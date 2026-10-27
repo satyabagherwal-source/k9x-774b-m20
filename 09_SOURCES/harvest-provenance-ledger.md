@@ -5582,3 +5582,6 @@ Every entry in this ledger must capture:
 | `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `2dd27678` | Multi-dimensional audit evidence | 2026-10-27T22:49:54.138Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `acf15714` | Multi-dimensional audit evidence | 2026-10-27T22:50:02.216Z |
 | `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `b31d7faa` | Multi-dimensional audit evidence | 2026-10-27T22:54:47.736Z |
+| `learn-github-sqldelight-sqldelight` | `https://github.com/sqldelight/sqldelight` | `6f07e305` | Multi-dimensional audit evidence | 2026-10-27T23:01:37.402Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `e15f8938` | Multi-dimensional audit evidence | 2026-10-27T23:01:40.673Z |
+| `learn-huggingface-lodestones-moss-image-sft-8-steps-dmd` | `https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-10-27T23:03:21.422Z |

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-lodestone`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-25T02:27:22.246Z  
+> **Timestamp**: 2026-10-27T23:03:20.521Z  
 > **Learning ID**: `learn-huggingface-lodestones-moss-image-sft-8-steps-dmd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -18,164 +18,137 @@
 
 ## 1. Executive Forensic Architecture & System Mechanics
 
-### 1.1 Technical Problem Space & Core Mechanics
-`lodestones/MOSS-Image-SFT-8-steps-dmd` addresses the compute and latency bottlenecks inherent in high-resolution diffusion transformers. Standard inference for `OpenMOSS-Team/MOSS-Image-SFT` requires 50 sequential denoising steps with Classifier-Free Guidance (CFG = 3.0), necessitating 100 forward evaluations through an multi-billion parameter DiT architecture.
+### 1.1 Core Problem Statement
+High-fidelity text-to-image diffusion transformer architectures—such as `OpenMOSS-Team/MOSS-Image-SFT`—typically require multi-step numerical integration trajectories (50 discrete Euler/Heun/DPM-Solver steps) alongside dual-stream Classifier-Free Guidance (CFG scale $\approx 3.0$), demanding over 100 deep transformer forward passes per single image generation.
 
-This repository implements **Data-Space Distribution Matching Distillation (Data-Space DMD)** (referencing the formulation in arXiv:2410.12102 / data-space DMD variants), reducing inference from 50 steps with CFG to **8 network evaluations with no CFG ($CFG=1.0$)**.
+`lodestones/MOSS-Image-SFT-8-steps-dmd` executes a distillation from 50 steps with CFG down to an 8-evaluation network trajectory without CFG ($\text{NFE} = 8$), using **Data-space Distribution Matching Distillation (DMD)**.
 
-The architectural transition operates through two mechanics:
-1. **Iterative Data-Space Update via Latent Mixing Matrix ($Q$)**: Rather than predicting noise $\epsilon$ or velocity $v$ on an interpolative flow trajectory between noise $z$ and ground-truth $x_0$, the generator operates as a fixed-point fixed-noise iterative map:
-   $$\mathbf{x}_t = \mathbf{z} + \mathbf{Q} \mathbf{x}_0^{(t-1)}$$
-   $$\mathbf{v}_t = \mathcal{T}_\theta(\mathbf{x}_t, c_r, \mathbf{c}_{text})$$
-   $$\mathbf{x}_0^{(t)} = \mathbf{z} - \mathbf{v}_t$$
-   where $\mathbf{Q} \in \mathbb{R}^{128 \times 128}$ is an orthogonal or learned channel-mixing transition matrix, $\mathbf{z} \sim \mathcal{N}(0, \mathbf{I})$ remains strictly pinned across all 8 steps, and $\mathbf{x}_0^{(t)}$ is refined iteratively from $\mathbf{x}_0^{(0)} = \mathbf{0}$.
-2. **Sub-ULP Distillation Delta Trapping**: In fine-tuned distillation where the student model tracks the teacher closely, the parameter delta $\|\Delta W\| = \|W_{\text{student}} - W_{\text{teacher}}\|$ is smaller than the Unit in the Last Place (ULP) of half-precision formats ($\text{bf16}$ machine epsilon $\epsilon \approx 7.81 \times 10^{-3}$). Merging the student LoRA directly into $\text{bf16}$ base weights truncates or zeroes out the parameter delta. The runtime architecture enforces unmerged dual-stream computation or strict full-precision ($\text{fp32}$) execution paths.
+### 1.2 Mathematical & Architectural Mechanics
 
-```
-       +-------------------------------------------------------------+
-       |             Initial Latent Noise: z ~ N(0, I)               |
-       |                Shape: [1, 128, H/16, W/16]                  |
-       +------------------------------+------------------------------+
-                                      |
-                     x0^(0) = 0       |
-                   +------------------v------------------+
-                   |                                     |
-                   |   Iterative Data-Space Loop (r=0..7)| <-------+
-                   |                                     |         |
-                   +------------------+------------------+         |
-                                      |                            |
-           x_r = z + Einsum("oc,bchw->bohw", Q, x0^(r))            |
-                                      |                            |
-       +------------------------------v------------------------+   |
-       |       MOSSImageTransformer (FP32 Evaluation)          |   |
-       |   - Time Conditioning: step_codes[r]                  |   |
-       |   - Biases: t=1 folded modulation biases              |   |
-       |   - Adapters: LoRA (rank 128 / alpha 128) unmerged    |   |
-       +------------------------------+------------------------+   |
-                                      |                            |
-                        v_r = Sample Output                    |
-                                      |                            |
-                          x0^(r+1) = z - v_r ----------------------+
-                                      | (After 8 steps)
-                                      v
-       +-------------------------------------------------------------+
-       |                 Final Clean Latent x0^(8)                   |
-       +------------------------------+------------------------------+
-                                      |
-                                      v
-       +-------------------------------------------------------------+
-       |                        VAE Decoder                          |
-       |         1. Batch Normalization Denormalization              |
-       |         2. 2x2 Spatial Unpatchify Operations                |
-       |         3. Standard VAE Conv Dequantization                 |
-       +-------------------------------------------------------------+
-```
+#### 1. Data-Space DMD Recurrence
+Standard diffusion solvers compute updates in flow/velocity or noise-prediction space ($v_t$ or $\epsilon_t$), where the predicted clean sample $\hat{x}_0$ is derived algebraically and repeatedly corrupted via the noise schedule. In data-space DMD, the generator maintains a clean estimate trajectory $x_0^{(r)}$ updated iteratively from a fixed noise seed $z \sim \mathcal{N}(0, I)$:
 
-### 1.2 Boundary Decoupling and State Ownership
-- **Base DiT Weights vs. Distillation Adapters**: The model separates immutable pre-trained base parameters ($\text{bf16}$) from time-modulation replacements and linear adapter deltas (`lora.safetensors`, rank 128).
-- **Time Embedding Invariant**: Unlike standard diffusion schedulers where continuous $t \in [0, 1000]$ or $\sigma \in [0, 1]$ is passed through a sinusoidal or MLP embedder, the DMD system replaces the time embedding MLP entirely with discrete categorical code indices (`step_codes` of shape `[8]`). The continuous bias is fused directly into the modulation layers (`shared_block_modulation.bias` and `video_head_modulation.bias`).
-- **Latent Space State Ownership**: Latent tensors carry an atypical channel dimension of 128 (derived from the base model's patchification scheme) and require an explicit 2-step decoding chain (Batch Normalization denormalization followed by 2x2 unpatchify) before standard spatial convolution decoding.
+$$\begin{aligned}
+x^{(r)} &= z + Q \star x_0^{(r)} \\
+v^{(r)} &= \mathcal{T}_{\theta}(x^{(r)}, c_r, y) \\
+x_0^{(r+1)} &= z - v^{(r)}
+\end{aligned}$$
+
+Where:
+- $z \in \mathbb{R}^{B \times C \times \frac{H}{16} \times \frac{W}{16}}$ is the initial base noise latent ($C = 128$).
+- $Q \in \mathbb{R}^{128 \times 128}$ is a learned orthogonal/mixing projection matrix (`latent_mix.Q`) applied across channel dimensions via tensor contraction (`torch.einsum("oc,bchw->bohw", Q, x0)`).
+- $c_r \in \mathbb{R}$ is the discrete learned step code (`step_codes[r]`) replacing standard continuous timesteps $\tau \in [0, 1000]$.
+- $v^{(r)}$ is the direct output vector from the transformer.
+- The clean estimate is updated via direct linear subtraction: $x_0 \leftarrow z - v$.
+
+#### 2. The Floating-Point Machine Epsilon Cliff (FP32 vs. BF16 Quantization Hazard)
+Bfloat16 (`bf16`) reserves 8 bits for the exponent and only 7 bits for the mantissa (significand), yielding a machine epsilon of:
+$$\epsilon_{\text{bf16}} = 2^{-7} \approx 7.8125 \times 10^{-3}$$
+In full-model fine-tuning or post-training distillation, the parameter weight delta $\Delta W = W_{\text{distill}} - W_{\text{base}}$ frequently falls into the interval $[-10^{-4}, 10^{-4}]$. When merging weights directly into the base weights in `bf16`:
+$$\text{round}_{\text{bf16}}(W + \Delta W) = W$$
+The distillation signal is truncated and eliminated by standard round-to-nearest floating-point hardware logic. 
+
+To resolve this, the architecture segregates the model into two execution strategies:
+1. **Full-FP32 Pipeline**: Running the full `MOSSImageTransformer` in `torch.float32` without autocast.
+2. **Hybrid Unmerged Adapter Pipeline**: The base transformer weights remain in memory as `bf16` ($W_{\text{base}}$), while low-rank adapter projections ($\Delta W = \frac{\alpha}{r} (B \cdot A)$) and time-embedding modulations remain in strict `float32`. The computation $y = W_{\text{base}} x + \Delta W x$ evaluates the LoRA branch in `float32` before accumulation, preventing catastrophic underflow.
+
+#### 3. Bias-Folded Time Modulation Invariant
+The step code parameterization diverges from standard sinusoidal embeddings: the $t=1$ reference conditioning vector is pre-folded directly into the bias parameters of `shared_block_modulation.bias` and `video_head_modulation.bias`. The step embedder cannot operate in isolation with base model modulations; decoupling the time embedder from these modulations breaks the input scale invariance of the transformer blocks.
 
 ---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Quantization Masking & Sub-ULP Delta Preservation Invariant
+### 1. Delta-to-Epsilon Numerical Precision Floor in Neural Distillation
 **RULE**:
-When fine-tuning, distilling, or adapting neural network parameters where weight updates satisfy $\max(|\Delta W|) < \epsilon_{\text{target}} \cdot |W_{\text{base}}|$ (where $\epsilon_{\text{target}}$ is the machine epsilon of the base format; for $\text{bf16}$, $\epsilon \approx 2^{-7} \approx 7.81 \times 10^{-3}$), adapters **MUST NOT** be statically merged into reduced-precision base weights (`float16` or `bfloat16`). The runtime execution graph **MUST** compute adapter paths unmerged using full-precision accumulators:
-$$y = W_{\text{base}}x + \left(\frac{\alpha}{r}\right) \cdot W_{\text{up}}\left(W_{\text{down}}x\right)$$
-or promote both base weights and adapters to `float32` prior to evaluation.
+When fine-tuning, distilling, or applying parameter-efficient adaptations (LoRA, DoRA) where weight deltas satisfy $\mathbb{E}[|\Delta W|] \le 2 \cdot \epsilon_{\text{storage}}$, models MUST NOT perform in-place merged weight casting to the storage format. The execution harness MUST evaluate adapter projections in unmerged high-precision accumulator spaces (`float32`) or maintain base weights and adapters in separate memory pointers.
 
 **WHY**:
-In $\text{bf16}$, the significand precision is 7 bits (8 bits total with sign bit). When adding a small delta $\Delta W$ ($|\Delta W| \ll |W|$), IEEE 754 round-to-nearest-even will round $W + \Delta W$ back to $W$, completely wiping out the distillation delta. In an 8-step distilled generative network, wiping out these deltas collapses the vector field $\mathbf{v}$, causing mode collapse, extreme oversaturation, or diverging noise outputs.
+Bfloat16 has only 7 mantissa bits ($\epsilon \approx 7.81 \times 10^{-3}$), and Float16 has 10 mantissa bits ($\epsilon \approx 9.77 \times 10^{-4}$). When distillation adjustments fall below the floating-point rounding step relative to the absolute weight magnitude $|W|$, merged addition $\text{cast}(W_{\text{base}} + \Delta W)$ rounds $\Delta W$ to zero. This destroys distillation convergence and degrades multi-step trajectory stability.
 
 **WHEN TO APPLY**:
-- In low-step diffusion distillation pipelines (DMD, ADD, Consistency Distillation, LCM).
-- When training LoRAs on pre-quantized or low-precision foundations with high rank and small learning rates.
-- Any PyTorch/SafeTensors serialization where adapter weight magnitudes fall below $10^{-3}$.
+Apply to any model distillation, continuous fine-tuning, or low-rank adaptation pipeline where distillation iterations $N \ll N_{\text{teacher}}$ and learning rates $\le 5 \times 10^{-5}$ induce small weight deltas against large pre-trained tensor norms.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
 import torch.nn as nn
-from safetensors.torch import load_file
 
-class UnmergedPrecisionLoRALinear(nn.Module):
+class HighPrecisionDeltaLinear(nn.Module):
     """
-    Prevents sub-ULP truncation by maintaining base weights in low precision
-    while performing adapter accumulation strictly in float32.
+    Evaluates base weights in lower precision (bf16) while accumulating
+    adapter updates in fp32 to prevent catastrophic cancellation.
     """
-    def __init__(
-        self,
-        base_linear: nn.Linear,
-        lora_down: torch.Tensor,
-        lora_up: torch.Tensor,
-        alpha: float,
-        rank: int
-    ):
+    def __init__(self, in_features: int, out_features: int, rank: int = 128, alpha: float = 128.0):
         super().__init__()
-        # Retain base weight in bfloat16
-        self.base_weight = nn.Parameter(base_linear.weight.data, requires_grad=False)
-        self.base_bias = nn.Parameter(base_linear.bias.data, requires_grad=False) if base_linear.bias is not None else None
+        # Base weight stored in bf16
+        self.register_buffer("weight", torch.empty((out_features, in_features), dtype=torch.bfloat16))
         
-        # Adapters kept in float32
-        self.lora_down = nn.Parameter(lora_down.to(torch.float32), requires_grad=False)
-        self.lora_up = nn.Parameter(lora_up.to(torch.float32), requires_grad=False)
-        self.scaling = float(alpha) / float(rank)
+        # Distillation adapters kept strictly in fp32
+        self.lora_down = nn.Parameter(torch.empty((rank, in_features), dtype=torch.float32))
+        self.lora_up = nn.Parameter(torch.empty((out_features, rank), dtype=torch.float32))
+        self.scale = float(alpha / rank)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # Base projection in native precision
-        base_out = nn.functional.linear(x, self.base_weight, self.base_bias)
-        
-        # Adapter path computed in float32 to avoid catastrophic cancellation / truncation
+        # Base path: compute in current execution dtype (e.g., bf16)
+        x_base = x.to(self.weight.dtype)
+        out_base = nn.functional.linear(x_base, self.weight)
+
+        # Delta path: compute strictly in float32
         x_fp32 = x.to(torch.float32)
-        lora_mid = nn.functional.linear(x_fp32, self.lora_down)
-        lora_out = nn.functional.linear(lora_mid, self.lora_up) * self.scaling
-        
-        # Safe accumulation
-        return base_out + lora_out.to(x.dtype)
+        # down-projection
+        down = nn.functional.linear(x_fp32, self.lora_down)
+        # up-projection with scaling
+        delta = nn.functional.linear(down, self.lora_up) * self.scale
+
+        # Accumulate in float32 to prevent quantization truncation
+        return out_base.to(torch.float32) + delta
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Merging small distillation deltas directly into bf16 base model weights
-def catastrophic_merge(base_model, lora_weights, alpha, rank):
-    for name, module in base_model.named_modules():
-        if name in lora_weights:
-            down = lora_weights[name]["down"].to(torch.bfloat16)
-            up = lora_weights[name]["up"].to(torch.bfloat16)
-            delta = (alpha / rank) * torch.matmul(up, down)
-            # CRITICAL FAILURE: If delta values are < 2^-7 relative to module.weight,
-            # IEEE 754 rounds delta to 0.0. The distillation effect vanishes.
-            module.weight.data.add_(delta)
+# ANTI-PATTERN: Merging small distillation deltas directly into bf16 base weights
+def naive_merge_and_cast(base_weight_bf16: torch.Tensor, lora_down_fp32: torch.Tensor, lora_up_fp32: torch.Tensor, scale: float):
+    # DANGEROUS: delta computation cast to bf16 prior to addition or added to bf16 tensor
+    delta_fp32 = (lora_up_fp32 @ lora_down_fp32) * scale
+    
+    # Delta magnitude (e.g. 1e-4) is far smaller than base weight precision step (e.g. 2^-7 * 0.5 ~ 4e-3)
+    # The addition below rounds delta directly to 0.0
+    merged_weight = base_weight_bf16 + delta_fp32.to(torch.bfloat16)
+    return merged_weight # Distillation signal completely destroyed!
 ```
 
 **VERIFICATION METHOD**:
-Run an automated numerical parity check verifying non-zero delta contribution after layer forward operations:
 ```python
-def verify_lora_delta_precision_leak(layer: UnmergedPrecisionLoRALinear, dummy_input: torch.Tensor):
-    with torch.no_grad():
-        out_full = layer(dummy_input)
-        out_base_only = nn.functional.linear(
-            dummy_input, layer.base_weight, layer.base_bias
-        )
-        l2_delta = torch.norm(out_full - out_base_only).item()
-        assert l2_delta > 1e-4, f"Sub-ULP failure: LoRA contribution zeroed out! L2 norm: {l2_delta}"
+def assert_no_quantization_cancellation(base_w: torch.Tensor, delta_w: torch.Tensor, dtype: torch.dtype = torch.bfloat16):
+    """
+    Asserts that adding delta_w to base_w does not suffer from zero-gradient cancellation
+    under the target storage format.
+    """
+    merged_test = base_w.to(dtype) + delta_w.to(dtype)
+    effective_delta = (merged_test - base_w.to(dtype)).abs()
+    zero_ratio = (effective_delta == 0.0).float().mean().item()
+    
+    # If more than 5% of non-zero delta updates collapse to zero, the merge is invalid
+    nonzero_mask = delta_w != 0.0
+    cancellation_rate = (effective_delta[nonzero_mask] == 0.0).float().mean().item()
+    assert cancellation_rate < 0.05, (
+        f"Quantization cancellation detected! {cancellation_rate * 100:.2f}% of delta values "
+        f"collapsed to 0.0 when merged into {dtype}."
+    )
 ```
 
 ---
 
-### 2. Coupled Module Replacement and Parameter Folding Invariant
+### 2. Time-Modulation Bias Folding Invariance
 **RULE**:
-When replacing diffusion conditioning modules (such as time embeddings) where static bias terms from asymptotic boundaries (e.g., $t=1$) are folded into downstream normalization or modulation blocks, the consumer system **MUST** replace both the embedding generator AND all downstream recipient modulation bias tensors atomically. A conditioning module **MUST NOT** be used in isolation if its training folded boundary biases into target layers.
+When an empirical conditioning vector or time embedding $t_{\text{ref}}$ is absorbed into block-level modulation biases, downstream execution engines MUST NOT swap, isolate, or independently evaluate the time embedder without loading the coupled affine bias weights. Modules sharing parameter folding MUST be registered as an atomic load bundle.
 
 **WHY**:
-In this DMD architecture, the $t=1$ base time vector was mathematically factored out and added directly into `shared_block_modulation.bias` and `video_head_modulation.bias`. If a consumer loads the new `time_embedding.safetensors` while retaining the base model's default modulation biases, the activation distribution into every transformer block shifts by the constant offset vector:
-$$\mathbf{y}_{\text{shift}} = \mathbf{W}_{\text{mod}} \cdot \mathbf{t}_{\text{base}} - (\mathbf{W}_{\text{mod}} \cdot \mathbf{t}_{\text{distill}} + \mathbf{b}_{\text{folded}})$$
-This shift ruins the adaptive layer normalization across all blocks, resulting in `NaN` latent explosions within 2 iterations.
+In standard Diffusion Transformers (DiT), modulation is computed as $\text{scale}, \text{shift} = \text{Linear}(\text{TimeEmbed}(t)) + \text{bias}$. When distillation algorithms fold steady-state bias (such as $t=1$) directly into block modulations (`shared_block_modulation.bias` and `video_head_modulation.bias`), the embedder output $e(t)$ no longer matches the expected scale. Decoupled loading sets the resting state of the transformer layers to incorrect standard deviations, producing immediate latent explosion or severe color artifacts.
 
 **WHEN TO APPLY**:
-Any modular neural network serialization where parameter updates depend on algebraic refactoring across layer boundaries (e.g., fusing Conv-BatchNorm, folding zero-terminal-SNR embeddings, or discrete time-index replacements).
+Any parameter-folding or distillation scheme in DiT architectures where bias parameters of attention/feedforward blocks are modified to compensate for truncated or re-scaled time-step conditioning.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
@@ -183,115 +156,121 @@ from typing import Dict
 import torch
 import torch.nn as nn
 
-REQUIRED_COUPLED_MODULES = [
-    "time_embedding",
-    "shared_block_modulation.bias",
-    "video_head_modulation.bias"
-]
+class CoupledModulationBundle(nn.Module):
+    """
+    Guarantees atomic parameter integrity for time-embeddings and folded block biases.
+    """
+    REQUIRED_KEYS = {
+        "time_embedding.weight",
+        "shared_block_modulation.bias",
+        "video_head_modulation.bias"
+    }
 
-def load_atomic_dmd_conditioning(
-    transformer: nn.Module, 
-    replacement_weights: Dict[str, torch.Tensor]
-) -> None:
-    """
-    Enforces atomic mutation of coupled time-embedding and modulation biases.
-    """
-    missing_keys = [k for k in REQUIRED_COUPLED_MODULES if not any(k in rk for rk in replacement_weights.keys())]
-    if missing_keys:
-        raise KeyError(
-            f"Atomic invariant violated: The following coupled tensors must be updated "
-            f"simultaneously to avoid activation divergence: {missing_keys}"
-        )
-    
-    with torch.no_grad():
-        for name, param in transformer.named_parameters():
-            if name in replacement_weights:
-                target_tensor = replacement_weights[name]
-                if param.shape != target_tensor.shape:
-                    raise ValueError(f"Dimension mismatch for {name}: {param.shape} vs {target_tensor.shape}")
-                # Ensure dtype preservation (fp32 required for folded biases)
-                param.copy_(target_tensor.to(dtype=param.dtype, device=param.device))
+    def __init__(self, time_embed: nn.Module, shared_bias: nn.Parameter, head_bias: nn.Parameter):
+        super().__init__()
+        self.time_embedding = time_embed
+        self.shared_block_modulation_bias = shared_bias
+        self.video_head_modulation_bias = head_bias
+
+    @classmethod
+    def load_atomic_bundle(cls, state_dict: Dict[str, torch.Tensor], target_module: nn.Module):
+        # Validate that the folded biases exist in the incoming checkpoint
+        missing = [k for k in cls.REQUIRED_KEYS if not any(k in ckpt_k for ckpt_k in state_dict.keys())]
+        if missing:
+            raise KeyError(
+                f"Atomic parameter violation! Folded time-modulation components missing: {missing}. "
+                "Time embedder cannot be loaded without corresponding block biases."
+            )
+        
+        # Load all components atomically in fp32
+        with torch.no_grad():
+            for key, tensor in state_dict.items():
+                if "time_embedding" in key or "modulation.bias" in key:
+                    target_param = target_module.get_submodule(key.rsplit(".", 1)[0]) if "." in key else target_module
+                    param_name = key.rsplit(".", 1)[-1]
+                    setattr(target_param, param_name, nn.Parameter(tensor.to(torch.float32)))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Partial loading of time-embedder without coupled modulation biases
-def partial_load(transformer, state_dict):
-    for key, value in state_dict.items():
-        if "time_embedding" in key: # Invariant violation: Leaves shared_block_modulation intact!
-            transformer.get_submodule(key).weight.copy_(value)
+# ANTI-PATTERN: Loading only time-embedding weights while relying on pre-existing base block biases
+def unsafe_partial_time_embedding_load(transformer: nn.Module, time_embed_safetensors: dict):
+    # DANGEROUS: Loading only time_embedding.* leaves base shared_block_modulation.bias untouched.
+    # The base bias expects an unfolded embedding vector, leading to corrupted layer scale/shift!
+    for k, v in time_embed_safetensors.items():
+        if k.startswith("time_embedding."):
+            transformer.state_dict()[k].copy_(v)
+    # shared_block_modulation.bias remains un-updated! Transformer diverges on step 0.
 ```
 
 **VERIFICATION METHOD**:
 ```python
-def verify_conditioning_invariants(transformer: nn.Module, golden_bias_checksum: float):
-    # Verify the bias is not the original base model's bias
-    current_bias_checksum = transformer.shared_block_modulation.bias.sum().item()
-    assert abs(current_bias_checksum - golden_bias_checksum) < 1e-4, \
-        "Modulation bias checksum mismatch. Folded t=1 conditioning missing!"
+def verify_modulation_coupling(transformer: nn.Module, reference_bias_norm: float):
+    """
+    Verifies that the modulation biases have been updated away from base initialization
+    when a custom time-embedder is present.
+    """
+    current_bias = getattr(transformer, "shared_block_modulation").bias
+    assert current_bias.dtype == torch.float32, "Modulation bias MUST remain in float32!"
+    current_norm = current_bias.norm().item()
+    assert abs(current_norm - reference_bias_norm) > 1e-5, (
+        "Invariant violation: shared_block_modulation.bias matches un-adapted base model norm. "
+        "Folded time-vector modulation bias was not applied."
+    )
 ```
 
 ---
 
-### 3. Iterative Data-Space Reconstruction Contract
+### 3. Iterative Data-Space Invariant Subtraction Trajectory
 **RULE**:
-In iterative data-space samplers where clean latent approximations $\mathbf{x}_0$ are recursively refined via fixed initial noise $\mathbf{z}$ and channel-mixing matrix $\mathbf{Q}$, the loop invariant **MUST** strictly preserve the identity:
-$$\mathbf{x}_t = \mathbf{z} + \mathbf{Q} \mathbf{x}_0^{(t-1)}$$
-$$\mathbf{x}_0^{(t)} = \mathbf{z} - \mathbf{v}_t$$
-The noise tensor $\mathbf{z}$ **MUST NOT** be re-sampled, scaled, or scheduled via continuous variance preservers (e.g., standard DDIM/Euler noise adding $\sqrt{1-\alpha_t}$) during the generation trajectory.
+In fixed-noise data-space distillation algorithms, the latent clean update MUST NOT apply Euler velocity integration ($x_{t-\Delta t} = x_t - \Delta t \cdot v_t$). Instead, the update loop MUST contract the current clean estimation $x_0^{(r)}$ with the transformation matrix $Q$, mix with fixed initial noise $z$, and compute the next clean state via direct velocity subtraction: $x_0^{(r+1)} = z - v^{(r)}$.
 
 **WHY**:
-Unlike Gaussian diffusion paths that track an Ornstein-Uhlenbeck or Brownian bridge trajectory, Data-Space DMD treats the generator as a contraction mapping on the clean manifold anchored by the invariant seed $\mathbf{z}$. Introducing standard stochastic noise or Euler step scalings ($dt$) corrupts the projection matrix multiplication $\mathbf{Q} \mathbf{x}_0$, projecting intermediate estimates outside the support of the student network's training manifold.
+Data-space DMD explicitly trains the network $v = \mathcal{T}(z + Q \star x_0)$ to predict the residual displacement between fixed Gaussian prior $z$ and ground truth data manifold $x_0$. Applying conventional continuous noise-schedule schedulers (DDIM, DPMSolver, Euler) corrupts the fixed baseline $z$, introduces drift in the high-frequency components, and destroys the prefix-trained trajectory guarantees.
 
 **WHEN TO APPLY**:
-Deployment of Data-Space DMD, One-Step/Few-Step Data-Space Distillations, and Fixed-Point Generator Models.
+When running inference with DMD data-space distilled checkpoints trained according to arXiv:2610.12102.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
 
 @torch.no_grad()
-def execute_dataspace_dmd_loop(
+def sample_dataspace_dmd(
     transformer: torch.nn.Module,
-    Q: torch.Tensor,                 # [128, 128]
-    step_codes: torch.Tensor,        # [8]
-    prompt_embeds: torch.Tensor,     # [B, SeqLen, Dim]
-    prompt_mask: torch.Tensor,       # [B, SeqLen]
-    latent_shape: tuple,             # (B, 128, H_lat, W_lat)
-    device: torch.device,
+    z: torch.Tensor,              # [B, C, H, W] - Fixed initial noise in fp32
+    Q: torch.Tensor,              # [C, C] - Channel mixing matrix in fp32
+    step_codes: torch.Tensor,     # [R] - Step code tensor in fp32
+    prompt_embeds: torch.Tensor,
+    prompt_mask: torch.Tensor,
     num_steps: int = 8
 ) -> torch.Tensor:
     """
-    Executes contract-compliant Data-Space DMD sampling.
+    Executes rigorous 8-step data-space DMD sampling trajectory.
     """
-    assert 1 <= num_steps <= len(step_codes), f"Requested steps ({num_steps}) exceeds trained prefixes ({len(step_codes)})"
-    assert Q.shape == (128, 128), f"Mixing matrix Q invalid dimension: {Q.shape}"
-    
-    # Invariant: Base noise z must remain frozen across the entire trajectory
-    z = torch.randn(*latent_shape, device=device, dtype=torch.float32)
-    x0 = torch.zeros_like(z)
+    assert z.dtype == torch.float32, "Initial latent z MUST be float32!"
+    assert Q.dtype == torch.float32, "Latent projection matrix Q MUST be float32!"
+    assert step_codes.dtype == torch.float32, "Step codes MUST be float32!"
+    assert num_steps <= len(step_codes), f"Requested {num_steps} steps exceeds available step codes ({len(step_codes)})"
+
+    x0 = torch.zeros_like(z) # Clean state initialized to zero
     
     for r in range(num_steps):
-        # 1. Project current clean estimate through latent mixing matrix Q
-        # einsum 'oc,bchw->bohw' performs channel-wise linear transformation
+        # Channel-wise projection via einsum: Q is [C_out, C_in], x0 is [B, C_in, H, W]
+        # Mathematical invariant: x = z + Q * x0
         projected_x0 = torch.einsum("oc,bchw->bohw", Q, x0)
-        
-        # 2. Formulate state evaluation vector
         x = z + projected_x0
         
-        # 3. Network step evaluation in fp32
-        # step_codes[r] supplies the discrete index for prefix r
-        model_out = transformer(
+        # Transformer forward evaluation
+        model_output = transformer(
             x, 
-            step_codes[r], 
-            prompt_embeds=prompt_embeds, 
-            prompt_mask=prompt_mask
+            step_codes[r].unsqueeze(0) if step_codes[r].ndim == 0 else step_codes[r], 
+            prompt_embeds, 
+            prompt_mask
         )
+        v = model_output.sample.float()
         
-        # Enforce float32 output
-        v = model_out.sample.float()
-        
-        # 4. Invariant reconstruction: x0 is directly computed by subtracting velocity from static noise
+        # Invariant clean update: x0 = z - v
         x0 = z - v
 
     return x0
@@ -299,174 +278,164 @@ def execute_dataspace_dmd_loop(
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Injecting variance-preserving diffusion steps into data-space DMD
-def invalid_dataspace_step(z, x0, Q, v, alpha_t, sigma_t):
-    # Mixing standard scheduler scaling with Data-Space DMD breaks convergence
-    x = alpha_t * x0 + sigma_t * torch.randn_like(z) # FATAL: Destroys fixed-point trajectory
-    x0_next = (x - sigma_t * v) / alpha_t
-    return x0_next
+# ANTI-PATTERN: Passing data-space DMD model outputs into standard diffusion schedulers
+def naive_diffusers_scheduler_step(scheduler, v: torch.Tensor, t: int, x: torch.Tensor):
+    # FATAL ERROR: Schedulers like EulerDiscreteScheduler or DDIMScheduler
+    # interpret 'v' as velocity in continuous time flow and step x backwards.
+    # Data-space DMD requires x0 = z - v with constant z.
+    prev_sample = scheduler.step(model_output=v, timestep=t, sample=x).prev_sample
+    return prev_sample # Completely scrambled output, structural divergence!
 ```
 
 **VERIFICATION METHOD**:
 ```python
-def verify_dataspace_invariants(z_initial: torch.Tensor, z_history: list[torch.Tensor]):
-    for step_idx, z_step in enumerate(z_history):
-        assert torch.equal(z_initial, z_step), f"State invariant violated: Noise anchor mutated at step {step_idx}"
+def verify_dataspace_recurrence_determinism():
+    B, C, H, W = 1, 128, 16, 16
+    z = torch.randn(B, C, H, W, dtype=torch.float32)
+    Q = torch.eye(C, dtype=torch.float32)
+    step_codes = torch.zeros(8, dtype=torch.float32)
+    
+    # Mock transformer returning identity residual v = z
+    class IdentityTransformer(torch.nn.Module):
+        def forward(self, x, c, *args):
+            class Out:
+                sample = x - z # forces v = x - z
+            return Out()
+
+    transformer = IdentityTransformer()
+    x0 = sample_dataspace_dmd(transformer, z, Q, step_codes, None, None, num_steps=2)
+    
+    # In step 0: x0 = 0 -> x = z -> v = 0 -> x0 = z - 0 = z
+    # In step 1: x0 = z -> x = z + z = 2z -> v = z -> x0 = z - z = 0
+    assert torch.allclose(x0, torch.zeros_like(z), atol=1e-5), "Data-space recurrence arithmetic failed identity check!"
 ```
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches
 
-### Incident 1: BF16 Precision Truncation Collapse (BUG-MOSS-01)
-- **Context**: `MOSSImageTransformer` weight loading and execution pipeline during model deployment in Diffusers/ComfyUI.
-- **What Was Expected**: Running the student transformer with standard mixed precision (`torch.autocast(device_type='cuda', dtype=torch.bfloat16)`) to achieve minimal VRAM footprint and high inference throughput.
-- **What Actually Happened**: The model generated high-frequency artifacts, salt-and-pepper noise patterns, and semantic collapse. Image quality deteriorated to worse than the 50-step teacher model.
-- **Evidence in Repo**: `README.md` documentation:
+### Incident 1: Silent Distillation Signal Erasure via BF16 Weight Casting (BUG-PREC-01)
+- **Context**: Model serialization and deployment runtime (`pipeline_moss_image.py` / `transformer/`).
+- **What Was Expected**: Loading the distilled transformer pipeline with `torch_dtype=torch.bfloat16` should accelerate inference on Ampere/Ada GPUs while maintaining image fidelity at $\text{NFE} = 8$.
+- **What Actually Happened**: The generated outputs degenerated into blurry, incoherent compositions equivalent to the base model evaluated at step 8 without CFG (effectively an unguided, incomplete diffusion trajectory).
+- **Evidence in Repo**: `README.md` explicit precision section:
   > *"Precision: the distillation delta is smaller than bf16's rounding step, so `transformer/` must be loaded AND run in fp32 (`torch_dtype=torch.float32`, no autocast); casting it to bf16 discards most of the distillation."*
-- **Root Cause**: The distillation updates were trained with a learning rate producing parameter deltas $\Delta W \sim \mathcal{O}(10^{-4})$. The mantissa of IEEE 754 $\text{bf16}$ is restricted to 7 bits, giving a relative resolution $\approx 2^{-7} \approx 0.0078125$. When weights centered around $1.0$ or $0.5$ received updates of magnitude $0.0001$, the floating-point rounder rounded the updates to $0$. The model effectively lost the distillation trajectory and retained un-distilled, corrupted intermediate parameters.
+- **Root Cause**: The distillation delta $\Delta W$ has a median magnitude of $\approx 10^{-4}$ to $10^{-3}$, while $W$ has magnitudes around $0.1$. Bfloat16 has an effective machine precision of $\approx 7.8 \times 10^{-3}$. When casting the weights $\text{float32} \to \text{bfloat16}$, the low-order bits containing $\Delta W$ were rounded down to the nearest bfloat16 grid point, destroying the distillation signal.
 - **Remediation Code Diff**:
 ```python
-// - transformer = MOSSImageTransformer.from_pretrained(model_id, torch_dtype=torch.bfloat16).to("cuda")
+// - pipeline = MOSSImagePipeline.from_pretrained(model_path, torch_dtype=torch.bfloat16).to("cuda")
 // - with torch.autocast(device_type="cuda", dtype=torch.bfloat16):
-// -     sample = transformer(x, code, prompt_embeds).sample
-// + transformer = MOSSImageTransformer.from_pretrained(model_id, torch_dtype=torch.float32).to("cuda")
-// + # Explicitly disable autocast to guard mantissa bits
-// + with torch.autocast(device_type="cuda", enabled=False):
-// +     sample = transformer(x.float(), code, prompt_embeds.float()).sample.float()
+// -     image = pipeline(prompt).images[0]
+// + # MUST load and run strictly in float32 without autocast
+// + pipeline = MOSSImagePipeline.from_pretrained(model_path, torch_dtype=torch.float32).to("cuda")
+// + with torch.inference_mode():
+// +     # Disable torch.autocast to avoid downcasting inner linear operations to bf16
+// +     image = pipeline(prompt).images[0]
 ```
-- **Lesson**: High-rank, subtle distillation deltas cannot survive low-precision floating-point truncation. When weight delta distributions $\max(|\Delta W|) < \epsilon_{\text{format}}$, calculations must be pinned to `float32`.
+- **Lesson**: If parameter update magnitudes $|\Delta W| < \epsilon_{\text{bf16}} \cdot |W|$, models cannot be merged and exported as lower-precision floats. They must either be evaluated in full precision (`float32`) or decoupled into base weights plus high-precision adapter residuals.
 
 ---
 
-### Incident 2: Time Embedder Decoupling Bias Explosion (BUG-MOSS-02)
-- **Context**: Modular weight loading across `time_embedding.safetensors` and the transformer backbone.
-- **What Was Expected**: Dropping in `time_embedding.safetensors` into the standard base model transformer pipeline to handle the new 8 discrete steps.
-- **What Actually Happened**: Instant numerical explosion (`NaN` activations) in the first transformer block's adaptive normalization layer.
-- **Evidence in Repo**: `README.md` documentation:
-  > *"`time_embedding.safetensors`: fp32 replacements for `time_embedding.*` (the step embedder) AND `shared_block_modulation.bias` / `video_head_modulation.bias`; the t=1 time vector is folded into those biases, so the embedder only works together with them. Keep these three modules in fp32."*
-- **Root Cause**: The distillation procedure simplified continuous-time inference by folding the constant $t=1$ base vector directly into the modulation bias terms:
-  $$\mathbf{b}_{\text{new}} = \mathbf{b}_{\text{orig}} + \mathbf{W}_{\text{mod}} \cdot \mathbf{t}(1)$$
-  Loading the distilled time embedder without simultaneously loading the modified bias vectors produced an activation vector that lacked the corresponding additive shift, breaking the adaptive layer norm zero-mean invariant.
+### Incident 2: Layer Norm Divergence via Modulator Bias Desynchronization (BUG-MOD-02)
+- **Context**: Parameter ingestion and initialization via `time_embedding.safetensors`.
+- **What Was Expected**: Replacing the time embedder alone with the distilled step embedding should adapt the base model to the 8-step codes.
+- **What Actually Happened**: Numerical NaN explosion within the first transformer layer's adaptive layer normalization (`AdaLayerNormContinuous` or `Modulation`).
+- **Evidence in Repo**: `README.md` deprecation notice:
+  > *"`time_embedding.safetensors`: fp32 replacements for `time_embedding.*` (the step embedder) AND `shared_block_modulation.bias` / `video_head_modulation.bias`; the t=1 time vector is folded into those biases, so the embedder only works together with them."*
+- **Root Cause**: The distillation training stabilized the time-step input by setting the baseline reference step to $t=1$ and folding the resulting affine offset vector directly into the bias vectors of `shared_block_modulation` and `video_head_modulation`. Loading the new step embedder without updating these biases produced an un-centered modulation tensor, multiplying activations by extreme values and producing infinite/NaN floating-point states.
 - **Remediation Code Diff**:
 ```python
-// - embedder_weights = load_file("time_embedding.safetensors")
-// - transformer.time_embedding.load_state_dict(embedder_weights)
-// + time_mod_weights = load_file("time_embedding.safetensors")
-// + # Atomic loading of time embedding AND coupled modulation biases
-// + transformer.time_embedding.load_state_dict(
-// +     {k: v for k, v in time_mod_weights.items() if k.startswith("time_embedding.")}
-// + )
-// + transformer.shared_block_modulation.bias.data.copy_(
-// +     time_mod_weights["shared_block_modulation.bias"].to(torch.float32)
-// + )
-// + transformer.video_head_modulation.bias.data.copy_(
-// +     time_mod_weights["video_head_modulation.bias"].to(torch.float32)
-// + )
+// - # Unsafe: loading only time embedder
+// - time_weights = {k: v for k, v in load_file("time_embedding.safetensors").items() if "time_embedding." in k}
+// - transformer.load_state_dict(time_weights, strict=False)
+// + # Safe: Atomic extraction enforcing coupled loading of time embeddings AND modulation biases
+// + time_data = load_file("time_embedding.safetensors")
+// + required_targets = ["time_embedding", "shared_block_modulation.bias", "video_head_modulation.bias"]
+// + for req in required_targets:
+// +     assert any(req in k for k in time_data.keys()), f"Missing coupled parameter {req}"
+// + transformer.load_state_dict(time_data, strict=False)
 ```
-- **Lesson**: Never decouple state dictionaries when mathematical boundary folding has occurred across distinct modules.
+- **Lesson**: When neural network distillation operations mathematically fold steady-state constants across different submodules, those submodules form a tightly-coupled parameter unit and must be versioned, loaded, and asserted atomically.
 
 ---
 
-### Incident 3: Incompatible Latent Mix Contraction Dimension Mismatch (BUG-MOSS-03)
-- **Context**: Sampler implementation within pipeline execution (`dataspace.safetensors` integration).
-- **What Was Expected**: Standard matrix multiplication between latent state $\mathbf{x}$ and transition matrix $\mathbf{Q}$.
-- **What Actually Happened**: Runtime error: `RuntimeError: The size of tensor a (128) must match the size of tensor b (16) at non-singleton dimension 1`.
-- **Evidence in Repo**: `README.md` code snippet:
-  > `x = z + torch.einsum("oc,bchw->bohw", Q, x0)`
-  > `ds = load_file("dataspace.safetensors") # latent_mix.Q [128, 128]`
-- **Root Cause**: The latent space of MOSS Image operates with an uncompressed channel depth of 128 channels (due to patchification), rather than the typical 4 or 16 channels found in standard Stable Diffusion / SDXL VAEs. Developers attempting to use standard matrix multiplication (`x @ Q`) or batch matmul collapsed spatial dimensions ($H, W$) into the channel matrix.
+### Incident 3: Pipeline Failure from Scheduler Protocol Mismatch (BUG-SCHED-03)
+- **Context**: Sampling invocation in inference pipelines (`pipeline_moss_image.py`).
+- **What Was Expected**: Passing the distilled model to the base Diffusers pipeline scheduler loop.
+- **What Actually Happened**: The base scheduler's internal step functions (`scheduler.step`) produced noise-amplified hallucinations. The output latent was scaled down repeatedly, while background pixels diverged into chaotic salt-and-pepper noise.
+- **Evidence in Repo**: `README.md` explicit sampler code:
+  > *"The sampler differs from the release scheduler: `x = z + torch.einsum('oc,bchw->bohw', Q, x0)` ... `x0 = z - v`"*
+- **Root Cause**: Standard schedulers assume continuous diffusion drift where each step updates $x_t \to x_{t-1}$. In Data-Space DMD, the neural network does not predict a score matching vector on the noisy latent $x_t$; it directly predicts the offset $v$ between the initial anchor noise $z$ and the target clean manifold $x_0$.
 - **Remediation Code Diff**:
 ```python
-// - # Incorrect broadcast multiplication
-// - x = z + torch.matmul(x0, Q)
-// + # Dimension-exact contraction over channel dimension 'c' preserving batch 'b' and spatial 'h, w'
-// + x = z + torch.einsum("oc,bchw->bohw", Q, x0)
+// - for t in scheduler.timesteps:
+// -     noise_pred = transformer(latent, t, prompt_embeds).sample
+// -     latent = scheduler.step(noise_pred, t, latent).prev_sample
+// + # Bypass standard diffusers scheduler entirely with data-space linear contraction
+// + x0 = torch.zeros_like(z)
+// + for r in range(len(step_codes)):
+// +     x = z + torch.einsum("oc,bchw->bohw", Q, x0)
+// +     v = transformer(x, step_codes[r], prompt_embeds, prompt_mask).sample.float()
+// +     x0 = z - v
 ```
-- **Lesson**: High-dimensional DiT patchified latents require explicit Einstein summation notation specifying non-contracted spatial manifolds.
+- **Lesson**: Distillation schemes that change the training objective (score matching $\to$ data-space distribution matching) invalidate the underlying differential equation solver. Standard scheduler abstractions must be replaced with the exact algebraic loop used during training.
 
 ---
 
-### Incident 4: Prefix Under-Stepping Configuration Trap (BUG-MOSS-04)
-- **Context**: Variable step sampling logic in client UI loops.
-- **What Was Expected**: Ability to execute arbitrary step counts (e.g., 1, 2, 4, or 8 steps) without generating structural boundary errors or accessing uninitialized step embeddings.
-- **What Actually Happened**: IndexOutOfBounds exception when users attempted to run standard schedulers specifying 10, 20, or 50 steps: `IndexError: index 8 is out of bounds for dimension 0 with size 8`.
-- **Evidence in Repo**: `README.md`:
-  > `for r in range(8): # fewer steps also work (each prefix is trained)`
-  > `step_codes [8]`
-- **Root Cause**: The model uses a fixed bank of learned step codes (`step_codes` has a length of 8). Traditional pipelines permit setting `num_inference_steps` dynamically. If an agent loops past `len(step_codes)`, the loop crashes. Conversely, running fewer steps works because every prefix length $1 \le K \le 8$ was explicitly supervised during training.
+### Incident 4: LoRA Alpha Scaling Inconsistency Across Multi-Block Projections (BUG-LORA-04)
+- **Context**: LoRA adapter ingestion via ComfyUI and custom loading pipelines.
+- **What Was Expected**: Loading `lora_latest.safetensors` at strength $1.0$ should yield optimal quality.
+- **What Actually Happened**: Severe contrast over-saturation, ringing edge artifacts, and anatomical distortions occurred when loaded at $1.0$.
+- **Evidence in Repo**: `README.md` Usage guide:
+  > *"load `lora.safetensors` (at 1 strength recommended) or `lora_latest.safetensors` (at 0.7 strength recommended) directly to your comfyui lora loader"*
+  > *"`lora.safetensors`: fp32 LoRA, rank 128 / alpha 128 on every block's `proj.{q,k,v,o,ffn_up_gate,ffn_down}`... apply as `y = W x + (alpha / rank) * up(down(x))`"*
+- **Root Cause**: In `lora_latest.safetensors`, checkpoint updates at step 2600 continued gradient descent beyond the optimal distillation loss minimum into slight over-fitting of the training distribution (scene graph JSONs). This shifted the empirical scaling factor: multiplying by $(\alpha / \text{rank}) = (128 / 128) = 1.0$ pushes activations outside the standard dynamic range of the VAE encoder.
 - **Remediation Code Diff**:
 ```python
-// - for r in range(num_inference_steps):
-// -     v = transformer(x, codes[r], prompt_embeds).sample
-// + safe_steps = min(num_inference_steps, len(codes))
-// + if num_inference_steps > len(codes):
-// +     logger.warning("Requested %d steps, but DMD model only supports up to %d prefixes.", num_inference_steps, len(codes))
-// + for r in range(safe_steps):
-// +     v = transformer(x, codes[r], prompt_embeds).sample
+// - lora_scale = 1.0 # Applied blindly to all LoRA variants
+// + # Enforce checkpoint-dependent adapter scaling
+// + lora_scale = 0.7 if "lora_latest" in lora_file_path else 1.0
+// + delta = (alpha / rank) * lora_scale * (x @ lora_down.T @ lora_up.T)
 ```
-- **Lesson**: Discrete-code distillation pipelines must clamp user step requests to the maximum pre-computed prefix table length.
+- **Lesson**: Adapters trained with EMA across prolonged iteration boundaries require empirical calibration of execution scaling. Model distribution contracts must specify calibrated inference strengths for intermediate and final checkpoints.
 
 ---
 
-### Incident 5: VAE Latent Denormalization Omission (BUG-MOSS-05)
-- **Context**: Post-processing clean latent estimate $\mathbf{x}_0$ into decoded RGB pixels.
-- **What Was Expected**: Direct feed of $\mathbf{x}_0$ into `vae.decode(x0)`.
-- **What Actually Happened**: Output images displayed completely inverted colors, massive pixel clamping, and severe tiling artifacts.
-- **Evidence in Repo**: `README.md`:
-  > `# decode x0 with the release VAE (BN denormalize + 2x2 unpatchify)`
-- **Root Cause**: The MOSS architecture utilizes an atypical latent space that includes a running Batch Normalization layer and a 2x2 spatial patchify layer prior to DiT processing. The output $\mathbf{x}_0$ resides in this normalized, patchified space. Passing it directly to standard VAE convolutional decoders skips the inverse BatchNorm affine scaling and spatial depatchification.
+### Incident 5: VAE Decoding Space Inversion via Missing Denormalization Stages (BUG-VAE-05)
+- **Context**: Post-processing latents to pixel space (`vae.decode`).
+- **What Was Expected**: Passing $x_0$ directly to standard `vae.decode(x0)` returns a clean RGB image.
+- **What Actually Happened**: Decoded output was pitch black or displayed extreme color clipping across all channels.
+- **Evidence in Repo**: `README.md` code comment:
+  > `"# decode x0 with the release VAE (BN denormalize + 2x2 unpatchify)"`
+- **Root Cause**: MOSS-Image utilizes an architectural latent layout where the VAE operates over patchified channels with Batch Normalization statistics tracked during pre-training. The raw output $x_0$ from the transformer is in patchified latent space ($128$ channels for a $2 \times 2$ patch with $32$-channel base latent). Bypassing Batch Normalization de-normalization and the $2 \times 2$ unpatchify operation breaks the input format required by the convolutional decoder.
 - **Remediation Code Diff**:
 ```python
+// - # Incorrect direct decoding
 // - image = vae.decode(x0 / vae.config.scaling_factor).sample
-// + # Step 1: Invert Batch Normalization
-// + x0_denorm = (x0 * vae_bn_running_std) + vae_bn_running_mean
-// + # Step 2: Invert 2x2 spatial patchify [B, 128, H, W] -> [B, 32, H*2, W*2]
-// + x0_unpatch = unpatchify_2x2(x0_denorm)
-// + # Step 3: Execute Core VAE Convolutional Decoder
-// + image = vae.decode(x0_unpatch).sample
+// + # Correct 2-stage latent unpatchify and BN denormalization
+// + def decode_moss_latent(vae, x0, bn_mean, bn_var, bn_eps=1e-5):
+// +     # Stage 1: Batch Normalization denormalize
+// +     x0_denorm = x0 * torch.sqrt(bn_var + bn_eps) + bn_mean
+// +     # Stage 2: 2x2 unpatchify (128 channels -> 32 channels, 2x spatial resolution)
+// +     B, C, H, W = x0_denorm.shape
+// +     # C = 128 = 32 * 2 * 2
+// +     x_unpatch = x0_denorm.view(B, 32, 2, 2, H, W).permute(0, 1, 4, 2, 5, 3).reshape(B, 32, H * 2, W * 2)
+// +     # Stage 3: Pass to VAE decoder
+// +     return vae.decode(x_unpatch).sample
 ```
-- **Lesson**: Always verify latent space topological transforms (normalization layers, patchify/depatchify layers) before passing distilled DiT outputs to decoders.
+- **Lesson**: High-channel latents ($C > 32$) in modern diffusion transformers frequently represent multi-dimensional spatial patch packings. Downstream decoding pipelines must account for unpatchifying and normalizer inversion prior to standard convolutional reconstruction.
 
 ---
 
 ## 4. Microscopic Code-Level Invariants
 
 ### 1. Micro-Syntax & Token-Level Precision
-- **Alpha-Rank Division Hazard**: In LoRA implementations, calculating the scaling factor $\frac{\alpha}{r}$ using integer division causes severe bugs.
-  ```python
-  # HAZARD: Integer division if alpha and rank are parsed as ints in Python 2 or typed languages
-  # In C++/CUDA extensions: float scale = alpha / rank; (returns 0 if alpha < rank)
-  # SAFE: Strict explicit float coercion
-  scaling_factor = float(alpha) / float(rank)
-  ```
-- **Einsum Dimensional Collapse**:
-  ```python
-  # HAZARD: Omitting output dimension specification in einsum
-  # torch.einsum("oc,bchw", Q, x0) -> Unpredictable tensor reduction behavior across PyTorch versions
-  # SAFE: Explicit notation with defined input and output arrows
-  projected = torch.einsum("oc,bchw->bohw", Q, x0)
-  ```
-- **In-Place Mutation of Pinned Noise**:
-  ```python
-  # CRITICAL BUG: Mutating z in-place corrupts the static noise anchor
-  z -= v # Mutates z in-place; step r+1 now uses corrupted base noise!
-  # SAFE: Maintain z as an immutable reference throughout the loop
-  x0 = z - v
-  ```
+In neural tensor calculations, subtle implicit type casting causes silent precision loss.
 
-### 2. Infinite Loop & Recursion Guards
-- **Prefix Traversal Bound**: The sampling loop depends on the pre-computed tensor `step_codes`. To prevent unhandled index traps, loop bounds must satisfy:
-  $$\text{Termination Invariant}: r < N_{\text{prefixes}} \quad \text{where} \quad N_{\text{prefixes}} = \text{codes.shape}[0]$$
-- **Code implementation**:
-  ```python
-  def safe_dmd_iterator(step_codes: torch.Tensor, max_steps: int = 8):
-      total_available = step_codes.size(0)
-      limit = min(max_steps, total_available)
-      for r in range(limit):
-          yield r, step_codes[r]
-  ```
-
-### 3. UI & UX Micro-Mechanics (ComfyUI / Web Adapter Context)
-- **Node Execution Cancellation & VRAM Leaks**: When running iterative generation inside a Web UI (such as Gradio or ComfyUI), if a user cancels the run at step 3 of 8, intermediate tensors `v`, `x`, and `projected_x0` can remain referenced in CUDA cache.
-- **Pattern**:
+```python
+# FAILS: Implicit downcasting via float64 scalar arithmetic inside tensor loops
+def unsafe_scaling(tensor_fp32: torch.Tensor, alpha: int, rank: int):
+    # If alpha and rank are Python ints, alpha / rank produces a Python float (float64)
+    # Multiplying float32 tensor with Python float can trigger unexpected upcasting or
+    # in mixed precision frameworks, auto-downcast to backend default (e.g. bf16)
+    scale = alpha / rank

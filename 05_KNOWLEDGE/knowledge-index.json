@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T22:54:47.683Z",
+  "last_updated": "2026-10-27T23:03:21.358Z",
   "total_verified_learnings": 1152,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -46668,8 +46668,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "1d22b2d8",
-      "content_hash": "3571762e234de7f067ed549f2719731a90fafc26e0c9b21404d3a9aeb2c1779c",
+      "source_version": "e15f8938",
+      "content_hash": "1be2e4c0791d0b24686cc80789d1d32c2313eb0d589b8cb7aab00c923e7b50de",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -46707,6 +46707,11 @@
           "number": 4710,
           "title": "include applesmc module",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5045,
+          "title": "use the established BGP source for numbered-peer BFD",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46714,7 +46719,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:27:27.823Z",
+      "verified_at": "2026-10-27T23:01:40.599Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48050,8 +48055,8 @@
       "slug": "sqldelight-sqldelight",
       "platform": "github",
       "source_url": "https://github.com/sqldelight/sqldelight",
-      "source_version": "78a3398e",
-      "content_hash": "b87622244e28bad37682da7949bfa3d4e0a46f31490325d1b33cc5a1bcc97a44",
+      "source_version": "6f07e305",
+      "content_hash": "bddd721293a6aef30c5c0873c0a9762b63514b5cc54b27466defaed9e8ac7264",
       "dossier_path": "07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md",
       "promoted_rules": [
@@ -48064,6 +48069,11 @@
           "number": 4240,
           "title": "Update dependency org.postgresql:postgresql to v42.7.14 (#6388)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5044,
+          "title": "Update Gradle to v9.8.1 (#6389)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48071,7 +48081,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T10:36:17.566Z",
+      "verified_at": "2026-10-27T23:01:37.328Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -108918,7 +108928,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
       "source_version": "hf-lodestones-moss-image-sft-8-steps-dmd",
-      "content_hash": "a6ffc821b6e2637abe21f0b1ca931118de1af06e7a2ec5eba76e4290c5e80522",
+      "content_hash": "097b839eb8a58e973d5804eb9f87ca3280d2f40ac4301ccb8c0e480efc123c7a",
       "dossier_path": "07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md",
       "promoted_rules": [
@@ -108946,6 +108956,21 @@
           "number": 3984,
           "title": "Iterative Data-Space Reconstruction Contract",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5046,
+          "title": "Delta-to-Epsilon Numerical Precision Floor in Neural Distillation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5047,
+          "title": "Time-Modulation Bias Folding Invariance",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5048,
+          "title": "Iterative Data-Space Invariant Subtraction Trajectory",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -108953,7 +108978,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T02:27:22.923Z",
+      "verified_at": "2026-10-27T23:03:21.345Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -139136,6 +139161,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T22:54:47.672Z"
+    },
+    "rule-5044": {
+      "learning_id": "rule-5044",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5044,
+      "title": "Update Gradle to v9.8.1 (#6389)",
+      "source_url": "https://github.com/sqldelight/sqldelight",
+      "source_version": "6f07e305",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T23:01:37.328Z"
+    },
+    "rule-5045": {
+      "learning_id": "rule-5045",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5045,
+      "title": "use the established BGP source for numbered-peer BFD",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "e15f8938",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T23:01:40.599Z"
+    },
+    "rule-5046": {
+      "learning_id": "rule-5046",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5046,
+      "title": "Delta-to-Epsilon Numerical Precision Floor in Neural Distillation",
+      "source_url": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "source_version": "hf-lodestones-moss-image-sft-8-steps-dmd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T23:03:21.345Z"
+    },
+    "rule-5047": {
+      "learning_id": "rule-5047",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5047,
+      "title": "Time-Modulation Bias Folding Invariance",
+      "source_url": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "source_version": "hf-lodestones-moss-image-sft-8-steps-dmd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T23:03:21.345Z"
+    },
+    "rule-5048": {
+      "learning_id": "rule-5048",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5048,
+      "title": "Iterative Data-Space Invariant Subtraction Trajectory",
+      "source_url": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "source_version": "hf-lodestones-moss-image-sft-8-steps-dmd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T23:03:21.345Z"
     }
   },
   "aliases": {

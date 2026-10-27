@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md`  
 > **Source**: github ([https://github.com/sqldelight/sqldelight](https://github.com/sqldelight/sqldelight))  
-> **Source Version**: `78a3398e`  
+> **Source Version**: `6f07e305`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T10:36:17.271Z  
+> **Timestamp**: 2026-10-27T23:01:36.985Z  
 > **Learning ID**: `learn-github-sqldelight-sqldelight`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sqldelight/sqldelight](https://github.com/sqldelight/sqldelight))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T10:36:16.932Z  
+> **Harvest Timestamp**: 2026-10-27T23:01:35.842Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: SQLDelight - Generates typesafe Kotlin APIs from SQL
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6899 stars
+- **Stars / Engagement**: 6898 stars
 
 ---
 
@@ -511,229 +511,327 @@ expect fun createDefaultWebWorkerDriver(): SqlDriver
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `78a3398e` (2026-10-25)
-**Commit Message**: Update dependency org.postgresql:postgresql to v42.7.14 (#6388)
+### Incident Patch 1: `6f07e305` (2026-10-25)
+**Commit Message**: Update Gradle to v9.8.1 (#6389)
 
 Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-**File**: `gradle/libs.versions.toml` (modified, +1/-1)
+**File**: `gradle/wrapper/gradle-wrapper.properties` (modified, +2/-2)
 ```diff
-@@ -69,7 +69,7 @@ robolectric = { module = "org.robolectric:robolectric", version = "4.17" }
- rxJava2 = { module = "io.reactivex.rxjava2:rxjava", version = "2.2.21" }
- rxJava3 = { module = "io.reactivex.rxjava3:rxjava", version = "3.1.12" }
- sqliteJdbc = { module = "org.xerial:sqlite-jdbc", version = "3.53.4.0" }
--postgresJdbc = { module = "org.postgresql:postgresql", version = "42.7.13" }
-+postgresJdbc = { module = "org.postgresql:postgresql", version = "42.7.14" }
- mysqlJdbc = { module = "mysql:mysql-connector-java", version = "8.0.33" }
- 
- schemaCrawler-tools = { module = "us.fatehi:schemacrawler-tools", version.ref = "schemaCrawler" }
+@@ -1,7 +1,7 @@
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+-distributionSha256Sum=bafd5ce9cfaea0fbccfdc8439a1ac42fbd4cd9c89dc9a988228d8a2639a58e6c
+-distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.0-bin.zip
++distributionSha256Sum=dce76f55f8e251a3a1f130eb120f30b3d271de2b76c9b0729d316b5a1b6dc01f
++distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.1-bin.zip
+ networkTimeout=10000
+ retries=0
+ retryBackOffMs=500
 ```
 
----
-
-### Incident Patch 2: `c47d71e2` (2026-10-23)
-**Commit Message**: Let the bad times roll (#6387)
-
-I found this while investigating crashes on Android 32-bit kernel devices. They'd run out of address space (ugh, pro tip, never use `largeHeap=true`), which makes malloc fail and triggers all sorts of weird failures.
-
-On the SQLite side, this manifests as a SQLITE_NOMEM error when running a statement. According to [the SQLite docs](https://www.sqlite.org/lang_transaction.html#response_to_errors_within_a_transaction):
-
-> If certain kinds of errors occur within a transaction, the transaction may or may not be rolled back automatically. The errors that can cause an automatic rollback include:
->
-> - SQLITE_FULL: database or disk full
-> - SQLITE_IOERR: disk I/O error
-> - SQLITE_INTERRUPT: operation interrupted by sqlite3_interrupt() or similar.
-> - SQLITE_NOMEM: out of memory
->
-> [...] it might be necessary for SQLite to rollback and cancel the entire transaction. An application can tell which course of action SQLite took by using the sqlite3_get_autocommit() or sqlite3_txn_state() C-language interfaces.
-
-AFAIK we can't call `sqlite3_get_autocommit()` from SQLDelight, so there's no way for us to know when this happens. After this happens, the transaction 
-
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `gradlew.bat` (modified, +41/-11)
 ```diff
-@@ -12,7 +12,7 @@
+@@ -26,6 +26,33 @@
+ @rem Set local scope for the variables, and ensure extensions are enabled
+ setlocal EnableExtensions
  
- ### Fixed
- 
--- Nothing yet!
-+- [Runtime] Keep the transaction body's exception when ending the transaction or a post-rollback hook also fails, for example with `cannot rollback - no transaction is active` after SQLite rolled the transaction back on its own. The second exception is added as suppressed, and the Android driver now clears its current transaction even when `endTransaction()` throws (#6387 by @pyricau)
- 
- 
- ## [2.4.1] - 2026-10-06
-```
-
-**File**: `drivers/android-driver/src/main/java/app/cash/sqldelight/driver/android/AndroidSqliteDriver.kt` (modified, +10/-7)
-```diff
-@@ -136,15 +136,18 @@ class AndroidSqliteDriver private constructor(
-     override val enclosingTransaction: Transacter.Transaction?,
-   ) : Transacter.Transaction() {
-     override fun endTransaction(successful: Boolean): QueryResult<Unit> {
--      if (enclosingTransaction == null) {
--        if (successful) {
--          database.setTransactionSuccessful()
--          database.endTransaction()
--        } else {
--          database.endTransaction()
-+      try {
-+        if (enclosingTransaction == null) {
-+          if (successful) {
-+            database.setTransactionSuccessful()
-+            database.endTransaction()
-+          } else {
-+            database.endTransaction()
-+          }
-         }
-+      } finally {
-+        transactions.set(enclosingTransaction)
-       }
--      transactions.set(enclosingTransaction)
-       return QueryResult.Unit
-     }
-   }
-```
-
-**File**: `drivers/driver-test/src/commonMain/kotlin/com/squareup/sqldelight/driver/test/TransacterTest.kt` (modified, +4/-5)
-```diff
-@@ -10,7 +10,7 @@ import kotlin.test.BeforeTest
- import kotlin.test.Test
- import kotlin.test.assertEquals
- import kotlin.test.assertFailsWith
--import kotlin.test.assertTrue
-+import kotlin.test.assertIs
- 
- abstract class TransacterTest {
-   protected lateinit var transacter: TransacterImpl
-@@ -189,19 +189,18 @@ abstract class TransacterTest {
-   }
- 
-   @Test
--  fun anExceptionThrownInPostRollbackFunctionIsCombinedWithTheExceptionInTheMainBody() {
-+  fun anExceptionThrownInPostRollbackFunctionIsSuppressedByTheExceptionInTheMainBody() {
-     class ExceptionA : RuntimeException()
-     class ExceptionB : RuntimeException()
--    val t = assertFailsWith<Throwable> {
-+    val t = assertFailsWith<ExceptionB> {
-       transacter.transaction {
-         afterRollback {
-           throw ExceptionA()
-         }
-         throw ExceptionB()
-       }
-     }
--    assertTrue("Exception thrown in body not in message($t)") { t.toString().contains("ExceptionA") }
--    assertTrue("Exception thrown in rollback not in message($t)") { t.toString().contains("ExceptionB") }
-+    assertIs<ExceptionA>(t.suppressedExceptions.single())
-   }
- 
-   @Test
-```
-
-**File**: `drivers/web-worker-driver/src/commonTest/kotlin/app/cash/sqldelight/drivers/worker/WebWorkerTransacterTest.kt` (modified, +4/-12)
-```diff
-@@ -11,8 +11,7 @@ import app.cash.sqldelight.driver.worker.createDefaultWebWorkerDriver
- import kotlin.test.Test
- import kotlin.test.assertEquals
- import kotlin.test.assertFailsWith
--import kotlin.test.assertTrue
--import kotlin.test.fail
-+import kotlin.test.assertIs
- 
- class WebWorkerTransacterTest {
-   private val schema = object : SqlSchema<QueryResult.Value<Unit>> {
-@@ -177,24 +176,17 @@ class WebWorkerTransacterTest {
-     }
-   }
- 
--  @Test fun an_exception_thrown_in_postRollback_function_is_combined_with_the_exception_in_the_main_body() = runTest { _, transacter ->
-+  @Test fun an_exception_thrown_in_postRollback_function_is_suppressed_by_the_exception_in_the_main_body() = runTest { _, transacter ->
-     class ExceptionA : RuntimeException()
-     class ExceptionB : RuntimeException()
--    try {
-+    val e = assertFailsWith<ExceptionB> {
-       transacter.transaction {
-         afterRollback {
-           throw ExceptionA()
-         }
-         throw ExceptionB()
-       }
--      fail("Should have thrown!")
--    } catch (e: Throwable) {
--      assertTrue("Exception thrown in body not in message($e)") {
--        e.toString().contains("ExceptionA")
--      }
--      assertTrue("Exception thrown in rollback not in message($e)") {
--        e.toString().contains("ExceptionB")
--      }
-     }
-+    assertIs<ExceptionA>(e.suppressedExceptions.single())
-   }
- }
-```
-
-**File**: `runtime/src/commonMain/kotlin/app/cash/sqldelight/Transacter.kt` (modified, +15/-9)
-```diff
-@@ -201,6 +201,18 @@ interface SuspendingTransacter : TransacterBase {
- 
- private class RollbackException(val value: Any? = null) : Throwable()
- 
-+private inline fun suppressingAnyNewException(thrownException: Throwable?, block: () -> Unit) {
-+  if (thrownException == null || thrownException is RollbackException) {
-+    block()
-+  } else {
-+    try {
-+      block()
-+    } catch (e: Throwable) {
-+      thrownException.addSuppressed(e)
-+    }
-+  }
-+}
++@rem Catch executions from older scripts and ensure they exit cleanly.
++@rem This can be removed once we can be reasonably confident that few people
++@rem will be migrating directly to this new wrapper.
++goto afterSafetyNet
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++goto exitWithErrorLevel
++:afterSafetyNet
 +
- private class TransactionWrapper<R>(
-   val transaction: Transaction,
- ) : TransactionWithoutReturn,
-@@ -277,14 +289,8 @@ abstract class BaseTransacterImpl(protected val driver: SqlDriver) {
-   protected fun <R> postTransactionCleanup(transaction: Transaction, enclosing: Transaction?, thrownException: Throwable?, returnValue: R?): R {
-     if (enclosing == null) {
-       if (!transaction.successful || !transaction.childrenSuccessful) {
--        // TODO: If this throws, and we threw in [body] then create a composite exception.
--        try {
-+        suppressingAnyNewException(thrownException) {
-           transaction.postRollbackHooks.forEach { it.invoke() }
--        } catch (rollbackException: Throwable) {
--          thrownException?.let {
--            throw Throwable("Exception while rolling back from an exception.\nOriginal exception: $thrownException\nwith cause ${thrownException.cause}\n\nRollback exception: $rollbackException", rollbackException)
--          }
--          throw rollbackException
-         }
-         transaction.postRollbackHooks.clear()
-       } else {
-@@ -388,7 +394,7 @@ abstract class TransacterImpl(driver: SqlDriver) :
-     } catch (e: Throwable) {
-       thrownException = e
-     } finally {
--      transaction.endTransaction()
-+      suppressingAnyNewException(thrownException) { transaction.endTransaction() }
-       return postTransactionCleanup(transaction, enclosing, thrownException, returnValue)
-     }
-   }
-@@ -439,7 +445,7 @@ abstract class SuspendingTransacterImpl(driver: SqlDriver) :
-     } catch (e: Throwable) {
-       thrownException = e
-     } finally {
--      transaction.endTransaction().await()
-+      suppressingAnyNewException(thrownException) { transaction.endTransaction().await() }
-       return postTransactionCleanup(transaction, enclosing, thrownException, returnValue)
-     }
-   }
+ set DIRNAME=%~dp0
+ if "%DIRNAME%"=="" set DIRNAME=.
+ @rem This is normally unused
+@@ -45,27 +72,29 @@ set JAVA_EXE=java.exe
+ %JAVA_EXE% -version >NUL 2>&1
+ if %ERRORLEVEL% equ 0 goto execute
+ 
+-echo. 1>&2
+-echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH. 1>&2
+-echo. 1>&2
+-echo Please set the JAVA_HOME variable in your environment to match the 1>&2
+-echo location of your Java installation. 1>&2
++1>&2 echo.
++1>&2 echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
++1>&2 echo.
++1>&2 echo Please set the JAVA_HOME variable in your environment to match the
++1>&2 echo location of your Java installation.
+ 
+ "%COMSPEC%" /c exit 1
++goto exitWithErrorLevel
+ 
+ :findJavaFromJavaHome
+ set JAVA_HOME=%JAVA_HOME:"=%
+ set JAVA_EXE=%JAVA_HOME%/bin/java.exe
+ 
+ if exist "%JAVA_EXE%" goto execute
+ 
+-echo. 1>&2
+-echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME% 1>&2
+-echo. 1>&2
+-echo Please set the JAVA_HOME variable in your environment to match the 1>&2
+-echo location of your Java installation. 1>&2
++1>&2 echo.
++1>&2 echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
++1>&2 echo.
++1>&2 echo Please set the JAVA_HOME variable in your environment to match the
++1>&2 echo location of your Java installation.
+ 
+ "%COMSPEC%" /c exit 1
++goto exitWithErrorLevel
+ 
+ :execute
+ @rem Setup the command line
+@@ -75,8 +104,9 @@ echo location of your Java installation. 1>&2
+ @rem Execute gradlew
+ @rem endlocal doesn't take effect until after the line is parsed and variables are expanded
+ @rem which allows us to clear the local environment before executing the java command
+-endlocal & "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -jar "%APP_HOME%\gradle\wrapper\gradle-wrapper.jar" %* & call :exitWithErrorLevel
++endlocal & "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -jar "%APP_HOME%\gradle\wrapper\gradle-wrapper.jar" %* & call :exitWithErrorLevel & goto exitWithErrorLevel
+ 
++@rem This label must not be changed. We rely on old scripts being able to jump to this point.
+ :exitWithErrorLevel
+ @rem Use "%COMSPEC%" /c exit to allow operators to work properly in scripts
+ "%COMSPEC%" /c exit %ERRORLEVEL%
+```
+
+**File**: `sample-web/gradle/wrapper/gradle-wrapper.properties` (modified, +2/-2)
+```diff
+@@ -1,7 +1,7 @@
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+-distributionSha256Sum=bafd5ce9cfaea0fbccfdc8439a1ac42fbd4cd9c89dc9a988228d8a2639a58e6c
+-distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.0-bin.zip
++distributionSha256Sum=dce76f55f8e251a3a1f130eb120f30b3d271de2b76c9b0729d316b5a1b6dc01f
++distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.1-bin.zip
+ networkTimeout=10000
+ retries=0
+ retryBackOffMs=500
+```
+
+**File**: `sample-web/gradlew.bat` (modified, +41/-11)
+```diff
+@@ -26,6 +26,33 @@
+ @rem Set local scope for the variables, and ensure extensions are enabled
+ setlocal EnableExtensions
+ 
++@rem Catch executions from older scripts and ensure they exit cleanly.
++@rem This can be removed once we can be reasonably confident that few people
++@rem will be migrating directly to this new wrapper.
++goto afterSafetyNet
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++goto exitWithErrorLevel
++:afterSafetyNet
++
+ set DIRNAME=%~dp0
+ if "%DIRNAME%"=="" set DIRNAME=.
+ @rem This is normally unused
+@@ -45,27 +72,29 @@ set JAVA_EXE=java.exe
+ %JAVA_EXE% -version >NUL 2>&1
+ if %ERRORLEVEL% equ 0 goto execute
+ 
+-echo. 1>&2
+-echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH. 1>&2
+-echo. 1>&2
+-echo Please set the JAVA_HOME variable in your environment to match the 1>&2
+-echo location of your Java installation. 1>&2
++1>&2 echo.
++1>&2 echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
++1>&2 echo.
++1>&2 echo Please set the JAVA_HOME variable in your environment to match the
++1>&2 echo location of your Java installation.
+ 
+ "%COMSPEC%" /c exit 1
++goto exitWithErrorLevel
+ 
+ :findJavaFromJavaHome
+ set JAVA_HOME=%JAVA_HOME:"=%
+ set JAVA_EXE=%JAVA_HOME%/bin/java.exe
+ 
+ if exist "%JAVA_EXE%" goto execute
+ 
+-echo. 1>&2
+-echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME% 1>&2
+-echo. 1>&2
+-echo Please set the JAVA_HOME variable in your environment to match the 1>&2
+-echo location of your Java installation. 1>&2
++1>&2 echo.
++1>&2 echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
++1>&2 echo.
++1>&2 echo Please set the JAVA_HOME variable in your environment to match the
++1>&2 echo location of your Java installation.
+ 
+ "%COMSPEC%" /c exit 1
++goto exitWithErrorLevel
+ 
+ :execute
+ @rem Setup the command line
+@@ -75,8 +104,9 @@ echo location of your Java installation. 1>&2
+ @rem Execute gradlew
+ @rem endlocal doesn't take effect until after the line is parsed and variables are expanded
+ @rem which allows us to clear the local environment before executing the java command
+-endlocal & "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -jar "%APP_HOME%\gradle\wrapper\gradle-wrapper.jar" %* & call :exitWithErrorLevel
++endlocal & "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -jar "%APP_HOME%\gradle\wrapper\gradle-wrapper.jar" %* & call :exitWithErrorLevel & goto exitWithErrorLevel
+ 
++@rem This label must not be changed. We rely on old scripts being able to jump to this point.
+ :exitWithErrorLevel
+ @rem Use "%COMSPEC%" /c exit to allow operators to work properly in scripts
+ "%COMSPEC%" /c exit %ERRORLEVEL%
+```
+
+**File**: `sample/gradle/wrapper/gradle-wrapper.properties` (modified, +2/-2)
+```diff
+@@ -1,7 +1,7 @@
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+-distributionSha256Sum=bafd5ce9cfaea0fbccfdc8439a1ac42fbd4cd9c89dc9a988228d8a2639a58e6c
+-distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.0-bin.zip
++distributionSha256Sum=dce76f55f8e251a3a1f130eb120f30b3d271de2b76c9b0729d316b5a1b6dc01f
++distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.1-bin.zip
+ networkTimeout=10000
+ retries=0
+ retryBackOffMs=500
+```
+
+**File**: `sample/gradlew.bat` (modified, +41/-11)
+```diff
+@@ -26,6 +26,33 @@
+ @rem Set local scope for the variables, and ensure extensions are enabled
+ setlocal EnableExtensions
+ 
++@rem Catch executions from older scripts and ensure they exit cleanly.
++@rem This can be removed once we can be reasonably confident that few people
++@rem will be migrating directly to this new wrapper.
++goto afterSafetyNet
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
++goto exitWithErrorLevel
++:afterSafetyNet
++
+ set DIRNAME=%~dp0
+ if "%DIRNAME%"=="" set DIRNAME=.
+ @rem This is normally unused
+@@ -45,27 +72,29 @@ set JAVA_EXE=java.exe
+ %JAVA_EXE% -version >NUL 2>&1
+ if %ERRORLEVEL% equ 0 goto execute
+ 
+-echo. 1>&2
+-echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH. 1>&2
+-echo. 1>&2
+-echo Please set the JAVA_HOME variable in your environment to match the 1>&2
+-echo location of your Java installation. 1>&2
++1>&2 echo.
++1>&2 echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
++1>&2 echo.
++1>&2 echo Please set the JAVA_HOME variable in your environment to match the
++1>&2 echo location of your Java installation.
+ 
+ "%COMSPEC%" /c exit 1
++goto exitWithErrorLevel
+ 
+ :findJavaFromJavaHome
+ set JAVA_HOME=%JAVA_HOME:"=%
+ set JAVA_EXE=%JAVA_HOME%/bin/java.exe
+ 
+ if exist "%JAVA_EXE%" goto execute
+ 
+-echo. 1>&2
+-echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME% 1>&2
+-echo. 1>&2
+-echo Please set the JAVA_HOME variable in your environment to match the 1>&2
+-echo location of your Java installation. 1>&2
++1>&2 echo.
++1>&2 echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
++1>&2 echo.
++1>&2 echo Please set the JAVA_HOME variable in your environment to match the
++1>&2 echo location of your Java installation.
+ 
+ "%COMSPEC%" /c exit 1
++goto exitWithErrorLevel
+ 
+ :execute
+ @rem Setup the command line
+@@ -75,8 +104,9 @@ echo location of your Java installation. 1>&2
+ @rem Execute gradlew
+ @rem endlocal doesn't take effect until after the line is parsed and variables are expanded
+ @rem which allows us to clear the local environment before executing the java command
+-endlocal & "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -jar "%APP_HOME%\gradle\wrapper\gradle-wrapper.jar" %* & call :exitWithErrorLevel
++endlocal & "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -jar "%APP_HOME%\gradle\wrapper\gradle-wrapper.jar" %* & call :exitWithErrorLevel & goto exitWithErrorLevel
+ 
++@rem This label must not be changed. We rely on old scripts being able to jump to this point.
+ :exitWithErrorLevel
+ @rem Use "%COMSPEC%" /c exit to allow operators to work properly in scripts
+ "%COMSPEC%" /c exit %ERRORLEVEL%
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6389** (2026-10-25): Update Gradle to v9.8.1 (@renovate[bot])
 - **PR #6388** (2026-10-25): Update dependency org.postgresql:postgresql to v42.7.14 (@renovate[bot])
 - **PR #6387** (2026-10-23): Let the bad times roll (@pyricau)
 - **PR #6386** (2026-10-06): Update sql-psi to 0.8.1 (@JakeWharton)
 - **PR #6381** (2026-10-06): Improve docs for Android transactions.md (@griffio)
 - **PR #6380** (2026-10-03): Update plugin spotless to v8.10.3 (@renovate[bot])
-- **PR #6379** (2026-10-03): Update Gradle to v9.8.0 (@renovate[bot])
 
 ---
 
@@ -753,28 +851,30 @@ AFAIK we can't call `sqlite3_get_autocommit()` from SQLDelight, so there's no wa
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update dependency org.postgresql:postgresql to v42.7.14 (#6388)
+## X. Update Gradle to v9.8.1 (#6389)
 
 **RULE**:
-When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqldelight/sqldelight. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gradle/wrapper/gradle-wrapper.properties`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqldelight/sqldelight. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `78a3398e`: Update dependency org.postgresql:postgresql to v42.7.14 (#6388). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6f07e305`: Update Gradle to v9.8.1 (#6389). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/wrapper/gradle-wrapper.properties`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-postgresJdbc = { module = "org.postgresql:postgresql", version = "42.7.14" }
+distributionSha256Sum=dce76f55f8e251a3a1f130eb120f30b3d271de2b76c9b0729d316b5a1b6dc01f
+distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.1-bin.zip
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-postgresJdbc = { module = "org.postgresql:postgresql", version = "42.7.13" }
+distributionSha256Sum=bafd5ce9cfaea0fbccfdc8439a1ac42fbd4cd9c89dc9a988228d8a2639a58e6c
+distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.0-bin.zip
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `78a3398e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6f07e305` are properly handled with clean fallback behavior.

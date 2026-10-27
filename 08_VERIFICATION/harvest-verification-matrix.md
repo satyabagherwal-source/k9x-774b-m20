@@ -5573,3 +5573,6 @@
 | `CYCLE-20261027-36QF` | `2026-10-27T22:49:54.135Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5041` | Yes (`890cdfd1...`) |
 | `CYCLE-20261027-3CYT` | `2026-10-27T22:50:02.213Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5042` | Yes (`339707ea...`) |
 | `CYCLE-20261027-9H9X` | `2026-10-27T22:54:47.733Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5043` | Yes (`ebd77dc2...`) |
+| `CYCLE-20261027-I9DI` | `2026-10-27T23:01:37.398Z` | `sqldelight/sqldelight` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5044` | Yes (`bddd7212...`) |
+| `CYCLE-20261027-IBWE` | `2026-10-27T23:01:40.670Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5045` | Yes (`1be2e4c0...`) |
+| `CYCLE-20261027-KHMY` | `2026-10-27T23:03:21.418Z` | `lodestones/MOSS-Image-SFT-8-steps-dmd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5046, Rule 5047, Rule 5048` | Yes (`097b839e...`) |

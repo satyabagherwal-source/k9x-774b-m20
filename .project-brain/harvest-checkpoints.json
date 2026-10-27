@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T22:54:47.744Z",
+  "last_updated": "2026-10-27T23:03:21.431Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10101,14 +10101,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sqldelight-sqldelight",
-      "content_hash": "b87622244e28bad37682da7949bfa3d4e0a46f31490325d1b33cc5a1bcc97a44",
-      "verified_at": "2026-10-25T10:36:17.641Z",
+      "content_hash": "bddd721293a6aef30c5c0873c0a9762b63514b5cc54b27466defaed9e8ac7264",
+      "verified_at": "2026-10-27T23:01:37.410Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T10:36:17.641Z"
+      "last_updated": "2026-10-27T23:01:37.410Z"
     },
     "kubernetes-sigs/aws-load-balancer-controller": {
       "repository": "kubernetes-sigs/aws-load-balancer-controller",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "3571762e234de7f067ed549f2719731a90fafc26e0c9b21404d3a9aeb2c1779c",
-      "verified_at": "2026-10-27T11:27:27.905Z",
+      "content_hash": "1be2e4c0791d0b24686cc80789d1d32c2313eb0d589b8cb7aab00c923e7b50de",
+      "verified_at": "2026-10-27T23:01:40.681Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T11:27:27.905Z"
+      "last_updated": "2026-10-27T23:01:40.681Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",
@@ -15591,14 +15591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-      "content_hash": "a6ffc821b6e2637abe21f0b1ca931118de1af06e7a2ec5eba76e4290c5e80522",
-      "verified_at": "2026-10-25T02:27:23.002Z",
+      "content_hash": "097b839eb8a58e973d5804eb9f87ca3280d2f40ac4301ccb8c0e480efc123c7a",
+      "verified_at": "2026-10-27T23:03:21.430Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T02:27:23.002Z"
+      "last_updated": "2026-10-27T23:03:21.430Z"
     },
     "AhmadHassan-BTed/AutoSwarm-Shadow-Adapter": {
       "repository": "AhmadHassan-BTed/AutoSwarm-Shadow-Adapter",

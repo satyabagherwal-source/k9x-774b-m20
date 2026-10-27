@@ -6693,10 +6693,10 @@
     "repository": "sqldelight/sqldelight",
     "platform": "github",
     "sourceUrl": "https://github.com/sqldelight/sqldelight",
-    "sourceVersion": "78a3398e",
+    "sourceVersion": "6f07e305",
     "license": "Apache-2.0",
-    "contentHash": "b87622244e28bad37682da7949bfa3d4e0a46f31490325d1b33cc5a1bcc97a44",
-    "lastHarvestedAt": "2026-10-25T10:36:17.633Z",
+    "contentHash": "bddd721293a6aef30c5c0873c0a9762b63514b5cc54b27466defaed9e8ac7264",
+    "lastHarvestedAt": "2026-10-27T23:01:37.402Z",
     "learningId": "learn-github-sqldelight-sqldelight"
   },
   "kubernetes-sigs-aws-load-balancer-controller": {
@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "1d22b2d8",
+    "sourceVersion": "e15f8938",
     "license": "MPL-2.0",
-    "contentHash": "3571762e234de7f067ed549f2719731a90fafc26e0c9b21404d3a9aeb2c1779c",
-    "lastHarvestedAt": "2026-10-27T11:27:27.897Z",
+    "contentHash": "1be2e4c0791d0b24686cc80789d1d32c2313eb0d589b8cb7aab00c923e7b50de",
+    "lastHarvestedAt": "2026-10-27T23:01:40.673Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {
@@ -10385,8 +10385,8 @@
     "sourceUrl": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
     "sourceVersion": "hf-lodestones-moss-image-sft-8-steps-dmd",
     "license": "Open-Source",
-    "contentHash": "a6ffc821b6e2637abe21f0b1ca931118de1af06e7a2ec5eba76e4290c5e80522",
-    "lastHarvestedAt": "2026-10-25T02:27:22.990Z",
+    "contentHash": "097b839eb8a58e973d5804eb9f87ca3280d2f40ac4301ccb8c0e480efc123c7a",
+    "lastHarvestedAt": "2026-10-27T23:03:21.422Z",
     "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd"
   },
   "ahmadhassan-bted-autoswarm-shadow-adapter": {

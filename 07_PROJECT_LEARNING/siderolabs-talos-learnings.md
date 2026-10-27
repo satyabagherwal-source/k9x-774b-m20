@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `1d22b2d8`  
+> **Source Version**: `e15f8938`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T11:27:27.493Z  
+> **Timestamp**: 2026-10-27T23:01:40.264Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T11:27:27.203Z  
+> **Harvest Timestamp**: 2026-10-27T23:01:39.927Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11414 stars
+- **Stars / Engagement**: 11415 stars
 
 ---
 
@@ -1920,13 +1920,16 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14746** (2026-10-27): **feat: include applesmc module**
-  *Symptoms*: Catch up with https://github.com/siderolabs/pkgs/pull/1732 
+- **Issue #14754** (2026-10-27): **test: new NVIDIA chart and drivers**
+  *Symptoms*: Bump NVIDIA chart, and also test with new drivers from https://github.com/siderolabs/extensions/pull/1326. 
   **Post-Mortem & Fix Analysis**:
   > /m
 
-- **Issue #14742** (2026-10-26): **Image verification deny rule is not applied to resident images**
-  *Symptoms*: ## Bug Report  ### What happened? What did you expect?  On a v1.14.2 worker with an image verification deny rule for `docker.io/library/busybox`, a pull of a non-resident busybox image is denied, but a pull of a busybox image that is already resident and unpacked succeeds. I expected the deny rule to apply to both.  Observed on aone worker node in a disposable v1.14.2 lab.  ### Steps to reproduce  1. On a v1.14.2 worker, configure an image verification deny rule for `docker.io/library/busybox`. 2. Pull a busybox tag that is not on the node:  ```sh talosctl image pull busybox:1.37 --nodes <worker> ```  Result: `verification denied by matched rule`.  3. Pull a busybox tag that is already resident and unpacked:  ```sh talosctl image pull busybox:1.36 --nodes <worker> ```  Result: `pulled image`, rc=0.  Reproduced 2/2 in the lab. The resident image was present before the deny rule was added. I did not test other registries or keyless rules.  ### Logs and diagnostics  No support bundle was collected: this is a command-output mismatch, not a crash or a node failure, and the lab node was disposable. The two `talosctl image pull` outputs are the evidence:  ```text $ talosctl image pull busybox:1.37 --nodes <worker> verification denied by matched rule  $ talosctl image pull busybox:1.36 --nodes <worker> pulled image ```  The code path I suspect, though I didn't instrument it to be sure (`internal/pkg/containers/image/pull.go:139-148` and `:172`):  ```go if opts.SkipIfAlreadyPulled {  
+- **Issue #14752** (2026-10-27): **Multiple ServiceCIDRs**
+  *Symptoms*: ## Feature Request There is no way to set several [ServiceCIDR](https://kubernetes.io/docs/reference/kubernetes-api/networking/service-cidr-v1/) in Talos (1.14) right now  No way to create a few [KubeNetworkConfig](https://docs.siderolabs.com/talos/v1.14/reference/configuration/kubernetes/kubenetworkconfig) as well  ### Description Requesting a way to get multiple CIDR blocks for k8s svc
+  **Post-Mortem & Fix Analysis**:
+  > It is perfectly supported, even documented https://docs.siderolabs.com/talos/v1.14/reference/configuration/kubernetes/kubenetworkconfig
+  > @smira sorry, I don't get it. The doc says I can put only one IPv4 block to serviceSubnets. The second one can only be IPv6 only. How how I get multiple IPv4 blocks like with multiple ServiceCIDR objects?
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1943,461 +1946,413 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1d22b2d8` (2026-10-27)
-**Commit Message**: feat: include applesmc module
+### Incident Patch 1: `78fccf08` (2026-10-27)
+**Commit Message**: fix: use the established BGP source for numbered-peer BFD
 
-Catch up with https://github.com/siderolabs/pkgs/pull/1732
+Update GoBGP from v4.9.0 to the upstream source-selection fix at
+57fa92f17f18. BFD previously chose its UDP source independently of BGP,
+leaving numbered peers stuck in Init when the addresses differed.
+BFD now uses the established TCP connection address without forcing
+an explicit local address or restricting incoming BGP connections.
 
-Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
+Fixes: #13940
 
-**File**: `Makefile` (modified, +1/-1)
+Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
+
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -28,7 +28,7 @@ EMBED_TARGET ?= embed
- TOOLS_PREFIX ?= ghcr.io/siderolabs/tools
- TOOLS ?= v1.15.0-alpha.0-15-g2d70a26
- PKGS_PREFIX ?= ghcr.io/siderolabs
--PKGS ?= v1.15.0-alpha.0-62-g2c33dc1
-+PKGS ?= v1.15.0-alpha.0-63-g6e225ae
- GENERATE_VEX_PREFIX ?= ghcr.io/siderolabs/generate-vex
- GENERATE_VEX ?= latest
- 
+@@ -122,7 +122,7 @@ require (
+ 	github.com/opencontainers/go-digest v1.0.0
+ 	github.com/opencontainers/image-spec v1.1.1
+ 	github.com/opencontainers/runtime-spec v1.3.0
+-	github.com/osrg/gobgp/v4 v4.10.0
++	github.com/osrg/gobgp/v4 v4.10.1-0.20261020121312-57fa92f17f18
+ 	github.com/packethost/packngo v0.31.0
+ 	github.com/pelletier/go-toml/v2 v2.4.3
+ 	github.com/pin/tftp/v3 v3.2.0
 ```
 
-**File**: `hack/modules-amd64.txt` (modified, +1/-0)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -88,6 +88,7 @@ kernel/drivers/hid/usbhid/usbhid.ko
- kernel/drivers/hv/hv_balloon.ko
- kernel/drivers/hv/hv_utils.ko
- kernel/drivers/hwmon/acpi_power_meter.ko
-+kernel/drivers/hwmon/applesmc.ko
- kernel/drivers/hwmon/coretemp.ko
- kernel/drivers/hwmon/drivetemp.ko
- kernel/drivers/hwmon/fam15h_power.ko
+@@ -1370,8 +1370,8 @@ github.com/opentracing/opentracing-go v1.2.0 h1:uEJPy/1a5RIPAJ0Ov+OIO8OxWu77jEv+
+ github.com/opentracing/opentracing-go v1.2.0/go.mod h1:GxEUsuufX4nBwe+T+Wl9TAgYrxe9dPLANfrWvHYVTgc=
+ github.com/orcaman/concurrent-map/v2 v2.0.1 h1:jOJ5Pg2w1oeB6PeDurIYf6k9PQ+aTITr/6lP/L/zp6c=
+ github.com/orcaman/concurrent-map/v2 v2.0.1/go.mod h1:9Eq3TG2oBe5FirmYWQfYO5iH1q0Jv47PLaNK++uCdOM=
+-github.com/osrg/gobgp/v4 v4.10.0 h1:9yoWSFo7mR9byOBRDg/daWh0yBlv2PfWkb1YkCZZww8=
+-github.com/osrg/gobgp/v4 v4.10.0/go.mod h1:cVD5Q5BXFPLQ1EKROFeXexGJi3XYca4pbs/drBwzUig=
++github.com/osrg/gobgp/v4 v4.10.1-0.20261020121312-57fa92f17f18 h1:iw41jCfDpaE7JoBviwki/QSWaAfe47FMWUbl44Yff3U=
++github.com/osrg/gobgp/v4 v4.10.1-0.20261020121312-57fa92f17f18/go.mod h1:cVD5Q5BXFPLQ1EKROFeXexGJi3XYca4pbs/drBwzUig=
+ github.com/packethost/packngo v0.31.0 h1:LLH90ardhULWbagBIc3I3nl2uU75io0a7AwY6hyi0S4=
+ github.com/packethost/packngo v0.31.0/go.mod h1:Io6VJqzkiqmIEQbpOjeIw9v8q9PfcTEq8TEY/tMQsfw=
+ github.com/pborman/getopt v0.0.0-20170112200414-7148bc3a4c30/go.mod h1:85jBQOZwpVEaDAr341tbn15RS4fCAsIst0qp7i8ex1o=
 ```
 
-**File**: `pkg/machinery/gendata/data/pkgs` (modified, +1/-1)
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/main_test.go` (added, +44/-0)
 ```diff
-@@ -1 +1 @@
--v1.15.0-alpha.0-62-g2c33dc1
-\ No newline at end of file
-+v1.15.0-alpha.0-63-g6e225ae
-\ No newline at end of file
-```
-
----
-
-### Incident Patch 2: `edbfe077` (2026-10-16)
-**Commit Message**: feat: allow overriding k8s endpoint in the talosctl upgrade command
-
-Add feature for overriding k8s api endpoint for upgrade command in talosctl
-
-- add overriding k8s endpoint in the talosctl upgrade command
-- add endpoint validation and early parse check in flag parsing
-- refactor endpoint string option in function option
-
-Signed-off-by: Bart van der Schans <[REDACTED_EMAIL]>
-
-**File**: `cmd/talosctl/cmd/talos/drain.go` (modified, +6/-4)
-```diff
-@@ -30,15 +30,15 @@ type nodeUpdate struct {
- // and performs cordon + drain on all of them in parallel.
- //
- // It returns a map of talosIP -> k8sNodeName for use in the uncordon phase.
--func drainNodes(ctx context.Context, clientFactory *global.ClientFactory, drainTimeout time.Duration, rep *reporter.Reporter) (map[string]string, error) {
-+func drainNodes(ctx context.Context, clientFactory *global.ClientFactory, k8sEndpoint string, drainTimeout time.Duration, rep *reporter.Reporter) (map[string]string, error) {
- 	// For kubeconfig - build a random endpoint client (to go to the controlplane).
- 	c, err := clientFactory.BuildRandomEndpointClient(ctx)
- 	if err != nil {
- 		return nil, err
- 	}
- 
- 	// Fetch kubeconfig once - it is cluster-global, not node-specific.
--	clientset, err := kubeclient.FromTalosClient(ctx, c)
-+	clientset, err := kubeclient.FromTalosClient(ctx, c, kubeclient.WithEndpoint(k8sEndpoint))
- 	if err != nil {
- 		return nil, fmt.Errorf("error creating Kubernetes client for drain: %w", err)
- 	}
-@@ -113,7 +113,9 @@ func drainNodes(ctx context.Context, clientFactory *global.ClientFactory, drainT
- // then uncordons all of them in parallel.
- //
- // nodeNames maps talosIP -> k8sNodeName (produced by drainNodes).
--func uncordonNodes(ctx context.Context, clientFactory *global.ClientFactory, nodeNames map[string]string, timeout time.Duration, rep *reporter.Reporter) error {
-+func uncordonNodes(
-+	ctx context.Context, clientFactory *global.ClientFactory, k8sEndpoint string, nodeNames map[string]string, timeout time.Duration, rep *reporter.Reporter,
-+) error {
- 	// For kubeconfig - build a random endpoint client (to go to the controlplane).
- 	c, err := clientFactory.BuildRandomEndpointClient(ctx)
- 	if err != nil {
-@@ -123,7 +125,7 @@ func uncordonNodes(ctx context.Context, clientFactory *global.ClientFactory, nod
- 	// Fetch a fresh kubeconfig (the previous connection may be stale after reboot).
- 	// The context has no "nodes" metadata (called from WithClientAndNodes), so the
- 	// request routes to the endpoint which is a control-plane node by convention.
--	clientset, err := kubeclient.FromTalosClient(ctx, c)
-+	clientset, err := kubeclient.FromTalosClient(ctx, c, kubeclient.WithEndpoint(k8sEndpoint))
- 	if err != nil {
- 		return fmt.Errorf("error creating Kubernetes client for uncordon: %w", err)
- 	}
-```
-
-**File**: `cmd/talosctl/cmd/talos/health.go` (modified, +2/-1)
-```diff
-@@ -16,6 +16,7 @@ import (
- 	"google.golang.org/grpc/codes"
- 
- 	"github.com/siderolabs/talos/cmd/talosctl/pkg/talos/global"
-+	"github.com/siderolabs/talos/cmd/talosctl/pkg/talos/helpers"
- 	"github.com/siderolabs/talos/cmd/talosctl/pkg/talos/safeout"
- 	"github.com/siderolabs/talos/pkg/cluster"
- 	"github.com/siderolabs/talos/pkg/cluster/check"
-@@ -237,7 +238,7 @@ func init() {
- 	healthCmd.Flags().StringSliceVar(&healthCmdFlags.clusterState.ControlPlaneNodes, "control-plane-nodes", nil, "specify IPs of control plane nodes")
- 	healthCmd.Flags().StringSliceVar(&healthCmdFlags.clusterState.WorkerNodes, "worker-nodes", nil, "specify IPs of worker nodes")
- 	healthCmd.Flags().DurationVar(&healthCmdFlags.clusterWaitTimeout, "wait-timeout", 20*time.Minute, "timeout to wait for the cluster to be ready")
--	healthCmd.Flags().StringVar(&healthCmdFlags.forceEndpoint, "k8s-endpoint", "", "use endpoint instead of kubeconfig default")
-+	helpers.KubernetesEndpointVar(healthCmd.Flags(), &healthCmdFlags.forceEndpoint, "k8s-endpoint", "", "use endpoint instead of kubeconfig default")
- 	healthCmd.Flags().BoolVar(&healthCmdFlags.runOnServer, "server", true, "run server-side check")
- 	healthCmd.Flags().BoolVar(&healthCmdFlags.runE2E, "run-e2e", false, "run Kubernetes e2e test")
- }
-```
-
-**File**: `cmd/talosctl/cmd/talos/reboot.go` (modified, +2/-2)
-```diff
-@@ -77,13 +77,13 @@ func rebootRun(ctx context.Context, opts []client.RebootMode) (retErr error) {
- 		return rebootInternal(ctx, clientFactory, rebootCmdFlags.wait, rebootCmdFlags.debug, rebootCmdFlags.timeout, rep, opts...)
- 	}
- 
--	nodeNames, err := drainNodes(ctx, clientFactory, rebootCmdFlags.drainTimeout, rep)
-+	nodeNames, err := drainNodes(ctx, clientFactory, "", rebootCmdFlags.drainTimeout, rep)
- 	if err != nil {
- 		return fmt.Errorf("error draining nodes: %w", err)
- 	}
- 
- 	defer func() {
--		if uncordonErr := uncordonNodes(ctx, clientFactory, nodeNames, rebootCmdFlags.timeout, rep); uncordonErr != nil {
-+		if uncordonErr := uncordonNodes(ctx, clientFactory, "", nodeNames, rebootCmdFlags.timeout, rep); uncordonErr != nil {
- 			retErr = errors.Join(retErr, uncordonErr)
- 		}
- 	}()
-```
-
-**File**: `cmd/talosctl/cmd/talos/rotate-ca.go` (modified, +2/-1)
-```diff
-@@ -11,6 +11,7 @@ import (
- 
- 	"github.com/spf13/cobra"
- 
-+	"github.com/siderolabs/talos/cmd/talosctl/pkg/talos/helpers"
- 	"github.com/siderolabs/talos/cmd/talosctl/pkg/talos/safeout"
- 	"github.com/siderolabs/talos/pkg/cluster"
- 	"github.com/siderolabs/talos/pkg/machinery/client"
-@@ -197,7 +198,7 @@ func init() {
- 	rotateCACmd.Flags().StringVar(&rotateCACmdFlags.clusterState.InitNode, "init-node", "", "specify IPs of init node")
- 	rotateCACmd.Flags().StringSliceVar(&rotateCACmdFlags.clusterState.ControlPlaneNodes, "control-plane-nodes", nil, "specify IPs of control plane nodes")
- 	rotateCACmd.Flags().StringSliceVar(&rotateCACmdFlags.clusterState.WorkerNodes, "worker-nodes", nil, "specify IPs of worker nodes")
--	rotateCACmd.Flags().StringVar(&rotateCACmdFlags.forceEndpoint, "k8s-endpoint", "", "use endpoint instead of kubeconfig default")
-+	helpers.KubernetesEndpointVar(rotateCACmd.Flags(), &rotateCACmdFlags.forceEndpoint, "k8s-endpoint", "", "use endpoint instead of kubeconfig default")
- 	rotateCACmd.Flags().BoolVarP(&rotateCACmdFlags.withExamples, "with-examples", "", true, "patch all machine configs with the commented examples")
- 	rotateCACmd.Flags().BoolVarP(&rotateCACmdFlags.withDocs, "with-docs", "", true, "patch all machine configs adding the documentation for each field")
- 	rotateCACmd.Flags().StringVarP(&rotateCACmdFlags.output, "output", "o", "talosconfig", "path to the output new `talosconfig`")
-```
-
-**File**: `cmd/talosctl/cmd/talos/upgrade.go` (modified, +4/-2)
-```diff
-@@ -44,6 +44,7 @@ var upgradeCmdFlags = struct {
- 
- 	drain        bool
- 	drainTimeout time.Duration
-+	k8sEndpoint  string
- 
- 	legacy   bool
- 	force    bool // Deprecated: only used for legacy upgrade path, to be removed in Talos 1.18.
-@@ -145,7 +146,7 @@ func upgradeViaLifecycleService(ctx context.Context, clientFactory *global.Clien
- 	var nodeNames map[string]string
- 
- 	if upgradeCmdFlags.drain {
--		nodeNames, err = drainNodes(ctx, clientFactory, upgradeCmdFlags.drainTimeout, rep)
-+		nodeNames, err = drainNodes(ctx, clientFactory, upgradeCmdFlags.k8sEndpoint, upgradeCmdFlags.drainTimeout, rep)
- 		if err != nil {
- 			return err
- 		}
-@@ -157,7 +158,7 @@ func upgradeViaLifecycleService(ctx context.Context, clientFactory *global.Clien
- 		}
- 
- 		if len(nodeNames) > 0 {
--			if uncordonErr := uncordonNodes(ctx, clientFactory, nodeNames, upgradeCmdFlags.timeout, rep); uncordonErr != nil {
-+			if uncordonErr := uncordonNodes(ctx, clientFactory, upgradeCmdFlags.k8sEndpoint, nodeNames, upgradeCmdFlags.timeout, rep); uncordonErr != nil {
- 				retErr = errors.Join(retErr, uncordonErr)
- 			}
- 		}
-@@ -373,6 +374,7 @@ func init() {
- 	upgradeCmd.Flags().BoolVar(&upgradeCmdFlags.noReboot, "no-reboot", false, "do not reboot the node after upgrade (skip reboot and drain)")
- 	upgradeCmd.Flags().BoolVar(&upgradeCmdFlags.drain, "drain", true, "drain the Kubernetes node before rebooting (cordon + evict pods)")
- 	upgradeCmd.Flags().DurationVar(&upgradeCmdFlags.drainTimeout, "drain-timeout", nodedrain.DefaultDrainTimeout, "timeout for draining the Kubernetes node")
-+	helpers.KubernetesEndpointVar(upgradeCmd.Flags(), &upgradeCmdFlags.k8sEndpoint, "k8s-endpoint", "", "use endpoint instead of kubeconfig default when draining the Kubernetes node")
- 
- 	// Mark legacy-only flags as deprecated. These are only used when falling back
- 	// to the legacy MachineService.Upgrade unary API for older Talos versions.
-```
-
-**File**: `cmd/talosctl/pkg/talos/helpers/k8sendpoint.go` (added, +46/-0)
-```diff
-@@ -0,0 +1,46 @@
+@@ -0,0 +1,44 @@
 +// This Source Code Form is subject to the terms of the Mozilla Public
 +// License, v. 2.0. If a copy of the MPL was not distributed with this
 +// file, You can obtain one at http://mozilla.org/MPL/2.0/.
 +
-+package helpers
++package bgp_test
 +
 +import (
-+	"github.com/spf13/pflag"
++	"net"
++	"os"
++	"testing"
 +
-+	"github.com/siderolabs/talos/pkg/cluster"
++	"github.com/jsimonetti/rtnetlink/v2"
++	"golang.org/x/sys/unix"
++
++	"github.com/siderolabs/talos/internal/pkg/testnetns"
 +)
 +
-+// kubernetesEndpointValue is a string flag value which is validated as a Kubernetes API endpoint override.
-+type kubernetesEndpointValue struct {
-+	value *string
-+}
-+
-+// String implements pflag.Value interface.
-+func (v *kubernetesEndpointValue) String() string {
-+	return *v.value
-+}
-+
-+// Set implements pflag.Value interface.
-+func (v *kubernetesEndpointValue) Set(value string) error {
-+	if value != "" {
-+		if err := cluster.ValidateKubernetesEndpoint(value); err != nil {
-+			return err
++func TestMain(m *testing.M) {
++	os.Exit(testnetns.Run(func() int {
++		// GoBGP opens sockets in background goroutines, so isolate the whole
++		// process, not just an OS-thread-locked test goroutine.
++		conn, err := rtnetlink.Dial(nil)
++		if err != nil {
++			panic(err)
 +		}
-+	}
 +
-+	*v.value = value
++		lo, err := net.InterfaceByName("lo")
++		if err != nil {
++			panic(err)
++		}
 +
-+	return nil
-+}
++		if err = conn.Link.Set(&rtnetlink.LinkMessage{
++			Index: uint32(lo.Index), Flags: unix.IFF_UP, Change: unix.IFF_UP,
++		}); err != nil {
++			panic(err)
++		}
 +
-+// Type implements pflag.Value interface.
-+func (v *kubernetesEndpointValue) Type() string {
-+	return "string"
-+}
++		if err = conn.Close(); err != nil {
++			panic(err)
++		}
 +
-+// KubernetesEndpointVar defines a Kubernetes API endpoint override flag, which is validated when the flags are parsed.
-+func KubernetesEndpointVar(flags *pflag.FlagSet, p *string, name, value, usage string) {
-+	*p = value
-+
-+	flags.Var(&kubernetesEndpointValue{value: p}, name, usage)
++		return m.Run()
++	}))
 +}
 ```
 
-**File**: `cmd/talosctl/pkg/talos/kubeclient/kubeclient.go` (modified, +26/-1)
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/numbered_test.go` (added, +230/-0)
 ```diff
-@@ -13,13 +13,34 @@ import (
- 	"k8s.io/client-go/kubernetes"
- 	"k8s.io/client-go/tools/clientcmd"
- 
-+	"github.com/siderolabs/talos/pkg/cluster"
- 	"github.com/siderolabs/talos/pkg/kubeconfig"
- 	"github.com/siderolabs/talos/pkg/machinery/client"
- )
- 
-+type Options struct {
-+	endpoint string
-+}
+@@ -0,0 +1,230 @@
++// This Source Code Form is subject to the terms of the Mozilla Public
++// License, v. 2.0. If a copy of the MPL was not distributed with this
++// file, You can obtain one at http://mozilla.org/MPL/2.0/.
 +
-+type Option func(*Options)
++package bgp_test
 +
-+// WithEndpoint overrides the Kubernetes API endpoint from the kubeconfig.
-+// An empty endpoint keeps the endpoint from the kubeconfig.
-+func WithEndpoint(endpoint string) Option {
-+	return func(o *Options) {
-+		o.endpoint = endpoint
-+	}
-+}
-+
- // FromTalosClient fetches the admin kubeconfig from the Talos API and returns
- // a Kubernetes clientset. The kubeconfig is held entirely in memory.
--func FromTalosClient(ctx context.Context, c *client.Client) (kubernetes.Interface, error) {
-+func FromTalosClient(ctx context.Context, c *client.Client, opts ...Option) (kubernetes.Interface, error) {
-+	var options Options
-+
-+	for _, opt := range opts {
-+		opt(&options)
-+	}
-+
- 	kubeconfigBytes, err := c.Kubeconfig(ctx)
- 	if err != nil {
- 		return nil, fmt.Errorf("error fetching kubeconfig from Talos API: %w", err)
-@@ -41,6 +62,10 @@ func FromTalosClient(ctx context.Context, c *client.Client) (kubernetes.Interfac
- 		return nil, fmt.Errorf("error building REST config: %w", err)
- 	}
- 
-+	if err = cluster.ApplyKubernetesEndpointOverride(restConfig, options.endpoint); err != nil {
-+		return nil, err
-+	}
-+
- 	clientset, err := kubernetes.NewForConfig(restConfig)
- 	if err != nil {
- 		return nil, fmt.Errorf("error creating Kubernetes clientset: %w", err)
-```
-
-**File**: `pkg/cluster/kubernetes.go` (modified, +118/-8)
-```diff
-@@ -6,7 +6,10 @@ package cluster
- 
- import (
- 	"context"
-+	"fmt"
- 	"net"
++import (
++	"context"
++	"io"
++	"net"
 +	"net/netip"
-+	"net/url"
- 	"strconv"
- 	"strings"
- 
-@@ -77,19 +80,126 @@ func (k *KubernetesClient) K8sRestConfig(ctx context.Context) (*rest.Config, err
- 		return nil, err
- 	}
- 
--	if k.ForceEndpoint != "" {
--		forceEndpoint, _ := strings.CutPrefix(k.ForceEndpoint, "https://")
-+	if err = ApplyKubernetesEndpointOverride(config, k.ForceEndpoint); err != nil {
-+		return nil, err
-+	}
++	"testing"
++	"time"
 +
-+	return config, nil
-+}
++	"github.com/jsimonetti/rtnetlink/v2"
++	gobgpapi "github.com/osrg/gobgp/v4/api"
++	bgppacket "github.com/osrg/gobgp/v4/pkg/packet/bgp"
++	"github.com/stretchr/testify/require"
++	"golang.org/x/sys/unix"
 +
-+// ValidateKubernetesEndpoint checks that the endpoint has the format accepted by ApplyKubernetesEndpointOverride.
-+//
-+// The accepted format is [https://]host[:port][/], where host is a hostname, an IPv4 address,
-+// or an IPv6 address (in brackets if a port is specified).
-+func ValidateKubernetesEndpoint(endpoint string) error {
-+	_, err := parseKubernetesEndpoint(endpoint)
++	internalbgp "github.com/siderolabs/talos/internal/app/machined/pkg/controllers/network/internal/bgp"
++	"github.com/siderolabs/talos/pkg/machinery/resources/network"
++)
 +
-+	return err
-+}
-+
-+// ApplyKubernetesEndpointOverride overrides the Kubernetes API endpoint in the config.
-+//
-+// If endpoint is empty, the config is left unchanged. If the endpoint
-+// doesn't specify a port, the default control plane port is used.
-+func ApplyKubernetesEndpointOverride(config *rest.Config, endpoint string) error {
-+	if endpoint == "" {
-+		return nil
-+	}
-+
-+	hostPort, err := parseKubernetesEndpoint(endpoint)
-+	if err != nil {
-+		return err
-+	}
-+
-+	config.Host = hostPort
-+
-+	return nil
-+}
-+
-+// parseKubernetesEndpoint parses the endpoint in the format [https://]host[:port][/] and returns host:port.
-+//
-+//nolint:gocyclo,cyclop
-+func parseKubernetesEndpoint(endpoint string) (string, error) {
-+	const defaultPort = constants.DefaultControlPlanePort
-+
-+	invalid := func(reason string) (string, error) {
-+		return "", fmt.Errorf(
-+			"invalid Kubernetes endpoint %q: %s",
-+			endpoint, reason,
-+		)
-+	}
-+
-+	// Bare IPv4 or IPv6, including IPv6 zones.
-+	if addr, err := netip.ParseAddr(endpoint); err == nil {
-+		return (&url.URL{
-+			Scheme: "https",
-+			Host: net.JoinHostPort(
-+				addr.String(),
-+				strconv.Itoa(defaultPort),
-+			),
-+		}).String(), nil
-+	}
- 
--		host, port, err := net.SplitHostPort(forceEndpoint)
--		if err != nil {
--			host = forceEndpoint
--			port = strconv.Itoa(constants.DefaultControlPlanePort)
-+	if !strings.Contains(endpoint, "://") {
-+		endpoint = "https://" + endpoint
-+	}
-+
-+	u, err := url.Parse(endpoint)
-+	if err != nil {
-+		return invalid(err.Error())
-+	}
-+
-+	if u.Scheme != "https" {
-+		return invalid("only https is supported")
-+	}
-+
-+	if u.Host == "" || u.Hostname() == "" {
-+		return invalid("host is empty")
-+	}
-+
-+	if u.User != nil {
-+		return invalid("credentials are not allowed")
-+	}
-+
-+	if (u.Path != "" && u.Path != "/") ||
-+		u.RawQuery != "" || u.ForceQuery ||
-+		u.Fragment != "" || u.RawFragment != "" {
-+		return invalid("paths, queries and fragments are not allowed")
-+	}
-+
-+	host := u.Hostname()
-+
-+	// IPv6 must be valid and bracketed in URLs.
-+	if strings.Contains(host, ":") {
-+		if _, err := netip.ParseAddr(host); err != nil {
-+			return invalid("invalid IPv6 address")
- 		}
- 
--		config.Host = net.JoinHostPort(host, port)
-+		if !strings.HasPrefix(u.Host, "[") {
-+			return invalid("IPv6 address must be bracketed")
++// TestNumberedBFDSource checks packets, not just configuration: an unspecified
++// BFD source must follow the established TCP socket, including accepted sockets
++// whose local address differs from the kernel's preferred outgoing source.
++func TestNumberedBFDSource(t *testing.T) {
++	for _, family := range []string{"IPv4", "IPv6"} {
++		for _, direction := range []string{"accepted", "outgoing"} {
++			t.Run(family+"/"+direction, func(t *testing.T) {
++				testNumberedBFDSource(t, family == "IPv6", direction == "outgoing")
++			})
 +		}
- 	}
- 
--	return config, nil
-+	port := defaultPort
-+
-+	if strings.HasSuffix(u.Host, ":") {
-+		return invalid("port is empty")
 +	}
++}
 +
-+	if rawPort := u.Port(); rawPort != "" {
-+		n, err := strconv.ParseUint(rawPort, 10, 16)
-+		if err != nil || n == 0 {
-+			return invalid("invalid port")
++func assertNumberedFixtureRemoved(t *testing.T, conn *rtnetlink.Conn, ips ...string) {
++	t.Helper()
++
++	addresses, err := conn.Address.List()
++	require.NoError(t, err)
++	routes, err := conn.Route.List()
++	require.NoError(t, err)
++
++	for _, ip := range ips {
++		for _, address := range addresses {
++			require.False(t, address.Attributes.Address.Equal(net.ParseIP(ip)), "fixture address leaked: %s", ip)
 +		}
 +
-+		port = int(n)
++		for _, route := range routes {
++			require.False(t, route.Attributes.Dst.Equal(net.ParseIP(ip)), "fixture route leaked: %s: %+v", ip, route)
++		}
++	}
++}
++
++func assertIPv6FixtureReady(t *testing.T, conn *rtnetlink.Conn, index uint32, address net.IP) {
++	t.Helper()
++
++	addresses, err := conn.Address.List()
++	require.NoError(t, err)
++
++	for _, actual := range addresses {
++		if actual.Index == index && actual.Attributes.Address.Equal(address) {
++			require.NotZero(t, actual.Attributes.Flags&unix.IFA_F_NODAD, "IPv6 fixture must disable DAD")
++			require.Zero(t, actual.Attributes.Flags&unix.IFA_F_TENTATIVE, "IPv6 fixture must be ready immediately")
++
++			return
++		}
 +	}
 +
-+	u.Host = net.JoinHostPort(host, strconv.Itoa(port))
-+	u.Path = ""
-+	u.RawPath = ""
++	t.Fatal("IPv6 fixture address must exist")
++}
 +
-+	return u.String(), nil
- }
- 
- // K8sClient builds Kubernetes client via Talos Kubeconfig API.
++func testNumberedBFDSource(t *testing.T, ipv6, outgoing bool) {
++	t.Helper()
++
++	primary, secondary, remoteIP, tcp, udp := "192.0.2.20", "192.0.2.10", "192.0.2.99", "tcp4", "udp4"
++	family, prefixLength := uint8(unix.AF_INET), uint8(32)
++	priority := uint32(0)
++
++	if ipv6 {
++		primary, secondary, remoteIP, tcp, udp = "2001:db8::20", "2001:db8::10", "2001:db8::99", "tcp6", "udp6"
++		family, prefixLength = unix.AF_INET6, 128
++		// IPv6 assigns this default metric when none is supplied. Include it
++		// explicitly so deletion selects our route, not the address's route.
++		priority = 1024
++	}
++
++	// All addresses and routes exist only in the disposable child namespace.
++	conn, err := rtnetlink.Dial(nil)
++	require.NoError(t, err)
++	t.Cleanup(func() { require.NoError(t, conn.Close()) })
++
++	lo, err := net.InterfaceByName("lo")
++	require.NoError(t, err)
++
++	index := uint32(lo.Index)
++	require.NoError(t, conn.Link.Set(&rtnetlink.LinkMessage{
++		Index: index, Flags: unix.IFF_UP, Change: unix.IFF_UP,
++	}))
++
++	// Registered before fixture cleanup, this runs after it and catches leaks
++	// even in the last case, when no subsequent test would encounter them.
++	t.Cleanup(func() {
++		assertNumberedFixtureRemoved(t, conn, primary, secondary, remoteIP)
++	})
++
++	for _, ip := range []string{primary, secondary, remoteIP} {
++		address := netip.MustParseAddr(ip).AsSlice()
++		message := &rtnetlink.AddressMessage{
++			Family: family, PrefixLength: prefixLength, Index: index,
++			Attributes: &rtnetlink.AddressAttributes{Address: address, Local: address, Flags: unix.IFA_F_NODAD},
++		}
++		require.NoError(t, conn.Address.New(message))
++		// Cleanup runs after the sockets, server, and explicit route cleanup,
++		// and before the netlink connection closes.
++		t.Cleanup(func() { require.NoError(t, conn.Address.Delete(message)) })
++
++		if ipv6 {
++			assertIPv6FixtureReady(t, conn, index, address)
++		}
++	}
++
++	route := &rtnetlink.RouteMessage{
++		Family: family, DstLength: prefixLength,
++		Table: unix.RT_TABLE_LOCAL, Type: unix.RTN_LOCAL, Scope: unix.RT_SCOPE_HOST,
++		Attributes: rtnetlink.RouteAttributes{
++			OutIface: index, Dst: netip.MustParseAddr(remoteIP).AsSlice(), Src: netip.MustParseAddr(primary).AsSlice(), Priority: priority,
++		},
++	}
++	require.NoError(t, conn.Route.Replace(route))
++	t.Cleanup(func() { require.NoError(t, conn.Route.Delete(route)) })
++
++	packets, err := net.ListenUDP(udp, &net.UDPAddr{IP: net.ParseIP(remoteIP)})
++	require.NoError(t, err)
++	t.Cleanup(func() { require.NoError(t, packets.Close()) })
++
++	ctx, cancel := context.WithTimeout(t.Context(), 15*time.Second)
++	defer cance
+```
+
+**File**: `internal/pkg/testnetns/testnetns_linux.go` (added, +51/-0)
+```diff
+@@ -0,0 +1,51 @@
++// This Source Code Form is subject to the terms of the Mozilla Public
++// License, v. 2.0. If a copy of the MPL was not distributed with this
++// file, You can obtain one at http://mozilla.org/MPL/2.0/.
++
++// Package testnetns runs tests in an isolated network namespace.
++package testnetns
++
++import (
++	"context"
++	"errors"
++	"fmt"
++	"os"
++	"os/exec"
++	"syscall"
++)
++
++const childEnvironment = "TALOS_TEST_NETNS_CHILD"
++
++// Run is called from TestMain as os.Exit(testnetns.Run(m.Run)). It reexecutes
++// the test binary with its original arguments and streams, so test selection,
++// repetition, JSON output, skips, and failures remain owned by testing.
++//
++// All goroutines in the child share the new network namespace. Its loopback
++// interface is initially down; callers must configure it if needed. Tests still
++// share one namespace and must clean up their fixtures between cases.
++// Creating the namespace requires CAP_SYS_ADMIN, as provided by privileged CI.
++// Namespace creation failures fail the suite rather than silently losing tests.
++func Run(run func() int) int {
++	if os.Getenv(childEnvironment) == "1" {
++		return run()
++	}
++
++	cmd := exec.CommandContext(context.Background(), os.Args[0], os.Args[1:]...)
++	cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
++
++	cmd.Env = append(os.Environ(), childEnvironment+"=1")
++	cmd.SysProcAttr = &syscall.SysProcAttr{Cloneflags: syscall.CLONE_NEWNET}
++
++	if err := cmd.Run(); err != nil {
++		var exitErr *exec.ExitError
++		if errors.As(err, &exitErr) && exitErr.ExitCode() >= 0 {
++			return exitErr.ExitCode()
++		}
++
++		fmt.Fprintf(os.Stderr, "testnetns: running tests in a network namespace: %v\n", err)
++
++		return 1
++	}
++
++	return 0
++}
+```
+
+**File**: `internal/pkg/testnetns/testnetns_linux_test.go` (added, +104/-0)
+```diff
+@@ -0,0 +1,104 @@
++// This Source Code Form is subject to the terms of the Mozilla Public
++// License, v. 2.0. If a copy of the MPL was not distributed with this
++// file, You can obtain one at http://mozilla.org/MPL/2.0/.
++
++package testnetns_test
++
++import (
++	"fmt"
++	"io"
++	"os"
++	"os/exec"
++	"strings"
++	"testing"
++
++	"github.com/stretchr/testify/require"
++
++	"github.com/siderolabs/talos/internal/pkg/testnetns"
++)
++
++const (
++	modeEnvironment  = "TALOS_TEST_NETNS_MODE"
++	childEnvironment = "TALOS_TEST_NETNS_CHILD"
++)
++
++func TestMain(m *testing.M) {
++	if os.Getenv(modeEnvironment) != "" {
++		os.Exit(testnetns.Run(m.Run))
++	}
++
++	os.Exit(m.Run())
++}
++
++func TestChild(t *testing.T) {
++	mode := os.Getenv(modeEnvironment)
++	if mode == "" {
++		t.Skip("subprocess fixture")
++	}
++
++	switch mode {
++	case "pass":
++		input, err := io.ReadAll(os.Stdin)
++		require.NoError(t, err)
++		require.Equal(t, "forwarded stdin", string(input))
++		fmt.Fprintln(os.Stdout, "forwarded stdout")
++		fmt.Fprintln(os.Stderr, "forwarded stderr")
++	case "fail":
++		t.Fatal("intentional failure")
++	case "skip":
++		t.Skip("intentional skip")
++	case "panic":
++		panic("intentional panic")
++	}
++}
++
++func TestRun(t *testing.T) {
++	for _, tt := range []struct {
++		mode   string
++		code   int
++		output string
++	}{
++		{"pass", 0, "--- PASS: TestChild"},
++		{"fail", 1, "intentional failure"},
++		{"skip", 0, "--- SKIP: TestChild"},
++		{"panic", 2, "panic: intentional panic"},
++	} {
++		t.Run(tt.mode, func(t *testing.T) {
++			cmd := exec.CommandContext(t.Context(), os.Args[0], "-test.run=^TestChild$", "-test.v")
++
++			cmd.Env = append(os.Environ(), modeEnvironment+"="+tt.mode, childEnvironment+"=")
++			cmd.Stdin = strings.NewReader("forwarded stdin")
++			output, err := cmd.CombinedOutput()
++
++			if tt.code == 0 {
++				require.NoError(t, err, "%s", output)
++			} else {
++				var exitErr *exec.ExitError
++				require.ErrorAs(t, err, &exitErr, "%s", output)
++				require.Equal(t, tt.code, exitErr.ExitCode(), "%s", output)
++			}
++
++			require.Contains(t, string(output), tt.output)
++
++			if tt.mode == "pass" {
++				require.Contains(t, string(output), "forwarded stdout")
++				require.Contains(t, string(output), "forwarded stderr")
++			}
++		})
++	}
++}
++
++func TestStartFailure(t *testing.T) {
++	t.Setenv(childEnvironment, "")
++
++	original := os.Args
++	os.Args = []string{"/nonexistent/testnetns-binary"}
++
++	t.Cleanup(func() { os.Args = original })
++
++	require.Equal(t, 1, testnetns.Run(func() int {
++		t.Fatal("must not run without namespace isolation")
++
++		return 0
++	}))
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14754** (2026-10-27): test: new NVIDIA chart and drivers (@smira)
+- **PR #14751** (2026-10-27): chore: update Go dependencies (@smira)
+- **PR #14749** (2026-10-27): test: update CSI helm chart versions (@smira)
+- **PR #14748** (2026-10-27): feat: update Flannel to 0.28.10 (@smira)
+- **PR #14747** (2026-10-27): release(v1.15.0-alpha.2): prepare release (@smira)
 - **PR #14746** (2026-10-27): feat: include applesmc module (@smira)
-- **PR #14739** (2026-10-26): release(v1.14.5): prepare release (@smira)
-- **PR #14738** (closed): fix: skip applying unchanged machine config patches (@immanuwell)
-- **PR #14734** (2026-10-26): backports: for v1.14.5 (@smira)
-- **PR #14725** (2026-10-26): refactor: adjust the redactable.Spec for future changes (@smira)
-- **PR #14724** (2026-10-24): feat: load kernel modules on demand via the modprobe usermode helper  (@smira)
 
 ---
 
@@ -2417,28 +2372,28 @@ Signed-off-by: Bart van der Schans <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. include applesmc module
+## X. use the established BGP source for numbered-peer BFD
 
 **RULE**:
-When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1d22b2d8`: include applesmc module. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `78fccf08`: use the established BGP source for numbered-peer BFD. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-PKGS ?= v1.15.0-alpha.0-63-g6e225ae
+	github.com/osrg/gobgp/v4 v4.10.1-0.20261020121312-57fa92f17f18
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-PKGS ?= v1.15.0-alpha.0-62-g2c33dc1
+	github.com/osrg/gobgp/v4 v4.10.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1d22b2d8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `78fccf08` are properly handled with clean fallback behavior.

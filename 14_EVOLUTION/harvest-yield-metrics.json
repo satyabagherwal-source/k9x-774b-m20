@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T22:54:47.740Z",
-  "total_cycles_completed": 5550,
-  "total_learnings_persisted": 5550,
-  "total_rules_promoted": 4957,
+  "last_updated": "2026-10-27T23:03:21.427Z",
+  "total_cycles_completed": 5553,
+  "total_learnings_persisted": 5553,
+  "total_rules_promoted": 4962,
   "history": [
-    {
-      "timestamp": "2026-10-27T14:29:59.601Z",
-      "repository": "weaviate/weaviate",
-      "learningId": "learn-github-weaviate-weaviate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T14:33:10.932Z",
-      "repository": "TokenRhythm/opensquilla",
-      "learningId": "learn-github-tokenrhythm-opensquilla",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T14:33:14.078Z",
-      "repository": "eracle/OpenOutreach",
-      "learningId": "learn-github-eracle-openoutreach",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T14:33:15.787Z",
       "repository": "lackeyjb/playwright-skill",
@@ -1403,6 +1382,27 @@
       "repository": "cachix/devenv",
       "learningId": "learn-github-cachix-devenv",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T23:01:37.407Z",
+      "repository": "sqldelight/sqldelight",
+      "learningId": "learn-github-sqldelight-sqldelight",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T23:01:40.678Z",
+      "repository": "siderolabs/talos",
+      "learningId": "learn-github-siderolabs-talos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T23:03:21.427Z",
+      "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
