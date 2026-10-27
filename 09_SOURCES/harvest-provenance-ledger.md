@@ -5514,3 +5514,7 @@ Every entry in this ledger must capture:
 | `learn-github-chakra-ui-zag` | `https://github.com/chakra-ui/zag` | `b03b597a` | Multi-dimensional audit evidence | 2026-10-27T19:38:45.053Z |
 | `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `0d38f834` | Multi-dimensional audit evidence | 2026-10-27T19:38:45.409Z |
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `a443fd39` | Multi-dimensional audit evidence | 2026-10-27T19:38:52.377Z |
+| `learn-github-ant-design-pro-components` | `https://github.com/ant-design/pro-components` | `d468909f` | Multi-dimensional audit evidence | 2026-10-27T19:49:17.833Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `37faef81` | Multi-dimensional audit evidence | 2026-10-27T19:49:21.566Z |
+| `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `873eade3` | Multi-dimensional audit evidence | 2026-10-27T19:49:27.716Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `39773c33` | Multi-dimensional audit evidence | 2026-10-27T19:49:30.099Z |

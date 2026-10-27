@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source**: github ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
-> **Source Version**: `08cbb88a`  
+> **Source Version**: `37faef81`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T01:37:17.226Z  
+> **Timestamp**: 2026-10-27T19:49:21.156Z  
 > **Learning ID**: `learn-github-zed-industries-zed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T01:37:15.974Z  
+> **Harvest Timestamp**: 2026-10-27T19:49:20.329Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 92184 stars
+- **Stars / Engagement**: 92288 stars
 
 ---
 
@@ -2334,505 +2334,975 @@ fn score_against_expected_patch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `876c1b0c` (2026-10-25)
-**Commit Message**: Fix removal of unloaded project groups (#66127)
+### Incident Patch 1: `5e548b8a` (2026-10-26)
+**Commit Message**: workspace: Fix panel buttons not working while a dock panel is zoomed (#66119)
 
 ## Summary
 
-- Remove project group rows even when no retained workspace backs them.
-- Add a regression test for removing an unloaded project group.
+I use Claude Code in a terminal thread with the agent panel zoomed, and
+I couldn't get back to the project panel by clicking its button in the
+status bar: the button flickers and I stay in the agent panel. The
+keybinding for the same action (`cmd-1` in the JetBrains keymap) works
+fine. It happens with any two panels in the same dock, not only the
+agent panel.
+
+The cause: before dispatching its action, a panel button focuses the
+dock's focus handle (added in #34590 so the action works when nothing is
+focused yet). But when a panel is zoomed, the dock isn't rendered,
+because the panel is drawn in the zoom layer instead. So the dock's
+focus handle isn't in the rendered frame, the action is dispatched from
+the window root, and it never reaches the workspace's handlers.
+
+The fix: when the dock has a zoomed panel, the button focuses that panel
+instead, since it's on screen. Otherwise nothing changes.
+
+AI helped me find the cause and write the tests; I've reviewed and
+tested the change myself.
 
 ## Testing
 
-- `cargo test -p workspace
-test_remove_unloaded_project_group_removes_its_row --lib`
-- `cargo fmt --check`
+Tested manually on macOS:
 
-## Self-review
+1. Open the agent panel in the left dock (the project panel is in 
 
-- [x] I've reviewed my diff for quality, security, reliability, and
-performance.
-- [x] UI changes follow the
-[checklist](https://zed.dev/docs/development/ui-checklist).
-- [x] Tests cover the new or changed behavior.
-
-Release Notes:
-
-- Fixed project entries reappearing in Recent Projects after removal.
-
-**File**: `crates/workspace/src/multi_workspace.rs` (modified, +12/-3)
+**File**: `crates/workspace/src/dock.rs` (modified, +9/-1)
 ```diff
-@@ -962,10 +962,19 @@ impl MultiWorkspace {
+@@ -989,6 +989,14 @@ impl Dock {
          }
- 
-         let workspaces = self.workspaces_for_project_group(group_key, cx);
-+        if workspaces.is_empty() {
-+            let previous_group_count = self.project_groups.len();
-+            self.project_groups.retain(|group| group.key != *group_key);
-+            if self.project_groups.len() != previous_group_count {
-+                cx.emit(MultiWorkspaceEvent::ProjectGroupsChanged);
-+                self.serialize(cx);
-+                cx.notify();
-+                return Task::ready(Ok(true));
-+            }
-+            return Task::ready(Ok(false));
-+        }
- 
--        let task = self.remove(workspaces, RemovalIntent::CloseProject, window, cx);
--
--        task
-+        self.remove(workspaces, RemovalIntent::CloseProject, window, cx)
      }
  
-     /// Returns the nearest retained workspace outside the project group at
++    /// Panel buttons focus this before dispatching their action. A zoomed panel isn't rendered
++    /// inside its dock, so the dock's own handle would be outside the frame and the action dropped.
++    pub(crate) fn panel_button_focus_handle(&self, window: &Window, cx: &App) -> FocusHandle {
++        self.zoomed_panel(window, cx)
++            .map(|panel| panel.panel_focus_handle(cx))
++            .unwrap_or_else(|| self.focus_handle.clone())
++    }
++
+     pub fn active_panel_size(&self) -> Option<PanelSizeState> {
+         if self.is_open {
+             self.active_panel_entry().map(|entry| entry.size_state)
+@@ -1435,7 +1443,7 @@ impl Render for PanelButtons {
+                     (action, icon_tooltip.into())
+                 };
+ 
+-                let focus_handle = dock.focus_handle(cx);
++                let focus_handle = dock.panel_button_focus_handle(window, cx);
+                 let icon_label = entry.panel.icon_label(window, cx);
+ 
+                 Some(
 ```
 
-**File**: `crates/workspace/src/multi_workspace_tests.rs` (modified, +32/-0)
+**File**: `crates/workspace/src/workspace.rs` (modified, +76/-5)
 ```diff
-@@ -1026,6 +1026,38 @@ async fn test_close_workspace_opens_unloaded_local_neighbor(cx: &mut TestAppCont
-     });
+@@ -12723,8 +12723,8 @@ mod tests {
+     };
+     use fs::{FakeFs, RemoveOptions};
+     use gpui::{
+-        DismissEvent, Empty, EventEmitter, FocusHandle, Focusable, Render, TestAppContext,
+-        UpdateGlobal, VisualTestContext, px,
++        DismissEvent, Empty, EventEmitter, FocusHandle, Focusable, Modifiers, Render,
++        TestAppContext, UpdateGlobal, VisualTestContext, px,
+     };
+     use project::{Project, ProjectEntryId, WorktreeId};
+     use serde_json::json;
+@@ -20753,6 +20753,77 @@ mod tests {
+         });
+     }
+ 
++    #[gpui::test]
++    async fn test_panel_buttons_work_while_dock_is_zoomed(cx: &mut gpui::TestAppContext) {
++        init_test(cx);
++        let fs = FakeFs::new(cx.executor());
++        let project = Project::test(fs, [], cx).await;
++        // Workspace actions are registered on the `MultiWorkspace` root, so a bare `Workspace`
++        // window wouldn't route dispatched actions to the workspace.
++        let (multi_workspace, cx) =
++            cx.add_window_view(|window, cx| MultiWorkspace::test_new(project, window, cx));
++        let workspace =
++            multi_workspace.read_with(cx, |multi_workspace, _| multi_workspace.workspace().clone());
++
++        let (zoomed_panel, sibling_panel) = workspace.update_in(cx, |workspace, window, cx| {
++            workspace.register_action(|workspace, _: &ToggleSecondTestPanel, window, cx| {
++                workspace.toggle_panel_focus::<SecondTestPanel>(window, cx);
++            });
++            let sibling_panel = cx.new(|cx| SecondTestPanel {
++                focus_handle: cx.focus_handle(),
++                zoomed: false,
++            });
++            workspace.add_panel(sibling_panel.clone(), window, cx);
++            let zoomed_panel = cx.new(|cx| TestPanel::new(DockPosition::Bottom, 100, cx));
++            workspace.add_panel(zoomed_panel.clone(), window, cx);
++            workspace.toggle_panel_focus::<TestPanel>(window, cx);
++            (zoomed_panel, sibling_panel)
++        });
++        zoomed_panel.update(cx, |_, cx| cx.emit(PanelEvent::ZoomIn));
++        cx.run_until_parked();
++        workspace.read_with(cx, |workspace, _| {
++            assert_eq!(workspace.zoomed_position, Some(DockPosition::Bottom));
++        });
++
++        let sibling_button = cx
++            .debug_bounds("ICON-Terminal")
++            .expect("sibling panel button should be rendered in the status bar");
++        cx.simulate_click(sibling_button.center(), Modifiers::none());
++        cx.run_until_parked();
++        workspace.update_in(cx, |workspace, window, cx| {
++            let dock = workspace.bottom_dock().read(cx);
++            assert!(dock.is_open());
++            assert_eq!(
++                dock.active_panel().map(|panel| panel.panel_id()),
++                Some(sibling_panel.entity_id()),
++            );
++            assert!(
++                sibling_panel
++                    .read(cx)
++                    .focus_handle(cx)
++                    .contains_focused(window, cx)
++            );
++        });
++
++        sibling_panel.update(cx, |_, cx| cx.emit(PanelEvent::ZoomIn));
++        cx.run_until_parked();
++        workspace.read_with(cx, |workspace, _| {
++            assert_eq!(workspace.zoomed_position, Some(DockPosition::Bottom));
++        });
++
++        let close_button = cx
++            .debug_bounds("ICON-Terminal")
++            .expect("active panel button should be rendered in the status bar");
++        cx.simulate_click(close_button.center(), Modifiers::none());
++        cx.run_until_parked();
++        workspace.read_with(cx, |workspace, cx| {
++            assert!(!workspace.bottom_dock().read(cx).is_open());
++            assert_eq!(workspace.zoomed_position, None);
++        });
++    }
++
++    actions!(test_only, [ToggleSecondTestPanel]);
++
+     struct SecondTestPanel {
+         focus_handle: FocusHandle,
+         zoomed: bool,
+@@ -20798,15 +20869,15 @@ mod tests {
+         }
+ 
+         fn icon(&self, _: &Window, _: &App) -> Option<ui::IconName> {
+-            None
++            Some(ui::IconName::Terminal)
+         }
+ 
+         fn icon_tooltip(&self, _: &Window, _: &App) -> Option<&'static str> {
+-            None
++            Some("Second Test Panel")
+         }
+ 
+         fn toggle_action(&self) -> Box<dyn Action> {
+-            crate::dock::test::ToggleTestPanel.boxed_clone()
++            ToggleSecondTestPanel.boxed_clone()
+         }
+ 
+         fn activation_priority(&self) -> u32 {
+```
+
+---
+
+### Incident Patch 2: `6b985a8b` (2026-10-26)
+**Commit Message**: vim: Fix Helix surround add crashing on adjacent selections (#66107)
+
+## Summary
+
+Closes #65718
+
+Reproduction, Helix mode:
+
+1. Type `abcd` in a buffer.
+2. Press `x` to select the line.
+3. Press `s`, enable regex, enter `\w`.
+   Each character is now its own selection.
+4. Press `m s "`.
+
+Result: Zed panics with `cannot seek backward` in `text.rs`.
+
+Cause: #59201 changed `m s` to select the surrounded text together with
+the new delimiters.
+It uses anchors taken before the edit:
+`anchor_before(start)..anchor_after(end)`.
+When two selections touch, the edit inserts the closing `"` of the first
+selection and the opening `"` of the second selection at the same
+offset.
+`anchor_after(end)` of the first selection resolves after both.
+The two selections now overlap.
+Resolving overlapping anchors fails the ordering check.
+
+Fix: each edge of a new `m s` selection records anchors on both sides of
+its pre-edit offset, plus the length of the text requested at that
+insertion point before the edge.
+After the edit, the edge moves forward by that length, but never past
+the text actually inserted between its anchors.
+This keeps adjacent selections apart, and keeps ranges valid when an
+insertion does n
+
+**File**: `crates/vim/src/helix/surround.rs` (modified, +218/-21)
+```diff
+@@ -1,7 +1,8 @@
++use collections::HashMap;
+ use editor::display_map::DisplaySnapshot;
+ use editor::{Bias, DisplayPoint, MultiBufferOffset, movement};
+ use gpui::{Context, Window};
+-use multi_buffer::Anchor;
++use multi_buffer::{Anchor, MultiBufferSnapshot, ToOffset};
+ use text::Selection;
+ 
+ use crate::Vim;
+@@ -80,29 +81,71 @@ fn preserved_selection_anchors(
  }
  
-+#[gpui::test]
-+async fn test_remove_unloaded_project_group_removes_its_row(cx: &mut TestAppContext) {
-+    init_test(cx);
-+    let fs = FakeFs::new(cx.executor());
-+    fs.insert_tree("/project-a", json!({})).await;
+ type SurroundEdits = Vec<(std::ops::Range<MultiBufferOffset>, String)>;
+-type SurroundAnchors = Vec<std::ops::Range<Anchor>>;
 +
-+    let project_a = Project::test(fs, ["/project-a".as_ref()], cx).await;
-+    let key_a = project_a.read_with(cx, |project, cx| project.project_group_key(cx));
-+    let key_b = ProjectGroupKey::new(None, PathList::new(&[PathBuf::from("/project-b")]));
-+    let (multi_workspace, cx) = setup_multi_workspace(&[project_a], cx);
-+
-+    multi_workspace.update(cx, |multi_workspace, _cx| {
-+        multi_workspace.test_add_project_group(ProjectGroup {
-+            key: key_b.clone(),
-+            workspaces: Vec::new(),
-+            expanded: true,
-+        });
-+    });
-+
-+    let removed = multi_workspace
-+        .update_in(cx, |multi_workspace, window, cx| {
-+            multi_workspace.remove_project_group(&key_b, window, cx)
-+        })
-+        .await
-+        .expect("removing an unloaded project group should succeed");
-+
-+    assert!(removed, "the unloaded project group row should be removed");
-+    multi_workspace.read_with(cx, |multi_workspace, _cx| {
-+        assert_eq!(multi_workspace.project_group_keys(), vec![key_a]);
-+    });
++/// One end of a selection that `ms` surrounds, resolved after the edit.
++struct SurroundedEdge {
++    /// Anchors around the pre-edit offset: everything inserted there ends up
++    /// between them.
++    before: Anchor,
++    after: Anchor,
++    /// The length of the text requested at this offset that belongs before
++    /// the edge.
++    skip: usize,
 +}
 +
- #[gpui::test]
- async fn test_remove_project_group_opens_unloaded_local_neighbor(cx: &mut TestAppContext) {
-     init_test(cx);
++impl SurroundedEdge {
++    fn new(snapshot: &MultiBufferSnapshot, offset: MultiBufferOffset, skip: usize) -> Self {
++        Self {
++            before: snapshot.anchor_before(offset),
++            after: snapshot.anchor_after(offset),
++            skip,
++        }
++    }
++
++    fn resolve(&self, snapshot: &MultiBufferSnapshot) -> MultiBufferOffset {
++        let before = self.before.to_offset(snapshot);
++        let after = self.after.to_offset(snapshot);
++        // The multi buffer does not always grow by the requested amount: the
++        // editor can be read-only, or an excerpt can end at the insertion
++        // point. Only move over text that was actually inserted.
++        before + self.skip.min(after - before)
++    }
++}
++
++enum SurroundSelections {
++    Anchors(Vec<std::ops::Range<Anchor>>),
++    Surrounded(Vec<std::ops::Range<SurroundedEdge>>),
++}
+ 
+ fn apply_helix_surround_edits<F>(
+     vim: &mut Vim,
+     window: &mut Window,
+     cx: &mut Context<Vim>,
+     mut build: F,
+ ) where
+-    F: FnMut(&DisplaySnapshot, Vec<Selection<DisplayPoint>>) -> (SurroundEdits, SurroundAnchors),
++    F: FnMut(&DisplaySnapshot, Vec<Selection<DisplayPoint>>) -> (SurroundEdits, SurroundSelections),
+ {
+     vim.update_editor(cx, |_, editor, cx| {
+         editor.transact(window, cx, |editor, window, cx| {
+             editor.set_clip_at_line_ends(false, cx);
+ 
+             let display_map = editor.display_snapshot(cx);
+             let selections = editor.selections.all_display(&display_map);
+-            let (mut edits, anchors) = build(&display_map, selections);
++            let (mut edits, new_selections) = build(&display_map, selections);
+ 
++            // The sort is stable, so insertions at the same offset keep the
++            // order they were pushed in.
+             edits.sort_by_key(|edit| edit.0.start);
+             editor.edit(edits, cx);
+ 
+-            editor.change_selections(Default::default(), window, cx, |s| {
+-                s.select_anchor_ranges(anchors);
++            let snapshot = editor.buffer().read(cx).snapshot(cx);
++            editor.change_selections(Default::default(), window, cx, |s| match new_selections {
++                SurroundSelections::Anchors(anchors) => s.select_anchor_ranges(anchors),
++                SurroundSelections::Surrounded(edges) => s.select_ranges(
++                    edges
++                        .iter()
++                        .map(|edge| edge.start.resolve(&snapshot)..edge.end.resolve(&snapshot)),
++                ),
+             });
+             editor.set_clip_at_line_ends(true, cx);
+         });
+@@ -117,31 +160,50 @@ impl Vim {
+         let pair = bracket_pair_for_str_helix(text);
+ 
+         apply_helix_surround_edits(self, window, cx, |display_map, selections| {
++            let snapshot = display_map.buffer_snapshot();
+             let mut edits = Vec::new();
+-            let mut anchors = Vec::new();
+-
++            let mut ranges = Vec::new();
++            // The length of the text requested so far at each insertion
++            // point. Keyed by the position in the source buffer: offsets on
++            // both sides of an excerpt boundary can map to the same source
++            // position, and the multi buffer coalesces their insertions.
++            let mut requested_at = HashMap::default();
++            let insertion_point = |offset| {
++                snapshot
++                    .point_to_buffer_offset(offset)
++                    .map(|(buffer, offset)| (buffer.remote_id(), offset))
++            };
++
++            // Like Helix, the new selection covers the surrounded text
++            // including the added delimiters, so that surrounds compose and
++            // `i`/`a` land outside the pair. When two selections touch, the
++            // closing delimiter of the first and the opening delimiter of the
++            // second are inserted at the same offset, so no anchor can end up
++            // between them. Instead, each edge records how much of the text
++            // requested at its offset was pushed before it.
+             for selection in selections {
+                 let range = selection.ra
 ```
 
 ---
 
-### Incident Patch 2: `78f5a535` (2026-10-25)
-**Commit Message**: agent_ui: Keep inline review on the root thread when subagents appear (#66093)
+### Incident Patch 3: `fdcb1981` (2026-10-27)
+**Commit Message**: gpui: Smooth frame pacing in macOS Low Power Mode (#63477)
 
-Every thread view made its thread the inline review target when it was
-built (`AgentDiff::set_active_thread` in
-`ConversationView::new_thread_view`). A subagent's view is built when
-the subagent is spawned or announced, not when it's opened. So as soon
-as a native or ACP subagent started, inline review in the editor
-switched to that subagent's action log and showed only its edits. The
-parent's earlier edits disappeared from review.
+# Objective
 
-A subagent's action log is linked to its parent's, and every edit it
-records is also recorded there. So only root thread views set the review
-target now, and the root's log covers the whole conversation.
+On macOS, Low Power Mode reduces the CPU and GPU performance available
+to applications. GPUI continued requesting animation frames at the
+normal cadence, so work that no longer fit inside every refresh produced
+irregular frame drops instead of a deliberate lower frame rate.
 
-`test_subagent_views_keep_the_root_thread_under_review` registers a
-subagent and then navigates to its view. Review stays on the root thread
-both times. The test fails without the change, and uses a new test-only
-`AgentDiff::reviewed_thread`. `cargo nextest run -p agent_ui -p agent -p
-sidebar` (1526 tests), `./script/clippy` and `cargo fmt` pass locally.
+Frame throttling could also reject a display-link callback that arrived
+a fraction of a millisecond before the mathematically exact target
+interval. On a 120 Hz display, for example, a measured 16.666 ms
+interval missed a 16.667 ms threshold and delayed the frame until
+roughly 25 ms, intermittently turning a 60 fps cap into 40 fps.
+
+## Self-Review Checklist:
+
+- [x] I've reviewed my own diff for quality, security, and reliability
+- [x] Unsafe blocks (if any) have justifying comments
+- [x] The content adheres to Zed's UI standards
+- [x] Tests cover the new/changed behavior
+- [x] Performance impact has been considered and is acceptable
+
+---
 
 Release Notes:
 
-- Fixed inline review switching to a subagent's edits when the subagent
-started.
+- [GPUI] Improved animation smoothness on macOS when Low Power Mode is
+enabled.
 
-**File**: `crates/agent_ui/src/agent_diff.rs` (modified, +13/-0)
+---------
+
+Co-authored-by: Anthony Eid <[REDACTED_EMAIL]>
+
+**File**: `crates/gpui/src/app.rs` (modified, +22/-3)
 ```diff
-@@ -1309,6 +1309,19 @@ impl AgentDiff {
-         });
+@@ -51,9 +51,9 @@ use crate::{
+     DisplayChanges, DisplayEvent, DisplayId, EventEmitter, ExternalDragPayload, FocusHandle,
+     FocusMap, ForegroundExecutor, Global, KeyBinding, KeyContext, Keymap, Keystroke, LayoutId,
+     Menu, MenuItem, MissingGlyph, OwnedMenu, PathPromptOptions, Pixels, Platform, PlatformDisplay,
+-    PlatformKeyboardLayout, PlatformKeyboardMapper, Point, Priority, PromptBuilder, PromptButton,
+-    PromptHandle, PromptLevel, Render, RenderImage, RenderablePromptHandle, Reservation,
+-    ScreenCaptureSource, SharedString, SubscriberSet, Subscription, SvgRenderer,
++    PlatformKeyboardLayout, PlatformKeyboardMapper, Point, PowerMode, Priority, PromptBuilder,
++    PromptButton, PromptHandle, PromptLevel, Render, RenderImage, RenderablePromptHandle,
++    Reservation, ScreenCaptureSource, SharedString, SubscriberSet, Subscription, SvgRenderer,
+     SystemNotification, SystemNotificationResponse, Task, TextRenderingMode, TextSystem,
+     ThermalState, Window, WindowAppearance, WindowButtonLayout, WindowHandle, WindowId,
+     WindowInvalidator, WindowingRequest,
+@@ -939,6 +939,7 @@ pub struct App {
+     pub(crate) reduce_motion: bool,
+     /// Origin of the shared clock that phase-locks synced repeating animations.
+     pub(crate) synced_animation_epoch: Instant,
++    power_mode: PowerMode,
+     /// Whether the app was created by [`Application::new_inaccessible`]. No
+     /// accesskit APIs will be called when this flag is set.
+     pub(crate) accessibility_force_disabled: bool,
+@@ -973,6 +974,7 @@ impl App {
+         let entities = EntityMap::new();
+         let keyboard_layout = platform.keyboard_layout();
+         let keyboard_mapper = platform.keyboard_mapper();
++        let power_mode = platform.power_mode();
+ 
+         #[cfg(any(test, gpui_leak_detection))]
+         let _ref_counts = entities.ref_counts_drop_handle();
+@@ -1048,6 +1050,7 @@ impl App {
+                 cursor_hide_mode: CursorHideMode::default(),
+                 reduce_motion: false,
+                 synced_animation_epoch,
++                power_mode,
+                 accessibility_force_disabled: false,
+ 
+                 #[cfg(any(test, feature = "test-support", debug_assertions))]
+@@ -1150,6 +1153,16 @@ impl App {
+             }
+         }));
+ 
++        platform.on_power_mode_change(Box::new({
++            let app = Rc::downgrade(&app);
++            move || {
++                if let Some(app) = app.upgrade() {
++                    let power_mode = app.borrow().platform.power_mode();
++                    app.borrow_mut().power_mode = power_mode;
++                }
++            }
++        }));
++
+         platform.on_quit(Box::new({
+             let cx = Rc::downgrade(&app);
+             move || {
+@@ -1814,6 +1827,12 @@ impl App {
+         self.text_rendering_mode.get()
      }
  
-+    #[cfg(test)]
-+    pub(crate) fn reviewed_thread(
-+        workspace: &WeakEntity<Workspace>,
-+        cx: &mut App,
-+    ) -> Option<Entity<AcpThread>> {
-+        Self::global(cx)
-+            .read(cx)
-+            .workspace_threads
-+            .get(workspace)?
-+            .thread
-+            .upgrade()
++    /// Returns the operating system's power mode, or [`PowerMode::Unknown`]
++    /// when the platform cannot determine it.
++    pub fn power_mode(&self) -> PowerMode {
++        self.power_mode
 +    }
 +
-     fn register_active_thread_impl(
-         &mut self,
-         workspace: &WeakEntity<Workspace>,
+     /// Writes data to the platform clipboard.
+     pub fn write_to_clipboard(&self, item: ClipboardItem) {
+         self.platform.write_to_clipboard(item)
 ```
 
-**File**: `crates/agent_ui/src/conversation_view.rs` (modified, +50/-1)
+**File**: `crates/gpui/src/platform.rs` (modified, +22/-0)
 ```diff
-@@ -1624,7 +1624,11 @@ impl ConversationView {
-             list_state.scroll_to_end();
-         }
+@@ -514,6 +514,14 @@ pub trait Platform: 'static {
+     fn on_thermal_state_change(&self, callback: Box<dyn FnMut()>);
+     fn prevent_idle_sleep(&self, reason: &str) -> Task<Result<ActivityGuard>>;
  
--        AgentDiff::set_active_thread(&self.workspace, thread.clone(), window, cx);
-+        // A subagent's edits are also recorded in its parent's action log, so reviewing the
-+        // root thread covers the whole conversation.
-+        if thread.read(cx).parent_session_id().is_none() {
-+            AgentDiff::set_active_thread(&self.workspace, thread.clone(), window, cx);
++    /// Returns the operating system's power mode, or [`PowerMode::Unknown`]
++    /// when the platform cannot determine it.
++    fn power_mode(&self) -> PowerMode {
++        PowerMode::Unknown
++    }
++    /// Registers a callback invoked when the reported power mode changes.
++    fn on_power_mode_change(&self, _callback: Box<dyn FnMut()>) {}
++
+     /// Sets the application's process-wide identity and user-visible name.
+     ///
+     /// The identifier is used for platform identity mechanisms such as the
+@@ -701,6 +709,20 @@ pub struct SystemNotificationResponse {
+     pub action_id: Option<SharedString>,
+ }
+ 
++/// The operating system's preference for energy use versus performance.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub enum PowerMode {
++    /// The platform cannot determine the mode, or cannot distinguish the
++    /// active mode from other non-low-power modes.
++    Unknown,
++    /// The system prioritizes reducing energy use.
++    LowPower,
++    /// The system balances energy use and performance.
++    Balanced,
++    /// The system prioritizes performance over energy use.
++    HighPower,
++}
++
+ /// Thermal state of the system
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+ pub enum ThermalState {
+```
+
+**File**: `crates/gpui/src/profiler/journal.rs` (modified, +2/-0)
+```diff
+@@ -165,6 +165,8 @@ pub enum FrameSkipReason {
+     InactiveFrameRateLimit,
+     /// Thermal throttling deferred drawing.
+     ThermalFrameRateLimit,
++    /// Low power mode deferred drawing.
++    LowPowerFrameRateLimit,
+ }
+ 
+ /// A completed frame request that returned without drawing a new frame.
+```
+
+**File**: `crates/gpui/src/window.rs` (modified, +132/-37)
+```diff
+@@ -146,15 +146,6 @@ struct FrameDirtyAccumulator {
+     invalidations: u64,
+ }
+ 
+-/// Why GPUI capped a window's frame rate.
+-#[derive(Clone, Copy)]
+-enum FrameRateLimit {
+-    /// The window isn't focused.
+-    Inactive,
+-    /// The system is under thermal pressure.
+-    Thermal,
+-}
+-
+ #[derive(Clone)]
+ pub(crate) struct WindowInvalidator {
+     inner: Rc<RefCell<WindowInvalidatorInner>>,
+@@ -1332,6 +1323,47 @@ pub(crate) struct InputRateTracker {
+     sustain_duration: Duration,
+ }
+ 
++const THIRTY_FPS_INTERVAL: Duration = Duration::from_micros(33333);
++const SIXTY_FPS_INTERVAL: Duration = Duration::from_micros(16667);
++const FRAME_INTERVAL_TOLERANCE: Duration = Duration::from_millis(1);
++
++/// Display-link timestamps can straddle a target interval by fractions of a
++/// millisecond. Accepting that callback preserves an even display-frame divisor
++/// instead of occasionally waiting for an additional refresh.
++fn frame_request_arrived_too_early(elapsed: Duration, minimum_interval: Duration) -> bool {
++    elapsed < minimum_interval.saturating_sub(FRAME_INTERVAL_TOLERANCE)
++}
++
++fn minimum_frame_interval(
++    should_throttle: bool,
++    inactive_without_high_rate_input: bool,
++    inactive_frame_interval: Option<Duration>,
++    thermal_state: ThermalState,
++    power_mode: crate::PowerMode,
++) -> Option<Duration> {
++    let low_power_mode_enabled = power_mode == crate::PowerMode::LowPower;
++    if !should_throttle {
++        None
++    } else if inactive_without_high_rate_input {
++        match (inactive_frame_interval, low_power_mode_enabled) {
++            (Some(inactive_frame_interval), true) => {
++                Some(inactive_frame_interval.max(THIRTY_FPS_INTERVAL))
++            }
++            (inactive_frame_interval, false) => inactive_frame_interval,
++            (None, true) => Some(THIRTY_FPS_INTERVAL),
 +        }
- 
-         let connection = thread.read(cx).connection().clone();
-         let session_id = thread.read(cx).session_id().clone();
-@@ -6796,6 +6800,51 @@ pub(crate) mod tests {
-         });
-     }
- 
-+    #[gpui::test]
-+    async fn test_subagent_views_keep_the_root_thread_under_review(cx: &mut TestAppContext) {
-+        init_test(cx);
-+        let connection = StubAgentConnection::new();
-+        let (conversation_view, cx) =
-+            setup_conversation_view(StubAgentServer::new(connection.clone()), cx).await;
-+        let root =
-+            active_thread(&conversation_view, cx).read_with(cx, |view, _| view.thread.clone());
-+        let root_session_id = root.read_with(cx, |thread, _| thread.session_id().clone());
-+        let workspace = conversation_view.read_with(cx, |view, _| view.workspace.clone());
-+        let reviewed_thread = |cx: &mut VisualTestContext| {
-+            cx.update(|_, cx| AgentDiff::reviewed_thread(&workspace, cx))
-+        };
-+        assert_eq!(reviewed_thread(cx).as_ref(), Some(&root));
-+
-+        let child = conversation_view.update(cx, |view, cx| {
-+            create_test_acp_thread(
-+                Some(root_session_id),
-+                "child",
-+                Rc::new(connection.clone()),
-+                view.project.clone(),
-+                cx,
-+            )
-+        });
-+        root.update(cx, |root, cx| root.register_subagent(child.clone(), cx));
-+        cx.run_until_parked();
-+        assert!(
-+            conversation_view.read_with(cx, |view, _| view
-+                .thread_view(&acp_v2::SessionId::new("child"))
-+                .is_some()),
-+            "the subagent got its view"
-+        );
-+        assert_eq!(reviewed_thread(cx).as_ref(), Some(&root));
-+
-+        conversation_view.update_in(cx, |view, window, cx| {
-+            view.navigate_to_thread(acp_v2::SessionId::new("child"), window, cx)
-+        });
-+        cx.run_until_parked();
-+        assert_eq!(
-+            reviewed_thread(cx).as_ref(),
-+            Some(&root),
-+            "opening a subagent keeps the conversation's edits under review"
-+        );
-+    }
-+
-     #[gpui::test]
-     async fn test_subagent_card_state_follows_the_spawn_tool_call(cx: &mut TestAppContext) {
-         use super::subagent_card::{SubagentCardState, SubagentEntries, SubagentStatus};
-```
-
----
-
-### Incident Patch 3: `c8995a08` (2026-10-25)
-**Commit Message**: agent_ui: Don't load tool-call-referenced sessions where the subagents RFD applies (#66095)
-
-A tool call carrying Zed's private `_meta.subagent_session_info` makes
-the conversation `load_session` the referenced session. That's how Zed
-restores native subagents. Some external agents send the same key,
-according to #65120, so that path stays for them.
-
-Where the ACP subagents RFD applies, though, subagents are discovered
-only through their parent's announcements, and loading one is forbidden.
-Loading a referenced child before its announcement would also make the
-connection reject the announcement, because the connection already
-routes that session.
-
-- `AgentConnection::announces_subagents` says whether the RFD applies:
-always on v2, on v1 when Zed advertised `subagents` (behind `acp-beta`),
-and never for the native agent.
-- `ConversationView::load_subagent_session` does nothing where it
-applies.
-
-Without `acp-beta` nothing changes, because no connection announces
-subagents.
-
-`test_referenced_subagents_load_only_without_the_subagents_rfd` checks
-both cases with a stub connection that supports loading, and fails
-without the guard. Existing v1 and v2 tests now assert each connection's
-a
-
-**File**: `crates/acp_thread/src/connection.rs` (modified, +17/-0)
-```diff
-@@ -135,6 +135,12 @@ pub trait AgentConnection {
-         false
-     }
- 
-+    /// Whether subagents follow the ACP subagents RFD on this connection: they are discovered
-+    /// only through their parent's announcements, and must never be loaded or resumed.
-+    fn announces_subagents(&self) -> bool {
-+        false
-+    }
-+
-     /// Whether conversation teardown should invoke `close_session`.
-     /// The default preserves existing UI cleanup; backend-owned release hooks are separate.
-     /// Autonomous backends can opt out without disabling explicit close support.
-@@ -988,6 +994,7 @@ mod test_support {
-         supports_retry: bool,
-         supports_load_session: bool,
-         supports_close_session: bool,
-+        announces_subagents: bool,
-         close_sessions_on_release: bool,
-         supports_session_additional_directories: bool,
-         supports_set_title: bool,
-@@ -1037,6 +1044,7 @@ mod test_support {
-                 supports_retry: false,
-                 supports_load_session: false,
-                 supports_close_session: false,
-+                announces_subagents: false,
-                 close_sessions_on_release: true,
-                 supports_session_additional_directories: false,
-                 supports_set_title: true,
-@@ -1175,6 +1183,11 @@ mod test_support {
-             self
-         }
- 
-+        pub fn with_announced_subagents(mut self, announces_subagents: bool) -> Self {
-+            self.announces_subagents = announces_subagents;
-+            self
-+        }
-+
-         pub fn with_close_sessions_on_release(mut self, close_sessions_on_release: bool) -> Self {
-             self.close_sessions_on_release = close_sessions_on_release;
-             self
-@@ -1331,6 +1344,10 @@ mod test_support {
-             self.supports_close_session
-         }
- 
-+        fn announces_subagents(&self) -> bool {
-+            self.announces_subagents
-+        }
-+
-         fn should_close_sessions_on_release(&self) -> bool {
-             self.supports_close_session && self.close_sessions_on_release
-         }
-```
-
-**File**: `crates/agent_servers/src/acp/v1.rs` (modified, +23/-1)
-```diff
-@@ -79,6 +79,8 @@ pub struct AcpConnection {
-     auth_methods: Vec<acp_v2::AuthMethod>,
-     agent_server_store: WeakEntity<AgentServerStore>,
-     agent_capabilities: acp::AgentCapabilities,
-+    /// Whether Zed advertised the subagents RFD, so the agent reports subagents with it.
-+    accepts_subagent_updates: bool,
-     request_elicitations: Entity<ElicitationStore>,
-     defaults: AcpConnectionDefaults,
-     _child: Option<transport::OwnedChild>,
-@@ -561,13 +563,14 @@ impl AcpConnection {
-         let request_elicitations = cx.new(|_| ElicitationStore::default());
-         let client_capabilities = client_capabilities_for_agent(&agent_id);
- 
-+        let accepts_subagent_updates = client_capabilities.subagents.is_some();
-         let dispatch_context = ClientContext {
-             sessions: sessions.clone(),
-             session_list: client_session_list.clone(),
-             request_elicitations: request_elicitations.clone(),
-             active_request_scopes: None,
-             pending_session_updates: None,
--            accepts_subagent_updates: client_capabilities.subagents.is_some(),
-+            accepts_subagent_updates,
-         };
-         let (mut runtime, shutdown) = runtime::ClientRuntime::new(dispatch_context, cx);
-         let dispatch_tx = runtime.sender();
-@@ -718,6 +721,7 @@ impl AcpConnection {
-             sessions,
-             pending_sessions: RefCell::new(HashMap::default()),
-             agent_capabilities: response.agent_capabilities,
-+            accepts_subagent_updates,
-             request_elicitations,
-             defaults,
-             session_list,
-@@ -742,6 +746,7 @@ impl AcpConnection {
-         connection: ConnectionTo<Agent>,
-         sessions: Rc<RefCell<HashMap<acp_v2::SessionId, AcpSession>>>,
-         agent_capabilities: acp::AgentCapabilities,
-+        accepts_subagent_updates: bool,
-         request_elicitations: Entity<ElicitationStore>,
-         agent_server_store: WeakEntity<AgentServerStore>,
-         io_task: Task<()>,
-@@ -763,6 +768,7 @@ impl AcpConnection {
-             auth_methods: vec![],
-             agent_server_store,
-             agent_capabilities,
-+            accepts_subagent_updates,
-             request_elicitations,
-             defaults,
-             _child: None,
-@@ -1461,6 +1467,10 @@ impl AgentConnection for AcpConnection {
-         self.agent_capabilities.load_session
-     }
- 
-+    fn announces_subagents(&self) -> bool {
-+        self.accepts_subagent_updates
-+    }
-+
-     fn supports_resume_session(&self) -> bool {
-         self.agent_capabilities
-             .session_capabilities
-@@ -2273,6 +2283,7 @@ pub mod test_support {
-                 client_conn,
-                 sessions,
-                 agent_capabilities,
-+                false,
-                 request_elicitations,
-                 agent_server_store,
-                 client_io_task,
-@@ -6969,6 +6980,7 @@ mod tests {
-                 client_conn,
-                 sessions,
-                 acp::AgentCapabilities::default(),
-+                false,
-                 request_elicitations,
-                 WeakEntity::new_invalid(),
-                 client_io_task,
-@@ -7594,6 +7606,7 @@ exit 7
-                 client_conn,
-                 sessions,
-                 agent_capabilities,
-+                accepts_subagent_updates,
-                 request_elicitations,
-                 agent_server_store,
-                 client_io_task,
-@@ -8935,6 +8948,11 @@ exit 7
-             _keep_agent_alive,
-         ) = connect_fake_agent(None, cx).await;
- 
-+        assert!(
-+            !connection.announces_subagents(),
-+            "a v1 connection that did not advertise subagents does not follow the RFD"
-+        );
-+
-         // Queue up some history updates that the fake agent will stream to
-         // the client during the `load_session` call, before responding.
-         *load_session_updates
-@@ -9015,6 +9033,10 @@ exit 7
-                 cx,
-             )
-             .await;
-+        assert!(
-+            connection.announces_subagents(),
-+            "a v1 connection that advertised subagents follows the RFD"
-+        );
-         *load_session_updates
-             .lock()
-             .expect("load_session_updates mutex poisoned") = vec![
-```
-
-**File**: `crates/agent_servers/src/acp/v2.rs` (modified, +6/-0)
-```diff
-@@ -1452,6 +1452,11 @@ impl AgentConnection for AcpV2Connection {
-         self.initialize_response.capabilities.session.is_some()
-     }
- 
-+    fn announces_subagents(&self) -> bool {
-+        // Subagents are part of v2's baseline session model.
-+        true
-+    }
-+
-     fn close_session(
-         self: Rc<Self>,
-         session_id: &acp::SessionId,
-@@ -2679,6 +2684,7 @@ mod tests {
-         use agent_client_protocol::schema::MaybeUndefined;
- 
-         let harness = SessionHarness::new(session_capabilities(), vec![], vec![], cx).await;
-+        assert!(harness.client.announces_subagents());
-         let parent = harness.thread(cx).await;
-         harness.send_update(
-             "session",
-```
-
-**File**: `crates/agent_ui/src/conversation_view.rs` (modified, +29/-0)
-```diff
-@@ -2587,6 +2587,8 @@ impl ConversationView {
-     /// Restores a child session that a tool call references but its parent does not
-     /// own, such as a native subagent from a thread loaded from the database. Children
-     /// the parent already owns are never loaded: ACP forbids loading subagent sessions.
-+    /// Neither is any session where the subagents RFD applies, since a child referenced
-+    /// there may still be announced, and loading it first would reject the announcement.
-     fn load_subagent_session(
-         &mut self,
-         subagent_id: acp_v2::SessionId,
-@@ -2598,6 +2600,7 @@ impl ConversationView {
-         };
-         if connected.threads.contains_key(&subagent_id)
-             || !connected.connection.supports_load_session()
-+            || connected.connection.announces_subagents()
-         {
-             return;
-         }
-@@ -6896,6 +6899,32 @@ pub(crate) mod tests {
-         }
-     }
- 
-+    #[gpui::test]
-+    async fn test_referenced_subagents_load_only_without_the_subagents_rfd(
-+        cx: &mut TestAppContext,
++    } else if low_power_mode_enabled {
++        Some(THIRTY_FPS_INTERVAL)
++    } else if matches!(
++        thermal_state,
++        ThermalState::Critical | ThermalState::Serious
 +    ) {
-+        init_test(cx);
-+        for announces_subagents in [false, true] {
-+            let connection = StubAgentConnection::new()
-+                .with_supports_load_session(true)
-+                .with_announced_subagents(announces_subagents);
-+            let (conversation_view, cx) =
-+                setup_conversation_view(StubAgentServer::new(connection), cx).await;
-+            let root_session_id = active_thread(&conversation_view, cx)
-+                .read_with(cx, |view, _| view.session_id.clone());
-+            let referenced = acp_v2::SessionId::new("referenced");
-+            conversation_view.update(cx, |view, cx| {
-+                view.load_subagent_session(referenced.clone(), root_session_id, cx);
-+            });
-+            cx.run_until_parked();
-+            assert_eq!(
-+                conversation_view.read_with(cx, |view, _| view.thread_view(&referenced).is_some()),
-+                !announces_subagents,
-+                "a session a tool call references is loaded only where the RFD does not apply"
-+            );
++        Some(SIXTY_FPS_INTERVAL)
++    } else {
++        None
++    }
++}
++
+ impl Default for InputRateTracker {
+     fn default() -> Self {
+         Self {
+@@ -1830,31 +1862,37 @@ impl Window {
+                 let force_render =
+                     mem::take(&mut deferred_force_render) || request_frame_options.force_render;
+ 
+-                let thermal_state = handle
+-                    .update(&mut cx, |_, _, cx| cx.thermal_state())
++                let power_state = handle
++                    .update(&mut cx, |_, _, cx| (cx.thermal_state(), cx.power_mode()))
+                     .log_err();
+ 
+                 // Throttle frame rate based on conditions:
+                 // - Thermal pressure (Serious/Critical): cap to ~60fps
+-                // - Inactive window (not focused): cap to ~30fps to save energy
+-                let min_frame_interval = if request_frame_options.require_presentation
+-                    || (!request_frame_options.force_render
+-                        && next_frame_callbacks.borrow().is_empty())
+-                {
+-                    None
+-                } else if !active.get() && !input_rate_tracker.borrow_mut().is_high_rate() {
+-                    inactive_frame_interval.map(|interval| (interval, FrameRateLimit::Inactive))
+-                } else if let Some(ThermalState::Critical | ThermalState::Serious) = thermal_state {
+-                    Some((Duration::from_micros(16667), FrameRateLimit::Thermal))
+-                } else {
+-                    None
+-                };
++                // - Low power mode: cap to ~30fps
++                // - Inactive window (not focused): use its configured frame interval
++                let should_throttle = !request_frame_options.require_presentation
++                    && (request_frame_options.force_render
++                        || !next_frame_callbacks.borrow().is_empty());
++                let inactive_without_high_rate_input = should_throttle
++                    && !active.get()
++                    && !input_rate_tracker.borrow_mut().is_high_rate();
++                let (thermal_state, power_mode) =
++                    power_state.unwrap_or((ThermalState::Nominal, crate::PowerMode::Unknown));
++                let min_frame_interval = minimum_frame_interval(
++                    should_throttle,
++                    inactive_without_high_rate_input,
++                    inactive_frame_interval,
++                    thermal_state,
++                    power_mode,
++                );
+ 
+                 let now = Instant::now();
+-                #[cfg_attr(not(feature = "profiler"), expect(unused_variables))]
+-                if let Some((min_interval, limit)) = min_frame_interval {
++                if let Some(min_interval) = min_frame_interval {
+                     if let Some(last_frame) = last_frame_time.get()
+-                        && now.duration_since(last_frame) < min_interval
++                        && 
+```
+
+**File**: `crates/gpui_apple/src/gpui_apple.rs` (modified, +1/-1)
+```diff
+@@ -9,7 +9,7 @@ mod dispatcher;
+ pub mod keychain;
+ mod metal_atlas;
+ pub mod metal_renderer;
+-pub mod thermal;
++pub mod process_info;
+ 
+ #[cfg(feature = "font-kit")]
+ mod open_type;
+```
+
+**File**: `crates/gpui_apple/src/process_info.rs` (added, +182/-0)
+```diff
+@@ -0,0 +1,182 @@
++use block2::RcBlock;
++use futures::{StreamExt, channel::mpsc};
++use gpui::{ForegroundExecutor, PowerMode, Task, ThermalState};
++use objc2::{rc::Retained, runtime::ProtocolObject};
++use objc2_foundation::{
++    NSNotification, NSNotificationCenter, NSNotificationName, NSObjectProtocol, NSProcessInfo,
++    NSProcessInfoPowerStateDidChangeNotification, NSProcessInfoThermalState,
++    NSProcessInfoThermalStateDidChangeNotification,
++};
++
++pub fn thermal_state() -> ThermalState {
++    match NSProcessInfo::processInfo().thermalState() {
++        NSProcessInfoThermalState::Fair => ThermalState::Fair,
++        NSProcessInfoThermalState::Serious => ThermalState::Serious,
++        NSProcessInfoThermalState::Critical => ThermalState::Critical,
++        _ => ThermalState::Nominal,
++    }
++}
++
++pub fn power_mode() -> PowerMode {
++    if NSProcessInfo::processInfo().isLowPowerModeEnabled() {
++        PowerMode::LowPower
++    } else {
++        // This API does not distinguish Automatic from High Power Mode on macOS.
++        PowerMode::Unknown
++    }
++}
++
++pub fn observe_thermal_state(
++    executor: &ForegroundExecutor,
++    callback: Box<dyn FnMut()>,
++) -> ProcessInfoObserver {
++    // Foundation requires reading thermalState before registering for changes.
++    // https://developer.apple.com/documentation/foundation/processinfo/thermalstatedidchangenotification
++    thermal_state();
++    ProcessInfoObserver::new(
++        unsafe { NSProcessInfoThermalStateDidChangeNotification },
++        executor,
++        callback,
++    )
++}
++
++pub fn observe_power_mode(
++    executor: &ForegroundExecutor,
++    callback: Box<dyn FnMut()>,
++) -> ProcessInfoObserver {
++    ProcessInfoObserver::new(
++        unsafe { NSProcessInfoPowerStateDidChangeNotification },
++        executor,
++        callback,
++    )
++}
++
++pub struct ProcessInfoObserver {
++    center: Retained<NSNotificationCenter>,
++    observer: Retained<ProtocolObject<dyn NSObjectProtocol>>,
++    _task: Task<()>,
++}
++
++impl ProcessInfoObserver {
++    fn new(
++        name: &NSNotificationName,
++        executor: &ForegroundExecutor,
++        callback: Box<dyn FnMut()>,
++    ) -> Self {
++        Self::with_center(
++            NSNotificationCenter::defaultCenter(),
++            name,
++            executor,
++            callback,
++        )
++    }
++
++    fn with_center(
++        center: Retained<NSNotificationCenter>,
++        name: &NSNotificationName,
++        executor: &ForegroundExecutor,
++        mut callback: Box<dyn FnMut()>,
++    ) -> Self {
++        let (sender, mut receiver) = mpsc::unbounded();
++        let block = RcBlock::new(move |_: std::ptr::NonNull<NSNotification>| {
++            // Notifications can arrive synchronously or off-thread. Defer application
++            // callbacks so they cannot reenter GPUI while it is already borrowed.
++            if sender.unbounded_send(()).is_err() {
++                log::debug!("process info observer stopped before notification delivery");
++            }
++        });
++        let observer = unsafe {
++            center.addObserverForName_object_queue_usingBlock(
++                Some(name),
++                Some(&NSProcessInfo::processInfo()),
++                None,
++                &block,
++            )
++        };
++        let task = executor.spawn(async move {
++            while receiver.next().await.is_some() {
++                callback();
++            }
++        });
++        Self {
++            center,
++            observer,
++            _task: task,
++        }
++    }
++}
++
++impl Drop for ProcessInfoObserver {
++    fn drop(&mut self) {
++        unsafe {
++            self.center.removeObserver(self.observer.as_ref());
++        }
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use std::{cell::Cell, rc::Rc};
++
++    fn post_notification(center: &NSNotificationCenter, name: &NSNotificationName) {
++        unsafe {
++            center.postNotificationName_object(name, Some(&NSProcessInfo::processInfo()));
 +        }
 +    }
 +
-     #[gpui::test]
-     async fn test_concurrent_subagent_loads_create_one_thread_view(cx: &mut TestAppContext) {
-         init_test(cx);
++    #[gpui::test]
++    fn notifications_are_deferred_and_cancelled_on_drop(cx: &mut gpui::TestAppContext) {
++        for name in unsafe {
++            [
++                NSProcessInfoPowerStateDidChangeNotification,
++                NSProcessInfoThermalStateDidChangeNotification,
++            ]
++        } {
++            check_notification_lifecycle(cx, name);
++        }
++    }
++
++    fn check_notification_lifecycle(
++        cx: &mut gpui::TestAppContext,
++        name: &'static NSNotificationName,
++    ) {
++        // Tests cannot share the default center because they run concurrently.
++        let center = NSNotificationCenter::new();
++        let calls = Rc::new(Cell::new(0));
++        let observer = ProcessInfoObserver::with_center(
++            center.clone(),
++            name,
++            &cx.foreground_executor,
++            Box::new({
++                let calls = calls.clone();
++                move || calls.set(calls.get() + 1)
++            }),
++        );
+
+```
+
+**File**: `crates/gpui_apple/src/thermal.rs` (removed, +0/-113)
+```diff
+@@ -1,113 +0,0 @@
+-use block2::RcBlock;
+-use futures::{StreamExt, channel::mpsc};
+-use gpui::{ForegroundExecutor, Task, ThermalState};
+-use objc2::{rc::Retained, runtime::ProtocolObject};
+-use objc2_foundation::{
+-    NSNotification, NSNotificationCenter, NSObjectProtocol, NSProcessInfo,
+-    NSProcessInfoThermalState, NSProcessInfoThermalStateDidChangeNotification,
+-};
+-
+-pub fn thermal_state() -> ThermalState {
+-    match NSProcessInfo::processInfo().thermalState() {
+-        NSProcessInfoThermalState::Fair => ThermalState::Fair,
+-        NSProcessInfoThermalState::Serious => ThermalState::Serious,
+-        NSProcessInfoThermalState::Critical => ThermalState::Critical,
+-        _ => ThermalState::Nominal,
+-    }
+-}
+-
+-pub struct ThermalObserver {
+-    center: Retained<NSNotificationCenter>,
+-    observer: Retained<ProtocolObject<dyn NSObjectProtocol>>,
+-    _task: Task<()>,
+-}
+-
+-impl ThermalObserver {
+-    pub fn new(executor: &ForegroundExecutor, callback: Box<dyn FnMut()>) -> Self {
+-        Self::with_center(NSNotificationCenter::defaultCenter(), executor, callback)
+-    }
+-
+-    fn with_center(
+-        center: Retained<NSNotificationCenter>,
+-        executor: &ForegroundExecutor,
+-        mut callback: Box<dyn FnMut()>,
+-    ) -> Self {
+-        let (sender, mut receiver) = mpsc::unbounded();
+-        let block = RcBlock::new(move |_: std::ptr::NonNull<NSNotification>| {
+-            // NotificationCenter can call synchronously or off-thread. Never enter
+-            // application code here: GPUI may already be borrowed on the main thread.
+-            if sender.unbounded_send(()).is_err() {
+-                log::debug!("thermal observer stopped before notification delivery");
+-            }
+-        });
+-        let observer = unsafe {
+-            center.addObserverForName_object_queue_usingBlock(
+-                Some(NSProcessInfoThermalStateDidChangeNotification),
+-                Some(&NSProcessInfo::processInfo()),
+-                None,
+-                &block,
+-            )
+-        };
+-        let task = executor.spawn(async move {
+-            while receiver.next().await.is_some() {
+-                callback();
+-            }
+-        });
+-        Self {
+-            center,
+-            observer,
+-            _task: task,
+-        }
+-    }
+-}
+-
+-impl Drop for ThermalObserver {
+-    fn drop(&mut self) {
+-        unsafe {
+-            self.center.removeObserver(self.observer.as_ref());
+-        }
+-    }
+-}
+-
+-#[cfg(test)]
+-mod tests {
+-    use super::*;
+-    use std::{cell::Cell, rc::Rc};
+-
+-    // Tests run concurrently in one process, so they cannot share the default center.
+-    fn post_thermal_notification(center: &NSNotificationCenter) {
+-        unsafe {
+-            center.postNotificationName_object(
+-                NSProcessInfoThermalStateDidChangeNotification,
+-                Some(&NSProcessInfo::processInfo()),
+-            );
+-        }
+-    }
+-
+-    #[gpui::test]
+-    fn notifications_are_deferred_and_cancelled_on_drop(cx: &mut gpui::TestAppContext) {
+-        let center = NSNotificationCenter::new();
+-        let calls = Rc::new(Cell::new(0));
+-        let observer = ThermalObserver::with_center(
+-            center.clone(),
+-            &cx.foreground_executor,
+-            Box::new({
+-                let calls = calls.clone();
+-                move || calls.set(calls.get() + 1)
+-            }),
+-        );
+-        let post_notification = || post_thermal_notification(&center);
+-        post_notification();
+-        assert_eq!(calls.get(), 0);
+-        cx.run_until_parked();
+-        assert_eq!(calls.get(), 1);
+-
+-        post_notification();
+-        drop(observer);
+-        cx.run_until_parked();
+-        assert_eq!(calls.get(), 1);
+-        post_notification();
+-        cx.run_until_parked();
+-        assert_eq!(calls.get(), 1);
+-    }
+-}
+```
+
+**File**: `crates/gpui_ios/src/ios/platform.rs` (modified, +16/-5)
+```diff
+@@ -20,11 +20,11 @@ use gpui::{
+     Action, AnyWindowHandle, AppLifecyclePhase, BackgroundExecutor, ClipboardItem, CursorStyle,
+     DummyKeyboardMapper, ForegroundExecutor, Keymap, Menu, MenuItem, PathPromptOptions, Platform,
+     PlatformDisplay, PlatformKeyboardLayout, PlatformKeyboardMapper, PlatformTextSystem,
+-    PlatformWindow, Result, Task, ThermalState, WindowAppearance, WindowParams,
++    PlatformWindow, PowerMode, Result, Task, ThermalState, WindowAppearance, WindowParams,
+ };
+ use gpui_apple::{
+     AppleDispatcher, keychain, main_thread_marker,
+-    thermal::{self, ThermalObserver},
++    process_info::{self, ProcessInfoObserver},
+ };
+ use objc2::{MainThreadOnly, rc::Retained, runtime::ProtocolObject};
+ use objc2_foundation::{
+@@ -51,7 +51,8 @@ pub(crate) struct IosPlatformState {
+     background_executor: BackgroundExecutor,
+     foreground_executor: ForegroundExecutor,
+     text_system: Arc<dyn PlatformTextSystem>,
+-    thermal_observer: RefCell<Option<ThermalObserver>>,
++    thermal_observer: RefCell<Option<ProcessInfoObserver>>,
++    power_mode_observer: RefCell<Option<ProcessInfoObserver>>,
+     display_observers: RefCell<Vec<Retained<ProtocolObject<dyn NSObjectProtocol>>>>,
+     display_task: RefCell<Option<Task<()>>>,
+     displays_changed_callback: CallbackSlot<Box<dyn FnMut()>>,
+@@ -75,6 +76,7 @@ impl IosPlatform {
+             foreground_executor: ForegroundExecutor::new(dispatcher),
+             text_system,
+             thermal_observer: RefCell::new(None),
++            power_mode_observer: RefCell::new(None),
+             display_observers: RefCell::new(Vec::new()),
+             display_task: RefCell::new(None),
+             displays_changed_callback: CallbackSlot::default(),
+@@ -459,14 +461,23 @@ impl Platform for IosPlatform {
+     }
+ 
+     fn thermal_state(&self) -> ThermalState {
+-        thermal::thermal_state()
++        process_info::thermal_state()
+     }
+ 
+     fn on_thermal_state_change(&self, callback: Box<dyn FnMut()>) {
+-        let observer = ThermalObserver::new(&self.0.foreground_executor, callback);
++        let observer = process_info::observe_thermal_state(&self.0.foreground_executor, callback);
+         self.0.thermal_observer.replace(Some(observer));
+     }
+ 
++    fn power_mode(&self) -> PowerMode {
++        process_info::power_mode()
++    }
++
++    fn on_power_mode_change(&self, callback: Box<dyn FnMut()>) {
++        let observer = process_info::observe_power_mode(&self.0.foreground_executor, callback);
++        self.0.power_mode_observer.replace(Some(observer));
++    }
++
+     fn keyboard_layout(&self) -> Box<dyn PlatformKeyboardLayout> {
+         Box::new(IosKeyboardLayout)
+     }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #66132** (2026-10-25): git_ui: Fix git graph lagging when toggling commit details panel (@RemcoSmitsDev)
-- **PR #66127** (2026-10-25): Fix removal of unloaded project groups (@EcutAtom336)
-- **PR #66126** (closed): Fix scrolling across pinned tabs (@EcutAtom336)
-- **PR #66121** (closed): extension_api: Expose file scan and file type settings to extensions (@AJenbo)
-- **PR #66113** (2026-10-25): Fix pwsh-related issues with local and remote env variables detection (#66097) (cherry-pick to stable) (@zed-zippy[bot])
-- **PR #66112** (2026-10-25): Fix pwsh-related issues with local and remote env variables detection (#66097) (cherry-pick to preview) (@zed-zippy[bot])
+- **PR #66219** (closed): repl: Update Jupyter libraries and repair notebook cell IDs (@rgbkrk)
+- **PR #66212** (closed): Restore activity when reopening retained ACP v1 sessions (@pepusz)
+- **PR #66206** (2026-10-27): gpui: Fix text system reference cycle through pooled line wrappers (@Anthony-Eid)
+- **PR #66199** (2026-10-27): title_bar: Fix project name shown for `repo.git` bare clones on Windows remotes (@lingyaochu)
+- **PR #66190** (2026-10-27): gpui_wgpu: Fix WebGL surface reconfiguration panics (@probably-neb)
+- **PR #66185** (2026-10-27): Update Tree-sitter and extension grammar memory imports (@maxbrunsfeld)
 
 ---
 
@@ -2852,41 +3322,36 @@ a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. removal of unloaded project groups (#66127)
+## X. workspace: Fix panel buttons not working while a dock panel is zoomed (#66119)
 
 **RULE**:
-When implementing operations in `crates/workspace/src/multi_workspace.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/workspace/src/dock.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `876c1b0c`: removal of unloaded project groups (#66127). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5e548b8a`: workspace: Fix panel buttons not working while a dock panel is zoomed (#66119). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/workspace/src/multi_workspace.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/workspace/src/dock.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        if workspaces.is_empty() {
-            let previous_group_count = self.project_groups.len();
-            self.project_groups.retain(|group| group.key != *group_key);
-            if self.project_groups.len() != previous_group_count {
-                cx.emit(MultiWorkspaceEvent::ProjectGroupsChanged);
-                self.serialize(cx);
-                cx.notify();
-                return Task::ready(Ok(true));
-            }
-            return Task::ready(Ok(false));
-        }
-        self.remove(workspaces, RemovalIntent::CloseProject, window, cx)
+    /// Panel buttons focus this before dispatching their action. A zoomed panel isn't rendered
+    /// inside its dock, so the dock's own handle would be outside the frame and the action dropped.
+    pub(crate) fn panel_button_focus_handle(&self, window: &Window, cx: &App) -> FocusHandle {
+        self.zoomed_panel(window, cx)
+            .map(|panel| panel.panel_focus_handle(cx))
+            .unwrap_or_else(|| self.focus_handle.clone())
+    }
+
+                let focus_handle = dock.panel_button_focus_handle(window, cx);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        let task = self.remove(workspaces, RemovalIntent::CloseProject, window, cx);
-
-        task
+                let focus_handle = dock.focus_handle(cx);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `876c1b0c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5e548b8a` are properly handled with clean fallback behavior.

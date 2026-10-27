@@ -5505,3 +5505,7 @@
 | `CYCLE-20261027-9D4O` | `2026-10-27T19:38:45.048Z` | `chakra-ui/zag` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4967` | Yes (`60e5f386...`) |
 | `CYCLE-20261027-9DEL` | `2026-10-27T19:38:45.405Z` | `tokio-rs/tokio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4968` | Yes (`59c37bcc...`) |
 | `CYCLE-20261027-9IS5` | `2026-10-27T19:38:52.373Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4969` | Yes (`f0692c5d...`) |
+| `CYCLE-20261027-MXDY` | `2026-10-27T19:49:17.830Z` | `ant-design/pro-components` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4970` | Yes (`56ef2bd4...`) |
+| `CYCLE-20261027-N09M` | `2026-10-27T19:49:21.562Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4971` | Yes (`fd171d0a...`) |
+| `CYCLE-20261027-N50G` | `2026-10-27T19:49:27.712Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4972` | Yes (`83388a49...`) |
+| `CYCLE-20261027-N6UO` | `2026-10-27T19:49:30.096Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4973` | Yes (`b89cd80d...`) |

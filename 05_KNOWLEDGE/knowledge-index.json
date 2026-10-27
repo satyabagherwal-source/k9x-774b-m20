@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T19:38:52.300Z",
+  "last_updated": "2026-10-27T19:49:30.022Z",
   "total_verified_learnings": 1146,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1986,8 +1986,8 @@
       "slug": "ant-design-pro-components",
       "platform": "github",
       "source_url": "https://github.com/ant-design/pro-components",
-      "source_version": "0e181a77",
-      "content_hash": "36a3ceb2aa7397d9744ba9098f0a11d512f75cdd50e609f387d6a96b0d20050c",
+      "source_version": "d468909f",
+      "content_hash": "56ef2bd4926b0d774ecd710e0e11992673f0497537cfdceb995a9ccad5ed1fdc",
       "dossier_path": "07_PROJECT_LEARNING/ant-design-pro-components-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ant-design-pro-components-learnings.md",
       "promoted_rules": [
@@ -2005,6 +2005,11 @@
           "number": 4607,
           "title": "table): 更新 ellipsis 属性描述以更清晰地说明内容省略行为 (#9776)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4970,
+          "title": "layout): restore menu active bar token suppression removed by #9772",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2012,7 +2017,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T13:28:56.878Z",
+      "verified_at": "2026-10-27T19:49:17.742Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -12493,8 +12498,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "b1d59903",
-      "content_hash": "b4634f3c7160b883646b97c4b6a29977a6d8d934a870929278b99ec07183b14d",
+      "source_version": "39773c33",
+      "content_hash": "b89cd80d895ca089e227e8923afae35faa6e9ca7ee0e9dbcd17f5455ecf2b4e2",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -12602,6 +12607,11 @@
           "number": 4702,
           "title": "core): repair degenerate visited-peers bloom indices, gated on the floor (#6011)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4973,
+          "title": "build: release 0.2.151 (#6016)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12609,7 +12619,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:09:21.339Z",
+      "verified_at": "2026-10-27T19:49:30.009Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40693,8 +40703,8 @@
       "slug": "opentofu-opentofu",
       "platform": "github",
       "source_url": "https://github.com/opentofu/opentofu",
-      "source_version": "aa0f14f5",
-      "content_hash": "a87f6d8231b886d09e429ffe3a5767569940befeb558e65852f1cfd16f9fe03b",
+      "source_version": "873eade3",
+      "content_hash": "83388a491f352ff66d59df4d85d16d47f469733f33d3851c76e31f6d0c1f5a51",
       "dossier_path": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "promoted_rules": [
@@ -40727,6 +40737,11 @@
           "number": 4629,
           "title": "plugin: Test ProviderMeta is sent as msgpack null",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4972,
+          "title": "implicit moved detection bug",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40734,7 +40749,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T17:52:06.862Z",
+      "verified_at": "2026-10-27T19:49:27.640Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54748,8 +54763,8 @@
       "slug": "zed-industries-zed",
       "platform": "github",
       "source_url": "https://github.com/zed-industries/zed",
-      "source_version": "08cbb88a",
-      "content_hash": "4c0aff132484985500e25f8b4b2695e2c89b2be29e23a432540bc41b7d4cf439",
+      "source_version": "37faef81",
+      "content_hash": "fd171d0a74303e7532a09ee2691b1181d433d99ebbee0f24750378ddfac9941b",
       "dossier_path": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "promoted_rules": [
@@ -54792,6 +54807,11 @@
           "number": 4525,
           "title": "removal of unloaded project groups (#66127)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4971,
+          "title": "workspace: Fix panel buttons not working while a dock panel is zoomed (#66119)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54799,7 +54819,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T01:37:17.548Z",
+      "verified_at": "2026-10-27T19:49:21.490Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -137560,6 +137580,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T19:38:52.287Z"
+    },
+    "rule-4970": {
+      "learning_id": "rule-4970",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4970,
+      "title": "layout): restore menu active bar token suppression removed by #9772",
+      "source_url": "https://github.com/ant-design/pro-components",
+      "source_version": "d468909f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T19:49:17.742Z"
+    },
+    "rule-4971": {
+      "learning_id": "rule-4971",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4971,
+      "title": "workspace: Fix panel buttons not working while a dock panel is zoomed (#66119)",
+      "source_url": "https://github.com/zed-industries/zed",
+      "source_version": "37faef81",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T19:49:21.490Z"
+    },
+    "rule-4972": {
+      "learning_id": "rule-4972",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4972,
+      "title": "implicit moved detection bug",
+      "source_url": "https://github.com/opentofu/opentofu",
+      "source_version": "873eade3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T19:49:27.640Z"
+    },
+    "rule-4973": {
+      "learning_id": "rule-4973",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4973,
+      "title": "build: release 0.2.151 (#6016)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "39773c33",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T19:49:30.009Z"
     }
   },
   "aliases": {

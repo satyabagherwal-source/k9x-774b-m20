@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ant-design-pro-components-learnings.md`  
 > **Source**: github ([https://github.com/ant-design/pro-components](https://github.com/ant-design/pro-components))  
-> **Source Version**: `0e181a77`  
+> **Source Version**: `d468909f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T13:28:56.451Z  
+> **Timestamp**: 2026-10-27T19:49:17.405Z  
 > **Learning ID**: `learn-github-ant-design-pro-components`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ant-design-pro-components-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ant-design/pro-components](https://github.com/ant-design/pro-components))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T13:28:55.473Z  
+> **Harvest Timestamp**: 2026-10-27T19:49:16.108Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -414,17 +414,11 @@ export default () => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #9776** (2026-10-26): **docs(table): update ellipsis api**
-  *Symptoms*: showTitle 属性 被标记为 过时, 这里在文档中移除. 同时更新 ellipsis 描述  <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **文档**   * 更新表格列配置中 `ellipsis` 的说明：设为 `true` 且未启用复制时，使用原生 CSS 省略，不显示 Tooltip；使用对象配置或同时启用复制时，截断内容悬停可显示 Tooltip。   * 说明对象配置的 Tooltip 默认开启，可关闭或自定义，并更新相关类型说明。  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
-  **Post-Mortem & Fix Analysis**:
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/ant-design/pro-components/pull/9776?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review.  <details> <summary><strong><picture><img src="https://storage.googleapis.com/coderabbit_pub
-  > ## [Codecov](https://app.codecov.io/gh/ant-design/pro-components/pull/9776?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ant-design) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 88.98%. Comparing base ([`060dad9`](https://app.codecov.io/gh/ant-design/pro-components/commit/060dad9df59816b9dce9c3b4cd985de5339e5267?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ant-design)) to head ([`352a942`](https://app.codecov.io/gh/ant-design/pro-components/commit/352a9422aaf52158093b519397af437a790ee652?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ant-design)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##           master    #9776   +
+- **Issue #9778** (2026-10-27): **#9772 移除 activeBar token 覆盖后，横向菜单默认视觉回归（背景高亮与下划线并存）**
+  *Symptoms*: ## 关联  - #9772（commit a40870be9，"Stop overriding antd Menu active bar tokens in ProLayout and TopNavHeader"） - #9768（撤回后其诉求回到未解决状态，见文末说明）  ## 问题描述  横向菜单（`layout="top"` / `"mix"`）的选中态，ProLayout 一直是自己的一套视觉：`horizontalItemSelectedBg` 背景高亮 + `colorTextMenuSelected` 文字变色，并通过以下配置压制 antd 的 activeBar 下划线：  ```ts activeBarWidth: 0, activeBarHeight: 0, activeBarBorderWidth: 0, ```  该压制自 v4 时代（`colorActiveBar*: 0`）就存在，antd 6 迁移时特意改名保留，是维护多年的默认视觉。#9772 将两处覆盖删除（`src/layout/ProLayout.tsx`、`src/layout/components/TopNavHeader/index.tsx`）后，antd v6 Menu 默认 token 接管（`activeBarHeight: lineWidthBold`，2px），横向菜单现在默认渲染成**背景高亮与下划线并存**——ProLayout 自定义风格与 antd 原生风格两套设计语言混在一起，属于所有存量用户被动接受的视觉回归。  ## 建议：撤回 menu 相关修改  建议恢复上述三行覆盖（两个文件各一处），#9772 中其余修复（ProList 滚动、DrawerForm placement、ellipsis、文档主题）不受影响。TopNavHeader 中随带的格式化改动可保留，以最小化 diff。  理由：  - 回归修复优先于 API 设计讨论，恢复默认视觉无争议、可立即合入； - "如何正确暴露 activeBar 定制能力"（在 ProLayout token 体系加 `header/sider.activeBar*` 字段，或透传用户 antd 全局 `ConfigProvider` 的 `components.Menu` 配置）值得一个独立、带文档与 demo 的 PR 充分讨论，而不是在多目的 fix PR 中顺带决定。
 
-- **Issue #9775** (2026-10-26): **docs(modal-form): add placement api**
-  *Symptoms*:   <!-- This is an auto-generated comment: release notes by coderabbit.ai --> <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **文档**   * 补充 `DrawerForm` 的 `placement` 参数说明：用于设置底部操作按钮的对齐位置，可选 `start` 或 `end`，默认值为 `end`；抽屉的弹出方向仍通过 `drawerProps.placement` 设置。 <!-- end of auto-generated comment: release notes by coderabbit.ai -->
-  **Post-Mortem & Fix Analysis**:
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/ant-design/pro-components/pull/9775?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review.  <details> <summary><strong><picture><img src="https://storage.googleapis.com/coderabbit_pub
-  > ## [Codecov](https://app.codecov.io/gh/ant-design/pro-components/pull/9775?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ant-design) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 88.98%. Comparing base ([`060dad9`](https://app.codecov.io/gh/ant-design/pro-components/commit/060dad9df59816b9dce9c3b4cd985de5339e5267?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ant-design)) to head ([`76c6e3a`](https://app.codecov.io/gh/ant-design/pro-components/commit/76c6e3a5a8566bfdd79ee16dda0a541efc2835d4?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ant-design)). :warning: Report is 1 commits behind head on master.  <details><summary>Additional details and impacted files</summary>    ```diff @@           Covera
+- **Issue #9777** (2026-10-27): **doc: 补充自动合并场景文档**
+  *Symptoms*:    ## 关联    follow up #9771（自动合并主体功能已合并）。本 PR 为后续加固与文档完善。    ## 改动内容    ### fix: 捕获失效且本地排序/筛选激活时跳过该页自动合并    本地排序/筛选由 antd 在客户端改变行顺序或行集合；数据刷新（`reload`、编辑保存回流、`props.dataSource` 更新）使 `onChange`   捕获的渲染快照失效后，fallback 的源数据顺序与显示顺序不一致，按过期顺序计算 `rowSpan`   会错误隐藏单元格（如跨行组盖住其他行的城市单元格）。    - `handleTableChange` 中基于现有 `isLocalSorter` / 服务端筛选结果识别本地排序/筛选激活状态   - 捕获失效且本地排序/筛选激活时，合并计算跳过该页（所有单元格正常渲染），下一次 `onChange` 重新捕获后自动恢复   - 服务端排序/筛选场景不受影响：显示顺序即源数据顺序，fallback 切片仍然正确    ### dev 体验：合并场景的全边框推荐提示    `bordered` 是 antd Table 的核心视觉属性，与合并逻辑正交，不默认开启（不反转 antd 默认值）。仅在 dev 环境对「开启   `autoMerge`/`mergeFields` 且未显式传 `bordered`」给一条 `noteOnce` 推荐提示，不改变实际渲染行为。    ### 测试（净新增 5 个集成场景）    - 开启合并且未显式传 `bordered` 时保持 antd 默认无边框（正交性锁定）   - 未开启合并时 `bordered` 保持 antd 默认行为   - 本地排序激活时数据刷新：跳过该页合并，不错误隐藏单元格   - `request` 服务端翻页后按新页数据计算合并   - 可编辑表格本地排序激活时编辑保存回流：跳过该页合并    ### 文档与 demo    - 中英文档：`mergeFields`（ProTable 属性表）、`autoMerge`（Columns 列定义表）属性说明，「合并单元格示例」新增自动合并说明与 demo   入口   - `api.mdx` 表格功能区新增同值合并 demo（中英文同步）   - demo `demos/table/auto-merge.tsx`：列配置 `autoMerge`、表级 `mergeFields` 多级合并、无边框合并对比，合并场景建议开启 `bordered`   的注释说明    ## 验证    - 全量 `tests/table/` 回归通过（仅 1 个存量失败：`column.test.tsx` 的 z-index 用例在纯净 master 上同样失败，与本 PR 无关）   - tsc / oxlint 干净  <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **新功能**   * 表格支持按当前页连续且值相同的单元格自动纵向合并，可通过表级或列级配置启用。   * 自动合并会随排序、筛选和分页重新计算；合并示例现已提供。 * **行为说明** 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -441,42 +435,58 @@ export default () => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a5400b9b` (2026-10-26)
-**Commit Message**: fix(table): 更新 ellipsis 属性描述以更清晰地说明内容省略行为 (#9776)
+### Incident Patch 1: `b42b6ee9` (2026-10-27)
+**Commit Message**: fix(layout): restore menu active bar token suppression removed by #9772
 
-**File**: `site/en-US/components/table/index.mdx` (modified, +1/-1)
+#9772 removed the activeBarWidth/activeBarHeight/activeBarBorderWidth
+suppression from ProLayout sider and TopNavHeader, letting antd's
+default horizontal active bar (2px underline, activeBarHeight:
+lineWidthBold) render on top navigation menus again. That mixed antd's
+native selected style with ProLayout's own horizontalItemSelectedBg
+highlight, silently changing the default visuals for all users.
+
+Restore the three token overrides (present since the v4 era as
+colorActiveBar*: 0 and renamed during the antd 6 migration) so the
+default appearance is unchanged. #9768's customization request should
+be addressed separately by exposing these values through theme tokens.
+
+Fixes #9778
+
+**File**: `src/layout/ProLayout.tsx` (modified, +3/-0)
 ```diff
-@@ -275,7 +275,7 @@ If you want **client-side** sorting/filtering (and **do not** want to trigger `r
- | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------- |
- | title                                  | Basically the same as in antd, but supports passing in a method                                                                                                                                                                              | `ReactNode \| ((config: ProColumnType<T>, type: ProTableTypes) => ReactNode)`                         | -             |
- | tooltip                                | An icon will be displayed after the title, and some information will be prompted after hover                                                                                                                                                 | `LabelTooltipType \| string`                                                                          | -             |
--| ellipsis                               | Whether to abbreviate automatically. `true` uses antd Table native CSS ellipsis (better performance, no hover tooltip); pass `{showTitle?: boolean, tooltip?: TooltipProps}` for Typography rendering with tooltip                           | `boolean` \| `{showTitle?: boolean}`                                                                  | -             |
-+| ellipsis | Whether to truncate content that exceeds the column width. `true` without `copyable` uses antd Table native CSS ellipsis without a Tooltip popup, though a native browser title hint may appear. An object, or ellipsis combined with `copyable`, uses Typography for default read-only content and shows a tooltip on hover when the content is truncated. The object’s `tooltip` is enabled by default; set it to `false` to disable it, or pass Tooltip props to customize it | `boolean \| { tooltip?: boolean \| TooltipProps }` | - |
- | copyable                               | Whether to support copying                                                                                                                                                                                                                   | `boolean`                                                                                             | -             |
- | valueEnum                              | The value enumeration will automatically convert the value as a key to retrieve the content to be displayed                                                                                                                                  | [valueEnum](/en-US/components/schema-form#valueenum)                                                  | -             |
- | valueType                              | The type of value, which will generate different renderers                                                                                                                                                                                   | [`valueType`](/components/schema-form#common-valuetypes)                                              | `text`        |
+@@ -831,6 +831,9 @@ const BaseProLayout: React.FC<ProLayoutProps> = (props) => {
+                     horizontalItemSelectedBg:
+                       token.layout?.sider?.colorBgMenuItemSelected ||
+                       token?.colorBgTextHover,
++                    activeBarWidth: 0,
++                    activeBarHeight: 0,
++                    activeBarBorderWidth: 0,
+                     itemColor:
+                       token.layout?.sider?.colorTextMenu ||
+                       token?.colorTextSecondary,
 ```
 
-**File**: `site/zh-CN/components/table/index.mdx` (modified, +1/-1)
+**File**: `src/layout/components/TopNavHeader/index.tsx` (modified, +3/-0)
 ```diff
-@@ -282,7 +282,7 @@ ref.current?.cancelEditable(rowKey);
- | -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------ |
- | title                                  | 与 antd 中基本相同，但是支持通过传入一个方法                                                                                                                                                                                              | `ReactNode \| ((config: ProColumnType<T>, type: ProTableTypes) => ReactNode)`                                       | -      |
- | tooltip                                | 会在 title 之后展示一个 icon，hover 之后提示一些信息                                                                                                                                                                                      | `LabelTooltipType \| string`                                                                                        | -      |
--| ellipsis                               | 是否自动缩略。`true` 时使用 antd Table 原生 CSS 省略（性能更优，无悬浮提示）；需要 tooltip 提示或自定义时传 `{showTitle?: boolean,tooltip: [TooltipProps](https://ant-design.antgroup.com/components/tooltip-cn#api)}` 走 Typography 渲染 | boolean \| {showTitle?: boolean,tooltip: [TooltipProps](https://ant-design.antgroup.com/components/tooltip-cn#api)} | -      |
-+| ellipsis | 是否自动省略超出列宽的内容。`true` 且未开启 `copyable` 时使用 antd Table 原生 CSS 省略，不提供 Tooltip 浮层，但可能显示浏览器原生 title 提示。传入对象或同时开启 `copyable` 时，默认只读内容使用 Typography 渲染，内容被省略后悬浮显示提示；对象中的 `tooltip` 默认为开启，设为 `false` 可关闭，或传入 Tooltip 属性自定义提示 | `boolean \| { tooltip?: boolean \| TooltipProps }` | - |
- | copyable                               | 是否支持复制                                                                                                                                                                                                                              | `boolean`                                                                                                           | -      |
- | valueEnum                              | 值的枚举，会自动转化把值当成 key 来取出要显示的内容                                                                                                                                                                                       | [valueEnum](/components/schema-form#valueenum)                                                                      | -      |
- | valueType                              | 值的类型，会生成不同的渲染器                                                                                                                                                                                                              | [`valueType`](/components/schema-form#常见-valuetype)                                                               | `text` |
+@@ -80,6 +80,9 @@ const TopNavHeader: React.FC<TopNavHeaderProps> = (
+               horizontalItemSelectedBg:
+                 token.layout?.header?.colorBgMenuItemSelected ||
+                 token?.colorBgTextHover,
++              activeBarWidth: 0,
++              activeBarHeight: 0,
++              activeBarBorderWidth: 0,
+               itemColor:
+                 token.layout?.header?.colorTextMenu ||
+                 token?.colorTextSecondary,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #9777** (2026-10-27): doc: 补充自动合并场景文档 (@Zzzz-zmy)
 - **PR #9776** (2026-10-26): docs(table): update ellipsis api (@zzjiaxiang)
 - **PR #9775** (2026-10-26): docs(modal-form): add placement api (@zzjiaxiang)
 - **PR #9772** (2026-10-23): fix: address ProList, DrawerForm, Menu, ellipsis and docs theme issues (@chenshuai2144)
 - **PR #9771** (2026-10-23): feat(table): 支持同值单元格纵向自动合并 autoMerge/mergeFields (#9770) (@Zzzz-zmy)
 - **PR #9762** (2026-10-16): fix: keep open-key callbacks out of state updaters (@FOWEPJF255)
-- **PR #9761** (2026-10-16): fix(form): preserve input focus across popover validation (@FOWEPJF255)
 
 ---
 
@@ -496,28 +506,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. table): 更新 ellipsis 属性描述以更清晰地说明内容省略行为 (#9776)
+## X. layout): restore menu active bar token suppression removed by #9772
 
 **RULE**:
-When implementing operations in `site/en-US/components/table/index.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ant-design/pro-components. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/layout/ProLayout.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ant-design/pro-components. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a5400b9b`: table): 更新 ellipsis 属性描述以更清晰地说明内容省略行为 (#9776). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b42b6ee9`: layout): restore menu active bar token suppression removed by #9772. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `site/en-US/components/table/index.mdx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/layout/ProLayout.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-| ellipsis | Whether to truncate content that exceeds the column width. `true` without `copyable` uses antd Table native CSS ellipsis without a Tooltip popup, though a native browser title hint may appear. An object, or ellipsis combined with `copyable`, uses Typography for default read-only content and shows a tooltip on hover when the content is truncated. The object’s `tooltip` is enabled by default; set it to `false` to disable it, or pass Tooltip props to customize it | `boolean \| { tooltip?: boolean \| TooltipProps }` | - |
+                    activeBarWidth: 0,
+                    activeBarHeight: 0,
+                    activeBarBorderWidth: 0,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-| ellipsis                               | Whether to abbreviate automatically. `true` uses antd Table native CSS ellipsis (better performance, no hover tooltip); pass `{showTitle?: boolean, tooltip?: TooltipProps}` for Typography rendering with tooltip                           | `boolean` \| `{showTitle?: boolean}`                                                                  | -             |
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a5400b9b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b42b6ee9` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T19:38:52.388Z",
+  "last_updated": "2026-10-27T19:49:30.107Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "b4634f3c7160b883646b97c4b6a29977a6d8d934a870929278b99ec07183b14d",
-      "verified_at": "2026-10-27T11:09:21.392Z",
+      "content_hash": "b89cd80d895ca089e227e8923afae35faa6e9ca7ee0e9dbcd17f5455ecf2b4e2",
+      "verified_at": "2026-10-27T19:49:30.107Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T11:09:21.392Z"
+      "last_updated": "2026-10-27T19:49:30.107Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -5436,14 +5436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ant-design-pro-components",
-      "content_hash": "36a3ceb2aa7397d9744ba9098f0a11d512f75cdd50e609f387d6a96b0d20050c",
-      "verified_at": "2026-10-26T13:28:57.001Z",
+      "content_hash": "56ef2bd4926b0d774ecd710e0e11992673f0497537cfdceb995a9ccad5ed1fdc",
+      "verified_at": "2026-10-27T19:49:17.841Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T13:28:57.001Z"
+      "last_updated": "2026-10-27T19:49:17.841Z"
     },
     "ratatui/ratatui": {
       "repository": "ratatui/ratatui",
@@ -9636,14 +9636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-opentofu-opentofu",
-      "content_hash": "a87f6d8231b886d09e429ffe3a5767569940befeb558e65852f1cfd16f9fe03b",
-      "verified_at": "2026-10-26T17:52:06.944Z",
+      "content_hash": "83388a491f352ff66d59df4d85d16d47f469733f33d3851c76e31f6d0c1f5a51",
+      "verified_at": "2026-10-27T19:49:27.724Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T17:52:06.944Z"
+      "last_updated": "2026-10-27T19:49:27.724Z"
     },
     "surrealdb/surrealdb": {
       "repository": "surrealdb/surrealdb",
@@ -11721,14 +11721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zed-industries-zed",
-      "content_hash": "4c0aff132484985500e25f8b4b2695e2c89b2be29e23a432540bc41b7d4cf439",
-      "verified_at": "2026-10-26T01:37:17.641Z",
+      "content_hash": "fd171d0a74303e7532a09ee2691b1181d433d99ebbee0f24750378ddfac9941b",
+      "verified_at": "2026-10-27T19:49:21.574Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T01:37:17.641Z"
+      "last_updated": "2026-10-27T19:49:21.574Z"
     },
     "MohamedRejeb/compose-rich-editor": {
       "repository": "MohamedRejeb/compose-rich-editor",

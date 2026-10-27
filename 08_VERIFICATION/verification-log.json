@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-YDAW",
-    "timestamp": "2026-10-25T21:46:49.688Z",
-    "repository": "topgrade-rs/topgrade",
-    "learningId": "learn-github-topgrade-rs-topgrade",
-    "contentHash": "79decd2ac35451c61d7cd2716976dd733c89f92ce843ffaeff2c703c4ec984af",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-6NGX",
-    "timestamp": "2026-10-25T21:53:16.113Z",
-    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-    "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-    "contentHash": "5c0c2233c57cbabeda7debe3c27f194f2db10f8eb37fc6c9c3b179d2f33985df",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-6S64",
-    "timestamp": "2026-10-25T21:53:22.204Z",
-    "repository": "callstack/react-native-builder-bob",
-    "learningId": "learn-github-callstack-react-native-builder-bob",
-    "contentHash": "6976497b125bc4354824d92e0064bc2dea65725260241a603f30010354cfec1e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-G34D",
-    "timestamp": "2026-10-25T22:00:36.301Z",
-    "repository": "carbon-design-system/carbon-components-svelte",
-    "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
-    "contentHash": "1e2713ce5151383255000ef9407b969acb49c652878fee78d0e35c002b740591",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-G4N6",
     "timestamp": "2026-10-25T22:00:38.274Z",
     "repository": "restatedev/restate",
@@ -7490,6 +7430,66 @@
     "repository": "k3s-io/k3s",
     "learningId": "learn-github-k3s-io-k3s",
     "contentHash": "f0692c5d51e8e89708371c42a6caa6e4f42181e1a422b0efe8d18f9826248ac8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-MXDY",
+    "timestamp": "2026-10-27T19:49:17.830Z",
+    "repository": "ant-design/pro-components",
+    "learningId": "learn-github-ant-design-pro-components",
+    "contentHash": "56ef2bd4926b0d774ecd710e0e11992673f0497537cfdceb995a9ccad5ed1fdc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-N09M",
+    "timestamp": "2026-10-27T19:49:21.562Z",
+    "repository": "zed-industries/zed",
+    "learningId": "learn-github-zed-industries-zed",
+    "contentHash": "fd171d0a74303e7532a09ee2691b1181d433d99ebbee0f24750378ddfac9941b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-N50G",
+    "timestamp": "2026-10-27T19:49:27.712Z",
+    "repository": "opentofu/opentofu",
+    "learningId": "learn-github-opentofu-opentofu",
+    "contentHash": "83388a491f352ff66d59df4d85d16d47f469733f33d3851c76e31f6d0c1f5a51",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-N6UO",
+    "timestamp": "2026-10-27T19:49:30.096Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "b89cd80d895ca089e227e8923afae35faa6e9ca7ee0e9dbcd17f5455ecf2b4e2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "b1d59903",
+    "sourceVersion": "39773c33",
     "license": "NOASSERTION",
-    "contentHash": "b4634f3c7160b883646b97c4b6a29977a6d8d934a870929278b99ec07183b14d",
-    "lastHarvestedAt": "2026-10-27T11:09:21.386Z",
+    "contentHash": "b89cd80d895ca089e227e8923afae35faa6e9ca7ee0e9dbcd17f5455ecf2b4e2",
+    "lastHarvestedAt": "2026-10-27T19:49:30.099Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -3543,10 +3543,10 @@
     "repository": "ant-design/pro-components",
     "platform": "github",
     "sourceUrl": "https://github.com/ant-design/pro-components",
-    "sourceVersion": "0e181a77",
+    "sourceVersion": "d468909f",
     "license": "MIT",
-    "contentHash": "36a3ceb2aa7397d9744ba9098f0a11d512f75cdd50e609f387d6a96b0d20050c",
-    "lastHarvestedAt": "2026-10-26T13:28:56.992Z",
+    "contentHash": "56ef2bd4926b0d774ecd710e0e11992673f0497537cfdceb995a9ccad5ed1fdc",
+    "lastHarvestedAt": "2026-10-27T19:49:17.833Z",
     "learningId": "learn-github-ant-design-pro-components"
   },
   "ratatui-ratatui": {
@@ -6363,10 +6363,10 @@
     "repository": "opentofu/opentofu",
     "platform": "github",
     "sourceUrl": "https://github.com/opentofu/opentofu",
-    "sourceVersion": "aa0f14f5",
+    "sourceVersion": "873eade3",
     "license": "MPL-2.0",
-    "contentHash": "a87f6d8231b886d09e429ffe3a5767569940befeb558e65852f1cfd16f9fe03b",
-    "lastHarvestedAt": "2026-10-26T17:52:06.938Z",
+    "contentHash": "83388a491f352ff66d59df4d85d16d47f469733f33d3851c76e31f6d0c1f5a51",
+    "lastHarvestedAt": "2026-10-27T19:49:27.716Z",
     "learningId": "learn-github-opentofu-opentofu"
   },
   "surrealdb-surrealdb": {
@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "08cbb88a",
+    "sourceVersion": "37faef81",
     "license": "NOASSERTION",
-    "contentHash": "4c0aff132484985500e25f8b4b2695e2c89b2be29e23a432540bc41b7d4cf439",
-    "lastHarvestedAt": "2026-10-26T01:37:17.632Z",
+    "contentHash": "fd171d0a74303e7532a09ee2691b1181d433d99ebbee0f24750378ddfac9941b",
+    "lastHarvestedAt": "2026-10-27T19:49:21.566Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {
