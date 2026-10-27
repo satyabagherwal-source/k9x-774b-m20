@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `0073665a`  
+> **Source Version**: `e0faf3fe`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T04:12:34.844Z  
+> **Timestamp**: 2026-10-27T10:47:36.811Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T04:12:33.789Z  
+> **Harvest Timestamp**: 2026-10-27T10:47:36.328Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40674 stars
+- **Stars / Engagement**: 40684 stars
 
 ---
 
@@ -1919,11 +1919,11 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #72285** (2026-10-24): **expression: use the binary collation for an implicit cast to a binary string**
-  *Symptoms*: ### What problem does this PR solve?  Issue Number: close #69191  Problem Summary:  `BINARY(expr)` and other casts to a binary string that are not built with an explicit charset get their collation info from the connection (`ctx.GetCharsetInfo()`), while their return type says `binary`. TiDB evaluates with the return type, but `scalarFuncToPBExpr` sends `CharsetAndCollation()` to the coprocessor. So `MIN(BINARY(...))`, which max/min elimination turns into a TopN pushed to TiKV, is sorted by the connection collation in TiKV and by the binary collation in TiDB. With `utf8mb4_general_ci` or `utf8mb4_0900_ai_ci` as the connection collation the query returns a wrong minimum.  ### What changed and how does it work?  A cast to a string type whose charset is `binary` now always uses the binary collation, explicit charset or not.  ### Check List  Tests <!-- At least one of them must be included. -->  - [ ] Unit test - [x] Integration test - [x] Manual test (add detailed scripts or steps below) - [ ] No need to test   > - [ ] I checked and no code files have been changed.   > <!-- Or your custom  "No need to test" reasons -->  The new cases in `collation_misc` fail without the fix in the new collation mode and pass in both modes with it. The issue's queries return `323032302D31312D3234` for both forms on a nightly TiKV playground with the patched TiDB (before: `5D` for the single table query). The whole integration test suite, `go test ./pkg/expression/...`, `./pkg/planner/core/...` an
+- **Issue #72430** (2026-10-27): **executor, planner: support materialized view SHOW statements**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #18023  Problem Summary:  The MV SHOW syntax added by #72409 needs planner and executor support before users can inspect materialized views and their logs. This PR implements object listings, CREATE statements, remaining refresh-log counts, and logs waiting for purge. It also completes the common object-level grant rules for MV/MLog objects.  ### What changed and how does it work?  - Implement the six SHOW forms below, including object resolution, result columns, LIKE/WHERE filtering, visibility, and authorization. - Read the refresh/purge watermarks and MLog counts in one internal transaction, and restore the borrowed session's MV settings on cleanup. Resolve permanent objects for the definition and status commands when local temporary tables shadow them. - Limit MV/MLog object grants to SELECT, SHOW VIEW, ALTER, DROP, and OPERATE VIEW, with USAGE and grant-option handling. Expand object-level GRANT ALL to that supported set, allow only SELECT/USAGE column grants, and reject grants on shadow tables
 
-- **Issue #72257** (2026-10-25): **Cascades planner fails with error 1815 when the same CTE is referenced more than once**
-  *Symptoms*: ## Bug Report  ### 1. Minimal reproduce step (Required)  No tables or data are required. Run the following statements with default session settings apart from explicitly enabling Cascades:  ```sql SET tidb_enable_cascades_planner = ON;  WITH c AS (SELECT 1 AS a) SELECT * FROM c UNION SELECT * FROM c; ```  The issue reproduces using the native `mysql` client, independently of the test harness.  ### 2. What did you expect to see? (Required)  The query should execute successfully and return one row:  ```text a 1 ```  ### 3. What did you see instead (Required)  ```text ERROR 1815 (HY000): Internal : Can't find a proper physical plan for this query ```  Disabling Cascades makes the same query succeed:  ```sql SET tidb_enable_cascades_planner = OFF;  WITH c AS (SELECT 1 AS a) SELECT * FROM c UNION SELECT * FROM c; -- Returns one row: 1. ```  The following controls succeed with Cascades enabled:  ```sql SET tidb_enable_cascades_planner = ON;  -- UNION without a CTE. SELECT 1 AS a UNION SELECT 1 AS a;  -- A single reference to the CTE. WITH c AS (SELECT 1 AS a) SELECT * FROM c;  -- UNION with only one reference to the CTE. WITH c AS (SELECT 1 AS a) SELECT * FROM c UNION SELECT 2;  -- Two separately defined CTEs, each referenced once. WITH c1 AS (SELECT 1 AS a), c2 AS (SELECT 1 AS a) SELECT * FROM c1 UNION SELECT * FROM c2; ```  However, referencing the same CTE twice also produces error 1815 with UNION ALL and a self-join:  ```sql WITH c AS (SELECT 1 AS a) SELECT * FROM c UNION ALL S
+- **Issue #72429** (2026-10-27): **br: enable log redact by default**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: close #72428  Problem Summary:  ### What changed and how does it work?  Now, `--redact-info-log` was enabled by default.  ### Check List  Tests <!-- At least one of them must be included. -->  - [ ] Unit test - [ ] Integration test - [x] Manual test (add detailed scripts or steps below)  Source: current uncommitted change in br/cmd/br/cmd.go, based on 7fa5afdeb8412ec26fd848054a9bc1f703a2eb90. All builds and runtime verification were executed outside the sandbox.  #### Commands  ```sh make build_br BR_BIN=/private/tmp/br-redact-tiup.F1JjR8/br tiup playground:v1.16.1 v9.0.0-beta.2.pre-nightly --mode tikv-slim --pd 1 --kv 1 --without-monitor --port-offset 20000 --tag br-redact-F1JjR8 tiup --binpath /private/tmp/br-redact-tiup.F1JjR8/br br backup raw --pd 127.0.0.1:22379 --storage local:///private/tmp/br-redact-tiup.F1JjR8/default-backup --format raw --start br_redact_probe_a --end br_redact_probe_z --log-file /private/tmp/br-redact-tiup.F1JjR8/default.log --log-format json tiup --binpath /private/tmp/br-re
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1940,347 +1940,1026 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b1731737` (2026-10-22)
-**Commit Message**: *: make the graceful shutdown drain timeout configurable (#71796)
+### Incident Patch 1: `7fa5afde` (2026-10-26)
+**Commit Message**: build: upgrade Go to 1.27.3 (#72180)
 
-ref pingcap/tidb#48158, close pingcap/tidb#50143, ref pingcap/tidb#71795
+ref pingcap/tidb#70069
 
-**File**: `cmd/tidb-server/main.go` (modified, +2/-5)
+**File**: `.github/actions/tidb_build/action.yml` (modified, +1/-1)
 ```diff
-@@ -1324,14 +1324,11 @@ func closeDDLOwnerMgrDomainAndStorage(storage kv.Storage, dom *domain.Domain) {
- 	}
- }
- 
--// The amount of time we wait for the ongoing txt to finished.
--// We should better provider a dynamic way to set this value.
--var gracefulCloseConnectionsTimeout = 15 * time.Second
--
- func cleanup(svr *server.Server, storage kv.Storage, dom *domain.Domain) {
- 	dom.StopAutoAnalyze()
- 
--	drainClientWait := gracefulCloseConnectionsTimeout
-+	// The amount of time we wait for the ongoing statements and transactions to finish.
-+	drainClientWait := time.Duration(config.GetGlobalConfig().GracefulCloseConnectionsTimeout) * time.Second
- 	if deploymode.IsStarter() && svr.GetForceShutdown() {
- 		drainClientWait = 0
- 	}
+@@ -4,7 +4,7 @@ inputs:
+   go-version:
+     description: Go version to setup
+     required: false
+-    default: "1.25"
++    default: "1.27.3"
+   bazelrc:
+     description: Bazelrc content from secrets
+     required: true
 ```
 
-**File**: `pkg/config/config.go` (modified, +7/-0)
+**File**: `.github/workflows/bazel-build-crossbuild.yml` (modified, +1/-1)
 ```diff
-@@ -255,6 +255,9 @@ type Config struct {
- 	IndexLimit                 int                     `toml:"index-limit" json:"index-limit"`
- 	TableColumnCountLimit      uint32                  `toml:"table-column-count-limit" json:"table-column-count-limit"`
- 	GracefulWaitBeforeShutdown int                     `toml:"graceful-wait-before-shutdown" json:"graceful-wait-before-shutdown"`
-+	// GracefulCloseConnectionsTimeout is the number of seconds the server waits during shutdown for running
-+	// statements and open transactions to finish before it kills the remaining connections.
-+	GracefulCloseConnectionsTimeout int `toml:"graceful-close-connections-timeout" json:"graceful-close-connections-timeout"`
- 	// AlterPrimaryKey is used to control alter primary key feature.
- 	AlterPrimaryKey bool `toml:"alter-primary-key" json:"alter-primary-key"`
- 	// TreatOldVersionUTF8AsUTF8MB4 is use to treat old version table/column UTF8 charset as UTF8MB4. This is for compatibility.
-@@ -1327,6 +1330,7 @@ var defaultConf = Config{
- 	TiDBEnableExitCheck:                  false,
- 	InMemSlowQueryTopNNum:                30,
- 	InMemSlowQueryRecentNum:              500,
-+	GracefulCloseConnectionsTimeout:      15,
- 	CSE: CSE{
- 		ColumnarStoreType:      "tiflash",
- 		ColumnarCollectTimeout: 5 * time.Second,
-@@ -1798,6 +1802,9 @@ func (c *Config) Valid() error {
- 	if c.IndexLimit < DefIndexLimit || c.IndexLimit > DefMaxOfIndexLimit {
- 		return fmt.Errorf("index-limit should be [%d, %d]", DefIndexLimit, DefMaxOfIndexLimit)
- 	}
-+	if c.GracefulCloseConnectionsTimeout < 0 {
-+		return fmt.Errorf("graceful-close-connections-timeout should not be negative")
-+	}
- 	if c.Log.File.MaxSize > MaxLogFileSize {
- 		return fmt.Errorf("invalid max log file size=%v which is larger than max=%v", c.Log.File.MaxSize, MaxLogFileSize)
- 	}
+@@ -29,7 +29,7 @@ jobs:
+         with:
+           bazelrc: ${{ secrets.BAZELRC }}
+           gcp_sa_key: ${{ secrets.GCP_SA_KEY }}
+-          go-version: 1.25
++          go-version: 1.27.3
+       - name: Run Build
+         shell: bash
+         run: |
 ```
 
-**File**: `pkg/config/config.toml.example` (modified, +4/-0)
+**File**: `.github/workflows/bazel-lint-crossbuild.yml` (modified, +1/-1)
 ```diff
-@@ -49,6 +49,10 @@ compatible-kill-query = false
- # The health check will fail immediately but the server will not start shutting down until the time has elapsed.
- graceful-wait-before-shutdown = 0
- 
-+# During shutdown, wait up to N seconds for running statements and open transactions to finish before killing
-+# the remaining connections. Connections that are idle between statements are closed without waiting.
-+graceful-close-connections-timeout = 15
-+
- # treat-old-version-utf8-as-utf8mb4 use for upgrade compatibility. Set to true will treat old version table/column UTF8 charset as UTF8MB4.
- treat-old-version-utf8-as-utf8mb4 = true
- 
+@@ -25,7 +25,7 @@ jobs:
+         with:
+           bazelrc: ${{ secrets.BAZELRC }}
+           gcp_sa_key: ${{ secrets.GCP_SA_KEY }}
+-          go-version: 1.25
++          go-version: 1.27.3
+       - name: Run Bazel Lint
+         shell: bash
+         run: |
 ```
 
-**File**: `pkg/config/config.toml.nextgen.example` (modified, +4/-0)
+**File**: `.github/workflows/check-bazel-prepare.yml` (modified, +1/-1)
 ```diff
-@@ -60,6 +60,10 @@ compatible-kill-query = false
- # The health check will fail immediately but the server will not start shutting down until the time has elapsed.
- graceful-wait-before-shutdown = 0
- 
-+# During shutdown, wait up to N seconds for running statements and open transactions to finish before killing
-+# the remaining connections. Connections that are idle between statements are closed without waiting.
-+graceful-close-connections-timeout = 15
-+
- # treat-old-version-utf8-as-utf8mb4 use for upgrade compatibility. Set to true will treat old version table/column UTF8 charset as UTF8MB4.
- treat-old-version-utf8-as-utf8mb4 = true
- 
+@@ -25,7 +25,7 @@ jobs:
+       - name: Set up Go
+         uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
+         with:
+-          go-version: 1.25
++          go-version: 1.27.3
+           cache: false
+       - name: Set up Bazelisk
+         uses: bazel-contrib/setup-bazel@8310a45e30297e76bc8fbae427fb6068efa01eb8 # 0.16.0
 ```
 
-**File**: `pkg/config/config_test.go` (modified, +10/-1)
+**File**: `.github/workflows/generate-bazel-files.yml` (modified, +1/-1)
 ```diff
-@@ -1130,7 +1130,14 @@ ingest-kv-bytes = 3
- 			require.ErrorContains(t, conf.Valid(), "ru-v2.ddl-weights.ingest-kv-bytes")
- 		}
- 	})
--	conf := new(Config)
-+	require.Equal(t, 15, NewConfig().GracefulCloseConnectionsTimeout)
-+	conf := NewConfig()
-+	conf.GracefulCloseConnectionsTimeout = 0
-+	require.NoError(t, conf.Valid())
-+	conf.GracefulCloseConnectionsTimeout = -1
-+	require.ErrorContains(t, conf.Valid(), "graceful-close-connections-timeout")
-+
-+	conf = new(Config)
- 	conf.TempStoragePath = tempStorageDirName
- 	conf.Performance.TxnTotalSizeLimit = 1000
- 	conf.TiKVClient.CommitTimeout = "10s"
-@@ -1194,6 +1201,7 @@ repair-mode = true
- max-index-length = 3080
- index-limit = 70
- table-column-count-limit = 4000
-+graceful-close-connections-timeout = 120
- skip-register-to-dashboard = true
- deprecate-integer-display-length = true
- enable-enum-length-limit = false
-@@ -1282,6 +1290,7 @@ max_connections = 200
- 	require.Equal(t, 3080, conf.MaxIndexLength)
- 	require.Equal(t, 70, conf.IndexLimit)
- 	require.Equal(t, uint32(4000), conf.TableColumnCountLimit)
-+	require.Equal(t, 120, conf.GracefulCloseConnectionsTimeout)
- 	require.True(t, conf.SkipRegisterToDashboard)
- 	require.Equal(t, 3, len(conf.Labels))
- 	require.Equal(t, "bar", conf.Labels["foo"])
+@@ -32,7 +32,7 @@ jobs:
+         with:
+           bazelrc: ""
+           gcp_sa_key: ""
+-          go-version: 1.25
++          go-version: 1.27.3
+       - name: Run Bazel Prepare
+         shell: bash
+         run: |
 ```
 
-**File**: `pkg/executor/simple.go` (modified, +5/-3)
+**File**: `DEPS.bzl` (modified, +237/-192)
 ```diff
-@@ -3614,10 +3614,12 @@ func asyncDelayShutdown(p *os.Process, delay time.Duration) {
- 	// Sending SIGKILL should not be needed as SIGTERM should cause a graceful shutdown after
- 	// n seconds as configured by the GracefulWaitBeforeShutdown. This is here in case that doesn't
- 	// work for some reason.
--	graceTime := config.GetGlobalConfig().GracefulWaitBeforeShutdown
-+	cfg := config.GetGlobalConfig()
-+	graceTime := cfg.GracefulWaitBeforeShutdown
+@@ -8,29 +8,29 @@ def go_deps():
+         name = "cc_mvdan_gofumpt",
+         build_file_proto_mode = "disable_global",
+         importpath = "mvdan.cc/gofumpt",
+-        sum = "h1:zsEMWL8SVKGHNztrx6uZrXdp7AX8r421Vvp23sz7ik4=",
+-        version = "v0.9.2",
++        sum = "h1:1Lbudkz2kpM9Cjz2pL4M19u7q+GaEhCTNf7N9mfpcho=",
++        version = "v0.12.0",
+     )
+     go_repository(
+         name = "cc_mvdan_unparam",
+         build_file_proto_mode = "disable_global",
+         importpath = "mvdan.cc/unparam",
+-        sum = "h1:ssMzja7PDPJV8FStj7hq9IKiuiKhgz9ErWw+m68e7DI=",
+-        version = "v0.0.0-20251027182757-5beb8c8f8f15",
++        sum = "h1:Re1NRyLpiAt9kB+ImaaoapwWiQXrKwER4tY8fLOkDew=",
++        version = "v0.0.0-20260823230713-2fa3d841b0c8",
+     )
+     go_repository(
+         name = "co_honnef_go_tools",
+         build_file_proto_mode = "disable_global",
+         importpath = "honnef.co/go/tools",
+-        sum = "h1:w6WUp1VbkqPEgLz4rkBzH/CSU6HkoqNLp6GstyTx3lU=",
+-        version = "v0.7.0",
++        sum = "h1:+jPbCzuYxYrcoOvCecYUFDj+XJQRmzIhJmlbpps21Zk=",
++        version = "v0.8.2",
+     )
+     go_repository(
+         name = "com_4d63_gocheckcompilerdirectives",
+         build_file_proto_mode = "disable_global",
+         importpath = "4d63.com/gocheckcompilerdirectives",
+-        sum = "h1:Ew5y5CtcAAQeTVKUVFrE7EwHMrTO6BggtEj8BZSjZ3A=",
+-        version = "v1.3.0",
++        sum = "h1:ZLq62rbGWVmQhiZ8kuNVIT/M09xCSTdJz9K3xOdT/CY=",
++        version = "v1.4.0",
+     )
+     go_repository(
+         name = "com_4d63_gochecknoglobals",
+@@ -43,15 +43,15 @@ def go_deps():
+         name = "com_github_4meepo_tagalign",
+         build_file_proto_mode = "disable_global",
+         importpath = "github.com/4meepo/tagalign",
+-        sum = "h1:Bnu7jGWwbfpAie2vyl63Zup5KuRv21olsPIha53BJr8=",
+-        version = "v1.4.3",
++        sum = "h1:052JDGj2pBORc6NkD30dDXpsUpoYszDeUwr9/5YZuVA=",
++        version = "v1.4.4",
+     )
+     go_repository(
+         name = "com_github_abirdcfly_dupword",
+         build_file_proto_mode = "disable_global",
+         importpath = "github.com/Abirdcfly/dupword",
+-        sum = "h1:2j8sInznrje4I0CMisSL6ipEBkeJUJAmK1/lfoNGWrQ=",
+-        version = "v0.1.7",
++        sum = "h1:SrhcUuGsROBuChFxHALRYzyyPODWn9zwghmzPvD9Cd8=",
++        version = "v0.1.8",
+     )
+     go_repository(
+         name = "com_github_acarl005_stripansi",
+@@ -106,15 +106,15 @@ def go_deps():
+         name = "com_github_alecthomas_chroma_v2",
+         build_file_proto_mode = "disable_global",
+         importpath = "github.com/alecthomas/chroma/v2",
+-        sum = "h1:nv2AVZdTyClGbVQkIzlDm/rnhk1E9bU9nXwmZ/Vk/iY=",
+-        version = "v2.23.1",
++        sum = "h1:FodwmyOBgJULFYmDqibcp9pvfDLWdtPRh9v/r5BXYZs=",
++        version = "v2.27.0",
+     )
+     go_repository(
+         name = "com_github_alecthomas_go_check_sumtype",
+         build_file_proto_mode = "disable_global",
+         importpath = "github.com/alecthomas/go-check-sumtype",
+-        sum = "h1:u9aUvbGINJxLVXiFvHUlPEaD7VDULsrxJb4Aq31NLkU=",
+-        version = "v0.3.1",
++        sum = "h1:dXPJ+uOJLWb8rjlAuLX7JPiRJtZKw/53Ol+WxdDJ1Eo=",
++        version = "v0.5.1-0.20260828200218-ae6904d28606",
+     )
+     go_repository(
+         name = "com_github_alecthomas_kingpin_v2",
+@@ -316,8 +316,8 @@ def go_deps():
+         name = "com_github_alwxsin_noinlineerr",
+         build_file_proto_mode = "disable_global",
+         importpath = "github.com/AlwxSin/noinlineerr",
+-        sum = "h1:RUjt63wk1AYWTXtVXbSqemlbVTb23JOSRiNsshj7TbY=",
+-        version = "v1.0.5",
++        sum = "h1:KAvuxunTe9QxvqrFB7nZTdb/7Wzas4AvifslTnG0Ld8=",
++        version = "v1.0.6",
+     )
+     go_repository(
+         name = "com_github_andybalholm_brotli",
+@@ -344,15 +344,15 @@ def go_deps():
+         name = "com_github_antonboom_errname",
+         build_file_proto_mode = "disable_global",
+         importpath = "github.com/Antonboom/errname",
+-        sum = "h1:bllB7mlIbTVzO9jmSWVWLjxTEbGBVQ1Ff/ClQgtPw9Q=",
+-        version = "v1.1.1",
++        sum = "h1:dxwONZJua3VB8Xh/VaCjqAcqF645sWWv7xj26zy7tdQ=",
++        version = "v1.1.2",
+     )
+     go_repository(
+         name = "com_github_antonboom_nilnil",
+         build_file_proto_mode = "disable_global",
+         importpath = "github.com/Antonboom/nilnil",
+-        sum = "h1:9Mdr6BYd8WHCDngQnNVV0b554xyisFioEKi30sksufQ=",
+-        version = "v1.1.1",
++        sum = "h1:aNlFuJhaEseXe4fHO3xbjXlSeEiQVYa2lEkWD2s2hAY=",
++        version = "v1.1.2",
+     )
+     go_repository(
+         name = "com_github_antonboom_testifylint",
+@@ -442,8 +442,8 @@ def go_deps():
+         name = "com_github_ashanbrown_forbidigo_v2",
+         build_file_proto_mode = "disable_global",
+         importpath = "github.com/ashanbrown/forbidigo/v2",
+-        sum = "h1:OZZDOchCgsX5gvToVtEBoV2UWbFfI6RKQTir2UZzSxo=",
+-        version = "v2.3.0",
++        sum = "h1:KAZijvQ7zeIBKbhikT4jCm0TLYXC4u78bTiLh/8JROI=",
++        version = "v2.3.1",
+     )
+     go_repository(
+         name = "com_github_asha
+```
+
+**File**: `Dockerfile` (modified, +1/-1)
+```diff
+@@ -16,7 +16,7 @@
+ # production environment, please refer to https://github.com/PingCAP-QE/artifacts/blob/main/dockerfiles/cd/builders/tidb/Dockerfile.
  
--	// The shutdown is supposed to start at graceTime and is allowed to take up to 10s.
--	time.Sleep(time.Second * time.Duration(graceTime+10))
-+	// The shutdown is supposed to start at graceTime, drain clients for up to GracefulCloseConnectionsTimeout,
-+	// and is allowed to take up to 10s more for the rest of the cleanup.
-+	time.Sleep(time.Second * time.Duration(graceTime+cfg.GracefulCloseConnectionsTimeout+10))
- 	logutil.BgLogger().Info("Killing process as grace period is over", zap.Int("pid", p.Pid), zap.Int("graceTime", graceTime))
- 	err = p.Kill()
- 	if err != nil {
+ # Builder image
+-FROM golang:1.25.14@sha256:54b6b88db6fe375c6676625d87d668273f85c6d09153635d0cbba89cba7a207a as builder
++FROM golang:1.27.3@sha256:f24164268fc1e741bbdc0066dbadcf1c8426c5a8489f0729c02c3905a53032fd as builder
+ WORKDIR /tidb
+ 
+ COPY . .
+```
+
+**File**: `Dockerfile.enterprise` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@
+ 
+ # The current dockerfile is only used for development purposes.
+ # Builder image
+-FROM golang:1.25.14@sha256:54b6b88db6fe375c6676625d87d668273f85c6d09153635d0cbba89cba7a207a as builder
++FROM golang:1.27.3@sha256:f24164268fc1e741bbdc0066dbadcf1c8426c5a8489f0729c02c3905a53032fd as builder
+ WORKDIR /tidb
+ 
+ COPY . .
 ```
 
 ---
 
-### Incident Patch 2: `0073665a` (2026-10-24)
-**Commit Message**: txn: update client-go to fix repeated lock resolution (#72232)
+### Incident Patch 2: `da76b944` (2026-10-26)
+**Commit Message**: statistics: build auto-analyze jobs during the table scan (#72229)
 
-close pingcap/tidb#72231
+close pingcap/tidb#72184
 
-**File**: `DEPS.bzl` (modified, +2/-2)
+**File**: `pkg/meta/meta.go` (modified, +1/-0)
 ```diff
-@@ -4527,8 +4527,8 @@ def go_deps():
-         build_tags = ["nextgen", "intest"],
-         build_file_proto_mode = "disable_global",
-         importpath = "github.com/tikv/client-go/v2",
--        sum = "h1:R/KBFo6TCJompFfg1AZ0udz9z8AuyRCYE0Aalrc1Zl8=",
--        version = "v2.0.8-0.20260928031501-8edb23f6c7ee",
-+        sum = "h1:4HxKZfJqBoV7aPdLPcWRXImDqKCoZtZm0m0smNGgcGo=",
-+        version = "v2.0.8-0.20261023145611-a0d0bf6b591f",
-     )
-     go_repository(
-         name = "com_github_tikv_pd_client",
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -121,7 +121,7 @@ require (
- 	github.com/stretchr/testify v1.11.1
- 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.3.142
- 	github.com/tiancaiamao/appdash v0.0.0-20181126055449-889f96f722a2
--	github.com/tikv/client-go/v2 v2.0.8-0.20260928031501-8edb23f6c7ee
-+	github.com/tikv/client-go/v2 v2.0.8-0.20261023145611-a0d0bf6b591f
- 	github.com/tikv/pd/client v0.0.0-20260805103528-afa43111d149
- 	github.com/timakin/bodyclose v0.0.0-20241222091800-1db5c5ca4d67
- 	github.com/twmb/murmur3 v1.1.6
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -2368,8 +2368,8 @@ github.com/tidwall/pretty v1.2.1 h1:qjsOFOWWQl+N3RsoF5/ssm1pHmJJwhjlSbZ51I6wMl4=
- github.com/tidwall/pretty v1.2.1/go.mod h1:ITEVvHYasfjBbM0u2Pg8T2nJnzm8xPwvNhhsoaGGjNU=
- github.com/tidwall/sjson v1.2.5 h1:kLy8mja+1c9jlljvWTlSazM7cKDRfJuR/bOJhcY5NcY=
- github.com/tidwall/sjson v1.2.5/go.mod h1:Fvgq9kS/6ociJEDnK0Fk1cpYF4FIW6ZF7LAe+6jwd28=
--github.com/tikv/client-go/v2 v2.0.8-0.20260928031501-8edb23f6c7ee h1:R/KBFo6TCJompFfg1AZ0udz9z8AuyRCYE0Aalrc1Zl8=
--github.com/tikv/client-go/v2 v2.0.8-0.20260928031501-8edb23f6c7ee/go.mod h1:U0rq982i6UbAH1LUfc4t2BxZoAWvwW1JkEhGp+yEf3w=
-+github.com/tikv/client-go/v2 v2.0.8-0.20261023145611-a0d0bf6b591f h1:4HxKZfJqBoV7aPdLPcWRXImDqKCoZtZm0m0smNGgcGo=
-+github.com/tikv/client-go/v2 v2.0.8-0.20261023145611-a0d0bf6b591f/go.mod h1:6RHGg6yqa8Wc0cPeyvX7GL4wS6Alz9xZO9Kiopfkkyg=
- github.com/tikv/pd/client v0.0.0-20260805103528-afa43111d149 h1:q5NgKsvuOdEHspG/pZEpKhWlPLrIfmO8P/lDFjTEdok=
- github.com/tikv/pd/client v0.0.0-20260805103528-afa43111d149/go.mod h1:sfdha4LXeUkSs2Z7N5jLzDEtm0GE7x+Glm2pW3UgEpA=
- github.com/timakin/bodyclose v0.0.0-20241222091800-1db5c5ca4d67 h1:9LPGD+jzxMlnk5r6+hJnar67cgpDIz/iyD+rfl5r2Vk=
-```
-
-**File**: `tests/realtikvtest/txntest/BUILD.bazel` (modified, +1/-0)
-```diff
-@@ -48,6 +48,7 @@ go_test(
-         "@com_github_tikv_client_go_v2//tikv",
-         "@com_github_tikv_client_go_v2//tikvrpc",
-         "@com_github_tikv_client_go_v2//tikvrpc/interceptor",
-+        "@com_github_tikv_client_go_v2//txnkv/txnlock",
-         "@io_opencensus_go//stats/view",
-     ],
- )
-```
-
-**File**: `tests/realtikvtest/txntest/txn_test.go` (modified, +207/-0)
-```diff
-@@ -25,18 +25,24 @@ import (
+@@ -1205,6 +1205,7 @@ func splitRangeInt64Max(n int64) [][]string {
  
- 	"github.com/pingcap/errors"
- 	"github.com/pingcap/failpoint"
-+	"github.com/pingcap/kvproto/pkg/kvrpcpb"
- 	"github.com/pingcap/tidb/pkg/config"
- 	"github.com/pingcap/tidb/pkg/config/kerneltype"
- 	"github.com/pingcap/tidb/pkg/errno"
- 	"github.com/pingcap/tidb/pkg/expression"
- 	"github.com/pingcap/tidb/pkg/kv"
- 	"github.com/pingcap/tidb/pkg/session"
-+	"github.com/pingcap/tidb/pkg/tablecodec"
- 	"github.com/pingcap/tidb/pkg/testkit"
-+	"github.com/pingcap/tidb/pkg/testkit/external"
- 	"github.com/pingcap/tidb/pkg/testkit/testfailpoint"
- 	"github.com/pingcap/tidb/pkg/util/sqlexec"
- 	"github.com/pingcap/tidb/tests/realtikvtest"
- 	"github.com/stretchr/testify/require"
-+	"github.com/tikv/client-go/v2/oracle"
-+	"github.com/tikv/client-go/v2/tikv"
- 	"github.com/tikv/client-go/v2/tikvrpc"
-+	"github.com/tikv/client-go/v2/txnkv/txnlock"
- )
+ // IterAllTables iterates all the table at once, in order to avoid oom. It can use at most 15 concurrency to iterate.
+ // This function is optimized for 'many databases' scenario. Only 1 concurrency can work for 'many tables in one database' scenario.
++// It calls fn from the worker goroutines, but never concurrently.
+ func IterAllTables(ctx context.Context, store kv.Storage, startTs uint64, concurrency int, fn func(info *model.TableInfo) error) error {
+ 	cancelCtx, cancel := context.WithCancel(ctx)
+ 	defer cancel()
+```
+
+**File**: `pkg/statistics/handle/autoanalyze/priorityqueue/queue.go` (modified, +51/-49)
+```diff
+@@ -545,65 +545,22 @@ func (pq *AnalysisPriorityQueue) fetchAllTablesAndBuildAnalysisJobs(ctx context.
+ 		}
+ 		jobFactory := NewAnalysisJobFactory(sctx, autoAnalyzeRatio, currentTs)
  
- func TestInTxnPSProtoPointGet(t *testing.T) {
-@@ -242,6 +248,207 @@ func TestDuplicateErrorMessage(t *testing.T) {
- 	tk.MustContainErrMsg("update t3 set c = c + 1 where v = 1", "Duplicate entry '1' for key 't3.i1'")
+-		// Get all schemas except the memory and system database.
+-		tbls := make([]*model.TableInfo, 0, 512)
+-		// This only occurs during priority queue initialization which is infrequent.
+-		halfCPUNum := runtime.NumCPU() / 2
+-		start := time.Now()
+-		if err := meta.IterAllTables(
+-			ctx,
+-			sctx.GetStore(),
+-			currentTs,
+-			halfCPUNum,
+-			// Make sure this function is thread-safe.
+-			func(info *model.TableInfo) error {
+-				// Ignore the memory and system database.
+-				db, ok := is.SchemaByID(info.DBID)
+-				if !ok || metadef.IsMemOrSysDB(db.Name.L) {
+-					return nil
+-				}
+-				tbls = append(tbls, info)
+-				return nil
+-			}); err != nil {
+-			return errors.Trace(err)
+-		}
+-		statslogutil.StatsLogger().Info("Fetched all tables", zap.Int("tableCount", len(tbls)), zap.Duration("duration", time.Since(start)))
+-		// Add assertion to verify we've collected all tables by comparing with two different methods.
+-		// The below one is way slower than the above one, so we only use it for verification.
+-		intest.AssertFunc(func() bool {
+-			dbs := is.AllSchemaNames()
+-			verifyTbls := make([]*model.TableInfo, 0, 512)
+-			for _, db := range dbs {
+-				// Ignore the memory and system database.
+-				if metadef.IsMemOrSysDB(db.L) {
+-					continue
+-				}
+-
+-				tbls, err := is.SchemaTableInfos(context.Background(), db)
+-				if err != nil {
+-					panic(err)
+-				}
+-				verifyTbls = append(verifyTbls, tbls...)
+-			}
+-			return len(verifyTbls) == len(tbls)
+-		})
+-
+ 		// We need to check every partition of every table to see if it needs to be analyzed.
+-		for _, tblInfo := range tbls {
++		pushJobsForTable := func(tblInfo *model.TableInfo) error {
+ 			// If table locked, skip analyze all partitions of the table.
+ 			if _, ok := lockedTables[tblInfo.ID]; ok {
+-				continue
++				return nil
+ 			}
+ 
+ 			if tblInfo.IsView() {
+-				continue
++				return nil
+ 			}
+ 
+ 			pi := tblInfo.GetPartitionInfo()
+ 			if pi == nil {
+ 				stats, found := pq.statsHandle.GetNonPseudoPhysicalTableStats(tblInfo.ID)
+ 				if !found {
+-					continue
++					return nil
+ 				}
+ 
+ 				job := jobFactory.CreateNonPartitionedTableAnalysisJob(
+@@ -614,7 +571,7 @@ func (pq *AnalysisPriorityQueue) fetchAllTablesAndBuildAnalysisJobs(ctx context.
+ 				if err != nil {
+ 					return err
+ 				}
+-				continue
++				return nil
+ 			}
+ 
+ 			// Only analyze the partition that has not been locked.
+@@ -641,7 +598,7 @@ func (pq *AnalysisPriorityQueue) fetchAllTablesAndBuildAnalysisJobs(ctx context.
+ 			} else {
+ 				globalStats, found := pq.statsHandle.GetNonPseudoPhysicalTableStats(tblInfo.ID)
+ 				if !found {
+-					continue
++					return nil
+ 				}
+ 				job := jobFactory.CreateDynamicPartitionedTableAnalysisJob(
+ 					tblInfo,
+@@ -653,8 +610,53 @@ func (pq *AnalysisPriorityQueue) fetchAllTablesAndBuildAnalysisJobs(ctx context.
+ 					return err
+ 				}
+ 			}
++			return nil
+ 		}
+ 
++		// Get all schemas except the memory and system database.
++		tableCount := 0
++		// This only occurs during priority queue initialization which is infrequent.
++		halfCPUNum := runtime.NumCPU() / 2
++		start := time.Now()
++		if err := meta.IterAllTables(
++			ctx,
++			sctx.GetStore(),
++			currentTs,
++			halfCPUNum,
++			// IterAllTables calls this function serially, so it can push to the queue directly.
++			// Build jobs during the scan: keeping every TableInfo until the end can OOM with many tables.
++			func(info *model.TableInfo) error {
++				// Ignore the memory and system database.
++				db, ok := is.SchemaByID(info.DBID)
++				if !ok || metadef.IsMemOrSysDB(db.Name.L) {
++					return nil
++				}
++				tableCount++
++				return pushJobsForTable(info)
++			}); err != nil {
++			return errors.Trace(err)
++		}
++		statslogutil.StatsLogger().Info("Fetched all tables", zap.Int("tableCount", tableCount), zap.Duration("duration", time.Since(start)))
++		// Add assertion to verify we've collected all tables by comparing with two different methods.
++		// The below one is way slower than the above one, so we only use it for verification.
++		intest.AssertFunc(func() bool {
++			dbs := is.AllSchemaNames()
++			verifyTbls := make([]*model.TableInfo, 0, 512)
++			for _, db := range dbs {
++				// Ignore the memory and system database.
++				if metadef.IsMemOrSysDB(db.L) {
++					continue
++				}
++
++				tbls, err := is.SchemaTableInfos(context.Background(), db)
++				if err != nil {
++					panic(err)
++				}
++				verifyTbls = append(verifyTbls, tbls...)
++			}
++			return len(verifyTbls) == tableCount
++		})
++
+ 		return nil
+ 	}, statsutil.FlagWrapTxn)
+ }
+```
+
+**File**: `pkg/statistics/handle/autoanalyze/priorityqueue/queue_test.go` (modified, +21/-0)
+```diff
+@@ -480,6 +480,15 @@ func TestProcessDMLChangesWithLockedTables(t *testing.T) {
+ 	require.NoError(t, err)
+ 	require.Equal(t, tbl2.Meta().ID, job.GetTableID())
+ 
++	// Rebuild must also skip the locked table.
++	require.NoError(t, pq.Rebuild())
++	l, err = pq.Len()
++	require.NoError(t, err)
++	require.Equal(t, 1, l)
++	job, err = pq.PeekForTest()
++	require.NoError(t, err)
++	require.Equal(t, tbl2.Meta().ID, job.GetTableID())
++
+ 	// Unlock t1.
+ 	tk.MustExec("unlock stats t1")
+ 	require.NoError(t, handle.Update(ctx, dom.InfoSchema()))
+@@ -542,6 +551,12 @@ func TestProcessDMLChangesWithLockedPartitionsAndDynamicPruneMode(t *testing.T)
+ 	require.NoError(t, err)
+ 	require.Equal(t, 0, l)
+ 
++	// Rebuild must also skip the locked table.
++	require.NoError(t, pq.Rebuild())
++	l, err = pq.Len()
++	require.NoError(t, err)
++	require.Equal(t, 0, l)
++
+ 	// Unlock the whole table.
+ 	tk.MustExec("unlock stats t1")
+ 	require.NoError(t, handle.Update(ctx, dom.InfoSchema()))
+@@ -605,6 +620,12 @@ func TestProcessDMLChangesWithLockedPartitionsAndStaticPruneMode(t *testing.T) {
+ 	require.NoError(t, err)
+ 	require.Equal(t, 0, l)
+ 
++	// Rebuild must also skip the locked partition.
++	require.NoError(t, pq.Rebuild())
++	l, err = pq.Len()
++	require.NoError(t, err)
++	require.Equal(t, 0, l)
++
+ 	// Unlock partition p0.
+ 	tk.MustExec("unlock stats t1 partition (p0)")
+ 	require.NoError(t, handle.Update(ctx, dom.InfoSchema()))
+```
+
+---
+
+### Incident Patch 3: `592082de` (2026-10-26)
+**Commit Message**: server: fix connection quota and cursor resource ownership (#72240)
+
+close pingcap/tidb#71988, close pingcap/tidb#72411
+
+**File**: `pkg/server/conn_stmt.go` (modified, +23/-54)
+```diff
+@@ -285,24 +285,10 @@ func (cc *clientConn) executePreparedStmtAndWriteResult(ctx context.Context, stm
+ 	}
+ 
+ 	// first, try to clear the left cursor if there is one
+-	if useCursor && stmt.GetCursorActive() {
+-		resultset.ReportCursorRUV2Delta(stmt.GetResultSet())
+-		if stmt.GetResultSet() != nil && stmt.GetResultSet().GetRowIterator() != nil {
+-			stmt.GetResultSet().GetRowIterator().Close()
++	if stmt.GetCursorActive() {
++		if err := stmt.CloseCursor(); err != nil {
++			logutil.Logger(ctx).Error("Fail to close cursor before executing statement", zap.Error(err))
+ 		}
+-		if stmt.GetRowContainer() != nil {
+-			stmt.GetRowContainer().GetMemTracker().Detach()
+-			stmt.GetRowContainer().GetDiskTracker().Detach()
+-			err := stmt.GetRowContainer().Close()
+-			if err != nil {
+-				logutil.Logger(ctx).Error(
+-					"Fail to close rowContainer before executing statement. May cause resource leak",
+-					zap.Error(err))
+-			}
+-			stmt.StoreRowContainer(nil)
+-		}
+-		stmt.StoreResultSet(nil)
+-		stmt.SetCursorActive(false)
+ 	}
+ 
+ 	// For the combination of `ComPrepare` and `ComExecute`, the statement name is stored in the client side, and the
+@@ -323,10 +309,10 @@ func (cc *clientConn) executePreparedStmtAndWriteResult(ctx context.Context, stm
+ 	if rs == nil || err != nil {
+ 		clearConnectionAlive()
+ 	}
+-	var lazy bool
++	var detached bool
+ 	if rs != nil {
+ 		defer func() {
+-			if !lazy {
++			if !detached {
+ 				rs.Close()
+ 			}
+ 		}()
+@@ -355,7 +341,7 @@ func (cc *clientConn) executePreparedStmtAndWriteResult(ctx context.Context, stm
+ 	// we should hold the ResultSet in PreparedStatement for next stmt_fetch, and only send back ColumnInfo.
+ 	// Tell the client cursor exists in server by setting proper serverStatus.
+ 	if useCursor {
+-		lazy, err = cc.executeWithCursor(ctx, stmt, rs)
++		detached, err = cc.executeWithCursor(ctx, stmt, rs)
+ 		return false, err
+ 	}
+ 	retryable, err := cc.writeResultSet(ctx, rs, true, cc.ctx.Status(), 0)
+@@ -365,15 +351,25 @@ func (cc *clientConn) executePreparedStmtAndWriteResult(ctx context.Context, stm
+ 	return false, nil
  }
  
-+type observeInsertLockClient struct {
-+	tikv.Client
-+	onResponse func(*tikvrpc.Request, *tikvrpc.Response, error) (*tikvrpc.Response, error)
-+}
-+
-+func (c *observeInsertLockClient) SendRequest(ctx context.Context, addr string, req *tikvrpc.Request, timeout time.Duration) (*tikvrpc.Response, error) {
-+	resp, err := c.Client.SendRequest(ctx, addr, req, timeout)
-+	return c.onResponse(req, resp, err)
-+}
-+
-+// TestInsertOnDuplicateKeyUpdateResolvesRepeatedLocks verifies that an INSERT
-+// encountering repeated locks from unique-index checks resolves them and preserves committed rows.
-+// See https://github.com/pingcap/tidb/issues/72231.
-+func TestInsertOnDuplicateKeyUpdateResolvesRepeatedLocks(t *testing.T) {
-+	testInsertOnDuplicateKeyUpdateResolvesRepeatedLocks(t, false)
-+}
-+
-+// TestInsertOnDuplicateKeyUpdateRollsBackRepeatedLocks verifies that an INSERT
-+// encountering expired repeated locks rolls them back and writes the expected rows.
-+// See https://github.com/pingcap/tidb/issues/72231.
-+func TestInsertOnDuplicateKeyUpdateRollsBackRepeatedLocks(t *testing.T) {
-+	testInsertOnDuplicateKeyUpdateResolvesRepeatedLocks(t, true)
-+}
-+
-+func testInsertOnDuplicateKeyUpdateResolvesRepeatedLocks(t *testing.T, rollback bool) {
-+	store := realtikvtest.CreateMockStoreAndSetup(t)
-+	tk := testkit.NewTestKit(t, store)
-+	tk.MustExec("use test")
-+	tk.MustExec("create table insert_duplicate_locks (id int primary key, u int unique, v int)")
-+	tk.MustExec("set tidb_enable_async_commit = OFF")
-+	tk.MustExec("set tidb_enable_1pc = OFF")
-+	t.Log("TiDB version:", tk.MustQuery("select tidb_version()").Rows())
-+
-+	// Leave prewrite locks for the next INSERT to resolve, either committed or expired.
-+	var startTS uint64
-+	func() {
-+		var enabledFailpoints []string
-+		defer func() {
-+			for i := len(enabledFailpoints) - 1; i >= 0; i-- {
-+				if err := failpoint.Disable(enabledFailpoints[i]); err != nil {
-+					t.Errorf("failed to disable failpoint %s: %v", enabledFailpoints[i], err)
-+				}
+-func (cc *clientConn) executeWithCursor(ctx context.Context, stmt PreparedStatement, rs resultset.ResultSet) (lazy bool, err error) {
++// The detached result indicates that the caller no longer owns the original result set,
++// even when detaching or sending the cursor metadata fails.
++func (cc *clientConn) executeWithCursor(ctx context.Context, stmt PreparedStatement, rs resultset.ResultSet) (detached bool, err error) {
++	defer func() {
++		if err != nil {
++			if closeErr := stmt.CloseCursor(); closeErr != nil {
++				logutil.Logger(ctx).Error("Fail to close cursor after execution error",
++					zap.NamedError("original-error", err), zap.NamedError("close-error", closeErr))
 +			}
-+		}()
-+		enableFailpoint := func(name, expression string) {
-+			require.NoError(t, failpoint.Enable(name, expression))
-+			enabledFailpoints = append(enabledFailpoints, name)
 +		}
-+
-+		enableFailpoint("tikvclient/twoPCRequestBatchSizeLimit", "return")
-+		if rollback {
-+			enableFailpoint("tikvclient/beforeCommit", `return("fail")`)
-+			enableFailpoint("tikvclient/commitFailedSkipCleanup", "return")
-+			enableFailpoint("tikvclient/twoPCShortLockTTL", "return")
-+			enableFailpoint("tikvclient/doNotKeepAlive", "return")
-+		} else {
-+			enableFailpoint("tikvclient/beforeCommitSecondaries", `return("skip")`)
-+		}
-+		tk.MustExec("begin optimistic")
-+		tk.MustExec("insert into insert_duplicate_locks values (1, 1, 10), (2, 2, 20), (3, 3, 30)")
-+		txn, err := tk.Session().Txn(false)
-+		require.NoError(t, err)
-+		startTS = txn.StartTS()
-+		if rollback {
-+			tk.MustContainErrMsg("commit", "injected failure before commit")
-+		} else {
-+			tk.MustExec("commit")
-+		}
-+		tk.Session().GetCommitWaitGroup().Wait()
 +	}()
+ 	vars := (&cc.ctx).GetSessionVars()
+ 	if vars.EnableLazyCursorFetch {
+ 		// try to execute with lazy cursor fetch
+ 		ok, err := cc.executeWithLazyCursor(ctx, stmt, rs)
+ 
+-		// if `ok` is false, should try to execute without lazy cursor fetch
+-		if ok {
+-			return true, err
++		// Fall back to eager execution only when detaching is unsupported.
++		if ok || err != nil {
++			return ok, err
+ 		}
+ 	}
+ 
+@@ -407,20 +403,6 @@ func (cc *clientConn) executeWithCursor(ctx context.Context, stmt PreparedStatem
+ 	// store the rowContainer in the statement right after it's created, so that even if the logic in defer is not triggered,
+ 	// the rowContainer will be released when the statement is closed.
+ 	stmt.StoreRowContainer(rowContainer)
+-	defer func() {
+-		if err != nil {
+-			// if the execution panic, it'll not reach this branch. The `rowContainer` will be released in the `stmt.Close`.
+-			stmt.StoreRowContainer(nil)
+-
+-			rowContainer.GetMemTracker().Detach()
+-			rowContainer.GetDiskTracker().Detach()
+-			errCloseRowContainer := rowContainer.Close()
+-			if errCloseRowContainer != nil {
+-				logutil.Logger(ctx).Error("Fail to close rowContainer in error handler. May cause resource leak",
+-					zap.NamedError("original-error", err), zap.NamedError("close-error", errCloseRowContainer))
+-			}
+-		}
+-	}()
+ 
+ 	for {
+ 		chk := rs.NewChunk(nil)
+@@ -440,11 +422,6 @@ func (cc *clientConn) executeWithCursor(ctx context.Context, stmt PreparedStatem
+ 	}
+ 
+ 	reader := chunk.NewRowContainerReader(rowContainer)
+-	defer func() {
+-		if err != nil {
+-			reader.Close()
+-		}
+-	}()
+ 	crs := resultset.WrapWithRowContainerCursor(rs, reader)
+ 	resultset.AttachCursorRUV2Tracker(crs, cc.buildCursorRUV2Tracker(ctx))
+ 	if cl, ok := crs.(resultset.FetchNotifier); ok {
+@@ -456,13 +433,12 @@ func (cc *clientConn) executeWithCursor(ctx context.Context, stmt PreparedStatem
+ }
+ 
+ // executeWithLazyCursor tries to detach the `ResultSet` and make it suitable to execute lazily.
+-// Be careful that the return value `(bool, error)` has different meaning with other similar functions. The first `bool` represent whether
+-// the `ResultSet` is suitable for lazy execution. If the return value is `(false, _)`, the `rs` in argument can still 
+```
+
+**File**: `pkg/server/conn_stmt_test.go` (modified, +111/-0)
+```diff
+@@ -58,6 +58,23 @@ func (*mockCursorTrackerRecordSet) Close() error { return nil }
+ 
+ var _ sqlexec.RecordSet = &mockCursorTrackerRecordSet{}
+ 
++type detachableCursorRecordSet struct {
++	mockCursorTrackerRecordSet
++	detached      sqlexec.RecordSet
++	detachErr     error
++	detachOnError bool
++	closeCount    int
++}
 +
-+	tikvStore := store.(tikv.Storage)
-+	tableID := external.GetTableByName(t, tk, "test", "insert_duplicate_locks").Meta().ID
-+	tableStart := tablecodec.EncodeTablePrefix(tableID)
-+	tableEnd := tableStart.PrefixNext()
-+	scanLocks := func() (int, error) {
-+		resolver := tikv.NewRegionLockResolver("insert-duplicate-locks", tikvStore)
-+		bo := tikv.NewBackoffer(context.Background(), 5000)
-+		count := 0
-+		for key := []byte(tableStart); ; {
-+			locks, loc, err := resolver.ScanLocksInOneRegion(bo, key, tableEnd, startTS, 16)
-+			if err != nil {
-+				return 0, err
-+			}
-+			count += len(locks)
-+			if len(loc.EndKey) == 0 || bytes.Compare(loc.EndKey, tableEnd) >= 0 {
-+				return count, nil
-+			}
-+			key = loc.EndKey
++func (rs *detachableCursorRecordSet) TryDetach() (sqlexec.RecordSet, bool, error) {
++	return rs.detached, rs.detached != nil || rs.detachOnError, rs.detachErr
++}
++
++func (rs *detachableCursorRecordSet) Close() error {
++	rs.closeCount++
++	return nil
++}
++
+ type executeStmtRecordSetSession struct {
+ 	sessionapi.Session
+ 	recordSet sqlexec.RecordSet
+@@ -556,6 +573,16 @@ func TestCursorFetchExecuteWithOpenCursor(t *testing.T) {
+ 	require.NoError(t, c.Dispatch(ctx, appendUint32(appendUint32([]byte{mysql.ComStmtFetch}, uint32(stmt.ID())), 1)))
+ 	require.NoError(t, c.flush(context.Background()))
+ 	require.Equal(t, expected, out.Bytes())
++
++	// Re-executing without a cursor must release the previous cursor too.
++	require.NoError(t, c.Dispatch(ctx, append(
++		appendUint32([]byte{mysql.ComStmtExecute}, uint32(stmt.ID())),
++		0x0, 0x1, 0x0, 0x0, 0x0,
++	)))
++	require.False(t, stmt.GetCursorActive())
++	require.Nil(t, stmt.GetResultSet())
++	require.Nil(t, stmt.GetRowContainer())
++	require.Error(t, c.Dispatch(ctx, appendUint32(appendUint32([]byte{mysql.ComStmtFetch}, uint32(stmt.ID())), 1)))
+ }
+ 
+ func TestCursorFetchReset(t *testing.T) {
+@@ -598,6 +625,90 @@ func TestCursorFetchReset(t *testing.T) {
+ 	)))
+ 	// the following fetch will fail
+ 	require.Error(t, c.Dispatch(ctx, appendUint32(appendUint32([]byte{mysql.ComStmtFetch}, uint32(stmt.ID())), 1)))
++
++	t.Run("lazy metadata failures release the detached cursor", func(t *testing.T) {
++		c.ctx.GetSessionVars().EnableLazyCursorFetch = true
++		for _, tc := range []struct {
++			name       string
++			bufferSize int
++		}{
++			{name: "column count", bufferSize: 1},
++			{name: "EOF", bufferSize: 5},
++			{name: "flush", bufferSize: 4096},
++		} {
++			t.Run(tc.name, func(t *testing.T) {
++				writer := &failedWriteResponseWriter{failOnWrite: 1}
++				c.pkt.SetBufWriter(bufio.NewWriterSize(writer, tc.bufferSize))
++				detached := &detachableCursorRecordSet{}
++				source := resultset.New(&detachableCursorRecordSet{detached: detached}, nil)
++				defer source.Close()
++				cursorStmt := &TiDBStatement{}
++				_, err := c.executeWithCursor(ctx, cursorStmt, source)
++				require.Error(t, err)
++				require.Equal(t, 1, detached.closeCount)
++				require.Nil(t, cursorStmt.GetResultSet())
++				require.False(t, cursorStmt.GetCursorActive())
++				require.NoError(t, cursorStmt.Reset())
++				require.Equal(t, 1, detached.closeCount)
++			})
 +		}
++	})
++
++	t.Run("detach errors do not fall back to eager execution", func(t *testing.T) {
++		c.ctx.GetSessionVars().EnableLazyCursorFetch = true
++		c.pkt.ResetBufWriter(new(bytes.Buffer))
++		for _, detached := range []bool{false, true} {
++			detachErr := errors.New("cannot detach cursor")
++			source := resultset.New(&detachableCursorRecordSet{detachErr: detachErr, detachOnError: detached}, nil)
++			defer source.Close()
++			cursorStmt := &TiDBStatement{}
++			gotDetached, err := c.executeWithCursor(ctx, cursorStmt, source)
++			require.ErrorIs(t, err, detachErr)
++			require.Equal(t, detached, gotDetached)
++			require.Nil(t, cursorStmt.GetRowContainer())
++			require.Nil(t, cursorStmt.GetResultSet())
++			require.False(t, cursorStmt.GetCursorActive())
++		}
++	})
++
++	t.Run("successful lazy cursor stays open until release", func(t *testing.T) {
++		c.ctx.GetSessionVars().EnableLazyCursorFetch = true
++		c.pkt.ResetBufWriter(new(bytes.Buffer))
++		detached := &detachableCursorRecordSet{}
++		source := resultset.New(&detachableCursorRecordSet{detached: detached}, nil)
++		defer source.Close()
++		cursorStmt := &TiDBStatement{boundParams: [][]byte{[]byte("long data")}}
++		gotDetached, err := c.executeWithCursor(ctx, cursorStmt, source)
++		require.NoError(t, err)
++		require.True(t, gotDetached)
++		require.True(t, cursorStmt.GetCursorActive())
++		require.Zero(t, detached.closeCount)
++		require.NoError(t, cursorStmt.CloseCursor())
++		require.Equal(t, [][]byte{[]byte("long data")}, cursorStmt.BoundParams())
++		require.NoError(t, cursorStmt.CloseCursor())
++		require.NoError(t, cursorStmt.Reset())
++		require.Nil(t, cursorStmt.BoundParams()[0])
++		require.Equal(t, 1, detached.closeCount)
++		require.Nil(t, cursorStmt.GetResultSet())
++		require.False(t, cursorStmt.GetCursorActive())
++	})
++
++	t.Run("eager metadata failures release the row container", func(t *testing.T) {
++		c.ctx.GetSessionVars().EnableLazyCursorFetch = false
++		for _, bufferSize := range []int{1, 5, 4096} {
++			writer := &failedWriteResponseWriter{failOnWrite: 1}
++			c.pkt.SetBufWriter(bufio.NewWriterSize(writer, bufferSize))
++			source := resultset.New(&mockCursorTrackerRecordSet{}, nil)
++			defer source.Close()
++			cursorStmt := &TiDBStatement{}
++			_, err := c.executeWithCursor(ctx, cursorStmt, source)
++			re
+```
+
+**File**: `pkg/server/driver.go` (modified, +3/-0)
+```diff
+@@ -65,6 +65,9 @@ type PreparedStatement interface {
+ 	// Reset removes all bound parameters and opened resultSet/rowContainer.
+ 	Reset() error
+ 
++	// CloseCursor releases cursor resources without clearing bound parameters.
++	CloseCursor() error
++
+ 	// Close closes the statement.
+ 	Close() error
+ 
+```
+
+**File**: `pkg/server/driver_tidb.go` (modified, +18/-35)
+```diff
+@@ -80,9 +80,8 @@ type TiDBStatement struct {
+ 	boundLongDataBytes int64
+ 	paramsType         []byte
+ 	ctx                *TiDBContext
+-	// this result set should have been closed before stored here. Only the `rowIterator` are used here. This field is
+-	// not moved out to reuse the logic inside functions `writeResultSet...`
+-	// TODO: move the `fetchedRows` into the statement, and remove the `ResultSet` from statement.
++	// Eager cursors keep a reader over rowContainer after their result set is closed;
++	// lazy cursors keep a detached result set alive until their iterator is closed.
+ 	rs resultset.CursorResultSet
+ 	// the `rowContainer` should contain all pre-fetched results of the statement in `EXECUTE` command.
+ 	// it's stored here to be closed in RESET and CLOSE command
+@@ -207,8 +206,7 @@ func (ts *TiDBStatement) GetParamsType() []byte {
+ 
+ // StoreResultSet stores ResultSet for stmt fetching
+ func (ts *TiDBStatement) StoreResultSet(rs resultset.CursorResultSet) {
+-	// the original reset set should have been closed, and it's only used to store the iterator through the rowContainer
+-	// so it's fine to just overwrite it.
++	// The caller must release any previous cursor before replacing it.
+ 	ts.rs = rs
+ }
+ 
+@@ -220,47 +218,32 @@ func (ts *TiDBStatement) GetResultSet() resultset.CursorResultSet {
+ // Reset implements PreparedStatement Reset method.
+ func (ts *TiDBStatement) Reset() error {
+ 	ts.releaseBoundLongData()
+-	ts.hasActiveCursor = false
++	return ts.CloseCursor()
++}
+ 
+-	resultset.ReportCursorRUV2Delta(ts.rs)
+-	if ts.rs != nil && ts.rs.GetRowIterator() != nil {
+-		ts.rs.GetRowIterator().Close()
+-	}
++// CloseCursor releases each owned cursor resource once, including after an error.
++func (ts *TiDBStatement) CloseCursor() error {
++	rs, rowContainer := ts.rs, ts.rowContainer
+ 	ts.rs = nil
++	ts.rowContainer = nil
++	ts.hasActiveCursor = false
+ 
+-	if ts.rowContainer != nil {
+-		ts.rowContainer.GetMemTracker().Detach()
+-		ts.rowContainer.GetDiskTracker().Detach()
+-
+-		rc := ts.rowContainer
+-		ts.rowContainer = nil
+-
+-		err := rc.Close()
+-		if err != nil {
+-			return err
+-		}
++	resultset.ReportCursorRUV2Delta(rs)
++	if rs != nil && rs.GetRowIterator() != nil {
++		rs.GetRowIterator().Close()
+ 	}
+ 
++	if rowContainer != nil {
++		return rowContainer.Close()
 +	}
-+	lockCount, err := scanLocks()
-+	require.NoError(t, err)
-+	if rollback {
-+		require.Equal(t, 6, lockCount, "the primary and all five secondaries must remain 
+ 	return nil
+ }
+ 
+ // Close implements PreparedStatement Close method.
+ func (ts *TiDBStatement) Close() error {
+ 	ts.releaseBoundLongData()
+-
+-	resultset.ReportCursorRUV2Delta(ts.rs)
+-	if ts.rs != nil && ts.rs.GetRowIterator() != nil {
+-		ts.rs.GetRowIterator().Close()
+-	}
+-
+-	if ts.rowContainer != nil {
+-		ts.rowContainer.GetMemTracker().Detach()
+-		ts.rowContainer.GetDiskTracker().Detach()
+-
+-		err := ts.rowContainer.Close()
+-		if err != nil {
+-			return err
+-		}
++	if err := ts.CloseCursor(); err != nil {
++		return err
+ 	}
+ 
+ 	// TODO close at tidb level
+```
+
+**File**: `pkg/server/server.go` (modified, +3/-2)
+```diff
+@@ -834,13 +834,14 @@ func (s *Server) onConn(conn *clientConn) {
+ 		logutil.Logger(ctx).Debug("connection closed")
+ 	}()
+ 
+-	if err := conn.increaseUserConnectionsCount(); err != nil {
++	releaseUserConnection, err := conn.increaseUserConnectionsCount()
++	if err != nil {
+ 		logutil.BgLogger().With(zap.Uint64("conn", conn.connectionID)).
+ 			Warn("failed to increase the count of connections", zap.Error(err),
+ 				zap.String("remote addr", conn.bufReadConn.RemoteAddr().String()))
+ 		return
+ 	}
+-	defer conn.decreaseUserConnectionCount()
++	defer releaseUserConnection()
+ 
+ 	if !s.registerConn(conn) {
+ 		return
+```
+
+**File**: `pkg/server/user_connections.go` (modified, +19/-27)
+```diff
+@@ -36,59 +36,51 @@ func calculateConnectionLimit(globalLimit uint32, userLimit uint32) uint32 {
+ 	return globalLimit
+ }
+ 
+-// increaseUserConnectionsCount increases the count of connections when user login the database.
++// increaseUserConnectionsCount increases the count of connections when user login the database
++// and returns a release function bound to the account that acquired the quota.
+ // Note: increaseUserConnectionsCount() is called when create connections only, and not in 'changeUser'(COM_CHANGE_USER).
+ // In mysql, 'COM_CHANGE_USER' will only reset the session state (such as permissions, default database, etc.),
+ // but will not change the ownership of the number of connections.
+-func (cc *clientConn) increaseUserConnectionsCount() error {
++func (cc *clientConn) increaseUserConnectionsCount() (func(), error) {
+ 	var (
+ 		user       = cc.ctx.GetSessionVars().User
+ 		targetUser = user.String()
+ 		globaLimit = vardef.MaxUserConnectionsValue.Load()
++		server     = cc.server
+ 	)
+ 
+ 	// check the number of connections again.
+ 	pm := privilege.GetPrivilegeManager(cc.ctx.Session)
+ 	userLimit, err := pm.GetUserResources(user.AuthUsername, user.AuthHostname)
+ 	if err != nil {
+-		return err
++		return nil, err
+ 	}
+ 	limit := calculateConnectionLimit(globaLimit, uint32(userLimit))
+ 
+-	cc.server.userResLock.Lock()
+-	defer cc.server.userResLock.Unlock()
+-	ur, ok := cc.server.userResource[targetUser]
++	server.userResLock.Lock()
++	defer server.userResLock.Unlock()
++	ur, ok := server.userResource[targetUser]
+ 	if !ok {
+-		// if not exist in userResource,
+-		userHost := &userResourceLimits{
+-			connections: 1,
+-		}
+-		cc.server.userResource[targetUser] = userHost
+-		return nil
+-	}
+-
+-	// check the global variables `MAX_USER_CONNECTIONS` and the max_user_conections in mysql.user
+-	// with current count of active connection.
+-	if limit > 0 && ur.connections >= int(limit) {
+-		return servererr.ErrTooManyUserConnections.GenWithStackByArgs(targetUser)
++		ur = &userResourceLimits{}
++		server.userResource[targetUser] = ur
++	} else if limit > 0 && ur.connections >= int(limit) {
++		// Check the global MAX_USER_CONNECTIONS and the user's limit against the active count.
++		return nil, servererr.ErrTooManyUserConnections.GenWithStackByArgs(targetUser)
+ 	}
+ 
+ 	ur.connections++
+-	return nil
++	return func() { server.decreaseUserConnectionCount(targetUser) }, nil
+ }
+ 
+ // decreaseUserConnectionCount decreases the count of connections when user logout the database.
+-func (cc *clientConn) decreaseUserConnectionCount() {
+-	user := cc.ctx.GetSessionVars().User
+-	targetUser := user.String()
+-
+-	cc.server.userResLock.Lock()
+-	defer cc.server.userResLock.Unlock()
+-	ur, ok := cc.server.userResource[targetUser]
++func (s *Server) decreaseUserConnectionCount(targetUser string) {
++	s.userResLock.Lock()
++	defer s.userResLock.Unlock()
++	ur, ok := s.userResource[targetUser]
+ 	if ok && ur.connections > 0 {
+ 		ur.connections--
+ 		if ur.connections <= 0 {
+-			delete(cc.server.userResource, targetUser)
++			delete(s.userResource, targetUser)
+ 		}
+ 	}
+ }
+```
+
+**File**: `pkg/server/user_connections_test.go` (modified, +75/-37)
+```diff
+@@ -62,88 +62,126 @@ func TestUserConnectionCount(t *testing.T) {
+ 		AuthHostname: "%",
+ 	}
+ 
++	var releases []func()
++	acquireConnection := func() error {
++		release, err := cc.increaseUserConnectionsCount()
++		if err == nil {
++			releases = append(releases, release)
++		}
++		return err
++	}
++	releaseConnection := func() {
++		last := len(releases) - 1
++		releases[last]()
++		releases = releases[:last]
++	}
++
+ 	// test1: global MAX_USER_CONNECTIONS = 0 and max_user_conections = 0 in mysql.user for `zak`@`%`
+-	require.Nil(t, cc.increaseUserConnectionsCount())
+-	require.Nil(t, cc.increaseUserConnectionsCount())
+-	require.Nil(t, cc.increaseUserConnectionsCount())
++	require.NoError(t, acquireConnection())
++	require.NoError(t, acquireConnection())
++	require.NoError(t, acquireConnection())
+ 	require.Equal(t, cc.getUserConnectionCount(sess.User), 3)
+-	cc.decreaseUserConnectionCount()
+-	cc.decreaseUserConnectionCount()
+-	cc.decreaseUserConnectionCount()
++	releaseConnection()
++	releaseConnection()
++	releaseConnection()
+ 	require.Equal(t, cc.getUserConnectionCount(sess.User), 0)
+ 
+ 	// test2: global MAX_USER_CONNECTIONS = 0 and max_user_conections = 2 in mysql.user for `zak`@`%`
+ 	tk.MustExec("ALTER USER `zak`@`%` WITH MAX_USER_CONNECTIONS 2")
+-	require.Nil(t, cc.increaseUserConnectionsCount())
+-	require.Nil(t, cc.increaseUserConnectionsCount())
+-	require.ErrorContains(t, cc.increaseUserConnectionsCount(),
++	require.NoError(t, acquireConnection())
++	require.NoError(t, acquireConnection())
++	require.ErrorContains(t, acquireConnection(),
+ 		"[server:1203]User zak@% has exceeded the 'max_user_connections' resource")
+ 	require.Equal(t, cc.getUserConnectionCount(sess.User), 2)
+-	cc.decreaseUserConnectionCount()
++	releaseConnection()
+ 
+-	cc.decreaseUserConnectionCount()
++	releaseConnection()
+ 	require.Equal(t, cc.getUserConnectionCount(sess.User), 0)
+ 
+ 	// test3: global MAX_USER_CONNECTIONS = 3 and max_user_conections = 0 in mysql.user for `zak`@`%`
+ 	tk.MustExec("ALTER USER `zak`@`%` WITH MAX_USER_CONNECTIONS 0")
+ 	tk.MustExec("set global max_user_connections = 3")
+-	require.Nil(t, cc.increaseUserConnectionsCount())
+-	require.Nil(t, cc.increaseUserConnectionsCount())
+-	require.Nil(t, cc.increaseUserConnectionsCount())
+-	require.ErrorContains(t, cc.increaseUserConnectionsCount(),
++	require.NoError(t, acquireConnection())
++	require.NoError(t, acquireConnection())
++	require.NoError(t, acquireConnection())
++	require.ErrorContains(t, acquireConnection(),
+ 		"[server:1203]User zak@% has exceeded the 'max_user_connections' resource")
+ 	require.Equal(t, cc.getUserConnectionCount(sess.User), 3)
+-	cc.decreaseUserConnectionCount()
+-	cc.decreaseUserConnectionCount()
+-	cc.decreaseUserConnectionCount()
++	releaseConnection()
++	releaseConnection()
++	releaseConnection()
+ 	require.Equal(t, cc.getUserConnectionCount(sess.User), 0)
+ 
+ 	// test4: global MAX_USER_CONNECTIONS = 2 and max_user_conections = 3 in mysql.user for `zak`@`%`
+ 	// the max_user_connection attribute has a higher priority than global MAX_USER_CONNECTIONS.
+ 	tk.MustExec("ALTER USER `zak`@`%` WITH MAX_USER_CONNECTIONS 3")
+ 	tk.MustExec("set global max_user_connections = 2")
+-	require.Nil(t, cc.increaseUserConnectionsCount())
+-	require.Nil(t, cc.increaseUserConnectionsCount())
+-	require.Nil(t, cc.increaseUserConnectionsCount())
+-	require.ErrorContains(t, cc.increaseUserConnectionsCount(),
++	require.NoError(t, acquireConnection())
++	require.NoError(t, acquireConnection())
++	require.NoError(t, acquireConnection())
++	require.ErrorContains(t, acquireConnection(),
+ 		"[server:1203]User zak@% has exceeded the 'max_user_connections' resource")
+ 	require.Equal(t, cc.getUserConnectionCount(sess.User), 3)
+-	cc.decreaseUserConnectionCount()
+-	cc.decreaseUserConnectionCount()
+-	cc.decreaseUserConnectionCount()
++	releaseConnection()
++	releaseConnection()
++	releaseConnection()
+ 	require.Equal(t, cc.getUserConnectionCount(sess.User), 0)
+ 
+ 	// test5: global MAX_USER_CONNECTIONS = 3 and max_user_conections = 2 in mysql.user for `zak`@`%`
+ 	// the max_user_connection attribute has a higher priority than global MAX_USER_CONNECTIONS.
+ 	tk.MustExec("ALTER USER `zak`@`%` WITH MAX_USER_CONNECTIONS 2")
+ 	tk.MustExec("set global max_user_connections = 3")
+-	require.Nil(t, cc.increaseUserConnectionsCount())
+-	require.Nil(t, cc.increaseUserConnectionsCount())
+-	require.ErrorContains(t, cc.increaseUserConnectionsCount(),
++	require.NoError(t, acquireConnection())
++	require.NoError(t, acquireConnection())
++	require.ErrorContains(t, acquireConnection(),
+ 		"[server:1203]User zak@% has exceeded the 'max_user_connections' resource")
+ 	require.Equal(t, cc.getUserConnectionCount(sess.User), 2)
+-	cc.decreaseUserConnectionCount()
+-	cc.decreaseUserConnectionCount()
++	releaseConnection()
++	releaseConnection()
+ 	require.Equal(t, cc.getUserConnectionCount(sess.User), 0)
+ 
+ 	// test6: the user zak@127.0.0.1 and zak@127.0.0.2 have same limit(zak@127.0.0.1 + zap@127.0.0.2 <= 3).
+ 	tk.MustExec("set global max_user_connec
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #72285** (closed): expression: use the binary collation for an implicit cast to a binary string (@lohmag)
-- **PR #72249** (2026-10-25): txn: update client-go to fix repeated lock resolution (#72232) (@ti-chi-bot)
-- **PR #72248** (2026-10-25): txn: update client-go to fix repeated lock resolution (#72232) (@ti-chi-bot)
-- **PR #72232** (2026-10-24): txn: update client-go to fix repeated lock resolution (@lcwangchao)
-- **PR #72225** (closed): server: skip small packets and pool BestSpeed zlib writers in the compressed protocol (@nmass-betpawa)
-- **PR #72212** (2026-10-23): lightning: surface checkpoint resume failures in compression test (@D3Hunter)
+- **PR #72430** (2026-10-27): executor, planner: support materialized view SHOW statements (@windtalker)
+- **PR #72429** (2026-10-27): br: enable log redact by default (@YuJuncen)
+- **PR #72419** (2026-10-27): Diagnostic mode: merge diagnostic split PRs onto release-nextgen-202603 (@elsa0520)
+- **PR #72413** (closed): go.mod: update PD client and TiKV client-go (@rleungx)
+- **PR #72409** (2026-10-27): parser: support materialized view SHOW and COMPARE syntax (@windtalker)
+- **PR #72406** (2026-10-26): build: prepare Bazel tooling for Go 1.27 (#72082) (@ti-chi-bot)
 
 ---
 
@@ -2300,33 +2979,28 @@ close pingcap/tidb#72231
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. *: make the graceful shutdown drain timeout configurable (#71796)
+## X. build: upgrade Go to 1.27.3 (#72180)
 
 **RULE**:
-When implementing operations in `cmd/tidb-server/main.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actions/tidb_build/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b1731737`: *: make the graceful shutdown drain timeout configurable (#71796). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7fa5afde`: build: upgrade Go to 1.27.3 (#72180). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/tidb-server/main.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/tidb_build/action.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// The amount of time we wait for the ongoing statements and transactions to finish.
-	drainClientWait := time.Duration(config.GetGlobalConfig().GracefulCloseConnectionsTimeout) * time.Second
+    default: "1.27.3"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// The amount of time we wait for the ongoing txt to finished.
-// We should better provider a dynamic way to set this value.
-var gracefulCloseConnectionsTimeout = 15 * time.Second
-
-	drainClientWait := gracefulCloseConnectionsTimeout
+    default: "1.25"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b1731737` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7fa5afde` are properly handled with clean fallback behavior.

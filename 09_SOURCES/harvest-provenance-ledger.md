@@ -5216,3 +5216,6 @@ Every entry in this ledger must capture:
 | `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `9a470efc` | Multi-dimensional audit evidence | 2026-10-27T10:37:45.058Z |
 | `learn-github-scrapy-scrapy` | `https://github.com/scrapy/scrapy` | `3e4d0faf` | Multi-dimensional audit evidence | 2026-10-27T10:39:32.195Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `8742357a` | Multi-dimensional audit evidence | 2026-10-27T10:39:42.948Z |
+| `learn-github-douyinfe-semi-design` | `https://github.com/DouyinFE/semi-design` | `0580665e` | Multi-dimensional audit evidence | 2026-10-27T10:47:26.046Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `e0faf3fe` | Multi-dimensional audit evidence | 2026-10-27T10:47:37.139Z |
+| `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `0f5ee234` | Multi-dimensional audit evidence | 2026-10-27T10:47:41.235Z |

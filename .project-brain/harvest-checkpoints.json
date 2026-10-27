@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T10:39:42.954Z",
+  "last_updated": "2026-10-27T10:47:41.241Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7131,14 +7131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sfu-db-connector-x",
-      "content_hash": "9db6de5efdbef4406cc0189ab1cba2c64598dfddb78e56e0f6fa7140c4b1718c",
-      "verified_at": "2026-10-25T02:25:26.586Z",
+      "content_hash": "05f665fcdcf64645af174efd8679dd98163d2328f9225dae076479d45be3329d",
+      "verified_at": "2026-10-27T10:47:41.241Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T02:25:26.586Z"
+      "last_updated": "2026-10-27T10:47:41.241Z"
     },
     "stenciljs/core": {
       "repository": "stenciljs/core",
@@ -7221,14 +7221,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-douyinfe-semi-design",
-      "content_hash": "9e05bac06e3dfb011c6ee3f21a0b65770a0ae2cc80abfd18e78540e2135e5257",
-      "verified_at": "2026-10-20T14:44:27.968Z",
+      "content_hash": "38a33326925a062b6e1aa12db89c8bb0c43b4b7e8fcd8be2fd8c7463eb6fbc00",
+      "verified_at": "2026-10-27T10:47:26.053Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T14:44:27.968Z"
+      "last_updated": "2026-10-27T10:47:26.053Z"
     },
     "pimalaya/himalaya": {
       "repository": "pimalaya/himalaya",
@@ -10701,14 +10701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-tidb",
-      "content_hash": "d382fe5cdabe305aae8fb441662032a7b843524e8d37a92f84a79f8fd2e26432",
-      "verified_at": "2026-10-25T04:12:35.300Z",
+      "content_hash": "994045af5bcd219fb100ead442f948be6ecb3f433e5f5060e2203c71023c0daa",
+      "verified_at": "2026-10-27T10:47:37.145Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T04:12:35.300Z"
+      "last_updated": "2026-10-27T10:47:37.145Z"
     },
     "neondatabase/neon": {
       "repository": "neondatabase/neon",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  
 > **Source**: github ([https://github.com/sfu-db/connector-x](https://github.com/sfu-db/connector-x))  
-> **Source Version**: `c8601f8f`  
+> **Source Version**: `0f5ee234`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T02:25:26.219Z  
+> **Timestamp**: 2026-10-27T10:47:40.895Z  
 > **Learning ID**: `learn-github-sfu-db-connector-x`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sfu-db/connector-x](https://github.com/sfu-db/connector-x))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T02:25:26.211Z  
+> **Harvest Timestamp**: 2026-10-27T10:47:40.632Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fastest library to load data from DB to DataFrames in Rust and Python
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2660 stars
+- **Stars / Engagement**: 2661 stars
 
 ---
 
@@ -787,73 +787,421 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c8601f8f` (2026-10-23)
-**Commit Message**: Merge pull request #1028 from tschm/ci/import-test-macos
+### Incident Patch 1: `20710a11` (2026-10-26)
+**Commit Message**: build(rust): bump testcontainers from 0.23.3 to 0.28.0
 
-ci(import-test): replace retired macos-10.15 runner
+Bumps [testcontainers](https://github.com/testcontainers/testcontainers-rs) from 0.23.3 to 0.28.0.
+- [Release notes](https://github.com/testcontainers/testcontainers-rs/releases)
+- [Changelog](https://github.com/testcontainers/testcontainers-rs/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/testcontainers/testcontainers-rs/compare/0.23.3...0.28.0)
 
-**File**: `.github/workflows/import-test.yml` (modified, +1/-2)
+---
+updated-dependencies:
+- dependency-name: testcontainers
+  dependency-version: 0.28.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +123/-63)
 ```diff
-@@ -17,7 +17,7 @@ jobs:
-     runs-on: ${{ matrix.os }}
-     strategy:
-       matrix:
--        os: [ubuntu-latest, macos-10.15, windows-latest]
-+        os: [ubuntu-latest, macos-15-intel, macos-latest, windows-latest]
-         python-version: ["3.11", "3.12", "3.13", "3.14", "3.15"]
-     steps:
-       - uses: actions/checkout@v7
-@@ -26,7 +26,6 @@ jobs:
-         uses: actions/setup-python@v6
-         with:
-           python-version: ${{ matrix.python-version }}
--          architecture: x64
+@@ -455,6 +455,22 @@ dependencies = [
+  "syn 2.0.119",
+ ]
  
-       - name: Check which python we use
-         run: |
++[[package]]
++name = "astral-tokio-tar"
++version = "0.6.4"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "b18457efd137254e016bbde5e1d88df61c4e1a5ae2223746e56123bac6af2463"
++dependencies = [
++ "futures-core",
++ "libc",
++ "portable-atomic",
++ "rustc-hash 2.1.3",
++ "rustix 1.1.5",
++ "tokio",
++ "tokio-stream",
++ "xattr",
++]
++
+ [[package]]
+ name = "async-channel"
+ version = "2.5.0"
+@@ -1021,6 +1037,49 @@ dependencies = [
+  "tracing",
+ ]
+ 
++[[package]]
++name = "axum"
++version = "0.8.9"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "31b698c5f9a010f6573133b09e0de5408834d0c82f8d7475a89fc1867a71cd90"
++dependencies = [
++ "axum-core",
++ "bytes",
++ "futures-util",
++ "http 1.5.0",
++ "http-body 1.1.0",
++ "http-body-util",
++ "itoa",
++ "matchit",
++ "memchr",
++ "mime",
++ "percent-encoding",
++ "pin-project-lite",
++ "serde_core",
++ "sync_wrapper 1.0.2",
++ "tower",
++ "tower-layer",
++ "tower-service",
++]
++
++[[package]]
++name = "axum-core"
++version = "0.5.6"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "08c78f31d7b1291f7ee735c1c6780ccde7785daae9a9206026862dab7d8792d1"
++dependencies = [
++ "bytes",
++ "futures-core",
++ "http 1.5.0",
++ "http-body 1.1.0",
++ "http-body-util",
++ "mime",
++ "pin-project-lite",
++ "sync_wrapper 1.0.2",
++ "tower-layer",
++ "tower-service",
++]
++
+ [[package]]
+ name = "backtrace"
+ version = "0.3.76"
+@@ -1275,11 +1334,14 @@ checksum = "119771309b95163ec7aaf79810da82f7cd0599c19722d48b9c03894dca833966"
+ 
+ [[package]]
+ name = "bollard"
+-version = "0.18.1"
++version = "0.21.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "97ccca1260af6a459d75994ad5acc1651bcabcbdbc41467cc9786519ab854c30"
++checksum = "dbe8358268799ebb3e4df23cb9d47f4c72bbc4f5247e2fa6a1bf7b6c0baea220"
+ dependencies = [
++ "async-stream",
+  "base64 0.22.1",
++ "bitflags 2.13.2",
++ "bollard-buildkit-proto",
+  "bollard-stubs",
+  "bytes",
+  "futures-core",
+@@ -1294,33 +1356,53 @@ dependencies = [
+  "hyper-util",
+  "hyperlocal",
+  "log",
++ "num",
+  "pin-project-lite",
++ "rand 0.10.2",
+  "rustls 0.23.45",
+  "rustls-native-certs",
+- "rustls-pemfile 2.2.0",
+  "rustls-pki-types",
+  "serde",
+  "serde_derive",
+  "serde_json",
+- "serde_repr",
+  "serde_urlencoded",
+  "thiserror 2.0.21",
++ "time",
+  "tokio",
++ "tokio-stream",
+  "tokio-util 0.7.20",
++ "tonic",
+  "tower-service",
+  "url",
+  "winapi",
+ ]
+ 
++[[package]]
++name = "bollard-buildkit-proto"
++version = "0.8.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "b5c97450e79c7c565302dd92e86b08823b47550fcb4fc5ce910194d1b087a1a3"
++dependencies = [
++ "prost",
++ "prost-types",
++ "tonic",
++ "tonic-prost",
++]
++
+ [[package]]
+ name = "bollard-stubs"
+-version = "1.47.1-rc.27.3.1"
++version = "1.53.1-rc.29.3.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3f179cfbddb6e77a5472703d4b30436bff32929c0aa8a9008ecf23d1d3cdd0da"
++checksum = "ce412eb6f7096743011dc3cb5c674caeb24ced61d8c498fe07cf7998a4fea889"
+ dependencies = [
++ "base64 0.22.1",
++ "bollard-buildkit-proto",
++ "bytes",
++ "prost",
+  "serde",
++ "serde_json",
+  "serde_repr",
+- "serde_with",
++ "time",
+ ]
+ 
+ [[package]]
+@@ -3471,13 +3553,12 @@ dependencies = [
+ 
+ [[package]]
+ name = "etcetera"
+-version = "0.8.0"
++version = "0.11.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "136d1b5283a1ab77bd9257427ffd09d8667ced0570b6f938942bc7568ed5b943"
++checksum = "de48cc4d1c1d97a20fd819def54b890cadde72ed3ad0c614822a0a433361be96"
+ dependencies = [
+  "cfg-if",
+- "home",
+- "windows-sys 0.48.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -3557,23 +3638,24 @@ dependencies = [
+ ]
+ 
+ [[package]]
+-name = "ff"
+-version = "0.13.1"
++name = "ferroid"
++version = "2.0.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c0b50bfb653653f9ca9095b427bed08ab8d75a137839d9ad64eb11810d5b6393"
++checksum = "ee93edf3c501f0035bbeffeccfed0b79e14c311f12195ec0e661e114a0f60da4"
+ dependencies = [
+- "rand_core 0.6.4",
+- "subtle",
++ "portable-atomic",
++ "rand 0.10.2",
++ "web-time",
+ ]
+ 
+ [[package]]
+-name = "filetime"
+-version = "0.2.29"
++name = "ff"
++version = "0.13.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5c287a33c7f0a620c38e641e7f60827713987b3c0f26e8ddc9462cc69cf75759"
++checksum = "c0b50bfb653653f9ca9095b427bed08ab8d75a137839d9ad64eb11810d5b6393"
+ dependencies = [
+- "cfg-if",
+- "libc",
++ "rand_core 0.6.4",
++ "subtle",
+ ]
+ 
+ [[package]]
+@@ -5049,6 +5131,12 @@ dependencies = [
+  "web_atoms",
+ ]
+ 
++[[package]]
++name = "matchit"
++version = "0.8.4"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "47e1ffaa40ddd1f3ed91f717a33c8c0ee23fff369e3aa8772b9605cc1d22f4c3"
++
+ [[package]]
+ name = "md-5"
+ version = "0.10.6"
+@@ -5857,9 +5945,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "parse-display"
+-version = "0.9.1"
++version = "0.11.0"
+ source = "registry
+```
+
+**File**: `connectorx/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -103,7 +103,7 @@ name = "connectorx"
+ criterion = "0.8"
+ env_logger = "0.11"
+ iai = "0.1"
+-testcontainers = { version = "0.23", features = ["blocking"] }
++testcontainers = { version = "0.28", features = ["blocking"] }
+ ureq = { version = "2", features = ["json"] }
+ 
+ # pprof depends on nix/pthread and does not build on Windows.
 ```
 
 ---
 
-### Incident Patch 2: `79abb07c` (2026-10-23)
-**Commit Message**: ci(import-test): replace retired macos-10.15 runner
+### Incident Patch 2: `b022f752` (2026-10-26)
+**Commit Message**: build(deps-dev): bump certifi in /connectorx-python
 
-GitHub retired the macos-10.15 image, so that matrix leg could not be
-scheduled. Test on macos-15-intel and macos-latest instead, matching the
-x86_64 and arm64 macOS wheels release.yml builds. Drop the hard-coded
-x64 architecture so the arm64 runner tests the arm64 wheel instead of
-an x64 Python under Rosetta.
+Bumps [certifi](https://github.com/certifi/python-certifi) from 2026.2.25 to 2026.10.19.
+- [Commits](https://github.com/certifi/python-certifi/compare/2026.02.25...2026.10.19)
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+---
+updated-dependencies:
+- dependency-name: certifi
+  dependency-version: 2026.10.19
+  dependency-type: indirect
+...
 
-**File**: `.github/workflows/import-test.yml` (modified, +1/-2)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `connectorx-python/poetry.lock` (modified, +8/-8)
 ```diff
-@@ -17,7 +17,7 @@ jobs:
-     runs-on: ${{ matrix.os }}
-     strategy:
-       matrix:
--        os: [ubuntu-latest, macos-10.15, windows-latest]
-+        os: [ubuntu-latest, macos-15-intel, macos-latest, windows-latest]
-         python-version: ["3.11", "3.12", "3.13", "3.14", "3.15"]
-     steps:
-       - uses: actions/checkout@v7
-@@ -26,7 +26,6 @@ jobs:
-         uses: actions/setup-python@v6
-         with:
-           python-version: ${{ matrix.python-version }}
--          architecture: x64
+@@ -1,4 +1,4 @@
+-# This file is automatically @generated by Poetry 2.4.1 and should not be changed by hand.
++# This file is automatically @generated by Poetry 2.5.1 and should not be changed by hand.
  
-       - name: Check which python we use
-         run: |
+ [[package]]
+ name = "appnope"
+@@ -83,7 +83,7 @@ mypy-extensions = ">=0.4.3"
+ pathspec = ">=0.9.0,<1"
+ platformdirs = ">=2"
+ tomli = ">=0.2.6,<2.0.0"
+-typing-extensions = {version = ">=3.10.0.0,<3.10.0.1 || >3.10.0.1", markers = "python_version >= \"3.10\""}
++typing-extensions = {version = ">=3.10.0.0,!=3.10.0.1", markers = "python_version >= \"3.10\""}
+ 
+ [package.extras]
+ colorama = ["colorama (>=0.4.3)"]
+@@ -94,14 +94,14 @@ uvloop = ["uvloop (>=0.15.2)"]
+ 
+ [[package]]
+ name = "certifi"
+-version = "2026.2.25"
++version = "2026.10.19"
+ description = "Python package for providing Mozilla's CA Bundle."
+ optional = false
+ python-versions = ">=3.7"
+ groups = ["dev"]
+ files = [
+-    {file = "certifi-2026.2.25-py3-none-any.whl", hash = "sha256:027692e4402ad994f1c42e52a4997a9763c646b73e4096e4d5d6db8af1d6f0fa"},
+-    {file = "certifi-2026.2.25.tar.gz", hash = "sha256:e887ab5cee78ea814d3472169153c2d12cd43b14bd03329a39a9c6e2e80bfba7"},
++    {file = "certifi-2026.10.19-py3-none-any.whl", hash = "sha256:42d35340cc5b9ba78e818ddbff0c5b1c2b779de448a340fd1b989f5fa8670e1b"},
++    {file = "certifi-2026.10.19.tar.gz", hash = "sha256:035c1e85572b141bf1c3a3eff0e33a8eb74917522f2559075ff8d2fea780a1ae"},
+ ]
+ 
+ [[package]]
+@@ -720,7 +720,7 @@ msgpack = ">=0.6.0"
+ psutil = ">=5.0"
+ pyyaml = "*"
+ setuptools = "*"
+-sortedcontainers = "<2.0.0 || >2.0.0,<2.0.1 || >2.0.1"
++sortedcontainers = "!=2.0.0,!=2.0.1"
+ tblib = ">=1.6.0"
+ toolz = ">=0.8.2"
+ tornado = {version = ">=6.0.3", markers = "python_version >= \"3.8\""}
+@@ -953,7 +953,7 @@ jedi = ">=0.16"
+ matplotlib-inline = "*"
+ pexpect = {version = ">4.3", markers = "sys_platform != \"win32\""}
+ pickleshare = "*"
+-prompt-toolkit = ">=2.0.0,<3.0.0 || >3.0.0,<3.0.1 || >3.0.1,<3.1.0"
++prompt-toolkit = ">=2.0.0,!=3.0.0,!=3.0.1,<3.1.0"
+ pygments = "*"
+ setuptools = ">=18.5"
+ traitlets = ">=4.2"
+@@ -2822,7 +2822,7 @@ keyring = ">=15.1"
+ pkginfo = ">=1.8.1"
+ readme-renderer = ">=21.0"
+ requests = ">=2.20"
+-requests-toolbelt = ">=0.8.0,<0.9.0 || >0.9.0"
++requests-toolbelt = ">=0.8.0,!=0.9.0"
+ rfc3986 = ">=1.4.0"
+ tqdm = ">=4.14"
+ urllib3 = ">=1.26.0"
+```
+
+---
+
+### Incident Patch 3: `6f7887ec` (2026-10-24)
+**Commit Message**: build(rust): bump serde_json from 1.0.151 to 1.0.154
+
+Bumps [serde_json](https://github.com/serde-rs/json) from 1.0.151 to 1.0.154.
+- [Release notes](https://github.com/serde-rs/json/releases)
+- [Commits](https://github.com/serde-rs/json/compare/v1.0.151...v1.0.154)
+
+---
+updated-dependencies:
+- dependency-name: serde_json
+  dependency-version: 1.0.154
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +6/-6)
+```diff
+@@ -1710,7 +1710,7 @@ dependencies = [
+  "rand 0.9.5",
+  "serde",
+  "serde_json",
+- "thiserror 2.0.20",
++ "thiserror 2.0.21",
+  "tokio",
+  "tracing",
+  "twox-hash 2.1.4",
+@@ -1736,7 +1736,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "d7ddab58fabf3bdde7b6fa401f72b9abc7566ff015264c89aaaa71cf1d173d06"
+ dependencies = [
+  "bytes",
+- "thiserror 2.0.20",
++ "thiserror 2.0.21",
+ ]
+ 
+ [[package]]
+@@ -6986,7 +6986,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "03da047801ff44bb6a4d407d4860c05fd70bb81714e6b2f3812603d5b145b042"
+ dependencies = [
+  "heck",
+- "itertools 0.13.0",
++ "itertools 0.14.0",
+  "log",
+  "multimap",
+  "petgraph",
+@@ -7007,7 +7007,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "b570b25f7617e43d59005d0990ccb79e950a423952cea19671b7a876da390adf"
+ dependencies = [
+  "anyhow",
+- "itertools 0.13.0",
++ "itertools 0.14.0",
+  "proc-macro2",
+  "quote",
+  "syn 2.0.119",
+@@ -8112,9 +8112,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "serde_json"
+-version = "1.0.151"
++version = "1.0.154"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c841b55ecdae098c80dcae9cf767f6f8a0c2cdb3416bbef72181df4d0fe73f14"
++checksum = "e7e9cc8b1b85264074fbcc02a88680c4096b1e47df8f739dceb03bf482f04bd6"
+ dependencies = [
+  "itoa",
+  "memchr",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1034** (2026-10-26): build(deps-dev): bump certifi from 2026.2.25 to 2026.10.19 in /connectorx-python (@dependabot[bot])
+- **PR #1033** (2026-10-26): build(rust): bump serde_json from 1.0.151 to 1.0.154 (@dependabot[bot])
+- **PR #1032** (2026-10-26): build(rust): bump testcontainers from 0.23.3 to 0.28.0 (@dependabot[bot])
+- **PR #1031** (2026-10-26): build(rust): bump tokio-util from 0.7.19 to 0.7.20 (@dependabot[bot])
 - **PR #1028** (2026-10-23): ci(import-test): replace retired macos-10.15 runner (@tschm)
 - **PR #1025** (2026-10-20): Measure more of the test suite in coverage (@tschm)
-- **PR #1024** (2026-10-20): Drop Python 3.10 wheels and support (@tschm)
-- **PR #1022** (2026-10-21): build(rust): bump clickhouse to 0.15.3 (@tschm)
-- **PR #1021** (closed): build(rust): bump arrow from 56.2.1 to 60.0.0 (@dependabot[bot])
-- **PR #1020** (closed): build(rust): bump clickhouse from 0.13.3 to 0.15.3 (@dependabot[bot])
 
 ---
 
@@ -873,29 +1221,108 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1028 from tschm/ci/import-test-macos
+## X. build(rust): bump testcontainers from 0.23.3 to 0.28.0
 
 **RULE**:
-When implementing operations in `.github/workflows/import-test.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sfu-db/connector-x. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sfu-db/connector-x. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c8601f8f`: Merge pull request #1028 from tschm/ci/import-test-macos. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `20710a11`: build(rust): bump testcontainers from 0.23.3 to 0.28.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/import-test.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        os: [ubuntu-latest, macos-15-intel, macos-latest, windows-latest]
+[[package]]
+name = "astral-tokio-tar"
+version = "0.6.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b18457efd137254e016bbde5e1d88df61c4e1a5ae2223746e56123bac6af2463"
+dependencies = [
+ "futures-core",
+ "libc",
+ "portable-atomic",
+ "rustc-hash 2.1.3",
+ "rustix 1.1.5",
+ "tokio",
+ "tokio-stream",
+ "xattr",
+]
+
+[[package]]
+name = "axum"
+version = "0.8.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "31b698c5f9a010f6573133b09e0de5408834d0c82f8d7475a89fc1867a71cd90"
+dependencies = [
+ "axum-core",
+ "bytes",
+ "futures-util",
+ "http 1.5.0",
+ "http-body 1.1.0",
+ "http-body-util",
+ "itoa",
+ "matchit",
+ "memchr",
+ "mime",
+ "percent-encoding",
+ "pin-project-lite",
+ "serde_core",
+ "sync_wrapper 1.0.2",
+ "tower",
+ "tower-layer",
+ "tower-service",
+]
+
+[[package]]
+name = "axum-core"
+version = "0.5.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "08c78f31d7b1291f7ee735c1c6780ccde7785daae9a9206026862dab7d8792d1"
+dependencies = [
+ "bytes",
+ "futures-core",
+ "http 1.5.0",
+ "http-body 1.1.0",
+ "http-body-util",
+ "mime",
+ "pin-project-lite",
+ "sync_wrapper 1.0.2",
+ "tower-layer",
+ "tower-service",
+]
+
+version = "0.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        os: [ubuntu-latest, macos-10.15, windows-latest]
-          architecture: x64
+version = "0.18.1"
+checksum = "97ccca1260af6a459d75994ad5acc1651bcabcbdbc41467cc9786519ab854c30"
+ "rustls-pemfile 2.2.0",
+ "serde_repr",
+version = "1.47.1-rc.27.3.1"
+checksum = "3f179cfbddb6e77a5472703d4b30436bff32929c0aa8a9008ecf23d1d3cdd0da"
+ "serde_with",
+version = "0.8.0"
+checksum = "136d1b5283a1ab77bd9257427ffd09d8667ced0570b6f938942bc7568ed5b943"
+ "home",
+ "windows-sys 0.48.0",
+name = "ff"
+version = "0.13.1"
+checksum = "c0b50bfb653653f9ca9095b427bed08ab8d75a137839d9ad64eb11810d5b6393"
+ "rand_core 0.6.4",
+ "subtle",
+name = "filetime"
+version = "0.2.29"
+checksum = "5c287a33c7f0a620c38e641e7f60827713987b3c0f26e8ddc9462cc69cf75759"
+ "cfg-if",
+ "libc",
+version = "0.9.1"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c8601f8f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `20710a11` are properly handled with clean fallback behavior.

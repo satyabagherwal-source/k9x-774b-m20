@@ -4673,10 +4673,10 @@
     "repository": "sfu-db/connector-x",
     "platform": "github",
     "sourceUrl": "https://github.com/sfu-db/connector-x",
-    "sourceVersion": "c8601f8f",
+    "sourceVersion": "0f5ee234",
     "license": "MIT",
-    "contentHash": "9db6de5efdbef4406cc0189ab1cba2c64598dfddb78e56e0f6fa7140c4b1718c",
-    "lastHarvestedAt": "2026-10-25T02:25:26.573Z",
+    "contentHash": "05f665fcdcf64645af174efd8679dd98163d2328f9225dae076479d45be3329d",
+    "lastHarvestedAt": "2026-10-27T10:47:41.235Z",
     "learningId": "learn-github-sfu-db-connector-x"
   },
   "stenciljs-core": {
@@ -4733,10 +4733,10 @@
     "repository": "DouyinFE/semi-design",
     "platform": "github",
     "sourceUrl": "https://github.com/DouyinFE/semi-design",
-    "sourceVersion": "4289eff2",
+    "sourceVersion": "0580665e",
     "license": "NOASSERTION",
-    "contentHash": "9e05bac06e3dfb011c6ee3f21a0b65770a0ae2cc80abfd18e78540e2135e5257",
-    "lastHarvestedAt": "2026-10-20T14:44:27.944Z",
+    "contentHash": "38a33326925a062b6e1aa12db89c8bb0c43b4b7e8fcd8be2fd8c7463eb6fbc00",
+    "lastHarvestedAt": "2026-10-27T10:47:26.046Z",
     "learningId": "learn-github-douyinfe-semi-design"
   },
   "pimalaya-himalaya": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "0073665a",
+    "sourceVersion": "e0faf3fe",
     "license": "Apache-2.0",
-    "contentHash": "d382fe5cdabe305aae8fb441662032a7b843524e8d37a92f84a79f8fd2e26432",
-    "lastHarvestedAt": "2026-10-25T04:12:35.287Z",
+    "contentHash": "994045af5bcd219fb100ead442f948be6ecb3f433e5f5060e2203c71023c0daa",
+    "lastHarvestedAt": "2026-10-27T10:47:37.139Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {

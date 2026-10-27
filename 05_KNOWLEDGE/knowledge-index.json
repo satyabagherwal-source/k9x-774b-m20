@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T10:39:42.897Z",
+  "last_updated": "2026-10-27T10:47:41.188Z",
   "total_verified_learnings": 1099,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9290,8 +9290,8 @@
       "slug": "douyinfe-semi-design",
       "platform": "github",
       "source_url": "https://github.com/DouyinFE/semi-design",
-      "source_version": "4289eff2",
-      "content_hash": "9e05bac06e3dfb011c6ee3f21a0b65770a0ae2cc80abfd18e78540e2135e5257",
+      "source_version": "0580665e",
+      "content_hash": "38a33326925a062b6e1aa12db89c8bb0c43b4b7e8fcd8be2fd8c7463eb6fbc00",
       "dossier_path": "07_PROJECT_LEARNING/douyinfe-semi-design-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/douyinfe-semi-design-learnings.md",
       "promoted_rules": [
@@ -9304,6 +9304,11 @@
           "number": 3230,
           "title": "docs: clarify React 19 and Tailwind setup (#3413)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4685,
+          "title": "docs: clarify production CSS layer order with Tailwind (#3413)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9311,7 +9316,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T14:44:27.898Z",
+      "verified_at": "2026-10-27T10:47:25.990Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41308,8 +41313,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "0073665a",
-      "content_hash": "d382fe5cdabe305aae8fb441662032a7b843524e8d37a92f84a79f8fd2e26432",
+      "source_version": "e0faf3fe",
+      "content_hash": "994045af5bcd219fb100ead442f948be6ecb3f433e5f5060e2203c71023c0daa",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -41352,6 +41357,11 @@
           "number": 4037,
           "title": "*: make the graceful shutdown drain timeout configurable (#71796)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4686,
+          "title": "build: upgrade Go to 1.27.3 (#72180)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41359,7 +41369,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T04:12:35.208Z",
+      "verified_at": "2026-10-27T10:47:37.084Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45196,8 +45206,8 @@
       "slug": "sfu-db-connector-x",
       "platform": "github",
       "source_url": "https://github.com/sfu-db/connector-x",
-      "source_version": "c8601f8f",
-      "content_hash": "9db6de5efdbef4406cc0189ab1cba2c64598dfddb78e56e0f6fa7140c4b1718c",
+      "source_version": "0f5ee234",
+      "content_hash": "05f665fcdcf64645af174efd8679dd98163d2328f9225dae076479d45be3329d",
       "dossier_path": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "promoted_rules": [
@@ -45230,6 +45240,11 @@
           "number": 3978,
           "title": "Merge pull request #1028 from tschm/ci/import-test-macos",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4687,
+          "title": "build(rust): bump testcontainers from 0.23.3 to 0.28.0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45237,7 +45252,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T02:25:26.505Z",
+      "verified_at": "2026-10-27T10:47:41.178Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -130841,6 +130856,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T10:39:42.890Z"
+    },
+    "rule-4685": {
+      "learning_id": "rule-4685",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4685,
+      "title": "docs: clarify production CSS layer order with Tailwind (#3413)",
+      "source_url": "https://github.com/DouyinFE/semi-design",
+      "source_version": "0580665e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T10:47:25.990Z"
+    },
+    "rule-4686": {
+      "learning_id": "rule-4686",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4686,
+      "title": "build: upgrade Go to 1.27.3 (#72180)",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "e0faf3fe",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T10:47:37.084Z"
+    },
+    "rule-4687": {
+      "learning_id": "rule-4687",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4687,
+      "title": "build(rust): bump testcontainers from 0.23.3 to 0.28.0",
+      "source_url": "https://github.com/sfu-db/connector-x",
+      "source_version": "0f5ee234",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T10:47:41.178Z"
     }
   },
   "aliases": {
