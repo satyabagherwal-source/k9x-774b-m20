@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/i18next-react-i18next-learnings.md`  
 > **Source**: github ([https://github.com/i18next/react-i18next](https://github.com/i18next/react-i18next))  
-> **Source Version**: `3f0880e2`  
+> **Source Version**: `16a017ee`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-24T20:55:00.058Z  
+> **Timestamp**: 2026-10-27T15:18:54.623Z  
 > **Learning ID**: `learn-github-i18next-react-i18next`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/i18next-react-i18next-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/i18next/react-i18next](https://github.com/i18next/react-i18next))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-24T20:54:59.124Z  
+> **Harvest Timestamp**: 2026-10-27T15:18:54.616Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Internationalization for react done right. Using the i18next i18n ecosystem.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 10058 stars
+- **Stars / Engagement**: 10061 stars
 
 ---
 
@@ -964,128 +964,77 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9802f17e` (2026-10-24)
+### Incident Patch 1: `e1a69455` (2026-10-25)
 **Commit Message**: build
 
-**File**: `react-i18next.js` (modified, +4/-0)
+**File**: `react-i18next.js` (modified, +2/-1)
 ```diff
-@@ -2805,6 +2805,10 @@
-           stringNode += `{{${value}}}`;
-           return;
-         }
-+        if (!keys.length && Object.keys(child).length === 1 && 'format' in child) {
-+          stringNode += '{{format}}';
-+          return;
-+        }
-         warn(i18n, 'TRANS_INVALID_OBJ', `Invalid child - Object should only have keys {{ value, format }} (format is optional).`, {
-           i18nKey,
-           child
+@@ -3811,7 +3811,8 @@
+     } = i18nOptions;
+     const nsOrContext = ns || defaultNSFromContext || i18n?.options?.defaultNS;
+     const unstableNamespaces = isString(nsOrContext) ? [nsOrContext] : nsOrContext || ['translation'];
+-    const namespaces = React.useMemo(() => unstableNamespaces, unstableNamespaces);
++    const namespacesKey = JSON.stringify(unstableNamespaces);
++    const namespaces = React.useMemo(() => unstableNamespaces, [namespacesKey]);
+     i18n?.reportNamespaces?.addUsedNamespaces?.(namespaces);
+     const revisionRef = React.useRef(0);
+     const subscribe = React.useCallback(callback => {
 ```
 
 ---
 
-### Incident Patch 2: `63f4e41d` (2026-10-24)
-**Commit Message**: fix(Trans): don't drop an interpolation variable named format (#1944)
+### Incident Patch 2: `46564b65` (2026-10-25)
+**Commit Message**: fix: refresh translations when namespaces are added (#1945)
 
-nodesToString takes 'format' out of an interpolation object as the
-formatter name, so <Trans>Export as {{ format }}</Trans> left no key
-behind, warned TRANS_INVALID_OBJ and rendered 'Export as '.
-
-**File**: `src/TransWithoutContext.js` (modified, +5/-0)
+**File**: `src/useTranslation.js` (modified, +2/-1)
 ```diff
-@@ -113,6 +113,11 @@ export const nodesToString = (children, i18nOptions, i18n, i18nKey) => {
-         stringNode += `{{${value}}}`;
-         return;
-       }
-+      // a single variable that happens to be called `format`, e.g. {{ format }}
-+      if (!keys.length && Object.keys(child).length === 1 && 'format' in child) {
-+        stringNode += '{{format}}';
-+        return;
-+      }
-       warn(
-         i18n,
-         'TRANS_INVALID_OBJ',
+@@ -53,7 +53,8 @@ export const useTranslation = (ns, props = {}) => {
+ 
+   const nsOrContext = ns || defaultNSFromContext || i18n?.options?.defaultNS;
+   const unstableNamespaces = isString(nsOrContext) ? [nsOrContext] : nsOrContext || ['translation'];
+-  const namespaces = useMemo(() => unstableNamespaces, unstableNamespaces);
++  const namespacesKey = JSON.stringify(unstableNamespaces);
++  const namespaces = useMemo(() => unstableNamespaces, [namespacesKey]);
+ 
+   i18n?.reportNamespaces?.addUsedNamespaces?.(namespaces);
+ 
 ```
 
-**File**: `test/trans.nodeToString.spec.jsx` (modified, +13/-0)
+**File**: `test/useTranslation.spec.jsx` (modified, +17/-0)
 ```diff
-@@ -205,6 +205,19 @@ describe('trans nodeToString', () => {
-       expect(actual).toEqual(expected);
-     });
+@@ -248,6 +248,23 @@ describe('useTranslation', () => {
+   });
  
-+    it('should treat a single variable named format as the interpolated value', () => {
-+      const fragment = (
-+        <>
-+          {'export as '}
-+          {{ format: 'pdf' }}
-+        </>
+   describe('namespace change', () => {
++    it('uses a newly added fallback namespace', () => {
++      i18nInstance.addResource('en', 'nsB', 'onlyInB', 'B');
++      let ns = ['nsA'];
++      const { result, rerender } = renderHook(() =>
++        useTranslation(ns, { i18n: i18nInstance, nsMode: 'fallback' }),
 +      );
++      expect(result.current.t('onlyInB')).toBe('onlyInB');
 +
-+      const expected = 'export as {{format}}';
-+      const actual = nodesToString(fragment.props.children, {});
-+      expect(actual).toEqual(expected);
++      ns = ['nsA', 'nsB'];
++      rerender();
++      expect(result.current.t('onlyInB')).toBe('B');
++
++      ns = ['nsA'];
++      rerender();
++      expect(result.current.t('onlyInB')).toBe('onlyInB');
 +    });
 +
-     it('should ignore invalid primitive children (e.g. numbers)', () => {
-       const fragment = (
-         <>
-```
-
-**File**: `test/trans.render.spec.jsx` (modified, +12/-0)
-```diff
-@@ -296,6 +296,18 @@ describe('trans testTransKey1 singular', () => {
-   });
- });
- 
-+describe('trans with a variable named format', () => {
-+  function TestComponent() {
-+    const format = 'pdf';
-+    return <Trans i18nKey="exportAsFormatNotInResources">Export as {{ format }}</Trans>;
-+  }
-+
-+  it('should interpolate it like any other variable', () => {
-+    const { container } = render(<TestComponent />);
-+    expect(container).toHaveTextContent('Export as pdf');
-+  });
-+});
-+
- describe('trans testTransKey1 plural', () => {
-   function TestComponent() {
-     const numOfItems = 10;
-```
-
----
-
-### Incident Patch 3: `5e2cf4ac` (2026-10-24)
-**Commit Message**: build
-
-**File**: `react-i18next.js` (modified, +6/-2)
-```diff
-@@ -3433,9 +3433,13 @@
-     '&real;': 'ℜ',
-     '&alefsym;': 'ℵ'
-   };
--  const entityPattern = new RegExp(Object.keys(commonEntities).map(entity => entity.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'g');
-+  const entityPattern = /&(?:#(\d+)|#x([0-9a-fA-F]+)|[A-Za-z][A-Za-z0-9]*);/g;
-   const decodeCodePoint = (match, codePoint) => codePoint <= 0x10ffff ? String.fromCodePoint(codePoint) : match;
--  const decodeHtmlEntities = text => text.replace(entityPattern, match => commonEntities[match]).replace(/&#(\d+);/g, (match, num) => decodeCodePoint(match, parseInt(num, 10))).replace(/&#x([0-9a-fA-F]+);/g, (match, hex) => decodeCodePoint(match, parseInt(hex, 16)));
-+  const decodeHtmlEntities = text => text.replace(entityPattern, (match, decimal, hex) => {
-+    if (decimal) return decodeCodePoint(match, parseInt(decimal, 10));
-+    if (hex) return decodeCodePoint(match, parseInt(hex, 16));
-+    return Object.prototype.hasOwnProperty.call(commonEntities, match) ? commonEntities[match] : match;
-+  });
- 
-   const tokenize = translation => {
-     const tokens = [];
+     it('should return a t bound to the new namespace', () => {
+       i18nInstance.addResource('en', 'nsA', 'k', 'A');
+       i18nInstance.addResource('en', 'nsB', 'k', 'B');
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1945** (2026-10-25): fix: refresh translations when namespaces are added (@lprnmns)
 - **PR #1944** (2026-10-24): fix(Trans): don't drop an interpolation variable named format (@Pharex38)
 - **PR #1943** (2026-10-24): fix(IcuTrans): decode each HTML entity only once (@Pharex38)
 - **PR #1942** (2026-10-24): fix(Trans): use the count passed in tOptions (@nk-batman21)
 - **PR #1941** (2026-10-23): fix(Trans): fall back to the last key of an i18nKey array, like t() (@nk-batman21)
 - **PR #1940** (2026-10-22): fix(IcuTrans): decode numeric entities above U+FFFF (@nk-batman21)
-- **PR #1939** (2026-10-22): fix(Trans): render the inner text when the only child is a string (@Cayan)
 
 ---
 
@@ -1111,7 +1060,7 @@ behind, warned TRANS_INVALID_OBJ and rendered 'Export as '.
 When implementing operations in `react-i18next.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in i18next/react-i18next. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9802f17e`: build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e1a69455`: build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `react-i18next.js`.
@@ -1119,17 +1068,15 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-        if (!keys.length && Object.keys(child).length === 1 && 'format' in child) {
-          stringNode += '{{format}}';
-          return;
-        }
+    const namespacesKey = JSON.stringify(unstableNamespaces);
+    const namespaces = React.useMemo(() => unstableNamespaces, [namespacesKey]);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    const namespaces = React.useMemo(() => unstableNamespaces, unstableNamespaces);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9802f17e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e1a69455` are properly handled with clean fallback behavior.

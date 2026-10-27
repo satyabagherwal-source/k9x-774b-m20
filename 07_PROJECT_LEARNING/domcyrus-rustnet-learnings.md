@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source**: github ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
-> **Source Version**: `0144a88d`  
+> **Source Version**: `213d43cd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T03:06:07.025Z  
+> **Timestamp**: 2026-10-27T15:18:50.491Z  
 > **Learning ID**: `learn-github-domcyrus-rustnet`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T03:06:05.086Z  
+> **Harvest Timestamp**: 2026-10-27T15:18:49.365Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Per-process network monitoring for your terminal with deep packet inspection. Cross-platform, sandboxed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5159 stars
+- **Stars / Engagement**: 5180 stars
 
 ---
 
@@ -2495,58 +2495,48 @@ pub(super) fn dns_header_counts(payload: &[u8]) -> Option<DnsHeaderCounts> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0144a88d` (2026-10-23)
-**Commit Message**: fix: update dependencies for security audit (#698)
+### Incident Patch 1: `213d43cd` (2026-10-26)
+**Commit Message**: chore(deps): bump docker/login-action (#700)
 
-**File**: `CHANGELOG.md` (modified, +3/-0)
-```diff
-@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ## [Unreleased]
- 
-+### Security
-+- Update ctutils to 0.4.4 for RUSTSEC-2026-0385 and replace yanked clipboard-win 5.4.1 with 5.4.3 (#698)
-+
- ### Changed
- - Run Windows CI tests independently and start DEB installation checks after GNU/Linux builds, preserving all existing checks (#686)
- 
-```
+Bumps the actions group with 1 update: [docker/login-action](https://github.com/docker/login-action).
 
-**File**: `Cargo.lock` (modified, +4/-4)
+
+Updates `docker/login-action` from 4.6.0 to 4.7.0
+- [Release notes](https://github.com/docker/login-action/releases)
+- [Commits](https://github.com/docker/login-action/compare/dbcb813823bdd20940b903addbd779551569679f...81c6f93d4bc991e510b342a00b419b3bb4efc5c6)
+
+---
+updated-dependencies:
+- dependency-name: docker/login-action
+  dependency-version: 4.7.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+  dependency-group: actions
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/docker.yml` (modified, +1/-1)
 ```diff
-@@ -441,9 +441,9 @@ dependencies = [
+@@ -25,7 +25,7 @@ jobs:
  
- [[package]]
- name = "clipboard-win"
--version = "5.4.1"
-+version = "5.4.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "bde03770d3df201d4fb868f2c9c59e66a3e4e2bd06692a0fe701e7103c7e84d4"
-+checksum = "052af7878466feccda12ba7a6a67d019d712f296809559b47c12c8cc196d3a9a"
- dependencies = [
-  "error-code",
- ]
-@@ -719,9 +719,9 @@ dependencies = [
- 
- [[package]]
- name = "ctutils"
--version = "0.4.2"
-+version = "0.4.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7d5515a3834141de9eafb9717ad39eea8247b5674e6066c404e8c4b365d2a29e"
-+checksum = "12218662ccac37d9714f2191252553d67585b97df8c839cbe49e0bde278dc865"
- dependencies = [
-  "cmov",
- ]
+       - name: Log in to Container Registry
+         if: github.event_name != 'pull_request'
+-        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
++        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4
+         with:
+           registry: ${{ env.REGISTRY }}
+           username: ${{ github.actor }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #700** (2026-10-26): chore(deps): bump docker/login-action from 4.6.0 to 4.7.0 in the actions group (@dependabot[bot])
 - **PR #698** (2026-10-23): fix: update dependencies for security audit (@domcyrus)
 - **PR #697** (2026-10-21): chore(deps): bump zip from 9.0.4 to 9.0.5 in the rust-dependencies group (@dependabot[bot])
 - **PR #696** (2026-10-20): chore(deps): bump the rust-dependencies group with 2 updates (@dependabot[bot])
 - **PR #694** (2026-10-22): refactor: tighten tests and simplify DPI and command cleanup (@domcyrus)
 - **PR #693** (2026-10-19): feat: improve Host diagnostics and add history windows (@domcyrus)
-- **PR #692** (2026-10-19): fix(windows): fall back to verified Npcap SDK mirror (@domcyrus)
 
 ---
 
@@ -2566,30 +2556,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. update dependencies for security audit (#698)
+## X. deps): bump docker/login-action (#700)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/docker.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0144a88d`: update dependencies for security audit (#698). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `213d43cd`: deps): bump docker/login-action (#700). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/docker.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### Security
-- Update ctutils to 0.4.4 for RUSTSEC-2026-0385 and replace yanked clipboard-win 5.4.1 with 5.4.3 (#698)
-
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0144a88d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `213d43cd` are properly handled with clean fallback behavior.

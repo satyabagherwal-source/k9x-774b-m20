@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T15:12:16.159Z",
+  "last_updated": "2026-10-27T15:19:02.660Z",
   "total_verified_learnings": 1139,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3840,8 +3840,8 @@
       "slug": "aws-aws-cdk",
       "platform": "github",
       "source_url": "https://github.com/aws/aws-cdk",
-      "source_version": "a4d9f092",
-      "content_hash": "898ede3c62bc3cbf332e7c564481d04d4cdb340301dc776a1f8006d7d197508c",
+      "source_version": "2548bd51",
+      "content_hash": "b28a502c2c989784a8c920a075edb2211afdbc4dff1f13e0cf005801b9c466e6",
       "dossier_path": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "promoted_rules": [
@@ -3886,7 +3886,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T03:03:50.682Z",
+      "verified_at": "2026-10-27T15:18:59.044Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -9277,8 +9277,8 @@
       "slug": "domcyrus-rustnet",
       "platform": "github",
       "source_url": "https://github.com/domcyrus/rustnet",
-      "source_version": "0144a88d",
-      "content_hash": "36c7f9231e71ac8d2bc4a37f5751cfcfaf689c896778af5d25de3aade83f4d38",
+      "source_version": "213d43cd",
+      "content_hash": "d95f5003c713adaf38de61bb536227ff34285dbd1c628990d6d8b34f2147490b",
       "dossier_path": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "promoted_rules": [
@@ -9306,6 +9306,11 @@
           "number": 4004,
           "title": "update dependencies for security audit (#698)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4879,
+          "title": "deps): bump docker/login-action (#700)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9313,7 +9318,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T03:06:07.288Z",
+      "verified_at": "2026-10-27T15:18:50.888Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29138,8 +29143,8 @@
       "slug": "i18next-react-i18next",
       "platform": "github",
       "source_url": "https://github.com/i18next/react-i18next",
-      "source_version": "3f0880e2",
-      "content_hash": "f434ad81a164d71fb3e970bb221b7fd15984cde339bd6240372a31f541711e60",
+      "source_version": "16a017ee",
+      "content_hash": "8121b7fca327b28e3919a1547d674f450e6b88c26793cad01e25b9d65af7bcf3",
       "dossier_path": "07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
       "promoted_rules": [],
@@ -29148,7 +29153,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T20:55:00.138Z",
+      "verified_at": "2026-10-27T15:18:54.733Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32908,8 +32913,8 @@
       "slug": "langchain4j-langchain4j",
       "platform": "github",
       "source_url": "https://github.com/langchain4j/langchain4j",
-      "source_version": "71d0dcf6",
-      "content_hash": "979f0a51f5143395114948845c8e6a42cda351ed8f64def0167af5def252e59d",
+      "source_version": "565e54d3",
+      "content_hash": "b9fd9dd447f7c7bf8b45cdc7a10f44c84b18c647795bfe7d98bde766341e574d",
       "dossier_path": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "promoted_rules": [
@@ -32942,6 +32947,11 @@
           "number": 4276,
           "title": "Bump Jackson to 2.22.4 and 3.2.4 to fix DoS advisories (#6808)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4881,
+          "title": "deps): bump postcss-selector-parser in /docs (#6860)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32949,7 +32959,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T11:59:58.012Z",
+      "verified_at": "2026-10-27T15:19:02.647Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52602,8 +52612,8 @@
       "slug": "vuetifyjs-vuetify",
       "platform": "github",
       "source_url": "https://github.com/vuetifyjs/vuetify",
-      "source_version": "195e522f",
-      "content_hash": "dee3af550b2959667e9e9c0d2b9a34761e6ded177bf3fa27f5e119ce4f56b0b9",
+      "source_version": "9f6b215f",
+      "content_hash": "780a68234ed1c4dac8afbf8645be5a29cbc39fda7b5eefaec74415928312692f",
       "dossier_path": "07_PROJECT_LEARNING/vuetifyjs-vuetify-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vuetifyjs-vuetify-learnings.md",
       "promoted_rules": [
@@ -52671,6 +52681,11 @@
           "number": 4524,
           "title": "Monotonic Integer Date-Time Identifier Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4878,
+          "title": "docs(rules): fix plugin setup snippets",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52678,7 +52693,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T01:25:49.426Z",
+      "verified_at": "2026-10-27T15:18:50.751Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -67673,8 +67688,8 @@
       "slug": "google-closure-compiler",
       "platform": "github",
       "source_url": "https://github.com/google/closure-compiler",
-      "source_version": "e912cdb1",
-      "content_hash": "93023a13b050f8cbca566742f88d838349afa1c57030ab92af96075b14cf1c32",
+      "source_version": "a2a176a5",
+      "content_hash": "84409828d433f47a93a0537a0d0d5b43b7ffb58a20bd21d890b234da5066ba63",
       "dossier_path": "07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
       "promoted_rules": [
@@ -67687,6 +67702,11 @@
           "number": 3781,
           "title": "Allow extending conformance requirements to append to the root rule's error mess",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4880,
+          "title": "Pin current behavior of private-element lowering bugs.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -67694,7 +67714,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T06:09:24.074Z",
+      "verified_at": "2026-10-27T15:18:53.195Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -135612,6 +135632,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T15:12:16.135Z"
+    },
+    "rule-4878": {
+      "learning_id": "rule-4878",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4878,
+      "title": "docs(rules): fix plugin setup snippets",
+      "source_url": "https://github.com/vuetifyjs/vuetify",
+      "source_version": "9f6b215f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T15:18:50.751Z"
+    },
+    "rule-4879": {
+      "learning_id": "rule-4879",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4879,
+      "title": "deps): bump docker/login-action (#700)",
+      "source_url": "https://github.com/domcyrus/rustnet",
+      "source_version": "213d43cd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T15:18:50.888Z"
+    },
+    "rule-4880": {
+      "learning_id": "rule-4880",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4880,
+      "title": "Pin current behavior of private-element lowering bugs.",
+      "source_url": "https://github.com/google/closure-compiler",
+      "source_version": "a2a176a5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T15:18:53.195Z"
+    },
+    "rule-4881": {
+      "learning_id": "rule-4881",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4881,
+      "title": "deps): bump postcss-selector-parser in /docs (#6860)",
+      "source_url": "https://github.com/langchain4j/langchain4j",
+      "source_version": "565e54d3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T15:19:02.647Z"
     }
   },
   "aliases": {

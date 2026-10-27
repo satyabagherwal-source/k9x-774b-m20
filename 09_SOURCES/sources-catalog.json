@@ -4103,10 +4103,10 @@
     "repository": "i18next/react-i18next",
     "platform": "github",
     "sourceUrl": "https://github.com/i18next/react-i18next",
-    "sourceVersion": "3f0880e2",
+    "sourceVersion": "16a017ee",
     "license": "MIT",
-    "contentHash": "f434ad81a164d71fb3e970bb221b7fd15984cde339bd6240372a31f541711e60",
-    "lastHarvestedAt": "2026-10-24T20:55:00.221Z",
+    "contentHash": "8121b7fca327b28e3919a1547d674f450e6b88c26793cad01e25b9d65af7bcf3",
+    "lastHarvestedAt": "2026-10-27T15:18:54.823Z",
     "learningId": "learn-github-i18next-react-i18next"
   },
   "clastix-kamaji": {
@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "a4d9f092",
+    "sourceVersion": "2548bd51",
     "license": "Apache-2.0",
-    "contentHash": "898ede3c62bc3cbf332e7c564481d04d4cdb340301dc776a1f8006d7d197508c",
-    "lastHarvestedAt": "2026-10-26T03:03:50.738Z",
+    "contentHash": "b28a502c2c989784a8c920a075edb2211afdbc4dff1f13e0cf005801b9c466e6",
+    "lastHarvestedAt": "2026-10-27T15:18:59.135Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {
@@ -6723,10 +6723,10 @@
     "repository": "vuetifyjs/vuetify",
     "platform": "github",
     "sourceUrl": "https://github.com/vuetifyjs/vuetify",
-    "sourceVersion": "195e522f",
+    "sourceVersion": "9f6b215f",
     "license": "NOASSERTION",
-    "contentHash": "dee3af550b2959667e9e9c0d2b9a34761e6ded177bf3fa27f5e119ce4f56b0b9",
-    "lastHarvestedAt": "2026-10-26T01:25:49.497Z",
+    "contentHash": "780a68234ed1c4dac8afbf8645be5a29cbc39fda7b5eefaec74415928312692f",
+    "lastHarvestedAt": "2026-10-27T15:18:50.839Z",
     "learningId": "learn-github-vuetifyjs-vuetify"
   },
   "pauljuliusmartinez-jless": {
@@ -6823,10 +6823,10 @@
     "repository": "domcyrus/rustnet",
     "platform": "github",
     "sourceUrl": "https://github.com/domcyrus/rustnet",
-    "sourceVersion": "0144a88d",
+    "sourceVersion": "213d43cd",
     "license": "Apache-2.0",
-    "contentHash": "36c7f9231e71ac8d2bc4a37f5751cfcfaf689c896778af5d25de3aade83f4d38",
-    "lastHarvestedAt": "2026-10-25T03:06:07.341Z",
+    "contentHash": "d95f5003c713adaf38de61bb536227ff34285dbd1c628990d6d8b34f2147490b",
+    "lastHarvestedAt": "2026-10-27T15:18:50.964Z",
     "learningId": "learn-github-domcyrus-rustnet"
   },
   "futurice-pepperoni-app-kit": {
@@ -7353,10 +7353,10 @@
     "repository": "langchain4j/langchain4j",
     "platform": "github",
     "sourceUrl": "https://github.com/langchain4j/langchain4j",
-    "sourceVersion": "71d0dcf6",
+    "sourceVersion": "565e54d3",
     "license": "Apache-2.0",
-    "contentHash": "979f0a51f5143395114948845c8e6a42cda351ed8f64def0167af5def252e59d",
-    "lastHarvestedAt": "2026-10-25T11:59:58.051Z",
+    "contentHash": "b9fd9dd447f7c7bf8b45cdc7a10f44c84b18c647795bfe7d98bde766341e574d",
+    "lastHarvestedAt": "2026-10-27T15:19:02.721Z",
     "learningId": "learn-github-langchain4j-langchain4j"
   },
   "railwayapp-nixpacks": {
@@ -9933,10 +9933,10 @@
     "repository": "google/closure-compiler",
     "platform": "github",
     "sourceUrl": "https://github.com/google/closure-compiler",
-    "sourceVersion": "e912cdb1",
+    "sourceVersion": "a2a176a5",
     "license": "Apache-2.0",
-    "contentHash": "93023a13b050f8cbca566742f88d838349afa1c57030ab92af96075b14cf1c32",
-    "lastHarvestedAt": "2026-10-23T06:09:24.142Z",
+    "contentHash": "84409828d433f47a93a0537a0d0d5b43b7ffb58a20bd21d890b234da5066ba63",
+    "lastHarvestedAt": "2026-10-27T15:18:53.272Z",
     "learningId": "learn-github-google-closure-compiler"
   },
   "shpigford-chops": {

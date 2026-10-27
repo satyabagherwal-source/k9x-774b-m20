@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source**: github ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
-> **Source Version**: `a4d9f092`  
+> **Source Version**: `2548bd51`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T03:03:50.413Z  
+> **Timestamp**: 2026-10-27T15:18:58.942Z  
 > **Learning ID**: `learn-github-aws-aws-cdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T03:03:50.407Z  
+> **Harvest Timestamp**: 2026-10-27T15:18:58.934Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1182,8 +1182,11 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 - **Issue #39344** (2026-10-24): **feat(lambda-nodejs): support repeated esbuild arguments**
   *Symptoms*: ### Issue #  Closes #32260.  ### Description of changes  Allow string arrays in `BundlingOptions.esbuildArgs` for options that esbuild supports repeating. Every array item is emitted as a separate `--flag:value` argument, including options such as `--supported` that are outside the existing scalar colon-option list. Empty arrays emit no arguments. Existing string and boolean handling is unchanged.  Docker shell escaping and direct local spawning share the conversion. Updated README and JSDoc explain the array syntax and that single-value options should use strings or booleans.  ### Validation  Validated the review follow-up in commit `34ed9898`:  - JSII package compilation: 0 errors; 1 existing `constructs` development-dependency metadata warning. - Bundling suite: 69 tests and 1 existing snapshot passed. - Both updated repeated-argument tests fail against the original implementation and pass with the fix. They cover repeated `--supported` values in both Docker and local-spawn paths, while preserving scalar `--conditions=first,second` rendering. - ESLint passed for all three changed TypeScript files; `git diff --check` passed. - Real esbuild 0.28.1 smoke check using the updated conversion confirmed that both `--supported` overrides apply together and a single-value option supplied as an array is rejected by esbuild.  ### Integration deployment  The integration source is `packages/@aws-cdk-testing/framework-integ/test/aws-lambda-nodejs/test/integ.repeated-esbuild-args.ts`. No 
 
-- **Issue #38940** (2026-10-01): **cdk: alias package published without matching aws-cdk version**
-  *Symptoms*: ### Describe the bug  `cdk@2.1144.0` has been published to npm, but it depends on `aws-cdk@2.1144.0`, which does not appear to exist in the registry.  As a result, running npx cdk without a local aws-cdk dependency fails with: ``` npm error code ETARGET npm error notarget No matching version found for aws-cdk@2.1144.0. ```  This appears to be a publishing issue where the cdk alias package was released before the corresponding aws-cdk version.  ### Regression Issue  - [x] Select this option if this issue appears to be a regression.  ### Last Known Working CDK Library Version  2.1143.0  ### Expected Behavior  Have the separated npm publications match up and be consistent  ### Current Behavior  ``` npm error code ETARGET npm error notarget No matching version found for aws-cdk@2.1144.0. ```   ### Reproduction Steps  Run `npx cdk` without a (dev) dependency on `cdk` or `aws-cdk`  ### Possible Solution  _No response_  ### Additional Information/Context  _No response_  ### AWS CDK Library version (aws-cdk-lib)  n/a  ### AWS CDK CLI version  2.1144  ### Node.js Version  24  ### OS  macOS  ### Language  TypeScript  ### Language Version  _No response_  ### Other information  _No response_
+- **Issue #39338** (2026-10-26): **fix(ec2): warn when a VPC has no availability zones**
+  *Symptoms*: ### Issue # (if applicable)  Closes #32451.  ### Description of changes  An explicit empty availability-zone list silently creates no subnets and can produce misleading downstream errors. Add a suppressible synthesis warning without rejecting existing VPC configurations. Tokenized lists and normal AZ defaults remain accepted. The warning only applies to an explicitly empty availabilityZones list when subnets are requested; intentional subnetConfiguration: [] and maxAzs: 0 do not receive this warning.   Validation: 193 tests passed on this independent branch; changed TypeScript files passed ESLint. Strict JSII/TypeScript compilation passed with all five independent changes combined on a local validation branch.  Integration test exemption requested: this change only adds synth-time metadata. Unit tests cover empty, omitted, explicit nonempty, and tokenized AZ lists; no deployed resource behavior changes.  ----  *By submitting this pull request, I confirm that my contribution is made under the terms of the Apache-2.0 license* 
+  **Post-Mortem & Fix Analysis**:
+  > The `validate-pr` job failed while installing dependencies from the base branch, before the PR validation ran: npm returned `502 Bad Gateway` for `constant-case-3.0.4.tgz`.  [Failed job](https://github.com/aws/aws-cdk/actions/runs/38913326531/job/117014457532). I attempted to rerun it, but GitHub requires repository administrator access. Could a maintainer rerun the failed job?  Could you also consider `pr-linter/exempt-integ-test` for this synthesis-warning change? The independent branch passes 193 VPC tests, including explicit empty/nonempty, omitted and tokenized AZ lists, plus intentionally empty subnet configurations. The change adds diagnostic metadata and does not alter deployed resources. 
+  > **Automated review**  A maintainer will still review this — treat the notes below as a starting point.  📌 Commit [`b27c2f1`](https://github.com/aws/aws-cdk/pull/39338/commits/b27c2f16759318162142262f7a80cac093aa205c)  This PR adds a synth-time warning to the `ec2.Vpc` L2 construct that fires when a VPC is created with an explicit empty `availabilityZones: []` list alongside a default or non-empty `subnetConfiguration`, a case that silently produces no subnets and later surfaces as a confusing "no subnet groups" error. It emits a suppressible `addWarningV2` diagnostic (ID `@aws-cdk/aws-ec2:emptyAvailabilityZonesInVpc`) guarded so it only triggers for the problematic case, and does not alter emitted templates, logical IDs, or deployed resources. The warning guard correctly short-circuits on unresolved tokens before comparing list length, and suppresses itself for an intentionally subnetless VPC. The four added unit tests exercise the positive warning case plus each suppression branch. N
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1200,157 +1203,437 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a4d9f092` (2026-10-25)
-**Commit Message**: docs(eks): explain how to pass null helm chart values from non-typescript languages (#39410)
+### Incident Patch 1: `b190b461` (2026-10-26)
+**Commit Message**: chore(security-guardian): make the detect tests assert the rule they name (#39503)
 
 ### Issue # (if applicable)
 
-Addresses #30000. This documents the limitation and a working workaround; the underlying behavior comes from jsii (details below), so I have not used "Closes".
+None.
 
 ### Reason for this change
 
-#30000 reports that `HelmChart` drops `values` entries set to `None` (Python), which makes it impossible to disable chart defaults that are removed by setting them to `null`, such as the OpenTelemetry Collector's default receivers. The issue also says escape hatches are not available for this construct. Both points turn out to have clear answers that are not documented anywhere.
+The tool's "should detect" tests pass even without cfn-guard installed. [`runCfnGuardValidation`](https://github.com/aws/aws-cdk/blob/e7429db970d0c181a9eef32a58496535d697432b/tools/@aws-cdk/security-guardian/src/cfn-guard-runner.ts#L83-L91) returns `false` on any error, and the tests only checked that.
 
-**Root cause.** CDK's own serialization keeps `null`. Synthesizing `values: { thing: null, nested: { gone: null, keep: 1 }, list: [null, 'a'] }` from TypeScript with aws-cdk-lib 2.274.0 renders
+### Description of changes
 
-```
-Values = {"thing":null,"nested":{"gone":null,"keep":1},"list":[null,"a"],"thing2":"exists"}
-```
+- Each "should detect" test now checks that its rule is reported as failed in the JUnit report, parsed with [`@xmldom/xmldom`](https://www.npmjs.com/package/@xmldom/xmldom). The package is already in `yarn.lock`.
+- The `IAM_NO_WILDCARD_ACTIONS` test now uses its own fixture. Before, it passed only because other IAM rules failed.
+- The README says how to run the tests.
 
-The same values from Python (aws-cdk-lib 2.255.0) render
+### Describe any new or updated permissions being added
 
-```
-Values = {"nested":{"keep":1},"list":["a"],"thing2":"exists"}
-```
+None.
 
-`values` is typed `{[key: string]: any}`, and the jsii kernel maps `null` to `un
+### Description of how you validated changes
 
-**File**: `packages/aws-cdk-lib/aws-eks-v2/README.md` (modified, +22/-0)
+- 71 of 71 tests pass with cfn-guard 3.2.1. Without it, all 6 "should detect" tests fail.
+- These tests run in CI once #39502 merges.
+
+### Checklist
+- [x] My code adheres to the [CONTRIBUTING GUIDE](https://github.com/aws/aws-cdk/blob/ma
+
+**File**: `tools/@aws-cdk/security-guardian/README.md` (modified, +8/-0)
 ```diff
-@@ -1305,6 +1305,28 @@ cluster.addHelmChart('ExternalSecretsOperator', {
- });
- ```
+@@ -142,6 +142,14 @@ yarn security-guardian
+ > - `--base_sha=origin/main`  
+ > - `--rule_set_path=./custom-rules`
  
-+`null` values are passed through to Helm, which is how many charts let you remove a default
-+(for example, disabling one of the OpenTelemetry Collector's default receivers). This works in
-+TypeScript and JavaScript. In the other jsii languages (Python, Java, .NET, Go), the jsii runtime
-+turns `null` (`None` in Python) inside `values` into `undefined`, so those keys are silently
-+left out of the rendered values. To keep them, pass the values as a JSON string with a property
-+override on the chart's underlying resource:
++### 3. Run Tests
 +
-+```ts
-+declare const cluster: eks.Cluster;
++The tests run the rules with [cfn-guard](https://github.com/aws-cloudformation/cloudformation-guard), so install cfn-guard 3 and put it on your `PATH` first.
 +
-+const chart = cluster.addHelmChart('OpenTelemetryCollector', {
-+  chart: 'opentelemetry-collector',
-+  release: 'opentelemetry-collector',
-+  repository: 'https://open-telemetry.github.io/opentelemetry-helm-charts',
-+  namespace: 'opentelemetry',
-+});
-+
-+// A JSON string keeps `null` values intact in every language.
-+const chartResource = chart.node.findChild('Resource').node.defaultChild as CfnResource;
-+chartResource.addPropertyOverride('Values', '{"mode":"deployment","image":{"repository":"otel/opentelemetry-collector-k8s"},"config":{"receivers":{"jaeger":null,"zipkin":null},"service":{"pipelines":{"traces":{"receivers":["otlp"]}}}}}');
++```bash
++yarn test
 +```
 +
- Helm chart can come with Custom Resource Definitions (CRDs) defined that by default will be installed by helm as well. However in special cases it might be needed to skip the installation of CRDs, for that the property `skipCrds` can be used.
+ ---
  
- ```ts
+ ## Output
 ```
 
-**File**: `packages/aws-cdk-lib/aws-eks-v2/lib/helm-chart.ts` (modified, +4/-0)
+**File**: `tools/@aws-cdk/security-guardian/package.json` (modified, +1/-0)
 ```diff
-@@ -58,6 +58,10 @@ export interface HelmChartOptions {
-    *  installationCRDs: true,
-    *  webhook: { port: 9443 }
-    * }
-+   *
-+   * In languages other than TypeScript and JavaScript, `null` values (such as
-+   * `None` in Python) are dropped when crossing the jsii boundary. To pass
-+   * `null` values to the chart, see the "Helm Charts" section of the module README.
-    * @default - No values are provided to the chart.
-    */
-   readonly values?: {[key: string]: any};
+@@ -16,6 +16,7 @@
+   "devDependencies": {
+     "@types/jest": "^29.5.0",
+     "@types/node": "^22.14.1",
++    "@xmldom/xmldom": "^0.9.12",
+     "jest": "^29.5.0",
+     "ts-jest": "^29.1.0",
+     "ts-node": "^10.9.2",
 ```
 
-**File**: `packages/aws-cdk-lib/aws-eks/README.md` (modified, +22/-0)
+**File**: `tools/@aws-cdk/security-guardian/test/guard-rules.test.ts` (modified, +17/-9)
 ```diff
-@@ -1932,6 +1932,28 @@ cluster.addHelmChart('ExternalSecretsOperator', {
- });
- ```
+@@ -1,10 +1,12 @@
+ import { preprocessTemplates } from '../src/template-preprocessor';
+ import { runCfnGuardValidation } from '../src/cfn-guard-runner';
++import { failedRules } from './junit-report';
+ import * as fs from 'fs';
+ import * as path from 'path';
  
-+`null` values are passed through to Helm, which is how many charts let you remove a default
-+(for example, disabling one of the OpenTelemetry Collector's default receivers). This works in
-+TypeScript and JavaScript. In the other jsii languages (Python, Java, .NET, Go), the jsii runtime
-+turns `null` (`None` in Python) inside `values` into `undefined`, so those keys are silently
-+left out of the rendered values. To keep them, pass the values as a JSON string with a property
-+override on the chart's underlying resource:
-+
-+```ts
-+declare const cluster: eks.Cluster;
-+
-+const chart = cluster.addHelmChart('OpenTelemetryCollector', {
-+  chart: 'opentelemetry-collector',
-+  release: 'opentelemetry-collector',
-+  repository: 'https://open-telemetry.github.io/opentelemetry-helm-charts',
-+  namespace: 'opentelemetry',
-+});
-+
-+// A JSON string keeps `null` values intact in every language.
-+const chartResource = chart.node.findChild('Resource').node.defaultChild as CfnResource;
-+chartResource.addPropertyOverride('Values', '{"mode":"deployment","image":{"repository":"otel/opentelemetry-collector-k8s"},"config":{"receivers":{"jaeger":null,"zipkin":null},"service":{"pipelines":{"traces":{"receivers":["otlp"]}}}}}');
-+```
-+
- Helm chart can come with Custom Resource Definitions (CRDs) defined that by default will be installed by helm as well. However in special cases it might be needed to skip the installation of CRDs, for that the property `skipCrds` can be used.
+ describe('Guard Rules Validation', () => {
+   const templatesDir = path.join(__dirname, 'templates');
++  const ruleFixturesDir = path.join(__dirname, 'rule-fixtures');
+   const outputDir = path.join(__dirname, 'guard-test-output');
+   const rulesDir = path.join(__dirname, '..', 'rules');
  
- ```ts
+@@ -37,12 +39,13 @@ describe('Guard Rules Validation', () => {
+         path.join(outputDir, 'trust-scope-test.xml'),
+         'Trust Scope',
+         new Map(),
+-        true
++        false
+       );
+       
+       // Should detect broad principals (validation should fail)
+       expect(typeof success).toBe('boolean');
+       expect(success).toBe(false);
++      expect(failedRules(path.join(outputDir, 'trust-scope-test.xml'))).toContain('IAM_ROLE_NO_BROAD_PRINCIPALS');
+     });
+   });
+ 
+@@ -58,19 +61,20 @@ describe('Guard Rules Validation', () => {
+         path.join(outputDir, 'resource-policy-test.xml'),
+         'Resource Policy',
+         new Map(),
+-        true
++        false
+       );
+       
+       // Should detect root principals without conditions (validation should fail)
+       expect(typeof success).toBe('boolean');
+       expect(success).toBe(false);
++      expect(failedRules(path.join(outputDir, 'resource-policy-test.xml'))).toContain('RESOURCE_POLICY_ROOT_PRINCIPAL_NEEDS_CONDITIONS');
+     });
+   });
+ 
+   describe('IAM Rules', () => {
+-    test('IAM_NO_WILDCARD_ACTIONS - should validate existing templates for wildcard actions', async () => {
+-      // Process existing templates that may contain IAM policies
+-      preprocessTemplates(templatesDir, outputDir);
++    test('IAM_NO_WILDCARD_ACTIONS - should detect wildcard actions in IAM policies', async () => {
++      // Process the rule's own fixtures; no template in test/templates uses a wildcard action
++      preprocessTemplates(path.join(ruleFixturesDir, 'iam/iam-no-wildcard-actions'), outputDir);
+       
+       // Run validation with IAM rules
+       const success = await runCfnGuardValidation(
+@@ -79,12 +83,13 @@ describe('Guard Rules Validation', () => {
+         path.join(outputDir, 'iam-test.xml'),
+         'IAM',
+         new Map(),
+-        true
++        false
+       );
+       
+       // Should detect IAM violations (validation should fail)
+       expect(typeof success).toBe('boolean');
+       expect(success).toBe(false);
++      expect(failedRules(path.join(outputDir, 'iam-test.xml'))).toContain('IAM_NO_WILDCARD_ACTIONS');
+     });
+ 
+     describe('IAM_NO_WORLD_ACCESSIBLE_TRUST_POLICY', () => {
+@@ -99,11 +104,12 @@ describe('Guard Rules Validation', () => {
+           path.join(outputDir, 'world-accessible-static-test.xml'),
+           'World Accessible Static',
+           new Map(),
+-          true
++          false
+         );
+         
+         // Should detect world-accessible trust policies (validation should fail)
+         expect(success).toBe(false);
++        expect(failedRules(path.join(outputDir, 'world-accessible-static-test.xml'))).toContain('IAM_NO_WORLD_ACCESSIBLE_TRUST_POLICY');
+       });
+ 
+       test('Resolved: should detect Principal: "*" after intrinsic resolution', async () => {
+@@ -117,11 +123,12 @@ describe('Guard Rules Validation', () => {
+           path.join(outputDir, 'world-accessible-resolved-test.xml'),
+           'World Accessible Resolved',
+           new Map(),
+-          true
++          false
+         );
+         
+         // Should detect world-accessible trust policies (validation should fail)
+         expect(success).toBe(false);
++        expect(failedRules(path.join(outputDir, 'world-accessible-resolved-test.xml'))).toContain('IAM_NO_WORLD_ACCESSIBLE_TRUST_POLICY');
+       });
+ 
+       test('Static: should not flag intrinsic functions as world-accessible', async () => {
+@@ -196,12 +203,13 @@ describe('Guard Rules Validation', () => {
+         path.join(outputDir, 'root-principal-test.xml'),
+         'Root Principal',
+         new Map(),
+-        true
++        false
+       );
+       
+       // Should detect root principals without conditions (validation should fail)
+       expect(typeof success).toBe('boolean');
+       expect(success).toBe(false);
++      expect(failedRules(path.join(outputDir, 'root-principal-test.xml'))).toContain('IAM_ROLE_ROOT_PRINCIPAL_NEEDS_CONDITIONS');
+     });
+   });
+ 
 ```
 
-**File**: `packages/aws-cdk-lib/aws-eks/lib/helm-chart.ts` (modified, +4/-0)
+**File**: `tools/@aws-cdk/security-guardian/test/junit-report.ts` (added, +21/-0)
 ```diff
-@@ -58,6 +58,10 @@ export interface HelmChartOptions {
-    *  installationCRDs: true,
-    *  webhook: { port: 9443 }
-    * }
-+   *
-+   * In languages other than TypeScript and JavaScript, `null` values (such as
-+   * `None` in Python) are dropped when crossing the jsii boundary. To pass
-+   * `null` values to the chart, see the "Helm Charts" section of the module README.
-    * @default - No values are provided to the chart.
-    */
-   readonly values?: {[key: string]: any};
+@@ -0,0 +1,21 @@
++import { DOMParser } from '@xmldom/xmldom';
++import * as fs from 'fs';
++
++function readReport(junitFile: string) {
++  const xml = fs.readFileSync(junitFile, 'utf8');
++  if (xml.trim() === '') {
++    throw new Error(`cfn-guard wrote no JUnit report to ${junitFile} (is cfn-guard on PATH?)`);
++  }
++  return new DOMParser().parseFromString(xml, 'text/xml');
++}
++
++/**
++ * Names of the rules that failed in a cfn-guard JUnit report.
++ *
++ * Needs a report written with enhanceXml disabled: only then is each failure
++ * message the rule name (prefixed with "[Type: <type>] ").
++ */
++export function failedRules(junitFile: string): string[] {
++  return Array.from(readReport(junitFile).getElementsByTagName('failure'))
++    .map(failure => (failure.getAttribute('message') ?? '').replace(/^\[Type: [^\]]*\] /, ''));
++}
 ```
 
-**File**: `packages/aws-cdk-lib/rosetta/aws_eks/default.ts-fixture` (modified, +1/-1)
+**File**: `tools/@aws-cdk/security-guardian/test/rule-fixtures/iam/iam-no-wildcard-actions/non-compliant.json` (added, +20/-0)
 ```diff
-@@ -1,5 +1,5 @@
- import { Construct } from 'constructs';
--import { CfnOutput, Fn, Size, Stack } from 'aws-cdk-lib';
-+import { CfnOutput, CfnResource, Fn, Size, Stack } from 'aws-cdk-lib';
- import * as eks from 'aws-cdk-lib/aws-eks';
- import * as ec2 from 'aws-cdk-lib/aws-ec2';
- import * as lambda from 'aws-cdk-lib/aws-lambda';
+@@ -0,0 +1,20 @@
++{
++  "Description": "IAM_NO_WILDCARD_ACTIONS fires: the managed policy allows a service-wide wildcard action",
++  "Resources": {
++    "WildcardActionPolicy": {
++      "Type": "AWS::IAM::ManagedPolicy",
++      "Properties": {
++        "PolicyDocument": {
++          "Version": "2012-10-17",
++          "Statement": [
++            {
++              "Effect": "Allow",
++              "Action": "s3:*",
++              "Resource": "arn:aws:s3:::example-bucket/*"
++            }
++          ]
++        }
++      }
++    }
++  }
++}
 ```
 
-**File**: `packages/aws-cdk-lib/rosetta/aws_eks_v2/default.ts-fixture` (modified, +1/-1)
+---
+
+### Incident Patch 2: `e7453546` (2026-10-26)
+**Commit Message**: chore(security-guardian): run the tool's tests on pull requests (#39502)
+
+### Issue # (if applicable)
+
+None.
+
+### Reason for this change
+
+The Security Guardian tool's tests don't run in CI. The package isn't in [`lerna.json`](https://github.com/aws/aws-cdk/blob/e7429db970d0c181a9eef32a58496535d697432b/lerna.json), and [`security-guardian.yml`](https://github.com/aws/aws-cdk/blob/e7429db970d0c181a9eef32a58496535d697432b/.github/workflows/security-guardian.yml#L52-L53) only builds the tool.
+
+### Description of changes
+
+- Add [`security-guardian-tests.yml`](https://github.com/aws/aws-cdk/blob/f8d940ff240ce4d51e345d1cc6bb6075d39462bf/.github/workflows/security-guardian-tests.yml). It builds and tests the tool on pull requests that change the tool, this workflow, `yarn.lock` or `package.json`.
+- It tests the pull request's own code, installs cfn-guard the same way as the scan, and uses Node.js 24, which GitHub runs the action with.
+- Its name differs from "Security Guardian", so it doesn't trigger the Security Report workflow.
+
+### Describe any new or updated permissions being added
+
+None.
+
+### Description of how you validated changes
+
+- [This PR's run](https://github.com/aws/aws-cdk/ac
+
+**File**: `.github/workflows/security-guardian-tests.yml` (added, +50/-0)
 ```diff
-@@ -1,6 +1,6 @@
- // Fixture with packages imported, but nothing else
- import { Construct } from 'constructs';
--import { CfnOutput, Fn, Size, Stack } from 'aws-cdk-lib';
-+import { CfnOutput, CfnResource, Fn, Size, Stack } from 'aws-cdk-lib';
- import * as eks from 'aws-cdk-lib/aws-eks-v2';
- import * as ec2 from 'aws-cdk-lib/aws-ec2';
- import * as lambda from 'aws-cdk-lib/aws-lambda';
+@@ -0,0 +1,50 @@
++# Builds and unit-tests the Security Guardian tool when a pull request changes it
++# or the root dependencies, which pin the tool's jest and ts-jest.
++# security-guardian.yml checks out the base branch; this workflow uses the default
++# checkout (the pull request merge commit), so it tests the pull request's own code.
++name: Security Guardian Tests
++on:
++  pull_request:
++    paths:
++      - 'tools/@aws-cdk/security-guardian/**'
++      - '.github/workflows/security-guardian-tests.yml'
++      - 'yarn.lock'
++      - 'package.json'
++
++permissions:
++  contents: read
++
++jobs:
++  test:
++    runs-on: ubuntu-latest
++    timeout-minutes: 30
++    steps:
++      - name: Checkout
++        uses: actions/checkout@v7
++        with:
++          persist-credentials: false
++
++      # GitHub runs the Security Guardian action (action.yml: node20) on Node.js 24
++      - name: Set up Node
++        uses: actions/setup-node@v7
++        with:
++          node-version: "24"
++
++      # The rule tests run the same cfn-guard release as the Security Guardian scan
++      - name: Install cfn-guard
++        run: |
++          mkdir -p "$HOME/.local/bin"
++          curl -L -o cfn-guard.tar.gz https://github.com/aws-cloudformation/cloudformation-guard/releases/latest/download/cfn-guard-v3-x86_64-ubuntu-latest.tar.gz
++          tar -xzf cfn-guard.tar.gz
++          mv cfn-guard-v3-*/cfn-guard "$HOME/.local/bin/cfn-guard"
++          chmod +x "$HOME/.local/bin/cfn-guard"
++          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
++
++      - name: Install & Build security-guardian
++        run: yarn install --frozen-lockfile && cd tools/@aws-cdk/security-guardian && yarn build
++
++      - name: Test security-guardian
++        run: |
++          cfn-guard --version
++          cd tools/@aws-cdk/security-guardian
++          yarn test --ci
+```
+
+---
+
+### Incident Patch 3: `155d8ed0` (2026-10-26)
+**Commit Message**: chore(deps): bump postcss-selector-parser from 6.1.4 to 6.1.5 in the npm_and_yarn group across 1 directory (#39500)
+
+Bumps the npm_and_yarn group with 1 update in the / directory: [postcss-selector-parser](https://github.com/postcss/postcss-selector-parser).
+
+Updates `postcss-selector-parser` from 6.1.4 to 6.1.5
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a href="https://github.com/postcss/postcss-selector-parser/releases">postcss-selector-parser's releases</a>.</em></p>
+<blockquote>
+<h2>6.1.5</h2>
+<ul>
+<li>fix: parse flat selectors in linear time, closing a CPU exhaustion vulnerability (<a href="https://github.com/advisories/GHSA-rj75-hqrm-r3gf">CVE-2026-104844</a> / GHSA-rj75-hqrm-r3gf, reported by Wayde Shi), backported from 7.1.6 (<a href="https://redirect.github.com/postcss/postcss-selector-parser/pull/346">#346</a> by <a href="https://github.com/bradyshutt"><code>@​bradyshutt</code></a>)</li>
+</ul>
+<h3>The 6.x line is now in security-only maintenance</h3>
+<p>This release exists because the advisory above covers every published 6.x
+version, and until now the only remediation on offer was an upgrade to 7.x.
+<strong>6.1.5 is the patched version for the 6.x li
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -33,7 +33,7 @@
+     "jsii-reflect": "1.142.0",
+     "jsii-rosetta": "~6.0.20",
+     "lerna": "^8.2.4",
+-    "nx": "^23",
++    "nx": "^24",
+     "semver": "^7.8.5",
+     "standard-version": "^9.5.0",
+     "ts-jest": "^29.4.15",
+```
+
+**File**: `yarn.lock` (modified, +62/-167)
+```diff
+@@ -3866,100 +3866,100 @@
+   resolved "https://registry.npmjs.org/@nx/nx-darwin-arm64/-/nx-darwin-arm64-20.8.4.tgz#80a8dfa808d3e0749ac2a7b90683ca9dfd38f999"
+   integrity sha512-8Y7+4wj1qoZsuDRpnuiHzSIsMt3VqtJ0su8dgd/MyGccvvi4pndan2R5yTiVw/wmbMxtBmZ6PO6Z8dgSIrMVog==
+ 
+-"@nx/nx-darwin-arm64@23.3.1":
+-  version "23.3.1"
+-  resolved "https://registry.npmjs.org/@nx/nx-darwin-arm64/-/nx-darwin-arm64-23.3.1.tgz#51231d136bf5432f249a4faa86f4192ecc86fa33"
+-  integrity sha512-T3KOTrUIdWaqlIIMyusbpKHujXTumoltkYwBjqjw9Py6Fb3c8Eb7uvWVW6dP8ODknqr9oEcTlk+C8Nid+bunAQ==
++"@nx/nx-darwin-arm64@24.0.0":
++  version "24.0.0"
++  resolved "https://registry.npmjs.org/@nx/nx-darwin-arm64/-/nx-darwin-arm64-24.0.0.tgz#90df1d05ecd762e3db453cca3a80859c6dae9a24"
++  integrity sha512-ZHXmqkMVF7aA6QShvc5lVkCU6JHjGV19m8eplw0pL06AFgNdQ9u16013HJPm+Ys6fKnltYDWl/Ef7meQjT+u3Q==
+ 
+ "@nx/nx-darwin-x64@20.8.4":
+   version "20.8.4"
+   resolved "https://registry.npmjs.org/@nx/nx-darwin-x64/-/nx-darwin-x64-20.8.4.tgz#59a2a7ca04c45648e4829cbc453e53dbef654317"
+   integrity sha512-2lfuxRc56QWnAysMhcD03tpCPiRzV1+foUq0MhV2sSBIybXmgV4wHLkPZNhlBCl4FNXrWiZiN1OJ2X9AGiOdug==
+ 
+-"@nx/nx-darwin-x64@23.3.1":
+-  version "23.3.1"
+-  resolved "https://registry.npmjs.org/@nx/nx-darwin-x64/-/nx-darwin-x64-23.3.1.tgz#bc3d73144279f6de18f2e400ec73ef5e27840bcd"
+-  integrity sha512-GnbMF9xEGIdUI/7KoQdcTILWmRUrMLbbFi3CO8KgKcA1Be7eaoeKdgBQoCQ2yF7r7DyQOR1PXp7sF3s7gqUATQ==
++"@nx/nx-darwin-x64@24.0.0":
++  version "24.0.0"
++  resolved "https://registry.npmjs.org/@nx/nx-darwin-x64/-/nx-darwin-x64-24.0.0.tgz#d8b651e2b1b777df8630da5e3bcc31d32c799642"
++  integrity sha512-a+cpg/VQvD/vF7BJsl70vulc1GxCamtU0XwzkGOzzDATn3JcKBNpBFx0Iqp5frJYN0X00Supz4zhgCEe9LpCow==
+ 
+ "@nx/nx-freebsd-x64@20.8.4":
+   version "20.8.4"
+   resolved "https://registry.npmjs.org/@nx/nx-freebsd-x64/-/nx-freebsd-x64-20.8.4.tgz#3905826ac68a0bc226266b858564b1e68c7223af"
+   integrity sha512-99vnUXZy+OUBHU+8Yhabre2qafepKg9GKkQkhmXvJGqOmuIsepK7wirUFo2PiVM8YhS6UV2rv6hKAZcQ7skYyg==
+ 
+-"@nx/nx-freebsd-x64@23.3.1":
+-  version "23.3.1"
+-  resolved "https://registry.npmjs.org/@nx/nx-freebsd-x64/-/nx-freebsd-x64-23.3.1.tgz#58003c3611fad85f781af2b844d1ff1d4807b272"
+-  integrity sha512-RzLx1pVL/MQQ/fSreMFIufAfsrj/TpD1+69n5kBcr3An2FaqKdQ6BhKLWRlAeOSKq6Su75Y0la8e2AU5zlmdpw==
++"@nx/nx-freebsd-x64@24.0.0":
++  version "24.0.0"
++  resolved "https://registry.npmjs.org/@nx/nx-freebsd-x64/-/nx-freebsd-x64-24.0.0.tgz#8244b7c3f9ea44bab09c1cf17f295f346c7ccd10"
++  integrity sha512-PAGVaLbJxEzBXSQvg82g/8mDoqoMQFIX/EchuJbJGekIiz3BM2Xgyiy5qAD2/2meLVOTFtbkBQR+4ZSymgqGWw==
+ 
+ "@nx/nx-linux-arm-gnueabihf@20.8.4":
+   version "20.8.4"
+   resolved "https://registry.npmjs.org/@nx/nx-linux-arm-gnueabihf/-/nx-linux-arm-gnueabihf-20.8.4.tgz#8c3dc73f17f064e10f98baca4f704fb1c015ebee"
+   integrity sha512-dht73zpnpzEUEzMHFQs4mfiwZH3WcJgQNWkD5p7WkeJewHq2Yyd0eG5Jg3kB7wnFtwPUV1eNJRM5rephgylkLA==
+ 
+-"@nx/nx-linux-arm-gnueabihf@23.3.1":
+-  version "23.3.1"
+-  resolved "https://registry.npmjs.org/@nx/nx-linux-arm-gnueabihf/-/nx-linux-arm-gnueabihf-23.3.1.tgz#ed8dfe436ce7c4167479be2e99101f708c792d42"
+-  integrity sha512-/K7ig9xL4FMO2eQovTSLtk4QR7d0phbKoWf1wYQZ2r0ZrHNo2gPYmS8wU0Ci4d6oSiqa2fdeHKVDtEvWldTBaQ==
++"@nx/nx-linux-arm-gnueabihf@24.0.0":
++  version "24.0.0"
++  resolved "https://registry.npmjs.org/@nx/nx-linux-arm-gnueabihf/-/nx-linux-arm-gnueabihf-24.0.0.tgz#f038c5522ec3b5f6b9fc5b8aa1e4b2a75071486b"
++  integrity sha512-WOWBIlTb+1FNP86GcodUF4BHdjVyGCwrVH/lqUvNAmT/FPopirCzVLdoj1P5kfWC/F0II/qAu7X698yKzIu71A==
+ 
+ "@nx/nx-linux-arm64-gnu@20.8.4":
+   version "20.8.4"
+   resolved "https://registry.npmjs.org/@nx/nx-linux-arm64-gnu/-/nx-linux-arm64-gnu-20.8.4.tgz#986a01154212da2b9946117ae1b5bd4aa1d00775"
+   integrity sha512-syXxbJZ0yPaqzVmB28QJgUtaarSiW/PQmv/5Z2Ps8rCi7kYylISPVNjP1NNiIOcGDRWbHqoBfM0bEGPfSp0rBQ==
+ 
+-"@nx/nx-linux-arm64-gnu@23.3.1":
+-  version "23.3.1"
+-  resolved "https://registry.npmjs.org/@nx/nx-linux-arm64-gnu/-/nx-linux-arm64-gnu-23.3.1.tgz#a2ba4f91a9fdfb4b016bd4adfdbf7b8810e006e3"
+-  integrity sha512-Uj3xl5aLXUV6EQ/vWbZBqMqZO9K58CxRIsMTISC1+LxjvGnf4uUL73ObTi3K1eih3f1CVCGsU95LF3Kf6T2Frw==
++"@nx/nx-linux-arm64-gnu@24.0.0":
++  version "24.0.0"
++  resolved "https://registry.npmjs.org/@nx/nx-linux-arm64-gnu/-/nx-linux-arm64-gnu-24.0.0.tgz#6d41543cb8e87828d48c4bb62b8c6ea02521bb28"
++  integrity sha512-vASWIfOijXd5cdOn0Z6Wcd2iwtFxlBoBre6w+c8wuLLLPN3r4SRQyL+jAEB+eHkUHz39mMxSwa8DY+VlS9luVw==
+ 
+ "@nx/nx-linux-arm64-musl@20.8.4":
+   version "20.8.4"
+   resolved "https://registry.npmjs.org/@nx/nx-linux-arm64-musl/-/nx-linux-arm64-musl-20.8.4.tgz#2c302efd47bd117cadbf2a2e6bf2aad7772665c4"
+   integrity sha512-AlZZFolS/S0FahRKG7rJ0Z9CgmIkyzHgGaoy3qNEMDEjFhR3jt2ZZSLp90W7zjgrxojOo90ajNMrg2UmtcQRDA==
+ 
+-"@nx/nx-linux-arm64-musl@23.3.1":
+-  version "23.3.1"
+-  resolved "https://registry.npmjs.org/@nx/nx-linux-arm64-musl/-/nx-linux-arm64-musl-23.3.1.tgz#e8608e746e5d6475364eae6029752664f59d9b0c"
+-  integrity sha512-woeNHutXYgiWU0SQnvKQ4VNgVbqwy1uer6bS0HF2RbfN80HglsjhtzTAUZ
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #39475** (closed): a (@Imadnajam)
-- **PR #39452** (2026-10-23): feat(core): switch off built-in CloudFormation Validate using App prop (@rix0rrr)
-- **PR #39451** (2026-10-23): fix(core): overly defensive plugin invocation leads to slowness (@rix0rrr)
-- **PR #39440** (2026-10-22): chore(security-guardian): set rootDir for TypeScript 6 (@kumsmrit)
-- **PR #39438** (2026-10-23): chore(custom-resource-handlers): remove unused aws-glue-alpha handler (@ozelalisen)
-- **PR #39436** (2026-10-22): fix(stepfunctions-tasks): use a dedicated Lambda function for each EvaluateExpression task (@kumsmrit)
+- **PR #39515** (closed): chore(deps): bump @aws-cdk/lambda-layer-kubectl-v36 to 2.0.1 (@aemada-aws)
+- **PR #39507** (2026-10-26): chore(merge-back): 2.275.0 (@aws-cdk-automation)
+- **PR #39504** (2026-10-27): chore(security-guardian): remove KINESIS_ENCRYPTION_ENABLED rule (@gasolima)
+- **PR #39503** (2026-10-26): chore(security-guardian): make the detect tests assert the rule they name (@ozelalisen)
+- **PR #39502** (2026-10-26): chore(security-guardian): run the tool's tests on pull requests (@ozelalisen)
+- **PR #39500** (2026-10-26): chore(deps): bump postcss-selector-parser from 6.1.4 to 6.1.5 in the npm_and_yarn group across 1 directory (@dependabot[bot])
 
 ---
 
@@ -1370,40 +1653,28 @@ Values = {"nested":{"keep":1},"list":["a"],"thing2":"exists"}
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(eks): explain how to pass null helm chart values from non-typescript langua
+## X. security-guardian): make the detect tests assert the rule they name (#39503)
 
 **RULE**:
-When implementing operations in `packages/aws-cdk-lib/aws-eks-v2/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tools/@aws-cdk/security-guardian/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a4d9f092`: docs(eks): explain how to pass null helm chart values from non-typescript languages (#39410). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b190b461`: security-guardian): make the detect tests assert the rule they name (#39503). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/aws-cdk-lib/aws-eks-v2/README.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/@aws-cdk/security-guardian/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-`null` values are passed through to Helm, which is how many charts let you remove a default
-(for example, disabling one of the OpenTelemetry Collector's default receivers). This works in
-TypeScript and JavaScript. In the other jsii languages (Python, Java, .NET, Go), the jsii runtime
-turns `null` (`None` in Python) inside `values` into `undefined`, so those keys are silently
-left out of the rendered values. To keep them, pass the values as a JSON string with a property
-override on the chart's underlying resource:
+### 3. Run Tests
 
-```ts
-declare const cluster: eks.Cluster;
+The tests run the rules with [cfn-guard](https://github.com/aws-cloudformation/cloudformation-guard), so install cfn-guard 3 and put it on your `PATH` first.
 
-const chart = cluster.addHelmChart('OpenTelemetryCollector', {
-  chart: 'opentelemetry-collector',
-  release: 'opentelemetry-collector',
-  repository: 'https://open-telemetry.github.io/opentelemetry-helm-charts',
-  namespace: 'opentelemetry',
-});
+```bash
+yarn test
+```
 
-// A JSON string keeps `null` values intact in every language.
-const chartResource = chart.node.findChild('Resource').node.defaultChild as CfnResource;
-chartResource.addPropertyOverride('Values', '{"mode":"deployment","image":{"repository":"otel/opentelemetry-collector-k8s"},"config":{"receivers":{"jaeger":null,"zipkin":null},"service":{"pipelines":{"traces":{"receivers":["otlp"]}}}}}')
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1413,4 +1684,4 @@ chartResource.addPropertyOverride('Values', '{"mode":"deployment","image":{"repo
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a4d9f092` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b190b461` are properly handled with clean fallback behavior.

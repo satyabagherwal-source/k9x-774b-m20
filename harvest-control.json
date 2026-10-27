@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-27T15:12:12.416Z",
+  "lastUpdated": "2026-10-27T15:19:00.202Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -188,7 +188,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T15:11:54.165Z",
+        "lastActiveAt": "2026-10-27T15:18:41.993Z",
         "lastHarvestedAt": "2026-10-27T15:04:35.412Z",
         "totalHarvested": 1126,
         "lastError": null
@@ -198,9 +198,9 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T15:12:05.311Z",
-        "lastHarvestedAt": "2026-10-27T15:12:05.311Z",
-        "totalHarvested": 1412,
+        "lastActiveAt": "2026-10-27T15:18:53.379Z",
+        "lastHarvestedAt": "2026-10-27T15:18:53.379Z",
+        "totalHarvested": 1413,
         "lastError": null
       },
       {
@@ -208,9 +208,9 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T15:11:56.726Z",
-        "lastHarvestedAt": "2026-10-27T15:01:13.248Z",
-        "totalHarvested": 1513,
+        "lastActiveAt": "2026-10-27T15:18:53.501Z",
+        "lastHarvestedAt": "2026-10-27T15:18:53.501Z",
+        "totalHarvested": 1514,
         "lastError": null
       },
       {
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T15:12:09.571Z",
-        "lastHarvestedAt": "2026-10-27T15:12:09.571Z",
-        "totalHarvested": 5192,
+        "lastActiveAt": "2026-10-27T15:18:55.815Z",
+        "lastHarvestedAt": "2026-10-27T15:18:55.815Z",
+        "totalHarvested": 5193,
         "lastError": null
       },
       {
@@ -228,9 +228,9 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T15:12:01.735Z",
-        "lastHarvestedAt": "2026-10-27T14:54:00.834Z",
-        "totalHarvested": 1551,
+        "lastActiveAt": "2026-10-27T15:18:57.370Z",
+        "lastHarvestedAt": "2026-10-27T15:18:57.370Z",
+        "totalHarvested": 1552,
         "lastError": null
       },
       {
@@ -238,9 +238,9 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T15:12:15.158Z",
-        "lastHarvestedAt": "2026-10-27T15:12:15.158Z",
-        "totalHarvested": 1479,
+        "lastActiveAt": "2026-10-27T15:19:01.683Z",
+        "lastHarvestedAt": "2026-10-27T15:19:01.683Z",
+        "totalHarvested": 1480,
         "lastError": null
       },
       {
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T15:12:06.974Z",
+        "lastActiveAt": "2026-10-27T15:18:54.680Z",
         "lastHarvestedAt": "2026-10-27T15:01:21.627Z",
         "totalHarvested": 1301,
         "lastError": null
@@ -258,9 +258,9 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T15:12:18.793Z",
-        "lastHarvestedAt": "2026-10-27T15:12:18.793Z",
-        "totalHarvested": 1511,
+        "lastActiveAt": "2026-10-27T15:19:05.266Z",
+        "lastHarvestedAt": "2026-10-27T15:19:05.266Z",
+        "totalHarvested": 1512,
         "lastError": null
       },
       {
@@ -268,7 +268,7 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T15:12:11.816Z",
+        "lastActiveAt": "2026-10-27T15:18:59.925Z",
         "lastHarvestedAt": "2026-10-27T14:54:10.612Z",
         "totalHarvested": 1189,
         "lastError": null
@@ -294,7 +294,7 @@
     "GITHUB_REST_API": {
       "service": "GITHUB_REST_API",
       "status": "HEALTHY",
-      "remaining": 4962,
+      "remaining": 4911,
       "resetEpoch": 0,
       "resetAt": null,
       "trippedAt": null,
@@ -303,14 +303,13 @@
     },
     "GITHUB_SEARCH_API": {
       "service": "GITHUB_SEARCH_API",
-      "status": "COOLING_DOWN",
-      "remaining": 5,
-      "resetEpoch": 1793113968985,
-      "resetAt": "2026-10-27T15:12:48.985Z",
-      "trippedAt": "2026-10-27T15:11:47.985Z",
-      "reason": "Secondary rate limit or HTTP 403 backoff (Remaining: 4 | Resource: search | URL: https://api.github.com/search/repositories?q=topic%3Adesign-system%20language%3Atypescript%20stars%3A%3E2000%20sort%3Astars&per_page=15&page=2)",
-      "consecutiveBlocks": 0,
-      "isSecondaryRateLimit": true
+      "status": "HEALTHY",
+      "remaining": 9,
+      "resetEpoch": 0,
+      "resetAt": null,
+      "trippedAt": null,
+      "reason": null,
+      "consecutiveBlocks": 0
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T15:12:16.262Z",
+  "last_updated": "2026-10-27T15:19:02.730Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6276,14 +6276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-i18next-react-i18next",
-      "content_hash": "f434ad81a164d71fb3e970bb221b7fd15984cde339bd6240372a31f541711e60",
-      "verified_at": "2026-10-24T20:55:00.229Z",
+      "content_hash": "8121b7fca327b28e3919a1547d674f450e6b88c26793cad01e25b9d65af7bcf3",
+      "verified_at": "2026-10-27T15:18:54.841Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-24T20:55:00.229Z"
+      "last_updated": "2026-10-27T15:18:54.841Z"
     },
     "clastix/kamaji": {
       "repository": "clastix/kamaji",
@@ -7326,14 +7326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aws-aws-cdk",
-      "content_hash": "898ede3c62bc3cbf332e7c564481d04d4cdb340301dc776a1f8006d7d197508c",
-      "verified_at": "2026-10-26T03:03:50.745Z",
+      "content_hash": "b28a502c2c989784a8c920a075edb2211afdbc4dff1f13e0cf005801b9c466e6",
+      "verified_at": "2026-10-27T15:18:59.152Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T03:03:50.745Z"
+      "last_updated": "2026-10-27T15:18:59.152Z"
     },
     "cockroachdb/cockroach": {
       "repository": "cockroachdb/cockroach",
@@ -10146,14 +10146,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vuetifyjs-vuetify",
-      "content_hash": "dee3af550b2959667e9e9c0d2b9a34761e6ded177bf3fa27f5e119ce4f56b0b9",
-      "verified_at": "2026-10-26T01:25:49.504Z",
+      "content_hash": "780a68234ed1c4dac8afbf8645be5a29cbc39fda7b5eefaec74415928312692f",
+      "verified_at": "2026-10-27T15:18:50.848Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T01:25:49.504Z"
+      "last_updated": "2026-10-27T15:18:50.848Z"
     },
     "PaulJuliusMartinez/jless": {
       "repository": "PaulJuliusMartinez/jless",
@@ -10296,14 +10296,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-domcyrus-rustnet",
-      "content_hash": "36c7f9231e71ac8d2bc4a37f5751cfcfaf689c896778af5d25de3aade83f4d38",
-      "verified_at": "2026-10-25T03:06:07.348Z",
+      "content_hash": "d95f5003c713adaf38de61bb536227ff34285dbd1c628990d6d8b34f2147490b",
+      "verified_at": "2026-10-27T15:18:50.972Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T03:06:07.348Z"
+      "last_updated": "2026-10-27T15:18:50.972Z"
     },
     "futurice/pepperoni-app-kit": {
       "repository": "futurice/pepperoni-app-kit",
@@ -11076,14 +11076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-langchain4j-langchain4j",
-      "content_hash": "979f0a51f5143395114948845c8e6a42cda351ed8f64def0167af5def252e59d",
-      "verified_at": "2026-10-25T11:59:58.056Z",
+      "content_hash": "b9fd9dd447f7c7bf8b45cdc7a10f44c84b18c647795bfe7d98bde766341e574d",
+      "verified_at": "2026-10-27T15:19:02.730Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T11:59:58.056Z"
+      "last_updated": "2026-10-27T15:19:02.730Z"
     },
     "railwayapp/nixpacks": {
       "repository": "railwayapp/nixpacks",
@@ -14946,14 +14946,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-google-closure-compiler",
-      "content_hash": "93023a13b050f8cbca566742f88d838349afa1c57030ab92af96075b14cf1c32",
-      "verified_at": "2026-10-23T06:09:24.156Z",
+      "content_hash": "84409828d433f47a93a0537a0d0d5b43b7ffb58a20bd21d890b234da5066ba63",
+      "verified_at": "2026-10-27T15:18:53.281Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T06:09:24.156Z"
+      "last_updated": "2026-10-27T15:18:53.281Z"
     },
     "Shpigford/chops": {
       "repository": "Shpigford/chops",

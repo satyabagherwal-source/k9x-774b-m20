@@ -5413,3 +5413,9 @@ Every entry in this ledger must capture:
 | `learn-github-scrapinghub-dateparser` | `https://github.com/scrapinghub/dateparser` | `f1c58d6a` | Multi-dimensional audit evidence | 2026-10-27T15:12:07.033Z |
 | `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `021a041a` | Multi-dimensional audit evidence | 2026-10-27T15:12:12.617Z |
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `aed80691` | Multi-dimensional audit evidence | 2026-10-27T15:12:16.253Z |
+| `learn-github-vuetifyjs-vuetify` | `https://github.com/vuetifyjs/vuetify` | `9f6b215f` | Multi-dimensional audit evidence | 2026-10-27T15:18:50.839Z |
+| `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `213d43cd` | Multi-dimensional audit evidence | 2026-10-27T15:18:50.964Z |
+| `learn-github-google-closure-compiler` | `https://github.com/google/closure-compiler` | `a2a176a5` | Multi-dimensional audit evidence | 2026-10-27T15:18:53.272Z |
+| `learn-github-i18next-react-i18next` | `https://github.com/i18next/react-i18next` | `16a017ee` | Multi-dimensional audit evidence | 2026-10-27T15:18:54.823Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `2548bd51` | Multi-dimensional audit evidence | 2026-10-27T15:18:59.135Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `565e54d3` | Multi-dimensional audit evidence | 2026-10-27T15:19:02.721Z |

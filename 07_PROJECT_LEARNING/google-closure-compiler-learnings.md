@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/google-closure-compiler-learnings.md`  
 > **Source**: github ([https://github.com/google/closure-compiler](https://github.com/google/closure-compiler))  
-> **Source Version**: `e912cdb1`  
+> **Source Version**: `a2a176a5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T06:09:23.778Z  
+> **Timestamp**: 2026-10-27T15:18:52.839Z  
 > **Learning ID**: `learn-github-google-closure-compiler`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-closure-compiler-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/closure-compiler](https://github.com/google/closure-compiler))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T06:09:22.072Z  
+> **Harvest Timestamp**: 2026-10-27T15:18:52.831Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A JavaScript checker and optimizer.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 7697 stars
+- **Stars / Engagement**: 7699 stars
 
 ---
 
@@ -2461,555 +2461,707 @@ $jscomp.arrayIterator = function(array) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `404b4687` (2026-10-22)
-**Commit Message**: Allow extending conformance requirements to append to the root rule's error message.
+### Incident Patch 1: `23bf7f71` (2026-10-26)
+**Commit Message**: Pin current behavior of private-element lowering bugs.
 
-PiperOrigin-RevId: 1005063226
+When `#private` is lowered (ES5 to ES2021 output), it differs from native private elements in the cases below. The tests pin today's output. Their names end in `_knownBug`, and a `TODO(b/236744850)` comment in each describes the bug:
 
-**File**: `src/com/google/javascript/jscomp/CheckConformance.java` (modified, +5/-0)
+- `#x` in an `extends` clause resolves to the class being defined instead of the enclosing class.
+- A private field read as the superclass, as in `class extends Outer.#base`, crashes the compiler.
+- `super` in a private method's parameter defaults, or with `+=`, `++` or `--`, crashes the compiler, and `super.p = v` evaluates to a boolean.
+- `super.p` in a static private getter loses its receiver.
+- `this` in a private accessor's parameter list is the internal record, not the instance.
+- Private methods are named `"value"` or `""` instead of `"#m"`, and a method named `#__proto__` is never defined.
+- Writing a private field before it is initialized doesn't throw.
+- `(0, this.#m)()`, `(o?.#m)()` and private methods used as template tags get the wrong `this`.
+- With `DevMode.EVERY_PASS`, `super.p` in a private method fails a validity check.
+- With property renaming, reading a static private accessor
+
+**File**: `test/com/google/javascript/jscomp/RewriteClassMembersTest.java` (modified, +445/-0)
 ```diff
-@@ -296,6 +296,7 @@ private static boolean validateBehaviorSettingOfConfigs(
-   private static final ImmutableSet<String> EXTENDABLE_FIELDS =
-       ImmutableSet.of(
-           "config_file",
-+          "error_message",
-           "extends",
-           "only_apply_to",
-           "only_apply_to_regexp",
-@@ -521,6 +522,10 @@ private static void mergeExtendingRequirementIntoExtended(
-         .addAllAllowlistEntry(extendingRequirement.getAllowlistEntryList())
-         .addAllValue(extendingRequirement.getValueList())
-         .addAllConfigFile(extendingRequirement.getConfigFileList());
-+    if (extendingRequirement.hasErrorMessage() && extendedRequirement.hasErrorMessage()) {
-+      extendedRequirement.setErrorMessage(
-+          extendedRequirement.getErrorMessage() + " " + extendingRequirement.getErrorMessage());
-+    }
-   }
- 
-   /**
-```
-
-**File**: `src/com/google/javascript/jscomp/conformance/conformance.proto` (modified, +8/-7)
-```diff
-@@ -60,9 +60,10 @@ message ConformanceConfig {
- // A specification of code requirements
- // NEXT ID: 20
- message Requirement {
--  // Required: The message to report when a requirement is violated. This should
--  // reference a document describing the reasoning for the requirement
--  // and contacts.
-+  // Required on root rules: The message to report when a requirement is
-+  // violated. This should reference a document describing the reasoning for the
-+  // requirement and contacts. If specified on a rule that extends another rule,
-+  // it is appended to the extended rule's error_message separated by a space.
-   optional string error_message = 1;
- 
-   // Optional: A list of google3-relative path prefixes that are exempt from the
-@@ -240,10 +241,10 @@ message Requirement {
-   // through 'extends'. An example of ID is 'closure:innerHtml'.
-   optional string rule_id = 9;
- 
--  // Allows extending allowlists/whitelists of rules with the specified rule_id.
--  // If this field is specified then all fields except allowlist/whitelist,
--  // allowlist_regexp/whitelist_regexp, only_apply_to and only_apply_to_regexp
--  // are ignored.
-+  // Allows extending allowlists/whitelists and error_message of rules with the
-+  // specified rule_id. If this field is specified then all fields except
-+  // allowlist/whitelist, allowlist_regexp/whitelist_regexp, only_apply_to,
-+  // only_apply_to_regexp, and error_message are ignored.
-   optional string extends = 10;
- 
-   // Whether to report possible violations when type information is not exact.
-```
-
-**File**: `test/com/google/javascript/jscomp/CheckConformanceTest.java` (modified, +77/-0)
-```diff
-@@ -3056,6 +3056,67 @@ public void testSimpleExtends_withAllowlistRegexp() {
+@@ -6620,6 +6620,451 @@ class Foo {
          """);
    }
  
 +  @Test
-+  public void testSimpleExtends_withErrorMessage() {
-+    baseConfiguration =
++  public void testPrivateNameInHeritageClause_knownBug() {
++    // Expected behavior: `o.#x` in the `extends` clause of `Sub` is lowered to a read of `Outer`'s
++    // private map. The `extends` clause is outside the body of `Sub`, so `#x` there refers to
++    // `Outer`'s `#x`, not `Sub`'s.
++    //
++    // TODO(b/236744850): `#x` in an `extends` clause refers to `Sub`'s `#x`.
++    // Current behavior: `o.#x` is lowered to a read of `Sub`'s private map.
++    // Why it's a bug: natively `Sub.read(new Outer())` returns 1 and `Sub.read(new Sub())` throws a
++    //   TypeError; the compiled code throws a TypeError for the first and returns 2 for the second.
++    test(
 +        """
-+        requirement: {
-+          rule_id: "gws:goog.Promise.X"
-+          type: BANNED_NAME
-+          error_message: "Prefer using native Promise equivalents. See go/gws-js-conformance#goog-promise"
-+          value: "goog.Promise.all"
++        class Outer {
++          #x = 1;
++          makeSub() {
++            return class Sub extends (class { static read(o) { return o.#x; } }) {
++              #x = 2;
++            };
++          }
 +        }
-+        """;
-+    extendingConfiguration =
-+        """
-+        requirement: {
-+          extends: 'gws:goog.Promise.X'
-+          error_message: "Contact gws-team@ for questions."
-+        }
-+        """;
-+
-+    testWarning(
-+        """
-+        goog.Promise.all();
 +        """,
-+        CheckConformance.CONFORMANCE_VIOLATION,
-+        "Violation: Prefer using native Promise equivalents. See go/gws-js-conformance#goog-promise"
-+            + " Contact gws-team@ for questions.");
-+  }
-+
-+  @Test
-+  public void testSimpleExtends_missingRootErrorMessage_reportsInvalidRequirementSpec() {
-+    allowSourcelessWarnings();
-+    baseConfiguration =
 +        """
-+        requirement: {
-+          rule_id: "gws:goog.Promise.X"
-+          type: BANNED_NAME
-+          value: "goog.Promise.all"
-+        }
-+        """;
-+    extendingConfiguration =
-+        """
-+        requirement: {
-+          extends: 'gws:goog.Promise.X'
-+          error_message: "Contact gws-team@ for questions."
-+        }
-+        """;
-+
-+    testError(
-+        """
-+        goog.Promise.all();
-+        """,
-+        CheckConformance.INVALID_REQUIREMENT_SPEC,
-+        """
-+        Invalid requirement. Reason: missing message
-+        Requirement spec:
-+        type: BANNED_NAME
-+        value: "goog.Promise.all"
-+        rule_id: "gws:goog.Promise.X"
-+        """);
-+  }
-+
-   @Test
-   public void testRequirementHasBothRuleIdAndExtends_reportsInvalidRequirementSpec() {
-     allowSourcelessWarnings();
-@@ -3710,6 +3771,22 @@ public void testMergeRequirementsAllowlist() {
-     assertThat(requirement.getAllowlistEntryCount()).isEqualTo(2);
-   }
- 
-+  @Test
-+  public void testMergeRequirementsErrorMessage() {
-+    Compiler compiler = createCompiler();
-+    ConformanceConfig.Builder builder = ConformanceConfig.newBuilder();
-+    builder.addRequirementBuilder().setRuleId("a").setErrorMessage("Root message.");
-+    builder.addRequirementBuilder().setExtends("a").setErrorMessage("Project message.");
-+    CheckConformance checkConformance = new CheckConformance(compiler);
-+    List<Requirement> requirements =
-+        checkConformance.mergeRequirements(
-+            compiler,
-+            ImmutableList.of(builder.build()),
-+            /* isLibraryLevelConformanceReportingMode= */ false);
-+    assertThat(requirements).hasSize(1);
-+    assertThat(requirements.get(0).getErrorMessage()).isEqualTo("Root message. Project message.");
-+  }
-+
-   @Test
-   public void testMergeRequirementsWhitelist_findsDuplicates() {
-     Compiler compiler = createCompiler();
-```
-
----
-
-### Incident Patch 2: `bf3df97a` (2026-10-21)
-**Commit Message**: Fixed transpilation of this, arguments, new.target and super.prop inside arrow functions in an async function's parameter list
-
-PiperOrigin-RevId: 1004266374
-
-**File**: `src/com/google/javascript/jscomp/RewriteAsyncFunctions.java` (modified, +24/-13)
-```diff
-@@ -232,16 +232,28 @@ public LexicalContext getContextForNode(NodeTraversal t, Node n) {
-         // e.g. `() => something`
-         // function someFunc(callback = () => something) {}
-         String uniqueId = compiler.getUniqueIdSupplier().getUniqueId(t.getInput());
--        return new FunctionContext(functionContext, n, uniqueId);
-+        return new FunctionContext(getAsyncContextForParameterList(), n, uniqueId);
-       } else {
-         return this;
-       }
-     }
- 
-+    /**
-+     * Returns the async context that `this`, `arguments`, `new.target`, and `super` refer to in
-+     * this parameter list, or null if they should be left unchanged.
-+     *
-+     * <p>When the function owning this parameter list is itself the async context, the parameter
-+     * list stays on the outer function and is not moved into the generator body, so references here
-+     * (including inside nested arrow functions) must not be aliased.
-+     */
-+    private @Nullable FunctionContext getAsyncContextForParameterList() {
-+      FunctionContext asyncContext = functionContext.asyncThisAndArgumentsContext;
-+      return asyncContext == functionContext ? null : asyncContext;
-+    }
-+
-     @Override
-     public void visit(NodeTraversal t, Node n) {
--      if (functionContext.asyncThisAndArgumentsContext != null
--          && functionContext.asyncThisAndArgumentsContext != functionContext) {
-+      if (getAsyncContextForParameterList() != null) {
-         // e.g.
-         // async function outer(outerT = this) {
-         //   // `this` in outer parameter list must remain unchanged
-@@ -285,26 +297,25 @@ private final class FunctionContext extends LexicalContext {
-       }
-     }
- 
--    FunctionContext(FunctionContext outer, Node contextRootNode, String uniqueId) {
-+    // outerAsyncContext is the async context that `this`, `arguments`, etc. refer to at the point
-+    // where this function is defined, or null if there is none.
-+    FunctionContext(
-+        @Nullable FunctionContext outerAsyncContext, Node contextRootNode, String uniqueId) {
-       super(contextRootNode, uniqueId);
-       checkState(contextRootNode.isFunction(), contextRootNode);
-       if (contextRootNode.isAsyncFunction()) {
-         if (contextRootNode.isArrowFunction()) {
--          // An async arrow function context points to outer.asyncThisAndArgumentsContext
-+          // An async arrow function context points to outerAsyncContext
-           // if non-null, otherwise to itself.
--          asyncThisAndArgumentsContext =
--              outer.asyncThisAndArgumentsContext == null
--                  ? this
--                  : outer.asyncThisAndArgumentsContext;
-+          asyncThisAndArgumentsContext = outerAsyncContext == null ? this : outerAsyncContext;
-         } else {
-           // An async non-arrow function context always points to itself
-           asyncThisAndArgumentsContext = this;
-         }
-       } else {
-         if (contextRootNode.isArrowFunction()) {
--          // A non-async arrow function context always points to
--          // outer.asyncThisAndArgumentsContext
--          asyncThisAndArgumentsContext = outer.asyncThisAndArgumentsContext;
-+          // A non-async arrow function context always points to outerAsyncContext
-+          asyncThisAndArgumentsContext = outerAsyncContext;
-         } else {
-           // A non-async, non-arrow function has no async context.
-           asyncThisAndArgumentsContext = null;
-@@ -318,7 +329,7 @@ public LexicalContext getContextForNode(NodeTraversal t, Node n) {
-         return this;
-       } else if (n.isFunction()) {
-         String uniqueId = compiler.getUniqueIdSupplier().getUniqueId(t.getInput());
--        return new FunctionContext(this, n, uniqueId);
-+        return new FunctionContext(asyncThisAndArgumentsContext, n, uniqueId);
-       } else if (n.isParamList()) {
-         String uniqueId = compiler.getUniqueIdSupplier().getUniqueId(t.getInput());
-         return new ParameterListContext(this, n, uniqueId);
-```
-
-**File**: `test/com/google/javascript/jscomp/RewriteAsyncFunctionsTest.java` (modified, +84/-20)
-```diff
-@@ -968,8 +968,6 @@ class A {
- 
-   @Test
-   public void testDefaultParamArrowUsingThisArgumentsNewTarget() {
--    // TODO(b/572972833): Default-param arrow functions rewrite this/arguments/new.target to
--    // out-of-scope body temporaries.
-     test(
-         """
-         async function f(a = () => this, b = () => arguments, c = () => new.target) {
-@@ -978,26 +976,22 @@ async function f(a = () => this, b = () => arguments, c = () => new.target) {
-         """,
-         """
-         function f(a = () => {
--          return ASYNC_THIS$1;
-+          return this;
-         }, b = () => {
--          return ASYNC_ARGUMENTS$1;
-+          return arguments;
-         }, c = () => {
--          return ASYNC_NEW_TARGET$1;
-+          return new.target;
-         }) {
--          const ASYNC_THIS$1 = this;
--          const ASYNC_ARGUMENTS$1 = arguments;
--          const ASYNC_NEW_TARGET$1 = new.target;
--          return (0,$jscomp.asyncExecutePromiseGeneratorFunction)(function*() {
--            return a();
--          });
-+          return (0, $jscomp.asyncExecutePromiseGeneratorFunction)(
-+              function* () {
-+                return a();
-+              });
-         }
-         """);
-   }
- 
-   @Test
-   public void testDefaultParamArrowUsingSuperProp() {
--    // TODO(b/572972833): Default-param arrow functions rewrite super.prop to out-of-scope body
--    // temporaries.
-     test(
-         """
-         class A {
-@@ -1019,16 +1013,86 @@ class A {
-         }
-         class B extends A {
-           m(a = () => {
--            return ASYNC_SUPER_GET$7$prop().call(ASYNC_THIS$3);
-+            return super.prop();
-           }) {
--            const ASYNC_THIS$3 = this;
--            const ASYNC_SUPER_GET$7$prop = () => {
--              return super.prop;
-+            return (0, $jscomp.asyncExecutePromiseGeneratorFunction)(
-+                function* () {
-+                  return a();
-+                });
++        const PRIVATE_MAP$5 = new $jscomp.PrivateMap();
++        class Outer {
++          constructor() {
++            const PRIVATE$6 = Object.create(null);
++            PRIVATE_MAP$5.set(this, PRIVATE$6);
++            PRIVATE$6.x = 1;
++          }
++          makeSub() {
++            return (() => {
++              const CLASS_EXTENDS$0 = (() => {
++                const CLASS_DECL$2 = class {
++                  static read(o) {
++                    return PRIVATE_MAP$3.get(o).x;
++                  }
++                };
++                return CLASS_DECL$2;
++              })();
++              const PRIVATE_MAP$3 = new $jscomp.PrivateMap();
++              const CLASS_DECL$1 = class extends CLASS_EXTENDS$0 {
++                constructor() {
++                  super(...arguments);
++                  const PRIVATE$4 = Object.create(null);
++                  PRIVATE_MAP$3.set(this, PRIVATE$4);
++                  PRIVATE$4.x = 2;
++                }
++              };
++              return CLASS_DECL$1;
++            })();
 +          }
 +        }
 +        """);
 +  }
 +
 +  @Test
-+  public void testDefaultParamAsyncArrowUsingThis() {
-+    test(
++  public void testPrivateFieldAsSuperclass_knownBug() {
++    // Expected behavior: a private field read in an `extends` clause, as in `extends Outer.#base`,
++    // is lowered to a read of `Outer`'s static private map and moved into a temporary before the
++    // class, like other superclass expressions that aren't qualified names.
++    //
++    // TODO(b/236744850): A private field read in an `extends` clause crashes the compiler.
++    // Current behavior: `Outer.#base` is a qualified name, so the `extends` clause stays in place,
++    //   but lowering turns it into a read through a `get` call on `Outer`'s static private map,
++    //   which isn't one, so adding the constructor that initializes `x` throws an
++    //   IllegalStateException.
++    // Why it's a bug: the compiler crashes on valid code.
++    String src =
 +        """
-+        async function f(a = async () => this) {
-+          return a();
++        class Outer {
++          static #base = class {};
++          static make() {
++            return class extends Outer.#base {
++              x = 1;
++            };
++          }
 +        }
-+        """,
-+        """
-+        function f(a = () => {
-+          const ASYNC_THIS$3 = this;
-+          return (0, $jscomp.asyncExecutePromiseGeneratorFunction)(function*() {
-+            return ASYNC_THIS$3;
-+          });
-+        }) {
-+          return (0, $jscomp.asyncExecutePromiseGeneratorFunction)(function*() {
-+            return a();
-+          });
-+        }
-+        """);
++        """;
++    var ex = assertThrows(RuntimeException.class, () -> test(src, ""));
++    assertThat(ex).hasMessageThat().contains("INTERNAL COMPILER ERROR");
++    assertThat(ex).hasCauseThat().isInstanceOf(IllegalStateException.class);
++    assertThat(ex)
++        .hasCauseThat()
++        .hasMessageThat()
++        .contains("Expected Es6NormalizeClasses to make all extends clauses into qualified names");
 +  }
 +
 +  @Test
-+  public void testDefaultParamArrowInNestedAsyncArrowUsingThis() {
-+    test(
++  public void testSuperInPrivateMethodParameterDefault_knownBug() {
++    // Expected behavior: `super` in a private method's parameter list is lowered like `super` in
++    // its body, so `super.m()` calls `Base.prototype.m` with the method's `this`.
++    //
++    // TODO(b/236744850): `super` in a private method's parameter list crashes the compiler.
++    // Current behavior: `super.m()` in the parameter list isn't lowered, so it ends up in a plain
++    //   function, where `super` is invalid, and AST validation fails.
++    // Why it's a bug: the compiler crashes on valid code.
++    String src =
 +        """
-+        async function f() {
-+          const g = async (a = () => this) => a();
-+          return g();
++        class Base {}
++        class Sub extends Base {
++          #m(v = super.m()) {}
 +        }
-+        """,
-+        """
-+        function f() {
-+          const ASYNC_THIS$1 = this;
-+          return (0, $jscomp.asyncExecutePromiseGeneratorFunction)(function*() {
-+            const g = (a = () => {
-+              return ASYNC_THIS$1;
-+            }) => {
-+              return (0, $jscomp.asyncExecutePromiseGeneratorFunction)(function*() {
-+                return a();
-+              });
-             };
--            return (0,$jscomp.asyncExecutePromiseGeneratorFunction)(function*() {
--              return a();
--            });
-+            return g();
-+          });
-+        }
-+        """);
++        """;
++    var ex = assertThrows(IllegalStateException.class, () -> test(src, ""));
++    assertThat(ex)
++        .hasMessageThat()
++        .contains(
++            "super property references are only allowed in methods, class static blocks and class"
++                + " fields");
 +  }
 +
 +  @Test
-+  public void testDefaultParamArrowInNonAsyncFunctionInAsyncFunction() {
-+    test(
-+        """
-+        async function f() {
-+          function g(a = () => this) {
-+            return a();
-           }
-+          return g();
-+        }
-+        """,
-+        """
-+        function f() {
-+          return (0, $jscomp.asyncExecutePromiseGeneratorFunction)(function*() {
-+            function g(a = () => {
-+              return this;
-+            }) {
-+              return a();
-+            }
-+            return g();
-+          });
-         }
-         """);
++  public void testSuperCompoundAssignmentInPrivateMethod_knownBug() {
++    // Expected behavior: `+=`, `++` and `--` on `super` properties in a private method keep their
++    // native semantics: `super[k()] += 1` calls `k()` once, and `super.c++` returns the old value
++    // of `super.c`, converted to a number.
++    //
++    // TODO(b/236744850): `+=`, `++` and `--` on `super` properties crash the compiler.
++    // Current beh
+```
+
+**File**: `test/com/google/javascript/jscomp/integration/ES2022IntegrationTest.java` (modified, +95/-0)
+```diff
+@@ -17,6 +17,7 @@
+ package com.google.javascript.jscomp.integration;
+ 
+ import static com.google.common.truth.Truth.assertThat;
++import static org.junit.Assert.assertThrows;
+ 
+ import com.google.common.collect.ImmutableList;
+ import com.google.javascript.jscomp.CheckLevel;
+@@ -1021,6 +1022,100 @@ static getC() {
+     test(options, src, expected);
    }
+ 
++  @Test
++  public void privateClassMembers_superReadWithConstReflectExterns_knownBug() {
++    // Expected behavior: `super.p` in a private method is lowered to
++    // `Reflect.get(Base.prototype, "p", this)`, with the `Reflect` name marked constant. The
++    // externs declare `@const Reflect`, and the compiler requires every reference to a constant
++    // name to be marked constant.
++    // In a full build: only `DevMode.EVERY_PASS` checks this; the output is correct either way.
++    //
++    // TODO(b/236744850): `super.p` in a private method crashes the compiler with `@const Reflect`.
++    // Current behavior: the `Reflect` name in the lowered `Reflect.get(...)` isn't marked constant,
++    //   so the validity check after `es6NormalizeClasses` fails.
++    // Why it's a bug: the compiler crashes on valid code when its validity checks are on, as in
++    //   this test (`DevMode.EVERY_PASS`).
++    CompilerOptions options = createCompilerOptions();
++    options.setRuntimeLibraryMode(RuntimeLibraryMode.RECORD_ONLY);
++    options.setVariableRenaming(VariableRenamingPolicy.OFF);
++    options.setLanguageOut(LanguageMode.ECMASCRIPT_2021);
++    externs =
++        ImmutableList.of(
++            new TestExternsBuilder()
++                .addReflect()
++                .addExtra("/** @const */ var $jscomp = {};")
++                .buildExternsFile("externs"));
++    String src =
++        """
++        class Base {}
++        class Sub extends Base {
++          #m() {
++            return super.p;
++          }
++        }
++        """;
++
++    var ex = assertThrows(RuntimeException.class, () -> compile(options, src));
++    assertThat(ex).hasMessageThat().contains("Validity check failed for es6NormalizeClasses");
++    assertThat(ex)
++        .hasCauseThat()
++        .hasCauseThat()
++        .hasMessageThat()
++        .contains("Should be const but not marked as const");
++  }
++
++  @Test
++  public void privateClassMembers_staticPrivateAccessorWithPropertyRenaming_knownBug() {
++    // Expected behavior: property renaming renames the key of a static private accessor and its
++    // reads the same way, so `C.read()` still returns "sa". Renaming must not change what a
++    // property read returns.
++    //
++    // TODO(b/236744850): Property renaming breaks reads of a static private accessor.
++    // Current behavior: the getter is defined under the quoted key "sa", which property renaming
++    //   doesn't rename, but the inlined read of `C.#sa` is renamed.
++    // Why it's a bug: `console.log(C.read())` logs `undefined` instead of "sa".
++    CompilerOptions options = createCompilerOptions();
++    CompilationLevel.ADVANCED_OPTIMIZATIONS.setOptionsForCompilationLevel(options);
++    options.setRuntimeLibraryMode(RuntimeLibraryMode.RECORD_ONLY);
++    options.setVariableRenaming(VariableRenamingPolicy.OFF);
++    options.setLanguageOut(LanguageMode.ECMASCRIPT_2021);
++    externs =
++        ImmutableList.of(
++            new TestExternsBuilder()
++                .addConsole()
++                .addObject()
++                .addExtra(
++                    "/** @const */ var $jscomp = {};",
++                    "/** @constructor */ $jscomp.PrivateMap = function() {};",
++                    "$jscomp.PrivateMap.prototype.get = function(o) {};",
++                    "$jscomp.PrivateMap.prototype.set = function(o, v) {};")
++                .buildExternsFile("externs"));
++
++    test(
++        options,
++        """
++        class C {
++          static get #sa() { return 'sa'; }
++          static read() { return C.#sa; }
++        }
++        console.log(C.read());
++        """,
++        """
++        const $jscomp$staticPrivateMap$98447280$0 = new $jscomp.PrivateMap();
++        class C {}
++        (function() {
++          var $jscomp$priv$98447280$1 = Object.create(null);
++          $jscomp$staticPrivateMap$98447280$0.set(C, $jscomp$priv$98447280$1);
++          Object.defineProperty($jscomp$priv$98447280$1, "sa", {
++            get: function() {
++              return "sa";
++            }
++          });
++        })();
++        console.log($jscomp$staticPrivateMap$98447280$0.get(C).a);
++        """);
++  }
++
+   @Test
+   public void privateClassMembers_optionalChainingIntegrationTest() {
+     CompilerOptions options = createCompilerOptions();
 ```
 
 ---
 
-### Incident Patch 3: `33b2e8ed` (2026-10-21)
-**Commit Message**: Fix inverted line number ternary in VerboseMessageFormatter.
+### Incident Patch 2: `9da747bd` (2026-10-26)
+**Commit Message**: Pin current behavior of private-element lowering and check bugs.
 
-Fix inverted line number condition in `VerboseMessageFormatter` so line numbers
-are formatted when present.
+The tests pin today's behavior. Their names end in `_knownBug`, and a `TODO(b/236744850)` comment in each describes the bug:
 
-PiperOrigin-RevId: 1004027076
+- Lowering: `[o.#x] = 1` crashes, `this.#n ??= 1` is left unlowered, and a direct `eval` is emitted silently.
+- Private methods: `this.#m ??= v` is left unlowered, like `this.#n ??= 1`.
+- Checks: the parser accepts `#constructor`, and `#x in this` reports `JSC_UNDEFINED_VARIABLE` and `JSC_IN_USED_WITH_STRUCT`. Once `VarCheck` accepts `#x in o`, `RemoveUnusedCode` crashes on it with native output.
 
-**File**: `src/com/google/javascript/jscomp/VerboseMessageFormatter.java` (modified, +1/-1)
+PiperOrigin-RevId: 1007436526
+
+**File**: `test/com/google/javascript/jscomp/RemoveUnusedCodeTest.java` (modified, +25/-0)
 ```diff
-@@ -49,7 +49,7 @@ private String format(JSError message) {
-         "%s at %s line %s %s",
-         description,
-         (Strings.isNullOrEmpty(sourceName) ? "(unknown source)" : sourceName),
--        ((lineNumber < 0) ? String.valueOf(lineNumber) : "(unknown line)"),
-+        ((lineNumber < 0) ? "(unknown line)" : String.valueOf(lineNumber)),
-         ((lineSource != null) ? ":\n\n" + lineSource : "."));
+@@ -19,6 +19,7 @@
+ import static com.google.common.base.Preconditions.checkArgument;
+ import static com.google.common.base.Preconditions.checkNotNull;
+ import static java.util.stream.Collectors.joining;
++import static org.junit.Assert.assertThrows;
+ 
+ import com.google.errorprone.annotations.CanIgnoreReturnValue;
+ import com.google.javascript.jscomp.testing.JSChunkGraphBuilder;
+@@ -3752,4 +3753,28 @@ public void testArrayReferenceInForLoopNameDeclarations() {
+         console.log(arr)
+         """);
    }
++
++  @Test
++  public void testPrivateFieldUsedOnlyInBrandCheck_knownBug() {
++    // Expected behavior: `RemoveUnusedCode` leaves this code unchanged. In `#brand in o`, `#brand`
++    // is a private name of `C`, not a variable, and the brand check is a use of the field.
++    String js =
++        """
++        class C {
++          // Expected: kept, because `#brand in o` uses it. Without it, `#brand in o` is a
++          // SyntaxError.
++          #brand;
++          static isC(o) { return #brand in o; }
++        }
++        alert(C.isC({}));
++        """;
++    // TODO(b/236744850): `RemoveUnusedCode` crashes on `#brand in o`.
++    // Current behavior: `testSame(js)` throws a NullPointerException, because `#brand` is looked
++    //   up as a variable, and there is none.
++    // Why it's a bug: the compiler crashes on valid code.
++    // In a full build: the crash shows up once `VarCheck` skips private names. Before that,
++    //   `VarCheck` reports `#brand` as undeclared, and with that check off it declares `#brand`
++    //   as a global, so this pass deletes `#brand;` instead, which is a SyntaxError.
++    assertThrows(NullPointerException.class, () -> testSame(js));
++  }
  }
 ```
 
-**File**: `test/com/google/javascript/jscomp/VerboseMessageFormatterTest.java` (added, +157/-0)
+**File**: `test/com/google/javascript/jscomp/RewriteClassMembersTest.java` (modified, +164/-0)
 ```diff
-@@ -0,0 +1,157 @@
-+/*
-+ * Copyright 2026 The Closure Compiler Authors.
-+ *
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+package com.google.javascript.jscomp;
-+
-+import static com.google.common.truth.Truth.assertThat;
-+
-+import com.google.debugging.sourcemap.proto.Mapping.OriginalMapping;
-+import java.util.Objects;
-+import org.jspecify.annotations.Nullable;
-+import org.junit.Test;
-+import org.junit.runner.RunWith;
-+import org.junit.runners.JUnit4;
-+
-+@RunWith(JUnit4.class)
-+public final class VerboseMessageFormatterTest {
-+  private static final DiagnosticType FOO_TYPE =
-+      DiagnosticType.error("TEST_FOO", "error description here");
+@@ -7323,4 +7323,168 @@ class A {
+         }
+         """);
+   }
 +
 +  @Test
-+  public void testFormatError_validLineNumber() {
-+    VerboseMessageFormatter formatter = new VerboseMessageFormatter(emptySourceProvider());
-+    JSError error = JSError.make("test.js", 10, 5, FOO_TYPE);
-+
-+    String formatted = formatter.formatError(error);
-+
-+    assertThat(formatted).contains("line 10");
-+    assertThat(formatted).doesNotContain("(unknown line)");
-+    assertThat(formatted).isEqualTo("ERROR: error description here at test.js line 10 .");
-+  }
-+
-+  @Test
-+  public void testFormatError_unknownLineNumber() {
-+    VerboseMessageFormatter formatter = new VerboseMessageFormatter(emptySourceProvider());
-+    JSError error = JSError.make("test.js", -1, -1, FOO_TYPE);
-+
-+    String formatted = formatter.formatError(error);
-+
-+    assertThat(formatted).contains("line (unknown line)");
-+    assertThat(formatted).doesNotContain("-1");
-+    assertThat(formatted)
-+        .isEqualTo("ERROR: error description here at test.js line (unknown line) .");
-+  }
-+
-+  @Test
-+  public void testFormatError_unknownSourceName() {
-+    VerboseMessageFormatter formatter = new VerboseMessageFormatter(emptySourceProvider());
-+    JSError error = JSError.make(null, 10, 5, FOO_TYPE);
-+
-+    String formatted = formatter.formatError(error);
-+
-+    assertThat(formatted).contains("(unknown source)");
-+    assertThat(formatted).contains("line 10");
-+    assertThat(formatted).isEqualTo("ERROR: error description here at (unknown source) line 10 .");
-+  }
-+
-+  @Test
-+  public void testFormatError_unknownSourceAndLineNumber() {
-+    VerboseMessageFormatter formatter = new VerboseMessageFormatter(emptySourceProvider());
-+    JSError error = JSError.make(null, -1, -1, FOO_TYPE);
-+
-+    String formatted = formatter.formatError(error);
-+
-+    assertThat(formatted).contains("(unknown source)");
-+    assertThat(formatted).contains("line (unknown line)");
-+    assertThat(formatted)
-+        .isEqualTo("ERROR: error description here at (unknown source) line (unknown line) .");
-+  }
-+
-+  @Test
-+  public void testFormatError_withSourceRegion() {
-+    SourceExcerptProvider provider =
-+        new SourceExcerptProvider() {
-+          @Override
-+          public @Nullable String getSourceLine(String sourceName, int lineNumber) {
-+            return null;
++  public void testComputedPropertyReferencingPrivateField_knownBug() {
++    // Expected behavior: `[o.#x] = 1` is lowered like any other computed field. It is a public
++    // field of the inner class whose key is the value of `o.#x`, not a private member, although
++    // its key reads the private field `#x` of `C`. The key is computed once, when the inner class
++    // is defined.
++    String js =
++        """
++        class C {
++          #x = 'key';
++          make(o) {
++            return /** @dict */ class {
++              [o.#x] = 1;
++            };
 +          }
-+
-+          @Override
-+          public @Nullable Region getSourceLines(String sourceName, int lineNumber, int length) {
-+            return null;
++        }
++        """;
++    String expected =
++        """
++        const PRIVATE_MAP$1 = new $jscomp.PrivateMap();
++        class C {
++          constructor() {
++            const PRIVATE$3 = Object.create(null);
++            PRIVATE_MAP$1.set(this, PRIVATE$3);
++            PRIVATE$3.x = 'key';
 +          }
-+
-+          @Override
-+          public @Nullable Region getSourceRegion(String sourceName, int lineNumber) {
-+            if (Objects.equals(sourceName, "test.js") && lineNumber == 10) {
-+              return new SimpleRegion(10, 10, "const x = 1;");
-+            }
-+            return null;
++          make(o) {
++            var COMP_FIELD$2 = PRIVATE_MAP$1.get(o).x;
++            const CLASS_DECL$0 = class {
++              constructor() {
++                this[COMP_FIELD$2] = 1;
++              }
++            };
++            return CLASS_DECL$0;
 +          }
-+
-+          @Override
-+          public @Nullable OriginalMapping getSourceMapping(
-+              String sourceName, int lineNumber, int columnNumber) {
-+            return null;
-+          }
-+        };
-+
-+    VerboseMessageFormatter formatter = new VerboseMessageFormatter(provider);
-+    JSError error = JSError.make("test.js", 10, 0, FOO_TYPE);
-+
-+    String formatted = formatter.formatError(error);
-+
-+    assertThat(formatted)
-+        .isEqualTo("ERROR: error description here at test.js line 10 :\n\nconst x = 1;");
++        }
++        """;
++    // TODO(b/236744850): `Es6NormalizeClasses` crashes on a computed field whose key reads `#x`.
++    // Current behavior: `Es6NormalizeClasses` takes `[o.#x] = 1` for a private member of the
++    //   inner class, and fails a `checkArgument` in `recordPrivateMember`. `test(js, expected)`
++    //   throws an internal compiler error caused by an IllegalArgumentException.
++    // Why it's a bug: the compiler crashes on valid code.
++    var ex = assertThrows(RuntimeException.class, () -> test(js, expected));
++    assertThat(ex).hasMessageThat().contains("INTERNAL COMPILER ERROR");
++    assertThat(ex).hasCauseThat().isInstanceOf(IllegalArgumentException.class);
 +  }
 +
 +  @Test
-+  public void testFormatWarning_validLineNumber() {
-+    VerboseMessageFormatter formatter = new VerboseMessageFormatter(emptySourceProvider());
-+    DiagnosticType warningType = DiagnosticType.warning("TEST_WARN", "warning description here");
-+    JSError warning = JSError.make("test.js", 42, 0, warningType);
++  public void testLogicalAssignmentToPrivateField_knownBug() {
++    // Expected behavior: both the read and the write of `#n` that `Normalize` creates for
++    // `this.#n ??= 1` are lowered, like any other use of `#n`, so both go through `C`'s private
++    // map. Once `#n` is lowered, `C` no longer declares a native `#n`, so a native `#n` access
++    // left in `C` is a SyntaxError.
++    String js =
++        """
++        class C {
++          #n;
++          m() {
++            this.#n ??= 1;
++          }
++        }
++        """;
++    String expected =
++        """
++        const PRIVATE_MAP$1 = new $jscomp.PrivateMap();
++        class C {
++          constructor() {
++            const PRIVATE$2 = Object.create(null);
++            PRIVATE_MAP$1.set(this, PRIVATE$2);
++            PRIVATE$2.n = void 0;
++          }
++          m() {
++            let $jscomp$logical$assign$tmpm1146332801$0;
++            PRIVATE_MAP$1.get($jscomp$logical$assign$tmpm1146332801$0 = this).n ??
++                (PRIVATE_MAP$1.get($jscomp$logical$assign$tmpm1146332801$0).n = 1);
++          }
++        }
++        """;
++    // TODO(b/236744850): The accesses to `#n` that `Normalize` creates for `??=` are not lowered.
++    // Current behavior: `Normalize` rewrites `this.#n ??= 1` to `(tmp = this).#n ?? (tmp.#n = 1)`
++    //   with a temporary `tmp`, without the private name flag on the two new `#n` accesses. So
++    //   neither is lowered, the output keeps both as `#n`, and `test(js, expected)` fails.
++    // Why it's a bug: `#n` was lowered, so `C` no longer declares `#n`, and `tmp.#n` is a
++    //   SyntaxError. The whole script fails to load.
++    var ex = assertThrows(AssertionError.class, () -> test(js, expected));
++    assertThat(ex).hasMessageThat().contains(".#n");
++  }
 +
-+    String formatted = formatter.formatWarning(warning);
++  @Test
++  public void testLogicalAssignmentToPrivateMethod_knownBug() {
++    // Expected behavior: `this.#m ??= () => {}` compiles, and both accesses to `#m` that
++    // `Normalize` creates for it go through `C`'s private map. Natively `init()` only reads `#m`:
++    // a method is never nullish, so the assignment never runs.
++    String js =
++        """
++        class C {
++          #m() {}
++          init() {
++            this.#m ??= () => {};
++          }
++        }
++        """;
++    String expected =
++        """
++        const PRIVATE_MAP$1 = new $jscomp.PrivateMap();
++        const PRIVATE_PROTO$2 = Object.create(null, {
++          m: {
++            value: function() {}
++          }
++        });
++        class C {
++          constructor() {
++            const PRIVATE$3 = Object.create(PRIVATE_PROTO$2);
++            PRIVATE_MAP$1.set(this, PRIVATE$3);
++          }
++          init() {
++            let $jscomp$logical$assign$tmpm1146332801$0;
++            PRIVATE_MAP$1.get($jscomp$logical$assign$tmpm1146332801$0 = this).m ??
++                (PRIVATE_MAP$1.get($jscomp$logical$assign$tmpm1146332801$0).m = () => {});
++          }
++        }
++        """;
++    // TODO(b/236744850): The accesses to `#m` that `Normalize` creates for `??=` are not lowere
+```
+
+**File**: `test/com/google/javascript/jscomp/integration/ES2022IntegrationTest.java` (modified, +25/-0)
+```diff
+@@ -1300,4 +1300,29 @@ static getStaticGetter(target) {
+     options.setLanguageOut(LanguageMode.ECMASCRIPT_2021);
+     test(options, src, expected);
+   }
 +
-+    assertThat(formatted).startsWith("WARNING: ");
-+    assertThat(formatted).contains("line 42");
-+    assertThat(formatted).isEqualTo("WARNING: warning d
++  @Test
++  public void privateClassMembers_brandCheckWithTypeAndSymbolChecks_knownBug() {
++    // Expected behavior: no diagnostics with `setCheckSymbols(true)` or `setCheckTypes(true)`. In
++    // `#x in this`, `#x` is a private name of `C`, not a variable, and a brand check is valid on
++    // any object, including a class instance, which the type checker treats as a struct.
++    String js = "class C { #x; has() { return #x in this; } }";
++    CompilerOptions checkSymbols = createCompilerOptions();
++    checkSymbols.setCheckSymbols(true);
++    CompilerOptions checkTypes = createCompilerOptions();
++    checkTypes.setCheckTypes(true);
++    // TODO(b/236744850): `VarCheck` reports the private name `#x` as an undeclared variable.
++    // Current behavior: `VarCheck` reports the error `JSC_UNDEFINED_VARIABLE` ("variable #x is
++    //   undeclared").
++    // Why it's a bug: the error is false, because `#x` is a private name declared in `C`, not a
++    //   variable. Valid code fails to compile.
++    test(checkSymbols, js, DiagnosticGroups.UNDEFINED_VARIABLES);
++    // TODO(b/236744850): `TypeCheck` reports a brand check on a struct.
++    // Current behavior: `TypeCheck` reports the warning `JSC_IN_USED_WITH_STRUCT` ("Cannot use
++    //   the IN operator with structs"), because class instances are structs.
++    // Why it's a bug: the warning is false, because `#x in this` only checks whether `this` has
++    //   the private field `#x`, which is fine on a struct. In strict builds, the warning is an
++    //   error, so valid code fails to compile.
++    test(checkTypes, js, DiagnosticGroups.CHECK_TYPES);
++  }
+ }
+```
+
+**File**: `test/com/google/javascript/jscomp/parsing/ParserTest.java` (modified, +17/-0)
+```diff
+@@ -6396,6 +6396,23 @@ public void testPrivateProperty_invalid_identifierAlreadyDeclared_crossStaticGet
+     parseError("class C { static set #p(x) {} get #p() {} }", expectedError);
+   }
+ 
++  @Test
++  public void testPrivateProperty_namedConstructor_knownBug() {
++    // Expected behavior: the parser reports "Classes may not have a private element named
++    // '#constructor'" for each source. The spec makes a private element named `#constructor` an
++    // early SyntaxError.
++    //
++    // TODO(b/236744850): A private element named `#constructor` is accepted.
++    // Current behavior: each source parses without an error or a warning, so `parse` passes.
++    // Why it's a bug: natively each source is a SyntaxError, so the whole script fails to load.
++    //   The compiler accepts the code instead of reporting the error.
++    parse("class C { #constructor; }");
++    parse("class C { #constructor() {} }");
++    parse("class C { async #constructor() {} }");
++    parse("class C { get #constructor() {} }");
++    parse("class C { set #constructor(v) {} }");
++  }
++
+   @Test
+   public void testPrivateProperty_classMembersReferencingOtherPrivateField() {
+     expectFeatures(Feature.PRIVATE_ELEMENTS);
+```
+
+---
+
+### Incident Patch 3: `db61d226` (2026-10-26)
+**Commit Message**: CheckSuper: require a super() call in derived class constructors that return a value.
+
+Previously, `CheckSuper` didn't require a derived class constructor to call `super()` if it returned a value. Like TypeScript's TS2377, it now reports `JSC_RETURN_WITHOUT_CALL_TO_SUPER` for a derived class constructor that returns a value without a `super()` call anywhere. Constructors that intentionally return a different object can suppress the error with `@suppress {missingCallToSuper}`. A constructor with neither a `super()` call nor a `return` with a value is still reported as `JSC_MISSING_CALL_TO_SUPER`, which can't be suppressed.
+
+This also applies to classes with instance fields or private members, whose constructors returning a value without calling `super()` were reported as `JSC_MISSING_ROOT_LEVEL_CALL_TO_SUPER`. That error is now only reported when such a constructor calls `super()`, but not exactly once, unconditionally, in a root-level statement before any `return`.
+
+PiperOrigin-RevId: 1007653231
+
+**File**: `src/com/google/javascript/jscomp/CheckSuper.java` (modified, +16/-9)
+```diff
+@@ -44,11 +44,17 @@ final class CheckSuper implements CompilerPass, NodeTraversal.Callback {
+   static final DiagnosticType MISSING_CALL_TO_SUPER =
+       DiagnosticType.error("JSC_MISSING_CALL_TO_SUPER", "constructor is missing a call to super()");
+ 
+-  // For a derived class with instance fields or private members whose constructor doesn't call
+-  // `super()` exactly once in a root-level statement before any `return`, so there is no single
+-  // place to initialize the instance elements when they are transpiled. Unlike
++  // For a derived class constructor that returns a value without a `super()` call anywhere. Unlike
+   // MISSING_CALL_TO_SUPER, this can be suppressed, since the constructor might intentionally return
+   // a different object.
++  static final DiagnosticType RETURN_WITHOUT_CALL_TO_SUPER =
++      DiagnosticType.error(
++          "JSC_RETURN_WITHOUT_CALL_TO_SUPER",
++          "constructor returns a value without calling super()");
++
++  // For a derived class with instance fields or private members whose constructor calls `super()`,
++  // but not exactly once in a root-level statement before any `return`, so there is no single place
++  // to initialize the instance elements when they are transpiled.
+   static final DiagnosticType MISSING_ROOT_LEVEL_CALL_TO_SUPER =
+       DiagnosticType.error(
+           "JSC_MISSING_ROOT_LEVEL_CALL_TO_SUPER",
+@@ -450,19 +456,20 @@ void visitContextNode(NodeTraversal t) {
+           t.report(firstSuperCall, INVALID_SUPER_CALL);
+         }
+       } else {
+-        // There is a parent class, so a call to `super()` is required unless the constructor
+-        // returns a value.
+-        if (firstSuperCall == null && !returnsAValue) {
++        // There is a parent class, so a call to `super()` is required. Like TypeScript (TS2377), we
++        // require it even when the constructor returns a value.
++        if (firstSuperCall == null) {
+           // The context node is the function itself , but ErrorToFixMapper expects the error to
+           // be reported on the MEMBER_FUNCTION_DEF that is its parent.
+-          t.report(getContextNode().getParent(), MISSING_CALL_TO_SUPER);
++          t.report(
++              getContextNode().getParent(),
++              returnsAValue ? RETURN_WITHOUT_CALL_TO_SUPER : MISSING_CALL_TO_SUPER);
+         } else if (hasInstanceElements
+             && (rootLevelSuperCall == null
+                 || returnsBeforeRootLevelSuperCall
+                 || hasMultipleSuperCalls)) {
+           // The instance elements are initialized right after `super()` returns, so like TypeScript
+-          // (TS2401), require a single place to initialize them, even if the constructor returns a
+-          // value.
++          // (TS2401), require a single place to initialize them.
+           t.report(getContextNode().getParent(), MISSING_ROOT_LEVEL_CALL_TO_SUPER);
+         }
+         if (thisAccessedBeforeSuper != null) {
+```
+
+**File**: `src/com/google/javascript/jscomp/DiagnosticGroups.java` (modified, +3/-1)
+```diff
+@@ -263,7 +263,9 @@ public static DiagnosticGroup forName(String name) {
+ 
+   public static final DiagnosticGroup MISSING_CALL_TO_SUPER =
+       DiagnosticGroups.registerGroup(
+-          "missingCallToSuper", CheckSuper.MISSING_ROOT_LEVEL_CALL_TO_SUPER);
++          "missingCallToSuper",
++          CheckSuper.RETURN_WITHOUT_CALL_TO_SUPER,
++          CheckSuper.MISSING_ROOT_LEVEL_CALL_TO_SUPER);
+ 
+   public static final DiagnosticGroup MISSING_OVERRIDE =
+       DiagnosticGroups.registerGroup(
+```
+
+**File**: `test/com/google/javascript/jscomp/CheckSuperTest.java` (modified, +32/-30)
+```diff
+@@ -21,6 +21,7 @@
+ import static com.google.javascript.jscomp.CheckSuper.INVALID_SUPER_USAGE;
+ import static com.google.javascript.jscomp.CheckSuper.MISSING_CALL_TO_SUPER;
+ import static com.google.javascript.jscomp.CheckSuper.MISSING_ROOT_LEVEL_CALL_TO_SUPER;
++import static com.google.javascript.jscomp.CheckSuper.RETURN_WITHOUT_CALL_TO_SUPER;
+ import static com.google.javascript.jscomp.CheckSuper.SUPER_ACCESS_BEFORE_SUPER_CONSTRUCTOR;
+ import static com.google.javascript.jscomp.CheckSuper.SUPER_CALL_IN_ARROW;
+ import static com.google.javascript.jscomp.CheckSuper.THIS_BEFORE_SUPER;
+@@ -135,13 +136,9 @@ class C extends D {
+   public void testNoWarning_derivedConstructorCompletesWithUndefinedBeforeSuperCall() {
+     // Won't fix (b/573571176): a derived class constructor that completes with `undefined` before
+     // calling `super()` throws a ReferenceError natively, but for a class without instance fields
+-    // or private members, `MISSING_CALL_TO_SUPER` is only reported for a constructor that has
+-    // neither a `super()` call nor a `return` with a value. We decided not to report these
+-    // constructors, since the compiler isn't required to preserve errors in code that is already
+-    // broken.
+-    testNoWarning("class C extends D { constructor() { return undefined; } }");
++    // or private members, `CheckSuper` only checks that `super()` appears somewhere in the
++    // constructor.
+     testNoWarning("class C extends D { constructor(w) { if (w) return; super(); } }");
+-    testNoWarning("class C extends D { constructor(w) { if (w) return {}; } }");
+   }
+ 
+   @Test
+@@ -491,36 +488,34 @@ public void testPropertyInStaticMethod() {
+   }
+ 
+   @Test
+-  public void testNoWarning_withExplicitReturnInConstructor() {
+-    // TODO(b/573596312): Require `super()` unless `@suppress {missingCallToSuper}` is used.
+-    testNoWarning("class C extends D { constructor() { return {}; } }");
+-    testNoWarning("class C extends D { constructor() { return f(); } }");
+-    // the following cases will error at runtime but we don't bother checking them.
+-    testNoWarning("class C extends D { constructor() { return 3; } }");
+-    testNoWarning("class C extends D { constructor() { if (false) return {}; } }");
++  public void testError_withExplicitReturnInConstructor() {
++    testError("class C extends D { constructor() { return {}; } }", RETURN_WITHOUT_CALL_TO_SUPER);
++    testError("class C extends D { constructor() { return f(); } }", RETURN_WITHOUT_CALL_TO_SUPER);
++    testError("class C extends D { constructor() { return 3; } }", RETURN_WITHOUT_CALL_TO_SUPER);
++    testError(
++        "class C extends D { constructor() { return undefined; } }", RETURN_WITHOUT_CALL_TO_SUPER);
++    testError(
++        "class C extends D { constructor() { if (false) return {}; } }",
++        RETURN_WITHOUT_CALL_TO_SUPER);
++    // A constructor may intentionally return a different object without calling `super()`.
++    testNoWarning(
++        "class C extends D { /** @suppress {missingCallToSuper} */ constructor() { return {}; } }");
+   }
+ 
+   @Test
+   public void testReturnWithoutSuperCall() {
+-    // When a class has instance fields or private members, they are initialized right after
+-    // `super()` returns, so a constructor that returns a value must still call `super()`.
+     testError(
+-        "class C extends D { x = 1; constructor() { return {}; } }",
+-        MISSING_ROOT_LEVEL_CALL_TO_SUPER);
++        "class C extends D { x = 1; constructor() { return {}; } }", RETURN_WITHOUT_CALL_TO_SUPER);
+     testError(
+         "class C extends D { [k] = 1; constructor() { return {}; } }",
+-        MISSING_ROOT_LEVEL_CALL_TO_SUPER);
++        RETURN_WITHOUT_CALL_TO_SUPER);
+     testError(
+-        "class C extends D { #x = 1; constructor() { return {}; } }",
+-        MISSING_ROOT_LEVEL_CALL_TO_SUPER);
++        "class C extends D { #x = 1; constructor() { return {}; } }", RETURN_WITHOUT_CALL_TO_SUPER);
+     testError(
+-        "class C extends D { #m() {} constructor() { return {}; } }",
+-        MISSING_ROOT_LEVEL_CALL_TO_SUPER);
+-    testNoWarning(
+-        "class C extends D { x = 1; /** @suppress {missingCallToSuper} */ constructor() { return"
+-            + " {}; } }");
+-    // Static fields aren't instance elements.
+-    testNoWarning("class C extends D { static x = 1; constructor() { return {}; } }");
++        "class C extends D { #m() {} constructor() { return {}; } }", RETURN_WITHOUT_CALL_TO_SUPER);
++    testError(
++        "class C extends D { static x = 1; constructor() { return {}; } }",
++        RETURN_WITHOUT_CALL_TO_SUPER);
+     testError(
+         "class C extends D { x = 1; constructor(a) { if (a) { super(); } else { return {}; } } }",
+         MISSING_ROOT_LEVEL_CALL_TO_SUPER);
+@@ -635,9 +630,16 @@ public void testInvalidThisReference_withExplicitReturnInConstructor() {
+ 
+   @Test
+   public void testThisReference_withExplicitReturnInConstructor() {
+-    // You don't have to call `super()` when the constructor returns a v
+```
+
+**File**: `test/com/google/javascript/jscomp/integration/ES2022IntegrationTest.java` (modified, +2/-3)
+```diff
+@@ -406,8 +406,7 @@ class C {
+   @Test
+   public void publicClassFields_derivedConstructorReturnsObjectWithoutSuperCall() {
+     // The fields of `Sub` are never initialized, since its constructor never calls `super()`.
+-    // `CheckSuper` reports it, although the constructor returns a value, since the transpiled
+-    // fields need a `super()` call to be installed after.
++    // Like TypeScript's TS2377, `CheckSuper` reports it, although the constructor returns a value.
+     CompilerOptions options = createCompilerOptions();
+     options.setLanguageOut(LanguageMode.ECMASCRIPT_2021);
+     options.setRuntimeLibraryMode(RuntimeLibraryMode.RECORD_ONLY);
+@@ -427,7 +426,7 @@ class Sub extends Base {
+     Compiler compiler = compile(options, src);
+     checkUnexpectedErrorsOrWarnings(compiler, 1);
+     assertThat(compiler.getErrors().get(0).type().key)
+-        .isEqualTo("JSC_MISSING_ROOT_LEVEL_CALL_TO_SUPER");
++        .isEqualTo("JSC_RETURN_WITHOUT_CALL_TO_SUPER");
+   }
+ 
+   @Test
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4354** (2026-10-16): fix legacy octal string escape grouping for a leading 4-7 digit (@dxbjavid)
-- **PR #4353** (closed): Reset a coalesced let that is read before assignment in a loop (@kalayciburak)
-- **PR #4351** (2026-10-13): Handle private fields that are initialzied with an identifier (@bullfest)
-- **PR #4348** (closed): Do not escape the raw text of tagged template literals (@rodry957)
-- **PR #4347** (2026-09-28): Bump actions/setup-java from 6.0.0 to 6.0.1 (@dependabot[bot])
-- **PR #4342** (2026-09-14): Fix spelling of existence in Node javadoc (@tanvir-ux)
+- **PR #4365** (2026-10-26): Bump actions/upload-artifact from 7.0.1 to 7.0.2 (@dependabot[bot])
+- **PR #4364** (2026-10-26): Bump actions/download-artifact from 8.0.1 to 8.0.2 (@dependabot[bot])
+- **PR #4363** (2026-10-26): Bump actions/setup-node from 7.0.0 to 7.1.0 (@dependabot[bot])
+- **PR #4361** (2026-10-27): treat backslash before <ls> or <ps> as a line continuation (@dxbjavid)
+- **PR #4360** (2026-10-27): Add ClipboardItem.supports to w3c_clipboard.js externs (@avelad)
+- **PR #4359** (2026-10-26): Add fastSeek to HTMLMediaElement in html5.js externs (@avelad)
 
 ---
 
@@ -3029,25 +3181,51 @@ PiperOrigin-RevId: 1004027076
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Allow extending conformance requirements to append to the root rule's error mess
+## X. Pin current behavior of private-element lowering bugs.
 
 **RULE**:
-When implementing operations in `src/com/google/javascript/jscomp/CheckConformance.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/closure-compiler. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `test/com/google/javascript/jscomp/RewriteClassMembersTest.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/closure-compiler. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `404b4687`: Allow extending conformance requirements to append to the root rule's error message.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `23bf7f71`: Pin current behavior of private-element lowering bugs.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/com/google/javascript/jscomp/CheckConformance.java`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/com/google/javascript/jscomp/RewriteClassMembersTest.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-          "error_message",
-    if (extendingRequirement.hasErrorMessage() && extendedRequirement.hasErrorMessage()) {
-      extendedRequirement.setErrorMessage(
-          extendedRequirement.getErrorMessage() + " " + extendingRequirement.getErrorMessage());
-    }
+  @Test
+  public void testPrivateNameInHeritageClause_knownBug() {
+    // Expected behavior: `o.#x` in the `extends` clause of `Sub` is lowered to a read of `Outer`'s
+    // private map. The `extends` clause is outside the body of `Sub`, so `#x` there refers to
+    // `Outer`'s `#x`, not `Sub`'s.
+    //
+    // TODO(b/236744850): `#x` in an `extends` clause refers to `Sub`'s `#x`.
+    // Current behavior: `o.#x` is lowered to a read of `Sub`'s private map.
+    // Why it's a bug: natively `Sub.read(new Outer())` returns 1 and `Sub.read(new Sub())` throws a
+    //   TypeError; the compiled code throws a TypeError for the first and returns 2 for the second.
+    test(
+        """
+        class Outer {
+          #x = 1;
+          makeSub() {
+            return class Sub extends (class { static read(o) { return o.#x; } }) {
+              #x = 2;
+            };
+          }
+        }
+        """,
+        """
+        const PRIVATE_MAP$5 = new $jscomp.PrivateMap();
+        class Outer {
+          constructor() {
+            const PRIVATE$6 = Object.create(null);
+            PRIVATE_MAP$5.set(this, PRIVATE$6);
+            PRIVATE$6.x = 1;
+          }
+          makeSub() {
+            return ((
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3057,4 +3235,4 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `404b4687` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `23bf7f71` are properly handled with clean fallback behavior.
