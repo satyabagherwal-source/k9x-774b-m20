@@ -5423,3 +5423,6 @@ Every entry in this ledger must capture:
 | `learn-github-sveltejs-svelte` | `https://github.com/sveltejs/svelte` | `14a611f3` | Multi-dimensional audit evidence | 2026-10-27T15:25:48.099Z |
 | `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `c2881447` | Multi-dimensional audit evidence | 2026-10-27T15:29:31.251Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `3575f972` | Multi-dimensional audit evidence | 2026-10-27T15:29:36.441Z |
+| `learn-github-lucide-icons-lucide` | `https://github.com/lucide-icons/lucide` | `2ca268e7` | Multi-dimensional audit evidence | 2026-10-27T15:32:53.879Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `d188f08a` | Multi-dimensional audit evidence | 2026-10-27T15:32:56.237Z |
+| `learn-github-vitejs-vite` | `https://github.com/vitejs/vite` | `cce559ab` | Multi-dimensional audit evidence | 2026-10-27T15:32:58.468Z |

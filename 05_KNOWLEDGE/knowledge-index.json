@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T15:29:36.344Z",
+  "last_updated": "2026-10-27T15:32:58.425Z",
   "total_verified_learnings": 1139,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34153,8 +34153,8 @@
       "slug": "lucide-icons-lucide",
       "platform": "github",
       "source_url": "https://github.com/lucide-icons/lucide",
-      "source_version": "7faf8762",
-      "content_hash": "a84567b478a798a713233090e12994e26f8f22db4c4f2aba9a09a634dea6790b",
+      "source_version": "2ca268e7",
+      "content_hash": "a3105dea53f0a7e580ed074540a18e20986d306fd222d992f55375aa28af9358",
       "dossier_path": "07_PROJECT_LEARNING/lucide-icons-lucide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lucide-icons-lucide-learnings.md",
       "promoted_rules": [
@@ -34182,6 +34182,11 @@
           "number": 4336,
           "title": "ci): prevent broken and duplicate metadata suggestions (#5065)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4886,
+          "title": "lucide-react): ignore stale DynamicIcon loads after the name changes (#5060)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34189,7 +34194,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T14:25:09.792Z",
+      "verified_at": "2026-10-27T15:32:53.825Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44071,8 +44076,8 @@
       "slug": "restatedev-restate",
       "platform": "github",
       "source_url": "https://github.com/restatedev/restate",
-      "source_version": "c57aa66f",
-      "content_hash": "dea7a07be6165e4790438eaca0ad583d1d90f054d455112d2ec02951230a6fc9",
+      "source_version": "d188f08a",
+      "content_hash": "2a29ccc89fd32ddea047cea0782ce889346daf2f44f920697393745d4860caf7",
       "dossier_path": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "promoted_rules": [
@@ -44115,6 +44120,11 @@
           "number": 4462,
           "title": "[tests] Kill local cluster nodes when a test exits without cleanup",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4887,
+          "title": "[PartitionStore] Fix storage cleanup and durable-LSN reporting",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44122,7 +44132,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T22:00:38.215Z",
+      "verified_at": "2026-10-27T15:32:56.184Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -67817,8 +67827,8 @@
       "slug": "vitejs-vite",
       "platform": "github",
       "source_url": "https://github.com/vitejs/vite",
-      "source_version": "a976df38",
-      "content_hash": "d78d0fd7472f799d996775ad4fd1c85fa4685994b716931195f7f48801e04f7d",
+      "source_version": "cce559ab",
+      "content_hash": "5e135c328a2727106063e8b6e009c05048f349bdb81ec3b918cac8f4bfa7390e",
       "dossier_path": "07_PROJECT_LEARNING/vitejs-vite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vitejs-vite-learnings.md",
       "promoted_rules": [
@@ -67831,6 +67841,11 @@
           "number": 3788,
           "title": "optimizer): skip patches dir check for yarn.lock fallback (#23725)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4888,
+          "title": "test: workaround flaky test failure caused by Rolldown bug (#23872)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -67838,7 +67853,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T06:30:10.562Z",
+      "verified_at": "2026-10-27T15:32:58.414Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -135764,6 +135779,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T15:29:36.327Z"
+    },
+    "rule-4886": {
+      "learning_id": "rule-4886",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4886,
+      "title": "lucide-react): ignore stale DynamicIcon loads after the name changes (#5060)",
+      "source_url": "https://github.com/lucide-icons/lucide",
+      "source_version": "2ca268e7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T15:32:53.825Z"
+    },
+    "rule-4887": {
+      "learning_id": "rule-4887",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4887,
+      "title": "[PartitionStore] Fix storage cleanup and durable-LSN reporting",
+      "source_url": "https://github.com/restatedev/restate",
+      "source_version": "d188f08a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T15:32:56.184Z"
+    },
+    "rule-4888": {
+      "learning_id": "rule-4888",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4888,
+      "title": "test: workaround flaky test failure caused by Rolldown bug (#23872)",
+      "source_url": "https://github.com/vitejs/vite",
+      "source_version": "cce559ab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T15:32:58.414Z"
     }
   },
   "aliases": {

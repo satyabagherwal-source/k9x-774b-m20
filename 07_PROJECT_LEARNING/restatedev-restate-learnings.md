@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source**: github ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
-> **Source Version**: `c57aa66f`  
+> **Source Version**: `d188f08a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T22:00:37.938Z  
+> **Timestamp**: 2026-10-27T15:32:55.878Z  
 > **Learning ID**: `learn-github-restatedev-restate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T22:00:37.930Z  
+> **Harvest Timestamp**: 2026-10-27T15:32:54.606Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Restate is the platform for building resilient applications that tolerate all infrastructure faults w/o the need for a PhD.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4608 stars
+- **Stars / Engagement**: 4611 stars
 
 ---
 
@@ -1631,564 +1631,881 @@ async fn list(env: &CliEnv, opts: &List) -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c57aa66f` (2026-10-25)
-**Commit Message**: [tests] Kill local cluster nodes when a test exits without cleanup
+### Incident Patch 1: `374dc27d` (2026-10-26)
+**Commit Message**: [PartitionStore] Fix storage cleanup and durable-LSN reporting
 
-## Summary
+Allow unused partition storage to be released after its manager is dropped,
+while keeping durability updates working for stores that are still in use.
 
-A failing `#[restate_core::test]` exits via `std::process::exit(1)`, so neither tokio's
-`kill_on_drop` nor `StartedNode`'s `Drop` runs. The test's restate-server nodes kept running as
-orphans, and since they kept writing into the cluster's temp dir, removing it at exit raced with
-them and could leave the dir behind.
+Keep reported durable progress correct when flush notifications arrive late or
+a partition is reopened or replaced from a snapshot. Also fix a deadlock when
+configuration reload overlaps database cleanup.
 
-- Add `restate_test_util::kill_on_exit(pid)`, which SIGKILLs and reaps registered children from
-  the same `atexit` hook that removes the temp dirs, before removing them. The returned guard
-  unregisters the pid when dropped.
-- local-cluster-runner registers every node it spawns and drops the guard as soon as the node is
-  reaped, so a reused pid is never signalled.
-- Rename the `tempdir` module of restate-test-util to `on_exit` since it now covers both.
+## Caveats and follow-ups
 
-## Validation
+- Partition close still allows commits through retained handles and does not
+  wait for pending writes. The next commit in this stack fixes this for
+  transaction commits.
+- Waiting for all retained partition resources to be released is planned for
+  the following step. Removing the resource leak alone does not provide that
+  guarantee.
+- A database can still miss a configuration update that arrives while it is
+  opening (exists prior to this commit already).
 
-- `cargo check`
-- `cargo nextest run --all-features --test-threads 8`: 1613 passed, 11 skipped
-- `cargo fmt --all -- --check`
-- `cargo clippy --all-features --all-targets --workspace -- -D warnings`
-- New regression test re-runs itself as a probe process that creates a temp dir, spawns a
-  child and exits with `std::process:
-
-**File**: `crates/local-cluster-runner/src/node/mod.rs` (modified, +10/-1)
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -305,6 +305,9 @@ impl NodeSpec {
- 
-         let mut child = cmd.spawn().map_err(NodeStartError::SpawnError)?;
-         let pid = child.id().expect("child to have a pid");
-+        // `kill_on_drop` and our `Drop` don't run if the process exits without unwinding, e.g.
-+        // when a `#[restate_core::test]` fails.
-+        let kill_on_exit = restate_test_util::kill_on_exit(pid);
- 
-         info!(
-             %fabric_advertised_address,
-@@ -373,7 +376,13 @@ impl NodeSpec {
-         };
- 
-         let child_handle = tokio::spawn(async move {
--            let (status, _) = tokio::join!(child.wait(), lines_fut);
-+            let wait = async {
-+                let status = child.wait().await;
-+                // the pid may be reused once the child is reaped
-+                drop(kill_on_exit);
-+                status
-+            };
-+            let (status, _) = tokio::join!(wait, lines_fut);
- 
-             match status {
-                 Ok(status) => {
+@@ -8523,6 +8523,7 @@ dependencies = [
+  "restate-limiter",
+  "restate-memory",
+  "restate-object-store-util",
++ "restate-platform",
+  "restate-rocksdb",
+  "restate-service-protocol-v4",
+  "restate-storage-api",
 ```
 
-**File**: `crates/test-util/src/lib.rs` (modified, +4/-2)
+**File**: `crates/partition-store/Cargo.toml` (modified, +1/-0)
 ```diff
-@@ -32,7 +32,9 @@ pub use assert2::{assert, check};
- pub use pretty_assertions::{assert_eq, assert_ne};
- 
- pub mod matchers;
-+mod on_exit;
- pub mod rand;
--mod tempdir;
- 
--pub use tempdir::tempdir;
-+pub use on_exit::tempdir;
-+#[cfg(unix)]
-+pub use on_exit::{KillOnExit, kill_on_exit};
+@@ -20,6 +20,7 @@ restate-errors = { workspace = true }
+ restate-limiter = { workspace = true, features = ["rule-book"] }
+ restate-memory = { workspace = true }
+ restate-object-store-util = { workspace = true }
++restate-platform = { workspace = true }
+ restate-rocksdb = { workspace = true }
+ restate-storage-api = { workspace = true }
+ restate-types = { workspace = true }
 ```
 
-**File**: `crates/test-util/src/on_exit.rs` (added, +158/-0)
+**File**: `crates/partition-store/src/durable_lsn_tracking.rs` (modified, +104/-17)
 ```diff
-@@ -0,0 +1,158 @@
-+// Copyright (c) 2023 - 2026 Restate Software, Inc., Restate GmbH.
-+// All rights reserved.
-+//
-+// Use of this software is governed by the Business Source License
-+// included in the LICENSE file.
-+//
-+// As of the Change Date specified in that file, in accordance with
-+// the Business Source License, use of this software will be governed
-+// by the Apache License, Version 2.0.
-+
-+//! Cleanup that runs even when destructors don't: values held in statics are never dropped, and
-+//! the `#[restate_core::test]` panic hook ends a failing test via [`std::process::exit`]. Both
-+//! still run `atexit` handlers, which is where the cleanup happens. A process killed by a signal
-+//! runs neither.
-+
-+use std::io;
-+use std::path::PathBuf;
-+#[cfg(unix)]
-+use std::sync::{Mutex, PoisonError};
-+use std::sync::{Once, OnceLock};
-+
-+use tempfile::TempDir;
-+
-+static TEMP_ROOT: OnceLock<PathBuf> = OnceLock::new();
-+#[cfg(unix)]
-+static CHILDREN: Mutex<Vec<libc::pid_t>> = Mutex::new(Vec::new());
-+
-+/// Creates a [`TempDir`] that is cleaned up even if its destructor never runs.
+@@ -10,21 +10,23 @@
+ 
+ use std::borrow::Cow;
+ use std::ffi::{CStr, CString};
+-use std::sync::{Arc, Weak};
++use std::sync::Arc;
+ 
+ use ahash::HashMap;
+ use rocksdb::event_listener::{EventListener, FlushJobInfo};
+ use rocksdb::table_properties::{
+     CollectorError, EntryType, TablePropertiesCollector, TablePropertiesCollectorFactory,
+ };
++use tokio::sync::watch;
+ use tracing::warn;
+ 
++use restate_platform::sync::RwLock;
+ use restate_storage_api::StorageError;
+ use restate_storage_api::fsm_table::SequenceNumber;
+ use restate_storage_api::protobuf_types::PartitionStoreProtobufValue;
++use restate_types::logs::SequenceNumber as _;
+ use restate_types::{identifiers::PartitionId, logs::Lsn};
+ 
+-use crate::SharedState;
+ use crate::fsm_table::{PartitionStateMachineKey, fsm_variable};
+ #[cfg(test)]
+ use crate::keys::EncodeTableKey;
+@@ -109,32 +111,116 @@ impl TablePropertiesCollectorFactory for AppliedLsnCollectorFactory {
+     }
+ }
+ 
+-/// Event listener tracking durable LSNs across
++/// Per-database registry of durable-LSN watch senders.
 +///
-+/// Directories created here live under a per-process root that is removed when the process
-+/// exits, even if they were [`TempDir::keep`]-ed.
-+pub fn tempdir() -> io::Result<TempDir> {
-+    let root = match TEMP_ROOT.get() {
-+        Some(root) => root,
-+        None => {
-+            let root = TempDir::new()?;
-+            if TEMP_ROOT.set(root.path().to_path_buf()).is_ok() {
-+                let _ = root.keep();
-+                register_exit_hook();
-+            }
-+            // if a concurrent caller set the root first, ours is removed on drop
-+            TEMP_ROOT.get().expect("root is set")
++/// [`DurableLsnEventListener`] uses it to notify partition stores when their
++/// applied state reaches disk, without keeping the stores or their manager alive.
++#[derive(Default)]
++pub(crate) struct DurableLsnSenders {
++    senders: RwLock<HashMap<PartitionId, Registration>>,
++    #[cfg(test)]
++    before_note: restate_platform::sync::Mutex<Option<NotificationPause>>,
++}
++
++struct Registration {
++    cf_id: u32,
++    sender: watch::Sender<Lsn>,
++}
++
++impl DurableLsnSenders {
++    pub fn register(&self, partition_id: PartitionId, cf_id: u32, sender: watch::Sender<Lsn>) {
++        let mut senders = self.senders.write();
++        if let Some(previous) = senders.insert(partition_id, Registration { cf_id, sender }) {
++            previous.sender.send_replace(Lsn::INVALID);
 +        }
-+    };
-+    // Names only need to be unique within the root. Keep them short since unix socket paths
-+    // are limited to ~100 bytes.
-+    tempfile::Builder::new()
-+        .prefix("")
-+        .rand_bytes(4)
-+        .tempdir_in(root)
-+}
++    }
 +
-+/// Sends SIGKILL to the child process `pid` when this process exits, before the directories
-+/// created by [`tempdir`] are removed, unless the returned guard was dropped by then.
-+///
-+/// Drop the guard as soon as the child has been reaped: its pid may be reused afterwards.
-+#[cfg(unix)]
-+pub fn kill_on_exit(pid: u32) -> KillOnExit {
-+    let pid = libc::pid_t::try_from(pid).expect("pid to fit into pid_t");
-+    register_exit_hook();
-+    CHILDREN
-+        .lock()
-+        .unwrap_or_else(PoisonError::into_inner)
-+        .push(pid);
-+    KillOnExit(pid)
-+}
++    pub fn unregister(&self, partition_id: PartitionId, cf_id: u32) {
++        let mut senders = self.senders.write();
++        if let std::collections::hash_map::Entry::Occupied(entry) = senders.entry(partition_id)
++            && entry.get().cf_id == cf_id
++        {
++            entry.remove().sender.send_replace(Lsn::INVALID);
++        }
++    }
 +
-+/// Guard returned by [`kill_on_exit`].
-+#[cfg(unix)]
-+#[must_use = "the child is not killed at exit once the guard is dropped"]
-+pub struct KillOnExit(libc::pid_t);
++    pub fn note_durable_lsn(&self, partition_id: PartitionId, cf_id: u32, lsn: Lsn) {
++        #[cfg(test)]
++        let completed = {
++            let pause = self.before_note.lock().take();
++            pause.map(|pause| {
++                let _ = pause.reached.send(());
++                let _ = pause.resume.recv();
++                pause.completed
++            })
++        };
++        // Keep the read lock through notification so unregister cannot reset an
++        // old watch to INVALID and then have an in-flight callback or recovery revive it.
++        let senders = self.senders.read();
++        if let Some(registration) = senders.get(&partition_id)
++            && registration.cf_id == cf_id
++        {
++            registration.sender.send_if_modified(|current| {
++                if lsn > *current {
++                    *current = lsn;
++                    true
++                } else {
++                    false
++                }
++            });
++        }
++        #[cfg(test)]
++        if let Some(completed) = completed {
++            let _ = completed.send(());
++        }
++    }
 +
-+#[cfg(unix)]
-+impl Drop for KillOnExit {
-+    fn drop(&mut self) {
-+        CHILDREN
-+            .lock()
-+            .unwrap_or_else(PoisonError::into_inner)
-+            .retain(|pid| *pid != self.0);
++    /// Pause a native callback before it selects a registration. Dropping the
++    /// resume sender releases it, including if the test fails.
++    #[cfg(test)]
++    pub fn pause_next_notification(
++        &self,
++    ) -> (
++        tokio::sync::oneshot::Receiver<()>,
++        std::sync::mpsc::Sender<()>,
++        tokio::sync::oneshot::Receiver<()>,
++    ) {
++        let (reached_tx, reached_rx) = tokio::sync::oneshot::channel();
++        let (resume_tx, resume_rx) = std::sync::mpsc::channel();
++        let (completed_tx, completed_rx) = tokio::sync::oneshot::channel();
++        *self.before_note.lock() = Some(NotificationPause {
++            reached: reached_tx,
++            resume: resume_rx,
++            completed: completed_tx,
++        });
++        (reached_rx, resume_tx, completed_rx)
 +    }
 +}
 +
-+fn register_exit_hook() {
-+    static REGISTER: Once = Once::new();
-+    // SAFETY: `on_exit` is a plain `extern "C" fn()` that does not unwind.
-+    REGISTER.call_once(|| unsafe {
-+        libc::atexit(on_exit);
-+    });
++#[cfg(test)]
++struct NotificationPause {
++    reached: tokio::sync::oneshot::Sender<()>,
++    resume: std::sync::mpsc::Receiver<()>,
++    completed: tokio::sync::oneshot::Sender<()>,
 +}
 +
-+extern "C" fn on_exit() {
-+    // Children go first, they might still be writing into the temp dirs.
-+    #[cfg(unix)]
-+    {
-+        let children = CHILDREN.lock().unwrap_or_else(PoisonError::into_inner);
-+        for &pid in children.iter() {
-+            // SAFETY: plain syscalls; `pid` belongs to a child that has not been reaped yet.
-+            unsafe {
-+                libc::kill(pid, libc::SIGKILL);
-+                // fails with ECHILD if the runtime reaped it concurrently, which is fine too
-+                libc::waitpid(pid, std::ptr::null_mut(), 0);
-+            }
-+        }
-+    }
-+    if let Some(root) = TEMP_ROOT.get() {
-+        let _ = std::fs::remove_dir_all(root);
-+    }
-+}
-+
-+#[cfg(all(test, unix))]
-+mod tests {
-+    use std::process::Command;
-+    use std::time::{Duration, Instant};
-+
-+    const PROBE_ENV: &str = "RESTATE_TEST_UTIL_ON_EXIT_PROBE";
-+
-+    /// Runs this test in a child process that exits like a failing `#[restate_core::test]` does,
-+    /// and checks that its temp dir and its own child process are gone afterwards.
-+    #[test]
-+    fn cleans_up_on_process_exit() {
-+        if std::env::var_os(PROBE_ENV).is_some() {
-+            let dir = super::tempdir().unwrap().keep();
-+            std::fs::write(dir.join("data"), b"x").unwrap();
-+            let child = Command::new("sleep").arg("60").spawn().unwrap();
-+            let _guard = super::kill_on_exit(child.id());
-+            println!("PROBE {} {}", dir.display(), child.id());
-+            std::process::exit(1);
-+        }
-+
-+        let started = Instant::now();
-+        let output = Command::new(std::env::current_exe().unwrap())
-+            .args([
-+                "--exact",
-+                "on_exit::tests::cleans_up_on_process_exit",
-+                "--nocapture",
-+            ])
-+            .env(PROBE_ENV, "1")
-+            .
++/// Event listener tracking durable LSNs across partitions.
+ ///
+ /// This listener works in conjunction with the [`AppliedLsnCollector`] to track the high watermark
+ /// applied LSNs per partition, once tables are flushed to disk. The event listener will only track
+-/// partitions for which there are already entries in the [`shared_state`].
+-#[derive(Default)]
++/// partitions with a registered sender in [`DurableLsnSenders`].
+ pub(crate) struct DurableLsnEventListener {
+-    shared_state: Weak<SharedState>,
++    notifications: Arc<DurableLsnSenders>,
+ }
+ 
+ impl DurableLsnEventListener {
+-    pub fn new(shared_state: &Arc<SharedState>) -> Self {
+-        Self {
+-     
 ```
 
-**File**: `crates/test-util/src/tempdir.rs` (removed, +0/-52)
+**File**: `crates/partition-store/src/partition_db.rs` (modified, +77/-53)
 ```diff
-@@ -1,52 +0,0 @@
--// Copyright (c) 2023 - 2026 Restate Software, Inc., Restate GmbH.
--// All rights reserved.
--//
--// Use of this software is governed by the Business Source License
--// included in the LICENSE file.
--//
--// As of the Change Date specified in that file, in accordance with
--// the Business Source License, use of this software will be governed
--// by the Apache License, Version 2.0.
--
--use std::io;
--use std::path::PathBuf;
--use std::sync::OnceLock;
--
--use tempfile::TempDir;
--
--/// Creates a [`TempDir`] that is cleaned up even if its destructor never runs.
--///
--/// `TempDir` only removes its directory on drop, which never happens for values held in statics
--/// or when the process exits via [`std::process::exit`] (the `#[restate_core::test]` panic hook
--/// does this when a test fails). Directories created here live under a per-process root that is
--/// removed when the process exits, even if they were [`TempDir::keep`]-ed. A process killed by a
--/// signal still leaves the root behind.
--pub fn tempdir() -> io::Result<TempDir> {
--    static ROOT: OnceLock<PathBuf> = OnceLock::new();
--
--    extern "C" fn remove_root() {
--        if let Some(root) = ROOT.get() {
--            let _ = std::fs::remove_dir_all(root);
+@@ -14,10 +14,10 @@ use std::ops::DerefMut;
+ use std::sync::Arc;
+ use std::time::Duration;
+ 
+-use parking_lot::RwLock;
+ use rocksdb::table_properties::TablePropertiesExt;
+ use rocksdb::{
+-    BoundColumnFamily, DBRawIteratorWithThreadMode, ExportImportFilesMetaData, ReadOptions,
++    AsColumnFamilyRef, BoundColumnFamily, DBRawIteratorWithThreadMode, ExportImportFilesMetaData,
++    ReadOptions,
+ };
+ use tokio::sync::{RwLock as AsyncRwLock, watch};
+ use tokio::time::Instant;
+@@ -28,45 +28,54 @@ use restate_rocksdb::configuration::{CfConfigurator, DbConfigurator};
+ use restate_rocksdb::{DbName, RocksDb, RocksError};
+ use restate_storage_api::StorageError;
+ use restate_types::config::Configuration;
+-use restate_types::logs::Lsn;
++use restate_types::logs::{Lsn, SequenceNumber};
+ use restate_types::partitions::{CfName, Partition};
+ use restate_util_bytecount::ByteCount;
++use restate_util_string::{ReString, ToReString};
+ 
+-use crate::durable_lsn_tracking::{AppliedLsnCollectorFactory, DurableLsnEventListener};
++use crate::durable_lsn_tracking::{
++    AppliedLsnCollectorFactory, DurableLsnEventListener, DurableLsnSenders,
++};
+ use crate::keys::KeyKind;
+ use crate::memory::{MemoryBudget, PartitionDbMemoryConfig};
+ use crate::scan::PhysicalScan;
+ use crate::snapshots::LocalPartitionSnapshot;
+ use crate::{TableKind, configure_prefix_iterator_opts, configure_range_iterator_opts};
+ 
+-use restate_util_string::{ReString, ToReString};
++/// A physical database and the notification registry installed in its listener.
++/// Keep these together when reusing a database from the manager's weak cache.
++#[derive(Clone)]
++pub(crate) struct PartitionStoreDb {
++    pub rocksdb: Arc<RocksDb>,
++    pub notifications: Arc<DurableLsnSenders>,
++}
+ 
+ #[derive(Clone)]
+ pub struct PartitionDb {
+     meta: Arc<Partition>,
+-    durable_lsn: watch::Sender<Option<Lsn>>,
++    durable_lsn: watch::Sender<Lsn>,
+     archived_lsn: watch::Sender<Option<Lsn>>,
+     // Note: Rust will drop the fields in the order they are declared in the struct.
+     // It's crucial to keep the column family and the database in this exact order.
+     cf: PartitionBoundCfHandle,
+-    rocksdb: Arc<RocksDb>,
++    database: PartitionStoreDb,
+ }
+ 
+ impl PartitionDb {
+     pub(crate) fn new(
+         meta: Arc<Partition>,
+         archived_lsn: watch::Sender<Option<Lsn>>,
+-        rocksdb: Arc<RocksDb>,
++        database: PartitionStoreDb,
+         cf: Arc<BoundColumnFamily<'_>>,
+     ) -> Self {
+         Self {
+             meta,
+-            durable_lsn: watch::Sender::new(None),
++            durable_lsn: watch::Sender::new(Lsn::INVALID),
+             archived_lsn,
+             // SAFETY: the new BoundColumnFamily here just expanding lifetime to static,
+-            // it's safe to use here as long as rocksdb is dropped last.
++            // it's safe to use here as long as database is dropped last.
+             cf: unsafe { PartitionBoundCfHandle::new(cf) },
+-            rocksdb,
++            database,
+         }
+     }
+ 
+@@ -75,12 +84,12 @@ impl PartitionDb {
+     }
+ 
+     pub fn rocksdb(&self) -> &Arc<RocksDb> {
+-        &self.rocksdb
++        &self.database.rocksdb
+     }
+ 
+     #[cfg(test)]
+     pub fn into_rocksdb(self) -> Arc<RocksDb> {
+-        self.rocksdb
++        self.database.rocksdb
+     }
+ 
+     pub fn cf_handle(&self) -> &Arc<BoundColumnFamily<'_>> {
+@@ -100,7 +109,7 @@ impl PartitionDb {
+     }
+ 
+     pub async fn flush_memtables(&self, wait: bool) -> Result<(), RocksError> {
+-        self.rocksdb
++        self.rocksdb()
+             .clone()
+             .flush_memtables(
+                 std::slice::from_ref(&restate_rocksdb::CfName::from(self.partition().cf_name())),
+@@ -129,14 +138,29 @@ impl PartitionDb {
+         self.archived_lsn.subscribe()
+     }
+ 
+-    pub(crate) fn durable_lsn_sender(&self) -> &watch::Sender<Option<Lsn>> {
++    pub(crate) fn durable_lsn_sender(&self) -> &watch::Sender<Lsn> {
+         &self.durable_lsn
+     }
+ 
++    pub(crate) fn note_durable_lsn(&self, lsn: Lsn) {
++        self.database.notifications.note_durable_lsn(
++            self.meta.partition_id,
++            self.cf_handle_for_key_kind(KeyKind::Fsm).id(),
++            lsn,
++        );
++    }
++
++    fn unregister_durable_lsn(&self) {
++        self.database.notifications.unregister(
++            self.meta.partition_id,
++            self.cf_handle_for_key_kind(KeyKind::Fsm).id(),
++        );
++    }
++
+     pub(crate) async fn update_memory_budget(&self, memory_budget: usize) {
+         // impacts only this partition's column-families
+         let cf_names = self.cf_names();
+-        let rocksdb = self.rocksdb.clone();
++        let rocksdb = self.rocksdb().clone();
+ 
+         // NOTE: Updating rocksdb's options is a blocking operations and may take a few
+         // tens of milliseconds on each column family. We need to perform this operation
+@@ -201,7 +225,7 @@ impl PartitionDb {
+                 configure_prefix_iterator_opts(&mut opts, prefix.as_ref());
+                 let t
+```
+
+**File**: `crates/partition-store/src/partition_store.rs` (modified, +8/-24)
+```diff
+@@ -37,7 +37,7 @@ use restate_storage_api::{IsolationLevel, Storage, StorageError, Transaction};
+ use restate_types::SemanticRestateVersion;
+ use restate_types::config::{Configuration, StorageOptions};
+ use restate_types::identifiers::{PartitionId, PartitionKey, SnapshotId, WithPartitionKey};
+-use restate_types::logs::Lsn;
++use restate_types::logs::{Lsn, SequenceNumber};
+ use restate_types::partitions::Partition;
+ use restate_types::partitions::StorageVersion;
+ use restate_types::sharding::KeyRange;
+@@ -535,31 +535,15 @@ impl PartitionStore {
+         self.transaction_with_isolation(IsolationLevel::Committed)
+     }
+ 
+-    /// Returns the durably persisted applied LSN, if any.
+-    pub async fn get_durable_lsn(&mut self) -> Result<watch::Receiver<Option<Lsn>>> {
+-        {
+-            let sender = self.db.durable_lsn_sender();
+-            if sender.borrow().is_some() {
+-                let mut rx = self.db.durable_lsn_sender().subscribe();
+-                rx.mark_changed();
+-                return Ok(rx);
+-            }
 -        }
+-
+-        let local = get_locally_durable_lsn(self).await?;
+-        let sender = self.db.durable_lsn_sender();
+-        if let Some(lsn) = local {
+-            sender.send_if_modified(|current_mut| {
+-                if current_mut.is_none_or(|c| c < lsn) {
+-                    *current_mut = Some(lsn);
+-                    true
+-                } else {
+-                    false
+-                }
+-            });
++    /// Returns a watch of the durably persisted applied LSN, or [`Lsn::INVALID`]
++    /// when no durable position is known or the old column family has been removed.
++    pub async fn get_durable_lsn(&mut self) -> Result<watch::Receiver<Lsn>> {
++        let needs_recovery = *self.db.durable_lsn_sender().borrow() == Lsn::INVALID;
++        if needs_recovery && let Some(lsn) = get_locally_durable_lsn(self).await? {
++            self.db.note_durable_lsn(lsn);
+         }
+ 
+-        let mut rx = sender.subscribe();
++        let mut rx = self.db.durable_lsn_sender().subscribe();
+         rx.mark_changed();
+         Ok(rx)
+     }
+```
+
+**File**: `crates/partition-store/src/partition_store_manager.rs` (modified, +522/-38)
+```diff
+@@ -25,8 +25,11 @@ use restate_types::partitions::Partition;
+ use restate_types::protobuf::common::DatabaseKind;
+ 
+ use crate::SnapshotError;
++use crate::durable_lsn_tracking::DurableLsnSenders;
+ use crate::memory::MemoryController;
+-use crate::partition_db::{AllDataCf, PartitionCell, PartitionDb, RocksConfigurator};
++use crate::partition_db::{
++    AllDataCf, PartitionCell, PartitionDb, PartitionStoreDb, RocksConfigurator,
++};
+ use crate::snapshots::{LocalPartitionSnapshot, PartitionSnapshotStatus, Snapshots};
+ use crate::{BuildError, OpenError, PartitionStore, SnapshotErrorKind};
+ 
+@@ -84,7 +87,7 @@ impl SharedState {
+     pub async fn get_or_open(
+         &self,
+         partition: &Partition,
+-        rocksdb: &Arc<RocksDb>,
++        database: &PartitionStoreDb,
+     ) -> Arc<PartitionCell> {
+         let cell = self.get_or_default(partition);
+         let mut state_guard = cell.inner.write().await;
+@@ -93,22 +96,12 @@ impl SharedState {
+             return cell;
+         }
+ 
+-        cell.open_cf(&mut state_guard, rocksdb);
++        cell.open_cf(&mut state_guard, database);
+ 
+         drop(state_guard);
+         cell
+     }
+ 
+-    /// Note: we only modify entries, never insert, from the event listener. If we don't find
+-    /// an existing entry for the partition, that means that the PartitionStoreManager doesn't
+-    /// know about it.
+-    pub fn note_durable_lsn(&self, partition_id: PartitionId, durable_lsn: Lsn) {
+-        let guard = self.partitions.read();
+-        if let Some(cell) = guard.get(&partition_id) {
+-            cell.note_durable_lsn(durable_lsn);
+-        };
 -    }
 -
--    let root = match ROOT.get() {
--        Some(root) => root,
--        None => {
--            let root = TempDir::new()?;
--            if ROOT.set(root.path().to_path_buf()).is_ok() {
--                let _ = root.keep();
--                // SAFETY: `remove_root` is a plain `extern "C" fn()` that does not unwind.
--                unsafe { libc::atexit(remove_root) };
--            }
--            // if a concurrent caller set the root first, ours is removed on drop
--            ROOT.get().expect("root is set")
--        }
--    };
--    // Names only need to be unique within the root. Keep them short since unix socket paths
--    // are limited to ~100 bytes.
--    tempfile::Builder::new()
--        .prefix("")
--        .rand_bytes(4)
--        .tempdir_in(root)
--}
+     #[cfg(test)]
+     pub async fn drop_partition(
+         &self,
+@@ -122,10 +115,15 @@ impl SharedState {
+     }
+ }
+ 
++struct CachedDb {
++    rocksdb: Weak<RocksDb>,
++    notifications: Arc<DurableLsnSenders>,
++}
++
+ pub struct PartitionStoreManager {
+     state: Arc<SharedState>,
+     snapshots: Snapshots,
+-    db_cache: AsyncMutex<HashMap<restate_rocksdb::DbName, Weak<RocksDb>>>,
++    db_cache: AsyncMutex<HashMap<restate_rocksdb::DbName, CachedDb>>,
+     memory_controller: MemoryController,
+     use_multi_db_layout: bool,
+ }
+@@ -151,18 +149,24 @@ impl PartitionStoreManager {
+         Ok(psm)
+     }
+ 
+-    async fn open_rocksdb(&self, partition: &Partition) -> Result<Arc<RocksDb>, RocksError> {
++    async fn open_rocksdb(&self, partition: &Partition) -> Result<PartitionStoreDb, RocksError> {
+         let mut db_cache_guard = self.db_cache.lock().await;
+         let db_name = restate_rocksdb::DbName::from(partition.db_name(self.use_multi_db_layout));
+ 
+-        if let Some(db) = db_cache_guard.get(&db_name).and_then(|db| db.upgrade()) {
+-            return Ok(db);
++        if let Some(cached) = db_cache_guard.get(&db_name)
++            && let Some(rocksdb) = cached.rocksdb.upgrade()
++        {
++            return Ok(PartitionStoreDb {
++                rocksdb,
++                notifications: cached.notifications.clone(),
++            });
+         }
+ 
+         // We need to create/open this database.
++        let notifications = Arc::new(DurableLsnSenders::default());
+         let configurator = RocksConfigurator::<AllDataCf>::new(
+             self.memory_controller.memory_budget.clone(),
+-            Arc::clone(&self.state),
++            &notifications,
+             self.use_multi_db_layout,
+         );
+ 
+@@ -179,11 +183,20 @@ impl PartitionStoreManager {
+         .build()
+         .expect("valid spec");
+ 
+-        let db = RocksDbManager::get().open_db(db_spec).await?;
++        let rocksdb = RocksDbManager::get().open_db(db_spec).await?;
+ 
+-        db_cache_guard.insert(db_name, Arc::downgrade(&db));
++        db_cache_guard.insert(
++            db_name,
++            CachedDb {
++                rocksdb: Arc::downgrade(&rocksdb),
++                notifications: notifications.clone(),
++            },
++        );
+ 
+-        Ok(db)
++        Ok(PartitionStoreDb {
++            rocksdb,
++            notifications,
++        })
+     }
+ 
+     pub fn is_repository_configured(&self) -> bool {
+@@ -239,11 +252,11 @@ impl PartitionStoreManager {
+         partition: &Partition,
+         target_lsn: Option<Lsn>,
+     ) -> Result<PartitionStore, OpenError> {
+-        let rocksdb = self.open_rocksdb(partition).await?;
++        let database = self.open_rocksdb(partition).await?;
+ 
+         // If we already have the partition locally and we don't have a fast-forward target, or the
+         // store already meets the target LSN requirement, then we simply return it.
+-        let cell = self.state.get_or_open(partition, &rocksdb).await;
++        let cell = self.state.get_or_open(partition, &database).await;
+ 
+         let mut state_guard = cell.inner.write().await;
+ 
+@@ -277,15 +290,13 @@ impl PartitionStoreManager {
+         match (snapshot, target_lsn) {
+             (None, None) => {
+                 debug!("No snapshot found for partition, creating new partition store");
+-                let db = cell.provision(&mut state_guard, rocksd
+```
+
+**File**: `crates/partition-store/src/tests/durable_lsn_tracking_test.rs` (modified, +17/-14)
+```diff
+@@ -18,7 +18,7 @@ use restate_storage_api::{
+ };
+ use restate_types::{
+     identifiers::{PartitionId, PartitionKey},
+-    logs::Lsn,
++    logs::{Lsn, SequenceNumber},
+     partitions::Partition,
+     sharding::KeyRange,
+     time::MillisSinceEpoch,
+@@ -55,34 +55,37 @@ async fn track_latest_applied_lsn() -> googletest::Result<()> {
+     txn.commit().await.expect("commit succeeds");
+     drop(txn);
+ 
+-    assert_eq!(None, *partition_store.get_durable_lsn().await?.borrow());
+-    assert_eq!(None, *watch_durable_lsn.borrow());
++    assert_eq!(
++        Lsn::INVALID,
++        *partition_store.get_durable_lsn().await?.borrow()
++    );
++    assert_eq!(Lsn::INVALID, *watch_durable_lsn.borrow());
+ 
+     partition_store.partition_db().flush_memtables(true).await?;
+ 
+-    assert_eq!(Some(Lsn::new(100)), *watch_durable_lsn.borrow());
++    assert_eq!(Lsn::new(100), *watch_durable_lsn.borrow());
+     assert_eq!(
+-        Some(Lsn::new(100)),
++        Lsn::new(100),
+         *partition_store.get_durable_lsn().await?.borrow()
+     );
+ 
+     drop(partition_store);
+     partition_store_manager
+         .close_partition_store(PARTITION.partition_id)
+         .await;
+-    assert_eq!(None, *watch_durable_lsn.borrow());
++    assert_eq!(Lsn::INVALID, *watch_durable_lsn.borrow());
+ 
+     let mut partition_store = partition_store_manager.open(&PARTITION, None).await?;
+     assert_eq!(
+-        Some(Lsn::new(100)),
++        Lsn::new(100),
+         *partition_store.get_durable_lsn().await?.borrow(),
+         "partition store should announce the durable LSN on open"
+     );
+-    // old watch should be _still_ None
+-    assert_eq!(None, *watch_durable_lsn.borrow());
+-    // new watch should have Some(100)
++    // The old watch stays reset after the database reopens.
++    assert_eq!(Lsn::INVALID, *watch_durable_lsn.borrow());
++    // The new watch recovers the durable position from storage.
+     let watch_durable_lsn = partition_store.get_durable_lsn().await?;
+-    assert_eq!(Some(Lsn::new(100)), *watch_durable_lsn.borrow());
++    assert_eq!(Lsn::new(100), *watch_durable_lsn.borrow());
+ 
+     partition_store.partition_db().flush_memtables(true).await?;
+ 
+@@ -95,15 +98,15 @@ async fn track_latest_applied_lsn() -> googletest::Result<()> {
+         drop(txn);
+ 
+         assert_eq!(
+-            Some(Lsn::new(100)),
++            Lsn::new(100),
+             *partition_store.get_durable_lsn().await?.borrow(),
+             "durable LSN remains unchanged"
+         );
+-        assert_eq!(Some(Lsn::new(100)), *watch_durable_lsn.borrow());
++        assert_eq!(Lsn::new(100), *watch_durable_lsn.borrow());
+     }
+ 
+     partition_store.partition_db().flush_memtables(true).await?;
+-    assert_eq!(Some(Lsn::new(200)), *watch_durable_lsn.borrow());
++    assert_eq!(Lsn::new(200), *watch_durable_lsn.borrow());
+ 
+     rocksdb.shutdown().await;
+     Ok(())
+```
+
+**File**: `crates/rocksdb/src/db_manager.rs` (modified, +95/-1)
+```diff
+@@ -503,7 +503,10 @@ impl DbWatchdog {
+ 
+         // Databases choose to react to config updates as they see fit.
+         // e.g. set write_buffer_size
+-        for db in self.manager.dbs.read().values() {
++        // A final Arc drop re-enters background_close_db, which takes the write
++        // lock. Snapshot weak references and upgrade them outside the registry lock.
++        let dbs: Vec<_> = self.manager.dbs.read().values().cloned().collect();
++        for db in dbs {
+             let Some(db) = db.upgrade() else {
+                 continue;
+             };
+@@ -535,3 +538,94 @@ fn check_memory_limit(opts: &CommonOptions) {
+ }
+ 
+ static_assertions::assert_impl_all!(RocksDbManager: Send, Sync);
++
++#[cfg(test)]
++mod tests {
++    use std::sync::Arc;
++
++    use parking_lot::Mutex;
++
++    use restate_core::TaskCenterBuilder;
++    use restate_types::config::{Configuration, node_dir};
++    use restate_types::protobuf::common::DatabaseKind;
++
++    use super::{DbWatchdog, RocksDbManager};
++    use crate::configuration::{DbConfigurator, create_default_db_options};
++    use crate::{DbName, DbSpecBuilder, RocksAccess, RocksDb};
++
++    #[derive(Clone, Default)]
++    struct ReleaseOnConfigUpdate {
++        owner: Arc<Mutex<Option<Arc<RocksDb>>>>,
++    }
++
++    impl DbConfigurator for ReleaseOnConfigUpdate {
++        fn get_db_options(
++            &self,
++            db_name: &DbName,
++            env: &rocksdb::Env,
++            write_buffer_manager: &rocksdb::WriteBufferManager,
++            limiter: &rocksdb::RateLimiter,
++        ) -> rocksdb::Options {
++            create_default_db_options(env, db_name, write_buffer_manager, limiter)
++        }
++
++        fn note_config_update(&self, _db: &RocksAccess) {
++            // On regression, retain the external owner so the test can report the
++            // failure instead of deadlocking when the watchdog drops its Arc.
++            if RocksDbManager::get().dbs.try_write().is_some() {
++                // Leave the watchdog holding the last strong reference.
++                self.owner.lock().take();
++            }
++        }
++    }
++
++    #[tokio::test]
++    async fn config_update_can_release_last_database_reference() -> anyhow::Result<()> {
++        let task_center = TaskCenterBuilder::default()
++            .default_runtime_handle(tokio::runtime::Handle::current())
++            .build()?
++            .into_handle();
++        let manager = task_center.run_sync(RocksDbManager::init);
++        let mut owners = Vec::new();
++        for name in ["config-update-first", "config-update-second"] {
++            let configurator = ReleaseOnConfigUpdate::default();
++            let spec = DbSpecBuilder::new(
++                DbName::new(name),
++                DatabaseKind::PartitionStore,
++                node_dir().join(name),
++                configurator.clone(),
++            )
++            .cf_patterns(Vec::new())
++            .build()?;
++            let db = manager.open_db(spec).await?;
++            *configurator.owner.lock() = Some(db);
++            owners.push(configurator.owner);
++        }
++
++        let mut watchdog = DbWatchdog {
++            manager,
++            cache: manager.cache.clone(),
++            current_common_opts: Configuration::pinned().common.clone(),
++        };
++        watchdog.on_config_update();
++
++        let released_in_callback = owners.iter().all(|owner| owner.lock().is_none());
++        let databases_unregistered = manager.dbs.read().is_empty();
++        // Also release retained owners on regression, after the registry lock is gone.
++        for owner in owners {
++            owner.lock().take();
++        }
++        task_center.shutdown_node("test completed", 0).await;
++        manager.shutdown().await;
++
++        assert!(
++            released_in_callback,
++            "config callbacks must run without the database registry lock"
++        );
++        assert!(
++            databases_unregistered,
++            "the watchdog must release its final database references before returning"
++        );
++        Ok(())
++    }
++}
 ```
 
 ---
 
-### Incident Patch 2: `126b9d43` (2026-10-25)
-**Commit Message**: [tests] Remove test temp dirs even when tests fail
+### Incident Patch 2: `71b52eea` (2026-10-26)
+**Commit Message**: [types] Add address lists to NodeConfig and a v1.8.1 compatibility fixture
 
-## Summary
+Add QualifiedAddress, an advertised address with an optional location, and two ordered lists on NodeConfig: `addresses` for fabric and `ctrl_addresses` for control. Both default to empty and are left out of the encoding when empty, so a node without lists serializes the way older versions wrote it. Nothing populates them yet.
 
-Tests leaked temp dirs in two ways:
+Entries this version cannot read are skipped instead of failing the decode of the whole configuration. A newer version may publish an entry that this one rejects, such as a location with a third scope, and a single such entry would otherwise stop every older node from reading cluster metadata. Skipped entries are logged at debug level. If this version rewrites the configuration they are dropped, like entries dropped by older versions, and they return when their node publishes its lists again. The existing `ctrl_address` field gets the same protection: a value this version cannot read, such as an address in neither defined shape, decodes as absent, so readers fall back to the fabric address instead of failing.
 
-- In test builds, `NODE_BASE_DIR` kept its `TempDir` in a static. Statics are never dropped, so
-  every test process that touched `node_dir()` left a dir behind, whether it passed or failed.
-- `#[restate_core::test]` ends a failing test with `std::process::exit(1)` from its panic hook,
-  which skips all destructors. Temp dirs owned by the test (cluster base dirs, snapshot dirs, ...)
-  leaked whenever a test failed.
+Start keeping compatibility fixtures in crates/types/tests/fixtures: bytes 
 
-Add `restate_test_util::tempdir()`, which creates temp dirs under a per-process root that an
-`atexit` hook removes. `atexit` hooks run on normal exit and on `std::process::exit`, but not
-when the process is killed by a signal.
-
-- `NODE_BASE_DIR` uses it and only creates the dir on first use. Processes that set an explicit
-  base dir, like the restate-server nodes of integration tests (built with `test-util`), never
-  create one.
-- local-cluster-runner uses it for cluster base dirs. `LOCAL_CLUSTER_RUNNER_RETAIN_TEMPDIR` and
-  bifrost-benchpress' `--retain-test-dir` still keep their dirs.
-- partition-store, ingress-http and fabric TLS tests use it. The snapshot repository 
-
-**File**: `Cargo.lock` (modified, +4/-1)
+**File**: `crates/types/src/nodes_config.rs` (modified, +238/-2)
 ```diff
-@@ -8036,7 +8036,6 @@ dependencies = [
-  "serde_json",
-  "serde_with",
-  "strum",
-- "tempfile",
-  "thiserror 2.0.20",
-  "tokio",
-  "tokio-stream",
-@@ -8202,6 +8201,7 @@ dependencies = [
-  "restate-metadata-providers",
-  "restate-metadata-server-grpc",
-  "restate-metadata-store",
-+ "restate-test-util",
-  "restate-types",
-  "restate-workspace-hack",
-  "rev_lines",
-@@ -8644,6 +8644,7 @@ dependencies = [
-  "restate-node",
-  "restate-rocksdb",
-  "restate-service-client",
-+ "restate-test-util",
-  "restate-tracing-instrumentation",
-  "restate-types",
-  "restate-util-time",
-@@ -8875,11 +8876,13 @@ dependencies = [
-  "bytes",
-  "bytestring",
-  "googletest",
-+ "libc",
-  "pretty_assertions",
-  "prost",
-  "prost-types",
-  "rand 0.10.2",
-  "restate-workspace-hack",
-+ "tempfile",
- ]
+@@ -21,7 +21,7 @@ use serde_with::serde_as;
+ use crate::base62_util::base62_max_length_for_type;
+ use crate::locality::NodeLocation;
+ use crate::metadata::GlobalMetadata;
+-use crate::net::address::{AdvertisedAddress, ControlPort, FabricPort};
++use crate::net::address::{AdvertisedAddress, ControlPort, FabricPort, ListenerPort};
+ use crate::net::metadata::{MetadataContainer, MetadataKind};
+ use crate::{
+     GenerationalNodeId, NodeId, PlainNodeId, RestateVersion, base62_util,
+@@ -258,19 +258,59 @@ enum MaybeNode {
+     Node(Box<NodeConfig>),
+ }
  
- [[package]]
++/// An advertised address for callers whose own location starts with `location`. An entry without
++/// a location is for every caller.
++#[derive(Debug, Clone, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
++pub struct QualifiedAddress<P: ListenerPort> {
++    pub address: AdvertisedAddress<P>,
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    pub location: Option<NodeLocation>,
++}
++
++/// Logs an address list entry that this version cannot read. Such entries are skipped instead of
++/// failing the decode of the whole configuration, because a newer version may publish entries
++/// that this one rejects, for example a location with more scopes.
++struct SkippedAddressEntry;
++
++impl serde_with::InspectError for SkippedAddressEntry {
++    fn inspect_error(error: impl serde::de::Error) {
++        tracing::debug!(%error, "Skipping an advertised address entry this version cannot read");
++    }
++}
++
++#[serde_as]
+ #[derive(
+     Debug, Clone, Eq, PartialEq, serde::Serialize, serde::Deserialize, typed_builder::TypedBuilder,
+ )]
+ pub struct NodeConfig {
+     pub name: String,
+     pub current_generation: GenerationalNodeId,
+     pub address: AdvertisedAddress<FabricPort>,
++    /// Fabric addresses for callers in specific locations, in this node's order of preference.
++    /// Empty means `address` is the only route. Versions that predate this field drop it when
++    /// they rewrite the configuration, and entries this version cannot read are skipped.
++    /// Introduced in v1.8.2 (not populated yet)
++    #[serde_as(as = "serde_with::VecSkipError<_, SkippedAddressEntry>")]
++    #[serde(default, skip_serializing_if = "Vec::is_empty")]
++    #[builder(default)]
++    pub addresses: Vec<QualifiedAddress<FabricPort>>,
+     /// The address to use for control plane requests (NodeCtlSvc / ClusterCtrlSvc)
+     /// Introduced in v1.6.0 (for forward compatibility, not populated by v1.6.0)
+-    /// Since v1.8.2, nodes populate this on startup, defaulting to the fabric address.
++    /// Since v1.8.2, nodes populate this on startup, defaulting to the fabric address. A value
++    /// this version cannot read decodes as absent, so `ctrl_address()` falls back to `address`,
++    /// instead of failing the decode of the whole configuration.
++    #[serde_as(as = "serde_with::DefaultOnError")]
+     #[serde(default, skip_serializing_if = "Option::is_none")]
+     #[builder(default)]
+     pub ctrl_address: Option<AdvertisedAddress<ControlPort>>,
++    /// Control addresses for callers in specific locations, in this node's order of preference.
++    /// Empty means `ctrl_address()` is the only route. Entries this version cannot read are
++    /// skipped.
++    /// Introduced in v1.8.2 (not populated yet)
++    #[serde_as(as = "serde_with::VecSkipError<_, SkippedAddressEntry>")]
++    #[serde(default, skip_serializing_if = "Vec::is_empty")]
++    #[builder(default)]
++    pub ctrl_addresses: Vec<QualifiedAddress<ControlPort>>,
+     pub roles: EnumSet<Role>,
+     #[serde(default)]
+     #[builder(default)]
+@@ -758,16 +798,208 @@ flexbuffers_storage_encode_decode!(NodesConfiguration);
+ 
+ #[cfg(test)]
+ mod tests {
++    use std::io::Write;
+     use std::num::NonZeroU64;
++    use std::path::{Path, PathBuf};
+ 
+     use bytes::BytesMut;
+ 
+     use super::*;
+ 
+     use restate_test_util::assert_eq;
+ 
++    use crate::net::ProtocolVersion;
++    use crate::net::codec::{WireDecode, WireEncode};
++    use crate::net::metadata::MetadataUpdate;
+     use crate::storage::StorageCodec;
+ 
++    /// Compatibility fixtures written by released versions. See `tests/fixtures/README.md`.
++    fn fixtures_dir() -> PathBuf {
++        Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/nodes_config")
++    }
++
++    const FIXTURE_FINGERPRINT: u64 = 0x5245_5354_4154_4531;
++
++    /// The live nodes of every node configuration fixture. A third node is removed.
++    fn fixture_nodes(binary_version: &str) -> [NodeConfig; 2] {
++        let binary_version = RestateVersion::new(binary_version.to_owned());
++        [
++            NodeConfig::builder()
++                .name("node-1".to_owned())
++                .current_generation(GenerationalNodeId::new(1, 3))
++                .address("http://10.1.7.3:5122/".parse().unwrap())
++                .location("us-east1.az1".parse().unwrap())
++                .roles(Role::Admin | Role::Worker | Role::LogServer | Role::MetadataServer)
++                .log_server_config(LogServe
 ```
 
-**File**: `Cargo.toml` (modified, +1/-0)
+**File**: `crates/types/tests/fixtures/README.md` (added, +30/-0)
 ```diff
-@@ -195,6 +195,7 @@ jiff = "0.2.17"
- jsonptr = "0.8.2"
- jsonschema = { version = "0.56.0", default-features = false }
- jsonwebtoken = { version = "11.1.0", features = ["aws_lc_rs"] }
-+libc = "0.2"
- metrics = { version = "0.24" }
- metrics-exporter-prometheus = { version = "0.18.1", default-features = false, features = [
-     "async-runtime",
-```
-
-**File**: `crates/clock/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@ restate-platform = { workspace = true }
- 
- bilrost = { workspace = true }
- jiff = { workspace = true, optional = true }
--libc = { version = "0.2" }
-+libc = { workspace = true }
- prost-types = { workspace = true, optional = true }
- rand = { workspace = true }
- schemars = { workspace = true, optional = true }
-```
-
-**File**: `crates/ingress-http/Cargo.toml` (modified, +0/-1)
-```diff
-@@ -68,7 +68,6 @@ restate-types = { workspace = true, features = ["test-util"] }
- hyper = { workspace = true, features = ["full"] }
- hyper-util = { workspace = true, features = ["full"] }
- mockall = { workspace = true }
--tempfile = { workspace = true }
- tokio-stream = { workspace = true }
- tracing-test = { workspace = true }
- 
-```
-
-**File**: `crates/ingress-http/src/server.rs` (modified, +2/-2)
-```diff
-@@ -540,7 +540,7 @@ mod tests {
-                 })))
-             });
- 
--        let socket_dir = tempfile::tempdir().unwrap();
-+        let socket_dir = restate_test_util::tempdir().unwrap();
-         let socket_path = socket_dir.path().join("ingress.sock");
-         bootstrap_test(
-             Listeners::new_unix_listener(socket_path.clone()).unwrap(),
-@@ -599,7 +599,7 @@ mod tests {
-     /// have any effect at all.
-     #[restate_core::test(start_paused = false)]
-     async fn http2_keep_alive_closes_unresponsive_connection() {
--        let socket_dir = tempfile::tempdir().unwrap();
-+        let socket_dir = restate_test_util::tempdir().unwrap();
-         let socket_path = socket_dir.path().join("ingress.sock");
- 
-         bootstrap_test(
-```
-
-**File**: `crates/local-cluster-runner/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -18,6 +18,7 @@ restate-clock = { workspace = true }
- restate-metadata-store = { workspace = true }
- restate-metadata-providers = { workspace = true, features = ["replicated"] }
- restate-metadata-server-grpc = { workspace = true, features = ["grpc-client"] }
-+restate-test-util = { workspace = true }
- # nb features here will also affect the compiled restate-server binary in integration tests
- restate-types = { workspace = true, features = ["unsafe-mutable-config"] }
- 
-```
-
-**File**: `crates/local-cluster-runner/src/cluster/mod.rs` (modified, +4/-1)
-```diff
-@@ -319,7 +319,10 @@ impl MaybeTempDir {
-             );
-             Self::PathBuf(dir)
-         } else {
--            Self::TempDir(Arc::new(tempfile::tempdir().expect("to create a tempdir")))
-+            // removed on drop, or at process exit if a failing test skips the drop
-+            Self::TempDir(Arc::new(
-+                restate_test_util::tempdir().expect("to create a tempdir"),
-+            ))
-         }
-     }
- 
-```
-
-**File**: `crates/partition-store/src/snapshots/repository.rs` (modified, +23/-22)
-```diff
-@@ -1132,6 +1132,7 @@ mod tests {
-     use restate_clock::time::MillisSinceEpoch;
-     use restate_core::{Metadata, TestCoreEnv};
-     use restate_object_store_util::create_object_store_client;
-+    use restate_test_util::tempdir;
-     use restate_types::config::{ObjectStoreOptions, SnapshotsOptions};
-     use restate_types::identifiers::{PartitionId, SnapshotId};
-     use restate_types::logs::{LogId, Lsn, SequenceNumber};
-@@ -1147,7 +1148,7 @@ mod tests {
-     async fn overwrite_unparsable_latest() -> anyhow::Result<()> {
-         let _env = TestCoreEnv::create_with_single_node(1, 1).await;
- 
--        let snapshot_source = TempDir::new()?;
-+        let snapshot_source = tempdir()?;
-         let source_dir = snapshot_source.path().to_path_buf();
- 
-         let data = b"snapshot-data";
-@@ -1161,7 +1162,7 @@ mod tests {
-             data.len(),
-         );
- 
--        let snapshots_destination: TempDir = TempDir::new()?;
-+        let snapshots_destination: TempDir = tempdir()?;
-         let destination_dir = snapshots_destination.path().to_owned();
-         let opts = SnapshotsOptions {
-             destination: Some(
-@@ -1171,7 +1172,7 @@ mod tests {
-             ),
-             ..SnapshotsOptions::default()
-         };
--        let repository = SnapshotRepository::new_from_config(&opts, TempDir::new().unwrap().keep())
-+        let repository = SnapshotRepository::new_from_config(&opts, tempdir()?.keep())
-             .await?
-             .unwrap();
- 
-@@ -1197,7 +1198,7 @@ mod tests {
- 
-     #[restate_core::test]
-     async fn put_snapshot_local_filesystem() -> anyhow::Result<()> {
--        let snapshots_destination = TempDir::new()?;
-+        let snapshots_destination = tempdir()?;
-         test_put_snapshot(
-             Url::from_file_path(snapshots_destination.path())
-                 .unwrap()
-@@ -1218,7 +1219,7 @@ mod tests {
-     async fn test_put_snapshot(destination: String) -> anyhow::Result<()> {
-         let _env = TestCoreEnv::create_with_single_node(1, 1).await;
- 
--        let snapshot_source = TempDir::new()?;
-+        let snapshot_source = tempdir()?;
-         let source_dir = snapshot_source.path().to_path_buf();
- 
-         let destination_url = Url::parse(destination.as_str())?;
-@@ -1256,7 +1257,7 @@ mod tests {
-             ..SnapshotsOptions::default()
-         };
- 
--        let repository = SnapshotRepository::new_from_config(&opts, TempDir::new().unwrap().keep())
-+        let repository = SnapshotRepository::new_from_config(&opts, tempdir()?.keep())
-             .await?
-             .unwrap();
- 
-@@ -1291,7 +1292,7 @@ mod tests {
-         let (expected_latest, _) = repository.build_latest_v2(&snapshot1, None)?;
-         assert_eq!(expected_latest, latest);
- 
--        let snapshot_source = TempDir::new()?;
-+        let snapshot_source = tempdir()?;
-         let source_dir = snapshot_source.path().to_path_buf();
- 
-         let data = b"snapshot-data";
-@@ -1336,7 +1337,7 @@ mod tests {
-         data: &[u8],
-         lsn: Lsn,
-     ) -> anyhow::Result<(PartitionSnapshotMetadata, PathBuf)> {
--        let snapshot_dir = TempDir::new()?.keep();
-+        let snapshot_dir = tempdir()?.keep();
- 
-         let mut data_file = tokio::fs::File::create(snapshot_dir.join("data.sst")).await?;
-         data_file.write_all(data).await?;
-@@ -1393,7 +1394,7 @@ mod tests {
-     async fn snapshot_retention_v2() -> anyhow::Result<()> {
-         let _env = TestCoreEnv::create_with_single_node(1, 1).await;
- 
--        let snapshots_destination = TempDir::new()?;
-+        let snapshots_destination = tempdir()?;
-         let destination = Url::from_file_path(snapshots_destination.path())
-             .unwrap()
-             .to_string();
-@@ -1404,12 +1405,12 @@ mod tests {
-             ..SnapshotsOptions::default()
-         };
- 
--        let repository = SnapshotRepository::new_from_config(&opts, TempDir::new().unwrap().keep())
-+        let repository = SnapshotRepository::new_from_config(&opts, tempdir()?.keep())
-             .await?
-             .unwrap();
- 
-         for i in 1..=4 {
--            let snapshot_source = TempDir::new()?;
-+            let snapshot_source = tempdir()?;
-             let source_dir = snapshot_source.path().to_path_buf();
- 
-             let data = format!("snapshot-data-{}", i);
-@@ -1456,12 +1457,12 @@ mod tests {
-     async fn v1_to_v2_migration() -> anyhow::Result<()> {
-         let _env = TestCoreEnv::create_with_single_node(1, 1).await;
- 
--        let snapshots_destination = TempDir::new()?;
-+        let snapshots_destination = tempdir()?;
-         let destination = Url::from_file_path(snapshots_destination.path())
-             .unwrap()
-             .to_string();
- 
--        let snapshot_source = TempDir::new()?;
-+        let snapshot_source = tempdir()?;
-         let source_dir = snapshot_source.path().to_path_buf();
-         let data = b"snapshot-data-v1";
-         let mut data_file = tokio::fs::File::create(source_dir.join("data.sst")).await?;
-@@ -1488,7 +1489,7 @@ mod tests {
-      
+@@ -0,0 +1,30 @@
++# Compatibility fixtures
++
++Bytes written by released Restate versions. Every later version must keep decoding them, so a
++test that fails on one of these files means a compatibility break, not a stale fixture.
++
++## Rules
++
++1. Never edit or regenerate an existing fixture. Add a new file instead.
++2. Name a fixture after the release that wrote it, for example `nodes_config/v1.8.1.flexbuffers`.
++3. Generate fixtures from the release tag, not from a development branch.
++4. Tests assert the decoded content, not the bytes, so harmless encoder changes do not fail them.
++
++## Adding a fixture for a release
++
++Check out the release tag and run the generator, which refuses to overwrite an existing file:
++
++```sh
++RESTATE_FIXTURE_PATH=$PWD/crates/types/tests/fixtures/nodes_config/v1.9.0.flexbuffers \
++  cargo nextest run -p restate-types --run-ignored only -E 'test(write_nodes_config_fixture)'
++```
++
++Copy the file into this directory on the main branch, and add assertions for its content to
++`decodes_nodes_config_fixtures` in `crates/types/src/nodes_config.rs`. Every file in
++`nodes_config/` is decoded by that test automatically.
++
++## Provenance
++
++| Fixture | Written by | How |
++| --- | --- | --- |
++| `nodes_config/v1.8.1.flexbuffers` | v1.8.1 tag, commit `20efb1b83a39` | That release has no generator, so the generator from `crates/types/src/nodes_config.rs` was added to an export of the tag, without the address lists that v1.8.1 does not have. |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5652** (2026-10-26): [rocksdb] Introduce configurable database environments (@AhmedSoliman)
+- **PR #5647** (2026-10-27): Remove obsolete Jepsen CI workflows (@pcholakov)
+- **PR #5646** (closed): Refresh restate-cli and the previous minor release in the Docker refresh workflow (@tillrohrmann)
+- **PR #5643** (2026-10-26): [PartitionStore] Wait for in-flight commits before closing partitions (@AhmedSoliman)
 - **PR #5642** (2026-10-25): [chore] upgrade deps for advisories (@AhmedSoliman)
 - **PR #5641** (2026-10-25): [tests] Kill local cluster nodes when a test exits without cleanup (@AhmedSoliman)
-- **PR #5640** (2026-10-25): [tests] Remove test temp dirs even when tests fail (@AhmedSoliman)
-- **PR #5636** (2026-10-23): [Restate UI] Update to v1.1.3 (@restatedev-ci)
-- **PR #5635** (2026-10-23): Remove all dependencies in `restate-web-ui-crate` (@nikrooz)
-- **PR #5634** (closed): [Restate UI] Update to v1.1.2 (@restatedev-ci)
 
 ---
 
@@ -2208,37 +2525,28 @@ when the process is killed by a signal.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [tests] Kill local cluster nodes when a test exits without cleanup
+## X. [PartitionStore] Fix storage cleanup and durable-LSN reporting
 
 **RULE**:
-When implementing operations in `crates/local-cluster-runner/src/node/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c57aa66f`: [tests] Kill local cluster nodes when a test exits without cleanup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `374dc27d`: [PartitionStore] Fix storage cleanup and durable-LSN reporting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/local-cluster-runner/src/node/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // `kill_on_drop` and our `Drop` don't run if the process exits without unwinding, e.g.
-        // when a `#[restate_core::test]` fails.
-        let kill_on_exit = restate_test_util::kill_on_exit(pid);
-            let wait = async {
-                let status = child.wait().await;
-                // the pid may be reused once the child is reaped
-                drop(kill_on_exit);
-                status
-            };
-            let (status, _) = tokio::join!(wait, lines_fut);
+ "restate-platform",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            let (status, _) = tokio::join!(child.wait(), lines_fut);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c57aa66f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `374dc27d` are properly handled with clean fallback behavior.

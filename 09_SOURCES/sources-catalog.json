@@ -6873,10 +6873,10 @@
     "repository": "lucide-icons/lucide",
     "platform": "github",
     "sourceUrl": "https://github.com/lucide-icons/lucide",
-    "sourceVersion": "7faf8762",
+    "sourceVersion": "2ca268e7",
     "license": "NOASSERTION",
-    "contentHash": "a84567b478a798a713233090e12994e26f8f22db4c4f2aba9a09a634dea6790b",
-    "lastHarvestedAt": "2026-10-25T14:25:09.863Z",
+    "contentHash": "a3105dea53f0a7e580ed074540a18e20986d306fd222d992f55375aa28af9358",
+    "lastHarvestedAt": "2026-10-27T15:32:53.879Z",
     "learningId": "learn-github-lucide-icons-lucide"
   },
   "iconoir-icons-iconoir": {
@@ -6983,10 +6983,10 @@
     "repository": "restatedev/restate",
     "platform": "github",
     "sourceUrl": "https://github.com/restatedev/restate",
-    "sourceVersion": "c57aa66f",
+    "sourceVersion": "d188f08a",
     "license": "NOASSERTION",
-    "contentHash": "dea7a07be6165e4790438eaca0ad583d1d90f054d455112d2ec02951230a6fc9",
-    "lastHarvestedAt": "2026-10-25T22:00:38.277Z",
+    "contentHash": "2a29ccc89fd32ddea047cea0782ce889346daf2f44f920697393745d4860caf7",
+    "lastHarvestedAt": "2026-10-27T15:32:56.237Z",
     "learningId": "learn-github-restatedev-restate"
   },
   "kong-kubernetes-ingress-controller": {
@@ -9993,10 +9993,10 @@
     "repository": "vitejs/vite",
     "platform": "github",
     "sourceUrl": "https://github.com/vitejs/vite",
-    "sourceVersion": "a976df38",
+    "sourceVersion": "cce559ab",
     "license": "MIT",
-    "contentHash": "d78d0fd7472f799d996775ad4fd1c85fa4685994b716931195f7f48801e04f7d",
-    "lastHarvestedAt": "2026-10-23T06:30:10.617Z",
+    "contentHash": "5e135c328a2727106063e8b6e009c05048f349bdb81ec3b918cac8f4bfa7390e",
+    "lastHarvestedAt": "2026-10-27T15:32:58.468Z",
     "learningId": "learn-github-vitejs-vite"
   },
   "keyboardkit-keyboardkit": {

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T15:29:36.446Z",
-  "total_cycles_completed": 5391,
-  "total_learnings_persisted": 5391,
-  "total_rules_promoted": 4793,
+  "last_updated": "2026-10-27T15:32:58.472Z",
+  "total_cycles_completed": 5394,
+  "total_learnings_persisted": 5394,
+  "total_rules_promoted": 4796,
   "history": [
-    {
-      "timestamp": "2026-10-27T10:54:23.343Z",
-      "repository": "goharbor/harbor",
-      "learningId": "learn-github-goharbor-harbor",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T10:54:24.967Z",
-      "repository": "ScrapeCreators/social-media-research-skills",
-      "learningId": "learn-github-scrapecreators-social-media-research-skills",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T10:54:28.581Z",
-      "repository": "etcd-io/etcd",
-      "learningId": "learn-github-etcd-io-etcd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T10:57:50.926Z",
       "repository": "elastic/eui",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-27T15:29:36.446Z",
       "repository": "lancedb/lancedb",
       "learningId": "learn-github-lancedb-lancedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T15:32:53.882Z",
+      "repository": "lucide-icons/lucide",
+      "learningId": "learn-github-lucide-icons-lucide",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T15:32:56.240Z",
+      "repository": "restatedev/restate",
+      "learningId": "learn-github-restatedev-restate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T15:32:58.472Z",
+      "repository": "vitejs/vite",
+      "learningId": "learn-github-vitejs-vite",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
