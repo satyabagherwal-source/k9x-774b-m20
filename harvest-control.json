@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-27T07:39:58.694Z",
+  "lastUpdated": "2026-10-27T08:08:37.699Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -188,7 +188,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T07:39:38.889Z",
+        "lastActiveAt": "2026-10-27T08:08:16.799Z",
         "lastHarvestedAt": "2026-10-27T07:13:47.339Z",
         "totalHarvested": 1112,
         "lastError": null
@@ -198,9 +198,9 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T07:39:38.862Z",
-        "lastHarvestedAt": "2026-10-26T18:25:29.745Z",
-        "totalHarvested": 1394,
+        "lastActiveAt": "2026-10-27T08:12:58.532Z",
+        "lastHarvestedAt": "2026-10-27T08:12:58.532Z",
+        "totalHarvested": 1395,
         "lastError": null
       },
       {
@@ -208,9 +208,9 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T07:39:41.374Z",
-        "lastHarvestedAt": "2026-10-27T07:15:15.983Z",
-        "totalHarvested": 1484,
+        "lastActiveAt": "2026-10-27T08:13:26.856Z",
+        "lastHarvestedAt": "2026-10-27T08:13:26.856Z",
+        "totalHarvested": 1485,
         "lastError": null
       },
       {
@@ -218,7 +218,7 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T07:39:43.894Z",
+        "lastActiveAt": "2026-10-27T08:08:21.916Z",
         "lastHarvestedAt": "2026-10-27T07:21:01.976Z",
         "totalHarvested": 5159,
         "lastError": null
@@ -228,7 +228,7 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T07:39:46.377Z",
+        "lastActiveAt": "2026-10-27T08:08:24.389Z",
         "lastHarvestedAt": "2026-10-26T18:25:37.716Z",
         "totalHarvested": 1526,
         "lastError": null
@@ -238,7 +238,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T07:50:46.053Z",
+        "lastActiveAt": "2026-10-27T08:08:26.978Z",
         "lastHarvestedAt": "2026-10-27T07:50:46.053Z",
         "totalHarvested": 1445,
         "lastError": null
@@ -248,9 +248,9 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T07:39:51.355Z",
-        "lastHarvestedAt": "2026-10-26T21:10:32.287Z",
-        "totalHarvested": 1283,
+        "lastActiveAt": "2026-10-27T08:12:15.513Z",
+        "lastHarvestedAt": "2026-10-27T08:12:15.513Z",
+        "totalHarvested": 1284,
         "lastError": null
       },
       {
@@ -258,7 +258,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T07:39:53.925Z",
+        "lastActiveAt": "2026-10-27T08:08:31.882Z",
         "lastHarvestedAt": "2026-10-26T18:12:37.153Z",
         "totalHarvested": 1477,
         "lastError": null
@@ -268,9 +268,9 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T07:45:11.929Z",
-        "lastHarvestedAt": "2026-10-27T07:45:11.929Z",
-        "totalHarvested": 1182,
+        "lastActiveAt": "2026-10-27T08:31:14.376Z",
+        "lastHarvestedAt": "2026-10-27T08:31:14.376Z",
+        "totalHarvested": 1183,
         "lastError": null
       }
     ],
@@ -294,7 +294,7 @@
     "GITHUB_REST_API": {
       "service": "GITHUB_REST_API",
       "status": "HEALTHY",
-      "remaining": 4982,
+      "remaining": 4966,
       "resetEpoch": 0,
       "resetAt": null,
       "trippedAt": null,
@@ -303,13 +303,14 @@
     },
     "GITHUB_SEARCH_API": {
       "service": "GITHUB_SEARCH_API",
-      "status": "HEALTHY",
-      "remaining": 9,
-      "resetEpoch": 0,
-      "resetAt": null,
-      "trippedAt": null,
-      "reason": null,
-      "consecutiveBlocks": 0
+      "status": "COOLING_DOWN",
+      "remaining": 5,
+      "resetEpoch": 1793088551772,
+      "resetAt": "2026-10-27T08:09:11.772Z",
+      "trippedAt": "2026-10-27T08:08:10.772Z",
+      "reason": "Secondary rate limit or HTTP 403 backoff (Remaining: 4 | Resource: search | URL: https://api.github.com/search/repositories?q=topic%3Aweb-framework%20language%3Atypescript%20stars%3A%3E3000%20sort%3Astars&per_page=15&page=2)",
+      "consecutiveBlocks": 0,
+      "isSecondaryRateLimit": true
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",

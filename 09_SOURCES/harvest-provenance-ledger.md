@@ -5201,3 +5201,7 @@ Every entry in this ledger must capture:
 | `learn-github-sourcey-sourcey` | `https://github.com/sourcey/sourcey` | `9c4ee18d` | Multi-dimensional audit evidence | 2026-10-27T07:20:59.433Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `938cefb5` | Multi-dimensional audit evidence | 2026-10-27T07:45:09.387Z |
 | `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `223a398d` | Multi-dimensional audit evidence | 2026-10-27T07:50:43.515Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `fcc8eb13` | Multi-dimensional audit evidence | 2026-10-27T08:12:12.972Z |
+| `learn-huggingface-xhtoken-spark-x2-6-4b-gguf` | `https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-10-27T08:12:55.997Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-27T08:13:24.323Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `d75ef158` | Multi-dimensional audit evidence | 2026-10-27T08:31:11.840Z |

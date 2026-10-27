@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-V32W",
-    "timestamp": "2026-10-25T05:52:29.528Z",
-    "repository": "elastic/eui",
-    "learningId": "learn-github-elastic-eui",
-    "contentHash": "d3f794986f25e0c6d94d27772c65d9d759372e9950a17be2d59907ab2fcdcac2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-V37C",
-    "timestamp": "2026-10-25T05:52:29.688Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-    "contentHash": "bde7af3085bc2dbef40994bba81b601141507b3405f6fb3dc1ffb202b160e73f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-V4O1",
-    "timestamp": "2026-10-25T05:52:31.585Z",
-    "repository": "biomejs/biome",
-    "learningId": "learn-github-biomejs-biome",
-    "contentHash": "030116ca2e52e3997df97c0e04cafe0c64680f533b598b9a00566d32eca14eff",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-V7PQ",
-    "timestamp": "2026-10-25T05:52:35.534Z",
-    "repository": "lingodotdev/lingo.dev",
-    "learningId": "learn-github-lingodotdev-lingo-dev",
-    "contentHash": "1107f803b609869c939bd34fac715b1647ed6c5e18ffdd127a880fae726d5174",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-V9NQ",
     "timestamp": "2026-10-25T05:52:38.054Z",
     "repository": "alexellis/k3sup",
@@ -7492,6 +7432,66 @@
     "contentHash": "6964b2cbf6858c564595d404042e380fd36ab2129f8e91f543de83d9da68ef38",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-QH4A",
+    "timestamp": "2026-10-27T08:12:12.970Z",
+    "repository": "microsoft/agent-governance-toolkit",
+    "learningId": "learn-github-microsoft-agent-governance-toolkit",
+    "contentHash": "e3b43b91d1de4090c75517df924818a66a534b0611ae74fd63ce0414c7c46c8e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-REBF",
+    "timestamp": "2026-10-27T08:12:55.995Z",
+    "repository": "XHToken/Spark-X2.6-4B-GGUF",
+    "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
+    "contentHash": "e7971e132c532ba511a7901f67f96dae5e691b79a090b2e99b4703a4641fcdd9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-S068",
+    "timestamp": "2026-10-27T08:13:24.320Z",
+    "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
+    "contentHash": "48da1837bef0e5b1b38df6e7150814b86dcfe7b59cf5c2886f8d80dcad727eb9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-EVVE",
+    "timestamp": "2026-10-27T08:31:11.834Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "7bce661a9e2247f98637cd7adfe154f0be3dfca368d38ab9aa3d036080735566",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

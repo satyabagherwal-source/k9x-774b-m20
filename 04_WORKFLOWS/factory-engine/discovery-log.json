@@ -18790,5 +18790,29 @@
     "qualityScore": 1060,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-27T07:07:01.841Z"
+  },
+  {
+    "name": "XHToken/Spark-X2.6-4B-GGUF",
+    "fullName": "XHToken/Spark-X2.6-4B-GGUF",
+    "url": "https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: XHToken/Spark-X2.6-4B-GGUF (170 likes, 69669 downloads)",
+    "likes": 170,
+    "downloads": 69669,
+    "qualityScore": 3700,
+    "discoveredAt": "2026-10-27T08:08:13.938Z"
+  },
+  {
+    "name": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+    "fullName": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+    "url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB (160 likes, 35608 downloads)",
+    "likes": 160,
+    "downloads": 35608,
+    "qualityScore": 3600,
+    "discoveredAt": "2026-10-27T08:08:13.938Z"
   }
 ]

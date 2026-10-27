@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T07:50:43.446Z",
-  "total_verified_learnings": 1097,
+  "last_updated": "2026-10-27T08:31:11.764Z",
+  "total_verified_learnings": 1099,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -4405,8 +4405,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "733b7419",
-      "content_hash": "13cb556f57eac3ff2a6bda42d0b457142fd73f84e18ea49ad2845b6fb9af01f1",
+      "source_version": "d75ef158",
+      "content_hash": "7bce661a9e2247f98637cd7adfe154f0be3dfca368d38ab9aa3d036080735566",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -4469,6 +4469,11 @@
           "number": 3770,
           "title": "Multi-Purpose Singleton Re-Attachment Rule",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4667,
+          "title": "memory): per-channel retrieval diagnostics and skill applicability profiles (PLA",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4476,7 +4481,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T05:41:36.885Z",
+      "verified_at": "2026-10-27T08:31:11.756Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35396,8 +35401,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "70a4ab8e",
-      "content_hash": "f4d446086325dc54b5f06f1276c893a3de074ca9583956177fb6612ae46fda49",
+      "source_version": "fcc8eb13",
+      "content_hash": "e3b43b91d1de4090c75517df924818a66a534b0611ae74fd63ce0414c7c46c8e",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -35450,6 +35455,21 @@
           "number": 3972,
           "title": "haystack-agentmesh): charge TrustGate decay once per elapsed hour (#4401)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4659,
+          "title": "POSIX CLI Parameter Smuggling and Environment Precedence Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4660,
+          "title": "Fail-Closed Asynchronous STDIO Interceptor Boundary Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4661,
+          "title": "Metric-Reward Calculation Equivalence Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35457,7 +35477,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T02:11:19.206Z",
+      "verified_at": "2026-10-27T08:12:12.914Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -130291,6 +130311,213 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T07:45:09.316Z"
+    },
+    "rule-4659": {
+      "learning_id": "rule-4659",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4659,
+      "title": "POSIX CLI Parameter Smuggling and Environment Precedence Invariant",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "fcc8eb13",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T08:12:12.914Z"
+    },
+    "rule-4660": {
+      "learning_id": "rule-4660",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4660,
+      "title": "Fail-Closed Asynchronous STDIO Interceptor Boundary Invariant",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "fcc8eb13",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T08:12:12.914Z"
+    },
+    "rule-4661": {
+      "learning_id": "rule-4661",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4661,
+      "title": "Metric-Reward Calculation Equivalence Invariant",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "fcc8eb13",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T08:12:12.914Z"
+    },
+    "learn-huggingface-xhtoken-spark-x2-6-4b-gguf": {
+      "learning_id": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "XHToken/Spark-X2.6-4B-GGUF",
+      "repository": "XHToken/Spark-X2.6-4B-GGUF",
+      "slug": "hf-xhtoken-spark-x2.6-4b-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF",
+      "source_version": "hf-xhtoken-spark-x2.6-4b-gguf",
+      "content_hash": "e7971e132c532ba511a7901f67f96dae5e691b79a090b2e99b4703a4641fcdd9",
+      "dossier_path": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4662,
+          "title": "Dynamic Thinking Budget Enforcement via Token-Bounded KV Cache Pre-Allocation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4663,
+          "title": "Zero-Copy GGUF Alignment and Memory-Mapped Boundary Verification",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T08:12:55.939Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4662": {
+      "learning_id": "rule-4662",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4662,
+      "title": "Dynamic Thinking Budget Enforcement via Token-Bounded KV Cache Pre-Allocation",
+      "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF",
+      "source_version": "hf-xhtoken-spark-x2.6-4b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T08:12:55.939Z"
+    },
+    "rule-4663": {
+      "learning_id": "rule-4663",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4663,
+      "title": "Zero-Copy GGUF Alignment and Memory-Mapped Boundary Verification",
+      "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF",
+      "source_version": "hf-xhtoken-spark-x2.6-4b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T08:12:55.939Z"
+    },
+    "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb": {
+      "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+      "slug": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
+      "content_hash": "48da1837bef0e5b1b38df6e7150814b86dcfe7b59cf5c2886f8d80dcad727eb9",
+      "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4664,
+          "title": "Enforce Atomic Delimiter Fencing for Thinking-Budget Preemption",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4665,
+          "title": "Speculative Drafter Dimension and Vocabulary Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4666,
+          "title": "Strict Boundary Validation for 64K Edge Context Allocations",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T08:13:24.268Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4664": {
+      "learning_id": "rule-4664",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4664,
+      "title": "Enforce Atomic Delimiter Fencing for Thinking-Budget Preemption",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T08:13:24.268Z"
+    },
+    "rule-4665": {
+      "learning_id": "rule-4665",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4665,
+      "title": "Speculative Drafter Dimension and Vocabulary Alignment Invariant",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T08:13:24.268Z"
+    },
+    "rule-4666": {
+      "learning_id": "rule-4666",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4666,
+      "title": "Strict Boundary Validation for 64K Edge Context Allocations",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T08:13:24.268Z"
+    },
+    "rule-4667": {
+      "learning_id": "rule-4667",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4667,
+      "title": "memory): per-channel retrieval diagnostics and skill applicability profiles (PLA",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "d75ef158",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T08:31:11.756Z"
     }
   },
   "aliases": {

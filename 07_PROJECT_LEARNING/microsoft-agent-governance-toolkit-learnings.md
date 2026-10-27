@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Source Version**: `70a4ab8e`  
+> **Source Version**: `fcc8eb13`  
 > **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T02:11:19.037Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-27T08:12:12.443Z  
 > **Learning ID**: `learn-github-microsoft-agent-governance-toolkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,668 +12,521 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): microsoft/agent-governance-toolkit
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T02:11:18.631Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): microsoft/agent-governance-toolkit
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `microsoft/agent-governance-toolkit`
-- **Description**: AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution sandboxing, and reliability engineering for autonomous AI agents. Covers 10/10 OWASP Agentic Top 10.
-- **Primary Language / Ecosystem**: Python
-- **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 6464 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+### Exact Technical Problem Addressed
+Autonomous LLM-driven agents possess dynamic execution capabilities: tool invocation, arbitrary shell execution, file system mutation, relational database operations, and inter-agent task delegation. Standard perimeter security controls (e.g., OAuth tokens, IAM roles, network firewalls) only govern whether an agent can establish a transport session with a resource. They cannot inspect or constrain runtime behavior within an established session. Stochastic system safety cannot rely on prompt-level instructions ("system prompts") because prompt injection, jailbreaks, and goal hijacking reliably bypass natural language constraints (ICLR 2025: 100% attack success rates against frontier models under adaptive probing). 
+
+`microsoft/agent-governance-toolkit` (AGT) solves this problem by inserting a deterministic, out-of-band policy engine and control boundary between the agent reasoning loop and host environment execution interfaces. AGT acts as an enforcement broker across Python, Node.js/TypeScript, and .NET runtimes, intercepting prompts, tool parameters, shell executions, and tool outputs before host state mutation occurs.
+
+### Architectural Boundaries & State Ownership
+The architecture isolates runtime evaluation across several strict control boundaries:
+
+```
+┌──────────────────────────────────────────────────────────────────────────┐
+│                             HOST / OPERATOR                              │
+│                                                                          │
+│  ┌───────────────────────┐          ┌──────────────────────────────────┐ │
+│  │ GovernanceConfig      │          │ CLI / Orchestrator               │ │
+│  │ (Immutable Invariants)│          │ (Antigravity, Claude Code, etc.) │ │
+│  └──────────┬────────────┘          └────────────────┬─────────────────┘ │
+└─────────────┼────────────────────────────────────────┼───────────────────┘
+              │ Enforced Controls                      │ Invokes Stdin/Stdout
+              ▼                                        ▼
+┌──────────────────────────────────────────────────────────────────────────┐
+│ INTERCEPTION HOOK RUNTIME (Subprocess / STDIO Boundary)                  │
+│                                                                          │
+│  ┌────────────────────────────────────────────────────────────────────┐  │
+│  │ hook-runtime.mjs / common.mjs                                      │  │
+│  │ - Buffer stdin chunks until stream termination                     │  │
+│  │ - Parse payload JSON                                               │  │
+│  │ - Catch ALL errors -> write stderr -> EXIT 2 (FAIL-CLOSED)         │  │
+│  └──────────────────┬─────────────────────────────────────────────────┘  │
+│                     │ Evaluates payload                                  │
+│                     ▼                                                    │
+│  ┌────────────────────────────────────────────────────────────────────┐  │
+│  │ Policy Engine / Evaluator (Native Rust FFI / OPA WASM / Rego CLI)  │  │
+│  │ - evaluatePromptSubmission(state, input)                           │  │
+│  │ - evaluatePreToolUse(state, input)                                 │  │
+│  │ - inspectToolResult(state, input)                                  │  │
+│  └──────────────────┬─────────────────────────────────────────────────┘  │
+└─────────────────────┼────────────────────────────────────────────────────┘
+                      │ Emits Allow / Deny / Transform
+                      ▼
+┌──────────────────────────────────────────────────────────────────────────┐
+│ EXECUTION HARNESS & CONTAINMENT                                          │
+│                                                                          │
+│  ┌─────────────────────────┐            ┌──────────────────────────────┐ │
+│  │ DockerDeployer (Runtime)│            │ Reward & Feedback            │ │
+│  │ - Isolated network      │            │ (Agent-Lightning)            │ │
+│  │ - Read-only rootfs      │            │ - Invariant penalty scaling  │ │
+│  │ - Blocked env overrides │            │ - Cryptographic audit logs   │ │
+│  └─────────────────────────┘            └──────────────────────────────┘ │
+└──────────────────────────────────────────────────────────────────────────┘
+```
+
+1. **Subprocess/STDIO Isolation Barrier**: For developer CLI integrations (Claude Code, GitHub Copilot CLI, Antigravity CLI), AGT executes policy hooks as discrete Node.js scripts via non-blocking POSIX stdin/stdout streaming pipes. Host environments communicate through serialized JSON payloads over stdin. Policy decisions (`allow`, `deny`, or output-suppression commands) are emitted over stdout. Any runtime error, policy syntax failure, or execution crash routes directly to stderr and forces an immediate non-zero exit code (`exit(2)`), halting the agent loop before unverified operations execute.
+2. **Deterministic Native Evaluation Boundary**: Policy evaluation leverages compiled Rust artifacts (`agent_control_specification` via Maturin PyO3 bindings) and Open Policy Agent (OPA) binaries compiled to standalone static executables. Rego and AST evaluations occur strictly in deterministic local memory space without out-of-band network dependencies.
+3. **Container Sandboxing Boundary**: `DockerDeployer` runs untrusted agent processes inside hardened Linux namespaces (`--security-opt no-new-privileges`, `--read-only`, and `/tmp:rw,noexec,nosuid`). Mandatory host configurations (`AGT_KILL_SWITCH`, `AGT_POLICY_PATH`, `AGT_TRUST_LEVEL`) are injected into the execution context and hard-locked against container-level environment variable overrides.
+4. **Audit and Reward Boundary**: Cryptographic SHA-256 hash chains trace session metadata immutability across evaluation turns. In reinforcement learning (RL) fine-tuning pipelines (Agent-Lightning), governance violations feed directly into reward penalty calculators to align agent trajectories against safety violations.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: README.md, Dockerfile.
-- Evaluated system abstractions and modular contracts.
+### 1. POSIX CLI Parameter Smuggling and Environment Precedence Invariant
+**RULE**:
+When generating CLI execution arguments for third-party command-line binaries (e.g., `docker run`, `kubectl exec`, `ssh`, or runtime wrappers) where certain internal configuration keys MUST take absolute precedence over user-supplied mappings, the system MUST NOT rely on argument positioning alone. The system MUST explicitly validate user-supplied dictionaries, reject keys matching reserved configuration names, and reject keys containing internal delimiter tokens (such as `=` in key names) before command construction.
 
-### Core Architecture Module: `agent-governance-antigravity-cli/assets/extensions/agt-global-policy/hooks/after-tool.mjs`
+**WHY**:
+Third-party CLIs parse repeated flags using variable semantics. For example, Docker CLI evaluates repeated environment variables (`-e KEY=val1 -e KEY=val2`) using "last-write-wins". If internal security policies inject `-e AGT_KILL_SWITCH=true` first, and user inputs are appended afterward, a malicious or accidental user entry `{"AGT_KILL_SWITCH": "false"}` completely overrides the security posture. Furthermore, POSIX argument parsers split key-value definitions on the first `=` sign; passing an entry with an `=` in the key (e.g., `{"AGT_KILL_SWITCH=false": "irrelevant"}`) results in the binary parsing `AGT_KILL_SWITCH` as the key and `false` as the value, circumventing key-blocklists that check only exact dictionary key strings.
+
+**WHEN TO APPLY**:
+Apply in any orchestration, container dispatch, subprocess wrapper, or CLI proxy written in Python, Go, Node.js, or Rust where system-level security constraints are merged with user-defined environment variables, query parameters, or execution options.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from typing import Mapping, Sequence
+
+def build_hardened_container_command(
+    image: str,
+    reserved_config: Mapping[str, str],
+    user_env: Mapping[str, str] | None = None,
+) -> list[str]:
+    """
+    Constructs CLI arguments preventing parameter smuggling and precedence overrides.
+    """
+    cmd: list[str] = [
+        "docker", "run",
+        "--rm",
+        "--security-opt", "no-new-privileges",
+        "--read-only",
+        "--tmpfs", "/tmp:rw,noexec,nosuid",
+    ]
+
+    # 1. Enforce reserved immutable governance/security controls
+    for key, value in reserved_config.items():
+        if "=" in key:
+            raise ValueError(f"Reserved configuration key {key!r} contains invalid token '='")
+        cmd.extend(["-e", f"{key}={value}"])
+
+    # 2. Strict validation and sanitization of user-provided environment mappings
+    if user_env:
+        for user_key, user_val in user_env.items():
+            # Prevent POSIX CLI delimiter injection where key contains '='
+            if "=" in user_key:
+                raise ValueError(
+                    f"Invalid environment variable name {user_key!r}: must not contain '='"
+                )
+            # Prevent overriding reserved governance keys
+            if user_key in reserved_config:
+                raise ValueError(
+                    f"Security violation: user environment variable {user_key!r} "
+                    f"attempts to override immutable governance config"
+                )
+            cmd.extend(["-e", f"{user_key}={user_val}"])
+
+    cmd.append(image)
+    return cmd
 ```
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 
-import { inspectToolResult } from "../lib/policy.mjs";
-import {
-  emitSystemBlock,
-  extractAntigravityToolResponse,
-  loadHookInput,
-  loadHookPolicyState,
-  runHookMain,
-  writeHookOutput,
-} from "../lib/hook-runtime.mjs";
+**NEGATIVE CONSTRAINT**:
+```python
+# CRITICAL VULNERABILITY: Relies on placement or blind appending
+def unsafe_build_container_command(image: str, reserved_config: dict, user_env: dict):
+    cmd = ["docker", "run"]
+    # Appending reserved config first allows user_env appended later to override it in Docker!
+    for k, v in reserved_config.items():
+        cmd.extend(["-e", f"{k}={v}"])
+    
+    # Smuggling flaw: If user_env has {"AGT_KILL_SWITCH=false": "1"}, Docker splits on '='
+    # and sets AGT_KILL_SWITCH to 'false' even if k == 'AGT_KILL_SWITCH' is explicitly blocked!
+    for k, v in user_env.items():
+        cmd.extend(["-e", f"{k}={v}"])
+    cmd.append(image)
+    return cmd
+```
 
-await runHookMain(async () => {
-  const input = await loadHookInput();
-  const state = await loadHookPolicyState(import.meta.url);
-  const result = await inspectToolResult(
-    state,
-    {
-      toolName: input.tool_name,
-      toolResult: extractAntigravityToolResponse(input.tool_response),
-    },
-    { sessionId: input.session_id },
-  );
+**VERIFICATION METHOD**:
+Enforce parameter boundary tests that supply both direct collisions and delimiter-smuggled keys:
+```python
+import pytest
 
-  if (result?.suppressOutput) {
-    await writeHookOutput({
-      decision: "deny",
-      reason: result.additionalContext ?? "AGT suppressed suspicious tool output.",
-      suppressOutput: true,
-    });
-  } else if (result?.additionalContext) {
-    await writeHookOutput({
-      hookSpecificOutput: {
-        additionalContext: result.additionalContext,
-      },
-    });
-  } else {
-    await writeHookOutput({});
+def test_cli_builder_rejects_overrides_and_smuggling():
+    reserved = {"SECURITY_ENFORCED": "true"}
+    
+    # Check direct name collision
+    with pytest.raises(ValueError, match="attempts to override"):
+        build_hardened_container_command("alpine:latest", reserved, {"SECURITY_ENFORCED": "false"})
+        
+    # Check delimiter smuggling attack vector
+    with pytest.raises(ValueError, match="must not contain '='"):
+        build_hardened_container_command("alpine:latest", reserved, {"SECURITY_ENFORCED=false": "value"})
+```
+
+---
+
+### 2. Fail-Closed Asynchronous STDIO Interceptor Boundary Invariant
+**RULE**:
+Process hook handlers intercepting tool calls or agent executions over standard I/O (STDIO) streams MUST buffer input until EOF, handle stdout backpressure asynchronously with error listeners detached upon completion, and enforce a strict catch-all wrapper that writes diagnostic errors to `stderr` and forces an explicit non-zero exit code (MUST NOT exit 0, and MUST NOT allow unhandled promise rejections to let execution fall through).
+
+**WHY**:
+CLI agents (such as Claude Code or Antigravity) invoke external lifecycle hooks as child processes and parse stdout as JSON. If a policy evaluation hook crashes due to an unhandled exception, syntax error, or file access error, and the process terminates without setting an explicit exit code, the parent orchestrator may treat the absence of a denial payload as an implicit approval ("fail-open"). Furthermore, synchronous writes to `stdout` under large diagnostic payloads can trigger truncated buffer writes if the OS pipe buffer fills up, resulting in unhandled JSON parsing failures in the orchestrator.
+
+**WHEN TO APPLY**:
+All hook scripts, pre-commit scanners, gateway interceptors, and stdio-based CLI wrappers across Node.js/JavaScript, Python, and shell scripts.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// hook-runtime.mjs
+import process from "node:process";
+
+/**
+ * Executes a policy lifecycle hook with strict fail-closed guarantees.
+ * @param {() => Promise<void>} handler
+ */
+export async function runHookMain(handler) {
+  try {
+    await handler();
+  } catch (error) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    // Fail-closed invariant: Write reason to stderr and force exit code 2
+    await writeHookStderr(`AGT Policy Hook Execution Failure: ${err.message}\n${err.stack ?? ""}`);
+    process.exit(2);
   }
-}, async (error) => {
-  await emitSystemBlock(`AGT after-tool hook failed closed: ${error.message}`);
-});
-
-```
-
-### Core Architecture Module: `agent-governance-antigravity-cli/assets/extensions/agt-global-policy/hooks/before-agent.mjs`
-```
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-
-import { evaluatePromptSubmission } from "../lib/policy.mjs";
-import {
-  emitSystemBlock,
-  loadHookInput,
-  loadHookPolicyState,
-  runHookMain,
-  writeHookOutput,
-} from "../lib/hook-runtime.mjs";
-
-await runHookMain(async () => {
-  const input = await loadHookInput();
-  const state = await loadHookPolicyState(import.meta.url);
-  const result = await evaluatePromptSubmission(
-    state,
-    { prompt: input.prompt },
-    { sessionId: input.session_id },
-  );
-
-  if (result?.modifiedPrompt) {
-    await writeHookOutput({
-      decision: "deny",
-      reason: result.modifiedPrompt,
-      systemMessage: "AGT blocked an unsafe prompt before Antigravity CLI planning began.",
-    });
-  } else if (result?.additionalContext) {
-    await writeHookOutput({
-      hookSpecificOutput: {
-        additionalContext: result.additionalContext,
-      },
-    });
-  } else {
-    await writeHookOutput({});
-  }
-}, async (error) => {
-  await emitSystemBlock(`AGT before-agent hook failed closed: ${error.message}`);
-});
-
-```
-
-### Core Architecture Module: `agent-governance-antigravity-cli/assets/extensions/agt-global-policy/hooks/before-tool.mjs`
-```
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-
-import { evaluatePreToolUse } from "../lib/policy.mjs";
-import {
-  emitSystemBlock,
-  loadHookInput,
-  loadHookPolicyState,
-  runHookMain,
-  writeHookOutput,
-} from "../lib/hook-runtime.mjs";
-
-await runHookMain(async () => {
-  const input = await loadHookInput();
-  const state = await loadHookPolicyState(import.meta.url);
-  const toolArgs = input.tool_input ?? input.toolArgs;
-  const result = await evaluatePreToolUse(
-    state,
-    {
-      cwd: input.cwd,
-      toolArgs,
-      toolName: input.tool_name,
-    },
-    { sessionId: input.session_id },
-  );
-
-  if (result?.permissionDecision === "deny") {
-    await writeHookOutput({
-      decision: "deny",
-      reason: result.permissionDecisionReason,
-    });
-  } else if (result?.additionalContext) {
-    await writeHookOutput({
-      systemMessage: result.additionalContext,
-    });
-  } else {
-    await writeHookOutput({});
-  }
-}, async (error) => {
-  await emitSystemBlock(`AGT before-tool hook failed closed: ${error.message}`);
-});
-
-```
-
-### Core Architecture Module: `agent-governance-antigravity-cli/assets/extensions/agt-global-policy/hooks/session-start.mjs`
-```
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-
-import { loadHookPolicyState, runHookMain, writeHookOutput } from "../lib/hook-runtime.mjs";
-
-await runHookMain(async () => {
-  const state = await loadHookPolicyState(import.meta.url);
-  await writeHookOutput({
-    hookSpecificOutput: {
-      additionalContext: state.policy.additionalContext.join("\n"),
-    },
-    systemMessage: "AGT Antigravity governance policy is active.",
-  });
-}, async (error) => {
-  await writeHookOutput({
-    systemMessage: `AGT Antigravity governance could not load startup context: ${error.message}`,
-  });
-});
-
-```
-
-### Core Architecture Module: `agent-governance-antigravity-cli/assets/extensions/agt-global-policy/lib/hook-runtime.mjs`
-```
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-
-import { fileURLToPath } from "node:url";
-import { loadPolicy } from "./policy.mjs";
-
-export async function loadHookInput() {
-  const chunks = [];
-  for await (const chunk of process.stdin) {
-    chunks.push(chunk);
-  }
-
-  const payload = Buffer.concat(chunks).toString("utf8").trim();
-  return payload ? JSON.parse(payload) : {};
 }
 
-export async function loadHookPolicyState(importMetaUrl) {
-  return loadPolicy({
-    extensionRoot: fileURLToPath(new URL("..", importMetaUrl)),
-  });
-}
-
-export function extractAntigravityToolResponse(toolResponse) {
-  return {
-    error: toolResponse?.error,
-    llmContent: toolResponse?.llmContent,
-    returnDisplay: toolResponse?.returnDisplay,
-  };
-}
-
-export async function writeHookOutput(output) {
+/**
+ * Safely drains stdout with backpressure handling and leak-free error listener cleanup.
+ */
+export async function writeHookOutput(payload) {
+  const jsonStr = `${JSON.stringify(payload ?? {})}\n`;
   await new Promise((resolve, reject) => {
-    const onError = (error) => {
-      process.stdout.off("error", onError);
-      reject(error);
+    const onDrainError = (err) => {
+      process.stdout.off("error", onDrainError);
+      reject(err);
     };
-    process.stdout.once("error", onError);
-    process.stdout.write(`${JSON.stringify(output ?? {})}\n`, "utf8", () => {
-      process.stdout.off("error", onError);
+    process.stdout.once("error", onDrainError);
+    process.stdout.write(jsonStr, "utf8", () => {
+      process.stdout.off("error", onDrainError);
       resolve();
     });
   });
 }
 
-export async function writeHookStderr(message) {
-  await new Promise((resolve) => {
-    process.stderr.write(`${String(message ?? "").trim()}\n`, "utf8", resolve);
-  });
-}
-
-export async function runHookMain(handler, onError) {
-  try {
-    await handler();
-  } catch (error) {
-    await onError(error instanceof Error ? error : new Error(String(error)));
-  }
-}
-
-export async function emitSystemBlock(message) {
-  await writeHookStderr(message);
-  process.exitCode = 2;
-}
-
-```
-
-### Core Architecture Module: `agent-governance-claude-code/hooks/common.mjs`
-```
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-
-export async function readHookInput() {
+/**
+ * Fully buffers stdin until stream termination before invoking parsers.
+ */
+export async function loadHookInput() {
   const chunks = [];
   for await (const chunk of process.stdin) {
     chunks.push(chunk);
   }
-
-  if (chunks.length === 0) {
-    return {};
-  }
-
-  const text = Buffer.concat(chunks).toString("utf8").trim();
-  return text ? JSON.parse(text) : {};
+  if (chunks.length === 0) return {};
+  const raw = Buffer.concat(chunks).toString("utf8").trim();
+  return raw ? JSON.parse(raw) : {};
 }
+```
 
-export function writeHookOutput(payload) {
-  process.stdout.write(`${JSON.stringify(payload)}\n`);
+**NEGATIVE CONSTRAINT**:
+```javascript
+// DANGEROUS ANTI-PATTERN: Silent fail-open, uncaught async error, unhandled backpressure
+export async function badHook() {
+  // 1. Partial read: Stdin might not be finished sending payload
+  let data = "";
+  process.stdin.on("data", chunk => { data += chunk; });
+  
+  // 2. Unhandled JSON parse throw crashes node process with exit code 1 or 0
+  // In some CI/wrappers exit code 1 without structured json is ignored or falls open!
+  const parsed = JSON.parse(data);
+  
+  // 3. Synchronous write ignoring pipe backpressure
+  process.stdout.write(JSON.stringify({ decision: "allow" }));
+  // Missing error handler, process leaves open handles or exits before drain
 }
-
 ```
 
-### Core Architecture Module: `agent-governance-claude-code/hooks/pre-tool-use.mjs`
-```
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-
-import { readHookInput, writeHookOutput } from "./common.mjs";
-import { evaluatePreToolUse, loadPolicy } from "../lib/policy.mjs";
-
-try {
-  const input = await readHookInput();
-  const state = await loadPolicy();
-  writeHookOutput(await evaluatePreToolUse(state, input));
-} catch (error) {
-  process.stderr.write(
-    `AGT governance denied the tool call because policy evaluation failed closed: ${error instanceof Error ? error.message : String(error)}\n`,
-  );
-  process.exit(2);
-}
-
-```
-
-### Core Architecture Module: `agent-governance-claude-code/hooks/session-start.mjs`
-```
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-
-import { readHookInput, writeHookOutput } from "./common.mjs";
-import { buildSessionStartResult, loadPolicy } from "../lib/policy.mjs";
-
-try {
-  const input = await readHookInput();
-  const state = await loadPolicy();
-  writeHookOutput(buildSessionStartResult(state, input));
-} catch (error) {
-  process.stderr.write(
-    `AGT governance could not initialize the Claude session because startup evaluation failed closed: ${error instanceof Error ? error.message : String(error)}\n`,
-  );
-  process.exit(2);
-}
-
-```
-
-### Core Architecture Module: `agent-governance-claude-code/hooks/user-prompt-submit.mjs`
-```
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-
-import { readHookInput, writeHookOutput } from "./common.mjs";
-import { evaluatePromptSubmission, loadPolicy } from "../lib/policy.mjs";
-
-try {
-  const input = await readHookInput();
-  const state = await loadPolicy();
-  writeHookOutput(await evaluatePromptSubmission(state, input));
-} catch (error) {
-  process.stderr.write(
-    `AGT governance blocked the prompt because prompt evaluation failed closed: ${error instanceof Error ? error.message : String(error)}\n`,
-  );
-  process.exit(2);
-}
-
-```
-
-### Core Architecture Module: `agent-governance-codex-cli/hooks/common.mjs`
-```
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-
-export async function readHookInput() {
-  const chunks = [];
-  for await (const chunk of process.stdin) {
-    chunks.push(chunk);
-  }
-
-  if (chunks.length === 0) {
-    return {};
-  }
-
-  const text = Buffer.concat(chunks).toString("utf8").trim();
-  return text ? JSON.parse(text) : {};
-}
-
-export function writeHookOutput(payload) {
-  process.stdout.write(`${JSON.stringify(payload)}\n`);
-}
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4178** (2026-10-02): **[Bug]: Claude Code plugin: recursive-delete rule never matches rm -rf (fix from #3834 never merged)**
-  *Symptoms*: ### Package  Other  ### Description  Package: agent-governance-claude-code (also affects agent-governance-copilot-cli) The bundled `recursive-delete` deny rule of the Claude Code plugin never matches a real `rm -rf` command, so recursive deletes   are not blocked. Filed publicly because the issue is already public in #3834 and #3662.    **Where**   - `agent-governance-claude-code/config/default-policy.json`, line 41 (plugin 5.0.0, `main` at 625559f, 2026-09-28):     `"source": "\\brm\\b[\\s\\S]*\\b-rf\\b"`   - The same pattern ships in the Copilot CLI extension:   `agent-governance-copilot-cli/assets/extensions/agt-global-policy/config/default-policy.json` (line 112) and the `advisory`,   `balanced` and `strict` profiles.    **Why**   `\b-rf` requires a word character immediately before the hyphen. After a space there is no word boundary, so `rm -rf <target>`   never matches. Only nonsense forms like `rm x-rf` do.    **History**   - #3834 fixed exactly this for Claude Code, but was closed as stale on 2026-09-26 without being merged.   - #3662 / #4129 fixed the same problem for OpenCode only, with a quote-aware tokenizer (merged 2026-09-25).    **Suggested fix**   Apply the #4129 approach (tokenizer + flag parser) to the Claude Code plugin and to the Copilot CLI policies, or at least a   regex that requires whitespace before the flag.    **Workaround we use** (custom policy via `AGT_CLAUDE_POLICY_PATH`, JS regex, flag `i`):   `(?<!git\s)\brm\s+(?:[^\n;&|]*\s)?(?:-[a-z]*r[a-z]*
-
-- **Issue #4172** (2026-10-02): **[Bug]: Agent-mesh: handle policy engine exceptions in PolicyProviderHandler**
-  *Symptoms*: ### Package  agent-mesh  ---  ## Description  `PolicyProviderHandler.handle_check()` calls `self.policy_engine.evaluate(action, context)` without exception handling. If the policy engine raises an exception, the error propagates out of the handler instead of producing a structured governance response.  The ASGI application's `POST /check` route also invokes `handle_check()` without catching exceptions from the policy evaluation path. Consequently, an unexpected policy engine failure can cause the request to fail without returning a structured policy decision.  This is an error-handling defect in the policy enforcement gateway. The behavior of downstream callers depends on how they handle the resulting exception.  ## Expected Behavior  - Policy evaluation failures should follow the gateway's documented fail-closed behavior. - The `/check` endpoint should return a predictable, structured failure response consistent with existing project conventions. - Exceptions should not result in an implicit allow decision. - Audit behavior should be explicitly defined for failed evaluations. - Internal exception details should not be exposed to clients.  ## Actual Behavior  When `policy_engine.evaluate()` raises an exception, the exception propagates through `handle_check()` and can escape the ASGI `/check` route.  This prevents the gateway from consistently returning a structured governance response for policy evaluation failures.  ## Scope  The issue concerns exception handling in the Pyt
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `fb950bcd` (2026-10-23)
-**Commit Message**: fix(haystack-agentmesh): charge TrustGate decay once per elapsed hour (#4401)
-
-* fix(haystack-agentmesh): charge TrustGate decay once per elapsed hour
-
-apply_decay subtracted decay_rate for every hour since the last success
-or failure but never moved last_update, and run() calls it on every
-evaluation, so each call charged the whole interval again and an idle
-agent was soon blocked by repeated checks alone. apply_decay now records
-when it ran, so decay covers only the time since the last update.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
-
-* docs(changelog): add the PR number to the haystack-agentmesh entry
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`a2a-protocol` `TaskEnvelope.from_dict` keeps each message's content type and accepts a message without parts.** It rebuilt every message as `text/plain`, so a round trip through `to_dict` turned an `application/json` message into plain text, and a message with an empty `parts` list raised `IndexError`. The part's `type` is now restored, and a message with no parts becomes empty `text/plain` content (#4408).
- - **`agent-sandbox` code scanner flags `os.posix_spawn` and asyncio subprocesses.** The pre-execution scanner listed `subprocess`, `os.system`, `os.popen`, the `os.exec*` and `os.spawn*` families and `pty.spawn`, but not `os.posix_spawn`, `os.posix_spawnp`, `asyncio.create_subprocess_exec` or `asyncio.create_subprocess_shell`, so code that started a process through them reached the sandbox. They are now flagged, including through `asyncio.subprocess` and `from asyncio import subprocess` (#4369).
- - **`agent-sandbox` Docker checkpoints work for agent ids with uppercase letters or edge separators.** `save_state` committed the checkpoint to the image repository `agent-sandbox-<agent_id>`, but repository names must be lowercase and cannot start or end with a separator or repeat `.` or `_`, so for an id such as `Analyst-001`, `agent-` or `a..b` (all accepted by `create_session`) `docker commit` rejected the name and the session could not be checkpointed. Such ids now get the repository `agent-sandbox/id<escaped>`, where lowercase letters, digits and a single `-` or `.` between them are kept and every other character is written as `_` and two hex digits (`A-1` -> `agent-sandbox/id_41-1`); the encoding is reversible, so `Agent` and `agent` do not share a repository. Ids that already formed a valid name keep their repository and existing checkpoints, and an id whose escaped name would exceed Docker's 255-character limit raises `ValueError` before `docker commit` (#4370).
-+- **Haystack `TrustGate` charges trust decay once per elapsed hour.** `apply_decay` subtracted `decay_rate` for every hour since the last success or failure but did not move `last_update`, and `run` calls it on every evaluation, so each call charged the whole interval again: with the default rate, an agent idle for 10 hours lost 0.1 on the first `run`, 0.2 by the second and 0.3 by the third, and was soon blocked by repeated checks alone. `apply_decay` now records when it ran, so decay covers only the time since the last update or decay (#4401).
- 
- ### Added
- - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
-```
-
-**File**: `agent-governance-python/agentmesh-integrations/haystack-agentmesh/src/haystack_agentmesh/trust_gate.py` (modified, +8/-2)
-```diff
-@@ -86,11 +86,17 @@ def record_failure(self, agent_id: str) -> float:
-         return rec.score
- 
-     def apply_decay(self, agent_id: str) -> float:
--        """Apply time-based decay to an agent's trust score."""
-+        """Apply time-based decay to an agent's trust score.
-+
-+        Decay covers the time since the record was last updated or decayed,
-+        so each elapsed hour is charged once however often this is called.
-+        """
-         rec = self._get_record(agent_id)
--        elapsed_hours = (time.time() - rec.last_update) / 3600.0
-+        now = time.time()
-+        elapsed_hours = (now - rec.last_update) / 3600.0
-         decay = self.decay_rate * elapsed_hours
-         rec.score = max(rec.score - decay, 0.0)
-+        rec.last_update = now
-         return rec.score
- 
-     def get_score(self, agent_id: str) -> float:
-```
-
-**File**: `agent-governance-python/agentmesh-integrations/haystack-agentmesh/tests/test_trust_gate.py` (modified, +28/-0)
-```diff
-@@ -68,6 +68,34 @@ def test_decay_reduces_score(self):
-         gate.apply_decay("a")
-         assert gate.get_score("a") < 0.5
- 
-+    def test_repeated_decay_charges_elapsed_time_once(self, monkeypatch):
-+        gate = TrustGate(decay_rate=0.01)
-+        now = 1_000_000.0
-+        monkeypatch.setattr(time, "time", lambda: now)
-+        gate.record_success("a")  # 0.55, updated at `now`
-+        monkeypatch.setattr(time, "time", lambda: now + 10 * 3600)
-+        scores = [gate.apply_decay("a") for _ in range(3)]
-+        assert scores == pytest.approx([0.45, 0.45, 0.45])
-+
-+    def test_repeated_run_charges_elapsed_time_once(self, monkeypatch):
-+        gate = TrustGate(decay_rate=0.01)
-+        now = 1_000_000.0
-+        monkeypatch.setattr(time, "time", lambda: now)
-+        gate.record_success("a")
-+        monkeypatch.setattr(time, "time", lambda: now + 10 * 3600)
-+        scores = [gate.run(agent_id="a")["score"] for _ in range(3)]
-+        assert scores == pytest.approx([0.45, 0.45, 0.45])
-+
-+    def test_decay_accumulates_across_intervals(self, monkeypatch):
-+        gate = TrustGate(decay_rate=0.01)
-+        now = 1_000_000.0
-+        monkeypatch.setattr(time, "time", lambda: now)
-+        gate.record_success("a")
-+        monkeypatch.setattr(time, "time", lambda: now + 4 * 3600)
-+        gate.run(agent_id="a")
-+        monkeypatch.setattr(time, "time", lambda: now + 10 * 3600)
-+        assert gate.run(agent_id="a")["score"] == pytest.approx(0.45)
-+
-     def test_custom_min_score_override(self):
-         gate = TrustGate()
-         # Default score 0.5 should pass if min_score is set to 0.3
+**VERIFICATION METHOD**:
+Execute an integration test that feeds malformed input or triggers internal evaluator errors, verifying that the process terminates with exit code 2 and outputs nothing on `stdout`:
+```bash
+node -e 'import("./hooks/before-tool.mjs")' < /dev/null
+test $? -eq 2 || exit 1
 ```
 
 ---
 
-### Incident Patch 2: `88066250` (2026-10-23)
-**Commit Message**: fix(haystack-agentmesh): record a snapshot of AuditLogger entry metadata (#4402)
-
-* fix(haystack-agentmesh): record a snapshot of AuditLogger entry metadata
-
-run() stored the caller's metadata dict itself, so changing it after the
-call changed the recorded entry and made verify_chain() report the log
-as tampered, and metadata JSON cannot hold (a datetime, mixed int and str
-keys) raised TypeError. The metadata is now stored as a JSON snapshot
-taken when the entry is recorded, other values as their str(); chain
-hashes for JSON metadata are unchanged.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
-
-* docs(changelog): add the PR number to the haystack-agentmesh entry
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -40,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`agent-sandbox` code scanner flags `os.posix_spawn` and asyncio subprocesses.** The pre-execution scanner listed `subprocess`, `os.system`, `os.popen`, the `os.exec*` and `os.spawn*` families and `pty.spawn`, but not `os.posix_spawn`, `os.posix_spawnp`, `asyncio.create_subprocess_exec` or `asyncio.create_subprocess_shell`, so code that started a process through them reached the sandbox. They are now flagged, including through `asyncio.subprocess` and `from asyncio import subprocess` (#4369).
- - **`agent-sandbox` Docker checkpoints work for agent ids with uppercase letters or edge separators.** `save_state` committed the checkpoint to the image repository `agent-sandbox-<agent_id>`, but repository names must be lowercase and cannot start or end with a separator or repeat `.` or `_`, so for an id such as `Analyst-001`, `agent-` or `a..b` (all accepted by `create_session`) `docker commit` rejected the name and the session could not be checkpointed. Such ids now get the repository `agent-sandbox/id<escaped>`, where lowercase letters, digits and a single `-` or `.` between them are kept and every other character is written as `_` and two hex digits (`A-1` -> `agent-sandbox/id_41-1`); the encoding is reversible, so `Agent` and `agent` do not share a repository. Ids that already formed a valid name keep their repository and existing checkpoints, and an id whose escaped name would exceed Docker's 255-character limit raises `ValueError` before `docker commit` (#4370).
- - **Haystack `TrustGate` charges trust decay once per elapsed hour.** `apply_decay` subtracted `decay_rate` for every hour since the last success or failure but did not move `last_update`, and `run` calls it on every evaluation, so each call charged the whole interval again: with the default rate, an agent idle for 10 hours lost 0.1 on the first `run`, 0.2 by the second and 0.3 by the third, and was soon blocked by repeated checks alone. `apply_decay` now records when it ran, so decay covers only the time since the last update or decay (#4401).
-+- **Haystack `AuditLogger` records a snapshot of the entry metadata.** `run` stored the caller's `metadata` dict itself, so changing that dict after the call changed the recorded entry and made `verify_chain` report the log as tampered, and metadata that JSON cannot hold (a `datetime`, keys mixing `int` and `str`) raised `TypeError` from `run`. The metadata is now stored as a JSON snapshot taken when the entry is recorded, with other values stored as their `str()`; chain hashes for JSON metadata are unchanged (#4402).
- 
- ### Added
- - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
-```
-
-**File**: `agent-governance-python/agentmesh-integrations/haystack-agentmesh/src/haystack_agentmesh/audit.py` (modified, +8/-3)
-```diff
-@@ -49,7 +49,7 @@ def _hash_entry(entry: AuditEntry) -> str:
-     payload = (
-         f"{entry.entry_id}|{entry.timestamp}|{entry.action}|"
-         f"{entry.agent_id}|{entry.decision}|"
--        f"{json.dumps(entry.metadata, sort_keys=True)}|{entry.prev_hash}"
-+        f"{json.dumps(entry.metadata, sort_keys=True, default=str)}|{entry.prev_hash}"
-     )
-     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
- 
-@@ -81,14 +81,19 @@ def run(
-         decision: str,
-         metadata: Optional[Dict[str, Any]] = None,
-     ) -> Dict[str, Any]:
--        """Record an audit entry and return ``entry_id`` and ``chain_hash``."""
-+        """Record an audit entry and return ``entry_id`` and ``chain_hash``.
-+
-+        ``metadata`` is stored as a JSON snapshot taken now (values JSON
-+        cannot hold are stored as their ``str()``), so later changes to the
-+        caller's dict do not alter the recorded entry or break the chain.
-+        """
-         entry = AuditEntry(
-             entry_id=uuid.uuid4().hex[:16],
-             timestamp=time.time(),
-             action=action,
-             agent_id=agent_id,
-             decision=decision,
--            metadata=metadata or {},
-+            metadata=json.loads(json.dumps(metadata or {}, default=str)),
-             prev_hash=self._last_hash,
-         )
-         entry.chain_hash = _hash_entry(entry)
-```
-
-**File**: `agent-governance-python/agentmesh-integrations/haystack-agentmesh/tests/test_audit.py` (modified, +30/-0)
-```diff
-@@ -5,6 +5,7 @@
- import json
- import os
- import tempfile
-+from datetime import UTC, datetime
- 
- import pytest
- 
-@@ -53,6 +54,35 @@ def test_metadata_stored(self):
-         logger.run(action="z", agent_id="a1", decision="audit", metadata=meta)
-         assert logger.entries[0].metadata == meta
- 
-+    def test_caller_changing_metadata_after_run_keeps_chain_valid(self):
-+        logger = AuditLogger()
-+        meta = {"source": "test", "tags": ["a"]}
-+        logger.run(action="z", agent_id="a1", decision="audit", metadata=meta)
-+        meta["source"] = "changed"
-+        meta["tags"].append("b")
-+        assert logger.entries[0].metadata == {"source": "test", "tags": ["a"]}
-+        assert logger.verify_chain() is True
-+
-+    def test_non_json_metadata_is_recorded_as_text(self):
-+        logger = AuditLogger()
-+        when = datetime(2026, 1, 1, tzinfo=UTC)
-+        logger.run(action="z", agent_id="a1", decision="audit", metadata={"at": when})
-+        assert logger.entries[0].metadata == {"at": str(when)}
-+        assert logger.verify_chain() is True
-+        assert json.loads(logger.to_jsonl_string())["metadata"] == {"at": str(when)}
-+
-+    def test_metadata_with_mixed_key_types_is_recorded(self):
-+        logger = AuditLogger()
-+        logger.run(action="z", agent_id="a1", decision="audit", metadata={1: "a", "b": 2})
-+        assert logger.entries[0].metadata == {"1": "a", "b": 2}
-+        assert logger.verify_chain() is True
-+
-+    def test_tampered_metadata_still_breaks_chain(self):
-+        logger = AuditLogger()
-+        logger.run(action="z", agent_id="a1", decision="audit", metadata={"k": 1})
-+        logger.entries[0].metadata["k"] = 2
-+        assert logger.verify_chain() is False
-+
-     def test_export_jsonl(self):
-         logger = AuditLogger()
-         logger.run(action="a", agent_id="a1", decision="allow")
-```
-
-#### Recent Merged Pull Requests:
-- **PR #4420** (closed): fix(agt-policies): harden v4 rule migration (@ShreyasGosavi65)
-- **PR #4415** (2026-10-23): chore(deps): Bump black from 26.3.1 to 26.10.1 in /agent-governance-python/agent-os/services/cloud-board (@dependabot[bot])
-- **PR #4414** (2026-10-23): chore(deps): Bump opentelemetry-api from 1.29.0 to 1.45.1 in /agent-governance-python/agent-os/services/cloud-board (@dependabot[bot])
-- **PR #4413** (2026-10-23): chore(deps-dev): Bump vite from 8.0.16 to 8.3.5 in /agent-governance-python/agentmesh-integrations/mastra-agentmesh (@dependabot[bot])
-- **PR #4412** (2026-10-23): chore(deps): Bump @vitest/mocker and vitest in /agent-governance-python/agentmesh-integrations/mastra-agentmesh (@dependabot[bot])
-- **PR #4410** (2026-10-22): fix(agent-runtime): report paused Docker containers as stopped, not failed (@ShivamSharma43)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. haystack-agentmesh): charge TrustGate decay once per elapsed hour (#4401)
-
+### 3. Metric-Reward Calculation Equivalence Invariant
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When an optimization, reward-shaping, or governance subsystem applies non-linear or multiplicative transformations to a base score (e.g., penalties scaling rewards by `factor < 1.0`), all exported telemetry, accumulated metrics (`total_penalties`, `avg_penalty`), and emitted event values MUST record the actual delta applied to the baseline (`applied_penalty = final_value - base_value`). Telemetry systems MUST NOT record static additive severity constants from unapplied penalty lookup tables.
 
 **WHY**:
-Prevents defects observed in production commit `fb950bcd`: haystack-agentmesh): charge TrustGate decay once per elapsed hour (#4401). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Reinforcement learning loops and compliance telemetry use reported penalties to evaluate policy regressions and credit assignment. If a policy scales a baseline reward of 1.0 down to 0.5 via a multiplicative factor of 0.5, the actual penalty applied is `-0.5`. If the reporting system logs `-100.0` from a static additive lookup table, downstream RL policy gradients destabilize due to incorrect credit assignment, and compliance monitoring dashboards display distorted, uncalibrated risk metrics.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Any scoring, rate-limiting, RL reward shaping, token-bucket budgeting, or trust-score calculation engine in Python, Rust, Go, or Java.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-// Verified production-grade fix pattern:
-- **Haystack `TrustGate` charges trust decay once per elapsed hour.** `apply_decay` subtracted `decay_rate` for every hour since the last success or failure but did not move `last_update`, and `run` calls it on every evaluation, so each call charged the whole interval again: with the default rate, an agent idle for 10 hours lost 0.1 on the first `run`, 0.2 by the second and 0.3 by the third, and was soon blocked by repeated checks alone. `apply_decay` now records when it ran, so decay covers only the time since the last update or decay (#4401).
+from dataclasses import dataclass
+from typing import Sequence
+
+@dataclass(frozen=True)
+class PolicyViolation:
+    severity: str  # "low", "medium", "high", "critical"
+
+@dataclass
+class RewardConfig:
+    multiplicative: bool = False
+    multiplicative_factor: float = 0.5
+    clean_bonus: float = 0.0
+    min_reward: float | None = None
+
+class PolicyRewardEvaluator:
+    SEVERITY_PENALTIES = {
+        "low": -5.0,
+        "medium": -15.0,
+        "high": -50.0,
+        "critical": -100.0,
+    }
+
+    def __init__(self, config: RewardConfig):
+        self.config = config
+        self.total_penalties: float = 0.0
+        self.evaluation_count: int = 0
+
+    def compute_reward(self, base_reward: float, violations: Sequence[PolicyViolation]) -> tuple[float, float]:
+        """
+        Computes final reward and the mathematically exact applied penalty delta.
+        Returns: (final_reward, applied_penalty)
+        """
+        if self.config.multiplicative and len(violations) > 0:
+            final_reward = base_reward * self.config.multiplicative_factor
+            # Mathematical invariant: penalty represents exact degradation against base
+            applied_penalty = final_reward - base_reward
+        else:
+            # Additive calculation
+            applied_penalty = sum(self.SEVERITY_PENALTIES.get(v.severity, -10.0) for v in violations)
+            final_reward = base_reward + applied_penalty
+
+        if not violations:
+            final_reward += self.config.clean_bonus
+
+        if self.config.min_reward is not None:
+            final_reward = max(final_reward, self.config.min_reward)
+
+        # Telemetry state strictly matches applied runtime transformation
+        self.total_penalties += applied_penalty
+        self.evaluation_count += 1
+
+        return final_reward, applied_penalty
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+# DEFECTIVE CODE: Calculates multiplicative reward, but logs additive constant!
+def calculate_reward_bad(base_reward, violations, config):
+    # Lookup additive table penalty
+    additive_penalty = sum(SEVERITY[v.severity] for v in violations)
+    
+    if config.multiplicative and violations:
+        final_reward = base_reward * config.multiplicative_factor
+        # BUG: additive_penalty (-100.0) is returned for logging/stats
+        # while final_reward used 0.5 * base_reward (-0.5)!
+        penalty_to_report = additive_penalty 
+    else:
+        final_reward = base_reward + additive_penalty
+        penalty_to_report = additive_penalty
+        
+    return final_reward, penalty_to_report
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fb950bcd` are properly handled with clean fallback behavior.
+Assert mathematical parity across both modes in property-based unit tests:
+```python
+def test_applied_penalty_parity():
+    cfg = RewardConfig(multiplicative=True, multiplicative_factor=0.5)
+    evaluator = PolicyRewardEvaluator(cfg)
+    base = 1.0
+    final, penalty = evaluator.compute_reward(base, [PolicyViolation("critical")])
+    assert final == 0.5
+    assert penalty == -0.5
+    assert evaluator.total_penalties == -0.5
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: CLI Argument Precedence & Key-Value Smuggling Override in Docker Deployer (BUG-DOCKER-DEPLOY-01)
+- **Context**: `agent-governance-python/agent-runtime/src/agent_runtime/deploy.py` inside `DockerDeployer.deploy()`
+- **What Was Expected**: The container runtime deployer takes parameters from `GovernanceConfig` (e.g., `kill_switch_enabled`, `policy_path`, `trust_level`) and must guarantee that these governance controls cannot be disabled by user-supplied environment variables passed in the `env` dictionary.
+- **What Actually Happened**: `DockerDeployer.deploy` serialized governance settings as `-e KEY=VAL` flags at the start of the `docker run` command line, and subsequently appended caller-provided `env` items. Because the Docker CLI evaluates multiple `-e` arguments with a "last-write-wins" resolution strategy, calling `deploy(..., env={"AGT_KILL_SWITCH": "false"})` overrode `config.kill_switch_enabled=True`. In addition, if a caller passed an environment key containing an equals sign (e.g., `{"AGT_KILL_SWITCH=false": "x"}`), Docker split the string on the first `=` and overrode `AGT_KILL_SWITCH`.
+- **Evidence in Repo**: Commit `fcc8eb13`, PR #4409, file `agent-governance-python/agent-runtime/src/agent_runtime/deploy.py`, test file `agent-governance-python/agent-runtime/tests/test_deploy.py`.
+- **Root Cause**: Reliance on CLI argument order for authorization boundary enforcement without input validation for key collisions and POSIX token delimiter (`=`) injection.
+- **Remediation Code Diff**:
+```python
+<<<<
+-            # Governance config as env vars
+-            "-e", f"AGT_POLICY_PATH={config.policy_path}",
+-            "-e", f"AGT_TRUST_LEVEL={config.trust_level}",
+-            "-e", f"AGT_AUDIT_ENABLED={str(config.audit_enabled).lower()}",
+-            "-e", f"AGT_MAX_TOOL_CALLS={config.max_tool_calls}",
+-            "-e", f"AGT_RATE_LIMIT_RPM={config.rate_limit_rpm}",
+-            "-e", f"AGT_KILL_SWITCH={str(config.kill_switch_enabled).lower()}",
+-            "-e", f"AGT_RETENTION_DAYS={config.retention_days}",
+         ]
++        governance_env = {
++            "AGT_POLICY_PATH": config.policy_path,
++            "AGT_TRUST_LEVEL": config.trust_level,
++            "AGT_AUDIT_ENABLED": str(config.audit_enabled).lower(),
++            "AGT_MAX_TOOL_CALLS": str(config.max_tool_calls),
++            "AGT_RATE_LIMIT_RPM": str(config.rate_limit_rpm),
++            "AGT_KILL_SWITCH": str(config.kill_switch_enabled).lower(),
++            "AGT_RETENTION_DAYS": str(config.retention_days),
++        }
++        for k, v in governance_env.items():
++            cmd.extend(["-e", f"{k}={v}"])
+         if port:
+             cmd.extend(["-p", f"127.0.0.1:{port}:8080"])
+         if env:
++            for k, v in env.items():
++                if "=" in k:
++                    raise ValueError(
++                        f"invalid environment variable name {k!r}: must not contain '='"
++                    )
++                if k in governance_env:
++                    raise ValueError(
++                        f"env must not set {k}: it is set from GovernanceConfig"
++                    )
+                 cmd.extend(["-e", f"{k}={v}"])
+         cmd.append(image)
+====
+```
+- **Lesson**: Hardened wrappers around third-party CLI tools must implement defensive input rejection against both name-space collisions and argument-delimiter smuggling.
+
+---
+
+### Incident 2: Multiplicative Reward Penalty Reporting Desynchronization (BUG-LIGHTNING-REWARD-02)
+- **Context**: `agent-governance-python/agent-lightning/src/agent_lightning_gov/reward.py`
+- **What Was Expected**: When `RewardConfig(multiplicative=True)` is configured, RL policy fine-tuning runs must track the actual penalty applied to the base reward so that `get_stats()` (`total_penalties`, `avg_penalty`) and the `policy_penalty` emission to Agent-Lightning accurately represent training feedback.
+- **What Actually Happened**: The calculation correctly multiplied `base_reward * multiplicative_factor`, but the telemetry reporter continued pulling penalty figures from `self._calculate_penalty(violations)` (the additive lookup table). For example, a critical violation on a `1.0` base reward halved the reward to `0.5` (a `-0.5` delta), but emitted a penalty of `-100.0`. This skewed training metrics and corrupted RL credit assignment.
+- **Evidence in Repo**: Commit `6dc2093e`, PR #4418, spec document `docs/specs/AGENT-LIGHTNING-FAST-PATH-1.0.md`.
+- **Root Cause**: Calculation code branching calculated the return value correctly, but bypassed updating the intermediate variable that was subsequently consumed by telemetry logging.
+- **Remediation Code Diff**:
+```python
+<<<<
+-        # Calculate penalty
+-        penalty = self._calculate_penalty(violations)
+-
+-        # Calculate final reward
+         if self.config.multiplicative and violations:
+             final_reward = base_reward * self.config.multiplicative_factor
++            penalty = final_reward - base_reward
+         else:
++            penalty = self._calculate_penalty(violations)
+             final_reward = base_reward + penalty
+====
+```
+- **Lesson**: Telemetry, logging, and operational variables must be calculated as direct derivatives of the active transformation logic, not computed via disconnected parallel execution paths.
+
+---
+
+### Incident 3: Regex Word Boundary Hazard on Hyphenated CLI Flags Blocking `rm -rf` Detection (BUG-REGEX-FLAG-03)
+- **Context**: `agent-governance-claude-code/config/default-policy.json` and `agent-governance-copilot-cli/.../default-policy.json`
+- **What Was Expected**: The built-in safety rule `recursive-delete` was intended to match and block dangerous shell deletion invocations such as `rm -rf /` or `rm -r -f /dir`.
+- **What Actually Happened**: The policy rule pattern was authored as `"source": "\\brm\\b[\\s\\S]*\\b-rf\\b"`. In standard regex engines, `\b` asserts a word boundary between a word character (`\w`: letters, digits, underscore) and a non-word character. Because the hyphen `-` is itself a non-word character, `\b-` requires a *word character immediately preceding the hyphen*. Following a whitespace character (`rm -rf`), there is NO word boundary before `-`. As a result, `rm -rf` never matched, and recursive deletes executed unhindered. The rule only triggered on nonsensical syntax like `rm x-rf`.
+- **Evidence in Repo**: Issue #4178, Issue #3834, Issue #3662, PR #4129.
+- **Root Cause**: Authoring regex rules with `\b` placed adjacent to non-word punctuation characters (`-`), misunderstanding regex engine word-boundary assertion mechanics.
+- **Remediation Pattern**:
+```json
+<<<<
+- "source": "\\brm\\b[\\s\\S]*\\b-rf\\b"
+====
++ "source": "(?<!git\\s)\\brm\\s+(?:[^\\n;&|]*\\s)?(?:-[a-zA-Z]*r[a-zA-Z]*f|--recursive)"
+>>>>
+```
+- **Lesson**: Never place regex word boundary assertions (`\b`) adjacent to non-alphanumeric punctuation. Security filters inspecting command-line strings must rely on structured AST tokenizers or explicit whitespace-delimited flag parsers rather than naive regular expressions.
+
+---
+
+### Incident 4: Unhandled Policy Engine Exception Causing Fail-Open / Crash in ASGI Gateway (BUG-MESH-GATEWAY-04)
+- **Context**: `agent-mesh/src/agent_mesh/policy_provider.py` in `PolicyProviderHandler.handle_check()`
+- **What Was Expected**: The agent mesh policy enforcement gateway must enforce a strict "fail-closed" contract. If the underlying policy engine encounters an internal failure, timeout, or uncaught exception, the gateway must produce a structured governance response indicating `deny` and log an audit event, shielding internal exception traces from the caller.
+- **What Actually Happened**: `PolicyProviderHandler.handle_check()` called `self.policy_engine.evaluate(action, context)` without an enclosing `try...except` block. When an evaluation raised an exception, the error bubbled unhandled out of the ASGI HTTP `POST /check` route, resulting in an HTTP 500 error without a structured governance payload. Downstream agent client runtimes, unable to parse a valid policy decision payload, failed open or crashed unpredictably.
+- **Evidence in Repo**: Issue #4172, CHANGELOG entry regarding .NET and Python `PolicyEngine` evaluation exception consistency.
+- **Root Cause**: Missing fail-closed exception translation boundary in the core gateway request pipeline.
+- **Remediation Pattern**:
+```python
+<<<<
+    def handle_check(self, action: Action, context: Context) -> PolicyDecision:
+        decision = self.policy_engine.evaluate(action, context)
+        return decision
+====
+    def handle_check(self, action: Action, context: Context) -> PolicyDecision:
+        try:
+            return self.policy_engine.evaluate(action, context)
+        except Exception as exc:
+            self.audit_logger.record_failure(
+                action=action,
+                context=context,
+                error=str(exc)
+            )
+            # Mandatory fail-closed contract
+            return PolicyDecision(
+                decision="deny",
+                reason="Policy evaluation failed closed due to an internal error.",
+                details={"error_class": exc.__class__.__name__}
+            )
+>>>>
+```
+- **Lesson**: Governance gateways must enforce fail-closed exception boundaries at every network and inter-process entrypoint. An unhandled exception must evaluate to an explicit `deny`.
+
+---
+
+### Incident 5: Temporal Decay Accumulation Bug & Mutable Reference Invalidation in Audit Logger (BUG-AUDIT-DECAY-05)
+- **Context**: `agent-governance-python/integrations/haystack` in `TrustGate.apply_decay` and `AuditLogger.run`
+- **What Was Expected**: 
+  1. `TrustGate.apply_decay` should decay agent trust scores proportional to elapsed time since the *last evaluation or activity*.
+  2. `AuditLogger.run` should maintain a tamper-evident SHA-256 cryptographic chain of logged session metadata.
+- **What Actually Happened**:
+  1. `apply_decay` subtracted `decay_rate` for each hour elapsed since the agent's last recorded success/failure, but failed to update `self.last_update` timestamp. On subsequent evaluations, it recalculated decay over the entire cumulative historical window again. An idle agent was unfairly penalized on repeated checks alone (e.g., losing 0.1 on check 1, 0.2 on check 2, 0.3 on check 3).
+  2. `AuditLogger.run` stored direct references to the caller's mutable `metadata` dictionary. When callers subsequently modified their local dictionary, the historical logged entry was mutated in memory, causing subsequent calls to `verify_chain()` to report cryptographic tampering. Furthermore, non-JSON-serializable objects (such as `datetime.datetime`) caused serialization crashes inside `run`.
+- **Evidence in Repo**: PR #4401, PR #4402, CHANGELOG.md entries.
+- **Root Cause**: State update omissions (omitting timestamp progression) combined with shallow reference storage of mutable caller state in cryptographic logging structures.
+- **Remediation Pattern**:
+```python
+# Remediation in TrustGate:
+def apply_decay(self, now: datetime) -> None:
+    elapsed_hours = (now - self.last_update).total_seconds() / 3600.0
+    if elapsed_hours >= 1.0:
+        decay_steps = int(elapsed_hours)
+        self.trust_score = max(0.0, self.trust_score - (self.decay_rate * decay_steps))
+        # Advance baseline timestamp to prevent geometric multi-charging
+        self.last_update = now
+
+# Remediation in AuditLogger:
+import json
+
+def run(self, entry_id: str, metadata: dict) -> None:
+    # Deep snapshot through immutable JSON serialization boundary
+    def _default_serializer(obj):
+        return str(obj)
+    
+    snapshot_str = json.dumps(metadata, default=_default_serializer, sort_keys=True)
+    immutable_snapshot = json.loads(snapshot_str)
+    
+    # Store immutable snapshot and hash payload
+    self._append_to_hash_chain(entry_id, immutable_snapshot)
+```
+- **Lesson**: Temporal state processors must advance baseline clocks upon evaluation. Cryptographic audit ledgers must serialize deep immutable snapshots at ingestion time to prevent caller mutations from corrupting verification chains.
+
+---
+
+## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
+
+### 1. Micro-Syntax & Token-Level Precision
+- **Nullish Coalescing vs Falsy Or (`

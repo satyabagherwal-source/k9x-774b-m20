@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T07:50:43.520Z",
-  "total_cycles_completed": 5169,
-  "total_learnings_persisted": 5169,
-  "total_rules_promoted": 4559,
+  "last_updated": "2026-10-27T08:31:11.843Z",
+  "total_cycles_completed": 5173,
+  "total_learnings_persisted": 5173,
+  "total_rules_promoted": 4568,
   "history": [
-    {
-      "timestamp": "2026-10-25T21:02:15.988Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T21:02:21.770Z",
-      "repository": "ytsaurus/ytsaurus",
-      "learningId": "learn-github-ytsaurus-ytsaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T21:08:40.808Z",
-      "repository": "deepseek-ai/DeepSeek-V3",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T21:08:41.000Z",
-      "repository": "primer/react",
-      "learningId": "learn-github-primer-react",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T21:15:16.530Z",
       "repository": "touchlab/SKIE",
@@ -1403,6 +1375,34 @@
       "repository": "projectcontour/contour",
       "learningId": "learn-github-projectcontour-contour",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T08:12:12.976Z",
+      "repository": "microsoft/agent-governance-toolkit",
+      "learningId": "learn-github-microsoft-agent-governance-toolkit",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T08:12:56.004Z",
+      "repository": "XHToken/Spark-X2.6-4B-GGUF",
+      "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T08:13:24.326Z",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T08:31:11.843Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
