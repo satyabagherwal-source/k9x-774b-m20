@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `9dc00492`  
+> **Source Version**: `abcdcf19`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T12:30:17.437Z  
+> **Timestamp**: 2026-10-27T14:26:33.766Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T12:30:16.214Z  
+> **Harvest Timestamp**: 2026-10-27T14:26:33.110Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32365 stars
+- **Stars / Engagement**: 32366 stars
 
 ---
 
@@ -1445,61 +1445,420 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9dc00492` (2026-10-27)
-**Commit Message**: fix(trackers): gitea reporter pagination (#7945)
+### Incident Patch 1: `abcdcf19` (2026-10-27)
+**Commit Message**: Merge pull request #7940 from mazzz3r/feat/info-placeholders
 
-**File**: `pkg/reporting/trackers/gitea/gitea.go` (modified, +8/-5)
+feat(templates): fill placeholders in info description, impact and remediation
+
+**File**: `SYNTAX-REFERENCE.md` (modified, +18/-0)
 ```diff
-@@ -156,6 +156,7 @@ func (i *Integration) ShouldFilter(event *output.ResultEvent) bool {
- 	return true
+@@ -530,6 +530,16 @@ Description of the template.
+ 
+ You can go in-depth here on what the template actually does.
+ 
++Description, impact and remediation may hold {{placeholders}} filled for
++each finding: named extractors, payloads, variables and DSL helpers
++(network helpers excluded), and the result fields host, port, ip, url,
++scheme, path, matched-at, matcher-name and extractor-name, which win over
++values of the same name. Use join(", ", name) for an extractor with
++several values, and brackets for a hyphenated name inside a helper:
++to_upper([matcher-name]). Unknown placeholders stay as written, and so
++does a field whose expression fails. Global matcher templates match on
++other templates' responses, so only the result fields fill their text.
++
+ 
+ 
+ Examples:
+@@ -543,6 +553,10 @@ description: Bower is a package manager which stores package information in the
+ description: Subversion ALM for the enterprise before 8.8.2 allows reflected XSS at multiple locations
+ ```
+ 
++```yaml
++description: Redis {{version}} on {{host}}:{{port}} accepts the default password
++```
++
+ 
+ </div>
+ 
+@@ -559,6 +573,8 @@ Impact of the template.
+ 
+ You can go in-depth here on impact of the template.
+ 
++Supports the same placeholders as description.
++
+ 
+ 
+ Examples:
+@@ -665,6 +681,8 @@ Remediation steps for the template.
+ 
+ You can go in-depth here on how to mitigate the problem found by this template.
+ 
++Supports the same placeholders as description.
++
+ 
+ 
+ Examples:
+```
+
+**File**: `pkg/model/model.go` (modified, +63/-0)
+```diff
+@@ -1,9 +1,13 @@
+ package model
+ 
+ import (
++	"slices"
++	"strings"
++
+ 	"github.com/invopop/jsonschema"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/severity"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/stringslice"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/marker"
+ )
+ 
+ type schemaMetadata struct {
+@@ -47,15 +51,28 @@ type Info struct {
+ 	//
+ 	//   You can go in-depth here on what the template actually does.
+ 	//
++	//   Description, impact and remediation may hold {{placeholders}} filled for
++	//   each finding: named extractors, payloads, variables and DSL helpers
++	//   (network helpers excluded), and the result fields host, port, ip, url,
++	//   scheme, path, matched-at, matcher-name and extractor-name, which win over
++	//   values of the same name. Use join(", ", name) for an extractor with
++	//   several values, and brackets for a hyphenated name inside a helper:
++	//   to_upper([matcher-name]). Unknown placeholders stay as written, and so
++	//   does a field whose expression fails. Global matcher templates match on
++	//   other templates' responses, so only the result fields fill their text.
++	//
+ 	// examples:
+ 	//   - value: "\"Bower is a package manager which stores package information in the bower.json file\""
+ 	//   - value: "\"Subversion ALM for the enterprise before 8.8.2 allows reflected XSS at multiple locations\""
++	//   - value: "\"Redis {{version}} on {{host}}:{{port}} accepts the default password\""
+ 	Description string `json:"description,omitempty" yaml:"description,omitempty" jsonschema:"title=description of the template,description=In-depth explanation on what the template does,type=string,example=Bower is a package manager which stores package information in the bower.json file"`
+ 	// description: |
+ 	//   Impact of the template.
+ 	//
+ 	//   You can go in-depth here on impact of the template.
+ 	//
++	//   Supports the same placeholders as description.
++	//
+ 	// examples:
+ 	//   - value: "\"Successful exploitation of this vulnerability could allow an attacker to execute arbitrary SQL queries, potentially leading to unauthorized access, data leakage, or data manipulation.\""
+ 	//   - value: "\"Successful exploitation of this vulnerability could allow an attacker to execute arbitrary script code in the context of the victim's browser, potentially leading to session hijacking, defacement, or theft of sensitive information.\""
+@@ -89,11 +106,57 @@ type Info struct {
+ 	//
+ 	//   You can go in-depth here on how to mitigate the problem found by this template.
+ 	//
++	//   Supports the same placeholders as description.
++	//
+ 	// examples:
+ 	//   - value: "\"Change the default administrative username and password of Apache ActiveMQ by editing the file jetty-realm.properties\""
+ 	Remediation string `json:"remediation,omitempty" yaml:"remediation,omitempty" jsonschema:"title=remediation steps for the template,description=In-depth explanation on how to fix the issues found by the template,example=Change the default administrative username and password of Apache ActiveMQ by editing the file jetty-realm.properties,type=string"`
  }
  
-+// findIssueByTitle searches every linked issue page for an exact title match.
- func (i *Integration) findIssueByTitle(title string) (*gitea.Issue, error) {
- 	// Fetch issues in pages to ensure older issues are also checked for duplicates.
- 	pageSize := i.options.DuplicateIssuePageSize
-@@ -177,7 +178,7 @@ func (i *Integration) findIssueByTitle(title string) (*gitea.Issue, error) {
- 			return nil, nil
- 		}
- 
--		issueList, _, err := i.client.ListRepoIssues(i.options.ProjectOwner, i.options.ProjectName, opts)
-+		issueList, response, err := i.client.ListRepoIssues(i.options.ProjectOwner, i.options.ProjectName, opts)
- 		if err != nil {
- 			return nil, err
- 		}
-@@ -188,12 +189,14 @@ func (i *Integration) findIssueByTitle(title string) (*gitea.Issue, error) {
- 			}
- 		}
- 
--		if len(issueList) < opts.PageSize {
--			// Last page reached.
-+		if response == nil || response.NextPage == 0 {
-+			// Gitea's Link header indicates there is no next page.
- 			return nil, nil
- 		}
--
--		opts.Page++
-+		if response.NextPage <= opts.Page {
-+			return nil, fmt.Errorf("gitea returned a non-advancing issue page: current page %d, next page %d", opts.Page, response.NextPage)
++// TextField is a free-text field of the info, labeled as reports show it.
++type TextField struct {
++	Label string
++	Value *string
++}
++
++// PlaceholderFields returns the free-text fields that may hold {{placeholders}}
++// filled for each finding. Rendering, redaction and the sarif export all walk
++// this one list, so a field added here is handled by every one of them.
++func (i *Info) PlaceholderFields() []TextField {
++	return []TextField{
++		{Label: "Description", Value: &i.Description},
++		{Label: "Impact", Value: &i.Impact},
++		{Label: "Remediation", Value: &i.Remediation},
++	}
++}
++
++// HasPlaceholders reports whether the field holds a {{...}} or §...§ marker
++// the renderer could fill.
++func (f TextField) HasPlaceholders() bool {
++	return strings.Contains(*f.Value, marker.ParenthesisOpen) || strings.Contains(*f.Value, marker.General)
++}
++
++// HasPlaceholders reports whether any placeholder field holds a marker.
++func (i *Info) HasPlaceholders() bool {
++	return slices.ContainsFunc(i.PlaceholderFields(), TextField.HasPlaceholders)
++}
++
++// FilledFields returns the placeholder fields whose text differs from written,
++// the info as the template wrote it. A nil written means nothing was filled.
++func (i *Info) FilledFields(written *Info) []TextField {
++	if written == nil {
++		return nil
++	}
++	writtenFields := written.PlaceholderFields()
++	var filled []TextField
++	for n, field := range i.PlaceholderFields() {
++		if *field.Value != *writtenFields[n].Value {
++			filled = append(filled, field)
 +		}
-+		opts.Page = response.NextPage
- 	}
++	}
++	return filled
++}
++
+ // JSONSchemaProperty returns the JSON schema property for the Info object.
+ func (i Info) JSONSchemaExtend(base *jsonschema.Schema) {
+ 	// since we are re-using a stringslice and rawStringSlice everywhere, we can extend/edit the schema here
+```
+
+**File**: `pkg/model/model_test.go` (modified, +18/-0)
+```diff
+@@ -135,3 +135,21 @@ func TestUnmarshal(t *testing.T) {
+ 	info2 := assertUnmarshalledTemplateInfo(t, yamlPayload2)
+ 	require.Equal(t, info1, info2)
  }
++
++func TestInfoFilledFields(t *testing.T) {
++	written := Info{Description: "{{host}} is exposed", Impact: "Data loss"}
++	filled := written
++	filled.Description = "example.com is exposed"
++
++	require.Nil(t, filled.FilledFields(nil))
++	fields := filled.FilledFields(&written)
++	require.Len(t, fields, 1)
++	require.Equal(t, "Description", fields[0].Label)
++	require.Equal(t, "example.com is exposed", *fields[0].Value)
++}
++
++func TestInfoHasPlaceholders(t *testing.T) {
++	require.False(t, (&Info{Description: "Redis is exposed"}).HasPlaceholders())
++	require.True(t, (&Info{Impact: "{{host}} is exposed"}).HasPlaceholders())
++	require.True(t, (&Info{Remediation: "rotate §password§"}).HasPlaceholders())
++}
+```
+
+**File**: `pkg/output/output.go` (modified, +8/-0)
+```diff
+@@ -237,6 +237,11 @@ type ResultEvent struct {
+ 	FileToIndexPosition map[string]int `json:"-"`
+ 	TemplateVerifier    string         `json:"-"`
+ 	Error               string         `json:"error,omitempty"`
++	// TemplateInfo is the info as the template wrote it, kept only when
++	// placeholders changed the text. The changed fields can carry response data,
++	// so they are redacted like the raw request and response. It is bookkeeping,
++	// so no exporter writes it; mongo serializes with bson tags, not json ones.
++	TemplateInfo *model.Info `json:"-" bson:"-"`
+ }
+ 
+ type IssueTrackerMetadata struct {
+@@ -364,6 +369,9 @@ func (w *StandardWriter) Write(event *ResultEvent) error {
+ 	event.Response = redactWithPatterns(event.Response, patterns)
+ 	event.CURLCommand = redactWithPatterns(event.CURLCommand, patterns)
+ 	event.Matched = redactWithPatterns(event.Matched, patterns)
++	for _, field := range event.Info.FilledFields(event.TemplateInfo) {
++		*field.Value = redactWithPatterns(*field.Value, patterns)
++	}
+ 
+ 	event.Timestamp = time.Now()
  
 ```
 
-**File**: `pkg/reporting/trackers/gitea/gitea_test.go` (added, +172/-0)
+**File**: `pkg/output/output_test.go` (modified, +33/-0)
 ```diff
-@@ -0,0 +1,172 @@
-+package gitea
+@@ -6,8 +6,11 @@ import (
+ 	"testing"
+ 
+ 	"github.com/pkg/errors"
++	"github.com/projectdiscovery/goflags"
++	"github.com/projectdiscovery/nuclei/v3/pkg/model"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
+ 	"github.com/stretchr/testify/require"
++	"go.mongodb.org/mongo-driver/bson"
+ )
+ 
+ func TestStandardWriterRequest(t *testing.T) {
+@@ -51,6 +54,36 @@ func TestStandardWriterRequest(t *testing.T) {
+ 	})
+ }
+ 
++// Only the fields filled from a response are redacted; text the template wrote
++// stays as it is, even next to a filled field.
++func TestStandardWriterRedactsFilledInfo(t *testing.T) {
++	w, err := NewStandardWriter(&types.Options{Redact: goflags.StringSlice{"password"}})
++	require.NoError(t, err)
++	w.DisableStdout = true
++
++	written := model.Info{Description: "login with password: {{password}}", Remediation: "Rotate the password: it is public"}
++	filled := &ResultEvent{TemplateInfo: &written, Info: model.Info{Description: "login with password: admin", Remediation: written.Remediation}}
++	static := &ResultEvent{Info: model.Info{Description: "send the password: header"}}
++	require.NoError(t, w.Write(filled))
++	require.NoError(t, w.Write(static))
++
++	require.Equal(t, "login with password: ***", filled.Info.Description)
++	require.Equal(t, "Rotate the password: it is public", filled.Info.Remediation)
++	require.Equal(t, "send the password: header", static.Info.Description)
++}
++
++// The mongo exporter serializes results with bson, which ignores json tags.
++func TestResultEventKeepsTemplateInfoOutOfBSON(t *testing.T) {
++	written := model.Info{Description: "{{host}} is exposed"}
++	data, err := bson.Marshal(&ResultEvent{TemplateInfo: &written, Info: model.Info{Description: "example.com is exposed"}})
++	require.NoError(t, err)
++
++	var doc bson.M
++	require.NoError(t, bson.Unmarshal(data, &doc))
++	require.NotContains(t, doc, "templateinfo")
++	require.Contains(t, doc, "info")
++}
++
+ type testWriteCloser struct {
+ 	strings.Builder
+ }
+```
+
+**File**: `pkg/protocols/http/operators_test.go` (modified, +47/-0)
+```diff
+@@ -304,6 +304,53 @@ func TestHTTPMakeResult(t *testing.T) {
+ 	require.Equal(t, "1.1.1.1", finalEvent.Results[0].ExtractedResults[0], "could not get correct extracted results")
+ }
+ 
++func TestHTTPMakeResultRendersInfo(t *testing.T) {
++	options := testutils.DefaultOptions
++
++	testutils.Init(options)
++	templateID := "testing-http-info"
++	request := &Request{
++		ID:     templateID,
++		Path:   []string{"{{BaseURL}}"},
++		Method: HTTPMethodTypeHolder{MethodType: HTTPGet},
++		Operators: operators.Operators{
++			Matchers: []*matchers.Matcher{{
++				Part:  "body",
++				Type:  matchers.MatcherTypeHolder{MatcherType: matchers.WordsMatcher},
++				Words: []string{"version"},
++			}},
++			Extractors: []*extractors.Extractor{{
++				Name:       "version",
++				Part:       "body",
++				Type:       extractors.ExtractorTypeHolder{ExtractorType: extractors.RegexExtractor},
++				Regex:      []string{`version: ([0-9.]+)`},
++				RegexGroup: 1,
++				Internal:   true,
++			}},
++		},
++	}
++	description := "Version {{version}} on {{host}}:{{port}} accepts password {{replace_regex(password, '^(.{2}).*$', '$1***')}}"
++	executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{
++		ID:   templateID,
++		Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.High}, Name: "test", Description: description},
++	})
++	require.NoError(t, request.Compile(executerOpts))
++
++	resp := &http.Response{Header: make(http.Header)}
++	// The payload values of the request that matched travel in the event.
++	payloads := map[string]interface{}{"password": "s3cr3t"}
++	event := request.responseToDSLMap(resp, "https://example.com:8443/", "https://example.com:8443/", "", "", "server version: 7.2.4", "", time.Second, payloads)
++	finalEvent := &output.InternalWrappedEvent{InternalEvent: event}
++	result, ok := request.CompiledOperators.Execute(event, request.Match, request.Extract, false)
++	require.True(t, ok)
++	finalEvent.OperatorsResult = result
++	finalEvent.Results = request.MakeResultEvent(finalEvent)
++
++	require.Len(t, finalEvent.Results, 1)
++	require.Equal(t, "Version 7.2.4 on example.com:8443 accepts password s3***", finalEvent.Results[0].Info.Description)
++	require.Equal(t, description, executerOpts.TemplateInfo.Description, "the template info must stay as written")
++}
++
+ const exampleRawRequest = `GET / HTTP/1.1
+ Host: example.com
+ Upgrade-Insecure-Requests: 1
+```
+
+**File**: `pkg/protocols/info.go` (added, +80/-0)
+```diff
+@@ -0,0 +1,80 @@
++package protocols
 +
 +import (
-+	"encoding/json"
-+	"fmt"
-+	"net/http"
-+	"net/http/httptest"
-+	"strconv"
-+	"strings"
++	"maps"
++
++	"github.com/projectdiscovery/gologger"
++	"github.com/projectdiscovery/nuclei/v3/pkg/output"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/render"
++)
++
++// renderInfo fills the {{placeholders}} in the free text of each result's info
++// with the values of the event that produced it, so a finding can say what was
++// found and where. Name, severity, tags and classification stay as written:
++// they identify the template for filtering, grouping and issue trackers.
++//
++// Each result holds its own copy of the info, so the template is never changed.
++// When filling changes the text, the result keeps the info as written in
++// TemplateInfo.
++func renderInfo(results []*output.ResultEvent, data map[string]interface{}) []*output.ResultEvent {
++	// A global matcher matches on another template's event, with that template's
++	// payloads, variables and extracted values, so only the result fields fill
++	// its info.
++	if isGlobal, _ := data["global-matchers"].(bool); isGlobal {
++		data = nil
++	}
++	for _, result := range results {
++		if !result.Info.HasPlaceholders() {
++			continue
++		}
++		written := result.Info
++		values := infoValues(result, data)
++		for _, field := range result.Info.PlaceholderFields() {
++			if field.HasPlaceholders() {
++				*field.Value = renderInfoText(result.TemplateID, *field.Value, values)
++			}
++		}
++		if len(result.Info.FilledFields(&written)) > 0 {
++			result.TemplateInfo = &written
++		}
++	}
++	return results
++}
++
++// infoValues returns the event data with the result's own fields on top, under
++// their names in the JSON output. Those win over the event's keys: in an http
++// event host is the raw input URL, while the output reports the hostname.
++func infoValues(result *output.ResultEvent, data map[string]interface{}) map[string]interface{} {
++	values := make(map[string]interface{}, len(data)+9)
++	maps.Copy(values, data)
++	for key, value := range map[string]string{
++		"host":           result.Host,
++		"port":           result.Port,
++		"ip":             result.IP,
++		"url":            result.URL,
++		"scheme":         result.Scheme,
++		"path":           result.Path,
++		"matched-at":     result.Matched,
++		"matcher-name":   result.MatcherName,
++		"extractor-name": result.ExtractorName,
++	} {
++		if value != "" {
++			values[key] = value
++		}
++	}
++	return values
++}
++
++// renderInfoText renders the text through the shared renderer, as requests and
++// matchers are, so nested placeholders and helpers behave the same way. Scan
++// options are left out, so network helpers stay denied while results are built.
++// If an expression fails, the text stays as written, as a word matcher's does:
++// a typo in the template must not cost the finding.
++func renderInfoText(templateID, text string, values map[string]interface{}) string {
++	rendered, err := render.Render(render.Input{Text: text, Values: values})
++	if err != nil {
++		gologger.Verbose().Msgf("[%s] Could not render template info: %s\n", templateID, err)
++		return text
++	}
++	return rendered.Text
++}
+```
+
+**File**: `pkg/protocols/info_test.go` (added, +120/-0)
+```diff
+@@ -0,0 +1,120 @@
++package protocols
++
++import (
 +	"testing"
 +
 +	"github.com/projectdiscovery/nuclei/v3/pkg/model"
@@ -1507,628 +1866,110 @@ Observed empirical fixes and code patches:
 +	"github.com/stretchr/testify/require"
 +)
 +
-+const testIssueTitle = "Test finding (template-id) found on example.com"
++func TestRenderInfoLeavesStaticInfoAlone(t *testing.T) {
++	result := &output.ResultEvent{Host: "example.com", Info: model.Info{Description: "Redis is exposed"}}
 +
-+type issueRequest struct {
-+	Page    string
-+	Limit   string
-+	State   string
-+	Keyword string
++	renderInfo([]*output.ResultEvent{result}, map[string]interface{}{"host": "example.com"})
++
++	require.Equal(t, "Redis is exposed", result.Info.Description)
++	require.Nil(t, result.TemplateInfo)
 +}
 +
-+type fakeGitea struct {
-+	server       *httptest.Server
-+	requests     []issueRequest
-+	comments     []int64
-+	created      int
-+	issueHandler func(http.ResponseWriter, *http.Request, issueRequest)
++// Braces that fill nothing, like an SSTI payload in the description, leave the
++// text static, so it is neither redacted nor moved off the sarif rule.
++func TestRenderInfoLeavesUnfilledBracesStatic(t *testing.T) {
++	result := &output.ResultEvent{Host: "example.com", Info: model.Info{Description: "Send {{7*7}} or {{config}} in the name parameter"}}
++
++	renderInfo([]*output.ResultEvent{result}, map[string]interface{}{})
++
++	require.Equal(t, "Send {{7*7}} or {{config}} in the name parameter", result.Info.Description)
++	require.Nil(t, result.TemplateInfo)
 +}
 +
-+// newFakeGitea starts a local Gitea API stub and returns its tracker integration.
-+func newFakeGitea(t *testing.T, issueHandler func(http.ResponseWriter, *http.Request, issueRequest)) (*Integration, *fakeGitea) {
-+	t.Helper()
++func TestRenderInfoFillsResultAndEventValues(t *testing.T) {
++	result := &output.ResultEvent{
++		Host:        "example.com",
++		Port:        "6379",
++		MatcherName: "auth",
++		Info: model.Info{
++			Name:        "Redis {{version}}",
++			Description: "{{matcher-name}} on {{host}}:{{port}}, version {{version}}",
++			Impact:      "{{to_upper(password)}}",
++			Remediation: "{{credentials}} stays",
++		},
++	}
++	// The event's host is the raw input, while the output reports the hostname.
++	data := map[string]interface{}{"host": "redis://example.com:6379", "version": "7.2.4", "password": "admin"}
 +
-+	fake := &fakeGitea{issueHandler: issueHandler}
-+	fake.server = httptest.NewServer(http.HandlerFunc(fake.serveHTTP))
-+	t.Cleanup(fake.server.Close)
++	renderInfo([]*output.ResultEvent{result}, data)
 +
-+	integration, err := New(&Options{
-+		BaseURL:             fake.server.URL,
-+		Token:               "test-token",
-+		ProjectOwner:        "owner",
-+		ProjectName:         "repo",
-+		DuplicateIssueCheck: true,
++	require.Equal(t, "auth on example.com:6379, version 7.2.4", result.Info.Description)
++	require.Equal(t, "ADMIN", result.Info.Impact)
++	require.Equal(t, "{{credentials}} stays", result.Info.Remediation)
++	require.Equal(t, "Redis {{version}}", result.Info.Name)
++	require.Equal(t, "redis://example.com:6379", data["host"])
++	require.NotNil(t, result.TemplateInfo)
++	require.Equal(t, "{{matcher-name}} on {{host}}:{{port}}, version {{version}}", result.TemplateInfo.Description)
++	require.Equal(t, "{{to_upper(password)}}", result.TemplateInfo.Impact)
++}
++
++// Info renders like requests do, so the usual nested placeholder idiom and an
++// expression spread over lines work too.
++func TestRenderInfoFillsNestedAndMultilinePlaceholders(t *testing.T) {
++	result := &output.ResultEvent{Info: model.Info{
++		Description: "Authorization: Basic {{base64('{{username}}:{{password}}')}}",
++		Remediation: "Upgrade from {{join(\", \",\n  versions)}}",
++	}}
++
++	renderInfo([]*output.ResultEvent{result}, map[string]interface{}{
++		"username": "admin", "password": "secret", "versions": []string{"7.2.4", "6.0.9"},
 +	})
-+	require.NoError(t, err)
-+	return integration, fake
++
++	require.Equal(t, "Authorization: Basic YWRtaW46c2VjcmV0", result.Info.Description)
++	require.Equal(t, "Upgrade from 7.2.4, 6.0.9", result.Info.Remediation)
 +}
 +
-+// serveHTTP records tracker requests and serves the configured fake API responses.
-+func (f *fakeGitea) serveHTTP(w http.ResponseWriter, r *http.Request) {
-+	w.Header().Set("Content-Type", "application/json")
-+	switch {
-+	case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/version"):
-+		_, _ = w.Write([]byte(`{"version":"1.21.0"}`))
-+	case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/labels"):
-+		_, _ = w.Write([]byte("[]"))
-+	case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/issues"):
-+		query := r.URL.Query()
-+		request := issueRequest{
-+			Page:    query.Get("page"),
-+			Limit:   query.Get("limit"),
-+			State:   query.Get("state"),
-+			Keyword: query.Get("q"),
-+		}
-+		f.requests = append(f.requests, request)
-+		f.issueHandler(w, r, request)
-+	case r.Method == http.MethodPost && strings.Contains(r.URL.Path, "/comments"):
-+		parts := strings.Split(strings.Trim(r.URL.Path, "/"), "/")
-+		issueNumber, _ := strconv.ParseInt(parts[len(parts)-2], 10, 64)
-+		f.comments = append(f.comments, issueNumber)
-+		_, _ = w.Write([]byte(`{"id":1}`))
-+	case r.Method == http.MethodPost && strings.HasSuffix(r.URL.Path, "/issues"):
-+		f.created++
-+		_, _ = w.Write([]byte(`{"number":99,"title":"created","url":"https://gitea.test/issues/99"}`))
-+	default:
-+		http.NotFound(w, r)
-+	}
++// A hyphenated name reads as subtraction inside a helper unless it is bracketed,
++// and the general §name§ marker fills like a {{name}} one.
++func TestRenderInfoFillsBracketedNamesAndGeneralMarkers(t *testing.T) {
++	result := &output.ResultEvent{MatcherName: "auth", Info: model.Info{
++		Description: "{{to_upper([matcher-name])}} matched",
++		Impact:      "default login §username§ accepted",
++	}}
++
++	renderInfo([]*output.ResultEvent{result}, map[string]interface{}{"username": "admin"})
++
++	require.Equal(t, "AUTH matched", result.Info.Description)
++	require.Equal(t, "default login admin accepted", result.Info.Impact)
 +}
 +
-+// writeIssuePage writes issue objects as a JSON API response.
-+func writeIssuePage(w http.ResponseWriter, issues ...map[string]any) {
-+	_ = json.NewEncoder(w).Encode(issues)
++// A failing expression leaves its field as written; the other fields render.
++func TestRenderInfoKeepsAFieldWithAFailingExpression(t *testing.T) {
++	result := &output.ResultEvent{Host: "example.com", Info: model.Info{
++		Description: "{{host}} {{to_upper(missing)}}",
++		Impact:      "{{host}} is exposed",
++	}}
++
++	renderInfo([]*output.ResultEvent{result}, map[string]interface{}{})
++
++	require.Equal(t, "{{host}} {{to_upper(missing)}}", result.Info.Description)
++	require.Equal(t, "example.com is exposed", result.Info.Impact)
++	require.Len(t, result.Info.FilledFields(result.TemplateInfo), 1)
 +}
 +
-+// TestCreateIssueFollowsLinkAfterCappedPageAndComments verifies duplicate detection continues after a capped page.
-+func TestCreateIssueFollowsLinkAfterCappedPageAndComments(t *testing.T) {
-+	var server *httptest.Server
-+	integration, fake := newFakeGitea(t, func(w http.ResponseWriter, r *http.Request, request issueRequest) {
-+		if request.Page == "1" {
-+			// Gitea may return only 50 items despite a requested limit of 100.
-+			w.Header().Set("Link", fmt.Sprintf("<%s%s?limit=100&page=2&state=all>; rel=\"next\"", server.URL, r.URL.Path))
-+			issues := make([]map[string]any, 50)
-+			for index := range issues {
-+				issues[index] = map[string]any{"number": index + 1, "title": "unrelated issue"}
-+			}
-+			writeIssuePage(w, issues...)
-+			return
-+		}
-+		writeIssuePage(w, map[string]any{"number": 42, "title": testIssueTitle, "url": "https://gitea.test/issues/42"})
-+	})
-+	server = fake.server
++// A global matcher's event belongs to the template whose response it matched,
++// so only the result fields fill its info.
++func TestRenderInfoFillsGlobalMatcherInfoFromResultFieldsOnly(t *testing.T) {
++	result := &output.ResultEvent{Host: "example.com", Info: model.Info{Description: "Leaked {{token}} on {{host}}"}}
 +
-+	response, err := integration.CreateIssue(testGiteaEvent())
-+	require.NoError(t, err)
-+	require.Equal(t, "42", response.IssueID)
-+	require.Equal(t, "https://gitea.test/issues/42", response.IssueURL)
-+	require.Equal(t, []int64{42}, fake.comments)
-+	require.Zero(t, fake.created)
-+	require.Equal(t, []string{"1", "2"}, []string{fake.requests[0].Page, fake.requests[1].Page})
-+	for _, request := range fake.requests {
-+		require.Equal(t, "100", request.Limit)
-+		require.Equal(t, "all", request.State)
-+		require.Empty(t, request.Keyword)
-+	}
++	renderInfo([]*output.ResultEvent{result}, map[string]interface{}{"global-matchers": true, "token": "origin-template-payload"})
++
++	require.Equal(t, "Leaked {{token}} on example.com", result.Info.Description)
 +}
 +
-+// TestFindIssueByTitleRespectsMaxPages verifies the configured page limit stops further requests.
-+func TestFindIssueByTitleRespectsMaxPages(t *testing.T) {
-+	var server *httptest.Server
-+	integration, fake := newFakeGitea(t, func(w http.ResponseWriter, r *http.Request, request issueRequest) {
-+		w.Header().Set("Link", fmt.Sprintf("<%s%s?page=2>; rel=\"next\"", server.URL, r.URL.Path))
-+		writeIssuePage(w, map[string]any{"number": 1, "title": "unrelated"})
-+	})
-+	server = fake.server
-+	integration.options.DuplicateIssueMaxPages = 1
-+
-+	issue, err := integration.findIssueByTitle(testIssueTitle)
-+	require.NoError(t, err)
-+	require.Nil(t, issue)
-+	require.Len(t, fake.requests, 1)
-+	require.Equal(
-```
-
----
-
-### Incident Patch 2: `3d2f411e` (2026-10-26)
-**Commit Message**: Merge pull request #7925 from projectdiscovery/dwisiswant0/fix/offlinehttp/read-status-lines-by-position-not-text-search
-
-fix(offlinehttp): read status lines by position, not text search
-
-**File**: `pkg/protocols/offlinehttp/read_response.go` (modified, +79/-38)
-```diff
-@@ -9,54 +9,95 @@ import (
- 	"strings"
- )
- 
--var (
--	noMinor             = regexp.MustCompile(`^HTTP/([0-9]) `)
--	responseStatusRegex = regexp.MustCompile(`(?m)^HTTP/[0-9](?:\.[0-9])?\s+[0-9]{3}`)
--)
-+// noMinor matches a leading status-line protocol with no minor version, such
-+// as "HTTP/2 ". The go parser only accepts HTTP/X.Y.
-+var noMinor = regexp.MustCompile(`^HTTP/[0-9] `)
-+
-+// errNotRequest marks data that does not start with an HTTP request, so the
-+// caller parses it as a bare response instead.
-+var errNotRequest = errors.New("not an http request")
- 
--// readResponseFromString reads a raw http response from a string.
-+// readResponseFromString reads one raw HTTP response. Data may be the response
-+// itself or a request followed by that response. A status line is recognized
-+// only where a response starts, never by searching the body for "HTTP/".
- func readResponseFromString(data string) (*http.Response, error) {
--	// Check if "data" contains RFC compatible Request followed by a response
--	br := bufio.NewReader(strings.NewReader(data))
--	if req, err := http.ReadRequest(br); err == nil {
--		if req.Body != nil {
--			_, _ = io.Copy(io.Discard, req.Body)
--			_ = req.Body.Close()
--		}
--		remaining, _ := io.ReadAll(br)
--		if len(remaining) > 0 {
--			remainingStr := addMinorVersionToHTTP(string(remaining))
--			if resp, err := http.ReadResponse(bufio.NewReader(strings.NewReader(remainingStr)), req); err == nil {
--				return resp, nil
--			}
-+	resp, err := readRequestResponse(data)
-+	if err == nil || !errors.Is(err, errNotRequest) {
-+		return resp, err
-+	}
-+	return readResponse(data, nil)
-+}
-+
-+// readRequestResponse reads a raw HTTP request from the start of data and the
-+// response that follows it.
-+func readRequestResponse(data string) (*http.Response, error) {
-+	sr := strings.NewReader(data)
-+	br := bufio.NewReader(sr)
-+	// unread bytes are either still in sr or buffered in br
-+	unread := func() string { return data[len(data)-sr.Len()-br.Buffered():] }
-+
-+	req, err := http.ReadRequest(br)
-+	if err != nil {
-+		return nil, errNotRequest
-+	}
-+	afterHeaders := unread()
-+	// the response follows the request body, so it has to be read first.
-+	// a dump that keeps Content-Length but drops the body is tried at the headers.
-+	if _, err := io.Copy(io.Discard, req.Body); err == nil {
-+		if resp, err := readResponse(unread(), req); err == nil {
-+			return resp, nil
- 		}
- 	}
-+	return readResponse(afterHeaders, req)
-+}
-+
-+// maxInterimResponses bounds how many interim responses are skipped before the
-+// final one. Each skip copies the remainder of data.
-+const maxInterimResponses = 5
- 
--	// otherwise tries to patch known cases such as http minor version
--	var final string
--	if strings.HasPrefix(data, "HTTP/") {
--		final = addMinorVersionToHTTP(data)
--	} else {
--		loc := responseStatusRegex.FindStringIndex(data)
--		if loc == nil {
--			return nil, errors.New("malformed raw http response")
-+// readResponse reads a raw HTTP response whose status line starts data, after
-+// any leading blank lines. Interim responses such as 100 Continue are skipped,
-+// as the HTTP client does. The last interim response is returned when no final
-+// response follows it.
-+func readResponse(data string, req *http.Request) (*http.Response, error) {
-+	var lastInterim *http.Response
-+	for range maxInterimResponses + 1 {
-+		data = strings.TrimLeft(data, "\r\n")
-+		data = addMinorVersionToHTTP(data)
-+		sr := strings.NewReader(data)
-+		br := bufio.NewReader(sr)
-+		resp, err := http.ReadResponse(br, req)
-+		if err != nil {
-+			if lastInterim != nil {
-+				return lastInterim, nil
-+			}
-+			return nil, err
-+		}
-+		if !isInterimResponse(resp) {
-+			return resp, nil
-+		}
-+		if lastInterim != nil && lastInterim.Body != nil {
-+			_ = lastInterim.Body.Close()
- 		}
--		final = addMinorVersionToHTTP(data[loc[0]:])
-+		lastInterim = resp
-+		data = data[len(data)-sr.Len()-br.Buffered():]
- 	}
--	return http.ReadResponse(bufio.NewReader(strings.NewReader(final)), nil)
-+	return lastInterim, nil
- }
- 
--// addMinorVersionToHTTP tries to add a minor version to http status header
--// fixing the compatibility issue with go standard library.
-+// isInterimResponse reports whether resp is an interim response, such as
-+// 100 Continue, that comes before the final response. 101 Switching Protocols
-+// is the response.
-+func isInterimResponse(resp *http.Response) bool {
-+	return resp != nil && resp.StatusCode >= 100 && resp.StatusCode <= 199 && resp.StatusCode != http.StatusSwitchingProtocols
-+}
-+
-+// addMinorVersionToHTTP inserts ".0" into a leading protocol such as HTTP/2.
-+// Only those bytes change, so the reason phrase, headers, and body stay intact.
- func addMinorVersionToHTTP(data string) string {
--	matches := noMinor.FindAllStringSubmatch(data, 1)
--	if len(matches) == 0 {
--		return data
--	}
--	if len(matches[0]) < 2 {
-+	if !noMinor.MatchString(data) {
- 		return data
- 	}
--	replacedVersion := strings.Replace(matches[0][0], matches[0][1], matches[0][1]+".0", 1)
--	d
-```
-
-**File**: `pkg/protocols/offlinehttp/read_response_test.go` (modified, +183/-21)
-```diff
-@@ -6,6 +6,7 @@ import (
- 	"net/http"
- 	"net/http/httptest"
- 	"net/http/httputil"
-+	"strings"
- 	"testing"
- 	"time"
- 
-@@ -200,43 +201,204 @@ Server: Google Frontend
- 	})
- }
- 
-+func TestReadResponseFromStringPreservesHTTPVersionText(t *testing.T) {
-+	const body = "Supports HTTP/2 and HTTP/3."
- 
--func TestReadResponse_HTTPInBodyCases(t *testing.T) {
- 	tests := []struct {
--		name         string
--		data         string
--		expectedBody string
--		statusCode   int
-+		name       string
-+		data       string
-+		wantProto  string
-+		wantStatus string
-+		wantVia    string
-+		wantMethod string
- 	}{
- 		{
--			name:         "http2 response without minor version and HTTP/ in body (#7924)",
--			data:         "GET / HTTP/1.1\r\nHost: example.com\r\n\r\nHTTP/2 200 OK\r\nContent-Length: 27\r\n\r\nSupports HTTP/2 and HTTP/3.",
--			expectedBody: "Supports HTTP/2 and HTTP/3.",
--			statusCode:   200,
-+			name:       "body-with-content-length",
-+			data:       "HTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\n" + body,
-+			wantProto:  "HTTP/1.1",
-+			wantStatus: "200 OK",
- 		},
- 		{
--			name:         "request with body and HTTP/ in response body (#7924)",
--			data:         "POST /search HTTP/1.1\r\nHost: example.com\r\nContent-Length: 3\r\n\r\nq=1HTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\nSupports HTTP/2 and HTTP/3.",
--			expectedBody: "Supports HTTP/2 and HTTP/3.",
--			statusCode:   200,
-+			name:       "body-without-content-length",
-+			data:       "HTTP/1.1 200 OK\r\n\r\n" + body,
-+			wantProto:  "HTTP/1.1",
-+			wantStatus: "200 OK",
- 		},
- 		{
--			name:         "control http 1.1 with HTTP/ in response body (#7924)",
--			data:         "GET / HTTP/1.1\r\nHost: example.com\r\n\r\nHTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\nSupports HTTP/2 and HTTP/3.",
--			expectedBody: "Supports HTTP/2 and HTTP/3.",
--			statusCode:   200,
-+			name:       "body-with-chunked-encoding",
-+			data:       "HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n1b\r\n" + body + "\r\n0\r\n\r\n",
-+			wantProto:  "HTTP/1.1",
-+			wantStatus: "200 OK",
-+		},
-+		{
-+			name:       "header-value",
-+			data:       "HTTP/1.1 200 OK\r\nVia: HTTP/2 edge\r\nContent-Length: 27\r\n\r\n" + body,
-+			wantProto:  "HTTP/1.1",
-+			wantStatus: "200 OK",
-+			wantVia:    "HTTP/2 edge",
-+		},
-+		{
-+			name:       "reason-phrase",
-+			data:       "HTTP/1.1 200 Use HTTP/2 instead\r\nContent-Length: 27\r\n\r\n" + body,
-+			wantProto:  "HTTP/1.1",
-+			wantStatus: "200 Use HTTP/2 instead",
-+		},
-+		{
-+			name:       "status-line-without-minor-version",
-+			data:       "HTTP/2 200 OK\r\nVia: HTTP/2 edge\r\nContent-Length: 27\r\n\r\n" + body,
-+			wantProto:  "HTTP/2.0",
-+			wantStatus: "200 OK",
-+			wantVia:    "HTTP/2 edge",
-+		},
-+		{
-+			name:       "http3-status-line-without-minor-version",
-+			data:       "HTTP/3 200 OK\r\nContent-Length: 27\r\n\r\n" + body,
-+			wantProto:  "HTTP/3.0",
-+			wantStatus: "200 OK",
-+		},
-+		{
-+			name:       "request-then-status-line-without-minor-version",
-+			data:       "GET / HTTP/1.1\r\nHost: example.com\r\n\r\nHTTP/2 200 OK\r\nContent-Length: 27\r\n\r\n" + body,
-+			wantProto:  "HTTP/2.0",
-+			wantStatus: "200 OK",
-+			wantMethod: "GET",
-+		},
-+		{
-+			name:       "blank-line-before-response",
-+			data:       "GET / HTTP/1.1\r\nHost: example.com\r\n\r\n\r\nHTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\n" + body,
-+			wantProto:  "HTTP/1.1",
-+			wantStatus: "200 OK",
-+			wantMethod: "GET",
-+		},
-+		{
-+			name:       "request-with-body-then-response",
-+			data:       "POST /search HTTP/1.1\r\nHost: example.com\r\nContent-Length: 3\r\n\r\nq=1HTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\n" + body,
-+			wantProto:  "HTTP/1.1",
-+			wantStatus: "200 OK",
-+			wantMethod: "POST",
-+		},
-+		{
-+			name:       "request-without-saved-body-then-response",
-+			data:       "POST /search HTTP/1.1\r\nHost: example.com\r\nContent-Length: 3\r\n\r\nHTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\n" + body,
-+			wantProto:  "HTTP/1.1",
-+			wantStatus: "200 OK",
-+			wantMethod: "POST",
-+		},
-+		{
-+			name:       "request-then-interim-response",
-+			data:       "POST /search HTTP/1.1\r\nHost: example.com\r\nExpect: 100-continue\r\nContent-Length: 3\r\n\r\nq=1HTTP/1.1 100 Continue\r\n\r\nHTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\n" + body,
-+			wantProto:  "HTTP/1.1",
-+			wantStatus: "200 OK",
-+			wantMethod: "POST",
-+		},
-+		{
-+			name:       "interim-response-without-minor-version",
-+			data:       "HTTP/2 103 Early Hints\r\nLink: </style.css>; rel=preload\r\n\r\nHTTP/2 200 OK\r\nContent-Length: 27\r\n\r\n" + body,
-+			wantProto:  "HTTP/2.0",
-+			wantStatus: "200 OK",
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			resp, err := readResponseFromString(tt.data)
-+			require.NoError(t, err, "could not read response from string")
-+
-+			respBody, err := io.ReadAll(resp.Body)
-+			require.NoError(t, err, "could not read response body")
-+			require.Equal(t, body, string(respBody), "could not get correct parsed body")
-+			require.Equal(t, tt.wantProto, res
-```
-
----
-
-### Incident Patch 3: `421ec706` (2026-10-26)
-**Commit Message**: Merge pull request #7947 from projectdiscovery/dwisiswant0/fix/trackers/follow-x-next-page-in-gitlab-duplicate-search
-
-fix(trackers): follow X-Next-Page in gitlab duplicate search
-
-**File**: `cmd/nuclei/issue-tracker-config.yaml` (modified, +2/-1)
-```diff
-@@ -57,7 +57,8 @@
- #    severity: low
- #  # duplicate-issue-check (optional) flag to enable duplicate tracking issue check
- #  duplicate-issue-check: false
--#  # duplicate-issue-page-size (optional) controls how many issues to fetch per page when searching for duplicates
-+#  # duplicate-issue-page-size (optional) sets the number of issues to request per page when searching for duplicates
-+#  # (GitLab returns at most 100 issues per page)
- #  duplicate-issue-page-size: 100
- #  # duplicate-issue-max-pages (optional) limits how many pages to fetch when searching for duplicates (0 = no limit)
- #  duplicate-issue-max-pages: 0
-```
-
-**File**: `pkg/reporting/trackers/gitlab/gitlab.go` (modified, +11/-7)
-```diff
-@@ -41,7 +41,8 @@ type Options struct {
- 	DenyList *filters.Filter `yaml:"deny-list"`
- 	// DuplicateIssueCheck is a bool to enable duplicate tracking issue check and update the newest
- 	DuplicateIssueCheck bool `yaml:"duplicate-issue-check" default:"false"`
--	// DuplicateIssuePageSize controls how many issues are fetched per page when searching for duplicates.
-+	// DuplicateIssuePageSize is the number of issues to request per page when searching for duplicates.
-+	// GitLab returns at most 100 issues per page.
- 	// If unset or <=0, a default of 100 is used.
- 	DuplicateIssuePageSize int `yaml:"duplicate-issue-page-size" default:"100"`
- 	// DuplicateIssueMaxPages limits how many pages are fetched when searching for duplicates.
-@@ -161,23 +162,23 @@ func (i *Integration) findIssueByTitle(title string) (*gitlab.Issue, error) {
- 	if pageSize <= 0 {
- 		pageSize = 100
- 	}
--	maxPages := i.options.DuplicateIssueMaxPages
-+	maxPages := int64(i.options.DuplicateIssueMaxPages)
- 
- 	searchIn := "title"
- 	searchState := "all"
--	page := 1
-+	page := int64(1)
- 
- 	for {
- 		if maxPages > 0 && page > maxPages {
- 			return nil, nil
- 		}
- 
--		issues, _, err := i.client.Issues.ListProjectIssues(i.options.ProjectName, &gitlab.ListProjectIssuesOptions{
-+		issues, resp, err := i.client.Issues.ListProjectIssues(i.options.ProjectName, &gitlab.ListProjectIssuesOptions{
- 			In:     &searchIn,
- 			State:  &searchState,
- 			Search: &title,
- 			ListOptions: gitlab.ListOptions{
--				Page:    int64(page),
-+				Page:    page,
- 				PerPage: int64(pageSize),
- 			},
- 		})
-@@ -191,11 +192,14 @@ func (i *Integration) findIssueByTitle(title string) (*gitlab.Issue, error) {
- 			}
- 		}
- 
--		if len(issues) < pageSize {
-+		// GitLab caps per_page at 100, so a short page is not necessarily
-+		// the last one. Follow X-Next-Page instead, and stop when it is
-+		// empty or does not move forward.
-+		if resp.NextPage <= page {
- 			return nil, nil
- 		}
- 
--		page++
-+		page = resp.NextPage
- 	}
- }
- 
-```
-
-**File**: `pkg/reporting/trackers/gitlab/gitlab_test.go` (added, +137/-0)
-```diff
-@@ -0,0 +1,137 @@
-+package gitlab
-+
-+import (
-+	"encoding/json"
-+	"fmt"
-+	"net/http"
-+	"net/http/httptest"
-+	"slices"
-+	"strconv"
-+	"sync"
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+)
-+
-+type fakeIssue struct {
-+	ID    int64  `json:"id"`
-+	IID   int64  `json:"iid"`
-+	Title string `json:"title"`
-+}
-+
-+// fakeGitLab serves the GitLab API endpoints that findIssueByTitle uses. Like
-+// GitLab, it caps per_page at maxPerPage and names the next page in the
-+// X-Next-Page header, which is empty on the last page. Every issue counts as
-+// a search hit, which leaves the exact title match to the tracker.
-+type fakeGitLab struct {
-+	issues     []fakeIssue
-+	maxPerPage int
-+
-+	mu    sync.Mutex
-+	pages []int
-+}
-+
-+func newFakeGitLab(issueCount, maxPerPage int) *fakeGitLab {
-+	f := &fakeGitLab{maxPerPage: maxPerPage}
-+	for n := 1; n <= issueCount; n++ {
-+		f.issues = append(f.issues, fakeIssue{ID: int64(n), IID: int64(n), Title: fmt.Sprintf("issue %d", n)})
-+	}
-+	return f
-+}
-+
-+func (f *fakeGitLab) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-+	w.Header().Set("Content-Type", "application/json")
-+	switch r.URL.Path {
-+	case "/api/v4/user":
-+		_, _ = w.Write([]byte(`{"id":1}`))
-+	case "/api/v4/projects/1234/issues":
-+		f.listIssues(w, r)
-+	default:
-+		http.NotFound(w, r)
-+	}
-+}
-+
-+func (f *fakeGitLab) listIssues(w http.ResponseWriter, r *http.Request) {
-+	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
-+	perPage, _ := strconv.Atoi(r.URL.Query().Get("per_page"))
-+	if perPage <= 0 || perPage > f.maxPerPage {
-+		perPage = f.maxPerPage
-+	}
-+
-+	f.mu.Lock()
-+	f.pages = append(f.pages, page)
-+	f.mu.Unlock()
-+
-+	nextPage := ""
-+	if page*perPage < len(f.issues) {
-+		nextPage = strconv.Itoa(page + 1)
-+	}
-+	w.Header().Set("X-Next-Page", nextPage)
-+
-+	start := min((page-1)*perPage, len(f.issues))
-+	end := min(start+perPage, len(f.issues))
-+	_ = json.NewEncoder(w).Encode(f.issues[start:end])
-+}
-+
-+func (f *fakeGitLab) requestedPages() []int {
-+	f.mu.Lock()
-+	defer f.mu.Unlock()
-+	return slices.Clone(f.pages)
-+}
-+
-+func TestFindIssueByTitle(t *testing.T) {
-+	tests := []struct {
-+		name      string
-+		title     string
-+		maxPages  int
-+		wantIID   int64
-+		wantPages []int
-+	}{
-+		{
-+			name:      "match after a server-capped first page",
-+			title:     "issue 110",
-+			wantIID:   110,
-+			wantPages: []int{1, 2},
-+		},
-+		{
-+			name:      "no match checks every page once",
-+			title:     "missing",
-+			wantPages: []int{1, 2},
-+		},
-+		{
-+			name:      "max pages stops the search",
-+			title:     "issue 110",
-+			maxPages:  1,
-+			wantPages: []int{1},
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			// GitLab caps per_page at 100, so a configured page size of
-+			// 150 still splits 120 issues into two pages.
-+			fake := newFakeGitLab(120, 100)
-+			server := httptest.NewServer(fake)
-+			t.Cleanup(server.Close)
-+
-+			integration, err := New(&Options{
-+				BaseURL:                server.URL,
-+				Token:                  "token",
-+				ProjectName:            "1234",
-+				DuplicateIssuePageSize: 150,
-+				DuplicateIssueMaxPages: tt.maxPages,
-+			})
-+			require.NoError(t, err)
-+
-+			issue, err := integration.findIssueByTitle(tt.title)
-+			require.NoError(t, err)
-+			if tt.wantIID == 0 {
-+				require.Nil(t, issue)
-+			} else {
-+				require.NotNil(t, issue)
-+				require.Equal(t, tt.wantIID, issue.IID)
-+			}
-+			require.Equal(t, tt.wantPages, fake.requestedPages())
-+		})
-+	}
-+}
++// Results are built without scan options, so a network helper never runs.
++func TestRenderInfoDeniesNetworkHelpers(t *testing.T) {
++	result := &output.ResultEve
 ```
 
 #### Recent Merged Pull Requests:
@@ -2137,7 +1978,7 @@ fix(trackers): follow X-Next-Page in gitlab duplicate search
 - **PR #7945** (2026-10-27): fix(trackers): gitea reporter pagination (@shifttymike)
 - **PR #7943** (2026-10-26): chore(deps): bump crate-ci/typos from 1.49.0 to 1.51.1 in the workflows group (@dependabot[bot])
 - **PR #7941** (2026-10-26): fix(offlinehttp): handle request body and unversioned HTTP/2 in passive mode (#7924) (@TassioSales)
-- **PR #7930** (2026-10-25): Keep template options on compiled-cache hits (@Mzack9999)
+- **PR #7940** (2026-10-27): feat(templates): fill placeholders in info description, impact and remediation (@mazzz3r)
 
 ---
 
@@ -2157,39 +1998,45 @@ fix(trackers): follow X-Next-Page in gitlab duplicate search
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. trackers): gitea reporter pagination (#7945)
+## X. Merge pull request #7940 from mazzz3r/feat/info-placeholders
 
 **RULE**:
-When implementing operations in `pkg/reporting/trackers/gitea/gitea.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `SYNTAX-REFERENCE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9dc00492`: trackers): gitea reporter pagination (#7945). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `abcdcf19`: Merge pull request #7940 from mazzz3r/feat/info-placeholders. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/reporting/trackers/gitea/gitea.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `SYNTAX-REFERENCE.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// findIssueByTitle searches every linked issue page for an exact title match.
-		issueList, response, err := i.client.ListRepoIssues(i.options.ProjectOwner, i.options.ProjectName, opts)
-		if response == nil || response.NextPage == 0 {
-			// Gitea's Link header indicates there is no next page.
-		if response.NextPage <= opts.Page {
-			return nil, fmt.Errorf("gitea returned a non-advancing issue page: current page %d, next page %d", opts.Page, response.NextPage)
-		}
-		opts.Page = response.NextPage
+Description, impact and remediation may hold {{placeholders}} filled for
+each finding: named extractors, payloads, variables and DSL helpers
+(network helpers excluded), and the result fields host, port, ip, url,
+scheme, path, matched-at, matcher-name and extractor-name, which win over
+values of the same name. Use join(", ", name) for an extractor with
+several values, and brackets for a hyphenated name inside a helper:
+to_upper([matcher-name]). Unknown placeholders stay as written, and so
+does a field whose expression fails. Global matcher templates match on
+other templates' responses, so only the result fields fill their text.
+
+```yaml
+description: Redis {{version}} on {{host}}:{{port}} accepts the default password
+```
+
+Supports the same placeholders as description.
+
+Supports the same placeholders as description.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		issueList, _, err := i.client.ListRepoIssues(i.options.ProjectOwner, i.options.ProjectName, opts)
-		if len(issueList) < opts.PageSize {
-			// Last page reached.
-
-		opts.Page++
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9dc00492` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `abcdcf19` are properly handled with clean fallback behavior.

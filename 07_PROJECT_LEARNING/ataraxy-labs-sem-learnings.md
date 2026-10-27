@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md`  
 > **Source**: github ([https://github.com/Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem))  
-> **Source Version**: `f7fa398c`  
+> **Source Version**: `76f97a98`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-24T20:48:37.742Z  
+> **Timestamp**: 2026-10-27T14:26:27.700Z  
 > **Learning ID**: `learn-github-ataraxy-labs-sem`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-24T20:48:35.854Z  
+> **Harvest Timestamp**: 2026-10-27T14:26:24.913Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Semantic version control => entity-level diffs, blame, and impact analysis on top of git. 28 languages via tree-sitter. Built for coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 3422 stars
+- **Stars / Engagement**: 3427 stars
 
 ---
 
@@ -1820,13 +1820,15 @@ fn main() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #530** (2026-10-24): **docs: record MCP query contract fixes**
-  *Symptoms*: Add the missing Unreleased entry for #529. Documentation only.
+- **Issue #533** (2026-10-26): **fix(release): resume accepted uploads after registry indexing stalls**
+  *Symptoms*: Crates.io accepted the new versions and serves their archives, but Cargo cannot resolve them until its sparse index updates. Query upload acceptance separately, avoid re-uploading accepted versions, wait directly on the sparse index before publishing dependents, preserve upload errors, and pin retries to the release tag. Six publisher regression tests cover delayed indexing, authentication failure, response-loss recovery, timeout, API failure, and exact unyanked versions. Workflow YAML and tests pass locally; no Rust product code changed.
   **Post-Mortem & Fix Analysis**:
-  > [vc]: #hLtm8gfokaGm2XmuSg6PfFAOtJ/gZtYN3gwXO5g41cw=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJzZW0tZG9jcyIsInByb2plY3RJZCI6InByal9MT1JiN29SSjBTbUZGUnlGUEw1eE1ha3FVcjRrIiwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3JzNTQ1ODM3cy1wcm9qZWN0cy9zZW0tZG9jcy9BZlVGOGpURmpndG9rZVREa3V5b2FZNnVRZVNZIiwicHJldmlld1VybCI6InNlbS1kb2NzLWdpdC1kb2NzLXF1ZXJ5LWNvbnRyYWN0LWNoYW5nZWxvZy1yczU0NTgzN3MtcHJvamVjdHMudmVyY2VsLmFwcCIsIm5leHRDb21taXRTdGF0dXMiOiJQRU5ESU5HIiwibGl2ZUZlZWRiYWNrIjp7InJlc29sdmVkIjowLCJ1bnJlc29sdmVkIjowLCJ0b3RhbCI6MCwibGluayI6IiJ9fV0sInJlcXVlc3RSZXZpZXdVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vdmVyY2VsLWFnZW50L3JlcXVlc3QtcmV2aWV3P293bmVyPUF0YXJheHktTGFicyZyZXBvPXNlbSZwcj01MzAifQ== The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a href="https://vercel.com/rs545837s-projects/sem-docs"><sup><img src="https://vercel.
+  > [vc]: #+jA9Wvqzz+yYsv0QNMpPN8rK0H/2dS4Gtwma9yZAVfs=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJzZW0tZG9jcyIsInByb2plY3RJZCI6InByal9MT1JiN29SSjBTbUZGUnlGUEw1eE1ha3FVcjRrIiwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3JzNTQ1ODM3cy1wcm9qZWN0cy9zZW0tZG9jcy8yS3FZRUY5S2FyckRRcWhEcEJ0NVdGNDFZaG80IiwicHJldmlld1VybCI6InNlbS1kb2NzLWdpdC1maXgtcmVnaXN0cnktcHVibGljYXRpb24tcnM1NDU4MzdzLXByb2plY3RzLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoiREVQTE9ZRUQiLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoic2VtLWRvY3MtZ2l0LWZpeC1yZWdpc3RyeS1wdWJsaWNhdGlvbi1yczU0NTgzN3MtcHJvamVjdHMudmVyY2VsLmFwcCJ9fV0sInJlcXVlc3RSZXZpZXdVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vdmVyY2VsLWFnZW50L3JlcXVlc3QtcmV2aWV3P293bmVyPUF0YXJheHktTGFicyZyZXBvPXNlbSZwcj01MzMifQ== The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a 
 
-- **Issue #529** (2026-10-24): **fix(mcp): support scoped context and structured caller batches**
-  *Symptoms*: ## Summary - Resolve context queries within the requested directory without leaking sibling scope. - Accept batched caller queries, preserving ambiguity handling. - Return a valid JSON array with per-query errors for JSON batches. - Include the simple capability-aware policy used in the recent benchmark campaign.  ## Validation All 110 sem-mcp library tests passed in Modal. Earlier scoped-context and batching implementation plus the policy passed seven official benchmark runs (two each ADK/DSPy/Restic and one Ant Design). The JSON envelope fix has unit coverage but has not had a new session-speed benchmark. No universal speedup claimed.
+- **Issue #532** (2026-10-26): **release: Sem 0.28.2**
+  *Symptoms*: Release the accumulated fixes and performance improvements as 0.28.2. Synchronizes workspace crates, lockfile, npm package, and MCP registry metadata. Includes the experimental validation adapters from #531; merge after that PR and release checks pass.
+  **Post-Mortem & Fix Analysis**:
+  > [vc]: #ji54PRsh8oHTHMj6t10l7TYHY4fvokESvVBhRUbxdic=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJzZW0tZG9jcyIsInByb2plY3RJZCI6InByal9MT1JiN29SSjBTbUZGUnlGUEw1eE1ha3FVcjRrIiwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3JzNTQ1ODM3cy1wcm9qZWN0cy9zZW0tZG9jcy8yUXFGZTFLS25lWVRDU0EybW40M3dpZDIzZFJVIiwicHJldmlld1VybCI6InNlbS1kb2NzLWdpdC1yZWxlYXNlLTAyODItcnM1NDU4MzdzLXByb2plY3RzLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoiREVQTE9ZRUQiLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoic2VtLWRvY3MtZ2l0LXJlbGVhc2UtMDI4Mi1yczU0NTgzN3MtcHJvamVjdHMudmVyY2VsLmFwcCJ9LCJyb290RGlyZWN0b3J5IjoiZG9jcyJ9XSwicmVxdWVzdFJldmlld1VybCI6Imh0dHBzOi8vdmVyY2VsLmNvbS92ZXJjZWwtYWdlbnQvcmVxdWVzdC1yZXZpZXc/b3duZXI9QXRhcmF4eS1MYWJzJnJlcG89c2VtJnByPTUzMiJ9 The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a href
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1843,669 +1845,306 @@ fn main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6caf881d` (2026-10-22)
-**Commit Message**: perf: parallelize the rest of the cold index build's serial stretches (#528)
+### Incident Patch 1: `76f97a98` (2026-10-26)
+**Commit Message**: fix(release): resume accepted uploads after registry indexing stalls (#533)
 
-Follow-up to #524, which merged with the first commit of this work. This
-draft holds the remaining fixes for the serial stretches of a cold index
-build. The final before and after table against main is being
-re-measured and will replace the numbers below.
+Crates.io accepted the new versions and serves their archives, but Cargo
+cannot resolve them until its sparse index updates. Query upload
+acceptance separately, avoid re-uploading accepted versions, wait
+directly on the sparse index before publishing dependents, preserve
+upload errors, and pin retries to the release tag. Six publisher
+regression tests cover delayed indexing, authentication failure,
+response-loss recovery, timeout, API failure, and exact unyanked
+versions. Workflow YAML and tests pass locally; no Rust product code
+changed.
 
-## What was slow
-
-Profiling cold `sem graph` builds on Modal (8 vCPU) showed that the
-build scales about linearly now, but long single-threaded stretches
-dominate its wall time on big repos. These were the serial pieces left
-after #524 on the Linux kernel (2.35M entities):
-
-| phase | ms |
-|---|---|
-| index image build (`build_image`) | 6,400 |
-| first-pass lookup tables (`owned`) | 4,700 |
-| corpus table fingerprints | 2,000 |
-| facts store save plus corpus populate | 2,600 |
-| freeing the entity list after the build | about 1,400 |
-
-## Changes
-
-1. **Fingerprints hashed in parallel.** `fingerprint_corpus_tables`
-computes the value hashes in parallel and writes them in the tables' own
-iteration order. The map and the XOR guard come out the same as before.
-The table is sized up front.
-2. **Index sections side by side.** The refs and trigram sections run
-b
-
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `.github/workflows/release-publisher.yml` (added, +16/-0)
 ```diff
-@@ -15,7 +15,7 @@ All notable changes to sem are documented in this file.
- ### Changed
+@@ -0,0 +1,16 @@
++name: Release publisher tests
++on:
++  pull_request:
++    paths: ['scripts/publish-crates.py', 'scripts/test-publish-crates.py', '.github/workflows/release.yml', '.github/workflows/release-publisher.yml']
++  push:
++    branches: [main]
++    paths: ['scripts/publish-crates.py', 'scripts/test-publish-crates.py', '.github/workflows/release.yml', '.github/workflows/release-publisher.yml']
++jobs:
++  publisher:
++    runs-on: ubuntu-latest
++    steps:
++      - uses: actions/checkout@v4
++      - uses: actions/setup-python@v5
++        with:
++          python-version: '3.12'
++      - run: python3 scripts/test-publish-crates.py
+```
+
+**File**: `.github/workflows/release.yml` (modified, +19/-37)
+```diff
+@@ -236,54 +236,36 @@ jobs:
+         run: ./mcp-publisher publish || (sleep 60 && ./mcp-publisher publish)
  
- - Cold graph builds move reusable lookup tables instead of cloning them and sort independent lookup buckets in parallel. Sequential builds retain the same behavior without requiring Rayon.
+   publish-crates:
+-    needs: [check-version, semver-check]
++    needs: [check-version, create-tag]
+     if: >-
+       always() && needs.check-version.result == 'success' &&
+-      ((needs.check-version.outputs.should_release == 'true' && needs.semver-check.result == 'success') ||
++      ((needs.check-version.outputs.should_release == 'true' && needs.create-tag.result == 'success') ||
+       (inputs.publish_crates_only == true && needs.check-version.outputs.should_release == 'false'))
+     runs-on: ubuntu-latest
+-    defaults:
+-      run:
+-        working-directory: crates
++    timeout-minutes: 90
++    concurrency:
++      group: crates-publication
++      cancel-in-progress: false
+     steps:
+       - uses: actions/checkout@v4
+ 
+-      - name: Install Rust
+-        uses: dtolnay/rust-toolchain@stable
 -
-+- **Cold index builds on large repos are about a fifth faster.** A first `sem graph` on the Linux kernel (2.35M entities) went from 49.5 s to 38.6 s, and on kubernetes (545k entities) from 12.5 s to 10.0 s, on an 8 vCPU machine, with peak memory within 2%. The build had long single-threaded stretches. Along with the lookup-table change above, corpus fingerprints are hashed in parallel, independent index sections and lookup tables are built side by side, and large frees and the two facts saves no longer hold up the command. The graph and the index file are byte-identical to before.
- - **`sem_find` with mode `callers` gives the CLI's answer.** It says when the static graph cannot prove the caller set is complete, lists possible callers, and merges dispatch groups, where it used to print `callers: none` either way. Its JSON is now the shape `sem callers --json` prints (`entity`, `related`, `complete`, `incomplete_because`).
- 
- ### Fixed
-```
-
-**File**: `crates/sem-cli/src/commands/graph.rs` (modified, +34/-9)
-```diff
-@@ -90,6 +90,7 @@ pub fn graph_command(opts: GraphOptions) {
-         );
-     }
-     timings.finish();
-+    drop_in_background(graph);
- }
- 
- /// Format a count with thousands separators (1234 -> "1,234"), uv-style.
-@@ -419,14 +420,25 @@ fn build_graph_with_facts_store(
-     // Best-effort: a save failure (permissions, disk full, read-only cache
-     // dir) must never fail the build this function exists to produce. The
-     // store is a pure speed optimization — the next process just stays cold.
--    let __facts_save_t0 = std::time::Instant::now();
--    let _ = store.save(root, &exported);
--    crate::build_cache::cache_profile_mark("facts_store_save", __facts_save_t0);
--    let __facts_corpus_t0 = std::time::Instant::now();
--    if let Some(corpus) = &corpus {
--        let _ = corpus.populate_delta(local_hashes.as_ref(), &exported, registry);
--    }
--    crate::build_cache::cache_profile_mark("facts_corpus_populate_delta", __facts_corpus_t0);
-+    //
-+    // The per-repo store and the machine-global corpus are separate
-+    // directories written from the same read-only snapshot, so the two saves
-+    // run side by side rather than one after the other.
-+    std::thread::scope(|scope| {
-+        scope.spawn(|| {
-+            let __facts_corpus_t0 = std::time::Instant::now();
-+            if let Some(corpus) = &corpus {
-+                let _ = corpus.populate_delta(local_hashes.as_ref(), &exported, registry);
-+            }
-+            crate::build_cache::cache_profile_mark(
-+                "facts_corpus_populate_delta",
-+                __facts_corpus_t0,
-+            );
-+        });
-+        let __facts_save_t0 = std::time::Instant::now();
-+        let _ = store.save(root, &exported);
-+        crate::build_cache::cache_profile_mark("facts_store_save", __facts_save_t0);
-+    });
-     facts_rss_mark("after_populate_delta");
-     session.into_parts()
- }
-@@ -876,7 +888,7 @@ pub fn get_or_build_graph_topology_with_timings(
-     } else {
-         CacheMissSavePolicy::IndexOnly
-     };
--    let (graph, _entities) = get_or_build_graph_with_cache_policy(
-+    let (graph, entities) = get_or_build_graph_with_cache_policy(
-         root,
-         file_paths,
-         registry,
-@@ -885,9 +897,22 @@ pub fn get_or_build_graph_topology_with_timings(
-         source_scope,
-         timings,
-     );
-+    drop_in_background(entities);
-     graph
- }
- 
-+/// Free a large build product on a detached thread. Dropping millions of
-+/// entities (every one owning several strings) takes seconds on a giant repo,
-+/// and nothing waits on the memory coming back; a short-lived CLI process
-+/// simply exits around the thread.
-+fn drop_in_background<T: Send + 'static>(value: T) {
-+    // If the thread cannot be spawned the closure, and the value with it, is
-+    // dropped right here, exactly as before.
-+    let _ = std::thread::Builder::new()
-+        .name("sem-drop".into())
-+        .spawn(move || drop(value));
-+}
-+
- pub fn get_or_build_graph_topology_with_topology_save_on_miss_with_timings(
-     root: &Path,
-     file_paths: &[String],
-```
-
-**File**: `crates/sem-core/src/index/writer.rs` (modified, +149/-111)
-```diff
-@@ -325,120 +325,158 @@ pub(crate) fn build_image(
-         .collect();
-     image_mark("file_and_entity_index", __fileidx_t0);
- 
--    let __entbytes_t0 = std::time::Instant::now();
--    let mut entity_bytes = Vec::with_capacity(entities.len() * ENTITY_REC_LEN);
--    for entity in &entities {
--        let id_text = if ids_elided {
--            id_tail_of(&entity.id, &entity.file_path).unwrap_or(&entity.id)
--        } else {
--            entity.id.as_str()
--        };
--        let kind = kinds.intern(&entity.entity_type, &mut arena);
--        let parent = entity
--            .parent_id
--            .as_deref()
--            .and_then(|id| entity_index.get(id).copied())
--            .unwrap_or(NONE_U32);
--        let flags = match test_entity_ids {
--            Some(ids) if ids.contains(entity.id.as_str()) => format::entity::FLAG_IS_TEST,
--            _ => 0,
--        };
--        let (start_byte, end_byte) = entity_byte_spans
--            .and_then(|spans| spans.get(entity.id.as_str()))
--            .copied()
--            .unwrap_or((NONE_U32, NONE_U32));
--        format::entity::write(
--            &mut entity_bytes,
--            arena.push_short(id_text),
--            arena.push_interned(&entity.name),
--            kind,
--            flags,
--            file_index[entity.file_path.as_str()],
--            entity.start_line as u32,
--            entity.end_line as u32,
--            parent,
--            start_byte,
--            end_byte,
--        );
--    }
+-      - name: Publish sem-core
+-        run: |
+-          VERSION=$(grep '^version' sem-core/Cargo.toml | head -1 | sed 's/.*"\(.*\)"/\1/')
+-          cargo publish -p sem-core || cargo info --registry crates-io "sem-core@$VERSION" >/dev/null
+-        env:
+-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 -
--    // NAMES: entity indices sorted by name bytes, so a name query is an
--    // equal_range rather than a scan. The tie-break on
--    // index keeps the table a deterministic function of the graph, which is
--    // what the consistency oracle's byte-equality property needs.
--    image_mark("entities_section", __entbytes_t0);
--    let __names_t0 = std::time::Instant::now();
--    let mut name_order: Vec<u32> = (0..entities.len() as u32).collect();
--    maybe_par_sort_unstable_by!(name_order, |a: &u32, b: &u32| {
--        entities[*a as usize]
--            .name
--            .cmp(&entities[*b as usize].name)
--            .then(a.cmp(b))
--    });
--    let mut name_bytes = Vec::with_capacity(name_order.len() * NAME_REC_LEN);
--    for index in &name_order {
--        name_bytes.extend_from_slice(&index.to_le_bytes());
--    }
-+    // ENTITIES/NAMES/FILES/KINDS share the string arena, so they are built in
-+    // order on one task; REFS and TRIGRAM read only the sorted entities and
-+    // the file list, so they run beside that chain instead of after it. Each
-+    // section is a pure function of its inputs, so the image is byte-identical
-+    // to the serial build (the image sha256 gate witnesses this).
-+    let refs_typed = entities.len() <= format::refs::MAX_ENTITIES;
-+    let sections = || {
-+        let __entbytes_t0 = std::time::Instant::now();
-+        // The per-entity hash lookups (parent index, test flag, byte span,
-+        // file index) touch no shared state, so they are resolved in parallel
-+        // first; only the arena pushes, which assign string offsets in entity
-+        // order, stay serial.
-+        let resolved: Vec<(u32, u16, (u32, u32), u32)> = maybe_par_iter!(entities)
-+            .map(|entity| {
-+                let parent = entity
-+                    .parent_id
-+                    .as_deref()
-+                    .and_then(|id| entity_index.get(id).copied())
-+                    .unwrap_or(NONE_U32);
-+                let flags = match test_entity_ids {
-+                    Some(ids) if ids.contains(entity.id.as_str()) => format::entity::FLAG_IS_TEST,
-+                    _ => 0,
-+                };
-+                let span = entity_byte_spans
-+                    .and_then(|spans| spans.get(entity.id.as_str()))
-+                    .copied()
-+                    .unwrap_or((NONE_U32, NONE_U32));
-+                (parent, flags, span, file_index[entity.file_path.as_str()])
-+            })
-+            .collect();
-+        let mut entity_bytes = Vec::with_capacity(entities.len() * ENTITY_REC_LEN);
-+        for (entity, &(parent, flags, (start_byte, end_byte), file)) in
-+            entities.iter().zip(&resolved)
-+        {
-+            let id_text = if ids_elided {
-+                id_tail_of(&entity.id, &entity.file_path).unwrap_or(&entity.id)
-+            } else {
-+                entity.id.as_str()
-+            };
-+            let kind = kinds.intern(&entity.entity_type, &mut arena);
-+            format::entity::write(
-+                &mut entity_bytes,
-+                arena.push_short(id_text),
-+                arena.push_interned(&entity.name),
-+                kind,
-+                flags,
-+                file,
-+                entity.start_line as u32,
-+                entity.end_line as u32,
-+                parent,
-+                start_byte,
-+                end_byte,
-+            );
-+        }
-+        drop(resolved);
+-      - name: Wait for crates.io index
+-        run: sleep 30
++      - uses: actions/setup-python@v5
++        with:
++          python-version: '3.12'
+ 
+-      - name: Publish sem-cloud-client
++      - name: Test and preserve publishing helper
+         run: |
+-          VERSION=$(grep '^version' sem-cloud-client/Cargo.toml | head -1 | sed 's/.*"\(.*\)"/\1/')
+-          cargo publish -p sem-cloud-client || cargo info --registry crates-io "sem-cloud-client@$VERSION" >/dev/null
+-        env:
+-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
++          python3 scripts/test-publish-crates.py
++          cp scripts/publish-crates.py "$RUNNER_TEMP/publish-crates.py"
+ 
+-      - name: Wait for crates.io index
+-        run: sleep 30
+-
+-      - name: Publish sem-mcp
+-        run: |
+-          VERSION=$(grep '^version' sem-mcp/Cargo.toml | head -1 | sed 's/.*"\(.*\)"/\1/')
+-          cargo publish -p sem-mcp || cargo info --registry crates-io "sem-mcp@$VERSION" >/dev/null
+-        env:
+-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
++      - uses: actions/checkout@v4
++        with:
++          ref: v${{ needs.check-version.outputs.version }}
+ 
+-      - name: Wait for crates.io index
+-        run: sleep 30
++      - name: Install Rust
++        uses: dtolnay/rust-toolchain@stable
+ 
+-      - name: Publish sem-cli
+-        run: |
+-          VERSION=$(grep '^version' sem-cli/Cargo.toml | head -1 | sed 's/.*"\(.*\)"/\1/')
+-          cargo publish -p sem-cli || cargo info --registry crates-io "sem-cli@$VERSION" >/dev/null
++      - name: Publish crates in dependency order
++        run: python3 "$RUNNER_TEMP/publish-crates.py" --workspace crates sem-core sem-cloud-client sem-mcp sem-cli
+         env:
+           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+```
+
+**File**: `CHANGELOG.md` (modified, +5/-0)
+```diff
+@@ -4,6 +4,11 @@ All notable changes to sem are documented in this file.
+ 
+ ## [Unreleased]
+ 
++### Fixed
 +
-+        // NAMES: entity indices sorted by name bytes, so a name query is an
-+        // equal_ran
-```
-
-**File**: `crates/sem-core/src/parser/graph.rs` (modified, +78/-41)
-```diff
-@@ -2365,7 +2365,16 @@ impl EntityGraph {
-         resolve_profile::add_pass1_wall_ns(__pass1_wall_t0.elapsed());
- 
-         let __assemble_t0 = std::time::Instant::now();
--        let mut all_entities: Vec<SemanticEntity> = Vec::new();
-+        // Sized up front: growing by doubling re-copied every entity already
-+        // gathered, which on a 2M-entity corpus is a lot of memmove on
-+        // the serial spine. Reused entities (warm builds) are not counted, so
-+        // this is a lower bound and the vector still grows when it must.
-+        let mut all_entities: Vec<SemanticEntity> = Vec::with_capacity(
-+            per_file
-+                .iter()
-+                .map(|product| product.entities.as_ref().map_or(0, Vec::len))
-+                .sum(),
-+        );
-         let mut parsed_files: Vec<(String, String, tree_sitter::Tree)> = Vec::new();
-         let mut fresh_precomputed: HashMap<String, scope_resolve::PrecomputedFileFacts> =
-             HashMap::default();
-@@ -2771,50 +2780,78 @@ impl EntityGraph {
-             ));
-             symbol_table_plain = symbol_table_owned;
-         } else {
--            // Unchanged from before: whole rebuild, single pass over
--            // all_entities for symbol_table/entity_map/entity_ranges, a
--            // second pass (needs entity_map complete) for class/owner
--            // members.
--            let mut symbol_table_owned: SymbolTable =
--                HashMap::with_capacity_and_hasher(all_entities.len(), Default::default());
--            let mut owned_entity_map: EntityInfoMap =
--                HashMap::with_capacity_and_hasher(all_entities.len(), Default::default());
--            let mut owned_entity_ranges: EntityRanges = HashMap::default();
--            for entity in &all_entities {
--                // No eager `entry(key.clone)`: `entry`
--                // demands an owned key up front, so the old spelling allocated
--                // `name`/`file_path` Strings that were immediately dropped on
--                // every hit — `file_path` once per entity in the file. Same
--                // get_mut/insert idiom `child_line_ranges` above already uses.
--                let interned_id = EntityId::from(entity.id.as_str());
--                match symbol_table_owned.get_mut(entity.name.as_str()) {
--                    Some(bucket) => bucket.push(interned_id.clone()),
--                    None => {
--                        symbol_table_owned.insert(entity.name.clone(), vec![interned_id.clone()]);
-+            // Whole rebuild: one pass each over all_entities for
-+            // symbol_table/entity_map/entity_ranges, then a second pass
-+            // (needs entity_map complete) for class/owner members. The three
-+            // first-pass tables are independent, so they are built on three
-+            // tasks from ids interned once up front. Each table still sees
-+            // entities in `all_entities` order, so bucket order and
-+            // last-insert-wins on a colliding id are exactly what one serial
-+            // pass produced.
-+            let interned_ids: Vec<EntityId> = maybe_par_iter!(all_entities)
-+                .map(|entity| EntityId::from(entity.id.as_str()))
-+                .collect();
-+            let build_symbol_table = || {
-+                let mut table: SymbolTable =
-+                    HashMap::with_capacity_and_hasher(all_entities.len(), Default::default());
-+                for (entity, interned_id) in all_entities.iter().zip(&interned_ids) {
-+                    // No eager `entry(key.clone)`: `entry`
-+                    // demands an owned key up front, so the old spelling allocated
-+                    // `name`/`file_path` Strings that were immediately dropped on
-+                    // every hit — `file_path` once per entity in the file. Same
-+                    // get_mut/insert idiom `child_line_ranges` above already uses.
-+                    match table.get_mut(entity.name.as_str()) {
-+                        Some(bucket) => bucket.push(interned_id.clone()),
-+                        None => {
-+                            table.insert(entity.name.clone(), vec![interned_id.clone()]);
-+                        }
-                     }
-                 }
--                owned_entity_map.insert(
--                    interned_id.clone(),
--                    EntityInfo {
--                        id: interned_id.clone(),
--                        name: entity.name.clone(),
--                        entity_type: entity.entity_type.clone(),
--                        file_path: entity.file_path.clone(),
--                        parent_id: entity.parent_id.as_ref().map(Into::into),
--                        start_line: entity.start_line,
--                        end_line: entity.end_line,
--                    },
--                );
--                match owned_entity_ranges.get_mut(entity.file_path.as_str()) {
--                    Some(bucket) => bucket.push((entity.start_line, entity.end_line, interned_id)),
--     
-```
-
-**File**: `crates/sem-core/src/parser/incremental.rs` (modified, +6/-0)
-```diff
-@@ -352,6 +352,12 @@ impl Serialize for TableFingerprints {
- }
- 
- impl TableFingerprints {
-+    /// Make room for `additional` more keys, so a whole-corpus pass does not
-+    /// rehash the table over and over as it grows.
-+    pub(crate) fn reserve(&mut self, additional: usize) {
-+        self.entries.reserve(additional);
-+    }
++- Crate publishing checks accepted uploads separately from sparse-index availability, waits before publishing dependents, and resumes from the immutable release tag without re-uploading accepted versions.
 +
-     #[inline]
-     pub(crate) fn put(&mut self, key: u64, value: u64) {
-         self.entries.insert(key, value);
-```
-
-**File**: `crates/sem-core/src/parser/scope_resolve.rs` (modified, +45/-21)
-```diff
-@@ -3452,6 +3452,13 @@ pub(crate) fn fingerprint_corpus_tables(
-     entity_map: &EntityInfoMap,
-     fp: &mut TableFingerprints,
- ) -> u64 {
-+    fp.reserve(
-+        lookups.symbol_table.len()
-+            + lookups.class_members.len()
-+            + lookups.owner_members.len()
-+            + entity_map.len()
-+            + 1,
-+    );
-     let mut sink = FingerprintSink::new(fp, 0);
-     // `register_rust_module_import` (the module-alias `use` form) scans
-     // every `(name, target file)` pair below looking for ones whose file
-@@ -3461,36 +3468,53 @@ pub(crate) fn fingerprint_corpus_tables(
-     // already visits them for the per-key `SymbolTable`/`EntityMap`
-     // fingerprints, so the guard costs one extra `u64` XOR per pair, not a
-     // second corpus scan.
-+    //
-+    // The value hashes are computed in parallel and then written in the
-+    // tables' own iteration order, so the map (and the guard, an XOR fold)
-+    // comes out exactly as a serial pass would leave it. On a 2.3M-entity
-+    // corpus this pass was several seconds on the build's serial spine.
-     let mut wildcard_import_guard: u64 = 0;
--    for (name, ids) in lookups.symbol_table.iter() {
--        let mut h = ValueHasher::new();
--        for id in ids {
--            h.s(id);
--            if let Some(info) = entity_map.get(id) {
--                wildcard_import_guard ^= {
--                    let mut wh = ValueHasher::new();
--                    wh.s(name).s(&info.file_path);
--                    wh.finish()
--                };
-+    let symbol_rows: Vec<(&String, u64, u64)> = maybe_par_iter!(lookups.symbol_table)
-+        .map(|(name, ids)| {
-+            let mut h = ValueHasher::new();
-+            let mut guard: u64 = 0;
-+            for id in ids {
-+                h.s(id);
-+                if let Some(info) = entity_map.get(id) {
-+                    guard ^= {
-+                        let mut wh = ValueHasher::new();
-+                        wh.s(name).s(&info.file_path);
-+                        wh.finish()
-+                    };
-+                }
-             }
--        }
--        sink.one(Table::SymbolTable, name, h.finish());
-+            (name, h.finish(), guard)
-+        })
-+        .collect();
-+    for (name, value, guard) in symbol_rows {
-+        wildcard_import_guard ^= guard;
-+        sink.one(Table::SymbolTable, name, value);
-     }
-     for (owner, members) in &lookups.class_members {
-         sink.one(Table::ClassMembers, owner, hash_member_list(members));
-     }
-     for (owner, members) in &lookups.owner_members {
-         sink.one(Table::OwnerMembers, owner, hash_member_list(members));
-     }
--    for (id, info) in entity_map {
--        let mut h = ValueHasher::new();
--        h.s(&info.name)
--            .s(&info.entity_type)
--            .s(&info.file_path)
--            .s(info.parent_id.as_deref().unwrap_or("\u{0}"))
--            .u(info.start_line)
--            .u(info.end_line);
--        sink.one(Table::EntityMap, id, h.finish());
-+    let entity_rows: Vec<(&EntityId, u64)> = maybe_par_iter!(entity_map)
-+        .map(|(id, info)| {
-+            let mut h = ValueHasher::new();
-+            h.s(&info.name)
-+                .s(&info.entity_type)
-+                .s(&info.file_path)
-+                .s(info.parent_id.as_deref().unwrap_or("\u{0}"))
-+                .u(info.start_line)
-+                .u(info.end_line);
-+            (id, h.finish())
-+        })
-+        .collect();
-+    for (id, value) in entity_rows {
-+        sink.one(Table::EntityMap, id, value);
-     }
-     sink.whole(Table::GuardRustModuleAlias, wildcard_import_guard);
-     wildcard_import_guard
-```
-
----
-
-### Incident Patch 2: `1ab4f898` (2026-10-22)
-**Commit Message**: perf: shorten the serial spine of cold index builds (#524)
-
-Draft: numbers and the equivalence check are still being collected and
-will be added here.
-
-## What is slow
-
-I profiled cold `sem graph` builds on Modal (8 vCPU) with phase timers
-and stack sampling. Today's baseline is about 63 s for the Linux kernel
-(2.35M entities) and 13 s for kubernetes (545k). The old 589 s figure is
-stale. Per-entity cost now grows roughly linearly, so the problem is no
-longer a quadratic. Most of the remaining wall time on large repos is
-spent in single-threaded stretches of the build. On kubernetes, about
-three quarters of the stack samples had only one busy thread.
-
-The largest serial pieces on Linux:
-
-| phase | ms |
-|---|---|
-| entity lookup tables (`owned`), including six whole-corpus clones |
-7,650 |
-| index image build (`build_image`) | 11,180 |
-| corpus table fingerprints | 3,400 |
-
-## Changes
-
-1. **Drop the whole-corpus lookup clones.** A non-retain session build
-(any repo over 20k files) cloned the symbol table, entity map, class and
-owner members, entity ranges and child ranges into its carry. Nothing
-mutates them after that point, so they are now moved into the carry once
-resolution is d
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -14,6 +14,8 @@ All notable changes to sem are documented in this file.
- 
- ### Changed
- 
-+- Cold graph builds move reusable lookup tables instead of cloning them and sort independent lookup buckets in parallel. Sequential builds retain the same behavior without requiring Rayon.
 +
- - **`sem_find` with mode `callers` gives the CLI's answer.** It says when the static graph cannot prove the caller set is complete, lists possible callers, and merges dispatch groups, where it used to print `callers: none` either way. Its JSON is now the shape `sem callers --json` prints (`entity`, `related`, `complete`, `incomplete_because`).
+ ## [0.28.2] - 2026-10-25
  
- ### Fixed
+ ### Added
 ```
 
-**File**: `crates/sem-core/src/index/grep.rs` (modified, +6/-0)
+**File**: `scripts/publish-crates.py` (added, +108/-0)
 ```diff
-@@ -115,10 +115,16 @@ pub fn search(
-     // Trigram candidate derivation and the membership sweep touch disjoint
-     // sections (NAMES-adjacent TRIGRAM postings vs. FILES/DIRS), so they run
-     // concurrently — same discipline `commands::query::index_answer` uses.
-+    #[cfg(feature = "parallel")]
-     let ((candidates, origin), complete) = rayon::join(
-         || candidate_files(idx, pattern, opts.case_insensitive),
-         || complete_check(idx, root, walk_subtree),
-     );
-+    #[cfg(not(feature = "parallel"))]
-+    let ((candidates, origin), complete) = (
-+        candidate_files(idx, pattern, opts.case_insensitive),
-+        complete_check(idx, root, walk_subtree),
-+    );
- 
-     // Unlike `commands::query`'s entity verbs, grep has no cheaper
-     // authoritative fallback to bail to on an inconclusive sweep — `verify`
+@@ -0,0 +1,108 @@
++#!/usr/bin/env python3
++"""Publish an immutable release in dependency order, waiting for registry visibility."""
++import argparse
++import json
++import subprocess
++import time
++import tomllib
++import urllib.error
++import urllib.request
++from pathlib import Path
++
++
++class RegistryError(RuntimeError):
++    pass
++
++
++def read_url(url):
++    request = urllib.request.Request(url, headers={
++        "User-Agent": "ataraxy-release-publisher/1.0", "Cache-Control": "no-cache",
++    })
++    try:
++        with urllib.request.urlopen(request, timeout=30) as response:
++            return response.read().decode()
++    except urllib.error.HTTPError as exc:
++        if exc.code == 404:
++            return None
++        raise RegistryError(f"Registry HTTP {exc.code}: {url}") from exc
++    except (urllib.error.URLError, TimeoutError) as exc:
++        raise RegistryError(f"Registry unavailable: {exc}") from exc
++
++
++def uploaded(name, version):
++    body = read_url(f"https://crates.io/api/v1/crates/{name}/{version}")
++    if body is None:
++        return False
++    release = json.loads(body)["version"]
++    if release.get("yanked"):
++        raise RegistryError(f"{name}@{version} is yanked; refusing to continue")
++    return release["num"] == version
++
++
++def indexed(name, version):
++    if len(name) == 1:
++        path = f"1/{name}"
++    elif len(name) == 2:
++        path = f"2/{name}"
++    elif len(name) == 3:
++        path = f"3/{name[0]}/{name}"
++    else:
++        path = f"{name[:2]}/{name[2:4]}/{name}"
++    body = read_url(f"https://index.crates.io/{path}")
++    return body is not None and any(
++        row.get("vers") == version and not row.get("yanked", False)
++        for row in (json.loads(line) for line in body.splitlines() if line.strip())
++    )
++
++
++def wait_until(check, label, timeout, interval):
++    deadline = time.monotonic() + timeout
++    while True:
++        try:
++            if check():
++                return
++            detail = "not yet visible"
++        except RegistryError as exc:
++            detail = str(exc)
++        remaining = deadline - time.monotonic()
++        if remaining <= 0:
++            raise RegistryError(f"Timed out waiting for {label}: {detail}. Rerun publication-only when registry indexing recovers.")
++        print(f"Waiting for {label}: {detail} ({int(remaining)}s remaining)", flush=True)
++        time.sleep(min(interval, remaining))
++
++
++def publish_one(name, version, command, timeout, interval):
++    if uploaded(name, version):
++        print(f"{name}@{version} already accepted; skipping upload", flush=True)
++    else:
++        result = subprocess.run(command, check=False)
++        if result.returncode and not uploaded(name, version):
++            raise RuntimeError(f"Upload failed for {name}@{version} (exit {result.returncode})")
++        wait_until(lambda: uploaded(name, version), f"{name}@{version} upload", timeout, interval)
++    wait_until(lambda: indexed(name, version), f"{name}@{version} in Cargo's sparse index", timeout, interval)
++    print(f"{name}@{version} is available to dependents", flush=True)
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--workspace", default=".")
++    parser.add_argument("--crates-dir", default="crates")
++    parser.add_argument("--no-verify", action="store_true")
++    parser.add_argument("--timeout", type=int, default=3600)
++    parser.add_argument("--interval", type=int, default=30)
++    parser.add_argument("crates", nargs="+")
++    args = parser.parse_args()
++    if args.timeout <= 0 or args.interval <= 0:
++        parser.error("timeout and interval must be positive")
++    for name in args.crates:
++        manifest = tomllib.loads((Path(args.crates_dir) / name / "Cargo.toml").read_text())
++        if manifest["package"]["name"] != name:
++            raise ValueError(f"Package name mismatch for {name}")
++        command = ["cargo", "publish", "--manifest-path", str(Path(args.workspace) / "Cargo.toml"), "-p", name]
++        if args.no_verify:
++            command.append("--no-verify")
++        publish_one(name, manifest["package"]["version"], command, args.timeout, args.interval)
++
++
++if __name__ == "__main__":
++    main()
 ```
 
-**File**: `crates/sem-core/src/parser/graph.rs` (modified, +69/-23)
+**File**: `scripts/test-publish-crates.py` (added, +47/-0)
 ```diff
-@@ -263,7 +263,11 @@ const PARSED_FILE_REUSE_BYTE_LIMIT: u64 = 24 * 1024 * 1024;
- pub fn source_bytes(root: &Path, file_paths: &[String]) -> u64 {
-     file_paths
-         .iter()
--        .map(|f| std::fs::metadata(root.join(f)).map(|m| m.len()).unwrap_or(0))
-+        .map(|f| {
-+            std::fs::metadata(root.join(f))
-+                .map(|m| m.len())
-+                .unwrap_or(0)
-+        })
-         .sum()
- }
- 
-@@ -796,6 +800,11 @@ pub type EntityAdjacencyMap = HashMap<EntityId, Vec<EntityId>>;
- pub type SymbolTable = HashMap<String, Vec<EntityId>>;
- 
- fn sort_symbol_table_targets_by_source(symbol_table: &mut SymbolTable, entity_map: &EntityInfoMap) {
-+    #[cfg(feature = "parallel")]
-+    symbol_table
-+        .par_iter_mut()
-+        .for_each(|(_, target_ids)| sort_one_symbol_table_bucket(target_ids, entity_map));
-+    #[cfg(not(feature = "parallel"))]
-     for target_ids in symbol_table.values_mut() {
-         sort_one_symbol_table_bucket(target_ids, entity_map);
-     }
-@@ -916,10 +925,15 @@ fn sort_members_bucket_by_source(members: &mut Vec<MemberTarget>, entity_map: &E
- /// neither was a *stated*, enforced invariant — see
- /// "Resolver tie-break contract" section for the measured effect of making
- /// it one.
--fn sort_all_member_buckets_by_source<K>(
-+fn sort_all_member_buckets_by_source<K: Eq + std::hash::Hash + Sync>(
-     buckets: &mut HashMap<K, Vec<MemberTarget>>,
-     entity_map: &EntityInfoMap,
- ) {
-+    #[cfg(feature = "parallel")]
-+    buckets
-+        .par_iter_mut()
-+        .for_each(|(_, members)| sort_members_bucket_by_source(members, entity_map));
-+    #[cfg(not(feature = "parallel"))]
-     for members in buckets.values_mut() {
-         sort_members_bucket_by_source(members, entity_map);
-     }
-@@ -940,6 +954,11 @@ fn sort_all_member_buckets_by_source<K>(
- /// this sorted order wins) instead of an unstated by-product of whichever
- /// order entities happened to be discovered in.
- fn sort_all_entity_ranges_by_source(ranges_by_file: &mut EntityRanges) {
-+    #[cfg(feature = "parallel")]
-+    ranges_by_file
-+        .par_iter_mut()
-+        .for_each(|(_, ranges)| ranges.sort_unstable());
-+    #[cfg(not(feature = "parallel"))]
-     for ranges in ranges_by_file.values_mut() {
-         ranges.sort_unstable();
-     }
-@@ -2635,6 +2654,10 @@ impl EntityGraph {
-         // corpus — see `maintain_entity_lookups_incremental`'s doc comment.
-         let use_incremental_lookups =
-             inc.is_some() && !retain_parsed_files && *carry_entity_lookups_primed;
-+        // Whether the tables built below end up in the carry after this build:
-+        // always on the incremental path, and on a non-retain session build's
-+        // whole rebuild, which primes the carry for the next one.
-+        let reclaim_lookups = inc.is_some() && !retain_parsed_files;
- 
-         // Pass A (borrowed half): lookups that borrow `&str` out of
-         // `all_entities` and so must be rebuilt every build regardless of
-@@ -2821,7 +2844,14 @@ impl EntityGraph {
-                     }
-                 }
-             }
--            sort_symbol_table_targets_by_source(&mut symbol_table_owned, &owned_entity_map);
-+            // The four bucket sorts below and the child-range index are
-+            // independent of each other (each writes one table and reads only
-+            // `owned_entity_map`/`all_entities`), so they run side by side
-+            // instead of one after another on the build's serial spine.
-+            // Every bucket is sorted by a total order (or stably, from the
-+            // same push order), so the result does not depend on scheduling.
-+            let sort_symbols =
-+                || sort_symbol_table_targets_by_source(&mut symbol_table_owned, &owned_entity_map);
-             // same canonical (file_path, start_line, end_line, id)
-             // tie-break as `symbol_table`, made explicit here instead of
-             // relying on `all_entities` already being in file-path order
-@@ -2831,25 +2861,38 @@ impl EntityGraph {
-             // build's `maintain_entity_lookups_incremental` (which re-sorts
-             // only the buckets it touches) starts from an already-canonical
-             // baseline.
--            sort_all_member_buckets_by_source(&mut owned_class_members, &owned_entity_map);
--            sort_all_member_buckets_by_source(&mut owned_owner_members, &owned_entity_map);
--            sort_all_entity_ranges_by_source(&mut owned_entity_ranges);
-+            let sort_members = || {
-+                sort_all_member_buckets_by_source(&mut owned_class_members, &owned_entity_map);
-+                sort_all_member_buckets_by_source(&mut owned_owner_members, &owned_entity_map);
-+                sort_all_entity_ranges_by_source(&mut owned_entity_ranges);
-+            };
-+            let child_ranges = || {
-+                let __lookup_child_ranges_t0 = std::time::Instant::now();
-+                let ranges = build_child_ranges_by_parent(&all_entities);
-+                resolve_p
-```
-
----
-
-### Incident Patch 3: `7e4ca027` (2026-10-22)
-**Commit Message**: fix(deps): bump webpki-roots to 1.0.10 (#526)
-
-Fixes #525.
-
-Bumps webpki-roots from 1.0.7 to 1.0.10 in Cargo.lock to pick up the
-fixed root store.
-
-webpki-roots 0.26.11 is still in the tree because ureq 2 depends on it,
-but that version is a semver shim that re-exports webpki-roots 1.x, so
-after this change every TLS client in sem uses the 1.0.10 roots.
-Dropping the shim entirely needs a move to ureq 3, which can come
-separately.
-
-Checked with `cargo tree -i webpki-roots@1.0.10` and a release build of
-sem-cli.
-
-Thanks @0323pin for the report.
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-**File**: `crates/Cargo.lock` (modified, +3/-3)
-```diff
-@@ -3673,14 +3673,14 @@ version = "0.26.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "521bc38abb08001b01866da9f51eb7c5d647a19260e00054a8c7fd5f9e57f7a9"
- dependencies = [
-- "webpki-roots 1.0.7",
-+ "webpki-roots 1.0.10",
- ]
- 
- [[package]]
- name = "webpki-roots"
--version = "1.0.7"
-+version = "1.0.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "52f5ee44c96cf55f1b349600768e3ece3a8f26010c05265ab73f945bb1a2eb9d"
-+checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
- dependencies = [
-  "rustls-pki-types",
- ]
+@@ -0,0 +1,47 @@
++import importlib.util
++import unittest
++from pathlib import Path
++from types import SimpleNamespace
++from unittest.mock import patch
++
++spec = importlib.util.spec_from_file_location("publisher", Path(__file__).with_name("publish-crates.py"))
++p = importlib.util.module_from_spec(spec)
++spec.loader.exec_module(p)
++
++
++class PublicationTests(unittest.TestCase):
++    def test_accepted_upload_waits_for_index_without_reupload(self):
++        with patch.object(p, "uploaded", return_value=True), patch.object(p, "indexed", side_effect=[False, True]) as index, patch.object(p.subprocess, "run") as run, patch.object(p.time, "sleep"):
++            p.publish_one("test-crate", "1.0.0", ["cargo"], 60, 1)
++        run.assert_not_called()
++        self.assertEqual(index.call_count, 2)
++
++    def test_auth_failure_stops_before_index(self):
++        with patch.object(p, "uploaded", return_value=False), patch.object(p.subprocess, "run", return_value=SimpleNamespace(returncode=101)), patch.object(p, "indexed") as index:
++            with self.assertRaisesRegex(RuntimeError, "Upload failed"):
++                p.publish_one("test-crate", "1.0.0", ["cargo"], 60, 1)
++        index.assert_not_called()
++
++    def test_lost_upload_response_recovers_from_registry_confirmation(self):
++        with patch.object(p, "uploaded", side_effect=[False, True, True]), patch.object(p.subprocess, "run", return_value=SimpleNamespace(returncode=101)), patch.object(p, "indexed", return_value=True):
++            p.publish_one("test-crate", "1.0.0", ["cargo"], 60, 1)
++
++    def test_index_timeout_is_not_success(self):
++        with patch.object(p, "uploaded", return_value=True), patch.object(p, "indexed", return_value=False), patch.object(p.time, "monotonic", side_effect=[0, 61]):
++            with self.assertRaisesRegex(p.RegistryError, "Timed out"):
++                p.publish_one("test-crate", "1.0.0", ["cargo"], 60, 1)
++
++    def test_registry_api_failure_does_not_trigger_upload(self):
++        with patch.object(p, "uploaded", side_effect=p.RegistryError("HTTP 503")), patch.object(p.subprocess, "run") as run:
++            with self.assertRaises(p.RegistryError):
++                p.publish_one("test-crate", "1.0.0", ["cargo"], 60, 1)
++        run.assert_not_called()
++
++    def test_sparse_index_requires_exact_unyanked_version(self):
++        with patch.object(p, "read_url", return_value='{"vers":"1.0.0","yanked":true}\n{"vers":"1.0.1","yanked":false}'):
++            self.assertFalse(p.indexed("test-crate", "1.0.0"))
++            self.assertTrue(p.indexed("test-crate", "1.0.1"))
++
++
++if __name__ == "__main__":
++    unittest.main()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #533** (2026-10-26): fix(release): resume accepted uploads after registry indexing stalls (@rs545837)
+- **PR #532** (2026-10-26): release: Sem 0.28.2 (@rs545837)
+- **PR #531** (2026-10-26): bench: preserve experimental validation runtime and parity checks (@rs545837)
 - **PR #530** (2026-10-24): docs: record MCP query contract fixes (@rs545837)
 - **PR #529** (2026-10-24): fix(mcp): support scoped context and structured caller batches (@rs545837)
 - **PR #528** (2026-10-22): perf: parallelize the rest of the cold index build's serial stretches (@rs545837)
-- **PR #527** (2026-10-22): fix: preserve entity lookup and source receipt completeness (@rs545837)
-- **PR #526** (2026-10-22): fix(deps): bump webpki-roots to 1.0.10 (@rs545837)
-- **PR #524** (2026-10-22): perf: shorten the serial spine of cold index builds (@rs545837)
 
 ---
 
@@ -2525,21 +2164,36 @@ Thanks @0323pin for the report.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. parallelize the rest of the cold index build's serial stretches (#528)
+## X. release): resume accepted uploads after registry indexing stalls (#533)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ataraxy-Labs/sem. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release-publisher.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ataraxy-Labs/sem. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6caf881d`: parallelize the rest of the cold index build's serial stretches (#528). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `76f97a98`: release): resume accepted uploads after registry indexing stalls (#533). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-publisher.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Cold index builds on large repos are about a fifth faster.** A first `sem graph` on the Linux kernel (2.35M entities) went from 49.5 s to 38.6 s, and on kubernetes (545k entities) from 12.5 s to 10.0 s, on an 8 vCPU machine, with peak memory within 2%. The build had long single-threaded stretches. Along with the lookup-table change above, corpus fingerprints are hashed in parallel, independent index sections and lookup tables are built side by side, and large frees and the two facts saves no longer hold up the command. The graph and the index file are byte-identical to before.
+name: Release publisher tests
+on:
+  pull_request:
+    paths: ['scripts/publish-crates.py', 'scripts/test-publish-crates.py', '.github/workflows/release.yml', '.github/workflows/release-publisher.yml']
+  push:
+    branches: [main]
+    paths: ['scripts/publish-crates.py', 'scripts/test-publish-crates.py', '.github/workflows/release.yml', '.github/workflows/release-publisher.yml']
+jobs:
+  publisher:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python3 scripts/test-publish-crates.py
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2549,4 +2203,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6caf881d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `76f97a98` are properly handled with clean fallback behavior.

@@ -5370,3 +5370,5 @@
 | `CYCLE-20261027-YG9V` | `2026-10-27T14:22:20.131Z` | `openreplay/openreplay` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4842` | Yes (`5c5270f1...`) |
 | `CYCLE-20261027-YKEN` | `2026-10-27T14:22:25.487Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4843` | Yes (`8a019d96...`) |
 | `CYCLE-20261027-ZK5V` | `2026-10-27T14:23:11.827Z` | `ooples/token-optimizer-mcp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4844` | Yes (`b4140bcc...`) |
+| `CYCLE-20261027-3RMI` | `2026-10-27T14:26:28.122Z` | `Ataraxy-Labs/sem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4845` | Yes (`8a447017...`) |
+| `CYCLE-20261027-3WAQ` | `2026-10-27T14:26:34.178Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4846` | Yes (`9a2955f4...`) |

@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "9dc00492",
+    "sourceVersion": "abcdcf19",
     "license": "MIT",
-    "contentHash": "2fae450924efcbb1903329c8859fd9508e8d61c740cd5709549650aa2ebfd1c5",
-    "lastHarvestedAt": "2026-10-27T12:30:17.847Z",
+    "contentHash": "9a2955f4d38ddd289ba410c49b7aafc7fe5226d23f456c6a9f4bf5fd819b99d6",
+    "lastHarvestedAt": "2026-10-27T14:26:34.182Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -6343,10 +6343,10 @@
     "repository": "Ataraxy-Labs/sem",
     "platform": "github",
     "sourceUrl": "https://github.com/Ataraxy-Labs/sem",
-    "sourceVersion": "f7fa398c",
+    "sourceVersion": "76f97a98",
     "license": "Apache-2.0",
-    "contentHash": "ff9e0140a51dabe509ad315726f3e10fd6fa1f706629a718437538b0344e8d24",
-    "lastHarvestedAt": "2026-10-24T20:48:38.127Z",
+    "contentHash": "8a4470177454f716f19750e3e8e4a65a05e20a93b8c68b0511131074641c5d20",
+    "lastHarvestedAt": "2026-10-27T14:26:28.125Z",
     "learningId": "learn-github-ataraxy-labs-sem"
   },
   "komi-store-komi-store": {

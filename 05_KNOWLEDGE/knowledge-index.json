@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T14:23:11.756Z",
+  "last_updated": "2026-10-27T14:26:34.118Z",
   "total_verified_learnings": 1129,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3551,8 +3551,8 @@
       "slug": "ataraxy-labs-sem",
       "platform": "github",
       "source_url": "https://github.com/Ataraxy-Labs/sem",
-      "source_version": "f7fa398c",
-      "content_hash": "ff9e0140a51dabe509ad315726f3e10fd6fa1f706629a718437538b0344e8d24",
+      "source_version": "76f97a98",
+      "content_hash": "8a4470177454f716f19750e3e8e4a65a05e20a93b8c68b0511131074641c5d20",
       "dossier_path": "07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
       "promoted_rules": [
@@ -3570,6 +3570,11 @@
           "number": 3964,
           "title": "parallelize the rest of the cold index build's serial stretches (#528)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4845,
+          "title": "release): resume accepted uploads after registry indexing stalls (#533)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3577,7 +3582,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T20:48:38.060Z",
+      "verified_at": "2026-10-27T14:26:28.052Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42318,8 +42323,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "9dc00492",
-      "content_hash": "2fae450924efcbb1903329c8859fd9508e8d61c740cd5709549650aa2ebfd1c5",
+      "source_version": "abcdcf19",
+      "content_hash": "9a2955f4d38ddd289ba410c49b7aafc7fe5226d23f456c6a9f4bf5fd819b99d6",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -42377,6 +42382,11 @@
           "number": 4752,
           "title": "trackers): gitea reporter pagination (#7945)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4846,
+          "title": "Merge pull request #7940 from mazzz3r/feat/info-placeholders",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42384,7 +42394,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:30:17.778Z",
+      "verified_at": "2026-10-27T14:26:34.105Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -134705,6 +134715,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T14:23:11.745Z"
+    },
+    "rule-4845": {
+      "learning_id": "rule-4845",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4845,
+      "title": "release): resume accepted uploads after registry indexing stalls (#533)",
+      "source_url": "https://github.com/Ataraxy-Labs/sem",
+      "source_version": "76f97a98",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:26:28.052Z"
+    },
+    "rule-4846": {
+      "learning_id": "rule-4846",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4846,
+      "title": "Merge pull request #7940 from mazzz3r/feat/info-placeholders",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "abcdcf19",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:26:34.105Z"
     }
   },
   "aliases": {

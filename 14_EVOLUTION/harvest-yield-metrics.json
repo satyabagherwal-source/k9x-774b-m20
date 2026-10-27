@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T14:23:11.834Z",
-  "total_cycles_completed": 5347,
-  "total_learnings_persisted": 5347,
-  "total_rules_promoted": 4751,
+  "last_updated": "2026-10-27T14:26:34.187Z",
+  "total_cycles_completed": 5349,
+  "total_learnings_persisted": 5349,
+  "total_rules_promoted": 4753,
   "history": [
-    {
-      "timestamp": "2026-10-26T17:58:25.079Z",
-      "repository": "prometheus/prometheus",
-      "learningId": "learn-github-prometheus-prometheus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T17:58:26.672Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-26T17:58:30.310Z",
       "repository": "MaterializeInc/materialize",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-27T14:23:11.834Z",
       "repository": "ooples/token-optimizer-mcp",
       "learningId": "learn-github-ooples-token-optimizer-mcp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:26:28.131Z",
+      "repository": "Ataraxy-Labs/sem",
+      "learningId": "learn-github-ataraxy-labs-sem",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:26:34.187Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

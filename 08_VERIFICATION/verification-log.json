@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-JMJH",
-    "timestamp": "2026-10-25T15:03:27.197Z",
-    "repository": "gocd/gocd",
-    "learningId": "learn-github-gocd-gocd",
-    "contentHash": "c9e26af95b616b39d62474051d53cceae30b12f8e356fbd17f4beac780446011",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-RQMA",
-    "timestamp": "2026-10-25T15:09:45.730Z",
-    "repository": "tamagui/tamagui",
-    "learningId": "learn-github-tamagui-tamagui",
-    "contentHash": "7a3183da86dfc5510dfb76ae5b44b808f6c8a9e68e30c253f0c9cbd5ede69015",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-RWXL",
     "timestamp": "2026-10-25T15:09:53.913Z",
     "repository": "goss-org/goss",
@@ -7490,6 +7460,36 @@
     "repository": "ooples/token-optimizer-mcp",
     "learningId": "learn-github-ooples-token-optimizer-mcp",
     "contentHash": "b4140bcc4d54484c9325e02d3fabeae090017a088aa3c1382165d053ef0a957e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-3RMI",
+    "timestamp": "2026-10-27T14:26:28.122Z",
+    "repository": "Ataraxy-Labs/sem",
+    "learningId": "learn-github-ataraxy-labs-sem",
+    "contentHash": "8a4470177454f716f19750e3e8e4a65a05e20a93b8c68b0511131074641c5d20",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-3WAQ",
+    "timestamp": "2026-10-27T14:26:34.178Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "9a2955f4d38ddd289ba410c49b7aafc7fe5226d23f456c6a9f4bf5fd819b99d6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
