@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T14:07:29.552Z",
+  "last_updated": "2026-10-27T14:10:56.259Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "2b30b67f7f363751b1a7807e68f8d582d8dc0ba73c57a545d95f88496fd2ad9a",
-      "verified_at": "2026-10-26T17:58:26.674Z",
+      "content_hash": "b0ea55d144beb7fd565894a5fb55d2899abee847d4a67063bb29dbf15ec787bd",
+      "verified_at": "2026-10-27T14:10:56.258Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T17:58:26.674Z"
+      "last_updated": "2026-10-27T14:10:56.258Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -9531,14 +9531,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-carbon-design-system-carbon",
-      "content_hash": "99eb769a293832d0728098c240eee2beec14ee737bce944ffceb06233e2da78e",
-      "verified_at": "2026-10-25T12:10:54.399Z",
+      "content_hash": "0081ff95b86902a1fa527b98dd7e83c0f959bbbd798f59f59a5e89b236f314f9",
+      "verified_at": "2026-10-27T14:10:39.854Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T12:10:54.399Z"
+      "last_updated": "2026-10-27T14:10:39.854Z"
     },
     "emilkowalski/vaul": {
       "repository": "emilkowalski/vaul",
@@ -10071,14 +10071,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-milvus-io-milvus",
-      "content_hash": "6697442573ee5b14266e12c155aec0da031cb5f4c06c385cbd1fe0b64d78e85d",
-      "verified_at": "2026-10-25T08:24:37.823Z",
+      "content_hash": "3f1009bf8f86511b7eede86668b2bd20f9d3fb3b3866074df7e2f8e0c40539d5",
+      "verified_at": "2026-10-27T14:10:54.500Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T08:24:37.823Z"
+      "last_updated": "2026-10-27T14:10:54.500Z"
     },
     "ynqa/jnv": {
       "repository": "ynqa/jnv",
@@ -15845,15 +15845,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-comfy-org-z_image_turbo",
-      "content_hash": "6cfd82cf4627c83e8b7300f361a83043a4732c397d604ce10e3f7a935647f633",
-      "verified_at": "2026-10-25T16:34:47.047Z",
+      "learning_id": "learn-huggingface-comfy-org-z-image-turbo",
+      "content_hash": "72959981cec0b965bda1d5cb1207f5e065128ff8cfad3a8e04e407f78825b1c0",
+      "verified_at": "2026-10-27T14:10:49.333Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T16:34:47.047Z"
+      "last_updated": "2026-10-27T14:10:49.333Z"
     },
     "unsloth/flint-GGUF": {
       "repository": "unsloth/flint-GGUF",

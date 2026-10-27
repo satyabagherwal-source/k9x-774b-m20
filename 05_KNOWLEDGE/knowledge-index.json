@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T14:07:29.494Z",
+  "last_updated": "2026-10-27T14:10:56.188Z",
   "total_verified_learnings": 1123,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5453,8 +5453,8 @@
       "slug": "carbon-design-system-carbon",
       "platform": "github",
       "source_url": "https://github.com/carbon-design-system/carbon",
-      "source_version": "dc9a20d0",
-      "content_hash": "99eb769a293832d0728098c240eee2beec14ee737bce944ffceb06233e2da78e",
+      "source_version": "db1bdb20",
+      "content_hash": "0081ff95b86902a1fa527b98dd7e83c0f959bbbd798f59f59a5e89b236f314f9",
       "dossier_path": "07_PROJECT_LEARNING/carbon-design-system-carbon-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/carbon-design-system-carbon-learnings.md",
       "promoted_rules": [
@@ -5497,6 +5497,11 @@
           "number": 4280,
           "title": "MultiSelect): omit empty aria-activedescendant on the toggle button (#23819)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4831,
+          "title": "Card): update header actions architecture (#23797)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5504,7 +5509,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T12:10:54.338Z",
+      "verified_at": "2026-10-27T14:10:39.766Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36342,8 +36347,8 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "78f1a7a6",
-      "content_hash": "6697442573ee5b14266e12c155aec0da031cb5f4c06c385cbd1fe0b64d78e85d",
+      "source_version": "b6cbe004",
+      "content_hash": "3f1009bf8f86511b7eede86668b2bd20f9d3fb3b3866074df7e2f8e0c40539d5",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
@@ -36386,6 +36391,11 @@
           "number": 4190,
           "title": "Snapshot Re-Verification on Aborted Terminal Dependency States",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4834,
+          "title": "write manifest index artifacts under the segment _index directory (#54412)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36393,7 +36403,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T08:24:37.740Z",
+      "verified_at": "2026-10-27T14:10:54.403Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54182,8 +54192,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "8252d52f",
-      "content_hash": "2b30b67f7f363751b1a7807e68f8d582d8dc0ba73c57a545d95f88496fd2ad9a",
+      "source_version": "a6a48cd8",
+      "content_hash": "b0ea55d144beb7fd565894a5fb55d2899abee847d4a67063bb29dbf15ec787bd",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -54226,6 +54236,11 @@
           "number": 4633,
           "title": "gpu): also fuzz cpp code for gpu",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4835,
+          "title": "gpu): add goldshmidt_division (#3926)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54233,7 +54248,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T17:58:26.625Z",
+      "verified_at": "2026-10-27T14:10:56.168Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -117401,7 +117416,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
       "source_version": "hf-comfy-org-z-image-turbo",
-      "content_hash": "f6d9511e888b789348c4b6a1014711b6622bdcb0901e26f201be1b275c05910a",
+      "content_hash": "72959981cec0b965bda1d5cb1207f5e065128ff8cfad3a8e04e407f78825b1c0",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md",
       "promoted_rules": [
@@ -117414,6 +117429,16 @@
           "number": 3755,
           "title": "Immutable Model Metadata Separation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4832,
+          "title": "Multi-Precision Artifact Separation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4833,
+          "title": "LoRA Distillation Patch Isolation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -117421,7 +117446,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T21:35:20.147Z",
+      "verified_at": "2026-10-27T14:10:49.216Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -134271,6 +134296,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T14:07:29.484Z"
+    },
+    "rule-4831": {
+      "learning_id": "rule-4831",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4831,
+      "title": "Card): update header actions architecture (#23797)",
+      "source_url": "https://github.com/carbon-design-system/carbon",
+      "source_version": "db1bdb20",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:10:39.766Z"
+    },
+    "rule-4832": {
+      "learning_id": "rule-4832",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4832,
+      "title": "Multi-Precision Artifact Separation Invariant",
+      "source_url": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
+      "source_version": "hf-comfy-org-z-image-turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:10:49.216Z"
+    },
+    "rule-4833": {
+      "learning_id": "rule-4833",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4833,
+      "title": "LoRA Distillation Patch Isolation Invariant",
+      "source_url": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
+      "source_version": "hf-comfy-org-z-image-turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:10:49.216Z"
+    },
+    "rule-4834": {
+      "learning_id": "rule-4834",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4834,
+      "title": "write manifest index artifacts under the segment _index directory (#54412)",
+      "source_url": "https://github.com/milvus-io/milvus",
+      "source_version": "b6cbe004",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:10:54.403Z"
+    },
+    "rule-4835": {
+      "learning_id": "rule-4835",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4835,
+      "title": "gpu): add goldshmidt_division (#3926)",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "a6a48cd8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:10:56.168Z"
     }
   },
   "aliases": {

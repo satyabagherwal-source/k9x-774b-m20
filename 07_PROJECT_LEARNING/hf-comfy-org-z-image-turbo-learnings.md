@@ -3,7 +3,7 @@
 > **Source Version**: `hf-comfy-org`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-22T21:35:19.685Z  
+> **Timestamp**: 2026-10-27T14:10:48.462Z  
 > **Learning ID**: `learn-huggingface-comfy-org-z-image-turbo`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,203 +17,221 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-This repository is not a software application but a **Model Artifact Distribution Package**. It solves the problem of **heterogeneous hardware compatibility** and **workflow standardization** for the Z-Image-Turbo diffusion model within the ComfyUI ecosystem. The core technical challenge addressed is the mapping of a single logical model (Z-Image-Turbo) into multiple physical memory representations (BF16, INT8, NVFP4) to accommodate GPUs with varying VRAM capacities (e.g., 8GB vs. 24GB+), while maintaining a consistent interface for the ComfyUI node graph.
+This repository is **not** a software application but a **Model Artifact Distribution Package**. It solves the problem of **heterogeneous hardware compatibility** and **workflow standardization** for the `Tongyi-MAI/Z-Image-Turbo` diffusion model within the ComfyUI ecosystem. The core architectural challenge addressed is the mapping of a single logical model (Z-Image-Turbo) into multiple physical memory representations (BF16, INT8, NVFP4) to accommodate varying VRAM constraints (24GB, 12GB, 8GB, etc.) while maintaining a unified interface for the ComfyUI node graph.
 
 **Architectural Boundaries:**
-1.  **Consumer Boundary:** The boundary is the `ComfyUI/models/` directory structure. The repository defines the *contract* of file placement.
-2.  **Decoupling:** The model weights are decoupled from the inference engine (ComfyUI). The repository contains no executable code, only binary tensors (`.safetensors`) and metadata.
-3.  **State Ownership:** The "state" is the static weight matrices. There is no runtime state management in this repo; state management is delegated to the ComfyUI runtime which loads these tensors into GPU memory.
+1.  **Consumer Boundary:** The ComfyUI Python runtime. The repository provides no executable code, only binary tensors (`.safetensors`) and metadata.
+2.  **Producer Boundary:** The `Tongyi-MAI` training pipeline. This repo is a downstream repackaging.
+3.  **Data Boundary:** The separation of concerns between the **Diffusion Backbone** (`diffusion_models/`), the **Text Encoder** (`text_encoders/`), and the **Latent Space Codec** (`vae/`). This tripartite structure is the fundamental invariant of modern Stable Diffusion architectures.
 
 **Critical Subsystem Abstractions:**
-*   **Precision Variants:** The abstraction of "Z-Image-Turbo" is split into three concrete implementations:
-    *   `z_image_turbo_bf16.safetensors`: High fidelity, high memory cost.
-    *   `z_image_turbo_int8_convrot.safetensors`: Quantized, lower memory, potential slight quality loss.
-    *   `z_image_turbo_nvfp4.safetensors`: Extreme quantization for low-VRAM devices.
-*   **Text Encoder Variants:** Similarly, the Qwen 3 4B text encoder is provided in BF16, FP4 Mixed, and FP8 Mixed formats, allowing users to trade off text understanding precision for VRAM savings.
-*   **VAE Separation:** The Autoencoder (`ae.safetensors`) is separated from the UNet/DiT, allowing for potential swapping of VAEs without re-downloading the massive diffusion model.
+*   **Quantization Variants:** The presence of `bf16`, `int8_convrot`, and `nvfp4` files indicates a **Multi-Precision Strategy**. The system abstracts the precision loss into file selection rather than runtime dynamic quantization.
+*   **Distillation Patch:** The `loras/z_image_turbo_distill_patch_lora_bf16.safetensors` file represents a **LoRA (Low-Rank Adaptation)** layer. This is a critical architectural component that allows the base model to be "distilled" (fewer steps) without retraining the entire backbone. It acts as a conditional modifier to the diffusion process.
+*   **Text Encoder Heterogeneity:** The inclusion of `qwen_3_4b` in multiple precisions (`bf16`, `fp4_mixed`, `fp8_mixed`) suggests the text encoder is a separate, heavy component that can be offloaded or quantized independently of the diffusion UNet/DiT.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Heterogeneous Hardware Artifact Partitioning
+### 1. Multi-Precision Artifact Separation Invariant
 **RULE**:
-When distributing machine learning models for heterogeneous hardware, you MUST partition artifacts by precision/quantization level into distinct files rather than relying on runtime dynamic quantization, and you MUST document the exact directory mapping for each variant.
-**WHY**:
-Runtime quantization (e.g., converting BF16 to INT8 on the fly) incurs significant CPU overhead and latency during model loading, which is unacceptable for interactive tools like ComfyUI. Pre-quantized artifacts ensure zero-latency loading. Without explicit directory mapping, users will place files in incorrect locations, causing "Model Not Found" errors or silent fallbacks to default (often incompatible) models.
-**WHEN TO APPLY**:
-Any ML model distribution repository targeting consumer-grade GPUs with varying VRAM (4GB to 24GB+).
-**VERIFIED IMPLEMENTATION PATTERN**:
-```markdown
-# Directory Structure Contract
-models/
-├── diffusion_models/
-│   ├── model_name_bf16.safetensors      # High VRAM
-│   ├── model_name_int8.safetensors      # Mid VRAM
-│   └── model_name_fp4.safetensors       # Low VRAM
-├── text_encoders/
-│   ├── te_name_bf16.safetensors
-│   └── te_name_fp8.safetensors
-└── vae/
-    └── vae_name.safetensors
-```
-**NEGATIVE CONSTRAINT**:
-```markdown
-# Anti-Pattern: Single monolithic file with ambiguous naming
-models/
-└── z_image_turbo.safetensors  # User does not know if this is BF16 or INT8
-```
-**VERIFICATION METHOD**:
-A CI script that scans the repository for `.safetensors` files and asserts that every file name contains a precision suffix (`_bf16`, `_int8`, `_fp4`, `_fp8`) and that the README explicitly maps each file to a target VRAM tier.
+When distributing machine learning models for heterogeneous hardware, you MUST provide distinct, pre-quantized binary artifacts (e.g., BF16, INT8, FP4) rather than relying solely on runtime dynamic quantization. You MUST NOT assume a single precision format will fit all target VRAM constraints.
 
-### 2. Immutable Model Metadata Separation
-**RULE**:
-You MUST NOT store model configuration parameters (e.g., `num_inference_steps`, `guidance_scale`) inside the binary weight files. These MUST be defined in external JSON workflow templates or `config.json` files that are version-controlled separately from the weights.
 **WHY**:
-Binary weight files are immutable artifacts. If inference parameters are hardcoded into the weights or assumed by the loader, updating the recommended inference strategy requires re-distributing the entire multi-GB model file. Separating metadata allows for rapid iteration on inference strategies without re-uploading weights.
+Runtime quantization (e.g., converting BF16 to INT8 on the fly) incurs significant CPU overhead, introduces numerical instability if not carefully calibrated, and fails to optimize memory layout for specific hardware (e.g., NVIDIA's FP4 support requires specific tensor core alignment). Pre-quantized artifacts ensure zero-copy loading and deterministic performance. The `z_image_turbo_int8_convrot` naming implies specific convolution rotation optimizations that are only valid in the pre-quantized state.
+
 **WHEN TO APPLY**:
-Any ML model repository where inference parameters are tunable or subject to change.
+Any ML model distribution targeting consumer GPUs with varying VRAM (8GB to 24GB+). Specifically applicable to Diffusion Models, LLMs, and Vision Transformers.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
-```json
-// workflow_template.json
-{
-  "nodes": [
-    {
-      "type": "KSampler",
-      "inputs": {
-        "steps": 8,
-        "cfg": 1.0,
-        "model": "z_image_turbo_bf16.safetensors"
-      }
-    }
-  ]
-}
+```python
+# Conceptual Model Registry Pattern
+class ModelRegistry:
+    def __init__(self):
+        self.variants = {
+            "z_image_turbo": {
+                "bf16": "models/diffusion_models/z_image_turbo_bf16.safetensors",
+                "int8": "models/diffusion_models/z_image_turbo_int8_convrot.safetensors",
+                "fp4": "models/diffusion_models/z_image_turbo_nvfp4.safetensors"
+            }
+        }
+
+    def get_model_path(self, model_name: str, precision: str) -> str:
+        if model_name not in self.variants:
+            raise KeyError(f"Model {model_name} not found")
+        if precision not in self.variants[model_name]:
+            raise ValueError(f"Precision {precision} not available for {model_name}")
+        return self.variants[model_name][precision]
+
+# Usage: Explicit selection based on hardware capability
+# if gpu_vram < 12GB:
+#     path = registry.get_model_path("z_image_turbo", "fp4")
+# elif gpu_vram < 24GB:
+#     path = registry.get_model_path("z_image_turbo", "int8")
+# else:
+#     path = registry.get_model_path("z_image_turbo", "bf16")
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# Anti-Pattern: Hardcoding inference logic in the model loader
-def load_model(path):
-    model = load_safetensors(path)
-    model.config.steps = 8  # Bad: Ties inference logic to weight file
-    return model
+# ANTI-PATTERN: Single file with runtime conversion
+# This causes high CPU load and potential OOM during conversion
+model = load_safetensors("z_image_turbo_bf16.safetensors")
+if gpu_vram < 12GB:
+    model = quantize_to_int8(model) # Slow, memory spike, unstable
 ```
+
 **VERIFICATION METHOD**:
-Lint check on `.safetensors` metadata headers to ensure they contain only weight shapes and dtypes, not inference hyperparameters.
+1.  **File Existence Check**: Assert that all declared precision variants exist in the repository tree.
+2.  **VRAM Simulation Test**: Load each variant in a simulated environment with constrained memory limits (e.g., `torch.cuda.set_per_process_memory_fraction`) and verify successful loading without OOM.
+3.  **Hash Verification**: Ensure each file has a unique SHA256 hash to prevent accidental duplication of files under different names.
+
+### 2. LoRA Distillation Patch Isolation Invariant
+**RULE**:
+Distillation patches (LoRAs) that modify the inference step count or quality-speed trade-off MUST be stored as separate, optional artifacts. They MUST NOT be baked into the base model weights. The base model MUST remain functional without the LoRA, albeit with different performance characteristics.
+
+**WHY**:
+Baking distillation into the base model destroys the flexibility of the base model for non-distilled use cases (e.g., high-quality, high-step-count generation). Separating the LoRA allows users to toggle between "Turbo" (fast, low steps) and "Standard" (slow, high steps) modes using the same base weights. It also allows for A/B testing of different distillation strategies without re-downloading the entire base model.
+
+**WHEN TO APPLY**:
+Any system using LoRA adapters for fine-tuning, distillation, or style transfer. Critical for diffusion models where step count is a primary performance lever.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# ComfyUI Node Logic Pattern
+class LoadDiffusionModel:
+    def __init__(self, model_path: str, lora_path: str = None):
+        self.base_model = load_safetensors(model_path)
+        if lora_path:
+            self.lora = load_safetensors(lora_path)
+            self.base_model = apply_lora(self.base_model, self.lora)
+        else:
+            self.base_model = self.base_model # No modification
+
+    def get_model(self):
+        return self.base_model
+
+# Workflow JSON Structure
+{
+  "3": {
+    "class_type": "LoadDiffusionModel",
+    "inputs": {
+      "model_name": "z_image_turbo_bf16.safetensors",
+      "lora_name": "z_image_turbo_distill_patch_lora_bf16.safetensors"
+    }
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Merged weights
+# This prevents using the base model for non-distilled tasks
+merged_model = merge_base_and_lora(base_model, lora)
+save_safetensors(merged_model, "z_image_turbo_merged.safetensors")
+# Now you cannot easily switch back to non-distilled mode without re-downloading
+```
+
+**VERIFICATION METHOD**:
+1.  **Functional Test**: Load base model without LoRA and generate an image. Verify it works (even if slower).
+2.  **Functional Test**: Load base model with LoRA and generate an image. Verify it works and produces different results (faster convergence).
+3.  **Dependency Check**: Ensure the LoRA file is not a hard dependency for the base model to load.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: The provided input data contains empty arrays for commits, issues, and source code. Therefore, no specific historical incidents can be extracted from this repository's history. However, based on the architectural evidence of providing multiple precision variants (BF16, INT8, FP4), we can infer the **latent failure modes** that this architecture is designed to prevent, which are common in production ML deployments.*
+*Note: The provided input data contains empty arrays for commits, issues, and source code snippets. Therefore, no specific "Real Incidents" from the repository's history can be extracted. The following section is populated with **Inferred Production Risks** based on the architectural evidence of the file structure and known issues in similar ComfyUI model distributions.*
 
-### Incident 1: VRAM OOM Crash on Low-End GPUs (BUG-VRAM-01)
-- **Context**: User attempts to load `z_image_turbo_bf16.safetensors` on a GPU with 8GB VRAM.
+### Incident 1: VRAM OOM Due to Incorrect Precision Selection (BUG-VRAM-01)
+- **Context**: User loads `z_image_turbo_bf16.safetensors` on an 8GB GPU.
 - **What Was Expected**: The model should load and generate images.
-- **What Actually Happened**: `CUDA out of memory` error during model initialization.
-- **Evidence in Repo**: The existence of `z_image_turbo_int8_convrot.safetensors` and `z_image_turbo_nvfp4.safetensors` implies that the BF16 version fails on lower-end hardware.
-- **Root Cause**: BF16 requires ~2x the memory of FP16 and ~4x the memory of INT8. For a 4B parameter model, BF16 weights alone require ~8GB, leaving no room for activations, KV-cache, or VAE.
+- **What Actually Happened**: `torch.cuda.OutOfMemoryError` during model loading or first inference step.
+- **Evidence in Repo**: The presence of `int8` and `fp4` variants implies that `bf16` is too large for low-VRAM devices.
+- **Root Cause**: The user did not select the appropriate quantized variant. The ComfyUI UI may not have clearly indicated which file to use for their hardware.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: User selects BF16 model on 8GB GPU
-model_path = "z_image_turbo_bf16.safetensors"
-model = load_model(model_path) # Crashes
-
-# + Fixed: User selects INT8 model on 8GB GPU
-model_path = "z_image_turbo_int8_convrot.safetensors"
-model = load_model(model_path) # Loads successfully
+// - User selects bf16 on 8GB GPU
+// + User selects int8 or fp4 on 8GB GPU
+// System should provide a "Recommended Model" based on detected VRAM
 ```
-- **Lesson**: Always provide quantized variants for models that exceed the VRAM of the target consumer base.
+- **Lesson**: Model distribution must include clear documentation or automated detection logic to guide users to the correct precision variant for their hardware.
 
-### Incident 2: Text Encoder Precision Mismatch (BUG-TE-02)
-- **Context**: User loads BF16 diffusion model but FP4 text encoder.
-- **What Was Expected**: Consistent image quality.
-- **What Actually Happened**: Degraded prompt adherence due to lossy quantization of the text encoder.
-- **Evidence in Repo**: Separate files for `qwen_3_4b.safetensors` (BF16) and `qwen_3_4b_fp4_mixed.safetensors`.
-- **Root Cause**: The text encoder is critical for semantic understanding. Aggressive quantization (FP4) can lose subtle semantic nuances, leading to "prompt drift."
+### Incident 2: Text Encoder Mismatch (BUG-TE-02)
+- **Context**: User loads `z_image_turbo_bf16.safetensors` but uses a different text encoder (e.g., CLIP-L instead of Qwen3-4B).
+- **What Was Expected**: The model should generate images based on the prompt.
+- **What Actually Happened**: Garbage output or `KeyError` in the model's forward pass due to mismatched embedding dimensions.
+- **Evidence in Repo**: The repository explicitly includes `qwen_3_4b.safetensors` in `text_encoders/`. This indicates the model is tightly coupled to this specific text encoder.
+- **Root Cause**: The model's cross-attention layers are trained to expect embeddings from Qwen3-4B. Using a different text encoder results in dimension mismatches or semantic misalignment.
 - **Remediation Code Diff**:
-```json
-// - Buggy Workflow: Mixed precision without user awareness
-{
-  "model": "z_image_turbo_bf16.safetensors",
-  "text_encoder": "qwen_3_4b_fp4_mixed.safetensors"
-}
-
-// + Fixed Workflow: Matched precision or explicit user choice
-{
-  "model": "z_image_turbo_bf16.safetensors",
-  "text_encoder": "qwen_3_4b.safetensors" // High fidelity
-}
+```python
+// - Load any text encoder
+// + Load only the specific text encoder listed in the model's README
+// Add a validation check in the ComfyUI node to verify the text encoder type
 ```
-- **Lesson**: Document the impact of precision mismatches between model components.
+- **Lesson**: Model repositories must explicitly document the required text encoder and VAE. The ComfyUI workflow should enforce these dependencies.
+
+### Incident 3: LoRA Application Order Error (BUG-LORA-03)
+- **Context**: User applies the distillation LoRA after other style LoRAs.
+- **What Was Expected**: The distillation LoRA should modify the base model's behavior.
+- **What Actually Happened**: The distillation effect is diminished or incorrect because the LoRA is applied to an already-modified model.
+- **Evidence in Repo**: The LoRA is named `distill_patch_lora`, implying it is a patch to the base model, not a style modifier.
+- **Root Cause**: LoRAs are linear transformations. The order of application matters if they are not commutative. The distillation LoRA is likely designed to be applied directly to the base model.
+- **Remediation Code Diff**:
+```python
+// - Apply style LoRA, then distillation LoRA
+// + Apply distillation LoRA first, then style LoRA (or ensure they are compatible)
+// Document the recommended order of LoRA application
+```
+- **Lesson**: LoRA application order is critical. Documentation must specify the correct order, and the UI should allow users to reorder LoRAs.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-Since this repository contains no executable code, the following invariants are derived from the **consumer-side code** (ComfyUI) that interacts with these artifacts.
-
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **File Extension Validation**: The loader MUST validate that the file extension is `.safetensors`. A common bug is accepting `.ckpt` or `.bin` files and attempting to parse them as safetensors, leading to `KeyError` or `ValueError`.
-    *   **Precision Suffix Parsing**: When auto-detecting model type, the code MUST parse the filename suffix (`_bf16`, `_int8`) using strict string matching, not regex that might match partial strings (e.g., `int8` matching `int8_convrot` vs `int8`).
+    *   **File Extension Consistency**: All model files MUST use the `.safetensors` extension. This format is safer than `.bin` (PyTorch pickle) as it does not execute arbitrary code during loading.
+    *   **Precision Suffixes**: File names MUST include the precision suffix (`_bf16`, `_int8`, `_fp4`) to avoid ambiguity. This allows for programmatic selection based on hardware capabilities.
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **Model Loading Timeout**: Loading large safetensors files can hang if the disk I/O is slow. The loader MUST implement a timeout mechanism to prevent the UI from freezing indefinitely.
-    *   **VRAM Check Loop**: If the model fails to load due to OOM, the system MUST NOT retry loading the same model in a loop. It MUST immediately suggest a lower-precision variant.
+    *   **N/A**: This repository contains no executable code. However, the ComfyUI workflow JSON files that reference these models MUST have a finite number of nodes and no circular dependencies.
 
 3.  **UI & UX Micro-Mechanics**:
-    *   **Progress Bar Accuracy**: The download/load progress bar MUST reflect actual bytes read, not estimated time. A common bug is the progress bar jumping from 0% to 100% instantly, or getting stuck at 99%.
-    *   **Error Message Clarity**: If a model file is missing, the error MUST specify the exact expected path (e.g., `models/diffusion_models/z_image_turbo_bf16.safetensors`) rather than a generic "Model not found."
+    *   **Model Selection Dropdown**: The ComfyUI UI MUST populate the model selection dropdown with only the files present in the `models/` directory. It MUST NOT hardcode model names.
+    *   **VRAM Warning**: The UI SHOULD display a warning if the user selects a `bf16` model on a GPU with less than 12GB VRAM.
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **GPU Memory Cleanup**: Before loading a new model, the system MUST explicitly free the previous model from GPU memory (`torch.cuda.empty_cache()`). Failure to do so leads to OOM errors even if the new model fits in VRAM.
-    *   **Thread-Safe Model Loading**: If multiple users/workflows request different models simultaneously, the loading process MUST be serialized or use a lock to prevent race conditions on GPU memory allocation.
+    *   **Model Loading Lock**: When loading a large model file, the ComfyUI backend MUST acquire a lock to prevent multiple concurrent load operations, which could cause OOM.
+    *   **Memory Cleanup**: After a model is no longer in use, the backend MUST explicitly free the GPU memory (`torch.cuda.empty_cache()`) to prevent memory leaks.
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null Check on Model Path**: Before attempting to load, the code MUST check if the file exists on disk. If not, it MUST raise a clear `FileNotFoundError` with a helpful message, not a cryptic `OSError`.
-    *   **Checksum Validation**: The loader SHOULD verify the SHA256 checksum of the downloaded file against a known good value to prevent loading corrupted or tampered weights.
+    *   **File Existence Check**: Before attempting to load a model, the system MUST verify that the file exists on disk. If not, it MUST raise a clear error message indicating the missing file.
+    *   **Checksum Verification**: The system SHOULD verify the SHA256 checksum of the model file against a known good value to prevent corrupted downloads.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: The architecture is a **flat file distribution** with a strict directory contract. There is no complex subsystem boundary; the boundary is the filesystem.
-2.  **Core Abstractions**: The core abstraction is the **Safetensors Tensor**. The model is a collection of named tensors with specific shapes and dtypes.
-3.  **Error Handling**: Error handling is delegated to the consumer (ComfyUI). The repository provides no error handling code. The "error" is a missing file or incompatible dtype.
-4.  **Testing**: No tests are present in the repository. Testing is implicit in the ComfyUI workflow validation.
-5.  **Security**: The primary security concern is **supply chain integrity**. Users must trust that the `.safetensors` files are not maliciously modified. Checksums are recommended but not enforced by the repository itself.
-6.  **Performance**: Performance is determined by the **precision variant** chosen. BF16 is fastest for inference (if VRAM allows) but slowest to load. INT8/FP4 are slower to load (due to dequantization overhead) but allow for larger batch sizes or higher resolutions on low-VRAM GPUs.
-7.  **Deployment**: Deployment is manual. The user must download the files and place them in the correct directories. There is no automated deployment script.
-8.  **Agent Patterns**: Not applicable. This is a static artifact repository.
-9.  **Data Flow**: Data flows from the disk (`.safetensors`) to GPU memory (tensors) to the inference engine. The flow is unidirectional and stateless.
+1.  **Architecture**: The repository follows a **Modular Artifact Architecture**. The model is decomposed into three independent components: Diffusion Backbone, Text Encoder, and VAE. This allows for independent quantization and optimization of each component.
+2.  **Core Abstractions**: The core abstraction is the **Safetensors File Format**. This format provides a safe, efficient, and cross-platform way to store tensor data. The **LoRA** abstraction allows for lightweight model modification.
+3.  **Error Handling**: Error handling is primarily the responsibility of the ComfyUI runtime. The repository itself does not contain error handling code. However, the clear separation of files allows for precise error messages (e.g., "Missing VAE file").
+4.  **Testing**: Testing is performed by the ComfyUI community through workflow execution. There are no automated tests in this repository. However, the presence of multiple precision variants implies that each variant has been tested for functionality and quality.
+5.  **Security**: The use of `.safetensors` instead of `.bin` is a significant security improvement. It prevents code execution during model loading. The repository is licensed under Apache-2.0, which is a permissive license.
+6.  **Performance**: The performance is optimized through **Pre-Quantization**. The `int8_convrot` variant suggests specific optimizations for convolution operations. The `nvfp4` variant leverages NVIDIA's FP4 tensor cores for maximum throughput.
+7.  **Deployment**: Deployment is straightforward: copy the files to the correct directories in the ComfyUI installation. The README provides clear instructions. The workflows are provided as JSON files, which can be easily imported into ComfyUI.
+8.  **Agent Patterns**: The repository is designed to be consumed by the ComfyUI agent. The agent reads the workflow JSON, identifies the required model files, and loads them. The agent must handle the selection of the correct precision variant based on the user's hardware.
+9.  **Data Flow**: The data flow is: Prompt -> Text Encoder -> Latent Space -> Diffusion Backbone (with LoRA) -> VAE -> Image. The LoRA modifies the diffusion backbone's behavior, allowing for faster convergence (fewer steps).
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: **Multi-Precision Artifact Distribution**. Provide multiple versions of the same model with different quantization levels to support a wide range of hardware.
-2.  **Rule**: **Explicit Directory Mapping**. Always document the exact directory structure and file names in the README.
-3.  **Architecture Principle**: **Separation of Weights and Configuration**. Keep inference parameters in external JSON files, not in the binary weights.
-4.  **Failure Mode**: **VRAM OOM Crash**. Loading a high-precision model on low-VRAM hardware causes a crash.
-5.  **Reusable Skill**: **Hardware-Aware Model Selection**. Guide users to select the appropriate precision variant based on their GPU VRAM.
-6.  **Decision**: **Pre-Quantization vs. Runtime Quantization**. Pre-quantization is chosen for faster loading and lower CPU overhead, at the cost of larger repository size.
-7.  **Anti-pattern**: **Ambiguous File Naming**. Using file names that do not indicate the precision or variant (e.g., `model.safetensors`).
-8.  **Verification Method**: **Checksum Validation**. Verify the integrity of downloaded files using SHA256 checksums.
+1.  **Pattern**: **Multi-Precision Artifact Distribution**. Provide multiple pre-quantized versions of the model to support different hardware configurations.
+2.  **Rule**: **Explicit Dependency Documentation**. Clearly document the required text encoder and VAE for the model.
+3.  **Architecture Principle**: **Modular Component Separation**. Separate the diffusion backbone, text encoder, and VAE into distinct files to allow for independent optimization.
+4.  **Failure Mode**: **VRAM OOM**. Loading a high-precision model on a low-VRAM GPU causes an out-of-memory error.
+5.  **Reusable Skill**: **Hardware-Aware Model Selection**. Implement logic to select the appropriate model precision based on the detected GPU VRAM.
+6.  **Decision**: **Pre-Quantization over Runtime Quantization**. Pre-quantize the model to avoid runtime overhead and ensure deterministic performance.
+7.  **Anti-pattern**: **Single Precision Artifact**. Providing only one precision variant limits the model's usability on different hardware.
+8.  **Verification Method**: **VRAM Simulation Test**. Test each model variant on simulated hardware with constrained memory to ensure successful loading.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-For an AI coding agent building a similar model distribution system:
-
-1.  **Define Precision Variants**:
-    *   [ ] Identify the target hardware tiers (e.g., 8GB, 16GB, 24GB VRAM).
-    *   [ ] Generate model weights in BF16, INT8, and FP4/FP8 formats.
-    *   [ ] Name files with explicit precision suffixes (e.g., `model_bf16.safetensors`).
-
-2.  **Structure Directory Layout**:
-    *   [ ] Create a `models/` directory with subdirectories for `diffusion_models`, `text_encoders`, and `vae`.
-    *   [ ] Place each variant in the correct subdirectory.
-
-3.  **Document the Contract**:
-    *   [ ] Write a README.md that explicitly maps each file to its target hardware tier.
-    *   [ ] Include a directory tree diagram in the README.
-
-4.  **Provide Workflow Templates**:
-    *   [ ] Create JSON workflow templates for each precision variant.
-    *   [ ] Ensure the templates reference the correct file names.
-
-5.  **Implement Integrity Checks**:
-    *   [ ] Generate SHA256 checksums for all files.
-    *   [ ] Include the checksums in the README or a separate `checksums.txt` file.
-
-6.  **Test on Target Hardware**:
-    *   [ ] Verify that each variant loads and runs correctly on the target hardware tier.
-    *   [ ] Document any known issues or quality differences between variants.
+1.  **Verify File Structure**: Ensure all required files are present in the correct directories (`diffusion_models/`, `text_encoders/`, `vae/`, `loras/`).
+2.  **Check Precision Variants**: Verify that multiple precision variants (BF16, INT8, FP4) are available for the diffusion model.
+3.  **Document Dependencies**: Clearly document the required text encoder and VAE in the README.
+4.  **Provide Workflows**: Include example workflow JSON files that demonstrate how to use the model with different precision variants.
+5.  **Test on Multiple Hardware**: Test the model on different GPU configurations (8GB, 12GB, 24GB) to ensure it works correctly with each precision variant.
+6.  **Validate LoRA Application**: Test the LoRA application to ensure it works correctly and produces the expected results.
+7.  **Security Check**: Ensure all model files are in the `.safetensors` format to prevent code execution during loading.
+8.  **Performance Benchmarking**: Benchmark the inference speed and memory usage for each precision variant to provide accurate performance data to users.

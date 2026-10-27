@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "8252d52f",
+    "sourceVersion": "a6a48cd8",
     "license": "NOASSERTION",
-    "contentHash": "2b30b67f7f363751b1a7807e68f8d582d8dc0ba73c57a545d95f88496fd2ad9a",
-    "lastHarvestedAt": "2026-10-26T17:58:26.668Z",
+    "contentHash": "b0ea55d144beb7fd565894a5fb55d2899abee847d4a67063bb29dbf15ec787bd",
+    "lastHarvestedAt": "2026-10-27T14:10:56.250Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -6273,10 +6273,10 @@
     "repository": "carbon-design-system/carbon",
     "platform": "github",
     "sourceUrl": "https://github.com/carbon-design-system/carbon",
-    "sourceVersion": "dc9a20d0",
+    "sourceVersion": "db1bdb20",
     "license": "Apache-2.0",
-    "contentHash": "99eb769a293832d0728098c240eee2beec14ee737bce944ffceb06233e2da78e",
-    "lastHarvestedAt": "2026-10-25T12:10:54.394Z",
+    "contentHash": "0081ff95b86902a1fa527b98dd7e83c0f959bbbd798f59f59a5e89b236f314f9",
+    "lastHarvestedAt": "2026-10-27T14:10:39.846Z",
     "learningId": "learn-github-carbon-design-system-carbon"
   },
   "emilkowalski-vaul": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "78f1a7a6",
+    "sourceVersion": "b6cbe004",
     "license": "Apache-2.0",
-    "contentHash": "6697442573ee5b14266e12c155aec0da031cb5f4c06c385cbd1fe0b64d78e85d",
-    "lastHarvestedAt": "2026-10-25T08:24:37.810Z",
+    "contentHash": "3f1009bf8f86511b7eede86668b2bd20f9d3fb3b3866074df7e2f8e0c40539d5",
+    "lastHarvestedAt": "2026-10-27T14:10:54.492Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {
@@ -10545,8 +10545,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
     "sourceVersion": "hf-comfy-org-z-image-turbo",
     "license": "Open-Source",
-    "contentHash": "f6d9511e888b789348c4b6a1014711b6622bdcb0901e26f201be1b275c05910a",
-    "lastHarvestedAt": "2026-10-22T21:35:20.211Z",
+    "contentHash": "72959981cec0b965bda1d5cb1207f5e065128ff8cfad3a8e04e407f78825b1c0",
+    "lastHarvestedAt": "2026-10-27T14:10:49.326Z",
     "learningId": "learn-huggingface-comfy-org-z-image-turbo"
   },
   "hf-unsloth-flint-gguf": {

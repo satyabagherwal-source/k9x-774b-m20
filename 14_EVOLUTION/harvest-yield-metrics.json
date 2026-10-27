@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T14:07:29.549Z",
-  "total_cycles_completed": 5334,
-  "total_learnings_persisted": 5334,
-  "total_rules_promoted": 4737,
+  "last_updated": "2026-10-27T14:10:56.255Z",
+  "total_cycles_completed": 5338,
+  "total_learnings_persisted": 5338,
+  "total_rules_promoted": 4742,
   "history": [
-    {
-      "timestamp": "2026-10-26T13:58:18.255Z",
-      "repository": "Orange-OpenSource/hurl",
-      "learningId": "learn-github-orange-opensource-hurl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:58:25.498Z",
-      "repository": "open-policy-agent/opa",
-      "learningId": "learn-github-open-policy-agent-opa",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T14:03:29.031Z",
-      "repository": "InternScience/Sage-A1.5",
-      "learningId": "learn-huggingface-internscience-sage-a1-5",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T14:10:05.399Z",
-      "repository": "Qwen/Qwen3-14B",
-      "learningId": "learn-huggingface-qwen-qwen3-14b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-26T14:16:46.813Z",
       "repository": "berkaycubuk/kitsune",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-27T14:07:29.549Z",
       "repository": "VectifyAI/PageIndex",
       "learningId": "learn-github-vectifyai-pageindex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:10:39.851Z",
+      "repository": "carbon-design-system/carbon",
+      "learningId": "learn-github-carbon-design-system-carbon",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:10:49.330Z",
+      "repository": "Comfy-Org/Z-Image-Turbo",
+      "learningId": "learn-huggingface-comfy-org-z-image-turbo",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:10:54.497Z",
+      "repository": "milvus-io/milvus",
+      "learningId": "learn-github-milvus-io-milvus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:10:56.255Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

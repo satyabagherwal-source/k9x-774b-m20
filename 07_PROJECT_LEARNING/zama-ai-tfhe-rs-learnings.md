@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `8252d52f`  
+> **Source Version**: `a6a48cd8`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T17:58:26.427Z  
+> **Timestamp**: 2026-10-27T14:10:55.706Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T17:58:25.606Z  
+> **Harvest Timestamp**: 2026-10-27T14:10:55.431Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1927,358 +1927,795 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0fc677fa` (2026-09-29)
-**Commit Message**: fix(gpu): also fuzz cpp code for gpu
+### Incident Patch 1: `a6a48cd8` (2026-10-27)
+**Commit Message**: feat(gpu): add goldshmidt_division (#3926)
 
-**File**: `.github/workflows/gpu_fuzzing.yml` (modified, +49/-11)
+**File**: `.github/workflows/gpu_integer_classic_tests_h100_2gpu_par.yml` (modified, +5/-0)
 ```diff
-@@ -1,6 +1,6 @@
- # Weekly AFL++ GPU fuzzing campaign for harness-cuda-compute.
- # Runs on the internal mirror only, the public repo skips every job.
--name: gpu-fuzzing
-+name: gpu_fuzzing
+@@ -166,6 +166,11 @@ jobs:
+           done
+           exit "${STATUS}"
  
- env:
-   CARGO_TERM_COLOR: always
-@@ -19,6 +19,7 @@ env:
-   # Secrets will be available only to zama-ai organization members
-   SECRETS_AVAILABLE: ${{ secrets.JOB_SECRET != '' }}
-   EXTERNAL_CONTRIBUTION_RUNNER: "gpu_ubuntu-22.04"
-+  INSTANCE_TYPE_SCHEDULED: "terraform::generic-4-l4orl40-tests (nebius-L40)"
- 
- on:
-   workflow_dispatch:
-@@ -28,6 +29,20 @@ on:
-         description: "Campaign duration in seconds"
-         default: "1200" # 20 min
-         required: false
-+      instance-type:
-+        description: "Instance type"
-+        type: choice
-+        default: "terraform::generic-4-l4orl40-tests (nebius-L40)"
-+        options:
-+          - "terraform::generic-4-l4orl40-tests (nebius-L40)"
-+          - "terraform::scaleway-1-l4 (L4-1-24G)"
-+          - "terraform::scaleway-4-l4 (L4-4-24G)"
-+          - "terraform::scaleway-4-l40-tests (L40S-4-48G)"
-+          - "terraform::scaleway-single-h100 (H100-1-80G)"
-+          - "terraform::nebius-single-h100 (nebius-H100-SXM-1-80G)"
-+          - "hyperstack::l40 (n3-L40x1)"
-+          - "hyperstack::4-l40 (n3-L40x4)"
-+          - "hyperstack::single-h100 (n3-H100x1)"
-   schedule:
-     # Saturday 05:00 UTC (day after the CPU campaign).
-     - cron: "0 5 * * 6"
-@@ -40,14 +55,34 @@ concurrency:
-   cancel-in-progress: false
- 
- jobs:
--  setup-instance:
--    name: gpu-fuzzing/setup-instance
-+  parse-inputs:
-+    name: gpu-fuzzing/parse-inputs
-     # Skip on the public repo so fuzz logs are not exposed publicly.
-     if: github.repository != 'zama-ai/tfhe-rs'
-     runs-on: ubuntu-latest
-+    outputs:
-+      backend: ${{ steps.parse.outputs.backend }}
-+      profile: ${{ steps.parse.outputs.profile }}
-+      cloud-provider: ${{ steps.parse.outputs.cloud_provider }}
-+    steps:
-+      - name: Checkout
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-+        with:
-+          persist-credentials: "false"
-+          token: ${{ secrets.REPO_CHECKOUT_TOKEN }}
++      # Separate build: the golden test needs the gpu-goldschmidt-trace feature.
++      - name: Run Goldschmidt division golden trace test
++        run: |
++          make test_integer_goldschmidt_golden_trace_gpu
 +
-+      - name: Parse instance type
-+        id: parse
-+        env:
-+          INSTANCE_TYPE: ${{ inputs['instance-type'] || env.INSTANCE_TYPE_SCHEDULED }}
-+        run: python3 ci/parse_benchmark_profile.py "$INSTANCE_TYPE" "$GITHUB_OUTPUT"
-+
-+  setup-instance:
-+    name: gpu-fuzzing/setup-instance
-+    needs: parse-inputs
-+    runs-on: ubuntu-latest
-     outputs:
-       runner-name: ${{ steps.start-instance.outputs.label }}
--      cloud-provider: ${{ steps.start-instance.outputs.cloud-provider }}
-     steps:
-       - name: Start instance
-         id: start-instance
-@@ -57,16 +92,15 @@ jobs:
-           github-token: ${{ secrets.SLAB_ACTION_TOKEN }}
-           slab-url: ${{ secrets.SLAB_BASE_URL }}
-           job-secret: ${{ secrets.JOB_SECRET }}
--          backend: terraform
--          profile: scaleway-1-l4
-+          backend: ${{ needs.parse-inputs.outputs.backend }}
-+          profile: ${{ needs.parse-inputs.outputs.profile }}
- 
-   fuzz:
-     name: gpu-fuzzing/run-campaign
--    needs: setup-instance
-+    needs: [parse-inputs, setup-instance]
-     if: needs.setup-instance.result == 'success'
-     runs-on: ${{ needs.setup-instance.outputs.runner-name }}
--    # 2h: covers a 20min campaign + CUDA build (~90m) + pre/post with headroom.
--    timeout-minutes: 120
-+    timeout-minutes: 1640
-     env:
-       FUZZ_DURATION_SECONDS: ${{ inputs['duration-seconds'] }}
-     steps:
-@@ -81,13 +115,16 @@ jobs:
-         with:
-           cuda-version: "12.8 12.2"
-           gcc-version: 12
--          cloud-provider: ${{ needs.setup-instance.outputs.cloud-provider }}
-+          cloud-provider: ${{ needs.parse-inputs.outputs.cloud-provider }}
- 
-       - name: Install latest stable
-         uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # zizmor: ignore[stale-action-refs] this action doesn't create releases
-         with:
-           toolchain: stable
- 
-+      - name: Install clang-14 and OpenMP for AFL C++ instrumentation
-+        run: sudo apt-get install -y clang-14 libomp-14-dev
-+
-       - name: Install cargo-afl
-         run: make install_cargo_afl
- 
-@@ -101,6 +138,7 @@ jobs:
-         run: make fuzz_gpu_run
- 
-       - name: Run postcampaign processing
-+        if: always()
-         run: make fuzz_gpu_postcampaign
- 
-       - name: Upload artifacts
-@@ -139,7 +177,7 @@ jobs:
-   teardown-instance:
-     name: gpu-fuzzing/teardown-instance
-     if: ${{ always() && needs.setup-instance.result != 'skipped' }}
--    needs: [setup-instance, fuzz]
-+    needs: [parse-inputs, setup-instance, fuzz]
-     runs-on: ubuntu-latest
-     steps:
-       - name: Stop instance
+   slack-notify:
+     name: gpu_integer_classic_tests_h100_2gpu_par/slack-notify
+     needs: [setup-instance, cuda-tests-linux]
 ```
 
-**File**: `Cargo.lock` (modified, +0/-1)
+**File**: `Makefile` (modified, +7/-0)
 ```diff
-@@ -1429,7 +1429,6 @@ name = "fuzz-utils"
- version = "0.1.0"
- dependencies = [
-  "afl",
-- "bincode",
-  "tfhe",
- ]
+@@ -1178,6 +1178,13 @@ test_signed_integer_gpu_ci: install_cargo_nextest
+ 		--cargo-profile "$(CARGO_PROFILE)" --backend "gpu" \
+ 		--signed-only --tfhe-package "tfhe"
  
-```
-
-**File**: `Makefile` (modified, +21/-1)
-```diff
-@@ -755,10 +755,30 @@ fuzz_gpu_precampaign: install_cargo_afl
- fuzz_gpu_build: install_cargo_afl
- 	cd utils/fuzz && ./build.sh --gpu
- 
--.PHONY: fuzz_gpu_run # Run the GPU AFL harness as a single master instance
-+.PHONY: fuzz_gpu_run # Run GPU AFL harness: 2 instances per GPU, auto-detected via nvidia-smi
- fuzz_gpu_run: check_fuzz_system_config
- 	cd utils/fuzz && ./run.sh --gpu $(if $(FUZZ_DURATION_SECONDS),--duration-seconds $(FUZZ_DURATION_SECONDS))
- 
-+.PHONY: fuzz_gpu_reproduce # Reproduce GPU crashes from a CI artifact: GPU_FUZZ_ARTIFACT=<unpacked-artifact-dir>
-+fuzz_gpu_reproduce:
-+	$(if $(GPU_FUZZ_ARTIFACT),,$(error GPU_FUZZ_ARTIFACT is not set. Usage: make fuzz_gpu_reproduce GPU_FUZZ_ARTIFACT=<unpacked-artifact-dir>))
-+	TFHE_CUDA_FUZZING=1 cargo build -p harness-cuda-compute --features gpu
-+	@crashes="$(GPU_FUZZ_ARTIFACT)/stored_crashes/cuda-compute"; \
-+	if [ ! -d "$$crashes" ]; then echo "ERROR: no crashes dir at $$crashes" >&2; exit 1; fi; \
-+	total=$$(ls "$$crashes" | wc -l); \
-+	echo "==> Reproducing $$total crash(es) from $$crashes"; \
-+	failed=0; \
-+	for f in "$$crashes"/*; do \
-+		echo "--- $$(basename $$f)"; \
-+		if RUST_BACKTRACE=1 TFHE_FUZZ_AUX_DIR="$(GPU_FUZZ_ARTIFACT)/aux_data" \
-+				./target/debug/harness-cuda-compute < "$$f"; then \
-+			echo "    (no crash)"; \
-+		else \
-+			failed=$$((failed + 1)); \
-+		fi; \
-+	done; \
-+	echo "==> $$failed/$$total inputs crashed"
++.PHONY: test_integer_goldschmidt_golden_trace_gpu # Check every Goldschmidt division iterate against the Lean-generated golden trace on gpu backend
++test_integer_goldschmidt_golden_trace_gpu:
++	RUSTFLAGS="$(RUSTFLAGS)" cargo test --profile $(CARGO_PROFILE) \
++		--features=integer,gpu-goldschmidt-trace -p tfhe --lib -- \
++		integer::gpu::server_key::radix::goldschmidt_division::tests::test_goldschmidt_division_golden_trace \
++		--exact --nocapture
 +
- .PHONY: clippy_wasm_par_mq # Run clippy lints on wasm-par-mq and its examples
- clippy_wasm_par_mq: install_rs_check_toolchain
- 	RUSTFLAGS="$(RUSTFLAGS)" cargo "$(CARGO_RS_CHECK_TOOLCHAIN)" clippy --all-targets --all-features \
+ .PHONY: test_signed_integer_fake_multi_gpu # Run the tests for signed integer ci on gpu backend
+ test_signed_integer_fake_multi_gpu: install_cargo_nextest
+ 	BIG_TESTS_INSTANCE="$(BIG_TESTS_INSTANCE)" \
 ```
 
-**File**: `backends/tfhe-cuda-backend/build.rs` (modified, +33/-0)
+**File**: `backends/tfhe-cuda-backend/Cargo.toml` (modified, +3/-0)
 ```diff
-@@ -61,7 +61,40 @@ fn main() {
-             cmake_config.define("TFHE_CUDA_COMMON_CHECK_CUDA_DIR", &check_cuda_dir);
+@@ -24,3 +24,6 @@ experimental-multi-arch = []
+ profile = ["tfhe-cuda-common/profile"]
+ debug = ["tfhe-cuda-common/debug"]
+ debug-fake-multi-gpu = []
++# Test-only: Goldschmidt division writes its fixed-point iterates to a CSV
++# (trivial ciphertexts only), for the golden trace test.
++goldschmidt-trace = []
+```
+
+**File**: `backends/tfhe-cuda-backend/build.rs` (modified, +6/-0)
+```diff
+@@ -44,6 +44,12 @@ fn main() {
+             cmake_config.define("USE_NVTOOLS", "OFF");
          }
  
-+        // When building under cargo-afl, instrument host-side C++ for AFL coverage.
-+        // We bypass afl-clang-fast++ (which has a bug duplicating flags once per argument)
-+        // and use clang++ directly with -fsanitize-coverage=trace-pc-guard — the same
-+        // mechanism AFL PCGUARD uses internally. No LLVM plugin is loaded, so there is no
-+        // LLVM version matching requirement. AFL's runtime (linked by cargo-afl into the
-+        // Rust binary) intercepts __sanitizer_cov_trace_pc_guard callbacks automatically.
-+        println!("cargo::rerun-if-env-changed=AFL_CXX");
-+        println!("cargo::rerun-if-env-changed=TFHE_CUDA_FUZZING");
-+        let afl_build = std::env::var("AFL_CXX").is_ok();
-+        // TFHE_CUDA_FUZZING=1 enables polynomial_size=32 in the CUDA dispatch table, which the
-+        // fuzzer needs (its generated inputs use small parameters). Set this independently of
-+        // AFL_CXX so plain `cargo build` can reproduce crashes without AFL instrumentation.
-+        let cuda_fuzzing = afl_build || std::env::var("TFHE_CUDA_FUZZING").as_deref() == Ok("1");
-+        if afl_build {
-+            // clang-14 satisfies all constraints: NVCC accepts clang < 15, and clang
-+            // supports -fsanitize-coverage=trace-pc-guard for AFL coverage instrumentation.
-+            cmake_config.define("CMAKE_CXX_COMPILER", "clang++-14");
-+            cmake_config.define("CMAKE_C_COMPILER", "clang-14");
-+            // Coverage flags for CXX (.cpp files) and CUDA (.cu files via -Xcompiler) are
-+            // both added by CMakeLists.txt after project()/enable_language() so the cmake
-+            // compiler tests don't fail trying to link without the AFL runtime.
-+            // -ccbin must be in CMAKE_CUDA_FLAGS from the start so the cmake CUDA compiler
-+            // test (inside enable_language) uses clang++-14 as host, not g++.
-+            cmake_config.define("CMAKE_CUDA_FLAGS", "-ccbin clang++-14");
-+            cmake_config.define("AFL_CUDA_INSTRUMENT", "ON");
-+            cmake_config.define("CMAKE_VERBOSE_MAKEFILE", "ON");
-+        }
-+        if cuda_fuzzing {
-+            cmake_config.define("TFHE_CUDA_FUZZING", "ON");
++        if cfg!(feature = "goldschmidt-trace") {
++            cmake_config.define("GOLDSCHMIDT_TRACE", "ON");
++        } else {
++            cmake_config.define("GOLDSCHMIDT_TRACE", "OFF");
 +        }
 +
-         // Build the CMake project
-+        let jobs = std::env::var("NUM_JOBS").unwrap_or_else(|_| "1".to_string());
-+        cmake_config.build_arg(format!("-j{jobs}"));
-         let dest = cmake_config.build();
-         println!("cargo:rustc-link-search=native={}", dest.display());
-         println!("cargo:rustc-link-lib=static=tfhe_cuda_backend");
+         if cfg!(feature = "debug") {
+             cmake_config.define("CMAKE_BUILD_TYPE", "Debug");
+         } else if cfg!(feature = "debug-fake-multi-gpu") {
 ```
 
-**File**: `backends/tfhe-cuda-backend/cuda/CMakeLists.txt` (modified, +26/-1)
+**File**: `backends/tfhe-cuda-backend/cuda/CMakeLists.txt` (modified, +5/-0)
 ```diff
-@@ -1,6 +1,14 @@
- cmake_minimum_required(VERSION 3.24 FATAL_ERROR)
- project(tfhe_cuda_backend LANGUAGES CXX)
+@@ -131,6 +131,11 @@ if(${FAKE_MULTI_GPU})
+   add_definitions(-DDEBUG_FAKE_MULTI_GPU)
+ endif()
  
-+# AFL coverage flags for C++ files are added after project() so the CXX compiler test (which runs inside project())
-+# doesn't require the AFL runtime at link time.
-+if(AFL_CUDA_INSTRUMENT)
-+  set(CMAKE_CXX_FLAGS
-+      "${CMAKE_CXX_FLAGS} -fsanitize-coverage=trace-pc-guard -D__AFL_COMPILER=1 -DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION=1"
-+  )
++if(GOLDSCHMIDT_TRACE)
++  message(STATUS "Goldschmidt division trace is enabled")
++  add_definitions(-DGOLDSCHMIDT_TRACE)
 +endif()
 +
- # See if the minimum CUDA version is available. If not, only enable documentation building.
- set(MINIMUM_SUPPORTED_CUDA_VERSION 10.0)
- include(CheckLanguage)
-@@ -9,6 +17,19 @@ check_language(CUDA)
- # If so, enable CUDA to check the version.
- if(CMAKE_CUDA_COMPILER)
-   enable_language(CUDA)
-+  # AFL coverage flags are added after enable_language so the cmake CUDA compiler test (which runs inside
-+  # enable_language) doesn't require the AFL runtime at link time.
-+  if(AFL_CUDA_INSTRUMENT)
-+    set(CMAKE_CUDA_FLAGS
-+        "${CMAKE_CUDA_FLAGS} \
-+      -Xcompiler -fsanitize-coverage=trace-pc-guard \
-+      -Xcompiler -D__AFL_COMPILER=1 \
-+      -Xcompiler -DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION=1")
-+  endif()
-+  if(TFHE_CUDA_FUZZING)
-+    add_compile_definitions(TFHE_CUDA_FUZZING=1)
-+    message(STATUS "TFHE_CUDA_FUZZING enabled: polynomial_size=32 supported in dispatch")
-+  endif()
- endif()
- # If CUDA is not available, or the minimum version is too low do not build
- if(NOT CMAKE_CUDA_COMPILER)
-@@ -112,8 +133,12 @@ endif()
- 
  # in production, should use -arch=sm_70 --ptxas-options=-v to see register spills -lineinfo for better debugging to use
  # nvtx when profiling -lnvToolsExt
-+string(FIND "${CMAKE_CUDA_FLAGS}" "-ccbin" _cuda_has_ccbin)
-+if(_cuda_has_ccbin EQUAL -1)
-+  set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -ccbin ${CMAKE_CXX_COMPILER}")
-+endif()
- set(CMAKE_CUDA_FLAGS
--    "${CMAKE_CUDA_FLAGS} -ccbin ${CMAKE_CXX_COMPILER} ${OPTIMIZATION_FLAGS}\
-+    "${CMAKE_CUDA_FLAGS} ${OPTIMIZATION_FLAGS}\
-   -std=c++17 --no-exceptions  --expt-relaxed-constexpr -rdc=true \
-   --use_fast_math -Xcompiler -fPIC ")
- 
+ string(FIND "${CMAKE_CUDA_FLAGS}" "-ccbin" _cuda_has_ccbin)
 ```
 
-**File**: `backends/tfhe-cuda-backend/cuda/src/integer/multiplication.cu` (modified, +0/-6)
+**File**: `backends/tfhe-cuda-backend/cuda/include/integer/goldschmidt_division.h` (added, +464/-0)
 ```diff
-@@ -24,15 +24,9 @@ uint64_t scratch_cuda_integer_mult_inplace_64_async(
-     uint32_t carry_modulus, CudaLweBootstrapKeyParamsFFI bsk_params,
-     CudaLweKeyswitchKeyParamsFFI ksk_params, uint32_t num_radix_blocks,
-     bool allocate_gpu_memory) {
--  const uint32_t polynomial_size = bsk_params.polynomial_size;
-   int_radix_params params(bsk_params, ksk_params, message_modulus,
-                           carry_modulus);
- 
--  if (polynomial_size < 256 || polynomial_size > 16384 ||
--      (polynomial_size & (polynomial_size - 1)) != 0)
--    PANIC("Cuda error (integer multiplication): unsupported polynomial size. "
--          "Supported N's are powers of two in the interval [256..16384].")
--
-   return scratch_cuda_integer_mult_radix_ciphertext<uint64_t>(
-       CudaStreams(streams), (int_mul_memory<uint64_t> **)mem_ptr,
-       is_boolean_left, is_boolean_right, num_radix_blocks, params,
+@@ -0,0 +1,464 @@
++#pragma once
++#include "cmux.h"
++#include "comparison.h"
++#include "ilog2.h"
++#include "integer_utilities.h"
++#include "mul_add_fixed_point.h"
++#include "multiplication.h"
++#include "shift_and_rotate.h"
++#include "vector_find.h"
++
++// ---------------------------------------------------------------------------
++// Goldschmidt division
++// ---------------------------------------------------------------------------
++//
++// Divides two n-block unsigned radix integers by iterating a fixed-point
++// reciprocal instead of doing long division, so the work is a handful of wide
++// multiplications rather than one sequential step per bit.
++//
++// Everything runs in a fixed point two blocks wider than the operands
++// (68 bits for a 64-bit division), in two different scalings:
++//
++//     d  =  Q0.68   normalised into [1/2, 1)   -- the MSB of the field is set
++//     n  =  Q64.4   the numerator, rescaled by the same factor as d
++//
++//     bit  67                                    4  3      0
++//          +-------------------------------------+--+------+
++//     d    |0. 1 d62 d61 ................... d0  |  0 ...  |   d in [1/2, 1)
++//          +-------------------------------------+--+------+
++//          +----------------------------------------+------+
++//     n    | floor(N * 2^lz / 2^60)                 | .frac|   n = N/D * 2^4
++//          +----------------------------------------+------+
++//
++// The iteration multiplies both by the same factor until d converges to 1, at
++// which point n holds the quotient:
++//
++//     d <- d * (1 + x),   n <- n * (1 + x)     with x = 1 - d
++//
++// so that d becomes 1 - x^2 and the number of correct bits doubles each round.
++// Three rounds after a 9-bit seed cover 64 bits. The seed comes from a
++// 512-entry lookup table on d's top 10 bits, chosen so that (1 + x0) * d < 1 --
++// keeping every intermediate below 1 means the quotient only ever approaches
++// the true value from below, so a single +1 correction at the end suffices.
++//
++// The per-round truncation schedule is the one the correctness proof pins down:
++// round i takes x from `s` significant blocks whose LSB weighs beta^-t, and the
++// multiplication drops everything below one ulp of the output.
++//
++//     round | s (blocks of x) | t (x's LSB weight) | x's leading zero blocks
++//     ------+-----------------+--------------------+------------------------
++//     seed  |        5        |         5          |           0
++//       0   |        5        |         9          |           4
++//       1   |        9        |        17          |           8
++//       2   |       16        |        32          |          16
++//
++// x is a true negation of d, carry propagated. The tempting shortcut - read the
++// bitwise complement and skip the +1, since only the top blocks are ever used -
++// is wrong: it lowers x by one ulp exactly when 1 - d is representable at x's
++// scale, which for a power-of-two denominator is every single round. The losses
++// compound to two ulps of quotient, one more than the final correction can
++// absorb, and u64::MAX / 1 comes out short.
++#define GOLDSCHMIDT_ITERATIONS 3u
++#define GOLDSCHMIDT_LUT_PRECISION 9u
++
++/// @brief Scratch for the Goldschmidt division: the truncation schedule, the
++/// fixed-point iteration state, the seed table, and the sub-buffers of every
++/// step (normalisation, seed lookup, the four multiply-adds, and the
++/// remainder-based correction). See the file banner above for the algorithm.
++template <typename Torus> struct int_goldschmidt_division_buffer {
++  int_radix_params params;
++  bool gpu_memory_allocated;
++
++  /// @brief Operand width, 32 for a 64-bit division.
++  uint32_t num_blocks;
++  /// @brief Fixed-point width, num_blocks + 2.
++  uint32_t fp_blocks;
++  /// @brief Significant blocks of the seed factor x0.
++  uint32_t x0_blocks;
++  /// @brief Width of the leading-zero counter, enough to hold the bit count.
++  uint32_t counter_blocks;
++
++  /// @brief Per-round significant blocks of x (the `s` of the schedule).
++  uint32_t x_blocks[GOLDSCHMIDT_ITERATIONS];
++  /// @brief Per-round leading zero blocks of x. The LSB of x weighs
++  /// beta^-(x_zero_blocks + x_blocks), which is the `t` of the schedule.
++  uint32_t x_zero_blocks[GOLDSCHMIDT_ITERATIONS];
++
++  /// @brief Numerator of the current round, fp_blocks. Swaps with next_n
++  /// every round.
++  CudaRadixCiphertextFFI current_n;
++  /// @brief Denominator of the current round, fp_blocks. Swaps with next_d
++  /// every round.
++  CudaRadixCiphertextFFI current_d;
++  /// @brief Output of the numerator multiply-add of the current round.
++  CudaRadixCiphertextFFI next_n;
++  /// @brief Output of the denominator multiply-add of the current round.
++  CudaRadixCiphertextFFI next_d;
++
++  /// @brief The denominator at operand width, shifted by the leading-zero
++  /// count.
++  CudaRadixCiphertextFFI shifted_d;
++  /// @brief The numerator widened to twice the operand width, so the same
++  /// shift ca
 ```
 
-**File**: `backends/tfhe-cuda-backend/cuda/src/polynomial/dispatch.cuh` (modified, +8/-0)
+**File**: `backends/tfhe-cuda-backend/cuda/include/integer/ilog2.h` (modified, +1/-0)
 ```diff
-@@ -11,8 +11,15 @@
+@@ -1,3 +1,4 @@
++#pragma once
+ #include "integer_utilities.h"
  
- // Standard policy: AmortizedDegree for sizes 256-16384
- // (64-bit PBS CG, integer ops, FFT, keyswitch, sample extract)
-+// TFHE_CUDA_FUZZING extends support down to 32 for small synthetic parameters
-+// used by the GPU fuzz harness (reduces LWE mask size, no correctness
-+// guarantee).
- template <uint32_t N> struct AmortizedDegreePolicy {
-+#ifdef TFHE_CUDA_FUZZING
-+  static constexpr bool supported = (N >= 32 && N <= 16384);
-+#else
-   static constexpr bool supported = (N >= 256 && N <= 16384);
-+#endif
-   using type = AmortizedDegree<N>;
- };
- 
-@@ -68,6 +75,7 @@ template <uint32_t N> struct Multibit128DegreePolicy {
- #define DISPATCH_POLY_SIZE(poly_size, Policy, ...)                             \
-   do {                                                                         \
-     switch (poly_size) {                                                       \
-+      DISPATCH_POLY_SIZE_CASE(32, Policy, __VA_ARGS__)                         \
-       DISPATCH_POLY_SIZE_CASE(64, Policy, __VA_ARGS__)                         \
-       DISPATCH_POLY_SIZE_CASE(128, Policy, __VA_ARGS__)                        \
-       DISPATCH_POLY_SIZE_CASE(256, Policy, __VA_ARGS__)                        \
+ template <typename Torus> struct int_prepare_count_of_consecutive_bits_buffer {
 ```
 
-**File**: `ci/parse_benchmark_profile.py` (modified, +3/-1)
+**File**: `backends/tfhe-cuda-backend/cuda/include/integer/integer.h` (modified, +20/-0)
 ```diff
-@@ -9,6 +9,8 @@
-     "hyperstack": "hyperstack",
-     "scaleway": "terraform",
-     "nebius": "terraform",
-+    # Direct terraform prefix: profile name is used as-is (no cloud provider prefix prepended).
-+    "terraform": "terraform",
+@@ -487,6 +487,26 @@ void cuda_mul_low_partial_sum_64_async(
+ void cleanup_cuda_mul_low_partial_sum_64(CudaStreamsFFI streams,
+                                          int8_t **mem_ptr_void);
+ 
++// Goldschmidt division: quotient and remainder of two unsigned radix integers,
++// computed by iterating a fixed-point reciprocal rather than by long division.
++// Only 64-bit operands at 2 bits per block, 3 iterations and a 9-bit seed are
++// supported - that is the shape the truncation schedule is proved for. A zero
++// denominator returns an all-ones quotient and the numerator as remainder.
++uint64_t scratch_cuda_goldschmidt_division_64_async(
++    CudaStreamsFFI streams, int8_t **mem_ptr, uint32_t num_blocks,
++    uint32_t iterations, uint32_t lut_precision, uint32_t message_modulus,
++    uint32_t carry_modulus, CudaLweBootstrapKeyParamsFFI bsk_params,
++    CudaLweKeyswitchKeyParamsFFI ksk_params, bool allocate_gpu_memory);
++
++void cuda_goldschmidt_division_64_async(
++    CudaStreamsFFI streams, CudaRadixCiphertextFFI *quotient,
++    CudaRadixCiphertextFFI *remainder, CudaRadixCiphertextFFI const *numerator,
++    CudaRadixCiphertextFFI const *denominator, uint32_t iterations,
++    int8_t *mem_ptr, void *const *bsks, void *const *ksks);
++
++void cleanup_cuda_goldschmidt_division_64(CudaStreamsFFI streams,
++                                          int8_t **mem_ptr_void);
++
+ uint64_t scratch_cuda_integer_scalar_mul_64_async(
+     CudaStreamsFFI streams, int8_t **mem_ptr,
+     CudaLweBootstrapKeyParamsFFI bsk_params,
+```
+
+---
+
+### Incident Patch 2: `d22e3fcf` (2026-10-27)
+**Commit Message**: feat(gpu): GPU version of count_ones and count_zeros
+
+**File**: `backends/tfhe-cuda-backend/cuda/include/integer/count_bits.h` (added, +405/-0)
+```diff
+@@ -0,0 +1,405 @@
++#pragma once
++#include "integer_utilities.h"
++
++/**
++ * @brief Backs count_ones and count_zeros, following the CPU count_bits_2_2.
++ * Only 2_2 parameters are accepted, the bit value to count is fixed at
++ * construction.
++ *
++ * Instead of one sum term per block, the counts of 6 blocks and of a completer
++ * c are added without PBS into a chunk filled up to degree 15. The final sum
++ * then gets about 6 times fewer terms, for one extra PBS layer splitting each
++ * chunk into its message and carry.
++ *
++ *     regular blocks   (b0 b1)  (b2 b3)  (b4 b5)     c
++ *     count LUTs         0..4     0..4     0..4     0..3
++ *                          \        |        /       /
++ *     no PBS                +-------+-------+-------+
++ *                                   |
++ *                  chunk, degree <= 15, noise level 4
++ *                               /         \
++ *     extract LUTs          message      carry
++ *                               \         /
++ *                          one term of the sum
++ *
++ * c is a completer count. A duo [d0 d1 d2] is packed as (d0 d1) and (d1 d2),
++ * giving two counts in 0..3 that complete two chunks. A single block gives a
++ * count in 0..2. Completers left without a chunk are summed as they are.
++ *
++ * Zeros are counted directly by the LUTs, so count_zeros costs the same as
++ * count_ones, unlike the generic CPU path that derives it from the number of
++ * ones.
++ */
++template <typename Torus> struct int_count_bits_buffer {
++  /// @brief A 2_2 block holds up to 15, 3 pair counts in 0..4 reach 12 and
++  /// leave exactly the room of a completer in 0..3. A 4th pair would overflow.
++  static constexpr uint32_t PAIRS_PER_CHUNK = 3;
++  /// A pair packs 2 blocks as the 4 bits of one PBS input.
++  static constexpr uint32_t BLOCKS_PER_CHUNK = 2 * PAIRS_PER_CHUNK;
++
++  int_radix_params params;
++  bool allocate_gpu_memory;
++  /// Blocks of the input, the split and the buffers below are sized for them.
++  uint32_t num_radix_blocks;
++  /// @brief Low blocks of the output the sum runs on, just enough to hold the
++  /// number of input bits, the largest count.
++  uint32_t counter_num_blocks;
++
++  // Split of the input, regular blocks come first, then duos, then singles
++  //
++  /// Groups of 6 regular blocks, each one ends up as a (message, carry) term.
++  uint32_t num_chunks;
++  /// Multiple of 3, each group of 3 blocks tops up 2 chunks.
++  uint32_t num_duo_blocks;
++  /// Blocks counted alone, they top up chunks too while some remain.
++  uint32_t num_single_blocks;
++  /// Chunks that got a completer, the others stay at degree 12.
++  uint32_t num_completed_chunks;
++  /// Chunks plus the completers that found no chunk, handed to the sum.
++  uint32_t num_terms;
++
++  // Layout of the counts, the index of a count picks its LUT
++  //
++  /// Two per duo, the pairs (d0 d1) and (d1 d2).
++  uint32_t num_duo_counts;
++  /// Start of the duo counts, after the 3 packed pairs of each chunk.
++  uint32_t first_duo_count;
++  /// Start of the single block counts, the ones that take LUT 3.
++  uint32_t first_single_count;
++  /// Packed pairs of each chunk, then duo pairs, then single blocks.
++  uint32_t num_lut_inputs;
++
++  // Count stage
++  //
++  /// Four LUTs picked per block, so that all the counts take one PBS call.
++  int_radix_lut<Torus> *count_lut = nullptr;
++  /// Input block of each duo block, b0 b0+1 b0+1 b0+2 per duo.
++  std::vector<Torus> h_duo_block_indexes;
++  /// GPU copy of h_duo_block_indexes, read by the copy kernel.
++  Torus *d_duo_block_indexes = nullptr;
++  /// Duo blocks laid out as [d0 d1 d1 d2], pack_blocks then gives both pairs.
++  CudaRadixCiphertextFFI duo_blocks;
++  /// Packed regular blocks, then packed duo pairs, then single blocks.
++  CudaRadixCiphertextFFI lut_inputs;
++  /// Bit counts, in the same order as lut_inputs.
++  CudaRadixCiphertextFFI counts;
++
++  // Chunk stage, unused without chunk
++  //
++  /// Message and carry LUTs, both read each chunk.
++  int_radix_lut<Torus> *extract_lut = nullptr;
++  /// Chunk of each extract LUT input, the same chunk for message and carry.
++  std::vector<Torus> h_extract_indexes_in;
++  /// Block of each extract LUT output, the messages then the carries.
++  std::vector<Torus> h_extract_indexes_out;
++  /// Chunk sums, input of both extract LUTs.
++  CudaRadixCiphertextFFI chunks;
++  /// Messages of all the chunks, then their carries.
++  CudaRadixCiphertextFFI chunks_message_carry;
++
++  // Sum stage
++  //
++  /// Term block of each chunk message, chunk carry, then leftover completer.
++  std::vector<Torus> h_term_block_indexes;
++  /// GPU copy of h_term_block_indexes, read by the copy kernel.
++  Torus *d_term_block_indexes = nullptr;
++  /// num_terms zero padded radix ciphertexts of counter_num_blocks blocks.
++  CudaRadixCiphertextFFI sum_input_cts;
++  /// Partial sum reducing degrees for one propagation.
++  int_sum_ciphertexts_vec_memory<Torus> *sum_mem = nullptr;
++  /// Single carry propagation that cleans the summ
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/include/integer/integer.h` (modified, +16/-0)
+```diff
+@@ -693,6 +693,22 @@ void cuda_integer_count_of_consecutive_bits_64_async(
+ void cleanup_cuda_integer_count_of_consecutive_bits_64(CudaStreamsFFI streams,
+                                                        int8_t **mem_ptr_void);
+ 
++uint64_t scratch_cuda_integer_count_bits_64_async(
++    CudaStreamsFFI streams, int8_t **mem_ptr,
++    CudaLweBootstrapKeyParamsFFI bsk_params,
++    CudaLweKeyswitchKeyParamsFFI ksk_params, uint32_t num_blocks,
++    uint32_t counter_num_blocks, uint32_t message_modulus,
++    uint32_t carry_modulus, BitValue bit_value, bool allocate_gpu_memory);
++
++void cuda_integer_count_bits_64_async(CudaStreamsFFI streams,
++                                      CudaRadixCiphertextFFI *output_ct,
++                                      CudaRadixCiphertextFFI const *input_ct,
++                                      int8_t *mem_ptr, void *const *bsks,
++                                      void *const *ksks);
++
++void cleanup_cuda_integer_count_bits_64(CudaStreamsFFI streams,
++                                        int8_t **mem_ptr_void);
++
+ uint64_t scratch_cuda_integer_grouped_oprf_64_async(
+     CudaStreamsFFI streams, int8_t **mem_ptr,
+     CudaLweBootstrapKeyParamsFFI bsk_params,
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/src/integer/count_bits.cu` (added, +50/-0)
+```diff
+@@ -0,0 +1,50 @@
++#include "count_bits.cuh"
++
++uint64_t scratch_cuda_integer_count_bits_64_async(
++    CudaStreamsFFI streams, int8_t **mem_ptr,
++    CudaLweBootstrapKeyParamsFFI bsk_params,
++    CudaLweKeyswitchKeyParamsFFI ksk_params, uint32_t num_blocks,
++    uint32_t counter_num_blocks, uint32_t message_modulus,
++    uint32_t carry_modulus, BitValue bit_value, bool allocate_gpu_memory) {
++  int_radix_params params(bsk_params, ksk_params, message_modulus,
++                          carry_modulus);
++
++  return scratch_integer_count_bits<uint64_t>(
++      CudaStreams(streams), params, (int_count_bits_buffer<uint64_t> **)mem_ptr,
++      num_blocks, counter_num_blocks, bit_value, allocate_gpu_memory);
++}
++
++/**
++ * @brief GPU entry point of count_ones and count_zeros, the bit value to count
++ * is the one given to the scratch call.
++ *
++ * @param output_ct At least the counter_num_blocks given to the scratch call,
++ * the blocks above the counter are set to zero
++ * @param input_ct  Ciphertext to count, with clean carries
++ * @param mem_ptr   Buffer from scratch_cuda_integer_count_bits_64_async
++ */
++void cuda_integer_count_bits_64_async(CudaStreamsFFI streams,
++                                      CudaRadixCiphertextFFI *output_ct,
++                                      CudaRadixCiphertextFFI const *input_ct,
++                                      int8_t *mem_ptr, void *const *bsks,
++                                      void *const *ksks) {
++  GPU_ASSERT(output_ct != input_ct,
++             "Output and input pointers must be different for out-of-place "
++             "operations");
++
++  host_integer_count_bits<uint64_t, uint64_t>(
++      CudaStreams(streams), output_ct, input_ct,
++      (int_count_bits_buffer<uint64_t> *)mem_ptr, bsks, (uint64_t **)ksks);
++}
++
++void cleanup_cuda_integer_count_bits_64(CudaStreamsFFI streams,
++                                        int8_t **mem_ptr_void) {
++
++  int_count_bits_buffer<uint64_t> *mem_ptr =
++      (int_count_bits_buffer<uint64_t> *)(*mem_ptr_void);
++
++  mem_ptr->release(CudaStreams(streams));
++
++  delete mem_ptr;
++  *mem_ptr_void = nullptr;
++}
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/src/integer/count_bits.cuh` (added, +256/-0)
+```diff
+@@ -0,0 +1,256 @@
++#ifndef COUNT_BITS_CUH
++#define COUNT_BITS_CUH
++
++#include "integer.cuh"
++#include "integer/count_bits.h"
++#include "integer/integer_utilities.h"
++#include "multiplication.cuh"
++
++template <typename Torus>
++__host__ uint64_t scratch_integer_count_bits(
++    CudaStreams streams, const int_radix_params params,
++    int_count_bits_buffer<Torus> **mem_ptr, uint32_t num_radix_blocks,
++    uint32_t counter_num_blocks, BitValue bit_value,
++    const bool allocate_gpu_memory) {
++
++  uint64_t size_tracker = 0;
++
++  *mem_ptr = new int_count_bits_buffer<Torus>(
++      streams, params, num_radix_blocks, counter_num_blocks, bit_value,
++      allocate_gpu_memory, size_tracker);
++
++  return size_tracker;
++}
++
++/**
++ * @brief First PBS layer, fills mem_ptr->counts with the bit count of each
++ * packed pair and of each single block of input_ct.
++ *
++ * Regular and duo blocks are packed by pairs so that one PBS counts two
++ * blocks, single blocks go as they are.
++ *
++ * @param input_ct Ciphertext to count, with clean carries
++ */
++template <typename Torus, typename KSTorus>
++__host__ void
++host_integer_count_bits_counts(CudaStreams streams,
++                               CudaRadixCiphertextFFI const *input_ct,
++                               int_count_bits_buffer<Torus> *mem_ptr,
++                               void *const *bsks, KSTorus *const *ksks) {
++
++  auto stream = streams.stream(0);
++  auto gpu_index = streams.gpu_index(0);
++  auto message_modulus = mem_ptr->params.message_modulus;
++  auto carry_modulus = mem_ptr->params.carry_modulus;
++  auto lut_inputs = &mem_ptr->lut_inputs;
++  const uint32_t num_regular_blocks =
++      mem_ptr->BLOCKS_PER_CHUNK * mem_ptr->num_chunks;
++  const uint32_t num_duo_counts = mem_ptr->num_duo_counts;
++  const uint32_t first_duo_count = mem_ptr->first_duo_count;
++  const uint32_t first_single_count = mem_ptr->first_single_count;
++
++  if (num_regular_blocks > 0) {
++    CudaRadixCiphertextFFI regular_blocks;
++    as_radix_ciphertext_slice<Torus>(&regular_blocks, input_ct, 0,
++                                     num_regular_blocks);
++    CudaRadixCiphertextFFI packed_regular_blocks;
++    as_radix_ciphertext_slice<Torus>(&packed_regular_blocks, lut_inputs, 0,
++                                     first_duo_count);
++    pack_blocks<Torus>(stream, gpu_index, &packed_regular_blocks,
++                       &regular_blocks, num_regular_blocks, message_modulus,
++                       message_modulus, carry_modulus);
++  }
++
++  if (num_duo_counts > 0) {
++    copy_radix_ciphertext_blocks_from_indexes_async<Torus>(
++        stream, gpu_index, &mem_ptr->duo_blocks, input_ct,
++        mem_ptr->d_duo_block_indexes, mem_ptr->h_duo_block_indexes.data(),
++        2 * num_duo_counts);
++    CudaRadixCiphertextFFI packed_duo_blocks;
++    as_radix_ciphertext_slice<Torus>(&packed_duo_blocks, lut_inputs,
++                                     first_duo_count, first_single_count);
++    pack_blocks<Torus>(stream, gpu_index, &packed_duo_blocks,
++                       &mem_ptr->duo_blocks, 2 * num_duo_counts,
++                       message_modulus, message_modulus, carry_modulus);
++  }
++
++  if (mem_ptr->num_single_blocks > 0) {
++    const uint32_t first_single_block =
++        num_regular_blocks + mem_ptr->num_duo_blocks;
++    copy_radix_ciphertext_slice_async<Torus>(
++        stream, gpu_index, lut_inputs, first_single_count,
++        first_single_count + mem_ptr->num_single_blocks, input_ct,
++        first_single_block, input_ct->num_radix_blocks);
++  }
++
++  host_apply_univariate_lut<Torus>(streams, &mem_ptr->counts, lut_inputs,
++                                   mem_ptr->count_lut, ksks, bsks);
++}
++
++/**
++ * @brief Adds the counts of each chunk, then splits the chunks into their
++ * message and carry with the second PBS layer, the extra cost of this path.
++ *
++ * The additions need no PBS, degree <= 15 and noise level <= 4 fit the 2_2
++ * limits.
++ */
++template <typename Torus, typename KSTorus>
++__host__ void
++host_integer_count_bits_chunks(CudaStreams streams,
++                               int_count_bits_buffer<Torus> *mem_ptr,
++                               void *const *bsks, KSTorus *const *ksks) {
++
++  auto stream = streams.stream(0);
++  auto gpu_index = streams.gpu_index(0);
++  auto message_modulus = mem_ptr->params.message_modulus;
++  auto carry_modulus = mem_ptr->params.carry_modulus;
++  auto chunks = &mem_ptr->chunks;
++  const uint32_t num_chunks = mem_ptr->num_chunks;
++  const uint32_t num_completed_chunks = mem_ptr->num_completed_chunks;
++
++  constexpr uint32_t pairs_per_chunk =
++      int_count_bits_buffer<Torus>::PAIRS_PER_CHUNK;
++  CudaRadixCiphertextFFI regular_counts[pairs_per_chunk];
++  for (uint32_t i = 0; i < pairs_per_chunk; ++i) {
++    as_radix_ciphertext_slice<Torus>(&regular_counts[i], &mem_ptr->counts,
++                                     i * num_chunks, (i + 1) * num_chunks);
++  }
++  host_addition<Torus>(stream, gpu_index, chunks, &regular_counts[0],
++         
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/src/integer/radix_ciphertext.cuh` (modified, +79/-0)
+```diff
+@@ -7,6 +7,7 @@
+ #include "integer/integer.h"
+ #include "integer/radix_ciphertext.h"
+ #include "utils/helper.cuh"
++#include "utils/helper_multi_gpu.cuh"
+ 
+ inline CudaLweCiphertextListFFI
+ to_lwe_ciphertext_list(CudaRadixCiphertextFFI *radix) {
+@@ -153,6 +154,84 @@ void copy_radix_ciphertext_async(cudaStream_t const stream,
+       input_radix, 0, input_radix->num_radix_blocks);
  }
  
++/**
++ * @brief Block i of output_radix gets block indexes[i] of input_radix, for i
++ * below num_blocks, in one kernel instead of one copy per block.
++ *
++ * @param output_radix Its num_blocks first blocks receive the copied blocks
++ * @param input_radix  Blocks to copy, an index can repeat
++ * @param d_indexes    Input block of each output block, on the GPU of stream
++ * @param h_indexes    Host copy of d_indexes, the degrees and noise levels move
++ * on the host
++ * @param num_blocks   Blocks copied, nothing is launched for 0
++ */
++template <typename Torus>
++void copy_radix_ciphertext_blocks_from_indexes_async(
++    cudaStream_t const stream, uint32_t const gpu_index,
++    CudaRadixCiphertextFFI *output_radix,
++    const CudaRadixCiphertextFFI *input_radix, Torus const *d_indexes,
++    Torus const *h_indexes, uint32_t num_blocks) {
++  if (num_blocks == 0) {
++    return;
++  }
++  GPU_ASSERT(output_radix->lwe_dimension == input_radix->lwe_dimension,
++             "Cuda error: input and output lwe dimension must be equal");
++  GPU_ASSERT(num_blocks <= output_radix->num_radix_blocks,
++             "Cuda error: the output does not have enough blocks");
++  for (uint32_t i = 0; i < num_blocks; ++i) {
++    GPU_ASSERT(h_indexes[i] < input_radix->num_radix_blocks,
++               "Cuda error: input index exceeds input num radix blocks");
++    output_radix->degrees[i] = input_radix->degrees[h_indexes[i]];
++    output_radix->noise_levels[i] = input_radix->noise_levels[h_indexes[i]];
++  }
++
++  cuda_set_device(gpu_index);
++  align_with_indexes<Torus><<<num_blocks, 256, 0, stream>>>(
++      (Torus *)output_radix->ptr, (Torus const *)input_radix->ptr, d_indexes,
++      output_radix->lwe_dimension + 1);
++  check_cuda_error(cudaGetLastError());
++}
++
++/**
++ * @brief Block i of input_radix goes to block indexes[i] of output_radix, for
++ * i below num_blocks, in one kernel instead of one copy per block.
++ *
++ * @param output_radix Receives each input block at its index, the others are
++ * left untouched
++ * @param input_radix  Its num_blocks first blocks are copied
++ * @param d_indexes    Output block of each input block, all distinct, on the
++ * GPU of stream
++ * @param h_indexes    Host copy of d_indexes, the degrees and noise levels move
++ * on the host
++ * @param num_blocks   Blocks copied, nothing is launched for 0
++ */
++template <typename Torus>
++void copy_radix_ciphertext_blocks_to_indexes_async(
++    cudaStream_t const stream, uint32_t const gpu_index,
++    CudaRadixCiphertextFFI *output_radix,
++    const CudaRadixCiphertextFFI *input_radix, Torus const *d_indexes,
++    Torus const *h_indexes, uint32_t num_blocks) {
++  if (num_blocks == 0) {
++    return;
++  }
++  GPU_ASSERT(output_radix->lwe_dimension == input_radix->lwe_dimension,
++             "Cuda error: input and output lwe dimension must be equal");
++  GPU_ASSERT(num_blocks <= input_radix->num_radix_blocks,
++             "Cuda error: the input does not have enough blocks");
++  for (uint32_t i = 0; i < num_blocks; ++i) {
++    GPU_ASSERT(h_indexes[i] < output_radix->num_radix_blocks,
++               "Cuda error: output index exceeds output num radix blocks");
++    output_radix->degrees[h_indexes[i]] = input_radix->degrees[i];
++    output_radix->noise_levels[h_indexes[i]] = input_radix->noise_levels[i];
++  }
++
++  cuda_set_device(gpu_index);
++  realign_with_indexes<Torus><<<num_blocks, 256, 0, stream>>>(
++      (Torus *)output_radix->ptr, (Torus const *)input_radix->ptr, d_indexes,
++      output_radix->lwe_dimension + 1);
++  check_cuda_error(cudaGetLastError());
++}
++
+ // end_lwe_index is exclusive
+ template <typename Torus>
+ void set_zero_radix_ciphertext_slice_async(cudaStream_t const stream,
+```
+
+**File**: `backends/tfhe-cuda-backend/src/bindings.rs` (modified, +27/-0)
+```diff
+@@ -1636,6 +1636,33 @@ unsafe extern "C" {
+         mem_ptr_void: *mut *mut i8,
+     );
+ }
++unsafe extern "C" {
++    pub fn scratch_cuda_integer_count_bits_64_async(
++        streams: CudaStreamsFFI,
++        mem_ptr: *mut *mut i8,
++        bsk_params: CudaLweBootstrapKeyParamsFFI,
++        ksk_params: CudaLweKeyswitchKeyParamsFFI,
++        num_blocks: u32,
++        counter_num_blocks: u32,
++        message_modulus: u32,
++        carry_modulus: u32,
++        bit_value: BitValue,
++        allocate_gpu_memory: bool,
++    ) -> u64;
++}
++unsafe extern "C" {
++    pub fn cuda_integer_count_bits_64_async(
++        streams: CudaStreamsFFI,
++        output_ct: *mut CudaRadixCiphertextFFI,
++        input_ct: *const CudaRadixCiphertextFFI,
++        mem_ptr: *mut i8,
++        bsks: *const *mut ffi::c_void,
++        ksks: *const *mut ffi::c_void,
++    );
++}
++unsafe extern "C" {
++    pub fn cleanup_cuda_integer_count_bits_64(streams: CudaStreamsFFI, mem_ptr_void: *mut *mut i8);
++}
+ unsafe extern "C" {
+     pub fn scratch_cuda_integer_grouped_oprf_64_async(
+         streams: CudaStreamsFFI,
+```
+
+**File**: `scripts/check_scratch_cleanup.py` (modified, +8/-8)
+```diff
+@@ -54,29 +54,29 @@
+ # Bindings parsed from bindings.rs
+ # Scratch functions: Two more than cleanup functions because of
+ #  'scratch_cuda_programmable_bootstrap_32_async' and
+-EXPECTED_SCRATCH_COUNT = 82
++EXPECTED_SCRATCH_COUNT = 83
  
-@@ -43,7 +45,7 @@ def parse_profile(profile_string, output_file, slab_toml):
-         sys.exit(1)
+ # Cuda operation functions
+-EXPECTED_CUDA_COUNT = 120
++EXPECTED_CUDA_COUNT = 121
  
-     slab_backend = BACKEND_MAP[backend_prefix]
--    if slab_backend == "terraform":
-+    if slab_backend == "terraform" and backend_prefix != "terraform":
-         profile = backend_prefix + "-" + profile_name
-     else:
-         profile = profile_name
+ # Cleanup functions
+-EXPECTED_CLEANUP_COUNT = 82
++EXPECTED_CLEANUP_COUNT = 83
+ 
+ # Check 3: Rust call-site scanning
+ # Number of functions in ffi.rs files
+-EXPECTED_CHECK3_RUST_FNS = 142
++EXPECTED_CHECK3_RUST_FNS = 143
+ # Number of functions in ffi.rs files that
+-EXPECTED_CHECK3_ASYNC_CUDA_CALLS = 106
++EXPECTED_CHECK3_ASYNC_CUDA_CALLS = 107
+ 
+ # Number of instances of Rust calls to the scratch/cuda/cleanup in a
+ # triplet sequence.
+-EXPECTED_CHECK3_SCRATCH_CUDA_CLEANUP_TRIPLET_CALLS = 124
++EXPECTED_CHECK3_SCRATCH_CUDA_CLEANUP_TRIPLET_CALLS = 125
+ 
+ # Check 5: Rust async-caller scanning
+-EXPECTED_CHECK5_ASYNC_CALLERS = 135
++EXPECTED_CHECK5_ASYNC_CALLERS = 136
+ 
+ # Check 6: Rust cleanup-caller scanning
+-EXPECTED_CHECK6_CLEANUP_CALLERS = 122
++EXPECTED_CHECK6_CLEANUP_CALLERS = 123
+ 
+ 
+ def check_paths_exist():
+```
+
+**File**: `tfhe-benchmark/benches/integer/bench.rs` (modified, +28/-0)
+```diff
+@@ -1994,6 +1994,18 @@ mod cuda {
+         display_name: ilog2
+     );
+ 
++    define_cuda_server_key_bench_clean_input_unary_fn!(
++        method_name: unchecked_count_ones,
++        method_name_cpu: unchecked_count_ones_parallelized,
++        display_name: count_ones
++    );
++
++    define_cuda_server_key_bench_clean_input_unary_fn!(
++        method_name: unchecked_count_zeros,
++        method_name_cpu: unchecked_count_zeros_parallelized,
++        display_name: count_zeros
++    );
++
+     define_cuda_server_key_bench_clean_input_scalar_fn!(
+         method_name: unchecked_scalar_bitand,
+         method_name_cpu: unchecked_scalar_bitand_parallelized,
+@@ -2332,6 +2344,18 @@ mod cuda {
+         display_name: ilog2
+     );
+ 
++    define_cuda_server_key_bench_clean_input_unary_fn!(
++        method_name: count_ones,
++        method_name_cpu: count_ones_parallelized,
++        display_name: count_ones
++    );
++
++    define_cuda_server_key_bench_clean_input_unary_fn!(
++        method_name: count_zeros,
++        method_name_cpu: count_zeros_parallelized,
++        display_name: count_zeros
++    );
++
+     define_cuda_server_key_bench_clean_input_scalar_fn!(
+         method_name: scalar_sub,
+         method_name_cpu: scalar_sub_parallelized,
+@@ -2508,6 +2532,8 @@ mod cuda {
+         cuda_unchecked_rotate_left,
+         cuda_unchecked_rotate_right,
+         cuda_unchecked_ilog2,
++        cuda_unchecked_count_ones,
++        cuda_unchecked_count_zeros,
+     );
+ 
+     criterion_group!(
+@@ -2569,6 +2595,8 @@ mod cuda {
+         cuda_trailing_zeros,
+         cuda_trailing_ones,
+         cuda_ilog2,
++        cuda_count_ones,
++        cuda_count_zeros,
+         oprf::cuda::cuda_unsigned_oprf,
+         vector_find::cuda::cuda_match_value,
+         mul_add_fixed_point::cuda::cuda_mul_add_fixed_point,
 ```
 
 #### Recent Merged Pull Requests:
@@ -2307,67 +2744,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gpu): also fuzz cpp code for gpu
+## X. gpu): add goldshmidt_division (#3926)
 
 **RULE**:
-When implementing operations in `.github/workflows/gpu_fuzzing.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/gpu_integer_classic_tests_h100_2gpu_par.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0fc677fa`: gpu): also fuzz cpp code for gpu. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a6a48cd8`: gpu): add goldshmidt_division (#3926). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/gpu_fuzzing.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/gpu_integer_classic_tests_h100_2gpu_par.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-name: gpu_fuzzing
-  INSTANCE_TYPE_SCHEDULED: "terraform::generic-4-l4orl40-tests (nebius-L40)"
-      instance-type:
-        description: "Instance type"
-        type: choice
-        default: "terraform::generic-4-l4orl40-tests (nebius-L40)"
-        options:
-          - "terraform::generic-4-l4orl40-tests (nebius-L40)"
-          - "terraform::scaleway-1-l4 (L4-1-24G)"
-          - "terraform::scaleway-4-l4 (L4-4-24G)"
-          - "terraform::scaleway-4-l40-tests (L40S-4-48G)"
-          - "terraform::scaleway-single-h100 (H100-1-80G)"
-          - "terraform::nebius-single-h100 (nebius-H100-SXM-1-80G)"
-          - "hyperstack::l40 (n3-L40x1)"
-          - "hyperstack::4-l40 (n3-L40x4)"
-          - "hyperstack::single-h100 (n3-H100x1)"
-  parse-inputs:
-    name: gpu-fuzzing/parse-inputs
-    outputs:
-      backend: ${{ steps.parse.outputs.backend }}
-      profile: ${{ steps.parse.outputs.profile }}
-      cloud-provider: ${{ steps.parse.outputs.cloud_provider }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: "false"
-          token: ${{ secrets.REPO_CHECKOUT_TOKEN }}
+      # Separate build: the golden test needs the gpu-goldschmidt-trace feature.
+      - name: Run Goldschmidt division golden trace test
+        run: |
+          make test_integer_goldschmidt_golden_trace_gpu
 
-      - nam
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-name: gpu-fuzzing
-  setup-instance:
-    name: gpu-fuzzing/setup-instance
-      cloud-provider: ${{ steps.start-instance.outputs.cloud-provider }}
-          backend: terraform
-          profile: scaleway-1-l4
-    needs: setup-instance
-    # 2h: covers a 20min campaign + CUDA build (~90m) + pre/post with headroom.
-    timeout-minutes: 120
-          cloud-provider: ${{ needs.setup-instance.outputs.cloud-provider }}
-    needs: [setup-instance, fuzz]
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0fc677fa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a6a48cd8` are properly handled with clean fallback behavior.

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-N3DL",
-    "timestamp": "2026-10-25T14:38:09.369Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "6ec740fb37bdd2b1069a35fc2d5c333c7cc43b504df8abd901350ffba87fe51c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-UZI7",
-    "timestamp": "2026-10-25T14:44:17.599Z",
-    "repository": "bvaughn/react-virtualized",
-    "learningId": "learn-github-bvaughn-react-virtualized",
-    "contentHash": "e16d8f5b74bdb1cf97e0973d3e0e1b5842e021cf696b098479db090f7058db4f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-V7GQ",
-    "timestamp": "2026-10-25T14:44:27.914Z",
-    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-    "contentHash": "9d31fed7497129d49bbffd92e5c857cd22e6130a32bcf02deccb160668affa3c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-V98W",
-    "timestamp": "2026-10-25T14:44:30.224Z",
-    "repository": "meshery/meshery",
-    "learningId": "learn-github-meshery-meshery",
-    "contentHash": "1b9c87096685db4353a722c66ca8337447d98d7f00f02c626cb17e031ee2dee5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-3A61",
     "timestamp": "2026-10-25T14:50:44.665Z",
     "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -7490,6 +7430,66 @@
     "repository": "VectifyAI/PageIndex",
     "learningId": "learn-github-vectifyai-pageindex",
     "contentHash": "db27976a2ab3cafaca897e43cdc4fe005f27caf83ae81c4de0d4853ccb5689b1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-JFXF",
+    "timestamp": "2026-10-27T14:10:39.843Z",
+    "repository": "carbon-design-system/carbon",
+    "learningId": "learn-github-carbon-design-system-carbon",
+    "contentHash": "0081ff95b86902a1fa527b98dd7e83c0f959bbbd798f59f59a5e89b236f314f9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-JN8Q",
+    "timestamp": "2026-10-27T14:10:49.322Z",
+    "repository": "Comfy-Org/Z-Image-Turbo",
+    "learningId": "learn-huggingface-comfy-org-z-image-turbo",
+    "contentHash": "72959981cec0b965bda1d5cb1207f5e065128ff8cfad3a8e04e407f78825b1c0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-JR89",
+    "timestamp": "2026-10-27T14:10:54.489Z",
+    "repository": "milvus-io/milvus",
+    "learningId": "learn-github-milvus-io-milvus",
+    "contentHash": "3f1009bf8f86511b7eede86668b2bd20f9d3fb3b3866074df7e2f8e0c40539d5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-JSL3",
+    "timestamp": "2026-10-27T14:10:56.247Z",
+    "repository": "zama-ai/tfhe-rs",
+    "learningId": "learn-github-zama-ai-tfhe-rs",
+    "contentHash": "b0ea55d144beb7fd565894a5fb55d2899abee847d4a67063bb29dbf15ec787bd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

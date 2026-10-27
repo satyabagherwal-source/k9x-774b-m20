@@ -5366,3 +5366,7 @@ Every entry in this ledger must capture:
 | `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `10a74ea6` | Multi-dimensional audit evidence | 2026-10-27T14:07:18.037Z |
 | `learn-github-rdflib-rdflib` | `https://github.com/RDFLib/rdflib` | `8571e879` | Multi-dimensional audit evidence | 2026-10-27T14:07:20.021Z |
 | `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `b81465d9` | Multi-dimensional audit evidence | 2026-10-27T14:07:29.544Z |
+| `learn-github-carbon-design-system-carbon` | `https://github.com/carbon-design-system/carbon` | `db1bdb20` | Multi-dimensional audit evidence | 2026-10-27T14:10:39.846Z |
+| `learn-huggingface-comfy-org-z-image-turbo` | `https://huggingface.co/Comfy-Org/Z-Image-Turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-27T14:10:49.326Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `b6cbe004` | Multi-dimensional audit evidence | 2026-10-27T14:10:54.492Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `a6a48cd8` | Multi-dimensional audit evidence | 2026-10-27T14:10:56.250Z |

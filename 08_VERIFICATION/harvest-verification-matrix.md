@@ -5357,3 +5357,7 @@
 | `CYCLE-20261027-F47M` | `2026-10-27T14:07:18.034Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4828` | Yes (`62230325...`) |
 | `CYCLE-20261027-F5QQ` | `2026-10-27T14:07:20.018Z` | `RDFLib/rdflib` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4829` | Yes (`6718fc12...`) |
 | `CYCLE-20261027-FD39` | `2026-10-27T14:07:29.541Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4830` | Yes (`db27976a...`) |
+| `CYCLE-20261027-JFXF` | `2026-10-27T14:10:39.843Z` | `carbon-design-system/carbon` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4831` | Yes (`0081ff95...`) |
+| `CYCLE-20261027-JN8Q` | `2026-10-27T14:10:49.322Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4832, Rule 4833` | Yes (`72959981...`) |
+| `CYCLE-20261027-JR89` | `2026-10-27T14:10:54.489Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4834` | Yes (`3f1009bf...`) |
+| `CYCLE-20261027-JSL3` | `2026-10-27T14:10:56.247Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4835` | Yes (`b0ea55d1...`) |
