@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T12:53:52.431Z",
-  "total_cycles_completed": 5267,
-  "total_learnings_persisted": 5267,
-  "total_rules_promoted": 4674,
+  "last_updated": "2026-10-27T12:56:55.416Z",
+  "total_cycles_completed": 5269,
+  "total_learnings_persisted": 5269,
+  "total_rules_promoted": 4677,
   "history": [
-    {
-      "timestamp": "2026-10-26T02:26:58.304Z",
-      "repository": "serpapi/google-search-results-nodejs",
-      "learningId": "learn-github-serpapi-google-search-results-nodejs",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T02:33:55.764Z",
-      "repository": "serpapi/google-search-results-python",
-      "learningId": "learn-github-serpapi-google-search-results-python",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-26T02:44:41.436Z",
       "repository": "yattee/yattee",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-27T12:53:52.431Z",
       "repository": "StarTrail-org/LEANN",
       "learningId": "learn-github-startrail-org-leann",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T12:56:51.441Z",
+      "repository": "baidu/Unlimited-OCR-2",
+      "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T12:56:55.416Z",
+      "repository": "litmuschaos/litmus",
+      "learningId": "learn-github-litmuschaos-litmus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

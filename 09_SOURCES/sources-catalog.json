@@ -2913,10 +2913,10 @@
     "repository": "litmuschaos/litmus",
     "platform": "github",
     "sourceUrl": "https://github.com/litmuschaos/litmus",
-    "sourceVersion": "b957f314",
+    "sourceVersion": "97a397fb",
     "license": "Apache-2.0",
-    "contentHash": "852bf05a79c3f24e745a198a66f64c86cf4d776783b95a51bfdd9ec1a0f62e1d",
-    "lastHarvestedAt": "2026-10-20T13:53:46.848Z",
+    "contentHash": "5b5b93ae6be4c6a11a043d849ed472689d4b8e5727dd0a4e7e90fe6c1399c7dc",
+    "lastHarvestedAt": "2026-10-27T12:56:55.412Z",
     "learningId": "learn-github-litmuschaos-litmus"
   },
   "provablehq-snarkos": {
@@ -10908,5 +10908,15 @@
     "contentHash": "162c9f3ce81e61eb82c72b98fe7df9e064fc886da09d8f6b72992e94ac7a24f6",
     "lastHarvestedAt": "2026-10-27T12:50:11.147Z",
     "learningId": "learn-github-papersgpt-papersgpt-for-zotero"
+  },
+  "hf-baidu-unlimited-ocr-2": {
+    "repository": "baidu/Unlimited-OCR-2",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/baidu/Unlimited-OCR-2",
+    "sourceVersion": "hf-baidu-unlimited-ocr-2",
+    "license": "Open-Source",
+    "contentHash": "d3bddca3d24d3c13e9cb71814a29757e9757d84a7f8f31c0c690d8e0a18d910c",
+    "lastHarvestedAt": "2026-10-27T12:56:51.438Z",
+    "learningId": "learn-huggingface-baidu-unlimited-ocr-2"
   }
 }

@@ -4516,3 +4516,7 @@ https://github.com/7onez/cti-expert
 # --- Automatically Discovered by AI Scout Engine [2026-10-27T12:50:03.651Z] ---
 # [AI-AGENTS] papersgpt/papersgpt-for-zotero (1776 score) - Professional AI research tool for Zotero: chat with PDFs, whole-library search, 
 https://github.com/papersgpt/papersgpt-for-zotero
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T12:56:35.414Z] ---
+# [HUGGINGFACE-AI-MODELS] baidu/Unlimited-OCR-2 (2143 score) - Verified Hugging Face Model: baidu/Unlimited-OCR-2 (163 likes, 513 downloads)
+https://huggingface.co/baidu/Unlimited-OCR-2

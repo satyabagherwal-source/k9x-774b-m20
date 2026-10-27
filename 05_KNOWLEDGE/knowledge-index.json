@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T12:53:52.351Z",
-  "total_verified_learnings": 1107,
+  "last_updated": "2026-10-27T12:56:55.376Z",
+  "total_verified_learnings": 1108,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -33554,8 +33554,8 @@
       "slug": "litmuschaos-litmus",
       "platform": "github",
       "source_url": "https://github.com/litmuschaos/litmus",
-      "source_version": "b957f314",
-      "content_hash": "852bf05a79c3f24e745a198a66f64c86cf4d776783b95a51bfdd9ec1a0f62e1d",
+      "source_version": "97a397fb",
+      "content_hash": "5b5b93ae6be4c6a11a043d849ed472689d4b8e5727dd0a4e7e90fe6c1399c7dc",
       "dossier_path": "07_PROJECT_LEARNING/litmuschaos-litmus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/litmuschaos-litmus-learnings.md",
       "promoted_rules": [
@@ -33568,6 +33568,11 @@
           "number": 3206,
           "title": "fix unimplemented concurrency in CheckComponentStatus (#5522)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4772,
+          "title": "chaoscenter-web): build frontend image with pnpm multi-stage Dockerfile (#5660)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33575,7 +33580,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T13:53:46.771Z",
+      "verified_at": "2026-10-27T12:56:55.368Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -132685,6 +132690,86 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T12:53:52.339Z"
+    },
+    "learn-huggingface-baidu-unlimited-ocr-2": {
+      "learning_id": "learn-huggingface-baidu-unlimited-ocr-2",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "baidu/Unlimited-OCR-2",
+      "repository": "baidu/Unlimited-OCR-2",
+      "slug": "hf-baidu-unlimited-ocr-2",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/baidu/Unlimited-OCR-2",
+      "source_version": "hf-baidu-unlimited-ocr-2",
+      "content_hash": "d3bddca3d24d3c13e9cb71814a29757e9757d84a7f8f31c0c690d8e0a18d910c",
+      "dossier_path": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4770,
+          "title": "Sparse Attention Windowing for Unbounded Context",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4771,
+          "title": "MoE Expert Routing Stability in Long-Context OCR",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T12:56:51.380Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4770": {
+      "learning_id": "rule-4770",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4770,
+      "title": "Sparse Attention Windowing for Unbounded Context",
+      "source_url": "https://huggingface.co/baidu/Unlimited-OCR-2",
+      "source_version": "hf-baidu-unlimited-ocr-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:56:51.380Z"
+    },
+    "rule-4771": {
+      "learning_id": "rule-4771",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4771,
+      "title": "MoE Expert Routing Stability in Long-Context OCR",
+      "source_url": "https://huggingface.co/baidu/Unlimited-OCR-2",
+      "source_version": "hf-baidu-unlimited-ocr-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:56:51.380Z"
+    },
+    "rule-4772": {
+      "learning_id": "rule-4772",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4772,
+      "title": "chaoscenter-web): build frontend image with pnpm multi-stage Dockerfile (#5660)",
+      "source_url": "https://github.com/litmuschaos/litmus",
+      "source_version": "97a397fb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:56:55.369Z"
     }
   },
   "aliases": {

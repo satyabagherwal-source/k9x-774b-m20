@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-369P",
-    "timestamp": "2026-10-25T11:34:42.301Z",
-    "repository": "Contrastive-LM/CLM-v0.1-8B",
-    "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-    "contentHash": "1e1d688c3ea9d22241bb39fb30d33029cea193d5b6694cb26f74d4c353d60632",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-EVLA",
-    "timestamp": "2026-10-25T11:43:48.334Z",
-    "repository": "nvidia/Nemotron-3-Diarization",
-    "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
-    "contentHash": "f3a59d387e7a8d8fab60d1acdd9a5bdd0e86df5b79ba769dce989c1da41f1f17",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-RO8E",
     "timestamp": "2026-10-25T11:53:45.326Z",
     "repository": "cachix/devenv",
@@ -7490,6 +7460,36 @@
     "repository": "StarTrail-org/LEANN",
     "learningId": "learn-github-startrail-org-leann",
     "contentHash": "b9333ed6025adcd9ee89a7738c410ab19dd902e7c5071a7a7ef1f7ecb414733e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-WIY4",
+    "timestamp": "2026-10-27T12:56:51.436Z",
+    "repository": "baidu/Unlimited-OCR-2",
+    "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
+    "contentHash": "d3bddca3d24d3c13e9cb71814a29757e9757d84a7f8f31c0c690d8e0a18d910c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-WM0I",
+    "timestamp": "2026-10-27T12:56:55.410Z",
+    "repository": "litmuschaos/litmus",
+    "learningId": "learn-github-litmuschaos-litmus",
+    "contentHash": "5b5b93ae6be4c6a11a043d849ed472689d4b8e5727dd0a4e7e90fe6c1399c7dc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

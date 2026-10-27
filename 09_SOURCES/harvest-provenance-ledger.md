@@ -5299,3 +5299,5 @@ Every entry in this ledger must capture:
 | `learn-github-saffsanity-sill` | `https://github.com/Saffsanity/sill` | `6c5b5d24` | Multi-dimensional audit evidence | 2026-10-27T12:53:45.535Z |
 | `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `32e8e3f7` | Multi-dimensional audit evidence | 2026-10-27T12:53:47.417Z |
 | `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `a63f484a` | Multi-dimensional audit evidence | 2026-10-27T12:53:52.427Z |
+| `learn-huggingface-baidu-unlimited-ocr-2` | `https://huggingface.co/baidu/Unlimited-OCR-2` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-10-27T12:56:51.438Z |
+| `learn-github-litmuschaos-litmus` | `https://github.com/litmuschaos/litmus` | `97a397fb` | Multi-dimensional audit evidence | 2026-10-27T12:56:55.412Z |

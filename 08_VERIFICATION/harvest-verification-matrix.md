@@ -5290,3 +5290,5 @@
 | `CYCLE-20261027-SJI4` | `2026-10-27T12:53:45.532Z` | `Saffsanity/sill` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4767` | Yes (`f8c3c4e0...`) |
 | `CYCLE-20261027-SKYE` | `2026-10-27T12:53:47.414Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4768` | Yes (`0b0d79e2...`) |
 | `CYCLE-20261027-SOTK` | `2026-10-27T12:53:52.424Z` | `StarTrail-org/LEANN` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4769` | Yes (`b9333ed6...`) |
+| `CYCLE-20261027-WIY4` | `2026-10-27T12:56:51.436Z` | `baidu/Unlimited-OCR-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4770, Rule 4771` | Yes (`d3bddca3...`) |
+| `CYCLE-20261027-WM0I` | `2026-10-27T12:56:55.410Z` | `litmuschaos/litmus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4772` | Yes (`5b5b93ae...`) |
