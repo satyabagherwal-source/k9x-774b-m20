@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source**: github ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
-> **Source Version**: `79e49c75`  
+> **Source Version**: `3861d587`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T17:58:24.808Z  
+> **Timestamp**: 2026-10-27T19:56:21.500Z  
 > **Learning ID**: `learn-github-prometheus-prometheus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T17:58:23.871Z  
+> **Harvest Timestamp**: 2026-10-27T19:56:21.104Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Prometheus monitoring system and time series database.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 66776 stars
+- **Stars / Engagement**: 66812 stars
 
 ---
 
@@ -1500,11 +1500,13 @@ func openDir(path string) (fd syscall.Handle, err error) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20195** (2026-10-26): **Add changelog entry for cherry-pick**
-  *Symptoms*:  ```release-notes NONE ``` 
+- **Issue #20208** (2026-10-27): **release-3.16: Bump rc version for CI**
+  *Symptoms*: Signed-off-by: Owen Williams <owen.williams@grafana.com>  ```release-notes NONE ``` 
+  **Post-Mortem & Fix Analysis**:
+  > still a spurious test error, merging anyway
 
-- **Issue #20194** (2026-10-26): **release: omit authors and parentheses from generated PR references**
-  *Symptoms*: <!--     - Please give your PR a title in the form "area: short description".  For example "tsdb: reduce disk usage by 95%"      - Please sign CNCF's Developer Certificate of Origin and sign-off your commits by adding the -s / --signoff flag to `git commit`. See https://github.com/apps/dco for more information.      - If the PR adds or changes a behaviour or fixes a bug of an exported API it would need a unit/e2e test.      - Where possible use only exported APIs for tests to simplify the review and make it as close as possible to an actual library usage.      - Performance improvements would need a benchmark test to prove it.      - All exposed objects should have a comment.      - All comments should start with a capital letter and end with a full stop.  -->  #### Which issue(s) does the PR fix: <!-- If it applies. Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. More at https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword -->  #### Release notes for end users (**ALL** commits must be considered). *Reviewers should verify clarity and quality.*  <!-- Write NONE only if there is no user-facing change.  Otherwise use one of: [FEATURE] [ENHANCEMENT] [PERF] [BUGFIX] [SECURITY] [CHANGE] Following the pattern `[TYPE] Component: description.`  Example: [FEATURE] API: Add 
+- **Issue #20201** (2026-10-27): **ci: pass --security-opt seccomp=unconfined to 386 test container**
+  *Symptoms*: Ubuntu 26.04 runners currently ship Docker 29.4.2, whose default seccomp profile blocks `socketcall(2)` with `ENOSYS` ([actions/runner-images#14790](https://github.com/actions/runner-images/issues/14790)). Since Go on `linux/386` still uses `socketcall(2)` for socket operations ([golang/go#79200](https://github.com/golang/go/issues/79200)), tests opening sockets fail with `socket: function not implemented` when `ubuntu-latest` resolves to `ubuntu-26.04`.  Commits: - `ci: pass --security-opt seccomp=unconfined to 386 test container`  ```release-notes NONE ```
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1521,256 +1523,214 @@ func openDir(path string) (fd syscall.Handle, err error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0d5a5c1d` (2026-10-26)
-**Commit Message**: Merge pull request #20161 from guidonguido/fix/tsdb/block-reload-interval
+### Incident Patch 1: `c21fd394` (2026-10-27)
+**Commit Message**: ci: pass --security-opt seccomp=unconfined to 386 test container
 
-tsdb: use a persistent maintenance ticker
+Ubuntu 26.04 runners currently ship Docker 29.4.2, whose default seccomp profile blocks socketcall(2) with ENOSYS (actions/runner-images#14790). Since Go on linux/386 still uses socketcall(2) for socket operations (golang/go#79200), all tests opening sockets fail with 'socket: function not implemented' when ubuntu-latest lands on ubuntu-26.04.
 
-**File**: `tsdb/db.go` (modified, +3/-1)
+Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/ci.yml` (modified, +4/-0)
 ```diff
-@@ -1294,6 +1294,8 @@ func (db *DB) run(ctx context.Context) {
- 	defer close(db.donec)
- 
- 	backoff := time.Duration(0)
-+	blockReloadTick := time.NewTicker(db.opts.BlockReloadInterval)
-+	defer blockReloadTick.Stop()
- 
- 	for {
- 		select {
-@@ -1303,7 +1305,7 @@ func (db *DB) run(ctx context.Context) {
- 		}
- 
- 		select {
--		case <-time.After(db.opts.BlockReloadInterval):
-+		case <-blockReloadTick.C:
- 			db.cmtx.Lock()
- 			if err := db.reloadBlocks(); err != nil {
- 				db.logger.Error("reloadBlocks", "err", err)
+@@ -54,6 +54,10 @@ jobs:
+     runs-on: ubuntu-latest
+     container:
+       image: quay.io/prometheus/golang-builder:1.27-base
++      # Docker 29.4.2 on ubuntu-26.04 blocks socketcall(2) in its default seccomp profile
++      # (https://github.com/actions/runner-images/issues/14790), which Go on linux/386
++      # still uses for socket operations (https://github.com/golang/go/issues/79200).
++      options: --security-opt seccomp=unconfined
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
 ```
 
-**File**: `tsdb/db_test.go` (modified, +53/-0)
+---
+
+### Incident Patch 2: `56d89290` (2026-10-20)
+**Commit Message**: discovery/file: drain watcher events continuously to prevent Windows deadlock
+
+On Windows, fsnotify's Watcher.Add (called in refresh -> watchFiles) blocks waiting for the single readEvents IOCP goroutine, which itself blocks sending to Watcher.Events or Watcher.Errors when the 50-event buffer fills up. Previously, only stop() drained Events and Errors concurrently around Watcher.Close(), leaving Run() vulnerable to deadlocking inside refresh -> watchFiles when a watched directory received a burst of events.
+
+Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
+
+**File**: `discovery/file/file.go` (modified, +50/-35)
 ```diff
-@@ -36,6 +36,7 @@ import (
- 	"strconv"
- 	"sync"
- 	"testing"
-+	"testing/synctest"
- 	"time"
+@@ -244,7 +244,55 @@ func (d *Discovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
+ 		return
+ 	}
+ 	d.watcher = watcher
+-	defer d.stop()
++
++	// Drain watcher events and errors in a dedicated goroutine for the entire
++	// lifetime of the watcher. Closing or adding watches (e.g. on Windows in
++	// refresh -> watchFiles) will deadlock unless all events and errors are
++	// continuously drained while the watcher's backend goroutine is active.
++	refreshCh := make(chan struct{}, 1)
++	done := make(chan struct{})
++	var wg sync.WaitGroup
++	wg.Go(func() {
++		for {
++			select {
++			case event, ok := <-d.watcher.Events:
++				if !ok {
++					return
++				}
++				// fsnotify sometimes sends a bunch of events without name or operation.
++				// It's unclear what they are and why they are sent - filter them out.
++				if event.Name == "" {
++					break
++				}
++				// Everything but a chmod requires rereading.
++				if event.Op^fsnotify.Chmod == 0 {
++					break
++				}
++				// Changes to a file can spawn various sequences of events with
++				// different combinations of operations. For all practical purposes
++				// this is inaccurate.
++				// The most reliable solution is to reload everything if anything happens.
++				select {
++				case refreshCh <- struct{}{}:
++				default:
++				}
++			case err, ok := <-d.watcher.Errors:
++				if !ok {
++					return
++				}
++				if err != nil {
++					d.logger.Error("Error watching file", "err", err)
++				}
++			case <-done:
++				return
++			}
++		}
++	})
++	defer func() {
++		d.stop()
++		close(done)
++		wg.Wait()
++	}()
  
- 	"github.com/gogo/protobuf/proto"
-@@ -10341,6 +10342,58 @@ func TestBlockReloadInterval(t *testing.T) {
+ 	d.refresh(ctx, ch)
+ 
+@@ -256,31 +304,13 @@ func (d *Discovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
+ 		case <-ctx.Done():
+ 			return
+ 
+-		case event := <-d.watcher.Events:
+-			// fsnotify sometimes sends a bunch of events without name or operation.
+-			// It's unclear what they are and why they are sent - filter them out.
+-			if event.Name == "" {
+-				break
+-			}
+-			// Everything but a chmod requires rereading.
+-			if event.Op^fsnotify.Chmod == 0 {
+-				break
+-			}
+-			// Changes to a file can spawn various sequences of events with
+-			// different combinations of operations. For all practical purposes
+-			// this is inaccurate.
+-			// The most reliable solution is to reload everything if anything happens.
++		case <-refreshCh:
+ 			d.refresh(ctx, ch)
+ 
+ 		case <-ticker.C:
+ 			// Setting a new watch after an update might fail. Make sure we don't lose
+ 			// those files forever.
+ 			d.refresh(ctx, ch)
+-
+-		case err := <-d.watcher.Errors:
+-			if err != nil {
+-				d.logger.Error("Error watching file", "err", err)
+-			}
+ 		}
  	}
  }
+@@ -301,23 +331,8 @@ func (d *Discovery) deleteTimestamp(filename string) {
+ func (d *Discovery) stop() {
+ 	d.logger.Debug("Stopping file discovery...", "paths", fmt.Sprintf("%v", d.paths))
  
-+func TestFrequentCommitsDoNotStarveMaintenance(t *testing.T) {
-+	cases := []struct {
-+		name        string
-+		autoCompact bool
-+	}{
-+		{"automatic compaction disabled", false},
-+		{"automatic compaction enabled", true},
+-	done := make(chan struct{})
+-	defer close(done)
+-
+ 	d.metrics.fileSDTimeStamp.removeDiscoverer(d)
+ 
+-	// Closing the watcher will deadlock unless all events and errors are drained.
+-	go func() {
+-		for {
+-			select {
+-			case <-d.watcher.Errors:
+-			case <-d.watcher.Events:
+-				// Drain all events and errors.
+-			case <-done:
+-				return
+-			}
+-		}
+-	}()
+ 	if err := d.watcher.Close(); err != nil {
+ 		d.logger.Error("Error closing file watcher", "paths", fmt.Sprintf("%v", d.paths), "err", err)
+ 	}
+```
+
+**File**: `discovery/file/file_test.go` (modified, +22/-0)
+```diff
+@@ -517,3 +517,25 @@ func TestRemoveFile(t *testing.T) {
+ 		},
+ 	)
+ }
++
++func TestFileUpdateBurst(t *testing.T) {
++	t.Parallel()
++
++	runner := newTestRunner(t)
++	sdFile := runner.copyFile("fixtures/valid.yml")
++
++	runner.run("*.yml")
++	defer runner.stop()
++
++	runner.requireUpdate(time.Time{}, validTg(sdFile))
++
++	// Generate more events than fsnotify's 50-event buffer in the watched
++	// directory while discovery is refreshing and re-adding directory watches.
++	ref := runner.lastReceive()
++	noiseFile := filepath.Join(runner.dir, "noise.txt")
++	for range 100 {
++		require.NoError(t, os.WriteFile(noiseFile, []byte("x"), 0o600))
 +	}
-+	for _, c := range cases {
-+		t.Run(c.name, func(t *testing.T) {
-+			synctest.Test(t, func(t *testing.T) {
-+				db := newTestDB(t, withOpts(&Options{
-+					BlockReloadInterval: time.Second,
-+					CompactionDelay:     time.Hour,
-+				}), withRngs(10))
-+				if !c.autoCompact {
-+					db.DisableCompactions()
-+				}
-+
-+				lset := labels.FromStrings("series", "frequent-commit")
-+
-+				// Make the head compactable before the loop.
-+				app := db.Appender(context.Background())
-+				_, err := app.Append(0, lset, 0, 0)
-+				require.NoError(t, err)
-+				_, err = app.Append(0, lset, 19, 0)
-+				require.NoError(t, err)
-+				require.NoError(t, app.Commit())
-+				synctest.Wait()
-+
-+				for ts := int64(20); ts < 120; ts++ {
-+					app := db.Appender(context.Background())
-+					_, err := app.Append(0, lset, ts, 0)
-+					require.NoError(t, err)
-+					compactionsBefore := prom_testutil.ToFloat64(db.metrics.compactionsTriggered)
-+					require.NoError(t, app.Commit())
-+					// Commit faster than BlockReloadInterval.
-+					time.Sleep(100 * time.Millisecond)
-+					synctest.Wait()
-+					require.True(t, db.Head().compactable())
-+					require.Greater(t, prom_testutil.ToFloat64(db.metrics.compactionsTriggered), compactionsBefore)
-+				}
-+
-+				// Verify that maintenance ran without head compaction.
-+				require.Empty(t, db.Blocks())
-+				require.Greater(t, prom_testutil.ToFloat64(db.metrics.reloads), 1.0)
-+				require.Greater(t, prom_testutil.ToFloat64(db.Head().metrics.mmapChunksTotal), 0.0)
-+			})
-+		})
-+	}
++	runner.copyFileTo("fixtures/valid2.yml", "valid.yml")
++	runner.requireUpdate(ref, valid2Tg(sdFile))
 +}
-+
- func TestStaleSeriesCompaction(t *testing.T) {
- 	opts := DefaultOptions()
- 	opts.MinBlockDuration = 1000
 ```
 
 ---
 
-### Incident Patch 2: `79e49c75` (2026-10-26)
-**Commit Message**: Merge pull request #20194 from roidelapluie/changelog-fix
+### Incident Patch 3: `670a4af2` (2026-10-27)
+**Commit Message**: Merge pull request #20201 from prometheus/bwplotka/ci-fix-386-seccomp
 
-release: omit authors and parentheses from generated PR references
+ci: pass --security-opt seccomp=unconfined to 386 test container
 
-**File**: `scripts/generate_release_notes.sh` (modified, +4/-2)
+**File**: `.github/workflows/ci.yml` (modified, +4/-0)
 ```diff
-@@ -64,7 +64,8 @@ if [[ "${patch}" == "0" ]]; then
- 		--org prometheus --repo prometheus \
- 		--required-author="" --dependencies=false \
- 		--go-template="go-template:inline:${TMPL}" \
--		--output=/dev/stdout
-+		--output=/dev/stdout |
-+		sed -E 's/\(#([0-9]+), @[A-Za-z0-9_-]+\)$/#\1/'
- else
- 	# Patch release: cover commits since the previous patch tag.
- 	prev_patch=$(( patch - 1 ))
-@@ -79,5 +80,6 @@ else
- 		--required-author="" --dependencies=false \
- 		--go-template="go-template:inline:${TMPL}" \
- 		--skip-first-commit \
--		--output=/dev/stdout
-+		--output=/dev/stdout |
-+		sed -E 's/\(#([0-9]+), @[A-Za-z0-9_-]+\)$/#\1/'
- fi
-```
-
----
-
-### Incident Patch 3: `dd8f8e7a` (2026-10-26)
-**Commit Message**: Merge pull request #20193 from prometheus/bwplotka/fix-windows-tsdb-tests
-
-tsdb: fix Windows test flake and timeout in WBL tests
-
-**File**: `tsdb/db_append_v2_test.go` (modified, +23/-19)
-```diff
-@@ -5693,7 +5693,6 @@ func TestWBLAndMmapReplay_AppendV2(t *testing.T) {
- 	t.Parallel()
- 	for name, scenario := range sampleTypeScenarios {
- 		t.Run(name, func(t *testing.T) {
--			t.Parallel()
- 			testWBLAndMmapReplayAppendV2(t, scenario)
- 		})
- 	}
-@@ -5771,6 +5770,10 @@ func testWBLAndMmapReplayAppendV2(t *testing.T, scenario sampleTypeScenario) {
- 
- 	// Making a copy of original state of WBL and Mmap files to use it later.
- 	mmapDir := mmappedChunksDir(db.head.opts.ChunkDirRoot)
-+	// On Windows, head chunk files are preallocated to 128 MiB (MaxHeadChunkFileSize)
-+	// with trailing zeros. Truncate the closed file to the non-Windows preallocation
-+	// size (128 KiB) before copying mmapDir repeatedly across subtests.
-+	require.NoError(t, os.Truncate(filepath.Join(mmapDir, "000001"), chunks.MinWriteBufferSize*2))
- 	wblDir := db.head.wbl.Dir()
- 	originalWblDir := filepath.Join(t.TempDir(), "original_wbl")
- 	originalMmapDir := filepath.Join(t.TempDir(), "original_mmap")
-@@ -6505,14 +6508,25 @@ func TestWBLCorruption_AppendV2(t *testing.T) {
- 	// We corrupt WBL after the sample at 255. So everything added later
- 	// should be deleted after replay.
- 
-+	// segmentSize returns the on-disk size of the named WBL segment. It opens
-+	// the file and stats the handle instead of relying on os.ReadDir's cached
-+	// directory metadata, which on Windows can be stale for a segment that was
-+	// just closed asynchronously by WL.NextSegment.
-+	segmentSize := func(name string) int64 {
-+		f, err := os.Open(path.Join(db.head.wbl.Dir(), name))
-+		require.NoError(t, err)
-+		defer f.Close()
-+		fi, err := f.Stat()
-+		require.NoError(t, err)
-+		return fi.Size()
-+	}
-+
- 	// Checking where we corrupt it.
- 	require.NoError(t, db.head.wbl.Sync()) // Syncing to make sure wbl is flushed in windows.
- 	files, err := os.ReadDir(db.head.wbl.Dir())
- 	require.NoError(t, err)
- 	require.Len(t, files, 2)
--	f1, err := files[1].Info()
--	require.NoError(t, err)
--	corruptIndex := f1.Size()
-+	corruptIndex := segmentSize(files[1].Name())
- 	corruptFilePath := path.Join(db.head.wbl.Dir(), files[1].Name())
- 
- 	// Corrupt the WBL by adding a malformed record.
-@@ -6533,15 +6547,9 @@ func TestWBLCorruption_AppendV2(t *testing.T) {
- 	files, err = os.ReadDir(db.head.wbl.Dir())
- 	require.NoError(t, err)
- 	require.Len(t, files, 3)
--	f1, err = files[1].Info()
--	require.NoError(t, err)
--	require.Greater(t, f1.Size(), corruptIndex)
--	f0, err := files[0].Info()
--	require.NoError(t, err)
--	require.Greater(t, f0.Size(), int64(100))
--	f2, err := files[2].Info()
--	require.NoError(t, err)
--	require.Greater(t, f2.Size(), int64(100))
-+	require.Greater(t, segmentSize(files[1].Name()), corruptIndex)
-+	require.Greater(t, segmentSize(files[0].Name()), int64(100))
-+	require.Greater(t, segmentSize(files[2].Name()), int64(100))
- 
- 	verifySamples := func(expSamples []chunks.Sample) {
- 		sort.Slice(expSamples, func(i, j int) bool {
-@@ -6577,12 +6585,8 @@ func TestWBLCorruption_AppendV2(t *testing.T) {
- 	files, err = os.ReadDir(db.head.wbl.Dir())
- 	require.NoError(t, err)
- 	require.Len(t, files, 3)
--	f0, err = files[0].Info()
--	require.NoError(t, err)
--	require.Greater(t, f0.Size(), int64(100))
--	f2, err = files[2].Info()
--	require.NoError(t, err)
--	require.Equal(t, int64(0), f2.Size())
-+	require.Greater(t, segmentSize(files[0].Name()), int64(100))
-+	require.Equal(t, int64(0), segmentSize(files[2].Name()))
- 	require.Equal(t, corruptFilePath, path.Join(db.head.wbl.Dir(), files[1].Name()))
- 
- 	// Verifying that everything after the corruption point is set to 0.
-```
-
-**File**: `tsdb/db_test.go` (modified, +4/-1)
-```diff
-@@ -7757,7 +7757,6 @@ func TestWBLAndMmapReplay(t *testing.T) {
- 	t.Parallel()
- 	for name, scenario := range sampleTypeScenarios {
- 		t.Run(name, func(t *testing.T) {
--			t.Parallel()
- 			testWBLAndMmapReplay(t, scenario)
- 		})
- 	}
-@@ -7835,6 +7834,10 @@ func testWBLAndMmapReplay(t *testing.T, scenario sampleTypeScenario) {
- 
- 	// Making a copy of original state of WBL and Mmap files to use it later.
- 	mmapDir := mmappedChunksDir(db.head.opts.ChunkDirRoot)
-+	// On Windows, head chunk files are preallocated to 128 MiB (MaxHeadChunkFileSize)
-+	// with trailing zeros. Truncate the closed file to the non-Windows preallocation
-+	// size (128 KiB) before copying mmapDir repeatedly across subtests.
-+	require.NoError(t, os.Truncate(filepath.Join(mmapDir, "000001"), chunks.MinWriteBufferSize*2))
- 	wblDir := db.head.wbl.Dir()
- 	originalWblDir := filepath.Join(t.TempDir(), "original_wbl")
- 	originalMmapDir := filepath.Join(t.TempDir(), "original_mmap")
+@@ -54,6 +54,10 @@ jobs:
+     runs-on: ubuntu-latest
+     container:
+       image: quay.io/prometheus/golang-builder:1.27-base
++      # Docker 29.4.2 on ubuntu-26.04 blocks socketcall(2) in its default seccomp profile
++      # (https://github.com/actions/runner-images/issues/14790), which Go on linux/386
++      # still uses for socket operations (https://github.com/golang/go/issues/79200).
++      options: --security-opt seccomp=unconfined
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20195** (2026-10-26): Add changelog entry for cherry-pick (@ywwg)
-- **PR #20194** (2026-10-26): release: omit authors and parentheses from generated PR references (@roidelapluie)
-- **PR #20193** (2026-10-26): tsdb: fix Windows test flake and timeout in WBL tests (@bwplotka)
-- **PR #20187** (closed): storage/remote: count metadata entries received from WAL (@shilohlee98)
-- **PR #20181** (closed): docs: add AppArmor profile example (@rizzabhdwaj)
-- **PR #20172** (closed): scrape: reuse labels.Builder across sample label mutations (@bwplotka)
+- **PR #20208** (2026-10-27): release-3.16: Bump rc version for CI (@ywwg)
+- **PR #20201** (2026-10-27): ci: pass --security-opt seccomp=unconfined to 386 test container (@bwplotka)
+- **PR #20200** (2026-10-27): chore: ignore GitHub Bot accounts in pr-triage-board (@bwplotka)
+- **PR #20198** (2026-10-27): release-3.16: Set changelog date (@ywwg)
+- **PR #20197** (closed): model/histogram: preserve integer bucket counts during float conversion (@umtong)
+- **PR #20196** (2026-10-27): tsdb/agent: preserve metadata for stale samples in AppenderV2 (@roidelapluie)
 
 ---
 
@@ -1790,30 +1750,31 @@ tsdb: fix Windows test flake and timeout in WBL tests
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #20161 from guidonguido/fix/tsdb/block-reload-interval
+## X. ci: pass --security-opt seccomp=unconfined to 386 test container
 
 **RULE**:
-When implementing operations in `tsdb/db.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0d5a5c1d`: Merge pull request #20161 from guidonguido/fix/tsdb/block-reload-interval. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c21fd394`: ci: pass --security-opt seccomp=unconfined to 386 test container. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tsdb/db.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	blockReloadTick := time.NewTicker(db.opts.BlockReloadInterval)
-	defer blockReloadTick.Stop()
-		case <-blockReloadTick.C:
+      # Docker 29.4.2 on ubuntu-26.04 blocks socketcall(2) in its default seccomp profile
+      # (https://github.com/actions/runner-images/issues/14790), which Go on linux/386
+      # still uses for socket operations (https://github.com/golang/go/issues/79200).
+      options: --security-opt seccomp=unconfined
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		case <-time.After(db.opts.BlockReloadInterval):
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0d5a5c1d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c21fd394` are properly handled with clean fallback behavior.

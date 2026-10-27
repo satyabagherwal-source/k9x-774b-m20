@@ -1983,10 +1983,10 @@
     "repository": "fastapi/fastapi",
     "platform": "github",
     "sourceUrl": "https://github.com/tiangolo/fastapi",
-    "sourceVersion": "69ddc2ba",
+    "sourceVersion": "79cab5be",
     "license": "MIT",
-    "contentHash": "f4eac31f9a2f7c3446faa1ec486de4c8f99a2c793aa5812da0868aa0700a148b",
-    "lastHarvestedAt": "2026-10-23T11:44:03.809Z",
+    "contentHash": "d641b1a4893a9f140bb03c13ec066131620daa81545afff56d27cad2580be776",
+    "lastHarvestedAt": "2026-10-27T19:56:17.651Z",
     "learningId": "learn-github-fastapi-fastapi"
   },
   "pallets-flask": {
@@ -5663,10 +5663,10 @@
     "repository": "lingodotdev/lingo.dev",
     "platform": "github",
     "sourceUrl": "https://github.com/lingodotdev/lingo.dev",
-    "sourceVersion": "1d5d5d12",
+    "sourceVersion": "28435298",
     "license": "Apache-2.0",
-    "contentHash": "1107f803b609869c939bd34fac715b1647ed6c5e18ffdd127a880fae726d5174",
-    "lastHarvestedAt": "2026-10-25T05:52:35.537Z",
+    "contentHash": "1d51803ebfbcb333e29ee3e9f68f4e48a4bbc7419cfc4924d38afe194644df1a",
+    "lastHarvestedAt": "2026-10-27T19:56:18.313Z",
     "learningId": "learn-github-lingodotdev-lingo-dev"
   },
   "startrail-org-leann": {
@@ -6413,10 +6413,10 @@
     "repository": "prometheus/prometheus",
     "platform": "github",
     "sourceUrl": "https://github.com/prometheus/prometheus",
-    "sourceVersion": "79e49c75",
+    "sourceVersion": "3861d587",
     "license": "Apache-2.0",
-    "contentHash": "086c57db452884cf14868307702aa7f3197945ec9058d0c9c813ea5a0aea7d12",
-    "lastHarvestedAt": "2026-10-26T17:58:25.076Z",
+    "contentHash": "ae2fe82e8859945185fb1b064d7be7fe461734c7f7a0e6b7a02c1d858594061b",
+    "lastHarvestedAt": "2026-10-27T19:56:22.064Z",
     "learningId": "learn-github-prometheus-prometheus"
   },
   "meilisearch-meilisearch": {
@@ -7803,10 +7803,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/codewhale-hq/Codewhale",
-    "sourceVersion": "bf028bcc",
+    "sourceVersion": "fff5a476",
     "license": "MIT",
-    "contentHash": "08fc9d507fc72feec96321c59f2c765636b2575af0310ea0bbd38c9ffe626e15",
-    "lastHarvestedAt": "2026-10-26T01:49:13.541Z",
+    "contentHash": "a9eaaed06383d898f5ac06f78021d4fa5cbc55e00f618bbe6455720a2ec8b022",
+    "lastHarvestedAt": "2026-10-27T19:56:14.889Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "meshtastic-meshtastic-android": {

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T19:49:30.104Z",
-  "total_cycles_completed": 5486,
-  "total_learnings_persisted": 5486,
-  "total_rules_promoted": 4884,
+  "last_updated": "2026-10-27T19:56:22.070Z",
+  "total_cycles_completed": 5490,
+  "total_learnings_persisted": 5490,
+  "total_rules_promoted": 4888,
   "history": [
-    {
-      "timestamp": "2026-10-27T13:14:23.950Z",
-      "repository": "genkit-ai/genkit",
-      "learningId": "learn-github-genkit-ai-genkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:14:27.460Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:17:54.475Z",
-      "repository": "vikejs/vike",
-      "learningId": "learn-github-vikejs-vike",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:17:55.053Z",
-      "repository": "ntex-rs/ntex",
-      "learningId": "learn-github-ntex-rs-ntex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T13:18:08.088Z",
       "repository": "RediSearch/RediSearch",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-27T19:49:30.104Z",
       "repository": "freenet/freenet-core",
       "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T19:56:14.894Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T19:56:17.656Z",
+      "repository": "fastapi/fastapi",
+      "learningId": "learn-github-fastapi-fastapi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T19:56:18.318Z",
+      "repository": "lingodotdev/lingo.dev",
+      "learningId": "learn-github-lingodotdev-lingo-dev",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T19:56:22.070Z",
+      "repository": "prometheus/prometheus",
+      "learningId": "learn-github-prometheus-prometheus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

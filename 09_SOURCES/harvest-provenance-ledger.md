@@ -5518,3 +5518,7 @@ Every entry in this ledger must capture:
 | `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `37faef81` | Multi-dimensional audit evidence | 2026-10-27T19:49:21.566Z |
 | `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `873eade3` | Multi-dimensional audit evidence | 2026-10-27T19:49:27.716Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `39773c33` | Multi-dimensional audit evidence | 2026-10-27T19:49:30.099Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `fff5a476` | Multi-dimensional audit evidence | 2026-10-27T19:56:14.889Z |
+| `learn-github-fastapi-fastapi` | `https://github.com/tiangolo/fastapi` | `79cab5be` | Multi-dimensional audit evidence | 2026-10-27T19:56:17.651Z |
+| `learn-github-lingodotdev-lingo-dev` | `https://github.com/lingodotdev/lingo.dev` | `28435298` | Multi-dimensional audit evidence | 2026-10-27T19:56:18.313Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `3861d587` | Multi-dimensional audit evidence | 2026-10-27T19:56:22.064Z |

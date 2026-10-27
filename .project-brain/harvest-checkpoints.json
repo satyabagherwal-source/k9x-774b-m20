@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T19:49:30.107Z",
+  "last_updated": "2026-10-27T19:56:22.074Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3111,14 +3111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fastapi-fastapi",
-      "content_hash": "8c990616402ee82689bf1b2d4c7a230f52a830ddc7e7df0e2284fdf486ee813c",
-      "verified_at": "2026-10-27T14:29:45.646Z",
+      "content_hash": "d641b1a4893a9f140bb03c13ec066131620daa81545afff56d27cad2580be776",
+      "verified_at": "2026-10-27T19:56:17.659Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T14:29:45.646Z"
+      "last_updated": "2026-10-27T19:56:17.659Z"
     },
     "pallets/flask": {
       "repository": "pallets/flask",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "9d1d301b11f0ce1a40ced1c2366a2fe0d72daa6240399ee12fef7ad5595bae9c",
-      "verified_at": "2026-10-26T09:49:02.851Z",
+      "content_hash": "a9eaaed06383d898f5ac06f78021d4fa5cbc55e00f618bbe6455720a2ec8b022",
+      "verified_at": "2026-10-27T19:56:14.897Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T09:49:02.851Z"
+      "last_updated": "2026-10-27T19:56:14.897Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -8616,14 +8616,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lingodotdev-lingo-dev",
-      "content_hash": "1107f803b609869c939bd34fac715b1647ed6c5e18ffdd127a880fae726d5174",
-      "verified_at": "2026-10-25T05:52:35.550Z",
+      "content_hash": "1d51803ebfbcb333e29ee3e9f68f4e48a4bbc7419cfc4924d38afe194644df1a",
+      "verified_at": "2026-10-27T19:56:18.321Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T05:52:35.550Z"
+      "last_updated": "2026-10-27T19:56:18.321Z"
     },
     "StarTrail-org/LEANN": {
       "repository": "StarTrail-org/LEANN",
@@ -9711,14 +9711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-prometheus-prometheus",
-      "content_hash": "086c57db452884cf14868307702aa7f3197945ec9058d0c9c813ea5a0aea7d12",
-      "verified_at": "2026-10-26T17:58:25.081Z",
+      "content_hash": "ae2fe82e8859945185fb1b064d7be7fe461734c7f7a0e6b7a02c1d858594061b",
+      "verified_at": "2026-10-27T19:56:22.073Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T17:58:25.081Z"
+      "last_updated": "2026-10-27T19:56:22.073Z"
     },
     "meilisearch/meilisearch": {
       "repository": "meilisearch/meilisearch",

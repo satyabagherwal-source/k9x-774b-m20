@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T19:49:30.022Z",
+  "last_updated": "2026-10-27T19:56:21.991Z",
   "total_verified_learnings": 1146,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7006,13 +7006,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "hmbown-codewhale",
+      "slug": "codewhale-hq-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/Hmbown/Codewhale",
-      "source_version": "88772172",
-      "content_hash": "9d1d301b11f0ce1a40ced1c2366a2fe0d72daa6240399ee12fef7ad5595bae9c",
-      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "fff5a476",
+      "content_hash": "a9eaaed06383d898f5ac06f78021d4fa5cbc55e00f618bbe6455720a2ec8b022",
+      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
@@ -7083,6 +7083,11 @@
           "number": 4572,
           "title": "docs): keep the OrcaRouter registry summary within its limit [skip ci]",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4974,
+          "title": "tui): change mode and permissions mid-turn; record steering in Unreleased (CW-75",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7090,7 +7095,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T09:49:02.771Z",
+      "verified_at": "2026-10-27T19:56:14.765Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11748,13 +11753,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "fastapi/fastapi",
       "repository": "fastapi/fastapi",
-      "slug": "fastapi-fastapi",
+      "slug": "tiangolo-fastapi",
       "platform": "github",
-      "source_url": "https://github.com/fastapi/fastapi",
+      "source_url": "https://github.com/tiangolo/fastapi",
       "source_version": "79cab5be",
-      "content_hash": "8c990616402ee82689bf1b2d4c7a230f52a830ddc7e7df0e2284fdf486ee813c",
-      "dossier_path": "07_PROJECT_LEARNING/fastapi-fastapi-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/fastapi-fastapi-learnings.md",
+      "content_hash": "d641b1a4893a9f140bb03c13ec066131620daa81545afff56d27cad2580be776",
+      "dossier_path": "07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
       "promoted_rules": [
         {
           "number": 1664,
@@ -11834,7 +11839,7 @@
         {
           "number": 4847,
           "title": "📝 Update release notes",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11842,7 +11847,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T14:29:45.579Z",
+      "verified_at": "2026-10-27T19:56:17.552Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33645,8 +33650,8 @@
       "slug": "lingodotdev-lingo.dev",
       "platform": "github",
       "source_url": "https://github.com/lingodotdev/lingo.dev",
-      "source_version": "1d5d5d12",
-      "content_hash": "1107f803b609869c939bd34fac715b1647ed6c5e18ffdd127a880fae726d5174",
+      "source_version": "28435298",
+      "content_hash": "1d51803ebfbcb333e29ee3e9f68f4e48a4bbc7419cfc4924d38afe194644df1a",
       "dossier_path": "07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md",
       "promoted_rules": [
@@ -33664,6 +33669,11 @@
           "number": 4087,
           "title": "deps): bump vite to 7.3.7 and launch-editor to 2.14.2 (#2251)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4975,
+          "title": "deps): override fast-uri and serialize-javascript for security advisories (#2256",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33671,7 +33681,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T05:52:35.469Z",
+      "verified_at": "2026-10-27T19:56:18.193Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42736,8 +42746,8 @@
       "slug": "prometheus-prometheus",
       "platform": "github",
       "source_url": "https://github.com/prometheus/prometheus",
-      "source_version": "79e49c75",
-      "content_hash": "086c57db452884cf14868307702aa7f3197945ec9058d0c9c813ea5a0aea7d12",
+      "source_version": "3861d587",
+      "content_hash": "ae2fe82e8859945185fb1b064d7be7fe461734c7f7a0e6b7a02c1d858594061b",
       "dossier_path": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "promoted_rules": [
@@ -42780,6 +42790,11 @@
           "number": 4632,
           "title": "Merge pull request #20161 from guidonguido/fix/tsdb/block-reload-interval",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4976,
+          "title": "ci: pass --security-opt seccomp=unconfined to 386 test container",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42787,7 +42802,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T17:58:25.033Z",
+      "verified_at": "2026-10-27T19:56:21.968Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -135294,14 +135309,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 4847,
       "title": "📝 Update release notes",
-      "source_url": "https://github.com/fastapi/fastapi",
+      "source_url": "https://github.com/tiangolo/fastapi",
       "source_version": "79cab5be",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-27T14:29:45.579Z"
+      "verified_at": "2026-10-27T19:56:17.552Z"
     },
     "rule-4848": {
       "learning_id": "rule-4848",
@@ -137636,6 +137651,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T19:49:30.009Z"
+    },
+    "rule-4974": {
+      "learning_id": "rule-4974",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4974,
+      "title": "tui): change mode and permissions mid-turn; record steering in Unreleased (CW-75",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "fff5a476",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T19:56:14.765Z"
+    },
+    "rule-4975": {
+      "learning_id": "rule-4975",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4975,
+      "title": "deps): override fast-uri and serialize-javascript for security advisories (#2256",
+      "source_url": "https://github.com/lingodotdev/lingo.dev",
+      "source_version": "28435298",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T19:56:18.193Z"
+    },
+    "rule-4976": {
+      "learning_id": "rule-4976",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4976,
+      "title": "ci: pass --security-opt seccomp=unconfined to 386 test container",
+      "source_url": "https://github.com/prometheus/prometheus",
+      "source_version": "3861d587",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T19:56:21.968Z"
     }
   },
   "aliases": {
