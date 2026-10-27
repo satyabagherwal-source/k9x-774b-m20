@@ -4560,3 +4560,11 @@ https://github.com/smol-machines/smolvm
 https://github.com/BlockRunAI/ClawRouter
 # [AI-AGENTS] czlonkowski/n8n-skills (3879 score) - n8n skillset for Claude Code to build flawless n8n workflows
 https://github.com/czlonkowski/n8n-skills
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T14:13:58.681Z] ---
+# [AI-AGENTS] martin-ger/esp32_nat_router (1572 score) - An AI-enabled NAT Router/Firewall for the ESP32
+https://github.com/martin-ger/esp32_nat_router
+# [AI-AGENTS] atomicstrata/llm-wiki-compiler (1448 score) - The knowledge compiler. Raw sources in, interlinked wiki out. Inspired by Karpat
+https://github.com/atomicstrata/llm-wiki-compiler
+# [AI-AGENTS] alpic-ai/skybridge (1472 score) - Skybridge is a full-stack TypeScript framework for MCP Apps and ChatGPT Apps. Ty
+https://github.com/alpic-ai/skybridge

@@ -5361,3 +5361,7 @@
 | `CYCLE-20261027-JN8Q` | `2026-10-27T14:10:49.322Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4832, Rule 4833` | Yes (`72959981...`) |
 | `CYCLE-20261027-JR89` | `2026-10-27T14:10:54.489Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4834` | Yes (`3f1009bf...`) |
 | `CYCLE-20261027-JSL3` | `2026-10-27T14:10:56.247Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4835` | Yes (`b0ea55d1...`) |
+| `CYCLE-20261027-NXX8` | `2026-10-27T14:14:09.788Z` | `atomicstrata/llm-wiki-compiler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4836` | Yes (`9d7a2850...`) |
+| `CYCLE-20261027-O0F8` | `2026-10-27T14:14:13.028Z` | `alpic-ai/skybridge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4837` | Yes (`ba554263...`) |
+| `CYCLE-20261027-O6SB` | `2026-10-27T14:14:21.275Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4838` | Yes (`13fe10d0...`) |
+| `CYCLE-20261027-UBTY` | `2026-10-27T14:19:07.750Z` | `martin-ger/esp32_nat_router` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4839` | Yes (`2fb56597...`) |

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-3A61",
-    "timestamp": "2026-10-25T14:50:44.665Z",
-    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-    "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-    "contentHash": "51516e80bba96a1c027d01838bca8c33a9d71c07341ed085d048a89286f6d604",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-3HRQ",
-    "timestamp": "2026-10-25T14:50:54.518Z",
-    "repository": "Orange-Cyberdefense/GOAD",
-    "learningId": "learn-github-orange-cyberdefense-goad",
-    "contentHash": "ff9d41d3d726a2bb6224890561a25b227d078cd06b075c30049c7e6f49681af0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-3LE2",
-    "timestamp": "2026-10-25T14:50:59.210Z",
-    "repository": "xerj-org/xerj",
-    "learningId": "learn-github-xerj-org-xerj",
-    "contentHash": "d159dfdbdbdbf0158b110e60e288e510327178fab197e338cace2ade0e9d3fdf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-BNUC",
-    "timestamp": "2026-10-25T14:57:15.636Z",
-    "repository": "unsloth/Qwen-Image-2.1-GGUF",
-    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-    "contentHash": "5bf242d835e6e8ea42d7bd037464d7016e886a6ccb13a64c29906720ab1e8c31",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-BO39",
     "timestamp": "2026-10-25T14:57:15.957Z",
     "repository": "adobe/react-spectrum",
@@ -7490,6 +7430,66 @@
     "repository": "zama-ai/tfhe-rs",
     "learningId": "learn-github-zama-ai-tfhe-rs",
     "contentHash": "b0ea55d144beb7fd565894a5fb55d2899abee847d4a67063bb29dbf15ec787bd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-NXX8",
+    "timestamp": "2026-10-27T14:14:09.788Z",
+    "repository": "atomicstrata/llm-wiki-compiler",
+    "learningId": "learn-github-atomicstrata-llm-wiki-compiler",
+    "contentHash": "9d7a2850ddb412e64b9a871e726f03cd162b3af39753b7bb00278569cb210ef2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-O0F8",
+    "timestamp": "2026-10-27T14:14:13.028Z",
+    "repository": "alpic-ai/skybridge",
+    "learningId": "learn-github-alpic-ai-skybridge",
+    "contentHash": "ba554263844be74c6f857f4148d17d3905e52bc1c8573f1030977df1e6efb32b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-O6SB",
+    "timestamp": "2026-10-27T14:14:21.275Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "13fe10d0d042d1a096f61af4803a32c095da1d4ad17f630904afd23ff636b6f9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-UBTY",
+    "timestamp": "2026-10-27T14:19:07.750Z",
+    "repository": "martin-ger/esp32_nat_router",
+    "learningId": "learn-github-martin-ger-esp32_nat_router",
+    "contentHash": "2fb56597ce3dd2a91d4601eb01f8bf78b93839720bb0ea75addb89784b0c1bf2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

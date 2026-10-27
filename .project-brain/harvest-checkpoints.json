@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T14:10:56.259Z",
+  "last_updated": "2026-10-27T14:19:07.762Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "bbbb5446d9ee849bacea6fc1255a1feae96252430b55413af8216d46d7fbdec7",
-      "verified_at": "2026-10-27T12:14:44.670Z",
+      "content_hash": "13fe10d0d042d1a096f61af4803a32c095da1d4ad17f630904afd23ff636b6f9",
+      "verified_at": "2026-10-27T14:14:21.287Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T12:14:44.670Z"
+      "last_updated": "2026-10-27T14:14:21.287Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -16634,6 +16634,51 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-27T14:01:04.701Z"
+    },
+    "atomicstrata/llm-wiki-compiler": {
+      "repository": "atomicstrata/llm-wiki-compiler",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-atomicstrata-llm-wiki-compiler",
+      "content_hash": "9d7a2850ddb412e64b9a871e726f03cd162b3af39753b7bb00278569cb210ef2",
+      "verified_at": "2026-10-27T14:14:09.813Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T14:14:09.813Z"
+    },
+    "alpic-ai/skybridge": {
+      "repository": "alpic-ai/skybridge",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-alpic-ai-skybridge",
+      "content_hash": "ba554263844be74c6f857f4148d17d3905e52bc1c8573f1030977df1e6efb32b",
+      "verified_at": "2026-10-27T14:14:13.040Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T14:14:13.040Z"
+    },
+    "martin-ger/esp32_nat_router": {
+      "repository": "martin-ger/esp32_nat_router",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-martin-ger-esp32_nat_router",
+      "content_hash": "2fb56597ce3dd2a91d4601eb01f8bf78b93839720bb0ea75addb89784b0c1bf2",
+      "verified_at": "2026-10-27T14:19:07.762Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T14:19:07.762Z"
     }
   },
   "repos": {

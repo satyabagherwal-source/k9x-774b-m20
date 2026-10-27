@@ -19168,5 +19168,50 @@
     "qualityScore": 3879,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-27T14:00:14.522Z"
+  },
+  {
+    "name": "esp32_nat_router",
+    "fullName": "martin-ger/esp32_nat_router",
+    "url": "https://github.com/martin-ger/esp32_nat_router",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "An AI-enabled NAT Router/Firewall for the ESP32",
+    "stars": 2238,
+    "forks": 509,
+    "openIssues": 157,
+    "language": "C",
+    "qualityScore": 1572,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T14:13:38.198Z"
+  },
+  {
+    "name": "llm-wiki-compiler",
+    "fullName": "atomicstrata/llm-wiki-compiler",
+    "url": "https://github.com/atomicstrata/llm-wiki-compiler",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The knowledge compiler. Raw sources in, interlinked wiki out. Inspired by Karpathy's LLM Wiki pattern.",
+    "stars": 2218,
+    "forks": 236,
+    "openIssues": 9,
+    "language": "TypeScript",
+    "qualityScore": 1448,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T14:13:38.198Z"
+  },
+  {
+    "name": "skybridge",
+    "fullName": "alpic-ai/skybridge",
+    "url": "https://github.com/alpic-ai/skybridge",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Skybridge is a full-stack TypeScript framework for MCP Apps and ChatGPT Apps. Type-safe. React-powered. Platform-agnostic.",
+    "stars": 2178,
+    "forks": 142,
+    "openIssues": 45,
+    "language": "TypeScript",
+    "qualityScore": 1472,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T14:13:38.198Z"
   }
 ]

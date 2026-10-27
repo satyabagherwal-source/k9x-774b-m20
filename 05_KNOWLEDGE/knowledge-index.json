@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T14:10:56.188Z",
-  "total_verified_learnings": 1123,
+  "last_updated": "2026-10-27T14:19:07.689Z",
+  "total_verified_learnings": 1126,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -6154,8 +6154,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "a3e5ddfc",
-      "content_hash": "bbbb5446d9ee849bacea6fc1255a1feae96252430b55413af8216d46d7fbdec7",
+      "source_version": "3391b242",
+      "content_hash": "13fe10d0d042d1a096f61af4803a32c095da1d4ad17f630904afd23ff636b6f9",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -6278,6 +6278,11 @@
           "number": 4738,
           "title": "datapath/orchestrator: fix goroutine leak in MergeChannels watch path",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4838,
+          "title": "network driver: document RX queue management",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6285,7 +6290,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:14:44.569Z",
+      "verified_at": "2026-10-27T14:14:21.204Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -134366,6 +134371,161 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T14:10:56.168Z"
+    },
+    "learn-github-atomicstrata-llm-wiki-compiler": {
+      "learning_id": "learn-github-atomicstrata-llm-wiki-compiler",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "atomicstrata/llm-wiki-compiler",
+      "repository": "atomicstrata/llm-wiki-compiler",
+      "slug": "atomicstrata-llm-wiki-compiler",
+      "platform": "github",
+      "source_url": "https://github.com/atomicstrata/llm-wiki-compiler",
+      "source_version": "c9c8734b",
+      "content_hash": "9d7a2850ddb412e64b9a871e726f03cd162b3af39753b7bb00278569cb210ef2",
+      "dossier_path": "07_PROJECT_LEARNING/atomicstrata-llm-wiki-compiler-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/atomicstrata-llm-wiki-compiler-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4836,
+          "title": "viewer): stop snapshot refresh when the viewer closes (#276)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T14:14:09.689Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4836": {
+      "learning_id": "rule-4836",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4836,
+      "title": "viewer): stop snapshot refresh when the viewer closes (#276)",
+      "source_url": "https://github.com/atomicstrata/llm-wiki-compiler",
+      "source_version": "c9c8734b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:14:09.689Z"
+    },
+    "learn-github-alpic-ai-skybridge": {
+      "learning_id": "learn-github-alpic-ai-skybridge",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "alpic-ai/skybridge",
+      "repository": "alpic-ai/skybridge",
+      "slug": "alpic-ai-skybridge",
+      "platform": "github",
+      "source_url": "https://github.com/alpic-ai/skybridge",
+      "source_version": "9fd04e0b",
+      "content_hash": "ba554263844be74c6f857f4148d17d3905e52bc1c8573f1030977df1e6efb32b",
+      "dossier_path": "07_PROJECT_LEARNING/alpic-ai-skybridge-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/alpic-ai-skybridge-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4837,
+          "title": "security): patch Node.js October 2026 vulnerabilities (#1134)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T14:14:12.956Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4837": {
+      "learning_id": "rule-4837",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4837,
+      "title": "security): patch Node.js October 2026 vulnerabilities (#1134)",
+      "source_url": "https://github.com/alpic-ai/skybridge",
+      "source_version": "9fd04e0b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:14:12.956Z"
+    },
+    "rule-4838": {
+      "learning_id": "rule-4838",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4838,
+      "title": "network driver: document RX queue management",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "3391b242",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:14:21.204Z"
+    },
+    "learn-github-martin-ger-esp32_nat_router": {
+      "learning_id": "learn-github-martin-ger-esp32_nat_router",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "martin-ger/esp32_nat_router",
+      "repository": "martin-ger/esp32_nat_router",
+      "slug": "martin-ger-esp32_nat_router",
+      "platform": "github",
+      "source_url": "https://github.com/martin-ger/esp32_nat_router",
+      "source_version": "119e0a3d",
+      "content_hash": "2fb56597ce3dd2a91d4601eb01f8bf78b93839720bb0ea75addb89784b0c1bf2",
+      "dossier_path": "07_PROJECT_LEARNING/martin-ger-esp32_nat_router-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/martin-ger-esp32_nat_router-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4839,
+          "title": "seven correctness bugs found by audit",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T14:19:07.676Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4839": {
+      "learning_id": "rule-4839",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4839,
+      "title": "seven correctness bugs found by audit",
+      "source_url": "https://github.com/martin-ger/esp32_nat_router",
+      "source_version": "119e0a3d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:19:07.676Z"
     }
   },
   "aliases": {

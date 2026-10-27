@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `a3e5ddfc`  
+> **Source Version**: `3391b242`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T12:14:44.145Z  
+> **Timestamp**: 2026-10-27T14:14:20.876Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T12:14:43.691Z  
+> **Harvest Timestamp**: 2026-10-27T14:14:20.486Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1283,1145 +1283,351 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c814151c` (2026-05-29)
-**Commit Message**: datapath/orchestrator: fix goroutine leak in MergeChannels watch path
+### Incident Patch 1: `3391b242` (2026-09-18)
+**Commit Message**: network driver: document RX queue management
 
-common.MergeChannels starts a goroutine that blocks in reflect.Select
-until one of its input channels fires, with no way to cancel it. Its
-only caller, newLocalNodeConfig, merges statedb watch channels and
-returns the result as the orchestrator reconciler's localNodeConfigWatch.
+Document RX queue discovery, reservation, leasing, cleanup, workload
+metadata, configuration, and allocation verification.
 
-The reconciler builds a fresh watch on every loop iteration. When it
-wakes via another event source (a LocalNodeStore update or an explicit
-trigger) rather than localNodeConfigWatch, the previous iteration's
-MergeChannels goroutine is abandoned. If none of its input watch
-channels ever close - which happens when only the local node changes
-while the device and address tables stay stable - that goroutine blocks
-forever. Under multi-pool IPAM with sustained CiliumNode churn this leaks
-one goroutine per update, accumulating thousands over time and driving up
-CPU, latency and packet drops.
+Signed-off-by: Aaron Campbell <[REDACTED_EMAIL]>
 
-Make MergeChannels context-aware so the goroutine observes cancellation,
-thread the context through newLocalNodeConfig, and have the reconciler
-cancel each iteration's watch once the select has chosen a branch.
-
-Add a unit test for MergeChannels cancella
-
-**File**: `pkg/common/utils.go` (modified, +20/-8)
+**File**: `pkg/networkdriver/README.md` (modified, +221/-31)
 ```diff
-@@ -4,6 +4,7 @@
- package common
+@@ -12,10 +12,15 @@ can claim devices via the standard DRA framework.
+ - Kubernetes v1.34+. Device managers that publish consumable capacity also
+   require the `DRAConsumableCapacity` feature gate. Enable it explicitly on
+   Kubernetes v1.34 and v1.35; it is enabled by default starting in v1.36.
+-- Container Runtime NRI support (and have it enabled). The agent 
++- Container runtime with NRI support enabled. The agent
+   depends on `/var/run/nri/nri.sock` for plugin registration.
++- Container runtime CDI support. The agent writes CDI specifications to
++  `/var/run/cdi` so DRA device metadata can be mounted into containers.
+ - Cilium agent with `--enable-network-driver` (set automatically
+-  when the Helm flag is enabled)
++  when the Helm flag is enabled).
++- The RX queue manager additionally requires a Linux kernel with netdev RX
++  queue leasing and netkit support (upstream Linux v7.1 or an equivalent
++  backport), and a NIC driver that implements RX queue leasing.
  
- import (
-+	"context"
- 	"fmt"
- 	"os"
- 	"reflect"
-@@ -75,22 +76,33 @@ func RequireRootPrivilege(cmd string) {
- 	}
- }
+ ## Use cases
  
--func MergeChannels[T any](chans ...<-chan T) <-chan T {
-+// MergeChannels forwards the first value received on any of the input channels.
-+// The goroutine it starts is bound to ctx, so it is reclaimed on cancellation
-+// even if no input ever fires and the caller abandons the returned channel.
-+func MergeChannels[T any](ctx context.Context, chans ...<-chan T) <-chan T {
- 	out := make(chan T)
--	cases := make([]reflect.SelectCase, len(chans))
--	for i, ch := range chans {
--		cases[i] = reflect.SelectCase{
-+	cases := make([]reflect.SelectCase, 0, len(chans)+1)
-+	for _, ch := range chans {
-+		cases = append(cases, reflect.SelectCase{
- 			Dir:  reflect.SelectRecv,
- 			Chan: reflect.ValueOf(ch),
--		}
-+		})
+@@ -25,6 +30,8 @@ hand-off from the host, such as:
+ 
+ - DPDK-based applications (VNFs, packet-processing pipelines)
+ - High-frequency trading or other low-latency workloads
++- Applications that consume a dedicated NIC receive queue, including
++  `io_uring` zero-copy receive applications
+ 
+ ## Device Managers
+ 
+@@ -35,13 +42,16 @@ whenever the device set changes, then blocks until context cancellation.
+ 
+ Available device managers:
+ 
+-| Manager         | Key in CRD     | `DeviceManagerType` string | Devices managed                                          |
+-|-----------------|----------------|----------------------------|-----------------------------------------------------------|
+-| `sriov`         | `sriov`        | `sr-iov`                   | SR-IOV Virtual Functions (legacy mode)                    |
+-| `dummy`         | `dummy`        | `dummy`                    | Linux dummy interfaces                                    |
++| Manager   | Key in CRD | `DeviceManagerType` string | Devices managed                                                  |
++|-----------|------------|----------------------------|------------------------------------------------------------------|
++| `sriov`   | `sriov`    | `sr-iov`                   | SR-IOV Virtual Functions (legacy mode)                           |
++| `dummy`   | `dummy`    | `dummy`                    | Linux dummy interfaces                                           |
++| `rxqueue` | `rxQueue`  | `rxQueue`                  | Physical NIC RX queue capacity                                   |
+ 
+-Both current managers publish dedicated devices. Each published dummy device
+-or SR-IOV Virtual Function can be allocated to one claim at a time.
++The dummy and SR-IOV managers publish dedicated devices. Each published dummy
++device or SR-IOV Virtual Function can be allocated to one claim at a time. The
++RX queue manager publishes each physical interface as a shareable device whose
++capacity can be consumed by several claims.
+ 
+ ### Device allocation model
+ 
+@@ -105,6 +115,36 @@ It cannot inspect the API server's feature-gate configuration. On v1.34 or
+ later with `DRAConsumableCapacity` disabled, `ResourceSlice` publication
+ reports an error when the API server omits the feature-gated fields.
+ 
++### RX queue device manager
++
++The RX queue manager (`pkg/networkdriver/rxqueue`) publishes one shareable DRA
++device for each configured physical interface. Its `rxQueues` capacity is the
++number of queues configured for reservation. Each claim consumes exactly one
++unit of that capacity. Kubernetes schedules capacity from the parent device;
++physical queue IDs remain an implementation detail of the manager.
++
++At startup, the manager resolves each configured interface and enumerates its
++active RX queues through the netdev generic netlink API. The interface must be
++up and must have more active queues than the configured reservation. The
++manager selects the highest-numbered queues and always leaves at least one
++queue outside the reserved set. `count` defaults to one. Discovery runs once,
++so interface or queue-count changes require an agent restart.
++
++At `PrepareResourceClaims` time, the manager:
++
++1. Validates that the scheduler assigned one unit of `rxQueues` capacity and
++   supplied a `ShareID`.
++2. Selects an unleased physical queue from the reserved set.
++3. Records the queue reservation against that share and returns the
++   allocation-specific state.
++
++Repeated preparation of the same share returns the same queue. Different
++shares cannot reserve the same queue. Cleanup releases the in-memory
++reservation only after the kernel reports that no active lease remains.
++
++After an agent restart, recovery restores the reservation for the physical
++queue recorded in `PreparedDevice`.
++
+ ### SR-IOV device manager
+ 
+ The SR-IOV manager (`pkg/networkdriver/sriov`) discovers VFs by walking
+@@ -166,10 +206,12 @@ device manager, and `Dev` is that manager's current device object.
+ 
+ Each device man
+```
+
+---
+
+### Incident Patch 2: `1927ef1d` (2026-09-14)
+**Commit Message**: network driver: register the RX queue manager
+
+Construct the RX queue manager when enabled by node configuration and
+include it in the generic device-manager set consumed by the network
+driver.
+
+Require the netkit or netkit-l2 datapath before initializing the manager.
+A veth endpoint cannot host the queue lease that the manager advertises.
+Leave other device managers and disabled RX queue configurations unchanged.
+
+Verify disabled and incomplete configurations at the registration
+boundary, and cover serialization through the generic allocation
+persistence path.
+
+Signed-off-by: Aaron Campbell <[REDACTED_EMAIL]>
+
+**File**: `pkg/networkdriver/cell.go` (modified, +3/-0)
+```diff
+@@ -16,6 +16,7 @@ import (
+ 	kube_types "k8s.io/apimachinery/pkg/types"
+ 	"k8s.io/client-go/util/workqueue"
+ 
++	"github.com/cilium/cilium/pkg/datapath/connector"
+ 	"github.com/cilium/cilium/pkg/ipam"
+ 	"github.com/cilium/cilium/pkg/k8s/apis/cilium.io/v2alpha1"
+ 	k8sClient "github.com/cilium/cilium/pkg/k8s/client"
+@@ -61,6 +62,7 @@ type networkDriverParams struct {
+ 	Configs         resource.Resource[*v2alpha1.CiliumNetworkDriverNodeConfig]
+ 	ResourceClaims  resource.Resource[*resourceapi.ResourceClaim]
+ 	Pods            resource.Resource[*corev1.Pod]
++	ConnectorConfig connector.Config
+ 	DaemonCfg       *option.DaemonConfig
+ 	DB              *statedb.DB
+ 	DeviceTable     statedb.RWTable[*DRADevice]
+@@ -132,6 +134,7 @@ func registerNetworkDriver(params networkDriverParams) *Driver {
+ 		jg:              params.JobGroup,
+ 		resourceClaims:  params.ResourceClaims,
+ 		pods:            params.Pods,
++		datapathMode:    params.ConnectorConfig.GetOperationalMode(),
+ 		kubeClient:      params.ClientSet,
+ 		deviceManagers:  make(map[types.DeviceManagerType]types.DeviceManager),
+ 		configCRD:       params.Configs,
+```
+
+**File**: `pkg/networkdriver/devicemanagers/managers.go` (modified, +10/-1)
+```diff
+@@ -8,6 +8,7 @@ import (
+ 
+ 	"github.com/cilium/cilium/pkg/k8s/apis/cilium.io/v2alpha1"
+ 	"github.com/cilium/cilium/pkg/networkdriver/dummy"
++	"github.com/cilium/cilium/pkg/networkdriver/rxqueue"
+ 	"github.com/cilium/cilium/pkg/networkdriver/sriov"
+ 	"github.com/cilium/cilium/pkg/networkdriver/types"
+ )
+@@ -27,7 +28,6 @@ func InitManagers(logger *slog.Logger, managerConfigs *v2alpha1.CiliumNetworkDri
+ 
+ 		result[types.DeviceManagerTypeDummy] = dummyMgr
  	}
-+	ctxCase := len(cases)
-+	cases = append(cases, reflect.SelectCase{
-+		Dir:  reflect.SelectRecv,
-+		Chan: reflect.ValueOf(ctx.Done()),
-+	})
- 	go func() {
- 		defer close(out)
--		_, value, ok := reflect.Select(cases)
--		if !ok {
-+		chosen, value, ok := reflect.Select(cases)
-+		if chosen == ctxCase || !ok {
- 			return
- 		}
--		out <- value.Interface().(T)
-+		select {
-+		case out <- value.Interface().(T):
-+		case <-ctx.Done():
+-
+ 	if managerConfigs.SRIOV != nil && managerConfigs.SRIOV.Enabled {
+ 		sriovMgr, err := sriov.NewManager(logger, managerConfigs.SRIOV)
+ 		if err != nil {
+@@ -37,5 +37,14 @@ func InitManagers(logger *slog.Logger, managerConfigs *v2alpha1.CiliumNetworkDri
+ 		result[types.DeviceManagerTypeSRIOV] = sriovMgr
+ 	}
+ 
++	if managerConfigs.RXQueue != nil && managerConfigs.RXQueue.Enabled {
++		rxQueueMgr, err := rxqueue.NewManager(logger, managerConfigs.RXQueue)
++		if err != nil {
++			return nil, err
 +		}
- 	}()
- 	return out
- }
-```
-
-**File**: `pkg/common/utils_test.go` (modified, +48/-0)
-```diff
-@@ -4,9 +4,12 @@
- package common
- 
- import (
-+	"context"
- 	"testing"
- 
- 	"github.com/stretchr/testify/require"
 +
-+	"github.com/cilium/cilium/pkg/testutils"
- )
- 
- func TestC2GoArray(t *testing.T) {
-@@ -48,3 +51,48 @@ func TestGoArray2C(t *testing.T) {
- 		require.Equal(t, test.output, GoArray2C(test.input))
- 	}
- }
-+
-+func TestMergeChannels(t *testing.T) {
-+	t.Run("forwards the first received value", func(t *testing.T) {
-+		a := make(chan int, 1)
-+		b := make(chan int, 1)
-+		out := MergeChannels(context.Background(), a, b)
-+
-+		b <- 42
-+		require.Equal(t, 42, <-out)
-+
-+		// Only a single value is forwarded; the output channel is then closed.
-+		_, ok := <-out
-+		require.False(t, ok)
-+	})
-+
-+	t.Run("closed input closes the output", func(t *testing.T) {
-+		a := make(chan struct{})
-+		b := make(chan struct{})
-+		out := MergeChannels(context.Background(), a, b)
-+
-+		close(b)
-+		_, ok := <-out
-+		require.False(t, ok, "output channel should be closed once an input is closed")
-+	})
-+
-+	t.Run("does not leak when context is cancelled", func(t *testing.T) {
-+		// Regression test for https://github.com/cilium/cilium/issues/46254.
-+		defer testutils.GoleakVerifyNone(t)
-+
-+		ctx, cancel := context.WithCancel(context.Background())
-+
-+		// Inputs that never fire, mimicking abandoned statedb watch channels.
-+		a := make(chan struct{})
-+		b := make(chan struct{})
-+		c := make(chan struct{})
-+		out := MergeChannels(ctx, a, b, c)
-+
-+		cancel()
-+
-+		// The output channel is closed once the goroutine observes the
-+		// cancellation; this blocks until the goroutine has exited.
-+		_, ok := <-out
-+		require.False(t, ok)
-+	})
-+}
-```
-
-**File**: `pkg/datapath/orchestrator/localnodeconfig.go` (modified, +1/-1)
-```diff
-@@ -251,7 +251,7 @@ func newLocalNodeConfig(
- 		DatapathIsNetkit:             connectorConfig.GetOperationalMode().IsNetkit(),
- 		VLANFilter:                   vlanFilter,
- 		Plugins:                      plugins,
--	}, common.MergeChannels(watchChans...), nil
-+	}, common.MergeChannels(ctx, watchChans...), nil
- }
- 
- // podSubnets returns the explicitly configured pod subnets, falling back to
-```
-
-**File**: `pkg/datapath/orchestrator/localnodeconfig_test.go` (modified, +111/-0)
-```diff
-@@ -4,13 +4,33 @@
- package orchestrator
- 
- import (
-+	"context"
- 	"net/netip"
- 	"testing"
- 
-+	"github.com/cilium/statedb"
-+	"github.com/spf13/afero"
- 	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+	"go.uber.org/goleak"
- 
-+	cmtypes "github.com/cilium/cilium/pkg/clustermesh/types"
-+	fakeconnector "github.com/cilium/cilium/pkg/datapath/connector/fake"
-+	fakeipsec "github.com/cilium/cilium/pkg/datapath/linux/ipsec/fake"
-+	"github.com/cilium/cilium/pkg/datapath/linux/sysctl"
- 	"github.com/cilium/cilium/pkg/datapath/tables"
-+	"github.com/cilium/cilium/pkg/datapath/tunnel"
-+	"github.com/cilium/cilium/pkg/datapath/xdp"
-+	"github.com/cilium/cilium/pkg/defaults"
-+	"github.com/cilium/cilium/pkg/kpr"
-+	"github.com/cilium/cilium/pkg/loadbalancer"
-+	"github.com/cilium/cilium/pkg/maglev"
-+	"github.com/cilium/cilium/pkg/mtu"
-+	"github.com/cilium/cilium/pkg/node"
- 	"github.com/cilium/cilium/pkg/option"
-+	"github.com/cilium/cilium/pkg/svcrouteconfig"
-+	"github.com/cilium/cilium/pkg/testutils"
-+	wgfake "github.com/cilium/cilium/pkg/wireguard/fake"
- )
- 
- func TestDirectRoutingDeviceHasAddr(t *testing.T) {
-@@ -103,3 +123,94 @@ func TestDirectRoutingDeviceHasAddr(t *testing.T) {
- 		})
- 	}
- }
-+
-+// TestNewLocalNodeConfigNoGoroutineLeak is a regression test for
-+// https://github.com/cilium/cilium/issues/46254: the watch channel returned by
-+// newLocalNodeConfig is backed by a common.MergeChannels goroutine that must be
-+// reclaimed when the caller cancels the context, even if no input ever fires.
-+func TestNewLocalNodeConfigNoGoroutineLeak(t *testing.T) {
-+	// Save and restore the global config touched below.
-+	savedHostLegacy := option.Config.UnsafeDaemonConfigOption.EnableHostLegacyRouting
-+	savedV4Range := option.Config.IPv4ServiceRange
-+	savedV6Range := option.Config.IPv6ServiceRange
-+	t.Cleanup(func() {
-+		option.Config.UnsafeDaemonConfigOption.EnableHostLegacyRouting = savedHostLegacy
-+		option.Config.IPv4ServiceRange = savedV4Range
-+		option.Config.IPv6ServiceRange = savedV6Range
-+	})
-+	// KPR + BPF host routing + Wireguard disabled => DirectRoutingDeviceRequired
-+	// is false, so newLocalNodeConfig skips the direct routing device branch.
-+	option.Config.UnsafeDaemonConfigOption.EnableHostLegacyRouting = true
-+	option.Config.IPv4ServiceRange = netip.Prefix{}
-+	option.Config.IPv6ServiceRange = netip.Prefix{}
-+
-+	db := statedb.New()
-+	devices, err := tables.NewDeviceTable(db)
-+	require.NoError(t, err)
-+	nodeAddrs, err := tables.NewNodeAddressTable(db)
-+	require.NoError(t, err)
-+	mtuTable, err := mtu.NewMTUTable(db)
-+	require.NoError(t, err)
-+
-+	// Seed cilium_host and cilium_net so newLocalNodeConfig reaches the success
-+	// path that builds the merged watch channel.
-+	wtxn := db.WriteTxn(devices)
-+	for i, name := range []string{defaults.HostDevice, defaults.SecondHostDevice} {
-+		_, _, err = devices.Insert(wtxn, &tables.Device{
-+			Index:        i + 1,
-+			Name:         name,
-+			HardwareAddr: tables.HardwareAddr{0x02, 0x00, 0x00, 0x00, 0x00, byte(i + 1)},
-+		})
-+		require.NoError(t, err)
++		result[types.DeviceManagerTypeRXQueue] = rxQueueMgr
 +	}
-+	wtxn.Commit()
 +
-+	// In-memory sysctl with the ephemeral port range getEphemeralPortRangeMin reads.
-+	memFS := afero.NewMemMapFs()
-+	require.NoError(t, memFS.MkdirAll("/proc/sys/net/ipv4", 0755))
-+	require.NoError(t, afero.WriteFile(memFS,
-+		"/proc/sys/net/ipv4/ip_local_port_range", []byte("32768\t60999"), 0644))
-+	sysctlReader := sysctl.NewDirectSysctl(memFS, "/proc")
+ 	return result, nil
+ }
+```
+
+**File**: `pkg/networkdriver/devicemanagers/managers_test.go` (modified, +18/-0)
+```diff
+@@ -58,4 +58,22 @@ func TestInitManagers(t *testing.T) {
+ 		assert.NotContains(t, mgrs, types.DeviceManagerTypeDummy)
+ 
+ 	})
 +
-+	wgAgent := wgfake.NewTestAgent(wgfake.Config{EnableWireguard: false})
++	t.Run("RX queue disabled does not show up in the map", func(t *testing.T) {
++		cfg := &v2alpha1.CiliumNetworkDriverDeviceManagerConfig{
++			RXQueue: &v2alpha1.RXQueueDeviceManagerConfig{Enabled: false},
++		}
++		mgrs, err := InitManagers(hivetest.Logger(t), cfg)
++		require.NoError(t, err)
++		assert.NotContains(t, mgrs, types.DeviceManagerTypeRXQueue)
++	})
 +
-+	call := func(ctx context.Context) error {
-+		_, _, err := newLocalNodeConfig(
-+			ctx,
-+			option.Config,
-+			node.LocalNode{Local: &node.LocalNodeInfo{}},
-+			sysctlReader,
-+			cmtypes.DefaultClusterInfo,
-+			tunnel.Config{},
-+			db.ReadTxn(),
-+			tables.DirectRoutingDevice{},
-+			devices,
-+			nodeAddrs,
-+			"",
-+			xdp.Config{},
-+			loadbalancer.Config{},
-+			false,
-+			kpr.KPRConfig{},
-+			svcrouteconfig.RoutesConfig{},
-+			maglev.Config{},
-+			mtuTable,
-+			wgAgent,
-+			fakeipsec.Config{},
-+			fakeconnector.NewVeth(),
-+			nil,
++	t.Run("RX queue enabled requires interfaces", func(t *testing.T) {
++		cfg := &v2alpha1.CiliumNetworkDriverDeviceManagerConfig{
++			RXQueue: &v2alpha1.RXQueueDeviceManagerConfig{Enabled: true},
++		}
++		mgrs, err := InitManagers(hivetest.Logger(t), cfg)
++		require.Error(t, err)
++		assert.NotContains(t, mgrs, types.DeviceManagerTypeRXQueue)
++	})
+ }
+```
+
+**File**: `pkg/networkdriver/dra_test.go` (modified, +26/-0)
+```diff
+@@ -35,6 +35,7 @@ import (
+ 	"github.com/cilium/cilium/pkg/networkdriver/config"
+ 	"github.com/cilium/cilium/pkg/networkdriver/dummy"
+ 	networkdriverIPAM "github.com/cilium/cilium/pkg/networkdriver/ipam"
++	"github.com/cilium/cilium/pkg/networkdriver/rxqueue"
+ 	"github.com/cilium/cilium/pkg/networkdriver/sriov"
+ 	"github.com/cilium/cilium/pkg/networkdriver/types"
+ 	nodetypes "github.com/cilium/cilium/pkg/node/types"
+@@ -93,6 +94,31 @@ func TestSerializeDevice(t *testing.T) {
+ 		require.NoError(t, err)
+ 		require.Equal(t, dev.IfName(), restored.IfName())
+ 	})
++
++	t.Run("RX queue device round-trip", func(t *testing.T) {
++		dev := &rxqueue.RXQueueDevice{
++			PhysicalIfName:   "eth0",
++			TotalRXQueues:    8,
++			ReservedQueueIDs: []uint32{7, 6},
++		}
++		capacity := map[resourceapi.QualifiedName]apiresource.Quantity{
++			types.RXQueuesCapacity: apiresource.MustParse("1"),
++		}
++		a := allocation{Device: dev, Manager: types.DeviceManagerTypeRXQueue, ConsumedCapacity: capacity}
++
++		raw, err := serializeDevice(a)
++		require.NoError(t, err)
++
++		serialized, err := deserializeDevice(raw)
++		require.NoError(t, err)
++		require.Equal(t, types.DeviceManagerTypeRXQueue, serialized.Manager)
++		require.Equal(t, capacity, serialized.ConsumedCapacity)
++
++		mgr := &rxqueue.RXQueueManager{}
++		restored, err := mgr.RestoreDevice(serialized.Dev)
++		require.NoError(t, err)
++		require.Equal(t, dev.IfName(), restored.IfName())
++	})
+ }
+ 
+ func TestAllocationInterfaceName(t *testing.T) {
+```
+
+**File**: `pkg/networkdriver/driver.go` (modified, +23/-0)
+```diff
+@@ -28,6 +28,7 @@ import (
+ 	"k8s.io/dynamic-resource-allocation/resourceslice"
+ 	"k8s.io/utils/ptr"
+ 
++	"github.com/cilium/cilium/pkg/datapath/connector"
+ 	"github.com/cilium/cilium/pkg/ipam"
+ 	"github.com/cilium/cilium/pkg/k8s/apis/cilium.io/v2alpha1"
+ 	"github.com/cilium/cilium/pkg/k8s/resource"
+@@ -60,6 +61,7 @@ type Driver struct {
+ 	jg             job.Group
+ 	resourceClaims resource.Resource[*resourceapi.ResourceClaim]
+ 	pods           resource.Resource[*corev1.Pod]
++	datapathMode   connector.Mode
+ 
+ 	configCRD resource.Resource[*v2alpha1.CiliumNetworkDriverNodeConfig]
+ 	config    *v2alpha1.CiliumNetworkDriverNodeConfigSpec
+@@ -220,6 +222,10 @@ func (driver *Driver) Start(ctx cell.HookContext) error {
+ 		}
+ 		driver.setConfig(&cfg)
+ 
++		if err := validateRXQueueDatapath(driver.config.DeviceManagerConfigs, driver.datapathMode); err != nil {
++			return err
++		}
++
+ 		mgrs, err := devicemanagers.InitManagers(driver.logger, driver.config.DeviceManagerConfigs)
+ 		if err != nil {
+ 			return err
+@@ -395,6 +401,23 @@ func (driver *Driver) validateConsumableCapacityVersion(k8sVersion semver.Versio
+ 	return nil
+ }
+ 
++// validateRXQueueDatapath requires netkit when RX queue management is enabled.
++func validateRXQueueDatapath(
++	configs *v2alpha1.CiliumNetworkDriverDeviceManagerConfig,
++	mode connector.Mode,
++) error {
++	if configs == nil || configs.RXQueue == nil || !configs.RXQueue.Enabled {
++		return nil
++	}
++	if !mode.IsNetkit() {
++		return fmt.Errorf(
++			"RX queue device manager requires the netkit or netkit-l2 datapath, got %q",
++			mode,
 +		)
-+		return err
 +	}
-+
-+	// Baseline goroutines after setup so statedb's etc. are not counted.
-+	defer testutils.GoleakVerifyNone(t, goleak.IgnoreCurrent())
-+
-+	// Emulate the reconciler loop: create a watch, abandon it (as when the loop
-+	// wakes via another event source), then cancel the per-iteration context.
-+	// Without the fix the merge goroutines block forever in reflect.Select.
-+	for range 1000 {
-+		watchCtx, cancelWatch := context.WithCancel(context.Background())
-+		require.NoError(t, call(watchCtx))
-+		cancelWatch()
-+	}
++	return nil
 +}
-```
-
-**File**: `pkg/datapath/orchestrator/orchestrator.go` (modified, +10/-1)
-```diff
-@@ -229,6 +229,11 @@ func (o *orchestrator) reconciler(ctx context.Context, health cell.Health) error
- 		giveUp           error
- 	)
- 	for {
-+		// Per-iteration context for the watch goroutine started by
-+		// newLocalNodeConfig, cancelled below so it does not leak if we proceed
-+		// via a different event source than localNodeConfigWatch.
-+		watchCtx, cancelWatch := context.WithCancel(ctx)
 +
- 		var (
- 			localNodeConfig      config.Config
- 			localNodeConfigWatch <-chan struct{}
-@@ -246,7 +251,7 @@ func (o *orchestrator) reconciler(ctx context.Context, health cell.Health) error
- 			retryChan = time.After(reinitRetryDuration)
- 		} else {
- 			localNodeConfig, localNodeConfigWatch, err = newLocalNodeConfig(
--				ctx,
-+				watchCtx,
- 				option.Config,
- 				localNode,
- 				o.params.Sysctl,
-@@ -313,6 +318,7 @@ func (o *orchestrator) reconciler(ctx context.Context, health cell.Health) error
+ func (driver *Driver) withLock(f func() error) error {
+ 	driver.lock.Lock()
+ 	defer driver.lock.Unlock()
+```
+
+**File**: `pkg/networkdriver/driver_test.go` (modified, +19/-0)
+```diff
+@@ -40,6 +40,7 @@ import (
+ 	"k8s.io/dynamic-resource-allocation/resourceslice"
+ 	"k8s.io/utils/ptr"
  
- 		select {
- 		case <-ctx.Done():
-+			cancelWatch()
- 			return ctx.Err()
- 		case <-ipipWatch:
- 		case <-localNodeConfigWatch:
-@@ -321,6 +327,9 @@ func (o *orchestrator) reconciler(ctx context.Context, health cell.Health) error
- 		case request = <-o.trigger:
- 		}
++	"github.com/cilium/cilium/pkg/datapath/connector"
+ 	"github.com/cilium/cilium/pkg/k8s/apis/cilium.io/v2alpha1"
+ 	k8sClient "github.com/cilium/cilium/pkg/k8s/client/testutils"
+ 	"github.com/cilium/cilium/pkg/networkdriver/dummy"
+@@ -127,6 +128,24 @@ func deviceLogicalPoolAttr(t *testing.T, devices []resourceapi.Device, name stri
+ 	return ""
+ }
  
-+		// Stop this iteration's watch goroutine now that we no longer need it.
-+		cancelWatch()
++func TestValidateRXQueueDatapath(t *testing.T) {
++	disabled := &v2alpha1.CiliumNetworkDriverDeviceManagerConfig{
++		RXQueue: &v2alpha1.RXQueueDeviceManagerConfig{},
++	}
++	enabled := &v2alpha1.CiliumNetworkDriverDeviceManagerConfig{
++		RXQueue: &v2alpha1.RXQueueDeviceManagerConfig{Enabled: true},
++	}
 +
- 		// Limit the rate at which we reinitialize and to give the devs&addrs
- 		// a chance to settle down.
- 		if err := limiter.Wait(ctx); err != nil {
-```
-
----
-
-### Incident Patch 2: `a3e5ddfc` (2026-08-29)
-**Commit Message**: orchestrator: avoid leaking local node config watch goroutines
-
-The initial fix made MergeChannels context-aware and cancelled its helper
-goroutine after each reconciler iteration. While this prevents the leak, the
-orchestrator does not need a goroutine to combine its statedb watch channels.
-
-Return the watch channels directly from newLocalNodeConfig and use one
-reflect.Select in the reconciler to wait on them together with context
-cancellation, retries, local node updates, and explicit reinitialization
-requests. Remove MergeChannels and its tests because it no longer has callers.
-
-Keep a regression test that repeatedly builds and abandons watch sets and uses
-the shared testutils goleak configuration to verify that no goroutines remain.
-
-Fixes: #46254
-Signed-off-by: Evgeny Evseev <[REDACTED_EMAIL]>
-
-**File**: `pkg/common/utils.go` (modified, +0/-33)
-```diff
-@@ -4,10 +4,8 @@
- package common
- 
- import (
--	"context"
- 	"fmt"
- 	"os"
--	"reflect"
- 	"strconv"
- 	"strings"
- )
-@@ -75,34 +73,3 @@ func RequireRootPrivilege(cmd string) {
- 		os.Exit(1)
- 	}
- }
--
--// MergeChannels forwards the first value received on any of the input channels.
--// The goroutine it starts is bound to ctx, so it is reclaimed on cancellation
--// even if no input ever fires and the caller abandons the returned channel.
--func MergeChannels[T any](ctx context.Context, chans ...<-chan T) <-chan T {
--	out := make(chan T)
--	cases := make([]reflect.SelectCase, 0, len(chans)+1)
--	for _, ch := range chans {
--		cases = append(cases, reflect.SelectCase{
--			Dir:  reflect.SelectRecv,
--			Chan: reflect.ValueOf(ch),
--		})
--	}
--	ctxCase := len(cases)
--	cases = append(cases, reflect.SelectCase{
--		Dir:  reflect.SelectRecv,
--		Chan: reflect.ValueOf(ctx.Done()),
--	})
--	go func() {
--		defer close(out)
--		chosen, value, ok := reflect.Select(cases)
--		if chosen == ctxCase || !ok {
--			return
--		}
--		select {
--		case out <- value.Interface().(T):
--		case <-ctx.Done():
--		}
--	}()
--	return out
--}
-```
-
-**File**: `pkg/common/utils_test.go` (modified, +0/-48)
-```diff
-@@ -4,12 +4,9 @@
- package common
- 
- import (
--	"context"
- 	"testing"
- 
- 	"github.com/stretchr/testify/require"
--
--	"github.com/cilium/cilium/pkg/testutils"
- )
- 
- func TestC2GoArray(t *testing.T) {
-@@ -51,48 +48,3 @@ func TestGoArray2C(t *testing.T) {
- 		require.Equal(t, test.output, GoArray2C(test.input))
- 	}
- }
--
--func TestMergeChannels(t *testing.T) {
--	t.Run("forwards the first received value", func(t *testing.T) {
--		a := make(chan int, 1)
--		b := make(chan int, 1)
--		out := MergeChannels(context.Background(), a, b)
--
--		b <- 42
--		require.Equal(t, 42, <-out)
--
--		// Only a single value is forwarded; the output channel is then closed.
--		_, ok := <-out
--		require.False(t, ok)
--	})
--
--	t.Run("closed input closes the output", func(t *testing.T) {
--		a := make(chan struct{})
--		b := make(chan struct{})
--		out := MergeChannels(context.Background(), a, b)
--
--		close(b)
--		_, ok := <-out
--		require.False(t, ok, "output channel should be closed once an input is closed")
--	})
--
--	t.Run("does not leak when context is cancelled", func(t *testing.T) {
--		// Regression test for https://github.com/cilium/cilium/issues/46254.
--		defer testutils.GoleakVerifyNone(t)
--
--		ctx, cancel := context.WithCancel(context.Background())
--
--		// Inputs that never fire, mimicking abandoned statedb watch channels.
--		a := make(chan struct{})
--		b := make(chan struct{})
--		c := make(chan struct{})
--		out := MergeChannels(ctx, a, b, c)
--
--		cancel()
--
--		// The output channel is closed once the goroutine observes the
--		// cancellation; this blocks until the goroutine has exited.
--		_, ok := <-out
--		require.False(t, ok)
--	})
--}
-```
-
-**File**: `pkg/datapath/orchestrator/localnodeconfig.go` (modified, +13/-12)
-```diff
-@@ -13,7 +13,6 @@ import (
- 	"github.com/cilium/statedb"
- 
- 	cmtypes "github.com/cilium/cilium/pkg/clustermesh/types"
--	"github.com/cilium/cilium/pkg/common"
- 	"github.com/cilium/cilium/pkg/datapath/config"
- 	"github.com/cilium/cilium/pkg/datapath/connector"
- 	ipsec "github.com/cilium/cilium/pkg/datapath/linux/ipsec/types"
-@@ -47,8 +46,10 @@ import (
- // LocalNodeConfiguration instance is generated. Previous LocalNodeConfiguration
- // is never mutated in-place.
- //
--// The returned channel will be closed for recoverable errors once the state of
--// failing condition changes.
-+// Each returned watch channel is closed when the piece of state it tracks
-+// changes; the caller should wait on all of them. For recoverable errors, a
-+// single watch channel is returned that is closed once the failing condition
-+// changes.
- func newLocalNodeConfig(
- 	ctx context.Context,
- 	daemon *option.DaemonConfig,
-@@ -72,7 +73,7 @@ func newLocalNodeConfig(
- 	ipsecCfg ipsec.Config,
- 	connectorConfig connector.Config,
- 	plugins plugin.Plugins,
--) (config.Config, <-chan struct{}, error) {
-+) (config.Config, []<-chan struct{}, error) {
- 	auxPrefixes := []ip.Prefix{}
- 
- 	if daemon.IPv4ServiceRange.IsValid() {
-@@ -93,7 +94,7 @@ func newLocalNodeConfig(
- 
- 	vlanFilter, err := resolveVLANFilters(nativeDevices, daemon.VLANBPFBypass)
- 	if err != nil {
--		return config.Config{}, devsWatch, fmt.Errorf("resolving VLAN filters: %w", err)
-+		return config.Config{}, []<-chan struct{}{devsWatch}, fmt.Errorf("resolving VLAN filters: %w", err)
- 	}
- 
- 	watchChans := []<-chan struct{}{devsWatch, addrsWatch, mtuWatch}
-@@ -103,14 +104,14 @@ func newLocalNodeConfig(
- 		if drd == nil {
- 			// If the direct routing device is not present return the watch channel along with an error.
- 			// Watch channel will be closed when there is an update to the DirectRouting device configuration.
--			return config.Config{}, directRoutingDevWatch, errors.New("direct routing device required but not configured")
-+			return config.Config{}, []<-chan struct{}{directRoutingDevWatch}, errors.New("direct routing device required but not configured")
- 		}
- 
- 		// Ensure the device has at least one usable address for the enabled
- 		// address families. If not, return the watch channel so we retry as
- 		// soon as the device's addresses change.
- 		if !directRoutingDeviceHasAddr(drd) {
--			return config.Config{}, directRoutingDevWatch,
-+			return config.Config{}, []<-chan struct{}{directRoutingDevWatch},
- 				fmt.Errorf("direct routing device %s has no usable addresses", drd.Name)
- 		}
- 
-@@ -136,7 +137,7 @@ func newLocalNodeConfig(
- 
- 	ciliumHostDevice, _, hostWatch, ok := devices.GetWatch(txn, tables.DeviceByName(defaults.HostDevice))
- 	if !ok {
--		return config.Config{}, hostWatch, fmt.Errorf("failed to look up link '%s'", defaults.HostDevice)
-+		return config.Config{}, []<-chan struct{}{hostWatch}, fmt.Errorf("failed to look up link '%s'", defaults.HostDevice)
- 	}
- 	watchChans = append(watchChans, hostWatch)
- 	ciliumHostMAC, err := mac.ParseMAC(ciliumHostDevice.HardwareAddr.String())
-@@ -146,7 +147,7 @@ func newLocalNodeConfig(
- 
- 	ciliumNetDevice, _, netWatch, ok := devices.GetWatch(txn, tables.DeviceByName(defaults.SecondHostDevice))
- 	if !ok {
--		return config.Config{}, netWatch, fmt.Errorf("failed to look up link '%s'", defaults.SecondHostDevice)
-+		return config.Config{}, []<-chan struct{}{netWatch}, fmt.Errorf("failed to look up link '%s'", defaults.SecondHostDevice)
- 	}
- 	watchChans = append(watchChans, netWatch)
- 	ciliumNetMAC, err := mac.ParseMAC(ciliumNetDevice.HardwareAddr.String())
-@@ -159,15 +160,15 @@ func newLocalNodeConfig(
- 		if daemon.EnableIPv4 {
- 			dev, _, watch, ok := devices.GetWatch(txn, tables.DeviceByName(defaults.IPIPv4Device))
- 			if !ok {
--				return config.Config{}, watch, fmt.Errorf("failed to look up IPv4 IPIP device '%s'", defaults.IPIPv4Device)
-+				return config.Config{}, []<-chan struct{}{watch}, fmt.Errorf("failed to look up IPv4 IPIP device '%s'", defaults.IPIPv4Device)
- 			}
- 			watchChans = append(watchChans, watch)
- 			encap4IfIndex = uint32(dev.Index)
- 		}
- 		if daemon.EnableIPv6 {
- 			dev, _, watch, ok := devices.GetWatch(txn, tables.DeviceByName(defaults.IPIPv6Device))
- 			if !ok {
--				return config.Config{}, watch, fmt.Errorf("failed to look up IPv6 IPIP device '%s'", defaults.IPIPv6Device)
-+				return config.Config{}, []<-chan struct{}{watch}, fmt.Errorf("failed to look up IPv6 IPIP device '%s'", defaults.IPIPv6Device)
- 			}
- 			watchChans = append(watchChans, watch)
- 			encap6IfIndex = uint32(dev.Index)
-@@ -251,7 +252,7 @@ func newLocalNodeConfig(
- 		DatapathIsNetkit:             connectorConfig.GetOperationalMode().IsNetkit(),
- 		VLANFilter:                   vlanFilter,
- 		Plugins:                      plugins,
--	}, common.MergeChannels(ctx, watchChans...), nil
-+	}, watchChans, nil
- }
- 
- // podSubnets returns the explicitly configured pod subnets, falling back to
-```
-
-**File**: `pkg/datapath/orchestrator/localnodeconfig_test.go` (modified, +16/-15)
-```diff
-@@ -12,7 +12,6 @@ import (
- 	"github.com/spf13/afero"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
--	"go.uber.org/goleak"
- 
- 	cmtypes "github.com/cilium/cilium/pkg/clustermesh/types"
- 	fakeconnector "github.com/cilium/cilium/pkg/datapath/connector/fake"
-@@ -125,9 +124,11 @@ func TestDirectRoutingDeviceHasAddr(t *testing.T) {
- }
- 
- // TestNewLocalNodeConfigNoGoroutineLeak is a regression test for
--// https://github.com/cilium/cilium/issues/46254: the watch channel returned by
--// newLocalNodeConfig is backed by a common.MergeChannels goroutine that must be
--// reclaimed when the caller cancels the context, even if no input ever fires.
-+// https://github.com/cilium/cilium/issues/46254. newLocalNodeConfig must return
-+// its watch channels directly rather than merging them with a helper goroutine:
-+// the reconciler abandons the watch set whenever it wakes up via another event
-+// source, so any goroutine tied to it would leak. This test guards against a
-+// merge helper being reintroduced.
- func TestNewLocalNodeConfigNoGoroutineLeak(t *testing.T) {
- 	// Save and restore the global config touched below.
- 	savedHostLegacy := option.Config.UnsafeDaemonConfigOption.EnableHostLegacyRouting
-@@ -153,7 +154,7 @@ func TestNewLocalNodeConfigNoGoroutineLeak(t *testing.T) {
- 	require.NoError(t, err)
- 
- 	// Seed cilium_host and cilium_net so newLocalNodeConfig reaches the success
--	// path that builds the merged watch channel.
-+	// path that returns the full watch channel set.
- 	wtxn := db.WriteTxn(devices)
- 	for i, name := range []string{defaults.HostDevice, defaults.SecondHostDevice} {
- 		_, _, err = devices.Insert(wtxn, &tables.Device{
-@@ -174,8 +175,8 @@ func TestNewLocalNodeConfigNoGoroutineLeak(t *testing.T) {
- 
- 	wgAgent := wgfake.NewTestAgent(wgfake.Config{EnableWireguard: false})
- 
--	call := func(ctx context.Context) error {
--		_, _, err := newLocalNodeConfig(
-+	call := func(ctx context.Context) ([]<-chan struct{}, error) {
-+		_, watches, err := newLocalNodeConfig(
- 			ctx,
- 			option.Config,
- 			node.LocalNode{Local: &node.LocalNodeInfo{}},
-@@ -199,18 +200,18 @@ func TestNewLocalNodeConfigNoGoroutineLeak(t *testing.T) {
- 			fakeconnector.NewVeth(),
- 			nil,
- 		)
--		return err
-+		return watches, err
- 	}
- 
- 	// Baseline goroutines after setup so statedb's etc. are not counted.
--	defer testutils.GoleakVerifyNone(t, goleak.IgnoreCurrent())
-+	defer testutils.GoleakVerifyNone(t, testutils.GoleakIgnoreCurrent())
- 
--	// Emulate the reconciler loop: create a watch, abandon it (as when the loop
--	// wakes via another event source), then cancel the per-iteration context.
--	// Without the fix the merge goroutines block forever in reflect.Select.
-+	// Emulate the reconciler loop rebuilding and abandoning its watch set when
-+	// another event source wakes it. No goroutine should be created for the
-+	// watch channels.
- 	for range 1000 {
--		watchCtx, cancelWatch := context.WithCancel(context.Background())
--		require.NoError(t, call(watchCtx))
--		cancelWatch()
-+		watches, err := call(context.Background())
-+		require.NoError(t, err)
-+		require.NotEmpty(t, watches)
- 	}
- }
-```
-
-**File**: `pkg/datapath/orchestrator/orchestrator.go` (modified, +35/-20)
-```diff
-@@ -9,6 +9,7 @@ import (
- 	"fmt"
- 	"io"
- 	"log/slog"
-+	"reflect"
- 	"sync/atomic"
- 
- 	"github.com/cilium/hive/cell"
-@@ -229,14 +230,9 @@ func (o *orchestrator) reconciler(ctx context.Context, health cell.Health) error
- 		giveUp           error
- 	)
- 	for {
--		// Per-iteration context for the watch goroutine started by
--		// newLocalNodeConfig, cancelled below so it does not leak if we proceed
--		// via a different event source than localNodeConfigWatch.
--		watchCtx, cancelWatch := context.WithCancel(ctx)
--
- 		var (
--			localNodeConfig      config.Config
--			localNodeConfigWatch <-chan struct{}
-+			localNodeConfig        config.Config
-+			localNodeConfigWatches []<-chan struct{}
- 		)
- 
- 		// Re-run this on every reconciliation to update the tunnel MTU or
-@@ -250,8 +246,8 @@ func (o *orchestrator) reconciler(ctx context.Context, health cell.Health) error
- 			health.Degraded("Failed to ensure IPIP devices", err)
- 			retryChan = time.After(reinitRetryDuration)
- 		} else {
--			localNodeConfig, localNodeConfigWatch, err = newLocalNodeConfig(
--				watchCtx,
-+			localNodeConfig, localNodeConfigWatches, err = newLocalNodeConfig(
-+				ctx,
- 				option.Config,
- 				localNode,
- 				o.params.Sysctl,
-@@ -316,19 +312,38 @@ func (o *orchestrator) reconciler(ctx context.Context, health cell.Health) error
- 			return giveUp
- 		}
- 
--		select {
--		case <-ctx.Done():
--			cancelWatch()
--			return ctx.Err()
--		case <-ipipWatch:
--		case <-localNodeConfigWatch:
--		case <-retryChan:
--		case localNode = <-localNodes:
--		case request = <-o.trigger:
-+		// Wait on all event sources with a single select. The statedb watch
-+		// channels are variable in number, so the select is built with reflect;
-+		// the index of each case is derived from the statement that adds it.
-+		cases := make([]reflect.SelectCase, 0, 5+len(localNodeConfigWatches))
-+		add := func(ch any) int {
-+			cases = append(cases, reflect.SelectCase{Dir: reflect.SelectRecv, Chan: reflect.ValueOf(ch)})
-+			return len(cases) - 1
-+		}
-+		ctxCase := add(ctx.Done())
-+		retryCase := add(retryChan)
-+		localNodesCase := add(localNodes)
-+		triggerCase := add(o.trigger)
-+		add(ipipWatch)
-+		for _, watch := range localNodeConfigWatches {
-+			add(watch)
- 		}
- 
--		// Stop this iteration's watch goroutine now that we no longer need it.
--		cancelWatch()
-+		chosen, value, ok := reflect.Select(cases)
-+		switch chosen {
-+		case ctxCase:
-+			return ctx.Err()
-+		case retryCase:
-+			// Retry immediately after the rate limiter below.
-+		case localNodesCase:
-+			if !ok {
-+				// localNodes is closed when ctx is cancelled.
-+				return ctx.Err()
-+			}
-+			localNode = value.Interface().(node.LocalNode)
-+		case triggerCase:
-+			request = value.Interface().(reinitializeRequest)
-+		}
- 
- 		// Limit the rate at which we reinitialize and to give the devs&addrs
- 		// a chance to settle down.
-```
-
----
-
-### Incident Patch 3: `0f2a1737` (2026-10-14)
-**Commit Message**: test(gateway-api): cover GRPCRoute BackendTLSPolicy fixtures
-
-Add YAML testdata for BackendTLSPolicy with GRPCRoute under operator/pkg/gateway-api/testdata/gateway/grpcroute-backendtlspolicy, covering both valid CA/SNI origination and missing CA negative handling.
-
-Signed-off-by: Adil Alperen Çiftci <[REDACTED_EMAIL]>
-
-**File**: `operator/pkg/gateway-api/gateway_reconcile_test.go` (modified, +1/-0)
-```diff
-@@ -324,6 +324,7 @@ func Test_Conformance(t *testing.T) {
- 		{name: "httproute-backendtlspolicy-conflict-resolution", gateway: []gwDetails{gatewaySameNamespace}},
- 		{name: "httproute-backendtlspolicy-invalid-ca-cert", gateway: []gwDetails{gatewaySameNamespace}},
- 		{name: "httproute-backendtlspolicy-invalid-kind", gateway: []gwDetails{gatewaySameNamespace}},
-+		{name: "grpcroute-backendtlspolicy", gateway: []gwDetails{gatewaySameNamespace}},
- 		{name: "gateway-multi-port-https", gateway: []gwDetails{{FullName: types.NamespacedName{Name: "multi-port-https", Namespace: "gateway-conformance-infra"}}}},
- 		{name: "gateway-tls-options", gateway: []gwDetails{{FullName: types.NamespacedName{Name: "gateway-tls-options", Namespace: "gateway-conformance-infra"}}}},
- 		{name: "tcproute-invalid-reference-grant", gateway: []gwDetails{{FullName: types.NamespacedName{Name: "gateway-tcproute-referencegrant", Namespace: "gateway-conformance-infra"}, skipCEC: true}}},
-```
-
-**File**: `operator/pkg/gateway-api/testdata/gateway/grpcroute-backendtlspolicy/input/grpcroute-backendtlspolicy.yaml` (added, +68/-0)
-```diff
-@@ -0,0 +1,68 @@
-+apiVersion: gateway.networking.k8s.io/v1
-+kind: GRPCRoute
-+metadata:
-+  name: backendtlspolicy
-+  namespace: gateway-conformance-infra
-+spec:
-+  parentRefs:
-+    - name: same-namespace
-+  rules:
-+    - matches:
-+        - method:
-+            service: grpc.backend.Backend
-+            method: Valid
-+      backendRefs:
-+        - name: tls-backend
-+          port: 443
-+    - matches:
-+        - method:
-+            service: grpc.backend.Backend
-+            method: Invalid
-+      backendRefs:
-+        - name: tls-backend-2
-+          port: 443
-+---
-+apiVersion: gateway.networking.k8s.io/v1
-+kind: BackendTLSPolicy
-+metadata:
-+  name: grpc-backend-tls
-+  namespace: gateway-conformance-infra
-+spec:
-+  targetRefs:
-+    - group: ""
-+      kind: Service
-+      name: tls-backend
-+  validation:
-+    caCertificateRefs:
-+      - group: ""
-+        kind: ConfigMap
-+        name: tls-checks-ca-certificate
-+    hostname: grpc.example.com
-+---
-+apiVersion: gateway.networking.k8s.io/v1
-+kind: BackendTLSPolicy
-+metadata:
-+  name: grpc-backend-tls-invalid-ca
-+  namespace: gateway-conformance-infra
-+spec:
-+  targetRefs:
-+    - group: ""
-+      kind: Service
-+      name: tls-backend-2
-+  validation:
-+    caCertificateRefs:
-+      - group: ""
-+        kind: ConfigMap
-+        name: nonexistent-ca-certificate
-+    hostname: invalid.grpc.example.com
-+---
-+apiVersion: v1
-+kind: ConfigMap
-+metadata:
-+  name: tls-checks-ca-certificate
-+  namespace: gateway-conformance-infra
-+data:
-+  ca.crt: |
-+    -----BEGIN CERTIFICATE-----
-+    Q0Ey
-+    -----END CERTIFICATE-----
-```
-
-**File**: `operator/pkg/gateway-api/testdata/gateway/grpcroute-backendtlspolicy/output/backendtlspolicy-grpc-backend-tls-invalid-ca.yaml` (added, +35/-0)
-```diff
-@@ -0,0 +1,35 @@
-+apiVersion: gateway.networking.k8s.io/v1
-+kind: BackendTLSPolicy
-+metadata:
-+  name: grpc-backend-tls-invalid-ca
-+  namespace: gateway-conformance-infra
-+spec:
-+  targetRefs:
-+    - group: ""
-+      kind: Service
-+      name: tls-backend-2
-+  validation:
-+    caCertificateRefs:
-+      - group: ""
-+        kind: ConfigMap
-+        name: nonexistent-ca-certificate
-+    hostname: invalid.grpc.example.com
-+status:
-+  ancestors:
-+    - controllerName: io.cilium/gateway-controller
-+      ancestorRef:
-+        group: gateway.networking.k8s.io
-+        kind: Gateway
-+        namespace: gateway-conformance-infra
-+        name: same-namespace
-+      conditions:
-+        - lastTransitionTime: "2025-07-01T14:19:43Z"
-+          message: "CA Certificate does not exist: gateway-conformance-infra/nonexistent-ca-certificate"
-+          reason: NoValidCACertificate
-+          status: "False"
-+          type: Accepted
-+        - lastTransitionTime: "2025-07-01T14:19:43Z"
-+          message: "CA Certificate does not exist: gateway-conformance-infra/nonexistent-ca-certificate"
-+          reason: InvalidCACertificateRef
-+          status: "False"
-+          type: ResolvedRefs
-```
-
-**File**: `operator/pkg/gateway-api/testdata/gateway/grpcroute-backendtlspolicy/output/backendtlspolicy-grpc-backend-tls.yaml` (added, +35/-0)
-```diff
-@@ -0,0 +1,35 @@
-+apiVersion: gateway.networking.k8s.io/v1
-+kind: BackendTLSPolicy
-+metadata:
-+  name: grpc-backend-tls
-+  namespace: gateway-conformance-infra
-+spec:
-+  targetRefs:
-+    - group: ""
-+      kind: Service
-+      name: tls-backend
-+  validation:
-+    caCertificateRefs:
-+      - group: ""
-+        kind: ConfigMap
-+        name: tls-checks-ca-certificate
-+    hostname: grpc.example.com
-+status:
-+  ancestors:
-+    - controllerName: io.cilium/gateway-controller
-+      ancestorRef:
-+        group: gateway.networking.k8s.io
-+        kind: Gateway
-+        namespace: gateway-conformance-infra
-+        name: same-namespace
-+      conditions:
-+        - lastTransitionTime: "2025-07-01T14:19:43Z"
-+          message: Accepted BackendTLSPolicy
-+          reason: Accepted
-+          status: "True"
-+          type: Accepted
-+        - lastTransitionTime: "2025-07-01T14:19:43Z"
-+          message: All references are valid
-+          reason: ResolvedRefs
-+          status: "True"
-+          type: ResolvedRefs
-```
-
-**File**: `operator/pkg/gateway-api/testdata/gateway/grpcroute-backendtlspolicy/output/cec-same-namespace.yaml` (added, +127/-0)
-```diff
-@@ -0,0 +1,127 @@
-+metadata:
-+  annotations:
-+    cec.cilium.io/use-original-source-address: "false"
-+  labels:
-+    gateway.networking.k8s.io/gateway-name: same-namespace
-+  name: cilium-gateway-same-namespace
-+  namespace: gateway-conformance-infra
-+  ownerReferences:
-+    - apiVersion: gateway.networking.k8s.io/v1
-+      controller: true
-+      kind: Gateway
-+      name: same-namespace
-+  resourceVersion: "1"
-+spec:
-+  backendServices:
-+    - name: tls-backend
-+      namespace: gateway-conformance-infra
-+      number:
-+        - "443"
-+  resources:
-+    - "@type": type.googleapis.com/envoy.config.listener.v3.Listener
-+      filterChains:
-+        - filterChainMatch:
-+            transportProtocol: raw_buffer
-+          filters:
-+            - name: envoy.filters.network.http_connection_manager
-+              typedConfig:
-+                "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
-+                commonHttpProtocolOptions:
-+                  maxStreamDuration: 0s
-+                httpFilters:
-+                  - name: envoy.filters.http.grpc_web
-+                    typedConfig:
-+                      "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_web.v3.GrpcWeb
-+                  - name: envoy.filters.http.grpc_stats
-+                    typedConfig:
-+                      "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_stats.v3.FilterConfig
-+                      emitFilterState: true
-+                      enableUpstreamStats: true
-+                  - name: envoy.filters.http.router
-+                    typedConfig:
-+                      "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
-+                internalAddressConfig: {}
-+                rds:
-+                  routeConfigName: listener-insecure
-+                statPrefix: listener-insecure
-+                streamIdleTimeout: 300s
-+                upgradeConfigs:
-+                  - upgradeType: websocket
-+                useRemoteAddress: true
-+      listenerFilters:
-+        - name: envoy.filters.listener.tls_inspector
-+          typedConfig:
-+            "@type": type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector
-+      name: listener
-+      socketOptions:
-+        - description: Enable TCP keep-alive (default to enabled)
-+          intValue: "1"
-+          level: "1"
-+          name: "9"
-+        - description: TCP keep-alive idle time (in seconds) (defaults to 10s)
-+          intValue: "10"
-+          level: "6"
-+          name: "4"
-+        - description: TCP keep-alive probe intervals (in seconds) (defaults to 5s)
-+          intValue: "5"
-+          level: "6"
-+          name: "5"
-+        - description: TCP keep-alive probe max failures.
-+          intValue: "10"
-+          level: "6"
-+          name: "6"
-+    - "@type": type.googleapis.com/envoy.config.route.v3.RouteConfiguration
-+      name: listener-insecure
-+      virtualHosts:
-+        - domains:
-+            - "*"
-+          name: "*"
-+          routes:
-+            - direct_response:
-+                body:
-+                  inline_string: ""
-+                status: 500
-+              match:
-+                path: /grpc.backend.Backend/Invalid
-+            - match:
-+                path: /grpc.backend.Backend/Valid
-+              route:
-+                cluster: gateway-conformance-infra:tls-backend:443
-+                maxStreamDuration:
-+                  maxStreamDuration: 0s
-+    - "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
-+      edsClusterConfig:
-+        serviceName: gateway-conformance-infra/tls-backend:443
-+      name: gateway-conformance-infra:tls-backend:443
-+      outlierDetection:
-+        splitExternalLocalOriginErrors: true
-+      transportSocket:
-+        name: envoy.transport_sockets.tls
-+        typedConfig:
-+          "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
-+          commonTlsContext:
-+            tlsParams:
-+              tlsMaximumProtocolVersion: TLSv1_3
-+            combinedValidationContext:
-+              defaultValidationContext:
-+                match_typed_subject_alt_names:
-+                  - san_type: DNS
-+                    matcher:
-+                      exact: grpc.example.com
-+              validationContextSdsSecretConfig:
-+                name: cilium-secrets/cilium-sync-cfgmap-f3757660099595ce0587b4d45f08d43da98e3f80d7c9fa16d991dbd0946ee01b
-+          sni: grpc.example.com
-+      type: EDS
-+      typedExtensionProtocolOptions:
-+        envoy.extensions.upstreams.http.v3.HttpProtocolOptions:
-+          "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
-+          commonHttpProtocolOptions:
-+            idleTimeout: 60s
-+          explicitHttpConfig:
-+            http2ProtocolOptions: {}
-+  services:
-+    - listener: ""
-+      name: cilium-gateway-same-namespace
-+      namespace
-```
-
-**File**: `operator/pkg/gateway-api/testdata/gateway/grpcroute-backendtlspolicy/output/grpcroute-backendtlspolicy.yaml` (added, +39/-0)
-```diff
-@@ -0,0 +1,39 @@
-+apiVersion: gateway.networking.k8s.io/v1
-+kind: GRPCRoute
-+metadata:
-+  name: backendtlspolicy
-+  namespace: gateway-conformance-infra
-+spec:
-+  parentRefs:
-+    - name: same-namespace
-+  rules:
-+    - matches:
-+        - method:
-+            service: grpc.backend.Backend
-+            method: Valid
-+      backendRefs:
-+        - name: tls-backend
-+          port: 443
-+    - matches:
-+        - method:
-+            service: grpc.backend.Backend
-+            method: Invalid
-+      backendRefs:
-+        - name: tls-backend-2
-+          port: 443
-+status:
-+  parents:
-+    - conditions:
-+        - lastTransitionTime: "2025-07-01T14:19:43Z"
-+          message: Accepted GRPCRoute
-+          reason: Accepted
-+          status: "True"
-+          type: Accepted
-+        - lastTransitionTime: "2025-07-01T14:19:43Z"
-+          message: Service reference is valid
-+          reason: ResolvedRefs
-+          status: "True"
-+          type: ResolvedRefs
-+      controllerName: io.cilium/gateway-controller
-+      parentRef:
-+        name: same-namespace
-```
-
-**File**: `operator/pkg/gateway-api/testdata/gateway/grpcroute-backendtlspolicy/output/same-namespace.yaml` (added, +50/-0)
-```diff
-@@ -0,0 +1,50 @@
-+apiVersion: gateway.networking.k8s.io/v1
-+kind: Gateway
-+metadata:
-+  name: same-namespace
-+  namespace: gateway-conformance-infra
-+spec:
-+  gatewayClassName: cilium
-+  listeners:
-+    - allowedRoutes:
-+        namespaces:
-+          from: Same
-+      name: http
-+      port: 80
-+      protocol: HTTP
-+status:
-+  conditions:
-+    - lastTransitionTime: "2025-07-01T14:29:32Z"
-+      message: Gateway successfully scheduled
-+      reason: Accepted
-+      status: "True"
-+      type: Accepted
-+    - lastTransitionTime: "2025-07-01T05:06:15Z"
-+      message: Gateway waiting for address
-+      reason: AddressNotAssigned
-+      status: "False"
-+      type: Programmed
-+  listeners:
-+    - attachedRoutes: 1
-+      conditions:
-+        - lastTransitionTime: "2025-07-01T14:29:32Z"
-+          message: Resolved Refs
-+          reason: ResolvedRefs
-+          status: "True"
-+          type: ResolvedRefs
-+        - lastTransitionTime: "2025-07-01T14:29:32Z"
-+          message: Listener Accepted
-+          reason: Accepted
-+          status: "True"
-+          type: Accepted
-+        - lastTransitionTime: "2025-07-01T14:29:32Z"
-+          message: Address not ready yet
-+          reason: Pending
-+          status: "False"
-+          type: Programmed
-+      name: http
-+      supportedKinds:
-+        - group: gateway.networking.k8s.io
-+          kind: HTTPRoute
-+        - group: gateway.networking.k8s.io
-+          kind: GRPCRoute
++	require.NoError(t, validateRXQueueDatapath(nil, connector.ModeVeth))
++	require.NoError(t, validateRXQueueDatapath(&v2alpha1.CiliumNetworkDriverDeviceManagerConfig{}, connector.ModeVeth))
++	require.NoError(t, validateRXQueueDatapath(disabled, connector.ModeVeth))
++	for _, mode := range []connector.Mode{connector.ModeNetkit, connector.ModeNetkitL2} {
++		require.NoError(t, validateRXQueueDatapath(enabled, mode))
++	}
++	require.ErrorContains(t, validateRXQueueDatapath(enabled, connector.ModeVeth),
++		"requires the netkit or netkit-l2 datapath")
++}
++
+ // matchingDevice is a trackedDevice whose Match() returns the supplied bool.
+ // GetAttrs returns a non-nil map; buildPoolsFromTable handles it without issue.
+ type matchingDevice struct {
 ```
 
 #### Recent Merged Pull Requests:
@@ -2450,54 +1656,49 @@ Signed-off-by: Adil Alperen Çiftci <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. datapath/orchestrator: fix goroutine leak in MergeChannels watch path
+## X. network driver: document RX queue management
 
 **RULE**:
-When implementing operations in `pkg/common/utils.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/networkdriver/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c814151c`: datapath/orchestrator: fix goroutine leak in MergeChannels watch path. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3391b242`: network driver: document RX queue management. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/common/utils.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/networkdriver/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"context"
-// MergeChannels forwards the first value received on any of the input channels.
-// The goroutine it starts is bound to ctx, so it is reclaimed on cancellation
-// even if no input ever fires and the caller abandons the returned channel.
-func MergeChannels[T any](ctx context.Context, chans ...<-chan T) <-chan T {
-	cases := make([]reflect.SelectCase, 0, len(chans)+1)
-	for _, ch := range chans {
-		cases = append(cases, reflect.SelectCase{
-		})
-	ctxCase := len(cases)
-	cases = append(cases, reflect.SelectCase{
-		Dir:  reflect.SelectRecv,
-		Chan: reflect.ValueOf(ctx.Done()),
-	})
-		chosen, value, ok := reflect.Select(cases)
-		if chosen == ctxCase || !ok {
-		select {
-		case out <- value.Interface().(T):
-		case <-ctx.Done():
-		}
+- Container runtime with NRI support enabled. The agent
+- Container runtime CDI support. The agent writes CDI specifications to
+  `/var/run/cdi` so DRA device metadata can be mounted into containers.
+  when the Helm flag is enabled).
+- The RX queue manager additionally requires a Linux kernel with netdev RX
+  queue leasing and netkit support (upstream Linux v7.1 or an equivalent
+  backport), and a NIC driver that implements RX queue leasing.
+- Applications that consume a dedicated NIC receive queue, including
+  `io_uring` zero-copy receive applications
+| Manager   | Key in CRD | `DeviceManagerType` string | Devices managed                                                  |
+|-----------|------------|----------------------------|------------------------------------------------------------------|
+| `sriov`   | `sriov`    | `sr-iov`                   | SR-IOV Virtual Functions (legacy mode)                           |
+| `dummy`   | `dummy`    | `dummy`                    | Linux dummy interfaces                                           |
+| `rxqueue` | `rxQueue`  | `rxQueue`                  | Physical NIC RX queue capacity                                   |
+The dummy and SR-IOV manag
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-func MergeChannels[T any](chans ...<-chan T) <-chan T {
-	cases := make([]reflect.SelectCase, len(chans))
-	for i, ch := range chans {
-		cases[i] = reflect.SelectCase{
-		}
-		_, value, ok := reflect.Select(cases)
-		if !ok {
-		out <- value.Interface().(T)
+- Container Runtime NRI support (and have it enabled). The agent 
+  when the Helm flag is enabled)
+| Manager         | Key in CRD     | `DeviceManagerType` string | Devices managed                                          |
+|-----------------|----------------|----------------------------|-----------------------------------------------------------|
+| `sriov`         | `sriov`        | `sr-iov`                   | SR-IOV Virtual Functions (legacy mode)                    |
+| `dummy`         | `dummy`        | `dummy`                    | Linux dummy interfaces                                    |
+Both current managers publish dedicated devices. Each published dummy device
+or SR-IOV Virtual Function can be allocated to one claim at a time.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c814151c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3391b242` are properly handled with clean fallback behavior.

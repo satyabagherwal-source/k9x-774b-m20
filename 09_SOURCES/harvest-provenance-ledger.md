@@ -5370,3 +5370,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-comfy-org-z-image-turbo` | `https://huggingface.co/Comfy-Org/Z-Image-Turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-27T14:10:49.326Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `b6cbe004` | Multi-dimensional audit evidence | 2026-10-27T14:10:54.492Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `a6a48cd8` | Multi-dimensional audit evidence | 2026-10-27T14:10:56.250Z |
+| `learn-github-atomicstrata-llm-wiki-compiler` | `https://github.com/atomicstrata/llm-wiki-compiler` | `c9c8734b` | Multi-dimensional audit evidence | 2026-10-27T14:14:09.796Z |
+| `learn-github-alpic-ai-skybridge` | `https://github.com/alpic-ai/skybridge` | `9fd04e0b` | Multi-dimensional audit evidence | 2026-10-27T14:14:13.032Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `3391b242` | Multi-dimensional audit evidence | 2026-10-27T14:14:21.279Z |
+| `learn-github-martin-ger-esp32_nat_router` | `https://github.com/martin-ger/esp32_nat_router` | `119e0a3d` | Multi-dimensional audit evidence | 2026-10-27T14:19:07.753Z |

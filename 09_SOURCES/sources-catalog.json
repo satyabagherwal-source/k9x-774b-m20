@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "a3e5ddfc",
+    "sourceVersion": "3391b242",
     "license": "Apache-2.0",
-    "contentHash": "bbbb5446d9ee849bacea6fc1255a1feae96252430b55413af8216d46d7fbdec7",
-    "lastHarvestedAt": "2026-10-27T12:14:44.662Z",
+    "contentHash": "13fe10d0d042d1a096f61af4803a32c095da1d4ad17f630904afd23ff636b6f9",
+    "lastHarvestedAt": "2026-10-27T14:14:21.279Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -11068,5 +11068,35 @@
     "contentHash": "925746295faf7aa52e6b3ccf1326ff552f7804efd1746d50dd56517341100c84",
     "lastHarvestedAt": "2026-10-27T14:01:04.694Z",
     "learningId": "learn-github-czlonkowski-n8n-skills"
+  },
+  "atomicstrata-llm-wiki-compiler": {
+    "repository": "atomicstrata/llm-wiki-compiler",
+    "platform": "github",
+    "sourceUrl": "https://github.com/atomicstrata/llm-wiki-compiler",
+    "sourceVersion": "c9c8734b",
+    "license": "MIT",
+    "contentHash": "9d7a2850ddb412e64b9a871e726f03cd162b3af39753b7bb00278569cb210ef2",
+    "lastHarvestedAt": "2026-10-27T14:14:09.796Z",
+    "learningId": "learn-github-atomicstrata-llm-wiki-compiler"
+  },
+  "alpic-ai-skybridge": {
+    "repository": "alpic-ai/skybridge",
+    "platform": "github",
+    "sourceUrl": "https://github.com/alpic-ai/skybridge",
+    "sourceVersion": "9fd04e0b",
+    "license": "MIT",
+    "contentHash": "ba554263844be74c6f857f4148d17d3905e52bc1c8573f1030977df1e6efb32b",
+    "lastHarvestedAt": "2026-10-27T14:14:13.032Z",
+    "learningId": "learn-github-alpic-ai-skybridge"
+  },
+  "martin-ger-esp32_nat_router": {
+    "repository": "martin-ger/esp32_nat_router",
+    "platform": "github",
+    "sourceUrl": "https://github.com/martin-ger/esp32_nat_router",
+    "sourceVersion": "119e0a3d",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "2fb56597ce3dd2a91d4601eb01f8bf78b93839720bb0ea75addb89784b0c1bf2",
+    "lastHarvestedAt": "2026-10-27T14:19:07.753Z",
+    "learningId": "learn-github-martin-ger-esp32_nat_router"
   }
 }
