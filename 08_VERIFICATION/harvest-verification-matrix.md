@@ -5497,3 +5497,8 @@
 | `CYCLE-20261027-LLSR` | `2026-10-27T19:20:16.539Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4958` | Yes (`6808ebc7...`) |
 | `CYCLE-20261027-LOPF` | `2026-10-27T19:20:20.307Z` | `rmax/scrapy-redis` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4959, Rule 4960, Rule 4961` | Yes (`3307e598...`) |
 | `CYCLE-20261027-LQ4R` | `2026-10-27T19:20:22.155Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4962` | Yes (`ec7265a3...`) |
+| `CYCLE-20261027-0N8Y` | `2026-10-27T19:31:58.258Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4963` | Yes (`4c2591d6...`) |
+| `CYCLE-20261027-0NJ7` | `2026-10-27T19:31:58.627Z` | `scrapinghub/scrapy-poet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4964` | Yes (`54392d6b...`) |
+| `CYCLE-20261027-0PQ3` | `2026-10-27T19:32:01.467Z` | `react/metro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4965` | Yes (`24bba216...`) |
+| `CYCLE-20261027-0SAZ` | `2026-10-27T19:32:04.811Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4966` | Yes (`0ed692e8...`) |
+| `CYCLE-20261027-0UWZ` | `2026-10-27T19:32:08.195Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md` | Yes (`2e409d6c...`) |

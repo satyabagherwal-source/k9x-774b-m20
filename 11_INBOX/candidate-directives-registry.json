@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T19:06:55.880Z",
+  "last_updated": "2026-10-27T19:32:08.210Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3027,6 +3027,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-matrixorigin-matrixone"
+    },
+    {
+      "id": "CD-0UXE",
+      "directive_title": "Fixed lexical search in hybrid index with external vectors",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "SeekStorm/SeekStorm",
+      "source_commit": "ab61bc73",
+      "date_staged": "2026-10-27",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-seekstorm-seekstorm"
     }
   ]
 }

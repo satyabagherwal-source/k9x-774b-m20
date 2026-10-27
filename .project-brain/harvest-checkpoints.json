@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T19:20:22.165Z",
+  "last_updated": "2026-10-27T19:32:08.224Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3051,14 +3051,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-scrapinghub-scrapy-poet",
-      "content_hash": "9cb7ac09152268d39c07b1df2ed7c28aad5c2c55fec23dbfa6d028f963055449",
-      "verified_at": "2026-10-20T05:22:53.377Z",
+      "content_hash": "54392d6bcef66081a17f01052bbaafce076ecca83f2cda8742612401c4a2a549",
+      "verified_at": "2026-10-27T19:31:58.639Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T05:22:53.377Z"
+      "last_updated": "2026-10-27T19:31:58.639Z"
     },
     "webdriverio/webdriverio": {
       "repository": "webdriverio/webdriverio",
@@ -5151,14 +5151,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-seekstorm-seekstorm",
-      "content_hash": "3b51590fb6a39e42826969d894941b2cfa30f4b4a5789abe51b8e55c82bcd86f",
-      "verified_at": "2026-10-25T16:09:09.940Z",
+      "content_hash": "2e409d6ceacbff11744739de1e1f1d0625d7c484c0789debd62a824fec40f8d7",
+      "verified_at": "2026-10-27T19:32:08.223Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T16:09:09.940Z"
+      "last_updated": "2026-10-27T19:32:08.223Z"
     },
     "serafimcloud/21st": {
       "repository": "serafimcloud/21st",
@@ -8361,14 +8361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-metro",
-      "content_hash": "920185e17a6b56bfc634fc9d2fdd127599ddfb5f377feaebac67fe5c5ee2bd8b",
-      "verified_at": "2026-10-25T05:27:41.064Z",
+      "content_hash": "24bba216d8fc133eb2d3280177f96ed789bf77476144c6b5fee731f17989ed23",
+      "verified_at": "2026-10-27T19:32:01.479Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T05:27:41.064Z"
+      "last_updated": "2026-10-27T19:32:01.479Z"
     },
     "Checkmarx/kics": {
       "repository": "Checkmarx/kics",
@@ -9501,14 +9501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-envoyproxy-envoy",
-      "content_hash": "8642fa355bced98c974c29fbc1fb59c356dbd67f195b111ee9e5515d26278b77",
-      "verified_at": "2026-10-26T14:23:24.339Z",
+      "content_hash": "0ed692e8157f5f3e75d8f4ff2d0d8738067fe8c808c9dd83cd3d066b77a9d4fc",
+      "verified_at": "2026-10-27T19:32:04.824Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T14:23:24.339Z"
+      "last_updated": "2026-10-27T19:32:04.824Z"
     },
     "tursodatabase/turso": {
       "repository": "tursodatabase/turso",
@@ -11661,14 +11661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pola-rs-polars",
-      "content_hash": "c5336b981c79df7f2067eb3766c95b6d533f441e728f61626ea480593afc980d",
-      "verified_at": "2026-10-26T01:10:18.445Z",
+      "content_hash": "4c2591d68c64458a5478b11b79a98fa92c7b0b7a1d4a39292dbd7331526d353b",
+      "verified_at": "2026-10-27T19:31:58.272Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T01:10:18.445Z"
+      "last_updated": "2026-10-27T19:31:58.272Z"
     },
     "mrkai77/Loop": {
       "repository": "mrkai77/Loop",

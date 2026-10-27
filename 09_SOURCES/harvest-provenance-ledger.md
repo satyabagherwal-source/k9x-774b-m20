@@ -5506,3 +5506,8 @@ Every entry in this ledger must capture:
 | `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `e9ea8d94` | Multi-dimensional audit evidence | 2026-10-27T19:20:16.542Z |
 | `learn-github-rmax-scrapy-redis` | `https://github.com/rmax/scrapy-redis` | `931336e7` | Multi-dimensional audit evidence | 2026-10-27T19:20:20.310Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `9cab16d5` | Multi-dimensional audit evidence | 2026-10-27T19:20:22.157Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `7d9102fb` | Multi-dimensional audit evidence | 2026-10-27T19:31:58.263Z |
+| `learn-github-scrapinghub-scrapy-poet` | `https://github.com/scrapinghub/scrapy-poet` | `fd700743` | Multi-dimensional audit evidence | 2026-10-27T19:31:58.631Z |
+| `learn-github-react-metro` | `https://github.com/react/metro` | `43cc1e3c` | Multi-dimensional audit evidence | 2026-10-27T19:32:01.471Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `b9f63105` | Multi-dimensional audit evidence | 2026-10-27T19:32:04.815Z |
+| `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `ab61bc73` | Multi-dimensional audit evidence | 2026-10-27T19:32:08.198Z |

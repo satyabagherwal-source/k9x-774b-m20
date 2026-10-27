@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T19:20:22.162Z",
-  "total_cycles_completed": 5474,
-  "total_learnings_persisted": 5474,
-  "total_rules_promoted": 4873,
+  "last_updated": "2026-10-27T19:32:08.220Z",
+  "total_cycles_completed": 5479,
+  "total_learnings_persisted": 5479,
+  "total_rules_promoted": 4877,
   "history": [
-    {
-      "timestamp": "2026-10-27T13:00:32.058Z",
-      "repository": "dkhamsing/open-source-ios-apps",
-      "learningId": "learn-github-dkhamsing-open-source-ios-apps",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:03:35.224Z",
-      "repository": "afrise/MCPSharp",
-      "learningId": "learn-github-afrise-mcpsharp",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:03:40.190Z",
-      "repository": "hookdeck/hookdeck-cli",
-      "learningId": "learn-github-hookdeck-hookdeck-cli",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:03:42.060Z",
-      "repository": "Alex2Yang97/yahoo-finance-mcp",
-      "learningId": "learn-github-alex2yang97-yahoo-finance-mcp",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:03:45.511Z",
-      "repository": "react-hook-form/react-hook-form",
-      "learningId": "learn-github-react-hook-form-react-hook-form",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T13:07:07.418Z",
       "repository": "cloudscape-design/components",
@@ -1403,6 +1368,41 @@
       "repository": "doobidoo/mcp-memory-service",
       "learningId": "learn-github-doobidoo-mcp-memory-service",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T19:31:58.269Z",
+      "repository": "pola-rs/polars",
+      "learningId": "learn-github-pola-rs-polars",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T19:31:58.636Z",
+      "repository": "scrapinghub/scrapy-poet",
+      "learningId": "learn-github-scrapinghub-scrapy-poet",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T19:32:01.476Z",
+      "repository": "react/metro",
+      "learningId": "learn-github-react-metro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T19:32:04.820Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T19:32:08.220Z",
+      "repository": "SeekStorm/SeekStorm",
+      "learningId": "learn-github-seekstorm-seekstorm",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

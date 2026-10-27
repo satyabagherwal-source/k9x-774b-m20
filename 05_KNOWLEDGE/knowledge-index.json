@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T19:20:22.108Z",
+  "last_updated": "2026-10-27T19:32:08.135Z",
   "total_verified_learnings": 1146,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10706,8 +10706,8 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "5277f015",
-      "content_hash": "8642fa355bced98c974c29fbc1fb59c356dbd67f195b111ee9e5515d26278b77",
+      "source_version": "b9f63105",
+      "content_hash": "0ed692e8157f5f3e75d8f4ff2d0d8738067fe8c808c9dd83cd3d066b77a9d4fc",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
@@ -10740,6 +10740,11 @@
           "number": 4626,
           "title": "ai_protocol_manager: add flow-control integration tests (#48483)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4966,
+          "title": "mcp_json_rest_bridge: fix empty JSON-RPC responses for streaming tools/call with",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10747,7 +10752,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T14:23:24.260Z",
+      "verified_at": "2026-10-27T19:32:04.741Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42280,8 +42285,8 @@
       "slug": "pola-rs-polars",
       "platform": "github",
       "source_url": "https://github.com/pola-rs/polars",
-      "source_version": "7f902bd3",
-      "content_hash": "c5336b981c79df7f2067eb3766c95b6d533f441e728f61626ea480593afc980d",
+      "source_version": "7d9102fb",
+      "content_hash": "4c2591d68c64458a5478b11b79a98fa92c7b0b7a1d4a39292dbd7331526d353b",
       "dossier_path": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "promoted_rules": [
@@ -42324,6 +42329,11 @@
           "number": 4518,
           "title": "test: Fix allocator-dependent failure in masked zero-copy `to_numpy` test (#3029",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4963,
+          "title": "Fix panic in dt.base_utc_offset/dst_offset (#30335)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42331,7 +42341,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T01:10:18.368Z",
+      "verified_at": "2026-10-27T19:31:58.179Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43571,8 +43581,8 @@
       "slug": "react-metro",
       "platform": "github",
       "source_url": "https://github.com/react/metro",
-      "source_version": "5cfcfe21",
-      "content_hash": "920185e17a6b56bfc634fc9d2fdd127599ddfb5f377feaebac67fe5c5ee2bd8b",
+      "source_version": "43cc1e3c",
+      "content_hash": "24bba216d8fc133eb2d3280177f96ed789bf77476144c6b5fee731f17989ed23",
       "dossier_path": "07_PROJECT_LEARNING/react-metro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-metro-learnings.md",
       "promoted_rules": [
@@ -43590,6 +43600,11 @@
           "number": 4076,
           "title": "Remove 3 sketchy-null suppressions (constant-folding-plugin, getRamBundleInfo, s",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4965,
+          "title": "metro-file-map: Fix regressions with symlinks and unnormalised roots (#2093)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43597,7 +43612,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T05:27:40.983Z",
+      "verified_at": "2026-10-27T19:32:01.374Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45765,8 +45780,8 @@
       "slug": "seekstorm-seekstorm",
       "platform": "github",
       "source_url": "https://github.com/SeekStorm/SeekStorm",
-      "source_version": "a20c7c3f",
-      "content_hash": "3b51590fb6a39e42826969d894941b2cfa30f4b4a5789abe51b8e55c82bcd86f",
+      "source_version": "ab61bc73",
+      "content_hash": "2e409d6ceacbff11744739de1e1f1d0625d7c484c0789debd62a824fec40f8d7",
       "dossier_path": "07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
       "promoted_rules": [
@@ -45786,7 +45801,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T16:09:09.851Z",
+      "verified_at": "2026-10-27T19:32:08.117Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -69141,8 +69156,8 @@
       "slug": "scrapinghub-scrapy-poet",
       "platform": "github",
       "source_url": "https://github.com/scrapinghub/scrapy-poet",
-      "source_version": "f06d684b",
-      "content_hash": "9cb7ac09152268d39c07b1df2ed7c28aad5c2c55fec23dbfa6d028f963055449",
+      "source_version": "fd700743",
+      "content_hash": "54392d6bcef66081a17f01052bbaafce076ecca83f2cda8742612401c4a2a549",
       "dossier_path": "07_PROJECT_LEARNING/scrapinghub-scrapy-poet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapinghub-scrapy-poet-learnings.md",
       "promoted_rules": [
@@ -69170,6 +69185,11 @@
           "number": 3075,
           "title": "Dual-Runtime Awaitable Bridging Invariant (Asyncio to Twisted Reactor)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4964,
+          "title": "Upgrade docs requirements (#267)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -69177,7 +69197,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T05:22:53.299Z",
+      "verified_at": "2026-10-27T19:31:58.544Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -137427,6 +137447,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T19:20:22.097Z"
+    },
+    "rule-4963": {
+      "learning_id": "rule-4963",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4963,
+      "title": "Fix panic in dt.base_utc_offset/dst_offset (#30335)",
+      "source_url": "https://github.com/pola-rs/polars",
+      "source_version": "7d9102fb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T19:31:58.179Z"
+    },
+    "rule-4964": {
+      "learning_id": "rule-4964",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4964,
+      "title": "Upgrade docs requirements (#267)",
+      "source_url": "https://github.com/scrapinghub/scrapy-poet",
+      "source_version": "fd700743",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T19:31:58.544Z"
+    },
+    "rule-4965": {
+      "learning_id": "rule-4965",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4965,
+      "title": "metro-file-map: Fix regressions with symlinks and unnormalised roots (#2093)",
+      "source_url": "https://github.com/react/metro",
+      "source_version": "43cc1e3c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T19:32:01.374Z"
+    },
+    "rule-4966": {
+      "learning_id": "rule-4966",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4966,
+      "title": "mcp_json_rest_bridge: fix empty JSON-RPC responses for streaming tools/call with",
+      "source_url": "https://github.com/envoyproxy/envoy",
+      "source_version": "b9f63105",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T19:32:04.741Z"
     }
   },
   "aliases": {

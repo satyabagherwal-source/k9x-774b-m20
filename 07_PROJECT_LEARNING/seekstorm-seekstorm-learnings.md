@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md`  
 > **Source**: github ([https://github.com/SeekStorm/SeekStorm](https://github.com/SeekStorm/SeekStorm))  
-> **Source Version**: `a20c7c3f`  
+> **Source Version**: `ab61bc73`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T16:09:09.745Z  
+> **Timestamp**: 2026-10-27T19:32:08.000Z  
 > **Learning ID**: `learn-github-seekstorm-seekstorm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SeekStorm/SeekStorm](https://github.com/SeekStorm/SeekStorm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T16:09:09.736Z  
+> **Harvest Timestamp**: 2026-10-27T19:32:06.929Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: SeekStorm: vector & lexical search - in-process library & multi-tenancy server, in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 1924 stars
+- **Stars / Engagement**: 1928 stars
 
 ---
 
@@ -2225,63 +2225,161 @@ pub(crate) fn top_fragments_from_field(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a20c7c3f` (2026-10-24)
-**Commit Message**: Fixed panic with facet filters and empty query facets
+### Incident Patch 1: `44d9df90` (2026-10-27)
+**Commit Message**: Fixed lexical search in hybrid index with external vectors
 
 ### Fixed
 
-- Fixed panic that occurred, if facet fields and facet filters, but no query facets existed.
+- Fixed a problem, where search did not return results from a hybrid index (lexical index + external vector index), with `search_mode=SearchMode::Lexical` and `query_vector=None`.
 
-**File**: `CHANGELOG.md` (modified, +6/-0)
+### Changed
+
+- For consistency and latency, for result_type=TopK in vector search no facet_count() is invoked anymore.
+
+**File**: `CHANGELOG.md` (modified, +10/-0)
 ```diff
-@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
+@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
  The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
  and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
  
-+## [3.4.3] - 2026-10-24
++## [3.4.5] - 2026-10-27
 +
 +### Fixed
 +
-+- Fixed panic that occurred, if facet fields and facet filters, but no query facets existed.
++- Fixed a problem, where search did not return results from a hybrid index (lexical index + external vector index), with `search_mode=SearchMode::Lexical` and `query_vector=None`.
 +
- ## [3.4.2] - 2026-10-23
++### Changed
++
++- for consistency and latency, for result_type=TopK in vector search no facet_count() is invoked anymore.
++
+ ## [3.4.4] - 2026-10-26
  
  ### Added
 ```
 
-**File**: `seekstorm/Cargo.toml` (modified, +2/-2)
+**File**: `seekstorm/Cargo.toml` (modified, +1/-1)
 ```diff
 @@ -1,6 +1,6 @@
  [package]
  name = "seekstorm"
--version = "3.4.2"
-+version = "3.4.3"
+-version = "3.4.4"
++version = "3.4.5"
  authors = ["Wolf Garbe <wolf.garbe@seekstorm.com>"]
  license = "Apache-2.0"
  categories = ["database-implementations", "data-structures"]
-@@ -54,7 +54,7 @@ async-recursion = "1.2.0"
- zstd = "0.14.2"
- rayon = "1.12.0"
- aho-corasick = "1.1.5"
--smallvec = "1.16.3"
-+smallvec = "1.16.4"
- memmap2 = "0.9.12"
- regex-syntax = "0.8.11"
- indexmap = { version = "2.14.2", features = ["serde"]}
 ```
 
-**File**: `seekstorm/src/union.rs` (modified, +3/-0)
+**File**: `seekstorm/src/search.rs` (modified, +10/-10)
 ```diff
-@@ -980,6 +980,9 @@ pub(crate) async fn union_count<'a>(
-                     continue 'next;
-                 }
+@@ -1463,7 +1463,7 @@ impl Search for IndexArc {
+         let shard_number = index_ref.shard_number;
+         let aggregate_results = result_type != ResultType::Count;
  
-+                if search_result.query_facets.is_empty() {
-+                    continue 'next;
-+                }
-                 for (i, facet) in shard.facets.iter().enumerate() {
-                     if search_result.query_facets[i].length == 0 {
-                         continue;
+-        let query_vector = if index_ref.is_vector_indexing {
++        let query_vector = if index_ref.is_vector_indexing && search_mode != SearchMode::Lexical {
+             Some(if let Some(mut qv) = query_vector {
+                 if index_ref.vector_similarity == VectorSimilarity::Cosine
+                     && matches!(index_ref.meta.inference, Inference::External { .. })
+@@ -1643,18 +1643,16 @@ impl Search for IndexArc {
+             let query_vector_clone = query_vector.clone();
+             let shard_clone = shard.clone();
+             let query_type_clone = query_type_default.clone();
+-            let query_mode_clone = search_mode.clone();
++            let search_mode_clone = search_mode.clone();
+             let result_type_clone = result_type.clone();
+             let field_filter_clone = field_filter.clone();
+             let query_facets_clone = query_facets.clone();
+-            let query_facets_clone2 = query_facets.clone();
+             let facet_filter_clone = facet_filter.clone();
+-            let facet_filter_clone2 = facet_filter.clone();
+             let result_sort_clone = result_sort.clone();
+             let shard_id = shard.read().await.meta.id;
+ 
+             result_object_list.push(INDEX_RUNTIME.handle().spawn(async move {
+-                match query_mode_clone {
++                match search_mode_clone {
+                     SearchMode::Lexical => {
+                         let mut rlo_lexical = shard_clone
+                             .search_lexical_shard(
+@@ -1688,6 +1686,7 @@ impl Search for IndexArc {
+                                 query_string_clone,
+                                 query_vector_clone,
+                                 offset + length,
++                                result_type_clone,
+                                 include_uncommitted,
+                                 similarity_threshold,
+                                 cluster_search,
+@@ -1715,11 +1714,11 @@ impl Search for IndexArc {
+                                 enable_empty_query,
+                                 0,
+                                 offset + length,
+-                                result_type_clone,
++                                result_type_clone.clone(),
+                                 include_uncommitted,
+                                 field_filter_clone.clone(),
+-                                query_facets_clone,
+-                                facet_filter_clone,
++                                query_facets_clone.clone(),
++                                facet_filter_clone.clone(),
+                                 result_sort_clone,
+                             )
+                             .await;
+@@ -1734,12 +1733,13 @@ impl Search for IndexArc {
+                                 query_string_clone,
+                                 query_vector_clone,
+                                 offset + length,
++                                result_type_clone,
+                                 include_uncommitted,
+                                 similarity_threshold,
+                                 ann_mode,
+                                 field_filter_clone,
+-                                query_facets_clone2,
+-                                facet_filter_clone2,
++                                query_facets_clone,
++                                facet_filter_clone,
+                             )
+                             .await;
+ 
+```
+
+**File**: `seekstorm/src/vector.rs` (modified, +6/-2)
+```diff
+@@ -1,7 +1,7 @@
+ use crate::add_result::{facet_count, is_facet_filter};
+ use crate::min_heap::MinHeap;
+ use crate::search::{
+-    FacetFilter, QueryFacet, ResultSortIndex, SearchResult, get_query_facets,
++    FacetFilter, QueryFacet, ResultSortIndex, ResultType, SearchResult, get_query_facets,
+     set_facet_filter_sparse, set_query_facets,
+ };
+ use crate::vector_similarity::VectorSimilarity;
+@@ -1114,6 +1114,7 @@ pub(crate) trait SearchVectorShard {
+         query_string: String,
+         query_vector: Option<(Embedding, f32, f32, i16, i32)>,
+         length: usize,
++        result_type: ResultType,
+         include_uncommitted: bool,
+         similarity_threshold: Option<f32>,
+         cluster_search: AnnMode,
+@@ -1213,6 +1214,7 @@ impl SearchVectorShard for ShardArc {
+         query_string: String,
+         query_vector: Option<(Embedding, f32, f32, i16, i32)>,
+         length: usize,
++        result_type: ResultType,
+         include_uncommitted: bool,
+         similarity_threshold: Option<f32>,
+         ann_mode: AnnMode,
+@@ -1456,7 +1458,9 @@ impl SearchVectorShard for ShardArc {
+                                     continue;
+                                 };
+ 
+-                                facet_count(&shard_ref, &mut search_result, doc_id);
++                                if result_type != ResultType::Topk {
++                                    facet_count(&shard_ref, &mut search_result, doc_id);
++                                }
+ 
+                                 let scale_norm = if enable_scale {
+                                     Some((
 ```
 
 **File**: `seekstorm_client/Cargo.toml` (modified, +2/-2)
@@ -2289,8 +2387,8 @@ Observed empirical fixes and code patches:
 @@ -1,6 +1,6 @@
  [package]
  name = "seekstorm_client_rs"
--version = "3.4.2"
-+version = "3.4.3"
+-version = "3.4.4"
++version = "3.4.5"
  authors = ["Wolf Garbe <wolf.garbe@seekstorm.com>"]
  license = "Apache-2.0"
  categories = ["database-implementations", "data-structures"]
@@ -2298,8 +2396,8 @@ Observed empirical fixes and code patches:
  chrono = "0.4.45"
  base64 = "0.23.1"
  reqwest = { version = "0.13.5", features = ["json"] }
--seekstorm =  { version = "3.4.2", path = "../seekstorm", default-features = false , features = ["zh", "vb"] }
-+seekstorm =  { version = "3.4.3", path = "../seekstorm", default-features = false , features = ["zh", "vb"] }
+-seekstorm =  { version = "3.4.4", path = "../seekstorm", default-features = false , features = ["zh", "vb"] }
++seekstorm =  { version = "3.4.5", path = "../seekstorm", default-features = false , features = ["zh", "vb"] }
  serde_json = "1.0.154"
  tokio = "1.54.1"
  tokio-test = "0.4.6"
@@ -2310,8 +2408,8 @@ Observed empirical fixes and code patches:
 @@ -1,6 +1,6 @@
  [package]
  name = "seekstorm_mcp_server"
--version = "3.4.2"
-+version = "3.4.3"
+-version = "3.4.4"
++version = "3.4.5"
  authors = ["Wolf Garbe <wolf.garbe@seekstorm.com>"]
  license = "Apache-2.0"
  categories = ["database-implementations", "data-structures"]
@@ -2319,8 +2417,8 @@ Observed empirical fixes and code patches:
  base64 = "0.23.1"
  # reqwest = { version = "0.13.5", features = ["json"] }
  rmcp = { version = "3.5.0", features = ["transport-io"] }
--seekstorm =  { version = "3.4.2", path = "../seekstorm", default-features = false , features = ["zh", "vb", "pdf"] }
-+seekstorm =  { version = "3.4.3", path = "../seekstorm", default-features = false , features = ["zh", "vb", "pdf"] }
+-seekstorm =  { version = "3.4.4", path = "../seekstorm", default-features = false , features = ["zh", "vb", "pdf"] }
++seekstorm =  { version = "3.4.5", path = "../seekstorm", default-features = false , features = ["zh", "vb", "pdf"] }
  serde = { version = "1.0.151", features = ["derive"] }
  serde_json = "1.0.154"
  tokio = { version = "1.54.1", features = ["full"] }
@@ -2331,8 +2429,8 @@ Observed empirical fixes and code patches:
 @@ -1,6 +1,6 @@
  [package]
  name = "seekstorm_server"
--version = "3.4.2"
-+version = "3.4.3"
+-version = "3.4.4"
++version = "3.4.5"
  authors = ["Wolf Garbe <wolf.garbe@seekstorm.com>"]
  license = "Apache-2.0"
  categories = ["database-implementations", "data-structures"]
@@ -2340,8 +2438,8 @@ Observed empirical fixes and code patches:
  
  [dependencies]
  # This forces the library to compile WITH gxhash when building the server binary
--seekstorm = { version = "3.4.2", path = "../seekstorm" , features = ["gxhash"], default-features = false} 
-+seekstorm = { version = "3.4.3", path = "../seekstorm" , features = ["gxhash"], default-features = false} 
+-seekstorm = { version = "3.4.4", path = "../seekstorm" , features = ["gxhash"], default-features = false} 
++seekstorm = { version = "3.4.5", path = "../seekstorm" , features = ["gxhash"], default-features = false} 
  ahash ={ version = "0.8.12", features = ["serde"]}
  base64 = "0.23.1"
  chrono = "0.4.45"
@@ -2353,24 +2451,11 @@ Observed empirical fixes and code patches:
        "name": "Apache-2.0",
        "identifier": "Apache-2.0"
      },
--    "version": "3.4.2"
-+    "version": "3.4.3"
+-    "version": "3.4.4"
++    "version": "3.4.5"
    },
    "servers": [
      {
-```
-
-**File**: `seekstorm_server/openapi/openapi.yml` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@ info:
-   license:
-     name: Apache-2.0
-     identifier: Apache-2.0
--  version: 3.4.2
-+  version: 3.4.3
- servers:
- - url: http://127.0.0.1
-   description: Local SeekStorm server
 ```
 
 #### Recent Merged Pull Requests:
@@ -2399,13 +2484,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Fixed panic with facet filters and empty query facets
+## X. Fixed lexical search in hybrid index with external vectors
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SeekStorm/SeekStorm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a20c7c3f`: Fixed panic with facet filters and empty query facets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `44d9df90`: Fixed lexical search in hybrid index with external vectors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2413,11 +2498,15 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## [3.4.3] - 2026-10-24
+## [3.4.5] - 2026-10-27
 
 ### Fixed
 
-- Fixed panic that occurred, if facet fields and facet filters, but no query facets existed.
+- Fixed a problem, where search did not return results from a hybrid index (lexical index + external vector index), with `search_mode=SearchMode::Lexical` and `query_vector=None`.
+
+### Changed
+
+- for consistency and latency, for result_type=TopK in vector search no facet_count() is invoked anymore.
 
 ```
 
@@ -2428,4 +2517,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a20c7c3f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `44d9df90` are properly handled with clean fallback behavior.
