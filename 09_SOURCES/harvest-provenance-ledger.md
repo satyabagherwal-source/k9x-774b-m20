@@ -5402,3 +5402,4 @@ Every entry in this ledger must capture:
 | `learn-github-svnscha-mcp-windbg` | `https://github.com/svnscha/mcp-windbg` | `c62c27e5` | Multi-dimensional audit evidence | 2026-10-27T14:53:56.380Z |
 | `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `bccbb730` | Multi-dimensional audit evidence | 2026-10-27T14:53:58.291Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `8c9b7d76` | Multi-dimensional audit evidence | 2026-10-27T14:54:08.076Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `fbb588ee` | Multi-dimensional audit evidence | 2026-10-27T14:57:47.652Z |

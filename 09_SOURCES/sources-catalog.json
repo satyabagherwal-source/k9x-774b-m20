@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "febdfe08",
+    "sourceVersion": "fbb588ee",
     "license": "Apache-2.0",
-    "contentHash": "b51fbef7c2f8c996fff4fbda399c9be043f55dc54b3ab135f9e3aee67c87a8c2",
-    "lastHarvestedAt": "2026-10-26T01:10:25.448Z",
+    "contentHash": "ab74851ab13e7647607a05aebfc52f144a4ef67af2caad0ea7739e476bfdec5c",
+    "lastHarvestedAt": "2026-10-27T14:57:47.652Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {

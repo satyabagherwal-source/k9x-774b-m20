@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T14:54:08.015Z",
+  "last_updated": "2026-10-27T14:57:47.592Z",
   "total_verified_learnings": 1138,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -48721,8 +48721,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "febdfe08",
-      "content_hash": "b51fbef7c2f8c996fff4fbda399c9be043f55dc54b3ab135f9e3aee67c87a8c2",
+      "source_version": "fbb588ee",
+      "content_hash": "ab74851ab13e7647607a05aebfc52f144a4ef67af2caad0ea7739e476bfdec5c",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -48770,6 +48770,11 @@
           "number": 4519,
           "title": "sql): keep top-level SQL Server BEGIN blocks as one batch",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4868,
+          "title": "windows): keep the 8 MiB main-thread stack on legacy builds (0xC00000FD) (#13672",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48777,7 +48782,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T01:10:25.379Z",
+      "verified_at": "2026-10-27T14:57:47.580Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -135394,6 +135399,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T14:54:08.002Z"
+    },
+    "rule-4868": {
+      "learning_id": "rule-4868",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4868,
+      "title": "windows): keep the 8 MiB main-thread stack on legacy builds (0xC00000FD) (#13672",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "fbb588ee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:57:47.580Z"
     }
   },
   "aliases": {

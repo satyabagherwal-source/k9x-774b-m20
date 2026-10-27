@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T14:54:08.085Z",
+  "last_updated": "2026-10-27T14:57:47.662Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10791,14 +10791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-t8y2-dbx",
-      "content_hash": "b51fbef7c2f8c996fff4fbda399c9be043f55dc54b3ab135f9e3aee67c87a8c2",
-      "verified_at": "2026-10-26T01:10:25.456Z",
+      "content_hash": "ab74851ab13e7647607a05aebfc52f144a4ef67af2caad0ea7739e476bfdec5c",
+      "verified_at": "2026-10-27T14:57:47.661Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T01:10:25.456Z"
+      "last_updated": "2026-10-27T14:57:47.661Z"
     },
     "ouch-org/ouch": {
       "repository": "ouch-org/ouch",

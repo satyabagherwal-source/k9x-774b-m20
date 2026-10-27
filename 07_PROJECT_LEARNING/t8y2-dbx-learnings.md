@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `febdfe08`  
+> **Source Version**: `fbb588ee`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T01:10:25.067Z  
+> **Timestamp**: 2026-10-27T14:57:47.248Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T01:10:25.058Z  
+> **Harvest Timestamp**: 2026-10-27T14:57:45.907Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 27740 stars
+- **Stars / Engagement**: 27918 stars
 
 ---
 
@@ -36,6 +36,153 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: package.json, Cargo.toml, README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `agents/drivers/oracle-go/pldebug_statement.go`
+```
+package main
+
+import (
+	"context"
+	"database/sql/driver"
+	"errors"
+	"fmt"
+	"time"
+)
+
+type plDebugStatement struct {
+	driver.Stmt
+	allocation     *plDebugAllocation
+	closeRequested bool
+	closeStarted   bool
+	closeDone      chan struct{}
+	closeDeadline  time.Time
+	closeErr       error
+}
+
+func (s *plDebugStatement) Close() error {
+	a := s.allocation
+	a.mu.Lock()
+	if !s.closeRequested {
+		s.closeRequested = true
+		s.closeDone = make(chan struct{})
+		a.closingStatements++
+		s.closeDeadline = time.Now().Add(plDebugReleaseTimeout)
+		if !a.cleanupDeadline.IsZero() && a.cleanupDeadline.Before(s.closeDeadline) {
+			s.closeDeadline = a.cleanupDeadline
+		}
+	}
+	if a.active != nil || a.unknown || len(a.rows) != 0 {
+		a.mu.Unlock()
+		return errPLDebugAllocationUnknown
+	}
+	if !s.closeStarted {
+		s.closeStarted = true
+		go s.closeRaw()
+	}
+	done, deadline := s.closeDone, s.closeDeadline
+	a.mu.Unlock()
+	select {
+	case <-done:
+		return s.result()
+	default:
+	}
+	timer := time.NewTimer(time.Until(deadline))
+	defer timer.Stop()
+	select {
+	case <-done:
+		return s.result()
+	case <-timer.C:
+		return errPLDebugAllocationUnknown
+	}
+}
+
+func (s *plDebugStatement) result() error {
+	s.allocation.mu.Lock()
+	defer s.allocation.mu.Unlock()
+	return s.closeErr
+}
+
+func (s *plDebugStatement) closeRaw() {
+	var err error
+	defer func() {
+		if recovered := recover(); recovered != nil {
+			err = fmt.Errorf("PL/SQL statement close panicked: %v", recovered)
+		}
+		a := s.allocation
+		a.mu.Lock()
+		s.closeErr = err
+		if err != nil {
+			a.unknown = true
+		} else {
+			delete(a.statements, s)
+		}
+		a.closingStatements--
+		close(s.closeDone)
+		retiring := a.retiring && !a.unknown && len(a.statements) == 0 && len(a.rows) == 0
+		a.mu.Unlock()
+		if retiring {
+			_ = a.close()
+		}
+	}()
+	err = s.Stmt.Close()
+}
+
+func (s *plDebugStatement) CheckNamedValue(value *driver.NamedValue) error {
+	if checker, ok := s.Stmt.(driver.NamedValueChecker); ok {
+		return checker.CheckNamedValue(value)
+	}
+	return driver.ErrSkip
+}
+
+func (s *plDebugStatement) ExecContext(ctx context.Context, args []driver.NamedValue) (driver.Result, error) {
+	return s.allocation.exec(ctx, func(private context.Context) (driver.Result, error) {
+		if stmt, ok := s.Stmt.(driver.StmtExecContext); ok {
+			return stmt.ExecContext(private, args)
+		}
+		values := make([]driver.Value, len(args))
+		for i, arg := range args {
+			if arg.Name != "" {
+				return nil, errors.New("legacy PL/SQL statement does not support named arguments")
+			}
+			values[i] = arg.Value
+		}
+		return s.Stmt.Exec(values)
+	})
+}
+
+func (s *plDebugStatement) Exec(args []driver.Value) (driver.Result, error) {
+	values := make([]driver.NamedValue, len(args))
+	for i, arg := range args {
+		values[i] = driver.NamedValue{Ordinal: i + 1, Value: arg}
+	}
+	return s.ExecContext(context.Background(), values)
+}
+
+func (s *plDebugStatement) QueryContext(ctx context.Context, args []driver.NamedValue) (driver.Rows, error) {
+	return s.allocation.query(ctx, func(private context.Context) (driver.Rows, error) {
+		if stmt, ok := s.Stmt.(driver.StmtQueryContext); ok {
+			return stmt.QueryContext(private, args)
+		}
+		values := make([]driver.Value, len(args))
+		for i, arg := range args {
+			if arg.Name != "" {
+				return nil, errors.New("legacy PL/SQL statement does not support named arguments")
+			}
+			values[i] = arg.Value
+		}
+		return s.Stmt.Query(values)
+	})
+}
+
+func (s *plDebugStatement) Query(args []driver.Value) (driver.Rows, error) {
+	values := make([]driver.NamedValue, len(args))
+	for i, arg := range args {
+		values[i] = driver.NamedValue{Ordinal: i + 1, Value: arg}
+	}
+	return s.QueryContext(context.Background(), values)
+}
+
+```
 
 ### Core Architecture Module: `agents/drivers/tdengine/src/config.rs`
 ```
@@ -1835,252 +1982,17 @@ func (b *Binary) GetValues() []byte {
 
 ```
 
-### Core Architecture Module: `apps/desktop/src/components/editor/useQueryEditorDocumentState.ts`
-```
-import { watch, nextTick } from "vue";
-import { Transaction } from "@codemirror/state";
-import type { EditorView as EditorViewType } from "@codemirror/view";
-import { createDeferredEditorTask } from "@/lib/editor/deferredEditorTask";
-import { focusEditorView } from "@/lib/editor/queryEditorFocus";
-import type { ShallowRef, Ref } from "vue";
-import type { QueryEditorProps } from "./queryEditorTypes";
-
-const BEFORE_TAB_SWITCH_EVENT = "dbx:before-tab-switch";
-
-interface QueryEditorDocumentStateRuntime {
-  historyResetComp: import("@codemirror/state").Compartment | null;
-  codeMirrorHistory: typeof import("@codemirror/commands").history | null;
-  codeMirrorEditorSelection: typeof import("@codemirror/state").EditorSelection | null;
-  editorIsActive: boolean;
-}
-
-interface QueryEditorDocumentStateOptions {
-  props: Readonly<QueryEditorProps>;
-  view: ShallowRef<EditorViewType | null>;
-  previewContextSql: Readonly<Ref<string>>;
-  runtime: QueryEditorDocumentStateRuntime;
-  emit: {
-    (event: "selectionStateChange", selection: { anchor: number; head: number }): void;
-    (event: "viewportChange", viewport: { scrollTop: number; scrollLeft: number }, tabId?: string): void;
-    (event: "editorStateFlushed"): void;
-    (event: "editorRevealConsumed"): void;
-    (event: "previewChangesAvailable", value: boolean): void;
-  };
-  scheduleSemanticDiagnostics: (delay?: number, options?: { preserveOutsideRanges?: boolean }) => void;
-  clearScheduledPreviewContextRefresh: () => void;
-  syncContextMenuState: (view: EditorViewType) => void;
-  applyEditorAppearance: () => Promise<void>;
-  applyEditorShortcutKeymaps: () => void;
-  applyEditorIndentExtension: () => void;
-  applyEditorCompletionExtension: () => void;
-  invalidateSemanticDiagnosticsForDocumentChange: () => void;
-  currentEditorDocText: (view: EditorViewType) => string;
-  scheduleDocumentSearchUpdate: () => void;
-  isEditorComposing: (view: EditorViewType) => boolean;
-}
-
-export function useQueryEditorDocumentState(options: QueryEditorDocumentStateOptions) {
-  const { isEditorComposing } = options;
-  const {
-    props,
-    view,
-    previewContextSql,
-    runtime,
-    emit,
-    scheduleDocumentSearchUpdate,
-    scheduleSemanticDiagnostics,
-    clearScheduledPreviewContextRefresh,
-    syncContextMenuState,
-    applyEditorAppearance,
-    applyEditorShortcutKeymaps,
-    applyEditorIndentExtension,
-    applyEditorCompletionExtension,
-    invalidateSemanticDiagnosticsForDocumentChange,
-    currentEditorDocText,
-  } = options;
-
-  let viewportOwnerTabId = props.tabId;
-  const viewportEmitTask = createDeferredEditorTask(() => {
-    if (latestViewport) emitEditorViewport(latestViewport);
-  }, 150);
-  let viewportRestoreFrame: number | null = null;
-  let latestViewport: { scrollTop: number; scrollLeft: number } | undefined = props.initialViewport;
-  let lastEmittedViewport: { scrollTop: number; scrollLeft: number } | undefined = props.initialViewport;
-  let tabSwitchStateCaptured = false;
-  let latestSelection: { anchor: number; head: number } | undefined = props.initialSelection;
-
-  // A single editor instance serves every tab, so the document swap on tab
-  // switches must not push "previous tab's content → new content" onto a shared
-  // undo history (one undo in the new tab restored the old tab's text). Each
-  // tab's editor state — including its undo history — is cached per tabId and
-  // reinstalled with setState; first-seen tabs get the document swapped in with a
-  // transaction excluded from history, and the history extension is dropped and
-  // re-added in two separate transactions (a compartment reconfigure alone keeps
-  // the old field value) so the previous tab's edits cannot leak in.
-  interface CachedTabState {
-    state: import("@codemirror/state").EditorState;
-    viewport: { scrollTop: number; scrollLeft: number };
-  }
-  const tabStateCache = new Map<string, CachedTabState>();
-  const MAX_CACHED_TAB_STATES = 16;
-
-  function swapEditorDocument(doc: string) {
-    const currentView = view.value;
-    if (!currentView || !runtime.historyResetComp || !runtime.codeMirrorHistory) return;
-    if (doc !== currentView.state.doc.toString()) {
-      currentView.dispatch({
-        changes: { from: 0, to: currentView.state.doc.length, insert: doc },
-        annotations: Transaction.addToHistory.of(false),
-      });
-    }
-    currentView.dispatch({ effects: runtime.historyResetComp.reconfigure([]) });
-    currentView.dispatch({ effects: runtime.historyResetComp.reconfigure(runtime.codeMirrorHistory()) });
-    scheduleSemanticDiagnostics();
-  }
-
-  function activateTabDocument(prevTabId: string | undefined, tabId: string | undefined, doc: string) {
-    const currentView = view.value;
-    if (!currentView) return;
-    // Flush the outgoing document before props and restored scroll positions
-    // become the new tab's state. The event carries its original owner. A
-    // before-tab-switch capture already flushed this editor while it was still
-    // visible, so avoid reading the reset scroll position during the transition.
-    if (!tabSwitchStateCaptured) {
-      flushEditorViewport();
-      flushEditorSelection();
-    }
-    viewportOwnerTabId = tabId;
-    lastEmittedViewport = undefined;
-    clearScheduledPreviewContextRefresh();
-    if (prevTabId !== undefined) {
-      tabStateCache.set(prevTabId, {
-        state: currentView.state,
-        viewport: readEditorViewport(currentView),
-      });
-      if (tabStateCache.size > MAX_CACHED_TAB_STATES) {
-        const oldest = tabStateCache.keys().next();
-        if (!oldest.done) tabStateCache.delete(oldest.value);
-      }
-    }
-    const cached = tabId === undefined ? undefined : tabStateCache.get(tabId);
-    if (!cached) {
-      swapEditorDocument(doc);
-      // First activation in this editor instance (or a cache-evicted tab, e.g.
-      // beyond MAX_CACHED_TAB_STATES): restore the tab's saved cursor and scroll
-      // position exactly like the cached-state branch, otherwise the swapped-in
-      // document keeps whatever scroll offset the dispatch left behind (#8374).
-      // A brand-new tab has no saved state, so reset it instead of falling back
-      // to the previous tab's latest position (#8378).
-      const initialSel = props.initialSelection ?? { anchor: 0, head: 0 };
-      const initialVp = props.initialViewport ?? { scrollTop: 0, scrollLeft: 0 };
-      latestSelection = initialSel;
-      latestViewport = initialVp;
-      restoreEditorSelection(initialSel, !props.initialViewport);
-      restoreEditorViewport(initialVp);
-      clearScheduledPreviewContextRefresh();
-      syncContextMenuState(currentView);
-      emit("previewChangesAvailable", !!previewContextSql.value);
-      return;
-    }
-    // setState swaps doc, selection, undo history and all fields at once, but it
-    // is not a transaction, so update-listener side effects are re-run manually.
-    currentView.setState(cached.state);
-    // Compartments in the restored state may lag behind settings that changed
-    // while another tab was active; re-sync them from current values.
-    void applyEditorAppearance();
-    applyEditorShortcutKeymaps();
-    applyEditorIndentExtension();
-    applyEditorCompletionExtension();
-    if (doc !== currentView.state.doc.toString()) {
-      // Content changed while the tab was inactive (external file change, AI
-      // edit, another split group): apply it as a regular undoable edit.
-      currentView.dispatch({
-        changes: { from: 0, to: currentView.state.doc.length, insert: doc },
-      });
-    }
-    scheduleDocumentSearchUpdate();
-    invalidateSemanticDiagnosticsForDocumentChange();
-    if (props.initialSelection !== undefined) {
-      restoreEditorSelection(props.initialSelection, !props.initialViewport);
-    }
-    latestSelection = readEditorSelection(currentView);
-    const targetViewport = props.initialViewport ?? cached.viewport;
-    latestViewport = targetViewport;
-    restoreEditorViewport(targetViewport);
-    clearScheduledPreviewContextRefresh();
-    syncContextMenuState(currentView);
-    emit("previewChangesAvailable", !!previewContextSql.value);
-    scheduleSemanticDiagnostics();
-  }
-
-  watch([() => props.tabId, () => props.modelValue], ([tabId, val], [prevTabId]) => {
-    if (!view.value) return;
-    if (tabId !== prevTabId) {
-      activateTabDocument(prevTabId, tabId, val);
-      if (props.autoFocus) restoreEditorFocus();
-      return;
-    }
-    if (val !== currentEditorDocText(view.value)) {
-      if (isEditorComposing(view.value)) return;
-      view.value.dispatch({
-        changes: { from: 0, to: view.value.state.doc.length, insert: val },
-      });
-      scheduleSemanticDiagnostics();
-    }
-  });
-
-  watch(
-    () => props.initialViewport,
-    (viewport, previousViewport) => {
-      if (!view.value || !viewport || previousViewport) return;
-      // Saved SQL content can hydrate after the editor has already mounted. In
-      // that case the initial prop was undefined and the mount-time restore had
-      // nothing to apply.
-      latestViewport = { ...viewport };
-      lastEmittedViewport = { ...viewport };
-      restoreEditorViewport(viewport);
-    },
-    { deep: true },
-  );
-
-  watch(
-    () => props.initialSelection,
-    (selection, previousSelection) => {
-      if (!view.value || !selection || previousSelection) return;
-      // Keep the cursor and viewport in sync when a saved SQL tab hydrates after
-      // the editor component has already been mounted.
-      restoreEditorSelection(selection, !props.initialViewport);
-    },
-    { deep: true },
-  );
-
-  function captureEditorStateBeforeTabSwitch(event: Event) {
-    const fromTabId = (event as CustomEvent<{ fromTabId?: string }>).detail?.fromTabId;
-    if (!view.value || !fromTabId || fromTabId !== props.tabId) return;
-    // Capture while the outgoing editor is still visible. Once KeepAlive starts
-    // deactivating the surface, WebKit can report a reset scrollTop of zero.
-    flushEditorViewport();
-    flushEditorSelection();
-    emit("editorStateFl
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #13382** (2026-10-25): **[Bug] kafka消费者组加载不出来，主题也无法看到对应的消费者信息**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  kafka  ### 问题描述 / Problem description  > 还是之前的问题，我让ai 分析了下，给你下结果， #13252  197 个消费者组时加载卡死并杀掉 agent。根因为串行查询：实测单组 222ms，197 组约 43.7 秒，超过内部超时（约 20-30 秒）。建议：① 并发查询（实测并发 12 只需 4 秒）；② 消费者组列表分页/懒加载，不要一次拉全量；③ agent 被杀后要能自动重启，而不是让 UI 永久挂死。   ### 支持信息 / Support information  DBX 版本/ Version: v0.6.53 运行环境/Runtime: Desktop 操作系统/OS: macOS tahoe26.0 系统架构 / Architecture: aarch64  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > <!-- dbx-similar-issues --> 以下 Issue 可能与当前问题相关：  - #13252  这些结果由机器人自动检索，尚未确认重复。如属于同一问题，建议在已有 Issue 中补充信息。
-  > 最终让ai,完全分析下，找到了原因，看能不能修复下 197 个消费者组时加载卡死并杀掉 agent。根因为串行查询：实测单组 222ms，197 组约 43.7 秒，超过内部超时（约 20-30 秒）。建议：① 并发查询（实测并发 12 只需 4 秒）；② 消费者组列表分页/懒加载，不要一次拉全量；③ agent 被杀后要能自动重启，而不是让 UI 永久挂死。
+- **Issue #13674** (2026-10-27): **[Bug] 横向标签分组栏的当前分组不明显**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  通用；MySQL、Oracle 分组场景可复现。  ### 问题描述 / Problem description  1. 打开属于不同分组的多个标签页。 2. 启用横向标签分组，使用单行或双行布局。 3. 在不同分组的标签之间切换。  实际结果：多个分组都带彩色背景、标记和底线，当前分组与非焦点分组差异较小，难以快速确认当前所在分组。相同分组色时尤其明显。  期望结果：单行和双行统一采用淡底聚焦样式，当前分组保留彩色浅底和明确底线；非焦点分组取消彩色底，保留 30% 透明度的主题色底线，弱化文字、图标、展开箭头和数量徽标，保留淡色身份标记。折叠数量徽标增加 0.6px 分组主题色描边，使折叠状态更容易辨认。悬停应有轻量反馈。  ### 支持信息 / Support information  - 源码版本：0.6.58。 - 反馈来自桌面界面；本地在 macOS arm64 浏览器中加载实际组件及完整 Web 应用验证。 - 未采集应用内完整支持信息。  ### 优先级 / Priority  P2 普通 · 按排期处理。  ### 补充信息 / Additional information  单行完整 Web 应用预览中的分组栏：  ![单行分组淡底聚焦](https://raw.githubusercontent.com/zipg/dbx/f4e9e28ddfa63a2bfb1c87acfde58582930207a0/collapsed-count-ring-06.png)  双行完整 Web 应用预览中的分组栏：  ![双行分组淡底聚焦](https://raw.githubusercontent.com/zipg/dbx/4da4593f1fa72c68ee7f8c930b2e73624c85b427/two-row-faint-line.png) 
 
-- **Issue #13374** (2026-10-24): **[Bug] 「执行 SQL 文件」弹窗执行时进度区被挤到折叠线以下，不手动下翻看不到执行进度**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  通用  ### 问题描述 / Problem description  1. 复现步骤 / Steps:    打开「执行 SQL 文件」对话框 → 选择一个 SQL 文件（预览区显示文件内容）→ 点击「执行」。全程不做滚动操作。  2. 期望结果 / Expected:    点击执行后，进度区（进度条、已处理字节数、逐文件汇总）应立即出现在可视区域内；执行过程中进度持续可见；失败时失败原因也在可视区域内。  3. 实际结果 / Actual:    进度区完全落在弹窗滚动区的折叠线以下。点击「执行」后界面没有任何可见反馈，必须手动向下滚动才能看到进度条和字节计数；执行失败时失败原因同样要再往下翻才能读到。文件越大、预览区越高，问题越明显。  4. 附上截图和错误日志 / Attach screenshots and logs:    本地开发版（v0.6.53，Windows x64）可稳定复现，无错误日志。 https://github.com/user-attachments/assets/cf3baf18-ff8c-4143-b9aa-a381ad53d33a  ### 支持信息 / Support information  DBX 版本 / Version: v0.6.53（本地开发版，基于 upstream/main 8cdfb8929） 运行环境 / Runtime: 桌面端 / Desktop 操作系统 / OS: Windows 10 (10.0.19045) 系统架构 / Architecture: x86_64  ### 优先级（是否紧急） / Priority (urgency)  🟡 P2 普通 · 按排期处理 / Normal · Schedule as appropriate  ### 补充信息 / Additional information  - 根因：该弹窗的滚动区把「文件选择 → SQL 预览 → 执行进度」自上而下排列，而进度区是滚动区的最后一个子元素。预览区高度上限是 min(46vh, 420px)，选中文件后进度区必然落在折叠线以下。 - 与 #11350 的区别：#11350 说的是后台任务详情的入口路径（要回到原入口才能进详情页）；本 issue 说的是弹窗内进度区本身的可见性。两者诉求不同，即使 #11350 被解决，本 issue 仍然存在。 - 已实现并验证的方案：执行开始时自动把滚动区滚到底，使进度区立即可见；进度区在执行中变高时跟随滚动；用户主动向上滚动后立即交还滚动位置，不再把视图拉回底部。改动仅涉及前端，不新增任何用户可见文案。 - 已准备好对应的 PR，认领后即可提交。
-  **Post-Mortem & Fix Analysis**:
-  > /claim
-  > ✅ @Gaiokane 已认领 #13374，开始处理吧！
+- **Issue #13672** (2026-10-27): **fix(windows): keep the 8 MiB main-thread stack on legacy builds (0xC00000FD)**
+  *Symptoms*: ## 变更说明 / Change Description  修复 #13671：Windows 7 SP1 / Server 2012 R2 的 legacy 离线包在 0.6.56+ 点击数据库连接（MySQL / Oracle 11 / 达梦 8 均可复现）即崩溃，WER 异常码 `c00000fd`（STATUS_STACK_OVERFLOW），0.6.55 正常。  根因：`.cargo/config.toml` 用 `-C link-arg=/STACK:8388608` 把标准 Windows 包的主线程栈从 1 MiB 提到 8 MiB（#9415 引入），但 **Cargo 在设置 `RUSTFLAGS` 环境变量时会忽略 config 的 target rustflags**。Win7 / Server 2012 R2 构建为了静态 CRT 设置了 `RUSTFLAGS`，因此 legacy 包 PE 仍是链接器默认的 1 MiB 主线程栈；#13448（0.6.56 的 Oracle/OceanBase PL/SQL 调试）重构连接 / transport 层后建连调用栈变深，1 MiB 栈被撑爆。标准 Windows 包没有设置 env RUSTFLAGS，仍是 8 MiB，所以不受影响。  本 PR：  - 在所有链接 Windows PE 的构建里重复 `-C link-arg=/STACK:8388608`：release 的 Win7 app / dbx-web、CI 的 Win7 / 标准 / DuckDB 构建、SQL Server 2000 Win7 测试构建，以及 agents-release 中显式设置 RUSTFLAGS 的 DuckDB Win7 驱动； - `.cargo/config.toml` 增加 `[target.x86_64-win7-windows-msvc]` 的同一 link arg，保证本地构建与 CI 一致； - `assert-win7-pe-compat.ps1` 解析 PE 头校验 `SizeOfStackReserve >= 8 MiB`，低于阈值构建直接失败，防止再次静默回归； - `ci-workflow.test.mjs` 增加两条守卫测试，锁定上述 RUSTFLAGS 与审计逻辑。  ## 变更类型 / Change Type  - [x] Bug 修复 / Bug fix - [x] CI / 构建 / CI or build  ## 涉及前端 / Frontend Changes  - [ ] 本 PR 涉及前端改动，已附截图/录屏（无前端改动 / no frontend changes）  ## 验证 / Validation  - [x] `node --test .github/scripts/ci-workflow.test.mjs` 通过（37 passed） - [x] 4 个 workflow YAML 解析通过（ci / release / sqlserver2000-windows-user-test / agents-release） - [ ] 建议发布前在 Win7 SP1 / Server 2012 R2 实机用 legacy 包点击连接复测（本 PR 无 Windows 实机环境） - 发版后可在 Windows 上验证：`dumpbin /headers DBX.exe | findstr /i "stack reserve"` 应
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2097,502 +2009,865 @@ export function useQueryEditorDocumentState(options: QueryEditorDocumentStateOpt
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `afc9374f` (2026-10-25)
-**Commit Message**: fix(sql): keep top-level SQL Server BEGIN blocks as one batch
+### Incident Patch 1: `fbb588ee` (2026-10-27)
+**Commit Message**: fix(windows): keep the 8 MiB main-thread stack on legacy builds (0xC00000FD) (#13672)
 
-**File**: `apps/desktop/src/lib/__tests__/sql/sqlStatementRanges.spec.ts` (modified, +79/-0)
+* fix(windows): keep the 8 MiB main-thread stack on legacy builds
+
+Windows 7 / Server 2012 R2 users on 0.6.58 report the WER dialog "DBX 已停止
+工作" with APPCRASH signature dbx.exe / faulting module dbx.exe / exception
+c00000fd (STATUS_STACK_OVERFLOW) as soon as they click a database connection
+(MySQL, Oracle 11 and Dameng 8 all reproduce), while 0.6.55 is fine.
+
+Root cause: .cargo/config.toml raises the main-thread stack to 8 MiB with
+-C link-arg=/STACK:8388608, but Cargo ignores target rustflags whenever a
+RUSTFLAGS env var is set. The Win7/Server 2012 R2 jobs set RUSTFLAGS for the
+static CRT, so the legacy PE kept the 1 MiB linker default while the standard
+Windows build kept 8 MiB. The 0.6.56 connect-path rewrite made the DB query
+stack deeper, and the legacy 1 MiB stack overflows on connect.
+
+- repeat -C link-arg=/STACK:8388608 in every workflow RUSTFLAGS that links a
+  Windows PE (release Win7 app + dbx-web, CI Win7/standard/duckdb jobs, SQL
+  Server 2000 Win7 test build)
+- add the same flag to the legacy target table in .cargo/config.toml for local
+  builds
+- fail the Win7 PE audit when SizeOf
+
+**File**: `.cargo/config.toml` (modified, +8/-0)
 ```diff
-@@ -2510,6 +2510,85 @@ WHERE t2.product_name = '12345'
-     expect(rangeSqlTexts(ranges)).toEqual(["BEGIN TRAN", "UPDATE dbo.T SET x = 1", "COMMIT"]);
-   });
- 
-+  const sqlServerTryCatchBatch = [
-+    "SET XACT_ABORT ON;",
-+    "",
-+    "BEGIN TRY",
-+    "    BEGIN TRANSACTION;",
-+    "",
-+    "    UPDATE [dbo].[Documents]",
-+    "    SET [Deleted] = 0",
-+    "    WHERE [Deleted] = 1;",
-+    "",
-+    "    DECLARE @Updated int = @@ROWCOUNT;",
-+    "",
-+    "    IF EXISTS (SELECT 1 FROM [dbo].[Documents] WHERE [Deleted] = 1)",
-+    "        THROW 50001, N'Rows with Deleted = 1 still exist.', 1;",
-+    "",
-+    "    COMMIT TRANSACTION;",
-+    "",
-+    "    SELECT N'OK' AS Result, @Updated AS RowsUpdated;",
-+    "END TRY",
-+    "BEGIN CATCH",
-+    "    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;",
-+    "    THROW;",
-+    "END CATCH;",
-+  ].join("\n");
-+  // The batch range starts at the real `BEGIN TRY` token, so the blank line
-+  // and semicolon around the statement are not part of it.
-+  const sqlServerTryCatchRange = sqlServerTryCatchBatch.slice(sqlServerTryCatchBatch.indexOf("BEGIN TRY")).replace(/;$/, "");
+@@ -23,3 +23,11 @@ linker = "rust-lld"
+ # Large Rust projects in debug mode overflow the 1 MiB stack when DB query
+ # paths pull in deep serde/driver call stacks. This embeds the size in the PE.
+ rustflags = ["-C", "link-arg=/STACK:8388608"]
 +
-+  // #13051: a top-level BEGIN TRY ... END TRY BEGIN CATCH ... END CATCH script
-+  // must execute as one batch — splitting it at the top-level `;` sends
-+  // fragments like `BEGIN TRANSACTION` alone and SQL Server rejects them.
-+  it("keeps a SQL Server top-level TRY/CATCH script as one batch after the leading statement", () => {
-+    const ranges = executableStatementRanges(sqlServerTryCatchBatch, "sqlserver");
-+
-+    expect(rangeSqlTexts(ranges)).toEqual(["SET XACT_ABORT ON", sqlServerTryCatchRange]);
-+  });
-+
-+  it("keeps the statement after END CATCH as its own SQL Server range", () => {
-+    const ranges = executableStatementRanges(`${sqlServerTryCatchBatch}\nSELECT 999;`, "sqlserver");
-+
-+    expect(rangeSqlTexts(ranges)).toEqual(["SET XACT_ABORT ON", sqlServerTryCatchRange, "SELECT 999"]);
-+  });
-+
-+  it("keeps two consecutive SQL Server TRY/CATCH scripts as two ranges", () => {
-+    const second = sqlServerTryCatchBatch.replace(/\[dbo\]\.\[Documents\]/g, "[dbo].[Docs]");
-+    const ranges = executableStatementRanges(`${sqlServerTryCatchBatch}\n${second};`, "sqlserver");
-+
-+    expect(rangeSqlTexts(ranges)).toEqual(["SET XACT_ABORT ON", sqlServerTryCatchRange, "SET XACT_ABORT ON", second.slice(second.indexOf("BEGIN TRY")).replace(/;$/, "")]);
-+  });
-+
-+  it("keeps a SQL Server top-level plain BEGIN/END block whole", () => {
-+    const sql = ["BEGIN", "    SELECT 1;", "    SELECT 2;", "END"].join("\n");
-+    const ranges = executableStatementRanges(sql, "sqlserver");
-+
-+    expect(rangeSqlTexts(ranges)).toEqual([sql]);
-+  });
-+
-+  // A bare `BEGIN` is the first keystroke of every SQL Server block: the merge
-+  // reads the word after `BEGIN` to tell a block from `BEGIN TRAN`, and a
-+  // missing token must not be treated as one (it crashed the splitter).
-+  it("splits a lone SQL Server BEGIN without merging", () => {
-+    expect(rangeSqlTexts(splitSqlStatementRanges("BEGIN", "sqlserver"))).toEqual(["BEGIN"]);
-+  });
-+
-+  it("splits a SQL Server BEGIN terminated by a semicolon without merging", () => {
-+    expect(rangeSqlTexts(splitSqlStatementRanges("BEGIN;", "sqlserver"))).toEqual(["BEGIN"]);
-+  });
-+
-+  it("splits a SQL Server BEGIN followed by a comment without merging", () => {
-+    expect(rangeSqlTexts(splitSqlStatementRanges("BEGIN -- draft block", "sqlserver"))).toEqual(["BEGIN"]);
-+  });
-+
-+  it("ends a SQL Server TRY batch without a CATCH at END TRY", () => {
-+    const sql = ["BEGIN TRY", "    SELECT 1;", "END TRY", "SELECT 999;"].join("\n");
-+    const ranges = executableStatementRanges(sql, "sqlserver");
-+
-+    expect(rangeSqlTexts(ranges)).toEqual(["BEGIN TRY\n    SELECT 1;\nEND TRY", "SELECT 999"]);
-+  });
-+
-   // The depth carried across fragments decides where a batch ends: fragments
-   // after the closing `END` are independent statements, so every following
-   // statement keeps its own execution icon.
++# The legacy Windows 7 / Server 2012 R2 target keeps the same 8 MiB main-thread
++# stack. CI builds it with an explicit RUSTFLAGS env (static CRT), which
++# replaces this table, so the same link arg is repeated in those workflows and
++# audited by .github/scripts/assert-win7-pe-compat.ps1. Without it the legacy PE
++# keeps the 1 MiB default and the app aborts with 0xC00000FD ("DBX 已停止工作").
++[target.x86_64-win7-windows-msvc]
++rustflags = ["-C", "link-arg=/STACK:8388608"]
 ```
 
-**File**: `apps/desktop/src/lib/sql/sqlStatementRanges.ts` (modified, +48/-10)
+**File**: `.github/scripts/assert-win7-pe-compat.ps1` (modified, +35/-0)
 ```diff
-@@ -1025,6 +1025,13 @@ function scanSqlServerControlFlow(sql: string, from: number, to: number, databas
-     if (word === "END") {
-       if (next !== undefined && SQLSERVER_NON_BLOCK_END_KEYWORDS.has(next)) continue;
-       openBlocks -= 1;
-+      // `END TRY` must be followed by `BEGIN CATCH` within the same batch
-+      // (#13051): when the carried TRY block closes right where a CATCH block
-+      // opens, the batch continues instead of ending at the pair — the
-+      // following `BEGIN` re-opens the depth in its own branch below.
-+      if (initialOpenBlocks > 0 && openBlocks === 0 && next === "TRY" && words[index + 2] === "BEGIN" && words[index + 3] === "CATCH") {
-+        continue;
-+      }
-       // Only the closure of the *carried* block is a statement boundary: a
-       // block opened and closed inside this fragment (`IF ... BEGIN ... END`
-       // in one piece) belongs to the statement that contains it. A closure
-@@ -1033,8 +1040,11 @@ function scanSqlServerControlFlow(sql: string, from: number, to: number, databas
-       // branch tail carries no semicolon) must still be able to replace it;
-       // a closure followed by anything else is final.
-       if (initialOpenBlocks > 0 && openBlocks === 0 && (closedAt === null || wordAfterClose === "ELSE")) {
--        closedAt = ends[index];
--        wordAfterClose = next ?? "";
-+        // `END TRY`/`END CATCH` are two-token closers; the statement boundary
-+        // sits after the pair, not between `END` and its keyword.
-+        const closesPairedKeyword = next === "TRY" || next === "CATCH";
-+        closedAt = closesPairedKeyword ? (ends[index + 1] ?? ends[index]) : ends[index];
-+        wordAfterClose = (closesPairedKeyword ? words[index + 2] : next) ?? "";
-       }
-       continue;
-     }
-@@ -1046,36 +1056,64 @@ function scanSqlServerControlFlow(sql: string, from: number, to: number, databas
-   return { openBlocks, closedAt, wordAfterClose, sawBlockBegin, hasControlFlowElse };
+@@ -69,3 +69,38 @@ if ($violations.Count -gt 0) {
  }
  
-+/**
-+ * True when the first word is `BEGIN` followed by a keyword that opens a real
-+ * block — a plain `BEGIN ... END`, `BEGIN TRY`, `BEGIN CATCH` — rather than a
-+ * transaction or conversation, which has no matching `END` (#13051).
-+ */
-+function opensSqlServerTopLevelBlock(sql: string, from: number, databaseType?: DatabaseType, parameterOptions?: SqlParameterOptions): boolean {
-+  const firstToken = nextSqlWordToken(sql, from, databaseType, parameterOptions);
-+  if (firstToken?.word !== "BEGIN") return false;
-+  const secondToken = nextSqlWordToken(sql, firstToken.end, databaseType, parameterOptions);
-+  return secondToken != null && !SQLSERVER_NON_BLOCK_BEGIN_KEYWORDS.has(secondToken.word);
+ Write-Host "Windows 7 PE import audit passed: $BinaryPath"
++
++# Main-thread stack reserve audit. The app needs the 8 MiB stack that
++# .cargo/config.toml applies to the standard Windows target; the legacy target is
++# built with an explicit env RUSTFLAGS (static CRT), which replaces the config
++# rustflags, so the workflow repeats `-C link-arg=/STACK:8388608`. Without it the
++# PE keeps the 1 MiB linker default and deep connect/serde call stacks abort with
++# 0xC00000FD ("DBX 已停止工作"), which users reported on Windows 7 / Server 2012 R2.
++$minimumStackReserve = 8 * 1024 * 1024
++$image = [System.IO.File]::ReadAllBytes($BinaryPath)
++if ($image.Length -lt 0x100) {
++  throw "Windows 7 PE audit target is truncated: $BinaryPath"
++}
++$peOffset = [System.BitConverter]::ToInt32($image, 0x3C)
++if ($peOffset -le 0 -or $peOffset + 24 -gt $image.Length) {
++  throw "Invalid PE header offset in ${BinaryPath}"
++}
++$peSignature = [System.BitConverter]::ToUInt32($image, $peOffset)
++if ($peSignature -ne 0x00004550) {
++  throw "Invalid PE signature in ${BinaryPath}"
++}
++$optionalHeaderOffset = $peOffset + 24
++$optionalHeaderMagic = [System.BitConverter]::ToUInt16($image, $optionalHeaderOffset)
++$stackReserveOffset = $optionalHeaderOffset + 72
++$stackReserve = if ($optionalHeaderMagic -eq 0x20B) {
++  [System.BitConverter]::ToUInt64($image, $stackReserveOffset)
++} elseif ($optionalHeaderMagic -eq 0x10B) {
++  [System.BitConverter]::ToUInt32($image, $stackReserveOffset)
++} else {
++  throw ("Unsupported PE optional header magic 0x{0:X4} in {1}" -f $optionalHeaderMagic, $BinaryPath)
++}
++if ($stackReserve -lt $minimumStackReserve) {
++  throw ("Windows 7 main-thread stack reserve is {0} bytes, below the {1}-byte minimum. Add -C link-arg=/STACK:8388608 to the build RUSTFLAGS. Binary: {2}" -f $stackReserve, $minimumStackReserve, $BinaryPath)
 +}
 +
- /**
-  * True when `statement` is a whole T-SQL control-flow batch: an `IF`/`WHILE`
-  * whose body is a `BEGIN ... END` block or whose branches are plain statements
-- * with an `ELSE`. Such a batch contains no independent statements, so it must
-- * stay one execution range instead of being split at the line-oriented
-- * `BEGIN`/`EXEC`/`END` tokens.
-+ * with an `ELSE`, or a top-level block statement (`BEGIN ... END`, `BEGIN TRY
-+ * ... END TRY BEGIN CATCH ... END CATCH`). Such a batch contains no
-+ * independent statements, so it must stay one execution range instead of
-+ * being split at the line-oriented `BEGIN`/`EXEC`/`END` tokens.
-  */
- function isSqlServerControlFlowBatch(sql: string, statement: RawStatement, databaseType?: DatabaseType, parameterOptions?: SqlParameterOptions): boolean {
-   if (databaseType !== "sqlserver") return false;
-   const firstWord = nextSqlWordToken(sql, statement.from, databaseType, parameterOptions)?.word;
--  if (firstWord !== "IF" && firstWord !== "WHILE") return false;
-+  const opensTopLevelBlock = opensSqlServerTopLevelBlock(sql, statement.from, databaseType, parameterOptions);
-+  if (firstWord !== "IF" && firstWord !== "WHILE" && !opensTopLevelBlock) return false;
- 
-   const scan = scanSqlServerControlFlow(sql, statement.from, statement.to, databaseType, parameterOptions);
--  return scan.hasControlFlowElse || (scan.sawBlockBegin && scan.openBlocks === 0);
-+  if (firstWord === "IF" || firstWord === "WHILE") {
-+    return scan.hasControlFlowElse || (scan.sawBlockBegin && scan.openBlocks === 0);
++Write-Host "Windows 7 PE stack reserve audit passed: $stackReserve bytes ($BinaryPath)"
+```
+
+**File**: `.github/scripts/ci-workflow.test.mjs` (modified, +23/-0)
+```diff
+@@ -496,3 +496,26 @@ test("path filtering and the planner use the exact test merge first parent", ()
+   }
+   assert.doesNotMatch(changes, /steps\.filter\.outputs\.windows_win7_bundle|github\.event\.pull_request\.base\.sha|WIN7_CURRENT/);
+ });
++
++test("legacy Windows builds keep the 8 MiB main-thread stack", () => {
++  const release = readFileSync(new URL("../workflows/release.yml", import.meta.url), "utf8").replaceAll("\r\n", "\n");
++  const sqlServerUserTest = readFileSync(new URL("../workflows/sqlserver2000-windows-user-test.yml", import.meta.url), "utf8").replaceAll("\r\n", "\n");
++  const stackFlag = /RUSTFLAGS:.*link-arg=\/STACK:8388608/;
++  // An env RUSTFLAGS replaces .cargo/config.toml target rustflags, so every job
++  // that links a Windows PE has to repeat the /STACK link argument; otherwise
++  // the 1 MiB linker default returns and deep DB call stacks abort with
++  // 0xC00000FD ("DBX 已停止工作").
++  for (const name of ["windows-standard-check", "windows-win7-bundle", "duckdb-windows-driver"]) {
++    assert.match(job(name), stackFlag, `${name} must keep the 8 MiB main-thread stack in RUSTFLAGS`);
 +  }
-+  // A top-level `BEGIN` block is one batch by itself: keep it whole whether
-+  // the block is balanced or still open mid-typing. `BEGIN TRAN[SACTION]` and
-+  // friends never reach this branch.
-+  return true;
- }
- 
- /**
-  * T-SQL does not end a `BEGIN ... END` block at a semicolon, so splitting on
-  * every top-level `;` cuts `IF ... BEGIN ... ; ... END` batches into fragments
-  * whose `BEGIN`/`EXEC`/`END` lines then look like independent statements
-- * (#9336). Re-join the fragments of such a batch so it stays one range.
-+ * (#9336). Top-level block statements — a plain `BEGIN ... END`, `BEGIN TRY
-+ * ... END TRY` plus its mandatory `BEGIN CATCH ... END CATCH` — hit the same
-+ * split and are re-joined here too (#13051); only `BEGIN` 
++  for (const name of ["build-windows-7-offline", "build-windows-7-static-browser"]) {
++    assert.match(job(name, release), stackFlag, `release job ${name} must keep the 8 MiB main-thread stack in RUSTFLAGS`);
++  }
++  assert.match(job("build-windows-7-x64", sqlServerUserTest), stackFlag, "the SQL Server 2000 Win7 test build must keep the 8 MiB main-thread stack");
++});
++
++test("the Win7 PE audit fails when the stack reserve regresses", () => {
++  const audit = readFileSync(new URL("./assert-win7-pe-compat.ps1", import.meta.url), "utf8");
++  assert.ok(audit.includes("minimumStackReserve"));
++  assert.ok(audit.includes("link-arg=/STACK:8388608"));
++});
 ```
 
-**File**: `crates/dbx-sql-core/src/sql.rs` (modified, +378/-11)
+**File**: `.github/workflows/agents-release.yml` (modified, +3/-1)
 ```diff
-@@ -1832,22 +1832,29 @@ fn find_sqlserver_statement_at_cursor(sql: &str, cursor_pos: usize) -> String {
+@@ -963,7 +963,9 @@ jobs:
+         shell: bash
+         run: |
+           if [ "${{ runner.os }}" = "Windows" ]; then
+-            export RUSTFLAGS="${RUSTFLAGS:+$RUSTFLAGS }-C target-feature=+crt-static"
++            # An env RUSTFLAGS replaces .cargo/config.toml target rustflags; keep
++            # the 8 MiB main-thread stack of the DBX app for the Win7 driver too.
++            export RUSTFLAGS="${RUSTFLAGS:+$RUSTFLAGS }-C target-feature=+crt-static -C link-arg=/STACK:8388608"
+           fi
+           if [ -n "${{ matrix.manylinux_image }}" ]; then
+             docker run --rm \
+```
+
+**File**: `.github/workflows/ci.yml` (modified, +15/-3)
+```diff
+@@ -313,7 +313,11 @@ jobs:
+     timeout-minutes: 45
+     env:
+       CARGO_INCREMENTAL: "0"
+-      RUSTFLAGS: -C debuginfo=line-tables-only -C target-feature=+crt-static
++      # An env RUSTFLAGS replaces .cargo/config.toml target rustflags, so the
++      # 8 MiB main-thread stack must be repeated here: without it the Windows PE
++      # keeps the 1 MiB linker default and deep connect/serde call stacks abort
++      # with 0xC00000FD ("DBX 已停止工作"). Guarded by assert-win7-pe-compat.ps1.
++      RUSTFLAGS: -C debuginfo=line-tables-only -C target-feature=+crt-static -C link-arg=/STACK:8388608
+       RUSTC_WRAPPER: sccache
+       # Prefer S3 when available; GitHub's 10 GB cache quota evicts the shared
+       # Linux target caches when thousands of GHA sccache entries pile up.
+@@ -388,7 +392,11 @@ jobs:
+       CARGO_INCREMENTAL: "0"
+       CARGO_PROFILE_RELEASE_LTO: "off"
+       CARGO_PROFILE_RELEASE_CODEGEN_UNITS: "8"
+-      RUSTFLAGS: -C debuginfo=line-tables-only -C target-feature=+crt-static
++      # An env RUSTFLAGS replaces .cargo/config.toml target rustflags, so the
++      # 8 MiB main-thread stack must be repeated here: without it the Windows PE
++      # keeps the 1 MiB linker default and deep connect/serde call stacks abort
++      # with 0xC00000FD ("DBX 已停止工作"). Guarded by assert-win7-pe-compat.ps1.
++      RUSTFLAGS: -C debuginfo=line-tables-only -C target-feature=+crt-static -C link-arg=/STACK:8388608
+       RUSTC_WRAPPER: sccache
+       # Prefer S3 when available; GitHub's 10 GB cache quota evicts the shared
+       # Linux target caches when thousands of GHA sccache entries pile up.
+@@ -830,7 +838,11 @@ jobs:
+     env:
+       CARGO_INCREMENTAL: "0"
+       CARGO_TARGET_DIR: ${{ github.workspace }}/target/duckdb-driver
+-      RUSTFLAGS: -C debuginfo=line-tables-only -C target-feature=+crt-static
++      # An env RUSTFLAGS replaces .cargo/config.toml target rustflags, so the
++      # 8 MiB main-thread stack must be repeated here: without it the Windows PE
++      # keeps the 1 MiB linker default and deep connect/serde call stacks abort
++      # with 0xC00000FD ("DBX 已停止工作"). Guarded by assert-win7-pe-compat.ps1.
++      RUSTFLAGS: -C debuginfo=line-tables-only -C target-feature=+crt-static -C link-arg=/STACK:8388608
+       RUSTC_WRAPPER: sccache
+       # Prefer S3 when available; GitHub's 10 GB cache quota evicts the shared
+       # Linux target caches when thousands of GHA sccache entries pile up.
+```
+
+**File**: `.github/workflows/release.yml` (modified, +10/-2)
+```diff
+@@ -579,7 +579,11 @@ jobs:
+     # The vendored loader is a tracked Cargo input, so Rust compile caching is safe.
+     env:
+       CARGO_INCREMENTAL: "0"
+-      RUSTFLAGS: -C debuginfo=line-tables-only -C target-feature=+crt-static
++      # An env RUSTFLAGS replaces .cargo/config.toml target rustflags, so the
++      # 8 MiB main-thread stack must be repeated here: without it the legacy PE
++      # keeps the 1 MiB linker default and deep connect/serde call stacks abort
++      # with 0xC00000FD ("DBX 已停止工作"). Guarded by assert-win7-pe-compat.ps1.
++      RUSTFLAGS: -C debuginfo=line-tables-only -C target-feature=+crt-static -C link-arg=/STACK:8388608
+       RUSTC_WRAPPER: sccache
+       SCCACHE_GHA_ENABLED: ${{ secrets.SCCACHE_S3_BUCKET == '' && 'true' || 'false' }}
+       SCCACHE_GHA_VERSION: win7-webview2-1.0.902.49-v1
+@@ -747,7 +751,11 @@ jobs:
+             arch: x86_64
+     env:
+       CARGO_INCREMENTAL: "0"
+-      RUSTFLAGS: -C debuginfo=line-tables-only -C target-feature=+crt-static
++      # An env RUSTFLAGS replaces .cargo/config.toml target rustflags, so the
++      # 8 MiB main-thread stack must be repeated here: without it the legacy PE
++      # keeps the 1 MiB linker default and deep connect/serde call stacks abort
++      # with 0xC00000FD ("DBX 已停止工作"). Guarded by assert-win7-pe-compat.ps1.
++      RUSTFLAGS: -C debuginfo=line-tables-only -C target-feature=+crt-static -C link-arg=/STACK:8388608
+     steps:
+       - uses: actions/checkout@v7
  
-     for (idx, batch) in batches.iter().enumerate() {
-         if cursor >= batch.start && cursor <= batch.end {
--            if starts_with_sqlserver_control_flow_batch(&batch.text)
--                || (profile.keeps_sqlserver_module_batch_at_cursor && starts_with_sqlserver_module_ddl(&batch.text))
--            {
-+            // Module DDL is checked before the block scan: a procedure body is
-+            // itself a `BEGIN ... END` block, and the whole `CREATE`/`ALTER`
-+            // batch is the execution unit there.
-+            if profile.keeps_sqlserver_module_batch_at_cursor && starts_with_sqlserver_module_ddl(&batch.text) {
-                 return batch.text.clone();
-             }
-+            if let Some(statement) =
-+                sqlserver_control_flow_statement_at(&batch.text, Some(cursor.saturating_sub(batch.start)))
-+            {
-+                return statement;
-+            }
-             let relative_cursor = sql[..cursor].encode_utf16().count() - sql[..batch.start].encode_utf16().count();
-             return find_statement_at_cursor_with_options(&batch.text, relative_cursor, SqlParsingOptions::default());
-         }
+```
+
+**File**: `.github/workflows/sqlserver2000-windows-user-test.yml` (modified, +3/-1)
+```diff
+@@ -12,7 +12,9 @@ jobs:
+     timeout-minutes: 120
+     env:
+       CARGO_INCREMENTAL: "0"
+-      RUSTFLAGS: -C debuginfo=line-tables-only -C target-feature=+crt-static
++      # Keep the Win7/Server 2012 R2 main-thread stack at 8 MiB: an env
++      # RUSTFLAGS replaces the .cargo/config.toml target rustflags.
++      RUSTFLAGS: -C debuginfo=line-tables-only -C target-feature=+crt-static -C link-arg=/STACK:8388608
+     steps:
+       - uses: actions/checkout@v7
  
-         if cursor < batch.start {
-             if let Some(prev) = idx.checked_sub(1).and_then(|prev_idx| batches.get(prev_idx)) {
--                if starts_with_sqlserver_control_flow_batch(&prev.text)
--                    || (profile.keeps_sqlserver_module_batch_at_cursor && starts_with_sqlserver_module_ddl(&prev.text))
--                {
-+                if profile.keeps_sqlserver_module_batch_at_cursor && starts_with_sqlserver_module_ddl(&prev.text) {
-                     return prev.text.clone();
-                 }
-+                if let Some(statement) = sqlserver_control_flow_statement_at(&prev.text, None) {
-+                    return statement;
-+                }
-                 let relative_cursor = prev.text.encode_utf16().count();
-                 return find_statement_at_cursor_with_options(
-                     &prev.text,
-@@ -1862,12 +1869,271 @@ fn find_sqlserver_statement_at_cursor(sql: &str, cursor_pos: usize) -> String {
-     batches.last().map(|batch| batch.text.clone()).unwrap_or_else(|| sql.trim().to_string())
- }
- 
-+/// A top-level token of a SQL Server batch: a word or a `;` terminator outside
-+/// string literals, quoted identifiers, comments and parentheses. `CASE ... END`
-+/// inside a condition or select list therefore never looks like a block.
-+struct SqlServerTopLevelToken<'a> {
-+    text: &'a str,
-+    start: usize,
-+    end: usize,
-+}
-+
-+impl SqlServerTopLevelToken<'_> {
-+    fn is_word(&self, keyword: &str) -> bool {
-+        self.text.eq_ignore_ascii_case(keyword)
-+    }
-+}
-+
-+fn sqlserver_top_level_tokens(sql: &str) -> Vec<SqlServerTopLevelToken<'_>> {
-+    let bytes = sql.as_bytes();
-+    let mut tokens = Vec::new();
-+    let mut paren_depth = 0usize;
-+    let mut index = 0usize;
-+
-+    while index < bytes.len() {
-+        match bytes[index] {
-+            quote @ (b'\'' | b'"') => {
-+                index += 1;
-+                while index < bytes.len() {
-+                    if bytes[index] == quote {
-+                        if bytes.get(index + 1) == Some(&quote) {
-+                            index += 2;
-+                            continue;
-+                        }
-+                        index += 1;
-+                        break;
-+                    }
-+                    index += 1;
-+                }
-+            }
-+            b'[' => {
-+                index += 1;
-+                while index < bytes.len() {
-+                    if bytes[index] == b']' {
-+                        if bytes.get(index + 1) == Some(&b']') {
-+                            index += 2;
-+                            continue;
-+                        }
-+                        index += 1;
-+                        break;
-+                    }
-+                    index += 1;
-+                }
-+            }
-+            b'-' if bytes.get(index + 1) == Some(&b'-') => {
-+                index += 2;
-+                while index < bytes.len() && bytes[index] != b'\n' {
-+                    index += 1;
-+                }
-+            }
-+            b'/' if bytes.get(index + 1) == Some(&b'*') => {
-+                index += 2;
-+                while index < bytes.len() && !(bytes[index] == b'*' && bytes.get(index + 1) == Some(&b'/')) {
-+                    index += 1;
-+                }
-+                index = (index + 2).min(bytes.len());
-+            }
-+            b'(' => {
-+                paren_depth += 1;
-+                index += 1;
-+            }
-+            b')' => {
-+                paren_depth = paren_depth.saturating_sub(1);
-+                index += 1;
-+            }
-+            b';' if paren_depth == 0 => {
-+                tokens.push(SqlServerTopLevelToken { text: ";", start: index, end: index + 1 });
-+                index +=
+```
+
+**File**: `crates/dbx-sql-schema/src/schema_diff.rs` (modified, +1/-1)
+```diff
+@@ -3860,7 +3860,7 @@ fn normalized_foreign_key_action(action: Option<&str>) -> Option<String> {
+ /// - "NO ACTION: ... For InnoDB, this is equivalent to RESTRICT".
+ /// - "Specifying RESTRICT (or NO ACTION) is the same as omitting the ON DELETE or ON UPDATE clause."
+ /// - "For an ON DELETE or ON UPDATE that is not specified, the default action is always NO ACTION."
+-/// MariaDB KB "Foreign Keys" likewise documents `NO ACTION` as a "Synonym for RESTRICT".
++///   MariaDB KB "Foreign Keys" likewise documents `NO ACTION` as a "Synonym for RESTRICT".
+ ///
+ /// Only the comparison is normalized; generated DDL keeps the source's original action text.
+ /// Known caveat: on MySQL NDB Cluster `NO ACTION` is a deferred check, but schema metadata does
 ```
 
 ---
 
-### Incident Patch 2: `0566e0db` (2026-10-25)
-**Commit Message**: fix(mcp): clear readonly attribute on replacement temp cleanup
+### Incident Patch 2: `8009fbcb` (2026-10-27)
+**Commit Message**: fix(oracle): recover object column panics on pinned connections
 
-**File**: `.github/scripts/install-mcp-powershell.test.ps1` (modified, +7/-0)
+**File**: `agents/drivers/oracle-go/dbms_output.go` (modified, +12/-0)
 ```diff
-@@ -134,6 +134,13 @@ try {
-     Remove-McpReplacementTempFiles (Join-Path $testRoot 'missing')
-     $script:count++
-     Write-Output 'PASS cleanup preserves active binary, marker, unrelated files and directories'
-+    $readonlyPath = Join-Path $installDir 'dbx-mcp.exe~RF8c73e4f.TMP'
-+    [IO.File]::WriteAllText($readonlyPath, 'readonly leftover')
-+    [IO.File]::SetAttributes($readonlyPath, [IO.FileAttributes]::ReadOnly)
-+    Remove-McpReplacementTempFiles $installDir
-+    Assert-True (!(Test-Path -LiteralPath $readonlyPath)) 'Cleanup kept a read-only replacement temp file'
-+    $script:count++
-+    Write-Output 'PASS cleanup removes read-only replacement temp files'
-     $linkTarget = Join-Path $testRoot 'linked-target'
-     [IO.Directory]::CreateDirectory($linkTarget) | Out-Null
-     $targetFile = Join-Path $linkTarget 'dbx-mcp.exe~RF789.TMP'
+@@ -550,6 +550,9 @@ func (s *server) withStatementDBMSOutput(sqlText string, run func() error) []que
+ 	s.statementConn = conn
+ 	defer func() {
+ 		s.statementConn = previous
++		if repinned := s.takeRepinnedStatementConn(); repinned != nil {
++			_ = repinned.Close()
++		}
+ 		_ = conn.Close()
+ 	}()
+ 	session := s.statementDBMSOutputSession(conn)
+@@ -604,6 +607,9 @@ func (s *server) withPagedStatementDBMSOutput(sqlText string, run func() error)
+ 			// so this function owns it. The statement's own cleanup has already closed
+ 			// its rows (runPagedOracleSelect defers that), which is what lets the close
+ 			// below return instead of waiting for a cursor that no one will close.
++			if repinned := s.takeRepinnedStatementConn(); repinned != nil {
++				_ = repinned.Close()
++			}
+ 			_ = conn.Close()
+ 			panic(recovered)
+ 		}
+@@ -612,6 +618,12 @@ func (s *server) withPagedStatementDBMSOutput(sqlText string, run func() error)
+ 	capture := s.ensureDBMSOutput(ctx, session)
+ 	_ = run()
+ 	messages := s.finishStatementDBMSOutput(ctx, session, capture, sqlText)
++	if repinned := s.takeRepinnedStatementConn(); repinned != nil {
++		// A driver panic poisoned the pinned connection and the statement's
++		// fallback ran on a replacement, so the page's cursor lives there.
++		_ = conn.Close()
++		conn = repinned
++	}
+ 	return conn, messages
+ }
+ 
 ```
 
-**File**: `docs/public/install-mcp.ps1` (modified, +3/-0)
+**File**: `agents/drivers/oracle-go/main.go` (modified, +63/-2)
 ```diff
-@@ -50,6 +50,9 @@ function Remove-McpReplacementTempFiles([string]$Directory) {
-             $_.Name -imatch '\Adbx-mcp\.exe~RF[0-9a-f]+\.TMP\z'
-         } | ForEach-Object {
-             # A running MCP process may still hold the old executable; retry on the next run.
-+            # A READONLY attribute makes [IO.File]::Delete throw, so one read-only
-+            # leftover would otherwise survive every install; clear it first.
-+            try { $_.Attributes = $_.Attributes -band (-bnot [IO.FileAttributes]::ReadOnly) } catch {}
-             try { [IO.File]::Delete($_.FullName) } catch {}
-         }
-     } catch {}
+@@ -660,6 +660,8 @@ type server struct {
+ 	statementCtx           context.Context
+ 	statementCancel        context.CancelFunc
+ 	statementConn          *sql.Conn
++	statementSchema        string
++	repinnedStatementConn  *sql.Conn
+ 	plDebugMu              sync.Mutex
+ 	plDebugSessions        map[string]*plDebugSession
+ 	plAllocation           *plDebugAllocation
+@@ -2028,6 +2030,17 @@ func (s *server) currentSchema() (string, error) {
+ 		}
+ 		return strings.ToUpper(schema), nil
+ 	}
++	// The connection pinned for a statement's DBMS_OUTPUT capture carries the
++	// statement's CURRENT_SCHEMA the same way.
++	if s.statementConn != nil {
++		if err := s.repinPoisonedStatementConn(); err != nil {
++			return "", err
++		}
++		if err := s.statementConn.QueryRowContext(s.statementContext(), sqlText).Scan(&schema); err != nil {
++			return "", err
++		}
++		return strings.ToUpper(schema), nil
++	}
+ 	db, err := s.requireDB()
+ 	if err != nil {
+ 		return "", err
+@@ -5133,8 +5146,10 @@ func (s *server) queryRowsWithOracleValueRewriteIfNeeded(sqlText string, timeout
+ 	// A statement that keeps row locks while it runs is rewritten before the
+ 	// first attempt: when such a statement panics after the rows were locked,
+ 	// the locks stay behind and the retry below blocks on them until the query
+-	// times out (issues #9344 / #9180).
+-	if oracleSQLLocksRows(sqlText) {
++	// times out (issues #9344 / #9180). A manual transaction cannot retry at
++	// all: the panic leaves its session unusable and the transaction is rolled
++	// back (issue #13455).
++	if oracleSQLLocksRows(sqlText) || s.hasManualTransaction() {
+ 		rewritten, err := rewriteOracleSelectSQL(sqlText, s.loadOracleColumnMeta, deferLOBs)
+ 		if err == nil && rewritten != sqlText {
+ 			return s.queryRowsWithTimeout(rewritten, nil, timeoutSecs)
+@@ -6131,6 +6146,9 @@ func (s *server) setSchema(schema string) error {
+ 	}
+ 	if s.statementConn != nil {
+ 		_, err := s.statementConn.ExecContext(s.statementContext(), sqlText)
++		if err == nil {
++			s.statementSchema = schema
++		}
+ 		return err
+ 	}
+ 	db, err := s.requireDB()
+@@ -6141,6 +6159,46 @@ func (s *server) setSchema(schema string) error {
+ 	return err
+ }
+ 
++// repinPoisonedStatementConn replaces the statement's pinned connection once a
++// driver panic has poisoned it, so the placeholder fallbacks of the same
++// statement do not fail on the dead session (issue #13455). The fresh
++// connection gets the statement's CURRENT_SCHEMA back; the statement's owner
++// closes it together with the original one.
++func (s *server) repinPoisonedStatementConn() error {
++	if s.manualTx != nil || s.statementConn == nil || !oracleConnPoisoned(s.statementConn) {
++		return nil
++	}
++	db, err := s.requireDB()
++	if err != nil {
++		return err
++	}
++	conn, err := db.Conn(s.statementContext())
++	if err != nil {
++		return err
++	}
++	if s.statementSchema != "" {
++		if _, err := conn.ExecContext(s.statementContext(), "ALTER SESSION SET CURRENT_SCHEMA = "+quoteIdentifier(s.statementSchema)); err != nil {
++			_ = conn.Close()
++			return err
++		}
++	}
++	if s.repinnedStatementConn != nil {
++		_ = s.repinnedStatementConn.Close()
++	}
++	s.repinnedStatementConn = conn
++	s.statementConn = conn
++	return nil
++}
++
++// takeRepinnedStatementConn hands a connection opened by
++// repinPoisonedStatementConn to the statement's owner.
++func (s *server) takeRepinnedStatementConn() *sql.Conn {
++	conn := s.repinnedStatementConn
++	s.repinnedStatementConn = nil
++	s.statementSchema = ""
++	return conn
++}
++
+ func (s *server) queryRows(sqlText string, args []any) (*sql.Rows, error) {
+ 	return s.queryRowsWithTimeout(sqlText, args, 0)
+ }
+@@ -6149,6 +6207,9 @@ func (s *server) queryRowsWithTimeout(sqlText string, args []any, timeoutSecs in
+ 	if _, err := s.requireDB(); err != nil {
+ 		return nil, err
+ 	}
++	if err := s.repinPoisonedStatementConn(); err != nil {
++		return nil, err
++	}
+ 	ctx, cancel := context.WithCancel(s.statementContext())
+ 	var timer *time.Timer
+ 	if timeoutSecs > 0 {
 ```
 
-**File**: `src-tauri/src/commands/mcp_cleanup.rs` (modified, +32/-2)
+**File**: `agents/drivers/oracle-go/main_test.go` (modified, +128/-0)
 ```diff
-@@ -39,8 +39,24 @@ pub(super) fn cleanup_directory(directory: &Path) -> io::Result<usize> {
-         }
-         let path = entry.path();
-         let Ok(metadata) = fs::symlink_metadata(&path) else { continue };
--        // Never recurse or follow links; locked/read-only leftovers can be retried next launch.
--        if metadata.is_file() && !is_link(&metadata) && fs::remove_file(&path).is_ok() {
-+        // Never recurse or follow links; locked leftovers can be retried next launch.
-+        if !metadata.is_file() || is_link(&metadata) {
-+            continue;
-+        }
-+        // A READONLY attribute makes fs::remove_file fail with Access Denied on
-+        // Windows, so one read-only leftover would otherwise survive every
-+        // startup pass. Clear the attribute (the name pattern is strict enough)
-+        // before deleting. This is Windows-only: on Unix unlinking only needs a
-+        // writable directory, and clearing the write bits would widen the mode
-+        // to 0666 if the delete failed. The clear is best-effort so a failed
-+        // attribute write never skips the delete attempt.
-+        #[cfg(windows)]
-+        if metadata.permissions().readonly() {
-+            let mut permissions = metadata.permissions();
-+            permissions.set_readonly(false);
-+            let _ = fs::set_permissions(&path, permissions);
-+        }
-+        if fs::remove_file(&path).is_ok() {
-             removed += 1;
-         }
-     }
-@@ -124,6 +140,20 @@ mod tests {
-         assert!(!missing.exists());
+@@ -4329,6 +4329,134 @@ func TestOracleQueryRowsKeepsSTAsTextErrorWhenPlaceholderAlsoFails(t *testing.T)
+ 	}
+ }
+ 
++// oracleViewSourceTxConn lets the scripted driver open the manual transaction
++// the query guard wraps.
++type oracleViewSourceTxConn struct{ *oracleViewSourceConn }
++
++func (c oracleViewSourceTxConn) BeginTx(context.Context, driver.TxOptions) (driver.Tx, error) {
++	return oracleViewSourceTx{}, nil
++}
++
++type oracleViewSourceTx struct{}
++
++func (oracleViewSourceTx) Commit() error   { return nil }
++func (oracleViewSourceTx) Rollback() error { return nil }
++
++type oracleViewSourceTxDriver struct{ scripted *oracleViewSourceDriver }
++
++func (d oracleViewSourceTxDriver) Open(string) (driver.Conn, error) {
++	return oracleViewSourceTxConn{&oracleViewSourceConn{driver: d.scripted}}, nil
++}
++
++func openGuardedOracleViewSourceTestDB(t *testing.T, steps []oracleViewSourceQueryStep) (*sql.DB, *oracleViewSourceDriver) {
++	t.Helper()
++	scripted := &oracleViewSourceDriver{steps: steps}
++	db := sql.OpenDB(oracleQueryConnector{oracleGuardTestConnector{oracleViewSourceTxDriver{scripted}}})
++	t.Cleanup(func() { _ = db.Close() })
++	return db, scripted
++}
++
++func udtPanicFallbackSteps(rows [][]driver.Value) []oracleViewSourceQueryStep {
++	return []oracleViewSourceQueryStep{
++		{exec: true, queryContains: `ALTER SESSION SET CURRENT_SCHEMA = "DBXT"`},
++		{queryContains: "SELECT ID, G FROM T_UDT", args: []driver.Value{}, panicText: "simulated go-ora panic on object column"},
++		// The poisoned pinned connection is replaced and gets the editor schema back.
++		{exec: true, queryContains: `ALTER SESSION SET CURRENT_SCHEMA = "DBXT"`},
++		{queryContains: "CURRENT_SCHEMA", args: []driver.Value{}, columns: []string{"SCHEMA"}, rows: [][]driver.Value{{"DBXT"}}},
++		{
++			queryContains: "ALL_TAB_COLUMNS",
++			args:          []driver.Value{"DBXT", "T_UDT"},
++			columns:       []string{"COLUMN_NAME", "DATA_TYPE", "DATA_TYPE_OWNER"},
++			rows:          [][]driver.Value{{"ID", "NUMBER", nil}, {"G", "GEOM_T", "DBXT"}},
++		},
++		{queryContains: "'<GEOM_T>'", args: []driver.Value{}, columns: []string{"ID", "G"}, rows: rows},
++	}
++}
++
++func TestExecuteQueryRetriesObjectColumnPanicOnFreshPinnedConnection(t *testing.T) {
++	steps := udtPanicFallbackSteps([][]driver.Value{{int64(1), "<GEOM_T>"}})
++	db, scripted := openGuardedOracleViewSourceTestDB(t, steps)
++	s := newServer()
++	s.db = db
++	result, err := s.executeQuery(queryOptions{SQL: "SELECT ID, G FROM T_UDT", Schema: "DBXT", MaxRows: 10})
++	if err != nil {
++		t.Fatalf("expected the placeholder fallback to recover the panic, got %v", err)
++	}
++	if !reflect.DeepEqual(result.Rows, [][]any{{int64(1), "<GEOM_T>"}}) {
++		t.Fatalf("unexpected rows: %#v", result.Rows)
++	}
++	if scripted.next != len(steps) {
++		t.Fatalf("expected all %d scripted steps, ran %d", len(steps), scripted.next)
++	}
++	if s.statementConn != nil || s.repinnedStatementConn != nil || s.statementSchema != "" || db.Stats().InUse != 0 {
++		t.Fatalf("statement leaked its pinned connections: %+v", db.Stats())
++	}
++}
++
++func TestExecuteQueryPageKeepsCursorOnReplacementPinnedConnection(t *testing.T) {
++	steps := udtPanicFallbackSteps([][]driver.Value{{int64(1), "<GEOM_T>"}, {int64(2), "<GEOM_T>"}})
++	db, scripted := openGuardedOracleViewSourceTestDB(t, steps)
++	s := newServer()
++	s.db = db
++	result, err := s.executeQueryPage(queryOptions{SQL: "SELECT ID, G FROM T_UDT", Schema: "DBXT", MaxRows: 10}, 1)
++	if err != nil {
++		t.Fatalf("expected the placeholder fallback to recover the panic, got %v", err)
++	}
++	if !result.HasMore || result.SessionID == nil || !reflect.DeepEqual(result.Rows, [][]any{{int64(1), "<GEOM_T>"}}) {
++		t.Fatalf("unexpected first page: %+v", result)
++	}
++	if scripted.next != len(steps) {
++		t.Fatalf("expected all %d scripted steps, ran %d", len(steps), scripted.next)
++	}
++	next, err := s.fetchQueryPage(*result.SessionID, 1)
++	if err != nil || !reflect.DeepEqual(next.Rows, [][]any{{int64(2), "<GEOM_T>"}}) {
++		t.Fatalf("unexpected second page: %+v, %v", next, err)
++	}
++	s.closeQuerySession(*result.SessionID)
++	if s.statementConn != nil || s.repinnedStatementConn != nil || db.Stats().InUse != 0 {
++		t.Fatalf("paging session leaked its pinned connections: %+v", db.Stats())
++	}
++}
++
++func TestManualTransactionRewritesObjectColumnsBeforeTheFirstAttempt(t *testing.T) {
++	steps := []oracleViewSourceQueryStep{
++		{exec: true, queryContains: `ALTER SESSION SET CURRENT_SCHEMA = "DBXT"`},
++		{queryContains: "CURRENT_SCHEMA", args: []driver.Value{}, columns: []string{"SCHEMA"}, rows: [][]driver.Value{{"DBXT"}}},
++		{
++			queryContains: "ALL_TAB_COLUMNS",
++			args:          []driver.Value{"DBXT", "T_UDT"},
++			columns:       []string{"COLUMN_NAME", "DATA_TYPE", "DATA_TYPE_OWNER"},
++			rows:          [][]driver.Value{{"ID", "NUMBER", nil}, {"G", "GEOM_T", "DBXT"}},
++		},
++		{queryContains: "'<GEOM_T>'", args: []driver.Value{}, columns: []string{"ID", "G"}, rows: [][]driver.Value{{int64(1), "<GEOM_T>"}}},
++		{queryContains: 
+```
+
+**File**: `agents/drivers/oracle-go/query_guard.go` (modified, +12/-0)
+```diff
+@@ -2,6 +2,7 @@ package main
+ 
+ import (
+ 	"context"
++	"database/sql"
+ 	"database/sql/driver"
+ 	"fmt"
+ )
+@@ -59,6 +60,17 @@ func (c *oracleQueryConnection) QueryContext(ctx context.Context, query string,
+ 	return c.oracleThinConnection.QueryContext(ctx, query, args)
+ }
+ 
++// oracleConnPoisoned reports whether a driver panic already made conn unusable.
++func oracleConnPoisoned(conn *sql.Conn) bool {
++	poisoned := false
++	_ = conn.Raw(func(driverConn any) error {
++		guarded, ok := driverConn.(*oracleQueryConnection)
++		poisoned = ok && guarded.failed != nil
++		return nil
++	})
++	return poisoned
++}
++
+ // Invalidate via Validator, not ErrBadConn: ErrBadConn would tell database/sql
+ // to replay the original statement, even when it has already acquired locks or
+ // invoked a function with side effects. The original panic remains diagnostic.
+```
+
+---
+
+### Incident Patch 3: `dd8c713c` (2026-10-27)
+**Commit Message**: fix(oracle): send a single TCP connect on failure and back off retries
+
+**File**: `apps/desktop/src/components/admin/MySqlDashboard.vue` (modified, +3/-1)
+```diff
+@@ -133,7 +133,9 @@ async function fetchStatus(options: { silent?: boolean } = {}) {
+   if (!options.silent) loading.value = true;
+   error.value = "";
+   try {
+-    await connectionStore.ensureConnected(props.connectionId, { skipIfClosedByUser: true });
++    // 轮询/静默刷新走被动重连：失败后退避，避免后台每次 tick 都新建连接
++    // （企业安全/零信任客户端会为每次新连接弹一次授权框）。手动刷新不受影响。
++    await connectionStore.ensureConnected(props.connectionId, { skipIfClosedByUser: true, ...(options.silent === true ? { passive: true } : {}) });
+     const result = await api.executeQuery(props.connectionId, "", GLOBAL_STATUS_SQL, undefined, undefined, { maxRows: 2000, clientSessionId: props.clientSessionId });
+     const sample: StatusSample = { at: Date.now(), status: parseStatusResult(result) };
+     const next = [...samples.value, sample];
+```
+
+**File**: `apps/desktop/src/components/admin/PostgresDashboard.vue` (modified, +3/-1)
+```diff
+@@ -146,7 +146,9 @@ async function fetchStatus(options: { silent?: boolean } = {}) {
+   if (!options.silent) loading.value = true;
+   error.value = "";
+   try {
+-    await connectionStore.ensureConnected(props.connectionId, { skipIfClosedByUser: true });
++    // 轮询/静默刷新走被动重连：失败后退避，避免后台每次 tick 都新建连接
++    // （企业安全/零信任客户端会为每次新连接弹一次授权框）。手动刷新不受影响。
++    await connectionStore.ensureConnected(props.connectionId, { skipIfClosedByUser: true, ...(options.silent === true ? { passive: true } : {}) });
+     const sql = fallbackStatusSql.value ?? activeDriver.statusSql;
+     let result;
+     try {
+```
+
+**File**: `apps/desktop/src/components/admin/ProcessListPanel.vue` (modified, +3/-1)
+```diff
+@@ -354,7 +354,9 @@ async function load(options: { silent?: boolean } = {}) {
+   loadError.value = "";
+   versionProbeWarning.value = "";
+   try {
+-    await connectionStore.ensureConnected(connectionId, { skipIfClosedByUser: true });
++    // 轮询/静默刷新走被动重连：失败后退避，避免后台每次 tick 都新建连接
++    // （企业安全/零信任客户端会为每次新连接弹一次授权框）。手动刷新不受影响。
++    await connectionStore.ensureConnected(connectionId, { skipIfClosedByUser: true, ...(options.silent === true ? { passive: true } : {}) });
+     if (!isCurrent()) return;
+     if (activeDriver.versionSql && versionMajor.value === null) {
+       try {
+```
+
+**File**: `apps/desktop/src/components/admin/XuguServerDashboard.vue` (modified, +5/-4)
+```diff
+@@ -180,13 +180,14 @@ async function query(sql: string, maxRows: number) {
+   return api.executeQuery(props.connectionId, "", sql, undefined, undefined, { maxRows });
+ }
+ 
+-async function load() {
++async function load(options: { passive?: boolean } = {}) {
+   if (!supported.value) return;
+   loading.value = true;
+   error.value = "";
+   partialErrors.value = [];
+   try {
+-    await connectionStore.ensureConnected(props.connectionId, { skipIfClosedByUser: true });
++    // 首屏/自动刷新是后台路径：失败后退避，避免每次 tick 都新建连接。手动刷新不传 passive。
++    await connectionStore.ensureConnected(props.connectionId, { skipIfClosedByUser: true, passive: options.passive === true });
+     const requests = [
+       ["version", XUGU_VERSION_SQL, 1],
+       ["nodes", XUGU_CLUSTER_NODES_SQL, 500],
+@@ -271,7 +272,7 @@ function startAutoRefresh() {
+   stopAutoRefresh();
+   if (refreshSeconds.value <= 0) return;
+   refreshTimer = setInterval(() => {
+-    if (!document.hidden) void load();
++    if (!document.hidden) void load({ passive: true });
+   }, refreshSeconds.value * 1000);
+ }
+ 
+@@ -281,7 +282,7 @@ function changeRefresh(value: string) {
+ }
+ 
+ onMounted(async () => {
+-  await load();
++  await load({ passive: true });
+   startAutoRefresh();
+ });
+ 
+```
+
+**File**: `apps/desktop/src/components/document/DocumentBrowser.vue` (modified, +1/-1)
+```diff
+@@ -2723,7 +2723,7 @@ onMounted(async () => {
+   try {
+     // A restored tab issues no query, so a blocking health probe here would be
+     // the only round trip left on the switch.
+-    await connectionStore.ensureConnected(props.connectionId, { ...(restoredDocumentData ? { verifyHealth: false } : {}), skipIfClosedByUser: true });
++    await connectionStore.ensureConnected(props.connectionId, { ...(restoredDocumentData ? { verifyHealth: false, passive: true } : {}), skipIfClosedByUser: true });
+   } catch (e) {
+     console.warn("[DBX] ensureConnected failed for", props.connectionId, e);
+   }
+```
+
+**File**: `apps/desktop/src/stores/__tests__/connectionStore.automaticReconnectCooldown.spec.ts` (added, +143/-0)
+```diff
+@@ -0,0 +1,143 @@
++import { createPinia, setActivePinia } from "pinia";
++import { beforeEach, describe, expect, it, vi } from "vitest";
++import type { ConnectionConfig } from "@/types/database";
++
++function installLocalStorage() {
++  const data = new Map<string, string>();
++  vi.stubGlobal("localStorage", {
++    getItem: vi.fn((key: string) => data.get(key) ?? null),
++    setItem: vi.fn((key: string, value: string) => data.set(key, value)),
++    removeItem: vi.fn((key: string) => data.delete(key)),
++  });
++}
++
++function pgConnection(id: string): ConnectionConfig {
++  return { id, name: id, db_type: "postgres", host: "127.0.0.1", port: 5432, username: "postgres", password: "", database: "app", read_only: false } as ConnectionConfig;
++}
++
++const ORA_NO_LISTENER = "Agent RPC error: ORA-12541: TNS:no listener";
++
++async function setup() {
++  const checkConnectionHealth = vi.fn().mockResolvedValue(undefined);
++  const connectDb = vi
++    .fn()
++    .mockRejectedValueOnce(new Error(ORA_NO_LISTENER))
++    .mockImplementation(async (config: ConnectionConfig) => config.id);
++  const disconnectDb = vi.fn().mockResolvedValue(undefined);
++
++  vi.doMock("@/lib/backend/tauriRuntime", () => ({ isTauriRuntime: () => false }));
++  vi.doMock("@/lib/backend/api", () => ({
++    checkConnectionHealth,
++    connectDb,
++    disconnectDb,
++    deleteSchemaCachePrefix: vi.fn().mockResolvedValue(undefined),
++    deleteTableVGroupsForConnection: vi.fn().mockResolvedValue(undefined),
++    listInstalledAgents: vi.fn().mockResolvedValue([]),
++    listInstalledAgentsLocal: vi.fn().mockResolvedValue([]),
++    loadSchemaCache: vi.fn().mockResolvedValue(null),
++    saveConnections: vi.fn().mockResolvedValue(undefined),
++    saveSchemaCache: vi.fn().mockResolvedValue(undefined),
++    saveSidebarLayout: vi.fn().mockResolvedValue(undefined),
++  }));
++
++  const { useConnectionStore } = await import("@/stores/connectionStore");
++  const store = useConnectionStore();
++  store.connections = [pgConnection("conn-a")];
++  return { store, connectDb, disconnectDb };
++}
++
++describe("connectionStore: passive reconnect backoff", () => {
++  beforeEach(() => {
++    vi.resetModules();
++    vi.unstubAllGlobals();
++    vi.useRealTimers();
++    installLocalStorage();
++    setActivePinia(createPinia());
++  });
++
++  it("does not open a second connection for passive callers inside the backoff window", async () => {
++    const { store, connectDb } = await setup();
++
++    await expect(store.ensureConnected("conn-a", { passive: true })).rejects.toThrow("ORA-12541");
++    expect(connectDb).toHaveBeenCalledTimes(1);
++    expect(store.connectionErrors["conn-a"]).toContain("ORA-12541");
++
++    // 面板轮询/自动刷新/页签恢复在退避窗口内必须复用同一次失败，不能再发起连接——
++    // 否则第三方安全/零信任客户端会为每次连接各弹一个框。
++    await expect(store.ensureConnected("conn-a", { passive: true })).rejects.toThrow("ORA-12541");
++    expect(connectDb).toHaveBeenCalledTimes(1);
++  }, 20_000);
++
++  it("never blocks a user-triggered ensureConnected", async () => {
++    const { store, connectDb } = await setup();
++    await expect(store.ensureConnected("conn-a", { passive: true })).rejects.toThrow("ORA-12541");
++    expect(connectDb).toHaveBeenCalledTimes(1);
++
++    // 用户点侧栏连接/打开表等走非 passive 路径：必须真的再连一次，不能被后台退避拦住。
++    await expect(store.ensureConnected("conn-a")).resolves.toBeUndefined();
++    expect(connectDb).toHaveBeenCalledTimes(2);
++    expect(store.connectedIds.has("conn-a")).toBe(true);
++  }, 20_000);
++
++  it("lets an explicit connect() through and clears the backoff on success", async () => {
++    const { store, connectDb } = await setup();
++    await expect(store.ensureConnected("conn-a", { passive: true })).rejects.toThrow("ORA-12541");
++    expect(connectDb).toHaveBeenCalledTimes(1);
++
++    await store.connect(pgConnection("conn-a"));
++    expect(connectDb).toHaveBeenCalledTimes(2);
++    expect(store.connectedIds.has("conn-a")).toBe(true);
++
++    // 成功后退避清空，被动路径恢复正常且不再被拦。
++    await store.ensureConnected("conn-a", { passive: true, verifyHealth: false });
++    expect(connectDb).toHaveBeenCalledTimes(2);
++  }, 20_000);
++
++  it("forceReconnect bypasses the backoff", async () => {
++    const { store, connectDb } = await setup();
++    await expect(store.ensureConnected("conn-a", { passive: true })).rejects.toThrow("ORA-12541");
++    expect(connectDb).toHaveBeenCalledTimes(1);
++
++    await expect(store.ensureConnected("conn-a", { passive: true, forceReconnect: true })).resolves.toBeUndefined();
++    expect(connectDb).toHaveBeenCalledTimes(2);
++    expect(store.connectedIds.has("conn-a")).toBe(true);
++  }, 20_000);
++
++  it("stops passive reconnects after repeated failures until an explicit connect", async () => {
++    const { store, connectDb } = await setup();
++    connectDb.mockReset();
++    connectDb.mockRejectedValue(new Error(ORA_NO_LISTENER));
++
++    const start = Date.now();
++    const nowSpy = vi.spyOn(Date, "now").mockImplementation(() => start);
++    try {
++      // 退避序列 15s → 60s → 5min；每次都要等窗口过去才会再试一次。
++      const pas
+```
+
+**File**: `apps/desktop/src/stores/connectionStore.ts` (modified, +57/-1)
+```diff
+@@ -238,6 +238,15 @@ const CONNECTION_HEALTH_CHECK_TIMEOUT_MS = 5000;
+ const CONNECTION_PREWARM_TTL_MS = 30_000;
+ const DISCONNECT_REQUEST_TIMEOUT_MS = 5_000;
+ const DEFAULT_KEEPALIVE_INTERVAL_SECS = 30;
++/**
++ * 被动重连退避/熔断（只作用于显式标了 `passive: true` 的后台路径，用户操作永远不拦）。
++ * 企业零信任/安全接入客户端会为每一次到受保护数据库的**新建连接**做一次授权检查，
++ * 失败时弹一个原生「警告」框——所以一次故障若被面板轮询、自动刷新、页签恢复反复重连，
++ * 用户看到的就是满屏弹框。这里把「失败后的被动重连」逐级收敛：第 1 次失败后 15s、
++ * 第 2 次 60s、第 3 次 5min 内不再发起 connectDb；第 4 次起**完全停止被动重连**，
++ * 直到任意一次成功连接（含用户手动连接）清空退避。
++ */
++const AUTOMATIC_RECONNECT_BACKOFF_MS = [15_000, 60_000, 300_000] as const;
+ const METADATA_LIST_PAGE_CACHE_TTL_MS = 30_000;
+ const METADATA_LIST_PAGE_CACHE_MAX_ENTRIES = 160;
+ const SIDEBAR_DATABASE_STORAGE_CACHE_TTL_MS = 30_000;
+@@ -731,6 +740,11 @@ export const useConnectionStore = defineStore("connection", () => {
+     console.debug("[DBX][metadata-load:trace]", event);
+   };
+   const connectInFlight = new Map<string, Promise<void>>();
++  // 自动重连冷却：连接 id -> 冷却截止时间（Unix 毫秒）与最近一次失败。
++  // 只拦「自动/被动」重连；connect() 与 forceReconnect 会清掉它。
++  const automaticReconnectBlockedUntil = new Map<string, number>();
++  const automaticReconnectBlockedError = new Map<string, unknown>();
++  const automaticReconnectFailureCount = new Map<string, number>();
+   const disconnectInFlight = new Map<string, Promise<void>>();
+   const credentialCloseInFlight = new Map<string, Promise<void>>();
+   const disconnectInFlightScoped = new Map<string, boolean>();
+@@ -1614,6 +1628,34 @@ export const useConnectionStore = defineStore("connection", () => {
+     return message;
+   }
+ 
++  /** 自动重连退避中？（只用于非用户显式触发的重连，见 ensureConnected） */
++  function automaticReconnectCooldownRemainingMs(connectionId: string): number {
++    return Math.max(0, (automaticReconnectBlockedUntil.get(connectionId) ?? 0) - Date.now());
++  }
++
++  function clearAutomaticReconnectCooldown(connectionId: string) {
++    automaticReconnectBlockedUntil.delete(connectionId);
++    automaticReconnectBlockedError.delete(connectionId);
++    automaticReconnectFailureCount.delete(connectionId);
++  }
++
++  function noteAutomaticReconnectFailure(connectionId: string, error: unknown) {
++    const failures = (automaticReconnectFailureCount.get(connectionId) ?? 0) + 1;
++    automaticReconnectFailureCount.set(connectionId, failures);
++    automaticReconnectBlockedError.set(connectionId, error);
++    if (failures > AUTOMATIC_RECONNECT_BACKOFF_MS.length) {
++      // 连续多次失败：停止自动重连，等用户显式重试（避免第三方安全客户端被无限触发）。
++      automaticReconnectBlockedUntil.set(connectionId, Number.POSITIVE_INFINITY);
++      return;
++    }
++    automaticReconnectBlockedUntil.set(connectionId, Date.now() + AUTOMATIC_RECONNECT_BACKOFF_MS[failures - 1]);
++  }
++
++  function automaticReconnectCooldownError(connectionId: string): Error {
++    const lastError = automaticReconnectBlockedError.get(connectionId);
++    return lastError instanceof Error ? lastError : new Error(connectionErrorMessage(lastError));
++  }
++
+   function markConnectionLost(connectionId: string, error: unknown) {
+     connectedIds.value.delete(connectionId);
+     clearEtcdAccessCapabilities(connectionId);
+@@ -5211,6 +5253,8 @@ export const useConnectionStore = defineStore("connection", () => {
+     const expectedConfigFingerprint = connectionConfigFingerprint(getConfig(config.id) ?? config);
+     if (getBlockingDisconnectInFlight(config.id)) await waitForBlockingDisconnectInFlight(config.id);
+     if (passwordChangeReconnectRequired.get(config.id) !== passwordChangeState) throw new Error(i18n.global.t("userAdmin.passwordChangedReconnect"));
++    // 用户显式连接：清掉自动重连冷却，保证“点连接/重试”永远真的会再试一次。
++    clearAutomaticReconnectCooldown(config.id);
+     const localAttempt = beginLocalConnectionAttempt(config.id);
+     const metadataRevision = connectionStateRevision(config.id);
+     try {
+@@ -5262,6 +5306,8 @@ export const useConnectionStore = defineStore("connection", () => {
+       markConnectionHealthChecked(id);
+       clearConnectionError(config.id);
+       if (id !== config.id) clearConnectionError(id);
++      clearAutomaticReconnectCooldown(config.id);
++      if (id !== config.id) clearAutomaticReconnectCooldown(id);
+ 
+       const existing = findConnectionNode(id);
+       if (existing) {
+@@ -5636,7 +5682,7 @@ export const useConnectionStore = defineStore("connection", () => {
+    * `CONNECTION_CLOSED_BY_USER_MESSAGE`，让调用方停在"连接已关闭"的空态，而不是把连接
+    * 偷偷连回来（这是"关闭连接后连接又自己回来"这类报告的根因）。
+    */
+-  async function ensureConnected(connectionId: string, options: { activate?: boolean; verifyHealth?: boolean; forceReconnect?: boolean; allowPasswordPrompt?: boolean; skipIfClosedByUser?: boolean } = {}) {
++  async function ensureConnected(connectionId: string, options: { activate?: boolean; verifyHealth?: boolean; forceReconnect?: boolean; allowPasswordPrompt?: boolean; skipIfClosedByUser?: boolean; passive?: boolean } = {}) {
+     if (options.skipIfClosedByUser && isConnectionClosedByUser(connectionId)) throw new Error(CONNECTION_CLOSED_BY_USER_MESSAGE);
+     if (passwordChangeReconnectRequire
+```
+
+**File**: `crates/dbx-core/src/connection/mod.rs` (modified, +3/-1)
+```diff
+@@ -9924,7 +9924,9 @@ mod tests {
+         .expect("SID listener errors should allow service-name retry");
+         assert_eq!(service_retry.connection_string.as_deref(), Some("jdbc:oracle:thin:@//127.0.0.1:3306/ORCL"));
+ 
+-        assert!(oracle_alternate_connect_config(&config, "ORA-12541: TNS:no listener").is_some());
++        // ORA-12541 / "no listener" is TCP-level unreachable: alternates cannot help
++        // and each one opens another connection (and another security-client popup).
++        assert!(oracle_alternate_connect_config(&config, "ORA-12541: TNS:no listener").is_none());
      }
  
-+    #[test]
-+    fn removes_read_only_leftovers() {
-+        let directory = TestDirectory::new();
-+        let readonly_path = directory.0.join("dbx-mcp.exe~RF8c73e4f.TMP");
-+        fs::write(&readonly_path, b"readonly leftover").unwrap();
-+        let mut permissions = fs::metadata(&readonly_path).unwrap().permissions();
-+        permissions.set_readonly(true);
-+        fs::set_permissions(&readonly_path, permissions).unwrap();
-+        assert!(fs::metadata(&readonly_path).unwrap().permissions().readonly());
-+
-+        assert_eq!(cleanup_directory(&directory.0).unwrap(), 1);
-+        assert!(!readonly_path.exists());
-+    }
-+
-     #[cfg(unix)]
      #[test]
-     fn skips_symlinked_files_and_directories() {
-```
-
----
-
-### Incident Patch 3: `7e2c6e20` (2026-10-25)
-**Commit Message**: fix(deps): update gson to 2.15.0
-
-**File**: `agents/common/build.gradle` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- dependencies {
--    implementation 'com.google.code.gson:gson:2.14.0'
-+    implementation 'com.google.code.gson:gson:2.15.0'
-     compileOnly 'com.zaxxer:HikariCP:7.1.0'
-     testImplementation 'com.zaxxer:HikariCP:7.1.0'
-     testImplementation 'com.h2database:h2:2.3.232'
-```
-
-**File**: `agents/drivers/dameng/build.gradle` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@ dependencies {
-     implementation fileTree(dir: 'libs', include: ['*.jar'])
-     // DmJdbcDriver8 supports JDK 8+ (compatible with JRE 21 used by DAMENG agent).
-     implementation 'com.dameng:DmJdbcDriver8:8.1.5.45'
--    testImplementation 'com.google.code.gson:gson:2.14.0'
-+    testImplementation 'com.google.code.gson:gson:2.15.0'
- }
- 
- tasks.named('shadowJar') {
-```
-
-**File**: `agents/drivers/db2/build.gradle` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- dependencies {
--    implementation 'com.google.code.gson:gson:2.14.0'
-+    implementation 'com.google.code.gson:gson:2.15.0'
-     implementation fileTree(dir: 'libs', include: ['*.jar'])
-     implementation 'com.ibm.db2:jcc:11.5.9.0'
- }
-```
-
-**File**: `agents/drivers/h2/build.gradle` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@ dependencies {
-     h2V1 'com.h2database:h2:1.4.200'
-     h2V2 'com.h2database:h2:2.1.214'
-     h2V3 'com.h2database:h2:2.4.240'
--    testImplementation 'com.google.code.gson:gson:2.14.0'
-+    testImplementation 'com.google.code.gson:gson:2.15.0'
- }
- 
- tasks.named('processResources') {
-```
-
-**File**: `agents/drivers/kafka/build.gradle` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- dependencies {
--    implementation 'com.google.code.gson:gson:2.14.0'
-+    implementation 'com.google.code.gson:gson:2.15.0'
-     implementation 'org.apache.kafka:kafka-clients:3.9.2'
-     implementation('org.apache.zookeeper:zookeeper:3.8.4') {
-         exclude group: 'log4j', module: 'log4j'
-```
-
-**File**: `agents/drivers/mongodb/build.gradle` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- dependencies {
-     implementation project(':common')
-     implementation 'org.mongodb:mongodb-driver-sync:3.12.14'
--    implementation 'com.google.code.gson:gson:2.14.0'
-+    implementation 'com.google.code.gson:gson:2.15.0'
- }
- 
- tasks.named('shadowJar') {
-```
-
-**File**: `agents/drivers/oceanbase-oracle/build.gradle` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- dependencies {
-     implementation fileTree(dir: 'libs', include: ['*.jar'])
-     implementation 'com.oceanbase:oceanbase-client:2.4.19'
--    testImplementation 'com.google.code.gson:gson:2.14.0'
-+    testImplementation 'com.google.code.gson:gson:2.15.0'
- }
- 
- tasks.named('shadowJar') {
-```
-
-**File**: `agents/drivers/transwarp/build.gradle` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- dependencies {
-     implementation files('libs/inceptor-sdk-transwarp-6.1.0-SNAPSHOT.jar')
-     testImplementation 'com.h2database:h2:2.4.240'
--    testImplementation 'com.google.code.gson:gson:2.14.0'
-+    testImplementation 'com.google.code.gson:gson:2.15.0'
- }
- 
- tasks.named('shadowJar') {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13441** (2026-10-25): feat(export): queue manual desktop exports (@efeire)
-- **PR #13440** (2026-10-25): fix(deps): update dependency com.google.code.gson:gson to v2.15.0 (@renovate[bot])
-- **PR #13439** (2026-10-25): fix(sql): keep top-level SQL Server BEGIN blocks as one execution batch (@caiyq925-cell)
-- **PR #13438** (closed): fix(deps): update dependency com.databricks:databricks-jdbc to v3.4.4 - autoclosed (@renovate[bot])
-- **PR #13437** (2026-10-25): fix(mcp): clear the READONLY attribute when cleaning replacement temp files (@caiyq925-cell)
-- **PR #13435** (2026-10-25): docs(database-docs): match zh-CN UI labels and explain the notes file (@dienaso)
+- **PR #13677** (closed): fix(deps): update npm minor/patch - autoclosed (@renovate[bot])
+- **PR #13675** (2026-10-27): fix(tabs): clarify the active group in horizontal tab layouts (@zipg)
+- **PR #13672** (2026-10-27): fix(windows): keep the 8 MiB main-thread stack on legacy builds (0xC00000FD) (@zipg)
+- **PR #13662** (2026-10-27): fix(oracle): 连接失败最多只发一条 TCP，避免第三方安全客户端弹框风暴 (@zipg)
+- **PR #13658** (2026-10-27): fix(sidebar): 修复长对象名称触发横向滚动后搜索控件溢出 (@zipg)
+- **PR #13654** (2026-10-27): chore(deps): update actions/checkout action to v7 (@renovate[bot])
 
 ---
 
@@ -2612,52 +2887,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sql): keep top-level SQL Server BEGIN blocks as one batch
+## X. windows): keep the 8 MiB main-thread stack on legacy builds (0xC00000FD) (#13672
 
 **RULE**:
-When implementing operations in `apps/desktop/src/lib/__tests__/sql/sqlStatementRanges.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.cargo/config.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `afc9374f`: sql): keep top-level SQL Server BEGIN blocks as one batch. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fbb588ee`: windows): keep the 8 MiB main-thread stack on legacy builds (0xC00000FD) (#13672). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/lib/__tests__/sql/sqlStatementRanges.spec.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/config.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  const sqlServerTryCatchBatch = [
-    "SET XACT_ABORT ON;",
-    "",
-    "BEGIN TRY",
-    "    BEGIN TRANSACTION;",
-    "",
-    "    UPDATE [dbo].[Documents]",
-    "    SET [Deleted] = 0",
-    "    WHERE [Deleted] = 1;",
-    "",
-    "    DECLARE @Updated int = @@ROWCOUNT;",
-    "",
-    "    IF EXISTS (SELECT 1 FROM [dbo].[Documents] WHERE [Deleted] = 1)",
-    "        THROW 50001, N'Rows with Deleted = 1 still exist.', 1;",
-    "",
-    "    COMMIT TRANSACTION;",
-    "",
-    "    SELECT N'OK' AS Result, @Updated AS RowsUpdated;",
-    "END TRY",
-    "BEGIN CATCH",
-    "    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;",
-    "    THROW;",
-    "END CATCH;",
-  ].join("\n");
-  // The batch range starts at the real `BEGIN TRY` token, so the blank line
-  // and semicolon around the statement are not part of it.
-  const sqlServerTryCatchRange = sqlServerTryCatchBatch.slice(sqlServerTryCatchBatch.indexOf("BEGIN TRY")).replace(/;$/, "");
 
-  // #13051: a top-level BEGIN TRY ... END TRY BEGIN CATCH ... END CATCH script
-  // must execute as one batch — splitting it at the top-level `;` sends
-  // fragments like `BEGIN TRANSACTION` alone and SQL Server rejects them.
-  it("keeps a SQL Server top-level 
+# The legacy Windows 7 / Server 2012 R2 target keeps the same 8 MiB main-thread
+# stack. CI builds it with an explicit RUSTFLAGS env (static CRT), which
+# replaces this table, so the same link arg is repeated in those workflows and
+# audited by .github/scripts/assert-win7-pe-compat.ps1. Without it the legacy PE
+# keeps the 1 MiB default and the app aborts with 0xC00000FD ("DBX 已停止工作").
+[target.x86_64-win7-windows-msvc]
+rustflags = ["-C", "link-arg=/STACK:8388608"]
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2667,4 +2918,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `afc9374f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fbb588ee` are properly handled with clean fallback behavior.
