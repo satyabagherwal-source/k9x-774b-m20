@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T17:38:04.022Z",
-  "total_cycles_completed": 5438,
-  "total_learnings_persisted": 5438,
-  "total_rules_promoted": 4839,
+  "last_updated": "2026-10-27T17:49:42.169Z",
+  "total_cycles_completed": 5440,
+  "total_learnings_persisted": 5440,
+  "total_rules_promoted": 4841,
   "history": [
-    {
-      "timestamp": "2026-10-27T12:14:44.667Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T12:14:46.995Z",
-      "repository": "GreptimeTeam/greptimedb",
-      "learningId": "learn-github-greptimeteam-greptimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T12:18:37.736Z",
       "repository": "embassy-rs/embassy",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-27T17:38:04.022Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T17:44:56.501Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T17:49:42.169Z",
+      "repository": "agent-of-empires/agent-of-empires",
+      "learningId": "learn-github-agent-of-empires-agent-of-empires",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

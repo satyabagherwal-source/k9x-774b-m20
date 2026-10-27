@@ -5470,3 +5470,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-minimaxai-minimax-m3-1-flash` | `https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash` | `hf-minimax` | Multi-dimensional audit evidence | 2026-10-27T17:37:54.817Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `b3766d4f` | Multi-dimensional audit evidence | 2026-10-27T17:37:58.361Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `a22e2df0` | Multi-dimensional audit evidence | 2026-10-27T17:38:04.018Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `a078a8b7` | Multi-dimensional audit evidence | 2026-10-27T17:44:56.496Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `691b8d2c` | Multi-dimensional audit evidence | 2026-10-27T17:49:42.164Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source**: github ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
-> **Source Version**: `a927b3d6`  
+> **Source Version**: `691b8d2c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T23:39:19.209Z  
+> **Timestamp**: 2026-10-27T17:49:41.729Z  
 > **Learning ID**: `learn-github-agent-of-empires-agent-of-empires`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T23:39:19.200Z  
+> **Harvest Timestamp**: 2026-10-27T17:44:39.051Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Manage multiple Claude Code, OpenCode agents from either TUI or Web for easy access on mobile. Also supports Mistral Vibe, Codex CLI, Gemini CLI, Pi.dev, Copilot CLI, Factory Droid Coding.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3383 stars
+- **Stars / Engagement**: 3389 stars
 
 ---
 
@@ -1305,6 +1305,7 @@ impl Lease {
 //! `AcpState`: the structured view session state, folded from `Event`s by a single writer.
 
 use crate::daemon::PromptAttachmentRef;
+use crate::session::Status;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
@@ -1619,8 +1620,7 @@ pub enum StartupErrorDetail {
         auto_install: bool,
     },
     MissingAgentInfo {
-        expected_package: String,
-        i
+        expecte
 ```
 
 ### Core Architecture Module: `src/cli/hooks.rs`
@@ -2217,11 +2217,11 @@ impl Transaction {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4793** (2026-10-23): **Record benchmark quit timeouts as failed runs**
-  *Symptoms*: ### What happened?  P3 follow-up to #4566, verified on main `4cdb0fea3042f25aa3881d182d78e1c03b0d335f`.  After the first frame, if all PTY slave descriptors close while the child remains alive, Linux can report EIO on the master. The quit loop then [calls `process.wait(timeout=...)`](https://github.com/agent-of-empires/agent-of-empires/blob/4cdb0fea3042f25aa3881d182d78e1c03b0d335f/scripts/bench-startup.py#L133-L140). If that wait expires, `subprocess.TimeoutExpired` bypasses the [per-run `except RuntimeError`](https://github.com/agent-of-empires/agent-of-empires/blob/4cdb0fea3042f25aa3881d182d78e1c03b0d335f/scripts/bench-startup.py#L226-L245), aborting the series with a traceback instead of recording a failed measurement and continuing. Cleanup still runs.  **Reproduction scenario, source-traced, not executed:** in a two-iteration fixture, deliver the first frame, then make the post-quit PTY read raise EIO while `poll()` reports a live child and `wait()` raises `TimeoutExpired`. The exception escapes the first iteration. A stuck child that retains the PTY follows the already-handled deadline branch; this is not a claim about every slow quit or ordinary TUI shutdown.  **Expected correction:** normalize this wait timeout to the existing `RuntimeError("quit timed out after the first frame")`. Add a deterministic regression proving a `FAIL` record, continuation to the next iteration, a nonzero aggregate result and retained cleanup. Do not extend deadlines or suppress failures.  P
+- **Issue #4896** (2026-10-26): **Local TUI restart silently removes the configured passphrase gate**
+  *Symptoms*: ### What happened?  A Local dashboard started from a TUI inheriting `AOE_SERVE_PASSPHRASE` enables the passphrase gate, but confirming Restart in that same TUI silently removes it. Local binds `0.0.0.0`, so this can affect LAN clients. Token authentication remains active: this is loss of the additional passphrase gate, **not unauthenticated access**.  **Source-derived reproduction, not executed:**  1. In a disposable account on an isolated network, launch `AOE_SERVE_PASSPHRASE='dummy-test-secret' aoe` and start the Web dashboard in Local mode. 2. Using a fresh HTTP client with the current URL token and no login cookie, request `/api/login/status`. The passphrase is required (`required: true`). 3. Confirm Restart with R twice in the TUI, without changing its environment. Repeat the request using the current URL token. 4. The successor is constructed without a passphrase (`required: false`). Expected: restart preserves the effective passphrase requirement.  **Cause at [`0400f174`](https://github.com/agent-of-empires/agent-of-empires/commit/0400f1748a179b839d86243e9024a05e24d9e0b2):** Local restart supplies `None` ([request](https://github.com/agent-of-empires/agent-of-empires/blob/0400f1748a179b839d86243e9024a05e24d9e0b2/src/tui/dialogs/serve/mod.rs#L655-L662)). Its override bypasses startup's environment fallback and takes precedence over the recovered predecessor credential ([restart](https://github.com/agent-of-empires/agent-of-empires/blob/0400f1748a179b839d86243e9024a05e24
 
-- **Issue #4748** (2026-10-23): **fix(trash): restoring worktree fails with 'validation failed' when .git pointer is relative**
-  *Symptoms*: ### What happened?  Restoring a trashed session with an aoe-managed worktree fails with: ``` Could not restore the worktree: git worktree move: Git worktree command failed: fatal: validation failed, cannot move working tree ```  #### Root Cause 1. On worktree creation (`src/git/worktree/create.rs`), AoE intentionally runs `convert_git_file_to_relative()`, writing a relative pointer into the worktree's `.git` file (e.g. `gitdir: ../../private-node-agent/.git/worktrees/bonial`). 2. When the session is trashed (`src/session/trash.rs`), the worktree is relocated into `<repo-worktrees>/.aoe-trash/<session-id>`. 3. Because `.aoe-trash/` introduces an extra nesting level (+1 directory depth), the existing relative path `../../...` becomes broken while in trash (it resolves to `<repo-worktrees>/<repo>` instead of reaching the parent directory containing the main repo). 4. When restoring via `aoe session restore` or the UI, AoE calls `git.move_worktree(&current, &original)` which runs `git worktree move`. Git runs `validate_worktree()` before moving, attempts to resolve the broken relative path in `.git`, and aborts with:    ```    fatal: validation failed, cannot move working tree    ```  #### Steps to reproduce 1. Create a session with a managed worktree located in a sibling directory (e.g. `<repo>-worktrees/<session-name>`), where `.git` contains a relative pointer (`gitdir: ../../<repo>/.git/worktrees/<session-name>`). 2. Trash the session (relocates it into `<repo>-worktrees/.aoe
+- **Issue #4848** (2026-10-26): **Hold every session-list request in the delayed-layout regression**
+  *Symptoms*: ### What happened?  P3 test follow-up to #4644; no local flaky-run reproduction is claimed.  In [web/tests/live/right-panel.spec.ts:64](https://github.com/agent-of-empires/agent-of-empires/blob/4f72cb0273fa31a73d453284304b47c74f982477/web/tests/live/right-panel.spec.ts#L64-L94), the route holds only the first GET, while [web/src/hooks/useSessions.ts:57](https://github.com/agent-of-empires/agent-of-empires/blob/4f72cb0273fa31a73d453284304b47c74f982477/web/src/hooks/useSessions.ts#L57-L64) keeps polling. A subsequent GET can load the row and pin layout before `release()`, so the intended unknown-state precondition is not protected.  The same test awaits `pane-toggle-diff` before release, but [web/src/components/TopBar.tsx:221](https://github.com/agent-of-empires/agent-of-empires/blob/4f72cb0273fa31a73d453284304b47c74f982477/web/src/components/TopBar.tsx#L221-L224) renders that control only after the Session is known. Merely holding every GET would leave this assertion waiting for its own blocked prerequisite.  **Acceptance:** hold all list GETs until explicit release. After the causal diff-request barrier, assert storage remains unpinned and the toggle is absent; release, await the row/toggle and persisted layout, then assert its inactive state. Use observable checkpoints, not fixed sleeps. The test must remain valid even if polling happens before release.  ### aoe version and OS  Source at upstream/main `4f72cb0273fa31a73d453284304b47c74f982477` (1.21.0). Live Playwright test 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2238,402 +2238,1363 @@ impl Transaction {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7ee49af3` (2026-10-25)
-**Commit Message**: fix(daemon): stop trusting group-writable ancestors of the socket dir (#4929)
+### Incident Patch 1: `886b11b6` (2026-10-26)
+**Commit Message**: fix(session): report Busy consistently across CLI, TUI and HTTP delete paths (#4925)
 
-* fix(daemon): stop trusting group-writable ancestors of the socket dir
+* fix(session): report Busy and Superseded as distinct delete outcomes
 
-user_private_gid inferred a private group from an empty gr_mem, which
-omits accounts whose primary GID is that group. Another passwd entry
-sharing the owner's GID could then write an owner-owned 0775 ancestor
-and replace the daemon directory. Drop the exception: ancestors must
-have no group or other write, apart from root-owned sticky directories.
+Split DeletionDisposition::Superseded from Busy, name the holding operation
+in 409 lifecycle responses, list Busy sessions in empty-trash and workspace
+delete, and give the TUI a Busy message for lifecycle_locked.
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* fix(daemon): drop the unused st_gid from the Linux Stat
-
-Nothing reads the group id once the private-group exception is gone, so
-Linux clippy rejected the field as dead code.
+* test(session): cover Busy holder, retry after release, and the contract docs
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
----------
+* fix(daemon): keep superseded distinct from busy in the client
 
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Superseded now has its own finite code header and TUI text that does not
+promise nothing changed, since a superseded purge may have started teardown.
 
-**File**: `src/cli/runtime_read/uds.rs` (modified, +14/-32)
+Addresses review comment from @jerome-benoit on #4925.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(session): report stale abandon-purge as superseded and keep restore holder
+
+lifecycle_busy is now reserved for a confirmed holder; a stale purge
+generation answers lifecycle_superseded and restore names the holding
+operation.
+
+Addresses review comment from @jerome-benoit on #4925.
+
+Co-Authored-By: Claude S
+
+**File**: `docs/api.md` (modified, +12/-0)
 ```diff
-@@ -336,12 +336,9 @@ fn walk_directory(path: &Path, euid: u32, admission: bool) -> Result<OwnedFd, Tr
-     if !path.is_absolute() {
-         return Err(TrustedPathError::Invalid);
-     }
--    let private_gid = admission
--        .then(|| crate::daemon::transport::user_private_gid(euid))
--        .flatten();
-     let root = open_dir(Path::new("/"))?;
-     if admission {
--        validate_directory_stat(&root, euid, private_gid, false, true, Path::new("/"))?;
-+        validate_directory_stat(&root, euid, false, true, Path::new("/"))?;
-     }
-     let mut components = path.components().skip(1).peekable();
-     if components.peek().is_none() {
-@@ -367,7 +364,7 @@ fn walk_directory(path: &Path, euid: u32, admission: bool) -> Result<OwnedFd, Tr
-             })?;
-         // Connection trust is checked on opened objects, never on their pathnames.
-         if admission {
--            validate_directory_stat(&next, euid, private_gid, final_component, true, &walked)?;
-+            validate_directory_stat(&next, euid, final_component, true, &walked)?;
+@@ -646,6 +646,18 @@ Complete purge recovery before retrying; this busy refusal does not degrade runt
+ Purge refuses unresolved runner ownership before committing deletion. The row
+ and its resources remain available for repair and retry.
+ 
++Delete, purge and restore share one Busy contract. Busy means another lifecycle
++operation holds the session, nothing changed, and the caller may retry once it
++finishes. It is not `KeptRestored` (restored mid-purge), already gone, or a
++cleanup failure. Over HTTP it is `409` with the `lifecycle_locked` code header
++and `{"error":"lifecycle_busy","operation":"<holder>"}`; a selection that
++changed after it was made is `409` with its own `lifecycle_superseded` code
++header; it may already be partly processed, so refresh and check before retrying. A batch delete that skips Busy sessions lists them under `busy` and
++reports `partial`; when nothing else completed it answers `409 lifecycle_busy`.
++`aoe rm --purge` and `aoe session restore` exit non-zero for Busy. `aoe session
++empty-trash` purges the rest, lists each skipped session on stderr, then exits
++non-zero.
++
+ Selected-trash actions include `expected_trashed_at`, `expected_generation` and
+ `expected_trash_lifecycle_id`. The durable identity distinguishes restore/retrash
+ even when timestamps coincide.
+```
+
+**File**: `src/cli/remove.rs` (modified, +3/-0)
+```diff
+@@ -245,6 +245,9 @@ pub async fn run(profile: &str, args: RemoveArgs) -> Result<()> {
+                 .first()
+                 .map(String::as_str)
+                 .unwrap_or("Session purge was refused");
++            if result.disposition == crate::session::deletion::DeletionDisposition::Busy {
++                anyhow::bail!("{detail}: {removed_title}; nothing changed, retry once it finishes");
++            }
+             anyhow::bail!("{detail}: {removed_title}");
          }
-         current = next;
-     }
-@@ -468,7 +465,6 @@ fn validate_directory_owner(
- fn validate_directory_stat(
-     file: &OwnedFd,
-     euid: u32,
--    private_gid: Option<u32>,
-     final_component: bool,
-     root_check: bool,
-     path: &Path,
-@@ -483,7 +479,7 @@ fn validate_directory_stat(
-             "Inspect the existing path at {path}; select a directory without removing configuration.",
-         )));
-     }
--    if !group_other_writes_allowed(&stat, final_component, euid, private_gid) {
-+    if !group_other_writes_allowed(&stat, final_component, euid) {
-         return Err(TrustedPathError::Refused(RefusedComponent::new(
-             path,
-             mode,
-@@ -516,21 +512,10 @@ fn validate_directory_stat(
-     Ok(())
- }
- 
--fn group_other_writes_allowed(
--    stat: &os::Stat,
--    final_component: bool,
--    owner: u32,
--    private_gid: Option<u32>,
--) -> bool {
-+fn group_other_writes_allowed(stat: &os::Stat, final_component: bool, owner: u32) -> bool {
-     stat.st_mode & 0o022 == 0
-         || (!final_component
--            && crate::daemon::transport::trusted_ancestor(
--                stat.st_uid,
--                stat.st_gid,
--                stat.st_mode,
--                owner,
--                private_gid,
--            ))
-+            && crate::daemon::transport::trusted_ancestor(stat.st_uid, stat.st_mode, owner))
- }
- 
- async fn connect_admission(
-@@ -1350,36 +1335,33 @@ mod tests {
-     }
- 
-     #[test]
--    fn writable_ancestors_preserve_private_groups_and_final_directory_isolation() {
-+    fn writable_ancestors_preserve_sticky_roots_and_final_directory_isolation() {
-         let mut stat = os::Stat {
-             st_mode: os::DIRECTORY | 0o777,
-             st_uid: 0,
--            st_gid: 0,
-             st_dev: 0,
-             st_ino: 0,
-             st_nlink: 1,
-         };
- 
-         stat.st_uid = 0;
--        assert!(!group_other_writes_allowed(&stat, true, 1, None));
-+        assert!(!group_other_writes_allowed(&stat, true, 1));
-         stat.st_mode |= crate::process::runtime_io::STICKY;
--        assert!(group_other_writes_allowed(&stat, false, 1, None));
--        assert!(!group_other_writes_allowed(&stat, true, 1, None));
-+        assert!(group_other_writes_allowed(&stat, false, 1));
-+        assert!(!group_other_writes_allowed(&stat, true, 1));
- 
-         stat.st_uid = 1;
--        assert!(!group_other_writes_allowed(&stat, false, 1, None));
-+        assert!(!group_other_writes_allowed(&stat, false, 1));
- 
-         stat.st_uid = 0;
-         stat.st_mode = crate::process::runtime_io::DIRECTORY | 0o755;
--        assert!(group_other_writes_allowed(&stat, false, 1, None));
-+        assert!(group_other_writes_allowed(&stat, false, 1));
-         stat.st_mode = crate::process::runtime_io::DIRECTORY | 0o757;
--        assert!(!group_other_writes_allowed(&stat, false, 1, None));
-+        assert!(!group_other_writes_allowed(&stat, false, 1));
-         stat.st_uid = 1;
--        stat.st_gid = 1;
-         stat.st_mode = os::DIRECTORY | 0o775;
--        assert!(group_other_writes_allowed(&stat, false, 1, Some(1)));
--        assert!(!group_other_writes_allowed(&stat, true, 1, Some(1)));
--        assert!(!group_other_writes_allowed(&stat, false, 1, None));
-+        assert!(!group_other_writes_allowed(&stat, false, 1));
-+        assert!(!group_other_writes_allowed(&stat, true, 1));
-         stat.st_uid = 1;
-         stat.st_mode = os::DIRECTORY | 0o700;
-         assert!(matches!(
+     };
 ```
 
-**File**: `src/daemon/transport.rs` (modified, +13/-32)
+**File**: `src/cli/session.rs` (modified, +88/-1)
 ```diff
-@@ -50,13 +50,12 @@ pub(crate) fn prepare_runtime_directory(parent: &Path) -> anyhow::Result<()> {
-     if let Some(app_dir) = parent.parent() {
-         drop_group_other_write(app_dir, owner)?;
+@@ -684,6 +684,7 @@ async fn empty_trash(profile: &str) -> Result<()> {
+     let mut kept_for_retry = 0usize;
+     let mut being_restored_elsewhere = 0usize;
+     let mut being_purged_elsewhere = 0usize;
++    let mut busy = Vec::new();
+     for inst in &trashed {
+         let config = crate::session::config::repo_config::resolve_config_with_repo_or_warn(
+             profile,
+@@ -717,6 +718,9 @@ async fn empty_trash(profile: &str) -> Result<()> {
+                         being_restored_elsewhere += 1;
+                     }
+                     crate::session::deletion::DeletionDisposition::Busy => {
++                        busy.push(busy_line(inst, &result));
++                    }
++                    crate::session::deletion::DeletionDisposition::Superseded => {
+                         being_purged_elsewhere += 1;
+                     }
+                     _ => {}
+@@ -742,6 +746,9 @@ async fn empty_trash(profile: &str) -> Result<()> {
+                 }
+             }
+             crate::session::deletion::DeletionDisposition::Busy => {
++                busy.push(busy_line(inst, &result));
++            }
++            crate::session::deletion::DeletionDisposition::Superseded => {
+                 being_purged_elsewhere += 1;
+             }
+             crate::session::deletion::DeletionDisposition::Failed => kept_for_retry += 1,
+@@ -770,9 +777,12 @@ async fn empty_trash(profile: &str) -> Result<()> {
+             "{being_restored_elsewhere} being restored by another process"
+         ));
      }
--    let private_gid = user_private_gid(owner);
-     for ancestor in parent.ancestors() {
-         let meta = std::fs::symlink_metadata(ancestor)?;
-         anyhow::ensure!(
-             meta.is_dir()
-                 && !meta.file_type().is_symlink()
--                && trusted_ancestor(meta.uid(), meta.gid(), meta.mode(), owner, private_gid),
-+                && trusted_ancestor(meta.uid(), meta.mode(), owner),
-             "Unsafe daemon socket directory: {}",
-             ancestor.display()
-         );
-@@ -80,24 +79,9 @@ fn drop_group_other_write(dir: &Path, owner: u32) -> anyhow::Result<()> {
-     Ok(())
- }
- 
--/// Accept only same-name user-private primary groups without extra members.
--pub(crate) fn user_private_gid(owner: u32) -> Option<u32> {
--    use nix::unistd::{Group, Uid, User};
--    let user = User::from_uid(Uid::from_raw(owner)).ok()??;
--    let group = Group::from_gid(user.gid).ok()??;
--    (group.name == user.name && group.mem.is_empty()).then(|| user.gid.as_raw())
--}
--
--pub(crate) fn trusted_ancestor(
--    uid: u32,
--    gid: u32,
--    mode: u32,
--    owner: u32,
--    private_gid: Option<u32>,
--) -> bool {
-+pub(crate) fn trusted_ancestor(uid: u32, mode: u32, owner: u32) -> bool {
-     let trusted_sticky = uid == 0 && mode & 0o1000 != 0;
--    let private_group_write = uid == owner && mode & 0o002 == 0 && private_gid == Some(gid);
--    (uid == owner || uid == 0) && (mode & 0o022 == 0 || trusted_sticky || private_group_write)
-+    (uid == owner || uid == 0) && (mode & 0o022 == 0 || trusted_sticky)
- }
- 
- pub(crate) async fn connect_unix(path: &Path) -> Result<tokio::net::UnixStream, DaemonClientError> {
-@@ -371,24 +355,21 @@ mod tests {
-     }
- 
-     #[test]
--    fn ancestor_trust_allows_only_owner_private_or_sticky_writes() {
-+    fn ancestor_trust_allows_only_owner_or_root_sticky_writes() {
-         const ME: u32 = 1000;
--        const PRIVATE: Option<u32> = Some(1000);
-         let cases = [
--            (ME, 1000, 0o755, PRIVATE, true),
--            (ME, 1000, 0o775, PRIVATE, true),
--            (ME, 1000, 0o775, None, false),
--            (ME, 100, 0o775, PRIVATE, false),
--            (ME, 1000, 0o777, PRIVATE, false),
--            (0, 0, 0o1777, PRIVATE, true),
--            (0, 1000, 0o775, PRIVATE, false),
--            (2000, 2000, 0o755, PRIVATE, false),
-+            (ME, 0o755, true),
-+            (ME, 0o775, false),
-+            (ME, 0o777, false),
-+            (0, 0o1777, true),
-+            (0, 0o775, false),
-+            (2000, 0o755, false),
-         ];
--        for (uid, gid, mode, private_gid, expected) in cases {
-+        for (uid, mode, expected) in cases {
-             assert_eq!(
--                trusted_ancestor(uid, gid, mode, ME, private_gid),
-+                trusted_ancestor(uid, mode, ME),
-                 expected,
--                "uid={uid} gid={gid} mode={mode:o} private={private_gid:?}"
-+                "uid={uid} mode={mode:o}"
-             );
-         }
-     }
-```
-
-**File**: `src/process/linux.rs` (modified, +0/-2)
-```diff
-@@ -1576,7 +1576,6 @@ pub(crate) mod runtime_io {
-     pub(crate) struct Stat {
-         pub st_mode: u32,
-         pub st_uid: u32,
--        pub st_gid: u32,
-         pub st_dev: u64,
-         pub st_ino: u64,
-         pub st_nlink: libc::nlink_t,
-@@ -1585,7 +1584,6 @@ pub(crate) mod runtime_io {
-         Stat {
-             st_mode: stat.st_mode,
-             st_uid: stat.st_uid,
--            st_gid: stat.st_gid,
-             st_dev: stat.st_dev,
-             st_ino: stat.st_ino,
-             st_nlink: stat.st_nlink,
-```
-
----
-
-### Incident Patch 2: `5f4bcc3e` (2026-10-25)
-**Commit Message**: fix(session): release the create spawn reservation when a stop cancels it (#4940)
-
-* fix(session): release the create spawn reservation when a stop cancels it
-
-The acp.create_spawn task waited on the prompt-submission and instance
-guards without watching its lease. A purge of a Starting session holds
-both guards while it waits for that reservation to drop, so the wait
-ran into its 5 s timeout and the scratch dir was only removed later by
-purge recovery. Race the guard acquisition against the lease
-cancellation and return, dropping the reservation, on cancel.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* fix(session): include the namespace read in the cancellable spawn acquisition
-
-Addresses review comment from jerome-benoit on #4940.
-
-create_spawn took the profile namespace read before the cancellable
-acquisition. A queued namespace writer (rename) makes that read wait
-behind a purge's read lease, and the purge waits on the reservation,
-so the select was never reached. Acquire namespace, submission and
-instance guards together, in the same order, against the lease
-cancellation, and cover the queued-writer case.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
------
-
-**File**: `src/server/session_spawn.rs` (modified, +69/-4)
-```diff
-@@ -744,10 +744,16 @@ pub(crate) async fn spawn_structured_session(
-                 let spawn_state = state.clone();
-                 let claude_store_pin = response_instance.selected_claude_store_pin();
-                 service.work.spawn("acp.create_spawn", async move {
--                    let namespace = spawn_state.profile_namespace.read().await;
--                    let submission = service_for_check.prompt_submission(&id).await;
--                    let inst_lock = service_for_check.instance_lock(&id).await;
--                    let guard = inst_lock.lock().await;
-+                    let Some((namespace, submission, guard)) = acquire_spawn_guards(
-+                        &service_for_check,
-+                        &spawn_state.profile_namespace,
-+                        &id,
-+                        reservation.lease().cancellation(),
-+                    )
-+                    .await
-+                    else {
-+                        return;
-+                    };
-                     let check_id = id.clone();
-                     let checked = tokio::task::spawn_blocking(move || {
-                         use crate::session::SessionStore;
-@@ -869,6 +875,32 @@ pub(crate) async fn spawn_structured_session(
-     }
- }
- 
-+/// Takes the namespace, submission and instance guards, or `None` once a stop
-+/// cancels the lease. A purge holds them while it waits for this reservation
-+/// to drop, and a queued namespace writer makes the read wait behind it, so
-+/// waiting through a cancel deadlocks until the purge timeout.
-+async fn acquire_spawn_guards(
-+    service: &SessionService,
-+    namespace: &Arc<tokio::sync::RwLock<()>>,
-+    id: &str,
-+    cancelled: &tokio_util::sync::CancellationToken,
-+) -> Option<(
-+    tokio::sync::OwnedRwLockReadGuard<()>,
-+    tokio::sync::OwnedMutexGuard<()>,
-+    tokio::sync::OwnedMutexGuard<()>,
-+)> {
-+    let acquire = async {
-+        let namespace = namespace.clone().read_owned().await;
-+        let submission = service.prompt_submission(id).await;
-+        let instance = service.instance_lock(id).await.lock_owned().await;
-+        (namespace, submission, instance)
-+    };
-+    tokio::select! {
-+        guards = acquire => Some(guards),
-+        () = cancelled.cancelled() => None,
++    if !busy.is_empty() {
++        parts.push(format!("skipped {} busy", busy.len()));
 +    }
+     if being_purged_elsewhere > 0 {
+         parts.push(format!(
+-            "{being_purged_elsewhere} being purged by another process"
++            "{being_purged_elsewhere} changed during purge, rerun to retry"
+         ));
+     }
+     if outcome.restored_after_teardown > 0 {
+@@ -786,9 +796,26 @@ async fn empty_trash(profile: &str) -> Result<()> {
+         parts.join(", "),
+         storage.profile()
+     );
++    if !busy.is_empty() {
++        for line in &busy {
++            eprintln!("{line}");
++        }
++        anyhow::bail!(
++            "{} session(s) were skipped because another operation holds them; nothing changed \
++             for those, retry once the operation finishes",
++            busy.len()
++        );
++    }
+     Ok(())
+ }
+ 
++fn busy_line(inst: &Instance, result: &crate::session::deletion::DeletionResult) -> String {
++    let reason = result
++        .conflict()
++        .map_or_else(|| "busy".to_owned(), |error| error.to_string());
++    format!("  Busy: {}  {} ({reason})", inst.id, inst.title)
 +}
 +
- pub(crate) async fn finish_structured_launch(
-     state: &Arc<super::AppState>,
-     native: Arc<super::session_store::NativeSessionStore>,
-@@ -919,6 +951,39 @@ pub(crate) async fn finish_structured_launch(
- mod tests {
-     use super::*;
+ async fn snooze_session(profile: &str, args: SnoozeArgs) -> Result<()> {
+     let config = crate::session::config::profile_config::resolve_config(profile)?;
+ 
+@@ -4091,3 +4118,63 @@ mod wait_decision_tests {
+         assert!(adopt_stored(&live, converted).is_err());
+     }
+ }
++
++#[cfg(test)]
++mod empty_trash_busy_tests {
++    use super::empty_trash;
++    use crate::session::{Instance, LifecycleOperation, Storage};
++
++    #[tokio::test]
++    #[serial_test::serial]
++    async fn empty_trash_purges_the_rest_then_fails_for_a_busy_session() {
++        let _home = crate::session::test_support::isolate_app_dir();
++        let root = crate::session::get_app_dir().unwrap();
++        crate::session::purge_owners::initialize(&root).unwrap();
++        crate::tmux::tool_retirement::initialize(&root).unwrap();
++        let profile = "empty-trash-busy";
++        let storage = Storage::new_unwatched(profile).unwrap();
++        let mut busy = Instance::new("busy", "/tmp/empty-trash-busy-a");
++        let mut free = Instance::new("free", "/tmp/empty-trash-busy-b");
++        for row in [&mut busy, &mut free] {
++            row.source_profile = profile.into();
++            row.trash();
++        }
++        let busy_id = busy.id.clone();
++        storage
++            .update(|rows, _| {
++                rows.extend([busy, free]);
++                Ok(())
++            })
++            .unwrap();
++        let generation = storage
++            .update(|rows, _| {
++                let row = rows.iter_mut().find(|row| row.id == busy_id).unwrap();
++                Ok(row
++                    .try_acquire_lifecycle_reservation(
++                        LifecycleOperation::Restore,
++                        Instance::LIFECYCLE_RESERVATION_TTL,
++                        chrono::Utc::now(),
++                    )
++                    .unwrap())
++            })
++            .unwrap();
++
++        let error = empty_trash(profile).await.unwrap_err().to_string();
++        assert!(error.contains("1 session(s) were skipped"), "{error}");
++        let left = storage.load().unwrap();
++        assert_eq!(left.len(), 1);
++        assert_eq!(left[0].id, busy_id);
++
++        storage
++            .update(|rows, _| {
++                rows[0].release_lifecycle_reservation_if_owned(
++                    LifecycleOperation::Restore,
++                  
+```
+
+**File**: `src/daemon/error.rs` (modified, +10/-0)
+```diff
+@@ -11,6 +11,7 @@ pub enum ApiErrorCode {
+     AccessPolicyDenied,
+     CityhallMode,
+     LifecycleLocked,
++    LifecycleSuperseded,
+     PendingTargetGone,
+     TlsRequired,
+     RuntimeEpochMismatch,
+@@ -36,6 +37,7 @@ impl ApiErrorCode {
+             Self::AccessPolicyDenied => "access_policy_denied",
+             Self::CityhallMode => "cityhall_mode",
+             Self::LifecycleLocked => "lifecycle_locked",
++            Self::LifecycleSuperseded => "lifecycle_superseded",
+             Self::PendingTargetGone => "pending_target_gone",
+             Self::StartFailed => "start_failed",
+             Self::PurgeFailed => "purge_failed",
+@@ -61,6 +63,7 @@ impl ApiErrorCode {
+             | Self::AccessPolicyDenied
+             | Self::CityhallMode => StatusCode::FORBIDDEN,
+             Self::LifecycleLocked
++            | Self::LifecycleSuperseded
+             | Self::RuntimeEpochMismatch
+             | Self::ResumeFailed
+             | Self::PurgeFailed
+@@ -100,6 +103,7 @@ impl ApiErrorCode {
+             b"access_policy_denied" => Self::AccessPolicyDenied,
+             b"cityhall_mode" => Self::CityhallMode,
+             b"lifecycle_locked" => Self::LifecycleLocked,
++            b"lifecycle_superseded" => Self::LifecycleSuperseded,
+             b"pending_target_gone" if resolving_pending_target => Self::PendingTargetGone,
+             b"tls_required" => Self::TlsRequired,
+             b"runtime_epoch_mismatch" => Self::RuntimeEpochMismatch,
+@@ -176,6 +180,12 @@ mod tests {
+                 Some(ApiErrorCode::NoRevive),
+             ),
+             (StatusCode::FORBIDDEN, "no_revive", false, None),
++            (
++                StatusCode::CONFLICT,
++                "lifecycle_superseded",
++                false,
++                Some(ApiErrorCode::LifecycleSuperseded),
++            ),
+             (
+                 StatusCode::BAD_REQUEST,
+                 "create_hook_failed",
+```
+
+**File**: `src/daemon/mod.rs` (modified, +44/-1)
+```diff
+@@ -166,6 +166,12 @@ fn daemon_status_message(status: StatusCode, code: Option<ApiErrorCode>, body: &
+         }
+         Some(ApiErrorCode::StartFailed) => "Session start failed".into(),
+         Some(ApiErrorCode::PurgeFailed) => "Session purge failed".into(),
++        Some(ApiErrorCode::LifecycleLocked) => {
++            "Session is busy with another operation; nothing changed, retry when it finishes".into()
++        }
++        Some(ApiErrorCode::LifecycleSuperseded) => {
++            "Session changed after it was selected; it may be partly processed, refresh and check before retrying".into()
++        }
+         _ => format!("daemon returned HTTP {status}: {body}"),
+     }
+ }
+@@ -873,7 +879,11 @@ impl DaemonClient {
+             // D1: 409 lifecycle_locked maps from status plus the single finite
+             // server-owned header without reading the body. 401 maps from status
+             // alone; neither retains a body or token in the error.
+-            if code == Some(ApiErrorCode::LifecycleLocked) || status == StatusCode::UNAUTHORIZED {
++            if matches!(
++                code,
++                Some(ApiErrorCode::LifecycleLocked | ApiErrorCode::LifecycleSuperseded)
++            ) || status == StatusCode::UNAUTHORIZED
++            {
+                 return Err(DaemonClientError::Status {
+                     status,
+                     code,
+@@ -1524,10 +1534,43 @@ mod tests {
+             ),
+             "409 lifecycle_locked must map from status plus header with no body read, got: {error:?}"
+         );
++        assert!(
++            error.to_string().contains("busy with another operation"),
++            "TUI-facing text must say the session is busy, got: {error}"
++        );
+         let captured = next_request(rx).await;
+         assert_eq!(captured.path, "/api/sessions/sess-1/stop");
+     }
  
 +    #[tokio::test]
-+    async fn spawn_guard_wait_yields_to_lease_cancellation() {
-+        let state = crate::server::test_support::build_test_app_state(Vec::new());
-+        let service = &state.session_service;
-+        let namespace = &state.profile_namespace;
-+        let cancelled = tokio_util::sync::CancellationToken::new();
-+        assert!(acquire_spawn_guards(service, namespace, "s1", &cancelled)
-+            .await
-+            .is_some());
-+
-+        // A purge holds a namespace read and the instance lock; a rename queues
-+        // a namespace writer, which blocks any further read.
-+        let purge_lease = namespace.clone().read_owned().await;
-+        let held = service.instance_lock("s1").await.lock_owned().await;
-+        let writer = tokio::spawn(namespace.clone().write_owned());
-+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
-+        while namespace.try_read().is_ok() {
-+            assert!(std::time::Instant::now() < deadline, "writer never queued");
-+            tokio::task::yield_now().await;
-+        }
-+
-+        cancelled.cancel();
-+        let waited = tokio::time::timeout(
-+            std::time::Duration::from_secs(5),
-+            acquire_spawn_guards(service, namespace, "s1", &cancelled),
++    async fn conflict_lifecycle_superseded_stays_distinct_from_busy() {
++        let (tx, _rx) = tokio::sync::oneshot::channel();
++        let base = serve_mutation_once(
++            "/api/sessions/{id}/stop",
++            409,
++            vec![(ERROR_CODE_HEADER, "lifecycle_superseded")],
++            r#"{"error":"lifecycle_superseded","message":"changed"}"#,
++            tx,
 +        )
-+        .await
-+        .expect("a cancelled lease must not wait on the held guards");
-+        assert!(waited.is_none());
-+        drop((held, purge_lease));
-+        writer.await.unwrap();
++        .await;
++        let client = DaemonClient::new(&base, None).expect("test client");
++        let error = client
++            .mutate_session("sess-1", &SessionMutation::Stop, "epoch-1")
++            .await
++            .expect_err("conflict must fail");
++        assert!(matches!(
++            error,
++            DaemonClientError::Status {
++                code: Some(ApiErrorCode::LifecycleSuperseded),
++                ref body,
++                ..
++            } if body.is_empty()
++        ));
++        let text = error.to_string();
++        assert!(text.contains("changed after it was selected"), "{text}");
++        assert!(!text.contains("nothing changed"), "{text}");
 +    }
 +
      #[tokio::test]
-     #[serial_test::serial]
-     async fn pre_launch_hook_failure_rolls_back_resources_and_owner() {
+     async fn unauthorized_maps_by_status_without_body_or_token() {
+         let (tx, rx) = tokio::sync::oneshot::channel();
+```
+
+**File**: `src/server/api/sessions/delete.rs` (modified, +48/-21)
+```diff
+@@ -133,16 +133,8 @@ pub(crate) async fn purge_session_artifacts(
+                     messages: result.errors,
+                     teardown_started: false,
+                 }),
+-                DeletionDisposition::Busy => {
+-                    let operation = result
+-                        .retained_instance
+-                        .as_ref()
+-                        .and_then(|row| row.lifecycle_reservation.as_ref())
+-                        .map(|reservation| reservation.op);
+-                    Err(operation
+-                        .map(crate::session::LifecycleReservationError::Busy)
+-                        .unwrap_or(crate::session::LifecycleReservationError::Superseded)
+-                        .into())
++                DeletionDisposition::Busy | DeletionDisposition::Superseded => {
++                    Err(result.conflict().expect("conflict disposition").into())
+                 }
+                 DeletionDisposition::Failed | DeletionDisposition::Removed => {
+                     Err(anyhow::anyhow!(result.errors.join("; ")))
+@@ -211,7 +203,7 @@ pub(crate) async fn purge_session_artifacts(
+                 teardown_started: result.teardown_started,
+             });
+         }
+-        DeletionDisposition::Busy => {
++        DeletionDisposition::Busy | DeletionDisposition::Superseded => {
+             anyhow::bail!(crate::session::LifecycleReservationError::Superseded)
+         }
+         DeletionDisposition::Failed => {
+@@ -898,13 +890,25 @@ pub async fn abandon_purge(
+                 !cityhall || row.is_structured(),
+                 LifecycleTargetError::CityHall
+             );
+-            anyhow::ensure!(
+-                row.lifecycle_reservation_is_owned(
+-                    LifecycleOperation::Purge,
+-                    body.expected_generation.get()
+-                ),
+-                LifecycleTargetError::Busy
+-            );
++            if !row.lifecycle_reservation_is_owned(
++                LifecycleOperation::Purge,
++                body.expected_generation.get(),
++            ) {
++                let holder = row
++                    .lifecycle_reservation
++                    .as_ref()
++                    .filter(|reservation| {
++                        reservation.op != LifecycleOperation::Purge
++                            && row.has_fresh_lifecycle_reservation(chrono::Utc::now())
++                    })
++                    .map(|reservation| reservation.op);
++                return Err(holder
++                    .map_or(
++                        crate::session::LifecycleReservationError::Superseded,
++                        crate::session::LifecycleReservationError::Busy,
++                    )
++                    .into());
++            }
+             removed = Some(rows.remove(index));
+             Ok(())
+         })?;
+@@ -980,6 +984,9 @@ pub struct TrashPurgeConsent {
+ pub(super) struct WorkspaceDeleteFailure {
+     pub(super) id: String,
+     pub(super) error: String,
++    /// Another lifecycle operation holds the session; reported under `busy`.
++    #[serde(skip)]
++    pub(super) busy: bool,
+ }
+ 
+ /// Preserve first-seen order without deleting the same row twice.
+@@ -1139,6 +1146,7 @@ pub(super) async fn purge_workspace_artifacts(
+                     failed.push(WorkspaceDeleteFailure {
+                         id: owner_id,
+                         error: format!("Resource ownership unavailable: {error:#}"),
++                        busy: false,
+                     });
+                     return (deleted, kept, failed, messages, None);
+                 }
+@@ -1148,6 +1156,7 @@ pub(super) async fn purge_workspace_artifacts(
+                 failed.push(WorkspaceDeleteFailure {
+                     id: owner_id,
+                     error: format!("Workspace: {msg}"),
++                    busy: false,
+                 });
+                 return (deleted, kept, failed, messages, Some(msg));
+             }
+@@ -1180,6 +1189,7 @@ pub(super) async fn purge_workspace_artifacts(
+                     failed.push(WorkspaceDeleteFailure {
+                         id: id.clone(),
+                         error: cleanup_errors.join("; "),
++                        busy: false,
+                     });
+                     deleted.push(id);
+                     break;
+@@ -1197,6 +1207,10 @@ pub(super) async fn purge_workspace_artifacts(
+                 failed.push(WorkspaceDeleteFailure {
+                     id: id.clone(),
+                     error: msg.to_string(),
++                    busy: matches!(
++                        msg.downcast_ref::<crate::session::LifecycleReservationError>(),
++                        Some(crate::session::LifecycleReservationError::Busy(_))
++                    ),
+                 });
+                 // The owner remains intact when a sibling cannot be safely removed.
+                 break;
+@@ -1288,6 +1302,7 @@ pub async fn delete_workspace(
+             )
+                 .into_response();
+         }
++        let (busy, failed): (Ve
+```
+
+**File**: `src/server/api/sessions/lifecycle.rs` (modified, +53/-18)
+```diff
+@@ -748,7 +748,13 @@ pub async fn restore_session(
+                 let now = chrono::Utc::now();
+                 if !row.is_trashed() {
+                     if row.has_fresh_lifecycle_reservation(now) {
+-                        return Err(LifecycleTargetError::Busy.into());
++                        return Err(row.lifecycle_reservation.as_ref().map_or(
++                            LifecycleTargetError::Busy.into(),
++                            |reservation| {
++                                crate::session::LifecycleReservationError::Busy(reservation.op)
++                                    .into()
++                            },
++                        ));
+                     }
+                     return Ok(None);
+                 }
+@@ -763,8 +769,8 @@ pub async fn restore_session(
+                     crate::session::claim::RestoreClaimDecision::AlreadyGone => {
+                         Err(LifecycleTargetError::Missing.into())
+                     }
+-                    crate::session::claim::RestoreClaimDecision::Busy(_) => {
+-                        Err(LifecycleTargetError::Busy.into())
++                    crate::session::claim::RestoreClaimDecision::Busy(holder) => {
++                        Err(crate::session::LifecycleReservationError::Busy(holder).into())
+                     }
+                 }
+             })?;
+@@ -804,7 +810,7 @@ pub async fn restore_session(
+                         Err(LifecycleTargetError::Missing.into())
+                     }
+                     crate::session::claim::RestoreCommit::Superseded => {
+-                        Err(LifecycleTargetError::Busy.into())
++                        Err(crate::session::LifecycleReservationError::Superseded.into())
+                     }
+                 }
+             })?;
+@@ -1140,21 +1146,50 @@ pub(crate) fn lifecycle_rejection(
+     if error.is::<crate::session::SessionGone>() {
+         return Some(crate::server::api::session_not_found());
+     }
+-    if matches!(
+-        error.downcast_ref::<LifecycleTargetError>(),
+-        Some(LifecycleTargetError::Busy)
+-    ) || matches!(
+-        error.downcast_ref::<crate::session::LifecycleReservationError>(),
+-        Some(
+-            crate::session::LifecycleReservationError::Busy(_)
+-                | crate::session::LifecycleReservationError::Superseded
++    let (code, operation, message) = match error
++        .downcast_ref::<crate::session::LifecycleReservationError>()
++    {
++        Some(crate::session::LifecycleReservationError::Busy(operation)) => (
++            "lifecycle_busy",
++            Some(*operation),
++            format!(
++                "Session is busy with {}; nothing changed, retry when it finishes",
++                serde_json::json!(operation)
++                    .as_str()
++                    .unwrap_or("another operation")
++            ),
++        ),
++        Some(crate::session::LifecycleReservationError::Superseded) => (
++            "lifecycle_superseded",
++            None,
++            "Session changed after it was selected; refresh and check before retrying".to_owned(),
++        ),
++        _ if matches!(
++            error.downcast_ref::<LifecycleTargetError>(),
++            Some(LifecycleTargetError::Busy)
++        ) =>
++        {
++            (
++                "lifecycle_busy",
++                None,
++                "Session lifecycle is busy".to_owned(),
++            )
++        }
++        _ => return None,
++    };
++    let header = if code == "lifecycle_superseded" {
++        crate::daemon::ApiErrorCode::LifecycleSuperseded.header()
++    } else {
++        crate::daemon::ApiErrorCode::LifecycleLocked.header()
++    };
++    Some(
++        (
++            StatusCode::CONFLICT,
++            header,
++            Json(serde_json::json!({"error": code, "operation": operation, "message": message})),
+         )
+-    ) {
+-        return Some((StatusCode::CONFLICT,
+-            crate::daemon::ApiErrorCode::LifecycleLocked.header(),
+-            Json(serde_json::json!({"error": "lifecycle_busy", "message": "Session lifecycle is busy"}))).into_response());
+-    }
+-    None
++            .into_response(),
++    )
+ }
+ 
+ async fn adopt_lifecycle_commit<R>(
+```
+
+**File**: `src/server/api/sessions/tests.rs` (modified, +140/-3)
+```diff
+@@ -2013,6 +2013,138 @@ async fn purge_receipt_publishes_removal_and_committed_peer_rows() -> anyhow::Re
+     Ok(())
+ }
+ 
++#[tokio::test]
++#[serial_test::serial]
++async fn purge_of_a_busy_session_names_the_holder_and_retries_after_release() -> anyhow::Result<()>
++{
++    use axum::body::to_bytes;
++    let _guard = crate::session::test_support::isolate_app_dir();
++    crate::session::purge_owners::initialize(&crate::session::get_app_dir()?)?;
++    crate::tmux::tool_retirement::initialize(&crate::session::get_app_dir()?)?;
++    let mut row = Instance::new("busy purge", "/tmp/busy-purge");
++    row.source_profile = "busy".into();
++    row.status = Status::Stopped;
++    row.trash();
++    let id = row.id.clone();
++    let state = crate::server::test_support::build_test_app_state(vec![row.clone()]);
++    let storage = Storage::new("busy", state.file_watch.clone())?;
++    storage.update(|rows, _| {
++        rows.push(row);
++        Ok(())
++    })?;
++    *state.canonical_metadata.write().await =
++        crate::server::reload::load_all_profiles(&state.file_watch)?.metadata;
++    state.runtime.publish(&state).await?;
++    let generation = storage.update(|rows, _| {
++        Ok(rows[0]
++            .try_acquire_lifecycle_reservation(
++                crate::session::LifecycleOperation::Restore,
++                Instance::LIFECYCLE_RESERVATION_TTL,
++                chrono::Utc::now(),
++            )
++            .unwrap())
++    })?;
++
++    let single = delete_session(State(state.clone()), Path(id.clone()), None)
++        .await
++        .into_response();
++    assert_eq!(single.status(), StatusCode::CONFLICT);
++    let body: serde_json::Value =
++        serde_json::from_slice(&to_bytes(single.into_body(), usize::MAX).await?)?;
++    assert_eq!(body["error"], "lifecycle_busy");
++    assert_eq!(body["operation"], "restore");
++
++    let batch = delete_workspace(
++        State(state.clone()),
++        Some(Json(DeleteWorkspaceBody {
++            session_ids: vec![id.clone()],
++            ..Default::default()
++        })),
++    )
++    .await
++    .into_response();
++    assert_eq!(batch.status(), StatusCode::CONFLICT);
++    let body: serde_json::Value =
++        serde_json::from_slice(&to_bytes(batch.into_body(), usize::MAX).await?)?;
++    assert_eq!(body["error"], "lifecycle_busy");
++    assert_eq!(body["busy"][0]["id"], id.as_str());
++    assert_eq!(storage.load()?.len(), 1);
++
++    let restore = restore_session(State(state.clone()), Path(id.clone()))
++        .await
++        .into_response();
++    assert_eq!(restore.status(), StatusCode::CONFLICT);
++    let body: serde_json::Value =
++        serde_json::from_slice(&to_bytes(restore.into_body(), usize::MAX).await?)?;
++    assert_eq!(body["error"], "lifecycle_busy");
++    assert_eq!(body["operation"], "restore");
++
++    storage.update(|rows, _| {
++        rows[0].release_lifecycle_reservation_if_owned(
++            crate::session::LifecycleOperation::Restore,
++            generation,
++        );
++        Ok(())
++    })?;
++    let retried = delete_session(State(state.clone()), Path(id), None)
++        .await
++        .into_response();
++    assert_eq!(retried.status(), StatusCode::OK);
++    assert!(storage.load()?.is_empty());
++    Ok(())
++}
++
++#[tokio::test]
++#[serial_test::serial]
++async fn purge_of_a_retained_handoff_reports_busy_launch_over_http() -> anyhow::Result<()> {
++    use axum::body::to_bytes;
++    let _guard = crate::session::test_support::isolate_app_dir();
++    crate::session::purge_owners::initialize(&crate::session::get_app_dir()?)?;
++    crate::tmux::tool_retirement::initialize(&crate::session::get_app_dir()?)?;
++    let mut row = Instance::new("owed handoff", "/tmp/owed-handoff");
++    row.source_profile = "owed".into();
++    row.status = Status::Stopped;
++    row.terminal_handoff = Some(Box::new(crate::session::test_support::launch_owed_handoff(
++        &row,
++    )));
++    row.trash();
++    let id = row.id.clone();
++    let state = crate::server::test_support::build_test_app_state(vec![row.clone()]);
++    let storage = Storage::new("owed", state.file_watch.clone())?;
++    storage.update(|rows, _| {
++        rows.push(row);
++        Ok(())
++    })?;
++    *state.canonical_metadata.write().await =
++        crate::server::reload::load_all_profiles(&state.file_watch)?.metadata;
++    state.runtime.publish(&state).await?;
++
++    let single = delete_session(State(state.clone()), Path(id.clone()), None)
++        .await
++        .into_response();
++    assert_eq!(single.status(), StatusCode::CONFLICT);
++    let body: serde_json::Value =
++        serde_json::from_slice(&to_bytes(single.into_body(), usize::MAX).await?)?;
++    assert_eq!(body["error"], "lifecycle_busy");
++    assert_eq!(body["operation"], "launch");
++
++    let batch = delete_workspace(
++        State(state.clone()),
++        Some(Json(DeleteWorkspaceBody {
++            session_ids: vec![id.clone()],
++            ..Default::default()
++        })),
++    )
++    .await
++    .into_response();
++    assert_e
 ```
 
 ---
 
-### Incident Patch 3: `01054558` (2026-10-25)
-**Commit Message**: fix(serve): retry transient lifecycle snapshot read failures with a bounded budget (#4938)
+### Incident Patch 2: `b264770c` (2026-10-26)
+**Commit Message**: feat(daemon): align native transport security and safe API errors (#4743)
 
-* fix(serve): retry transient lifecycle snapshot read failures with a bounded budget
+* feat(server): resolve ingress once and refuse plaintext remote peers with 426
 
-observe_disk now reports Settled, Again or ReadFailed. The disk consumer
-paces repeats with ReadRetry: read failures draw on a five-attempt
-exponential budget that a healthy read or fresh filesystem activity
-refills, and the wait is a shutdown-aware select arm instead of a
-spawned timer.
+Forwarded headers are honored only from a loopback peer in proxy mode, the Cloudflare
+client header only from a Cloudflare tunnel, and plain HTTP from a non-loopback peer
+gets 426 tls_required unless --dangerously-allow-plaintext-remote is set.
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* fix(serve): stop the disk consumer when shutdown races a retry wake
+* fix(cli): read and set the log level through the typed daemon client
 
-Addresses review comment from CodeRabbit on #4938.
+The command printed the server's raw response body, including on errors. It now goes
+through HttpClient, classifies failures from the status and error-code header, and
+prints a typed reply.
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* fix(serve): refill the read retry budget on a fully readable second look
+* fix(acp-client): classify passphrase login errors from the safe error code
 
-Observed::Again now carries whether every profile was read. A healthy
-Again refills the budget; one that still has an unread profile does not,
-so mixed reads stay bounded.
+Addresses review comment from @jerome-benoit on #4743.
 
-Addresses review feedback from jerome-benoit on #4938.
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(acp-client): fall back to a passphrase login when a bearer alone is refused
+
+A token-plus-passphrase daemon needs a login session even with a valid token. A cached
+session now wins, a bearer is tried next, and a bearer 401 retries on
+
+**File**: `docs/api.md` (modified, +2/-0)
+```diff
+@@ -201,6 +201,8 @@ session when login is enabled. They are unavailable in CityHall mode. Adoption
+ rejects symlinks, special files, packages over 64 MiB, individual files over
+ 32 MiB, more than 1,024 files, and directory nesting deeper than 16 levels.
+ 
++Native clients classify errors from the status and one `AoE-Error-Code` response header, never from the body. A missing, repeated, unknown or status-inconsistent value means "generic status". Plain HTTP from a non-loopback peer gets `426 tls_required` before authentication unless the bind sets `--dangerously-allow-plaintext-remote`.
++
+ ## Runtime CLI reads
+ 
+ Read-only CLI commands use `/api/runtime/read/ws` when `--daemon-url` or `AOE_DAEMON_URL` selects an HTTP endpoint. `/api/runtime/ws` is reserved for the TUI stream and does not serve this one-shot protocol.
+```
+
+**File**: `docs/cli/reference.md` (modified, +2/-1)
+```diff
+@@ -1764,7 +1764,8 @@ Start the aoe daemon: REST/WebSocket API, plus the web dashboard in builds that
+   Possible values: `token`, `passphrase`, `none`
+ 
+ * `--no-auth` — Disable authentication (only allowed with localhost binding). Alias for --auth=none
+-* `--behind-proxy` — Mark this server as sitting behind a reverse proxy that terminates TLS upstream. Sets cookies as `; Secure` and trusts the `X-Forwarded-For` / `cf-connecting-ip` headers from loopback peers. Does NOT auto-spawn a tunnel (unlike --remote). Required when --auth=passphrase or --auth=none is combined with a non-loopback bind
++* `--behind-proxy` — Mark this server as sitting behind a reverse proxy that terminates TLS upstream. Sets cookies as `; Secure` and trusts the `X-Forwarded-For` header from loopback peers. Does NOT auto-spawn a tunnel (unlike --remote). Required when --auth=passphrase or --auth=none is combined with a non-loopback bind
++* `--dangerously-allow-plaintext-remote` — Accept plain HTTP from non-loopback peers. By default the server answers those with 426 before authentication: bearer tokens and passphrases would cross the network in the clear. A TLS proxy or tunnel in front of a loopback listener (`--behind-proxy`, `--remote`) needs no opt-out. This applies to this bind only, is never inferred from the address, and is logged at every start
+ * `--allowed-host <HOST>` — Extra `Host` header value to accept (repeatable). The DNS-rebinding gate trusts loopback, any routable IP-literal `Host` (LAN/tailnet IPs can't be rebound), and a non-wildcard `--host` by default. A browser `Origin` is accepted without `--allowed-origin` only when it is allowlisted or has the exact same authority as `Host`; add a HOSTNAME or mDNS name here when serving behind a reverse proxy, a custom tunnel, or by name when binding `0.0.0.0` (access by IP needs no flag). Auto-injected tunnel hosts (`--remote`) need no flag
+ * `--allowed-origin <ORIGIN>` — Extra browser `Origin` to accept (repeatable, full origin `scheme://host[:port]`, e.g. `https://aoe.example.com:8443`). Needed only for a reverse proxy on a nonstandard port; standard 80/443 origins for `--allowed-host` entries are derived automatically
+ * `--read-only` — Read-only mode: view terminals but cannot send keystrokes
+```
+
+**File**: `docs/guides/web-dashboard.md` (modified, +7/-5)
+```diff
+@@ -20,7 +20,7 @@ The dashboard ships in release binaries. Source builds need the `web` Cargo feat
+ ```bash
+ aoe serve                       # Localhost only (safe, default)
+ aoe serve --remote              # Remote over HTTPS (Tailscale Funnel, else Cloudflare quick tunnel)
+-aoe serve --host 0.0.0.0        # LAN/VPN access (HTTP, requires VPN)
++aoe serve --host 0.0.0.0        # LAN/VPN bind; plain-HTTP peers get 426 unless --dangerously-allow-plaintext-remote
+ aoe serve --daemon              # Run in background
+ aoe daemon start                # Same; also stop, status, restart
+ aoe serve --open                # Open the URL in the default browser when ready
+@@ -85,7 +85,8 @@ In `--remote` mode the token rotates every four hours. Use `aoe url` for the liv
+ | `--host` | 127.0.0.1 | Bind address. Use `0.0.0.0` for LAN/VPN access |
+ | `--auth` | `token` | Auth mode: `token` (URL token), `passphrase` (passphrase login wall only), `none` (no auth, loopback only unless `--behind-proxy`) |
+ | `--passphrase` | | Passphrase for the login wall. Valid with `--auth=token` (token + passphrase) and `--auth=passphrase`. Also reads `AOE_SERVE_PASSPHRASE` |
+-| `--behind-proxy` | off | Server sits behind an external reverse proxy that terminates TLS. Sets `; Secure` cookies and trusts `X-Forwarded-For` / `cf-connecting-ip` from loopback peers; does NOT spawn a tunnel. Requires at least one `--allowed-host` |
++| `--behind-proxy` | off | Server sits behind an external reverse proxy that terminates TLS. Sets `; Secure` cookies and trusts `X-Forwarded-For` and `X-Forwarded-Proto` from loopback peers, and from no one else; does NOT spawn a tunnel. Requires at least one `--allowed-host` |
++| `--dangerously-allow-plaintext-remote` | off | Accept plain HTTP from non-loopback peers instead of answering `426`; see [Security](#security) |
+ | `--allowed-host` | | Extra `Host` value the DNS-rebinding gate accepts (repeatable). Add the public hostname behind a reverse proxy or custom tunnel, or a hostname/mDNS name when binding `0.0.0.0` (routable IP literals are trusted automatically). `--remote` tunnel hosts are added automatically |
+ | `--allowed-origin` | | Extra browser `Origin` to accept (repeatable, full origin `scheme://host[:port]`). Needed only for a reverse proxy on a nonstandard port; standard 80/443 origins for `--allowed-host` entries are derived automatically |
+ | `--no-auth` | off | Alias for `--auth=none` (kept for backwards compatibility) |
+@@ -143,7 +144,7 @@ aoe serve \
+   --allowed-host aoe.example.com
+ ```
+ 
+-The upstream must set `X-Forwarded-For` (or `cf-connecting-ip`); aoe reads the last value as the client IP. The trust check fires only when the socket peer is loopback, so a misconfigured upstream that lets requests reach aoe directly cannot spoof the IP.
++The upstream must set `X-Forwarded-For` and `X-Forwarded-Proto: https`; aoe reads the last value of each, and only when the socket peer is loopback, so a client or misconfigured upstream cannot spoof them. `--remote` over a Cloudflare tunnel also supplies `cf-connecting-ip`; `--behind-proxy` and Tailscale Funnel ignore it because a proxy can pass a client-chosen one through. A request whose client address is missing or malformed shares one rate-limit bucket. A loopback proxy that omits `X-Forwarded-Proto` makes no HTTPS assertion and is not refused; only an explicit non-`https` value gets `426`.
+ 
+ With `--auth=passphrase --behind-proxy`, the passphrase wall applies to TCP loopback callers too. Proxied traffic arrives on a loopback TCP socket, so an upstream that forgets the header would otherwise hand visitors the same-host bypass. A browser on the same host signs in with the passphrase like any other TCP client. The local TUI and local `aoe acp` commands instead use the owner-verified Unix API; they do not read `serve.passphrase` or perform a login exchange. See [Cross-machine attach](../structured-view.md#cross-machine-attach) for explicit TCP and remote ACP authentication.
+ 
+@@ -198,6 +199,7 @@ Control a manager-owned daemon with `systemctl --user` or `launchctl`, not `aoe
+ 
+ - **Token auth** (`--auth=token`, default): a random 256-bit token, generated on startup and stored at `~/.config/agent-of-empires/serve.token` (Linux) or `~/.agent-of-empires/serve.token` (macOS). Passed via URL on first visit, then kept as an `HttpOnly; SameSite=Strict` cookie.
+ - **Passphrase wall** (`--auth=passphrase`, or combined with token via `--passphrase`): an argon2-hashed passphrase gates `/login`. Sessions bind to a per-device secret in `localStorage`, so a leaked cookie alone is insufficient.
++- **Plaintext refusal**: plain HTTP from a non-loopback peer gets `426` before authentication, so tokens and passphrases never cross a network in the clear. A TLS proxy or tunnel in front of a loopback bind is unaffected. A direct bind to a LAN or tailnet IP needs `--dangerously-allow-plaintext-remote` (per bind, logged at every start). Native clients likewise refuse to send a tok
+```
+
+**File**: `src/acp/client/http.rs` (modified, +279/-51)
+```diff
+@@ -62,6 +62,17 @@ pub enum PromptDispositionWire {
+ /// under the server's `MAX_REPLAY_PAGE` so it is never clamped down.
+ pub const REPLAY_PAGE_SIZE: u64 = 1000;
+ 
++/// `GET` and `PATCH /api/log-level` answers; each leaves out the fields the other owns.
++#[derive(Debug, serde::Deserialize, serde::Serialize)]
++pub struct LogFilterReply {
++    #[serde(skip_serializing_if = "Option::is_none")]
++    pub previous: Option<String>,
++    pub current: Option<String>,
++    #[serde(skip_serializing_if = "Option::is_none")]
++    pub reloadable: Option<bool>,
++    pub ephemeral: bool,
++}
++
+ /// Acp daemon HTTP client. Cheap to clone; the underlying
+ /// `reqwest::Client` is reference-counted.
+ #[derive(Debug, Clone)]
+@@ -606,46 +617,62 @@ impl HttpClient {
+         check_resolve_status(res, session_id)
+     }
+ 
+-    /// Read sessions with the endpoint's bearer token or passphrase session.
++    /// Read sessions with the endpoint's bearer token or passphrase session,
++    /// recovering once from a stale session or a bearer a second factor refused.
+     pub async fn list_sessions(
+         &self,
+         state: Option<crate::session::SessionScope>,
+     ) -> Result<crate::daemon::SessionsEnvelope, HttpError> {
+-        let had_cached_session = self.endpoint.bearer_token().is_none()
+-            && self.passphrase_session.get(&self.endpoint).is_some();
+-        match self.list_sessions_once(state).await {
+-            Err(HttpError::Unauthorized) if had_cached_session => {
++        let had_cached_session =
++            self.can_login() && self.passphrase_session.get(&self.endpoint).is_some();
++        let bearer_only =
++            !had_cached_session && self.endpoint.bearer_token().is_some() && self.can_login();
++        match self.list_sessions_once(state, false).await {
++            Err(HttpError::Unauthorized) if had_cached_session || bearer_only => {
+                 self.passphrase_session.invalidate(&self.endpoint);
+-                self.list_sessions_once(state).await
++                self.list_sessions_once(state, true).await
+             }
+             result => result,
+         }
+     }
+ 
+     pub(crate) async fn daemon_client(&self) -> Result<crate::daemon::DaemonClient, HttpError> {
++        self.daemon_client_with(false).await
++    }
++
++    /// Same credential order as [`Self::attach_credential`].
++    async fn daemon_client_with(
++        &self,
++        force_session: bool,
++    ) -> Result<crate::daemon::DaemonClient, HttpError> {
+         let base_url = &self.endpoint.base_url;
+-        let client = if let Some(path) = self.endpoint.unix_path() {
+-            crate::daemon::DaemonClient::new_unix(path)
+-        } else if let Some(token) = self.endpoint.bearer_token() {
+-            crate::daemon::DaemonClient::new(base_url, Some(token))
+-        } else if self.endpoint.resolved_passphrase().is_some() {
+-            let session = self.ensure_passphrase_session().await?;
+-            crate::daemon::DaemonClient::with_session(
+-                base_url,
+-                &session.cookie,
+-                &session.binding_secret,
+-            )
+-        } else {
+-            crate::daemon::DaemonClient::new(base_url, None)
+-        }?;
+-        Ok(client)
++        if let Some(path) = self.endpoint.unix_path() {
++            return Ok(crate::daemon::DaemonClient::new_unix(path)?);
++        }
++        let can_login = self.can_login();
++        let cached = can_login && self.passphrase_session.get(&self.endpoint).is_some();
++        if !(force_session && can_login || cached) {
++            if let Some(token) = self.endpoint.bearer_token() {
++                return Ok(crate::daemon::DaemonClient::new(base_url, Some(token))?);
++            }
++            if !can_login {
++                return Ok(crate::daemon::DaemonClient::new(base_url, None)?);
++            }
++        }
++        let session = self.ensure_passphrase_session().await?;
++        Ok(crate::daemon::DaemonClient::with_session(
++            base_url,
++            &session.cookie,
++            &session.binding_secret,
++        )?)
+     }
+ 
+     async fn list_sessions_once(
+         &self,
+         state: Option<crate::session::SessionScope>,
++        force_session: bool,
+     ) -> Result<crate::daemon::SessionsEnvelope, HttpError> {
+-        let client = self.daemon_client().await?;
++        let client = self.daemon_client_with(force_session).await?;
+         client
+             .list_sessions(state)
+             .await
+@@ -655,6 +682,11 @@ impl HttpClient {
+                 {
+                     HttpError::Unauthorized
+                 }
++                crate::daemon::DaemonClientError::Status {
++                    status,
++                    code: Some(code),
++                    ..
++                } => classify_code(status, Some(code), None, false),
+                 error => HttpError::Daemon(error),
+             })
+     }
+@@ -715,6 +747,20 @@ impl HttpClient {
+         })
+     }
+ 
++    /// `GET /api/log-level`, or `PATCH` it first when `patc
+```
+
+**File**: `src/acp/client/passphrase_session.rs` (modified, +46/-21)
+```diff
+@@ -84,10 +84,15 @@ pub(crate) async fn login(
+         "passphrase": passphrase,
+         "device_binding_secret": binding_secret,
+     });
+-    let res = client.post(url).json(&body).send().await?;
++    // A token-plus-passphrase daemon gates the login route on the bearer too.
++    let mut request = client.post(url).json(&body);
++    if let Some(token) = endpoint.bearer_token() {
++        request = request.bearer_auth(token);
++    }
++    let res = request.send().await?;
+     let status = res.status();
+     if !status.is_success() {
+-        return Err(map_auth_error(status));
++        return Err(map_auth_error(status, res.headers()));
+     }
+     let cookie = extract_session_cookie(res.headers()).ok_or(HttpError::Unauthorized)?;
+     let session = PassphraseSession {
+@@ -99,15 +104,10 @@ pub(crate) async fn login(
+     Ok(session)
+ }
+ 
+-/// Authentication response bodies can reflect credentials, including transformed values.
+-fn map_auth_error(status: StatusCode) -> HttpError {
+-    match status {
+-        StatusCode::UNAUTHORIZED => HttpError::Unauthorized,
+-        _ => HttpError::Server {
+-            status,
+-            body: String::new(),
+-        },
+-    }
++/// Authentication response bodies can reflect credentials, so only the status and the
++/// validated error-code header are read.
++fn map_auth_error(status: StatusCode, headers: &HeaderMap) -> HttpError {
++    super::http::classify_status(status, headers, None, false)
+ }
+ 
+ /// Confirm the passphrase again against `POST /api/login/elevate`, extending
+@@ -136,7 +136,7 @@ pub(super) async fn elevate(
+     if status.is_success() {
+         return Ok(());
+     }
+-    Err(map_auth_error(status))
++    Err(map_auth_error(status, res.headers()))
+ }
+ 
+ fn login_client(url: impl reqwest::IntoUrl) -> Result<(reqwest::Client, reqwest::Url), HttpError> {
+@@ -471,16 +471,41 @@ mod tests {
+         assert!(cache_dir.join(DEVICE_BINDING_FILENAME).exists());
+     }
+ 
++    /// 401 maps from the status alone; a coded 403 keeps its code only when exactly one
++    /// known value agrees with the status. The body is never an input.
+     #[test]
+-    fn map_auth_error_distinguishes_unauthorized_from_generic() {
+-        assert!(matches!(
+-            map_auth_error(StatusCode::UNAUTHORIZED),
+-            HttpError::Unauthorized
+-        ));
+-        assert!(matches!(
+-            map_auth_error(StatusCode::TOO_MANY_REQUESTS),
+-            HttpError::Server { status, .. } if status == StatusCode::TOO_MANY_REQUESTS
+-        ));
++    fn map_auth_error_classifies_from_the_status_and_one_valid_code() {
++        let headers = |values: &[&str]| {
++            let mut map = HeaderMap::new();
++            for value in values {
++                map.append("aoe-error-code", value.parse().unwrap());
++            }
++            map
++        };
++        let forbidden = StatusCode::FORBIDDEN;
++        for (status, values, want) in [
++            (StatusCode::UNAUTHORIZED, &["read_only"][..], "unauthorized"),
++            (forbidden, &["read_only"], "read_only"),
++            (
++                forbidden,
++                &["access_policy_denied"],
++                "code:access_policy_denied",
++            ),
++            (forbidden, &[], "status"),
++            (forbidden, &["not_a_code"], "status"),
++            (forbidden, &["access_policy_denied", "read_only"], "status"),
++            (StatusCode::CONFLICT, &["access_policy_denied"], "status"),
++            (StatusCode::TOO_MANY_REQUESTS, &[], "status"),
++        ] {
++            let got = match map_auth_error(status, &headers(values)) {
++                HttpError::Unauthorized => "unauthorized".to_string(),
++                HttpError::ReadOnly => "read_only".to_string(),
++                HttpError::Server { body, .. } if !body.is_empty() => format!("code:{body}"),
++                HttpError::Server { .. } => "status".to_string(),
++                other => panic!("{status} {values:?}: {other:?}"),
++            };
++            assert_eq!(got, want, "{status} {values:?}");
++        }
+     }
+ 
+     #[tokio::test]
+```
+
+**File**: `src/acp/client/ws.rs` (modified, +40/-15)
+```diff
+@@ -182,37 +182,45 @@ where
+ 
+ /// Open the session stream, retrying once after a fresh passphrase login if a
+ /// *cached* session was rejected (rotated passphrase, expired or evicted
+-/// session). A first-ever login failure is not retried: the passphrase itself
+-/// is wrong, not merely stale.
++/// session), or if a bearer token alone was refused and a passphrase resolves (a
++/// daemon that also requires the second factor). A first-ever login failure is
++/// not retried: the passphrase itself is wrong, not merely stale.
+ async fn connect_session(
+     endpoint: &DaemonEndpoint,
+     path: &str,
+     query: &str,
+ ) -> Result<NativeSocket, WsError> {
+     let cache = PassphraseSessionCache::default();
+     let had_cached_session = cache.get(endpoint).is_some();
+-    let headers = session_headers(endpoint, &cache).await?;
++    let headers = session_headers(endpoint, &cache, false).await?;
++    let bearer_only =
++        !had_cached_session && endpoint.bearer_token().is_some() && can_login(endpoint);
+     match websocket::connect_with_headers(endpoint, path, Some(query), &headers).await {
+-        Err(error) if had_cached_session && is_unauthorized(&error) => {
++        Err(error) if (had_cached_session || bearer_only) && is_unauthorized(&error) => {
+             cache.invalidate(endpoint);
+-            let headers = session_headers(endpoint, &cache).await?;
++            let headers = session_headers(endpoint, &cache, true).await?;
+             websocket::connect_with_headers(endpoint, path, Some(query), &headers).await
+         }
+         connected => connected,
+     }
+ }
+ 
+-/// The passphrase-login headers this upgrade must carry, or none when the
+-/// endpoint needs none: a resolved bearer token already rides the
+-/// `Authorization` header, a local Unix-socket daemon is authorized by its
+-/// peer owner, and `--auth=none` resolves no passphrase at all.
++/// A passphrase can be used: never over a Unix socket, whose peer owner authorizes the
++/// connection, and never without one resolving (`--auth=none`).
++fn can_login(endpoint: &DaemonEndpoint) -> bool {
++    endpoint.unix_path().is_none() && endpoint.resolved_passphrase().is_some()
++}
++
++/// The passphrase-login headers this upgrade must carry, or none when the endpoint needs
++/// none. A cached session wins, then a bearer token (which already rides the
++/// `Authorization` header), then a fresh login; `force_session` skips the bearer.
+ async fn session_headers(
+     endpoint: &DaemonEndpoint,
+     cache: &PassphraseSessionCache,
++    force_session: bool,
+ ) -> Result<Vec<(HeaderName, HeaderValue)>, WsError> {
+-    if endpoint.bearer_token().is_some()
+-        || endpoint.unix_path().is_some()
+-        || endpoint.resolved_passphrase().is_none()
++    if !can_login(endpoint)
++        || (endpoint.bearer_token().is_some() && !force_session && cache.get(endpoint).is_none())
+     {
+         return Ok(Vec::new());
+     }
+@@ -535,7 +543,7 @@ mod tests {
+         let _env = crate::session::test_support::EnvGuard::unset(&["AOE_DAEMON_PASSPHRASE"]);
+         let e = endpoint("http://127.0.0.1:8080", Some("tok"));
+         let cache = PassphraseSessionCache::default();
+-        assert!(session_headers(&e, &cache).await.unwrap().is_empty());
++        assert!(session_headers(&e, &cache, false).await.unwrap().is_empty());
+     }
+ 
+     #[tokio::test]
+@@ -544,7 +552,24 @@ mod tests {
+         let _env = crate::session::test_support::EnvGuard::unset(&["AOE_DAEMON_PASSPHRASE"]);
+         let e = endpoint("http://127.0.0.1:8080", None);
+         let cache = PassphraseSessionCache::default();
+-        assert!(session_headers(&e, &cache).await.unwrap().is_empty());
++        assert!(session_headers(&e, &cache, false).await.unwrap().is_empty());
++    }
++
++    #[tokio::test]
++    #[serial_test::serial]
++    async fn a_cached_session_wins_over_a_bearer_but_a_bearer_alone_sends_no_session() {
++        let _app = crate::session::test_support::isolate_app_dir();
++        let _env =
++            crate::session::test_support::EnvGuard::set(&[("AOE_DAEMON_PASSPHRASE", "hunter2")]);
++        let e = endpoint("http://127.0.0.1:8080", Some("tok"));
++        let cache = PassphraseSessionCache::default();
++        assert!(session_headers(&e, &cache, false).await.unwrap().is_empty());
++        cache.set_for_test(passphrase_session::PassphraseSession {
++            cookie: "aoe_session=abc123".to_string(),
++            binding_secret: "the-binding-secret".to_string(),
++        });
++        let headers = session_headers(&e, &cache, false).await.unwrap();
++        assert!(headers.iter().any(|(name, _)| *name == header::COOKIE));
+     }
+ 
+     #[tokio::test]
+@@ -560,7 +585,7 @@ mod tests {
+             binding_secret: "the-binding-secret".to_string(),
+         });
+ 
+-        let headers = session_headers(&e, &cache).await.unwrap();
++        let headers = session_headers(&e, &cache, false).await.unwrap();
+         let value_of = |name: header::HeaderName| {
+             headers
+            
+```
+
+**File**: `src/cli/log_level.rs` (modified, +18/-69)
+```diff
+@@ -3,8 +3,6 @@
+ use anyhow::{bail, Context, Result};
+ use clap::Args;
+ 
+-use super::serve::read_serve_urls;
+-
+ #[derive(Args)]
+ pub struct LogLevelArgs {
+     /// Bare level (trace|debug|info|warn|error). Expands to all known
+@@ -25,64 +23,28 @@ pub struct LogLevelArgs {
+ 
+ #[tracing::instrument(target = "cli.log_level", skip_all)]
+ pub async fn run(args: LogLevelArgs) -> Result<()> {
+-    let urls = read_serve_urls();
+-    let Some(primary) = urls.first() else {
+-        bail!("No aoe serve daemon is running, or serve.url is empty/missing.");
+-    };
+-
+-    let base = primary
+-        .url
+-        .split('?')
+-        .next()
+-        .unwrap_or(&primary.url)
+-        .trim_end_matches('/');
+-    let endpoint = format!("{base}/api/log-level");
+-    let token = crate::daemon::authorization_header(extract_token(&primary.url))?;
+-    let endpoint = crate::daemon::native_url(&endpoint)?;
+-    let client = crate::daemon::native_http_client(&endpoint, token.is_some())?;
+-
+-    if args.get || (args.level.is_none() && args.filter.is_none()) {
+-        let mut req = client.get(endpoint);
+-        if let Some(t) = token {
+-            req = req.header(reqwest::header::AUTHORIZATION, t);
+-        }
+-        let resp = req.send().await.context("GET /api/log-level")?;
+-        let status = resp.status();
+-        let body = resp.text().await.unwrap_or_default();
+-        if !status.is_success() {
+-            bail!("server returned {status}: {body}");
++    let endpoint = crate::acp::client::discovery::discover_local()
++        .context("No aoe serve daemon is running.")?;
++    let client = crate::acp::client::HttpClient::new(endpoint)?;
++
++    let patch = match (args.level.as_deref(), args.filter.as_deref()) {
++        _ if args.get => None,
++        (None, None) => None,
++        (Some(level), None) if matches_known_level(level) => {
++            Some(serde_json::json!({ "level": level }))
+         }
+-        println!("{body}");
+-        return Ok(());
+-    }
+-
+-    let body = match (args.level.as_deref(), args.filter.as_deref()) {
+-        (Some(level), None) => {
+-            if matches_known_level(level) {
+-                serde_json::json!({ "level": level })
+-            } else {
+-                bail!(
+-                    "{level:?} is not a known level. \
+-                     Use trace|debug|info|warn|error, or pass --filter for raw EnvFilter syntax."
+-                );
+-            }
+-        }
+-        (None, Some(filter)) => serde_json::json!({ "filter": filter }),
++        (Some(level), None) => bail!(
++            "{level:?} is not a known level. \
++             Use trace|debug|info|warn|error, or pass --filter for raw EnvFilter syntax."
++        ),
++        (None, Some(filter)) => Some(serde_json::json!({ "filter": filter })),
+         (Some(_), Some(_)) => bail!("specify exactly one of <level> or --filter"),
+-        (None, None) => unreachable!("guarded above"),
+     };
+ 
+-    let mut req = client.patch(endpoint).json(&body);
+-    if let Some(t) = token {
+-        req = req.header(reqwest::header::AUTHORIZATION, t);
+-    }
+-    let resp = req.send().await.context("PATCH /api/log-level")?;
+-    let status = resp.status();
+-    let text = resp.text().await.unwrap_or_default();
+-    if !status.is_success() {
+-        bail!("server returned {status}: {text}");
+-    }
+-    println!("{text}");
++    println!(
++        "{}",
++        serde_json::to_string(&client.log_level(patch.as_ref()).await?)?
++    );
+     Ok(())
+ }
+ 
+@@ -92,16 +54,3 @@ fn matches_known_level(s: &str) -> bool {
+         "trace" | "debug" | "info" | "warn" | "warning" | "error"
+     )
+ }
+-
+-fn extract_token(url: &str) -> Option<&str> {
+-    let query = url.split_once('?').map(|(_, q)| q)?;
+-    for pair in query.split('&') {
+-        if let Some(rest) = pair.strip_prefix("token=") {
+-            if rest.is_empty() {
+-                return None;
+-            }
+-            return Some(rest);
+-        }
+-    }
+-    None
+-}
+```
+
+**File**: `src/cli/runtime_read/mod.rs` (modified, +115/-26)
+```diff
+@@ -385,9 +385,8 @@ async fn upgrade_http(
+     let peer = stream
+         .peer_addr()
+         .map_err(|_| ReadFailure::post("unavailable"))?;
+-    let auth = if !request.headers().contains_key("Authorization")
+-        && std::env::var_os("AOE_DAEMON_PASSPHRASE").is_some()
+-    {
++    let had_bearer = request.headers().contains_key("Authorization");
++    let auth = if std::env::var_os("AOE_DAEMON_PASSPHRASE").is_some() {
+         let uri = request.uri();
+         let path = uri
+             .path()
+@@ -403,44 +402,57 @@ async fn upgrade_http(
+             // Login uses the connected loopback address, never a second localhost lookup.
+             format!("http://{peer}{path}")
+         };
+-        let endpoint = DaemonEndpoint::new(base, None, Source::Env);
++        let bearer = request
++            .headers()
++            .get("Authorization")
++            .and_then(|value| value.to_str().ok())
++            .and_then(|value| value.strip_prefix("Bearer "))
++            .map(str::to_string);
++        let endpoint = DaemonEndpoint::new(base, bearer, Source::Env);
+         endpoint
+             .resolved_passphrase()
+             .is_some()
+             .then(|| (endpoint, PassphraseSessionCache::default()))
+     } else {
+         None
+     };
++    // A bearer goes first. A 401 on it falls back to one passphrase login, which then
++    // replaces the bearer, the same order the HTTP client uses.
++    let mut login_now = !had_bearer;
+     let mut refreshed = false;
+     loop {
+         let mut had_cached_session = false;
+         if let Some((endpoint, cache)) = &auth {
+             let session = match cache.get(endpoint) {
+                 Some(session) => {
+                     had_cached_session = true;
+-                    session
++                    Some(session)
+                 }
+-                None => {
++                None if login_now => Some(
+                     tokio::time::timeout_at(deadline, passphrase_session::login(endpoint, cache))
+                         .await
+                         .map_err(|_| ReadFailure::post("unavailable"))?
+-                        .map_err(map_login_error)?
+-                }
++                        .map_err(map_login_error)?,
++                ),
++                None => None,
+             };
+-            request.headers_mut().insert(
+-                "Cookie",
+-                session
+-                    .cookie
+-                    .parse()
+-                    .map_err(|_| ReadFailure::post("unauthorized"))?,
+-            );
+-            request.headers_mut().insert(
+-                "X-Aoe-Device-Binding",
+-                session
+-                    .binding_secret
+-                    .parse()
+-                    .map_err(|_| ReadFailure::post("unauthorized"))?,
+-            );
++            if let Some(session) = session {
++                request.headers_mut().remove("Authorization");
++                request.headers_mut().insert(
++                    "Cookie",
++                    session
++                        .cookie
++                        .parse()
++                        .map_err(|_| ReadFailure::post("unauthorized"))?,
++                );
++                request.headers_mut().insert(
++                    "X-Aoe-Device-Binding",
++                    session
++                        .binding_secret
++                        .parse()
++                        .map_err(|_| ReadFailure::post("unauthorized"))?,
++                );
++            }
+         }
+         let result = tokio::time::timeout_at(
+             deadline,
+@@ -456,11 +468,16 @@ async fn upgrade_http(
+         match result {
+             Ok((stream, _)) => return Ok(stream),
+             Err(WsError::Http(response))
+-                if response.status().as_u16() == 401 && had_cached_session && !refreshed =>
++                if response.status().as_u16() == 401
++                    && auth.is_some()
++                    && ((had_cached_session && !refreshed) || !login_now) =>
+             {
+-                let (endpoint, cache) = auth.as_ref().expect("cached passphrase session");
+-                cache.invalidate(endpoint);
+-                refreshed = true;
++                let (endpoint, cache) = auth.as_ref().expect("passphrase auth");
++                if had_cached_session {
++                    cache.invalidate(endpoint);
++                    refreshed = true;
++                }
++                login_now = true;
+                 request = match endpoint::select_endpoint(source)? {
+                     SelectedEndpoint::Http { request } => *request,
+                     SelectedEndpoint::Local => unreachable!("captured HTTP source"),
+@@ -1143,4 +1160,76 @@ mod tests {
+             .unwrap()
+             .unwrap();
+     }
++
++    /// A bearer alone is refused on a token-plus-passphrase daemon, so the read falls back to
++    /// one passphrase login (which carries the bearer) instead of failing.
++    #[tokio::test]
++    #[serial_test::serial]
++    async fn a_bearer_refused_f
+```
+
+---
+
+### Incident Patch 3: `60f0031d` (2026-10-26)
+**Commit Message**: fix(server): refuse a missing relative ACP adapter in an existing project (#4971)
+
+* fix(server): refuse a missing relative ACP adapter in an existing project
+
+The create check skipped relative adapter commands, so a missing
+./node_modules/.bin/x only failed at spawn. Check it against the project
+dir when that dir exists; a not-yet-created launch dir or any hook still
+gets the benefit of the doubt.
+
+* fix(cli): clean up provisioned resources when add refuses a missing adapter
+
+Addresses review comment from jerome-benoit on #4971. The explicit --agent
+refusal ran after the scratch dir or worktree was provisioned and bailed
+without cleanup; the relative-adapter check made that reachable.
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
@@ -2641,201 +3602,145 @@ Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-**File**: `src/server/disk_watch.rs` (modified, +14/-12)
+**File**: `src/cli/add.rs` (modified, +10/-0)
 ```diff
-@@ -4,6 +4,7 @@
- use crate::file_watch::{FileMatcher, WatchSpec};
- use std::sync::Arc;
- 
-+use super::lifecycle_feed::ReadRetry;
- #[cfg(test)]
- use super::reload::load_all_profiles;
- use super::reload::reload_state_instances_from_disk;
-@@ -261,10 +262,17 @@ pub(super) async fn init_disk_watch_subscriptions_inner<F>(
- /// pattern but does NOT touch tmux or `state.status_tx`. Polling stays
- /// canonical; this task is pure latency reduction.
- pub(super) async fn disk_watcher_consumer(state: Arc<AppState>) {
-+    let mut retry = ReadRetry::default();
-+    let mut retry_in = None;
-     loop {
--        tokio::select! {
-+        let fresh_wake = tokio::select! {
-             _ = state.shutdown.cancelled() => break,
--            _ = state.disk_changed.notified() => {}
-+            _ = state.disk_changed.notified() => true,
-+            _ = tokio::time::sleep(retry_in.unwrap_or_default()), if retry_in.is_some() => false,
-+        };
-+        retry_in = None;
-+        if state.shutdown.is_cancelled() {
-+            break;
-         }
-         let started = std::time::Instant::now();
-         let namespace = state.profile_namespace.read().await;
-@@ -301,17 +309,11 @@ pub(super) async fn disk_watcher_consumer(state: Arc<AppState>) {
-         };
-         let ((fresh, metadata), live_worker_records) = loaded;
-         // Diff before the reload consumes the rows. A session missing once is only a suspect,
--        // and a snapshot a commit overtook is dropped, so look again shortly rather than
--        // waiting for the next file event.
--        let observe_again = state.lifecycle.observe_disk(lifecycle_since, &fresh);
-+        // a snapshot a commit overtook is dropped, and a failed read says nothing, so look
-+        // again shortly rather than waiting for the next file event.
-+        let observed = state.lifecycle.observe_disk(lifecycle_since, &fresh);
-         drop(lifecycle_turn);
--        if observe_again {
--            let again = state.disk_changed.clone();
--            tokio::spawn(async move {
--                tokio::time::sleep(std::time::Duration::from_millis(250)).await;
--                again.notify_one();
--            });
--        }
-+        retry_in = retry.next(observed, fresh_wake);
-         let count = fresh.instances.len();
-         reload_state_instances_from_disk(
-             &state,
+@@ -698,6 +698,16 @@ pub async fn run(profile: &str, args: AddArgs) -> Result<()> {
+             let hint = crate::acp::install_hints::install_hint_for(&spec.command)
+                 .unwrap_or("install via your package manager and re-run");
+             if user_picked_agent {
++                cleanup_partial_session(
++                    &path,
++                    instance.worktree_info.as_ref(),
++                    instance.workspace_info.as_ref(),
++                    args.create_branch,
++                    instance
++                        .scratch
++                        .then(|| std::path::Path::new(&instance.project_path)),
++                    None,
++                );
+                 bail!(
+                     "ACP adapter `{}` is not installed or not on $PATH.\n\
+                          Install: {}\n\
 ```
 
-**File**: `src/server/lifecycle_feed.rs` (modified, +211/-18)
+**File**: `src/session/builder.rs` (modified, +46/-3)
 ```diff
-@@ -5,6 +5,7 @@
- //! also covers writers in other processes and profile moves, but is debounced.
- 
- use std::sync::{Arc, Mutex};
-+use std::time::Duration;
- 
- use tokio::sync::broadcast;
- 
-@@ -19,6 +20,64 @@ const LIFECYCLE_CHANNEL_CAPACITY: usize = 256;
- /// Reads of the baseline before giving up on a quiet moment between commits.
- const BASELINE_ATTEMPTS: usize = 5;
- 
-+/// Wait before looking again at a missing session or an overtaken snapshot.
-+const AGAIN_DELAY: Duration = Duration::from_millis(250);
-+
-+/// Observations repeated after a failed read before waiting for the next filesystem event.
-+const READ_RETRY_ATTEMPTS: u32 = 5;
-+
-+/// Wait before the first read retry; each further one doubles it.
-+const READ_RETRY_BASE_DELAY: Duration = Duration::from_millis(250);
-+
-+/// What an observation asks of the consumer.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub(super) enum Observed {
-+    Settled,
-+    /// A missing session awaits a second look, or a commit overtook the snapshot and nothing
-+    /// was applied. `read_healthy` is whether every profile was listed and read.
-+    Again {
-+        read_healthy: bool,
-+    },
-+    /// The profile listing or a profile's storage could not be read.
-+    ReadFailed,
-+}
-+
-+/// Paces repeated observations. Read failures draw on a bounded budget that a healthy read or
-+/// fresh filesystem activity refills, so a profile that stays unreadable is not reloaded
-+/// forever.
-+#[derive(Default)]
-+pub(super) struct ReadRetry {
-+    failures: u32,
-+}
-+
-+impl ReadRetry {
-+    /// How long to wait before observing again; `None` waits for the next filesystem event.
-+    /// `fresh` is whether this observation was woken by filesystem activity, not by a retry.
-+    pub(super) fn next(&mut self, observed: Observed, fresh: bool) -> Option<Duration> {
-+        if fresh {
-+            self.failures = 0;
-+        }
-+        match observed {
-+            Observed::Settled => {
-+                self.failures = 0;
-+                None
-+            }
-+            Observed::Again { read_healthy } => {
-+                if read_healthy {
-+                    self.failures = 0;
-+                }
-+                Some(AGAIN_DELAY)
-+            }
-+            Observed::ReadFailed if self.failures < READ_RETRY_ATTEMPTS => {
-+                let delay = READ_RETRY_BASE_DELAY * 2u32.pow(self.failures);
-+                self.failures += 1;
-+                Some(delay)
-+            }
-+            Observed::ReadFailed => None,
-+        }
-+    }
-+}
-+
- /// Runs before each publication, so a test can hold one producer there.
- #[cfg(test)]
- type PublishHook = Arc<dyn Fn(&LifecycleChange) + Send + Sync>;
-@@ -57,30 +116,37 @@ impl LifecycleFeed {
-     }
- 
-     /// Diff the freshly loaded sessions of every profile, read after `since` was taken from
--    /// [`Self::commit_generation`]. Returns whether to observe again shortly: a missing
--    /// session awaits a second look, or a commit overtook the snapshot and nothing was applied.
--    pub(super) fn observe_disk(&self, since: u64, loaded: &LoadedInstances) -> bool {
-+    /// [`Self::commit_generation`].
-+    pub(super) fn observe_disk(&self, since: u64, loaded: &LoadedInstances) -> Observed {
-         let health = &loaded.cache.health;
-         if health.enumeration_failed {
-             // An empty listing says nothing about which sessions exist.
-             self.apply(|tracker| {
-                 tracker.baseline_unavailable();
-                 (Vec::new(), ())
-             });
--            return false;
-+            return Observed::ReadFailed;
+@@ -1359,9 +1359,14 @@ pub mod structured {
+             return true;
          }
-         let rows: Vec<LifecycleRow> = loaded
-             .instances
-             .iter()
-             .map(|inst| LifecycleRow::of(inst, &inst.effective_profile()))
-             .collect();
-         let unread: Vec<String> = health.unreadable_profiles.iter().cloned().collect();
-+        let read_healthy = unread.is_empty();
-         self.apply(|tracker| {
-             if tracker.commits() != since {
--                return (Vec::new(), true);
-+                return (Vec::new(), Observed::Again { read_healthy });
-             }
-             let changes = tracker.observe(&rows, &unread);
--            (changes, tracker.has_suspects(&unread))
-+            let observed = if tracker.has_suspects(&unread) {
-+                Observed::Again { read_healthy }
-+            } else if read_healthy {
-+                Observed::Settled
-+            } else {
-+                Observed::ReadFailed
-+            };
-+            (changes, observed)
-         })
-     }
- 
-@@ -131,7 +197,7 @@ impl LifecycleFeed {
-             if loaded.cache.health.enumeration_failed {
-                 continue;
-             }
--            if !self.observe_disk(since, &loaded) {
-+            if !matches!(self.observe_disk(since, &loaded), Observed::Again { .. }) {
-                 return true;
-             }
+         if !is_bare_command(command) {
+-            let checkable =
+-                command.contains("${aoe_data_dir}") || std::path::Path::new(command).is_absolute();
+-            return !checkable || crate::cli::acp::command_present(command);
++            let path = std::path::Path::new(command);
++            if command.contains("${aoe_data_dir}") || path.is_absolute() {
++                return crate::cli::acp::command_present(command);
++            }
++            // Spawned from the project, so a relative path resolves there; a launch
++            // directory that doesn't exist yet may still gain it.
++            return command.contains("${")
++                || project_path.is_none_or(|cwd| !cwd.is_dir() || cwd.join(path).exists());
          }
-@@ -205,7 +271,10 @@ mod tests {
+         let app_dir = crate::session::get_app_dir().ok();
+         if resolve_agent_command(command, app_dir.as_deref()).is_ok() {
+@@ -1708,6 +1713,8 @@ mod tests {
+                     "fake-present-path",
+                     bin.join(&adapter).display().to_string(),
+                 ),
++                ("fake-rel-present", format!("agent-bin/{adapter}")),
++                ("fake-rel-missing", "agent-bin/aoe-test-missing".to_string()),
+             ] {
+                 config.session.agent_acp_cmd.insert(name.into(), cmd);
+             }
+@@ -1725,6 +1732,7 @@ mod tests {
+         };
+         let configured = vec![format!("PATH={}", bin.display())];
+         let present_wrapper = bin.join(&adapter).display().to_string();
++        let not_created = project.path().join("not-created");
+         let missing_text = "is not installed or not on $PATH";
+         let missing = Some(missing_text);
+         let not_capable = Some("is not ACP-capable");
+@@ -1849,6 +1857,41 @@ mod tests {
+                 before_session_hook: true,
+                 ..base()
+             },
++            Case {
++                label: "relative command, present in the project",
++                tool: "fake-rel-present",
++                ..base()
++            },
++            Case {
++                label: "relative command, missing from an existing project",
++                tool: "fake-rel-missing",
++                expected: missing,
++                ..base()
++            },
++            Case {
++                label: "relative command, launch dir not created yet",
++                tool: "fake-rel-missing",
++                project: None,
++                ..base()
++            },
++            Case {
++                label: "relative command, project dir absent on disk",
++                tool: "fake-rel-missing",
++                project: Some(&not_created),
++                ..base()
++            },
++            Case {
++                label: "a before_session hook may install a relative command",
++                tool: "fake-rel-missing",
++                before_session_hook: true,
++                ..base()
++            },
++            Case {
++                label: "an on_create hook may install a relative command",
++                tool: "fake-rel-missing",
++                preparation_hooks: true,
++                ..base()
++            },
+             Case {
+                 label: "absolute command, present",
+                 tool: "fake-present-path",
+```
+
+**File**: `tests/e2e/cli.rs` (modified, +19/-0)
+```diff
+@@ -1446,6 +1446,25 @@ fn cli_add_effort_is_stored_and_refusals_provision_nothing() {
+     }
+ }
  
-     /// A complete disk read taken just now.
-     fn observe(feed: &LifecycleF
++/// An explicit `--agent` whose relative adapter is missing is refused after the scratch dir
++/// is provisioned, so the refusal must remove it.
++#[test]
++#[parallel]
++fn cli_add_missing_relative_adapter_leaves_no_scratch_dir() {
++    let h = TuiTestHarness::new("cli_add_missing_adapter");
++    h.append_config("[session.agent_acp_cmd]\nfake = \"./missing-acp\"");
++
++    let stderr = h.run_cli_err(&["add", "--scratch", "-t", "Refused", "--agent", "fake"]);
++    assert!(stderr.contains("is not installed"), "{stderr}");
++
++    let scratch_root = app_dir_in(h.home_path()).join("scratch");
++    assert_eq!(
++        std::fs::read_dir(&scratch_root).map_or(0, Iterator::count),
++        0,
++        "the refused add left its scratch dir behind"
++    );
++}
++
+ /// #1051: `aoe ps --json` is fail-soft on an empty profile with no tmux
+ /// server: an empty array and exit 0, never a failed substrate probe.
+ #[test]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4940** (2026-10-25): fix(session): release the create spawn reservation when a stop cancels it (@Seluj78)
-- **PR #4939** (2026-10-25): fix(serve): quiesce structured worker on profile-only session move (@Seluj78)
-- **PR #4938** (2026-10-25): fix(serve): retry transient lifecycle snapshot read failures with a bounded budget (@Seluj78)
-- **PR #4937** (2026-10-25): feat(daemon): tag group-not-empty rejection with an error code (@Seluj78)
-- **PR #4936** (2026-10-25): refactor(tui): adopt cycle_focus in remaining dialogs (@Seluj78)
-- **PR #4931** (2026-10-25): fix(update): give Nix installs a command that updates them (@Seluj78)
+- **PR #4986** (2026-10-27): fix(web): defer first layout persistence until repository status is known (@Seluj78)
+- **PR #4985** (2026-10-27): fix(acp): do not park a turn that extra usage covers (@Seluj78)
+- **PR #4984** (2026-10-27): fix(web): serve one display name per Agent from the server (@Seluj78)
+- **PR #4979** (2026-10-27): docs(maintainers): require a code-owner approval on main (@Seluj78)
+- **PR #4974** (2026-10-27): fix(acp): name the missing aoe binary when the runner cannot spawn (@Seluj78)
+- **PR #4973** (2026-10-27): fix(web): keep top banners' dismiss "×" and push-health text readable (@Seluj78)
 
 ---
 
@@ -2855,67 +3760,39 @@ Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. daemon): stop trusting group-writable ancestors of the socket dir (#4929)
+## X. session): report Busy consistently across CLI, TUI and HTTP delete paths (#4925)
 
 **RULE**:
-When implementing operations in `src/cli/runtime_read/uds.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/api.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7ee49af3`: daemon): stop trusting group-writable ancestors of the socket dir (#4929). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `886b11b6`: session): report Busy consistently across CLI, TUI and HTTP delete paths (#4925). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cli/runtime_read/uds.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/api.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        validate_directory_stat(&root, euid, false, true, Path::new("/"))?;
-            validate_directory_stat(&next, euid, final_component, true, &walked)?;
-    if !group_other_writes_allowed(&stat, final_component, euid) {
-fn group_other_writes_allowed(stat: &os::Stat, final_component: bool, owner: u32) -> bool {
-            && crate::daemon::transport::trusted_ancestor(stat.st_uid, stat.st_mode, owner))
-    fn writable_ancestors_preserve_sticky_roots_and_final_directory_isolation() {
-        assert!(!group_other_writes_allowed(&stat, true, 1));
-        assert!(group_other_writes_allowed(&stat, false, 1));
-        assert!(!group_other_writes_allowed(&stat, true, 1));
-        assert!(!group_other_writes_allowed(&stat, false, 1));
-        assert!(group_other_writes_allowed(&stat, false, 1));
-        assert!(!group_other_writes_allowed(&stat, false, 1));
-        assert!(!group_other_writes_allowed(&stat, false, 1));
-        assert!(!group_other_writes_allowed(&stat, true, 1));
+Delete, purge and restore share one Busy contract. Busy means another lifecycle
+operation holds the session, nothing changed, and the caller may retry once it
+finishes. It is not `KeptRestored` (restored mid-purge), already gone, or a
+cleanup failure. Over HTTP it is `409` with the `lifecycle_locked` code header
+and `{"error":"lifecycle_busy","operation":"<holder>"}`; a selection that
+changed after it was made is `409` with its own `lifecycle_superseded` code
+header; it may already be partly processed, so refresh and check before retrying. A batch delete that skips Busy sessions lists them under `busy` and
+reports `partial`; when nothing else completed it answers `409 lifecycle_busy`.
+`aoe rm --purge` and `aoe session restore` exit non-zero for Busy. `aoe session
+empty-trash` purges the rest, lists each skipped session on stderr, then exits
+non-zero.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    let private_gid = admission
-        .then(|| crate::daemon::transport::user_private_gid(euid))
-        .flatten();
-        validate_directory_stat(&root, euid, private_gid, false, true, Path::new("/"))?;
-            validate_directory_stat(&next, euid, private_gid, final_component, true, &walked)?;
-    private_gid: Option<u32>,
-    if !group_other_writes_allowed(&stat, final_component, euid, private_gid) {
-fn group_other_writes_allowed(
-    stat: &os::Stat,
-    final_component: bool,
-    owner: u32,
-    private_gid: Option<u32>,
-) -> bool {
-            && crate::daemon::transport::trusted_ancestor(
-                stat.st_uid,
-                stat.st_gid,
-                stat.st_mode,
-                owner,
-                private_gid,
-            ))
-    fn writable_ancestors_preserve_private_groups_and_final_directory_isolation() {
-            st_gid: 0,
-        assert!(!group_other_writes_allowed(&stat, true, 1, None));
-        assert!(group_other_writes_allowed(&stat, false, 1, None));
-        assert!(!group_other_writes_allowed(&stat, true, 1, None));
-        assert!(!group_other_writes_allowed(&stat, false, 1, None));
-        assert!(group_other_writes_allowed(&stat, false
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7ee49af3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `886b11b6` are properly handled with clean fallback behavior.

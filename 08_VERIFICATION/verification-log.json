@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-51YY",
-    "timestamp": "2026-10-25T19:32:03.514Z",
-    "repository": "modelcontextprotocol/kotlin-sdk",
-    "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
-    "contentHash": "78d75c280b29e172b239f3c776898f0df8ba88f558deb8a042d834a9a4b74e1f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-DBL7",
-    "timestamp": "2026-10-25T19:38:29.227Z",
-    "repository": "fishaudio/drama-3",
-    "learningId": "learn-huggingface-fishaudio-drama-3",
-    "contentHash": "8d38b9a656e6d1ca27ef6e6154c3f4fcb9ba6a668130e10cb2b4124801be9c47",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-DH0B",
     "timestamp": "2026-10-25T19:38:36.251Z",
     "repository": "emberstack/kubernetes-reflector",
@@ -7490,6 +7460,36 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
     "contentHash": "2103e3268c1c1d95759379e7c8c9fb5fb0d43422ee52ac2c0fec029c26d2b6c8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-706L",
+    "timestamp": "2026-10-27T17:44:56.493Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "d696a44e4f0c603501224bb4a2aad4cb8e79dfb79e92d0658fc28d183612a93a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-D4LT",
+    "timestamp": "2026-10-27T17:49:42.161Z",
+    "repository": "agent-of-empires/agent-of-empires",
+    "learningId": "learn-github-agent-of-empires-agent-of-empires",
+    "contentHash": "a3518adde1606d91ba2841ce230e96f4876443098df2758b6feb8a030df94499",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

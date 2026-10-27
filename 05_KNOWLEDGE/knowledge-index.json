@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T17:38:03.966Z",
+  "last_updated": "2026-10-27T17:49:42.101Z",
   "total_verified_learnings": 1145,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -769,8 +769,8 @@
       "slug": "agent-of-empires-agent-of-empires",
       "platform": "github",
       "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-      "source_version": "a927b3d6",
-      "content_hash": "f5c52edb5942deb0b331b20917bbddd088d21d2d8a02bf11cdc569abe930a0f0",
+      "source_version": "691b8d2c",
+      "content_hash": "a3518adde1606d91ba2841ce230e96f4876443098df2758b6feb8a030df94499",
       "dossier_path": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "promoted_rules": [
@@ -813,6 +813,11 @@
           "number": 4491,
           "title": "daemon): stop trusting group-writable ancestors of the socket dir (#4929)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4931,
+          "title": "session): report Busy consistently across CLI, TUI and HTTP delete paths (#4925)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -820,7 +825,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T23:39:19.544Z",
+      "verified_at": "2026-10-27T17:49:42.088Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8152,8 +8157,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "8ca46580",
-      "content_hash": "753de2a8c60fab1bd5d41cce11c1456f3020e20a4028e159776304785595186c",
+      "source_version": "a078a8b7",
+      "content_hash": "d696a44e4f0c603501224bb4a2aad4cb8e79dfb79e92d0658fc28d183612a93a",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -8396,6 +8401,11 @@
           "number": 4747,
           "title": "get): --output files follow the umask, not the cache's 0600 (#4945)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4930,
+          "title": "mcp): v27.0.1 release of MCP Server and Claude Cowork plugin",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8403,7 +8413,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:21:58.049Z",
+      "verified_at": "2026-10-27T17:44:56.396Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -136772,6 +136782,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T17:38:03.955Z"
+    },
+    "rule-4930": {
+      "learning_id": "rule-4930",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4930,
+      "title": "mcp): v27.0.1 release of MCP Server and Claude Cowork plugin",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "a078a8b7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T17:44:56.396Z"
+    },
+    "rule-4931": {
+      "learning_id": "rule-4931",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4931,
+      "title": "session): report Busy consistently across CLI, TUI and HTTP delete paths (#4925)",
+      "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+      "source_version": "691b8d2c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T17:49:42.088Z"
     }
   },
   "aliases": {

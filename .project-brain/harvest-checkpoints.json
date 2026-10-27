@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T17:38:04.026Z",
+  "last_updated": "2026-10-27T17:49:42.173Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "753de2a8c60fab1bd5d41cce11c1456f3020e20a4028e159776304785595186c",
-      "verified_at": "2026-10-27T12:21:58.130Z",
+      "content_hash": "d696a44e4f0c603501224bb4a2aad4cb8e79dfb79e92d0658fc28d183612a93a",
+      "verified_at": "2026-10-27T17:44:56.504Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T12:21:58.130Z"
+      "last_updated": "2026-10-27T17:44:56.504Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -11211,14 +11211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-of-empires-agent-of-empires",
-      "content_hash": "f5c52edb5942deb0b331b20917bbddd088d21d2d8a02bf11cdc569abe930a0f0",
-      "verified_at": "2026-10-25T23:39:19.640Z",
+      "content_hash": "a3518adde1606d91ba2841ce230e96f4876443098df2758b6feb8a030df94499",
+      "verified_at": "2026-10-27T17:49:42.173Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T23:39:19.640Z"
+      "last_updated": "2026-10-27T17:49:42.173Z"
     },
     "NativeScript/NativeScript": {
       "repository": "NativeScript/NativeScript",

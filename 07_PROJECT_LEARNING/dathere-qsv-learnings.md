@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `8ca46580`  
+> **Source Version**: `a078a8b7`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T12:21:57.668Z  
+> **Timestamp**: 2026-10-27T17:44:56.047Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T12:21:57.194Z  
+> **Harvest Timestamp**: 2026-10-27T17:44:54.846Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,194 +2203,192 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `48462a79` (2026-10-27)
-**Commit Message**: fix(get): --output files follow the umask, not the cache's 0600 (#4945)
+### Incident Patch 1: `a078a8b7` (2026-10-27)
+**Commit Message**: chore(mcp): v27.0.1 release of MCP Server and Claude Cowork plugin
 
-* fix(get): --output files follow the umask, not the cache's 0600
-
-Since #4928, `get --output` and `get cache-fetch --output` went through the
-cache's private atomic_write, so a file the user asked for was written 0600
-and any parent directories created for it 0700, whatever the umask. Every
-other qsv writer leaves the mode to the umask, and an owner-only export in a
-shared project or web directory quietly breaks whoever else reads it.
-
-write_output now uses write_user_file: still a temp file renamed into place,
-with #4944's collision retry (create_temp, now shared with the cache), but with
-the umask's mode and a plain create_dir_all. The cache itself stays owner-only.
+[skip ci]
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs(changelog): cite #4945
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(get): --output over an existing file keeps its mode; umask-proof test
-
-roborev 5923:
-- High: writing via temp + rename replaced an existing destination's mode, so
-  exporting over a 0600 file under umask 022 left a 0644 file. The temp now
-  takes the existing file's mode while still empty, as File::create 
-
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `.claude-plugin/marketplace.json` (modified, +2/-2)
 ```diff
-@@ -132,7 +132,7 @@ Read **Breaking Changes** before upgrading: `sqlp` subquery aliases, three `vali
- - **Internal: `src/util.rs` split into 15 submodules under `src/util/`.** The 7,800-line file is now a facade that keeps the shared statics, `SchemaArgs` and `get_args`, and re-exports `stats_cache`, `input`, `special_format`, `http` and the other submodules, so every `util::…` path is unchanged. Pure code motion with no behavior change ([#4855](https://github.com/dathere/qsv/pull/4855)).
- 
- ### Fixed
--- **Security: the `get` cache and its `dc:` copies are readable by you only** ([#4928](https://github.com/dathere/qsv/pull/4928)). On a shared machine, other local users could read everything `qsv get` had fetched, including private CKAN resources fetched with an API token: the cache's files were created world-readable (`0644`) in directories anyone could open (`0755`). The copies of `dc:` entries that other commands read were in a shared `qsv-dc` directory in the system temp dir (`/tmp` on Linux), and the index build left a copy in `qsv-getidx` there too. On Unix, the cache's `get/` directory is now owner-only (`0700`), and a cache made by an earlier qsv is tightened the next time it is used. Its files are `0600`. The `dc:` copies are in a per-user, owner-only `qsv-dc-<uid>`. A `QSV_CACHE_DIR` you created keeps its mode, as it may be shared on purpose. The cache directory qsv creates itself is owner-only too. **Behavior changes:** a `get/` cache directory shared with a group on purpose is now owner-only. If `qsv-dc-<uid>` exists and isn't a directory owned by you (in a shared `/tmp`, another user could create it first), `dc:` inputs fail with an error; set `TMPDIR` to a private directory. The old shared `qsv-dc` and `qsv-getidx` directories aren't removed: delete them from your temp dir.
-+- **Security: the `get` cache and its `dc:` copies are readable by you only** ([#4928](https://github.com/dathere/qsv/pull/4928)). On a shared machine, other local users could read everything `qsv get` had fetched, including private CKAN resources fetched with an API token: the cache's files were created world-readable (`0644`) in directories anyone could open (`0755`). The copies of `dc:` entries that other commands read were in a shared `qsv-dc` directory in the system temp dir (`/tmp` on Linux), and the index build left a copy in `qsv-getidx` there too. On Unix, the cache's `get/` directory is now owner-only (`0700`), and a cache made by an earlier qsv is tightened the next time it is used. Its files are `0600`. A file you ask for with `--output` (`get`, `get cache-fetch`) is not part of the cache and keeps your umask's mode, as with every other qsv command, and overwriting an existing file keeps that file's mode ([#4945](https://github.com/dathere/qsv/pull/4945)). The `dc:` copies are in a per-user, owner-only `qsv-dc-<uid>`. A `QSV_CACHE_DIR` you created keeps its mode, as it may be shared on purpose. The cache directory qsv creates itself is owner-only too. **Behavior changes:** a `get/` cache directory shared with a group on purpose is now owner-only. If `qsv-dc-<uid>` exists and isn't a directory owned by you (in a shared `/tmp`, another user could create it first), `dc:` inputs fail with an error; set `TMPDIR` to a private directory. The old shared `qsv-dc` and `qsv-getidx` directories aren't removed: delete them from your temp dir.
- - **Security: `stats`' `.stats.csv.json` sidecar is no more readable than its CSV** ([#4929](https://github.com/dathere/qsv/pull/4929)). The `.stats.csv` and `.stats.csv.data.jsonl` caches beside a CSV never get a wider mode than the CSV (since [#4619](https://github.com/dathere/qsv/issues/4619)), but the `.stats.csv.json` sidecar was created at the umask default, so a private (`0600`) CSV got a world-readable sidecar. It holds no data values, but it does record the CSV's full path, record count, size and BLAKE3 hash, which is enough to confirm a guess at a small file's contents. It is now derived from the CSV's mode like the other two, including the copy written beside a symlink's target. Sidecars left by earlier versions are tightened the next time `stats` recomputes them.
- - **`writestat` no longer writes wrong data to SPSS portable (`.por`) files** ([#4927](https://github.com/dathere/qsv/pull/4927), polars-readstat-rs [0.27.0](https://github.com/jrothbaum/polars_readstat/releases)). Numbers of about 1.8e19 and above came back as 1.8e19, and text outside printable ASCII was written as NUL bytes (`café` came back as `caf` and two NULs), or, for a line break, as a file that couldn't be read back. Large numbers now come back as written. **Behavior change:** text a `.por` file can't hold is now an error naming the column, and no file is written; write `.sav` to keep such text.
- - **`writestat` refuses numbers a SAS transport (`.xpt`) file would write as missing** ([#4927](https://github.com/dathere/qsv/pull/4927)). XPT stores IBM floats, which stop at about 7.2e75, so a larger number wa
+@@ -6,14 +6,14 @@
+   },
+   "metadata": {
+     "description": "Blazingly fast data wrangling plugins for Claude Code — 57 skill-based commands for CSV, TSV, Excel, JSONL, and Parquet files",
+-    "version": "26.0.0"
++    "version": "27.0.1"
+   },
+   "plugins": [
+     {
+       "name": "qsv-data-wrangling",
+       "source": "./.claude/skills",
+       "description": "Blazingly fast tabular data wrangling with 57 qsv skill-based commands for CSV, TSV, Excel, JSONL, and Parquet files",
+-      "version": "26.0.0",
++      "version": "27.0.1",
+       "author": {
+         "name": "datHere, Inc.",
+         "email": "qsv@dathere.com",
 ```
 
-**File**: `src/diskcache.rs` (modified, +41/-4)
+**File**: `.claude/skills/.claude-plugin/plugin.json` (modified, +1/-1)
 ```diff
-@@ -824,15 +824,23 @@ mod rich {
-         format!("{}-{n}", std::process::id())
-     }
- 
--    /// Create an owner-only temp file at `make(token)`, moving on to the next
-+    /// Create an owner-only (0600) temp file for the cache; see `create_temp`.
-+    fn create_private_temp(make: impl Fn(&str) -> PathBuf) -> std::io::Result<(PathBuf, fs::File)> {
-+        create_temp(make, create_private_file)
-+    }
-+
-+    /// Create a temp file at `make(token)` with `open`, moving on to the next
-     /// token if that name is taken. A crashed run leaves its temps behind, and
-     /// a later process that gets the same pid (routine in containers, where
-     /// qsv often has the same low pid every run) would otherwise hit them.
--    fn create_private_temp(make: impl Fn(&str) -> PathBuf) -> std::io::Result<(PathBuf, fs::File)> {
-+    fn create_temp(
-+        make: impl Fn(&str) -> PathBuf,
-+        open: impl Fn(&Path) -> std::io::Result<fs::File>,
-+    ) -> std::io::Result<(PathBuf, fs::File)> {
-         let mut last_err = None;
-         for _ in 0..16 {
-             let tmp = make(&unique_token());
--            match create_private_file(&tmp) {
-+            match open(&tmp) {
-                 Ok(file) => return Ok((tmp, file)),
-                 Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => last_err = Some(e),
-                 Err(e) => return Err(e),
-@@ -841,6 +849,35 @@ mod rich {
-         Err(last_err.unwrap_or_else(|| std::io::Error::other("no free temp filename")))
-     }
- 
-+    /// Write a file the user asked for (`--output`) atomically, with the
-+    /// umask's mode, like every other qsv writer. Only the cache's own files are
-+    /// owner-only: where an export goes, and who may read it, is the user's call.
-+    /// Overwriting an existing file keeps its mode, as `File::create` would: the
-+    /// temp gets that mode while still empty, so a file the user locked down is
-+    /// never replaced by a more readable one.
-+    fn write_user_file(path: &Path, bytes: &[u8]) -> std::io::Result<()> {
-+        if let Some(parent) = path.parent() {
-+            fs::create_dir_all(parent)?;
-+        }
-+        let (tmp, mut file) = create_temp(
-+            |t| path.with_extension(format!("tmp-{t}")),
-+            |p| fs::OpenOptions::new().write(true).create_new(true).open(p),
-+        )?;
-+        let written = (|| {
-+            #[cfg(unix)]
-+            if let Ok(existing) = fs::metadata(path) {
-+                file.set_permissions(existing.permissions())?;
-+            }
-+            file.write_all(bytes)
-+        })();
-+        drop(file);
-+        if let Err(e) = written.and_then(|()| fs::rename(&tmp, path)) {
-+            let _ = fs::remove_file(&tmp);
-+            return Err(e);
-+        }
-+        Ok(())
-+    }
-+
-     fn atomic_write(path: &Path, bytes: &[u8]) -> std::io::Result<()> {
-         if let Some(parent) = path.parent() {
-             super::create_private_dir_all(parent)?;
-@@ -3444,7 +3481,7 @@ mod rich {
-             .ok_or_else(|| CliError::Other(format!("get: no cached entry named '{name}'")))?;
-         let body = read_blob(&root, &entry.meta.blake3, entry.meta.compression)?;
-         match output {
--            Some(p) if p != "-" => atomic_write(Path::new(p), &body)?,
-+            Some(p) if p != "-" => write_user_file(Path::new(p), &body)?,
-             _ => {
-                 use std::io::Write;
-                 std::io::stdout().write_all(&body)?;
+@@ -1,6 +1,6 @@
+ {
+   "name": "qsv-data-wrangling",
+-  "version": "26.0.0",
++  "version": "27.0.1",
+   "description": "Blazingly fast tabular data wrangling with 57 qsv skill-based commands for CSV, TSV, Excel, JSONL, and Parquet files",
+   "author": {
+     "name": "datHere, Inc.",
 ```
 
-**File**: `tests/test_get.rs` (modified, +62/-0)
+**File**: `.claude/skills/CHANGELOG.md` (modified, +2/-1)
 ```diff
-@@ -2855,6 +2855,68 @@ fn get_symlinked_cache_root_is_made_owner_only() {
-     );
+@@ -5,7 +5,8 @@ All notable changes to the qsv Agent Skills (MCP Server) project will be documen
+ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+ 
+-## [Unreleased]
++## [27.0.1] - 2026-10-27
++Companion release to qsv 27.0.1, "The Live Data Schematics Release". The MCP server tracks the qsv binary version per the policy adopted in 20.0.0, and `minimum_qsv_version` is raised to 27.0.1 because the regenerated skill JSONs advertise options that only exist in the new binary (`qsv-viz --no-daemon-bridge`, `qsv-validate --offline`, `qsv-pivotp --no-moarstats`) and no longer offer `--low-memory` on `qsv-sqlp`, `qsv-joinp` and `qsv-count`, which the new binary rejects. The skill count stays at **57**. Update your qsv binary first.
+ 
+ ### Added
+ - **`qsv-viz` gains `--no-daemon-bridge`** ([#4848](https://github.com/dathere/qsv/pull/4848), [#4902](https://github.com/dathere/qsv/pull/4902)): it leaves the qsv-clientd bridge script out of a `smart` Data Schematic. The description explains what the bridge does by default (one "hello" request to 127.0.0.1, a "Live data" chip only if a qsv-clientd daemon answers) and that the recorded arguments omit the source URL of a `dc:` input.
+```
+
+**File**: `.claude/skills/README-MCP.md` (modified, +3/-3)
+```diff
+@@ -60,7 +60,7 @@ Excel and JSONL files are automatically converted to CSV before processing - no
+ 
+ The **MCP Desktop Extension** (MCPB) provides the easiest installation experience:
+ 
+-1. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-26.0.0.mcpb`) from [releases](https://github.com/dathere/qsv/releases/latest)
++1. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-27.0.1.mcpb`) from [releases](https://github.com/dathere/qsv/releases/latest)
+ 2. Open Claude Desktop Settings → Extensions
+ 3. Click "Install from file" and select the `.mcpb` file
+ 4. Configure your allowed directories when prompted
+@@ -621,8 +621,8 @@ For issues or questions:
+ 
+ ---
+ 
+-**Updated**: 2026-10-19
+-**Version**: 26.0.0
++**Updated**: 2026-10-27
++**Version**: 27.0.1
+ **Tools**: 23 tools at startup (10 core + 13 commonly-used; +1 app-only when MCP Apps enabled), all 57 discoverable via `qsv_search_tools`
+ **Skills**: 57 qsv commands
+ **Status**: Production Ready
+```
+
+**File**: `.claude/skills/README.md` (modified, +3/-3)
+```diff
+@@ -49,7 +49,7 @@ Each skill file provides:
+ 
+ **Installation**:
+ 1. Install qsv: `brew install qsv` (macOS) or see [qsv installation](https://github.com/dathere/qsv#installation)
+-2. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-26.0.0.mcpb`) from releases
++2. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-27.0.1.mcpb`) from releases
+ 3. Double-click the `.mcpb` file (opens with Claude Desktop)
+ 4. **That's it!** qsv binary path is auto-detected, no manual configuration needed
+ 5. Restart Claude Desktop
+@@ -467,8 +467,8 @@ MIT
+ 
+ ---
+ 
+-**Updated**: 2026-10-19
+-**Version**: 26.0.0
++**Updated**: 2026-10-27
++**Version**: 27.0.1
+ **Generator**: `qsv --update-mcp-skills`
+ **Skills**: 57 commands
+ **Usage Examples**: 263 from documentation
+```
+
+**File**: `.claude/skills/docs/desktop/README-MCPB.md` (modified, +2/-2)
+```diff
+@@ -576,7 +576,7 @@ Same license as qsv: MIT OR Apache-2.0
+ 
+ ---
+ 
+-**Updated**: 2026-10-19
+-**Version**: 26.0.0
++**Updated**: 2026-10-27
++**Version**: 27.0.1
+ **Format**: MCP Bundle (MCPB) v0.3
+ **Compatibility**: Claude Desktop 1.0+
+```
+
+**File**: `.claude/skills/manifest.json` (modified, +2/-2)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "manifest_version": "0.3",
+   "name": "qsv",
+-  "version": "26.0.0",
++  "version": "27.0.1",
+   "description": "Blazingly fast Data Wrangling Toolkit for Tabular Data",
+   "long_description": "Comprehensive data-wrangling toolkit for transforming, analyzing, querying & validating tabular data. Process local CSV, TSV, SSV, Excel/ODS, Parquet and JSONL files w/o uploading. Despite the warning, only accesses APPROVED DIRECTORIES on your computer.",
+   "author": {
+@@ -260,7 +260,7 @@
+         "Smart caching with stats/frequency files",
+         "Automatic Excel, Parquet and JSONL conversion"
+       ],
+-      "minimum_qsv_version": "26.0.0"
++      "minimum_qsv_version": "27.0.1"
+     }
+   }
  }
+```
+
+**File**: `.claude/skills/package-lock.json` (modified, +2/-2)
+```diff
+@@ -1,12 +1,12 @@
+ {
+   "name": "@qsv/agent-skills",
+-  "version": "26.0.0",
++  "version": "27.0.1",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+       "name": "@qsv/agent-skills",
+-      "version": "26.0.0",
++      "version": "27.0.1",
+       "license": "MIT",
+       "dependencies": {
+         "@modelcontextprotocol/ext-apps": "^1.7.2",
+```
+
+---
+
+### Incident Patch 2: `eb52a8da` (2026-10-27)
+**Commit Message**: docs(changelog): 27.0.1 contributors and v27 anchors
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +11/-1)
+```diff
+@@ -24,8 +24,18 @@ Also in this release:
+ - **`get` ships in the prebuilt `qsv` binaries**, so `dc:` inputs work out of the box.
+ - **Private caches on shared machines.** The `get` cache and the `dc:` copies other commands read are now readable by you only, and so is every file `stats` writes beside a private CSV. Before, other local users could read data `qsv get` had fetched, including private CKAN resources fetched with an API token.
  
-+// The cache is owner-only, but a file the user asks for with --output is not:
-+// it gets the umask's mode, as every other qsv writer's output does, and so do
-+// the directories created for it. Overwriting an existing file keeps that
-+// file's mode instead. qsv runs under a fixed umask (022), so the expected
-+// modes don't depend on the umask the test suite happens to run with.
-+#[cfg(unix)]
-+#[test]
-+#[serial]
-+fn get_output_and_cache_fetch_output_follow_the_umask() {
-+    use std::os::unix::{fs::PermissionsExt, process::CommandExt};
-+    fn umask_022(cmd: &mut std::process::Command) {
-+        // SAFETY: umask is async-signal-safe and touches only the child.
-+        unsafe {
-+            cmd.pre_exec(|| {
-+                libc::umask(0o022);
-+                Ok(())
-+            });
-+        }
-+    }
-+    let wrk = Workdir::new("get_output_and_cache_fetch_output_follow_the_umask");
-+    let cache_dir = wrk.path("qsvcache");
-+    let tmp_dir = private_qsv_tmp(&wrk);
-+    wrk.create_from_string("src.csv", "a,b\n1,2\n");
-+    // an existing file the user locked down
-+    wrk.create_from_string("locked.csv", "old\n");
-+    std::fs::set_permissions(
-+        wrk.path("locked.csv"),
-+        std::fs::Permissions::from_mode(0o600),
-+    )
-+    .unwrap();
+-Read **Breaking Changes** before upgrading: `sqlp` subquery aliases, three `validate` schema behaviors, and `QSV_SNIFF_PREAMBLE`. `--low-memory` is gone from `sqlp`, `joinp` and `count`. The two security fixes at the top of **Fixed** also change behavior: a `get` cache shared with a group on purpose becomes owner-only, and `dc:` inputs stop with an error if another user has taken their temp folder.
++Read **[Breaking Changes](#v27-breaking-changes)** before upgrading: `sqlp` subquery aliases, three `validate` schema behaviors, and `QSV_SNIFF_PREAMBLE`. `--low-memory` is gone from `sqlp`, `joinp` and `count`. The two security fixes at the top of **Fixed** also change behavior: a `get` cache shared with a group on purpose becomes owner-only, and `dc:` inputs stop with an error if another user has taken their temp folder.
+ 
++### 🙏 Contributors
 +
-+    let mut get = dc_command(&wrk, "get", &cache_dir, &tmp_dir);
-+    get.args(["--name", "t.csv", "src.csv", "--output", "dl/sub/got.csv"]);
-+    umask_022(&mut get);
-+    wrk.assert_success(&mut get);
-+    let mut fetch = dc_command(&wrk, "get", &cache_dir, &tmp_dir);
-+    fetch.args(["cache-fetch", "t.csv", "--output", "cf/fetched.csv"]);
-+    umask_022(&mut fetch);
-+    wrk.assert_success(&mut fetch);
-+    let mut over = dc_command(&wrk, "get", &cache_dir, &tmp_dir);
-+    over.args(["cache-fetch", "t.csv", "--output", "locked.csv"]);
-+    umask_022(&mut over);
-+    wrk.assert_success(&mut over);
++Thanks to everyone who made 27.0.1 possible:
 +
-+    for dir in ["dl", "dl/sub", "cf"] {
-+        assert_eq!(mode_of(&wrk.path(dir)), 0o755, "{dir}");
-+    }
-+    for (file, want) in [
-+        ("dl/sub/got.csv", 0o644),
-+        ("cf/fetched.csv", 0o644),
-+        ("locked.csv", 0o600),
-+    ] {
-+        assert_eq!(mode_of(&wrk.path(file)), want, "{file}");
-+        assert_eq!(
-+            std::fs::read_to_string(wrk.path(file)).unwrap(),
-+            "a,b\n1,2\n"
-+        );
-+    }
-+    // the cache itself stays owner-only
-+    assert_eq!(mode_of(&cache_dir.join("get")), 0o700);
-+}
++- [@slonyik](https://github.com/slonyik) for reporting, with a clear repro, that `json` left a copy of the converted data in the system temp directory ([#4924](https://github.com/dathere/qsv/issues/4924), fixed in [#4925](https://github.com/dathere/qsv/pull/4925))
 +
- // The dc: directory's name is predictable, so in a shared /tmp another user
- // could make it first; anything but a directory of this user's is refused,
- // and nothing is written through it.
++---
++<a id="v27-changes" name="v27-changes"></a>
++
++<a id="v27-breaking-changes" name="v27-breaking-changes"></a>
+ ### Breaking Changes
+ - **`sqlp`: the alias of a subquery in `FROM` can no longer be read as a table** ([#4907](https://github.com/dathere/qsv/pull/4907), Polars [#30207](https://github.com/pola-rs/polars/pull/30207)). Some queries that worked in qsv 26.0.0 now fail with `relation '<alias>' was not found`. The alias still qualifies the subquery's columns (`a.x`). Reading it as a table, whether in another subquery or in a later `FROM` item, now fails:
+   ```sql
 ```
 
 #### Recent Merged Pull Requests:
@@ -2419,28 +2417,30 @@ roborev 5923:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. get): --output files follow the umask, not the cache's 0600 (#4945)
+## X. mcp): v27.0.1 release of MCP Server and Claude Cowork plugin
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude-plugin/marketplace.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `48462a79`: get): --output files follow the umask, not the cache's 0600 (#4945). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a078a8b7`: mcp): v27.0.1 release of MCP Server and Claude Cowork plugin. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude-plugin/marketplace.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Security: the `get` cache and its `dc:` copies are readable by you only** ([#4928](https://github.com/dathere/qsv/pull/4928)). On a shared machine, other local users could read everything `qsv get` had fetched, including private CKAN resources fetched with an API token: the cache's files were created world-readable (`0644`) in directories anyone could open (`0755`). The copies of `dc:` entries that other commands read were in a shared `qsv-dc` directory in the system temp dir (`/tmp` on Linux), and the index build left a copy in `qsv-getidx` there too. On Unix, the cache's `get/` directory is now owner-only (`0700`), and a cache made by an earlier qsv is tightened the next time it is used. Its files are `0600`. A file you ask for with `--output` (`get`, `get cache-fetch`) is not part of the cache and keeps your umask's mode, as with every other qsv command, and overwriting an existing file keeps that file's mode ([#4945](https://github.com/dathere/qsv/pull/4945)). The `dc:` copies are in a per-user, owner-only `qsv-dc-<uid>`. A `QSV_CACHE_DIR` you created keeps its mode, as it may be shared on purpose. The cache directory qsv creates itself is owner-only too. **Behavior changes
+    "version": "27.0.1"
+      "version": "27.0.1",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-- **Security: the `get` cache and its `dc:` copies are readable by you only** ([#4928](https://github.com/dathere/qsv/pull/4928)). On a shared machine, other local users could read everything `qsv get` had fetched, including private CKAN resources fetched with an API token: the cache's files were created world-readable (`0644`) in directories anyone could open (`0755`). The copies of `dc:` entries that other commands read were in a shared `qsv-dc` directory in the system temp dir (`/tmp` on Linux), and the index build left a copy in `qsv-getidx` there too. On Unix, the cache's `get/` directory is now owner-only (`0700`), and a cache made by an earlier qsv is tightened the next time it is used. Its files are `0600`. The `dc:` copies are in a per-user, owner-only `qsv-dc-<uid>`. A `QSV_CACHE_DIR` you created keeps its mode, as it may be shared on purpose. The cache directory qsv creates itself is owner-only too. **Behavior changes:** a `get/` cache directory shared with a group on purpose is now owner-only. If `qsv-dc-<uid>` exists and isn't a directory owned by you (in a shared `/tmp`, another user could create it first), `dc:` inputs fail with an error; set `TMPDIR` to a private di
+    "version": "26.0.0"
+      "version": "26.0.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `48462a79` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a078a8b7` are properly handled with clean fallback behavior.

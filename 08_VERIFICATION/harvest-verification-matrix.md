@@ -5461,3 +5461,5 @@
 | `CYCLE-20261027-XYTA` | `2026-10-27T17:37:54.814Z` | `MiniMaxAI/MiniMax-M3.1-Flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3846, Rule 2093, Rule 4927` | Yes (`d7689b4d...`) |
 | `CYCLE-20261027-Y1IS` | `2026-10-27T17:37:58.324Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4928` | Yes (`dd7e014c...`) |
 | `CYCLE-20261027-Y5WV` | `2026-10-27T17:38:04.015Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4929` | Yes (`2103e326...`) |
+| `CYCLE-20261027-706L` | `2026-10-27T17:44:56.493Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4930` | Yes (`d696a44e...`) |
+| `CYCLE-20261027-D4LT` | `2026-10-27T17:49:42.161Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4931` | Yes (`a3518add...`) |
