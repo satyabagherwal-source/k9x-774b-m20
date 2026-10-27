@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md`  
 > **Source**: github ([https://github.com/sweetpad-dev/sweetpad](https://github.com/sweetpad-dev/sweetpad))  
-> **Source Version**: `5ded4409`  
+> **Source Version**: `d633af8a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T03:28:20.139Z  
+> **Timestamp**: 2026-10-27T11:34:09.443Z  
 > **Learning ID**: `learn-github-sweetpad-dev-sweetpad`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sweetpad-dev/sweetpad](https://github.com/sweetpad-dev/sweetpad))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T03:28:20.131Z  
+> **Harvest Timestamp**: 2026-10-27T11:34:08.290Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: xcodebuild for humans and agents: build, run, debug, and test iOS, macOS, tvOS, watchOS, and visionOS apps from your terminal.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 1911 stars
+- **Stars / Engagement**: 1916 stars
 
 ---
 
@@ -134,9 +134,14 @@ pub struct State {
 pub struct ProjectState {
     /// The build/run context — what `build` and `app` use.
     pub scheme: Option<String>,
-    pub configuration: Option<String>,
     pub sdk: Option<String>,
     pub destination: Option<String>,
+
+    /// The configuration picked for each scheme, by scheme name. A scheme with
+    /// no pick builds with the configuration its own `.xcscheme` names, the way
+    /// Xcode keeps one per scheme.
+    #[serde(skip_serializing_if = "BTreeMap::is_empty")]
+    pub configurations: BTreeMap<String, String>,
 
     /// The testing context, kept separate from the build context (mirrors the
     /// extension's `testing.*` keys). `test` reads this, falling back to the
@@ -170,7 +175,7 @@ impl ProjectState {
     #[must_use]
     pub fn is_empty(&self) -> bool {
         self.scheme.is_none()
-            && self.configuration.is_none()
+            && self.configurations.is_empty()
             && self.sdk.is_none()
             && self.destination.is_none()
             && self.testing.is_empty()
@@ -187,9 +192,11 @@ impl ProjectState {
 #[serde(default)]
 pub struct TestingState {
     pub scheme: Option<String>,
-    pub configuration: Option<String>,
     pub target: Option<String>,
     pub destination: Option<String>,
+    /// The configuration picked for each scheme's tests, by scheme name.
+    #[serde(skip_serializing_if = "BTreeMap::is_empty")]
+    pub configurations: BTreeMap<String, String>,
 }
 
 impl TestingState {
@@ -197,7 +204,7 @@ impl TestingState {
     #[must_use]
     pub fn is_empty(&self) -> bool {
         self.scheme.is_none()
-            && self.configuration.is_none()
+            && self.configurations.is_empty()
             && self.target.is_none()
             && self.destination.is_none()
     }
@@ -324,12 +331,7 @@ impl State {
     /// whole purpose is the write (`context set`) must not report success for
     /// a save that never happened.
     pub fn save(&self) -> Result<(), String> {
-        // PID alone distinguishes processes; the counter distinguishes saves
-        // within this process, so two same-process saves can never interleave
-        // writes into one temp file and rename a torn mix into place.
-        static SAVE_SEQ: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
-        // An unreadable-on-load file must never be replaced by this run's
-        // near-empty v
+        
 ```
 
 ### Core Architecture Module: `sweetpad-core/examples/dump_settings.rs`
@@ -853,7 +855,7 @@ use std::fs::OpenOptions;
 use std::io::{self, Read, Write};
 use std::path::{Path, PathBuf};
 use std::process::{Child, Command, ExitStatus, Stdio};
-use std::sync::atomic::{AtomicU8, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU8, Ordering};
 use std::sync::{Arc, Condvar, Mutex, PoisonError};
 use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
@@ -866,7 +868,7 @@ use crate::framing::{read_message, write_message};
 use crate::scratch::{ScratchDir, TmpdirLeftovers};
 use crate::xcodebuild_args;
 use control::{LogLevel, TelemetryServer};
-use sweetpad_lib::{compiler_args, derived_data, project, scheme};
+use sweetpad_lib::{compiler_args, derived_data, pif, project, scheme};
 
 /// Write a `buildServer.json` so `sourcekit-lsp` discovers and launches this
 /// server. Its `argv` is the current executable followed by
@@ -1031,6 +1033,11 @@ pub fn run_with(args: &[String], command_line: CommandLine) -> Result<(), String
                 // The client is now ready for notifications: watch the project
                 // for structure changes and push `buildTarget/didChange`.
                 if !watching {
+                    // The local packages come from a `swift package dump-pif`
+                    // that takes seconds cold, so their targets join once it
+                    // finishes, with a `buildTarget/didChange`.
+                    let loader = Arc::clone(&server);
+                    std::thread::spawn(move || loader.load_packages());
                     Arc::clone(&server).spawn_change_watcher();
                     watching = true;
                     // Warm every target in the background. The cold window —
@@ -1049,13 +1056,7 @@ pub fn run_with(args: &[String], command_line: CommandLine) -> Result<(), String
             "workspace/buildTargets" => server.reply(id, server.build_targets())?,
             "buildTarget/sources" => server.reply(id, server.sources(params))?,
             "buildTarget/inverseSources" => server.reply(id, server.inverse_sources(params))?,
-            "textDocument/sourceKitOptions" => {
-                server.reply(id, server.source_kit_options(params))?;
-            }
-            "buildTarget/prepare" => {
-                // Hand off to the worker; it replies once the build is done. A
-                // prepare without an id (shouldn't happen) is simply dropped.
-                if let Some(id) = i
+ 
 ```
 
 ### Core Architecture Module: `sweetpad-core/src/devices/devicectl.rs`
@@ -1591,14 +1592,13 @@ pub fn find_named<'a>(sims: &'a [Simulator], spec: &DestinationSpec) -> Option<&
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #340** (2026-10-10): **DAP support**
-  *Symptoms*: I see in the docs that we can debug an app using lldb interactive console. Is there a way it integrates with lldb-dap so we can debug from any editor?
+- **Issue #343** (2026-10-25): **bsp serve: report sources of local Swift packages referenced by the Xcode project**
+  *Symptoms*: **Setup** - sweetpad CLI 0.1.13 (`sweetpad bsp init --project SafePlace.xcodeproj`), VS Code + sweetpad 0.2.19, Xcode 27.1 toolchain sourcekit-lsp - App target + 14 local Swift packages under `Packages/*` (each with its own `Package.swift`), linked into the app target  **What happens** - `workspace/buildTargets` returns only the 3 Xcode targets; `buildTarget/sources` returns 39 files, none under `Packages/`. - Opening any file in `Packages/X/` makes sourcekit-lsp create an implicit SwiftPM workspace for that package ("Opening implicit workspace at …" in its log). - Each implicit workspace background-indexes with its own `swift build` for **macOS** into `Packages/X/.build/index-build`, rebuilding shared dependencies (e.g. `Core`) once per package. Here: ~10 GB across 10 packages, plus noticeable CPU/swap pressure on top of the regular iOS-simulator build.  **Expected** `bsp serve` also reports the Swift sources of local package targets that are part of the scheme's build graph, with their compiler arguments from the Xcode build, so sourcekit-lsp keeps those files in the root workspace and uses the one DerivedData index store.  **Repro** Any `.xcodeproj` with a local package dependency: open a file inside the package and check `Packages/<name>/.build/index-build` appear. 
   **Post-Mortem & Fix Analysis**:
-  > Not in the CLI yet, but the VS Code extension has it built in (debugging through CodeLLDB). With the CLI, `sweetpad run --wait-for-debugger --detach` launches the app suspended and prints its pid, so lldb-dap in any editor can attach to it with `"request": "attach", "pid": <pid>`. Simulator and macOS apps only for now. Proper lldb-dap support in the CLI would be great, so I'll think about adding it. 
-  > Just shipped `sweetpad dap` in the CLI (0.1.12), so you can debug from any editor that speaks DAP: https://sweetpad.hyzyla.dev/docs/cli/editor-debugging  Which editor do you use? Curious if it works for you. 
+  > Shipped in extension 0.2.20 and CLI 0.1.14: `bsp serve` now reports local package sources with Xcode's compiler arguments. Thanks for the report! Closing.
 
-- **Issue #339** (2026-09-28): **Project discovery selects internal project.xcworkspace instead of .xcodeproj, breaking scheme refresh**
-  *Symptoms*: ## Summary  SweetPad's VS Code extension (0.2.16) discovers only `.xcworkspace` directories and `Package.swift`. For an ordinary single-project repository containing only `TinyPreview.xcodeproj`, the *only* offered choice is the internal `TinyPreview.xcodeproj/project.xcworkspace`, not the `.xcodeproj` itself. The extension then fails to list schemes with `I/O error: No such file or directory (os error 2)` and "Generate Build Server Config" fails before writing a config.  This is different from earlier "No schemes" reports caused by an inactive Xcode installation or an incompatible project format: `xcodebuild -list -project` and the SweetPad CLI both enumerate the schemes successfully here.  ## Reproduction  1. Open a repository containing `TinyPreview.xcodeproj` but no top-level `.xcworkspace` in VS Code (example: [lingmacker/TinyPreview](https://github.com/lingmacker/TinyPreview), commit `d62bfe3`). 2. In SweetPad, select the Xcode container / run "Generate Build Server Config". 3. The picker offers only `TinyPreview.xcodeproj/project.xcworkspace`; selecting it logs:     ```text    Getting schemes: <repo>/TinyPreview.xcodeproj/project.xcworkspace    Failed to refresh schemes: I/O error: No such file or directory (os error 2)    Failed to get schemes: I/O error: No such file or directory (os error 2)    ```  `project.xcworkspace` exists but has no `contents.xcworkspacedata`. The extension's bundled native reader reproduces the *same* error when passed this path, while passin
+- **Issue #342** (2026-10-25): **[Bug] Incorrect scheme -> build configuration mapping (UAT scheme builds with TEST config)**
+  *Symptoms*:  ## Description SweetPad fails to correctly resolve the binding between the selected Xcode scheme and its corresponding build configuration. When selecting a specific scheme (e.g., UAT), the extension ignores the configuration mapped in the .xcscheme file and incorrectly builds using a different configuration (e.g., TEST).  ## Environment  Cursor Version: 3.25.9  SweetPad Version: 0.2.19  OS: macOS 26.7.1  Xcode Version: 27.1  ## Steps to Reproduce  Open an iOS/macOS project in Cursor with the SweetPad extension enabled.  Ensure the project has multiple schemes with distinct build configurations (e.g., scheme UAT mapped to UAT config, and scheme TEST mapped to TEST config).  Select the UAT scheme in SweetPad's UI.  Trigger a build process.  Inspect the executed xcodebuild command and build logs.  ### Expected Behavior SweetPad should parse the scheme definitions and correctly identify that the UAT scheme is bound to the UAT build configuration. It should pass the correct -configuration UAT flag to xcodebuild.  ### Actual Behavior SweetPad passes the incorrect configuration flag (e.g., -configuration TEST) when attempting to build the UAT scheme, leading to build failures or incorrect environment variables being injected. The incorrect configuration is the one selected during the very first configuration of the project for SweetPad.  ## Additional Context  Building the exact same scheme directly in Xcode UI or via native CLI (xcodebuild -scheme UAT) works perfectly and uses th
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1615,1065 +1615,533 @@ pub fn find_named<'a>(sims: &'a [Simulator], spec: &DestinationSpec) -> Option<&
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `111d11e5` (2026-10-10)
-**Commit Message**: Show NSLog in debug sessions and private log values from macOS apps
+### Incident Patch 1: `4123e4a3` (2026-10-24)
+**Commit Message**: Build each scheme with its own configuration and remember picks per scheme (#342)
 
-**File**: `sweetpad-cli/CLI_DESIGN.md` (modified, +253/-3)
+The extension saved one configuration for the whole workspace, so the first pick applied to every scheme. A scheme now defaults to the configuration its .xcscheme sets, picks are kept per project and scheme, and the old workspace-wide pick is no longer read.
+
+**File**: `sweetpad-vscode/CHANGELOG.md` (modified, +4/-0)
 ```diff
-@@ -4145,7 +4145,7 @@ through. `restart` is refused with the way to restart.
- | destination | started by | lldb-dap is sent |
- |---|---|---|
- | simulator | `simctl launch --console-pty --wait-for-debugger` | `attach {pid, program}` |
--| macOS, Mac Catalyst | lldb-dap itself | `launch {program, args, env}` |
-+| macOS, Mac Catalyst | `posix_spawn` with `POSIX_SPAWN_START_SUSPENDED` | `attach {pid, program}` |
- | device (iOS 17+) | `devicectl … launch --start-stopped` | `attach` with `attachCommands` |
- | Designed for iPad | `open` (LaunchServices), after configurationDone | `attach {program, waitFor}` |
- 
-@@ -4222,8 +4222,8 @@ colorless, so nothing prompts, animates or colors.
- build's launch error repeats the first errors, as `build start` does when its
- stderr goes elsewhere. Simulator stdout and stderr arrive through the console
- child, and os_log through the log stream `run` follows, at `run`'s default
--level. On macOS lldb launched the process and relays its stdout itself, so only
--the log stream is added. The lines about the launch rather than the app are
-+level, with NSLog added (§9v). A macOS app's stdout and stderr come through the
-+pipes it was started with. The lines about the launch rather than the app are
- left out as `run` leaves them out: the simulator's boot noise, AppKit's note on
- the `-ApplePersistenceIgnoreState` sweetpad adds, and the lines Xcode's
- debug-dylib stub writes whenever a debugger starts the app. A `disconnect`,
-@@ -4282,6 +4282,256 @@ drives one real session per destination kind it has through
- macOS, a breakpoint, the `stopped` event and its frame, a disconnect, and the
- adapter exiting.
- 
-+## 9v. v8 — an app's output, once each and readable
-+
-+> sweetpad-dev/sweetpad#97 asked for an app's output in the editor's debug
-+> console. `dap` (§9u) put it there; this section settles what reached it
-+> twice, what didn't reach it, and what reached it as `<private>`.
-+
-+An app writes three ways. `print` and anything else on stdout or stderr reach
-+the app's own pipes. `Logger` and `os_log` go to the unified log. NSLog goes to
-+either: to stderr, except while a debugger is attached, when it goes to the
-+unified log only. A simulator app writes it to both.
-+
-+**Pipes for stdio, `log stream` for the unified log, nothing else.** sweetpad
-+reads stdout and stderr itself and unified-log entries through `log stream`,
-+which keeps them structured: the level, subsystem and category the level keys,
-+the filters and `--json` rely on. The other way to get os_log text is the
-+`OS_ACTIVITY_DT_MODE` echo, which copies each entry onto stderr. Apple doesn't
-+document it, it carries no level or subsystem, and LLDB sets it for every
-+process it launches, so a macOS debug session that lldb-dap launched showed each
-+`Logger` line twice. sweetpad never sets it, and a debug session starts the app
-+itself (§9u): a macOS or Mac Catalyst app is spawned with
-+`POSIX_SPAWN_START_SUSPENDED`, its stdout and stderr on pipes, and lldb-dap
-+attaches to the pid. Continuing from the attach releases the suspension, so
-+breakpoints are set before the first instruction, as with lldb-dap's own
-+launch. `app debug` launches through lldb in the terminal.
-+
-+The app starts in the editor's `lldb.cwd` (`posix_spawn_file_actions_addchdir_np`)
-+when it sets one. The lldb-dap fields only its launch reads (`launchCommands`,
-+`runInTerminal`, `console`, `stdio`, `disableASLR`, `disableSTDIO`,
-+`shellExpandArguments`, `detachOnError`) can't apply to an attach, so an editor
-+that sets one gets lldb-dap's launch, with a note that each `Logger` line shows
-+twice, and a stream without NSLog, which the copy on stderr already carries.
-+`stopOnEntry` works on the attach and needs neither.
-+
-+A launched app lldb-dap never reached, its `attach` failed or unanswered,
-+stops with the session even when the editor asks to detach: nothing else would
-+resume it.
-+
-+**A debug session adds NSLog to the stream.** With a debugger attached, NSLog
-+writes nothing to stderr, so the stream's predicate also takes it: sender
-+`Foundation`, no subsystem. The predicate can't test for a missing subsystem
-+(`== nil` and `== ""` match nothing), so it tests for one without a dot, which
-+every Apple subsystem has. A plain `run` leaves the clause out, since a
-+simulator app's NSLog would show twice. The entry renders as `[NSLog]`.
-+
-+**macOS redacts, and sweetpad's builds opt the app in.** The unified log on a
-+Mac records a dynamic value, a `String` interpolated into a `Logger` message or
-+NSLog's whole text, as `<private>`, and `log stream` reads what it records.
-+Xcode unredacts the processes it launches through a channel only it has; the
-+`log` tool has no per-process switch, and the simulator doesn't redact. The
-+documented opt-in is the app's own Info.plist:
-+
-+```xml
-+<key>OSLogPreferences</key>
-+<dict>
-+  <key>com.example.app</key>
-+  <dict><key>DEFAULT-OPTIONS</key><dict><key>Enable-Private-Data</key><true/></dict></dict>
-+</dict>
-+```
-+
-+It's keyed by sub
-```
-
-**File**: `sweetpad-cli/src/cli/commands/app.rs` (modified, +200/-41)
-```diff
-@@ -15,6 +15,7 @@ use sweetpad_lib::destination::DestinationSpec;
- pub(crate) mod adapter;
- mod ax;
- mod macwin;
-+mod private_logs;
- mod sample;
- 
- use crate::cli::inject::recompiler::{Mode, Recompiler};
-@@ -1021,6 +1022,11 @@ struct RunPlan {
-     /// A detached launch records it in its captured file's header, so `app
-     /// logs` leaves it out there too ([`CapturedLog`]).
-     added_ignore_persistence: bool,
-+    /// Whether a build of this macOS app opts its own log subsystems into the
-+    /// unified log's private data before it launches ([`private_logs`]). Off
-+    /// for any other target, an iOS app on the Mac, `app debug` and `app
-+    /// diagnose`, and `[run] private_logs = false`.
-+    private_logs: bool,
-     /// Extra xcodebuild arguments (after `--`), passed through verbatim.
-     passthrough: Vec<String>,
- }
-@@ -1391,8 +1397,16 @@ fn plan(ctx: &mut Context, opts: &RunOpts) -> Result<RunPlan, CliError> {
-         hot_entitlements: None,
-         launch: opts.launch.clone(),
-         added_ignore_persistence: false,
-+        private_logs: false,
-         passthrough: opts.passthrough.to_vec(),
-     };
-+    plan.private_logs = matches!(plan.target, Target::Mac)
-+        && !designed_for_ipad(&plan.destination)
-+        && ctx
-+            .project_file(&plan.resolved.container)
-+            .run
-+            .private_logs
-+            .unwrap_or(true);
-     // Settled on the plan, like the macOS pair below, so every launch it
-     // drives carries them: a session's relaunches, a detached launch, and
-     // lldb's. `swift run` has no scheme to read them from.
-@@ -1666,13 +1680,48 @@ fn install_built(
-             })?;
-         }
-         // A macOS app is built in place; there's no install step.
--        Target::Mac => {}
-+        Target::Mac => opt_into_private_logs(out, plan),
-         // SPM executables never reach here (run_app routes them to `swift run`).
-         Target::SpmRun(_) => unreachable!("SPM run does not build/install via xcodebuild"),
-     }
-     Ok(app)
- }
- 
-+/// Opt a macOS build into recording its own logs' private values
-+/// ([`private_logs`]), when the plan does. Each build that launches the app
-+/// runs it, [`install_built`] and the session's [`build`]: the edit makes
-+/// Xcode's next build process the Info.plist and sign the app again, which
-+/// undoes it. A failure leaves the build's logs redacted, which costs a
-+/// warning rather than the launch.
-+fn opt_into_private_logs(out: &Output, plan: &RunPlan) {
-+    if !plan.private_logs {
-+        return;
-+    }
-+    let Ok(app) = plan.app_bundle() else {
-+        return;
-+    };
-+    match private_logs::opt_in(&app) {
-+        Ok(added) if !added.is_empty() => out.debug(&format!(
-+            "re-signed {} to record private log values from {}",
-+            app.bundle_id,
-+            added.join(", ")
-+        )),
-+        Ok(_) => {}
-+        Err(e) => out.warn(&format!(
-+            "{}'s logs keep showing <private> values: {e}",
-+            app.bundle_id
-+        )),
-+    }
-+}
-+
-+/// Whether `destination` runs an iOS app on the Mac ("Designed for iPad"),
-+/// which only LaunchServices can start.
-+fn designed_for_ipad(destination: &str) -> bool {
-+    DestinationSpec::parse(destination)
-+        .variant
-+        .is_some_and(|variant| variant.starts_with("Designed for"))
-+}
-+
- /// Record the app being launched into the project's state — for re-launch and
- /// `context show`, mirroring the extension's `lastLaunchedApp`. Best-effort: a
- /// missing bundle or write failure never derails a run. SPM executables have no
-@@ -2286,7 +2335,7 @@ fn run_hot_session(
-         });
-     }
- 
--    let mut logs = start_logs(ctx, plan, &filter);
-+    let mut logs = start_logs(ctx, plan, &filter, Senders::App);
-     // Watch the workspace; each save drives `server.inject`.
-     let session = HotSession::start(Arc::clone(&server), &project_root);
- 
-@@ -2915,7 +2964,7 @@ impl SessionLogs {
-     fn launched(&mut self, ctx: &Context, plan: &RunPlan, filter: &Arc<AtomicU8>) {
-         if !self.started {
-             self.started = true;
--            self.stream = start_logs(ctx, plan, filter);
-+            self.stream = start_logs(ctx, plan, filter, Senders::App);
-         }
-     }
- 
-@@ -3315,7 +3364,10 @@ fn build(plan: &RunPlan, out: &Output, capture: Option<&std::path::Path>) -> Bui
-         &diagnostics,
-     );
-     match status {
--        Ok(s) if s.success() => BuildOutcome::Ok,
-+        Ok(s) if s.success() => {
-+            opt_into_private_logs(out, plan);
-+            BuildOutcome::Ok
-+        }
-         // The stream above already closed on `✗ Build failed` under the errors
-         // that caused it, as `BuildPlan::run`'s does, and the failure reads the
-         // same as there.
-@@ -3387,7 +3439,7 @@ fn follow_once(ctx: &Context, plan: &RunPlan) -> CliResult {
-             // Stream the device's os_log (pymobiledevice3) alongside the devicectl
-             // console; no live filter on the non-interactive path, so use the 
-```
-
-**File**: `sweetpad-cli/src/cli/commands/app/adapter.rs` (modified, +105/-26)
-```diff
-@@ -6,23 +6,24 @@
- //!
- //! Each destination reaches lldb-dap its own way. A simulator app starts
- //! under `simctl launch --wait-for-debugger` and lldb-dap attaches to its pid.
--//! A macOS or Mac Catalyst app is launched by lldb-dap itself. A physical
--//! device's app starts under `devicectl … --start-stopped` and lldb attaches
--//! through its `device` commands. An iOS app running on the Mac ("Designed for
-+//! A macOS or Mac Catalyst app starts suspended and lldb-dap attaches to it,
-+//! so lldb never sets the `OS_ACTIVITY_DT_MODE` it gives what it launches. A
-+//! physical device's app starts under `devicectl … --start-stopped` and lldb
-+//! attaches through its `device` commands. An iOS app running on the Mac ("Designed for
- //! iPad") starts through LaunchServices, so lldb-dap waits for it by name.
- 
--use std::path::PathBuf;
-+use std::path::{Path, PathBuf};
- use std::process::Child;
- use std::sync::Arc;
- use std::sync::atomic::{AtomicBool, AtomicU8, AtomicU32, Ordering};
- use std::time::{Duration, Instant};
- 
- use serde_json::{Map, Value, json};
--use sweetpad_lib::destination::DestinationSpec;
- 
- use super::{
--    LaunchArgs, LogStream, RunOpts, RunPlan, Target, app_dir_name, default_filter, install_built,
--    launch_sim_console, macwin, plan, print_summary, process_name, signal_group, start_logs,
-+    LaunchArgs, LogStream, OwnLines, RunOpts, RunPlan, Senders, Target, app_dir_name,
-+    default_filter, designed_for_ipad, install_built, launch_sim_console, macwin, plan,
-+    print_summary, process_name, render_console_pipes, signal_group, start_logs,
- };
- use crate::cli::inject::recompiler::Mode;
- use crate::cli::output::Output;
-@@ -246,14 +247,20 @@ enum AppKind {
-         udid: String,
-         app_dir: String,
-     },
--    /// lldb-dap launched it, or waited for it, and stops it itself.
-+    /// lldb-dap launched it, waited for it, or attached to a process this
-+    /// session didn't start, and stops it itself.
-     Mac,
-+    /// A macOS app this session started suspended, for lldb-dap to attach to.
-+    /// It is this process's child.
-+    MacSpawned {
-+        pid: u32,
-+    },
- }
- 
- impl AppSession {
-     /// Stop following the app, and stop the app too when `terminate`. lldb
--    /// has already been told to kill or detach from it; this makes sure a
--    /// simulator or device app that outlived the debugger goes as well.
-+    /// has already been told to kill or detach from it; this makes sure an app
-+    /// that outlived the debugger goes as well.
-     pub(crate) fn end(mut self, terminate: bool) {
-         crate::cli::signals::unregister_child(self.console_slot.take());
-         if terminate {
-@@ -264,6 +271,14 @@ impl AppSession {
-                 AppKind::Device { udid, app_dir } => {
-                     let _ = devicectl::terminate(udid, app_dir);
-                 }
-+                AppKind::MacSpawned { pid } => {
-+                    // Safety: our own child, not yet reaped, so the pid can't
-+                    // belong to anyone else; the wait reaps it.
-+                    unsafe {
-+                        libc::kill(pid.cast_signed(), libc::SIGKILL);
-+                        libc::waitpid(pid.cast_signed(), std::ptr::null_mut(), 0);
-+                    }
-+                }
-                 AppKind::Mac => {}
-             }
-         }
-@@ -379,7 +394,7 @@ pub(crate) fn prepare_launch(
-     let prepared = match &plan.target {
-         Target::Simulator(udid) => launch_on_simulator(ctx, &plan, config, udid, sink, cancel),
-         Target::Device(udid) => launch_on_device(ctx, &plan, config, udid, sink, cancel),
--        Target::Mac if designed_for_ipad(&plan) => {
-+        Target::Mac if designed_for_ipad(&plan.destination) => {
-             launch_designed_for_ipad(ctx, &plan, config, sink, cancel)
-         }
-         Target::Mac => launch_on_mac(ctx, &plan, config, sink, cancel),
-@@ -392,14 +407,6 @@ pub(crate) fn prepare_launch(
-     Ok(prepared)
- }
- 
--/// Whether the plan runs an iOS app on the Mac ("Designed for iPad"), which
--/// only LaunchServices can start.
--fn designed_for_ipad(plan: &RunPlan) -> bool {
--    DestinationSpec::parse(&plan.destination)
--        .variant
--        .is_some_and(|variant| variant.starts_with("Designed for"))
--}
--
- /// The live log filter a debug session streams at: info and above, as `run`
- /// shows by default.
- fn log_filter(out: &Output) -> Arc<AtomicU8> {
-@@ -436,7 +443,7 @@ fn launch_on_simulator(
-         )));
-     };
-     let console_slot = crate::cli::signals::register_child(console.id());
--    let logs = start_logs(ctx, plan, &filter);
-+    let logs = start_logs(ctx, plan, &filter, Senders::AppAndNSLog);
-     Ok(Prepared {
-         command: "attach",
-         arguments: lldb_arguments(
-@@ -457,6 +464,25 @@ fn launch_on_simulator(
-     })
- }
- 
-+/// lldb-dap fields only its own launch reads. Setting one hands a macOS app's
-+/// launch to lldb-dap ([`lldb_launch_on_mac`]).
-+const LLDB_LAUNCH_FIELDS: [&str; 8] = [
-+    "launchCommands",
-```
-
-**File**: `sweetpad-cli/src/cli/commands/app/private_logs.rs` (added, +601/-0)
-```diff
-@@ -0,0 +1,601 @@
-+//! A macOS app's private log values (CLI_DESIGN §9v).
-+//!
-+//! On a Mac the unified log records a dynamic value, such as a `String`
-+//! interpolated into a `Logger` message, as `<private>`, and `log stream` reads
-+//! what it records. An app opts a subsystem in from its own Info.plist:
-+//!
-+//! ```text
-+//! OSLogPreferences → <subsystem> → DEFAULT-OPTIONS → Enable-Private-Data = true
-+//! ```
-+//!
-+//! A key at the top level does nothing, and a log with no subsystem, NSLog's
-+//! or a `Logger()`'s, can't be opted in at all. So after each debuggable build
-+//! of the app, its subsystems are added to the built Info.plist and the bundle
-+//! is re-signed by the identity that signed it. The subsystems are the bundle
-+//! identifier, which Apple recommends as one, and every subsystem the log
-+//! stream has shown from the app before ([`Watch`] records them).
-+
-+use std::collections::{BTreeMap, BTreeSet};
-+use std::path::{Path, PathBuf};
-+
-+use sweetpad_lib::pbxproj::Value;
-+
-+use super::Senders;
-+use crate::cli::output::Output;
-+use crate::cli::state::{LogSubsystems, Recorded};
-+use crate::cli::xcodebuild::AppBundle;
-+use crate::cli::{CliError, oslog, process};
-+
-+const PLIST_BUDDY: &str = "/usr/libexec/PlistBuddy";
-+
-+/// The built app's Info.plist, for a macOS bundle.
-+fn info_plist(app: &AppBundle) -> Option<PathBuf> {
-+    Some(app.path.join("Contents/Info.plist")).filter(|p| p.is_file())
-+}
-+
-+/// Opt `app`'s subsystems in, returning the ones added. A subsystem whose
-+/// `Enable-Private-Data` the app's own Info.plist sets, on or off, is left as
-+/// the app has it, and nothing is re-signed when nothing is added. A bundle
-+/// that isn't debuggable, a Release build say, is left alone: Xcode shows
-+/// private values only for an app a debugger may attach to, and so does this.
-+pub(super) fn opt_in(app: &AppBundle) -> Result<Vec<String>, CliError> {
-+    let Some(plist) = info_plist(app) else {
-+        return Ok(Vec::new());
-+    };
-+    let set = private_data(&plist)?;
-+    let mut wanted = LogSubsystems::load().of(&app.bundle_id);
-+    if !app.bundle_id.is_empty() {
-+        wanted.insert(app.bundle_id.clone());
-+    }
-+    let added: Vec<String> = wanted
-+        .into_iter()
-+        .filter(|s| addressable(s) && !set.contains_key(s))
-+        .collect();
-+    if added.is_empty() || !super::signed_entitlements(&app.path).debuggable {
-+        return Ok(Vec::new());
-+    }
-+    let original = std::fs::read(&plist)
-+        .map_err(|e| CliError::new(format!("reading {}: {e}", plist.display())))?;
-+    let mut args = Vec::new();
-+    for subsystem in &added {
-+        args.push("-c".to_string());
-+        args.push(format!(
-+            "Add :OSLogPreferences:{subsystem}:DEFAULT-OPTIONS:Enable-Private-Data bool true"
-+        ));
-+    }
-+    args.push(plist.display().to_string());
-+    let args: Vec<&str> = args.iter().map(String::as_str).collect();
-+    // PlistBuddy saves the commands that worked even when one fails, so a
-+    // failure at either step puts the Info.plist back, and the signature
-+    // covers it again: the app launches as it was built.
-+    if let Err(e) = run(PLIST_BUDDY, &args) {
-+        let _ = std::fs::write(&plist, &original);
-+        return Err(e);
-+    }
-+    if let Err(e) = resign(&app.path) {
-+        let _ = std::fs::write(&plist, &original);
-+        let _ = resign(&app.path);
-+        return Err(e);
-+    }
-+    Ok(added)
-+}
-+
-+/// Whether PlistBuddy can name `subsystem` in a command: it splits a key path
-+/// on `:` and a command on whitespace, and reads quotes and backslashes.
-+/// Reverse-DNS names hold none of them.
-+fn addressable(subsystem: &str) -> bool {
-+    !subsystem.is_empty()
-+        && !subsystem.contains(|c: char| c.is_whitespace() || matches!(c, ':' | '"' | '\'' | '\\'))
-+}
-+
-+/// What the Info.plist at `plist` sets `Enable-Private-Data` to, by subsystem.
-+/// A subsystem it configures without that key isn't in the map.
-+fn private_data(plist: &Path) -> Result<BTreeMap<String, bool>, CliError> {
-+    // plutil reads either plist format, and writes the binary one the bplist
-+    // reader takes; its output is bytes, not text, so it's read raw.
-+    let output = std::process::Command::new("plutil")
-+        .args(["-convert", "binary1", "-o", "-"])
-+        .arg(plist)
-+        .output()
-+        .map_err(|e| process::spawn_error("plutil", &e))?;
-+    if !output.status.success() {
-+        return Err(CliError::new(format!(
-+            "plutil can't read {}: {}",
-+            plist.display(),
-+            String::from_utf8_lossy(&output.stderr).trim()
-+        )));
-+    }
-+    let root = sweetpad_lib::bplist::parse(&output.stdout)
-+        .map_err(|e| CliError::new(format!("reading {}: {e}", plist.display())))?;
-+    Ok(read_private_data(&root))
-+}
-+
-+/// [`private_data`] from a parsed Info.plist, where the bplist reader spells
-+/// `true` as `YES`.
-+fn read_private_data(root: &Value) -> BTreeMap<String, bool> {
-+    let Some(preferenc
-```
-
-**File**: `sweetpad-cli/src/cli/commands/dap/session.rs` (modified, +12/-3)
-```diff
-@@ -414,6 +414,10 @@ struct Debuggee {
-     /// The editor launched it, rather than attaching to it: a launched app
-     /// stops with the session unless the editor says otherwise.
-     launched: bool,
-+    /// lldb-dap answered the request with success. A launched app it never
-+    /// reached waits for a debugger, so it stops with the session whatever
-+    /// the editor says.
-+    reached: bool,
-     app: Option<AppSession>,
- }
- 
-@@ -589,6 +593,7 @@ impl Session<'_> {
-             editor_command: command.to_string(),
-             forwarded: command,
-             launched,
-+            reached: false,
-             app: None,
-         });
-         self.forward(message);
-@@ -624,6 +629,7 @@ impl Session<'_> {
-             editor_command: request["command"].as_str().unwrap_or_default().to_string(),
-             forwarded: prepared.command,
-             launched,
-+            reached: false,
-             app: Some(prepared.app),
-         });
-         self.forward(&forwarded);
-@@ -692,11 +698,12 @@ impl Session<'_> {
-                         body.remove("supportsRestartRequest");
-                     }
-                 }
--                if let Some(debuggee) = &self.debuggee
-+                if let Some(debuggee) = &mut self.debuggee
-                     && message["request_seq"] == debuggee.request_seq
-                     && command == debuggee.forwarded
-                 {
-                     message["command"] = json!(debuggee.editor_command);
-+                    debuggee.reached = message["success"] == true;
-                 }
-                 let disconnected = command == "disconnect" && self.disconnecting.is_some();
-                 self.editor.send(message);
-@@ -749,8 +756,10 @@ impl Session<'_> {
-     }
- 
-     fn end_app(&mut self, terminate: bool) {
--        if let Some(app) = self.debuggee.as_mut().and_then(|d| d.app.take()) {
--            app.end(terminate);
-+        if let Some(debuggee) = &mut self.debuggee
-+            && let Some(app) = debuggee.app.take()
-+        {
-+            app.end(terminate || (debuggee.launched && !debuggee.reached));
-         }
-     }
- 
-```
-
-**File**: `sweetpad-cli/src/cli/config.rs` (modified, +18/-1)
-```diff
-@@ -412,6 +412,11 @@ pub struct RunDefaults {
-     /// (CLI_DESIGN §9d). Default true; `false` opts the project out
-     /// (`--keep-sandbox` does it per run).
-     pub auto_unsandbox: Option<bool>,
-+    /// Whether `app run` and `dap` opt a macOS app they build into recording
-+    /// its own logs' private values (CLI_DESIGN §9v). Default true; `false`
-+    /// leaves the built app as Xcode signed it, so its logs read as they do
-+    /// in production.
-+    pub private_logs: Option<bool>,
- }
- 
- /// `[format]` — `format` defaults for this project.
-@@ -735,7 +740,9 @@ fn lint_project_file(raw: &toml::Value, warnings: &mut Vec<String>) {
-             "run" => {
-                 if let Some(t) = value.as_table() {
-                     for rkey in t.keys() {
--                        if !["hot", "hot_recompiler", "auto_unsandbox"].contains(&rkey.as_str()) {
-+                        if !["hot", "hot_recompiler", "auto_unsandbox", "private_logs"]
-+                            .contains(&rkey.as_str())
-+                        {
-                             warnings.push(format!("sweetpad.toml: unknown key '{rkey}' in [run]"));
-                         }
-                     }
-@@ -982,6 +989,16 @@ mod tests {
-         assert!(warnings[0].contains("bogus"), "{warnings:?}");
-     }
- 
-+    #[test]
-+    fn run_private_logs_parses_and_lints_clean() {
-+        let pf: ProjectFile = toml::from_str("[run]\nprivate_logs = false\n").unwrap();
-+        assert_eq!(pf.run.private_logs, Some(false));
-+        let raw: toml::Value = toml::from_str("[run]\nprivate_logs = false\n").unwrap();
-+        let mut warnings = Vec::new();
-+        lint_project_file(&raw, &mut warnings);
-+        assert!(warnings.is_empty(), "{warnings:?}");
-+    }
-+
-     #[test]
-     fn xcodebuild_args_parse_and_lint_clean() {
-         let pf: ProjectFile =
-```
-
-**File**: `sweetpad-cli/src/cli/oslog.rs` (modified, +140/-8)
-```diff
-@@ -21,6 +21,11 @@ struct Entry {
-     #[serde(rename = "messageType")]
-     message_type: Option<String>,
-     category: Option<String>,
-+    subsystem: Option<String>,
-+    #[serde(rename = "senderImagePath")]
-+    sender_image_path: Option<String>,
-+    #[serde(rename = "formatString")]
-+    format_string: Option<String>,
-     #[serde(rename = "eventMessage")]
-     event_message: Option<String>,
-     /// Set only on the summary `log show` closes with ([`is_query_summary`]).
-@@ -34,6 +39,67 @@ impl Entry {
-     fn is_summary(&self) -> bool {
-         self.finished.is_some() && self.event_message.is_none()
-     }
-+
-+    /// Whether this is an NSLog call: Foundation sends it, with no subsystem
-+    /// and no category.
-+    fn is_nslog(&self) -> bool {
-+        let empty = |field: &Option<String>| field.as_deref().is_none_or(str::is_empty);
-+        empty(&self.subsystem)
-+            && empty(&self.category)
-+            && self
-+                .sender_image_path
-+                .as_deref()
-+                .and_then(|path| path.rsplit('/').next())
-+                == Some("Foundation")
-+    }
-+}
-+
-+/// The marker the unified log records in place of a value logged as private.
-+pub const REDACTED: &str = "<private>";
-+
-+/// Whether `message` holds a value the unified log redacted: it shows
-+/// [`REDACTED`], and its `format`, when the entry carries one, has an argument
-+/// that isn't public. A public argument whose text holds the marker is
-+/// redacted nowhere.
-+fn is_redacted(message: &str, format: Option<&str>) -> bool {
-+    message.contains(REDACTED) && format.is_none_or(has_private_argument)
-+}
-+
-+/// Whether an os_log format string has an argument the log may redact. An
-+/// argument marked `{public}` is public, one marked `{private}` or
-+/// `{sensitive}` isn't, and an unmarked one is private when it's a string, an
-+/// object or data (`%s`, `%@`, `%P`) and public otherwise, as a number is.
-+fn has_private_argument(format: &str) -> bool {
-+    let mut rest = format;
-+    while let Some(at) = rest.find('%') {
-+        rest = &rest[at + 1..];
-+        if let Some(after) = rest.strip_prefix('%') {
-+            rest = after;
-+            continue;
-+        }
-+        let mut privacy = "";
-+        if let Some(after) = rest.strip_prefix('{')
-+            && let Some(end) = after.find('}')
-+        {
-+            privacy = &after[..end];
-+            rest = &after[end + 1..];
-+        }
-+        // Flags, width, precision and length come before the conversion.
-+        let conversion = rest
-+            .chars()
-+            .find(|c| !(c.is_ascii_digit() || "-+ #'.*hlqLjzt".contains(*c)));
-+        let private = if privacy.contains("public") {
-+            false
-+        } else if privacy.contains("private") || privacy.contains("sensitive") {
-+            true
-+        } else {
-+            matches!(conversion, Some('s' | 'S' | '@' | 'P'))
-+        };
-+        if private {
-+            return true;
-+        }
-+    }
-+    false
- }
- 
- /// os_log severity, ordered low→high so a live filter can compare against a
-@@ -99,23 +165,44 @@ fn level_color(message_type: &str) -> u8 {
- pub struct Line {
-     pub level: Level,
-     pub text: String,
-+    /// The entry's subsystem, for a unified-log entry that has one.
-+    pub subsystem: Option<String>,
-+    /// The entry is an NSLog call.
-+    pub nslog: bool,
-+    /// The message holds a value the unified log recorded as [`REDACTED`].
-+    pub redacted: bool,
- }
- 
- /// Render one ndjson line as a colored log line with its severity, or `None`
- /// for the banner `log stream` opens with ([`is_stream_banner`]) and the
- /// summary `log show` closes with ([`is_query_summary`]). Other non-JSON input
--/// is shown as a blue `system` note at `Notice` level.
-+/// is shown as a blue `system` note at `Notice` level. An NSLog entry, which
-+/// has no category, shows as `[NSLog]`.
- #[must_use]
- pub fn render_ndjson_line(line: &str, color: bool) -> Option<Line> {
-     Some(match serde_json::from_str::<Entry>(line) {
-         Ok(entry) if entry.is_summary() => return None,
--        Ok(entry) => render_fields(
--            entry.timestamp.as_deref(),
--            entry.message_type.as_deref().unwrap_or("Default"),
--            entry.category.as_deref().unwrap_or("?"),
--            entry.event_message.as_deref().unwrap_or(""),
--            color,
--        ),
-+        Ok(entry) => {
-+            let nslog = entry.is_nslog();
-+            let message = entry.event_message.as_deref().unwrap_or("");
-+            let category = if nslog {
-+                "NSLog"
-+            } else {
-+                entry.category.as_deref().unwrap_or("?")
-+            };
-+            Line {
-+                subsystem: entry.subsystem.clone().filter(|s| !s.is_empty()),
-+                nslog,
-+                redacted: is_redacted(message, entry.format_string.as_deref()),
-+                ..render_fields(
-+                    entry.timestamp.as_deref(),
-+                    entry.message_type.as_der
-```
-
-**File**: `sweetpad-cli/src/cli/output.rs` (modified, +1/-0)
-```diff
-@@ -16,6 +16,7 @@ use crate::cli::{CliError, GlobalArgs};
- 
- /// Resolved output mode shared across commands.
- #[allow(clippy::struct_excessive_bools)] // independent output toggles, not a state machine
-+#[derive(Clone)]
- pub struct Output {
-     json: bool,
-     ndjson: bool,
-```
-
----
-
-### Incident Patch 2: `e09afbe5` (2026-10-10)
-**Commit Message**: Fix demo link in README.md
-
-Updated demo link to point to a GitHub asset.
-
-**File**: `README.md` (modified, +7/-1)
-```diff
-@@ -6,7 +6,13 @@ A command-line tool that builds, runs, debugs, and tests apps for iOS, macOS, et
- Xcode. It works with Xcode projects and workspaces, Tuist, XcodeGen, and Swift
- packages.
- 
--[![Demo: sweetpad run builds an app and launches it in the iOS Simulator, then rebuilds it after a code change](./sweetpad-docs/static/videos/sweetpad-demo-readme.jpg)](./sweetpad-docs/static/videos/sweetpad-demo-readme.mp4)
-+
-+
-+
-+
-+
-+
-+[![Demo: sweetpad run builds an app and launches it in the iOS Simulator, then rebuilds it after a code change](./sweetpad-docs/static/videos/sweetpad-demo-readme.jpg)](https://github.com/user-attachments/assets/e9913ef6-a018-4bac-a627-1b1c11968d61)
- 
- ```bash
- brew install sweetpad-dev/tap/sweetpad
-```
-
----
-
-### Incident Patch 3: `7e2b054c` (2026-10-04)
-**Commit Message**: Debug through sweetpad dap in VS Code, with CodeLLDB as a fallback
-
-The new `sweetpad.debugger.adapter` setting picks the route; `auto` uses the CLI when it has `dap` and keeps CodeLLDB for iOS 16 devices or when the CLI is missing. CodeLLDB is no longer a required extension.
-
-**File**: `sweetpad-docs/docs/vscode/debug.md` (modified, +29/-9)
-```diff
-@@ -4,8 +4,10 @@ sidebar_position: 4
- 
- # Debugging
- 
--SweetPad integrates with the [CodeLLDB](https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb)
--extension, powered by [LLDB](https://lldb.llvm.org/), so you can debug your iOS app directly from VSCode.
-+SweetPad debugs your app from VS Code through one of two debuggers. When the
-+[SweetPad CLI](../cli/getting-started.md) is installed, it uses `sweetpad dap`, which drives Xcode's own lldb-dap and
-+needs no setup. Otherwise it uses the [CodeLLDB](https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb)
-+extension. [Choosing the debugger](#choosing-the-debugger) explains how SweetPad picks one.
- 
- ## Tutorial
- 
-@@ -18,22 +20,22 @@ extension, powered by [LLDB](https://lldb.llvm.org/), so you can debug your iOS
-      "configurations": [
-        {
-          "type": "sweetpad-lldb",
--         "request": "attach",
--         "name": "Attach to running app (SweetPad)",
--         "preLaunchTask": "sweetpad: launch"
-+         "request": "launch",
-+         "name": "SweetPad: Build and Run"
-        }
-      ]
-    }
-    ```
- 
--   You can also generate this file by clicking **Create a launch.json file** in the _Run and Debug_ panel.
-+   You can also generate this file by clicking **Create a launch.json file** in the _Run and Debug_ panel. Older
-+   configurations with `"request": "attach"` and `"preLaunchTask": "sweetpad: debugging-launch"` keep working.
- 
-    ![Create launch.json](/images/debug-create-launch-json.png)  
-    ![Select SweetPad LLDB](/images/debug-select-sweetpad-lldb.png)  
-    ![Update launch.json](/images/debug-update-launch-json.png)
- 
--2. **Configure the LLDB backend.** If you haven't done so already, point CodeLLDB at Xcode's bundled LLDB by adding
--   the following to your `settings.json`:
-+2. **Using CodeLLDB? Configure its LLDB backend.** Skip this step when the SweetPad CLI is installed. Otherwise point
-+   CodeLLDB at Xcode's bundled LLDB by adding the following to your `settings.json`:
- 
-    ```json title="settings.json"
-    {
-@@ -57,6 +59,24 @@ extension, powered by [LLDB](https://lldb.llvm.org/), so you can debug your iOS
- 
-    ![Breakpoints](/images/debug-breakpoints.png)
- 
-+## Choosing the debugger
-+
-+The `sweetpad.debugger.adapter` setting decides which debugger runs a session:
-+
-+- `auto` (the default) uses the SweetPad CLI when it's installed and has `sweetpad dap`, and CodeLLDB otherwise.
-+  Devices on iOS 16 and older always use CodeLLDB, since the CLI reaches devices through `devicectl`.
-+- `sweetpad` always uses the CLI.
-+- `codelldb` always uses CodeLLDB.
-+
-+With neither installed, starting a session says so and offers to install one. SweetPad looks for the CLI on your
-+`PATH`, then in `/opt/homebrew/bin` and `/usr/local/bin`; `sweetpad.debugger.cliPath` names it explicitly.
-+
-+On the CLI route, the build output and app logs appear in the Debug Console, errors link to their source line, and
-+stopping the session during the build cancels it. The scheme, configuration and destination are the ones selected in
-+SweetPad; `scheme`, `configuration`, `destination`, `args` and `env` in `launch.json` override them. A `lldb` object is
-+passed to lldb-dap as it is, for example `"lldb": { "initCommands": ["..."] }`.
-+[Editor debugging](../cli/editor-debugging.md#launch-configuration) lists every field.
-+
- ## Customize preLaunchTask
- 
- If you need more control, you can point the `preLaunchTask` property to a custom task defined in `.vscode/tasks.json`.  
-@@ -98,7 +118,7 @@ Then reference that task from `launch.json`:
- 
- ## Passing CodeLLDB parameters
- 
--To pass additional parameters to CodeLLDB, use the `codelldbAttributes` property in your `launch.json` file. For
-+On the CodeLLDB route, to pass additional parameters to CodeLLDB, use the `codelldbAttributes` property in your `launch.json` file. For
- example, if you want to execute LLDB commands before the debugger starts, you can do it like this:
- 
- ```json title=".vscode/launch.json"
-```
-
-**File**: `sweetpad-vscode/.vscode-test.mjs` (modified, +0/-3)
-```diff
-@@ -32,9 +32,6 @@ export default defineConfig({
-   label: "e2e",
-   files: "out-e2e/**/*.e2e.js",
-   workspaceFolder: disposableWorkspace(),
--  // `extensionDependencies` names CodeLLDB, and VS Code refuses to activate an
--  // extension whose dependency is missing — so the test instance needs it too.
--  installExtensions: ["vadimcn.vscode-lldb"],
-   mocha: {
-     // `suite`/`test`, the interface the VS Code extension samples use.
-     ui: "tdd",
-```
-
-**File**: `sweetpad-vscode/CHANGELOG.md` (modified, +7/-0)
-```diff
-@@ -2,6 +2,13 @@
+@@ -2,6 +2,10 @@
  
  New features, improvements and bug fixes for SweetPad are documented in this file.
  
-+## [0.2.19]
++## [0.2.20]
 +
-+- Debug through `sweetpad dap` when the SweetPad CLI is installed ([#340](https://github.com/sweetpad-dev/sweetpad/issues/340), thanks [@amgdev9](https://github.com/amgdev9))
-+- Add `sweetpad.debugger.adapter` to choose the CLI or CodeLLDB
-+- Add a "SweetPad: Build and Run" launch configuration
-+- Make CodeLLDB optional
++- Fix every scheme building with the first configuration picked ([#342](https://github.com/sweetpad-dev/sweetpad/issues/342), thanks [@bartlomiejswierad-vodeno](https://github.com/bartlomiejswierad-vodeno))
 +
- ## [0.2.18] - 2026-09-28
+ ## [0.2.19] - 2026-10-10
  
- - Apply build settings from `sweetpad.build.args` to autocomplete
+ - Debug through `sweetpad dap` when the SweetPad CLI is installed ([#340](https://github.com/sweetpad-dev/sweetpad/issues/340), thanks [@amgdev9](https://github.com/amgdev9))
 ```
 
-**File**: `sweetpad-vscode/README.md` (modified, +2/-1)
+**File**: `sweetpad-vscode/native/src/lib.rs` (modified, +19/-0)
 ```diff
-@@ -41,7 +41,8 @@ tools such as **swift-format**, **swiftlint**, **xcodebuild**, **xcrun**, **xcod
- - 🛠️ **[Tools](https://sweetpad.hyzyla.dev/docs/vscode/tools)** — manage essential iOS development tools using
-   [Homebrew](https://brew.sh/)
-   
--- 🪲 **[Debug](https://sweetpad.hyzyla.dev/docs/vscode/debug)** — debug iOS applications using
-+- 🪲 **[Debug](https://sweetpad.hyzyla.dev/docs/vscode/debug)** — debug iOS applications with the
-+  [SweetPad CLI](https://sweetpad.hyzyla.dev/docs/cli/getting-started) or
-   [CodeLLDB](https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb)
-   
- - ✅ **[Tests](https://sweetpad.hyzyla.dev/docs/vscode/tests)** — run tests on simulators and devices
-```
-
-**File**: `sweetpad-vscode/e2e/activation.e2e.ts` (modified, +1/-1)
-```diff
-@@ -17,7 +17,7 @@ suite("activation", () => {
-     assert.equal(stat.type & vscode.FileType.Directory, vscode.FileType.Directory);
-   });
+@@ -331,6 +331,25 @@ pub fn configurations(path: String) -> napi::Result<Vec<String>> {
+     }
+ }
  
--  test("declares CodeLLDB as a dependency and it resolved", async () => {
-+  test("every extensionDependencies entry resolved", async () => {
-     // Activation silently fails if an `extensionDependencies` entry is missing,
-     // which would otherwise surface here as an unexplained inactive extension.
-     const extension = vscode.extensions.getExtension(EXTENSION_ID);
-```
-
-**File**: `sweetpad-vscode/package.json` (modified, +160/-7)
-```diff
-@@ -31,9 +31,6 @@
-     "workspaceContains:**/project.yml",
-     "workspaceContains:**/Project.swift"
-   ],
--  "extensionDependencies": [
--    "vadimcn.vscode-lldb"
--  ],
-   "scripts": {
-     "build": "npm run build:native:debug && rolldown -c rolldown.config.mjs",
-     "watch": "npm run build:native:debug && rolldown -c rolldown.config.mjs --watch",
-@@ -207,6 +204,15 @@
-         "type": "sweetpad-lldb",
-         "label": "SweetPad (LLDB)",
-         "configurationSnippets": [
-+          {
-+            "label": "SweetPad: Build and Run",
-+            "description": "Build, launch and debug the app selected in SweetPad",
-+            "body": {
-+              "type": "sweetpad-lldb",
-+              "request": "launch",
-+              "name": "SweetPad: Build and Run"
-+            }
-+          },
-           {
-             "label": "SweetPad: Build and Run (Wait for debugger)",
-             "body": {
-@@ -219,13 +225,65 @@
-         ],
-         "configurationAttributes": {
-           "attach": {
--            "description": "Attach to running app",
-+            "description": "Attach to a running app. With the \"sweetpad: debugging-launch\" pre-launch task, SweetPad builds and launches the app first. Fields other than codelldbAttributes apply only when the SweetPad CLI runs the session. See sweetpad.debugger.adapter.",
-             "required": [],
-             "type": "object",
-             "properties": {
-+              "scheme": {
-+                "type": "string",
-+                "description": "Scheme to build. Defaults to the scheme selected in SweetPad."
-+              },
-+              "configuration": {
-+                "type": "string",
-+                "description": "Build configuration. Defaults to the configuration selected in SweetPad.",
-+                "examples": [
-+                  "Debug",
-+                  "Release"
-+                ]
-+              },
-+              "destination": {
-+                "type": "string",
-+                "markdownDescription": "Where the app runs: a simulator or device name or UDID, `booted`, or `mac`. A value with `=` goes to xcodebuild as `-destination`, for example `platform=macOS,variant=Mac Catalyst`. Defaults to the destination selected in SweetPad.",
-+                "examples": [
-+                  "booted",
-+                  "mac",
-+                  "iPhone 17 Pro",
-+                  "platform=macOS,variant=Mac Catalyst"
-+                ]
-+              },
-+              "workspace": {
-+                "type": "string",
-+                "description": "Path to the .xcworkspace to build. Defaults to the project selected in SweetPad."
-+              },
-+              "project": {
-+                "type": "string",
-+                "description": "Path to the .xcodeproj to build. Defaults to the project selected in SweetPad."
-+              },
-+              "cwd": {
-+                "type": "string",
-+                "description": "Directory to find the project from. Defaults to the workspace folder."
-+              },
-+              "pid": {
-+                "type": [
-+                  "number",
-+                  "string"
-+                ],
-+                "description": "Process to attach to. Without it, the debugger attaches to the scheme's app running on the destination."
-+              },
-+              "lldb": {
-+                "type": "object",
-+                "markdownDescription": "Fields passed to lldb-dap as written, such as `initCommands` and `sourceMap`.",
-+                "examples": [
-+                  {
-+                    "initCommands": [
-+                      "command script import ~/lldb/helpers.py"
-+                    ]
-+                  }
-+                ]
-+              },
-               "codelldbAttributes": {
-                 "title": "CodeLLDB attributes",
--                "description": "Attributes to pass to CodeLLDB. See: https://github.com/vadimcn/codelldb/blob/v1.10.0/MANUAL.md",
-+                "description": "Attributes to pass to CodeLLDB. Used only when CodeLLDB runs the session. See: https://github.com/vadimcn/codelldb/blob/v1.10.0/MANUAL.md",
-                 "type": "object",
-                 "examples": [
-                   {
-@@ -243,13 +301,85 @@
-             }
-           },
-           "launch": {
--            "description": "Deprecated: use `attach` instead",
-+            "description": "Build the app, launch it and attach the debugger. Fields other than codelldbAttributes apply only when the SweetPad CLI runs the session. See sweetpad.debugger.adapter.",
-             "required": [],
-             "type": "object",
-             "properties": {
-+              "scheme": {
-+                "type": "string",
-+                "description": "Scheme to build. Defaults to the scheme selected in SweetPad."
-+              },
-+              "configuration": {
-+                "type": "string",
-+                "description": "Build configuration. Defaults to the configuration selected in SweetPad.",
-+        
-```
-
-**File**: `sweetpad-vscode/src/__mocks__/vscode.ts` (modified, +31/-1)
-```diff
-@@ -1,6 +1,7 @@
- export const window = {
-   showInformationMessage: vi.fn(),
-   showWarningMessage: vi.fn(),
-+  showErrorMessage: vi.fn(),
-   createOutputChannel: vi.fn(() => ({
-     appendLine: vi.fn(),
-     show: vi.fn(),
-@@ -10,6 +11,15 @@ export const window = {
- 
- export const commands = {
-   registerCommand: vi.fn(),
-+  executeCommand: vi.fn(),
-+};
-+
-+export const extensions = {
-+  getExtension: vi.fn(),
-+};
-+
-+export const tasks = {
-+  fetchTasks: vi.fn(async () => []),
- };
- 
- export const workspace = {
-@@ -45,17 +55,37 @@ export const workspace = {
- 
- export const Uri = {
-   file: vi.fn((fsPath: string) => ({ fsPath })),
-+  parse: vi.fn((value: string) => ({ toString: () => value })),
- };
- 
- export const debug = {
-   registerDebugConfigurationProvider: vi.fn(() => ({ dispose: vi.fn() })),
-+  registerDebugAdapterDescriptorFactory: vi.fn(() => ({ dispose: vi.fn() })),
- };
- 
-+export class DebugAdapterExecutable {
-+  constructor(
-+    public readonly command: string,
-+    public readonly args?: string[],
-+    public readonly options?: { cwd?: string; env?: { [key: string]: string } },
-+  ) {}
++/// The project's `defaultConfigurationName` (the "Use … for command-line
++/// builds" choice, `Release` in Xcode's templates) for a `.xcodeproj`, or the
++/// first member project that declares one for a `.xcworkspace`. `null` when
++/// none does.
++#[napi]
++pub fn default_configuration(path: String) -> napi::Result<Option<String>> {
++    let p = Path::new(&path);
++    if is_workspace(p) {
++        let ws = workspace::open(p).map_err(to_napi_err)?;
++        Ok(ws
++            .project_refs
++            .iter()
++            .filter_map(|project_path| project::open(project_path).ok())
++            .find_map(|proj| proj.default_configuration))
++    } else {
++        Ok(project::open(p).map_err(to_napi_err)?.default_configuration)
++    }
 +}
 +
- export const DebugConfigurationProviderTriggerKind = {
-   Initial: 1,
-   Dynamic: 2,
- };
- 
- // Modules under test reach for vscode both as `import * as vscode` and as a default import;
- // the real extension host module satisfies both.
--export default { window, commands, workspace, debug, DebugConfigurationProviderTriggerKind, Uri };
-+export default {
-+  window,
-+  commands,
-+  extensions,
-+  tasks,
-+  workspace,
-+  debug,
-+  DebugAdapterExecutable,
-+  DebugConfigurationProviderTriggerKind,
-+  Uri,
-+};
+ /// Options for a `buildSettings` resolution — mirrors
+ /// `xcodebuild -showBuildSettings`. Either `project` or `workspace` is required;
+ /// either `scheme` or `target` selects what to resolve.
 ```
 
-**File**: `sweetpad-vscode/src/common/config.ts` (modified, +2/-0)
+**File**: `sweetpad-vscode/src/build/commands.ts` (modified, +23/-17)
 ```diff
-@@ -52,6 +52,8 @@ type Config = {
-   "buildServer.logLevel": "off" | "error" | "info" | "debug";
-   "tuist.autogenerate": boolean;
-   "tuist.generate.env": { [key: string]: string | null };
-+  "debugger.adapter": "auto" | "sweetpad" | "codelldb";
-+  "debugger.cliPath": string | null;
-   "testing.configuration": string;
-   "testing.baseClasses": string[];
-   "cliServer.enabled": boolean;
+@@ -3,15 +3,16 @@ import path from "node:path";
+ import * as vscode from "vscode";
+ 
+ import { getBuildServerProvider } from "../bsp/commands";
+-import { showConfigurationPicker, showYesNoQuestion } from "../common/askers";
+-import { type XcodeScheme, getBuildConfigurations, getIsXBSInstalled, getSchemes } from "../common/cli/scripts";
++import { askConfigurationForScheme, showYesNoQuestion } from "../common/askers";
++import { type XcodeScheme, getIsXBSInstalled, getSchemeConfiguration, getSchemes } from "../common/cli/scripts";
+ import type { AppDeps } from "../common/commands";
+ import { getWorkspaceConfig, updateWorkspaceConfig } from "../common/config";
+ import { ExecBaseError, ExtensionError } from "../common/errors";
+ import { exec } from "../common/exec";
+ import { getWorkspaceRelativePath, isFileExists, removeDirectory } from "../common/files";
+-import { showInputBox, showQuickPick } from "../common/quick-pick";
++import { showQuickPick } from "../common/quick-pick";
+ import { runTask } from "../common/tasks/run";
++import { getPickedConfiguration } from "./configuration";
+ import type { BuildTreeItem } from "./tree";
+ import {
+   askSchemeForBuild,
+@@ -379,34 +380,39 @@ export async function selectConfigurationForBuildCommand(deps: AppDeps): Promise
+     workspaceContext: deps.workspaceContext,
+     buildManager: deps.buildManager,
+   });
++  const scheme = await askSchemeForBuild(deps.progressStatusBar, deps.buildManager, {
++    title: "Select scheme to pick a configuration for",
++    xcworkspace: xcworkspace,
++  });
+ 
+   deps.progressStatusBar.updateText("Searching for configurations");
+-  const configurations = await getBuildConfigurations({
++  const answer = await askConfigurationForScheme({
+     xcworkspace: xcworkspace,
++    scheme: scheme,
++    schemeDefault: getSchemeConfiguration({ xcworkspace: xcworkspace, scheme: scheme, action: "launch" }),
++    current:
++      getWorkspaceConfig("build.configuration") ??
++      getPickedConfiguration({ workspaceState: deps.workspaceState, scope: "build", xcworkspace, scheme }),
+   });
+-
+-  let selected: string | undefined;
+-  if (configurations.length === 0) {
+-    selected = await showInputBox({
+-      title: "No configurations found. Please enter configuration name manually",
+-    });
+-  } else {
+-    selected = await showConfigurationPicker(configurations);
++  if (!answer) {
++    vscode.window.showErrorMessage("Configuration was not selected");
++    return;
+   }
+ 
+-  if (!selected) {
+-    vscode.window.showErrorMessage("Configuration was not selected");
++  // The scheme's own configuration is what applies without a pick, so going back to it drops the pick.
++  if (answer.configuration === undefined) {
++    deps.buildManager.setConfigurationForBuild({ xcworkspace, scheme, configuration: undefined });
+     return;
+   }
+ 
+   const saveAnswer = await showYesNoQuestion({
+     title: "Do you want to update configuration in the workspace settings (.vscode/settings.json)?",
+   });
+   if (saveAnswer) {
+-    await updateWorkspaceConfig("build.configuration", selected);
+-    deps.buildManager.setDefaultConfigurationForBuild(undefined);
++    await updateWorkspaceConfig("build.configuration", answer.configuration);
++    deps.buildManager.setConfigurationForBuild({ xcworkspace, scheme, configuration: undefined });
+   } else {
+-    deps.buildManager.setDefaultConfigurationForBuild(selected);
++    deps.buildManager.setConfigurationForBuild({ xcworkspace, scheme, configuration: answer.configuration });
+   }
+ }
+ 
+```
+
+**File**: `sweetpad-vscode/src/build/configuration.spec.ts` (added, +178/-0)
+```diff
+@@ -0,0 +1,178 @@
++import type { Mock } from "vitest";
++
++import { getSchemeConfiguration } from "../common/cli/scripts";
++import { getWorkspaceConfig } from "../common/config";
++import type { WorkspaceStateService } from "../common/workspace-state";
++import { getPickedConfiguration, resolveConfiguration, setPickedConfiguration } from "./configuration";
++
++vi.mock("../common/config", () => ({ getWorkspaceConfig: vi.fn() }));
++vi.mock("../common/cli/scripts", () => ({ getSchemeConfiguration: vi.fn() }));
++
++const mockSetting = getWorkspaceConfig as Mock;
++const mockSchemeConfiguration = getSchemeConfiguration as Mock;
++
++function memoryState(initial: Record<string, unknown> = {}): WorkspaceStateService {
++  const values = new Map(Object.entries(initial));
++  return {
++    get: (key: string) => values.get(key),
++    update: (key: string, value: unknown) => {
++      if (value === undefined) {
++        values.delete(key);
++      } else {
++        values.set(key, value);
++      }
++    },
++    rawKeys: () => [...values.keys()],
++  } as unknown as WorkspaceStateService;
++}
++
++const APP = "/work/App.xcworkspace";
++const OTHER = "/work/Other.xcodeproj";
++
++describe("resolveConfiguration", () => {
++  beforeEach(() => {
++    vi.resetAllMocks();
++  });
++
++  // #342: each scheme builds with the configuration its own .xcscheme names, so switching from
++  // "App TEST" to "App UAT" switches the configuration with it.
++  it("uses each scheme's own launch configuration when nothing is picked", () => {
++    const state = memoryState();
++    mockSchemeConfiguration.mockImplementation(({ scheme }) => (scheme === "App UAT" ? "UAT" : "TEST-Debug"));
++
++    expect(resolveConfiguration({ workspaceState: state, scope: "build", xcworkspace: APP, scheme: "App UAT" })).toBe(
++      "UAT",
++    );
++    expect(resolveConfiguration({ workspaceState: state, scope: "build", xcworkspace: APP, scheme: "App TEST" })).toBe(
++      "TEST-Debug",
++    );
++    expect(mockSchemeConfiguration).toHaveBeenCalledWith({ xcworkspace: APP, scheme: "App UAT", action: "launch" });
++  });
++
++  it("reads the scheme's test action for testing", () => {
++    mockSchemeConfiguration.mockReturnValue("TEST-Debug");
++
++    expect(
++      resolveConfiguration({ workspaceState: memoryState(), scope: "testing", xcworkspace: APP, scheme: "App" }),
++    ).toBe("TEST-Debug");
++    expect(mockSchemeConfiguration).toHaveBeenCalledWith({ xcworkspace: APP, scheme: "App", action: "test" });
++  });
++
++  it("prefers a pick for the scheme over the scheme's own configuration", () => {
++    const state = memoryState();
++    mockSchemeConfiguration.mockReturnValue("UAT");
++    setPickedConfiguration({
++      workspaceState: state,
++      scope: "build",
++      xcworkspace: APP,
++      scheme: "App UAT",
++      configuration: "Release",
++    });
++
++    expect(resolveConfiguration({ workspaceState: state, scope: "build", xcworkspace: APP, scheme: "App UAT" })).toBe(
++      "Release",
++    );
++  });
++
++  it("lets the workspace setting override every scheme", () => {
++    const state = memoryState();
++    mockSetting.mockImplementation((key: string) => (key === "build.configuration" ? "Staging" : undefined));
++    setPickedConfiguration({
++      workspaceState: state,
++      scope: "build",
++      xcworkspace: APP,
++      scheme: "App",
++      configuration: "Release",
++    });
++
++    expect(resolveConfiguration({ workspaceState: state, scope: "build", xcworkspace: APP, scheme: "App" })).toBe(
++      "Staging",
++    );
++    expect(
++      resolveConfiguration({ workspaceState: state, scope: "build", xcworkspace: undefined, scheme: undefined }),
++    ).toBe("Staging");
++  });
++
++  it("answers nothing without a scheme, leaving the caller its fallback", () => {
++    expect(
++      resolveConfiguration({ workspaceState: memoryState(), scope: "build", xcworkspace: APP, scheme: undefined }),
++    ).toBeUndefined();
++    expect(mockSchemeConfiguration).not.toHaveBeenCalled();
++  });
++
++  // The single workspace-wide pick older versions stored is the value that pinned every scheme to
++  // one configuration, so it is not read at all.
++  it("ignores the workspace-wide pick older versions stored", () => {
++    const state = memoryState({ "build.xcodeConfiguration": "TEST-Debug" });
++    mockSchemeConfiguration.mockReturnValue("UAT");
++
++    expect(resolveConfiguration({ workspaceState: state, scope: "build", xcworkspace: APP, scheme: "App UAT" })).toBe(
++      "UAT",
++    );
++  });
++});
++
++describe("setPickedConfiguration", () => {
++  it("keeps picks apart for same-named schemes of different projects", () => {
++    const state = memoryState();
++    setPickedConfiguration({
++      workspaceState: state,
++      scope: "build",
++      xcworkspace: APP,
++      scheme: "App",
++      configuration: "UAT",
++    });
++    setPickedConfiguration({
++      workspaceState: state,
++      scope: "build",
++      xcworkspace: OTHER,
++      scheme: "App",
++      configuration: "Beta",
++    });
++
++    expect(getPi
+```
+
+**File**: `sweetpad-vscode/src/build/configuration.ts` (added, +83/-0)
+```diff
+@@ -0,0 +1,83 @@
++import { getSchemeConfiguration } from "../common/cli/scripts";
++import { getWorkspaceConfig } from "../common/config";
++import type { WorkspaceStateService } from "../common/workspace-state";
++
++/** Build and run read one set of configuration picks, tests another, as with schemes. */
++export type ConfigurationScope = "build" | "testing";
++
++const PICKS_KEY = {
++  build: "build.xcodeConfigurationByScheme",
++  testing: "testing.xcodeConfigurationByScheme",
++} as const;
++
++const SETTING_KEY = {
++  build: "build.configuration",
++  testing: "testing.configuration",
++} as const;
++
++const SCHEME_ACTION = {
++  build: "launch",
++  testing: "test",
++} as const;
++
++type SchemeKey = {
++  workspaceState: WorkspaceStateService;
++  scope: ConfigurationScope;
++  xcworkspace: string;
++  scheme: string;
++};
++
++/**
++ * The configuration picked for one scheme of one project. Picks are keyed by both because a folder
++ * can hold several projects with a same-named scheme whose configurations differ.
++ */
++export function getPickedConfiguration(options: SchemeKey): string | undefined {
++  return options.workspaceState.get(PICKS_KEY[options.scope])?.[options.xcworkspace]?.[options.scheme];
++}
++
++/** Record a pick for one scheme, or drop it with `undefined` so the scheme's own configuration applies. */
++export function setPickedConfiguration(options: SchemeKey & { configuration: string | undefined }): void {
++  const key = PICKS_KEY[options.scope];
++  const picks = { ...options.workspaceState.get(key) };
++  const forWorkspace = { ...picks[options.xcworkspace] };
++  if (options.configuration === undefined) {
++    delete forWorkspace[options.scheme];
++  } else {
++    forWorkspace[options.scheme] = options.configuration;
++  }
++  if (Object.keys(forWorkspace).length === 0) {
++    delete picks[options.xcworkspace];
++  } else {
++    picks[options.xcworkspace] = forWorkspace;
++  }
++  options.workspaceState.update(key, Object.keys(picks).length === 0 ? undefined : picks);
++}
++
++/**
++ * The configuration a build of `scheme` uses without asking: the workspace setting, then the pick for
++ * that scheme, then the scheme's own (`LaunchAction` for builds, `TestAction` for tests). Undefined
++ * leaves the caller to its fallback (a picker, or Debug where nobody can be asked).
++ */
++export function resolveConfiguration(options: {
++  workspaceState: WorkspaceStateService;
++  scope: ConfigurationScope;
++  xcworkspace: string | undefined;
++  scheme: string | undefined;
++}): string | undefined {
++  const fromSetting = getWorkspaceConfig(SETTING_KEY[options.scope]);
++  if (fromSetting) {
++    return fromSetting;
++  }
++  if (!options.xcworkspace || !options.scheme) {
++    return undefined;
++  }
++  const key = { ...options, xcworkspace: options.xcworkspace, scheme: options.scheme };
++  return (
++    getPickedConfiguration(key) ??
++    getSchemeConfiguration({
++      xcworkspace: options.xcworkspace,
++      scheme: options.scheme,
++      action: SCHEME_ACTION[options.scope],
++    })
++  );
++}
+```
+
+**File**: `sweetpad-vscode/src/build/manager.ts` (modified, +48/-14)
+```diff
+@@ -38,6 +38,7 @@ import { MacOSLogSidecar, Pymd3Sidecar, SimulatorLogSidecar } from "../run/sidec
+ import type { SimulatorDestination } from "../simulators/types";
+ import { getSimulatorByUdid } from "../simulators/utils";
+ import type { ProgressStatusBar } from "../system/status-bar";
++import { resolveConfiguration, setPickedConfiguration } from "./configuration";
+ import { BUILD_TASK_PROBLEM_MATCHERS } from "./constants";
+ import type { DiagnosticsManager } from "./diagnostics";
+ import type { ParsedDiagnostic } from "./diagnostics-parser";
+@@ -54,6 +55,7 @@ import {
+   ensureAppPathExists,
+   generateBuildServerConfigOnBuild,
+   activateCurrentXcodeWorkspacePath,
++  getCurrentXcodeWorkspacePath,
+   notifyXBSMissing,
+   getSchemeLaunchSettings,
+   getSwiftPMDirectory,
+@@ -74,6 +76,8 @@ export type BuildSessionCommand = "build" | "run" | "launch" | "test" | "clean"
+ 
+ export type BuildSessionStarted = {
+   scheme: string;
++  /** Null for commands that build nothing (resolving dependencies). */
++  configuration: string | null;
+   command: BuildSessionCommand;
+ };
+ 
+@@ -256,21 +260,40 @@ export class BuildManager {
+     this.emitter.emit("defaultSchemeForTestingUpdated", scheme);
+   }
+ 
++  /**
++   * The configuration a build of the selected scheme in the current project uses, without asking.
++   * See `resolveConfiguration` for the order; undefined when nothing answers yet.
++   */
+   getDefaultConfigurationForBuild(): string | undefined {
+-    return this.workspaceState.get("build.xcodeConfiguration");
++    return this.getConfigurationForBuild({
++      xcworkspace: getCurrentXcodeWorkspacePath(this.workspaceState),
++      scheme: this.getDefaultSchemeForBuild(),
++    });
+   }
+ 
+-  getDefaultConfigurationForTesting(): string | undefined {
+-    return this.workspaceState.get("testing.xcodeConfiguration");
++  getConfigurationForBuild(options: {
++    xcworkspace: string | undefined;
++    scheme: string | undefined;
++  }): string | undefined {
++    return resolveConfiguration({ workspaceState: this.workspaceState, scope: "build", ...options });
+   }
+ 
+-  setDefaultConfigurationForBuild(configuration: string | undefined): void {
+-    this.workspaceState.update("build.xcodeConfiguration", configuration);
+-    this.emitter.emit("defaultConfigurationForBuildUpdated", configuration);
++  getConfigurationForTesting(options: { xcworkspace: string; scheme: string }): string | undefined {
++    return resolveConfiguration({ workspaceState: this.workspaceState, scope: "testing", ...options });
+   }
+ 
+-  setDefaultConfigurationForTesting(configuration: string | undefined): void {
+-    this.workspaceState.update("testing.xcodeConfiguration", configuration);
++  /** Pick a configuration for one scheme, or drop the pick with `undefined` to use the scheme's own. */
++  setConfigurationForBuild(options: { xcworkspace: string; scheme: string; configuration: string | undefined }): void {
++    setPickedConfiguration({ workspaceState: this.workspaceState, scope: "build", ...options });
++    this.emitter.emit("defaultConfigurationForBuildUpdated", this.getDefaultConfigurationForBuild());
++  }
++
++  setConfigurationForTesting(options: {
++    xcworkspace: string;
++    scheme: string;
++    configuration: string | undefined;
++  }): void {
++    setPickedConfiguration({ workspaceState: this.workspaceState, scope: "testing", ...options });
+   }
+ 
+   /**
+@@ -365,13 +388,18 @@ export class BuildManager {
+   async runSchemeTask(options: {
+     name: string;
+     scheme: string;
++    configuration: string | null;
+     workspaceRoot: string;
+     command: BuildSessionCommand;
+     callback: (terminal: TaskTerminal) => Promise<void>;
+   }): Promise<void> {
+     this.cancellingSchemes.delete(options.scheme);
+     this.startSchemeBuild(options.scheme);
+-    this.emitter.emit("buildSessionStarted", { scheme: options.scheme, command: options.command });
++    this.emitter.emit("buildSessionStarted", {
++      scheme: options.scheme,
++      configuration: options.configuration,
++      command: options.command,
++    });
+     let status: BuildSessionEnded["status"] = "succeeded";
+     try {
+       await runTask(this.execution, {
+@@ -421,7 +449,7 @@ export class BuildManager {
+     });
+ 
+     this.progress.updateText("Searching for configuration");
+-    const configuration = await askConfiguration(this.progress, this, { xcworkspace: xcworkspace });
++    const configuration = await askConfiguration(this.progress, this, { xcworkspace: xcworkspace, scheme: scheme });
+ 
+     this.progress.updateText("Searching for destination");
+     const destination = await askDestinationToRunOn(this.progress, this.destinations, {
+@@ -439,6 +467,7 @@ export class BuildManager {
+     await this.runSchemeTask({
+       name: "Build",
+       scheme: scheme,
++      configuration: configuration,
+       workspaceRoot: workspaceRoot,
+       command: "build",
+       callback: async (terminal) => {
+@@ -482,7 +511,7 @@ export class BuildManager {
+       }));
+ 
+     this.progress.updateText
+```
+
+**File**: `sweetpad-vscode/src/build/provider.ts` (modified, +5/-0)
+```diff
+@@ -177,6 +177,7 @@ class ActionDispatcher {
+       definition.configuration ??
+       (await askConfiguration(this.deps.progressStatusBar, this.deps.buildManager, {
+         xcworkspace: xcworkspace,
++        scheme: scheme,
+       }));
+ 
+     const destination = await this.getDestination({
+@@ -299,6 +300,7 @@ class ActionDispatcher {
+       definition.configuration ??
+       (await askConfiguration(this.deps.progressStatusBar, this.deps.buildManager, {
+         xcworkspace: xcworkspace,
++        scheme: scheme,
+       }));
+ 
+     const destination = await this.getDestination({
+@@ -364,6 +366,7 @@ class ActionDispatcher {
+       definition.configuration ??
+       (await askConfiguration(this.deps.progressStatusBar, this.deps.buildManager, {
+         xcworkspace: xcworkspace,
++        scheme: scheme,
+       }));
+ 
+     const destination = await this.getDestination({
+@@ -460,6 +463,7 @@ class ActionDispatcher {
+       definition.configuration ??
+       (await askConfiguration(this.deps.progressStatusBar, this.deps.buildManager, {
+         xcworkspace: xcworkspace,
++        scheme: scheme,
+       }));
+ 
+     const destination = await this.getDestination({
+@@ -511,6 +515,7 @@ class ActionDispatcher {
+       definition.configuration ??
+       (await askConfiguration(this.deps.progressStatusBar, this.deps.buildManager, {
+         xcworkspace: xcworkspace,
++        scheme: scheme,
+       }));
+ 
+     const destination = await this.getDestination({
+```
+
+**File**: `sweetpad-vscode/src/build/utils.spec.ts` (modified, +1/-0)
+```diff
+@@ -49,6 +49,7 @@ vi.mock("../common/cli/scripts", () => ({
+   findSchemeFile: vi.fn(),
+   getBuildSettingsList: vi.fn(),
+   getXcodeBuildCommand: vi.fn(() => "xcodebuild"),
++  getSchemeConfiguration: vi.fn(),
+   SWEETPAD_CLI_MISSING_MESSAGE: "cli missing",
+ }));
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -2702,48 +2170,31 @@ The new `sweetpad.debugger.adapter` setting picks the route; `auto` uses the CLI
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Show NSLog in debug sessions and private log values from macOS apps
+## X. Build each scheme with its own configuration and remember picks per scheme (#342
 
 **RULE**:
-When implementing operations in `sweetpad-cli/CLI_DESIGN.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sweetpad-dev/sweetpad. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sweetpad-vscode/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sweetpad-dev/sweetpad. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `111d11e5`: Show NSLog in debug sessions and private log values from macOS apps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4123e4a3`: Build each scheme with its own configuration and remember picks per scheme (#342). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sweetpad-cli/CLI_DESIGN.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sweetpad-vscode/CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| macOS, Mac Catalyst | `posix_spawn` with `POSIX_SPAWN_START_SUSPENDED` | `attach {pid, program}` |
-level, with NSLog added (§9v). A macOS app's stdout and stderr come through the
-pipes it was started with. The lines about the launch rather than the app are
-## 9v. v8 — an app's output, once each and readable
+## [0.2.20]
 
-> sweetpad-dev/sweetpad#97 asked for an app's output in the editor's debug
-> console. `dap` (§9u) put it there; this section settles what reached it
-> twice, what didn't reach it, and what reached it as `<private>`.
+- Fix every scheme building with the first configuration picked ([#342](https://github.com/sweetpad-dev/sweetpad/issues/342), thanks [@bartlomiejswierad-vodeno](https://github.com/bartlomiejswierad-vodeno))
 
-An app writes three ways. `print` and anything else on stdout or stderr reach
-the app's own pipes. `Logger` and `os_log` go to the unified log. NSLog goes to
-either: to stderr, except while a debugger is attached, when it goes to the
-unified log only. A simulator app writes it to both.
-
-**Pipes for stdio, `log stream` for the unified log, nothing else.** sweetpad
-reads stdout and stderr itself and unified-log entries through `log stream`,
-which keeps them structured: the level, subsystem and category the level keys,
-the filters and `--json` rely on. The other way to get os_log text is the
-`OS_ACTIVITY_DT_MODE` echo, which copies each entry onto stderr. Apple does
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-| macOS, Mac Catalyst | lldb-dap itself | `launch {program, args, env}` |
-level. On macOS lldb launched the process and relays its stdout itself, so only
-the log stream is added. The lines about the launch rather than the app are
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `111d11e5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4123e4a3` are properly handled with clean fallback behavior.

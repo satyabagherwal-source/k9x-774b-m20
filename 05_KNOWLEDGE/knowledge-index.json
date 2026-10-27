@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T11:27:34.757Z",
+  "last_updated": "2026-10-27T11:39:02.158Z",
   "total_verified_learnings": 1102,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -36556,8 +36556,8 @@
       "slug": "moby-buildkit",
       "platform": "github",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "fc10d048",
-      "content_hash": "72a6de191e6520cf2710f4a532fedc5723412f3828f1c18fcd79eebb9380e21d",
+      "source_version": "892eaeac",
+      "content_hash": "cf87bb451bb64770a8fec9a20afb8cfeb89eecfd55eee39b92b192792ec0bf62",
       "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "promoted_rules": [
@@ -36580,6 +36580,11 @@
           "number": 3686,
           "title": "Merge pull request #7284 from tonistiigi/req-close-hang-workaround",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4712,
+          "title": "runcexecutor: stop tty resize loop before closing pty",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36587,7 +36592,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T05:14:46.386Z",
+      "verified_at": "2026-10-27T11:34:11.984Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48020,8 +48025,8 @@
       "slug": "sweetpad-dev-sweetpad",
       "platform": "github",
       "source_url": "https://github.com/sweetpad-dev/sweetpad",
-      "source_version": "5ded4409",
-      "content_hash": "fa63212c0a2414c27f085e2a71eea1b4e3ca3d1bb3afb714a6af4b64689066e5",
+      "source_version": "d633af8a",
+      "content_hash": "45d954c99dd240b85016009b7f395a07bb14d6fdc79c8348d09723ee6001ebca",
       "dossier_path": "07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md",
       "promoted_rules": [],
@@ -48030,7 +48035,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T03:28:20.220Z",
+      "verified_at": "2026-10-27T11:34:09.542Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50470,8 +50475,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "67e7cf4c",
-      "content_hash": "4527f5955bf7d300fb6a72c2cc5b41e4aab95536994b9274ad8f2d0e122ec550",
+      "source_version": "442b6191",
+      "content_hash": "41bd8eb5a73e403cfa15cf5d3cf4337a5011f67e2fe9c1d4bb4ffc8bb9fe84b2",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -50504,6 +50509,11 @@
           "number": 4434,
           "title": "test code flagged by error-prone 2.51.0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4713,
+          "title": "Aggregation analysis for session expressions",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50511,7 +50521,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T19:51:49.938Z",
+      "verified_at": "2026-10-27T11:34:17.077Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52501,8 +52511,8 @@
       "slug": "webrtc-rs-webrtc",
       "platform": "github",
       "source_url": "https://github.com/webrtc-rs/webrtc",
-      "source_version": "a53d7ac4",
-      "content_hash": "30feeed0e1ca5e98881e64e674507e3990041fd59872165415101775d127d58b",
+      "source_version": "1c07e9f0",
+      "content_hash": "f0fda1bbcc2e63941496d6388dcbed2ff9cdd4440b9bb61c974f769a43b42da8",
       "dossier_path": "07_PROJECT_LEARNING/webrtc-rs-webrtc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webrtc-rs-webrtc-learnings.md",
       "promoted_rules": [
@@ -52522,7 +52532,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T17:30:14.379Z",
+      "verified_at": "2026-10-27T11:34:17.780Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65677,8 +65687,8 @@
       "slug": "webrecorder-pywb",
       "platform": "github",
       "source_url": "https://github.com/webrecorder/pywb",
-      "source_version": "5fcffb27",
-      "content_hash": "62f8659edffd679f1eb7ed7c8f35bcf0772bb7bc5e72ce9c8c60c59b5b951734",
+      "source_version": "20bf53e0",
+      "content_hash": "ed341d24b0403e83ecec7af2565ed9d4ba99f859c56195ab12937cc3a909c304",
       "dossier_path": "07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
       "promoted_rules": [
@@ -65691,6 +65701,21 @@
           "number": 3685,
           "title": "Merge pull request #1058 from arquivo/igobranco/1671/closest-aggregated-sources",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4714,
+          "title": "Guard Against Negative Caching on Dynamic Read-Through Pipelines",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4715,
+          "title": "Lexicographical Delimiter-Boundary Range Clamping",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4716,
+          "title": "Stream-Chunk Boundary Realignment in Binary Chunk Parsers",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -65698,7 +65723,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T18:11:04.227Z",
+      "verified_at": "2026-10-27T11:39:02.146Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -131443,6 +131468,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T11:27:34.745Z"
+    },
+    "rule-4712": {
+      "learning_id": "rule-4712",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4712,
+      "title": "runcexecutor: stop tty resize loop before closing pty",
+      "source_url": "https://github.com/moby/buildkit",
+      "source_version": "892eaeac",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:34:11.984Z"
+    },
+    "rule-4713": {
+      "learning_id": "rule-4713",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4713,
+      "title": "Aggregation analysis for session expressions",
+      "source_url": "https://github.com/trinodb/trino",
+      "source_version": "442b6191",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:34:17.077Z"
+    },
+    "rule-4714": {
+      "learning_id": "rule-4714",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4714,
+      "title": "Guard Against Negative Caching on Dynamic Read-Through Pipelines",
+      "source_url": "https://github.com/webrecorder/pywb",
+      "source_version": "20bf53e0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:39:02.146Z"
+    },
+    "rule-4715": {
+      "learning_id": "rule-4715",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4715,
+      "title": "Lexicographical Delimiter-Boundary Range Clamping",
+      "source_url": "https://github.com/webrecorder/pywb",
+      "source_version": "20bf53e0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:39:02.146Z"
+    },
+    "rule-4716": {
+      "learning_id": "rule-4716",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4716,
+      "title": "Stream-Chunk Boundary Realignment in Binary Chunk Parsers",
+      "source_url": "https://github.com/webrecorder/pywb",
+      "source_version": "20bf53e0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:39:02.146Z"
     }
   },
   "aliases": {

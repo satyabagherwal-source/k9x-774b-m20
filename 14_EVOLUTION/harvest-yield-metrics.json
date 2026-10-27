@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T11:27:34.824Z",
-  "total_cycles_completed": 5212,
-  "total_learnings_persisted": 5212,
-  "total_rules_promoted": 4614,
+  "last_updated": "2026-10-27T11:39:02.223Z",
+  "total_cycles_completed": 5217,
+  "total_learnings_persisted": 5217,
+  "total_rules_promoted": 4619,
   "history": [
-    {
-      "timestamp": "2026-10-25T23:17:30.551Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:32:54.934Z",
-      "repository": "meta-models/Muse-Spark-Open-816B-A42B",
-      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:39:17.223Z",
-      "repository": "FacebookAI/xlm-roberta-base",
-      "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:39:17.367Z",
-      "repository": "dockview/dockview",
-      "learningId": "learn-github-dockview-dockview",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:39:19.637Z",
-      "repository": "agent-of-empires/agent-of-empires",
-      "learningId": "learn-github-agent-of-empires-agent-of-empires",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T23:39:26.440Z",
       "repository": "PeerDB-io/peerdb",
@@ -1403,6 +1368,41 @@
       "repository": "arangodb/arangodb",
       "learningId": "learn-github-arangodb-arangodb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:34:09.645Z",
+      "repository": "sweetpad-dev/sweetpad",
+      "learningId": "learn-github-sweetpad-dev-sweetpad",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:34:12.062Z",
+      "repository": "moby/buildkit",
+      "learningId": "learn-github-moby-buildkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:34:17.159Z",
+      "repository": "trinodb/trino",
+      "learningId": "learn-github-trinodb-trino",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:34:17.875Z",
+      "repository": "webrtc-rs/webrtc",
+      "learningId": "learn-github-webrtc-rs-webrtc",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:39:02.223Z",
+      "repository": "webrecorder/pywb",
+      "learningId": "learn-github-webrecorder-pywb",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

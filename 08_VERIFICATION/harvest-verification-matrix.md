@@ -5235,3 +5235,8 @@
 | `CYCLE-20261027-PKEU` | `2026-10-27T11:27:27.894Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4710` | Yes (`3571762e...`) |
 | `CYCLE-20261027-PP7R` | `2026-10-27T11:27:34.119Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`5882a7fa...`) |
 | `CYCLE-20261027-PPR4` | `2026-10-27T11:27:34.816Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4711` | Yes (`99bf7b8f...`) |
+| `CYCLE-20261027-Y6EB` | `2026-10-27T11:34:09.635Z` | `sweetpad-dev/sweetpad` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md` | Yes (`45d954c9...`) |
+| `CYCLE-20261027-Y89I` | `2026-10-27T11:34:12.054Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4712` | Yes (`cf87bb45...`) |
+| `CYCLE-20261027-YC73` | `2026-10-27T11:34:17.151Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4713` | Yes (`41bd8eb5...`) |
+| `CYCLE-20261027-YCQZ` | `2026-10-27T11:34:17.867Z` | `webrtc-rs/webrtc` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/webrtc-rs-webrtc-learnings.md` | Yes (`f0fda1bb...`) |
+| `CYCLE-20261027-4G5J` | `2026-10-27T11:39:02.215Z` | `webrecorder/pywb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4714, Rule 4715, Rule 4716` | Yes (`ed341d24...`) |

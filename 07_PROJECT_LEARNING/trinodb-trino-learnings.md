@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `67e7cf4c`  
+> **Source Version**: `442b6191`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T19:51:49.628Z  
+> **Timestamp**: 2026-10-27T11:34:16.752Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T19:51:49.416Z  
+> **Harvest Timestamp**: 2026-10-27T11:34:16.431Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13365 stars
+- **Stars / Engagement**: 13374 stars
 
 ---
 
@@ -1862,182 +1862,484 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5d51219a` (2026-10-25)
-**Commit Message**: Fix test code flagged by error-prone 2.51.0
+### Incident Patch 1: `fcd508b6` (2026-10-24)
+**Commit Message**: Fix Aggregation analysis for session expressions
 
-**File**: `core/trino-main/src/test/java/io/trino/operator/aggregation/minmaxn/TestDoubleMinNAggregation.java` (modified, +1/-1)
+Treat CURRENT_USER, CURRENT_CATALOG, CURRENT_SCHEMA and CURRENT_PATH
+as group-constant expression during aggregation analysis.
+
+Without these dedicated visitor methods, these expression falls throgh
+generic unsupported expression path in Aggregation Analyzer causing
+query to fail with UnsupportedOperationException.
+
+- Added test to cover these cases
+
+**File**: `core/trino-main/src/main/java/io/trino/sql/analyzer/AggregationAnalyzer.java` (modified, +28/-0)
 ```diff
-@@ -79,7 +79,7 @@ private void testInvalidAggregation(Double[] x, int n)
+@@ -29,9 +29,13 @@
+ import io.trino.sql.tree.AtTimeZone;
+ import io.trino.sql.tree.Cast;
+ import io.trino.sql.tree.CoalesceExpression;
++import io.trino.sql.tree.CurrentCatalog;
+ import io.trino.sql.tree.CurrentDate;
++import io.trino.sql.tree.CurrentPath;
++import io.trino.sql.tree.CurrentSchema;
+ import io.trino.sql.tree.CurrentTime;
+ import io.trino.sql.tree.CurrentTimestamp;
++import io.trino.sql.tree.CurrentUser;
+ import io.trino.sql.tree.DefaultExpressionTraversalVisitor;
+ import io.trino.sql.tree.DereferenceExpression;
+ import io.trino.sql.tree.ExistsPredicate;
+@@ -308,6 +312,30 @@ protected Boolean visitExtract(Extract node, Void context)
+             return process(node.getExpression(), context);
+         }
  
-     private void testCustomAggregation(Double[] values, int n)
-     {
--        PriorityQueue<Double> heap = new PriorityQueue<>(n, (x, y) -> -Double.compare(x, y));
-+        PriorityQueue<Double> heap = new PriorityQueue<>(n, (x, y) -> Double.compare(y, x));
-         Arrays.stream(values).filter(Objects::nonNull).forEach(heap::add);
-         Double[] expected = new Double[heap.size()];
-         for (int i = heap.size() - 1; i >= 0; i--) {
++        @Override
++        protected Boolean visitCurrentCatalog(CurrentCatalog node, Void context)
++        {
++            return true;
++        }
++
++        @Override
++        protected Boolean visitCurrentSchema(CurrentSchema node, Void context)
++        {
++            return true;
++        }
++
++        @Override
++        protected Boolean visitCurrentUser(CurrentUser node, Void context)
++        {
++            return true;
++        }
++
++        @Override
++        protected Boolean visitCurrentPath(CurrentPath node, Void context)
++        {
++            return true;
++        }
++
+         @Override
+         protected Boolean visitCurrentTime(CurrentTime node, Void context)
+         {
 ```
 
-**File**: `core/trino-main/src/test/java/io/trino/server/ui/TestMultipartUiCookie.java` (modified, +1/-2)
+**File**: `core/trino-main/src/test/java/io/trino/sql/query/TestSessionFunctions.java` (modified, +23/-0)
 ```diff
-@@ -19,7 +19,6 @@
- import org.junit.jupiter.api.Test;
+@@ -105,6 +105,29 @@ public void testCurrentSchema()
+         }
+     }
  
++    @Test
++    public void testSessionFunctionWithAggregation()
++    {
++        Session session = testSessionBuilder()
++                .setIdentity(Identity.ofUser("test_current_user"))
++                .setCatalog("trino_rocks")
++                .setSchema("trino_rocks")
++                .setPath(SqlPath.buildPath("test_path", Optional.empty()))
++                .build();
++
++        try (QueryAssertions assertions = new QueryAssertions(session)) {
++            assertThat(assertions.query(
++                    "SELECT CURRENT_USER, CURRENT_CATALOG, CURRENT_SCHEMA, CURRENT_PATH, count(*)"
++                            + "FROM (VALUES 1, 2)"))
++                    .matches(format(
++                            "SELECT CAST('%s' AS VARCHAR), CAST('%s' AS VARCHAR), CAST('%s' AS VARCHAR), CAST('%s' AS VARCHAR), BIGINT '2'",
++                            session.getUser(),
++                            session.getCatalog().orElseThrow(),
++                            session.getSchema().orElseThrow(),
++                            session.getPath()));
++        }
++    }
++
+     @Test
+     public void testCurrentGroups()
+     {
+```
+
+---
+
+### Incident Patch 2: `0313ae9a` (2026-10-26)
+**Commit Message**: Fix PreparedStatement date/time before Gregorian cutover
+
+Convert `java.util.Date` values, including `java.sql.Timestamp` with or
+without a `Calendar`, using `java.util` calendar and time zone rules.
+Previously, the `java.time` conversion shifted values before the 1582
+Julian/Gregorian cutover and before standard time zones were adopted,
+and `Timestamp.toLocalDateTime()` dropped the era, binding a year 2 BC
+value as year 2 AD.
+
+Julian leap days that do not exist in the proleptic Gregorian calendar,
+such as 1500-02-29, are rejected with `SQLException` instead of an
+unchecked `DateTimeException`.
+
+**File**: `client/trino-jdbc/src/main/java/io/trino/jdbc/AbstractTrinoResultSet.java` (modified, +1/-1)
+```diff
+@@ -129,7 +129,7 @@ abstract class AbstractTrinoResultSet
+     private static final long NANOSECONDS_PER_SECOND = 1_000_000_000;
+     private static final int PICOSECONDS_PER_NANOSECOND = 1_000;
+ 
+-    static final DateTimeFormatter DATE_FORMATTER = ISODateTimeFormat.date();
++    private static final DateTimeFormatter DATE_FORMATTER = ISODateTimeFormat.date();
+ 
+     // Before 1900, Java Time and Joda Time are not consistent with java.sql.Date and java.util.Calendar
+     // Since January 1, 1900 UTC is still December 31, 1899 in other zones, we are adding a 1 year margin.
+```
+
+**File**: `client/trino-jdbc/src/main/java/io/trino/jdbc/TrinoPreparedStatement.java` (modified, +46/-20)
+```diff
+@@ -44,28 +44,29 @@
+ import java.sql.Time;
+ import java.sql.Timestamp;
+ import java.sql.Types;
++import java.time.DateTimeException;
  import java.time.Instant;
--import java.util.Date;
+ import java.time.LocalDate;
+ import java.time.LocalDateTime;
+ import java.time.LocalTime;
+ import java.time.OffsetTime;
+-import java.time.ZoneId;
+ import java.time.ZoneOffset;
+ import java.time.format.DateTimeFormatter;
+ import java.time.format.DateTimeFormatterBuilder;
+ import java.util.ArrayList;
+ import java.util.Calendar;
++import java.util.GregorianCalendar;
+ import java.util.HashMap;
  import java.util.List;
  import java.util.Map;
++import java.util.TimeZone;
+ import java.util.function.Consumer;
+ import java.util.regex.Matcher;
+ import java.util.regex.Pattern;
  
-@@ -65,7 +64,7 @@ public void testLongValueRoundTrip()
-                 .allMatch(NewCookie::isSecure)
-                 .allMatch(NewCookie::isHttpOnly)
-                 .allMatch(cookie -> cookie.getMaxAge() == DEFAULT_MAX_AGE)
--                .allMatch(cookie -> cookie.getExpiry().equals(Date.from(Instant.EPOCH)))
-+                .allMatch(cookie -> cookie.getExpiry().toInstant().equals(Instant.EPOCH))
-                 .allMatch(cookie -> (cookie.getName().length() + cookie.getValue().length()) <= MAXIMUM_COOKIE_SIZE);
+ import static com.google.common.base.Preconditions.checkArgument;
+ import static com.google.common.io.BaseEncoding.base16;
+ import static io.trino.client.ClientTypeSignature.VARCHAR_UNBOUNDED_LENGTH;
+-import static io.trino.jdbc.AbstractTrinoResultSet.DATE_FORMATTER;
+ import static io.trino.jdbc.ColumnInfo.setTypeInfo;
+ import static io.trino.jdbc.ObjectCasts.castToBigDecimal;
+ import static io.trino.jdbc.ObjectCasts.castToBigint;
+@@ -315,7 +316,7 @@ private String toDateLiteral(Object value)
+     {
+         requireNonNull(value, "value is null");
+         if (value instanceof java.util.Date) {
+-            return DATE_FORMATTER.print(((java.util.Date) value).getTime());
++            value = toLocalDateTime((java.util.Date) value, TimeZone.getDefault());
+         }
+         if (value instanceof LocalDate) {
+             return ISO_LOCAL_DATE.format(((LocalDate) value));
+@@ -355,13 +356,8 @@ private void setAsTime(int parameterIndex, Object value)
+     private String toTimeLiteral(Object value)
+             throws SQLException
+     {
+-        if (value instanceof Timestamp) {
+-            value = ((Timestamp) value).toLocalDateTime().toLocalTime();
+-        }
+         if (value instanceof java.util.Date) {
+-            value = Instant.ofEpochMilli(((java.util.Date) value).getTime())
+-                    .atZone(ZoneId.systemDefault())
+-                    .toLocalTime();
++            value = toLocalTime((java.util.Date) value, TimeZone.getDefault());
+         }
+         if (value instanceof LocalDateTime) {
+             value = ((LocalDateTime) value).toLocalTime();
+@@ -423,13 +419,8 @@ private void setAsTimestamp(int parameterIndex, Object value)
+     private String toTimestampLiteral(Object value)
+             throws SQLException
+     {
+-        if (value instanceof Timestamp) {
+-            value = ((Timestamp) value).toLocalDateTime();
+-        }
+         if (value instanceof java.util.Date) {
+-            value = Instant.ofEpochMilli(((java.util.Date) value).getTime())
+-                    .atZone(ZoneId.systemDefault())
+-                    .toLocalDateTime();
++            value = toLocalDateTime((java.util.Date) value, TimeZone.getDefault());
+         }
+         if (value instanceof LocalDateTime) {
+             return LOCAL_DATE_TIME_FORMATTER.format(((LocalDateTime) value));
+@@ -441,6 +432,45 @@ private String toTimestampLiteral(Object value)
+         throw invalidConversion(value, "timestamp");
+     }
  
-         assertThat(newCookies)
++    // Use java.util calendar and time zone rules, which differ from java.time for historical dates. Unlike Timestamp.toLocalDateTime(),
++    // retain the era and reject days that do not exist in the proleptic Gregorian calendar
++    private static LocalDateTime toLocalDateTime(java.util.Date value, TimeZone timeZone)
++            throws SQLException
++    {
++        GregorianCalendar calendar = toCalendar(value, timeZone);
++        int year = calendar.get(Calendar.YEAR);
++        if (calendar.get(Calendar.ERA) == GregorianCalendar.BC) {
++            year = 1 - year;
++        }
++        LocalDate date;
++        try {
++            date = LocalDate.of(year, calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
++        }
++        catch (DateTimeException e) {
++            throw new SQLException(format("Cannot convert instance of %s to local date-time: %s", value.getClass().getName(), value), e);
++        }
++        return LocalDateTime.of(date, toLocalTime(value, calendar));
++    }
++
++    // Unlike toLocalDateTime(), does not access the date fields, so a date that does not exist in the proleptic Gregorian calendar is not rejected
++    private static LocalTime toLocalTime(java.util.Date value, TimeZone timeZone)
++    {
++        return toLocalTime(value, toCalendar(value, timeZone));
++    }
++
++    private static LocalTime toLocalTime(java.util.Date value, GregorianCalendar calendar)
++    {
++        int nanoOfSecond = value instanceof Timestamp ? ((Timestamp) value).getNanos() : calendar.get(Calendar.MILLISECOND) * 1_000_000;
++        return LocalTime.of(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), calendar.get(Calendar.SECOND), nanoOfSecond);
++    }
++
++    private static GregorianCalendar toCalendar(java.util.Date value, TimeZone timeZone)
++   
 ```
 
-**File**: `core/trino-main/src/test/java/io/trino/util/DynamicFiltersTestUtil.java` (modified, +1/-1)
+**File**: `client/trino-jdbc/src/test/java/io/trino/jdbc/TestJdbcPreparedStatement.java` (modified, +194/-0)
 ```diff
-@@ -176,7 +176,7 @@ public boolean equals(Object o)
-             }
-             TestingDynamicFilter that = (TestingDynamicFilter) o;
-             return futuresLeft == that.futuresLeft
--                    && Objects.equals(isBlocked, that.isBlocked)
-+                    && isBlocked == that.isBlocked
-                     && Objects.equals(currentPredicate, that.currentPredicate);
-         }
+@@ -52,6 +52,7 @@
+ import java.time.ZoneOffset;
+ import java.time.temporal.ChronoUnit;
+ import java.util.Calendar;
++import java.util.GregorianCalendar;
+ import java.util.TimeZone;
+ import java.util.stream.LongStream;
  
+@@ -1064,6 +1065,54 @@ private void testConvertDate(boolean explicitPrepare)
+         assertBind((ps, i) -> ps.setObject(i, "2001-05-06", Types.DATE), explicitPrepare)
+                 .resultsIn("date", "DATE '2001-05-06'")
+                 .roundTripsAs(Types.DATE, sqlDate);
++
++        // BEFORE JULIAN/GREGORIAN CUTOVER
++        LocalDate dateBeforeGregorianCutover = LocalDate.of(1410, 7, 15);
++        Date sqlDateBeforeGregorianCutover = Date.valueOf(dateBeforeGregorianCutover);
++        java.util.Date javaDateBeforeGregorianCutover = new java.util.Date(sqlDateBeforeGregorianCutover.getTime());
++        LocalDateTime dateTimeBeforeGregorianCutover = LocalDateTime.of(dateBeforeGregorianCutover, LocalTime.of(15, 54, 12));
++        Timestamp sqlTimestampBeforeGregorianCutover = Timestamp.valueOf(dateTimeBeforeGregorianCutover);
++
++        assertBind((ps, i) -> ps.setDate(i, sqlDateBeforeGregorianCutover), explicitPrepare)
++                .resultsIn("date", "DATE '1410-07-15'")
++                .roundTripsAs(Types.DATE, sqlDateBeforeGregorianCutover);
++
++        assertBind((ps, i) -> ps.setObject(i, sqlDateBeforeGregorianCutover), explicitPrepare)
++                .resultsIn("date", "DATE '1410-07-15'")
++                .roundTripsAs(Types.DATE, sqlDateBeforeGregorianCutover);
++
++        assertBind((ps, i) -> ps.setObject(i, sqlDateBeforeGregorianCutover, Types.DATE), explicitPrepare)
++                .resultsIn("date", "DATE '1410-07-15'")
++                .roundTripsAs(Types.DATE, sqlDateBeforeGregorianCutover);
++
++        assertBind((ps, i) -> ps.setObject(i, sqlTimestampBeforeGregorianCutover, Types.DATE), explicitPrepare)
++                .resultsIn("date", "DATE '1410-07-15'")
++                .roundTripsAs(Types.DATE, sqlDateBeforeGregorianCutover);
++
++        assertBind((ps, i) -> ps.setObject(i, javaDateBeforeGregorianCutover, Types.DATE), explicitPrepare)
++                .resultsIn("date", "DATE '1410-07-15'")
++                .roundTripsAs(Types.DATE, sqlDateBeforeGregorianCutover);
++
++        assertBind((ps, i) -> ps.setObject(i, dateBeforeGregorianCutover, Types.DATE), explicitPrepare)
++                .resultsIn("date", "DATE '1410-07-15'")
++                .roundTripsAs(Types.DATE, sqlDateBeforeGregorianCutover);
++
++        assertBind((ps, i) -> ps.setObject(i, dateTimeBeforeGregorianCutover, Types.DATE), explicitPrepare)
++                .resultsIn("date", "DATE '1410-07-15'")
++                .roundTripsAs(Types.DATE, sqlDateBeforeGregorianCutover);
++
++        // AROUND JULIAN/GREGORIAN CUTOVER, BEFORE STANDARD TIME ZONES, BEFORE COMMON ERA
++        for (String historicalDate : ImmutableList.of("1582-10-04", "1582-10-15", "1700-03-01", "1899-12-31", "-0001-03-01")) {
++            Date sqlHistoricalDate = Date.valueOf(LocalDate.parse(historicalDate));
++            assertBind((ps, i) -> ps.setDate(i, sqlHistoricalDate), explicitPrepare)
++                    .resultsIn("date", "DATE '" + historicalDate + "'")
++                    .roundTripsAs(Types.DATE, sqlHistoricalDate);
++        }
++
++        // JULIAN LEAP DAY
++        Date sqlDateWithJulianLeapDay = new Date(new GregorianCalendar(1500, Calendar.FEBRUARY, 29).getTimeInMillis());
++        assertBind((ps, i) -> ps.setDate(i, sqlDateWithJulianLeapDay), explicitPrepare)
++                .isInvalid("Cannot convert instance of java.sql.Date to local date-time: 1500-02-29");
+     }
+ 
+     @Test
+@@ -1428,6 +1477,48 @@ private void testConvertTime(boolean explicitPrepare)
+                 .resultsIn("time(9)", "TIME '12:34:56.123456789'")
+                 .roundTripsAs(Types.TIME, sqlTimeWithMillisecond);
+ 
++        // BEFORE JULIAN/GREGORIAN CUTOVER
++        LocalDateTime dateTimeWithBeforeGregorianCutover = LocalDateTime.of(LocalDate.of(1410, 7, 15), timeWithMillisecond);
++        Timestamp sqlTimestampWithBeforeGregorianCutover = Timestamp.valueOf(dateTimeWithBeforeGregorianCutover);
++        Time sqlTimeWithBeforeGregorianCutover = new Time(sqlTimestampWithBeforeGregorianCutover.getTime());
++        java.util.Date javaDateWithBeforeGregorianCutover = new java.util.Date(sqlTimestampWithBeforeGregorianCutover.getTime());
++        Date sqlDateWithBeforeGregorianCutover = new Date(sqlTimestampWithBeforeGregorianCutover.getTime());
++
++        // BEFORE JULIAN/GREGORIAN CUTOVER setTime
++        assertBind((ps, i) -> ps.setTime(i, sqlTimeWithBeforeGregorianCutover), explicitPrepare)
++                .resultsIn("time(3)", "TIME '12:34:56.123'")
++                .roundTripsAs(Types.TIME, sqlTimeWithMillisecond);
++
++        // BEFORE JULIAN/GREGORIAN CUTOVER setObject with java.sql.Time
++        assertBind((ps, i) -> ps.setObject(i, sqlTimeWithBeforeGregorianCutover), explicitPrepare)
++                .resultsIn("time(3)", "TIME '12:34:5
 ```
 
 ---
 
-### Incident Patch 2: `4b915171` (2026-10-25)
-**Commit Message**: Remove impossible null check in ProtobufValueProvider
+### Incident Patch 3: `c477523e` (2026-10-06)
+**Commit Message**: Allow requiring audience in OAuth2 access tokens
 
-DynamicMessage.getField never returns null, so the check is always true.
+NimbusOAuth2Client always added null to the set of accepted access
+token audiences, so an access token with no aud claim at all was
+accepted regardless of the client ID or any configured additional
+audiences. An identity provider shared with other services can issue
+access tokens without an aud claim for those services, and Trino
+accepted them.
 
-**File**: `lib/trino-record-decoder/src/main/java/io/trino/decoder/protobuf/ProtobufValueProvider.java` (modified, +2/-4)
+Add http-server.authentication.oauth2.require-audience (default
+false, preserving current behavior). When true, access tokens without
+an aud claim are rejected; the client ID and any additional audiences
+remain the accepted audiences.
+
+Co-authored-by: Ragnar Dahlén <[REDACTED_EMAIL]>
+
+**File**: `core/trino-main/src/main/java/io/trino/server/security/oauth2/NimbusOAuth2Client.java` (modified, +11/-1)
 ```diff
-@@ -273,10 +273,8 @@ private SqlMap serializeMap(BlockBuilder parentBlockBuilder, @Nullable Object va
-     private void buildMap(String columnName, Collection<DynamicMessage> dynamicMessages, Type keyType, Type valueType, BlockBuilder keyBuilder, BlockBuilder valueBuilder)
+@@ -97,6 +97,7 @@ public class NimbusOAuth2Client
+     private final Duration maxClockSkew;
+     private final Optional<String> jwtType;
+     private final Optional<String> domainHint;
++    private final boolean requireAudience;
+     private final NimbusHttpClient httpClient;
+     private final OAuth2ServerConfigProvider serverConfigurationProvider;
+     private volatile boolean loaded;
+@@ -119,10 +120,14 @@ public NimbusOAuth2Client(OAuth2Config oauthConfig, OAuth2ServerConfigProvider s
+         maxClockSkew = oauthConfig.getMaxClockSkew();
+         jwtType = oauthConfig.getJwtType();
+         domainHint = oauthConfig.getDomainHint();
++        requireAudience = oauthConfig.isRequireAudience();
+ 
+         accessTokenAudiences = new HashSet<>(oauthConfig.getAdditionalAudiences());
+         accessTokenAudiences.add(clientId.getValue());
+-        accessTokenAudiences.add(null); // A null value in the set allows JWTs with no audience
++        // With require-audience, null is left out so that Nimbus rejects JWTs that have no aud claim
++        if (!requireAudience) {
++            accessTokenAudiences.add(null); // A null value in the set allows JWTs with no audience
++        }
+ 
+         this.serverConfigurationProvider = requireNonNull(serverConfigurationProvider, "serverConfigurationProvider is null");
+         this.httpClient = requireNonNull(httpClient, "httpClient is null");
+@@ -136,6 +141,11 @@ public void load()
+         this.tokenUrl = config.tokenUrl();
+         this.userinfoUrl = config.userinfoUrl();
+         this.endSessionUrl = config.endSessionUrl();
++        if (requireAudience && userinfoUrl.isPresent()) {
++            // The userinfo endpoint path validates access tokens by calling the IdP instead of verifying claims locally,
++            // so accessTokenAudiences (and therefore require-audience) is never consulted for those tokens.
++            LOG.warn("http-server.authentication.oauth2.require-audience has no effect because access tokens are validated using the userinfo endpoint");
++        }
+         try {
+             jwsKeySelector = new JWSVerificationKeySelector<>(
+                     Stream.concat(JWSAlgorithm.Family.RSA.stream(), JWSAlgorithm.Family.EC.stream()).collect(toImmutableSet()),
+```
+
+**File**: `core/trino-main/src/main/java/io/trino/server/security/oauth2/OAuth2Config.java` (modified, +14/-0)
+```diff
+@@ -42,6 +42,7 @@ public class OAuth2Config
+     private Set<String> scopes = ImmutableSet.of(OPENID_SCOPE);
+     private String principalField = "sub";
+     private List<String> additionalAudiences = Collections.emptyList();
++    private boolean requireAudience;
+     private Duration challengeTimeout = new Duration(15, TimeUnit.MINUTES);
+     private Duration maxClockSkew = new Duration(1, TimeUnit.MINUTES);
+     private Optional<String> jwtType = Optional.empty();
+@@ -122,6 +123,19 @@ public OAuth2Config setAdditionalAudiences(List<String> additionalAudiences)
+         return this;
+     }
+ 
++    public boolean isRequireAudience()
++    {
++        return requireAudience;
++    }
++
++    @Config("http-server.authentication.oauth2.require-audience")
++    @ConfigDescription("Reject access tokens without an audience claim")
++    public OAuth2Config setRequireAudience(boolean requireAudience)
++    {
++        this.requireAudience = requireAudience;
++        return this;
++    }
++
+     @NotNull
+     public Set<String> getScopes()
      {
-         for (DynamicMessage dynamicMessage : dynamicMessages) {
--            if (dynamicMessage.getField(dynamicMessage.getDescriptorForType().findFieldByNumber(1)) != null) {
--                serializeObject(keyBuilder, dynamicMessage.getField(getFieldDescriptor(dynamicMessage, 1)), keyType, columnName);
--                serializeObject(valueBuilder, dynamicMessage.getField(getFieldDescriptor(dynamicMessage, 2)), valueType, columnName);
--            }
-+            serializeObject(keyBuilder, dynamicMessage.getField(getFieldDescriptor(dynamicMessage, 1)), keyType, columnName);
-+            serializeObject(valueBuilder, dynamicMessage.getField(getFieldDescriptor(dynamicMessage, 2)), valueType, columnName);
+```
+
+**File**: `core/trino-main/src/test/java/io/trino/server/security/oauth2/BaseOAuth2WebUiAuthenticationFilterTest.java` (modified, +13/-4)
+```diff
+@@ -93,6 +93,8 @@ public abstract class BaseOAuth2WebUiAuthenticationFilterTest
+     private static final String UNTRUSTED_CLIENT_ID = "untrusted-client";
+     private static final String UNTRUSTED_CLIENT_SECRET = "untrusted-secret";
+     private static final String UNTRUSTED_CLIENT_AUDIENCE = "https://untrusted.com";
++    protected static final String NO_AUDIENCE_CLIENT_ID = "no-audience-client";
++    protected static final String NO_AUDIENCE_CLIENT_SECRET = "no-audience-secret";
+ 
+     protected OkHttpClient httpClient;
+     protected TestingHydraIdentityProvider hydraIdP;
+@@ -146,6 +148,13 @@ public void setup()
+                 ImmutableList.of(UNTRUSTED_CLIENT_AUDIENCE),
+                 "https://untrusted.com/callback",
+                 "https://untrusted.com/logout_callback");
++        hydraIdP.createClient(
++                NO_AUDIENCE_CLIENT_ID,
++                NO_AUDIENCE_CLIENT_SECRET,
++                CLIENT_SECRET_BASIC,
++                ImmutableList.of(),
++                serverUri + "/oauth2/callback",
++                serverUri + "/ui/logout/logout.html");
+     }
+ 
+     protected abstract Map<String, String> getOAuth2Config(String idpUrl);
+@@ -324,7 +333,7 @@ public void testExpiredAccessToken()
          }
      }
  
-```
-
----
-
-### Incident Patch 3: `aab079cf` (2026-10-23)
-**Commit Message**: Migrate RecordPageSource to MemoryContext
-
-Report cursor and page builder memory through a required MemoryContext
-and update callers to pass it.
-
-**File**: `core/trino-main/src/main/java/io/trino/connector/system/SystemPageSourceProvider.java` (modified, +12/-10)
-```diff
-@@ -160,16 +160,18 @@ public ConnectorPageSource createPageSource(
-                     userToSystemFieldIndex.build());
-         }
-         catch (UnsupportedOperationException e) {
--            return new RecordPageSource(new MappedRecordSet(
--                    toRecordSet(
--                            systemTransaction.getConnectorTransactionHandle(),
--                            systemTable,
--                            session,
--                            newConstraint,
--                            requiredColumns.build(),
--                            systemSplit,
--                            accessControl),
--                    userToSystemFieldIndex.build()));
-+            return new RecordPageSource(
-+                    new MappedRecordSet(
-+                            toRecordSet(
-+                                    systemTransaction.getConnectorTransactionHandle(),
-+                                    systemTable,
-+                                    session,
-+                                    newConstraint,
-+                                    requiredColumns.build(),
-+                                    systemSplit,
-+                                    accessControl),
-+                            userToSystemFieldIndex.build()),
-+                    memoryContext);
-         }
-     }
- 
-```
-
-**File**: `core/trino-main/src/main/java/io/trino/split/RecordPageSourceProvider.java` (modified, +4/-2)
-```diff
-@@ -23,6 +23,7 @@
- import io.trino.spi.connector.ConnectorTableHandle;
- import io.trino.spi.connector.ConnectorTransactionHandle;
- import io.trino.spi.connector.DynamicFilter;
-+import io.trino.spi.connector.MemoryContext;
- import io.trino.spi.connector.RecordPageSource;
- 
- import java.util.List;
-@@ -48,8 +49,9 @@ public ConnectorPageSource createPageSource(
-             ConnectorTableHandle table,
-             Optional<ConnectorTableCredentials> tableCredentials,
-             List<ColumnHandle> columns,
--            DynamicFilter dynamicFilter)
-+            DynamicFilter dynamicFilter,
-+            MemoryContext memoryContext)
+-    private Request.Builder uiCall()
++    protected Request.Builder uiCall()
      {
--        return new RecordPageSource(recordSetProvider.getRecordSet(transaction, session, split, table, columns));
-+        return new RecordPageSource(recordSetProvider.getRecordSet(transaction, session, split, table, columns), memoryContext);
-     }
- }
-```
-
-**File**: `core/trino-main/src/test/java/io/trino/connector/MockConnector.java` (modified, +3/-2)
-```diff
-@@ -1127,7 +1127,8 @@ public ConnectorPageSource createPageSource(
-                 ConnectorTableHandle table,
-                 Optional<ConnectorTableCredentials> tableCredentials,
-                 List<ColumnHandle> columns,
--                DynamicFilter dynamicFilter)
-+                DynamicFilter dynamicFilter,
-+                MemoryContext memoryContext)
-         {
-             MockConnectorTableHandle handle = (MockConnectorTableHandle) table;
-             SchemaTableName tableName = handle.getTableName();
-@@ -1155,7 +1156,7 @@ public ConnectorPageSource createPageSource(
-                         return projectedRow.build();
-                     })
-                     .collect(toImmutableList());
--            return new MockConnectorPageSource(new RecordPageSource(new InMemoryRecordSet(types, records)), metrics.apply(tableName));
-+            return new MockConnectorPageSource(new RecordPageSource(new InMemoryRecordSet(types, records), memoryContext), metrics.apply(tableName));
+         return new Request.Builder()
+                 .url(serverUri.resolve("/ui/").toString())
+@@ -386,7 +395,7 @@ protected Jws<Claims> parseJwsClaims(String claimsJws)
          }
+     }
  
-         private Map<String, Integer> getColumnIndexes(SchemaTableName tableName)
+-    private void assertUICallWithCookie(String cookieValue)
++    protected void assertUICallWithCookie(String cookieValue)
+             throws IOException
+     {
+         OkHttpClient httpClient = httpClientWithOAuth2Cookie(cookieValue, true);
+@@ -397,7 +406,7 @@ private void assertUICallWithCookie(String cookieValue)
+         }
+     }
+ 
+-    private OkHttpClient httpClientWithOAuth2Cookie(String cookieValue, boolean followRedirects)
++    protected OkHttpClient httpClientWithOAuth2Cookie(String cookieValue, boolean followRedirects)
+     {
+         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
+         setupInsecureSsl(httpClientBuilder);
+@@ -426,7 +435,7 @@ public List<Cookie> loadForRequest(HttpUrl url)
+         return httpClientBuilder.build();
+     }
+ 
+-    private void assertRedirectResponse(Response response)
++    protected void assertRedirectResponse(Response response)
+             throws MalformedURLException
+     {
+         assertThat(response.code()).isEqualTo(SEE_OTHER.getStatusCode());
 ```
 
-**File**: `core/trino-main/src/test/java/io/trino/operator/TestScanFilterAndProjectOperator.java` (modified, +1/-1)
-```diff
-@@ -313,7 +313,7 @@ public void testRecordCursorSource()
-                 0,
-                 new PlanNodeId("test"),
-                 new PlanNodeId("0"),
--                (_, _) -> (_, _, _, _, _, _, _) -> new RecordPageSource(new PageRecordSet(ImmutableList.of(VARCHAR), input)),
-+                (_, _) -> (_, _, _, _, _, _, memoryContext) -> new RecordPageSource(new PageRecordSet(ImmutableList.of(VARCHAR), input), memoryContext),
-                 _ -> pageProcessor.get(),
-                 TEST_TABLE_HANDLE,
-                 Optional.empty(),
-```
-
-**File**: `core/trino-main/src/test/java/io/trino/split/TestRecordPageSourceProvider.java` (added, +79/-0)
+**File**: `core/trino-main/src/test/java/io/trino/server/security/oauth2/BaseOAuth2WebUiAuthenticationFilterWithJwtTest.java` (added, +79/-0)
 ```diff
 @@ -0,0 +1,79 @@
 +/*
@@ -2053,291 +2355,210 @@ and update callers to pass it.
 + * See the License for the specific language governing permissions and
 + * limitations under the License.
 + */
-+package io.trino.split;
++package io.trino.server.security.oauth2;
 +
-+import io.trino.memory.context.AggregatedMemoryContext;
-+import io.trino.memory.context.LocalMemoryContext;
-+import io.trino.spi.connector.ColumnHandle;
-+import io.trino.spi.connector.ConnectorPageSource;
-+import io.trino.spi.connector.ConnectorRecordSetProvider;
-+import io.trino.spi.connector.ConnectorSession;
-+import io.trino.spi.connector.ConnectorSplit;
-+import io.trino.spi.connector.ConnectorTableHandle;
-+import io.trino.spi.connector.ConnectorTransactionHandle;
-+import io.trino.spi.connector.DynamicFilter;
-+import io.trino.spi.connector.InMemoryRecordSet;
-+import io.trino.spi.connector.RecordPageSource;
-+import io.trino.spi.connector.RecordSet;
-+import org.junit.jupiter.api.Test;
++import com.google.common.collect.ImmutableMap;
++import com.google.common.io.Resources;
++import io.jsonwebtoken.Claims;
++import io.jsonwebtoken.Jws;
 +
-+import java.io.IOException;
-+import java.util.List;
-+import java.util.Optional;
++import java.util.Map;
 +
-+import static io.trino.memory.context.AggregatedMemoryContext.newSimpleAggregatedMemoryContext;
-+import static io.trino.spi.type.BigintType.BIGINT;
-+import static io.trino.testing.TestingConnectorSession.SESSION;
-+import static io.trino.testing.TestingHandles.TEST_TABLE_HANDLE;
 +import static org.assertj.core.api.Assertions.assertThat;
 +
-+class TestRecordPageSourceProvider
++public abstract class BaseOAuth2WebUiAuthenticationFilterWithJwtTest
++        extends BaseOAuth2WebUiAuthenticationFilterTest
 +{
-+    @Test
-+    public void testMemoryContextLifecycle()
-+            throws IOException
-+    {
-+        InMemoryRecordSet recordSet = new InMemoryRecordSet(List.of(BIGINT), List.of(List.of(42L)));
-+        RecordPageSourceProvider provider = new RecordPageSourceProvider(new ConnectorRecordSetProvider()
-+        {
-+            @Override
-+            public RecordSet getRecordSet(ConnectorTransactionHandle transaction, ConnectorSession session, ConnectorSplit split, ConnectorTableHandle table, List<? extends ColumnHandle> columns)
-+            {
-+                return recordSet;
-+            }
-+        });
++    private final boolean stampAudience;
 +
-+        AggregatedMemoryContext memoryContext = newSimpleAggregatedMemoryContext();
-+        LocalMemoryContext sourceMemoryContext = memoryContext.newLocalMemoryContext("test");
-+        try (ConnectorPageSource source = provider.createPageSource(
-+                TEST_TABLE_HANDLE.transaction(),
-+                SESSION,
-+                new ConnectorSplit() {},
-+                TEST_TABLE_HANDLE.connectorHandle(),
-+                Optional.empty(),
-+                List.of(),
-+                DynamicFilter.EMPTY,
-+                sourceMemoryContext::setBytes)) {
-+            assertThat(source).isInstanceOf(RecordPageSource.class);
-+            assertThat(source.getMemoryUsage()).isZero();
-+            assertThat(memoryContext.getBytes()).isPositive();
-+            assertThat(source.getNextSourcePage().getPositionCount()).isEqualTo(1);
-+            assertThat(source.isFinished()).isTrue();
-+        }
-+        // Closing the source preserves accounting for the retained builder buffers.
-+        assertThat(memoryContext.getBytes()).isPositive();
-+        sourceMemoryContext.close();
-+        assertThat(memoryContext.getBytes()).isZero();
++    public BaseOAuth2WebUiAuthenticationFilterWithJwtTest(boolean stampAudience)
++    {
++        this.stampAudience = stampAudience;
++    }
++
++    @Override
++    protected TestingHydraIdentityProvider getHydraIdp()
++            throws Exception
++    {
++        TestingHydraIdentityProvider hydraIdP = new TestingHydraIdentityProvider(TTL_ACCESS_TOKEN_IN_SECONDS, true, false, stampAudience);
++        hydraIdP.start();
++
++        return hydraIdP;
++    }
++
++    @Override
++    protected Map<String, String> getOAuth2Config(String idpUrl)
++    {
++        return ImmutableMap.<String, String>builder()
++                .put("web-ui.enabled", "true")
++                .put("web-ui.authentication.type", "oauth2")
++                .put("http-server.https.enabled", "true")
++                .put("http-server.https.keystore.path", Resources.getResource("cert/localhost.pem").getPath())
++                .put("http-server.https.keystore.key", "")
++                .put("http-server.authentication.oauth2.issuer", "https://localhost:4444/")
++                .put("http-server.authentication.oauth2.auth-url", idpUrl + "/oauth2/auth")
++                .put("http-server.authentication.oauth2.token-url", idpUrl + "/oauth2/token")
++                .put("http-server.authentication.oauth2.end-session-url", idpUrl + "/oauth2/sessions/logout")
++                .put("http-server.authentication.oauth2.jwks-url", idpUrl + "/.well-known/jwks.json")
++                .put("http-server.authentication.oauth2.client-id", TRINO_CLIENT_ID)
++                .put("http-server.authentication.oauth2.client-secret", TRINO_CLIENT_SECRET)
++                .put("http-server.authentication.oauth2.additional-audiences", TRUSTED_CLIENT_ID)
++                .put("http-server.authentication.oauth2.max-clock-skew", "0s")
++                .put("http-server.authentication.oauth2.user-mapping.pattern", "(.*)(@.*)?")
++                .put("http-server.authentication.oauth2.oidc.discovery", "false")
++                .put("oauth2-jwk.http-client.trust-store-path", Resources.getResource("cert/localhost.pem").getPath())
++                .buildOrThrow();
++    }
++
++    @Override
++    protected void validateAccessToken(String cookieValue)
++    {
++        assertThat(cookieValue).isNotBlank();
++        Jws<Claims> jwt = parseJwsClaims(cookieValue);
++        Claims claims = jwt.getPayload();
++        assertThat(claims.getSubject()).isEqualTo("foo@bar.com");
++        assertThat(claims.get("client_id")).isEqualTo(TRINO_CLIENT_ID);
++        assertThat(claims.getIssuer()).isEqualTo("https://localhost:4444/");
 +    }
 +}
 ```
 
-**File**: `core/trino-spi/pom.xml` (modified, +12/-0)
+**File**: `core/trino-main/src/test/java/io/trino/server/security/oauth2/TestOAuth2Config.java` (modified, +3/-0)
 ```diff
-@@ -240,6 +240,18 @@
-                                     </old>
-                                 </item>
-                                 <!-- Backwards incompatible changes since the previous release -->
-+                                <item>
-+                                    <code>java.method.numberOfParametersChanged</code>
-+                                    <old>method void io.trino.spi.connector.RecordPageSource::&lt;init&gt;(io.trino.spi.connector.RecordSet)</old>
-+                                    <new>method void io.trino.spi.connector.RecordPageSource::&lt;init&gt;(io.trino.spi.connector.RecordSet, io.trino.spi.connector.MemoryContext)</new>
-+                                    <justification>Require a MemoryContext to replace polling through ConnectorPageSource.getMemoryUsage</justification>
-+                                </item>
-+                                <item>
-+                                    <code>java.method.numberOfParametersChanged</code>
-+                                    <old>method void io.trino.spi.connector.RecordPageSource::&lt;init&gt;(java.util.List&lt;io.trino.spi.type.Type&gt;, io.trino.spi.connector.RecordCursor)</old>
-+                                    <new>method void io.trino.spi.connector.RecordPageSource::&lt;init&gt;(java.util.List&lt;io.trino.spi.type.Type&gt;, io.trino.spi.connector.RecordCursor, io.trino.spi.connector.MemoryContext)</new>
-+                                    <justification>Require a MemoryContext to replace polling through ConnectorPageSource.getMemoryUsage</justification>
-+                                </item>
-                                 <item>
-                                     <ignore>true</ignore>
-                                     <code>java.method.removed</code>
+@@ -45,6 +45,7 @@ public void testDefaults()
+                 .setChallengeTimeout(new Duration(15, MINUTES))
+                 .setPrincipalField("sub")
+                 .setAdditionalAudiences(Collections.emptyList())
++                .setRequireAudience(false)
+                 .setMaxClockSkew(new Duration(1, MINUTES))
+                 .setJwtType(null)
+                 .setUserMappingPattern(null)
+@@ -67,6 +68,7 @@ public void testExplicitPropertyMappings()
+                 .put("http-server.authentication.oauth2.scopes", "email,offline")
+                 .put("http-server.authentication.oauth2.principal-field", "some-field")
+                 .put("http-server.authentication.oauth2.additional-audiences", "test-aud1,test-aud2")
++                .put("http-server.authentication.oauth2.require-audience", "true")
+                 .put("http-server.authentication.oauth2.challenge-timeout", "90s")
+                 .put("http-server.authentication.oauth2.max-clock-skew", "15s")
+                 .put("http-server.authentication.oauth2.jwt-type", "at+jwt")
+@@ -85,6 +87,7 @@ public void testExplicitPropertyMappings()
+                 .setScopes(ImmutableSet.of("email", "offline"))
+                 .setPrincipalField("some-field")
+                 .setAdditionalAudiences(List.of("test-aud1", "test-aud2"))
++                .setRequireAudience(true)
+                 .setChallengeTimeout(new Duration(90, SECONDS))
+                 .setMaxClockSkew(new Duration(15, SECONDS))
+                 .setJwtType("at+jwt")
 ```
 
-**File**: `core/trino-spi/src/main/java/io/trino/spi/connector/RecordPageSource.java` (modified, +22/-9)
+**File**: `core/trino-main/src/test/java/io/trino/server/security/oauth2/TestOAuth2WebUiAuthenticationFilterWithJwt.java` (modified, +10/-45)
 ```diff
-@@ -30,18 +30,28 @@ public class RecordPageSource
-     private final RecordCursor cursor;
-     private final List<Type> types;
-     private final PageBuilder pageBuilder;
-+    private final MemoryContext memoryContext;
-     private boolean closed;
+@@ -13,60 +13,25 @@
+  */
+ package io.trino.server.security.oauth2;
  
--    public RecordPageSource(RecordSet recordSet)
-+    public RecordPageSource(RecordSet recordSet, MemoryContext memoryContext)
+-import com.google.common.collect.ImmutableMap;
+-import com.google.common.io.Resources;
+-import io.jsonwebtoken.Claims;
+-import io.jsonwebtoken.Jws;
+-
+-import java.util.Map;
++import com.google.common.collect.ImmutableList;
++import org.junit.jupiter.api.Test;
+ 
+ import static org.assertj.core.api.Assertions.assertThat;
+ 
+ public class TestOAuth2WebUiAuthenticationFilterWithJwt
+-        extends BaseOAuth2WebUiAuthenticationFilterTest
++        extends BaseOAuth2WebUiAuthenticationFilterWithJwtTest
+ {
+-    @Override
+-    protected Map<String, String> getOAuth2Config(String idpUrl)
++    public TestOAuth2WebUiAuthenticationFilterWithJwt()
      {
--        this(recordSet.getColumnTypes(), recordSet.cursor());
-+        this(recordSet.getColumnTypes(), recordSet.cursor(), memoryContext);
-     }
- 
--    public RecordPageSource(List<Type> types, RecordCursor cursor)
-+    public RecordPageSource(List<Type> types, RecordCursor cursor, MemoryContext memoryContext)
-     {
-         this.cursor = requireNonNull(cursor, "cursor is null");
-         this.types = List.copyOf(requireNonNull(types, "types is null"));
-         this.pageBuilder = new PageBuilder(this.types);
-+        this.memoryContext = requireNonNull(memoryContext, "memoryContext is null");
-+        try {
-+            updateMemoryUsage();
-+        }
-+        catch (Throwable throwable) {
-+            try (cursor) {
-+                throw throwable;
-+            }
-+        }
-     }
- 
-     public RecordCursor getCursor()
-@@ -61,17 +71,13 @@ public long getReadTimeNanos()
-         return cursor.getReadTimeNanos();
+-        return ImmutableMap.<String, String>builder()
+-                .put("web-ui.enabled", "true")
+-                .put("web-ui.authentication.type", "oauth2")
+-                .put("http-server.https.enabled", "true")
+-                .put("http-server.https.keystore.path", Resources.getResource("cert/localhost.pem").getPath())
+-                .put("http-server.https.keystore.key", "")
+-                .put("http-server.authentication.oauth2.issuer", "https://localhost:4444/")
+-                .put("http-server.authentication.oauth2.auth-url", idpUrl + "/oauth2/auth")
+-                .put("http-server.authentication.oauth2.token-url", idpUrl + "/oauth2/token")
+-                .put("http-server.authentication.oauth2.end-session-url", idpUrl + "/oauth2/sessions/logout")
+-                .put("http-server.authentication.oauth2.jwks-url", idpUrl + "/.well-known/jwks.json")
+-                .put("http-server.authentication.oauth2.client-id", TRINO_CLIENT_ID)
+-                .put("http-server.authentication.oauth2.client-secret", TRINO_CLIENT_SECRET)
+-                .put("http-server.authentication.oauth2.additional-audiences", TRUSTED_CLIENT_ID)
+-                .put("http-server.authentication.oauth2.max-clock-skew", "0s")
+-                .put("http-server.authentication.oauth2.user-mapping.pattern", "(.*)(@.*)?")
+-                .put("http-server.authentication.oauth2.oidc.discovery", "false")
+-                .put("oauth2-jwk.http-client.trust-store-path", Resources.getResource("cert/localhost.pem").getPath())
+-                .buildOrThrow();
++        super(false);
      }
  
 -    @Override
--    public long getMemoryUsage()
--    {
--        return cursor.getMemoryUsage() + pageBuilder.getRetainedSizeInBytes();
+-    protected TestingHydraIdentityProvider getHydraIdp()
++    @Test
++    public void testTokenWithoutAudience()
+             throws Exception
+     {
+-        TestingHydraIdentityProvider hydraIdP = new TestingHydraIdentityProvider(TTL_ACCESS_TOKEN_IN_SECONDS, true, false);
+-        hydraIdP.start();
+-
+-        return hydraIdP;
 -    }
 -
-     @Override
-     public void close()
-     {
-         closed = true;
-         cursor.close();
-+        // The builder remains retained; its reservation is released by the context's owner.
-+        updateMemoryUsage();
+-    @Override
+-    protected void validateAccessToken(String cookieValue)
+-    {
+-        assertThat(cookieValue).isNotBlank();
+-        Jws<Claims> jwt = parseJwsClaims(cookieValue);
+-        Claims claims = jwt.getPayload();
+-        assertThat(claims.getSubject()).isEqualTo("foo@bar.com");
+-        assertThat(claims.get("client_id")).isEqualTo(TRINO_CLIENT_ID);
+-        assertThat(claims.getIssuer()).isEqualTo("https://localhost:4444/");
++        String token = hydraIdP.getToken(NO_AUDIENCE_CLIENT_ID, NO_AUDIENCE_CLIENT_SECRET, ImmutableList.of());
++        assertThat(parseJwsClaims(token).getPayload().getAudience()).isNull();
++        assertUICallWithCookie(token);
      }
- 
-     @Override
-@@ -124,9 +130,16 @@ else if (javaType == Slice.class) {
-         if ((closed && !pageBuilder.isEmpty()) || pageBuilder.isFull()) {
-             Page page = pageBuilder.build();
-             pageBuilder.reset();
-+            updateMemoryUsage();
-             return SourcePage.create(page);
-         }
- 
-+        updateMemoryUsage();
-         return null;
-     }
-+
-+    private void updateMemoryUsage()
-+    {
-+        memoryContext.setBytes(cursor.getMemoryUsage() + pageBuilder.getRetainedSizeInBytes());
-+    }
  }
 ```
 
-**File**: `core/trino-spi/src/test/java/io/trino/spi/connector/TestRecordPageSource.java` (added, +158/-0)
+**File**: `core/trino-main/src/test/java/io/trino/server/security/oauth2/TestOAuth2WebUiAuthenticationFilterWithOpaque.java` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,158 @@
-+/*
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+package io.trino.spi.connector;
-+
-+import io.trino.spi.PageBuilder;
-+import io.trino.spi.connector.InMemoryRecordSet.InMemoryRecordCursor;
-+import io.trino.spi.type.Type;
-+import org.junit.jupiter.api.Test;
-+
-+import java.util.List;
-+import java.util.concurrent.atomic.AtomicLong;
-+import java.util.stream.LongStream;
-+
-+import static io.trino.spi.type.BigintType.BIGINT;
-+import static io.trino.spi.type.VarcharType.VARCHAR;
-+import static java.util.Collections.nCopies;
-+import static org.assertj.core.api.Assertions.assertThat;
-+import static org.assertj.core.api.Assertions.assertThatThrownBy;
-+
-+class TestRecordPageSource
-+{
-+    @Test
-+    public void testCloseOnInitialMemoryReservationFailure()
-+    {
-+        RuntimeException reservationFailure = new RuntimeException("reservation failed");
-+        RuntimeException closeFailure = new RuntimeException("close failed");
-+        MemoryTrackingRecordCursor cursor = new MemoryTrackingRecordCursor(List.of(BIGINT), List.of())
-+        {
-+            @Override
-+            public void close()
-+            {
-+                super.close();
-+                throw closeFailure;
-+            }
-+        };
-+
-+        assertThatThrownBy(() -> new RecordPageSource(List.of(BIGINT), cursor, _ -> {
-+            throw reservationFailure;
-+        })).isSameAs(reservationFailure);
-+        assertThat(cursor.closed).isTrue();
-+        assertThat(reservationFailure).hasSuppressedException(closeFailure);
-+    }
-+
-+    @Test
-+    public void testMemoryUsageUpdates()
-+    {
-+        List<List<Object>> records = LongStream.range(0, 5000)
-+                .mapToObj(value -> List.<Object>of(value))
-+                .toList();
-+        MemoryTrackingRecordCursor cursor = new MemoryTrackingRecordCursor(List.of(BIGINT), records);
-+        AtomicLong reportedBytes = new AtomicLong(-1);
-+        long emptyBuilderBytes = new PageBuilder(List.of(BIGINT)).getRetainedSizeInBytes();
-+        try (RecordPageSource source = new RecordPageSource(List.of(BIGINT), cursor, reportedBytes::set)) {
-+            assertThat(reportedBytes).hasValue(cursor.getMemoryUsage() + emptyBuilderBytes);
-+            assertThat(source.getMemoryUsage()).isZero();
-+
-+            // A request can grow both the cursor and the builder without returning a page.
-+            assertThat(source.getNextSourcePage()).isNull();
-+            assertThat(reportedBytes.get()).isGreaterThan(cursor.getMemoryUsage() + 4096L * Long.BYTES);
-+            assertThat(source.isFinished()).isFalse();
-+
-+            SourcePage page = source.getNextSourcePage();
-+            assertThat(page.getPositionCount()).isEqualTo(5000);
-+            assertThat(BIGINT.getLong(page.getBlock(0), 0)).isZero();
-+            assertThat(BIGINT.getLong(page.getBlock(0), 4999)).isEqualTo(4999);
-+            assertThat(source.isFinished()).isTrue();
-+            assertThat(reportedBytes).hasValue(cursor.getMemoryUsage() + emptyBuilderBytes);
-+            assertThat(source.getMemoryUsage()).isZero();
-+            long beforeClose = reportedBytes.get();
-+            long cursorBytes = cursor.getMemoryUsage();
-+
-+            source.close();
-+            assertThat(reportedBytes).hasValue(beforeClose - cursorBytes);
-+        }
-+        // The builder is still retained. Its reservation is released by the context's owner.
-+        assertThat(reportedBytes).hasValue(emptyBuilderBytes);
-+        assertThat(reportedBytes.get()).isPositive();
-+    }
-+
-+    @Test
-+    public void testFullPages()
-+    {
-+        InMemoryRecordSet recordSet = new InMemoryRecordSet(List.of(VARCHAR), nCopies(3000, List.of("x".repeat(1024))));
-+        AtomicLong reportedBytes = new AtomicLong(-1);
-+        long emptyBuilderBytes = new PageBuilder(List.of(VARCHAR)).getRetainedSizeInBytes();
-+        try (RecordPageSource source = new RecordPageSource(recordSet, reportedBytes::set)) {
-+            assertThat(reportedBytes).hasValue(emptyBuilderBytes);
-+            int positions = 0;
-+            int pages = 0;
-+            while (!source.isFinished()) {
-+                SourcePage page = source.getNextSourcePage();
-+                assertThat(page).isNotNull();
-+                assertThat(reportedBytes).hasValue(emptyBuilderBytes);
-+                assertThat(source.getMemoryUsage()).isZero();
-+                positions += page.getPositionCount();
-+                pages++;
-+            }
-+            assertThat(po
+@@ -62,7 +62,7 @@ protected Map<String, String> getOAuth2Config(String idpUrl)
+     protected TestingHydraIdentityProvider getHydraIdp()
+             throws Exception
+     {
+-        TestingHydraIdentityProvider hydraIdP = new TestingHydraIdentityProvider(TTL_ACCESS_TOKEN_IN_SECONDS, false, false);
++        TestingHydraIdentityProvider hydraIdP = new TestingHydraIdentityProvider(TTL_ACCESS_TOKEN_IN_SECONDS, false, false, false);
+         hydraIdP.start();
+ 
+         return hydraIdP;
+```
+
+**File**: `core/trino-main/src/test/java/io/trino/server/security/oauth2/TestOAuth2WebUiAuthenticationFilterWithRefreshTokens.java` (modified, +1/-1)
+```diff
+@@ -87,7 +87,7 @@ public void setup()
+         httpClientBuilder.followRedirects(false);
+         httpClient = httpClientBuilder.build();
+ 
+-        hydraIdP = new TestingHydraIdentityProvider(TTL_ACCESS_TOKEN_IN_SECONDS, true, false);
++        hydraIdP = new TestingHydraIdentityProvider(TTL_ACCESS_TOKEN_IN_SECONDS, true, false, false);
+         hydraIdP.start();
+ 
+         String idpUrl = "https://localhost:" + hydraIdP.getAuthPort();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #31778** (2026-10-24): Remove duplicated words in messages (@chenjian2664)
-- **PR #31767** (2026-10-25): Bump dep.airlift.version from 453 to 454 (@dependabot[bot])
-- **PR #31764** (2026-10-24): Update Hadoop to 3.3.5-4 (@electrum)
-- **PR #31763** (2026-10-23): Remove Hadoop dependency from trino-tests (@electrum)
-- **PR #31761** (2026-10-23): Support query parameters in MV properties (@findepi)
-- **PR #31760** (2026-10-23): Disable NameNode load check in HDFS test container (@findepi)
+- **PR #31820** (2026-10-27): Remove Joda Time from JDBC driver (@findepi)
+- **PR #31814** (2026-10-27): Bump org.roaringbitmap:RoaringBitmap from 1.6.24 to 1.6.25 (@dependabot[bot])
+- **PR #31811** (2026-10-27): Update bun to 1.4.4 (@Chaho12)
+- **PR #31802** (2026-10-27): Exclude unused shaded Jackson from Iceberg plugins (@wendigo)
+- **PR #31801** (2026-10-26): Update JDK to jdk-25.0.5+8 (@wendigo)
+- **PR #31799** (2026-10-26): Bump io.airlift:airbase from 420 to 421 in the airlift group (@dependabot[bot])
 
 ---
 
@@ -2357,28 +2578,55 @@ and update callers to pass it.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test code flagged by error-prone 2.51.0
+## X. Aggregation analysis for session expressions
 
 **RULE**:
-When implementing operations in `core/trino-main/src/test/java/io/trino/operator/aggregation/minmaxn/TestDoubleMinNAggregation.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/trino-main/src/main/java/io/trino/sql/analyzer/AggregationAnalyzer.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5d51219a`: test code flagged by error-prone 2.51.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fcd508b6`: Aggregation analysis for session expressions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-main/src/test/java/io/trino/operator/aggregation/minmaxn/TestDoubleMinNAggregation.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-main/src/main/java/io/trino/sql/analyzer/AggregationAnalyzer.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        PriorityQueue<Double> heap = new PriorityQueue<>(n, (x, y) -> Double.compare(y, x));
+import io.trino.sql.tree.CurrentCatalog;
+import io.trino.sql.tree.CurrentPath;
+import io.trino.sql.tree.CurrentSchema;
+import io.trino.sql.tree.CurrentUser;
+        @Override
+        protected Boolean visitCurrentCatalog(CurrentCatalog node, Void context)
+        {
+            return true;
+        }
+
+        @Override
+        protected Boolean visitCurrentSchema(CurrentSchema node, Void context)
+        {
+            return true;
+        }
+
+        @Override
+        protected Boolean visitCurrentUser(CurrentUser node, Void context)
+        {
+            return true;
+        }
+
+        @Override
+        protected Boolean visitCurrentPath(CurrentPath node, Void context)
+        {
+            return true;
+        }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-        PriorityQueue<Double> heap = new PriorityQueue<>(n, (x, y) -> -Double.compare(x, y));
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5d51219a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fcd508b6` are properly handled with clean fallback behavior.

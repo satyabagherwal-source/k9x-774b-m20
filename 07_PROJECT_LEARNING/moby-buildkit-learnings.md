@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source**: github ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
-> **Source Version**: `fc10d048`  
+> **Source Version**: `892eaeac`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T05:14:46.152Z  
+> **Timestamp**: 2026-10-27T11:34:11.656Z  
 > **Learning ID**: `learn-github-moby-buildkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T05:14:44.837Z  
+> **Harvest Timestamp**: 2026-10-27T11:34:11.342Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: concurrent, cache-efficient, and Dockerfile-agnostic builder toolkit
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10340 stars
+- **Stars / Engagement**: 10342 stars
 
 ---
 
@@ -2299,11 +2299,13 @@ func isPathEscapesRootError(err error) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7315** (2026-10-23): **build(deps): bump github/codeql-action/upload-sarif from 4.39.0 to 4.39.1**
-  *Symptoms*: Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.39.0 to 4.39.1. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action/upload-sarif's releases</a>.</em></p> <blockquote> <h2>v4.39.1</h2> <ul> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.3">2.27.3</a>. <a href="https://redirect.github.com/github/codeql-action/pull/4256">#4256</a></li> </ul> </blockquote> </details> <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/blob/main/CHANGELOG.md">github/codeql-action/upload-sarif's changelog</a>.</em></p> <blockquote> <h1>CodeQL Action Changelog</h1> <p>See the <a href="https://github.com/github/codeql-action/releases">releases page</a> for the relevant changes to the CodeQL CLI and language packs.</p> <h2>[UNRELEASED]</h2> <p>No user facing changes.</p> <h2>4.39.1 - 21 Oct 2026</h2> <ul> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.3">2.27.3</a>. <a href="https://redirect.github.com/github/codeql-action/pull/4256">#4256</a></li> </ul> <h2>4.39.0 - 15 Oct 2026</h2> <ul> <li><em>Breaking change</em>: Bump the minimum required CodeQL bundle version to 2.20.7. <a href="https://redirect.github.com/github/codeql-action/pull/4205">#4205</a></li> <l
+- **Issue #7324** (2026-10-26): **source: negotiate manifest media types for image blobs**
+  *Symptoms*: `llb.ImageBlob` can fetch digest-addressed manifests through the builder's authenticated registry resolver, but the underlying `FetchByDigest` call sends only `Accept: */*`. Distribution rejects OCI manifests and indexes without an explicit matching media type, so its manifest fallback fails with a misleading blob HEAD 404 even when the image itself pulls successfully.  Advertise OCI image manifest/index and Docker schema 2 manifest/list media types when fetching image blobs. The resolver retains wildcard acceptance for ordinary blob payloads. Credentials, mirror selection, and certificate handling continue through the existing builder resolver and session.  The new regression test reproduces the failure before this change and covers all four manifest types plus an ordinary blob. `go test ./source/containerblob/blobfetch -count=1` passes, and the existing `source/containerblob` tests pass from a privileged container (their snapshot mounts require privileges).  Also verified downstream with the changed daemon: the sandbox-kit frontend's full guidance, cache, and set end-to-end suite passes, including derived workloads, nested sets, bare manifests, annotated indexes, and a private TLS registry accessible only through a builder-configured mirror. The same private-registry regression fails against the stock daemon. No full BuildKit integration suite was run.  This is a prerequisite for removing direct anonymous registry requests from https://github.com/docker/sandbox-kit-spec/pul
 
-- **Issue #7314** (2026-10-23): **build(deps): bump docker/github-builder/.github/workflows/bake.yml from 1.18.0 to 1.18.1**
-  *Symptoms*: Bumps [docker/github-builder/.github/workflows/bake.yml](https://github.com/docker/github-builder) from 1.18.0 to 1.18.1. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/docker/github-builder/releases">docker/github-builder/.github/workflows/bake.yml's releases</a>.</em></p> <blockquote> <h2>v1.18.1</h2> <ul> <li>update BuildKit image to v0.34.1 in <a href="https://redirect.github.com/docker/github-builder/pull/321">docker/github-builder#321</a></li> <li>update Buildx version to v0.38.1 in <a href="https://redirect.github.com/docker/github-builder/pull/322">docker/github-builder#322</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/docker/github-builder/compare/v1.18.0...v1.18.1">https://github.com/docker/github-builder/compare/v1.18.0...v1.18.1</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/docker/github-builder/commit/cbc9d42f8c89a55623392aadd03600965b80e963"><code>cbc9d42</code></a> Merge pull request <a href="https://redirect.github.com/docker/github-builder/issues/322">#322</a> from docker/deps/buildx-version</li> <li><a href="https://github.com/docker/github-builder/commit/f5a10c68eaddb3ff661ff23060968553b703d913"><code>f5a10c6</code></a> chore(deps): update Buildx version to v0.38.1</li> <li><a href="https://github.com/docker/github-builder/commit/dff72fc83c7d777460fa3da1e72fafb4ec1980bd"><code>dff72fc</code></a> Merge pull request <a href
+- **Issue #7322** (2026-10-26): **Fixes for data races.**
+  *Symptoms*: All commits cover separate issues detected with the race detector.
+  **Post-Mortem & Fix Analysis**:
+  > @tonistiigi Pushed extra commit to fix another race
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2320,366 +2322,726 @@ func isPathEscapesRootError(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c6b4059f` (2026-10-23)
-**Commit Message**: build(deps): bump github/codeql-action/upload-sarif
+### Incident Patch 1: `50452fdb` (2026-10-25)
+**Commit Message**: runcexecutor: stop tty resize loop before closing pty
 
-Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.39.0 to 4.39.1.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee...9b3254085494b55a0f7c4c2b3d2d52cc712ce370)
+The resize goroutine calls ptm.Resize (os.File.Fd) and only exits once
+runcProcess.Shutdown() cancels its context, which ran after the cleanup
+had already closed ptm. A resize racing with process exit could read a
+closed or reused fd, so TIOCSWINSZ could hit an unrelated descriptor.
+Stop and join the resize loop before the pty is closed.
 
----
-updated-dependencies:
-- dependency-name: github/codeql-action/upload-sarif
-  dependency-version: 4.39.1
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
+Signed-off-by: Tonis Tiigi <[REDACTED_EMAIL]>
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/buildkit.yml` (modified, +2/-2)
+**File**: `executor/runcexecutor/executor_linux.go` (modified, +8/-0)
 ```diff
-@@ -161,7 +161,7 @@ jobs:
-       -
-         name: Upload SARIF report
-         if: ${{ github.ref == 'refs/heads/master' && github.repository == 'moby/buildkit' }}
--        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-         with:
-           sarif_file: ${{ env.DESTDIR }}/govulncheck.out
- 
-@@ -326,7 +326,7 @@ jobs:
-           jq . ${{ steps.scout.outputs.result-file }}
-       -
-         name: Upload SARIF report
--        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-         with:
-           sarif_file: ${{ steps.scout.outputs.result-file }}
- 
-```
-
-**File**: `.github/workflows/frontend.yml` (modified, +1/-1)
-```diff
-@@ -226,7 +226,7 @@ jobs:
-           jq . ${{ steps.scout.outputs.result-file }}
-       -
-         name: Upload SARIF report
--        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-         with:
-           sarif_file: ${{ steps.scout.outputs.result-file }}
- 
-```
-
----
-
-### Incident Patch 2: `2be1b623` (2026-10-23)
-**Commit Message**: Merge pull request #7314 from moby/dependabot/github_actions/docker/github-builder/dot-github/workflows/bake.yml-1.18.1
-
-build(deps): bump docker/github-builder/.github/workflows/bake.yml from 1.18.0 to 1.18.1
-
-**File**: `.github/workflows/buildkit.yml` (modified, +2/-2)
-```diff
-@@ -49,7 +49,7 @@ jobs:
-           fields: platforms
- 
-   binaries:
--    uses: docker/github-builder/.github/workflows/bake.yml@4345a1cea1e4cfb65c8a5e2b1b80f9e630068827 # v1.18.0
-+    uses: docker/github-builder/.github/workflows/bake.yml@cbc9d42f8c89a55623392aadd03600965b80e963 # v1.18.1
-     permissions:
-       contents: read # same as global permission
-       id-token: write # for signing attestation(s) with GitHub OIDC Token
-@@ -222,7 +222,7 @@ jobs:
-             core.setOutput('includes', JSON.stringify(matrix));
- 
-   image:
--    uses: docker/github-builder/.github/workflows/bake.yml@4345a1cea1e4cfb65c8a5e2b1b80f9e630068827 # v1.18.0
-+    uses: docker/github-builder/.github/workflows/bake.yml@cbc9d42f8c89a55623392aadd03600965b80e963 # v1.18.1
-     needs:
-       - image-prepare
-       - test
-```
-
-**File**: `.github/workflows/frontend.yml` (modified, +1/-1)
-```diff
-@@ -125,7 +125,7 @@ jobs:
-             core.setOutput('includes', JSON.stringify(matrix));
- 
-   image:
--    uses: docker/github-builder/.github/workflows/bake.yml@4345a1cea1e4cfb65c8a5e2b1b80f9e630068827 # v1.18.0
-+    uses: docker/github-builder/.github/workflows/bake.yml@cbc9d42f8c89a55623392aadd03600965b80e963 # v1.18.1
-     needs:
-       - prepare
-       - test
-```
-
----
-
-### Incident Patch 3: `1a046037` (2026-10-23)
-**Commit Message**: Merge pull request #7277 from crazy-max/fix-solver-progress-race
-
-solver: synchronize vertex progress updates
-
-**File**: `solver/cacheopts.go` (modified, +1/-1)
-```diff
-@@ -36,7 +36,7 @@ func withAncestorCacheOpts(ctx context.Context, start *state) context.Context {
- 		}
- 		values := make(map[any]any)
- 		walkAncestors(ctx, start, func(st *state) bool {
--			if st.clientVertex.Error != "" {
-+			if st.vertexFailed() {
- 				// don't use values from cancelled or otherwise error'd vertexes
- 				return false
- 			}
-```
-
-**File**: `solver/jobs.go` (modified, +54/-30)
-```diff
-@@ -61,9 +61,10 @@ type state struct {
- 	mspan    *tracing.MultiSpan
- 	execSpan trace.Span
- 
--	vtx          Vertex
--	clientVertex client.Vertex
--	origDigest   digest.Digest // original LLB digest. TODO: probably better to use string ID so this isn't needed
-+	vtx            Vertex
-+	clientVertex   client.Vertex
-+	clientVertexMu sync.Mutex    // protects mutable clientVertex fields
-+	origDigest     digest.Digest // original LLB digest. TODO: probably better to use string ID so this isn't needed
- 
- 	mu    sync.RWMutex
- 	op    *sharedOp
-@@ -329,6 +330,51 @@ func (s *state) combinedCacheManager() CacheManager {
- 	return NewCombinedCacheManager(cms, mainCache)
- }
- 
-+// writeVertexSnapshot can read progress concurrently with
-+// notifyStarted, which is the only writer of the mutable vertex fields.
-+func (s *state) writeVertexSnapshot(pw progress.Writer) {
-+	s.clientVertexMu.Lock()
-+	defer s.clientVertexMu.Unlock()
-+	// Keep the snapshot and write together so a newer update cannot be
-+	// published before this snapshot.
-+	pw.Write(identity.NewID(), s.clientVertex)
-+}
-+
-+// vertexFailed lets the ancestor walk read the error concurrently with
-+// progress updates from notifyStarted.
-+func (s *state) vertexFailed() bool {
-+	s.clientVertexMu.Lock()
-+	defer s.clientVertexMu.Unlock()
-+	return s.clientVertex.Error != ""
-+}
-+
-+func (s *state) notifyStarted(ctx context.Context, cached bool) func(err error, cached bool) {
-+	pw, _, _ := progress.NewFromContext(ctx)
-+	s.clientVertexMu.Lock()
-+	v := &s.clientVertex
-+	start := time.Now()
-+	v.Started = &start
-+	v.Completed = nil
-+	v.Cached = cached
-+	id := identity.NewID()
-+	pw.Write(id, *v)
-+	s.clientVertexMu.Unlock()
-+	return func(err error, cached bool) {
-+		defer pw.Close()
-+		s.clientVertexMu.Lock()
-+		defer s.clientVertexMu.Unlock()
-+		stop := time.Now()
-+		v.Completed = &stop
-+		v.Cached = cached
-+		if err != nil {
-+			v.Error = err.Error()
-+		} else {
-+			v.Error = ""
-+		}
-+		pw.Write(id, *v)
-+	}
-+}
-+
- func (s *state) Release() {
- 	for _, e := range s.edges {
- 		for e.owner != nil {
-@@ -689,7 +735,7 @@ func (jl *Solver) connectProgressFromState(target, src *state) {
- 		if _, ok := target.allPw[pw]; !ok {
- 			target.mpw.Add(pw)
- 			target.allPw[pw] = struct{}{}
--			pw.Write(identity.NewID(), target.clientVertex)
-+			target.writeVertexSnapshot(pw)
- 			if span != nil && span.SpanContext().IsValid() {
- 				target.mspan.Add(span)
- 			}
-@@ -1058,7 +1104,7 @@ func (s *sharedOp) LoadCache(ctx context.Context, rec *CacheRecord) (Result, fun
- 	// no cache hit. start evaluating the node
- 	span, ctx := tracing.StartSpan(ctx, "load cache: "+s.st.vtx.Name(), trace.WithAttributes(attribute.String("vertex", s.st.vtx.Digest().String())))
- 	s.st.execSpan = span
--	notifyCompleted := notifyStarted(ctx, &s.st.clientVertex, true)
-+	notifyCompleted := s.st.notifyStarted(ctx, true)
- 	res, err := s.Cache().Load(withAncestorCacheOpts(ctx, s.st), rec)
- 	tracing.FinishWithError(span, err)
- 	notifyCompleted(err, true)
-@@ -1145,7 +1191,7 @@ func (s *sharedOp) CalcSlowCache(ctx context.Context, index Index, p PreprocessF
- 		if s.st.mspan.Span != nil {
- 			ctx = trace.ContextWithSpan(ctx, s.st.mspan)
- 		}
--		notifyCompleted := notifyStarted(ctx, &s.st.clientVertex, false)
-+		notifyCompleted := s.st.notifyStarted(ctx, false)
- 		notifyCompleted(err, false)
- 		return "", err
+@@ -169,7 +169,9 @@ func (w *runcExecutor) callWithIO(ctx context.Context, process executor.ProcessI
+ 		})
  	}
-@@ -1177,7 +1223,7 @@ func (s *sharedOp) CacheMap(ctx context.Context, index int) (resp *cacheMapResp,
- 		if len(s.st.vtx.Inputs()) == 0 {
- 			// no cache hit. start evaluating the node
- 			span, ctx := tracing.StartSpan(ctx, "cache request: "+s.st.vtx.Name(), trace.WithAttributes(attribute.String("vertex", s.st.vtx.Digest().String())))
--			notifyCompleted := notifyStarted(ctx, &s.st.clientVertex, false)
-+			notifyCompleted := s.st.notifyStarted(ctx, false)
- 			defer func() {
- 				tracing.FinishWithError(span, retErr)
- 				notifyCompleted(retErr, false)
-@@ -1263,7 +1309,7 @@ func (s *sharedOp) Exec(ctx context.Context, inputs []Result) (outputs []Result,
- 		// no cache hit. start evaluating the node
- 		span, ctx := tracing.StartSpan(ctx, s.st.vtx.Name(), trace.WithAttributes(attribute.String("vertex", s.st.vtx.Digest().String())))
- 		s.st.execSpan = span
--		notifyCompleted := notifyStarted(ctx, &s.st.clientVertex, false)
-+		notifyCompleted := s.st.notifyStarted(ctx, false)
- 		defer func() {
- 			tracing.FinishWithError(span, retErr)
- 			notifyCompleted(retErr, false)
-@@ -1390,28 +1436,6 @@ func (v *vertexWithCacheOptions) Inputs() []Edge {
- 	return v.inputs
- }
  
--func notifyStarted(ctx context.Context, v *client.Vertex, cached bool) func(err error, cached bool) {
--	pw, _, _ := progress.NewFromContext(ctx)
--	start := time.Now()
--	v.Started = &start
--	v.Completed = nil
--	v.Cached = cached
--	id := identity.NewID()
--	pw.Write(id, *v)
--	return func(err error, cached bool) {
--		defer pw.Close()
--		stop := time.Now()
--		v.Completed = &stop
--		v.Cached = cached
--		if err != nil {
--			v.Error = err.Error()
--		} else {
--			v.Error = ""
--		}
--
++	resizeDone := make(chan struct{})
+ 	eg.Go(func() error {
++		defer close(resizeDone)
+ 		err := runcProcess.WaitForReady(ctx)
+ 		if err != nil {
+ 			return err
+@@ -195,6 +197,12 @@ func (w *runcExecutor) callWithIO(ctx context.Context, process executor.ProcessI
+ 			}
+ 		}
+ 	})
++	// Runs before the cleanup defer above: the resize loop uses ptm's fd, so
++	// stop it before ptm is closed.
++	defer func() {
++		runcProcess.Shutdown()
++		<-resizeDone
++	}()
+ 
+ 	runcIO := &forwardIO{}
+ 	if process.Stdin != nil {
 ```
 
-**File**: `solver/scheduler_test.go` (modified, +80/-0)
+---
+
+### Incident Patch 2: `7ce6ee10` (2026-10-26)
+**Commit Message**: Merge pull request #7322 from tonistiigi/fixes-data-races
+
+Fixes for data races.
+
+**File**: `cache/manager.go` (modified, +5/-2)
 ```diff
-@@ -12,8 +12,10 @@ import (
- 	"testing"
- 	"time"
+@@ -470,7 +470,10 @@ func (cm *cacheManager) getRecord(ctx context.Context, id string, opts ...RefOpt
+ 	}
  
-+	"github.com/moby/buildkit/client"
- 	"github.com/moby/buildkit/identity"
- 	"github.com/moby/buildkit/session"
-+	"github.com/moby/buildkit/util/progress"
- 	digest "github.com/opencontainers/go-digest"
- 	ocispecs "github.com/opencontainers/image-spec/specs-go/v1"
- 	"github.com/pkg/errors"
-@@ -208,6 +210,84 @@ func TestSingleLevelActiveGraph(t *testing.T) {
- 	require.Equal(t, int64(1), *g4.Vertex.(*vertex).execCallCount)
+ 	if rec, ok := cm.records[id]; ok {
+-		if rec.isDead() {
++		rec.mu.Lock()
++		isDead := rec.isDead()
++		rec.mu.Unlock()
++		if isDead {
+ 			return nil, errors.Wrapf(errNotFound, "failed to get dead record %s", id)
+ 		}
+ 		if err := checkLazyProviders(rec); err != nil {
+@@ -498,7 +501,7 @@ func (cm *cacheManager) getRecord(ctx context.Context, id string, opts ...RefOpt
+ 		mutable, err := cm.getRecord(ctx, mutableID)
+ 		if err == nil {
+ 			rec := &cacheRecord{
+-				mu:            &sync.Mutex{},
++				mu:            mutable.mu, // share the mutex as in mutableRef.commit
+ 				cm:            cm,
+ 				refs:          make(map[ref]struct{}),
+ 				parentRefs:    parents,
+```
+
+**File**: `cache/manager_test.go` (modified, +171/-0)
+```diff
+@@ -1635,6 +1635,177 @@ func TestLazyCommit(t *testing.T) {
+ 	require.Equal(t, true, errors.Is(err, errNotFound))
  }
  
-+func TestProgressSnapshotDuringCompletion(t *testing.T) {
++// TestMountDuringFinalize checks that readonly mounts can run concurrently with
++// Finalize of a lazily committed ref. Run with -race to detect unsynchronized
++// access to the equalMutable field.
++func TestMountDuringFinalize(t *testing.T) {
 +	t.Parallel()
-+	for range 100 {
-+		pr, ctx, cancel := progress.NewContext(t.Context())
-+		pw, _, _ := progress.NewFromContext(ctx)
-+		j := &Job{pw: pw}
-+		st := &state{
-+			mpw:   progress.NewMultiWriter(),
-+			allPw: map[progress.Writer]struct{}{},
-+			jobs:  map[*Job]struct{}{j: {}},
-+		}
-+		completed := st.notifyStarted(progress.WithProgress(ctx, st.mpw), false)
-+		start := make(chan struct{})
-+		var eg errgroup.Group
++
++	ctx := namespaces.WithNamespace(t.Context(), "buildkit-test")
++
++	tmpdir := t.TempDir()
++
++	snapshotter, err := native.NewSnapshotter(filepath.Join(tmpdir, "snapshots"))
++	require.NoError(t, err)
++	t.Cleanup(func() {
++		require.NoError(t, snapshotter.Close())
++	})
++
++	co, cleanup, err := newCacheManager(ctx, t, cmOpt{
++		tmpdir:          tmpdir,
++		snapshotter:     snapshotter,
++		snapshotterName: "native",
++	})
++	require.NoError(t, err)
++	t.Cleanup(cleanup)
++	cm := co.manager
++
++	active, err := cm.New(ctx, nil, nil, CachePolicyRetain)
++	require.NoError(t, err)
++
++	snap, err := active.Commit(ctx)
++	require.NoError(t, err)
++	defer snap.Release(context.WithoutCancel(ctx))
++
++	start := make(chan struct{})
++	eg, egCtx := errgroup.WithContext(ctx)
++	eg.Go(func() error {
++		<-start
++		return snap.Finalize(egCtx)
++	})
++	for range 8 {
 +		eg.Go(func() error {
 +			<-start
-+			completed(nil, false)
-+			return nil
++			_, err := snap.Mount(egCtx, true, nil)
++			return err
 +		})
-+		eg.Go(func() error {
-+			<-start
-+			(&Solver{}).connectProgressFromState(st, st)
-+			return nil
-+		})
-+		close(start)
-+		err := eg.Wait()
-+		pw.Close()
-+		cancel(nil)
-+		require.NoError(t, err)
-+		items, err := pr.Read(t.Context())
-+		require.NoError(t, err)
-+		require.NotEmpty(t, items)
-+		last := items[len(items)-1].Sys.(client.Vertex)
-+		require.NotNil(t, last.Completed, "snapshot must not overwrite completion")
 +	}
-+}
-+
-+func TestCacheOptsDuringProgress(t *testing.T) {
-+	t.Parallel()
-+	st := &state{
-+		op: &sharedOp{
-+			cacheRes: []*CacheMap{{Opts: CacheOpts{"test": "value"}}},
-+		},
-+	}
-+	ctx := withAncestorCacheOpts(t.Context(), st)
-+	getter := CacheOptGetterOf(ctx)
-+
-+	completed := st.notifyStarted(ctx, false)
-+	require.Equal(t, "value", getter(false, "test")["test"])
-+	completed(errors.New("operation failed"), false)
-+	require.Empty(t, getter(false, "test"))
-+
-+	completed = st.notifyStarted(ctx, false)
-+	completed(nil, false)
-+	require.Equal(t, "value", getter(false, "test")["test"])
-+
-+	// Cache option lookups can run while another operation reports progress.
-+	var eg errgroup.Group
-+	eg.Go(func() error {
-+		for range 100 {
-+			completed := st.notifyStarted(ctx, false)
-+			completed(errors.New("operation failed"), false)
-+			completed = st.notifyStarted(ctx, true)
-+			completed(nil, true)
-+		}
-+		return nil
-+	})
-+	eg.Go(func() error {
-+		for range 100 {
-+			if value, ok := getter(false, "test")["test"]; ok {
-+				require.Equal(t, "value", value)
-+			}
-+		}
-+		return nil
-+	})
++	close(start)
 +	require.NoError(t, eg.Wait())
 +}
 +
- func TestSingleLevelCache(t *testing.T) {
++// TestGetDuringFinalize checks that a lazily committed ref can be looked up
++// by ID concurrently with its Finalize. Run with -race to detect
++// unsynchronized access to the record's equalMutable state.
++func TestGetDuringFinalize(t *testing.T) {
++	t.Parallel()
++
++	ctx := namespaces.WithNamespace(t.Context(), "buildkit-test")
++
++	tmpdir := t.TempDir()
++
++	snapshotter, err := native.NewSnapshotter(filepath.Join(tmpdir, "snapshots"))
++	require.NoError(t, err)
++	t.Cleanup(func() {
++		require.NoError(t, snapshotter.Close())
++	})
++
++	co, cleanup, err := newCacheManager(ctx, t, cmOpt{
++		tmpdir:          tmpdir,
++		snapshotter:     snapshotter,
++		snapshotterName: "native",
++	})
++	require.NoError(t, err)
++	t.Cleanup(cleanup)
++	cm := co.manager
++
++	active, err := cm.New(ctx, nil, nil, CachePolicyRetain)
++	require.NoError(t, err)
++
++	snap, err := active.Commit(ctx)
++	require.NoError(t, err)
++	defer snap.Release(context.WithoutCancel(ctx))
++
++	start := make(chan struct{})
++	eg, egCtx := errgroup.WithContext(ctx)
++	eg.Go(func() error {
++		<-start
++		return snap.Finalize(egCtx)
++	})
++	for range 8 {
++		eg.Go(func() error {
++			<-start
++			ref, err := cm.Get(egCtx, snap.ID(), nil)
++			if err != nil {
++				return err
++			}
++			return ref.Release(context.WithoutCancel(egCtx))
++		})
++	}
++	close(start)
++	require.NoError(t, eg.Wait())
++}
++
++// TestGetDuringFinalizeAfterRestart is like TestGetDuringFinalize, but the
++// lazily committed ref and its equal mutable are loaded from metadata after
++// a restart and the mutable is looked up by ID while the ref is finalized.
++func TestGetDuringFinalizeAfterRestart(t *testing.T) {
++	t.Parallel()
++
++	ctx := namespaces.WithNamespace(t.Context(), "buildkit-test")
++
++	tmpdir := t.TempDir()
++
++	snapshotter, err := native.NewSnapshotter(filepath.Join(tmpdir, "snapshots"))
++	require.NoError(t, err)
++	t.Cleanup(func() {
++		require.NoError(t, snapshotter.Close())
++	})
++
++	co, cleanup, err := newCacheManager(ctx, t, cmOpt{
++		tmpdir:          tmpdir,
++		snapshotter:     snapshotter,
++		snapshotterName: "native",
++	})
++	require.NoError(t, err)
++	cm := co.manager
++
++	active, err := cm.New(ctx, nil, nil, CachePolicyRetain)
++	require.NoError(t, err)
++
++	snap, err := active.Commit(ctx)
++	require.NoError(t, err)
++
++	require.NoError(t, cm.Close())
++	cleanup()
++
++	co, cleanup, err = newCacheManager(ctx, t, cmOpt{
++		tmpdir:          tmpdir,
++		snapshotter:     snapshotter,
++		snapshotterName: "native",
++	})
++	require.NoError(t, err)
++	t.Cleanup(cleanup)
++	cm = co.manager
++
++	snap, err = cm.Get(ctx, snap.ID(), nil)
++	require.NoError(t, err)
++	defer snap.Release(context.WithoutCancel(ctx))
++
++	start := make(chan struct{})
++	eg, egCtx := errgroup.WithContext(ctx)
++	eg.Go(func() error {
++		<-start
++		return snap.Finalize(egCtx)
++	})
++	for range 8 {
++		eg.Go(func() error {
++			<-start
++			ref, err := cm.Get(egCtx, active.ID(), nil)
++			if err != nil {
++				// the mutable is gone once finalize has completed
++				if IsNotFound(err) {
++					return nil
++				}
++				return err
++			}
++			return ref.Release(context.WithoutCancel(egCtx))
++		})
++	}
++	close(start)
++	require.NoError(t, eg.Wait())
++}
++
+ func TestLoopLeaseContent(t *testing.T) {
  	t.Parallel()
- 	ctx := t.Context()
+ 	// windows fails when lazy blob is being extracted with "invalid windows mount type: 'bind'"
+```
+
+**File**: `cache/refs.go` (modified, +3/-1)
+```diff
+@@ -967,7 +967,9 @@ func fieldsFromLabels(labels map[string]string) (fields []string) {
+ }
+ 
+ func (sr *immutableRef) Mount(ctx context.Context, readonly bool, s session.Group) (_ snapshot.Mountable, rerr error) {
+-	if sr.equalMutable != nil && !readonly {
++	// Finalize is a no-op if there is no equalMutable. Don't check it here,
++	// equalMutable is protected by sr.mu.
++	if !readonly {
+ 		if err := sr.Finalize(ctx); err != nil {
+ 			return nil, err
+ 		}
+```
+
+**File**: `client/gateway_container_exec_test.go` (modified, +28/-8)
+```diff
+@@ -7,6 +7,7 @@ import (
+ 	"fmt"
+ 	"io"
+ 	"strings"
++	"sync"
+ 	"syscall"
+ 	"testing"
+ 	"time"
+@@ -36,7 +37,7 @@ func testClientGatewayContainerCancelExecTty(t *testing.T, sb integration.Sandbo
+ 	product := "buildkit_test"
+ 
+ 	inputR, inputW := io.Pipe()
+-	output := bytes.NewBuffer(nil)
++	output := &lockedBuffer{}
+ 	b := func(ctx context.Context, c client.Client) (*client.Result, error) {
+ 		ctx, timeout := context.WithTimeoutCause(ctx, 10*time.Second, nil)
+ 		defer timeout()
+@@ -189,7 +190,7 @@ func testClientGatewayContainerCancelPID1Tty(t *testing.T, sb integration.Sandbo
+ 	product := "buildkit_test"
+ 
+ 	inputR, inputW := io.Pipe()
+-	output := bytes.NewBuffer(nil)
++	output := &lockedBuffer{}
+ 
+ 	b := func(ctx context.Context, c client.Client) (*client.Result, error) {
+ 		ctx, cancel := context.WithTimeoutCause(ctx, 10*time.Second, nil)
+@@ -479,7 +480,7 @@ func testClientGatewayContainerExecTty(t *testing.T, sb integration.Sandbox) {
+ 	product := "buildkit_test"
+ 
+ 	inputR, inputW := io.Pipe()
+-	output := bytes.NewBuffer(nil)
++	output := &lockedBuffer{}
+ 	b := func(ctx context.Context, c client.Client) (*client.Result, error) {
+ 		ctx, timeout := context.WithTimeoutCause(ctx, 10*time.Second, nil)
+ 		defer timeout()
+@@ -774,7 +775,7 @@ func testClientGatewayContainerPID1Tty(t *testing.T, sb integration.Sandbox) {
+ 	product := "buildkit_test"
+ 
+ 	inputR, inputW := io.Pipe()
+-	output := bytes.NewBuffer(nil)
++	output := &lockedBuffer{}
+ 
+ 	b := func(ctx context.Context, c client.Client) (*client.Result, error) {
+ 		ctx, timeout := context.WithTimeoutCause(ctx, 10*time.Second, nil)
+@@ -1056,7 +1057,7 @@ func testClientGatewayExecError(t *testing.T, sb integration.Sandbox) {
+ 				defer inputW.Close()
+ 				defer inputR.Close()
+ 
+-				pid1Output := bytes.NewBuffer(nil)
++				pid1Output := &lockedBuffer{}
+ 
+ 				prompt := newTestPrompt(ctx, t, inputW, pid1Output)
+ 				pid1, err := ctr.Start(ctx, client.StartRequest{
+@@ -1071,7 +1072,7 @@ func testClientGatewayExecError(t *testing.T, sb integration.Sandbox) {
+ 
+ 				meta := exec.Meta
+ 				for _, p := range tt.Paths {
+-					output := bytes.NewBuffer(nil)
++					output := &lockedBuffer{}
+ 					proc, err := ctr.Start(ctx, client.StartRequest{
+ 						Args:         []string{"cat", p},
+ 						Env:          meta.Env,
+@@ -1348,10 +1349,29 @@ func testClientGatewaySlowCacheExecError(t *testing.T, sb integration.Sandbox) {
+ 	checkAllReleasable(t, c, sb, true)
+ }
+ 
++// lockedBuffer is a bytes.Buffer that the container output streams can write
++// to while testPrompt reads it.
++type lockedBuffer struct {
++	mu  sync.Mutex
++	buf bytes.Buffer
++}
++
++func (b *lockedBuffer) Write(p []byte) (int, error) {
++	b.mu.Lock()
++	defer b.mu.Unlock()
++	return b.buf.Write(p)
++}
++
++func (b *lockedBuffer) String() string {
++	b.mu.Lock()
++	defer b.mu.Unlock()
++	return b.buf.String()
++}
++
+ type testPrompt struct {
+ 	ctx    context.Context
+ 	t      *testing.T
+-	output *bytes.Buffer
++	output *lockedBuffer
+ 	input  io.Writer
+ 	prompt string
+ 	pos    int
+@@ -1394,7 +1414,7 @@ func (p *testPrompt) wait(msg string) string {
+ 	}
+ }
+ 
+-func newTestPrompt(ctx context.Context, t *testing.T, input io.Writer, output *bytes.Buffer) *testPrompt {
++func newTestPrompt(ctx context.Context, t *testing.T, input io.Writer, output *lockedBuffer) *testPrompt {
+ 	return &testPrompt{
+ 		ctx:    ctx,
+ 		t:      t,
+```
+
+**File**: `executor/oci/resolvconf.go` (modified, +7/-7)
+```diff
+@@ -4,6 +4,7 @@ import (
+ 	"context"
+ 	"net/netip"
+ 	"os"
++	"sync/atomic"
+ 
+ 	"github.com/moby/buildkit/solver/pb"
+ 	"github.com/moby/buildkit/util/bklog"
+@@ -23,9 +24,10 @@ const (
+ )
+ 
+ var (
+-	g            flightcontrol.Group[struct{}]
+-	notFirstRun  bool
+-	lastNotEmpty bool
++	g flightcontrol.Group[struct{}]
++	// accessed concurrently by calls with different keys
++	notFirstRun  atomic.Bool
++	lastNotEmpty atomic.Bool
+ )
+ 
+ // overridden by tests
+@@ -67,8 +69,7 @@ func GetResolvConf(ctx context.Context, root *os.Root, idmap *user.IdentityMappi
+ 	}
+ 
+ 	_, err := g.Do(ctx, root.Name()+"/"+name, func(ctx context.Context) (struct{}, error) {
+-		generate := !notFirstRun
+-		notFirstRun = true
++		generate := !notFirstRun.Swap(true)
+ 
+ 		if !generate {
+ 			fi, err := root.Stat(name)
+@@ -84,9 +85,8 @@ func GetResolvConf(ctx context.Context, root *os.Root, idmap *user.IdentityMappi
+ 					if !errors.Is(err, os.ErrNotExist) {
+ 						return struct{}{}, err
+ 					}
+-					if lastNotEmpty {
++					if lastNotEmpty.CompareAndSwap(true, false) {
+ 						generate = true
+-						lastNotEmpty = false
+ 					}
+ 				} else if fi.ModTime().Before(fiMain.ModTime()) {
+ 					generate = true
+```
+
+**File**: `executor/oci/resolvconf_test.go` (modified, +31/-0)
+```diff
+@@ -9,6 +9,7 @@ import (
+ 
+ 	"github.com/moby/buildkit/solver/pb"
+ 	"github.com/stretchr/testify/require"
++	"golang.org/x/sync/errgroup"
+ )
+ 
+ const defaultResolvConf = `nameserver 8.8.8.8
+@@ -135,3 +136,33 @@ func TestResolvConf(t *testing.T) {
+ 		})
+ 	}
+ }
++
++// TestResolvConfConcurrentRoots checks that resolv.conf is generated for every
++// root when called for different roots concurrently. Run with -race to detect
++// unsynchronized access to the package-level generation state.
++func TestResolvConfConcurrentRoots(t *testing.T) {
++	const n = 4
++	roots := make([]*os.Root, n)
++	paths := make([]string, n)
++	start := make(chan struct{})
++	eg, ctx := errgroup.WithContext(t.Context())
++	for i := range n {
++		root, err := os.OpenRoot(t.TempDir())
++		require.NoError(t, err)
++		t.Cleanup(func() { root.Close() })
++		roots[i] = root
++		eg.Go(func() error {
++			<-start
++			p, err := GetResolvConf(ctx, root, nil, nil, pb.NetMode_UNSET)
++			paths[i] = p
++			return err
++		})
++	}
++	close(start)
++	require.NoError(t, eg.Wait())
++
++	for i, root := range roots {
++		_, err := root.Stat(paths[i])
++		require.NoError(t, err)
++	}
++}
+```
+
+**File**: `executor/runcexecutor/executor_linux.go` (modified, +8/-0)
+```diff
+@@ -169,7 +169,9 @@ func (w *runcExecutor) callWithIO(ctx context.Context, process executor.ProcessI
+ 		})
+ 	}
+ 
++	resizeDone := make(chan struct{})
+ 	eg.Go(func() error {
++		defer close(resizeDone)
+ 		err := runcProcess.WaitForReady(ctx)
+ 		if err != nil {
+ 			return err
+@@ -195,6 +197,12 @@ func (w *runcExecutor) callWithIO(ctx context.Context, process executor.ProcessI
+ 			}
+ 		}
+ 	})
++	// Runs before the cleanup defer above: the resize loop uses ptm's fd, so
++	// stop it before ptm is closed.
++	defer func() {
++		runcProcess.Shutdown()
++		<-resizeDone
++	}()
+ 
+ 	runcIO := &forwardIO{}
+ 	if process.Stdin != nil {
+```
+
+**File**: `frontend/dockerfile/builder/build.go` (modified, +1/-1)
+```diff
+@@ -35,7 +35,7 @@ const (
+ )
+ 
+ func Build(ctx context.Context, c client.Client) (_ *client.Result, err error) {
+-	c = &withResolveCache{Client: c}
++	c = newWithResolveCache(c)
+ 	bc, err := dockerui.NewClient(c)
+ 	if err != nil {
+ 		return nil, err
+```
+
+---
+
+### Incident Patch 3: `afaf5b75` (2026-10-26)
+**Commit Message**: Merge pull request #7312 from tonistiigi/fix-cache-deps-match
+
+solver: fix matching alternative cache input keys
+
+**File**: `client/client_cache_test.go` (modified, +88/-0)
+```diff
+@@ -1,6 +1,7 @@
+ package client
+ 
+ import (
++	"context"
+ 	"encoding/base64"
+ 	"encoding/json"
+ 	"fmt"
+@@ -28,6 +29,7 @@ import (
+ 	cacheimporttypes "github.com/moby/buildkit/cache/remotecache/v1/types"
+ 	"github.com/moby/buildkit/client/llb"
+ 	"github.com/moby/buildkit/exporter/containerimage/exptypes"
++	gateway "github.com/moby/buildkit/frontend/gateway/client"
+ 	"github.com/moby/buildkit/identity"
+ 	"github.com/moby/buildkit/util/compression"
+ 	"github.com/moby/buildkit/util/testutil"
+@@ -342,6 +344,92 @@ func testBasicLocalCacheImportExport(t *testing.T, sb integration.Sandbox) {
+ 	testBasicCacheImportExport(t, sb, []CacheOptionsEntry{im}, []CacheOptionsEntry{ex})
+ }
+ 
++// testAlternativeInputKeysCacheImport checks that an independently built COPY
++// can match an imported cache entry through its content key even when its source
++// key is absent from that cache. Changing an unselected file gives the source a
++// different key while preserving the copied content. A downstream RUN must still
++// reuse its imported result: the COPY's source and content keys are alternatives
++// for the same input, so matching both is not required.
++func testAlternativeInputKeysCacheImport(t *testing.T, sb integration.Sandbox) {
++	requiresLinux(t)
++	workers.CheckFeatureCompat(t, sb,
++		workers.FeatureCacheExport,
++		workers.FeatureCacheImport,
++		workers.FeatureCacheBackendRegistry,
++	)
++	registry, err := sb.NewRegistry()
++	if errors.Is(err, integration.ErrRequirements) {
++		t.Skip(err.Error())
++	}
++	require.NoError(t, err)
++	c, err := New(sb.Context(), sb.Address())
++	require.NoError(t, err)
++	defer c.Close()
++
++	parent := llb.Image("busybox:latest")
++	copyValue := func(ctxVal string) llb.State {
++		src := llb.Scratch().File(llb.Mkfile("/value", 0644, []byte("same content"))).
++			File(llb.Mkfile("/unselected", 0644, []byte(ctxVal)))
++		// Keep the source at input 1, where structural and content keys are
++		// alternatives. The parent makes this a copy with two inputs.
++		return parent.File(llb.Copy(src, "/value", "/value"))
++	}
++	marker := func(input llb.State) llb.State {
++		return input.Run(
++			llb.Shlex("sh -c 'test \"$(cat /value)\" = \"same content\" && head -c 100 /dev/urandom > /out/unique'"),
++		).AddMount("/out", llb.Scratch())
++	}
++
++	cacheRef := registry + "/buildkit/alternative-input-keys:latest"
++	def, err := marker(copyValue("original context")).Marshal(sb.Context())
++	require.NoError(t, err)
++	first := t.TempDir()
++	_, err = c.Solve(sb.Context(), def, SolveOpt{
++		Exports: []ExportEntry{{Type: ExporterLocal, OutputDir: first}},
++		CacheExports: []CacheOptionsEntry{{Type: "registry", Attrs: map[string]string{
++			"ref": cacheRef, "mode": "max",
++		}}},
++	}, nil)
++	require.NoError(t, err)
++	want, err := os.ReadFile(filepath.Join(first, "unique"))
++	require.NoError(t, err)
++	require.Len(t, want, 100)
++	ensurePruneAll(t, c, sb)
++
++	// Build the equivalent copy independently, before making the imported
++	// cache available. Its source key differs, but its selected content agrees.
++	// Importing during this solve would let Query link the new source key to
++	// the old copy and hide the getIDFromDeps regression.
++	_, err = c.Build(sb.Context(), SolveOpt{}, "", func(ctx context.Context, gw gateway.Client) (*gateway.Result, error) {
++		copied := copyValue("changed context")
++		def, err := copied.Marshal(ctx)
++		require.NoError(t, err)
++		_, err = gw.Solve(ctx, gateway.SolveRequest{Definition: def.ToPB(), Evaluate: true})
++		require.NoError(t, err)
++
++		// Keep the first solve active so this result retains both its source
++		// key and content checksum when it is reused by the downstream solve.
++		// Mapping it into the imported cache must use the content alternative.
++		def, err = marker(copied).Marshal(ctx)
++		require.NoError(t, err)
++		res, err := gw.Solve(ctx, gateway.SolveRequest{
++			Definition: def.ToPB(),
++			Evaluate:   true,
++			CacheImports: []gateway.CacheOptionsEntry{{Type: "registry", Attrs: map[string]string{
++				"ref": cacheRef,
++			}}},
++		})
++		require.NoError(t, err)
++		ref, err := res.SingleRef()
++		require.NoError(t, err)
++		got, err := ref.ReadFile(ctx, gateway.ReadRequest{Filename: "/unique"})
++		require.NoError(t, err)
++		require.Equal(t, want, got, "downstream operation was reexecuted instead of using imported cache")
++		return res, nil
++	}, nil)
++	require.NoError(t, err)
++}
++
+ func testBasicRegistryCacheImportExport(t *testing.T, sb integration.Sandbox) {
+ 	workers.CheckFeatureCompat(t, sb,
+ 		workers.FeatureCacheExport,
+```
+
+**File**: `client/client_test.go` (modified, +1/-0)
+```diff
+@@ -21,6 +21,7 @@ var allTests = []func(t *testing.T, sb integration.Sandbox){
+ 	testBasicAzblobCacheImportExport,
+ 	testBasicInlineCacheImportExport,
+ 	testBasicLocalCacheImportExport,
++	testAlternativeInputKeysCacheImport,
+ 	testBasicRegistryCacheImportExport,
+ 	testBasicS3CacheImportExport,
+ 	testCacheExportCacheDeletedContent,
+```
+
+**File**: `solver/cachemanager.go` (modified, +28/-30)
+```diff
+@@ -409,42 +409,40 @@ func (c *cacheManager) ensurePersistentKey(k *CacheKey) error {
+ 
+ func (c *cacheManager) getIDFromDeps(k *CacheKey) string {
+ 	matches := map[string]struct{}{}
+-
++loop0:
+ 	for i, deps := range k.deps {
+-		if i == 0 || len(matches) > 0 {
+-			for _, ck := range deps {
+-				m2 := make(map[string]struct{})
+-				if err := c.backend.WalkLinks(c.getID(ck.CacheKey.CacheKey), CacheInfoLink{
+-					Input:    Index(i),
+-					Output:   k.Output(),
+-					Digest:   k.Digest(),
+-					Selector: ck.Selector,
+-				}, func(id string) error {
+-					if i == 0 {
+-						matches[id] = struct{}{}
+-					} else {
+-						m2[id] = struct{}{}
+-					}
+-					return nil
+-				}); err != nil {
+-					matches = map[string]struct{}{}
+-					break
+-				}
+-				if i != 0 {
+-					for id := range matches {
+-						if _, ok := m2[id]; !ok {
+-							delete(matches, id)
+-						}
+-					}
++		if i > 0 && len(matches) == 0 {
++			break
++		}
++		// Keys within one input are alternatives; different inputs must all match.
++		candidates := map[string]struct{}{}
++		for _, ck := range deps {
++			if err := c.backend.WalkLinks(c.getID(ck.CacheKey.CacheKey), CacheInfoLink{
++				Input:    Index(i),
++				Output:   k.Output(),
++				Digest:   k.Digest(),
++				Selector: ck.Selector,
++			}, func(id string) error {
++				candidates[id] = struct{}{}
++				return nil
++			}); err != nil {
++				matches = nil
++				break loop0
++			}
++		}
++		if i == 0 {
++			matches = candidates
++		} else {
++			for id := range matches {
++				if _, ok := candidates[id]; !ok {
++					delete(matches, id)
+ 				}
+ 			}
+ 		}
+ 	}
+-
+-	for k := range matches {
+-		return k
++	for id := range matches {
++		return id
+ 	}
+-
+ 	return identity.NewID()
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7315** (2026-10-23): build(deps): bump github/codeql-action/upload-sarif from 4.39.0 to 4.39.1 (@dependabot[bot])
-- **PR #7314** (2026-10-23): build(deps): bump docker/github-builder/.github/workflows/bake.yml from 1.18.0 to 1.18.1 (@dependabot[bot])
-- **PR #7311** (2026-10-23): runcexecutor: share keyring in NoProcessSandbox (@JoaoManierii)
-- **PR #7309** (2026-10-23): client: honor ignore-error for local cache index publish (@lucalandi)
-- **PR #7306** (closed): build(deps): bump docker/github-builder/.github/workflows/bake.yml from 1.17.0 to 1.18.0 (@dependabot[bot])
-- **PR #7303** (closed): solver: avoid blocking on lazy cache queries (@sairex53)
+- **PR #7324** (closed): source: negotiate manifest media types for image blobs (@cdupuis)
+- **PR #7322** (2026-10-26): Fixes for data races. (@tonistiigi)
+- **PR #7321** (2026-10-26): build(deps): bump docker/login-action from 4.6.0 to 4.7.0 (@dependabot[bot])
+- **PR #7320** (closed): cache: update media type metadata when linking blob with matching digest (@AdamMagued)
+- **PR #7319** (closed): llb: support uint32 numeric user and group IDs in parseUID (@AdamMagued)
+- **PR #7317** (closed): fix: isolate pending registry cache imports from the scheduler (@mvanhorn)
 
 ---
 
@@ -2699,30 +3061,35 @@ solver: synchronize vertex progress updates
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump github/codeql-action/upload-sarif
+## X. runcexecutor: stop tty resize loop before closing pty
 
 **RULE**:
-When implementing operations in `.github/workflows/buildkit.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `executor/runcexecutor/executor_linux.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c6b4059f`: build(deps): bump github/codeql-action/upload-sarif. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `50452fdb`: runcexecutor: stop tty resize loop before closing pty. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/buildkit.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `executor/runcexecutor/executor_linux.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+	resizeDone := make(chan struct{})
+		defer close(resizeDone)
+	// Runs before the cleanup defer above: the resize loop uses ptm's fd, so
+	// stop it before ptm is closed.
+	defer func() {
+		runcProcess.Shutdown()
+		<-resizeDone
+	}()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c6b4059f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `50452fdb` are properly handled with clean fallback behavior.

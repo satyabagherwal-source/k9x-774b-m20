@@ -5244,3 +5244,8 @@ Every entry in this ledger must capture:
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `1d22b2d8` | Multi-dimensional audit evidence | 2026-10-27T11:27:27.897Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `505c1a23` | Multi-dimensional audit evidence | 2026-10-27T11:27:34.123Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `21c7f844` | Multi-dimensional audit evidence | 2026-10-27T11:27:34.819Z |
+| `learn-github-sweetpad-dev-sweetpad` | `https://github.com/sweetpad-dev/sweetpad` | `d633af8a` | Multi-dimensional audit evidence | 2026-10-27T11:34:09.638Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `892eaeac` | Multi-dimensional audit evidence | 2026-10-27T11:34:12.057Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `442b6191` | Multi-dimensional audit evidence | 2026-10-27T11:34:17.154Z |
+| `learn-github-webrtc-rs-webrtc` | `https://github.com/webrtc-rs/webrtc` | `1c07e9f0` | Multi-dimensional audit evidence | 2026-10-27T11:34:17.870Z |
+| `learn-github-webrecorder-pywb` | `https://github.com/webrecorder/pywb` | `20bf53e0` | Multi-dimensional audit evidence | 2026-10-27T11:39:02.219Z |

@@ -2113,10 +2113,10 @@
     "repository": "moby/buildkit",
     "platform": "github",
     "sourceUrl": "https://github.com/moby/buildkit",
-    "sourceVersion": "fc10d048",
+    "sourceVersion": "892eaeac",
     "license": "Apache-2.0",
-    "contentHash": "72a6de191e6520cf2710f4a532fedc5723412f3828f1c18fcd79eebb9380e21d",
-    "lastHarvestedAt": "2026-10-25T05:14:46.472Z",
+    "contentHash": "cf87bb451bb64770a8fec9a20afb8cfeb89eecfd55eee39b92b192792ec0bf62",
+    "lastHarvestedAt": "2026-10-27T11:34:12.057Z",
     "learningId": "learn-github-moby-buildkit"
   },
   "microsoft-agent-governance-toolkit": {
@@ -5043,10 +5043,10 @@
     "repository": "webrtc-rs/webrtc",
     "platform": "github",
     "sourceUrl": "https://github.com/webrtc-rs/webrtc",
-    "sourceVersion": "a53d7ac4",
+    "sourceVersion": "1c07e9f0",
     "license": "Apache-2.0",
-    "contentHash": "30feeed0e1ca5e98881e64e674507e3990041fd59872165415101775d127d58b",
-    "lastHarvestedAt": "2026-10-25T17:30:14.438Z",
+    "contentHash": "f0fda1bbcc2e63941496d6388dcbed2ff9cdd4440b9bb61c974f769a43b42da8",
+    "lastHarvestedAt": "2026-10-27T11:34:17.870Z",
     "learningId": "learn-github-webrtc-rs-webrtc"
   },
   "midudev-preguntas-entrevista-react": {
@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "67e7cf4c",
+    "sourceVersion": "442b6191",
     "license": "Apache-2.0",
-    "contentHash": "4527f5955bf7d300fb6a72c2cc5b41e4aab95536994b9274ad8f2d0e122ec550",
-    "lastHarvestedAt": "2026-10-25T19:51:50.006Z",
+    "contentHash": "41bd8eb5a73e403cfa15cf5d3cf4337a5011f67e2fe9c1d4bb4ffc8bb9fe84b2",
+    "lastHarvestedAt": "2026-10-27T11:34:17.154Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {
@@ -9233,10 +9233,10 @@
     "repository": "webrecorder/pywb",
     "platform": "github",
     "sourceUrl": "https://github.com/webrecorder/pywb",
-    "sourceVersion": "5fcffb27",
+    "sourceVersion": "20bf53e0",
     "license": "GPL-3.0",
-    "contentHash": "62f8659edffd679f1eb7ed7c8f35bcf0772bb7bc5e72ce9c8c60c59b5b951734",
-    "lastHarvestedAt": "2026-10-22T18:11:04.290Z",
+    "contentHash": "ed341d24b0403e83ecec7af2565ed9d4ba99f859c56195ab12937cc3a909c304",
+    "lastHarvestedAt": "2026-10-27T11:39:02.219Z",
     "learningId": "learn-github-webrecorder-pywb"
   },
   "kruszoneq-macusb": {
@@ -10183,10 +10183,10 @@
     "repository": "sweetpad-dev/sweetpad",
     "platform": "github",
     "sourceUrl": "https://github.com/sweetpad-dev/sweetpad",
-    "sourceVersion": "5ded4409",
+    "sourceVersion": "d633af8a",
     "license": "MIT",
-    "contentHash": "fa63212c0a2414c27f085e2a71eea1b4e3ca3d1bb3afb714a6af4b64689066e5",
-    "lastHarvestedAt": "2026-10-20T03:28:20.284Z",
+    "contentHash": "45d954c99dd240b85016009b7f395a07bb14d6fdc79c8348d09723ee6001ebca",
+    "lastHarvestedAt": "2026-10-27T11:34:09.638Z",
     "learningId": "learn-github-sweetpad-dev-sweetpad"
   },
   "wcandillon-react-native-skia": {
