@@ -3663,10 +3663,10 @@
     "repository": "internet-development/www-sacred",
     "platform": "github",
     "sourceUrl": "https://github.com/internet-development/www-sacred",
-    "sourceVersion": "a288a847",
+    "sourceVersion": "a4412efd",
     "license": "MIT",
-    "contentHash": "9e74309fc3cf6ce083170890feb23731979a57d91c4fd6edeae06c27d6e66ae0",
-    "lastHarvestedAt": "2026-10-18T23:45:22.584Z",
+    "contentHash": "1f65b77c9ca49a96848cababb2cfbb92e71e14868da97198b296b2911e6d58f0",
+    "lastHarvestedAt": "2026-10-27T20:04:44.166Z",
     "learningId": "learn-github-internet-development-www-sacred"
   },
   "rigellute-spotify-tui": {
@@ -6513,10 +6513,10 @@
     "repository": "stakater/Reloader",
     "platform": "github",
     "sourceUrl": "https://github.com/stakater/Reloader",
-    "sourceVersion": "437d18a6",
+    "sourceVersion": "41b3ad27",
     "license": "Apache-2.0",
-    "contentHash": "beef5a6d18bef7e86fd5cf2e40228ed0bdd81190efb88c256e8ca024af32bca9",
-    "lastHarvestedAt": "2026-10-26T18:12:30.843Z",
+    "contentHash": "36ad7fe4771c4abd45642121dc6a078eed3946c03ef1f449ac5dd7fa3b4583d9",
+    "lastHarvestedAt": "2026-10-27T20:04:49.929Z",
     "learningId": "learn-github-stakater-reloader"
   },
   "pathwaycom-llm-app": {
@@ -7823,10 +7823,10 @@
     "repository": "astral-sh/uv",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/uv",
-    "sourceVersion": "656d02b6",
+    "sourceVersion": "f75ea631",
     "license": "Apache-2.0",
-    "contentHash": "58805b16afc68a067fb425e9fb60a3a66ad7f70bb284f9ba7464263db35e8fc6",
-    "lastHarvestedAt": "2026-10-26T01:55:35.225Z",
+    "contentHash": "53db82dd5c199b79f25a16445567e0408c309cfc3c00f52fa22b5141b2c0732c",
+    "lastHarvestedAt": "2026-10-27T20:04:46.222Z",
     "learningId": "learn-github-astral-sh-uv"
   },
   "thaw-app-thaw": {

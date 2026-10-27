@@ -5526,3 +5526,6 @@ Every entry in this ledger must capture:
 | `learn-github-alikon-art-determinflow` | `https://github.com/alikon-art/DeterminFlow` | `8ad68863` | Multi-dimensional audit evidence | 2026-10-27T20:01:14.889Z |
 | `learn-github-sunbigfly-ppt-agent-skills` | `https://github.com/sunbigfly/ppt-agent-skills` | `13e35377` | Multi-dimensional audit evidence | 2026-10-27T20:01:17.007Z |
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `bf81a4c2` | Multi-dimensional audit evidence | 2026-10-27T20:01:23.256Z |
+| `learn-github-internet-development-www-sacred` | `https://github.com/internet-development/www-sacred` | `a4412efd` | Multi-dimensional audit evidence | 2026-10-27T20:04:44.166Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `f75ea631` | Multi-dimensional audit evidence | 2026-10-27T20:04:46.222Z |
+| `learn-github-stakater-reloader` | `https://github.com/stakater/Reloader` | `41b3ad27` | Multi-dimensional audit evidence | 2026-10-27T20:04:49.929Z |

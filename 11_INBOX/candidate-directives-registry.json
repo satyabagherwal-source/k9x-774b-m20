@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T19:32:08.210Z",
+  "last_updated": "2026-10-27T20:04:44.174Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3038,6 +3038,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-seekstorm-seekstorm"
+    },
+    {
+      "id": "CD-6S5Q",
+      "directive_title": "Empirical Invariant Guard in .gitignore",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "internet-development/www-sacred",
+      "source_commit": "a4412efd",
+      "date_staged": "2026-10-27",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-internet-development-www-sacred"
     }
   ]
 }

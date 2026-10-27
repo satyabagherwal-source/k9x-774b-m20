@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T20:01:23.193Z",
+  "last_updated": "2026-10-27T20:04:49.888Z",
   "total_verified_learnings": 1149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3462,8 +3462,8 @@
       "slug": "astral-sh-uv",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/uv",
-      "source_version": "656d02b6",
-      "content_hash": "58805b16afc68a067fb425e9fb60a3a66ad7f70bb284f9ba7464263db35e8fc6",
+      "source_version": "f75ea631",
+      "content_hash": "53db82dd5c199b79f25a16445567e0408c309cfc3c00f52fa22b5141b2c0732c",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "promoted_rules": [
@@ -3516,6 +3516,11 @@
           "number": 4534,
           "title": "Disable automatic rebase scans in uv-dev (#22918)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4981,
+          "title": "Let `--no-package` and `--script` take precedence over `UV_INIT_BUILD_BACKEND` (",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3523,7 +3528,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T01:55:35.148Z",
+      "verified_at": "2026-10-27T20:04:46.171Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29882,8 +29887,8 @@
       "slug": "internet-development-www-sacred",
       "platform": "github",
       "source_url": "https://github.com/internet-development/www-sacred",
-      "source_version": "a288a847",
-      "content_hash": "9e74309fc3cf6ce083170890feb23731979a57d91c4fd6edeae06c27d6e66ae0",
+      "source_version": "a4412efd",
+      "content_hash": "1f65b77c9ca49a96848cababb2cfbb92e71e14868da97198b296b2911e6d58f0",
       "dossier_path": "07_PROJECT_LEARNING/internet-development-www-sacred-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/internet-development-www-sacred-learnings.md",
       "promoted_rules": [
@@ -29898,7 +29903,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:45:22.539Z",
+      "verified_at": "2026-10-27T20:04:44.108Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48016,8 +48021,8 @@
       "slug": "stakater-reloader",
       "platform": "github",
       "source_url": "https://github.com/stakater/Reloader",
-      "source_version": "437d18a6",
-      "content_hash": "beef5a6d18bef7e86fd5cf2e40228ed0bdd81190efb88c256e8ca024af32bca9",
+      "source_version": "41b3ad27",
+      "content_hash": "36ad7fe4771c4abd45642121dc6a078eed3946c03ef1f449ac5dd7fa3b4583d9",
       "dossier_path": "07_PROJECT_LEARNING/stakater-reloader-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/stakater-reloader-learnings.md",
       "promoted_rules": [
@@ -48035,6 +48040,11 @@
           "number": 4640,
           "title": "keep floating builder image tag",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4982,
+          "title": "Merge pull request #1261 from stakater/chore/chart-2.2.19",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48042,7 +48052,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T18:12:30.735Z",
+      "verified_at": "2026-10-27T20:04:49.879Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -137853,6 +137863,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T20:01:23.181Z"
+    },
+    "rule-4981": {
+      "learning_id": "rule-4981",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4981,
+      "title": "Let `--no-package` and `--script` take precedence over `UV_INIT_BUILD_BACKEND` (",
+      "source_url": "https://github.com/astral-sh/uv",
+      "source_version": "f75ea631",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:04:46.171Z"
+    },
+    "rule-4982": {
+      "learning_id": "rule-4982",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4982,
+      "title": "Merge pull request #1261 from stakater/chore/chart-2.2.19",
+      "source_url": "https://github.com/stakater/Reloader",
+      "source_version": "41b3ad27",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:04:49.879Z"
     }
   },
   "aliases": {

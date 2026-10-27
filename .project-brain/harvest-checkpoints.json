@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T20:01:23.266Z",
+  "last_updated": "2026-10-27T20:04:49.936Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5616,14 +5616,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-internet-development-www-sacred",
-      "content_hash": "9e74309fc3cf6ce083170890feb23731979a57d91c4fd6edeae06c27d6e66ae0",
-      "verified_at": "2026-10-18T23:45:22.592Z",
+      "content_hash": "1f65b77c9ca49a96848cababb2cfbb92e71e14868da97198b296b2911e6d58f0",
+      "verified_at": "2026-10-27T20:04:44.178Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:45:22.592Z"
+      "last_updated": "2026-10-27T20:04:44.178Z"
     },
     "Rigellute/spotify-tui": {
       "repository": "Rigellute/spotify-tui",
@@ -9861,14 +9861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-stakater-reloader",
-      "content_hash": "beef5a6d18bef7e86fd5cf2e40228ed0bdd81190efb88c256e8ca024af32bca9",
-      "verified_at": "2026-10-26T18:12:30.853Z",
+      "content_hash": "36ad7fe4771c4abd45642121dc6a078eed3946c03ef1f449ac5dd7fa3b4583d9",
+      "verified_at": "2026-10-27T20:04:49.935Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T18:12:30.853Z"
+      "last_updated": "2026-10-27T20:04:49.935Z"
     },
     "amir1376/ab-download-manager": {
       "repository": "amir1376/ab-download-manager",
@@ -11766,14 +11766,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-uv",
-      "content_hash": "58805b16afc68a067fb425e9fb60a3a66ad7f70bb284f9ba7464263db35e8fc6",
-      "verified_at": "2026-10-26T01:55:35.234Z",
+      "content_hash": "53db82dd5c199b79f25a16445567e0408c309cfc3c00f52fa22b5141b2c0732c",
+      "verified_at": "2026-10-27T20:04:46.229Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T01:55:35.234Z"
+      "last_updated": "2026-10-27T20:04:46.229Z"
     },
     "thaw-app/Thaw": {
       "repository": "thaw-app/Thaw",

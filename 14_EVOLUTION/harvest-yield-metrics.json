@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T20:01:23.261Z",
-  "total_cycles_completed": 5494,
-  "total_learnings_persisted": 5494,
-  "total_rules_promoted": 4892,
+  "last_updated": "2026-10-27T20:04:49.933Z",
+  "total_cycles_completed": 5497,
+  "total_learnings_persisted": 5497,
+  "total_rules_promoted": 4894,
   "history": [
-    {
-      "timestamp": "2026-10-27T13:22:18.506Z",
-      "repository": "kumahq/kuma",
-      "learningId": "learn-github-kumahq-kuma",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:22:24.534Z",
-      "repository": "ClickHouse/ClickHouse",
-      "learningId": "learn-github-clickhouse-clickhouse",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:25:16.262Z",
-      "repository": "Xudong-Huang/may",
-      "learningId": "learn-github-xudong-huang-may",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T13:25:18.693Z",
       "repository": "axios/axios",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-27T20:01:23.261Z",
       "repository": "temporalio/temporal",
       "learningId": "learn-github-temporalio-temporal",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T20:04:44.175Z",
+      "repository": "internet-development/www-sacred",
+      "learningId": "learn-github-internet-development-www-sacred",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T20:04:46.226Z",
+      "repository": "astral-sh/uv",
+      "learningId": "learn-github-astral-sh-uv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T20:04:49.933Z",
+      "repository": "stakater/Reloader",
+      "learningId": "learn-github-stakater-reloader",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

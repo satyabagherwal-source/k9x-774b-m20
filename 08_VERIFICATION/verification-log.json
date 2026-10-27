@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-X8VU",
-    "timestamp": "2026-10-25T22:13:56.922Z",
-    "repository": "tauri-apps/tauri",
-    "learningId": "learn-github-tauri-apps-tauri",
-    "contentHash": "570d1c8c5df1574ce90b6527f03aae518b9ab687e55f2419fa2121d93241f58e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-X90N",
-    "timestamp": "2026-10-25T22:13:57.095Z",
-    "repository": "dragonflydb/dragonfly",
-    "learningId": "learn-github-dragonflydb-dragonfly",
-    "contentHash": "0121de5004a5c6dc2f80afcb8a215a8c0207e7b2c680abd636a374a41faac495",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-ZY1A",
-    "timestamp": "2026-10-25T22:16:02.830Z",
-    "repository": "NaiveAI/Naive-N0.5-Flash",
-    "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
-    "contentHash": "d0cb0ed7b0ade4acc1161688655171875022495dde7d8ae18f77f679155ef075",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-AFA0",
     "timestamp": "2026-10-25T22:24:11.736Z",
     "repository": "franken-ui/ui",
@@ -7490,6 +7445,51 @@
     "repository": "temporalio/temporal",
     "learningId": "learn-github-temporalio-temporal",
     "contentHash": "ee3e8e0c350383f2da3b4b9a7f6b863f5b32188503267f0ddac0bf1f3023c7b4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-6S5F",
+    "timestamp": "2026-10-27T20:04:44.163Z",
+    "repository": "internet-development/www-sacred",
+    "learningId": "learn-github-internet-development-www-sacred",
+    "contentHash": "1f65b77c9ca49a96848cababb2cfbb92e71e14868da97198b296b2911e6d58f0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-6TQJ",
+    "timestamp": "2026-10-27T20:04:46.219Z",
+    "repository": "astral-sh/uv",
+    "learningId": "learn-github-astral-sh-uv",
+    "contentHash": "53db82dd5c199b79f25a16445567e0408c309cfc3c00f52fa22b5141b2c0732c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-6WLI",
+    "timestamp": "2026-10-27T20:04:49.926Z",
+    "repository": "stakater/Reloader",
+    "learningId": "learn-github-stakater-reloader",
+    "contentHash": "36ad7fe4771c4abd45642121dc6a078eed3946c03ef1f449ac5dd7fa3b4583d9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

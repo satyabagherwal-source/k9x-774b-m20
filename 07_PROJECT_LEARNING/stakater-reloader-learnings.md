@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/stakater-reloader-learnings.md`  
 > **Source**: github ([https://github.com/stakater/Reloader](https://github.com/stakater/Reloader))  
-> **Source Version**: `437d18a6`  
+> **Source Version**: `41b3ad27`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T18:12:30.237Z  
+> **Timestamp**: 2026-10-27T20:04:49.640Z  
 > **Learning ID**: `learn-github-stakater-reloader`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/stakater-reloader-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/stakater/Reloader](https://github.com/stakater/Reloader))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T18:12:26.182Z  
+> **Harvest Timestamp**: 2026-10-27T20:04:49.225Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1460,13 +1460,11 @@ func GenerateSHA(data string) string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1258** (2026-10-26): **chore: bump Go to 1.26.10 for eMudhra CA distrust (CVE-2026-111943)**
-  *Symptoms*: ## Problem Private keys for 8 eMudhra intermediate CAs were compromised ([CVE-2026-111943](https://hol.org/blog/cve-2026-111943-emudhra-ca-key-compromise-go-certifi-node-java), GO-2026-6809). Go 1.26.10 adds a `crypto/x509` denylist so any chain through those intermediates fails verification. Older toolchains still trust them, so our binaries would accept certificates minted with the leaked keys.  ## Solution Bump the `go` directive to 1.26.10. The builder image keeps its floating tag: the official `golang` image sets `GOTOOLCHAIN=local`, so a stale cached image fails the build (`go.mod requires go >= 1.26.10`) instead of shipping an unpatched binary.  ## Before/After | | Before | After | |---|---|---| | `go.mod` | `go 1.26.9` | `go 1.26.10` |  Example: a TLS call to a server presenting a chain via one of the compromised eMudhra intermediates now fails certificate verification instead of succeeding.  The fix only reaches users after a new release image is built and deployed.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #1261** (2026-10-27): **chore: bump Helm chart to 2.2.19 (appVersion v1.4.23)**
+  *Symptoms*: ## Problem `v1.4.23` ships the Go 1.26.10 rebuild (#1258) that distrusts the compromised eMudhra intermediates (CVE-2026-111943), plus the fixes merged since `v1.4.22`. The chart still deploys `v1.4.22`.  ## Solution Point the chart at `v1.4.23` and bump the chart version. The `release/helm-chart` label publishes it on merge.  ## Before/After | | Before | After | |---|---|---| | Chart `version` | `2.2.18` | `2.2.19` | | `appVersion`, `image.tag`, version label | `v1.4.22` | `v1.4.23` |  Example: `helm upgrade reloader stakater/reloader --version 2.2.19` deploys `ghcr.io/stakater/reloader:v1.4.23`.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
-- **Issue #1256** (2026-10-26): **chore(chart): tighten metadata Role RBAC for reloader-meta-info**
-  *Symptoms*: Tighten the ConfigMap RBAC rules for <release>-metadata-role according to least-privilege principles:  - Drop unused list and watch verbs (which are unused by Reloader in its own deployment namespace). - Restrict get and update to esourceNames: ["reloader-meta-info"], where Reloader writes startup metadata. - Retain create without esourceNames (as resourceNames restrictions are not supported on create in Kubernetes RBAC).  This mirrors the existing lease lock least-privilege scoping in the same Role.  Closes #1221 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- pr-title-freeze --> Thank you for your contribution. The `master` branch is in feature freeze and accepts only `fix:` and `chore:` pull requests.  - For a bug fix or maintenance change, update the title to begin with `fix:` or `chore:`, for example `fix(chart): correct probe port`. - For a new feature, change the base branch of this pull request to `v2`, the active development branch.  For more details, see [Branches and PR titles](https://github.com/stakater/Reloader/blob/master/README.md#branches-and-pr-titles). 
+- **Issue #1260** (2026-10-27): **chore: bump Go to 1.26.10 for eMudhra CA distrust (CVE-2026-111943)**
+  *Symptoms*: ## Problem Private keys for 8 eMudhra intermediate CAs were compromised ([CVE-2026-111943](https://hol.org/blog/cve-2026-111943-emudhra-ca-key-compromise-go-certifi-node-java), GO-2026-6809). Go 1.26.10 adds a `crypto/x509` denylist so any chain through those intermediates fails verification. The v2 line is on 1.26.8, which still trusts them. Master was bumped in #1258; this brings v2 in line.  ## Solution Bump the `go` directive to 1.26.10. The builder image keeps its floating `golang:1.26` tag: the `golang` image sets `GOTOOLCHAIN=local`, so a stale cached image fails the build (`go.mod requires go >= 1.26.10`) instead of shipping an unpatched binary.  ## Before/After | | Before | After | |---|---|---| | `go.mod` | `go 1.26.8` | `go 1.26.10` |  Example: a TLS call to a server presenting a chain via one of the compromised eMudhra intermediates now fails certificate verification instead of succeeding.  The fix only reaches users after the next v2 release is built and published.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1483,34 +1481,99 @@ func GenerateSHA(data string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `18cdbf14` (2026-10-26)
-**Commit Message**: chore: keep floating builder image tag
+### Incident Patch 1: `41b3ad27` (2026-10-27)
+**Commit Message**: Merge pull request #1261 from stakater/chore/chart-2.2.19
 
-go.mod enforces 1.26.10 and the golang image sets GOTOOLCHAIN=local,
-so a stale image fails the build rather than shipping unpatched.
+chore: bump Helm chart to 2.2.19 (appVersion v1.4.23)
+
+**File**: `deployments/kubernetes/chart/reloader/Chart.yaml` (modified, +2/-2)
+```diff
+@@ -1,8 +1,8 @@
+ apiVersion: v1
+ name: reloader
+ description: Reloader chart that runs on kubernetes
+-version: 2.2.18
+-appVersion: v1.4.22
++version: 2.2.19
++appVersion: v1.4.23
+ keywords:
+   - Reloader
+   - kubernetes
+```
+
+**File**: `deployments/kubernetes/chart/reloader/values.yaml` (modified, +2/-2)
+```diff
+@@ -19,7 +19,7 @@ fullnameOverride: ""
+ image:
+   name: stakater/reloader
+   repository: ghcr.io/stakater/reloader
+-  tag: v1.4.22
++  tag: v1.4.23
+   # digest: sha256:1234567
+   # repository, tag and digest are rendered with tpl, so they may reference other values.
+   pullPolicy: IfNotPresent
+@@ -152,7 +152,7 @@ reloader:
+     labels:
+       provider: stakater
+       group: com.stakater.platform
+-      version: v1.4.22
++      version: v1.4.23
+     # Support for extra environment variables.
+     env:
+       # Open supports Key value pair as environment variables.
+```
+
+---
+
+### Incident Patch 2: `242c4c48` (2026-10-27)
+**Commit Message**: chore: bump Helm chart to 2.2.19 (appVersion v1.4.23)
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `Dockerfile` (modified, +1/-1)
+**File**: `deployments/kubernetes/chart/reloader/Chart.yaml` (modified, +2/-2)
 ```diff
-@@ -2,7 +2,7 @@ ARG BUILDER_IMAGE
- ARG BASE_IMAGE
- 
- # Build the manager binary
--FROM --platform=${BUILDPLATFORM} ${BUILDER_IMAGE:-golang:1.26.10} AS builder
-+FROM --platform=${BUILDPLATFORM} ${BUILDER_IMAGE:-golang:1.26} AS builder
- 
- ARG TARGETOS
- ARG TARGETARCH
+@@ -1,8 +1,8 @@
+ apiVersion: v1
+ name: reloader
+ description: Reloader chart that runs on kubernetes
+-version: 2.2.18
+-appVersion: v1.4.22
++version: 2.2.19
++appVersion: v1.4.23
+ keywords:
+   - Reloader
+   - kubernetes
+```
+
+**File**: `deployments/kubernetes/chart/reloader/values.yaml` (modified, +2/-2)
+```diff
+@@ -19,7 +19,7 @@ fullnameOverride: ""
+ image:
+   name: stakater/reloader
+   repository: ghcr.io/stakater/reloader
+-  tag: v1.4.22
++  tag: v1.4.23
+   # digest: sha256:1234567
+   # repository, tag and digest are rendered with tpl, so they may reference other values.
+   pullPolicy: IfNotPresent
+@@ -152,7 +152,7 @@ reloader:
+     labels:
+       provider: stakater
+       group: com.stakater.platform
+-      version: v1.4.22
++      version: v1.4.23
+     # Support for extra environment variables.
+     env:
+       # Open supports Key value pair as environment variables.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1261** (2026-10-27): chore: bump Helm chart to 2.2.19 (appVersion v1.4.23) (@msafwankarim)
+- **PR #1260** (2026-10-27): chore: bump Go to 1.26.10 for eMudhra CA distrust (CVE-2026-111943) (@msafwankarim)
+- **PR #1259** (2026-10-27): Bump version to 1.4.23 on release-v1.4.23 branch (@github-actions[bot])
 - **PR #1258** (2026-10-26): chore: bump Go to 1.26.10 for eMudhra CA distrust (CVE-2026-111943) (@msafwankarim)
 - **PR #1256** (closed): chore(chart): tighten metadata Role RBAC for reloader-meta-info (@Hrushikesh-ramilla)
 - **PR #1255** (closed): fix(chart): make NetworkPolicy egress ports configurable (@Hrushikesh-ramilla)
-- **PR #1254** (2026-10-22): chore(chart): bump enterprise console to 0.0.42 (@msafwankarim)
-- **PR #1253** (closed): chore(chart): expose deployment update strategy in values (@Hrushikesh-ramilla)
-- **PR #1252** (2026-10-22): fix: isolate metrics port from pprof and expvar handlers (#1251) (@Hrushikesh-ramilla)
 
 ---
 
@@ -1530,28 +1593,30 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. keep floating builder image tag
+## X. Merge pull request #1261 from stakater/chore/chart-2.2.19
 
 **RULE**:
-When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in stakater/Reloader. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `deployments/kubernetes/chart/reloader/Chart.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in stakater/Reloader. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `18cdbf14`: keep floating builder image tag. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `41b3ad27`: Merge pull request #1261 from stakater/chore/chart-2.2.19. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `deployments/kubernetes/chart/reloader/Chart.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-FROM --platform=${BUILDPLATFORM} ${BUILDER_IMAGE:-golang:1.26} AS builder
+version: 2.2.19
+appVersion: v1.4.23
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-FROM --platform=${BUILDPLATFORM} ${BUILDER_IMAGE:-golang:1.26.10} AS builder
+version: 2.2.18
+appVersion: v1.4.22
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `18cdbf14` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `41b3ad27` are properly handled with clean fallback behavior.
