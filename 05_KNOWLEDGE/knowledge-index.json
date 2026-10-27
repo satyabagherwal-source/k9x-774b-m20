@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T21:01:44.891Z",
+  "last_updated": "2026-10-27T21:08:29.515Z",
   "total_verified_learnings": 1149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12799,8 +12799,8 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "cfa33f54",
-      "content_hash": "f78e5b11f293bd8d42d3d1a941b275bf52cc70234f906452905f0899303c0a7d",
+      "source_version": "19bf3803",
+      "content_hash": "ac61b906db70a97e4c52176d48a309e367a491ba2daf7cf6c6d6029f084a88ff",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
@@ -12853,6 +12853,11 @@
           "number": 4671,
           "title": "Isolation of Global Flag-Registering Packages in Modular Binaries",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5011,
+          "title": "copying of kind cluster kubeconfigs (#16080)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12860,7 +12865,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T09:13:31.568Z",
+      "verified_at": "2026-10-27T21:08:29.497Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29474,8 +29479,8 @@
       "slug": "iii-hq-iii",
       "platform": "github",
       "source_url": "https://github.com/iii-hq/iii",
-      "source_version": "9dc4f03b",
-      "content_hash": "e20b63c5e16ab5c924e420a0dd22ca28260d4e16c283fbe58bd1b953bb247845",
+      "source_version": "8dd73dfc",
+      "content_hash": "b5e66c44870e7ad4f7aa2e75d3070180deb2f7ae16324143ae0ffd512060e696",
       "dossier_path": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "promoted_rules": [
@@ -29513,6 +29518,11 @@
           "number": 4554,
           "title": "docs: add @iziang to contributors.md",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5010,
+          "title": "sdk): patch happy-dom and zod security advisories (#2400)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -29520,7 +29530,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T03:03:41.293Z",
+      "verified_at": "2026-10-27T21:08:23.079Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -138406,6 +138416,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T21:01:44.878Z"
+    },
+    "rule-5010": {
+      "learning_id": "rule-5010",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5010,
+      "title": "sdk): patch happy-dom and zod security advisories (#2400)",
+      "source_url": "https://github.com/iii-hq/iii",
+      "source_version": "8dd73dfc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:08:23.079Z"
+    },
+    "rule-5011": {
+      "learning_id": "rule-5011",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5011,
+      "title": "copying of kind cluster kubeconfigs (#16080)",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "19bf3803",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:08:29.497Z"
     }
   },
   "aliases": {

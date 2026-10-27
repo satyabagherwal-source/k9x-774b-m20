@@ -2173,10 +2173,10 @@
     "repository": "iii-hq/iii",
     "platform": "github",
     "sourceUrl": "https://github.com/iii-hq/iii",
-    "sourceVersion": "9dc4f03b",
+    "sourceVersion": "8dd73dfc",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "e20b63c5e16ab5c924e420a0dd22ca28260d4e16c283fbe58bd1b953bb247845",
-    "lastHarvestedAt": "2026-10-26T03:03:41.354Z",
+    "contentHash": "b5e66c44870e7ad4f7aa2e75d3070180deb2f7ae16324143ae0ffd512060e696",
+    "lastHarvestedAt": "2026-10-27T21:08:23.167Z",
     "learningId": "learn-github-iii-hq-iii"
   },
   "crawlseo-crawlseo": {
@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "cfa33f54",
+    "sourceVersion": "19bf3803",
     "license": "Apache-2.0",
-    "contentHash": "f78e5b11f293bd8d42d3d1a941b275bf52cc70234f906452905f0899303c0a7d",
-    "lastHarvestedAt": "2026-10-27T09:13:31.640Z",
+    "contentHash": "ac61b906db70a97e4c52176d48a309e367a491ba2daf7cf6c6d6029f084a88ff",
+    "lastHarvestedAt": "2026-10-27T21:08:29.589Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {

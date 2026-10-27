@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-H4E4",
-    "timestamp": "2026-10-25T23:53:23.068Z",
-    "repository": "Qwen/Qwen3-VL-8B-Instruct",
-    "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-    "contentHash": "fe24084134d320bc63ff45261775c72a5a768ca4490dd1c4b08f3ed225856d17",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-HBOM",
-    "timestamp": "2026-10-25T23:53:32.518Z",
-    "repository": "prof18/feed-flow",
-    "learningId": "learn-github-prof18-feed-flow",
-    "contentHash": "f5717861eb2627527ec3f695c9a33030a8c950d4e212ccdee83773800619b246",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-XDJI",
     "timestamp": "2026-10-26T00:06:01.422Z",
     "repository": "tencent/Hy-Memory-30B-A3B",
@@ -7490,6 +7460,36 @@
     "repository": "trailbaseio/trailbase",
     "learningId": "learn-github-trailbaseio-trailbase",
     "contentHash": "24f5f8ab3087723efbbf775ae4e23fac2ebc3ecd11bfbf33faebbd4557996a82",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-GMWS",
+    "timestamp": "2026-10-27T21:08:23.164Z",
+    "repository": "iii-hq/iii",
+    "learningId": "learn-github-iii-hq-iii",
+    "contentHash": "b5e66c44870e7ad4f7aa2e75d3070180deb2f7ae16324143ae0ffd512060e696",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-GRV5",
+    "timestamp": "2026-10-27T21:08:29.585Z",
+    "repository": "gardener/gardener",
+    "learningId": "learn-github-gardener-gardener",
+    "contentHash": "ac61b906db70a97e4c52176d48a309e367a491ba2daf7cf6c6d6029f084a88ff",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

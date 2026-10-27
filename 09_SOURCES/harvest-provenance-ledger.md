@@ -5552,3 +5552,5 @@ Every entry in this ledger must capture:
 | `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `a38f4c6c` | Multi-dimensional audit evidence | 2026-10-27T21:01:37.915Z |
 | `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `b396bd00` | Multi-dimensional audit evidence | 2026-10-27T21:01:37.974Z |
 | `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `aca78520` | Multi-dimensional audit evidence | 2026-10-27T21:01:44.951Z |
+| `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `8dd73dfc` | Multi-dimensional audit evidence | 2026-10-27T21:08:23.167Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `19bf3803` | Multi-dimensional audit evidence | 2026-10-27T21:08:29.589Z |

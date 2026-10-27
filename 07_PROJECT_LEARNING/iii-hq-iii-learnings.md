@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source**: github ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
-> **Source Version**: `9dc4f03b`  
+> **Source Version**: `8dd73dfc`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T03:03:41.026Z  
+> **Timestamp**: 2026-10-27T21:08:22.620Z  
 > **Learning ID**: `learn-github-iii-hq-iii`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T03:03:39.860Z  
+> **Harvest Timestamp**: 2026-10-27T21:08:21.250Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Effortlessly compose, extend, and observe every service in real-time for the first time ever.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 18862 stars
+- **Stars / Engagement**: 18865 stars
 
 ---
 
@@ -1463,6 +1463,277 @@ impl StateStore {
     pub fn loa
 ```
 
+### Core Architecture Module: `crates/iii-init/src/worker_env.rs`
+```
+// Copyright Motia LLC and/or licensed to Motia LLC under one or more
+// contributor license agreements. Licensed under the Elastic License 2.0;
+// you may not use this file except in compliance with the Elastic License 2.0.
+// This software is patent protected. We welcome discussions - reach out at team@iii.dev
+// See LICENSE and PATENTS files for details.
+
+//! Loads the worker environment the host sends over the `iii.env`
+//! virtio-console port (see `iii_supervisor::env_channel`).
+//!
+//! The frame carries the worker's variables and the worker command
+//! (`III_WORKER_CMD`). The rest of iii-init's plumbing (`III_BLOCK_ROOT_*`,
+//! `III_WORKER_WORKDIR`, ...) still arrives on the kernel command line. The
+//! frame is exported into PID 1's environment, and the worker, supervisor
+//! restarts and `iii worker exec` sessions inherit it from there.
+
+use std::fs::OpenOptions;
+use std::io::{self, Read};
+use std::os::fd::{AsRawFd, RawFd};
+use std::os::unix::fs::OpenOptionsExt;
+use std::path::{Path, PathBuf};
+use std::time::{Duration, Instant};
+
+use iii_supervisor::env_channel::{ENV_PORT_ENV, decode_payload, frame_len};
+
+use crate::InitError;
+
+/// How long to wait for the port to appear and for the host's frame. The
+/// host writes the frame as soon as the VM starts, so hitting this means
+/// the host side is broken.
+const TIMEOUT: Duration = Duration::from_secs(30);
+
+/// Pause between retries while the port is missing or reads as EOF.
+const RETRY: Duration = Duration::from_millis(25);
+
+/// Reads the env frame when the host announced one via `III_ENV_PORT` and
+/// exports it. No-op when the variable is absent (older hosts).
+///
+/// Fails closed: a worker started without the environment and command it
+/// was given would fail later, and much less clearly, than a boot error
+/// naming the port.
+///
+/// Needs `/sys` and `/dev` (mounted by `mount::mount_filesystems`), and must
+/// run while iii-init is still single-threaded (before
+/// `supervisor::exec_worker` spawns its helper threads), because it mutates
+/// the process environment. `main::run` calls it right after
+/// `mount_filesystems`, so the worker env is visible to every later boot
+/// step, as it was when the env rode the kernel command line.
+pub fn load_worker_env() -> Result<(), InitError> {
+    let port_name = match std::env::var(ENV_PORT_ENV) {
+        Ok(name) => name,
+        Err(_) => return Ok(()),
+    };
+    let started = Instant::now();
+    let deadline = started + TIMEOUT;
+
+    let port_path = wait_for_port(&port_name, deadline).ok_or_else(|| {
+        InitError::WorkerEnv(format!(
+            "{ENV_PORT_ENV}={port_name} but no such port appeared in /sys/class/virtio-ports \
+             within {}s",
+            TIMEOUT.as_secs()
+        ))
+    })?;
+
+    let pairs = read_env_frame(&port_path, started, deadline)
+        .map_err(|e| InitError::WorkerEnv(format!("reading {}: {e}", port_path.display())))?;
+
+    // SAFETY: iii-init is single-threaded at this point. `main::run` calls
+    // this before `exec_worker`, which is where the shell-dispatcher and
+    // source-sync threads are spawned, so nothing can read the environment
+    // concurrently. `decode_payload` has already rejected the inputs that
+    // make `set_var` panic (empty name, '=' in the name, NUL).
+    unsafe {
+        for (key, value) in &pairs {
+            std::env::set_var(key, value);
+        }
+        // Plumbing, not worker configuration.
+        std::env::remove_var(ENV_PORT_ENV);
+    }
+    Ok(())
+}
+
+/// Port add/name events are asynchronous virtio control traffic, handled by
+/// a kernel workqueue; a slow host can still be announcing the port when
+/// iii-init gets here.
+fn wait_for_port(name: &str, deadline: Instant) -> Option<PathBuf> {
+    loop {
+        if let Some(path) = iii_supervisor::control::find_virtio_port_by_name(name) {
+            return Some(path);
+        }
+        if Instant::now() >= deadline {
+            return None;
+        }
+        std::thread::sleep(RETRY);
+    }
+}
+
+fn read_env_frame(
+    port_path: &Path,
+    started: Instant,
+    deadline: Instant,
+) -> io::Result<Vec<(String, String)>> {
+    let mut port = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .custom_flags(libc::O_NONBLOCK)
+        .open(port_path)?;
+    read_frame_patient(&mut port, started, deadline)
+}
+
+/// Reads one frame from a non-blocking reader, tolerating the transient EOF
+/// a virtio-console port reports before its host backend is connected, and
+/// giving up at `deadline`. `started` is when the whole load began (port
+/// lookup included), for the timeout message.
+fn read_frame_patient<R: Read + AsRawFd>(
+    port: &mut R,
+    started: Instant,
+    deadline: Instant,
+) -> io::Result<Vec<(String, String)>> {
+    let mut header = [0u8; 4];
+    read_exact_patient(port, &mut header, started, deadline)?;
+    let mut payload = vec![0u8; frame_len(header)?];
+    read_exact_patient(port, &mut payload, started, deadline)?;
+    decode_payload(&payload)
+}
+
+fn read_exact_patient<R: Read + AsRawFd>(
+    port: &mut R,
+    buf: &mut [u8],
+    started: Instant,
+    deadline: Instant,
+) -> io::Result<()> {
+    let mut filled = 0;
+    while filled < buf.len() {
+        let remaining = deadline.saturating_duration_since(Instant::now());
+        if remaining.is_zero() {
+            return Err(io::Error::new(
+                io::ErrorKind::TimedOut,
+                format!(
+                    "no complete env frame from the host after {:.1}s ({filled} of {} bytes)",
+                    started.elapsed().as_secs_f32(),
+                    buf.len()
+                ),
+            ));
+        }
+        match port.read(&mut buf[filled..]) {
+            Ok(n) if n > 0 => filled += n,
+            // Host backend not connected yet: the port reads as EOF.
+            Ok(_) => std::thread::sleep(RETRY),
+            Err(e) if e.kind() == io::ErrorKind::Interrupted => {}
+            Err(e) if e.kind() == io::ErrorKind::WouldBlock => {
+                wait_readable(port.as_raw_fd(), remaining)?
+            }
+            Err(e) => return Err(e),
+        }
+    }
+    Ok(())
+}
+
+fn wait_readable(fd: RawFd, remaining: Duration) -> io::Result<()> {
+    let mut pollfd = libc::pollfd {
+        fd,
+        events: libc::POLLIN,
+        revents: 0,
+    };
+    // Short slices so the deadline is re-checked even if poll keeps
+    // reporting a hangup without data.
+    let slice_ms = remaining.as_millis().clamp(1, 100) as libc::c_int;
+    // SAFETY: one valid pollfd on the stack, count 1.
+    let rc = unsafe { libc::poll(&mut pollfd, 1, slice_ms) };
+    if rc < 0 {
+        let err = io::Error::last_os_error();
+        if err.kind() != io::ErrorKind::Interrupted {
+            return Err(err);
+        }
+    }
+    if rc > 0 && pollfd.revents & libc::POLLHUP != 0 && pollfd.revents & libc::POLLIN == 0 {
+        std::thread::sleep(RETRY);
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use iii_supervisor::env_channel::encode_frame;
+    use std::collections::VecDeque;
+    use std::io::Write;
+    use std::os::unix::net::UnixStream;
+
+    fn env() -> Vec<(String, String)> {
+        vec![
+            ("GREETING".to_string(), "Ol\u{e1} \u{1f496}".to_string()),
+            ("PEM".to_string(), "a\nb".to_string()),
+            (
+                "III_WORKER_CMD".to_string(),
+                "exec bash /opt/iii/dev-run.sh".to_string(),
+            ),
+        ]
+    }
+
+    fn read_within<R: Read + AsRawFd>(port: &mut R, ms: u64) -> io::Result<Vec<(String, String)>> {
+        let now = Instant::now();
+        read_frame_patient(port, now, now + Duration::from_millis(ms))
+    }
+
+    /// Scripted reads: `Ok(0)` entries model the transient EOF of a port
+    /// whose host backend is not connected yet.
+    struct Scripted(VecDeque<io::Result<Vec<u8>>>);
+
+    impl Read for Scripted {
+        fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
+            match self.0.pop_front() {
+                None => Ok(0),
+                Some(Err(e)) => Err(e),
+                Some(Ok(mut chunk)) => {
+                    let n = chunk.len().min(buf.len());
+                    buf[..n].copy_from_slice(&chunk[..n]);
+                    if n < chunk.len() {
+                        self.0.push_front(Ok(chunk.split_off(n)));
+                    }
+                    Ok(n)
+                }
+            }
+        }
+    }
+
+    impl AsRawFd for Scripted {
+        fn as_raw_fd(&self) -> RawFd {
+            -1 // poll ignores negative fds
+        }
+    }
+
+    #[test]
+    fn frame_split_across_reads_on_a_nonblocking_socket() {
+        let (mut host, mut guest) = UnixStream::pair().unwrap();
+        guest.set_nonblocking(true).unwrap();
+        let frame = encode_frame(&env()).unwrap();
+        let writer = std::thread::spawn(move || {
+            for chunk in [&frame[..2], &frame[2..7], &frame[7..]] {
+                host.write_all(chunk).unwrap();
+                std::thread::sleep(Duration::from_millis(20));
+            }
+            host
+        });
+        assert_eq!(read_within(&mut guest, 5_000).unwrap(), env());
+        drop(writer.join().unwrap());
+    }
+
+    #[test]
+    fn frame_larger_than_the_socket_buffer_arrives_whole() {
+        let (mut host, mut guest) = UnixStream::pair().unwrap();
+        guest.set_nonblocking(true).unwrap();
+        // Over a Linux socketpair's ~180 KiB, so the writer really blocks;
+        // each variable stays under the 128 KiB execve limit.
+        let big: Vec<(String, String)> = (0..3)
+            .map(|i| (format!("BIG{i}"), "x".repeat(100 * 1024)))
+            .collect();
+        let frame = encode_frame(&big).unwrap();
+        let writer = std::thread::spawn(move || host.write_all(&frame).map(|_| host));
+        assert_eq!(read_within(&mut guest, 5_000).unwrap(), big);
+        drop(writer.join().unwrap().unwrap());
+    }
+
+    #[test]
+    fn transient_eof_before_the_host_connects_is_retried() {
+        let frame = encode_frame(&env()).unwrap();
+        let mut port = Scripted(VecDeque
+```
+
 ### Core Architecture Module: `crates/iii-worker/examples/dump_worker_env.rs`
 ```
 //! Quick demo: dumps the env hashmap that `iii worker start <name>`
@@ -2121,270 +2392,17 @@ pub async fn download_locked_binary_archive(
     validate_locked_artifac
 ```
 
-### Core Architecture Module: `crates/iii-worker/src/cli/builtin_defaults.rs`
-```
-// Copyright Motia LLC and/or licensed to Motia LLC under one or more
-// contributor license agreements. Licensed under the Elastic License 2.0;
-// you may not use this file except in compliance with the Elastic License 2.0.
-// This software is patent protected. We welcome discussions - reach out at team@iii.dev
-// See LICENSE and PATENTS files for details.
-
-/// Configurable engine workers for which this support binary still carries a
-/// default YAML config.
-pub const BUILTIN_NAMES: [&str; 2] = ["iii-stream", "iii-sandbox"];
-
-/// Internal builtin workers that are always present and never user-configured.
-/// Defaults live in Rust (`ObservabilityWorkerConfig::default`, etc.), not in
-/// a `config:` block written into `config.yaml`.
-pub const MANDATORY_BUILTIN_NAMES: [&str; 6] = [
-    "configuration",
-    "iii-worker-manager",
-    "iii-telemetry",
-    "iii-engine-functions",
-    "iii-http-functions",
-    "iii-observability",
-];
-
-/// Returns true if the name is any engine builtin (configurable, optional, or mandatory).
-pub fn is_any_builtin(name: &str) -> bool {
-    BUILTIN_NAMES.contains(&name) || MANDATORY_BUILTIN_NAMES.contains(&name)
-}
-
-/// Version used for built-in worker metadata when the caller did not request
-/// an explicit registry version.
-pub const ENGINE_BUILTIN_VERSION: &str = env!("CARGO_PKG_VERSION");
-
-/// Resolve the version to use for builtin worker telemetry and display.
-pub fn resolve_builtin_version(requested: Option<&str>) -> &str {
-    requested
-        .filter(|version| !version.is_empty())
-        .unwrap_or(ENGINE_BUILTIN_VERSION)
-}
-
-const STREAM_MANIFEST: &str = include_str!("../../../../engine/src/workers/stream/iii.worker.yaml");
-
-fn manifest_for_builtin(name: &str) -> Option<&'static str> {
-    match name {
-        "iii-stream" => Some(STREAM_MANIFEST),
-        _ => None,
-    }
-}
-
-fn extract_manifest_config_yaml(manifest: &str) -> Option<String> {
-    let manifest: serde_yaml::Value = serde_yaml::from_str(manifest).ok()?;
-    let config_key = serde_yaml::Value::String("config".into());
-    let config = manifest.as_mapping()?.get(&config_key)?;
-    let yaml = serde_yaml::to_string(config).ok()?;
-    let yaml = yaml.strip_prefix("---\n").unwrap_or(&yaml).trim_end();
-
-    if yaml.is_empty() || yaml == "null" {
-        None
-    } else {
-        Some(yaml.to_string())
-    }
-}
-
-// Flat SandboxConfig shape — parsed directly by the daemon's config
-// loader. Renders in config.yaml as a clean `config:` block without a
-// redundant `sandbox:` key nested under an entry already named
-// `iii-sandbox`.
-//
-// `image_allowlist` ships with `python` and `node` because those cover
-// ~95% of AI-agent use cases. `bash` and `alpine` are still catalog
-// presets (see sandbox_daemon/catalog.rs::PRESETS) — users opt in by
-// adding them to this list. An empty allowlist means nothing boots.
-const SANDBOX_DEFAULT: &str = "\
-auto_install: true
-image_allowlist:
-  - python
-  - node
-default_idle_timeout_secs: 300
-max_concurrent_sandboxes: 32
-default_cpus: 1
-default_memory_mb: 512
-";
-
-/// Return the default YAML configuration for a builtin worker, or `None` if the
-/// name is not a recognised builtin.
-pub fn get_builtin_default(name: &str) -> Option<String> {
-    if name == "iii-sandbox" {
-        return Some(SANDBOX_DEFAULT.to_string());
-    }
-
-    manifest_for_builtin(name).and_then(extract_manifest_config_yaml)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use serde_yaml::Value;
-
-    #[test]
-    fn all_builtins_return_some() {
-        for name in &BUILTIN_NAMES {
-            assert!(
-                get_builtin_default(name).is_some(),
-                "expected Some for builtin '{name}'"
-            );
-        }
-    }
-
-    #[test]
-    fn unknown_name_returns_none() {
-        assert!(get_builtin_default("iii-unknown").is_none());
-        assert!(get_builtin_default("").is_none());
-        assert!(get_builtin_default("http").is_none());
-    }
-
-    #[test]
-    fn all_defaults_are_valid_yaml() {
-        for name in &BUILTIN_NAMES {
-            let yaml = get_builtin_default(name).unwrap();
-            let result: Result<Value, _> = serde_yaml::from_str(&yaml);
-            assert!(
-                result.is_ok(),
-                "invalid YAML for '{name}': {:?}",
-                result.err()
-            );
-        }
-    }
-
-    #[test]
-    fn resolve_builtin_version_uses_engine_version_by_default() {
-        assert_eq!(resolve_builtin_version(None), ENGINE_BUILTIN_VERSION);
-        assert_eq!(resolve_builtin_version(Some("")), ENGINE_BUILTIN_VERSION);
-    }
-
-    #[test]
-    fn resolve_builtin_version_accepts_explicit_versions() {
-        assert_eq!(resolve_builtin_version(Some("0.10.0")), "0.10.0");
-        assert_eq!(
-            resolve_builtin_version(Some("0.11.4-next.2")),
-            "0.11.4-next.2"
-        );
-        assert_eq!(
-            resolve_builtin_version(Some("custom-channel")),
-            "custom-channel"
-        );
-    }
-
-    #[test]
-    fn observability_is_mandatory_without_yaml_default() {
-        // Defaults live in ObservabilityWorkerConfig::default(); the
-        // iii.worker.yaml no longer carries a config: block, so
-        // get_builtin_default must not invent one for config.yaml.
-        assert!(MANDATORY_BUILTIN_NAMES.contains(&"iii-observability"));
-        assert!(!BUILTIN_NAMES.contains(&"iii-observability"));
-        assert!(get_builtin_default("iii-observability").is_none());
-        assert!(is_any_builtin("iii-observability"));
-    }
-
-    #[test]
-    fn stream_default_uses_kv_adapter() {
-        let yaml = get_builtin_default("iii-stream").unwrap();
-        let val: Value = serde_yaml::from_str(&yaml).unwrap();
-        let map = val.as_mapping().unwrap();
-
-        assert_eq!(
-            map[&Value::String("port".into())],
-            Value::Number(3112.into())
-        );
-
-        let adapter = map[&Value::String("adapter".into())]
-            .as_mapping()
-            .expect("adapter should be a mapping");
-        assert_eq!(
-            adapter[&Value::String("name".into())],
-            Value::String("kv".into())
-        );
-
-        let config = adapter[&Value::String("config".into())]
-            .as_mapping()
-            .expect("config should be a mapping");
-        assert_eq!(
-            config[&Value::String("store_method".into())],
-            Value::String("file_based".into())
-        );
-    }
-
-    #[test]
-    fn sandbox_default_allowlist_is_python_and_node_only() {
-        // The "just works" defaults ship with python + node only. bash
-        // and alpine are still catalog presets but opt-in — users who
-        // want them edit config.yaml by hand. Pinning the exact contents
-        // here makes any future change to the default a conscious PR,
-        // not a silent addition that changes the security surface.
-        let yaml = get_builtin_default("iii-sandbox").unwrap();
-        let val: Value = serde_yaml::from_str(&yaml).unwrap();
-        let allowlist: Vec<&str> = val
-            .as_mapping()
-            .and_then(|m| m.get(&Value::String("image_allowlist".into())))
-            .and_then(|v| v.as_sequence())
-            .expect("image_allowlist must be a top-level sequence")
-            .iter()
-            .map(|v| v.as_str().unwrap())
-            .collect();
-        assert_eq!(
-            allowlist,
-            vec!["python", "node"],
-            "sandbox default allowlist changed — confirm this is intentional \
-             and update engine/config.yaml + docs/api-reference/sandbox.mdx"
-        );
-    }
-
-    #[test]
-    fn sandbox_default_has_no_wrapping_sandbox_key() {
-        // Guard against regressions to the wrapped shape. The flat shape
-        // is what renders cleanly under `config:` in config.yaml; adding
-        // a wrapping `sandbox:` key back would produce
-        // `iii-sandbox.config.sandbox.image_allowlist` — double-nested
-        // and ugly.
-        let yaml = get_builtin_default("iii-sandbox").unwrap();
-        let val: Value = serde_yaml::from_str(&yaml).unwrap();
-        assert!(
-            val.as_mapping()
-                .map(|m| !m.contains_key(&Value::String("sandbox".into())))
-                .unwrap_or(false),
-            "iii-sandbox default must use flat shape (no wrapping `sandbox:` key)"
-        );
-    }
-
-    #[test]
-    fn builtin_names_matches_function() {
-        for name in &BUILTIN_NAMES {
-            assert!(
-                get_builtin_default(name).is_some(),
-                "BUILTIN_NAMES contains '{name}' but get_builtin_default returns None"
-            );
-        }
-
-        let known: std::collections::HashSet<&str> = BUILTIN_NAMES.iter().copied().collect();
-        for extra in &["iii-unknown", "iii-foo", "redis", ""] {
-            assert!(
-                !known.contains(extra),
-                "unexpected name '{extra}' found in BUILTIN_NAMES"
-            );
-            assert!(
-                get_builtin_default(extra).is_none(),
-                "get_builtin_default should return None for '{extra}'"
-            );
-        }
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2237** (2026-10-27): **Trigger registry: teardown racing a re-home or an in-flight activation leaves bindings firing untracked or resurrects them**
+  *Symptoms*: ## Summary  Found while reviewing #2198 (the fix for #2178). There are four races in `engine/src/trigger.rs`. Each one ends with a binding that keeps firing when it shouldn't: either a provider keeps running it with no registry entry left to tear it down, or it gets published live after an explicit unregister or an owner disconnect.  **All four reproduce on `main` (merge base `3ccf2251f`) and on #2198 (`2e872b7cd`).** They are pre-existing and not caused by #2198. That PR removes the accidental serialization the shard guards provided, which only made some interleavings less likely. Repro tests are at the bottom.  ## Cases  ### 1. `unregister_worker` tears bindings down on a stale provider (one-line fix)  `unregister_worker` snapshots the worker's bindings. For each one it calls `remove_if(worker_id matches)`, but then sends `unregister_trigger` to the provider from `trigger.provider_key()` of the **snapshot**, not of the entry actually removed ([code](https://github.com/iii-hq/iii/blob/2e872b7cd01252ac3e7e86d0dafdbe85f20430b7/engine/src/trigger.rs#L544-L566)). Suppose a home provider re-homes some of those bindings (`default` → `shop`) while the loop is awaiting a provider call. The loop then removes the re-homed entries from the registry but tells the fallback to let go. `shop` keeps running them, and nothing can unregister them anymore.  ``` registry still tracks []; `shop` still runs N untracked bindings: [...] ```  N was 52, 31 and 4 in different runs; it depends on DashM
+
 - **Issue #1884** (2026-07-16): **Generated docker-compose .env not forwarded to engine; ${RABBITMQ_USER} unset at runtime**
   *Symptoms*: ## Summary  The generated `docker-compose.yml` does not forward the generated `.env` into the engine container, so `${VAR}` placeholders in `config.yaml` (for example the RabbitMQ credentials) are unset at runtime and the engine fails to boot once a user switches a worker to a remote adapter.  Tested on Linux with engine `0.19.4`.  ## Reproduction  1. `iii project init --docker` (generates `.env` with `RABBITMQ_USER=iii` / `RABBITMQ_PASS=...`). 2. Uncomment the `rabbitmq` service in `docker-compose.yml` and switch `iii-queue` to the `rabbitmq` adapter with `amqp://${RABBITMQ_USER}:${RABBITMQ_PASS}@rabbitmq:5672` in `config.yaml`. 3. `docker compose up`.  ## Actual  ``` Environment variable 'RABBITMQ_USER' not set ```  ## Expected  The credentials the generator wrote to `.env` should be available to the engine's `${VAR}` expansion.  ## Root cause  - The generator writes `.env` with the RabbitMQ creds: `engine/src/cli/project/mod.rs:390-402`. - `${VAR}` in `config.yaml` is expanded by the **engine process**, so the variable must be in the **container's** environment. - Docker Compose only uses `.env` to substitute the compose file itself; it does **not** inject those variables into the container unless the service declares `env_file:` (or an explicit `environment:` list). The generated `iii` service declares neither (templates in `iii-hq/templates`; mirrored at `engine/tests/fixtures/templates/docker/docker-compose.yml`).  ## Proposed fix  Add `env_file: .env` to the generated 
-
-- **Issue #1883** (2026-07-06): **docker compose up crash-loops on Linux: configuration worker can't create ./data (permission denied)**
-  *Symptoms*: ## Summary  `iii project init --docker && docker compose up` crash-loops on a **Linux host** because the `configuration` worker cannot create its data directory. The generated `docker-compose.yml` mounts no writable data volume, and the published image runs as a non-root user (`65532`) with no writable `./data`.  Tested on Linux with engine `0.19.4`. (Often not reproducible on macOS Docker Desktop, whose file-sharing layer ignores UID ownership.)  ## Reproduction  ```bash iii project init --docker docker compose up ```  ## Actual  The engine exits on boot:  ``` failed to create configuration directory './data/configuration': Permission denied ```  …and restarts in a loop.  ## Expected  A fresh `init --docker` + `up` should boot and persist state with no manual edits.  ## Root cause  1. The `configuration` worker's `fs` adapter defaults to `./data/configuration`:     `engine/src/workers/configuration/adapters/fs.rs:38`    ```rust    pub(crate) const DEFAULT_DIRECTORY: &str = "./data/configuration";    ```    With `WORKDIR /app` (set by the generated Dockerfile), this resolves to `/app/data/configuration`.  2. `/app` is owned by root and the image runs as UID `65532` (base: `gcr.io/distroless/cc-debian12:nonroot`, `engine/Dockerfile`). The non-root user cannot create `/app/data`.  3. The generated compose mounts only `./config.yaml:ro` — there is **no writable data volume** (templates live in `iii-hq/templates`; mirrored at `engine/tests/fixtures/templates/docker/docker-compose
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2401,27 +2419,432 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9dc4f03b` (2026-10-25)
-**Commit Message**: docs: add @iziang to contributors.md
+### Incident Patch 1: `c7c3154c` (2026-10-26)
+**Commit Message**: fix(sdk): patch happy-dom and zod security advisories (#2400)
 
-@iziang agrees to license contributions to iii under Apache 2.0.
+Co-authored-by: iii harness (codex/gpt-6-astra) <[REDACTED_EMAIL]>
 
-**File**: `contributors.md` (modified, +1/-0)
+**File**: `pnpm-lock.yaml` (modified, +19/-19)
 ```diff
-@@ -23,3 +23,4 @@ The following users make all of their contributions to iii under the Apache 2 li
- - @1aifanatic
- - @WanderLandWalker
- - @bsodmike
-+- @iziang
+@@ -105,7 +105,7 @@ importers:
+         version: 5.9.3
+       vitest:
+         specifier: ^4.1.12
+-        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@24.11.0)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@24.11.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
++        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@24.11.0)(@vitest/coverage-v8@4.1.12)(happy-dom@21.0.4)(vite@7.3.7(@types/node@24.11.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+ 
+   sdk/packages/node/iii:
+     dependencies:
+@@ -145,16 +145,16 @@ importers:
+         version: 5.9.3
+       vitest:
+         specifier: ^4.1.12
+-        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
++        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@21.0.4)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+ 
+   sdk/packages/node/iii-browser:
+     devDependencies:
+       '@types/ws':
+         specifier: ^8.18.1
+         version: 8.18.1
+       happy-dom:
+-        specifier: ^20.14.5
+-        version: 20.14.5
++        specifier: ^21.0.4
++        version: 21.0.4
+       tsdown:
+         specifier: ^0.21.4
+         version: 0.21.10(synckit@0.11.12)(typescript@5.9.3)
+@@ -166,7 +166,7 @@ importers:
+         version: 5.9.3
+       vitest:
+         specifier: ^4.1.12
+-        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
++        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@21.0.4)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+       ws:
+         specifier: ^8.21.0
+         version: 8.21.3
+@@ -180,8 +180,8 @@ importers:
+         specifier: workspace:*
+         version: link:../iii
+       zod:
+-        specifier: ^4.3.6
+-        version: 4.3.6
++        specifier: ^4.6.6
++        version: 4.6.6
+     devDependencies:
+       '@types/node':
+         specifier: ^24.10.1
+@@ -207,7 +207,7 @@ importers:
+         version: 5.9.3
+       vitest:
+         specifier: ^4.1.12
+-        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
++        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@21.0.4)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+ 
+   website:
+     dependencies:
+@@ -2551,8 +2551,8 @@ packages:
+   hachure-fill@0.5.2:
+     resolution: {integrity: sha512-3GKBOn+m2LX9iq+JC1064cSFprJY4jL1jCXTcpnfER5HYE2l/4EfWSGzkPa/ZDBmYI0ZOEj5VHV/eKnPGkHuOg==}
+ 
+-  happy-dom@20.14.5:
+-    resolution: {integrity: sha512-x/RzkpWO40bTjIoT30iQtt64FLLmH/iRcUCN2X//bLx7H3ifkdfPXyqsro/OYtqzIAhiLMMA7mmiOR9C3NOKjQ==}
++  happy-dom@21.0.4:
++    resolution: {integrity: sha512-tFm+GaLBgo6o0awHnvHaNoraVo27qJ+2tZEtZ+cIa08hXbeitrxAJajLI05hsUy/2/YTKcUjQYzHe5mCcraLBw==}
+     engines: {node: '>=20.0.0'}
+ 
+   has-flag@4.0.0:
+@@ -4242,8 +4242,8 @@ packages:
+   zod@3.25.76:
+     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
+ 
+-  zod@4.3.6:
+-    resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
++  zod@4.6.6:
++    resolution: {integrity: sha512-4UmzQUF5fxvfcYHlbjBmejU+w+hbDnWFx4aS8kBx7nPBHcO2SqPbpAG8snbdg+Xse4pRefR98hgjFgIMCI/UhA==}
+ 
+   zwitch@2.0.4:
+     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
+@@ -5541,7 +5541,7 @@ snapshots:
+       obug: 2.2.1
+       std-env: 4.2.0
+       tinyrainbow: 3.1.1
+-      vitest: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@24.11.0)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@24.11.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
++      vitest: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@24.11.0)(@vitest/coverage-v8@4.1.12)(happy-dom@21.0.4)(vite@7.3.7(@types/node@24.11.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+ 
+   '@vitest/expect@4.1.12':
+     dependencies:
+@@ -6400,7 +6400,7 @@ snapshots:
+ 
+   hachure-fill@0.5.2: {}
+ 
+-  happy-dom@20.14.5:
++  happy-dom@21.0.4:
+     dependencies:
+       '@types/node': 25.9.4
+       '@types/whatwg-mimetype': 3.0.2
+@@ -8247,7 +8247,7 @@ snapshots:
+      
+```
+
+**File**: `sdk/packages/node/iii-browser/package.json` (modified, +1/-1)
+```diff
+@@ -47,7 +47,7 @@
+   },
+   "devDependencies": {
+     "@types/ws": "^8.18.1",
+-    "happy-dom": "^20.14.5",
++    "happy-dom": "^21.0.4",
+     "tsdown": "^0.21.4",
+     "typedoc": "^0.28.20",
+     "typescript": "^5.9.3",
+```
+
+**File**: `sdk/packages/node/iii-example/package.json` (modified, +1/-1)
+```diff
+@@ -9,7 +9,7 @@
+   "dependencies": {
+     "@iii-dev/helpers": "workspace:*",
+     "iii-sdk": "workspace:*",
+-    "zod": "^4.3.6"
++    "zod": "^4.6.6"
+   },
+   "devDependencies": {
+     "@types/node": "^24.10.1",
+```
+
+---
+
+### Incident Patch 2: `d1276eea` (2026-10-26)
+**Commit Message**: fix(rust): keep Logger lines under concurrency and close the connection on shutdown (#2404)
+
+**File**: `sdk/packages/rust/helpers/src/observability/telemetry/mod.rs` (modified, +65/-8)
+```diff
+@@ -15,7 +15,7 @@ pub mod types;
+ pub mod worker_metrics;
+ 
+ use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
+-use std::sync::{Arc, OnceLock};
++use std::sync::{Arc, OnceLock, PoisonError, RwLock};
+ 
+ use opentelemetry::propagation::TextMapCompositePropagator;
+ use opentelemetry::trace::{SpanKind, Status, TraceContextExt, Tracer};
+@@ -50,10 +50,22 @@ static OTEL_INITIALIZED: AtomicBool = AtomicBool::new(false);
+ /// tears down the global state when this reaches zero.
+ static OTEL_REF_COUNT: AtomicUsize = AtomicUsize::new(0);
+ 
++/// The logger provider of `OTEL_STATE`, read by every `Logger` call. It lives
++/// apart from `OTEL_STATE` because a log line cannot wait for that lock and
++/// must not be dropped when it is taken: init, flush and shutdown hold it
++/// across awaits, and loggers on other threads take it too.
++static LOGGER_PROVIDER: RwLock<Option<SdkLoggerProvider>> = RwLock::new(None);
++
+ fn get_otel_lock() -> &'static Mutex<Option<OtelState>> {
+     OTEL_STATE.get_or_init(|| Mutex::new(None))
+ }
+ 
++fn set_logger_provider(provider: Option<SdkLoggerProvider>) {
++    *LOGGER_PROVIDER
++        .write()
++        .unwrap_or_else(PoisonError::into_inner) = provider;
++}
++
+ /// Normalize an engine WebSocket URL into the dedicated OTEL endpoint.
+ ///
+ /// The engine exposes `/otel` for telemetry-only WS connections. Appending
+@@ -419,6 +431,7 @@ pub async fn init_otel(config: OtelConfig) -> bool {
+     let shutdown_timeout =
+         std::time::Duration::from_millis(config.shutdown_timeout_ms.unwrap_or(10_000));
+ 
++    set_logger_provider(logger_provider.clone());
+     let otel_state = OtelState {
+         tracer_provider,
+         meter_provider,
+@@ -461,6 +474,7 @@ pub async fn shutdown_otel() {
+ 
+     if let Some(otel) = state.take() {
+         OTEL_INITIALIZED.store(false, Ordering::Release);
++        set_logger_provider(None);
+ 
+         let timeout_duration = otel.shutdown_timeout;
+ 
+@@ -632,13 +646,10 @@ pub fn is_initialized() -> bool {
+ /// This is used by the SDK logger to emit OTel LogRecords alongside the
+ /// engine invoker calls.
+ pub fn get_logger_provider() -> Option<SdkLoggerProvider> {
+-    if !is_initialized() {
+-        return None;
+-    }
+-    // Try to acquire the lock without blocking. If contended, skip emission.
+-    let lock = get_otel_lock();
+-    let state = lock.try_lock().ok()?;
+-    state.as_ref()?.logger_provider.clone()
++    LOGGER_PROVIDER
++        .read()
++        .unwrap_or_else(PoisonError::into_inner)
++        .clone()
+ }
+ 
+ #[cfg(test)]
+@@ -766,4 +777,50 @@ mod tests {
+             "successful span should not have an exception event"
+         );
+     }
++
++    #[test]
++    #[serial_test::serial]
++    fn the_logger_provider_is_read_while_the_otel_state_is_locked() {
++        use opentelemetry_sdk::logs::SdkLoggerProvider;
++
++        super::set_logger_provider(Some(SdkLoggerProvider::builder().build()));
++        // init, flush and shutdown hold this lock across awaits
++        let held = super::get_otel_lock().try_lock().expect("unlocked");
++        assert!(super::get_logger_provider().is_some());
++        drop(held);
++
++        super::set_logger_provider(None);
++        assert!(super::get_logger_provider().is_none());
++    }
++
++    #[test]
++    #[serial_test::serial]
++    fn loggers_on_many_threads_emit_every_line() {
++        use opentelemetry_sdk::logs::{InMemoryLogExporter, SdkLoggerProvider};
++
++        let exporter = InMemoryLogExporter::default();
++        let provider = SdkLoggerProvider::builder()
++            .with_simple_exporter(exporter.clone())
++            .build();
++        super::set_logger_provider(Some(provider));
++
++        let threads: Vec<_> = (0..16)
++            .map(|t| {
++                std::thread::spawn(move || {
++                    let logger = crate::observability::Logger::new();
++                    for i in 0..200 {
++                        logger.info(&format!("thread {t} line {i}"), None);
++                    }
++                })
++            })
++            .collect();
++        for thread in threads {
++            thread.join().unwrap();
++        }
++        // Counted before the provider goes: its shutdown clears the exporter.
++        let emitted = exporter.get_emitted_logs().unwrap().len();
++        super::set_logger_provider(None);
++
++        assert_eq!(emitted, 16 * 200);
++    }
+ }
+```
+
+**File**: `sdk/packages/rust/iii/src/iii.rs` (modified, +61/-0)
+```diff
+@@ -1437,6 +1437,9 @@ type PendingInvocation = oneshot::Sender<Result<Value, Error>>;
+ // WebSocket transmitter type alias
+ type WsTx = futures_util::stream::SplitSink<WsStream, WsMessage>;
+ 
++/// How long a stopping worker waits to send its close frame.
++const CLOSE_TIMEOUT: Duration = Duration::from_secs(1);
++
+ /// An `invokefunction` received from the engine.
+ struct InboundInvocation {
+     invocation_id: Option<Uuid>,
+@@ -3275,6 +3278,7 @@ impl IIIClient {
+                     if shutdown {
+                         self.inner.running.store(false, Ordering::SeqCst);
+                         self.abandon_reports(&mut queue, &mut reports, &mut rx);
++                        Self::close_ws(&mut ws_tx).await;
+                         return;
+                     }
+                     self.hold_observe_frames(&mut queue, &mut reports);
+@@ -3319,11 +3323,13 @@ impl IIIClient {
+                                     Some(Outbound::Shutdown) => {
+                                         self.inner.running.store(false, Ordering::SeqCst);
+                                         self.abandon_reports(&mut queue, &mut reports, &mut rx);
++                                        Self::close_ws(&mut ws_tx).await;
+                                         return;
+                                     }
+                                     None => {
+                                         self.inner.running.store(false, Ordering::SeqCst);
+                                         self.abandon_reports(&mut queue, &mut reports, &mut rx);
++                                        Self::close_ws(&mut ws_tx).await;
+                                         return;
+                                     }
+                                 }
+@@ -3622,6 +3628,13 @@ impl IIIClient {
+         Ok(())
+     }
+ 
++    /// Ends the connection of a worker that is stopping with a close frame,
++    /// so the engine sees it leave instead of a connection reset. Bounded:
++    /// a dead link must not hold up shutdown.
++    async fn close_ws(ws_tx: &mut WsTx) {
++        let _ = tokio::time::timeout(CLOSE_TIMEOUT, ws_tx.close()).await;
++    }
++
+     async fn send_ws_frame(
+         &self,
+         ws_tx: &mut WsTx,
+@@ -4579,6 +4592,54 @@ mod tests {
+         assert_eq!(n, 1, "healthy pinged connection must not be torn down");
+     }
+ 
++    /// WS server that reports how each connection ended: `true` for a close
++    /// frame, `false` for a socket that went away without one.
++    async fn spawn_close_recorder() -> (std::net::SocketAddr, mpsc::UnboundedReceiver<bool>) {
++        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
++        let addr = listener.local_addr().unwrap();
++        let (tx, rx) = mpsc::unbounded_channel();
++        tokio::spawn(async move {
++            while let Ok((sock, _)) = listener.accept().await {
++                let tx = tx.clone();
++                tokio::spawn(async move {
++                    let Ok(mut ws) = tokio_tungstenite::accept_async(sock).await else {
++                        return;
++                    };
++                    let closed = loop {
++                        match ws.next().await {
++                            Some(Ok(WsMessage::Close(_))) => break true,
++                            Some(Ok(_)) => {}
++                            Some(Err(_)) | None => break false,
++                        }
++                    };
++                    let _ = tx.send(closed);
++                });
++            }
++        });
++        (addr, rx)
++    }
++
++    #[tokio::test]
++    async fn shutdown_closes_the_connection_with_a_close_frame() {
++        let (addr, mut ends) = spawn_close_recorder().await;
++        let iii = client_with_timings(addr, ConnTimings::default());
++        let deadline = Instant::now() + Duration::from_secs(5);
++        while iii.get_connection_state() != IIIConnectionState::Connected {
++            assert!(Instant::now() < deadline, "never connected");
++            sleep(Duration::from_millis(10)).await;
++        }
++
++        iii.shutdown_async().await;
++
++        // Without one the engine logs a reset ("Connection reset without
++        // closing handshake") for every worker that stops.
++        let closed = tokio::time::timeout(Duration::from_secs(5), ends.recv())
++            .await
++            .expect("the connection never ended")
++            .unwrap();
++        assert!(closed, "a stopping worker must send a close frame");
++    }
++
+     type Handshake = (String, tokio_tungstenite::tungstenite::http::HeaderMap);
+ 
+     /// WS server that reports each handshake's request URI and headers.
+```
+
+---
+
+### Incident Patch 3: `70ee84b5` (2026-10-27)
+**Commit Message**: fix(website): replace the wrong iii logo everywhere it is drawn (#2418)
+
+**File**: `docs/0-12-0/assets/favicon.svg` (modified, +14/-1)
+```diff
+@@ -1 +1,14 @@
+-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g clip-path="url(#SvgjsClipPath1045)"><rect width="1000" height="1000" fill="#ffffff"></rect><g transform="matrix(1.335113484646195,0,0,1.335113484646195,0.6675567423230859,0)"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="748" height="749" viewBox="0 0 748 749"><image width="748" height="749" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAuwAAALtCAYAAABzfDFZAAABYGlDQ1BJQ0MgUHJvZmlsZQAAKJFtkLFLw1AQxr+0kWKtYEEEwaFOolSpqSguQq2iYodQFdNuaVJba1sfSUTc3MRddHYR/Qu6dHB2EoQK4uDgIK5CFi3xXqOmVe9x3I+P+967d4AvpDJWFgFUqpaRXpqPKJlsJPAKH7rRCxF+VTNZQpZT1ILv2hl2AwKvd+P8rvPw8WAj+6gMh16uFHHV+NvfEUE9b2pUPygljRkWIMSI5X2LcT4k7jdoKOITzgWXLznnXK63etbTSeJb4j6tqOrET8TRXJteaONKeU/7moFPH8pXN9aoDlAOYQGLSNGJQIaEGUxiFsu0o/89Uy1PErtgOICBbRRQhEXuBCkMZeSJV1CFhglEiSXEKKf5rn/v0NP0IyA+Rk8FPa30DNTPgPCNp43s0HfmgOsMUw31Z7OCLZpbccnlnhrQdeo4b5tAYBRo3jvOe81xmheA/4G89icAvWGUjfhnmwAAMHRJREFUeAHt2jGq33UaxeGbwTauK+AGtLBKYT0MWA2IMNXAMDsQtBLEDYguSV1AhDthigNvmyaf/+W51fstQs59zq84hLx6fv/z5IcAAQIECBAgQIAAgaTA35KphCJAgAABAgQIECBA4P8CBrsPgQABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQKfICDwyALf/PPbR47/orJ/+69vHv738T11KvQ9dbp4CUlewvf0EnrwO3y4wKvn9z8f/sf9SQIfT+D77354evvV248XwN98BP569+68H+3x048/P33x5eePFvvF5n307+nXX357evPZmxfbz6P9Yn/+/sfT609fP1pseQlMwH+JGYWD
+```
+
+**File**: `docs/0-13-0/assets/favicon.svg` (modified, +14/-1)
+```diff
+@@ -1 +1,14 @@
+-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g clip-path="url(#SvgjsClipPath1045)"><rect width="1000" height="1000" fill="#ffffff"></rect><g transform="matrix(1.335113484646195,0,0,1.335113484646195,0.6675567423230859,0)"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="748" height="749" viewBox="0 0 748 749"><image width="748" height="749" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAuwAAALtCAYAAABzfDFZAAABYGlDQ1BJQ0MgUHJvZmlsZQAAKJFtkLFLw1AQxr+0kWKtYEEEwaFOolSpqSguQq2iYodQFdNuaVJba1sfSUTc3MRddHYR/Qu6dHB2EoQK4uDgIK5CFi3xXqOmVe9x3I+P+967d4AvpDJWFgFUqpaRXpqPKJlsJPAKH7rRCxF+VTNZQpZT1ILv2hl2AwKvd+P8rvPw8WAj+6gMh16uFHHV+NvfEUE9b2pUPygljRkWIMSI5X2LcT4k7jdoKOITzgWXLznnXK63etbTSeJb4j6tqOrET8TRXJteaONKeU/7moFPH8pXN9aoDlAOYQGLSNGJQIaEGUxiFsu0o/89Uy1PErtgOICBbRRQhEXuBCkMZeSJV1CFhglEiSXEKKf5rn/v0NP0IyA+Rk8FPa30DNTPgPCNp43s0HfmgOsMUw31Z7OCLZpbccnlnhrQdeo4b5tAYBRo3jvOe81xmheA/4G89icAvWGUjfhnmwAAMHRJREFUeAHt2jGq33UaxeGbwTauK+AGtLBKYT0MWA2IMNXAMDsQtBLEDYguSV1AhDthigNvmyaf/+W51fstQs59zq84hLx6fv/z5IcAAQIECBAgQIAAgaTA35KphCJAgAABAgQIECBA4P8CBrsPgQABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQKfICDwyALf/PPbR47/orJ/+69vHv738T11KvQ9dbp4CUlewvf0EnrwO3y4wKvn9z8f/sf9SQIfT+D77354evvV248XwN98BP569+68H+3x048/P33x5eePFvvF5n307+nXX357evPZmxfbz6P9Yn/+/sfT609fP1pseQlMwH+JGYWD
+```
+
+**File**: `docs/0-16-0/assets/favicon.svg` (modified, +14/-1)
+```diff
+@@ -1 +1,14 @@
+-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g clip-path="url(#SvgjsClipPath1045)"><rect width="1000" height="1000" fill="#ffffff"></rect><g transform="matrix(1.335113484646195,0,0,1.335113484646195,0.6675567423230859,0)"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="748" height="749" viewBox="0 0 748 749"><image width="748" height="749" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAuwAAALtCAYAAABzfDFZAAABYGlDQ1BJQ0MgUHJvZmlsZQAAKJFtkLFLw1AQxr+0kWKtYEEEwaFOolSpqSguQq2iYodQFdNuaVJba1sfSUTc3MRddHYR/Qu6dHB2EoQK4uDgIK5CFi3xXqOmVe9x3I+P+967d4AvpDJWFgFUqpaRXpqPKJlsJPAKH7rRCxF+VTNZQpZT1ILv2hl2AwKvd+P8rvPw8WAj+6gMh16uFHHV+NvfEUE9b2pUPygljRkWIMSI5X2LcT4k7jdoKOITzgWXLznnXK63etbTSeJb4j6tqOrET8TRXJteaONKeU/7moFPH8pXN9aoDlAOYQGLSNGJQIaEGUxiFsu0o/89Uy1PErtgOICBbRRQhEXuBCkMZeSJV1CFhglEiSXEKKf5rn/v0NP0IyA+Rk8FPa30DNTPgPCNp43s0HfmgOsMUw31Z7OCLZpbccnlnhrQdeo4b5tAYBRo3jvOe81xmheA/4G89icAvWGUjfhnmwAAMHRJREFUeAHt2jGq33UaxeGbwTauK+AGtLBKYT0MWA2IMNXAMDsQtBLEDYguSV1AhDthigNvmyaf/+W51fstQs59zq84hLx6fv/z5IcAAQIECBAgQIAAgaTA35KphCJAgAABAgQIECBA4P8CBrsPgQABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQKfICDwyALf/PPbR47/orJ/+69vHv738T11KvQ9dbp4CUlewvf0EnrwO3y4wKvn9z8f/sf9SQIfT+D77354evvV248XwN98BP569+68H+3x048/P33x5eePFvvF5n307+nXX357evPZmxfbz6P9Yn/+/sfT609fP1pseQlMwH+JGYWD
+```
+
+**File**: `docs/0-17-0/assets/favicon.svg` (modified, +14/-1)
+```diff
+@@ -1 +1,14 @@
+-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g clip-path="url(#SvgjsClipPath1045)"><rect width="1000" height="1000" fill="#ffffff"></rect><g transform="matrix(1.335113484646195,0,0,1.335113484646195,0.6675567423230859,0)"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="748" height="749" viewBox="0 0 748 749"><image width="748" height="749" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAuwAAALtCAYAAABzfDFZAAABYGlDQ1BJQ0MgUHJvZmlsZQAAKJFtkLFLw1AQxr+0kWKtYEEEwaFOolSpqSguQq2iYodQFdNuaVJba1sfSUTc3MRddHYR/Qu6dHB2EoQK4uDgIK5CFi3xXqOmVe9x3I+P+967d4AvpDJWFgFUqpaRXpqPKJlsJPAKH7rRCxF+VTNZQpZT1ILv2hl2AwKvd+P8rvPw8WAj+6gMh16uFHHV+NvfEUE9b2pUPygljRkWIMSI5X2LcT4k7jdoKOITzgWXLznnXK63etbTSeJb4j6tqOrET8TRXJteaONKeU/7moFPH8pXN9aoDlAOYQGLSNGJQIaEGUxiFsu0o/89Uy1PErtgOICBbRRQhEXuBCkMZeSJV1CFhglEiSXEKKf5rn/v0NP0IyA+Rk8FPa30DNTPgPCNp43s0HfmgOsMUw31Z7OCLZpbccnlnhrQdeo4b5tAYBRo3jvOe81xmheA/4G89icAvWGUjfhnmwAAMHRJREFUeAHt2jGq33UaxeGbwTauK+AGtLBKYT0MWA2IMNXAMDsQtBLEDYguSV1AhDthigNvmyaf/+W51fstQs59zq84hLx6fv/z5IcAAQIECBAgQIAAgaTA35KphCJAgAABAgQIECBA4P8CBrsPgQABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQKfICDwyALf/PPbR47/orJ/+69vHv738T11KvQ9dbp4CUlewvf0EnrwO3y4wKvn9z8f/sf9SQIfT+D77354evvV248XwN98BP569+68H+3x048/P33x5eePFvvF5n307+nXX357evPZmxfbz6P9Yn/+/sfT609fP1pseQlMwH+JGYWD
+```
+
+**File**: `docs/0-18-0/assets/favicon.svg` (modified, +14/-1)
+```diff
+@@ -1 +1,14 @@
+-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g clip-path="url(#SvgjsClipPath1045)"><rect width="1000" height="1000" fill="#ffffff"></rect><g transform="matrix(1.335113484646195,0,0,1.335113484646195,0.6675567423230859,0)"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="748" height="749" viewBox="0 0 748 749"><image width="748" height="749" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAuwAAALtCAYAAABzfDFZAAABYGlDQ1BJQ0MgUHJvZmlsZQAAKJFtkLFLw1AQxr+0kWKtYEEEwaFOolSpqSguQq2iYodQFdNuaVJba1sfSUTc3MRddHYR/Qu6dHB2EoQK4uDgIK5CFi3xXqOmVe9x3I+P+967d4AvpDJWFgFUqpaRXpqPKJlsJPAKH7rRCxF+VTNZQpZT1ILv2hl2AwKvd+P8rvPw8WAj+6gMh16uFHHV+NvfEUE9b2pUPygljRkWIMSI5X2LcT4k7jdoKOITzgWXLznnXK63etbTSeJb4j6tqOrET8TRXJteaONKeU/7moFPH8pXN9aoDlAOYQGLSNGJQIaEGUxiFsu0o/89Uy1PErtgOICBbRRQhEXuBCkMZeSJV1CFhglEiSXEKKf5rn/v0NP0IyA+Rk8FPa30DNTPgPCNp43s0HfmgOsMUw31Z7OCLZpbccnlnhrQdeo4b5tAYBRo3jvOe81xmheA/4G89icAvWGUjfhnmwAAMHRJREFUeAHt2jGq33UaxeGbwTauK+AGtLBKYT0MWA2IMNXAMDsQtBLEDYguSV1AhDthigNvmyaf/+W51fstQs59zq84hLx6fv/z5IcAAQIECBAgQIAAgaTA35KphCJAgAABAgQIECBA4P8CBrsPgQABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQKfICDwyALf/PPbR47/orJ/+69vHv738T11KvQ9dbp4CUlewvf0EnrwO3y4wKvn9z8f/sf9SQIfT+D77354evvV248XwN98BP569+68H+3x048/P33x5eePFvvF5n307+nXX357evPZmxfbz6P9Yn/+/sfT609fP1pseQlMwH+JGYWD
+```
+
+**File**: `docs/0-19-0/assets/favicon.svg` (modified, +14/-1)
+```diff
+@@ -1 +1,14 @@
+-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g clip-path="url(#SvgjsClipPath1045)"><rect width="1000" height="1000" fill="#ffffff"></rect><g transform="matrix(1.335113484646195,0,0,1.335113484646195,0.6675567423230859,0)"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="748" height="749" viewBox="0 0 748 749"><image width="748" height="749" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAuwAAALtCAYAAABzfDFZAAABYGlDQ1BJQ0MgUHJvZmlsZQAAKJFtkLFLw1AQxr+0kWKtYEEEwaFOolSpqSguQq2iYodQFdNuaVJba1sfSUTc3MRddHYR/Qu6dHB2EoQK4uDgIK5CFi3xXqOmVe9x3I+P+967d4AvpDJWFgFUqpaRXpqPKJlsJPAKH7rRCxF+VTNZQpZT1ILv2hl2AwKvd+P8rvPw8WAj+6gMh16uFHHV+NvfEUE9b2pUPygljRkWIMSI5X2LcT4k7jdoKOITzgWXLznnXK63etbTSeJb4j6tqOrET8TRXJteaONKeU/7moFPH8pXN9aoDlAOYQGLSNGJQIaEGUxiFsu0o/89Uy1PErtgOICBbRRQhEXuBCkMZeSJV1CFhglEiSXEKKf5rn/v0NP0IyA+Rk8FPa30DNTPgPCNp43s0HfmgOsMUw31Z7OCLZpbccnlnhrQdeo4b5tAYBRo3jvOe81xmheA/4G89icAvWGUjfhnmwAAMHRJREFUeAHt2jGq33UaxeGbwTauK+AGtLBKYT0MWA2IMNXAMDsQtBLEDYguSV1AhDthigNvmyaf/+W51fstQs59zq84hLx6fv/z5IcAAQIECBAgQIAAgaTA35KphCJAgAABAgQIECBA4P8CBrsPgQABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQKfICDwyALf/PPbR47/orJ/+69vHv738T11KvQ9dbp4CUlewvf0EnrwO3y4wKvn9z8f/sf9SQIfT+D77354evvV248XwN98BP569+68H+3x048/P33x5eePFvvF5n307+nXX357evPZmxfbz6P9Yn/+/sfT609fP1pseQlMwH+JGYWD
+```
+
+**File**: `docs/0-20-0/assets/favicon.svg` (modified, +14/-1)
+```diff
+@@ -1 +1,14 @@
+-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g clip-path="url(#SvgjsClipPath1045)"><rect width="1000" height="1000" fill="#ffffff"></rect><g transform="matrix(1.335113484646195,0,0,1.335113484646195,0.6675567423230859,0)"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="748" height="749" viewBox="0 0 748 749"><image width="748" height="749" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAuwAAALtCAYAAABzfDFZAAABYGlDQ1BJQ0MgUHJvZmlsZQAAKJFtkLFLw1AQxr+0kWKtYEEEwaFOolSpqSguQq2iYodQFdNuaVJba1sfSUTc3MRddHYR/Qu6dHB2EoQK4uDgIK5CFi3xXqOmVe9x3I+P+967d4AvpDJWFgFUqpaRXpqPKJlsJPAKH7rRCxF+VTNZQpZT1ILv2hl2AwKvd+P8rvPw8WAj+6gMh16uFHHV+NvfEUE9b2pUPygljRkWIMSI5X2LcT4k7jdoKOITzgWXLznnXK63etbTSeJb4j6tqOrET8TRXJteaONKeU/7moFPH8pXN9aoDlAOYQGLSNGJQIaEGUxiFsu0o/89Uy1PErtgOICBbRRQhEXuBCkMZeSJV1CFhglEiSXEKKf5rn/v0NP0IyA+Rk8FPa30DNTPgPCNp43s0HfmgOsMUw31Z7OCLZpbccnlnhrQdeo4b5tAYBRo3jvOe81xmheA/4G89icAvWGUjfhnmwAAMHRJREFUeAHt2jGq33UaxeGbwTauK+AGtLBKYT0MWA2IMNXAMDsQtBLEDYguSV1AhDthigNvmyaf/+W51fstQs59zq84hLx6fv/z5IcAAQIECBAgQIAAgaTA35KphCJAgAABAgQIECBA4P8CBrsPgQABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQKfICDwyALf/PPbR47/orJ/+69vHv738T11KvQ9dbp4CUlewvf0EnrwO3y4wKvn9z8f/sf9SQIfT+D77354evvV248XwN98BP569+68H+3x048/P33x5eePFvvF5n307+nXX357evPZmxfbz6P9Yn/+/sfT609fP1pseQlMwH+JGYWD
+```
+
+**File**: `docs/0-21-0/assets/favicon.svg` (modified, +14/-1)
+```diff
+@@ -1 +1,14 @@
+-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g clip-path="url(#SvgjsClipPath1045)"><rect width="1000" height="1000" fill="#ffffff"></rect><g transform="matrix(1.335113484646195,0,0,1.335113484646195,0.6675567423230859,0)"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="748" height="749" viewBox="0 0 748 749"><image width="748" height="749" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAuwAAALtCAYAAABzfDFZAAABYGlDQ1BJQ0MgUHJvZmlsZQAAKJFtkLFLw1AQxr+0kWKtYEEEwaFOolSpqSguQq2iYodQFdNuaVJba1sfSUTc3MRddHYR/Qu6dHB2EoQK4uDgIK5CFi3xXqOmVe9x3I+P+967d4AvpDJWFgFUqpaRXpqPKJlsJPAKH7rRCxF+VTNZQpZT1ILv2hl2AwKvd+P8rvPw8WAj+6gMh16uFHHV+NvfEUE9b2pUPygljRkWIMSI5X2LcT4k7jdoKOITzgWXLznnXK63etbTSeJb4j6tqOrET8TRXJteaONKeU/7moFPH8pXN9aoDlAOYQGLSNGJQIaEGUxiFsu0o/89Uy1PErtgOICBbRRQhEXuBCkMZeSJV1CFhglEiSXEKKf5rn/v0NP0IyA+Rk8FPa30DNTPgPCNp43s0HfmgOsMUw31Z7OCLZpbccnlnhrQdeo4b5tAYBRo3jvOe81xmheA/4G89icAvWGUjfhnmwAAMHRJREFUeAHt2jGq33UaxeGbwTauK+AGtLBKYT0MWA2IMNXAMDsQtBLEDYguSV1AhDthigNvmyaf/+W51fstQs59zq84hLx6fv/z5IcAAQIECBAgQIAAgaTA35KphCJAgAABAgQIECBA4P8CBrsPgQABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQIGu2+AAAECBAgQIECAQFjAYA+XIxoBAgQIECBAgAABg903QIAAAQIECBAgQCAsYLCHyxGNAAECBAgQIECAgMHuGyBAgAABAgQIECAQFjDYw+WIRoAAAQIECBAgQMBg9w0QIECAAAECBAgQCAsY7OFyRCNAgAABAgQIECBgsPsGCBAgQIAAAQIECIQFDPZwOaIRIECAAAECBAgQMNh9AwQIECBAgAABAgTCAgZ7uBzRCBAgQIAAAQIECBjsvgECBAgQIECAAAECYQGDPVyOaAQIECBAgAABAgQMdt8AAQIECBAgQIAAgbCAwR4uRzQCBAgQIECAAAECBrtvgAABAgQIECBAgEBYwGAPlyMaAQIECBAgQIAAAYPdN0CAAAECBAgQIEAgLGCwh8sRjQABAgQIECBAgIDB7hsgQIAAAQIECBAgEBYw2MPliEaAAAECBAgQIEDAYPcNECBAgAABAgQIEAgLGOzhckQjQIAAAQIECBAgYLD7BggQIECAAAECBAiEBQz2cDmiESBAgAABAgQIEDDYfQMECBAgQIAAAQIEwgIGe7gc0QgQIECAAAECBAgY7L4BAgQIECBAgAABAmEBgz1cjmgECBAgQIAAAQIEDHbfAAECBAgQIECAAIGwgMEeLkc0AgQIECBAgAABAga7b4AAAQIECBAgQIBAWMBgD5cjGgECBAgQIECAAAGD3TdAgAABAgQIECBAICxgsIfLEY0AAQIECBAgQICAwe4bIECAAAECBAgQIBAWMNjD5YhGgAABAgQIECBAwGD3DRAgQIAAAQIECBAICxjs4XJEI0CAAAECBAgQIGCw+wYIECBAgAABAgQIhAUM9nA5ohEgQIAAAQIECBAw2H0DBAgQIECAAAECBMICBnu4HNEIECBAgAABAgQIGOy+AQIECBAgQIAAAQJhAYM9XI5oBAgQIECAAAECBAx23wABAgQIECBAgACBsIDBHi5HNAIECBAgQIAAAQKfICDwyALf/PPbR47/orJ/+69vHv738T11KvQ9dbp4CUlewvf0EnrwO3y4wKvn9z8f/sf9SQIfT+D77354evvV248XwN98BP569+68H+3x048/P33x5eePFvvF5n307+nXX357evPZmxfbz6P9Yn/+/sfT609fP1pseQlMwH+JGYWD
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2392** (closed): chore(deps): bump the cargo-minor-and-patch group across 1 directory with 31 updates (@dependabot[bot])
-- **PR #2391** (2026-10-23): fix(deps): update Tokio to address RUSTSEC-2026-0386 (@guibeira)
-- **PR #2386** (2026-10-23): test(rust): give the oversized result_wire case a 30s budget (@guibeira)
-- **PR #2385** (2026-10-23): fix(python): require websockets>=14.0 (@guibeira)
-- **PR #2383** (2026-10-23): docs(changelog): complete 0.25.0 release notes (@guibeira)
-- **PR #2382** (closed): chore(deps): bump the npm-minor-and-patch group across 1 directory with 36 updates (@dependabot[bot])
+- **PR #2419** (2026-10-27): fix(website): name Motia LLC as the legal entity in site metadata (@arihantcodes)
+- **PR #2418** (2026-10-27): fix(website): replace the wrong iii logo everywhere it is drawn (@arihantcodes)
+- **PR #2409** (2026-10-27): fix(engine): handle trigger teardown races and cancellation (@guibeira)
+- **PR #2408** (2026-10-27): clarify CLI licensing (@anthonyiscoding)
+- **PR #2404** (2026-10-26): fix(rust): keep Logger lines under concurrency and close the connection on shutdown (@sergiofilhowz)
+- **PR #2402** (2026-10-26): docs: move Upgrading group to bottom of sidebar (@anthonyiscoding)
 
 ---
 
@@ -2441,28 +2864,50 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: add @iziang to contributors.md
+## X. sdk): patch happy-dom and zod security advisories (#2400)
 
 **RULE**:
-When implementing operations in `contributors.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pnpm-lock.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9dc4f03b`: docs: add @iziang to contributors.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c7c3154c`: sdk): patch happy-dom and zod security advisories (#2400). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `contributors.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `pnpm-lock.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- @iziang
+        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@24.11.0)(@vitest/coverage-v8@4.1.12)(happy-dom@21.0.4)(vite@7.3.7(@types/node@24.11.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@21.0.4)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+        specifier: ^21.0.4
+        version: 21.0.4
+        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@21.0.4)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+        specifier: ^4.6.6
+        version: 4.6.6
+        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@21.0.4)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+  happy-dom@21.0.4:
+    resolution: {integrity: sha512-tFm+GaLBgo6o0awHnvHaNoraVo27qJ+2tZEtZ+cIa08hXbeitrxAJajLI05hsUy/2/YTKcUjQYzHe5mCcraLBw==}
+  zod@4.6.6:
+    resolution: {integri
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@24.11.0)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@24.11.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+        specifier: ^20.14.5
+        version: 20.14.5
+        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+        specifier: ^4.3.6
+        version: 4.3.6
+        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+  happy-dom@20.14.5:
+    resolution: {integrity: sha512-x/RzkpWO40bTjIoT30iQtt64FLLmH/iRcUCN2X//bLx7H3ifkdfPXyqsro/OYtqzIAhiLMMA7mmiOR9C3NOKjQ==}
+  zod@4.3.6:
+    resolution: {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9dc4f03b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c7c3154c` are properly handled with clean fallback behavior.

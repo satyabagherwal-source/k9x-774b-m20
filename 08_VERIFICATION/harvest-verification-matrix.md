@@ -5543,3 +5543,5 @@
 | `CYCLE-20261027-7Y7R` | `2026-10-27T21:01:37.911Z` | `kube-rs/kube` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5007` | Yes (`9a20d431...`) |
 | `CYCLE-20261027-7Y9E` | `2026-10-27T21:01:37.970Z` | `callstack/agent-device` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5008` | Yes (`d74e8b50...`) |
 | `CYCLE-20261027-83N7` | `2026-10-27T21:01:44.947Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5009` | Yes (`24f5f8ab...`) |
+| `CYCLE-20261027-GMWS` | `2026-10-27T21:08:23.164Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5010` | Yes (`b5e66c44...`) |
+| `CYCLE-20261027-GRV5` | `2026-10-27T21:08:29.585Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5011` | Yes (`ac61b906...`) |

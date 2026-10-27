@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T21:01:44.956Z",
-  "total_cycles_completed": 5520,
-  "total_learnings_persisted": 5520,
-  "total_rules_promoted": 4922,
+  "last_updated": "2026-10-27T21:08:29.594Z",
+  "total_cycles_completed": 5522,
+  "total_learnings_persisted": 5522,
+  "total_rules_promoted": 4924,
   "history": [
-    {
-      "timestamp": "2026-10-27T13:54:21.467Z",
-      "repository": "dockview/dockview",
-      "learningId": "learn-github-dockview-dockview",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:54:23.868Z",
-      "repository": "Dicklesworthstone/destructive_command_guard",
-      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T13:54:28.116Z",
       "repository": "feathersjs/feathers",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-27T21:01:44.956Z",
       "repository": "trailbaseio/trailbase",
       "learningId": "learn-github-trailbaseio-trailbase",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T21:08:23.173Z",
+      "repository": "iii-hq/iii",
+      "learningId": "learn-github-iii-hq-iii",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T21:08:29.594Z",
+      "repository": "gardener/gardener",
+      "learningId": "learn-github-gardener-gardener",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
