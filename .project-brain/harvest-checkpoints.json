@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T21:52:01.752Z",
+  "last_updated": "2026-10-27T22:00:15.425Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3411,14 +3411,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crawlseo-crawlseo",
-      "content_hash": "85f6f41da6f0d34ba14306e3734935132a88aa7b008ba08dc6da2e08acbc42f1",
-      "verified_at": "2026-10-24T20:48:38.480Z",
+      "content_hash": "25beda912f70da0c8146d06d572b1aa95fc9de76714cd98b393681ba62cb7216",
+      "verified_at": "2026-10-27T22:00:15.424Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-24T20:48:38.480Z"
+      "last_updated": "2026-10-27T22:00:15.424Z"
     },
     "react-hook-form/react-hook-form": {
       "repository": "react-hook-form/react-hook-form",

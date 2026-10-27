@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T21:52:01.666Z",
+  "last_updated": "2026-10-27T22:00:15.341Z",
   "total_verified_learnings": 1152,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -65189,8 +65189,8 @@
       "slug": "crawlseo-crawlseo",
       "platform": "github",
       "source_url": "https://github.com/crawlseo/crawlseo",
-      "source_version": "449ff7a7",
-      "content_hash": "85f6f41da6f0d34ba14306e3734935132a88aa7b008ba08dc6da2e08acbc42f1",
+      "source_version": "77e3c644",
+      "content_hash": "25beda912f70da0c8146d06d572b1aa95fc9de76714cd98b393681ba62cb7216",
       "dossier_path": "07_PROJECT_LEARNING/crawlseo-crawlseo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crawlseo-crawlseo-learnings.md",
       "promoted_rules": [
@@ -65213,6 +65213,21 @@
           "number": 3112,
           "title": "Fenced State Mutations with Monotonic Heartbeat Leases",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5034,
+          "title": "Fenced Mutex Halt-Before-Release Invariant on Process Termination",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5035,
+          "title": "Dual-Barrier Pinned DNS Resolution for SSRF & Rebinding Shielding",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5036,
+          "title": "Fenced Heartbeat Leasing Invariant for Long-Running Mutations",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -65220,7 +65235,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T20:48:38.397Z",
+      "verified_at": "2026-10-27T22:00:15.324Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -138946,6 +138961,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T21:51:49.239Z"
+    },
+    "rule-5034": {
+      "learning_id": "rule-5034",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5034,
+      "title": "Fenced Mutex Halt-Before-Release Invariant on Process Termination",
+      "source_url": "https://github.com/crawlseo/crawlseo",
+      "source_version": "77e3c644",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T22:00:15.324Z"
+    },
+    "rule-5035": {
+      "learning_id": "rule-5035",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5035,
+      "title": "Dual-Barrier Pinned DNS Resolution for SSRF & Rebinding Shielding",
+      "source_url": "https://github.com/crawlseo/crawlseo",
+      "source_version": "77e3c644",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T22:00:15.324Z"
+    },
+    "rule-5036": {
+      "learning_id": "rule-5036",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5036,
+      "title": "Fenced Heartbeat Leasing Invariant for Long-Running Mutations",
+      "source_url": "https://github.com/crawlseo/crawlseo",
+      "source_version": "77e3c644",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T22:00:15.324Z"
     }
   },
   "aliases": {

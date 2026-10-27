@@ -364943,3 +364943,352 @@ Subsystems managing PHP data structures, boundary deserialization, API parsing, 
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `e8edc3c5` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5034. Fenced Mutex Halt-Before-Release Invariant on Process Termination (Harvested from crawlseo/crawlseo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Fenced Mutex Halt-Before-Release Invariant on Process Termination",
+  "source": "crawlseo/crawlseo",
+  "source_url": "https://github.com/crawlseo/crawlseo",
+  "source_version": "77e3c644",
+  "license": "MIT",
+  "extracted_at": "2026-10-27T22:00:14.510Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-crawlseo-crawlseo",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [crawlseo/crawlseo](https://github.com/crawlseo/crawlseo) (Revision: `77e3c644`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+On process shutdown, SIGTERM, or unhandled crash, an asynchronous job-polling worker MUST completely halt task acquisition (clear polling intervals and await in-flight claim transactions) BEFORE invoking queue release or state rollback handlers. It MUST NEVER release in-flight jobs back to the persistent queue while the consumer loop retains claiming capability.
+
+**WHY**:
+Releasing tasks back to a shared broker/database while the local claim loop is still listening or executing an active polling iteration produces an immediate TOCTOU (Time-of-Check to Time-of-Use) race condition. The local worker thread will observe the newly released job in the database, claim it again in the same event loop tick, and then terminate immediately thereafter due to process exit (`process.exit(1)`). This resets the job attempts counter, causes duplicate execution, leads to cascade job failure, and leaves the database record in an orphaned `RUNNING` or `STALE` state on worker death.
+
+**WHEN TO APPLY**:
+Apply to any distributed worker daemon, consumer loop, Kafka/RabbitMQ subscriber, or database polling queue implemented in asynchronous event-driven runtimes (Node.js, Go goroutines, Python asyncio).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Production Invariant from: lib/jobs/loop.ts & worker/worker.ts
+export class JobLoop {
+  private stopping = false;
+  private timers: NodeJS.Timeout[] = [];
+  private ticking: Promise<number> | null = null;
+
+  public get halted(): boolean {
+    return this.stopping;
+  }
+
+  /**
+   * STAGE 1: Halts claiming.
+   * Clears timers and awaits the active claim transaction so that every job
+   * this process will ever hold is already fully registered in the runner.
+   */
+  public async halt(): Promise<void> {
+    this.stopping = true;
+    for (const timer of this.timers) {
+      clearInterval(timer);
+    }
+    this.timers = [];
+    // Await running claim transaction to settle; ignore inner failure
+    await this.ticking?.catch(() => 0);
+  }
+
+  /**
+   * STAGE 2: Graceful stop.
+   * Only after halt() guarantees no new jobs can enter, release running tasks.
+   */
+  public async stop(graceMs: number): Promise<void> {
+    if (this.stopping) return;
+    await this.halt();
+
+    // Release immediate-cancel jobs (e.g., crawls) back to queue
+    this.runner.release((handler) => handler?.stopOnShutdown === true);
+    
+    // Await in-flight promises or force release after timeout
+    const all = Promise.allSettled([...this.inflight]);
+    const timedOut = await Promise.race([
+      all.then(() => false),
+      new Promise<boolean>((resolve) => 
+        setTimeout(() => resolve(true), graceMs).unref?.()
+      ),
+    ]);
+
+    if (timedOut) {
+      await this.runner.forceReleaseAll();
+    }
+  }
+}
+
+// Worker crash handler invocation order:
+export function crashHandlers(worker: Worker) {
+  process.on("uncaughtException", async (err) => {
+    try {
+      const putBack = (async () => {
+        // 1. MUST halt the consumer loop first
+        await worker.loop.halt();
+        // 2. Safe to return held claims back to the queue
+        return worker.loop.runner.forceReleaseAll();
+      })();
+
+      await Promise.race([
+        putBack,
+        new Promise((resolve) => setTimeout(resolve, 5000)),
+      ]);
+    } finally {
+      process.exit(1);
+    }
+  });
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Releasing locks before stopping poll loop
+process.on("uncaughtException", async () => {
+  // CRITICAL HAZARD: Runner resets rows to 'QUEUED' in DB
+  await worker.runner.forceReleaseAll();
+  
+  // Meanwhile, the polling loop timer fires or an active claim query resolves:
+  // worker.loop.claimOnce() executes SELECT ... FOR UPDATE SKIP LOCKED
+  // It RE-CLAIMS the job it just put back, then the process exits immediately!
+  worker.loop.stop();
+  process.exit(1);
+});
+```
+
+**VERIFICATION METHOD**:
+Mock the execution runner and capture the strictly ordered step trace. Assert that the `halt` invocation strictly precedes `forceReleaseAll`, and that `loop.halted === true` at the exact moment of database release:
+```typescript
+const order: string[] = [];
+vi.spyOn(loop, "halt").mockImplementation(async () => {
+  order.push("halt");
+});
+vi.spyOn(runner, "forceReleaseAll").mockImplementation(async () => {
+  order.push("release");
+  expect(loop.halted).toBe(true);
+});
+await crashHandler();
+expect(order).toEqual(["halt", "release", "exit"]);
+```
+
+---
+
+
+---
+
+## 5035. Dual-Barrier Pinned DNS Resolution for SSRF & Rebinding Shielding (Harvested from crawlseo/crawlseo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Barrier Pinned DNS Resolution for SSRF & Rebinding Shielding",
+  "source": "crawlseo/crawlseo",
+  "source_url": "https://github.com/crawlseo/crawlseo",
+  "source_version": "77e3c644",
+  "license": "MIT",
+  "extracted_at": "2026-10-27T22:00:14.815Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-crawlseo-crawlseo",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [crawlseo/crawlseo](https://github.com/crawlseo/crawlseo) (Revision: `77e3c644`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When issuing outbound HTTP requests to user-supplied or crawled web targets, an application MUST NOT rely solely on pre-flight hostname checks (e.g., checking `isPrivateIp` once before `fetch`). It MUST inject a custom resolver (`lookup` function) into the transport socket agent that evaluates the resolved IP against an IP blocklist at the exact moment the socket connects, and returns only the validated IP to the socket.
+
+**WHY**:
+Pre-flight checks without socket-level pinned lookup are completely vulnerable to DNS Rebinding Attacks (TOCTOU). A malicious domain can return a benign public IP (TTL: 0s or 1s) to satisfy `assertPublicUrl()`, and immediately resolve to an internal AWS/GCP metadata address (`169.254.169.254`) or loopback (`127.0.0.1`) when the HTTP client's internal transport layer resolves the connection socket. Pre-flight and connection MUST share the exact same validated IP set.
+
+**WHEN TO APPLY**:
+Applies to crawlers, webhooks, proxy engines, link preview generators, and RSS feed fetchers interacting with untrusted external URLs.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Production Invariant from: lib/crawler/engine.ts & lib/webhooks/address.ts
+import { BlockList, isIPv4, isIPv6, type LookupFunction } from "net";
+import { lookup } from "dns/promises";
+import type { LookupAddress } from "dns";
+import { Agent } from "undici";
+
+const PRIVATE_RANGES = new BlockList();
+// Populate IPv4 ranges: 0.0.0.0/8, 10.0.0.0/8, 127.0.0.0/8, 169.254.0.0/16, etc.
+// Populate IPv6 subnets: ::1/128, fc00::/7, fe80::/10, ::ffff:0:0/96, etc.
+
+export function isPrivateIp(ip: string): boolean {
+  // Catch IPv4-mapped IPv6 literals explicitly before passing to blocklist
+  const v4mapped = ip.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/i);
+  if (v4mapped) return isPrivateIp(v4mapped[1]);
+
+  if (isIPv4(ip)) return PRIVATE_RANGES.check(ip, "ipv4");
+  if (isIPv6(ip)) return PRIVATE_RANGES.check(ip, "ipv6");
+  return true; // Fail closed if format is unknown
+}
+
+export async function checkedAddresses(
+  hostname: string, 
+  blockedRule: (ip: string) => boolean
+): Promise<LookupAddress[]> {
+  const addresses = await lookup(hostname, { all: true });
+  // Invariant: If ANY resolved address for the host is disallowed, reject ALL.
+  if (addresses.length === 0 || addresses.some((a) => blockedRule(a.address))) {
+    throw new Error(`Access Denied: ${hostname} resolved to illegal address.`);
+  }
+  return addresses;
+}
+
+export function pinnedLookupWith(blockedRule: (ip: string) => boolean): LookupFunction {
+  return (hostname, options, callback) => {
+    const family = options.family === 4 || options.family === "IPv4" ? 4
+      : options.family === 6 || options.family === "IPv6" ? 6
+      : 0;
+
+    checkedAddresses(hostname, blockedRule)
+      .then((addresses) => {
+        const usable = family ? addresses.filter((a) => a.family === family) : addresses;
+        if (usable.length === 0) {
+          throw Object.assign(new Error(`No IPv${family} address for ${hostname}`), { 
+            code: "ENOTFOUND" 
+          });
+        }
+        // Hand the socket only the verified addresses from the exact DNS check
+        callback(null, usable as any);
+      })
+      .catch((err) => callback(err, [] as any));
+  };
+}
+
+// Undici client instantiation with pinned socket lookup
+export function createSafeDispatcher(allowPrivate: boolean): Agent {
+  return new Agent({
+    connect: {
+      lookup: pinnedLookupWith((ip) => isPrivateIp(ip)),
+    },
+  });
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Vulnerable to DNS Rebinding TOCTOU
+async function insecureFetch(targetUrl: string) {
+  const { hostname } = new URL(targetUrl);
+  const addresses = await dns.promises.lookup(hostname);
+  
+  if (isPrivateIp(addresses.address)) {
+    throw new Error("Private IP blocked");
+  }
+
+  // BUG: fetch() resolves DNS a second time! An attacker DNS server returns
+  // 1.1.1.1 on the first call, and 169.254.169.254 on the fetch connection.
+  return fetch(targetUrl);
+}
+```
+
+**VERIFICATION METHOD**:
+Configure an automated integration test against a DNS server that alternates responses between a public IP and `127.0.0.1` on consecutive requests. Assert that `createSafeDispatcher` refuses the connection with `ENOTFOUND` or `Access Denied` at the socket level.
+
+---
+
+
+---
+
+## 5036. Fenced Heartbeat Leasing Invariant for Long-Running Mutations (Harvested from crawlseo/crawlseo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Fenced Heartbeat Leasing Invariant for Long-Running Mutations",
+  "source": "crawlseo/crawlseo",
+  "source_url": "https://github.com/crawlseo/crawlseo",
+  "source_version": "77e3c644",
+  "license": "MIT",
+  "extracted_at": "2026-10-27T22:00:15.152Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-crawlseo-crawlseo",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [crawlseo/crawlseo](https://github.com/crawlseo/crawlseo) (Revision: `77e3c644`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In distributed background job processing where tasks exceed typical request timeouts, every persistent update modifying application entities MUST be fenced on the job's active lease token (`lockedBy`) and current state (`RUNNING`). If a lease heartbeat expires, the job runner MUST NOT assume ownership; all persistence operations MUST fail closed or detect lease loss via row count verification (`count === 1`).
+
+**WHY**:
+Network partitions, CPU starvation, or full garbage collection pauses can cause worker heartbeats to lapse, prompting maintenance workers to mark the job as stale and reassign it to another node. If the delayed worker wakes up and executes database writes without lease fencing, it will overwrite the work of the newly assigned worker, corrupting system state, duplicating page crawl entities, or producing phantom statuses.
+
+**WHEN TO APPLY**:
+Background batch processing, multi-page web crawlers, video rendering tasks, or database migration pipelines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Production Invariant from: lib/jobs/queue.ts
+export async function markSucceeded(
+  db: PrismaClient,
+  job: { id: string },
+  workerId: string,
+  result: Prisma.InputJsonValue | undefined,
+  now: Date = new Date()
+): Promise<boolean> {
+  // CRITICAL: The update is strictly fenced against ID, lockedBy, and status.
+  const { count } = await db.job.updateMany({
+    where: {
+      id: job.id,
+      lockedBy: workerId,
+      status: "RUNNING",
+    },
+    data: {
+      status: "SUCCEEDED",
+      finishedAt: now,
+      activeKey: null,
+      result: result ?? Prisma.DbNull,
+      lastError: null,
+      errorCode: null,
+    },
+  });
+
+  // If count is 0, the worker was preempted and the result MUST be discarded.
+  return count === 1;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Blind update without fencing
+export async function markSucceededUnfenced(db: PrismaClient, jobId: string) {
+  // FATAL: If another worker recovered and claimed this job, this write corrupts
+  // the active state and overwrites the second worker's active run.
+  await db.job.update({
+    where: { id: jobId },
+    data: { status: "SUCCEEDED" },
+  });
+}
+```
+
+**VERIFICATION METHOD**:
+Write a test that acquires a job under `workerId = "worker-A"`, updates `lockedBy = "worker-B"` directly in the database to simulate lease preemption, and invokes `markSucceeded(..., "worker-A")`. Assert that the returned status is `false` and the database record remains unmodified.
+
+---

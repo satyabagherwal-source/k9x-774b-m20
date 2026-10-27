@@ -5573,3 +5573,4 @@ Every entry in this ledger must capture:
 | `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `2879ce4f` | Multi-dimensional audit evidence | 2026-10-27T21:45:15.377Z |
 | `learn-github-lokoe-mehdi-scouter` | `https://github.com/lokoe-mehdi/scouter` | `e8edc3c5` | Multi-dimensional audit evidence | 2026-10-27T21:51:49.333Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `fce458c1` | Multi-dimensional audit evidence | 2026-10-27T21:52:01.737Z |
+| `learn-github-crawlseo-crawlseo` | `https://github.com/crawlseo/crawlseo` | `77e3c644` | Multi-dimensional audit evidence | 2026-10-27T22:00:15.415Z |

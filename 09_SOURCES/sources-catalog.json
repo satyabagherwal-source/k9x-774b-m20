@@ -2183,10 +2183,10 @@
     "repository": "crawlseo/crawlseo",
     "platform": "github",
     "sourceUrl": "https://github.com/crawlseo/crawlseo",
-    "sourceVersion": "449ff7a7",
+    "sourceVersion": "77e3c644",
     "license": "MIT",
-    "contentHash": "85f6f41da6f0d34ba14306e3734935132a88aa7b008ba08dc6da2e08acbc42f1",
-    "lastHarvestedAt": "2026-10-24T20:48:38.466Z",
+    "contentHash": "25beda912f70da0c8146d06d572b1aa95fc9de76714cd98b393681ba62cb7216",
+    "lastHarvestedAt": "2026-10-27T22:00:15.415Z",
     "learningId": "learn-github-crawlseo-crawlseo"
   },
   "react-hook-form-react-hook-form": {

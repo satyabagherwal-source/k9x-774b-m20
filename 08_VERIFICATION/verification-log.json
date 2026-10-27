@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-O4KB",
-    "timestamp": "2026-10-26T00:54:49.115Z",
-    "repository": "clockworklabs/SpacetimeDB",
-    "learningId": "learn-github-clockworklabs-spacetimedb",
-    "contentHash": "b0ca96c9580bfb4a3aa3cb74b94eb2e5c8a55722f2120780efd19421c9cd7c49",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-O5S2",
     "timestamp": "2026-10-26T00:54:50.690Z",
     "repository": "dathere/qsv",
@@ -7492,6 +7477,21 @@
     "contentHash": "a8dc125c0d8a65d7d2bd087f3d87e0b2c528807e51f611671646e33f461f6d76",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-BCC4",
+    "timestamp": "2026-10-27T22:00:15.412Z",
+    "repository": "crawlseo/crawlseo",
+    "learningId": "learn-github-crawlseo-crawlseo",
+    "contentHash": "25beda912f70da0c8146d06d572b1aa95fc9de76714cd98b393681ba62cb7216",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
