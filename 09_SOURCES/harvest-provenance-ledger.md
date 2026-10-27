@@ -5467,3 +5467,6 @@ Every entry in this ledger must capture:
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `54d4c0fa` | Multi-dimensional audit evidence | 2026-10-27T17:23:43.767Z |
 | `learn-github-software-mansion-react-native-gesture-handler` | `https://github.com/software-mansion/react-native-gesture-handler` | `142d4334` | Multi-dimensional audit evidence | 2026-10-27T17:30:56.154Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `71322f76` | Multi-dimensional audit evidence | 2026-10-27T17:31:04.567Z |
+| `learn-huggingface-minimaxai-minimax-m3-1-flash` | `https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash` | `hf-minimax` | Multi-dimensional audit evidence | 2026-10-27T17:37:54.817Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `b3766d4f` | Multi-dimensional audit evidence | 2026-10-27T17:37:58.361Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `a22e2df0` | Multi-dimensional audit evidence | 2026-10-27T17:38:04.018Z |

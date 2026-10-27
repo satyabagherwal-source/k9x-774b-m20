@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `2b62983a`  
+> **Source Version**: `b3766d4f`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T12:46:43.147Z  
+> **Timestamp**: 2026-10-27T17:37:57.927Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T12:46:42.930Z  
+> **Harvest Timestamp**: 2026-10-27T17:37:57.486Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38153 stars
+- **Stars / Engagement**: 38167 stars
 
 ---
 
@@ -800,11 +800,11 @@ export const sessionStateStorage: IPNStateStorage = {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #21890** (2026-10-27): **net/routemanager: removing overlapping CGNAT subnet route drops coarse OS route**
+  *Symptoms*: ## What is the issue?  `RouteManager.applyDirty` can remove `100.64.0.0/10` from `OSRoutes` when a peer advertising that accepted subnet route is removed, even though other peers still require the same prefix as the coarse CGNAT route.  The `/10` is handled as a plain route and deleted during the incremental update. Since CGNAT coarsening remains enabled, the code that adds the coarse route only on a coarsening transition does not run. A full rebuild restores the route.  Expected: `100.64.0.0/10` remains in `OSRoutes` while either the accepted subnet route or CGNAT coarsening requires it.  Actual: after removing the subnet peer, the prefix disappears from `OSRoutes` until a full rebuild.  ## Steps to reproduce  1. Create a `RouteManager` with `RouteAll: true` and `OneCGNAT: true`. 2. Add three peers with CGNAT `/32` self addresses. Have one peer also advertise `100.64.0.0/10`. 3. Remove the peer advertising `/10`, leaving two peers so CGNAT coarsening remains enabled. 4. Check `OSRoutes().Get(100.64.0.0/10)`. It returns false. A new manager built with the two remaining peers returns true.  This reproduces on v1.102.0, v1.104.2, and current main. A regression test is included in the corresponding PR.  https://github.com/tailscale/tailscale/pull/21891 
+
 - **Issue #21889** (2026-10-22): **Install script broken for Ubuntu 26.10**
   *Symptoms*: ### What is the issue?  Tailscale install script "curl -fsSL https://tailscale.com/install.sh | sh" doesn't install on Ubuntu 26.10. Error says OS not supported.  ### Steps to reproduce  Paste the official install command into Ubuntu 26.10 terminal "curl -fsSL https://tailscale.com/install.sh | sh"  ### Are there any recent changes that introduced the issue?  _No response_  ### OS  Linux  ### OS version  Ubuntu 26.10  ### Tailscale version  Latest  ### Other software  _No response_  ### Bug report  _No response_
-
-- **Issue #21885** (2026-10-23): **DoH forwarders on Windows can be very slow**
-  *Symptoms*: ### What is the issue?  The client can get backed up by GetWindowsDefault being too slow underneath DoH TCP socket binding setup.  ### Steps to reproduce  Have a large number of routes or interfaces, and a large number of DoH resolvers.  ### Are there any recent changes that introduced the issue?  The problem was slightly worsened by improvements in Happy Eyeballs.  ### OS  Windows  ### OS version  _No response_  ### Tailscale version  _No response_  ### Other software  _No response_  ### Bug report  _No response_
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -821,252 +821,456 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2b62983a` (2026-10-26)
-**Commit Message**: tstest/natlab/vnet: fix TCPConn leak
+### Incident Patch 1: `b3766d4f` (2026-10-27)
+**Commit Message**: cmd/k8s-operator/e2e: add 4via6 egress tests (#21854)
 
-Explicitly close the other end of the losing connection.
+Add end-to-end tests for egress to a 4via6 target (an address behind a
+subnet router advertising a 4via6 route). Tests include:
 
-This is a follow-up to 31baee90c079ed52efc83fdf29860baf2637cb8d.
+- TestConnector4via6Egress/HAEgress: egress to an in-cluster Connector
+subnet router. Test requires a dual stack cluster.
 
-Updates #cleanup
+- TestHostSubnetRouter4via6Egress/HAEgress: egress to a subnet router that
+runs on the test host as a tsnet node. Use RegisterFallbackTCPHandler to
+mock the backend response without requiring forwarding on to a backend node
+(for test simplicity).
 
-Change-Id: I5bf36a7451da05545e7242ee5c1bff02fa44b362
-Signed-off-by: Francois Marier <[REDACTED_EMAIL]>
+Also update end-to-end test acl for 4via6 routes, and install a dedicated
+ProxyClass to accept routes.
 
-**File**: `tstest/natlab/vnet/vnet.go` (modified, +1/-0)
+Updates tailscale/corp#45732
+
+Signed-off-by: Becky Pauley <[REDACTED_EMAIL]>
+
+**File**: `cmd/k8s-operator/e2e/acl.hujson` (modified, +9/-0)
 ```diff
-@@ -3196,6 +3196,7 @@ func (s *Server) takeAgentConnOne(n *node) (ac *agentConn, miss int) {
- 		s.agentConns.Delete(ac)
- 		if st := tcp.EndpointState(ac.ep.State()); st != tcp.StateEstablished {
- 			log.Printf("takeAgentConn: discarding idle agent conn for %v that the agent already closed (state %v)", n.mac, st)
-+			ac.tc.Close()
- 			continue
- 		}
- 		return ac, 0
+@@ -11,6 +11,9 @@
+ 		// wide subnet maximises compatibility for most clusters.
+ 		"routes": {
+ 			"10.0.0.0/8": ["tag:k8s"],
++			// Tailscale 4via6 range, so dynamically-computed 4via6 subnet routes
++			// advertised by Connectors in the e2e tests are auto-approved.
++			"fd7a:115c:a1e0:b1a::/64": ["tag:k8s"],
+ 		},
+ 		"services": {
+ 			"tag:k8s": ["tag:k8s"],
+@@ -29,5 +32,11 @@
+ 				}],
+ 			},
+ 		},
++		{
++			// Allow egress proxies to reach 4via6 targets.
++			"src": ["tag:k8s"],
++			"dst": ["fd7a:115c:a1e0:b1a::/64"],
++			"ip":  ["tcp:80", "tcp:443"],
++		},
+ 	],
+ }
+\ No newline at end of file
 ```
 
----
-
-### Incident Patch 2: `e8ebe6ab` (2026-10-26)
-**Commit Message**: ssh/tailssh: parse UIDs consistently in isRootUser()
-
-Since the incubator parses the UID in base 0 via flags.IntVar()
-and isRootUser() uses base 10, it was possible to get inconsistent
-results between the two using non-base 10 numbers.
-
-Updates tailscale/corp#50380
-
-Change-Id: I9b2fb16bc37153df7b695533cc73a3499cb774eb
-Signed-off-by: Francois Marier <[REDACTED_EMAIL]>
-
-**File**: `ssh/tailssh/tailssh_test.go` (modified, +11/-0)
+**File**: `cmd/k8s-operator/e2e/helpers_test.go` (modified, +22/-17)
 ```diff
-@@ -1734,6 +1734,17 @@ func TestIsRootUser(t *testing.T) {
- 		{uid: "0", username: "alice", want: true},
- 		// A non-canonical numeric uid 0 is also root.
- 		{uid: "00", username: "alice", want: true},
-+		{uid: "+0", username: "alice", want: true},
-+		{uid: "-0", username: "alice", want: true},
-+		{uid: "0b0", username: "alice", want: true},
-+		{uid: "0B0", username: "alice", want: true},
-+		{uid: "0o0", username: "alice", want: true},
-+		{uid: "0O0", username: "alice", want: true},
-+		{uid: "0x0", username: "alice", want: true},
-+		{uid: "0X0", username: "alice", want: true},
-+		{uid: "-0x0", username: "alice", want: true},
-+		{uid: "0_0", username: "alice", want: true},
-+		{uid: "0x_0", username: "alice", want: true},
- 		{uid: "00000000", username: "alice", want: true},
- 		{uid: "1000", username: "root", want: true},
- 		{uid: "1000", username: "alice", want: false},
-```
-
-**File**: `ssh/tailssh/user_unix.go` (modified, +1/-1)
-```diff
-@@ -36,7 +36,7 @@ func isRootUser(u *userMeta) bool {
- 	// denotes root, and must not bypass the non-root checks that later
- 	// parse the uid numerically (e.g. the incubator's --uid). Non-numeric
- 	// uids keep the previous string behavior (not root).
--	if uid, err := strconv.ParseUint(u.Uid, 10, 32); err == nil {
-+	if uid, err := strconv.ParseInt(u.Uid, 0, strconv.IntSize); err == nil {
- 		return uid == 0
+@@ -113,20 +113,36 @@ func newHTTPClient(cl *tsnet.Server) *http.Client {
  	}
- 	return false
+ }
+ 
+-func verifyConnectorTailnet(t *testing.T, cn *tsapi.Connector, cl *tsnet.Server) error {
++// tailnetDomain returns the tailnet's MagicDNS domain for the given
++// tailnet client.
++func tailnetDomain(t *testing.T, cl *tsnet.Server) string {
+ 	t.Helper()
+ 	lc, err := cl.LocalClient()
+ 	if err != nil {
+-		return err
++		t.Fatalf("getting local client: %v", err)
+ 	}
+ 	status, err := lc.Status(t.Context())
+ 	if err != nil {
+-		return err
++		t.Fatalf("getting tailnet status: %v", err)
+ 	}
+-	_, expectedTailnet, ok := strings.Cut(strings.TrimSuffix(status.Self.DNSName, "."), ".")
++	_, domain, ok := strings.Cut(strings.TrimSuffix(status.Self.DNSName, "."), ".")
+ 	if !ok {
+-		return fmt.Errorf("unexpected DNSName format %q", status.Self.DNSName)
++		t.Fatalf("unexpected DNSName format %q", status.Self.DNSName)
+ 	}
++	return domain
++}
++
++// via6FQDN returns the hyphenated 4via6 MagicDNS name for an IPv4 address and
++// site ID on the given tailnet, e.g. "10-1-0-5-via-7.example.ts.net".
++func via6FQDN(t *testing.T, ip netip.Addr, siteID int, cl *tsnet.Server) string {
++	t.Helper()
++	hyphenatedIP := strings.ReplaceAll(ip.String(), ".", "-")
++	return fmt.Sprintf("%s-via-%d.%s", hyphenatedIP, siteID, tailnetDomain(t, cl))
++}
++
++func verifyConnectorTailnet(t *testing.T, cn *tsapi.Connector, cl *tsnet.Server) error {
++	t.Helper()
++	expectedTailnet := tailnetDomain(t, cl)
+ 	if err := tstest.WaitFor(3*time.Minute, func() error {
+ 		var secrets corev1.SecretList
+ 		if err := kubeClient.List(t.Context(), &secrets,
+@@ -162,18 +178,7 @@ func verifyConnectorTailnet(t *testing.T, cn *tsapi.Connector, cl *tsnet.Server)
+ func verifyProxyGroupTailnet(t *testing.T, pg *tsapi.ProxyGroup, cl *tsnet.Server) error {
+ 	t.Helper()
+ 	// Determine the expected tailnet Magic DNS Name.
+-	lc, err := cl.LocalClient()
+-	if err != nil {
+-		return err
+-	}
+-	status, err := lc.Status(t.Context())
+-	if err != nil {
+-		return err
+-	}
+-	_, expectedTailnet, ok := strings.Cut(strings.TrimSuffix(status.Self.DNSName, "."), ".")
+-	if !ok {
+-		return fmt.Errorf("unexpected DNSName format %q", status.Self.DNSName)
+-	}
++	expectedTailnet := tailnetDomain(t, cl)
+ 	// Read the device FQDN from the first state secret for the ProxyGroup,
+ 	// and verify that this matches the expected tailnet.
+ 	if err := tstest.WaitFor(3*time.Minute, func() error {
 ```
 
----
-
-### Incident Patch 3: `f5fdb18b` (2026-10-26)
-**Commit Message**: ssh/tailssh: give delegated action fetches one timeout owner
-
-Let fetchSSHAction own the per-fetch deadline and pass the connection cancellation context directly from clientAuth. Remove the duplicate timeout and its deferred cancellation inside the action loop. Derive the longer transport watchdog from the fetch timeout, keeping both durations unchanged.
-
-Use virtual time to test the fetch deadline across retries, earlier parent deadlines, and parent cancellation. Verify that a successful fetch releases its request context.
-
-Updates tailscale/corp#50380
-
-Change-Id: I185958ca19566f04cbd68f33e4b1dad3d18aebb7
-Signed-off-by: James Tucker <[REDACTED_EMAIL]>
-
-**File**: `ssh/tailssh/delegate_test.go` (added, +97/-0)
+**File**: `cmd/k8s-operator/e2e/via6_test.go` (added, +365/-0)
 ```diff
-@@ -0,0 +1,97 @@
+@@ -0,0 +1,365 @@
 +// Copyright (c) Tailscale Inc & contributors
 +// SPDX-License-Identifier: BSD-3-Clause
 +
-+//go:build (linux && !android) || (darwin && !ios) || freebsd || openbsd || plan9
-+
-+package tailssh
++package e2e
 +
 +import (
-+	"context"
-+	"errors"
-+	"io"
++	"bufio"
++	"fmt"
++	"net"
 +	"net/http"
-+	"strings"
++	"net/netip"
 +	"testing"
-+	"testing/synctest"
 +	"time"
++
++	corev1 "k8s.io/api/core/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++
++	"tailscale.com/ipn"
++	kube "tailscale.com/k8s-operator"
++	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
++	"tailscale.com/net/tsaddr"
++	"tailscale.com/tstest"
 +)
 +
-+type delegateBackend struct {
-+	ipnLocalBackend
-+	request func(*http.Request) (*http.Response, error)
++const via6SiteID = 7
++
++// via6BackendIP is the dummy IPv4 embedded in the advertised 4via6 route; it is
++// never dialed.
++var via6BackendIP = netip.MustParseAddr("10.0.0.1")
++
++type via6Target struct {
++	viaIP   string // e.g. "fd7a:115c:a1e0:b1a::7:a00:1"
++	viaFQDN string // e.g. "10-0-0-1-via-7.<tailnet>.ts.net"
 +}
 +
-+func (b *delegateBackend) DoNoiseRequest(req *http.Request) (*http.Response, error) {
-+	return b.request(req)
-+}
++// TestHostSubnetRouter4via6Egress tests the operator's 4via6 egress
++// using a subnet router outside the cluster (runs as a tsnet node advertising a 4via6 route).
++//
++// See [TestMain] for test requirements.
++func TestHostSubnetRouter4via6Egress(t *testing.T) {
++	if tnClient == nil {
++		t.Skip("TestHostSubnetRouter4via6Egress requires a working tailnet client")
++	}
++	if !clusterIPv6Support {
++		t.Skip("4via6 egress requires an IPv6-capable cluster")
++	}
++	t.Parallel()
 +
-+func TestFetchSSHActionTimeout(t *testing.T) {
-+	for _, mode := range []string{"timeout", "retry-timeout", "parent-deadline", "parent-cancel"} {
-+		t.Run(mode, func(t *testing.T) {
-+			synctest.Test(t, func(t *testing.T) {
-+				start := time.Now()
-+				wantDeadline := start.Add(delegateFetchTimeout)
-+				wantElapsed := delegateFetchTimeout
-+				wantErr := context.DeadlineExceeded
-+				ctx, cancel := context.WithCancel(context.Background())
-+				defer cancel()
-+				switch mode {
-+				case "parent-deadline":
-+					var stop context.CancelFunc
-+					ctx, stop = context.WithTimeout(ctx, time.Minute)
-+					defer stop()
-+					wantElapsed = time.Minute
-+					wantDeadline = start.Add(wantElapsed)
-+				case "parent-cancel":
-+					time.AfterFunc(time.Minute, cancel)
-+					wantElapsed = time.Minute
-+					wantErr = context.Canceled
-+				}
-+				calls := 0
-+				b := &delegateBackend{request: func(req *http.Request) (*http.Response, error) {
-+					calls++
-+					if got, ok := req.Context().Deadline(); !ok || !got.Equal(wantDeadline) {
-+						t.Errorf("request deadline = %v, %v; want %v", got, ok, wantDeadline)
-+					}
-+					if mode == "retry-timeout" {
-+						return nil, errors.New("temporarily unavailable")
-+					}
-+					<-req.Context().Done()
-+					return nil, req.Context().Err()
-+				}}
-+				c := &conn{srv: &server{lb: b, logf: t.Logf}}
-+				if _, err := c.fetchSSHAction(ctx, "https://unused/action"); !errors.Is(err, wantErr) {
-+					t.Errorf("fetchSSHAction error = %v, want %v", err, wantErr)
-+				}
-+				if got := time.Since(start); got != wantElapsed {
-+					t.Errorf("fetch duration = %v, want %v", got, wantElapsed)
-+				}
-+				if calls == 0 || mode == "retry-timeout" && calls < 2 {
-+					t.Errorf("request calls = %d", calls)
-+				}
-+			})
++	target := startVia6SubnetRouter(t)
++	proxyClass := applyAcceptRoutesProxyClass(t)
++
++	t.Run("ViaIP", func(t *testing.T) {
++		svc := egressService(generateName("test-4via6"), map[string]string{
++			"tailscale.com/tailnet-ip":  target.viaIP,
++			"tailscale.com/proxy-class": proxyClass.Name,
 +		})
++		createAndCleanup(t, kubeClient, svc)
++		waitForEgress(t, svc.Name, kube.SvcIsReady)
++		requireTargetIsReachable(t, egressURL(svc.Name))
++	})
++
++	t.Run("ViaFQDN", func(t *testing.T) {
++		svc := egressService(generateName("test-4via6"), map[string]string{
++			"tailscale.com/tailnet-fqdn": target.viaFQDN,
++			"tailscale.com/proxy-class":  proxyClass.Name,
++		})
++		createAndCleanup(t, kubeClient, svc)
++		waitForEgress(t, svc.Name, kube.SvcIsReady)
++		requireTargetIsReachable(t, egressURL(svc.Name))
++	})
++}
++
++// See [TestHostSubnetRouter4via6Egress] and [TestMain] for test requirements.
++func TestHostSubnetRouter4via6HAEgress(t *testing.T) {
++	if tnClient == nil {
++		t.Skip("TestHostSubnetRouter4via6HAEgress requires a working tailnet client")
++	}
++	if !clusterIPv6Support {
++		t.Skip("4via6 egress requires an IPv6-capable cluster")
++	}
++	t.Parallel()
++
++	target := startVia6SubnetRouter(t)
++	proxyClass := applyAcceptRoutesProxyClass(t)
++
++	pg := &tsapi.ProxyGroup{
++		ObjectMeta: metav1.ObjectMeta{
++			Name: generateName("egress-4via6"),
++		},
++		Spec: tsapi.ProxyGroupSpec{
++			Type:       tsapi.ProxyGroupTypeEgress,
++			ProxyClass: proxyClass.Name,
++		},
++	}
++	createAndCleanup(t, kubeClient, pg)
++
++	t.Run("ViaIP", func(t *testing.T) {
++		svc := egressService(generateName("test-4via6"), map[string]string{
++			"tailscale.com/tailnet-ip":  target.viaIP,
++			"tailscale.com/proxy-group": pg.Name,
++		})
++		createAndCleanup(t, kubeClient, svc)
++		waitForEgress(t, svc.Name, pgEgressReady)
++		requireTargetIsReachable(t, egressURL(svc.Name))
++	})
++
++	t.Run("ViaFQDN", func(t *testing.T) {
++		svc := egressService(generateName("test-4via6"), map[string]string{
++			"tailscale.com/tailnet-fqdn": target.viaFQDN,
++			"tailscale.com/proxy-group":  pg.Name,
++		})
++		createAndCleanup(t, kubeClient, svc)
++		waitForEgress(t, svc.Name, pgEgressReady)
++		requireTargetIsReachable(t, egressURL(svc.Name))
++	})
++}
++
++// startVia6SubnetRouter brings up a tsnet node on the test host that advertises a
++// 4via6 route and acts as a subnet router, serving the forwarded flow in-process
++// via a RegisterFallbackTCPHandler. It returns the egress target's tailnet IP and FQDN.
++func startVia6SubnetRouter(t *testing.T) via6Target {
++	t.Helper()
++
++	srv := newTailnetNode(t, tsClient, generateName("test-4via6-router"))
++	srv.RegisterFallbackTCPHandler(func(src, dst netip.AddrPort) (func(net.Conn), bool) {
++		// Mock the backend.
++		return func(c net.Conn) {
++			defer c.Close()
++			req, err := http.ReadRequest(bufio.NewReader(c))
++			if err != nil {
++				return
++			}
++			resp := http.Response{StatusCode: http.StatusOK, ProtoMajor: 1, ProtoMinor: 1, Close: true, Request: req}
++			if err := resp.Write(c); err != nil {
++				t.Logf("writing 4via6 response: %v", err)
++			}
++		}, true
++	})
++
++	via, err := tsaddr.MapVia(via6SiteID, netip.PrefixFrom(via6BackendIP, 32))
++	if err != nil {
++		t.Fatalf("computing 4via6 route for %s: %v", via6BackendIP, err)
++	}
++
++	lc, err := srv.LocalClient()
++	if err != nil {
++		t.Fatalf("getting subnet router local client: %v", err)
++	}
++	if _, err := lc.EditPrefs(t.Context(), &ipn.MaskedPrefs{
++		AdvertiseRoutesSet: true,
++		Prefs: ipn.Prefs{
++			AdvertiseRoutes: []netip.Prefix{via},
++		},
++	}); err != nil {
++		t.Fatalf("advertising 4via6 route %s: %v", via, err)
++	}
++
++	return via6Target{
++		viaIP:   via.Addr().String(),
++		viaFQDN: via6FQDN(t, via6BackendIP, via6SiteID, srv),
 +	}
 +}
 +
-+func TestFetchSSHActionCancelsRequestOnSuccess(t *testing.T) {
-+	var requestContext context.Context
-+	b := &delegateBackend{request: func(req *http.Request) (*http.Response, error) {
-+		requestContext = req.Context()
-+		return &http.Response{
-+			StatusCode: http.StatusOK,
-+			Body:       io.NopCloser(strings.NewReader(`{"Accept":true}`)),
-+		}, nil
-+	}}
-+	c := &conn{srv: &server{lb: b, logf: t.Logf}}
-+	action, err := c.fetchSSHAction(context.Background(), "https://unused/action")
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if !action.Accept {
-+		t.Fatal("delegated action did not accept")
-+	}
-+	if err := requestContext.Err(); err != context.Canceled {
-+		t.Errorf("request context error = %v, want context.Canceled", err)
-+	}
-+}
++// Test
 ```
 
-**File**: `ssh/tailssh/tailssh.go` (modified, +15/-15)
+---
+
+### Incident Patch 2: `ce19ee0b` (2026-10-27)
+**Commit Message**: net/routemanager: keep the coarse CGNAT and ULA routes when a peer advertises them (#21901)
+
+A peer can advertise 100.64.0.0/10 or fd7a:115c:a1e0::/48 as a subnet
+route. Those prefixes are also the coarse routes that stand in for peers'
+individual addresses, so one OS route entry has two reasons to exist.
+applyDirty set that entry from one reason at a time, so removing the
+advertising peer deleted the /10 while coarsening still wanted it, and
+turning coarsening off deleted the /10 while a peer still advertised it.
+Set each coarse prefix once, from both inputs, as rebuildAll already does.
+
+Fixes #21890
+
+Signed-off-by: Brendan Creane <[REDACTED_EMAIL]>
+
+**File**: `net/routemanager/routemanager.go` (modified, +12/-3)
 ```diff
-@@ -490,19 +490,16 @@ func (c *conn) clientAuth(cm ssh.ConnMetadata) (perms *ssh.Permissions, retErr e
- 
- 			url := action.HoldAndDelegate
- 
--			// The delegate wait is bounded by fetchSSHAction's own 30-minute
--			// context. Extend the login grace to cover it plus buffer, so
--			// the grace timer never kills a live approval flow. A wedged
--			// fetch still gets torn down at the raw socket.
-+			// Allow the delegate fetch to reach its own timeout before
-+			// login grace closes the transport. Keep the transport deadline
-+			// in case the fetch does not return on context cancellation.
- 			c.extendLoginGrace(holdDelegateGrace)
- 
- 			// Connection teardown also cancels the delegate fetch.
--			parent := c.preAuthCtx
--			if parent == nil {
--				parent = context.Background()
-+			ctx := c.preAuthCtx
-+			if ctx == nil {
-+				ctx = context.Background()
+@@ -946,14 +946,22 @@ func (rm *RouteManager) applyDirty(dirty set.Set[netip.Prefix], res *Result) {
  			}
--			ctx, cancel := context.WithTimeout(parent, 30*time.Minute)
--			defer cancel()
- 
- 			metricHolds.Add(1)
- 			url = c.expandDelegateURLLocked(url)
-@@ -921,11 +918,14 @@ func (c *conn) newSSHSession(s gliderssh.Session) *sshSession {
+ 			cgnatDirty = append(cgnatDirty, pfx)
+ 		case osPlain:
++			if pfx == tsaddr.CGNATRange() || pfx == tsaddr.TailscaleULARange() {
++				// A peer can advertise the CGNAT /10 or the ULA /48
++				// as a subnet route. Those prefixes double as the
++				// coarse routes, so they are set below from both
++				// inputs rather than from the advertised route alone.
++				continue
++			}
+ 			var ch bool
+ 			osr, ch = tableSet(osr, pfx, wantOS)
+ 			osChanged = osChanged || ch
+ 		}
  	}
+ 
+ 	var ch bool
+-	osr, ch = tableSet(osr, tsaddr.TailscaleULARange(), len(rm.ulaPfxs) > 0)
++	_, advULA := rm.desiredFor(tsaddr.TailscaleULARange())
++	osr, ch = tableSet(osr, tsaddr.TailscaleULARange(), advULA || len(rm.ulaPfxs) > 0)
+ 	osChanged = osChanged || ch
+ 
+ 	wantCoarse := len(rm.cgnatPfxs) > rm.cgnatThreshold()
+@@ -963,9 +971,10 @@ func (rm *RouteManager) applyDirty(dirty set.Set[netip.Prefix], res *Result) {
+ 			osr, ch = tableSet(osr, pfx, !wantCoarse)
+ 			osChanged = osChanged || ch
+ 		}
+-		osr, ch = tableSet(osr, tsaddr.CGNATRange(), wantCoarse)
+-		osChanged = osChanged || ch
+ 	}
++	_, advCGNAT := rm.desiredFor(tsaddr.CGNATRange())
++	osr, ch = tableSet(osr, tsaddr.CGNATRange(), advCGNAT || rm.coarseCGNAT)
++	osChanged = osChanged || ch
+ 	for _, pfx := range cgnatDirty {
+ 		osr, ch = tableSet(osr, pfx, !rm.coarseCGNAT && rm.cgnatPfxs.Contains(pfx))
+ 		osChanged = osChanged || ch
+```
+
+**File**: `net/routemanager/routemanager_test.go` (modified, +100/-0)
+```diff
+@@ -273,6 +273,106 @@ func TestFullRebuildWhileCoarse(t *testing.T) {
+ 	wantOutbound(t, rm, "100.64.0.2", k2, true)
  }
  
--// holdDelegateGrace is how long the login-grace timer is extended for a
--// conn waiting on a HoldAndDelegate approval. It is fetchSSHAction's own
--// 30-minute cap plus buffer, so the grace timer never kills a live
--// approval flow. A wedged fetch is still torn down at the socket.
--const holdDelegateGrace = 35 * time.Minute
-+const (
-+	// delegateFetchTimeout bounds one delegated action fetch, including retries.
-+	delegateFetchTimeout = 30 * time.Minute
++// TestAdvertisedCGNATRangeWhileCoarse checks that the CGNAT /10 stays
++// in the OS route set while either CGNAT coarsening or an accepted
++// subnet route for exactly that prefix still wants it. The two inputs
++// share one table entry, and the incremental path used to let the
++// subnet route's removal delete the entry out from under coarsening.
++func TestAdvertisedCGNATRangeWhileCoarse(t *testing.T) {
++	cgnat := tsaddr.CGNATRange()
++	p3 := peerView{
++		ID:        3,
++		Key:       k3,
++		SelfAddrs: []netip.Prefix{pfx("100.64.0.3/32")},
++		Routes:    []netip.Prefix{cgnat},
++	}
++	rm := New(t.Logf)
++	commit(rm, func(m *Mutation) {
++		m.SetPrefs(Prefs{RouteAll: true})
++		m.SetTailnetConfig(TailnetConfig{OneCGNAT: true})
++		m.upsertPeer(peer1())
++		m.upsertPeer(peer2())
++	})
++	wantOSRoutes(t, rm, "100.64.0.0/10", "fd7a:115c:a1e0::/48")
 +
-+	// holdDelegateGrace is the login-grace period while fetching a delegated
-+	// action. It allows the fetch to time out before closing the transport.
-+	holdDelegateGrace = delegateFetchTimeout + 5*time.Minute
-+)
- 
- // armLoginGrace arms the pre-auth login-grace timer; on expiry the
- // connection is closed at the raw socket. The timer is stopped at auth
-@@ -1276,7 +1276,7 @@ func acceptEnvNarrowed(old, fresh []string) bool {
- }
- 
- func (c *conn) fetchSSHAction(ctx context.Context, url string) (*tailcfg.SSHAction, error) {
--	ctx, cancel := context.WithTimeout(ctx, 30*time.Minute)
-+	ctx, cancel := context.WithTimeout(ctx, delegateFetchTimeout)
- 	defer cancel()
- 	bo := backoff.NewBackoff("fetch-ssh-action", c.logf, 10*time.Second)
- 	for {
++	// Adding the advertiser while coarse changes nothing in the OS
++	// route set: the /10 is already there.
++	res := commit(rm, func(m *Mutation) { m.upsertPeer(p3) })
++	if res.OSRoutesChanged {
++		t.Errorf("adding /10 advertiser while coarse: %+v", res)
++	}
++	wantOSRoutes(t, rm, "100.64.0.0/10", "fd7a:115c:a1e0::/48")
++
++	// Removing it leaves two CGNAT peers, so coarsening stays on and
++	// the /10 must survive.
++	res = commit(rm, func(m *Mutation) { m.RemovePeer(3) })
++	if res.OSRoutesChanged {
++		t.Errorf("removing /10 advertiser while coarse: %+v", res)
++	}
++	wantOSRoutes(t, rm, "100.64.0.0/10", "fd7a:115c:a1e0::/48")
++
++	// Now the reverse: coarsening turns off while the /10 is still
++	// advertised. Only the advertiser remains, so its own /32 comes
++	// back and the /10 stays as a plain route.
++	commit(rm, func(m *Mutation) {
++		m.upsertPeer(p3)
++		m.RemovePeer(1)
++		m.RemovePeer(2)
++	})
++	if rm.coarseCGNAT {
++		t.Fatal("coarseCGNAT still set with one CGNAT peer")
++	}
++	wantOSRoutes(t, rm, "100.64.0.0/10", "100.64.0.3/32")
++
++	// Either way, the incremental result matches a fresh build.
++	fresh := New(t.Logf)
++	commit(fresh, func(m *Mutation) {
++		m.SetPrefs(Prefs{RouteAll: true})
++		m.SetTailnetConfig(TailnetConfig{OneCGNAT: true})
++		m.upsertPeer(p3)
++	})
++	if !fresh.OSRoutes().Equal(rm.OSRoutes()) {
++		t.Errorf("incremental OSRoutes = %v; fresh build = %v",
++			slices.Collect(rm.OSRoutes().All()), slices.Collect(fresh.OSRoutes().All()))
++	}
++}
++
++// TestAdvertisedULARange is the IPv6 counterpart of
++// TestAdvertisedCGNATRangeWhileCoarse: the ULA /48 is both the coarse
++// route for peers' /128s and a prefix a peer can advertise.
++func TestAdvertisedULARange(t *testing.T) {
++	ula := tsaddr.TailscaleULARange()
++	adv := peerView{
++		ID:        1,
++		Key:       k1,
++		SelfAddrs: []netip.Prefix{pfx("100.64.0.1/32")},
++		Routes:    []netip.Prefix{ula},
++	}
++	rm := New(t.Logf)
++	commit(rm, func(m *Mutation) {
++		m.SetPrefs(Prefs{RouteAll: true})
++		m.upsertPeer(adv)
++		m.upsertPeer(peer2())
++	})
++	wantOSRoutes(t, rm, "100.64.0.1/32", "100.64.0.2/32", "fd7a:115c:a1e0::/48")
++
++	// peer2 was the only peer with a ULA self address. Its removal
++	// must not take the /48 with it while adv still advertises it.
++	res := commit(rm, func(m *Mutation) { m.RemovePeer(2) })
++	if !res.OSRoutesChanged {
++		t.Errorf("removing peer2: %+v", res)
++	}
++	wantOSRoutes(t, rm, "100.64.0.1/32", "fd7a:115c:a1e0::/48")
++
++	// And removing the advertiser while a /128 peer is present must
++	// not take it either.
++	commit(rm, func(m *Mutation) {
++		m.upsertPeer(peer2())
++		m.RemovePeer(1)
++	})
++	wantOSRoutes(t, rm, "100.64.0.2/32", "fd7a:115c:a1e0::/48")
++}
++
+ // TestSingleIPPlainRoute checks that a single-IP route outside the
+ // CGNAT and ULA ranges is programmed individually, not coarsened.
+ func TestSingleIPPlainRoute(t *testing.T) {
 ```
 
 #### Recent Merged Pull Requests:
@@ -1095,21 +1299,29 @@ Signed-off-by: James Tucker <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tstest/natlab/vnet: fix TCPConn leak
+## X. cmd/k8s-operator/e2e: add 4via6 egress tests (#21854)
 
 **RULE**:
-When implementing operations in `tstest/natlab/vnet/vnet.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/k8s-operator/e2e/acl.hujson`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2b62983a`: tstest/natlab/vnet: fix TCPConn leak. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b3766d4f`: cmd/k8s-operator/e2e: add 4via6 egress tests (#21854). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tstest/natlab/vnet/vnet.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/k8s-operator/e2e/acl.hujson`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			ac.tc.Close()
+			// Tailscale 4via6 range, so dynamically-computed 4via6 subnet routes
+			// advertised by Connectors in the e2e tests are auto-approved.
+			"fd7a:115c:a1e0:b1a::/64": ["tag:k8s"],
+		{
+			// Allow egress proxies to reach 4via6 targets.
+			"src": ["tag:k8s"],
+			"dst": ["fd7a:115c:a1e0:b1a::/64"],
+			"ip":  ["tcp:80", "tcp:443"],
+		},
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1119,4 +1331,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2b62983a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b3766d4f` are properly handled with clean fallback behavior.

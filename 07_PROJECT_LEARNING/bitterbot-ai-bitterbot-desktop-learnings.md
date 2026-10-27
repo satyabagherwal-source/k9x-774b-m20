@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `d75ef158`  
+> **Source Version**: `a22e2df0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T08:31:11.535Z  
+> **Timestamp**: 2026-10-27T17:38:03.667Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T08:08:40.469Z  
+> **Harvest Timestamp**: 2026-10-27T17:38:03.063Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,608 +1799,1145 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6f704fc7` (2026-10-27)
-**Commit Message**: feat(memory): per-channel retrieval diagnostics and skill applicability profiles (PLAN-58) (#309)
+### Incident Patch 1: `a22e2df0` (2026-10-27)
+**Commit Message**: fix(memory): keyword channel matches natural-language queries; failed embedding batch no longer aborts sync (#312)
 
-Phase A: every hybrid search result carries `channels` (1-based rank and
-native score per vector / keyword / graph channel) and `fusion`. rrfFuse
-already computed the ranks; mergeHybridResultsRRF dropped them. The
-memory_search tool shows a compact {v,k,g} rank map by default
-(agents.defaults.memorySearch.query.channelDiagnostics: ranks|full|off);
-guests never see it. deep_recall's "skip the REPL" shortcut now thresholds
-the vector cosine: under RRF the fused score tops out near 3/61, so the old
-score >= 0.8 filter could never fire. status().search reports live channels.
-The LongMemEval retrieval runner reports per-channel Recall@K and gold
-attribution from the same fused list and stamps the git commit.
+* fix(memory): make the keyword channel match natural-language queries; keep a failed embedding batch from aborting sync
 
-Phase B: housekeeping rebuilds <skill>/.applicability.json (models,
-platform, declared requirements, run shape, outcome depth; names, hashes
-and counts only, 4 KB cap) and the P2P publisher ships it inside the signed
-provenance trailer, covered by the existing device-key binding. Receivers
-compute a fit against their own facts at ingest; it is stored on the
-envelope and the peer stage
+Two defects the PLAN-58 per-channel diagnostics and the retrieval baseline
+surfaced on 2026-10-27.
 
-**File**: `benchmarks/longmemeval/README.md` (modified, +15/-0)
+- buildFtsQuery AND-joined every token, so a chunk had to contain every word
+  of the query. That held for terse two-word lookups and for no conversational
+  question: the keyword channel contributed zero results to natural-language
+  queries on the live store (0 of 6 results carried a keyword rank) and to the
+  LongMemEval baseline (keyword R@10 = 0% on every question). "Hybrid" search
+  was vector-only in practice. Terms are now OR-joined with a shared stopword
+  list (dropped only when the query has three or more tokens) and a 16-term
+  cap; bm25 ranks by how many terms match and how rare they are, so an
+  all-terms match still sorts first. proactive-recall's recall fallback shares
+  the stopword list.
+- A transient embedding failure during sync left the item's embedding as [],
+  and Buffer.from(new Float32Array([]).buffer) binds as NULL in node:s
+
+**File**: `benchmarks/longmemeval/README.md` (modified, +12/-0)
 ```diff
-@@ -30,6 +30,21 @@ pnpm benchmark:longmemeval --oracle
- pnpm benchmark:longmemeval:evaluate
- ```
+@@ -45,6 +45,18 @@ chunk (`vector-only`, `keyword-only`, `graph-only`, `multi`). The output
+ JSON records the git commit it measured, so a saved run is the frozen
+ baseline any later retrieval change is compared against.
  
-+### Retrieval-only baseline with per-channel attribution (PLAN-58)
++Saved runs (LongMemEval-S, first 50 questions, all `single-session-user`, quiet bridge):
 +
-+```bash
-+pnpm benchmark:longmemeval:retrieval            # LongMemEval-S, Recall@5 / Recall@10
-+pnpm benchmark:longmemeval:retrieval -- --oracle
-+```
++| metric                            | `bitterbot_longmemeval_s_retrieval.json` (code 9708d2d1, AND-joined FTS) | `..._2026-10-27_keyword-or.json` (code 09e5a54e, OR-joined FTS) |
++| --------------------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------- |
++| questions scored                  | 49 (one lost to the empty-embedding NOT NULL bug)                        | 50                                                              |
++| R@5 / R@10                        | 98.0% / 100%                                                             | 100% / 100%                                                     |
++| vector R@5                        | 98.0%                                                                    | 98.0%                                                           |
++| keyword R@5 / R@10                | 0.0% / 0.0%                                                              | 100% / 100%                                                     |
++| attribution of the top-5 gold hit | vector-only 98%, none 2%                                                 | multi 100%                                                      |
 +
-+`runner-retrieval.ts` does no answer generation. Since every search result
-+now carries `channels` (rank and native score per vector / keyword / graph
-+channel), the runner also reports, from the same fused list, what each
-+channel alone would have recalled at K and which channel(s) found the gold
-+chunk (`vector-only`, `keyword-only`, `graph-only`, `multi`). The output
-+JSON records the git commit it measured, so a saved run is the frozen
-+baseline any later retrieval change is compared against.
++The vector channel did not change between the two runs; the difference is that the keyword channel now takes part at all. On this slice it agrees with the vector channel on every gold session, which is what the fused score should reflect.
 +
  ## How It Works
  
  1. **Ingest**: Each question's chat history is converted to timestamped session files and ingested through Bitterbot's normal memory pipeline (chunk → embed → store with temporal metadata)
 ```
 
-**File**: `benchmarks/longmemeval/runner-retrieval.ts` (modified, +108/-0)
+**File**: `benchmarks/longmemeval/bitterbot-bridge.ts` (modified, +14/-0)
 ```diff
-@@ -20,6 +20,7 @@
-  *   node --import tsx benchmarks/longmemeval/runner-retrieval.ts [--oracle] [--limit N]
-  */
+@@ -108,6 +108,20 @@ export async function createBenchmarkMemoryManager(): Promise<BenchmarkBridge> {
+       },
+       list: [{ id: agentId, default: true, workspace: workspaceDir }],
+     },
++    // Retrieval baseline = raw store + search. Without these switches the
++    // manager starts the dream engine (trigger-on-start cycle, emotional
++    // mini-dreams), consolidation, curiosity and the health sweep inside the
++    // benchmark process: minutes per question, LLM calls on the operator's
++    // key, and a score that is no longer "raw mode". The biological runner
++    // has its own bridge for that comparison.
++    memory: {
++      dream: { enabled: false },
++      consolidation: { enabled: false },
++      curiosity: { enabled: false },
++      emotional: { enabled: false },
++      healthSweep: { enabled: false },
++      coverageDiagnostics: { enabled: false },
++    },
+   } as BitterbotConfig;
  
-+import { execSync } from "node:child_process";
- import { writeFileSync, mkdirSync, rmSync, existsSync } from "node:fs";
- import { join, dirname, basename } from "node:path";
- import { fileURLToPath } from "node:url";
-@@ -28,9 +29,80 @@ import { parseArgs } from "node:util";
- const __filename = fileURLToPath(import.meta.url);
- const __dirname = dirname(__filename);
- 
-+import type { HybridChannel } from "../../src/memory/hybrid.js";
-+import type { MemorySearchResult } from "../../src/memory/types.js";
- import { loadDataset, sessionToMarkdown, cleanWorkDir } from "./adapter.js";
- import { createBenchmarkMemoryManager } from "./bitterbot-bridge.js";
- 
-+// ── PLAN-58: per-channel attribution ──
-+//
-+// Every result now carries `channels` (rank + native score per channel that
-+// returned it). From the same fused list we can therefore compute, per
-+// question, what EACH channel alone would have recalled at K and which
-+// channel(s) found the gold chunk, without a second search. This is the
-+// frozen baseline every later retrieval experiment is measured against.
-+
-+const CHANNELS: readonly HybridChannel[] = ["vector", "keyword", "graph"];
-+
-+type ChannelRecall = Record<HybridChannel, { recall_any_5: number; recall_any_10: number }>;
-+/** Which channels contributed to the top-5 fused hit on a gold session. */
-+type Attribution = "vector-only" | "keyword-only" | "graph-only" | "multi" | "none";
-+
-+/** Re-rank the fused list by one channel's own rank and dedupe to sessions. */
-+function sessionsByChannel(chunks: MemorySearchResult[], channel: HybridChannel): string[] {
-+  const ranked = chunks
-+    .filter((c) => c.channels?.[channel])
-+    .toSorted((a, b) => a.channels![channel]!.rank - b.channels![channel]!.rank);
-+  const order: string[] = [];
-+  const seen = new Set<string>();
-+  for (const c of ranked) {
-+    const sid = sessionIdFromPath(c.path);
-+    if (!seen.has(sid)) {
-+      seen.add(sid);
-+      order.push(sid);
+   const manager = await MemoryIndexManager.get({ cfg: config, agentId });
+```
+
+**File**: `benchmarks/longmemeval/results/bitterbot_longmemeval_s_retrieval.json` (modified, +1961/-44)
+```diff
+@@ -1,21 +1,47 @@
+ {
+-  "dataset": "/mnt/d/Bitterbot/bitterbot-desktop/benchmarks/longmemeval/data/longmemeval_s.json",
+-  "n_questions": 5,
+-  "elapsed_seconds": 2729.7,
++  "dataset": "/home/vicmg/bitterbot-desktop/benchmarks/longmemeval/data/longmemeval_s.json",
++  "git_commit": "9708d2d1",
++  "generated_at": "2026-10-27T15:48:53.764Z",
++  "n_questions": 50,
++  "elapsed_seconds": 1337.9,
+   "overall": {
+-    "n": 0,
+-    "R@5": "—",
+-    "R@10": "—",
+-    "R@5(all)": "—",
+-    "R@10(all)": "—"
++    "n": 49,
++    "R@5": "98.0%",
++    "R@10": "100.0%",
++    "R@5(all)": "98.0%",
++    "R@10(all)": "100.0%",
++    "vector R@5": "98.0%",
++    "keyword R@5": "0.0%",
++    "graph R@5": "0.0%",
++    "vector R@10": "98.0%",
++    "keyword R@10": "0.0%",
++    "attribution": {
++      "vector-only": "98.0%",
++      "keyword-only": "0.0%",
++      "graph-only": "0.0%",
++      "multi": "0.0%",
++      "none": "2.0%"
 +    }
-+  }
-+  return order;
-+}
+   },
+   "by_question_type": {
+     "single-session-user": {
+-      "n": 0,
+-      "R@5": "—",
+-      "R@10": "—",
+-      "R@5(all)": "—",
+-      "R@10(all)": "—"
++      "n": 49,
++      "R@5": "98.0%",
++      "R@10": "100.0%",
++      "R@5(all)": "98.0%",
++      "R@10(all)": "100.0%",
++      "vector R@5": "98.0%",
++      "keyword R@5": "0.0%",
++      "graph R@5": "0.0%",
++      "vector R@10": "98.0%",
++      "keyword R@10": "0.0%",
++      "attribution": {
++        "vector-only": "98.0%",
++        "keyword-only": "0.0%",
++        "graph-only": "0.0%",
++        "multi": "0.0%",
++        "none": "2.0%"
++      }
+     }
+   },
+   "per_question": [
+@@ -24,70 +50,1961 @@
+       "question_type": "single-session-user",
+       "num_haystack_sessions": 53,
+       "num_answer_sessions": 1,
+-      "retrieved_sessions": [],
++      "retrieved_sessions": [
++        "answer_280352e9",
++        "sharegpt_UnjngE7_65",
++        "f6859b48_2",
++        "d414cac5_4",
++        "sharegpt_PdnvIns_0",
++        "41abc171_4",
++        "sharegpt_Jcy1CVN_0",
++        "sharegpt_QZMeA7V_17",
++        "02bd2b90_3",
++        "0586f435_3"
++      ],
+       "answer_session_ids": ["answer_280352e9"],
+-      "recall_any_5": 0,
+-      "recall_any_10": 0,
+-      "recall_all_5": 0,
+-      "recall_all_10": 0,
+-      "num_chunks_returned": 0,
+-      "error": "fetch failed"
++      "recall_any_5": 1,
++      "recall_any_10": 1,
++      "recall_all_5": 1,
++      "recall_all_10": 1,
++      "num_chunks_returned": 50,
++      "channel_recall": {
++        "vector": {
++          "recall_any_5": 1,
++          "recall_any_10": 1
++        },
++        "keyword": {
++          "recall_any_5": 0,
++          "recall_any_10": 0
++        },
++        "graph": {
++          "recall_any_5": 0,
++          "recall_any_10": 0
++        }
++      },
++      "attribution": "vector-only",
++      "fusion": "rrf"
+     },
+     {
+       "question_id": "118b2229",
+       "question_type": "single-session-user",
+       "num_haystack_sessions": 45,
+       "num_answer_sessions": 1,
+-      "retrieved_sessions": [],
++      "retrieved_sessions": [
++        "answer_40a90d51",
++        "7d8b5834_1",
++        "004edb32",
++        "5209e813_2",
++        "0afa904a",
++        "c22571ff_2",
++        "sharegpt_M3x4mZx_0",
++        "sharegpt_dabXXRO_10",
++        "afe04238_1",
++        "db50c0f6"
++      ],
+       "answer_session_ids": ["answer_40a90d51"],
+-      "recall_any_5": 0,
+-      "recall_any_10": 0,
+-      "recall_all_5": 0,
+-      "recall_all_10": 0,
+-      "num_chunks_returned": 0,
+-      "error": "memory embeddings batch timed out after 120s"
++      "recall_any_5": 1,
++      "recall_any_10": 1,
++      "recall_all_5": 1,
++      "recall_all_10": 1,
++      "num_chunks_returned": 50,
++      "channel_recall": {
++        "vector": {
++          "recall_any_5": 1,
++          "recall_any_10": 1
++        },
++        "keyword": {
++          "recall_any_5": 0,
++          "recall_any_10": 0
++        },
++        "graph": {
++          "recall_any_5": 0,
++          "recall_any_10": 0
++        }
++      },
++      "attribution": "vector-only",
++      "fusion": "rrf"
+     },
+     {
+       "question_id": "51a45a95",
+       "question_type": "single-session-user",
+       "num_haystack_sessions": 50,
+       "num_answer_sessions": 1,
+-      "retrieved_sessions": [],
++      "retrieved_sessions": [
++        "answer_d61669c7",
++        "sharegpt_MKMWjX0_25",
++        "55e0c6db_2",
++        "sharegpt_apWLb2c_0",
++        "4679a05c",
++        "6e0b1800_2",
++        "07d1915d_1",
++        "d680a212_1",
++        "83addb61_4",
++        "dfe646a7_1"
++      ],
+       "answer_session_ids": ["answer_d61669c7"],
+-      "recall_any_5": 0,
+-      "recall_any_10": 0,
+-      "recall_all_5": 0,
+-      "recall_all_10": 0,
+-      "num_chunks_returned": 0,
+-      "error": "memory embeddings batch timed out after 120s"
++      "recall_any_5": 1,
++      "recall_any_10": 1,
++      "recall_all_5": 1,
++      "recall_all_10": 1,
++      "num_chunks_returned": 50,
++      "channel_recall": {
++        "vector": {
++          "recall_any_5": 1,
++       
+```
+
+**File**: `benchmarks/longmemeval/results/bitterbot_longmemeval_s_retrieval_2026-10-27_keyword-or.json` (added, +2048/-0)
+```diff
+@@ -0,0 +1,2048 @@
++{
++  "dataset": "/home/vicmg/bitterbot-desktop/benchmarks/longmemeval/data/longmemeval_s.json",
++  "git_commit": "09e5a54e",
++  "generated_at": "2026-10-27T16:15:20.404Z",
++  "n_questions": 50,
++  "elapsed_seconds": 1440.8,
++  "overall": {
++    "n": 50,
++    "R@5": "100.0%",
++    "R@10": "100.0%",
++    "R@5(all)": "100.0%",
++    "R@10(all)": "100.0%",
++    "vector R@5": "98.0%",
++    "keyword R@5": "100.0%",
++    "graph R@5": "0.0%",
++    "vector R@10": "98.0%",
++    "keyword R@10": "100.0%",
++    "attribution": {
++      "vector-only": "0.0%",
++      "keyword-only": "0.0%",
++      "graph-only": "0.0%",
++      "multi": "100.0%",
++      "none": "0.0%"
++    }
++  },
++  "by_question_type": {
++    "single-session-user": {
++      "n": 50,
++      "R@5": "100.0%",
++      "R@10": "100.0%",
++      "R@5(all)": "100.0%",
++      "R@10(all)": "100.0%",
++      "vector R@5": "98.0%",
++      "keyword R@5": "100.0%",
++      "graph R@5": "0.0%",
++      "vector R@10": "98.0%",
++      "keyword R@10": "100.0%",
++      "attribution": {
++        "vector-only": "0.0%",
++        "keyword-only": "0.0%",
++        "graph-only": "0.0%",
++        "multi": "100.0%",
++        "none": "0.0%"
++      }
++    }
++  },
++  "per_question": [
++    {
++      "question_id": "e47becba",
++      "question_type": "single-session-user",
++      "num_haystack_sessions": 53,
++      "num_answer_sessions": 1,
++      "retrieved_sessions": [
++        "answer_280352e9",
++        "02bd2b90_3",
++        "sharegpt_UnjngE7_65",
++        "f6859b48_2",
++        "d414cac5_4",
++        "sharegpt_PdnvIns_0",
++        "41abc171_4",
++        "sharegpt_Jcy1CVN_0",
++        "sharegpt_QZMeA7V_17",
++        "0586f435_3"
++      ],
++      "answer_session_ids": ["answer_280352e9"],
++      "recall_any_5": 1,
++      "recall_any_10": 1,
++      "recall_all_5": 1,
++      "recall_all_10": 1,
++      "num_chunks_returned": 50,
++      "channel_recall": {
++        "vector": {
++          "recall_any_5": 1,
++          "recall_any_10": 1
++        },
++        "keyword": {
++          "recall_any_5": 1,
++          "recall_any_10": 1
++        },
++        "graph": {
++          "recall_any_5": 0,
++          "recall_any_10": 0
++        }
++      },
++      "attribution": "multi",
++      "fusion": "rrf"
++    },
++    {
++      "question_id": "118b2229",
++      "question_type": "single-session-user",
++      "num_haystack_sessions": 45,
++      "num_answer_sessions": 1,
++      "retrieved_sessions": [
++        "answer_40a90d51",
++        "5209e813_2",
++        "db50c0f6",
++        "0afa904a",
++        "7d8b5834_1",
++        "sharegpt_dabXXRO_10",
++        "afe04238_1",
++        "db73b7e4_4",
++        "5dce60dd",
++        "ultrachat_392094"
++      ],
++      "answer_session_ids": ["answer_40a90d51"],
++      "recall_any_5": 1,
++      "recall_any_10": 1,
++      "recall_all_5": 1,
++      "recall_all_10": 1,
++      "num_chunks_returned": 50,
++      "channel_recall": {
++        "vector": {
++          "recall_any_5": 1,
++          "recall_any_10": 1
++        },
++        "keyword": {
++          "recall_any_5": 1,
++          "recall_any_10": 1
++        },
++        "graph": {
++          "recall_any_5": 0,
++          "recall_any_10": 0
++        }
++      },
++      "attribution": "multi",
++      "fusion": "rrf"
++    },
++    {
++      "question_id": "51a45a95",
++      "question_type": "single-session-user",
++      "num_haystack_sessions": 50,
++      "num_answer_sessions": 1,
++      "retrieved_sessions": [
++        "answer_d61669c7",
++        "d680a212_1",
++        "07ba9acd_2",
++        "217debf7",
++        "4679a05c",
++        "5c44d9fe_1",
++        "127fd1c9",
++        "fab585c2_1",
++        "98c198fb",
++        "dfe646a7_1"
++      ],
++      "answer_session_ids": ["answer_d61669c7"],
++      "recall_any_5": 1,
++      "recall_any_10": 1,
++      "recall_all_5": 1,
++      "recall_all_10": 1,
++      "num_chunks_returned": 50,
++      "channel_recall": {
++        "vector": {
++          "recall_any_5": 1,
++          "recall_any_10": 1
++        },
++        "keyword": {
++          "recall_any_5": 1,
++          "recall_any_10": 1
++        },
++        "graph": {
++          "recall_any_5": 0,
++          "recall_any_10": 0
++        }
++      },
++      "attribution": "multi",
++      "fusion": "rrf"
++    },
++    {
++      "question_id": "58bf7951",
++      "question_type": "single-session-user",
++      "num_haystack_sessions": 57,
++      "num_answer_sessions": 1,
++      "retrieved_sessions": [
++        "answer_355c48bb",
++        "ultrachat_221066",
++        "ultrachat_155546",
++        "sharegpt_9qAGH5s_0",
++        "sharegpt_DGiqvVv_270",
++        "7e17ae56_5",
++        "ultrachat_71618",
++        "ultrachat_304942",
++        "sharegpt_LG0uJvY_0",
++        "sharegpt_PancT1q_0"
++      ],
++      "answer_session_ids": ["answer_355c48bb"],
++      "recall_any_5": 1,
++      "recall_any_10": 1,
++      "recall_all_5": 1,
++      "recall_all_10": 1,
++      "num_chunks_returned": 50,
++      "channel_recall": {
++        "vector": {
++ 
+```
+
+**File**: `benchmarks/longmemeval/runner-retrieval.ts` (modified, +13/-2)
+```diff
+@@ -95,9 +95,19 @@ function attribution(chunks: MemorySearchResult[], top5: Set<string>, gold: stri
+   return found[0] ? (`${found[0]}-only` as Attribution) : "none";
+ }
+ 
++/**
++ * The commit under test, read ONCE before the first question. A run takes
++ * long enough for HEAD to move (the 2026-10-27 baseline was stamped with a
++ * commit made while it ran), so the stamp is taken at the start, and a dirty
++ * working tree is marked because the measured code is then not that commit.
++ */
+ function gitCommit(): string | null {
+   try {
+-    return execSync("git rev-parse --short HEAD", { encoding: "utf-8" }).trim();
++    const head = execSync("git rev-parse --short HEAD", { encoding: "utf-8" }).trim();
++    const dirty = execSync("git status --porcelain --untracked-files=no", {
++      encoding: "utf-8",
++    }).trim();
++    return dirty ? `${head}+dirty` : head;
+   } catch {
+     return null;
+   }
+@@ -212,6 +222,7 @@ function fmt(agg: Aggregate) {
+ // ── Main ──
+ 
+ async function run() {
++  const measuredCommit = gitCommit();
+   const dataFile = args.oracle
+     ? join(args["data-dir"]!, "longmemeval_oracle.json")
+     : join(args["data-dir"]!, "longmemeval_s.json");
+@@ -375,7 +386,7 @@ async function run() {
+   const summary = {
+     dataset: dataFile,
+     // PLAN-58: the baseline is only comparable when it names the code it measured.
+-    git_commit: gitCommit(),
++    git_commit: measuredCommit,
+     generated_at: new Date().toISOString(),
+     n_questions: perQuestion.length,
+     elapsed_seconds: parseFloat(totalSec),
+```
+
+**File**: `docs/memory/curiosity-and-search.md` (modified, +2/-0)
+```diff
+@@ -234,6 +234,8 @@ flowchart TB
+ 
+ **Hybrid merging** uses reciprocal rank fusion by default (`mergeStrategy: "rrf"`); the configurable weights (0.7 vector + 0.3 text) apply only with `mergeStrategy: "weighted"`. BM25 ranks are converted to [0,1] scores via `bm25RankToScore()`. A PLAN-18 graph-reader channel joins the fusion as a third ranked list when the knowledge graph is populated.
+ 
++**Keyword query shape.** `buildFtsQuery()` OR-joins the query's terms for the FTS5 `MATCH`, dropping a short shared stopword list when the query has three or more tokens (a one- or two-word lookup keeps every word) and capping at 16 distinct terms. bm25 then ranks chunks by how many of the terms they contain and how rare those terms are, so a chunk holding every term still sorts first. Until 2026-10-27 the terms were AND-joined: a chunk had to contain every token, which held for terse lookups and for no conversational question, and the per-channel diagnostics showed the keyword channel contributing nothing to natural-language queries on the live store or the LongMemEval baseline. The `fusion` field still reports `rrf` in that case, so look at `channels.keyword` presence, not `fusion`, to tell whether the keyword channel took part.
 +
-+function channelRecall(chunks: MemorySearchResult[], gold: string[]): ChannelRecall {
-+  const out = {} as ChannelRecall;
-+  for (const ch of CHANNELS) {
-+    const order = sessionsByChannel(chunks, ch);
-+    const top5 = new Set(order.slice(0, 5));
-+    const top10 = new Set(order.slice(0, 10));
-+    out[ch] = {
-+      recall_any_5: gold.some((g) => top5.has(g)) ? 1 : 0,
-+      recall_any_10: gold.some((g) => top10.has(g)) ? 1 : 0,
-+    };
-+  }
-+  return out;
-+}
-+
-+/** For the first fused top-5 chunk on a gold session, who found it? */
-+function attribution(chunks: MemorySearchResult[], top5: Set<string>, gold: string[]): Attribution {
-+  const hit = chunks.find((c) => {
-+    const sid = sessionIdFromPath(c.path);
-+    return top5.has(sid) && gold.includes(sid);
+ **Per-channel diagnostics (PLAN-58).** Every result carries `channels` and `fusion` alongside the fused `score`:
+ 
+ ```ts
+```
+
+**File**: `src/memory/hybrid.test.ts` (modified, +20/-4)
+```diff
+@@ -8,14 +8,30 @@ import {
+ import { rrfFuse } from "./rrf.js";
+ 
+ describe("memory hybrid helpers", () => {
+-  it("buildFtsQuery tokenizes and AND-joins", () => {
+-    expect(buildFtsQuery("hello world")).toBe('"hello" AND "world"');
+-    expect(buildFtsQuery("FOO_bar baz-1")).toBe('"FOO_bar" AND "baz" AND "1"');
++  it("buildFtsQuery tokenizes and OR-joins so bm25 ranks by how many terms match", () => {
++    expect(buildFtsQuery("hello world")).toBe('"hello" OR "world"');
++    expect(buildFtsQuery("FOO_bar baz-1")).toBe('"FOO_bar" OR "baz" OR "1"');
+     expect(buildFtsQuery("金银价格")).toBe('"金银价格"');
+-    expect(buildFtsQuery("価格 2026年")).toBe('"価格" AND "2026年"');
++    expect(buildFtsQuery("価格 2026年")).toBe('"価格" OR "2026年"');
+     expect(buildFtsQuery("   ")).toBeNull();
+   });
+ 
++  it("buildFtsQuery drops stopwords from a sentence but keeps every word of a short lookup", () => {
++    // A natural question: under AND this matched nothing anywhere.
++    expect(buildFtsQuery("what did the user say about their trip to Paris")).toBe(
++      '"user" OR "say" OR "trip" OR "Paris"',
++    );
++    // Two tokens: no stopword pass, so "the" survives on purpose.
++    expect(buildFtsQuery("the matrix")).toBe('"the" OR "matrix"');
++    // All stopwords: fall back to the raw tokens rather than returning nothing.
++    expect(buildFtsQuery("and the for")).toBe('"and" OR "the" OR "for"');
++    // Duplicates collapse and the term list is capped.
++    expect(buildFtsQuery("alpha alpha beta")).toBe('"alpha" OR "beta"');
++    expect(
++      buildFtsQuery(Array.from({ length: 30 }, (_, i) => `term${i}`).join(" "))?.split(" OR "),
++    ).toHaveLength(16);
 +  });
-+  if (!hit?.channels) {
-+    return "none";
-+  }
-+  const found = CHANNELS.filter((ch) => hit.channels![ch]);
-+  if (found.length > 1) {
-+    return "multi";
-+  }
-+  return found[0] ? (`${found[0]}-only` as Attribution) : "none";
-+}
 +
-+function gitCommit(): string | null {
-+  try {
-+    return execSync("git rev-parse --short HEAD", { encoding: "utf-8" }).trim();
-+  } catch {
+   it("bm25RankToScore is monotonic and clamped", () => {
+     expect(bm25RankToScore(0)).toBeCloseTo(1);
+     expect(bm25RankToScore(1)).toBeCloseTo(0.5);
+```
+
+**File**: `src/memory/hybrid.ts` (modified, +147/-2)
+```diff
+@@ -62,6 +62,143 @@ export type HybridKeywordResult = {
+   emotionalValence?: number | null;
+ };
+ 
++/**
++ * Minimal English stopword set shared by the keyword channel and the
++ * proactive-recall fallback. It only needs to strip the glue words of a
++ * conversational sentence; bm25's inverse document frequency handles the rest.
++ */
++export const FTS_STOPWORDS: ReadonlySet<string> = new Set([
++  "the",
++  "and",
++  "for",
++  "are",
++  "was",
++  "were",
++  "did",
++  "does",
++  "has",
++  "had",
++  "have",
++  "you",
++  "your",
++  "yours",
++  "our",
++  "ours",
++  "his",
++  "her",
++  "hers",
++  "its",
++  "their",
++  "theirs",
++  "this",
++  "that",
++  "these",
++  "those",
++  "with",
++  "from",
++  "what",
++  "which",
++  "when",
++  "where",
++  "who",
++  "whom",
++  "why",
++  "how",
++  "can",
++  "could",
++  "would",
++  "should",
++  "will",
++  "shall",
++  "may",
++  "might",
++  "must",
++  "about",
++  "into",
++  "onto",
++  "over",
++  "under",
++  "again",
++  "then",
++  "than",
++  "there",
++  "here",
++  "just",
++  "very",
++  "not",
++  "but",
++  "any",
++  "all",
++  "some",
++  "one",
++  "two",
++  "get",
++  "got",
++  "let",
++  "lets",
++  "please",
++  "tell",
++  "know",
++  "think",
++  "want",
++  "need",
++  "yesterday",
++  "today",
++  "tomorrow",
++  "now",
++  "still",
++  "yet",
++  "also",
++  "too",
++  "a",
++  "i",
++  "to",
++  "of",
++  "in",
++  "on",
++  "at",
++  "it",
++  "is",
++  "as",
++  "be",
++  "by",
++  "or",
++  "an",
++  "if",
++  "we",
++  "my",
++  "me",
++  "do",
++  "so",
++  "up",
++  "no",
++  "us",
++  "he",
++  "she",
++  "they",
++  "them",
++  "been",
++  "being",
++]);
++
++/** Query terms kept after stopword removal; bm25 ranks by how many match. */
++export const FTS_MAX_QUERY_TERMS = 16;
++
++/**
++ * Build the FTS5 MATCH expression for the keyword channel.
++ *
++ * Terms are OR-joined, not AND-joined. Under AND, a chunk had to contain
++ * every token of the query, which held for terse two-word lookups and for
++ * nothing conversational: the PLAN-58 per-channel diagnostics showed the
++ * keyword channel contributing zero results to natural-language questions on
++ * the live store and on the LongMemEval baseline, so "hybrid" search had been
++ * vector-only in practice. With OR, bm25 ranks chunks by how many of the
++ * query's terms they contain and how rare those terms are, so an all-terms
++ * match still sorts first and the channel has something to say about the
++ * rest. Stopwords are dropped only when the query has three or more tokens,
++ * so a short lookup keeps every word it was given. Returns null when nothing
++ * searchable remains.
++ */
+ export function buildFtsQuery(raw: string): string | null {
+   const tokens =
+     raw
+@@ -71,8 +208,16 @@ export function buildFtsQuery(raw: string): string | null {
+   if (tokens.length === 0) {
+     return null;
+   }
+-  const quoted = tokens.map((t) => `"${t.replaceAll('"', "")}"`);
+-  return quoted.join(" AND ");
++  const content =
++    tokens.length >= 3 ? tokens.filter((t) => !FTS_STOPWORDS.has(t.toLowerCase())) : tokens;
++  const kept = content.length > 0 ? content : tokens;
++  const unique = [...new Set(kept.map((t) => t.replaceAll('"', "")))]
++    .filter(Boolean)
++    .slice(0, FTS_MAX_QUERY_TERMS);
++  if (unique.length === 0) {
 +    return null;
 +  }
-+}
-+
- // ── CLI Args ──
- 
- const { values: args } = parseArgs({
-@@ -64,6 +136,11 @@ interface PerQuestion {
-   recall_all_5: number;
-   recall_all_10: number;
-   num_chunks_returned: number;
-+  /** PLAN-58: what each channel alone would have recalled from the same fused list. */
-+  channel_recall?: ChannelRecall;
-+  /** PLAN-58: which channel(s) found the gold chunk in the fused top-5. */
-+  attribution?: Attribution;
-+  fusion?: string;
-   error?: string;
++  return unique.map((t) => `"${t}"`).join(" OR ");
  }
  
-@@ -73,6 +150,10 @@ interface Aggregate {
-   recall_any_10_sum: number;
-   recall_all_5_sum: number;
-   recall_all_10_sum: number;
-+  /** PLAN-58 */
-+  channel_5_sum: Record<HybridChannel, number>;
-+  channel_10_sum: Record<HybridChannel, number>;
-+  attribution: Record<Attribution, number>;
- }
- 
- function emptyAgg(): Aggregate {
-@@ -82,6 +163,9 @@ function emptyAgg(): Aggregate {
-     recall_any_10_sum: 0,
-     recall_all_5_sum: 0,
-     recall_all_10_sum: 0,
-+    channel_5_sum: { vector: 0, keyword: 0, graph: 0 },
-+    channel_10_sum: { vector: 0, keyword: 0, graph: 0 },
-+    attribution: { "vector-only": 0, "keyword-only": 0, "graph-only": 0, multi: 0, none: 0 },
-   };
- }
- 
-@@ -91,6 +175,15 @@ function addToAgg(agg: Aggregate, q: PerQuestion) {
-   agg.recall_any_10_sum += q.recall_any_10;
-   agg.recall_all_5_sum += q.recall_all_5;
-   agg.recall_all_10_sum += q.recall_all_10;
-+  if (q.channel_recall) {
-+    for (const ch of CHANNELS) {
-+      agg.channel_5_sum[ch] += q.channel_recall[ch].recall_any_5;
-+      agg.channel_10_sum[ch] += q.channel_recall[ch].recall_any_10;
-+    }
-+  }
-+  if (q.attribution) {
-+    agg.attribution[q.attribution] += 1;
-+  }
- }
- 
- function fmt(agg: Aggregate) {
-@@ -104,6 +197,15 @@ function fmt(agg: Ag
+ export function bm25RankToScore(rank: number): number {
 ```
 
-**File**: `docs/memory/curiosity-and-search.md` (modified, +20/-1)
+---
+
+### Incident Patch 2: `ee51008c` (2026-10-27)
+**Commit Message**: fix(skills): lint src/agents/skills again, dedupe fit text, two-node mesh harness, startup log (#311)
+
+* fix(skills): lint src/agents/skills again, dedupe fit mismatch text, add the local two-node mesh harness
+
+- .oxlintrc.json: the `skills/` ignore pattern also matched `src/agents/skills/`,
+  so that directory was linted nowhere, CI included. Anchor it to the repo-root
+  bundled skills dir and fix the 15 findings it hid (unused imports and
+  variables, `sort` -> `toSorted`, a useless regex escape, a brittle unused
+  replaced-count computation).
+- applicability-fit: name the sender model once when the gate model and the
+  read model are the same string (was "measured on X, X: weaker ...").
+- server-startup-memory: memory search turned off is a configuration, not
+  "initialization failed: unknown error"; log it as information and keep the
+  warning for a real thrown error. Unit test added.
+- scripts/sim-mesh: two throwaway gateways on one machine joined only over
+  loopback (the wrapper strips the public bootstraps the gateway merges in),
+  with a publisher script that runs the real housekeeping pass and
+  orchestrator publish, and a retraction script. Verified end to end: fit
+  goo
+
+**File**: `.gitignore` (modified, +2/-0)
 ```diff
-@@ -232,7 +232,26 @@ flowchart TB
-     H --> K[Return results]
- ```
+@@ -240,6 +240,8 @@ benchmarks/arc-agi-3/results/
  
--**Hybrid merging** uses reciprocal rank fusion by default (`mergeStrategy: "rrf"`); the configurable weights (0.7 vector + 0.3 text) apply only with `mergeStrategy: "weighted"`. BM25 ranks are converted to [0,1] scores via `bm25RankToScore()`.
-+**Hybrid merging** uses reciprocal rank fusion by default (`mergeStrategy: "rrf"`); the configurable weights (0.7 vector + 0.3 text) apply only with `mergeStrategy: "weighted"`. BM25 ranks are converted to [0,1] scores via `bm25RankToScore()`. A PLAN-18 graph-reader channel joins the fusion as a third ranked list when the knowledge graph is populated.
-+
-+**Per-channel diagnostics (PLAN-58).** Every result carries `channels` and `fusion` alongside the fused `score`:
-+
-+```ts
-+type MemorySearchResult = {
-+  score: number; // fused; under RRF this is rank-only and tops out near 3/61
-+  fusion?: "rrf" | "weighted" | "vector-only";
-+  channels?: {
-+    vector?: { rank: number; score: number }; // 1-based rank, cosine
-+    keyword?: { rank: number; score: number }; // 1-based rank, bm25RankToScore
-+    graph?: { rank: number; score: number }; // 1-based rank, graph reader score
-+  };
-+  // ...
-+};
-+```
-+
-+A channel that did not return the chunk is absent, never zero-filled. The ranks are the same ones `rrfFuse` used (it reports them as `sourceRanks`), so a consumer can see _why_ a memory matched: vector consensus, an exact keyword hit, a graph hop, or several at once. Anything that needs "how similar" (the `deep_recall` shortcut, thresholds, evaluation) must read `channels.vector.score`, not the fused RRF score.
-+
-+What the **model** sees is a config decision, `agents.defaults.memorySearch.query.channelDiagnostics`: `"ranks"` (default) adds a compact `{v, k, g}` rank map to each `memory_search` result (about 12 tokens); `"full"` adds native scores too; `"off"` makes tool output byte-identical to before. Programmatic callers of `manager.search()` always get the full block. Guest searches never carry it. `manager.status().search` reports which channels are live (`vector`, `keyword`, `graph`) and the fusion in effect.
- 
- **Importance boost** applies a multiplicative factor:
- 
+ # PLAN-24 Phase 2 contrastive run scratch + timestamped artifacts
+ benchmarks/longmemeval/.work-contrastive/
++benchmarks/longmemeval/.work-retrieval/
++benchmarks/longmemeval/.bench-runs/
+ # Per-run benchmark artifacts (PLAN-41 p0-24): two historic run dirs and
+ # the bio work tree were tracked at ~57MB; runs are reproducible, not source.
+ benchmarks/longmemeval/.bench-runs-bio/
 ```
 
-**File**: `docs/memory/deep-recall.md` (modified, +17/-4)
+**File**: `.oxlintrc.json` (modified, +1/-1)
 ```diff
-@@ -95,18 +95,31 @@ The sandbox is cached per `agent:session:scope` and **reused across `deep_recall
- 
- ## Smart Shortcut
- 
--Before spawning the REPL, the tool runs a quick hybrid search (BM25 + vector). If 3+ results score ≥ 0.8, they're returned directly — skipping the REPL.
-+Before spawning the REPL, the tool runs a quick hybrid search (BM25 + vector). If 3+ results are high-confidence, they're returned directly, skipping the REPL.
- 
--**Important:** The 0.8 threshold is applied **client-side** after retrieval, because the RRF (Reciprocal Rank Fusion) merge strategy ignores the `minScore` parameter. This was a critical bug that caused the shortcut to ALWAYS fire.
-+**What "high-confidence" means (PLAN-58).** The threshold is 0.8 on the **cosine scale**, applied client-side. Under the default RRF (Reciprocal Rank Fusion) merge strategy the fused `score` is rank-only and tops out near 3/61 ≈ 0.049, so a threshold on the fused score has two failure modes, and the tool has had both:
-+
-+- Before the client-side filter, the manager ignored `minScore` under RRF and the shortcut **always** fired.
-+- With a client-side `score >= 0.8` filter on the fused RRF score, the shortcut could **never** fire, and every `deep_recall` paid for the REPL.
-+
-+The fix reads the vector channel's native cosine from the per-channel diagnostics every search result now carries:
- 
- ```typescript
--// Fixed: filter scores client-side
--const highConfidence = quickResults.filter((r) => r.score >= 0.8);
-+// src/agents/tools/deep-recall-tool.ts
-+export function isHighConfidenceHit(r, threshold = 0.8) {
-+  if (r.fusion === "rrf") {
-+    return (r.channels?.vector?.score ?? 0) >= threshold; // cosine, not fused rank score
-+  }
-+  return r.score >= threshold; // weighted / vector-only are already on the cosine scale
-+}
-+const highConfidence = quickResults.filter((r) => isHighConfidenceHit(r));
- if (highConfidence.length >= 3) {
-   return formatQuickResults(highConfidence); // Skip REPL
- }
- ```
- 
-+A keyword-only hit has no cosine and never counts toward the shortcut.
-+
- ---
- 
- ## Model Routing
+@@ -48,7 +48,7 @@
+     "node_modules/",
+     "patches/",
+     "pnpm-lock.yaml",
+-    "skills/",
++    "/skills/",
+     "deploy/mailbox-host/mailbox-host.bundle.mjs",
+     "src/canvas-host/a2ui/a2ui.bundle.js",
+     "Swabble/",
 ```
 
-**File**: `docs/memory/skills-pipeline.md` (modified, +55/-0)
+**File**: `desktop/renderer/src/components/skills/SkillEditor.tsx` (modified, +1/-1)
 ```diff
-@@ -290,6 +290,61 @@ The evidence record carries `ladder`, `canary`, and `modelDrift`; status
-   strict canary (a fifth of runs, 16 determinate runs per side, looks at
-   4/8/16/32/64 with alpha 0.05/5, 40 runs or 21 days to graduate).
+@@ -296,7 +296,7 @@ export function SkillEditor({ onClose }: { onClose: () => void }) {
+   const validation = useMemo<ValidationResult>(() => validate(content), [content]);
  
-+### Evidence of conditions travels with the skill (PLAN-58 Phase B)
+   const appTheme = useUIStore((s) => s.theme);
+-  const monacoRef = useRef<Parameters<OnMount>[1] | null>(null);
++  const monacoRef = useRef<Parameters<OnMount>[1]>(null);
+ 
+   const onEditorMount: OnMount = useCallback((editor, monaco) => {
+     monacoRef.current = monaco;
+```
+
+**File**: `docs/memory/skills-pipeline.md` (modified, +13/-0)
+```diff
+@@ -345,6 +345,19 @@ gate or touching the orchestrator.
+ - Config: `skills.evolution.applicabilityProfile.{enabled, publish,
+   windowDays}`, defaults `true`, `true`, `14`.
+ 
++#### Exercising it locally
 +
-+The trailer above says a skill helped on the sender's suite. It did not say
-+under what conditions, so a receiver could tell "this skill sounds relevant"
-+from "this skill has evidence under conditions like mine" only by running
-+the gate. The **applicability profile** closes that gap without adding a
-+gate or touching the orchestrator.
-+
-+- **Built every housekeeping pass** (`applicability-refresh.ts`, right
-+  after the evidence record, default on) into `<skill>/.applicability.json`
-+  from ledgers that already exist: the read ledger (models the skill was
-+  read under, pass / fail / indeterminate counts, highest L0-L4 evidence
-+  level), the evolution meta (gate trials, delta, CI, `validatedOn`,
-+  corpus version), the SKILL.md frontmatter (declared `os`,
-+  `requires.bins/anyBins/env` **names**, capability **keys**, tier) and up
-+  to 40 reconstructed journal traces that credited a read (tool names by
-+  run count, tool-sequence hashes, failure mechanisms). Names, hashes and
-+  counts only: no task text, run ids, session keys, arguments, results,
-+  paths or env values ever enter it, the builder is unit-tested against
-+  planted secrets, and the whole thing is capped at 4 KB.
-+- **Shipped inside the signed trailer.** `buildProvenanceTrailer` places
-+  the profile in the claims block, so the device-key binding (4.4) signs it
-+  with no change to the signing code; a single altered byte makes the
-+  trailer parse as no trailer at all. The publisher runs `findPublishLeak`
-+  over the serialized profile too and withholds the **profile** (never the
-+  skill) on a hit. Total growth is under 4 KB against the 256 KB gossip
-+  cap; zero Rust changes. A pre-PLAN-58 receiver verifies the same
-+  signature and simply does not read the field.
-+- **Fit on receipt** (`assessApplicabilityFit`, pure). The receiver scores
-+  the profile against its own facts: primary model (exact match, else the
-+  4.6 transfer direction), platform versus declared and measured OS,
-+  declared binaries on PATH, declared env names set, and the sender's
-+  evidence depth (five or more runs at L3+ for full credit). A declared OS
-+  that excludes this platform or a missing required binary is a **hard**
-+  mismatch that caps the level at `partial`. No profile is `unknown`, never
-+  `poor`. The fit is stored on `.envelope.json` (`applicability_fit`) and on
-+  `.evolution-meta.json.peer.applicabilityFit` when the skill is staged.
-+- **Soft signal, three consumers, nothing else.** The review list
-+  (`listIncomingSkills().applicability`) shows the level, the mismatches
-+  and a display subset of the profile. `evaluationPriority` becomes half
-+  trust, half fit when a fit is supplied (no profile ranks below any
-+  measured fit); the activation score keeps weight 0 for both, asserted by
-+  `trust-not-evidence.test.ts`. The gate applies the **strict canary**
-+  when the fit is `poor` or `unknown`, even for a trusted attester; a
-+  `good` fit changes nothing (fit can tighten, never loosen). There is no
-+  fit-based admission, rejection or auto-accept.
-+- **The claim this makes testable.** Peer skills with a `good` fit should
-+  pass the local re-gate more often than skills with a `poor` fit. The
-+  status RPC carries the fit per pending peer so the stratified pass rate
-+  can be read off after a few dozen receipts; if the strata do not
-+  separate, `skills.evolution.applicabilityProfile.publish: false` is the
-+  right default and the profile is not earning its bytes.
-+- Config: `skills.evolution.applicabilityProfile.{enabled, publish,
-+  windowDays}`, defaults `true`, `true`, `14`.
++`scripts/sim-mesh/` brings up two throwaway gateways on one machine, joined
++only over loopback with the public bootstraps stripped, and drives the whole
++outbound and inbound path without an LLM: seeded evolved skills on the
++publisher go through the real housekeeping pass (evidence record, profile,
++signed trailer, orchestrator publish), arrive on the receiver through its
++orchestrator, and land in quarantine with the fit on the envelope, in the
++review list, in the staged meta after an operator accept and in the
++evolution status. A signed retraction from the publisher removes the
++receiver's quarantined copy. See the README there for the exact commands and
++the expected fits.
 +
  ### Measuring it: the ablation harness (PLAN-45 Phase 5.1 and 5.2)
  
  The mechanism above is only a claim until it has numbers. `pnpm
 ```
 
-**File**: `package.json` (modified, +1/-0)
+**File**: `scripts/sim-mesh/README.md` (added, +82/-0)
 ```diff
-@@ -101,6 +101,7 @@
-     "benchmark:longmemeval:download": "bash benchmarks/longmemeval/download.sh",
-     "benchmark:longmemeval:evaluate": "node --import tsx benchmarks/longmemeval/evaluate.ts",
-     "benchmark:longmemeval:oracle": "node --import tsx benchmarks/longmemeval/runner.ts --oracle",
-+    "benchmark:longmemeval:retrieval": "node --import tsx benchmarks/longmemeval/runner-retrieval.ts",
-     "benchmark:skills": "node --import tsx benchmarks/skill-evolution/ablation.ts",
-     "benchmark:skills:check": "node --import tsx benchmarks/skill-evolution/ablation.ts --check",
-     "bitterbot": "node scripts/run-node.mjs",
-```
-
-**File**: `src/agents/memory-search.ts` (modified, +10/-0)
-```diff
-@@ -68,6 +68,8 @@ export type ResolvedMemorySearchConfig = {
-       candidateMultiplier: number;
-       mergeStrategy: "rrf" | "weighted";
-     };
-+    /** PLAN-58: per-channel detail the memory_search tool shows the model. */
-+    channelDiagnostics: "full" | "ranks" | "off";
-     recency: {
-       enabled: boolean;
-       alpha: number;
-@@ -376,6 +378,9 @@ function mergeConfig(
-         candidateMultiplier,
-         mergeStrategy: hybrid.mergeStrategy as "rrf" | "weighted",
-       },
-+      channelDiagnostics: resolveChannelDiagnostics(
-+        overrides?.query?.channelDiagnostics ?? defaults?.query?.channelDiagnostics,
-+      ),
-       recency: {
-         enabled:
-           (overrides?.query as Record<string, unknown>)?.recency != null
-@@ -414,6 +419,11 @@ function mergeConfig(
-   };
- }
- 
-+/** PLAN-58: default "ranks"; anything unrecognised falls back to the default. */
-+export function resolveChannelDiagnostics(value: unknown): "full" | "ranks" | "off" {
-+  return value === "full" || value === "off" ? value : "ranks";
-+}
+@@ -0,0 +1,82 @@
++# Local two-node mesh test
 +
- export function resolveMemorySearchConfig(
-   cfg: BitterbotConfig,
-   agentId: string,
++Two throwaway Bitterbot nodes on one machine, connected only to each other
++over loopback, so the skill propagation path can be exercised end to end
++without an LLM and without touching the public mesh:
++
++evolved skill on A → housekeeping (evidence record, applicability profile,
++signed provenance trailer) → orchestrator `publish_skill` → Gossipsub →
++B's orchestrator → `skill_received` → ingest (signature, hash, binding,
++applicability fit) → quarantine → operator accept → staging → evolution
++status, and a signed retraction back the other way.
++
++Each node is a real gateway with its own state dir, keys, ports and
++orchestrator. Dreams, consolidation, curiosity and memory search are off in
++the generated config so a test node makes no model or embedding calls. The
++orchestrator runs through `orchestrator-isolated.sh`, which drops every
++non-loopback bootstrap the gateway merges in from the defaults and DNS and
++forces relay mode off. A test node therefore never reaches the relay fleet.
++
++Budget: each fresh gateway settles around 700 MB RSS. On a small box stop
++them as soon as the run is done.
++
++## Run
++
++Build first (`pnpm build`) so `dist/entry.js` is current. All paths below
++are relative to the repository root. Replace `$A`/`$B` with the state dirs.
++
++```bash
++A=~/bitterbot-sim/a; B=~/bitterbot-sim/b
++export A_IPC=/tmp/bitterbot-orchestrator-sim-a.sock B_IPC=/tmp/bitterbot-orchestrator-sim-b.sock
++
++# 1. Fresh identities. A node whose key dir is empty would otherwise inherit a
++#    legacy key from <repo>/keys or ~/keys and share the live node's peer id.
++mkdir -p $A/keys $B/keys
++for n in a b; do
++  timeout 4 orchestrator/target/release/bitterbot-orchestrator \
++    --ipc-path /tmp/keygen-$n.sock --key-dir ~/bitterbot-sim/$n/keys \
++    --listen-addr /ip4/127.0.0.1/tcp/9299 --relay-mode off >/dev/null 2>&1 || true
++  rm -f /tmp/keygen-$n.sock
++done
++
++# 2. Node A (publisher): weaker primary model so its "poor" skill reads as such on B.
++node scripts/sim-mesh/write-config.mjs a 19101 9201 9857 anthropic/claude-haiku-4-5
++BITTERBOT_STATE_DIR=$A BITTERBOT_ORCHESTRATOR_IPC_PATH=$A_IPC \
++  setsid nohup node dist/entry.js gateway > $A/gateway.log 2>&1 < /dev/null &
++until curl -sf http://127.0.0.1:9857/api/peers >/dev/null; do sleep 2; done
++A_PEER=$(curl -s http://127.0.0.1:9857/api/peers | sed 's/.*"peer_id":"\([^"]*\)".*/\1/')
++
++# 3. Node B (receiver) dials A over loopback.
++node scripts/sim-mesh/write-config.mjs b 19102 9202 9858 anthropic/claude-opus-4-8 \
++  /ip4/127.0.0.1/tcp/9201/p2p/$A_PEER
++BITTERBOT_STATE_DIR=$B BITTERBOT_ORCHESTRATOR_IPC_PATH=$B_IPC \
++  setsid nohup node dist/entry.js gateway > $B/gateway.log 2>&1 < /dev/null &
++until curl -s http://127.0.0.1:9857/api/peers | grep -q '"connected_peers":1'; do sleep 2; done
++
++# 4. Publish from A through its real housekeeping pass and orchestrator.
++BITTERBOT_STATE_DIR=$A BITTERBOT_ORCHESTRATOR_IPC_PATH=$A_IPC \
++  node --import tsx scripts/sim-mesh/publish-sim.mts run1
++
++# 5. Read the result on B: review list, fit, then accept one into staging.
++BITTERBOT_STATE_DIR=$B node dist/entry.js skills incoming list --json
++cat $B/skills-incoming/sim-mesh-good-run1/.envelope.json | grep -A4 applicability_fit
++BITTERBOT_STATE_DIR=$B node dist/entry.js skills incoming accept sim-mesh-good-run1
++cat $B/skills-staging/sim-mesh-good-run1/.evolution-meta.json | grep -A4 applicabilityFit
++
++# 6. Retract the other one from A; B drops its quarantined copy within a second.
++BITTERBOT_STATE_DIR=$A BITTERBOT_ORCHESTRATOR_IPC_PATH=$A_IPC \
++  node --import tsx scripts/sim-mesh/retract-sim.mts sim-mesh-poor-run1
++grep -i retraction $B/gateway.log
++
++# 7. Stop both gateways (their orchestrators exit with them) and keep or delete the dirs.
++pkill -f "bitterbot-orchestrator-sim-[ab].sock"
++```
++
++Expected on B with the defaults above: `sim-mesh-good-run1` fit `good`,
++score 1.0, no mismatches; `sim-mesh-poor-run1` fit `poor`, score 0.25, with
++the weaker model, the declared OS, the missing binary and the thin evidence
++named. The fit orders evaluation and tightens the canary; it never admits or
++rejects a skill (see `docs/memory/skills-pipeline.md`).
++
++Scripts here import from `src/` and run under `node --import tsx`; they are
++not part of the build.
 ```
 
-**File**: `src/agents/skills/ingest.applicability.test.ts` (added, +166/-0)
+**File**: `scripts/sim-mesh/orchestrator-isolated.sh` (added, +26/-0)
 ```diff
-@@ -0,0 +1,166 @@
+@@ -0,0 +1,26 @@
++#!/usr/bin/env bash
++# Isolated-mesh wrapper for local multi-node tests (scripts/sim-mesh/README.md).
++#
++# The gateway always merges the public relay fleet (and the DNS bootstrap list)
++# into the orchestrator's --bootstrap arguments. A test node must never dial
++# them: a simulated skill would gossip onto the real mesh. This wrapper keeps
++# only loopback bootstraps, forces relay mode off and passes everything else
++# through to the real binary. Point `p2p.orchestratorBinary` at it.
++set -euo pipefail
++HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
++REAL="${SIM_MESH_ORCHESTRATOR:-$HERE/../../orchestrator/target/release/bitterbot-orchestrator}"
++args=()
++while [ $# -gt 0 ]; do
++  case "$1" in
++    --bootstrap)
++      case "$2" in /ip4/127.0.0.1/*) args+=("$1" "$2") ;; esac
++      shift 2
++      ;;
++    --relay-mode) shift 2 ;;
++    *)
++      args+=("$1")
++      shift
++      ;;
++  esac
++done
++exec "$REAL" "${args[@]}" --relay-mode off
+```
+
+**File**: `scripts/sim-mesh/publish-sim.mts` (added, +204/-0)
+```diff
+@@ -0,0 +1,204 @@
 +/**
-+ * PLAN-58 Phase B, receiver side: a skill that arrives with an applicability
-+ * profile gets this node's fit computed at ingest, stored beside the
-+ * envelope, shown in the review list, and carried into the peer stage. A
-+ * skill without a profile is "unknown", never rejected for it.
++ * Publisher side of the local two-node mesh test (scripts/sim-mesh/README.md).
++ *
++ *   BITTERBOT_STATE_DIR=~/bitterbot-sim/a BITTERBOT_ORCHESTRATOR_IPC_PATH=/tmp/bitterbot-orchestrator-sim-a.sock \
++ *     node --import tsx scripts/sim-mesh/publish-sim.mts <tag>
++ *
++ * Seeds two skills exactly as the evolution loop leaves them (SKILL.md,
++ * `.evolution-meta.json` with an accepted gate verdict, credited reads in the
++ * skill-wiki ledger), then runs the REAL housekeeping pass against the node's
++ * state dir: evidence record, applicability profile, signed provenance trailer
++ * and the orchestrator `publish_skill` verb over the node's own IPC socket.
++ * No LLM is involved. The "good" skill was measured on the receiver's model
++ * with eight passing runs; the "poor" one on a weaker model, declares another
++ * OS and a binary nobody has, and carries two thin runs.
 + */
-+import { createHash, generateKeyPairSync, type KeyObject, sign as cryptoSign } from "node:crypto";
++import { randomUUID } from "node:crypto";
 +import fs from "node:fs/promises";
-+import os from "node:os";
++import net from "node:net";
 +import path from "node:path";
-+import { afterEach, beforeEach, describe, expect, it } from "vitest";
-+import type { BitterbotConfig } from "../../config/config.js";
-+import type { ReceiverFacts } from "../../memory/skill-evolution/applicability-profile.js";
-+import { buildProvenanceTrailer } from "../../memory/skill-evolution/provenance-trailer.js";
-+import type { EvolutionMeta } from "../../memory/skill-evolution/validation-gate.js";
-+import { CONFIG_DIR } from "../../utils.js";
-+import {
-+  acceptIncomingSkill,
-+  ingestSkill,
-+  listIncomingSkills,
-+  receiverFactsFromConfig,
-+  type SkillEnvelope,
-+} from "./ingest.js";
-+import { resolveStorageRoots, stagingSkillDir } from "./skill-storage.js";
++import readline from "node:readline";
++import { WIKI_SUBDIR } from "../../src/agents/skills/impact-trail.js";
++import { keyPairFromPrivateKeyPem } from "../../src/commerce/envelope.js";
++import { loadConfig } from "../../src/config/io.js";
++import { loadOrCreateDeviceIdentity } from "../../src/infra/device-identity.js";
++import { ipcAuthLine, loadOrCreateIpcToken } from "../../src/infra/orchestrator-ipc-token.js";
++import { resolveP2pKeyDir } from "../../src/infra/p2p-key-dir.js";
++import { runHousekeeping } from "../../src/memory/skill-evolution/housekeeping.js";
 +
-+function generateEd25519(): { pubkeyBase64: string; privateKey: KeyObject } {
-+  const { publicKey, privateKey } = generateKeyPairSync("ed25519");
-+  const spki = publicKey.export({ format: "der", type: "spki" });
-+  return { pubkeyBase64: spki.subarray(-32).toString("base64"), privateKey };
++const configDir = process.env.BITTERBOT_STATE_DIR;
++const ipcPath = process.env.BITTERBOT_ORCHESTRATOR_IPC_PATH;
++if (!configDir || !ipcPath) {
++  throw new Error("set BITTERBOT_STATE_DIR and BITTERBOT_ORCHESTRATOR_IPC_PATH to the test node's");
 +}
-+function envelopeFor(
-+  content: string,
-+  name: string,
-+  pair: { pubkeyBase64: string; privateKey: KeyObject },
-+): SkillEnvelope {
-+  const bytes = Buffer.from(content, "utf-8");
-+  return {
-+    version: 1,
-+    skill_md: bytes.toString("base64"),
-+    name,
-+    author_peer_id: "12D3KooWApplicability",
-+    author_pubkey: pair.pubkeyBase64,
-+    signature: cryptoSign(null, bytes, pair.privateKey).toString("base64"),
-+    timestamp: Date.now(),
-+    content_hash: createHash("sha256").update(bytes).digest("hex"),
-+  };
-+}
-+const RUN_TAG = `${process.pid.toString(36)}${Date.now().toString(36)}`;
-+const NAME = `fit-skill-${RUN_TAG}`;
-+const md = (name: string) =>
-+  `---\nname: ${name}\ndescription: Use when the task asks to ${name} against a flaky host; not for local files.\n---\n\nbody\n`;
++const TAG = process.argv[2] ?? "mesh1";
++const GOOD_MODEL = process.env.SIM_MESH_GOOD_MODEL ?? "anthropic/claude-opus-4-8";
++const POOR_MODEL = process.env.SIM_MESH_POOR_MODEL ?? "anthropic/claude-haiku-4-5";
++const now = Date.now();
++const DAY = 86_400_000;
 +
-+const profile = {
-+  v: 1 as const,
-+  generatedAt: "2026-10-26T00:00:00.000Z",
-+  windowDays: 14,
-+  measured: { models: ["openai/gpt-x"], validatedOn: ["openai/gpt-x"], os: ["linux"] },
-+  declared: { bins: ["definitely-not-installed-bin"] },
-+  shape: { tools: [{ name: "exec", runs: 6 }], sequenceHashes: ["abcdef012345"] },
-+  outcomes: {
-+    runs: 6,
-+    pass: 5,
-+    fail: 1,
-+    indeterminate: 0,
-+    successRate: 5 / 6,
-+    maxEvidenceLevel: 3,
-+    gate: null,
-+  },
-+  failures: [],
-+};
-+const meta = {
-+  origin: "wiki-evolution",
-+  validation: {
-+    mode: "tasks",
-+    verdict: "accepted",
-+    validatedAt: Date.now(),
-+    model: "openai/gpt-x",
-+  },
-+} as unknown as EvolutionMeta;
++type Pending = { res: (v: unknown) => void; rej: (e: Error) => void; t: NodeJS.Timeout };
++type Ipc = { send: (type: string, payload: unknown) => Promise<unknown>; close: () => void };
 +
-+describe("PLAN-58: applicability fit on receipt", () => {
-+  let tmp: string;
-+  const cfg = (): BitterbotConfig =>
-+    ({
-+      skills: { p2p: { ingestPolicy: "review", quarantineDir: path.join(tmp, "skills-incoming") } },
-+    }) as unknown as BitterbotConfig;
-+  const facts: ReceiverFacts = {
-+    platform: "linux",
-+    model: "openai/gpt-x",
-+    hasBinary: () => false,
-+    hasEnv: () => false,
-+  };
-+  beforeEach(async () => {
-+    tmp = await fs.mkdtemp(path.join(os.tmpdir(), "ingest-fit-"));
-+  });
-+  afterEach(async () => {
-+    await fs.rm(tmp, { recursive: true, force: true }).catch(() => {});
-+    for (const dir of [
-+      path.join(CONFIG_DIR, "skills", NAME),
-+      path.join(CONFIG_DIR, "skills-staging", NAME),
-+      path.join(CONFIG_DIR, "skills-archive", NAME),
-+    ]) {
-+      await fs.rm(dir, { recursive: true, force: true }).catch(() => {});
-+    }
-+  });
-+
-+  it("computes, stores and lists the fit; a hard mismatch is partial, never a reject; accept carries it to the stage", async () => {
-+    const node = generateEd25519();
-+    const body = `${md(NAME).replace(/\n+$/, "")}\n${buildProvenanceTrailer(meta, undefined, { applicability: profile })}`;
-+    const r = await ingestSkill({
-+      envelope: envelopeFor(body, NAME, node),
-+      config: cfg(),
-+      receiverFacts: facts,
++/** The same JSON-line protocol the gateway's orchestrator bridge speaks. */
++function connectIpc(socketPath: string, token: string): Promise<Ipc> {
++  return new Promise((resolve, reject) => {
++    const pending = new Map<string, Pending>();
++    const sock = net.createConnection({ path: socketPath }, () => {
++      sock.write(ipcAuthLine(token));
++      resolve({
++        send: (type, payload) =>
++          new Promise((res, rej) => {
++            const id = randomUUID();
++            const t = setTimeout(() => {
++              pending.delete(id);
++              rej(new Error(`${type} timed out`));
++            }, 20_000);
++            pending.set(id, { res, rej, t });
++            sock.write(`${JSON.stringify({ type, id, payload })}\n`);
++          }),
++        close: () => sock.end(),
++      });
 +    });
-+    expect(r.action).toBe("quarantined");
-+    const env = JSON.parse(
-+      await fs.readFile(path.join(tmp, "skills-incoming", NAME, ".envelope.json"), "utf-8"),
-+    ) as { applicability_fit?: { level: string; score: number | null; mismatches: string[] } };
-+    expect(env.applicability_fit?.level).toBe("partial");
-+    expect(env.applicability_fit?.mismatches[0]).toContain("definitely-not-installed-bin");
-+
-+    const listed = (await listIncomingSkills(cfg())).find((s) => s.name === NAME);
-+    expect(listed?.applicability).toMatchObject({
-+      level: "partial",
-+      profile: { models: ["openai/gpt-x"], os: ["linux"], runs: 6, maxEvidenc
-```
-
----
-
-### Incident Patch 2: `d75ef158` (2026-10-27)
-**Commit Message**: fix(skills): resolve the receiver's primary model from agents.defaults.model for the applicability fit (#310)
-
-Found on the live box 2026-10-26 while simulating peer-skill receipts (PLAN-58):
-receiverFactsFromConfig read only the default agent's own model override, which
-is unset on a stock config, so every fit carried "receiver model unknown" and the
-model term was scored at half credit. Fall back to agents.defaults.model (string
-or { primary }) the way model selection does; test both shapes.
-
-Also: the pre-commit hook failed a commit whose staged files are ALL under an
-oxlint ignorePattern ("skills/" also matches src/agents/skills/), because oxlint
-exits 1 with "No files found to lint". The hook now treats that as nothing to
-lint rather than a lint failure. The ignore pattern itself is left as is.
-
-Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `git-hooks/pre-commit` (modified, +9/-2)
-```diff
-@@ -31,10 +31,17 @@ while IFS= read -r -d '' f; do
- done < <(node "$ROOT_DIR/scripts/pre-commit/filter-staged-files.mjs" lint -- "${files[@]}")
- 
- if [[ ${#lint_files[@]} -gt 0 ]]; then
--  "$ROOT_DIR/scripts/pre-commit/run-node-tool.sh" oxlint --type-aware -- "${lint_files[@]}" || {
-+  # oxlint exits 1 with "No files found to lint" when EVERY staged file falls
-+  # under .oxlintrc.json ignorePatterns (e.g. a commit touching only
-+  # src/agents/skills/, which the root "skills/" pattern also matches). That
-+  # is not a lint failure; CI's `pnpm lint` applies the same ignore list.
-+  lint_out="$("$ROOT_DIR/scripts/pre-commit/run-node-tool.sh" oxlint --type-aware -- "${lint_files[@]}" 2>&1)" && lint_rc=0 || lint_rc=$?
-+  if [[ $lint_rc -ne 0 ]] && ! grep -q "No files found to lint" <<<"$lint_out"; then
-+    printf '%s\n' "$lint_out"
-     echo "Pre-commit lint failed. Fix the errors above, then re-stage and commit."
-     exit 1
--  }
-+  fi
-+  [[ -n "$lint_out" ]] && printf '%s\n' "$lint_out"
- fi
- 
- # Filter to formattable files and run oxfmt.
-```
-
-**File**: `src/agents/skills/ingest.applicability.test.ts` (modified, +14/-0)
-```diff
-@@ -156,6 +156,20 @@ describe("PLAN-58: applicability fit on receipt", () => {
-     expect(listed?.applicability && "profile" in listed.applicability).toBe(false);
-   });
- 
-+  it("receiverFactsFromConfig resolves the primary model from agents.defaults.model in both shapes", () => {
-+    expect(
-+      receiverFactsFromConfig({
-+        agents: { defaults: { model: { primary: "anthropic/claude-opus-4-8" } } },
-+      } as unknown as BitterbotConfig).model,
-+    ).toBe("anthropic/claude-opus-4-8");
-+    expect(
-+      receiverFactsFromConfig({
-+        agents: { defaults: { model: "openai/gpt-x" } },
-+      } as unknown as BitterbotConfig).model,
-+    ).toBe("openai/gpt-x");
-+    expect(receiverFactsFromConfig({} as BitterbotConfig).model).toBeNull();
++    sock.on("error", reject);
++    readline.createInterface({ input: sock }).on("line", (line) => {
++      let msg: { type: string; id?: string; payload?: unknown };
++      try {
++        msg = JSON.parse(line) as typeof msg;
++      } catch {
++        return;
++      }
++      const p = msg.type === "response" && msg.id ? pending.get(msg.id) : undefined;
++      if (p && msg.id) {
++        clearTimeout(p.t);
++        pending.delete(msg.id);
++        p.res(msg.payload);
++      }
++    });
 +  });
++}
 +
-   it("receiverFactsFromConfig reports this platform and probes the real PATH", () => {
-     const f = receiverFactsFromConfig({} as BitterbotConfig);
-     expect(f.platform).toBe(process.platform);
++const seeds = [
++  { name: `sim-mesh-good-${TAG}`, model: GOOD_MODEL, bins: ["node"], os: null, runs: 8, fails: 0 },
++  {
++    name: `sim-mesh-poor-${TAG}`,
++    model: POOR_MODEL,
++    bins: ["definitely-missing-bin-xyz"],
++    os: ["darwin"],
++    runs: 2,
++    fails: 1,
++  },
++] as const;
++
++const liveRoot = path.join(configDir, "skills");
++const wikiDir = path.join(configDir, WIKI_SUBDIR);
++await fs.mkdir(wikiDir, { recursive: true });
++let readLines = "";
++for (const s of seeds) {
++  const dir = path.join(liveRoot, s.name);
++  await fs.mkdir(dir, { recursive: true });
++  const skillMd = [
++    "---",
++    `name: ${s.name}`,
++    `description: Use when the task asks to ${s.name} against a flaky host; not for local files.`,
++    "bitterbot:",
++    "  requires:",
++    `    bins: [${s.bins.join(", ")}]`,
++    ...(s.os ? [`  os: [${s.os.join(", ")}]`] : []),
++    "---",
++    "",
++    `Mesh simulation skill (${TAG}). Steps: check the host answers, retry twice with backoff, report the final status. It does nothing real.`,
++    "",
++  ].join("\n");
++  await fs.writeFile(path.join(dir, "SKILL.md"), skillMd);
++  const meta = {
++    origin: "wiki-evolution",
++    stagedAt: now - 5 * DAY,
++    validation: {
++      mode: "tasks",
++      verdict: "accepted",
++      validatedAt: now - 4 * DAY,
++      model: s.model,
++      evolverModel: s.mod
 ```
 
-**File**: `src/agents/skills/ingest.ts` (modified, +11/-1)
+**File**: `scripts/sim-mesh/retract-sim.mts` (added, +76/-0)
 ```diff
-@@ -949,7 +949,17 @@ export type IncomingSkillSummary = {
- export function receiverFactsFromConfig(config: BitterbotConfig): ReceiverFacts {
-   let model: string | null = null;
-   try {
--    model = resolveAgentModelPrimary(config, resolveDefaultAgentId(config)) ?? null;
-+    // The default agent's own override first, then `agents.defaults.model`
-+    // (string or `{ primary }`), which is where a typical install sets it.
-+    // Found live on 2026-10-26: the override alone was null on a stock
-+    // config, so every fit said "receiver model unknown".
-+    const raw = config.agents?.defaults?.model as { primary?: string } | string | undefined;
-+    const fromDefaults =
-+      typeof raw === "string" ? raw.trim() : typeof raw === "object" ? raw?.primary?.trim() : "";
-+    model = resolveAgentModelPrimary(config, resolveDefaultAgentId(config)) ?? fromDefaults ?? null;
-+    if (!model) {
-+      model = null;
-+    }
-   } catch {
-     model = null;
-   }
+@@ -0,0 +1,76 @@
++/**
++ * Publisher side: retract a skill this test node published (scripts/sim-mesh/README.md).
++ *
++ *   BITTERBOT_STATE_DIR=... BITTERBOT_ORCHESTRATOR_IPC_PATH=... \
++ *     node --import tsx scripts/sim-mesh/retract-sim.mts <skillName> [reason]
++ *
++ * Uses the real `publishRetraction` (PLAN-45 3.4): the signed stub rides the
++ * publish verb and the receiver drops the quarantined copy by author key and
++ * content hash.
++ */
++import { randomUUID } from "node:crypto";
++import fs from "node:fs/promises";
++import net from "node:net";
++import path from "node:path";
++import readline from "node:readline";
++import { loadConfig } from "../../src/config/io.js";
++import { ipcAuthLine, loadOrCreateIpcToken } from "../../src/infra/orchestrator-ipc-token.js";
++import { resolveP2pKeyDir } from "../../src/infra/p2p-key-dir.js";
++import { publishRetraction } from "../../src/memory/skill-evolution/p2p-publish.js";
++
++const configDir = process.env.BITTERBOT_STATE_DIR;
++const ipcPath = process.env.BITTERBOT_ORCHESTRATOR_IPC_PATH;
++const [name, reason = "simulation: retract after mesh test"] = process.argv.slice(2);
++if (!configDir || !ipcPath || !name) {
++  throw new Error(
++    "usage: BITTERBOT_STATE_DIR=.. BITTERBOT_ORCHESTRATOR_IPC_PATH=.. retract-sim.mts <skillName> [reason]",
++  );
++}
++const meta = JSON.parse(
++  await fs.readFile(path.join(configDir, "skills", name, ".evolution-meta.json"), "utf-8"),
++) as { published?: { contentHash?: string } };
++const contentHash = meta.published?.contentHash;
++if (!contentHash) {
++  throw new Error(`${name} has no published marker; nothing to retract`);
++}
++const token = loadOrCreateIpcToken(resolveP2pKeyDir(loadConfig().p2p?.keyDir));
++const pending = new Map<string, (v: unknown) => void>();
++const sock = await new Promise<net.Socket>((res, rej) => {
++  const s = net.createConnection({ path: ipcPath }, () => {
++    s.write(ipcAuthLine(token));
++    res(s);
++  });
++  s.on("error", rej);
++});
++readline.createInterface({ input: sock }).on("line", (line) => {
++  let msg: { type: string; id?: string; payload?: unknown };
++  try {
++    msg = JSON.parse(line) as typeof msg;
++  } catch {
++    return;
++  }
++  const settle = msg.type === "response" && msg.id ? pending.get(msg.id) : undefined;
++  if (settle && msg.id) {
++    pending.delete(msg.id);
++    settle(msg.payload);
++  }
++});
++const publisher = {
++  publishSkill: (skillMd: string, skillName: string) =>
++    new Promise<unknown>((res) => {
++      const id = randomUUID();
++      pending.set(id, res);
++      sock.write(
++        `${JSON.stringify({ type: "publish_skill", id, payload: { skill_md: skillMd, name: skillName } })}\n`,
++      );
++    }),
++};
++const result = await publishRetraction({
++  publisher,
++  name,
++  contentHash,
++  reason,
++  storeOpts: { configDir },
++});
++console.log("retraction:", JSON.stringify(result), "of", contentHash.slice(0, 12));
++sock.end();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #312** (2026-10-27): fix(memory): keyword channel matches natural-language queries; failed embedding batch no longer aborts sync (@VGIL77)
+- **PR #311** (2026-10-27): fix(skills): lint src/agents/skills again, dedupe fit text, two-node mesh harness, startup log (@VGIL77)
 - **PR #310** (2026-10-27): fix(skills): resolve the receiver's primary model from agents.defaults.model for the applicability fit (@VGIL77)
 - **PR #309** (2026-10-27): feat(memory): per-channel retrieval diagnostics and skill applicability profiles (PLAN-58) (@VGIL77)
 - **PR #308** (2026-10-23): fix(compute): local operator pools are local trust, startup reconcile waits for the coordinator, beta installs update to stable (@VGIL77)
 - **PR #292** (2026-10-22): fix(memory): attach compute episode and nudge sinks on every manager get (@VGIL77)
-- **PR #291** (2026-10-22): fix(compute): register the Soapbox backend so the agent's compute surface is live (@VGIL77)
-- **PR #290** (2026-10-22): chore(main): release 1.10.1 (@github-actions[bot])
 
 ---
 
@@ -2420,13 +2957,13 @@ Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. memory): per-channel retrieval diagnostics and skill applicability profiles (PLA
+## X. memory): keyword channel matches natural-language queries; failed embedding batc
 
 **RULE**:
 When implementing operations in `benchmarks/longmemeval/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6f704fc7`: memory): per-channel retrieval diagnostics and skill applicability profiles (PLAN-58) (#309). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a22e2df0`: memory): keyword channel matches natural-language queries; failed embedding batch no longer aborts sync (#312). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `benchmarks/longmemeval/README.md`.
@@ -2434,21 +2971,15 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-### Retrieval-only baseline with per-channel attribution (PLAN-58)
+Saved runs (LongMemEval-S, first 50 questions, all `single-session-user`, quiet bridge):
 
-```bash
-pnpm benchmark:longmemeval:retrieval            # LongMemEval-S, Recall@5 / Recall@10
-pnpm benchmark:longmemeval:retrieval -- --oracle
-```
-
-`runner-retrieval.ts` does no answer generation. Since every search result
-now carries `channels` (rank and native score per vector / keyword / graph
-channel), the runner also reports, from the same fused list, what each
-channel alone would have recalled at K and which channel(s) found the gold
-chunk (`vector-only`, `keyword-only`, `graph-only`, `multi`). The output
-JSON records the git commit it measured, so a saved run is the frozen
-baseline any later retrieval change is compared against.
-
+| metric                            | `bitterbot_longmemeval_s_retrieval.json` (code 9708d2d1, AND-joined FTS) | `..._2026-10-27_keyword-or.json` (code 09e5a54e, OR-joined FTS) |
+| --------------------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| questions scored                  | 49 (one lost to the empty-embedding NOT NULL bug)                        | 50                                                              |
+| R@5 / R@10                        | 98.0% / 100%                                                             | 100% / 100%                                                     |
+| vector R@5                        | 98.0%                                                                    | 98.0%                                                           |
+| keyword R@5 / R@10                | 0.0% / 0.0%                                                              | 100% / 100%                                                     |
+| attribution of the top-5 gold hit 
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2458,4 +2989,4 @@ baseline any later retrieval change is compared against.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6f704fc7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a22e2df0` are properly handled with clean fallback behavior.

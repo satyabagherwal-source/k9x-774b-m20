@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T17:31:04.576Z",
+  "last_updated": "2026-10-27T17:38:04.026Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "7bce661a9e2247f98637cd7adfe154f0be3dfca368d38ab9aa3d036080735566",
-      "verified_at": "2026-10-27T08:31:11.846Z",
+      "content_hash": "2103e3268c1c1d95759379e7c8c9fb5fb0d43422ee52ac2c0fec029c26d2b6c8",
+      "verified_at": "2026-10-27T17:38:04.025Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T08:31:11.846Z"
+      "last_updated": "2026-10-27T17:38:04.025Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "996c07471cfc335a2bd8d3fe808e6eda64d37849f29dff150239f25c2f50e07c",
-      "verified_at": "2026-10-27T12:46:43.566Z",
+      "content_hash": "dd7e014c3481811cfdb6184f2e6cbafa95b95670e2de30d217a03f95deace83d",
+      "verified_at": "2026-10-27T17:37:58.488Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T12:46:43.566Z"
+      "last_updated": "2026-10-27T17:37:58.488Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -15891,14 +15891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-minimaxai-minimax-m3-1-flash",
-      "content_hash": "ea2857e3f7ac8570a916fab5d9dca1ad7f8dec67f9966e63c8b2cae607b3a148",
-      "verified_at": "2026-10-23T09:20:47.325Z",
+      "content_hash": "d7689b4d21936af69e9575c1e5ecad934d9c8a1d88eb0969d2caa0f439593fd3",
+      "verified_at": "2026-10-27T17:37:54.824Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T09:20:47.325Z"
+      "last_updated": "2026-10-27T17:37:54.824Z"
     },
     "NomaDamas/CozyClay": {
       "repository": "NomaDamas/CozyClay",

@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "d75ef158",
+    "sourceVersion": "a22e2df0",
     "license": "MIT",
-    "contentHash": "7bce661a9e2247f98637cd7adfe154f0be3dfca368d38ab9aa3d036080735566",
-    "lastHarvestedAt": "2026-10-27T08:31:11.840Z",
+    "contentHash": "2103e3268c1c1d95759379e7c8c9fb5fb0d43422ee52ac2c0fec029c26d2b6c8",
+    "lastHarvestedAt": "2026-10-27T17:38:04.018Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "2b62983a",
+    "sourceVersion": "b3766d4f",
     "license": "BSD-3-Clause",
-    "contentHash": "996c07471cfc335a2bd8d3fe808e6eda64d37849f29dff150239f25c2f50e07c",
-    "lastHarvestedAt": "2026-10-27T12:46:43.558Z",
+    "contentHash": "dd7e014c3481811cfdb6184f2e6cbafa95b95670e2de30d217a03f95deace83d",
+    "lastHarvestedAt": "2026-10-27T17:37:58.361Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -10575,8 +10575,8 @@
     "sourceUrl": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
     "sourceVersion": "hf-minimaxai-minimax-m3.1-flash",
     "license": "Open-Source",
-    "contentHash": "ea2857e3f7ac8570a916fab5d9dca1ad7f8dec67f9966e63c8b2cae607b3a148",
-    "lastHarvestedAt": "2026-10-23T09:20:47.317Z",
+    "contentHash": "d7689b4d21936af69e9575c1e5ecad934d9c8a1d88eb0969d2caa0f439593fd3",
+    "lastHarvestedAt": "2026-10-27T17:37:54.817Z",
     "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash"
   },
   "nomadamas-cozyclay": {

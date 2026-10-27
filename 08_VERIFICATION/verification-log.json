@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-OJOW",
-    "timestamp": "2026-10-25T19:19:13.329Z",
-    "repository": "black-forest-labs/FLUX.1-schnell",
-    "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
-    "contentHash": "6ac389969203fb511de08e2beead758f9b0c76a5d91c277abae97cda01517ac6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-WN2T",
-    "timestamp": "2026-10-25T19:25:30.965Z",
-    "repository": "MiniMaxAI/MiniMax-H3",
-    "learningId": "learn-huggingface-minimaxai-minimax-h3",
-    "contentHash": "3a3ebbaa035e5ea99d8c446a967ded6d78e1477171d5cfe5380890845d5a55f6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-4XHI",
-    "timestamp": "2026-10-25T19:31:57.702Z",
-    "repository": "Qwen/Qwen3.8-Flash-Next",
-    "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
-    "contentHash": "860f81abde284d85fd16eea43904df4244c097e5fb43d342c7f9603ee767b415",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-51YY",
     "timestamp": "2026-10-25T19:32:03.514Z",
     "repository": "modelcontextprotocol/kotlin-sdk",
@@ -7492,6 +7447,51 @@
     "contentHash": "c6d1ecbe0a099a0156a8a30ef252b41be22cad42510cae753443568edda201ad",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-XYTA",
+    "timestamp": "2026-10-27T17:37:54.814Z",
+    "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
+    "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
+    "contentHash": "d7689b4d21936af69e9575c1e5ecad934d9c8a1d88eb0969d2caa0f439593fd3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-Y1IS",
+    "timestamp": "2026-10-27T17:37:58.324Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "dd7e014c3481811cfdb6184f2e6cbafa95b95670e2de30d217a03f95deace83d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-Y5WV",
+    "timestamp": "2026-10-27T17:38:04.015Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "2103e3268c1c1d95759379e7c8c9fb5fb0d43422ee52ac2c0fec029c26d2b6c8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

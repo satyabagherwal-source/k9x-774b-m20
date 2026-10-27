@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T17:31:04.499Z",
+  "last_updated": "2026-10-27T17:38:03.966Z",
   "total_verified_learnings": 1145,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4485,8 +4485,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "d75ef158",
-      "content_hash": "7bce661a9e2247f98637cd7adfe154f0be3dfca368d38ab9aa3d036080735566",
+      "source_version": "a22e2df0",
+      "content_hash": "2103e3268c1c1d95759379e7c8c9fb5fb0d43422ee52ac2c0fec029c26d2b6c8",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -4554,6 +4554,11 @@
           "number": 4667,
           "title": "memory): per-channel retrieval diagnostics and skill applicability profiles (PLA",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4929,
+          "title": "memory): keyword channel matches natural-language queries; failed embedding batc",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4561,7 +4566,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T08:31:11.756Z",
+      "verified_at": "2026-10-27T17:38:03.955Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49216,8 +49221,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "2b62983a",
-      "content_hash": "996c07471cfc335a2bd8d3fe808e6eda64d37849f29dff150239f25c2f50e07c",
+      "source_version": "b3766d4f",
+      "content_hash": "dd7e014c3481811cfdb6184f2e6cbafa95b95670e2de30d217a03f95deace83d",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -49300,6 +49305,11 @@
           "number": 4762,
           "title": "tstest/natlab/vnet: fix TCPConn leak",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4928,
+          "title": "cmd/k8s-operator/e2e: add 4via6 egress tests (#21854)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49307,7 +49317,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:46:43.482Z",
+      "verified_at": "2026-10-27T17:37:58.214Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -93195,14 +93205,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 2093,
       "title": "MoE Routing Stability Invariant",
-      "source_url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
-      "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
+      "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
+      "source_version": "hf-minimaxai-minimax-m3.1-flash",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T03:53:49.737Z"
+      "verified_at": "2026-10-27T17:37:54.755Z"
     },
     "rule-2094": {
       "learning_id": "rule-2094",
@@ -119168,14 +119178,19 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
       "source_version": "hf-minimaxai-minimax-m3.1-flash",
-      "content_hash": "ea2857e3f7ac8570a916fab5d9dca1ad7f8dec67f9966e63c8b2cae607b3a148",
+      "content_hash": "d7689b4d21936af69e9575c1e5ecad934d9c8a1d88eb0969d2caa0f439593fd3",
       "dossier_path": "07_PROJECT_LEARNING/hf-minimaxai-minimax-m3.1-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-minimaxai-minimax-m3.1-flash-learnings.md",
       "promoted_rules": [
         {
+          "number": 2093,
+          "title": "MoE Routing Stability Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 3846,
           "title": "Sparse Attention Block Alignment Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 3847,
@@ -119186,6 +119201,11 @@
           "number": 3848,
           "title": "Partial Rotary Embedding Dimension Alignment",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4927,
+          "title": "Context Window and Positional Encoding Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -119193,7 +119213,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T09:20:47.279Z",
+      "verified_at": "2026-10-27T17:37:54.755Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -119214,7 +119234,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-23T09:20:47.279Z"
+      "verified_at": "2026-10-27T17:37:54.755Z"
     },
     "rule-3847": {
       "learning_id": "rule-3847",
@@ -136710,6 +136730,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T17:30:56.106Z"
+    },
+    "rule-4927": {
+      "learning_id": "rule-4927",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4927,
+      "title": "Context Window and Positional Encoding Alignment",
+      "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
+      "source_version": "hf-minimaxai-minimax-m3.1-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T17:37:54.755Z"
+    },
+    "rule-4928": {
+      "learning_id": "rule-4928",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4928,
+      "title": "cmd/k8s-operator/e2e: add 4via6 egress tests (#21854)",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "b3766d4f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T17:37:58.214Z"
+    },
+    "rule-4929": {
+      "learning_id": "rule-4929",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4929,
+      "title": "memory): keyword channel matches natural-language queries; failed embedding batc",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "a22e2df0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T17:38:03.955Z"
     }
   },
   "aliases": {
