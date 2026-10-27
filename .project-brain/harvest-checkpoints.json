@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T21:29:55.693Z",
+  "last_updated": "2026-10-27T21:36:40.185Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3261,14 +3261,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-moss-image",
-      "content_hash": "7dcc0ae2c0261979bae15bc13ee41878a38d95d70168ddb0fe9348c35eb9a467",
-      "verified_at": "2026-10-24T20:19:13.478Z",
+      "content_hash": "7dcd89662ec7369c901f0a36205e8de0cbb3dd59220da13c39366063f1732ea4",
+      "verified_at": "2026-10-27T21:36:40.185Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-24T20:19:13.478Z"
+      "last_updated": "2026-10-27T21:36:40.185Z"
     },
     "bvaughn/react-virtualized": {
       "repository": "bvaughn/react-virtualized",
@@ -16056,14 +16056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-makecindy-cindy",
-      "content_hash": "c3ec7797c0670ea6d6e960e981b450d7bd5840fc05014713426e8007af6d1216",
-      "verified_at": "2026-10-25T08:44:00.589Z",
+      "content_hash": "269ed3435abe182b501541a019614794eb73cc5313092da5a32ca9a7a57b8cdb",
+      "verified_at": "2026-10-27T21:36:36.845Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T08:44:00.589Z"
+      "last_updated": "2026-10-27T21:36:36.845Z"
     },
     "Fei2411/DS-Bot": {
       "repository": "Fei2411/DS-Bot",

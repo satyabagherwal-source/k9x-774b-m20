@@ -5555,3 +5555,5 @@
 | `CYCLE-20261027-7692` | `2026-10-27T21:29:01.286Z` | `open-ani/animeko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5021` | Yes (`db219afd...`) |
 | `CYCLE-20261027-77CA` | `2026-10-27T21:29:02.698Z` | `flux-iac/tofu-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5022` | Yes (`e403308e...`) |
 | `CYCLE-20261027-8C81` | `2026-10-27T21:29:55.681Z` | `margelo/react-native-blur` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5023, Rule 5024` | Yes (`c72cf1e1...`) |
+| `CYCLE-20261027-GXR4` | `2026-10-27T21:36:36.832Z` | `makecindy/cindy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5025` | Yes (`269ed343...`) |
+| `CYCLE-20261027-H0BX` | `2026-10-27T21:36:40.173Z` | `Comfy-Org/MOSS-Image` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5026, Rule 5027` | Yes (`7dcd8966...`) |

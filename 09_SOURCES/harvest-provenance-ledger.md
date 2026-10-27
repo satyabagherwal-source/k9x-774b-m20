@@ -5564,3 +5564,5 @@ Every entry in this ledger must capture:
 | `learn-github-open-ani-animeko` | `https://github.com/open-ani/animeko` | `2f33ea34` | Multi-dimensional audit evidence | 2026-10-27T21:29:01.290Z |
 | `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `ee95e83a` | Multi-dimensional audit evidence | 2026-10-27T21:29:02.702Z |
 | `learn-github-margelo-react-native-blur` | `https://github.com/margelo/react-native-blur` | `7edfaa0f` | Multi-dimensional audit evidence | 2026-10-27T21:29:55.684Z |
+| `learn-github-makecindy-cindy` | `https://github.com/makecindy/cindy` | `b486def1` | Multi-dimensional audit evidence | 2026-10-27T21:36:36.836Z |
+| `learn-huggingface-comfy-org-moss-image` | `https://huggingface.co/Comfy-Org/MOSS-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-27T21:36:40.176Z |

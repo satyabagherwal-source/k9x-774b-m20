@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-ZPHV",
-    "timestamp": "2026-10-26T00:35:49.843Z",
-    "repository": "intfloat/multilingual-e5-small",
-    "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
-    "contentHash": "e23d98bb76ba7a1d1769f86e19fe02d6043b6074a515d32ed8b2ad910b33fcbe",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-7GG5",
-    "timestamp": "2026-10-26T00:41:51.365Z",
-    "repository": "argmaxinc/whisperkit-coreml",
-    "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
-    "contentHash": "48b89959dd6906e58c21549c2ef7002da2f95529e419dcd059d573b8c18be2ef",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-7H6C",
     "timestamp": "2026-10-26T00:41:52.308Z",
     "repository": "facebook/folly",
@@ -7490,6 +7460,36 @@
     "repository": "margelo/react-native-blur",
     "learningId": "learn-github-margelo-react-native-blur",
     "contentHash": "c72cf1e17387953f4059c369bdb8349ea548e92a9222a3ba3c2359a34339338c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-GXR4",
+    "timestamp": "2026-10-27T21:36:36.832Z",
+    "repository": "makecindy/cindy",
+    "learningId": "learn-github-makecindy-cindy",
+    "contentHash": "269ed3435abe182b501541a019614794eb73cc5313092da5a32ca9a7a57b8cdb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-H0BX",
+    "timestamp": "2026-10-27T21:36:40.173Z",
+    "repository": "Comfy-Org/MOSS-Image",
+    "learningId": "learn-huggingface-comfy-org-moss-image",
+    "contentHash": "7dcd89662ec7369c901f0a36205e8de0cbb3dd59220da13c39366063f1732ea4",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T21:29:55.572Z",
+  "last_updated": "2026-10-27T21:36:40.090Z",
   "total_verified_learnings": 1152,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -87688,7 +87688,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/MOSS-Image",
       "source_version": "hf-comfy-org-moss-image",
-      "content_hash": "7dcc0ae2c0261979bae15bc13ee41878a38d95d70168ddb0fe9348c35eb9a467",
+      "content_hash": "7dcd89662ec7369c901f0a36205e8de0cbb3dd59220da13c39366063f1732ea4",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md",
       "promoted_rules": [
@@ -87701,6 +87701,16 @@
           "number": 1689,
           "title": "Header-Validated Immutable File System Layout Contract",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5026,
+          "title": "Model Artifact Topology Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5027,
+          "title": "Quantization Variant Naming Convention",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -87708,7 +87718,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T20:19:13.388Z",
+      "verified_at": "2026-10-27T21:36:40.076Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -124851,8 +124861,8 @@
       "slug": "makecindy-cindy",
       "platform": "github",
       "source_url": "https://github.com/makecindy/cindy",
-      "source_version": "65288cb1",
-      "content_hash": "c3ec7797c0670ea6d6e960e981b450d7bd5840fc05014713426e8007af6d1216",
+      "source_version": "b486def1",
+      "content_hash": "269ed3435abe182b501541a019614794eb73cc5313092da5a32ca9a7a57b8cdb",
       "dossier_path": "07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
       "promoted_rules": [
@@ -124870,6 +124880,11 @@
           "number": 4195,
           "title": "Fail-Fast Entity Verification on Deletion Operations",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5025,
+          "title": "Merge pull request #7556 from 321sssrt-bit/fix/7424-autoreview-pasted-text",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -124877,7 +124892,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T08:44:00.510Z",
+      "verified_at": "2026-10-27T21:36:36.757Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -138775,6 +138790,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T21:29:55.555Z"
+    },
+    "rule-5025": {
+      "learning_id": "rule-5025",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5025,
+      "title": "Merge pull request #7556 from 321sssrt-bit/fix/7424-autoreview-pasted-text",
+      "source_url": "https://github.com/makecindy/cindy",
+      "source_version": "b486def1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:36:36.757Z"
+    },
+    "rule-5026": {
+      "learning_id": "rule-5026",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5026,
+      "title": "Model Artifact Topology Invariant",
+      "source_url": "https://huggingface.co/Comfy-Org/MOSS-Image",
+      "source_version": "hf-comfy-org-moss-image",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:36:40.076Z"
+    },
+    "rule-5027": {
+      "learning_id": "rule-5027",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5027,
+      "title": "Quantization Variant Naming Convention",
+      "source_url": "https://huggingface.co/Comfy-Org/MOSS-Image",
+      "source_version": "hf-comfy-org-moss-image",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:36:40.076Z"
     }
   },
   "aliases": {

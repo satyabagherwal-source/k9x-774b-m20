@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T21:29:55.689Z",
-  "total_cycles_completed": 5532,
-  "total_learnings_persisted": 5532,
-  "total_rules_promoted": 4937,
+  "last_updated": "2026-10-27T21:36:40.181Z",
+  "total_cycles_completed": 5534,
+  "total_learnings_persisted": 5534,
+  "total_rules_promoted": 4940,
   "history": [
-    {
-      "timestamp": "2026-10-27T14:07:20.025Z",
-      "repository": "RDFLib/rdflib",
-      "learningId": "learn-github-rdflib-rdflib",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T14:07:29.549Z",
-      "repository": "VectifyAI/PageIndex",
-      "learningId": "learn-github-vectifyai-pageindex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T14:10:39.851Z",
       "repository": "carbon-design-system/carbon",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-27T21:29:55.689Z",
       "repository": "margelo/react-native-blur",
       "learningId": "learn-github-margelo-react-native-blur",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T21:36:36.841Z",
+      "repository": "makecindy/cindy",
+      "learningId": "learn-github-makecindy-cindy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T21:36:40.181Z",
+      "repository": "Comfy-Org/MOSS-Image",
+      "learningId": "learn-huggingface-comfy-org-moss-image",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     }

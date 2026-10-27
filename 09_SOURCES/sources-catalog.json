@@ -2085,8 +2085,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/MOSS-Image",
     "sourceVersion": "hf-comfy-org-moss-image",
     "license": "Open-Source",
-    "contentHash": "7dcc0ae2c0261979bae15bc13ee41878a38d95d70168ddb0fe9348c35eb9a467",
-    "lastHarvestedAt": "2026-10-24T20:19:13.470Z",
+    "contentHash": "7dcd89662ec7369c901f0a36205e8de0cbb3dd59220da13c39366063f1732ea4",
+    "lastHarvestedAt": "2026-10-27T21:36:40.176Z",
     "learningId": "learn-huggingface-comfy-org-moss-image"
   },
   "bvaughn-react-virtualized": {
@@ -10683,10 +10683,10 @@
     "repository": "makecindy/cindy",
     "platform": "github",
     "sourceUrl": "https://github.com/makecindy/cindy",
-    "sourceVersion": "65288cb1",
+    "sourceVersion": "b486def1",
     "license": "Apache-2.0",
-    "contentHash": "c3ec7797c0670ea6d6e960e981b450d7bd5840fc05014713426e8007af6d1216",
-    "lastHarvestedAt": "2026-10-25T08:44:00.577Z",
+    "contentHash": "269ed3435abe182b501541a019614794eb73cc5313092da5a32ca9a7a57b8cdb",
+    "lastHarvestedAt": "2026-10-27T21:36:36.836Z",
     "learningId": "learn-github-makecindy-cindy"
   },
   "fei2411-ds-bot": {
