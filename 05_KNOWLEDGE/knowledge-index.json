@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T13:00:31.990Z",
-  "total_verified_learnings": 1111,
+  "last_updated": "2026-10-27T13:03:45.434Z",
+  "total_verified_learnings": 1114,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -43077,8 +43077,8 @@
       "slug": "react-hook-form-react-hook-form",
       "platform": "github",
       "source_url": "https://github.com/react-hook-form/react-hook-form",
-      "source_version": "eed80865",
-      "content_hash": "22fee60f73d170b516281702a724709739354f2704ed62079b8555a66c1167ff",
+      "source_version": "a8e11030",
+      "content_hash": "dc13ba179e7657b7bfdaccfeb6caccb52dbf9e3db11848d59a1c1d6183b27a76",
       "dossier_path": "07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
       "promoted_rules": [
@@ -43101,6 +43101,11 @@
           "number": 3817,
           "title": "Referential Stability Preservation in Nested Property Updaters",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4784,
+          "title": "🐞 fix(setValue): select empty-string checkbox options (#13950)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43108,7 +43113,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T07:39:40.670Z",
+      "verified_at": "2026-10-27T13:03:45.417Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -133006,6 +133011,161 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T13:00:31.977Z"
+    },
+    "learn-github-afrise-mcpsharp": {
+      "learning_id": "learn-github-afrise-mcpsharp",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "afrise/MCPSharp",
+      "repository": "afrise/MCPSharp",
+      "slug": "afrise-mcpsharp",
+      "platform": "github",
+      "source_url": "https://github.com/afrise/MCPSharp",
+      "source_version": "a4cfca01",
+      "content_hash": "d8daf5eb46a56784f2d34120bcd472d57b597aff84664e3c3a31828eef9306dd",
+      "dossier_path": "07_PROJECT_LEARNING/afrise-mcpsharp-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/afrise-mcpsharp-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4781,
+          "title": "null handling and initialize collections in RPC classes",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T13:03:35.125Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4781": {
+      "learning_id": "rule-4781",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4781,
+      "title": "null handling and initialize collections in RPC classes",
+      "source_url": "https://github.com/afrise/MCPSharp",
+      "source_version": "a4cfca01",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:03:35.125Z"
+    },
+    "learn-github-hookdeck-hookdeck-cli": {
+      "learning_id": "learn-github-hookdeck-hookdeck-cli",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "hookdeck/hookdeck-cli",
+      "repository": "hookdeck/hookdeck-cli",
+      "slug": "hookdeck-hookdeck-cli",
+      "platform": "github",
+      "source_url": "https://github.com/hookdeck/hookdeck-cli",
+      "source_version": "c117a4d8",
+      "content_hash": "99b933a2ba7e2b1317ba2f04eee4238e2453d3d7a3deeda1da88f396ab504823",
+      "dossier_path": "07_PROJECT_LEARNING/hookdeck-hookdeck-cli-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hookdeck-hookdeck-cli-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4782,
+          "title": "ci: build and test with Go 1.26.10 to clear stdlib vulnerabilities",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T13:03:40.094Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4782": {
+      "learning_id": "rule-4782",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4782,
+      "title": "ci: build and test with Go 1.26.10 to clear stdlib vulnerabilities",
+      "source_url": "https://github.com/hookdeck/hookdeck-cli",
+      "source_version": "c117a4d8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:03:40.094Z"
+    },
+    "learn-github-alex2yang97-yahoo-finance-mcp": {
+      "learning_id": "learn-github-alex2yang97-yahoo-finance-mcp",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Alex2Yang97/yahoo-finance-mcp",
+      "repository": "Alex2Yang97/yahoo-finance-mcp",
+      "slug": "alex2yang97-yahoo-finance-mcp",
+      "platform": "github",
+      "source_url": "https://github.com/Alex2Yang97/yahoo-finance-mcp",
+      "source_version": "b9c17654",
+      "content_hash": "ac6b36b598abe127f28163f28e1a5dcf986de0cbedecedaa4be2893dd7f26a97",
+      "dossier_path": "07_PROJECT_LEARNING/alex2yang97-yahoo-finance-mcp-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/alex2yang97-yahoo-finance-mcp-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4783,
+          "title": "normalize US class-share tickers (BRK.B -> BRK-B) so they don't fail silently (#",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T13:03:41.964Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4783": {
+      "learning_id": "rule-4783",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4783,
+      "title": "normalize US class-share tickers (BRK.B -> BRK-B) so they don't fail silently (#",
+      "source_url": "https://github.com/Alex2Yang97/yahoo-finance-mcp",
+      "source_version": "b9c17654",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:03:41.964Z"
+    },
+    "rule-4784": {
+      "learning_id": "rule-4784",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4784,
+      "title": "🐞 fix(setValue): select empty-string checkbox options (#13950)",
+      "source_url": "https://github.com/react-hook-form/react-hook-form",
+      "source_version": "a8e11030",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:03:45.417Z"
     }
   },
   "aliases": {

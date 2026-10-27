@@ -18988,5 +18988,50 @@
     "qualityScore": 1529,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-27T12:59:43.755Z"
+  },
+  {
+    "name": "MCPSharp",
+    "fullName": "afrise/MCPSharp",
+    "url": "https://github.com/afrise/MCPSharp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "MCPSharp is a .NET library that helps you build Model Context Protocol (MCP) servers and clients - the standardized API protocol used by AI assistants and models.",
+    "stars": 377,
+    "forks": 43,
+    "openIssues": 13,
+    "language": "C#",
+    "qualityScore": 477,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T13:03:05.087Z"
+  },
+  {
+    "name": "hookdeck-cli",
+    "fullName": "hookdeck/hookdeck-cli",
+    "url": "https://github.com/hookdeck/hookdeck-cli",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "CLI for Hookdeck: forward webhooks to localhost (ngrok alternative), manage and query Event Gateway resources (sources, connections, destinations, events), run the MCP server for AI agents. Free for dev.",
+    "stars": 365,
+    "forks": 22,
+    "openIssues": 89,
+    "language": "Go",
+    "qualityScore": 617,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T13:03:05.087Z"
+  },
+  {
+    "name": "yahoo-finance-mcp",
+    "fullName": "Alex2Yang97/yahoo-finance-mcp",
+    "url": "https://github.com/Alex2Yang97/yahoo-finance-mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "This is a Model Context Protocol (MCP) server that provides comprehensive financial data from Yahoo Finance. It allows you to retrieve detailed information about stocks, including historical prices, company information, financial statements, options data, and market news.",
+    "stars": 363,
+    "forks": 170,
+    "openIssues": 12,
+    "language": "Python",
+    "qualityScore": 507,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T13:03:05.087Z"
   }
 ]

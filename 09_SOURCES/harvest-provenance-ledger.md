@@ -5307,3 +5307,7 @@ Every entry in this ledger must capture:
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `2662cc4b` | Multi-dimensional audit evidence | 2026-10-27T13:00:27.530Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `c2602604` | Multi-dimensional audit evidence | 2026-10-27T13:00:29.290Z |
 | `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `99bbbbff` | Multi-dimensional audit evidence | 2026-10-27T13:00:32.053Z |
+| `learn-github-afrise-mcpsharp` | `https://github.com/afrise/MCPSharp` | `a4cfca01` | Multi-dimensional audit evidence | 2026-10-27T13:03:35.219Z |
+| `learn-github-hookdeck-hookdeck-cli` | `https://github.com/hookdeck/hookdeck-cli` | `c117a4d8` | Multi-dimensional audit evidence | 2026-10-27T13:03:40.185Z |
+| `learn-github-alex2yang97-yahoo-finance-mcp` | `https://github.com/Alex2Yang97/yahoo-finance-mcp` | `b9c17654` | Multi-dimensional audit evidence | 2026-10-27T13:03:42.055Z |
+| `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `a8e11030` | Multi-dimensional audit evidence | 2026-10-27T13:03:45.506Z |

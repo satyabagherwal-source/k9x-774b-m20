@@ -4528,3 +4528,11 @@ https://github.com/Joooook/12306-mcp
 https://github.com/0xMassi/webclaw
 # [AI-AGENTS] AmoyLab/Unla (1529 score) - 🧩 MCP Gateway - A lightweight gateway service that instantly transforms existin
 https://github.com/AmoyLab/Unla
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T13:03:29.870Z] ---
+# [AI-AGENTS] afrise/MCPSharp (477 score) - MCPSharp is a .NET library that helps you build Model Context Protocol (MCP) ser
+https://github.com/afrise/MCPSharp
+# [AI-AGENTS] hookdeck/hookdeck-cli (617 score) - CLI for Hookdeck: forward webhooks to localhost (ngrok alternative), manage and 
+https://github.com/hookdeck/hookdeck-cli
+# [AI-AGENTS] Alex2Yang97/yahoo-finance-mcp (507 score) - This is a Model Context Protocol (MCP) server that provides comprehensive financ
+https://github.com/Alex2Yang97/yahoo-finance-mcp

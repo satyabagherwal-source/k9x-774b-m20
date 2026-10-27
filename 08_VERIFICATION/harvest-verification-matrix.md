@@ -5298,3 +5298,7 @@
 | `CYCLE-20261027-15ON` | `2026-10-27T13:00:27.527Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4776` | Yes (`c8e3dc42...`) |
 | `CYCLE-20261027-171J` | `2026-10-27T13:00:29.287Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4777` | Yes (`d9ac0e83...`) |
 | `CYCLE-20261027-1969` | `2026-10-27T13:00:32.049Z` | `dkhamsing/open-source-ios-apps` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4778, Rule 4779, Rule 4780` | Yes (`51c5a932...`) |
+| `CYCLE-20261027-56I8` | `2026-10-27T13:03:35.216Z` | `afrise/MCPSharp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4781` | Yes (`d8daf5eb...`) |
+| `CYCLE-20261027-5AC5` | `2026-10-27T13:03:40.181Z` | `hookdeck/hookdeck-cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4782` | Yes (`99b933a2...`) |
+| `CYCLE-20261027-5BS3` | `2026-10-27T13:03:42.051Z` | `Alex2Yang97/yahoo-finance-mcp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4783` | Yes (`ac6b36b5...`) |
+| `CYCLE-20261027-5EFZ` | `2026-10-27T13:03:45.503Z` | `react-hook-form/react-hook-form` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4784` | Yes (`dc13ba17...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T13:00:32.062Z",
+  "last_updated": "2026-10-27T13:03:45.516Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3426,14 +3426,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-hook-form-react-hook-form",
-      "content_hash": "22fee60f73d170b516281702a724709739354f2704ed62079b8555a66c1167ff",
-      "verified_at": "2026-10-23T07:39:40.754Z",
+      "content_hash": "dc13ba179e7657b7bfdaccfeb6caccb52dbf9e3db11848d59a1c1d6183b27a76",
+      "verified_at": "2026-10-27T13:03:45.515Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T07:39:40.765Z"
+      "last_updated": "2026-10-27T13:03:45.515Z"
     },
     "higress-group/higress": {
       "repository": "higress-group/higress",
@@ -16454,6 +16454,51 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-27T13:00:22.057Z"
+    },
+    "afrise/MCPSharp": {
+      "repository": "afrise/MCPSharp",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-afrise-mcpsharp",
+      "content_hash": "d8daf5eb46a56784f2d34120bcd472d57b597aff84664e3c3a31828eef9306dd",
+      "verified_at": "2026-10-27T13:03:35.227Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T13:03:35.227Z"
+    },
+    "hookdeck/hookdeck-cli": {
+      "repository": "hookdeck/hookdeck-cli",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-hookdeck-hookdeck-cli",
+      "content_hash": "99b933a2ba7e2b1317ba2f04eee4238e2453d3d7a3deeda1da88f396ab504823",
+      "verified_at": "2026-10-27T13:03:40.194Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T13:03:40.194Z"
+    },
+    "Alex2Yang97/yahoo-finance-mcp": {
+      "repository": "Alex2Yang97/yahoo-finance-mcp",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-alex2yang97-yahoo-finance-mcp",
+      "content_hash": "ac6b36b598abe127f28163f28e1a5dcf986de0cbedecedaa4be2893dd7f26a97",
+      "verified_at": "2026-10-27T13:03:42.063Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T13:03:42.063Z"
     }
   },
   "repos": {

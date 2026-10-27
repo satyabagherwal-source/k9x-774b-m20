@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-ZOTH",
-    "timestamp": "2026-10-25T11:59:59.333Z",
-    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-    "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-    "contentHash": "ad9506a9b892d9afa5f8e7423d323a9b72b0721a161539cb1e8abe1d0fd0e82f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-7EN4",
-    "timestamp": "2026-10-25T12:05:59.392Z",
-    "repository": "necolas/react-native-web",
-    "learningId": "learn-github-necolas-react-native-web",
-    "contentHash": "4edb0339ff7e244f8b661c392e7aece2fe0cefdc379679c69294d47753038aa7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-7IHC",
-    "timestamp": "2026-10-25T12:06:04.368Z",
-    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-    "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-    "contentHash": "7c09b5474c05292c8382694cea686baa3d13c9afbc2b66177f9132c7f7a4b304",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-DQ9K",
-    "timestamp": "2026-10-25T12:10:54.392Z",
-    "repository": "carbon-design-system/carbon",
-    "learningId": "learn-github-carbon-design-system-carbon",
-    "contentHash": "99eb769a293832d0728098c240eee2beec14ee737bce944ffceb06233e2da78e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-LL03",
     "timestamp": "2026-10-25T12:17:00.819Z",
     "repository": "Qwen/Qwen-Image-2.1-Turbo",
@@ -7492,6 +7432,66 @@
     "contentHash": "51c5a9325089a6aadd839e666211d2072233b5e76f8a5cb60ea5f82b6b9b408e",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-56I8",
+    "timestamp": "2026-10-27T13:03:35.216Z",
+    "repository": "afrise/MCPSharp",
+    "learningId": "learn-github-afrise-mcpsharp",
+    "contentHash": "d8daf5eb46a56784f2d34120bcd472d57b597aff84664e3c3a31828eef9306dd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-5AC5",
+    "timestamp": "2026-10-27T13:03:40.181Z",
+    "repository": "hookdeck/hookdeck-cli",
+    "learningId": "learn-github-hookdeck-hookdeck-cli",
+    "contentHash": "99b933a2ba7e2b1317ba2f04eee4238e2453d3d7a3deeda1da88f396ab504823",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-5BS3",
+    "timestamp": "2026-10-27T13:03:42.051Z",
+    "repository": "Alex2Yang97/yahoo-finance-mcp",
+    "learningId": "learn-github-alex2yang97-yahoo-finance-mcp",
+    "contentHash": "ac6b36b598abe127f28163f28e1a5dcf986de0cbedecedaa4be2893dd7f26a97",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-5EFZ",
+    "timestamp": "2026-10-27T13:03:45.503Z",
+    "repository": "react-hook-form/react-hook-form",
+    "learningId": "learn-github-react-hook-form-react-hook-form",
+    "contentHash": "dc13ba179e7657b7bfdaccfeb6caccb52dbf9e3db11848d59a1c1d6183b27a76",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

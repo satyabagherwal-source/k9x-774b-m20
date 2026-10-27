@@ -2193,10 +2193,10 @@
     "repository": "react-hook-form/react-hook-form",
     "platform": "github",
     "sourceUrl": "https://github.com/react-hook-form/react-hook-form",
-    "sourceVersion": "eed80865",
+    "sourceVersion": "a8e11030",
     "license": "MIT",
-    "contentHash": "22fee60f73d170b516281702a724709739354f2704ed62079b8555a66c1167ff",
-    "lastHarvestedAt": "2026-10-23T07:39:40.739Z",
+    "contentHash": "dc13ba179e7657b7bfdaccfeb6caccb52dbf9e3db11848d59a1c1d6183b27a76",
+    "lastHarvestedAt": "2026-10-27T13:03:45.506Z",
     "learningId": "learn-github-react-hook-form-react-hook-form"
   },
   "higress-group-higress": {
@@ -10948,5 +10948,35 @@
     "contentHash": "1fdddd9d29e0edc46e5d724ede182965463dbc72e4727a5e70fc3f4f5f0dac72",
     "lastHarvestedAt": "2026-10-27T13:00:22.048Z",
     "learningId": "learn-github-amoylab-unla"
+  },
+  "afrise-mcpsharp": {
+    "repository": "afrise/MCPSharp",
+    "platform": "github",
+    "sourceUrl": "https://github.com/afrise/MCPSharp",
+    "sourceVersion": "a4cfca01",
+    "license": "MIT",
+    "contentHash": "d8daf5eb46a56784f2d34120bcd472d57b597aff84664e3c3a31828eef9306dd",
+    "lastHarvestedAt": "2026-10-27T13:03:35.219Z",
+    "learningId": "learn-github-afrise-mcpsharp"
+  },
+  "hookdeck-hookdeck-cli": {
+    "repository": "hookdeck/hookdeck-cli",
+    "platform": "github",
+    "sourceUrl": "https://github.com/hookdeck/hookdeck-cli",
+    "sourceVersion": "c117a4d8",
+    "license": "Apache-2.0",
+    "contentHash": "99b933a2ba7e2b1317ba2f04eee4238e2453d3d7a3deeda1da88f396ab504823",
+    "lastHarvestedAt": "2026-10-27T13:03:40.185Z",
+    "learningId": "learn-github-hookdeck-hookdeck-cli"
+  },
+  "alex2yang97-yahoo-finance-mcp": {
+    "repository": "Alex2Yang97/yahoo-finance-mcp",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Alex2Yang97/yahoo-finance-mcp",
+    "sourceVersion": "b9c17654",
+    "license": "MIT",
+    "contentHash": "ac6b36b598abe127f28163f28e1a5dcf986de0cbedecedaa4be2893dd7f26a97",
+    "lastHarvestedAt": "2026-10-27T13:03:42.055Z",
+    "learningId": "learn-github-alex2yang97-yahoo-finance-mcp"
   }
 }
