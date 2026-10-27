@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T13:41:01.657Z",
-  "total_cycles_completed": 5317,
-  "total_learnings_persisted": 5317,
-  "total_rules_promoted": 4722,
+  "last_updated": "2026-10-27T13:48:15.334Z",
+  "total_cycles_completed": 5320,
+  "total_learnings_persisted": 5320,
+  "total_rules_promoted": 4725,
   "history": [
-    {
-      "timestamp": "2026-10-26T12:57:01.413Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:01:48.661Z",
-      "repository": "DefGuard/defguard",
-      "learningId": "learn-github-defguard-defguard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:11:23.811Z",
-      "repository": "Vincentwei1021/video-shotcraft",
-      "learningId": "learn-github-vincentwei1021-video-shotcraft",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-26T13:11:27.508Z",
       "repository": "Kuddev/pebrel",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-27T13:41:01.657Z",
       "repository": "Open-Source-Legal/OpenContracts",
       "learningId": "learn-github-open-source-legal-opencontracts",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:48:09.296Z",
+      "repository": "taiga-family/taiga-ui",
+      "learningId": "learn-github-taiga-family-taiga-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:48:12.309Z",
+      "repository": "aio-libs/aiohttp",
+      "learningId": "learn-github-aio-libs-aiohttp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:48:15.334Z",
+      "repository": "streetwriters/notesnook",
+      "learningId": "learn-github-streetwriters-notesnook",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T13:41:01.660Z",
+  "last_updated": "2026-10-27T13:48:15.339Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4386,14 +4386,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-streetwriters-notesnook",
-      "content_hash": "90e4bf2cc9b8114ca45c9c9a3dffa0ef80022c2aaba45fa2f6bdcce8566672c4",
-      "verified_at": "2026-10-23T10:31:05.551Z",
+      "content_hash": "d9c85f7436630f188b7d1ebf9d0fd5266a62e427d2f42346d75726b17175e4fc",
+      "verified_at": "2026-10-27T13:48:15.338Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T10:31:05.551Z"
+      "last_updated": "2026-10-27T13:48:15.338Z"
     },
     "kgateway-dev/kgateway": {
       "repository": "kgateway-dev/kgateway",
@@ -9171,14 +9171,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-taiga-family-taiga-ui",
-      "content_hash": "42b2fc8ddfb93d6b7b9d7038c3c8371b65850ca02bff56c65cd96d3bf62a8a8a",
-      "verified_at": "2026-10-25T11:33:35.989Z",
+      "content_hash": "db458172af5054ca13510744d13d828f8f8e76f7796c3868b05d3e7ccd77b45f",
+      "verified_at": "2026-10-27T13:48:09.299Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T11:33:35.989Z"
+      "last_updated": "2026-10-27T13:48:09.299Z"
     },
     "u-root/u-root": {
       "repository": "u-root/u-root",
@@ -14556,14 +14556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aio-libs-aiohttp",
-      "content_hash": "2f48af1ea745bc2e4a299d8ad91f325c16366021e2302772fe9bfeb68ec5507b",
-      "verified_at": "2026-10-22T21:08:03.548Z",
+      "content_hash": "88ae448a08ad2731e232fcffe2a333640088bb3913bf2d954989a99ccc62bb27",
+      "verified_at": "2026-10-27T13:48:12.312Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T21:08:03.548Z"
+      "last_updated": "2026-10-27T13:48:12.312Z"
     },
     "iPlug2/iPlug2": {
       "repository": "iPlug2/iPlug2",

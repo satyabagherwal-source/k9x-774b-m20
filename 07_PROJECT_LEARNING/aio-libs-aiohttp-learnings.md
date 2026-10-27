@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md`  
 > **Source**: github ([https://github.com/aio-libs/aiohttp](https://github.com/aio-libs/aiohttp))  
-> **Source Version**: `7275bea9`  
+> **Source Version**: `e7475aec`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T21:08:03.196Z  
+> **Timestamp**: 2026-10-27T13:48:11.898Z  
 > **Learning ID**: `learn-github-aio-libs-aiohttp`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aio-libs/aiohttp](https://github.com/aio-libs/aiohttp))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T21:08:02.606Z  
+> **Harvest Timestamp**: 2026-10-27T13:48:11.428Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Asynchronous HTTP client/server framework for asyncio and Python
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 16587 stars
+- **Stars / Engagement**: 16593 stars
 
 ---
 
@@ -364,7 +364,7 @@ import re
 import signal
 import sys
 from types import FrameType
-from typing import Any, Optional
+from typing import Any
 
 from gunicorn.config import AccessLogFormat as GunicornAccessLogFormat
 from gunicorn.workers import base
@@ -510,9 +510,7 @@ class GunicornWebWorker(base.Worker):  # type: ignore[misc,no-any-unimported]
 
         return waiter
 
-    def _notify_waiter_done(
-        self, waiter: Optional["asyncio.Future[bool]"] = None
-    ) -> None:
+    def _notify_waiter_done(self, waiter: "asyncio.Future[bool] | None" = None) -> None:
         if waiter is None:
             waiter = self._notify_waiter
         if waiter is not None:
@@ -1683,7 +1681,7 @@ class WebSocketDataQueue:
             self._waiter = self._loop.create_future()
             try:
                 await self._waiter
-            except (asyncio.CancelledError, asyncio.TimeoutError):
+            except (asyncio.CancelledError, TimeoutError):
                 self._waiter = None
                 raise
         return self._read_from_buffer()
@@ -1812,7 +1810,7 @@ class WebSocketReader:
                         raise WebSocketError(
                             WSCloseCode.PROTOCOL_ERROR,
                             "The opcode in non-fin frame is expected "
-                 
+                         
 ```
 
 
@@ -1842,34 +1840,37 @@ class WebSocketReader:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `23103b87` (2026-10-21)
-**Commit Message**: Bump certifi from 2026.7.22 to 2026.10.19 in /requirements in the pip group across 1 directory (#14093)
+### Incident Patch 1: `79675d55` (2026-10-26)
+**Commit Message**: Bump filelock from 4.1.0 to 4.2.1 in /requirements in the pip group across 1 directory (#14172)
 
 Bumps the pip group with 1 update in the /requirements directory:
-[certifi](https://github.com/certifi/python-certifi).
+[filelock](https://github.com/tox-dev/py-filelock).
 
-Updates `certifi` from 2026.7.22 to 2026.10.19
+Updates `filelock` from 4.1.0 to 4.2.1
 <details>
-<summary>Commits</summary>
+<summary>Release notes</summary>
+<p><em>Sourced from <a
+href="https://github.com/tox-dev/py-filelock/releases">filelock's
+releases</a>.</em></p>
+<blockquote>
+<h2>4.2.1</h2>
 <ul>
-<li><a
-href="https://github.com/certifi/python-certifi/commit/662df63d7906df66f1f07c0751a3dfe9da14d914"><code>662df63</code></a>
-Restore unaffected emSign roots (<a
-href="https://redirect.github.com/certifi/python-certifi/issues/439">#439</a>)
-(<a
-href="https://redirect.github.com/certifi/python-certifi/issues/440">#440</a>)</li>
-<li><a
-href="https://github.com/certifi/python-certifi/commit/5cb238caeeb6c30ec1a7309ad3e16a5aa7b10ce8"><code>5cb238c</code></a>
-Remove emsign (<a
-href="https://redirect.github.com/certifi/python-certifi/issues/437">#437</a>)</li>
-<li><a
-href="https://github.com/certifi/python-certifi/commit/69494a764d0a08f90838d53d4b0fefd3e84045d6"><code>69494a7</code></a>
-Bump actions/download-artifact from 8.0.1 to 8.0.2 (<a
-href="https://redirect.github.com/certifi/python-certifi/issues/436">#436</a>)</li>
-<li><a
-href="https://github.com/certifi/python-certifi
+<li>On a singleton wrapper, <code>close&gt;</code> and
+<code>close&gt;</code> end only the holds that tasks acquired
+through that wrapper. A reader that arrives during <code>close()</code>
+gets the closed error instead of joining the ending hold.
+After synchronous code closes or force-releases the shared lock, the
+wrappers refuse to admit readers into the ended
+hold, and <code>close()</code> on such a wrapper returns.
+Closing one wrapper no longer ends a task's nested hold taken through
+another wrapper on the same path. <a
+href="https://redirect.github.com/tox-dev/py-filelock/issues/832">#832</a></li>
+<li><code>ReadWriteLock</code> locks again after a
+<code>release()</code> that an exception from a signal handler
+interrupted.
+The async read-write 
 
-**File**: `requirements/constraints.txt` (modified, +64/-64)
+**File**: `requirements/constraints.txt` (modified, +63/-63)
 ```diff
 @@ -6,21 +6,21 @@
  #
@@ -1900,22 +1901,16 @@ href="https://github.com/certifi/python-certifi
      #   aiohttp
  alabaster==1.0.0
      # via sphinx
-@@ -30,11 +30,11 @@ ast-serialize==0.13.1
+@@ -29,21 +29,21 @@ annotated-types==0.8.0
+ ast-serialize==0.13.1
      # via mypy
- async-timeout==5.0.1 ; python_version < "3.11"
-     # via
--    #   -r requirements/runtime-deps.in
-+    #   -r runtime-deps.in
-     #   aiohttp
-     #   valkey
  atheris==3.0.0
 -    # via -r requirements/lint.in
 +    # via -r lint.in
  attrs==26.1.0
      # via aiohttp
  babel==2.18.0
-@@ -43,17 +43,17 @@ backports-asyncio-runner==1.2.0
-     # via pytest-asyncio
+     # via sphinx
  backports-zstd==1.3.0 ; implementation_name == "cpython" and python_version < "3.14"
      # via
 -    #   -r requirements/lint.in
@@ -1928,17 +1923,13 @@ href="https://github.com/certifi/python-certifi
 -    #   -r requirements/test-common.in
 +    #   -r lint.in
 +    #   -r test-common.in
- brotli==1.2.0 ; platform_python_implementation == "CPython" and sys_platform != "android" and sys_platform != "ios"
+ brotli==1.2.1 ; platform_python_implementation == "CPython" and sys_platform != "android" and sys_platform != "ios"
 -    # via -r requirements/runtime-deps.in
 +    # via -r runtime-deps.in
  build==1.6.1
      # via pip-tools
--certifi==2026.7.22
-+certifi==2026.10.19
-     # via requests
- cffi==2.1.1
-     # via
-@@ -69,12 +69,12 @@ click==8.5.0
+ certifi==2026.10.19
+@@ -62,12 +62,12 @@ click==8.5.0
      #   towncrier
  coverage==7.16.2
      # via
@@ -1953,7 +1944,16 @@ href="https://github.com/certifi/python-certifi
  distlib==0.4.4
      # via virtualenv
  docutils==0.21.2
-@@ -95,15 +95,15 @@ forbiddenfruit==0.1.4
+@@ -76,23 +76,23 @@ docutils==0.21.2
+     #   sphinx
+ execnet==2.1.2
+     # via pytest-xdist
+-filelock==4.1.0
++filelock==4.2.1
+     # via
+     #   python-discovery
+     #   virtualenv
+ forbiddenfruit==0.1.4
      # via blockbuster
  freezegun==1.5.5
      # via
@@ -1973,7 +1973,7 @@ href="https://github.com/certifi/python-certifi
  identify==2.6.20
      # via pre-commit
  idna==3.20
-@@ -117,8 +117,8 @@ iniconfig==2.3.1
+@@ -106,8 +106,8 @@ iniconfig==2.3.1
      # via pytest
  isal==1.8.0 ; python_version < "3.14" and implementation_name == "cpython"
      # via
@@ -1984,7 +1984,7 @@ href="https://github.com/certifi/python-certifi
  jinja2==3.1.6
      # via
      #   myst-parser
-@@ -140,18 +140,18 @@ mdurl==0.1.2
+@@ -129,18 +129,18 @@ mdurl==0.1.2
      # via markdown-it-py
  multidict==7.1.0
      # via
@@ -2008,8 +2008,8 @@ href="https://github.com/certifi/python-certifi
  nodeenv==1.11.0
      # via pre-commit
  packaging==26.3
-@@ -166,26 +166,26 @@ pathspec==1.1.1
- pip==26.2.1
+@@ -155,26 +155,26 @@ pathspec==1.1.1
+ pip==26.2.2
      # via pip-tools
  pip-tools==7.6.2
 -    # via -r requirements/dev.in
@@ -2041,7 +2041,7 @@ href="https://github.com/certifi/python-certifi
  pycares==5.1.0
      # via aiodns
  pycparser==3.11
-@@ -207,8 +207,8 @@ pyproject-hooks==1.3.3
+@@ -196,8 +196,8 @@ pyproject-hooks==1.3.3
      #   pip-tools
  pytest==9.1.1
      # via
@@ -2052,7 +2052,7 @@ href="https://github.com/certifi/python-certifi
      #   pytest-aiohttp
      #   pytest-asyncio
      #   pytest-codspeed
-@@ -218,32 +218,32 @@ pytest==9.1.1
+@@ -207,32 +207,32 @@ pytest==9.1.1
      #   pytest-xdist
  pytest-aiohttp==1.1.1
      # via
@@ -2062,10 +2062,13 @@ href="https://github.com/certifi/python-certifi
 +    #   -r test-common-base.in
  pytest-asyncio==1.4.0
      # via pytest-aiohttp
- pytest
+ pytest-codspeed==5.0.3
+     # via
+-    #   -r requirements/lint.in
+-    #   -r requirements/test-commo
 ```
 
-**File**: `requirements/dev.txt` (modified, +61/-61)
+**File**: `requirements/dev.txt` (modified, +60/-60)
 ```diff
 @@ -6,21 +6,21 @@
  #
@@ -2096,22 +2099,16 @@ href="https://github.com/certifi/python-certifi
      #   aiohttp
  alabaster==1.0.0
      # via sphinx
-@@ -30,11 +30,11 @@ ast-serialize==0.13.1
+@@ -29,21 +29,21 @@ annotated-types==0.8.0
+ ast-serialize==0.13.1
      # via mypy
- async-timeout==5.0.1 ; python_version < "3.11"
-     # via
--    #   -r requirements/runtime-deps.in
-+    #   -r runtime-deps.in
-     #   aiohttp
-     #   valkey
  atheris==3.0.0
 -    # via -r requirements/lint.in
 +    # via -r lint.in
  attrs==26.1.0
      # via aiohttp
  babel==2.18.0
-@@ -43,17 +43,17 @@ backports-asyncio-runner==1.2.0
-     # via pytest-asyncio
+     # via sphinx
  backports-zstd==1.3.0 ; platform_python_implementation == "CPython" and python_version < "3.14" and sys_platform != "android" and sys_platform != "ios"
      # via
 -    #   -r requirements/lint.in
@@ -2124,17 +2121,13 @@ href="https://github.com/certifi/python-certifi
 -    #   -r requirements/test-common.in
 +    #   -r lint.in
 +    #   -r test-common.in
- brotli==1.2.0 ; platform_python_implementation == "CPython" and sys_platform != "android" and sys_platform != "ios"
+ brotli==1.2.1 ; platform_python_implementation == "CPython" and sys_platform != "android" and sys_platform != "ios"
 -    # via -r requirements/runtime-deps.in
 +    # via -r runtime-deps.in
  build==1.6.1
      # via pip-tools
--certifi==2026.7.22
-+certifi==2026.10.19
-     # via requests
- cffi==2.1.1
-     # via
-@@ -69,7 +69,7 @@ click==8.5.0
+ certifi==2026.10.19
+@@ -62,7 +62,7 @@ click==8.5.0
      #   towncrier
  coverage==7.16.2
      # via
@@ -2143,7 +2136,16 @@ href="https://github.com/certifi/python-certifi
      #   pytest-cov
  cryptography==50.0.2
      # via trustme
-@@ -93,15 +93,15 @@ forbiddenfruit==0.1.4
+@@ -74,23 +74,23 @@ docutils==0.21.2
+     #   sphinx
+ execnet==2.1.2
+     # via pytest-xdist
+-filelock==4.1.0
++filelock==4.2.1
+     # via
+     #   python-discovery
+     #   virtualenv
+ forbiddenfruit==0.1.4
      # via blockbuster
  freezegun==1.5.5
      # via
@@ -2163,7 +2165,7 @@ href="https://github.com/certifi/python-certifi
  identify==2.6.20
      # via pre-commit
  idna==3.20
-@@ -115,8 +115,8 @@ iniconfig==2.3.1
+@@ -104,8 +104,8 @@ iniconfig==2.3.1
      # via pytest
  isal==1.8.0 ; python_version < "3.14" and implementation_name == "cpython"
      # via
@@ -2174,7 +2176,7 @@ href="https://github.com/certifi/python-certifi
  jinja2==3.1.6
      # via
      #   myst-parser
-@@ -138,17 +138,17 @@ mdurl==0.1.2
+@@ -127,17 +127,17 @@ mdurl==0.1.2
      # via markdown-it-py
  multidict==7.1.0
      # via
@@ -2196,8 +2198,8 @@ href="https://github.com/certifi/python-certifi
  nodeenv==1.11.0
      # via pre-commit
  packaging==26.3
-@@ -163,26 +163,26 @@ pathspec==1.1.1
- pip==26.2.1
+@@ -152,26 +152,26 @@ pathspec==1.1.1
+ pip==26.2.2
      # via pip-tools
  pip-tools==7.6.2
 -    # via -r requirements/dev.in
@@ -2229,7 +2231,7 @@ href="https://github.com/certifi/python-certifi
  pycares==5.1.0
      # via aiodns
  pycparser==3.11
-@@ -202,8 +202,8 @@ pyproject-hooks==1.3.3
+@@ -191,8 +191,8 @@ pyproject-hooks==1.3.3
      #   pip-tools
  pytest==9.1.1
      # via
@@ -2240,7 +2242,7 @@ href="https://github.com/certifi/python-certifi
      #   pytest-aiohttp
      #   pytest-asyncio
      #   pytest-codspeed
-@@ -213,32 +213,32 @@ pytest==9.1.1
+@@ -202,32 +202,32 @@ pytest==9.1.1
      #   pytest-xdist
  pytest-aiohttp==1.1.1
      # via
@@ -2255,156 +2257,209 @@ href="https://github.com/certifi/python-certifi
 -    #   -r requirements/lint.in
 -    #   -r requirements/test-common.in
 +    #   -r lint.in
-+    #   
++    #   -r test-common.in
+ pytest-cov==7.1.0
+-    # via -r requirements/test-common-base.in
++    # via -
 ```
 
-**File**: `requirements/doc-spelling.txt` (modified, +9/-9)
+**File**: `requirements/lint.txt` (modified, +21/-21)
 ```diff
-@@ -5,12 +5,12 @@
- #    pip-compile --allow-unsafe --output-file=requirements/doc-spelling.txt --strip-extras requirements/doc-spelling.in
+@@ -5,9 +5,9 @@
+ #    pip-compile --output-file=requirements/lint.txt --strip-extras --unsafe-package=aiohttp requirements/lint.in
  #
- aiohttp-theme==0.1.7
--    # via -r requirements/doc.in
-+    # via -r doc.in
- alabaster==1.0.0
-     # via sphinx
- babel==2.18.0
-     # via sphinx
--certifi==2026.7.22
-+certifi==2026.10.19
-     # via requests
- charset-normalizer==3.5.2
-     # via requests
-@@ -41,7 +41,7 @@ mdit-py-plugins==0.6.1
- mdurl==0.1.2
-     # via markdown-it-py
- myst-parser==4.0.1
--    # via -r requirements/doc.in
-+    # via -r doc.in
- packaging==26.3
-     # via sphinx
- pyenchant==3.3.0
-@@ -60,14 +60,14 @@ snowballstemmer==3.1.1
-     # via sphinx
- sphinx==8.1.3
+ aiodns==4.0.4
+-    # via -r requirements/lint.in
++    # via -r lint.in
+ aiofastnet==1.2.0
+-    # via -r requirements/lint.in
++    # via -r lint.in
+ aiohappyeyeballs==2.7.1
+     # via aiohttp
+ aiosignal==1.4.0
+@@ -17,13 +17,13 @@ annotated-types==0.8.0
+ ast-serialize==0.13.1
+     # via mypy
+ atheris==3.0.0
+-    # via -r requirements/lint.in
++    # via -r lint.in
+ attrs==26.1.0
+     # via aiohttp
+ backports-zstd==1.3.0 ; implementation_name == "cpython" and python_version < "3.14"
+-    # via -r requirements/lint.in
++    # via -r lint.in
+ blockbuster==1.5.29
+-    # via -r requirements/lint.in
++    # via -r lint.in
+ cffi==2.1.1
      # via
--    #   -r requirements/doc.in
-+    #   -r doc.in
-     #   myst-parser
-     #   sphinx-issues
-     #   sphinxcontrib-mermaid
-     #   sphinxcontrib-spelling
-     #   sphinxcontrib-towncrier
- sphinx-issues==6.0.0
--    # via -r requirements/doc.in
-+    # via -r doc.in
- sphinxcontrib-applehelp==2.0.0
-     # via sphinx
- sphinxcontrib-devhelp==2.0.0
-@@ -77,22 +77,22 @@ sphinxcontrib-htmlhelp==2.1.0
- sphinxcontrib-jsmath==1.0.1
-     # via sphinx
- sphinxcontrib-mermaid==2.1.1
--    # via -r requirements/doc.in
-+    # via -r doc.in
- sphinxcontrib-qthelp==2.0.0
-     # via sphinx
- sphinxcontrib-serializinghtml==2.0.0
-     # via sphinx
- sphinxcontrib-spelling==8.0.2 ; platform_system != "Windows"
--    # via -r requirements/doc-spelling.in
-+    # via -r doc-spelling.in
- sphinxcontrib-towncrier==0.5.0a0
--    # via -r requirements/doc.in
-+    # via -r doc.in
- tomli==2.4.1
+     #   cryptography
+@@ -34,14 +34,14 @@ cryptography==50.0.2
+     # via trustme
+ distlib==0.4.4
+     # via virtualenv
+-filelock==4.1.0
++filelock==4.2.1
      # via
-     #   sphinx
-     #   towncrier
- towncrier==26.9.0
+     #   python-discovery
+     #   virtualenv
+ forbiddenfruit==0.1.4
+     # via blockbuster
+ freezegun==1.5.5
+-    # via -r requirements/lint.in
++    # via -r lint.in
+ frozenlist==1.8.0
      # via
--    #   -r requirements/doc.in
-+    #   -r doc.in
-     #   sphinxcontrib-towncrier
- urllib3==2.8.0
-     # via requests
+     #   aiohttp
+@@ -55,7 +55,7 @@ idna==3.20
+ iniconfig==2.3.1
+     # via pytest
+ isal==1.8.0
+-    # via -r requirements/lint.in
++    # via -r lint.in
+ librt==0.16.0
+     # via mypy
+ markdown-it-py==4.2.0
+@@ -67,7 +67,7 @@ multidict==7.1.0
+     #   aiohttp
+     #   yarl
+ mypy==2.4.0 ; implementation_name == "cpython"
+-    # via -r requirements/lint.in
++    # via -r lint.in
+ mypy-extensions==1.1.0
+     # via mypy
+ nodeenv==1.11.0
+@@ -83,13 +83,13 @@ platformdirs==4.12.4
+ pluggy==1.7.0
+     # via pytest
+ pre-commit==4.6.2
+-    # via -r requirements/lint.in
++    # via -r lint.in
+ propcache==0.5.4
+     # via
+     #   aiohttp
+     #   yarl
+ proxy-py==2.4.10
+-    # via -r requirements/lint.in
++    # via -r lint.in
+ pycares==5.1.0
+     # via aiodns
+ pycparser==3.11
+@@ -104,35 +104,35 @@ pygments==2.21.0
+     #   rich
+ pytest==9.1.1
+     # via
+-    #   -r requirements/lint.in
++    #   -r lint.in
+     #   pytest-aiohttp
+     #   pytest-asyncio
+     #   pytest-codspeed
+     #   pytest-mock
+ pytest-aiohttp==1.1.1
+-    # via -r requirements/lint.in
++    # via -r lint.in
+ pytest-asyncio==1.4.0
+     # via pytest-aiohttp
+ pytest-codspeed==5.0.3
+-    # via -r requirements/lint.in
++    # via -r lint.in
+ pytest-mock==3.17.0
+-    # via -r requirements/lint.in
++    # via -r lint.in
+ python-dateutil==3.0.0
+     # via freezegun
+ python-discovery==1.6.4
+     # via virtualenv
+ python-on-whales==0.81.0
+-    # via -r requirements/lint.in
++    # via -r lint.in
+ pyyaml==6.0.3
+     # via pre-commit
+ rich==15.0.0
+     # via pytest-codspeed
+ six==1.17.0
+     # via python-dateutil
+ slotscheck==0.21.0
+-    # via -r requirements/lint.in
++    # via -r lint.in
+ trustme==1.2.1
+-    # via -r requirements/lint.in
++    # via -r lint.in
+ typing-extensions==4.16.0
+     # via
+     #   aiohttp
+@@ -148,15 +148,15 @@ typing-inspection==0.4.4
+ tzdata==2026.5
+     # via python-dateutil
+ uvloop==0.23.0 ; platform_system != "Windows"
+-    # via -r requirements/lint.in
++    # via -r lint.in
+ valkey==6.1.1
+-    # via -r requirements/lint.in
++    # via -r lint.in
+ virtualenv==21.14.13
+     # via pre-commit
+ yarl==1.25.1
+     # via aiohttp
+ zlib-ng==1.0.0
+-    # via -r requirements/lint.in
++    # via -r lint.in
+ 
+ # The following packages are considered to be unsafe in a requirements file:
+ # aiohttp
 ```
 
-**File**: `requirements/doc.txt` (modified, +8/-8)
+---
+
+### Incident Patch 2: `12029ec5` (2026-10-26)
+**Commit Message**: Bump pypa/cibuildwheel from 4.3.1 to 4.3.4 (#14134)
+
+Bumps [pypa/cibuildwheel](https://github.com/pypa/cibuildwheel) from
+4.3.1 to 4.3.4.
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a
+href="https://github.com/pypa/cibuildwheel/releases">pypa/cibuildwheel's
+releases</a>.</em></p>
+<blockquote>
+<h2>v4.3.4</h2>
+<ul>
+<li>🔐 Warns when a uv build frontend is selected and the host uv is
+older than 0.13.4, which still trusts the compromised eMudhra CA roots
+(<a
+href="https://redirect.github.com/pypa/cibuildwheel/issues/3021">#3021</a>)</li>
+<li>🔐 Uses cibuildwheel's CA bundle for pip on Python 3.9, where pip
+uses its bundled certifi, which still trusts the compromised eMudhra
+roots (<a
+href="https://redirect.github.com/pypa/cibuildwheel/issues/3017">#3017</a>)</li>
+<li>🔐 Uses cibuildwheel's CA bundle for pip on GraalPy, where truststore
+is not supported (<a
+href="https://redirect.github.com/pypa/cibuildwheel/issues/3019">#3019</a>)</li>
+<li>🔐 Uses cibuildwheel's CA bundle in Android, iOS, and Pyodide cross
+venvs, where pip uses the host's OpenSSL CA file (<a
+href="https://redirect.github.com/pypa/cibuildwheel/issues/3020">#3020</a>)</li>
+<li>🐛 Seeds build's isolated
+
+**File**: `.github/workflows/reusable-cibuildwheel.yml` (modified, +1/-1)
 ```diff
-@@ -5,12 +5,12 @@
- #    pip-compile --allow-unsafe --output-file=requirements/doc.txt --resolver=backtracking --strip-extras requirements/doc.in
- #
- aiohttp-theme==0.1.7
--    # via -r requirements/doc.in
-+    # via -r doc.in
- alabaster==1.0.0
-     # via sphinx
- babel==2.18.0
-     # via sphinx
--certifi==2026.7.22
-+certifi==2026.10.19
-     # via requests
- charset-normalizer==3.5.2
-     # via requests
-@@ -41,7 +41,7 @@ mdit-py-plugins==0.6.1
- mdurl==0.1.2
-     # via markdown-it-py
- myst-parser==4.0.1
--    # via -r requirements/doc.in
-+    # via -r doc.in
- packaging==26.3
-     # via sphinx
- pygments==2.21.0
-@@ -56,13 +56,13 @@ snowballstemmer==3.1.1
-     # via sphinx
- sphinx==8.1.3
-     # via
--    #   -r requirements/doc.in
-+    #   -r doc.in
-     #   myst-parser
-     #   sphinx-issues
-     #   sphinxcontrib-mermaid
-     #   sphinxcontrib-towncrier
- sphinx-issues==6.0.0
--    # via -r requirements/doc.in
-+    # via -r doc.in
- sphinxcontrib-applehelp==2.0.0
-     # via sphinx
- sphinxcontrib-devhelp==2.0.0
-@@ -72,20 +72,20 @@ sphinxcontrib-htmlhelp==2.1.0
- sphinxcontrib-jsmath==1.0.1
-     # via sphinx
- sphinxcontrib-mermaid==2.1.1
--    # via -r requirements/doc.in
-+    # via -r doc.in
- sphinxcontrib-qthelp==2.0.0
-     # via sphinx
- sphinxcontrib-serializinghtml==2.0.0
-     # via sphinx
- sphinxcontrib-towncrier==0.5.0a0
--    # via -r requirements/doc.in
-+    # via -r doc.in
- tomli==2.4.1
-     # via
-     #   sphinx
-     #   towncrier
- towncrier==26.9.0
-     # via
--    #   -r requirements/doc.in
-+    #   -r doc.in
-     #   sphinxcontrib-towncrier
- urllib3==2.8.0
-     # via requests
+@@ -116,7 +116,7 @@ jobs:
+         image: tonistiigi/binfmt:qemu-v8.1.5
+ 
+     - name: Build wheels
+-      uses: pypa/cibuildwheel@v4.3.1
++      uses: pypa/cibuildwheel@v4.3.4
+       with:
+         package-dir: >-  # not necessarily a dir, we pass an acceptable sdist
+           dist/${{ inputs.source-tarball-name }}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14103** (2026-10-22): Bump certifi from 2026.7.22 to 2026.10.18 (@dependabot[bot])
-- **PR #14093** (2026-10-21): Bump certifi from 2026.7.22 to 2026.10.19 in /requirements in the pip group across 1 directory (@dependabot[bot])
-- **PR #14092** (2026-10-21): Bump virtualenv from 21.14.8 to 21.14.11 (@dependabot[bot])
-- **PR #14091** (2026-10-21): Bump virtualenv from 21.14.8 to 21.14.11 (@dependabot[bot])
-- **PR #14090** (2026-10-21): Bump pytest-mock from 3.16.0 to 3.17.0 (@dependabot[bot])
-- **PR #14089** (2026-10-21): Bump pytest-mock from 3.16.0 to 3.17.0 (@dependabot[bot])
+- **PR #14199** (2026-10-27): Bump coverage from 7.16.2 to 7.17.0 (@dependabot[bot])
+- **PR #14198** (2026-10-27): Bump coverage from 7.16.2 to 7.17.0 (@dependabot[bot])
+- **PR #14197** (2026-10-27): Bump certifi from 2026.10.19 to 2026.10.23 (@dependabot[bot])
+- **PR #14194** (2026-10-27): Bump multidict from 7.1.0 to 7.2.0 (@dependabot[bot])
+- **PR #14192** (2026-10-27): Bump pycares from 5.1.0 to 5.2.1 (@dependabot[bot])
+- **PR #14190** (2026-10-27): Bump myst-parser from 4.0.1 to 5.1.0 (@dependabot[bot])
 
 ---
 
@@ -2424,13 +2479,13 @@ href="https://github.com/certifi/python-certifi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump certifi from 2026.7.22 to 2026.10.19 in /requirements in the pip group acro
+## X. Bump filelock from 4.1.0 to 4.2.1 in /requirements in the pip group across 1 dir
 
 **RULE**:
 When implementing operations in `requirements/constraints.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aio-libs/aiohttp. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `23103b87`: Bump certifi from 2026.7.22 to 2026.10.19 in /requirements in the pip group across 1 directory (#14093). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `79675d55`: Bump filelock from 4.1.0 to 4.2.1 in /requirements in the pip group across 1 directory (#14172). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `requirements/constraints.txt`.
@@ -2445,16 +2500,15 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
     #   -r runtime-deps.in
     # via -r doc.in
     #   -r runtime-deps.in
-    #   -r runtime-deps.in
     # via -r lint.in
     #   -r lint.in
     #   -r runtime-deps.in
     #   -r lint.in
     #   -r test-common.in
     # via -r runtime-deps.in
-certifi==2026.10.19
     #   -r test-common.in
     # via -r cython.in
+filelock==4.2.1
     #   -r lint.in
     #   -r test-common-base.in
     #   -r runtime-deps.in
@@ -2488,16 +2542,15 @@ certifi==2026.10.19
     #   -r requirements/runtime-deps.in
     # via -r requirements/doc.in
     #   -r requirements/runtime-deps.in
-    #   -r requirements/runtime-deps.in
     # via -r requirements/lint.in
     #   -r requirements/lint.in
     #   -r requirements/runtime-deps.in
     #   -r requirements/lint.in
     #   -r requirements/test-common.in
     # via -r requirements/runtime-deps.in
-certifi==2026.7.22
     #   -r requirements/test-common.in
     # via -r requirements/cython.in
+filelock==4.1.0
     #   -r requirements/lint.in
     #   -r requirements/test-common-base.in
     #   -r requirements/runtime-deps.in
@@ -2514,8 +2567,9 @@ certifi==2026.7.22
     # via -r requirements/lint.in
     #   -r requirements/runtime-deps.in
     #   -r requirements/lint.in
-   
+    #   -r requirements/test-common-base.in
+  
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `23103b87` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `79675d55` are properly handled with clean fallback behavior.

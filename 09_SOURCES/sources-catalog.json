@@ -2833,10 +2833,10 @@
     "repository": "streetwriters/notesnook",
     "platform": "github",
     "sourceUrl": "https://github.com/streetwriters/notesnook",
-    "sourceVersion": "cd712d44",
+    "sourceVersion": "7a183013",
     "license": "GPL-3.0",
-    "contentHash": "90e4bf2cc9b8114ca45c9c9a3dffa0ef80022c2aaba45fa2f6bdcce8566672c4",
-    "lastHarvestedAt": "2026-10-23T10:31:05.538Z",
+    "contentHash": "d9c85f7436630f188b7d1ebf9d0fd5266a62e427d2f42346d75726b17175e4fc",
+    "lastHarvestedAt": "2026-10-27T13:48:15.327Z",
     "learningId": "learn-github-streetwriters-notesnook"
   },
   "kgateway-dev-kgateway": {
@@ -6033,10 +6033,10 @@
     "repository": "taiga-family/taiga-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/taiga-family/taiga-ui",
-    "sourceVersion": "fd585329",
+    "sourceVersion": "90c4bc1f",
     "license": "Apache-2.0",
-    "contentHash": "42b2fc8ddfb93d6b7b9d7038c3c8371b65850ca02bff56c65cd96d3bf62a8a8a",
-    "lastHarvestedAt": "2026-10-25T11:33:35.982Z",
+    "contentHash": "db458172af5054ca13510744d13d828f8f8e76f7796c3868b05d3e7ccd77b45f",
+    "lastHarvestedAt": "2026-10-27T13:48:09.292Z",
     "learningId": "learn-github-taiga-family-taiga-ui"
   },
   "u-root-u-root": {
@@ -9673,10 +9673,10 @@
     "repository": "aio-libs/aiohttp",
     "platform": "github",
     "sourceUrl": "https://github.com/aio-libs/aiohttp",
-    "sourceVersion": "7275bea9",
+    "sourceVersion": "e7475aec",
     "license": "Apache-2.0",
-    "contentHash": "2f48af1ea745bc2e4a299d8ad91f325c16366021e2302772fe9bfeb68ec5507b",
-    "lastHarvestedAt": "2026-10-22T21:08:03.535Z",
+    "contentHash": "88ae448a08ad2731e232fcffe2a333640088bb3913bf2d954989a99ccc62bb27",
+    "lastHarvestedAt": "2026-10-27T13:48:12.304Z",
     "learningId": "learn-github-aio-libs-aiohttp"
   },
   "iplug2-iplug2": {

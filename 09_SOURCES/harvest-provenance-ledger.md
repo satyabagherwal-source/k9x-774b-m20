@@ -5349,3 +5349,6 @@ Every entry in this ledger must capture:
 | `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `a8a2bb3d` | Multi-dimensional audit evidence | 2026-10-27T13:40:53.570Z |
 | `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `a1ca224c` | Multi-dimensional audit evidence | 2026-10-27T13:40:56.277Z |
 | `learn-github-open-source-legal-opencontracts` | `https://github.com/Open-Source-Legal/OpenContracts` | `6652e8dd` | Multi-dimensional audit evidence | 2026-10-27T13:41:01.652Z |
+| `learn-github-taiga-family-taiga-ui` | `https://github.com/taiga-family/taiga-ui` | `90c4bc1f` | Multi-dimensional audit evidence | 2026-10-27T13:48:09.292Z |
+| `learn-github-aio-libs-aiohttp` | `https://github.com/aio-libs/aiohttp` | `e7475aec` | Multi-dimensional audit evidence | 2026-10-27T13:48:12.304Z |
+| `learn-github-streetwriters-notesnook` | `https://github.com/streetwriters/notesnook` | `7a183013` | Multi-dimensional audit evidence | 2026-10-27T13:48:15.327Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T13:41:01.603Z",
+  "last_updated": "2026-10-27T13:48:15.269Z",
   "total_verified_learnings": 1117,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -48022,8 +48022,8 @@
       "slug": "streetwriters-notesnook",
       "platform": "github",
       "source_url": "https://github.com/streetwriters/notesnook",
-      "source_version": "cd712d44",
-      "content_hash": "90e4bf2cc9b8114ca45c9c9a3dffa0ef80022c2aaba45fa2f6bdcce8566672c4",
+      "source_version": "7a183013",
+      "content_hash": "d9c85f7436630f188b7d1ebf9d0fd5266a62e427d2f42346d75726b17175e4fc",
       "dossier_path": "07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
       "promoted_rules": [
@@ -48041,6 +48041,11 @@
           "number": 3879,
           "title": "core: fix data encrypted with the wrong key after a password change",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4818,
+          "title": "server(themes): fix sync and install count edge cases",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48048,7 +48053,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T10:31:05.473Z",
+      "verified_at": "2026-10-27T13:48:15.257Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48853,8 +48858,8 @@
       "slug": "taiga-family-taiga-ui",
       "platform": "github",
       "source_url": "https://github.com/taiga-family/taiga-ui",
-      "source_version": "fd585329",
-      "content_hash": "42b2fc8ddfb93d6b7b9d7038c3c8371b65850ca02bff56c65cd96d3bf62a8a8a",
+      "source_version": "90c4bc1f",
+      "content_hash": "db458172af5054ca13510744d13d828f8f8e76f7796c3868b05d3e7ccd77b45f",
       "dossier_path": "07_PROJECT_LEARNING/taiga-family-taiga-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/taiga-family-taiga-ui-learnings.md",
       "promoted_rules": [
@@ -48907,6 +48912,11 @@
           "number": 4268,
           "title": "Containing-Block Isolation Rule",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4816,
+          "title": "core): `Hint` and `Dropdown` respect CSS zoom via shared `TuiCSSZoomService` (#1",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48914,7 +48924,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T11:33:35.895Z",
+      "verified_at": "2026-10-27T13:48:09.227Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -67014,8 +67024,8 @@
       "slug": "aio-libs-aiohttp",
       "platform": "github",
       "source_url": "https://github.com/aio-libs/aiohttp",
-      "source_version": "7275bea9",
-      "content_hash": "2f48af1ea745bc2e4a299d8ad91f325c16366021e2302772fe9bfeb68ec5507b",
+      "source_version": "e7475aec",
+      "content_hash": "88ae448a08ad2731e232fcffe2a333640088bb3913bf2d954989a99ccc62bb27",
       "dossier_path": "07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
       "promoted_rules": [
@@ -67028,6 +67038,11 @@
           "number": 3743,
           "title": "Bump certifi from 2026.7.22 to 2026.10.19 in /requirements in the pip group acro",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4817,
+          "title": "Bump filelock from 4.1.0 to 4.2.1 in /requirements in the pip group across 1 dir",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -67035,7 +67050,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T21:08:03.469Z",
+      "verified_at": "2026-10-27T13:48:12.229Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -133820,6 +133835,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T13:41:01.592Z"
+    },
+    "rule-4816": {
+      "learning_id": "rule-4816",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4816,
+      "title": "core): `Hint` and `Dropdown` respect CSS zoom via shared `TuiCSSZoomService` (#1",
+      "source_url": "https://github.com/taiga-family/taiga-ui",
+      "source_version": "90c4bc1f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:48:09.227Z"
+    },
+    "rule-4817": {
+      "learning_id": "rule-4817",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4817,
+      "title": "Bump filelock from 4.1.0 to 4.2.1 in /requirements in the pip group across 1 dir",
+      "source_url": "https://github.com/aio-libs/aiohttp",
+      "source_version": "e7475aec",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:48:12.229Z"
+    },
+    "rule-4818": {
+      "learning_id": "rule-4818",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4818,
+      "title": "server(themes): fix sync and install count edge cases",
+      "source_url": "https://github.com/streetwriters/notesnook",
+      "source_version": "7a183013",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:48:15.257Z"
     }
   },
   "aliases": {
