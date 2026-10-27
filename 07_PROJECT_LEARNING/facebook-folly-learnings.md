@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source**: github ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
-> **Source Version**: `b11ea7ea`  
+> **Source Version**: `595b4e62`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T00:41:51.989Z  
+> **Timestamp**: 2026-10-27T18:59:36.777Z  
 > **Learning ID**: `learn-github-facebook-folly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T00:41:51.983Z  
+> **Harvest Timestamp**: 2026-10-27T18:59:36.386Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source C++ library developed and used at Facebook.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 30556 stars
+- **Stars / Engagement**: 30553 stars
 
 ---
 
@@ -2368,49 +2368,425 @@ class WriteFileAtomicOptions {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3d04a788` (2026-10-25)
-**Commit Message**: Build absl from source on Ubuntu 24.04
+### Incident Patch 1: `c8c7adb7` (2026-10-26)
+**Commit Message**: Make signal stack-trace test TSAN-compatible
 
 Summary:
-X-link: https://github.com/facebookexternal/rdma_gen/pull/38
+[🤖 Metamate] Make `StackTraceTest.Signal` signal-safe so it can run under TSAN rather than report a runtime skip or be compiled out.
 
-Ubuntu 24.04's libabsl-dev (20220623.1) provides no `absl::log` target, so the rdma-unit suite's `find_package(absl)` fails to generate there. The manifest now excludes 24.04 from distro packages, falling back to the pinned source rev.
+The handler captures only `getStackTraceSafe()` into fixed storage and publishes its count with a statically verified lock-free atomic. Preserve `errno` in the handler and restore the previous signal action after the test. Perform symbolization and assertions after `raise()` returns, checking errno preservation and that the captured trace includes the handler and interrupted caller in order. `Simple` continues comparing all three stack-trace APIs outside signal context.
 
-Reviewed By: ccanel
+___
 
-Differential Revision: D127265177
+landed-with-radar-review
 
-fbshipit-source-id: b13866e619a03e93f303803d965c588d6f8a3d70
+Differential Revision: D127472550
 
-**File**: `build/fbcode_builder/manifests/absl` (modified, +3/-5)
+fbshipit-source-id: da7c1eb3b5bdc5bdf8fd6a12c88492aa6a8747c4
+
+**File**: `folly/debugging/symbolizer/test/StackTraceTest.cpp` (modified, +57/-19)
 ```diff
-@@ -14,14 +14,12 @@ ABSL_BUILD_TESTING = OFF
- ABSL_PROPAGATE_CXX_STD = ON
- ABSL_USE_SYSTEM_INCLUDES = ON
+@@ -14,8 +14,11 @@
+  * limitations under the License.
+  */
  
--# Prefer distro abseil where it is new enough to provide absl::log, and
--# build the pinned rev from source elsewhere. EL8/EL9 ship 20211102.0
--# and Ubuntu 22.04 ships 20210324 (20.04/18.04 older still), all of
--# which predate absl::log.
-+# EL8/EL9 ship 20211102.0, too old for absl::log.
- [rpms.any(distro=fedora,all(distro_family=rhel,not(any(distro_vers=8,distro_vers=9))))]
- abseil-cpp-devel
++#include <algorithm>
+ #include <array>
+ #include <atomic>
++#include <cerrno>
++#include <csignal>
+ #include <cstdint>
+ #include <cstring>
+ #include <limits>
+@@ -651,31 +654,66 @@ void foo2() {
+   verifyStackTraces();
+ }
  
--[debs.not(all(distro=ubuntu,any(distro_vers="18.04",distro_vers="20.04",distro_vers="22.04")))]
-+# Ubuntu 24.04 ships abseil 20220623.1, too old for absl::log.
-+[debs.not(all(distro=ubuntu,any(distro_vers="18.04",distro_vers="20.04",distro_vers="22.04",distro_vers="24.04")))]
- libabsl-dev
+-volatile bool handled = false;
+-void handler(int /* num */, siginfo_t* /* info */, void* /* ctx */) {
+-  // Yes, getStackTrace and VLOG aren't async-signal-safe, but signals
+-  // raised with raise() aren't "async" signals.
++TEST(StackTraceTest, Simple) {
+   foo1();
+-  handled = true;
+ }
  
- [homebrew]
+-TEST(StackTraceTest, Simple) {
+-  foo1();
++namespace {
++
++// NOLINTNEXTLINE
++std::array<uintptr_t, 100> signalAddresses{};
++std::atomic<ssize_t> signalFrameCount{-1};
++static_assert(decltype(signalFrameCount)::is_always_lock_free);
++
++FOLLY_NOINLINE void captureSignalStackTrace(int) {
++  const int savedErrno = errno;
++  signalFrameCount.store(
++      getStackTraceSafe(signalAddresses.data(), signalAddresses.size()),
++      std::memory_order_release);
++  errno = savedErrno;
++}
++
++FOLLY_NOINLINE int raiseSignalForStackTrace() {
++  const int result = raise(SIGUSR1);
++  compiler_must_not_elide(result);
++  return result;
+ }
+ 
++} // namespace
++
+ TEST(StackTraceTest, Signal) {
+-  if (folly::kIsSanitizeThread) {
+-    // TSAN doesn't like signal-unsafe functions in a signal handler regardless
+-    // of how the signal is raised. So skip the test in that case.
+-    SKIP() << "Not supported for TSAN";
+-  }
+-  struct sigaction sa;
+-  memset(&sa, 0, sizeof(sa));
+-  sa.sa_sigaction = handler;
+-  sa.sa_flags = SA_RESETHAND | SA_SIGINFO;
+-  CHECK_ERR(sigaction(SIGUSR1, &sa, nullptr));
+-  raise(SIGUSR1);
+-  EXPECT_TRUE(handled);
++  struct sigaction sa{};
++  sa.sa_handler = captureSignalStackTrace;
++  sigemptyset(&sa.sa_mask);
++  struct sigaction previous{};
++  ASSERT_EQ(sigaction(SIGUSR1, &sa, &previous), 0);
++  SCOPE_EXIT {
++    CHECK_ERR(sigaction(SIGUSR1, &previous, nullptr));
++  };
++
++  signalFrameCount.store(-1, std::memory_order_relaxed);
++  errno = EDOM;
++  const int result = raiseSignalForStackTrace();
++  const int signalErrno = errno;
++  ASSERT_EQ(result, 0);
++  EXPECT_EQ(signalErrno, EDOM);
++  const auto count = signalFrameCount.load(std::memory_order_acquire);
++  ASSERT_GT(count, 0);
++  ASSERT_LE(count, static_cast<ssize_t>(signalAddresses.size()));
++
++  FrameArray<signalAddresses.size()> frames;
++  frames.frameCount = static_cast<size_t>(count);
++  std::copy_n(signalAddresses.begin(), frames.frameCount, frames.addresses);
++  Symbolizer symbolizer;
++  symbolizer.symbolize(frames);
++  StringSymbolizePrinter printer;
++  printer.println(frames);
++  const auto stackTrace = printer.str();
++  const auto handler = stackTrace.find("captureSignalStackTrace");
++  const auto caller = stackTrace.find("raiseSignalForStackTrace");
++  ASSERT_NE(handler, std::string::npos) << stackTrace;
++  ASSERT_NE(caller, std::string::npos) << stackTrace;
++  EXPECT_LT(handler, caller) << stackTrace;
+ }
+ 
+ ssize_t read_all(int fd, uint8_t* buffer, size_t size) {
+```
+
+---
+
+### Incident Patch 2: `8e65d37c` (2026-10-26)
+**Commit Message**: Gather commit-message background without a fixed outline
+
+Summary:
+The reason for a change often comes from the task discussion, not the
+diff. Background notes should help explain the change, not dictate what the
+Summary must cover.
+
+Authors can now gather that background without a required format. The shared
+guide selects what belongs in the introduction. Independent reviewers get the
+facts they need, not the author's proposed wording or conclusions.
+
+___
+
+landed-with-radar-review
+
+Differential Revision: D127637714
+
+fbshipit-source-id: 0fe58bac30103b96355aaf79c33f72322495dead
+
+**File**: `folly/agents/critic-iterate.md` (modified, +9/-10)
+```diff
+@@ -17,6 +17,9 @@ Author and orchestrator sessions load these package files:
+ - `rule-design.md`: before agent-rule work.
+ - `design-vetting.md`: before choosing a substantive design or correctness fix.
+ 
++For commit or diff messages under critic-iterate, gather task context before
++drafting by following `{FA}/write/commit-summary/c-i-author.md`.
++
+ If a required file is unavailable, stop and report the missing dependency.
+ Runtime reviewer roles instead load only the inputs their task permits; their
+ preamble defines the role-specific rules.
+@@ -252,13 +255,10 @@ launches a cold reader. Use the same pair below this threshold when the user
+ requests a cold read or the artifact follows a known first-read comprehension
+ failure. "Fresh" means unprimed by the author's diagnosis, not context-free.
+ 
+-**Commit / diff messages.** Before opening the author draft or cold report, put
+-a complete independent message, including its Test Plan, in `REVIEW FRAME:`.
+-Then follow the general comparison, triage, and closure rules.
+-
+-**Context packet discipline (commit messages).** Before drafting a commit or
+-diff message, the author or orchestrator must follow
+-`{FA}/write/commit-summary/c-i-author.md`.
++**Commit / diff messages.** The fresh reviewer puts a complete independent
++message, including its Test Plan, in `REVIEW FRAME:` before opening the author
++draft or cold report. It then follows the general comparison, triage, and
++closure rules.
+ 
+ To prepare a fresh review, follow `{FA}/critic-iterate/fresh-review.md`.
+ 
+@@ -366,9 +366,8 @@ for cases that need them:
+ - **Commit messages:** fresh review is required when the change affects ≥1
+   sentence of substantive content. Mechanically forced version bumps, renames,
+   and pure config-value changes are exempt when one sentence says everything the
+-  reader needs, the context packet adds no other `Reader must know` fact, and
+-  the author checks the message against the diff. A design choice or known
+-  comprehension failure restores fresh review.
++  reader needs and the author checks the message against the diff. A design
++  choice or known comprehension failure restores fresh review.
+ - **Rule-doc edits** in the rules package containing this file or another
+   personal or project rule document: fresh review is required for every semantic
+   or readability change; there is no size threshold.
+```
+
+**File**: `folly/agents/write/CONTRIB.md` (modified, +3/-1)
+```diff
+@@ -19,4 +19,6 @@ can change without redefining the review process.
+ 
+ Commit and diff messages need a useful introduction before the reader opens the
+ diff. [author.md](commit-summary/author.md) owns that standard with or without
+-critic-iterate.
++critic-iterate. The commit-summary review files gather and select context for
++that introduction. Context supplies facts and reasons, not a list of details the
++message must repeat.
+```
+
+**File**: `folly/agents/write/commit-summary/c-i-author.md` (modified, +12/-33)
+```diff
+@@ -1,36 +1,15 @@
+-# Build commit-message context
++# Gather commit-message context
+ 
+-The author or orchestrator builds a context packet for commit messages.
+-Structure it into three named sections so the author can scan it predictably.
++For critic-iterate, gather relevant task context before drafting. Reread the
++active workstream ledger when one exists.
+ 
+-Before constructing the packet, reread the active workstream ledger when one
+-exists. Build from current task inputs relevant to Stack context, Reader must
+-know, or Decision trail, including any ledger goal and unsuperseded requirements
+-or rationale. Before using the packet, treat every input as a claim or
+-requirement, not approved wording. Apply "Evidence" when a false claim could
+-change the message, then check each input against the intended reader's starting
+-knowledge. Keep code identifiers when they anchor a fact or help find the
+-relevant code. Explain the concrete actor, condition, action, or outcome hidden
+-by unfamiliar shorthand, and define unavoidable technical terms on first use.
+-Raw input may be overcomplete, but not opaque.
++Use the current request, unsuperseded decisions and sources to recover the goal,
++reason for the work, and constraints or choices that explain the approach. The
++reason can matter even when it is not itself changed by the diff. Check factual
++claims using critic-iterate's Evidence rules when an error could change the
++message.
+ 
+-- **Stack context** — for diffs in a stack: what predecessors covered and what
+-  follow-ons will do.
+-- **Reader must know** — the few facts whose absence would make a reader act
+-  wrongly or misunderstand the change, plus the artifact goal and intended
+-  readers. Past three or four facts, reapply that test to each; do not merge
+-  distinct causal facts into an abstract label. The final message may compress
+-  detail and wording only while preserving the reader's needed model.
+-- **Decision trail** — for a design choice not mechanically forced by the spec
+-  or bug, collect only the choices, constraints, or reversals needed to explain
+-  the final shape. Typical candidates are a rejected alternative whose trade-off
+-  is not clear from the diff, a constraint that pinned the choice, or a reversal
+-  that explains a surprising result. Do not inventory the rest of the
+-  discussion.
+-
+-The Decision trail is RAW input — the inner loop selects only the facts needed
+-for the reader's task, then applies the cut test (typically the load-bearing
+-constraint or rejected alternative; see `write.md` "## What evergreen context
+-means"). The packet-vs-final-message split is input-vs-keep, not a different
+-taxonomy. Omitting a decision the reader needs starves the loop; forcing process
+-history the reader does not need invents motivation and adds noise.
++Use `{FA}/write/commit-summary/author.md` to select and explain what the message
++needs. Context is input, not a list of facts the Summary must contain. No
++particular context format is required; supply facts and reasons, not approved
++wording.
+```
+
+**File**: `folly/agents/write/commit-summary/c-i-fresh-review.md` (modified, +5/-4)
+```diff
+@@ -4,10 +4,11 @@ Require `{FA}/write/commit-summary/author.md` as an input.
+ 
+ Before constructing the task note, reread the active workstream ledger when one
+ exists. Use the short task note defined in
+-`{FA}/critic-iterate/fresh-review.md`. Never pass the whole author packet,
+-ledger paths, or raw ledger contents.
++`{FA}/critic-iterate/fresh-review.md`. Never pass the author's full context
++notes, ledger paths, or raw ledger contents.
+ 
+ Include review-affecting predecessor framing or follow-on plans; omit mechanics
+ not needed to understand the current diff. Include a fact only when the reviewer
+-needs it to verify correctness and cannot derive it from the sources it may
+-read.
++needs it to check a claim or establish the reader's context and cannot derive it
++from the sources it may read. Supply facts, not proposed wording or a preferred
++conclusion.
+```
+
+---
+
+### Incident Patch 3: `6ca6d347` (2026-10-26)
+**Commit Message**: io_uring: require liburing 2.10 headers, and 2.15 for zero-copy receive
+
+Summary:
+Folly's open-source CMake build turns on its io_uring code whenever `<liburing.h>` exists, and fails with liburing headers that are too old for it. Ubuntu 24.04's `liburing-dev` is 2.5, which lacks `io_uring_set_iowait()` and `io_uring_buf_ring_head()` and, in its copy of the kernel header, `IORING_OP_RECV_ZC`, `IOU_PBUF_RING_INC` and other constants that folly uses, so 13 of folly's source files don't compile. liburing 2.10 is the first release with all of them, so `FOLLY_HAS_LIBURING` now requires 2.10, read from `liburing/io_uring_version.h`, and older headers build folly without io_uring, as a host without liburing does.
+
+With liburing 2.10 to 2.14, such as CentOS Stream 9's `liburing-devel-2.12`, the build still fails in `IoUringZeroCopyBufferPool.cpp`, which uses the ZCRX query and control APIs whenever `<liburing.h>` exists; those first shipped in 2.15. The new `FOLLY_HAS_LIBURING_ZCRX` checks for 2.15 the same way, rather than probing for `liburing/io_uring/query.h`, because liburing 2.13 and 2.14 already ship that header without the ZCRX APIs. The internal stub reports 2.15, so internal build
+
+**File**: `folly/io/async/IoUringBufferPoolSharing.cpp` (modified, +4/-4)
+```diff
+@@ -41,10 +41,10 @@ struct EbBackend {
+ // Runs `setupStep` on `evb` and reports whether it succeeded.
+ //
+ // The catch is load-bearing, not defensive: IoUringZeroCopyBufferPool::create()
+-// and ::importHandle() never return null, they throw on failure, so throwing is
+-// the only way create/import can report a problem. Left uncaught it would
+-// propagate on the EventBase worker and terminate the thread. `setupStep`
+-// itself reports failure by returning false.
++// and ::importHandle() throw when setup fails, and return null only when folly
++// is built without ZCRX support. Left uncaught, an exception would propagate on
++// the EventBase worker and terminate the thread. `setupStep` itself reports
++// failure by returning false.
+ bool runSetupStepOnEventBase(
+     folly::EventBase* evb, folly::FunctionRef<bool()> setupStep) {
+   bool succeeded = false;
+```
+
+**File**: `folly/io/async/IoUringZeroCopyBufferPool.cpp` (modified, +57/-1)
+```diff
+@@ -17,6 +17,7 @@
+ #include <folly/io/async/IoUringZeroCopyBufferPool.h>
+ 
+ #include <mutex>
++#include <stdexcept>
+ 
+ #include <folly/Conv.h>
+ #include <folly/GLog.h>
+@@ -26,7 +27,7 @@
+ #include <folly/portability/SysMman.h>
+ #include <folly/synchronization/DistributedMutex.h>
+ 
+-#if FOLLY_HAS_LIBURING
++#if FOLLY_HAS_LIBURING_ZCRX
+ 
+ // TODO: T264228475: remove this once liburing/uapi headers are updated.
+ #define ZCRX_REG_NODEV 2
+@@ -812,4 +813,59 @@ void IoUringZeroCopyBufferPool::flushRefillQueueIfNeeded() noexcept {
+ 
+ } // namespace folly
+ 
++#elif FOLLY_HAS_LIBURING
++
++// TODO: T294823393: remove these stand-ins along with FOLLY_HAS_LIBURING_ZCRX.
++
++namespace folly {
++
++bool IoUringZeroCopyBufferPool::kernelZeroCopyRxSupported() {
++  return false;
++}
++
++/* static */ IoUringZeroCopyBufferPool::UniquePtr
++IoUringZeroCopyBufferPool::create(Params) {
++  return nullptr;
++}
++
++/* static */ IoUringZeroCopyBufferPool::UniquePtr
++IoUringZeroCopyBufferPool::importHandle(ExportHandle, struct io_uring*) {
++  return nullptr;
++}
++
++IoUringZeroCopyBufferPool::ExportHandle
++IoUringZeroCopyBufferPool::exportHandle() const {
++  throw std::runtime_error(
++      "io_uring zero-copy receive is not supported by these liburing headers");
++}
++
++IoUringZeroCopyBufferPool::~IoUringZeroCopyBufferPool() = default;
++
++IoUringZeroCopyBufferPool::Result IoUringZeroCopyBufferPool::getIoBuf(
++    const struct io_uring_cqe*, const struct io_uring_zcrx_cqe*) noexcept {
++  return {nullptr, false};
++}
++
++void IoUringZeroCopyBufferPool::processNotificationCqe(
++    const struct io_uring_cqe*) noexcept {}
++
++uint64_t IoUringZeroCopyBufferPool::getAndResetCopyFallbackCount() noexcept {
++  return 0;
++}
++
++uint64_t IoUringZeroCopyBufferPool::getAndResetCopyFallbackBytes() noexcept {
++  return 0;
++}
++
++uint32_t IoUringZeroCopyBufferPool::getAndResetNoBufferCount() noexcept {
++  return 0;
++}
++
++IoUringZeroCopyBufferPool::Diagnostics
++IoUringZeroCopyBufferPool::getDiagnostics() noexcept {
++  return {};
++}
++
++} // namespace folly
++
+ #endif
+```
+
+**File**: `folly/io/async/Liburing.h` (modified, +20/-1)
+```diff
+@@ -16,8 +16,27 @@
+ 
+ #pragma once
+ 
+-#if defined(__linux__) && __has_include(<liburing.h>)
++#if defined(__linux__) && __has_include(<liburing/io_uring_version.h>)
++#include <liburing/io_uring_version.h>
++#endif
++
++// TODO: T294823393: remove these version checks once every liburing that folly
++// builds against is 2.15 or newer.
++// folly's io_uring code uses APIs that first shipped in liburing 2.10, such as
++// io_uring_set_iowait().
++#if defined(IO_URING_VERSION_MAJOR) && \
++    (IO_URING_VERSION_MAJOR > 2 ||     \
++     (IO_URING_VERSION_MAJOR == 2 && IO_URING_VERSION_MINOR >= 10))
+ #define FOLLY_HAS_LIBURING 1
+ #else
+ #define FOLLY_HAS_LIBURING 0
+ #endif
++
++// The ZCRX query and control APIs first shipped in liburing 2.15.
++#if FOLLY_HAS_LIBURING &&          \
++    (IO_URING_VERSION_MAJOR > 2 || \
++     (IO_URING_VERSION_MAJOR == 2 && IO_URING_VERSION_MINOR >= 15))
++#define FOLLY_HAS_LIBURING_ZCRX 1
++#else
++#define FOLLY_HAS_LIBURING_ZCRX 0
++#endif
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2730** (closed): Make DistributedMutex Waiter layout independent of interference size (@Nicoshev)
 - **PR #2726** (closed): Fix FixedString literal macros with MSVC's conforming preprocessor (@tinadu1018)
+- **PR #2719** (closed): [coro] Fix CO_ASSERT_FALSE with released GoogleTest (@Hrushikesh-ramilla)
 - **PR #2718** (closed): Stop Wait.multipleWait racing a timer (@vitaut)
 - **PR #2717** (closed): Fix the remaining Windows test failures (@vitaut)
 - **PR #2715** (closed): reverse iterator (#2715) (@DenisYaroshevskiy)
-- **PR #2714** (closed): Fix the args test on Windows (@vitaut)
-- **PR #2712** (closed): Fix the Windows CMake build (@vitaut)
 
 ---
 
@@ -2430,34 +2806,86 @@ fbshipit-source-id: b13866e619a03e93f303803d965c588d6f8a3d70
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Build absl from source on Ubuntu 24.04
+## X. Make signal stack-trace test TSAN-compatible
 
 **RULE**:
-When implementing operations in `build/fbcode_builder/manifests/absl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in facebook/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `folly/debugging/symbolizer/test/StackTraceTest.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in facebook/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3d04a788`: Build absl from source on Ubuntu 24.04. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c8c7adb7`: Make signal stack-trace test TSAN-compatible. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `build/fbcode_builder/manifests/absl`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/debugging/symbolizer/test/StackTraceTest.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-# EL8/EL9 ship 20211102.0, too old for absl::log.
-# Ubuntu 24.04 ships abseil 20220623.1, too old for absl::log.
-[debs.not(all(distro=ubuntu,any(distro_vers="18.04",distro_vers="20.04",distro_vers="22.04",distro_vers="24.04")))]
+#include <algorithm>
+#include <cerrno>
+#include <csignal>
+TEST(StackTraceTest, Simple) {
+namespace {
+
+// NOLINTNEXTLINE
+std::array<uintptr_t, 100> signalAddresses{};
+std::atomic<ssize_t> signalFrameCount{-1};
+static_assert(decltype(signalFrameCount)::is_always_lock_free);
+
+FOLLY_NOINLINE void captureSignalStackTrace(int) {
+  const int savedErrno = errno;
+  signalFrameCount.store(
+      getStackTraceSafe(signalAddresses.data(), signalAddresses.size()),
+      std::memory_order_release);
+  errno = savedErrno;
+}
+
+FOLLY_NOINLINE int raiseSignalForStackTrace() {
+  const int result = raise(SIGUSR1);
+  compiler_must_not_elide(result);
+  return result;
+} // namespace
+
+  struct sigaction sa{};
+  sa.sa_handler = captureSignalStackTrace;
+  sigemptyset(&sa.sa_mask);
+  struct sigaction previous{};
+  ASSERT_EQ(sigaction(SIGUSR1, &sa, &previous), 0);
+  SCOPE_EXIT {
+    CHECK_ERR(sigaction(SIGUSR1, &previous, nullptr));
+  };
+
+  signalFrameCount.store(-1, std::memory_order_relaxed);
+  errno = EDOM;
+  const int result = raiseSignalForStackTrace();
+  const int signalErrno = errno;
+  ASSERT_EQ(result, 0);
+  EXPECT_EQ(signalErrno, EDOM);
+  const auto count = signalFrameCount.load(std::memory_order_acqui
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-# Prefer distro abseil where it is new enough to provide absl::log, and
-# build the pinned rev from source elsewhere. EL8/EL9 ship 20211102.0
-# and Ubuntu 22.04 ships 20210324 (20.04/18.04 older still), all of
-# which predate absl::log.
-[debs.not(all(distro=ubuntu,any(distro_vers="18.04",distro_vers="20.04",distro_vers="22.04")))]
+volatile bool handled = false;
+void handler(int /* num */, siginfo_t* /* info */, void* /* ctx */) {
+  // Yes, getStackTrace and VLOG aren't async-signal-safe, but signals
+  // raised with raise() aren't "async" signals.
+  handled = true;
+TEST(StackTraceTest, Simple) {
+  foo1();
+  if (folly::kIsSanitizeThread) {
+    // TSAN doesn't like signal-unsafe functions in a signal handler regardless
+    // of how the signal is raised. So skip the test in that case.
+    SKIP() << "Not supported for TSAN";
+  }
+  struct sigaction sa;
+  memset(&sa, 0, sizeof(sa));
+  sa.sa_sigaction = handler;
+  sa.sa_flags = SA_RESETHAND | SA_SIGINFO;
+  CHECK_ERR(sigaction(SIGUSR1, &sa, nullptr));
+  raise(SIGUSR1);
+  EXPECT_TRUE(handled);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3d04a788` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c8c7adb7` are properly handled with clean fallback behavior.

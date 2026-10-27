@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T18:43:42.576Z",
-  "total_cycles_completed": 5460,
-  "total_learnings_persisted": 5460,
-  "total_rules_promoted": 4859,
+  "last_updated": "2026-10-27T18:59:49.231Z",
+  "total_cycles_completed": 5465,
+  "total_learnings_persisted": 5465,
+  "total_rules_promoted": 4864,
   "history": [
-    {
-      "timestamp": "2026-10-27T12:50:24.918Z",
-      "repository": "expo/expo",
-      "learningId": "learn-github-expo-expo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T12:50:26.034Z",
-      "repository": "karmada-io/karmada",
-      "learningId": "learn-github-karmada-io-karmada",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T12:50:26.150Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T12:50:30.501Z",
-      "repository": "ytsaurus/ytsaurus",
-      "learningId": "learn-github-ytsaurus-ytsaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T12:53:45.540Z",
-      "repository": "Saffsanity/sill",
-      "learningId": "learn-github-saffsanity-sill",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T12:53:47.422Z",
       "repository": "kgateway-dev/kgateway",
@@ -1403,6 +1368,41 @@
       "repository": "rollup/rollup",
       "learningId": "learn-github-rollup-rollup",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T18:59:37.251Z",
+      "repository": "facebook/folly",
+      "learningId": "learn-github-facebook-folly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T18:59:39.368Z",
+      "repository": "ccore/Qwen3.5-4B-3D-Coder",
+      "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T18:59:41.447Z",
+      "repository": "cypress-io/cypress",
+      "learningId": "learn-github-cypress-io-cypress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T18:59:43.139Z",
+      "repository": "czy0729/Bangumi",
+      "learningId": "learn-github-czy0729-bangumi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T18:59:49.231Z",
+      "repository": "neuron-core/neuron-ai",
+      "learningId": "learn-github-neuron-core-neuron-ai",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

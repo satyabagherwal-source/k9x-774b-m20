@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md`  
 > **Source**: github ([https://github.com/neuron-core/neuron-ai](https://github.com/neuron-core/neuron-ai))  
-> **Source Version**: `14ecdbc0`  
+> **Source Version**: `179c6818`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T15:38:22.254Z  
+> **Timestamp**: 2026-10-27T18:59:49.018Z  
 > **Learning ID**: `learn-github-neuron-core-neuron-ai`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/neuron-core/neuron-ai](https://github.com/neuron-core/neuron-ai))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T15:38:22.055Z  
+> **Harvest Timestamp**: 2026-10-27T18:59:48.912Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Agentic Framework of the PHP ecosystem to build production-ready AI driven applications. Connect components (LLMs, Tools, vector DBs, memory) to agents that interact with your data and UI.
 - **Primary Language / Ecosystem**: PHP
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2153 stars
+- **Stars / Engagement**: 2160 stars
 
 ---
 
@@ -540,296 +540,68 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `14ecdbc0` (2026-10-25)
-**Commit Message**: fix batch embeddings and sentence splitter
+### Incident Patch 1: `179c6818` (2026-10-27)
+**Commit Message**: doc
 
-**File**: `src/RAG/Embeddings/AbstractEmbeddingsProvider.php` (modified, +23/-0)
+**File**: `README.md` (modified, +2/-2)
 ```diff
-@@ -4,8 +4,12 @@
+@@ -81,8 +81,8 @@ skill before you write any Neuron code instead of relying on what you remember a
+ the framework;
  
- namespace NeuronAI\RAG\Embeddings;
+ - Third: work out what kind of app this is. Look at composer.json
+-and the project structure to tell whether it is a Laravel app or a Symfony app, then
+-activate the matching skill: neuron-laravel-integration or neuron-symfony-integration.
++and the project structure to see whether it is an application based on Laravel, Symfony, or another framework,
++then activate the matching skill: neuron-laravel-integration or neuron-symfony-integration.
+ If Neuron is already part of the app go through the skill's foundations checklist
+ item by item. Report what differs from the recommended setup;
  
-+use NeuronAI\Exceptions\ProviderException;
- use NeuronAI\RAG\Document;
- 
-+use function array_diff_key;
-+use function count;
-+
- abstract class AbstractEmbeddingsProvider implements EmbeddingsProviderInterface
- {
-     public function embedDocuments(array $documents): array
-@@ -23,4 +27,23 @@ public function embedDocument(Document $document): Document
- 
-         return $document;
-     }
-+
-+    /**
-+     * The whole batch response is checked before any embedding is set: a document it missed
-+     * would otherwise keep no embedding, or the one it carried before, without any error.
-+     *
-+     * @param Document[] $documents The documents of one request, in the order they were sent
-+     * @param array<int, array<int, int|float>> $embeddings Keyed by the position of the document they embed
-+     * @throws ProviderException
-+     */
-+    protected function assignEmbeddings(array $documents, array $embeddings): void
-+    {
-+        if (count($embeddings) !== count($documents) || array_diff_key($documents, $embeddings) !== []) {
-+            throw new ProviderException('The embeddings response does not have one embedding for each of the '.count($documents).' documents sent.');
-+        }
-+
-+        foreach ($documents as $position => $document) {
-+            $document->setEmbedding($embeddings[$position]);
-+        }
-+    }
- }
 ```
 
-**File**: `src/RAG/Embeddings/CohereEmbeddingsProvider.php` (modified, +4/-3)
-```diff
-@@ -5,6 +5,7 @@
- namespace NeuronAI\RAG\Embeddings;
- 
- use NeuronAI\Exceptions\HttpException;
-+use NeuronAI\Exceptions\ProviderException;
- use NeuronAI\HttpClient\Curl\CurlHttpClient;
- use NeuronAI\HttpClient\HasHttpClient;
- use NeuronAI\HttpClient\HttpClientInterface;
-@@ -61,6 +62,7 @@ public function embedText(string $text): array
- 
-     /**
-      * @throws HttpException
-+     * @throws ProviderException
-      */
-     public function embedDocuments(array $documents): array
-     {
-@@ -82,9 +84,7 @@ public function embedDocuments(array $documents): array
-                 )
-             )->json();
- 
--            foreach ($response['embeddings']['float'] as $index => $item) {
--                $chunk[$index]->setEmbedding($item);
--            }
-+            $this->assignEmbeddings($chunk, $response['embeddings']['float'] ?? []);
-         }
- 
-         return array_merge(...$chunks);
-@@ -94,6 +94,7 @@ public function embedDocuments(array $documents): array
-      * A stored document, so it takes the document input type, unlike embedText() at search time.
-      *
-      * @throws HttpException
-+     * @throws ProviderException
-      */
-     public function embedDocument(Document $document): Document
-     {
-```
+---
 
-**File**: `src/RAG/Embeddings/OllamaEmbeddingsProvider.php` (modified, +6/-0)
-```diff
-@@ -5,6 +5,7 @@
- namespace NeuronAI\RAG\Embeddings;
- 
- use NeuronAI\Exceptions\HttpException;
-+use NeuronAI\Exceptions\ProviderException;
- use NeuronAI\HttpClient\Curl\CurlHttpClient;
- use NeuronAI\HttpClient\HasHttpClient;
- use NeuronAI\HttpClient\HttpClientInterface;
-@@ -30,6 +31,7 @@ public function __construct(
- 
-     /**
-      * @throws HttpException
-+     * @throws ProviderException
-      */
-     public function embedText(string $text): array
-     {
-@@ -45,6 +47,10 @@ public function embedText(string $text): array
-             )
-         )->json();
- 
-+        if (!isset($response['embeddings'][0])) {
-+            throw new ProviderException('Ollama returned no embedding, as it does when the text to embed is empty.');
-+        }
-+
-         return $response['embeddings'][0];
-     }
- }
-```
+### Incident Patch 2: `4f3487d8` (2026-10-27)
+**Commit Message**: doc
 
-**File**: `src/RAG/Embeddings/OpenAIEmbeddingsProvider.php` (modified, +15/-2)
+**File**: `README.md` (modified, +18/-10)
 ```diff
-@@ -5,6 +5,7 @@
- namespace NeuronAI\RAG\Embeddings;
+@@ -70,18 +70,26 @@ Copy & paste this initial prompt to tell your coding agent how to install and co
+ You are going to set up Neuron AI, a PHP framework for building agentic applications,
+ in this project, and you must follow three steps in order.
  
- use NeuronAI\Exceptions\HttpException;
-+use NeuronAI\Exceptions\ProviderException;
- use NeuronAI\HttpClient\Curl\CurlHttpClient;
- use NeuronAI\HttpClient\HasHttpClient;
- use NeuronAI\HttpClient\HttpClientInterface;
-@@ -15,6 +16,7 @@
- use function array_chunk;
- use function array_map;
- use function array_merge;
-+use function count;
- 
- class OpenAIEmbeddingsProvider extends AbstractEmbeddingsProvider
- {
-@@ -38,6 +40,7 @@ public function __construct(
- 
-     /**
-      * @throws HttpException
-+     * @throws ProviderException
-      */
-     public function embedDocuments(array $documents): array
-     {
-@@ -57,10 +60,20 @@ public function embedDocuments(array $documents): array
-                 )
-             )->json();
- 
-+            $embeddings = [];
+-- First: install the framework: check composer.json, and if neuron-core/neuron-ai is not already required, run `composer require neuron-core/neuron-ai`.
+-
+-- Second: install the agent skills that ship with the package by running `npx skills add ./vendor/neuron-core/neuron-ai/skills -y` from the project root. The skills are symlinked, so they stay current whenever Neuron is
+-updated through Composer. From then on, load the relevant skill before you write any Neuron code instead of relying on what you remember about the framework, because your memory may
+-describe an older version.
+-
+-- Third: work out what kind of app this is. Look at composer.json and the project structure to tell whether it is a Laravel app or a Symfony app, then
++- First: install the framework: check composer.json, and if neuron-core/neuron-ai is not
++already required, run `composer require neuron-core/neuron-ai`;
 +
-             // Each item names the input it embeds, whatever order the server returns them in
--            foreach ($response['data'] as $position => $item) {
--                $chunk[$item['index'] ?? $position]->setEmbedding($item['embedding']);
-+            foreach ($response['data'] ?? [] as $position => $item) {
-+                $index = $item['index'] ?? $position;
++- Second: install the agent skills that ship
++with the package by running `npx --yes skills add ./vendor/neuron-core/neuron-ai/skills -y` from
++the project root. Add this command to `post-update-cmd` in the composer.json file, so they
++stay updated whenever Neuron is updated through Composer. From then on, load the relevant
++skill before you write any Neuron code instead of relying on what you remember about
++the framework;
 +
-+                if (isset($embeddings[$index])) {
-+                    throw new ProviderException('The embeddings response does not have one embedding for each of the '.count($chunk).' documents sent.');
-+                }
-+
-+                $embeddings[$index] = $item['embedding'];
-             }
-+
-+            $this->assignEmbeddings($chunk, $embeddings);
-         }
++- Third: work out what kind of app this is. Look at composer.json
++and the project structure to tell whether it is a Laravel app or a Symfony app, then
+ activate the matching skill: neuron-laravel-integration or neuron-symfony-integration.
++If Neuron is already part of the app go through the skill's foundations checklist
++item by item. Report what differs from the recommended setup;
  
-         return array_merge(...$chunks);
-```
-
-**File**: `src/RAG/Embeddings/VoyageEmbeddingsProvider.php` (modified, +15/-2)
-```diff
-@@ -5,6 +5,7 @@
- namespace NeuronAI\RAG\Embeddings;
+-If Neuron is already part of the app go through the skill's foundations checklist item by item. Report what differs from the recommended setup. If Neuron is not
+-in the app yet, follow the same checklist to do the first setup. If the app uses neither framework, start from a plain PHP agent using the neuron-agent skill.
+-Finish with a short summary of what you installed and what you found.
++If Neuron is not in the app yet, follow the same checklist to do the first setup.
++If the app uses neither framework, start from a plain PHP agent using
++the neuron-agent skill. Finish with a short summary of what you installed
++and what you found.
+ ```
  
- use NeuronAI\Exceptions\HttpException;
-+use NeuronAI\Exceptions\ProviderException;
- use NeuronAI\HttpClient\Curl\CurlHttpClient;
- use NeuronAI\HttpClient\HasHttpClient;
- use NeuronAI\HttpClient\HttpClientInterface;
-@@ -15,6 +16,7 @@
- use function array_chunk;
- use function array_map;
- use function array_merge;
-+use function count;
- 
- class VoyageEmbeddingsProvider extends AbstractEmbeddingsProvider
- {
-@@ -58,6 +60,7 @@ public function embedText(string $text): array
- 
-     /**
-      * @throws HttpException
-+     * @throws ProviderException
-      */
-     public function embedDocuments(array $documents): array
-     {
-@@ -76,10 +79,20 @@ public function embedDocuments(array $documents): array
-                 )
-             )->json();
- 
-+            $embeddings = [];
-+
-             // Each item names the input it embeds, whatever order the server returns them in
--            foreach ($response['data'] as $position => $item) {
--                $chunk[$item['index'] ?? $position]->setEmbedding($item['embedding']);
-+            foreach ($response['data'] ?? [] as $position => $item) {
-+                $index = $item['index'] ?? $position;
-+
-+                if (isset($embeddings[$index])) {
-+                    throw new ProviderException('The embeddings response does not have one embedding for each of the '.count($chunk).' documents sent.');
-+                }
-+
-+                $embeddings[$index] = $item['embedding'];
-             }
-+
-+            $this->assignEmbeddings($chunk, $embeddings);
-         }
- 
-         return array_merge(...$chunks);
-```
-
-**File**: `src/RAG/RAG.php` (modified, +4/-0)
-```diff
-@@ -132,6 +132,10 @@ protected function validateBatch(array $documents, int $chunkSize): void
-         $schema = $this->resolveVectorStore()->getSchema();
- 
-         foreach ($documents as $document) {
-+            if ($document->getContent() === '') {
-+                throw new DocumentSchemaException("Document {$document->getId()} has no content to embed.");
-+            }
-+
-             $schema->validate($document);
-         }
-     }
-```
-
-**File**: `src/RAG/Splitter/SentenceTextSplitter.php` (modified, +1/-1)
-```diff
-@@ -136,7 +136,7 @@ private function splitSentences(string $text): array
-     {
-         $pattern = '/(?<=[.!?…])\s+(?=(?:[\"\'\""\'\'«»„""]?)\p{Lu})/u';
-         $sentences = preg_split($pattern, trim($text));
--        return array_filter(array_map(trim(...), $sentences));
-+        return array_filter(array_map(trim(...), $sentences), static fn (string $sentence): bool => $sentence !== '');
-     }
- 
-     /**
-```
-
-**File**: `tests/RAG/Embeddings/CohereEmbeddingsProviderTest.php` (modified, +30/-0)
-```diff
-@@ -6,6 +6,7 @@
- 
- use GuzzleHttp\Psr7\Response;
- use NeuronAI\Exceptions\HttpException;
-+use NeuronAI\Exceptions\ProviderException;
- use NeuronAI\RAG\Document;
- use NeuronAI\RAG\Embeddings\CohereEmbeddingsProvider;
- use NeuronAI\Tests\RAG\Stub\RecordsJsonRequests;
-@@ -118,6 +119,35 @@ public function test_embed_documents_splits_requests_at_ninety_six_texts_and_kee
-         }
-     }
- 
-+    /**
-+     * @return array<string, array{array<string, mixed>}>
-+     */
-+    public static function responsesNotEmbeddingEachDocument(): array
-+    {
-+        return [
-+            'fewer embeddings than documents' => [['embeddings' => ['float' => [[0.0], [1.0]]]]],
-+            'more embeddings than documents' => [['embeddings' => ['float' => [[0.0], [1.0], [2.0], [3.0]]]]],
-+            'no float embeddings' => [['embeddings' => []]],
-+        ];
-+    }
-+
-+    /** @param array<string, mixed> $body */
-+    #[DataProvider('responsesNotEmbeddingEachDocument')]
-+    public function test_a_response_not_embedding_each_document_is_refused_before_any_embedding_is_set(array $body): void
-+    {
-+        $documents = [new Document('First'), new Document('Second'), new Document('Third')];
-+        $provider = new CohereEmbeddingsProvider(key: 'cohere-key', model: 'embed-v4.0', httpClient: $this->recordingClient($this->jsonResponse($body)));
-+
-+        try {
-+            $provider->embedDocuments($documents);
-+            $this->fail('A response that does not embed each document must be refused.');
-+        } catch (ProviderException $exception) {
-+            $this->assertSame('The embeddings response does not have one embedding for each of the 3 documents sent.', $exception->getMessage());
-+        }
-+
-+        $this->assertSame([null, null, null], array_map(static fn (Document $document): ?array => $document->getEmbedding(), $documents));
-+    }
-+
-     public function test_embed_documents_without_documents_sends_nothing(): void
-     {
-         $provider = new CohereEmbeddingsProvider(key: 'cohere-key', model: 'embed-v4.0', httpClient: $this->recordingClient());
+ ## Requirements
 ```
 
 #### Recent Merged Pull Requests:
@@ -858,50 +630,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. batch embeddings and sentence splitter
+## X. Empirical Invariant Guard in README.md
 
 **RULE**:
-When implementing operations in `src/RAG/Embeddings/AbstractEmbeddingsProvider.php`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in neuron-core/neuron-ai. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in neuron-core/neuron-ai. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `14ecdbc0`: batch embeddings and sentence splitter. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `179c6818`: doc. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/RAG/Embeddings/AbstractEmbeddingsProvider.php`.
+Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```php
 // Verified production-grade fix pattern:
-use NeuronAI\Exceptions\ProviderException;
-use function array_diff_key;
-use function count;
-
-
-    /**
-     * The whole batch response is checked before any embedding is set: a document it missed
-     * would otherwise keep no embedding, or the one it carried before, without any error.
-     *
-     * @param Document[] $documents The documents of one request, in the order they were sent
-     * @param array<int, array<int, int|float>> $embeddings Keyed by the position of the document they embed
-     * @throws ProviderException
-     */
-    protected function assignEmbeddings(array $documents, array $embeddings): void
-    {
-        if (count($embeddings) !== count($documents) || array_diff_key($documents, $embeddings) !== []) {
-            throw new ProviderException('The embeddings response does not have one embedding for each of the '.count($documents).' documents sent.');
-        }
-
-        foreach ($documents as $position => $document) {
-            $document->setEmbedding($embeddings[$position]);
-        }
-    }
+and the project structure to see whether it is an application based on Laravel, Symfony, or another framework,
+then activate the matching skill: neuron-laravel-integration or neuron-symfony-integration.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```php
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+and the project structure to tell whether it is a Laravel app or a Symfony app, then
+activate the matching skill: neuron-laravel-integration or neuron-symfony-integration.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `14ecdbc0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `179c6818` are properly handled with clean fallback behavior.

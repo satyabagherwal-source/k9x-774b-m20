@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T18:43:42.579Z",
+  "last_updated": "2026-10-27T18:59:49.235Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3021,14 +3021,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cypress-io-cypress",
-      "content_hash": "d7af5ecd62ce05243eb7b068fc3c367656365e83ce4498b035be7525820b8ae4",
-      "verified_at": "2026-10-23T10:54:22.204Z",
+      "content_hash": "0d32cc134e726f9923ddefa1078e62bdb3aec75bb109cbfc2d9618c1122bc806",
+      "verified_at": "2026-10-27T18:59:41.451Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T10:54:22.204Z"
+      "last_updated": "2026-10-27T18:59:41.451Z"
     },
     "syntax-tree/unist": {
       "repository": "syntax-tree/unist",
@@ -4791,14 +4791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-neuron-core-neuron-ai",
-      "content_hash": "f46b1bdbfd718a66bb7b93e623fd9e46c743d47d701e41324fafdf5c27fb28eb",
-      "verified_at": "2026-10-25T15:38:22.598Z",
+      "content_hash": "4a37f099d616bbcb9852285d51c0e0525e1bc88539950fa07b44753a9418a1b9",
+      "verified_at": "2026-10-27T18:59:49.234Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T15:38:22.598Z"
+      "last_updated": "2026-10-27T18:59:49.234Z"
     },
     "GeekyAnts/NativeBase": {
       "repository": "GeekyAnts/NativeBase",
@@ -8076,14 +8076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-czy0729-bangumi",
-      "content_hash": "1e27c58337c8bda86da3017de7fa5a6ab91091d8d342d3921d63bdf65e0469a0",
-      "verified_at": "2026-10-25T04:56:59.315Z",
+      "content_hash": "c08c894466bfa404309b1a4c072268fca4d63d3e122b34cc7dba534dc0403b0b",
+      "verified_at": "2026-10-27T18:59:43.142Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T04:56:59.315Z"
+      "last_updated": "2026-10-27T18:59:43.142Z"
     },
     "aquasecurity/tfsec": {
       "repository": "aquasecurity/tfsec",
@@ -11541,14 +11541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-facebook-folly",
-      "content_hash": "ba6657c376819353ff545a1e8ffd286f9ae308308ad8ba948779da27ef9e91e4",
-      "verified_at": "2026-10-26T00:41:52.317Z",
+      "content_hash": "ab8cdc682d73881ceaed44800a1f38e401b130b89bef8b97aea5ddd65e6ce231",
+      "verified_at": "2026-10-27T18:59:37.254Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T00:41:52.317Z"
+      "last_updated": "2026-10-27T18:59:37.254Z"
     },
     "Kotlin/kmp-production-sample": {
       "repository": "Kotlin/kmp-production-sample",
@@ -16964,6 +16964,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-27T17:16:49.285Z"
+    },
+    "ccore/Qwen3.5-4B-3D-Coder": {
+      "repository": "ccore/Qwen3.5-4B-3D-Coder",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
+      "content_hash": "ce3a5161a76b514b0941a139522e7f2e7fc0eca6ffdf06c602f3f493fdde5bad",
+      "verified_at": "2026-10-27T18:59:39.371Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T18:59:39.371Z"
     }
   },
   "repos": {

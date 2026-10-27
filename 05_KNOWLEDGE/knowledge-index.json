@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T18:43:42.473Z",
-  "total_verified_learnings": 1145,
+  "last_updated": "2026-10-27T18:59:49.145Z",
+  "total_verified_learnings": 1146,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -7666,8 +7666,8 @@
       "slug": "czy0729-bangumi",
       "platform": "github",
       "source_url": "https://github.com/czy0729/Bangumi",
-      "source_version": "c4e2dcf8",
-      "content_hash": "1e27c58337c8bda86da3017de7fa5a6ab91091d8d342d3921d63bdf65e0469a0",
+      "source_version": "f58a6465",
+      "content_hash": "c08c894466bfa404309b1a4c072268fca4d63d3e122b34cc7dba534dc0403b0b",
       "dossier_path": "07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
       "promoted_rules": [
@@ -7695,6 +7695,11 @@
           "number": 4058,
           "title": "Screen-Focused Global Hardware Back-Handler Isolation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4953,
+          "title": "- [帖子聚合] 修复翻页页码与内容错位，并整理列表与 Tab 组件",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7702,7 +7707,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T04:56:59.232Z",
+      "verified_at": "2026-10-27T18:59:43.060Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11457,8 +11462,8 @@
       "slug": "facebook-folly",
       "platform": "github",
       "source_url": "https://github.com/facebook/folly",
-      "source_version": "b11ea7ea",
-      "content_hash": "ba6657c376819353ff545a1e8ffd286f9ae308308ad8ba948779da27ef9e91e4",
+      "source_version": "595b4e62",
+      "content_hash": "ab8cdc682d73881ceaed44800a1f38e401b130b89bef8b97aea5ddd65e6ce231",
       "dossier_path": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "promoted_rules": [
@@ -11491,6 +11496,11 @@
           "number": 4507,
           "title": "Build absl from source on Ubuntu 24.04",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4949,
+          "title": "Make signal stack-trace test TSAN-compatible",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11498,7 +11508,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T00:41:52.254Z",
+      "verified_at": "2026-10-27T18:59:37.146Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38456,8 +38466,8 @@
       "slug": "neuron-core-neuron-ai",
       "platform": "github",
       "source_url": "https://github.com/neuron-core/neuron-ai",
-      "source_version": "14ecdbc0",
-      "content_hash": "f46b1bdbfd718a66bb7b93e623fd9e46c743d47d701e41324fafdf5c27fb28eb",
+      "source_version": "179c6818",
+      "content_hash": "4a37f099d616bbcb9852285d51c0e0525e1bc88539950fa07b44753a9418a1b9",
       "dossier_path": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "promoted_rules": [
@@ -38482,7 +38492,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T15:38:22.514Z",
+      "verified_at": "2026-10-27T18:59:49.125Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68507,8 +68517,8 @@
       "slug": "cypress-io-cypress",
       "platform": "github",
       "source_url": "https://github.com/cypress-io/cypress",
-      "source_version": "e20ef17f",
-      "content_hash": "d7af5ecd62ce05243eb7b068fc3c367656365e83ce4498b035be7525820b8ae4",
+      "source_version": "75df26c3",
+      "content_hash": "0d32cc134e726f9923ddefa1078e62bdb3aec75bb109cbfc2d9618c1122bc806",
       "dossier_path": "07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
       "promoted_rules": [
@@ -68536,6 +68546,11 @@
           "number": 3890,
           "title": "show a clear error when the component testing dev server fails to start (#35081)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4952,
+          "title": "fix @ts- comments in driver test code for ban-ts-comment (#35177)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -68543,7 +68558,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T10:54:22.136Z",
+      "verified_at": "2026-10-27T18:59:41.368Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -137133,6 +137148,114 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T18:43:42.455Z"
+    },
+    "rule-4949": {
+      "learning_id": "rule-4949",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4949,
+      "title": "Make signal stack-trace test TSAN-compatible",
+      "source_url": "https://github.com/facebook/folly",
+      "source_version": "595b4e62",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T18:59:37.146Z"
+    },
+    "learn-huggingface-ccore-qwen3-5-4b-3d-coder": {
+      "learning_id": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ccore/Qwen3.5-4B-3D-Coder",
+      "repository": "ccore/Qwen3.5-4B-3D-Coder",
+      "slug": "hf-ccore-qwen3.5-4b-3d-coder",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
+      "source_version": "hf-ccore-qwen3.5-4b-3d-coder",
+      "content_hash": "ce3a5161a76b514b0941a139522e7f2e7fc0eca6ffdf06c602f3f493fdde5bad",
+      "dossier_path": "07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4950,
+          "title": "Quantization-Induced Layer Drift Mitigation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4951,
+          "title": "Domain-Specific Code Generation Prompt Engineering",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T18:59:39.266Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4950": {
+      "learning_id": "rule-4950",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4950,
+      "title": "Quantization-Induced Layer Drift Mitigation",
+      "source_url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
+      "source_version": "hf-ccore-qwen3.5-4b-3d-coder",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T18:59:39.266Z"
+    },
+    "rule-4951": {
+      "learning_id": "rule-4951",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4951,
+      "title": "Domain-Specific Code Generation Prompt Engineering",
+      "source_url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
+      "source_version": "hf-ccore-qwen3.5-4b-3d-coder",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T18:59:39.266Z"
+    },
+    "rule-4952": {
+      "learning_id": "rule-4952",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4952,
+      "title": "fix @ts- comments in driver test code for ban-ts-comment (#35177)",
+      "source_url": "https://github.com/cypress-io/cypress",
+      "source_version": "75df26c3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T18:59:41.368Z"
+    },
+    "rule-4953": {
+      "learning_id": "rule-4953",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4953,
+      "title": "- [帖子聚合] 修复翻页页码与内容错位，并整理列表与 Tab 组件",
+      "source_url": "https://github.com/czy0729/Bangumi",
+      "source_version": "f58a6465",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T18:59:43.060Z"
     }
   },
   "aliases": {

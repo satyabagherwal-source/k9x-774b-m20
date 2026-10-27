@@ -5492,3 +5492,8 @@ Every entry in this ledger must capture:
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `d5d80841` | Multi-dimensional audit evidence | 2026-10-27T18:43:28.500Z |
 | `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `ade98454` | Multi-dimensional audit evidence | 2026-10-27T18:43:33.890Z |
 | `learn-github-rollup-rollup` | `https://github.com/rollup/rollup` | `7879c659` | Multi-dimensional audit evidence | 2026-10-27T18:43:42.571Z |
+| `learn-github-facebook-folly` | `https://github.com/facebook/folly` | `595b4e62` | Multi-dimensional audit evidence | 2026-10-27T18:59:37.246Z |
+| `learn-huggingface-ccore-qwen3-5-4b-3d-coder` | `https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder` | `hf-ccore-q` | Multi-dimensional audit evidence | 2026-10-27T18:59:39.363Z |
+| `learn-github-cypress-io-cypress` | `https://github.com/cypress-io/cypress` | `75df26c3` | Multi-dimensional audit evidence | 2026-10-27T18:59:41.442Z |
+| `learn-github-czy0729-bangumi` | `https://github.com/czy0729/Bangumi` | `f58a6465` | Multi-dimensional audit evidence | 2026-10-27T18:59:43.134Z |
+| `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `179c6818` | Multi-dimensional audit evidence | 2026-10-27T18:59:49.220Z |

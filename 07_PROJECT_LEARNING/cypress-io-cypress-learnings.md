@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cypress-io-cypress-learnings.md`  
 > **Source**: github ([https://github.com/cypress-io/cypress](https://github.com/cypress-io/cypress))  
-> **Source Version**: `e20ef17f`  
+> **Source Version**: `75df26c3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T10:54:21.897Z  
+> **Timestamp**: 2026-10-27T18:59:41.007Z  
 > **Learning ID**: `learn-github-cypress-io-cypress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cypress-io-cypress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cypress-io/cypress](https://github.com/cypress-io/cypress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T10:54:20.969Z  
+> **Harvest Timestamp**: 2026-10-27T18:59:40.718Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast, easy and reliable testing for anything that runs in a browser.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 51014 stars
+- **Stars / Engagement**: 51015 stars
 
 ---
 
@@ -981,11 +981,11 @@ export const pinnedBlock = (view: PinnedView): string[] => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #35125** (2026-10-22): **chore: wait for an in-flight project scaffold before a test retry re-scaffolds it**
-  *Symptoms*: - Closes N/A — flaky test fix  ### Additional details  `ct-framework-errors.cy.ts` › `Angular 21` › `error conditions` flakes on Windows ([example job](https://app.circleci.com/pipelines/github/cypress-io/cypress/87278/workflows/fccacf0e-a845-4c95-9ede-11e2744bb4e7/jobs/4031838), Cloud run `ypt4pf/74925`). The reported error, `Could not resolve "@angular-devkit/build-angular/..."`, is a symptom of the test harness, not of `@cypress/webpack-dev-server`:  | Attempt | Duration | Error | |---|---|---| | 1 | 60.6s | `` cy.task('__internal_scaffoldProject') timed out after waiting `60000ms` `` | | 2 | 4.9s | Could not resolve `.../utils/webpack-browser-config.js` | | 3 | 4.9s | Could not resolve `.../tools/webpack/configs/common.js` |  - The Windows runner has no cached `node_modules` for the Angular fixtures, so the first `yarn install` can take longer than the 60s default `cy.scaffoldProject` timeout. - A `cy.task` timeout fails the test but does not stop the plugin-side install. The CI log shows the angular-21 install still at "Linking dependencies" while the retries ran. - The retries re-scaffolded the project on top of that in-progress install. On Windows they logged "Found package.json" and then returned without installing, so the dev server loaded from a half-linked `node_modules`. Each retry was missing a different file.  Changes: - `__internal_scaffoldProject` (in `e2ePluginSetup.ts`) now waits for any in-progress scaffold of the same project, whether it succeeds or fails,
+- **Issue #35178** (2026-10-27): **chore: migrate @packages/telemetry to the shared ESLint flat config**
+  *Symptoms*: - Closes N/A. This is one slice of the ESLint 9 flat-config migration tracked by the checklist in `guides/eslint-migration.md`.  ### Additional details  This moves `@packages/telemetry` onto `@packages/eslint-config` (ESLint 9). Until now the package had no `lint` script, so CI never linted it. The PR has three commits, and the last two can be dropped if you'd rather keep this PR to the migration alone.  **1. Migration (`385cf8d`)** - Adds `eslint.config.ts`, which spreads `baseConfig` and then `jsonConfig` and sets `tsconfigRootDir`. The only local override ignores `browser/`, rollup's build output, which the shared ignores don't cover. `scaffold-config` and `socket` do the same. - `package.json` gets the `lint` script, the `lint-staged` key and the `@packages/eslint-config`, `eslint` and `jiti` devDependencies. `jsonConfig` reordered its top-level keys, which is expected. The package is added to the root `lint:fix` scope and ticked off in the guide. - There were no `.eslintrc*` or `.eslintignore` files to delete or port, nested ones included. - Autofixes cover spacing, padding lines, `import type` and `prefer-const`. - **`ban-ts-comment` (62):** the two `@ts-ignore`s are now `@ts-expect-error`, and every directive is written `// @ts-expect-error - <reason>`, naming the compiler error it actually suppresses. One in `test/browser.spec.ts` no longer suppressed anything, so it's deleted. `check-ts` only covers `src/`, so I ran `tsc` over the whole package to find unused directi
 
-- **Issue #35121** (2026-10-22): **chore: remove the GraphQL-over-fetch switch**
-  *Symptoms*: - Closes N/A — internal cleanup of a test-only code path.  ### Additional details  `window.__CYPRESS_GQL_NO_SOCKET__` made the app's urql client send GraphQL over `fetch` instead of the socket. Its only consumers were two app e2e specs (`debug.cy.ts` and `cloud_message_banner.cy.ts`) that used it so `cy.intercept('mutation-…')` could see GraphQL requests. This PR removes the switch so the app always uses the socket (launchpad is unchanged and still uses `fetch`).  - `frontend-shared/src/graphql/urqlClient.ts`: drops the flag and its `Window` type. - `data-context/src/sources/HtmlDataSource.ts`: drops the injection driven by `CYPRESS_INTERNAL_GQL_NO_SOCKET`. - `server/lib/gui/menu.ts`: drops the "GraphQL requests over Fetch" dev-menu toggle. The submenu is now typed as `MenuItemConstructorOptions[]`, which removes a `@ts-expect-error` that had been hiding the toggle's type mismatch. - `app/cypress/e2e/support/e2eSupport.ts`: drops the per-load reset hook. - `debug.cy.ts`: waits on the existing `recordEvent` spy and `openFile` stub with `cy.withRetryableCtx` instead of `cy.wait` on intercepts, and sets `preferredEditorBinary` on the server instead of rewriting the `OpenFileInIDE` response. - `cloud_message_banner.cy.ts`: spies on `ctx.actions.localSettings.setPreferences` and asserts the same payload contents the intercept checked. - `guides/app-cloud-testing.md`: updated to describe `cy.remoteGraphQLIntercept` plus server-side spies, and GraphiQL for capturing fixture response
+- **Issue #35177** (2026-10-27): **chore: fix @ts- comments in driver test code for ban-ts-comment**
+  *Symptoms*: - Closes N/A. This is one slice of the ESLint 9 flat-config migration ([guide](https://github.com/cypress-io/cypress/blob/develop/guides/eslint-migration.md)).  ### Additional details  This is prep work for moving `@packages/driver` to `@packages/eslint-config`. It doesn't migrate driver yet. It clears the 151 `@typescript-eslint/ban-ts-comment` errors in driver test code (97 under `cypress/e2e`, 54 under `test/unit`) so the migration can focus on the config. The 78 in `src` are out of scope here.  **Suppressions** - Every `@ts-ignore` is now a `@ts-expect-error`, and every directive has a `- <reason>`, as [`guides/typescript.md`](https://github.com/cypress-io/cypress/blob/develop/guides/typescript.md) describes. Each reason names the error `tsc` reports when the directive is removed. - I deleted directives that suppressed nothing. - In `test/unit`, typing the mocks properly removed about 30 per-call directives:   - `vi.mocked()` for mocked module functions   - a typed `vi.importActual<typeof import(...)>()`   - the automation and config mocks typed once in `beforeEach`  **Things this surfaced, worth a look** - **The "delayed navigation" cy.origin suite registered no tests.** It passed two config objects to `describe()`, so the mocha override used the second object as the suite callback, and the old `@ts-ignore` hid this. I merged the two objects and set the timeout to 4s, because the fixture waits 1.5s before navigating. All four tests pass locally in Electron. This PR is th
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1002,836 +1002,910 @@ export const pinnedBlock = (view: PinnedView): string[] => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b7fd293f` (2026-10-21)
-**Commit Message**: fix: show a clear error when the component testing dev server fails to start (#35081)
+### Incident Patch 1: `0a5e2aa2` (2026-10-27)
+**Commit Message**: chore: fix @ts- comments in driver test code for ban-ts-comment (#35177)
 
-* fix(webpack-dev-server): reject devServer() when creating the server fails
+* chore: replace @ts-ignore and describe @ts-expect-error in driver cypress/e2e specs
 
-An error thrown by devServer.create() happened inside an async Promise
-executor, so it surfaced as an unhandled rejection and devServer() never
-settled. devServer() is now async, so the error rejects its promise.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_012RGXnicvByeKrNXrZmn9Q8
-
-* fix: show a clear error when the component testing dev server fails to start
-
-When the dev server rejected during startup, the error reached the
-terminal and Launchpad as a bare message and stack. Wrap it in a new
-DEV_SERVER_START_FAILED error that names the dev server and links to the
-dev server docs. This also replaces the "config file crashed" message
-that webpack version errors used to get by escaping as an unhandled
-rejection.
+Prepares packages/driver/cypress for @typescript-eslint/ban-ts-comment
+ahead of the flat-config migration. Each @ts-ignore becomes a
+@ts-expect-error, every directive gets a `- <reason>`, and directives
+that suppressed nothing are removed.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_012RGXnicvByeKrNXrZmn9Q8
+Claude-Session: https://claude.ai/code/session_01WUv8r4tuSpusABNDhGvnZa
 
-* chore: add changelog entry and regenerate cypress-sessions types
+* chore: describe @ts-expect-error directives in driver unit tests
+
+Prepares packages/driver/test for @typescript-eslint/ban-ts-comment
+ahead of the flat-config migration. Every directive gets a
+`- <reason>`, and directives that suppressed nothing are removed.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session:
+Claude-Session: https://claude.ai/code/session_01WUv8r4tuSpusABNDhGvnZa
 
-**File**: `cli/CHANGELOG.md` (modified, +1/-0)
+* chore: register the driver 'delayed navigation' cy.origin tests
+
+The suite passed its config as two objects, so the mocha override took
+the second object as the suite callback and registered no tests. Merge
+them into one config object and drop the @ts-expect-error that hid it,
+along wi
+
+**File**: `CLAUDE.md` (modified, +1/-0)
 ```diff
-@@ -6,6 +6,7 @@
- - Fixed a regression in [16.1.0](#16-1-0) where, in Chrome, Chromium, and Edge run headed, the Cypress browser extension could stop responding for the rest of the run. This caused [`@cypress/puppeteer`](https://github.com/cypress-io/cypress/tree/develop/npm/puppeteer) to fail with `Cannot communicate with the Cypress Chrome extension`. Fixed in [#34958](https://github.com/cypress-io/cypress/pull/34958).
- - [`cy.fixture()`](https://on.cypress.io/fixture) and the `fixture` property of a [`cy.intercept()`](https://on.cypress.io/intercept) static response now fail when the fixture path resolves outside the [`fixturesFolder`](https://docs.cypress.io/app/references/configuration#Folders--Files). Fixed in [#35072](https://github.com/cypress-io/cypress/pull/35072).
- - Fixed an issue where [`.rightclick()`](https://on.cypress.io/rightclick) sent `buttons: 2` on its `pointerup` and `mouseup` events. A real right click reports `buttons: 0` on these events because the right button has just been released, so code that checks `event.buttons` on release now sees the same value it does in a browser. Fixed in [#35042](https://github.com/cypress-io/cypress/pull/35042).
-+- When the dev server for component testing fails to start, such as when your project installs a version of webpack or webpack-dev-server that Cypress does not support, Cypress now explains that the dev server could not start, shows the dev server's error, and links to the dev server documentation. Previously, webpack errors were reported as a crash of your config file, and other dev server errors were shown with no explanation. Fixed in [#35081](https://github.com/cypress-io/cypress/pull/35081).
- - [`.trigger()`](https://on.cypress.io/trigger) now fails when passed an empty string as the event name, such as `cy.get('button').trigger('')`. Previously, it dispatched an event whose `type` was an empty string instead of failing, even though its error message says the event name must be a non-empty string. That error now shows the value that was passed, instead of the literal text `{{cmd}}`. It and the matching errors from [`cy.readFile()`](https://on.cypress.io/readfile) and [`cy.writeFile()`](https://on.cypress.io/writefile) now show an empty string as `''`, instead of leaving the value blank. Fixed in [#35068](https://github.com/cypress-io/cypress/pull/35068).
- - Node code in the config process, such as [`setupNodeEvents`](https://docs.cypress.io/app/plugins/plugins-guide), [`cy.task()`](https://on.cypress.io/task) handlers, and the plugins they load, now verifies TLS certificates the same way Node does. Fixed in [#35093](https://github.com/cypress-io/cypress/pull/35093).
- - Fixed an issue where runs recorded to Cypress Cloud with Test Replay enabled did not report the hooks that run around each test. Tests whose code had not changed were then listed as **Modified** under **Tests for review** whenever a run switched between a browser that supports Test Replay and one that does not, such as from Electron to Firefox. Because hooks are now reported for these runs, tests in projects that record with Test Replay may be listed as **Modified** once, in the first run after upgrading. Fixes [#35070](https://github.com/cypress-io/cypress/issues/35070).
+@@ -45,6 +45,7 @@
+ - Packaged-binary integration tests (`system-tests/test-binary`) need Docker and a built binary, so they do not run in the sandbox. When they are needed, provide the exact commands and ask the user to run them.
+ - System tests under `system-tests/test` do run in cloud containers once the monorepo is built. Run them yourself rather than handing them off; see [Running system tests](./AGENTS.md#running-system-tests).
+ - Keep follow-up work from the same task, such as review fixes and related instruction updates, on that task's branch. Create a separate branch only when the user asks for one.
++- After committing a merge of `develop`, run `git diff --name-only origin/develop` and check that every file listed is in the PR's scope. The pre-commit hook runs `eslint --fix` on every staged file, merged-in ones included, and `package-json/order-properties` reorders keys in `package.json` files that `develop` committed unsorted. Restore any such file with `git checkout origin/develop -- <file>` and commit with `--no-verify`.
+ - Before committing or pushing, `yarn check-ts`, `yarn lint`, `yarn health-check` (knip), and relevant unit tests must pass locally. CI currently does not block expensive e2e jobs when these fail.
+ 
+ @AGENTS.md
 ```
 
-**File**: `npm/webpack-dev-server/src/devServer.ts` (modified, +20/-22)
+**File**: `packages/driver/cypress/e2e/commands/net_stubbing/helpers.ts` (modified, +0/-1)
 ```diff
-@@ -52,29 +52,27 @@ type DevServerCreateResult = {
-  *
-  * @param config
-  */
--export function devServer (devServerConfig: WebpackDevServerConfig): Promise<Cypress.ResolvedDevServerConfig> {
--  return new Promise(async (resolve, reject) => {
--    const result = await devServer.create(devServerConfig) as DevServerCreateResult
--
--    result.server.start().then(() => {
--      if (!result.server.options.port) {
--        return reject(new Error(`Expected port ${result.server.options.port} to be a number`))
--      }
--
--      debug(`Component testing webpack server ${result.version} started on port %s`, result.server.options.port)
--
--      resolve({
--        port: result.server.options.port as number,
--        // Close is for unit testing only. We kill this child process which will handle the closing of the server
--        close: async (done) => {
--          debug('closing dev server')
--          result.server.stop().then(() => done?.()).catch(done).finally(() => {
--            debug('closed dev server')
--          })
--        },
-+export async function devServer (devServerConfig: WebpackDevServerConfig): Promise<Cypress.ResolvedDevServerConfig> {
-+  const result = await devServer.create(devServerConfig) as DevServerCreateResult
-+
-+  await result.server.start()
-+
-+  if (!result.server.options.port) {
-+    throw new Error(`Expected port ${result.server.options.port} to be a number`)
-+  }
-+
-+  debug(`Component testing webpack server ${result.version} started on port %s`, result.server.options.port)
-+
-+  return {
-+    port: result.server.options.port as number,
-+    // Close is for unit testing only. We kill this child process which will handle the closing of the server
-+    close: async (done) => {
-+      debug('closing dev server')
-+      result.server.stop().then(() => done?.()).catch(done).finally(() => {
-+        debug('closed dev server')
+@@ -1,6 +1,5 @@
+ export const testFail = (cb, expectedDocsUrl = 'https://on.cypress.io/intercept') => {
+   cy.on('fail', (err) => {
+-    // @ts-ignore
+     const docsUrl = Array.isArray(err.docsUrl) ? err.docsUrl[0] : err.docsUrl
+ 
+     expect(docsUrl).to.eq(expectedDocsUrl)
+```
+
+**File**: `packages/driver/cypress/e2e/commands/net_stubbing/intercept.cy.ts` (modified, +11/-17)
+```diff
+@@ -182,11 +182,10 @@ describe('network stubbing', { retries: 15 }, function () {
+         const url = uniqueRoute('/foo')
+ 
+         const handler = (req) => {
+-          // @ts-ignore
+           const routeId = _.findKey(state('routes'), { handler })
+           const route = state('routes')[routeId!]
+ 
+-          // @ts-ignore
++          // @ts-expect-error - `routeId` is not part of the expected event literal
+           expectedEvent.routeId = routeId
+           expect(this.emit).to.be.calledWith('backend:request', 'net', 'route:added', expectedEvent)
+ 
+@@ -225,11 +224,10 @@ describe('network stubbing', { retries: 15 }, function () {
+         const regexUrl = new RegExp(`^${url}.*`)
+ 
+         const handler = (req) => {
+-          // @ts-ignore
+           const routeId = _.findKey(state('routes'), { handler })
+           const route = state('routes')[routeId!]
+ 
+-          // @ts-ignore
++          // @ts-expect-error - `routeId` is not part of the expected event literal
+           expectedEvent.routeId = routeId
+           expect(this.emit).to.be.calledWith('backend:request', 'net', 'route:added', expectedEvent)
+ 
+@@ -743,7 +741,6 @@ describe('network stubbing', { retries: 15 }, function () {
+         this.logs = []
+ 
+         cy.on('log:added', (attrs, log) => {
+-          // @ts-ignore
+           if (log.get('name') !== 'intercept') {
+             return
+           }
+@@ -760,9 +757,8 @@ describe('network stubbing', { retries: 15 }, function () {
+           done()
+         })
+ 
+-        // @ts-ignore: should fail
+         cy.intercept({
+-          // @ts-ignore
++          // @ts-expect-error - deliberately passes an object as the url
+           url: {},
+         })
        })
--    }).catch(reject)
--  })
-+    },
-+  }
- }
+@@ -784,7 +780,7 @@ describe('network stubbing', { retries: 15 }, function () {
+           done()
+         })
  
- export type PresetHandlerResult = { frameworkConfig: Configuration, sourceWebpackModulesResult: SourceRelativeWebpackResult }
-```
-
-**File**: `packages/cypress-sessions/lib/generated/graphql.ts` (modified, +1/-0)
-```diff
-@@ -198,6 +198,7 @@ export type ErrorTypeEnum =
-   | 'COULD_NOT_PARSE_ARGUMENTS'
-   | 'DEFAULT_SUPPORT_FILE_NOT_FOUND'
-   | 'DEV_SERVER_CONFIG_FILE_NOT_FOUND'
-+  | 'DEV_SERVER_START_FAILED'
-   | 'DUPLICATE_TASK_KEY'
-   | 'ERROR_READING_FILE'
-   | 'ERROR_WRITING_FILE'
-```
-
-**File**: `packages/data-context/schemas/schema.graphql` (modified, +1/-0)
-```diff
-@@ -1261,6 +1261,7 @@ enum ErrorTypeEnum {
-   COULD_NOT_PARSE_ARGUMENTS
-   DEFAULT_SUPPORT_FILE_NOT_FOUND
-   DEV_SERVER_CONFIG_FILE_NOT_FOUND
-+  DEV_SERVER_START_FAILED
-   DUPLICATE_TASK_KEY
-   ERROR_READING_FILE
-   ERROR_WRITING_FILE
-```
-
-**File**: `packages/data-context/src/data/ProjectLifecycleManager.ts` (modified, +6/-0)
-```diff
-@@ -246,6 +246,12 @@ export class ProjectLifecycleManager {
-            *      The empty specs are handled within the @cypress/webpack-dev-server package as this has no impact on vite.
-            */
-           const devServerOptions = await this.ctx._apis.projectApi.getDevServer().start({ specs: this.ctx.project.specs, config: finalConfig })
-+          .catch((err) => {
-+            span?.end()
-+            const devServer = this.loadedConfigFile?.component?.devServer
-+
-+            throw getError('DEV_SERVER_START_FAILED', this.configFile, typeof devServer === 'object' ? devServer.bundler : undefined, err)
-+          })
+-        // @ts-ignore - should fail
++        // @ts-expect-error - deliberately calls cy.intercept() without arguments
+         cy.intercept()
+       })
  
-           // If we received a cypressConfig.port we want to null it out
-           // because we propagated it into the devServer.port and it is
-```
-
-**File**: `packages/errors/src/errors.ts` (modified, +14/-0)
-```diff
-@@ -1667,6 +1667,20 @@ export const AllCypressErrors = {
-     `
-   },
+@@ -797,7 +793,7 @@ describe('network stubbing', { retries: 15 }, function () {
+           done()
+         })
  
-+  DEV_SERVER_START_FAILED: (configFile: string, bundler: string | undefined, err: ErrorLike) => {
-+    const devServer = bundler ? errPartial`the ${fmt.highlight(bundler)} dev server` : errPartial`your dev server`
-+
-+    return errTemplate`
-+      Cypress could not start ${devServer} for component testing. Fix the error below, then run Cypress again.
-+
-+      Read about configuring the dev server: https://on.cypress.io/dev-server
-+
-+      The ${fmt.highlight('component.devServer')} set in ${fmt.path(configFile)} threw this error:
-+
-+      ${fmt.stackTrace(err)}
-+    `
-+  },
-+
-   UNEXPECTED_MUTATION_ERROR: (mutationField: string, args: any, err: Error) => {
-     return errTemplate`
-       An unexpected internal error occurred while executing the ${fmt.highlight(mutationField)} operation with payload:
+-        // @ts-ignore - should fail
++        // @ts-expect-error - deliberately repeats `url` in the RouteMatcher
+         cy.intercept(url, { url }, () => {})
+       })
+ 
+@@ -823,7 +819,7 @@ describe('network stubbing', { retries: 15 }, function () {
+             done()
+           })
+ 
+-          // @ts-ignore
++          // @ts-expect-error - deliberately passes both a static response and a handler
+           cy.intercept(url, { forceNetworkError: true }, () => {})
+         })
+ 
+@@ -835,7 +831,7 @@ describe('network stubbing', { retries: 15 }, function () {
+             done()
+           })
+ 
+-          // @ts-ignore
++          // @ts-expect-error - deliberately passes a fourth argument after the static response
+           cy.intercept(url, { middleware: true }, { forceNetworkError: true }, () => {})
+         })
+ 
+@@ -847,7 +843,7 @@ describe('network stubbing', { retries: 15 }, function () {
+             done()
+           })
+ 
+-          // @ts-ignore
++          // @ts-expect-error - deliberately passes a fourth argument after the static response
+           cy.intercept('POST', url, { forceNetworkError: true }, () => {})
+         })
+       })
+@@ -875,12 +871,11 @@ describe('network stubbing', { retries: 15 }, function () {
+             done()
+           })
+ 
+-          // @ts-ignore this is invalid on purpose
+           cy.intercept({
+             headers: {
+               good: 'string',
+               fine: /regexp/,
+-              // @ts-ignore
++              // @ts-expect-error - deliberately passes a number as a header matcher
+               wrong: 3,
+             },
+           })
+@@ -893,7 +888,7 @@ describe('network stubbing', { retries: 15 }, function () {
+             done()
+           })
+ 
+-          // @ts-ignore
++          // @ts-expect-error - deliberately passes an unknown RouteMatcher property
+           cy.intercept({ wrong: true })
+         })
+ 
+@@ -938,7 +933,7 @@ describe('network stubbing', { retries: 15 }, function () {
+               done()
+             })
+ 
+-            // @ts-ignore - this should error
++            // @ts-expect-error - deliberately passes an invalid handler
+             cy.intercept('/', handler)
+           })
+         })
+@@ -980,7 +975,6 @@ describe('network stubbing', { retries: 15 }, function () {
+               done()
+             })
+ 
+-            // @ts-ignore - this should error
+             cy.intercept('/', handler)
+           })
+         })
 ```
 
-**File**: `packages/errors/test/__snapshots__/DEV_SERVER_START_FAILED - customDevServer.ansi` (added, +9/-0)
+**File**: `packages/driver/cypress/e2e/commands/net_stubbing/intercepting_request.cy.ts` (modified, +3/-3)
 ```diff
-@@ -0,0 +1,9 @@
-+[31mCypress could not start your dev server for component testing. Fix the error below, then run Cypress again.[39m
-+[31m[39m
-+[31mRead about configuring the dev server: https://on.cypress.io/dev-server[39m
-+[31m[39m
-+[31mThe [33mcomponent.devServer[39m[31m set in [94mcypress.config.ts[39m[31m threw this error:[39m
-+[35m[39m
-+[35mError: fail whale[39m
-+[35m    at makeErr (cypress/packages/errors/test/visualSnapshotErrors.spec.ts)[39m
-+[35m    at DEV_SERVER_START_FAILED (cypress/packages/errors/test/visualSnapshotErrors.spec.ts)[39m
-\ No newline at end of file
+@@ -581,7 +581,7 @@ describe('network stubbing', { retries: 15 }, function () {
+               })
+             }).as('first')
+             .intercept(`${url}*`, (req) => {
+-              // @ts-ignore
++              // @ts-expect-error - `eventName` is a string, not one of the request event names
+               req.on(eventName, (res) => {
+                 res.headers['content-type'] = 'application/json'
+                 res.send({
+@@ -612,7 +612,7 @@ describe('network stubbing', { retries: 15 }, function () {
+           })
+ 
+           cy.intercept(url, function (req) {
+-            // @ts-ignore
++            // @ts-expect-error - deliberately passes an unknown event name
+             req.on('totally-bad', _.noop)
+           }).visit(url)
+         })
+@@ -626,7 +626,7 @@ describe('network stubbing', { retries: 15 }, function () {
+           })
+ 
+           cy.intercept(url, function (req) {
+-            // @ts-ignore
++            // @ts-expect-error - deliberately passes a non-function handler
+             req.on('before:response', false)
+           }).visit(url)
+         })
 ```
 
-**File**: `packages/errors/test/__snapshots__/DEV_SERVER_START_FAILED.ansi` (added, +9/-0)
+**File**: `packages/driver/cypress/e2e/commands/sessions/manager.cy.ts` (modified, +0/-1)
 ```diff
-@@ -0,0 +1,9 @@
-+[31mCypress could not start the [33mwebpack[39m[31m dev server for component testing. Fix the error below, then run Cypress again.[39m
-+[31m[39m
-+[31mRead about configuring the dev server: https://on.cypress.io/dev-server[39m
-+[31m[39m
-+[31mThe [33mcomponent.devServer[39m[31m set in [94mcypress.config.ts[39m[31m threw this error:[39m
-+[35m[39m
-+[35mError: fail whale[39m
-+[35m    at makeErr (cypress/packages/errors/test/visualSnapshotErrors.spec.ts)[39m
-+[35m    at DEV_SERVER_START_FAILED (cypress/packages/errors/test/visualSnapshotErrors.spec.ts)[39m
-\ No newline at end of file
+@@ -5,7 +5,6 @@ describe('src/cy/commands/sessions/manager.ts', () => {
+   let CypressInstance
+ 
+   beforeEach(function () {
+-    // @ts-ignore
+     CypressInstance = new $Cypress()
+   })
+ 
+```
+
+**File**: `packages/driver/cypress/e2e/commands/sessions/origins.cy.ts` (modified, +0/-1)
+```diff
+@@ -6,7 +6,6 @@ describe('src/cy/commands/sessions/origins', () => {
+   let baseUrl
+ 
+   beforeEach(function () {
+-    // @ts-ignore
+     CypressInstance = new $Cypress()
+     baseUrl = Cypress.config('baseUrl')
+   })
+```
+
+**File**: `packages/driver/cypress/e2e/commands/storage.cy.ts` (modified, +1/-1)
+```diff
+@@ -470,7 +470,7 @@ describe('src/cy/commands/storage', () => {
+           done()
+         })
+ 
+-        // @ts-expect-error
++        // @ts-expect-error - deliberately passes a number as the key
+         cy.clearLocalStorage(1)
+       })
+     })
+```
+
+**File**: `packages/driver/cypress/e2e/cy/actionability.cy.ts` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-// @ts-ignore
++// @ts-expect-error - spec is a script, so `$` redeclares the global jQuery and `_` clashes with the lodash namespace
+ const { $, _ } = Cypress
+ 
+ describe('src/cy/actionability', () => {
 ```
 
 ---
 
-### Incident Patch 2: `259b98f0` (2026-10-21)
-**Commit Message**: perf: skip resetting rendered origins between tests when none rendered (#35089)
+### Incident Patch 2: `be712929` (2026-10-26)
+**Commit Message**: fix: accept a DOM element or a jQuery object in Cypress.dom helpers (#35155)
 
-* perf(driver): skip test-isolation clears that have nothing to clear
+* fix: accept a DOM element or a jQuery object in Cypress.dom helpers
 
-With testIsolation on, every test asked the browser to clear cookies
-and the server to reset its rendered-origins set, even when there was
-nothing to clear or reset.
+isFocused(), isScrollable(), isFocusable(), isDescendent(),
+getReasonIsHidden(), isTextLike(), isSelector(), getWindowByElement() and
+the three getFirst*Parent() helpers were typed to accept a DOM element or a
+jQuery object, but each handled only one of the two: the other form threw
+a TypeError or returned a wrong answer. isScrollable() also threw for a
+window wrapped in jQuery.
 
-- Skip `clear:cookies` when `get:cookies` found no cookies.
-- Skip `reset:rendered:html:origins` when the server reported no
-  rendered origins. `clearStorage` now returns the origins it read, so
-  this needs no extra round trip.
+Each now converts its argument once with the existing isJquery/wrap
+helpers. A jQuery object passed to a helper that needs jQuery is used
+as-is, keeping the .selector property Cypress uses in error messages.
+Cypress's own callers already pass the form each helper expected, so they
+are unaffected. isTextLike() now returns a plain boolean; no caller
+relied on its type guard.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_0116Vhn1SQfFaCnRAs1LFB6X
-
-* chore: describe the late-render case in the rendered-origins comment
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_0116Vhn1SQfFaCnRAs1LFB6X
-
-* chore: trim the clearSessionData comment to what the name does not say
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_0116Vhn1SQfFaCnRAs1LFB6X
-
-* chore: link the changelog entry to its pull request
+The declarations and JSDoc for these methods now describe what they
+accept and return: getWindowByElement() returns a Window and accepts a
+document or window, and the getFirst*Parent() helpers return
+JQuery | null.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://cl
+Claude-Session: https://
 
-**File**: `cli/CHANGELOG.md` (modified, +4/-0)
+**File**: `cli/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -1,6 +1,10 @@
- <!-- See ../guides/writing-the-cypress-changelog.md for details on writing the changelog. -->
- ## 16.2.1
+@@ -25,6 +25,7 @@
+ - Fixed an issue where several `cypress run` processes sharing a project folder could save a screenshot under the same file name, so one silently overwrote the other and both runs reported the same file. Each screenshot now gets its own file, numbered ` (1)`, ` (2)`, and so on, as it already did within a single run. The same applies to videos when [`trashAssetsBeforeRuns`](https://on.cypress.io/configuration#Folders--Files) is `false`. Screenshots taken with the [`overwrite`](https://on.cypress.io/screenshot) option, and videos when `trashAssetsBeforeRuns` is `true`, still replace the existing file. Fixed in [#34928](https://github.com/cypress-io/cypress/pull/34928).
+ - Requests to an origin that serves only HTTP/2 now fail immediately at the TLS handshake instead of returning a misleading `403: Forbidden` or hanging until they time out. Cypress advertised no protocol over ALPN when opening a TLS connection, leaving such an origin nothing to negotiate against; it now advertises `http/1.1`. Origins that serve both protocols are unaffected. Where such an origin previously answered with a `403`, [`cy.request()`](https://on.cypress.io/request) with `failOnStatusCode: false` yielded a response object and now reports a network error instead. Fixed in [#34951](https://github.com/cypress-io/cypress/pull/34951).
+ - Fixed an issue where `cypress run` could stop printing output and never finish when a test was retried after one of its hooks timed out on the previous attempt. Fixed in [#34997](https://github.com/cypress-io/cypress/pull/34997).
++- These [`Cypress.dom`](https://on.cypress.io/dom) methods now accept either a DOM element or a jQuery object, as their types already said: `isFocused()`, `isScrollable()`, `isFocusable()`, `isDescendent()`, `getReasonIsHidden()`, `isTextLike()`, `isSelector()`, `getWindowByElement()`, `getFirstScrollableParent()`, `getFirstStickyPositionParent()`, and `getFirstFixedOrStickyPositionParent()`. Previously, passing the other form threw a `TypeError` or returned a wrong result, such as `isFocused()` returning `false` for a focused element. Fixed in [#35155](https://github.com/cypress-io/cypress/pull/35155).
  
-+**Performance:**
+ **Misc:**
+ 
+```
+
+**File**: `cli/types/cypress.d.ts` (modified, +60/-6)
+```diff
+@@ -653,15 +653,29 @@ declare namespace Cypress {
+       isHidden(element: JQuery | HTMLElement, methodName?: string, options?: object): boolean
+       /**
+        * Returns a boolean indicating whether an element can receive focus.
++       * Accepts a DOM element or a jQuery object. For a jQuery object with
++       * more than one element, returns `true` if any of them can receive focus.
+        */
+       isFocusable(element: JQuery | HTMLElement): boolean
++      /**
++       * Returns a boolean indicating whether an element accepts typed text: a
++       * `<textarea>`, a contenteditable element, or an `<input>` whose `type` is
++       * `text`, `password`, `email`, `number`, `date`, `week`, `month`, `time`,
++       * `datetime`, `datetime-local`, `search`, `url`, or `tel`.
++       * Accepts a DOM element or a jQuery object. For a jQuery object, checks its
++       * first element.
++       */
+       isTextLike(element: JQuery | HTMLElement): boolean
+       /**
+-       * Returns a boolean indicating whether an element is scrollable.
++       * Returns a boolean indicating whether an element or the window is scrollable.
++       * Accepts the window, a DOM element, or a jQuery object. For a jQuery object,
++       * checks its first element.
+        */
+       isScrollable(element: Window | JQuery | HTMLElement): boolean
+       /**
+        * Returns a boolean indicating whether an element currently has focus.
++       * Accepts a DOM element or a jQuery object. For a jQuery object, checks
++       * its first element.
+        */
+       isFocused(element: JQuery | HTMLElement): boolean
+       /**
+@@ -672,9 +686,16 @@ declare namespace Cypress {
+        * Returns a boolean indicating whether an element is attached to the DOM.
+        */
+       isAttached(element: JQuery | HTMLElement | Window | Document): boolean
++      /**
++       * Returns a boolean indicating whether an element matches a jQuery selector.
++       * For a jQuery object with more than one element, returns `true` if any of
++       * them match. Accepts a DOM element or a jQuery object.
++       */
+       isSelector(element: JQuery | HTMLElement, selector: JQuery.Selector): boolean
+       /**
+-       * Returns a boolean indicating whether an element is a descendent of another element.
++       * Returns a boolean indicating whether `element2` is `element1` or is
++       * inside it. Each argument can be a DOM element or a jQuery object.
++       * For a jQuery object, checks its first element.
+        */
+       isDescendent(element1: JQuery | HTMLElement, element2: JQuery | HTMLElement): boolean
+       /**
+@@ -729,11 +750,44 @@ declare namespace Cypress {
+        */
+       getContainsSelector(text: string, filter?: string, options?: CaseMatchable): JQuery.Selector
+       getFirstDeepestElement(elements: HTMLElement[], index?: number): HTMLElement
+-      getWindowByElement(element: JQuery | HTMLElement): JQuery | HTMLElement
++      /**
++       * Returns the window that contains an element or a document, or the window
++       * itself when passed a window. Accepts any of these, or a jQuery object
++       * holding one. For a jQuery object, uses its first element.
++       */
++      getWindowByElement(element: JQuery<HTMLElement | Document | Window> | HTMLElement | Document | Window): Window
++      /**
++       * Returns a sentence explaining why an element is not visible.
++       * Accepts a DOM element or a jQuery object.
++       */
+       getReasonIsHidden(element: JQuery | HTMLElement, options?: object): string
+-      getFirstScrollableParent(element: JQuery | HTMLElement): JQuery | HTMLElement
+-      getFirstFixedOrStickyPositionParent(element: JQuery | HTMLElement): JQuery | HTMLElement
+-      getFirstStickyPositionParent(element: JQuery | HTMLElement): JQuery | HTMLElement
++      /**
++       * Returns the closest ancestor of an element that can scroll, as a jQuery
++       * object, or `null` if there is none. The element itself is not checked.
++       * It walks out of shadow roots to their hosts and can return `<html>`.
++       * Returns `null` right away for `<html>`, `<body>`, or the document.
++       * Accepts a DOM element or a jQuery object. For a jQuery object, starts
++       * from its first element.
++       */
++      getFirstScrollableParent(element: JQuery | HTMLElement): JQuery | null
++      /**
++       * Returns the element, or its closest ancestor, whose CSS `position` is
++       * `fixed` or `sticky`, as a jQuery object, or `null` if there is none.
++       * It walks out of shadow roots to their hosts. Returns `null` right away for
++       * `<html>`, `<body>`, or the document.
++       * Accepts a DOM element or a jQuery object. For a jQuery object, starts
++       * from its first element.
++       */
++      getFirstFixedOrStickyPositionParent(element: JQuery | HTMLElement): JQuery | null
++      /**
++       * Returns the element, or its closest ancestor, whose CSS `position` is
++       * `sticky`, as a jQuery object, or `null` if there is no
+```
+
+**File**: `cli/types/tests/cypress-tests.ts` (modified, +20/-4)
+```diff
+@@ -922,13 +922,22 @@ namespace CypressDomTests {
+   Cypress.dom.isVisible(el) // $ExpectType boolean
+   Cypress.dom.isHidden(el) // $ExpectType boolean
+   Cypress.dom.isFocusable(el) // $ExpectType boolean
++  Cypress.dom.isFocusable(jel) // $ExpectType boolean
+   Cypress.dom.isTextLike(el) // $ExpectType boolean
++  Cypress.dom.isTextLike(jel) // $ExpectType boolean
+   Cypress.dom.isScrollable(el) // $ExpectType boolean
++  Cypress.dom.isScrollable(jel) // $ExpectType boolean
++  Cypress.dom.isScrollable(window) // $ExpectType boolean
+   Cypress.dom.isFocused(el) // $ExpectType boolean
++  Cypress.dom.isFocused(jel) // $ExpectType boolean
+   Cypress.dom.isDetached(el) // $ExpectType boolean
+   Cypress.dom.isAttached(el) // $ExpectType boolean
+   Cypress.dom.isSelector(el, 'foo') // $ExpectType boolean
++  Cypress.dom.isSelector(jel, 'foo') // $ExpectType boolean
+   Cypress.dom.isDescendent(el, el) // $ExpectType boolean
++  Cypress.dom.isDescendent(jel, jel) // $ExpectType boolean
++  Cypress.dom.isDescendent(el, jel) // $ExpectType boolean
++  Cypress.dom.isDescendent(jel, el) // $ExpectType boolean
+   Cypress.dom.isElement(obj) // $ExpectType boolean
+   Cypress.dom.isDocument(obj) // $ExpectType boolean
+   Cypress.dom.isWindow(obj) // $ExpectType boolean
+@@ -943,11 +952,18 @@ namespace CypressDomTests {
+   Cypress.dom.getContainsSelector('foo', 'bar') // $ExpectType string
+   Cypress.dom.getContainsSelector('foo', 'bar', { matchCase: true }) // $ExpectType string
+   Cypress.dom.getFirstDeepestElement([el], 1) // $ExpectType HTMLElement
+-  Cypress.dom.getWindowByElement(el) // $ExpectType HTMLElement | JQuery<HTMLElement>
++  Cypress.dom.getWindowByElement(el) // $ExpectType Window
++  Cypress.dom.getWindowByElement(jel) // $ExpectType Window
++  Cypress.dom.getWindowByElement(doc) // $ExpectType Window
++  Cypress.dom.getWindowByElement(window) // $ExpectType Window
+   Cypress.dom.getReasonIsHidden(el) // $ExpectType string
+-  Cypress.dom.getFirstScrollableParent(el) // $ExpectType HTMLElement | JQuery<HTMLElement>
+-  Cypress.dom.getFirstFixedOrStickyPositionParent(el) // $ExpectType HTMLElement | JQuery<HTMLElement>
+-  Cypress.dom.getFirstStickyPositionParent(el) // $ExpectType HTMLElement | JQuery<HTMLElement>
++  Cypress.dom.getReasonIsHidden(jel) // $ExpectType string
++  Cypress.dom.getFirstScrollableParent(el) // $ExpectType JQuery<HTMLElement> | null
++  Cypress.dom.getFirstScrollableParent(jel) // $ExpectType JQuery<HTMLElement> | null
++  Cypress.dom.getFirstFixedOrStickyPositionParent(el) // $ExpectType JQuery<HTMLElement> | null
++  Cypress.dom.getFirstFixedOrStickyPositionParent(jel) // $ExpectType JQuery<HTMLElement> | null
++  Cypress.dom.getFirstStickyPositionParent(el) // $ExpectType JQuery<HTMLElement> | null
++  Cypress.dom.getFirstStickyPositionParent(jel) // $ExpectType JQuery<HTMLElement> | null
+   Cypress.dom.getCoordsByPosition(1, 2) // $ExpectType number
+   Cypress.dom.getElementPositioning(el) // $ExpectType ElementPositioning
+   Cypress.dom.getElementAtPointFromViewport(doc, 1, 2) // $ExpectType Element | null
+```
+
+**File**: `packages/driver/cypress/e2e/dom/elements.cy.ts` (modified, +175/-0)
+```diff
+@@ -256,18 +256,193 @@ describe('src/dom/elements', () => {
+       })
+     })
+ 
++    it('returns true for a focused element passed as a DOM element or a jQuery object', () => {
++      cy.get('input:first').focus().then(($el) => {
++        expect(Cypress.dom.isFocused($el[0])).to.be.true
++        expect(Cypress.dom.isFocused($el)).to.be.true
++      })
++    })
 +
-+- Tests that run with [`testIsolation`](https://docs.cypress.io/app/references/configuration#e2e) enabled now start slightly faster when the previous test did not load any pages, such as an API test that only uses [`cy.request()`](https://on.cypress.io/request). Fixed in [#35089](https://github.com/cypress-io/cypress/pull/35089).
++    it('returns false for an unfocused element passed as a DOM element or a jQuery object', () => {
++      cy.get('input:first').then(($el) => {
++        expect(Cypress.dom.isFocused($el[0])).to.be.false
++        expect(Cypress.dom.isFocused($el)).to.be.false
++      })
++    })
 +
++    it('returns false for an empty jQuery object', () => {
++      expect(Cypress.dom.isFocused($())).to.be.false
++    })
++
+     describe('in the shadow dom', () => {
+       it('returns true if the element is the active element of the shadow root', () => {
+         cy.visit('/fixtures/shadow-dom.html')
+         cy
+         .get('#shadow-element-1')
+         .find('input', { includeShadowDom: true }).focus().then(($el) => {
+           expect(isFocused($el[0])).to.be.true
++          expect(Cypress.dom.isFocused($el)).to.be.true
+         })
+       })
+     })
+   })
+ 
++  context('.isFocusable', () => {
++    beforeEach(() => {
++      cy.visit('/fixtures/active-elements.html')
++    })
++
++    it('returns true for a focusable element passed as a DOM element or a jQuery object', () => {
++      cy.get('input:first').then(($el) => {
++        expect(Cypress.dom.isFocusable($el[0])).to.be.true
++        expect(Cypress.dom.isFocusable($el)).to.be.true
++      })
++    })
++
++    it('returns false for a non-focusable element passed as a DOM element or a jQuery object', () => {
++      cy.$$('body').append('<div id="not-focusable">not focusable</div>')
++      cy.get('#not-focusable').then(($el) => {
++        expect(Cypress.dom.isFocusable($el[0])).to.be.false
++        expect(Cypress.dom.isFocusable($el)).to.be.false
++      })
++    })
++  })
++
++  context('.isTextLike', () => {
++    beforeEach(() => {
++      cy.visit('/fixtures/dom.html')
++      cy.get('body').then(($body) => {
++        $body.append('<input id="text-like-email" type="email"><button id="text-like-button">button</button>')
++      })
++    })
++
++    it('returns true for a text-like element passed as a DOM element or a jQuery object', () => {
++      cy.get('#text-like-email').then(($el) => {
++        expect(Cypress.dom.isTextLike($el[0])).to.be.true
++        expect(Cypress.dom.isTextLike($el)).to.be.true
++      })
++    })
++
++    it('returns false for an element that is not text-like, passed as a DOM element or a jQuery object', () => {
++      cy.get('#text-like-button').then(($el) => {
++        expect(Cypress.dom.isTextLike($el[0])).to.be.false
++        expect(Cypress.dom.isTextLike($el)).to.be.false
++      })
++    })
++  })
++
++  context('.isSelector', () => {
++    beforeEach(() => {
++      cy.visit('/fixtures/dom.html')
++    })
++
++    it('matches a selector for a DOM element or a jQuery object', () => {
++      cy.get('input:first').then(($el) => {
++        expect(Cypress.dom.isSelector($el[0], 'input')).to.be.true
++        expect(Cypress.dom.isSelector($el, 'input')).to.be.true
++        expect(Cypress.dom.isSelector($el[0], 'button')).to.be.false
++        expect(Cypress.dom.isSelector($el, 'button')).to.be.false
++      })
++    })
++  })
++
++  context('.getWindowByElement', () => {
++    beforeEach(() => {
++      cy.visit('/fixtures/dom.html')
++    })
++
++    it('returns the window for a DOM element, a document, a window, or a jQuery object holding one', () => {
++      cy.window().then((win) => {
++        const doc = win.document
++        const el = doc.body
++
++        expect(Cypress.dom.getWindowByElement(el)).to.equal(win)
++        expect(Cypress.dom.getWindowByElement($(el))).to.equal(win)
++        expect(Cypress.dom.getWindowByElement(doc)).to.equal(win)
++        expect(Cypress.dom.getWindowByElement($(doc))).to.equal(win)
++        expect(Cypress.dom.getWindowByElement(win)).to.equal(win)
++        expect(Cypress.dom.getWindowByElement($(win))).to.equal(win)
++      })
++    })
++  })
++
++  context('.getFirst*Parent', () => {
++    beforeEach(() => {
++      cy.visit('/fixtures/dom.html')
++      cy.get('body').then(($body) => {
++        $body.append(`\
++<div id="parent-scroll" style="height: 50px; overflow: auto;">
++  <div id="parent-sticky" style="position: sticky; top: 0;"><span id="parent-inner">inner</span></div>
++  <div style="height: 500px;"></div>
++</div>`)
++      })
++    })
++
++    it('finds the scrollable ancestor of a DOM element or a jQuery object', () => {
++      cy.get('#parent-inner').then(($el) => {
++        expect(Cypress.dom.getFirstScrollableParent($el[0])!.attr('id')).to.eq('parent-scroll')
++        expect(Cypress.dom.getFirstScrollableParent($el)!.attr('id')).to.eq('parent-scroll')
++      })
++    })
++
++    it('finds the sticky ancestor of a DOM element or a jQuery object', () => {
++      cy.get('#parent-inner').then(($el) => {
+
+```
+
+**File**: `packages/driver/cypress/e2e/dom/visibility.cy.ts` (modified, +50/-0)
+```diff
+@@ -111,6 +111,14 @@ describe('src/cypress/dom/visibility', {
+           expect(fn()).to.be.true
+         })
+ 
++        it('returns true for a scrollable window passed directly or wrapped in jQuery', function () {
++          this.add('<div style="height: 1000px; width: 10px;" />')
++          const win = cy.state('window')
++
++          expect(dom.isScrollable(win)).to.be.true
++          expect(dom.isScrollable($(win))).to.be.true
++        })
++
+         it('returns false if window and body < window height', () => {
+           cy.$$('body').html('<div>foo</div>')
+ 
+@@ -217,6 +225,39 @@ describe('src/cypress/dom/visibility', {
+ 
+           expect(fn()).to.be.true
+         })
++
++        it('returns true for a scrollable element passed as a DOM element or a jQuery object', function () {
++          const $scrollable = this.add(`\
++<div style="height: 100px; width: 100px; overflow: auto;">
++  <div style="height: 150px;">Vertical Scroll</div>
++</div>\
++`)
++
++          expect(dom.isScrollable($scrollable[0])).to.be.true
++          expect(dom.isScrollable($scrollable)).to.be.true
++        })
++
++        it('returns false for a non-scrollable element passed as a DOM element or a jQuery object', function () {
++          const $noScroll = this.add(`\
++<div style="height: 100px; overflow: auto;">
++  <div>No Scroll</div>
++</div>\
++`)
++
++          expect(dom.isScrollable($noScroll[0])).to.be.false
++          expect(dom.isScrollable($noScroll)).to.be.false
++        })
++
++        it('checks a <select> passed as a DOM element itself, not its first option', function () {
++          const $select = this.add(`\
++<select size="2" style="height: 30px; overflow: auto;">
++  <option>one</option><option>two</option><option>three</option><option>four</option>
++</select>\
++`)
++
++          expect(dom.isScrollable($select)).to.be.true
++          expect(dom.isScrollable($select[0])).to.be.true
++        })
+       })
+ 
+       describe('visibility scenarios', () => {
+@@ -423,6 +464,7 @@ describe('src/cypress/dom/visibility', {
+   context('#getReasonIsHidden (legacy)', { visibilityStrategy: 'legacy' }, () => {
+     const reasonIs = ($el: JQuery, str: string) => {
+       expect(dom.getReasonIsHidden($el)).to.eq(str)
++      expect(dom.getReasonIsHidden($el[0])).to.eq(str)
+     }
+ 
+     describe('basic css / box model', () => {
+@@ -588,6 +630,14 @@ describe('src/cypress/dom/visibility', {
+       })
+     })
+ 
++    it('returns the same reason for a DOM element as for a jQuery object', () => {
++      prepareFixtureSection('display-property')
++      cy.get('[cy-section="display-property"] .testCase[cy-expect="hidden"]:first').then(($el) => {
++        expect(dom.getReasonIsHidden($el[0])).to.eq(dom.getReasonIsHidden($el))
++        expect(dom.getReasonIsHidden($el[0])).to.contain('`display: none`')
++      })
++    })
++
+     it('passes opacityProperty: true to checkVisibility by default', () => {
+       cy.get('h1').then(($el) => {
+         const spy = cy.spy($el[0], 'checkVisibility')
+```
+
+**File**: `packages/driver/src/dom/elements/complexElements.ts` (modified, +23/-14)
+```diff
+@@ -9,7 +9,7 @@ import { findParent, getParent, isUndefinedOrHTMLBodyDoc } from './find'
+ import { isInput, isTextarea, textLikeInputTypes } from './elementHelpers'
+ import { getNativeProp } from './nativeProps'
+ import { isWithinShadowRoot } from './shadow'
+-import type { HTMLElementCanSetSelectionRange, HTMLTextLikeElement } from './types'
++import type { HTMLElementCanSetSelectionRange } from './types'
+ import { isSelector } from './utils'
+ import Debug from 'debug'
+ 
+@@ -64,7 +64,8 @@ export const isButtonLike = (el: HTMLElement) => {
+   ])
+ }
+ 
+-export const isTextLike = function (el: HTMLElement): el is HTMLTextLikeElement {
++export const isTextLike = function (elOrJquery: HTMLElement | JQuery<HTMLElement>): boolean {
++  const el = $jquery.isJquery(elOrJquery) ? elOrJquery[0] : elOrJquery
+   const $el = $jquery.wrap(el)
+   const sel = (selector) => {
+     return isSelector($el, selector)
+@@ -93,7 +94,9 @@ export const isTextLike = function (el: HTMLElement): el is HTMLTextLikeElement
+  * Focusable checks and getters
+  */
+ 
+-export const isFocused = (el) => {
++export const isFocused = (elOrJquery) => {
++  const el = $jquery.isJquery(elOrJquery) ? elOrJquery[0] : elOrJquery
++
+   try {
+     let doc
+ 
+@@ -118,7 +121,9 @@ export const isFocused = (el) => {
+ /**
+  * The element can be activeElement, receive focus events, and also receive keyboard events
+  */
+-export const isFocusable = ($el: JQuery<HTMLElement>) => {
++export const isFocusable = (elOrJquery: HTMLElement | JQuery<HTMLElement>) => {
++  const $el = $jquery.isJquery(elOrJquery) ? elOrJquery : $jquery.wrap(elOrJquery)
++
+   return (
+     _.some(focusableSelectors, (sel) => $el.is(sel)) ||
+      isDesignModeDocumentElement($el.get(0))
+@@ -243,7 +248,7 @@ const isScrollOrAuto = (prop) => {
+   return prop === 'scroll' || prop === 'auto'
+ }
+ 
+-export const isScrollable = ($el) => {
++export const isScrollable = (subject) => {
+   const checkDocumentElement = (win, documentElement) => {
+     // Check if body height is higher than window height
+     if (win.innerHeight < documentElement.scrollHeight) {
+@@ -263,16 +268,14 @@ export const isScrollable = ($el) => {
+     return false
+   }
+ 
++  const el = $jquery.isJquery(subject) ? subject[0] : subject
++
+   // if we're the window, we want to get the document's
+   // element and check its size against the actual window
+-  if ($window.isWindow($el)) {
+-    const win = $el
+-
+-    return checkDocumentElement(win, win.document.documentElement)
++  if ($window.isWindow(el)) {
++    return checkDocumentElement(el, el.document.documentElement)
+   }
+ 
+-  const el = $el[0]
+-
+   // window.getComputedStyle(el) will error if el is undefined
+   if (!el) {
+     return false
+@@ -316,7 +319,9 @@ export const isScrollable = ($el) => {
+ /**
+  * Getters where DOM state like focus, styling, and actionability affect the return value
+  */
+-export const getFirstFixedOrStickyPositionParent = ($el): JQuery<any> | null => {
++export const getFirstFixedOrStickyPositionParent = (elOrJquery): JQuery<any> | null => {
++  const $el = $jquery.isJquery(elOrJquery) ? elOrJquery : $jquery.wrap(elOrJquery)
++
+   if (isUndefinedOrHTMLBodyDoc($el)) {
+     return null
+   }
+@@ -338,7 +343,9 @@ export const getFirstFixedOrStickyPositionParent = ($el): JQuery<any> | null =>
+   })
+ }
+ 
+-export const getFirstStickyPositionParent = ($el) => {
++export const getFirstStickyPositionParent = (elOrJquery): JQuery<any> | null => {
++  const $el = $jquery.isJquery(elOrJquery) ? elOrJquery : $jquery.wrap(elOrJquery)
++
+   if (isUndefinedOrHTMLBodyDoc($el)) {
+     return null
+   }
+@@ -360,7 +367,9 @@ export const getFirstStickyPositionParent = ($el) => {
+   })
+ }
+ 
+-export const getFirstScrollableParent = ($el) => {
++export const getFirstScrollableParent = (elOrJquery): JQuery<any> | null => {
++  const $el = $jquery.isJquery(elOrJquery) ? elOrJquery : $jquery.wrap(elOrJquery)
++
+   if (isUndefinedOrHTMLBodyDoc($el)) {
+     return null
+   }
+```
+
+**File**: `packages/driver/src/dom/elements/find.ts` (modified, +9/-6)
+```diff
+@@ -185,23 +185,26 @@ export const isChild = ($el: JQuery<HTMLElement>, $maybeChild: JQuery<HTMLElemen
+   return children.index($maybeChild) >= 0
+ }
+ 
+-export const isDescendent = ($el1: JQuery<HTMLElement>, $el2?: JQuery<HTMLElement>) => {
+-  if (!$el2) {
++export const isDescendent = (elOrJquery1: HTMLElement | JQuery<HTMLElement>, elOrJquery2?: HTMLElement | JQuery<HTMLElement>) => {
++  if (!elOrJquery2) {
+     return false
+   }
+ 
++  const el1 = $jquery.isJquery(elOrJquery1) ? elOrJquery1.get(0) : elOrJquery1
++  const el2 = $jquery.isJquery(elOrJquery2) ? elOrJquery2.get(0) : elOrJquery2
++
+   // if they are equal, consider them a descendent
+-  if ($el1.get(0) === $el2.get(0)) {
++  if (el1 === el2) {
+     return true
+   }
+ 
+   // walk up the tree until we find a parent which
+   // equals the descendent, if ever
+-  return findParent($el2.get(0), (node) => {
+-    if (node === $el1.get(0)) {
++  return findParent(el2, (node) => {
++    if (node === el1) {
+       return node
+     }
+-  }) === $el1.get(0)
++  }) === el1
+ }
+ 
+ // mostly useful when traversing up parent nodes and wanting to
+```
+
+**File**: `packages/driver/src/dom/elements/utils.ts` (modified, +3/-1)
+```diff
+@@ -24,7 +24,9 @@ export const isSame = function ($el1, $el2) {
+   return el1 && el2 && _.isEqual(el1, el2)
+ }
+ 
+-export const isSelector = ($el: JQuery<HTMLElement>, selector) => {
++export const isSelector = (elOrJquery: HTMLElement | JQuery<HTMLElement>, selector) => {
++  const $el = $jquery.isJquery(elOrJquery) ? elOrJquery : $jquery.wrap(elOrJquery)
++
+   return $el.is(selector)
+ }
+ 
+```
+
+---
+
+### Incident Patch 3: `72b7d270` (2026-10-25)
+**Commit Message**: fix: reject invalid falsy request encodings (#35122)
+
+* fix: reject invalid falsy request encodings
+
+* Update cli/CHANGELOG.md
+
+---------
+
+Co-authored-by: Jennifer Shehane <[REDACTED_EMAIL]>
+Co-authored-by: Jennifer Shehane <[REDACTED_EMAIL]>
+
+**File**: `cli/CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -7,6 +7,7 @@
+ 
  **Bugfixes:**
  
++- [`cy.request()`](https://on.cypress.io/request) now fails with an invalid encoding error when passed `encoding: false`, `0`, or an empty string, instead of crashing Cypress with `TypeError [ERR_UNKNOWN_ENCODING]: Unknown encoding: false`. Fixes [#24192](https://github.com/cypress-io/cypress/issues/24192).
+ - Fixed a regression in [16.0.0](#16-0-0) where, in Chrome, Chromium, and Edge, a spec hung forever at its first [`cy.visit()`](https://on.cypress.io/visit) to another origin when its bundled file was larger than about 75 MB, which a spec can reach by importing tens of megabytes of generated code. [`pageLoadTimeout`](https://on.cypress.io/configuration#Timeouts) never fired, so `cypress run` had to be killed. Setting [`forceHttp1`](https://on.cypress.io/configuration) to `true` is no longer needed to avoid it. Fixes [#34794](https://github.com/cypress-io/cypress/issues/34794).
  - Fixed an issue where `cypress open` with both a `--browser` and a testing type flag launched the browser twice the first time Cypress showed its major-version welcome screen — on first open after upgrading, or after clearing app data. Fixes [#34868](https://github.com/cypress-io/cypress/issues/34868).
+ - Fixed an issue where [`.scrollTo()`](https://on.cypress.io/scrollto) and [`.scrollIntoView()`](https://on.cypress.io/scrollintoview) stopped short of the end of a scrollable element with always-visible scrollbars. Positions such as `bottom`, `right`, `bottomRight`, and `'100%'` landed short by the width of the scrollbar, and `center` or `'50%'` landed off-center by half of it. Fixed in [#34948](https://github.com/cypress-io/cypress/pull/34948).
 ```
 
-**File**: `packages/driver/cypress/e2e/commands/sessions/manager.cy.ts` (modified, +50/-0)
+**File**: `packages/driver/cypress/e2e/commands/request.cy.ts` (modified, +17/-0)
 ```diff
-@@ -277,6 +277,42 @@ describe('src/cy/commands/sessions/manager.ts', () => {
+@@ -1163,6 +1163,23 @@ describe('src/cy/commands/request', () => {
+         })
        })
-     })
  
-+    describe('.clearSessionData()', () => {
-+      beforeEach(() => {
-+        CypressInstance.state = cy.stub()
-+      })
++      // https://github.com/cypress-io/cypress/issues/24192
++      for (const encoding of [false, 0, '']) {
++        it(`rejects invalid falsy encoding ${JSON.stringify(encoding)}`, function (done) {
++          cy.on('fail', (err) => {
++            expect(err.message).to.include('`cy.request()` was called with invalid encoding:')
++            expect(err.docsUrl).to.eq('https://on.cypress.io/request')
++            done()
++          })
 +
-+      it('resolves to the origins that had rendered HTML', async () => {
-+        cy.stub(CypressInstance, 'backend')
-+        .callThrough()
-+        .withArgs('get:rendered:html:origins')
-+        .resolves({ [window.location.origin]: true })
-+
-+        const sessionsManager = new SessionsManager(CypressInstance, {
-+          state: () => false,
++          // @ts-expect-error - intentionally passing an invalid encoding
++          cy.request({
++            url: 'http://localhost:1234/foo',
++            encoding,
++          })
 +        })
++      }
 +
-+        cy.stub(sessionsManager.sessions, 'clearCookies').resolves([])
-+
-+        expect(await sessionsManager.clearSessionData()).to.deep.eq([window.location.origin])
-+      })
-+
-+      it('resolves to an empty list when no origins rendered HTML', async () => {
-+        cy.stub(CypressInstance, 'backend')
-+        .callThrough()
-+        .withArgs('get:rendered:html:origins')
-+        .resolves({})
-+
-+        const sessionsManager = new SessionsManager(CypressInstance, {
-+          state: () => false,
-+        })
-+
-+        cy.stub(sessionsManager.sessions, 'clearCookies').resolves([])
-+
-+        expect(await sessionsManager.clearSessionData()).to.deep.eq([])
-+      })
-+    })
-+
-     it('sessions.getCookies()', async () => {
-       const cookies = [{ id: 'cookie' }]
-       const cypressSpy = cy.stub(CypressInstance, 'automation').withArgs('get:cookies').resolves(cookies)
-@@ -312,6 +348,20 @@ describe('src/cy/commands/sessions/manager.ts', () => {
-       expect(cypressSpy).to.be.calledOnceWith('clear:cookies', cookies)
-     })
- 
-+    // The server also empties its cookie jar on `clear:cookies`, and the jar
-+    // can hold cookies the browser no longer reports.
-+    it('sessions.clearCookies() still clears when the browser reports no cookies', async () => {
-+      const cypressSpy = cy.stub(CypressInstance, 'automation').withArgs('clear:cookies').resolves([])
-+
-+      const sessionsManager = new SessionsManager(CypressInstance, () => {})
-+
-+      cy.stub(sessionsManager.sessions, 'getCookies').resolves([])
-+
-+      await sessionsManager.sessions.clearCookies()
-+
-+      expect(cypressSpy).to.be.calledOnceWith('clear:cookies', [])
-+    })
-+
-     it('sessions.getCurrentSessionData()', async () => {
-       const sessionsManager = new SessionsManager(Cypress, () => {})
-       const cookiesSpy = cy.stub(sessionsManager.sessions, 'getCookies').resolves([{ id: 'cookie' }])
+       it('throws when encoding is not valid', function (done) {
+         cy.on('fail', (err) => {
+           const { lastLog } = this
 ```
 
-**File**: `packages/driver/cypress/e2e/commands/sessions/sessions.cy.ts` (modified, +23/-5)
+**File**: `packages/driver/src/cy/commands/request.ts` (modified, +1/-1)
 ```diff
-@@ -156,25 +156,43 @@ describe('cy.session', { retries: 0 }, () => {
- 
-     describe('test:before:run:async', () => {
-       it('clears session data before each run', async () => {
--        const clearCurrentSessionData = cy.spy(Cypress.session, 'clearCurrentSessionData')
-+        const backendSpy = cy.spy(Cypress, 'backend').log(false)
-+        const automationSpy = cy.spy(Cypress, 'automation').log(false)
- 
-         await Cypress.action('runner:test:before:run:async', {
-           id: 'r1',
-           currentRetry: 0,
-         }, Cypress.state('runnable'))
- 
--        expect(clearCurrentSessionData).to.be.called
-+        expect(backendSpy).to.be.calledWith('get:rendered:html:origins')
-+        expect(automationSpy).to.be.calledWith('get:cookies')
-       })
- 
--      it('resets rendered html origins before each run', async () => {
--        const backendSpy = cy.spy(Cypress, 'backend').log(false)
-+      it('resets rendered html origins before each run when origins were rendered', async () => {
-+        const backendStub = cy.stub(Cypress, 'backend').log(false).callThrough()
-+
-+        backendStub.withArgs('get:rendered:html:origins').resolves({ [window.location.origin]: true })
-+
-+        await Cypress.action('runner:test:before:run:async', {
-+          id: 'r1',
-+          currentRetry: 0,
-+        }, Cypress.state('runnable'))
-+
-+        expect(backendStub).to.be.calledWith('reset:rendered:html:origins')
-+      })
-+
-+      it('does not reset rendered html origins before each run when no origins were rendered', async () => {
-+        const backendStub = cy.stub(Cypress, 'backend').log(false).callThrough()
-+
-+        backendStub.withArgs('get:rendered:html:origins').resolves({})
- 
-         await Cypress.action('runner:test:before:run:async', {
-           id: 'r1',
-           currentRetry: 0,
-         }, Cypress.state('runnable'))
- 
--        expect(backendSpy).to.be.calledWith('reset:rendered:html:origins')
-+        expect(backendStub).to.be.calledWith('get:rendered:html:origins')
-+        expect(backendStub).not.to.be.calledWith('reset:rendered:html:origins')
-       })
- 
-       it('clears the browser context before each run', () => {
-```
-
-**File**: `packages/driver/cypress/e2e/e2e/origin/cookie_jar_isolation.cy.ts` (added, +37/-0)
-```diff
-@@ -0,0 +1,37 @@
-+// These tests run in order: the second checks that a cookie the first left in
-+// the server's cookie jar, but not in the browser, is cleared between tests.
-+describe('server cookie jar between isolated tests', { browser: '!webkit', testIsolation: true, retries: 0 }, () => {
-+  const originUrl = 'https://www.foobar.com:3502'
-+
-+  it('leaves a cookie in the jar after the app deletes it from the browser', () => {
-+    cy.visit(`${originUrl}/fixtures/generic.html`)
-+
-+    cy.window().then((win) => {
-+      return cy.wrap(win.fetch(`${originUrl}/set-cookie?cookie=foo1=bar1; Domain=foobar.com`))
-+    })
-+
-+    cy.getAllCookies().should('have.length', 1)
-+
-+    // Removes the cookie from the browser, but not from the server's jar
-+    cy.window().then((win) => {
-+      win.document.cookie = 'foo1=; Domain=foobar.com; Path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
-+    })
-+
-+    cy.getAllCookies().should('have.length', 0)
-+  })
-+
-+  it('does not send the previous test\'s jar cookie from cy.origin()', () => {
-+    cy.intercept(`${originUrl}/test-request`).as('req')
-+
-+    cy.visit('/fixtures/primary-origin.html')
-+    cy.get('a[data-cy="cookie-https"]').click()
-+
-+    cy.origin(originUrl, { args: originUrl }, (originUrl) => {
-+      cy.window().then((win) => {
-+        return cy.wrap(win.fetch(`${originUrl}/test-request`))
-+      })
-+    })
-+
-+    cy.wait('@req').its('request.headers.cookie').should('be.undefined')
-+  })
-+})
-```
-
-**File**: `packages/driver/src/cy/commands/sessions/index.ts` (modified, +7/-2)
-```diff
-@@ -49,8 +49,13 @@ export default function (Commands, Cypress, cy) {
-         return
+@@ -201,7 +201,7 @@ export default (Commands, Cypress, cy, state, config) => {
+         })
        }
  
--      return sessions.clearCurrentSessionData()
--      .then(() => Cypress.backend('reset:rendered:html:origins'))
-+      const renderedOrigins = await sessionsManager.clearSessionData()
-+
-+      // An empty set has nothing to reset. A page that finishes rendering after
-+      // the read stays in the set, so the next test clears its storage too.
-+      if (renderedOrigins.length) {
-+        await Cypress.backend('reset:rendered:html:origins')
-+      }
-     })
-   })
- 
-```
-
-**File**: `packages/driver/src/cy/commands/sessions/manager.ts` (modified, +22/-12)
-```diff
-@@ -98,6 +98,24 @@ export default class SessionsManager {
-     ])
-   }
- 
-+  // Resolves to the rendered origins that `clearStorage` read before clearing.
-+  clearSessionData = async (): Promise<string[]> => {
-+    // this prevents a log occurring when we clear session in-between tests
-+    if (this.cy.state('duringUserTestExecution')) {
-+      this.Cypress.log(getLogProperties('clearCurrentSessionData'))
-+    }
-+
-+    window.localStorage.clear()
-+    window.sessionStorage.clear()
-+
-+    const [renderedOrigins] = await Promise.all([
-+      clearStorage(this.Cypress),
-+      this.sessions.clearCookies(),
-+    ])
-+
-+    return renderedOrigins
-+  }
-+
-   // this the public api exposed to consumers as Cypress.session
-   sessions = {
-     clearAllSavedSessions: async () => {
-@@ -109,18 +127,8 @@ export default class SessionsManager {
-     },
- 
-     clearCurrentSessionData: async () => {
--      // this prevents a log occurring when we clear session in-between tests
--      if (this.cy.state('duringUserTestExecution')) {
--        this.Cypress.log(getLogProperties('clearCurrentSessionData'))
--      }
--
--      window.localStorage.clear()
--      window.sessionStorage.clear()
--
--      await Promise.all([
--        clearStorage(this.Cypress),
--        this.sessions.clearCookies(),
--      ])
-+      // Public API: resolves to nothing, unlike `clearSessionData`
-+      await this.clearSessionData()
-     },
- 
-     getCookies: async () => {
-@@ -132,6 +140,8 @@ export default class SessionsManager {
-     },
- 
-     clearCookies: async () => {
-+      // Sent even when the browser reports no cookies: the server also empties
-+      // its cookie jar here, and the jar can hold cookies the browser no longer has.
-       return this.Cypress.automation('clear:cookies', await this.sessions.getCookies())
-     },
- 
-```
-
-**File**: `packages/driver/src/cy/commands/sessions/origins.ts` (modified, +9/-5)
-```diff
-@@ -20,10 +20,14 @@ export async function mapOrigins (Cypress: Cypress.Cypress, origins: string | st
-   return _.uniq(_.flatten(await getOrigins))
- }
- 
--export async function getAllHtmlOrigins (Cypress: Cypress.Cypress) {
--  const currentOrigin = window.location.origin
--  const storedOrigins = await Cypress.backend('get:rendered:html:origins')
--  const origins = [..._.keys(storedOrigins), currentOrigin]
-+export async function getRenderedHtmlOrigins (Cypress: Cypress.Cypress): Promise<string[]> {
-+  return _.keys(await Cypress.backend('get:rendered:html:origins'))
-+}
- 
--  return _.uniq(origins)
-+export function withCurrentOrigin (origins: string[]) {
-+  return _.uniq([...origins, window.location.origin])
-+}
-+
-+export async function getAllHtmlOrigins (Cypress: Cypress.Cypress) {
-+  return withCurrentOrigin(await getRenderedHtmlOrigins(Cypress))
- }
-```
-
-**File**: `packages/driver/src/cy/commands/sessions/storage.ts` (modified, +10/-4)
-```diff
-@@ -1,7 +1,7 @@
- import _ from 'lodash'
- 
- import { $Location } from '../../../cypress/location'
--import { getAllHtmlOrigins, mapOrigins } from './origins'
-+import { getRenderedHtmlOrigins, mapOrigins, withCurrentOrigin } from './origins'
- import { getCurrentOriginStorage, getPostMessageLocalStorage, setPostMessageLocalStorage } from './utils'
- 
- export type StorageType = 'localStorage' | 'sessionStorage'
-@@ -82,9 +82,13 @@ export async function getStorage (Cypress: Cypress.Cypress, options: GetStorageO
-   return results
- }
- 
--export async function clearStorage (Cypress: Cypress.Cypress, type?: StorageType) {
--  const origins = await getAllHtmlOrigins(Cypress)
--  const originOptions = origins.map((origin) => ({ origin, clear: true }))
-+/**
-+ * Resolves to the origins the server reported as having rendered HTML,
-+ * which does not include the current origin unless it rendered HTML too.
-+ */
-+export async function clearStorage (Cypress: Cypress.Cypress, type?: StorageType): Promise<string[]> {
-+  const renderedOrigins = await getRenderedHtmlOrigins(Cypress)
-+  const originOptions = withCurrentOrigin(renderedOrigins).map((origin) => ({ origin, clear: true }))
-   const options: SetStoragesOptions = {}
- 
-   if (!type || type === 'localStorage') {
-@@ -96,6 +100,8 @@ export async function clearStorage (Cypress: Cypress.Cypress, type?: StorageType
-   }
- 
-   await setStorage(Cypress, options)
-+
-+  return renderedOrigins
- }
- 
- async function setStorageOnOrigins (Cypress: Cypress.Cypress, originOptions) {
-```
-
----
-
-### Incident Patch 3: `9f506e5e` (2026-10-21)
-**Commit Message**: fix: launch the browser once when the major-version welcome gates the initial launch (#34877)
-
-* fix: launch the browser once when the major-version welcome gates the initial launch
-
-`cypress open --e2e --browser <browser>` launched the browser twice the
-first time the major-version welcome screen was shown (first open after
-upgrading, or after clearing app data). Dismissing the welcome fired a
-launch from Main.vue and mounted OpenBrowser, whose auto-launch check
-read `launchCount` while that launch was still in flight - the count only
-moved after the launch settled, so it launched again. The second launch
-tore down the first one's CDP connection, leaving Chrome/Chromium/Edge
-unable to connect and Electron reporting its tab closed unexpectedly.
-
-- Count a launch in ProjectActions as it starts, so a concurrent
-  `shouldLaunchBrowserFromOpenBrowser` check sees it.
-- Make OpenBrowser the single client-side launcher after the welcome is
-  dismissed; it also waits for the config to be ready before firing.
-- Unit-test the counter ordering, and make the launchpad e2e test for the
-  welcome path actually go through the welcome with a slow launch stub.
-
-Fixes #34868
-
-Co-Authored-By: Claude 
-
-**File**: `cli/CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -3,6 +3,7 @@
- 
- **Bugfixes:**
- 
-+- Fixed an issue where `cypress open` with both a `--browser` and a testing type flag launched the browser twice the first time Cypress showed its major-version welcome screen — on first open after upgrading, or after clearing app data. Fixes [#34868](https://github.com/cypress-io/cypress/issues/34868).
- - Fixed an issue where [`.scrollTo()`](https://on.cypress.io/scrollto) and [`.scrollIntoView()`](https://on.cypress.io/scrollintoview) stopped short of the end of a scrollable element with always-visible scrollbars. Positions such as `bottom`, `right`, `bottomRight`, and `'100%'` landed short by the width of the scrollbar, and `center` or `'50%'` landed off-center by half of it. Fixed in [#34948](https://github.com/cypress-io/cypress/pull/34948).
- - Fixed a regression in [16.1.0](#16-1-0) where, in Chrome, Chromium, and Edge run headed, the Cypress browser extension could stop responding for the rest of the run. This caused [`@cypress/puppeteer`](https://github.com/cypress-io/cypress/tree/develop/npm/puppeteer) to fail with `Cannot communicate with the Cypress Chrome extension`. Fixed in [#34958](https://github.com/cypress-io/cypress/pull/34958).
- - [`cy.fixture()`](https://on.cypress.io/fixture) and the `fixture` property of a [`cy.intercept()`](https://on.cypress.io/intercept) static response now fail when the fixture path resolves outside the [`fixturesFolder`](https://docs.cypress.io/app/references/configuration#Folders--Files). Fixed in [#35072](https://github.com/cypress-io/cypress/pull/35072).
-```
-
-**File**: `packages/data-context/src/DataContext.ts` (modified, +3/-0)
-```diff
-@@ -349,6 +349,9 @@ export class DataContext {
- 
-     this._modeOptions = modeOptions
-     this._coreData = makeCoreData(modeOptions)
-+    // DataActions is created once in the constructor and is not rebuilt here, so
-+    // its launch counter has to be reset explicitly or it leaks between tests
-+    this.actions.project.launchCount = 0
-     // @ts-expect-error - we've already cleaned up, this is for testing only
-     this.lifecycleManager = new ProjectLifecycleManager(this)
- 
-```
-
-**File**: `packages/data-context/src/actions/ProjectActions.ts` (modified, +12/-4)
-```diff
-@@ -93,9 +93,10 @@ const debug = debugLib('cypress:data-context:ProjectActions')
- export class ProjectActions {
-   /**
-    * @var globalLaunchCount
--   * Used as a read-only in the launchpad to ensure
--   * that launchProject is only called once if
--   * the --browser flag is passed alone.
-+   * Read by the `shouldLaunchBrowserFromOpenBrowser` resolver so the
-+   * launchpad's `--browser` auto-launch fires only once. Incremented as a
-+   * launch starts: a launch takes seconds, and dismissing the major-version
-+   * welcome mounts OpenBrowser, which re-reads this inside that window (#34868).
-    */
-   private globalLaunchCount = 0
-   constructor (private ctx: DataContext) {}
-@@ -301,9 +302,16 @@ export class ProjectActions {
-       this.api.resetServer()
-     }
- 
--    await this.api.launchProject(browser, activeSpec ?? emptySpec, options)
-     this.globalLaunchCount++
- 
-+    try {
-+      await this.api.launchProject(browser, activeSpec ?? emptySpec, options)
-+    } catch (err) {
-+      // A launch that never happened should not use up the one-shot auto-launch
-+      this.globalLaunchCount--
-+      throw err
-+    }
-+
-     return
-   }
- 
-```
-
-**File**: `packages/data-context/src/data/ProjectLifecycleManager.ts` (modified, +2/-2)
-```diff
-@@ -346,8 +346,8 @@ export class ProjectLifecycleManager {
-       const hasWelcomeBeenDismissed = Boolean(preferences.majorVersionWelcomeDismissed?.[GET_MAJOR_VERSION_FOR_CONTENT()])
- 
-       // only continue if the browser was successfully set - we must have an activeBrowser once this function resolves
--      // but if the user needs to dismiss a landing page, don't continue, the active browser will be opened
--      // by a mutation called from the client side when the user dismisses the welcome screen
-+      // but if the user needs to dismiss a landing page, don't continue: dismissing it renders OpenBrowser
-+      // in the launchpad, whose auto-launch opens the active browser once the config is ready
-       if (this.ctx.coreData.activeBrowser && hasWelcomeBeenDismissed) {
-         // if `cypress open` was launched with a `--project` and `--testingType`, go ahead and launch the `--browser`
-         if (this.ctx.modeOptions.project && this.ctx.modeOptions.testingType) {
-```
-
-**File**: `packages/data-context/test/unit/actions/ProjectActions.spec.ts` (modified, +39/-0)
-```diff
-@@ -303,6 +303,45 @@ describe('ProjectActions', () => {
-     })
-   })
- 
-+  describe('launchProject', () => {
-+    beforeEach(() => {
-+      ctx.coreData.currentProject = '/cy-project'
-+      ctx.coreData.currentTestingType = 'e2e'
-+      ctx.coreData.activeBrowser = { id: 'abc' } as any
-+    })
-+
-+    it('counts the launch before it settles so a concurrent auto-launch check does not launch again', async () => {
-+      let resolveLaunch!: () => void
-+      const launchProject = jest.fn().mockReturnValue(new Promise<void>((resolve) => {
-+        resolveLaunch = resolve
-+      }))
-+
-+      Object.assign(ctx._apis.projectApi, { launchProject })
-+
-+      expect(actions.launchCount).toBe(0)
-+
-+      const launching = actions.launchProject('e2e')
-+
-+      expect(launchProject).toHaveBeenCalledTimes(1)
-+      expect(actions.launchCount).toBe(1)
-+
-+      resolveLaunch()
-+      await launching
-+
-+      expect(actions.launchCount).toBe(1)
-+    })
-+
-+    it('does not count a launch that rejects', async () => {
-+      const launchProject = jest.fn().mockRejectedValue(new Error('browser failed to launch'))
-+
-+      Object.assign(ctx._apis.projectApi, { launchProject })
-+
-+      await expect(actions.launchProject('e2e')).rejects.toThrow('browser failed to launch')
-+
-+      expect(actions.launchCount).toBe(0)
-+    })
-+  })
-+
-   describe('debugCloudRun', () => {
-     beforeEach(() => {
-       jest.spyOn(ctx.relevantRuns, 'moveToRun')
-```
-
-**File**: `packages/launchpad/cypress/e2e/choose-a-browser.cy.ts` (modified, +0/-3)
-```diff
-@@ -3,9 +3,6 @@ import type { FoundBrowser } from '@packages/types'
- describe('Choose a browser page', () => {
-   beforeEach(() => {
-     cy.scaffoldProject('launchpad')
--    cy.withCtx((ctx, _) => {
--      ctx.actions.project.launchCount = 0
--    })
-   })
- 
-   describe('System Browsers Detected', () => {
-```
-
-**File**: `packages/launchpad/cypress/e2e/open-mode.cy.ts` (modified, +25/-3)
-```diff
-@@ -216,22 +216,44 @@ describe('Launchpad: Open Mode', () => {
-     cy.get('button[data-cy=launch-button]').invoke('text').should('include', 'Start E2E Testing in Firefox')
-   })
- 
--  it('auto-launches the browser when launched with --browser --testingType --project, after Major Version Welcome is dismissed', () => {
-+  it('auto-launches the browser exactly once when launched with --browser --testingType --project, after Major Version Welcome is dismissed', () => {
-     cy.scaffoldProject('launchpad')
-     stubAvailableBrowsers()
-     cy.openProject('launchpad', ['--browser', 'firefox', '--e2e'])
-     cy.withCtx((ctx, o) => {
--      o.sinon.stub(ctx._apis.projectApi, 'launchProject').resolves()
-+      // A real launch takes seconds. Dismissing the welcome mounts OpenBrowser
-+      // inside that window, and its own auto-launch check must not launch again.
-+      // The test holds the launch open until it has checked that.
-+      o.sinon.stub(ctx._apis.projectApi, 'launchProject').callsFake(() => {
-+        return new Promise<void>((resolve) => {
-+          o.testState.resolveLaunch = resolve
-+        })
-+      })
-     })
- 
-+    // OpenBrowser decides whether to auto-launch from this query's response
-+    cy.intercept('query-OpenBrowser_LocalSettings').as('openBrowserLocalSettings')
-+
-     // Need to visit after args have been configured, todo: fix in #18776
--    cy.visitLaunchpad()
-+    cy.visitLaunchpad({ showWelcome: true })
-+    cy.skipWelcome()
- 
-     cy.get('h1').should('contain', 'Choose a browser')
-     cy.get('[data-cy-browser=firefox]').should('have.attr', 'aria-checked', 'true')
-     cy.get('button[data-cy=launch-button]').invoke('text').should('include', 'Start E2E Testing in Firefox')
-+    cy.wait('@openBrowserLocalSettings')
-+
-+    cy.withRetryableCtx((ctx, o) => {
-+      expect(ctx._apis.projectApi.launchProject).to.be.calledOnce
-+      expect(o.testState.resolveLaunch).to.be.a('function')
-+    })
-+
-+    cy.withCtx((ctx, o) => {
-+      o.testState.resolveLaunch()
-+    })
- 
-     cy.withRetryableCtx((ctx) => {
-+      expect(ctx.actions.project.launchCount).to.eq(1)
-       expect(ctx._apis.projectApi.launchProject).to.be.calledOnce
-     })
-   })
-```
-
-**File**: `packages/launchpad/src/Main.vue` (modified, +1/-24)
-```diff
-@@ -80,7 +80,7 @@
- 
- <script lang="ts" setup>
- import { gql, useMutation, useQuery } from '@urql/vue'
--import { MainLaunchpadQueryDocument, Main_ResetErrorsAndLoadConfigDocument, Main_LaunchProjectDocument } from './generated/graphql'
-+import { MainLaunchpadQueryDocument, Main_ResetErrorsAndLoadConfigDocument } from './generated/graphql'
- import TestingTypeCards from './setup/TestingTypeCards.vue'
- import Wizard from './setup/Wizard.vue'
- import GlobalPage from './global/GlobalPage.vue'
-@@ -117,7 +117,6 @@ fragment MainLaunchpadQueryData on Query {
-     preferences {
-       majorVersionWelcomeDismissed
-       wasBrowserSetInCLI
--      shouldLaunchBrowserFromOpenBrowser
-     }
-   }
-   currentProject {
-@@ -153,22 +152,7 @@ mutation Main_ResetErrorsAndLoadConfig($id: ID!) {
- }
- `
- 
--gql`
--mutation Main_LaunchProject ($testingType: TestingTypeEnum!)  {
--  launchOpenProject {
--    id
--  }
--  setProjectPreferencesInGlobalCache(testingType: $testingType) {
--    currentProject {
--      id
--      title
--    }
--  }
--}
--`
--
- const mutation = useMutation(Main_ResetErrorsAndLoadConfigDocument)
--const launchProject = useMutation(Main_LaunchProjectDocument)
- 
- const resetErrorAndLoadConfig = (id: string) => {
-   if (!mutation.fetching.value) {
-@@ -230,13 +214,6 @@ watch(
- 
- function handleClearLandingPage () {
-   setMajorVersionWelcomeDismissed(GET_MAJOR_VERSION_FOR_CONTENT())
--  const shouldLaunchBrowser = query.data?.value?.localSettings?.preferences?.shouldLaunchBrowserFromOpenBrowser
--
--  const currentTestingType = currentProject.value?.currentTestingType
--
--  if (shouldLaunchBrowser && currentTestingType) {
--    launchProject.executeMutation({ testingType: currentTestingType })
--  }
- }
- 
- const shouldShowWelcome = computed(() => {
+-      if (options.encoding) {
++      if (options.encoding !== null) {
+         if (!_.isString(options.encoding) || !Buffer.isEncoding(options.encoding)) {
+           $errUtils.throwErrByPath('request.encoding_invalid', {
+             args: {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #35125** (2026-10-22): chore: wait for an in-flight project scaffold before a test retry re-scaffolds it (@mschile)
-- **PR #35121** (2026-10-22): chore: remove the GraphQL-over-fetch switch (@mschile)
-- **PR #35119** (2026-10-22): fix: keep cy.contains() retrying when its within subject is missing (@jennifer-shehane)
-- **PR #35118** (2026-10-21): fix: record the user's NODE_TLS_REJECT_UNAUTHORIZED at server startup (@mschile)
-- **PR #35117** (closed): fix: pass NODE_TLS_REJECT_UNAUTHORIZED to config process before request.ts loads (@cursor[bot])
-- **PR #35102** (2026-10-21): misc: rewrite the cy.visit() and cy.request() status code options errors (@jennifer-shehane)
+- **PR #35178** (2026-10-27): chore: migrate @packages/telemetry to the shared ESLint flat config (@jennifer-shehane)
+- **PR #35177** (2026-10-27): chore: fix @ts- comments in driver test code for ban-ts-comment (@jennifer-shehane)
+- **PR #35176** (2026-10-27): chore: give driver src @ts-expect-error directives a reason (@jennifer-shehane)
+- **PR #35175** (2026-10-27): chore(packages/runner): migrate to @packages/eslint-config (@jennifer-shehane)
+- **PR #35174** (2026-10-27): chore: migrate @packages/example to the shared ESLint flat config (@jennifer-shehane)
+- **PR #35173** (2026-10-27): chore: migrate net-stubbing, network, network-tools and socket to @packages/eslint-config (@jennifer-shehane)
 
 ---
 
@@ -1851,21 +1925,21 @@ Co-Authored-By: Claude
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. show a clear error when the component testing dev server fails to start (#35081)
+## X. fix @ts- comments in driver test code for ban-ts-comment (#35177)
 
 **RULE**:
-When implementing operations in `cli/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cypress-io/cypress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cypress-io/cypress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b7fd293f`: show a clear error when the component testing dev server fails to start (#35081). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0a5e2aa2`: fix @ts- comments in driver test code for ban-ts-comment (#35177). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/CHANGELOG.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CLAUDE.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- When the dev server for component testing fails to start, such as when your project installs a version of webpack or webpack-dev-server that Cypress does not support, Cypress now explains that the dev server could not start, shows the dev server's error, and links to the dev server documentation. Previously, webpack errors were reported as a crash of your config file, and other dev server errors were shown with no explanation. Fixed in [#35081](https://github.com/cypress-io/cypress/pull/35081).
+- After committing a merge of `develop`, run `git diff --name-only origin/develop` and check that every file listed is in the PR's scope. The pre-commit hook runs `eslint --fix` on every staged file, merged-in ones included, and `package-json/order-properties` reorders keys in `package.json` files that `develop` committed unsorted. Restore any such file with `git checkout origin/develop -- <file>` and commit with `--no-verify`.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1875,4 +1949,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b7fd293f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0a5e2aa2` are properly handled with clean fallback behavior.

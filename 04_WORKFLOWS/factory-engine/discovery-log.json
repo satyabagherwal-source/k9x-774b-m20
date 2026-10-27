@@ -19498,5 +19498,17 @@
     "qualityScore": 1240,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-27T17:13:18.453Z"
+  },
+  {
+    "name": "ccore/Qwen3.5-4B-3D-Coder",
+    "fullName": "ccore/Qwen3.5-4B-3D-Coder",
+    "url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: ccore/Qwen3.5-4B-3D-Coder (152 likes, 3544 downloads)",
+    "likes": 152,
+    "downloads": 3544,
+    "qualityScore": 3520,
+    "discoveredAt": "2026-10-27T18:57:17.159Z"
   }
 ]

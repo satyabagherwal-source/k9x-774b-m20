@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-G6DZ",
-    "timestamp": "2026-10-25T20:36:41.687Z",
-    "repository": "meta-llama/Llama-2-7b-chat-hf",
-    "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
-    "contentHash": "e488462a3831525c5bb0dec5c3f81f53d0e688ed8ddb4e51a464733d057ada8c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-GA7R",
-    "timestamp": "2026-10-25T20:36:46.647Z",
-    "repository": "ydb-platform/ydb",
-    "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "3227ba0c4ded78d52a02f3a7bd965b35c91679aed3e06063053beaaca98da657",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-OEUL",
-    "timestamp": "2026-10-25T20:43:05.901Z",
-    "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
-    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
-    "contentHash": "523f0f76dfa9f3d23b1e8a65c0f631bce43cb74c75c2bf87152ecd9f78b4c78c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-OOH3",
-    "timestamp": "2026-10-25T20:43:18.375Z",
-    "repository": "mitmproxy/mitmproxy",
-    "learningId": "learn-github-mitmproxy-mitmproxy",
-    "contentHash": "0e52dc72cc14cb986c4bee10fc906bf17463758b6ade61c2c68bd5359ee92fba",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-WAPQ",
-    "timestamp": "2026-10-25T20:49:13.790Z",
-    "repository": "meta-llama/Llama-2-7b",
-    "learningId": "learn-huggingface-meta-llama-llama-2-7b",
-    "contentHash": "ef61d53f847fd5a74e280baa7f21ac7b52521dca9ba1babb08e86705ff31668b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-WFLN",
     "timestamp": "2026-10-25T20:49:20.123Z",
     "repository": "jellyfin/Swiftfin",
@@ -7492,6 +7417,81 @@
     "contentHash": "bb0522585e01b1b167aeb92354f783bdf7f815ef9acebc53bd81330caa74509b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-V1JV",
+    "timestamp": "2026-10-27T18:59:37.243Z",
+    "repository": "facebook/folly",
+    "learningId": "learn-github-facebook-folly",
+    "contentHash": "ab8cdc682d73881ceaed44800a1f38e401b130b89bef8b97aea5ddd65e6ce231",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-V36O",
+    "timestamp": "2026-10-27T18:59:39.360Z",
+    "repository": "ccore/Qwen3.5-4B-3D-Coder",
+    "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
+    "contentHash": "ce3a5161a76b514b0941a139522e7f2e7fc0eca6ffdf06c602f3f493fdde5bad",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-V4SF",
+    "timestamp": "2026-10-27T18:59:41.439Z",
+    "repository": "cypress-io/cypress",
+    "learningId": "learn-github-cypress-io-cypress",
+    "contentHash": "0d32cc134e726f9923ddefa1078e62bdb3aec75bb109cbfc2d9618c1122bc806",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-V63F",
+    "timestamp": "2026-10-27T18:59:43.131Z",
+    "repository": "czy0729/Bangumi",
+    "learningId": "learn-github-czy0729-bangumi",
+    "contentHash": "c08c894466bfa404309b1a4c072268fca4d63d3e122b34cc7dba534dc0403b0b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-VASH",
+    "timestamp": "2026-10-27T18:59:49.217Z",
+    "repository": "neuron-core/neuron-ai",
+    "learningId": "learn-github-neuron-core-neuron-ai",
+    "contentHash": "4a37f099d616bbcb9852285d51c0e0525e1bc88539950fa07b44753a9418a1b9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

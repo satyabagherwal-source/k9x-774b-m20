@@ -5483,3 +5483,8 @@
 | `CYCLE-20261027-AA27` | `2026-10-27T18:43:28.495Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4946` | Yes (`b6cae88e...`) |
 | `CYCLE-20261027-AE7Z` | `2026-10-27T18:43:33.887Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4947` | Yes (`3fabbb5c...`) |
 | `CYCLE-20261027-AKX4` | `2026-10-27T18:43:42.568Z` | `rollup/rollup` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4948` | Yes (`bb052258...`) |
+| `CYCLE-20261027-V1JV` | `2026-10-27T18:59:37.243Z` | `facebook/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4949` | Yes (`ab8cdc68...`) |
+| `CYCLE-20261027-V36O` | `2026-10-27T18:59:39.360Z` | `ccore/Qwen3.5-4B-3D-Coder` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4950, Rule 4951` | Yes (`ce3a5161...`) |
+| `CYCLE-20261027-V4SF` | `2026-10-27T18:59:41.439Z` | `cypress-io/cypress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4952` | Yes (`0d32cc13...`) |
+| `CYCLE-20261027-V63F` | `2026-10-27T18:59:43.131Z` | `czy0729/Bangumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4953` | Yes (`c08c8944...`) |
+| `CYCLE-20261027-VASH` | `2026-10-27T18:59:49.217Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md` | Yes (`4a37f099...`) |

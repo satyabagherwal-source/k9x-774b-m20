@@ -1923,10 +1923,10 @@
     "repository": "cypress-io/cypress",
     "platform": "github",
     "sourceUrl": "https://github.com/cypress-io/cypress",
-    "sourceVersion": "e20ef17f",
+    "sourceVersion": "75df26c3",
     "license": "MIT",
-    "contentHash": "d7af5ecd62ce05243eb7b068fc3c367656365e83ce4498b035be7525820b8ae4",
-    "lastHarvestedAt": "2026-10-23T10:54:22.193Z",
+    "contentHash": "0d32cc134e726f9923ddefa1078e62bdb3aec75bb109cbfc2d9618c1122bc806",
+    "lastHarvestedAt": "2026-10-27T18:59:41.442Z",
     "learningId": "learn-github-cypress-io-cypress"
   },
   "syntax-tree-unist": {
@@ -3113,10 +3113,10 @@
     "repository": "neuron-core/neuron-ai",
     "platform": "github",
     "sourceUrl": "https://github.com/neuron-core/neuron-ai",
-    "sourceVersion": "14ecdbc0",
+    "sourceVersion": "179c6818",
     "license": "MIT",
-    "contentHash": "f46b1bdbfd718a66bb7b93e623fd9e46c743d47d701e41324fafdf5c27fb28eb",
-    "lastHarvestedAt": "2026-10-25T15:38:22.591Z",
+    "contentHash": "4a37f099d616bbcb9852285d51c0e0525e1bc88539950fa07b44753a9418a1b9",
+    "lastHarvestedAt": "2026-10-27T18:59:49.220Z",
     "learningId": "learn-github-neuron-core-neuron-ai"
   },
   "geekyants-nativebase": {
@@ -5303,10 +5303,10 @@
     "repository": "czy0729/Bangumi",
     "platform": "github",
     "sourceUrl": "https://github.com/czy0729/Bangumi",
-    "sourceVersion": "c4e2dcf8",
+    "sourceVersion": "f58a6465",
     "license": "MIT",
-    "contentHash": "1e27c58337c8bda86da3017de7fa5a6ab91091d8d342d3921d63bdf65e0469a0",
-    "lastHarvestedAt": "2026-10-25T04:56:59.302Z",
+    "contentHash": "c08c894466bfa404309b1a4c072268fca4d63d3e122b34cc7dba534dc0403b0b",
+    "lastHarvestedAt": "2026-10-27T18:59:43.134Z",
     "learningId": "learn-github-czy0729-bangumi"
   },
   "aquasecurity-tfsec": {
@@ -7663,10 +7663,10 @@
     "repository": "facebook/folly",
     "platform": "github",
     "sourceUrl": "https://github.com/facebook/folly",
-    "sourceVersion": "b11ea7ea",
+    "sourceVersion": "595b4e62",
     "license": "Apache-2.0",
-    "contentHash": "ba6657c376819353ff545a1e8ffd286f9ae308308ad8ba948779da27ef9e91e4",
-    "lastHarvestedAt": "2026-10-26T00:41:52.311Z",
+    "contentHash": "ab8cdc682d73881ceaed44800a1f38e401b130b89bef8b97aea5ddd65e6ce231",
+    "lastHarvestedAt": "2026-10-27T18:59:37.246Z",
     "learningId": "learn-github-facebook-folly"
   },
   "kotlin-kmp-production-sample": {
@@ -11288,5 +11288,15 @@
     "contentHash": "2e7b999e76114db71fad2f988fe84c1756d93d1fc49867bac39e6b731a180dd9",
     "lastHarvestedAt": "2026-10-27T17:16:49.274Z",
     "learningId": "learn-github-chongdashu-unreal-mcp"
+  },
+  "hf-ccore-qwen3.5-4b-3d-coder": {
+    "repository": "ccore/Qwen3.5-4B-3D-Coder",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
+    "sourceVersion": "hf-ccore-qwen3.5-4b-3d-coder",
+    "license": "Open-Source",
+    "contentHash": "ce3a5161a76b514b0941a139522e7f2e7fc0eca6ffdf06c602f3f493fdde5bad",
+    "lastHarvestedAt": "2026-10-27T18:59:39.363Z",
+    "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder"
   }
 }
