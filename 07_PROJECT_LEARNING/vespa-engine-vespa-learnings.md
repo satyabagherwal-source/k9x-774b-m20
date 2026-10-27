@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source**: github ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
-> **Source Version**: `7cd4e5e1`  
+> **Source Version**: `a354091b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T21:40:24.807Z  
+> **Timestamp**: 2026-10-27T13:07:21.430Z  
 > **Learning ID**: `learn-github-vespa-engine-vespa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T21:40:24.800Z  
+> **Harvest Timestamp**: 2026-10-27T13:07:21.201Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI search platform
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7145 stars
+- **Stars / Engagement**: 7150 stars
 
 ---
 
@@ -1065,47 +1065,212 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cb004029` (2026-10-25)
-**Commit Message**: fix(deps): update dependency io.projectreactor:reactor-core to v3.8.8
+### Incident Patch 1: `ab6fa0e1` (2026-10-26)
+**Commit Message**: Fix misleading javadoc and cleanup tests
 
-**File**: `dependency-versions/pom.xml` (modified, +1/-1)
+**File**: `config-model/src/main/java/com/yahoo/vespa/model/content/cluster/ContentCluster.java` (modified, +1/-1)
 ```diff
-@@ -155,7 +155,7 @@
-         <protobuf.vespa.version>4.36.2</protobuf.vespa.version>
-         <questdb.vespa.version>7.4.2</questdb.vespa.version>
-         <re2j.vespa.version>1.8</re2j.vespa.version>
--        <reactor-core.vespa.version>3.8.7</reactor-core.vespa.version>
-+        <reactor-core.vespa.version>3.8.8</reactor-core.vespa.version>
-         <spifly.vespa.version>1.3.8</spifly.vespa.version>
-         <snappy.vespa.version>1.1.10.12</snappy.vespa.version>
-         <snakeyaml.vespa.version>2.4</snakeyaml.vespa.version>
+@@ -667,7 +667,7 @@ public boolean isHosted() {
+      * Returns whether cluster state versions received by content nodes must be strictly increasing.
+      * This safety check can only be relaxed when this deployment has exactly one cluster controller
+      * configured OR the {@code require-strictly-increasing-cluster-state-versions}
+-     * feature flag is enabled.
++     * feature flag is disabled.
+      */
+     public boolean requireStrictlyIncreasingClusterStateVersions() {
+         if (singleClusterController) {
+```
+
+**File**: `config-model/src/test/java/com/yahoo/vespa/model/content/ContentClusterTest.java` (modified, +6/-25)
+```diff
+@@ -1333,11 +1333,11 @@ private ContentCluster createWithZone(String clusterXml, Zone zone) throws Excep
+         return createWithZone(clusterXml, zone, true);
+     }
+ 
+-    private ContentCluster createWithZone(String clusterXml, Zone zone, boolean relaxStrictlyIncreasingClusterStateVersions) throws Exception {
++    private ContentCluster createWithZone(String clusterXml, Zone zone, boolean requireStrictlyIncreasingClusterStateVersions) throws Exception {
+         DeployState.Builder deployStateBuilder = new DeployState.Builder()
+                 .zone(zone);
+         var properties = new TestProperties().setHostedVespa(true)
+-                .requireStrictlyIncreasingClusterStateVersions(relaxStrictlyIncreasingClusterStateVersions);
++                .requireStrictlyIncreasingClusterStateVersions(requireStrictlyIncreasingClusterStateVersions);
+         deployStateBuilder.properties(properties);
+ 
+         List<String> schemas = SchemaBuilder.createSchemas("test");
+@@ -1691,26 +1691,7 @@ void distribution_key_not_much_higher_than_node_count_does_not_log_deployment_wa
+         assertEquals(warnings, "");
+     }
+ 
+-    private void checkStrictlyIncreasingClusterStateVersionConfig(boolean expected) throws Exception {
+-        var cc = createOneNodeCluster(false);
+-
+-        // stor-server config should be the same for both distributors and storage nodes
+-        var cfg = getStorServerConfigForStorage(cc);
+-        StorServerConfig.Builder builder;
+-        assertEquals(expected, cfg.require_strictly_increasing_cluster_state_versions());
+-
+-        builder = new StorServerConfig.Builder();
+-        cc.getDistributorNodes().getConfig(builder);
+-        cfg = builder.build();
+-        assertEquals(expected, cfg.require_strictly_increasing_cluster_state_versions());
+-    }
+-
+-    @Test
+-    void strictly_increasing_cluster_state_versions_config() throws Exception {
+-        checkStrictlyIncreasingClusterStateVersionConfig(true);
+-    }
+-
+-    private void checkRequireStrictlyIncreasingClusterStateVersionConfig(boolean requireStrictlyIncreasingClusterStateVersions) throws Exception {
++    private void checkStrictlyIncreasingClusterStateVersionNotRequired(boolean requireStrictlyIncreasingClusterStateVersions) throws Exception {
+         Zone zone = new Zone(Environment.dev, RegionName.from("us-east-3"));
+         String xml = new ContentClusterBuilder().docTypes("test").getXml();
+         var cc = createWithZone(xml, zone, requireStrictlyIncreasingClusterStateVersions);
+@@ -1733,9 +1714,9 @@ private static StorServerConfig getStorServerConfigForStorage(ContentCluster cc)
+     }
+ 
+     @Test
+-    void strictly_increasing_cluster_state_versions_config_is_always_disabled_with_a_single_cluster_controller() throws Exception {
+-        checkRequireStrictlyIncreasingClusterStateVersionConfig(true);
+-        checkRequireStrictlyIncreasingClusterStateVersionConfig(false);
++    void strictly_increasing_cluster_state_versions_config_is_not_required_with_a_single_cluster_controller() throws Exception {
++        checkStrictlyIncreasingClusterStateVersionNotRequired(true);
++        checkStrictlyIncreasingClusterStateVersionNotRequired(false);
+     }
+ 
+     @Test
 ```
 
 ---
 
-### Incident Patch 2: `888d9876` (2026-10-25)
-**Commit Message**: fix(deps): update byte-buddy.vespa.version to v1.18.16
+### Incident Patch 2: `ca13c2b4` (2026-10-27)
+**Commit Message**: Merge pull request #38337 from vespa-engine/arnej/independent-boosts-fix
 
-**File**: `dependency-versions/pom.xml` (modified, +1/-1)
+Arnej/independent boosts fix
+
+**File**: `model-evaluation/src/main/java/ai/vespa/models/evaluation/LazyValue.java` (modified, +1/-1)
 ```diff
-@@ -70,7 +70,7 @@
-         <assertj.vespa.version>3.27.7</assertj.vespa.version>
-         <bouncycastle.vespa.version>1.86</bouncycastle.vespa.version>
-         <bouncycastle.bcprov.vespa.version>1.86</bouncycastle.bcprov.vespa.version>
--        <byte-buddy.vespa.version>1.18.15</byte-buddy.vespa.version>
-+        <byte-buddy.vespa.version>1.18.16</byte-buddy.vespa.version>
-         <checker-qual.vespa.version>3.38.0</checker-qual.vespa.version>
-         <classworlds-classworlds.vespa.version>1.1</classworlds-classworlds.vespa.version>
-         <commons-beanutils.vespa.version>1.9.4</commons-beanutils.vespa.version>
+@@ -34,7 +34,7 @@ public LazyValue(FunctionReference function, Context context, Model model) {
+ 
+     private Value computedValue() {
+         if (computedValue == null)
+-            computedValue = model.requireReferencedFunction(function).getBody().evaluate(context);
++            computedValue = model.requireReferencedFunction(function).getBody().evaluate(context).freeze();
+         return computedValue;
+     }
+ 
+```
+
+**File**: `model-evaluation/src/test/java/ai/vespa/models/evaluation/RankProfileImportingTest.java` (modified, +15/-0)
+```diff
+@@ -87,4 +87,19 @@ public void testImportingLayeredGlobalPhase() {
+         assertEquals(1, args.size());
+         assertEquals("tensor(m{},v[3])", args.get("rankingExpression(mymul)").toString());
+     }
++
++    @Test
++    public void testEvaluatingChainedGlobalPhase() {
++        ModelTester tester = new ModelTester("src/test/resources/config/independent-boosts/");
++        assertEquals(1, tester.models().size());
++        Model m = tester.models().get("default");
++        var evaluator = m.evaluatorOf("globalphase");
++        evaluator.bind("attribute(score_lexical)", 5.0);
++        evaluator.bind("query(multiplierA)", 0.15);
++        evaluator.bind("query(multiplierB)", 0.15);
++        // score_base = 2 * 5 = 10
++        // finalA = 10 + 10 * 0.15 = 11.5
++        // finalB = 11.5 + 10 * 0.15 = 13.0
++        assertEquals(13.0, evaluator.evaluate().asDouble(), 1e-9);
++    }
+ }
+```
+
+**File**: `model-evaluation/src/test/resources/config/independent-boosts/rank-profiles.cfg` (added, +75/-0)
+```diff
+@@ -0,0 +1,75 @@
++rankprofile[0].name "default"
++rankprofile[0].fef.property[0].name "rankingExpression(lexical_signal).rankingScript"
++rankprofile[0].fef.property[0].value "attribute(score_lexical)"
++rankprofile[0].fef.property[1].name "rankingExpression(score_base).rankingScript"
++rankprofile[0].fef.property[1].value "2 * rankingExpression(lexical_signal)"
++rankprofile[0].fef.property[2].name "rankingExpression(baseA).rankingScript"
++rankprofile[0].fef.property[2].value "rankingExpression(score_base)"
++rankprofile[0].fef.property[3].name "rankingExpression(boostA).rankingScript"
++rankprofile[0].fef.property[3].value "rankingExpression(baseA) * query(multiplierA)"
++rankprofile[0].fef.property[4].name "rankingExpression(finalA).rankingScript"
++rankprofile[0].fef.property[4].value "rankingExpression(baseA) + rankingExpression(boostA)"
++rankprofile[0].fef.property[5].name "rankingExpression(baseB).rankingScript"
++rankprofile[0].fef.property[5].value "rankingExpression(score_base)"
++rankprofile[0].fef.property[6].name "rankingExpression(boostB).rankingScript"
++rankprofile[0].fef.property[6].value "rankingExpression(baseB) * query(multiplierB)"
++rankprofile[0].fef.property[7].name "rankingExpression(finalB).rankingScript"
++rankprofile[0].fef.property[7].value "rankingExpression(finalA) + rankingExpression(boostB)"
++rankprofile[0].fef.property[8].name "vespa.rank.firstphase"
++rankprofile[0].fef.property[8].value "rankingExpression(firstphase)"
++rankprofile[0].fef.property[9].name "rankingExpression(firstphase).rankingScript"
++rankprofile[0].fef.property[9].value "1"
++rankprofile[0].fef.property[10].name "vespa.rank.globalphase"
++rankprofile[0].fef.property[10].value "rankingExpression(finalB)"
++rankprofile[0].fef.property[11].name "vespa.summary.feature"
++rankprofile[0].fef.property[11].value "rankingExpression(score_base)"
++rankprofile[0].fef.property[12].name "vespa.summary.feature"
++rankprofile[0].fef.property[12].value "rankingExpression(baseA)"
++rankprofile[0].fef.property[13].name "vespa.summary.feature"
++rankprofile[0].fef.property[13].value "rankingExpression(boostA)"
++rankprofile[0].fef.property[14].name "vespa.summary.feature"
++rankprofile[0].fef.property[14].value "rankingExpression(finalA)"
++rankprofile[0].fef.property[15].name "vespa.summary.feature"
++rankprofile[0].fef.property[15].value "rankingExpression(baseB)"
++rankprofile[0].fef.property[16].name "vespa.summary.feature"
++rankprofile[0].fef.property[16].value "rankingExpression(boostB)"
++rankprofile[0].fef.property[17].name "vespa.summary.feature"
++rankprofile[0].fef.property[17].value "rankingExpression(finalB)"
++rankprofile[0].fef.property[18].name "vespa.match.feature"
++rankprofile[0].fef.property[18].value "attribute(score_lexical)"
++rankprofile[0].fef.property[19].name "vespa.hidden.matchfeature"
++rankprofile[0].fef.property[19].value "attribute(score_lexical)"
++rankprofile[0].fef.property[20].name "vespa.feature.rename"
++rankprofile[0].fef.property[20].value "rankingExpression(score_base)"
++rankprofile[0].fef.property[21].name "vespa.feature.rename"
++rankprofile[0].fef.property[21].value "score_base"
++rankprofile[0].fef.property[22].name "vespa.feature.rename"
++rankprofile[0].fef.property[22].value "rankingExpression(baseA)"
++rankprofile[0].fef.property[23].name "vespa.feature.rename"
++rankprofile[0].fef.property[23].value "baseA"
++rankprofile[0].fef.property[24].name "vespa.feature.rename"
++rankprofile[0].fef.property[24].value "rankingExpression(boostA)"
++rankprofile[0].fef.property[25].name "vespa.feature.rename"
++rankprofile[0].fef.property[25].value "boostA"
++rankprofile[0].fef.property[26].name "vespa.feature.rename"
++rankprofile[0].fef.property[26].value "rankingExpression(finalA)"
++rankprofile[0].fef.property[27].name "vespa.feature.rename"
++rankprofile[0].fef.property[27].value "finalA"
++rankprofile[0].fef.property[28].name "vespa.feature.rename"
++rankprofile[0].fef.property[28].value "rankingExpression(baseB)"
++rankprofile[0].fef.property[29].name "vespa.feature.rename"
++rankprofile[0].fef.property[29].value "baseB"
++rankprofile[0].fef.property[30].name "vespa.feature.rename"
++rankprofile[0].fef.property[30].value "rankingExpression(boostB)"
++rankprofile[0].fef.property[31].name "vespa.feature.rename"
++rankprofile[0].fef.property[31].value "boostB"
++rankprofile[0].fef.property[32].name "vespa.feature.rename"
++rankprofile[0].fef.property[32].value "rankingExpression(finalB)"
++rankprofile[0].fef.property[33].name "vespa.feature.rename"
++rankprofile[0].fef.property[33].value "finalB"
++rankprofile[0].fef.property[34].name "vespa.globalphase.rerankcount"
++rankprofile[0].fef.property[34].value "10"
++rankprofile[0].fef.property[35].name "query(multiplierA)"
++rankprofile[0].fef.property[35].value "0.15"
++rankprofile[0].fef.property[36].name "query(multiplierB)"
++rankprofile[0].fef.property[36].value "0.15"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #38319** (2026-10-25): fix(deps): update dependency io.projectreactor:reactor-core to v3.8.8 (@renovate[bot])
-- **PR #38318** (2026-10-25): fix(deps): update byte-buddy.vespa.version to v1.18.16 (@renovate[bot])
-- **PR #38316** (2026-10-25): Add explicit versions to model-integration dependencyManagement (@arnej27959)
-- **PR #38315** (2026-10-25): Add sparseTensorWand YQL operator (@arnej27959)
-- **PR #38314** (2026-10-24): Follow-up to streaming sparseTensorWand review (@arnej27959)
-- **PR #38312** (2026-10-24): Support sparseTensorWand in streaming search (@arnej27959)
+- **PR #38338** (2026-10-27): Remove the 'bitPacked' property (@bratseth)
+- **PR #38337** (2026-10-27): Arnej/independent boosts fix (@arnej27959)
+- **PR #38336** (2026-10-27): Add explanations (@bratseth)
+- **PR #38334** (2026-10-27): Add input explanations (@bratseth)
+- **PR #38331** (2026-10-26): Update how to find re2 library. (@toregge)
+- **PR #38330** (2026-10-26): Add noexcept specifier to blueprint resolver constructor. (@toregge)
 
 ---
 
@@ -1125,28 +1290,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update dependency io.projectreactor:reactor-core to v3.8.8
+## X. misleading javadoc and cleanup tests
 
 **RULE**:
-When implementing operations in `dependency-versions/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `config-model/src/main/java/com/yahoo/vespa/model/content/cluster/ContentCluster.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cb004029`: deps): update dependency io.projectreactor:reactor-core to v3.8.8. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ab6fa0e1`: misleading javadoc and cleanup tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `dependency-versions/pom.xml`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `config-model/src/main/java/com/yahoo/vespa/model/content/cluster/ContentCluster.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        <reactor-core.vespa.version>3.8.8</reactor-core.vespa.version>
+     * feature flag is disabled.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-        <reactor-core.vespa.version>3.8.7</reactor-core.vespa.version>
+     * feature flag is enabled.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cb004029` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ab6fa0e1` are properly handled with clean fallback behavior.

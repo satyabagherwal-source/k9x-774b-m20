@@ -5311,3 +5311,5 @@ Every entry in this ledger must capture:
 | `learn-github-hookdeck-hookdeck-cli` | `https://github.com/hookdeck/hookdeck-cli` | `c117a4d8` | Multi-dimensional audit evidence | 2026-10-27T13:03:40.185Z |
 | `learn-github-alex2yang97-yahoo-finance-mcp` | `https://github.com/Alex2Yang97/yahoo-finance-mcp` | `b9c17654` | Multi-dimensional audit evidence | 2026-10-27T13:03:42.055Z |
 | `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `a8e11030` | Multi-dimensional audit evidence | 2026-10-27T13:03:45.506Z |
+| `learn-github-cloudscape-design-components` | `https://github.com/cloudscape-design/components` | `6997ceb2` | Multi-dimensional audit evidence | 2026-10-27T13:07:07.413Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `a354091b` | Multi-dimensional audit evidence | 2026-10-27T13:07:21.844Z |

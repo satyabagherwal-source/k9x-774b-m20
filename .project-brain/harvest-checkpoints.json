@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T13:03:45.516Z",
+  "last_updated": "2026-10-27T13:07:21.853Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8496,14 +8496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cloudscape-design-components",
-      "content_hash": "49e4e5efa691f8d8000f69e470e1a8d7e50dbd343c430264b81927800a7584f8",
-      "verified_at": "2026-10-25T09:38:23.297Z",
+      "content_hash": "b33f093a402bbe0cd35c202b7ccb36bdda6410751e28a9750c436cc91a87b967",
+      "verified_at": "2026-10-27T13:07:07.422Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T09:38:23.297Z"
+      "last_updated": "2026-10-27T13:07:07.422Z"
     },
     "async-rs/async-std": {
       "repository": "async-rs/async-std",
@@ -8931,14 +8931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vespa-engine-vespa",
-      "content_hash": "f601101d9b371aedc80636428d4211c268b0c888c73d9838bbe3a97c015e073e",
-      "verified_at": "2026-10-25T21:40:25.201Z",
+      "content_hash": "ca172c0e033c47c0600ea4926b8592b40fe3df9011df6a8439e93b7b4231cce1",
+      "verified_at": "2026-10-27T13:07:21.853Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T21:40:25.201Z"
+      "last_updated": "2026-10-27T13:07:21.853Z"
     },
     "radix-ui/themes": {
       "repository": "radix-ui/themes",

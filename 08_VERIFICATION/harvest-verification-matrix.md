@@ -5302,3 +5302,5 @@
 | `CYCLE-20261027-5AC5` | `2026-10-27T13:03:40.181Z` | `hookdeck/hookdeck-cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4782` | Yes (`99b933a2...`) |
 | `CYCLE-20261027-5BS3` | `2026-10-27T13:03:42.051Z` | `Alex2Yang97/yahoo-finance-mcp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4783` | Yes (`ac6b36b5...`) |
 | `CYCLE-20261027-5EFZ` | `2026-10-27T13:03:45.503Z` | `react-hook-form/react-hook-form` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4784` | Yes (`dc13ba17...`) |
+| `CYCLE-20261027-9Q8I` | `2026-10-27T13:07:07.410Z` | `cloudscape-design/components` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4785` | Yes (`b33f093a...`) |
+| `CYCLE-20261027-A1DC` | `2026-10-27T13:07:21.840Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4786` | Yes (`ca172c0e...`) |

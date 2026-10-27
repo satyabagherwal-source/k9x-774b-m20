@@ -5583,10 +5583,10 @@
     "repository": "cloudscape-design/components",
     "platform": "github",
     "sourceUrl": "https://github.com/cloudscape-design/components",
-    "sourceVersion": "1f35242c",
+    "sourceVersion": "6997ceb2",
     "license": "Apache-2.0",
-    "contentHash": "49e4e5efa691f8d8000f69e470e1a8d7e50dbd343c430264b81927800a7584f8",
-    "lastHarvestedAt": "2026-10-25T09:38:23.285Z",
+    "contentHash": "b33f093a402bbe0cd35c202b7ccb36bdda6410751e28a9750c436cc91a87b967",
+    "lastHarvestedAt": "2026-10-27T13:07:07.413Z",
     "learningId": "learn-github-cloudscape-design-components"
   },
   "async-rs-async-std": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "7cd4e5e1",
+    "sourceVersion": "a354091b",
     "license": "Apache-2.0",
-    "contentHash": "f601101d9b371aedc80636428d4211c268b0c888c73d9838bbe3a97c015e073e",
-    "lastHarvestedAt": "2026-10-25T21:40:25.193Z",
+    "contentHash": "ca172c0e033c47c0600ea4926b8592b40fe3df9011df6a8439e93b7b4231cce1",
+    "lastHarvestedAt": "2026-10-27T13:07:21.844Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {

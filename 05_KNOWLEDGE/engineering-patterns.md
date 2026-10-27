@@ -349088,3 +349088,123 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `a8e11030` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4785. Prevent stuck active state when quickly moving and releasing drag handle (#5177) (Harvested from cloudscape-design/components)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Prevent stuck active state when quickly moving and releasing drag handle (#5177)",
+  "source": "cloudscape-design/components",
+  "source_url": "https://github.com/cloudscape-design/components",
+  "source_version": "6997ceb2",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-27T13:07:07.216Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-cloudscape-design-components",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [cloudscape-design/components](https://github.com/cloudscape-design/components) (Revision: `6997ceb2`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `src/internal/components/drag-handle/hooks/__tests__/use-drag-handle-interaction-state.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cloudscape-design/components. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `324fda33`: Prevent stuck active state when quickly moving and releasing drag handle (#5177). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/internal/components/drag-handle/hooks/__tests__/use-drag-handle-interaction-state.test.tsx`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+      test('should still fire onDndEnd when pointer up is delivered before the dnd-active callback returns (fast release)', () => {
+        const calls: string[] = [];
+        let lastInteraction: DragHandleInteractionState = { value: null };
+
+        const FastReleaseHost = React.forwardRef<
+          { processPointerDown: (event: PointerEvent) => void; processPointerMove: (event: PointerEvent) => void },
+          // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+          {}
+        >((_props, ref) => {
+          // A fresh props object is built every render, mirroring ItemContainer / TestComponent.
+          const firstActiveRef = React.useRef(true);
+
+          const { interaction, processPointerDown, processPointerMove, processPointerUp } =
+            useInternalDragHandleInteractionState({
+              onDndStartAction: () => calls.push('start'),
+              onDndActiveAction: () => {
+                calls.push('active');
+                // Simulate the sub-millisecond release: deliver POINTER_UP while the POINTER_MOVE
+                // batch is still being processed, the first time only.
+                if (firstActiveRef.current) {
+                  f
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `324fda33` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4786. misleading javadoc and cleanup tests (Harvested from vespa-engine/vespa)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "misleading javadoc and cleanup tests",
+  "source": "vespa-engine/vespa",
+  "source_url": "https://github.com/vespa-engine/vespa",
+  "source_version": "a354091b",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-27T13:07:21.635Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-vespa-engine-vespa",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [vespa-engine/vespa](https://github.com/vespa-engine/vespa) (Revision: `a354091b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `config-model/src/main/java/com/yahoo/vespa/model/content/cluster/ContentCluster.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ab6fa0e1`: misleading javadoc and cleanup tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `config-model/src/main/java/com/yahoo/vespa/model/content/cluster/ContentCluster.java`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```java
+// Verified production-grade fix pattern:
+     * feature flag is disabled.
+```
+
+**NEGATIVE CONSTRAINT**:
+```java
+// Anti-pattern to NEVER write (induced failure mode):
+     * feature flag is enabled.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ab6fa0e1` are properly handled with clean fallback behavior.

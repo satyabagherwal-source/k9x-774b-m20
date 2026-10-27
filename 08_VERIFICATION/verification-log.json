@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-LL03",
-    "timestamp": "2026-10-25T12:17:00.819Z",
-    "repository": "Qwen/Qwen-Image-2.1-Turbo",
-    "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-    "contentHash": "fcde7db5d868d2fc77a045db93857a2bf17bfe6401193cced78757c7bc917662",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-LO1E",
-    "timestamp": "2026-10-25T12:17:04.754Z",
-    "repository": "lancedb/lancedb",
-    "learningId": "learn-github-lancedb-lancedb",
-    "contentHash": "17690d987778ac08711c9f138108b30e3858ec84582198a8d93977d2e2730ad8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-TAZL",
     "timestamp": "2026-10-25T12:23:01.089Z",
     "repository": "fastapi/fastapi",
@@ -7490,6 +7460,36 @@
     "repository": "react-hook-form/react-hook-form",
     "learningId": "learn-github-react-hook-form-react-hook-form",
     "contentHash": "dc13ba179e7657b7bfdaccfeb6caccb52dbf9e3db11848d59a1c1d6183b27a76",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-9Q8I",
+    "timestamp": "2026-10-27T13:07:07.410Z",
+    "repository": "cloudscape-design/components",
+    "learningId": "learn-github-cloudscape-design-components",
+    "contentHash": "b33f093a402bbe0cd35c202b7ccb36bdda6410751e28a9750c436cc91a87b967",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-A1DC",
+    "timestamp": "2026-10-27T13:07:21.840Z",
+    "repository": "vespa-engine/vespa",
+    "learningId": "learn-github-vespa-engine-vespa",
+    "contentHash": "ca172c0e033c47c0600ea4926b8592b40fe3df9011df6a8439e93b7b4231cce1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
