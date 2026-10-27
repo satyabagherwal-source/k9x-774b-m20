@@ -2023,10 +2023,10 @@
     "repository": "nitrojs/nitro",
     "platform": "github",
     "sourceUrl": "https://github.com/unjs/nitro",
-    "sourceVersion": "6bccaad1",
+    "sourceVersion": "20a88507",
     "license": "NOASSERTION",
-    "contentHash": "af195f25875f4c5e73093ec56641d1a9df1b7ce546fe8cf3109276d0ba13e34a",
-    "lastHarvestedAt": "2026-10-24T19:44:12.400Z",
+    "contentHash": "0163a5da843cf9123f78fb46003f7e297a14883005ec3934ea7ce2f89996d682",
+    "lastHarvestedAt": "2026-10-27T20:45:18.882Z",
     "learningId": "learn-github-nitrojs-nitro"
   },
   "unjs-h3": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "2b5ab29c",
+    "sourceVersion": "a80937a2",
     "license": "Apache-2.0",
-    "contentHash": "9a9df49b4d8d50c63ff5b4fec3c1560d108c08489fefadd4109d5861ab0abca3",
-    "lastHarvestedAt": "2026-10-27T17:05:12.228Z",
+    "contentHash": "f134c334fdb4a8aef0c09471bd3f3ecbeecba011368e60ada45fab30e6660445",
+    "lastHarvestedAt": "2026-10-27T20:45:24.859Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "05f166aa",
+    "sourceVersion": "60cc748f",
     "license": "NOASSERTION",
-    "contentHash": "d79645254cd6a18d234ea38338a1c8c8548f6a53ea3ecab5834ad95ef3418ac2",
-    "lastHarvestedAt": "2026-10-26T17:58:30.307Z",
+    "contentHash": "ebb8d099247296685a6cf40149b014d2e34a35e0868838bca71377055869e92d",
+    "lastHarvestedAt": "2026-10-27T20:45:27.339Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {

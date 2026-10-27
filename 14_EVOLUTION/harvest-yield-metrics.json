@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T20:38:36.319Z",
-  "total_cycles_completed": 5508,
-  "total_learnings_persisted": 5508,
-  "total_rules_promoted": 4907,
+  "last_updated": "2026-10-27T20:45:27.344Z",
+  "total_cycles_completed": 5511,
+  "total_learnings_persisted": 5511,
+  "total_rules_promoted": 4910,
   "history": [
-    {
-      "timestamp": "2026-10-27T13:35:08.426Z",
-      "repository": "nezhahq/nezha",
-      "learningId": "learn-github-nezhahq-nezha",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:35:09.557Z",
-      "repository": "urllib3/urllib3",
-      "learningId": "learn-github-urllib3-urllib3",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:35:11.680Z",
-      "repository": "react-navigation/react-navigation",
-      "learningId": "learn-github-react-navigation-react-navigation",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T13:35:14.807Z",
       "repository": "PeerDB-io/peerdb",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-27T20:38:36.319Z",
       "repository": "zama-ai/tfhe-rs",
       "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T20:45:18.887Z",
+      "repository": "nitrojs/nitro",
+      "learningId": "learn-github-nitrojs-nitro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T20:45:24.864Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T20:45:27.344Z",
+      "repository": "MaterializeInc/materialize",
+      "learningId": "learn-github-materializeinc-materialize",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

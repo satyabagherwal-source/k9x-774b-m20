@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `2b5ab29c`  
+> **Source Version**: `a80937a2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T17:05:11.966Z  
+> **Timestamp**: 2026-10-27T20:45:24.443Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T17:05:11.338Z  
+> **Harvest Timestamp**: 2026-10-27T20:45:23.194Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25718 stars
+- **Stars / Engagement**: 25719 stars
 
 ---
 
@@ -1259,11 +1259,11 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #49654** (2026-10-27): **Add CRD-managed SPIRE registration and shared-root HA**
+  *Symptoms*: 
+
 - **Issue #49648** (2026-10-27): **test commit: do not merge**
   *Symptoms*: if joe sees this message : do not the commit :>  Please ensure your pull request adheres to the following guidelines:  - [ ] For first time contributors, read [Submitting a pull request] - [ ] All code is covered by unit and/or runtime tests where feasible. - [ ] All commits contain a well written commit description including a title,       description and a `Fixes: #XXX` line if the commit addresses a particular       GitHub issue. - [ ] If your commit description contains a `Fixes: <commit-id>` tag, then       please add the commit author[s] as reviewer[s] to this issue. - [ ] All commits are signed off. See the section [Developer’s Certificate of Origin] - [ ] Provide a title or release-note blurb suitable for the release notes. - [ ] Describe how you have tested this change in a live environment such as       [kind], if applicable. - [ ] Disclose use of machine learning models (including LLMs and other generative AI)       in accordance with the [Cilium AI Policy], and indicate the rating using       [AI Influence Level].       Example: "This PR was prepared with AIL:N. I personally checked X." - [ ] Thanks for contributing!  <!-- Description of change -->  Fixes: #issue-number  ```release-note <!-- Enter the release note text here or remove this release-note section from your PR description. Do NOT put an "empty" release note here --> ```  [AI Influence Level]: https://danielmiessler.com/blog/ai-influence-level-ail [Cilium AI Policy]: https://github.com/cilium/community/
-
-- **Issue #49645** (2026-10-27): **l2announcer: Fix deadlock between stop() and leader events**
-  *Symptoms*: The L2 announcer's main loop can deadlock: stop() waits for a service's leader election to exit, while the election waits for the main loop to read its last event from the full 16-slot channel. The agent then announces no new IP until it restarts. This made GatewayHTTPListenerIsolation fail in 6 of the last 103 Gateway API conformance push runs on main.  This PR fixes it by having stop() close a channel that the election selects on next to the send. On agent shutdown, the elections stop before the main loop, so their events still arrive and withdraw the entries. It also drops leader events that arrive after the announcer replaced their service, which could otherwise remove the entries of the new one.  With this PR, the Gateway API conformance workflow passed 10 runs out of 10 on all four legs of its matrix: [1], [2], [3], [4], [5], [6], [7], [8], [9], [10].  [1]: https://github.com/cilium/cilium/actions/runs/40515410571 [2]: https://github.com/cilium/cilium/actions/runs/40515423460 [3]: https://github.com/cilium/cilium/actions/runs/40515435706 [4]: https://github.com/cilium/cilium/actions/runs/40515447532 [5]: https://github.com/cilium/cilium/actions/runs/40515459342 [6]: https://github.com/cilium/cilium/actions/runs/40515471701 [7]: https://github.com/cilium/cilium/actions/runs/40515484569 [8]: https://github.com/cilium/cilium/actions/runs/40515497992 [9]: https://github.com/cilium/cilium/actions/runs/40515510582 [10]: https://github.com/cilium/cilium/actions/runs/4051552362
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1280,435 +1280,145 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e64d9c5f` (2026-10-27)
-**Commit Message**: l2announcer: Fix deadlock between stop() and leader events
+### Incident Patch 1: `4584f51a` (2026-10-23)
+**Commit Message**: ipam/resynctest: generalize the resync race helper
 
-stop() runs on the main loop and waits for the service's leader
-election to exit, but the election sends an event on its way out, on a
-16-slot channel that only the main loop reads. Once the channel fills
-up, for example when deleting 17 selected services at once, the main
-loop hangs and the agent announces no new IP until it restarts. This
-made GatewayHTTPListenerIsolation fail in 6 of the last 103 Gateway API
-conformance push runs on main, with the agent stuck in:
+Rename RunDuringFullResync to RunDuringResync because the helper can also
+exercise partial refreshes through a resyncer adapter.
 
-  goroutine 677 [chan receive, 4 minutes]:
-  github.com/cilium/cilium/pkg/l2announcer.(*selectedService).stop(...)
+This lays the foundation for further testing in the subsequent commits.
 
-This commit fixes it by having stop() close a channel that the election
-selects on next to the send, as stop() already resets the leader state.
-On agent shutdown, the elections stop before the main loop, so their
-events still arrive and withdraw the entries.
+Signed-off-by: Fabio Falzoi <[REDACTED_EMAIL]>
 
-This commit was prepared with AIL:3. I personally checked that a local
-test deleting 17 leading services blocks without this change.
-
-Fixes: 9827f467a9e5 ("Add l2 announcer cell")
-Signed-off-by: André Martins <[REDACTED_EMAIL]>
-
-**File**: `pkg/l2announcer/l2announcer.go` (modified, +16/-5)
+**File**: `pkg/aws/ipam/instances_resync_test.go` (modified, +1/-1)
 ```diff
-@@ -878,6 +878,7 @@ func (l2a *L2Announcer) addSelectedService(svc *loadbalancer.Service, extAddrs,
- 		byPolicies:        byPolicies,
- 		lock:              l2a.newLeaseLock(svc),
- 		done:              make(chan struct{}),
-+		stopped:           make(chan struct{}),
- 		leaderChannel:     l2a.leaderChannel,
- 		leaseDuration:     leaseDuration,
- 		renewDeadline:     renewDeadline,
-@@ -1216,9 +1217,10 @@ type selectedService struct {
- 	leaderChannel   chan leaderElectionEvent
+@@ -74,7 +74,7 @@ func TestFullResync(t *testing.T) {
+ 		require.NotEmpty(t, addrs)
+ 		released := addrs[0]
  
- 	// Leader election goroutine lifetime management
--	ctx    context.Context
--	cancel context.CancelFunc
--	done   chan struct{}
-+	ctx     context.Context
-+	cancel  context.CancelFunc
-+	done    chan struct{}
-+	stopped chan struct{}
+-		resynctest.RunDuringFullResync(t, mngr, hooked.setHook,
++		resynctest.RunDuringResync(t, mngr, hooked.setHook,
+ 			func() error {
+ 				return ec2api.UnassignPrivateIpAddresses(context.Background(), eniID, []string{released})
+ 			},
+```
+
+**File**: `pkg/ipam/resynctest/resynctest.go` (modified, +27/-19)
+```diff
+@@ -1,8 +1,8 @@
+ // SPDX-License-Identifier: Apache-2.0
+ // Copyright Authors of Cilium
+ 
+-// Package resynctest checks that an IPAM cache update made during a full
+-// cloud API resync survives it.
++// Package resynctest checks that an IPAM cache update made during a full or
++// partial cloud API resync survives it.
+ package resynctest
+ 
+ import (
+@@ -19,14 +19,17 @@ type resyncer interface {
+ 	Resync(ctx context.Context) (time.Time, error)
  }
  
- func (ss *selectedService) serviceLeaderElection(ctx context.Context, health cell.Health) error {
-@@ -1242,15 +1244,22 @@ func (ss *selectedService) serviceLeaderElection(ctx context.Context, health cel
+-// RunDuringFullResync runs cloudSetup and then cacheUpdate inside the cloud fetch window of a full resync.
+-// setHook installs the function the fake cloud API calls when the full resync's fetch returns.
+-func RunDuringFullResync(t *testing.T, mngr resyncer, setHook func(func()), cloudSetup func() error, cacheUpdate func()) {
++// RunDuringResync runs cloudSetup and then cacheUpdate while a full or partial
++// resync holds its cloud snapshot before publishing it. setHook installs the
++// function the fake cloud API calls after capturing the snapshot and before
++// returning it to the resync.
++func RunDuringResync(t *testing.T, mngr resyncer, setHook func(func()), cloudSetup func() error, cacheUpdate func()) {
+ 	t.Helper()
  
- 				Callbacks: leaderelection.LeaderCallbacks{
- 					OnStartedLeading: func(ctx context.Context) {
--						ss.leaderChannel <- leaderElectionEvent{
-+						select {
-+						case ss.leaderChannel <- leaderElectionEvent{
- 							typ:             leaderElectionLeading,
- 							selectedService: ss,
-+						}:
-+						case <-ctx.Done():
- 						}
- 					},
- 					OnStoppedLeading: func() {
--						ss.leaderChannel <- leaderElectionEvent{
-+						// The main loop, the only reader of leaderChannel, waits for this goroutine in stop().
-+						select {
-+						case ss.leaderChannel <- leaderElectionEvent{
- 							typ:             leaderElectionStoppedLeading,
- 							selectedService: ss,
-+						}:
-+						case <-ss.stopped:
- 						}
- 					},
- 				},
-@@ -1261,8 +1270,10 @@ func (ss *selectedService) serviceLeaderElection(ctx context.Context, health cel
+-	// An unguarded cacheUpdate must land within this much of the fetch window for the resync to drop it.
++	// Give an unguarded cacheUpdate time to finish before the delayed snapshot
++	// returns, allowing the resync to expose a stale overwrite.
+ 	const detectionBudget = 2 * time.Second
+-	// Only a locking regression keeps cloudSetup or cacheUpdate waiting this long.
++	// Bound waits for cloud setup, snapshot publication, and the cache update.
+ 	const progressTimeout = 10 * time.Second
  
- func (ss *selectedService) stop() {
- 	if ss.cancel != nil {
-+		close(ss.stopped)
- 		ss.cancel()
- 		<-ss.done
-+		ss.cancel = nil
- 		ss.currentlyLeader = false
+ 	var setupErr error
+@@ -35,7 +38,8 @@ func RunDuringFullResync(t *testing.T, mngr resyncer, setHook func(func()), clou
+ 	done := make(chan struct{})
+ 	hookReturned := make(chan struct{})
+ 
+-	// The resync goroutine runs this hook, so it records what it saw and never calls t itself.
++	// The resync goroutine runs this hook. Record progress here and report
++	// failures from the test goroutine.
+ 	setHook(func() {
+ 		defer close(hookReturned)
+ 		go func() {
+@@ -47,7 +51,7 @@ func RunDuringFullResync(t *testing.T, mngr resyncer, setHook func(func()), clou
+ 			cacheUpdate()
+ 		}()
+ 
+-		// Keep the cloud calls out of the budget below, and never wait on a setup that gave up.
++		// Wait for cloudSetup before starting the cache-update detection window.
+ 		select {
+ 		case <-atCacheUpdate:
+ 		case <-done:
+@@ -57,7 +61,8 @@ func RunDuringFullResync(t *testing.T, mngr resyncer, setHook func(func()), clou
+ 			return
+ 		}
+ 
+-		// A guarded cacheUpdate waits for resyncLock, so this select always spends the whole budget.
++		// A serialized cacheUpdate waits for the resync to finish. Let the
++		// snapshot return when the detection budget expires so it can proceed.
+ 		select {
+ 		case <-done:
+ 		case <-time.After(detectionBudget):
+@@ -71,26 +76,29 @@ func RunDuringFullResync(t *testing.T, mngr resyncer, setHook func(func()), clou
+ 		resynced <- err
+ 	}()
+ 
+-	// The hook owns progressTimeout plus the budget, so wait that out before blaming the resync.
++	// Allow time for cloudSetup and the detection window before checking
++	// whether the resync returned from its snapshot hook.
+ 	select {
+ 	case <-hookReturned:
+ 	case <-time.After(progressTimeout + detectionBudget + time.Second):
+-		t.Fatalf("the full resync did not reach its cloud fetch hook within %v", progressTimeout)
++		t.Fatalf("resync did not return from its cloud snapshot hook within %v", progressTimeout+detectionBudget+time.Second)
  	}
+ 	require.False(t, setupStalled, "cloud setup neither reached the cache update nor failed within %v", progressTimeout)
+ 
+-	// A cacheUpdate that takes the locks in the wrong order deadlocks the publish after the hook.
++	// Wait for snapshot publication. A cacheUpdate that takes locks in the
++	// wrong order can block the resync after its snapshot hook returns.
+ 	select {
+ 	case err := <-resynced:
+ 		require.NoError(t, err)
+ 	case <-time.After(progressTimeout):
+-		t.Fatalf("the full resync did not publish within %v of its fetch window; cacheUpdate holds a lock it needs", progressTimeout)
++		t.Fatalf("resync did not publish within %v after its snapshot hook returned; cacheUpdate may hold a lock it needs", progressTimeout)
+ 	}
+ 
++	// Once the resync completes, a serialized cacheUpdate must also finish.
+ 	select {
+ 	case <-done:
+ 	case <-time.After(progressTimeout):
+-		t.Fatalf("cache update still blocked %v after the full resync released resyncLock", progressTimeout)
++		t.Fatalf("cache update still blocked %v after the resync completed", progressTimeout)
+ 	}
+ 
+ 	setHook(nil)
+@@ -103,7 +111,7 @@ type eniCache[E any] interface {
+ 	UpdateENI(instanceID string, eni E)
  }
-```
-
----
-
-### Incident Patch 2: `4e6983e1` (2026-10-14)
-**Commit Message**: loadbalancer: Fix leak of expanded NodePort frontends with two scopes
-
-The BPF reconciler expands each NodePort frontend (0.0.0.0) into one frontend per NodePort node address. It records the expanded addresses in `nodePortAddrByPort`, keyed by address family, L4 proto and port. The key does not include the scope.
-
-A NodePort service whose `externalTrafficPolicy` and `internalTrafficPolicy` differ will have two frontends for the same port, one in the external scope and one in the internal scope. Both frontends use the same `nodePortAddrByPort` entry. After a user deletes the service, `Delete()` for the first frontend removes the expanded frontends of its scope and then deletes the shared entry. `Delete()` for the second frontend then finds no addresses and does not remove the expanded frontends of its scope.
-
-The leaked frontends keep their service map slots, their reverse NAT entry, their service ID, and their backend references. The reconciler still holds these references, so pruning does not remove the entries. Only an agent restart clears them. The same collision leaks the external scope frontends when a service changes from two scopes to one and a user deletes it later.
-
-Add th
-
-**File**: `pkg/loadbalancer/reconciler/bpf_reconciler.go` (modified, +7/-2)
-```diff
-@@ -153,6 +153,11 @@ type nodePortAddrKey struct {
  
- 	// port is the Layer 4 port number of the key
- 	port uint16
-+
-+	// scope is the lookup scope of the key. A NodePort service with mixed
-+	// traffic policies has an external and an internal frontend for the same
-+	// port, and each must track its own expanded addresses.
-+	scope uint8
- }
- 
- type backendState struct {
-@@ -423,7 +428,7 @@ func (ops *BPFOps) Delete(_ context.Context, txn statedb.ReadTxn, _ statedb.Revi
- 
- 	if isExpansion {
- 		proto := loadbalancer.L4TypeAsProtocolNumber(fe.Address.Protocol())
--		key := nodePortAddrKey{family: fe.Address.IsIPv6(), port: fe.Address.Port(), protocol: proto}
-+		key := nodePortAddrKey{family: fe.Address.IsIPv6(), port: fe.Address.Port(), protocol: proto, scope: fe.Address.Scope()}
- 		addrs := ops.nodePortAddrByPort[key]
- 		for _, addr := range addrs {
- 			fe = fe.Clone()
-@@ -910,7 +915,7 @@ func (ops *BPFOps) Update(_ context.Context, txn statedb.ReadTxn, _ statedb.Revi
- 		// For NodePort create entries for each node address.
- 		// For HostPort only create them if the address was not specified (HostIP is unset).
- 		proto := loadbalancer.L4TypeAsProtocolNumber(fe.Address.Protocol())
--		key := nodePortAddrKey{family: fe.Address.IsIPv6(), port: fe.Address.Port(), protocol: proto}
-+		key := nodePortAddrKey{family: fe.Address.IsIPv6(), port: fe.Address.Port(), protocol: proto, scope: fe.Address.Scope()}
- 		old := sets.New(ops.nodePortAddrByPort[key]...)
- 
- 		// Collect matching node addresses for datapath candidates, skipping those
-```
-
-**File**: `pkg/loadbalancer/tests/testdata/nodeport-two-scopes.txtar` (added, +189/-0)
-```diff
-@@ -0,0 +1,189 @@
-+#! --lb-test-fault-probability=0.0
-+#
-+# Tests that the NodePort frontends expanded from the surrogate 0.0.0.0
-+# frontends are removed for both the external and internal scope. Mixed
-+# traffic policies produce two frontends per NodePort that share the same
-+# port and protocol, but differ in scope.
-+
-+# Add a node address to expand NodePort frontends to
-+db/insert node-addresses addrv4.yaml
-+
-+# Start the test application
-+hive start
-+
-+# Add a NodePort service with eTP=Local and iTP=Cluster, which gives
-+# frontends in both scopes.
-+k8s/add endpointslice.yaml service-mixed.yaml
-+db/cmp frontends frontends-mixed.table
-+
-+# Check BPF maps
-+lb/maps-dump lbmaps.actual
-+* cmp lbmaps-mixed.expected lbmaps.actual
-+
-+# Delete the service
-+k8s/delete service-mixed.yaml
-+
-+# Both the external and internal scoped node address frontends must be
-+# removed.
-+* db/empty services frontends
-+* lb/maps-empty
-+
-+# Add the service back and switch it to a single scope.
-+k8s/add service-mixed.yaml
-+db/cmp frontends frontends-mixed.table
-+k8s/update service-cluster.yaml
-+db/cmp frontends frontends-cluster.table
-+
-+# Check BPF maps
-+lb/maps-dump lbmaps.actual
-+* cmp lbmaps-cluster.expected lbmaps.actual
-+
-+# Delete everything
-+k8s/delete service-cluster.yaml endpointslice.yaml
-+
-+# The external scoped node address frontend must still be removed after
-+# the internal scope was dropped.
-+* db/empty services frontends backends
-+* lb/maps-empty
-+
-+#####
-+
-+-- addrv4.yaml --
-+addr: 1.1.1.1
-+nodeport: true
-+primary: true
-+devicename: test
-+
-+-- frontends-mixed.table --
-+Address               Type        ServiceName   PortName   Backends                               Status
-+0.0.0.0:30781/TCP     NodePort    test/echo     http       10.244.1.1:80/TCP                      Done
-+0.0.0.0:30781/TCP/i   NodePort    test/echo     http       10.244.1.1:80/TCP, 10.244.2.1:80/TCP   Done
-+10.96.50.104:80/TCP   ClusterIP   test/echo     http       10.244.1.1:80/TCP, 10.244.2.1:80/TCP   Done
-+
-+-- frontends-cluster.table --
-+Address               Type        ServiceName   PortName   Backends                               Status
-+0.0.0.0:30781/TCP     NodePort    test/echo     http       10.244.1.1:80/TCP, 10.244.2.1:80/TCP   Done
-+10.96.50.104:80/TCP   ClusterIP   test/echo     http       10.244.1.1:80/TCP, 10.244.2.1:80/TCP   Done
-+
-+-- lbmaps-mixed.expected --
-+BE: ID=1 ADDR=10.244.1.1:80/TCP STATE=active
-+BE: ID=2 ADDR=10.244.2.1:80/TCP STATE=active
-+REV: ID=1 ADDR=0.0.0.0:30781
-+REV: ID=2 ADDR=1.1.1.1:30781
-+REV: ID=3 ADDR=0.0.0.0:30781
-+REV: ID=4 ADDR=1.1.1.1:30781
-+REV: ID=5 ADDR=10.96.50.104:80
-+SVC: ID=0 ADDR=10.96.50.104:0/ANY SLOT=0 LBALG=undef AFFTimeout=0 COUNT=0 QCOUNT=0 FLAGS=ClusterIP+non-routable
-+SVC: ID=1 ADDR=0.0.0.0:30781/TCP SLOT=0 LBALG=undef AFFTimeout=0 COUNT=1 QCOUNT=0 FLAGS=NodePort+Local+two-scopes+non-routable
-+SVC: ID=1 ADDR=0.0.0.0:30781/TCP SLOT=1 BEID=1 COUNT=0 QCOUNT=0 FLAGS=NodePort+Local+two-scopes+non-routable
-+SVC: ID=2 ADDR=1.1.1.1:30781/TCP SLOT=0 LBALG=undef AFFTimeout=0 COUNT=1 QCOUNT=0 FLAGS=NodePort+Local+two-scopes
-+SVC: ID=2 ADDR=1.1.1.1:30781/TCP SLOT=1 BEID=1 COUNT=0 QCOUNT=0 FLAGS=NodePort+Local+two-scopes
-+SVC: ID=3 ADDR=0.0.0.0:30781/TCP/i SLOT=0 LBALG=undef AFFTimeout=0 COUNT=2 QCOUNT=0 FLAGS=NodePort+Local+two-scopes+non-routable
-+SVC: ID=3 ADDR=0.0.0.0:30781/TCP/i SLOT=1 BEID=1 COUNT=0 QCOUNT=0 FLAGS=NodePort+Local+two-scopes+non-routable
-+SVC: ID=3 ADDR=0.0.0.0:30781/TCP/i SLOT=2 BEID=2 COUNT=0 QCOUNT=0 FLAGS=NodePort+Local+two-scopes+non-routable
-+SVC: ID=4 ADDR=1.1.1.1:30781/TCP/i SLOT=0 LBALG=undef AFFTimeout=0 COUNT=2 QCOUNT=0 FLAGS=NodePort+Local+two-scopes
-+SVC: ID=4 ADDR=1.1.1.1:30781/TCP/i SLOT=1 BEID=1 COUNT=0 QCOUNT=0 FLAGS=NodePort+Local+two-scopes
-+SVC: ID=4 ADDR=1.1.1.1:30781/TCP/i SLOT=2 BEID=2 COUNT=0 QCOUNT=0 FLAGS=NodePort+Local+two-scopes
-+SVC: ID=5 ADDR=10.96.50.104:80/TCP SLOT=0 LBALG=undef AFFTimeout=0 COUNT=2 QCOUNT=0 FLAGS=ClusterIP+Local+non-routable
-+SVC: ID=5 ADDR=10.96.50.104:80/TCP SLOT=1 BEID=1 COUNT=0 QCOUNT=0 FLAGS=ClusterIP+Local+non-routable
-+SVC: ID=5 ADDR=10.96.50.104:80/TCP SLOT=2 BEID=2 COUNT=0 QCOUNT=0 FLAGS=ClusterIP+Local+non-routable
-+-- lbmaps-cluster.expected --
-+BE: ID=3 ADDR=10.244.1.1:80/TCP STATE=active
-+BE: ID=4 ADDR=10.244.2.1:80/TCP STATE=active
-+REV: ID=10 ADDR=10.96.50.104:80
-+REV: ID=6 ADDR=0.0.0.0:30781
-+REV: ID=7 ADDR=1.1.1.1:30781
-+SVC: ID=0 ADDR=10.96.50.104:0/ANY SLOT=0 LBALG=undef AFFTimeout=0 COUNT=0 QCOUNT=0 FLAGS=ClusterIP+non-routable
-+SVC: ID=10 ADDR=10.96.50.104:80/TCP SLOT=0 LBALG=undef AFFTimeout=0 COUNT=2 QCOUNT=0 FLAGS=ClusterIP+non-routable
-+SVC: ID=10 ADDR=10.96.50.104:80/TCP SLOT=1 BEID=3 COUNT=0 QCOUNT=0 FLAGS=ClusterIP+non-routable
-+SVC: ID=10 ADDR=10.96.50.104:80/TCP SLOT=2 BEID=4 COUNT=0 QCOUNT=0 FLAGS=ClusterIP+non-routable
-+SVC: ID=6 ADDR=0.0.0.0:30781/TCP SLOT=0 LBALG=undef AFFTimeout=0 COUNT=2 QCOUNT=0 FLAGS=NodePort+non-routable
-+SVC: ID=6 ADDR=0.0.0.0:30781/TCP SLOT=1 BEID=3 COUNT=0 QCOUNT=0 F
-```
-
----
-
-### Incident Patch 3: `01a4fc2f` (2026-10-14)
-**Commit Message**: datapath: turn `DEBUG_TAGGED` into runtime config
-
-Migrate `DEBUG_TAGGED` config macro to runtime config.
-
-Signed-off-by: Leonardo Di Giovanna <[REDACTED_EMAIL]>
-
-**File**: `bpf/include/bpf/config/node.h` (modified, +2/-0)
-```diff
-@@ -195,6 +195,8 @@ NODE_CONFIG(bool, enable_masquerade_ipv6, "Masquerade IPv6 traffic")
- 
- NODE_CONFIG(bool, debug, "Enable debugging trace statements")
- 
-+NODE_CONFIG(bool, debug_tagged, "Enable debugging trace statements for tagged packets")
-+
- struct dsr_config {
- 	/* Enable DSR load balancing. */
- 	bool enable;
-```
-
-**File**: `bpf/lib/dbg.h` (modified, +4/-11)
-```diff
-@@ -180,10 +180,7 @@ struct debug_capture_msg {
- 
- #include "events.h"
- #include "utils.h"
--
--#ifdef DEBUG_TAGGED
- #include "trace_id.h"
--#endif
- 
- /* This takes both literals and modifiers, e.g.,
-  * printk("hello\n");
-@@ -210,7 +207,7 @@ struct debug_capture_msg {
- static __always_inline void cilium_dbg3(const struct __ctx_buff *ctx, __u8 type,
- 					__u32 arg1, __u32 arg2, __u32 arg3)
- {
--	if (!CONFIG(debug) && !is_defined(DEBUG_TAGGED))
-+	if (!CONFIG(debug) && !CONFIG(debug_tagged))
- 		return;
- 
- 	struct debug_msg msg = {
-@@ -219,10 +216,8 @@ static __always_inline void cilium_dbg3(const struct __ctx_buff *ctx, __u8 type,
- 		.arg2	= arg2,
- 		.arg3	= arg3,
- 	};
--#ifdef DEBUG_TAGGED
--	if (!load_ip_trace_id())
-+	if (CONFIG(debug_tagged) && !load_ip_trace_id())
- 		return;
--#endif
- 	dbg_extension_hook(ctx, msg);
- 	ctx_event_output(ctx, &cilium_events, BPF_F_CURRENT_CPU,
- 			 &msg, sizeof(msg));
-@@ -237,7 +232,7 @@ cilium_dbg(const struct __ctx_buff *ctx, __u8 type, __u32 arg1, __u32 arg2)
- static __always_inline void cilium_dbg_capture2(const struct __ctx_buff *ctx, __u8 type,
- 						__u32 arg1, __u32 arg2)
- {
--	if (!CONFIG(debug) && !is_defined(DEBUG_TAGGED))
-+	if (!CONFIG(debug) && !CONFIG(debug_tagged))
- 		return;
- 
- 	__u64 ctx_len = ctx_full_len(ctx);
-@@ -248,10 +243,8 @@ static __always_inline void cilium_dbg_capture2(const struct __ctx_buff *ctx, __
- 		.arg1	= arg1,
- 		.arg2	= arg2,
- 	};
--#ifdef DEBUG_TAGGED
--	if (!load_ip_trace_id())
-+	if (CONFIG(debug_tagged) && !load_ip_trace_id())
- 		return;
--#endif
- 	dbg_capture_extension_hook(ctx, msg);
- 	ctx_event_output(ctx, &cilium_events,
- 			 (cap_len << 32) | BPF_F_CURRENT_CPU,
-```
-
-**File**: `pkg/datapath/config/endpoint.go` (modified, +1/-0)
-```diff
-@@ -61,6 +61,7 @@ func Endpoint(ep endpoint.Config, lnc *Config) any {
- 	cfg.EnablePolicyAccounting = lnc.EnablePolicyAccounting
- 	cfg.EnableTraceNotify = ep.GetOptions().IsEnabled(option.TraceNotify)
- 	cfg.Debug = ep.GetOptions().IsEnabled(option.Debug)
-+	cfg.DebugTagged = ep.GetOptions().IsEnabled(option.DebugTagged)
- 	cfg.DebugLB = ep.GetOptions().IsEnabled(option.DebugLB)
- 	cfg.EnableDropNotify = ep.GetOptions().IsEnabled(option.DropNotify)
- 
-```
-
-**File**: `pkg/datapath/config/host.go` (modified, +3/-0)
-```diff
-@@ -63,6 +63,7 @@ func CiliumHost(ep endpoint.Config, lnc *Config) any {
- 	cfg.EnablePolicyAccounting = lnc.EnablePolicyAccounting
- 	cfg.EnableDropNotify = ep.GetOptions().IsEnabled(option.DropNotify)
- 	cfg.Debug = ep.GetOptions().IsEnabled(option.Debug)
-+	cfg.DebugTagged = ep.GetOptions().IsEnabled(option.DebugTagged)
- 
- 	cfg.TunnelProtocol = lnc.TunnelProtocol
- 	cfg.TunnelPort = lnc.TunnelPort
-@@ -120,6 +121,7 @@ func CiliumNet(ep endpoint.Config, lnc *Config, link netlink.Link) any {
- 	cfg.EnablePolicyAccounting = lnc.EnablePolicyAccounting
- 	cfg.EnableDropNotify = ep.GetOptions().IsEnabled(option.DropNotify)
- 	cfg.Debug = ep.GetOptions().IsEnabled(option.Debug)
-+	cfg.DebugTagged = ep.GetOptions().IsEnabled(option.DebugTagged)
- 
- 	cfg.TunnelProtocol = lnc.TunnelProtocol
- 	cfg.TunnelPort = lnc.TunnelPort
-@@ -196,6 +198,7 @@ func Netdev(ep endpoint.Config, lnc *Config, link netlink.Link, masq4, masq6 net
- 	cfg.EnablePolicyAccounting = lnc.EnablePolicyAccounting
- 	cfg.EnableDropNotify = ep.GetOptions().IsEnabled(option.DropNotify)
- 	cfg.Debug = ep.GetOptions().IsEnabled(option.Debug)
-+	cfg.DebugTagged = ep.GetOptions().IsEnabled(option.DebugTagged)
- 
- 	cfg.TunnelProtocol = lnc.TunnelProtocol
- 	cfg.TunnelPort = lnc.TunnelPort
-```
-
-**File**: `pkg/datapath/config/node.go` (modified, +1/-0)
-```diff
-@@ -165,6 +165,7 @@ func NodeConfig(lnc *Config) Node {
- 
- 	node.EnableTraceNotify = option.Config.Opts.IsEnabled(option.TraceNotify)
- 	node.Debug = option.Config.Opts.IsEnabled(option.Debug)
-+	node.DebugTagged = option.Config.Opts.IsEnabled(option.DebugTagged)
- 	node.DebugLB = option.Config.Opts.IsEnabled(option.DebugLB)
- 	node.EnableDropNotify = option.Config.Opts.IsEnabled(option.DropNotify)
- 
-```
-
-**File**: `pkg/datapath/config/node_config.go` (modified, +5/-3)
-```diff
-@@ -32,6 +32,8 @@ type Node struct {
- 	Debug bool `config:"debug"`
- 	// Enable debugging trace statements for load balancer.
- 	DebugLB bool `config:"debug_lb"`
-+	// Enable debugging trace statements for tagged packets.
-+	DebugTagged bool `config:"debug_tagged"`
- 	// Index of the interface used to connect nodes in the cluster.
- 	DirectRoutingDevIfIndex uint32 `config:"direct_routing_dev_ifindex"`
- 	// Enable BPF Host Routing.
-@@ -151,10 +153,10 @@ func NewNode() *Node {
- 		0x0,
- 		cast[types.MACAddr]([]byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}),
- 		0x0, 0x8, cast[types.DSRConfig]([]byte{0x0, 0x0, 0x0}), false,
--		false, 0x0, false, false, false, false, false, false, false,
-+		false, false, 0x0, false, false, false, false, false, false,
- 		false, false, false, false, false, false, false, false, false,
--		false, false, false, 0x0, 0x0, false, 0x0, 0x0, 0x0, 0x0, cast[types.V4Addr]([]byte{0x0, 0x0, 0x0, 0x0}),
--		cast[types.V4Addr]([]byte{0x0, 0x0, 0x0, 0x0}),
-+		false, false, false, false, 0x0, 0x0, false, 0x0, 0x0, 0x0,
-+		0x0, cast[types.V4Addr]([]byte{0x0, 0x0, 0x0, 0x0}), cast[types.V4Addr]([]byte{0x0, 0x0, 0x0, 0x0}),
- 		cast[types.IPv4SNATExclusionPrefix]([]byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}),
- 		cast[types.V6Addr]([]byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}),
- 		cast[types.IPv6SNATExclusionPrefix]([]byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}),
-```
-
-**File**: `pkg/datapath/loader/verifier_load_test.go` (modified, +1/-0)
-```diff
-@@ -32,6 +32,7 @@ func setBasePermutations(t *config.Node) {
- 	t.MonitorReportFlags = 0xff
- 	t.TracingIPOptionType = 1
- 	t.Debug = true
-+	t.DebugTagged = true
- 	t.DebugLB = true
- 	t.EventsMapRateLimit = 1000
- 	t.EnableIdentityMark = true
-```
-
-**File**: `pkg/option/runtime_options.go` (modified, +0/-1)
-```diff
-@@ -35,7 +35,6 @@ var (
- 	}
- 
- 	specDebugTagged = Option{
--		Define:      "DEBUG_TAGGED",
- 		Description: "Enable debugging trace statements for tagged packets",
- 	}
- 
+-// ENIUpdate checks that an ENI attached inside the cloud fetch window of a full resync survives it.
++// ENIUpdate checks that an ENI attached while a resync holds its cloud snapshot survives it.
+ func ENIUpdate[E any](t *test
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49654** (closed): Add CRD-managed SPIRE registration and shared-root HA (@Arleee1)
 - **PR #49648** (closed): test commit: do not merge (@Artyop)
 - **PR #49645** (2026-10-27): l2announcer: Fix deadlock between stop() and leader events (@aanm)
 - **PR #49642** (2026-10-27): renovate: Bump go-control-plane/envoy with cilium-envoy (@aanm)
-- **PR #49632** (2026-10-27): bpf: migrate ENABLE_IPV4 to runtime config part 5 (@lconnery)
-- **PR #49629** (2026-10-27): loadbalancer/maps: use testutils.IsPrivileged() to pick real test maps (@Bigdelle)
-- **PR #49627** (2026-10-27): v1.18 Backports 2026-10-26 (@nbusseneau)
+- **PR #49637** (2026-10-27): v1.19 Backports 2026-10-27 (@christarazi)
+- **PR #49636** (2026-10-27): v1.18 Backports 2026-10-27 (@christarazi)
 
 ---
 
@@ -1728,47 +1438,28 @@ Signed-off-by: Leonardo Di Giovanna <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. l2announcer: Fix deadlock between stop() and leader events
+## X. ipam/resynctest: generalize the resync race helper
 
 **RULE**:
-When implementing operations in `pkg/l2announcer/l2announcer.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/aws/ipam/instances_resync_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e64d9c5f`: l2announcer: Fix deadlock between stop() and leader events. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4584f51a`: ipam/resynctest: generalize the resync race helper. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/l2announcer/l2announcer.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/aws/ipam/instances_resync_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		stopped:           make(chan struct{}),
-	ctx     context.Context
-	cancel  context.CancelFunc
-	done    chan struct{}
-	stopped chan struct{}
-						select {
-						case ss.leaderChannel <- leaderElectionEvent{
-						}:
-						case <-ctx.Done():
-						// The main loop, the only reader of leaderChannel, waits for this goroutine in stop().
-						select {
-						case ss.leaderChannel <- leaderElectionEvent{
-						}:
-						case <-ss.stopped:
-		close(ss.stopped)
-		ss.cancel = nil
+		resynctest.RunDuringResync(t, mngr, hooked.setHook,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	ctx    context.Context
-	cancel context.CancelFunc
-	done   chan struct{}
-						ss.leaderChannel <- leaderElectionEvent{
-						ss.leaderChannel <- leaderElectionEvent{
+		resynctest.RunDuringFullResync(t, mngr, hooked.setHook,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e64d9c5f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4584f51a` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T20:38:36.263Z",
+  "last_updated": "2026-10-27T20:45:27.277Z",
   "total_verified_learnings": 1149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6249,8 +6249,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "2b5ab29c",
-      "content_hash": "9a9df49b4d8d50c63ff5b4fec3c1560d108c08489fefadd4109d5861ab0abca3",
+      "source_version": "a80937a2",
+      "content_hash": "f134c334fdb4a8aef0c09471bd3f3ecbeecba011368e60ada45fab30e6660445",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -6383,6 +6383,11 @@
           "number": 4914,
           "title": "l2announcer: Fix deadlock between stop() and leader events",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4997,
+          "title": "ipam/resynctest: generalize the resync race helper",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6390,7 +6395,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T17:05:12.177Z",
+      "verified_at": "2026-10-27T20:45:24.784Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34868,8 +34873,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "05f166aa",
-      "content_hash": "d79645254cd6a18d234ea38338a1c8c8548f6a53ea3ecab5834ad95ef3418ac2",
+      "source_version": "60cc748f",
+      "content_hash": "ebb8d099247296685a6cf40149b014d2e34a35e0868838bca71377055869e92d",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -34912,6 +34917,11 @@
           "number": 4634,
           "title": "build(deps): bump actions/checkout from 6.0.2 to 7.0.1 (#40164)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4998,
+          "title": "build(deps): bump tokio from 1.53.3 to 1.54.1 (#40171)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34919,7 +34929,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T17:58:30.262Z",
+      "verified_at": "2026-10-27T20:45:27.264Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -69481,8 +69491,8 @@
       "slug": "unjs-nitro",
       "platform": "github",
       "source_url": "https://github.com/unjs/nitro",
-      "source_version": "6bccaad1",
-      "content_hash": "af195f25875f4c5e73093ec56641d1a9df1b7ce546fe8cf3109276d0ba13e34a",
+      "source_version": "20a88507",
+      "content_hash": "0163a5da843cf9123f78fb46003f7e297a14883005ec3934ea7ce2f89996d682",
       "dossier_path": "07_PROJECT_LEARNING/unjs-nitro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/unjs-nitro-learnings.md",
       "promoted_rules": [
@@ -69520,6 +69530,11 @@
           "number": 3929,
           "title": "POSIX Signal Multiplexing Invariant for Containerized Orchestrators",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4996,
+          "title": "build): skip unchanged sourcemaps (#4925)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -69527,7 +69542,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T19:44:12.338Z",
+      "verified_at": "2026-10-27T20:45:18.805Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -138139,6 +138154,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T20:38:36.252Z"
+    },
+    "rule-4996": {
+      "learning_id": "rule-4996",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4996,
+      "title": "build): skip unchanged sourcemaps (#4925)",
+      "source_url": "https://github.com/unjs/nitro",
+      "source_version": "20a88507",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:45:18.805Z"
+    },
+    "rule-4997": {
+      "learning_id": "rule-4997",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4997,
+      "title": "ipam/resynctest: generalize the resync race helper",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "a80937a2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:45:24.784Z"
+    },
+    "rule-4998": {
+      "learning_id": "rule-4998",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4998,
+      "title": "build(deps): bump tokio from 1.53.3 to 1.54.1 (#40171)",
+      "source_url": "https://github.com/MaterializeInc/materialize",
+      "source_version": "60cc748f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:45:27.264Z"
     }
   },
   "aliases": {

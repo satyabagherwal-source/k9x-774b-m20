@@ -5540,3 +5540,6 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `25abe0aa` | Multi-dimensional audit evidence | 2026-10-27T20:32:06.203Z |
 | `learn-huggingface-krafton-raon-1-mini-preview` | `https://huggingface.co/KRAFTON/Raon-1-mini-preview` | `hf-krafton` | Multi-dimensional audit evidence | 2026-10-27T20:38:35.329Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `5c02d67f` | Multi-dimensional audit evidence | 2026-10-27T20:38:36.315Z |
+| `learn-github-nitrojs-nitro` | `https://github.com/unjs/nitro` | `20a88507` | Multi-dimensional audit evidence | 2026-10-27T20:45:18.882Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `a80937a2` | Multi-dimensional audit evidence | 2026-10-27T20:45:24.859Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `60cc748f` | Multi-dimensional audit evidence | 2026-10-27T20:45:27.339Z |

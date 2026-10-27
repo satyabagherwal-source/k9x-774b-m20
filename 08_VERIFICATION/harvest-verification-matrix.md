@@ -5531,3 +5531,6 @@
 | `CYCLE-20261027-5Z5J` | `2026-10-27T20:32:06.199Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`7c101d96...`) |
 | `CYCLE-20261027-EBEM` | `2026-10-27T20:38:35.326Z` | `KRAFTON/Raon-1-mini-preview` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4992, Rule 4993, Rule 4994` | Yes (`59bb7a1d...`) |
 | `CYCLE-20261027-EC60` | `2026-10-27T20:38:36.312Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4995` | Yes (`8dc22b01...`) |
+| `CYCLE-20261027-MYSF` | `2026-10-27T20:45:18.879Z` | `nitrojs/nitro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4996` | Yes (`0163a5da...`) |
+| `CYCLE-20261027-N3EG` | `2026-10-27T20:45:24.856Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4997` | Yes (`f134c334...`) |
+| `CYCLE-20261027-N5BB` | `2026-10-27T20:45:27.335Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4998` | Yes (`ebb8d099...`) |

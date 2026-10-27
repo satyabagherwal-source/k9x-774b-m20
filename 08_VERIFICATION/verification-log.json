@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-YH2P",
-    "timestamp": "2026-10-25T23:10:53.425Z",
-    "repository": "LiquidAI/LFM2.5-24B-A2B",
-    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
-    "contentHash": "16f7a60c68eb142058af41a45f37d562591ca6225fa01135eb8009574688e611",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-YH6B",
-    "timestamp": "2026-10-25T23:10:53.555Z",
-    "repository": "skyhook-io/radar",
-    "learningId": "learn-github-skyhook-io-radar",
-    "contentHash": "932ac2442c2977fba6194c1a76605af343e987561909ab907438e99df1a96fd8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-YK6G",
-    "timestamp": "2026-10-25T23:10:57.448Z",
-    "repository": "Mintplex-Labs/anything-llm",
-    "learningId": "learn-github-mintplex-labs-anything-llm",
-    "contentHash": "2e3761b103ec6f360d7917f636377e223217a30ad777c261e5a86f8f9b517ae6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-6O1F",
     "timestamp": "2026-10-25T23:17:15.699Z",
     "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -7490,6 +7445,51 @@
     "repository": "zama-ai/tfhe-rs",
     "learningId": "learn-github-zama-ai-tfhe-rs",
     "contentHash": "8dc22b0143bfa5915c068407796fe984971597e31c1fd02cc7a9359d0ae282cf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-MYSF",
+    "timestamp": "2026-10-27T20:45:18.879Z",
+    "repository": "nitrojs/nitro",
+    "learningId": "learn-github-nitrojs-nitro",
+    "contentHash": "0163a5da843cf9123f78fb46003f7e297a14883005ec3934ea7ce2f89996d682",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-N3EG",
+    "timestamp": "2026-10-27T20:45:24.856Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "f134c334fdb4a8aef0c09471bd3f3ecbeecba011368e60ada45fab30e6660445",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-N5BB",
+    "timestamp": "2026-10-27T20:45:27.335Z",
+    "repository": "MaterializeInc/materialize",
+    "learningId": "learn-github-materializeinc-materialize",
+    "contentHash": "ebb8d099247296685a6cf40149b014d2e34a35e0868838bca71377055869e92d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
