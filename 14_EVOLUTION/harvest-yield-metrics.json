@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T20:11:41.871Z",
-  "total_cycles_completed": 5499,
-  "total_learnings_persisted": 5499,
-  "total_rules_promoted": 4895,
+  "last_updated": "2026-10-27T20:25:14.525Z",
+  "total_cycles_completed": 5502,
+  "total_learnings_persisted": 5502,
+  "total_rules_promoted": 4899,
   "history": [
-    {
-      "timestamp": "2026-10-27T13:25:28.214Z",
-      "repository": "dragonflydb/dragonfly",
-      "learningId": "learn-github-dragonflydb-dragonfly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:28:17.481Z",
-      "repository": "nexu-io/html-anything",
-      "learningId": "learn-github-nexu-io-html-anything",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:28:22.606Z",
-      "repository": "lemomo-ai/lemo-opuscar",
-      "learningId": "learn-github-lemomo-ai-lemo-opuscar",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T13:28:23.905Z",
       "repository": "automazeio/ccpm",
@@ -1403,6 +1382,27 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T20:20:12.307Z",
+      "repository": "actions/actions-runner-controller",
+      "learningId": "learn-github-actions-actions-runner-controller",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T20:20:18.150Z",
+      "repository": "risingwavelabs/risingwave",
+      "learningId": "learn-github-risingwavelabs-risingwave",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T20:25:14.525Z",
+      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "84409045",
+    "sourceVersion": "3a2a460c",
     "license": "Apache-2.0",
-    "contentHash": "eaa3498455bfffa13eac89b217400cdca04d25b9017ce5854e3a8e15a3877622",
-    "lastHarvestedAt": "2026-10-26T14:23:26.789Z",
+    "contentHash": "78fb211ce3b1d08efa8d41f3b607c1cff8914c6cae76c7d31bb75a932804bfaa",
+    "lastHarvestedAt": "2026-10-27T20:20:18.145Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {
@@ -6603,10 +6603,10 @@
     "repository": "actions/actions-runner-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/actions/actions-runner-controller",
-    "sourceVersion": "23159a8e",
+    "sourceVersion": "89f34c4f",
     "license": "Apache-2.0",
-    "contentHash": "6b36cfa9aa1f9a5b0a68784a77bb33e543a103713600e6c3bb884f924d588a92",
-    "lastHarvestedAt": "2026-10-25T02:50:29.534Z",
+    "contentHash": "764271afe3bfebf04cf9fc8a7190d7289dc61975c96b630246067dd3bd9d44f1",
+    "lastHarvestedAt": "2026-10-27T20:20:12.301Z",
     "learningId": "learn-github-actions-actions-runner-controller"
   },
   "vectifyai-pageindex": {
@@ -10605,8 +10605,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "78368454b7e83365d15b5f37c7ede172beb608d575401a2f1053aca4458e4b90",
-    "lastHarvestedAt": "2026-10-24T19:34:54.439Z",
+    "contentHash": "54c2d11b82afe63c9212309843b5a00fccc119ec6fd3323be2ebd76965de0b54",
+    "lastHarvestedAt": "2026-10-27T20:25:14.520Z",
     "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf"
   },
   "hf-comfy-org-fibo-2.0": {

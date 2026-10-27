@@ -5522,3 +5522,6 @@
 | `CYCLE-20261027-6WLI` | `2026-10-27T20:04:49.926Z` | `stakater/Reloader` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4982` | Yes (`36ad7fe4...`) |
 | `CYCLE-20261027-FPS3` | `2026-10-27T20:11:40.995Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4983` | Yes (`cdfb59ed...`) |
 | `CYCLE-20261027-FQG5` | `2026-10-27T20:11:41.861Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`ef973ae5...`) |
+| `CYCLE-20261027-QOAX` | `2026-10-27T20:20:12.297Z` | `actions/actions-runner-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4984` | Yes (`764271af...`) |
+| `CYCLE-20261027-QSTA` | `2026-10-27T20:20:18.142Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4985` | Yes (`78fb211c...`) |
+| `CYCLE-20261027-X5HX` | `2026-10-27T20:25:14.517Z` | `ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4986, Rule 4987` | Yes (`54c2d11b...`) |

@@ -5531,3 +5531,6 @@ Every entry in this ledger must capture:
 | `learn-github-stakater-reloader` | `https://github.com/stakater/Reloader` | `41b3ad27` | Multi-dimensional audit evidence | 2026-10-27T20:04:49.929Z |
 | `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `cb995107` | Multi-dimensional audit evidence | 2026-10-27T20:11:40.999Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `73085699` | Multi-dimensional audit evidence | 2026-10-27T20:11:41.865Z |
+| `learn-github-actions-actions-runner-controller` | `https://github.com/actions/actions-runner-controller` | `89f34c4f` | Multi-dimensional audit evidence | 2026-10-27T20:20:12.301Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `3a2a460c` | Multi-dimensional audit evidence | 2026-10-27T20:20:18.145Z |
+| `learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-27T20:25:14.520Z |

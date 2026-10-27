@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T20:11:41.789Z",
+  "last_updated": "2026-10-27T20:25:14.413Z",
   "total_verified_learnings": 1149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -331,8 +331,8 @@
       "slug": "actions-actions-runner-controller",
       "platform": "github",
       "source_url": "https://github.com/actions/actions-runner-controller",
-      "source_version": "23159a8e",
-      "content_hash": "6b36cfa9aa1f9a5b0a68784a77bb33e543a103713600e6c3bb884f924d588a92",
+      "source_version": "89f34c4f",
+      "content_hash": "764271afe3bfebf04cf9fc8a7190d7289dc61975c96b630246067dd3bd9d44f1",
       "dossier_path": "07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md",
       "promoted_rules": [
@@ -355,6 +355,11 @@
           "number": 3997,
           "title": "Prepare 0.15.1 release (#4727)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4984,
+          "title": "Updates: runner to v2.338.2 (#4730)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -362,7 +367,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T02:50:29.453Z",
+      "verified_at": "2026-10-27T20:20:12.189Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44582,8 +44587,8 @@
       "slug": "risingwavelabs-risingwave",
       "platform": "github",
       "source_url": "https://github.com/risingwavelabs/risingwave",
-      "source_version": "84409045",
-      "content_hash": "eaa3498455bfffa13eac89b217400cdca04d25b9017ce5854e3a8e15a3877622",
+      "source_version": "3a2a460c",
+      "content_hash": "78fb211ce3b1d08efa8d41f3b607c1cff8914c6cae76c7d31bb75a932804bfaa",
       "dossier_path": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "promoted_rules": [
@@ -44621,6 +44626,11 @@
           "number": 4627,
           "title": "optimizer): keep at least one group key in AggGroupBySimplifyRule (#27594)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4985,
+          "title": "stream): check in debug builds that executors output no rows below their waterma",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44628,7 +44638,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T14:23:26.717Z",
+      "verified_at": "2026-10-27T20:20:18.053Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -120540,7 +120550,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
-      "content_hash": "78368454b7e83365d15b5f37c7ede172beb608d575401a2f1053aca4458e4b90",
+      "content_hash": "54c2d11b82afe63c9212309843b5a00fccc119ec6fd3323be2ebd76965de0b54",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -120558,6 +120568,16 @@
           "number": 3919,
           "title": "MoE Expert Sparsity as a Memory Optimization Lever",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4986,
+          "title": "Per-Tensor Heterogeneity in Quantization Allocation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4987,
+          "title": "GGUF Format Constraint: Per-Layer vs. Per-Expert Quantization",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -120565,7 +120585,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T19:34:54.374Z",
+      "verified_at": "2026-10-27T20:25:14.396Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -137910,6 +137930,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T20:11:40.905Z"
+    },
+    "rule-4984": {
+      "learning_id": "rule-4984",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4984,
+      "title": "Updates: runner to v2.338.2 (#4730)",
+      "source_url": "https://github.com/actions/actions-runner-controller",
+      "source_version": "89f34c4f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:20:12.189Z"
+    },
+    "rule-4985": {
+      "learning_id": "rule-4985",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4985,
+      "title": "stream): check in debug builds that executors output no rows below their waterma",
+      "source_url": "https://github.com/risingwavelabs/risingwave",
+      "source_version": "3a2a460c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:20:18.053Z"
+    },
+    "rule-4986": {
+      "learning_id": "rule-4986",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4986,
+      "title": "Per-Tensor Heterogeneity in Quantization Allocation",
+      "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:25:14.396Z"
+    },
+    "rule-4987": {
+      "learning_id": "rule-4987",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4987,
+      "title": "GGUF Format Constraint: Per-Layer vs. Per-Expert Quantization",
+      "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:25:14.396Z"
     }
   },
   "aliases": {

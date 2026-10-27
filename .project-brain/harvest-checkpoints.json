@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T20:11:41.875Z",
+  "last_updated": "2026-10-27T20:25:14.529Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5781,14 +5781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-risingwavelabs-risingwave",
-      "content_hash": "eaa3498455bfffa13eac89b217400cdca04d25b9017ce5854e3a8e15a3877622",
-      "verified_at": "2026-10-26T14:23:26.797Z",
+      "content_hash": "78fb211ce3b1d08efa8d41f3b607c1cff8914c6cae76c7d31bb75a932804bfaa",
+      "verified_at": "2026-10-27T20:20:18.153Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T14:23:26.797Z"
+      "last_updated": "2026-10-27T20:20:18.153Z"
     },
     "mertJF/tailblocks": {
       "repository": "mertJF/tailblocks",
@@ -9981,14 +9981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-actions-actions-runner-controller",
-      "content_hash": "6b36cfa9aa1f9a5b0a68784a77bb33e543a103713600e6c3bb884f924d588a92",
-      "verified_at": "2026-10-25T02:50:29.546Z",
+      "content_hash": "764271afe3bfebf04cf9fc8a7190d7289dc61975c96b630246067dd3bd9d44f1",
+      "verified_at": "2026-10-27T20:20:12.310Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T02:50:29.546Z"
+      "last_updated": "2026-10-27T20:20:12.310Z"
     },
     "VectifyAI/PageIndex": {
       "repository": "VectifyAI/PageIndex",
@@ -15936,14 +15936,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
-      "content_hash": "78368454b7e83365d15b5f37c7ede172beb608d575401a2f1053aca4458e4b90",
-      "verified_at": "2026-10-24T19:34:54.448Z",
+      "content_hash": "54c2d11b82afe63c9212309843b5a00fccc119ec6fd3323be2ebd76965de0b54",
+      "verified_at": "2026-10-27T20:25:14.528Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-24T19:34:54.448Z"
+      "last_updated": "2026-10-27T20:25:14.528Z"
     },
     "Comfy-Org/Fibo-2.0": {
       "repository": "Comfy-Org/Fibo-2.0",

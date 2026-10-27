@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `84409045`  
+> **Source Version**: `3a2a460c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T14:23:26.399Z  
+> **Timestamp**: 2026-10-27T20:20:17.603Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T14:23:26.153Z  
+> **Harvest Timestamp**: 2026-10-27T20:20:17.175Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9388 stars
+- **Stars / Engagement**: 9390 stars
 
 ---
 
@@ -1077,266 +1077,278 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a3472511` (2026-10-26)
-**Commit Message**: fix(optimizer): keep at least one group key in AggGroupBySimplifyRule (#27594)
+### Incident Patch 1: `3a2a460c` (2026-10-27)
+**Commit Message**: chore(stream): check in debug builds that executors output no rows below their watermarks (#27559)
 
-**File**: `e2e_test/streaming/bug_fixes/issue_27451.slt` (added, +74/-0)
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/stream/src/executor/wrapper.rs` (modified, +4/-1)
 ```diff
-@@ -0,0 +1,74 @@
-+# https://github.com/risingwavelabs/risingwave/issues/27451
-+# TL;DR A grouped agg over an input with at most one row was simplified into a simple agg,
-+# which outputs one row instead of zero rows on empty input.
-+
-+statement ok
-+create materialized view m6 as select min(x) as col_0 from (values (1)) as v(x);
-+
-+statement ok
-+create materialized view m16 as select col_0 from m6 where false group by col_0;
-+
-+query I
-+select * from m16;
-+----
-+
-+query I
-+select col_0 from m6 where false group by col_0;
-+----
-+
-+# Multiple group keys on a single-row input whose only row may be filtered out.
-+statement ok
-+create table t (v int);
-+
-+statement ok
-+create materialized view m_single as select min(v) as a, max(v) as b from t;
-+
-+statement ok
-+create materialized view m_grouped as
-+select a, b, count(*) as cnt from m_single where a is not null group by a, b;
-+
-+query III
-+select * from m_grouped;
-+----
-+
-+# The same query in batch mode.
-+query III
-+select a, b, count(*) from m_single where a is not null group by a, b;
-+----
-+
-+statement ok
-+insert into t values (1), (3);
-+
-+statement ok
-+flush;
-+
-+query III
-+select * from m_grouped;
-+----
-+1 3 1
-+
-+statement ok
-+delete from t;
-+
-+statement ok
-+flush;
-+
-+query III
-+select * from m_grouped;
-+----
-+
-+# cleanup
-+statement ok
-+drop materialized view m_grouped;
-+
-+statement ok
-+drop materialized view m_single;
-+
-+statement ok
-+drop table t;
-+
-+statement ok
-+drop materialized view m16;
-+
-+statement ok
-+drop materialized view m6;
+@@ -22,6 +22,7 @@ mod schema_check;
+ mod stream_node_metrics;
+ mod trace;
+ mod update_check;
++mod watermark_check;
+ 
+ /// [`WrapperExecutor`] will do some sanity checks and logging for the wrapped executor.
+ pub struct WrapperExecutor {
+@@ -40,7 +41,9 @@ impl WrapperExecutor {
+         stream: impl MessageStream + 'static,
+     ) -> impl MessageStream + 'static {
+         // Update check
+-        let stream = update_check::update_check(info, stream);
++        let stream = update_check::update_check(info.clone(), stream);
++        // Watermark check
++        let stream = watermark_check::watermark_check(info, stream);
+ 
+         stream
+     }
 ```
 
-**File**: `src/frontend/planner_test/tests/testdata/input/agg.yaml` (modified, +19/-0)
+**File**: `src/stream/src/executor/wrapper/watermark_check.rs` (added, +112/-0)
 ```diff
-@@ -1173,3 +1173,22 @@
-     - logical_plan
-     - batch_plan
-     - stream_plan
-+- name: group by on a single-row input must not become a simple agg (https://github.com/risingwavelabs/risingwave/issues/27451)
-+  sql: |
-+    create materialized view m6 as select min(x) as col_0 from (values (1)) as v(x);
-+    select col_0 from m6 where false group by col_0;
-+  expected_outputs:
-+    - logical_plan
-+    - optimized_logical_plan_for_batch
-+    - optimized_logical_plan_for_stream
-+    - batch_plan
-+    - stream_plan
-+- name: group by multiple columns on a single-row input keeps one group key
-+  sql: |
-+    create materialized view m7 as select min(x) as a, max(x) as b from (values (1)) as v(x);
-+    select a, b, count(*) from m7 where a > 0 group by a, b;
-+  expected_outputs:
-+    - optimized_logical_plan_for_batch
-+    - optimized_logical_plan_for_stream
-+    - batch_plan
-+    - stream_plan
+@@ -0,0 +1,112 @@
++// Copyright 2026 RisingWave Labs
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++use std::collections::BTreeMap;
++use std::sync::Arc;
++
++use futures::StreamExt;
++use risingwave_common::array::Op;
++use risingwave_common::row::{Row, RowExt};
++use risingwave_common::types::{DefaultOrd, ScalarImpl};
++use risingwave_pb::stream_plan::stream_node::PbStreamKind;
++
++use crate::executor::{ExecutorInfo, Message, MessageStream};
++
++/// Streams wrapped by `watermark_check` will check that no row falls below a watermark emitted
++/// earlier on the same column. A delete of an upsert stream is not checked, as only its stream key
++/// identifies the row it deletes.
++///
++/// It is a combinator rather than a generator, which would deepen the stack of every executor in
++/// debug builds.
++pub fn watermark_check(info: Arc<ExecutorInfo>, input: impl MessageStream) -> impl MessageStream {
++    let mut watermarks = BTreeMap::<usize, ScalarImpl>::new();
++    input.inspect(move |message| match message {
++        Ok(Message::Watermark(watermark)) => {
++            let emitted = watermarks
++                .entry(watermark.col_idx)
++                .or_insert_with(|| watermark.val.clone());
++            if watermark.val.default_cmp(emitted).is_gt() {
++                *emitted = watermark.val.clone();
++            }
++        }
++        Ok(Message::Chunk(chunk)) if !watermarks.is_empty() => {
++            for (op, row) in chunk.rows() {
++                if info.stream_kind == PbStreamKind::Upsert
++                    && matches!(op, Op::Delete | Op::UpdateDelete)
++                {
++                    continue;
++                }
++                for (&col_idx, watermark) in &watermarks {
++                    if let Some(value) = row.datum_at(col_idx) {
++                        debug_assert!(
++                            value.default_cmp(&watermark.as_scalar_ref_impl()).is_ge(),
++                            "row below a watermark emitted earlier
++row: {}
++op: {:?}
++column: {}
++watermark: {:?}
++executor: {}",
++                            row.display(),
++                            op,
++                            col_idx,
++                            watermark,
++                            info.identity
++                        );
++                    }
++                }
++            }
++        }
++        _ => {}
++    })
++}
++
++#[cfg(test)]
++mod tests {
++    use futures::pin_mut;
++    use risingwave_common::array::StreamChunk;
++    use risingwave_common::array::stream_chunk::StreamChunkTestExt;
++    use risingwave_common::catalog::{Field, Schema};
++    use risingwave_common::types::DataType;
++
++    use super::*;
++    use crate::executor::test_utils::MockSource;
++
++    /// Runs `chunk` after `Watermark(10)` on the only column through the check.
++    async fn check_after_watermark(stream_kind: PbStreamKind, chunk: &str) {
++        let (mut tx, source) = MockSource::channel();
++        let source =
++            source.into_executor(Schema::new(vec![Field::unnamed(DataType::Int64)]), vec![]);
++        let mut info = source.info().clone();
++        info.stream_kind = stream_kind;
++        tx.push_int64_watermark(0, 10);
++        tx.push_chunk(StreamChunk::from_pretty(chunk));
++
++        let checked = watermark_check(info.into(), source.execute());
++        pin_mut!(checked);
++        checked.next().await.unwrap().unwrap();
++        checked.next().await.unwrap().unwrap();
++    }
++
++    #[should_panic(expected = "row below a watermark emitted earlier")]
++    #[tokio::test]
++    async fn test_row_below_watermark() {
++        check_after_watermark(PbStreamKind::Retract, " I\n + 10\n - 9").await;
++    }
++
++    #[tokio::test]
++    async fn test_rows_not_below_watermark() {
++        check_after_watermark(PbStreamKind::Retract, " I\n + 10\n + 11\n + .").await;
++        check_after_watermark(PbStreamKind::Upsert, " I\n - 9").await;
++    }
++}
 ```
 
-**File**: `src/frontend/planner_test/tests/testdata/output/agg.yaml` (modified, +50/-0)
+---
+
+### Incident Patch 2: `51098d22` (2026-10-27)
+**Commit Message**: fix(meta): send notification service responses zstd-compressed (#27654)
+
+Co-authored-by: Yuhao Su <[REDACTED_EMAIL]>
+Co-authored-by: Claude Fable 5 <[REDACTED_EMAIL]>
+
+**File**: `src/meta/node/src/server.rs` (modified, +8/-1)
 ```diff
-@@ -2331,3 +2331,53 @@
-     └─StreamProject { exprs: [null:Struct(a:Int16, b:Float64, c:Time), 995:Int32, '-168:00:00':Interval, 294:Float64, _row_id] }
-       └─StreamFilter { predicate: false:Boolean }
-         └─StreamValues { rows: [[0:Int64]] }
-+- name: group by on a single-row input must not become a simple agg (https://github.com/risingwavelabs/risingwave/issues/27451)
-+  sql: |
-+    create materialized view m6 as select min(x) as col_0 from (values (1)) as v(x);
-+    select col_0 from m6 where false group by col_0;
-+  logical_plan: |-
-+    LogicalProject { exprs: [m6.col_0] }
-+    └─LogicalAgg { group_key: [m6.col_0], aggs: [] }
-+      └─LogicalProject { exprs: [m6.col_0] }
-+        └─LogicalFilter { predicate: false:Boolean }
-+          └─LogicalScan { table: m6, columns: [m6.col_0, m6._rw_timestamp], cardinality: 1..=1 }
-+  optimized_logical_plan_for_batch: |-
-+    LogicalAgg { group_key: [m6.col_0], aggs: [] }
-+    └─LogicalValues { rows: [], schema: Schema { fields: [m6.col_0:Int32] } }
-+  optimized_logical_plan_for_stream: |-
-+    LogicalAgg { group_key: [m6.col_0], aggs: [] }
-+    └─LogicalScan { table: m6, columns: [m6.col_0], predicate: false:Boolean, cardinality: 1..=1 }
-+  batch_plan: |-
-+    BatchExchange { order: [], dist: Single }
-+    └─BatchHashAgg { group_key: [m6.col_0], aggs: [] }
-+      └─BatchExchange { order: [], dist: HashShard(m6.col_0) }
-+        └─BatchValues { rows: [] }
-+  stream_plan: |-
-+    StreamMaterialize { columns: [col_0], stream_key: [col_0], pk_columns: [col_0], pk_conflict: NoCheck }
-+    └─StreamProject { exprs: [m6.col_0], noop_update_hint: true }
-+      └─StreamHashAgg { group_key: [m6.col_0], aggs: [count] }
-+        └─StreamExchange { dist: HashShard(m6.col_0) }
-+          └─StreamFilter { predicate: false:Boolean }
-+            └─StreamTableScan { table: m6, columns: [m6.col_0], stream_scan_type: SnapshotBackfill, stream_key: [], pk: [], dist: Single }
-+- name: group by multiple columns on a single-row input keeps one group key
-+  sql: |
-+    create materialized view m7 as select min(x) as a, max(x) as b from (values (1)) as v(x);
-+    select a, b, count(*) from m7 where a > 0 group by a, b;
-+  optimized_logical_plan_for_batch: |-
-+    LogicalAgg { group_key: [m7.a], aggs: [internal_last_seen_value(m7.b), count] }
-+    └─LogicalScan { table: m7, columns: [m7.a, m7.b], predicate: (m7.a > 0:Int32), cardinality: 1..=1 }
-+  optimized_logical_plan_for_stream: |-
-+    LogicalAgg { group_key: [m7.a], aggs: [internal_last_seen_value(m7.b), count] }
-+    └─LogicalScan { table: m7, columns: [m7.a, m7.b], predicate: (m7.a > 0:Int32), cardinality: 1..=1 }
-+  batch_plan: |-
-+    BatchExchange { order: [], dist: Single }
-+    └─BatchHashAgg { group_key: [m7.a], aggs: [internal_last_seen_value(m7.b), count] }
-+      └─BatchExchange { order: [], dist: HashShard(m7.a) }
-+        └─BatchFilter { predicate: (m7.a > 0:Int32) }
-+          └─BatchScan { table: m7, columns: [m7.a, m7.b], distribution: Single }
-+  stream_plan: |-
-+    StreamMaterialize { columns: [a, b, count], stream_key: [a], pk_columns: [a], pk_conflict: NoCheck }
-+    └─StreamHashAgg { group_key: [m7.a], aggs: [internal_last_seen_value(m7.b), count] }
-+      └─StreamExchange { dist: HashShard(m7.a) }
-+        └─StreamFilter { predicate: (m7.a > 0:Int32) }
-+          └─StreamTableScan { table: m7, columns: [m7.a, m7.b], stream_scan_type: SnapshotBackfill, stream_key: [], pk: [], dist: Single }
+@@ -828,7 +828,14 @@ pub async fn start_service_as_election_leader(
+         .add_service(
+             HummockManagerServiceServer::new(hummock_srv).max_decoding_message_size(usize::MAX),
+         )
+-        .add_service(NotificationServiceServer::new(notification_srv))
++        // Compress notifications with zstd for clients that accept it (older clients still
++        // get uncompressed responses). The initial `MetaSnapshot` carries the full hummock
++        // version; uncompressed messages larger than `i32::MAX` bytes are silently reset by
++        // hyper/h2, so compression keeps large snapshots deliverable.
++        .add_service(
++            NotificationServiceServer::new(notification_srv)
++                .send_compressed(tonic::codec::CompressionEncoding::Zstd),
++        )
+         .add_service(MetaMemberServiceServer::new(meta_member_srv))
+         .add_service(DdlServiceServer::new(ddl_srv).max_decoding_message_size(usize::MAX))
+         .add_service(UserServiceServer::new(user_srv))
 ```
 
-**File**: `src/frontend/planner_test/tests/testdata/output/subquery_impure_outer.yaml` (modified, +8/-8)
+**File**: `src/rpc_client/src/meta_client.rs` (modified, +6/-2)
 ```diff
-@@ -384,14 +384,14 @@
-     select s.max_id, (select count(*) from t where t.id = s.max_id)
-     from (select max(id) as max_id from (select id from t limit 5) t) s;
-   optimized_logical_plan_for_stream: |-
--    LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(max(t.id), internal_last_seen_value(max(t.id))), output: [max(t.id), count(1:Int32)] }
-+    LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(max(t.id), max(t.id)), output: [max(t.id), count(1:Int32)] }
-     ├─LogicalShare { id: 3 }
-     │ └─LogicalAgg { aggs: [max(t.id)] }
-     │   └─LogicalLimit { limit: 5, offset: 0 }
-     │     └─LogicalScan { table: t, columns: [t.id] }
--    └─LogicalAgg { group_key: [internal_last_seen_value(max(t.id))], aggs: [count(1:Int32)] }
--      └─LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(internal_last_seen_value(max(t.id)), t.id), output: [internal_last_seen_value(max(t.id)), 1:Int32] }
--        ├─LogicalAgg { aggs: [internal_last_seen_value(max(t.id))] }
-+    └─LogicalAgg { group_key: [max(t.id)], aggs: [count(1:Int32)] }
-+      └─LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(max(t.id), t.id), output: [max(t.id), 1:Int32] }
-+        ├─LogicalAgg { group_key: [max(t.id)], aggs: [] }
-         │ └─LogicalShare { id: 3 }
-         │   └─LogicalAgg { aggs: [max(t.id)] }
-         │     └─LogicalLimit { limit: 5, offset: 0 }
-@@ -407,14 +407,14 @@
-     select s.max_id, (select count(*) from t where t.id = s.max_id)
-     from (select max(id) as max_id from (select id from t order by priority limit 5) t) s;
-   optimized_logical_plan_for_stream: |-
--    LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(max(t.id), internal_last_seen_value(max(t.id))), output: [max(t.id), count(1:Int32)] }
-+    LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(max(t.id), max(t.id)), output: [max(t.id), count(1:Int32)] }
-     ├─LogicalShare { id: 3 }
-     │ └─LogicalAgg { aggs: [max(t.id)] }
-     │   └─LogicalTopN { order: [t.priority ASC], limit: 5, offset: 0 }
-     │     └─LogicalScan { table: t, columns: [t.id, t.priority] }
--    └─LogicalAgg { group_key: [internal_last_seen_value(max(t.id))], aggs: [count(1:Int32)] }
--      └─LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(internal_last_seen_value(max(t.id)), t.id), output: [internal_last_seen_value(max(t.id)), 1:Int32] }
--        ├─LogicalAgg { aggs: [internal_last_seen_value(max(t.id))] }
-+    └─LogicalAgg { group_key: [max(t.id)], aggs: [count(1:Int32)] }
-+      └─LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(max(t.id), t.id), output: [max(t.id), 1:Int32] }
-+        ├─LogicalAgg { group_key: [max(t.id)], aggs: [] }
-         │ └─LogicalShare { id: 3 }
-         │   └─LogicalAgg { aggs: [max(t.id)] }
-         │     └─LogicalTopN { order: [t.priority ASC], limit: 5, offset: 0 }
+@@ -2343,8 +2343,12 @@ impl GrpcMetaClientCore {
+             DdlServiceClient::new(channel.clone()).max_decoding_message_size(usize::MAX);
+         let hummock_client =
+             HummockManagerServiceClient::new(channel.clone()).max_decoding_message_size(usize::MAX);
+-        let notification_client =
+-            NotificationServiceClient::new(channel.clone()).max_decoding_message_size(usize::MAX);
++        // Accept zstd-compressed notifications: the initial `MetaSnapshot` on `Subscribe`
++        // carries the full hummock version, and a single uncompressed gRPC message larger
++        // than `i32::MAX` bytes is silently reset by hyper/h2 and can never be delivered.
++        let notification_client = NotificationServiceClient::new(channel.clone())
++            .accept_compressed(tonic::codec::CompressionEncoding::Zstd)
++            .max_decoding_message_size(usize::MAX);
+         let stream_client =
+             StreamManagerServiceClient::new(channel.clone()).max_decoding_message_size(usize::MAX);
+         let user_client = UserServiceClient::new(channel.clone());
 ```
 
-**File**: `src/frontend/planner_test/tests/testdata/output/topn.yaml` (modified, +6/-4)
-```diff
-@@ -4,10 +4,12 @@
-     CREATE MATERIALIZED VIEW t1_mv AS SELECT SUM(a) as sa, SUM(b) as sb, SUM(c) as sc, SUM(d) as sd FROM t1;
-     SELECT sa, count(*) as cnt2 FROM t1_mv GROUP BY sa ORDER BY cnt2 DESC LIMIT 50 OFFSET 50;
-   batch_plan: |-
--    BatchExchange { order: [], dist: Single }
--    └─BatchLimit { limit: 50, offset: 50 }
--      └─BatchSimpleAgg { aggs: [internal_last_seen_value(t1_mv.sa), count] }
--        └─BatchScan { table: t1_mv, columns: [t1_mv.sa], distribution: Single }
-+    BatchLimit { limit: 50, offset: 50 }
-+    └─BatchExchange { order: [], dist: Single, sequential: true }
-+      └─BatchLimit { limit: 100, offset: 0 }
-+        └─BatchHashAgg { group_key: [t1_mv.sa], aggs: [count] }
-+          └─BatchExchange { order: [], dist: HashShard(t1_mv.sa) }
-+            └─BatchScan { table: t1_mv, columns: [t1_mv.sa], distribution: Single }
- - sql: |
-     CREATE TABLE t1 (pk int, a int, b int, c bigint, d int);
-     CREATE MATERIALIZED VIEW t1_mv AS SELECT * from t1;
-```
+---
 
-**File**: `src/frontend/src/optimizer/rule/agg_group_by_simplify_rule.rs` (modified, +8/-2)
+### Incident Patch 3: `dea532d7` (2026-10-27)
+**Commit Message**: refactor(optimizer): remove column pruning workaround in GroupingSetsToExpandRule (#27652)
+
+**File**: `src/frontend/src/optimizer/rule/grouping_sets_to_expand_rule.rs` (modified, +1/-41)
 ```diff
-@@ -35,10 +35,16 @@ impl Rule<Logical> for AggGroupBySimplifyRule {
-         }
-         let functional_dependency = agg_input.functional_dependency();
-         let group_key = group_key.to_vec();
--        if !functional_dependency.is_key(&group_key) {
-+        if group_key.is_empty() || !functional_dependency.is_key(&group_key) {
+@@ -12,7 +12,6 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-use fixedbitset::FixedBitSet;
+ use itertools::Itertools;
+ use risingwave_common::types::DataType;
+ use risingwave_common::util::column_index_mapping::ColIndexMapping;
+@@ -28,44 +27,6 @@ impl GroupingSetsToExpandRule {
+     pub fn create() -> BoxedRule {
+         Box::new(Self {})
+     }
+-
+-    /// TODO: Remove this method when we support column pruning for `Expand`.
+-    fn prune_column_for_agg(agg: &LogicalAgg) -> LogicalAgg {
+-        let group_key_required_cols = agg.group_key().to_bitset();
+-        let agg_call_required_cols = {
+-            let input_cnt = agg.input().schema().len();
+-            let mut tmp = FixedBitSet::with_capacity(input_cnt);
+-
+-            agg.agg_calls().iter().for_each(|agg_call| {
+-                tmp.extend(agg_call.inputs.iter().map(|x| x.index()));
+-                tmp.extend(agg_call.order_by.iter().map(|x| x.column_index));
+-                // collect columns used in aggregate filter expressions
+-                for i in &agg_call.filter.conjunctions {
+-                    tmp.union_with(&i.collect_input_refs(input_cnt));
+-                }
+-            });
+-            tmp
+-        };
+-
+-        let input_required_cols = {
+-            let mut tmp = FixedBitSet::with_capacity(agg.input().schema().len());
+-            tmp.union_with(&group_key_required_cols);
+-            tmp.union_with(&agg_call_required_cols);
+-            tmp.ones().collect_vec()
+-        };
+-        let input_col_change = ColIndexMapping::with_remaining_columns(
+-            &input_required_cols,
+-            agg.input().schema().len(),
+-        );
+-        let input =
+-            LogicalProject::with_out_col_idx(agg.input(), input_required_cols.iter().cloned())
+-                .into();
+-
+-        let (new_agg, output_col_change) =
+-            agg.rewrite_with_input_agg(input, agg.agg_calls(), input_col_change);
+-        assert!(output_col_change.is_identity());
+-        new_agg
+-    }
+ }
+ 
+ impl Rule<Logical> for GroupingSetsToExpandRule {
+@@ -74,9 +35,8 @@ impl Rule<Logical> for GroupingSetsToExpandRule {
+         if agg.grouping_sets().is_empty() {
              return None;
          }
--        let minimized_group_key = functional_dependency.minimize_key(&group_key);
-+        let mut minimized_group_key = functional_dependency.minimize_key(&group_key);
-+        // The minimized key is empty when the input has at most one row. Keep one group key
-+        // column, otherwise the grouped agg would become a simple agg, which outputs one row
-+        // instead of zero rows on empty input.
-+        if minimized_group_key.is_empty() {
-+            minimized_group_key.push(group_key[0]);
-+        }
-         if minimized_group_key.len() < group_key.len() {
-             let new_group_key = IndexSet::from(minimized_group_key);
-             let new_group_key_len = new_group_key.len();
+-        let agg = Self::prune_column_for_agg(agg);
+         let (old_agg_calls, old_group_keys, grouping_sets, input, enable_two_phase) =
+-            agg.decompose();
++            agg.clone().decompose();
+ 
+         let old_input_schema_len = input.schema().len();
+         let flag_col_idx = old_group_keys.len();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #27670** (2026-10-27): chore(deps): Bump uuid from 1.26.1 to 1.28.0 (@dependabot[bot])
+- **PR #27668** (closed): feat(batch): opt in to latest locally committed point reads (@zwang28)
+- **PR #27667** (closed): perf(optimizer): pull up correlated COUNT aggregates without a domain (@chenzl25)
+- **PR #27664** (2026-10-27): fix(batch): avoid extra NULL rows in full outer hash join with non-equi condition (@chenzl25)
+- **PR #27663** (2026-10-27): perf(storage): avoid version waits for readable batch query epochs (#27661) (@risingwave-ci)
 - **PR #27662** (closed): fix: batch query epoch readiness and Pub/Sub credentials fixes to release-3.1 (@zwang28)
-- **PR #27661** (2026-10-26): perf(storage): avoid version waits for readable batch query epochs (@zwang28)
-- **PR #27655** (2026-10-26): feat(iceberg): list tables in storage catalog (@chenzl25)
-- **PR #27650** (2026-10-26): cherry-pick refactor(meta): shorten Hummock GC context lock scope (release-3.1) (@zwang28)
-- **PR #27645** (2026-10-26): test(iceberg): wait longer for sink commits in predicate_pushdown bench (@howenyap)
-- **PR #27627** (2026-10-23): fix(frontend): avoid external MySQL access in CDC privilege test (@cyliu0)
 
 ---
 
@@ -1356,85 +1368,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. optimizer): keep at least one group key in AggGroupBySimplifyRule (#27594)
+## X. stream): check in debug builds that executors output no rows below their waterma
 
 **RULE**:
-When implementing operations in `e2e_test/streaming/bug_fixes/issue_27451.slt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/stream/src/executor/wrapper.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a3472511`: optimizer): keep at least one group key in AggGroupBySimplifyRule (#27594). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3a2a460c`: stream): check in debug builds that executors output no rows below their watermarks (#27559). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e_test/streaming/bug_fixes/issue_27451.slt`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/stream/src/executor/wrapper.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# https://github.com/risingwavelabs/risingwave/issues/27451
-# TL;DR A grouped agg over an input with at most one row was simplified into a simple agg,
-# which outputs one row instead of zero rows on empty input.
-
-statement ok
-create materialized view m6 as select min(x) as col_0 from (values (1)) as v(x);
-
-statement ok
-create materialized view m16 as select col_0 from m6 where false group by col_0;
-
-query I
-select * from m16;
-----
-
-query I
-select col_0 from m6 where false group by col_0;
-----
-
-# Multiple group keys on a single-row input whose only row may be filtered out.
-statement ok
-create table t (v int);
-
-statement ok
-create materialized view m_single as select min(v) as a, max(v) as b from t;
-
-statement ok
-create materialized view m_grouped as
-select a, b, count(*) as cnt from m_single where a is not null group by a, b;
-
-query III
-select * from m_grouped;
-----
-
-# The same query in batch mode.
-query III
-select a, b, count(*) from m_single where a is not null group by a, b;
-----
-
-statement ok
-insert into t values (1), (3);
-
-statement ok
-flush;
-
-query III
-select * from m_grouped;
-----
-1 3 1
-
-statement ok
-delete from t;
-
-statement ok
-flush;
-
-query III
-select * from m_grouped;
-----
+mod watermark_check;
+        let stream = update_check::update_check(info.clone(), stream);
+        // Watermark check
+        let stream = watermark_check::watermark_check(info, stream);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        let stream = update_check::update_check(info, stream);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a3472511` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3a2a460c` are properly handled with clean fallback behavior.
