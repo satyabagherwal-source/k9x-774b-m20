@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source**: github ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
-> **Source Version**: `811dd4cd`  
+> **Source Version**: `fab43236`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T02:11:22.268Z  
+> **Timestamp**: 2026-10-27T10:21:50.259Z  
 > **Learning ID**: `learn-github-slatedb-slatedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T02:11:21.464Z  
+> **Harvest Timestamp**: 2026-10-27T10:21:49.701Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cloud native embedded storage engine built on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3588 stars
+- **Stars / Engagement**: 3593 stars
 
 ---
 
@@ -2367,45 +2367,676 @@ func uniffiCheckChecksums() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `811dd4cd` (2026-10-22)
-**Commit Message**: Add Atomix to list of adopters (#2188)
+### Incident Patch 1: `fab43236` (2026-10-26)
+**Commit Message**: Add slatedb-mirror crate with ObjectStoreMirror (RFC 0034) (#2136)
 
-**File**: `README.md` (modified, +1/-0)
+**File**: `.github/workflows/release.yaml` (modified, +1/-0)
 ```diff
-@@ -153,6 +153,7 @@ SlateDB follows Semantic Versioning. We release new versions approximately every
- See who's using SlateDB.
+@@ -100,6 +100,7 @@ jobs:
+           }
  
- - [4og.io](https://4og.io)
-+- [Atomix](https://www.atomix.com)
- - [Dropbox](https://www.dropbox.com)
- - [Embucket](https://www.embucket.com)
- - [Gadget](https://gadget.dev)
+           publish_if_missing "slatedb-common"
++          publish_if_missing "slatedb-mirror"
+           publish_if_missing "slatedb-txn-obj"
+           publish_if_missing "slatedb"
+           publish_if_missing "slatedb-uniffi"
+```
+
+**File**: `Cargo.lock` (modified, +35/-0)
+```diff
+@@ -1485,6 +1485,12 @@ version = "0.5.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "fc0fef456e4baa96da950455cd02c081ca953b141298e41db3fc7e36b1da849c"
+ 
++[[package]]
++name = "hex"
++version = "0.4.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
++
+ [[package]]
+ name = "http"
+ version = "1.4.0"
+@@ -3280,6 +3286,7 @@ dependencies = [
+  "serde_json",
+  "siphasher",
+  "slatedb-common",
++ "slatedb-mirror",
+  "slatedb-txn-obj",
+  "smallvec",
+  "snap",
+@@ -3340,12 +3347,17 @@ dependencies = [
+ name = "slatedb-common"
+ version = "0.17.0"
+ dependencies = [
++ "async-trait",
++ "bytes",
+  "chrono",
+  "log",
++ "lru",
+  "object_store",
++ "parking_lot",
+  "rand 0.10.3",
+  "rand_xoshiro",
+  "serde",
++ "tempfile",
+  "thread_local",
+  "tokio",
+ ]
+@@ -3375,6 +3387,29 @@ dependencies = [
+  "walkdir",
+ ]
+ 
++[[package]]
++name = "slatedb-mirror"
++version = "0.17.0"
++dependencies = [
++ "async-trait",
++ "backon",
++ "bytes",
++ "chrono",
++ "futures",
++ "hex",
++ "log",
++ "md-5",
++ "object_store",
++ "parking_lot",
++ "serde",
++ "serde_json",
++ "slatedb-common",
++ "tempfile",
++ "thiserror 1.0.69",
++ "tokio",
++ "tokio-util",
++]
++
+ [[package]]
+ name = "slatedb-txn-obj"
+ version = "0.17.0"
+```
+
+**File**: `Cargo.toml` (modified, +4/-0)
+```diff
+@@ -6,6 +6,7 @@ members = [
+     "slatedb",
+     "slatedb-dst",
+     "slatedb-common",
++    "slatedb-mirror",
+     "slatedb-bencher",
+     "slatedb-cli",
+     "slatedb-txn-obj",
+@@ -52,10 +53,12 @@ flate2 = "1.1.2"
+ flatbuffers = "25.2.10"
+ foyer = "0.22.6"
+ futures = "0.3.30"
++hex = "0.4.3"
+ humantime = "2.1.0"
+ log = "0.4.27"
+ lru = "0.18"
+ lz4_flex = "0.11.5"
++md-5 = { version = "0.11", default-features = false }
+ moka = "0.12.8"
+ object_store = "0.14.2"
+ ouroboros = "0.18"
+@@ -71,6 +74,7 @@ siphasher = "1"
+ smallvec = "1.15.1"
+ slatedb = { path = "slatedb", version = "0.17.0" }
+ slatedb-common = { path = "slatedb-common", version = "0.17.0" }
++slatedb-mirror = { path = "slatedb-mirror", version = "0.17.0" }
+ slatedb-txn-obj = { path = "slatedb-txn-obj", version = "0.17.0" }
+ snap = "1.1.1"
+ sysinfo = "0.35.2"
+```
+
+**File**: `rfcs/0034-local-object-mirroring.md` (modified, +696/-255)
+```diff
+@@ -14,16 +14,21 @@ Authors:
+ 
+ ## Summary
+ 
+-This RFC adds `ObjectStoreMirror`, a whole-file local mirror for compacted SSTs.
+-It is separate from the existing part-based `CachedObjectStore`, which we will
+-deprecate and remove.
++This RFC adds `ObjectStoreMirror`, a generic whole-file local mirror for object
++storage, and `SlateDbMirrorPolicy`, which uses it to mirror compacted SSTs. The
++mirror is separate from the existing part-based `CachedObjectStore`, which we
++will deprecate and remove.
+ 
+-`ObjectStoreMirror` supports local-only reads, write-through mirroring, cache
+-warming, and garbage collection. It guarantees all compacted SST reads are from
+-local files and all writes are durable to object storage before returning
+-success.
++The mirror decides how objects are kept locally. A `MirrorPolicy` decides which
++objects are kept. `ObjectStoreMirror` lives in its own crate and knows nothing
++about SlateDB. `SlateDbMirrorPolicy` holds all of SlateDB's rules.
+ 
+-Each `ObjectStoreMirror` serves one database root. The root is detected from
++With `SlateDbMirrorPolicy`, the mirror supports local-only reads, write-through
++mirroring, cache warming, and garbage collection. It guarantees all compacted
++SST reads are from local files and all writes are durable to object storage
++before returning success.
++
++Each `SlateDbMirrorPolicy` serves one database root. The root is detected from
+ the first `.manifest` read or write. Subsequent `.manifest` operations for a
+ different root are rejected. External SSTs referenced by the database remain
+ supported and may reside under other roots.
+@@ -66,38 +71,131 @@ cases:
+   to one file unlink.
+ 
+ Rather than change the existing `CachedObjectStore` in place, this RFC adds
+-`ObjectStoreMirror` under `slatedb/src/object_store_mirror` to address these
+-issues.
++`ObjectStoreMirror` to address these issues.
++
++Most of a local mirror has nothing to do with SlateDB. File layout, downloads,
++write-through, and cleaning up after remote deletes are useful to any
++`object_store` user. Only the choice of which objects to keep, and when to drop
++them, depends on SlateDB's manifests. Putting that choice behind a trait keeps
++the SlateDB logic in one small place and lets other projects reuse the mirror.
+ 
+ ## Goals
+ 
+ - Add a whole-SST local mirror for compacted SSTs.
+ - Support local-only reads, write-through mirroring, and cache warming.
+ - Garbage collect obsolete local SSTs promptly without duplicating GC
+   eligibility.
++- Keep the mirror generic, with SlateDB's rules in a pluggable policy.
+ - Make the new cache additive so existing users are unaffected.
+ 
+ ## Non-Goals
+ 
+ - Changing the runtime behavior of `CachedObjectStore`.
+ - Caching WALs, manifests, or other coordination objects.
+ - Providing size-based eviction, write-back, or a best-effort caching.
++- Mirroring objects that are overwritten in place. The mirror assumes every
++  mirrored path is written once. See [Guarantees](#guarantees).
+ 
+ ## Design
+ 
+-### Public API
++### Crates
+ 
+-`ObjectStoreMirror` is a normal `ObjectStore` implementation in
+-`slatedb/src/object_store_mirror`. Users construct it with a local cache root
+-and remote store, then pass it through the existing
+-`DbBuilder::new`/`Db::builder`/`DbReaderBuilder::builder` object store
+-parameter.
++- `slatedb-mirror` is a new workspace crate containing `ObjectStoreMirror`,
++  `MirrorPolicy`, `MirrorHandle`, and `MirrorError`. It doesn't depend
++  on `slatedb`. A crate boundary is the only thing that keeps the mirror truly
++  generic, because it can't reach `ManifestCore` even by accident.
++- `single_flight.rs` moves out of `slatedb`, into either `slatedb-mirror` or
++  `slatedb-common`.
++- `Vfs` lives in `slatedb-common`, since nothing in it is mirror-specific.
++  `slatedb-mirror` re-exports it.
++- `SlateDbMirrorPolicy` lives in `slatedb`.
++
++### Public API
+ 
+ ```rust
++pub enum ReadRoute {
++    /// Wrapped store only.
++    Remote,
++    /// Wrapped store. The whole object goes to `MirrorPolicy::observe` before
++    /// the caller gets a result.
++    Observe,
++    /// Local copy only. A miss is an error.
++    Local,
++    /// Download the whole object again, replace the local copy, and serve the
++    /// request from it.
++    Refetch,
++}
++
++pub enum WriteRoute {
++    /// Wrapped store only.
++    Remote,
++    /// Wrapped store, then the payload goes to `MirrorPolicy::observe`.
++    Observe,
++    /// Write to both. Returns after the upload succeeds and the local file is
++    /// in place.
++    Mirror,
++}
++
++pub enum MultipartRoute {
++    /// Wrapped store only.
++    Remote,
++    /// Write to both. Returns after the upload completes and the local file
++    /// is in place.
++    Mirror,
++}
++
++#[async_trait]
++pub trait MirrorPolicy: Send + Sync + 'static {
++    /// Runs on every GET and HEAD. `options.head` is true for HEAD. Must be
++    /// cheap.
++    fn read_route(&self, path: &Path, options: &GetOptions) -> Result<ReadRoute>;
++
++    /// Runs on every PUT. Must be cheap.
++  
+```
+
+**File**: `slatedb-common/Cargo.toml` (modified, +7/-2)
+```diff
+@@ -8,21 +8,26 @@ license.workspace = true
+ homepage.workspace = true
+ 
+ [dependencies]
++async-trait = { workspace = true }
++bytes = { workspace = true }
+ chrono = { workspace = true }
+ log = { workspace = true }
++lru = { workspace = true }
+ object_store = { workspace = true }
++parking_lot = { workspace = true }
+ rand = { workspace = true }
+ rand_xoshiro = { workspace = true }
+ serde = { workspace = true, features = ["derive"], optional = true }
+ thread_local = { workspace = true }
+-tokio = { workspace = true, features = ["macros", "rt", "time"] }
++tokio = { workspace = true, features = ["fs", "io-util", "macros", "rt", "sync", "time"] }
+ 
+ [features]
+ serde = ["dep:serde"]
+ test-util = ["tokio/test-util"]
+ 
+ [dev-dependencies]
+-tokio = { workspace = true, features = ["macros", "rt", "time", "test-util"] }
++tempfile = { workspace = true }
++tokio = { workspace = true, features = ["fs", "io-util", "macros", "rt", "sync", "time", "test-util"] }
+ 
+ [lints]
+ workspace = true
+```
+
+**File**: `slatedb-common/src/file_handle_cache.rs` (added, +278/-0)
+```diff
+@@ -0,0 +1,278 @@
++//! A cache of open files and a helper for positional reads.
++
++use lru::LruCache;
++use std::num::NonZeroUsize;
++use std::sync::Arc;
++
++/// A cache of open file descriptors, keyed by filesystem path.
++///
++/// Uses a `Mutex` protecting an `LruCache` for O(1) lookup, promotion, and
++/// eviction. Each read specifies its own offset, so threads can share a
++/// handle without a lock for each file. On Unix, these reads do not move
++/// the file cursor.
++#[derive(Clone)]
++pub struct FileHandleCache {
++    inner: Arc<std::sync::Mutex<LruCache<std::path::PathBuf, Arc<std::fs::File>>>>,
++}
++
++impl std::fmt::Debug for FileHandleCache {
++    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
++        let inner = self.inner.lock().expect("lock should not be poisoned");
++        f.debug_struct("FileHandleCache")
++            .field("len", &inner.len())
++            .field("cap", &inner.cap())
++            .finish()
++    }
++}
++
++impl FileHandleCache {
++    /// Creates a cache that retains at most `max_handles` open files.
++    ///
++    /// # Panics
++    ///
++    /// Panics if `max_handles` is zero.
++    pub fn new(max_handles: usize) -> Self {
++        Self {
++            inner: Arc::new(std::sync::Mutex::new(LruCache::new(
++                NonZeroUsize::new(max_handles).expect("max_handles must be > 0"),
++            ))),
++        }
++    }
++
++    /// Returns the number of handles retained by the cache.
++    pub fn len(&self) -> usize {
++        self.inner
++            .lock()
++            .expect("lock should not be poisoned")
++            .len()
++    }
++
++    /// Returns whether the cache retains no handles.
++    pub fn is_empty(&self) -> bool {
++        self.len() == 0
++    }
++
++    /// Look up a cached file handle, or open the file and cache it.
++    /// Returns `Ok(None)` if the file does not exist on disk.
++    /// The returned `Arc` keeps the file open after its cache entry is evicted.
++    pub fn get_or_open(
++        &self,
++        path: &std::path::Path,
++    ) -> Result<Option<Arc<std::fs::File>>, std::io::Error> {
++        match self.try_get_or_open(path) {
++            Ok(handle) => Ok(Some(handle)),
++            Err(err) if err.kind() == std::io::ErrorKind::NotFound => Ok(None),
++            Err(err) => Err(err),
++        }
++    }
++
++    /// Look up a cached file handle, or open the file and cache it.
++    /// Unlike [`Self::get_or_open`], returns the error from opening the file
++    /// as-is, including `NotFound`.
++    /// The returned `Arc` keeps the file open after its cache entry is evicted.
++    pub fn try_get_or_open(
++        &self,
++        path: &std::path::Path,
++    ) -> Result<Arc<std::fs::File>, std::io::Error> {
++        let mut cache = self.inner.lock().expect("lock should not be poisoned");
++        if let Some(handle) = cache.get(path) {
++            if Self::is_valid(handle, path) {
++                return Ok(handle.clone());
++            }
++            // Stale entry — remove it so we reopen below.
++            cache.pop(path);
++        }
++
++        let handle = Arc::new(std::fs::File::open(path)?);
++
++        cache.push(path.to_path_buf(), handle.clone());
++        Ok(handle)
++    }
++
++    /// Check whether a cached file descriptor still refers to a live file.
++    ///
++    /// On Unix an unlinked file keeps its data accessible through open fds,
++    /// but `fstat` will report `nlink == 0`. This single in-kernel syscall is
++    /// much cheaper than a full `open` and lets us detect deleted or replaced
++    /// files without a TOCTOU-prone path `stat`.
++    ///
++    /// On non-Unix platforms (e.g. Windows), we fall back to checking whether
++    /// the path still exists on disk.
++    #[cfg(unix)]
++    fn is_valid(handle: &std::fs::File, _path: &std::path::Path) -> bool {
++        use std::os::unix::fs::MetadataExt;
++        handle.metadata().is_ok_and(|m| m.nlink() > 0)
++    }
++
++    #[cfg(not(unix))]
++    fn is_valid(_handle: &std::fs::File, path: &std::path::Path) -> bool {
++        path.exists()
++    }
++
++    /// Remove a cached handle, e.g. after eviction or after a write replaces
++    /// the file (since the cached fd would still reference the old inode).
++    pub fn invalidate(&self, path: &std::path::Path) {
++        let mut cache = self.inner.lock().expect("lock should not be poisoned");
++        cache.pop(path);
++    }
++}
++
++/// Reads exactly `buf.len()` bytes at `offset`.
++///
++/// Concurrent readers can share the file because each read specifies its offset.
++/// On Unix, reads do not move the file cursor. On Windows, they do.
++pub fn read_exact_at_offset(
++    file: &std::fs::File,
++    buf: &mut [u8],
++    offset: u64,
++) -> std::io::Result<()> {
++    #[cfg(unix)]
++    {
++        use std::os::unix::fs::FileExt;
++        file.read_exact_at(buf, offset)
++    }
++    #[cfg(windows)]
++    {
++        use std::os::windows::fs::FileExt;
++        let mut bytes_read = 0;
++        while bytes_read < buf.len() {
++            let n = file.seek_read(
+```
+
+**File**: `slatedb-common/src/lib.rs` (modified, +4/-0)
+```diff
+@@ -23,10 +23,14 @@
+ )]
+ 
+ pub mod clock;
++pub mod file_handle_cache;
+ pub mod metrics;
+ pub mod object_metadata;
+ pub mod rand;
++pub mod retry;
++pub mod single_flight;
+ pub mod utils;
++pub mod vfs;
+ 
+ #[cfg(feature = "test-util")]
+ pub use clock::MockSystemClock;
+```
+
+**File**: `slatedb-common/src/retry.rs` (added, +133/-0)
+```diff
+@@ -0,0 +1,133 @@
++//! Shared rules for retries of object store operations.
++
++use std::error::Error;
++use std::fmt;
++
++/// Wraps an error to tell retry loops that they must return it without retries.
++///
++/// Stores can use this wrapper as the source of [`object_store::Error::Generic`].
++/// The wrapper preserves the original error's display text and exposes it through
++/// [`Error::source`].
++#[derive(Debug)]
++pub struct NonRetryable(pub Box<dyn Error + Send + Sync>);
++
++impl fmt::Display for NonRetryable {
++    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
++        fmt::Display::fmt(&self.0, f)
++    }
++}
++
++impl Error for NonRetryable {
++    fn source(&self) -> Option<&(dyn Error + 'static)> {
++        Some(self.0.as_ref())
++    }
++}
++
++impl NonRetryable {
++    /// Finds this wrapper in an error or its sources, including inside [`std::io::Error`].
++    pub fn find<'a>(mut err: &'a (dyn Error + 'static)) -> Option<&'a Self> {
++        loop {
++            if let Some(err) = err.downcast_ref::<Self>() {
++                return Some(err);
++            }
++            // `io::Error::source()` skips the wrapped error, so visit it directly.
++            err = match err.downcast_ref::<std::io::Error>() {
++                Some(err) => err.get_ref()?,
++                None => err.source()?,
++            };
++        }
++    }
++}
++
++/// Returns whether an object store operation can be retried after this error.
++///
++/// Errors for missing objects, failed conditions, and unsupported operations stop
++/// retries. A [`NonRetryable`] wrapper anywhere in the error's sources also stops retries.
++pub fn should_retry(err: &object_store::Error) -> bool {
++    !matches!(
++        err,
++        object_store::Error::AlreadyExists { .. }
++            | object_store::Error::Precondition { .. }
++            | object_store::Error::NotModified { .. }
++            | object_store::Error::NotFound { .. }
++            | object_store::Error::NotImplemented { .. }
++            | object_store::Error::NotSupported { .. }
++    ) && NonRetryable::find(err).is_none()
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    fn generic(source: impl Error + Send + Sync + 'static) -> object_store::Error {
++        object_store::Error::Generic {
++            store: "test",
++            source: Box::new(source),
++        }
++    }
++
++    fn non_retryable() -> NonRetryable {
++        NonRetryable(Box::new(std::io::Error::other("write already committed")))
++    }
++
++    #[test]
++    fn should_preserve_display_and_original_error() {
++        let err = non_retryable();
++        assert_eq!(err.to_string(), "write already committed");
++        let source = err.source().unwrap().downcast_ref::<std::io::Error>();
++        assert!(source.is_some());
++    }
++
++    #[test]
++    fn should_retry_transient_errors() {
++        assert!(should_retry(&generic(std::io::Error::other("timeout"))));
++    }
++
++    #[test]
++    fn should_not_retry_permanent_errors() {
++        let errors = [
++            object_store::Error::AlreadyExists {
++                path: "a".into(),
++                source: "exists".into(),
++            },
++            object_store::Error::Precondition {
++                path: "a".into(),
++                source: "condition failed".into(),
++            },
++            object_store::Error::NotModified {
++                path: "a".into(),
++                source: "unchanged".into(),
++            },
++            object_store::Error::NotFound {
++                path: "a".into(),
++                source: "missing".into(),
++            },
++            object_store::Error::NotImplemented {
++                operation: "test".into(),
++                implementer: "test".into(),
++            },
++            object_store::Error::NotSupported {
++                source: "unsupported".into(),
++            },
++        ];
++        for err in errors {
++            assert!(!should_retry(&err), "unexpected retry for {err:?}");
++        }
++    }
++
++    #[test]
++    fn should_not_retry_tagged_errors_through_wrappers() {
++        let errors = [
++            generic(non_retryable()),
++            generic(generic(non_retryable())),
++            generic(std::io::Error::other(non_retryable())),
++            generic(std::io::Error::other(generic(non_retryable()))),
++            generic(std::io::Error::other(
++                std::io::Error::other(non_retryable()),
++            )),
++        ];
++        for err in errors {
++            assert!(!should_retry(&err), "unexpected retry for {err:?}");
++        }
++    }
++}
 ```
 
 ---
 
-### Incident Patch 2: `3e30522d` (2026-10-22)
-**Commit Message**: Add to adopters section (#2187)
+### Incident Patch 2: `7a7cca3c` (2026-10-26)
+**Commit Message**: Bump zstd to 0.14.3 to clear RUSTSEC-2026-0391/0398/0403/0410 (#2193)
 
-**File**: `README.md` (modified, +1/-0)
+**File**: `Cargo.lock` (modified, +23/-5)
 ```diff
-@@ -160,6 +160,7 @@ See who's using SlateDB.
- - [HelixDB](https://github.com/HelixDB/helix-db)
- - [Malstrom](https://github.com/MalstromDevelopers/malstrom)
- - [Massive](https://massive.com)
-+- [Mav9](https://mav9.com)
- - [Merklemap](https://merklemap.com)
- - [OpenData](https://www.opendata.dev)
- - [Prisma](https://www.prisma.io)
+@@ -1200,7 +1200,7 @@ dependencies = [
+  "serde",
+  "tracing",
+  "twox-hash",
+- "zstd",
++ "zstd 0.13.3",
+ ]
+ 
+ [[package]]
+@@ -3295,7 +3295,7 @@ dependencies = [
+  "url",
+  "uuid",
+  "walkdir",
+- "zstd",
++ "zstd 0.14.3",
+ ]
+ 
+ [[package]]
+@@ -4902,7 +4902,16 @@ version = "0.13.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "e91ee311a569c327171651566e07972200e76fcfe2242a4fa446149a3881c08a"
+ dependencies = [
+- "zstd-safe",
++ "zstd-safe 7.2.4",
++]
++
++[[package]]
++name = "zstd"
++version = "0.14.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "db3ae9bf90af6e40197bef767eeefc46ad6397420fe873830bd85e5fbbfb3c70"
++dependencies = [
++ "zstd-safe 8.2.0",
+ ]
+ 
+ [[package]]
+@@ -4914,11 +4923,20 @@ dependencies = [
+  "zstd-sys",
+ ]
+ 
++[[package]]
++name = "zstd-safe"
++version = "8.2.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "ded520f16b29e1a9b771c722221b2b0a0398c2316d9bb3c42b458a5414d7434b"
++dependencies = [
++ "zstd-sys",
++]
++
+ [[package]]
+ name = "zstd-sys"
+-version = "2.0.16+zstd.1.5.7"
++version = "2.1.2+zstd.1.5.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "91e19ebc2adc8f83e43039e79776e3fda8ca919132d68a1fed6a5faca2683748"
++checksum = "481ada9c543b2323cbb7bbdbb5249177fbf0188ed959ed2c15e4b22421c84ed3"
+ dependencies = [
+  "cc",
+  "pkg-config",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -87,7 +87,7 @@ ulid = "1.2.1"
+ uuid = "1.18.0"
+ url = "2.5.8"
+ walkdir = "2.3.3"
+-zstd = "0.13.2"
++zstd = "0.14.3"
+ 
+ # dev dependencies
+ bincode = "1"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2193** (2026-10-26): Bump zstd to 0.14.3 to clear RUSTSEC-2026-0391/0398/0403/0410 (@sorenbs)
 - **PR #2189** (closed): Fix sequence tracker corruption when a delta-of-delta exceeds 32 bits (@zach-schoenberger)
 - **PR #2188** (2026-10-22): Add Atomix to list of adopters (@nomiero)
 - **PR #2187** (2026-10-22): Add to adopters section (@tom-mav9)
 - **PR #2185** (closed): Add Neon Object Storage example and tutorial (@rishi-raj-jain)
 - **PR #2184** (closed): Support seek for descending scans. Fixes #2069 (@PranavV205)
-- **PR #2183** (closed): fix(retrying_object_store): do not retry auth failures (@Tyagiquamar)
 
 ---
 
@@ -2425,21 +3056,21 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add Atomix to list of adopters (#2188)
+## X. Add slatedb-mirror crate with ObjectStoreMirror (RFC 0034) (#2136)
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `811dd4cd`: Add Atomix to list of adopters (#2188). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fab43236`: Add slatedb-mirror crate with ObjectStoreMirror (RFC 0034) (#2136). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- [Atomix](https://www.atomix.com)
+          publish_if_missing "slatedb-mirror"
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2449,4 +3080,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `811dd4cd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fab43236` are properly handled with clean fallback behavior.

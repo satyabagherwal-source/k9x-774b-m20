@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T10:09:02.778Z",
+  "last_updated": "2026-10-27T10:26:43.775Z",
   "total_verified_learnings": 1099,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11943,8 +11943,8 @@
       "slug": "flux-iac-tofu-controller",
       "platform": "github",
       "source_url": "https://github.com/flux-iac/tofu-controller",
-      "source_version": "1a172945",
-      "content_hash": "753974fd94470642633bc566014dbc18488dab99058f9ca54b5608c2012c11bd",
+      "source_version": "47aa0886",
+      "content_hash": "70326d57fdbe33fe5f07b9a03323a6186ec64a8e07ecc27295ecb0be9db1836a",
       "dossier_path": "07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
       "promoted_rules": [
@@ -11967,6 +11967,11 @@
           "number": 4033,
           "title": "branch-planner): replace the PR source ref and only plan PRs targeting the track",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4677,
+          "title": "cancel runner calls when the runner connection stays down (#1907)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11974,7 +11979,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T03:59:34.602Z",
+      "verified_at": "2026-10-27T10:21:53.517Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31173,14 +31178,19 @@
       "slug": "keyboardkit-keyboardkit",
       "platform": "github",
       "source_url": "https://github.com/KeyboardKit/KeyboardKit",
-      "source_version": "2b19759f",
-      "content_hash": "5ed390188f27ac2d758391ac60b72a3f2e45ed2b3f1197556dc6fca6f2ac8b81",
+      "source_version": "b9cb190e",
+      "content_hash": "861c2cf3b0515048eae0f06cb8711107710cabe16f2c719b22cf5fb3b747fe2f",
       "dossier_path": "07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
       "promoted_rules": [
         {
           "number": 3735,
           "title": "Patch 11.1 with a debug diacritic color fix",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4679,
+          "title": "Update package to 11.1.3",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -31189,7 +31199,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T20:51:57.298Z",
+      "verified_at": "2026-10-27T10:26:43.763Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46444,8 +46454,8 @@
       "slug": "slatedb-slatedb",
       "platform": "github",
       "source_url": "https://github.com/slatedb/slatedb",
-      "source_version": "811dd4cd",
-      "content_hash": "0180c7a53059a6724258a74814f0d569ea6a5f6b05fc4f8432b399747e0d671a",
+      "source_version": "fab43236",
+      "content_hash": "b7beb4a2b5d4982ae350937e0bc6fb01d91b3dcc87e8a247300a5cea6ac1526d",
       "dossier_path": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "promoted_rules": [
@@ -46458,6 +46468,11 @@
           "number": 3973,
           "title": "Add Atomix to list of adopters (#2188)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4676,
+          "title": "Add slatedb-mirror crate with ObjectStoreMirror (RFC 0034) (#2136)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46465,7 +46480,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T02:11:22.440Z",
+      "verified_at": "2026-10-27T10:21:50.595Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62527,13 +62542,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "181d6814",
-      "content_hash": "567332b1052ee215263fb9631f48101fb093314dfeaa3c860c0495ea0e0ac4c5",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "4a9dcea3",
+      "content_hash": "694457ca976b3a347f14b7809c93e692951c39f65dda344ed17852169330d288",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -62579,6 +62594,11 @@
           "number": 4303,
           "title": "Merge pull request #4575 from aleo-labs-protocol/deps/crypto-bigint-0.7.7",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4678,
+          "title": "Merge pull request #4577 from aleo-labs-protocol/fix/devnet-sh-eval",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -62586,7 +62606,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T16:48:16.966Z",
+      "verified_at": "2026-10-27T10:22:04.902Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -130670,6 +130690,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T10:09:02.767Z"
+    },
+    "rule-4676": {
+      "learning_id": "rule-4676",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4676,
+      "title": "Add slatedb-mirror crate with ObjectStoreMirror (RFC 0034) (#2136)",
+      "source_url": "https://github.com/slatedb/slatedb",
+      "source_version": "fab43236",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T10:21:50.595Z"
+    },
+    "rule-4677": {
+      "learning_id": "rule-4677",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4677,
+      "title": "cancel runner calls when the runner connection stays down (#1907)",
+      "source_url": "https://github.com/flux-iac/tofu-controller",
+      "source_version": "47aa0886",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T10:21:53.517Z"
+    },
+    "rule-4678": {
+      "learning_id": "rule-4678",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4678,
+      "title": "Merge pull request #4577 from aleo-labs-protocol/fix/devnet-sh-eval",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "4a9dcea3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T10:22:04.902Z"
+    },
+    "rule-4679": {
+      "learning_id": "rule-4679",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4679,
+      "title": "Update package to 11.1.3",
+      "source_url": "https://github.com/KeyboardKit/KeyboardKit",
+      "source_version": "b9cb190e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T10:26:43.763Z"
     }
   },
   "aliases": {

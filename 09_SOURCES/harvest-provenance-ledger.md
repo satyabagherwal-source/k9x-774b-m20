@@ -5209,3 +5209,7 @@ Every entry in this ledger must capture:
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `cfa33f54` | Multi-dimensional audit evidence | 2026-10-27T09:13:31.640Z |
 | `learn-github-smallstep-cli` | `https://github.com/smallstep/cli` | `824bfd6b` | Multi-dimensional audit evidence | 2026-10-27T09:46:50.504Z |
 | `learn-github-kong-kubernetes-ingress-controller` | `https://github.com/Kong/kubernetes-ingress-controller` | `76d2886d` | Multi-dimensional audit evidence | 2026-10-27T10:09:02.828Z |
+| `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `fab43236` | Multi-dimensional audit evidence | 2026-10-27T10:21:50.664Z |
+| `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `47aa0886` | Multi-dimensional audit evidence | 2026-10-27T10:21:53.588Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `4a9dcea3` | Multi-dimensional audit evidence | 2026-10-27T10:22:04.974Z |
+| `learn-github-keyboardkit-keyboardkit` | `https://github.com/KeyboardKit/KeyboardKit` | `b9cb190e` | Multi-dimensional audit evidence | 2026-10-27T10:26:43.835Z |

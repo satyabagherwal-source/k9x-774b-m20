@@ -5200,3 +5200,7 @@
 | `CYCLE-20261027-XBLH` | `2026-10-27T09:13:31.637Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4669, Rule 4670, Rule 4671` | Yes (`f78e5b11...`) |
 | `CYCLE-20261027-45XH` | `2026-10-27T09:46:50.501Z` | `smallstep/cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4672, Rule 4673, Rule 4674` | Yes (`348993ae...`) |
 | `CYCLE-20261027-WPYH` | `2026-10-27T10:09:02.825Z` | `Kong/kubernetes-ingress-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4675` | Yes (`8c7926a0...`) |
+| `CYCLE-20261027-D6F9` | `2026-10-27T10:21:50.661Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4676` | Yes (`b7beb4a2...`) |
+| `CYCLE-20261027-D8OH` | `2026-10-27T10:21:53.585Z` | `flux-iac/tofu-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4677` | Yes (`70326d57...`) |
+| `CYCLE-20261027-DHGR` | `2026-10-27T10:22:04.971Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4678` | Yes (`694457ca...`) |
+| `CYCLE-20261027-JGMW` | `2026-10-27T10:26:43.832Z` | `KeyboardKit/KeyboardKit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4679` | Yes (`861c2cf3...`) |

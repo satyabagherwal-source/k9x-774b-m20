@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-3F1K",
-    "timestamp": "2026-10-25T05:58:58.280Z",
-    "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
-    "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
-    "contentHash": "d43e03a6b461a048966d3005217c353fe2b415025a704db8c352e772f7b364b9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-CQPT",
-    "timestamp": "2026-10-25T06:06:13.313Z",
-    "repository": "facebook/folly",
-    "learningId": "learn-github-facebook-folly",
-    "contentHash": "e7255f10788615a79eac5c8f88abc3a22256ddd59807a82b5d81d5ff2d1fd7ba",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-CW2W",
-    "timestamp": "2026-10-25T06:06:20.264Z",
-    "repository": "nats-io/nats.go",
-    "learningId": "learn-github-nats-io-nats-go",
-    "contentHash": "e705fdae239550e89763f5f342bb808ac77403a460fa301d387db7cd25779315",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-D04V",
-    "timestamp": "2026-10-25T06:06:25.519Z",
-    "repository": "dragonflydb/dragonfly",
-    "learningId": "learn-github-dragonflydb-dragonfly",
-    "contentHash": "01d2a52b29b2ca4713980fea784318ed06f32a672adab63cbfc7da8b256c9c85",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-F9NB",
     "timestamp": "2026-10-25T06:08:11.159Z",
     "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -7490,6 +7430,66 @@
     "repository": "Kong/kubernetes-ingress-controller",
     "learningId": "learn-github-kong-kubernetes-ingress-controller",
     "contentHash": "8c7926a09de531fdb3f3a6f7fb374f49bf243d9cb6f6de844e7e2672ed61e906",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-D6F9",
+    "timestamp": "2026-10-27T10:21:50.661Z",
+    "repository": "slatedb/slatedb",
+    "learningId": "learn-github-slatedb-slatedb",
+    "contentHash": "b7beb4a2b5d4982ae350937e0bc6fb01d91b3dcc87e8a247300a5cea6ac1526d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-D8OH",
+    "timestamp": "2026-10-27T10:21:53.585Z",
+    "repository": "flux-iac/tofu-controller",
+    "learningId": "learn-github-flux-iac-tofu-controller",
+    "contentHash": "70326d57fdbe33fe5f07b9a03323a6186ec64a8e07ecc27295ecb0be9db1836a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-DHGR",
+    "timestamp": "2026-10-27T10:22:04.971Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "694457ca976b3a347f14b7809c93e692951c39f65dda344ed17852169330d288",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-JGMW",
+    "timestamp": "2026-10-27T10:26:43.832Z",
+    "repository": "KeyboardKit/KeyboardKit",
+    "learningId": "learn-github-keyboardkit-keyboardkit",
+    "contentHash": "861c2cf3b0515048eae0f06cb8711107710cabe16f2c719b22cf5fb3b747fe2f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

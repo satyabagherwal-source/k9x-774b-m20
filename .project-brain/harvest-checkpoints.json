@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T10:09:02.835Z",
+  "last_updated": "2026-10-27T10:26:43.843Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "567332b1052ee215263fb9631f48101fb093314dfeaa3c860c0495ea0e0ac4c5",
-      "verified_at": "2026-10-25T16:48:17.048Z",
+      "content_hash": "694457ca976b3a347f14b7809c93e692951c39f65dda344ed17852169330d288",
+      "verified_at": "2026-10-27T10:22:04.982Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T16:48:17.048Z"
+      "last_updated": "2026-10-27T10:22:04.982Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -6981,14 +6981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-slatedb-slatedb",
-      "content_hash": "0180c7a53059a6724258a74814f0d569ea6a5f6b05fc4f8432b399747e0d671a",
-      "verified_at": "2026-10-25T02:11:22.488Z",
+      "content_hash": "b7beb4a2b5d4982ae350937e0bc6fb01d91b3dcc87e8a247300a5cea6ac1526d",
+      "verified_at": "2026-10-27T10:21:50.672Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T02:11:22.488Z"
+      "last_updated": "2026-10-27T10:21:50.672Z"
     },
     "react-component/slider": {
       "repository": "react-component/slider",
@@ -10611,14 +10611,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-flux-iac-tofu-controller",
-      "content_hash": "753974fd94470642633bc566014dbc18488dab99058f9ca54b5608c2012c11bd",
-      "verified_at": "2026-10-25T03:59:34.710Z",
+      "content_hash": "70326d57fdbe33fe5f07b9a03323a6186ec64a8e07ecc27295ecb0be9db1836a",
+      "verified_at": "2026-10-27T10:21:53.596Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T03:59:34.710Z"
+      "last_updated": "2026-10-27T10:21:53.596Z"
     },
     "clockworklabs/SpacetimeDB": {
       "repository": "clockworklabs/SpacetimeDB",
@@ -15051,14 +15051,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-keyboardkit-keyboardkit",
-      "content_hash": "5ed390188f27ac2d758391ac60b72a3f2e45ed2b3f1197556dc6fca6f2ac8b81",
-      "verified_at": "2026-10-22T20:51:57.378Z",
+      "content_hash": "861c2cf3b0515048eae0f06cb8711107710cabe16f2c719b22cf5fb3b747fe2f",
+      "verified_at": "2026-10-27T10:26:43.843Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T20:51:57.378Z"
+      "last_updated": "2026-10-27T10:26:43.843Z"
     },
     "evanw/esbuild": {
       "repository": "evanw/esbuild",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md`  
 > **Source**: github ([https://github.com/flux-iac/tofu-controller](https://github.com/flux-iac/tofu-controller))  
-> **Source Version**: `1a172945`  
+> **Source Version**: `47aa0886`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T03:59:34.230Z  
+> **Timestamp**: 2026-10-27T10:21:53.186Z  
 > **Learning ID**: `learn-github-flux-iac-tofu-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/flux-iac/tofu-controller](https://github.com/flux-iac/tofu-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T03:59:34.222Z  
+> **Harvest Timestamp**: 2026-10-27T10:21:44.739Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A GitOps OpenTofu and Terraform controller for Flux
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 1718 stars
+- **Stars / Engagement**: 1719 stars
 
 ---
 
@@ -37,7 +37,7 @@
 - Entry configurations inspected via direct stream: go.mod, README.md, Dockerfile.
 - Evaluated system abstractions and modular contracts.
 
-### Core Architecture Module: `controllers/tf_controller_webhooks.go`
+### Core Architecture Module: `controllers/webhooks.go`
 ```
 package controllers
 
@@ -78,14 +78,14 @@ func shouldProcessPostPlanningWebhooks(terraform *infrav1.Terraform) bool {
 	return false
 }
 
-func (r *TerraformReconciler) prepareWebhookPayload(terraform *infrav1.Terraform, runnerClient runner.RunnerClient, payloadType string, tfInstance string) ([]byte, error) {
+func (r *TerraformReconciler) prepareWebhookPayload(ctx context.Context, terraform *infrav1.Terraform, runnerClient runner.RunnerClient, payloadType string, tfInstance string) ([]byte, error) {
 	toBytes, err := terraform.ToBytes(r.Scheme)
 	if err != nil {
 		err = fmt.Errorf("failed to marshal Terraform resource: %w", err)
 		return nil, err
 	}
 
-	reply, err := runnerClient.ShowPlanFile(context.Background(), &runner.ShowPlanFileRequest{
+	reply, err := runnerClient.ShowPlanFile(ctx, &runner.ShowPlanFileRequest{
 		TfInstance: tfInstance,
 		Filename:   runner.TFPlanName,
 	})
@@ -140,7 +140,7 @@ func (r *TerraformReconciler) prepareWebhookPayload(terraform *infrav1.Terraform
 	return jsonBytes, nil
 }
 
-func (r *TerraformReconciler) processPostPlanningWebhooks(ctx context.Context, terraform *infrav1.Terraform, runnerClient runner.RunnerClient, revision string, tfInstance string) (*infrav1.Terraform, error) {
+func (r *TerraformReconciler) processPostPlanningWebhooks(ctx context.Context, s *runnerSession, terraform *infrav1.Terraform) error {
 	log := ctrl.LoggerFrom(ctx)
 
 	hooks := []infrav1.Webhook{}
@@ -151,7 +151,7 @@ func (r *TerraformReconciler) processPostPlanningWebhooks(ctx context.Context, t
 	}
 
 	if len(hooks) == 0 {
-		return terraform, nil
+		return nil
 	}
 
 	disableWebhookTLSVerification := os.Getenv("DISABLE_WEBHOOK_TLS_VERIFY") == "1"
@@ -166,10 +166,10 @@ func (r *TerraformReconciler) processPostPlanningWebhooks(ctx context.Context, t
 
 		log.Info("webhook is enabled, processing")
 
-		payloadBytes, err := r.prepareWebhookPayload(terraform, runnerClient, webhook.PayloadType, tfInstance)
+		payloadBytes, err := r.prepareWebhookPayload(ctx, terraform, s.client, webhook.PayloadType, s.tfInstance)
 		if err != nil {
 			err = fmt.Errorf("failed to prepare webhook payload: %w", err)
-			return terraform, err
+			return err
 		}
 
 		log.Info("webhook payload prepared")
@@ -184,7 +184,7 @@ func (r *TerraformReconciler) processPostPlanningWebhooks(ctx context.Context, t
 			u, err := url.Parse(webhook.URL)
 			if err != nil {
 				err = fmt.Errorf("failed to parse webhook URL: %w", err)
-				return terraform, err
+				return err
 			}
 
 			log.Info("webhook URL parsed", "host", u.Host)
@@ -203,7 +203,7 @@ func (r *TerraformReconciler) processPostPlanningWebhooks(ctx context.Context, t
 			certificate, err := tls.LoadX509KeyPair(tlsCertPath, tlsKeyPath)
 			if err != nil {
 				err = fmt.Errorf("failed to load webhook TLS certificate: %w", err)
-				return terraform, err
+				return err
 			}
 
 			log.Info("webhook TLS cert loaded", "path", tlsCertPath, "keypath", tlsKeyPath)
@@ -219,23 +219,23 @@ func (r *TerraformReconciler) processPostPlanningWebhooks(ctx context.Context, t
 		post, err := cli.Post(webhook.URL, "application/json", bytes.NewReader(payloadBytes))
 		if err != nil {
 			err = fmt.Errorf("failed to send webhook: %w", err)
-			return terraform, err
+			return err
 		}
 
 		log.Info("webhook sent")
 
 		if post.StatusCode != 200 {
-			return terraform, fmt.Errorf("webhook %s returned %d: %s", webhook.URL, post.StatusCode, post.Status)
+			return fmt.Errorf("webhook %s returned %d: %s", webhook.URL, post.StatusCode, post.Status)
 		}
 
-		log.Info(fmt.Sprintf("webhook returned %d: %s", post.StatusCode, post.Status))
+		log.Info("webhook returned", "statusCode", post.StatusCode, "status", post.Status)
 
 		// read json from post.Body, unmarshall to map[string]interface{}
 		jsonReply := map[string]any{}
 		err = json.NewDecoder(post.Body).Decode(&jsonReply)
 		if err != nil {
 			err = fmt.Errorf("failed to decode webhook reply: %w", err)
-			return terraform, err
+			return err
 		}
 
 		log.Info("webhook reply decoded")
@@ -247,7 +247,7 @@ func (r *TerraformReconciler) processPostPlanningWebhooks(ctx context.Context, t
 			Parse(webhook.TestExpression)
 		if err != nil {
 			err = fmt.Errorf("failed to parse webhook test expression: %w", err)
-			return terraform, err
+			return err
 		}
 
 		log.Info("webhook test expression parsed")
@@ -256,7 +256,7 @@ func (r *TerraformReconciler) processPostPlanningWebhooks(ctx context.Context, t
 		err = testExprTpl.Execute(&testExprBuf, jsonReply)
 		if err != nil {
 			err = fmt.Errorf("failed to execute webhook test expression: %w", err)
-			return terraform, err
+			return err
 		}
 
 		log.Info("webhook test expression executed")
@@ -268,7 +268,7 @@ func (r *TerraformReconciler) processPostPlanningWebhooks(ctx context.Context, t
 		} else if testResult == "false" || testResult == "no" {
 			// do nothing
 		} else {
-			return terraform, fmt.Errorf("webhook test expression %q returned unexpected result: %s", webhook.TestExpression, testResult)
+			return fmt.Errorf("webhook test expression %q returned unexpected result: %s", webhook.TestExpression, testResult)
 		}
 
 		log.Info("webhook test expression returned false, webhook is not successful - prepare error message")
@@ -280,7 +280,7 @@ func (r *TerraformReconciler) processPostPlanningWebhooks(ctx context.Context, t
 			Parse(webhook.ErrorMessageTemplate)
 		if err != nil {
 			err = fmt.Errorf("failed to parse webhook error message template: %w", err)
-			return terraform, err
+			return err
 		}
 
 		log.Info("webhook error message template parsed")
@@ -289,17 +289,17 @@ func (r *TerraformReconciler) processPostPlanningWebhooks(ctx context.Context, t
 		err = errMsgTpl.Execute(&errorMessage, jsonReply)
 		if err != nil {
 			err = fmt.Errorf("failed to execute webhook error message template: %w", err)
-			return terraform, err
+			return err
 		}
 
 		log.Info("webhook error message template executed")
 
-		terraform = infrav1.TerraformPostPlanningWebhookFailed(terraform, revision, errorMessage.String())
+		infrav1.TerraformPostPlanningWebhookFailed(terraform, s.revision, errorMessage.String())
 		webhookErr := errors.New(errorMessage.String())
-		return terraform, webhookErr
+		return webhookErr
 	}
 
-	return terraform, nil
+	return nil
 }
 
 ```
@@ -974,11 +974,11 @@ package v1alpha1
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1910** (2026-10-23): **chore(deps): go minor bumps**
+- **Issue #1921** (2026-10-27): **fix: recover from runner pods that fail or cannot start**
   *Symptoms*: 
 
-- **Issue #1909** (2026-10-23): **chore(deps): bump go to 1.26.10**
-  *Symptoms*: - bumps go to 1.26.10 - bumps golang.org/x/net to v0.60.0
+- **Issue #1920** (2026-10-26): **chore: release 0.16.6**
+  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -995,726 +995,865 @@ package v1alpha1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1a172945` (2026-10-23)
-**Commit Message**: fix(branch-planner): replace the PR source ref and only plan PRs targeting the tracked branch (#1908)
+### Incident Patch 1: `ac680305` (2026-10-26)
+**Commit Message**: fix: cancel runner calls when the runner connection stays down (#1907)
 
-* fix(branch-planner): replace the copied source ref with the PR head branch
+* fix: cancel runner calls when the runner connection stays down
 
-The PR's GitRepository copy previously only had spec.ref.branch overwritten, so an inherited name/tag/semver/commit kept taking precedence over the PR head in source-controller (e.g. Flux Operator sources using spec.ref.name). Replace spec.ref outright with a branch-only ref. A commit is deliberately not pinned: source-controller's commit clone path is neither shallow nor short-circuited by ls-remote, which would turn every polling interval into a full clone. The planned commit is still recorded in the revision (<branch>@sha1:<sha>) and the plan ID.
+The runner client uses waitForReady:true, and every call made after
+setupTerraform (Plan, SaveTFPlan, LoadTFPlan, Apply, Destroy, outputs,
+CleanupDir, ...) runs on the reconcile context, which has no deadline.
+When the runner process dies mid-call, the call fails with UNAVAILABLE,
+the service config retries it, and the retry waits for a READY
+connection to a pod that no longer exists. The reconcile for that
+object never returns and only a controller restart frees it. #1838
+bounded the setupTerraform calls and left plan and apply for a
+follow-up.
 
-Signed-off-by: Robin Breathe <[REDACTED_EMAIL]>
+Add a unary client interceptor that watches the connection while each
+call is in flight. Once the connection has reached the runner, a call
+whose connection then stays out of READY for --runner-unreachable-timeout
+(default 5m, 0 disables) is cancelled and returned as UNAVAILABLE, so
+the reconcile errors and requeues and the next one recreates the
+runner. Later calls on the same connection fail fast instead of waiting
+the timeout out again.
 
-* fix(branch-planner): only plan PRs targeting the tracked branch
+A fixed deadline would also cut legitimately long plans and appl
 
-Previously every open PR was planned, so two clusters tracking different branches at the same commit (e.g. main and develop) both planned a PR to develop. Filter PRs by base branch before the path filter: the branch tracked by the source (spec.ref.branch, or spec.ref.name of the form refs/heads/<branch>; source-controller's default branch (git.
-
-**File**: `api/v1alpha2/terraform_types.go` (modified, +7/-0)
+**File**: `cmd/manager/main.go` (modified, +9/-0)
 ```diff
-@@ -305,6 +305,13 @@ type BranchPlanner struct {
- 	// resources will be created only if there are any changes in terraform files.
- 	// +optional
- 	EnablePathScope bool `json:"enablePathScope"`
-+
-+	// BaseBranch restricts branch planning to Pull Requests targeting this branch.
-+	// Defaults to the branch tracked by the source GitRepository (`.spec.ref.branch`,
-+	// or `.spec.ref.name` of the form `refs/heads/<branch>`). If unset and the source
-+	// does not track a branch (tag, semver or commit-only), no Pull Requests are planned.
-+	// +optional
-+	BaseBranch string `json:"baseBranch,omitempty"`
- }
- 
- type Remediation struct {
+@@ -92,6 +92,7 @@ func main() {
+ 		runnerGRPCPort            int
+ 		runnerCreationTimeout     time.Duration
+ 		runnerRPCTimeout          time.Duration
++		runnerUnreachableTimeout  time.Duration
+ 		runnerGRPCMaxMessageSize  int
+ 		allowBreakTheGlass        bool
+ 		clusterDomain             string
+@@ -123,6 +124,13 @@ func main() {
+ 		"Maximum duration for the batch of runner RPCs that set up Terraform (upload, "+
+ 			"backend config, init, workspace select). Bounds the reconcile so a runner pod "+
+ 			"that dies mid-RPC surfaces as an error and requeues instead of hanging forever.")
++	flag.DurationVar(&runnerUnreachableTimeout, "runner-unreachable-timeout", 5*time.Minute,
++		"Cancel a runner RPC once the connection to a runner that was reachable has not been "+
++			"ready for this long, so a runner pod that dies mid-plan or mid-apply surfaces as an "+
++			"error and requeues instead of hanging forever. Healthy long-running plans and applies "+
++			"keep the connection ready and are not affected, and waiting for a runner that is still "+
++			"starting is not counted. Set to 0 to disable, which also turns off the keepalive "+
++			"pings that notice a runner whose node vanished without closing the connection.")
+ 	flag.IntVar(&runnerGRPCMaxMessageSize, "runner-grpc-max-message-size", 4, "The maximum message size for gRPC connections in MiB.")
+ 	flag.BoolVar(&allowBreakTheGlass, "allow-break-the-glass", false, "Allow break the glass mode.")
+ 	flag.StringVar(&clusterDomain, "cluster-domain", "cluster.local", "The cluster domain used by the cluster.")
+@@ -259,6 +267,7 @@ func main() {
+ 		RunnerGRPCPort:            runnerGRPCPort,
+ 		RunnerCreationTimeout:     runnerCreationTimeout,
+ 		RunnerRPCTimeout:          runnerRPCTimeout,
++		RunnerUnreachableTimeout:  runnerUnreachableTimeout,
+ 		RunnerGRPCMaxMessageSize:  runnerGRPCMaxMessageSize,
+ 		AllowBreakTheGlass:        allowBreakTheGlass,
+ 		ClusterDomain:             clusterDomain,
 ```
 
-**File**: `charts/tofu-controller/crds/crds.yaml` (modified, +7/-0)
+**File**: `controllers/suite_test.go` (modified, +1/-0)
 ```diff
-@@ -5809,6 +5809,13 @@ spec:
-               branchPlanner:
-                 description: BranchPlanner configuration.
-                 properties:
-+                  baseBranch:
-+                    description: |-
-+                      BaseBranch restricts branch planning to Pull Requests targeting this branch.
-+                      Defaults to the branch tracked by the source GitRepository (`.spec.ref.branch`,
-+                      or `.spec.ref.name` of the form `refs/heads/<branch>`). If unset and the source
-+                      does not track a branch (tag, semver or commit-only), no Pull Requests are planned.
-+                    type: string
-                   enablePathScope:
-                     description: |-
-                       EnablePathScope specifies if the Branch Planner should or shouldn't check
-```
-
-**File**: `config/crd/bases/infra.contrib.fluxcd.io_terraforms.yaml` (modified, +7/-0)
-```diff
-@@ -5809,6 +5809,13 @@ spec:
-               branchPlanner:
-                 description: BranchPlanner configuration.
-                 properties:
-+                  baseBranch:
-+                    description: |-
-+                      BaseBranch restricts branch planning to Pull Requests targeting this branch.
-+                      Defaults to the branch tracked by the source GitRepository (`.spec.ref.branch`,
-+                      or `.spec.ref.name` of the form `refs/heads/<branch>`). If unset and the source
-+                      does not track a branch (tag, semver or commit-only), no Pull Requests are planned.
-+                    type: string
-                   enablePathScope:
-                     description: |-
-                       EnablePathScope specifies if the Branch Planner should or shouldn't check
-```
-
-**File**: `docs/References/terraform.md` (modified, +1/-0)
-```diff
-@@ -53,6 +53,7 @@ _Appears in:_
- | Field | Description | Default | Validation |
- | --- | --- | --- | --- |
- | `enablePathScope` _boolean_ | EnablePathScope specifies if the Branch Planner should or shouldn't check<br />if a Pull Request has changes under `.spec.path`. If enabled extra<br />resources will be created only if there are any changes in terraform files. |  | Optional: \{\} <br /> |
-+| `baseBranch` _string_ | BaseBranch restricts branch planning to Pull Requests targeting this branch.<br />Defaults to the branch tracked by the source GitRepository (`.spec.ref.branch`,<br />or `.spec.ref.name` of the form `refs/heads/<branch>`). If unset and the source<br />does not track a branch (tag, semver or commit-only), no Pull Requests are planned. |  | Optional: \{\} <br /> |
- 
- 
- ### CloudSpec
-```
-
-**File**: `docs/branch-planner/index.md` (modified, +4/-0)
-```diff
-@@ -8,6 +8,10 @@ Branch Planner supports **GitHub** (including GitHub Enterprise), **GitLab** (in
- 
- ![branch planner](branch-planner.png)
- 
-+### Base branch
-+
-+Only Pull Requests whose base branch matches the branch tracked by the Terraform object's source (`.spec.ref.branch`, or `.spec.ref.name` of the form `refs/heads/<branch>`) are planned. Set `spec.branchPlanner.baseBranch` to override this. Sources that track a tag, semver range or commit need the override, otherwise no Pull Requests are planned.
-+
- ### Replan commands
- 
- The Branch Planner also allows users to manually trigger the replan process. By simply commenting `!replan` under the PR or MR, the Branch Planner will be instructed to generate a new plan and post it under the PR/MR as a new comment.
-```
-
-**File**: `go.mod` (modified, +16/-0)
-```diff
-@@ -20,6 +20,7 @@ require (
- 	github.com/flux-iac/tofu-controller/api v0.0.0-20260505110553-6233d9ea1db8
- 	github.com/flux-iac/tofu-controller/tfctl v0.0.0-00010101000000-000000000000
- 	github.com/fluxcd/pkg/apis/meta v1.36.0
-+	github.com/fluxcd/pkg/git v0.53.0
- 	github.com/fluxcd/pkg/runtime v0.120.0
- 	github.com/fluxcd/pkg/tar v1.3.0
- 	github.com/fluxcd/source-controller/api v1.9.4
-@@ -65,6 +66,7 @@ require (
- 	github.com/Masterminds/goutils v1.1.1 // indirect
- 	github.com/Masterminds/semver/v3 v3.5.0 // indirect
- 	github.com/Microsoft/go-winio v0.6.2 // indirect
-+	github.com/ProtonMail/go-crypto v1.4.1 // indirect
- 	github.com/agext/levenshtein v1.2.1 // indirect
- 	github.com/apparentlymart/go-textseg v1.0.0 // indirect
- 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
-@@ -109,6 +111,7 @@ require (
- 	github.com/chai2010/gettext-go v1.0.3 // indirect
- 	github.com/chainguard-dev/git-urls v1.0.2 // indirect
- 	github.com/clipperhouse/uax29/v2 v2.7.0 // indirect
-+	github.com/cloudflare/circl v1.6.3 // indirect
- 	github.com/containerd/errdefs v1.0.0 // indirect
- 	github.com/containerd/errdefs/pkg v0.3.0 // indirect
- 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
-@@ -118,6 +121,7 @@ require (
- 	github.com/docker/go-connections v0.8.1 // indirect
- 	github.com/docker/go-units v0.5.0 // indirect
- 	github.com/emicklei/go-restful/v3 v3.13.0 // indirect
-+	github.com/emirpasic/gods v1.18.1 // indirect
- 	github.com/evanphx/json-patch/v5 v5.9.11 // indirect
- 	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f // indirect
- 	github.com/fatih/color v1.19.0 // indirect
-@@ -130,6 +134,9 @@ require (
- 	github.com/fxamacker/cbor/v2 v2.9.3 // indirect
- 	github.com/go-errors/errors v1.5.1 // indirect
- 	github.com/go-fed/httpsig v1.1.0 // indirect
-+	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
-+	github.com/go-git/go-billy/v5 v5.9.2 // indirect
-+	github.com/go-git/go-git/v5 v5.19.3 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/go-logr/zapr v1.3.0 // indirect
- 	github.com/go-openapi/jsonpointer v1.0.0 // indirect
-@@ -148,17 +155,21 @@ require (
- 	github.com/go-openapi/swag/yamlutils v0.29.1 // indirect
- 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
- 	github.com/golang-jwt/jwt/v4 v4.5.2 // indirect
-+	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
- 	github.com/google/btree v1.1.3 // indirect
- 	github.com/google/gnostic-models v0.7.1 // indirect
- 	github.com/google/go-cmp v0.7.0 // indirect
- 	github.com/google/go-github/v88 v88.0.0 // indirect
- 	github.com/google/go-querystring v1.2.0 // indirect
- 	github.com/hako/durafmt v0.0.0-20210608085754-5c1018a4e16b // indirect
- 	github.com/hashicorp/go-version v1.9.0 // indirect
-+	github.com/hiddeco/sshsig v0.2.0 // indirect
- 	github.com/huandu/xstrings v1.5.0 // indirect
- 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-+	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
- 	github.com/jmespath/go-jmespath v0.4.0 // indirect
- 	github.com/json-iterator/go v1.1.12 // indirect
-+	github.com/kevinburke/ssh_config v1.2.0 // indirect
- 	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de // indirect
- 	github.com/mattn/go-colorable v0.1.14 // indirect
- 	github.com/mattn/go-isatty v0.0.20 // indirect
-@@ -178,6 +189,7 @@ require (
- 	github.com/opencontainers/image-spec v1.1.1 // indirect
- 	github.com/pelletier/go-toml/v2 v2.3.0 // indirect
- 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
-+	github.com/pjbgf/sha1cd v0.7.0 // indirect
- 	github.com/pkg/errors v0.9.1 // indirect
- 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
- 	github.com/prometheus/client_golang v1.24.1 // indirect
-@@ -186,10 +198,12 @@ require (
- 	github.com/prometheus/procfs v0.22.0 // indirect
- 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
- 	github.com/sagikazarmark/locafero v0.12.0 // indirect
-+	github.com/sergi/go-diff v1.4.0 // indirect
- 	github.com/shopspring/decimal v1.4.0 // indirect
- 	github.com/shurcooL/githubv4 v0.0.0-20260209031235-2402fdf4a9ed // indirect
- 	github.com/shurcooL/graphql v0.0.0-20240915155400-7ee5256398cf // indirect
- 	github.com/sirupsen/logrus v1.10.2 // indirect
-+	github.com/skeema/knownhosts v1.3.1 // indirect
- 	github.com/spf13/cast v1.10.0 // indirect
- 	github.com/subosito/gotenv v1.6.0 // indirect
- 	github.com/theckman/yacspin v0.13.12 // indirect
-@@ -199,6 +213,7 @@ require (
- 	github.com/tidwall/sjson v1.2.5 // indirect
- 	github.com/wI2L/jsondiff v0.6.1 // indirect
- 	github.com/x448/float16 v0.8.4 // indirect
-+	github.com/xanzy/ssh-agent v0.3.3 // indirect
- 	github.com/xlab/treeprint v1.2.0 // indirect
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 // indirect
-@@ -223,6 +238,7 @@ require (
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260706201446-f0a921348800 // indirect
- 	gopk
-```
-
-**File**: `go.sum` (modified, +26/-0)
-```diff
-@@ -18,12 +18,15 @@ github.com/Masterminds/semver/v3 v3.5.0 h1:kQceYJfbupGfZOKZQg0kou0DgAKhzDg2NZPAw
- github.com/Masterminds/semver/v3 v3.5.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
- github.com/Masterminds/sprig/v3 v3.3.0 h1:mQh0Yrg1XPo6vjYXgtf5OtijNAKJRNcTdOOGZe3tPhs=
- github.com/Masterminds/sprig/v3 v3.3.0/go.mod h1:Zy1iXRYNqNLUolqCpL4uhk6SHUMAOSCzdgBfDb35Lz0=
-+github.com/Microsoft/go-winio v0.5.2/go.mod h1:WpS1mjBmmwHBEWmogvA2mj8546UReBk4v8QkMxJ6pZY=
- github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERoyfY=
- github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
- github.com/ProtonMail/go-crypto v1.4.1 h1:9RfcZHqEQUvP8RzecWEUafnZVtEvrBVL9BiF67IQOfM=
- github.com/ProtonMail/go-crypto v1.4.1/go.mod h1:e1OaTyu5SYVrO9gKOEhTc+5UcXtTUa+P3uLudwcgPqo=
- github.com/agext/levenshtein v1.2.1 h1:QmvMAjj2aEICytGiWzmxoE0x2KZvE0fvmqMOfy2tjT8=
- github.com/agext/levenshtein v1.2.1/go.mod h1:JEDfjyjHDjOF/1e4FlBE/PkbqA9OfWu2ki2W0IB5558=
-+github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be h1:9AeTilPcZAjCFIImctFaOjnTIavg87rW78vTPkQqLI8=
-+github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be/go.mod h1:ySMOLuWl6zY27l47sB3qLNK6tF2fkHG55UZxx8oIVo4=
- github.com/apparentlymart/go-dump v0.0.0-20180507223929-23540a00eaa3 h1:ZSTrOEhiM5J5RFxEaFvMZVEAM1KvT1YzbEOwB2EAGjA=
- github.com/apparentlymart/go-dump v0.0.0-20180507223929-23540a00eaa3/go.mod h1:oL81AME2rN47vu18xqj1S1jPIPuN7afo62yKTNn3XMM=
- github.com/apparentlymart/go-textseg v1.0.0 h1:rRmlIsPEEhUTIKQb7T++Nz/A5Q6C9IuX2wFoYVvnCs0=
-@@ -32,6 +35,8 @@ github.com/apparentlymart/go-textseg/v15 v15.0.0 h1:uYvfpb3DyLSCGWnctWKGj857c6ew
- github.com/apparentlymart/go-textseg/v15 v15.0.0/go.mod h1:K8XmNZdhEBkdlyDdvbmmsvpAG721bKi0joRfFdHIWJ4=
- github.com/apparentlymart/go-textseg/v17 v17.0.1 h1:bpMXRgQ5cEoRNuQke1a80/Nl6w3G5eoIbWo9f3gXkAs=
- github.com/apparentlymart/go-textseg/v17 v17.0.1/go.mod h1:fa8X4jgGeevslICIY6LcdjkSecWnXmYd9Lk34z/VxZs=
-+github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5 h1:0CwZNZbxp69SHPdPJAN/hZIm0C4OItdklCFmMRWYpio=
-+github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5/go.mod h1:wHh0iHkYZB8zMSxRWpUBQtwG5a7fFgvEO+odwuTv2gs=
- github.com/aws/aws-sdk-go v1.55.5 h1:KKUZBfBoyqy5d3swXyiC7Q76ic40rYcbqH7qjh59kzU=
- github.com/aws/aws-sdk-go v1.55.5/go.mod h1:eRwEWoyTWFMVYVQzKMNHWP5/RV4xIUGMQfXQHfHkpNU=
- github.com/aws/aws-sdk-go-v2 v1.47.3 h1:HRoT/MkNi3bjO5xF4dCzLzvVmkvRGHj3/cLINDnJejk=
-@@ -158,6 +163,8 @@ github.com/docker/go-connections v0.8.1 h1:JibmG5hULs5qXSr/cp/w3Pw5fZuStt4MOHMUE
- github.com/docker/go-connections v0.8.1/go.mod h1:no1qkHdjq7kLMGUXYAduOhYPSJxxvgWBh7ogVvptn3Q=
- github.com/docker/go-units v0.5.0 h1:69rxXcBk27SvSaaxTtLh/8llcHD8vYHT7WSdRZ/jvr4=
- github.com/docker/go-units v0.5.0/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDDbaIK4Dk=
-+github.com/elazarl/goproxy v1.8.0 h1:dt561rX7UAYMeFRLtzFx6uQGl2TpL1dr6uCG23nFQSY=
-+github.com/elazarl/goproxy v1.8.0/go.mod h1:b5xm6W48AUHNpRTCvlnd0YVh+JafCCtsLsJZvvNTz+E=
- github.com/elgohr/go-localstack v1.0.169 h1:XTYFC6HzdnjK2dJtb/YX5MpfzwpkudW740V9tIx7egs=
- github.com/elgohr/go-localstack v1.0.169/go.mod h1:ElV4F6CaI8CcNuxIyG3U4M6rUuAAIJn4Yl3j/Ol2FRw=
- github.com/emicklei/go-restful/v3 v3.13.0 h1:C4Bl2xDndpU6nJ4bc1jXd+uTmYPVUwkD6bFY/oTyCes=
-@@ -182,6 +189,8 @@ github.com/fluxcd/pkg/apis/event v0.32.0 h1:3zyjdUspwQN+EQJPlUXwCvCMbeqtB+azlNme
- github.com/fluxcd/pkg/apis/event v0.32.0/go.mod h1:ALma8dTqo+NbI+z4BawSzt0pAPjetCSNNUSSS/9p0VU=
- github.com/fluxcd/pkg/apis/meta v1.36.0 h1:sgT0N/tXPTLYPzYjO3WHt3LKaRBOlQIP+/dTrJRzvDQ=
- github.com/fluxcd/pkg/apis/meta v1.36.0/go.mod h1:1MLvK2Xu3UdTKBzg+Q1Oj7H9PHeiKsUB1UW3uwxAwiM=
-+github.com/fluxcd/pkg/git v0.53.0 h1:wHtxfJ+qaNSQowaZB8Lr5adZO7psAsaID0E5W5QZREs=
-+github.com/fluxcd/pkg/git v0.53.0/go.mod h1:soKweVZNZcHvKt9CP2GhJ/hoxJ3Ck3NglnRzKLHAjrA=
- github.com/fluxcd/pkg/runtime v0.120.0 h1:FEeTLB5tnhMVbpjAC9l2LUZr9T0Dl+Z3r16ERqLcVXc=
- github.com/fluxcd/pkg/runtime v0.120.0/go.mod h1:Cw0CQ/tVKS9lgJoyKVouZr1qVnoJcYnSHw3QDzIOOjA=
- github.com/fluxcd/pkg/ssa v0.80.0 h1:GgakpCFz4pY+unpOscPYlc5eVLUsB7hw9TmWSNr3yp8=
-@@ -197,6 +206,8 @@ github.com/fsnotify/fsnotify v1.10.1 h1:b0/UzAf9yR5rhf3RPm9gf3ehBPpf0oZKIjtpKrx5
- github.com/fsnotify/fsnotify v1.10.1/go.mod h1:TLheqan6HD6GBK6PrDWyDPBaEV8LspOxvPSjC+bVfgo=
- github.com/fxamacker/cbor/v2 v2.9.3 h1:oQBnFATpNdY8gJHTndDDv5Xl4QqNaz51G5LLEPhng3Q=
- github.com/fxamacker/cbor/v2 v2.9.3/go.mod h1:vM4b+DJCtHn+zz7h3FFp/hDAI9WNWCsZj23V5ytsSxQ=
-+github.com/gliderlabs/ssh v0.3.8 h1:a4YXD1V7xMF9g5nTkdfnja3Sxy1PVDCj1Zg4Wb8vY6c=
-+github.com/gliderlabs/ssh v0.3.8/go.mod h1:xYoytBv1sV0aL3CavoDuJIQNURXkkfPA/wxQ1pL1fAU=
- github.com/go-errors/errors v1.5.1 h1:ZwEMSLRCapFLflTpT7NKaAc7ukJ8ZPEjzlxt8rPN8bk=
- github.com/go-errors/errors v1.5.1/go.mod h1:sIVyrIiJhuEF+Pj9Ebtd6P/rEYROXFi3BopGUQ5a5Og=
- github.com/go-fed/httpsig v1.1.0 h1:9M+hb0jkEICD8/cAiNqEB66R87tTINszBRTjwjQzWcI=
-@@ -205,6 +216,8 @@ github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 h1:+
-```
-
-**File**: `internal/server/polling/poll_test.go` (modified, +63/-1)
-```diff
-@@ -17,6 +17,7 @@ import (
- 
- 	infrav1 "github.com/flux-iac/tofu-controller/api/v1alpha2"
- 	"github.com/flux-iac/tofu-controller/internal/git/provider"
-+	"github.com/fluxcd/pkg/git"
- 	sourcev1 "github.com/fluxcd/source-controller/api/v1"
- )
- 
-@@ -108,8 +109,11 @@ func Test_poll_reconcile_objects(t *testing.T) {
- 		},
- 		Spec: sourcev1.GitRepositorySpec{
- 			URL: "https://github.com/tf-controller/helloworld",
-+			// Extra ref fields must not be inherited by the PR sources.
- 			Reference: &sourcev1.GitRepositoryRef{
- 				Branch: "main",
-+				Name:   "refs/heads/main",
-+				Commit: "0000000000000000000000000000000000000000",
- 			},
- 		},
+@@ -186,6 +186,7 @@ func TestMain(m *testing.M) {
+ 		RunnerGRPCPort:            30000,
+ 		RunnerCreationTimeout:     120 * time.Second,
+ 		RunnerRPCTimeout:          30 * time.Minute,
++		RunnerUnreachableTimeout:  5 * time.Minute,
+ 		RunnerGRPCMaxMessageSize:  4,
+ 		UsePodSubdomainResolution: false,
  	}
-@@ -163,6 +167,13 @@ func Test_poll_reconcile_objects(t *testing.T) {
- 			BaseBranch: "main",
- 			HeadBranch: "test-branch-3",
- 		},
-+		{
-+			// Targets another branch than the source tracks, so it's not planned.
-+			Repository: repo,
-+			Number:     4,
-+			BaseBranch: "develop",
-+			HeadBranch: "test-branch-4",
+```
+
+**File**: `controllers/tf_controller.go` (modified, +1/-0)
+```diff
+@@ -87,6 +87,7 @@ type TerraformReconciler struct {
+ 	RunnerGRPCPort            int
+ 	RunnerCreationTimeout     time.Duration
+ 	RunnerRPCTimeout          time.Duration
++	RunnerUnreachableTimeout  time.Duration
+ 	RunnerGRPCMaxMessageSize  int
+ 	AllowBreakTheGlass        bool
+ 	ClusterDomain             string
+```
+
+**File**: `controllers/tf_controller_finalizer.go` (modified, +4/-3)
+```diff
+@@ -127,9 +127,10 @@ func (r *TerraformReconciler) finalize(ctx context.Context, patchHelper *patch.S
+ 		traceLog.Info("Try getting a status from the error")
+ 		if e, ok := status.FromError(err); ok {
+ 			switch e.Code() {
+-			case codes.Internal:
+-				// transient error
+-				traceLog.Info("Internal error, transient, requeue")
++			case codes.Internal, codes.Unavailable:
++				// transient error; Unavailable means the runner could not be reached,
++				// and removing the finalizer now would leave its secrets behind
++				traceLog.Info("Internal or unavailable error, transient, requeue")
+ 				return terraform, controllerruntime.Result{Requeue: true}, err
+ 			case codes.NotFound:
+ 				// do nothing, fall through
+```
+
+**File**: `controllers/tf_controller_finalizer_test.go` (added, +46/-0)
+```diff
+@@ -0,0 +1,46 @@
++package controllers
++
++import (
++	"context"
++	"testing"
++
++	. "github.com/onsi/gomega"
++	"google.golang.org/grpc"
++	"google.golang.org/grpc/codes"
++	"google.golang.org/grpc/status"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++
++	infrav1 "github.com/flux-iac/tofu-controller/api/v1alpha2"
++	"github.com/flux-iac/tofu-controller/runner"
++)
++
++// finalizeSecretsRunner fails FinalizeSecrets with err. Any other call panics on
++// the nil embedded client, which would mean finalize went further than expected.
++type finalizeSecretsRunner struct {
++	runner.RunnerClient
++	err error
++}
++
++func (f finalizeSecretsRunner) FinalizeSecrets(context.Context, *runner.FinalizeSecretsRequest, ...grpc.CallOption) (*runner.FinalizeSecretsReply, error) {
++	return nil, f.err
++}
++
++func TestFinalizeRequeuesWhenRunnerUnavailable(t *testing.T) {
++	g := NewWithT(t)
++
++	terraform := &infrav1.Terraform{
++		ObjectMeta: metav1.ObjectMeta{
++			Name:       "finalize-unavailable",
++			Namespace:  "flux-system",
++			Finalizers: []string{infrav1.TerraformFinalizer},
 +		},
++	}
++	runnerClient := finalizeSecretsRunner{err: status.Error(codes.Unavailable, "runner unreachable")}
++
++	reconciler := &TerraformReconciler{}
++	terraform, result, err := reconciler.finalize(context.Background(), nil, terraform, runnerClient, nil, "")
++
++	g.Expect(status.Code(err)).To(Equal(codes.Unavailable))
++	g.Expect(result.Requeue).To(BeTrue())
++	g.Expect(terraform.Finalizers).To(ContainElement(infrav1.TerraformFinalizer))
++}
+```
+
+**File**: `controllers/tf_controller_reconcile.go` (modified, +2/-2)
+```diff
+@@ -94,7 +94,7 @@ func (r *TerraformReconciler) reconcile(ctx context.Context, patchHelper *patch.
+ 				// check /tmp/.break-glass file exists
+ 				reply, err := runnerClient.HasBreakTheGlassSessionDone(ctx, &runner.BreakTheGlassRequest{})
+ 				if err != nil {
+-					return nil, err
++					return terraform, err
+ 				}
+ 				if reply.Success {
+ 					done = true
+@@ -273,7 +273,7 @@ func (r *TerraformReconciler) reconcile(ctx context.Context, patchHelper *patch.
+ 			log.Error(err, "error getting inventory")
+ 		}
+ 
+-		for _, iv := range getInventoryReply.Inventories {
++		for _, iv := range getInventoryReply.GetInventories() {
+ 			inventoryEntries = append(inventoryEntries, infrav1.ResourceRef{
+ 				Name:       iv.GetName(),
+ 				Type:       iv.GetType(),
+```
+
+**File**: `controllers/tf_controller_runner.go` (modified, +29/-14)
+```diff
+@@ -10,6 +10,7 @@ import (
+ 
+ 	"github.com/fluxcd/pkg/runtime/logger"
+ 	"google.golang.org/grpc"
++	"google.golang.org/grpc/keepalive"
+ 	corev1 "k8s.io/api/core/v1"
+ 	v1 "k8s.io/api/core/v1"
+ 	"k8s.io/apimachinery/pkg/api/errors"
+@@ -151,7 +152,34 @@ func (r *TerraformReconciler) getRunnerConnection(ctx context.Context, tlsSecret
+ 		return nil, err
  	}
  
- 	server, err := New(
-@@ -186,6 +197,9 @@ func Test_poll_reconcile_objects(t *testing.T) {
- 	}))
+-	const retryPolicy = `{
++	traceLog.Info("Return gRPC new client")
++	maxMsgSize := r.RunnerGRPCMaxMessageSize * 1024 * 1024
++	opts := []grpc.DialOption{
++		grpc.WithTransportCredentials(credentials),
++		grpc.WithDefaultServiceConfig(runnerServiceConfig),
++		grpc.WithDefaultCallOptions(
++			grpc.MaxCallRecvMsgSize(maxMsgSize),
++			grpc.MaxCallSendMsgSize(maxMsgSize),
++		),
++		grpc.WithChainUnaryInterceptor(runnerUnreachableInterceptor(r.RunnerUnreachableTimeout)),
++	}
++	if r.RunnerUnreachableTimeout > 0 {
++		// If the runner's node disappears without closing the TCP connection, a
++		// call waiting on its reply sends nothing, so the connection stays READY
++		// until the OS keepalive gives up hours later. Ping during calls so the
++		// watchdog above gets to see it. Time must stay above the runner's default
++		// 5m ping enforcement minimum, or the runner answers with GOAWAY
++		// "too_many_pings". Timeout is generous so that a short network blip does
++		// not drop the transport of a healthy apply.
++		opts = append(opts, grpc.WithKeepaliveParams(keepalive.ClientParameters{
++			Time:    6 * time.Minute,
++			Timeout: 2 * time.Minute,
++		}))
++	}
++	return grpc.NewClient(fmt.Sprintf("%s:%d", hostname, port), opts...)
++}
++
++const runnerServiceConfig = `{
+ "methodConfig": [{
+   "name": [{"service": "runner.Runner"}],
+   "waitForReady": true,
+@@ -164,19 +192,6 @@ func (r *TerraformReconciler) getRunnerConnection(ctx context.Context, tlsSecret
+   }
+ }]}`
  
- 	expectToEqual(t, g, len(tfList.Items), 4)
-+	for _, item := range tfList.Items {
-+		g.Expect(item.Labels[bpconfig.LabelPRIDKey]).NotTo(gomega.Equal("4"))
+-	traceLog.Info("Return gRPC new client")
+-	maxMsgSize := r.RunnerGRPCMaxMessageSize * 1024 * 1024
+-	return grpc.NewClient(
+-		fmt.Sprintf("%s:%d", hostname, port),
+-		grpc.WithTransportCredentials(credentials),
+-		grpc.WithDefaultServiceConfig(retryPolicy),
+-		grpc.WithDefaultCallOptions(
+-			grpc.MaxCallRecvMsgSize(maxMsgSize),
+-			grpc.MaxCallSendMsgSize(maxMsgSize),
+-		),
+-	)
+-}
+-
+ func (r *TerraformReconciler) runnerPodSpec(terraform *infrav1.Terraform, tlsSecretName string) v1.PodSpec {
+ 	serviceAccountName := terraform.Spec.ServiceAccountName
+ 	if serviceAccountName == "" {
+```
+
+**File**: `controllers/tf_controller_runner_watchdog.go` (added, +131/-0)
+```diff
+@@ -0,0 +1,131 @@
++package controllers
++
++import (
++	"context"
++	"errors"
++	"fmt"
++	"sync/atomic"
++	"time"
++
++	"google.golang.org/grpc"
++	"google.golang.org/grpc/codes"
++	"google.golang.org/grpc/connectivity"
++	"google.golang.org/grpc/status"
++)
++
++// errRunnerUnreachable is the cancellation cause recorded when a runner call is
++// abandoned because the connection to the runner stopped being READY.
++var errRunnerUnreachable = errors.New("runner unreachable")
++
++// runnerConnectionState is shared by every call on one runner connection.
++type runnerConnectionState struct {
++	// reached is set once the connection has been READY or a call has
++	// succeeded, so the runner is known to have been up.
++	reached atomic.Bool
++	// unreachable is set when a call was abandoned because the runner went
++	// away, and cleared once the connection is READY again.
++	unreachable atomic.Bool
++}
++
++// runnerUnreachableInterceptor cancels a runner call once the connection to a
++// runner it has already reached has not been READY for longer than timeout. A
++// timeout of zero or less disables it. Build one per connection: the state it
++// keeps describes a single runner.
++//
++// The runner client is created with waitForReady:true, so a call on a connection
++// whose runner has gone away blocks until its context is done instead of failing
++// with UNAVAILABLE. That includes the retry gRPC makes when an in-flight call
++// fails because the runner process died mid-plan. Plan, Apply and the other
++// calls made after setupTerraform run on the reconcile context, which has no
++// deadline, so such a call parked the reconcile forever and only a controller
++// restart freed it.
++//
++// A fixed deadline would also cut legitimately long plans and applies. Those
++// keep the connection READY for their whole duration, so watching the
++// connection fires only when the runner is actually unreachable.
++func runnerUnreachableInterceptor(timeout time.Duration) grpc.UnaryClientInterceptor {
++	if timeout <= 0 {
++		return func(ctx context.Context, method string, req, reply any, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
++			return invoker(ctx, method, req, reply, cc, opts...)
++		}
 +	}
- 	for _, item := range tfList.Items {
- 		if item.Name == original.Name {
- 			// Ignore the original source object.
-@@ -220,7 +234,7 @@ func Test_poll_reconcile_objects(t *testing.T) {
- 		}
- 		prID := item.Labels[bpconfig.LabelPRIDKey]
- 		expectToEqual(t, g, item.Name, config.SourceName(original.Name, source.Name, prID))
--		expectToEqual(t, g, item.Spec.Reference.Branch, "test-branch-"+prID)
-+		expectToEqual(t, g, item.Spec.Reference, &sourcev1.GitRepositoryRef{Branch: "test-branch-" + prID})
- 		expectToEqual(t, g, item.Labels[bpconfig.LabelKey], bpconfig.LabelValue)
- 		expectToEqual(t, g, item.Labels[bpconfig.LabelPRIDKey], prID)
- 		expectToEqual(t, g, item.Labels["test-label"], "123")
-@@ -379,3 +393,51 @@ func Test_poll_noPathChanges(t *testing.T) {
- 
- 	t.Cleanup(func() { expectToSucceed(t, g, k8sClient.Delete(context.Background(), ns)) })
- }
 +
-+func Test_filterPullRequestsByBaseBranch(t *testing.T) {
-+	prs := []provider.PullRequest{
-+		{Number: 1, BaseBranch: "main"},
-+		{Number: 2, BaseBranch: "develop"},
-+		{Number: 3, BaseBranch: "main"},
-+		{Number: 4, BaseBranch: git.DefaultBranch},
-+	}
-+	main := []provider.PullRequest{prs[0], prs[2]}
-+	develop := []provider.PullRequest{prs[1]}
-+	defaultBranch := []provider.PullRequest{prs[3]}
-+
-+	tests := []struct {
-+		name     string
-+		ref      *sourcev1.GitRepositoryRef
-+		override string
-+		want     []provider.PullRequest
-+	}{
-+		{"branch", &sourcev1.GitRepositoryRef{Branch: "main"}, "", main},
-+		{"override beats source", &sourcev1.GitRepositoryRef{Branch: "main"}, "develop", develop},
-+		{"name refs/heads", &sourcev1.GitRepositoryRef{Name: "refs/heads/develop"}, "", develop},
-+		{"name refs/pull", &sourcev1.GitRepositoryRef{Name: "refs/pull/1/head"}, "", []provider.PullRequest{}},
-+		{"tag", &sourcev1.GitRepositoryRef{Tag: "v1"}, "", []provider.PullRequest{}},
-+		{"semver", &sourcev1.GitRepositoryRef{SemVer: ">=1.0.0"}, "", []provider.PullRequest{}},
-+		{"commit only", &sourcev1.GitRepositoryRef{Commit: "1111111111111111111111111111111111111111"}, "", []provider.PullRequest{}},
-+		{"branch and commit", &sourcev1.GitRepositoryRef{Branch: "main", Commit: "1111111111111111111111111111111111111111"}, "", main},
-+		{"nil ref defaults to git default branch", nil, "", defaultBranch},
-+		{"empty ref defaults to git default branch", &sourcev1.GitRepositoryRef{}, "", defaultBranch},
-+		{"override with tag source", &sourcev1.GitRepositoryRef{Tag: "v1"}, "main", main},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			g := gomega.NewWithT(t)
-+
-+			tf := &infrav1.Terraform{}
-+			if tt.override != "" {
-+				tf.Spec.BranchPlanner = &infrav1.BranchPlanner{BaseBranch: tt.override}
++	conn := &runnerConnectionState{}
++	return func(ctx context.Context, method string, req, reply any, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
++		// An earlier call already gave up on this runner. Fail the calls that
++		// follow it, such as the deferred CleanupDir, instead of waiting out the
++		// timeout again.
++		if state := cc.GetState(); conn.unreachable.Load() && state != connectivity.Ready {
++			if state == connectivity.Idle {
++				// Keep trying, so that a recovered connection shows as READY again.
++				cc.Connect()
 +			}
-+			source := &sourcev1.GitRepository{Spec: sourcev1.GitRepositorySpec{Reference: tt.ref}}
++			return status.Errorf(codes.Unavailable, "%s: %v", method, errRunnerUnreachable)
++		}
 +
-+			server, err := New()
-+			g.Expect(err).NotTo(gomega.HaveOccurred())
++		callCtx, cancel := context.WithCancelCause(ctx)
++		defer cancel(nil)
++		go watchRunnerConnection(callCtx, cc, timeout, conn, cancel)
 +
-+			g.Expect(server.filterPullRequestsByBaseBranch(tf, source, prs)).To(gomega.ConsistOf(tt.want))
++		err := invoker(callCtx, method, req, reply, cc, opts...)
++		if err == nil {
++			conn.reached.Store(true)
++			return nil
++		}
++		if cause := context.Cause(callCtx); errors.Is(cause, errRunnerUnreachable) {
++			conn.unreachable.Store(true)
++			return status.Errorf(codes.Unavailable, "%s: %v", method, cause)
++		}
++		return err
++	}
++}
++
++// watchRunnerConnection calls cancel with errRunnerUnreachable once cc, having
++// reached the runner, has been out of the READY state for timeout without
++// interruption. It returns when ctx is done, which happens when the call
++// finishes.
++func watchRunnerConnection(ctx context.Context, cc *grpc.ClientConn, timeout time.Duration, conn *runnerConnectionState, cancel context.CancelCauseFunc) {
++	var notReadySince time.Time
++	for {
++		state := cc.GetState()
++		switch {
++		case state == connectivity.Ready:
++			conn.reached.Store(true)
++			conn.unreachable.Store(false)
++			notReadySince = time.Time{}
++			cc.WaitForStateChange(ctx, state)
++
++		case !conn.reached.Load():
++			// The runner is still starting. Its pod gets an IP before the image is
++			// pulled, so a first call can legitimately wait a long time. That wait
++			// is left to the caller's deadline; setupTerraform bounds its calls
++			// with RunnerRPCTimeout.
++			cc.WaitForStateChange(ctx, state)
++
++		default:
++			if state == connectivity.Idle {
++				// A GOAWAY leaves the channel IDLE while the call drains on the old
++				// transport. Reconnect so that a live runner shows as READY again.
++				// The runner never sends GOAWAY itself; if a proxy in front of it
++				// does and reconnecting keeps failing for timeout, the call is
++				// cancelled even though the old transport is still draining.
++				cc.Connect()
++			}
++			if notReadySince.IsZero() {
++				notReadySince = time.Now()
++			}
++			remaining := timeout - time.Since(notReadySince)
++			if remaining <= 0 {
++				cancel(fmt.Errorf("%w: connection not ready for %s (state %s)", errRunnerUnreachabl
+```
+
+---
+
+### Incident Patch 2: `ceeb0b60` (2026-10-26)
+**Commit Message**: fix(drift): Ignore data-source-only reads (#1918)
+
+* fix(drift): Ignore data-source-only reads
+
+* fix(drift): Handle oversized plans and pending changes
+
+**File**: `controllers/drift_plan.go` (added, +57/-0)
+```diff
+@@ -0,0 +1,57 @@
++package controllers
++
++import (
++	"strings"
++
++	tfjson "github.com/hashicorp/terraform-json"
++	"google.golang.org/grpc/codes"
++	"google.golang.org/grpc/status"
++)
++
++// Only message-size failures should fall back; other exhausted resources may
++// indicate an unrelated runner failure.
++func isPlanMessageSizeError(err error) bool {
++	st, ok := status.FromError(err)
++	return ok && st.Code() == codes.ResourceExhausted &&
++		strings.Contains(st.Message(), "message larger than max")
++}
++
++// planHasOnlyDataReads excludes deferred check reads without hiding resource or
++// output changes. Keep the CLI result for plans with no reads at all.
++func planHasOnlyDataReads(plan *tfjson.Plan) bool {
++	if plan == nil {
++		return false
++	}
++	hasRead := false
++	for _, resource := range plan.ResourceChanges {
++		if resource == nil || resource.Change == nil {
++			return false
++		}
++		if resource.PreviousAddress != "" || resource.Change.Importing != nil {
++			return false
++		}
++		for _, action := range resource.Change.Actions {
++			switch action {
++			case tfjson.ActionNoop:
++			case tfjson.ActionRead:
++				if resource.Mode != tfjson.DataResourceMode {
++					return false
++				}
++				hasRead = true
++			default:
++				return false
++			}
++		}
++	}
++	for _, output := range plan.OutputChanges {
++		if output == nil {
++			return false
++		}
++		for _, action := range output.Actions {
++			if action != tfjson.ActionNoop {
++				return false
++			}
++		}
++	}
++	return hasRead
++}
+```
+
+**File**: `controllers/drift_plan_test.go` (added, +59/-0)
+```diff
+@@ -0,0 +1,59 @@
++package controllers
++
++import (
++	"errors"
++
++	"testing"
++
++	tfjson "github.com/hashicorp/terraform-json"
++	"github.com/stretchr/testify/assert"
++	"google.golang.org/grpc/codes"
++	"google.golang.org/grpc/status"
++)
++
++func TestIsPlanMessageSizeError(t *testing.T) {
++	for _, tt := range []struct {
++		name string
++		err  error
++		want bool
++	}{
++		{name: "no error"},
++		{name: "receive limit", err: status.Error(codes.ResourceExhausted, "grpc: received message larger than max (500 vs. 100)"), want: true},
++		{name: "send limit", err: status.Error(codes.ResourceExhausted, "grpc: trying to send message larger than max (500 vs. 100)"), want: true},
++		{name: "other resource exhaustion", err: status.Error(codes.ResourceExhausted, "quota exceeded")},
++		{name: "other status", err: status.Error(codes.Internal, "message larger than max")},
++		{name: "plain error", err: errors.New("message larger than max")},
++	} {
++		t.Run(tt.name, func(t *testing.T) {
++			assert.Equal(t, tt.want, isPlanMessageSizeError(tt.err))
++		})
++	}
++}
++
++func TestPlanHasOnlyDataReads(t *testing.T) {
++	read := &tfjson.ResourceChange{Mode: tfjson.DataResourceMode, Change: &tfjson.Change{Actions: tfjson.Actions{tfjson.ActionRead}}}
++	for _, tt := range []struct {
++		name string
++		plan *tfjson.Plan
++		want bool
++	}{
++		{name: "nil plan"},
++		{name: "empty plan", plan: &tfjson.Plan{}},
++		{name: "read and pending move", plan: &tfjson.Plan{ResourceChanges: []*tfjson.ResourceChange{read, {Mode: tfjson.ManagedResourceMode, PreviousAddress: "example.old", Change: &tfjson.Change{Actions: tfjson.Actions{tfjson.ActionNoop}}}}}},
++		{name: "read and pending import", plan: &tfjson.Plan{ResourceChanges: []*tfjson.ResourceChange{read, {Mode: tfjson.ManagedResourceMode, Change: &tfjson.Change{Actions: tfjson.Actions{tfjson.ActionNoop}, Importing: &tfjson.Importing{}}}}}},
++		{name: "deferred check read", plan: &tfjson.Plan{ResourceChanges: []*tfjson.ResourceChange{read}}, want: true},
++		{name: "read and unchanged resource", plan: &tfjson.Plan{ResourceChanges: []*tfjson.ResourceChange{read, {Mode: tfjson.ManagedResourceMode, Change: &tfjson.Change{Actions: tfjson.Actions{tfjson.ActionNoop}}}}}, want: true},
++		{name: "read and output change", plan: &tfjson.Plan{ResourceChanges: []*tfjson.ResourceChange{read}, OutputChanges: map[string]*tfjson.Change{"value": {Actions: tfjson.Actions{tfjson.ActionUpdate}}}}},
++		{name: "read and unchanged output", plan: &tfjson.Plan{ResourceChanges: []*tfjson.ResourceChange{read}, OutputChanges: map[string]*tfjson.Change{"value": {Actions: tfjson.Actions{tfjson.ActionNoop}}}}, want: true},
++	} {
++		t.Run(tt.name, func(t *testing.T) {
++			assert.Equal(t, tt.want, planHasOnlyDataReads(tt.plan))
++		})
++	}
++	for _, action := range []tfjson.Action{tfjson.ActionCreate, tfjson.ActionUpdate, tfjson.ActionDelete} {
++		t.Run(string(action), func(t *testing.T) {
++			plan := &tfjson.Plan{ResourceChanges: []*tfjson.ResourceChange{read, {Mode: tfjson.ManagedResourceMode, Change: &tfjson.Change{Actions: tfjson.Actions{action}}}}}
++			assert.False(t, planHasOnlyDataReads(plan))
 +		})
 +	}
 +}
 ```
 
----
-
-### Incident Patch 2: `e5dbc6ed` (2026-10-23)
-**Commit Message**: fix: read branch planner token secret just in time (#1883)
-
-The informer previously read the token secret once at startup and
-latched provider-construction errors forever via sync.Once. Re-read the
-ConfigMap and secret per comment interaction, matching the polling
-server's per-tick behaviour, so rotated tokens (e.g. GitHub App
-installation access tokens) keep working.
-
-Signed-off-by: Robin Breathe <[REDACTED_EMAIL]>
-Co-authored-by: Alex Marston <[REDACTED_EMAIL]>
-
-**File**: `cmd/branch-planner/informer.go` (modified, +6/-3)
+**File**: `controllers/tf_controller_drift_detect.go` (modified, +25/-0)
 ```diff
-@@ -19,8 +19,9 @@ import (
- )
- 
- func startInformer(ctx context.Context, log logr.Logger, dynamicClient *dynamic.DynamicClient, clusterClient client.Client, opts *applicationOptions) error {
--	providerOpts, err := getProviderOpts(ctx, clusterClient, opts.pollingConfigMap)
--	if err != nil {
-+	// The informer re-reads the config and secret just in time per
-+	// interaction; this call only validates the boot-time configuration.
-+	if _, err := getProviderOpts(ctx, clusterClient, opts.pollingConfigMap); err != nil {
- 		return fmt.Errorf("failed to get provider options: %w", err)
- 	}
- 
-@@ -32,7 +33,9 @@ func startInformer(ctx context.Context, log logr.Logger, dynamicClient *dynamic.
- 	informer, err := planner.NewInformer(
- 		planner.WithLogger(log),
- 		planner.WithClusterClient(clusterClient),
--		planner.WithProviderOpts(providerOpts...),
-+		planner.WithProviderOptsFn(func(ctx context.Context) ([]provider.ProviderOption, error) {
-+			return getProviderOpts(ctx, clusterClient, opts.pollingConfigMap)
-+		}),
- 		planner.WithSharedInformer(sharedInformer),
- 	)
- 	if err != nil {
-```
-
-**File**: `internal/informer/branch-planner/informer.go` (modified, +44/-28)
-```diff
-@@ -34,14 +34,13 @@ var (
- )
- 
- type Informer struct {
--	sharedInformer cache.SharedIndexInformer
--	handlers       cache.ResourceEventHandlerFuncs
--	log            logr.Logger
--	client         client.Client
--	gitProvider    provider.Provider
--	providerOpts   []provider.ProviderOption
--	providerOnce   sync.Once
--	providerErr    error
-+	sharedInformer      cache.SharedIndexInformer
-+	handlers            cache.ResourceEventHandlerFuncs
-+	log                 logr.Logger
-+	client              client.Client
-+	gitProvider         provider.Provider
-+	providerOptsFn      func(ctx context.Context) ([]provider.ProviderOption, error)
-+	gitProviderParserFn provider.URLParserFn
- 
- 	mux    *sync.RWMutex
- 	synced bool
-@@ -50,7 +49,9 @@ type Informer struct {
- type Option func(s *Informer) error
- 
- func NewInformer(options ...Option) (*Informer, error) {
--	informer := &Informer{}
-+	informer := &Informer{
-+		gitProviderParserFn: provider.FromURL,
-+	}
- 
- 	for _, opt := range options {
- 		if err := opt(informer); err != nil {
-@@ -226,7 +227,7 @@ func (i *Informer) updateHandler(oldObj, newObj any) {
- func (i *Informer) deleteHandler(obj any) {}
- 
- func (i *Informer) addCommentToPullRequest(ctx context.Context, tf *infrav1.Terraform, content []byte) {
--	repo, err := i.getRepo(ctx, tf)
-+	gitProvider, repo, err := i.getRepo(ctx, tf)
- 	if err != nil {
- 		i.log.Error(err, "failed getting repository")
- 		return
-@@ -250,13 +251,13 @@ func (i *Informer) addCommentToPullRequest(ctx context.Context, tf *infrav1.Terr
- 
- 	// If commentID is 0, it means that the comment has not been created yet.
- 	if commentID == 0 {
--		if _, err := i.gitProvider.AddCommentToPullRequest(ctx, pr, content); err != nil {
-+		if _, err := gitProvider.AddCommentToPullRequest(ctx, pr, content); err != nil {
- 			i.log.Error(err, "failed adding comment to pull request", "pr-id", tf.Labels[config.LabelPRIDKey], "namespace", tf.Namespace, "name", tf.Name)
- 		}
- 		return
- 	}
- 
--	if err := i.gitProvider.UpdateCommentOfPullRequest(ctx, pr, commentID, content); err != nil {
-+	if err := gitProvider.UpdateCommentOfPullRequest(ctx, pr, commentID, content); err != nil {
- 		i.log.Error(err, "failed updating comment in pull request", "pr-id", tf.Labels[config.LabelPRIDKey], "comment-id", commentID, "namespace", tf.Namespace, "name", tf.Name)
- 
- 		return
-@@ -334,9 +335,9 @@ func (i *Informer) isNewPlan(old, new *infrav1.Terraform) bool {
- 	return false
- }
- 
--func (i *Informer) getRepo(ctx context.Context, tf *infrav1.Terraform) (provider.Repository, error) {
-+func (i *Informer) getRepo(ctx context.Context, tf *infrav1.Terraform) (provider.Provider, provider.Repository, error) {
- 	if tf.Spec.SourceRef.Kind != sourcev1.GitRepositoryKind {
--		return provider.Repository{}, fmt.Errorf("branch based planner does not support source kind: %s", tf.Spec.SourceRef.Kind)
-+		return nil, provider.Repository{}, fmt.Errorf("branch based planner does not support source kind: %s", tf.Spec.SourceRef.Kind)
- 	}
- 
- 	ref := client.ObjectKey{
-@@ -345,24 +346,39 @@ func (i *Informer) getRepo(ctx context.Context, tf *infrav1.Terraform) (provider
- 	}
- 	obj := &sourcev1.GitRepository{}
- 	if err := i.client.Get(ctx, ref, obj); err != nil {
--		return provider.Repository{}, fmt.Errorf("unable to get Source: %w", err)
-+		return nil, provider.Repository{}, fmt.Errorf("unable to get Source: %w", err)
- 	}
- 
--	// Resolve the provider exactly once using sync.Once to avoid race
--	// conditions when multiple update events arrive concurrently. Skip
--	// resolution if a provider was already injected (e.g. via WithGitProvider
--	// in tests).
--	i.providerOnce.Do(func() {
--		if i.gitProvider != nil {
--			return
--		}
--		i.gitProvider, _, i.providerErr = provider.FromURL(obj.Spec.URL, i.providerOpts...)
--	})
--	if i.providerErr != nil {
--		return provider.Repository{}, fmt.Errorf("failed resolving git provider from URL: %w", i.providerErr)
-+	repo, err := provider.RepoFromURL(obj.Spec.URL)
-+	if err != nil {
-+		return nil, provider.Repository{}, err
-+	}
-+
-+	// A statically injected provider (e.g. via WithGitProvider in tests)
-+	// takes precedence.
-+	if i.gitProvider != nil {
-+		return i.gitProvider, repo, nil
-+	}
-+
-+	if i.providerOptsFn == nil {
-+		return nil, provider.Repository{}, fmt.Errorf("no provider options getter configured")
-+	}
-+
-+	// Resolve the provider per interaction so that a rotated token secret
-+	// (e.g. short-lived GitHub App installation tokens) is picked up just
-+	// in time.
-+	opts, err := i.providerOptsFn(ctx)
-+	if err != nil {
-+		return nil, provider.Repository{}, fmt.Errorf("failed to get provider options: %w", err)
-+	}
-+	opts = append([]provider.ProviderOption{provider.WithLogger(i.log)}, opts...)
-+
-+	gitProvider, _, err := i.gitProviderParserFn(obj.Spec.URL, opts...)
-+	if err != nil {
-+		return nil, provider.Repository{}, fmt.Errorf("failed resolving git provider from URL: %w", err)
- 	}
- 
--	return provider.RepoFromURL(obj.Spec.URL)
-+	return gitProvider, repo, nil
- }
- 
- func formatPlanOutput(planOut
-```
-
-**File**: `internal/informer/branch-planner/informer_test.go` (modified, +151/-0)
-```diff
-@@ -13,6 +13,7 @@ import (
- 	"github.com/flux-iac/tofu-controller/api/plan"
- 	infrav1 "github.com/flux-iac/tofu-controller/api/v1alpha2"
- 	"github.com/flux-iac/tofu-controller/internal/config"
-+	"github.com/flux-iac/tofu-controller/internal/git/provider"
- 	"github.com/flux-iac/tofu-controller/internal/git/provider/providerfakes"
- 	sourcev1 "github.com/fluxcd/source-controller/api/v1"
- 	corev1 "k8s.io/api/core/v1"
-@@ -126,6 +127,156 @@ func TestInformer(t *testing.T) {
- 	}).Should(gom.ContainSubstring("terraform plan output"))
- }
- 
-+// TestInformerReadsProviderSecretJustInTime verifies that the informer
-+// resolves the git provider per PR interaction, re-reading the provider
-+// secret each time, so that a rotated token (e.g. a short-lived GitHub App
-+// installation token) is picked up without a restart.
-+func TestInformerReadsProviderSecretJustInTime(t *testing.T) {
-+	g := gom.NewWithT(t)
-+	ns := newNamespace(t, g)
-+	ctx := t.Context()
-+
-+	// Create a source for the Terraform object to point to
-+	source := &sourcev1.GitRepository{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:      "jit-source",
-+			Namespace: ns.Name,
-+		},
-+		Spec: sourcev1.GitRepositorySpec{
-+			URL: "https://github.com/tf-controller/helloworld",
-+			Reference: &sourcev1.GitRepositoryRef{
-+				Branch: "main",
-+			},
-+		},
-+	}
-+	expectToSucceed(t, g, k8sClient.Create(t.Context(), source))
-+
-+	tf := &infrav1.Terraform{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:      "jit-helloworld",
-+			Namespace: ns.Name,
-+			Labels: map[string]string{
-+				config.LabelKey:           config.LabelValue,
-+				"infra.weave.works/pr-id": "1",
-+			},
-+		},
-+		Spec: infrav1.TerraformSpec{
-+			SourceRef: infrav1.CrossNamespaceSourceReference{
-+				Name:      source.Name,
-+				Namespace: ns.Name,
-+				Kind:      "GitRepository",
-+			},
-+		},
-+	}
-+	expectToSucceed(t, g, k8sClient.Create(t.Context(), tf))
-+
-+	tfOutputCM := &corev1.ConfigMap{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:      "tfplan-default-jit-helloworld",
-+			Namespace: ns.Name,
-+			Labels: map[string]string{
-+				plan.TFPlanNameLabel:      plan.SafeLabelValue("jit-helloworld"),
-+				plan.TFPlanWorkspaceLabel: plan.SafeLabelValue("default"),
-+			},
-+			Annotations: map[string]string{
-+				plan.TFPlanSavedAnnotation:         "plan-main-1",
-+				plan.TFPlanFullWorkspaceAnnotation: "default",
-+			},
-+		},
-+		Data: map[string]string{
-+			"tfplan": "terraform plan output",
-+		},
-+	}
-+	expectToSucceed(t, g, k8sClient.Create(t.Context(), tfOutputCM))
-+
-+	secret := &corev1.Secret{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:      "jit-provider-secret",
-+			Namespace: ns.Name,
-+		},
-+		Data: map[string][]byte{
-+			"token": []byte("token-1"),
-+		},
-+	}
-+	expectToSucceed(t, g, k8sClient.Create(t.Context(), secret))
-+
-+	dynamicClient, err := dynamic.NewForConfig(k8sConfig)
-+	g.Expect(err).NotTo(gom.HaveOccurred())
-+
-+	// A single shared fake provider accumulates call counts across events.
-+	// The parser fn applies each interaction's options to it, so SetToken
-+	// records the token used per event.
-+	fakeProvider := &providerfakes.FakeProvider{}
-+	parserFn := func(repoURL string, options ...provider.ProviderOption) (provider.Provider, provider.Repository, error) {
-+		repo, err := provider.RepoFromURL(repoURL)
-+		if err != nil {
-+			return nil, provider.Repository{}, err
-+		}
-+		for _, opt := range options {
-+			if err := opt(fakeProvider); err != nil {
-+				return nil, provider.Repository{}, err
-+			}
-+		}
-+		return fakeProvider, repo, nil
-+	}
-+
-+	sharedInformer := createSharedInformer(g, ctx, k8sClient, dynamicClient)
-+
-+	log := logr.Discard()
-+
-+	informer, err := NewInformer(
-+		WithLogger(log),
-+		WithClusterClient(k8sClient),
-+		WithProviderOptsFn(func(ctx context.Context) ([]provider.ProviderOption, error) {
-+			liveSecret := &corev1.Secret{}
-+			if err := k8sClient.Get(ctx, client.ObjectKeyFromObject(secret), liveSecret); err != nil {
-+				return nil, err
-+			}
-+			return provider.OptsFromSecret(liveSecret.Data)
-+		}),
-+		WithCustomProviderURLParserFn(parserFn),
-+		WithSharedInformer(sharedInformer),
-+	)
-+	g.Expect(err).NotTo(gom.HaveOccurred())
-+
-+	go func() {
-+		g.Expect(informer.Start(ctx)).To(gom.Succeed())
-+	}()
-+
-+	g.Eventually(func() bool {
-+		return informer.HasSynced()
-+	}).Should(gom.BeTrue())
-+
-+	// Event 1: patch status to trigger the informer update function.
-+	expectToSucceed(t, g, k8sClient.Get(ctx, client.ObjectKeyFromObject(tf), tf))
-+	patch := client.MergeFrom(tf.DeepCopy())
-+	tf.Status.LastPlanAt = &metav1.Time{Time: time.Now()}
-+	expectToSucceed(t, g, k8sClient.Status().Patch(ctx, tf, patch))
-+
-+	g.Eventually(fakeProvider.AddCommentToPullRequestCallCount).Should(gom.Equal(1))
-+
-+	tokenType, token := fakeProvider.SetTokenArgsForCall(0)
-+	g.Expect(tokenType).To(gom.Equal(provider.APITokenType))
-+	g.Expect(token).To(gom.Equal("token-1"))
-+
-+	// Rotate the token in the secret.
-+	expectToSucceed(t, g, k8sClient.Get(ctx, client.ObjectKeyFromObject(secret), secret))
-+	secret.Data["token"] = 
-```
-
-**File**: `internal/informer/branch-planner/options.go` (modified, +12/-2)
-```diff
-@@ -1,6 +1,8 @@
- package branchplanner
+@@ -2,9 +2,13 @@ package controllers
  
  import (
-+	"context"
+ 	"context"
++	"encoding/json"
 +
- 	"github.com/flux-iac/tofu-controller/internal/git/provider"
- 	"github.com/go-logr/logr"
- 	"k8s.io/client-go/tools/cache"
-@@ -32,9 +34,17 @@ func WithGitProvider(provider provider.Provider) Option {
+ 	"fmt"
+ 	"strings"
+ 
++	tfjson "github.com/hashicorp/terraform-json"
++
+ 	infrav1 "github.com/flux-iac/tofu-controller/api/v1alpha2"
+ 	"github.com/flux-iac/tofu-controller/runner"
+ 	"google.golang.org/grpc/status"
+@@ -115,6 +119,27 @@ func (r *TerraformReconciler) detectDrift(ctx context.Context, terraform *infrav
+ 	drifted := planReply.Drifted
+ 	log.Info(fmt.Sprintf("plan for drift: %s found drift: %v", planReply.Message, planReply.Drifted))
+ 
++	if drifted && !r.backendCompletelyDisable(terraform) {
++		showReply, err := runnerClient.ShowPlanFile(ctx, &runner.ShowPlanFileRequest{
++			TfInstance: tfInstance,
++			Filename:   driftFilename,
++		})
++		if isPlanMessageSizeError(err) {
++			log.Info("WARNING: JSON plan exceeds gRPC message-size limit; retaining exit-code-based drift detection", "error", err.Error())
++		} else if err != nil {
++			return infrav1.TerraformNotReady(terraform, revision, infrav1.DriftDetectionFailedReason, err.Error()), err
++		} else {
++			var plan tfjson.Plan
++			if err := json.Unmarshal(showReply.JsonOutput, &plan); err != nil {
++				return infrav1.TerraformNotReady(terraform, revision, infrav1.DriftDetectionFailedReason, err.Error()), err
++			}
++			if planHasOnlyDataReads(&plan) {
++				drifted = false
++				log.Info("ignoring data-source-only reads during drift detection")
++			}
++		}
++	}
++
+ 	if drifted {
+ 		var rawOutput string
+ 		if r.backendCompletelyDisable(terraform) {
+```
+
+---
+
+### Incident Patch 3: `47aa0886` (2026-10-27)
+**Commit Message**: fix: recover from runner pods that fail or cannot start (#1921)
+
+**File**: `controllers/prerequisites.go` (modified, +7/-0)
+```diff
+@@ -195,6 +195,13 @@ func (r *TerraformReconciler) shouldReconcile(terraform *infrav1.Terraform, sour
+ 		return true, "retry interval has elapsed since last failed reconciliation", 0
  	}
+ 
++	// reconcile if the last pass could not start the runner. That failure is
++	// not counted as a reconciliation failure, so without this the retry would
++	// wait for the full interval.
++	if runnerFailed(terraform) {
++		return true, "previously failed to start the runner", 0
++	}
++
+ 	if terraform.Status.LastSuccessfulReconcileAt == nil {
+ 		return true, "never successfuly reconciled before", 0
+ 	}
+```
+
+**File**: `controllers/runner_pod.go` (modified, +56/-10)
+```diff
+@@ -463,7 +463,7 @@ func (r *TerraformReconciler) reconcileRunnerPod(ctx context.Context, terraform
+ 
+ 	defer watcher.Stop()
+ 	// set a timeout for the watch
+-	ctx, cancel := context.WithTimeout(ctx, timeout)
++	watchCtx, cancel := context.WithTimeout(ctx, timeout)
+ 	defer cancel()
+ 
+ 	for {
+@@ -480,23 +480,69 @@ func (r *TerraformReconciler) reconcileRunnerPod(ctx context.Context, terraform
+ 					return "", fmt.Errorf("failed to cast object to pod: %v", event.Object)
+ 				}
+ 
++				// A failed pod will never serve, for example one the kubelet
++				// rejects or evicts under disk pressure. One evicted after it
++				// ran still reports its last IP, so check before the IP.
++				if runnerPod.Status.Phase == corev1.PodFailed {
++					return "", r.deleteUnusableRunnerPod(ctx, runnerPod,
++						fmt.Errorf("runner pod failed: %s: %s", runnerPod.Status.Reason, runnerPod.Status.Message))
++				}
++
++				// The kubelet gives the pod its IP before it pulls the image
++				// or builds the container config, so this too comes first.
++				if waiting := runnerContainerCannotStart(runnerPod); waiting != nil {
++					return "", r.deleteUnusableRunnerPod(ctx, runnerPod,
++						fmt.Errorf("runner pod cannot start: %s: %s", waiting.Reason, waiting.Message))
++				}
++
+ 				if runnerPod.Status.PodIP != "" {
+ 					return runnerPod.Status.PodIP, nil
+ 				}
+-
+ 			}
+-		case <-ctx.Done():
++		case <-watchCtx.Done():
++			return "", r.deleteUnusableRunnerPod(ctx, &runnerPod, fmt.Errorf("failed to create and obtain pod ip"))
++		}
++	}
++}
+ 
+-			if err := r.Delete(ctx, &runnerPod,
+-				client.GracePeriodSeconds(1), // force kill = 1 second
+-				client.PropagationPolicy(metav1.DeletePropagationForeground),
+-			); err != nil {
+-				return "", fmt.Errorf("failed to obtain pod ip and delete runner pod: %w", err)
+-			}
++// containerCannotStartReasons are the kubelet's waiting reasons for a
++// container that will not start until someone fixes the pod's image, spec or
++// secrets. Image pull failures (ErrImagePull, ImagePullBackOff) are left out:
++// the kubelet reports them after a single failed pull, including a transient
++// registry error, and retries with its own backoff.
++var containerCannotStartReasons = map[string]bool{
++	"InvalidImageName":           true,
++	"ErrImageNeverPull":          true,
++	"CreateContainerConfigError": true,
++}
+ 
+-			return "", fmt.Errorf("failed to create and obtain pod ip")
++// runnerContainerCannotStart returns the waiting state of a container in pod
++// that cannot start, or nil.
++func runnerContainerCannotStart(pod *corev1.Pod) *corev1.ContainerStateWaiting {
++	for _, status := range pod.Status.ContainerStatuses {
++		if waiting := status.State.Waiting; waiting != nil && containerCannotStartReasons[waiting.Reason] {
++			return waiting
+ 		}
+ 	}
++	return nil
++}
++
++// deleteUnusableRunnerPod force-deletes a runner pod that will never serve,
++// so the next pass creates a new one, and returns cause. The delete gets a
++// context of its own: the wait that gave up on the pod may have used up ctx's
++// deadline.
++func (r *TerraformReconciler) deleteUnusableRunnerPod(ctx context.Context, pod *corev1.Pod, cause error) error {
++	ctx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 30*time.Second)
++	defer cancel()
++
++	if err := r.Delete(ctx, pod,
++		client.GracePeriodSeconds(1), // force kill = 1 second
++		client.PropagationPolicy(metav1.DeletePropagationForeground),
++	); err != nil && !errors.IsNotFound(err) {
++		return fmt.Errorf("%w; failed to delete the runner pod: %v", cause, err)
++	}
++
++	return cause
  }
  
--func WithProviderOpts(opts ...provider.ProviderOption) Option {
-+func WithProviderOptsFn(fn func(ctx context.Context) ([]provider.ProviderOption, error)) Option {
-+	return func(i *Informer) error {
-+		i.providerOptsFn = fn
+ // reconcileRunnerSecret reconciles the runner secret used for mTLS
+```
+
+**File**: `controllers/runner_pod_test.go` (added, +214/-0)
+```diff
+@@ -0,0 +1,214 @@
++package controllers
 +
-+		return nil
++import (
++	"context"
++	"strings"
++	"testing"
++	"time"
++
++	infrav1 "github.com/flux-iac/tofu-controller/api/v1alpha2"
++	. "github.com/onsi/gomega"
++	corev1 "k8s.io/api/core/v1"
++	apierrors "k8s.io/apimachinery/pkg/api/errors"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/types"
++	"k8s.io/apimachinery/pkg/util/wait"
++	"k8s.io/client-go/kubernetes"
++	"sigs.k8s.io/controller-runtime/pkg/client"
++)
++
++// newRunnerPodReconciler returns a reconciler that talks to the envtest API
++// server directly, so reconcileRunnerPod's pod watch and deletes behave as
++// they do against a cluster. Nothing runs the pods it creates.
++func newRunnerPodReconciler(t *testing.T, timeout time.Duration) *TerraformReconciler {
++	t.Helper()
++	clientset, err := kubernetes.NewForConfig(testEnv.Config)
++	if err != nil {
++		t.Fatal(err)
++	}
++	return &TerraformReconciler{
++		Client:                k8sClient,
++		Clientset:             clientset,
++		RunnerGRPCPort:        30000,
++		RunnerCreationTimeout: timeout,
 +	}
 +}
 +
-+func WithCustomProviderURLParserFn(fn provider.URLParserFn) Option {
- 	return func(i *Informer) error {
--		i.providerOpts = opts
-+		i.gitProviderParserFn = fn
- 
- 		return nil
- 	}
++func runnerPodTestTerraform(name string) *infrav1.Terraform {
++	obj := fakeTerraform(name)
++	obj.UID = types.UID(name + "-uid")
++	obj.Spec.RunnerTerminationGracePeriodSeconds = new(int64)
++	return obj
++}
++
++func runnerPodTestSecret() *corev1.Secret {
++	return &corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: "terraform-runner.tls-1", Namespace: "flux-system"}}
++}
++
++func runnerPodKey(obj *infrav1.Terraform) client.ObjectKey {
++	return client.ObjectKey{Namespace: obj.Namespace, Name: obj.Name + "-tf-runner"}
++}
++
++// runnerPodDeleted reports whether the runner pod is gone or being deleted.
++// envtest runs no garbage collector, so a foreground delete leaves the pod in
++// place with a deletion timestamp.
++func runnerPodDeleted(key client.ObjectKey) bool {
++	var pod corev1.Pod
++	err := k8sClient.Get(context.Background(), key, &pod)
++	return apierrors.IsNotFound(err) || (err == nil && pod.DeletionTimestamp != nil)
++}
++
++// removeRunnerPod removes the runner pod for good, finalizers included, when
++// the test ends.
++func removeRunnerPod(t *testing.T, key client.ObjectKey) {
++	t.Cleanup(func() {
++		var pod corev1.Pod
++		if err := k8sClient.Get(context.Background(), key, &pod); err != nil {
++			return
++		}
++		pod.Finalizers = nil
++		_ = k8sClient.Update(context.Background(), &pod)
++		_ = k8sClient.Delete(context.Background(), &pod, client.GracePeriodSeconds(0))
++		_ = wait.PollUntilContextTimeout(context.Background(), 100*time.Millisecond, 10*time.Second, true, func(ctx context.Context) (bool, error) {
++			return apierrors.IsNotFound(k8sClient.Get(ctx, key, &corev1.Pod{})), nil
++		})
++	})
++}
++
++// setRunnerPodStatus waits for the runner pod to be created, then applies
++// set to its status, standing in for the kubelet.
++func setRunnerPodStatus(key client.ObjectKey, set func(*corev1.PodStatus)) {
++	go func() {
++		for {
++			var pod corev1.Pod
++			if err := k8sClient.Get(context.Background(), key, &pod); err == nil {
++				set(&pod.Status)
++				if err := k8sClient.Status().Update(context.Background(), &pod); err == nil {
++					return
++				}
++			}
++			time.Sleep(50 * time.Millisecond)
++		}
++	}()
++}
++
++// TestReconcileRunnerPodTimeoutDeletesPod checks that a runner pod that never
++// gets an IP is deleted once the creation timeout passes, so the next pass
++// starts a fresh one.
++func TestReconcileRunnerPodTimeoutDeletesPod(t *testing.T) {
++	g := NewWithT(t)
++	r := newRunnerPodReconciler(t, 2*time.Second)
++	obj := runnerPodTestTerraform("runner-pod-timeout")
++	removeRunnerPod(t, runnerPodKey(obj))
++
++	_, err := r.reconcileRunnerPod(context.Background(), obj, runnerPodTestSecret(), "main@sha1:5f75359fced864fd73935cf0a0972e45da1dc626")
++	g.Expect(err).To(MatchError("failed to create and obtain pod ip"))
++
++	g.Expect(runnerPodDeleted(runnerPodKey(obj))).To(BeTrue(), "the runner pod should be deleted")
++}
++
++// TestReconcileRunnerPodFailedPod checks that a failed runner pod ends the
++// wait at once with the pod's reason, and is deleted. That holds both for a
++// pod the kubelet rejected before it ran, which has no IP, and for one it
++// evicted after it ran, which keeps reporting its last IP.
++func TestReconcileRunnerPodFailedPod(t *testing.T) {
++	for name, podIP := range map[string]string{
++		"rejected before running": "",
++		"evicted after running":   "10.0.0.1",
++	} {
++		t.Run(name, func(t *testing.T) {
++			g := NewWithT(t)
++			timeout := time.Minute
++			r := newRunnerPodReconciler(t, timeout)
++			obj := runnerPodTestTerraform("runner-pod-failed-" + strings.ReplaceAll(name, " ", "-"))
++			key := runnerPodKey(obj)
++			removeRunnerPod(t, key)
++
++			setRunnerPodStatus(key, func(status *corev1.PodStatus) {
++				status.Phase = corev1.PodFailed
++				status.Reason = "Evicted"
++				status.Message = "The node had condition: [DiskPressure]."
++				status.PodIP = podIP
++			})
++
++			start := time.Now()
++			_, err := r.reconcileRunnerPod(context.Background(), obj, runnerPodTestS
+```
+
+**File**: `controllers/tf_controller_interval_test.go` (modified, +42/-0)
+```diff
+@@ -543,3 +543,45 @@ func TestShouldReconcileIgnoresResolvedDrift(t *testing.T) {
+ 	g.Expect(shouldReconcile).To(BeFalse())
+ 	g.Expect(reason).To(Equal("interval has not elapsed since last successful reconciliation"))
+ }
++
++func TestShouldReconcileAfterRunnerFailure(t *testing.T) {
++	Spec("This spec covers a pass that failed to start the runner, for example because its pod was evicted.")
++	It("should reconcile again instead of waiting for the interval.")
++
++	for _, reason := range []string{infrav1.RunnerFailedReason, infrav1.RunnerQuotaExhaustedReason} {
++		t.Run(reason, func(t *testing.T) {
++			g := NewWithT(t)
++			reconciler := &TerraformReconciler{}
++
++			lastReconcile := time.Now().Add(-6 * 24 * time.Hour)
++			tf := &infrav1.Terraform{
++				ObjectMeta: metav1.ObjectMeta{
++					Generation: 1,
++				},
++				Spec: infrav1.TerraformSpec{
++					Interval: metav1.Duration{Duration: 168 * time.Hour},
++				},
++				Status: infrav1.TerraformStatus{
++					LastPlanAt:                &metav1.Time{Time: lastReconcile},
++					LastSuccessfulReconcileAt: &metav1.Time{Time: lastReconcile},
++					LastAttemptedRevision:     "main/1234",
++					LastPlannedRevision:       "main/1234",
++					ObservedGeneration:        1,
++					Conditions: []metav1.Condition{
++						{
++							Message: "failed to create and obtain pod ip",
++							Reason:  reason,
++							Type:    meta.ReadyCondition,
++							Status:  metav1.ConditionFalse,
++						},
++					},
++				},
++			}
++
++			shouldReconcile, why, requeueAfter := reconciler.shouldReconcile(tf, nil)
++			g.Expect(shouldReconcile).To(BeTrue())
++			g.Expect(why).To(Equal("previously failed to start the runner"))
++			g.Expect(requeueAfter).To(BeZero())
++		})
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1910** (2026-10-23): chore(deps): go minor bumps (@alexandermarston)
-- **PR #1909** (2026-10-23): chore(deps): bump go to 1.26.10 (@alexandermarston)
-- **PR #1908** (2026-10-23): fix(branch-planner): replace the PR source ref and only plan PRs targeting the tracked branch (@isometry)
-- **PR #1906** (closed): chore(deps): bump the go-minor group across 3 directories with 24 updates (@dependabot[bot])
-- **PR #1904** (closed): chore(deps): bump the go-minor group across 3 directories with 21 updates (@dependabot[bot])
-- **PR #1903** (closed): chore(deps): bump the gh-minor group across 1 directory with 11 updates (@dependabot[bot])
+- **PR #1921** (2026-10-27): fix: recover from runner pods that fail or cannot start (@alexandermarston)
+- **PR #1920** (2026-10-26): chore: release 0.16.6 (@alexandermarston)
+- **PR #1919** (2026-10-26): feat(chart): optionally bind the runner role per namespace (@alexandermarston)
+- **PR #1918** (2026-10-26): fix(drift): Ignore data-source-only reads (@cgroschupp)
+- **PR #1917** (2026-10-27): refactor: restructure the runner (@alexandermarston)
+- **PR #1913** (2026-10-27): refactor: restructure the Terraform reconciler (@alexandermarston)
 
 ---
 
@@ -1734,27 +1873,29 @@ Co-authored-by: Alex Marston <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. branch-planner): replace the PR source ref and only plan PRs targeting the track
+## X. cancel runner calls when the runner connection stays down (#1907)
 
 **RULE**:
-When implementing operations in `api/v1alpha2/terraform_types.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flux-iac/tofu-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/manager/main.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flux-iac/tofu-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1a172945`: branch-planner): replace the PR source ref and only plan PRs targeting the tracked branch (#1908). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ac680305`: cancel runner calls when the runner connection stays down (#1907). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/v1alpha2/terraform_types.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/manager/main.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-
-	// BaseBranch restricts branch planning to Pull Requests targeting this branch.
-	// Defaults to the branch tracked by the source GitRepository (`.spec.ref.branch`,
-	// or `.spec.ref.name` of the form `refs/heads/<branch>`). If unset and the source
-	// does not track a branch (tag, semver or commit-only), no Pull Requests are planned.
-	// +optional
-	BaseBranch string `json:"baseBranch,omitempty"`
+		runnerUnreachableTimeout  time.Duration
+	flag.DurationVar(&runnerUnreachableTimeout, "runner-unreachable-timeout", 5*time.Minute,
+		"Cancel a runner RPC once the connection to a runner that was reachable has not been "+
+			"ready for this long, so a runner pod that dies mid-plan or mid-apply surfaces as an "+
+			"error and requeues instead of hanging forever. Healthy long-running plans and applies "+
+			"keep the connection ready and are not affected, and waiting for a runner that is still "+
+			"starting is not counted. Set to 0 to disable, which also turns off the keepalive "+
+			"pings that notice a runner whose node vanished without closing the connection.")
+		RunnerUnreachableTimeout:  runnerUnreachableTimeout,
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1764,4 +1905,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1a172945` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ac680305` are properly handled with clean fallback behavior.

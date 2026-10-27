@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "181d6814",
+    "sourceVersion": "4a9dcea3",
     "license": "Apache-2.0",
-    "contentHash": "592052b7d52064ed304a0cab8259a4d5f4613198a0ffad5bcfed9ef98f864a6b",
-    "lastHarvestedAt": "2026-10-25T15:56:07.675Z",
+    "contentHash": "694457ca976b3a347f14b7809c93e692951c39f65dda344ed17852169330d288",
+    "lastHarvestedAt": "2026-10-27T10:22:04.974Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -4573,10 +4573,10 @@
     "repository": "slatedb/slatedb",
     "platform": "github",
     "sourceUrl": "https://github.com/slatedb/slatedb",
-    "sourceVersion": "811dd4cd",
+    "sourceVersion": "fab43236",
     "license": "Apache-2.0",
-    "contentHash": "0180c7a53059a6724258a74814f0d569ea6a5f6b05fc4f8432b399747e0d671a",
-    "lastHarvestedAt": "2026-10-25T02:11:22.479Z",
+    "contentHash": "b7beb4a2b5d4982ae350937e0bc6fb01d91b3dcc87e8a247300a5cea6ac1526d",
+    "lastHarvestedAt": "2026-10-27T10:21:50.664Z",
     "learningId": "learn-github-slatedb-slatedb"
   },
   "react-component-slider": {
@@ -7043,10 +7043,10 @@
     "repository": "flux-iac/tofu-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/flux-iac/tofu-controller",
-    "sourceVersion": "1a172945",
+    "sourceVersion": "47aa0886",
     "license": "Apache-2.0",
-    "contentHash": "753974fd94470642633bc566014dbc18488dab99058f9ca54b5608c2012c11bd",
-    "lastHarvestedAt": "2026-10-25T03:59:34.704Z",
+    "contentHash": "70326d57fdbe33fe5f07b9a03323a6186ec64a8e07ecc27295ecb0be9db1836a",
+    "lastHarvestedAt": "2026-10-27T10:21:53.588Z",
     "learningId": "learn-github-flux-iac-tofu-controller"
   },
   "clockworklabs-spacetimedb": {
@@ -10003,10 +10003,10 @@
     "repository": "KeyboardKit/KeyboardKit",
     "platform": "github",
     "sourceUrl": "https://github.com/KeyboardKit/KeyboardKit",
-    "sourceVersion": "2b19759f",
+    "sourceVersion": "b9cb190e",
     "license": "NOASSERTION",
-    "contentHash": "5ed390188f27ac2d758391ac60b72a3f2e45ed2b3f1197556dc6fca6f2ac8b81",
-    "lastHarvestedAt": "2026-10-22T20:51:57.365Z",
+    "contentHash": "861c2cf3b0515048eae0f06cb8711107710cabe16f2c719b22cf5fb3b747fe2f",
+    "lastHarvestedAt": "2026-10-27T10:26:43.835Z",
     "learningId": "learn-github-keyboardkit-keyboardkit"
   },
   "evanw-esbuild": {
