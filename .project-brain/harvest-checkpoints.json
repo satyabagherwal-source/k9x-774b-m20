@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T15:08:14.625Z",
+  "last_updated": "2026-10-27T15:12:16.262Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2082,14 +2082,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cosscom-ui",
-      "content_hash": "445fe59039825c2ef88de96ee488f60c0e00796b72a32fcabf9cb103b2b8ba25",
-      "verified_at": "2026-10-26T01:10:17.786Z",
+      "content_hash": "5d480d34f4961b2cc2dc16bd13a7cbb2810c8b022c5885088b728b3caa5fa54c",
+      "verified_at": "2026-10-27T15:12:02.787Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T01:10:17.786Z"
+      "last_updated": "2026-10-27T15:12:02.787Z"
     },
     "Ebony-Vinyl/dsh-our-free-model": {
       "repository": "Ebony-Vinyl/dsh-our-free-model",
@@ -7266,14 +7266,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-saltstack-salt",
-      "content_hash": "9edec428ee4dd10ac3359db633b3786216f391649cdaecbf8fe892d6480d7e54",
-      "verified_at": "2026-10-23T08:39:33.195Z",
+      "content_hash": "c2ba244630db252ff066ee908b2c7f40ee60c53ab28ee89fe8fd3820d49d0443",
+      "verified_at": "2026-10-27T15:12:12.626Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T08:39:33.195Z"
+      "last_updated": "2026-10-27T15:12:12.626Z"
     },
     "etcd-io/etcd": {
       "repository": "etcd-io/etcd",
@@ -10986,14 +10986,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-alibaba-zvec",
-      "content_hash": "b7455f2d9e1b7a0740597258124a9388b1d5d3d27993ccb5281287e2815592a0",
-      "verified_at": "2026-10-22T21:28:57.960Z",
+      "content_hash": "ae5cdba134745b22009072ac86b99d05144d67ab026c42398475127705653256",
+      "verified_at": "2026-10-27T15:12:16.262Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T21:28:57.960Z"
+      "last_updated": "2026-10-27T15:12:16.262Z"
     },
     "zenbu-labs/terminal-browser": {
       "repository": "zenbu-labs/terminal-browser",
@@ -14931,14 +14931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-scrapinghub-dateparser",
-      "content_hash": "51d0bec1ca9296eb18f9ea8e7c2a7a02a32a6f56494f2cd1d05f534c9288282b",
-      "verified_at": "2026-10-23T06:02:50.239Z",
+      "content_hash": "42b578ece0d964e82f337ed0a18e7dba4f6cd26c6a8a144fbc28a0fad5285874",
+      "verified_at": "2026-10-27T15:12:07.041Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T06:02:50.239Z"
+      "last_updated": "2026-10-27T15:12:07.041Z"
     },
     "google/closure-compiler": {
       "repository": "google/closure-compiler",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md`  
 > **Source**: github ([https://github.com/scrapinghub/dateparser](https://github.com/scrapinghub/dateparser))  
-> **Source Version**: `4c4c5e52`  
+> **Source Version**: `f1c58d6a`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T06:02:49.887Z  
+> **Timestamp**: 2026-10-27T15:12:06.491Z  
 > **Learning ID**: `learn-github-scrapinghub-dateparser`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/scrapinghub/dateparser](https://github.com/scrapinghub/dateparser))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T06:02:49.489Z  
+> **Harvest Timestamp**: 2026-10-27T15:12:05.712Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -43,14 +43,12 @@ import calendar
 import logging
 import logging.config
 import os
-import threading
-import types
 import unicodedata
 from collections import OrderedDict
-from collections.abc import Callable, Mapping
+from collections.abc import Mapping
 from datetime import datetime, tzinfo
 from datetime import timezone as dt_timezone
-from typing import TYPE_CHECKING, Any, Literal, TypeVar
+from typing import TYPE_CHECKING, Any, Literal
 
 import regex as re
 from pytz import UTC, UnknownTimeZoneError, timezone
@@ -60,8 +58,6 @@ from dateparser.timezone_parser import StaticTzInfo, _find_tz
 
 if TYPE_CHECKING:
     from dateparser.conf import Settings
-
-_T = TypeVar("_T")
 
 
 def _get_localzone() -> tzinfo:
@@ -307,39 +303,6 @@ def set_correct_month_from_settings(
         return date_obj.replace(month=options["last"])
 
 
-_registry_lock = threading.Lock()
-
-
-def registry(cls: type[_T]) -> type[_T]:
-    def choose(creator: Callable[..., Any]) -> "staticmethod[..., Any]":
-        def constructor(cls: Any, *args: Any, **kwargs: Any) -> Any:
-            key = cls.get_key(*args, **kwargs)
-
-            with _registry_lock:
-                if not hasattr(cls, "__registry_dict"):
-                    setattr(cls, "__registry_dict", {})
-                registry_dict = getattr(cls, "__registry_dict")
-
-                if key not in registry_dict:
-                    instance = creator(cls, *args)
-                    # Set the key before publishing the instance so other
-                    # threads never observe an entry without ``registry_key``.
-                    instance.registry_key = key
-                    registry_dict[key] = instance
-                return registry_dict[key]
-
-        return staticmethod(constructor)
-
-    get_key = getattr(cls, "get_key", None)
-    if not (isinstance(get_key, types.MethodType) and get_key.__self__ is cls):
-        raise NotImplementedError(
-            "Registry classes require to implement class method get_key"
-        )
-
-    cls.__new__ = choose(cls.__new__)  # type: ignore[method-assign]
-    return cls
-
-
 def get_logger() -> logging.Logger:
     setup_logging()
     return logging.getLogger("dateparser")
@@ -357,6 +320,21 @@ def setup_logging() -> None:
                 "format": "%(asctime)s %(levelname)s: [%(name)s] %(message)s",
             },
         },
+        "handlers": {
+            "console": {
+                "level": logging.DEBUG,
+                "class": "logging.StreamHandler",
+                "formatter": "console",
+                "stream": "ext://sys.stdout",
+            },
+        },
+        "root": {
+            "level": logging.DEBUG,
+            "handlers": ["console"],
+        },
+    }
+    logging.config.dictConfig(config)
+
 ```
 
 ### Core Architecture Module: `dateparser/utils/strptime.py`
@@ -778,7 +756,9 @@ def parse(
         `here <https://docs.python.org/2/library/datetime.html#strftime-and-strptime-behavior>`_.
         The parser applies formats one by one, taking into account the detected
         languages/locales. A UTC offset matched by ``%z`` is kept, while a time
-        zone name matched by ``%Z`` is ignored.
+        zone name matched by ``%Z`` is ignored. If no format matches, the other
+        parsers of the :ref:`PARSERS <settings>` setting are tried; set it to
+        ``['custom-formats']`` to use only these formats.
     :type date_formats: list
 
     :param languages:
@@ -1227,13 +1207,17 @@ class HijriCalendar(CalendarBase):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1544** (2026-10-20): **Speed up parse() by ~35% by caching strptime format inspection and language order lookups**
-  *Symptoms*: No linked issue (related to the general slowness reports in #853 and #624).  `strptime()` re-derived, with four regex substitutions, whether each format has a year, a day of month and a day of year. Parsing one string calls it about 13 times, always with the same handful of formats. That inspection depends only on the format, so it now lives in a cached helper (`lru_cache(maxsize=256)`); the current year is still read on every call.  `LocaleDataLoader._load_data()` sorted the locales with `language_order.index()` as the key, which is quadratic over the 205 languages and ran on every `parse()` call without `languages`. It now looks positions up in a dict built once (`language_order` has no duplicates, so the order is identical).  Measured in-process, original vs patched alternating over 15 rounds (median ratio, IQR), Python 3.11, Apple M5:  | Workload | Before | After | Change | | --- | ---: | ---: | ---: | | `parse()` default settings, 10 mixed strings (en/es/de/fr, ISO, relative) | 12.80 ms | 8.24 ms | **−36%** (IQR 0.633–0.655) | | `parse(languages=['en'])`, 8 strings | 9.96 ms | 6.64 ms | **−25%** | | `search_dates()` on an English paragraph | 5.60 ms | 4.00 ms | **−28%** |  First-call cost (import and locale loading) is unchanged. Results are identical to the original on 1,896 calls (809 strings from the test suite × several settings and language sets with a fixed `RELATIVE_BASE`, plus `search_dates` and `date_formats` cases with `%j`, `%d %B` and `%f`), including tzinfo 
+- **Issue #1552** (2026-10-27): **Limit the name readings tried for date_formats**
+  *Symptoms*: Follow-up to #1486.  #1486 tries every combination of the English names that the month and weekday names of the string can stand for. Each name with two meanings, such as Spanish "mar" (martes or marzo), doubles the number of combinations, so a string with many of them makes `parse()` with `date_formats` try an ever larger number of `strptime` calls before it returns `None`.  This keeps only the first `_MAX_TRANSLATIONS` (16) combinations, the limit #1491 already uses for the other readings of words with several meanings. The first combination is the one #1486 tried first, so strings with a few such names, like the ones in the #1486 tests, parse as before.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**   `✅ 10` untouched benchmarks        ---  <sub>Comparing <code>serhii73:limit-date-formats-name-readings</code> (2c46e26) with <code>master</code> (b4124e0)</sub>  <a href="https://app.codspeed.io/scrapinghub/dateparser/branches/serhii73%3Alimit-date-formats-name-readings?utm_source=github&utm_medium=comment-v2&utm_content=button">   <picture>     <source media="(prefers-color-scheme: dark)" srcset="https://codspeed.io/pr-report/open-in-codspeed-dark.svg">     <source media="(prefers-color-scheme: light)" srcset="https://codspeed.io/pr-report/open-in-codspeed-light.svg">     <img alt="Open in CodSpeed" src="https://codspeed.io/pr-report/open-in-codspeed-light.svg" width="169" height="32">   </picture> </a>  
+  > ## [Codecov](https://app.codecov.io/gh/scrapinghub/dateparser/pull/1552?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapinghub) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 99.18%. Comparing base ([`b4124e0`](https://app.codecov.io/gh/scrapinghub/dateparser/commit/b4124e057fc428277c2e9a5a142f840168ec3a0d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapinghub)) to head ([`2c46e26`](https://app.codecov.io/gh/scrapinghub/dateparser/commit/2c46e263057c796ee861268eae5a288d3f643f5e?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapinghub)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##           master    #1552   +/-   #
 
-- **Issue #1541** (2026-10-16): **Switch the spam PR check to scrapy/unattended-pr-guard 0.2.0**
+- **Issue #1550** (2026-10-26): **Fix CI on the ubuntu-26.04 runner image**
   *Symptoms*: - [x] I have read the [contributing guide](https://dateparser.readthedocs.io/en/latest/contributing.html) and [set up pre-commit](https://pre-commit.com/#quick-start). 
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/scrapinghub/dateparser/pull/1541?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapinghub) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 98.96%. Comparing base ([`fed9cf9`](https://app.codecov.io/gh/scrapinghub/dateparser/commit/fed9cf94e9d8a1128b396f01ca66f4a303f03ee4?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapinghub)) to head ([`20c801c`](https://app.codecov.io/gh/scrapinghub/dateparser/commit/20c801c17615c331d2b8f0f3f6a35a72900368f6?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapinghub)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##           master    #1541   +/-   #
+  > ## [Codecov](https://app.codecov.io/gh/scrapinghub/dateparser/pull/1550?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapinghub) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 99.09%. Comparing base ([`2f54bb0`](https://app.codecov.io/gh/scrapinghub/dateparser/commit/2f54bb035c9e52d30d33af82300f127de4acec6f?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapinghub)) to head ([`870910b`](https://app.codecov.io/gh/scrapinghub/dateparser/commit/870910b0cbc04c78820ab2124dadee26e588f081?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapinghub)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##           master    #1550   +/-   #
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**   `✅ 10` untouched benchmarks        ---  <sub>Comparing <code>AdrianAtZyte:fix-ci-ubuntu-26.04</code> (870910b) with <code>master</code> (2f54bb0)</sub>  <a href="https://app.codspeed.io/scrapinghub/dateparser/branches/AdrianAtZyte%3Afix-ci-ubuntu-26.04?utm_source=github&utm_medium=comment-v2&utm_content=button">   <picture>     <source media="(prefers-color-scheme: dark)" srcset="https://codspeed.io/pr-report/open-in-codspeed-dark.svg">     <source media="(prefers-color-scheme: light)" srcset="https://codspeed.io/pr-report/open-in-codspeed-light.svg">     <img alt="Open in CodSpeed" src="https://codspeed.io/pr-report/open-in-codspeed-light.svg" width="169" height="32">   </picture> </a>  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1250,114 +1234,42 @@ class HijriCalendar(CalendarBase):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eb27abda` (2026-10-20)
-**Commit Message**: Add regression test for bare two-digit UTC offsets (#1340)
+### Incident Patch 1: `2467be89` (2026-10-26)
+**Commit Message**: Fix CI on the ubuntu-26.04 runner image (#1550)
 
-Master already parses offsets like +08 and -03 (#1475); this adds a test that pins the behaviour.
-
-**File**: `tests/test_short_utc_offsets.py` (added, +20/-0)
+**File**: `.github/workflows/codspeed.yml` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,20 @@
-+from datetime import timedelta
-+
-+import pytest
-+
-+from dateparser.utils import get_timezone_from_tz_string
-+
-+
-+@pytest.mark.parametrize(
-+    ("tz_string", "expected_offset"),
-+    [
-+        ("+08", timedelta(hours=8)),
-+        ("-03", -timedelta(hours=3)),
-+    ],
-+)
-+def test_two_digit_utc_offsets_without_minutes_are_supported(
-+    tz_string, expected_offset
-+):
-+    tzinfo = get_timezone_from_tz_string(tz_string)
-+
-+    assert tzinfo.utcoffset(None) == expected_offset
+@@ -50,7 +50,7 @@ jobs:
+           pip install tox
+           tox -e benchmark --notest
+       - name: Run benchmarks
+-        uses: CodSpeedHQ/action@373d6868929f444bc08d901fd0eb0ad52a8875ea # v5.2.1
++        uses: CodSpeedHQ/action@78102a468f96d8e0ccb92d0ec49425753fc42062 # v5.6.0
+         with:
+           mode: simulation
+           # The step above already built the environment, so the measured command
 ```
 
----
-
-### Incident Patch 2: `c6cfdff2` (2026-10-20)
-**Commit Message**: Fix negative subsecond timestamp parsing (#1387)
-
-**File**: `dateparser/date.py` (modified, +4/-2)
+**File**: `tests/test_freshness_date_parser.py` (modified, +1/-1)
 ```diff
-@@ -255,9 +255,11 @@ def get_date_from_timestamp(
- 
-         seconds = int(match.group(1))
-         millis = int(match.group(2) or 0)
--        micros = int(match.group(3) or 0)
-+        micros = millis * 1000 + int(match.group(3) or 0)
-+        if negative:
-+            seconds, micros = divmod(seconds * 1000000 - micros, 1000000)
-         date_obj = datetime.fromtimestamp(seconds, timezone).replace(
--            microsecond=millis * 1000 + micros, tzinfo=None
-+            microsecond=micros, tzinfo=None
+@@ -2603,7 +2603,7 @@ def test_freshness_date_with_to_timezone_setting(self) -> None:
          )
-         return apply_timezone_from_settings(date_obj, settings)
-     return None
-```
-
-**File**: `tests/test_date.py` (modified, +22/-0)
-```diff
-@@ -1487,6 +1487,28 @@ def reset_tzstr(self) -> None:
-         # Restore the old timezone behavior
-         tzset()
  
-+    @parameterized.expand(
-+        [
-+            ("-1570308760263", -1570308760263000),
-+            ("-1570308760999", -1570308760999000),
-+            ("-1570308760000", -1570308760000000),
-+            ("-1570308760263111", -1570308760263111),
-+            ("-1570308760000001", -1570308760000001),
-+            ("-1570308760999999", -1570308760999999),
-+            ("-1570308760000000", -1570308760000000),
-+        ]
-+    )
-+    def test_negative_subsecond_timestamp(
-+        self, timestamp: str, microseconds: int
-+    ) -> None:
-+        self.given_parser(
-+            settings={"PARSERS": ["negative-timestamp"], "TIMEZONE": "UTC"}
-+        )
-+        self.assertEqual(
-+            self.parser.get_date_data(timestamp)["date_obj"],
-+            datetime(1970, 1, 1) + timedelta(microseconds=microseconds),
-+        )
-+
-     def test_timestamp_in_milliseconds(self) -> None:
-         self.assertEqual(
-             date.get_date_from_timestamp("1570308760263", None),
-```
-
-**File**: `tests/test_date_parser.py` (modified, +3/-1)
-```diff
-@@ -1141,7 +1141,9 @@ def test_parse_timestamp(self, date_string: str, expected: datetime) -> None:
-         [
-             param("-1484823450", expected=datetime(1922, 12, 13, 13, 2, 30)),
-             param("-1436745600000", expected=datetime(1924, 6, 22, 0, 0)),
--            param("-1015673450000001", expected=datetime(1937, 10, 25, 12, 29, 10, 1)),
-+            param(
-+                "-1015673450000001", expected=datetime(1937, 10, 25, 12, 29, 9, 999999)
-+            ),
-         ]
-     )
-     def test_parse_negative_timestamp(
+         parser = dateparser.freshness_date_parser.FreshnessDateDataParser()
+-        timezone = ZoneInfo(key="US/Eastern")
++        timezone = ZoneInfo(key="America/New_York")
+         parser.get_local_tz = Mock(return_value=timezone)  # type: ignore[method-assign]
+         result = parser.get_date_data("1 minute ago", _settings)
+         result = result["date_obj"]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1552** (2026-10-27): Limit the name readings tried for date_formats (@serhii73)
+- **PR #1550** (2026-10-26): Fix CI on the ubuntu-26.04 runner image (@AdrianAtZyte)
+- **PR #1549** (2026-10-27): Document how date_formats falls back to the other parsers (@serhii73)
+- **PR #1547** (closed): Add a STRICT_DATE_FORMATS setting so that out-of-range numbers are not read as another part (#868) (@serhii73)
 - **PR #1544** (2026-10-20): Speed up parse() by ~35% by caching strptime format inspection and language order lookups (@deadstrobe5)
 - **PR #1541** (2026-10-16): Switch the spam PR check to scrapy/unattended-pr-guard 0.2.0 (@AdrianAtZyte)
-- **PR #1539** (2026-10-20): Parse "fortnight" and "century" in English relative dates (@yamilmaud)
-- **PR #1538** (closed): Keep the month of a time-only date that PREFER_DATES_FROM moves by a day (@darshjoshi)
-- **PR #1537** (closed): Read thousand-separated amounts in relative dates correctly (fixes #1367) (@simpleqt)
-- **PR #1536** (2026-10-19): Parse "midi" as noon in French (#459) (@serhii73)
 
 ---
 
@@ -1377,47 +1289,28 @@ Master already parses offsets like +08 and -03 (#1475); this adds a test that pi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add regression test for bare two-digit UTC offsets (#1340)
+## X. CI on the ubuntu-26.04 runner image (#1550)
 
 **RULE**:
-When implementing operations in `tests/test_short_utc_offsets.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapinghub/dateparser. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/codspeed.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapinghub/dateparser. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eb27abda`: Add regression test for bare two-digit UTC offsets (#1340). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2467be89`: CI on the ubuntu-26.04 runner image (#1550). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/test_short_utc_offsets.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/codspeed.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-from datetime import timedelta
-
-import pytest
-
-from dateparser.utils import get_timezone_from_tz_string
-
-
-@pytest.mark.parametrize(
-    ("tz_string", "expected_offset"),
-    [
-        ("+08", timedelta(hours=8)),
-        ("-03", -timedelta(hours=3)),
-    ],
-)
-def test_two_digit_utc_offsets_without_minutes_are_supported(
-    tz_string, expected_offset
-):
-    tzinfo = get_timezone_from_tz_string(tz_string)
-
-    assert tzinfo.utcoffset(None) == expected_offset
+        uses: CodSpeedHQ/action@78102a468f96d8e0ccb92d0ec49425753fc42062 # v5.6.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        uses: CodSpeedHQ/action@373d6868929f444bc08d901fd0eb0ad52a8875ea # v5.2.1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eb27abda` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2467be89` are properly handled with clean fallback behavior.

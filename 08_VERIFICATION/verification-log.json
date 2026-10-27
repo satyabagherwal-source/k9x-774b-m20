@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-T2TC",
-    "timestamp": "2026-10-25T16:34:47.040Z",
-    "repository": "Comfy-Org/Z-Image-Turbo",
-    "learningId": "learn-huggingface-comfy-org-z_image_turbo",
-    "contentHash": "6cfd82cf4627c83e8b7300f361a83043a4732c397d604ce10e3f7a935647f633",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-1EQ3",
-    "timestamp": "2026-10-25T16:41:15.723Z",
-    "repository": "google/embeddinggemma-2",
-    "learningId": "learn-huggingface-google-embeddinggemma-2",
-    "contentHash": "bdf99c8b950059bf820285aedb96a0f57757e03c163e45baa1178552e5b687e8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-1MMR",
-    "timestamp": "2026-10-25T16:41:25.971Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "3b7dbbbc83389e02441406dbc9473eebfdcc13c676b51f6a5abb93285c09256f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-A77P",
-    "timestamp": "2026-10-25T16:48:05.893Z",
-    "repository": "unsloth/embeddinggemma-2-GGUF",
-    "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-    "contentHash": "1a65e25c534faaf0ae2145e1ced297c26955d7d99ba8f14dea538bc08a491a01",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-AFT9",
     "timestamp": "2026-10-25T16:48:17.037Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7490,6 +7430,66 @@
     "repository": "pulumi/pulumi",
     "learningId": "learn-github-pulumi-pulumi",
     "contentHash": "8def4060b1fd6a71ea559a0652132eda989bcac2bcfc1ee9dda75467db724fdb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-QDP0",
+    "timestamp": "2026-10-27T15:12:02.772Z",
+    "repository": "cosscom/ui",
+    "learningId": "learn-github-cosscom-ui",
+    "contentHash": "5d480d34f4961b2cc2dc16bd13a7cbb2810c8b022c5885088b728b3caa5fa54c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-QGZ8",
+    "timestamp": "2026-10-27T15:12:07.028Z",
+    "repository": "scrapinghub/dateparser",
+    "learningId": "learn-github-scrapinghub-dateparser",
+    "contentHash": "42b578ece0d964e82f337ed0a18e7dba4f6cd26c6a8a144fbc28a0fad5285874",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-QLAE",
+    "timestamp": "2026-10-27T15:12:12.614Z",
+    "repository": "saltstack/salt",
+    "learningId": "learn-github-saltstack-salt",
+    "contentHash": "c2ba244630db252ff066ee908b2c7f40ee60c53ab28ee89fe8fd3820d49d0443",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-QO3E",
+    "timestamp": "2026-10-27T15:12:16.250Z",
+    "repository": "alibaba/zvec",
+    "learningId": "learn-github-alibaba-zvec",
+    "contentHash": "ae5cdba134745b22009072ac86b99d05144d67ab026c42398475127705653256",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

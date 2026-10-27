@@ -3,7 +3,7 @@
 > **Source Version**: `3d8ca28e`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T01:10:17.594Z  
+> **Timestamp**: 2026-10-27T15:12:02.544Z  
 > **Learning ID**: `learn-github-cosscom-ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cosscom-ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cosscom/ui](https://github.com/cosscom/ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T01:10:10.710Z  
+> **Harvest Timestamp**: 2026-10-27T15:12:00.989Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: coss.com/ui is the official design system of Cal.com
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 10750 stars
+- **Stars / Engagement**: 10756 stars
 
 ---
 

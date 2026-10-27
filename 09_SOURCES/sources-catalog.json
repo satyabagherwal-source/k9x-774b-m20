@@ -1335,8 +1335,8 @@
     "sourceUrl": "https://github.com/cosscom/ui",
     "sourceVersion": "3d8ca28e",
     "license": "AGPL-3.0",
-    "contentHash": "445fe59039825c2ef88de96ee488f60c0e00796b72a32fcabf9cb103b2b8ba25",
-    "lastHarvestedAt": "2026-10-26T01:10:17.779Z",
+    "contentHash": "5d480d34f4961b2cc2dc16bd13a7cbb2810c8b022c5885088b728b3caa5fa54c",
+    "lastHarvestedAt": "2026-10-27T15:12:02.776Z",
     "learningId": "learn-github-cosscom-ui"
   },
   "ebony-vinyl-dsh-our-free-model": {
@@ -4763,10 +4763,10 @@
     "repository": "saltstack/salt",
     "platform": "github",
     "sourceUrl": "https://github.com/saltstack/salt",
-    "sourceVersion": "03d8a981",
+    "sourceVersion": "021a041a",
     "license": "Apache-2.0",
-    "contentHash": "9edec428ee4dd10ac3359db633b3786216f391649cdaecbf8fe892d6480d7e54",
-    "lastHarvestedAt": "2026-10-23T08:39:33.189Z",
+    "contentHash": "c2ba244630db252ff066ee908b2c7f40ee60c53ab28ee89fe8fd3820d49d0443",
+    "lastHarvestedAt": "2026-10-27T15:12:12.617Z",
     "learningId": "learn-github-saltstack-salt"
   },
   "etcd-io-etcd": {
@@ -7293,10 +7293,10 @@
     "repository": "alibaba/zvec",
     "platform": "github",
     "sourceUrl": "https://github.com/alibaba/zvec",
-    "sourceVersion": "8d499692",
+    "sourceVersion": "aed80691",
     "license": "Apache-2.0",
-    "contentHash": "b7455f2d9e1b7a0740597258124a9388b1d5d3d27993ccb5281287e2815592a0",
-    "lastHarvestedAt": "2026-10-22T21:28:57.948Z",
+    "contentHash": "ae5cdba134745b22009072ac86b99d05144d67ab026c42398475127705653256",
+    "lastHarvestedAt": "2026-10-27T15:12:16.253Z",
     "learningId": "learn-github-alibaba-zvec"
   },
   "zenbu-labs-terminal-browser": {
@@ -9923,10 +9923,10 @@
     "repository": "scrapinghub/dateparser",
     "platform": "github",
     "sourceUrl": "https://github.com/scrapinghub/dateparser",
-    "sourceVersion": "4c4c5e52",
+    "sourceVersion": "f1c58d6a",
     "license": "BSD-3-Clause",
-    "contentHash": "51d0bec1ca9296eb18f9ea8e7c2a7a02a32a6f56494f2cd1d05f534c9288282b",
-    "lastHarvestedAt": "2026-10-23T06:02:50.232Z",
+    "contentHash": "42b578ece0d964e82f337ed0a18e7dba4f6cd26c6a8a144fbc28a0fad5285874",
+    "lastHarvestedAt": "2026-10-27T15:12:07.033Z",
     "learningId": "learn-github-scrapinghub-dateparser"
   },
   "google-closure-compiler": {

@@ -5409,3 +5409,7 @@ Every entry in this ledger must capture:
 | `learn-github-zereight-gitlab-mcp` | `https://github.com/zereight/gitlab-mcp` | `c6bad8cb` | Multi-dimensional audit evidence | 2026-10-27T15:04:32.878Z |
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `d18962e8` | Multi-dimensional audit evidence | 2026-10-27T15:04:43.542Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `fd029321` | Multi-dimensional audit evidence | 2026-10-27T15:08:14.616Z |
+| `learn-github-cosscom-ui` | `https://github.com/cosscom/ui` | `3d8ca28e` | Multi-dimensional audit evidence | 2026-10-27T15:12:02.776Z |
+| `learn-github-scrapinghub-dateparser` | `https://github.com/scrapinghub/dateparser` | `f1c58d6a` | Multi-dimensional audit evidence | 2026-10-27T15:12:07.033Z |
+| `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `021a041a` | Multi-dimensional audit evidence | 2026-10-27T15:12:12.617Z |
+| `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `aed80691` | Multi-dimensional audit evidence | 2026-10-27T15:12:16.253Z |

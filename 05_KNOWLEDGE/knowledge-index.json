@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T15:08:14.552Z",
+  "last_updated": "2026-10-27T15:12:16.159Z",
   "total_verified_learnings": 1139,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1481,8 +1481,8 @@
       "slug": "alibaba-zvec",
       "platform": "github",
       "source_url": "https://github.com/alibaba/zvec",
-      "source_version": "8d499692",
-      "content_hash": "b7455f2d9e1b7a0740597258124a9388b1d5d3d27993ccb5281287e2815592a0",
+      "source_version": "aed80691",
+      "content_hash": "ae5cdba134745b22009072ac86b99d05144d67ab026c42398475127705653256",
       "dossier_path": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "promoted_rules": [
@@ -1515,6 +1515,11 @@
           "number": 3752,
           "title": "core): preserve index bytes on read-only close (#834)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4877,
+          "title": "deduplicate string parameter constants (#846)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -1522,7 +1527,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T21:28:57.884Z",
+      "verified_at": "2026-10-27T15:12:16.135Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45039,8 +45044,8 @@
       "slug": "saltstack-salt",
       "platform": "github",
       "source_url": "https://github.com/saltstack/salt",
-      "source_version": "03d8a981",
-      "content_hash": "9edec428ee4dd10ac3359db633b3786216f391649cdaecbf8fe892d6480d7e54",
+      "source_version": "021a041a",
+      "content_hash": "c2ba244630db252ff066ee908b2c7f40ee60c53ab28ee89fe8fd3820d49d0443",
       "dossier_path": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
       "promoted_rules": [
@@ -45053,6 +45058,11 @@
           "number": 3534,
           "title": "Point the etcd_cache docs at the etcd v3 cache (#70351)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4876,
+          "title": "Remove deprecated tcp.TCPPubClient and tcp.TCPPublishServer (#70377)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45060,7 +45070,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T08:39:33.148Z",
+      "verified_at": "2026-10-27T15:12:12.527Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61218,7 +61228,7 @@
       "platform": "github",
       "source_url": "https://github.com/cosscom/ui",
       "source_version": "3d8ca28e",
-      "content_hash": "445fe59039825c2ef88de96ee488f60c0e00796b72a32fcabf9cb103b2b8ba25",
+      "content_hash": "5d480d34f4961b2cc2dc16bd13a7cbb2810c8b022c5885088b728b3caa5fa54c",
       "dossier_path": "07_PROJECT_LEARNING/cosscom-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cosscom-ui-learnings.md",
       "promoted_rules": [
@@ -61243,7 +61253,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T01:10:17.703Z",
+      "verified_at": "2026-10-27T15:12:02.670Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -67615,8 +67625,8 @@
       "slug": "scrapinghub-dateparser",
       "platform": "github",
       "source_url": "https://github.com/scrapinghub/dateparser",
-      "source_version": "4c4c5e52",
-      "content_hash": "51d0bec1ca9296eb18f9ea8e7c2a7a02a32a6f56494f2cd1d05f534c9288282b",
+      "source_version": "f1c58d6a",
+      "content_hash": "42b578ece0d964e82f337ed0a18e7dba4f6cd26c6a8a144fbc28a0fad5285874",
       "dossier_path": "07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md",
       "promoted_rules": [
@@ -67634,6 +67644,11 @@
           "number": 3779,
           "title": "Add regression test for bare two-digit UTC offsets (#1340)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4875,
+          "title": "CI on the ubuntu-26.04 runner image (#1550)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -67641,7 +67656,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T06:02:50.129Z",
+      "verified_at": "2026-10-27T15:12:06.930Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -135555,6 +135570,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T15:08:14.531Z"
+    },
+    "rule-4875": {
+      "learning_id": "rule-4875",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4875,
+      "title": "CI on the ubuntu-26.04 runner image (#1550)",
+      "source_url": "https://github.com/scrapinghub/dateparser",
+      "source_version": "f1c58d6a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T15:12:06.930Z"
+    },
+    "rule-4876": {
+      "learning_id": "rule-4876",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4876,
+      "title": "Remove deprecated tcp.TCPPubClient and tcp.TCPPublishServer (#70377)",
+      "source_url": "https://github.com/saltstack/salt",
+      "source_version": "021a041a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T15:12:12.527Z"
+    },
+    "rule-4877": {
+      "learning_id": "rule-4877",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4877,
+      "title": "deduplicate string parameter constants (#846)",
+      "source_url": "https://github.com/alibaba/zvec",
+      "source_version": "aed80691",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T15:12:16.135Z"
     }
   },
   "aliases": {

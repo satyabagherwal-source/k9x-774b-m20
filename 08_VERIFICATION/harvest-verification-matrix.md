@@ -5400,3 +5400,7 @@
 | `CYCLE-20261027-GQJV` | `2026-10-27T15:04:32.875Z` | `zereight/gitlab-mcp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4872` | Yes (`e1f8e983...`) |
 | `CYCLE-20261027-GYS2` | `2026-10-27T15:04:43.538Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4873` | Yes (`f3dc4928...`) |
 | `CYCLE-20261027-LHN8` | `2026-10-27T15:08:14.612Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4874` | Yes (`8def4060...`) |
+| `CYCLE-20261027-QDP0` | `2026-10-27T15:12:02.772Z` | `cosscom/ui` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/cosscom-ui-learnings.md` | Yes (`5d480d34...`) |
+| `CYCLE-20261027-QGZ8` | `2026-10-27T15:12:07.028Z` | `scrapinghub/dateparser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4875` | Yes (`42b578ec...`) |
+| `CYCLE-20261027-QLAE` | `2026-10-27T15:12:12.614Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4876` | Yes (`c2ba2446...`) |
+| `CYCLE-20261027-QO3E` | `2026-10-27T15:12:16.250Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4877` | Yes (`ae5cdba1...`) |
