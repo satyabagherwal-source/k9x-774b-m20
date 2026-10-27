@@ -5497,3 +5497,6 @@ Every entry in this ledger must capture:
 | `learn-github-cypress-io-cypress` | `https://github.com/cypress-io/cypress` | `75df26c3` | Multi-dimensional audit evidence | 2026-10-27T18:59:41.442Z |
 | `learn-github-czy0729-bangumi` | `https://github.com/czy0729/Bangumi` | `f58a6465` | Multi-dimensional audit evidence | 2026-10-27T18:59:43.134Z |
 | `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `179c6818` | Multi-dimensional audit evidence | 2026-10-27T18:59:49.220Z |
+| `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `87ce233e` | Multi-dimensional audit evidence | 2026-10-27T19:06:44.322Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `21c9f6de` | Multi-dimensional audit evidence | 2026-10-27T19:06:50.303Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `935811ca` | Multi-dimensional audit evidence | 2026-10-27T19:06:55.874Z |

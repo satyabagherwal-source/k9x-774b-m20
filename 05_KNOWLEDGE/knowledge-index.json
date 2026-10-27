@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T18:59:49.145Z",
+  "last_updated": "2026-10-27T19:06:55.794Z",
   "total_verified_learnings": 1146,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13958,8 +13958,8 @@
       "slug": "google-tcmalloc",
       "platform": "github",
       "source_url": "https://github.com/google/tcmalloc",
-      "source_version": "de96aa9f",
-      "content_hash": "3ca18d390dd9e963ab984f44e7d602a06dd6bfb47b0d2fde5c67256625ca915b",
+      "source_version": "87ce233e",
+      "content_hash": "6c4c2f4c11ab18efa265470018fefdf5ab7469b07ace7725a978f3a8bb45ee4c",
       "dossier_path": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "promoted_rules": [
@@ -13992,6 +13992,11 @@
           "number": 4104,
           "title": "Fault-Tolerant Unmapped Memory Probing via `process_vm_readv`",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4954,
+          "title": "Acquire sample lock before graveyard lock in SampleRecorder::PushDead.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13999,7 +14004,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T06:25:21.801Z",
+      "verified_at": "2026-10-27T19:06:44.243Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34871,8 +34876,8 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "e033d4a5",
-      "content_hash": "50c8444cd070847b46f2af464e8171967aa2dc0b979ca221f32b2f4d32149864",
+      "source_version": "935811ca",
+      "content_hash": "b30e14a4a5f3874ba667a814dc34f667dc4d6dc4c9a720f3828108ff18dc8d9e",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
@@ -34902,7 +34907,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T12:57:01.315Z",
+      "verified_at": "2026-10-27T19:06:55.776Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40259,8 +40264,8 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "83df76a5",
-      "content_hash": "8cc1a8cfedde90ae3851a416aafadc46b5ebec3fb6e7c860bc59f2dc3017a9ad",
+      "source_version": "21c9f6de",
+      "content_hash": "a100afcf87bbf0a01eb8e86c6e279bc27821f8119fdf62cdcc32f3e15815d9f4",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
@@ -40298,6 +40303,11 @@
           "number": 3957,
           "title": "File Extension Canonicalization Parity Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4955,
+          "title": "build(deps): bump markdown-it and markdownlint-cli2 in /docs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40305,7 +40315,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T13:58:25.407Z",
+      "verified_at": "2026-10-27T19:06:50.227Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -137256,6 +137266,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T18:59:43.060Z"
+    },
+    "rule-4954": {
+      "learning_id": "rule-4954",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4954,
+      "title": "Acquire sample lock before graveyard lock in SampleRecorder::PushDead.",
+      "source_url": "https://github.com/google/tcmalloc",
+      "source_version": "87ce233e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T19:06:44.243Z"
+    },
+    "rule-4955": {
+      "learning_id": "rule-4955",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4955,
+      "title": "build(deps): bump markdown-it and markdownlint-cli2 in /docs",
+      "source_url": "https://github.com/open-policy-agent/opa",
+      "source_version": "21c9f6de",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T19:06:50.227Z"
     }
   },
   "aliases": {

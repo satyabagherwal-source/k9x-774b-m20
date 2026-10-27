@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source**: github ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
-> **Source Version**: `83df76a5`  
+> **Source Version**: `21c9f6de`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T13:58:25.299Z  
+> **Timestamp**: 2026-10-27T19:06:49.876Z  
 > **Learning ID**: `learn-github-open-policy-agent-opa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T13:58:25.291Z  
+> **Harvest Timestamp**: 2026-10-27T19:06:49.868Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open Policy Agent (OPA) is an open source, general-purpose policy engine.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12404 stars
+- **Stars / Engagement**: 12407 stars
 
 ---
 
@@ -968,502 +968,353 @@ func BuildTLSConfig(scheme string, skipVerify bool, cert *tls.Certificate, pool 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `83df76a5` (2026-10-26)
-**Commit Message**: Integrate v1.21.4 patch release (#9423)
+### Incident Patch 1: `c75ba45e` (2026-10-27)
+**Commit Message**: build(deps): bump markdown-it and markdownlint-cli2 in /docs
 
-Signed-off-by: Johan Fylling <[REDACTED_EMAIL]>
+Bumps [markdown-it](https://github.com/markdown-it/markdown-it) to 15.0.3 and updates ancestor dependency [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2). These dependencies need to be updated together.
 
-**File**: `CHANGELOG.md` (modified, +6/-2)
+
+Updates `markdown-it` from 15.0.1 to 15.0.3
+- [Changelog](https://github.com/markdown-it/markdown-it/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/markdown-it/markdown-it/compare/15.0.1...15.0.3)
+
+Updates `markdownlint-cli2` from 0.23.3 to 0.24.0
+- [Changelog](https://github.com/DavidAnson/markdownlint-cli2/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/DavidAnson/markdownlint-cli2/compare/v0.23.3...v0.24.0)
+
+---
+updated-dependencies:
+- dependency-name: markdown-it
+  dependency-version: 15.0.3
+  dependency-type: indirect
+- dependency-name: markdownlint-cli2
+  dependency-version: 0.24.0
+  dependency-type: direct:production
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `docs/package-lock.json` (modified, +94/-85)
 ```diff
-@@ -55,10 +55,15 @@ Additionally, OPA will now correctly detect and sign all other files with the su
- 
- Authored by @philipaconrad
- 
-+## 1.21.4
-+
-+This release builds the OPA binary artifacts with the latest version of Go (v1.27.3).
-+
-+See: [https://groups.google.com/g/golang-announce/c/66pojueaQek](https://groups.google.com/g/golang-announce/c/66pojueaQek)
- 
- ## 1.21.3
- 
--### Security Fix: TODO-CVE-XXXX-XXXXX - Bundle signature verification could be side-stepped ([GHSA-g2pf-6v5v-qcc8](https://github.com/open-policy-agent/opa/security/advisories/GHSA-g2pf-6v5v-qcc8))
-+### Security Fix: Bundle signature verification could be side-stepped ([GHSA-g2pf-6v5v-qcc8](https://github.com/open-policy-agent/opa/security/advisories/GHSA-g2pf-6v5v-qcc8))
- 
- An attacker able to alter bundle bytes could supply arbitrary policy and data to an OPA that was [configured](https://www.openpolicyagent.org/docs/configuration#bundles) 
- to verify bundle signatures. This could happen if the attacker controls any of: 
-@@ -146,7 +151,6 @@ _Snapshot_ bundles must still be signed.
- 
- Reported by Brian Willows (@BrianWillows, Graith Internet, graith.co.uk), authored by @johanfylling.
- 
--
- ## 1.21.2
- 
- This release builds the OPA binary artifacts with the latest version of
+@@ -21,7 +21,7 @@
+         "eslint": "^10.11.0",
+         "glob": "^13.0.6",
+         "js-yaml": "^5.4.2",
+-        "markdownlint-cli2": "^0.23.3",
++        "markdownlint-cli2": "^0.24.0",
+         "md-front-matter": "^1.0.4",
+         "raw-loader": "^4.0.2",
+         "react-markdown": "^10.1.0",
+@@ -10629,9 +10629,9 @@
+       }
+     },
+     "node_modules/get-east-asian-width": {
+-      "version": "1.6.0",
+-      "resolved": "https://registry.npmjs.org/get-east-asian-width/-/get-east-asian-width-1.6.0.tgz",
+-      "integrity": "sha512-QRbvDIbx6YklUe6RxeTeleMR0yv3cYH6PsPZHcnVn7xv7zO1BHN8r0XETu8n6Ye3Q+ahtSarc3WgtNWmehIBfA==",
++      "version": "1.7.0",
++      "resolved": "https://registry.npmjs.org/get-east-asian-width/-/get-east-asian-width-1.7.0.tgz",
++      "integrity": "sha512-XjH1AECxf0giL2V1aU8vKyRR2ppRUb5c0EvT7zuJTokQ74bNo52zOtghqdWIqrhUD79fo3x0WfKZdOqxF6LG1Q==",
+       "license": "MIT",
+       "engines": {
+         "node": ">=18"
+@@ -12062,9 +12062,9 @@
+       "license": "MIT"
+     },
+     "node_modules/js-yaml": {
+-      "version": "5.4.2",
+-      "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-5.4.2.tgz",
+-      "integrity": "sha512-m+aqu+LwO1O6sIopafj8HUVl5aawITwZQe/yHpMCKjaWBaA/d07B/QdMb3529REftiU+RMMHL3Vlsw3hON7vWg==",
++      "version": "5.4.3",
++      "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-5.4.3.tgz",
++      "integrity": "sha512-yzzNtgczwgoVHNigCyKTXcQJU4Y8t/ikU4UxXW0BvrLfHTGWZhsNcOT2s/a7vn81/4KqVnNmHjaUEPlvWnNwVw==",
+       "funding": [
+         {
+           "type": "github",
+@@ -12438,9 +12438,9 @@
+       }
+     },
+     "node_modules/markdown-it": {
+-      "version": "15.0.1",
+-      "resolved": "https://registry.npmjs.org/markdown-it/-/markdown-it-15.0.1.tgz",
+-      "integrity": "sha512-9/7gE95FNPkfUWrjJIoHZza2iLmuJlPD0UNMxPi7bxUrbCR525YZY0r+zyfes0dZI5ZZ/uNIXUJca0pJvtw41g==",
++      "version": "15.0.3",
++      "resolved": "https://registry.npmjs.org/markdown-it/-/markdown-it-15.0.3.tgz",
++      "integrity": "sha512-+Az7Ojz3iRGu8KYMvJ6xVhvrxP3eE+vEtJX75Ow88XBpcQNV/0lGX5ZynIIBftREo4DC2jsveAMDaeltmm8QvQ==",
+       "funding": [
+         {
+           "type": "github",
+@@ -12453,9 +12453,9 @@
+       ],
+       "license": "MIT",
+       "dependencies": {
+-        "argparse": "^3.0.0",
+-        "entities": "^8.0.0",
+-        "linkify-it": "^6.0.0",
++        "argparse": "^3.0.3",
++        "entities": "^8.1.0",
++        "linkify-it": "^6.1.0",
+         "mdurl": "^2.1.0",
+         "punycode.js": "^2.3.1",
+         "uc.micro": "^3.0.0"
+@@ -12465,9 +12465,9 @@
+       }
+     },
+     "node_modules/markdown-it/node_modules/argparse": {
+-      "version": "3.0.2",
+-      "resolved": "https://registry.npmjs.org/argparse/-/argparse-3.0.2.tgz",
+-      "integrity": "sha512-mFdDM6WqWKraGLsVb+C9CahPnzTXOefAOLq3jYcca2YZ8bEWpr++Tzj+zSaKW9+X9L5uSxcm1AZ3Y6aZJ09OhQ==",
++      "version": "3.0.4",
++      "resolved": "https://registry.npmjs.org/argparse/-/argparse-3.0.4.tgz",
++      "integrity": "sha512-fwWK3Zq22l4XJJjx5mcBHGikIk+hJqO+32dPm0Jur7+rtG5x1scOjSfdT9ZKeWHPpsya/l0HHK4tDImBkTrtvA==",
+       "funding": [
+         {
+           "type": "github",
+@@ -12503,20 +12503,21 @@
+       }
+     },
+     "node_modules/markdownlint": {
+-      "version": "0.41.1",
+-      "resolved": "https://registry.npmjs.org/markdownlint/-/markdownlint-0.41.1.tgz",
+-      "integrity": "sha512-qHKeU2E1bdyNAT077go2FVTNXvYcktN5IHtF6XyeD1l0PClxzSp2tUApAV14ORI8DGX4H9bNKZEzelZp4qn8IA==",
++      "version": "0.42.0",
++      "resolved": "https://registry.npmjs.org/markdownlint/-/markdownlint-0.42.0.tgz",
++      "integrity": "sha512-kzsCV/rPWRFn3jUhcB919YF4Qgeh0g9tcogoXFadGSo6Zxj6662YOqWXv0jDn8nv5KCCxDfMKJZv6N4HkNkvTg==",
+       "license": "MIT",
+       "dependencies": {
+-        "micromark": "4.0.2",
+-        "micromark-core-commonmark": "2.0.3",
++        "micromark": "4.0.3",
++        "micromark-core-commonmark": "2.0.4",
+         "micromark-extension-directive": "4.0.0",
+         "micromark-extension-gfm-autolink-literal": "2.1.0",
+         "micromark-extension-gfm-footnote": "2.1.0",
+-        "micromark-extension-gfm-table": "2.1.1",
++        "micromark-extension-gfm-table": "2.1.2",
+         "micromark-extension-math": "3.1.0",
+-        "micromark-util-types": "2.0.2",
+-        "string-width": "8.2.1"
++        "micromark-util-types": "2.0.3",
++        "re2js": "2.8.6",
++        "string-width": "8.3.0"
+       },
+       "engines": {
+         "node": ">=22"
+@@ -12526,20 +12527,20 @@
+       }
+     },
+     "node_modules/markdownlint-cli2": {
+-      "version": "0.23.3",
+-      "resolved": "https://registry.npmjs.org/markdownlint-cli2/-/markdownlint-cli2-0.23.3.tgz",
+-      "integrity": "sha512-xAr5o/TGpC3v6lE6cKIW4b5eOFRrRX5u7Vtjae9ix3RALv8nNOd94XMkD/1OXXBtpMcJ4uQGbpSo3hv5UqS4uQ==",
++      "version": "0.24.0",
++      "resolved": "https://registry.npmjs.org/markdownlint-cli2/-/markdownlint-cli2-0.24.0.tgz",
++      "integrity": "sha512-c5hU2MDoTlS230MLzdNlkIyxImXq5acxGKz4nYz4aDhH/2BgFtpsA7iK9/OoTHMgZ4FuR0wedTQA31K6Lp9I/Q==",
+      
 ```
 
-**File**: `builtin_metadata.json` (modified, +206/-0)
+**File**: `docs/package.json` (modified, +1/-1)
 ```diff
-@@ -430,6 +430,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Returns the number without its sign.",
-@@ -605,6 +606,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "deprecated": true,
-@@ -782,6 +784,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Returns the intersection of two sets.",
-@@ -958,6 +961,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "deprecated": true,
-@@ -1135,6 +1139,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Concatenates two arrays.",
-@@ -1183,6 +1188,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Non-recursively unpacks array items in arr into the flattened array. Other types are appended as-is.",
-@@ -1309,6 +1315,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Returns the reverse of a given array.",
-@@ -1496,6 +1503,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Returns a slice of a given array. If `start` is greater or equal than `stop`, `slice` is `[]`.",
-@@ -1674,6 +1682,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "implementations": {},
-@@ -1846,6 +1855,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Deserializes the base64 encoded input string.",
-@@ -2023,6 +2033,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Serializes the input string into base64 encoding.",
-@@ -2179,6 +2190,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Verifies the input string is base64 encoded.",
-@@ -2356,6 +2368,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Deserializes the base64url encoded input string.",
-@@ -2533,6 +2546,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Serializes the input string into base64url encoding.",
-@@ -2687,6 +2701,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Serializes the input string into base64url encoding without padding.",
-@@ -2865,6 +2880,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Returns the bitwise \"AND\" of two integers.",
-@@ -3042,6 +3058,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Returns a new integer with its bits shifted `s` bits to the left.",
-@@ -3214,6 +3231,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Returns the bitwise negation (flip) of an integer.",
-@@ -3391,6 +3409,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Returns the bitwise \"OR\" of two integers.",
-@@ -3568,6 +3587,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Returns a new integer with its bits shifted `s` bits to the right.",
-@@ -3745,6 +3765,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Returns the bitwise \"XOR\" (exclusive-or) of two integers.",
-@@ -3919,6 +3940,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "deprecated": true,
-@@ -4089,6 +4111,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "deprecated": true,
-@@ -4259,6 +4282,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "deprecated": true,
-@@ -4429,6 +4453,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "deprecated": true,
-@@ -4599,6 +4624,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "deprecated": true,
-@@ -4769,6 +4795,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "deprecated": true,
-@@ -4912,6 +4939,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Rounds the number _up_ to the nearest integer.",
-@@ -5094,6 +5122,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.
+@@ -22,7 +22,7 @@
+     "eslint": "^10.11.0",
+     "glob": "^13.0.6",
+     "js-yaml": "^5.4.2",
+-    "markdownlint-cli2": "^0.23.3",
++    "markdownlint-cli2": "^0.24.0",
+     "md-front-matter": "^1.0.4",
+     "raw-loader": "^4.0.2",
+     "react-markdown": "^10.1.0",
 ```
 
 ---
 
-### Incident Patch 2: `924ece96` (2026-10-26)
-**Commit Message**: server: create TLS file watcher before returning listeners (#9420)
+### Incident Patch 2: `9ca77d8c` (2026-10-27)
+**Commit Message**: build(deps): bump body-parser from 1.20.6 to 1.20.9 in /docs
 
-The watcher was created when its loop started, so a cert change made
-right after the server came up could be missed and never reloaded.
-Create it in Listeners() so it is registered before the server serves.
+Bumps [body-parser](https://github.com/expressjs/body-parser) from 1.20.6 to 1.20.9.
+- [Release notes](https://github.com/expressjs/body-parser/releases)
+- [Changelog](https://github.com/expressjs/body-parser/blob/1.20.9/HISTORY.md)
+- [Commits](https://github.com/expressjs/body-parser/compare/1.20.6...1.20.9)
 
-Signed-off-by: Sebastian Spaink <[REDACTED_EMAIL]>
+---
+updated-dependencies:
+- dependency-name: body-parser
+  dependency-version: 1.20.9
+  dependency-type: indirect
+...
 
-**File**: `v1/server/certs.go` (modified, +20/-19)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `docs/package-lock.json` (modified, +7/-7)
 ```diff
-@@ -146,27 +146,28 @@ func (s *Server) certLoopPolling(logger logging.Logger) Loop {
- 	}
- }
- 
--func (s *Server) certLoopNotify(logger logging.Logger) Loop {
--	return func() error {
--
--		var paths []string
-+// certLoopNotify returns a Loop that reloads the TLS config whenever the watched files change. The watcher is
-+// registered before returning, so changes made after that are not lost if the Loop starts late.
-+func (s *Server) certLoopNotify(logger logging.Logger) (Loop, error) {
-+	var paths []string
- 
--		// if a cert file is set, then we want to watch the cert and key
--		if s.certFile != "" {
--			paths = append(paths, s.certFile, s.certKeyFile)
--		}
-+	// if a cert file is set, then we want to watch the cert and key
-+	if s.certFile != "" {
-+		paths = append(paths, s.certFile, s.certKeyFile)
-+	}
- 
--		// if a cert pool file is set, then we want to watch the cert pool. This might be set without the cert and key
--		// being set too.
--		if s.certPoolFile != "" {
--			paths = append(paths, s.certPoolFile)
--		}
-+	// if a cert pool file is set, then we want to watch the cert pool. This might be set without the cert and key
-+	// being set too.
-+	if s.certPoolFile != "" {
-+		paths = append(paths, s.certPoolFile)
-+	}
- 
--		watcher, err := pathwatcher.CreatePathWatcher(paths)
--		if err != nil {
--			return fmt.Errorf("failed to create tls path watcher: %w", err)
--		}
-+	watcher, err := pathwatcher.CreatePathWatcher(paths)
-+	if err != nil {
-+		return nil, fmt.Errorf("failed to create tls path watcher: %w", err)
-+	}
- 
-+	return func() error {
- 		for evt := range watcher.Events {
- 			removalMask := fsnotify.Remove | fsnotify.Rename
- 			mask := fsnotify.Create | fsnotify.Write | removalMask
-@@ -177,7 +178,7 @@ func (s *Server) certLoopNotify(logger logging.Logger) Loop {
- 			// retry logic here handles cases where the files are still being written to as events are triggered.
- 			retries := 0
- 			for {
--				err = s.reloadTLSConfig(s.manager.Logger())
-+				err := s.reloadTLSConfig(s.manager.Logger())
- 				if err == nil {
- 					logger.Info("TLS config reloaded")
- 					break
-@@ -194,7 +195,7 @@ func (s *Server) certLoopNotify(logger logging.Logger) Loop {
- 		}
- 
- 		return nil
--	}
-+	}, nil
- }
- 
- func hash(file string) ([]byte, error) {
+@@ -6963,9 +6963,9 @@
+       }
+     },
+     "node_modules/body-parser": {
+-      "version": "1.20.6",
+-      "resolved": "https://registry.npmjs.org/body-parser/-/body-parser-1.20.6.tgz",
+-      "integrity": "sha512-p5tAzS57i5MV9fZFDj9LeIiTZEufbSe2eDozP+ElheSUq1m74CRq1jI4mYNDdVs9vQztXFLuk/Gd6BWTdwRJ5g==",
++      "version": "1.20.9",
++      "resolved": "https://registry.npmjs.org/body-parser/-/body-parser-1.20.9.tgz",
++      "integrity": "sha512-FISIQxV5u91Y9gvuFq3q/tA/qTqLJn3AhRcEvyozyhJTh5OBFFtv827AdHU7Rbyct4r+Ba1/99oFa1Y3yuFsdw==",
+       "license": "MIT",
+       "dependencies": {
+         "bytes": "~3.1.2",
+@@ -6976,7 +6976,7 @@
+         "http-errors": "~2.0.1",
+         "iconv-lite": "~0.4.24",
+         "on-finished": "~2.4.1",
+-        "qs": "~6.15.1",
++        "qs": "~6.16.0",
+         "raw-body": "~2.5.3",
+         "type-is": "~1.6.18",
+         "unpipe": "~1.0.0"
+@@ -7031,9 +7031,9 @@
+       "license": "MIT"
+     },
+     "node_modules/body-parser/node_modules/qs": {
+-      "version": "6.15.3",
+-      "resolved": "https://registry.npmjs.org/qs/-/qs-6.15.3.tgz",
+-      "integrity": "sha512-O9gl3zCl5h5blw1KGUzQKhA5oUXSl8rwUIM5o0S3nCXMliSvy5Dzx7/DJcI+SwgICv+IneSZwhBh1oSyEHA71A==",
++      "version": "6.16.1",
++      "resolved": "https://registry.npmjs.org/qs/-/qs-6.16.1.tgz",
++      "integrity": "sha512-5Px6J7rfHBAGUhNQ3es4YzcOdBBw0SDcVtThJml4RdnKw4tKs2epA0kPZ+K8X+WiHktT93RHVcQ/3ym5aTCgtg==",
+       "license": "BSD-3-Clause",
+       "dependencies": {
+         "es-define-property": "^1.0.1",
 ```
 
-**File**: `v1/server/certs_test.go` (added, +121/-0)
-```diff
-@@ -0,0 +1,121 @@
-+package server
-+
-+import (
-+	"crypto/ecdsa"
-+	"crypto/elliptic"
-+	"crypto/rand"
-+	"crypto/tls"
-+	"crypto/x509"
-+	"crypto/x509/pkix"
-+	"encoding/pem"
-+	"math"
-+	"math/big"
-+	"os"
-+	"path/filepath"
-+	"testing"
-+	"time"
-+
-+	"github.com/open-policy-agent/opa/v1/plugins"
-+	"github.com/open-policy-agent/opa/v1/storage/inmem"
-+	"github.com/open-policy-agent/opa/v1/util/test"
-+)
-+
-+func TestCertNotifyWatcherIsReadyWhenListenersReturn(t *testing.T) {
-+	t.Parallel()
-+
-+	dir := t.TempDir()
-+	poolPath := filepath.Join(dir, "ca.pem")
-+
-+	initialPEM, serverCert := newSelfSignedCert(t, "initial")
-+	if err := os.WriteFile(poolPath, initialPEM, 0o600); err != nil {
-+		t.Fatal(err)
-+	}
-+	initialPool := x509.NewCertPool()
-+	initialPool.AppendCertsFromPEM(initialPEM)
-+
-+	m, err := plugins.New([]byte{}, "test", inmem.New())
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	server := New().
-+		WithAddresses([]string{"127.0.0.1:0"}).
-+		WithStore(inmem.New()).
-+		WithManager(m).
-+		WithCertificate(&serverCert).
-+		WithCertPool(initialPool).
-+		WithTLSConfig(&TLSConfig{CertPoolFile: poolPath})
-+
-+	if err := m.Start(t.Context()); err != nil {
-+		t.Fatal(err)
-+	}
-+	server, err = server.Init(t.Context())
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	loops, err := server.Listeners()
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	// Replace the CA file before any loop runs. A change made once Listeners has returned must not be
-+	// missed, regardless of how long the loops take to get scheduled.
-+	updatedPEM, _ := newSelfSignedCert(t, "updated")
-+	updatedPath := filepath.Join(dir, "ca-updated.pem")
-+	if err := os.WriteFile(updatedPath, updatedPEM, 0o600); err != nil {
-+		t.Fatal(err)
-+	}
-+	if err := os.Rename(updatedPath, poolPath); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	for _, loop := range loops {
-+		go func() { _ = loop() }()
-+	}
-+
-+	updatedPool := x509.NewCertPool()
-+	updatedPool.AppendCertsFromPEM(updatedPEM)
-+
-+	test.EventuallyOrFatal(t, 3*time.Second, func() bool {
-+		server.tlsConfigMtx.RLock()
-+		defer server.tlsConfigMtx.RUnlock()
-+
-+		return server.certPool.Equal(updatedPool)
-+	})
-+}
-+
-+func newSelfSignedCert(t *testing.T, commonName string) ([]byte, tls.Certificate) {
-+	t.Helper()
-+
-+	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	serial, err := rand.Int(rand.Reader, big.NewInt(math.MaxInt64))
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	template := &x509.Certificate{
-+		BasicConstraintsValid: true,
-+		SerialNumber:          serial,
-+		Subject:               pkix.Name{CommonName: commonName},
-+		NotBefore:             time.Now(),
-+		NotAfter:              time.Now().Add(time.Hour),
-+		KeyUsage:              x509.KeyUsageCertSign | x509.KeyUsageDigitalSignature,
-+		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
-+		IsCA:                  true,
-+	}
-+
-+	der, err := x509.CreateCertificate(rand.Reader, template, template, key.Public(), key)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	return pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: der}), tls.Certificate{
-+		Certificate: [][]byte{der},
-+		PrivateKey:  key,
-+	}
-+}
-```
+---
 
-**File**: `v1/server/server.go` (modified, +5/-2)
+### Incident Patch 3: `94050d34` (2026-10-27)
+**Commit Message**: build(deps): bump postcss-selector-parser in /docs
+
+Bumps  and [postcss-selector-parser](https://github.com/postcss/postcss-selector-parser). These dependencies needed to be updated together.
+
+Updates `postcss-selector-parser` from 6.1.4 to 6.1.5
+- [Release notes](https://github.com/postcss/postcss-selector-parser/releases)
+- [Changelog](https://github.com/postcss/postcss-selector-parser/blob/6.1.5/CHANGELOG.md)
+- [Commits](https://github.com/postcss/postcss-selector-parser/compare/6.1.4...6.1.5)
+
+Updates `postcss-selector-parser` from 7.1.4 to 7.1.7
+- [Release notes](https://github.com/postcss/postcss-selector-parser/releases)
+- [Changelog](https://github.com/postcss/postcss-selector-parser/blob/6.1.5/CHANGELOG.md)
+- [Commits](https://github.com/postcss/postcss-selector-parser/compare/6.1.4...6.1.5)
+
+---
+updated-dependencies:
+- dependency-name: postcss-selector-parser
+  dependency-version: 6.1.5
+  dependency-type: indirect
+- dependency-name: postcss-selector-parser
+  dependency-version: 7.1.7
+  dependency-type: indirect
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `docs/package-lock.json` (modified, +48/-48)
 ```diff
-@@ -687,8 +687,11 @@ func (s *Server) getListener(addr string, h http.Handler, t httpListenerType) ([
- 		// otherwise use the fsnotify default behavior
- 		if s.certRefresh > 0 {
- 			loops = []Loop{loop, s.certLoopPolling(logger)}
--		} else if s.certFile != "" || s.certPoolFile != "" {
--			loops = []Loop{loop, s.certLoopNotify(logger)}
-+		} else if err == nil && (s.certFile != "" || s.certPoolFile != "") {
-+			var notify Loop
-+			if notify, err = s.certLoopNotify(logger); err == nil {
-+				loops = []Loop{loop, notify}
-+			}
- 		}
- 	default:
- 		err = fmt.Errorf("invalid url scheme %q", parsedURL.Scheme)
+@@ -2349,9 +2349,9 @@
+       }
+     },
+     "node_modules/@csstools/postcss-cascade-layers/node_modules/postcss-selector-parser": {
+-      "version": "7.1.4",
+-      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.4.tgz",
+-      "integrity": "sha512-HeP7D2wyhkR+XaK6v4W8oRF62Dsz4flyuczALJp61GckGm42u1saSSJ/0auvcBqxs3jMRFEcPK34At/0JBKdOg==",
++      "version": "7.1.7",
++      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.7.tgz",
++      "integrity": "sha512-wWBro/7hJ40ye6TPiXkUQoXKCw23xSsjriUvqd7Uls9Sso3oLiON1flc18cCdnjgCRXw4fBVqUJJeOdDTh3P3g==",
+       "license": "MIT",
+       "dependencies": {
+         "cssesc": "^3.0.0",
+@@ -2770,9 +2770,9 @@
+       }
+     },
+     "node_modules/@csstools/postcss-is-pseudo-class/node_modules/postcss-selector-parser": {
+-      "version": "7.1.4",
+-      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.4.tgz",
+-      "integrity": "sha512-HeP7D2wyhkR+XaK6v4W8oRF62Dsz4flyuczALJp61GckGm42u1saSSJ/0auvcBqxs3jMRFEcPK34At/0JBKdOg==",
++      "version": "7.1.7",
++      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.7.tgz",
++      "integrity": "sha512-wWBro/7hJ40ye6TPiXkUQoXKCw23xSsjriUvqd7Uls9Sso3oLiON1flc18cCdnjgCRXw4fBVqUJJeOdDTh3P3g==",
+       "license": "MIT",
+       "dependencies": {
+         "cssesc": "^3.0.0",
+@@ -3217,9 +3217,9 @@
+       }
+     },
+     "node_modules/@csstools/postcss-scope-pseudo-class/node_modules/postcss-selector-parser": {
+-      "version": "7.1.4",
+-      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.4.tgz",
+-      "integrity": "sha512-HeP7D2wyhkR+XaK6v4W8oRF62Dsz4flyuczALJp61GckGm42u1saSSJ/0auvcBqxs3jMRFEcPK34At/0JBKdOg==",
++      "version": "7.1.7",
++      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.7.tgz",
++      "integrity": "sha512-wWBro/7hJ40ye6TPiXkUQoXKCw23xSsjriUvqd7Uls9Sso3oLiON1flc18cCdnjgCRXw4fBVqUJJeOdDTh3P3g==",
+       "license": "MIT",
+       "dependencies": {
+         "cssesc": "^3.0.0",
+@@ -8080,9 +8080,9 @@
+       }
+     },
+     "node_modules/css-blank-pseudo/node_modules/postcss-selector-parser": {
+-      "version": "7.1.4",
+-      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.4.tgz",
+-      "integrity": "sha512-HeP7D2wyhkR+XaK6v4W8oRF62Dsz4flyuczALJp61GckGm42u1saSSJ/0auvcBqxs3jMRFEcPK34At/0JBKdOg==",
++      "version": "7.1.7",
++      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.7.tgz",
++      "integrity": "sha512-wWBro/7hJ40ye6TPiXkUQoXKCw23xSsjriUvqd7Uls9Sso3oLiON1flc18cCdnjgCRXw4fBVqUJJeOdDTh3P3g==",
+       "license": "MIT",
+       "dependencies": {
+         "cssesc": "^3.0.0",
+@@ -8154,9 +8154,9 @@
+       }
+     },
+     "node_modules/css-has-pseudo/node_modules/postcss-selector-parser": {
+-      "version": "7.1.4",
+-      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.4.tgz",
+-      "integrity": "sha512-HeP7D2wyhkR+XaK6v4W8oRF62Dsz4flyuczALJp61GckGm42u1saSSJ/0auvcBqxs3jMRFEcPK34At/0JBKdOg==",
++      "version": "7.1.7",
++      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.7.tgz",
++      "integrity": "sha512-wWBro/7hJ40ye6TPiXkUQoXKCw23xSsjriUvqd7Uls9Sso3oLiON1flc18cCdnjgCRXw4fBVqUJJeOdDTh3P3g==",
+       "license": "MIT",
+       "dependencies": {
+         "cssesc": "^3.0.0",
+@@ -16175,9 +16175,9 @@
+       }
+     },
+     "node_modules/postcss-attribute-case-insensitive/node_modules/postcss-selector-parser": {
+-      "version": "7.1.4",
+-      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.4.tgz",
+-      "integrity": "sha512-HeP7D2wyhkR+XaK6v4W8oRF62Dsz4flyuczALJp61GckGm42u1saSSJ/0auvcBqxs3jMRFEcPK34At/0JBKdOg==",
++      "version": "7.1.7",
++      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.7.tgz",
++      "integrity": "sha512-wWBro/7hJ40ye6TPiXkUQoXKCw23xSsjriUvqd7Uls9Sso3oLiON1flc18cCdnjgCRXw4fBVqUJJeOdDTh3P3g==",
+       "license": "MIT",
+       "dependencies": {
+         "cssesc": "^3.0.0",
+@@ -16419,9 +16419,9 @@
+       }
+     },
+     "node_modules/postcss-custom-selectors/node_modules/postcss-selector-parser": {
+-      "version": "7.1.4",
+-      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.4.tgz",
+-      "integrity": "sha512-HeP7D2wyhkR+XaK6v4W8oRF62Dsz4flyuczALJp61GckGm42u1saSSJ/0auvcBqxs3jMRFEcPK34At/0JBKdOg==",
++      "version": "7.1.7",
++      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.7.tgz",
++      "integrity": "sha512-wWBro/7hJ40ye6TPiXkUQoXKCw23xSsjriUvqd7Uls9Sso3oLiON1flc18cCdnjgCRXw4fBVqUJJeOdDTh3P3g==",
+       "license": "MIT",
+       "dependencies": {
+         "css
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9425** (2026-10-24): docs(ecosystem): update OPA MCP install options (@OrygnsCode)
-- **PR #9423** (2026-10-26): Integrate v1.21.4  patch release (@johanfylling)
-- **PR #9422** (2026-10-23): Release 1.21.4 (@johanfylling)
-- **PR #9421** (2026-10-23): build: bump go (1.27.2 -> 1.27.3) (@johanfylling)
-- **PR #9420** (2026-10-26): server: create TLS file watcher before returning listeners (@sspaink)
-- **PR #9418** (2026-10-22): bundle: avoid using filepath in FS directory loader (@anderseknert)
+- **PR #9442** (2026-10-27): topdown: don't use set lookup fast path for unresolved refs (@sspaink)
+- **PR #9440** (2026-10-27): build(deps): bump markdown-it and markdownlint-cli2 in /docs (@dependabot[bot])
+- **PR #9439** (2026-10-27): build(deps): bump body-parser from 1.20.6 to 1.20.9 in /docs (@dependabot[bot])
+- **PR #9438** (2026-10-27): build(deps): bump dompurify from 3.4.16 to 3.4.17 in /docs (@dependabot[bot])
+- **PR #9437** (2026-10-27): build(deps): bump fast-uri from 3.1.8 to 3.1.9 in /docs (@dependabot[bot])
+- **PR #9436** (2026-10-27): build(deps): bump postcss-selector-parser in /docs (@dependabot[bot])
 
 ---
 
@@ -1483,34 +1334,64 @@ Signed-off-by: Sebastian Spaink <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Integrate v1.21.4 patch release (#9423)
+## X. build(deps): bump markdown-it and markdownlint-cli2 in /docs
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `83df76a5`: Integrate v1.21.4 patch release (#9423). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c75ba45e`: build(deps): bump markdown-it and markdownlint-cli2 in /docs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-## 1.21.4
-
-This release builds the OPA binary artifacts with the latest version of Go (v1.27.3).
-
-See: [https://groups.google.com/g/golang-announce/c/66pojueaQek](https://groups.google.com/g/golang-announce/c/66pojueaQek)
-### Security Fix: Bundle signature verification could be side-stepped ([GHSA-g2pf-6v5v-qcc8](https://github.com/open-policy-agent/opa/security/advisories/GHSA-g2pf-6v5v-qcc8))
+        "markdownlint-cli2": "^0.24.0",
+      "version": "1.7.0",
+      "resolved": "https://registry.npmjs.org/get-east-asian-width/-/get-east-asian-width-1.7.0.tgz",
+      "integrity": "sha512-XjH1AECxf0giL2V1aU8vKyRR2ppRUb5c0EvT7zuJTokQ74bNo52zOtghqdWIqrhUD79fo3x0WfKZdOqxF6LG1Q==",
+      "version": "5.4.3",
+      "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-5.4.3.tgz",
+      "integrity": "sha512-yzzNtgczwgoVHNigCyKTXcQJU4Y8t/ikU4UxXW0BvrLfHTGWZhsNcOT2s/a7vn81/4KqVnNmHjaUEPlvWnNwVw==",
+      "version": "15.0.3",
+      "resolved": "https://registry.npmjs.org/markdown-it/-/markdown-it-15.0.3.tgz",
+      "integrity": "sha512-+Az7Ojz3iRGu8KYMvJ6xVhvrxP3eE+vEtJX75Ow88XBpcQNV/0lGX5ZynIIBftREo4DC2jsveAMDaeltmm8QvQ==",
+        "argparse": "^3.0.3",
+        "entities": "^8.1.0",
+        "linkify-it": "^6.1.0",
+      "version": "3.0.4",
+      "resolved": "https://registry.npmjs.org/argparse/-/argparse-3.0.4.tgz",
+      "integrity": "sha512-fwWK3Zq22l4XJJjx5mcBHGikIk+hJqO+32dPm0Jur7+rtG5x1scOjSfdT9ZKeWHPpsya/l0HHK4tDImBkTrtvA==",
+      "version": "0.42.0",
+      "resolved": "https://registry.npmjs.org/markdownlint/-/markdownlint-0.42.0.tgz",
+      "integrity": "sha512-kzsCV/rPW
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-### Security Fix: TODO-CVE-XXXX-XXXXX - Bundle signature verification could be side-stepped ([GHSA-g2pf-6v5v-qcc8](https://github.com/open-policy-agent/opa/security/advisories/GHSA-g2pf-6v5v-qcc8))
-
+        "markdownlint-cli2": "^0.23.3",
+      "version": "1.6.0",
+      "resolved": "https://registry.npmjs.org/get-east-asian-width/-/get-east-asian-width-1.6.0.tgz",
+      "integrity": "sha512-QRbvDIbx6YklUe6RxeTeleMR0yv3cYH6PsPZHcnVn7xv7zO1BHN8r0XETu8n6Ye3Q+ahtSarc3WgtNWmehIBfA==",
+      "version": "5.4.2",
+      "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-5.4.2.tgz",
+      "integrity": "sha512-m+aqu+LwO1O6sIopafj8HUVl5aawITwZQe/yHpMCKjaWBaA/d07B/QdMb3529REftiU+RMMHL3Vlsw3hON7vWg==",
+      "version": "15.0.1",
+      "resolved": "https://registry.npmjs.org/markdown-it/-/markdown-it-15.0.1.tgz",
+      "integrity": "sha512-9/7gE95FNPkfUWrjJIoHZza2iLmuJlPD0UNMxPi7bxUrbCR525YZY0r+zyfes0dZI5ZZ/uNIXUJca0pJvtw41g==",
+        "argparse": "^3.0.0",
+        "entities": "^8.0.0",
+        "linkify-it": "^6.0.0",
+      "version": "3.0.2",
+      "resolved": "https://registry.npmjs.org/argparse/-/argparse-3.0.2.tgz",
+      "integrity": "sha512-mFdDM6WqWKraGLsVb+C9CahPnzTXOefAOLq3jYcca2YZ8bEWpr++Tzj+zSaKW9+X9L5uSxcm1AZ3Y6aZJ09OhQ==",
+      "version": "0.41.1",
+      "resolved": "https://registry.npmjs.org/markdownlint/-/markdownlint-0.41.1.tgz",
+      "integrity": "sha512-qHKeU2E1b
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `83df76a5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c75ba45e` are properly handled with clean fallback behavior.

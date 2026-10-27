@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-WFLN",
-    "timestamp": "2026-10-25T20:49:20.123Z",
-    "repository": "jellyfin/Swiftfin",
-    "learningId": "learn-github-jellyfin-swiftfin",
-    "contentHash": "97ce928dc7e25c5931d0dd8fb77648e14945bce6838cd66dec690bf15351dd04",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-WIZB",
-    "timestamp": "2026-10-25T20:49:24.503Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "20c6d8e5860f7201d484d6bc476926d49022b8a40b3ab98feb91f08076d129ee",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-4OQ2",
-    "timestamp": "2026-10-25T20:55:45.194Z",
-    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-    "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
-    "contentHash": "efab3bc387f5b405e01c2c73f19a4479d54c34347de867187204449ccfa9c5cf",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-CTNH",
     "timestamp": "2026-10-25T21:02:04.829Z",
     "repository": "datalab-to/indra-ocr",
@@ -7490,6 +7445,51 @@
     "repository": "neuron-core/neuron-ai",
     "learningId": "learn-github-neuron-core-neuron-ai",
     "contentHash": "4a37f099d616bbcb9852285d51c0e0525e1bc88539950fa07b44753a9418a1b9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-4733",
+    "timestamp": "2026-10-27T19:06:44.319Z",
+    "repository": "google/tcmalloc",
+    "learningId": "learn-github-google-tcmalloc",
+    "contentHash": "6c4c2f4c11ab18efa265470018fefdf5ab7469b07ace7725a978f3a8bb45ee4c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-4BP7",
+    "timestamp": "2026-10-27T19:06:50.299Z",
+    "repository": "open-policy-agent/opa",
+    "learningId": "learn-github-open-policy-agent-opa",
+    "contentHash": "a100afcf87bbf0a01eb8e86c6e279bc27821f8119fdf62cdcc32f3e15815d9f4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-4FZY",
+    "timestamp": "2026-10-27T19:06:55.870Z",
+    "repository": "matrixorigin/matrixone",
+    "learningId": "learn-github-matrixorigin-matrixone",
+    "contentHash": "b30e14a4a5f3874ba667a814dc34f667dc4d6dc4c9a720f3828108ff18dc8d9e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

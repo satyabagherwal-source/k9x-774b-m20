@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T18:59:49.231Z",
-  "total_cycles_completed": 5465,
-  "total_learnings_persisted": 5465,
-  "total_rules_promoted": 4864,
+  "last_updated": "2026-10-27T19:06:55.881Z",
+  "total_cycles_completed": 5468,
+  "total_learnings_persisted": 5468,
+  "total_rules_promoted": 4866,
   "history": [
-    {
-      "timestamp": "2026-10-27T12:53:47.422Z",
-      "repository": "kgateway-dev/kgateway",
-      "learningId": "learn-github-kgateway-dev-kgateway",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T12:53:52.431Z",
-      "repository": "StarTrail-org/LEANN",
-      "learningId": "learn-github-startrail-org-leann",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T12:56:51.441Z",
-      "repository": "baidu/Unlimited-OCR-2",
-      "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T12:56:55.416Z",
       "repository": "litmuschaos/litmus",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-27T18:59:49.231Z",
       "repository": "neuron-core/neuron-ai",
       "learningId": "learn-github-neuron-core-neuron-ai",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T19:06:44.327Z",
+      "repository": "google/tcmalloc",
+      "learningId": "learn-github-google-tcmalloc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T19:06:50.308Z",
+      "repository": "open-policy-agent/opa",
+      "learningId": "learn-github-open-policy-agent-opa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T19:06:55.881Z",
+      "repository": "matrixorigin/matrixone",
+      "learningId": "learn-github-matrixorigin-matrixone",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

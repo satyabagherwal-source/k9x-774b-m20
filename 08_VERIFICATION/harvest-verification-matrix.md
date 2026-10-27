@@ -5488,3 +5488,6 @@
 | `CYCLE-20261027-V4SF` | `2026-10-27T18:59:41.439Z` | `cypress-io/cypress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4952` | Yes (`0d32cc13...`) |
 | `CYCLE-20261027-V63F` | `2026-10-27T18:59:43.131Z` | `czy0729/Bangumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4953` | Yes (`c08c8944...`) |
 | `CYCLE-20261027-VASH` | `2026-10-27T18:59:49.217Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md` | Yes (`4a37f099...`) |
+| `CYCLE-20261027-4733` | `2026-10-27T19:06:44.319Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4954` | Yes (`6c4c2f4c...`) |
+| `CYCLE-20261027-4BP7` | `2026-10-27T19:06:50.299Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4955` | Yes (`a100afcf...`) |
+| `CYCLE-20261027-4FZY` | `2026-10-27T19:06:55.870Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md` | Yes (`b30e14a4...`) |

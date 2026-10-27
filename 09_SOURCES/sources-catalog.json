@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "e033d4a5",
+    "sourceVersion": "935811ca",
     "license": "Apache-2.0",
-    "contentHash": "50c8444cd070847b46f2af464e8171967aa2dc0b979ca221f32b2f4d32149864",
-    "lastHarvestedAt": "2026-10-26T12:57:01.405Z",
+    "contentHash": "b30e14a4a5f3874ba667a814dc34f667dc4d6dc4c9a720f3828108ff18dc8d9e",
+    "lastHarvestedAt": "2026-10-27T19:06:55.874Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -6113,10 +6113,10 @@
     "repository": "open-policy-agent/opa",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/opa",
-    "sourceVersion": "83df76a5",
+    "sourceVersion": "21c9f6de",
     "license": "Apache-2.0",
-    "contentHash": "8cc1a8cfedde90ae3851a416aafadc46b5ebec3fb6e7c860bc59f2dc3017a9ad",
-    "lastHarvestedAt": "2026-10-26T13:58:25.488Z",
+    "contentHash": "a100afcf87bbf0a01eb8e86c6e279bc27821f8119fdf62cdcc32f3e15815d9f4",
+    "lastHarvestedAt": "2026-10-27T19:06:50.303Z",
     "learningId": "learn-github-open-policy-agent-opa"
   },
   "dragonflydb-dragonfly": {
@@ -7683,10 +7683,10 @@
     "repository": "google/tcmalloc",
     "platform": "github",
     "sourceUrl": "https://github.com/google/tcmalloc",
-    "sourceVersion": "de96aa9f",
+    "sourceVersion": "87ce233e",
     "license": "Apache-2.0",
-    "contentHash": "3ca18d390dd9e963ab984f44e7d602a06dd6bfb47b0d2fde5c67256625ca915b",
-    "lastHarvestedAt": "2026-10-25T06:25:21.869Z",
+    "contentHash": "6c4c2f4c11ab18efa265470018fefdf5ab7469b07ace7725a978f3a8bb45ee4c",
+    "lastHarvestedAt": "2026-10-27T19:06:44.322Z",
     "learningId": "learn-github-google-tcmalloc"
   },
   "russhwolf-multiplatform-settings": {
