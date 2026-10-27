@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `7d8341a4`  
+> **Source Version**: `a3e5ddfc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T18:05:34.788Z  
+> **Timestamp**: 2026-10-27T12:14:44.145Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T18:05:34.351Z  
+> **Harvest Timestamp**: 2026-10-27T12:14:43.691Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25716 stars
+- **Stars / Engagement**: 25718 stars
 
 ---
 
@@ -1259,17 +1259,14 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49605** (2026-10-26): **fix(deps): update module github.com/go-openapi/validate to v1.0.1 (main)**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [github.com/go-openapi/validate](https://redirect.github.com/go-openapi/validate) | `v1.0.0` → `v1.0.1` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fgo-openapi%2fvalidate/v1.0.1?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fgo-openapi%2fvalidate/v1.0.0/v1.0.1?slim=true) |  ---  ### Release Notes  <details> <summary>go-openapi/validate (github.com/go-openapi/validate)</summary>  ### [`v1.0.1`](https://redirect.github.com/go-openapi/validate/releases/tag/v1.0.1)  [Compare Source](https://redirect.github.com/go-openapi/validate/compare/v1.0.0...v1.0.1)  #### [1.0.1](https://redirect.github.com/go-openapi/validate/tree/v1.0.1) - 2026-10-20  **Full Changelog**: <https://github.com/go-openapi/validate/compare/v1.0.0...v1.0.1>  10 commits in this release.  ***  ##### <!-- 03 -->Documentation  - doc: updated contributors file by [@&#8203;bot-go-openapi\[bot\]](https://redirect.github.com/bot-go-openapi\[bot]) in [#&#8203;302](https://redirect.github.com/go-openapi/validate/pull/302) [...](https://redirect.github.com/go-openapi/validate/commit/d56dbb5ccbb4caf66fd3a819d550024fcdf67d1d)  ##### <!-- 07 -->Miscellaneous tasks  - chore: update strfmt and golang.org dependencies by [@&#8203;fredbi](https://redirect.github.
+- **Issue #49633** (2026-10-26): **Kube-OVN generic-veth: сбои доставки L7/DNS в прокси и NOTRACK на ovn0**
+  *Symptoms*: ## Проблема и цель обращения  При Kube-OVN + Cilium generic-veth включение HTTP L7 или DNS/FQDN-политик ломает соответствующие соединения, хотя базовая связность и L3/L4 работают. В изолированной лаборатории обнаружены два разрыва пути через прокси: доставка TO_PROXY из OVS-подключённого endpoint в стек хоста и NOTRACK для ответов через ovn0.  Прилагаю воспроизведение и экспериментальный opt-in патч к Cilium v1.19.5 для обсуждения архитектуры перед PR. Это не заявление о полной поддержке L7 для всех chaining CNI. Новая настройка `cni-chaining-proxy-device` существует только в прототипе; имя/API предварительные.  ## Окружение и границы воспроизведения  - Kubernetes 1.34.9; один узел; Ubuntu 24.04; Linux 6.8.0-147-generic; IPv4. - Сетевые чарты Cozystack v1.6.3, Kube-OVN 1.15.10, Cilium 1.19.5. - Исходный образ: `ghcr.io/cozystack/cozystack/cilium:v1.6.3@sha256:136a7dfff4d6adcd448424c2354144160028a8e96eb6558b917fd3ee6d7b39fe`. - Это downstream-образ, не pristine upstream: Cozystack добавляет IPv6-passthrough BPF-патч. Воспроизведение на актуальном upstream-релизе/main пока НЕ выполнено. - Цепочка kube-ovn → portmap → cilium-cni, generic-veth; native routing; host legacy routing; TCX; kube-proxy replacement; masquerading Cilium отключён; DNSProxyEnableTransparentMode=false; BPF TPROXY отключён. - Полный Cozystack не установлен. PodCIDR 10.80.0.0/16; маршрутизация к подам через ovn0. - Контрольный стенд с Cilium как основной сетью проходит проверки, но использует tunnel/VXLAN и д
   **Post-Mortem & Fix Analysis**:
-  > ### ℹ️ Artifact update notice  ##### File name: go.mod  In order to perform the update(s) described in the table above, Renovate ran the `go get` command, which resulted in the following additional change(s):   - 3 additional dependencies were updated   Due to Go's usage of [Minimal Version Selection (MVS)](https://go.dev/ref/mod#minimal-version-selection), these packages have been updated to the minimum version available, so will still abide by `minimumReleaseAge=5 days`   Details:   | **Package**                           | **Change**           | | :------------------------------------ | :------------------- | | `github.com/go-openapi/analysis`      | `v1.0.0` -> `v1.0.1` | | `github.com/go-openapi/jsonpointer`   | `v1.0.1` -> `v1.0.2` | | `github.com/go-openapi/jsonreference` | `v1.0.2` -> `v1.0.3` |
-  > /test
+  > 👋 Welcome to the Cilium and eBPF community! 🐝 Thanks for helping to make Cilium better by reporting this issue. Please make sure the issue you are reporting is for a [maintained stable release](https://github.com/cilium/cilium/#stable-releases) and review the [triage process](https://docs.cilium.io/en/latest/contributing/development/reviewers_committers/triage/) to understand how the project works through issues.  📬 If you're using Cilium in your organization, please [add your name to our Adopters list](https://github.com/cilium/cilium/blob/main/USERS.md). 🙏 It really helps the project gain momentum and credibility.  **Resources:** - If you are new to eBPF, you can learn more on our community website: https://ebpf.io 🐝 - If you are new to Cilium, we have great [getting started guides](https://docs.cilium.io/en/stable/#getting-started) - Subscribe to eCHO News for your bi-weekly [Cilium and eBPF update](https://cilium.io/newsletter/) - [Slack](https://docs.cilium.io/en/stable/commu
+  > Superseded by the English-language report #49634, which preserves the reproducer, experimental patch, test results, and limitations. Closing this report only to avoid duplicates; the underlying problem is not resolved.
 
-- **Issue #49602** (2026-10-25): **fix(deps): update all go dependencies main (main)**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | Type | Update | |---|---|---|---|---|---| | [github.com/go-openapi/strfmt](https://redirect.github.com/go-openapi/strfmt) | `v0.27.3` → `v0.27.4` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fgo-openapi%2fstrfmt/v0.27.4?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fgo-openapi%2fstrfmt/v0.27.3/v0.27.4?slim=true) | require | patch | | [github.com/vishvananda/netlink](https://redirect.github.com/vishvananda/netlink) | `3fdd742` → `5537980` |  |  | require | digest |  ---  ### Release Notes  <details> <summary>go-openapi/strfmt (github.com/go-openapi/strfmt)</summary>  ### [`v0.27.4`](https://redirect.github.com/go-openapi/strfmt/releases/tag/v0.27.4)  [Compare Source](https://redirect.github.com/go-openapi/strfmt/compare/v0.27.3...v0.27.4)  #### [0.27.4](https://redirect.github.com/go-openapi/strfmt/tree/v0.27.4) - 2026-10-19  **Full Changelog**: <https://github.com/go-openapi/strfmt/compare/v0.27.3...v0.27.4>  5 commits in this release.  ***  ##### <!-- 07 -->Miscellaneous tasks  - chore: prepare release v0.27.4 by [@&#8203;bot-go-openapi\[bot\]](https://redirect.github.com/bot-go-openapi\[bot]) in [#&#8203;319](https://redirect.github.com/go-openapi/strfmt/pull/319) [...](https://redirect.github.com/go-openapi/strfmt/commit/f4233
-  **Post-Mortem & Fix Analysis**:
-  > /test
-  > /test
+- **Issue #49629** (2026-10-27): **loadbalancer/maps: use testutils.IsPrivileged() to pick real test maps**
+  *Symptoms*: ## Summary/Description  Noticed an issue where the loadbalancer restart tests fail when run as root without PRIVILEGED_TESTS, because newLBMaps() and the tests use different checks for "privileged". Specifically, `newLBMaps()` uin `pkg/loadbalancer/maps/lbmaps.go` and the loadbalancer script tests use two different checks for  checking privilege status:  | Code | Check | Effect | | --- | --- | --- | | `newLBMaps()` (`pkg/loadbalancer/maps/lbmaps.go`) | `os.Getuid() == 0` | if root, use real BPF maps, otherwise the in-memory fake | | `[privileged]` script condition (`pkg/loadbalancer/tests/script_test.go`) | `testutils.IsPrivileged()` (`PRIVILEGED_TESTS` set) | used by tests to stop themselves in privileged mode |  So, when the tests run as root without `PRIVILEGED_TESTS`, tests that simulate an agent restart (`restore-terminating-backend.txtar`, `prune-deleted-on-restart.txtar`) do:  ``` # Privileged mode uses real BPF maps, which are attached to the hive lifecycle. # Stop this test in privileged mode because we can't simulate the agent restarting # against BPF state that is not retained. [privileged] stop ```  In that setup `[privileged]` is false, so the test continues, but `newLBMaps()` hands it real maps. After `hive stop` / `hive/recreate` / `hive start`, the new hive tries to reopen the maps and fails.  This change modifies `newLBMaps()` to use `testutils.IsPrivileged()`, so both sides agree.  ### How to reproduce  Run the restart tests as root *
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1286,79 +1283,1154 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c76681a2` (2026-10-23)
-**Commit Message**: chore(deps): update dependency certifi to v2026.10.19 [security]
+### Incident Patch 1: `c814151c` (2026-05-29)
+**Commit Message**: datapath/orchestrator: fix goroutine leak in MergeChannels watch path
 
-Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.noreply.github.com>
+common.MergeChannels starts a goroutine that blocks in reflect.Select
+until one of its input channels fires, with no way to cancel it. Its
+only caller, newLocalNodeConfig, merges statedb watch channels and
+returns the result as the orchestrator reconciler's localNodeConfigWatch.
 
-**File**: `images/docs-builder/requirements.txt` (modified, +1/-1)
+The reconciler builds a fresh watch on every loop iteration. When it
+wakes via another event source (a LocalNodeStore update or an explicit
+trigger) rather than localNodeConfigWatch, the previous iteration's
+MergeChannels goroutine is abandoned. If none of its input watch
+channels ever close - which happens when only the local node changes
+while the device and address tables stay stable - that goroutine blocks
+forever. Under multi-pool IPAM with sustained CiliumNode churn this leaks
+one goroutine per update, accumulating thousands over time and driving up
+CPU, latency and packet drops.
+
+Make MergeChannels context-aware so the goroutine observes cancellation,
+thread the context through newLocalNodeConfig, and have the reconciler
+cancel each iteration's watch once the select has chosen a branch.
+
+Add a unit test for MergeChannels cancella
+
+**File**: `pkg/common/utils.go` (modified, +20/-8)
 ```diff
-@@ -24,7 +24,7 @@ annotated-doc==0.0.5
- annotated-types==0.8.0
- attrs==26.1.0
- babel==2.18.0
--certifi==2026.10.18
-+certifi==2026.10.19
- charset-normalizer==3.5.2
- colorama==0.4.6
- deepmerge==3.0.1
+@@ -4,6 +4,7 @@
+ package common
+ 
+ import (
++	"context"
+ 	"fmt"
+ 	"os"
+ 	"reflect"
+@@ -75,22 +76,33 @@ func RequireRootPrivilege(cmd string) {
+ 	}
+ }
+ 
+-func MergeChannels[T any](chans ...<-chan T) <-chan T {
++// MergeChannels forwards the first value received on any of the input channels.
++// The goroutine it starts is bound to ctx, so it is reclaimed on cancellation
++// even if no input ever fires and the caller abandons the returned channel.
++func MergeChannels[T any](ctx context.Context, chans ...<-chan T) <-chan T {
+ 	out := make(chan T)
+-	cases := make([]reflect.SelectCase, len(chans))
+-	for i, ch := range chans {
+-		cases[i] = reflect.SelectCase{
++	cases := make([]reflect.SelectCase, 0, len(chans)+1)
++	for _, ch := range chans {
++		cases = append(cases, reflect.SelectCase{
+ 			Dir:  reflect.SelectRecv,
+ 			Chan: reflect.ValueOf(ch),
+-		}
++		})
+ 	}
++	ctxCase := len(cases)
++	cases = append(cases, reflect.SelectCase{
++		Dir:  reflect.SelectRecv,
++		Chan: reflect.ValueOf(ctx.Done()),
++	})
+ 	go func() {
+ 		defer close(out)
+-		_, value, ok := reflect.Select(cases)
+-		if !ok {
++		chosen, value, ok := reflect.Select(cases)
++		if chosen == ctxCase || !ok {
+ 			return
+ 		}
+-		out <- value.Interface().(T)
++		select {
++		case out <- value.Interface().(T):
++		case <-ctx.Done():
++		}
+ 	}()
+ 	return out
+ }
 ```
 
----
-
-### Incident Patch 2: `1f32241f` (2026-10-23)
-**Commit Message**: ipam: Fix goleak usage in multi-pool migration test
-
-When using scripttest.Test without NoParallel, using defer to enable
-goleak is incorrect. That's because scripttest.Test relies on t.Parallel
-that starts a subtest for each txtar, pauses them and return before
-letting them run. When returning, defer is then triggered before the
-subtests actually run, missing possible leaks.
-
-Fix this scheduling goleak with t.Cleanup instead.
-
-Signed-off-by: Fabio Falzoi <[REDACTED_EMAIL]>
-
-**File**: `pkg/ipam/migration/script_test.go` (modified, +1/-1)
+**File**: `pkg/common/utils_test.go` (modified, +48/-0)
 ```diff
-@@ -60,7 +60,7 @@ func TestScriptClusterPoolToMultiPool(t *testing.T) {
- 		manager     *ipam.IPAM
+@@ -4,9 +4,12 @@
+ package common
+ 
+ import (
++	"context"
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/require"
++
++	"github.com/cilium/cilium/pkg/testutils"
+ )
+ 
+ func TestC2GoArray(t *testing.T) {
+@@ -48,3 +51,48 @@ func TestGoArray2C(t *testing.T) {
+ 		require.Equal(t, test.output, GoArray2C(test.input))
+ 	}
+ }
++
++func TestMergeChannels(t *testing.T) {
++	t.Run("forwards the first received value", func(t *testing.T) {
++		a := make(chan int, 1)
++		b := make(chan int, 1)
++		out := MergeChannels(context.Background(), a, b)
++
++		b <- 42
++		require.Equal(t, 42, <-out)
++
++		// Only a single value is forwarded; the output channel is then closed.
++		_, ok := <-out
++		require.False(t, ok)
++	})
++
++	t.Run("closed input closes the output", func(t *testing.T) {
++		a := make(chan struct{})
++		b := make(chan struct{})
++		out := MergeChannels(context.Background(), a, b)
++
++		close(b)
++		_, ok := <-out
++		require.False(t, ok, "output channel should be closed once an input is closed")
++	})
++
++	t.Run("does not leak when context is cancelled", func(t *testing.T) {
++		// Regression test for https://github.com/cilium/cilium/issues/46254.
++		defer testutils.GoleakVerifyNone(t)
++
++		ctx, cancel := context.WithCancel(context.Background())
++
++		// Inputs that never fire, mimicking abandoned statedb watch channels.
++		a := make(chan struct{})
++		b := make(chan struct{})
++		c := make(chan struct{})
++		out := MergeChannels(ctx, a, b, c)
++
++		cancel()
++
++		// The output channel is closed once the goroutine observes the
++		// cancellation; this blocks until the goroutine has exited.
++		_, ok := <-out
++		require.False(t, ok)
++	})
++}
+```
+
+**File**: `pkg/datapath/orchestrator/localnodeconfig.go` (modified, +1/-1)
+```diff
+@@ -251,7 +251,7 @@ func newLocalNodeConfig(
+ 		DatapathIsNetkit:             connectorConfig.GetOperationalMode().IsNetkit(),
+ 		VLANFilter:                   vlanFilter,
+ 		Plugins:                      plugins,
+-	}, common.MergeChannels(watchChans...), nil
++	}, common.MergeChannels(ctx, watchChans...), nil
+ }
+ 
+ // podSubnets returns the explicitly configured pod subnets, falling back to
+```
+
+**File**: `pkg/datapath/orchestrator/localnodeconfig_test.go` (modified, +111/-0)
+```diff
+@@ -4,13 +4,33 @@
+ package orchestrator
+ 
+ import (
++	"context"
+ 	"net/netip"
+ 	"testing"
+ 
++	"github.com/cilium/statedb"
++	"github.com/spf13/afero"
+ 	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"go.uber.org/goleak"
+ 
++	cmtypes "github.com/cilium/cilium/pkg/clustermesh/types"
++	fakeconnector "github.com/cilium/cilium/pkg/datapath/connector/fake"
++	fakeipsec "github.com/cilium/cilium/pkg/datapath/linux/ipsec/fake"
++	"github.com/cilium/cilium/pkg/datapath/linux/sysctl"
+ 	"github.com/cilium/cilium/pkg/datapath/tables"
++	"github.com/cilium/cilium/pkg/datapath/tunnel"
++	"github.com/cilium/cilium/pkg/datapath/xdp"
++	"github.com/cilium/cilium/pkg/defaults"
++	"github.com/cilium/cilium/pkg/kpr"
++	"github.com/cilium/cilium/pkg/loadbalancer"
++	"github.com/cilium/cilium/pkg/maglev"
++	"github.com/cilium/cilium/pkg/mtu"
++	"github.com/cilium/cilium/pkg/node"
+ 	"github.com/cilium/cilium/pkg/option"
++	"github.com/cilium/cilium/pkg/svcrouteconfig"
++	"github.com/cilium/cilium/pkg/testutils"
++	wgfake "github.com/cilium/cilium/pkg/wireguard/fake"
+ )
+ 
+ func TestDirectRoutingDeviceHasAddr(t *testing.T) {
+@@ -103,3 +123,94 @@ func TestDirectRoutingDeviceHasAddr(t *testing.T) {
+ 		})
+ 	}
+ }
++
++// TestNewLocalNodeConfigNoGoroutineLeak is a regression test for
++// https://github.com/cilium/cilium/issues/46254: the watch channel returned by
++// newLocalNodeConfig is backed by a common.MergeChannels goroutine that must be
++// reclaimed when the caller cancels the context, even if no input ever fires.
++func TestNewLocalNodeConfigNoGoroutineLeak(t *testing.T) {
++	// Save and restore the global config touched below.
++	savedHostLegacy := option.Config.UnsafeDaemonConfigOption.EnableHostLegacyRouting
++	savedV4Range := option.Config.IPv4ServiceRange
++	savedV6Range := option.Config.IPv6ServiceRange
++	t.Cleanup(func() {
++		option.Config.UnsafeDaemonConfigOption.EnableHostLegacyRouting = savedHostLegacy
++		option.Config.IPv4ServiceRange = savedV4Range
++		option.Config.IPv6ServiceRange = savedV6Range
++	})
++	// KPR + BPF host routing + Wireguard disabled => DirectRoutingDeviceRequired
++	// is false, so newLocalNodeConfig skips the direct routing device branch.
++	option.Config.UnsafeDaemonConfigOption.EnableHostLegacyRouting = true
++	option.Config.IPv4ServiceRange = netip.Prefix{}
++	option.Config.IPv6ServiceRange = netip.Prefix{}
++
++	db := statedb.New()
++	devices, err := tables.NewDeviceTable(db)
++	require.NoError(t, err)
++	nodeAddrs, err := tables.NewNodeAddressTable(db)
++	require.NoError(t, err)
++	mtuTable, err := mtu.NewMTUTable(db)
++	require.NoError(t, err)
++
++	// Seed cilium_host and cilium_net so newLocalNodeConfig reaches the success
++	// path that builds the merged watch channel.
++	wtxn := db.WriteTxn(devices)
++	for i, name := range []string{defaults.HostDevice, defaults.SecondHostDevice} {
++		_, _, err = devices.Insert(wtxn, &tables.Device{
++			Index:        i + 1,
++			Name:         name,
++			HardwareAddr: tables.HardwareAddr{0x02, 0x00, 0x00, 0x00, 0x00, byte(i + 1)},
++		})
++		require.NoError(t, err)
++	}
++	wtxn.Commit()
++
++	// In-memory sysctl with the ephemeral port range getEphemeralPortRangeMin reads.
++	memFS := afero.NewMemMapFs()
++	require.NoError(t, memFS.MkdirAll("/proc/sys/net/ipv4", 0755))
++	require.NoError(t, afero.WriteFile(memFS,
++		"/proc/sys/net/ipv4/ip_local_port_range", []byte("32768\t60999"), 0644))
++	sysctlReader := sysctl.NewDirectSysctl(memFS, "/proc")
++
++	wgAgent := wgfake.NewTestAgent(wgfake.Config{EnableWireguard: false})
++
++	call := func(ctx context.Context) error {
++		_, _, err := newLocalNodeConfig(
++			ctx,
++			option.Config,
++			node.LocalNode{Local: &node.LocalNodeInfo{}},
++			sysctlReader,
++			cmtypes.DefaultClusterInfo,
++			tunnel.Config{},
++			db.ReadTxn(),
++			tables.DirectRoutingDevice{},
++			devices,
++			nodeAddrs,
++			"",
++			xdp.Config{},
++			loadbalancer.Config{},
++			false,
++			kpr.KPRConfig{},
++			svcrouteconfig.RoutesConfig{},
++			maglev.Config{},
++			mtuTable,
++			wgAgent,
++			fakeipsec.Config{},
++			fakeconnector.NewVeth(),
++			nil,
++		)
++		return err
++	}
++
++	// Baseline goroutines after setup so statedb's etc. are not counted.
++	defer testutils.GoleakVerifyNone(t, goleak.IgnoreCurrent())
++
++	// Emulate the reconciler loop: create a watch, abandon it (as when the loop
++	// wakes via another event source), then cancel the per-iteration context.
++	// Without the fix the merge goroutines block forever in reflect.Select.
++	for range 1000 {
++		watchCtx, cancelWatch := context.WithCancel(context.Background())
++		require.NoError(t, call(watchCtx))
++		cancelWatch()
++	}
++}
+```
+
+**File**: `pkg/datapath/orchestrator/orchestrator.go` (modified, +10/-1)
+```diff
+@@ -229,6 +229,11 @@ func (o *orchestrator) reconciler(ctx context.Context, health cell.Health) error
+ 		giveUp           error
  	)
+ 	for {
++		// Per-iteration context for the watch goroutine started by
++		// newLocalNodeConfig, cancelled below so it does not leak if we proceed
++		// via a different event source than localNodeConfigWatch.
++		watchCtx, cancelWatch := context.WithCancel(ctx)
++
+ 		var (
+ 			localNodeConfig      config.Config
+ 			localNodeConfigWatch <-chan struct{}
+@@ -246,7 +251,7 @@ func (o *orchestrator) reconciler(ctx context.Context, health cell.Health) error
+ 			retryChan = time.After(reinitRetryDuration)
+ 		} else {
+ 			localNodeConfig, localNodeConfigWatch, err = newLocalNodeConfig(
+-				ctx,
++				watchCtx,
+ 				option.Config,
+ 				localNode,
+ 				o.params.Sysctl,
+@@ -313,6 +318,7 @@ func (o *orchestrator) reconciler(ctx context.Context, health cell.Health) error
  
--	defer testutils.GoleakVerifyNone(t)
-+	t.Cleanup(func() { testutils.GoleakVerifyNone(t) })
+ 		select {
+ 		case <-ctx.Done():
++			cancelWatch()
+ 			return ctx.Err()
+ 		case <-ipipWatch:
+ 		case <-localNodeConfigWatch:
+@@ -321,6 +327,9 @@ func (o *orchestrator) reconciler(ctx context.Context, health cell.Health) error
+ 		case request = <-o.trigger:
+ 		}
  
- 	scripttest.Test(t,
- 		t.Context(),
++		// Stop this iteration's watch goroutine now that we no longer need it.
++		cancelWatch()
++
+ 		// Limit the rate at which we reinitialize and to give the devs&addrs
+ 		// a chance to settle down.
+ 		if err := limiter.Wait(ctx); err != nil {
 ```
 
 ---
 
-### Incident Patch 3: `7d8341a4` (2026-09-25)
-**Commit Message**: docs: fix 'allows to use' grammar in CNI chaining docs
+### Incident Patch 2: `a3e5ddfc` (2026-08-29)
+**Commit Message**: orchestrator: avoid leaking local node config watch goroutines
 
-Signed-off-by: fng713 <[REDACTED_EMAIL]>
+The initial fix made MergeChannels context-aware and cancelled its helper
+goroutine after each reconciler iteration. While this prevents the leak, the
+orchestrator does not need a goroutine to combine its statedb watch channels.
 
-**File**: `Documentation/installation/cni-chaining.rst` (modified, +1/-1)
+Return the watch channels directly from newLocalNodeConfig and use one
+reflect.Select in the reconciler to wait on them together with context
+cancellation, retries, local node updates, and explicit reinitialization
+requests. Remove MergeChannels and its tests because it no longer has callers.
+
+Keep a regression test that repeatedly builds and abandons watch sets and uses
+the shared testutils goleak configuration to verify that no goroutines remain.
+
+Fixes: #46254
+Signed-off-by: Evgeny Evseev <[REDACTED_EMAIL]>
+
+**File**: `pkg/common/utils.go` (modified, +0/-33)
 ```diff
-@@ -10,7 +10,7 @@
- CNI Chaining
- ************
+@@ -4,10 +4,8 @@
+ package common
  
--CNI chaining allows to use Cilium in combination with other CNI plugins.
-+CNI chaining allows you to use Cilium in combination with other CNI plugins.
+ import (
+-	"context"
+ 	"fmt"
+ 	"os"
+-	"reflect"
+ 	"strconv"
+ 	"strings"
+ )
+@@ -75,34 +73,3 @@ func RequireRootPrivilege(cmd string) {
+ 		os.Exit(1)
+ 	}
+ }
+-
+-// MergeChannels forwards the first value received on any of the input channels.
+-// The goroutine it starts is bound to ctx, so it is reclaimed on cancellation
+-// even if no input ever fires and the caller abandons the returned channel.
+-func MergeChannels[T any](ctx context.Context, chans ...<-chan T) <-chan T {
+-	out := make(chan T)
+-	cases := make([]reflect.SelectCase, 0, len(chans)+1)
+-	for _, ch := range chans {
+-		cases = append(cases, reflect.SelectCase{
+-			Dir:  reflect.SelectRecv,
+-			Chan: reflect.ValueOf(ch),
+-		})
+-	}
+-	ctxCase := len(cases)
+-	cases = append(cases, reflect.SelectCase{
+-		Dir:  reflect.SelectRecv,
+-		Chan: reflect.ValueOf(ctx.Done()),
+-	})
+-	go func() {
+-		defer close(out)
+-		chosen, value, ok := reflect.Select(cases)
+-		if chosen == ctxCase || !ok {
+-			return
+-		}
+-		select {
+-		case out <- value.Interface().(T):
+-		case <-ctx.Done():
+-		}
+-	}()
+-	return out
+-}
+```
+
+**File**: `pkg/common/utils_test.go` (modified, +0/-48)
+```diff
+@@ -4,12 +4,9 @@
+ package common
  
- With Cilium CNI chaining, the base network connectivity and IP address management
- is managed by the non-Cilium CNI plugin, but Cilium attaches eBPF programs to the
+ import (
+-	"context"
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/require"
+-
+-	"github.com/cilium/cilium/pkg/testutils"
+ )
+ 
+ func TestC2GoArray(t *testing.T) {
+@@ -51,48 +48,3 @@ func TestGoArray2C(t *testing.T) {
+ 		require.Equal(t, test.output, GoArray2C(test.input))
+ 	}
+ }
+-
+-func TestMergeChannels(t *testing.T) {
+-	t.Run("forwards the first received value", func(t *testing.T) {
+-		a := make(chan int, 1)
+-		b := make(chan int, 1)
+-		out := MergeChannels(context.Background(), a, b)
+-
+-		b <- 42
+-		require.Equal(t, 42, <-out)
+-
+-		// Only a single value is forwarded; the output channel is then closed.
+-		_, ok := <-out
+-		require.False(t, ok)
+-	})
+-
+-	t.Run("closed input closes the output", func(t *testing.T) {
+-		a := make(chan struct{})
+-		b := make(chan struct{})
+-		out := MergeChannels(context.Background(), a, b)
+-
+-		close(b)
+-		_, ok := <-out
+-		require.False(t, ok, "output channel should be closed once an input is closed")
+-	})
+-
+-	t.Run("does not leak when context is cancelled", func(t *testing.T) {
+-		// Regression test for https://github.com/cilium/cilium/issues/46254.
+-		defer testutils.GoleakVerifyNone(t)
+-
+-		ctx, cancel := context.WithCancel(context.Background())
+-
+-		// Inputs that never fire, mimicking abandoned statedb watch channels.
+-		a := make(chan struct{})
+-		b := make(chan struct{})
+-		c := make(chan struct{})
+-		out := MergeChannels(ctx, a, b, c)
+-
+-		cancel()
+-
+-		// The output channel is closed once the goroutine observes the
+-		// cancellation; this blocks until the goroutine has exited.
+-		_, ok := <-out
+-		require.False(t, ok)
+-	})
+-}
+```
+
+**File**: `pkg/datapath/orchestrator/localnodeconfig.go` (modified, +13/-12)
+```diff
+@@ -13,7 +13,6 @@ import (
+ 	"github.com/cilium/statedb"
+ 
+ 	cmtypes "github.com/cilium/cilium/pkg/clustermesh/types"
+-	"github.com/cilium/cilium/pkg/common"
+ 	"github.com/cilium/cilium/pkg/datapath/config"
+ 	"github.com/cilium/cilium/pkg/datapath/connector"
+ 	ipsec "github.com/cilium/cilium/pkg/datapath/linux/ipsec/types"
+@@ -47,8 +46,10 @@ import (
+ // LocalNodeConfiguration instance is generated. Previous LocalNodeConfiguration
+ // is never mutated in-place.
+ //
+-// The returned channel will be closed for recoverable errors once the state of
+-// failing condition changes.
++// Each returned watch channel is closed when the piece of state it tracks
++// changes; the caller should wait on all of them. For recoverable errors, a
++// single watch channel is returned that is closed once the failing condition
++// changes.
+ func newLocalNodeConfig(
+ 	ctx context.Context,
+ 	daemon *option.DaemonConfig,
+@@ -72,7 +73,7 @@ func newLocalNodeConfig(
+ 	ipsecCfg ipsec.Config,
+ 	connectorConfig connector.Config,
+ 	plugins plugin.Plugins,
+-) (config.Config, <-chan struct{}, error) {
++) (config.Config, []<-chan struct{}, error) {
+ 	auxPrefixes := []ip.Prefix{}
+ 
+ 	if daemon.IPv4ServiceRange.IsValid() {
+@@ -93,7 +94,7 @@ func newLocalNodeConfig(
+ 
+ 	vlanFilter, err := resolveVLANFilters(nativeDevices, daemon.VLANBPFBypass)
+ 	if err != nil {
+-		return config.Config{}, devsWatch, fmt.Errorf("resolving VLAN filters: %w", err)
++		return config.Config{}, []<-chan struct{}{devsWatch}, fmt.Errorf("resolving VLAN filters: %w", err)
+ 	}
+ 
+ 	watchChans := []<-chan struct{}{devsWatch, addrsWatch, mtuWatch}
+@@ -103,14 +104,14 @@ func newLocalNodeConfig(
+ 		if drd == nil {
+ 			// If the direct routing device is not present return the watch channel along with an error.
+ 			// Watch channel will be closed when there is an update to the DirectRouting device configuration.
+-			return config.Config{}, directRoutingDevWatch, errors.New("direct routing device required but not configured")
++			return config.Config{}, []<-chan struct{}{directRoutingDevWatch}, errors.New("direct routing device required but not configured")
+ 		}
+ 
+ 		// Ensure the device has at least one usable address for the enabled
+ 		// address families. If not, return the watch channel so we retry as
+ 		// soon as the device's addresses change.
+ 		if !directRoutingDeviceHasAddr(drd) {
+-			return config.Config{}, directRoutingDevWatch,
++			return config.Config{}, []<-chan struct{}{directRoutingDevWatch},
+ 				fmt.Errorf("direct routing device %s has no usable addresses", drd.Name)
+ 		}
+ 
+@@ -136,7 +137,7 @@ func newLocalNodeConfig(
+ 
+ 	ciliumHostDevice, _, hostWatch, ok := devices.GetWatch(txn, tables.DeviceByName(defaults.HostDevice))
+ 	if !ok {
+-		return config.Config{}, hostWatch, fmt.Errorf("failed to look up link '%s'", defaults.HostDevice)
++		return config.Config{}, []<-chan struct{}{hostWatch}, fmt.Errorf("failed to look up link '%s'", defaults.HostDevice)
+ 	}
+ 	watchChans = append(watchChans, hostWatch)
+ 	ciliumHostMAC, err := mac.ParseMAC(ciliumHostDevice.HardwareAddr.String())
+@@ -146,7 +147,7 @@ func newLocalNodeConfig(
+ 
+ 	ciliumNetDevice, _, netWatch, ok := devices.GetWatch(txn, tables.DeviceByName(defaults.SecondHostDevice))
+ 	if !ok {
+-		return config.Config{}, netWatch, fmt.Errorf("failed to look up link '%s'", defaults.SecondHostDevice)
++		return config.Config{}, []<-chan struct{}{netWatch}, fmt.Errorf("failed to look up link '%s'", defaults.SecondHostDevice)
+ 	}
+ 	watchChans = append(watchChans, netWatch)
+ 	ciliumNetMAC, err := mac.ParseMAC(ciliumNetDevice.HardwareAddr.String())
+@@ -159,15 +160,15 @@ func newLocalNodeConfig(
+ 		if daemon.EnableIPv4 {
+ 			dev, _, watch, ok := devices.GetWatch(txn, tables.DeviceByName(defaults.IPIPv4Device))
+ 			if !ok {
+-				return config.Config{}, watch, fmt.Errorf("failed to look up IPv4 IPIP device '%s'", defaults.IPIPv4Device)
++				return config.Config{}, []<-chan struct{}{watch}, fmt.Errorf("failed to look up IPv4 IPIP device '%s'", defaults.IPIPv4Device)
+ 			}
+ 			watchChans = append(watchChans, watch)
+ 			encap4IfIndex = uint32(dev.Index)
+ 		}
+ 		if daemon.EnableIPv6 {
+ 			dev, _, watch, ok := devices.GetWatch(txn, tables.DeviceByName(defaults.IPIPv6Device))
+ 			if !ok {
+-				return config.Config{}, watch, fmt.Errorf("failed to look up IPv6 IPIP device '%s'", defaults.IPIPv6Device)
++				return config.Config{}, []<-chan struct{}{watch}, fmt.Errorf("failed to look up IPv6 IPIP device '%s'", defaults.IPIPv6Device)
+ 			}
+ 			watchChans = append(watchChans, watch)
+ 			encap6IfIndex = uint32(dev.Index)
+@@ -251,7 +252,7 @@ func newLocalNodeConfig(
+ 		DatapathIsNetkit:             connectorConfig.GetOperationalMode().IsNetkit(),
+ 		VLANFilter:                   vlanFilter,
+ 		Plugins:                      plugins,
+-	}, common.MergeChannels(ctx, watchChans...), nil
++	}, watchChans, nil
+ }
+ 
+ // podSubnets returns the explicitly configured pod subnets, falling back to
+```
+
+**File**: `pkg/datapath/orchestrator/localnodeconfig_test.go` (modified, +16/-15)
+```diff
+@@ -12,7 +12,6 @@ import (
+ 	"github.com/spf13/afero"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+-	"go.uber.org/goleak"
+ 
+ 	cmtypes "github.com/cilium/cilium/pkg/clustermesh/types"
+ 	fakeconnector "github.com/cilium/cilium/pkg/datapath/connector/fake"
+@@ -125,9 +124,11 @@ func TestDirectRoutingDeviceHasAddr(t *testing.T) {
+ }
+ 
+ // TestNewLocalNodeConfigNoGoroutineLeak is a regression test for
+-// https://github.com/cilium/cilium/issues/46254: the watch channel returned by
+-// newLocalNodeConfig is backed by a common.MergeChannels goroutine that must be
+-// reclaimed when the caller cancels the context, even if no input ever fires.
++// https://github.com/cilium/cilium/issues/46254. newLocalNodeConfig must return
++// its watch channels directly rather than merging them with a helper goroutine:
++// the reconciler abandons the watch set whenever it wakes up via another event
++// source, so any goroutine tied to it would leak. This test guards against a
++// merge helper being reintroduced.
+ func TestNewLocalNodeConfigNoGoroutineLeak(t *testing.T) {
+ 	// Save and restore the global config touched below.
+ 	savedHostLegacy := option.Config.UnsafeDaemonConfigOption.EnableHostLegacyRouting
+@@ -153,7 +154,7 @@ func TestNewLocalNodeConfigNoGoroutineLeak(t *testing.T) {
+ 	require.NoError(t, err)
+ 
+ 	// Seed cilium_host and cilium_net so newLocalNodeConfig reaches the success
+-	// path that builds the merged watch channel.
++	// path that returns the full watch channel set.
+ 	wtxn := db.WriteTxn(devices)
+ 	for i, name := range []string{defaults.HostDevice, defaults.SecondHostDevice} {
+ 		_, _, err = devices.Insert(wtxn, &tables.Device{
+@@ -174,8 +175,8 @@ func TestNewLocalNodeConfigNoGoroutineLeak(t *testing.T) {
+ 
+ 	wgAgent := wgfake.NewTestAgent(wgfake.Config{EnableWireguard: false})
+ 
+-	call := func(ctx context.Context) error {
+-		_, _, err := newLocalNodeConfig(
++	call := func(ctx context.Context) ([]<-chan struct{}, error) {
++		_, watches, err := newLocalNodeConfig(
+ 			ctx,
+ 			option.Config,
+ 			node.LocalNode{Local: &node.LocalNodeInfo{}},
+@@ -199,18 +200,18 @@ func TestNewLocalNodeConfigNoGoroutineLeak(t *testing.T) {
+ 			fakeconnector.NewVeth(),
+ 			nil,
+ 		)
+-		return err
++		return watches, err
+ 	}
+ 
+ 	// Baseline goroutines after setup so statedb's etc. are not counted.
+-	defer testutils.GoleakVerifyNone(t, goleak.IgnoreCurrent())
++	defer testutils.GoleakVerifyNone(t, testutils.GoleakIgnoreCurrent())
+ 
+-	// Emulate the reconciler loop: create a watch, abandon it (as when the loop
+-	// wakes via another event source), then cancel the per-iteration context.
+-	// Without the fix the merge goroutines block forever in reflect.Select.
++	// Emulate the reconciler loop rebuilding and abandoning its watch set when
++	// another event source wakes it. No goroutine should be created for the
++	// watch channels.
+ 	for range 1000 {
+-		watchCtx, cancelWatch := context.WithCancel(context.Background())
+-		require.NoError(t, call(watchCtx))
+-		cancelWatch()
++		watches, err := call(context.Background())
++		require.NoError(t, err)
++		require.NotEmpty(t, watches)
+ 	}
+ }
+```
+
+**File**: `pkg/datapath/orchestrator/orchestrator.go` (modified, +35/-20)
+```diff
+@@ -9,6 +9,7 @@ import (
+ 	"fmt"
+ 	"io"
+ 	"log/slog"
++	"reflect"
+ 	"sync/atomic"
+ 
+ 	"github.com/cilium/hive/cell"
+@@ -229,14 +230,9 @@ func (o *orchestrator) reconciler(ctx context.Context, health cell.Health) error
+ 		giveUp           error
+ 	)
+ 	for {
+-		// Per-iteration context for the watch goroutine started by
+-		// newLocalNodeConfig, cancelled below so it does not leak if we proceed
+-		// via a different event source than localNodeConfigWatch.
+-		watchCtx, cancelWatch := context.WithCancel(ctx)
+-
+ 		var (
+-			localNodeConfig      config.Config
+-			localNodeConfigWatch <-chan struct{}
++			localNodeConfig        config.Config
++			localNodeConfigWatches []<-chan struct{}
+ 		)
+ 
+ 		// Re-run this on every reconciliation to update the tunnel MTU or
+@@ -250,8 +246,8 @@ func (o *orchestrator) reconciler(ctx context.Context, health cell.Health) error
+ 			health.Degraded("Failed to ensure IPIP devices", err)
+ 			retryChan = time.After(reinitRetryDuration)
+ 		} else {
+-			localNodeConfig, localNodeConfigWatch, err = newLocalNodeConfig(
+-				watchCtx,
++			localNodeConfig, localNodeConfigWatches, err = newLocalNodeConfig(
++				ctx,
+ 				option.Config,
+ 				localNode,
+ 				o.params.Sysctl,
+@@ -316,19 +312,38 @@ func (o *orchestrator) reconciler(ctx context.Context, health cell.Health) error
+ 			return giveUp
+ 		}
+ 
+-		select {
+-		case <-ctx.Done():
+-			cancelWatch()
+-			return ctx.Err()
+-		case <-ipipWatch:
+-		case <-localNodeConfigWatch:
+-		case <-retryChan:
+-		case localNode = <-localNodes:
+-		case request = <-o.trigger:
++		// Wait on all event sources with a single select. The statedb watch
++		// channels are variable in number, so the select is built with reflect;
++		// the index of each case is derived from the statement that adds it.
++		cases := make([]reflect.SelectCase, 0, 5+len(localNodeConfigWatches))
++		add := func(ch any) int {
++			cases = append(cases, reflect.SelectCase{Dir: reflect.SelectRecv, Chan: reflect.ValueOf(ch)})
++			return len(cases) - 1
++		}
++		ctxCase := add(ctx.Done())
++		retryCase := add(retryChan)
++		localNodesCase := add(localNodes)
++		triggerCase := add(o.trigger)
++		add(ipipWatch)
++		for _, watch := range localNodeConfigWatches {
++			add(watch)
+ 		}
+ 
+-		// Stop this iteration's watch goroutine now that we no longer need it.
+-		cancelWatch()
++		chosen, value, ok := reflect.Select(cases)
++		switch chosen {
++		case ctxCase:
++			return ctx.Err()
++		case retryCase:
++			// Retry immediately after the rate limiter below.
++		case localNodesCase:
++			if !ok {
++				// localNodes is closed when ctx is cancelled.
++				return ctx.Err()
++			}
++			localNode = value.Interface().(node.LocalNode)
++		case triggerCase:
++			request = value.Interface().(reinitializeRequest)
++		}
+ 
+ 		// Limit the rate at which we reinitialize and to give the devs&addrs
+ 		// a chance to settle down.
+```
+
+---
+
+### Incident Patch 3: `0f2a1737` (2026-10-14)
+**Commit Message**: test(gateway-api): cover GRPCRoute BackendTLSPolicy fixtures
+
+Add YAML testdata for BackendTLSPolicy with GRPCRoute under operator/pkg/gateway-api/testdata/gateway/grpcroute-backendtlspolicy, covering both valid CA/SNI origination and missing CA negative handling.
+
+Signed-off-by: Adil Alperen Çiftci <[REDACTED_EMAIL]>
+
+**File**: `operator/pkg/gateway-api/gateway_reconcile_test.go` (modified, +1/-0)
+```diff
+@@ -324,6 +324,7 @@ func Test_Conformance(t *testing.T) {
+ 		{name: "httproute-backendtlspolicy-conflict-resolution", gateway: []gwDetails{gatewaySameNamespace}},
+ 		{name: "httproute-backendtlspolicy-invalid-ca-cert", gateway: []gwDetails{gatewaySameNamespace}},
+ 		{name: "httproute-backendtlspolicy-invalid-kind", gateway: []gwDetails{gatewaySameNamespace}},
++		{name: "grpcroute-backendtlspolicy", gateway: []gwDetails{gatewaySameNamespace}},
+ 		{name: "gateway-multi-port-https", gateway: []gwDetails{{FullName: types.NamespacedName{Name: "multi-port-https", Namespace: "gateway-conformance-infra"}}}},
+ 		{name: "gateway-tls-options", gateway: []gwDetails{{FullName: types.NamespacedName{Name: "gateway-tls-options", Namespace: "gateway-conformance-infra"}}}},
+ 		{name: "tcproute-invalid-reference-grant", gateway: []gwDetails{{FullName: types.NamespacedName{Name: "gateway-tcproute-referencegrant", Namespace: "gateway-conformance-infra"}, skipCEC: true}}},
+```
+
+**File**: `operator/pkg/gateway-api/testdata/gateway/grpcroute-backendtlspolicy/input/grpcroute-backendtlspolicy.yaml` (added, +68/-0)
+```diff
+@@ -0,0 +1,68 @@
++apiVersion: gateway.networking.k8s.io/v1
++kind: GRPCRoute
++metadata:
++  name: backendtlspolicy
++  namespace: gateway-conformance-infra
++spec:
++  parentRefs:
++    - name: same-namespace
++  rules:
++    - matches:
++        - method:
++            service: grpc.backend.Backend
++            method: Valid
++      backendRefs:
++        - name: tls-backend
++          port: 443
++    - matches:
++        - method:
++            service: grpc.backend.Backend
++            method: Invalid
++      backendRefs:
++        - name: tls-backend-2
++          port: 443
++---
++apiVersion: gateway.networking.k8s.io/v1
++kind: BackendTLSPolicy
++metadata:
++  name: grpc-backend-tls
++  namespace: gateway-conformance-infra
++spec:
++  targetRefs:
++    - group: ""
++      kind: Service
++      name: tls-backend
++  validation:
++    caCertificateRefs:
++      - group: ""
++        kind: ConfigMap
++        name: tls-checks-ca-certificate
++    hostname: grpc.example.com
++---
++apiVersion: gateway.networking.k8s.io/v1
++kind: BackendTLSPolicy
++metadata:
++  name: grpc-backend-tls-invalid-ca
++  namespace: gateway-conformance-infra
++spec:
++  targetRefs:
++    - group: ""
++      kind: Service
++      name: tls-backend-2
++  validation:
++    caCertificateRefs:
++      - group: ""
++        kind: ConfigMap
++        name: nonexistent-ca-certificate
++    hostname: invalid.grpc.example.com
++---
++apiVersion: v1
++kind: ConfigMap
++metadata:
++  name: tls-checks-ca-certificate
++  namespace: gateway-conformance-infra
++data:
++  ca.crt: |
++    -----BEGIN CERTIFICATE-----
++    Q0Ey
++    -----END CERTIFICATE-----
+```
+
+**File**: `operator/pkg/gateway-api/testdata/gateway/grpcroute-backendtlspolicy/output/backendtlspolicy-grpc-backend-tls-invalid-ca.yaml` (added, +35/-0)
+```diff
+@@ -0,0 +1,35 @@
++apiVersion: gateway.networking.k8s.io/v1
++kind: BackendTLSPolicy
++metadata:
++  name: grpc-backend-tls-invalid-ca
++  namespace: gateway-conformance-infra
++spec:
++  targetRefs:
++    - group: ""
++      kind: Service
++      name: tls-backend-2
++  validation:
++    caCertificateRefs:
++      - group: ""
++        kind: ConfigMap
++        name: nonexistent-ca-certificate
++    hostname: invalid.grpc.example.com
++status:
++  ancestors:
++    - controllerName: io.cilium/gateway-controller
++      ancestorRef:
++        group: gateway.networking.k8s.io
++        kind: Gateway
++        namespace: gateway-conformance-infra
++        name: same-namespace
++      conditions:
++        - lastTransitionTime: "2025-07-01T14:19:43Z"
++          message: "CA Certificate does not exist: gateway-conformance-infra/nonexistent-ca-certificate"
++          reason: NoValidCACertificate
++          status: "False"
++          type: Accepted
++        - lastTransitionTime: "2025-07-01T14:19:43Z"
++          message: "CA Certificate does not exist: gateway-conformance-infra/nonexistent-ca-certificate"
++          reason: InvalidCACertificateRef
++          status: "False"
++          type: ResolvedRefs
+```
+
+**File**: `operator/pkg/gateway-api/testdata/gateway/grpcroute-backendtlspolicy/output/backendtlspolicy-grpc-backend-tls.yaml` (added, +35/-0)
+```diff
+@@ -0,0 +1,35 @@
++apiVersion: gateway.networking.k8s.io/v1
++kind: BackendTLSPolicy
++metadata:
++  name: grpc-backend-tls
++  namespace: gateway-conformance-infra
++spec:
++  targetRefs:
++    - group: ""
++      kind: Service
++      name: tls-backend
++  validation:
++    caCertificateRefs:
++      - group: ""
++        kind: ConfigMap
++        name: tls-checks-ca-certificate
++    hostname: grpc.example.com
++status:
++  ancestors:
++    - controllerName: io.cilium/gateway-controller
++      ancestorRef:
++        group: gateway.networking.k8s.io
++        kind: Gateway
++        namespace: gateway-conformance-infra
++        name: same-namespace
++      conditions:
++        - lastTransitionTime: "2025-07-01T14:19:43Z"
++          message: Accepted BackendTLSPolicy
++          reason: Accepted
++          status: "True"
++          type: Accepted
++        - lastTransitionTime: "2025-07-01T14:19:43Z"
++          message: All references are valid
++          reason: ResolvedRefs
++          status: "True"
++          type: ResolvedRefs
+```
+
+**File**: `operator/pkg/gateway-api/testdata/gateway/grpcroute-backendtlspolicy/output/cec-same-namespace.yaml` (added, +127/-0)
+```diff
+@@ -0,0 +1,127 @@
++metadata:
++  annotations:
++    cec.cilium.io/use-original-source-address: "false"
++  labels:
++    gateway.networking.k8s.io/gateway-name: same-namespace
++  name: cilium-gateway-same-namespace
++  namespace: gateway-conformance-infra
++  ownerReferences:
++    - apiVersion: gateway.networking.k8s.io/v1
++      controller: true
++      kind: Gateway
++      name: same-namespace
++  resourceVersion: "1"
++spec:
++  backendServices:
++    - name: tls-backend
++      namespace: gateway-conformance-infra
++      number:
++        - "443"
++  resources:
++    - "@type": type.googleapis.com/envoy.config.listener.v3.Listener
++      filterChains:
++        - filterChainMatch:
++            transportProtocol: raw_buffer
++          filters:
++            - name: envoy.filters.network.http_connection_manager
++              typedConfig:
++                "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
++                commonHttpProtocolOptions:
++                  maxStreamDuration: 0s
++                httpFilters:
++                  - name: envoy.filters.http.grpc_web
++                    typedConfig:
++                      "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_web.v3.GrpcWeb
++                  - name: envoy.filters.http.grpc_stats
++                    typedConfig:
++                      "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_stats.v3.FilterConfig
++                      emitFilterState: true
++                      enableUpstreamStats: true
++                  - name: envoy.filters.http.router
++                    typedConfig:
++                      "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
++                internalAddressConfig: {}
++                rds:
++                  routeConfigName: listener-insecure
++                statPrefix: listener-insecure
++                streamIdleTimeout: 300s
++                upgradeConfigs:
++                  - upgradeType: websocket
++                useRemoteAddress: true
++      listenerFilters:
++        - name: envoy.filters.listener.tls_inspector
++          typedConfig:
++            "@type": type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector
++      name: listener
++      socketOptions:
++        - description: Enable TCP keep-alive (default to enabled)
++          intValue: "1"
++          level: "1"
++          name: "9"
++        - description: TCP keep-alive idle time (in seconds) (defaults to 10s)
++          intValue: "10"
++          level: "6"
++          name: "4"
++        - description: TCP keep-alive probe intervals (in seconds) (defaults to 5s)
++          intValue: "5"
++          level: "6"
++          name: "5"
++        - description: TCP keep-alive probe max failures.
++          intValue: "10"
++          level: "6"
++          name: "6"
++    - "@type": type.googleapis.com/envoy.config.route.v3.RouteConfiguration
++      name: listener-insecure
++      virtualHosts:
++        - domains:
++            - "*"
++          name: "*"
++          routes:
++            - direct_response:
++                body:
++                  inline_string: ""
++                status: 500
++              match:
++                path: /grpc.backend.Backend/Invalid
++            - match:
++                path: /grpc.backend.Backend/Valid
++              route:
++                cluster: gateway-conformance-infra:tls-backend:443
++                maxStreamDuration:
++                  maxStreamDuration: 0s
++    - "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
++      edsClusterConfig:
++        serviceName: gateway-conformance-infra/tls-backend:443
++      name: gateway-conformance-infra:tls-backend:443
++      outlierDetection:
++        splitExternalLocalOriginErrors: true
++      transportSocket:
++        name: envoy.transport_sockets.tls
++        typedConfig:
++          "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
++          commonTlsContext:
++            tlsParams:
++              tlsMaximumProtocolVersion: TLSv1_3
++            combinedValidationContext:
++              defaultValidationContext:
++                match_typed_subject_alt_names:
++                  - san_type: DNS
++                    matcher:
++                      exact: grpc.example.com
++              validationContextSdsSecretConfig:
++                name: cilium-secrets/cilium-sync-cfgmap-f3757660099595ce0587b4d45f08d43da98e3f80d7c9fa16d991dbd0946ee01b
++          sni: grpc.example.com
++      type: EDS
++      typedExtensionProtocolOptions:
++        envoy.extensions.upstreams.http.v3.HttpProtocolOptions:
++          "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
++          commonHttpProtocolOptions:
++            idleTimeout: 60s
++          explicitHttpConfig:
++            http2ProtocolOptions: {}
++  services:
++    - listener: ""
++      name: cilium-gateway-same-namespace
++      namespace
+```
+
+**File**: `operator/pkg/gateway-api/testdata/gateway/grpcroute-backendtlspolicy/output/grpcroute-backendtlspolicy.yaml` (added, +39/-0)
+```diff
+@@ -0,0 +1,39 @@
++apiVersion: gateway.networking.k8s.io/v1
++kind: GRPCRoute
++metadata:
++  name: backendtlspolicy
++  namespace: gateway-conformance-infra
++spec:
++  parentRefs:
++    - name: same-namespace
++  rules:
++    - matches:
++        - method:
++            service: grpc.backend.Backend
++            method: Valid
++      backendRefs:
++        - name: tls-backend
++          port: 443
++    - matches:
++        - method:
++            service: grpc.backend.Backend
++            method: Invalid
++      backendRefs:
++        - name: tls-backend-2
++          port: 443
++status:
++  parents:
++    - conditions:
++        - lastTransitionTime: "2025-07-01T14:19:43Z"
++          message: Accepted GRPCRoute
++          reason: Accepted
++          status: "True"
++          type: Accepted
++        - lastTransitionTime: "2025-07-01T14:19:43Z"
++          message: Service reference is valid
++          reason: ResolvedRefs
++          status: "True"
++          type: ResolvedRefs
++      controllerName: io.cilium/gateway-controller
++      parentRef:
++        name: same-namespace
+```
+
+**File**: `operator/pkg/gateway-api/testdata/gateway/grpcroute-backendtlspolicy/output/same-namespace.yaml` (added, +50/-0)
+```diff
+@@ -0,0 +1,50 @@
++apiVersion: gateway.networking.k8s.io/v1
++kind: Gateway
++metadata:
++  name: same-namespace
++  namespace: gateway-conformance-infra
++spec:
++  gatewayClassName: cilium
++  listeners:
++    - allowedRoutes:
++        namespaces:
++          from: Same
++      name: http
++      port: 80
++      protocol: HTTP
++status:
++  conditions:
++    - lastTransitionTime: "2025-07-01T14:29:32Z"
++      message: Gateway successfully scheduled
++      reason: Accepted
++      status: "True"
++      type: Accepted
++    - lastTransitionTime: "2025-07-01T05:06:15Z"
++      message: Gateway waiting for address
++      reason: AddressNotAssigned
++      status: "False"
++      type: Programmed
++  listeners:
++    - attachedRoutes: 1
++      conditions:
++        - lastTransitionTime: "2025-07-01T14:29:32Z"
++          message: Resolved Refs
++          reason: ResolvedRefs
++          status: "True"
++          type: ResolvedRefs
++        - lastTransitionTime: "2025-07-01T14:29:32Z"
++          message: Listener Accepted
++          reason: Accepted
++          status: "True"
++          type: Accepted
++        - lastTransitionTime: "2025-07-01T14:29:32Z"
++          message: Address not ready yet
++          reason: Pending
++          status: "False"
++          type: Programmed
++      name: http
++      supportedKinds:
++        - group: gateway.networking.k8s.io
++          kind: HTTPRoute
++        - group: gateway.networking.k8s.io
++          kind: GRPCRoute
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49605** (2026-10-26): fix(deps): update module github.com/go-openapi/validate to v1.0.1 (main) (@cilium-renovate[bot])
-- **PR #49602** (2026-10-25): fix(deps): update all go dependencies main (main) (@cilium-renovate[bot])
-- **PR #49600** (2026-10-26): chore(deps): update auto-merge-trusted-deps (v1.18) (@cilium-renovate[bot])
-- **PR #49599** (2026-10-26): chore(deps): update auto-merge-trusted-deps (v1.19) (@cilium-renovate[bot])
-- **PR #49598** (2026-10-26): chore(deps): update auto-merge-trusted-deps (v1.20) (@cilium-renovate[bot])
-- **PR #49597** (2026-10-25): fix(deps): update all go dependencies main (main) (@cilium-renovate[bot])
+- **PR #49629** (2026-10-27): loadbalancer/maps: use testutils.IsPrivileged() to pick real test maps (@Bigdelle)
+- **PR #49627** (2026-10-27): v1.18 Backports 2026-10-26 (@nbusseneau)
+- **PR #49626** (2026-10-27): v1.19 Backports 2026-10-26 (@nbusseneau)
+- **PR #49621** (2026-10-27): ci: allow more time for proxy policy updates during upgrades (@jrajahalme)
+- **PR #49616** (2026-10-27): egressgw: test: make policy reconciliation robust (@julianwiedmann)
+- **PR #49611** (2026-10-26): USERS.md: add Forterro (@ecthelion77)
 
 ---
 
@@ -1378,28 +2450,54 @@ Signed-off-by: fng713 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update dependency certifi to v2026.10.19 [security]
+## X. datapath/orchestrator: fix goroutine leak in MergeChannels watch path
 
 **RULE**:
-When implementing operations in `images/docs-builder/requirements.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/common/utils.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c76681a2`: deps): update dependency certifi to v2026.10.19 [security]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c814151c`: datapath/orchestrator: fix goroutine leak in MergeChannels watch path. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `images/docs-builder/requirements.txt`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/common/utils.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-certifi==2026.10.19
+	"context"
+// MergeChannels forwards the first value received on any of the input channels.
+// The goroutine it starts is bound to ctx, so it is reclaimed on cancellation
+// even if no input ever fires and the caller abandons the returned channel.
+func MergeChannels[T any](ctx context.Context, chans ...<-chan T) <-chan T {
+	cases := make([]reflect.SelectCase, 0, len(chans)+1)
+	for _, ch := range chans {
+		cases = append(cases, reflect.SelectCase{
+		})
+	ctxCase := len(cases)
+	cases = append(cases, reflect.SelectCase{
+		Dir:  reflect.SelectRecv,
+		Chan: reflect.ValueOf(ctx.Done()),
+	})
+		chosen, value, ok := reflect.Select(cases)
+		if chosen == ctxCase || !ok {
+		select {
+		case out <- value.Interface().(T):
+		case <-ctx.Done():
+		}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-certifi==2026.10.18
+func MergeChannels[T any](chans ...<-chan T) <-chan T {
+	cases := make([]reflect.SelectCase, len(chans))
+	for i, ch := range chans {
+		cases[i] = reflect.SelectCase{
+		}
+		_, value, ok := reflect.Select(cases)
+		if !ok {
+		out <- value.Interface().(T)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c76681a2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c814151c` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T12:10:57.843Z",
+  "last_updated": "2026-10-27T12:18:37.740Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3891,14 +3891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-authzed-spicedb",
-      "content_hash": "5ecedee92af13d3121864acc01439cd40d533ebe3579b1f1b6183fe061770686",
-      "verified_at": "2026-10-22T18:50:25.327Z",
+      "content_hash": "a111294c47f299622dccacd64b906d6085f23d0eb983956b2b76113af30c8594",
+      "verified_at": "2026-10-27T12:14:40.390Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T18:50:25.327Z"
+      "last_updated": "2026-10-27T12:14:40.390Z"
     },
     "hashicorp/boundary": {
       "repository": "hashicorp/boundary",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "1e789e541355f41075a002c4ccb3484520f1e63ef670a1c9bd91497fa855490c",
-      "verified_at": "2026-10-26T18:05:35.295Z",
+      "content_hash": "bbbb5446d9ee849bacea6fc1255a1feae96252430b55413af8216d46d7fbdec7",
+      "verified_at": "2026-10-27T12:14:44.670Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T18:05:35.295Z"
+      "last_updated": "2026-10-27T12:14:44.670Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -8136,14 +8136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-embassy-rs-embassy",
-      "content_hash": "7256a57567b0c2dd4edeb06f83768af7a439bbce0d765fdac25e76c3d0294aa1",
-      "verified_at": "2026-10-25T18:15:20.623Z",
+      "content_hash": "0922156e8e2e679bd61456aa6fe9666f9db3c04162281829b45207b9fc7d0496",
+      "verified_at": "2026-10-27T12:18:37.740Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T18:15:20.623Z"
+      "last_updated": "2026-10-27T12:18:37.740Z"
     },
     "jpush/aurora-imui": {
       "repository": "jpush/aurora-imui",
@@ -8181,14 +8181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-greptimeteam-greptimedb",
-      "content_hash": "7612195c220ca9fb0131ca849d77d5138553783272d9df28255a8f6a9facb22d",
-      "verified_at": "2026-10-25T04:12:39.977Z",
+      "content_hash": "af6824af16e19b597c641b8117b96e2a53925b377e2bd02e0f3c75840098a71b",
+      "verified_at": "2026-10-27T12:14:46.999Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T04:12:39.977Z"
+      "last_updated": "2026-10-27T12:14:46.999Z"
     },
     "heroui-inc/heroui-native": {
       "repository": "heroui-inc/heroui-native",
@@ -14091,14 +14091,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fb55-htmlparser2",
-      "content_hash": "21fb3b28e8d944af33f8150b42cfc101dadd7ad3e811c1b9da9e48e2d20a17c1",
-      "verified_at": "2026-10-22T18:50:19.766Z",
+      "content_hash": "1baec62a8e75c320a5b9966aabf72936e2d0e9e44ec997542f9a769f968767f3",
+      "verified_at": "2026-10-27T12:14:34.985Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T18:50:19.766Z"
+      "last_updated": "2026-10-27T12:14:34.985Z"
     },
     "inikulin/parse5": {
       "repository": "inikulin/parse5",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source**: github ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
-> **Source Version**: `1c5d15fd`  
+> **Source Version**: `5b4efd90`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T04:12:39.535Z  
+> **Timestamp**: 2026-10-27T12:14:46.447Z  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T04:12:39.136Z  
+> **Harvest Timestamp**: 2026-10-27T12:14:45.761Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6762 stars
+- **Stars / Engagement**: 6767 stars
 
 ---
 
@@ -1651,13 +1651,13 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #9937** (2026-10-24): **refactor(promql): remove NodePath and own the runtime tree recursively**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  ## What's changed and what's your intention?  **Summarize your change**  The native PromQL runtime addressed a node by the path that reached it. Every execution walked that path again to find the node's state, every metric export walked it to name a node, and the state itself lived in tables keyed by that path. This removes `NodePath` and the tables keyed by it, and replaces them with one recursive runtime tree: each node owns its children, its operator state, its metrics, and — once settled — nothing it no longer needs.  **How it works**  `NativeExecutionState` now holds a `RuntimeTree { root: RuntimeNode }`. A `RuntimeNode` carries its own `Box`ed children, its `Option` payload (the evaluator, the retained operands, the fold, the collected input), its lifecycle state and a shared `Arc<NodeMetrics>`, so there is no side table to look a node up in. Pulling, settling, flushing after a subtree closes, EOF, errors and drop all recurse through that tree.  An `InputId` is assigned only to the leaves that actually receive a feed, by a depth-first walk of the built tree. A scalar leaf takes no id, so no node is addressed by position and no flat registry stands in for the topology. The feed API is `push_raw(InputId, chunk)` / `push_evaluated(InputId, chunk)`; there is no `push_at` shim and no `input_count` nobody calls.  `E
+- **Issue #10003** (2026-10-27): **fix(mito2): stop the series distributor from stalling on unread partitions**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Cherry-pick of #9991 (merged into `main`) onto `narthex`.  ## What's changed and what's your intention?  `FusedSeriesExec` with two inputs reads every scan partition one after another. On `narthex` this hits the series distributor's round-robin `send_timeout(100us)`. Tokio timers tick at 1 ms, so after a merge (one batch per series) each series batch costs about 1 ms per unpolled partition. With 16 partitions, two-selector native queries over regions with several SSTs spent ~470 ms to 12.7 s in `SeriesScanExec`, while legacy took ~10 ms.  #9991 waits on all senders at once and sends to the first free slot. The cherry-pick applies cleanly and the diff is identical to #9991.  ## PR Checklist Please convert it to a draft if some of the following conditions are not met.  - [x] I have written the necessary rustdoc comments. - [x] I have added the necessary unit tests and integration tests. - [ ] This PR requires documentation updates. - [x] API changes are backward compatible. - [x] Schema or data changes are backward compatible. - [ ] This PR needs to be backported to release branches, and I have added the `backport-<target>` labels (e.g. `backport-v1.3` targets `release/v1.3`). 
   **Post-Mortem & Fix Analysis**:
-  > <!-- pr-open-limit --> > [!WARNING] > @discord9 has **18** open non-draft pull requests in this repository, over the limit of **5**.  Review is the scarcest resource here. Please land or close some of these before pushing this one forward.  - [PR 9404: feat\(query\)\: add opt\-in distributed broadcast join planner](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9404) - [PR 9463: fix\(flow\)\: clean up cross\-mode replacements without checker deadlocks](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9463) - [PR 9496: test\: query option regressions separate from capability](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9496) - [PR 9524: fix\(query\)\: stop windowed sort on precision\-lowering time casts](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9524) - [PR 9600: fix\(query\)\: avoid lossy casts in partition pruning](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9600) - [PR 9601: fix\(query\)\: preserve IGNORE NULLS semantics in d
+  > <!-- pr-open-limit --> > [!WARNING] > @killme2008 has **7** open non-draft pull requests in this repository, over the limit of **5**.  Review is the scarcest resource here. Please land or close some of these before pushing this one forward.  - [PR 9693: feat\(partition\)\: support iceberg\_hash in partition rules](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9693) - [PR 9913: perf\(mito2\)\: index encoded bulk parts from memory during flush](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9913) - [PR 9988: feat\(promql\)\: run time\(\)\, scalar\(v\)\, vector\(s\) and dynamic scalar broadcasts natively](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9988) - [PR 9990: feat\(promql\)\: run cross\-table selector pairs natively](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9990) - [PR 10004: feat\(promql\)\: run native statements over any number of selectors](https://redirect.github.com/GreptimeTeam/greptimedb/pull/10004) - [PR 10005: feat\(promql\
 
-- **Issue #9919** (2026-10-23): **fix: upload staging manifests in chunks**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Fixes #9903.  ## What's changed and what's your intention?  Large staging manifests generated during repartition were uploaded without explicit chunking and could exceed a storage endpoint's per-request limit. Route `StagingBlobStorage::put` through the existing manifest write helper, using its 64 MiB chunks without caching. Object paths and serialized contents remain unchanged.  Add a regression test covering small objects, the 64 MiB boundary, and larger objects. It enforces an artificial per-write limit, checks write sizes and completion, and verifies the stored bytes. With the same test and payload, the original implementation failed in both comparison runs and the fix passed in both. This exercises the underlying writer with a local filesystem backend; it does not test a live cloud multipart endpoint.  Validation: - `cargo nextest run -p mito2`: 1810 tests passed on the updated PR base (`5523cf38741`). - Focused regression: passed twice with the fix; failed as expected twice with the original upload call. - Changed-file `rustfmt --check` and `git diff --check`: passed. - Workspace-wide clippy, tests, and unused-dependency checks have not been run.  ## PR Checklist Please convert it to a draft if some of the following conditions are not met.  - [x] I have written the necessary rustdoc comments. - [x] I have adde
+- **Issue #9998** (2026-10-27): **feat(promql): split distributed aggregates over the raw fan-in**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Stacked on #9993 (authorized raw fan-in on the frontend). This PR needs the fan-in input to be correct; it does not need anything else from it.  ## What's changed and what's your intention?  Distributed `sum by (host)(rate(x[5m]))` — and the other aggregates the existing split supports — fell back to the legacy plan on every distributed query, because the split branch required `in_process_region_transport()`. That gate is only about where the input comes from, not about what the split needs.  The split is correct when the producer sees *every* series of each group it folds. For the local route, one region-local execution instance holds them. For the new remote route, `NativeRawFanInExec` gathers all selected regions into **one** frontend partition and merges raw samples before the prefix runs, so the same condition holds: the partial producer folds all series, then `AggregateFinalizeExec` merges its state. With a single input partition that merge is the identity case, which the finalize already supports (`aggregate_finalize.rs` keeps a lone partition unchanged).  So the change is to drop the transport gate and keep every other admission condition: one selector, `AggregateFinalize::can_split`, `Float64` fields, millisecond non-null time index, no append mode, no alternative matchers, no `__field__` matcher, and the t
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1674,551 +1674,1686 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1cb01d0d` (2026-10-23)
-**Commit Message**: fix(mito2): keep SSTs when a manifest save ends with RateLimited or PermissionDenied (#9898)
+### Incident Patch 1: `17ed988f` (2026-10-27)
+**Commit Message**: fix(mito): preserve SST lifetime across index replacement (#9950)
 
-* fix(mito2): keep SSTs when a manifest save ends with RateLimited
+* fix(mito): preserve SST lifetime across index replacement
 
-The object store's retry layer retries temporary errors and returns the
-last attempt's error. A manifest delta PUT can be stored by the server
-while the client sees a timeout, reset or 5xx, and the retries that
-follow can be throttled, so the save ends with RateLimited even though
-the delta exists. may_have_persisted_manifest_update treated RateLimited
-as proof that nothing was written, so flush and compaction deleted the
-SSTs the stored delta references. A later open or follower sync replays
-the delta and reads fail on the missing files.
+Share retirement and final purge across immutable index metadata views. Keep version-specific GC references until readers release them and match Parquet liveness by file identity.
 
-Treat RateLimited like other ambiguous errors: the SSTs are kept and
-become orphans when the save really failed.
+Fixes #9944
 
-Fixes #9897
+Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
 
-Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
+* refactor(mito): list-based SST purge and single FilePurger::remove_file
 
-* fix(mito2): keep SSTs when a manifest save ends with PermissionDenied
+The final purge of a retired SST no longer depends on FileMeta: index
+files of every version are discovered by listing
+({region_dir}/index/{file_id}. prefix), so even when the last live view
+is a stale one, the purge still removes all newer index files.
 
-The retry layer returns the last attempt's error, so a 403 from a revoked
-key, a changed bucket policy or clock skew can follow a delta PUT that
-the server already stored. Like RateLimited, PermissionDenied does not
-prove that nothing was written, 
+- SstLifetime is slimmed down to { deleted, file_purger }; the purge now
+  runs in the last FileHandleInner::drop (Arc::strong_count == 1, which
+  is race-free here since only inners of the same file hold the lifetime).
+- FilePurger is merged back into a single remove_file(file_meta,
+  is_delete) method; is_delete means the file was retired AND this is the
+  last live view.
+- LocalFilePurger deletes the SST and all its index files via the new
+  delete_file_and_all_indexes helper (list before delet
 
-**File**: `src/mito2/src/engine/compaction_test.rs` (modified, +1/-1)
+**File**: `src/cmd/src/datanode/objbench.rs` (modified, +2/-7)
 ```diff
-@@ -1414,7 +1414,7 @@ impl object_store::layers::mock::Write for FailingManifestWriter {
-     ) -> object_store::layers::mock::Result<()> {
-         if matches!(self.failure, ManifestWriteFailure::BeforeWrite) {
-             return Err(object_store::layers::mock::Error::new(
--                object_store::layers::mock::ErrorKind::PermissionDenied,
-+                object_store::layers::mock::ErrorKind::Unsupported,
-                 "manifest write rejected before persistence",
-             ));
-         }
+@@ -27,7 +27,7 @@ use mito2::config::{FulltextIndexConfig, MitoConfig, Mode};
+ use mito2::read::FlatSource;
+ use mito2::sst::FormatType;
+ use mito2::sst::file::{FileHandle, FileMeta};
+-use mito2::sst::file_purger::{FilePurger, FilePurgerRef};
++use mito2::sst::file_purger::{FilePurgerRef, NoopFilePurger};
+ use mito2::sst::index::intermediate::IntermediateManager;
+ use mito2::sst::index::puffin_manager::PuffinManagerFactory;
+ use mito2::sst::parquet::WriteOptions;
+@@ -508,12 +508,7 @@ async fn build_cache_manager(
+ }
+ 
+ fn new_noop_file_purger() -> FilePurgerRef {
+-    #[derive(Debug)]
+-    struct Noop;
+-    impl FilePurger for Noop {
+-        fn remove_file(&self, _file_meta: FileMeta, _is_delete: bool, _index_outdated: bool) {}
+-    }
+-    Arc::new(Noop)
++    Arc::new(NoopFilePurger)
+ }
+ 
+ async fn load_parquet_metadata(
 ```
 
-**File**: `src/mito2/src/error.rs` (modified, +15/-8)
+**File**: `src/mito2/src/engine/file_ref_test.rs` (modified, +201/-0)
 ```diff
-@@ -1445,7 +1445,9 @@ impl Error {
-     /// Returns whether a failed manifest update may have been persisted.
-     ///
-     /// Unknown errors are treated conservatively because deleting output SSTs after an ambiguous
--    /// manifest write could leave the manifest referencing missing files.
-+    /// manifest write could leave the manifest referencing missing files. The retry layer returns
-+    /// the last attempt's error, so an error that can follow a stored attempt (throttling, or a 403
-+    /// from a revoked key, a changed bucket policy or clock skew) never proves nothing was written.
-     pub(crate) fn may_have_persisted_manifest_update(&self) -> bool {
-         match self {
-             Error::UpdateManifest { .. }
-@@ -1459,11 +1461,9 @@ impl Error {
-                 ErrorKind::Unsupported
-                     | ErrorKind::ConfigInvalid
-                     | ErrorKind::NotFound
--                    | ErrorKind::PermissionDenied
-                     | ErrorKind::IsADirectory
-                     | ErrorKind::NotADirectory
-                     | ErrorKind::AlreadyExists
--                    | ErrorKind::RateLimited
-                     | ErrorKind::IsSameFile
-                     | ErrorKind::ConditionNotMatch
-                     | ErrorKind::RangeNotSatisfied
-@@ -1847,11 +1847,9 @@ mod tests {
-             ErrorKind::Unsupported,
-             ErrorKind::ConfigInvalid,
-             ErrorKind::NotFound,
--            ErrorKind::PermissionDenied,
-             ErrorKind::IsADirectory,
-             ErrorKind::NotADirectory,
-             ErrorKind::AlreadyExists,
--            ErrorKind::RateLimited,
-             ErrorKind::IsSameFile,
-             ErrorKind::ConditionNotMatch,
-             ErrorKind::RangeNotSatisfied,
-@@ -1864,9 +1862,18 @@ mod tests {
-             );
-         }
- 
--        let error =
--            OpenDalSnafu {}.into_error(object_store::Error::new(ErrorKind::Unexpected, "test"));
--        assert!(error.may_have_persisted_manifest_update());
-+        // The last retry can fail with these kinds even though an earlier attempt was stored.
-+        for kind in [
-+            ErrorKind::Unexpected,
-+            ErrorKind::RateLimited,
-+            ErrorKind::PermissionDenied,
-+        ] {
-+            let error = OpenDalSnafu {}.into_error(object_store::Error::new(kind, "test"));
-+            assert!(
-+                error.may_have_persisted_manifest_update(),
-+                "error kind {kind:?} should not prove the manifest was not persisted"
-+            );
-+        }
- 
-         let region_id = RegionId::new(1, 1);
-         let error = RegionTruncatedSnafu { region_id }.build();
-```
-
----
-
-### Incident Patch 2: `6a340787` (2026-10-23)
-**Commit Message**: fix(pipeline): accept auto-transformed values in existing JSON columns (#9895)
-
-* fix(pipeline): accept auto-transformed values in existing JSON columns
-
-Signed-off-by: luofucong <[REDACTED_EMAIL]>
-
-* test(pipeline): compare decoded JSON values in regression test
-
-Signed-off-by: luofucong <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: luofucong <[REDACTED_EMAIL]>
-
-**File**: `src/pipeline/src/etl/transform/transformer/greptime.rs` (modified, +89/-1)
-```diff
-@@ -503,6 +503,12 @@ fn resolve_schema(
-         let column_type = &mut schema_info.schema[index].column_schema.data_type;
-         match (column_type, value_type) {
-             (column_type, value_type) if column_type == value_type => Ok(()),
-+            // Auto-transformed arrays and objects use JSONB-encoded binary values.
-+            (ConcreteDataType::Json(json_type), ConcreteDataType::Binary(_))
-+                if !json_type.is_json2() =>
-+            {
-+                Ok(())
-+            }
-             (ConcreteDataType::Json(column_type), ConcreteDataType::Json(value_type))
-                 if column_type.is_json2() && value_type.is_json2() =>
-             {
-@@ -1064,7 +1070,89 @@ mod tests {
-     use table::test_util::MemTable;
- 
-     use super::*;
--    use crate::{PipelineDefinition, identity_pipeline};
-+    use crate::{Content, PipelineDefinition, identity_pipeline, parse, setup_pipeline};
+@@ -53,3 +53,204 @@ async fn get_snapshot_of_file_refs_skips_missing_file_handle_region() {
+     assert!(manifest.manifest_version.is_empty());
+     assert!(manifest.cross_region_refs.is_empty());
+ }
 +
-+    #[test]
-+    fn test_auto_transform_existing_json_column()
-+    -> std::result::Result<(), Box<dyn std::error::Error>> {
-+        let pipeline = parse(&Content::Yaml(
-+            r#"
-+version: 2
-+transform:
-+  - field: ts
-+    type: epoch, ms
-+    index: timestamp
-+"#,
-+        ))?;
-+        let (pipeline, mut schema_info, pipeline_definition, pipeline_params) =
-+            setup_pipeline!(pipeline);
-+        let pipeline_context =
-+            PipelineContext::new(&pipeline_definition, &pipeline_params, Channel::Unknown);
-+        schema_info.set_table(Some(MemTable::table(
-+            "events",
-+            RecordBatch::new_empty(Arc::new(Schema::new(vec![DatatypeColumnSchema::new(
-+                "payload",
-+                ConcreteDataType::Json(Default::default()),
-+                true,
-+            )]))),
-+        )));
-+        let inputs = [
-+            serde_json::Value::Null,
-+            serde_json::json!([2, 4, 6]),
-+            serde_json::json!({"active": true}),
-+            serde_json::json!({"a\"b": "\u{0001}"}),
-+            serde_json::json!([]),
-+            serde_json::json!({}),
-+            serde_json::Value::Null,
-+        ];
-+        let records = inputs
-+            .iter()
-+            .enumerate()
-+            .map(|(i, payload)| serde_json::json!({"ts": i, "payload": payload}))
-+            .collect::<Vec<_>>();
-+        let output = pipeline
-+            .exec_mut(
-+                serde_json::Value::Array(records).into(),
-+                &pipeline_context,
-+                &mut schema_info,
-+            )?
-+            .into_transformed()
-+            .ok_or("expected transformed rows")?;
-+        assert_eq!(output.len(), inputs.len());
-+        let index = schema_info.index["payload"];
-+        assert_eq!(
-+            schema_info.schema[index].column_schema.data_type,
-+            ConcreteDataType::Json(Default::default())
-+        );
-+        for ((row, _), expected) in output.iter().zip(&inputs) {
-+            if expected.is_null() {
-+                assert_eq!(
-+                    row.values.get(index).and_then(|v| v.value_data.as_ref()),
-+                    None
-+                );
-+            } else {
-+                let Some(ValueData::BinaryValue(value)) = &row.values[index].value_data else {
-+                    return Err("expected JSONB-encoded value".into());
-+                };
-+                assert_eq!(datatypes::types::jsonb_to_serde_json(value)?, *expected);
-+            }
-+        }
-+        let error = pipeline
-+            .exec_mut(
-+                serde_json::json!({"ts": 10, "payload": 7}).into(),
-+                &pipeline_context,
-+                &mut schema_info,
-+            )
-+            .err()
-+            .ok_or("expected a datatype mismatch")?;
-+        assert!(
-+            error
-+                .to_string()
-+                .contains("expected datatype: Json, actual datatype: Int64"),
-+            "{error:?}"
-+        );
-+        Ok(())
-+    }
++#[tokio::test]
++async fn get_snapshot_preserves_related_region_old_index_readers() {
++    use store_api::region_engine::{RegionEngine, RegionRole};
++    use store_api::region_request::RegionRequest;
++    use store_api::storage::{FileId, FileRef};
++
++    use crate::manifest::action::{RegionEdit, RegionMetaAction, RegionMetaActionList};
++    use crate::region::RegionLeaderState;
++    use crate::sst::file::{FileHandle, FileMeta, IndexType};
++    use crate::test_util::CreateRequestBuilder;
++
++    let mut env = TestEnv::new().await;
++    let engine = env
++        .create_engine(MitoConfig {
++            gc: crate::gc::GcConfig {
++                enable: true,
++                ..Default::default()
++            },
++            ..Default::default()
++        })
++        .await;
++    let source_region = RegionId::new(1, 1);
++    let target_region = RegionId::new(1, 2);
++    engine
++        .handle_request(
++            target_region,
++            RegionRequest::Create(CreateRequestBuilder::new().build()),
++        )
++        .await
++        .unwrap();
++    engine
++        .set_region_role(target_region, RegionRole::Leader)
++        .unwrap();
++    let meta = FileMeta {
++        region_id: source_region,
++        file_id: FileId::random(),
++        index_version: 2,
++        available_indexes: smallvec::smallvec![IndexType::InvertedIndex],
++        ..Default::default()
++    };
++    let target = engine.get_region(target_region).unwrap();
++    let old_reader = FileHandle::new(
++        FileMeta {
++            index_version: 0,
++            ..meta.clone()
++        },
++        target.file_purger.clone(),
++    );
++    target
++        .manifest_ctx
++        .update_manifest(
++            RegionLeaderState::Writable,
++            RegionMetaActionList::with_action(RegionMetaAction::Edit(RegionEdit {
++                files_to_add: vec![meta.clone()],
++                files_to_remove: vec![],
++                timestamp_ms: None,
++                compaction_time_window: None,
++                flushed_entry_id: None,
++                flushed_sequence: None,
++                committed_sequence: None,
++            })),
++            false,
++        )
++        .await
++        .unwrap();
++
++    // The source is not open here, but a query on the destination still uses its v0 index.
++    let related_regions = HashMap::from([(source_region, HashSet::from([target_region]))]);
++    let snapshot = engine
++        .get_snapshot_of_file_refs([], related_regions.clone())
++        .await
++        .unwrap();
++    assert_eq!(
++        snapshot.file_refs[&source_region],
++        [0, 2]
++            .into_iter()
++            .map(|version| FileRef::new(source_region, meta.file_id, Some(version)))
++            .collect()
++    );
++    assert_eq!(
++        snapshot.cross_region_refs[&source_region],
++        HashSet::from([target_region])
++    );
++    drop(old_reader);
++    let snapshot = engine
++        .get_snapshot_of_file_refs([], related_regions)
++        .await
++        .unwrap();
++    assert_eq!(
++        snapshot.file_refs[&source_region],
++        HashSet::from([FileRef::new(source_region, meta.file_id, Some(2))])
++    );
++}
++
++#[rstest::rstest]
++#[tokio::test]
++async fn get_snapshot_preserves_old_index_readers_until_release(
++    #[values(false, true)] old_has_index: bool,
++) {
++    use store_api::region_engine::{RegionEngine, RegionRole};
++    use store_api::region_request::RegionRequest;
++    use store_api::storage::{FileId, FileRef};
++
++    use crate::manifest::action::{RegionEdit, RegionMetaAction, RegionMetaActionList};
++    use crate::region::RegionLeaderState;
++    use crate::sst::file::{FileMeta, IndexType};
++    use crate::sst::version::SstVersion;
++    use crate::test_util::CreateRequestBuilder;
++
++    let mut env = TestEnv::new().await;
++    let engine = env
++        .create_engine(MitoConfig {
++            gc: crate::gc::GcConfig {
++                enable: true,
++                ..Default::default()
++            },
++            ..Default::default()
++        })
++        .await;
++    let region_id = RegionId::new(1, 1);
++    engine
++        .handle_request(
++            region_id,
++            RegionRequest::Create(CreateRequestBuilder::new().build()),
++        )
++        .await
++        .unwrap();
++    engine
++        .set_region_role(region_id, RegionRole::Leader)
++        .unwrap();
++    let region = engine.get_region(region_id).unwrap();
++    let meta = FileMeta {
++        region_id,
++        file_id: FileId::random(),
++        available_indexes: if old_has_index {
++            smallvec::smallvec![IndexType::InvertedIndex]
++        } else {
++            Default::default()
++        },
++        ..Default::default()
++    };
++    let mut version = SstVersion::new(crate::test_util::memtable_util::metadata_for_test());
++    version.a
+```
+
+**File**: `src/mito2/src/gc.rs` (modified, +14/-29)
+```diff
+@@ -929,17 +929,8 @@ impl LocalGcWorker {
+         unknown_file_may_linger_until: chrono::DateTime<chrono::Utc>,
+     ) -> Vec<RemovedFile> {
+         let mut ready_for_delete = vec![];
+-        // all group by file id for easier checking
+-        let in_tmp_ref: HashMap<FileId, HashSet<IndexVersion>> =
+-            in_tmp_ref
+-                .iter()
+-                .fold(HashMap::new(), |mut acc, (file, version)| {
+-                    let indices = acc.entry(*file).or_default();
+-                    if let Some(version) = version {
+-                        indices.insert(*version);
+-                    }
+-                    acc
+-                });
++        // Every index-version reader needs the same Parquet file.
++        let referenced_ssts: HashSet<_> = in_tmp_ref.iter().map(|(file_id, _)| *file_id).collect();
  
-     #[test]
-     fn test_column_metadata_caches_json_settings() -> Result<()> {
+         let may_linger_files: HashMap<FileId, HashSet<&RemovedFile>> = may_linger_files
+             .iter()
+@@ -976,7 +967,7 @@ impl LocalGcWorker {
+             let should_delete = match file_type {
+                 FileType::Parquet => {
+                     let is_in_manifest = in_manifest.contains_key(&file_id);
+-                    let is_in_tmp_ref = in_tmp_ref.contains_key(&file_id);
++                    let is_in_tmp_ref = referenced_ssts.contains(&file_id);
+                     let is_linger = may_linger_files.contains_key(&file_id);
+                     let is_eligible_for_delete = eligible_for_delete.contains_key(&file_id);
+ 
+@@ -991,15 +982,8 @@ impl LocalGcWorker {
+                     )
+                 }
+                 FileType::Puffin(version) => {
+-                    // notice need to check both file id and version
+-                    let is_in_manifest = in_manifest
+-                        .get(&file_id)
+-                        .map(|opt_ver| *opt_ver == Some(version))
+-                        .unwrap_or(false);
+-                    let is_in_tmp_ref = in_tmp_ref
+-                        .get(&file_id)
+-                        .map(|versions| versions.contains(&version))
+-                        .unwrap_or(false);
++                    let is_in_manifest = in_manifest.get(&file_id) == Some(&Some(version));
++                    let is_in_tmp_ref = in_tmp_ref.contains(&(file_id, Some(version)));
+                     let is_linger = may_linger_files
+                         .get(&file_id)
+                         .map(|files| files.contains(&&RemovedFile::Index(file_id, version)))
+@@ -1100,21 +1084,22 @@ impl LocalGcWorker {
+         // When full_file_listing is false, skip expensive list operations and only delete
+         // files that are tracked in recently_removed_files
+         if !self.full_file_listing {
++            let referenced_ssts: HashSet<_> =
++                in_tmp_ref.iter().map(|(file_id, _)| *file_id).collect();
+             // Only delete files that:
+             // 1. Are in recently_removed_files (tracked in manifest)
+             // 2. Are not in use(in manifest or tmp ref)
+             // 3. Have passed the lingering time
+             let files_to_delete: Vec<RemovedFile> = eligible_for_removal
+                 .iter()
+-                .filter(|file_id| {
+-                    let in_use = match file_id {
+-                        RemovedFile::File(file_id, index_version) => {
+-                            in_manifest.get(file_id) == Some(index_version)
+-                                || in_tmp_ref.contains(&(*file_id, *index_version))
++                .filter(|file| {
++                    let in_use = match file {
++                        RemovedFile::File(file_id, _) => {
++                            in_manifest.contains_key(file_id) || referenced_ssts.contains(file_id)
+                         }
+-                        RemovedFile::Index(file_id, index_version) => {
+-                            in_manifest.get(file_id) == Some(&Some(*index_version))
+-                                || in_tmp_ref.contains(&(*file_id, Some(*index_version)))
++                        RemovedFile::Index(file_id, version) => {
++                            in_manifest.get(file_id) == Some(&Some(*version))
++                                || in_tmp_ref.contains(&(*file_id, Some(*version)))
+                         }
+                     };
+                     !in_use
+```
+
+**File**: `src/mito2/src/gc/worker_test.rs` (modified, +297/-4)
+```diff
+@@ -21,12 +21,13 @@ use async_trait::async_trait;
+ use bytes::Bytes;
+ use common_base::Plugins;
+ use common_telemetry::init_default_ut_logging;
++use common_time::Timestamp;
+ use futures::TryStreamExt;
+ use object_store::{Entry, ObjectStore, services};
+ use store_api::metadata::RegionMetadataRef;
+-use store_api::region_engine::RegionEngine as _;
++use store_api::region_engine::{RegionEngine as _, RegionRole};
+ use store_api::region_request::{RegionCompactRequest, RegionRequest};
+-use store_api::storage::{FileRef, FileRefsManifest, RegionId};
++use store_api::storage::{FileId, FileRef, FileRefsManifest, IndexVersion, RegionId};
+ 
+ use crate::access_layer::AccessLayerRef;
+ use crate::config::MitoConfig;
+@@ -35,9 +36,11 @@ use crate::engine::compaction_test::{delete_and_flush, put_and_flush};
+ use crate::engine::region_hook::{RegionGcInfo, RegionHook, RegionHookRef};
+ use crate::error::UnexpectedSnafu;
+ use crate::gc::{GcConfig, LocalGcWorker, should_delete_file};
+-use crate::manifest::action::RemovedFile;
++use crate::manifest::action::{RegionEdit, RegionMetaAction, RegionMetaActionList, RemovedFile};
+ use crate::metrics::GC_SKIPPED_UNPARSABLE_FILES;
+-use crate::region::MitoRegionRef;
++use crate::region::{MitoRegionRef, RegionLeaderState};
++use crate::sst::file::{FileHandle, FileMeta, IndexType, RegionIndexId};
++use crate::sst::location;
+ use crate::test_util::{
+     CreateRequestBuilder, TestEnv, build_rows, flush_region, put_rows, rows_schema,
+ };
+@@ -74,6 +77,296 @@ async fn create_gc_worker(
+     .unwrap()
+ }
+ 
++struct IndexGcTestEnv {
++    engine: MitoEngine,
++    region: MitoRegionRef,
++    worker: LocalGcWorker,
++    meta: FileMeta,
++    entries: Vec<Entry>,
++    removed_files: BTreeMap<Timestamp, HashSet<RemovedFile>>,
++    _env: TestEnv,
++}
++
++impl IndexGcTestEnv {
++    async fn new(full_file_listing: bool) -> Self {
++        let mut env = TestEnv::new().await;
++        let engine = env
++            .create_engine(MitoConfig {
++                gc: GcConfig {
++                    enable: true,
++                    lingering_time: Some(std::time::Duration::from_secs(60 * 60)),
++                    ..Default::default()
++                },
++                ..Default::default()
++            })
++            .await;
++        let region_id = RegionId::new(1, 1);
++        engine
++            .handle_request(
++                region_id,
++                RegionRequest::Create(CreateRequestBuilder::new().build()),
++            )
++            .await
++            .unwrap();
++        let region = engine.get_region(region_id).unwrap();
++        let meta = FileMeta {
++            region_id,
++            file_id: FileId::random(),
++            available_indexes: smallvec::smallvec![IndexType::InvertedIndex],
++            ..Default::default()
++        };
++        let layer = &region.access_layer;
++        let paths = [
++            location::sst_file_path(layer.table_dir(), meta.file_id(), layer.path_type()),
++            location::index_file_path(layer.table_dir(), meta.index_id(), layer.path_type()),
++            location::index_file_path(
++                layer.table_dir(),
++                RegionIndexId::new(meta.file_id(), 1),
++                layer.path_type(),
++            ),
++        ];
++        let mut entries = Vec::new();
++        for path in paths {
++            entries.push(write_and_list_entry(layer.object_store(), &path).await);
++        }
++        let removed_files = BTreeMap::from([(
++            Timestamp::new_millisecond(0),
++            HashSet::from([
++                RemovedFile::File(meta.file_id, Some(1)),
++                RemovedFile::Index(meta.file_id, 0),
++                RemovedFile::Index(meta.file_id, 1),
++            ]),
++        )]);
++        let worker = create_gc_worker(
++            &engine,
++            BTreeMap::from([(region_id, Some(region.clone()))]),
++            &FileRefsManifest::default(),
++            full_file_listing,
++        )
++        .await;
++        Self {
++            engine,
++            region,
++            worker,
++            meta,
++            entries,
++            removed_files,
++            _env: env,
++        }
++    }
++}
++
++#[rstest::rstest]
++#[tokio::test]
++async fn test_gc_keeps_sst_across_index_versions(
++    #[values(false, true)] full_file_listing: bool,
++    #[values(false, true)] old_reader_last: bool,
++) {
++    use crate::sst::version::SstVersion;
++
++    let env = IndexGcTestEnv::new(full_file_listing).await;
++    let meta = &env.meta;
++    let region_id = meta.region_id;
++    let mut version = SstVersion::new(crate::test_util::memtable_util::metadata_for_test());
++    version.add_files(env.region.file_purger.clone(), [meta.clone()].into_iter());
++    let old = version.levels()[0].files[&meta.file_id].clone();
++    let updated = FileMeta {
++        index_version: 1,
++        ..meta.clone()
++    };
++    version.add_files(env.region.file_purger.clone(), [updated].into_iter());
++    let new = version.levels()[0].files[&meta.file_id].clone();
++    version.ma
+```
+
+**File**: `src/mito2/src/region.rs` (modified, +2/-4)
+```diff
+@@ -2363,10 +2363,8 @@ mod tests {
+         struct CountingPurger(AtomicUsize);
+ 
+         impl FilePurger for CountingPurger {
+-            fn remove_file(&self, _: FileMeta, is_delete: bool, _: bool) {
+-                if is_delete {
+-                    self.0.fetch_add(1, Ordering::SeqCst);
+-                }
++            fn purge_file(&self, _: FileMeta) {
++                self.0.fetch_add(1, Ordering::SeqCst);
+             }
+         }
+ 
+```
+
+**File**: `src/mito2/src/sst/file.rs` (modified, +68/-30)
+```diff
+@@ -39,6 +39,7 @@ use crate::cache::CacheManagerRef;
+ use crate::cache::file_cache::{FileType, IndexKey};
+ use crate::region::options::IndexOptions;
+ use crate::sst::file_purger::FilePurgerRef;
++use crate::sst::file_ref::FileReferenceManagerRef;
+ use crate::sst::index::fulltext_index::FULLTEXT_BLOOM_VERSION;
+ use crate::sst::location;
+ use crate::sst::parquet::SstInfo;
+@@ -551,13 +552,13 @@ impl fmt::Debug for FileHandle {
+         f.debug_struct("FileHandle")
+             .field("meta", self.meta_ref())
+             .field("compacting", &self.compacting())
+-            .field("deleted", &self.inner.deleted.load(Ordering::Relaxed))
++            .field("deleted", &self.is_deleted())
+             .finish()
+     }
+ }
+ 
+ impl FileHandle {
+-    /// Creates a handle sharing the file's physical state and original statistics.
++    /// Creates a new logical SST reference. Index replacements must reuse its lifetime.
+     pub fn new(meta: FileMeta, file_purger: FilePurgerRef) -> FileHandle {
+         let pk_range = meta.primary_key_range();
+         FileHandle {
+@@ -576,6 +577,23 @@ impl FileHandle {
+         }
+     }
+ 
++    /// Replaces an index metadata view without splitting the underlying SST lifetime.
++    pub(crate) fn with_updated_index(&self, meta: FileMeta) -> Self {
++        debug_assert_eq!(self.file_id(), meta.file_id());
++        let primary_key_range = meta
++            .primary_key_range()
++            .or_else(|| self.raw_primary_key_range());
++        let lifetime = self.inner.lifetime.clone();
++        *lifetime.meta.lock().unwrap() = meta.clone();
++        Self {
++            inner: Arc::new(FileHandleInner::with_lifetime(
++                meta,
++                lifetime,
++                primary_key_range,
++            )),
++        }
++    }
++
+     /// Returns the region id of the file.
+     pub fn region_id(&self) -> RegionId {
+         self.inner.meta.region_id
+@@ -615,7 +633,7 @@ impl FileHandle {
+ 
+     /// Mark the file as deleted and will delete it on drop asynchronously
+     pub fn mark_deleted(&self) {
+-        self.inner.deleted.store(true, Ordering::Relaxed);
++        self.inner.lifetime.deleted.store(true, Ordering::Relaxed);
+     }
+ 
+     pub fn compacting(&self) -> bool {
+@@ -634,23 +652,13 @@ impl FileHandle {
+             .is_ok()
+     }
+ 
+-    pub fn index_outdated(&self) -> bool {
+-        self.inner.index_outdated.load(Ordering::Relaxed)
+-    }
+-
+-    pub fn set_index_outdated(&self, index_outdated: bool) {
+-        self.inner
+-            .index_outdated
+-            .store(index_outdated, Ordering::Relaxed);
+-    }
+-
+     /// Returns a reference to the [FileMeta].
+     pub fn meta_ref(&self) -> &FileMeta {
+         &self.inner.meta
+     }
+ 
+     pub fn file_purger(&self) -> FilePurgerRef {
+-        self.inner.file_purger.clone()
++        self.inner.lifetime.file_purger.clone()
+     }
+ 
+     pub fn size(&self) -> u64 {
+@@ -670,7 +678,7 @@ impl FileHandle {
+     }
+ 
+     pub fn is_deleted(&self) -> bool {
+-        self.inner.deleted.load(Ordering::Relaxed)
++        self.inner.lifetime.deleted.load(Ordering::Relaxed)
+     }
+ 
+     /// Returns bounds aligned to the caller's pinned schema, before any comparison
+@@ -776,39 +784,69 @@ impl PrimaryKeyRange {
+ struct FileHandleInner {
+     meta: FileMeta,
+     compacting: AtomicBool,
+-    deleted: AtomicBool,
+-    index_outdated: AtomicBool,
+     primary_key_range: RwLock<PrimaryKeyRange>,
+-    file_purger: FilePurgerRef,
++    lifetime: Arc<SstLifetime>,
+ }
+ 
+ impl Drop for FileHandleInner {
+     fn drop(&mut self) {
+-        self.file_purger.remove_file(
+-            self.meta.clone(),
+-            self.deleted.load(Ordering::Acquire),
+-            self.index_outdated.load(Ordering::Acquire),
+-        );
++        if let Some(manager) = &self.lifetime.file_ref_manager {
++            manager.remove_file(&self.meta);
++        }
+     }
+ }
+ 
+ impl FileHandleInner {
+-    /// There should only be one `FileHandleInner` for each file on a datanode
+     fn new(
+         meta: FileMeta,
+         file_purger: FilePurgerRef,
+         primary_key_range: Option<(Bytes, Bytes)>,
+-    ) -> FileHandleInner {
+-        file_purger.new_file(&meta);
+-        FileHandleInner {
++    ) -> Self {
++        let file_ref_manager = file_purger.file_ref_manager();
++        let lifetime = Arc::new(SstLifetime {
++            meta: Mutex::new(meta.clone()),
++            deleted: AtomicBool::new(false),
++            file_purger,
++            file_ref_manager,
++        });
++        Self::with_lifetime(meta, lifetime, primary_key_range)
++    }
++
++    fn with_lifetime(
++        meta: FileMeta,
++        lifetime: Arc<SstLifetime>,
++        primary_key_range: Option<(Bytes, Bytes)>,
++    ) -> Self {
++        if let Some(manager) = &lifetime.file_ref_manager {
++            manager.register_file(&meta);
++        }
++        Self {
+             meta,
+             compacting: AtomicBool::new(false),
+-            deleted: AtomicBool::new(false),
+-            index_outdated: AtomicBo
+```
+
+**File**: `src/mito2/src/sst/file_purger.rs` (modified, +213/-141)
+```diff
+@@ -23,23 +23,20 @@ use crate::access_layer::AccessLayerRef;
+ use crate::cache::CacheManagerRef;
+ use crate::error::Result;
+ use crate::schedule::scheduler::SchedulerRef;
+-use crate::sst::file::{FileMeta, delete_files, delete_index};
++use crate::sst::file::{FileMeta, delete_files};
+ use crate::sst::file_ref::FileReferenceManagerRef;
+ use crate::sst::range_index::RangeIndexDeleter;
+ 
+ /// A worker to delete files in background.
+ pub trait FilePurger: Send + Sync + fmt::Debug {
+-    /// Send a request to remove the file.
+-    /// If `is_delete` is true, the file will be deleted from the storage.
+-    /// Otherwise, only the reference will be removed.
+-    /// If `index_outdated` is true, the index file will be deleted regardless of `is_delete`.
+-    fn remove_file(&self, file_meta: FileMeta, is_delete: bool, index_outdated: bool);
+-
+-    /// Notify the purger of a new file created.
+-    /// This is useful for object store based storage, where we need to track the file references
+-    /// The default implementation is a no-op.
+-    fn new_file(&self, _: &FileMeta) {
+-        // noop
++    /// Purges a retired SST and its indexes after all metadata views release their readers.
++    /// Each metadata view has already released its reader reference.
++    fn purge_file(&self, file_meta: FileMeta);
++
++    /// Returns the object-store reference manager used by SST metadata views.
++    /// Local and no-op purgers do not track GC references.
++    fn file_ref_manager(&self) -> Option<FileReferenceManagerRef> {
++        None
+     }
+ }
+ 
+@@ -50,9 +47,7 @@ pub type FilePurgerRef = Arc<dyn FilePurger>;
+ pub struct NoopFilePurger;
+ 
+ impl FilePurger for NoopFilePurger {
+-    fn remove_file(&self, _file_meta: FileMeta, _is_delete: bool, _index_outdated: bool) {
+-        // noop
+-    }
++    fn purge_file(&self, _file_meta: FileMeta) {}
+ }
+ 
+ /// Purger that purges file for current region.
+@@ -182,33 +177,16 @@ impl LocalFilePurger {
+             error!(e; "Failed to schedule the file purge request");
+         }
+     }
+-
+-    fn delete_index(&self, file_meta: FileMeta) {
+-        let sst_layer = self.sst_layer.clone();
+-        let cache_manager = self.cache_manager.clone();
+-        if let Err(e) = self.scheduler.schedule(Box::pin(async move {
+-            let index_id = file_meta.index_id();
+-            if let Err(e) = delete_index(index_id, &sst_layer, &cache_manager).await {
+-                error!(e; "Failed to delete index for file {:?} from storage", file_meta);
+-            }
+-        })) {
+-            error!(e; "Failed to schedule the index purge request");
+-        }
+-    }
+ }
+ 
+ impl FilePurger for LocalFilePurger {
+-    fn remove_file(&self, file_meta: FileMeta, is_delete: bool, index_outdated: bool) {
+-        if is_delete {
+-            schedule_range_index_deletion(
+-                &self.scheduler,
+-                self.range_index_deleter.as_ref(),
+-                file_meta.file_id,
+-            );
+-            self.delete_file(file_meta);
+-        } else if index_outdated {
+-            self.delete_index(file_meta);
+-        }
++    fn purge_file(&self, file_meta: FileMeta) {
++        schedule_range_index_deletion(
++            &self.scheduler,
++            self.range_index_deleter.as_ref(),
++            file_meta.file_id,
++        );
++        self.delete_file(file_meta);
+     }
+ }
+ 
+@@ -246,31 +224,26 @@ fn schedule_range_index_deletion(
+ }
+ 
+ impl FilePurger for ObjectStoreFilePurger {
+-    fn remove_file(&self, file_meta: FileMeta, is_delete: bool, _index_outdated: bool) {
+-        // if not on local file system, instead inform the global file purger to remove the file reference.
+-        // notice that no matter whether the file is deleted or not, we need to remove the reference
+-        // because the file is no longer in use nonetheless.
+-        // for same reason, we don't care about index_outdated here.
+-        self.file_ref_manager.remove_file(&file_meta);
+-        if is_delete {
+-            schedule_range_index_deletion(
+-                &self.scheduler,
+-                self.range_index_deleter.as_ref(),
+-                file_meta.file_id,
+-            );
+-        }
++    fn purge_file(&self, file_meta: FileMeta) {
++        schedule_range_index_deletion(
++            &self.scheduler,
++            self.range_index_deleter.as_ref(),
++            file_meta.file_id,
++        );
+     }
+ 
+-    fn new_file(&self, file_meta: &FileMeta) {
+-        self.file_ref_manager.add_file(file_meta);
++    fn file_ref_manager(&self) -> Option<FileReferenceManagerRef> {
++        Some(self.file_ref_manager.clone())
+     }
+ }
+ 
+ #[cfg(test)]
+ mod tests {
+     use std::num::NonZeroU64;
++    use std::sync::Barrier;
++    use std::thread;
+ 
+-    use common_test_util::temp_dir::create_temp_dir;
++    use common_test_util::temp_dir::{TempDir, create_temp_dir};
+     use object_store::ObjectStore;
+     use object_store::services::Fs;
+     use smallvec::SmallVec;
+@@ -288,43 +261,147 @@ mod tests {
+     use crate::sst::index::puff
+```
+
+**File**: `src/mito2/src/sst/file_ref.rs` (modified, +95/-235)
+```diff
+@@ -24,23 +24,18 @@ use crate::metrics::GC_REF_FILE_CNT;
+ use crate::region::MitoRegionRef;
+ use crate::sst::file::FileMeta;
+ 
+-/// File references for a region.
+-/// It contains all files referenced by the region.
++/// File references grouped by their physical source region.
+ #[derive(Debug, Clone, Default)]
+-pub struct RegionFileRefs {
+-    /// (FileRef, Ref Count) meaning how many FileHandleInner is opened for this file.
+-    pub files: HashMap<FileRef, usize>,
++struct RegionFileRefs {
++    /// Counts independent metadata views of each physical file and index version.
++    files: HashMap<FileRef, usize>,
+ }
+ 
+-/// Manages all file references in one datanode.
+-/// It keeps track of which files are referenced and group by table ids.
+-/// This is useful for ensuring that files are not deleted while they are still in use by any
+-/// query.
++/// Tracks reader references to SST metadata views in one datanode for object-store GC.
+ #[derive(Debug)]
+ pub struct FileReferenceManager {
+     /// Datanode id. used to determine tmp ref file name.
+     node_id: Option<u64>,
+-    /// TODO(discord9): use no hash hasher since table id is sequential.
+     files_per_region: DashMap<RegionId, RegionFileRefs>,
+     /// Whether global GC is enabled.
+     /// This is only meaningful when using object store (not local filesystem).
+@@ -68,58 +63,49 @@ impl FileReferenceManager {
+     }
+ 
+     /// Returns whether global GC is enabled.
+-    ///
+-    /// This is useful for determining the file deletion strategy:
+-    /// - If GC is enabled (and using object store), files are tracked but not immediately deleted
+-    /// - If GC is disabled (or using local filesystem), files are deleted immediately
+     pub fn is_gc_enabled(&self) -> bool {
+         self.gc_enabled
+     }
+ 
+     fn ref_file_set(&self, region_id: RegionId) -> Option<HashSet<FileRef>> {
+-        // region id not found.
+-        let file_refs = self.files_per_region.get(&region_id)?.clone();
+-
+-        if file_refs.files.is_empty() {
+-            // still return an empty manifest to indicate no files are referenced.
+-            // and differentiate from error case where table_id not found.
+-            return Some(HashSet::new());
+-        }
+-
+-        let ref_file_set: HashSet<FileRef> = file_refs.files.keys().cloned().collect();
+-
++        let region_refs = self.files_per_region.get(&region_id)?.clone();
++        let refs: HashSet<_> = region_refs.files.keys().cloned().collect();
+         debug!(
+             "Get file refs for region {}, node {:?}, {} files",
+             region_id,
+             self.node_id,
+-            ref_file_set.len(),
++            region_refs.files.len(),
+         );
+-
+-        Some(ref_file_set)
++        Some(refs)
+     }
+ 
+-    /// Gets all ref files for the given regions, meaning all open FileHandles for those regions
+-    /// and from related regions' manifests.
+-    /// `query_regions_for_mem` queries for in memory file handles.
+-    /// `related_regions_in_manifest` queries for related regions' manifests to get more file refs of given region ids.
++    /// Gets references from live SST metadata views and related regions' manifests.
+     pub(crate) async fn get_snapshot_of_file_refs(
+         &self,
+         query_regions_for_mem: Vec<MitoRegionRef>,
+         dst_region_to_src_regions: Vec<(MitoRegionRef, HashSet<RegionId>)>,
+     ) -> Result<FileRefsManifest> {
++        // Imported SSTs are tracked under their source region even if that region is
++        // not open on this node. Capture their old readers before reading manifests.
++        let region_ids: HashSet<_> = query_regions_for_mem
++            .iter()
++            .map(|r| r.region_id())
++            .chain(
++                dst_region_to_src_regions
++                    .iter()
++                    .flat_map(|(_, sources)| sources.iter().copied()),
++            )
++            .collect();
+         let mut ref_files = HashMap::new();
+-        // get from in memory file handles
+-        for region_id in query_regions_for_mem.iter().map(|r| r.region_id()) {
++        for region_id in region_ids {
+             if let Some(files) = self.ref_file_set(region_id) {
+                 ref_files.insert(region_id, files);
+             }
+         }
+ 
+         let mut manifest_version = HashMap::new();
+-
+         let mut cross_region_refs = HashMap::new();
+ 
+-        // get file refs from related regions' manifests
+         for (dst_region, src_regions) in &dst_region_to_src_regions {
+             let manifest = dst_region.manifest_ctx.manifest().await;
+             for meta in manifest.files.values() {
+@@ -128,9 +114,8 @@ impl FileReferenceManager {
+                         .entry(meta.region_id)
+                         .or_insert_with(HashSet::new)
+                         .insert(dst_region.region_id());
+-                    // since gc couldn't happen together with repartition
+-                    // (both the queries and related_region acquire region read lock), no need to worry about
+-  
 ```
 
 ---
 
-### Incident Patch 3: `00ab0901` (2026-10-23)
-**Commit Message**: ci: fix CI setup steps that fail on Ubuntu 26.04 runners (#9901)
+### Incident Patch 2: `5b4efd90` (2026-10-27)
+**Commit Message**: perf(mito2): index encoded bulk parts from memory during flush (#9913)
 
-* ci: install protoc with taiki-e/install-action
+* perf(mito2): build encoded bulk part indexes from in-memory bytes during flush
 
-Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
-
-* ci: run multi-language SDK tests on Python 3.13
-
-Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
-
-* ci: drop the unused libfuzzer-14-dev package from fuzz builds
+Sync flush uploaded encoded bulk parts without indexes and rebuilt them after
+the flush, which read every encoded SST back from the object store and needed a
+second manifest commit. Build the indexes from the encoded bytes still in memory
+before the flush commits, the same way the regular SST writer does, and drop the
+post-flush rebuild for these files.
 
 Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
 
-* ci: build fuzz targets with the bundled libFuzzer
+* fix(mito2): keep flush going when indexing encoded bytes fails
+
+Match ParquetWriter: a failure while building indexes from the encoded bytes
+logs and leaves the SST unindexed instead of failing the flush after the SST
+was uploaded.
 
 Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
 
----------
+* fix(mito2): own encoded SSTs for cleanup before uploading them
+
+Index creation now runs after an encoded SST is uploaded, so a truncate or drop
+could cancel the flush after the upload but before UncommittedSsts tracked the
+file, leaving the SST and its index behind. Track the file before the upload,
+and fill the index metadata on the caller's SstInfo i
+
+**File**: `config/config.md` (modified, +2/-0)
+```diff
+@@ -225,6 +225,7 @@
+ | `region_engine.mito.index.aux_path` | String | `""` | Auxiliary directory path for the index in filesystem, used to store intermediate files for<br/>creating the index and staging files for searching the index, defaults to `{data_home}/index_intermediate`.<br/>The default name for this directory is `index_intermediate` for backward compatibility.<br/><br/>This path contains two subdirectories:<br/>- `__intm`: for storing intermediate files used during creating index.<br/>- `staging`: for storing staging files used during searching index. |
+ | `region_engine.mito.index.staging_size` | String | `2GB` | The max capacity of the staging directory. |
+ | `region_engine.mito.index.staging_ttl` | String | `7d` | The TTL of the staging directory.<br/>Defaults to 7 days.<br/>Setting it to "0s" to disable TTL. |
++| `region_engine.mito.index.build_mode` | String | `sync` | When to build indexes for new SST files.<br/>- `sync`: build indexes while writing SST files during flush and compaction.<br/>- `async`: build indexes in the background after the SST files are written. Queries read<br/>  these files without indexes until the build finishes. |
+ | `region_engine.mito.index.metadata_cache_size` | String | `64MiB` | Cache size for inverted index metadata. |
+ | `region_engine.mito.index.content_cache_size` | String | `128MiB` | Cache size for inverted index content. |
+ | `region_engine.mito.index.content_cache_page_size` | String | `64KiB` | Page size for inverted index content cache. |
+@@ -703,6 +704,7 @@
+ | `region_engine.mito.index.aux_path` | String | `""` | Auxiliary directory path for the index in filesystem, used to store intermediate files for<br/>creating the index and staging files for searching the index, defaults to `{data_home}/index_intermediate`.<br/>The default name for this directory is `index_intermediate` for backward compatibility.<br/><br/>This path contains two subdirectories:<br/>- `__intm`: for storing intermediate files used during creating index.<br/>- `staging`: for storing staging files used during searching index. |
+ | `region_engine.mito.index.staging_size` | String | `2GB` | The max capacity of the staging directory. |
+ | `region_engine.mito.index.staging_ttl` | String | `7d` | The TTL of the staging directory.<br/>Defaults to 7 days.<br/>Setting it to "0s" to disable TTL. |
++| `region_engine.mito.index.build_mode` | String | `sync` | When to build indexes for new SST files.<br/>- `sync`: build indexes while writing SST files during flush and compaction.<br/>- `async`: build indexes in the background after the SST files are written. Queries read<br/>  these files without indexes until the build finishes. |
+ | `region_engine.mito.index.metadata_cache_size` | String | `64MiB` | Cache size for inverted index metadata. |
+ | `region_engine.mito.index.content_cache_size` | String | `128MiB` | Cache size for inverted index content. |
+ | `region_engine.mito.index.content_cache_page_size` | String | `64KiB` | Page size for inverted index content cache. |
+```
+
+**File**: `config/datanode.example.toml` (modified, +6/-0)
+```diff
+@@ -734,6 +734,12 @@ staging_size = "2GB"
+ ## Setting it to "0s" to disable TTL.
+ staging_ttl = "7d"
+ 
++## When to build indexes for new SST files.
++## - `sync`: build indexes while writing SST files during flush and compaction.
++## - `async`: build indexes in the background after the SST files are written. Queries read
++##   these files without indexes until the build finishes.
++build_mode = "sync"
++
+ ## Cache size for inverted index metadata.
+ metadata_cache_size = "64MiB"
+ 
+```
+
+**File**: `config/standalone.example.toml` (modified, +6/-0)
+```diff
+@@ -949,6 +949,12 @@ staging_size = "2GB"
+ ## Setting it to "0s" to disable TTL.
+ staging_ttl = "7d"
+ 
++## When to build indexes for new SST files.
++## - `sync`: build indexes while writing SST files during flush and compaction.
++## - `async`: build indexes in the background after the SST files are written. Queries read
++##   these files without indexes until the build finishes.
++build_mode = "sync"
++
+ ## Cache size for inverted index metadata.
+ metadata_cache_size = "64MiB"
+ 
+```
+
+**File**: `src/mito2/src/access_layer.rs` (modified, +65/-4)
+```diff
+@@ -44,9 +44,9 @@ use crate::metrics::{COMPACTION_STAGE_ELAPSED, FLUSH_ELAPSED};
+ use crate::read::FlatSource;
+ use crate::region::options::IndexOptions;
+ use crate::sst::file::{FileHandle, RegionFileId, RegionIndexId};
+-use crate::sst::index::IndexerBuilderImpl;
+ use crate::sst::index::intermediate::IntermediateManager;
+ use crate::sst::index::puffin_manager::{PuffinManagerFactory, SstPuffinManager};
++use crate::sst::index::{IndexerBuilderImpl, build_index_from_parquet_bytes};
+ use crate::sst::location::{self, region_dir_from_table_dir};
+ use crate::sst::parquet::reader::ParquetReaderBuilder;
+ use crate::sst::parquet::writer::ParquetWriter;
+@@ -477,13 +477,19 @@ impl AccessLayer {
+     }
+ 
+     /// Puts encoded SST bytes to the write cache (if enabled) and uploads it to the object store.
++    ///
++    /// Builds the SST's indexes from `data` into `sst_info.index_metadata` when
++    /// `index_build_params` is set.
+     pub(crate) async fn put_sst(
+         &self,
+         data: &bytes::Bytes,
+-        region_file_id: RegionFileId,
++        region_id: RegionId,
++        sst_info: &mut SstInfo,
+         cache_manager: &CacheManagerRef,
+         write_buffer_size: ReadableSize,
++        index_build_params: Option<EncodedSstIndexBuildParams>,
+     ) -> Result<Metrics> {
++        let region_file_id = RegionFileId::new(region_id, sst_info.file_id);
+         if let Some(write_cache) = cache_manager.write_cache() {
+             // Write to cache and upload to remote store
+             let upload_request = SstUploadRequest {
+@@ -494,7 +500,14 @@ impl AccessLayer {
+                 remote_store: self.object_store.clone(),
+             };
+             write_cache
+-                .put_and_upload_sst(data, region_file_id, upload_request, write_buffer_size)
++                .put_and_upload_sst(
++                    data,
++                    region_id,
++                    sst_info,
++                    upload_request,
++                    write_buffer_size,
++                    index_build_params,
++                )
+                 .await
+         } else {
+             let start = Instant::now();
+@@ -519,6 +532,19 @@ impl AccessLayer {
+             }
+             let mut metrics = Metrics::new(WriteType::Flush);
+             metrics.write_batch = start.elapsed();
++
++            if let Some(params) = index_build_params {
++                let start = Instant::now();
++                let builder = params.indexer_builder(
++                    self.puffin_manager_factory
++                        .build(self.object_store.clone(), path_provider),
++                    false,
++                    self.intermediate_manager.clone(),
++                );
++                sst_info.index_metadata =
++                    build_index_from_parquet_bytes(&builder, region_file_id, data).await;
++                metrics.update_index = start.elapsed();
++            }
+             Ok(metrics)
+         }
+     }
+@@ -593,6 +619,36 @@ pub struct SstWriteRequest {
+     pub bloom_filter_index_config: BloomFilterConfig,
+ }
+ 
++/// Index inputs for SST bytes that were encoded outside [ParquetWriter].
++pub(crate) struct EncodedSstIndexBuildParams {
++    pub(crate) metadata: RegionMetadataRef,
++    pub(crate) index_options: IndexOptions,
++    pub(crate) inverted_index_config: InvertedIndexConfig,
++    pub(crate) fulltext_index_config: FulltextIndexConfig,
++    pub(crate) bloom_filter_index_config: BloomFilterConfig,
++}
++
++impl EncodedSstIndexBuildParams {
++    pub(crate) fn indexer_builder(
++        self,
++        puffin_manager: SstPuffinManager,
++        write_cache_enabled: bool,
++        intermediate_manager: IntermediateManager,
++    ) -> IndexerBuilderImpl {
++        IndexerBuilderImpl {
++            build_type: OperationType::Flush.into(),
++            metadata: self.metadata,
++            puffin_manager,
++            write_cache_enabled,
++            intermediate_manager,
++            index_options: self.index_options,
++            inverted_index_config: self.inverted_index_config,
++            fulltext_index_config: self.fulltext_index_config,
++            bloom_filter_index_config: self.bloom_filter_index_config,
++        }
++    }
++}
++
+ /// Cleaner to remove temp files on the atomic write dir.
+ pub(crate) struct TempFileCleaner {
+     region_id: RegionId,
+@@ -830,9 +886,14 @@ mod tests {
+         access_layer
+             .put_sst(
+                 &encoded,
+-                file_id,
++                file_id.region_id(),
++                &mut SstInfo {
++                    file_id: file_id.file_id(),
++                    ..Default::default()
++                },
+                 &cache_manager,
+                 ReadableSize(chunk_size as u64),
++                None,
+             )
+             .await
+             .unwrap();
+```
+
+**File**: `src/mito2/src/batch_size.rs` (modified, +19/-0)
+```diff
+@@ -14,11 +14,30 @@
+ 
+ //! Utilities for choosing an execution batch size from source statistics.
+ 
++use parquet::file::metadata::ParquetMetaData;
++
+ use crate::sst::parquet::DEFAULT_READ_BATCH_SIZE;
+ 
+ /// Approximate decoded bytes to produce in one batch.
+ pub(crate) const TARGET_BATCH_BYTES: usize = 64 * 1024 * 1024;
+ 
++/// Returns `(num_rows, uncompressed_bytes)` of the largest row group in a Parquet file, which
++/// bounds the decoded size of a batch read from it.
++pub(crate) fn largest_row_group_statistic(metadata: &ParquetMetaData) -> Option<(u64, u64)> {
++    metadata
++        .row_groups()
++        .iter()
++        .map(|row_group| {
++            let uncompressed_bytes = row_group
++                .columns()
++                .iter()
++                .map(|column| column.uncompressed_size() as u64)
++                .sum();
++            (row_group.num_rows() as u64, uncompressed_bytes)
++        })
++        .max_by_key(|(_, uncompressed_bytes)| *uncompressed_bytes)
++}
++
+ /// Estimates a batch size from `(num_rows, estimated_bytes)` pairs.
+ ///
+ /// Uses the widest source with valid statistics and targets approximately 64 MiB of decoded data.
+```
+
+**File**: `src/mito2/src/cache/write_cache.rs` (modified, +62/-17)
+```diff
+@@ -26,20 +26,21 @@ use store_api::storage::RegionId;
+ use tokio::sync::mpsc::{UnboundedSender, unbounded_channel};
+ 
+ use crate::access_layer::{
+-    FilePathProvider, Metrics, OperationType, RegionFilePathFactory, SstInfoArray, SstWriteRequest,
+-    TempFileCleaner, WriteCachePathProvider, WriteType, new_fs_cache_store,
++    EncodedSstIndexBuildParams, FilePathProvider, Metrics, OperationType, RegionFilePathFactory,
++    SstInfoArray, SstWriteRequest, TempFileCleaner, WriteCachePathProvider, WriteType,
++    new_fs_cache_store,
+ };
+ use crate::cache::file_cache::{FileCache, FileCacheRef, FileType, IndexKey, IndexValue};
+ use crate::cache::manifest_cache::ManifestCache;
+ use crate::error::{self, Result};
+ use crate::metrics::UPLOAD_BYTES_TOTAL;
+ use crate::region::opener::RegionLoadCacheTask;
+ use crate::sst::file::RegionFileId;
+-use crate::sst::index::IndexerBuilderImpl;
+ use crate::sst::index::intermediate::IntermediateManager;
+ use crate::sst::index::puffin_manager::{PuffinManagerFactory, SstPuffinManager};
+-use crate::sst::parquet::WriteOptions;
++use crate::sst::index::{IndexerBuilderImpl, build_index_from_parquet_bytes};
+ use crate::sst::parquet::writer::ParquetWriter;
++use crate::sst::parquet::{SstInfo, WriteOptions};
+ use crate::sst::{DEFAULT_WRITE_BUFFER_SIZE, DEFAULT_WRITE_CONCURRENCY};
+ 
+ /// Wraps the remote object store used by write cache uploads.
+@@ -173,15 +174,20 @@ impl WriteCache {
+     }
+ 
+     /// Put encoded SST data to the cache and upload to the remote object store.
++    ///
++    /// Builds the SST's indexes from `data` when `index_build_params` is set and uploads them
++    /// with the SST.
+     pub(crate) async fn put_and_upload_sst(
+         &self,
+         data: &bytes::Bytes,
+-        region_file_id: RegionFileId,
++        region_id: RegionId,
++        sst_info: &mut SstInfo,
+         upload_request: SstUploadRequest,
+         write_buffer_size: ReadableSize,
++        index_build_params: Option<EncodedSstIndexBuildParams>,
+     ) -> Result<Metrics> {
+-        let region_id = region_file_id.region_id();
+-        let file_id = region_file_id.file_id();
++        let file_id = sst_info.file_id;
++        let region_file_id = RegionFileId::new(region_id, file_id);
+         let mut metrics = Metrics::new(WriteType::Flush);
+ 
+         // Create index key for the SST file
+@@ -204,31 +210,70 @@ impl WriteCache {
+ 
+         metrics.write_batch = cache_start.elapsed();
+ 
++        if let Some(params) = index_build_params {
++            let start = Instant::now();
++            let builder = params.indexer_builder(
++                self.build_puffin_manager(),
++                true,
++                self.intermediate_manager.clone(),
++            );
++            sst_info.index_metadata =
++                build_index_from_parquet_bytes(&builder, region_file_id, data).await;
++            metrics.update_index = start.elapsed();
++        }
++
+         // Upload to remote store
++        let remote_store = &upload_request.remote_store;
++        let mut upload_tracker = UploadTracker::new(region_id);
+         let upload_start = Instant::now();
+         let remote_path = upload_request
+             .dest_path_provider
+             .build_sst_file_path(region_file_id);
+-
+-        if let Err(e) = self
++        let mut result = self
+             .upload(
+                 parquet_key,
+                 &remote_path,
+-                &upload_request.remote_store,
++                remote_store,
+                 UploadOptions {
+                     // `put_and_upload_sst` is only used by the flush path.
+                     op_type: OperationType::Flush,
+                     write_buffer_size,
+                 },
+             )
+-            .await
+-        {
+-            // Clean up cache on failure
+-            self.remove(parquet_key).await;
+-            return Err(e);
++            .await;
++        metrics.upload_parquet = upload_start.elapsed();
++
++        if result.is_ok() && sst_info.index_metadata.file_size > 0 {
++            upload_tracker.push_uploaded_file(remote_path);
++            let puffin_key = IndexKey::new(region_id, file_id, FileType::Puffin(0));
++            let puffin_path = upload_request
++                .dest_path_provider
++                .build_index_file_path(region_file_id);
++            let start = Instant::now();
++            result = self
++                .upload(
++                    puffin_key,
++                    &puffin_path,
++                    remote_store,
++                    UploadOptions {
++                        op_type: OperationType::Flush,
++                        write_buffer_size: DEFAULT_WRITE_BUFFER_SIZE,
++                    },
++                )
++                .await;
++            metrics.upload_puffin = start.elapsed();
+         }
+ 
+-        metrics.upload_parquet = upload_start.elapsed();
++        if let Err(e) = result {
++            upload_tracker
++                .clean(
++                    std::slice::from_ref(sst_info),
++                    &self.fil
+```
+
+**File**: `src/mito2/src/engine/index_build_test.rs` (modified, +184/-28)
+```diff
+@@ -23,6 +23,8 @@ use api::v1::region::{StrictWindow, compact_request};
+ use api::v1::{Rows, SemanticType};
+ use async_trait::async_trait;
+ use common_base::readable_size::ReadableSize;
++use common_error::ext::ErrorExt;
++use common_error::status_code::StatusCode;
+ use common_recordbatch::RecordBatches;
+ use datafusion_expr::expr::InList;
+ use datafusion_expr::{Expr, col, lit};
+@@ -34,7 +36,7 @@ use store_api::metadata::ColumnMetadata;
+ use store_api::region_engine::RegionEngine;
+ use store_api::region_request::{
+     AddColumn, AlterKind, RegionAlterRequest, RegionBuildIndexRequest, RegionCloseRequest,
+-    RegionCompactRequest, RegionRequest, SetIndexOption,
++    RegionCompactRequest, RegionFlushRequest, RegionRequest, RegionTruncateRequest, SetIndexOption,
+ };
+ use store_api::storage::{RegionId, ScanRequest};
+ use tokio::sync::{Notify, Semaphore};
+@@ -2297,8 +2299,9 @@ impl SstReadCounter {
+ 
+ #[rstest::rstest]
+ #[tokio::test]
+-async fn test_sync_flush_indexes_encoded_bulk_parts(
+-    #[values(false, true)] disable_inverted_on_flush: bool,
++async fn test_flush_indexes_encoded_bulk_parts(
++    #[values(false, true)] async_without_flush_indexes: bool,
++    #[values(false, true)] write_cache: bool,
+ ) {
+     let sst_bytes_read = Arc::new(AtomicUsize::new(0));
+     let counter = sst_bytes_read.clone();
+@@ -2312,19 +2315,27 @@ async fn test_sync_flush_indexes_encoded_bulk_parts(
+         }))
+         .build()
+         .unwrap();
+-    let mut env = TestEnv::with_prefix("test_sync_flush_indexes_encoded_bulk_parts_")
++    let mut env = TestEnv::with_prefix("test_flush_indexes_encoded_bulk_parts_")
+         .await
+         .with_mock_layer(layer);
+-    let listener = Arc::new(IndexBuildListener::default());
+     let mut config = MitoConfig {
+         default_flat_format: true,
+         min_compaction_interval: Duration::from_secs(3600),
+         ..Default::default()
+     };
+     assert_eq!(config.index.build_mode, IndexBuildMode::Sync);
+-    if disable_inverted_on_flush {
++    if async_without_flush_indexes {
++        config.index.build_mode = IndexBuildMode::Async;
+         config.inverted_index.create_on_flush = Mode::Disable;
+     }
++    if write_cache {
++        config = config.enable_write_cache(
++            env.data_home().join("write_cache").display().to_string(),
++            ReadableSize::mb(32),
++            None,
++        );
++    }
++    let listener = Arc::new(IndexBuildListener::default());
+     let engine = env
+         .create_engine_with(config, None, Some(listener.clone()), None)
+         .await;
+@@ -2345,7 +2356,7 @@ async fn test_sync_flush_indexes_encoded_bulk_parts(
+         .insert_option("memtable.bulk.merge_threshold", "2")
+         .insert_option("memtable.bulk.encode_row_threshold", "1")
+         .build_with_index();
+-    if !disable_inverted_on_flush {
++    if !async_without_flush_indexes {
+         // `build_with_index` only adds inverted indexes on tags; also cover a skipping index.
+         let field = request
+             .column_metadatas
+@@ -2385,9 +2396,10 @@ async fn test_sync_flush_indexes_encoded_bulk_parts(
+     flush_region(&engine, region_id, None).await;
+ 
+     let files = current_file_metas(&engine, region_id).await;
+-    if disable_inverted_on_flush {
+-        // Only inverted indexes are configured and they are disabled on flush, so the builds
+-        // have nothing to create. They must stop before reading the rows of the SSTs.
++    assert!(!files.is_empty());
++    if async_without_flush_indexes {
++        // Async mode builds indexes after flush. Only inverted indexes are configured and they
++        // are disabled on flush, so the builds must stop before reading the rows of the SSTs.
+         let total_size: usize = files.iter().map(|f| f.file_size as usize).sum();
+         // Stopping the engine waits for scheduled index builds.
+         engine.stop().await.unwrap();
+@@ -2398,25 +2410,169 @@ async fn test_sync_flush_indexes_encoded_bulk_parts(
+         return;
+     }
+ 
+-    let version = engine.get_region(region_id).unwrap().version();
+-    let indexed = async {
+-        loop {
+-            let files = current_file_metas(&engine, region_id).await;
+-            if files.iter().all(|f| {
+-                f.is_index_consistent_with_region(
+-                    &version.metadata.column_metadatas,
+-                    &version.options.index_options,
+-                )
+-            }) {
+-                return files;
+-            }
+-            tokio::time::sleep(Duration::from_millis(20)).await;
++    // Sync mode builds the indexes from the encoded bytes in memory during flush.
++    assert_eq!(0, sst_bytes_read.load(Ordering::Relaxed));
++    assert_eq!(0, listener.begin_count());
++    assert!(files.iter().all(|f| f.inverted_index_available()));
++    assert!(files.iter().all(|f| f.bloom_filter_index_available()));
++    let access_layer = engine.get_region(region_id).unwrap().access_layer.clone();
++    for file in &files {
++        let index_path = location::index_file_pa
+```
+
+**File**: `src/mito2/src/flush.rs` (modified, +27/-59)
+```diff
+@@ -29,16 +29,17 @@ use smallvec::{SmallVec, smallvec};
+ use snafu::{ResultExt, ensure};
+ use store_api::metadata::RegionMetadataRef;
+ use store_api::region_request::RegionFlushReason;
+-use store_api::storage::{FileId, RegionId, SequenceNumber};
++use store_api::storage::{RegionId, SequenceNumber};
+ use strum::IntoStaticStr;
+ use tokio::sync::{Semaphore, mpsc, watch};
+ 
+ use crate::access_layer::{
+-    AccessLayerRef, Metrics, OperationType, SstInfoArray, SstWriteRequest, WriteType,
++    AccessLayerRef, EncodedSstIndexBuildParams, Metrics, OperationType, SstInfoArray,
++    SstWriteRequest, WriteType,
+ };
+ use crate::cache::CacheManagerRef;
+ use crate::compaction::{collect_json2_rewrite_plans, rewrite_json2_batch, rewrite_json2_schema};
+-use crate::config::MitoConfig;
++use crate::config::{IndexBuildMode, MitoConfig};
+ use crate::engine::region_hook::SstFileInfo;
+ use crate::error::{
+     Error, FlushCancelledSnafu, FlushRegionSnafu, JoinSnafu, RegionBusySnafu, RegionClosedSnafu,
+@@ -66,7 +67,7 @@ use crate::request::{
+ };
+ use crate::schedule::CancellableTaskState;
+ use crate::schedule::scheduler::{Job, SchedulerRef};
+-use crate::sst::file::{FileMeta, RegionFileId, UncommittedSsts};
++use crate::sst::file::{FileMeta, UncommittedSsts};
+ use crate::sst::parquet::metadata::extract_primary_key_range;
+ use crate::sst::parquet::{
+     DEFAULT_READ_BATCH_SIZE, DEFAULT_ROW_GROUP_SIZE, SstInfo, WriteOptions, flat_format,
+@@ -394,10 +395,7 @@ impl RegionFlushTask {
+         };
+ 
+         let worker_request = match flush_result {
+-            Ok(FlushedEdit {
+-                edit,
+-                unindexed_files,
+-            }) => {
++            Ok(edit) => {
+                 let memtables_to_remove = version_data
+                     .version
+                     .memtables
+@@ -413,7 +411,6 @@ impl RegionFlushTask {
+                     senders: std::mem::take(&mut self.senders),
+                     _timer: timer,
+                     edit,
+-                    unindexed_files,
+                     memtables_to_remove,
+                     is_staging: self.is_staging,
+                 };
+@@ -451,7 +448,7 @@ impl RegionFlushTask {
+         version_data: &VersionControlData,
+         state: &CancellableTaskState,
+         uncommitted: &UncommittedSsts,
+-    ) -> Result<FlushedEdit> {
++    ) -> Result<RegionEdit> {
+         // We must use the immutable memtables list and entry ids from the `version_data`
+         // for consistency as others might already modify the version in the `version_control`.
+         let version = &version_data.version;
+@@ -470,7 +467,6 @@ impl RegionFlushTask {
+ 
+         let DoFlushMemtablesResult {
+             file_metas,
+-            unindexed_files,
+             flushed_bytes,
+             series_count,
+             encoded_part_count,
+@@ -594,10 +590,7 @@ impl RegionFlushTask {
+             self.reason.as_str()
+         );
+ 
+-        Ok(FlushedEdit {
+-            edit,
+-            unindexed_files,
+-        })
++        Ok(edit)
+     }
+ 
+     async fn do_flush_memtables(
+@@ -612,7 +605,6 @@ impl RegionFlushTask {
+         let mut flushed_bytes = 0;
+         let mut series_count = 0;
+         let mut encoded_part_count = 0;
+-        let mut unindexed_files = Vec::new();
+         let mut flush_metrics = Metrics::new(WriteType::Flush);
+         let partition_expr = parse_partition_expr(self.partition_expr.as_deref())?;
+         let hook = self.manifest_ctx.hook();
+@@ -659,12 +651,7 @@ impl RegionFlushTask {
+                 .await?;
+             encoded_part_count += num_encoded;
+             for (source_idx, result) in results.into_iter().enumerate() {
+-                let FlushedSsts {
+-                    max_sequence,
+-                    ssts: ssts_written,
+-                    metrics,
+-                    indexed,
+-                } = result?;
++                let (max_sequence, ssts_written, metrics) = result?;
+                 if ssts_written.is_empty() {
+                     // No data written.
+                     continue;
+@@ -683,9 +670,6 @@ impl RegionFlushTask {
+ 
+                 for sst_info in &ssts_written {
+                     flushed_bytes += sst_info.file_size;
+-                    if !indexed {
+-                        unindexed_files.push(sst_info.file_id);
+-                    }
+                     let pk_range = sst_info
+                         .file_metadata
+                         .as_ref()
+@@ -719,7 +703,6 @@ impl RegionFlushTask {
+ 
+         Ok(DoFlushMemtablesResult {
+             file_metas,
+-            unindexed_files,
+             flushed_bytes,
+             series_count,
+             encoded_part_count,
+@@ -765,41 +748,43 @@ impl RegionFlushTask {
+                     .await?;
+                 uncommitted.track(&ssts);
+                 FLUSH_FILE_TOTAL.inc_by(ssts.len() as u64);
+-                Ok(FlushedSsts {
+-                    max_sequence,
+-                    ssts,
+-                    metrics,
+-                    indexed: true,
+-             
+```
+
+---
+
+### Incident Patch 3: `e6b60644` (2026-10-27)
+**Commit Message**: fix(mito2): stop the series distributor from stalling on unread partitions (#9991)
+
+When every partition channel is full, the distributor walked the senders
+round-robin with a 100us send timeout each. Tokio timers fire on a 1ms
+tick, so a consumer that leaves some partitions unpolled costs about one
+millisecond per unpolled partition for every series batch.
+SeriesScan::build_stream and scan_all_partitions drain partitions one
+after another, and SortPreservingMergeExec above a multi-partition
+SeriesScan only pulls the partition holding the current minimum key.
+With 16 partitions and one batch per series after a merge, a 40-series
+scan read partition by partition took ~480ms (measured on the native
+PromQL two-input route).
+
+Wait on all senders at once and send to the first one that frees a slot.
+The send-timeout metric goes away with the timeout.
 
 Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
 
-**File**: `.github/actions/build-windows-artifacts/action.yml` (modified, +3/-1)
+**File**: `src/mito2/src/read/scan_util.rs` (modified, +0/-10)
 ```diff
-@@ -22,7 +22,9 @@ inputs:
- runs:
-   using: composite
-   steps:
--    - uses: arduino/setup-protoc@v3
-+    - uses: taiki-e/install-action@v2
-+      with:
-+        tool: protoc@3.23.4
+@@ -202,8 +202,6 @@ pub(crate) struct ScanMetricsSet {
+     /// Elapsed time before the first poll operation.
+     first_poll: Duration,
  
-     - name: Install rust toolchain
-       uses: actions-rust-lang/setup-rust-toolchain@v1
-```
-
-**File**: `.github/workflows/apidoc.yml` (modified, +2/-2)
-```diff
-@@ -19,9 +19,9 @@ jobs:
-     - uses: actions/checkout@v4
-       with:
-         persist-credentials: false
--    - uses: arduino/setup-protoc@v3
-+    - uses: taiki-e/install-action@v2
-       with:
--        repo-token: ${{ secrets.GITHUB_TOKEN }}
-+        tool: protoc@3.23.4
-     - uses: actions-rust-lang/setup-rust-toolchain@v1
-     - run: cargo doc --workspace --no-deps --document-private-items
-     - run: |
-```
-
-**File**: `.github/workflows/checks.yml` (modified, +2/-2)
-```diff
-@@ -119,9 +119,9 @@ jobs:
-       - uses: actions/checkout@v4
-         with:
-           persist-credentials: false
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: actions-rust-lang/setup-rust-toolchain@v1
-       - name: Rust Cache
-         uses: Swatinem/rust-cache@v2
-```
-
-**File**: `.github/workflows/integration.yml` (modified, +10/-12)
-```diff
-@@ -54,9 +54,9 @@ jobs:
-       - uses: actions/checkout@v4
-         with:
-           persist-credentials: false
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: actions-rust-lang/setup-rust-toolchain@v1
-       - name: Build Binaries Cache
-         id: build-binaries-cache
-@@ -193,9 +193,9 @@ jobs:
-       - uses: actions/checkout@v4
-         with:
-           persist-credentials: false
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: actions-rust-lang/setup-rust-toolchain@v1
-       - name: Rust Cache
-         uses: Swatinem/rust-cache@v2
-@@ -327,9 +327,9 @@ jobs:
-       - uses: actions/checkout@v4
-         with:
-           persist-credentials: false
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: actions-rust-lang/setup-rust-toolchain@v1
-         with:
-           cache: false
-@@ -364,13 +364,11 @@ jobs:
-         env:
-           RUSTUP_TOOLCHAIN: ${{ env.FUZZ_RUST_TOOLCHAIN }}
-         run: |
--          sudo apt-get install -y libfuzzer-14-dev
-           cargo install cargo-fuzz --version "${CARGO_FUZZ_VERSION}" --locked
-       - name: Build fuzz target binaries
-         if: steps.fuzz-binaries.outputs.cache-hit != 'true'
-         shell: bash
-         env:
--          CUSTOM_LIBFUZZER_PATH: /usr/lib/llvm-14/lib/libFuzzer.a
-           RUSTUP_TOOLCHAIN: ${{ env.FUZZ_RUST_TOOLCHAIN }}
-           FUZZ_TARGETS: |
-             fuzz_create_database
-@@ -587,9 +585,9 @@ jobs:
-       - uses: actions/checkout@v4
-         with:
-           persist-credentials: false
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: actions-rust-lang/setup-rust-toolchain@v1
-       - name: Build Profile-CI Cache
-         id: build-greptime-ci-cache
-@@ -705,9 +703,9 @@ jobs:
-         uses: ./.github/actions/setup-etcd-cluster
-       # Only the Kafka WAL helper needs the Rust toolchain.
-       - if: matrix.mode.kafkaWalHelper
--        uses: arduino/setup-protoc@v3
-+        uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - if: matrix.mode.kafkaWalHelper
-         uses: actions-rust-lang/setup-rust-toolchain@v1
-         with:
-```
-
-**File**: `.github/workflows/nightly-ci.yml` (modified, +6/-6)
-```diff
-@@ -53,9 +53,9 @@ jobs:
-           fetch-depth: 0
-           persist-credentials: false
-       - uses: ./.github/actions/setup-cyborg
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: actions-rust-lang/setup-rust-toolchain@v1
-       - name: Rust Cache
-         uses: Swatinem/rust-cache@v2
-@@ -82,9 +82,9 @@ jobs:
-       - uses: actions/checkout@v4
-         with:
-           persist-credentials: false
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: rui314/setup-mold@v1
-       - name: Install toolchain
-         uses: actions-rust-lang/setup-rust-toolchain@v1
-@@ -134,9 +134,9 @@ jobs:
-           fetch-depth: 0
-           persist-credentials: false
-       - uses: ./.github/actions/setup-cyborg
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: KyleMayes/install-llvm-action@v1
-         with:
-           version: "14.0"
-```
-
-**File**: `.github/workflows/release.yml` (modified, +2/-2)
-```diff
-@@ -516,9 +516,9 @@ jobs:
-           fetch-depth: 0
-           persist-credentials: false
+-    /// Number of send timeout in SeriesScan.
+-    num_series_send_timeout: usize,
+     /// Number of send full in SeriesScan.
+     num_series_send_full: usize,
+     /// Number of rows the series distributor scanned.
+@@ -325,7 +323,6 @@ impl fmt::Debug for ScanMetricsSet {
+             num_sst_batches,
+             num_sst_rows,
+             first_poll,
+-            num_series_send_timeout,
+             num_series_send_full,
+             num_distributor_rows,
+             num_distributor_batches,
+@@ -459,9 +456,6 @@ impl fmt::Debug for ScanMetricsSet {
+         }
  
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
+         // Write non-zero distributor metrics
+-        if *num_series_send_timeout > 0 {
+-            write!(f, ", \"num_series_send_timeout\":{num_series_send_timeout}")?;
+-        }
+         if *num_series_send_full > 0 {
+             write!(f, ", \"num_series_send_full\":{num_series_send_full}")?;
+         }
+@@ -775,7 +769,6 @@ impl ScanMetricsSet {
+     /// Sets distributor metrics.
+     fn set_distributor_metrics(&mut self, distributor_metrics: &SeriesDistributorMetrics) {
+         let SeriesDistributorMetrics {
+-            num_series_send_timeout,
+             num_series_send_full,
+             num_rows,
+             num_batches,
+@@ -784,7 +777,6 @@ impl ScanMetricsSet {
+             divider_cost,
+         } = distributor_metrics;
  
-       - uses: actions-rust-lang/setup-rust-toolchain@v1
-         with:
+-        self.num_series_send_timeout += *num_series_send_timeout;
+         self.num_series_send_full += *num_series_send_full;
+         self.num_distributor_rows += *num_rows;
+         self.num_distributor_batches += *num_batches;
+@@ -1144,8 +1136,6 @@ impl fmt::Debug for PartitionMetrics {
+ /// Metrics for the series distributor.
+ #[derive(Default)]
+ pub(crate) struct SeriesDistributorMetrics {
+-    /// Number of send timeout in SeriesScan.
+-    pub(crate) num_series_send_timeout: usize,
+     /// Number of send full in SeriesScan.
+     pub(crate) num_series_send_full: usize,
+     /// Number of rows the series distributor scanned.
 ```
 
-**File**: `.github/workflows/run-multi-lang-tests.yml` (modified, +2/-2)
+**File**: `src/mito2/src/read/series_scan.rs` (modified, +56/-43)
 ```diff
-@@ -83,10 +83,10 @@ jobs:
-           java-version: '17'
-           cache: 'maven'
+@@ -17,7 +17,7 @@
+ use std::fmt;
+ use std::sync::atomic::{AtomicUsize, Ordering};
+ use std::sync::{Arc, Mutex};
+-use std::time::{Duration, Instant};
++use std::time::Instant;
  
--      - name: Setup Python 3.8
-+      - name: Setup Python 3.13
-         uses: actions/setup-python@v5
-         with:
--          python-version: '3.8'
-+          python-version: '3.13'
+ use async_stream::try_stream;
+ use common_error::ext::BoxedError;
+@@ -39,7 +39,7 @@ use store_api::region_engine::{
+     PartitionRange, PrepareRequest, QueryScanContext, RegionScanner, ScannerProperties,
+ };
+ use tokio::sync::Semaphore;
+-use tokio::sync::mpsc::error::{SendTimeoutError, TrySendError};
++use tokio::sync::mpsc::error::TrySendError;
+ use tokio::sync::mpsc::{self, Receiver, Sender};
  
-       - name: Setup uv
-         uses: astral-sh/setup-uv@v3
-```
-
-**File**: `.github/workflows/rust.yml` (modified, +14/-14)
-```diff
-@@ -40,9 +40,9 @@ jobs:
-       - uses: actions/checkout@v4
-         with:
-           persist-credentials: false
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: actions-rust-lang/setup-rust-toolchain@v1
-         with:
-           components: rustfmt
-@@ -58,9 +58,9 @@ jobs:
-       - uses: actions/checkout@v4
-         with:
-           persist-credentials: false
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: actions-rust-lang/setup-rust-toolchain@v1
-         with:
-           components: clippy
-@@ -102,9 +102,9 @@ jobs:
-       - uses: actions/checkout@v4
-         with:
-           persist-credentials: false
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - name: Install riscv64 cross toolchain
-         run: sudo apt-get update && sudo apt-get install -y gcc-riscv64-linux-gnu g++-riscv64-linux-gnu
-       - uses: actions-rust-lang/setup-rust-toolchain@v1
-@@ -130,9 +130,9 @@ jobs:
-         with:
-           persist-credentials: false
-       - uses: ./.github/actions/setup-cyborg
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: KyleMayes/install-llvm-action@v1
-         with:
-           version: "14.0"
-@@ -166,9 +166,9 @@ jobs:
-         with:
-           persist-credentials: false
-       - uses: ./.github/actions/setup-cyborg
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: KyleMayes/install-llvm-action@v1
-         with:
-           version: "14.0"
-@@ -210,9 +210,9 @@ jobs:
-       - uses: actions/checkout@v4
-         with:
-           persist-credentials: false
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: rui314/setup-mold@v1
-       - name: Install toolchain
-         uses: actions-rust-lang/setup-rust-toolchain@v1
-@@ -265,9 +265,9 @@ jobs:
-       - uses: actions/checkout@v4
-         with:
-           persist-credentials: false
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: rui314/setup-mold@v1
-       - name: Install toolchain
-         uses: actions-rust-lang/setup-rust-toolchain@v1
+ use crate::error::{
+@@ -61,9 +61,6 @@ use crate::read::stream::{ConvertBatchStream, ScanBatch, ScanBatchStream};
+ use crate::sst::parquet::flat_format::primary_key_column_index;
+ use crate::sst::parquet::format::PrimaryKeyArray;
+ 
+-/// Timeout to send a batch to a sender.
+-const SEND_TIMEOUT: Duration = Duration::from_micros(100);
+-
+ /// Maximum number of candidate series retained before distributing assignments.
+ const CANDIDATE_SERIES_ASSIGNMENT_THRESHOLD: usize = 1_000_000;
+ 
+@@ -843,7 +840,6 @@ impl SeriesDistributor {
+         }
+ 
+         metrics.scan_cost += fetch_start.elapsed();
+-        metrics.num_series_send_timeout = self.senders.num_timeout;
+         metrics.num_series_send_full = self.senders.num_full;
+         part_metrics.set_distributor_metrics(&metrics);
+ 
+@@ -996,8 +992,6 @@ struct SenderList {
+     num_nones: usize,
+     /// Index of the current partition to send.
+     sender_idx: usize,
+-    /// Number of timeout.
+-    num_timeout: usize,
+     /// Number of full senders.
+     num_full: usize,
+ }
+@@ -1009,7 +1003,6 @@ impl SenderList {
+             senders,
+             num_nones,
+             sender_idx: 0,
+-            num_timeout: 0,
+             num_full: 0,
+         }
+     }
+@@ -1045,46 +1038,35 @@ impl SenderList {
+     }
+ 
+     /// Finds a partition and sends the batch to the partition.
+-    async fn send_batch(&mut self, mut batch: SeriesBatch) -> Result<()> {
+-        // Sends the batch without blocking first.
+-        match self.try_send_batch(batch)? {
+-            Some(b) => {
+-                // Unable to send batch to partition.
+-                batch = b;
+-            }
+-            None => {
+-                return Ok(());
+-            }
+-        }
++    async fn send_batch(&mut self, batch: SeriesBatch) -> Result<()> {
++        let Some(batch) = self.try_send_batch(batch)? else {
++            return Ok(());
++        };
+ 
+         loop {
+             ensure!(self.num_nones < self.senders.len(), InvalidSenderSnafu);
+ 
+-            let sender_idx = self.fetch_add_sender_idx();
+-            let Some(sender) = &self.senders[sender_idx] else {
+-                continue;
+-            };
+-            // Adds a timeout to avoid blocking indefinitely and sending
+-            // the batch in a round-robin fashion when some partitions
+-            // don't poll their inputs. This may happen if we have a
+-            // node like sort merging. But it is rare when we are using SeriesScan.
+-            match sender.send_timeout(Ok(batch), SEND_TIMEOUT).await {
+-                Ok(()) => break,
+-                Err(SendTimeoutError::Timeout(res)) => {
+-                    self.num_timeout += 1;
+-                    // Safety: we send Ok.
+-                    batch = res.unwrap();
+-                }
+-                Err(SendTimeoutError::Closed(res)) => {
+-                    self.senders[sender_idx] = None;
+-                    self.num_nones += 1;
+-                    // Safety: we send Ok.
+-                    batch = res.unwrap();
++            // Waits on every partition at once and sends to whichever frees a slot first. A
++            // consumer may leave partitions unpolled for a long time, e.g. one that drains them one
++            // after another, and waiting on such a partition would stall the scan.
++            let closed = {
++                let reservations = self.senders.iter().enumerate().filter_map(|(idx, sender)| {
++                    sender
++                        .as_ref()
++                        .map(|sender| Box::pin(async move { (idx, sender.reserve().await) }))
++                });
++                let ((idx, reserved), _, _) = futures::future::select_all(reservations).await;
++                match reserved {
++                    Ok(permit) => {
++                        permit.send(Ok(batch));
++                        return Ok(());
++                    }
++                    Err(_) => idx,
+                 }
+-            }
++            };
++            self.senders[closed] = None;
++            self.num_nones += 1;
+         }
+-
+-        Ok(())
+     }
+ 
+     async fn send_error(&self, error: Error) {
+@@ -1294,6 +1276,37 @@ mod tests {
+         assert_eq!(0, active_receivers.load(Ordering::Relaxed));
+     }
+ 
++    #[tokio::test]
++    async fn distributor_does_not_stall_on_partitions_read_one_after_another() {
++        const NUM_BATCHES: usize = 2000;
++        let (mut senders, receivers) = new_leg
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9937** (2026-10-24): refactor(promql): remove NodePath and own the runtime tree recursively (@discord9)
-- **PR #9919** (2026-10-23): fix: upload staging manifests in chunks (@WenyXu)
-- **PR #9915** (2026-10-23): fix: backport CI fix to the release branch (@shuiyisong)
-- **PR #9914** (2026-10-24): refactor(datatypes): name the PromQL series label set by what it is (@discord9)
-- **PR #9912** (2026-10-23): ci: bring the narthex branch's CI workflows up to main (@discord9)
-- **PR #9911** (2026-10-23): fix(mito2): require flat SST output for JSON2 (#9893) (@shuiyisong)
+- **PR #10003** (2026-10-27): fix(mito2): stop the series distributor from stalling on unread partitions (@killme2008)
+- **PR #9998** (closed): feat(promql): split distributed aggregates over the raw fan-in (@discord9)
+- **PR #9994** (2026-10-27): fix(mito2): stop the series distributor from stalling on unread partitions [Backport release/v1.3] (@MichaelScofield)
+- **PR #9993** (closed): feat(promql): fan authorized raw series reads in on the frontend (@discord9)
+- **PR #9991** (2026-10-27): fix(mito2): stop the series distributor from stalling on unread partitions (@killme2008)
+- **PR #9990** (2026-10-27): feat(promql): run cross-table selector pairs natively (@killme2008)
 
 ---
 
@@ -2238,28 +3373,35 @@ Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mito2): keep SSTs when a manifest save ends with RateLimited or PermissionDenied
+## X. mito): preserve SST lifetime across index replacement (#9950)
 
 **RULE**:
-When implementing operations in `src/mito2/src/engine/compaction_test.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/cmd/src/datanode/objbench.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1cb01d0d`: mito2): keep SSTs when a manifest save ends with RateLimited or PermissionDenied (#9898). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `17ed988f`: mito): preserve SST lifetime across index replacement (#9950). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/mito2/src/engine/compaction_test.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmd/src/datanode/objbench.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                object_store::layers::mock::ErrorKind::Unsupported,
+use mito2::sst::file_purger::{FilePurgerRef, NoopFilePurger};
+    Arc::new(NoopFilePurger)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                object_store::layers::mock::ErrorKind::PermissionDenied,
+use mito2::sst::file_purger::{FilePurger, FilePurgerRef};
+    #[derive(Debug)]
+    struct Noop;
+    impl FilePurger for Noop {
+        fn remove_file(&self, _file_meta: FileMeta, _is_delete: bool, _index_outdated: bool) {}
+    }
+    Arc::new(Noop)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1cb01d0d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `17ed988f` are properly handled with clean fallback behavior.

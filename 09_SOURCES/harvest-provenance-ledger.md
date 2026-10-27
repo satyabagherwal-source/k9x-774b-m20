@@ -5268,3 +5268,8 @@ Every entry in this ledger must capture:
 | `learn-github-transact-rs-sqlx` | `https://github.com/transact-rs/sqlx` | `242eb8ca` | Multi-dimensional audit evidence | 2026-10-27T12:10:43.265Z |
 | `learn-github-react-react-native` | `https://github.com/react/react-native` | `0941e953` | Multi-dimensional audit evidence | 2026-10-27T12:10:49.100Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `fb9ac9b9` | Multi-dimensional audit evidence | 2026-10-27T12:10:57.836Z |
+| `learn-github-fb55-htmlparser2` | `https://github.com/fb55/htmlparser2` | `8eff7d8b` | Multi-dimensional audit evidence | 2026-10-27T12:14:34.974Z |
+| `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `7e7420c3` | Multi-dimensional audit evidence | 2026-10-27T12:14:40.382Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `a3e5ddfc` | Multi-dimensional audit evidence | 2026-10-27T12:14:44.662Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `5b4efd90` | Multi-dimensional audit evidence | 2026-10-27T12:14:46.990Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `c287925f` | Multi-dimensional audit evidence | 2026-10-27T12:18:37.731Z |

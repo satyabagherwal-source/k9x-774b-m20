@@ -2503,10 +2503,10 @@
     "repository": "authzed/spicedb",
     "platform": "github",
     "sourceUrl": "https://github.com/authzed/spicedb",
-    "sourceVersion": "5fedd8fc",
+    "sourceVersion": "7e7420c3",
     "license": "Apache-2.0",
-    "contentHash": "5ecedee92af13d3121864acc01439cd40d533ebe3579b1f1b6183fe061770686",
-    "lastHarvestedAt": "2026-10-22T18:50:25.307Z",
+    "contentHash": "a111294c47f299622dccacd64b906d6085f23d0eb983956b2b76113af30c8594",
+    "lastHarvestedAt": "2026-10-27T12:14:40.382Z",
     "learningId": "learn-github-authzed-spicedb"
   },
   "hashicorp-boundary": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "7d8341a4",
+    "sourceVersion": "a3e5ddfc",
     "license": "Apache-2.0",
-    "contentHash": "1e789e541355f41075a002c4ccb3484520f1e63ef670a1c9bd91497fa855490c",
-    "lastHarvestedAt": "2026-10-26T18:05:35.287Z",
+    "contentHash": "bbbb5446d9ee849bacea6fc1255a1feae96252430b55413af8216d46d7fbdec7",
+    "lastHarvestedAt": "2026-10-27T12:14:44.662Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -5343,10 +5343,10 @@
     "repository": "embassy-rs/embassy",
     "platform": "github",
     "sourceUrl": "https://github.com/embassy-rs/embassy",
-    "sourceVersion": "047ddf53",
+    "sourceVersion": "c287925f",
     "license": "Apache-2.0",
-    "contentHash": "7256a57567b0c2dd4edeb06f83768af7a439bbce0d765fdac25e76c3d0294aa1",
-    "lastHarvestedAt": "2026-10-25T18:15:20.615Z",
+    "contentHash": "0922156e8e2e679bd61456aa6fe9666f9db3c04162281829b45207b9fc7d0496",
+    "lastHarvestedAt": "2026-10-27T12:18:37.731Z",
     "learningId": "learn-github-embassy-rs-embassy"
   },
   "jpush-aurora-imui": {
@@ -5373,10 +5373,10 @@
     "repository": "GreptimeTeam/greptimedb",
     "platform": "github",
     "sourceUrl": "https://github.com/GreptimeTeam/greptimedb",
-    "sourceVersion": "1c5d15fd",
+    "sourceVersion": "5b4efd90",
     "license": "Apache-2.0",
-    "contentHash": "7612195c220ca9fb0131ca849d77d5138553783272d9df28255a8f6a9facb22d",
-    "lastHarvestedAt": "2026-10-25T04:12:39.965Z",
+    "contentHash": "af6824af16e19b597c641b8117b96e2a53925b377e2bd02e0f3c75840098a71b",
+    "lastHarvestedAt": "2026-10-27T12:14:46.990Z",
     "learningId": "learn-github-greptimeteam-greptimedb"
   },
   "heroui-inc-heroui-native": {
@@ -9363,10 +9363,10 @@
     "repository": "fb55/htmlparser2",
     "platform": "github",
     "sourceUrl": "https://github.com/fb55/htmlparser2",
-    "sourceVersion": "5141df8b",
+    "sourceVersion": "8eff7d8b",
     "license": "MIT",
-    "contentHash": "21fb3b28e8d944af33f8150b42cfc101dadd7ad3e811c1b9da9e48e2d20a17c1",
-    "lastHarvestedAt": "2026-10-22T18:50:19.755Z",
+    "contentHash": "1baec62a8e75c320a5b9966aabf72936e2d0e9e44ec997542f9a769f968767f3",
+    "lastHarvestedAt": "2026-10-27T12:14:34.974Z",
     "learningId": "learn-github-fb55-htmlparser2"
   },
   "inikulin-parse5": {

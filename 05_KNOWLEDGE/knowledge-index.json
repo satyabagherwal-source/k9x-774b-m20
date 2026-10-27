@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T12:10:57.793Z",
+  "last_updated": "2026-10-27T12:18:37.658Z",
   "total_verified_learnings": 1103,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3629,8 +3629,8 @@
       "slug": "authzed-spicedb",
       "platform": "github",
       "source_url": "https://github.com/authzed/spicedb",
-      "source_version": "5fedd8fc",
-      "content_hash": "5ecedee92af13d3121864acc01439cd40d533ebe3579b1f1b6183fe061770686",
+      "source_version": "7e7420c3",
+      "content_hash": "a111294c47f299622dccacd64b906d6085f23d0eb983956b2b76113af30c8594",
       "dossier_path": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "promoted_rules": [
@@ -3648,6 +3648,11 @@
           "number": 3699,
           "title": "schema): qualify wildcard cache keys by definition (#3421)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4737,
+          "title": "cache): expire dispatch cache entries a fixed TTL after they are written",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3655,7 +3660,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T18:50:25.241Z",
+      "verified_at": "2026-10-27T12:14:40.290Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -6129,8 +6134,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "7d8341a4",
-      "content_hash": "1e789e541355f41075a002c4ccb3484520f1e63ef670a1c9bd91497fa855490c",
+      "source_version": "a3e5ddfc",
+      "content_hash": "bbbb5446d9ee849bacea6fc1255a1feae96252430b55413af8216d46d7fbdec7",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -6248,6 +6253,11 @@
           "number": 4639,
           "title": "deps): update dependency certifi to v2026.10.19 [security]",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4738,
+          "title": "datapath/orchestrator: fix goroutine leak in MergeChannels watch path",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6255,7 +6265,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T18:05:35.197Z",
+      "verified_at": "2026-10-27T12:14:44.569Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10142,8 +10152,8 @@
       "slug": "embassy-rs-embassy",
       "platform": "github",
       "source_url": "https://github.com/embassy-rs/embassy",
-      "source_version": "047ddf53",
-      "content_hash": "7256a57567b0c2dd4edeb06f83768af7a439bbce0d765fdac25e76c3d0294aa1",
+      "source_version": "c287925f",
+      "content_hash": "0922156e8e2e679bd61456aa6fe9666f9db3c04162281829b45207b9fc7d0496",
       "dossier_path": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "promoted_rules": [
@@ -10176,6 +10186,21 @@
           "number": 3875,
           "title": "Coprocessor Redundancy and Security Initialization Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4740,
+          "title": "Hardware-Constrained Clock Divider Floor Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4741,
+          "title": "Dual Logging Format Compatibility Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4742,
+          "title": "Direct Memory Access (DMA) Memory Bus Containment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10183,7 +10208,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T18:15:20.540Z",
+      "verified_at": "2026-10-27T12:18:37.634Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14084,8 +14109,8 @@
       "slug": "greptimeteam-greptimedb",
       "platform": "github",
       "source_url": "https://github.com/GreptimeTeam/greptimedb",
-      "source_version": "1c5d15fd",
-      "content_hash": "7612195c220ca9fb0131ca849d77d5138553783272d9df28255a8f6a9facb22d",
+      "source_version": "5b4efd90",
+      "content_hash": "af6824af16e19b597c641b8117b96e2a53925b377e2bd02e0f3c75840098a71b",
       "dossier_path": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "promoted_rules": [
@@ -14118,6 +14143,11 @@
           "number": 4038,
           "title": "mito2): keep SSTs when a manifest save ends with RateLimited or PermissionDenied",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4739,
+          "title": "mito): preserve SST lifetime across index replacement (#9950)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14125,7 +14155,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T04:12:39.892Z",
+      "verified_at": "2026-10-27T12:14:46.898Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66048,8 +66078,8 @@
       "slug": "fb55-htmlparser2",
       "platform": "github",
       "source_url": "https://github.com/fb55/htmlparser2",
-      "source_version": "5141df8b",
-      "content_hash": "21fb3b28e8d944af33f8150b42cfc101dadd7ad3e811c1b9da9e48e2d20a17c1",
+      "source_version": "8eff7d8b",
+      "content_hash": "1baec62a8e75c320a5b9966aabf72936e2d0e9e44ec997542f9a769f968767f3",
       "dossier_path": "07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
       "promoted_rules": [
@@ -66067,6 +66097,11 @@
           "number": 3698,
           "title": "build(deps-dev): Bump eslint from 10.12.0 to 10.13.0 (#2552)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4736,
+          "title": "build(deps): Bump github/codeql-action from 4.39.0 to 4.39.1 (#2555)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -66074,7 +66109,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T18:50:19.684Z",
+      "verified_at": "2026-10-27T12:14:34.867Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -131927,6 +131962,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T12:10:57.786Z"
+    },
+    "rule-4736": {
+      "learning_id": "rule-4736",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4736,
+      "title": "build(deps): Bump github/codeql-action from 4.39.0 to 4.39.1 (#2555)",
+      "source_url": "https://github.com/fb55/htmlparser2",
+      "source_version": "8eff7d8b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:14:34.867Z"
+    },
+    "rule-4737": {
+      "learning_id": "rule-4737",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4737,
+      "title": "cache): expire dispatch cache entries a fixed TTL after they are written",
+      "source_url": "https://github.com/authzed/spicedb",
+      "source_version": "7e7420c3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:14:40.290Z"
+    },
+    "rule-4738": {
+      "learning_id": "rule-4738",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4738,
+      "title": "datapath/orchestrator: fix goroutine leak in MergeChannels watch path",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "a3e5ddfc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:14:44.569Z"
+    },
+    "rule-4739": {
+      "learning_id": "rule-4739",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4739,
+      "title": "mito): preserve SST lifetime across index replacement (#9950)",
+      "source_url": "https://github.com/GreptimeTeam/greptimedb",
+      "source_version": "5b4efd90",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:14:46.898Z"
+    },
+    "rule-4740": {
+      "learning_id": "rule-4740",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4740,
+      "title": "Hardware-Constrained Clock Divider Floor Invariant",
+      "source_url": "https://github.com/embassy-rs/embassy",
+      "source_version": "c287925f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:18:37.634Z"
+    },
+    "rule-4741": {
+      "learning_id": "rule-4741",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4741,
+      "title": "Dual Logging Format Compatibility Rule",
+      "source_url": "https://github.com/embassy-rs/embassy",
+      "source_version": "c287925f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:18:37.634Z"
+    },
+    "rule-4742": {
+      "learning_id": "rule-4742",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4742,
+      "title": "Direct Memory Access (DMA) Memory Bus Containment Invariant",
+      "source_url": "https://github.com/embassy-rs/embassy",
+      "source_version": "c287925f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:18:37.634Z"
     }
   },
   "aliases": {

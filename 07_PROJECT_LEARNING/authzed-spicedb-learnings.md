@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source**: github ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
-> **Source Version**: `5fedd8fc`  
+> **Source Version**: `7e7420c3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T18:50:24.954Z  
+> **Timestamp**: 2026-10-27T12:14:39.855Z  
 > **Learning ID**: `learn-github-authzed-spicedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T18:50:24.600Z  
+> **Harvest Timestamp**: 2026-10-27T12:14:39.480Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open Source, Google Zanzibar-inspired database for scalably storing and querying fine-grained authorization data
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 7167 stars
+- **Stars / Engagement**: 7175 stars
 
 ---
 
@@ -891,11 +891,11 @@ func convertWatchKindToContent(kinds []v1.WatchKind) datastore.WatchContent {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3424** (2026-10-21): **chore: bump grpc_health_probe to v0.4.60 and the base images for CVE-2026-111943**
-  *Symptoms*: ## What  Bump `grpc_health_probe` to v0.4.60 and the `cgr.dev/chainguard/static` base image in both Dockerfiles to fix CVE-2026-111943 in `crypto/x509`. The development `Dockerfile` also builds SpiceDB with `golang:1.27.3-alpine`.  ## Why  The Trivy scan of the release image now fails on CVE-2026-111943 (HIGH) in two places:  | Component | Installed | Fixed in | |---|---|---| | `grpc_health_probe` (Go stdlib) | v0.4.59, built with Go 1.27.2 | v0.4.60, built with Go 1.27.3 | | `ca-certificates-bundle` in the static base image | 20260413-r1 | 20260909-r3 |  The `spicedb` binary itself isn't affected, because CI builds it with Go 1.26.10. The development `Dockerfile` built it with Go 1.27.1, which is.  ## How  - `Dockerfile.release`: static base digest `sha256:17367e4d…` and `grpc_health_probe` v0.4.60. - `Dockerfile`:   - builder `golang:1.27.3-alpine@sha256:f2c872bc…`;   - the same static base digest;   - `grpc-health-probe:v0.4.60`.  ### Testing  - `go version -m` on the v0.4.60 release binary reports `go1.27.3`. - The development image builds. The same Trivy command as CI (`aquasec/trivy:0.69.3`, `--severity CRITICAL,HIGH,MEDIUM --ignore-unfixed`) reports 0 vulnerabilities for the base image, `grpc_health_probe` and `spicedb`. - The new static base digest on its own also scans clean. 
+- **Issue #3432** (2026-10-26): **fix(cache): expire dispatch cache entries a fixed TTL after they are written**
+  *Symptoms*: ## Description  Fixes #3431.  Partially addresses #3299: cache entries now expire based on write time rather than last access. Reducing the TTL itself is left for a follow-up.  When we switched from Ristretto to Otter, the caches' TTL became a sliding one: every read extended an entry's lifetime by another TTL. A cached dispatch result that kept getting read therefore never expired. On MySQL, the revision only advances on writes, so the cache key never changes either. An expired relationship could keep granting a permission until the next write, even with `fully_consistent`.  This restores the Ristretto behavior: entries expire a fixed TTL after they are written. Caches whose entries can't go stale while their key is unchanged can opt back into the sliding TTL. The namespace cache does, since schema at a revision never changes, and so does the full relation cache's access counter, which relies on it.  ## Testing  - New unit tests cover both expiration modes and check which mode each server cache is built with. - I reproduced the issue's steps against MySQL with a check every 2s. On v1.56.2 the expired relationship kept returning `true` for as long as the checks continued. With this change it returns `false` about two quantization windows after expiry, the same as v1.53.0 (Ristretto). 
 
-- **Issue #3423** (2026-10-21): **fix(crdb): derive the gc window from the zone config of SpiceDB's relationships**
-  *Symptoms*: ## What  The CockroachDB driver now takes its GC window from the zone configuration of the relationship table, not the cluster-wide `RANGE default`.  ## Why  CockroachDB resolves `gc.ttlseconds` per object: table → database → `RANGE default`. The value resolved for the table is what CockroachDB actually garbage-collects and enforces on reads. SpiceDB only read `RANGE default`, so its window was wrong whenever the database or table had its own TTL:  - **Too narrow.** With `ALTER DATABASE spicedb CONFIGURE ZONE USING gc.ttlseconds = 86400` and the default 4h `RANGE default`, SpiceDB clamped its window to 4h. `CheckRevision` then rejected revisions 4–24h old as stale, even though CockroachDB still served them. - **Too wide.** With the database below a longer `RANGE default`, SpiceDB accepted revisions past the real TTL. Reads then failed with CockroachDB's GC threshold error instead of being rejected as stale.  ## How  - At startup, run `SHOW ZONE CONFIGURATION FROM TABLE relation_tuple` (or `relation_tuple_with_integrity`). CockroachDB resolves the precedence itself. - Use `min(--datastore-gc-window, resolved TTL)` as the window. - If the query fails, e.g. the table doesn't exist yet, warn and fall back to `RANGE default`, as before. - At startup, log the effective window and the zone that set it: info when the configured window applies, warn when it is lowered. - Accept single-digit `gc.ttlseconds` values in the parser.  Deployments without a database or table zone configurati
+- **Issue #3431** (2026-10-26): **MySQL: expired relationship keeps granting permission until the next write, even with fully_consistent**
+  *Symptoms*: ### What SpiceDB version are you using?  v1.56.2 (zed v1.2.1, MySQL 8.0.32)  ### What SpiceDB flags do you use?  `--datastore-engine mysql`, everything else default.  ### Steps to Reproduce  ```sh docker network create sdb docker run -d --name mysql --network sdb -e MYSQL_ROOT_PASSWORD=pw -e MYSQL_DATABASE=spicedb mysql:8.0.32 until docker exec mysql mysqladmin ping -ppw --silent; do sleep 1; done; sleep 5 URI='root:pw@tcp(mysql:3306)/spicedb?parseTime=true' docker run --rm --network sdb authzed/spicedb:v1.56.2 migrate head --datastore-engine mysql --datastore-conn-uri "$URI" docker run -d --name spicedb --network sdb authzed/spicedb:v1.56.2 serve --grpc-preshared-key key --datastore-engine mysql --datastore-conn-uri "$URI" sleep 5 zed() { docker run --rm -i --network sdb authzed/zed:v1.2.1 --insecure --token key --endpoint spicedb:50051 "$@"; }  zed schema write <<'EOF' use expiration definition user {} definition doc {   relation viewer: user with expiration   permission view = viewer } EOF zed relationship touch doc:1 viewer user:alice --expiration-time "$(date -u -d '+5 sec' +%FT%TZ)" zed permission check doc:1 view user:alice --consistency-full  # true sleep 10 zed permission check doc:1 view user:alice --consistency-full  # true, although expired zed relationship read doc:1 --consistency-full                 # empty zed relationship touch doc:2 viewer user:bob --expiration-time 2099-01-01T00:00:00Z zed permission check doc:1 view user:alice --consistency-full  # false `
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -912,15 +912,340 @@ func convertWatchKindToContent(kinds []v1.WatchKind) datastore.WatchContent {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5fedd8fc` (2026-10-22)
-**Commit Message**: fix(schema): qualify wildcard cache keys by definition (#3421)
+### Incident Patch 1: `b2897b2e` (2026-10-26)
+**Commit Message**: fix(cache): expire dispatch cache entries a fixed TTL after they are written
 
-* fix(schema): qualify wildcard cache keys by definition
+Since the move to Otter, caches used a sliding TTL: every read pushed an
+entry's expiration out by another TTL, so an entry read more often than the
+TTL never expired. Ristretto, the previous default, expired entries a fixed
+TTL after they were set.
 
-* docs: add changelog entry for wildcard validation fix
+Dispatch results can go stale without their cache key changing, for example
+when a relationship they depend on expires. On MySQL, where the revision only
+advances on writes, an expired relationship could therefore keep granting a
+permission indefinitely, even with fully_consistent, until the next write.
 
----------
+Caches now expire entries a fixed TTL after they are written. Caches whose
+values cannot go stale while their key is unchanged can opt back into the
+sliding TTL with RefreshTTLOnAccess; the namespace cache and the full
+relation cache's access counter do.
 
+Fixes #3431
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+ 
+ ## [Unreleased]
+ ### Fixed
++- Caching: dispatch, cluster dispatch, relationship chunk and full relation cache entries again expire one TTL after they are written, as they did before v1.54.0. Since the move to Otter, every read pushed an entry's expiration out by another TTL, so a result that was read more often than the TTL never expired. On MySQL, where the revision only advances on writes, an expired relationship could then keep granting a permission indefinitely, even with `fully_consistent`, until the next write. The namespace cache, whose entries cannot go stale, still extends its TTL on reads. (https://github.com/authzed/spicedb/issues/3431)
+ - Schema validation: schemas that transitively include wildcard subjects are now consistently rejected, even when unrelated definitions reuse the same relation names. (https://github.com/authzed/spicedb/pull/3421)
+ - CockroachDB: the GC window is now derived from the zone configuration that applies to SpiceDB's relationship table instead of the cluster-wide `RANGE default`. SpiceDB reads `SHOW ZONE CONFIGURATION FROM TABLE relation_tuple` (or `relation_tuple_with_integrity`), for which CockroachDB resolves table, database and `RANGE default` precedence, and caps `--datastore-gc-window` at that TTL. Previously a database configured with `ALTER DATABASE ... CONFIGURE ZONE USING gc.ttlseconds = 86400` on a cluster with the default 4h `RANGE default` rejected revisions older than 4h as stale, and a database configured below a longer `RANGE default` kept a window wider than the data's real TTL, so reads past it failed with CockroachDB's GC threshold error instead of being rejected as stale. If the table's zone configuration cannot be read, the `RANGE default` value is used as before. A single-digit `gc.ttlseconds` is now also parsed correctly.
+ 
+```
+
+**File**: `internal/datastore/proxy/fullrelationcache/counter.go` (modified, +2/-0)
+```diff
+@@ -40,6 +40,8 @@ func NewAccessCounter(maxCost int64, window time.Duration) (AccessCounter, error
+ 	c, err := cache.NewStandardCache[counterKey, *atomic.Uint64](&cache.Config{
+ 		MaxCost:    maxCost,
+ 		DefaultTTL: window,
++		// Touch reads the counter, so each Touch restarts the window.
++		RefreshTTLOnAccess: true,
+ 	})
+ 	if err != nil {
+ 		return nil, err
+```
+
+**File**: `pkg/cache/cache.go` (modified, +10/-2)
+```diff
+@@ -40,15 +40,23 @@ type Config struct {
+ 	MaxCost int64
+ 
+ 	// DefaultTTL configures a default deadline on the lifetime of any keys set
+-	// to the cache.
++	// to the cache. The deadline is measured from when the key was last set;
++	// reads do not extend it unless RefreshTTLOnAccess is true.
+ 	DefaultTTL time.Duration
++
++	// RefreshTTLOnAccess, if true, extends a key's deadline by DefaultTTL on
++	// every read as well as on every set, so a key that is read more often than
++	// DefaultTTL never expires. Only enable it for caches whose values cannot
++	// become stale while their key is unchanged.
++	RefreshTTLOnAccess bool
+ }
+ 
+ func (c *Config) MarshalZerologObject(e *zerolog.Event) {
+ 	maxCost := spiceerrors.MustSafecast[uint64](c.MaxCost)
+ 	e.
+ 		Str("maxCost", humanize.IBytes(maxCost)).
+-		Dur("defaultTTL", c.DefaultTTL)
++		Dur("defaultTTL", c.DefaultTTL).
++		Bool("refreshTTLOnAccess", c.RefreshTTLOnAccess)
+ }
+ 
+ // Cache defines an interface for a generic cache. Method semantics follow
+```
+
+**File**: `pkg/cache/cache_otter.go` (modified, +5/-1)
+```diff
+@@ -83,7 +83,11 @@ func newOtterCache[K KeyString, V any](name string, config *Config) (*otterCache
+ 		StatsRecorder: counter,
+ 	}
+ 	if config.DefaultTTL > 0 {
+-		opts.ExpiryCalculator = otter.ExpiryAccessing[string, valueAndCost[V]](config.DefaultTTL)
++		if config.RefreshTTLOnAccess {
++			opts.ExpiryCalculator = otter.ExpiryAccessing[string, valueAndCost[V]](config.DefaultTTL)
++		} else {
++			opts.ExpiryCalculator = otter.ExpiryWriting[string, valueAndCost[V]](config.DefaultTTL)
++		}
+ 	}
+ 
+ 	cache, err := otter.New(opts)
+```
+
+**File**: `pkg/cache/cache_test.go` (modified, +89/-0)
+```diff
+@@ -205,3 +205,92 @@ func TestCacheWithMetrics(t *testing.T) {
+ 		})
+ 	})
+ }
++
++func TestTTLExpiration(t *testing.T) {
++	const ttl = 1 * time.Minute
++
++	newCache := func(t *testing.T, refreshOnAccess bool) Cache[StringKey, string] {
++		c, err := NewOtterCache[StringKey, string]("test-otter", &Config{
++			MaxCost:            1000,
++			DefaultTTL:         ttl,
++			RefreshTTLOnAccess: refreshOnAccess,
++		})
++		//nolint:testifylint  // we're in a goroutine
++		if !assert.NoError(t, err) {
++			t.FailNow()
++		}
++		t.Cleanup(c.Close)
++		return c
++	}
++
++	t.Run("expires after the TTL", func(t *testing.T) {
++		synctest.Test(t, func(t *testing.T) {
++			c := newCache(t, false)
++			assert.True(t, c.Set(StringKey("key"), "value", 10))
++
++			time.Sleep(ttl - time.Second)
++			_, found := c.Get(StringKey("key"))
++			assert.True(t, found, "expected key to be present before the TTL elapsed")
++
++			time.Sleep(2 * time.Second)
++			_, found = c.Get(StringKey("key"))
++			assert.False(t, found, "expected key to have expired after the TTL")
++		})
++	})
++
++	t.Run("reads do not extend the TTL", func(t *testing.T) {
++		synctest.Test(t, func(t *testing.T) {
++			c := newCache(t, false)
++			assert.True(t, c.Set(StringKey("key"), "value", 10))
++
++			// Read the key every 10 seconds, so a sliding TTL would never lapse.
++			// A key read steadily must still expire one TTL after it was set.
++			for elapsed := 10 * time.Second; elapsed < ttl; elapsed += 10 * time.Second {
++				time.Sleep(10 * time.Second)
++				_, found := c.Get(StringKey("key"))
++				assert.True(t, found, "expected key to be present %s after it was set", elapsed)
++			}
++
++			time.Sleep(10 * time.Second)
++			_, found := c.Get(StringKey("key"))
++			assert.False(t, found, "expected key to have expired despite being read")
++		})
++	})
++
++	t.Run("setting a key restarts its TTL", func(t *testing.T) {
++		synctest.Test(t, func(t *testing.T) {
++			c := newCache(t, false)
++			assert.True(t, c.Set(StringKey("key"), "first", 10))
++
++			time.Sleep(ttl / 2)
++			assert.True(t, c.Set(StringKey("key"), "second", 10))
++
++			time.Sleep(ttl/2 + time.Second)
++			value, found := c.Get(StringKey("key"))
++			assert.True(t, found, "expected key to be present one TTL after its first set")
++			assert.Equal(t, "second", value)
++
++			time.Sleep(ttl / 2)
++			_, found = c.Get(StringKey("key"))
++			assert.False(t, found, "expected key to have expired one TTL after its last set")
++		})
++	})
++
++	t.Run("RefreshTTLOnAccess extends the TTL on reads", func(t *testing.T) {
++		synctest.Test(t, func(t *testing.T) {
++			c := newCache(t, true)
++			assert.True(t, c.Set(StringKey("key"), "value", 10))
++
++			for range 5 {
++				time.Sleep(ttl / 2)
++				_, found := c.Get(StringKey("key"))
++				assert.True(t, found, "expected a read to keep the key alive")
++			}
++
++			// Once the reads stop, the key expires one TTL after the last one.
++			time.Sleep(ttl + time.Second)
++			_, found := c.Get(StringKey("key"))
++			assert.False(t, found, "expected key to have expired once reads stopped")
++		})
++	})
++}
+```
+
+**File**: `pkg/cache/memory_limiter_integration_test.go` (modified, +1/-1)
+```diff
+@@ -77,7 +77,7 @@ func TestCacheFillingDoesNotTripMemoryLimiter(t *testing.T) {
+ 			// live heap (dominated by the dispatch caches) is what the memory limiter sees.
+ 			"GOGC": envOr("SPICEDB_GOGC", "25"),
+ 			// A long quantization window with staleness gives dispatch cache
+-			// entries a sliding TTL of roughly 2 x (5m x 1.1) = 11m, so nothing
++			// entries a TTL of roughly 2 x (5m x 1.1) = 11m, so nothing
+ 			// expires during the run and the caches reach their budgets.
+ 			"SPICEDB_DATASTORE_REVISION_QUANTIZATION_INTERVAL":              "5m",
+ 			"SPICEDB_DATASTORE_REVISION_QUANTIZATION_MAX_STALENESS_PERCENT": "10",
+```
+
+**File**: `pkg/cmd/server/cacheconfig.go` (modified, +16/-4)
+```diff
+@@ -37,6 +37,8 @@ type CacheConfig struct {
+ 	Metrics     bool          `debugmap:"visible"`
+ 	Enabled     bool          `debugmap:"visible"`
+ 	defaultTTL  time.Duration `debugmap:"visible"`
++	// refreshTTLOnAccess makes reads extend an entry's TTL; see cache.Config.
++	refreshTTLOnAccess bool `debugmap:"visible"`
+ }
+ 
+ // WithRevisionParameters configures a cache such that all entries are given a TTL
+@@ -55,6 +57,14 @@ func (cc *CacheConfig) WithRevisionParameters(
+ 	return cc
+ }
+ 
++// WithTTLRefreshedOnAccess configures a cache such that reading an entry extends
++// its TTL. Only use it for caches whose values cannot become stale while their
++// key is unchanged, such as schema keyed by revision.
++func (cc *CacheConfig) WithTTLRefreshedOnAccess() *CacheConfig {
++	cc.refreshTTLOnAccess = true
++	return cc
++}
++
+ // CompleteCache translates the CLI cache config into a cache. If metrics are
+ // enabled for the cache, its metrics are registered with the given registerer.
+ func CompleteCache[K cache.KeyString, V any](registerer prometheus.Registerer, cc *CacheConfig) (cache.Cache[K, V], error) {
+@@ -69,14 +79,16 @@ func CompleteCache[K cache.KeyString, V any](registerer prometheus.Registerer, c
+ 
+ 	if cc.Metrics {
+ 		return cache.NewStandardCacheWithMetrics[K, V](registerer, cc.Name, &cache.Config{
+-			MaxCost:    intMaxCost,
+-			DefaultTTL: cc.defaultTTL,
++			MaxCost:            intMaxCost,
++			DefaultTTL:         cc.defaultTTL,
++			RefreshTTLOnAccess: cc.refreshTTLOnAccess,
+ 		})
+ 	}
+ 
+ 	return cache.NewStandardCache[K, V](&cache.Config{
+-		MaxCost:    intMaxCost,
+-		DefaultTTL: cc.defaultTTL,
++		MaxCost:            intMaxCost,
++		DefaultTTL:         cc.defaultTTL,
++		RefreshTTLOnAccess: cc.refreshTTLOnAccess,
+ 	})
+ }
+ 
+```
+
+**File**: `pkg/cmd/server/cacheconfig_test.go` (modified, +53/-0)
+```diff
+@@ -2,11 +2,15 @@ package server
+ 
+ import (
+ 	"testing"
++	"testing/synctest"
+ 	"time"
+ 
++	"github.com/prometheus/client_golang/prometheus"
++	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+ 
+ 	"github.com/authzed/spicedb/internal/datastore/dsfortesting"
++	"github.com/authzed/spicedb/pkg/cache"
+ 	"github.com/authzed/spicedb/pkg/cmd/util"
+ )
+ 
+@@ -176,6 +180,55 @@ func TestRevisionKeyedCachesExpire(t *testing.T) {
+ 		require.Positive(t, cacheConfig.defaultTTL,
+ 			"the %s cache is keyed by revision and must be given a TTL", name)
+ 	}
++
++	// Schema at a revision never changes, so namespace cache reads may extend
++	// the TTL. A dispatch result can go stale without its key changing (for
++	// example, when a relationship it depends on expires), so reads of the
++	// dispatch caches must not keep an entry alive past its TTL.
++	require.True(t, c.NamespaceCacheConfig.refreshTTLOnAccess,
++		"the namespace cache should extend its TTL on access")
++	require.False(t, c.DispatchCacheConfig.refreshTTLOnAccess,
++		"the dispatch cache must not extend its TTL on access")
++	require.False(t, c.ClusterDispatchCacheConfig.refreshTTLOnAccess,
++		"the cluster dispatch cache must not extend its TTL on access")
++}
++
++func TestCompleteCacheTTLOnAccess(t *testing.T) {
++	const ttl = 1 * time.Minute
++
++	for _, tc := range []struct {
++		name            string
++		refreshOnAccess bool
++		expectFound     bool
++	}{
++		{"fixed TTL expires despite reads", false, false},
++		{"TTL refreshed on access survives reads", true, true},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			synctest.Test(t, func(t *testing.T) {
++				cc := &CacheConfig{Name: "test", Enabled: true, MaxCost: "1MiB", defaultTTL: ttl}
++				if tc.refreshOnAccess {
++					cc = cc.WithTTLRefreshedOnAccess()
++				}
++
++				c, err := CompleteCache[cache.StringKey, string](prometheus.NewRegistry(), cc)
++				//nolint:testifylint  // we're in a goroutine
++				if !assert.NoError(t, err) {
++					return
++				}
++				defer c.Close()
++
++				assert.True(t, c.Set(cache.StringKey("key"), "value", 10))
++				for range 4 {
++					time.Sleep(ttl / 2)
++					_, _ = c.Get(cache.StringKey("key"))
++				}
++
++				_, found := c.Get(cache.StringKey("key"))
++				assert.Equal(t, tc.expectFound, found)
++			})
++		})
++	}
+ }
+ 
+ func TestCacheRetainsEntries(t *testing.T) {
+```
+
+---
+
+### Incident Patch 2: `7e7420c3` (2026-10-27)
+**Commit Message**: fix(tls): reload certificate authorities when they rotate on disk (#3296)
+
+Signed-off-by: Oleksii Udovychenko <[REDACTED_EMAIL]>
+Co-authored-by: Oleksii Udovychenko <[REDACTED_EMAIL]>
 Co-authored-by: Tanner Stirrat <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
@@ -929,597 +1254,597 @@ Co-authored-by: Tanner Stirrat <[REDACTED_EMAIL]>
  
  ## [Unreleased]
  ### Fixed
-+- Schema validation: schemas that transitively include wildcard subjects are now consistently rejected, even when unrelated definitions reuse the same relation names. (https://github.com/authzed/spicedb/pull/3421)
++- Dispatch and telemetry: CA bundles read from disk via `--dispatch-upstream-ca-path` and the telemetry client's CA path are now re-read on every outbound TLS handshake, so a rotated certificate authority is picked up without a process restart. Previously the CA pool was set once at startup and stayed fixed for the life of the process, causing handshakes to fail with "certificate signed by unknown authority" after the old CA was retired. (https://github.com/authzed/spicedb/pull/3296)
+ - Caching: dispatch, cluster dispatch, relationship chunk and full relation cache entries again expire one TTL after they are written, as they did before v1.54.0. Since the move to Otter, every read pushed an entry's expiration out by another TTL, so a result that was read more often than the TTL never expired. On MySQL, where the revision only advances on writes, an expired relationship could then keep granting a permission indefinitely, even with `fully_consistent`, until the next write. The namespace cache, whose entries cannot go stale, still extends its TTL on reads. (https://github.com/authzed/spicedb/issues/3431)
+ - Schema validation: schemas that transitively include wildcard subjects are now consistently rejected, even when unrelated definitions reuse the same relation names. (https://github.com/authzed/spicedb/pull/3421)
  - CockroachDB: the GC window is now derived from the zone configuration that applies to SpiceDB's relationship table instead of the cluster-wide `RANGE default`. SpiceDB reads `SHOW ZONE CONFIGURATION FROM TABLE relation_tuple` (or `relation_tuple_with_integrity`), for which CockroachDB resolves table, database and `RANGE default` precedence, and caps `--datastore-gc-window` at that TTL. Previously a database configured with `ALTER DATABASE ... CONFIGURE ZONE USING gc.ttlseconds = 86400` on a cluster with the default 4h `RANGE default` rejected revisions older than 4h as stale, and a database configured below a longer `RANGE default` kept a window wider than the data's real TTL, so reads past it failed with CockroachDB's GC threshold error instead of being rejected as stale. If the table's zone configuration cannot be read, the `RANGE default` value is used as before. A single-digit `gc.ttlseconds` is now also parsed correctly.
- 
- ## [1.57.0] - 2026-10-20
 ```
 
-**File**: `pkg/schema/typesystem_test.go` (modified, +67/-0)
+**File**: `internal/dispatch/combined/ca_rotation_integration_test.go` (added, +241/-0)
 ```diff
-@@ -12,6 +12,7 @@ import (
- 	"github.com/authzed/spicedb/pkg/datastore"
- 	ns "github.com/authzed/spicedb/pkg/namespace"
- 	core "github.com/authzed/spicedb/pkg/proto/core/v1"
-+	"github.com/authzed/spicedb/pkg/schemadsl/compiler"
- )
- 
- func TestTypeSystemConcurrency(t *testing.T) {
-@@ -702,3 +703,69 @@ func TestPossibleTraitsForFilter(t *testing.T) {
- 		})
- 	}
- }
+@@ -0,0 +1,241 @@
++//go:build image
 +
-+// The same relation name in different definitions must have independent wildcard results.
-+func TestWildcardReferencesAcrossDefinitions(t *testing.T) {
-+	compiled, err := compiler.Compile(compiler.InputSchema{
-+		SchemaString: `
-+			definition user {}
-+			definition direct {
-+				relation member: user
-+			}
-+			definition public {
-+				relation member: user:*
-+			}
-+		`,
-+	}, compiler.AllowUnprefixedObjectType())
-+	require.NoError(t, err)
-+
-+	for _, order := range [][]string{{"direct", "public"}, {"public", "direct"}} {
-+		t.Run(fmt.Sprint(order), func(t *testing.T) {
-+			ts := NewTypeSystem(ResolverForSchema(compiled))
-+			for _, name := range order {
-+				def, err := ts.GetDefinition(t.Context(), name)
-+				require.NoError(t, err)
-+				ref, err := ts.referencesWildcardType(t.Context(), def, "member")
-+				require.NoError(t, err)
-+				if name == "direct" {
-+					require.Nil(t, ref)
-+				} else {
-+					require.NotNil(t, ref)
-+					require.Equal(t, "public", ref.ReferencingRelation.Namespace)
-+					require.Equal(t, "member", ref.ReferencingRelation.Relation)
-+					require.Equal(t, "user", ref.WildcardType.Namespace)
-+				}
-+			}
-+		})
-+	}
-+}
-+
-+func TestTransitiveWildcardValidationAfterUnrelatedDefinition(t *testing.T) {
-+	compiled, err := compiler.Compile(compiler.InputSchema{
-+		SchemaString: `
-+			definition ty0 {
-+				relation rel0: ty3#rel0
-+				relation rel1: ty2#rel1
-+			}
-+			definition ty1 {
-+				relation rel0: ty0
-+			}
-+			definition ty2 {
-+				relation rel1: ty1#rel0
-+			}
-+			definition ty3 {
-+				relation rel0: ty0:*
-+			}
-+		`,
-+	}, compiler.AllowUnprefixedObjectType())
-+	require.NoError(t, err)
-+
-+	ts := NewTypeSystem(ResolverForSchema(compiled))
-+	// Validating ty2 first caches a negative wildcard result for ty1#rel0.
-+	_, err = ts.GetValidatedDefinition(t.Context(), "ty2")
-+	require.NoError(t, err)
-+
-+	// That result must not hide the wildcard in ty3#rel0 when validating ty0.
-+	_, err = ts.GetValidatedDefinition(t.Context(), "ty0")
-+	require.ErrorContains(t, err, "wildcard relations cannot be transitively included")
-+}
-```
-
-**File**: `pkg/schema/typesystem_validation.go` (modified, +4/-2)
-```diff
-@@ -303,7 +303,9 @@ func (ts *TypeSystem) referencesWildcardTypeWithEncountered(ctx context.Context,
- 		ts.wildcardCheckCache = make(map[string]*WildcardTypeReference, 1)
- 	}
- 
--	cached, isCached := ts.wildcardCheckCache[relationName]
-+	// Relation names are only unique within a definition.
-+	relString := tuple.JoinRelRef(def.nsDef.Name, relationName)
-+	cached, isCached := ts.wildcardCheckCache[relString]
- 	if isCached {
- 		return cached, nil
- 	}
-@@ -313,7 +315,7 @@ func (ts *TypeSystem) referencesWildcardTypeWithEncountered(ctx context.Context,
- 		return nil, err
- 	}
- 
--	ts.wildcardCheckCache[relationName] = computed
-+	ts.wildcardCheckCache[relString] = computed
- 	return computed, nil
- }
- 
-```
-
----
-
-### Incident Patch 2: `048889c6` (2026-10-21)
-**Commit Message**: fix(crdb): derive the gc window from the zone config of SpiceDB's relationships (#3423)
-
-At startup the CockroachDB driver lowered --datastore-gc-window to the
-gc.ttlseconds of RANGE default. CockroachDB resolves gc.ttlseconds per
-object (partition, index, table, database, then RANGE default), and both
-garbage collection and strict GC enforcement apply the TTL resolved for
-the table. A database configured with
-
-    ALTER DATABASE spicedb CONFIGURE ZONE USING gc.ttlseconds = 86400;
-
-on a cluster whose RANGE default is CockroachDB's built-in 4h retains 24h
-of history, yet SpiceDB clamped its window to 4h and CheckRevision
-rejected revisions 4-24h old as stale. Conversely, a database configured
-below a longer RANGE default kept SpiceDB's window too wide, and reads
-past the real TTL failed with CockroachDB's GC threshold error instead
-of being rejected as stale.
-
-The driver now reads SHOW ZONE CONFIGURATION FROM TABLE for the
-relationship table, for which CockroachDB resolves table, database and
-RANGE default precedence, and uses that TTL capped at the configured
-window. If the zone configuration cannot be read, it falls back to the
-RANGE default value as before.
-
-The gc.ttlseconds par
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
- The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
- 
- ## [Unreleased]
-+### Fixed
-+- CockroachDB: the GC window is now derived from the zone configuration that applies to SpiceDB's relationship table instead of the cluster-wide `RANGE default`. SpiceDB reads `SHOW ZONE CONFIGURATION FROM TABLE relation_tuple` (or `relation_tuple_with_integrity`), for which CockroachDB resolves table, database and `RANGE default` precedence, and caps `--datastore-gc-window` at that TTL. Previously a database configured with `ALTER DATABASE ... CONFIGURE ZONE USING gc.ttlseconds = 86400` on a cluster with the default 4h `RANGE default` rejected revisions older than 4h as stale, and a database configured below a longer `RANGE default` kept a window wider than the data's real TTL, so reads past it failed with CockroachDB's GC threshold error instead of being rejected as stale. If the table's zone configuration cannot be read, the `RANGE default` value is used as before. A single-digit `gc.ttlseconds` is now also parsed correctly.
- 
- ## [1.57.0] - 2026-10-20
- ### Added
-```
-
-**File**: `internal/datastore/crdb/crdb.go` (modified, +64/-17)
-```diff
-@@ -44,7 +44,7 @@ var ParseRevisionString = revisions.RevisionParser(revisions.HybridLogicalClock)
- var (
- 	psql = sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
- 
--	gcTTLRegex = regexp.MustCompile(`gc\.ttlseconds\s*=\s*([1-9][0-9]+)`)
-+	gcTTLRegex = regexp.MustCompile(`gc\.ttlseconds\s*=\s*([0-9]+)`)
- 
- 	tracer = otel.Tracer("spicedb/internal/datastore/crdb")
- )
-@@ -59,6 +59,7 @@ const (
- 	queryTransactionNowPreV23 = querySelectNow
- 	queryTransactionNow       = "SHOW COMMIT TIMESTAMP"
- 	queryShowZoneConfig       = "SHOW ZONE CONFIGURATION FOR RANGE default;"
-+	queryShowTableZoneConfig  = "SHOW ZONE CONFIGURATION FROM TABLE %s;"
- 
- 	spicedbTransactionKey = "$spicedb_transaction_key"
- )
-@@ -158,19 +159,11 @@ func newCRDBDatastore(ctx context.Context, url string, options ...Option) (datas
- 		transactionNowQuery = queryTransactionNowPreV23
- 	}
- 
--	clusterTTLNanos, err := readClusterTTLNanos(initCtx, initPool)
-+	gcWindow, err := resolveGCWindow(initCtx, initPool, config.gcWindow, config.withIntegrity)
- 	if err != nil {
- 		return nil, fmt.Errorf("unable to read cluster gc window: %w", err)
- 	}
--
--	gcWindowNanos := config.gcWindow.Nanoseconds()
--	if clusterTTLNanos < gcWindowNanos {
--		log.Warn().
--			Int64("cockroach_cluster_gc_window_nanos", clusterTTLNanos).
--			Int64("spicedb_gc_window_nanos", gcWindowNanos).
--			Msg("configured CockroachDB cluster gc window is less than configured SpiceDB gc window, falling back to CRDB value. See " + sharederrors.CrdbGcWindowErrorLink)
--		config.gcWindow = time.Duration(clusterTTLNanos) * time.Nanosecond
--	}
-+	config.gcWindow = gcWindow
- 
- 	// If watch is enabled, ensure the relationship tables suppress row-level TTL
- 	// deletes from changefeeds, so that the Watch API does not emit deletions
-@@ -750,26 +743,80 @@ func (cds *crdbDatastore) readTransactionCommitRev(ctx context.Context, reader p
- 	return revisions.NewForHLC(hlcNow)
- }
- 
--func readClusterTTLNanos(ctx context.Context, conn pgxcommon.DBFuncQuerier) (int64, error) {
--	var target, configSQL string
-+type zoneGCTTL struct {
-+	target string
-+	ttl    time.Duration
-+}
-+
-+func resolveGCWindow(ctx context.Context, conn pgxcommon.DBFuncQuerier, configured time.Duration, withIntegrity bool) (time.Duration, error) {
-+	relationTable := schema.TableTuple
-+	if withIntegrity {
-+		relationTable = schema.TableTupleWithIntegrity
-+	}
-+
-+	var effective time.Duration
-+	var rangeDefault zoneGCTTL
-+	dataZone, dataErr := readZoneGCTTL(ctx, conn, fmt.Sprintf(queryShowTableZoneConfig, relationTable))
-+	if dataErr == nil {
-+		effective = min(configured, dataZone.ttl)
-+	} else {
-+		var err error
-+		rangeDefault, err = readZoneGCTTL(ctx, conn, queryShowZoneConfig)
-+		if err != nil {
-+			return 0, err
-+		}
-+		log.Warn().Err(dataErr).Str("table", relationTable).Msg("unable to read the CockroachDB zone configuration of the relationship table, falling back to RANGE default")
-+		effective = min(configured, rangeDefault.ttl)
-+	}
-+
-+	event, msg := log.Info(), "using configured SpiceDB gc window, covered by the CockroachDB gc window"
-+	if effective < configured {
-+		event, msg = log.Warn(), "configured CockroachDB cluster gc window is less than configured SpiceDB gc window, falling back to CRDB value. See "+sharederrors.CrdbGcWindowErrorLink
-+	}
-+	if dataErr == nil {
-+		event = event.
-+			Int64("cockroach_data_gc_window_nanos", dataZone.ttl.Nanoseconds()).
-+			Str("cockroach_data_zone_target", dataZone.target)
-+	} else {
-+		event = event.Int64("cockroach_cluster_gc_window_nanos", rangeDefault.ttl.Nanoseconds())
-+	}
-+	event.
-+		Int64("spicedb_gc_window_nanos", configured.Nanoseconds()).
-+		Int64("effective_gc_window_nanos", effective.Nanoseconds()).
-+		Msg(msg)
-+	return effective, nil
-+}
- 
-+func readZoneGCTTL(ctx context.Context, conn pgxcommon.DBFuncQuerier, query string) (zoneGCTTL, error) {
-+	var target, configSQL string
- 	if err := conn.QueryRowFunc(ctx, func(ctx context.Context, row pgx.Row) error {
- 		return row.Scan(&target, &configSQL)
--	}, queryShowZoneConfig); err != nil {
--		return 0, err
-+	}, query); err != nil {
-+		return zoneGCTTL{}, err
- 	}
- 
-+	ttl, err := parseGCTTL(configSQL)
-+	if err != nil {
-+		return zoneGCTTL{}, fmt.Errorf("zone config of %s: %w", target, err)
-+	}
-+	return zoneGCTTL{target: target, ttl: ttl}, nil
-+}
-+
-+func parseGCTTL(configSQL string) (time.Duration, error) {
- 	groups := gcTTLRegex.FindStringSubmatch(configSQL)
--	if groups == nil || len(groups) != 2 {
-+	if len(groups) != 2 {
- 		return 0, errors.New("CRDB zone config unexpected format")
- 	}
- 
- 	gcSeconds, err := strconv.ParseInt(groups[1], 10, 64)
- 	if err != nil {
- 		return 0, err
- 	}
-+	if gcSeconds <= 0 {
-+		return 0, fmt.Errorf("CRDB zone config has invalid gc.ttlseconds %d", gcSeconds)
-+	}
- 
--	return gcSeconds * 1_000_000_000, nil
-+	return time.Duration(gcSeconds) * time.Second, nil
- }
- 
- func (cds *crdbDatastore) registerPrometheusCollectors(enablePrometheusStats bool) error {
-```
-
-**File**: `internal/datastore/crdb/crdb_test.go` (modified, +114/-0)
-```diff
-@@ -1027,3 +1027,117 @@ func TestVersionReading(t *testing.T) {
- 	require.Equal(expectedMinor, version.Minor)
- 	require.Equal(expectedPatch, version.Patch)
- }
-+
-+func TestEffectiveGCWindowFromZoneConfig(t *testing.T) {
-+	t.Parallel()
-+
-+	// Owns its container, so changing RANGE default cannot affect other tests.
-+	b := testdatastore.RunCRDBForTesting(t, crdbTestVersion())
-+
-+	const (
-+		dbZone24h    = "ALTER DATABASE %[1]s CONFIGURE ZONE USING gc.ttlseconds = 86400"
-+		dbZone4h     = "ALTER DATABASE %[1]s CONFIGURE ZONE USING gc.ttlseconds = 14400"
-+		tableZone24h = "ALTER TABLE %[1]s.relation_tuple CONFIGURE ZONE USING gc.ttlseconds = 86400"
-+		tableZone6h  = "ALTER TABLE %[1]s.relation_tuple CONFIGURE ZONE USING gc.ttlseconds = 21600"
-+		tableZone4h  = "ALTER TABLE %[1]s.relation_tuple CONFIGURE ZONE USING gc.ttlseconds = 14400"
-+	)
-+
-+	type zoneCase struct {
-+		name           string
-+		zoneStatements []string
-+		skipMigrations bool
-+		expectedWindow time.Duration
-+	}
-+
-+	groups := []struct {
-+		rangeDefaultSeconds int
-+		cases               []zoneCase
-+	}{
-+		{
-+			rangeDefaultSeconds: 14400,
-+			cases: []zoneCase{
-+				{name: "database 24h", zoneStatements: []string{dbZone24h}, expectedWindow: 24 * time.Hour},
-+				{name: "database 24h, table 6h", zoneStatements: []string{dbZone24h, tableZone6h}, expectedWindow: 6 * time.Hour},
-+				{name: "no zones", expectedWindow: 4 * time.Hour},
-+				{name: "database 4h, table 24h", zoneStatements: []string{dbZone4h, tableZone24h}, expectedWindow: 24 * time.Hour},
-+				{name: "table missing falls back to range default", zoneStatements: []string{dbZone24h}, skipMigrations: true, expectedWindow: 4 * time.Hour},
-+			},
-+		},
-+		{
-+			rangeDefaultSeconds: 86400,
-+			cases: []zoneCase{
-+				{name: "database 4h", zoneStatements: []string{dbZone4h}, expectedWindow: 4 * time.Hour},
-+				{name: "table 4h", zoneStatements: []string{tableZone4h}, expectedWindow: 4 * time.Hour},
-+				{name: "no zones", expectedWindow: 24 * time.Hour},
-+			},
-+		},
-+	}
-+
-+	applyZones := func(t *testing.T, uri string, statements []string) {
-+		ctx := t.Context()
-+		conn, err := pgx.Connect(ctx, uri)
-+		require.NoError(t, err)
-+		defer conn.Close(ctx)
-+
-+		var dbName string
-+		require.NoError(t, conn.QueryRow(ctx, "SELECT current_database()").Scan(&dbName))
-+		for _, stmt := range statements {
-+			_, err := conn.Exec(ctx, fmt.Sprintf(stmt, dbName))
-+			require.NoError(t, err)
-+		}
-+	}
-+
-+	newDatastore := func(t *testing.T, uri string) *crdbDatastore {
-+		ds, err := newCRDBDatastore(t.Context(), uri, GCWindow(24*time.Hour), WithAcquireTimeout(5*time.Second))
-+		require.NoError(t, err)
-+		t.Cleanup(func() {
-+			_ = ds.Close()
-+		})
-+		cds, ok := ds.(*crdbDatastore)
-+		require.True(t, ok)
-+		return cds
-+	}
-+
-+	// Groups run sequentially: RANGE default is cluster-wide.
-+	for _, group := range groups {
-+		t.Run(fmt.Sprintf("range default %ds", group.rangeDefaultSeconds), func(t *testing.T) {
-+			conn, err := pgx.Connect(t.Context(), b.NewDatabase(t))
-+			require.NoError(t, err)
-+			_, err = conn.Exec(t.Context(), fmt.Sprintf("ALTER RANGE default CONFIGURE ZONE USING gc.ttlseconds = %d", group.rangeDefaultSeconds))
-+			require.NoError(t, err)
-+			require.NoError(t, conn.Close(t.Context()))
-+
-+			for _, tc := range group.cases {
-+				t.Run(tc.name, func(t *testing.T) {
-+					var cds *crdbDatastore
-+					if tc.skipMigrations {
-+						uri := b.NewDatabase(t)
-+						applyZones(t, uri, tc.zoneStatements)
-+						cds = newDatastore(t, uri)
-+					} else {
-+						b.NewDatastore(t, func(_, uri string) datastore.Datastore {
-+							applyZones(t, uri, tc.zoneStatements)
-+							cds = newDatastore(t, uri)
-+							return cds
-+						})
-+					}
-+
-+					require.Equal(t, tc.expectedWindow, cds.gcWindow)
-+
-+					ctx := t.Context()
-+					justInside := revisions.NewHLCForTime(time.Now().Add(-tc.expectedWindow + 10*time.Minute))
-+					require.NoError(t, cds.CheckRevision(ctx, justInside))
-+					justOutside := revisions.NewHLCForTime(time.Now().Add(-tc.expectedWindow - 10*time.Minute))
-+					requireStale(t, cds.CheckRevision(ctx, justOutside))
-+				})
-+			}
-+		})
-+	}
-+}
-+
-+func requireStale(t *testing.T, err error) {
-+	t.Helper()
-+	var irErr datastore.InvalidRevisionError
-+	require.ErrorAs(t, err, &irErr)
-+	require.Equal(t, datastore.RevisionStale, irErr.Reason())
-+}
-```
-
-**File**: `internal/datastore/crdb/gcwindow_test.go` (added, +219/-0)
-```diff
-@@ -0,0 +1,219 @@
-+package crdb
++package combined_test
 +
 +import (
++	"bytes"
 +	"context"
-+	"errors"
++	"crypto/ecdsa"
++	"crypto/elliptic"
++	"crypto/rand"
++	"crypto/x509"
++	"crypto/x509/pkix"
++	"encoding/pem"
++	"fmt"
++	"math/big"
++	"os"
 +	"testing"
 +	"time"
 +
-+	"github.com/jackc/pgx/v5"
-+	"github.com/jackc/pgx/v5/pgconn"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"github.com/testcontainers/testcontainers-go"
++	"github.com/testcontainers/testcontainers-go/network"
++	"google.golang.org/grpc"
++	"google.golang.org/grpc/credentials/insecure"
++
++	v1 "github.com/authzed/authzed-go/proto/authzed/api/v1"
++	"github.com/authzed/authzed-go/v1"
++	"github.com/authzed/grpcutil"
++
++	"github.com/authzed/spicedb/pkg/testutil/sdbtestcontainer"
++)
++
++const (
++	// sdbNetworkAlias is the name the node dispatches to, so it is also the name
++	// the serving certificate has to be issued for.
++	sdbNetworkAlias = "sdb"
++
++	caPath          = "/certs/ca.crt"
++	servingCertPath = "/certs/tls.crt"
++	servingKeyPath  = "/certs/tls.key"
++
++	rotationSchema = `definition user {}
++
++definition group {
++	relation member: user
++}
++
++definition document {
++	relation viewer: group#member
++	permission view = viewer
++}`
++)
++
++// TestDispatchFollowsCARotation rotates the certificate authority a running
++// node uses to verify its dispatch peers, and asserts dispatch recovers without
++// a restart.
++//
++// The node dispatches to itself over the cluster gRPC port, so one container
++// covers both sides of the handshake: the serving certificate comes from
++// --dispatch-cluster-tls-cert-path and the trust bundle from
++// --dispatch-upstream-ca-path, exactly as an operator mounts them from one
++// secret.
++func TestDispatchFollowsCARotation(t *testing.T) {
++	image := envOr("SPICEDB_IMAGE", "authzed/spicedb:ci")
++
++	ctx, cancel := context.WithTimeout(t.Context(), 10*time.Minute)
++	defer cancel()
++
++	net, err := network.New(ctx)
++	require.NoError(t, err)
++	t.Cleanup(func() { _ = net.Remove(t.Context()) })
++
++	authority := newTestAuthority(t, "old")
++	certPEM, keyPEM := authority.issueServingCert(t, sdbNetworkAlias)
++
++	spicedb, err := sdbtestcontainer.Run(ctx, image,
++		sdbtestcontainer.WithBootstrapSchema(rotationSchema),
++		sdbtestcontainer.WithBootstrapRelationships(
++			"group:everyone#member@user:alice",
++			"document:firstdoc#viewer@group:everyone#member",
++		),
++		network.WithNetwork([]string{sdbNetworkAlias}, net),
++		testcontainers.WithFiles(
++			testcontainers.ContainerFile{Reader: bytes.NewReader(authority.bundlePEM(t)), ContainerFilePath: caPath, FileMode: 0o644},
++			testcontainers.ContainerFile{Reader: bytes.NewReader(certPEM), ContainerFilePath: servingCertPath, FileMode: 0o644},
++			testcontainers.ContainerFile{Reader: bytes.NewReader(keyPEM), ContainerFilePath: servingKeyPath, FileMode: 0o644},
++		),
++		testcontainers.WithEnv(map[string]string{
++			// Dispatch to ourselves over TLS on the cluster port, so every
++			// subproblem crosses a real handshake against the trust bundle.
++			"SPICEDB_DISPATCH_CLUSTER_ENABLED":       "true",
++			"SPICEDB_DISPATCH_CLUSTER_TLS_CERT_PATH": servingCertPath,
++			"SPICEDB_DISPATCH_CLUSTER_TLS_KEY_PATH":  servingKeyPath,
++			"SPICEDB_DISPATCH_UPSTREAM_ADDR":         sdbNetworkAlias + ":50053",
++			"SPICEDB_DISPATCH_UPSTREAM_CA_PATH":      caPath,
++			// Rotation only takes effect on a new connection, and the dispatch
++			// client holds one open. A short max age has the server retire it
++			// promptly, which is what an operator gets from the 30s default.
++			"SPICEDB_DISPATCH_CLUSTER_MAX_CONN_AGE": "5s",
++			// Without this a repeated check is answered from cache and never
++			// dispatches, so the probe below would stop observing the handshake.
++			"SPICEDB_DISPATCH_CACHE_ENABLED":         "false",
++			"SPICEDB_DISPATCH_CLUSTER_CACHE_ENABLED": "false",
++		}),
++	)
++	require.NoError(t, err)
++	t.Cleanup(func() { _ = spicedb.Terminate(t.Context()) })
++
++	client, err := authzed.NewClient(spicedb.GRPCEndpoint(),
++		grpcutil.WithInsecureBearerToken(spicedb.PresharedKey()),
++		grpc.WithTransportCredentials(insecure.NewCredentials()),
++	)
++	require.NoError(t, err)
++
++	// The dispatch client waits for its connection to be ready, so a check made
++	// while the handshake is failing blocks until its own deadline. The timeout
++	// therefore sets how long each probe below takes to report a broken cluster.
++	check := func(timeout time.Duration) error {
++		checkCtx, cancelCheck := context.WithTimeout(ctx, timeout)
++		defer cancelCheck()
++
++		resp, err := client.CheckPermission(checkCtx, &v1.CheckPermissionRequest{
++			Consistency: &v1.Consistency{
++				Requirement: &v1.Consistency_FullyConsistent{FullyConsistent: true},
++			},
++			Resource:   &v1.ObjectReference{ObjectType: "document", ObjectId: "firstdoc"},
++			Permission: "view",
++			Subject:    &v1.SubjectReference{Object: &v1.ObjectReference{ObjectType: "user", ObjectId: "alice"}},
++		})
++		if err != nil {
++			return err
++		}
++		if resp.Permissionship != v1.CheckPermissionResponse_PERMISSIONSHIP_HAS
+```
+
+**File**: `internal/dispatch/combined/combined.go` (modified, +7/-2)
+```diff
+@@ -1,6 +1,7 @@
+ package combined
+ 
+ import (
++	"crypto/tls"
+ 	"fmt"
+ 	"time"
+ 
+@@ -20,6 +21,7 @@ import (
+ 	caveattypes "github.com/authzed/spicedb/pkg/caveats/types"
+ 	v1 "github.com/authzed/spicedb/pkg/proto/dispatch/v1"
+ 	"github.com/authzed/spicedb/pkg/query"
++	"github.com/authzed/spicedb/pkg/x509util"
+ )
+ 
+ // Option is a function-style option for configuring a combined Dispatcher.
+@@ -249,11 +251,14 @@ func NewDispatcher(options ...Option) (dispatch.Dispatcher, error) {
+ 	} else {
+ 		// If an upstream is specified, create a cluster dispatcher.
+ 		if opts.upstreamCAPath != "" {
+-			customCertOpt, err := grpcutil.WithCustomCerts(grpcutil.VerifyCA, opts.upstreamCAPath)
++			// Read at handshake time so that rotating the CA on disk does not
++			// require restarting every node in the dispatch cluster.
++			caPool, err := x509util.NewCAPool(opts.upstreamCAPath)
+ 			if err != nil {
+ 				return nil, err
+ 			}
+-			opts.grpcDialOpts = append(opts.grpcDialOpts, customCertOpt)
++			creds := x509util.NewReloadingTLSCreds(caPool, &tls.Config{MinVersion: tls.VersionTLS12})
++			opts.grpcDialOpts = append(opts.grpcDialOpts, grpc.WithTransportCredentials(creds))
+ 			opts.grpcDialOpts = append(opts.grpcDialOpts, grpcutil.WithBearerToken(opts.grpcPresharedKey))
+ 		} else {
+ 			opts.grpcDialOpts = append(opts.grpcDialOpts, grpcutil.WithInsecureBearerToken(opts.grpcPresharedKey))
+```
+
+**File**: `internal/dispatch/combined/combined_test.go` (modified, +1/-1)
+```diff
+@@ -162,7 +162,7 @@ func TestNewDispatcher_WithUpstream(t *testing.T) {
+ }
+ 
+ // TestNewDispatcher_UpstreamCAPathMissing exercises the TLS branch by pointing
+-// UpstreamCAPath at a non-existent file; grpcutil.WithCustomCerts will error.
++// UpstreamCAPath at a non-existent file, which fails when the CA is read.
+ func TestNewDispatcher_UpstreamCAPathMissing(t *testing.T) {
+ 	_, err := NewDispatcher(
+ 		UpstreamAddr("localhost:0"),
+```
+
+**File**: `internal/telemetry/ca_rotation_test.go` (added, +200/-0)
+```diff
+@@ -0,0 +1,200 @@
++package telemetry
++
++import (
++	"crypto/ecdsa"
++	"crypto/elliptic"
++	"crypto/rand"
++	"crypto/tls"
++	"crypto/x509"
++	"crypto/x509/pkix"
++	"encoding/pem"
++	"log"
++	"math/big"
++	"net"
++	"net/http"
++	"os"
++	"path/filepath"
++	"strings"
++	"sync"
++	"testing"
++	"time"
++
++	"github.com/prometheus/client_golang/prometheus"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+func TestParseGCTTL(t *testing.T) {
-+	t.Parallel()
++// TestRemoteReporterFollowsCARotation asserts that the reporter keeps reaching
++// its endpoint after the CA override is rotated on disk, which it cannot do
++// while the pool is captured in the transport's TLSClientConfig.
++func TestRemoteReporterFollowsCARotation(t *testing.T) {
++	caPath := filepath.Join(t.TempDir(), "ca.crt")
 +
-+	tcs := []struct {
-+		name      string
-+		configSQL string
-+		expected  time.Duration
-+		expectErr bool
-+	}{
-+		{
-+			name: "range default",
-+			configSQL: `ALTER RANGE default CONFIGURE ZONE USING
-+	range_min_bytes = 134217728,
-+	range_max_bytes = 536870912,
-+	gc.ttlseconds = 14400,
-+	num_replicas = 3,
-+	constraints = '[]',
-+	lease_preferences = '[]'`,
-+			expected: 4 * time.Hour,
-+		},
-+		{
-+			name: "multi-region regional by row table",
-+			configSQL: `ALTER TABLE relation_tuple CONFIGURE ZONE USING
-+	range_min_bytes = 134217728,
-+	range_max_bytes = 536870912,
-+	gc.ttlseconds = 86400,
-+	num_replicas = 5,
-+	num_voters = 3,
-+	constraints = '{+region=us-east1: 1, +region=us-west1: 1}',
-+	voter_constraints = '[+region=us-east1]',
-+	lease_preferences = '[[+region=us-east1]]'`,
-+			expected: 24 * time.Hour,
-+		},
-+		{
-+			name:      "single digit",
-+			configSQL: "ALTER TABLE u CONFIGURE ZONE USING gc.ttlseconds = 7",
-+			expected:  7 * time.Second,
-+		},
-+		{
-+			name:      "no spaces",
-+			configSQL: "ALTER DATABASE d CONFIGURE ZONE USING gc.ttlseconds=600",
-+			expected:  10 * time.Minute,
-+		},
-+		{
-+			name:      "zero",
-+			configSQL: "ALTER RANGE default CONFIGURE ZONE USING gc.ttlseconds = 0",
-+			expectErr: true,
-+		},
-+		{
-+			name:      "missing",
-+			configSQL: "ALTER RANGE default CONFIGURE ZONE USING num_replicas = 3",
-+			expectErr: true,
-+		},
++	authority := newTestCA(t, "old")
++	writeCABundle(t, caPath, authority)
++
++	sink := newTLSSink(t, authority.issueServingCert(t))
++
++	registry := prometheus.NewRegistry()
++	gauge := prometheus.NewGauge(prometheus.GaugeOpts{Name: "test_metric", Help: "A test metric"})
++	gauge.Set(42)
++	registry.MustRegister(gauge)
++
++	// The endpoint is on loopback, so sub-minute intervals are allowed and the
++	// reporter pushes without a startup delay.
++	reporter, err := RemoteReporter(registry, sink.url, caPath, time.Second)
++	require.NoError(t, err)
++
++	done := make(chan error, 1)
++	go func() { done <- reporter(t.Context()) }()
++	t.Cleanup(func() { <-done })
++
++	require.Eventually(t, func() bool { return sink.reports() > 0 }, 15*time.Second, 100*time.Millisecond,
++		"the reporter should reach the endpoint with the authority it started with")
++
++	// Serve a certificate from a new authority without publishing it. The
++	// handshake has to start failing here, otherwise the recovery below would
++	// pass whether or not the trust bundle is ever re-read.
++	rotated := newTestCA(t, "new")
++	sink.setCert(rotated.issueServingCert(t))
++
++	require.Eventually(t, func() bool { return strings.Contains(sink.handshakeErrors(), "TLS handshake error") },
++		15*time.Second, 100*time.Millisecond,
++		"the reporter should reject a certificate from an authority that is not in the bundle")
++
++	writeCABundle(t, caPath, rotated)
++	before := sink.reports()
++
++	require.Eventually(t, func() bool { return sink.reports() > before }, 45*time.Second, 100*time.Millisecond,
++		"the reporter should reach the endpoint again once the rotated authority is published")
++}
++
++// tlsSink is an HTTPS endpoint that counts the reports it receives and whose
++// serving certificate can be swapped while it is running. It is also the
++// server's error log, so the test can observe rejected handshakes.
++type tlsSink struct {
++	url string
++
++	mu         sync.Mutex
++	cert       tls.Certificate // GUARDED_BY(mu)
++	received   int             // GUARDED_BY(mu)
++	serverLogs strings.Builder // GUARDED_BY(mu)
++}
++
++func newTLSSink(t *testing.T, cert tls.Certificate) *tlsSink {
++	t.Helper()
++
++	sink := &tlsSink{cert: cert}
++
++	listener, err := net.Listen("tcp", "127.0.0.1:0")
++	require.NoError(t, err)
++
++	server := &http.Server{
++		Handler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
++			sink.mu.Lock()
++			sink.received++
++			sink.mu.Unlock()
++			w.WriteHeader(http.StatusOK)
++		}),
++		TLSConfig:         &tls.Config{GetCertificate: sink.getCertificate, MinVersion: tls.VersionTLS12},
++		ErrorLog:          log.New(sink, "", 0),
++		ReadHeaderTimeout: 5 * time.Second,
 +	}
++	// Without this the reporter reuses a pooled connection and never re-dials,
++	// so a rotated certificate would not be presented to it.
++	server.SetKeepAlivesEnabled(false)
 +
-+	for _, tc := range tcs {
-+		t.Run(tc.name, func(t *testing.T) {
-+			t.Parallel()
-+			ttl, err := parseGCTTL(tc.configSQL)
-+			if tc.expectErr {
-+				require.Error(t, err)
-+				return
++	go func() { _ = server.ServeTLS(listener, "", "") }()
++	t.Cleanup(func() { _ = server.Close() })
++
++	sink.url = "https://" + listener.Addr().String()
++	return sink
++}
++
++func (s *tlsSink) getCertificate(*tls.ClientHelloInfo) (*tls.Certificate, error) {
++	s.mu.Lock()
++	defer s.mu.Unlock()
++	return &s.cert, nil
++}
++
++func (s *tlsSink) setCert(cert tls.Certificate) {
++	s.mu.Lock()
++	defer s.mu.Unlock()
++	s.cert = cert
++}
++
++func (s *tlsSink) reports() int {
++	s.mu.Lock()
++	defer s.mu.Unlock()
++	return s.received
++}
++
++func (s *tlsSink) handshakeErrors() string {
++	s.mu.Lock()
++	defer s.mu.Unlock()
++	return s.serverLogs.String()
++}
++
++func (s *tlsSink) Write(p []byte) (int, error) {
++	s.mu.Lock()
++	defer s.mu.Unlock()
++	return s.serverLogs.Write(p)
++}
++
++// testCA is a generated certificate authority that can sign serving certificates.
++type testCA struct {
++	cert *x509.Certificate
++	key  *ecdsa.PrivateKey
++}
++
++func newTestCA(t *testing.T, org string) *testCA {
++	t.Helper()
++
++	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
++	require.NoError(t, err)
++
++	template := &x509.Certificate{
++		SerialNumber:          big.NewInt(time.Now().UnixNano()),
++		Subject:               pkix.Name{Organization: []string{org}},
++		NotBefore:             time.Now().Add(-time.Minute),
++		NotAfter:              time.Now().Add(time.Hour),
++		IsCA:                  true,
++		KeyUsage:              x509.KeyUsageCertSign | x509.KeyUsageDigit
+```
+
+**File**: `internal/telemetry/reporter.go` (modified, +3/-8)
+```diff
+@@ -143,19 +143,14 @@ func RemoteReporter(
+ 
+ 	client := &http.Client{}
+ 	if caOverridePath != "" {
+-		pool, err := x509util.CustomCertPool(caOverridePath)
++		caPool, err := x509util.NewCAPool(caOverridePath)
+ 		if err != nil {
+ 			return nil, fmt.Errorf("invalid custom cert pool path `%s`: %w", caOverridePath, err)
+ 		}
+ 
+-		t := &http.Transport{
+-			TLSClientConfig: &tls.Config{
+-				RootCAs:    pool,
+-				MinVersion: tls.VersionTLS12,
+-			},
++		client.Transport = &http.Transport{
++			DialTLSContext: caPool.DialTLSContext(&tls.Config{MinVersion: tls.VersionTLS12}),
+ 		}
+-
+-		client.Transport = t
+ 	}
+ 
+ 	return func(ctx context.Context) error {
+```
+
+**File**: `pkg/cmd/util/util.go` (modified, +9/-5)
+```diff
+@@ -161,15 +161,19 @@ func (c *GRPCServerConfig) clientCreds() (credentials.TransportCredentials, erro
+ 	case c.TLSCertPath == "" && c.TLSKeyPath == "":
+ 		return insecure.NewCredentials(), nil
+ 	case c.TLSCertPath != "" && c.TLSKeyPath != "":
+-		var err error
+ 		var pool *x509.CertPool
+ 		if c.ClientCAPath != "" {
+-			pool, err = x509util.CustomCertPool(c.ClientCAPath)
++			caPool, err := x509util.NewCAPool(c.ClientCAPath)
++			if err != nil {
++				return nil, err
 +			}
-+			require.NoError(t, err)
-+			require.Equal(t, tc.expected, ttl)
-+		})
++			pool = caPool.CertPool()
+ 		} else {
++			var err error
+ 			pool, err = x509.SystemCertPool()
+-		}
+-		if err != nil {
+-			return nil, err
++			if err != nil {
++				return nil, err
++			}
+ 		}
+ 
+ 		return credentials.NewTLS(&tls.Config{RootCAs: pool, MinVersion: tls.VersionTLS12}), nil
+```
+
+**File**: `pkg/x509util/capool.go` (added, +164/-0)
+```diff
+@@ -0,0 +1,164 @@
++package x509util
++
++import (
++	"bytes"
++	"context"
++	"crypto/tls"
++	"crypto/x509"
++	"net"
++	"slices"
++	"sync"
++	"time"
++
++	"google.golang.org/grpc/credentials"
++
++	log "github.com/authzed/spicedb/internal/logging"
++)
++
++const defaultCAReloadInterval = 10 * time.Second
++
++// CAPool holds the certificate authorities read from a path and re-reads them
++// when the contents of that path change. Unlike CertWatcher it runs no
++// background goroutine: the path is re-read on demand, at most once per
++// interval.
++type CAPool struct {
++	path     string
++	interval time.Duration
++
++	mu       sync.Mutex
++	pool     *x509.CertPool // GUARDED_BY(mu)
++	contents [][]byte       // GUARDED_BY(mu)
++	lastRead time.Time      // GUARDED_BY(mu)
++}
++
++// NewCAPool returns a new CAPool for the certificate authorities at caPath,
++// which may be a single PEM file or a directory of them. The path is read
++// eagerly, so a missing or malformed bundle is reported here rather than at the
++// first handshake.
++func NewCAPool(caPath string) (*CAPool, error) {
++	contents, err := readCertFiles(caPath)
++	if err != nil {
++		return nil, err
++	}
++
++	pool, err := certPoolFromPEM(contents)
++	if err != nil {
++		return nil, err
++	}
++
++	return &CAPool{
++		path:     caPath,
++		interval: defaultCAReloadInterval,
++		pool:     pool,
++		contents: contents,
++		lastRead: time.Now(),
++	}, nil
++}
++
++// WithReloadInterval sets the minimum time between reads of the path and
++// returns the CAPool pointer
++func (p *CAPool) WithReloadInterval(interval time.Duration) *CAPool {
++	p.mu.Lock()
++	defer p.mu.Unlock()
++	p.interval = interval
++	return p
++}
++
++// CertPool returns the current authorities, re-reading the path if the reload
++// interval has elapsed. A failed re-read keeps the previously loaded
++// authorities, so a bundle that is briefly absent or truncated partway through
++// a rotation does not empty the trust store.
++func (p *CAPool) CertPool() *x509.CertPool {
++	p.mu.Lock()
++	defer p.mu.Unlock()
++
++	now := time.Now()
++	if now.Sub(p.lastRead) < p.interval {
++		return p.pool
++	}
++	p.lastRead = now
++
++	contents, err := readCertFiles(p.path)
++	if err != nil {
++		log.Warn().Err(err).Str("path", p.path).Msg("failed to re-read certificate authorities")
++		return p.pool
++	}
++
++	if slices.EqualFunc(p.contents, contents, bytes.Equal) {
++		return p.pool
++	}
++
++	pool, err := certPoolFromPEM(contents)
++	if err != nil {
++		log.Warn().Err(err).Str("path", p.path).Msg("failed to parse re-read certificate authorities")
++		return p.pool
++	}
++
++	log.Info().Str("path", p.path).Msg("reloaded certificate authorities")
++	p.pool = pool
++	p.contents = contents
++	return p.pool
++}
++
++// DialTLSContext returns a dial function that verifies the server against the
++// current authorities. It satisfies http.Transport.DialTLSContext, which is
++// called per connection, unlike TLSClientConfig.
++func (p *CAPool) DialTLSContext(base *tls.Config) func(ctx context.Context, network, addr string) (net.Conn, error) {
++	return func(ctx context.Context, network, addr string) (net.Conn, error) {
++		cfg := base.Clone()
++		cfg.RootCAs = p.CertPool()
++		return (&tls.Dialer{Config: cfg}).DialContext(ctx, network, addr)
 +	}
 +}
 +
-+type fakeZoneQuerier struct {
-+	zones   map[string]zoneResult
-+	queried []string
++// reloadingCreds resolves its trust store from a CAPool on every handshake and
++// delegates the handshake itself to the standard TLS credentials.
++type reloadingCreds struct {
++	ca   *CAPool
++	base *tls.Config
 +}
 +
-+type zoneResult struct {
-+	target    string
-+	configSQL string
-+	err       error
++var _ credentials.TransportCredentials = (*reloadingCreds)(nil)
++
++// NewReloadingTLSCreds returns credentials that verify peers against the
++// authorities in ca, picking up a rotation of those authorities without a
++// restart. base supplies the rest of the TLS configuration; its RootCAs and
++// ClientCAs are ignored.
++func NewReloadingTLSCreds(ca *CAPool, base *tls.Config) credentials.TransportCredentials {
++	return &reloadingCreds{ca: ca, base: base.Clone()}
 +}
 +
-+func (f *fakeZoneQuerier) ExecFunc(context.Context, func(context.Context, pgconn.CommandTag, error) error, string, ...any) error {
-+	return errors.New("not implemented")
++func (c *reloadingCreds) clientConfig() *tls.Config {
++	cfg := c.base.Clone()
++	cfg.RootCAs = c.ca.CertPool()
++	return cfg
 +}
 +
-+func (f *fakeZoneQuerier) QueryFunc(context.Context, func(context.Context, pgx.Rows) error, string, ...any) error {
-+	return errors.New("not implemented")
++func (c *reloadingCreds) serverConfig() *tls.Config {
++	cfg := c.base.Clone()
++	cfg.ClientCAs = c.ca.CertPool()
++	return cfg
 +}
 +
-+func (f *fakeZoneQuerier) QueryRowFunc(ctx context.Context, rowFunc func(context.Context, pgx.Row) error, sql string, _ ...any) error {
-+	f.queried = append(f.queried, sql)
-+	res, ok := f.zones[sql]
-+	if !ok {
-+		return &pgconn.PgError{Code: "42P01", Message: "relation does not exist"}
-+	}
-+	if res.err != nil {
-+		return res.err
-+	}
-+	return rowFunc(ctx, fakeZoneRow(res))
++func (c *reloadingCreds) ClientHandshake(ctx context.Context, authority string, rawConn net.Conn) (net.Conn, credentials.AuthInfo, error) {
++	return credentials.NewTLS(c.clientConfig()).ClientHandshake(ctx, authority, rawConn)
 +}
 +
-+type fakeZoneRow zoneResult
-+
-+func (r fakeZoneRow) Scan(dest ...any) error {
-+	*dest[0].(*string) = r.target
-+	*dest[1].(*string) = r.configSQL
-+	return nil
++func (c *reloadingCreds) ServerHandshake(rawConn net.Conn) (net.Conn, credentials.AuthInfo, error) {
++	return credentials.NewTLS(c.serverConfig()).ServerHandshake(rawConn)
 +}
 +
-+func TestResolveGCWindow(t *testing.T) {
-+	t.Parallel()
++func (c *reloadingCreds) Info() credentials.ProtocolInfo {
++	return credentials.NewTLS(c.base).Info()
++}
 +
-+	const (
-+		tableQuery          = "SHOW ZONE CONFIGURATION FROM TABLE relation_tuple;"
-+		integrityTableQuery = "SHOW ZONE CONFIGURATION FROM TABLE relation_tuple_with_integrity;"
-+		rangeQuery          = queryShowZoneConfig
-+	)
-+	zone := func(target string, seconds string) zoneResult {
-+		return zoneResult{target: target, configSQL: "ALTER ... CONFIGURE ZONE USING gc.ttlseconds = " + seconds}
-+	}
++// Clone returns credentials backed by the same CAPool, so that both share one
++// view of the trust store.
++func (c *reloadingCreds) Clone() credentials.TransportCredentials {
++	return &reloadingCreds{ca: c.ca, base: c.base.Clone()}
++}
 +
-+	tcs := []struct {
-+		name              string
-+		withIntegrity     bool
-+		zones             map[string]zoneResult
-+		expectedWindow    time.Duration
-+		expectedQueries   []string
-+		expectedErrString string
-+	}{
-+		{
-+			name:            "database zone above range default",
-+			zones:           map[string]zoneResult{tableQuery: zone("DATABASE spicedb", "86400"), rangeQuery: zone("RANGE default", "14400")},
-+			expectedWindow:  24 * time.Hour,
-+			expectedQueries: []string{tableQuery},
-+		},
-+		{
-+			name:            "data zone above configured is capped",
-+			zones:           map[string]zoneResult{tableQuery: zone("DATABASE spicedb", "172800")},
-+			expectedWindow:  24 * time.Hour,
-+			expectedQueries: []string{tableQuery},
-+		},
-+		{
-+			name:            "database zone below range default",
-+			zones:           map[string]zoneResult{tableQuery: zone("DATABASE spicedb", "14400"), rangeQuery: zone("RANGE default", "90000")},
-+			expectedWindow:  4 * time.Hour,
-+			expectedQueries: []string{tableQuery},
-+		},
-+		{
-+			name:            "table override",
-+			zones:           map[string]zoneResult{tableQuery: zone("TABLE spicedb.public.relation_tuple", "21600")},
-+			expectedWindow:  6 * time.Hour,
-+			expectedQueries: []string{tableQuery},
-+		},
-+		{
-+			name:            "inherits range default",
-+			zones:           map[string]zoneResult{tableQuery: zone("RANGE default", "14400")},
-+			expectedWindow:  4 * time.Hour,
-+			expectedQueries: []string{tableQuery},
-+		},
-+		{
-+			name:            "table missing falls back to range default",
-+			zones
++func (c *reloadingCreds) OverrideServerName(name string) error {
++	c.base.S
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3432** (2026-10-26): fix(cache): expire dispatch cache entries a fixed TTL after they are written (@josephschorr)
 - **PR #3424** (2026-10-21): chore: bump grpc_health_probe to v0.4.60 and the base images for CVE-2026-111943 (@vroldanbet)
 - **PR #3423** (2026-10-21): fix(crdb): derive the gc window from the zone config of SpiceDB's relationships (@vroldanbet)
 - **PR #3422** (2026-10-20): chore: roll changelog (@tstirrat15)
 - **PR #3421** (2026-10-22): fix(schema): qualify wildcard cache keys by definition (@josephschorr)
 - **PR #3415** (2026-10-20): fix: return a clear error when filtering relationships on a permission (@josephschorr)
-- **PR #3410** (closed): RHCLOUD-50295: Chore/security baseline (@akoserwal)
 
 ---
 
@@ -1539,13 +1864,13 @@ The gc.ttlseconds par
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. schema): qualify wildcard cache keys by definition (#3421)
+## X. cache): expire dispatch cache entries a fixed TTL after they are written
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5fedd8fc`: schema): qualify wildcard cache keys by definition (#3421). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b2897b2e`: cache): expire dispatch cache entries a fixed TTL after they are written. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1553,7 +1878,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Schema validation: schemas that transitively include wildcard subjects are now consistently rejected, even when unrelated definitions reuse the same relation names. (https://github.com/authzed/spicedb/pull/3421)
+- Caching: dispatch, cluster dispatch, relationship chunk and full relation cache entries again expire one TTL after they are written, as they did before v1.54.0. Since the move to Otter, every read pushed an entry's expiration out by another TTL, so a result that was read more often than the TTL never expired. On MySQL, where the revision only advances on writes, an expired relationship could then keep granting a permission indefinitely, even with `fully_consistent`, until the next write. The namespace cache, whose entries cannot go stale, still extends its TTL on reads. (https://github.com/authzed/spicedb/issues/3431)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1563,4 +1888,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5fedd8fc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b2897b2e` are properly handled with clean fallback behavior.

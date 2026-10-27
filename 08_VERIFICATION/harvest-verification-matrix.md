@@ -5259,3 +5259,8 @@
 | `CYCLE-20261027-970F` | `2026-10-27T12:10:43.263Z` | `transact-rs/sqlx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4733` | Yes (`97953ba0...`) |
 | `CYCLE-20261027-9BIH` | `2026-10-27T12:10:49.097Z` | `react/react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4734` | Yes (`386ee133...`) |
 | `CYCLE-20261027-9I96` | `2026-10-27T12:10:57.834Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4735` | Yes (`3fbaf08d...`) |
+| `CYCLE-20261027-E5SP` | `2026-10-27T12:14:34.969Z` | `fb55/htmlparser2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4736` | Yes (`1baec62a...`) |
+| `CYCLE-20261027-E9YY` | `2026-10-27T12:14:40.378Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4737` | Yes (`a111294c...`) |
+| `CYCLE-20261027-ED9U` | `2026-10-27T12:14:44.658Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4738` | Yes (`bbbb5446...`) |
+| `CYCLE-20261027-EF2J` | `2026-10-27T12:14:46.987Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4739` | Yes (`af6824af...`) |
+| `CYCLE-20261027-JD3Z` | `2026-10-27T12:18:37.727Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4740, Rule 4741, Rule 4742` | Yes (`0922156e...`) |
