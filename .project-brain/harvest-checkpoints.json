@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T13:10:46.233Z",
+  "last_updated": "2026-10-27T13:14:27.464Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "fac4e39c956b6153a70f021a03663963168cb38106b4009c33c7685acc466220",
-      "verified_at": "2026-10-27T07:45:09.395Z",
+      "content_hash": "951f466be567510b8454e11c00a55a6215e0553c776975f7a92d1eba92fe4a28",
+      "verified_at": "2026-10-27T13:14:27.463Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T07:45:09.395Z"
+      "last_updated": "2026-10-27T13:14:27.463Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -3726,14 +3726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nervjs-taro",
-      "content_hash": "3f041b07ba2187c6e313c70933bbc5893c9e02f3062539aaf1cb78e7b50f868d",
-      "verified_at": "2026-10-23T08:39:39.830Z",
+      "content_hash": "f8f19beae004818bbedc3255249b41475ec8e4f5df92d0a6023eb195f6010753",
+      "verified_at": "2026-10-27T13:14:17.546Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T08:39:39.830Z"
+      "last_updated": "2026-10-27T13:14:17.546Z"
     },
     "kubeedge/kubeedge": {
       "repository": "kubeedge/kubeedge",
@@ -8781,14 +8781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nvidia-cuda-rust",
-      "content_hash": "4a12ca1e59a8db9a73f29cd351751e3bba9816ba2095d2b56ccdf3878ae7693f",
-      "verified_at": "2026-10-25T19:12:49.723Z",
+      "content_hash": "bcf0c4b958194bee921d0949b2428a0b605f1c78156d3afd239b66741d82955e",
+      "verified_at": "2026-10-27T13:14:13.929Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T19:12:49.723Z"
+      "last_updated": "2026-10-27T13:14:13.929Z"
     },
     "typestack/routing-controllers": {
       "repository": "typestack/routing-controllers",
@@ -9081,14 +9081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-genkit-ai-genkit",
-      "content_hash": "c10764253e3467311a475df1fb470c6865d7ec568b471a47b975b9032fc419f8",
-      "verified_at": "2026-10-25T05:46:16.082Z",
+      "content_hash": "9bf1edde8872cbafa42d05c5f163c0de75690bb2b5cddaa2aed83efd18f3a51c",
+      "verified_at": "2026-10-27T13:14:23.953Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T05:46:16.082Z"
+      "last_updated": "2026-10-27T13:14:23.953Z"
     },
     "guokaigdg/animal-island-ui": {
       "repository": "guokaigdg/animal-island-ui",

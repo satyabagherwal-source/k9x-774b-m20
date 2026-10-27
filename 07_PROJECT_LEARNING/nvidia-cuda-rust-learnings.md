@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source**: github ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
-> **Source Version**: `9df9e7ce`  
+> **Source Version**: `f8563500`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T19:12:49.360Z  
+> **Timestamp**: 2026-10-27T13:14:13.498Z  
 > **Learning ID**: `learn-github-nvidia-cuda-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T19:12:49.353Z  
+> **Harvest Timestamp**: 2026-10-27T13:14:11.869Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: NVIDIA's CUDA platform for Rust. Host runtime crates plus Tile (cutile-rs) and SIMT (cuda-oxide) kernel programming models in idiomatic Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3792 stars
+- **Stars / Engagement**: 3823 stars
 
 ---
 
@@ -2166,127 +2166,1178 @@ impl<T> DeviceBuffer<T> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fc747196` (2026-10-23)
-**Commit Message**: fix: bump example tokio pins past RUSTSEC-2026-0386 (#1619)
+### Incident Patch 1: `0f68e38c` (2026-10-27)
+**Commit Message**: feat(cuda-oxide): shared-memory i32/addrspace(3) codegen and CTA-local TMA without SharedPtr (#1656)
 
-## Summary
+## What This PR Does
 
-Fixes #1618.
-[RUSTSEC-2026-0386](https://rustsec.org/advisories/RUSTSEC-2026-0386)
-rejects `tokio` before 1.53.3 on the 1.53 line. These locks move to
-1.54.1:
+This PR makes three changes to shared-memory addressing and CTA-local
+TMA loads (following up on #1336, #1341, #1238, #1337, and #1249):
 
-- `cuda-oxide/crates/rustc-codegen-cuda/examples/async_mlp`
-- `cuda-oxide/crates/rustc-codegen-cuda/examples/async_vecadd`
-- `cuda-oxide/crates/rustc-codegen-cuda/examples/cutile_inter_kernel`
-- `cutile-rs/Cargo.lock` (`cutile-rs/deny.toml` checks advisories and
-does not ignore this one)
+1. **Keep `.add()` and `.cast()` on shared pointers in `addrspace(3)`
+(`mir-importer`)**
+2. **Use 32-bit `i32` shared-memory offsets in `cuda-oxide-mlir-export`
+(+ `#[grid_constant]` in `blockscale_gemm_cute`)**
+3. **Remove `SharedPtr<T>` (`-3,141` lines) and take `dst: *mut u8`
+directly in `cp_async_bulk_tensor_{1..5}d_g2s_cta` (+ route `ctm-rs` to
+`.shared::cta`)**
+
+---
+
+### 1. Keep `.add()` and `.cast()` on Shared Pointers in `addrspace(3)`
+(`mir-importer`)
+
+Previously, `SlotAddrSpaceMap` only preserved `addrspace(3)` across
+plain `_y = _x` copies. Calling `.add(offset)` or `.cast::<T>()` on a
+shared pointer demoted it to a 64-bit generic pointer (`addrspace(0)`),
+forcing an `addrspace(3) -> addrspace(0) -> addrspace(3)` round-trip:
+
+```text
+Rust kernel:
+  let base = DynamicSharedArray::<u8, 1024>::get_raw();
+  let tile = base.add(slot * TILE_BYTES).cast::<u32>();
+
+BEFORE:
+  base (ptr addrspace(3))
+    ──► addrspacecast t
+
+**File**: `cuda-oxide/crates/cuda-device/src/generated/tma.rs` (modified, +15/-15)
+```diff
+@@ -237,11 +237,11 @@ pub unsafe fn cp_async_bulk_tensor_1d_g2s(
+ ///
+ /// # Safety
+ /// `dst`, `tensor_map`, and `barrier` must remain valid until the copy completes.
+-/// `barrier` must point into the issuing CTA's shared memory, as for the other
+-/// `mbarrier` operations. `dst` is a [`SharedPtr`], which points there by its type.
++/// `dst` and `barrier` must point into the issuing CTA's shared memory, as for the other
++/// `mbarrier` operations.
+ #[inline(never)]
+ pub unsafe fn cp_async_bulk_tensor_1d_g2s_cta(
+-    dst: SharedPtr<u8>,
++    dst: *mut u8,
+     tensor_map: *const TmaDescriptor,
+     coord0: i32,
+     barrier: *mut Barrier,
+@@ -284,11 +284,11 @@ pub unsafe fn cp_async_bulk_tensor_2d_g2s(
+ ///
+ /// # Safety
+ /// `dst`, `tensor_map`, and `barrier` must remain valid until the copy completes.
+-/// `barrier` must point into the issuing CTA's shared memory, as for the other
+-/// `mbarrier` operations. `dst` is a [`SharedPtr`], which points there by its type.
++/// `dst` and `barrier` must point into the issuing CTA's shared memory, as for the other
++/// `mbarrier` operations.
+ #[inline(never)]
+ pub unsafe fn cp_async_bulk_tensor_2d_g2s_cta(
+-    dst: SharedPtr<u8>,
++    dst: *mut u8,
+     tensor_map: *const TmaDescriptor,
+     coord0: i32,
+     coord1: i32,
+@@ -368,11 +368,11 @@ pub unsafe fn cp_async_bulk_tensor_3d_g2s(
+ ///
+ /// # Safety
+ /// `dst`, `tensor_map`, and `barrier` must remain valid until the copy completes.
+-/// `barrier` must point into the issuing CTA's shared memory, as for the other
+-/// `mbarrier` operations. `dst` is a [`SharedPtr`], which points there by its type.
++/// `dst` and `barrier` must point into the issuing CTA's shared memory, as for the other
++/// `mbarrier` operations.
+ #[inline(never)]
+ pub unsafe fn cp_async_bulk_tensor_3d_g2s_cta(
+-    dst: SharedPtr<u8>,
++    dst: *mut u8,
+     tensor_map: *const TmaDescriptor,
+     coord0: i32,
+     coord1: i32,
+@@ -421,11 +421,11 @@ pub unsafe fn cp_async_bulk_tensor_4d_g2s(
+ ///
+ /// # Safety
+ /// `dst`, `tensor_map`, and `barrier` must remain valid until the copy completes.
+-/// `barrier` must point into the issuing CTA's shared memory, as for the other
+-/// `mbarrier` operations. `dst` is a [`SharedPtr`], which points there by its type.
++/// `dst` and `barrier` must point into the issuing CTA's shared memory, as for the other
++/// `mbarrier` operations.
+ #[inline(never)]
+ pub unsafe fn cp_async_bulk_tensor_4d_g2s_cta(
+-    dst: SharedPtr<u8>,
++    dst: *mut u8,
+     tensor_map: *const TmaDescriptor,
+     coord0: i32,
+     coord1: i32,
+@@ -480,12 +480,12 @@ pub unsafe fn cp_async_bulk_tensor_5d_g2s(
+ ///
+ /// # Safety
+ /// `dst`, `tensor_map`, and `barrier` must remain valid until the copy completes.
+-/// `barrier` must point into the issuing CTA's shared memory, as for the other
+-/// `mbarrier` operations. `dst` is a [`SharedPtr`], which points there by its type.
++/// `dst` and `barrier` must point into the issuing CTA's shared memory, as for the other
++/// `mbarrier` operations.
+ #[inline(never)]
+ #[allow(clippy::too_many_arguments)]
+ pub unsafe fn cp_async_bulk_tensor_5d_g2s_cta(
+-    dst: SharedPtr<u8>,
++    dst: *mut u8,
+     tensor_map: *const TmaDescriptor,
+     coord0: i32,
+     coord1: i32,
+```
+
+**File**: `cuda-oxide/crates/cuda-device/src/lib.rs` (modified, +1/-1)
+```diff
+@@ -82,7 +82,7 @@ pub use cusimd::{CuSimd, Float2, Float4, TmemRegs4, TmemRegs32};
+ pub use disjoint::{__LaunchContractDisjointSlice, __LaunchContractDisjointSliceAbi};
+ pub use disjoint::{DisjointSlice, SpaceLayout};
+ pub use fence::*;
+-pub use shared::{DynamicSharedArray, SharedArray, SharedPtr};
++pub use shared::{DynamicSharedArray, SharedArray};
+ pub use tcgen05::{
+     TensorMemoryHandle, TmemAddress, TmemDeallocated, TmemF32x4, TmemF32x32, TmemGuard, TmemReady,
+     TmemUninit,
+```
+
+**File**: `cuda-oxide/crates/cuda-device/src/shared.rs` (modified, +0/-178)
+```diff
+@@ -233,34 +233,6 @@ impl<T, const N: usize, const ALIGN: usize> SharedArray<T, N, ALIGN> {
+         let _ = shared;
+         unreachable!("SharedArray::as_raw_mut_ptr called outside CUDA kernel context")
+     }
 -
-`cutile-rs/cutile-benchmarks/paper/app_exp1_work_distribution/bimodal_gemms_rust`
-
-`launch_overhead_rust` still pins `tokio` 1.53.0. Its manifest patches
-dependencies to a local path outside this tree, so that lock was not
-updated here.
-
-## Test plan
-
-- [ ] `cargo-deny / deny.toml governs the example workspaces` passes
-- [ ] `bash cuda-oxide/scripts/sync-example-locks.sh --check` still
-reports one version per crate
-- [ ] `cargo deny --manifest-path cutile-rs/Cargo.toml --locked check`
-passes advisories
-
----------
-
-Signed-off-by: Roman Ivanov <[REDACTED_EMAIL]>
-
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/async_mlp/Cargo.lock` (modified, +2/-2)
-```diff
-@@ -824,9 +824,9 @@ dependencies = [
+-    /// Returns a [`SharedPtr`] to the first element of a shared array.
+-    ///
+-    /// Unlike [`Self::as_raw_mut_ptr`], which returns a generic pointer, the
+-    /// result keeps the array's CTA-shared address space in its type, so it
+-    /// stays a shared-memory pointer when it is passed to helper functions.
+-    ///
+-    /// # Safety
+-    ///
+-    /// `shared` must point to a `static mut SharedArray` in the current CUDA
+-    /// kernel, normally obtained with `&raw mut`. The returned pointer is valid
+-    /// only within that kernel. This requirement is what makes the type's
+-    /// claim true: a `SharedPtr` built from any other pointer hands
+-    /// [`SharedPtr::addr_u32`] an address outside the shared window, where the
+-    /// conversion yields an unspecified value. Callers must keep concurrent
+-    /// accesses disjoint and use the CUDA synchronization required before
+-    /// reading data written by another thread.
+-    ///
+-    /// ```rust,ignore
+-    /// static mut TILE: SharedArray<u8, 4096, 128> = SharedArray::UNINIT;
+-    /// let tile: SharedPtr<u8> = unsafe { SharedArray::shared_ptr(&raw mut TILE) };
+-    /// ```
+-    #[inline(always)]
+-    pub unsafe fn shared_ptr(shared: *mut Self) -> SharedPtr<T> {
+-        SharedPtr {
+-            ptr: shared as *mut SharedSlot<T>,
+-        }
+-    }
+ }
  
- [[package]]
- name = "tokio"
--version = "1.52.3"
-+version = "1.54.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8fc7f01b389ac15039e4dc9531aa973a135d7a4135281b12d7c1bc79fd57fffe"
-+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
- dependencies = [
-  "pin-project-lite",
-  "tokio-macros",
+ impl<T, const N: usize, const ALIGN: usize> Index<usize> for SharedArray<T, N, ALIGN> {
+@@ -548,24 +520,6 @@ impl<T, const ALIGN: usize> DynamicSharedArray<T, ALIGN> {
+         let _ = byte_offset;
+         unreachable!("DynamicSharedArray::offset called outside CUDA kernel context")
+     }
+-
+-    /// Like [`Self::get`], but returns a [`SharedPtr`], which keeps the
+-    /// CTA-shared address space in its type.
+-    #[inline(always)]
+-    pub fn shared_ptr() -> SharedPtr<T> {
+-        SharedPtr {
+-            ptr: Self::get() as *mut SharedSlot<T>,
+-        }
+-    }
+-
+-    /// Like [`Self::offset`], but returns a [`SharedPtr`], which keeps the
+-    /// CTA-shared address space in its type.
+-    #[inline(always)]
+-    pub fn shared_ptr_at(byte_offset: usize) -> SharedPtr<T> {
+-        SharedPtr {
+-            ptr: Self::offset(byte_offset) as *mut SharedSlot<T>,
+-        }
+-    }
+ }
+ 
+ /// Convert a generic-address pointer into its raw `.shared` window offset.
+@@ -633,136 +587,4 @@ pub unsafe fn cvta_generic_to_shared_u32(ptr: *const u8) -> u32 {
+     unreachable!("cvta_generic_to_shared_u32 called outside CUDA kernel context")
+ }
+ 
+-// ============================================================================
+-// SharedPtr - a pointer into the issuing CTA's shared memory, typed as such
+-// ============================================================================
+-
+-/// The pointee of [`SharedPtr`]'s field. A pointer to `SharedSlot<T>` is a
+-/// pointer into CTA-shared memory (`addrspace(3)`) by its type, as a pointer
+-/// to [`SharedArray`] is; `repr(transparent)` gives it `T`'s size, so pointer
+-/// arithmetic strides by `T`.
+-#[doc(hidden)]
+-#[repr(transparent)]
+-pub struct SharedSlot<T>(T);
+-
+-/// A raw pointer into the shared memory of the issuing CTA (`.shared::cta`).
+-///
+-/// A `*mut T` in device code is a generic pointer, which may address global,
+-/// local or shared memory, including another CTA's shared memory in the
+-/// cluster. `SharedPtr<T>` instead carries its address space in its type: the
+-/// compiler knows it is a CTA-shared pointer wherever it goes, including
+-/// through calls to helper functions, and emits the `.shared::cta` forms of
+-/// instructions that take it without converting a generic address.
+-///
+-/// It is created from shared memory the CTA owns, with the `unsafe`
+-/// [`SharedArray::shared_ptr`] or the safe [`DynamicSharedArray::shared_ptr`],
+-/// or from a generic pointer with the `unsafe` [`SharedPtr::from_raw`]. Like a raw
+-/// pointer, it may dangle; dereferencing it goes through [`SharedPtr::as_ptr`]
+-/// and `unsafe` code.
+-///
+-/// Pointers from [`crate::cluster::map_shared_rank`], which may name another
+-/// CTA's shared memory, are not `SharedPtr`s.
+-///
+-/// # Example
+-///
+-/// ```rust,ignore
+-/// static mut TILE: SharedArray<f32, 256> = SharedArray::UNINIT;
+-///
+-/// fn store(tile: SharedPtr<f32>, i: usize, value: f32) {
+-///     // `tile` is still a shared pointer here, although `store` is a
+-///     // separate function.
+-///     unsafe { tile.add(i).as_ptr().write(value) };
+-/// }
+-///
+-/// let tile = unsafe { SharedArray::shared_ptr(&raw mut TILE) };
+-/// store(tile, thread::threadIdx_x() as usize, 1.0);
+-/// ```
+-#[repr(transparent)]
+-pub struct SharedPtr<T> {
+-    ptr: *mut SharedSlot<T>,
+-}
+-
+-impl<T> Clone for SharedPtr<T> {
+-    #[inline(always)]
+-    fn clone(&self) -> Self {
+-        *self
+-    }
+-}
+-
+-impl<T> Copy for SharedPt
 ```
 
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/async_vecadd/Cargo.lock` (modified, +2/-2)
+**File**: `cuda-oxide/crates/cuda-device/src/tma.rs` (modified, +0/-1)
 ```diff
-@@ -824,9 +824,9 @@ dependencies = [
+@@ -113,7 +113,6 @@
+ //! - **sm_120 (Blackwell)**: Latest TMA capabilities
  
- [[package]]
- name = "tokio"
--version = "1.52.3"
-+version = "1.54.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8fc7f01b389ac15039e4dc9531aa973a135d7a4135281b12d7c1bc79fd57fffe"
-+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
- dependencies = [
-  "pin-project-lite",
-  "tokio-macros",
+ use crate::barrier::Barrier;
+-use crate::shared::SharedPtr;
+ 
+ // =============================================================================
+ // TMA Descriptor Type
 ```
 
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/cutile_inter_kernel/Cargo.lock` (modified, +2/-2)
+**File**: `cuda-oxide/crates/cuda-intrinsics-gen/src/render/compat.rs` (modified, +2/-9)
 ```diff
-@@ -1017,9 +1017,9 @@ dependencies = [
- 
- [[package]]
- name = "tokio"
--version = "1.52.3"
-+version = "1.54.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8fc7f01b389ac15039e4dc9531aa973a135d7a4135281b12d7c1bc79fd57fffe"
-+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
- dependencies = [
-  "bytes",
-  "libc",
+@@ -944,7 +944,7 @@ pub(super) fn render_compat_tma(catalog: &CatalogFile, hash: &str) -> String {
+                 );
+                 if operation.is_cta_g2s() {
+                     output.push_str(
+-                        "/// `barrier` must point into the issuing CTA's shared memory, as for the other\n/// `mbarrier` operations. `dst` is a [`SharedPtr`], which points there by its type.\n",
++                        "/// `dst` and `barrier` must point into the issuing CTA's shared memory, as for the other\n/// `mbarrier` operations.\n",
+                     );
+                 }
+             } else if is_s2g {
+@@ -973,15 +973,8 @@ pub(super) fn render_compat_tma(catalog: &CatalogFile, hash: &str) -> String {
+         output.push_str("#[inline(never)]\n");
+         if is_g2s {
+             let dimensions = dimensions.unwrap();
+-            // The CTA-local forms take a typed CTA-shared destination; the
+-            // raw ABI keeps `*mut u8`, as `*mut Barrier` keeps `*mut u64`.
+-            let destination = if operation.is_cta_g2s() {
+-                "dst: SharedPtr<u8>"
+-            } else {
+-                "dst: *mut u8"
+-            };
+             let mut arguments = vec![
+-                destination.to_owned(),
++                "dst: *mut u8".to_owned(),
+                 "tensor_map: *const TmaDescriptor".to_owned(),
+             ];
+             let mut values = vec!["dst".to_owned(), "tensor_map".to_owned()];
 ```
 
-**File**: `cutile-rs/Cargo.lock` (modified, +2/-2)
+**File**: `cuda-oxide/crates/cuda-intrinsics-gen/src/render/tests/tensor.rs` (modified, +2/-2)
 ```diff
-@@ -1812,9 +1812,9 @@ dependencies = [
- 
- [[package]]
- name = "tokio"
--version = "1.52.1"
-+version = "1.54.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b67dee974fe86fd92cc45b7a95fdd2f99a36a6d7b0d431a231178d3d670bbcc6"
-+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
- dependencies = [
-  "bytes",
-  "libc",
+@@ -420,11 +420,11 @@ fn tma_rendering_preserves_api_and_injects_backend_defaults() {
+             "pub unsafe fn cp_async_bulk_tensor_reduce_xor_im2col_5d(src: *const u8, tensor_map: *const TmaDescriptor, coord0: i32, coord1: i32, coord2: i32, coord3: i32, coord4: i32)"
+         ));
+     assert!(compatibility.contains(
+-            "pub unsafe fn cp_async_bulk_tensor_2d_g2s_cta(dst: SharedPtr<u8>, tensor_map: *const TmaDescriptor, coord0: i32, coord1: i32, barrier: *mut Barrier)"
++            "pub unsafe fn cp_async_bulk_tensor_2d_g2s_cta(dst: *mut u8, tensor_map: *const TmaDescriptor, coord0: i32, coord1: i32, barrier: *mut Barrier)"
+         ));
+     for dimensions in 1..=5 {
+         assert!(compatibility.contains(&format!(
+-            "pub unsafe fn cp_async_bulk_tensor_{dimensions}d_g2s_cta(dst: SharedPtr<u8>,"
++            "pub unsafe fn cp_async_bulk_tensor_{dimensions}d_g2s_cta(dst: *mut u8,"
+         )));
+         assert!(compatibility.contains(&format!(
+             "pub unsafe fn cp_async_bulk_prefetch_tensor_{dimensions}d_l2("
 ```
 
-**File**: `cutile-rs/cutile-benchmarks/paper/app_exp1_work_distribution/bimodal_gemms_rust/Cargo.lock` (modified, +2/-2)
+**File**: `cuda-oxide/crates/cuda-oxide-mlir-export/src/cute/epilogue/sm120.rs` (modified, +23/-22)
 ```diff
-@@ -861,9 +861,9 @@ dependencies = [
+@@ -255,33 +255,34 @@ impl OperationTranslation for EpilogueStoreTranslation {
+             return Err("cute.epilogue_store_fragment needs 64 f32 leaves".into());
+         }
  
- [[package]]
- name = "tokio"
--version = "1.52.3"
-+version = "1.54.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8fc7f01b389ac15039e4dc9531aa973a135d7a4135281b12d7c1bc79fd57fffe"
-+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
- dependencies = [
-  "pin-project-lite",
-  "tokio-macros",
+-        let three = emit_i64_constant(session, &mut operations, 3, &input.location)?;
++        let warp_i32 = cast_int(
++            session,
++            &mut operations,
++            input.operands[1].clone(),
++            MlirType::Integer(32),
++            "arith.trunci",
++            &input.location,
++        )?;
++        let three = emit_i32_constant(session, &mut operations, 3, &input.location)?;
+         let warp_m = emit_binary(
+             session,
+             &mut operations,
+             "arith.andi",
+-            input.operands[1].clone(),
++            warp_i32.clone(),
+             three,
+             &input.location,
+         )?;
+-        let two = emit_i64_constant(session, &mut operations, 2, &input.location)?;
++        let two = emit_i32_constant(session, &mut operations, 2, &input.location)?;
+         let warp_n = emit_binary(
+             session,
+             &mut operations,
+             "arith.shrui",
+-            input.operands[1].clone(),
++            warp_i32,
+             two,
+             &input.location,
+         )?;
+-        let lane = cast_int(
+-            session,
+-            &mut operations,
+-            input.operands[2].clone(),
+-            MlirType::Integer(64),
+-            "arith.extui",
+-            &input.location,
+-        )?;
+-        let fifteen = emit_i64_constant(session, &mut operations, 15, &input.location)?;
++        let lane = input.operands[2].clone();
++        let fifteen = emit_i32_constant(session, &mut operations, 15, &input.location)?;
+         let lane15 = emit_binary(
+             session,
+             &mut operations,
+@@ -290,7 +291,7 @@ impl OperationTranslation for EpilogueStoreTranslation {
+             fifteen,
+             &input.location,
+         )?;
+-        let warp_row_stride = emit_i64_constant(session, &mut operations, 1024, &input.location)?;
++        let warp_row_stride = emit_i32_constant(session, &mut operations, 1024, &input.location)?;
+         let warp_rows = emit_binary(
+             session,
+             &mut operations,
+@@ -299,7 +300,7 @@ impl OperationTranslation for EpilogueStoreTranslation {
+             warp_row_stride,
+             &input.location,
+         )?;
+-        let lane_row_stride = emit_i64_constant(session, &mut operations, 64, &input.location)?;
++        let lane_row_stride = emit_i32_constant(session, &mut operations, 64, &input.location)?;
+         let lane_rows = emit_binary(
+             session,
+             &mut operations,
+@@ -316,7 +317,7 @@ impl OperationTranslation for EpilogueStoreTranslation {
+             lane_rows,
+             &input.location,
+         )?;
+-        let band_stride = emit_i64_constant(session, &mut operations, 4096, &input.location)?;
++        let band_stride = emit_i32_constant(session, &mut operations, 4096, &input.location)?;
+         let row_one = emit_binary(
+             session,
+             &mut operations,
+@@ -325,7 +326,7 @@ impl OperationTranslation for EpilogueStoreTranslation {
+             band_stride,
+             &input.location,
+         )?;
+-        let columns_per_warp = emit_i64_constant(session, &mut operations, 16, &input.location)?;
++        let columns_per_warp = emit_i32_constant(session, &mut operations, 16, &input.location)?;
+         let column_base = emit_binary(
+             session,
+             &mut operations,
+@@ -334,7 +335,7 @@ impl OperationTranslation for EpilogueStoreTranslation {
+             columns_per_warp,
+             &input.location,
+         )?;
+-        let seven = emit_i64_constant(session, &mut operations, 7, &input.location)?;
++        let seven = emit_i32_constant(session, &mut operations, 7, &input.location)?;
+         let lane7 = emit_binary(
+             session,
+             &mut operations,
+@@ -343,7 +344,7 @@ impl OperationTranslation for EpilogueStoreTranslation {
+             seven,
+             &input.location,
+         )?;
+-        let eight = emit_i64_constant(session, &mut operations, 8, &input.location)?;
++        let eight = emit_i32_constant(session, &mut operations, 8, &input.location)?;
+         let swizzle = emit_binary(
+             session,
+             &mut operations,
+@@ -352,14 +353,14 @@ impl OperationTranslation for EpilogueStoreTranslation {
+             eight,
+             &input.location,
+         )?;
+-        let half_stride = emit_i64_constant(session, &mut operations, 8192, &input.location)?;
++        let half_stride = emit_i32_constant(session, &mut operations, 8192, &input.location)?;
+ 
+         /// Logical column offsets for the eight accumulator slots within each M band.
+-        const N_OFFSETS: [u64; 8] = [0, 8, 32, 40, 64, 72, 96, 104];
++        const N_OFFSETS: [i128; 8] = [0, 8, 32, 40, 64, 72, 96, 104];
+         for m_band in 0..2_usize {
+             for (n_slot, n_offset) in N_OFFSETS.into_iter().enumerate() {
+```
+
+**File**: `cuda-oxide/crates/cuda-oxide-mlir-export/src/cute/mma/sm120.rs` (modified, +55/-28)
+```diff
+@@ -340,15 +340,24 @@ impl OperationTranslation for MmaLoadScalesTranslation {
+         }
+ 
+         let mut operations = vec![];
+-        let lane = cast_int(
++        let lane = input.operands[0].clone();
++        let wm = cast_int(
+             session,
+             &mut operations,
+-            input.operands[0].clone(),
+-            MlirType::Integer(64),
+-            "arith.extui",
++            input.operands[5].clone(),
++            MlirType::Integer(32),
++            "arith.trunci",
+             &input.location,
+         )?;
+-        let four = emit_i64_constant(session, &mut operations, 4, &input.location)?;
++        let wn = cast_int(
++            session,
++            &mut operations,
++            input.operands[6].clone(),
++            MlirType::Integer(32),
++            "arith.trunci",
++            &input.location,
++        )?;
++        let four = emit_i32_constant(session, &mut operations, 4, &input.location)?;
+         let q = emit_binary(
+             session,
+             &mut operations,
+@@ -357,7 +366,7 @@ impl OperationTranslation for MmaLoadScalesTranslation {
+             four,
+             &input.location,
+         )?;
+-        let three = emit_i64_constant(session, &mut operations, 3, &input.location)?;
++        let three = emit_i32_constant(session, &mut operations, 3, &input.location)?;
+         let r = emit_binary(
+             session,
+             &mut operations,
+@@ -366,7 +375,7 @@ impl OperationTranslation for MmaLoadScalesTranslation {
+             three,
+             &input.location,
+         )?;
+-        let one = emit_i64_constant(session, &mut operations, 1, &input.location)?;
++        let one = emit_i32_constant(session, &mut operations, 1, &input.location)?;
+         let parity = emit_binary(
+             session,
+             &mut operations,
+@@ -375,7 +384,7 @@ impl OperationTranslation for MmaLoadScalesTranslation {
+             one,
+             &input.location,
+         )?;
+-        let eight = emit_i64_constant(session, &mut operations, 8, &input.location)?;
++        let eight = emit_i32_constant(session, &mut operations, 8, &input.location)?;
+         let parity_band = emit_binary(
+             session,
+             &mut operations,
+@@ -392,12 +401,12 @@ impl OperationTranslation for MmaLoadScalesTranslation {
+             parity_band,
+             &input.location,
+         )?;
+-        let sixteen = emit_i64_constant(session, &mut operations, 16, &input.location)?;
++        let sixteen = emit_i32_constant(session, &mut operations, 16, &input.location)?;
+         let a_band = emit_binary(
+             session,
+             &mut operations,
+             "arith.muli",
+-            input.operands[5].clone(),
++            wm,
+             sixteen.clone(),
+             &input.location,
+         )?;
+@@ -409,7 +418,7 @@ impl OperationTranslation for MmaLoadScalesTranslation {
+             a_provider,
+             &input.location,
+         )?;
+-        let sixty_four = emit_i64_constant(session, &mut operations, 64, &input.location)?;
++        let sixty_four = emit_i32_constant(session, &mut operations, 64, &input.location)?;
+         let a_row1 = emit_binary(
+             session,
+             &mut operations,
+@@ -422,7 +431,7 @@ impl OperationTranslation for MmaLoadScalesTranslation {
+             session,
+             &mut operations,
+             "arith.muli",
+-            input.operands[6].clone(),
++            wn,
+             sixteen,
+             &input.location,
+         )?;
+@@ -435,8 +444,8 @@ impl OperationTranslation for MmaLoadScalesTranslation {
+             &input.location,
+         )?;
+         let mut rows = vec![a_row0, a_row1, b_row0.clone()];
+-        for delta in [8_u64, 32, 40, 64, 72, 96, 104] {
+-            let delta = emit_i64_constant(session, &mut operations, delta, &input.location)?;
++        for delta in [8_i128, 32, 40, 64, 72, 96, 104] {
++            let delta = emit_i32_constant(session, &mut operations, delta, &input.location)?;
+             rows.push(emit_binary(
+                 session,
+                 &mut operations,
+@@ -638,15 +647,23 @@ fn emit_ldmatrix_x4(
+     lane: MlirValueUse,
+     location: &MlirLocation,
+ ) -> Result<[MlirValueUse; 4], String> {
+-    let lane = cast_int(
++    let warp_tile_row = cast_int(
+         session,
+         operations,
+-        lane,
+-        MlirType::Integer(64),
+-        "arith.extui",
++        warp_tile_row,
++        MlirType::Integer(32),
++        "arith.trunci",
++        location,
++    )?;
++    let warp_tile_column = cast_int(
++        session,
++        operations,
++        warp_tile_column,
++        MlirType::Integer(32),
++        "arith.trunci",
+         location,
+     )?;
+-    let eight = emit_i64_constant(session, operations, 8, location)?;
++    let eight = emit_i32_constant(session, operations, 8, location)?;
+     let submatrix = emit_binary(
+         session,
+         operations,
+@@ -663,7 +680,7 @@ fn emit_ldmatrix_x4(
+         eight.clone(),
+         location,
+     )?;
+-    let two = 
+```
+
+---
+
+### Incident Patch 2: `f8563500` (2026-10-27)
+**Commit Message**: feat(cuda-oxide): add #[unroll(never)], propagate llvm.loop.unroll.disable, and normalize tcgen05 shared pointers (#1662)
+
+## What This PR Does
+
+Following up on #1656 (`addrspace(3)` preservation across `.add()` and
+`.cast()`), this PR fixes a 16K deadlock and 4K/8K register regression
+in `gemm_sol_final` on Blackwell (`sm_100a`) by making two compiler
+improvements:
+
+1. **Add `#[unroll(never)]` and propagate `!llvm.loop.unroll.disable`
+(`cuda-macros`, `mir-transforms`, `mir-lower`, `llvm-export`)**
+2. **Normalize non-generic `$0` pointer operands in
+`inline_asm_convergent` (`mir-lower`)**
+
+---
+
+### 1. Why #1656 Triggered a 16K Deadlock in `gemm_sol_final`
+
+`gemm_sol_final` has two kernels selected by problem size:
+```text
+Matrix Size   Kernel Selected by `GemmSelector`                           Status After #1656
+───────────   ─────────────────────────────────────────────────────────   ──────────────────────────────
+4096³ (4K)    gemm_sol_clc_multicast_4_stage_pipeline       (M256xN256)   Runs (64 -> 69 regs, perf dip)
+8192³ (8K)    gemm_sol_clc_multicast_4_stage_pipeline       (M256xN256)   Runs (64 -> 69 regs, perf dip)
+16384³ (16K)  gemm_sol_clc_multicast_4_stage_pipeline_large 
+
+**File**: `cuda-oxide/crates/cuda-device/src/thread.rs` (modified, +7/-0)
+```diff
+@@ -1404,7 +1404,14 @@ pub fn __unroll_config<const FACTOR: u32>() {
+     // No runtime code is generated.
+ }
+ 
++/// Internal sentinel factor for `#[unroll(never)]`.
++#[doc(hidden)]
++pub const UNROLL_NEVER: u32 = u32::MAX - 1;
++
+ const fn validate_unroll_factor(factor: u32) {
++    if factor == UNROLL_NEVER {
++        return;
++    }
+     assert!(
+         factor == 0 || (factor >= 2 && factor <= 1024),
+         "partial unroll factor must be in 2..=1024, or 0 for full unrolling"
+```
+
+**File**: `cuda-oxide/crates/cuda-macros/src/launch_attrs.rs` (modified, +11/-0)
+```diff
+@@ -381,6 +381,17 @@ impl Parse for UnrollArgs {
+             });
+         }
+ 
++        if input.peek(Ident) {
++            let fork = input.fork();
++            let ident: Ident = fork.parse()?;
++            if ident == "never" && fork.is_empty() {
++                let _: Ident = input.parse()?;
++                return Ok(UnrollArgs {
++                    factor: ConstU32Expr::literal(u32::MAX - 1),
++                });
++            }
++        }
++
+         let args: Punctuated<Expr, Token![,]> = Punctuated::parse_terminated(input)?;
+         let mut values = args
+             .into_iter()
+```
+
+**File**: `cuda-oxide/crates/cuda-macros/src/tests/launch.rs` (modified, +7/-0)
+```diff
+@@ -371,6 +371,13 @@ fn malformed_unroll_attr_records_error() {
+ fn partial_unroll_factor_must_be_at_least_two() {
+     assert!(syn::parse_str::<UnrollArgs>("0").is_err());
+     assert!(syn::parse_str::<UnrollArgs>("1").is_err());
++    assert_eq!(
++        syn::parse_str::<UnrollArgs>("never")
++            .unwrap()
++            .factor
++            .literal_value,
++        Some(u32::MAX - 1)
++    );
+     assert_eq!(
+         syn::parse_str::<UnrollArgs>("2")
+             .unwrap()
+```
+
+**File**: `cuda-oxide/crates/cuda-oxide-mlir-export/src/mir/core.rs` (modified, +2/-1)
+```diff
+@@ -17,7 +17,7 @@ use crate::{
+ use dialect_mir::{
+     attributes::{
+         InlineIntentAttr, MirCastKindAttr, MirFP16Attr, MirPointerKindAuthorityAttr,
+-        ReferenceParamValidityAttr,
++        ReferenceParamValidityAttr, UnrollAttr,
+     },
+     ops::{
+         MirAddOp, MirBitAndOp, MirBitOrOp, MirBitXorOp, MirCastOp, MirCondBranchOp, MirConstantOp,
+@@ -54,6 +54,7 @@ pub fn register_mir_core_pack(registry: &mut TranslationRegistry) -> Result<(),
+     // These optional optimization hints use Rust argument indices. Drop them
+     // until they can be remapped to the launch arguments after slice flattening.
+     registry.register_attribute::<ReferenceParamValidityAttr>(DropAttribute)?;
++    registry.register_attribute::<UnrollAttr>(DropAttribute)?;
+ 
+     registry.register_operation::<MirFuncOp>(FunctionTranslation)?;
+     registry.register_operation::<MirReturnOp>(RenameOperation("func.return"))?;
+```
+
+**File**: `cuda-oxide/crates/dialect-mir/src/ops/control_flow.rs` (modified, +28/-0)
+```diff
+@@ -141,10 +141,38 @@ impl Verify for MirReturnOp {
+ pub struct MirGotoOp;
+ 
+ impl MirGotoOp {
++    /// Operation attribute key marking a loop backedge whose unroll factor was
++    /// already applied by `mir-transforms`.
++    const LOOP_UNROLL_DISABLE_KEY: &str = "loop_unroll_disable";
++
+     /// Create a new MirGotoOp wrapper.
+     pub fn new(op: Ptr<Operation>) -> Self {
+         MirGotoOp { op }
+     }
++
++    /// Mark this branch as a loop backedge that downstream LLVM passes must
++    /// not unroll again.
++    pub fn set_loop_unroll_disable(&self, ctx: &mut Context) {
++        let key =
++            pliron::identifier::Identifier::try_new(Self::LOOP_UNROLL_DISABLE_KEY.to_string())
++                .expect("valid loop_unroll_disable attribute key");
++        self.get_operation()
++            .deref_mut(ctx)
++            .attributes
++            .set(key, UnrollAttr(1));
++    }
++
++    /// Whether downstream LLVM unrolling should be disabled on this backedge.
++    pub fn is_loop_unroll_disable(&self, ctx: &Context) -> bool {
++        let key =
++            pliron::identifier::Identifier::try_new(Self::LOOP_UNROLL_DISABLE_KEY.to_string())
++                .expect("valid loop_unroll_disable attribute key");
++        self.get_operation()
++            .deref(ctx)
++            .attributes
++            .get::<UnrollAttr>(&key)
++            .is_some()
++    }
+ }
+ 
+ impl Verify for MirGotoOp {
+```
+
+**File**: `cuda-oxide/crates/llvm-export/src/export/module.rs` (modified, +32/-0)
+```diff
+@@ -729,6 +729,22 @@ pub(super) fn export_module_with_externs_impl(
+         emit_nvvmir_version(&mut output, &mut state, config.nvvmir_version());
+     }
+ 
++    if let Some(attr_id) = state.loop_unroll_disable_attr_id {
++        writeln!(&mut output).unwrap();
++        writeln!(
++            &mut output,
++            "!{attr_id} = !{{!\"llvm.loop.unroll.disable\"}}"
++        )
++        .unwrap();
++        for &loop_id in &state.loop_unroll_disable_loop_ids {
++            writeln!(
++                &mut output,
++                "!{loop_id} = distinct !{{!{loop_id}, !{attr_id}}}"
++            )
++            .unwrap();
++        }
++    }
++
+     // 9. DWARF metadata (if requested and source locations exist)
+     if state.has_debug_metadata() {
+         writeln!(&mut output).unwrap();
+@@ -876,6 +892,22 @@ pub(super) fn export_module_to_string_with_config(
+         emit_nvvmir_version(&mut output, &mut state, config.nvvmir_version());
+     }
+ 
++    if let Some(attr_id) = state.loop_unroll_disable_attr_id {
++        writeln!(&mut output).unwrap();
++        writeln!(
++            &mut output,
++            "!{attr_id} = !{{!\"llvm.loop.unroll.disable\"}}"
++        )
++        .unwrap();
++        for &loop_id in &state.loop_unroll_disable_loop_ids {
++            writeln!(
++                &mut output,
++                "!{loop_id} = distinct !{{!{loop_id}, !{attr_id}}}"
++            )
++            .unwrap();
++        }
++    }
++
+     // Emit DWARF line-table metadata if debug export requested it and at least
+     // one function had a real source location.
+     if state.has_debug_metadata() {
+```
+
+**File**: `cuda-oxide/crates/llvm-export/src/export/ops.rs` (modified, +9/-3)
+```diff
+@@ -668,15 +668,21 @@ impl<'a> ModuleExportState<'a> {
+     }
+ 
+     fn emit_br(
+-        &self,
++        &mut self,
+         op: &ops::BrOp,
+         block_labels: &FxHashMap<Ptr<BasicBlock>, String>,
+         output: &mut String,
+     ) -> Result<(), String> {
+-        let op_ref = op.get_operation().deref(self.ctx);
++        let op_ptr = op.get_operation();
++        let op_ref = op_ptr.deref(self.ctx);
+         let dest = op_ref.successors().next().unwrap();
+         let label = block_labels.get(&dest).ok_or("Missing block label")?;
+-        writeln!(output, "  br label %{label}").unwrap();
++        if !self.legacy_typed_pointers() && ops::is_loop_unroll_disable(self.ctx, op_ptr) {
++            let loop_id = self.alloc_loop_unroll_disable_id();
++            writeln!(output, "  br label %{label}, !llvm.loop !{loop_id}").unwrap();
++        } else {
++            writeln!(output, "  br label %{label}").unwrap();
++        }
+         Ok(())
+     }
+ 
+```
+
+**File**: `cuda-oxide/crates/llvm-export/src/export/state.rs` (modified, +15/-0)
+```diff
+@@ -216,6 +216,10 @@ pub(super) struct ModuleExportState<'a> {
+     pub(super) debug_declare_used: bool,
+     /// Whether any function emitted `llvm.dbg.value`.
+     pub(super) debug_value_used: bool,
++    /// Shared `!{!"llvm.loop.unroll.disable"}` metadata id, allocated on first use.
++    pub(super) loop_unroll_disable_attr_id: Option<usize>,
++    /// Per-backedge `distinct !{!id, !attr_id}` loop metadata ids, in allocation order.
++    pub(super) loop_unroll_disable_loop_ids: Vec<usize>,
+ }
+ 
+ #[derive(Clone, Copy, Debug)]
+@@ -284,6 +288,8 @@ impl<'a> ModuleExportState<'a> {
+             debug_nodes: Vec::new(),
+             debug_declare_used: false,
+             debug_value_used: false,
++            loop_unroll_disable_attr_id: None,
++            loop_unroll_disable_loop_ids: Vec::new(),
+         }
+     }
+ 
+@@ -309,6 +315,15 @@ impl<'a> ModuleExportState<'a> {
+         id
+     }
+ 
++    pub(super) fn alloc_loop_unroll_disable_id(&mut self) -> usize {
++        if self.loop_unroll_disable_attr_id.is_none() {
++            self.loop_unroll_disable_attr_id = Some(self.alloc_metadata_id());
++        }
++        let loop_id = self.alloc_metadata_id();
++        self.loop_unroll_disable_loop_ids.push(loop_id);
++        loop_id
++    }
++
+     #[cfg(test)]
+     pub(super) fn next_metadata_id(&self) -> usize {
+         self.next_metadata_id
+```
+
+---
+
+### Incident Patch 3: `c6493434` (2026-10-27)
+**Commit Message**: feat(cuda-oxide): use 32-bit shared-memory pointers (p3:32:32:32 + --nvptx-short-ptr) in PTX backend (#1661)
+
+## What This PR Does
+
+This PR aligns our native `opt` + `llc` PTX backend with `nvcc` and
+`libNVVM` so shared-memory pointers (`ptr addrspace(3)`) use **32-bit
+(`%r`) registers** instead of **64-bit (`%rd`) registers**:
+
+1. **Set `NVPTX_DATALAYOUT_PTX = NVPTX_DATALAYOUT_FULL`
+(`llvm-export`)** so `opt -O2` sees `p3:32:32:32`.
+2. **Pass `--nvptx-short-ptr` to `llc` (`cuda-oxide-codegen`)** so `llc`
+emits 32-bit `%r` shared-memory addresses.
+3. **Return `ptr addrspace(3)` as a 64-bit generic `ptr` across `.func`
+return slots (`mir-lower`)** so non-inlined device functions returning
+shared pointers work cleanly under `--nvptx-short-ptr`.
+
+---
+
+### 1. Why `PtxExportConfig` Was Emitting 64-Bit Shared Pointers
+
+Previously, `NvvmExportConfig` (`libNVVM`) and `PtxExportConfig` (`opt`
++ `llc`) used two different data layouts:
+
+```text
+1. NvvmExportConfig (`NVPTX_DATALAYOUT_FULL`, matching `nvcc`):
+   "e-p:64:64:64-p3:32:32:32-..."
+                 ^^^^^^^^^^^
+                 Tells LLVM that shared memory (`addrspace(3)`) is 32-bit!
+
+2. PtxExportConfig (`NVPTX_DATALAYOUT_PTX`, befor
+
+**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/ptx.rs` (modified, +2/-0)
+```diff
+@@ -333,6 +333,7 @@ fn base_llc_args(target: &str) -> Vec<String> {
+     vec![
+         "-march=nvptx64".to_string(),
+         format!("-mcpu={target}"),
++        "--nvptx-short-ptr".to_string(),
+         DISABLE_BRANCH_FOLD.to_string(),
+         DISABLE_BLOCK_PLACEMENT.to_string(),
+     ]
+@@ -1222,6 +1223,7 @@ mod tests {
+             [
+                 "-march=nvptx64",
+                 "-mcpu=sm_90",
++                "--nvptx-short-ptr",
+                 "-disable-branch-fold",
+                 "-disable-block-placement",
+             ]
+```
+
+**File**: `cuda-oxide/crates/llvm-export/src/export/config.rs` (modified, +5/-2)
+```diff
+@@ -5,8 +5,11 @@
+ 
+ //! Backend configuration traits and built-in implementations.
+ 
+-/// Minimal data layout for PTX mode (default behavior).
+-pub(super) const NVPTX_DATALAYOUT_PTX: &str = "e-i64:64-i128:128-v16:16-v32:32-n16:32:64";
++/// Data layout for PTX mode (default behavior).
++///
++/// Matches `nvcc` and `libNVVM` (`NVPTX_DATALAYOUT_FULL`), declaring 32-bit
++/// shared-memory pointers (`p3:32:32:32`) and 64-bit generic/global pointers.
++pub(super) const NVPTX_DATALAYOUT_PTX: &str = NVPTX_DATALAYOUT_FULL;
+ 
+ /// Full NVPTX data layout for libNVVM/LTOIR mode (Blackwell+, modern dialect).
+ ///
+```
+
+**File**: `cuda-oxide/crates/mir-lower/src/convert/ops/aggregate/enums.rs` (modified, +2/-2)
+```diff
+@@ -1043,8 +1043,8 @@ mod tests {
+         let body = kernel_blocks(&ctx, module);
+         assert_eq!(
+             count_ops::<llvm::AddrSpaceCastOp>(&ctx, &body),
+-            2,
+-            "construction must genericize the pointer and extraction must restore shared space"
++            3,
++            "construction must genericize the pointer, extraction must restore shared space, and return must genericize for .func ABI"
+         );
+         assert_eq!(
+             count_ops::<llvm::PtrToIntOp>(&ctx, &body),
+```
+
+**File**: `cuda-oxide/crates/mir-lower/src/convert/ops/aggregate/fields.rs` (modified, +4/-4)
+```diff
+@@ -505,8 +505,8 @@ mod tests {
+ 
+         assert_eq!(
+             count_ops::<llvm::AddrSpaceCastOp>(&ctx, &body),
+-            2,
+-            "union insertion must genericize AS3 and extraction must restore AS3"
++            3,
++            "union insertion must genericize AS3, extraction must restore AS3, and return must genericize for .func ABI"
+         );
+         assert_eq!(
+             count_ops::<MirInsertFieldOp>(&ctx, &body),
+@@ -610,8 +610,8 @@ mod tests {
+ 
+         assert_eq!(
+             count_ops::<llvm::AddrSpaceCastOp>(&ctx, &body),
+-            2,
+-            "nested union insertion must genericize AS3 and extraction must restore AS3"
++            3,
++            "nested union insertion must genericize AS3, extraction must restore AS3, and return must genericize for .func ABI"
+         );
+         assert_eq!(count_ops::<MirInsertFieldOp>(&ctx, &body), 0);
+         assert_eq!(count_ops::<MirExtractFieldOp>(&ctx, &body), 0);
+```
+
+**File**: `cuda-oxide/crates/mir-lower/src/convert/ops/call.rs` (modified, +2/-4)
+```diff
+@@ -64,7 +64,7 @@
+ use crate::convert::target_stable_storage::coerce_target_stable_value;
+ use crate::convert::types::{
+     StructLayoutInfo, TransparentScalarAbiInfo, build_struct_slot_map, convert_function_type,
+-    convert_type, is_kernel_func, is_zero_sized_type, packed_shared_internal_abi_info,
++    convert_type, is_kernel_func, is_zero_sized_type, shared_return_abi_info,
+     transparent_scalar_abi_info,
+ };
+ use crate::helpers;
+@@ -680,9 +680,7 @@ pub fn convert(
+             let scalar_ty = abi.scalar_ty;
+             transparent_result_abi = Some(abi);
+             scalar_ty
+-        } else if let Some(abi) =
+-            packed_shared_internal_abi_info(ctx, mir_ty).map_err(anyhow_to_pliron)?
+-        {
++        } else if let Some(abi) = shared_return_abi_info(ctx, mir_ty).map_err(anyhow_to_pliron)? {
+             let storage_ty = abi.storage_ty;
+             packed_shared_result_abi = Some(abi);
+             storage_ty
+```
+
+**File**: `cuda-oxide/crates/mir-lower/src/convert/ops/cast.rs` (modified, +46/-17)
+```diff
+@@ -1523,11 +1523,19 @@ mod tests {
+         );
+ 
+         // The exposed integer is a generic address, so re-entering the shared
+-        // space must go inttoptr → generic, then addrspacecast → shared. A
+-        // bare inttoptr into addrspace(3) would reinterpret the generic
+-        // address as a space-local offset.
+-        assert_cast_lowered_to::<llvm::AddrSpaceCastOp>(&ctx, module, "llvm.addrspacecast");
++        // space must go inttoptr -> generic, then addrspacecast -> shared,
++        // followed by the .func return-boundary addrspacecast back to generic.
+         let body = kernel_blocks(&ctx, module);
++        assert_eq!(
++            count_ops::<llvm::AddrSpaceCastOp>(&ctx, &body),
++            2,
++            "expected cast addrspacecast plus .func return-boundary addrspacecast"
++        );
++        assert_eq!(
++            count_ops::<mir::MirCastOp>(&ctx, &body),
++            0,
++            "mir.cast must be replaced during lowering"
++        );
+         let int_to_ptrs = find_all::<llvm::IntToPtrOp>(&ctx, &body);
+         let [int_to_ptr] = int_to_ptrs.as_slice() else {
+             panic!("integer-to-shared transmute must lower to exactly one llvm.inttoptr");
+@@ -1564,8 +1572,14 @@ mod tests {
+             let module =
+                 lower_single_cast(&mut ctx, source, destination, MirCastKindAttr::Transmute);
+ 
+-            assert_cast_lowered_to::<llvm::AddrSpaceCastOp>(&ctx, module, "llvm.addrspacecast");
+             let body = kernel_blocks(&ctx, module);
++            let expected_casts = if shared_is_source { 1 } else { 2 };
++            assert_eq!(
++                count_ops::<llvm::AddrSpaceCastOp>(&ctx, &body),
++                expected_casts,
++                "expected cast addrspacecast (plus return-boundary cast when returning shared)"
++            );
++            assert_eq!(count_ops::<mir::MirCastOp>(&ctx, &body), 0);
+             assert_eq!(
+                 count_ops::<llvm::AllocaOp>(&ctx, &body),
+                 0,
+@@ -1946,17 +1960,28 @@ mod tests {
+ 
+             // The exposed integer is a generic address, so re-entry must be
+             // inttoptr-to-generic followed by addrspacecast into the space,
+-            // mirroring the PointerExposeAddress direction.
+-            assert_cast_lowered_to::<llvm::AddrSpaceCastOp>(&ctx, module_ptr, "llvm.addrspacecast");
++            // mirroring the PointerExposeAddress direction. When returning an
++            // addrspace(3) pointer, the .func return boundary adds a second
++            // addrspacecast back to generic.
++            let body = kernel_blocks(&ctx, module_ptr);
++            let expected_casts = if address_space == llvm_export::types::address_space::SHARED {
++                2
++            } else {
++                1
++            };
+             assert_eq!(
+-                count_ops::<llvm::IntToPtrOp>(&ctx, &kernel_blocks(&ctx, module_ptr)),
++                count_ops::<llvm::AddrSpaceCastOp>(&ctx, &body),
++                expected_casts,
++                "expected cast addrspacecast (plus return-boundary cast for shared)"
++            );
++            assert_eq!(count_ops::<mir::MirCastOp>(&ctx, &body), 0);
++            assert_eq!(
++                count_ops::<llvm::IntToPtrOp>(&ctx, &body),
+                 1,
+                 "address space {address_space} must re-enter through a generic inttoptr"
+             );
+-            let casts = find_all::<llvm::AddrSpaceCastOp>(&ctx, &kernel_blocks(&ctx, module_ptr));
+-            let [cast] = casts.as_slice() else {
+-                panic!("expected exactly one llvm.addrspacecast");
+-            };
++            let casts = find_all::<llvm::AddrSpaceCastOp>(&ctx, &body);
++            let cast = &casts[0];
+             let result_ty = cast
+                 .get_operation()
+                 .deref(&ctx)
+@@ -1984,12 +2009,16 @@ mod tests {
+             MirCastKindAttr::PtrToPtr,
+         );
+ 
+-        assert_cast_lowered_to::<llvm::AddrSpaceCastOp>(&ctx, module_ptr, "llvm.addrspacecast");
++        let body = kernel_blocks(&ctx, module_ptr);
++        assert_eq!(
++            count_ops::<llvm::AddrSpaceCastOp>(&ctx, &body),
++            2,
++            "ptr -> shared cast plus .func return-boundary cast must emit two llvm.addrspacecast ops"
++        );
++        assert_eq!(count_ops::<mir::MirCastOp>(&ctx, &body), 0);
+ 
+-        let casts = find_all::<llvm::AddrSpaceCastOp>(&ctx, &kernel_blocks(&ctx, module_ptr));
+-        let [cast] = casts.as_slice() else {
+-            panic!("ptr -> ptr addrspace cast must lower to exactly one llvm.addrspacecast");
+-        };
++        let casts = find_all::<llvm::AddrSpaceCastOp>(&ctx, &body);
++        let cast = &casts[0];
+         let result_ty = cast
+             .get_operation()
+             .deref(&ctx)
+```
+
+**File**: `cuda-oxide/crates/mir-lower/src/convert/ops/control_flow.rs` (modified, +13/-2)
+```diff
+@@ -24,7 +24,9 @@
+ //! not copied). Successor pointers are already valid — no block map lookup needed.
+ 
+ use crate::convert::target_stable_storage::coerce_target_stable_value;
+-use crate::convert::types::packed_shared_internal_abi_info;
++use crate::convert::types::{
++    is_kernel_func, packed_shared_internal_abi_info, shared_return_abi_info,
++};
+ use dialect_mir::types::MirStructType;
+ use llvm_export::ops as llvm;
+ use pliron::basic_block::BasicBlock;
+@@ -81,8 +83,17 @@ pub(crate) fn convert_return(
+                 }
+                 Some(scalar)
+             } else {
++                let is_kernel = op
++                    .deref(ctx)
++                    .get_parent_op(ctx)
++                    .is_some_and(|parent| is_kernel_func(ctx, parent));
+                 let packed_shared_abi = if let Some(mir_ty) = mir_ty {
+-                    match packed_shared_internal_abi_info(ctx, mir_ty) {
++                    let abi_res = if is_kernel {
++                        packed_shared_internal_abi_info(ctx, mir_ty)
++                    } else {
++                        shared_return_abi_info(ctx, mir_ty)
++                    };
++                    match abi_res {
+                         Ok(abi) => abi,
+                         Err(error) => {
+                             return pliron::input_err_noloc!(
+```
+
+**File**: `cuda-oxide/crates/mir-lower/src/convert/types/func_abi.rs` (modified, +32/-1)
+```diff
+@@ -349,6 +349,37 @@ pub(crate) fn packed_shared_internal_abi_info(
+     }))
+ }
+ 
++/// Recognize an internal device-function return type that must cross the `.func`
++/// boundary as a target-stable 64-bit generic pointer (or generic-pointer carrier).
++///
++/// Under `--nvptx-short-ptr` (`p3:32:32:32`), LLVM 23's `NVPTXAsmPrinter` emits
++/// `.func (.param .b64 func_retval0)` in the function header for a bare
++/// `ptr addrspace(3)` return value while emitting `.param .b32 retval0` at the
++/// call site. Returning `ptr` (`addrspace(0)`) across the `.func` boundary and
++/// coercing back to `ptr addrspace(3)` at the call site matches `nvcc` and
++/// avoids the PTX return-slot width mismatch.
++pub(crate) fn shared_return_abi_info(
++    ctx: &mut Context,
++    mir_ty: TypeHandle,
++) -> Result<Option<PackedSharedInternalAbiInfo>, anyhow::Error> {
++    if let Some(abi) = packed_shared_internal_abi_info(ctx, mir_ty)? {
++        return Ok(Some(abi));
++    }
++    let is_shared_ptr = mir_ty
++        .deref(ctx)
++        .downcast_ref::<MirPtrType>()
++        .is_some_and(|ptr_ty| ptr_ty.address_space() == llvm_types::address_space::SHARED);
++    if !is_shared_ptr {
++        return Ok(None);
++    }
++    let semantic_ty = convert_type(ctx, mir_ty)?;
++    let storage_ty = llvm_types::PointerType::get_generic(ctx).into();
++    Ok(Some(PackedSharedInternalAbiInfo {
++        semantic_ty,
++        storage_ty,
++    }))
++}
++
+ /// Convert a type that crosses a function boundary as one LLVM value.
+ ///
+ /// A struct with a natural-layout divergence is legal by value only when
+@@ -621,7 +652,7 @@ pub fn convert_function_type(
+         let ty = if is_transparent_scalar {
+             transparent_scalar_llvm_type(ctx, mir_ret_ty)?
+         } else if !is_kernel_entry {
+-            match packed_shared_internal_abi_info(ctx, mir_ret_ty)? {
++            match shared_return_abi_info(ctx, mir_ret_ty)? {
+                 Some(abi) => abi.storage_ty,
+                 None => convert_by_value_abi_type(ctx, mir_ret_ty, "by-value function return")?,
+             }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1662** (2026-10-27): feat(cuda-oxide): add #[unroll(never)], propagate llvm.loop.unroll.disable, and normalize tcgen05 shared pointers (@nihalpasham)
+- **PR #1661** (2026-10-27): feat(cuda-oxide): use 32-bit shared-memory pointers (p3:32:32:32 + --nvptx-short-ptr) in PTX backend (@nihalpasham)
+- **PR #1656** (2026-10-27): feat(cuda-oxide): shared-memory i32/addrspace(3) codegen and CTA-local TMA without SharedPtr (@nihalpasham)
 - **PR #1640** (2026-10-25): docs(book): soften dark-mode SVG fill colors across cute and compiler diagrams (@nihalpasham)
 - **PR #1626** (closed): Support one uniform i32 capture in checked block callbacks (@tpn)
 - **PR #1619** (2026-10-23): fix: bump example tokio pins past RUSTSEC-2026-0386 (@roivanov)
-- **PR #1617** (2026-10-23): docs(cuda-oxide): update remaining nightly references and doctor check for 1.99.1 (@nihalpasham)
-- **PR #1616** (2026-10-23): chore(cuda-oxide): update flake.lock for 1.99.1, scaffold config, and clean up docs (@nihalpasham)
-- **PR #1615** (2026-10-23): chore(cute-rs): sync shared host crate versions to v0.5.0 in lockfiles (@nihalpasham)
 
 ---
 
@@ -2306,30 +3357,56 @@ Signed-off-by: Roman Ivanov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bump example tokio pins past RUSTSEC-2026-0386 (#1619)
+## X. cuda-oxide): shared-memory i32/addrspace(3) codegen and CTA-local TMA without Sh
 
 **RULE**:
-When implementing operations in `cuda-oxide/crates/rustc-codegen-cuda/examples/async_mlp/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cuda-oxide/crates/cuda-device/src/generated/tma.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fc747196`: bump example tokio pins past RUSTSEC-2026-0386 (#1619). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0f68e38c`: cuda-oxide): shared-memory i32/addrspace(3) codegen and CTA-local TMA without SharedPtr (#1656). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cuda-oxide/crates/rustc-codegen-cuda/examples/async_mlp/Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cuda-oxide/crates/cuda-device/src/generated/tma.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.54.1"
-checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
+/// `dst` and `barrier` must point into the issuing CTA's shared memory, as for the other
+/// `mbarrier` operations.
+    dst: *mut u8,
+/// `dst` and `barrier` must point into the issuing CTA's shared memory, as for the other
+/// `mbarrier` operations.
+    dst: *mut u8,
+/// `dst` and `barrier` must point into the issuing CTA's shared memory, as for the other
+/// `mbarrier` operations.
+    dst: *mut u8,
+/// `dst` and `barrier` must point into the issuing CTA's shared memory, as for the other
+/// `mbarrier` operations.
+    dst: *mut u8,
+/// `dst` and `barrier` must point into the issuing CTA's shared memory, as for the other
+/// `mbarrier` operations.
+    dst: *mut u8,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "1.52.3"
-checksum = "8fc7f01b389ac15039e4dc9531aa973a135d7a4135281b12d7c1bc79fd57fffe"
+/// `barrier` must point into the issuing CTA's shared memory, as for the other
+/// `mbarrier` operations. `dst` is a [`SharedPtr`], which points there by its type.
+    dst: SharedPtr<u8>,
+/// `barrier` must point into the issuing CTA's shared memory, as for the other
+/// `mbarrier` operations. `dst` is a [`SharedPtr`], which points there by its type.
+    dst: SharedPtr<u8>,
+/// `barrier` must point into the issuing CTA's shared memory, as for the other
+/// `mbarrier` operations. `dst` is a [`SharedPtr`], which points there by its type.
+    dst: SharedPtr<u8>,
+/// `barrier` must point into the issuing CTA's shared memory, as for the other
+/// `mbarrier` operations. `dst` is a [`SharedPtr`], which points there by its type.
+    dst: SharedPtr<u8>,
+/// `barrier` must point into the issuing CTA's shared memory, as for the other
+/// `mbarrier` operations. `dst` is a [`SharedPtr`], which points there by its type.
+    dst: SharedPtr<u8>,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fc747196` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0f68e38c` are properly handled with clean fallback behavior.

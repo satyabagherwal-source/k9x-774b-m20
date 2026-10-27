@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nervjs-taro-learnings.md`  
 > **Source**: github ([https://github.com/NervJS/taro](https://github.com/NervJS/taro))  
-> **Source Version**: `fa5d076b`  
+> **Source Version**: `c4e9c548`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T08:39:39.586Z  
+> **Timestamp**: 2026-10-27T13:14:17.140Z  
 > **Learning ID**: `learn-github-nervjs-taro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nervjs-taro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NervJS/taro](https://github.com/NervJS/taro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T08:39:05.006Z  
+> **Harvest Timestamp**: 2026-10-27T13:14:16.917Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 开放式跨端跨框架解决方案，支持使用 React/Vue 等框架来开发微信/京东/百度/支付宝/字节跳动/ QQ 小程序/H5/React Native 等应用。
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 37732 stars
+- **Stars / Engagement**: 37739 stars
 
 ---
 
@@ -1216,573 +1216,548 @@ pub fn init_git(project_name: &str, project_path: &str) -> anyhow::Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `de08853c` (2026-10-23)
-**Commit Message**: fix(h5): handle clipboard copy failures and clean up temporary textareas (#19548)
+### Incident Patch 1: `8ed2d672` (2026-10-26)
+**Commit Message**: fix(h5): handle asynchronous storage failures (#19563)
 
-* fix(h5): handle clipboard copy failures and clean up temporary textareas
-
-* fix(h5): preserve clipboard cleanup compatibility
-
-* fix(h5): handle clipboard copy failures and clean up temporary textareas
-
-* fix(h5): preserve clipboard cleanup compatibility
-
-* fix(h5): guard clipboard cache updates during copy events
-
-**File**: `packages/taro-h5/__tests__/device/clipboard.test.ts` (added, +214/-0)
+**File**: `packages/taro-h5/__tests__/storage/errors.test.ts` (added, +96/-0)
 ```diff
-@@ -0,0 +1,214 @@
-+import { getClipboardData, setClipboardData } from '../../src/api/device/clipboard'
-+import { setStorageSync } from '../../src/api/storage'
-+import { showToast } from '../../src/api/ui/interaction'
+@@ -0,0 +1,96 @@
++import {
++  clearStorage,
++  clearStorageSync,
++  getStorageInfo,
++  getStorageInfoSync,
++  removeStorage,
++  removeStorageSync,
++  setStorage,
++  setStorageSync
++} from '../../src/api/storage'
 +
-+jest.mock('../../src/api/ui/interaction', () => ({ showToast: jest.fn() }))
++const operations = [
++  ['setStorage', (callbacks = {}) => setStorage({ key: 'test', data: 'value', ...callbacks })],
++  ['removeStorage', (callbacks = {}) => removeStorage({ key: 'test', ...callbacks })],
++  ['clearStorage', (callbacks = {}) => clearStorage(callbacks)],
++  ['getStorageInfo', (callbacks = {}) => getStorageInfo(callbacks)]
++] as const
 +
-+describe('setClipboardData', () => {
-+  let execCommand: jest.Mock
-+  const originalExecCommand = Object.getOwnPropertyDescriptor(document, 'execCommand')
++describe('storage browser errors', () => {
++  afterEach(() => jest.restoreAllMocks())
 +
-+  beforeEach(() => {
-+    execCommand = jest.fn(() => true)
-+    Object.defineProperty(document, 'execCommand', { configurable: true, value: execCommand })
-+    setStorageSync('taro_clipboard', 'previous content')
-+    jest.mocked(showToast).mockClear()
++  describe.each(operations)('%s', (name, invoke) => {
++    test.each(['promise', 'fail', 'complete', 'both'])('handles denied storage access with %s', async mode => {
++      const error = new DOMException('Storage access denied', 'SecurityError')
++      jest.spyOn(window, 'localStorage', 'get').mockImplementation(() => { throw error })
++      const success = jest.fn()
++      const fail = jest.fn()
++      const complete = jest.fn()
++      const callbacks = {
++        success,
++        ...(mode === 'fail' || mode === 'both' ? { fail } : {}),
++        ...(mode === 'complete' || mode === 'both' ? { complete } : {})
++      }
++      // Calling the asynchronous API must return a Promise without throwing.
++      const result = invoke(callbacks)
++      const expected = { errMsg: `${name}:fail Storage access denied` }
++      if (mode === 'promise') {
++        await expect(result).rejects.toEqual(expected)
++      } else {
++        // MethodHandler resolves failures when fail or complete is supplied.
++        await expect(result).resolves.toEqual(expected)
++      }
++      expect(success).not.toHaveBeenCalled()
++      expect(fail).toHaveBeenCalledTimes(mode === 'fail' || mode === 'both' ? 1 : 0)
++      expect(complete).toHaveBeenCalledTimes(mode === 'complete' || mode === 'both' ? 1 : 0)
++      if (fail.mock.calls.length) expect(fail).toHaveBeenCalledWith(expected)
++      if (complete.mock.calls.length) expect(complete).toHaveBeenCalledWith(expected)
++    })
 +  })
 +
-+  afterEach(() => {
-+    document.body.innerHTML = ''
-+    localStorage.clear()
-+    jest.restoreAllMocks()
-+    if (originalExecCommand) Object.defineProperty(document, 'execCommand', originalExecCommand)
-+    else delete document.execCommand
-+  })
-+
-+  function failCopy (mode: string) {
-+    if (mode === 'returns false') execCommand.mockReturnValue(false)
-+    else execCommand.mockImplementation(() => { throw new Error('copy denied') })
-+  }
-+
-+  test.each(['succeeds', 'returns false', 'throws'])('defers copy-event caching until the command %s', async mode => {
-+    jest.spyOn(window, 'getSelection').mockReturnValue({ toString: () => 'selected content' } as Selection)
-+    const setItem = jest.spyOn(Storage.prototype, 'setItem')
-+    execCommand.mockImplementation(() => {
-+      document.dispatchEvent(new Event('copy'))
-+      expect(setItem).not.toHaveBeenCalled()
-+      if (mode === 'throws') throw new Error('copy denied')
-+      return mode === 'succeeds'
++  test('settles quota errors through failure and completion callbacks', async () => {
++    jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
++      throw new DOMException('Storage quota exceeded', 'QuotaExceededError')
 +    })
 +    const success = jest.fn()
 +    const fail = jest.fn()
 +    const complete = jest.fn()
-+
-+    const result = await setClipboardData({ data: 'new content', success, fail, complete })
-+
-+    expect(execCommand).toHaveBeenCalledTimes(1)
-+    expect(result.errMsg).toBe(mode === 'succeeds'
-+      ? 'setClipboardData:ok'
-+      : `setClipboardData:fail ${mode === 'throws' ? 'copy denied' : 'Failed to copy to clipboard'}`)
-+    expect(setItem).toHaveBeenCalledTimes(mode === 'succeeds' ? 1 : 0)
-+    expect((await getClipboardData()).data).toBe(mode === 'succeeds' ? 'new content' : 'previous content')
-+    expect(success).toHaveBeenCalledTimes(mode === 'succeeds' ? 1 : 0)
-+    expect(fail).toHaveBeenCalledTimes(mode === 'succeeds' ? 0 : 1)
++    const expected = { errMsg: 'setStorage:fail Storage quota exceeded' }
++    await expect(setStorage({ key: 'test', data: 'value', success, fail, complete })).resolves.toEqual(expected)
++    expect(success).not.toHaveBeenCalled()
++    expect(fail).toHaveBeenCalledTimes(1)
++    expect(fail).toHaveBeenCalledWith(expected)
 +    expect(complete).toHaveBeenCalledTimes(1)
-+    expect(document.querySelector('textarea')).toBeNull()
-+    expect(showToast).toHaveBeenCalledTimes(mode === 'succeeds' ? 1 : 0)
-+
-+    // Manual copies must resume caching after both successful and failed API calls.
-+    document.dispatchEvent(new Event('copy'))
-+    expect((await getClipboardData()).data).toBe('selected content')
++    expect(complete).toHaveBeenCalledWith(expected)
 +  })
 +
-+  test.each(['QuotaExceededError', 'SecurityError'])('catches synchronous %s from a manual copy', errorName => {
-+    const error = new DOMException('Clipboard cache write failed', errorName)
-+    jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw error })
-+    const logError = jest.spyOn(console, 'error').mockImplementation(() => {})
-+
-+    document.dispatchEvent(new Event('copy'))
-+
-+    expect(logError).toHaveBeenCalledTimes(1)
-+    expect(logError).toHaveBeenCalledWith(error)
-+  })
-+
-+  test.each(['succeeds', 'returns false', 'throws'])('cleans up without textarea.remove when copying %s', async mode => {
-+    jest.spyOn(HTMLTextAreaElement.prototype, 'select').mockImplementation(function () {
-+      Object.defineProperty(this, 'remove', { value: undefined })
++  test('rejects serialization errors without writing data', async () => {
++    const data: Record<string, unknown> = {}
++    data.self = data
++    const write = jest.spyOn(Storage.prototype, 'setItem')
++    await expect(setStorage({ key: 'test', data })).rejects.toEqual({
++      errMsg: expect.stringMatching(/^setStorage:fail .*circular/i)
 +    })
-+    if (mode !== 'succeeds') failCopy(mode)
-+    const success = jest.fn()
++    expect(write).not.toHaveBeenCalled()
++    expect(() => setStorageSync('test', data)).toThrow(TypeError)
++  })
++
++  test.each([
++    ['setStorageSync', () => setStorageSync('test', 'value')],
++    ['removeStorageSync', () => removeStorageSync('test')],
++    ['clearStorageSync', () => clearStorageSync()],
++    ['getStorageInfoSync', () => getStorageInfoSync()]
++  ] as const)('%s still throws browser errors synchronously', (_name, invoke) => {
++    const error = new DOMException('Storage access denied', 'SecurityError')
++    jest.spyOn(window, 'localStorage', 'get').mockImplementation(() => { throw error })
++    expect(invoke).toThrow(error)
++  })
++
++  test('does not turn success callback exceptions into storage failures', () => {
++    const error = new Error('User callback failed')
 +    const fail = jest.fn()
-+    const complete = jest.fn()
-+
-+    const result = await setClipboardData({ data: 'new content', success, fail, complete })
-+
-+    expect(result).toEqual({
-+      errMsg: mode === 'succeeds'
-+        ? 'setClipboardData:ok'
-+        : `setClipboardData:fail ${mode === 'returns false' ? 'Failed to copy to clipboard' : 'copy denied'}`
-+    })
-+    expect(execCommand).toHaveBeenCalledWith('copy')
-+    expect(document.querySelector('textarea')).toBeNull()
-+    expect(success).toHaveBeenCalledTimes(mode === 'succeeds' ? 1 : 0)
-+    expect(fail).toHaveBeenCalledTimes(mode === 'succeeds' ? 0 : 1)
-+    expect(complete).toHaveBeenCalledTimes(1)
-+    expect(complete).toHaveBeenCalledWith(result)
-+    expect(showToast).toHaveBeenCalledTimes(mode === 'succeeds' ? 1 : 0)
-+    expect((await getClipboardData()).data).toBe(mode === 'succeeds' ? 'new content' : 'previous content')
++    expect(() => setStorage({ key: 'test', data: 'value', success: () => { throw error }, fail })).toThrow(error)
++    expect(fail).not.toHaveBeenCalled()
++    localStorage.removeItem('test')
 +  })
-+
-+  describe.each(['QuotaExceededError', 'SecurityError'])('when caching throws %s after a successful copy', errorName => {
-+    beforeEach(() => {
-+      jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
-+        throw new DOMException('Clipboard cache write failed', errorName)
-+      })
-+    })
-+
-+    test('rejects and cleans up while leavin
++})
 ```
 
-**File**: `packages/taro-h5/src/api/device/clipboard.ts` (modified, +23/-11)
+**File**: `packages/taro-h5/src/api/storage/index.ts` (modified, +22/-4)
 ```diff
-@@ -9,18 +9,20 @@ import Taro from '@tarojs/api'
- import { isFunction } from '@tarojs/shared'
+@@ -61,7 +61,11 @@ export const setStorage: typeof Taro.setStorage = (options) => {
+     })
+   }
  
- import { MethodHandler } from '../../utils/handler'
--import { getStorageSync, setStorage, setStorageSync } from '../storage/index'
-+import { getStorageSync, setStorageSync } from '../storage/index'
- import { showToast } from '../ui/interaction'
- 
- const CLIPBOARD_STORAGE_NAME = 'taro_clipboard'
-+let clipboardCopyDepth = 0
- 
- document.addEventListener('copy', () => {
--  setStorage({
--    key: CLIPBOARD_STORAGE_NAME,
--    data: window.getSelection()?.toString()
--  }).catch(e => {
-+  // Programmatic copies update the cache only after execCommand succeeds.
-+  if (clipboardCopyDepth > 0) return
+-  setStorageSync(key, data)
 +  try {
-+    setStorageSync(CLIPBOARD_STORAGE_NAME, window.getSelection()?.toString())
++    setStorageSync(key, data)
 +  } catch (e) {
-     console.error(e)
--  })
++    return handle.fail({ errMsg: e?.message || String(e) })
 +  }
- })
- 
- /**
-@@ -30,7 +32,6 @@ export const setClipboardData: typeof Taro.setClipboardData = async ({ data, opt
-   const hideDefaultMessage = options?.hideDefaultMessage ?? false
-   const handle = new MethodHandler({ name: 'setClipboardData', success, fail, complete })
-   try {
--    setStorageSync(CLIPBOARD_STORAGE_NAME, data)
-     /**
-      * 已于 iPhone 6s Plus iOS 13.1.3 上的 Safari 测试通过
-      * iOS < 10 的系统可能无法使用编程方式访问剪贴板，参考：
-@@ -44,13 +45,24 @@ export const setClipboardData: typeof Taro.setClipboardData = async ({ data, opt
-       textarea.style.width = '100px'
-       textarea.style.left = '-10000px'
-       document.body.appendChild(textarea)
--      textarea.select()
--      textarea.setSelectionRange(0, textarea.value.length)
--      document.execCommand('copy')
--      document.body.removeChild(textarea)
-+      clipboardCopyDepth++
-+      try {
-+        textarea.select()
-+        textarea.setSelectionRange(0, textarea.value.length)
-+        if (!document.execCommand('copy')) {
-+          throw new Error('Failed to copy to clipboard')
-+        }
-+      } finally {
-+        clipboardCopyDepth--
-+        if (textarea.parentNode) {
-+          textarea.parentNode.removeChild(textarea)
-+        }
-+      }
-     } else {
-       throw new Error('Unsupported Function: \'document.execCommand\'.')
-     }
-+    // Cache failures are reported even if the system clipboard was already updated.
-+    setStorageSync(CLIPBOARD_STORAGE_NAME, data)
-     if (!hideDefaultMessage) {
-       showToast({
-         title: '内容已复制',
-```
-
----
-
-### Incident Patch 2: `ecb48737` (2026-10-22)
-**Commit Message**: fix(h5): settle getVideoInfo when video loading fails (#19546)
-
-**File**: `packages/taro-h5/__tests__/media/getVideoInfo.test.ts` (added, +94/-0)
-```diff
-@@ -0,0 +1,94 @@
-+import { getVideoInfo } from '../../src/api/media/video/getVideoInfo'
-+
-+describe('getVideoInfo', () => {
-+  let video: HTMLVideoElement
-+  let fetchMock: jest.SpyInstance
-+
-+  beforeEach(() => {
-+    video = document.createElement('video')
-+    jest.spyOn(document, 'createElement').mockReturnValue(video)
-+    fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue({
-+      blob: async () => new Blob(['video'], { type: 'video/mp4' })
-+    } as Response)
-+  })
-+
-+  afterEach(() => {
-+    jest.restoreAllMocks()
-+  })
-+
-+  test.each([undefined, '', 'Unsupported video format'])('rejects a media load error with message %s', async message => {
-+    Object.defineProperty(video, 'error', { value: message === undefined ? null : { message } })
-+    const result = getVideoInfo({ src: '/broken.mp4' })
-+    const rejection = expect(result).rejects.toEqual({
-+      errMsg: `getVideoInfo:fail ${message || 'Failed to load video'}`
-+    })
-+
-+    video.dispatchEvent(new Event('error'))
-+
-+    await rejection
-+    expect(fetchMock).not.toHaveBeenCalled()
-+  })
-+
-+  test('calls fail and complete once when media loading fails', async () => {
-+    const success = jest.fn()
-+    const fail = jest.fn()
-+    const complete = jest.fn()
-+    const result = getVideoInfo({ src: '/broken.mp4', success, fail, complete })
-+
-+    video.dispatchEvent(new Event('error'))
-+    video.dispatchEvent(new Event('error'))
-+    video.dispatchEvent(new Event('loadedmetadata'))
-+
-+    const response = await result
-+    expect(response).toEqual({ errMsg: 'getVideoInfo:fail Failed to load video' })
-+    expect(success).not.toHaveBeenCalled()
-+    expect(fail).toHaveBeenCalledTimes(1)
-+    expect(fail).toHaveBeenCalledWith(response)
-+    expect(complete).toHaveBeenCalledTimes(1)
-+    expect(complete).toHaveBeenCalledWith(response)
-+    expect(fetchMock).not.toHaveBeenCalled()
-+  })
-+
-+  test('returns video metadata and invokes success and complete once', async () => {
-+    Object.defineProperties(video, {
-+      duration: { value: 2 },
-+      videoWidth: { value: 640 },
-+      videoHeight: { value: 360 }
-+    })
-+    const success = jest.fn()
-+    const complete = jest.fn()
-+    const result = getVideoInfo({ src: '/video.mp4', success, complete })
-+
-+    video.dispatchEvent(new Event('loadedmetadata'))
-+    video.dispatchEvent(new Event('loadedmetadata'))
-+    video.dispatchEvent(new Event('error'))
-+
-+    const response = await result
-+    expect(response).toEqual({
-+      errMsg: 'getVideoInfo:ok',
-+      orientation: 'up',
-+      type: 'video/mp4',
-+      duration: 2,
-+      size: 5,
-+      height: 360,
-+      width: 640,
-+      fps: 30,
-+      bitrate: 2.5
-+    })
-+    expect(fetchMock).toHaveBeenCalledTimes(1)
-+    expect(fetchMock).toHaveBeenCalledWith('/video.mp4')
-+    expect(success).toHaveBeenCalledTimes(1)
-+    expect(success).toHaveBeenCalledWith(response)
-+    expect(complete).toHaveBeenCalledTimes(1)
-+  })
-+
-+  test('still rejects when fetching the video fails after metadata loads', async () => {
-+    fetchMock.mockRejectedValue(new Error('fetch failed'))
-+    const result = getVideoInfo({ src: '/video.mp4' })
-+    const rejection = expect(result).rejects.toEqual({ errMsg: 'getVideoInfo:fail Error: fetch failed' })
-+
-+    video.dispatchEvent(new Event('loadedmetadata'))
-+
-+    await rejection
-+  })
-+})
-```
-
-**File**: `packages/taro-h5/src/api/media/video/getVideoInfo.ts` (modified, +15/-1)
-```diff
-@@ -43,10 +43,22 @@ export const getVideoInfo: typeof Taro.getVideoInfo = async function (options) {
-   const video = document.createElement('video')
-   video.crossOrigin = 'Anonymous'
-   video.preload = 'metadata'
--  video.src = src
- 
-   return new Promise((resolve, reject) => {
-+    const clearListeners = () => {
-+      video.onloadedmetadata = null
-+      video.onerror = null
-+    }
-+
-+    video.onerror = () => {
-+      clearListeners()
-+      handle.fail({
-+        errMsg: video.error?.message || 'Failed to load video'
-+      }, { resolve, reject })
-+    }
-+
-     video.onloadedmetadata = () => {
-+      clearListeners()
-       res.duration = video.duration
-       res.height = video.videoHeight
-       res.width = video.videoWidth
-@@ -66,5 +78,7 @@ export const getVideoInfo: typeof Taro.getVideoInfo = async function (options) {
-           }, { resolve, reject })
-         })
-     }
-+
-+    video.src = src
-   })
+   return handle.success()
  }
+ 
+@@ -101,7 +105,11 @@ export const removeStorage: typeof Taro.removeStorage = (options: Taro.removeSto
+     })
+   }
+ 
+-  removeStorageSync(key)
++  try {
++    removeStorageSync(key)
++  } catch (e) {
++    return handle.fail({ errMsg: e?.message || String(e) })
++  }
+   return handle.success()
+ }
+ 
+@@ -132,7 +140,13 @@ export const getStorageInfoSync: typeof Taro.getStorageInfoSync = () => {
+ 
+ export const getStorageInfo: typeof Taro.getStorageInfo = ({ success, fail, complete } = {}) => {
+   const handle = new MethodHandler<Taro.getStorageInfo.SuccessCallbackOption>({ name: 'getStorageInfo', success, fail, complete })
+-  return handle.success(getStorageInfoSync())
++  let res: ReturnType<typeof getStorageInfoSync>
++  try {
++    res = getStorageInfoSync()
++  } catch (e) {
++    return handle.fail({ errMsg: e?.message || String(e) })
++  }
++  return handle.success(res)
+ }
+ 
+ export const getStorage: typeof Taro.getStorage = <T>(options) => {
+@@ -175,7 +189,11 @@ export const clearStorageSync: typeof Taro.clearStorageSync = () => {
+ 
+ export const clearStorage: typeof Taro.clearStorage = ({ success, fail, complete } = {}) => {
+   const handle = new MethodHandler({ name: 'clearStorage', success, fail, complete })
+-  clearStorageSync()
++  try {
++    clearStorageSync()
++  } catch (e) {
++    return handle.fail({ errMsg: e?.message || String(e) })
++  }
+   return handle.success()
+ }
+ 
 ```
 
 ---
 
-### Incident Patch 3: `d4206da5` (2026-10-20)
-**Commit Message**: fix(h5): prevent uploads after cancellation during file conversion (#19537)
+### Incident Patch 2: `c4e9c548` (2026-10-27)
+**Commit Message**: fix(runtime): link cloned descendants to their parents (#19571)
 
-* fix(h5): prevent uploads after cancellation during file conversion
-
-* fix(h5): preserve file conversion failure statuses
-
-**File**: `packages/taro-h5/__tests__/network/upload.test.ts` (added, +103/-0)
+**File**: `packages/taro-runtime/src/dom-external/node.ts` (modified, +5/-1)
 ```diff
-@@ -0,0 +1,103 @@
-+import { uploadFile } from '../../src/api/network/upload'
-+import * as utils from '../../src/api/network/utils'
-+
-+describe('uploadFile lifecycle', () => {
-+  let xhr: XMLHttpRequest
-+  let send: jest.SpyInstance
-+  let abort: jest.SpyInstance
-+  let resolveFile: (file: Blob) => void
-+  let rejectFile: (error: unknown) => void
-+
-+  beforeEach(() => {
-+    jest.useFakeTimers()
-+    xhr = new XMLHttpRequest()
-+    jest.spyOn(window, 'XMLHttpRequest').mockImplementation(() => xhr)
-+    jest.spyOn(xhr, 'open').mockImplementation(() => {})
-+    send = jest.spyOn(xhr, 'send').mockImplementation(() => {})
-+    // Aborting an opened XHR before send() does not emit an abort event.
-+    abort = jest.spyOn(xhr, 'abort').mockImplementation(() => {})
-+    jest.spyOn(utils, 'convertObjectUrlToBlob').mockImplementation(() => new Promise((resolve, reject) => {
-+      resolveFile = resolve
-+      rejectFile = reject
-+    }))
-+  })
-+
-+  afterEach(() => {
-+    jest.clearAllTimers()
-+    jest.useRealTimers()
-+    jest.restoreAllMocks()
-+  })
-+
-+  function createTask () {
-+    const success = jest.fn()
-+    const fail = jest.fn()
-+    const complete = jest.fn()
-+    const task = uploadFile({ url: '/upload', filePath: 'blob:file', name: 'file', timeout: 100, success, fail, complete })
-+    const result = task.catch(error => error)
-+    return { task, result, success, fail, complete }
-+  }
-+
-+  test.each(['resolve', 'reject'])('abort during file conversion ignores a late %s', async outcome => {
-+    const { task, result, success, fail, complete } = createTask()
-+    task.abort()
-+    task.abort()
-+    expect(fail).toHaveBeenCalledTimes(1)
-+    expect(await result).toEqual({ errMsg: 'uploadFile:fail abort' })
-+
-+    if (outcome === 'resolve') resolveFile(new Blob(['file']))
-+    else rejectFile({ status: 404 })
-+    await Promise.resolve()
-+    await Promise.resolve()
-+
-+    expect(send).not.toHaveBeenCalled()
-+    expect(abort).toHaveBeenCalledTimes(1)
-+    expect(success).not.toHaveBeenCalled()
-+    expect(fail).toHaveBeenCalledTimes(1)
-+    expect(complete).toHaveBeenCalledTimes(1)
-+    expect(jest.getTimerCount()).toBe(0)
-+  })
-+
-+  test.each([403, 404, 500])('preserves a file conversion failure status of %s', async status => {
-+    const { result, success, fail, complete } = createTask()
-+    rejectFile({ status })
-+    expect(await result).toEqual({ errMsg: `uploadFile:fail ${status}` })
-+    expect(success).not.toHaveBeenCalled()
-+    expect(fail).toHaveBeenCalledTimes(1)
-+    expect(complete).toHaveBeenCalledTimes(1)
-+    expect(send).not.toHaveBeenCalled()
-+    expect(jest.getTimerCount()).toBe(0)
-+  })
-+
-+  test.each(['success', 'error', 'abort', 'timeout', 'conversion error'])('%s settles once and releases handlers and timers', async outcome => {
-+    const { task, result, success, fail, complete } = createTask()
-+    if (outcome === 'conversion error') {
-+      rejectFile(new Error('conversion failed'))
-+    } else {
-+      resolveFile(new Blob(['file']))
-+      await Promise.resolve()
-+      expect(send).toHaveBeenCalledTimes(1)
-+      switch (outcome) {
-+        case 'success': xhr.onload?.(new ProgressEvent('load')); break
-+        case 'error': xhr.onerror?.(Object.assign(new ProgressEvent('error'), { message: 'network error' })); break
-+        case 'abort': task.abort(); break
-+        case 'timeout': jest.advanceTimersByTime(100); break
-+      }
-+    }
-+
-+    const response = await result
-+    expect(response.errMsg).toBe(outcome === 'success' ? 'uploadFile:ok'
-+      : `uploadFile:fail ${outcome === 'error' ? 'network error' : outcome === 'conversion error' ? 'conversion failed' : outcome}`)
-+    task.abort()
-+    jest.advanceTimersByTime(200)
-+    expect(success).toHaveBeenCalledTimes(outcome === 'success' ? 1 : 0)
-+    expect(fail).toHaveBeenCalledTimes(outcome === 'success' ? 0 : 1)
-+    expect(complete).toHaveBeenCalledTimes(1)
-+    expect(abort).toHaveBeenCalledTimes(['abort', 'timeout'].includes(outcome) ? 1 : 0)
-+    expect(jest.getTimerCount()).toBe(0)
-+    expect(xhr.onload).toBeNull()
-+    expect(xhr.onabort).toBeNull()
-+    expect(xhr.onerror).toBeNull()
-+    expect(xhr.onreadystatechange).toBeNull()
-+    expect(xhr.upload.onprogress).toBeNull()
-+  })
-+})
+@@ -66,7 +66,11 @@ export function cloneNode (this: TaroNode, isDeep = false) {
+   }
+ 
+   if (isDeep) {
+-    newNode.childNodes = this.childNodes.map(node => (node as any).cloneNode(true))
++    newNode.childNodes = this.childNodes.map(node => {
++      const child = (node as any).cloneNode(true)
++      child.parentNode = newNode
++      return child
++    })
+   }
+ 
+   if (this.nodeType === NodeType.ELEMENT_NODE) {
 ```
 
-**File**: `packages/taro-h5/src/api/network/upload.ts` (modified, +26/-33)
+**File**: `packages/taro-runtime/tests/clone-node.spec.ts` (added, +153/-0)
 ```diff
-@@ -10,6 +10,7 @@ import {
+@@ -0,0 +1,153 @@
++import { Shortcuts } from '@tarojs/shared'
++import set from 'lodash/set'
++import { describe, expect, test, vi } from 'vitest'
++
++import { TaroRootElement } from '../src/dom/root'
++import { createEvent, document, MutationObserver } from '../src/index'
++
++function createTree () {
++  const parent = document.createElement('view')
++  const child = document.createElement('text')
++  child.appendChild(document.createTextNode('hello'))
++  parent.appendChild(child)
++  parent.appendChild(document.createElement('image'))
++  return parent
++}
++
++describe('cloneNode', () => {
++  test('deep cloning establishes parent and sibling references throughout the subtree', () => {
++    const source = createTree()
++    const clone = source.cloneNode(true)
++    const [first, last] = clone.childNodes
++    expect(clone.parentNode).toBeNull()
++    expect(first.parentNode).toBe(clone)
++    expect(first.parentElement).toBe(clone)
++    expect(first.firstChild!.parentNode).toBe(first)
++    expect(last.parentNode).toBe(clone)
++    expect(first.previousSibling).toBeNull()
++    expect(first.nextSibling).toBe(last)
++    expect(last.previousSibling).toBe(first)
++    expect(last.nextSibling).toBeNull()
++    expect(first).not.toBe(source.firstChild)
++    expect(first.firstChild).not.toBe(source.firstChild!.firstChild)
++    expect(source.firstChild!.parentNode).toBe(source)
++  })
++
++  test.each([undefined, false])('shallow cloning with %s leaves children out', (deep) => {
++    const source = createTree()
++    const clone = source.cloneNode(deep)
++    expect(clone.childNodes).toEqual([])
++    expect(clone.parentNode).toBeNull()
++    expect(source.childNodes).toHaveLength(2)
++  })
++
++  test.each([false, true])('clones text content with deep=%s', (deep) => {
++    const source = document.createTextNode('hello')
++    const clone = source.cloneNode(deep)
++    expect(clone.textContent).toBe('hello')
++    expect(clone.parentNode).toBeNull()
++    expect(clone.sid).not.toBe(source.sid)
++  })
++
++  test('removing a cloned child changes only the clone', () => {
++    const source = createTree()
++    const clone = source.cloneNode(true)
++    const first = clone.firstChild!
++    first.remove()
++    expect(clone.childNodes).toHaveLength(1)
++    expect(first.parentNode).toBeNull()
++    expect(clone.firstChild!.previousSibling).toBeNull()
++    expect(source.childNodes).toHaveLength(2)
++    expect(source.firstChild!.textContent).toBe('hello')
++  })
++
++  test('moving a cloned child detaches it from its cloned parent', () => {
++    const source = createTree()
++    const clone = source.cloneNode(true)
++    const first = clone.firstChild!
++    const destination = document.createElement('view')
++    destination.appendChild(first)
++    expect(clone.childNodes).toHaveLength(1)
++    expect(destination.firstChild).toBe(first)
++    expect(first.parentNode).toBe(destination)
++    expect(source.childNodes).toHaveLength(2)
++  })
++
++  test('preserves independent attributes, dataset, styles and node identities', () => {
++    const source = createTree()
++    const original = source.children[0]
++    original.setAttribute('title', 'original')
++    original.setAttribute('data-value', 'original')
++    original.setAttribute('style', 'color: red')
++    const clone = source.cloneNode(true)
++    const child = clone.firstChild!
++    expect(child.getAttribute('title')).toBe('original')
++    expect(child.dataset).toEqual({ value: 'original' })
++    expect(child.style.color).toBe('red')
++    expect(child.sid).not.toBe(original.sid)
++    child.setAttribute('title', 'changed')
++    child.setAttribute('data-value', 'changed')
++    child.style.color = 'blue'
++    expect(original.getAttribute('title')).toBe('original')
++    expect(original.dataset).toEqual({ value: 'original' })
++    expect(original.style.color).toBe('red')
++  })
++
++  test('does not copy event listeners', () => {
++    const source = createTree()
++    const listener = vi.fn()
++    source.firstChild!.addEventListener('tap', listener)
++    const clone = source.cloneNode(true)
++    clone.firstChild!.dispatchEvent(createEvent('tap'))
++    expect(listener).not.toHaveBeenCalled()
++    source.firstChild!.dispatchEvent(createEvent('tap'))
++    expect(listener).toHaveBeenCalledTimes(1)
++  })
++
++  test('cloning does not emit child list mutation records', () => {
++    const source = createTree()
++    const observer = new MutationObserver(vi.fn())
++    observer.observe(source, { childList: true, subtree: true })
++    try {
++      const clone = source.cloneNode(true)
++      expect(observer.takeRecords()).toEqual([])
++      expect(clone.childNodes).toHaveLength(2)
++      expect(source.childNodes).toHaveLength(2)
++    } finally {
++      observer.disconnect()
++    }
++  })
++
++  test('mounted cloned descendants send updates to their own rendered paths', () => {
++    vi.useFakeTimers()
++    try {
++      const source = createTree()
++      const clone = source.cloneNode(true)
++      const root = new TaroRootElement()
++      root.appendC
+```
+
+---
+
+### Incident Patch 3: `84290e33` (2026-10-27)
+**Commit Message**: fix(runtime): 删除 data-* 属性时同步清理 dataset (#19569)
+
+* fix(runtime): remove deleted data attributes from dataset
+
+* fix(runtime): remove deleted data attributes from dataset
+
+* fix(runtime): preserve colliding dataset mappings on removal
+
+* fix(runtime): restore dataset mappings by attribute write order
+
+**File**: `packages/taro-runtime/src/dom-external/node.ts` (modified, +6/-0)
+```diff
+@@ -1,7 +1,9 @@
+ import { DATASET, OBJECT, PROPS, STYLE } from '../constants'
++import { copyDatasetAttributeOrder } from '../dom/dataset'
+ import { NodeType } from '../dom/node_types'
+ import { parser } from '../dom-external/inner-html/parser'
  
- const createUploadTask = ({ url, filePath, formData = {}, name, header, timeout, fileName, withCredentials = true, success, error }): Taro.UploadTask => {
-   let timeoutInter: ReturnType<typeof setTimeout>
-+  let settled = false
-   let formKey
-   const apiName = 'uploadFile'
-   const xhr = new XMLHttpRequest()
-@@ -19,6 +20,23 @@ const createUploadTask = ({ url, filePath, formData = {}, name, header, timeout,
-     progressUpdate: new CallbackManager()
++import type { TaroElement } from '../dom/element'
+ import type { TaroNode } from '../dom/node'
+ 
+ export type IPosition = 'beforebegin' | 'afterbegin' | 'beforeend' | 'afterend'
+@@ -67,6 +69,10 @@ export function cloneNode (this: TaroNode, isDeep = false) {
+     newNode.childNodes = this.childNodes.map(node => (node as any).cloneNode(true))
    }
  
-+  const cleanup = () => {
-+    settled = true
-+    clearTimeout(timeoutInter)
-+    xhr.onload = null
-+    xhr.onabort = null
-+    xhr.onerror = null
-+    xhr.upload.onprogress = null
-+    xhr.onreadystatechange = null
++  if (this.nodeType === NodeType.ELEMENT_NODE) {
++    copyDatasetAttributeOrder(this as TaroElement, newNode)
 +  }
 +
-+  const fail = (message: string | undefined, abortRequest = false) => {
-+    if (settled) return
-+    cleanup()
-+    if (abortRequest) xhr.abort()
-+    error({ errMsg: `${apiName}:fail ${message}` })
-+  }
+   return newNode
+ }
+ 
+```
+
+**File**: `packages/taro-runtime/src/dom/dataset.ts` (added, +39/-0)
+```diff
+@@ -0,0 +1,39 @@
++import { toCamelCase } from '@tarojs/shared'
 +
-   xhr.open('POST', url)
-   xhr.withCredentials = !!withCredentials
-   setHeader(xhr, header)
-@@ -44,65 +62,40 @@ const createUploadTask = ({ url, filePath, formData = {}, name, header, timeout,
-   }
- 
-   xhr.onload = () => {
-+    if (settled) return
-     const status = xhr.status
--    clearTimeout(timeoutInter)
-+    cleanup()
-     success({
-       errMsg: `${apiName}:ok`,
-       statusCode: status,
-       data: xhr.responseText || xhr.response
-     })
-   }
- 
--  xhr.onabort = () => {
--    clearTimeout(timeoutInter)
--    error({
--      errMsg: `${apiName}:fail abort`
--    })
--  }
-+  xhr.onabort = () => fail('abort')
- 
--  xhr.onerror = (e: ProgressEvent<EventTarget> & { message?: string }) => {
--    clearTimeout(timeoutInter)
--    error({
--      errMsg: `${apiName}:fail ${e.message}`
--    })
--  }
-+  xhr.onerror = (e: ProgressEvent<EventTarget> & { message?: string }) => fail(e.message)
- 
-   /**
-    * 中断任务
-    */
--  const abort = () => {
--    clearTimeout(timeoutInter)
--    xhr.abort()
--  }
-+  const abort = () => fail('abort', true)
- 
-   const send = () => {
-+    timeoutInter = setTimeout(() => fail('timeout', true), timeout || NETWORK_TIMEOUT)
-     xhr.send(form)
--    timeoutInter = setTimeout(() => {
--      xhr.onabort = null
--      xhr.onload = null
--      xhr.upload.onprogress = null
--      xhr.onreadystatechange = null
--      xhr.onerror = null
--      abort()
--      error({
--        errMsg: `${apiName}:fail timeout`
--      })
--    }, timeout || NETWORK_TIMEOUT)
-   }
- 
-   convertObjectUrlToBlob(filePath)
-     .then((fileObj: string | (Blob & { name?: string })) => {
-+      if (settled) return
-       if (!fileName) {
-         fileName = typeof fileObj !== 'string' && fileObj.name
++import type { TaroElement } from './element'
++
++// Object property order does not track writes to existing attributes.
++const attributeOrder = new WeakMap<TaroElement, Set<string>>()
++
++export function recordDatasetAttribute (element: TaroElement, name: string) {
++  let order = attributeOrder.get(element)
++  if (!order) {
++    order = new Set()
++    attributeOrder.set(element, order)
++  }
++  order.delete(name)
++  order.add(name)
++}
++
++export function removeDatasetAttribute (element: TaroElement, name: string) {
++  const key = toCamelCase(name.replace(/^data-/, ''))
++  const order = attributeOrder.get(element)
++  order?.delete(name)
++  let remainingAttribute: string | undefined
++  order?.forEach(attribute => {
++    if (toCamelCase(attribute.replace(/^data-/, '')) === key) {
++      remainingAttribute = attribute
++    }
++  })
++  if (remainingAttribute !== undefined) {
++    element.dataset[key] = element.props[remainingAttribute]
++  } else {
++    delete element.dataset[key]
++  }
++  if (order?.size === 0) attributeOrder.delete(element)
++}
++
++export function copyDatasetAttributeOrder (source: TaroElement, target: TaroElement) {
++  const order = attributeOrder.get(source)
++  if (order) attributeOrder.set(target, new Set(order))
++}
+```
+
+**File**: `packages/taro-runtime/src/dom/element.ts` (modified, +5/-0)
+```diff
+@@ -17,6 +17,7 @@ import {
+ import { MutationObserver, MutationRecordType } from '../dom-external/mutation-observer'
+ import { extend, getComponentsAlias, isElement, isHasExtractProp, shortcutAttr } from '../utils'
+ import { ClassList } from './class-list'
++import { recordDatasetAttribute, removeDatasetAttribute } from './dataset'
+ import { eventSource } from './event-source'
+ import { TaroNode } from './node'
+ import { NodeType } from './node_types'
+@@ -172,6 +173,7 @@ export class TaroElement extends TaroNode {
+             this.dataset = Object.create(null)
+           }
+           this.dataset[toCamelCase(qualifiedName.replace(/^data-/, ''))] = value
++          recordDatasetAttribute(this, qualifiedName)
+         }
+         break
+     }
+@@ -246,6 +248,9 @@ export class TaroElement extends TaroNode {
+         return
        }
-       form.append(name, fileObj as Blob, fileName || `file-${Date.now()}`)
-       send()
-     })
--    .catch(e => {
--      error({
--        errMsg: `${apiName}:fail ${e.message}`
--      })
--    })
-+    .catch(e => fail(String(e?.message ?? e?.status ?? 'file conversion failed')))
+       delete this.props[qualifiedName]
++      if (qualifiedName.startsWith('data-')) {
++        removeDatasetAttribute(this, qualifiedName)
++      }
+     }
  
-   /**
-    * 监听 HTTP Response Header 事件。会比请求完成事件更早
+     // Serialization
+```
+
+**File**: `packages/taro-runtime/tests/data-attributes.spec.ts` (added, +286/-0)
+```diff
+@@ -0,0 +1,286 @@
++import { hooks } from '@tarojs/shared'
++import { describe, expect, test, vi } from 'vitest'
++
++import { createEvent, document, MutationObserver } from '../src/index'
++
++describe('removing data attributes', () => {
++  const collidingAttributes = ['data-user-id', 'data-user--id', 'data-user---id']
++  const removalOrders = [
++    [0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]
++  ]
++
++  test.each(removalOrders)('preserves the latest surviving write when removing attributes in order %s, %s, %s', (...order) => {
++    for (const rewritten of [-1, 0, 1, 2]) {
++      const node = document.createElement('view')
++      collidingAttributes.forEach((attribute, index) => node.setAttribute(attribute, ['old', 'middle', 'keep'][index]))
++      if (rewritten !== -1) node.setAttribute(collidingAttributes[rewritten], 'rewritten')
++      const writes = rewritten === -1 ? [0, 1, 2] : [0, 1, 2].filter(index => index !== rewritten).concat(rewritten)
++      const remaining = new Set([0, 1, 2])
++
++      for (const index of order) {
++        node.removeAttribute(collidingAttributes[index])
++        remaining.delete(index)
++        const latest = writes.filter(index => remaining.has(index)).pop()
++        if (latest === undefined) {
++          expect(Object.prototype.hasOwnProperty.call(node.dataset, 'userId')).toBe(false)
++        } else {
++          expect(node.dataset.userId).toBe(latest === rewritten ? 'rewritten' : ['old', 'middle', 'keep'][latest])
++        }
++      }
++    }
++  })
++
++  test('treats a removed and recreated mapping as the latest write without reordering attributes', () => {
++    const node = document.createElement('view')
++    collidingAttributes.forEach((attribute, index) => node.setAttribute(attribute, index))
++    node.setAttribute(collidingAttributes[0], 'updated')
++    expect(node.attributes.map(attribute => attribute.name)).toEqual(collidingAttributes)
++    node.removeAttribute(collidingAttributes[0])
++    expect(node.dataset.userId).toBe(2)
++    node.setAttribute(collidingAttributes[0], 'recreated')
++    node.removeAttribute(collidingAttributes[1])
++    expect(node.dataset.userId).toBe('recreated')
++    node.removeAttribute(collidingAttributes[0])
++    expect(node.dataset.userId).toBe(2)
++  })
++
++  test.each([undefined, null, false, 0, '', { nested: true }])('restores the actual remaining value: %j', (value) => {
++    const node = document.createElement('view')
++    node.setAttribute('data-user-id', value)
++    node.setAttribute('data-user--id', 'removed')
++    node.removeAttribute('data-user--id')
++    expect(Object.prototype.hasOwnProperty.call(node.dataset, 'userId')).toBe(true)
++    expect(node.dataset.userId).toBe(value)
++    node.removeAttribute('data-user-id')
++    expect(Object.prototype.hasOwnProperty.call(node.dataset, 'userId')).toBe(false)
++  })
++
++  test.each([false, true])('clones write order independently with deep cloning: %s', (deep) => {
++    const parent = document.createElement('view')
++    const source = document.createElement('view')
++    parent.appendChild(source)
++    collidingAttributes.forEach((attribute, index) => source.setAttribute(attribute, index))
++    source.setAttribute(collidingAttributes[0], 'latest')
++    const clone = deep ? parent.cloneNode(true).firstChild! : source.cloneNode()
++
++    clone.removeAttribute(collidingAttributes[2])
++    expect(clone.dataset.userId).toBe('latest')
++    clone.setAttribute(collidingAttributes[1], 'clone-only')
++    source.removeAttribute(collidingAttributes[0])
++    expect(source.dataset.userId).toBe(2)
++    expect(clone.dataset.userId).toBe('clone-only')
++    clone.removeAttribute(collidingAttributes[1])
++    expect(clone.dataset.userId).toBe('latest')
++    expect(source.getAttribute(collidingAttributes[1])).toBe(1)
++  })
++
++  test('leaves write order intact when removal is absent or interrupted', () => {
++    const node = document.createElement('view')
++    collidingAttributes.forEach((attribute, index) => node.setAttribute(attribute, index))
++    node.removeAttribute('data-user----id')
++    expect(node.dataset.userId).toBe(2)
++    const interrupt = () => true
++    hooks.tap('onRemoveAttribute', interrupt)
++    try {
++      node.removeAttribute(collidingAttributes[2])
++      expect(node.getAttribute(collidingAttributes[2])).toBe(2)
++      expect(node.dataset.userId).toBe(2)
++    } finally {
++      hooks.off('onRemoveAttribute', interrupt)
++    }
++    node.removeAttribute(collidingAttributes[1])
++    expect(node.dataset.userId).toBe(2)
++    node.removeAttribute(collidingAttributes[2])
++    expect(node.dataset.userId).toBe(0)
++    node.removeAttribute(collidingAttributes[0])
++    node.setAttribute(collidingAttributes[1], 'new')
++    expect(node.dataset.userId).toBe('new')
++  })
++
++  test('tracks parsed attributes and preserves write order through repeated cloning', () => {
++    const parent = document.createElement('view')
++    parent.innerHTML = '<view data-user-id="old" data-user--id="middle" data-use
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #19557** (2026-10-23): fix(components): 修复 Picker 重开时的关闭定时器竞争 (@Jarvis636431)
-- **PR #19555** (2026-10-23): fix(h5): 释放 chooseMedia 加载失败的临时资源 (@Jarvis636431)
-- **PR #19553** (2026-10-23): chore(release): publish 4.3.1 (@Single-Dancer)
-- **PR #19552** (closed): fix(project-graph): exclude owned paths before facts scan (@Single-Dancer)
-- **PR #19551** (2026-10-23): fix(runtime): preserve node insertion consistency (@Jarvis636431)
-- **PR #19549** (2026-10-22): docs: fix provider field name and typos in package READMEs (@toyeshhm)
+- **PR #19571** (2026-10-27): fix(runtime): 建立深克隆子树的父节点引用 (@Jarvis636431)
+- **PR #19569** (2026-10-27): fix(runtime): 删除 data-* 属性时同步清理 dataset (@Jarvis636431)
+- **PR #19567** (2026-10-27): fix(runtime): preserve insertAdjacentHTML node order (@Jarvis636431)
+- **PR #19564** (2026-10-26): fix(h5): validate canvas export targets (@Jarvis636431)
+- **PR #19563** (2026-10-26): fix(h5): handle asynchronous storage failures (@Jarvis636431)
+- **PR #19561** (2026-10-26): fix(cli): 修复创建页面时配置属性识别 (@Jarvis636431)
 
 ---
 
@@ -1802,51 +1777,52 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. h5): handle clipboard copy failures and clean up temporary textareas (#19548)
+## X. h5): handle asynchronous storage failures (#19563)
 
 **RULE**:
-When implementing operations in `packages/taro-h5/__tests__/device/clipboard.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NervJS/taro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/taro-h5/__tests__/storage/errors.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NervJS/taro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `de08853c`: h5): handle clipboard copy failures and clean up temporary textareas (#19548). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8ed2d672`: h5): handle asynchronous storage failures (#19563). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/taro-h5/__tests__/device/clipboard.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/taro-h5/__tests__/storage/errors.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { getClipboardData, setClipboardData } from '../../src/api/device/clipboard'
-import { setStorageSync } from '../../src/api/storage'
-import { showToast } from '../../src/api/ui/interaction'
+import {
+  clearStorage,
+  clearStorageSync,
+  getStorageInfo,
+  getStorageInfoSync,
+  removeStorage,
+  removeStorageSync,
+  setStorage,
+  setStorageSync
+} from '../../src/api/storage'
 
-jest.mock('../../src/api/ui/interaction', () => ({ showToast: jest.fn() }))
+const operations = [
+  ['setStorage', (callbacks = {}) => setStorage({ key: 'test', data: 'value', ...callbacks })],
+  ['removeStorage', (callbacks = {}) => removeStorage({ key: 'test', ...callbacks })],
+  ['clearStorage', (callbacks = {}) => clearStorage(callbacks)],
+  ['getStorageInfo', (callbacks = {}) => getStorageInfo(callbacks)]
+] as const
 
-describe('setClipboardData', () => {
-  let execCommand: jest.Mock
-  const originalExecCommand = Object.getOwnPropertyDescriptor(document, 'execCommand')
+describe('storage browser errors', () => {
+  afterEach(() => jest.restoreAllMocks())
 
-  beforeEach(() => {
-    execCommand = jest.fn(() => true)
-    Object.defineProperty(document, 'execCommand', { configurable: true, value: execCommand })
-    setStorageSync('taro_clipboard', 'previous content')
-    jest.mocked(showToast).mockClear()
-  })
-
-  afterEach(() => {
-    document.body.innerHTML = ''
-    localStorage.clear()
-    jest.restoreAllMocks()
-    if (originalExecCommand) Object.defineProperty(document, 'execCommand', originalExecCommand)
-    else delete document.execCommand
-  })
-
-  function failCopy (mode: string) {
-    if (mode === 'returns false') execCommand.mockReturnValue(false)
-    else execCommand.mockImplementation(() => { throw new Error('copy denied') })
-  }
-
-  test.each(['succeeds', 'returns false', 'throws'])('defers copy-event cachin
+  describe.each(operations)('%s', (name, invoke) => {
+    test.each(['promise', 'fail', 'complete', 'both'])('handles denied storage access with %s', async mode => {
+      const error = new DOMException('Storage access denied', 'SecurityError')
+      jest.spyOn(window, 'localStorage', 'get').mockImplementation(() => { throw error })
+      const success = jest.fn()
+      const fail = jest.fn()
+      const complete = jest.fn()
+      const callbacks = {
+        success,
+        ...(mode === 'fail' || mode === 'both' ? { fail } : {}),
+        ...(mode === 'complete' || mode ==
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1856,4 +1832,4 @@ describe('setClipboardData', () => {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `de08853c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8ed2d672` are properly handled with clean fallback behavior.

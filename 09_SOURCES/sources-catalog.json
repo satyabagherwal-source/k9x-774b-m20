@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "938cefb5",
+    "sourceVersion": "b2ca6a62",
     "license": "Apache-2.0",
-    "contentHash": "fac4e39c956b6153a70f021a03663963168cb38106b4009c33c7685acc466220",
-    "lastHarvestedAt": "2026-10-27T07:45:09.387Z",
+    "contentHash": "951f466be567510b8454e11c00a55a6215e0553c776975f7a92d1eba92fe4a28",
+    "lastHarvestedAt": "2026-10-27T13:14:27.455Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2393,10 +2393,10 @@
     "repository": "NervJS/taro",
     "platform": "github",
     "sourceUrl": "https://github.com/NervJS/taro",
-    "sourceVersion": "fa5d076b",
+    "sourceVersion": "c4e9c548",
     "license": "NOASSERTION",
-    "contentHash": "3f041b07ba2187c6e313c70933bbc5893c9e02f3062539aaf1cb78e7b50f868d",
-    "lastHarvestedAt": "2026-10-23T08:39:39.820Z",
+    "contentHash": "f8f19beae004818bbedc3255249b41475ec8e4f5df92d0a6023eb195f6010753",
+    "lastHarvestedAt": "2026-10-27T13:14:17.538Z",
     "learningId": "learn-github-nervjs-taro"
   },
   "kubeedge-kubeedge": {
@@ -5773,10 +5773,10 @@
     "repository": "NVIDIA/cuda-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/NVIDIA/cuda-rust",
-    "sourceVersion": "9df9e7ce",
+    "sourceVersion": "f8563500",
     "license": "Apache-2.0",
-    "contentHash": "4a12ca1e59a8db9a73f29cd351751e3bba9816ba2095d2b56ccdf3878ae7693f",
-    "lastHarvestedAt": "2026-10-25T19:12:49.716Z",
+    "contentHash": "bcf0c4b958194bee921d0949b2428a0b605f1c78156d3afd239b66741d82955e",
+    "lastHarvestedAt": "2026-10-27T13:14:13.921Z",
     "learningId": "learn-github-nvidia-cuda-rust"
   },
   "typestack-routing-controllers": {
@@ -5973,10 +5973,10 @@
     "repository": "genkit-ai/genkit",
     "platform": "github",
     "sourceUrl": "https://github.com/genkit-ai/genkit",
-    "sourceVersion": "3d67720d",
+    "sourceVersion": "ec961caa",
     "license": "Apache-2.0",
-    "contentHash": "c10764253e3467311a475df1fb470c6865d7ec568b471a47b975b9032fc419f8",
-    "lastHarvestedAt": "2026-10-25T05:46:16.072Z",
+    "contentHash": "9bf1edde8872cbafa42d05c5f163c0de75690bb2b5cddaa2aed83efd18f3a51c",
+    "lastHarvestedAt": "2026-10-27T13:14:23.945Z",
     "learningId": "learn-github-genkit-ai-genkit"
   },
   "guokaigdg-animal-island-ui": {

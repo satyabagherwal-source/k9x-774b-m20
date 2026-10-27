@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T13:10:46.229Z",
-  "total_cycles_completed": 5284,
-  "total_learnings_persisted": 5284,
-  "total_rules_promoted": 4694,
+  "last_updated": "2026-10-27T13:14:27.460Z",
+  "total_cycles_completed": 5288,
+  "total_learnings_persisted": 5288,
+  "total_rules_promoted": 4698,
   "history": [
-    {
-      "timestamp": "2026-10-26T05:17:56.783Z",
-      "repository": "signerlabs/ShipSwift",
-      "learningId": "learn-github-signerlabs-shipswift",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T05:18:00.963Z",
-      "repository": "meshery/meshery",
-      "learningId": "learn-github-meshery-meshery",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T09:02:22.620Z",
-      "repository": "ParadevAI/superset",
-      "learningId": "learn-github-paradevai-superset",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T09:23:37.034Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-26T09:24:30.259Z",
       "repository": "RevenueCat/purchases-ios",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-27T13:10:46.229Z",
       "repository": "nolabs-ai/nono",
       "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:14:13.926Z",
+      "repository": "NVIDIA/cuda-rust",
+      "learningId": "learn-github-nvidia-cuda-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:14:17.542Z",
+      "repository": "NervJS/taro",
+      "learningId": "learn-github-nervjs-taro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:14:23.950Z",
+      "repository": "genkit-ai/genkit",
+      "learningId": "learn-github-genkit-ai-genkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:14:27.460Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

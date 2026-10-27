@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source**: github ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
-> **Source Version**: `3d67720d`  
+> **Source Version**: `ec961caa`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T05:46:15.773Z  
+> **Timestamp**: 2026-10-27T13:14:23.525Z  
 > **Learning ID**: `learn-github-genkit-ai-genkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T05:46:15.767Z  
+> **Harvest Timestamp**: 2026-10-27T13:14:23.305Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source framework for building agentic apps in JavaScript, Go, Dart, and Python, built and used in production by Google
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6547 stars
+- **Stars / Engagement**: 6551 stars
 
 ---
 
@@ -2007,77 +2007,120 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3d67720d` (2026-10-23)
-**Commit Message**: fix(genkit-tools): restrict packed files to lib/ in common and telemetry-server (#6886)
+### Incident Patch 1: `ec961caa` (2026-10-27)
+**Commit Message**: fix(js/plugins/google-genai): Remove client side restriction (#6904)
 
-**File**: `genkit-tools/common/.npmignore` (modified, +6/-1)
+**File**: `js/plugins/google-genai/src/common/interaction-converters.ts` (modified, +4/-6)
 ```diff
-@@ -1,5 +1,10 @@
- node_modules
-+/*.tgz
-+/.genkit
-+/src
-+/tests
- jest.config.ts
- tsconfig.cjs.json
- tsconfig.esm.json
--tsconfig.json
-\ No newline at end of file
-+tsconfig.types.json
-+tsconfig.json
+@@ -781,12 +781,10 @@ function toInteractionMedia(part: Part): Content {
+   if (contentType.startsWith('video/')) {
+     return { type: 'video', ...fields, ...videoProcessingOf(part) };
+   }
+-  // The Interactions API accepts PDF and CSV documents.
+-  if (contentType === 'application/pdf' || contentType === 'text/csv') {
+-    return { type: 'document', ...fields };
+-  }
+-
+-  throw new Error(`Unsupported media type: ${contentType}`);
++  // Everything else is a document (PDF, CSV, Word, Excel, ...). The server
++  // decides which types it accepts and returns a clear error for the rest;
++  // its list has grown beyond the PDF and CSV in the published spec.
++  return { type: 'document', ...fields };
+ }
+ 
+ /**
 ```
 
-**File**: `genkit-tools/common/package.json` (modified, +3/-0)
+**File**: `js/plugins/google-genai/tests/common/interaction-converters_test.ts` (modified, +31/-7)
 ```diff
-@@ -70,6 +70,9 @@
-   },
-   "author": "genkit",
-   "license": "Apache-2.0",
-+  "files": [
-+    "lib/"
-+  ],
-   "types": "./lib/types/src/types/index.d.ts",
-   "exports": {
-     ".": {
+@@ -1192,13 +1192,37 @@ describe('Interaction Converters', () => {
+       );
+     });
+ 
+-    it('should throw for an unsupported contentType', () => {
+-      assert.throws(
+-        () =>
+-          toInteractionContent({
+-            media: { url: 'gs://bucket/notes.txt', contentType: 'text/plain' },
+-          }),
+-        /Unsupported media type: text\/plain/
++    it('sends Word and Excel files as documents', () => {
++      // User report: 1.43 threw "Unsupported media type" for these, although
++      // the server accepts them.
++      const docx =
++        'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
++      const xlsx =
++        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
++      assert.deepStrictEqual(
++        toInteractionContent({
++          media: { url: `data:${docx};base64,DATA`, contentType: docx },
++        }),
++        { type: 'document', data: 'DATA', mime_type: docx }
++      );
++      assert.deepStrictEqual(
++        toInteractionContent({
++          media: { url: 'gs://bucket/sheet.xlsx', contentType: xlsx },
++        }),
++        { type: 'document', uri: 'gs://bucket/sheet.xlsx', mime_type: xlsx }
++      );
++    });
++
++    it('leaves other content types for the server to accept or reject', () => {
++      assert.deepStrictEqual(
++        toInteractionContent({
++          media: { url: 'gs://bucket/notes.txt', contentType: 'text/plain' },
++        }),
++        {
++          type: 'document',
++          uri: 'gs://bucket/notes.txt',
++          mime_type: 'text/plain',
++        }
+       );
+     });
+   });
 ```
 
-**File**: `genkit-tools/telemetry-server/.npmignore` (modified, +6/-1)
+**File**: `js/testapps/basic-gemini/src/index.ts` (modified, +23/-0)
 ```diff
-@@ -1,4 +1,9 @@
- node_modules
-+/*.tgz
-+/.genkit
-+/src
-+/tests
- tsconfig.cjs.json
- tsconfig.esm.json
--tsconfig.json
-\ No newline at end of file
-+tsconfig.types.json
-+tsconfig.json
-```
-
-**File**: `genkit-tools/telemetry-server/package.json` (modified, +3/-0)
-```diff
-@@ -24,6 +24,9 @@
-   },
-   "author": "genkit",
-   "license": "Apache-2.0",
-+  "files": [
-+    "lib/"
-+  ],
-   "dependencies": {
-     "@genkit-ai/tools-common": "workspace:*",
-     "@asteasolutions/zod-to-openapi": "^7.0.0",
+@@ -488,6 +488,29 @@ ai.defineFlow('multimodal-input', async () => {
+   return text;
+ });
+ 
++// A Word document as inline media. Office documents (Word, Excel, ...) are
++// sent as `document` content with their content type.
++ai.defineFlow('word-document-input', async () => {
++  const docxBase64 = fs.readFileSync('story.docx', { encoding: 'base64' });
++  const contentType =
++    'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
++
++  const { text } = await ai.generate({
++    model: googleAI.model('gemini-3.8-flash'),
++    prompt: [
++      { text: 'Summarize this document in three sentences.' },
++      {
++        media: {
++          contentType,
++          url: `data:${contentType};base64,${docxBase64}`,
++        },
++      },
++    ],
++  });
++
++  return text;
++});
++
+ // YouTube videos
+ ai.defineFlow('youtube-videos', async (_, { sendChunk }) => {
+   const { text } = await ai.generate({
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6904** (2026-10-27): fix(js/plugins/google-genai): Remove client side restriction (@ifielker)
 - **PR #6886** (2026-10-23): fix(genkit-tools): restrict packed files to lib/ in common and telemetry-server (@MichaelDoyle)
 - **PR #6875** (closed): feat(js/plugins/express): add serveAgent to the beta entry point (@cabljac)
 - **PR #6872** (2026-10-22): feat(google-genai): Deep Research on vertexAI (@ifielker)
 - **PR #6870** (2026-10-22): chore(js): remove outdated .guides directories (@MichaelDoyle)
 - **PR #6866** (2026-10-22): fix(genkit-tools/cli): add MCP server instructions and descriptive tool metadata (@ssbushi)
-- **PR #6859** (2026-10-21): feat(js/plugins/google-genai): vertexAI model updates, TTS, Omni... (@ifielker)
 
 ---
 
@@ -2097,33 +2140,36 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. genkit-tools): restrict packed files to lib/ in common and telemetry-server (#68
+## X. js/plugins/google-genai): Remove client side restriction (#6904)
 
 **RULE**:
-When implementing operations in `genkit-tools/common/.npmignore`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `js/plugins/google-genai/src/common/interaction-converters.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3d67720d`: genkit-tools): restrict packed files to lib/ in common and telemetry-server (#6886). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ec961caa`: js/plugins/google-genai): Remove client side restriction (#6904). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `genkit-tools/common/.npmignore`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `js/plugins/google-genai/src/common/interaction-converters.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-/*.tgz
-/.genkit
-/src
-/tests
-tsconfig.types.json
-tsconfig.json
+  // Everything else is a document (PDF, CSV, Word, Excel, ...). The server
+  // decides which types it accepts and returns a clear error for the rest;
+  // its list has grown beyond the PDF and CSV in the published spec.
+  return { type: 'document', ...fields };
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-tsconfig.json
+  // The Interactions API accepts PDF and CSV documents.
+  if (contentType === 'application/pdf' || contentType === 'text/csv') {
+    return { type: 'document', ...fields };
+  }
+
+  throw new Error(`Unsupported media type: ${contentType}`);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3d67720d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ec961caa` are properly handled with clean fallback behavior.

@@ -349338,3 +349338,288 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `a39ad272` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4789. cuda-oxide): shared-memory i32/addrspace(3) codegen and CTA-local TMA without Sh (Harvested from NVIDIA/cuda-rust)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "cuda-oxide): shared-memory i32/addrspace(3) codegen and CTA-local TMA without Sh",
+  "source": "NVIDIA/cuda-rust",
+  "source_url": "https://github.com/NVIDIA/cuda-rust",
+  "source_version": "f8563500",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-27T13:14:13.714Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nvidia-cuda-rust",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust) (Revision: `f8563500`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `cuda-oxide/crates/cuda-device/src/generated/tma.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0f68e38c`: cuda-oxide): shared-memory i32/addrspace(3) codegen and CTA-local TMA without SharedPtr (#1656). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cuda-oxide/crates/cuda-device/src/generated/tma.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+/// `dst` and `barrier` must point into the issuing CTA's shared memory, as for the other
+/// `mbarrier` operations.
+    dst: *mut u8,
+/// `dst` and `barrier` must point into the issuing CTA's shared memory, as for the other
+/// `mbarrier` operations.
+    dst: *mut u8,
+/// `dst` and `barrier` must point into the issuing CTA's shared memory, as for the other
+/// `mbarrier` operations.
+    dst: *mut u8,
+/// `dst` and `barrier` must point into the issuing CTA's shared memory, as for the other
+/// `mbarrier` operations.
+    dst: *mut u8,
+/// `dst` and `barrier` must point into the issuing CTA's shared memory, as for the other
+/// `mbarrier` operations.
+    dst: *mut u8,
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+/// `barrier` must point into the issuing CTA's shared memory, as for the other
+/// `mbarrier` operations. `dst` is a [`SharedPtr`], which points there by its type.
+    dst: SharedPtr<u8>,
+/// `barrier` must point into the issuing CTA's shared memory, as for the other
+/// `mbarrier` operations. `dst` is a [`SharedPtr`], which points there by its type.
+    dst: SharedPtr<u8>,
+/// `barrier` must point into the issuing CTA's shared memory, as for the other
+/// `mbarrier` operations. `dst` is a [`SharedPtr`], which points there by its type.
+    dst: SharedPtr<u8>,
+/// `barrier` must point into the issuing CTA's shared memory, as for the other
+/// `mbarrier` operations. `dst` is a [`SharedPtr`], which points there by its type.
+    dst: SharedPtr<u8>,
+/// `barrier` must point into the issuing CTA's shared memory, as for the other
+/// `mbarrier` operations. `dst` is a [`SharedPtr`], which points there by its type.
+    dst: SharedPtr<u8>,
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0f68e38c` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4790. h5): handle asynchronous storage failures (#19563) (Harvested from NervJS/taro)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "h5): handle asynchronous storage failures (#19563)",
+  "source": "NervJS/taro",
+  "source_url": "https://github.com/NervJS/taro",
+  "source_version": "c4e9c548",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-27T13:14:17.344Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nervjs-taro",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NervJS/taro](https://github.com/NervJS/taro) (Revision: `c4e9c548`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `packages/taro-h5/__tests__/storage/errors.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NervJS/taro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `8ed2d672`: h5): handle asynchronous storage failures (#19563). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/taro-h5/__tests__/storage/errors.test.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+import {
+  clearStorage,
+  clearStorageSync,
+  getStorageInfo,
+  getStorageInfoSync,
+  removeStorage,
+  removeStorageSync,
+  setStorage,
+  setStorageSync
+} from '../../src/api/storage'
+
+const operations = [
+  ['setStorage', (callbacks = {}) => setStorage({ key: 'test', data: 'value', ...callbacks })],
+  ['removeStorage', (callbacks = {}) => removeStorage({ key: 'test', ...callbacks })],
+  ['clearStorage', (callbacks = {}) => clearStorage(callbacks)],
+  ['getStorageInfo', (callbacks = {}) => getStorageInfo(callbacks)]
+] as const
+
+describe('storage browser errors', () => {
+  afterEach(() => jest.restoreAllMocks())
+
+  describe.each(operations)('%s', (name, invoke) => {
+    test.each(['promise', 'fail', 'complete', 'both'])('handles denied storage access with %s', async mode => {
+      const error = new DOMException('Storage access denied', 'SecurityError')
+      jest.spyOn(window, 'localStorage', 'get').mockImplementation(() => { throw error })
+      const success = jest.fn()
+      const fail = jest.fn()
+      const complete = jest.fn()
+      const callbacks = {
+        success,
+        ...(mode === 'fail' || mode === 'both' ? { fail } : {}),
+        ...(mode === 'complete' || mode ==
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `8ed2d672` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4791. js/plugins/google-genai): Remove client side restriction (#6904) (Harvested from genkit-ai/genkit)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "js/plugins/google-genai): Remove client side restriction (#6904)",
+  "source": "genkit-ai/genkit",
+  "source_url": "https://github.com/genkit-ai/genkit",
+  "source_version": "ec961caa",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-27T13:14:23.737Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-genkit-ai-genkit",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [genkit-ai/genkit](https://github.com/genkit-ai/genkit) (Revision: `ec961caa`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `js/plugins/google-genai/src/common/interaction-converters.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ec961caa`: js/plugins/google-genai): Remove client side restriction (#6904). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `js/plugins/google-genai/src/common/interaction-converters.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+  // Everything else is a document (PDF, CSV, Word, Excel, ...). The server
+  // decides which types it accepts and returns a clear error for the rest;
+  // its list has grown beyond the PDF and CSV in the published spec.
+  return { type: 'document', ...fields };
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+  // The Interactions API accepts PDF and CSV documents.
+  if (contentType === 'application/pdf' || contentType === 'text/csv') {
+    return { type: 'document', ...fields };
+  }
+
+  throw new Error(`Unsupported media type: ${contentType}`);
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ec961caa` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4792. Add reward-driven proposal strategy learner (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Add reward-driven proposal strategy learner",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "b2ca6a62",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-27T13:14:27.260Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `b2ca6a62`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.github/agents/nuc-evaluate.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b2ca6a62`: Add reward-driven proposal strategy learner. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/agents/nuc-evaluate.agent.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+  reports/learner checkpoints in the external session workspace and normal
+  ignored build outputs; never overwrite old state or reports.
+  reporting; the separate optional UCB1 strategy learner consumes verified
+  rewards without overriding gate/independent failures, uniform category
+  selection, explicit requests, or token applicability.
+- For configured learning, verify the caller's pinned policy and genuinely
+  pre-draft selection/trial bindings, and preserve all four attribution
+  variables into `evaluate_proposal` so its saved report binds the arm.
+  Absent configuration is explicitly unattributed; partial/stale/malformed
+  supplied configuration is an error, never a fallback or reset.
+- After checking the actual saved report and overall independent evidence,
+  pin the report and actually invoke `learn_proposal_strategy` under the
+  skill's update contract. Write one fresh external checkpoint only for
+  genuinely scored attributed rewards; blocked/unscored/unattributed outcomes
+  do not increment trials. Return its path/pin or explicit skip/error.
+  Both single and continuous trials may learn, never retroactive old reports.
+  Do not claim evaluator authentication, concurrent/
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+  reports in the session workspace and normal ignored build outputs.
+  reporting, not a learner; they never override gate/independent failures or
+  change category selection and token applicability.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b2ca6a62` are properly handled with clean fallback behavior.

@@ -5307,3 +5307,7 @@
 | `CYCLE-20261027-E67V` | `2026-10-27T13:10:34.747Z` | `franken-ui/ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2109` | Yes (`8c01b70b...`) |
 | `CYCLE-20261027-EC37` | `2026-10-27T13:10:42.355Z` | `mattermost/mattermost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4787` | Yes (`fcf228ce...`) |
 | `CYCLE-20261027-EF2M` | `2026-10-27T13:10:46.222Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4788` | Yes (`913b890a...`) |
+| `CYCLE-20261027-IVBY` | `2026-10-27T13:14:13.918Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4789` | Yes (`bcf0c4b9...`) |
+| `CYCLE-20261027-IY4E` | `2026-10-27T13:14:17.534Z` | `NervJS/taro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4790` | Yes (`f8f19bea...`) |
+| `CYCLE-20261027-J32E` | `2026-10-27T13:14:23.942Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4791` | Yes (`9bf1edde...`) |
+| `CYCLE-20261027-J5RW` | `2026-10-27T13:14:27.452Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4792` | Yes (`951f466b...`) |

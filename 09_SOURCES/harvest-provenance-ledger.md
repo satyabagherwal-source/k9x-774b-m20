@@ -5316,3 +5316,7 @@ Every entry in this ledger must capture:
 | `learn-github-franken-ui-ui` | `https://github.com/franken-ui/ui` | `32af1a27` | Multi-dimensional audit evidence | 2026-10-27T13:10:34.750Z |
 | `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `43f954c2` | Multi-dimensional audit evidence | 2026-10-27T13:10:42.358Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `5946dcf5` | Multi-dimensional audit evidence | 2026-10-27T13:10:46.225Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `f8563500` | Multi-dimensional audit evidence | 2026-10-27T13:14:13.921Z |
+| `learn-github-nervjs-taro` | `https://github.com/NervJS/taro` | `c4e9c548` | Multi-dimensional audit evidence | 2026-10-27T13:14:17.538Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `ec961caa` | Multi-dimensional audit evidence | 2026-10-27T13:14:23.945Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `b2ca6a62` | Multi-dimensional audit evidence | 2026-10-27T13:14:27.455Z |

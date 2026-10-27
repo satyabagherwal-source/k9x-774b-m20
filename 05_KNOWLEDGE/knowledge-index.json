@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T13:10:46.168Z",
+  "last_updated": "2026-10-27T13:14:27.394Z",
   "total_verified_learnings": 1114,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12744,8 +12744,8 @@
       "slug": "genkit-ai-genkit",
       "platform": "github",
       "source_url": "https://github.com/genkit-ai/genkit",
-      "source_version": "3d67720d",
-      "content_hash": "c10764253e3467311a475df1fb470c6865d7ec568b471a47b975b9032fc419f8",
+      "source_version": "ec961caa",
+      "content_hash": "9bf1edde8872cbafa42d05c5f163c0de75690bb2b5cddaa2aed83efd18f3a51c",
       "dossier_path": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "promoted_rules": [
@@ -12773,6 +12773,11 @@
           "number": 4085,
           "title": "genkit-tools): restrict packed files to lib/ in common and telemetry-server (#68",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4791,
+          "title": "js/plugins/google-genai): Remove client side restriction (#6904)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12780,7 +12785,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T05:46:16.017Z",
+      "verified_at": "2026-10-27T13:14:23.875Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38001,8 +38006,8 @@
       "slug": "nervjs-taro",
       "platform": "github",
       "source_url": "https://github.com/NervJS/taro",
-      "source_version": "fa5d076b",
-      "content_hash": "3f041b07ba2187c6e313c70933bbc5893c9e02f3062539aaf1cb78e7b50f868d",
+      "source_version": "c4e9c548",
+      "content_hash": "f8f19beae004818bbedc3255249b41475ec8e4f5df92d0a6023eb195f6010753",
       "dossier_path": "07_PROJECT_LEARNING/nervjs-taro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nervjs-taro-learnings.md",
       "promoted_rules": [
@@ -38015,6 +38020,11 @@
           "number": 3836,
           "title": "h5): handle clipboard copy failures and clean up temporary textareas (#19548)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4790,
+          "title": "h5): handle asynchronous storage failures (#19563)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38022,7 +38032,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T08:39:39.768Z",
+      "verified_at": "2026-10-27T13:14:17.465Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38868,8 +38878,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "938cefb5",
-      "content_hash": "fac4e39c956b6153a70f021a03663963168cb38106b4009c33c7685acc466220",
+      "source_version": "b2ca6a62",
+      "content_hash": "951f466be567510b8454e11c00a55a6215e0553c776975f7a92d1eba92fe4a28",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -38947,6 +38957,11 @@
           "number": 4658,
           "title": "Rectangular Bounding Box Coordinate Contraction Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4792,
+          "title": "Add reward-driven proposal strategy learner",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38954,7 +38969,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T07:45:09.316Z",
+      "verified_at": "2026-10-27T13:14:27.382Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39011,8 +39026,8 @@
       "slug": "nvidia-cuda-rust",
       "platform": "github",
       "source_url": "https://github.com/NVIDIA/cuda-rust",
-      "source_version": "9df9e7ce",
-      "content_hash": "4a12ca1e59a8db9a73f29cd351751e3bba9816ba2095d2b56ccdf3878ae7693f",
+      "source_version": "f8563500",
+      "content_hash": "bcf0c4b958194bee921d0949b2428a0b605f1c78156d3afd239b66741d82955e",
       "dossier_path": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "promoted_rules": [
@@ -39055,6 +39070,11 @@
           "number": 4419,
           "title": "bump example tokio pins past RUSTSEC-2026-0386 (#1619)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4789,
+          "title": "cuda-oxide): shared-memory i32/addrspace(3) codegen and CTA-local TMA without Sh",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39062,7 +39082,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T19:12:49.654Z",
+      "verified_at": "2026-10-27T13:14:13.850Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -133242,6 +133262,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T13:10:46.156Z"
+    },
+    "rule-4789": {
+      "learning_id": "rule-4789",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4789,
+      "title": "cuda-oxide): shared-memory i32/addrspace(3) codegen and CTA-local TMA without Sh",
+      "source_url": "https://github.com/NVIDIA/cuda-rust",
+      "source_version": "f8563500",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:14:13.850Z"
+    },
+    "rule-4790": {
+      "learning_id": "rule-4790",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4790,
+      "title": "h5): handle asynchronous storage failures (#19563)",
+      "source_url": "https://github.com/NervJS/taro",
+      "source_version": "c4e9c548",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:14:17.465Z"
+    },
+    "rule-4791": {
+      "learning_id": "rule-4791",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4791,
+      "title": "js/plugins/google-genai): Remove client side restriction (#6904)",
+      "source_url": "https://github.com/genkit-ai/genkit",
+      "source_version": "ec961caa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:14:23.875Z"
+    },
+    "rule-4792": {
+      "learning_id": "rule-4792",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4792,
+      "title": "Add reward-driven proposal strategy learner",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "b2ca6a62",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:14:27.382Z"
     }
   },
   "aliases": {
