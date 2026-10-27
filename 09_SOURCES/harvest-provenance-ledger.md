@@ -5291,3 +5291,8 @@ Every entry in this ledger must capture:
 | `learn-github-cheeriojs-dom-serializer` | `https://github.com/cheeriojs/dom-serializer` | `7f3cd35e` | Multi-dimensional audit evidence | 2026-10-27T12:46:35.571Z |
 | `learn-github-appwrite-appwrite` | `https://github.com/appwrite/appwrite` | `f7aeed8f` | Multi-dimensional audit evidence | 2026-10-27T12:46:39.818Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `2b62983a` | Multi-dimensional audit evidence | 2026-10-27T12:46:43.558Z |
+| `learn-github-papersgpt-papersgpt-for-zotero` | `https://github.com/papersgpt/papersgpt-for-zotero` | `e2706780` | Multi-dimensional audit evidence | 2026-10-27T12:50:11.147Z |
+| `learn-github-expo-expo` | `https://github.com/expo/expo` | `a476ff07` | Multi-dimensional audit evidence | 2026-10-27T12:50:24.913Z |
+| `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `32047636` | Multi-dimensional audit evidence | 2026-10-27T12:50:26.029Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `ce76ea8f` | Multi-dimensional audit evidence | 2026-10-27T12:50:26.139Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `1ec33547` | Multi-dimensional audit evidence | 2026-10-27T12:50:30.496Z |

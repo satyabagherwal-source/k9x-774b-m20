@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/expo-expo-learnings.md`  
 > **Source**: github ([https://github.com/expo/expo](https://github.com/expo/expo))  
-> **Source Version**: `55889d57`  
+> **Source Version**: `a476ff07`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T06:42:33.889Z  
+> **Timestamp**: 2026-10-27T12:50:24.399Z  
 > **Learning ID**: `learn-github-expo-expo`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/expo-expo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/expo/expo](https://github.com/expo/expo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T06:42:32.523Z  
+> **Harvest Timestamp**: 2026-10-27T12:50:24.396Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source framework for making universal native apps with React. Expo runs on Android, iOS, and the web.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 53025 stars
+- **Stars / Engagement**: 53114 stars
 
 ---
 
@@ -674,790 +674,399 @@ object AsyncCondition {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c6deec18` (2026-10-22)
-**Commit Message**: [expo] Fall back to precompiled modules for buildFromSource patterns in the SwiftPM plugin (#52073)
+### Incident Patch 1: `597d7423` (2026-10-27)
+**Commit Message**: [ui][android] Fix crash when dragging Slider and VerticalSlider (#52376)
 
 # Why
 
-The prebuilt modules guide documents `"buildFromSource": [".*"]` to
-build every Expo module from source. Under Swift Package Manager
-(SwiftPM), this entry fails the sync. The SwiftPM plugin treats every
-match on `ExpoModulesCore` as an error. It also treats every match on a
-module that SwiftPM cannot build from source as an error. A pattern such
-as `".*"` always matches these modules.
+On Android, dragging a `Slider` (or `VerticalSlider`) crashes the app as
+soon as the drag starts, in release builds (R8):
 
-This pull request also handles three review comments on #51661, which
-merged without these changes.
+```
+NullPointerException: Attempt to invoke interface method 'java.lang.String kotlin.reflect.KProperty.getName()' on a null object reference
+```
+
+`SliderContent` and `VerticalSliderContent` create their event
+dispatchers with `val x by remember { EventDispatcher<T>() }` inside the
+composable. When an event is dispatched, `ViewEventDelegate.getValue`
+reads `property.name`, and the property reference it receives there is
+null. Debug builds aren't affected.
 
 # How
 
-The plugin now separates two kinds of `buildFromSource` entry:
-
-- An exact entry is equal, character for character, to the pod name or
-the npm package name. An exact entry keeps the current error. The user
-named that module, so the plugin must not ignore the request.
-- Any other entry is a pattern. When a pattern matches
-`ExpoModulesCore`, or a module that no source route can build, the
-plugin links the precompiled module. It prints one warning that names
-each such module and its entry.
-
-The fallback has a cost. A precompiled module that falls back can change
-what the source-built modules
-
-**File**: `.changeset/expo-spm-build-from-source-fallback.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'expo': patch
-+---
-+
-+[iOS] A `buildFromSource` pattern such as `".*"` no longer fails the SwiftPM sync when it matches a module that Swift Package Manager cannot build from source, `ExpoModulesCore` included: the plugin links that module precompiled and prints one warning naming it. An entry that names such a module exactly still fails the sync.
-```
-
-**File**: `packages/expo/scripts/spm/README.md` (modified, +17/-5)
-```diff
-@@ -96,17 +96,29 @@ The plugin decides each module in this order:
- 3. Otherwise its `Package.swift` is mirrored into a generated package, or a
-    pure-Swift module gets a generated package over its sources.
- 
-+A manifest built as it stands is linked at `<outDir>/direct/<npm package name>`,
-+a symlink to the module root, next to the `ExpoModulesCoreHeaders` package the
-+plugin emits in `direct/`. Link names are not flattened, so a scoped package
-+lands at `direct/@scope/pkg`. SwiftPM resolves the manifest's relative paths
-+from the link, not from the module's real directory, so the path to the headers
-+package depends on that depth: `../ExpoModulesCoreHeaders` for an unscoped
-+package, `../../ExpoModulesCoreHeaders` for a scoped one.
-+
- `buildFromSource` is the option CocoaPods reads, from
- `"expo": { "autolinking": { "buildFromSource": [...] } }` or its `"ios"`
- section in the app's package.json. Each entry is a regular expression that must
- match the whole pod name or npm package name. Under SwiftPM the entries are
- JavaScript regular expressions, so Ruby-only syntax differs: `(?i)` fails the
- sync with an error that names the invalid entry, and `\A` matches a literal `A`.
--An entry that matches
--ExpoModulesCore fails the sync, because every module built from source compiles
--against the precompiled ExpoModulesCore. A listed module that has an artifact but
--no way to be built from source is reported with the reason, and the report asks
--to remove the entry so the artifact is used.
-+An entry that is a
-+module's pod name or npm package name, character for character, names it
-+exactly; any other entry is a pattern. An exact entry for ExpoModulesCore fails
-+the sync, because every module built from source compiles against the
-+precompiled ExpoModulesCore. A module named exactly that has an artifact but no
-+way to be built from source is reported with the reason, and the report asks to
-+remove the entry so the artifact is used. A module that only a pattern matches,
-+ExpoModulesCore included, is linked precompiled in that case, and one warning
-+names each such module and its entry.
- 
- ## Unsupported modules
- 
-```
-
-**File**: `packages/expo/scripts/spm/__tests__/diagnostics.test.js` (modified, +61/-0)
-```diff
-@@ -18,6 +18,7 @@ const {
-   renderRootConflictWarning,
-   renderPartlyProvidedPackageWarning,
-   renderExtraPodsWarning,
-+  renderBuildFromSourceFallbackWarning,
- } = require('../diagnostics');
- const { spmUpdateCommand } = require('../commands');
- const { resolvePodIdentities, uncoveredPod } = require('../plugin');
-@@ -290,13 +291,73 @@ describe('a pod buildFromSource names that cannot be built from source', () => {
-     expect(text).toContain('Remove "ExpoBad" from');
-   });
- 
-+  describe('when a pattern links it precompiled and its XCFramework is incomplete', () => {
-+    const incomplete = { ...forced(null), precompiledIncomplete: true };
-+
-+    it('is refused naming the entry, with what blocks the source build as the cause', () => {
-+      expect(classify(incomplete)).toEqual([
-+        {
-+          ...subject,
-+          reason: 'build-from-source-fallback-incomplete',
-+          buildFromSourceEntry: 'expo-b.*',
-+          cause: { reason: 'mixed-no-manifest', productName: 'ExpoBad' },
-+        },
-+      ]);
-+    });
-+
-+    it('says what failed, why, and how to complete the XCFramework', () => {
-+      expect(renderUnsupportedReport(classify(incomplete))).toBe(
-+        [
-+          'error: The buildFromSource entry "expo-b.*" matches Expo module "expo-bad" (pod ExpoBad), which Swift Package Manager cannot build from source, and its precompiled XCFramework is incomplete, so it cannot be linked precompiled either.',
-+          '  It mixes Swift and Objective-C/C++ sources and ships no Package.swift, and Swift Package Manager can build such a module only from a manifest that splits the two languages into separate targets.',
-+          '  A buildFromSource pattern links a module precompiled when Swift Package Manager cannot build it from source, and the plugin links a precompiled XCFramework only when both its Debug and Release flavors are present.',
-+          `  Reinstall expo-bad so it ships both flavors, or, in the Expo repository, from its root, build both with \`node tools/bin/expotools.js prebuild expo-bad\`. Then run \`${spmUpdateCommand()}\` from your app directory again.`,
-+          '  Module path: /m/expo-bad',
-+        ].join('\n')
-+      );
-+    });
-+  });
-+
-   it('counts the pod once', () => {
-     expect(new UnsupportedModulesError(classify(forced(null))).message).toMatch(
-       /^1 Expo native module /
-     );
-   });
- });
- 
-+describe('modules a buildFromSource pattern matches that are linked precompiled instead', () => {
-+  const option =
-+    '`"expo": { "autolinking": { "buildFromSource": [...] } }` (or its `"ios"` section) in your package.json';
-+  const core = { podName: 'ExpoModulesCore', packageName: 'expo-modules-core', entry: '.*' };
-+
-+  it('renders nothing when no module fell back', () => {
-+    expect(renderBuildFromSourceFallbackWarning([])).toBe('');
-+  });
-+
-+  it('names the module and the entry that matched it', () => {
-+    expect(renderBuildFromSourceFallbackWarning([core])).toBe(
-+      'warning: buildFromSource matches 1 Expo module that Swift Package Manager cannot build from source, so it is linked precompiled instead: ExpoModulesCore (expo-modules-core, matched by ".*"). ' +
-+        'A buildFromSource pattern links a module precompiled when Swift Package Manager cannot build that module from source; an entry that names a module exactly fails the sync instead. ' +
-+        `To see what blocks a module's source build, list it by its exact pod or npm package name in ${option}: the sync then fails and names the cause. ` +
-+        `To keep it precompiled without this warning, narrow ".*" so that no entry matches this module. Then run \`${spmUpdateCommand()}\` from your app directory again.`
-+    );
-+  });
-+
-+  it('names every module, and each entry once', () => {
-+    const text = renderBuildFromSourceFallbackWarning([
-+      core,
-+      { podName: 'ExpoMixed', packageName: 'expo-mixed', entry: 'expo-.*' },
-+      { podName: 'ExpoOther', packageName: 'expo-other', entry: 'expo-.*' },
-+    ]);
-+    expect(text).toContain(
-+      'buildFromSource matches 3 Expo modules that Swift Package Manager cannot build from source, so they are linked precompiled instead: ExpoModulesCore (expo-modules-core, matched by ".*"), ExpoMixed (expo-mixed, matched by "expo-.*"), ExpoOther (expo-other, matched by "expo-.*").'
-+    );
-+    expect(text).toContain(
-+      'To keep them precompiled without this warning, narrow ".*", "expo-.*" so that no entry matches these modules.'
-+    );
-+  });
-+});
-+
- describe('linkage declared in a podspec', () => {
-   const podspecLinkage = {
-     file: '/m/expo-bad/ios/ExpoBad.podspec',
-```
-
-**File**: `packages/expo/scripts/spm/__tests__/direct.test.js` (modified, +17/-0)
-```diff
-@@ -260,6 +260,23 @@ describe('emitDirectPackage', () => {
-     expect(fs.realpathSync(link)).toBe(fs.realpathSync(moduleRoot));
-   });
- 
-+  // That package is written under its SwiftPM package name, which need not be the npm name.
-+  it('removes the package an earlier sync generated from the manifest', () => {
-+    const generated = path.join(outDir, 'expo-source', 'ExpoHapticsPackage');
-+    fs.mkdirSync(generated, { recursive: true });
-+    fs.writeFileSync(path.join(generated, 'Package.swift'), '// generated\n');
-+    emitDirectPackage({
-+      moduleRoot: path.join(root, 'expo-haptics'),
-+      packageName: 'expo-haptics',
-+      outDir,
-+      coreHeadersXCFramework,
-+      jsiHeadersPkgPath,
-+      macroTool: path.join(root, 'ExpoModulesMacros'),
-+      manifest: { ...hapticsManifest, name: 'ExpoHapticsPackage' },
-+    });
-+    expect(fs.existsSync(generated)).toBe(false);
-+  });
-+
-   it('links the products of the manifest it is given, without dumping it again', () => {
-     runDumpPackage.mockClear();
-     const { ok } = emit();
-```
-
-**File**: `packages/expo/scripts/spm/__tests__/plugin.test.js` (modified, +360/-11)
-```diff
-@@ -63,7 +63,7 @@ const {
- const { resolveAppTarget } = require('../app-target');
- const { findModuleRoot } = require('../classify');
- const { spmUpdateCommand } = require('../commands');
--const { UnsupportedModulesError } = require('../diagnostics');
-+const { UnsupportedModulesError, renderBuildFromSourceFallbackWarning } = require('../diagnostics');
- const { emitDirectPackage } = require('../direct');
- const { emitPureSwiftSourcePackage } = require('../manifests');
- const {
-@@ -218,6 +218,16 @@ function withPodfileProperties(tmp, properties) {
-   });
- }
- 
-+/** The warnings naming modules a buildFromSource pattern matched that were linked precompiled. */
-+const fallbackWarnings = (logs) =>
-+  logs.warn.mock.calls.map(([text]) => text).filter((text) => text.includes('buildFromSource'));
-+
-+const coreFallback = (entry) => ({
-+  podName: 'ExpoModulesCore',
-+  packageName: 'expo-modules-core',
-+  entry,
-+});
-+
- /** The arguments the framework resolver was called with for one package. */
- const resolvedFor = (packageName) =>
-   resolveFlavoredFramework.mock.calls
-@@ -1197,6 +1207,13 @@ describe('a module with a checked-in manifest', () => {
-     expect(thrown.cause).toBeInstanceOf(SyntaxError);
-   });
- 
-+  it('is built from source when a pattern matches every module, and only ExpoModulesCore is named as linked precompiled', () => {
-+    builtDirect(sync({ onCoreHeaders: true, precompiled: true, buildFromSource: ['.*'] }));
-+    expect(fallbackWarnings(logs)).toEqual([
-+      renderBuildFromSourceFallbackWarning([coreFallback('.*')]),
-+    ]);
-+  });
-+
-   // The plugin decides from the manifest alone; the flag an earlier preview read means nothing.
-   it('ignores a "directManifest" flag left in its spm.config.json', () => {
-     linkedPrecompiled(
-@@ -1293,7 +1310,7 @@ describe('a module without a checked-in manifest that buildFromSource names', ()
-     const { thrown, moduleRoot } = sync({
-       sources: 'mixed',
-       precompiled: true,
--      buildFromSource: ['expo-mix.*'],
-+      buildFromSource: ['expo-mixed'],
-     });
-     expect(thrown).toBeInstanceOf(UnsupportedModulesError);
-     expect(thrown.unsupported).toEqual([
-@@ -1302,7 +1319,7 @@ describe('a module without a checked-in manifest that buildFromSource names', ()
-         podName: 'ExpoMixed',
-         packageName: 'expo-mixed',
-         moduleRoot,
--        buildFromSourceEntry: 'expo-mix.*',
-+        buildFromSourceEntry: 'expo-mixed',
-         cause: { reason: 'mixed-no-manifest', productName: 'ExpoMixed' },
-       },
-     ]);
-@@ -1344,6 +1361,298 @@ describe('a module without a checked-in manifest that buildFromSource names', ()
-   });
- });
- 
-+describe('a module without a checked-in manifest that a buildFromSource pattern matches', () => {
-+  const logs = captureConsole({ each: true });
-+
-+  afterEach(restoreModuleMocks);
-+
-+  const sync = (options) => syncWithoutManifest(makeTempDir('expo-spm-pattern-source-'), options);
-+  const mixedFallback = (entry) => ({ podName: 'ExpoMixed', packageName: 'expo-mixed', entry });
-+
-+  it('is linked precompiled, as ExpoModulesCore is, when it cannot be built from source', () => {
-+    const { thrown, frameworks } = sync({
-+      sources: 'mixed',
-+      precompiled: true,
-+      buildFromSource: ['.*'],
-+    });
-+    expect(thrown).toBeNull();
-+    expect(frameworks).toEqual(['ExpoMixed', 'ExpoModulesCore']);
-+    expect(printed(logs.log)).toContain(
-+      'paired runtime frameworks (2): ExpoModulesCore, ExpoMixed'
-+    );
-+    expect(resolveSpmDependencyFrameworks).toHaveBeenLastCalledWith(
-+      expect.arrayContaining([expect.objectContaining({ podName: 'ExpoMixed' })])
-+    );
-+    expect(prepareCompileInterfaces).toHaveBeenLastCalledWith(
-+      expect.arrayContaining([expect.objectContaining({ frameworkName: 'ExpoMixed' })]),
-+      expect.any(String)
-+    );
-+    expect(fallbackWarnings(logs)).toEqual([
-+      renderBuildFromSourceFallbackWarning([coreFallback('.*'), mixedFallback('.*')]),
-+    ]);
-+  });
-+
-+  it('is linked precompiled whatever blocks its source build', () => {
-+    const { thrown, frameworks } = sync({
-+      sources: 'pure-swift with podspec linkage',
-+      precompiled: true,
-+      buildFromSource: ['ExpoMix.*'],
-+    });
-+    expect(thrown).toBeNull();
-+    expect(frameworks).toEqual(['ExpoMixed', 'ExpoModulesCore']);
-+    expect(fallbackWarnings(logs)).toEqual([
-+      renderBuildFromSourceFallbackWarning([mixedFallback('ExpoMix.*')]),
-+    ]);
-+  });
-+
-+  it('is built from source when it can be, and is not named as linked precompiled', () => {
-+    const { thrown, frameworks } = sync({
-+      sources: 'pure-swift',
-+      precompiled: true,
-+      buildFromSource: ['.*'],
-+    });
-+    expect(thrown).toBeNull();
-+    expect(frameworks).toEqual(['ExpoModulesCore']);
-+    expect(printed(logs.log)).toContain('source pure-Swift (1): ExpoMixed');
-+    expect(fallbackWarnings(logs)).toEqual([
-+      renderBuildFromSourceFallbackWarning([coreFallback('.*')]),
-+    ]);
-+  });
-+
-+ 
-```
-
-**File**: `packages/expo/scripts/spm/diagnostics.js` (modified, +48/-2)
-```diff
-@@ -96,11 +96,14 @@ function classifyUnsupported({ pending, coreAvailable }) {
-   if (!coreAvailable) {
-     return [{ reason: 'core-unavailable', pods: pending.map((p) => p.podName) }];
-   }
--  return pending.map(({ refusals, buildFromSourceEntry, ...subject }) => {
-+  return pending.map(({ refusals, buildFromSourceEntry, precompiledIncomplete, ...subject }) => {
-     if (buildFromSourceEntry == null) return { ...subject, ...mostSpecific(refusals) };
-     // The artifact exists; buildFromSource is why it was not linked.
-     const cause = mostSpecific(refusals.filter((r) => r.reason !== 'prebuild-available'));
--    return { ...subject, reason: 'build-from-source-unsupported', buildFromSourceEntry, cause };
-+    const reason = precompiledIncomplete
-+      ? 'build-from-source-fallback-incomplete'
-+      : 'build-from-source-unsupported';
-+    return { ...subject, reason, buildFromSourceEntry, cause };
-   });
- }
- 
-@@ -302,6 +305,25 @@ function renderBuildFromSourceUnsupported({
-   );
- }
- 
-+function renderBuildFromSourceFallbackIncomplete({
-+  podName,
-+  packageName,
-+  moduleRoot,
-+  buildFromSourceEntry,
-+  cause,
-+}) {
-+  return renderBlock(
-+    `error: The buildFromSource entry "${buildFromSourceEntry}" matches Expo module "${packageName}" (pod ${podName}), which Swift Package Manager cannot build from source, and its precompiled XCFramework is incomplete, so it cannot be linked precompiled either.`,
-+    [
-+      SOURCE_BUILD_BLOCKERS[cause.reason]?.(cause) ??
-+        `The plugin found no way to build it from source with Swift Package Manager (reason: ${cause.reason}).`,
-+      'A buildFromSource pattern links a module precompiled when Swift Package Manager cannot build it from source, and the plugin links a precompiled XCFramework only when both its Debug and Release flavors are present.',
-+      `Reinstall ${packageName} so it ships both flavors, or, in the Expo repository, from its root, build both with \`node tools/bin/expotools.js prebuild ${packageName}\`. ${rerunSpmUpdate()}`,
-+    ],
-+    moduleRoot
-+  );
-+}
-+
- function renderNoAppleSources({ podName, packageName, moduleRoot }) {
-   return renderBlock(
-     `error: Expo module "${packageName}" (pod ${podName}) has no \`ios\` or \`apple\` source directory, so Swift Package Manager has nothing to compile.`,
-@@ -682,6 +704,7 @@ const REFUSALS = new Map(
-   [
-     ['duplicate-pod-name', { render: renderDuplicatePodName }],
-     ['build-from-source-unsupported', { render: renderBuildFromSourceUnsupported }],
-+    ['build-from-source-fallback-incomplete', { render: renderBuildFromSourceFallbackIncomplete }],
-     ['partially-precompiled', { render: renderPartiallyPrecompiled }],
-     ['prebuild-available', { render: renderPrebuildAvailable }],
-     ['needs-manifest-for-linkage', { render: renderNeedsManifestForLinkage }],
-@@ -851,6 +874,28 @@ function renderExtraPodsWarning(pods) {
-   ].join('\n');
- }
- 
-+/**
-+ * Modules a buildFromSource pattern matched that are linked precompiled, because Swift
-+ * Package Manager cannot build them from source.
-+ *
-+ * @param fallbacks `{ podName, packageName, entry }` per module, `entry` being the pattern.
-+ */
-+function renderBuildFromSourceFallbackWarning(fallbacks) {
-+  if (!fallbacks.length) return '';
-+  const one = fallbacks.length === 1;
-+  const them = one ? 'it' : 'them';
-+  const entries = [...new Set(fallbacks.map((f) => f.entry))];
-+  const modules = fallbacks
-+    .map(({ podName, packageName, entry }) => `${podName} (${packageName}, matched by "${entry}")`)
-+    .join(', ');
-+  return [
-+    `warning: buildFromSource matches ${fallbacks.length} Expo ${one ? 'module' : 'modules'} that Swift Package Manager cannot build from source, so ${one ? 'it is' : 'they are'} linked precompiled instead: ${modules}.`,
-+    'A buildFromSource pattern links a module precompiled when Swift Package Manager cannot build that module from source; an entry that names a module exactly fails the sync instead.',
-+    `To see what blocks a module's source build, list it by its exact pod or npm package name in ${BUILD_FROM_SOURCE_OPTION}: the sync then fails and names the cause.`,
-+    `To keep ${them} precompiled without this warning, narrow ${entries.map((e) => `"${e}"`).join(', ')} so that no entry matches ${one ? 'this module' : 'these modules'}. ${rerunSpmUpdate()}`,
-+  ].join(' ');
-+}
-+
- /** Print the report and return the error to throw, or null when nothing is uncovered. */
- function reportUnsupported(entries) {
-   if (!entries.length) return null;
-@@ -877,5 +922,6 @@ module.exports = {
-   renderRootConflictWarning,
-   renderPartlyProvidedPackageWarning,
-   renderExtraPodsWarning,
-+  renderBuildFromSourceFallbackWarning,
-   reportUnsupported,
- };
-```
-
-**File**: `packages/expo/scripts/spm/direct.js` (modified, +1/-1)
-```diff
-@@ -137,7 +137,7 @@ function emitDirectPackage({
-   const link = path.join(directDir, packageName);
-   fs.mkdirSync(path.dirname(link), { recursive: true });
-   relativeSymlink(moduleRoot, link);
--  fs.rmSync(path.join(outDir, 'expo-source', packageName), { recursive: true, force: true });
-+  fs.rmSync(path.join(outDir, 'expo-source', manifest.name), { recursive: true, force: true });
- 
-   return {
-     ok: {
-```
-
-**File**: `packages/expo/scripts/spm/plugin.js` (modified, +233/-107)
-```diff
-@@ -62,6 +62,7 @@ const {
-   collectRootConflicts,
-   pluginError,
-   realPathOrSelf,
-+  renderBuildFromSourceFallbackWarning,
-   renderExtraPodsWarning,
-   renderLeftOutCompanionWarning,
-   renderPartlyProvidedPackageWarning,
-@@ -318,14 +319,16 @@ function uncoveredPod(identity, ...refusals) {
- /**
-  * What the passes decided for each pod, keyed by pod name: CocoaPods pod names are
-  * unique, so a name two packages list is one pod. `linkedAs` is `'build-phase'`,
-- * `'precompiled'`, `'manifest'`, `'pure-swift'` or null. A precompiled record carries its
-- * `framework`; `linkPrecompiledPods` documents `buildFromSourceEntry`.
-+ * `'precompiled'`, `'manifest'`, `'pure-swift'` or null. ExpoModulesJSI starts as
-+ * `'build-phase'` (see `linkExpoModulesJSI`). A precompiled record carries its
-+ * `framework`; `linkPrecompiledPods` documents `buildFromSource`.
-  */
- function podRecords(identities) {
-   const records = new Map();
-   for (const identity of identities.values()) {
-     if (!records.has(identity.podName)) {
--      records.set(identity.podName, { identity, linkedAs: null });
-+      const linkedAs = identity.podName === JSI_POD ? 'build-phase' : null;
-+      records.set(identity.podName, { identity, linkedAs });
-     }
-   }
-   return records;
-@@ -338,11 +341,10 @@ function podRecords(identities) {
-  * instead. Returns that package's directory, or null when expo-modules-jsi is not
-  * autolinked.
-  */
--function linkExpoModulesJSI(records, outDir, cacheDir, appRoot) {
--  const record = records.get(JSI_POD);
--  if (record == null) return null;
--  record.linkedAs = 'build-phase';
--  const { packageName, moduleRoot, productName } = record.identity;
-+function linkExpoModulesJSI(identities, outDir, cacheDir, appRoot) {
-+  const identity = [...identities.values()].find((i) => i.podName === JSI_POD);
-+  if (identity == null) return null;
-+  const { packageName, moduleRoot, productName } = identity;
-   const headers = resolveHeadersXCFramework({ packageName, moduleRoot, productName, cacheDir });
-   if (headers == null) {
-     const searched = headersXCFrameworkDirs(packageName, moduleRoot);
-@@ -378,11 +380,13 @@ function buildPhaseJsiRoot(appRoot) {
- }
- 
- /**
-- * The entry of the app's `buildFromSource` autolinking option that names a pod, or
-- * undefined, matched as CocoaPods matches it in `precompiled_modules.rb#build_from_source?`:
-- * each entry is a regular expression that must match the whole pod name or npm package name.
-- * An entry naming ExpoModulesCore fails the sync, because every source package compiles
-- * against the precompiled one.
-+ * The entry of the app's `buildFromSource` autolinking option that matches a pod, as
-+ * `{ entry, exact }`, or undefined. An entry is exact for a pod when it is, character for
-+ * character, the pod name or the npm package name. Any other entry is a pattern, matched as
-+ * CocoaPods matches it in `precompiled_modules.rb#build_from_source?`: a regular expression
-+ * that must match the whole pod name or npm package name. An exact entry wins over a pattern.
-+ * An exact entry for ExpoModulesCore fails the sync, because every source package compiles
-+ * against the precompiled one; a pattern matching it leaves it precompiled.
-  */
- function buildFromSourceMatcher(patterns) {
-   const entries = patterns.map((pattern) => {
-@@ -399,38 +403,51 @@ function buildFromSourceMatcher(patterns) {
-       );
-     }
-   });
--  const entryFor = ({ podName, packageName }) =>
--    entries.find(({ expression }) => expression.test(podName) || expression.test(packageName))
--      ?.pattern;
--  const coreEntry = entryFor({ podName: CORE_POD, packageName: CORE_PACKAGE });
--  if (coreEntry != null) {
-+  const matchFor = ({ podName, packageName }) => {
-+    const exact = patterns.find((pattern) => pattern === podName || pattern === packageName);
-+    if (exact != null) return { entry: exact, exact: true };
-+    const pattern = entries.find(
-+      ({ expression }) => expression.test(podName) || expression.test(packageName)
-+    )?.pattern;
-+    return pattern != null ? { entry: pattern, exact: false } : undefined;
-+  };
-+  const coreMatch = matchFor({ podName: CORE_POD, packageName: CORE_PACKAGE });
-+  if (coreMatch?.exact) {
-+    const coreEntry = coreMatch.entry;
-     throw pluginError({
-       what: `The buildFromSource entry "${coreEntry}" in your app's Expo autolinking options matches ${CORE_POD} (${CORE_PACKAGE}), which Swift Package Manager cannot build from source.`,
-       why: `Under Swift Package Manager, ${CORE_POD} is always linked precompiled: every Expo module built from source compiles against its precompiled interface.`,
-       how: `Remove "${coreEntry}" from ${BUILD_FROM_SOURCE_OPTION}, or narrow it so it no longer matches ${CORE_POD} or ${CORE_PACKAGE}. ${rerunSpmUpdate()}`,
-     });
-   }
--  return entryFor;
-+  return matchFor;
- }
- 
- /**
-  * Pass 1 — precompiled runtime frameworks. The declaration is all-or-nothing:
-  * once one flavor exists, the resolver requires and pre
-```
-
----
-
-### Incident Patch 2: `fe33dd9f` (2026-10-22)
-**Commit Message**: [router] Fix dismissTo pushing a duplicate screen in a nested stack (#51939)
-
-# Why
-
-Fixes #51936.
-
-`router.dismissTo('/')` from a modal in the root stack pushes a second
-Home into the nested stack instead of going back to the Home already
-there. The stack becomes `index → details → index`.
-
-`dismissTo` resolves to a `POP_TO` in the navigator where the current
-state and the href diverge. The navigators below it reduce a plain
-`NAVIGATE`, and `StackRouter` pushes unless the target is focused or
-`pop` is set.
-
-# How
-
-`createResolvedAction` now asks the nested navigators to pop when the
-resolved action is a `POP_TO`
-([resolveNavigationDestination.ts#L176-L187](https://github.com/expo/expo/blob/af3faf5dd363701c698b397f548b2e0d71239452/packages/expo-router/src/global-state/resolveNavigationDestination.ts#L176-L187)).
-The target navigator still handles the `POP_TO` itself. Each nested
-navigator then applies `shouldPopTo`, the per-level rule that #51649
-added for deep links. It pops to the last route with the target's name,
-and still pushes for a dynamic route with different params.
-
-Options I considered:
-
-1. Set `pop: true` in `getNavigateAction` for `POP_TO`, as
-`__internal__popToNaviga
-
-**File**: `.changeset/router-dismissto-nested-stack.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'expo-router': patch
-+---
-+
-+Fix `router.dismissTo` pushing a second screen in a nested stack instead of going back to the screen already in it.
-```
-
-**File**: `packages/expo-router/src/__tests__/dismissTo.test.ios.tsx` (modified, +48/-0)
-```diff
-@@ -456,3 +456,51 @@ it('collapses a nested history down to a sibling when the target was never visit
-     type: 'stack',
-   });
- });
-+
-+it('should go back to a previous route in a nested stack when a screen above that stack is focused', async () => {
-+  const result = await renderRouter({
-+    _layout: () => <Stack />,
-+    '(group)/_layout': () => <Stack />,
-+    '(group)/index': () => null,
-+    '(group)/details': () => null,
-+    modal: () => null,
-+  });
-+
-+  await act(() => router.push('/details'));
-+  await act(() => router.push('/modal'));
-+  expect(screen).toHavePathname('/modal');
-+
-+  await act(() => router.dismissTo('/'));
-+
-+  expect(screen).toHavePathname('/');
-+  const rootStack = result.getRouterState()!.routes[0]!.state!;
-+  expect(rootStack.routes.map((route) => route.name)).toEqual(['(group)']);
-+  const groupStack = rootStack.routes[0]!.state!;
-+  expect(groupStack.routes.map((route) => route.name)).toEqual(['index']);
-+  expect(groupStack.index).toBe(0);
-+});
-+
-+it('pushes a dynamic route with different params in a nested stack when a screen above that stack is focused', async () => {
-+  const result = await renderRouter({
-+    _layout: () => <Stack />,
-+    '(group)/_layout': () => <Stack />,
-+    '(group)/index': () => null,
-+    '(group)/[id]': () => null,
-+    modal: () => null,
-+  });
-+
-+  await act(() => router.push('/1'));
-+  await act(() => router.push('/modal'));
-+  expect(screen).toHavePathname('/modal');
-+
-+  await act(() => router.dismissTo('/2'));
-+
-+  expect(screen).toHavePathname('/2');
-+  const rootStack = result.getRouterState()!.routes[0]!.state!;
-+  expect(rootStack.routes.map((route) => route.name)).toEqual(['(group)']);
-+  const groupStack = rootStack.routes[0]!.state!;
-+  expect(groupStack.routes.map((route) => route.name)).toEqual(['index', '[id]', '[id]']);
-+  expect(groupStack.routes[1]!.params).toEqual({ id: '1' });
-+  expect(groupStack.routes[2]!.params).toEqual({ id: '2' });
-+  expect(groupStack.index).toBe(2);
-+});
-```
-
-**File**: `packages/expo-router/src/global-state/resolveNavigationDestination.ts` (modified, +2/-1)
-```diff
-@@ -183,7 +183,8 @@ function createResolvedAction({
-     internalParams,
-     parentChain,
-     previewKey: action.payload.__internal__PreviewKey,
--    pop: pop === true,
-+    // Navigators below the `POP_TO` target get `NAVIGATE`, which pushes unless `pop` is set.
-+    pop: pop === true || action.type === 'POP_TO',
-   });
- 
-   return {
-```
-
----
-
-### Incident Patch 3: `21b10fc2` (2026-10-22)
-**Commit Message**: fix(router): fix custom matcher types for global and `@jest/globals` when using `expo-router/testing-library` (#52036)
-
-# Why
-
-The custom Jest matchers exported by `expo-router/testing-library` have
-been broken for some time now. Now that the Jest 30 upgrade has landed,
-we can update them and make sure they work with both the global and
-`@jest/globals` style of importing `expect()`.
-
-Fixes #51870. Supersedes #51878.
-
-# How
-
-- Removed ambient TypeScript declaration file containing type
-augmentations for the Jest matchers, and instead re-export them from the
-matcher declarations source.
-- Add type augmentations to allow both `expect` from globals as well as
-`@jest/globals`.
+Declare `onValueChange` and `onValueChangeFinished` with `val x by
+Event<T>()` in the `ExpoUIView` definitions in `ExpoUIModule`, and pass
+the handlers into `SliderContent` and `VerticalSliderContent`. This
+matches how `ToggleButton` and `TextField` dispatch their events. The
+now-unused `expo.modules.kotlin.viewevent.getValue` imports are removed.
 
 # Test Plan
 
-- Created two SDK 58 projects, one with Jest 29 and one with Jest 30,
-created a sample test file, added this patch and ran the tests
-successfully.
-- CI
+Applied as a patch to `@expo/ui` 58.0.23 in an app (built from source
+with `expo.autolinking.android.buildFromSource: ["expo-ui"]`). In
+release builds, dragging `Sl
 
-# Checklist
-
-- [x] I added a changeset and followed [this short
-guide](https://github.com/expo/expo/blob/main/CONTRIBUTING.md#-before-submitting)
-- [x] This diff will work correctly for `npx expo prebuild` & EAS Build
-(eg: updated a module plugin).
-- [ ] Conforms with the [Documentation Writing Style
-Guide](https://github.com/expo/expo/blob/main/guid
-
-**File**: `.changeset/wicked-shrimps-search.md` (added, +5/-0)
+**File**: `.changeset/expo-ui-android-slider-crash.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+'expo-router': patch
++"@expo/ui": patch
 +---
 +
-+Fix custom matcher types for global and `@jest/globals` when using `expo-router/testing-library`.
++[Android] Fix a crash when dragging `Slider` or `VerticalSlider` in release builds. Their `onValueChange` and `onValueChangeFinished` events are now declared with `Event<T>()` in the view definition, as `ToggleButton` and `TextField` already do.
 ```
 
-**File**: `packages/expo-router/package.json` (modified, +1/-0)
+**File**: `packages/expo-ui/android/src/main/java/expo/modules/ui/ExpoUIModule.kt` (modified, +6/-4)
 ```diff
-@@ -325,6 +325,7 @@
-     "@types/react": "~19.3.0",
-     "@types/react-dom": "^19.1.7",
-     "@types/react-is": "^19.0.0",
-+    "expect": "^30.0.0",
-     "expect-type": "^1.3.0",
-     "expo-symbols": "workspace:^",
-     "immer": "^10.1.1",
-```
-
-**File**: `packages/expo-router/src/__tests__/testing-library.test.ios.tsx` (modified, +13/-0)
-```diff
-@@ -1,3 +1,4 @@
-+import { expect as importedExpect } from '@jest/globals';
- import { act, screen } from '@testing-library/react-native';
- import { stripVTControlCharacters } from 'node:util';
- import { Text } from 'react-native';
-@@ -40,6 +41,18 @@ describe('toHavePathname', () => {
-   });
- });
+@@ -359,18 +359,20 @@ class ExpoUIModule : Module() {
+     }
  
-+it('supports matchers with expect imported from @jest/globals', async () => {
-+  await renderRouter(['[slug]'], { initialUrl: '/home?test=true' });
+     ExpoUIView<SliderProps>("SliderView") {
+-      Events("onValueChange", "onValueChangeFinished")
++      val onValueChange by Event<SliderValueChangedEvent>()
++      val onValueChangeFinished by Event<Unit>()
+ 
+       Content { props ->
+-        SliderContent(props)
++        SliderContent(props, { onValueChange(it) }, { onValueChangeFinished(it) })
+       }
+     }
+ 
+     ExpoUIView<VerticalSliderProps>("VerticalSliderView") {
+-      Events("onValueChange", "onValueChangeFinished")
++      val onValueChange by Event<SliderValueChangedEvent>()
++      val onValueChangeFinished by Event<Unit>()
+ 
+       Content { props ->
+-        VerticalSliderContent(props)
++        VerticalSliderContent(props, { onValueChange(it) }, { onValueChangeFinished(it) })
+       }
+     }
+ 
+```
+
+**File**: `packages/expo-ui/android/src/main/java/expo/modules/ui/SliderView.kt` (modified, +5/-4)
+```diff
+@@ -14,7 +14,6 @@ import androidx.compose.runtime.remember
+ import androidx.compose.runtime.setValue
+ import expo.modules.kotlin.records.Field
+ import expo.modules.kotlin.records.Record
+-import expo.modules.kotlin.viewevent.getValue
+ import expo.modules.kotlin.views.ComposeProps
+ import expo.modules.kotlin.views.FunctionalComposableScope
+ import expo.modules.kotlin.types.OptimizedRecord
+@@ -58,9 +57,11 @@ data class SliderValueChangedEvent(
+ 
+ @OptIn(ExperimentalMaterial3Api::class)
+ @Composable
+-fun FunctionalComposableScope.SliderContent(props: SliderProps) {
+-  val onValueChange by remember { this@SliderContent.EventDispatcher<SliderValueChangedEvent>() }
+-  val onValueChangeFinished by remember { this@SliderContent.EventDispatcher<Unit>() }
++fun FunctionalComposableScope.SliderContent(
++  props: SliderProps,
++  onValueChange: (SliderValueChangedEvent) -> Unit,
++  onValueChangeFinished: (Unit) -> Unit
++) {
+   val interactionSource = remember { MutableInteractionSource() }
+ 
+   val effectiveLower = maxOf(props.min, props.lowerLimit ?: Float.NEGATIVE_INFINITY)
+```
+
+**File**: `packages/expo-ui/android/src/main/java/expo/modules/ui/VerticalSliderView.kt` (modified, +5/-4)
+```diff
+@@ -12,7 +12,6 @@ import androidx.compose.runtime.getValue
+ import androidx.compose.runtime.mutableFloatStateOf
+ import androidx.compose.runtime.remember
+ import androidx.compose.runtime.setValue
+-import expo.modules.kotlin.viewevent.getValue
+ import expo.modules.kotlin.views.ComposeProps
+ import expo.modules.kotlin.views.FunctionalComposableScope
+ import expo.modules.kotlin.views.OptimizedComposeProps
+@@ -33,9 +32,11 @@ data class VerticalSliderProps(
+ 
+ @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+ @Composable
+-fun FunctionalComposableScope.VerticalSliderContent(props: VerticalSliderProps) {
+-  val onValueChange by remember { this@VerticalSliderContent.EventDispatcher<SliderValueChangedEvent>() }
+-  val onValueChangeFinished by remember { this@VerticalSliderContent.EventDispatcher<Unit>() }
++fun FunctionalComposableScope.VerticalSliderContent(
++  props: VerticalSliderProps,
++  onValueChange: (SliderValueChangedEvent) -> Unit,
++  onValueChangeFinished: (Unit) -> Unit
++) {
+   val interactionSource = remember { MutableInteractionSource() }
+ 
+   val effectiveLower = maxOf(props.min, props.lowerLimit ?: Float.NEGATIVE_INFINITY)
+```
+
+---
+
+### Incident Patch 2: `8bc17627` (2026-10-27)
+**Commit Message**: [ui][android] Don't nest a ListItem row in another ListItem in FieldGroup.Section (#51030)
+
+# Why
+
+Fixes #50086.
+
+On Android, `FieldGroup.Section` wraps every row in a Compose `ListItem`
+with the section's container color and rounded clip. The universal
+`ListItem` renders its own Compose `ListItem`, so a `ListItem` row ended
+up nested in a second one: two stacked surfaces, two sets of content
+padding (taller than a `Switch` row), and a ripple/tap target inset from
+the rounded row.
+
+# How
+
+In `FieldSection.android.tsx`, when a row is a universal `ListItem`
+element, clone it instead of wrapping it:
+
+- `colors`: the section's `surfaceContainer` as `containerColor`,
+overridden by the item's own `colors`.
+- `modifiers`: `fillMaxWidth()` and the position-aware `clip(...)`, then
+`clickable(onPress)` (moved out of `onPress`), then the item's own
+`modifiers`. `ListItem.android` puts `clickable` first, which would draw
+the ripple outside the rounded clip, so it's applied here after `clip`
+instead. The item's modifiers still come after `clickable`, as they do
+in `ListItem`.
+
+Other rows (`Switch`, etc.) are still wrapped as before. A `ListItem`
+wrapped in a custom component isn't detected and 
+
+**File**: `.changeset/expo-ui-fieldsection-listitem-android.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'@expo/ui': patch
++---
 +
-+  importedExpect(screen).toHavePathname('/home');
-+  importedExpect(screen).toHavePathnameWithParams('/home?test=true');
-+  importedExpect(screen).toHaveSegments(['[slug]']);
-+  importedExpect(screen).toHaveSearchParams({ slug: 'home', test: 'true' });
-+  importedExpect(screen).not.toHaveRouterState(undefined);
-+  importedExpect(screen).not.toHavePathname('/other');
-+  await importedExpect(Promise.resolve(screen)).resolves.toHavePathname('/home');
++[Android] Fix a `ListItem` inside `FieldGroup.Section` being rendered inside a second Material `ListItem`, which drew an inset inner card, made the row taller than other rows and shrank its tap target. The `ListItem` is now styled as the section's row, and its ripple follows the row's rounded shape.
+```
+
+**File**: `packages/expo-ui/src/universal/FieldGroup/FieldSection.android.tsx` (modified, +28/-2)
+```diff
+@@ -4,8 +4,10 @@ import {
+   ListItem,
+   useMaterialColors,
+ } from '@expo/ui/jetpack-compose';
+-import { clip, fillMaxWidth, padding, Shapes } from '@expo/ui/jetpack-compose/modifiers';
++import { clickable, clip, fillMaxWidth, padding, Shapes } from '@expo/ui/jetpack-compose/modifiers';
++import { cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
+ 
++import { ListItem as UniversalListItem, type ListItemProps } from '../ListItem';
+ import { useUniversalLifecycle } from '../hooks';
+ import { getUserSizingOverrides } from '../modifierUtils';
+ import { transformToModifiers } from '../transformStyle';
+@@ -77,11 +79,31 @@ export function FieldSection({
+         <ComposeColumn verticalArrangement={{ spacedBy: 2 }} modifiers={[fillMaxWidth()]}>
+           {rows.map((child, index) => {
+             const position = getFieldItemPosition(index, rows.length);
++            const rowModifiers = [
++              fillMaxWidth(),
++              clip(Shapes.RoundedCorner(cornerRadii(position))),
++            ];
++            if (isUniversalListItem(child)) {
++              // A `ListItem` already renders a Compose `ListItem`. Style it as the row instead of
++              // nesting it in another one, which would draw a second surface with its own padding.
++              const { onPress, modifiers, colors: itemColors } = child.props;
++              return cloneElement(child, {
++                key: index,
++                onPress: undefined,
++                colors: { containerColor: colors.surfaceContainer, ...itemColors },
++                // Clip before `clickable` so the ripple follows the rounded row.
++                modifiers: [
++                  ...rowModifiers,
++                  ...(onPress ? [clickable(onPress)] : []),
++                  ...(modifiers ?? []),
++                ],
++              });
++            }
+             return (
+               <ListItem
+                 key={index}
+                 colors={{ containerColor: colors.surfaceContainer }}
+-                modifiers={[fillMaxWidth(), clip(Shapes.RoundedCorner(cornerRadii(position)))]}>
++                modifiers={rowModifiers}>
+                 <ListItem.HeadlineContent>{child}</ListItem.HeadlineContent>
+               </ListItem>
+             );
+@@ -93,6 +115,10 @@ export function FieldSection({
+   );
+ }
+ 
++function isUniversalListItem(node: ReactNode): node is ReactElement<ListItemProps> {
++  return isValidElement(node) && node.type === UniversalListItem;
++}
++
+ /**
+  * Per-position corner radii used to produce the Material 3 grouped-list look.
+  *
+```
+
+**File**: `packages/expo-ui/src/universal/FieldGroup/__tests__/FieldSection.test.android.tsx` (added, +62/-0)
+```diff
+@@ -0,0 +1,62 @@
++import { render } from '@testing-library/react-native';
++
++import { FieldGroup } from '..';
++import { renderedNativeViews } from '../../../__mocks__/expo';
++import { ListItem } from '../../ListItem';
++import { Switch } from '../../Switch';
++
++jest.mock('expo');
++
++function renderedListItems() {
++  return renderedNativeViews.mock.calls
++    .filter(([name]) => name === 'ListItemView')
++    .map(([, props]) => props);
++}
++
++function modifierTypes(props: Record<string, any>) {
++  return (props.modifiers ?? []).map((modifier: { $type: string }) => modifier.$type);
++}
++
++describe('FieldGroup.Section on Android', () => {
++  it('renders a ListItem row as a single Compose ListItem', async () => {
++    const onPress = jest.fn();
++    await render(
++      <FieldGroup.Section>
++        <ListItem onPress={onPress}>Row A</ListItem>
++        <ListItem>Row B</ListItem>
++      </FieldGroup.Section>
++    );
++
++    const listItems = renderedListItems();
++    expect(listItems).toHaveLength(2);
++    // The row's shape is clipped before the click handler, so the ripple follows the rounded row.
++    expect(modifierTypes(listItems[0])).toEqual(['fillMaxWidth', 'clip', 'clickable']);
++    expect(modifierTypes(listItems[1])).toEqual(['fillMaxWidth', 'clip']);
++  });
++
++  it('keeps the modifiers and colors set on the ListItem', async () => {
++    await render(
++      <FieldGroup.Section>
++        <ListItem
++          colors={{ contentColor: '#ff0000' }}
++          modifiers={[{ $type: 'testTag', tag: 'row' } as any]}>
++          Row
++        </ListItem>
++      </FieldGroup.Section>
++    );
++
++    const [listItem] = renderedListItems();
++    expect(modifierTypes(listItem)).toEqual(['fillMaxWidth', 'clip', 'testTag']);
++    expect(listItem.colors).toEqual(expect.objectContaining({ contentColor: '#ff0000' }));
++  });
++
++  it('still wraps other rows in a Compose ListItem', async () => {
++    await render(
++      <FieldGroup.Section>
++        <Switch label="Toggle" value={false} onValueChange={() => {}} />
++      </FieldGroup.Section>
++    );
++
++    expect(renderedListItems()).toHaveLength(1);
++  });
 +});
-+
- describe('toHavePathnameWithParams', () => {
-   it('correctly matches', async () => {
-     await renderRouter(['[slug]'], { initialUrl: '/home?test=true' });
 ```
 
-**File**: `packages/expo-router/src/testing-library/expect.ts` (modified, +18/-0)
+---
+
+### Incident Patch 3: `b2271b3f` (2026-10-27)
+**Commit Message**: [ios][file-system] Fix `'QLPreviewController' has no member 'canPreview'` on Mac Catalyst (#52359)
+
+# Why
+
+`expo-file-system` fails to compile for Mac Catalyst:
+
+```text
+Type 'QLPreviewController' has no member 'canPreview'
+```
+
+Mac Catalyst, which detected in `os(iOS)`, exposes this method as
+`canPreviewItem(_:)` instead of `canPreview(_:)` with the same
+functionalities, as listed in [Apple’s Quick Look
+documentation](https://developer.apple.com/documentation/quicklook/qlpreviewcontroller/canpreview%28_%3A%29).
+
+<img width="1716" height="892" alt="01"
+src="https://github.com/user-attachments/assets/e7d4449c-cae3-4588-8c67-42a0bed8ca81"
+/>
+
+# How
+
+Route that preview checks through one private helper.
+
+The helper uses `#if targetEnvironment(macCatalyst)` to select
+`canPreviewItem(_:)` on Mac Catalyst and `canPreview(_:)` on iOS. This
+keeps platform selection in one place and happens at compile time.
+
+# Test Plan
+
+Tested with
+- `expo-file-system` 58.0.11
+- `expo` 58.0.19
+- Xcode 27.1
+- macOS 27.0 (Mac Catalyst)
+
+After patched: build pass on both Mac Catalyst and regular iOS device
+(both Debug and Release configurations).
+
+# Screenshots
+
+<img width="2479" height="1047" alt="02"
+src="h
+
+**File**: `.changeset/file-system-catalyst-preview.md` (added, +5/-0)
 ```diff
-@@ -1,3 +1,21 @@
-+export interface RouterMatchers<R> {
-+  toHavePathname(pathname: string): R;
-+  toHavePathnameWithParams(pathname: string): R;
-+  toHaveSegments(segments: string[]): R;
-+  toHaveSearchParams(params: Record<string, string | string[]>): R;
-+  toHaveRouterState(state: Record<string, unknown> | undefined): R;
-+}
+@@ -0,0 +1,5 @@
++---
++'expo-file-system': patch
++---
 +
-+declare global {
-+  namespace jest {
-+    interface Matchers<R> extends RouterMatchers<R> {}
++Fix Mac Catalyst builds failing with `Type 'QLPreviewController' has no member 'canPreview'`.
+```
+
+**File**: `packages/expo-file-system/ios/FileSystemModule.swift` (modified, +10/-2)
+```diff
+@@ -61,12 +61,20 @@ public final class FileSystemModule: Module {
+   }
+ 
+   #if os(iOS)
++  private func canPreviewItem(_ item: FileSystemPreviewItem) -> Bool {
++    #if targetEnvironment(macCatalyst)
++    return QLPreviewController.canPreviewItem(item)
++    #else
++    return QLPreviewController.canPreview(item)
++    #endif
 +  }
-+}
 +
-+declare module 'expect' {
-+  interface Matchers<R extends void | Promise<void>> extends RouterMatchers<R> {}
-+}
-+
- function printMatcherDiff(
-   context: jest.MatcherContext,
-   expected: unknown,
-```
-
-**File**: `packages/expo-router/src/ts-declarations/expect.d.ts` (removed, +0/-9)
-```diff
-@@ -1,9 +0,0 @@
--declare namespace jest {
--  interface Matchers<R, T = unknown> {
--    toHavePathname(pathname: string): R;
--    toHavePathnameWithParams(pathname: string): R;
--    toHaveSegments(segments: string[]): R;
--    toHaveSearchParams(params: Record<string, string | string[]>): R;
--    toHaveRouterState(state: Record<string, unknown> | undefined): R;
--  }
--}
-```
-
-**File**: `pnpm-lock.yaml` (modified, +3/-0)
-```diff
-@@ -5808,6 +5808,9 @@ importers:
-       '@types/react-is':
-         specifier: ^19.0.0
-         version: 19.2.0
-+      expect:
-+        specifier: ^30.0.0
-+        version: 30.5.2
-       expect-type:
-         specifier: ^1.3.0
-         version: 1.3.0
+   private func canPreview(file: FileSystemFile) throws -> Bool {
+     return try file.withCorrectTypeAndScopedAccess(permission: .read) {
+       guard file.exists else {
+         return false
+       }
+-      return QLPreviewController.canPreview(FileSystemPreviewItem(url: file.url, title: nil))
++      return canPreviewItem(FileSystemPreviewItem(url: file.url, title: nil))
+     }
+   }
+ 
+@@ -98,7 +106,7 @@ public final class FileSystemModule: Module {
+         throw FilePreviewFileNotFoundException(file.url)
+       }
+       let item = FileSystemPreviewItem(url: file.url, title: options?.title)
+-      guard QLPreviewController.canPreview(item) else {
++      guard canPreviewItem(item) else {
+         throw FilePreviewUnsupportedException(file.url)
+       }
+       items.append(item)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #52115** (closed): [ui][android] Keep the community BottomSheet host attached in a clipping list (@intergalacticspacehighway)
-- **PR #52113** (2026-10-23): [code-review] Update reviewer prompts for changesets, and pin the code they cite (@brentvatne)
-- **PR #52111** (2026-10-23): [code-review] Bump the code review CLI to 0.20.0 (@brentvatne)
-- **PR #52110** (2026-10-23): [ci] Run Linux jobs that aren't faster on Blacksmith on GitHub runners (@brentvatne)
-- **PR #52108** (2026-10-23): [ci] Skip iOS and e2e jobs on draft pull requests (@brentvatne)
-- **PR #52107** (2026-10-23): [ci] Pin ccache on macOS and drop unused applesimutils installs (@brentvatne)
+- **PR #52379** (2026-10-27): [android][updates] Remove the BouncyCastle dependency (@lukmccall)
+- **PR #52377** (2026-10-27): [expo-camera] Keep ML Kit registrar constructors in R8 release builds (@alanjhughes)
+- **PR #52376** (2026-10-27): [ui][android] Fix crash when dragging Slider and VerticalSlider (@dorupopacaliman)
+- **PR #52374** (2026-10-27): [expo-web-browser] Present POPOVER as a form sheet on iPadOS 27 (@alanjhughes)
+- **PR #52372** (closed): [metro-config] Move the web asset srcset changelog entry to a changeset (@expo-bot)
+- **PR #52371** (2026-10-27): [fingerprint] Keep config modules from linked dependencies (@expo-tuft[bot])
 
 ---
 
@@ -1477,25 +1086,25 @@ Guide](https://github.com/expo/expo/blob/main/guid
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [expo] Fall back to precompiled modules for buildFromSource patterns in the Swif
+## X. [ui][android] Fix crash when dragging Slider and VerticalSlider (#52376)
 
 **RULE**:
-When implementing operations in `.changeset/expo-spm-build-from-source-fallback.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in expo/expo. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/expo-ui-android-slider-crash.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in expo/expo. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c6deec18`: [expo] Fall back to precompiled modules for buildFromSource patterns in the SwiftPM plugin (#52073). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `597d7423`: [ui][android] Fix crash when dragging Slider and VerticalSlider (#52376). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/expo-spm-build-from-source-fallback.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/expo-ui-android-slider-crash.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
 ---
-'expo': patch
+"@expo/ui": patch
 ---
 
-[iOS] A `buildFromSource` pattern such as `".*"` no longer fails the SwiftPM sync when it matches a module that Swift Package Manager cannot build from source, `ExpoModulesCore` included: the plugin links that module precompiled and prints one warning naming it. An entry that names such a module exactly still fails the sync.
+[Android] Fix a crash when dragging `Slider` or `VerticalSlider` in release builds. Their `onValueChange` and `onValueChangeFinished` events are now declared with `Event<T>()` in the view definition, as `ToggleButton` and `TextField` already do.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1505,4 +1114,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c6deec18` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `597d7423` are properly handled with clean fallback behavior.

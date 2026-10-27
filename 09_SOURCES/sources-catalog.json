@@ -2803,10 +2803,10 @@
     "repository": "karmada-io/karmada",
     "platform": "github",
     "sourceUrl": "https://github.com/karmada-io/karmada",
-    "sourceVersion": "103984cd",
+    "sourceVersion": "32047636",
     "license": "Apache-2.0",
-    "contentHash": "7eb9bd7aa5503bd9f4ace65e9f968c77906907f45c84980684b1f3771620ae68",
-    "lastHarvestedAt": "2026-10-25T06:44:56.569Z",
+    "contentHash": "a9a8739d06be43c7f55c319564b30151366d0b6c0cbfb69e400d113564656651",
+    "lastHarvestedAt": "2026-10-27T12:50:26.029Z",
     "learningId": "learn-github-karmada-io-karmada"
   },
   "milvus-io-bootcamp": {
@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "2caa45cf",
+    "sourceVersion": "ce76ea8f",
     "license": "AGPL-3.0",
-    "contentHash": "d66b972baa59eb46c76d59d4c13e4635b3c51918cc28fc8b12cd23a095ee8d9b",
-    "lastHarvestedAt": "2026-10-26T21:10:29.745Z",
+    "contentHash": "5a605a379142a30e61b14bb2f3aeb64b4ca598abc5fd544173447834f6b0ce50",
+    "lastHarvestedAt": "2026-10-27T12:50:26.139Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "0f38c118",
+    "sourceVersion": "1ec33547",
     "license": "Apache-2.0",
-    "contentHash": "e982eec13d8e6ebb14b7deb8550c8a6472932f2a7854d8d4be64c91732cf869b",
-    "lastHarvestedAt": "2026-10-25T21:02:21.766Z",
+    "contentHash": "7c23e515703ca38ac50da84d31321193b78488a49b83b10425c8dab85d11ba3b",
+    "lastHarvestedAt": "2026-10-27T12:50:30.496Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {
@@ -10333,10 +10333,10 @@
     "repository": "expo/expo",
     "platform": "github",
     "sourceUrl": "https://github.com/expo/expo",
-    "sourceVersion": "55889d57",
+    "sourceVersion": "a476ff07",
     "license": "MIT",
-    "contentHash": "76a90574f9442365d9ff70debc0d11c6cee02bf4d8572491a9374eba57f37f64",
-    "lastHarvestedAt": "2026-10-23T06:42:34.177Z",
+    "contentHash": "cb24b128928a03768b98255d9602181b7e463e3227520b324374c60f0eb908ad",
+    "lastHarvestedAt": "2026-10-27T12:50:24.913Z",
     "learningId": "learn-github-expo-expo"
   },
   "vercel-swr": {
@@ -10898,5 +10898,15 @@
     "contentHash": "c21f01f0ca39312242c9931a14b1913585a4988478295e5b14a65735d91fa15b",
     "lastHarvestedAt": "2026-10-27T12:35:07.462Z",
     "learningId": "learn-github-marmotdata-marmot"
+  },
+  "papersgpt-papersgpt-for-zotero": {
+    "repository": "papersgpt/papersgpt-for-zotero",
+    "platform": "github",
+    "sourceUrl": "https://github.com/papersgpt/papersgpt-for-zotero",
+    "sourceVersion": "e2706780",
+    "license": "AGPL-3.0",
+    "contentHash": "162c9f3ce81e61eb82c72b98fe7df9e064fc886da09d8f6b72992e94ac7a24f6",
+    "lastHarvestedAt": "2026-10-27T12:50:11.147Z",
+    "learningId": "learn-github-papersgpt-papersgpt-for-zotero"
   }
 }

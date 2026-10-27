@@ -4512,3 +4512,7 @@ https://github.com/marmotdata/marmot
 https://github.com/YoanWai/agent-manager
 # [AI-AGENTS] 7onez/cti-expert (591 score) - CTI Expert — Cyber Threat Intelligence & OSINT analysis skill for Claude Code / 
 https://github.com/7onez/cti-expert
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T12:50:03.651Z] ---
+# [AI-AGENTS] papersgpt/papersgpt-for-zotero (1776 score) - Professional AI research tool for Zotero: chat with PDFs, whole-library search, 
+https://github.com/papersgpt/papersgpt-for-zotero

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source**: github ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
-> **Source Version**: `2caa45cf`  
+> **Source Version**: `ce76ea8f`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T21:10:29.236Z  
+> **Timestamp**: 2026-10-27T12:50:25.895Z  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T21:10:28.527Z  
+> **Harvest Timestamp**: 2026-10-27T12:50:25.885Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 28712 stars
+- **Stars / Engagement**: 28727 stars
 
 ---
 
@@ -1140,204 +1140,400 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2caa45cf` (2026-10-26)
-**Commit Message**: add SecretParts to custom detectors (#5470)
+### Incident Patch 1: `ce76ea8f` (2026-10-27)
+**Commit Message**: Clean up S3 source logging for per-source debug (#5481)
 
-Populate Result.SecretParts when a secret is found by a customer regex detector.
+Put S3 log lines at the documented levels and give every skip a reason.
+Add role, page, object and AWS retry lines, and stop logging an error
+per bucket on cancel. Document the debug logs in the S3 README.
 
-We do this by adding the SecretParts field to Results within custom detectors.
-
-**File**: `pkg/custom_detectors/CUSTOM_DETECTORS.md` (modified, +1/-0)
+**File**: `pkg/sources/s3/README.md` (modified, +12/-0)
 ```diff
-@@ -34,6 +34,7 @@ This guide will walk you through setting up a custom detector in TruffleHog to i
-    - **`name`**: A unique identifier for your custom detector.
-    - **`keywords`**: An array of strings that, when found, trigger the regex search. If multiple keywords are specified, the presence of any one of them will initiate the regex search.
-    - **`regex`**: Defines the patterns to identify potential secrets. You can specify one or more named regular expressions. For a detection to be successful, each named regex must find a match. Capture groups `()` within these regular expressions are used to extract specific portions of the matched text, enabling the detector to process and report on particular segments of the identified patterns.
-+     Each named regex is recorded as a separate part of the detected secret, labeled with the regex's name, with the first capture group as its value (or the entire match if there is no capture group). Renaming a regex changes that label for new results, so keep names stable once a detector is in use.
+@@ -67,6 +67,18 @@ If a filter excludes every object in a bucket, the scan logs `Scanned no objects
+ - Extensions in the shared deny list in `pkg/common/vars.go`, which already covers images, audio, and video
+ - Keys ending in `/`, which are directory markers
  
-    - **`verify`**: An optional section to validate detected secrets. If you want to verify or unverify detected secrets, this section needs to be configured. If not configured, all detected secrets will be marked as unverified. Read [verification server examples](#verification-server-examples)
-      - **`successRanges`**: A list of HTTP status codes (or ranges) that indicate the secret is **live** (active). When the verification server responds with a matching status code, the secret is marked as verified. Each entry can be a single code (`"200"`) or an inclusive range (`"200-202"`). If omitted (along with `rotatedRanges`), only `200` is treated as verified (backward compatible).
++## Debug logs
++
++With debug on for this source (`debug: true` in the config), the scan logs:
++
++- `V(1)`: `S3 source initialized` with the config choices (the endpoint's host only, never credentials), and `Found buckets to scan` for each role.
++- `V(2)`: `Scanning bucket` and `Finished scanning bucket`, with the objects scanned, pages and duration.
++- `V(3)`: `Scanning object` for each object downloaded.
++- `V(4)`: `Skipping bucket` and `Skipping object` with a `reason`, `Listed page` for each page, and `AWS SDK` lines for retries, including S3 throttling (`SlowDown`).
++- `V(5)`: `Finished scanning object` with its duration, and the region used for a bucket outside the default region.
++
++Lines carry `role`, `bucket`, `page_number` and `key` where they apply. An object skipped for one of the reasons above shows its reason here, so a missing finding can be traced to the object it would have come from.
++
+ ## Custom endpoints
+ 
+ `--endpoint` points the scan at an S3-compatible service instead of AWS S3. Setting it changes three things:
 ```
 
-**File**: `pkg/custom_detectors/custom_detectors.go` (modified, +3/-0)
+**File**: `pkg/sources/s3/checkpointer.go` (modified, +1/-3)
 ```diff
-@@ -282,6 +282,8 @@ func (c *CustomRegexWebhook) createResults(ctx context.Context, match map[string
- 		DetectorType: detector_typepb.DetectorType_CustomRegex,
- 		DetectorName: c.GetName(),
- 		ExtraData:    map[string]string{},
-+		// Each entry is named after a regex in the user's config.
-+		SecretParts: make(map[string]string, len(match)),
+@@ -71,8 +71,6 @@ const defaultMaxObjectsPerPage = 1000
+ // NewCheckpointer creates a new checkpointer for S3 scanning operations.
+ // The progress provides the underlying mechanism for persisting scan state.
+ func NewCheckpointer(ctx context.Context, progress *sources.Progress, isUnitScan bool) *Checkpointer {
+-	ctx.Logger().Info("Creating checkpointer")
+-
+ 	return &Checkpointer{
+ 		// We are resuming if we have completed objects from a previous scan.
+ 		completedObjects: make([]bool, defaultMaxObjectsPerPage),
+@@ -119,7 +117,7 @@ func (p *Checkpointer) ResumePoint(ctx context.Context) (ResumeInfo, error) {
  	}
  
- 	var raw string
-@@ -296,6 +298,7 @@ func (c *CustomRegexWebhook) createResults(ctx context.Context, match map[string
- 		}
- 		raw += secret
- 		secrets = append(secrets, secret)
-+		result.SecretParts[key] = secret
+ 	if resumeInfo.CurrentBucket == "" {
+-		ctx.Logger().V(2).Info("resume info is missing current bucket, resuming from the beginning")
++		ctx.Logger().V(4).Info("resume info is missing current bucket, resuming from the beginning")
+ 		return resume, nil
+ 	}
  
- 		// We set the full regex match as the primary secret value.
- 		// Reasoning:
 ```
 
-**File**: `pkg/custom_detectors/custom_detectors_test.go` (modified, +89/-6)
+**File**: `pkg/sources/s3/progress.go` (modified, +1/-1)
 ```diff
-@@ -241,6 +241,7 @@ func TestDetector(t *testing.T) {
- 	assert.NoError(t, err)
- 	assert.Equal(t, 1, len(results))
- 	assert.Equal(t, results[0].Raw, []byte(`123456`))
-+	assert.Equal(t, map[string]string{"regex": "123456"}, results[0].SecretParts)
+@@ -127,7 +127,7 @@ func (s *Source) countBucket(
+ 		if err != nil {
+ 			// A cancelled count means the unit has finished, and finish settles the totals.
+ 			if ctx.Err() == nil {
+-				ctx.Logger().V(2).Info("could not count objects for progress", "bucket", bucket, "err", err)
++				ctx.Logger().V(4).Info("could not count objects for progress", "error", err)
+ 				progress.setState(sources.UnitProgressUnavailable)
+ 			}
+ 			return
+```
+
+**File**: `pkg/sources/s3/s3.go` (modified, +62/-27)
+```diff
+@@ -134,6 +134,21 @@ func (s *Source) Init(
+ 			"exclude_extensions", filter.excludeExtensions)
+ 	}
+ 
++	// Only the endpoint's host, since a user-entered endpoint can carry credentials.
++	var endpointHost string
++	if endpoint != nil {
++		endpointHost = endpoint.Host
++	}
++	ctx.Logger().V(1).Info("S3 source initialized",
++		"bucket_count", len(conn.GetBuckets()),
++		"ignore_bucket_count", len(conn.GetIgnoreBuckets()),
++		"role_count", len(conn.GetRoles()),
++		"region", s.defaultRegion(),
++		"endpoint_host", endpointHost,
++		"max_object_size", s.maxObjectSize,
++		// a nil credential means the AWS SDK's default credential chain
++		"credential_type", fmt.Sprintf("%T", conn.GetCredential()))
++
+ 	return nil
  }
  
- func TestDetectorPrimarySecret(t *testing.T) {
-@@ -260,6 +261,10 @@ func TestDetectorPrimarySecret(t *testing.T) {
- 	assert.NoError(t, err)
- 	assert.Equal(t, 1, len(results))
- 	assert.Equal(t, "secret_YI7C90ACY1_yy", results[0].GetPrimarySecretValue())
-+	assert.Equal(t, map[string]string{
-+		"id":     "id_ALPHA10100_yy",
-+		"secret": "secret_YI7C90ACY1_yy",
-+	}, results[0].SecretParts)
- }
+@@ -252,6 +267,9 @@ func (s *Source) newClient(ctx context.Context, region, roleArn string) (*s3.Cli
  
- func TestDetectorPrimarySecretFullMatch(t *testing.T) {
-@@ -313,7 +318,75 @@ func TestDetectorPrimarySecretFullMatch(t *testing.T) {
- 			assert.Equal(t, tt.want, results[0].GetPrimarySecretValue())
+ 	return s3.NewFromConfig(cfg, func(options *s3.Options) {
+ 		options.DisableLogOutputChecksumValidationSkipped = true
++		// Retries are otherwise invisible, including S3 throttling with SlowDown.
++		options.Logger = sdkLogger{}
++		options.ClientLogMode = aws.LogRetries
+ 		if s.endpoint != nil {
+ 			options.BaseEndpoint = aws.String(s.endpoint.String())
+ 			// S3-compatible services rarely publish the wildcard DNS that
+@@ -287,9 +305,11 @@ func (s *Source) getBucketsToScan(ctx context.Context, client *s3.Client) ([]str
+ 	var bucketsToScan []string
+ 	for _, bucket := range res.Buckets {
+ 		name := *bucket.Name
+-		if _, ignored := ignore[name]; !ignored {
+-			bucketsToScan = append(bucketsToScan, name)
++		if _, ignored := ignore[name]; ignored {
++			ctx.Logger().V(4).Info("Skipping bucket", "bucket", name, "reason", "in ignore list")
++			continue
+ 		}
++		bucketsToScan = append(bucketsToScan, name)
+ 	}
+ 	slices.Sort(bucketsToScan)
+ 
+@@ -375,28 +395,24 @@ func (s *Source) scanBuckets(
+ 	chunksChan chan *sources.Chunk,
+ 	totalObjectCount *uint64,
+ ) {
+-	if role != "" {
+-		ctx = context.WithValue(ctx, "role", role)
+-	}
+-
+ 	checkpointer := NewCheckpointer(ctx, &s.Progress, false)
+ 	pos := determineResumePosition(ctx, checkpointer, bucketsToScan)
+ 	switch {
+ 	case pos.isNewScan:
+-		ctx.Logger().Info("Starting new scan from beginning")
++		ctx.Logger().V(1).Info("Starting new scan from beginning")
+ 	case !pos.exactMatch:
+ 		ctx.Logger().Info(
+ 			"Resume bucket no longer available, starting from closest position",
+ 			"original_bucket", pos.bucket,
+ 			"position", pos.index,
+-			"role", pos.role,
++			"previous_role", pos.role,
+ 		)
+ 	default:
+ 		ctx.Logger().Info(
+ 			"Resuming scan from previous scan's bucket",
+ 			"bucket", pos.bucket,
+ 			"position", pos.index,
+-			"role", pos.role,
++			"previous_role", pos.role,
+ 		)
+ 	}
+ 
+@@ -447,12 +463,15 @@ func (s *Source) scanBucket(
+ 
+ 	ctx = context.WithValue(ctx, "bucket", bucket)
+ 
++	// scanBuckets calls this for every remaining bucket after a cancel, so this
++	// is not an error, or a cancelled scan would log one per bucket
+ 	if common.IsDone(ctx) {
+-		ctx.Logger().Error(ctx.Err(), "context done, while scanning bucket")
++		ctx.Logger().V(4).Info("Skipping bucket", "reason", "scan cancelled")
+ 		return 0
+ 	}
+ 
+-	ctx.Logger().V(3).Info("Scanning bucket")
++	ctx.Logger().V(2).Info("Scanning bucket")
++	start := time.Now()
+ 
+ 	regionalClient, err := s.getRegionalClientForBucket(ctx, client, role, bucket)
+ 	if err != nil {
+@@ -486,7 +505,7 @@ func (s *Source) scanBucket(
+ 				// often cause this to happen a lot (because in that case the scanner tries to scan every bucket in the
+ 				// account, but the role probably doesn't have access to all of them). This makes it expected behavior
+ 				// and therefore not an error.
+-				ctx.Logger().V(3).Info("could not list objects in bucket", "err", err)
++				ctx.Logger().V(4).Info("Skipping bucket", "reason", "role cannot list objects", "error", err)
+ 			} else {
+ 				// This can also be a failure to assume the role itself: role credentials
+ 				// are resolved lazily, so the first request that needs them surfaces the
+@@ -497,6 +516,7 @@ func (s *Source) scanBucket(
+ 			listFailed = true
+ 			break
+ 		}
++		ctx.Logger().V(4).Info("Listed page", "page_number", pageNumber, "object_count", len(output.Contents))
+ 		pageMetadata := pageMetadata{
+ 			bucket:     bucket,
+ 			role:       role,
+@@ -516,6 +536,10 @@ func (s *Source) scanBucket(
+ 		pageNumber++
+ 	}
+ 	scannedWholeBucket = startAfter == nil && !listFailed && ctx.Err() == nil
++	ctx.Logger().V(2).Info("Finished scanning bucket",
++		"objects_scanned", objectCount,
++		"pages", pageNumber-1,
++		"duration", time.Since(start))
+ 
+ 	// A filter that excludes everything otherwise looks exactly like a clean scan
+ 	// of an empty bucket, so say so rather than finishing silently.
+@@ -572,6 +596,7 @@ func (s *Source) getRegionalClientForBucket(
+ 	if region == s.defaultRegion() {
+ 		return defaultRegionClient, nil
+ 	}
++	ctx.Logger().V(5).Info("Using regional client for bucket", "region", region)
+ 
+ 	regionalClient, err := s.newClient(ctx, region, role)
+ 	if err != nil {
+@@ -632,7 +657,7 @@ func (
+```
+
+**File**: `pkg/sources/s3/s3_test.go` (modified, +128/-0)
+```diff
+@@ -4,24 +4,34 @@ import (
+ 	"encoding/base64"
+ 	"encoding/json"
+ 	"fmt"
++	"net/http"
++	"net/http/httptest"
+ 	"os"
++	"strings"
+ 	"sync"
++	"sync/atomic"
+ 	"testing"
+ 	"time"
+ 
+ 	"github.com/aws/aws-sdk-go-v2/aws"
+ 	awss3 "github.com/aws/aws-sdk-go-v2/service/s3"
+ 	s3types "github.com/aws/aws-sdk-go-v2/service/s3/types"
++	"github.com/go-logr/zapr"
+ 	"github.com/kylelemons/godebug/pretty"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
++	"go.uber.org/zap"
++	"go.uber.org/zap/zapcore"
++	"go.uber.org/zap/zaptest/observer"
+ 	"google.golang.org/protobuf/types/known/anypb"
+ 
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/common"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/log/logtest"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/credentialspb"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/sourcespb"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/sources"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/sourcestest"
+ )
+ 
+ func TestSource_Init_IncludeAndIgnoreBucketsError(t *testing.T) {
+@@ -648,3 +658,121 @@ func TestSource_SkipReason(t *testing.T) {
  		})
  	}
+ }
++
++// slowDownOnce answers the first GET of key with S3's throttling error, so the client retries it.
++type slowDownOnce struct {
++	next http.Handler
++	key  string
++	done atomic.Bool
 +}
 +
-+// TestDetectorSecretParts checks that each named regex becomes one entry in SecretParts.
-+func TestDetectorSecretParts(t *testing.T) {
-+	t.Parallel()
++func (h *slowDownOnce) ServeHTTP(w http.ResponseWriter, r *http.Request) {
++	if strings.HasSuffix(r.URL.Path, "/"+h.key) && h.done.CompareAndSwap(false, true) {
++		w.Header().Set("Content-Type", "application/xml")
++		w.WriteHeader(http.StatusServiceUnavailable)
++		_, _ = w.Write([]byte(`<Error><Code>SlowDown</Code><Message>Please reduce your request rate.</Message></Error>`))
++		return
++	}
++	h.next.ServeHTTP(w, r)
++}
 +
-+	t.Run("capture group", func(t *testing.T) {
-+		t.Parallel()
-+		detector, err := NewWebhookCustomRegex(&custom_detectorspb.CustomRegex{
-+			Name:     "test",
-+			Keywords: []string{"secret"},
-+			Regex:    map[string]string{"secret": `secret *= *"([^"\r\n]+)"`},
++func TestSource_DebugLogging(t *testing.T) {
++	const testSecret = "TESTSECRET-do-not-log-1234567890"
++
++	// One object of each kind the source logs about: scanned, empty, excluded by the filter, and a directory.
++	fake := &fakeS3{buckets: map[string]fakeBucket{"bucket": {objects: map[string]string{
++		"config.txt":      "aws_secret = " + testSecret,
++		"empty.txt":       "",
++		"archive/old.txt": "aws_secret = " + testSecret,
++		"dir/":            "x",
++	}}}}
++
++	// run the source with both Chunks and ChunkUnit, draining chunks the way the engine does
++	runSource := func(t *testing.T, ctx context.Context) {
++		server := httptest.NewServer(&slowDownOnce{next: fake, key: "config.txt"})
++		t.Cleanup(server.Close)
++		conn, err := anypb.New(&sourcespb.S3{
++			Credential:      &sourcespb.S3_Unauthenticated{},
++			Endpoint:        server.URL,
++			Buckets:         []string{"bucket"},
++			ExcludePrefixes: []string{"archive/"},
 +		})
 +		require.NoError(t, err)
 +
-+		results, err := detector.FromData(context.Background(), false, []byte(`secret="mysecret"`))
-+		require.NoError(t, err)
-+		require.Len(t, results, 1)
-+		assert.Equal(t, map[string]string{"secret": "mysecret"}, results[0].SecretParts)
-+		assert.Equal(t, `secret="mysecret"`, results[0].GetPrimarySecretValue())
-+	})
++		s := Source{}
++		require.NoError(t, s.Init(ctx, "test debug logging", 1, 1, false, conn, 1))
 +
-+	t.Run("no capture group", func(t *testing.T) {
-+		t.Parallel()
-+		detector, err := NewWebhookCustomRegex(&custom_detectorspb.CustomRegex{
-+			Name:     "test",
-+			Keywords: []string{"hog"},
-+			Regex:    map[string]string{"token": `hog_[A-Za-z0-9]{8}`},
-+		})
-+		require.NoError(t, err)
++		chunksCh := make(chan *sources.Chunk, 64)
++		go func() {
++			for range chunksCh {
++			}
++		}()
++		require.NoError(t, s.Chunks(ctx, chunksCh))
++		close(chunksCh)
 +
-+		results, err := detector.FromData(context.Background(), false, []byte("prefix hog_abcd1234 suffix"))
-+		require.NoError(t, err)
-+		require.Len(t, results, 1)
-+		assert.Equal(t, map[string]string{"token": "hog_abcd1234"}, results[0].SecretParts)
-+		assert.Equal(t, []byte("hog_abcd1234"), results[0].Raw)
-+	})
- 
-+	t.Run("verified multi-part", func(t *testing.T) {
-+		t.Parallel()
-+		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-+			w.WriteHeader(http.StatusOK)
-+		}))
-+		t.Cleanup(ts.Close)
++		reporter := sourcestest.TestReporter{}
++		require.NoError(t, s.ChunkUnit(ctx, S3SourceUnit{Bucket: "bucket"}, &reporter))
++		require.Empty(t, reporter.ChunkErrs)
++		require.NotEmpty(t, reporter.Chunks)
++	}
 +
-+		detector, err := NewWebhookCustomRegex(&custom_detectorspb.CustomRegex{
-+			Name:     "test",
-+			Keywords: []string{"secret"},
-+			Regex: map[string]string{
-+				"id":     `id_([A-Z]{4})`,
-+				"secret": `secret_([A-Z]{4})`,
-+			},
-+			Verify: []*custom_detectorspb.VerifierConfig{{
-+				Endpoint: ts.URL,
-+				Unsafe:   true,
-+			}},
-+		})
-+		require.NoError(t, err)
++	t.Run("debug on", func(t *testing.T) {
++		ctx, logs := logtest.DebugContext()
++		ctx = context.WithValues(ctx, "source_name", "test debug logging", "job_id", 1)
++		runSource(t, ctx)
 +
-+		results, err := detector.FromData(context.Background(), true, []byte("id_ABCD secret_WXYZ"))
-+		require.NoError(t, err)
-+		require.Len(t, results, 1)
-+		assert.True(t, results[0].Verified)
-+		assert.Equal(t, map[string]string{
-+			"id":     "ABCD",
-+			"secret": "WXYZ",
-+		}, results[0].SecretParts)
-+		assert.Equal(t, []byte("ABCDWXYZ"), results[0].Raw)
-+	})
- }
- 
- func TestDetectorValidations(t *testing.T) {
-@@ -351,6 +424,7 @@ func TestDetectorValidations(t *testing.T) {
- 					DetectorName: "test",
- 					Verified:     false,
- 					Raw:          []byte("MyStr0ngP@ssword!"),
-+					SecretParts:  map[string]string{"password": "MyStr0ngP@ssword!"},
- 				},
- 			},
- 		},
-@@ -398,6 +472,7 @@ func TestDetectorValidations(t *testing.T) {
- 					DetectorName: "test",
- 					Verified:     false,
- 					Raw:          []byte("MyStrongPassword!"),
-+					SecretParts:  map[string]string{"password": "MyStrongPassword!"},
- 				},
- 			},
- 		},
-@@ -445,6 +520,7 @@ func TestDetectorValidations(t *testing.T) {
- 					DetectorName: "test",
- 					Verified:     false,
- 					Raw:          []byte("MyStrongPassword!"),
-+					SecretParts:  map[string]string{"password": "MyStrongPassword!"},
- 				},
- 			},
- 		},
-@@ -492,6 +568,7 @@ func TestDetectorValidations(t *testing.T) {
- 					DetectorName: "test",
- 					Verified:     false,
- 					Raw:          []byte("MyStr@ngP@ssword!"),
-+					SecretParts:  map[string]string{"password": "MyStr@ngP@ssword!"},
- 				},
- 			},
- 		},
-@@ -540,6 +617,7 @@ func TestDetectorValidations(t *testing.T) {
- 					DetectorName: "test",
- 					Verified:     false,
- 					Raw:          []byte("MyStrongP@ssword"),
-+					SecretParts:  map[string]string{"password": "MyStrongP@ssword"},
- 				},
- 			},
- 		},
-@@ -588,6 +666,7 @@ func TestDetectorValidations(t *testing.T) {
- 					DetectorName: "test",
- 					Verified:     false,
- 					Raw:          []byte("mystrongp@ssword"),
-+					SecretParts:  map[string]string{"password": "mystrongp@ssword"},
- 				},
- 			},
- 		},
-@@ -624,6 +703,10 @@ func TestDetectorValidations(t *testing.T) {
- 					DetectorName: "test",
- 					Verified:     false,
- 					Raw:          []byte("c392c9837d69b44c764cbf260b-e618
++		// lines from each level show up
++		for _, msg := range []string{
++			"S3 source initialized",    // V(1)
++			"Found buckets to scan",    // V(1)
++			"Scanning bucket",          // V(2)
++			"Finished scanning bucket", // V(2)
++			"Scanning object",          // V(3)
++			"Listed page",              // V(4)
++			"Finished scanning object", // V(5)
++		} {
++			assert.NotZero(t, logs.FilterMessage(msg).Len(), "missing log line %q", msg)
++		}
++
++		// every skip says why, at V(4)
++		var reasons []string
++		for _, entry := range logs.FilterMessage("Skipping object").All() {
++			reasons = append(reasons, fmt.Sprint(entry.ContextMap()["reason"]))
++		}
++		assert.Contains(t, reasons, skipReasonEmptyFile)
++		assert.Contains(t, reasons, skipReasonObjectFilter)
++		assert.Contains(t, reasons, "directory")
++
++		// the throttled GET was retried, and the retry was logged through the request's context
++		var retried bool
++		for _, entry := range logs.FilterMessage("AWS SDK").All() {
++			fields := entry.ContextMap()
++			if strings.Contains(fmt.Sprint(fields["detail"]), "retrying request") {
++				retried = true
++				assert.Equal(t, "config.txt", fields["key"])
++			}
++		}
++		assert.True(t, retried, "missing retry log line")
++
++		// every line came from the context logger, so it carries the source fields,
++		// and none of them contain the secret
++		for _, entry := range logs.All() {
++			fields := entry.ContextMap()
++			assert.Contains(t, fields, "source_name", "line %q", entry.Message)
++			assert.Contains(t, fields, "job_id", "line %q", entry.Message)
++			assert.NotContains(t, ent
+```
+
+**File**: `pkg/sources/s3/sdklog.go` (added, +34/-0)
+```diff
+@@ -0,0 +1,34 @@
++package s3
++
++import (
++	stdctx "context"
++	"fmt"
++
++	"github.com/aws/smithy-go/logging"
++
++	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
++)
++
++// sdkLogger passes the AWS SDK's retry logs to the logger of the request's
++// context, so they carry that request's fields and follow per-source debug.
++// The zero value is what the client holds. It drops anything logged without a
++// request context, since there is no logger to send it to.
++type sdkLogger struct {
++	ctx stdctx.Context
++}
++
++var _ logging.ContextLogger = sdkLogger{}
++
++func (l sdkLogger) WithContext(ctx stdctx.Context) logging.Logger {
++	return sdkLogger{ctx: ctx}
++}
++
++func (l sdkLogger) Logf(_ logging.Classification, format string, v ...any) {
++	if l.ctx == nil {
++		return
++	}
++	logger := context.AddLogger(l.ctx).Logger().V(4)
++	if logger.Enabled() {
++		logger.Info("AWS SDK", "detail", fmt.Sprintf(format, v...))
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5481** (2026-10-27): Clean up S3 source logging for per-source debug (@kashifkhan0771)
 - **PR #5474** (2026-10-24): Fix 7z and rar panics in the archive handler and log recovered panic stacks (@dustin-decker)
 - **PR #5473** (2026-10-24): Keep GoReleaser temp files off the tmpfs /tmp in releases (@dustin-decker)
 - **PR #5472** (2026-10-24): security: bump andybalholm/brotli to v1.2.7 (CVE-2026-111497) (@dustin-decker)
 - **PR #5471** (2026-10-24): Fix --include-wikis help typo and huggingface README description (@protonnegativo)
 - **PR #5470** (2026-10-26): [SCAN-180]: Populate SecretParts for custom detector results (@casey-tran)
-- **PR #5467** (2026-10-26): Skip GitHub comment errors when issues or PRs are off (@kashifkhan0771)
 
 ---
 
@@ -1357,21 +1553,32 @@ We do this by adding the SecretParts field to Results within custom detectors.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add SecretParts to custom detectors (#5470)
+## X. Clean up S3 source logging for per-source debug (#5481)
 
 **RULE**:
-When implementing operations in `pkg/custom_detectors/CUSTOM_DETECTORS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/sources/s3/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2caa45cf`: add SecretParts to custom detectors (#5470). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce76ea8f`: Clean up S3 source logging for per-source debug (#5481). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/custom_detectors/CUSTOM_DETECTORS.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/sources/s3/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-     Each named regex is recorded as a separate part of the detected secret, labeled with the regex's name, with the first capture group as its value (or the entire match if there is no capture group). Renaming a regex changes that label for new results, so keep names stable once a detector is in use.
+## Debug logs
+
+With debug on for this source (`debug: true` in the config), the scan logs:
+
+- `V(1)`: `S3 source initialized` with the config choices (the endpoint's host only, never credentials), and `Found buckets to scan` for each role.
+- `V(2)`: `Scanning bucket` and `Finished scanning bucket`, with the objects scanned, pages and duration.
+- `V(3)`: `Scanning object` for each object downloaded.
+- `V(4)`: `Skipping bucket` and `Skipping object` with a `reason`, `Listed page` for each page, and `AWS SDK` lines for retries, including S3 throttling (`SlowDown`).
+- `V(5)`: `Finished scanning object` with its duration, and the region used for a bucket outside the default region.
+
+Lines carry `role`, `bucket`, `page_number` and `key` where they apply. An object skipped for one of the reasons above shows its reason here, so a missing finding can be traced to the object it would have come from.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1381,4 +1588,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2caa45cf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce76ea8f` are properly handled with clean fallback behavior.

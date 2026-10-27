@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T12:46:43.494Z",
-  "total_verified_learnings": 1106,
+  "last_updated": "2026-10-27T12:50:30.425Z",
+  "total_verified_learnings": 1107,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -11153,8 +11153,8 @@
       "slug": "expo-expo",
       "platform": "github",
       "source_url": "https://github.com/expo/expo",
-      "source_version": "55889d57",
-      "content_hash": "76a90574f9442365d9ff70debc0d11c6cee02bf4d8572491a9374eba57f37f64",
+      "source_version": "a476ff07",
+      "content_hash": "cb24b128928a03768b98255d9602181b7e463e3227520b324374c60f0eb908ad",
       "dossier_path": "07_PROJECT_LEARNING/expo-expo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/expo-expo-learnings.md",
       "promoted_rules": [
@@ -11167,6 +11167,11 @@
           "number": 3793,
           "title": "[expo] Fall back to precompiled modules for buildFromSource patterns in the Swif",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4764,
+          "title": "[ui][android] Fix crash when dragging Slider and VerticalSlider (#52376)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11174,7 +11179,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T06:42:34.124Z",
+      "verified_at": "2026-10-27T12:50:24.821Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31032,8 +31037,8 @@
       "slug": "karmada-io-karmada",
       "platform": "github",
       "source_url": "https://github.com/karmada-io/karmada",
-      "source_version": "103984cd",
-      "content_hash": "7eb9bd7aa5503bd9f4ace65e9f968c77906907f45c84980684b1f3771620ae68",
+      "source_version": "32047636",
+      "content_hash": "a9a8739d06be43c7f55c319564b30151366d0b6c0cbfb69e400d113564656651",
       "dossier_path": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "promoted_rules": [
@@ -31056,6 +31061,11 @@
           "number": 4117,
           "title": "add priority based preemptive scheduling gate (#7966)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4765,
+          "title": "Merge pull request #7971 from Sarthak-Shreshtha01/fix/issue-7965",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31063,7 +31073,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T06:44:56.503Z",
+      "verified_at": "2026-10-27T12:50:25.924Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50718,8 +50728,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "2caa45cf",
-      "content_hash": "d66b972baa59eb46c76d59d4c13e4635b3c51918cc28fc8b12cd23a095ee8d9b",
+      "source_version": "ce76ea8f",
+      "content_hash": "5a605a379142a30e61b14bb2f3aeb64b4ca598abc5fd544173447834f6b0ce50",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -50789,7 +50799,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T21:10:29.655Z",
+      "verified_at": "2026-10-27T12:50:26.040Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53733,8 +53743,8 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "0f38c118",
-      "content_hash": "e982eec13d8e6ebb14b7deb8550c8a6472932f2a7854d8d4be64c91732cf869b",
+      "source_version": "1ec33547",
+      "content_hash": "7c23e515703ca38ac50da84d31321193b78488a49b83b10425c8dab85d11ba3b",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
@@ -53772,6 +53782,11 @@
           "number": 4449,
           "title": "Prepare Rust 1.95 and shared crate dependencies (1/4)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4766,
+          "title": "Split TestSchedulerRowLevelSecurityCommands and TestUserJobMonitoring into two p",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53779,7 +53794,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T21:02:21.689Z",
+      "verified_at": "2026-10-27T12:50:30.404Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -132524,6 +132539,95 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T12:46:43.482Z"
+    },
+    "learn-github-papersgpt-papersgpt-for-zotero": {
+      "learning_id": "learn-github-papersgpt-papersgpt-for-zotero",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "papersgpt/papersgpt-for-zotero",
+      "repository": "papersgpt/papersgpt-for-zotero",
+      "slug": "papersgpt-papersgpt-for-zotero",
+      "platform": "github",
+      "source_url": "https://github.com/papersgpt/papersgpt-for-zotero",
+      "source_version": "e2706780",
+      "content_hash": "162c9f3ce81e61eb82c72b98fe7df9e064fc886da09d8f6b72992e94ac7a24f6",
+      "dossier_path": "07_PROJECT_LEARNING/papersgpt-papersgpt-for-zotero-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/papersgpt-papersgpt-for-zotero-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4763,
+          "title": "Merge pull request #161 from anupamme/fix-repo-papersgpt-for-zotero-v-001-minimi",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T12:50:11.054Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4763": {
+      "learning_id": "rule-4763",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4763,
+      "title": "Merge pull request #161 from anupamme/fix-repo-papersgpt-for-zotero-v-001-minimi",
+      "source_url": "https://github.com/papersgpt/papersgpt-for-zotero",
+      "source_version": "e2706780",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:50:11.054Z"
+    },
+    "rule-4764": {
+      "learning_id": "rule-4764",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4764,
+      "title": "[ui][android] Fix crash when dragging Slider and VerticalSlider (#52376)",
+      "source_url": "https://github.com/expo/expo",
+      "source_version": "a476ff07",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:50:24.821Z"
+    },
+    "rule-4765": {
+      "learning_id": "rule-4765",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4765,
+      "title": "Merge pull request #7971 from Sarthak-Shreshtha01/fix/issue-7965",
+      "source_url": "https://github.com/karmada-io/karmada",
+      "source_version": "32047636",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:50:25.924Z"
+    },
+    "rule-4766": {
+      "learning_id": "rule-4766",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4766,
+      "title": "Split TestSchedulerRowLevelSecurityCommands and TestUserJobMonitoring into two p",
+      "source_url": "https://github.com/ytsaurus/ytsaurus",
+      "source_version": "1ec33547",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:50:30.404Z"
     }
   },
   "aliases": {

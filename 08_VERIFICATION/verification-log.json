@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-L9IS",
-    "timestamp": "2026-10-25T11:20:46.708Z",
-    "repository": "guokaigdg/animal-island-ui",
-    "learningId": "learn-github-guokaigdg-animal-island-ui",
-    "contentHash": "b4d7d103a9170c14c7ce2c2b45e421f9add13b9c3dcc879be1f3d15e62d8a172",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-LC0W",
-    "timestamp": "2026-10-25T11:20:49.952Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "6541c3f98f9bc2a71923e98fe4d6e2bd80c9bc2726da3ddfdea59ac650924f59",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-LG4A",
-    "timestamp": "2026-10-25T11:20:55.258Z",
-    "repository": "Qwen/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-qwen-qwen-image-2-1",
-    "contentHash": "4577f352edaf8085d3508476f4abbdb4bd2ec4e540c7800ce6c85748a95ef61c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-Z8P7",
-    "timestamp": "2026-10-25T11:31:38.827Z",
-    "repository": "ajeetdsouza/zoxide",
-    "learningId": "learn-github-ajeetdsouza-zoxide",
-    "contentHash": "c800bd2238a6790c8707c98ab6de741d05e4bfdbcfb0ddcf844fd8c38f0d033b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-ZCF2",
-    "timestamp": "2026-10-25T11:31:43.646Z",
-    "repository": "onejs/one",
-    "learningId": "learn-github-onejs-one",
-    "contentHash": "8624d60d6e3bcd664b72bb521b7cefc50467f25452cd49303dc655d11fe8167f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-ZDVO",
     "timestamp": "2026-10-25T11:31:45.540Z",
     "repository": "argoproj/argo-events",
@@ -7490,6 +7415,81 @@
     "repository": "tailscale/tailscale",
     "learningId": "learn-github-tailscale-tailscale",
     "contentHash": "996c07471cfc335a2bd8d3fe808e6eda64d37849f29dff150239f25c2f50e07c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-NY2W",
+    "timestamp": "2026-10-27T12:50:11.144Z",
+    "repository": "papersgpt/papersgpt-for-zotero",
+    "learningId": "learn-github-papersgpt-papersgpt-for-zotero",
+    "contentHash": "162c9f3ce81e61eb82c72b98fe7df9e064fc886da09d8f6b72992e94ac7a24f6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-O8P9",
+    "timestamp": "2026-10-27T12:50:24.909Z",
+    "repository": "expo/expo",
+    "learningId": "learn-github-expo-expo",
+    "contentHash": "cb24b128928a03768b98255d9602181b7e463e3227520b324374c60f0eb908ad",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-O9KA",
+    "timestamp": "2026-10-27T12:50:26.026Z",
+    "repository": "karmada-io/karmada",
+    "learningId": "learn-github-karmada-io-karmada",
+    "contentHash": "a9a8739d06be43c7f55c319564b30151366d0b6c0cbfb69e400d113564656651",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-O9NC",
+    "timestamp": "2026-10-27T12:50:26.136Z",
+    "repository": "trufflesecurity/trufflehog",
+    "learningId": "learn-github-trufflesecurity-trufflehog",
+    "contentHash": "5a605a379142a30e61b14bb2f3aeb64b4ca598abc5fd544173447834f6b0ce50",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-OD0D",
+    "timestamp": "2026-10-27T12:50:30.493Z",
+    "repository": "ytsaurus/ytsaurus",
+    "learningId": "learn-github-ytsaurus-ytsaurus",
+    "contentHash": "7c23e515703ca38ac50da84d31321193b78488a49b83b10425c8dab85d11ba3b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

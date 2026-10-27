@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T12:46:43.567Z",
+  "last_updated": "2026-10-27T12:50:30.505Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4341,14 +4341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karmada-io-karmada",
-      "content_hash": "7eb9bd7aa5503bd9f4ace65e9f968c77906907f45c84980684b1f3771620ae68",
-      "verified_at": "2026-10-25T06:44:56.583Z",
+      "content_hash": "a9a8739d06be43c7f55c319564b30151366d0b6c0cbfb69e400d113564656651",
+      "verified_at": "2026-10-27T12:50:26.037Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T06:44:56.583Z"
+      "last_updated": "2026-10-27T12:50:26.037Z"
     },
     "milvus-io/bootcamp": {
       "repository": "milvus-io/bootcamp",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "d66b972baa59eb46c76d59d4c13e4635b3c51918cc28fc8b12cd23a095ee8d9b",
-      "verified_at": "2026-10-26T21:10:29.753Z",
+      "content_hash": "5a605a379142a30e61b14bb2f3aeb64b4ca598abc5fd544173447834f6b0ce50",
+      "verified_at": "2026-10-27T12:50:26.153Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T21:10:29.753Z"
+      "last_updated": "2026-10-27T12:50:26.153Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -8556,14 +8556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "e982eec13d8e6ebb14b7deb8550c8a6472932f2a7854d8d4be64c91732cf869b",
-      "verified_at": "2026-10-25T21:02:21.772Z",
+      "content_hash": "7c23e515703ca38ac50da84d31321193b78488a49b83b10425c8dab85d11ba3b",
+      "verified_at": "2026-10-27T12:50:30.504Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T21:02:21.772Z"
+      "last_updated": "2026-10-27T12:50:30.504Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",
@@ -15516,14 +15516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-expo-expo",
-      "content_hash": "76a90574f9442365d9ff70debc0d11c6cee02bf4d8572491a9374eba57f37f64",
-      "verified_at": "2026-10-23T06:42:34.187Z",
+      "content_hash": "cb24b128928a03768b98255d9602181b7e463e3227520b324374c60f0eb908ad",
+      "verified_at": "2026-10-27T12:50:24.922Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T06:42:34.187Z"
+      "last_updated": "2026-10-27T12:50:24.922Z"
     },
     "vercel/swr": {
       "repository": "vercel/swr",
@@ -16379,6 +16379,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-27T12:35:07.471Z"
+    },
+    "papersgpt/papersgpt-for-zotero": {
+      "repository": "papersgpt/papersgpt-for-zotero",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-papersgpt-papersgpt-for-zotero",
+      "content_hash": "162c9f3ce81e61eb82c72b98fe7df9e064fc886da09d8f6b72992e94ac7a24f6",
+      "verified_at": "2026-10-27T12:50:11.155Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T12:50:11.155Z"
     }
   },
   "repos": {

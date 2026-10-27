@@ -5282,3 +5282,8 @@
 | `CYCLE-20261027-JBQN` | `2026-10-27T12:46:35.567Z` | `cheeriojs/dom-serializer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4760` | Yes (`6bfe8bf3...`) |
 | `CYCLE-20261027-JF0M` | `2026-10-27T12:46:39.814Z` | `appwrite/appwrite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4761` | Yes (`c540c8c9...`) |
 | `CYCLE-20261027-JHWI` | `2026-10-27T12:46:43.554Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4762` | Yes (`996c0747...`) |
+| `CYCLE-20261027-NY2W` | `2026-10-27T12:50:11.144Z` | `papersgpt/papersgpt-for-zotero` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4763` | Yes (`162c9f3c...`) |
+| `CYCLE-20261027-O8P9` | `2026-10-27T12:50:24.909Z` | `expo/expo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4764` | Yes (`cb24b128...`) |
+| `CYCLE-20261027-O9KA` | `2026-10-27T12:50:26.026Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4765` | Yes (`a9a8739d...`) |
+| `CYCLE-20261027-O9NC` | `2026-10-27T12:50:26.136Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md` | Yes (`5a605a37...`) |
+| `CYCLE-20261027-OD0D` | `2026-10-27T12:50:30.493Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4766` | Yes (`7c23e515...`) |

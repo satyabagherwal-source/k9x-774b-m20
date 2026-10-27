@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source**: github ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
-> **Source Version**: `103984cd`  
+> **Source Version**: `32047636`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T06:44:56.218Z  
+> **Timestamp**: 2026-10-27T12:50:25.480Z  
 > **Learning ID**: `learn-github-karmada-io-karmada`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T06:44:55.990Z  
+> **Harvest Timestamp**: 2026-10-27T12:50:25.472Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open, Multi-Cloud, Multi-Cluster Kubernetes Orchestration
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5732 stars
+- **Stars / Engagement**: 5738 stars
 
 ---
 
@@ -984,11 +984,17 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7966** (2026-10-23): **feat: add priority based preemptive scheduling gate**
-  *Symptoms*: **What type of PR is this?** /kind feature <!-- Add one of the following kinds: /kind bug /kind feature /kind documentation /kind cleanup  Optionally add one or more of the following kinds if applicable: /kind api-change /kind deprecation /kind failing-test /kind flake /kind regression  -->  **What this PR does / why we need it**: This PR introduces the `PriorityBasedPreemptiveScheduling` feature gate as part of the [priority-based binding preemption proposal](https://github.com/karmada-io/karmada/blob/master/docs/proposals/scheduling/binding-preemption/binding-preemption.md) and related work items from the [umbrella issue tracking the work](https://github.com/karmada-io/karmada/issues/7943)  **Which issue(s) this PR fixes**: Part of #7943 <!-- *Optionally link to the umbrella issue if this PR resolves part of it. Usage: `Part of #<issue number>`, or `Part of (paste link of issue)`.* Part of # -->  **Special notes for your reviewer**: This feature gate requires both of the following gates to be turned on  ```go PriorityBasedScheduling && PriorityBasedPreemptiveScheduling ``` <!-- Such as a test report of this PR. -->  **Does this PR introduce a user-facing change?**: <!-- If no, just write "NONE" in the release-note block below. If yes, a release note is required. Some brief examples of release notes: 1. `karmada-controller-manager`: Fixed the issue that xxx 2. `karmada-scheduler`: The deprecated flag `--xxx` now has been removed. Users of this flag should xxx. 3. `API Change
+- **Issue #7984** (2026-10-26): **build(deps): bump actions/setup-python from 7.0.0 to 7.1.0**
+  *Symptoms*: Bumps [actions/setup-python](https://github.com/actions/setup-python) from 7.0.0 to 7.1.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/actions/setup-python/releases">actions/setup-python's releases</a>.</em></p> <blockquote> <h2>v7.1.0</h2> <h2>What's Changed</h2> <h3>Enhancements</h3> <ul> <li>Add <code>mirror</code> and <code>mirror-token</code> inputs for custom Python distribution sources by <a href="https://github.com/luhenry"><code>@​luhenry</code></a> in <a href="https://redirect.github.com/actions/setup-python/pull/1302">actions/setup-python#1302</a></li> <li>Improve error message clarity by <a href="https://github.com/v-lmvysakh"><code>@​v-lmvysakh</code></a> in <a href="https://redirect.github.com/actions/setup-python/pull/1351">actions/setup-python#1351</a></li> </ul> <h3>Dependency Upgrade</h3> <ul> <li>Upgrade browserslist from 4.28.2 to 4.28.9 by <a href="https://github.com/dependabot"><code>@​dependabot</code></a> in <a href="https://redirect.github.com/actions/setup-python/pull/1353">actions/setup-python#1353</a></li> <li>Upgrade <code>@​typescript-eslint/parser</code> from 8.62.0 to 8.70.0 by <a href="https://github.com/dependabot"><code>@​dependabot</code></a> in <a href="https://redirect.github.com/actions/setup-python/pull/1343">actions/setup-python#1343</a></li> <li>Upgrade eslint-plugin-jest from 29.15.2 to 29.16.6 by <a href="https://github.com/dependabot"><code>@​dependabot</code></a> in <a href="https://r
+  **Post-Mortem & Fix Analysis**:
+  > /lgtm /approve
+  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/karmada-io/karmada/pull/7984#issuecomment-6406017090" title="Approved">zhzhuang-zju</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=karmada-io%2Fkarmada).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[.github/workflows/OWNERS](https://github.com/karmada-io/karmada/blob/master/.github/workflows/OWNERS)~~ [zhzhuang-zju]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
 
-- **Issue #7963** (2026-10-22): **fix: add ClusterTaintPolicy webhook to chart, init, and operator**
-  *Symptoms*: **What type of PR is this?**  /kind bug  **What this PR does / why we need it**:  This PR adds the `clustertaintpolicy.karmada.io` validating webhook to the Helm chart, `karmadactl init`, and `karmada-operator`. The entry is the same as in `artifacts/deploy/webhook-configuration.yaml`.  #6370 added `/validate-clustertaintpolicy` and `--allow-no-execute-taint-policy`, but it added the webhook entry only to `artifacts/deploy`. For the other installers, the API server never calls the webhook. The flag has no effect, and the API server accepts every `NoExecute` taint in a `ClusterTaintPolicy`. Details: https://github.com/karmada-io/karmada/issues/7923#issuecomment-6209948597  **Which issue(s) this PR fixes**:  Fixes #7923  **Special notes for your reviewer**:  This PR depends on #7953, which is on `master`.  Behavior change:  - After the upgrade, `karmada-webhook` denies create and update requests for a `ClusterTaintPolicy` with a `NoExecute` taint, unless the flag is `true`. - Existing policies stay in the API, and the controller continues to use them. - Re-apply of an unchanged `NoExecute` policy without the flag: denied with `spec.taints[0]: Forbidden: Configuring taint with NoExecute effect is not allowed`. - The flag default stays `false`, as the flag help text requires.  Upgrade impact per installer:  - Helm chart: one `helm upgrade` can add the entry and set the flag. - `karmada-operator`: the operator applies the webhook configuration again each time it reconciles a valid
+- **Issue #7983** (2026-10-26): **build(deps): bump docker/login-action from 4.6.0 to 4.7.0**
+  *Symptoms*: Bumps [docker/login-action](https://github.com/docker/login-action) from 4.6.0 to 4.7.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/docker/login-action/releases">docker/login-action's releases</a>.</em></p> <blockquote> <h2>v4.7.0</h2> <ul> <li>Preserve explicit ECR settings in <code>registry-auth</code> by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1089">docker/login-action#1089</a></li> <li>Use registry hosts for scoped credentials by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1088">docker/login-action#1088</a></li> <li>Raise Docker Hub OIDC max expiry to 6 hours by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1068">docker/login-action#1068</a></li> <li>Log Docker Hub OIDC token exchange progress by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1061">docker/login-action#1061</a></li> <li>Bump <code>@​aws-sdk/client-ecr</code> and <code>@​aws-sdk/client-ecr-public</code> to 3.1154.0 in <a href="https://redirect.github.com/docker/login-action/pull/1093">docker/login-action#1093</a></li> <li>Bump <code>@​docker/actions-toolkit</code> from 0.94.0 to 0.107.0 in <a href="https://redir
+  **Post-Mortem & Fix Analysis**:
+  > /lgtm /approve
+  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/karmada-io/karmada/pull/7983#issuecomment-6406030246" title="Approved">zhzhuang-zju</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=karmada-io%2Fkarmada).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[.github/workflows/OWNERS](https://github.com/karmada-io/karmada/blob/master/.github/workflows/OWNERS)~~ [zhzhuang-zju]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1005,355 +1011,193 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `103984cd` (2026-10-23)
-**Commit Message**: feat: add priority based preemptive scheduling gate (#7966)
+### Incident Patch 1: `af7b2ae1` (2026-10-26)
+**Commit Message**: Merge pull request #7971 from Sarthak-Shreshtha01/fix/issue-7965
 
-* Introduce feature gate  in alpha
+fix(cronfederatedhpa): avoid a panic when failedHistoryLimit is 0
 
-Signed-off-by: Ajay Sarjoo <[REDACTED_EMAIL]>
-
-* Update comment based on PR feedback
-
-Signed-off-by: Ajay Sarjoo <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Ajay Sarjoo <[REDACTED_EMAIL]>
-
-**File**: `docs/command-line-flags/karmada-agent.md` (modified, +1/-0)
+**File**: `pkg/controllers/cronfederatedhpa/cronfederatedhpa_job.go` (modified, +9/-4)
 ```diff
-@@ -82,6 +82,7 @@ Generic flags:
-                                                        LoggingBetaOptions=true|false (BETA - default=true)
-                                                        MultiClusterService=true|false (ALPHA - default=false)
-                                                        MultiplePodTemplatesScheduling=true|false (ALPHA - default=false)
-+                                                       PriorityBasedPreemptiveScheduling=true|false (ALPHA - default=false)
-                                                        PriorityBasedScheduling=true|false (BETA - default=true)
-                                                        PropagateDeps=true|false (BETA - default=true)
-                                                        PropagationPolicyPreemption=true|false (ALPHA - default=false)
-```
-
-**File**: `docs/command-line-flags/karmada-aggregated-apiserver.md` (modified, +1/-0)
-```diff
-@@ -138,6 +138,7 @@ Generic flags:
-                                                                 MultiplePodTemplatesScheduling=true|false (ALPHA - default=false)
-                                                                 NativeHistograms=true|false (ALPHA - default=false)
-                                                                 OpenAPIEnums=true|false (BETA - default=true)
-+                                                                PriorityBasedPreemptiveScheduling=true|false (ALPHA - default=false)
-                                                                 PriorityBasedScheduling=true|false (BETA - default=true)
-                                                                 PropagateDeps=true|false (BETA - default=true)
-                                                                 PropagationPolicyPreemption=true|false (ALPHA - default=false)
-```
-
-**File**: `docs/command-line-flags/karmada-controller-manager.md` (modified, +1/-0)
-```diff
-@@ -87,6 +87,7 @@ Generic flags:
-                                                                        LoggingBetaOptions=true|false (BETA - default=true)
-                                                                        MultiClusterService=true|false (ALPHA - default=false)
-                                                                        MultiplePodTemplatesScheduling=true|false (ALPHA - default=false)
-+                                                                       PriorityBasedPreemptiveScheduling=true|false (ALPHA - default=false)
-                                                                        PriorityBasedScheduling=true|false (BETA - default=true)
-                                                                        PropagateDeps=true|false (BETA - default=true)
-                                                                        PropagationPolicyPreemption=true|false (ALPHA - default=false)
-```
-
-**File**: `docs/command-line-flags/karmada-scheduler-estimator.md` (modified, +1/-0)
-```diff
-@@ -60,6 +60,7 @@ Generic flags:
-                                            LoggingBetaOptions=true|false (BETA - default=true)
-                                            MultiClusterService=true|false (ALPHA - default=false)
-                                            MultiplePodTemplatesScheduling=true|false (ALPHA - default=false)
-+                                           PriorityBasedPreemptiveScheduling=true|false (ALPHA - default=false)
-                                            PriorityBasedScheduling=true|false (BETA - default=true)
-                                            PropagateDeps=true|false (BETA - default=true)
-                                            PropagationPolicyPreemption=true|false (ALPHA - default=false)
-```
-
-**File**: `docs/command-line-flags/karmada-scheduler.md` (modified, +1/-0)
-```diff
-@@ -64,6 +64,7 @@ Generic flags:
-                                                        LoggingBetaOptions=true|false (BETA - default=true)
-                                                        MultiClusterService=true|false (ALPHA - default=false)
-                                                        MultiplePodTemplatesScheduling=true|false (ALPHA - default=false)
-+                                                       PriorityBasedPreemptiveScheduling=true|false (ALPHA - default=false)
-                                                        PriorityBasedScheduling=true|false (BETA - default=true)
-                                                        PropagateDeps=true|false (BETA - default=true)
-                                                        PropagationPolicyPreemption=true|false (ALPHA - default=false)
-```
-
-**File**: `docs/command-line-flags/karmada-search.md` (modified, +1/-0)
-```diff
-@@ -151,6 +151,7 @@ Generic flags:
-                                                                 kube:MultiplePodTemplatesScheduling=true|false (ALPHA - default=false)
-                                                                 kube:NativeHistograms=true|false (ALPHA - default=false)
-                                                                 kube:OpenAPIEnums=true|false (BETA - default=true)
-+                                                                kube:PriorityBasedPreemptiveScheduling=true|false (ALPHA - default=false)
-                                                                 kube:PriorityBasedScheduling=true|false (BETA - default=true)
-                                                                 kube:PropagateDeps=true|false (BETA - default=true)
-                                                                 kube:PropagationPolicyPreemption=true|false (ALPHA - default=false)
-```
-
-**File**: `docs/command-line-flags/karmada-webhook.md` (modified, +1/-0)
-```diff
-@@ -63,6 +63,7 @@ Generic flags:
-                                            LoggingBetaOptions=true|false (BETA - default=true)
-                                            MultiClusterService=true|false (ALPHA - default=false)
-                                            MultiplePodTemplatesScheduling=true|false (ALPHA - default=false)
-+                                           PriorityBasedPreemptiveScheduling=true|false (ALPHA - default=false)
-                                            PriorityBasedScheduling=true|false (BETA - default=true)
-                                            PropagateDeps=true|false (BETA - default=true)
-                                            PropagationPolicyPreemption=true|false (ALPHA - default=false)
-```
-
-**File**: `pkg/features/features.go` (modified, +16/-0)
-```diff
-@@ -75,6 +75,16 @@ const (
- 	// beta: v1.19
- 	PriorityBasedScheduling featuregate.Feature = "PriorityBasedScheduling"
+@@ -230,11 +230,16 @@ func (c *ScalingJob) addFailedExecutionHistory(
+ 			Message:       errMsg,
+ 		}
+ 		historyLimits := helper.GetCronFederatedHPAFailedHistoryLimits(c.rule)
+-		if len(cronFHPA.Status.ExecutionHistories[index].FailedExecutions) > historyLimits-1 {
+-			cronFHPA.Status.ExecutionHistories[index].FailedExecutions = cronFHPA.Status.ExecutionHistories[index].FailedExecutions[:historyLimits-1]
++		if historyLimits <= 0 {
++			// No failed history should be kept.
++			cronFHPA.Status.ExecutionHistories[index].FailedExecutions = nil
++		} else {
++			if len(cronFHPA.Status.ExecutionHistories[index].FailedExecutions) > historyLimits-1 {
++				cronFHPA.Status.ExecutionHistories[index].FailedExecutions = cronFHPA.Status.ExecutionHistories[index].FailedExecutions[:historyLimits-1]
++			}
++			cronFHPA.Status.ExecutionHistories[index].FailedExecutions =
++				append([]autoscalingv1alpha1.FailedExecution{failedExecution}, cronFHPA.Status.ExecutionHistories[index].FailedExecutions...)
+ 		}
+-		cronFHPA.Status.ExecutionHistories[index].FailedExecutions =
+-			append([]autoscalingv1alpha1.FailedExecution{failedExecution}, cronFHPA.Status.ExecutionHistories[index].FailedExecutions...)
+ 		cronFHPA.Status.ExecutionHistories[index].NextExecutionTime = &metav1.Time{Time: nextExecutionTime}
+ 	}
  
-+	// PriorityBasedPreemptiveScheduling controls whether the scheduler may preempt
-+	// lower-priority bindings when the target cluster lacks sufficient resources
-+	// to schedule a higher-priority binding.
-+	// This feature depends on PriorityBasedScheduling and only takes effect when
-+	// both feature gates are enabled.
-+	//
-+	// owner: @seanlaii, @asarj
-+	// alpha: v1.20
-+	PriorityBasedPreemptiveScheduling featuregate.Feature = "PriorityBasedPreemptiveScheduling"
-+
- 	// FederatedQuotaEnforcement controls whether the existing FederatedResourceQuota enhancement feature is enabled.
- 	// When enabled, the existing FederatedResourceQuota can impose namespaced resource limits directly on the Karmada control-plane level
- 	//
-@@ -174,6 +184,7 @@ var (
- 		ResourceQuotaEstimate:             {Default: false, PreRelease: featuregate.Alpha},
- 		StatefulFailoverInjection:         {Default: false, PreRelease: featuregate.Alpha},
- 		PriorityBasedScheduling:           {Default: true, PreRelease: featuregate.Beta},
-+		PriorityBasedPreemptiveScheduling: {Default: false, PreRelease: featuregate.Alpha},
- 		FederatedQuotaEnforcement:         {Default: false, PreRelease: featuregate.Alpha},
- 		LoggingAlphaOptions:               {Default: false, PreRelease: featuregate.Alpha},
- 		LoggingBetaOptions:                {Default: true, PreRelease: featuregate.Beta},
-@@ -188,3 +199,8 @@ var (
- func init() {
- 	runtime.Must(FeatureGate.Add(DefaultFeatureGates))
+```
+
+**File**: `pkg/controllers/cronfederatedhpa/cronfederatedhpa_job_test.go` (modified, +75/-0)
+```diff
+@@ -189,6 +189,81 @@ func TestScaleFHPA(t *testing.T) {
+ 	}
  }
+ 
++func TestAddFailedExecutionHistory(t *testing.T) {
++	existingFailedExecutions := []autoscalingv1alpha1.FailedExecution{
++		{Message: "old-1"},
++		{Message: "old-2"},
++	}
 +
-+// PriorityBasedPreemptiveSchedulingEnabled reports whether priority-based preemptive scheduling is enabled.
-+func PriorityBasedPreemptiveSchedulingEnabled() bool {
-+	return FeatureGate.Enabled(PriorityBasedScheduling) && FeatureGate.Enabled(PriorityBasedPreemptiveScheduling)
++	tests := []struct {
++		name               string
++		failedHistoryLimit *int32
++		expectedMessages   []string
++	}{
++		{
++			name:               "limit 0 keeps no failed history",
++			failedHistoryLimit: new(int32(0)),
++			expectedMessages:   nil,
++		},
++		{
++			name:               "limit 1 keeps only the newest failed history",
++			failedHistoryLimit: new(int32(1)),
++			expectedMessages:   []string{"new"},
++		},
++		{
++			name:               "default limit keeps up to 3 failed histories",
++			failedHistoryLimit: nil,
++			expectedMessages:   []string{"new", "old-1", "old-2"},
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			cronFHPA := &autoscalingv1alpha1.CronFederatedHPA{
++				ObjectMeta: metav1.ObjectMeta{
++					Name:      "test-cron-fhpa",
++					Namespace: "default",
++				},
++				Status: autoscalingv1alpha1.CronFederatedHPAStatus{
++					ExecutionHistories: []autoscalingv1alpha1.ExecutionHistory{
++						{
++							RuleName:         "test-rule",
++							FailedExecutions: append([]autoscalingv1alpha1.FailedExecution{}, existingFailedExecutions...),
++						},
++					},
++				},
++			}
++
++			scheme := runtime.NewScheme()
++			_ = autoscalingv1alpha1.Install(scheme)
++			client := fake.NewClientBuilder().WithScheme(scheme).WithObjects(cronFHPA).WithStatusSubresource(cronFHPA).Build()
++
++			job := &ScalingJob{
++				client:    client,
++				scheduler: gocron.NewScheduler(time.UTC),
++				rule: autoscalingv1alpha1.CronFederatedHPARule{
++					Name:               "test-rule",
++					FailedHistoryLimit: tt.failedHistoryLimit,
++				},
++			}
++
++			assert.NotPanics(t, func() {
++				assert.NoError(t, job.addFailedExecutionHistory(cronFHPA, "new"))
++			})
++
++			updated := &autoscalingv1alpha1.CronFederatedHPA{}
++			assert.NoError(t, client.Get(context.TODO(), types.NamespacedName{Name: cronFHPA.Name, Namespace: cronFHPA.Namespace}, updated))
++			assert.Len(t, updated.Status.ExecutionHistories, 1)
++
++			var messages []string
++			for _, failedExecution := range updated.Status.ExecutionHistories[0].FailedExecutions {
++				messages = append(messages, failedExecution.Message)
++			}
++			assert.Equal(t, tt.expectedMessages, messages)
++		})
++	}
 +}
++
+ func TestFindExecutionHistory(t *testing.T) {
+ 	tests := []struct {
+ 		name          string
 ```
 
 ---
 
-### Incident Patch 2: `966b4c35` (2026-10-23)
-**Commit Message**: Merge pull request #7954 from RainbowMango/pr_extend_preemption_api
+### Incident Patch 2: `49792277` (2026-10-26)
+**Commit Message**: build(deps): bump github/codeql-action/upload-sarif
 
-Introduce PreemptionPolicy to ResourceBinding SchedulePriority API
+Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.39.0 to 4.39.1.
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee...9b3254085494b55a0f7c4c2b3d2d52cc712ce370)
 
-**File**: `api/openapi-spec/swagger.json` (modified, +4/-0)
+---
+updated-dependencies:
+- dependency-name: github/codeql-action/upload-sarif
+  dependency-version: 4.39.1
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/ci-image-scanning-on-schedule.yml` (modified, +1/-1)
 ```diff
-@@ -21891,6 +21891,10 @@
-       "description": "SchedulePriority represents the scheduling priority assigned to workloads.",
-       "type": "object",
-       "properties": {
-+        "preemptionPolicy": {
-+          "description": "PreemptionPolicy specifies whether the binding may preempt lower-priority bindings. Only PreemptLowerPriority enables preemption. If not set, the binding never preempts. It is populated from the preemptionPolicy of the referenced PriorityClass.",
-+          "type": "string"
-+        },
-         "priority": {
-           "description": "Priority specifies the scheduling priority for the binding. Higher values indicate a higher priority. If not explicitly set, the default value is 0.",
-           "type": "integer",
+@@ -69,7 +69,7 @@ jobs:
+           cache: false
+           vuln-type: 'os,library'
+       - name: Upload Trivy scan results to GitHub Security tab
+-        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
++        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+         with:
+           sarif_file: '${{ matrix.target }}:${{ matrix.karmada-version }}.trivy-results.sarif'
+           ref: ${{steps.gen_git_info.outputs.ref}}
 ```
 
-**File**: `charts/karmada/_crds/bases/work/work.karmada.io_clusterresourcebindings.yaml` (modified, +8/-0)
+**File**: `.github/workflows/ci-image-scanning.yaml` (modified, +1/-1)
 ```diff
-@@ -1773,6 +1773,14 @@ spec:
-                 description: SchedulePriority represents the scheduling priority assigned
-                   to workloads.
-                 properties:
-+                  preemptionPolicy:
-+                    description: |-
-+                      PreemptionPolicy specifies whether the binding may preempt lower-priority bindings.
-+                      Only PreemptLowerPriority enables preemption. If not set, the binding never preempts.
-+                      It is populated from the preemptionPolicy of the referenced PriorityClass.
-+                    enum:
-+                    - PreemptLowerPriority
-+                    type: string
-                   priority:
-                     default: 0
-                     description: |-
+@@ -68,6 +68,6 @@ jobs:
+           vuln-type: 'os,library'
+           cache: false
+       - name: Upload Trivy scan results to GitHub Security tab
+-        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
++        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+         with:
+           sarif_file: 'trivy-results.sarif'          
 ```
 
-**File**: `charts/karmada/_crds/bases/work/work.karmada.io_resourcebindings.yaml` (modified, +8/-0)
-```diff
-@@ -1773,6 +1773,14 @@ spec:
-                 description: SchedulePriority represents the scheduling priority assigned
-                   to workloads.
-                 properties:
-+                  preemptionPolicy:
-+                    description: |-
-+                      PreemptionPolicy specifies whether the binding may preempt lower-priority bindings.
-+                      Only PreemptLowerPriority enables preemption. If not set, the binding never preempts.
-+                      It is populated from the preemptionPolicy of the referenced PriorityClass.
-+                    enum:
-+                    - PreemptLowerPriority
-+                    type: string
-                   priority:
-                     default: 0
-                     description: |-
-```
+---
 
-**File**: `docs/proposals/scheduling/binding-preemption/binding-preemption.md` (modified, +8/-8)
-```diff
-@@ -244,7 +244,7 @@ Victim selection uses the preemptor's namespace by default. The `--enable-cross-
- 
- ## API Changes
- 
--### Add `PreemptionPolicy` to `SchedulePriority`
-+### Add `PreemptionPolicy` to `ResourceBinding.Spec.SchedulePriority`
- 
- ```go
- type PreemptionPolicy string
-@@ -254,13 +254,13 @@ const (
- )
- 
- type SchedulePriority struct {
--    Priority         int32            `json:"priority,omitempty"`
--    PreemptionPolicy PreemptionPolicy `json:"preemptionPolicy,omitempty"`
-+    Priority         int32             `json:"priority,omitempty"`
-+    PreemptionPolicy *PreemptionPolicy `json:"preemptionPolicy,omitempty"`
- }
- ```
- 
--- Defaults to unset (empty string), meaning the binding never preempts. No explicit "Never" constant is needed — the zero value naturally means "no preemption."
--- The ResourceDetector maps `PreemptionPolicy` from the PriorityClass's `preemptionPolicy` field when `PriorityBasedPreemptiveScheduling` is enabled. Kubernetes defaults `preemptionPolicy` to `PreemptLowerPriority` when unset, so any PriorityClass without explicit `preemptionPolicy: Never` enables preemption at the binding level. The feature gate (alpha, default off) provides the primary opt-in control.
-+- `nil` means the binding never preempts; only `PreemptLowerPriority` enables preemption. No `Never` constant is needed: unlike Kubernetes, ResourceBinding does not default this field, so leaving it unset already means "no preemption".
-+- The ResourceDetector sets `PreemptionPolicy` to `PreemptLowerPriority` when the PriorityClass's `preemptionPolicy` is `PreemptLowerPriority` and `PriorityBasedPreemptiveScheduling` is enabled; otherwise it leaves the field `nil`. 
- 
- ### New Constants and Feature Gate
- 
-@@ -337,7 +337,7 @@ func isPreemptionApplicable(spec *workv1alpha2.ResourceBindingSpec) bool {
- }
- ```
- 
--The full preemption gate (`preemptionEnabled`) combines feature gates + `PreemptionPolicy == PreemptLowerPriority` + `isPreemptionApplicable`.
-+The full preemption gate (`preemptionEnabled`) combines feature gates + `PreemptionPolicy != nil && *PreemptionPolicy == PreemptLowerPriority` + `isPreemptionApplicable`.
- 
- ### Modified Schedule() Flow
- 
-@@ -672,7 +672,7 @@ When the feature gate is enabled but no preemption is occurring (common case), t
- ### Unit Tests
- - Victim selection: minimum victims, priority ordering, reprieve correctness.
- - Priority handling: nil victim priority is treated as `0`; a binding without `PreemptLowerPriority` cannot initiate preemption.
--- `PreemptionPolicy` resolution: feature gate disabled → unset, explicit opt-in.
-+- `PreemptionPolicy` resolution: feature gate disabled → `nil`; PriorityClass `PreemptLowerPriority` → set; PriorityClass `Never` or `nil` → `nil`.
- - Trigger handling: typed insufficient-capacity results trigger preemption; affinity, taint, spread, and other failures do not.
- - Applicability checks: `MaxGroups == 1`, non-workload, multi-component preemptor, ClusterAffinities exclusions.
- - Victim scope: same namespace by default; cross-namespace victims require `--enable-cross-namespace-preemption=true`.
-@@ -683,7 +683,7 @@ When the feature gate is enabled but no preemption is occurring (common case), t
- 
- ### Integration Tests
- - End-to-end: high-priority binding preempts low-priority binding on single cluster.
--- No preemption when PreemptionPolicy is unset or feature gate disabled.
-+- No preemption when PreemptionPolicy is `nil` or when the feature gate is disabled.
- - With `MultiplePodTemplatesScheduling` enabled, multi-component bindings can be selected as victims.
- - Cross-namespace victims require `--enable-cross-namespace-preemption=true`; same-namespace behavior remains the default.
- - Preempted binding reschedules to another cluster.
-```
+### Incident Patch 3: `32047636` (2026-10-26)
+**Commit Message**: Merge pull request #7977 from MannXo/fix/7973-goimports-path
 
-**File**: `hack/update-codegen.sh` (modified, +3/-0)
-```diff
-@@ -43,6 +43,9 @@ cleanup
- 
- source "${REPO_ROOT}"/hack/util.sh
- util:create_gopath_tree "${REPO_ROOT}" "${go_path}"
-+# Keep the module cache (and any auto-downloaded toolchain) out of the
-+# temporary GOPATH so cleanup() can always remove it.
-+export GOMODCACHE="$(go env GOMODCACHE)"
- export GOPATH="${go_path}"
- 
- echo "Generating with deepcopy-gen"
-```
+hack: add GOPATH/bin to PATH in update-import-aliases.sh
 
-**File**: `hack/update-estimator-protobuf.sh` (modified, +3/-0)
+**File**: `hack/update-import-aliases.sh` (modified, +1/-0)
 ```diff
-@@ -131,6 +131,9 @@ setup_protoc
+@@ -23,6 +23,7 @@ cd "${SCRIPT_ROOT}"
+ ROOT_PATH=$(pwd)
  
- source "${KARMADA_ROOT}"/hack/util.sh
- util:create_gopath_tree "${KARMADA_ROOT}" "${go_path}"
-+# Keep the module cache (and any auto-downloaded toolchain) out of the
-+# temporary GOPATH so cleanup() can always remove it.
-+export GOMODCACHE="$(go env GOMODCACHE)"
- export GOPATH="${go_path}"
+ GO111MODULE=on go install "golang.org/x/tools/cmd/goimports"
++export PATH=$PATH:$(go env GOPATH)/bin
  
- # https://github.com/kubernetes/kubernetes/blob/release-1.23/hack/update-generated-protobuf-dockerized.sh
-```
-
-**File**: `pkg/apis/work/v1alpha2/binding_types.go` (modified, +16/-0)
-```diff
-@@ -413,6 +413,15 @@ type Suspension struct {
- 	Scheduling *bool `json:"scheduling,omitempty"`
- }
- 
-+// PreemptionPolicy describes whether a binding may preempt lower-priority bindings.
-+type PreemptionPolicy string
-+
-+const (
-+	// PreemptLowerPriority means the binding may preempt lower-priority bindings
-+	// when it cannot be scheduled due to insufficient capacity.
-+	PreemptLowerPriority PreemptionPolicy = "PreemptLowerPriority"
-+)
-+
- // SchedulePriority represents the scheduling priority assigned to workloads.
- type SchedulePriority struct {
- 	// Priority specifies the scheduling priority for the binding.
-@@ -421,6 +430,13 @@ type SchedulePriority struct {
- 	// +kubebuilder:default=0
- 	// +optional
- 	Priority int32 `json:"priority,omitempty"`
-+
-+	// PreemptionPolicy specifies whether the binding may preempt lower-priority bindings.
-+	// Only PreemptLowerPriority enables preemption. If not set, the binding never preempts.
-+	// It is populated from the preemptionPolicy of the referenced PriorityClass.
-+	// +kubebuilder:validation:Enum=PreemptLowerPriority
-+	// +optional
-+	PreemptionPolicy *PreemptionPolicy `json:"preemptionPolicy,omitempty"`
- }
- 
- // WorkloadAffinityGroups stores the instantiated affinity and anti-affinity group names.
-```
-
-**File**: `pkg/apis/work/v1alpha2/zz_generated.deepcopy.go` (modified, +6/-1)
-```diff
-@@ -433,7 +433,7 @@ func (in *ResourceBindingSpec) DeepCopyInto(out *ResourceBindingSpec) {
- 	if in.SchedulePriority != nil {
- 		in, out := &in.SchedulePriority, &out.SchedulePriority
- 		*out = new(SchedulePriority)
--		**out = **in
-+		(*in).DeepCopyInto(*out)
- 	}
- 	if in.WorkloadAffinityGroups != nil {
- 		in, out := &in.WorkloadAffinityGroups, &out.WorkloadAffinityGroups
-@@ -490,6 +490,11 @@ func (in *ResourceBindingStatus) DeepCopy() *ResourceBindingStatus {
- // DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
- func (in *SchedulePriority) DeepCopyInto(out *SchedulePriority) {
- 	*out = *in
-+	if in.PreemptionPolicy != nil {
-+		in, out := &in.PreemptionPolicy, &out.PreemptionPolicy
-+		*out = new(PreemptionPolicy)
-+		**out = **in
-+	}
- 	return
- }
- 
+ IMPORT_ALIASES_PATH="${ROOT_PATH}/hack/.import-aliases"
+ INCLUDE_PATH="(${ROOT_PATH}/cmd|${ROOT_PATH}/test/e2e|${ROOT_PATH}/test/helper|\
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7966** (2026-10-23): feat: add priority based preemptive scheduling gate (@asarj)
-- **PR #7963** (2026-10-22): fix: add ClusterTaintPolicy webhook to chart, init, and operator (@cmontemuino)
-- **PR #7961** (2026-10-22): hack: pin command docs generation locale (@Himanshu-singh04)
-- **PR #7959** (2026-10-21): build: bump Go to v1.26.10 (@FengyuanYin)
-- **PR #7954** (2026-10-23): Introduce PreemptionPolicy to ResourceBinding SchedulePriority API (@RainbowMango)
-- **PR #7953** (2026-10-21): feat(chart): add extraCommandArgs to karmada-webhook (@cmontemuino)
+- **PR #7984** (2026-10-26): build(deps): bump actions/setup-python from 7.0.0 to 7.1.0 (@dependabot[bot])
+- **PR #7983** (2026-10-26): build(deps): bump docker/login-action from 4.6.0 to 4.7.0 (@dependabot[bot])
+- **PR #7982** (2026-10-26): build(deps): bump github/codeql-action/upload-sarif from 4.39.0 to 4.39.1 (@dependabot[bot])
+- **PR #7981** (closed): Fixed "rm: Permisssion Denied" for _go directory which is created by hack/update-codegen.sh (@KAwasthi2889)
+- **PR #7978** (2026-10-26): feat(detector): populate `SchedulePriority.PreemptionPolicy` from `PriorityClass` for binding preemption (@asarj)
+- **PR #7977** (2026-10-26): hack: add GOPATH/bin to PATH in update-import-aliases.sh (@MannXo)
 
 ---
 
@@ -1373,28 +1217,39 @@ Introduce PreemptionPolicy to ResourceBinding SchedulePriority API
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add priority based preemptive scheduling gate (#7966)
+## X. Merge pull request #7971 from Sarthak-Shreshtha01/fix/issue-7965
 
 **RULE**:
-When implementing operations in `docs/command-line-flags/karmada-agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/controllers/cronfederatedhpa/cronfederatedhpa_job.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `103984cd`: add priority based preemptive scheduling gate (#7966). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `af7b2ae1`: Merge pull request #7971 from Sarthak-Shreshtha01/fix/issue-7965. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/command-line-flags/karmada-agent.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/controllers/cronfederatedhpa/cronfederatedhpa_job.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-                                                       PriorityBasedPreemptiveScheduling=true|false (ALPHA - default=false)
+		if historyLimits <= 0 {
+			// No failed history should be kept.
+			cronFHPA.Status.ExecutionHistories[index].FailedExecutions = nil
+		} else {
+			if len(cronFHPA.Status.ExecutionHistories[index].FailedExecutions) > historyLimits-1 {
+				cronFHPA.Status.ExecutionHistories[index].FailedExecutions = cronFHPA.Status.ExecutionHistories[index].FailedExecutions[:historyLimits-1]
+			}
+			cronFHPA.Status.ExecutionHistories[index].FailedExecutions =
+				append([]autoscalingv1alpha1.FailedExecution{failedExecution}, cronFHPA.Status.ExecutionHistories[index].FailedExecutions...)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+		if len(cronFHPA.Status.ExecutionHistories[index].FailedExecutions) > historyLimits-1 {
+			cronFHPA.Status.ExecutionHistories[index].FailedExecutions = cronFHPA.Status.ExecutionHistories[index].FailedExecutions[:historyLimits-1]
+		cronFHPA.Status.ExecutionHistories[index].FailedExecutions =
+			append([]autoscalingv1alpha1.FailedExecution{failedExecution}, cronFHPA.Status.ExecutionHistories[index].FailedExecutions...)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `103984cd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `af7b2ae1` are properly handled with clean fallback behavior.
