@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-6EOS",
-    "timestamp": "2026-10-25T14:25:10.876Z",
-    "repository": "Orange-OpenSource/hurl",
-    "learningId": "learn-github-orange-opensource-hurl",
-    "contentHash": "a79045076b4103650ec94b4dd8b0e11a05c7d98a1d0b4f8abfa0b32ff641f425",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-6IR3",
-    "timestamp": "2026-10-25T14:25:16.143Z",
-    "repository": "CrossPaste/crosspaste-desktop",
-    "learningId": "learn-github-crosspaste-crosspaste-desktop",
-    "contentHash": "6b5344c3ec41398ad8f33f604621a20ccb31d6d430fa7967043f3efe907c6dfd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-6LWA",
-    "timestamp": "2026-10-25T14:25:20.218Z",
-    "repository": "akhilaaa3/Jev-Omni",
-    "learningId": "learn-huggingface-akhilaaa3-jev-omni",
-    "contentHash": "cfec98b669361ed0f8071280f04c0ef119280a59a138de4b9f3aeeabc948cd64",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-EQAQ",
     "timestamp": "2026-10-25T14:31:39.170Z",
     "repository": "angular/angular",
@@ -7492,6 +7447,51 @@
     "contentHash": "beddf37864af3098f1f55f00b5861dea5ed59920a4741b0da564064429751ee9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-7180",
+    "timestamp": "2026-10-27T14:01:00.912Z",
+    "repository": "smol-machines/smolvm",
+    "learningId": "learn-github-smol-machines-smolvm",
+    "contentHash": "b74027811376c4f2804e39fa68724ef78a9f4ed99b8a56bc52673ccb9e881076",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-72UW",
+    "timestamp": "2026-10-27T14:01:03.032Z",
+    "repository": "BlockRunAI/ClawRouter",
+    "learningId": "learn-github-blockrunai-clawrouter",
+    "contentHash": "9bea8861175bd38f75ed386fc5d2d9eb9599667fdc6798b1e3b6e4a053a71b69",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-7450",
+    "timestamp": "2026-10-27T14:01:04.692Z",
+    "repository": "czlonkowski/n8n-skills",
+    "learningId": "learn-github-czlonkowski-n8n-skills",
+    "contentHash": "925746295faf7aa52e6b3ccf1326ff552f7804efd1746d50dd56517341100c84",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

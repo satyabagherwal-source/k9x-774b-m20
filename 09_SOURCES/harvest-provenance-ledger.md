@@ -5359,3 +5359,6 @@ Every entry in this ledger must capture:
 | `learn-github-frankbria-ralph-claude-code` | `https://github.com/frankbria/ralph-claude-code` | `a4ea748f` | Multi-dimensional audit evidence | 2026-10-27T13:57:47.895Z |
 | `learn-github-ntegrals-openbrowser` | `https://github.com/ntegrals/openbrowser` | `067fc45d` | Multi-dimensional audit evidence | 2026-10-27T13:57:52.362Z |
 | `learn-github-lastmile-ai-mcp-agent` | `https://github.com/lastmile-ai/mcp-agent` | `f62d8493` | Multi-dimensional audit evidence | 2026-10-27T13:57:56.459Z |
+| `learn-github-smol-machines-smolvm` | `https://github.com/smol-machines/smolvm` | `f75836ce` | Multi-dimensional audit evidence | 2026-10-27T14:01:00.914Z |
+| `learn-github-blockrunai-clawrouter` | `https://github.com/BlockRunAI/ClawRouter` | `d14d145d` | Multi-dimensional audit evidence | 2026-10-27T14:01:03.035Z |
+| `learn-github-czlonkowski-n8n-skills` | `https://github.com/czlonkowski/n8n-skills` | `e037563e` | Multi-dimensional audit evidence | 2026-10-27T14:01:04.694Z |

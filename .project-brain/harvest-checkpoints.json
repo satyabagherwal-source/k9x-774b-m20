@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T13:57:56.469Z",
+  "last_updated": "2026-10-27T14:01:04.701Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -16589,6 +16589,51 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-27T13:57:56.469Z"
+    },
+    "smol-machines/smolvm": {
+      "repository": "smol-machines/smolvm",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-smol-machines-smolvm",
+      "content_hash": "b74027811376c4f2804e39fa68724ef78a9f4ed99b8a56bc52673ccb9e881076",
+      "verified_at": "2026-10-27T14:01:00.919Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T14:01:00.920Z"
+    },
+    "BlockRunAI/ClawRouter": {
+      "repository": "BlockRunAI/ClawRouter",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-blockrunai-clawrouter",
+      "content_hash": "9bea8861175bd38f75ed386fc5d2d9eb9599667fdc6798b1e3b6e4a053a71b69",
+      "verified_at": "2026-10-27T14:01:03.045Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T14:01:03.045Z"
+    },
+    "czlonkowski/n8n-skills": {
+      "repository": "czlonkowski/n8n-skills",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-czlonkowski-n8n-skills",
+      "content_hash": "925746295faf7aa52e6b3ccf1326ff552f7804efd1746d50dd56517341100c84",
+      "verified_at": "2026-10-27T14:01:04.701Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T14:01:04.701Z"
     }
   },
   "repos": {

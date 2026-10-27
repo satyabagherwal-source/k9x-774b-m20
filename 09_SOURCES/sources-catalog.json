@@ -11038,5 +11038,35 @@
     "contentHash": "beddf37864af3098f1f55f00b5861dea5ed59920a4741b0da564064429751ee9",
     "lastHarvestedAt": "2026-10-27T13:57:56.459Z",
     "learningId": "learn-github-lastmile-ai-mcp-agent"
+  },
+  "smol-machines-smolvm": {
+    "repository": "smol-machines/smolvm",
+    "platform": "github",
+    "sourceUrl": "https://github.com/smol-machines/smolvm",
+    "sourceVersion": "f75836ce",
+    "license": "Apache-2.0",
+    "contentHash": "b74027811376c4f2804e39fa68724ef78a9f4ed99b8a56bc52673ccb9e881076",
+    "lastHarvestedAt": "2026-10-27T14:01:00.914Z",
+    "learningId": "learn-github-smol-machines-smolvm"
+  },
+  "blockrunai-clawrouter": {
+    "repository": "BlockRunAI/ClawRouter",
+    "platform": "github",
+    "sourceUrl": "https://github.com/BlockRunAI/ClawRouter",
+    "sourceVersion": "d14d145d",
+    "license": "MIT",
+    "contentHash": "9bea8861175bd38f75ed386fc5d2d9eb9599667fdc6798b1e3b6e4a053a71b69",
+    "lastHarvestedAt": "2026-10-27T14:01:03.035Z",
+    "learningId": "learn-github-blockrunai-clawrouter"
+  },
+  "czlonkowski-n8n-skills": {
+    "repository": "czlonkowski/n8n-skills",
+    "platform": "github",
+    "sourceUrl": "https://github.com/czlonkowski/n8n-skills",
+    "sourceVersion": "e037563e",
+    "license": "MIT",
+    "contentHash": "925746295faf7aa52e6b3ccf1326ff552f7804efd1746d50dd56517341100c84",
+    "lastHarvestedAt": "2026-10-27T14:01:04.694Z",
+    "learningId": "learn-github-czlonkowski-n8n-skills"
   }
 }

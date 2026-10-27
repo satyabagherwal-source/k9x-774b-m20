@@ -19123,5 +19123,50 @@
     "qualityScore": 4901,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-27T13:57:17.447Z"
+  },
+  {
+    "name": "smolvm",
+    "fullName": "smol-machines/smolvm",
+    "url": "https://github.com/smol-machines/smolvm",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "An embeddable, portable, branchable virtual machine to safely run Agents locally.",
+    "stars": 6847,
+    "forks": 341,
+    "openIssues": 78,
+    "language": "Rust",
+    "qualityScore": 3932,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T14:00:14.522Z"
+  },
+  {
+    "name": "ClawRouter",
+    "fullName": "BlockRunAI/ClawRouter",
+    "url": "https://github.com/BlockRunAI/ClawRouter",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The agent-native LLM router for autonomous agents. Every frontier model behind one wallet, <1ms local routing, USDC payments on Base & Solana via x402.",
+    "stars": 6639,
+    "forks": 652,
+    "openIssues": 0,
+    "language": "TypeScript",
+    "qualityScore": 3665,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T14:00:14.522Z"
+  },
+  {
+    "name": "n8n-skills",
+    "fullName": "czlonkowski/n8n-skills",
+    "url": "https://github.com/czlonkowski/n8n-skills",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "n8n skillset for Claude Code to build flawless n8n workflows",
+    "stars": 6527,
+    "forks": 1073,
+    "openIssues": 22,
+    "language": "Shell",
+    "qualityScore": 3879,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T14:00:14.522Z"
   }
 ]

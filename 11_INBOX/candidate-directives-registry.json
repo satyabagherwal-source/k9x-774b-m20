@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T13:57:56.464Z",
+  "last_updated": "2026-10-27T14:01:03.038Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2950,6 +2950,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-lastmile-ai-mcp-agent"
+    },
+    {
+      "id": "CD-72V2",
+      "directive_title": "Merge pull request #506 from BlockRunAI/fix/ssrf-dns-resolve",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "BlockRunAI/ClawRouter",
+      "source_commit": "d14d145d",
+      "date_staged": "2026-10-27",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-blockrunai-clawrouter"
     }
   ]
 }

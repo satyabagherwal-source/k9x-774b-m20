@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T13:57:56.382Z",
-  "total_verified_learnings": 1120,
+  "last_updated": "2026-10-27T14:01:04.655Z",
+  "total_verified_learnings": 1123,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -134074,6 +134074,127 @@
         "rules_verified": true,
         "index_read_back_verified": true
       }
+    },
+    "learn-github-smol-machines-smolvm": {
+      "learning_id": "learn-github-smol-machines-smolvm",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "smol-machines/smolvm",
+      "repository": "smol-machines/smolvm",
+      "slug": "smol-machines-smolvm",
+      "platform": "github",
+      "source_url": "https://github.com/smol-machines/smolvm",
+      "source_version": "f75836ce",
+      "content_hash": "b74027811376c4f2804e39fa68724ef78a9f4ed99b8a56bc52673ccb9e881076",
+      "dossier_path": "07_PROJECT_LEARNING/smol-machines-smolvm-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/smol-machines-smolvm-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4825,
+          "title": "Bump libkrunfw with the Android kernel options and the TSI socket fixes (#1993)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T14:01:00.868Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4825": {
+      "learning_id": "rule-4825",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4825,
+      "title": "Bump libkrunfw with the Android kernel options and the TSI socket fixes (#1993)",
+      "source_url": "https://github.com/smol-machines/smolvm",
+      "source_version": "f75836ce",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:01:00.868Z"
+    },
+    "learn-github-blockrunai-clawrouter": {
+      "learning_id": "learn-github-blockrunai-clawrouter",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "BlockRunAI/ClawRouter",
+      "repository": "BlockRunAI/ClawRouter",
+      "slug": "blockrunai-clawrouter",
+      "platform": "github",
+      "source_url": "https://github.com/BlockRunAI/ClawRouter",
+      "source_version": "d14d145d",
+      "content_hash": "9bea8861175bd38f75ed386fc5d2d9eb9599667fdc6798b1e3b6e4a053a71b69",
+      "dossier_path": "07_PROJECT_LEARNING/blockrunai-clawrouter-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/blockrunai-clawrouter-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T14:01:02.971Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-czlonkowski-n8n-skills": {
+      "learning_id": "learn-github-czlonkowski-n8n-skills",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "czlonkowski/n8n-skills",
+      "repository": "czlonkowski/n8n-skills",
+      "slug": "czlonkowski-n8n-skills",
+      "platform": "github",
+      "source_url": "https://github.com/czlonkowski/n8n-skills",
+      "source_version": "e037563e",
+      "content_hash": "925746295faf7aa52e6b3ccf1326ff552f7804efd1746d50dd56517341100c84",
+      "dossier_path": "07_PROJECT_LEARNING/czlonkowski-n8n-skills-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/czlonkowski-n8n-skills-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4826,
+          "title": "docs: $jmespath, silent-null expression errors, error-output blind spots, valida",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T14:01:04.647Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4826": {
+      "learning_id": "rule-4826",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4826,
+      "title": "docs: $jmespath, silent-null expression errors, error-output blind spots, valida",
+      "source_url": "https://github.com/czlonkowski/n8n-skills",
+      "source_version": "e037563e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:01:04.647Z"
     }
   },
   "aliases": {

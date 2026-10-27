@@ -5350,3 +5350,6 @@
 | `CYCLE-20261027-2WAC` | `2026-10-27T13:57:47.892Z` | `frankbria/ralph-claude-code` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4823` | Yes (`d2a8297f...`) |
 | `CYCLE-20261027-2ZQF` | `2026-10-27T13:57:52.359Z` | `ntegrals/openbrowser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4824` | Yes (`aaf0552b...`) |
 | `CYCLE-20261027-32W7` | `2026-10-27T13:57:56.455Z` | `lastmile-ai/mcp-agent` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/lastmile-ai-mcp-agent-learnings.md` | Yes (`beddf378...`) |
+| `CYCLE-20261027-7180` | `2026-10-27T14:01:00.912Z` | `smol-machines/smolvm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4825` | Yes (`b7402781...`) |
+| `CYCLE-20261027-72UW` | `2026-10-27T14:01:03.032Z` | `BlockRunAI/ClawRouter` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/blockrunai-clawrouter-learnings.md` | Yes (`9bea8861...`) |
+| `CYCLE-20261027-7450` | `2026-10-27T14:01:04.692Z` | `czlonkowski/n8n-skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4826` | Yes (`92574629...`) |

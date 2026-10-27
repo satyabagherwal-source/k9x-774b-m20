@@ -4552,3 +4552,11 @@ https://github.com/frankbria/ralph-claude-code
 https://github.com/ntegrals/openbrowser
 # [AI-AGENTS] lastmile-ai/mcp-agent (4901 score) - Build effective agents using Model Context Protocol and simple workflow patterns
 https://github.com/lastmile-ai/mcp-agent
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T14:00:51.088Z] ---
+# [AI-AGENTS] smol-machines/smolvm (3932 score) - An embeddable, portable, branchable virtual machine to safely run Agents locally
+https://github.com/smol-machines/smolvm
+# [AI-AGENTS] BlockRunAI/ClawRouter (3665 score) - The agent-native LLM router for autonomous agents. Every frontier model behind o
+https://github.com/BlockRunAI/ClawRouter
+# [AI-AGENTS] czlonkowski/n8n-skills (3879 score) - n8n skillset for Claude Code to build flawless n8n workflows
+https://github.com/czlonkowski/n8n-skills

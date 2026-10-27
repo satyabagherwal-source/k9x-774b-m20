@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T13:57:56.466Z",
-  "total_cycles_completed": 5327,
-  "total_learnings_persisted": 5327,
-  "total_rules_promoted": 4731,
+  "last_updated": "2026-10-27T14:01:04.698Z",
+  "total_cycles_completed": 5330,
+  "total_learnings_persisted": 5330,
+  "total_rules_promoted": 4733,
   "history": [
-    {
-      "timestamp": "2026-10-26T13:34:06.072Z",
-      "repository": "rustls/rustls",
-      "learningId": "learn-github-rustls-rustls",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:40:31.550Z",
-      "repository": "1jehuang/jcode",
-      "learningId": "learn-github-1jehuang-jcode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:40:38.967Z",
-      "repository": "juicedata/juicefs",
-      "learningId": "learn-github-juicedata-juicefs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-26T13:40:39.402Z",
       "repository": "RecursiveSI/flint",
@@ -1403,6 +1382,27 @@
       "repository": "lastmile-ai/mcp-agent",
       "learningId": "learn-github-lastmile-ai-mcp-agent",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:01:00.917Z",
+      "repository": "smol-machines/smolvm",
+      "learningId": "learn-github-smol-machines-smolvm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:01:03.043Z",
+      "repository": "BlockRunAI/ClawRouter",
+      "learningId": "learn-github-blockrunai-clawrouter",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:01:04.698Z",
+      "repository": "czlonkowski/n8n-skills",
+      "learningId": "learn-github-czlonkowski-n8n-skills",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
