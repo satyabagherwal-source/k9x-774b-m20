@@ -2313,10 +2313,10 @@
     "repository": "adobe/react-spectrum",
     "platform": "github",
     "sourceUrl": "https://github.com/adobe/react-spectrum",
-    "sourceVersion": "338cf2e1",
+    "sourceVersion": "06891def",
     "license": "Apache-2.0",
-    "contentHash": "b51eb88cf62282faa17b79b474387ce48566865fa09bc475e38eb9475a82d24e",
-    "lastHarvestedAt": "2026-10-25T14:57:15.960Z",
+    "contentHash": "9b71f4cfb427ec700475801dd6a593ba3868f83361defe794ae9a8f16bde9cc0",
+    "lastHarvestedAt": "2026-10-27T16:45:03.438Z",
     "learningId": "learn-github-adobe-react-spectrum"
   },
   "max-sixty-worktrunk": {
@@ -10093,10 +10093,10 @@
     "repository": "QwikDev/qwik",
     "platform": "github",
     "sourceUrl": "https://github.com/QwikDev/qwik",
-    "sourceVersion": "d1ca2412",
+    "sourceVersion": "fd3c66a5",
     "license": "MIT",
-    "contentHash": "9b97229156c628be86cb6bcc77c1613233349dac5231c57667a074c0d50f5d26",
-    "lastHarvestedAt": "2026-10-23T07:22:39.284Z",
+    "contentHash": "256d71270b16edb7277ac6199dc3517b680550e912d32fd0acfbfd55eb378ae3",
+    "lastHarvestedAt": "2026-10-27T16:45:09.070Z",
     "learningId": "learn-github-qwikdev-qwik"
   },
   "typewhisper-typewhisper-mac": {

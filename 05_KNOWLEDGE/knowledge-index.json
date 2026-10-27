@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T16:38:32.584Z",
+  "last_updated": "2026-10-27T16:45:08.998Z",
   "total_verified_learnings": 1142,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -505,8 +505,8 @@
       "slug": "adobe-react-spectrum",
       "platform": "github",
       "source_url": "https://github.com/adobe/react-spectrum",
-      "source_version": "338cf2e1",
-      "content_hash": "b51eb88cf62282faa17b79b474387ce48566865fa09bc475e38eb9475a82d24e",
+      "source_version": "06891def",
+      "content_hash": "9b71f4cfb427ec700475801dd6a593ba3868f83361defe794ae9a8f16bde9cc0",
       "dossier_path": "07_PROJECT_LEARNING/adobe-react-spectrum-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/adobe-react-spectrum-learnings.md",
       "promoted_rules": [
@@ -534,6 +534,11 @@
           "number": 4356,
           "title": "scroll anchoring improvements for chat (#10600)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4904,
+          "title": "docs(s2): close CardPreview with matching tag in Card anatomy (#10853)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -541,7 +546,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T14:57:15.891Z",
+      "verified_at": "2026-10-27T16:45:03.365Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68226,8 +68231,8 @@
       "slug": "qwikdev-qwik",
       "platform": "github",
       "source_url": "https://github.com/QwikDev/qwik",
-      "source_version": "d1ca2412",
-      "content_hash": "9b97229156c628be86cb6bcc77c1613233349dac5231c57667a074c0d50f5d26",
+      "source_version": "fd3c66a5",
+      "content_hash": "256d71270b16edb7277ac6199dc3517b680550e912d32fd0acfbfd55eb378ae3",
       "dossier_path": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
       "promoted_rules": [
@@ -68252,7 +68257,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T07:22:39.239Z",
+      "verified_at": "2026-10-27T16:45:08.978Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -136190,6 +136195,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T16:38:32.571Z"
+    },
+    "rule-4904": {
+      "learning_id": "rule-4904",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4904,
+      "title": "docs(s2): close CardPreview with matching tag in Card anatomy (#10853)",
+      "source_url": "https://github.com/adobe/react-spectrum",
+      "source_version": "06891def",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T16:45:03.365Z"
     }
   },
   "aliases": {

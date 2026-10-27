@@ -5441,3 +5441,5 @@ Every entry in this ledger must capture:
 | `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `4def5663` | Multi-dimensional audit evidence | 2026-10-27T16:38:20.271Z |
 | `learn-github-preactjs-preact` | `https://github.com/preactjs/preact` | `66b6e565` | Multi-dimensional audit evidence | 2026-10-27T16:38:22.580Z |
 | `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `6e4ce04b` | Multi-dimensional audit evidence | 2026-10-27T16:38:32.646Z |
+| `learn-github-adobe-react-spectrum` | `https://github.com/adobe/react-spectrum` | `06891def` | Multi-dimensional audit evidence | 2026-10-27T16:45:03.438Z |
+| `learn-github-qwikdev-qwik` | `https://github.com/QwikDev/qwik` | `fd3c66a5` | Multi-dimensional audit evidence | 2026-10-27T16:45:09.070Z |

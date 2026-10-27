@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T16:38:32.655Z",
+  "last_updated": "2026-10-27T16:45:09.082Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3606,14 +3606,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-adobe-react-spectrum",
-      "content_hash": "b51eb88cf62282faa17b79b474387ce48566865fa09bc475e38eb9475a82d24e",
-      "verified_at": "2026-10-25T14:57:15.968Z",
+      "content_hash": "9b71f4cfb427ec700475801dd6a593ba3868f83361defe794ae9a8f16bde9cc0",
+      "verified_at": "2026-10-27T16:45:03.446Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T14:57:15.968Z"
+      "last_updated": "2026-10-27T16:45:03.446Z"
     },
     "max-sixty/worktrunk": {
       "repository": "max-sixty/worktrunk",
@@ -15186,14 +15186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-qwikdev-qwik",
-      "content_hash": "9b97229156c628be86cb6bcc77c1613233349dac5231c57667a074c0d50f5d26",
-      "verified_at": "2026-10-23T07:22:39.294Z",
+      "content_hash": "256d71270b16edb7277ac6199dc3517b680550e912d32fd0acfbfd55eb378ae3",
+      "verified_at": "2026-10-27T16:45:09.082Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T07:22:39.294Z"
+      "last_updated": "2026-10-27T16:45:09.082Z"
     },
     "TypeWhisper/typewhisper-mac": {
       "repository": "TypeWhisper/typewhisper-mac",
