@@ -5365,3 +5365,8 @@
 | `CYCLE-20261027-O0F8` | `2026-10-27T14:14:13.028Z` | `alpic-ai/skybridge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4837` | Yes (`ba554263...`) |
 | `CYCLE-20261027-O6SB` | `2026-10-27T14:14:21.275Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4838` | Yes (`13fe10d0...`) |
 | `CYCLE-20261027-UBTY` | `2026-10-27T14:19:07.750Z` | `martin-ger/esp32_nat_router` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4839` | Yes (`2fb56597...`) |
+| `CYCLE-20261027-YBBY` | `2026-10-27T14:22:13.726Z` | `subnetmarco/pgmcp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4840` | Yes (`f07305b2...`) |
+| `CYCLE-20261027-YEOI` | `2026-10-27T14:22:18.066Z` | `concierge-hq/concierge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4841` | Yes (`93fa7061...`) |
+| `CYCLE-20261027-YG9V` | `2026-10-27T14:22:20.131Z` | `openreplay/openreplay` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4842` | Yes (`5c5270f1...`) |
+| `CYCLE-20261027-YKEN` | `2026-10-27T14:22:25.487Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4843` | Yes (`8a019d96...`) |
+| `CYCLE-20261027-ZK5V` | `2026-10-27T14:23:11.827Z` | `ooples/token-optimizer-mcp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4844` | Yes (`b4140bcc...`) |

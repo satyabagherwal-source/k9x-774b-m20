@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/openreplay-openreplay-learnings.md`  
 > **Source**: github ([https://github.com/openreplay/openreplay](https://github.com/openreplay/openreplay))  
-> **Source Version**: `564d808e`  
+> **Source Version**: `0ca127a4`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T11:37:45.647Z  
+> **Timestamp**: 2026-10-27T14:22:19.776Z  
 > **Learning ID**: `learn-github-openreplay-openreplay`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/openreplay-openreplay-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/openreplay/openreplay](https://github.com/openreplay/openreplay))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T11:37:45.469Z  
+> **Harvest Timestamp**: 2026-10-27T14:22:19.446Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Session replay, cobrowsing and product analytics you can self-host. Best for reproducing issues and iterating on your product.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13037 stars
+- **Stars / Engagement**: 13054 stars
 
 ---
 
@@ -1057,199 +1057,124 @@ def api_key_authorizer(token):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8b3b42fb` (2026-10-21)
-**Commit Message**: ui: use streaming zstd decompression to avoid 32bit pointer overflow (#5038)
+### Incident Patch 1: `2da25621` (2026-10-26)
+**Commit Message**: fix(ci): build crons as EE-only in patch workflow
 
-**File**: `player/src/common/unpack.ts` (modified, +27/-1)
+Patching crons from main failed: there is no crons chart (it lives in
+utilities), so the version came out as "1.." and the FOSS build hit
+build_crons.sh, which refuses non-ee builds. Mirror the old-tag
+workflow fix: skip FOSS for crons and read/bump the utilities chart.
+
+**File**: `.github/workflows/patch-build.yaml` (modified, +5/-2)
 ```diff
-@@ -1,6 +1,32 @@
- import { gunzipSync } from 'fflate';
- import * as fzstd from 'fzstd';
+@@ -222,6 +222,9 @@ jobs:
  
-+// fzstd's one-shot decompress computes bit positions as `byteOffset << 3` (int32),
-+// which overflows once the input passes 256MiB and fails with "invalid zstd data".
-+// The streaming decoder only ever indexes into the chunk it was pushed.
-+const ZSTD_ONESHOT_LIMIT = 1 << 28;
-+const ZSTD_CHUNK = 1 << 20;
-+
-+const zstdDecompress = (b: Uint8Array): Uint8Array => {
-+  if (b.byteLength < ZSTD_ONESHOT_LIMIT) return fzstd.decompress(b);
-+  const parts: Uint8Array[] = [];
-+  let length = 0;
-+  const stream = new fzstd.Decompress((chunk) => {
-+    parts.push(chunk);
-+    length += chunk.length;
-+  });
-+  for (let i = 0; i < b.byteLength; i += ZSTD_CHUNK) {
-+    stream.push(b.subarray(i, i + ZSTD_CHUNK), i + ZSTD_CHUNK >= b.byteLength);
-+  }
-+  const out = new Uint8Array(length);
-+  let offset = 0;
-+  for (const part of parts) {
-+    out.set(part, offset);
-+    offset += part.length;
-+  }
-+  return out;
-+};
-+
- const unpack = (b: Uint8Array): Uint8Array => {
-   // zstd magical numbers 40 181 47 253
-   const isZstd =
-@@ -23,7 +49,7 @@ const unpack = (b: Uint8Array): Uint8Array => {
-   }
-   if (isZstd) {
-     const now = performance.now();
--    const uData = fzstd.decompress(b);
-+    const uData = zstdDecompress(b);
-     console.debug(
-       'Zstd unpack time',
-       `${Math.floor(performance.now() - now)}ms`,
-```
-
-**File**: `player/src/web/managers/CanvasManager.ts` (modified, +1/-0)
-```diff
-@@ -67,6 +67,7 @@ export default class CanvasManager extends ListWalker<Timestamp> {
-           console.error(
-             'Failed to load canvas recording for node',
-             this.nodeId,
-+            e,
-           );
-         }
-       });
+                 local foss_build_args="" ee_build_args="" build_script="$BUILD_SCRIPT_NAME"
+                 local is_ee_only=false
++                # crons is EE-only and versioned in the utilities chart
++                local chart=$service
++                [[ $service == crons ]] && chart=utilities && is_ee_only=true
+ 
+                 # Determine build configuration based on service type
+                 if grep -qx "$service" "$BACKEND_SERVICES_FILE"; then
+@@ -257,7 +260,7 @@ jobs:
+ 
+                 # Get version and build
+                 local version
+-                version=$(image_version "$service")
++                version=$(image_version "$chart")
+ 
+                 # Build FOSS and EE versions (skip FOSS for EE-only services)
+                 if [[ $is_ee_only == false ]]; then
+@@ -278,7 +281,7 @@ jobs:
+                     ;;
+                 esac
+                 # Update chart and commit
+-                update_chart_version "$service" "$version"
++                update_chart_version "$chart" "$version"
+             done
+             cd "$WORKING_DIR"
+ 
 ```
 
 ---
 
-### Incident Patch 2: `8cdfe016` (2026-10-21)
-**Commit Message**: fix(ci): build managed patch images from branch
+### Incident Patch 2: `20584224` (2026-10-26)
+**Commit Message**: fix(ci): accept a tag as patch build branch input
 
-clone_msaas checked out $INPUT_TAG in the openreplay submodule, but
-the tag is only moved to the patched commit in the final step. Managed
-(ARM) frontend/chalice images were therefore built from the unpatched
-code while OSS/EE images had the fix (seen in run 39618595495 for the
-v1.27.0 zstd patch). Check out the patch branch head instead.
+The previous fix fetched refs/heads/$BRANCH_NAME only, but the branch
+input is often the tag itself (e.g. v1.27.0) when rebuilding a release
+without new commits. That failed with "couldn't find remote ref".
+Fetch the name as given and compare against FETCH_HEAD, matching how
+later steps resolve BRANCH_NAME.
 
-**File**: `.github/workflows/patch-build-old.yaml` (modified, +2/-1)
+**File**: `.github/workflows/patch-build-old.yaml` (modified, +4/-4)
 ```diff
-@@ -134,7 +134,8 @@ jobs:
-           [ -d $MSAAS_REPO_FOLDER ] || {
-           git clone -b $INPUT_TAG --recursive https://x-access-token:$MSAAS_REPO_CLONE_TOKEN@$MSAAS_REPO_URL $MSAAS_REPO_FOLDER
-           cd $MSAAS_REPO_FOLDER
--          cd openreplay && git fetch origin && git checkout $INPUT_TAG
-+          # Build from the patch branch; INPUT_TAG still points to the old commit until the last step.
-+          cd openreplay && git fetch origin $BRANCH_NAME && git checkout FETCH_HEAD
-           git log -1
-           cd $MSAAS_REPO_FOLDER
-           bash git-init.sh
+@@ -44,16 +44,16 @@ jobs:
+         TAG_NAME=${{ github.event.inputs.tag }}
+         
+         # Fetch the branch to ensure we have the latest
+-        # Explicit refspec: branch and tag can share a name (e.g. v1.27.0)
+-        git fetch origin "refs/heads/$BRANCH_NAME:refs/remotes/origin/$BRANCH_NAME"
++        # BRANCH_NAME may be a branch or a tag (e.g. v1.27.0); compare FETCH_HEAD
++        git fetch origin "$BRANCH_NAME"
+         
+         # Check if tag has commits not in the branch using git cherry
+-        UNMERGED_COMMITS=$(git cherry origin/$BRANCH_NAME $TAG_NAME | { grep '^+' || true; } | wc -l)
++        UNMERGED_COMMITS=$(git cherry FETCH_HEAD $TAG_NAME | { grep '^+' || true; } | wc -l)
+         
+         if [ $UNMERGED_COMMITS -gt 0 ]; then
+           echo "Error: Tag '$TAG_NAME' has commits not present in branch '$BRANCH_NAME'"
+           echo "Unmerged commits:"
+-          git cherry origin/$BRANCH_NAME $TAG_NAME | grep '^+'
++          git cherry FETCH_HEAD $TAG_NAME | grep '^+'
+           exit 1
+         fi
+         
 ```
 
 ---
 
-### Incident Patch 3: `179a4013` (2026-10-20)
-**Commit Message**: fix(gapi): fixed get events
+### Incident Patch 3: `868afcb8` (2026-10-26)
+**Commit Message**: fix(ci): make patch tag validation actually fail
 
-**File**: `backend/pkg/events/events.go` (modified, +34/-14)
+When branch and tag share a name (v1.27.0), "git fetch origin NAME"
+fetched the tag and never created origin/NAME. git cherry then failed,
+but the pipe into grep | wc hid the error, so the step reported
+"Validation passed" without checking anything. Fetch the branch with
+an explicit refspec and enable pipefail.
+
+**File**: `.github/workflows/patch-build-old.yaml` (modified, +4/-3)
 ```diff
-@@ -6,10 +6,10 @@ import (
- 	"fmt"
- 	"net/url"
- 	"strconv"
-+	"strings"
- 	"time"
- 	"unicode"
+@@ -39,15 +39,16 @@ jobs:
  
--	"github.com/ClickHouse/clickhouse-go/v2/lib/chcol"
- 	"github.com/ClickHouse/clickhouse-go/v2/lib/driver"
- 
- 	"openreplay/backend/pkg/logger"
-@@ -273,16 +273,36 @@ func (e *eventsImpl) GetErrorsBySessionID(projectID uint32, sessID uint64, lower
- }
- 
- type customEvent struct {
--	Name                   string     `ch:"name" json:"name"`
--	Type                   string     `ch:"type" json:"type"`
--	AutoCapturedProperties chcol.JSON `ch:"auto_props" json:"autoCapturedProperties"`
--	Properties             chcol.JSON `ch:"properties" json:"properties"`
--	CreatedAt              time.Time  `ch:"created_at" json:"-"`
-+	Name                   string    `ch:"name" json:"name"`
-+	Type                   string    `ch:"type" json:"type"`
-+	AutoCapturedProperties string    `ch:"auto_props" json:"autoCapturedProperties"`
-+	Properties             string    `ch:"properties" json:"properties"`
-+	CreatedAt              time.Time `ch:"created_at" json:"-"`
-+}
-+
-+// parseJSONObject decodes a JSON object produced by ClickHouse's toJSONString()
-+// into a nested map. Numbers are kept as json.Number so they round-trip
-+// unchanged. Empty or malformed input yields an empty map.
-+func parseJSONObject(raw string) map[string]interface{} {
-+	res := make(map[string]interface{})
-+	raw = strings.TrimSpace(raw)
-+	if raw == "" || raw == "null" {
-+		return res
-+	}
-+	dec := json.NewDecoder(strings.NewReader(raw))
-+	dec.UseNumber()
-+	if err := dec.Decode(&res); err != nil {
-+		return make(map[string]interface{})
-+	}
-+	return res
- }
- 
- func (e *eventsImpl) GetCustomsBySessionID(projectID uint32, sessID uint64, lower, upper time.Time) ([]interface{}, error) {
--	query := `SELECT "$properties" AS auto_props,
--				properties,
-+	// JSON columns are serialised to strings server-side: the native JSON
-+	// object encoding is not fully decoded by clickhouse-go (shared-data paths
-+	// desynchronise the stream and surface as "unsupported column type <path>").
-+	query := `SELECT toJSONString("$properties") AS auto_props,
-+				toJSONString(properties) AS properties,
- 				created_at,
- 				'CUSTOM' AS type,
- 				"$event_name" AS name
-@@ -306,10 +326,10 @@ func (e *eventsImpl) GetCustomsBySessionID(projectID uint32, sessID uint64, lowe
- 		event["type"] = cEvent.Type
- 		event["timestamp"] = cEvent.CreatedAt.UnixMilli()
- 
--		for key, value := range cEvent.AutoCapturedProperties.NestedMap() {
-+		for key, value := range parseJSONObject(cEvent.AutoCapturedProperties) {
- 			event[toCamelCase(key)] = value
- 		}
--		event["properties"] = cEvent.Properties.NestedMap()
-+		event["properties"] = parseJSONObject(cEvent.Properties)
- 
- 		res = append(res, event)
- 	}
-@@ -508,8 +528,8 @@ type mobileEvent struct {
- }
- 
- func (e *eventsImpl) GetMobileCrashesBySessionID(projID uint32, sessID uint64, lower, upper time.Time) ([]interface{}, error) {
--	query := `SELECT ` + "`$properties`" + `AS auto_captures,
--				properties,
-+	query := `SELECT toJSONString(` + "`$properties`" + `) AS auto_captures,
-+				toJSONString(properties) AS properties,
- 				created_at,
- 				'CRASH' AS type,
- 				` + "`$event_name`" + ` AS name
-@@ -533,8 +553,8 @@ func (e *eventsImpl) GetMobileCrashesBySessionID(projID uint32, sessID uint64, l
- }
- 
- func (e *eventsImpl) GetMobileCustomsBySessionID(projID uint32, sessID uint64, lower, upper time.Time) ([]interface{}, error) {
--	query := `SELECT ` + "`$properties`" + `AS auto_captures,
--				properties,
-+	query := `SELECT toJSONString(` + "`$properties`" + `) AS auto_captures,
-+				toJSONString(properties) AS properties,
- 				created_at,
- 				'CUSTOM' AS type,
- 				` + "`$event_name`" + `AS name
+     - name: Validate tag commits are in branch
+       run: |
+-        set -e
++        set -eo pipefail
+         BRANCH_NAME=${{ github.event.inputs.branch }}
+         TAG_NAME=${{ github.event.inputs.tag }}
+         
+         # Fetch the branch to ensure we have the latest
+-        git fetch origin $BRANCH_NAME
++        # Explicit refspec: branch and tag can share a name (e.g. v1.27.0)
++        git fetch origin "refs/heads/$BRANCH_NAME:refs/remotes/origin/$BRANCH_NAME"
+         
+         # Check if tag has commits not in the branch using git cherry
+-        UNMERGED_COMMITS=$(git cherry origin/$BRANCH_NAME $TAG_NAME | grep '^+' | wc -l)
++        UNMERGED_COMMITS=$(git cherry origin/$BRANCH_NAME $TAG_NAME | { grep '^+' || true; } | wc -l)
+         
+         if [ $UNMERGED_COMMITS -gt 0 ]; then
+           echo "Error: Tag '$TAG_NAME' has commits not present in branch '$BRANCH_NAME'"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5054** (2026-10-23): Updated patch build from main b382c9e9739761abf5416e6b732657daafdf0bc2 (@estradino)
-- **PR #5053** (2026-10-23): Updated patch build from main 79f56ad449ab5892fe12d0422e88fabe7d9752da (@estradino)
-- **PR #5052** (2026-10-23): refactor(chalice): upgraded dependencies (@tahayk)
-- **PR #5051** (2026-10-22): Updated patch build from main 3d82a5aa91f2b87ffc7d92242c87b6033d751e55 (@estradino)
-- **PR #5050** (2026-10-22): refactor(chalice): changed authorizer (@tahayk)
-- **PR #5048** (2026-10-22): refactor(chalice): upgraded dependencies (@tahayk)
+- **PR #5069** (2026-10-27): new chart tasks (@rjshrjndrn)
+- **PR #5068** (2026-10-27): Updated patch build from main 2da25621bfed6999affa1c8fdde4fb7413395c27 (@estradino)
+- **PR #5065** (closed): Updated patch build from main 2da25621bfed6999affa1c8fdde4fb7413395c27 (@estradino)
+- **PR #5064** (2026-10-26): Updated patch build from main ae396210bbae9f64b070bcb214d9d1dda7b3dca0 (@estradino)
+- **PR #5063** (2026-10-26): Move to node 26 and upgrade deps (@zavorotynskiy)
+- **PR #5061** (2026-10-23): Updated patch build from main 1d4ad3aa3b74e8c5254a9a8e9dca014bd009839e (@estradino)
 
 ---
 
@@ -1269,54 +1194,33 @@ v1.27.0 zstd patch). Check out the patch branch head instead.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ui: use streaming zstd decompression to avoid 32bit pointer overflow (#5038)
+## X. ci): build crons as EE-only in patch workflow
 
 **RULE**:
-When implementing operations in `player/src/common/unpack.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openreplay/openreplay. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/patch-build.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openreplay/openreplay. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8b3b42fb`: ui: use streaming zstd decompression to avoid 32bit pointer overflow (#5038). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2da25621`: ci): build crons as EE-only in patch workflow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `player/src/common/unpack.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/patch-build.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-// fzstd's one-shot decompress computes bit positions as `byteOffset << 3` (int32),
-// which overflows once the input passes 256MiB and fails with "invalid zstd data".
-// The streaming decoder only ever indexes into the chunk it was pushed.
-const ZSTD_ONESHOT_LIMIT = 1 << 28;
-const ZSTD_CHUNK = 1 << 20;
-
-const zstdDecompress = (b: Uint8Array): Uint8Array => {
-  if (b.byteLength < ZSTD_ONESHOT_LIMIT) return fzstd.decompress(b);
-  const parts: Uint8Array[] = [];
-  let length = 0;
-  const stream = new fzstd.Decompress((chunk) => {
-    parts.push(chunk);
-    length += chunk.length;
-  });
-  for (let i = 0; i < b.byteLength; i += ZSTD_CHUNK) {
-    stream.push(b.subarray(i, i + ZSTD_CHUNK), i + ZSTD_CHUNK >= b.byteLength);
-  }
-  const out = new Uint8Array(length);
-  let offset = 0;
-  for (const part of parts) {
-    out.set(part, offset);
-    offset += part.length;
-  }
-  return out;
-};
-
-    const uData = zstdDecompress(b);
+                # crons is EE-only and versioned in the utilities chart
+                local chart=$service
+                [[ $service == crons ]] && chart=utilities && is_ee_only=true
+                version=$(image_version "$chart")
+                update_chart_version "$chart" "$version"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    const uData = fzstd.decompress(b);
+                version=$(image_version "$service")
+                update_chart_version "$service" "$version"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8b3b42fb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2da25621` are properly handled with clean fallback behavior.

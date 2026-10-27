@@ -4568,3 +4568,11 @@ https://github.com/martin-ger/esp32_nat_router
 https://github.com/atomicstrata/llm-wiki-compiler
 # [AI-AGENTS] alpic-ai/skybridge (1472 score) - Skybridge is a full-stack TypeScript framework for MCP Apps and ChatGPT Apps. Ty
 https://github.com/alpic-ai/skybridge
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T14:22:02.394Z] ---
+# [AI-AGENTS] ooples/token-optimizer-mcp (555 score) - Measure token savings per AI coding agent, optimize context, and share a live lo
+https://github.com/ooples/token-optimizer-mcp
+# [AI-AGENTS] subnetmarco/pgmcp (543 score) - An MCP server to query any Postgres database in natural language.
+https://github.com/subnetmarco/pgmcp
+# [AI-AGENTS] concierge-hq/concierge (553 score) - 🚀 Universal SDK for building next-gen MCP servers
+https://github.com/concierge-hq/concierge

@@ -19213,5 +19213,50 @@
     "qualityScore": 1472,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-27T14:13:38.198Z"
+  },
+  {
+    "name": "token-optimizer-mcp",
+    "fullName": "ooples/token-optimizer-mcp",
+    "url": "https://github.com/ooples/token-optimizer-mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Measure token savings per AI coding agent, optimize context, and share a live local knowledge graph across 16 CLI clients.",
+    "stars": 563,
+    "forks": 72,
+    "openIssues": 1,
+    "language": "JavaScript",
+    "qualityScore": 555,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T14:21:30.975Z"
+  },
+  {
+    "name": "pgmcp",
+    "fullName": "subnetmarco/pgmcp",
+    "url": "https://github.com/subnetmarco/pgmcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "An MCP server to query any Postgres database in natural language.",
+    "stars": 540,
+    "forks": 63,
+    "openIssues": 2,
+    "language": "Go",
+    "qualityScore": 543,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T14:21:30.975Z"
+  },
+  {
+    "name": "concierge",
+    "fullName": "concierge-hq/concierge",
+    "url": "https://github.com/concierge-hq/concierge",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "🚀 Universal SDK for building next-gen MCP servers",
+    "stars": 528,
+    "forks": 96,
+    "openIssues": 55,
+    "language": "Python",
+    "qualityScore": 553,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T14:21:30.975Z"
   }
 ]

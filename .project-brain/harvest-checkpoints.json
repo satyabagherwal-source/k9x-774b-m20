@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T14:19:07.762Z",
+  "last_updated": "2026-10-27T14:23:11.837Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5106,14 +5106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-openreplay-openreplay",
-      "content_hash": "da576fefb5ec209e15464843774bc91c713209c7b9f4a98dfdfbf880d3283cf0",
-      "verified_at": "2026-10-23T11:37:46.087Z",
+      "content_hash": "5c5270f1cd8df6d543287d2f994021caf3fb3cb0305f9d48473bf3ca35980d93",
+      "verified_at": "2026-10-27T14:22:20.141Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T11:37:46.087Z"
+      "last_updated": "2026-10-27T14:22:20.141Z"
     },
     "kumahq/kuma": {
       "repository": "kumahq/kuma",
@@ -6291,14 +6291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clastix-kamaji",
-      "content_hash": "a7aace4e10de28c62daade59f447c5bbcdd49c7aa89e2dce431c9c8b44cca51f",
-      "verified_at": "2026-10-25T11:59:52.948Z",
+      "content_hash": "8a019d9679ed6b9c08837491fe9df1f1faac16b4c0ab3d5d0e8bf0e4e11a843b",
+      "verified_at": "2026-10-27T14:22:25.497Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T11:59:52.948Z"
+      "last_updated": "2026-10-27T14:22:25.497Z"
     },
     "gluesql/gluesql": {
       "repository": "gluesql/gluesql",
@@ -16679,6 +16679,51 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-27T14:19:07.762Z"
+    },
+    "subnetmarco/pgmcp": {
+      "repository": "subnetmarco/pgmcp",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-subnetmarco-pgmcp",
+      "content_hash": "f07305b2e16bab4e76f1cdba5ecdb7da54914592ee8961f2a5d0dd355f41d53d",
+      "verified_at": "2026-10-27T14:22:13.737Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T14:22:13.737Z"
+    },
+    "concierge-hq/concierge": {
+      "repository": "concierge-hq/concierge",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-concierge-hq-concierge",
+      "content_hash": "93fa706179b003a3f4312ba168afff7ec20414db6dd08f6ccbabcac6719e7f17",
+      "verified_at": "2026-10-27T14:22:18.076Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T14:22:18.076Z"
+    },
+    "ooples/token-optimizer-mcp": {
+      "repository": "ooples/token-optimizer-mcp",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ooples-token-optimizer-mcp",
+      "content_hash": "b4140bcc4d54484c9325e02d3fabeae090017a088aa3c1382165d053ef0a957e",
+      "verified_at": "2026-10-27T14:23:11.837Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T14:23:11.837Z"
     }
   },
   "repos": {

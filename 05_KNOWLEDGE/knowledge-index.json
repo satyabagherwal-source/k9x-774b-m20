@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T14:19:07.689Z",
-  "total_verified_learnings": 1126,
+  "last_updated": "2026-10-27T14:23:11.756Z",
+  "total_verified_learnings": 1129,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -6375,8 +6375,8 @@
       "slug": "clastix-kamaji",
       "platform": "github",
       "source_url": "https://github.com/clastix/kamaji",
-      "source_version": "f9bfdd48",
-      "content_hash": "a7aace4e10de28c62daade59f447c5bbcdd49c7aa89e2dce431c9c8b44cca51f",
+      "source_version": "f5f3bd80",
+      "content_hash": "8a019d9679ed6b9c08837491fe9df1f1faac16b4c0ab3d5d0e8bf0e4e11a843b",
       "dossier_path": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "promoted_rules": [
@@ -6404,6 +6404,11 @@
           "number": 4275,
           "title": "tcp): refresh endpoint after address changes (#1392)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4843,
+          "title": "soot): stop managers before dropping them (#1393)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6411,7 +6416,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T11:59:52.906Z",
+      "verified_at": "2026-10-27T14:22:25.428Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40295,8 +40300,8 @@
       "slug": "openreplay-openreplay",
       "platform": "github",
       "source_url": "https://github.com/openreplay/openreplay",
-      "source_version": "564d808e",
-      "content_hash": "da576fefb5ec209e15464843774bc91c713209c7b9f4a98dfdfbf880d3283cf0",
+      "source_version": "0ca127a4",
+      "content_hash": "5c5270f1cd8df6d543287d2f994021caf3fb3cb0305f9d48473bf3ca35980d93",
       "dossier_path": "07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
       "promoted_rules": [
@@ -40324,6 +40329,11 @@
           "number": 3905,
           "title": "ui: use streaming zstd decompression to avoid 32bit pointer overflow (#5038)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4842,
+          "title": "ci): build crons as EE-only in patch workflow",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40331,7 +40341,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T11:37:45.993Z",
+      "verified_at": "2026-10-27T14:22:20.070Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -134526,6 +134536,175 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T14:19:07.676Z"
+    },
+    "learn-github-subnetmarco-pgmcp": {
+      "learning_id": "learn-github-subnetmarco-pgmcp",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "subnetmarco/pgmcp",
+      "repository": "subnetmarco/pgmcp",
+      "slug": "subnetmarco-pgmcp",
+      "platform": "github",
+      "source_url": "https://github.com/subnetmarco/pgmcp",
+      "source_version": "53681ab9",
+      "content_hash": "f07305b2e16bab4e76f1cdba5ecdb7da54914592ee8961f2a5d0dd355f41d53d",
+      "dossier_path": "07_PROJECT_LEARNING/subnetmarco-pgmcp-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/subnetmarco-pgmcp-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4840,
+          "title": "improving security and adding more tests (#8)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T14:22:13.666Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4840": {
+      "learning_id": "rule-4840",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4840,
+      "title": "improving security and adding more tests (#8)",
+      "source_url": "https://github.com/subnetmarco/pgmcp",
+      "source_version": "53681ab9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:22:13.666Z"
+    },
+    "learn-github-concierge-hq-concierge": {
+      "learning_id": "learn-github-concierge-hq-concierge",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "concierge-hq/concierge",
+      "repository": "concierge-hq/concierge",
+      "slug": "concierge-hq-concierge",
+      "platform": "github",
+      "source_url": "https://github.com/concierge-hq/concierge",
+      "source_version": "8b6d217c",
+      "content_hash": "93fa706179b003a3f4312ba168afff7ec20414db6dd08f6ccbabcac6719e7f17",
+      "dossier_path": "07_PROJECT_LEARNING/concierge-hq-concierge-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/concierge-hq-concierge-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4841,
+          "title": "(#94) v0.15 Include Security and defer setup metrics",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T14:22:18.006Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4841": {
+      "learning_id": "rule-4841",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4841,
+      "title": "(#94) v0.15 Include Security and defer setup metrics",
+      "source_url": "https://github.com/concierge-hq/concierge",
+      "source_version": "8b6d217c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:22:18.006Z"
+    },
+    "rule-4842": {
+      "learning_id": "rule-4842",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4842,
+      "title": "ci): build crons as EE-only in patch workflow",
+      "source_url": "https://github.com/openreplay/openreplay",
+      "source_version": "0ca127a4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:22:20.070Z"
+    },
+    "rule-4843": {
+      "learning_id": "rule-4843",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4843,
+      "title": "soot): stop managers before dropping them (#1393)",
+      "source_url": "https://github.com/clastix/kamaji",
+      "source_version": "f5f3bd80",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:22:25.428Z"
+    },
+    "learn-github-ooples-token-optimizer-mcp": {
+      "learning_id": "learn-github-ooples-token-optimizer-mcp",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ooples/token-optimizer-mcp",
+      "repository": "ooples/token-optimizer-mcp",
+      "slug": "ooples-token-optimizer-mcp",
+      "platform": "github",
+      "source_url": "https://github.com/ooples/token-optimizer-mcp",
+      "source_version": "c20a1bd9",
+      "content_hash": "b4140bcc4d54484c9325e02d3fabeae090017a088aa3c1382165d053ef0a957e",
+      "dossier_path": "07_PROJECT_LEARNING/ooples-token-optimizer-mcp-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/ooples-token-optimizer-mcp-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4844,
+          "title": "release blockers for 7.7.0 -- neutral naming, hook latency, plugin instructions,",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T14:23:11.745Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4844": {
+      "learning_id": "rule-4844",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4844,
+      "title": "release blockers for 7.7.0 -- neutral naming, hook latency, plugin instructions,",
+      "source_url": "https://github.com/ooples/token-optimizer-mcp",
+      "source_version": "c20a1bd9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:23:11.745Z"
     }
   },
   "aliases": {

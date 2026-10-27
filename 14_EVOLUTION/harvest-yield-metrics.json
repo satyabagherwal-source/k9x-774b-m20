@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T14:19:07.758Z",
-  "total_cycles_completed": 5342,
-  "total_learnings_persisted": 5342,
-  "total_rules_promoted": 4746,
+  "last_updated": "2026-10-27T14:23:11.834Z",
+  "total_cycles_completed": 5347,
+  "total_learnings_persisted": 5347,
+  "total_rules_promoted": 4751,
   "history": [
-    {
-      "timestamp": "2026-10-26T14:23:26.794Z",
-      "repository": "risingwavelabs/risingwave",
-      "learningId": "learn-github-risingwavelabs-risingwave",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T14:29:54.228Z",
-      "repository": "microsoft/fluentui",
-      "learningId": "learn-github-microsoft-fluentui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T17:52:06.942Z",
-      "repository": "opentofu/opentofu",
-      "learningId": "learn-github-opentofu-opentofu",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T17:58:20.022Z",
-      "repository": "GitoxideLabs/gitoxide",
-      "learningId": "learn-github-gitoxidelabs-gitoxide",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T17:58:21.787Z",
-      "repository": "KartikLabhshetwar/better-shot",
-      "learningId": "learn-github-kartiklabhshetwar-better-shot",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-26T17:58:25.079Z",
       "repository": "prometheus/prometheus",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-27T14:19:07.758Z",
       "repository": "martin-ger/esp32_nat_router",
       "learningId": "learn-github-martin-ger-esp32_nat_router",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:22:13.734Z",
+      "repository": "subnetmarco/pgmcp",
+      "learningId": "learn-github-subnetmarco-pgmcp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:22:18.074Z",
+      "repository": "concierge-hq/concierge",
+      "learningId": "learn-github-concierge-hq-concierge",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:22:20.138Z",
+      "repository": "openreplay/openreplay",
+      "learningId": "learn-github-openreplay-openreplay",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:22:25.495Z",
+      "repository": "clastix/kamaji",
+      "learningId": "learn-github-clastix-kamaji",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:23:11.834Z",
+      "repository": "ooples/token-optimizer-mcp",
+      "learningId": "learn-github-ooples-token-optimizer-mcp",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

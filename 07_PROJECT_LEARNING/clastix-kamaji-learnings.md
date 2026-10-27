@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source**: github ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
-> **Source Version**: `f9bfdd48`  
+> **Source Version**: `f5f3bd80`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T11:59:52.714Z  
+> **Timestamp**: 2026-10-27T14:22:25.146Z  
 > **Learning ID**: `learn-github-clastix-kamaji`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T11:59:52.711Z  
+> **Harvest Timestamp**: 2026-10-27T14:22:24.798Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kamaji is the Hosted Control Plane Manager for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2056 stars
+- **Stars / Engagement**: 2067 stars
 
 ---
 
@@ -743,155 +743,163 @@ func ShouldReconcileErrorBeIgnored(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9292caba` (2026-10-23)
-**Commit Message**: fix(tcp): refresh endpoint after address changes (#1392)
+### Incident Patch 1: `f5f3bd80` (2026-10-26)
+**Commit Message**: fix(soot): stop managers before dropping them (#1393)
 
-Changing networkProfile.address can leave controlPlaneEndpoint at the
-previous address when the Service itself does not change. Compare the
-declared endpoint in the Service status check, preserving the existing
-result when the address is unavailable.
-
-Signed-off-by: spicysharkco <[REDACTED_EMAIL]>
-
-**File**: `internal/resources/k8s_service_resource.go` (modified, +5/-2)
+**File**: `controllers/soot/manager.go` (modified, +13/-8)
 ```diff
-@@ -33,10 +33,13 @@ func (r *KubernetesServiceResource) GetHistogram() prometheus.Histogram {
- 	return serviceCollector
- }
- 
--func (r *KubernetesServiceResource) ShouldStatusBeUpdated(_ context.Context, tenantControlPlane *kamajiv1alpha1.TenantControlPlane) bool {
-+func (r *KubernetesServiceResource) ShouldStatusBeUpdated(ctx context.Context, tenantControlPlane *kamajiv1alpha1.TenantControlPlane) bool {
-+	address, err := tenantControlPlane.DeclaredControlPlaneAddress(ctx, r.Client)
-+
- 	return tenantControlPlane.Status.Kubernetes.Service.Name != r.resource.GetName() ||
- 		tenantControlPlane.Status.Kubernetes.Service.Namespace != r.resource.GetNamespace() ||
--		tenantControlPlane.Status.Kubernetes.Service.Port != r.resource.Spec.Ports[0].Port
-+		tenantControlPlane.Status.Kubernetes.Service.Port != r.resource.Spec.Ports[0].Port ||
-+		err == nil && tenantControlPlane.Status.ControlPlaneEndpoint != net.JoinHostPort(address, strconv.FormatInt(int64(tenantControlPlane.Spec.NetworkProfile.Port), 10))
- }
- 
- func (r *KubernetesServiceResource) ShouldCleanup(*kamajiv1alpha1.TenantControlPlane) bool {
-```
-
-**File**: `internal/resources/k8s_service_resource_test.go` (modified, +32/-0)
-```diff
-@@ -433,3 +433,35 @@ var _ = Describe("KubernetesServiceResource ExternalIPs", func() {
- 		Expect(reconcile().Spec.ExternalIPs).To(Equal([]string{"203.0.113.10"}))
- 	})
- })
-+
-+var _ = Describe("KubernetesServiceResource control plane endpoint", func() {
-+	DescribeTable("refreshes status after an address change", func(serviceType kamajiv1alpha1.ServiceType, address, endpoint string, expected bool) {
-+		ctx := context.Background()
-+		tcp := &kamajiv1alpha1.TenantControlPlane{
-+			ObjectMeta: metav1.ObjectMeta{Name: "test-tcp", Namespace: "default"},
-+			Spec: kamajiv1alpha1.TenantControlPlaneSpec{
-+				ControlPlane: kamajiv1alpha1.ControlPlane{
-+					Service: kamajiv1alpha1.ServiceSpec{ServiceType: serviceType},
-+				},
-+				NetworkProfile: kamajiv1alpha1.NetworkProfileSpec{Address: address, Port: 6443},
-+			},
-+		}
-+		resource := &resources.KubernetesServiceResource{
-+			Client: fake.NewClientBuilder().WithScheme(runtimeScheme).Build(),
-+		}
-+		Expect(resource.Define(ctx, tcp)).To(Succeed())
-+		_, err := resource.CreateOrUpdate(ctx, tcp)
-+		Expect(err).NotTo(HaveOccurred())
-+		tcp.Status.Kubernetes.Service.Name = tcp.Name
-+		tcp.Status.Kubernetes.Service.Namespace = tcp.Namespace
-+		tcp.Status.Kubernetes.Service.Port = tcp.Spec.NetworkProfile.Port
-+		tcp.Status.ControlPlaneEndpoint = endpoint
-+
-+		Expect(resource.ShouldStatusBeUpdated(ctx, tcp)).To(Equal(expected))
-+	},
-+		Entry("changed ClusterIP address", kamajiv1alpha1.ServiceTypeClusterIP, "203.0.113.20", "203.0.113.10:6443", true),
-+		Entry("changed NodePort address", kamajiv1alpha1.ServiceTypeNodePort, "203.0.113.20", "203.0.113.10:6443", true),
-+		Entry("unchanged address and port", kamajiv1alpha1.ServiceTypeClusterIP, "203.0.113.10", "203.0.113.10:6443", false),
-+		Entry("LoadBalancer without ingress", kamajiv1alpha1.ServiceTypeLoadBalancer, "", "", false),
-+	)
-+})
-```
-
----
-
-### Incident Patch 2: `f9bfdd48` (2026-10-23)
-**Commit Message**: fix(datastore): keep MySQL TLS config off the global driver registry (#1390)
-
-**File**: `internal/datastore/mysql.go` (modified, +6/-11)
-```diff
-@@ -250,23 +250,18 @@ func NewMySQLConnection(config ConnectionConfig) (Connection, error) {
- 		return nil, err
+@@ -98,11 +98,16 @@ func (m *Manager) cleanup(ctx context.Context, req reconcile.Request, tenantCont
+ 		}()
  	}
  
--	tlsKey := "mysql"
--
--	if config.TLSConfig != nil {
--		if err = mysql.RegisterTLSConfig(tlsKey, config.TLSConfig); err != nil {
--			return nil, err
--		}
--		mysqlConfig.TLSConfig = tlsKey
--	}
--
-+	// Not mysql.RegisterTLSConfig: that registry is process-global, so a shared key lets
-+	// concurrent reconciles of different DataStores swap each other's CA and client key.
-+	mysqlConfig.TLS = config.TLSConfig
- 	mysqlConfig.DBName = config.DBName
--	parsedDSN := mysqlConfig.FormatDSN()
+-	tcpName := req.NamespacedName.String()
++	m.stop(ctx, req.NamespacedName.String())
  
--	db, err := sql.Open("mysql", parsedDSN)
-+	connector, err := mysql.NewConnector(mysqlConfig)
- 	if err != nil {
- 		return nil, err
++	return nil
++}
++
++// stop cancels the soot manager before removing it: once out of the map, nothing could stop it.
++func (m *Manager) stop(ctx context.Context, tcpName string) {
+ 	v, ok := m.sootMap[tcpName]
+ 	if !ok {
+-		return nil
++		return
  	}
  
-+	db := sql.OpenDB(connector)
-+
- 	return &MySQLConnection{db: db, config: mysqlConfig, connector: config.Endpoints[0]}, nil
+ 	v.cancelFn()
+@@ -126,8 +131,6 @@ func (m *Manager) cleanup(ctx context.Context, req reconcile.Request, tenantCont
+ 	}
+ 
+ 	delete(m.sootMap, tcpName)
+-
+-	return nil
  }
  
+ func (m *Manager) retryTenantControlPlaneAnnotations(ctx context.Context, request reconcile.Request, modifierFn func(annotations map[string]string)) error {
+@@ -178,7 +181,7 @@ func (m *Manager) Reconcile(ctx context.Context, request reconcile.Request) (res
+ 	if ok {
+ 		switch {
+ 		case tcp.Annotations != nil && tcp.Annotations[sootManagerAnnotation] == sootManagerFailedAnnotation:
+-			delete(m.sootMap, request.String())
++			m.stop(ctx, request.String())
+ 
+ 			return reconcile.Result{}, m.retryTenantControlPlaneAnnotations(ctx, request, func(annotations map[string]string) {
+ 				delete(annotations, sootManagerAnnotation)
+@@ -384,15 +387,17 @@ func (m *Manager) Reconcile(ctx context.Context, request reconcile.Request) (res
+ 	completedCh := make(chan struct{})
+ 	// Starting the manager
+ 	go func() {
+-		if err = mgr.Start(tcpCtx); err != nil {
+-			logger.Error(err, "unable to start soot manager")
++		startErr := mgr.Start(tcpCtx)
++		// A soot manager stopped on purpose can fail while shutting down: it must not flag the next one as failed
++		if startErr != nil && tcpCtx.Err() == nil {
++			logger.Error(startErr, "unable to start soot manager")
+ 			// The sootManagerAnnotation is used to propagate the error between reconciliations with its state:
+ 			// this is required to avoid mutex and prevent concurrent read/write on the soot map
+ 			annotationErr := m.retryTenantControlPlaneAnnotations(ctx, request, func(annotations map[string]string) {
+ 				annotations[sootManagerAnnotation] = sootManagerFailedAnnotation
+ 			})
+ 			if annotationErr != nil {
+-				logger.Error(err, "unable to update TenantControlPlane for soot failed annotation")
++				logger.Error(annotationErr, "unable to update TenantControlPlane for soot failed annotation")
+ 			}
+ 			// When the manager cannot start we're enqueuing back the request to take advantage of the backoff factor
+ 			// of the queue: this is a goroutine and cannot return an error since the manager is running on its own,
 ```
 
-**File**: `internal/datastore/mysql_test.go` (added, +28/-0)
+**File**: `controllers/soot/manager_test.go` (added, +80/-0)
 ```diff
-@@ -0,0 +1,28 @@
+@@ -0,0 +1,80 @@
 +// Copyright 2022 Clastix Labs
 +// SPDX-License-Identifier: Apache-2.0
 +
-+package datastore
++package soot
 +
 +import (
-+	"crypto/tls"
++	"context"
 +	"testing"
 +
-+	"github.com/go-sql-driver/mysql"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/types"
++	"k8s.io/utils/ptr"
++	"sigs.k8s.io/controller-runtime/pkg/client"
++	"sigs.k8s.io/controller-runtime/pkg/client/fake"
++	"sigs.k8s.io/controller-runtime/pkg/reconcile"
++
++	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
++	"github.com/clastix/kamaji/controllers/finalizers"
 +)
 +
-+func TestMySQLConnectionDoesNotRegisterGlobalTLSConfig(t *testing.T) {
-+	conn, err := NewMySQLConnection(ConnectionConfig{
-+		User:      "root",
-+		Endpoints: []ConnectionEndpoint{{Host: "127.0.0.1", Port: 3306}},
-+		DBName:    "kine",
-+		TLSConfig: &tls.Config{ServerName: "datastore-a", MinVersion: tls.VersionTLS12},
-+	})
-+	if err != nil {
-+		t.Fatalf("NewMySQLConnection() error = %v", err)
-+	}
-+	t.Cleanup(func() { _ = conn.Close() })
++func TestReconcileFailedAnnotationStopsSootManager(t *testing.T) {
++	t.Parallel()
 +
-+	if _, err := mysql.ParseDSN("root@tcp(127.0.0.1:3306)/kine?tls=mysql"); err == nil {
-+		t.Fatal(`TLS config is registered under the process-global key "mysql", want it kept on the connection`)
++	scheme := runtime.NewScheme()
++	if err := kamajiv1alpha1.AddToScheme(scheme); err != nil {
++		t.Fatalf("failed adding kamaji scheme: %v", err)
++	}
++
++	tcp := &kamajiv1alpha1.TenantControlPlane{
++		ObjectMeta: metav1.ObjectMeta{
++			Name:        "tenant",
++			Namespace:   "default",
++			Annotations: map[string]string{sootManagerAnnotation: sootManagerFailedAnnotation},
++			Finalizers:  []string{finalizers.SootFinalizer},
++		},
++	}
++	tcp.Status.Kubernetes.Version.Status = ptr.To(kamajiv1alpha1.VersionReady)
++
++	cl := fake.NewClientBuilder().WithScheme(scheme).WithObjects(tcp).Build()
++
++	request := reconcile.Request{NamespacedName: types.NamespacedName{Namespace: tcp.Namespace, Name: tcp.Name}}
++	completedCh := make(chan struct{})
++	cancelled := false
++
++	m := &Manager{
++		AdminClient: cl,
++		sootMap: sootMap{
++			request.String(): {
++				cancelFn: func() {
++					cancelled = true
++
++					close(completedCh)
++				},
++				completedCh: completedCh,
++			},
++		},
++	}
++
++	if _, err := m.Reconcile(context.Background(), request); err != nil {
++		t.Fatalf("Reconcile() error = %v", err)
++	}
++
++	if !cancelled {
++		t.Fatal("the soot manager was removed without being cancelled")
++	}
++
++	if _, ok := m.sootMap[request.String()]; ok {
++		t.Fatal("the soot manager is still in the soot map")
++	}
++
++	var got kamajiv1alpha1.TenantControlPlane
++	if err := cl.Get(context.Background(), client.ObjectKeyFromObject(tcp), &got); err != nil {
++		t.Fatalf("failed getting the TenantControlPlane: %v", err)
++	}
++
++	if _, ok := got.Annotations[sootManagerAnnotation]; ok {
++		t.Fatal("the failed annotation was not removed")
 +	}
 +}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1393** (2026-10-26): fix(soot): stop managers before dropping them (@serhiimazurok)
 - **PR #1392** (2026-10-23): fix(tcp): refresh endpoint after address changes (@spicysharkco)
 - **PR #1390** (2026-10-23): fix(datastore): keep MySQL TLS config off the global driver registry (@somaz94)
 - **PR #1389** (2026-10-23): fix(tcp): clear removed DataStore overrides (@spicysharkco)
 - **PR #1387** (2026-10-22): fix(e2e): wait for freeze webhook enforcement before asserting writes (@Sphinxgaia)
 - **PR #1386** (2026-10-22): feat: headless control plane service support (@Sphinxgaia)
-- **PR #1383** (2026-10-21): fix(cmd): bind the zap logger flags on the root command (@spicysharkco)
 
 ---
 
@@ -911,33 +919,47 @@ Signed-off-by: spicysharkco <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tcp): refresh endpoint after address changes (#1392)
+## X. soot): stop managers before dropping them (#1393)
 
 **RULE**:
-When implementing operations in `internal/resources/k8s_service_resource.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `controllers/soot/manager.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9292caba`: tcp): refresh endpoint after address changes (#1392). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f5f3bd80`: soot): stop managers before dropping them (#1393). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/resources/k8s_service_resource.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/soot/manager.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-func (r *KubernetesServiceResource) ShouldStatusBeUpdated(ctx context.Context, tenantControlPlane *kamajiv1alpha1.TenantControlPlane) bool {
-	address, err := tenantControlPlane.DeclaredControlPlaneAddress(ctx, r.Client)
+	m.stop(ctx, req.NamespacedName.String())
+	return nil
+}
 
-		tenantControlPlane.Status.Kubernetes.Service.Port != r.resource.Spec.Ports[0].Port ||
-		err == nil && tenantControlPlane.Status.ControlPlaneEndpoint != net.JoinHostPort(address, strconv.FormatInt(int64(tenantControlPlane.Spec.NetworkProfile.Port), 10))
+// stop cancels the soot manager before removing it: once out of the map, nothing could stop it.
+func (m *Manager) stop(ctx context.Context, tcpName string) {
+		return
+			m.stop(ctx, request.String())
+		startErr := mgr.Start(tcpCtx)
+		// A soot manager stopped on purpose can fail while shutting down: it must not flag the next one as failed
+		if startErr != nil && tcpCtx.Err() == nil {
+			logger.Error(startErr, "unable to start soot manager")
+				logger.Error(annotationErr, "unable to update TenantControlPlane for soot failed annotation")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-func (r *KubernetesServiceResource) ShouldStatusBeUpdated(_ context.Context, tenantControlPlane *kamajiv1alpha1.TenantControlPlane) bool {
-		tenantControlPlane.Status.Kubernetes.Service.Port != r.resource.Spec.Ports[0].Port
+	tcpName := req.NamespacedName.String()
+		return nil
+
+	return nil
+			delete(m.sootMap, request.String())
+		if err = mgr.Start(tcpCtx); err != nil {
+			logger.Error(err, "unable to start soot manager")
+				logger.Error(err, "unable to update TenantControlPlane for soot failed annotation")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9292caba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f5f3bd80` are properly handled with clean fallback behavior.

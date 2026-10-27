@@ -5374,3 +5374,8 @@ Every entry in this ledger must capture:
 | `learn-github-alpic-ai-skybridge` | `https://github.com/alpic-ai/skybridge` | `9fd04e0b` | Multi-dimensional audit evidence | 2026-10-27T14:14:13.032Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `3391b242` | Multi-dimensional audit evidence | 2026-10-27T14:14:21.279Z |
 | `learn-github-martin-ger-esp32_nat_router` | `https://github.com/martin-ger/esp32_nat_router` | `119e0a3d` | Multi-dimensional audit evidence | 2026-10-27T14:19:07.753Z |
+| `learn-github-subnetmarco-pgmcp` | `https://github.com/subnetmarco/pgmcp` | `53681ab9` | Multi-dimensional audit evidence | 2026-10-27T14:22:13.729Z |
+| `learn-github-concierge-hq-concierge` | `https://github.com/concierge-hq/concierge` | `8b6d217c` | Multi-dimensional audit evidence | 2026-10-27T14:22:18.069Z |
+| `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `0ca127a4` | Multi-dimensional audit evidence | 2026-10-27T14:22:20.134Z |
+| `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `f5f3bd80` | Multi-dimensional audit evidence | 2026-10-27T14:22:25.490Z |
+| `learn-github-ooples-token-optimizer-mcp` | `https://github.com/ooples/token-optimizer-mcp` | `c20a1bd9` | Multi-dimensional audit evidence | 2026-10-27T14:23:11.830Z |
