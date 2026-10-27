@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T19:56:22.070Z",
-  "total_cycles_completed": 5490,
-  "total_learnings_persisted": 5490,
-  "total_rules_promoted": 4888,
+  "last_updated": "2026-10-27T20:01:23.261Z",
+  "total_cycles_completed": 5494,
+  "total_learnings_persisted": 5494,
+  "total_rules_promoted": 4892,
   "history": [
-    {
-      "timestamp": "2026-10-27T13:18:08.088Z",
-      "repository": "RediSearch/RediSearch",
-      "learningId": "learn-github-redisearch-redisearch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:22:12.894Z",
-      "repository": "nodejs/undici",
-      "learningId": "learn-github-nodejs-undici",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:22:12.990Z",
-      "repository": "cloudwego/volo",
-      "learningId": "learn-github-cloudwego-volo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:22:17.264Z",
-      "repository": "karakeep-app/karakeep",
-      "learningId": "learn-github-karakeep-app-karakeep",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T13:22:18.506Z",
       "repository": "kumahq/kuma",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-27T19:56:22.070Z",
       "repository": "prometheus/prometheus",
       "learningId": "learn-github-prometheus-prometheus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T20:01:11.931Z",
+      "repository": "AgileRL/AgileRL",
+      "learningId": "learn-github-agilerl-agilerl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T20:01:14.894Z",
+      "repository": "alikon-art/DeterminFlow",
+      "learningId": "learn-github-alikon-art-determinflow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T20:01:17.012Z",
+      "repository": "sunbigfly/ppt-agent-skills",
+      "learningId": "learn-github-sunbigfly-ppt-agent-skills",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T20:01:23.261Z",
+      "repository": "temporalio/temporal",
+      "learningId": "learn-github-temporalio-temporal",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

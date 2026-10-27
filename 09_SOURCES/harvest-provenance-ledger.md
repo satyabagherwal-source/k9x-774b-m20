@@ -5522,3 +5522,7 @@ Every entry in this ledger must capture:
 | `learn-github-fastapi-fastapi` | `https://github.com/tiangolo/fastapi` | `79cab5be` | Multi-dimensional audit evidence | 2026-10-27T19:56:17.651Z |
 | `learn-github-lingodotdev-lingo-dev` | `https://github.com/lingodotdev/lingo.dev` | `28435298` | Multi-dimensional audit evidence | 2026-10-27T19:56:18.313Z |
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `3861d587` | Multi-dimensional audit evidence | 2026-10-27T19:56:22.064Z |
+| `learn-github-agilerl-agilerl` | `https://github.com/AgileRL/AgileRL` | `101484ce` | Multi-dimensional audit evidence | 2026-10-27T20:01:11.926Z |
+| `learn-github-alikon-art-determinflow` | `https://github.com/alikon-art/DeterminFlow` | `8ad68863` | Multi-dimensional audit evidence | 2026-10-27T20:01:14.889Z |
+| `learn-github-sunbigfly-ppt-agent-skills` | `https://github.com/sunbigfly/ppt-agent-skills` | `13e35377` | Multi-dimensional audit evidence | 2026-10-27T20:01:17.007Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `bf81a4c2` | Multi-dimensional audit evidence | 2026-10-27T20:01:23.256Z |

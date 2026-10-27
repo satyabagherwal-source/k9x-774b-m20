@@ -4624,3 +4624,11 @@ https://github.com/chongdashu/unreal-mcp
 # --- Automatically Discovered by AI Scout Engine [2026-10-27T18:59:25.755Z] ---
 # [HUGGINGFACE-AI-MODELS] ccore/Qwen3.5-4B-3D-Coder (3520 score) - Verified Hugging Face Model: ccore/Qwen3.5-4B-3D-Coder (152 likes, 3544 download
 https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T20:01:02.968Z] ---
+# [AI-AGENTS] AgileRL/AgileRL (771 score) - The complete post-training stack for LLMs, plus RL for any problem. SFT, DPO and
+https://github.com/AgileRL/AgileRL
+# [AI-AGENTS] alikon-art/DeterminFlow (796 score) - A production-oriented AI workflow runtime for building, validating, recovering, 
+https://github.com/alikon-art/DeterminFlow
+# [AI-AGENTS] sunbigfly/ppt-agent-skills (742 score) - A code-driven presentation generation framework. 像构建软件工程一样生成演示文稿。
+https://github.com/sunbigfly/ppt-agent-skills

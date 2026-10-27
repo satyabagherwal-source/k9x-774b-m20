@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-GE1C",
-    "timestamp": "2026-10-25T22:00:50.448Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "a33dee874b5dd8b0d4ccae59c389f9b95b09f2229f9dbe07a40e4049e077fa01",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-OJ5Q",
-    "timestamp": "2026-10-25T22:07:10.334Z",
-    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-    "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-    "contentHash": "0cbcd5878f74184740a02ae6f93466b4ccc07bb3fbd879d71f0923d111046985",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-ONHP",
-    "timestamp": "2026-10-25T22:07:15.949Z",
-    "repository": "software-mansion/react-native-screens",
-    "learningId": "learn-github-software-mansion-react-native-screens",
-    "contentHash": "45fbd34f3c555a0bdc09831005725b3bf05b2bdd11e8314442d7ed9d719a352b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-OTZR",
-    "timestamp": "2026-10-25T22:07:24.375Z",
-    "repository": "ClickHouse/ClickHouse",
-    "learningId": "learn-github-clickhouse-clickhouse",
-    "contentHash": "075eec4cce42203d4fb22e3f0747be30bb35e9f51b27947d94a192b0a15a4c60",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-X8VU",
     "timestamp": "2026-10-25T22:13:56.922Z",
     "repository": "tauri-apps/tauri",
@@ -7490,6 +7430,66 @@
     "repository": "prometheus/prometheus",
     "learningId": "learn-github-prometheus-prometheus",
     "contentHash": "ae2fe82e8859945185fb1b064d7be7fe461734c7f7a0e6b7a02c1d858594061b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-28DV",
+    "timestamp": "2026-10-27T20:01:11.923Z",
+    "repository": "AgileRL/AgileRL",
+    "learningId": "learn-github-agilerl-agilerl",
+    "contentHash": "9ec0da5636ba33ade780bae3d5b2290ed96e92c1c3054a080d564989e8d1c494",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-2AO6",
+    "timestamp": "2026-10-27T20:01:14.886Z",
+    "repository": "alikon-art/DeterminFlow",
+    "learningId": "learn-github-alikon-art-determinflow",
+    "contentHash": "4f7c98535a182d9a3526f45edc1213cce37ffa724afa20d254c9af4461829e3f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-2CB0",
+    "timestamp": "2026-10-27T20:01:17.004Z",
+    "repository": "sunbigfly/ppt-agent-skills",
+    "learningId": "learn-github-sunbigfly-ppt-agent-skills",
+    "contentHash": "1391df14235017a42a1aa6db922a0acfdd8a9b8e422b0d0d6af20fce9079e592",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-2H4K",
+    "timestamp": "2026-10-27T20:01:23.252Z",
+    "repository": "temporalio/temporal",
+    "learningId": "learn-github-temporalio-temporal",
+    "contentHash": "ee3e8e0c350383f2da3b4b9a7f6b863f5b32188503267f0ddac0bf1f3023c7b4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

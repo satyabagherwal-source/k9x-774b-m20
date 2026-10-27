@@ -19510,5 +19510,50 @@
     "downloads": 3544,
     "qualityScore": 3520,
     "discoveredAt": "2026-10-27T18:57:17.159Z"
+  },
+  {
+    "name": "AgileRL",
+    "fullName": "AgileRL/AgileRL",
+    "url": "https://github.com/AgileRL/AgileRL",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The complete post-training stack for LLMs, plus RL for any problem. SFT, DPO and multi-turn agentic RL, with evolutionary hyperparameter optimization built in.",
+    "stars": 960,
+    "forks": 83,
+    "openIssues": 8,
+    "language": "Python",
+    "qualityScore": 771,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T19:59:24.310Z"
+  },
+  {
+    "name": "DeterminFlow",
+    "fullName": "alikon-art/DeterminFlow",
+    "url": "https://github.com/alikon-art/DeterminFlow",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A production-oriented AI workflow runtime for building, validating, recovering, and shipping complex AI workflows as dependable services. 面向生产的 AI 工作流运行时：快速开发、验证和恢复复杂 AI 工作流，并将其稳定交付为服务。",
+    "stars": 938,
+    "forks": 143,
+    "openIssues": 17,
+    "language": "Python",
+    "qualityScore": 796,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T19:59:24.310Z"
+  },
+  {
+    "name": "ppt-agent-skills",
+    "fullName": "sunbigfly/ppt-agent-skills",
+    "url": "https://github.com/sunbigfly/ppt-agent-skills",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A code-driven presentation generation framework. 像构建软件工程一样生成演示文稿。",
+    "stars": 917,
+    "forks": 92,
+    "openIssues": 3,
+    "language": "Python",
+    "qualityScore": 742,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T19:59:24.310Z"
   }
 ]

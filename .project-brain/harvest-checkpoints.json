@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T19:56:22.074Z",
+  "last_updated": "2026-10-27T20:01:23.266Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9786,14 +9786,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-temporalio-temporal",
-      "content_hash": "1d09a55f383ce34114b1c9eb229164ac185af2ae78ff512f8ef755abc9e4dbcd",
-      "verified_at": "2026-10-26T18:05:30.103Z",
+      "content_hash": "ee3e8e0c350383f2da3b4b9a7f6b863f5b32188503267f0ddac0bf1f3023c7b4",
+      "verified_at": "2026-10-27T20:01:23.265Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T18:05:30.103Z"
+      "last_updated": "2026-10-27T20:01:23.265Z"
     },
     "Mintplex-Labs/anything-llm": {
       "repository": "Mintplex-Labs/anything-llm",
@@ -16979,6 +16979,51 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-27T18:59:39.371Z"
+    },
+    "AgileRL/AgileRL": {
+      "repository": "AgileRL/AgileRL",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-agilerl-agilerl",
+      "content_hash": "9ec0da5636ba33ade780bae3d5b2290ed96e92c1c3054a080d564989e8d1c494",
+      "verified_at": "2026-10-27T20:01:11.935Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T20:01:11.935Z"
+    },
+    "alikon-art/DeterminFlow": {
+      "repository": "alikon-art/DeterminFlow",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-alikon-art-determinflow",
+      "content_hash": "4f7c98535a182d9a3526f45edc1213cce37ffa724afa20d254c9af4461829e3f",
+      "verified_at": "2026-10-27T20:01:14.898Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T20:01:14.898Z"
+    },
+    "sunbigfly/ppt-agent-skills": {
+      "repository": "sunbigfly/ppt-agent-skills",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-sunbigfly-ppt-agent-skills",
+      "content_hash": "1391df14235017a42a1aa6db922a0acfdd8a9b8e422b0d0d6af20fce9079e592",
+      "verified_at": "2026-10-27T20:01:17.015Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T20:01:17.015Z"
     }
   },
   "repos": {

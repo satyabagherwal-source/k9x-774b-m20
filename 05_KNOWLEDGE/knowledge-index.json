@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T19:56:21.991Z",
-  "total_verified_learnings": 1146,
+  "last_updated": "2026-10-27T20:01:23.193Z",
+  "total_verified_learnings": 1149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -49905,8 +49905,8 @@
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "cde13dc1",
-      "content_hash": "1d09a55f383ce34114b1c9eb229164ac185af2ae78ff512f8ef755abc9e4dbcd",
+      "source_version": "bf81a4c2",
+      "content_hash": "ee3e8e0c350383f2da3b4b9a7f6b863f5b32188503267f0ddac0bf1f3023c7b4",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
@@ -49944,6 +49944,11 @@
           "number": 4637,
           "title": "Move query converter test cases to querytest (#12661)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4980,
+          "title": "V2 scheduler skipping pending jittered actions (#12745)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49951,7 +49956,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T18:05:30.007Z",
+      "verified_at": "2026-10-27T20:01:23.181Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -137693,6 +137698,161 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T19:56:21.968Z"
+    },
+    "learn-github-agilerl-agilerl": {
+      "learning_id": "learn-github-agilerl-agilerl",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "AgileRL/AgileRL",
+      "repository": "AgileRL/AgileRL",
+      "slug": "agilerl-agilerl",
+      "platform": "github",
+      "source_url": "https://github.com/AgileRL/AgileRL",
+      "source_version": "101484ce",
+      "content_hash": "9ec0da5636ba33ade780bae3d5b2290ed96e92c1c3054a080d564989e8d1c494",
+      "dossier_path": "07_PROJECT_LEARNING/agilerl-agilerl-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/agilerl-agilerl-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4977,
+          "title": "MoE routers under activation checkpointing, vision models, FSDP2, rollout logpro",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T20:01:11.850Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4977": {
+      "learning_id": "rule-4977",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4977,
+      "title": "MoE routers under activation checkpointing, vision models, FSDP2, rollout logpro",
+      "source_url": "https://github.com/AgileRL/AgileRL",
+      "source_version": "101484ce",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:01:11.850Z"
+    },
+    "learn-github-alikon-art-determinflow": {
+      "learning_id": "learn-github-alikon-art-determinflow",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "alikon-art/DeterminFlow",
+      "repository": "alikon-art/DeterminFlow",
+      "slug": "alikon-art-determinflow",
+      "platform": "github",
+      "source_url": "https://github.com/alikon-art/DeterminFlow",
+      "source_version": "8ad68863",
+      "content_hash": "4f7c98535a182d9a3526f45edc1213cce37ffa724afa20d254c9af4461829e3f",
+      "dossier_path": "07_PROJECT_LEARNING/alikon-art-determinflow-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/alikon-art-determinflow-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4978,
+          "title": "desktop): resolve locked plugin snapshots from canonical Git",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T20:01:14.814Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4978": {
+      "learning_id": "rule-4978",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4978,
+      "title": "desktop): resolve locked plugin snapshots from canonical Git",
+      "source_url": "https://github.com/alikon-art/DeterminFlow",
+      "source_version": "8ad68863",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:01:14.814Z"
+    },
+    "learn-github-sunbigfly-ppt-agent-skills": {
+      "learning_id": "learn-github-sunbigfly-ppt-agent-skills",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "sunbigfly/ppt-agent-skills",
+      "repository": "sunbigfly/ppt-agent-skills",
+      "slug": "sunbigfly-ppt-agent-skills",
+      "platform": "github",
+      "source_url": "https://github.com/sunbigfly/ppt-agent-skills",
+      "source_version": "13e35377",
+      "content_hash": "1391df14235017a42a1aa6db922a0acfdd8a9b8e422b0d0d6af20fce9079e592",
+      "dossier_path": "07_PROJECT_LEARNING/sunbigfly-ppt-agent-skills-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/sunbigfly-ppt-agent-skills-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4979,
+          "title": "visual_qa): specify UTF-8 encoding when reading planning JSON",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T20:01:16.933Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4979": {
+      "learning_id": "rule-4979",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4979,
+      "title": "visual_qa): specify UTF-8 encoding when reading planning JSON",
+      "source_url": "https://github.com/sunbigfly/ppt-agent-skills",
+      "source_version": "13e35377",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:01:16.933Z"
+    },
+    "rule-4980": {
+      "learning_id": "rule-4980",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4980,
+      "title": "V2 scheduler skipping pending jittered actions (#12745)",
+      "source_url": "https://github.com/temporalio/temporal",
+      "source_version": "bf81a4c2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:01:23.181Z"
     }
   },
   "aliases": {

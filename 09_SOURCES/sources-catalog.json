@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "cde13dc1",
+    "sourceVersion": "bf81a4c2",
     "license": "MIT",
-    "contentHash": "1d09a55f383ce34114b1c9eb229164ac185af2ae78ff512f8ef755abc9e4dbcd",
-    "lastHarvestedAt": "2026-10-26T18:05:30.095Z",
+    "contentHash": "ee3e8e0c350383f2da3b4b9a7f6b863f5b32188503267f0ddac0bf1f3023c7b4",
+    "lastHarvestedAt": "2026-10-27T20:01:23.256Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {
@@ -11298,5 +11298,35 @@
     "contentHash": "ce3a5161a76b514b0941a139522e7f2e7fc0eca6ffdf06c602f3f493fdde5bad",
     "lastHarvestedAt": "2026-10-27T18:59:39.363Z",
     "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder"
+  },
+  "agilerl-agilerl": {
+    "repository": "AgileRL/AgileRL",
+    "platform": "github",
+    "sourceUrl": "https://github.com/AgileRL/AgileRL",
+    "sourceVersion": "101484ce",
+    "license": "Apache-2.0",
+    "contentHash": "9ec0da5636ba33ade780bae3d5b2290ed96e92c1c3054a080d564989e8d1c494",
+    "lastHarvestedAt": "2026-10-27T20:01:11.926Z",
+    "learningId": "learn-github-agilerl-agilerl"
+  },
+  "alikon-art-determinflow": {
+    "repository": "alikon-art/DeterminFlow",
+    "platform": "github",
+    "sourceUrl": "https://github.com/alikon-art/DeterminFlow",
+    "sourceVersion": "8ad68863",
+    "license": "AGPL-3.0",
+    "contentHash": "4f7c98535a182d9a3526f45edc1213cce37ffa724afa20d254c9af4461829e3f",
+    "lastHarvestedAt": "2026-10-27T20:01:14.889Z",
+    "learningId": "learn-github-alikon-art-determinflow"
+  },
+  "sunbigfly-ppt-agent-skills": {
+    "repository": "sunbigfly/ppt-agent-skills",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sunbigfly/ppt-agent-skills",
+    "sourceVersion": "13e35377",
+    "license": "NOASSERTION",
+    "contentHash": "1391df14235017a42a1aa6db922a0acfdd8a9b8e422b0d0d6af20fce9079e592",
+    "lastHarvestedAt": "2026-10-27T20:01:17.007Z",
+    "learningId": "learn-github-sunbigfly-ppt-agent-skills"
   }
 }

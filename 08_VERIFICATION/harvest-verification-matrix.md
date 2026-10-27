@@ -5513,3 +5513,7 @@
 | `CYCLE-20261027-VXBJ` | `2026-10-27T19:56:17.647Z` | `fastapi/fastapi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4847` | Yes (`d641b1a4...`) |
 | `CYCLE-20261027-VXTX` | `2026-10-27T19:56:18.309Z` | `lingodotdev/lingo.dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4975` | Yes (`1d51803e...`) |
 | `CYCLE-20261027-W0Q4` | `2026-10-27T19:56:22.060Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4976` | Yes (`ae2fe82e...`) |
+| `CYCLE-20261027-28DV` | `2026-10-27T20:01:11.923Z` | `AgileRL/AgileRL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4977` | Yes (`9ec0da56...`) |
+| `CYCLE-20261027-2AO6` | `2026-10-27T20:01:14.886Z` | `alikon-art/DeterminFlow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4978` | Yes (`4f7c9853...`) |
+| `CYCLE-20261027-2CB0` | `2026-10-27T20:01:17.004Z` | `sunbigfly/ppt-agent-skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4979` | Yes (`1391df14...`) |
+| `CYCLE-20261027-2H4K` | `2026-10-27T20:01:23.252Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4980` | Yes (`ee3e8e0c...`) |

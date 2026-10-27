@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source**: github ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Source Version**: `cde13dc1`  
+> **Source Version**: `bf81a4c2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T18:05:29.598Z  
+> **Timestamp**: 2026-10-27T20:01:22.827Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T18:05:28.897Z  
+> **Harvest Timestamp**: 2026-10-27T20:01:22.046Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 23996 stars
+- **Stars / Engagement**: 24020 stars
 
 ---
 
@@ -2121,805 +2121,909 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cde13dc1` (2026-10-26)
-**Commit Message**: Move query converter test cases to querytest (#12661)
+### Incident Patch 1: `310879a3` (2026-10-27)
+**Commit Message**: Fix V2 scheduler skipping pending jittered actions (#12745)
 
-## What changed?
+This PR aims to hotfix a problem with jittering handling for
+schedulesv2, where schedules, particularly with long jitters can skip
+past the scheduling of the next fire, causing misses.
 
-Moved the query converter test cases shared by every visibility store to
-a new `store/query/querytest` package.
+Q&A: 
+- Can holding the LastProcessedTime back cause double-firing? No, the
+hold-back only occurs when there's nothing to process (such as during a
+jitter)
+- Why do we need two variables now? Because we still need to invalidate
+the generator task after it runs (for CHASM), and therefore we need to
+split its functionality between being a completion cursor for looking at
+the time-range to generate events and a chasm task being invalidated
+once the task processing has moved forward.
 
-**No test case changed**.
+## LLM Summary
 
-## Why?
-
-`store/tests` imported every store implementation just to run one table
-of cases.
-
-With each store testing itself, the tests live next to the code they
-test.
-
-This unblocks [adding build tags to remove ES from the
-build](https://github.com/temporalio/temporal/pull/12659).
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `common/persistence/visibility/store/elasticsearch/query_converter_test.go` (modified, +41/-0)
-```diff
-@@ -1,6 +1,7 @@
- package elasticsearch
- 
- import (
-+	"encoding/json"
- 	"fmt"
- 	"testing"
- 	"time"
-@@ -9,7 +10,12 @@ import (
- 	"github.com/stretchr/testify/require"
- 	"github.com/temporalio/sqlparser"
- 	enumspb "go.temporal.io/api/enums/v1"
-+	"go.temporal.io/server/common/log"
-+	"go.temporal.io/server/common/metrics"
-+	"go.temporal.io/server/common/namespace"
- 	"go.temporal.io/server/common/persistence/visibility/store/query"
-+	"go.temporal.io/server/common/persistence/visibility/store/query/querytest"
-+	"go.temporal.io/server/common/searchattribute"
- )
- 
- func TestQueryConverter_GetDatetimeFormat(t *testing.T) {
-@@ -747,3 +753,38 @@ func TestQueryConverter_ConvertIsExpr(t *testing.T) {
- 		})
- 	}
- }
-+
-+func TestElasticsearchQueryConverter(t *testing.T) {
-+	t.Parallel()
-+	querytest.Run(
-+		t,
-+		querytest.Elasticsearch,
-+		newESQueryConverter,
-+		serializeESQuery,
-+	)
-+}
-+
-+func newESQueryConverter() *query.QueryConverter[elastic.Query] {
-+	return NewQueryConverter(
-+		namespace.Name("test-namespace"),
-+		searchattribute.TestNameTypeMap(),
-+		&searchattribute.TestMapper{},
-+		metrics.NoopMetricsHandler,
-+		log.NewNoopLogger(),
-+	)
-+}
-+
-+func serializeESQuery(q elastic.Query) (string, error) {
-+	if q == nil {
-+		return "", nil
-+	}
-+	source, err := q.Source()
-+	if err != nil {
-+		return "", err
-+	}
-+	data, err := json.Marshal(source)
-+	if err != nil {
-+		return "", err
-+	}
-+	return string(data), nil
-+}
-```
-
-**File**: `common/persistence/visibility/store/query/querytest/querytest.go` (renamed, +20/-98)
-```diff
-@@ -1,37 +1,25 @@
--package tests
-+// Package querytest provides the query converter test cases shared by every visibility store.
-+package querytest
- 
- import (
--	"encoding/json"
- 	"strings"
- 	"testing"
- 
--	"github.com/olivere/elastic/v7"
- 	"github.com/stretchr/testify/require"
- 	"github.com/temporalio/sqlparser"
--	"go.temporal.io/server/common/log"
--	"go.temporal.io/server/common/metrics"
--	"go.temporal.io/server/common/namespace"
--	"go.temporal.io/server/common/persistence/sql"
--	"go.temporal.io/server/common/persistence/sql/sqlplugin/mysql"
--	"go.temporal.io/server/common/persistence/sql/sqlplugin/postgresql"
--	"go.temporal.io/server/common/persistence/sql/sqlplugin/sqlite"
--	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch"
- 	"go.temporal.io/server/common/persistence/visibility/store/query"
--	vissql "go.temporal.io/server/common/persistence/visibility/store/sql"
--	"go.temporal.io/server/common/searchattribute"
- )
- 
-+// Dialect selects the expected results of the store under test.
-+type Dialect int
-+
- const (
--	testNamespaceName = namespace.Name("test-namespace")
-+	MySQL Dialect = iota
-+	PostgreSQL
-+	SQLite
-+	Elasticsearch
- )
- 
--var sqlPlugins = []string{
--	mysql.PluginName,
--	postgresql.PluginName,
--	postgresql.PluginNamePGX,
--	sqlite.PluginName,
--}
--
- type queryConverterTestCase struct {
- 	name string
- 	in   string
-@@ -62,21 +50,21 @@ type queryConverterTestCase struct {
- 	orderBy string
- }
- 
--func (tc *queryConverterTestCase) expected(store string) (out string, errMsg string) {
-+func (tc *queryConverterTestCase) expected(dialect Dialect) (out string, errMsg string) {
- 	if tc.err != "" {
- 		return "", tc.err
- 	}
--	if store == elasticsearch.PersistenceName {
-+	if dialect == Elasticsearch {
- 		return tc.es, tc.esErr
- 	}
- 
- 	var outOverride, errOverride string
--	switch store {
--	case mysql.PluginName:
-+	switch dialect {
-+	case MySQL:
- 		outOverride, errOverride = tc.mysql, tc.mysqlErr
--	case postgresql.PluginName, postgresql.PluginNamePGX:
-+	case PostgreSQL:
- 		outOverride, errOverride = tc.postgres, tc.postgresErr
--	case sqlite.PluginName:
-+	case SQLite:
- 		outOverride, errOverride = tc.sqlite, tc.sqliteErr
- 	default:
- 		// no-op
-@@ -1410,16 +1398,18 @@ var queryConverterTestCases = []queryConverterTestCase{
- 	},
- }
- 
--func runQueryConverterTest[T any](
-+// Run converts every test case with a new query converter, and checks the serialized query
-+// against the expected results of dialect.
-+func Run[T any](
- 	t *testing.T,
--	store string,
-+	dialect Dialect,
- 	newQueryConverter func() *query.QueryConverter[T],
- 	serialize func(T) (string, error),
- ) {
- 	for _, tc := range queryConverterTestCases {
- 		t.Run(tc.name, func(t *testing.T) {
- 			r := require.New(t)
--			expectedOut, expectedErr := tc.expected(store)
-+			expectedOut, expectedErr := tc.expected(dialect)
- 			// The query converter is stateful (e.g. it tracks if the query filtered by
- 			// namespace division), thus each test case requires a new instance.
- 			queryParams, err := newQueryConverter().Convert(tc.in)
-@@ -1445,71 +1435,3 @@ func runQueryConverterTest[T any](
- 		})
- 	}
- }
--
--func serializeSQLQuery(expr sqlparser.Expr) (string, error) {
--	if expr == nil {
--		return "", nil
--	}
--	return sqlparser.String(expr), nil
--}
--
--func serializeESQuery(q elastic.Query) (string, error) {
--	if q == nil {
--		return "", nil
--	}
--	source, err := q.Source()
--	if err != nil {
--		return "", err
--	}
--	data, err := json.Marshal(source)
--	if err != nil {
--		return "", err
--	}
--	return string(data), nil
--}
--
--func TestSQLQueryConverter(t *testing.T) {
--	t.Parallel()
--	for _, plugin := range sqlPlugins {
--		t.Run(plugin, func(t *testing.T) {
--			t.Parallel()
--			pluginVisQC, err := sql.GetPluginVisibilityQueryConverter(plugin)
--			require.NoError(t, err)
--			runQueryConverterTest(
--				t,
--				plugin,
--				func() *query.QueryConverter[sqlparser.Expr] {
--					return query.NewQueryConverter(
--						&vissql.SQLQueryConverter{VisibilityQueryConverter: pluginVisQC},
--						testNamespaceName,
--						searchattribute.TestNameTypeMap(),
--						&searchattribute.TestMapper{},
--						metrics.NoopMetricsHandler,
--						log.NewNoopLogger(),
--					)
--				},
--				serializeSQLQuery,
--			)
--		})
--	}
--}
--
--func TestElasticsearchQueryConverter(t *testing.T) {
--	t.Parallel()
--	runQueryConverterTest(
--		t,
--		elasticsearch.PersistenceName,
--		newESQueryConverter,
--		serializeESQuery,
--	)
--}
--
--func newESQueryConverter() *query.QueryConverter[elastic.Query] {
--	return elasticsearch.NewQueryConverter(
--		testNamespaceName,
--		searchattribute.TestNameTypeMap(),
--		&searchattribute.TestMapper{},
--		metrics.NoopMetricsHandler,
--		log.NewNoopLogger(),
--	)
--}
-```
-
-**File**: `common/persistence/visibility/store/sql/query_converter_test.go` (modified, +51/-0)
-```diff
-@@ -9,8 +9,17 @@ import (
- 	"github.com/stretchr/testify/require"
- 	"github.com/temporalio/sqlparser"
- 	enumspb "go.temporal.io/api/enums/v1"
-+	"go.temporal.io/server/common/log"
-+	"go.temporal.io/server/common/metrics"
-+	"go.temporal.io/server/common/namespace"
-+	persistencesql "go.temporal.io/server/common/persistence/sql"
- 	"go.temporal.io/server/common/persistence/sql/sqlplugin"
-+	"go.temporal.io/server/common/persistence/sql/sqlplugin/mysql"
-+	"go.temporal.io/server/common/persistence/sql/sqlplugin/postgresql"
-+	"go.temporal.io/server/common/persistence/sql/sqlplugin/sqlite"
- 	"go.temporal.io/server/common/persistence/visibility/store/query"
-+	"go.temporal.io/server/common/persistence/visibility/store/query/querytest"
-+	"go.temporal.io/server/common/searchattribute"
- 	"go.uber.org/mock/gomock"
- )
- 
-@@ -1053,3 +1062,45 @@ func parseWhereString(where string) sqlparser.Expr {
- 	}
- 	return stmt.(*sqlparser.Select).Where.Expr
- }
-+
-+func TestSQLQueryConverter(t *testing.T) {
-+	t.Parallel()
-+	plugins := []struct {
-+		name    string
-+		dialect querytest.Dialect
-+	}{
-+		{name: mysql.PluginName, dialect: querytest.MySQL},
-+		{name: postgresql.PluginName, dialect: querytest.PostgreSQL},
-+		{name: postgresql.PluginNamePGX, dialect: querytest.PostgreSQL},
-+		{name: sqlite.PluginName, dialect: querytest.SQLite},
-+	}
-+	for _, plugin := range plugins {
-+		t.Run(plugin.name, func(t *testing.T) {
-+			t.Parallel()
-+			pluginVisQC, err := persistencesql.GetPluginVisibilityQueryConverter(plugin.name)
-+			require.NoError(t, err)
-+			querytest.Run(
-+				t,
-+				plugin.dialect,
-+				func() *query.QueryConverter[sqlparser.Expr] {
-+					return query.NewQueryConverter(
-+						&SQLQueryConverter{VisibilityQueryConverter: pluginVisQC},
-+						namespace.Name("test-namespace"),
-+						searchattribute.TestNameTypeMap(),
-+						&searchattribute.TestMapper{},
-+						metrics.NoopMetricsHandler,
-+						log.NewNoopLogger(),
-+					)
-+				},
-+				serializeSQLQuery,
-+			)
-+		})
-+	}
-+}
-+
-+func serializeSQLQuery(expr sqlparser.Expr) (string, error) {
-+	if expr == nil {
-+		return "", nil
-+	}
-+	return sqlparser.String(expr), nil
-+}
-```
-
----
-
-### Incident Patch 2: `205b1599` (2026-10-26)
-**Commit Message**: Record and expose principal attribution for standalone activities (#12550)
-
-## What changed?
-
-Persist the authenticated principal of the worker that most recently
-accepted or responded to a standalone activity task. Return
-started_by_principal, closed_by_principal, and last_worker_principal
-through DescribeActivityExecution.
+Fix V2 schedules silently losing jittered actions after an extra
+generator wakeup. Initialize `lastAction` to `start` instead of `end`,
+matching V1, and track timer executions separately so obsolete timers
+still retire.
 
 ## Why?
+Suppose the last processed action was at **15:00:57**. The next slot is
+nominally **15:15**, with jitter delaying it until **15:17**. The
+previous workflow completes at **15:16**, waking the generator before
+anything is du
 
-Help users and operators investigate standalone activities by
-identifying who started or closed an execution and which worker
-principal most recently handled a task.
-
-## How did you test it?
-- [x] built
-- [ ] run locally and tested manually
-- [x] covered by existing tests
-- [x] added new unit test(s)
-- [x] added new functional test(s)
-
-**File**: `chasm/context.go` (modified, +9/-0)
+**File**: `chasm/lib/scheduler/config.go` (modified, +2/-0)
 ```diff
-@@ -96,6 +96,12 @@ type ExecutionInfo struct {
- 	// An execution is closed when its root component reaches a terminal state in its lifecycle.
- 	// If the component is still running (not yet closed), it returns a zero time.Time value.
- 	CloseTime time.Time
-+	// StartedByPrincipal is the authenticated principal that created this execution.
-+	// It is nil when the execution was created without a principal.
-+	StartedByPrincipal *commonpb.Principal
-+	// ClosedByPrincipal is the authenticated principal that closed this execution.
-+	// It is nil when the execution remains open or was closed without a principal.
-+	ClosedByPrincipal *commonpb.Principal
- }
- 
- type EndpointRegistry interface {
-@@ -206,6 +212,7 @@ func (c *immutableCtx) ExecutionKey() ExecutionKey {
- 
- func (c *immutableCtx) ExecutionInfo() ExecutionInfo {
- 	executionInfo := c.root.backend.GetExecutionInfo()
-+	rootAttributes := c.root.serializedNode.GetMetadata().GetComponentAttributes()
- 
- 	var closeTime time.Time
- 	closeTimestamp := executionInfo.GetCloseTime()
-@@ -218,6 +225,8 @@ func (c *immutableCtx) ExecutionInfo() ExecutionInfo {
- 		StateTransitionCount: executionInfo.GetStateTransitionCount(),
- 		ApproximateStateSize: c.root.backend.GetApproximatePersistedSize(),
- 		CloseTime:            closeTime,
-+		StartedByPrincipal:   rootAttributes.GetStartedByPrincipal(),
-+		ClosedByPrincipal:    rootAttributes.GetClosedByPrincipal(),
- 	}
- }
- 
+@@ -17,6 +17,7 @@ type (
+ 		GeneratorBufferReserveSize        int           // Minimum number of spaces in `BufferedStarts` reserved for automated actions.
+ 		CanceledTerminatedCountAsFailures bool          // Whether cancelled+terminated count for pause-on-failure
+ 		MaxActionsPerExecution            int           // Limits the number of actions (startWorkflow, terminate/cancel) taken by ExecuteTask in a single iteration
++		EnableGeneratorJitterFix          bool          // Preserve pending jittered actions across empty generator wakeups; disable to restore the legacy cursor behavior.
+ 		EnableVersioningOverride          bool          // Whether to forward versioning overrides to started workflows
+ 		IdleTime                          time.Duration // How long to keep schedules after they're done
+ 		EventLogMaxEntries                int           // Maximum EventLog entries retained per component; the earliest entries are dropped beyond this.
+@@ -93,6 +94,7 @@ var (
+ 		CanceledTerminatedCountAsFailures: false,
+ 		MaxActionsPerExecution:            5,
+ 		EnableVersioningOverride:          true,
++		EnableGeneratorJitterFix:          true,
+ 		IdleTime:                          7 * 24 * time.Hour,
+ 		EventLogMaxEntries:                30,
+ 		EventLogMaxMessageLen:             1000,
 ```
 
-**File**: `chasm/lib/activity/activity.go` (modified, +24/-0)
+**File**: `chasm/lib/scheduler/gen/schedulerpb/v1/message.pb.go` (modified, +45/-31)
 ```diff
-@@ -17,6 +17,7 @@ import (
- 	"go.temporal.io/server/chasm/lib/callback"
- 	"go.temporal.io/server/common"
- 	"go.temporal.io/server/common/contextutil"
-+	"go.temporal.io/server/common/headers"
- 	"go.temporal.io/server/common/metrics"
- 	"go.temporal.io/server/common/retrypolicy"
- 	serviceerrors "go.temporal.io/server/common/serviceerror"
-@@ -244,6 +245,7 @@ func (a *Activity) HandleStarted(ctx chasm.MutableContext, request *historyservi
- 		}
- 		return nil, err
- 	}
-+	a.recordLastWorker(ctx, request.GetPollRequest().GetIdentity())
- 	if dispatchTime := a.dispatchTimeForAttempt(lastAttempt); dispatchTime != nil {
- 		metrics.TaskScheduleToStartLatency.With(a.taskScheduleToStartMetricsHandler(ctx)).Record(
- 			lastAttempt.GetStartedTime().AsTime().Sub(dispatchTime.AsTime()),
-@@ -366,6 +368,7 @@ func (a *Activity) HandleCompleted(
- 	}); err != nil {
- 		return nil, err
- 	}
-+	a.recordLastWorker(ctx, event.Request.GetCompleteRequest().GetIdentity())
- 
- 	return &historyservice.RespondActivityTaskCompletedResponse{}, nil
- }
-@@ -405,6 +408,7 @@ func (a *Activity) HandleFailed(
- 	}
- 	if retryState == enumspb.RETRY_STATE_IN_PROGRESS {
- 		a.emitOnAttemptFailedMetrics(ctx, enrichedHandler)
-+		a.recordLastWorker(ctx, failedRequest.GetIdentity())
- 
- 		return &historyservice.RespondActivityTaskFailedResponse{}, nil
- 	}
-@@ -417,6 +421,7 @@ func (a *Activity) HandleFailed(
- 	}); err != nil {
- 		return nil, err
- 	}
-+	a.recordLastWorker(ctx, failedRequest.GetIdentity())
- 
- 	return &historyservice.RespondActivityTaskFailedResponse{}, nil
- }
-@@ -442,10 +447,29 @@ func (a *Activity) HandleCanceled(
- 	}); err != nil {
- 		return nil, err
- 	}
-+	a.recordLastWorker(ctx, event.Request.GetCancelRequest().GetIdentity())
- 
- 	return &historyservice.RespondActivityTaskCanceledResponse{}, nil
+@@ -239,12 +239,17 @@ func (x *WorkflowMigrationState) GetPreMigrationNotes() string {
+ // CHASM scheduler's Generator internal state.
+ type GeneratorState struct {
+ 	state protoimpl.MessageState `protogen:"open.v1"`
+-	// High water mark.
++	// High water mark for processed schedule actions. This can lag behind the
++	// current time while an action is waiting for its jittered fire time.
+ 	LastProcessedTime *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=last_processed_time,json=lastProcessedTime,proto3" json:"last_processed_time,omitempty"`
+ 	// A list of upcoming times an action will be triggered.
+ 	FutureActionTimes []*timestamppb.Timestamp `protobuf:"bytes,4,rep,name=future_action_times,json=futureActionTimes,proto3" json:"future_action_times,omitempty"`
+-	unknownFields     protoimpl.UnknownFields
+-	sizeCache         protoimpl.SizeCache
++	// High water mark for generator task executions, used to invalidate timers
++	// even when no schedule action was due. Unset until the first execution
++	// after upgrading; task validation then falls back to last_processed_time.
++	LastProcessedTaskTime *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=last_processed_task_time,json=lastProcessedTaskTime,proto3" json:"last_processed_task_time,omitempty"`
++	unknownFields         protoimpl.UnknownFields
++	sizeCache             protoimpl.SizeCache
  }
  
-+func (a *Activity) recordLastWorker(
-+	ctx chasm.MutableContext,
-+	identity string,
-+) {
-+	attempt := a.LastAttempt.Get(ctx)
-+	attempt.LastWorkerIdentity = identity
-+	principalType := ctx.RequestHeader(headers.PrincipalTypeHeaderName)
-+	principalName := ctx.RequestHeader(headers.PrincipalNameHeaderName)
-+	if principalType != "" || principalName != "" {
-+		attempt.LastWorkerPrincipal = &commonpb.Principal{
-+			Type: principalType,
-+			Name: principalName,
-+		}
-+		return
-+	}
-+	attempt.LastWorkerPrincipal = nil
-+}
-+
- // Terminate implements the chasm.RootComponent interface.
- func (a *Activity) Terminate(
- 	ctx chasm.MutableContext,
-```
-
-**File**: `chasm/lib/activity/activity_test.go` (modified, +199/-27)
-```diff
-@@ -9,6 +9,7 @@ import (
- 	"github.com/stretchr/testify/require"
- 	apiactivitypb "go.temporal.io/api/activity/v1" //nolint:importas
- 	commonpb "go.temporal.io/api/common/v1"
-+	failurepb "go.temporal.io/api/failure/v1"
- 	nexuspb "go.temporal.io/api/nexus/v1"
- 	sdkpb "go.temporal.io/api/sdk/v1"
- 	"go.temporal.io/api/serviceerror"
-@@ -20,11 +21,13 @@ import (
- 	"go.temporal.io/server/chasm"
- 	"go.temporal.io/server/chasm/lib/activity/gen/activitypb/v1"
- 	"go.temporal.io/server/common/dynamicconfig"
-+	"go.temporal.io/server/common/headers"
- 	"go.temporal.io/server/common/metrics"
- 	"go.temporal.io/server/common/metrics/metricstest"
- 	"go.temporal.io/server/common/namespace"
- 	"go.temporal.io/server/common/searchattribute/sadefs"
- 	serviceerrors "go.temporal.io/server/common/serviceerror"
-+	"go.temporal.io/server/common/testing/protorequire"
- 	"google.golang.org/protobuf/types/known/durationpb"
- 	"google.golang.org/protobuf/types/known/fieldmaskpb"
- 	"google.golang.org/protobuf/types/known/timestamppb"
-@@ -112,26 +115,28 @@ func TestHandleStarted(t *testing.T) {
- 	startedTime := timestamppb.New(testTime.Add(-1 * time.Minute))
- 
- 	testCases := []struct {
--		name           string
--		activityStatus activitypb.ActivityExecutionStatus
--		attemptStamp   int32
--		requestStamp   int32
--		startRequestID string
--		requestID      string
--		attemptCount   int32
--		dispatchTime   *timestamppb.Timestamp
--		metricSamples  int
--		metricLatency  time.Duration
--		checkOutcome   func(t *testing.T, response *historyservice.RecordActivityTaskStartedResponse, err error)
-+		name             string
-+		activityStatus   activitypb.ActivityExecutionStatus
-+		attemptStamp     int32
-+		requestStamp     int32
-+		startRequestID   string
-+		requestID        string
-+		attemptCount     int32
-+		dispatchTime     *timestamppb.Timestamp
-+		metricSamples    int
-+		metricLatency    time.Duration
-+		expectLastWorker bool
-+		checkOutcome     func(t *testing.T, response *historyservice.RecordActivityTaskStartedResponse, err error)
- 	}{
- 		{
--			name:           "successful transition from scheduled",
--			activityStatus: activitypb.ACTIVITY_EXECUTION_STATUS_SCHEDULED,
--			attemptStamp:   testStamp,
--			requestStamp:   testStamp,
--			requestID:      testRequestID,
--			metricSamples:  1,
--			metricLatency:  30 * time.Second,
-+			name:             "successful transition from scheduled",
-+			activityStatus:   activitypb.ACTIVITY_EXECUTION_STATUS_SCHEDULED,
-+			attemptStamp:     testStamp,
-+			requestStamp:     testStamp,
-+			requestID:        testRequestID,
-+			metricSamples:    1,
-+			metricLatency:    30 * time.Second,
-+			expectLastWorker: true,
- 			checkOutcome: func(t *testing.T, response *historyservice.RecordActivityTaskStartedResponse, err error) {
- 				require.Equal(t, int32(1), response.Attempt)
- 				require.NoError(t, err)
-@@ -140,15 +145,16 @@ func TestHandleStarted(t *testing.T) {
- 		{
- 			// Latency is measured from the attempt's dispatch time, 10s ago, not from the schedule
- 			// time 30s ago: a retry excludes the earlier attempts and the backoff between them.
--			name:           "successful transition from scheduled - retry attempt",
--			activityStatus: activitypb.ACTIVITY_EXECUTION_STATUS_SCHEDULED,
--			attemptStamp:   testStamp,
--			requestStamp:   testStamp,
--			requestID:      testRequestID,
--			attemptCount:   2,
--			dispatchTime:   timestamppb.New(testTime.Add(-10 * time.Second)),
--			metricSamples:  1,
--			metricLatency:  10 * time.Second,
-+			name:             "successful transition from scheduled - retry attempt",
-+			activityStatus:   activitypb.ACTIVITY_EXECUTION_STATUS_SCHEDULED,
-+			attemptStamp:     testStamp,
-+			requestStamp:     testStamp,
-+			requestID:        testRequestID,
-+			attemptCount:     2,
-+			dispatchTime:     timestamppb.New(testTime.Add(-10 * time.Second)),
-+			metricSamples:    1,
-+			metricLatency:    10 * time.Second,
-+			expectLastWorker: true,
- 			checkOutcome: func(t *testing.T, response *historyservice.RecordActivityTaskStartedResponse, err error) {
- 				require.Equal(t, int32(2), response.Attempt)
- 				require.NoError(t, err)
-@@ -279,6 +285,7 @@ func TestHandleStarted(t *testing.T) {
- 					}),
- 				},
- 			}
-+			ctx.GoCtx = headers.SetPrincipal(ctx.GoCtx, &commonpb.Principal{Type: "jwt", Name: "poll-worker"})
- 
- 			// Setup activity state
- 			attemptState := &activitypb.ActivityAttemptState{
-@@ -327,12 +334,20 @@ func TestHandleStarted(t *testing.T) {
- 			request := &historyservice.RecordActivityTaskStartedRequest{
- 				Stamp:     tc.requestStamp,
- 				RequestId: tc.requestID,
-+				PollRequest: &workflowservice.PollActivityTaskQueueRequest{
-+					Namespace: "test-namespace",
-+					Identity:  "poll-worker-identity",
-+				},
- 			}
- 
- 			// Execute HandleStarted
- 			response, err := activity.HandleStarted(ctx, request)
- 
- 			tc.checkOutcome(t, response, err)
-+			if tc.expectLastWorker {
-+				require.Equal(t, "poll-worker-identity", attemptState.GetLastWorkerIdentity())
-+				protorequire.ProtoEqual(t, &common
-```
-
-**File**: `chasm/lib/activity/gen/activitypb/v1/activity_state.pb.go` (modified, +43/-30)
-```diff
-@@ -743,6 +743,9 @@ type ActivityAttemptState struct {
- 	// the started attempt is updated, so a task token issued at start remains valid until that attempt completes.
- 	StartedStamp       int32  `protobuf:"varint,14,opt,name=started_stamp,json=startedStamp,proto3" json:"started_stamp,omitempty"`
- 	LastWorkerIdentity string `protobuf:"bytes,7,opt,name=last_worker_identity,json=lastWorkerIdentity,proto3" json:"last_worker_identity,omitempty"`
-+	// The authenticated principal of the worker that most recently accepted or responded to an activity task.
-+	// It is updated with last_worker_identity.
-+	LastWorkerPrincipal *v1.Principal `protobuf:"bytes,15,opt,name=last_worker_principal,json=lastWorkerPrincipal,proto3" json:"last_worker_principal,omitempty"`
- 	// The Worker Deployment Version this activity was dispatched to most recently.
- 	// If nil, the activity has not yet been dispatched or was last dispatched to an unversioned worker.
- 	LastDeploymentVersion *v14.WorkerDeploymentVersion `protobuf:"bytes,8,opt,name=last_deployment_version,json=lastDeploymentVersion,proto3" json:"last_deployment_version,omitempty"`
-@@ -852,6 +855,13 @@ func (x *ActivityAttemptState) GetLastWorkerIdentity() string {
- 	return ""
+ func (x *GeneratorState) Reset() {
+@@ -291,6 +296,13 @@ func (x *GeneratorState) GetFutureActionTimes() []*timestamppb.Timestamp {
+ 	return nil
  }
  
-+func (x *ActivityAttemptState) GetLastWorkerPrincipal() *v1.Principal {
++func (x *GeneratorState) GetLastProcessedTaskTime() *timestamppb.Timestamp {
 +	if x != nil {
-+		return x.LastWorkerPrincipal
++		return x.LastProcessedTaskTime
 +	}
 +	return nil
 +}
 +
- func (x *ActivityAttemptState) GetLastDeploymentVersion() *v14.WorkerDeploymentVersion {
- 	if x != nil {
- 		return x.LastDeploymentVersion
-@@ -1318,7 +1328,7 @@ const file_temporal_server_chasm_lib_activity_proto_v1_activity_state_proto_rawD
- 	"\bidentity\x18\x02 \x01(\tR\bidentity\x12\x16\n" +
- 	"\x06reason\x18\x03 \x01(\tR\x06reason\x12\x1d\n" +
- 	"\n" +
--	"request_id\x18\x04 \x01(\tR\trequestId\"\x98\b\n" +
-+	"request_id\x18\x04 \x01(\tR\trequestId\"\xef\b\n" +
- 	"\x14ActivityAttemptState\x12\x14\n" +
- 	"\x05count\x18\x01 \x01(\x05R\x05count\x12O\n" +
- 	"\x16current_retry_interval\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\x14currentRetryInterval\x12=\n" +
-@@ -1327,7 +1337,8 @@ const file_temporal_server_chasm_lib_activity_proto_v1_activity_state_proto_rawD
- 	"\x14last_failure_details\x18\x05 \x01(\v2T.temporal.server.chasm.lib.activity.proto.v1.ActivityAttemptState.LastFailureDetailsR\x12lastFailureDetails\x12\x14\n" +
- 	"\x05stamp\x18\x06 \x01(\x05R\x05stamp\x12#\n" +
- 	"\rstarted_stamp\x18\x0e \x01(\x05R\fstartedStamp\x120\n" +
--	"\x14last_worker_identity\x18\a \x01(\tR\x12lastWorkerIdentity\x12k\n" +
-+	"\x14last_worker_identity\x18\a \x01(\tR\x12lastWorkerIdentity\x12U\n" +
-+	"\x15last_worker_principal\x18\x0f \x01(\v2!.temporal.api.common.v1.PrincipalR\x13lastWorkerPrincipal\x12k\n" +
- 	"\x17last_deployment_version\x18\b \x01(\v23.temporal.api.deployment.v1.WorkerDeploymentVersionR\x15lastDeploymentVersion\x12(\n" +
- 	"\x10start_request_id\x18\t \x01(\tR\x0estartRequestId\x12\x19\n" +
- 	"\bsdk_name\x18\n" +
-@@ -1416,13 +1427,14 @@ var file_temporal_server_chasm_lib_activity_proto_v1_activity_state_proto_goType
- 	(*v1.Priority)(nil),                             // 18: temporal.api.common.v1.Priority
- 	(*v12.ActivityOptions)(nil),                     // 19: temporal.api.activity.v1.ActivityOptions
- 	(*v13.CallbackMetadata)(nil),                    // 20: temporal.server.chasm.lib.callbacks.proto.v1.CallbackMetadata
--	(*v14.WorkerDeploymentVersion)(nil),             // 21: temporal.api.deployment.v1.WorkerDeploymentVersion
--	(*v1.Payloads)(nil),                             // 22: temporal.api.common.v1.Payloads
--	(*v1.Header)(nil),                               // 23: temporal.api.common.v1.Header
--	(*v15.UserMetadata)(nil),                        // 24: temporal.api.sdk.v1.UserMetadata
--	(*v16.PropagatedSerializationContext)(nil),      // 25: temporal.api.nexus.v1.PropagatedSerializationContext
--	(v17.RetryState)(0),                             // 26: temporal.api.enums.v1.RetryState
--	(*v18.Failure)(nil),                             // 27: temporal.api.failure.v1.Failure
-+	(*v1.Principal)(nil),                            // 21: temporal.api.common.v1.Principal
-+	(*v14.WorkerDeploymentVersion)(nil),             // 22: temporal.api.deployment.v1.WorkerDeploymentVersion
-+	(*v1.Payloads)(nil),                             // 23: temporal.api.common.v1.Payloads
-+	(*v1.Header)(nil),                               // 24: temporal.api.common.v1.Header
-+	(*v15.UserMetadata)(nil),                        // 25: temporal.api.sdk.v1.UserMetadata
-+	(*v16.PropagatedSerializationContext)(nil),      // 26: temporal.api.nexus.v1.PropagatedSerializationContext
-+	(v17.RetryState)(0),                             // 27: temporal.api.enums.v1.RetryState
-+	(*v18.Failure)(nil),                             // 28: temporal.api.failure.v1.Failure
- }
- var file_temporal_server_chasm_lib_activity_proto_v1_activity_state_proto_depIdxs = []int32{
- 	13, // 0: temporal.server.chasm.lib.activity.proto.v1.ActivityState.activity_type:type_name -> temporal.api.common.v1.ActivityType
-@@ -14
+ // CHASM scheduler's Invoker internal state.
+ type InvokerState struct {
+ 	state protoimpl.MessageState `protogen:"open.v1"`
+@@ -765,10 +777,11 @@ const file_temporal_server_chasm_lib_scheduler_proto_v1_message_proto_rawDesc =
+ 	"\x0flast_event_time\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\rlastEventTime\"z\n" +
+ 	"\x16WorkflowMigrationState\x120\n" +
+ 	"\x14pre_migration_paused\x18\x01 \x01(\bR\x12preMigrationPaused\x12.\n" +
+-	"\x13pre_migration_notes\x18\x02 \x01(\tR\x11preMigrationNotes\"\xa8\x01\n" +
++	"\x13pre_migration_notes\x18\x02 \x01(\tR\x11preMigrationNotes\"\xfd\x01\n" +
+ 	"\x0eGeneratorState\x12J\n" +
+ 	"\x13last_processed_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x11lastProcessedTime\x12J\n" +
+-	"\x13future_action_times\x18\x04 \x03(\v2\x1a.google.protobuf.TimestampR\x11futureActionTimes\"\xeb\x02\n" +
++	"\x13future_action_times\x18\x04 \x03(\v2\x1a.google.protobuf.TimestampR\x11futureActionTimes\x12S\n" +
++	"\x18last_processed_task_time\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x15lastProcessedTaskTime\"\xeb\x02\n" +
+ 	"\fInvokerState\x12W\n" +
+ 	"\x0fbuffered_starts\x18\x02 \x03(\v2..temporal.server.api.schedule.v1.BufferedStartR\x0ebufferedStarts\x12T\n" +
+ 	"\x10cancel_workflows\x18\x03 \x03(\v2).temporal.api.common.v1.WorkflowExecutionR\x0fcancelWorkflows\x12Z\n" +
+@@ -854,32 +867,33 @@ var file_temporal_server_chasm_lib_scheduler_proto_v1_message_proto_depIdxs = []
+ 	14, // 4: temporal.server.chasm.lib.scheduler.proto.v1.SchedulerState.last_event_time:type_name -> google.protobuf.Timestamp
+ 	14, // 5: temporal.server.chasm.lib.scheduler.proto.v1.GeneratorState.last_processed_time:type_name -> google.protobuf.Timestamp
+ 	14, // 6: temporal.server.chasm.lib.scheduler.proto.v1.GeneratorState.future_action_times:type_name -> google.protobuf.Timestamp
+-	15, // 7: temporal.server.chasm.lib.scheduler.proto.v1.InvokerState.buffered_starts:type_name -> temporal.server.api.schedule.v1.BufferedStart
+-	16, // 8: temporal.server.chasm.lib.scheduler.proto.v1.InvokerState.cancel_workflows:type_name -> temporal.api.common.v1.WorkflowExecution
+-	16, // 9: temporal.server.chasm.lib.scheduler.proto.v1.InvokerState.terminate_workflows:type_name -> temporal.api.common.v1.WorkflowExecution
+-	14, // 10: temporal.server.chasm.lib.scheduler.proto.v1.InvokerState.last_processed_time:type_name -> google.protobuf.Timestamp
+-	17, // 11: temporal.server.chasm.lib.scheduler.proto.v1.BackfillerState.backfill_request:type_name -> temporal.api.schedule.v1.BackfillRequest
+-	18, // 12: temporal.server.chasm.lib.scheduler.proto.v1.BackfillerState.trigger_request:type_name -> temporal.api.schedule.v1.TriggerImmediatelyRequest
+-	14, // 13: temporal.server.chasm.lib.scheduler.proto.v1.BackfillerState.last_processed_time:type_name -> google.protobuf.Timestamp
+-	19, // 14: temporal.server.chasm.lib.scheduler.proto.v1.LastCompletionResult.success:type_name -> temporal.api.common.v1.Payload
+-	20, // 15: temporal.server.chasm.lib.scheduler.proto.v1.LastCompletionResult.failure:type_name -> temporal.api.failure.v1.Failure
+-	0,  // 16: temporal.server.chasm.lib.scheduler.proto.v1.SchedulerMigrationState.scheduler_state:type_name -> temporal.server.chasm.lib.scheduler.proto.v1.SchedulerState
+-	2,  // 17: temporal.server.chasm.lib.scheduler.proto.v1.SchedulerMigrationState.generator_s
 ```
 
-**File**: `chasm/lib/activity/handler.go` (modified, +8/-5)
+**File**: `chasm/lib/scheduler/generator_jitter_test.go` (added, +172/-0)
 ```diff
-@@ -228,18 +228,21 @@ func (h *handler) newActivityForStartExecution(
- 		}
- 	}
- 
--	if request.GetRequestEagerExecution() {
--		err = TransitionEagerStarted.Apply(newActivity, mutableContext, eagerStartEvent{
-+	eager := request.GetRequestEagerExecution()
-+	if eager {
-+		if err := TransitionEagerStarted.Apply(newActivity, mutableContext, eagerStartEvent{
- 			requestID: request.GetRequestId(),
--			identity:  request.GetIdentity(),
--		})
-+		}); err != nil {
-+			return nil, nil, err
-+		}
-+		newActivity.recordLastWorker(mutableContext, request.GetIdentity())
- 	} else {
- 		err = TransitionScheduled.Apply(newActivity, mutableContext, nil)
- 	}
- 	if err != nil {
- 		return nil, nil, err
- 	}
--	if !request.GetRequestEagerExecution() {
-+	if !eager {
- 		return newActivity, nil, nil
- 	}
- 
-```
-
-**File**: `chasm/lib/activity/proto/v1/activity_state.proto` (modified, +4/-0)
-```diff
-@@ -247,6 +247,10 @@ message ActivityAttemptState {
- 
-   string last_worker_identity = 7;
- 
-+  // The authenticated principal of the worker that most recently accepted or responded to an activity task.
-+  // It is updated with last_worker_identity.
-+  temporal.api.common.v1.Principal last_worker_principal = 15;
+@@ -0,0 +1,172 @@
++package scheduler_test
 +
-   // The Worker Deployment Version this activity was dispatched to most recently.
-   // If nil, the activity has not yet been dispatched or was last dispatched to an unversioned worker.
-   temporal.api.deployment.v1.WorkerDeploymentVersion last_deployment_version = 8;
-```
-
-**File**: `chasm/lib/activity/responses.go` (modified, +13/-0)
-```diff
-@@ -221,6 +221,7 @@ func (a *Activity) buildActivityExecutionInfo(
- 		ActivityType:                        a.GetActivityType(),
- 		Attempt:                             attempt.GetCount(),
- 		CanceledReason:                      a.CancelState.GetReason(),
-+		ClosedByPrincipal:                   resolvedPrincipal(executionInfo.ClosedByPrincipal),
- 		CloseTime:                           closeTime,
- 		CurrentRetryInterval:                a.currentRetryInterval(ctx, attempt),
- 		EagerExecutionAccepted:              a.GetEagerExecutionAccepted(),
-@@ -235,6 +236,7 @@ func (a *Activity) buildActivityExecutionInfo(
- 		LastHeartbeatTime:                   heartbeat.GetRecordedTime(),
- 		LastStartedTime:                     attempt.GetStartedTime(),
- 		LastWorkerIdentity:                  attempt.GetLastWorkerIdentity(),
-+		LastWorkerPrincipal:                 resolvedPrincipal(attempt.GetLastWorkerPrincipal()),
- 		LastDeploymentVersion:               attempt.GetLastDeploymentVersion(),
- 		SdkName:                             attempt.GetSdkName(),
- 		SdkVersion:                          attempt.GetSdkVersion(),
-@@ -248,6 +250,7 @@ func (a *Activity) buildActivityExecutionInfo(
- 		ScheduleToCloseTimeout:              a.GetScheduleToCloseTimeout(),
- 		ScheduleToStartTimeout:              a.GetScheduleToStartTimeout(),
- 		StartDelay:                          a.GetStartDelay(),
-+		StartedByPrincipal:                  resolvedPrincipal(executionInfo.StartedByPrincipal),
- 		StartToCloseTimeout:                 a.GetStartToCloseTimeout(),
- 		StateSizeBytes:                      int64(executionInfo.ApproximateStateSize),
- 		StateTransitionCount:                executionInfo.StateTransitionCount,
-@@ -266,6 +269,16 @@ func (a *Activity) buildActivityExecutionInfo(
- 	return info
- }
- 
-+func resolvedPrincipal(principal *commonpb.Principal) *commonpb.ResolvedPrincipal {
-+	if principal == nil {
-+		return nil
-+	}
-+	return &commonpb.ResolvedPrincipal{
-+		Type:            principal.GetType(),
-+		NameAtWriteTime: principal.GetName(),
++import (
++	"testing"
++	"time"
++
++	"github.com/stretchr/testify/require"
++	enumspb "go.temporal.io/api/enums/v1"
++	schedulepb "go.temporal.io/api/schedule/v1"
++	"go.temporal.io/api/workflowservice/v1"
++	"go.temporal.io/server/chasm"
++	"go.temporal.io/server/chasm/lib/scheduler/gen/schedulerpb/v1"
++	"google.golang.org/protobuf/types/known/durationpb"
++	"google.golang.org/protobuf/types/known/timestamppb"
++)
++
++func TestGeneratorJitterGapPreservesPendingAction(t *testing.T) {
++	t.Parallel()
++	for _, policy := range []enumspb.ScheduleOverlapPolicy{
++		enumspb.SCHEDULE_OVERLAP_POLICY_SKIP,
++		enumspb.SCHEDULE_OVERLAP_POLICY_BUFFER_ONE,
++		enumspb.SCHEDULE_OVERLAP_POLICY_BUFFER_ALL,
++		enumspb.SCHEDULE_OVERLAP_POLICY_CANCEL_OTHER,
++		enumspb.SCHEDULE_OVERLAP_POLICY_TERMINATE_OTHER,
++		enumspb.SCHEDULE_OVERLAP_POLICY_ALLOW_ALL,
++	} {
++		t.Run(policy.String(), func(t *testing.T) {
++			t.Parallel()
++			schedule := defaultSchedule()
++			schedule.Spec = &schedulepb.ScheduleSpec{
++				Interval: []*schedulepb.IntervalSpec{{Interval: durationpb.New(15 * time.Minute)}},
++				Jitter:   durationpb.New(10 * time.Minute),
++			}
++			schedule.Policies.OverlapPolicy = policy
++			env := newTestEnv(t, withSchedule(schedule))
++			ctx := env.MutableContext()
++			generator := env.Scheduler.Generator.Get(ctx)
++			invoker := env.Scheduler.Invoker.Get(ctx)
++			handler := newGeneratorHandler(env)
++			start := time.Date(2030, 1, 1, 0, 0, 0, 0, time.UTC).Add(-time.Second)
++			generator.LastProcessedTime = timestamppb.New(start)
++			env.Scheduler.Info.UpdateTime = timestamppb.New(start)
++			next, err := env.SpecProcessor.NextTime(env.Scheduler, start)
++			require.NoError(t, err)
++			require.True(t, next.Next.After(next.Nominal))
++
++			// A completion or other event can wake the generator before the
++			// pending action's jittered fire time, when nothing is due yet.
++			env.TimeSource.Update(next.Nominal.Add(next.Next.Sub(next.Nominal) / 2))
++			require.NoError(t, handler.Execute(env.MutableContext(), generator, chasm.TaskAttributes{}, &schedulerpb.GeneratorTask{}))
++			require.Empty(t, invoker.BufferedStarts)
++			require.Equal(t, start, generator.LastProcessedTime.AsTime())
++
++			// The regular timer must still generate that action exactly once.
++			env.TimeSource.Update(next.Next)
++			require.NoError(t, handler.Execute(env.MutableContext(), generator, chasm.TaskAttributes{}, &schedulerpb.GeneratorTask{}))
++			require.Len(t, invoker.BufferedStarts, 1)
++			require.Equal(t, next.Nominal, invoker.BufferedStarts[0].NominalTime.AsTime())
++			require.Equal(t, next.Next, invoker.BufferedStarts[0].ActualTime.AsTime())
++			require.Equal(t, next.Next, generator.LastProcessedTime.AsTime())
++			require.NoError(t, handler.Execute(env.MutableContext(), generator, chasm.TaskAttributes{}, &schedulerpb.GeneratorTask{}))
++			require.Len(t, invoker.BufferedStarts, 1)
++		})
 +	}
 +}
 +
- func (a *Activity) buildDescribeActivityExecutionResponse(
- 	ctx chasm.Context,
- 	req *activitypb.DescribeActivityExecutionRequest,
++func TestGeneratorRetiresObsoleteTimerWithoutSkippingPendingAction(t *testing.T) {
++	t.Parallel()
++	schedule := defaultSchedule()
++	schedule.Spec.Interval[0].Phase = durationpb.New(30 * time.Second)
++	env := newTestEnv(t, withSchedule(schedule))
++	generator := env.Scheduler.Generator.Get(env.MutableContext())
++	invoker := env.Scheduler.Invoker.Get(env.MutableContext())
++	handler := newGeneratorHandler(env)
++	base := time.Date(2030, 1, 1, 0, 0, 0, 0, time.UTC)
++	updateTime := base.Add(45 * time.Second)
++	generator.LastProcessedTime = timestamppb.New(updateTime)
++	env.Scheduler.Info.UpdateTime = timestamppb.New(updateTime)
++
++	// An update changes the next fire from 00:01:00 to 00:01:30, but the
++	// timer from the old spec is still queued. Its empty execution must retire it.
++	oldTimer := base.Add(time.Minute)
++	env.TimeSource.Update(oldTimer)
++	attrs := chasm.TaskAttributes{ScheduledTime: oldTimer}
++	valid, err := handler.Validate(env.ReadContext(), generator, chasm.TaskInvocation{TaskAttributes: attrs}, &schedulerpb.GeneratorTask{})
++	require.NoError(t, err)
++	require.True(t, valid)
++	require.NoError(t, handler.Execute(env.MutableContext(), generator, attrs, &schedulerpb.GeneratorTask{}))
++	require.Empty(t, invoker.BufferedStarts)
++	require.Equal(t, updateTime, generator.LastProcessedTime.AsTime())
++	valid, err = handler.Validate(env.ReadContext(), generator, chasm.TaskInvocation{TaskAttributes: attrs}, &schedulerpb.GeneratorTask{})
++	require.NoError(t, err)
++	require.False(t, valid, "a successful execution must invalidate its scheduled pure task")
++
++	nextFire := base.Add(90 * time.Second)
++	env.TimeSource.Update(nextFire)
++	attrs.ScheduledTime = nextFire
++	valid, err = handler.Validate(env.ReadContext(), generator, chasm.TaskInvocation{TaskAttributes: attrs}, &schedulerpb.GeneratorTask{})
++	require.NoError(t, err)
++	require.True(t, valid)
++	require.NoError(t, handler.Execute(env.MutableContext(), generator, attrs, &schedulerpb.GeneratorTask{}))
++	require.Len(t, invoker.BufferedStarts, 1)
++	require.Equal(t, nextFire, invoker.Buffered
 ```
 
-**File**: `chasm/lib/activity/statemachine.go` (modified, +0/-7)
+**File**: `chasm/lib/scheduler/generator_killswitch_test.go` (added, +112/-0)
 ```diff
-@@ -37,7 +37,6 @@ func (a *Activity) SetStateMachineState(state activitypb.ActivityExecutionStatus
- type (
- 	eagerStartEvent struct {
- 		requestID string
--		identity  string
+@@ -0,0 +1,112 @@
++package scheduler_test
++
++import (
++	"testing"
++	"time"
++
++	"github.com/stretchr/testify/require"
++	"go.temporal.io/server/chasm"
++	"go.temporal.io/server/chasm/lib/scheduler"
++	"go.temporal.io/server/common/clock"
++	"go.temporal.io/server/common/metrics"
++	"go.temporal.io/server/common/testing/testlogger"
++	"google.golang.org/protobuf/types/known/durationpb"
++)
++
++func TestGeneratorJitterFixKillswitch(t *testing.T) {
++	t.Parallel()
++	for _, tc := range []struct {
++		name           string
++		enabled        bool
++		pendingActions int
++	}{
++		{name: "enabled", enabled: true, pendingActions: 1},
++		{name: "disabled", enabled: false, pendingActions: 0},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			t.Parallel()
++			createdAt := time.Date(2026, 10, 26, 21, 59, 59, 0, time.UTC)
++			fire := time.Date(2026, 10, 26, 22, 8, 0, 459000000, time.UTC)
++			followingFire := time.Date(2026, 10, 26, 22, 22, 43, 38000000, time.UTC)
++			ts := clock.NewEventTimeSource()
++			ts.Update(createdAt)
++			tweakables := scheduler.DefaultTweakables
++			require.True(t, tweakables.EnableGeneratorJitterFix, "the fix must be enabled by default")
++			config := defaultConfig()
++			config.Tweakables = func(ns string) scheduler.Tweakables {
++				require.Equal(t, namespace, ns)
++				return tweakables
++			}
++			processor := scheduler.NewSpecProcessor(config, metrics.NoopMetricsHandler,
++				testlogger.NewTestLogger(t, testlogger.FailOnExpectedErrorOnly), newLegacySpecBuilder(0, 0))
++			schedule := defaultSchedule()
++			schedule.Spec.Interval[0].Interval = durationpb.New(15 * time.Minute)
++			schedule.Spec.Jitter = durationpb.New(10 * time.Minute)
++			env := newSchedulerTestEngine(t, schedule, withEngineTimeSource(ts), withEngineSpecProcessor(processor))
++
++			// Change the setting after creation to exercise existing schedules.
++			tweakables.EnableGeneratorJitterFix = tc.enabled
++			if !tc.enabled {
++				require.NoError(t, env.readScheduler(func(s *scheduler.Scheduler, ctx chasm.Context) error {
++					// Manual backfill progress is unaffected by the generator switch.
++					result, err := processor.ProcessTimeRange(s, createdAt, createdAt.Add(4*time.Minute),
++						schedule.Policies.OverlapPolicy, s.WorkflowID(), "backfill", true, nil)
++					require.NoError(t, err)
++					require.Equal(t, createdAt, result.LastActionTime)
++					require.Equal(t, fire, result.NextWakeupTime)
++					result, err = processor.ProcessTimeRange(s, result.LastActionTime, fire,
++						schedule.Policies.OverlapPolicy, s.WorkflowID(), "backfill", true, nil)
++					require.NoError(t, err)
++					require.Len(t, result.BufferedStarts, 1)
++					return nil
++				}))
++			}
++			for _, now := range []time.Time{
++				time.Date(2026, 10, 26, 22, 2, 0, 0, time.UTC),
++				time.Date(2026, 10, 26, 22, 4, 0, 0, time.UTC),
++			} {
++				ts.Update(now)
++				require.NoError(t, env.updateScheduler(func(s *scheduler.Scheduler, ctx chasm.MutableContext) error {
++					s.Generator.Get(ctx).Generate(ctx)
++					return nil
++				}))
++				require.NoError(t, env.readScheduler(func(s *scheduler.Scheduler, ctx chasm.Context) error {
++					cursor := createdAt
++					if !tc.enabled {
++						cursor = now
++					}
++					generator := s.Generator.Get(ctx)
++					require.Equal(t, cursor, generator.LastProcessedTime.AsTime())
++					require.Equal(t, now, generator.LastProcessedTaskTime.AsTime())
++					return nil
++				}))
++			}
++
++			// CHASM validates and executes the original timer. Disabling the fix
++			// reproduces the old skip, while task completion still invalidates it.
++			ts.Update(fire)
++			for range 2 {
++				_, err := env.engine.FirePureTasks(env.rootRef, fire)
++				require.NoError(t, err)
++				require.NoError(t, env.readScheduler(func(s *scheduler.Scheduler, ctx chasm.Context) error {
++					require.Len(t, s.Invoker.Get(ctx).BufferedStarts, tc.pendingActions)
++					require.Equal(t, fire, s.Generator.Get(ctx).LastProcessedTaskTime.AsTime())
++					return nil
++				}))
++			}
++
++			// Re-enable without rewriting state. The next eligible slot still
++			// fires once; a slot skipped while disabled cannot be recovered.
++			tweakables.EnableGeneratorJitterFix = true
++			ts.Update(followingFire)
++			for range 2 {
++				_, err := env.engine.FirePureTasks(env.rootRef, followingFire)
++				require.NoError(t, err)
++				require.NoError(t, env.readScheduler(func(s *scheduler.Scheduler, ctx chasm.Context) error {
++					require.Len(t, s.Invoker.Get(ctx).BufferedStarts, tc.pendingActions+1)
++					return nil
++				}))
++			}
++		})
++	}
++}
+```
+
+**File**: `chasm/lib/scheduler/generator_tasks.go` (modified, +17/-5)
+```diff
+@@ -6,6 +6,7 @@ import (
+ 
+ 	"go.temporal.io/server/chasm"
+ 	"go.temporal.io/server/chasm/lib/scheduler/gen/schedulerpb/v1"
++	"go.temporal.io/server/common"
+ 	"go.temporal.io/server/common/log"
+ 	"go.temporal.io/server/common/log/tag"
+ 	"go.temporal.io/server/common/metrics"
+@@ -143,6 +144,9 @@ func (g *GeneratorTaskHandler) Execute(
+ 
+ 	// Write the new high water mark and future action times.
+ 	generator.LastProcessedTime = timestamppb.New(result.LastActionTime)
++	// Task progress is independent of action progress. An obsolete timer can
++	// execute without processing an action and must still invalidate itself.
++	generator.LastProcessedTaskTime = timestamppb.New(util.MaxTime(t2, generator.GetLastProcessedTaskTime().AsTime()))
+ 	generator.UpdateFutureActionTimes(ctx, g.specBuilder)
+ 
+ 	g.rearmTasks(ctx, generator, scheduler, metricsHandler, tweakables.IdleTime, result.NextWakeupTime)
+@@ -202,10 +206,18 @@ func (g *GeneratorTaskHandler) rearmTasks(
+ 	sched.IdleCloseTime = nil
+ 
+ 	if !nextWakeupTime.IsZero() {
+-		// Keep the generator task perpetually scheduled. When paused, the next
+-		// fire will simply advance the HWM without appending actions (handled in
+-		// ProcessTimeRange).
+-		generator.scheduleTask(ctx, nextWakeupTime)
++		// A clock rollback can put the next action before the task validation
++		// watermark. Defer the wakeup to the next queue tick after that watermark
++		// so it remains valid. Keep the action cursor so the delayed action is
++		// processed when the clock catches up, subject to the catchup window.
++		validationWatermark := util.MaxTime(
++			generator.GetLastProcessedTime().AsTime(),
++			generator.GetLastProcessedTaskTime().AsTime(),
++		)
++		earliestWakeup := validationWatermark.
++			Truncate(common.ScheduledTaskMinPrecision).
++			Add(common.ScheduledTaskMinPrecision)
++		generator.scheduleTask(ctx, util.MaxTime(nextWakeupTime, earliestWakeup))
+ 	} else {
+ 		// Hold open without a task: see the comment block above.
+ 		metricsHandler.Counter(metrics.SchedulerGeneratorLoopCompleted.Name()).Record(1)
+@@ -229,7 +241,7 @@ func (g *GeneratorTaskHandler) Validate(
+ 	_ *schedulerpb.GeneratorTask,
+ ) (bool, error) {
+ 	return validateTaskHighWaterMark(
+-		generator.GetLastProcessedTime(),
++		timestamppb.New(util.MaxTime(generator.GetLastProcessedTime().AsTime(), generator.GetLastProcessedTaskTime().AsTime())),
+ 		attrs.ScheduledTime,
+ 	)
+ }
+```
+
+**File**: `chasm/lib/scheduler/generator_wakeup_test.go` (added, +107/-0)
+```diff
+@@ -0,0 +1,107 @@
++package scheduler_test
++
++import (
++	"testing"
++	"time"
++
++	"github.com/stretchr/testify/require"
++	enumspb "go.temporal.io/api/enums/v1"
++	"go.temporal.io/server/chasm"
++	"go.temporal.io/server/chasm/chasmtest"
++	"go.temporal.io/server/chasm/lib/scheduler"
++	"go.temporal.io/server/common/clock"
++	"go.temporal.io/server/common/metrics"
++	"go.temporal.io/server/common/testing/testlogger"
++	"go.uber.org/mock/gomock"
++	"google.golang.org/protobuf/types/known/durationpb"
++)
++
++func TestGeneratorNextWakeupTimeStaysAtPendingJitteredFire(t *testing.T) {
++	t.Parallel()
++	createdAt := time.Date(2026, 10, 26, 21, 59, 59, 0, time.UTC)
++	fire := time.Date(2026, 10, 26, 22, 8, 0, 459000000, time.UTC)
++	followingFire := time.Date(2026, 10, 26, 22, 22, 43, 38000000, time.UTC)
++	timeSource := clock.NewEventTimeSource()
++	timeSource.Update(createdAt)
++	logger := testlogger.NewTestLogger(t, testlogger.FailOnExpectedErrorOnly)
++	realProcessor := scheduler.NewSpecProcessor(defaultConfig(), metrics.NoopMetricsHandler, logger, newLegacySpecBuilder(0, 0))
++
++	// Record the real processor's output, rather than inferring it from a
++	// previously queued timer that could hide an incorrect new wakeup time.
++	type output struct {
++		nextWakeupTime time.Time
++		actions        int
++	}
++	var outputs []output
++	processor := scheduler.NewMockSpecProcessor(gomock.NewController(t))
++	processor.EXPECT().NextTime(gomock.Any(), gomock.Any()).DoAndReturn(realProcessor.NextTime).AnyTimes()
++	processor.EXPECT().ProcessTimeRange(
++		gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(),
++	).DoAndReturn(func(
++		s *scheduler.Scheduler, start, end time.Time, policy enumspb.ScheduleOverlapPolicy,
++		workflowID, backfillID string, manual bool, limit *int,
++	) (*scheduler.ProcessedTimeRange, error) {
++		result, err := realProcessor.ProcessTimeRange(s, start, end, policy, workflowID, backfillID, manual, limit)
++		if err == nil {
++			outputs = append(outputs, output{result.NextWakeupTime, len(result.BufferedStarts)})
++		}
++		return result, err
++	}).AnyTimes()
++	schedule := defaultSchedule()
++	schedule.Spec.Interval[0].Interval = durationpb.New(15 * time.Minute)
++	schedule.Spec.Jitter = durationpb.New(10 * time.Minute)
++	generatorPath, err := chasm.DefaultPathEncoder.Encode(nil, []string{"Generator"})
++	require.NoError(t, err)
++	var timerDeadlines []time.Time
++	observeTimers := func(config *engineTestConfig) {
++		config.engineOpts = append(config.engineOpts, chasmtest.WithInvariantCheck(func(_ *testing.T, node *chasm.Node, _ chasm.RootComponent) {
++			timerDeadlines = nil
++			generator := node.Snapshot(nil).Nodes[generatorPath]
++			for _, task := range generator.GetMetadata().GetComponentAttributes().GetPureTasks() {
++				timerDeadlines = append(timerDeadlines, task.GetScheduledTime().AsTime())
++			}
++		}))
++	}
++	env := newSchedulerTestEngine(t, schedule, withEngineTimeSource(timeSource), withEngineSpecProcessor(processor), observeTimers)
++	requireTimerDeadline := func(expected time.Time) {
++		require.NotEmpty(t, timerDeadlines)
++		for _, deadline := range timerDeadlines {
++			require.Equal(t, expected, deadline, "every persisted generator timer must use the expected wakeup time")
++		}
++	}
++
++	// These fire times are fixed for namespace "ns-id" and schedule "sched-id".
++	// No expected timestamp is calculated by the implementation under test.
++	expected := []output{
++		{fire, 0},          // Creation: the 22:00 nominal slot is still in the future.
++		{fire, 0},          // 22:02: inside its jitter delay.
++		{fire, 0},          // 22:04: another empty wakeup must return the same deadline.
++		{fire, 0},          // 22:06: still waiting for the same slot.
++		{followingFire, 1}, // At the fire time, generate it and advance to the next slot.
++	}
++	require.Equal(t, expected[:1], outputs)
++	requireTimerDeadline(fire)
++	for i, now := range []time.Time{
++		time.Date(2026, 10, 26, 22, 2, 0, 0, time.UTC),
++		time.Date(2026, 10, 26, 22, 4, 0, 0, time.UTC),
++		time.Date(2026, 10, 26, 22, 6, 0, 0, time.UTC),
++	} {
++		timeSource.Update(now)
++		require.NoError(t, env.updateScheduler(func(s *scheduler.Scheduler, ctx chasm.MutableContext) error {
++			s.Generator.Get(ctx).Generate(ctx)
++			return nil
++		}))
++		require.Equal(t, expected[:i+2], outputs, "empty wakeup at %s", now)
++		requireTimerDeadline(fire)
++	}
++
++	// Deliver the timer through CHASM's validation and transaction machinery.
++	// A second delivery must neither regenerate the action nor recalculate a wakeup.
++	timeSource.Update(fire)
++	for range 2 {
++		_, err := env.engine.FirePureTasks(env.rootRef, fire)
++		require.NoError(t, err)
++		require.Equal(t, expected, outputs)
++		requireTimerDeadline(followingFire)
++	}
++}
+```
+
+**File**: `chasm/lib/scheduler/proto/v1/message.proto` (modified, +7/-1)
+```diff
+@@ -72,11 +72,17 @@ message WorkflowMigrationState {
+ 
+ // CHASM scheduler's Generator internal state.
+ message GeneratorState {
+-  // High water mark.
++  // High water mark for processed schedule actions. This can lag behind the
++  // current time while an action is waiting for its jittered fire time.
+   google.protobuf.Timestamp last_processed_time = 3;
+ 
+   // A list of upcoming times an action will be triggered.
+   repeated google.protobuf.Timestamp future_action_times = 4;
++
++  // High water mark for generator task executions, used to invalidate timers
++  // even when no schedule action was due. Unset until the first execution
++  // after upgrading; task validation then falls back to last_processed_time.
++  google.protobuf.Timestamp last_processed_task_time = 5;
+ }
+ 
+ // CHASM scheduler's Invoker internal state.
+```
+
+**File**: `chasm/lib/scheduler/spec_processor.go` (modified, +8/-5)
+```diff
+@@ -115,11 +115,14 @@ func (s *SpecProcessorImpl) ProcessTimeRange(
+ 
+ 	catchupWindow := catchupWindow(scheduler, tweakables)
+ 
+-	// lastAction is used to set the high water mark for future ProcessTimeRange
+-	// invocations. The code below will set a "last action" even when none is taken,
+-	// simply to indicate that processing can permanently skip that period of time
+-	// (e.g., it was prior to an update or past a catchup).
+-	lastAction := end
++	// Preserve the high water mark until an action is processed. NextTime searches
++	// nominal times, so advancing to end could skip an action whose nominal time
++	// has passed but whose jittered fire time is still in the future. The loop also
++	// advances past actions intentionally skipped or dropped.
++	lastAction := start
++	if !manual && !tweakables.EnableGeneratorJitterFix {
++		lastAction = end
++	}
+ 
+ 	var next legacyscheduler.GetNextTimeResult
+ 	var err error
+```
+
+---
+
+### Incident Patch 2: `f7ca7c3c` (2026-10-26)
+**Commit Message**: Fix namespace registration flakes in functional test setup (#12734)
+
+## What changed?
+
+Added test-only retries for namespace creation during functional test
+setup, capped at 10 outer attempts and a 10-second retry budget.
+
+## Why?
+
+Parallel functional tests can contend on Cassandra’s shared namespace
+metadata and exhaust the existing two-attempt retry limit, failing
+before the test itself runs. The additional retries give transient
+contention more time to clear without changing production retry
+settings.
+
+## How did you test it?
+- [X] built
+- [ ] run locally and tested manually
+- [ ] covered by existing tests
+- [X] added new unit test(s)
+- [ ] added new functional test(s)
+
+**File**: `tests/testcore/functional_test_base.go` (modified, +14/-1)
+```diff
+@@ -24,13 +24,15 @@ import (
+ 	"go.temporal.io/server/api/adminservice/v1"
+ 	persistencespb "go.temporal.io/server/api/persistence/v1"
+ 	"go.temporal.io/server/common"
++	"go.temporal.io/server/common/backoff"
+ 	"go.temporal.io/server/common/config"
+ 	"go.temporal.io/server/common/dynamicconfig"
+ 	"go.temporal.io/server/common/log"
+ 	"go.temporal.io/server/common/log/tag"
+ 	"go.temporal.io/server/common/namespace"
+ 	"go.temporal.io/server/common/payloads"
+ 	"go.temporal.io/server/common/persistence"
++	persistenceclient "go.temporal.io/server/common/persistence/client"
+ 	persistencetests "go.temporal.io/server/common/persistence/persistence-tests"
+ 	"go.temporal.io/server/common/persistence/sql/sqlplugin/sqlite"
+ 	"go.temporal.io/server/common/primitives/timestamp"
+@@ -550,7 +552,18 @@ func (s *functionalTestBase) RegisterNamespace(
+ 		},
+ 		IsGlobalNamespace: false,
+ 	}
+-	_, err := s.testCluster.testBase.MetadataManager.CreateNamespace(ctx, namespaceRequest)
++
++	// Parallel namespace creation can exhaust the normal retry budget, so test setup uses a larger
++	// budget for transient errors across all persistence backends.
++	metadataMgr := persistence.NewMetadataPersistenceRetryableClient(
++		s.testCluster.testBase.MetadataManager,
++		backoff.NewExponentialRetryPolicy(100*time.Millisecond).
++			WithMaximumInterval(time.Second).
++			WithMaximumAttempts(10).
++			WithExpirationInterval(10*time.Second),
++		persistenceclient.IsPersistenceTransientError,
++	)
++	_, err := metadataMgr.CreateNamespace(ctx, namespaceRequest)
+ 
+ 	if err != nil {
+ 		return namespace.EmptyID, err
+```
+
+---
+
+### Incident Patch 3: `eeea73a5` (2026-10-26)
+**Commit Message**: Add temporal_with_elasticsearch build tag to compile out Elasticsearch visibility (#12659)
+
+## What changed?
+
+Follow-up to #12593: `temporal_minimal` now also compiles out
+Elasticsearch visibility.
+
+`temporal_with_elasticsearch` opts it back in.
+
+**The default build is unchanged.**
+
+A `temporal_minimal` server with an Elasticsearch datastore refuses to
+start:
+
+```
+config validation error: persistence config error: datastore "es-visibility": elasticsearch: Elasticsearch visibility is not compiled into this server; remove this config or rebuild with the temporal_with_elasticsearch build tag
+```
+
+## Why?
+
+Every server binary includes the Elasticsearch client, even when
+visibility is stored in SQL or Cassandra.
+
+|                    | default  | `temporal_minimal` |
+| ------------------ | -------- |
+----------------------------------------- |
+| darwin/arm64 | 103.1 MB | 99.4 MB (−3.68 MB, −3.6%) |
+| linux/amd64 | 107.8 MB | 104.0 MB (−3.83 MB, −3.6%) |
+| packages compiled | 1443 | 1433 |
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `Makefile` (modified, +10/-9)
+```diff
+@@ -137,10 +137,10 @@ UNIT_TEST_DIRS := $(filter-out $(FUNCTIONAL_TEST_ROOT)% $(FUNCTIONAL_TEST_XDC_RO
+ UNIT_TEST_DIRS += $(TESTCORE_UNITTESTS)
+ endif
+ 
+-# Packages with a file constrained by temporal_minimal.
+-MINIMAL_DIRS := $(sort $(addprefix ./,$(dir $(shell git grep -lE '^//go:build .*temporal_minimal([^a-z0-9_]|$$)' -- '*.go'))))
+-# The unit test packages among MINIMAL_DIRS.
+-MINIMAL_UNIT_TEST_DIRS := $(filter $(UNIT_TEST_DIRS),$(MINIMAL_DIRS))
++# Packages with a file built only with temporal_minimal.
++MINIMAL_VARIANT_DIRS := $(sort $(addprefix ./,$(dir $(shell git grep --untracked -l '^//go:build.*[^!]temporal_minimal' -- '*.go'))))
++# The unit test packages among MINIMAL_VARIANT_DIRS.
++MINIMAL_VARIANT_UNIT_TEST_DIRS := $(filter $(UNIT_TEST_DIRS),$(MINIMAL_VARIANT_DIRS))
+ SYSTEM_WORKFLOWS_ROOT := ./service/worker
+ 
+ PINNED_DEPENDENCIES := \
+@@ -448,7 +448,7 @@ lint-code: $(GOLANGCI_LINT) $(ERRORTYPE)
+ 	@printf $(COLOR) "Linting code..."
+ 	$(call lint-go,$(ALL_TEST_TAGS),$(LINT_CODE_TARGETS))
+ 	@printf $(COLOR) "Linting code with temporal_minimal..."
+-	$(call lint-go,$(MINIMAL_TEST_TAGS),$(MINIMAL_DIRS))
++	$(call lint-go,$(MINIMAL_TEST_TAGS),$(MINIMAL_VARIANT_DIRS))
+ 
+ lint-yaml: $(YAMLFMT)
+ 	@printf $(COLOR) "Checking YAML formatting..."
+@@ -541,7 +541,8 @@ comma := ,
+ 
+ # Packages that temporal_minimal compiles out of the server unless the temporal_with_* build tag at the
+ # end of the variable name is set. Each temporal_with_* tag needs one.
+-EXCLUDED_PACKAGES_temporal_with_gstorage := cloud.google.com/go/storage go.temporal.io/server/common/archiver/gcloud
++EXCLUDED_PACKAGES_temporal_with_gstorage := cloud.google.com/go/storage
++EXCLUDED_PACKAGES_temporal_with_elasticsearch := github.com/olivere/elastic/v7
+ 
+ # $(call server-deps,<tags>): the packages the server depends on when built with <tags>.
+ server-deps = $(shell CGO_ENABLED=$(CGO_ENABLED) go list -tags $(ALL_BUILD_TAGS),$(1) -deps ./cmd/server)
+@@ -645,10 +646,10 @@ unit-test-coverage: prepare-coverage-test
+ 	go run ./cmd/tools/test-runner test --gotestsum-path=$(GOTESTSUM) --max-attempts=$(MAX_TEST_ATTEMPTS) $(TEST_RUNNER_TIMEOUT_ARG) --junitfile=$(NEW_REPORT) -- \
+ 		$(COMPILED_TEST_ARGS) -coverprofile=$(NEW_COVER_PROFILE) $(UNIT_TEST_DIRS)
+ 
+-# Runs the unit tests of MINIMAL_UNIT_TEST_DIRS with temporal_minimal.
++# Runs the unit tests of MINIMAL_VARIANT_UNIT_TEST_DIRS with temporal_minimal.
+ unit-test-build-tags:
+-	$(if $(MINIMAL_UNIT_TEST_DIRS),,$(error No package has a file constrained by temporal_minimal))
+-	$(MAKE) unit-test-coverage TEST_TAG="$(TEST_TAG),temporal_minimal" UNIT_TEST_DIRS="$(MINIMAL_UNIT_TEST_DIRS)"
++	$(if $(MINIMAL_VARIANT_UNIT_TEST_DIRS),,$(error No package has a temporal_minimal variant))
++	$(MAKE) unit-test-coverage TEST_TAG="$(TEST_TAG),temporal_minimal" UNIT_TEST_DIRS="$(MINIMAL_VARIANT_UNIT_TEST_DIRS)"
+ 
+ integration-test-coverage: prepare-coverage-test
+ 	@printf $(COLOR) "Run integration tests with coverage..."
+```
+
+**File**: `common/config/config.go` (modified, +2/-2)
+```diff
+@@ -14,7 +14,7 @@ import (
+ 	"go.temporal.io/server/common/log"
+ 	"go.temporal.io/server/common/masker"
+ 	"go.temporal.io/server/common/metrics"
+-	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch/client"
++	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch/esconfig"
+ 	"go.temporal.io/server/common/primitives"
+ 	"go.temporal.io/server/common/telemetry"
+ 	"google.golang.org/grpc/keepalive"
+@@ -281,7 +281,7 @@ type (
+ 		// Custom contains the config for custom datastore implementation
+ 		CustomDataStoreConfig *CustomDatastoreConfig `yaml:"customDatastore"`
+ 		// ElasticSearch contains the config for a ElasticSearch datastore
+-		Elasticsearch *client.Config `yaml:"elasticsearch"`
++		Elasticsearch *esconfig.Config `yaml:"elasticsearch"`
  	}
  
- 	rescheduleEvent struct {
-@@ -421,7 +420,6 @@ func (a *Activity) applyEagerStarted(ctx chasm.MutableContext, event eagerStartE
- 		a.FirstAttemptStartedTime = attempt.GetStartedTime()
- 	}
- 	attempt.StartRequestId = event.requestID
--	attempt.LastWorkerIdentity = event.identity
- 	attempt.SdkName = ctx.RequestHeader(headers.ClientNameHeaderName)
- 	attempt.SdkVersion = ctx.RequestHeader(headers.ClientVersionHeaderName)
- 	// TODO: Populate LastDeploymentVersion when standalone eager start supports worker versioning.
-@@ -479,7 +477,6 @@ func (a *Activity) applyStarted(ctx chasm.MutableContext, request *historyservic
- 		a.FirstAttemptStartedTime = attempt.GetStartedTime()
- 	}
- 	attempt.StartRequestId = request.GetRequestId()
--	attempt.LastWorkerIdentity = request.GetPollRequest().GetIdentity()
- 	attempt.SdkName = ctx.RequestHeader(headers.ClientNameHeaderName)
- 	attempt.SdkVersion = ctx.RequestHeader(headers.ClientVersionHeaderName)
- 	if versionDirective := request.GetVersionDirective().GetDeploymentVersion(); versionDirective != nil {
-@@ -527,7 +524,6 @@ func (a *Activity) applyCompleted(ctx chasm.MutableContext, event completeEvent)
+ 	FaultInjection struct {
+```
+
+**File**: `common/config/persistence.go` (modified, +5/-2)
+```diff
+@@ -11,7 +11,7 @@ import (
+ 	"time"
+ 
+ 	"github.com/gocql/gocql"
+-	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch/client"
++	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch/esconfig"
+ )
+ 
+ const (
+@@ -128,7 +128,7 @@ func (c *Persistence) GetSecondaryVisibilityStoreConfig() DataStore {
+ 		if ds.Elasticsearch != nil && ds.Elasticsearch.GetSecondaryVisibilityIndex() != "" {
+ 			esConfig := *ds.Elasticsearch
+ 			esConfig.Indices = map[string]string{
+-				client.VisibilityAppName: ds.Elasticsearch.GetSecondaryVisibilityIndex(),
++				esconfig.VisibilityAppName: ds.Elasticsearch.GetSecondaryVisibilityIndex(),
  			}
+ 			ds.Elasticsearch = &esConfig
+ 			return ds
+@@ -188,6 +188,9 @@ func (ds *DataStore) Validate() error {
  		}
- 		attempt.CompleteTime = timestamppb.New(ctx.Now(a))
--		attempt.LastWorkerIdentity = req.GetIdentity()
- 		outcome := a.Outcome.Get(ctx)
- 		outcome.Variant = &activitypb.ActivityOutcome_Successful_{
- 			Successful: &activitypb.ActivityOutcome_Successful{
-@@ -549,9 +545,6 @@ func (a *Activity) applyFailed(ctx chasm.MutableContext, event failedEvent) erro
- 		req := event.req.GetFailedRequest()
- 		a.Outcome.Get(ctx).RetryState = event.retryState
+ 	}
+ 	if ds.Elasticsearch != nil {
++		if err := validateElasticsearch(ds.Elasticsearch); err != nil {
++			return err
++		}
+ 		if err := ds.Elasticsearch.Validate(); err != nil {
+ 			return err
+ 		}
+```
+
+**File**: `common/config/persistence_elasticsearch.go` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++//go:build !temporal_minimal || temporal_with_elasticsearch
++
++package config
++
++import (
++	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch/esconfig"
++)
++
++func validateElasticsearch(*esconfig.Config) error {
++	return nil
++}
+```
+
+**File**: `common/config/persistence_elasticsearch_excluded.go` (added, +17/-0)
+```diff
+@@ -0,0 +1,17 @@
++//go:build temporal_minimal && !temporal_with_elasticsearch
++
++package config
++
++import (
++	"errors"
++
++	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch/esconfig"
++)
++
++// validateElasticsearch fails if cfg is set, since Elasticsearch visibility is excluded from this build.
++func validateElasticsearch(cfg *esconfig.Config) error {
++	if cfg != nil {
++		return errors.New("elasticsearch: Elasticsearch visibility is not compiled into this server; remove this config or rebuild with the temporal_with_elasticsearch build tag")
++	}
++	return nil
++}
+```
+
+**File**: `common/config/persistence_elasticsearch_excluded_test.go` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++//go:build temporal_minimal && !temporal_with_elasticsearch
++
++package config
++
++import (
++	"testing"
++
++	"github.com/stretchr/testify/require"
++	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch/esconfig"
++)
++
++func TestDataStoreValidate_ElasticsearchExcluded(t *testing.T) {
++	ds := &DataStore{Elasticsearch: &esconfig.Config{Indices: map[string]string{esconfig.VisibilityAppName: "temporal_visibility_v1"}}}
++	require.EqualError(t, ds.Validate(),
++		"elasticsearch: Elasticsearch visibility is not compiled into this server; remove this config or rebuild with the temporal_with_elasticsearch build tag")
++}
+```
+
+**File**: `common/config/persistence_elasticsearch_test.go` (added, +15/-0)
+```diff
+@@ -0,0 +1,15 @@
++//go:build !temporal_minimal || temporal_with_elasticsearch
++
++package config
++
++import (
++	"testing"
++
++	"github.com/stretchr/testify/require"
++	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch/esconfig"
++)
++
++func TestDataStoreValidate_Elasticsearch(t *testing.T) {
++	ds := &DataStore{Elasticsearch: &esconfig.Config{Indices: map[string]string{esconfig.VisibilityAppName: "temporal_visibility_v1"}}}
++	require.NoError(t, ds.Validate())
++}
+```
+
+**File**: `common/persistence/persistence-tests/elasticsearch_test_cluster.go` (modified, +6/-5)
+```diff
+@@ -13,12 +13,13 @@ import (
+ 	"go.temporal.io/server/common/log"
+ 	"go.temporal.io/server/common/log/tag"
+ 	esclient "go.temporal.io/server/common/persistence/visibility/store/elasticsearch/client"
++	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch/esconfig"
+ 	"go.temporal.io/server/temporal/environment"
+ 	"go.temporal.io/server/tests/testutils"
+ )
  
--		attempt := a.LastAttempt.Get(ctx)
--		attempt.LastWorkerIdentity = req.GetIdentity()
--
- 		// A worker may respond failed without a Failure. Synthesize a generic terminal failure so
- 		// the closed activity still exposes a consumable outcome; otherwise PollActivityExecution
- 		// returns a nil outcome and a client cannot tell the closed activity apart from one that
+ type esTestCluster struct {
+-	cfg    *esclient.Config
++	cfg    *esconfig.Config
+ 	logger log.Logger
+ 
+ 	indexName string
+@@ -40,13 +41,13 @@ func newEsTestCluster(
+ 		panic(err)
+ 	}
+ 	return &esTestCluster{
+-		cfg: &esclient.Config{
++		cfg: &esconfig.Config{
+ 			Version:  environment.GetESVersion(),
+ 			URL:      *addr,
+ 			Username: username,
+ 			Password: password,
+ 			Indices: map[string]string{
+-				esclient.VisibilityAppName: indexName,
++				esconfig.VisibilityAppName: indexName,
+ 			},
+ 		},
+ 		logger:    logger,
+@@ -80,7 +81,7 @@ func (c *esTestCluster) TearDownTestDatabase() {
+ 	}
+ }
+ 
+-func SetupEsIndex(esConfig *esclient.Config, logger log.Logger) error {
++func SetupEsIndex(esConfig *esconfig.Config, logger log.Logger) error {
+ 	ctx := context.Background()
+ 	var esClient esclient.IntegrationTestsClient
+ 	op := func() error {
+@@ -168,7 +169,7 @@ func waitForYellowStatus(esClient esclient.IntegrationTestsClient, index string)
+ 	return nil
+ }
+ 
+-func DeleteEsIndex(esConfig *esclient.Config, logger log.Logger) error {
++func DeleteEsIndex(esConfig *esconfig.Config, logger log.Logger) error {
+ 	esClient, err := esclient.NewFunctionalTestsClient(esConfig, logger)
+ 	if err != nil {
+ 		return err
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12729** (2026-10-26): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #12720** (2026-10-25): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #12714** (2026-10-26): Cloud/v1.33.0-165: Merge revisioned task queue user data during replication (@rkannan82)
-- **PR #12712** (2026-10-24): Cloud/v1.33.0-164: Merge revisioned task queue user data during replication (@rkannan82)
-- **PR #12709** (2026-10-24): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #12701** (2026-10-26): Fix V2 schedules forwarding empty last completion result (#12688) (@davidporter-id-au)
+- **PR #12754** (2026-10-27): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #12750** (closed): Keep unexpired workflow rules when creating a rule at the limit (@sangkyoonnam)
+- **PR #12745** (2026-10-27): Fix V2 scheduler skipping pending jittered actions (@davidporter-id-au)
+- **PR #12740** (2026-10-26): Skip events-reapplication reset when nothing would be reapplied (@jiechenz)
+- **PR #12737** (2026-10-27): Clamp the read partition count in PickReadPartition (@geraldw-ai)
+- **PR #12735** (closed): testlogger: never deep-walk tag values in formatValue (@claude[bot])
 
 ---
 
@@ -2939,61 +3043,22 @@ principal most recently handled a task.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Move query converter test cases to querytest (#12661)
+## X. V2 scheduler skipping pending jittered actions (#12745)
 
 **RULE**:
-When implementing operations in `common/persistence/visibility/store/elasticsearch/query_converter_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `chasm/lib/scheduler/config.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cde13dc1`: Move query converter test cases to querytest (#12661). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `310879a3`: V2 scheduler skipping pending jittered actions (#12745). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/persistence/visibility/store/elasticsearch/query_converter_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `chasm/lib/scheduler/config.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"encoding/json"
-	"go.temporal.io/server/common/log"
-	"go.temporal.io/server/common/metrics"
-	"go.temporal.io/server/common/namespace"
-	"go.temporal.io/server/common/persistence/visibility/store/query/querytest"
-	"go.temporal.io/server/common/searchattribute"
-
-func TestElasticsearchQueryConverter(t *testing.T) {
-	t.Parallel()
-	querytest.Run(
-		t,
-		querytest.Elasticsearch,
-		newESQueryConverter,
-		serializeESQuery,
-	)
-}
-
-func newESQueryConverter() *query.QueryConverter[elastic.Query] {
-	return NewQueryConverter(
-		namespace.Name("test-namespace"),
-		searchattribute.TestNameTypeMap(),
-		&searchattribute.TestMapper{},
-		metrics.NoopMetricsHandler,
-		log.NewNoopLogger(),
-	)
-}
-
-func serializeESQuery(q elastic.Query) (string, error) {
-	if q == nil {
-		return "", nil
-	}
-	source, err := q.Source()
-	if err != nil {
-		return "", err
-	}
-	data, err := json.Marshal(source)
-	if err != nil {
-		return "", err
-	}
-	return string(data), nil
-}
+		EnableGeneratorJitterFix          bool          // Preserve pending jittered actions across empty generator wakeups; disable to restore the legacy cursor behavior.
+		EnableGeneratorJitterFix:          true,
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3003,4 +3068,4 @@ func serializeESQuery(q elastic.Query) (string, error) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cde13dc1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `310879a3` are properly handled with clean fallback behavior.

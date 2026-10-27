@@ -1,15 +1,15 @@
 {
   "domains": {
     "ai-agents": {
-      "queryIndex": 4,
-      "page": 8
+      "queryIndex": 0,
+      "page": 1
     },
     "fullstack-ui": {
-      "queryIndex": 0,
-      "page": 2
+      "queryIndex": 6,
+      "page": 1
     },
     "high-perf-systems": {
-      "queryIndex": 5,
+      "queryIndex": 3,
       "page": 1
     },
     "huggingface-ai-models": {
@@ -17,11 +17,11 @@
       "page": 1
     },
     "mobile-cross-platform": {
-      "queryIndex": 2,
-      "page": 6
+      "queryIndex": 0,
+      "page": 1
     },
     "devops-cloud-infrastructure": {
-      "queryIndex": 1,
+      "queryIndex": 2,
       "page": 1
     },
     "cybersecurity-defenses": {
@@ -38,9 +38,9 @@
     }
   },
   "huggingFace": {
-    "sortIndex": 2,
+    "sortIndex": 0,
     "page": 1
   },
-  "totalAutoDiscovered": 190,
-  "lastReplenishedAt": "2026-10-27T19:56:01.278Z"
+  "totalAutoDiscovered": 193,
+  "lastReplenishedAt": "2026-10-27T20:01:02.967Z"
 }
