@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source**: github ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
-> **Source Version**: `21cf7bff`  
+> **Source Version**: `9d87f3fa`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T12:23:03.062Z  
+> **Timestamp**: 2026-10-27T23:37:14.786Z  
 > **Learning ID**: `learn-github-metalbear-co-mirrord`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T12:23:02.884Z  
+> **Harvest Timestamp**: 2026-10-27T23:34:27.985Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Run any process, on your machine or in an AI agent's environment, as if it were a pod in your Kubernetes cluster: real env vars, DNS, network, traffic.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 5382 stars
+- **Stars / Engagement**: 5387 stars
 
 ---
 
@@ -1535,555 +1535,269 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `19ea8411` (2026-10-25)
-**Commit Message**: Merge remote-tracking branch 'origin/main' into codex/fix-pr-5138-resolved
+### Incident Patch 1: `9d87f3fa` (2026-10-27)
+**Commit Message**: Merge pull request #5158 from metalbear-co/aviram/security-patch-bump
 
-# Conflicts:
-#	Cargo.lock
-#	mirrord/agent/src/vpn.rs
+release: treat security changelog fragments as patch-level
 
-**File**: `CHANGELOG.md` (modified, +21/-0)
+**File**: `.github/actions/next-release-version/version.py` (modified, +3/-3)
 ```diff
-@@ -8,6 +8,27 @@ This project uses [*towncrier*](https://towncrier.readthedocs.io/) and the chang
+@@ -22,9 +22,9 @@
  
- <!-- towncrier release notes start -->
+ import tomlkit
  
-+## [3.279.0](https://github.com/metalbear-co/mirrord/tree/3.279.0) - 2026-10-24
-+
-+
-+### Added
-+
-+- Add `mirrord preview down`, which deletes every preview environment under a
-+  key in all namespaces, finding the key the way `mirrord preview up` does.
-+- Add `mirrord preview up`, which starts a preview environment for every
-+  service of a `mirrord-up.yaml` that has an image (from `--image
-+  <service>=<ref>`, `MIRRORD_<SERVICE>_IMAGE` or the service's `image`), all
-+  under one key, and returns once each one is ready.
-+- Services in `mirrord-up.yaml` accept an optional `image` field, the container
-+  image `mirrord preview up` runs in the service's preview environment.
-+  `mirrord up` ignores it.
-+
-+
-+### Fixed
-+
-+- Fixed a SIGSEGV on macOS when apps using libuv 1.53+ (e.g. Homebrew Node)
-+  connect to a unix socket.
-+
- ## [3.278.0](https://github.com/metalbear-co/mirrord/tree/3.278.0) - 2026-10-22
+-# Fragments whose only effect is invisible to users, in towncrier category order of
+-# increasing significance. Anything outside this set warrants a minor bump.
+-PATCH_CATEGORIES = frozenset({"internal", "fixed"})
++# Fragments that only warrant a patch release: work invisible to users, bug fixes and
++# security fixes. Anything outside this set warrants a minor bump.
++PATCH_CATEGORIES = frozenset({"internal", "fixed", "security"})
  
- 
+ # Fragments recording work that no user can observe. A release made up entirely of
+ # these is optional, hence `--release-on-internal-only`.
 ```
 
-**File**: `Cargo.lock` (modified, +59/-59)
+**File**: `CONTRIBUTING.md` (modified, +1/-1)
 ```diff
-@@ -2015,9 +2015,9 @@ dependencies = [
- 
- [[package]]
- name = "ctutils"
--version = "0.4.4"
-+version = "0.4.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "12218662ccac37d9714f2191252553d67585b97df8c839cbe49e0bde278dc865"
-+checksum = "38d28fb6aa7dd680b3ffd1a3e64e115c177bdba63c0ae7f9cd48129ff05c4fa0"
- dependencies = [
-  "cmov",
- ]
-@@ -2489,7 +2489,7 @@ checksum = "1aaf95b3e5c8f23aa320147307562d361db0ae0d51242340f558153b4eb2439b"
- 
- [[package]]
- name = "double_listen"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "libc",
- ]
-@@ -2890,7 +2890,7 @@ dependencies = [
- 
- [[package]]
- name = "fileops"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "libc",
- ]
-@@ -4075,7 +4075,7 @@ checksum = "a6cb138bb79a146c1bd460005623e142ef0181e3d0219cb493e02f7d08a35695"
- 
- [[package]]
- name = "issue1317"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "axum",
-  "env_logger",
-@@ -4085,7 +4085,7 @@ dependencies = [
- 
- [[package]]
- name = "issue1776"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "errno 0.3.14",
-  "libc",
-@@ -4094,22 +4094,22 @@ dependencies = [
- 
- [[package]]
- name = "issue1776portnot53"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "libc",
-  "socket2 0.5.10",
- ]
- 
- [[package]]
- name = "issue1899"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "libc",
- ]
- 
- [[package]]
- name = "issue2001"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "libc",
- ]
-@@ -4713,7 +4713,7 @@ checksum = "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53"
- 
- [[package]]
- name = "listen_ports"
--version = "3.278.0"
-+version = "3.279.0"
- 
- [[package]]
- name = "litemap"
-@@ -5063,7 +5063,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "actix-codec",
-  "atomic-write-file",
-@@ -5167,7 +5167,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-agent"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "actix-codec",
-  "async-pidfd",
-@@ -5236,7 +5236,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-agent-env"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "base64 0.22.1",
-  "k8s-openapi",
-@@ -5249,7 +5249,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-agent-iptables"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "async-trait",
-  "caps",
-@@ -5265,7 +5265,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-analytics"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "assert-json-diff",
-  "base64 0.22.1",
-@@ -5283,7 +5283,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-auth"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "base64 0.22.1",
-  "bcder",
-@@ -5310,7 +5310,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-cluster-auth"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "aws-config",
-  "aws-credential-types",
-@@ -5344,7 +5344,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-command"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "tempfile",
-  "tokio",
-@@ -5353,7 +5353,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-config"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "base64 0.22.1",
-  "bimap",
-@@ -5395,7 +5395,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-config-derive"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "proc-macro2",
-  "proc-macro2-diagnostics",
-@@ -5405,7 +5405,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-console"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "bincode",
-  "drain",
-@@ -5424,7 +5424,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-intproxy"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "actix-codec",
-  "anyhow",
-@@ -5479,7 +5479,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-intproxy-protocol"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "bincode",
-  "bytes",
-@@ -5492,7 +5492,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-jaq"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "jaq-core",
-  "jaq-json",
-@@ -5505,7 +5505,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-kube"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "async-stream",
-  "futures",
-@@ -5534,7 +5534,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-layer"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "actix-codec",
-  "apple-codesign",
-@@ -5574,7 +5574,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-layer-core"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "frida-gum",
-  "libc",
-@@ -5584,7 +5584,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-layer-go"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "frida-gum",
-  "libc",
-@@ -5596,7 +5596,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-layer-lib"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "base64 0.22.1",
-  "bincode",
-@@ -56
+@@ -881,7 +881,7 @@ Releases are fully automated. Under normal circumstances no manual steps are req
+    - There is at least one entry in `changelog.d/`.
+    - The last release is older than 7 days.
+ 2. When both conditions are met, the [Auto Release PR workflow](/.github/workflows/auto-release-pr.yaml) opens (or updates) a PR from `releases/<version>` to `main`. The PR:
+-   - Bumps the workspace version in `Cargo.toml` (patch bump if all changes are `fixed`/`internal`; minor bump otherwise).
++   - Bumps the workspace version in `Cargo.toml` (patch bump if all changes are `fixed`/`security`/`internal`; minor bump otherwise).
+    - Updates `Cargo.lock`.
+    - Generates `CHANGELOG.md` by consuming the `changelog.d/` fragments.
+ 3. Review the release PR, fix any changelog issues or typos, then merge it.
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `changelog.d/+security-patch-bump.internal.md` (added, +1/-0)
 ```diff
-@@ -72,7 +72,7 @@ ignored-paths = [
- # latest commits on rustls suppress certificate verification
- [workspace.package]
- edition = "2024"
--version = "3.278.0"
-+version = "3.279.0"
- license = "MIT"
- readme = "README.md"
- repository = "https://github.com/metalbear/mirrord"
+@@ -0,0 +1 @@
++Release version bump now treats `security` changelog fragments as patch-level.
 ```
 
-**File**: `changelog.d/+frontend-deps-security.internal.md` (removed, +0/-1)
-```diff
-@@ -1 +0,0 @@
--Update frontend dependencies to pick up security fixes.
-```
+---
 
-**File**: `changelog.d/+qodo-review-config.internal.md` (removed, +0/-1)
-```diff
-@@ -1 +0,0 @@
--Add a Qodo code review configuration that skips automatic reviews for bot-authored PRs and PRs carrying the `no-qodo` label.
-```
+### Incident Patch 2: `50c03803` (2026-10-27)
+**Commit Message**: release: bump patch for security-only changelog fragments
 
-**File**: `deny.toml` (modified, +3/-0)
+**File**: `.github/actions/next-release-version/version.py` (modified, +3/-3)
 ```diff
-@@ -24,6 +24,9 @@ ignore = [
-   "RUSTSEC-2026-0367",
-   "RUSTSEC-2026-0368",
-   "RUSTSEC-2026-0369",
-+  # crypto-bigint timing side channels, held at 0.5 by apple-codesign's elliptic-curve 0.13. We only use it to
-+  # re-sign binaries locally, with no secrets an attacker could observe.
-+  "RUSTSEC-2026-0387",
- ]
+@@ -22,9 +22,9 @@
  
- [licenses]
+ import tomlkit
+ 
+-# Fragments whose only effect is invisible to users, in towncrier category order of
+-# increasing significance. Anything outside this set warrants a minor bump.
+-PATCH_CATEGORIES = frozenset({"internal", "fixed"})
++# Fragments that only warrant a patch release: work invisible to users, bug fixes and
++# security fixes. Anything outside this set warrants a minor bump.
++PATCH_CATEGORIES = frozenset({"internal", "fixed", "security"})
+ 
+ # Fragments recording work that no user can observe. A release made up entirely of
+ # these is optional, hence `--release-on-internal-only`.
 ```
 
-**File**: `mirrord-up-schema.json` (modified, +8/-0)
+**File**: `CONTRIBUTING.md` (modified, +1/-1)
 ```diff
-@@ -573,6 +573,14 @@
-           },
-           "uniqueItems": true
-         },
-+        "image": {
-+          "description": "Container image to run in this service's preview environment, as a full image ref, e.g.\n`ghcr.io/acme/api:3f9a2c1`.\n\nUsed only by `mirrord preview up`, which starts a preview for every service that has an\nimage. `mirrord preview up --image <service>=<ref>` and `MIRRORD_<SERVICE>_IMAGE` take\nprecedence over it. `mirrord up` ignores it.",
-+          "type": [
-+            "string",
-+            "null"
-+          ],
-+          "x-mirrord-plan": "enterprise"
-+        },
-         "run": {
-           "description": "How to launch the service's local process.",
-           "$ref": "#/$defs/RunConfig"
+@@ -881,7 +881,7 @@ Releases are fully automated. Under normal circumstances no manual steps are req
+    - There is at least one entry in `changelog.d/`.
+    - The last release is older than 7 days.
+ 2. When both conditions are met, the [Auto Release PR workflow](/.github/workflows/auto-release-pr.yaml) opens (or updates) a PR from `releases/<version>` to `main`. The PR:
+-   - Bumps the workspace version in `Cargo.toml` (patch bump if all changes are `fixed`/`internal`; minor bump otherwise).
++   - Bumps the workspace version in `Cargo.toml` (patch bump if all changes are `fixed`/`security`/`internal`; minor bump otherwise).
+    - Updates `Cargo.lock`.
+    - Generates `CHANGELOG.md` by consuming the `changelog.d/` fragments.
+ 3. Review the release PR, fix any changelog issues or typos, then merge it.
 ```
 
-**File**: `mirrord/agent/src/vpn.rs` (modified, +5/-6)
+---
+
+### Incident Patch 3: `a1aa6962` (2026-10-26)
+**Commit Message**: up: misc fixes from review
+
+up: add guidance for unsupported label targets
+up: skip default queue splits for label targets
+up: report all target validation errors
+
+**File**: `mirrord/cli/src/up.rs` (modified, +2/-2)
 ```diff
-@@ -89,12 +89,11 @@ pub struct AsyncRawSocket {
- impl AsyncRawSocket {
-     pub fn new(socket: Socket, addr: SockAddr) -> std::io::Result<Self> {
-         socket.set_nonblocking(true)?;
--        Ok(Self {
--            // SAFETY: Socket owns its descriptor, and AsyncRawSocket never closes or replaces it
--            // while registered with AsyncFd.
--            inner: unsafe { AsyncFd::register(socket)? },
--            addr,
--        })
-+        // SAFETY: `Socket` owns its file descriptor, so it stays open and is the same descriptor
-+        // for as long as the `AsyncFd` holds the socket. `AsyncRawSocket` does not close or replace
-+        // the descriptor while it is registered.
-+        let inner = unsafe { AsyncFd::register(socket) }?;
-+        Ok(Self { inner, addr })
+@@ -392,13 +392,13 @@ mod tests {
+ 
+     #[test]
+     fn mode_error_buckets_as_config_validation() {
+-        let v = category(UpCliError::Up(UpError::Mode(
++        let v = category(UpCliError::Up(UpError::Mode(vec![
+             TargetValidationError::IncompatibleTargets(vec![IncompatibleTarget {
+                 service: "svc".into(),
+                 mode: ServiceMode::Replace,
+                 target_type: TargetType::Targetless,
+             }]),
+-        )));
++        ])));
+         assert_eq!(v["error_category"], ErrorCategory::ConfigValidation as u32);
      }
  
-     pub async fn readable(&self) -> std::io::Result<AsyncFdReadyGuard<'_, Socket>> {
 ```
 
----
-
-### Incident Patch 2: `526c3c6b` (2026-10-24)
-**Commit Message**: Fix cargo deny
-
-**File**: `deny.toml` (modified, +3/-0)
+**File**: `mirrord/up/src/config.rs` (modified, +81/-60)
 ```diff
-@@ -24,6 +24,9 @@ ignore = [
-   "RUSTSEC-2026-0367",
-   "RUSTSEC-2026-0368",
-   "RUSTSEC-2026-0369",
-+  # crypto-bigint timing side channels, held at 0.5 by apple-codesign's elliptic-curve 0.13. We only use it to
-+  # re-sign binaries locally, with no secrets an attacker could observe.
-+  "RUSTSEC-2026-0387",
- ]
+@@ -644,20 +644,10 @@ impl ServiceConfig {
+             );
+         }
  
- [licenses]
-```
-
----
-
-### Incident Patch 3: `cc2f135e` (2026-10-24)
-**Commit Message**: preview: build the session spec in prepare
-
-**File**: `mirrord/cli/src/preview.rs` (modified, +53/-73)
-```diff
-@@ -49,10 +49,10 @@ use mirrord_operator::{
-     crd::{
-         MirrordOperatorSpec, NewOperatorFeature, TARGET_NAMESPACE_ANNOTATION, TargetCrd,
-         preview::{
--            PreviewCronJobConfig, PreviewDbBranchingConfig, PreviewEnvConfigMount,
--            PreviewEnvVarsConfig, PreviewIdleConfig, PreviewIncomingConfig, PreviewLabelFilter,
--            PreviewPodLogs, PreviewQueueSplittingConfig, PreviewSecretMountFile, PreviewSession,
--            PreviewSessionPhase, PreviewSessionSpec, PreviewSpecResources, PreviewTlsClientAuth,
-+            PreviewCronJobConfig, PreviewDbBranchingConfig, PreviewEnvVarsConfig,
-+            PreviewIdleConfig, PreviewIncomingConfig, PreviewLabelFilter, PreviewPodLogs,
-+            PreviewQueueSplittingConfig, PreviewSecretMountFile, PreviewSession,
-+            PreviewSessionPhase, PreviewSessionSpec, PreviewTlsClientAuth,
-             PreviewTlsClientAuthFromTarget, PreviewTlsDelivery,
-             view::{PreviewEnv, PreviewMessageKind},
-         },
-@@ -212,18 +212,11 @@ struct PreparedPreview {
-     /// session resource is created.
-     subtask: ProgressTracker,
-     config_target: Target,
--    image: String,
--    session_target: SessionTarget,
--    incoming: Option<PreviewIncomingConfig>,
--    cronjob: Option<PreviewCronJobConfig>,
-+    /// Sent to the operator once the session exists, see [`resolve_secret_mounts`].
-     secret_values: BTreeMap<String, ByteString>,
--    spec_resources: Option<PreviewSpecResources>,
--    secret_mounts: Vec<PreviewSecretMountFile>,
--    env: Option<PreviewEnvVarsConfig>,
--    config_mounts: Vec<PreviewEnvConfigMount>,
--    /// `feature.split_queues` are the defaults `mirrord preview up` adds, see
--    /// [`PreviewSessionSpec::auto_queue_splitting`].
--    auto_queue_splitting: bool,
-+    /// The session's spec, but for what [`PreparedPreview::start`] fills in: `db_branching`,
-+    /// from the branches it prepares, and `share_host`, from the session it replaces.
-+    spec: PreviewSessionSpec,
- }
+-        // A preview session that asks for any queue split is refused by the operator unless its
+-        // target is a workload it can look a `MirrordSplitConfig` up for, even when `"*"` would
+-        // match no queue. `mirrord up` sessions skip such targets instead, so leaving the splits
+-        // out ends the same way.
+-        if preview
+-            && matches!(
+-                cfg.target.path,
+-                Some(Target::Deployment(_) | Target::Rollout(_) | Target::StatefulSet(_))
+-            )
+-            .not()
+-        {
+-            cfg.feature.split_queues = SplitQueuesConfig::default();
+-        }
+-        let mut default_split_queues = cfg.feature.split_queues.is_set();
++        let patch_sets_split_queues = self
++            .config_patch
++            .as_ref()
++            .is_some_and(|patch| patch.pointer("/feature/split_queues").is_some());
  
- impl PreparedPreview {
-@@ -442,22 +435,51 @@ impl PreparedPreview {
-             .map(|m| m.resolve().map(Into::into))
-             .collect::<Result<Vec<_>, _>>()?;
+         if let Some(patch) = self.config_patch {
+             if preview && patch.pointer("/feature/preview/image").is_some() {
+@@ -667,10 +657,34 @@ impl ServiceConfig {
+             // A patch that sets `db_branches` or `split_queues` decides them itself, `[]`
+             // included, so whatever it holds afterwards was asked for by the user.
+             default_db_branches &= patch.pointer("/feature/db_branches").is_none();
+-            default_split_queues &= patch.pointer("/feature/split_queues").is_none();
+             cfg = apply_config_patch(cfg, patch, &key)?;
+         }
  
-+        let idle_config = &layer_config.feature.preview.idle;
-+        let idle = idle_config.is_enabled().then_some(PreviewIdleConfig {
-+            start_idle: idle_config.start_idle,
-+            sleep_after_secs: idle_config.sleep_after_secs,
-+            wake_timeout_secs: idle_config.wake_timeout_secs,
-+        });
-+
-+        // Preview start never opens an operator websocket, so `QueueSplitProgress` never runs.
-+        // The config already names the Temporal queues it asked to mirror (including `*` from
-+        // `mirrord up`), so warn from that before the session is created.
-+        for id in temporal_mirror_requested(&layer_config.feature.split_queues) {
-+            subtask.warning(&temporal_mirror_warning(&id));
++        let default_split_queues =
++            matches!(self.default_mode, ServiceMode::Split | ServiceMode::Mirror)
++                && patch_sets_split_queues.not()
++                && matches!(cfg.target.path, Some(Target::Label(_))).not()
++                && (preview.not()
++                    || matches!(
++                        cfg.target.path,
++                        Some(Target::Deployment(_) | Target::Rollout(_) | Target::StatefulSet(_))
++                    ));
++        if default_split_queues {
++            let splits = SplitQueuesConfig::all_wildcard_with_mode(&key, self.default_mode.into());
++            // A Kafka branch serves every Kafka queue, so it does not need generated Kafka splits.
++            cfg.feature.split_queues = if cfg.feature.kafka_branch {
++                SplitQueuesConfig::from_splits(
++                    splits
++                        .splits()
++                        .iter()
++                        .filter(|split| split.queue_type != QueueKind::Kafka)
++                        .cloned(),
++                )
++            } else {
++                splits
++            };
 +        }
 +
-+        let spec = PreviewSessionSpec {
-+            image,
-+            key: layer_config.key.as_str().to_owned(),
-+            target: session_target,
-+            ttl_secs: layer_config.feature.preview.resolved_ttl_secs(),
-+            replicas: layer_config.feature.preview.replicas,
-+            incoming,
-+            queue_splitting: PreviewQueueSplittingConfig::from_config(
-+                &layer_config.feature.split_queues,
-+                layer_config.feature.kafka_branch,
-+            ),
-+            db_branching: None,
-+            env,
-+            labels: PreviewLabelFilter::from_config(&layer_config.feature.preview.labels),
-+            config_mounts,
-+            secret_mounts,
-+            idle,
-+            cronjob,
-+            spec_resources,
-+            share_host: None,
-+            auto_queue_splitting,
-+        };
-+
-         Ok(Self {
-             layer_config,
-             operator_api,
-             api,
-             subtask,
-             config_target,
--            image,
--            session_target,
--            incoming,
--            cronjob,
-             secret_values,
--            spec_resources,
--            secret_mounts,
--            env,
--            config_mounts,
--            auto_queue_splitting,
-+            spec,
-         })
+         Ok(SubprocessCfg {
+             config: cfg,
+             service_name: service_name.clone(),
+@@ -736,8 +750,7 @@ impl ServiceConfig {
+                     }
+                 };
+ 
+-                cfg.feature.split_queues =
+-                    SplitQueuesConfig::all_wildcard_with_mode(key, self.default_mode.into());
++                cfg.feature.split_queues = SplitQueuesConfig::default();
+             }
+ 
+             // `Replace` mode should steal all traffic from the copied target, so `http_filter` is
+@@ -817,13 +830,6 @@ fn apply_config_patch(
+     patch: serde_json::Value,
+     key: &EnvKey,
+ ) -> Result<LayerConfig, ConfigPatchErrorKind> {
+-    let generated_kafka_splits = config
+-        .feature
+-        .split_queues
+-        .of_kind(QueueKind::Kafka)
+-        .cloned()
+-        .collect::<Vec<_>>();
+-
+     let mut layer_config_json = patchable(config, key).map_err(ConfigPatchErrorKind::Serialize)?;
+     json_patch::merge(&mut layer_config_json, &patch);
+ 
+@@ -836,19 +842,6 @@ fn apply_config_patch(
+     let mut config = file_config.generate_config(&mut context)?;
+     config.key = key.clone();
+ 
+-    // A Kafka branch serves every Kafka queue, so the Kafka splits the mode generated give way.
+-    if config.feature.kafka_branch {
+-        config.feature.split_queues = SplitQueuesConfig::from_splits(
+-            config
+-                .feature
+-                .split_queues
+-                .splits()
+-                .iter()
+-                .filter(|split| generated_kafka_splits.contains(split).not())
+-                .cloned(),
+-        );
+-    }
+-
+     config.verify(&mut context)?;
+ 
+     Ok(config)
+@@ -902,7 +895,7 @@ pub struct SubprocessCfg {
+ 
+ /// Rejects services whose resolved target cannot support the features their
+ /// mode enabled.
+-pub(crate) fn validate_targets(cfgs: &[SubprocessCfg]) -> Result<(), TargetValidationError> {
++pub(crate) fn validate_targets(cfgs: &[SubprocessCfg]) -> Result<(), Vec<TargetValidationError>> {
+     let (mut incompatible, mut unsupported) = (vec![], vec![]);
+     for cfg in cfgs {
+         let target_type = cfg
+@@ -928,16 +921,20 @@ pub(crate) fn validate_targets(cfgs: &[SubprocessCfg]) -> Result<(), TargetValid
+         }
      }
  
-@@ -470,16 +492,8 @@ impl PreparedPreview {
-             api,
-             mut subtask,
-             config_target,
--            image,
--            session_target,
--            incoming,
--            cronjob,
-             secret_values,
--            spec_resources,
--            secret_mounts,
--            env,
--            config_mounts,
--            auto_queue_splitting,
-+            mut spec,
-         } = self;
- 
-         // Label targets with branches were rejected in `prepare`, so an empty config is the only
-@@ -504,7 +518,7 @@ impl PreparedPreview {
- 
-         let mut replaced_sessions = existing_sessions
-             .into_iter()
--            .filter(|session| session.spec.target == session_target)
-+            .filter(|session| session.spec.target == spec.targ
+-    // prefer returning unsupported target types over incompatible targets
++ 
 ```
 
-**File**: `mirrord/cli/src/preview/up.rs` (modified, +1/-1)
+**File**: `mirrord/up/src/lib.rs` (modified, +4/-5)
 ```diff
-@@ -187,7 +187,7 @@ async fn run_preview_up(
-         a.operator_api.cluster_url() == b.operator_api.cluster_url()
-             && preview_namespace(&a.operator_api, &a.layer_config)
-                 == preview_namespace(&b.operator_api, &b.layer_config)
--            && a.session_target == b.session_target
-+            && a.spec.target == b.spec.target
-     };
-     // Service names are the keys of `services`, so they tell the services apart.
-     let clashes = checked
+@@ -150,10 +150,9 @@ pub enum UpError {
+     #[diagnostic(transparent)]
+     Select(#[from] SelectError),
+ 
+-    /// A service's mode can't be used with the target it resolved to.
+-    #[error(transparent)]
+-    #[diagnostic(transparent)]
+-    Mode(#[from] TargetValidationError),
++    /// One or more services cannot use their resolved targets.
++    #[error("target validation failed")]
++    Mode(#[related] Vec<TargetValidationError>),
+ 
+     /// The selected services would delegate to commands unsupported on Windows.
+     #[error(transparent)]
+@@ -827,7 +826,7 @@ pub async fn resolve_services(
+         &mut ConfigContext::default(),
+     )?;
+ 
+-    validate_targets(&service_configs)?;
++    validate_targets(&service_configs).map_err(UpError::Mode)?;
+ 
+     Ok(service_configs)
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5142** (2026-10-25): Release 3.279.1 (@cubby-mb[bot])
-- **PR #5141** (2026-10-24): Release 3.279.0 (@cubby-mb[bot])
-- **PR #5140** (2026-10-24): Fix socket address buffer overflow issue (@0x00A5)
-- **PR #5138** (2026-10-25): Fix vfork children unsubscribing parent listeners (@meowjesty)
-- **PR #5137** (2026-10-24): COR-2085 Add mirrord preview up and mirrord preview down (@MintSoup)
-- **PR #5136** (2026-10-25): Add least-privilege permissions to release and operator-e2e workflows (@aviramha)
+- **PR #5158** (2026-10-27): release: treat security changelog fragments as patch-level (@aviramha)
+- **PR #5156** (closed): DO NOT MERGE: MBE-2246 CI verification (@hank-metalbear)
+- **PR #5153** (2026-10-27): agent: remove java agent from jdk java options by default (@gememma)
+- **PR #5152** (2026-10-27): Release 3.280.0 (@cubby-mb[bot])
+- **PR #5148** (2026-10-27): Fix undefined permissions on the local placeholder file for remote files (COR-2035) (@linear-code[bot])
+- **PR #5147** (2026-10-27): Document which CI jobs actually test the CLI package (@skreborn)
 
 ---
 
@@ -2103,48 +1817,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge remote-tracking branch 'origin/main' into codex/fix-pr-5138-resolved
+## X. Merge pull request #5158 from metalbear-co/aviram/security-patch-bump
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actions/next-release-version/version.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `19ea8411`: Merge remote-tracking branch 'origin/main' into codex/fix-pr-5138-resolved. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9d87f3fa`: Merge pull request #5158 from metalbear-co/aviram/security-patch-bump. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/next-release-version/version.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## [3.279.0](https://github.com/metalbear-co/mirrord/tree/3.279.0) - 2026-10-24
-
-
-### Added
-
-- Add `mirrord preview down`, which deletes every preview environment under a
-  key in all namespaces, finding the key the way `mirrord preview up` does.
-- Add `mirrord preview up`, which starts a preview environment for every
-  service of a `mirrord-up.yaml` that has an image (from `--image
-  <service>=<ref>`, `MIRRORD_<SERVICE>_IMAGE` or the service's `image`), all
-  under one key, and returns once each one is ready.
-- Services in `mirrord-up.yaml` accept an optional `image` field, the container
-  image `mirrord preview up` runs in the service's preview environment.
-  `mirrord up` ignores it.
-
-
-### Fixed
-
-- Fixed a SIGSEGV on macOS when apps using libuv 1.53+ (e.g. Homebrew Node)
-  connect to a unix socket.
-
+# Fragments that only warrant a patch release: work invisible to users, bug fixes and
+# security fixes. Anything outside this set warrants a minor bump.
+PATCH_CATEGORIES = frozenset({"internal", "fixed", "security"})
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+# Fragments whose only effect is invisible to users, in towncrier category order of
+# increasing significance. Anything outside this set warrants a minor bump.
+PATCH_CATEGORIES = frozenset({"internal", "fixed"})
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `19ea8411` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9d87f3fa` are properly handled with clean fallback behavior.

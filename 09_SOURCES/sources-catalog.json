@@ -3013,10 +3013,10 @@
     "repository": "metalbear-co/mirrord",
     "platform": "github",
     "sourceUrl": "https://github.com/metalbear-co/mirrord",
-    "sourceVersion": "21cf7bff",
+    "sourceVersion": "9d87f3fa",
     "license": "MIT",
-    "contentHash": "12ea10f334850848316a72f50bfce35ebea42b8a91f1158462c85adb7bc61cd6",
-    "lastHarvestedAt": "2026-10-25T12:23:03.174Z",
+    "contentHash": "ce862687cd8417c169b2e67af0995a8666ecfeb200a0ebdf7c614ea4ec1b69b3",
+    "lastHarvestedAt": "2026-10-27T23:37:15.267Z",
     "learningId": "learn-github-metalbear-co-mirrord"
   },
   "openkruise-kruise": {

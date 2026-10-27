@@ -1889,8 +1889,8 @@
     "officialUrl": "https://github.com/mimblewimble/grin",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-27T19:38:50.354Z",
-    "lastVerified": "2026-10-27T19:38:50.354Z",
+    "lastChecked": "2026-10-27T23:34:34.592Z",
+    "lastVerified": "2026-10-27T23:34:34.592Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mimblewimble-grin",
@@ -2938,22 +2938,21 @@
     "revisionIdentifier": "b712c854"
   },
   "metalbear-co-mirrord": {
-    "name": "mirrord",
+    "name": "metalbear-co/mirrord",
     "officialUrl": "https://github.com/metalbear-co/mirrord",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-26T11:41:05.163Z",
-    "lastVerified": "2026-10-26T11:41:05.163Z",
+    "lastChecked": "2026-10-27T23:34:27.985Z",
+    "lastVerified": "2026-10-27T23:34:27.985Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-metalbear-co-mirrord",
-    "contentHash": "12ea10f334850848316a72f50bfce35ebea42b8a91f1158462c85adb7bc61cd6",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 3,
+    "contentHash": "ce862687cd8417c169b2e67af0995a8666ecfeb200a0ebdf7c614ea4ec1b69b3",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "21cf7bff"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "karakeep-app-karakeep": {
     "name": "karakeep-app/karakeep",
@@ -4122,12 +4121,12 @@
     "revisionIdentifier": "36f2f1ac"
   },
   "fission-fission": {
-    "name": "fission/fission",
+    "name": "fission",
     "officialUrl": "https://github.com/fission/fission",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-27T11:56:12.404Z",
-    "lastVerified": "2026-10-27T11:56:12.404Z",
+    "lastChecked": "2026-10-27T23:34:32.097Z",
+    "lastVerified": "2026-10-27T23:34:32.097Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fission-fission",
@@ -4136,7 +4135,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ae2aabf5"
   },
   "chaos-mesh-chaos-mesh": {
     "name": "chaos-mesh/chaos-mesh",
@@ -6729,8 +6729,8 @@
     "officialUrl": "https://github.com/react95-io/React95",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-27T10:50:32.271Z",
-    "lastVerified": "2026-10-27T10:50:32.271Z",
+    "lastChecked": "2026-10-27T23:34:22.134Z",
+    "lastVerified": "2026-10-27T23:34:22.134Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-react95-io-react95",
@@ -9454,8 +9454,8 @@
     "officialUrl": "https://github.com/cockroachdb/cockroach",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-27T10:58:00.176Z",
-    "lastVerified": "2026-10-27T10:58:00.176Z",
+    "lastChecked": "2026-10-27T23:34:37.338Z",
+    "lastVerified": "2026-10-27T23:34:37.338Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cockroachdb-cockroach",
@@ -15835,8 +15835,8 @@
     "officialUrl": "https://github.com/futurice/pepperoni-app-kit",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-10-25T11:11:02.755Z",
-    "lastVerified": "2026-10-25T11:11:02.755Z",
+    "lastChecked": "2026-10-27T23:34:29.603Z",
+    "lastVerified": "2026-10-27T23:34:29.603Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-futurice-pepperoni-app-kit",
@@ -18471,12 +18471,12 @@
     "revisionIdentifier": "fce458c1"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-27T22:50:01.189Z",
-    "lastVerified": "2026-10-27T22:50:01.189Z",
+    "lastChecked": "2026-10-27T23:34:39.596Z",
+    "lastVerified": "2026-10-27T23:34:39.596Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -18485,7 +18485,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "acf15714"
   },
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
@@ -27421,8 +27422,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-27T23:21:56.455Z",
-    "lastVerified": "2026-10-27T23:21:56.455Z",
+    "lastChecked": "2026-10-27T23:37:17.823Z",
+    "lastVerified": "2026-10-27T23:37:17.823Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -27676,9 +27677,9 @@
   "stangirard-seo-audits-toolkit": {
     "name": "seo-audits-toolkit",
     "officialUrl": "https://github.com/StanGirard/seo-audits-toolkit",
-    "lastChecked": "2026-10-25T02:50:17.532Z",
+    "lastChecked": "2026-10-27T23:34:27.118Z",
     "revisionIdentifier": "c3e95fc4bf",
-    "lastVerified": "2026-10-25T02:50:17.532Z"
+    "lastVerified": "2026-10-27T23:34:27.118Z"
   },
   "searchsolved-search-solved-public-seo": {
     "name": "search-solved-public-seo",

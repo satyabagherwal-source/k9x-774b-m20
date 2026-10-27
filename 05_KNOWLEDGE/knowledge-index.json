@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T23:21:53.872Z",
+  "last_updated": "2026-10-27T23:37:15.207Z",
   "total_verified_learnings": 1152,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -35865,8 +35865,8 @@
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "21cf7bff",
-      "content_hash": "12ea10f334850848316a72f50bfce35ebea42b8a91f1158462c85adb7bc61cd6",
+      "source_version": "9d87f3fa",
+      "content_hash": "ce862687cd8417c169b2e67af0995a8666ecfeb200a0ebdf7c614ea4ec1b69b3",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "promoted_rules": [
@@ -35894,6 +35894,11 @@
           "number": 3709,
           "title": "Fixed concurrency issues in layer ProxyConnection",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5056,
+          "title": "Merge pull request #5158 from metalbear-co/aviram/security-patch-bump",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35901,7 +35906,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T12:23:03.127Z",
+      "verified_at": "2026-10-27T23:37:15.192Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -139364,6 +139369,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T23:21:53.864Z"
+    },
+    "rule-5056": {
+      "learning_id": "rule-5056",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5056,
+      "title": "Merge pull request #5158 from metalbear-co/aviram/security-patch-bump",
+      "source_url": "https://github.com/metalbear-co/mirrord",
+      "source_version": "9d87f3fa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T23:37:15.192Z"
     }
   },
   "aliases": {

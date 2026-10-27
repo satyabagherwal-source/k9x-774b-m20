@@ -5588,3 +5588,4 @@ Every entry in this ledger must capture:
 | `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `ca36bfa1` | Multi-dimensional audit evidence | 2026-10-27T23:10:09.321Z |
 | `learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-10-27T23:10:18.909Z |
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `2b7b001a` | Multi-dimensional audit evidence | 2026-10-27T23:21:53.914Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `9d87f3fa` | Multi-dimensional audit evidence | 2026-10-27T23:37:15.267Z |
