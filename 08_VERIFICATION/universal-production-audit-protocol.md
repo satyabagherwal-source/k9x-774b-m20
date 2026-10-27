@@ -83,5 +83,18 @@ For every multi-language web property, the audit runner MUST evaluate the **Lang
   9. Search Console Error Triage & Protocol Purity Gate (Rule 1515):
      - Prohibition of triaging GSC client-side modals ("Oops! Something went wrong") as origin server 5xx errors without live HTTP status probing.
      - Strict protocol (`https://`) and apex hostname purity enforced across all sitemaps, robots.txt, canonical tags, hreflangs, and submission queues (0 instances of `http://` or `www.`).
+  10. Multi-Source Dataset Reconciliation Gate (Rule 83):
+     - Mathematically reconcile GSC UI summaries, CSV exports, sitemaps, and probe outputs down to 0 unexplained rows.
+     - Track parameter duplicates and trailing-slash normalization artifacts separately from genuine defects.
+  11. Decoupled HTTP vs Browser-Rendering Coverage Declaration Gate (Rule 85):
+     - Mandatory explicit declaration of test coverage: state exact counts for HTTP status probes (e.g. 100%) versus full Headless Chrome CDP rendering passes (e.g. representative templates).
+  12. Five-Stage Code-to-Production Verification Chain Gate (Rule 82):
+     - Strict prohibition of claiming production resolution based solely on local Git commits.
+     - Enforce 5-stage verification: Source (`src/`) -> Build (`dist/`) -> Deployment (CI/CD) -> Edge Verification (live curl/CDP) -> External Re-verification (GSC/SERP).
+  13. Evidence Trail & Timestamp Provenance Protocol (Rule 88):
+     - Mandatory attribution of source export dates, crawler `Last crawl` timestamps, deployment timestamps, and observation dates.
+     - Prohibition of claiming a URL failed indexing due to code defects when the last crawl predates the code fix.
+  14. Non-Blocking Third-Party Resource Isolation Gate (Rule 84):
+     - Classify rendering failures: Tier 1 (First-Party Critical Assets: HTML/CSS/Engine JS/Translations = P0 defect) vs Tier 2 (Third-Party Non-Blocking Extras: AdSense TagError on placeholder slots, tracking beacons = non-blocking, zero SEO impact).
 ```
 

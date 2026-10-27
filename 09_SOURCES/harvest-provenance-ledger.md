@@ -5194,3 +5194,5 @@ Every entry in this ledger must capture:
 | `learn-github-wzh4869-appports` | `https://github.com/wzh4869/AppPorts` | `412290e7` | Multi-dimensional audit evidence | 2026-10-26T18:25:35.181Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `7a365049` | Multi-dimensional audit evidence | 2026-10-26T18:32:20.239Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `2caa45cf` | Multi-dimensional audit evidence | 2026-10-26T21:10:29.745Z |
+| `learn-project-onlinefreeprotractor-seo-phase4-8` | `https://github.com/satyabagherwal-source/onlinefreeprotractor` | `2e181cc` | `docs/seo/` (Phases 4-8 reconciled audit dataset) | 2026-10-27T04:30:00.000Z |
+

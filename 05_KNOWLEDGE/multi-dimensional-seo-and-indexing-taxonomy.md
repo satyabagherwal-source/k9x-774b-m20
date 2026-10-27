@@ -61,16 +61,18 @@ Based on live Google Search Console telemetry, websites suffer from distinct ind
   - Sitemaps must contain ONLY URLs that return HTTP 200 OK directly in a single hop.
   - Implement Nginx/Caddy edge normalization to resolve protocol (HTTPS), host (non-WWW), and path (trailing slash) in exactly ONE redirect hop.
 
-### 2.2 "Crawled - currently not indexed" (Failed Validation: 291+ Pages)
-- **Root Cause**:
-  Googlebot fetched the page, rendered it, evaluated the content, but decided NOT to add it to the index. This is almost always a **content quality, thin content, or algorithmic value-add failure**:
-  1. **Thin Content**: Pages with under 300 unique words, or pages composed primarily of common navigation, header, and footer boilerplate.
-  2. **Near-Duplicate Clustering**: Multiple URLs offering essentially identical content (e.g. e-commerce product variants with only color change, or localized pages with identical machine-translated strings).
-  3. **Low User Engagement / Algorithmic Quality Filter**: The page does not demonstrate helpfulness, authoritativeness, or unique information gain.
+### 2.2 "Crawled - currently not indexed" (Forensic Multi-Cohort Triage)
+- **Diagnostic Invariant (Rule 81)**:
+  Never assume that URLs sharing this status share a single root cause. Live forensics on large properties reveal that "Crawled - currently not indexed" is typically a heterogeneous blend of three distinct engineering cohorts:
+  1. **Intentional Architectural Exclusions**: Multilingual legal, utility, or policy pages (e.g. `/de/terms/`, `/es/privacy/`) carrying explicit `<meta name="robots" content="noindex, follow">` and excluded from XML sitemaps to prevent algorithmic thin-content penalties across auto-translated boilerplate. Excluded state is healthy and intended.
+  2. **Architectural Normalization Redirects**: Slashless URL variants (e.g. `/de`, `/practice`) returning HTTP 308 permanent redirects to terminal canonical targets.
+  3. **Historical Quality Demotion Crawl Lag**: Legitimate canonical pages that previously suffered from technical defects (missing titles, duplicate H1s, DOM bloat) during a historical crawl (e.g. during a Google Core/Spam update), but where Googlebot has not yet recrawled the site since the deployment of production corrections.
+  4. **Genuine Thin / Near-Duplicate Content**: Pages with under 300 unique words, raw machine-translated shells lacking interactive depth, or excessive parameter variations.
 - **Remediation Protocol**:
-  - Run MinHash / Jaccard similarity scoring across pages: consolidate near-duplicates (> 80% similarity) into a single master URL using `<link rel="canonical">`.
-  - Expand thin pages with substantive editorial content, technical specifications, structured FAQ, and unique data.
-  - If the page is low-value search results or faceted filter combinations, add `<meta name="robots" content="noindex, follow">` to prevent crawl budget waste.
+  - Disaggregate the cohort before applying changes: separate intentional noindex pages, redirects, and canonical tools.
+  - Audit crawl timestamp provenance (`Last crawl`) against production deployment dates: if last crawl predates the fix, do not rewrite content; verify edge readiness and request recrawl via sitemap ping or inspection quota batches.
+  - For legitimate thin content: consolidate near-duplicates (> 80% similarity) via `<link rel="canonical">` or enrich with scholastic editorial content and interactive functionality.
+
 
 ### 2.3 "Discovered - currently not indexed" (229+ Pages)
 - **Root Cause**:
