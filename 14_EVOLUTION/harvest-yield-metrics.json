@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T19:13:39.796Z",
-  "total_cycles_completed": 5470,
-  "total_learnings_persisted": 5470,
-  "total_rules_promoted": 4867,
+  "last_updated": "2026-10-27T19:20:22.162Z",
+  "total_cycles_completed": 5474,
+  "total_learnings_persisted": 5474,
+  "total_rules_promoted": 4873,
   "history": [
-    {
-      "timestamp": "2026-10-27T13:00:20.555Z",
-      "repository": "0xMassi/webclaw",
-      "learningId": "learn-github-0xmassi-webclaw",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:00:22.053Z",
-      "repository": "AmoyLab/Unla",
-      "learningId": "learn-github-amoylab-unla",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:00:27.536Z",
-      "repository": "beclab/Olares",
-      "learningId": "learn-github-beclab-olares",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:00:29.295Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T13:00:32.058Z",
       "repository": "dkhamsing/open-source-ios-apps",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-27T19:13:39.796Z",
       "repository": "webdriverio/webdriverio",
       "learningId": "learn-github-webdriverio-webdriverio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T19:20:11.131Z",
+      "repository": "oxc-project/oxc",
+      "learningId": "learn-github-oxc-project-oxc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T19:20:16.547Z",
+      "repository": "linkerd/linkerd2",
+      "learningId": "learn-github-linkerd-linkerd2",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T19:20:20.314Z",
+      "repository": "rmax/scrapy-redis",
+      "learningId": "learn-github-rmax-scrapy-redis",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T19:20:22.162Z",
+      "repository": "doobidoo/mcp-memory-service",
+      "learningId": "learn-github-doobidoo-mcp-memory-service",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

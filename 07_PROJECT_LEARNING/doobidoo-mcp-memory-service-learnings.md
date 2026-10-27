@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `25308324`  
+> **Source Version**: `9cab16d5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T13:15:20.525Z  
+> **Timestamp**: 2026-10-27T19:20:21.796Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T13:15:19.237Z  
+> **Harvest Timestamp**: 2026-10-27T19:20:20.249Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2048 stars
+- **Stars / Engagement**: 2051 stars
 
 ---
 
@@ -2932,1212 +2932,245 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fb7c041e` (2026-10-26)
-**Commit Message**: fix(oauth): confine per-store grants to calls that stay in the store (#1690)
+### Incident Patch 1: `9cab16d5` (2026-10-27)
+**Commit Message**: fix(reasoning): clear four reasoning modules of unsanitised log calls (#1146) (#1698)
 
-* fix(oauth): confine per-store grants to calls that stay in the store
+* fix(reasoning): clear four reasoning modules of unsanitised log calls (#1146)
 
-A read:<store>/write:<store> grant authorized every MCP tool call that
-named the store, but only some tools confine themselves to it.
-memory_quality, memory_cleanup, memory_resolve, memory_consolidate and the
-mistake-note tools ignore store, so write:projectA plus store="projectA"
-reached every partition. memory_search with include_beliefs or fallback
-read across partitions as well. On cloudflare, milvus and remote_http,
-get_by_hash ignores store, so GET /api/memories/{hash} returned another
-store's memory to a read:projectA token.
+inference.py, entity_linker.py, nli.py and multi_strategy.py logged, through
+f-strings, the hash a caller hands the public SemanticReasoner methods, the
+entity names EntityExtractor pulls out of a memory's content and tags, and
+the exception text of the graph backend or of a failed search strategy.
+Those go through _sanitize_log_value; the link cap, the edge count and the
+content hash the service computed itself become lazy %-style. The four
+modules join GUARDED_MODULES, entity_name joins EXTERNAL_NAMES, and a caplog
+test per module forges the newline without storage or a model.
 
-MemoryServer.store_grant_target now decides which store a per-store
-grant may authorize: only for the eight tools whose handlers confine,
-without the two cross-store arguments, and only on a backend whose
-get_by_hash honours store. The SDK dispatch gate and the /mcp shim both
-use it. On REST, require_store_scope refuses a grant that holds only
-through operation:<store> on a backend that cannot confine. Global
-grants are unchanged. Storage-layer enforcement remains #1683.
-
-The scope check in mcp_endpoint mo
-
-**File**: `changelog.d/1690.fixed.md` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+- **Per-store scopes no longer reach outside their store (#1690).** A `read:<store>` /
-+  `write:<store>` grant authorized any MCP tool call that named the store, including tools
-+  that ignore `store` (`memory_quality`, `memory_cleanup`, `memory_resolve`,
-+  `memory_consolidate`, the mistake-note tools) and `memory_search` with `include_beliefs` or
-+  `fallback`, which read every partition. A per-store grant now covers only the tools that
-+  confine themselves to the store (`memory_store`, `memory_store_session`, `memory_search`,
-+  `memory_list`, `memory_delete`, `memory_update`) and only without those two arguments;
-+  everything else needs the global scope, including `memory_explore` and `memory_detail`,
-+  whose entity names come from a graph that has no store partition. The SDK
-+  transports and the `/mcp` shim share one rule. Store-restricted credentials are also
-+  refused, over MCP and REST, on backends whose `get_by_hash` ignores `store` (cloudflare,
-+  milvus, remote_http), where `GET /api/memories/{hash}` returned another store's memory.
-+  They work on sqlite_vec and hybrid until the storage layer enforces `store` (#1683).
-```
-
-**File**: `src/mcp_memory_service/server_impl.py` (modified, +37/-4)
-```diff
-@@ -1613,6 +1613,40 @@ def _rate_limit_error(
-             isError=True,
-         )
- 
-+    # Tools whose handlers keep reads and writes inside the claimed ``store``
-+    # on a backend whose get_by_hash honours it. A per-store grant
-+    # (read:<s>/write:<s>) authorizes only these: every other tool acts on all
-+    # partitions, so naming a store there must not unlock it. memory_explore
-+    # and memory_detail are left out: the entity graph is not partitioned, so
-+    # their entity names and related entities span every store (#1683).
-+    STORE_CONFINED_TOOLS = frozenset({
-+        "memory_store", "memory_store_session", "memory_search", "memory_list",
-+        "memory_delete", "memory_update",
-+    })
-+    # memory_search arguments that read outside the claimed store: beliefs are
-+    # not partitioned, and the exact/tag fallback queries ignore ``store``.
-+    CROSS_STORE_ARGUMENTS = ("include_beliefs", "fallback")
-+
-+    async def store_grant_target(self, name: Optional[str], arguments: Optional[dict] = None) -> Optional[str]:
-+        """Return the store a per-store grant may authorize this call for.
-+
-+        ``None`` means only the global grant will do: the call names no store
-+        (or ``all``), the tool ignores ``store``, the call reaches across
-+        partitions, or the backend's get_by_hash ignores ``store`` and so cannot
-+        prove confinement (storage-layer enforcement is #1683). The SDK dispatch
-+        gate and the /mcp shim both ask this, so the transports cannot disagree.
-+        """
-+        arguments = arguments or {}
-+        store = arguments.get("store")
-+        if store in (None, "all") or name not in self.STORE_CONFINED_TOOLS:
-+            return None
-+        if any(arguments.get(key) for key in self.CROSS_STORE_ARGUMENTS):
-+            return None
-+        storage = await self._ensure_storage_initialized()
-+        if not getattr(storage, "get_by_hash_is_store_scoped", False):
-+            return None
-+        return store
-+
-     async def tool_requires_write(self, name: Optional[str], arguments: Optional[dict] = None) -> bool:
-         """Return True if calling this tool requires the 'write' scope.
- 
-@@ -1738,16 +1772,15 @@ async def call_tool(
-         scope_str = self._caller_scope_str()
-         if scope_str is not None:
-             operation = "write" if await self.tool_requires_write(name, arguments) else "read"
--            store_arg = (arguments or {}).get("store")
--            target = None if store_arg in (None, "all") else store_arg
-+            target = await self.store_grant_target(name, arguments)
-             if not self._scope_grants(scope_str, operation, target):
-                 logger.warning(
-                     "Refused %s tool for a scope lacking the store grant: %s",
-                     operation, _sanitize_log_value(name),
-                 )
-+                required = "'%s' (global)" % operation if target is None else "'%s:%s'" % (operation, target)
-                 raise PermissionError(
--                    "insufficient_scope: tool '%s' requires '%s%s' access"
--                    % (name, operation, "" if target is None else ":" + target)
-+                    "insufficient_scope: tool '%s' requires %s access" % (name, required)
-                 )
- 
-         # Resolve handler from routing table
-```
-
-**File**: `src/mcp_memory_service/web/api/mcp.py` (modified, +33/-32)
-```diff
-@@ -47,6 +47,36 @@ async def _requires_write(server, tool_name: Optional[str], arguments: Optional[
-     """
-     return await server.tool_requires_write(tool_name, arguments)
- 
-+
-+async def _scope_refusal(server, user, request_id, tool_name: str, arguments: dict) -> Optional[JSONResponse]:
-+    """Return the 403 for a tool call the caller's scope does not cover, else None.
-+
-+    Mutating tools require 'write', read-only tools require 'read'
-+    (GHSA-2r68-g678-7qr3). A global 'read'/'write' grants every store.
-+    'read:<store>'/'write:<store>' grants exactly that store, and only where
-+    MemoryServer.store_grant_target says the call stays inside it (the same rule
-+    the SDK transports apply); anything else, including a call with no `store`,
-+    requires the global operation scope.
-+    """
-+    operation = "write" if await _requires_write(server, tool_name, arguments) else "read"
-+    target = await server.store_grant_target(tool_name, arguments)
-+    if user.has_store_scope(operation, target):
-+        return None
-+    required = (
-+        f"'{operation}' (global)" if target is None
-+        else f"'{operation}' or '{operation}:{target}'"
-+    )
-+    response = MCPResponse(
-+        id=request_id,
-+        error={
-+            "code": -32003,
-+            "message": f"Insufficient scope: tool requires {required} access",
-+            "data": {"required_scope": operation, "tool": tool_name, "store": arguments.get("store")},
-+        },
-+    )
-+    return JSONResponse(content=response.model_dump(exclude_none=True), status_code=403)
-+
-+
- router = APIRouter(prefix="/mcp", tags=["mcp"])
- 
- 
-@@ -235,38 +265,9 @@ async def mcp_endpoint(
-                 )
-                 return JSONResponse(content=response.model_dump(exclude_none=True))
- 
--            # Scope enforcement, per tool call. Mutating tools require 'write',
--            # read-only tools require 'read' (GHSA-2r68-g678-7qr3). When the
--            # call names a `store`, the check is per-store: a global
--            # 'read'/'write' grants every store, else 'read:<store>'/
--            # 'write:<store>' grants exactly that store ('all' -> global). A
--            # call with no `store` targets the implicit default and requires
--            # the global operation scope.
--            operation = "write" if await _requires_write(server, tool_name, arguments) else "read"
--            store_arg = arguments.get("store")
--            if store_arg is not None:
--                resolved_store = None if store_arg == "all" else store_arg
--                authorized = user.has_store_scope(operation, resolved_store)
--                required = (
--                    f"'{operation}' (global)" if resolved_store is None
--                    else f"'{operation}' or '{operation}:{store_arg}'"
--                )
--            else:
--                authorized = user.has_scope(operation)
--                required = f"'{operation}'"
--            if not authorized:
--                response = MCPResponse(
--                    id=request.id,
--                    error={
--                        "code": -32003,
--                        "message": f"Insufficient scope: tool requires {required} access",
--                        "data": {"required_scope": operation, "tool": tool_name, "store": store_arg},
--                    },
--                )
--                return JSONResponse(
--                    content=response.model_dump(exclude_none=True),
--                    status_code=403,
--                )
-+            refusal = await _scope_refusal(server, user, request.id, tool_name, arguments)
-+            if refusal is not None:
-+                return refusal
- 
-             # Resolve the rate-limit identity from the transport BEFORE the
-             # arguments rewrite below: the shim copies X-Agent-ID into
-```
-
-**File**: `src/mcp_memory_service/web/oauth/middleware.py` (modified, +34/-1)
-```diff
-@@ -109,7 +109,27 @@ def has_store_scope(self, operation: str, store: Optional[str]) -> bool:
-         return f"{operation}:{store}" in scopes
- 
-     def require_store_scope(self, operation: str, store: Optional[str]) -> None:
--        """Raise 403 if ``operation`` on ``store`` is not permitted."""
-+        """Raise 403 if ``operation`` on ``store`` is not permitted.
-+
-+        A grant that holds only through ``operation:<store>`` additionally needs
-+        a backend that confines hash lookups to the store. cloudflare, milvus
-+        and remote_http accept ``store`` on get_by_hash and ignore it, so there
-+        a store-restricted credential would read or delete another partition's
-+        memory by hash; it is refused until the storage layer enforces
-+        ``store`` (#1683). Global grants are unaffected.
-+        """
-+        if self.has_store_scope(operation, store) and not self.has_scope(operation):
-+            if not _storage_confines_store():
-+                raise HTTPException(
-+                    status_code=status.HTTP_403_FORBIDDEN,
-+                    detail={
-+                        "error": "insufficient_scope",
-+                        "error_description": (
-+                            "Store-restricted credentials are not supported on this "
-+                            f"storage backend; use a global '{operation}' scope"
-+                        ),
-+                    }
-+                )
-         if not self.has_store_scope(operation, store):
-             if store is None:
-                 needed = f"'{operation}' (global, for cross-store access)"
-@@ -124,6 +144,19 @@ def require_store_scope(self, operation: str, store: Optional[str]) -> None:
-             )
- 
- 
-+def _storage_confines_store() -> bool:
-+    """Whether the active backend's get_by_hash honours ``store``.
-+
-+    Fails closed: no initialized storage counts as not confining.
-+    """
-+    from ..dependencies import get_storage  # inline import: keeps the storage stack out of OAuth module import
-+    try:
-+        storage = get_storage()
-+    except HTTPException:
-+        return False
-+    return bool(getattr(storage, "get_by_hash_is_store_scoped", False))
-+
-+
- def scope_within_ceiling(requested: Optional[str], ceiling: Optional[str]) -> bool:
-     """Return True if every token in ``requested`` is permitted by ``ceiling``.
- 
-```
-
-**File**: `tests/unit/test_store_grant_gate.py` (added, +110/-0)
-```diff
-@@ -0,0 +1,110 @@
-+"""Per-store grants on the native MCP transports (SSE, Streamable HTTP).
-+
-+The SDK dispatch gate must apply the same rule as the /mcp shim: a
-+read:<store>/write:<store> grant authorizes a call only when the tool confines
-+itself to that store, the call does not reach across partitions, and the
-+backend can prove confinement. Everything else needs the global grant.
-+"""
-+
-+from types import SimpleNamespace
-+from unittest.mock import AsyncMock
-+
-+import pytest
-+from mcp import types
-+from mcp.server.lowlevel.server import request_ctx
-+from mcp.shared.context import RequestContext
-+
-+# Via the package: the direct server_impl import races the package __init__.
-+from mcp_memory_service.server import MemoryServer
-+
-+
-+@pytest.fixture
-+def server(monkeypatch):
-+    srv = MemoryServer()
-+    srv.remote_transport = True
-+    srv.storage = AsyncMock()
-+    srv.storage.get_by_hash_is_store_scoped = True
-+    monkeypatch.setattr(srv, "_ensure_storage_initialized", AsyncMock(return_value=srv.storage))
-+    srv.handled = []
-+
-+    async def handler(_server, arguments):
-+        srv.handled.append(arguments)
-+        return [types.TextContent(type="text", text="handled")]
-+
-+    monkeypatch.setattr("mcp_memory_service.tools.routing.resolve_handler", lambda name: handler)
-+    return srv
-+
-+
-+async def _call(server, name, arguments, scope):
-+    ctx = RequestContext(
-+        request_id=1, meta=None, session=None, lifespan_context=None,
-+        request=SimpleNamespace(scope={"mcp_auth_scope": scope}, headers={}, client=None),
-+    )
-+    token = request_ctx.set(ctx)
-+    try:
-+        handler = server.server.request_handlers[types.CallToolRequest]
-+        req = types.CallToolRequest(
-+            method="tools/call",
-+            params=types.CallToolRequestParams(name=name, arguments=arguments),
-+        )
-+        return (await handler(req)).root
-+    finally:
-+        request_ctx.reset(token)
-+
-+
-+@pytest.mark.asyncio
-+async def test_store_grant_cannot_reach_a_tool_that_ignores_store(server):
-+    result = await _call(server, "memory_quality",
-+                         {"action": "rate", "content_hash": "h", "rating": "-1", "store": "projectA"},
-+                         "read:projectA write:projectA")
-+    assert result.isError
-+    assert server.handled == []
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("flag", ["include_beliefs", "fallback"])
-+async def test_store_grant_cannot_search_across_partitions(server, flag):
-+    result = await _call(server, "memory_search", {"query": "x", "store": "projectA", flag: True},
-+                         "read:projectA")
-+    assert result.isError
-+    assert server.handled == []
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("tool, arguments", [
-+    ("memory_explore", {"query": "x", "store": "projectA"}),
-+    ("memory_detail", {"entity_id": "e", "store": "projectA"}),
-+])
-+async def test_store_grant_cannot_read_the_unpartitioned_graph(server, tool, arguments):
-+    """Entity names and related entities come from a graph with no store, so
-+    a per-store grant would see other stores' entities."""
-+    result = await _call(server, tool, arguments, "read:projectA")
-+    assert result.isError
-+    assert server.handled == []
-+
-+
-+@pytest.mark.asyncio
-+async def test_store_grant_refused_on_a_backend_that_cannot_confine(server):
-+    server.storage.get_by_hash_is_store_scoped = False
-+    result = await _call(server, "memory_delete", {"content_hash": "h", "store": "projectA"},
-+                         "read:projectA write:projectA")
-+    assert result.isError
-+    assert server.handled == []
-+
-+
-+@pytest.mark.asyncio
-+async def test_store_grant_still_works_for_a_confined_tool(server):
-+    result = await _call(server, "memory_delete", {"content_hash": "h", "store": "projectA"},
-+                         "read:projectA write:projectA")
-+    assert not result.isError
-+    assert server.handled == [{"content_hash": "h", "store": "projectA"}]
-+
-+
-+@pytest.mark.asyncio
-+async def test_global_grant_is_unchanged(server):
-+    server.storage.get_by_hash_is_store_scoped = False
-+    result = await _call(server, "memory_quality",
-+                         {"action": "rate", "content_hash": "h", "rating": "-1", "store": "projectA"},
-+                         "read write")
-+    assert not result.isError
-+    assert len(server.handled) == 1
-```
-
-**File**: `tests/web/api/test_store_grant_confinement.py` (added, +186/-0)
-```diff
-@@ -0,0 +1,186 @@
-+"""
-+A per-store grant (read:<store> / write:<store>) authorizes only calls that
-+really stay inside that store.
-+
-+#1682 introduced per-store scopes and gated every request on the store the
-+caller *claims*. Three holes were left behind it:
-+
-+- tools that ignore ``store`` (memory_quality, memory_cleanup, memory_resolve,
-+  ...) accepted a claimed store and then acted on every partition;
-+- memory_search's ``include_beliefs`` and ``fallback`` read across partitions
-+  even when the main search is store-scoped;
-+- on backends whose ``get_by_hash`` ignores ``store`` (cloudflare, milvus,
-+  remote_http), hash-addressed REST routes returned another store's memory.
-+
-+These drive the real /mcp shim and the real REST routes against sqlite-vec,
-+with the authenticated user replaced by one holding exactly the given scope.
-+"""
-+
-+import os
-+import tempfile
-+
-+import pytest
-+import pytest_asyncio
-+from fastapi.testclient import TestClient
-+
-+from mcp_memory_service.models.memory import Memory
-+from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage
-+from mcp_memory_service.utils.hashing import generate_content_hash
-+from mcp_memory_service.web.dependencies import set_storage
-+
-+
-+@pytest.fixture
-+def temp_db():
-+    with tempfile.TemporaryDirectory() as tmpdir:
-+        yield os.path.join(tmpdir, "test.db")
-+
-+
-+@pytest_asyncio.fixture
-+async def storage(temp_db, monkeypatch):
-+    monkeypatch.setenv("MCP_SEMANTIC_DEDUP_ENABLED", "false")
-+    s = SqliteVecMemoryStorage(temp_db)
-+    await s.initialize()
-+    yield s
-+    await s.close()
-+
-+
-+@pytest_asyncio.fixture
-+async def other_store_hash(storage):
-+    """A memory that lives in projectB, which a projectA credential must not reach."""
-+    content = "belongs to projectB only"
-+    memory = Memory(content=content, content_hash=generate_content_hash(content), tags=["b"])
-+    ok, _ = await storage.store(memory, store="projectB")
-+    assert ok
-+    return memory.content_hash
-+
-+
-+@pytest.fixture
-+def make_client(storage, monkeypatch):
-+    from mcp_memory_service.web.app import app
-+    from mcp_memory_service.web.oauth import middleware
-+    from mcp_memory_service.web.api import mcp
-+
-+    monkeypatch.setattr(middleware, "API_KEY", None)
-+    monkeypatch.setattr(middleware, "OAUTH_ENABLED", False)
-+    monkeypatch.setattr(middleware, "ALLOW_ANONYMOUS_ACCESS", True)
-+    from mcp_memory_service.web import dependencies
-+    # Restored on teardown, so this storage cannot answer later tests' lookups.
-+    monkeypatch.setattr(dependencies, "_storage", None)
-+    set_storage(storage)
-+    monkeypatch.setattr(mcp, "_memory_server", None)
-+
-+    def _make(scope):
-+        async def mock_user():
-+            return middleware.AuthenticationResult(
-+                authenticated=True, client_id="c", scope=scope, auth_method="test",
-+            )
-+
-+        app.dependency_overrides[middleware.get_current_user] = mock_user
-+        app.dependency_overrides[middleware.require_read_access] = mock_user
-+        return TestClient(app)
-+
-+    yield _make
-+    app.dependency_overrides.clear()
-+
-+
-+def _ignore_store_like_cloudflare(storage, monkeypatch):
-+    """Make the sqlite backend behave like cloudflare/milvus/remote_http:
-+    get_by_hash accepts ``store`` and ignores it, and says so."""
-+    original = storage.get_by_hash
-+
-+    async def get_by_hash(content_hash, store=None):
-+        return await original(content_hash)
-+
-+    monkeypatch.setattr(storage, "get_by_hash", get_by_hash)
-+    monkeypatch.setattr(storage, "get_by_hash_is_store_scoped", False)
-+
-+
-+def _call(client, name, arguments):
-+    return client.post("/mcp", json={
-+        "jsonrpc": "2.0", "id": 1, "method": "tools/call",
-+        "params": {"name": name, "arguments": arguments},
-+    })
-+
-+
-+def _refused(response):
-+    return response.status_code == 403 and response.json()["error"]["code"] == -32003
-+
-+
-+# --------------------------------------------------------------------------
-+# /mcp shim: tool allowlist and cross-store arguments
-+# --------------------------------------------------------------------------
-+
-+@pytest.mark.integration
-+def test_store_grant_cannot_reach_a_tool_that_ignores_store(make_client, other_store_hash):
-+    """memory_quality has no store parameter: claiming one must not unlock it."""
-+    client = make_client("read:projectA write:projectA")
-+    response = _call(client, "memory_quality", {
-+        "action": "rate", "content_hash": other_store_hash, "rating": "-1", "store": "projectA",
-+    })
-+    assert _refused(response)
-+
-+
-+@pytest.mark.integration
-+@pytest.mark.parametrize("flag", ["include_beliefs", "fallback"])
-+def test_store_grant_cannot_search_across_partitions(make_client, flag):
-+    client = make_client("read:projectA")
-+    response = _call(client, "memory_search", {"query": "x", "store": "projectA", flag: True})
-+    assert _refused(response)
-+
-+
-+@pytest.mark.integration
-+def test_store_grant_still_searches_its_own_store
-```
-
-**File**: `tests/web/test_anonymous_scope.py` (modified, +9/-0)
-```diff
-@@ -29,6 +29,15 @@
- from mcp_memory_service.web.oauth.middleware import AuthenticationResult
- 
- 
-+@pytest.fixture(autouse=True)
-+def _confining_backend(monkeypatch):
-+    """The commons store only works on a backend that confines get_by_hash to a
-+    store; the refusal elsewhere is covered in
-+    tests/web/api/test_store_grant_confinement.py."""
-+    from mcp_memory_service.web.oauth import middleware
-+    monkeypatch.setattr(middleware, "_storage_confines_store", lambda: True)
-+
-+
- # --------------------------------------------------------------------------
- # config resolution: unset -> full default, set-empty -> nothing, value kept
- # --------------------------------------------------------------------------
-```
-
-**File**: `tests/web/test_oauth_store_scopes.py` (modified, +9/-0)
-```diff
-@@ -30,6 +30,15 @@
- )
- 
- 
-+@pytest.fixture(autouse=True)
-+def _confining_backend(monkeypatch):
-+    """These test the scope grammar, so the backend counts as one that confines
-+    get_by_hash to a store. The refusal on a backend that cannot is covered in
-+    tests/web/api/test_store_grant_confinement.py."""
-+    from mcp_memory_service.web.oauth import middleware
-+    monkeypatch.setattr(middleware, "_storage_confines_store", lambda: True)
-+
-+
- def _auth(scope):
-     return AuthenticationResult(authenticated=True, client_id="c", scope=scope, auth_method="oauth")
- 
-```
-
----
-
-### Incident Patch 2: `e15728d6` (2026-10-26)
-**Commit Message**: fix(web): save the dashboard's Quality tab settings (#1671) (#1676)
-
-* fix(web): save the dashboard's Quality tab settings (#1671)
-
-The provider dropdown and the boost toggle on the Quality tab were never
-read, the toggle rendered checked although boosting is off by default,
-and the Current Provider box was hardcoded.
-
-Add an admin-only POST /api/config/quality that writes
-MCP_QUALITY_AI_PROVIDER and MCP_QUALITY_BOOST_ENABLED to .env and
-restarts the server, and wire the tab to it: it now loads both values
-from /api/config/env and has a Save & Restart button.
-
-Values are checked against the choices ENV_CATEGORIES already lists. A
-provider whose key is missing is refused before anything is written,
-since QualityConfig.validate() would stop the restarted server from
-starting. The saved values also go into os.environ: load_dotenv copied
-the old .env values there, and the restarted process inherits them.
-
-* fix(web): address review on the Quality tab save (#1671)
-
-Keep the tab's controls and Save disabled until /config/env has answered,
-so a slow or failed load can no longer write the HTML defaults over the
-configured values; a failed load says so and reopening the tab retries.
-
-Read t
-
-**File**: `changelog.d/1671.fixed.md` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+- **The dashboard's Quality tab now saves its settings (#1671).**
-+  The AI provider dropdown and the quality-boost toggle were never read by anything, the
-+  toggle rendered checked although the boost is off by default, and the "Current Provider"
-+  box was hardcoded. A new admin-only `POST /api/config/quality` writes
-+  `MCP_QUALITY_AI_PROVIDER` and `MCP_QUALITY_BOOST_ENABLED` to `.env` and restarts the
-+  server; the tab loads both from `/api/config/env` and gets a "Save & Restart" button.
-+  Values are checked against the choices the Environment tab already lists, and a provider
-+  whose API key is missing (groq, gemini) is refused up front, because
-+  `QualityConfig.validate()` would otherwise stop the server from coming back. Saved values
-+  also apply after the restart when the old value had already been loaded from `.env`.
-```
-
-**File**: `src/mcp_memory_service/web/api/configuration.py` (modified, +113/-3)
-```diff
-@@ -16,7 +16,8 @@
- Configuration API endpoint for exposing .env parameters.
- 
- Provides read-only access to environment configuration with sensitive value masking,
--plus write access for Cloudflare credentials with connection validation.
-+plus write access for Cloudflare credentials with connection validation and for the
-+quality settings shown in the dashboard's Quality tab.
- """
- 
- import os
-@@ -512,8 +513,8 @@ async def get_env_configuration(user = Depends(require_read_access)):
-             choices = param_def[2] if len(param_def) > 2 else None
-             sensitive = param_def[3] if len(param_def) > 3 else False
- 
--            # Get current value (environment > .env)
--            value = os.getenv(key) or env_vars.get(key)
-+            # Get current value (environment > .env, even when empty, as at startup)
-+            value = os.environ[key] if key in os.environ else env_vars.get(key)
- 
-             # Determine source
-             source = "default"
-@@ -642,6 +643,9 @@ def _write_credential_to_env(env_path: Path, key: str, value: str) -> None:
-             new_lines.append(line)
- 
-     if not found:
-+        # A file that ends without a newline would otherwise get the key glued to its last line
-+        if new_lines and not new_lines[-1].endswith("\n"):
-+            new_lines[-1] += "\n"
-         new_lines.append(f"{key}={value}\n")
- 
-     with open(env_path, 'w', encoding='utf-8') as f:
-@@ -799,3 +803,109 @@ def _sanitize(v: str) -> str:
-         message="Credentials saved. Server restarting...",
-         restart_scheduled=True,
-     )
-+
-+
-+# ---------------------------------------------------------------------------
-+# Quality settings
-+# ---------------------------------------------------------------------------
-+
-+# Keys the Quality tab may write. Each one is also listed in the "quality"
-+# category of ENV_CATEGORIES, which supplies its type and allowed choices.
-+QUALITY_WRITABLE_KEYS = ("MCP_QUALITY_AI_PROVIDER", "MCP_QUALITY_BOOST_ENABLED")
-+
-+# Variables a provider needs before QualityConfig.validate() lets the server start.
-+QUALITY_PROVIDER_REQUIREMENTS = {
-+    "groq": ("GROQ_API_KEY",),
-+    "gemini": ("GEMINI_API_KEY",),
-+}
-+
-+
-+class SaveQualitySettingsRequest(BaseModel):
-+    settings: dict[str, str]
-+
-+
-+def _normalize_quality_value(key: str, raw: str) -> str:
-+    """Strip control characters and check the value against the key's type and choices."""
-+    param_type, choices = next(
-+        (param_type, choices)
-+        for param_key, param_type, choices, _ in ENV_CATEGORIES["quality"]["params"]
-+        if param_key == key
-+    )
-+    value = re.sub(r"[\x00-\x1f\x7f]", "", raw).strip()
-+
-+    if param_type == "boolean":
-+        value = value.lower()
-+        if value not in ("true", "false"):
-+            raise HTTPException(status_code=400, detail=f"{key} must be true or false")
-+    elif param_type == "choice":
-+        value = value.lower()
-+        if value not in choices:
-+            raise HTTPException(
-+                status_code=400,
-+                detail=f"{key} must be one of: {', '.join(choices)}"
-+            )
-+    return value
-+
-+
-+def _check_quality_provider_requirements(provider: Optional[str], env_path: Path) -> None:
-+    """Refuse a provider whose required variables are not set."""
-+    env_vars = _read_env_file_dict(env_path)
-+    # Same precedence as load_dotenv(override=False) at startup: a variable present in
-+    # the process environment wins over .env even when it is empty.
-+    missing = [
-+        key for key in QUALITY_PROVIDER_REQUIREMENTS.get(provider, ())
-+        if not (os.environ[key] if key in os.environ else env_vars.get(key))
-+    ]
-+    if missing:
-+        raise HTTPException(
-+            status_code=400,
-+            detail=f"The {provider} provider needs {', '.join(missing)} to be set first"
-+        )
-+
-+
-+@router.post("/quality", response_model=SaveCredentialsResponse)
-+async def save_quality_settings(
-+    request: SaveQualitySettingsRequest,
-+    background_tasks: BackgroundTasks,
-+    user=Depends(require_admin_access)
-+):
-+    """
-+    Persist the Quality tab settings to .env and schedule a server restart.
-+    Only keys in QUALITY_WRITABLE_KEYS are accepted. Requires admin access.
-+    """
-+    if not request.settings:
-+        raise HTTPException(status_code=400, detail="No settings to save")
-+
-+    unknown = sorted(set(request.settings) - set(QUALITY_WRITABLE_KEYS))
-+    if unknown:
-+        raise HTTPException(status_code=400, detail=f"Unsupported setting: {', '.join(unknown)}")
-+
-+    values = {key: _normalize_quality_value(key, raw) for key, raw in request.settings.items()}
-+
-+    env_path = _find_env_path()
-+    _check_quality_provider_requirements(values.get("MCP_QUALITY_AI_PROVIDER"), env_path)
-+
-+    try:
-+        for key, value in values.items():
-+            _write_credential_to_env(env_path, key, value)
-+    except Exception as e:
-+        logger.error("Failed to write quality settings to .env: %s", _sanitize_log_va
-```
-
-**File**: `src/mcp_memory_service/web/static/app.js` (modified, +101/-0)
-```diff
-@@ -4630,6 +4630,11 @@ class MemoryDashboard {
-             this.loadCredentials();
-         }
- 
-+        // Load the configured quality settings when switching to quality tab
-+        if (tabName === 'quality') {
-+            this.loadQualitySettings();
-+        }
-+
-         // Load server status + auto-check for updates when switching to server tab
-         // (runs once per modal open to avoid repeated git fetches)
-         if (tabName === 'server') {
-@@ -4734,6 +4739,11 @@ class MemoryDashboard {
-         if (saveBtn) {
-             saveBtn.addEventListener('click', () => this.saveCloudflareCredentials());
-         }
-+
-+        // Quality tab Save & Restart button
-+        document.getElementById('qualitySaveBtn')?.addEventListener('click', () => {
-+            this.saveQualitySettings();
-+        });
-     }
- 
-     /**
-@@ -4829,6 +4839,97 @@ class MemoryDashboard {
-         el.style.display = 'block';
-     }
- 
-+    /**
-+     * Load the configured quality provider and boost flag into the Quality tab.
-+     * Values come from GET /api/config/env, so the tab shows what the server runs with.
-+     */
-+    async loadQualitySettings() {
-+        const resultEl = document.getElementById('qualitySaveResult');
-+        if (resultEl) resultEl.style.display = 'none';
-+
-+        // Nothing can be edited or saved until the configured values are in,
-+        // otherwise Save would write the HTML defaults over them
-+        const providerSelect = document.getElementById('quality-provider');
-+        const boostCheckbox = document.getElementById('quality-boost-enabled');
-+        const saveBtn = document.getElementById('qualitySaveBtn');
-+        [providerSelect, boostCheckbox, saveBtn].forEach(el => { if (el) el.disabled = true; });
-+
-+        try {
-+            const config = await this.apiCall('/config/env');
-+            const params = Object.fromEntries(
-+                config.categories.flatMap(category => category.parameters).map(param => [param.key, param])
-+            );
-+            const provider = params.MCP_QUALITY_AI_PROVIDER;
-+            const boost = params.MCP_QUALITY_BOOST_ENABLED;
-+
-+            const providerValue = (provider?.value || 'local').toLowerCase();
-+            const option = Array.from(providerSelect?.options || []).find(opt => opt.value === providerValue);
-+            if (providerSelect) {
-+                // A provider the dropdown does not offer (e.g. openai-compatible) is left as it is on save
-+                providerSelect.disabled = !option;
-+                providerSelect.value = providerValue;
-+            }
-+
-+            // Same spellings as safe_get_bool_env(); unset means off, the server default
-+            if (boostCheckbox) {
-+                boostCheckbox.checked = ['true', '1', 'yes', 'on', 'enabled']
-+                    .includes((boost?.value || '').toLowerCase().trim());
-+                boostCheckbox.disabled = false;
-+            }
-+            if (saveBtn) saveBtn.disabled = false;
-+
-+            const info = document.getElementById('current-provider-info');
-+            if (info) info.textContent = option ? option.textContent : providerValue;
-+        } catch (e) {
-+            console.warn('Failed to load quality settings:', e);
-+            this._showQualityResult('error', this.t(
-+                'settings.quality.loadFailed',
-+                '✗ Could not load the current settings: {error}. Reopen this tab to retry.',
-+                { error: e.message }
-+            ));
-+        }
-+    }
-+
-+    /**
-+     * POST /api/config/quality — persist the Quality tab and restart.
-+     */
-+    async saveQualitySettings() {
-+        const saveBtn = document.getElementById('qualitySaveBtn');
-+        const providerSelect = document.getElementById('quality-provider');
-+        const settings = {
-+            MCP_QUALITY_BOOST_ENABLED: document.getElementById('quality-boost-enabled')?.checked ? 'true' : 'false',
-+        };
-+        if (providerSelect && !providerSelect.disabled) {
-+            settings.MCP_QUALITY_AI_PROVIDER = providerSelect.value || 'local';
-+        }
-+
-+        saveBtn.disabled = true;
-+        saveBtn.textContent = this.t('settings.quality.saving', 'Saving…');
-+
-+        try {
-+            await this.apiCall('/config/quality', 'POST', { settings });
-+            this.closeModal(document.getElementById('settingsModal'));
-+            this.showRestartOverlay();
-+        } catch (e) {
-+            this._showQualityResult('error', this.t(
-+                'settings.quality.saveFailed',
-+                '✗ Save failed: {error}',
-+                { error: e.message }
-+            ));
-+        } finally {
-+            saveBtn.disabled = false;
-+            saveBtn.textContent = this.t('settings.quality.save', 'Save & Restart');
-+        }
-+    }
-+
-+    _showQualityResult(type, message) {
-+        const el = document.getElementById('qualitySaveResult');
-+        if (!el) return;
-+        el.className = `cred-test-result cred-test-${type}`;
-+        el
-```
-
-**File**: `src/mcp_memory_service/web/static/i18n/de.json` (modified, +5/-0)
-```diff
-@@ -326,13 +326,18 @@
-   "settings.quality.boost.help": "Ordnet Suchergebnisse neu, um hochwertige Speicher zu priorisieren",
-   "settings.quality.boost.label": "Qualitätsverbesserte Suche Aktivieren",
-   "settings.quality.current.label": "Aktueller Anbieter:",
-+  "settings.quality.loadFailed": "✗ Aktuelle Einstellungen konnten nicht geladen werden: {error}. Tab erneut öffnen, um es noch einmal zu versuchen.",
-   "settings.quality.provider.auto": "Automatisch (Alle Verfügbaren)",
-   "settings.quality.provider.gemini": "Gemini API",
-   "settings.quality.provider.groq": "Groq API",
-   "settings.quality.provider.help": "Lokales SLM bietet kostenlose, datenschutzwahrende Qualitätsbewertung",
-   "settings.quality.provider.label": "KI-Anbieter",
-   "settings.quality.provider.local": "Lokales SLM (Datenschutzmodus)",
-   "settings.quality.provider.none": "Nur Implizit (Ohne KI)",
-+  "settings.quality.save": "Speichern & Neustarten",
-+  "settings.quality.saveFailed": "✗ Speichern fehlgeschlagen: {error}",
-+  "settings.quality.saveHint": "Wird in .env gespeichert. Der Server startet neu, um die Änderung zu übernehmen.",
-+  "settings.quality.saving": "Speichern…",
-   "stats.tags": "Tags",
-   "stats.thisWeek": "Diese Woche",
-   "stats.total": "Erinnerungen gesamt",
-```
-
-**File**: `src/mcp_memory_service/web/static/i18n/en.json` (modified, +6/-1)
-```diff
-@@ -414,5 +414,10 @@
-   "settings.quality.provider.help": "Local SLM provides zero-cost, privacy-preserving quality scoring",
-   "settings.quality.boost.label": "Enable Quality-Boosted Search",
-   "settings.quality.boost.help": "Rerank search results to prioritize high-quality memories",
--  "settings.quality.current.label": "Current Provider:"
-+  "settings.quality.current.label": "Current Provider:",
-+  "settings.quality.save": "Save & Restart",
-+  "settings.quality.saving": "Saving…",
-+  "settings.quality.saveFailed": "✗ Save failed: {error}",
-+  "settings.quality.loadFailed": "✗ Could not load the current settings: {error}. Reopen this tab to retry.",
-+  "settings.quality.saveHint": "Saved to .env. The server restarts to apply the change."
- }
-```
-
-**File**: `src/mcp_memory_service/web/static/i18n/es.json` (modified, +5/-0)
-```diff
-@@ -326,13 +326,18 @@
-   "settings.quality.boost.help": "Reordena los resultados de búsqueda para priorizar memorias de alta calidad",
-   "settings.quality.boost.label": "Habilitar Búsqueda con Mejora de Calidad",
-   "settings.quality.current.label": "Proveedor Actual:",
-+  "settings.quality.loadFailed": "✗ No se pudo cargar la configuración actual: {error}. Vuelve a abrir esta pestaña para reintentarlo.",
-   "settings.quality.provider.auto": "Automático (Todos Disponibles)",
-   "settings.quality.provider.gemini": "API Gemini",
-   "settings.quality.provider.groq": "API Groq",
-   "settings.quality.provider.help": "El SLM local proporciona puntuación de calidad sin costo y preservando la privacidad",
-   "settings.quality.provider.label": "Proveedor de IA",
-   "settings.quality.provider.local": "SLM Local (Modo Privacidad)",
-   "settings.quality.provider.none": "Solo Implícito (Sin IA)",
-+  "settings.quality.save": "Guardar y reiniciar",
-+  "settings.quality.saveFailed": "✗ Error al guardar: {error}",
-+  "settings.quality.saveHint": "Se guarda en .env. El servidor se reinicia para aplicar el cambio.",
-+  "settings.quality.saving": "Guardando…",
-   "stats.tags": "Etiquetas",
-   "stats.thisWeek": "Esta Semana",
-   "stats.total": "Total de Memorias",
-```
-
-**File**: `src/mcp_memory_service/web/static/i18n/fr.json` (modified, +5/-0)
-```diff
-@@ -326,13 +326,18 @@
-   "settings.quality.boost.help": "Reclasse les résultats de recherche pour prioriser les mémoires de haute qualité",
-   "settings.quality.boost.label": "Activer la Recherche Améliorée par Qualité",
-   "settings.quality.current.label": "Fournisseur Actuel :",
-+  "settings.quality.loadFailed": "✗ Impossible de charger les paramètres actuels : {error}. Rouvrez cet onglet pour réessayer.",
-   "settings.quality.provider.auto": "Automatique (Tous Disponibles)",
-   "settings.quality.provider.gemini": "API Gemini",
-   "settings.quality.provider.groq": "API Groq",
-   "settings.quality.provider.help": "Le SLM local offre une notation de qualité sans coût et préservant la confidentialité",
-   "settings.quality.provider.label": "Fournisseur IA",
-   "settings.quality.provider.local": "SLM Local (Mode Confidentialité)",
-   "settings.quality.provider.none": "Implicite Uniquement (Sans IA)",
-+  "settings.quality.save": "Enregistrer et redémarrer",
-+  "settings.quality.saveFailed": "✗ Échec de l'enregistrement : {error}",
-+  "settings.quality.saveHint": "Enregistré dans .env. Le serveur redémarre pour appliquer la modification.",
-+  "settings.quality.saving": "Enregistrement…",
-   "stats.tags": "Tags",
-   "stats.thisWeek": "Cette Semaine",
-   "stats.total": "Total des Mémoires",
-```
-
-**File**: `src/mcp_memory_service/web/static/i18n/ja.json` (modified, +5/-0)
-```diff
-@@ -326,13 +326,18 @@
-   "settings.quality.boost.help": "検索結果を再ランク付けして高品質メモリを優先表示",
-   "settings.quality.boost.label": "品質ブースト検索を有効化",
-   "settings.quality.current.label": "現在のプロバイダー:",
-+  "settings.quality.loadFailed": "✗ 現在の設定を読み込めませんでした: {error}。このタブを開き直して再試行してください。",
-   "settings.quality.provider.auto": "自動 (利用可能なすべて)",
-   "settings.quality.provider.gemini": "Gemini API",
-   "settings.quality.provider.groq": "Groq API",
-   "settings.quality.provider.help": "ローカルSLMはゼロコストでプライバシーを保護した品質スコアリングを提供",
-   "settings.quality.provider.label": "AIプロバイダー",
-   "settings.quality.provider.local": "ローカルSLM (プライバシーモード)",
-   "settings.quality.provider.none": "暗黙のみ (AIなし)",
-+  "settings.quality.save": "保存して再起動",
-+  "settings.quality.saveFailed": "✗ 保存に失敗しました: {error}",
-+  "settings.quality.saveHint": ".env に保存されます。変更を反映するためにサーバーが再起動します。",
-+  "settings.quality.saving": "保存中…",
-   "stats.tags": "タグ",
-   "stats.thisWeek": "今週",
-   "stats.total": "総メモリー数",
-```
-
----
-
-### Incident Patch 3: `c36145f5` (2026-10-25)
-**Commit Message**: fix(ingestion): clear the five document loaders of unsanitised log calls (#1146) (#1677)
-
-* fix(ingestion): clear the five document loaders of unsanitised log calls (#1146)
-
-semtools_loader.py, json_loader.py, csv_loader.py, text_loader.py and
-pdf_loader.py logged the caller-provided file path, the parser's error text,
-the semtools stderr and the semtools binary location through f-strings.
-Those go through _sanitize_log_value; the character count and the PDF
-backend name become lazy %-style. The five modules join GUARDED_MODULES,
-file_path joins EXTERNAL_NAMES, and a caplog test per loader forges the
-path and the subprocess error without touching the disk.
-
-* changelog: fragment for #1677
-
-* test(ingestion): build the expected log path from str(forged_path), not a hardcoded '/'
-
-On Windows Path renders the separator as a backslash, so the five tests
-compared the escaped log line against 'docs/report...' and failed even
-when the escaping was right (Greptile P2 on #1677).
+* changelog: fragment for #1698
 
 ---------
 
 Co-authored-by: massimiliano1991 <[REDACTED_EMAIL]>
 
-**File**: `changelog.d/1677.fixed.md` (added, +6/-0)
+**File**: `changelog.d/1698.fixed.md` (added, +7/-0)
 ```diff
-@@ -0,0 +1,6 @@
-+- **Document loaders logged caller-provided paths and parser errors unsanitised (#1146, #1677, massimiliano1991).**
-+  `ingestion/semtools_loader.py`, `json_loader.py`, `csv_loader.py`, `text_loader.py` and
-+  `pdf_loader.py` put the path of the file being ingested, the parser's error text and the
-+  `semtools` stderr into the log through f-strings, so a newline in any of them forged a log
-+  line. They go through `_sanitize_log_value` now; the five modules are in the guard's
-+  `GUARDED_MODULES` list and a test per loader fails if the newline comes back.
+@@ -0,0 +1,7 @@
++- **Reasoning modules logged caller hashes, entity names and backend errors unsanitised (#1146, #1698, massimiliano1991).**
++  `reasoning/inference.py`, `entity_linker.py`, `nli.py` and `multi_strategy.py` put the hash
++  handed to the `SemanticReasoner` lookups, the entity names extracted from memory content and
++  tags, and the exception text of the graph backend or a failed search strategy into the log
++  through f-strings, so a newline in any of them forged a log line. They go through
++  `_sanitize_log_value` now; the four modules are in the guard's `GUARDED_MODULES` list and a
++  test per module fails if the newline comes back.
 ```
 
-**File**: `src/mcp_memory_service/ingestion/csv_loader.py` (modified, +4/-3)
+**File**: `src/mcp_memory_service/reasoning/entity_linker.py` (modified, +6/-4)
 ```diff
-@@ -25,6 +25,7 @@
+@@ -11,6 +11,8 @@
+ import os
+ from typing import List
  
- from .base import DocumentLoader, DocumentChunk
- from .chunker import TextChunker, ChunkingStrategy
 +from ..compat import _sanitize_log_value
- 
++
  logger = logging.getLogger(__name__)
  
-@@ -105,7 +106,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
-         max_rows_per_chunk = kwargs.get('max_rows_per_chunk', 50)
-         include_row_numbers = kwargs.get('include_row_numbers', True)
+ # Cap to prevent O(N²) edge explosion for common entities
+@@ -54,7 +56,7 @@ async def link_by_entities(
+             try:
+                 existing_hashes = await graph_storage.find_memories_by_entity(entity_name)
+             except Exception as e:
+-                logger.debug(f"Failed to query entity '{entity_name}': {e}")
++                logger.debug("Failed to query entity '%s': %s", _sanitize_log_value(entity_name), _sanitize_log_value(e))
+                 continue
  
--        logger.info(f"Extracting chunks from CSV file: {file_path}")
-+        logger.info("Extracting chunks from CSV file: %s", _sanitize_log_value(file_path))
+             # Defensive: handle None or non-iterable return
+@@ -68,7 +70,7 @@ async def link_by_entities(
+                     continue
+                 if linked_count >= MAX_LINKS_PER_ENTITY:
+                     logger.debug(
+-                        f"EntityLinker: hit cap ({MAX_LINKS_PER_ENTITY}) for entity '{entity_name}'"
++                        "EntityLinker: hit cap (%s) for entity '%s'", MAX_LINKS_PER_ENTITY, _sanitize_log_value(entity_name)
+                     )
+                     break
  
-         try:
-             # Read CSV data
-@@ -114,7 +115,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
+@@ -91,10 +93,10 @@ async def link_by_entities(
+                         edges_created += 1
+                         linked_count += 1
+                 except Exception as e:
+-                    logger.debug(f"Failed to create shares_entity edge: {e}")
++                    logger.debug("Failed to create shares_entity edge: %s", _sanitize_log_value(e))
+ 
+         if edges_created:
+             logger.info(
+-                f"EntityLinker: created {edges_created} shares_entity edges for {memory_hash}"
++                "EntityLinker: created %s shares_entity edges for %s", edges_created, memory_hash
              )
+         return edges_created
+```
+
+**File**: `src/mcp_memory_service/reasoning/inference.py` (modified, +5/-5)
+```diff
+@@ -73,7 +73,7 @@ async def _get_connected(self, hash: str, rel_type: str, direction: str = "both"
+             # connected is List[Tuple[str, int]]
+             return [mem_hash for mem_hash, distance in connected]
+         except Exception as e:
+-            logger.error(f"Failed to get connected memories: {e}")
++            logger.error("Failed to get connected memories: %s", _sanitize_log_value(e))
+             return []
  
-             if not rows:
--                logger.warning(f"CSV file {file_path} appears to be empty")
-+                logger.warning("CSV file %s appears to be empty", _sanitize_log_value(file_path))
-                 return
+     async def detect_contradictions(self, hash: str) -> List[str]:
+@@ -94,7 +94,7 @@ async def detect_contradictions(self, hash: str) -> List[str]:
+             # Find memories with "contradicts" relationship
+             return await self._get_connected(hash, "contradicts")
+         except Exception as e:
+-            logger.error(f"Failed to detect contradictions for {hash}: {e}")
++            logger.error("Failed to detect contradictions for %s: %s", _sanitize_log_value(hash), _sanitize_log_value(e))
+             return []
  
-             # Prepare headers
-@@ -152,7 +153,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
+     async def find_fixes(self, error_hash: str) -> List[str]:
+@@ -116,7 +116,7 @@ async def find_fixes(self, error_hash: str) -> List[str]:
+             # Use direction="incoming" to find sources that fix this target
+             return await self._get_connected(error_hash, "fixes", direction="incoming")
+         except Exception as e:
+-            logger.error(f"Failed to find fixes for {error_hash}: {e}")
++            logger.error("Failed to find fixes for %s: %s", _sanitize_log_value(error_hash), _sanitize_log_value(e))
+             return []
+ 
+     async def find_causes(self, error_hash: str) -> List[str]:
+@@ -138,7 +138,7 @@ async def find_causes(self, error_hash: str) -> List[str]:
+             # Use direction="incoming" to find what caused this error
+             return await self._get_connected(error_hash, "causes", direction="incoming")
+         except Exception as e:
+-            logger.error(f"Failed to find causes for {error_hash}: {e}")
++            logger.error("Failed to find causes for %s: %s", _sanitize_log_value(error_hash), _sanitize_log_value(e))
+             return []
+ 
+     async def abstract_to_concept(self, hash: str) -> Optional[str]:
+@@ -203,7 +203,7 @@ async def infer_transitive(
+                 for src, tgt, dist in results
+             ]
+         except Exception as e:
+-            logger.error(f"Failed to infer transitive relationships: {e}")
++            logger.error("Failed to infer transitive relationships: %s", _sanitize_log_value(e))
+             return []
+ 
+     async def abduct(self, effect_hash: str, max_depth: int = 2) -> List[Dict[str, Any]]:
+```
+
+**File**: `src/mcp_memory_service/reasoning/multi_strategy.py` (modified, +3/-1)
+```diff
+@@ -4,6 +4,8 @@
+ import logging
+ from typing import Any, Dict, List, Optional, Tuple
+ 
++from ..compat import _sanitize_log_value
++
+ logger = logging.getLogger(__name__)
+ 
+ 
+@@ -76,7 +78,7 @@ async def multi_strategy_search(
+ 
+     for result in results:
+         if isinstance(result, Exception):
+-            logger.warning(f"Strategy failed: {result}")
++            logger.warning("Strategy failed: %s", _sanitize_log_value(result))
+             continue
+         hashes, mem_map = result
+         if hashes:
+```
+
+**File**: `src/mcp_memory_service/reasoning/nli.py` (modified, +1/-1)
+```diff
+@@ -356,6 +356,6 @@ async def detect_contradictions_nli(
                  )
+                 result["conflicts_registered"] += 1
+             except Exception as e:
+-                logger.debug(f"Failed to register conflict: {e}")
++                logger.debug("Failed to register conflict: %s", _sanitize_log_value(e))
  
-         except Exception as e:
--            logger.error(f"Error extracting from CSV file {file_path}: {type(e).__name__} - {str(e)}")
-+            logger.error("Error extracting from CSV file %s: %s - %s", _sanitize_log_value(file_path), _sanitize_log_value(type(e).__name__), _sanitize_log_value(e))
-             raise ValueError(f"Failed to extract CSV content: {str(e)}") from e
- 
-     async def _read_csv_file(
+     return result
 ```
 
-**File**: `src/mcp_memory_service/ingestion/json_loader.py` (modified, +4/-3)
+**File**: `tests/unit/test_log_injection_guard.py` (modified, +25/-0)
 ```diff
-@@ -24,6 +24,7 @@
+@@ -89,6 +89,10 @@
+     "mcp_memory_service/ingestion/csv_loader.py",
+     "mcp_memory_service/ingestion/text_loader.py",
+     "mcp_memory_service/ingestion/pdf_loader.py",
++    "mcp_memory_service/reasoning/inference.py",
++    "mcp_memory_service/reasoning/entity_linker.py",
++    "mcp_memory_service/reasoning/nli.py",
++    "mcp_memory_service/reasoning/multi_strategy.py",
+ ]
  
- from .base import DocumentLoader, DocumentChunk
- from .chunker import TextChunker, ChunkingStrategy
-+from ..compat import _sanitize_log_value
+ # The levels check 6.5 looks at, verbatim.
+@@ -188,6 +192,11 @@
+     # the name bare in a %-style call, so listing it decides for nobody else.
+     # `error_msg` above already covers the stderr of the semtools subprocess.
+     "file_path",
++    # An entity name EntityExtractor pulled out of a memory's content or tags
++    # (reasoning/entity_linker.py logs it when the lookup fails and when the
++    # per-entity link cap is hit). No guarded module logs the name bare in a
++    # %-style call, so listing it decides for nobody else.
++    "entity_name",
+ })
  
- logger = logging.getLogger(__name__)
- 
-@@ -100,7 +101,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
-         include_types = kwargs.get('include_types', False)
-         array_handling = kwargs.get('array_handling', 'expand')
- 
--        logger.info(f"Extracting chunks from JSON file: {file_path}")
-+        logger.info("Extracting chunks from JSON file: %s", _sanitize_log_value(file_path))
- 
-         try:
-             # Read and parse JSON
-@@ -140,10 +141,10 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
-                 )
- 
-         except json.JSONDecodeError as e:
--            logger.error(f"Invalid JSON in file {file_path}: {str(e)}")
-+            logger.error("Invalid JSON in file %s: %s", _sanitize_log_value(file_path), _sanitize_log_value(e))
-             raise ValueError(f"Invalid JSON format: {str(e)}") from e
-         except Exception as e:
--            logger.error(f"Error extracting from JSON file {file_path}: {type(e).__name__} - {str(e)}")
-+            logger.error("Error extracting from JSON file %s: %s - %s", _sanitize_log_value(file_path), _sanitize_log_value(type(e).__name__), _sanitize_log_value(e))
-             raise ValueError(f"Failed to extract JSON content: {str(e)}") from e
- 
-     async def _read_json_file(self, file_path: Path) -> tuple:
+ # Fields of an outside object that cannot carry injectable text. An HTTP status
+@@ -610,3 +619,19 @@ def test_lazy_scan_flags_ingestion_file_path():
+     assert _lazy_findings(bare)
+     assert not _lazy_findings(wrapped)
+     assert not _lazy_findings('logger.debug("Successfully parsed %s, extracted %d characters", _sanitize_log_value(file_path), len(markdown_content))\n')
++
++
++@pytest.mark.unit
++def test_lazy_scan_flags_reasoning_entity_name():
++    """An entity name pulled out of memory content, logged by reasoning/entity_linker.py.
++
++    Both guarded logger calls that carry it already wrap it, so the module scans
++    stay green whether or not the name is listed. This is the sample that fails
++    if `entity_name` is dropped from EXTERNAL_NAMES; the link cap and the edge
++    count logged next to it stay unlisted on purpose.
++    """
++    bare = 'logger.debug("EntityLinker: hit cap (%s) for entity \'%s\'", MAX_LINKS_PER_ENTITY, entity_name)\n'
++    wrapped = 'logger.debug("EntityLinker: hit cap (%s) for entity \'%s\'", MAX_LINKS_PER_ENTITY, _sanitize_log_value(entity_name))\n'
++    assert _lazy_findings(bare)
++    assert not _lazy_findings(wrapped)
++    assert not _lazy_findings('logger.info("EntityLinker: created %s shares_entity edges for %s", edges_created, memory_hash)\n')
 ```
 
-**File**: `src/mcp_memory_service/ingestion/pdf_loader.py` (modified, +3/-2)
+**File**: `tests/unit/test_reasoning_logging.py` (added, +156/-0)
 ```diff
-@@ -9,6 +9,7 @@
- 
- from .base import DocumentLoader, DocumentChunk
- from .chunker import TextChunker, ChunkingStrategy
-+from ..compat import _sanitize_log_value
- 
- logger = logging.getLogger(__name__)
- 
-@@ -103,7 +104,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
-         extract_tables = kwargs.get('extract_tables', False)
-         page_range = kwargs.get('page_range', None)
- 
--        logger.info(f"Extracting chunks from PDF: {file_path} using {self.backend}")
-+        logger.info("Extracting chunks from PDF: %s using %s", _sanitize_log_value(file_path), self.backend)
- 
-         try:
-             if self.backend == 'pdfplumber':
-@@ -118,7 +119,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
-                     yield chunk
- 
-         except Exception as e:
--            logger.error(f"Error extracting from PDF {file_path}: {str(e)}")
-+            logger.error("Error extracting from PDF %s: %s", _sanitize_log_value(file_path), _sanitize_log_value(e))
-             raise ValueError(f"Failed to extract PDF content: {str(e)}") from e
- 
-     async def _extract_with_pdfplumber(
-```
-
-**File**: `src/mcp_memory_service/ingestion/semtools_loader.py` (modified, +9/-8)
-```diff
-@@ -28,6 +28,7 @@
- 
- from .base import DocumentLoader, DocumentChunk
- from .chunker import TextChunker, ChunkingStrategy
-+from ..compat import _sanitize_log_value
- 
- logger = logging.getLogger(__name__)
- 
-@@ -80,7 +81,7 @@ def _check_semtools_availability(self) -> bool:
-         """
-         semtools_path = shutil.which('semtools')
-         if semtools_path:
--            logger.info(f"Semtools found at: {semtools_path}")
-+            logger.info("Semtools found at: %s", _sanitize_log_value(semtools_path))
-             return True
-         else:
-             logger.debug(
-@@ -128,7 +129,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
-                 "Semtools is not available. Install with: npm i -g @llamaindex/semtools"
-             )
- 
--        logger.info(f"Extracting chunks from {file_path} using semtools")
-+        logger.info("Extracting chunks from %s using semtools", _sanitize_log_value(file_path))
- 
-         try:
-             # Parse document to markdown using semtools
-@@ -157,7 +158,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
-                 chunk_index += 1
- 
-         except Exception as e:
--            logger.error(f"Error processing {file_path} with semtools: {e}")
-+            logger.error("Error processing %s with semtools: %s", _sanitize_log_value(file_path), _sanitize_log_value(e))
-             raise ValueError(f"Failed to parse document: {str(e)}") from e
- 
-     async def _parse_with_semtools(self, file_path: Path) -> str:
-@@ -198,24 +199,24 @@ async def _parse_with_semtools(self, file_path: Path) -> str:
- 
-             if process.returncode != 0:
-                 error_msg = stderr.decode('utf-8', errors='replace')
--                logger.error(f"Semtools parsing failed: {error_msg}")
-+                logger.error("Semtools parsing failed: %s", _sanitize_log_value(error_msg))
-                 raise RuntimeError(f"Semtools returned error: {error_msg}")
- 
-             # Parse markdown output
-             markdown_content = stdout.decode('utf-8', errors='replace')
- 
-             if not markdown_content.strip():
--                logger.warning(f"Semtools returned empty content for {file_path}")
-+                logger.warning("Semtools returned empty content for %s", _sanitize_log_value(file_path))
-                 raise RuntimeError("Semtools returned empty content")
- 
--            logger.debug(f"Successfully parsed {file_path}, extracted {len(markdown_content)} characters")
-+            logger.debug("Successfully parsed %s, extracted %d characters", _sanitize_log_value(file_path), len(markdown_content))
-             return markdown_content
- 
-         except asyncio.TimeoutError:
--            logger.error(f"Semtools parsing timed out for {file_path}")
-+            logger.error("Semtools parsing timed out for %s", _sanitize_log_value(file_path))
-             raise RuntimeError("Document parsing timed out after 5 minutes")
-         except Exception as e:
--            logger.error(f"Error running semtools: {e}")
-+            logger.error("Error running semtools: %s", _sanitize_log_value(e))
-             raise
- 
- 
-```
-
-**File**: `src/mcp_memory_service/ingestion/text_loader.py` (modified, +3/-2)
-```diff
-@@ -25,6 +25,7 @@
- 
- from .base import DocumentLoader, DocumentChunk
- from .chunker import TextChunker, ChunkingStrategy
-+from ..compat import _sanitize_log_value
- 
- logger = logging.getLogger(__name__)
- 
-@@ -103,7 +104,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
-         preserve_structure = kwargs.get('preserve_structure', True)
-         extract_links = kwargs.get('extract_links', False)
-         
--        logger.info(f"Extracting chunks from text file: {file_path}")
-+        logger.info("Extracting chunks from text file: %s", _sanitize_log_value(file_path))
-         
-         try:
-             # Read file content
-@@ -125,7 +126,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
-                     yield chunk
-                     
-         except Exception as e:
--            logger.error(f"Error extracting from text file {file_path}: {str(e)}")
-+            logger.error("Error extracting from text file %s: %s", _sanitize_log_value(file_path), _sanitize_log_value(e))
-             raise ValueError(f"Failed to extract text content: {str(e)}") from e
-     
-     async def _read_file_content(self, file_path: Path, encoding: Optional[str]) -> tuple:
-```
-
-**File**: `tests/unit/test_ingestion_loaders_logging.py` (added, +166/-0)
-```diff
-@@ -0,0 +1,166 @@
+@@ -0,0 +1,156 @@
 +"""
-+Log-injection tests for the ingestion/ document loaders (#1146).
++Log-injection tests for the reasoning/ modules (#1146).
 +
-+Each loader logs the path of the document it is asked to read when it starts
-+and again, with the parser's error text, when it fails; the semtools loader
-+also logs where the ``semtools`` binary was found and what it wrote to stderr.
-+A newline in any of those must not reach the log as a line break.
++What these modules log and did not produce themselves: the hash a caller hands
++the public ``SemanticReasoner`` methods, the entity names ``EntityExtractor``
++pulls out of a memory's content and tags, and the exception text of the graph
++backend or of a failed search strategy. A newline in any of those must not
++reach the log as a line break.
 +
-+Nothing is written to disk and ``semtools`` is not run: ``validate_file`` and
-+the per-loader read step are stubbed, and the subprocess is a fake whose
-+``communicate`` returns a forged stderr.
++No storage and no model: the graph backend, the search strategy and the NLI
++classification step are stubs that raise or return forged text.
 +"""
 +
-+import asyncio
 +import logging
-+import shutil
-+from pathlib import Path
++import sys
++import types
++from types import SimpleNamespace
++from unittest.mock import AsyncMock, MagicMock
 +
 +import pytest
 +
-+from mcp_memory_service.ingestion import pdf_loader as pdf_module
-+from mcp_memory_service.ingestion.csv_loader import CSVLoader
-+from mcp_memory_service.ingestion.json_loader import JSONLoader
-+from mcp_memory_service.ingestion.pdf_loader import PDFLoader
-+from mcp_memory_service.ingestion.semtools_loader import SemtoolsLoader
-+from mcp_memory_service.ingestion.text_loader import TextLoader
++from mcp_memory_service.reasoning import entity_linker as entity_linker_module
++from mcp_memory_service.reasoning import multi_strategy as multi_strategy_module
++from mcp_memory_service.reasoning import nli as nli_module
++from mcp_memory_service.reasoning.entity_linker import EntityLinker
++from mcp_memory_service.reasoning.inference import SemanticReasoner
 +
-+FORGED = "FORGED ingestion verified"
-+LOGGERS = "mcp_memory_service.ingestion"
++FORGED = "FORGED reasoning verified"
++LOGGERS = "mcp_memory_service.reasoning"
++FORGED_HASH = f"abc123\n{FORGED}"
 +
 +
 +def _messages(caplog):
@@ -4151,167 +3184,308 @@ Co-authored-by: massimiliano1991 <[REDACTED_EMAIL]>
 +    assert not any(f"\n{FORGED}" in m for m in messages), messages
 +
 +
-+async def _no_validation(_file_path):
-+    return None
++def _escaped(text):
++    return text.replace("\n", "\\n")
 +
 +
-+async def _failing_read(*_args, **_kwargs):
-+    raise ValueError(f"parser said\n{FORGED}")
-+
-+
-+async def _drain(loader, file_path):
-+    with pytest.raises(ValueError):
-+        async for _chunk in loader.extract_chunks(file_path):
-+            pass
-+
-+
-+@pytest.fixture
-+def forged_path():
-+    return Path("docs", f"report\n{FORGED}.ext")
-+
-+
-+def _shown(path):
-+    """The path as the sanitised log line shows it: the OS separator, the newline escaped."""
-+    return str(path).replace("\n", "\\n")
++def _failing(message):
++    return AsyncMock(side_effect=ValueError(f"{message}\n{FORGED}"))
 +
 +
 +@pytest.mark.asyncio
-+async def test_json_loader_logs_do_not_carry_newlines(monkeypatch, caplog, forged_path):
-+    loader = JSONLoader()
-+    monkeypatch.setattr(loader, "validate_file", _no_validation)
-+    monkeypatch.setattr(loader, "_read_json_file", _failing_read)
++async def test_semantic_reasoner_logs_do_not_carry_newlines(monkeypatch, caplog):
++    graph = MagicMock()
++    graph.find_connected = _failing("backend said")
++    graph.transitive_closure = _failing("closure said")
++    reasoner = SemanticReasoner(graph)
 +
-+    with caplog.at_level(logging.INFO, logger=LOGGERS):
-+        await _drain(loader, forged_path)
++    with caplog.at_level(logging.DEBUG, logger=LOGGERS):
++        assert await reasoner._get_connected(FORGED_HASH, "contradicts") == []
++        assert await reasoner.infer_transitive("causes", 2) == []
 +
++        # _get_connected swallows its own errors, so the three wrappers only log
++        # when it raises: make it raise to reach their except branches.
++        monkeypatch.setattr(reasoner, "_get_connected", _failing("lookup said"))
++        assert await reasoner.detect_contradictions(FORGED_HASH) == []
++        assert await reasoner.find_fixes(FORGED_HASH) == []
++        assert await reasoner.find_causes(FORGED_HASH) == []
++
++    shown = _escaped(FORGED_HASH)
 +    _assert_clean(
 +        caplog,
-+        f"Extracting chunks from JSON file: {_shown(forged_path)}",
-+        f"Error extracting from JSON file {_shown(forged_path)}: ValueError - parser said\\n{FORGED}",
++        f"Failed to get connected memories: backend said\\n{FORGED}",
++        f"Failed to infer transitive relationships: closure said\\n{FORGED}",
++        f"Failed to detect contradictions for {shown}: lookup said\\n{FORGED}",
++        f"Failed to find fixes for {shown}: lookup said\\n{FORGED}",
++        f"Failed to find causes for {shown}: lookup said\\n{FORGED}",
 +    )
 +
 +
 +@pytest.mark.asyncio
-+async def test_csv_loader_logs_do_not_carry_newlines(monkeypatch, caplog, forged_path):
-+    loader = CSVLoader()
-+    monkeypatch.setattr(loader, "validate_file", _no_validation)
-+    monkeypatch.setattr(loader, "_read_csv_file", _failing_read)
++async def test_entity_linker_logs_do_not_carry_newlines(monkeypatch, caplog):
++    forged_entity = f"Acme\n{FORGED}"
++    linker = EntityLinker()
 +
-+    with caplog.at_level(logging.INFO, logger=LOGGERS):
-+        await _drain(loader, forged_path)
++    failing_graph = MagicMock()
++    failing_graph.find_memories_by_entity = _failing("entity lookup said")
 +
++    monkeypatch.setattr(entity_linker_module, "MAX_LINKS_PER_ENTITY", 1)
++    capped_graph = MagicMock()
++    capped_graph.find_memories_by_entity = AsyncMock(return_value=["h1", "h2"])
++    capped_graph.store_association = AsyncMock(return_value=True)
++
++    edge_failing_graph = MagicMock()
++    edge_failing_graph.find_memories_by_entity = AsyncMock(return_value=["h1"])
++    edge_failing_graph.store_association = _failing("edge said")
++
++    with caplog.at_level(logging.DEBUG, logger=LOGGERS):
++        assert await linker.link_by_entities("self", [forged_entity], failing_graph) == 0
++        assert await linker.link_by_entities("self", [forged_entity], capped_graph) == 1
++        assert await linker.link_by_entities("self", [forged_entity], edge_failing_graph) == 0
++
++    shown = _escaped(forged_entity)
 +    _assert_clean(
 +        caplog,
-+        f"Extracting chunks from CSV file: {_shown(forged_path)}",
-+        f"Error extracting from CSV file {_shown(forged_path)}: ValueError - parser said\\n{FORGED}",
++        f"Failed to query entity '{shown}': entity lookup said\\n{FORGED}",
++        f"EntityLinker: hit cap (1) for entity '{shown}'",
++        "EntityLinker: created 1 shares_entity edges for self",
++        f"Failed to create shares_entity edge: edge said\\n{FORGED}",
 +    )
 +
 +
 +@pytest.mark.asyncio
-+async def test_text_loader_logs_do_not_carry_newlines(monkeypatch, caplog, forged_path):
-+    loader = TextLoader()
-+    monkeypatch.setattr(loader, "validate_file", _no_validation)
-+    monkeypatch.setattr(loader, "_read_file_content", _failing_read)
++async def test_nli_conflict_registration_log_does_not_carry_newlines(monkeypatch, caplog):
++    monkeypatch.setenv("MCP_NLI_ENABLED", "true")
 +
-+    with caplog.at_level(logging.INFO, logger=LOGGERS):
-+        await _drain(loader, forged_path)
-+
-+    _assert_clean(
-+        caplog,
-+        f"Extracting chunks from text file: {_shown(forged_path)}",
-+        f"Error extracting from text file {_shown(forged_path)}: parser said\\n{FORGED}",
-+    )
-+
-+
-+@pytest.mark.asyncio
-+async def test_pdf_loader_logs_do_not_carry_newlines(monkeypatch, caplog, forged_path):
-+    # Pin the backend so the test does not depend on which PDF library is installed.
-+    monkeypatch.setattr(pdf_module, "HAS_PDFPLUMBER", True)
-+    loader = PDFLoader()
-+
-+    async def _failing_pages(*_args, **_kwargs):
-+        raise ValueError(f"parser said\n{FORGED}")
-+        yield  # pragma: no cover - makes this an async generator
-+
-+    monkeypatch.setattr(loader, "validate_file", _no_validation)
-+    monkeypatch.setattr(loader, "_extract_with_pdfplumber", _failing_pages)
-+
-+    with caplog.at_level(logging.INFO, logger=LOGGERS):
-+        await _drain(loader, forged_path)
-+
-+    _assert_clean(
-+        caplog,
-+        f"Extracting chunks from PDF: {_shown(forged_path)} using pdfplumber",
-+        f"Error extracting from PDF {_shown(forged_path)}: parser said\\n{FORGED}",
-+    )
-+
-+
-+class _FailingProcess:
-+    returncode = 1
-+
-+    async def communicate(self):
-+        return b"", f"semtools said\n{FORGED}".encode()
-+
-+
-+@pytest.mark.asyncio
-+async def test_semtools_loader_logs_do_not_carry_newlines(monkeypatch, ca
++    mem_a = MagicMock()
++    mem_a.content = "the feature is enabled"
++    mem_a.metadata = {"entities": ["feature"]}
++    storage = MagicMock()
++    storage.get_by_hash = AsyncMock(return_value=mem_a)
++    storage.search_memories = AsyncMock(return_value={
++        "memories": [{"content_hash": "hashB", "content": "the feature is disabl
 ```
 
-**File**: `tests/unit/test_log_injection_guard.py` (modified, +26/-0)
+---
+
+### Incident Patch 2: `ef25b93d` (2026-10-26)
+**Commit Message**: fix(beliefs): read contradicts edges so belief derivation sees contradictions (#1657) (#1692)
+
+_find_contradictions() returned [] for every group: it looked for the
+graph on storage.graph, which no storage class assigns, called a
+get_edges() that GraphStorage does not have, and asked for a
+CONTRADICTED_BY edge type nothing writes. Every belief was derived with
+contradicted_by empty.
+
+BeliefService now takes the graph handle, the scheduler (the only caller
+of derive_beliefs) passes the consolidator's, and contradictions are
+read by following "contradicts" edges one hop with find_connected().
+
+**File**: `changelog.d/1657.fixed.md` (added, +7/-0)
 ```diff
-@@ -84,6 +84,11 @@
-     "mcp_memory_service/config/search.py",
-     "mcp_memory_service/config/quality.py",
-     "mcp_memory_service/config/backup.py",
-+    "mcp_memory_service/ingestion/semtools_loader.py",
-+    "mcp_memory_service/ingestion/json_loader.py",
-+    "mcp_memory_service/ingestion/csv_loader.py",
-+    "mcp_memory_service/ingestion/text_loader.py",
-+    "mcp_memory_service/ingestion/pdf_loader.py",
- ]
+@@ -0,0 +1,7 @@
++- **Belief derivation never saw a contradiction (#1657, debashishthakur).**
++  `_find_contradictions()` looked for the graph on `storage.graph`, which no storage
++  class sets, called a `get_edges()` that `GraphStorage` does not have, and asked for a
++  `CONTRADICTED_BY` edge type that nothing writes, so every belief was derived with
++  `contradicted_by: []`. `BeliefService` now takes the graph handle, the scheduler passes
++  the consolidator's, and contradictions are read from the `contradicts` edges that
++  contradiction detection writes.
+```
+
+**File**: `src/mcp_memory_service/consolidation/belief_service.py` (modified, +19/-15)
+```diff
+@@ -103,8 +103,11 @@ class BeliefService:
+     SIMILARITY_THRESHOLD = 0.85
+     """Derives and manages beliefs from observations."""
  
- # The levels check 6.5 looks at, verbatim.
-@@ -178,6 +183,11 @@
-     "MCP_HYBRID_FUSION_METHOD",
-     "MCP_QUALITY_AI_PROVIDER",
-     "BACKUP_INTERVAL",
-+    # The document a caller asks the ingestion/ loaders to read: every loader
-+    # logs it when it starts and when the parser fails. No guarded module logs
-+    # the name bare in a %-style call, so listing it decides for nobody else.
-+    # `error_msg` above already covers the stderr of the semtools subprocess.
-+    "file_path",
- })
+-    def __init__(self, storage):
++    def __init__(self, storage, graph=None):
+         self.storage = storage
++        # Graph handle for contradiction lookups. It lives beside the memory
++        # storage, not on it, so callers that derive beliefs pass it in.
++        self.graph = graph
+         # Parsed with the repo's fallback pattern: an invalid value logs an
+         # error and keeps the default rather than raising out of __init__ and
+         # disabling belief derivation.
+@@ -360,26 +363,27 @@ async def _group_observations(self, observations) -> dict:
+         return groups
  
- # Fields of an outside object that cannot carry injectable text. An HTTP status
-@@ -584,3 +594,19 @@ def test_lazy_scan_flags_config_environment_strings():
-         assert _lazy_findings(bare)
-         assert not _lazy_findings(wrapped)
-     assert not _lazy_findings('logger.info("Backup configuration: retention=%s days", BACKUP_RETENTION)\n')
+     async def _find_contradictions(self, observations) -> List[dict]:
+-        """Find contradicting observations using existing graph edges."""
+-        contradicting = []
+-        if not hasattr(self.storage, "graph") or not self.storage.graph:
+-            return contradicting
++        """Find observations linked to the group by a ``contradicts`` edge.
+ 
++        Contradiction detection stores ``contradicts`` edges; following them in
++        both directions finds the other side whichever memory came first.
++        """
++        if not self.graph:
++            return []
++
++        contradicting_hashes = []
+         for obs in observations:
+             content_hash = obs.content_hash if hasattr(obs, "content_hash") else obs.get("content_hash", "")
+             if not content_hash:
+                 continue
+-            try:
+-                edges = await self.storage.graph.get_edges(content_hash, "CONTRADICTED_BY")
+-                for edge in edges:
+-                    target_hash = edge.get("target") or edge.get("to_hash", "")
+-                    if target_hash:
+-                        mems = await self._get_observations_by_hashes([target_hash])
+-                        contradicting.extend(mems)
+-            except Exception:
+-                continue
++            connected = await self.graph.find_connected(
++                content_hash, max_hops=1, relationship_type="contradicts"
++            )
++            for other_hash, _distance in connected:
++                if other_hash not in contradicting_hashes:
++                    contradicting_hashes.append(other_hash)
+ 
+-        return contradicting
++        return await self._get_observations_by_hashes(contradicting_hashes)
+ 
+     def _obs_to_dict(self, obs) -> dict:
+         """Convert Memory object to dict for derive_confidence."""
+```
+
+**File**: `src/mcp_memory_service/consolidation/scheduler.py` (modified, +4/-1)
+```diff
+@@ -743,7 +743,10 @@ async def _run_consolidation_job(self, time_horizon: str):
+             beliefs_enabled = os.getenv("MCP_BELIEFS_ENABLED", "false").lower() in ("true", "1", "yes")
+             if beliefs_enabled and hasattr(self.consolidator, 'storage'):
+                 try:
+-                    belief_svc = BeliefService(self.consolidator.storage)
++                    belief_svc = BeliefService(
++                        self.consolidator.storage,
++                        graph=getattr(self.consolidator, "graph_storage", None),
++                    )
+                     belief_stats = await belief_svc.derive_beliefs()
+                 except Exception as be:
+                     self.logger.warning("Belief derivation error (non-fatal): %s", _sanitize_log_value(be))
+```
+
+**File**: `tests/consolidation/test_dead_storage_calls.py` (modified, +73/-3)
+```diff
+@@ -11,7 +11,7 @@
+ 
+ import pytest
+ 
+-from mcp_memory_service.consolidation.belief_service import BeliefService
++from mcp_memory_service.consolidation.belief_service import BeliefService, _hash_content
+ from mcp_memory_service.consolidation.insights import InsightCard, store_insights
+ from mcp_memory_service.models.memory import Memory
+ from mcp_memory_service.storage.cloudflare import CloudflareStorage
+@@ -26,8 +26,10 @@ async def _storage(temp_db_path):
+     return storage
+ 
+ 
+-async def _store(storage, text):
+-    memory = Memory(content=text, content_hash=generate_content_hash(text), tags=["test"])
++async def _store(storage, text, memory_type=None):
++    memory = Memory(
++        content=text, content_hash=generate_content_hash(text), tags=["test"], memory_type=memory_type
++    )
+     ok, msg = await storage.store(memory)
+     assert ok, msg
+     return memory.content_hash
+@@ -312,3 +314,71 @@ async def test_cloudflare_storage_supports_consolidation_delete():
+ 
+     assert await storage.delete_memory("abc123") is True
+     storage.delete.assert_awaited_once_with("abc123")
 +
 +
-+@pytest.mark.unit
-+def test_lazy_scan_flags_ingestion_file_path():
-+    """The path the ingestion/ loaders are handed, logged at start and on failure.
++async def _contradiction_fixture(temp_db_path):
++    """Three unrelated observations; the first two are linked by a contradicts
++    edge, written the way contradiction detection writes it."""
++    storage = await _storage(temp_db_path)
++    texts = [
++        "The nightly backup job runs at 02:00 against the NAS share.",
++        "Backups were moved off the NAS to the Storj bucket last week.",
++        "Grafana alerts route to the on-call Slack channel.",
++    ]
++    hashes = [await _store(storage, t, memory_type="observation") for t in texts]
++    graph = GraphStorage(storage.db_path)
++    await graph.store_association(
++        hashes[1], hashes[0], 0.7, ["contradiction"], relationship_type="contradicts"
++    )
++    return storage, graph, texts, hashes
 +
-+    Every guarded logger call in the five loaders already wraps it, so the module
-+    scans stay green whether or not the name is listed. This is the sample that
-+    fails if `file_path` is dropped from EXTERNAL_NAMES; the character count and
-+    the PDF backend name logged next to it stay unlisted on purpose.
-+    """
-+    bare = 'logger.info("Extracting chunks from JSON file: %s", file_path)\n'
-+    wrapped = 'logger.info("Extracting chunks from JSON file: %s", _sanitize_log_value(file_path))\n'
-+    assert _lazy_findings(bare)
-+    assert not _lazy_findings(wrapped)
-+    assert not _lazy_findings('logger.debug("Successfully parsed %s, extracted %d characters", _sanitize_log_value(file_path), len(markdown_content))\n')
++
++async def _belief_for(svc, text):
++    belief = await svc._get_belief(_hash_content(text))
++    assert belief is not None, f"no belief derived for {text!r}"
++    return belief
++
++
++@pytest.mark.asyncio
++async def test_derive_beliefs_sees_contradicts_edges(temp_db_path):
++    """_find_contradictions read storage.graph, which no storage class assigns,
++    called get_edges(), which GraphStorage does not have, and asked for a
++    CONTRADICTED_BY edge type that nothing writes. Every belief was derived as
++    if no observation had ever been contradicted."""
++    storage, graph, texts, hashes = await _contradiction_fixture(temp_db_path)
++    svc = BeliefService(storage, graph=graph)
++
++    await svc.derive_beliefs()
++
++    contested = await _belief_for(svc, texts[0])
++    other_side = await _belief_for(svc, texts[1])
++    clean = await _belief_for(svc, texts[2])
++    assert json.loads(contested["contradicted_by"]) == [hashes[1]]
++    assert json.loads(other_side["contradicted_by"]) == [hashes[0]]
++    assert json.loads(clean["contradicted_by"]) == []
++    assert contested["confidence"] < clean["confidence"]
++
++
++@pytest.mark.asyncio
++async def test_scheduler_hands_the_graph_to_belief_derivation(temp_db_path, monkeypatch):
++    """The scheduler is the only caller of derive_beliefs(); it has to pass the
++    consolidator's graph handle, or contradictions stay invisible."""
++    from types import SimpleNamespace
++
++    from mcp_memory_service.consolidation.scheduler import ConsolidationScheduler
++
++    storage, graph, texts, hashes = await _contradiction_fixture(temp_db_path)
++    report = SimpleNamespace(
++        memories_processed=3, associations_discovered=0, clusters_created=0,
++        memories_compressed=0, memories_archived=0, errors=[],
++    )
++    consolidator = SimpleNamespace(
++        storage=storage, graph_storage=graph, consolidate=AsyncMock(return_value=report)
++    )
++    monkeypatch.setenv("MCP_BELIEFS_ENABLED", "true")
++
++    scheduler = ConsolidationScheduler(consolidator, schedule_config={}, enabled=False)
++    await scheduler._run_consolidation_job("weekly")
++
++    contested = await _belief_for(BeliefService(storage), texts[0])
++    assert json.loads(contested["contradicted_by"]) == [hashes[1]]
+```
+
+**File**: `tests/unit/test_silent_failures_are_logged.py` (modified, +1/-1)
+```diff
+@@ -25,7 +25,7 @@ async def test_job_record_carries_belief_stats(monkeypatch):
+ 
+     fake_service = MagicMock()
+     fake_service.derive_beliefs = AsyncMock(return_value={"beliefs_derived": 3})
+-    monkeypatch.setattr(sched_mod, "BeliefService", lambda storage: fake_service)
++    monkeypatch.setattr(sched_mod, "BeliefService", lambda storage, graph=None: fake_service)
+     monkeypatch.setenv("MCP_BELIEFS_ENABLED", "true")
+ 
+     scheduler = sched_mod.ConsolidationScheduler(consolidator, schedule_config={}, enabled=False)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1691** (2026-10-26): chore(release): v12.4.0 (@doobidoo)
-- **PR #1690** (2026-10-26): fix(oauth): confine per-store grants to calls that stay in the store (@doobidoo)
-- **PR #1689** (2026-10-26): chore(deps): bump pypdf from 6.21.1 to 6.21.2 (@dependabot[bot])
-- **PR #1688** (2026-10-26): chore(deps-dev): bump the npm_and_yarn group across 2 directories with 1 update (@dependabot[bot])
-- **PR #1687** (2026-10-26): ci: count .github/CODEOWNERS as a docs-only change (@doobidoo)
-- **PR #1686** (2026-10-26): chore(codeowners): restore henry201605 on the Milvus graph backend (@doobidoo)
+- **PR #1698** (2026-10-27): fix(reasoning): clear four reasoning modules of unsanitised log calls (#1146) (@massimiliano1991)
+- **PR #1697** (2026-10-27): bench: rerank the negation pairs from #1674 (+24.0 p.p. pairwise over cosine, implicit negation still below chance) (@filhocf)
+- **PR #1696** (2026-10-26): bench: measure resonance search against cosine retrieval (#1674) (@doobidoo)
+- **PR #1695** (2026-10-26): feat(web): auto-refresh dashboard after delta-sync cycles (@Parth-Jadhav-2004)
+- **PR #1694** (2026-10-26): feat(web): show delta-sync destinations and cycle status (@Parth-Jadhav-2004)
+- **PR #1693** (2026-10-26): docs(site): update the test count to 5,265 (@doobidoo)
 
 ---
 
@@ -4331,33 +3505,27 @@ Co-authored-by: massimiliano1991 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. oauth): confine per-store grants to calls that stay in the store (#1690)
+## X. reasoning): clear four reasoning modules of unsanitised log calls (#1146) (#1698
 
 **RULE**:
-When implementing operations in `changelog.d/1690.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/1698.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fb7c041e`: oauth): confine per-store grants to calls that stay in the store (#1690). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9cab16d5`: reasoning): clear four reasoning modules of unsanitised log calls (#1146) (#1698). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1690.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1698.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **Per-store scopes no longer reach outside their store (#1690).** A `read:<store>` /
-  `write:<store>` grant authorized any MCP tool call that named the store, including tools
-  that ignore `store` (`memory_quality`, `memory_cleanup`, `memory_resolve`,
-  `memory_consolidate`, the mistake-note tools) and `memory_search` with `include_beliefs` or
-  `fallback`, which read every partition. A per-store grant now covers only the tools that
-  confine themselves to the store (`memory_store`, `memory_store_session`, `memory_search`,
-  `memory_list`, `memory_delete`, `memory_update`) and only without those two arguments;
-  everything else needs the global scope, including `memory_explore` and `memory_detail`,
-  whose entity names come from a graph that has no store partition. The SDK
-  transports and the `/mcp` shim share one rule. Store-restricted credentials are also
-  refused, over MCP and REST, on backends whose `get_by_hash` ignores `store` (cloudflare,
-  milvus, remote_http), where `GET /api/memories/{hash}` returned another store's memory.
-  They work on sqlite_vec and hybrid until the storage layer enforces `store` (#1683).
+- **Reasoning modules logged caller hashes, entity names and backend errors unsanitised (#1146, #1698, massimiliano1991).**
+  `reasoning/inference.py`, `entity_linker.py`, `nli.py` and `multi_strategy.py` put the hash
+  handed to the `SemanticReasoner` lookups, the entity names extracted from memory content and
+  tags, and the exception text of the graph backend or a failed search strategy into the log
+  through f-strings, so a newline in any of them forged a log line. They go through
+  `_sanitize_log_value` now; the four modules are in the guard's `GUARDED_MODULES` list and a
+  test per module fails if the newline comes back.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -4367,4 +3535,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fb7c041e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9cab16d5` are properly handled with clean fallback behavior.

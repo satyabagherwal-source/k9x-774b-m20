@@ -5502,3 +5502,7 @@ Every entry in this ledger must capture:
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `935811ca` | Multi-dimensional audit evidence | 2026-10-27T19:06:55.874Z |
 | `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `9b8347a2` | Multi-dimensional audit evidence | 2026-10-27T19:13:38.113Z |
 | `learn-github-webdriverio-webdriverio` | `https://github.com/webdriverio/webdriverio` | `ba88f76d` | Multi-dimensional audit evidence | 2026-10-27T19:13:39.790Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `4e132918` | Multi-dimensional audit evidence | 2026-10-27T19:20:11.126Z |
+| `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `e9ea8d94` | Multi-dimensional audit evidence | 2026-10-27T19:20:16.542Z |
+| `learn-github-rmax-scrapy-redis` | `https://github.com/rmax/scrapy-redis` | `931336e7` | Multi-dimensional audit evidence | 2026-10-27T19:20:20.310Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `9cab16d5` | Multi-dimensional audit evidence | 2026-10-27T19:20:22.157Z |

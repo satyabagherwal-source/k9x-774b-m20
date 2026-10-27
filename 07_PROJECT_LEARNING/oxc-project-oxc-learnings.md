@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source**: github ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
-> **Source Version**: `3fbef5ba`  
+> **Source Version**: `4e132918`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T01:01:04.095Z  
+> **Timestamp**: 2026-10-27T19:20:10.701Z  
 > **Learning ID**: `learn-github-oxc-project-oxc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T01:01:03.886Z  
+> **Harvest Timestamp**: 2026-10-27T19:20:09.232Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚓ A collection of high-performance JavaScript tools.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 23223 stars
+- **Stars / Engagement**: 23252 stars
 
 ---
 
@@ -1229,11 +1229,15 @@ impl ResolvedDispatchConfig {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #28156** (2026-10-25): **chore(deps): update dependency serialize-javascript to v7.1.3**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [serialize-javascript](https://redirect.github.com/yahoo/serialize-javascript) | [`7.1.2` → `7.1.3`](https://renovatebot.com/diffs/npm/serialize-javascript/7.1.2/7.1.3) | ![age](https://developer.mend.io/api/mc/badges/age/npm/serialize-javascript/7.1.3?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/serialize-javascript/7.1.3?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/serialize-javascript/7.1.2/7.1.3?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/serialize-javascript/7.1.2/7.1.3?slim=true) |  ---  ### Release Notes  <details> <summary>yahoo/serialize-javascript (serialize-javascript)</summary>  ### [`v7.1.3`](https://redirect.github.com/yahoo/serialize-javascript/releases/tag/v7.1.3)  [Compare Source](https://redirect.github.com/yahoo/serialize-javascript/compare/v7.1.2...v7.1.3)  See: <https://github.com/yahoo/serialize-javascript/security/advisories/GHSA-m5mm-p8h7-m29v>  #### What's Changed  - fix: escape `</script` at the end of a serialized function body by [@&#8203;redonkulus](https://redirect.github.com/redonkulus) in [#&#8203;235](https://redi
+- **Issue #28235** (2026-10-27): **refactor(linter): migrate expect-expect to AST dispatch**
+  *Symptoms*: Use run and should_run with the existing per-call Jest/Vitest resolver. Preserve rule configuration, diagnostics, and fixes.  Refs https://github.com/oxc-project/backlog/issues/206  Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>  ---  <sub>Stack created with <a href="https://github.com/github/gh-stack">GitHub Stacks CLI</a> • <a href="https://gh.io/stacks-feedback">Give Feedback 💬</a></sub>
+  **Post-Mortem & Fix Analysis**:
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**   `✅ 5` untouched benchmarks   `⏩ 91` skipped benchmarks[^skipped]        ---  <sub>Comparing <code>cam/jest-run/expect-expect</code> (5ad2580) with <code>main</code> (f00862b)[^unexpected-base]</sub>  <a href="https://app.codspeed.io/oxc-project/oxc/branches/cam%2Fjest-run%2Fexpect-expect?utm_source=github&utm_medium=comment-v2&utm_content=button">   <picture>     <source media="(prefers-color-scheme: dark)" srcset="https://codspeed.io/pr-report/open-in-codspeed-dark.svg">     <source media="(prefers-color-scheme: light)" srcset="https://codspeed.io/pr-report/open-in-codspeed-light.svg">     <img alt="Open in CodSpeed" src="https://codspeed.io/pr-report/open-in-codspeed-light.svg" width="169" height="32">   </picture> </a>   [^skipped]: 91 benchmarks were skipped, so the baseline results were used instead. If they were deleted from the codebase, [click here and archive them to remove the
 
-- **Issue #28155** (2026-10-26): **oxlint: under Bun, output through a pipe stops silently at 64 KiB (WouldBlock treated as end of output)**
-  *Symptoms*: ## Versions  - oxlint 1.89.0 (npm package: `node_modules/.bin/oxlint` → `dist/cli.js`) - Bun 1.4.4+38afee6c8, macOS 15.7.7 arm64 (pipe buffer 64 KiB) - Node 25.2.1 for comparison  ## Reproduction  ```sh mkdir repro && cd repro bun init -y bun add oxlint@1.89.0 for i in $(seq 3000); do echo 'debugger;'; done > many.js  bun node_modules/.bin/oxlint --format json | wc -c    # 65536, exit 0 bun node_modules/.bin/oxlint --format json > out.json  # 960969 bytes, exit 0 node node_modules/.bin/oxlint --format json | wc -c   # 960973 ```  Under Bun, the piped report ends mid-JSON at exactly 65,536 bytes. Nothing goes to stderr, and oxlint exits 0 (`no-debugger` is a warning), so a CI step or a script reading the pipe cannot tell the report is incomplete. With an error-level finding the exit code is 1 as it should be, but the list of diagnostics is still cut.  ## Cause  `dist/cli.js` makes stdio blocking before it hands over to the native linter:  ```js process.stdout.isTTY || (process.stdin._handle?.setBlocking?.(!0), process.stdout._handle?.setBlocking?.(!0)) ```  `_handle.setBlocking` is a Node internal. Bun has no `process.stdout._handle`, so the optional chain does nothing. Like libuv, Bun makes a piped fd 1 `O_NONBLOCK` once `process.stdout` is used; a probe holding the pipe's write end saw the flag set while the Bun process ran. The native writer then gets `EAGAIN` as soon as the pipe buffer is full, and since #20295 `check_for_writer_error` treats `WouldBlock` as benign, so the
+- **Issue #28234** (2026-10-27): **refactor(linter): migrate valid-expect-in-promise to AST dispatch**
+  *Symptoms*: Use run and should_run with the existing per-call Jest/Vitest resolver. Preserve rule configuration, diagnostics, and fixes.  Refs https://github.com/oxc-project/backlog/issues/206  Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>  ---  <sub>Stack created with <a href="https://github.com/github/gh-stack">GitHub Stacks CLI</a> • <a href="https://gh.io/stacks-feedback">Give Feedback 💬</a></sub>
+  **Post-Mortem & Fix Analysis**:
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**   `✅ 5` untouched benchmarks   `⏩ 91` skipped benchmarks[^skipped]        ---  <sub>Comparing <code>cam/jest-run/valid-expect-in-promise</code> (4ded044) with <code>main</code> (f00862b)[^unexpected-base]</sub>  <a href="https://app.codspeed.io/oxc-project/oxc/branches/cam%2Fjest-run%2Fvalid-expect-in-promise?utm_source=github&utm_medium=comment-v2&utm_content=button">   <picture>     <source media="(prefers-color-scheme: dark)" srcset="https://codspeed.io/pr-report/open-in-codspeed-dark.svg">     <source media="(prefers-color-scheme: light)" srcset="https://codspeed.io/pr-report/open-in-codspeed-light.svg">     <img alt="Open in CodSpeed" src="https://codspeed.io/pr-report/open-in-codspeed-light.svg" width="169" height="32">   </picture> </a>   [^skipped]: 91 benchmarks were skipped, so the baseline results were used instead. If they were deleted from the codebase, [click here and archiv
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1250,229 +1254,377 @@ impl ResolvedDispatchConfig {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3fbef5ba` (2026-10-25)
-**Commit Message**: refactor(minifier): use ast helpers for enum tests (#28148)
+### Incident Patch 1: `8a7c2f82` (2026-10-27)
+**Commit Message**: refactor(linter): migrate no-test-prefixes to AST dispatch (#28225)
 
-**File**: `crates/oxc_minifier/src/peephole/fold_constants.rs` (modified, +2/-2)
+Use run and should_run with the existing per-call Jest/Vitest resolver.
+Preserve rule configuration, diagnostics, and fixes.
+
+Refs https://github.com/oxc-project/backlog/issues/206
+
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+
+---
+
+<sub>Stack created with <a
+href="https://github.com/github/gh-stack">GitHub Stacks CLI</a> • <a
+href="https://gh.io/stacks-feedback">Give Feedback 💬</a></sub>
+
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+
+**File**: `crates/oxc_linter/src/generated/rule_runner_impls.rs` (modified, +6/-4)
 ```diff
-@@ -11,7 +11,7 @@ use oxc_ecmascript::{
- use oxc_semantic::IsGlobalReference;
- use oxc_span::{GetSpan, SPAN};
- use oxc_str::JSStr;
--use oxc_syntax::operator::{AssignmentOperator, BinaryOperator, LogicalOperator};
-+use oxc_syntax::operator::{BinaryOperator, LogicalOperator};
+@@ -2387,8 +2387,9 @@ impl RuleRunner for crate::rules::jest::no_standalone_expect::NoStandaloneExpect
+ }
  
- use crate::{TraverseCtx, generated::ancestor::Ancestor};
+ impl RuleRunner for crate::rules::jest::no_test_prefixes::NoTestPrefixes {
+-    const NODE_TYPES: Option<&AstTypesBitset> = None;
+-    const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::RunOnJestNode;
++    const NODE_TYPES: Option<&AstTypesBitset> =
++        Some(&AstTypesBitset::from_types(&[AstType::CallExpression]));
++    const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::Run;
+ }
  
-@@ -1209,7 +1209,7 @@ pub(super) fn is_cjs_module_exports_hint(expr: &Expression<'_>) -> bool {
-     let Expression::AssignmentExpression(assign) = expr else {
-         return false;
-     };
--    assign.operator == AssignmentOperator::Assign
-+    assign.operator.is_assign()
-         && assign
-             .left
-             .as_member_expression()
-```
-
-**File**: `crates/oxc_minifier/src/peephole/inline.rs` (modified, +3/-7)
-```diff
-@@ -220,7 +220,7 @@ impl<'a> PeepholeOptimizations {
-                     matches!(
-                         prop,
-                         ObjectPropertyKind::ObjectProperty(p)
--                            if matches!(p.kind, PropertyKind::Set | PropertyKind::Get)
-+                            if p.kind.is_accessor()
-                                 || Self::expression_has_setter_or_getter(&p.value)
-                                 // `{ __proto__: ... }` sets the prototype chain and could
-                                 // install setters that make property writes side-effectful.
-@@ -267,11 +267,7 @@ impl<'a> PeepholeOptimizations {
-                     // A static getter OR setter makes a write to that key throw in
-                     // strict mode (a get-only accessor has no [[Set]]; a setter runs
-                     // on write), so neither is a droppable fresh-value write.
--                    || (method.r#static
--                        && matches!(
--                            method.kind,
--                            MethodDefinitionKind::Set | MethodDefinitionKind::Get
--                        ))
-+                    || (method.r#static && method.kind.is_accessor())
-             }
-             // `static accessor foo` auto-generates a getter+setter pair.
-             ClassElement::AccessorProperty(prop) => prop.r#static || !prop.decorators.is_empty(),
-@@ -295,7 +291,7 @@ impl<'a> PeepholeOptimizations {
-                 matches!(
-                     prop,
-                     ObjectPropertyKind::ObjectProperty(p)
--                        if matches!(p.kind, PropertyKind::Set | PropertyKind::Get)
-+                        if p.kind.is_accessor()
-                             || Self::expression_has_setter_or_getter(&p.value)
-                 )
-             }),
-```
-
-**File**: `crates/oxc_minifier/src/peephole/minimize_conditional_expression.rs` (modified, +1/-1)
-```diff
-@@ -219,7 +219,7 @@ impl<'a> PeepholeOptimizations {
+ impl RuleRunner for crate::rules::jest::no_test_return_statement::NoTestReturnStatement {
+@@ -4949,8 +4950,9 @@ impl RuleRunner for crate::rules::vitest::no_standalone_expect::NoStandaloneExpe
+ }
  
-         // `a ? c : b && c` => `(a || b) && c`
-         if let Expression::LogicalExpression(logical_expr) = &mut expr.alternate
--            && logical_expr.operator == LogicalOperator::And
-+            && logical_expr.operator.is_and()
-             && ctx.expr_eq(&logical_expr.right, &expr.consequent)
-         {
-             let mut new_logical = logical_expr.take_in_box(ctx);
-```
-
-**File**: `crates/oxc_minifier/src/peephole/minimize_conditions.rs` (modified, +1/-1)
-```diff
-@@ -163,7 +163,7 @@ impl<'a> PeepholeOptimizations {
-         match expr {
-             Expression::Identifier(id) => Some(id),
-             Expression::AssignmentExpression(assign_expr) => {
--                if assign_expr.operator == AssignmentOperator::Assign
-+                if assign_expr.operator.is_assign()
-                     && let AssignmentTarget::AssignmentTargetIdentifier(id) = &assign_expr.left
-                 {
-                     return Some(id);
-```
-
-**File**: `crates/oxc_minifier/src/peephole/minimize_statements.rs` (modified, +2/-3)
-```diff
-@@ -355,8 +355,7 @@ impl<'a> PeepholeOptimizations {
-             };
-             if kind.name == id.name {
-                 if decl.init.is_none()
--                    && (declaration_kind == VariableDeclarationKind::Var
--                        || assign_expr.right.is_literal_value(true, ctx))
-+                    && (declaration_kind.is_var() || assign_expr.right.is_literal_value(true, ctx))
-                 {
-                     // "var a; a = b();" => "var a = b();"
-                     decl.init = Some(assign_expr.right.take_in(ctx));
-@@ -1356,7 +1355,7 @@ impl<'a> PeepholeOptimizations {
-                 }
-             }
-             Expression::UnaryExpression(unary_expr) => {
--                if unary_expr.operator != UnaryOperator::Delete
-+                if !unary_expr.operator.is_delete()
-                     && let Some(changed) = Self::substitute_single_use_symbol_in_expression(
-                         &mut unary_expr.argument,
-                         search_for,
-```
-
-**File**: `crates/oxc_minifier/src/peephole/normalize.rs` (modified, +2/-2)
-```diff
-@@ -54,7 +54,7 @@ impl<'a> Normalize {
- impl<'a> Traverse<'a> for Normalize {
-     fn exit_program(&mut self, node: &mut Program<'a>, _ctx: &mut TraverseCtx<'a>) {
-         if self.options.remove_unnecessary_use_strict && node.source_type.is_module() {
--            node.directives.drain_filter(|d| d.directive.as_str() == "use strict");
-+            node.directives.drain_filter(|d| d.is_use_strict());
-         }
-     }
+ impl RuleRunner for crate::rules::vitest::no_test_prefixes::NoTestPrefixes {
+-    const NODE_TYPES: Option<&AstTypesBitset> = None;
+-    const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::RunOnJestNode;
++    const NODE_TYPES: Option<&AstTypesBitset> =
++        Some(&AstTypesBitset::from_types(&[AstType::CallExpression]));
++    const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::Run;
+ }
  
-@@ -680,7 +680,7 @@ impl<'a> Normalize {
-                 .map(|scope_id| ctx.scoping().scope_flags(scope_id))
-                 .is_some_and(ScopeFlags::is_strict_mode)
-         {
--            body.directives.drain_filter(|d| d.directive.as_str() == "use strict");
-+            body.directives.drain_filter(|d| d.is_use_strict());
-         }
+ impl RuleRunner for crate::rules::vitest::no_test_return_statement::NoTestReturnStatement {
+```
+
+**File**: `crates/oxc_linter/src/rules/jest/no_test_prefixes.rs` (modified, +11/-11)
+```diff
+@@ -1,12 +1,11 @@
++use oxc_ast::AstKind;
+ use oxc_macros::declare_oxc_lint;
++use oxc_semantic::AstNode;
+ 
+ use crate::{
+-    context::LintContext,
++    context::{ContextHost, LintContext},
+     rule::Rule,
+-    rules::{
+-        PossibleJestNode,
+-        shared::no_test_prefixes::{DOCUMENTATION, run_on_jest_node},
+-    },
++    rules::shared::no_test_prefixes::{DOCUMENTATION, run},
+ };
+ 
+ #[derive(Debug, Default, Clone)]
+@@ -23,12 +22,13 @@ declare_oxc_lint!(
+ );
+ 
+ impl Rule for NoTestPrefixes {
+-    fn run_on_jest_node<'a, 'c>(
+-        &self,
+-        jest_node: &PossibleJestNode<'a, 'c>,
+-        ctx: &'c LintContext<'a>,
+-    ) {
+-        run_on_jest_node(jest_node, ctx);
++    fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
++        let AstKind::CallExpression(_) = node.kind() else { return };
++        run(node, ctx);
++    }
++
++    fn should_run(&self, ctx: &ContextHost) -> bool {
++        ctx.frameworks().is_test()
      }
  }
+ 
 ```
 
-**File**: `crates/oxc_minifier/src/peephole/substitute_alternate_syntax.rs` (modified, +1/-1)
+**File**: `crates/oxc_linter/src/rules/shared/jest_vitest/no_test_prefixes.rs` (modified, +8/-7)
 ```diff
-@@ -1174,7 +1174,7 @@ impl<'a> PeepholeOptimizations {
-             // `BigInt(1n)` -> `1n`
-             "BigInt" => match arg {
-                 None => None,
--                Some(arg) => matches!(arg, Expression::BigIntLiteral(_)).then(|| arg.take_in(ctx)),
-+                Some(arg) => arg.is_big_int_literal().then(|| arg.take_in(ctx)),
-             },
-             _ => None,
-         };
+@@ -3,6 +3,7 @@ use oxc_ast::{
+     ast::{CallExpression, Expression},
+ };
+ use oxc_diagnostics::OxcDiagnostic;
++use oxc_semantic::AstNode;
+ use oxc_span::{GetSpan, Span};
+ 
+ use crate::{
+@@ -47,16 +48,16 @@ struct ParsedNoTestPrefixesCall {
+     member_names: Vec<String>,
+ }
+ 
+-pub fn run_on_jest_node<'a, 'c>(jest_node: &PossibleJestNode<'a, 'c>, ctx: &'c LintContext<'a>) {
+-    run(jest_node, ctx);
+-}
+-
+-fn run<'a>(possible_jest_node: &PossibleJestNode<'a, '_>, ctx: &LintContext<'a>) {
+-    let node = possible_jest_node.node;
++pub fn run<'a>(node: &AstNode<'a>, ctx: &LintContext<'a>) {
+     let AstKind::CallExpression(call_expr) = node.kind() else {
+         return;
+     };
+-    let Some(jest_fn_call) = parse_no_test_prefixes_call(call_expr, possible_jest_node, ctx) else {
++    let Some(possible_jest_node) = PossibleJestNode::from_call_expression(node, call_expr, ctx)
++    else {
++        return;
++    };
++    let Some(jest_fn_call) = parse_no_test_prefixes_call(call_expr, &possible_jest_node, ctx)
++    else {
+         return;
+     };
+ 
+```
+
+**File**: `crates/oxc_linter/src/rules/vitest/no_test_prefixes.rs` (modified, +11/-11)
+```diff
+@@ -1,12 +1,11 @@
++use oxc_ast::AstKind;
+ use oxc_macros::declare_oxc_lint;
++use oxc_semantic::AstNode;
+ 
+ use crate::{
+-    context::LintContext,
++    context::{ContextHost, LintContext},
+     rule::Rule,
+-    rules::{
+-        PossibleJestNode,
+-        shared::no_test_prefixes::{DOCUMENTATION, run_on_jest_node},
+-    },
++    rules::shared::no_test_prefixes::{DOCUMENTATION, run},
+ };
+ 
+ #[derive(Debug, Default, Clone)]
+@@ -15,12 +14,13 @@ pub struct NoTestPrefixes;
+ declare_oxc_lint!(NoTestPrefixes, vitest, style, fix, docs = DOCUMENTATION, version = "0.0.7",);
+ 
+ impl Rule for NoTestPrefixes {
+-    fn run_on_jest_node<'a, 'c>(
+-        &self,
+-        jest_node: &PossibleJestNode<'a, 'c>,
+-        ctx: &'c LintContext<'a>,
+-    ) {
+-        run_on_jest_node(jest_node, ctx);
++    fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
++        let AstKind::CallExpression(_) = node.kind() else { return };
++        run(node, ctx);
++    }
++
++    fn should_run(&self, ctx: &ContextHost) -> bool {
++        ctx.frameworks().is_test()
+     }
+ }
+ 
+```
+
+**File**: `tasks/track_linter_timings/linter_timings.snap` (modified, +0/-2)
+```diff
+@@ -233,7 +233,6 @@ jest/no-large-snapshots                                    |      7
+ jest/no-mocks-import                                       |      7
+ jest/no-restricted-jest-methods                            |      0
+ jest/no-standalone-expect                                  |      7
+-jest/no-test-prefixes                                      |      0
+ jest/no-test-return-statement                              |  14199
+ jest/no-untyped-mock-factory                               |      0
+ jest/padding-around-after-all-blocks                       |      0
+@@ -685,7 +684,6 @@ vitest/no-large-snapshots                                  |      7
+ vitest/no-mocks-import                                     |      7
+ vitest/no-restricted-vi-methods                            |      0
+ vitest/no-standalone-expect                                |      7
+-vitest/no-test-prefixes                                    |      0
+ vitest/no-test-return-statement                            |  14199
+ vitest/padding-around-after-all-blocks                     |      0
+ vitest/padding-around-test-blocks                          |      0
 ```
 
 ---
 
-### Incident Patch 2: `1a377316` (2026-10-25)
-**Commit Message**: chore(deps): update dependency serialize-javascript to v7.1.3 (#28156)
+### Incident Patch 2: `ff19bb81` (2026-10-27)
+**Commit Message**: refactor(linter): migrate require-to-throw-message to AST dispatch (#28222)
 
-This PR contains the following updates:
+Use run and should_run with the existing per-call Jest/Vitest resolver.
+Preserve rule configuration, diagnostics, and fixes.
 
-| Package | Change |
-[Age](https://docs.renovatebot.com/merge-confidence/) |
-[Adoption](https://docs.renovatebot.com/merge-confidence/) |
-[Passing](https://docs.renovatebot.com/merge-confidence/) |
-[Confidence](https://docs.renovatebot.com/merge-confidence/) |
-|---|---|---|---|---|---|
-|
-[serialize-javascript](https://redirect.github.com/yahoo/serialize-javascript)
-| [`7.1.2` →
-`7.1.3`](https://renovatebot.com/diffs/npm/serialize-javascript/7.1.2/7.1.3)
-|
-![age](https://developer.mend.io/api/mc/badges/age/npm/serialize-javascript/7.1.3?slim=true)
-|
-![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/serialize-javascript/7.1.3?slim=true)
-|
-![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/serialize-javascript/7.1.2/7.1.3?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/serialize-javascript/7.1.2/7.1.3?slim=true)
-|
+Refs https://github.com/oxc-project/backlog/issues/206
+
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ---
 
-### Release Notes
+<sub>Stack created with <a
+href="https://github.com/github/gh-stack">GitHub Stacks CLI</a> • <a
+href="https://gh.io/stacks-feedback">Give Feedback 💬</a></sub>
 
-<details>
-<summary>yahoo/serialize-javascript (serialize-javascript)</summary>
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-###
-[`v7.1.3`](https://redirect.github.com/yahoo/serialize-javascript/releases/tag/v7.1.3)
-
-
-
-**File**: `pnpm-lock.yaml` (modified, +4/-4)
+**File**: `crates/oxc_linter/src/generated/rule_runner_impls.rs` (modified, +6/-4)
 ```diff
-@@ -372,7 +372,7 @@ importers:
-         version: 1.2.14
-       serialize-javascript:
-         specifier: ^7.0.4
--        version: 7.1.2
-+        version: 7.1.3
-       tsdown:
-         specifier: 'catalog:'
-         version: 0.23.1(@arethetypeswrong/core@0.18.5)(publint@0.3.24)(tsx@4.23.15)(typescript@6.0.3)
-@@ -5856,8 +5856,8 @@ packages:
-     resolution: {integrity: sha512-1gnZf7DFcoIcajTjTwjwuDjzuz4PPcY2StKPlsGAQ1+YH20IRVrBaXSWmdjowTJ6u8Rc01PoYOGHXfP1mYcZNQ==}
-     engines: {node: '>= 18'}
+@@ -2558,8 +2558,9 @@ impl RuleRunner for crate::rules::jest::require_hook::RequireHook {
+ }
  
--  serialize-javascript@7.1.2:
--    resolution: {integrity: sha512-GL2BWwVa6JydKO6l/ljVgjAZF4QJ3S7dWDWi53s5GZT8PJzD2fNxi67HANQGKAqPrwEpL5ba7gUBGi0Ls/sEoQ==}
-+  serialize-javascript@7.1.3:
-+    resolution: {integrity: sha512-kYEnegpAxWFjUw3dSYdSM9zVlTrsxDbsSkq/qd3B7VanqyJ+JdDy6qVyuqVGBhSfuD/rLZQEKuXsO5KZFCrVYQ==}
-     engines: {node: '>=20.0.0'}
+ impl RuleRunner for crate::rules::jest::require_to_throw_message::RequireToThrowMessage {
+-    const NODE_TYPES: Option<&AstTypesBitset> = None;
+-    const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::RunOnJestNode;
++    const NODE_TYPES: Option<&AstTypesBitset> =
++        Some(&AstTypesBitset::from_types(&[AstType::CallExpression]));
++    const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::Run;
+ }
  
-   seroval-plugins@1.3.3:
-@@ -11575,7 +11575,7 @@ snapshots:
-     transitivePeerDependencies:
-       - supports-color
+ impl RuleRunner for crate::rules::jest::require_top_level_describe::RequireTopLevelDescribe {
+@@ -5177,8 +5178,9 @@ impl RuleRunner for crate::rules::vitest::require_test_timeout::RequireTestTimeo
+ }
  
--  serialize-javascript@7.1.2: {}
-+  serialize-javascript@7.1.3: {}
+ impl RuleRunner for crate::rules::vitest::require_to_throw_message::RequireToThrowMessage {
+-    const NODE_TYPES: Option<&AstTypesBitset> = None;
+-    const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::RunOnJestNode;
++    const NODE_TYPES: Option<&AstTypesBitset> =
++        Some(&AstTypesBitset::from_types(&[AstType::CallExpression]));
++    const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::Run;
+ }
  
-   seroval-plugins@1.3.3(seroval@1.3.2):
-     dependencies:
+ impl RuleRunner for crate::rules::vitest::require_top_level_describe::RequireTopLevelDescribe {
+```
+
+**File**: `crates/oxc_linter/src/rules/jest/require_to_throw_message.rs` (modified, +11/-9)
+```diff
+@@ -1,10 +1,11 @@
++use oxc_ast::AstKind;
+ use oxc_macros::declare_oxc_lint;
++use oxc_semantic::AstNode;
+ 
+ use crate::{
+-    context::LintContext,
++    context::{ContextHost, LintContext},
+     rule::Rule,
+-    rules::shared::require_to_throw_message::{DOCUMENTATION, run_on_jest_node},
+-    utils::PossibleJestNode,
++    rules::shared::require_to_throw_message::{DOCUMENTATION, run},
+ };
+ 
+ #[derive(Debug, Default, Clone)]
+@@ -19,12 +20,13 @@ declare_oxc_lint!(
+ );
+ 
+ impl Rule for RequireToThrowMessage {
+-    fn run_on_jest_node<'a, 'c>(
+-        &self,
+-        jest_node: &PossibleJestNode<'a, 'c>,
+-        ctx: &'c LintContext<'a>,
+-    ) {
+-        run_on_jest_node(jest_node, ctx);
++    fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
++        let AstKind::CallExpression(_) = node.kind() else { return };
++        run(node, ctx);
++    }
++
++    fn should_run(&self, ctx: &ContextHost) -> bool {
++        ctx.frameworks().is_test()
+     }
+ }
+ 
+```
+
+**File**: `crates/oxc_linter/src/rules/shared/jest_vitest/require_to_throw_message.rs` (modified, +7/-6)
+```diff
+@@ -1,5 +1,6 @@
+ use oxc_ast::AstKind;
+ use oxc_diagnostics::OxcDiagnostic;
++use oxc_semantic::AstNode;
+ use oxc_span::Span;
+ 
+ use crate::{
+@@ -48,16 +49,16 @@ test('all the things', async () => {
+ ```
+ ";
+ 
+-pub fn run_on_jest_node<'a, 'c>(
+-    possible_jest_node: &PossibleJestNode<'a, 'c>,
+-    ctx: &'c LintContext<'a>,
+-) {
+-    let node = possible_jest_node.node;
++pub fn run<'a>(node: &AstNode<'a>, ctx: &LintContext<'a>) {
+     let AstKind::CallExpression(call_expr) = node.kind() else {
+         return;
+     };
+ 
+-    let Some(jest_fn_call) = parse_expect_jest_fn_call(call_expr, possible_jest_node, ctx) else {
++    let Some(possible_jest_node) = PossibleJestNode::from_call_expression(node, call_expr, ctx)
++    else {
++        return;
++    };
++    let Some(jest_fn_call) = parse_expect_jest_fn_call(call_expr, &possible_jest_node, ctx) else {
+         return;
+     };
+ 
+```
+
+**File**: `crates/oxc_linter/src/rules/vitest/require_to_throw_message.rs` (modified, +11/-9)
+```diff
+@@ -1,10 +1,11 @@
++use oxc_ast::AstKind;
+ use oxc_macros::declare_oxc_lint;
++use oxc_semantic::AstNode;
+ 
+ use crate::{
+-    context::LintContext,
++    context::{ContextHost, LintContext},
+     rule::Rule,
+-    rules::shared::require_to_throw_message::{DOCUMENTATION, run_on_jest_node},
+-    utils::PossibleJestNode,
++    rules::shared::require_to_throw_message::{DOCUMENTATION, run},
+ };
+ 
+ #[derive(Debug, Default, Clone)]
+@@ -19,12 +20,13 @@ declare_oxc_lint!(
+ );
+ 
+ impl Rule for RequireToThrowMessage {
+-    fn run_on_jest_node<'a, 'c>(
+-        &self,
+-        jest_node: &PossibleJestNode<'a, 'c>,
+-        ctx: &'c LintContext<'a>,
+-    ) {
+-        run_on_jest_node(jest_node, ctx);
++    fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
++        let AstKind::CallExpression(_) = node.kind() else { return };
++        run(node, ctx);
++    }
++
++    fn should_run(&self, ctx: &ContextHost) -> bool {
++        ctx.frameworks().is_test()
+     }
+ }
+ 
+```
+
+**File**: `tasks/track_linter_timings/linter_timings.snap` (modified, +0/-2)
+```diff
+@@ -254,7 +254,6 @@ jest/prefer-snapshot-hint                                  |      7
+ jest/prefer-spy-on                                         |  13005
+ jest/prefer-to-have-been-called                            |      0
+ jest/require-hook                                          |  62613
+-jest/require-to-throw-message                              |      0
+ jest/require-top-level-describe                            |      7
+ jest/valid-describe-callback                               |      0
+ jest/valid-expect                                          |      7
+@@ -719,7 +718,6 @@ vitest/require-hook                                        |  62613
+ vitest/require-local-test-context-for-concurrent-snapshots |      0
+ vitest/require-mock-type-parameters                        |      0
+ vitest/require-test-timeout                                |      7
+-vitest/require-to-throw-message                            |      0
+ vitest/require-top-level-describe                          |      7
+ vitest/valid-describe-callback                             |      0
+ vitest/valid-expect                                        |      7
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28156** (2026-10-25): chore(deps): update dependency serialize-javascript to v7.1.3 (@renovate[bot])
-- **PR #28152** (2026-10-25): chore(deps): update npm packages (@renovate[bot])
-- **PR #28149** (2026-10-25): perf(minifier): reuse is_error_constructor and simplify substitute_global_new_expression (@armano2)
-- **PR #28148** (2026-10-25): refactor(minifier): use ast helpers for enum tests (@armano2)
-- **PR #28139** (2026-10-23): perf(parser): move annotation comment handling out of hot paths (@camc314)
-- **PR #28138** (2026-10-23): fix(linter): use the type-aware rule's severity when another plugin has a rule with the same name (@NavpreetSSidhu)
+- **PR #28235** (2026-10-27): refactor(linter): migrate expect-expect to AST dispatch (@camchenry)
+- **PR #28234** (2026-10-27): refactor(linter): migrate valid-expect-in-promise to AST dispatch (@camchenry)
+- **PR #28233** (2026-10-27): refactor(linter): migrate no-conditional-expect to AST dispatch (@camchenry)
+- **PR #28232** (2026-10-27): refactor(linter): migrate padding-around-test-blocks to AST dispatch (@camchenry)
+- **PR #28231** (2026-10-27): refactor(linter): migrate padding-around-after-all-blocks to AST dispatch (@camchenry)
+- **PR #28230** (2026-10-27): refactor(linter): migrate no-restricted-test-methods to AST dispatch (@camchenry)
 
 ---
 
@@ -1492,30 +1644,36 @@ This PR contains the following updates:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. minifier): use ast helpers for enum tests (#28148)
+## X. linter): migrate no-test-prefixes to AST dispatch (#28225)
 
 **RULE**:
-When implementing operations in `crates/oxc_minifier/src/peephole/fold_constants.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/oxc_linter/src/generated/rule_runner_impls.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3fbef5ba`: minifier): use ast helpers for enum tests (#28148). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8a7c2f82`: linter): migrate no-test-prefixes to AST dispatch (#28225). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_minifier/src/peephole/fold_constants.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_linter/src/generated/rule_runner_impls.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use oxc_syntax::operator::{BinaryOperator, LogicalOperator};
-    assign.operator.is_assign()
+    const NODE_TYPES: Option<&AstTypesBitset> =
+        Some(&AstTypesBitset::from_types(&[AstType::CallExpression]));
+    const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::Run;
+    const NODE_TYPES: Option<&AstTypesBitset> =
+        Some(&AstTypesBitset::from_types(&[AstType::CallExpression]));
+    const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::Run;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use oxc_syntax::operator::{AssignmentOperator, BinaryOperator, LogicalOperator};
-    assign.operator == AssignmentOperator::Assign
+    const NODE_TYPES: Option<&AstTypesBitset> = None;
+    const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::RunOnJestNode;
+    const NODE_TYPES: Option<&AstTypesBitset> = None;
+    const RUN_FUNCTIONS: RuleRunFunctionsImplemented = RuleRunFunctionsImplemented::RunOnJestNode;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3fbef5ba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8a7c2f82` are properly handled with clean fallback behavior.

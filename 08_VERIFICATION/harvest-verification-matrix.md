@@ -5493,3 +5493,7 @@
 | `CYCLE-20261027-4FZY` | `2026-10-27T19:06:55.870Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md` | Yes (`b30e14a4...`) |
 | `CYCLE-20261027-D2DA` | `2026-10-27T19:13:38.110Z` | `oven-sh/bun` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/oven-sh-bun-learnings.md` | Yes (`3b819d96...`) |
 | `CYCLE-20261027-D3NV` | `2026-10-27T19:13:39.787Z` | `webdriverio/webdriverio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4956` | Yes (`60ef7038...`) |
+| `CYCLE-20261027-LHMB` | `2026-10-27T19:20:11.123Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4957` | Yes (`4a7628c4...`) |
+| `CYCLE-20261027-LLSR` | `2026-10-27T19:20:16.539Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4958` | Yes (`6808ebc7...`) |
+| `CYCLE-20261027-LOPF` | `2026-10-27T19:20:20.307Z` | `rmax/scrapy-redis` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4959, Rule 4960, Rule 4961` | Yes (`3307e598...`) |
+| `CYCLE-20261027-LQ4R` | `2026-10-27T19:20:22.155Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4962` | Yes (`ec7265a3...`) |

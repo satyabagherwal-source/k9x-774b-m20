@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source**: github ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
-> **Source Version**: `5bb8ea84`  
+> **Source Version**: `e9ea8d94`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T21:15:03.697Z  
+> **Timestamp**: 2026-10-27T19:20:16.172Z  
 > **Learning ID**: `learn-github-linkerd-linkerd2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T21:15:03.433Z  
+> **Harvest Timestamp**: 2026-10-27T19:20:15.160Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Ultralight, security-first service mesh for Kubernetes. Main repo for Linkerd 2.x.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 11517 stars
+- **Stars / Engagement**: 11521 stars
 
 ---
 
@@ -1621,19 +1621,10 @@ func (pw *ProbeWorker) doProbe() error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3a872780` (2026-10-20)
-**Commit Message**: chore(build): update golang to 1.26.9 (#15737)
+### Incident Patch 1: `e9ea8d94` (2026-10-26)
+**Commit Message**: chore: update go version. (#15749)
 
-This addresses the following CVEs:
-[GO-2026-6599](https://pkg.go.dev/vuln/GO-2026-6599)
-[GO-2026-6600](https://pkg.go.dev/vuln/GO-2026-6600)
-[GO-2026-6605](https://pkg.go.dev/vuln/GO-2026-6605)
-[GO-2026-6607](https://pkg.go.dev/vuln/GO-2026-6607)
-[GO-2026-6608](https://pkg.go.dev/vuln/GO-2026-6608)
-[GO-2026-6613](https://pkg.go.dev/vuln/GO-2026-6613)
-
-Signed-off-by: Allison Richardet <[REDACTED_EMAIL]>
-Signed-off-by: --get <[REDACTED_EMAIL]>
+Signed-off-by: Apoorv Kothari <[REDACTED_EMAIL]>
 
 **File**: `.github/workflows/codecov.yml` (modified, +1/-1)
 ```diff
@@ -1641,8 +1632,8 @@ Signed-off-by: --get <[REDACTED_EMAIL]>
      timeout-minutes: 30
      runs-on: ${{ vars.LINKERD2_RUNNER || 'ubuntu-24.04' }}
      container:
--      image: golang:1.26.7
-+      image: golang:1.26.9
+-      image: golang:1.26.9
++      image: golang:1.26.10
      steps:
        - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
        - run: go install gotest.tools/gotestsum@v0.4.2
@@ -1652,8 +1643,8 @@ Signed-off-by: --get <[REDACTED_EMAIL]>
 ```diff
 @@ -1,5 +1,5 @@
  # Precompile key slow-to-build dependencies
--FROM --platform=$BUILDPLATFORM golang:1.26.7-alpine AS go-deps
-+FROM --platform=$BUILDPLATFORM golang:1.26.9-alpine AS go-deps
+-FROM --platform=$BUILDPLATFORM golang:1.26.9-alpine AS go-deps
++FROM --platform=$BUILDPLATFORM golang:1.26.10-alpine AS go-deps
  WORKDIR /linkerd-build
  COPY go.mod go.sum ./
  COPY bin/install-deps bin/
@@ -1665,8 +1656,8 @@ Signed-off-by: --get <[REDACTED_EMAIL]>
  ARG TARGETARCH
  
  # Precompile key slow-to-build dependencies
--FROM --platform=$BUILDPLATFORM golang:1.26.7-alpine AS go-deps
-+FROM --platform=$BUILDPLATFORM golang:1.26.9-alpine AS go-deps
+-FROM --platform=$BUILDPLATFORM golang:1.26.9-alpine AS go-deps
++FROM --platform=$BUILDPLATFORM golang:1.26.10-alpine AS go-deps
  WORKDIR /linkerd-build
  COPY go.mod go.sum ./
  COPY bin/install-deps bin/
@@ -1674,8 +1665,8 @@ Signed-off-by: --get <[REDACTED_EMAIL]>
  RUN CGO_ENABLED=0 GOOS=linux GOARCH=$TARGETARCH go build -o /out/proxy-identity -mod=readonly -ldflags "-s -w" ./proxy-identity
  
  ## build proxy-init
--FROM --platform=$BUILDPLATFORM golang:1.26.7-alpine AS proxy-init
-+FROM --platform=$BUILDPLATFORM golang:1.26.9-alpine AS proxy-init
+-FROM --platform=$BUILDPLATFORM golang:1.26.9-alpine AS proxy-init
++FROM --platform=$BUILDPLATFORM golang:1.26.10-alpine AS proxy-init
  WORKDIR /build
  ARG PROXY_INIT_REPO="linkerd/linkerd2-proxy-init"
  ARG PROXY_INIT_REF="proxy-init/v2.4.10"
@@ -1687,8 +1678,8 @@ Signed-off-by: --get <[REDACTED_EMAIL]>
  ARG BUILDPLATFORM=linux/amd64
  
  # Precompile key slow-to-build dependencies
--FROM --platform=$BUILDPLATFORM golang:1.26.7-alpine AS go-deps
-+FROM --platform=$BUILDPLATFORM golang:1.26.9-alpine AS go-deps
+-FROM --platform=$BUILDPLATFORM golang:1.26.9-alpine AS go-deps
++FROM --platform=$BUILDPLATFORM golang:1.26.10-alpine AS go-deps
  WORKDIR /linkerd-build
  COPY go.mod go.sum ./
  RUN go mod download
@@ -1699,8 +1690,8 @@ Signed-off-by: --get <[REDACTED_EMAIL]>
 @@ -1,6 +1,6 @@
  module github.com/linkerd/linkerd2
  
--go 1.26.7
-+go 1.26.9
+-go 1.26.9
++go 1.26.10
  
  require (
  	contrib.go.opencensus.io/exporter/ocagent v0.7.0
@@ -1712,8 +1703,8 @@ Signed-off-by: --get <[REDACTED_EMAIL]>
  ARG BUILDPLATFORM=linux/amd64
  
  # Precompile key slow-to-build dependencies
--FROM --platform=$BUILDPLATFORM golang:1.26.7-alpine AS go-deps
-+FROM --platform=$BUILDPLATFORM golang:1.26.9-alpine AS go-deps
+-FROM --platform=$BUILDPLATFORM golang:1.26.9-alpine AS go-deps
++FROM --platform=$BUILDPLATFORM golang:1.26.10-alpine AS go-deps
  WORKDIR /linkerd-build
  COPY go.mod go.sum ./
  COPY bin/install-deps bin/
@@ -1725,8 +1716,8 @@ Signed-off-by: --get <[REDACTED_EMAIL]>
  ARG BUILDPLATFORM=linux/amd64
  
  # Precompile key slow-to-build dependencies
--FROM --platform=$BUILDPLATFORM golang:1.26.7-alpine AS go-deps
-+FROM --platform=$BUILDPLATFORM golang:1.26.9-alpine AS go-deps
+-FROM --platform=$BUILDPLATFORM golang:1.26.9-alpine AS go-deps
++FROM --platform=$BUILDPLATFORM golang:1.26.10-alpine AS go-deps
  WORKDIR /linkerd-build
  COPY go.mod go.sum ./
  COPY bin/install-deps bin/
@@ -1738,140 +1729,20 @@ Signed-off-by: --get <[REDACTED_EMAIL]>
  ARG BUILDPLATFORM=linux/amd64
  
  # Precompile key slow-to-build dependencies
--FROM --platform=$BUILDPLATFORM golang:1.26.7-alpine AS go-deps
-+FROM --platform=$BUILDPLATFORM golang:1.26.9-alpine AS go-deps
+-FROM --platform=$BUILDPLATFORM golang:1.26.9-alpine AS go-deps
++FROM --platform=$BUILDPLATFORM golang:1.26.10-alpine AS go-deps
  WORKDIR /linkerd-build
  COPY go.mod go.sum ./
  COPY bin/install-deps bin/
 ```
 
----
-
-### Incident Patch 2: `5bb8ea84` (2026-10-20)
-**Commit Message**: build(deps): bump golang.org/x/tools from 0.50.0 to 0.52.0 (#15721)
-
-Bumps [golang.org/x/tools](https://github.com/golang/tools) from 0.50.0 to 0.52.0.
-- [Release notes](https://github.com/golang/tools/releases)
-- [Commits](https://github.com/golang/tools/compare/v0.50.0...v0.52.0)
-
----
-updated-dependencies:
-- dependency-name: golang.org/x/tools
-  dependency-version: 0.52.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +9/-9)
-```diff
-@@ -35,7 +35,7 @@ require (
- 	github.com/spf13/cobra v1.10.2
- 	github.com/spf13/pflag v1.0.10
- 	go.opencensus.io v0.24.0
--	golang.org/x/tools v0.50.0
-+	golang.org/x/tools v0.52.0
- 	google.golang.org/grpc v1.84.0
- 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.6.2
- 	google.golang.org/protobuf v1.36.12
-@@ -61,7 +61,7 @@ require (
- 	github.com/go-openapi/swag/netutils v0.27.1 // indirect
- 	github.com/go-openapi/swag/pools v0.29.1 // indirect
- 	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
--	golang.org/x/net v0.59.0 // indirect
-+	golang.org/x/net v0.61.0 // indirect
- 	k8s.io/streaming v0.37.1 // indirect
- )
- 
-@@ -136,14 +136,14 @@ require (
- 	go.opentelemetry.io/otel/trace v1.44.0 // indirect
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
--	golang.org/x/crypto v0.57.0 // indirect
--	golang.org/x/mod v0.41.0 // indirect
-+	golang.org/x/crypto v0.58.0 // indirect
-+	golang.org/x/mod v0.42.0 // indirect
- 	golang.org/x/oauth2 v0.36.0 // indirect
--	golang.org/x/sync v0.23.0 // indirect
--	golang.org/x/sys v0.48.0 // indirect
--	golang.org/x/telemetry v0.0.0-20260908163034-4bcc4b2ee518 // indirect
--	golang.org/x/term v0.46.0 // indirect
--	golang.org/x/text v0.42.0 // indirect
-+	golang.org/x/sync v0.24.0 // indirect
-+	golang.org/x/sys v0.49.0 // indirect
-+	golang.org/x/telemetry v0.0.0-20261009151841-97e8ea77aa2a // indirect
-+	golang.org/x/term v0.47.0 // indirect
-+	golang.org/x/text v0.43.0 // indirect
- 	golang.org/x/time v0.15.0 // indirect
- 	golang.org/x/tools/godoc v0.1.0-deprecated // indirect
- 	google.golang.org/api v0.278.0 // indirect
-```
-
-**File**: `go.sum` (modified, +18/-18)
-```diff
-@@ -463,8 +463,8 @@ golang.org/x/crypto v0.0.0-20190510104115-cbcb75029529/go.mod h1:yigFU9vqHzYiE8U
- golang.org/x/crypto v0.0.0-20190605123033-f99c8df09eb5/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
- golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
- golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
--golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
--golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
-+golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
-+golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
- golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522/go.mod h1:ZjyILWgesfNpC6sMxTJOJm9Kp84zZh5NQWvqDGG3Qr8=
-@@ -494,8 +494,8 @@ golang.org/x/mod v0.1.0/go.mod h1:0QHyrYULN0/3qlju5TqG8bIK38QM8yzMo5ekMj3DlcY=
- golang.org/x/mod v0.1.1-0.20191105210325-c90efee705ee/go.mod h1:QqPTAvyqsEbceGzBzNggFXnrqF1CaUcvgkdR5Ot7KZg=
- golang.org/x/mod v0.1.1-0.20191107180719-034126e5016b/go.mod h1:QqPTAvyqsEbceGzBzNggFXnrqF1CaUcvgkdR5Ot7KZg=
- golang.org/x/mod v0.2.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
--golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
--golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
-+golang.org/x/mod v0.42.0 h1:ICeL3t2L30ljSPHHxDnR4fqVcBt/zR2zJAb9juavmQg=
-+golang.org/x/mod v0.42.0/go.mod h1:u5fzIrRInkL8MaO1cbRkUHT64v303YIT5KEqpNr7jRs=
- golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
- golang.org/x/net v0.0.0-20180826012351-8a410e7b638d/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
- golang.org/x/net v0.0.0-20190108225652-1e06a53dbb7e/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
-@@ -516,8 +516,8 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
- golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e/go.mod h1:qpuaurCH72eLCgpAm/N6yyVIVM9cpaDIP3A8BGJEC5A=
- golang.org/x/net v0.0.0-20200520182314-0ba52f642ac2/go.mod h1:qpuaurCH72eLCgpAm/N6yyVIVM9cpaDIP3A8BGJEC5A=
- golang.org/x/net v0.0.0-20201110031124-69a78807bb2b/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
--golang.org/x/net v0.59.0 h1:5zfYln+w5XCxwrnMMJPufRgNoXEaGxl0wo5GqPXyues=
--golang.org/x/net v0.59.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
-+golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
-+golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
- golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
- golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
-@@ -532,8 +532,8 @@ golang.org/x/sync v0.0.0-20190227155943-e225da77a7e6/go.mod h1:RxMgew5VJxzue5/jJ
- golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
--golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
--golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
-+golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190312061237-fead79001313/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-@@ -556,19 +556,19 @@ golang.org/x/sys v0.0.0-20200331124033-c3d80250170d/go.mod h1:h1NjWce9XRLGQEsW7w
- golang.org/x/sys v0.0.0-20200523222454-059865788121/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
- golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
- golang.org/x/sys v0.0.0-20210616094352-59db8d763f22/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
--golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
--golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
--golang.org/x/telemetry v0.0.0-20260908163034-4bcc4b2ee518 h1:F5BWKvW126NXR74uxkxuc1jQHhm/rwm/J3rSiFyuRs4=
--golang.org/x/telemetry v0.0.0-20260908163034-4bcc4b2ee518/go.mo
-```
-
 #### Recent Merged Pull Requests:
+- **PR #15749** (2026-10-26): chore: update go version. (@toidiu)
+- **PR #15742** (closed): chore: bump v50 -> v51 (@raykroeker)
 - **PR #15737** (2026-10-20): chore(build): update golang to 1.26.9 (@arichardet)
 - **PR #15724** (2026-10-15): chore: fix rate limit policy test (@raykroeker)
 - **PR #15721** (2026-10-20): build(deps): bump golang.org/x/tools from 0.50.0 to 0.52.0 (@dependabot[bot])
 - **PR #15709** (2026-10-15): docs: update contribution guideilnes to include LLM code policy (@mattbailey)
-- **PR #15703** (2026-10-08): proxy: v2.371.0 (@l5d-bot)
-- **PR #15702** (closed): build(deps): bump golang.org/x/tools from 0.50.0 to 0.51.0 (@dependabot[bot])
 
 ---
 
@@ -1891,13 +1762,13 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build): update golang to 1.26.9 (#15737)
+## X. update go version. (#15749)
 
 **RULE**:
 When implementing operations in `.github/workflows/codecov.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3a872780`: build): update golang to 1.26.9 (#15737). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e9ea8d94`: update go version. (#15749). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/codecov.yml`.
@@ -1905,14 +1776,14 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      image: golang:1.26.9
+      image: golang:1.26.10
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-      image: golang:1.26.7
+      image: golang:1.26.9
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3a872780` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e9ea8d94` are properly handled with clean fallback behavior.

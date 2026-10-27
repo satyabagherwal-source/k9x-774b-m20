@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-D6PU",
-    "timestamp": "2026-10-25T21:02:21.762Z",
-    "repository": "ytsaurus/ytsaurus",
-    "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "e982eec13d8e6ebb14b7deb8550c8a6472932f2a7854d8d4be64c91732cf869b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-LB6N",
-    "timestamp": "2026-10-25T21:08:40.799Z",
-    "repository": "deepseek-ai/DeepSeek-V3",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
-    "contentHash": "e95ef162a3a9a489151c0ed80794867f53cf86473006a5dedddbc3ba69b4c2d2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-LBC1",
-    "timestamp": "2026-10-25T21:08:40.993Z",
-    "repository": "primer/react",
-    "learningId": "learn-github-primer-react",
-    "contentHash": "36721dc20052739b00d07c3cbd20e661f320b735eec5acdba64989b1c975f237",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-TSIX",
-    "timestamp": "2026-10-25T21:15:16.521Z",
-    "repository": "touchlab/SKIE",
-    "learningId": "learn-github-touchlab-skie",
-    "contentHash": "a256d453f2ca6bffa2215fff9e80d2021ac60e6085755afd287cf9d6030300e1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-TYB7",
     "timestamp": "2026-10-25T21:15:24.019Z",
     "repository": "baidu/Unlimited-OCR",
@@ -7490,6 +7430,66 @@
     "repository": "webdriverio/webdriverio",
     "learningId": "learn-github-webdriverio-webdriverio",
     "contentHash": "60ef70381a2a41fbec4b4ae3eb09efc6d6baddf18fc9d42acc3d0ebfe74cb2c0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-LHMB",
+    "timestamp": "2026-10-27T19:20:11.123Z",
+    "repository": "oxc-project/oxc",
+    "learningId": "learn-github-oxc-project-oxc",
+    "contentHash": "4a7628c48a1d757bf48a2e1238fb0d0c70c8f5567d768b85f1bb0773282b9c34",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-LLSR",
+    "timestamp": "2026-10-27T19:20:16.539Z",
+    "repository": "linkerd/linkerd2",
+    "learningId": "learn-github-linkerd-linkerd2",
+    "contentHash": "6808ebc735012f497031e5c8e906070606f1a545d03067ab9bb3df5b39877a88",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-LOPF",
+    "timestamp": "2026-10-27T19:20:20.307Z",
+    "repository": "rmax/scrapy-redis",
+    "learningId": "learn-github-rmax-scrapy-redis",
+    "contentHash": "3307e5982c4b255ef3af5adce349bf2e6ea6bcd95534a6fe6a3d1fa5f6ea8a7c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-LQ4R",
+    "timestamp": "2026-10-27T19:20:22.155Z",
+    "repository": "doobidoo/mcp-memory-service",
+    "learningId": "learn-github-doobidoo-mcp-memory-service",
+    "contentHash": "ec7265a317ca5543a7564a5219a0367bb1a3cd43c9c07ee851af2a75e01311cf",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
