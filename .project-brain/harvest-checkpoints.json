@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T23:45:58.592Z",
+  "last_updated": "2026-10-27T23:52:42.380Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "6b099d696de29b98f3a8f1d9de52633959e8976ce91addbd78ed594f1c27794b",
-      "verified_at": "2026-10-27T22:36:27.656Z",
+      "content_hash": "d4a3d7dc9bac41ec851a71096c8f0c52bca83a64a4c689a8f2e4e5dafd4e1a76",
+      "verified_at": "2026-10-27T23:52:42.380Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T22:36:27.656Z"
+      "last_updated": "2026-10-27T23:52:42.380Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -10446,14 +10446,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-onejs-one",
-      "content_hash": "8624d60d6e3bcd664b72bb521b7cefc50467f25452cd49303dc655d11fe8167f",
-      "verified_at": "2026-10-25T11:31:43.662Z",
+      "content_hash": "c35ad664482c9f5425be23c2b258a17ef913e20cf496887637dc127745caeccf",
+      "verified_at": "2026-10-27T23:52:37.864Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T11:31:43.662Z"
+      "last_updated": "2026-10-27T23:52:37.864Z"
     },
     "influxdata/influxdb": {
       "repository": "influxdata/influxdb",
@@ -17084,6 +17084,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-27T23:45:58.592Z"
+    },
+    "michael-denyer/pstack-claude": {
+      "repository": "michael-denyer/pstack-claude",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-michael-denyer-pstack-claude",
+      "content_hash": "ec6f32dfe9dd196b57575bf1be39670969b130d3da1fd1b3c05c319d7c2f2743",
+      "verified_at": "2026-10-27T23:52:32.178Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T23:52:32.178Z"
     }
   },
   "repos": {

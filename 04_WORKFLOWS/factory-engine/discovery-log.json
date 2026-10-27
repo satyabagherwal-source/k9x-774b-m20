@@ -19612,5 +19612,20 @@
     "downloads": 6311,
     "qualityScore": 3540,
     "discoveredAt": "2026-10-27T23:41:40.764Z"
+  },
+  {
+    "name": "pstack-claude",
+    "fullName": "michael-denyer/pstack-claude",
+    "url": "https://github.com/michael-denyer/pstack-claude",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Claude Code, Codex, Copilot, Pi, OpenCode, Muse, Gemini, and Prime Agent versions of Poteto's pstack. Rigorous agent workflows with Cursor primitives translated for other harnesses.",
+    "stars": 3519,
+    "forks": 330,
+    "openIssues": 7,
+    "language": "TypeScript",
+    "qualityScore": 2123,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T23:48:51.922Z"
   }
 ]

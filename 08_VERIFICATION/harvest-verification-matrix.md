@@ -5584,3 +5584,6 @@
 | `CYCLE-20261027-0YCG` | `2026-10-27T23:44:09.184Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5057` | Yes (`f9461b7f...`) |
 | `CYCLE-20261027-10LW` | `2026-10-27T23:44:12.116Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5058` | Yes (`a70dcad6...`) |
 | `CYCLE-20261027-3AR7` | `2026-10-27T23:45:58.579Z` | `LiquidAI/LFM3-1.7B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 969, Rule 5059, Rule 5060` | Yes (`182bd4dd...`) |
+| `CYCLE-20261027-BQG6` | `2026-10-27T23:52:32.166Z` | `michael-denyer/pstack-claude` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5061` | Yes (`ec6f32df...`) |
+| `CYCLE-20261027-BUU4` | `2026-10-27T23:52:37.852Z` | `onejs/one` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5062` | Yes (`c35ad664...`) |
+| `CYCLE-20261027-BYBK` | `2026-10-27T23:52:42.368Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5038` | Yes (`d4a3d7dc...`) |

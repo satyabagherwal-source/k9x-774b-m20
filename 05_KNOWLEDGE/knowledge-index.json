@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T23:45:58.528Z",
-  "total_verified_learnings": 1153,
+  "last_updated": "2026-10-27T23:52:42.306Z",
+  "total_verified_learnings": 1154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -40159,8 +40159,8 @@
       "slug": "onejs-one",
       "platform": "github",
       "source_url": "https://github.com/onejs/one",
-      "source_version": "615ca692",
-      "content_hash": "8624d60d6e3bcd664b72bb521b7cefc50467f25452cd49303dc655d11fe8167f",
+      "source_version": "96fa7367",
+      "content_hash": "c35ad664482c9f5425be23c2b258a17ef913e20cf496887637dc127745caeccf",
       "dossier_path": "07_PROJECT_LEARNING/onejs-one-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/onejs-one-learnings.md",
       "promoted_rules": [
@@ -40188,6 +40188,11 @@
           "number": 4264,
           "title": "vxrn): preserve client output during generation (#1028)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5062,
+          "title": "deps): upgrade Tamagui consumers to 3.1.6",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40195,7 +40200,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T11:31:43.577Z",
+      "verified_at": "2026-10-27T23:52:37.782Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63789,13 +63794,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "6b124303",
-      "content_hash": "6b099d696de29b98f3a8f1d9de52633959e8976ce91addbd78ed594f1c27794b",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "content_hash": "d4a3d7dc9bac41ec851a71096c8f0c52bca83a64a4c689a8f2e4e5dafd4e1a76",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -63850,7 +63855,7 @@
         {
           "number": 5038,
           "title": "metrics: count transaction verification, memory-pool admission and gossip per ca",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -63858,7 +63863,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T22:36:27.570Z",
+      "verified_at": "2026-10-27T23:52:42.293Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -139133,14 +139138,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 5038,
       "title": "metrics: count transaction verification, memory-pool admission and gossip per ca",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "6b124303",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-27T22:36:27.570Z"
+      "verified_at": "2026-10-27T23:52:42.293Z"
     },
     "rule-5039": {
       "learning_id": "rule-5039",
@@ -139492,6 +139497,67 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T23:45:58.516Z"
+    },
+    "learn-github-michael-denyer-pstack-claude": {
+      "learning_id": "learn-github-michael-denyer-pstack-claude",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "michael-denyer/pstack-claude",
+      "repository": "michael-denyer/pstack-claude",
+      "slug": "michael-denyer-pstack-claude",
+      "platform": "github",
+      "source_url": "https://github.com/michael-denyer/pstack-claude",
+      "source_version": "abd512a6",
+      "content_hash": "ec6f32dfe9dd196b57575bf1be39670969b130d3da1fd1b3c05c319d7c2f2743",
+      "dossier_path": "07_PROJECT_LEARNING/michael-denyer-pstack-claude-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/michael-denyer-pstack-claude-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 5061,
+          "title": "Add issue forms for bug reports and feature requests (#268)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T23:52:32.094Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5061": {
+      "learning_id": "rule-5061",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5061,
+      "title": "Add issue forms for bug reports and feature requests (#268)",
+      "source_url": "https://github.com/michael-denyer/pstack-claude",
+      "source_version": "abd512a6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T23:52:32.094Z"
+    },
+    "rule-5062": {
+      "learning_id": "rule-5062",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5062,
+      "title": "deps): upgrade Tamagui consumers to 3.1.6",
+      "source_url": "https://github.com/onejs/one",
+      "source_version": "96fa7367",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T23:52:37.782Z"
     }
   },
   "aliases": {

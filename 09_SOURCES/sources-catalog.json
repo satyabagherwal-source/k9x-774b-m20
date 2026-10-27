@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "4a9dcea3",
+    "sourceVersion": "6b124303",
     "license": "Apache-2.0",
-    "contentHash": "426babffa76c72ca74c0ab261a2d1c011ffe5595890f05231326669cf4a33294",
-    "lastHarvestedAt": "2026-10-27T11:16:06.406Z",
+    "contentHash": "d4a3d7dc9bac41ec851a71096c8f0c52bca83a64a4c689a8f2e4e5dafd4e1a76",
+    "lastHarvestedAt": "2026-10-27T23:52:42.372Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -6923,10 +6923,10 @@
     "repository": "onejs/one",
     "platform": "github",
     "sourceUrl": "https://github.com/onejs/one",
-    "sourceVersion": "615ca692",
+    "sourceVersion": "96fa7367",
     "license": "NOASSERTION",
-    "contentHash": "8624d60d6e3bcd664b72bb521b7cefc50467f25452cd49303dc655d11fe8167f",
-    "lastHarvestedAt": "2026-10-25T11:31:43.651Z",
+    "contentHash": "c35ad664482c9f5425be23c2b258a17ef913e20cf496887637dc127745caeccf",
+    "lastHarvestedAt": "2026-10-27T23:52:37.856Z",
     "learningId": "learn-github-onejs-one"
   },
   "influxdata-influxdb": {
@@ -11368,5 +11368,15 @@
     "contentHash": "182bd4dd6cb13ad204aeb4a0657ab5e6253694eb671bafda8f5b0edf8c2bdb8b",
     "lastHarvestedAt": "2026-10-27T23:45:58.583Z",
     "learningId": "learn-huggingface-liquidai-lfm3-1-7b"
+  },
+  "michael-denyer-pstack-claude": {
+    "repository": "michael-denyer/pstack-claude",
+    "platform": "github",
+    "sourceUrl": "https://github.com/michael-denyer/pstack-claude",
+    "sourceVersion": "abd512a6",
+    "license": "MIT",
+    "contentHash": "ec6f32dfe9dd196b57575bf1be39670969b130d3da1fd1b3c05c319d7c2f2743",
+    "lastHarvestedAt": "2026-10-27T23:52:32.170Z",
+    "learningId": "learn-github-michael-denyer-pstack-claude"
   }
 }

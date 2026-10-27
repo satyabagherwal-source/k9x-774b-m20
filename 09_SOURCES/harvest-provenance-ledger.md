@@ -5593,3 +5593,6 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `b11d06c6` | Multi-dimensional audit evidence | 2026-10-27T23:44:09.187Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `ce3abe70` | Multi-dimensional audit evidence | 2026-10-27T23:44:12.119Z |
 | `learn-huggingface-liquidai-lfm3-1-7b` | `https://huggingface.co/LiquidAI/LFM3-1.7B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-27T23:45:58.583Z |
+| `learn-github-michael-denyer-pstack-claude` | `https://github.com/michael-denyer/pstack-claude` | `abd512a6` | Multi-dimensional audit evidence | 2026-10-27T23:52:32.170Z |
+| `learn-github-onejs-one` | `https://github.com/onejs/one` | `96fa7367` | Multi-dimensional audit evidence | 2026-10-27T23:52:37.856Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `6b124303` | Multi-dimensional audit evidence | 2026-10-27T23:52:42.372Z |
