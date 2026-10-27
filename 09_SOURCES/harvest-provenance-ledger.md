@@ -5397,3 +5397,8 @@ Every entry in this ledger must capture:
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `d2830dca` | Multi-dimensional audit evidence | 2026-10-27T14:50:28.653Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `20452bdc` | Multi-dimensional audit evidence | 2026-10-27T14:50:28.927Z |
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `e3166533` | Multi-dimensional audit evidence | 2026-10-27T14:50:31.246Z |
+| `learn-github-patrickchugh-terravision` | `https://github.com/patrickchugh/terravision` | `849bf43b` | Multi-dimensional audit evidence | 2026-10-27T14:53:47.483Z |
+| `learn-github-modelcontextprotocol-php-sdk` | `https://github.com/modelcontextprotocol/php-sdk` | `57b45eb9` | Multi-dimensional audit evidence | 2026-10-27T14:53:52.257Z |
+| `learn-github-svnscha-mcp-windbg` | `https://github.com/svnscha/mcp-windbg` | `c62c27e5` | Multi-dimensional audit evidence | 2026-10-27T14:53:56.380Z |
+| `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `bccbb730` | Multi-dimensional audit evidence | 2026-10-27T14:53:58.291Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `8c9b7d76` | Multi-dimensional audit evidence | 2026-10-27T14:54:08.076Z |

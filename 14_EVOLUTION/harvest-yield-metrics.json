@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T14:50:31.251Z",
-  "total_cycles_completed": 5365,
-  "total_learnings_persisted": 5365,
-  "total_rules_promoted": 4770,
+  "last_updated": "2026-10-27T14:54:08.081Z",
+  "total_cycles_completed": 5370,
+  "total_learnings_persisted": 5370,
+  "total_rules_promoted": 4775,
   "history": [
-    {
-      "timestamp": "2026-10-27T07:15:13.445Z",
-      "repository": "thetahealth/mirobody",
-      "learningId": "learn-github-thetahealth-mirobody",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T07:20:59.438Z",
-      "repository": "sourcey/sourcey",
-      "learningId": "learn-github-sourcey-sourcey",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T07:45:09.391Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T07:50:43.520Z",
-      "repository": "projectcontour/contour",
-      "learningId": "learn-github-projectcontour-contour",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T08:12:12.976Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T08:12:56.004Z",
       "repository": "XHToken/Spark-X2.6-4B-GGUF",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-27T14:50:31.251Z",
       "repository": "clockworklabs/SpacetimeDB",
       "learningId": "learn-github-clockworklabs-spacetimedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:53:47.489Z",
+      "repository": "patrickchugh/terravision",
+      "learningId": "learn-github-patrickchugh-terravision",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:53:52.263Z",
+      "repository": "modelcontextprotocol/php-sdk",
+      "learningId": "learn-github-modelcontextprotocol-php-sdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:53:56.386Z",
+      "repository": "svnscha/mcp-windbg",
+      "learningId": "learn-github-svnscha-mcp-windbg",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:53:58.296Z",
+      "repository": "software-mansion/react-native-reanimated",
+      "learningId": "learn-github-software-mansion-react-native-reanimated",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:54:08.081Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

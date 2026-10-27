@@ -5388,3 +5388,8 @@
 | `CYCLE-20261027-YN54` | `2026-10-27T14:50:28.648Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4860` | Yes (`74b0dcfc...`) |
 | `CYCLE-20261027-YNCQ` | `2026-10-27T14:50:28.922Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4861` | Yes (`057b7852...`) |
 | `CYCLE-20261027-YP56` | `2026-10-27T14:50:31.242Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4862` | Yes (`1560c987...`) |
+| `CYCLE-20261027-2WK8` | `2026-10-27T14:53:47.480Z` | `patrickchugh/terravision` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4863` | Yes (`0cc242f7...`) |
+| `CYCLE-20261027-308T` | `2026-10-27T14:53:52.253Z` | `modelcontextprotocol/php-sdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4864` | Yes (`01c8957a...`) |
+| `CYCLE-20261027-33FD` | `2026-10-27T14:53:56.377Z` | `svnscha/mcp-windbg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4865` | Yes (`8a980d64...`) |
+| `CYCLE-20261027-34WG` | `2026-10-27T14:53:58.288Z` | `software-mansion/react-native-reanimated` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4866` | Yes (`be9db397...`) |
+| `CYCLE-20261027-3CG8` | `2026-10-27T14:54:08.072Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4867` | Yes (`78d396c1...`) |

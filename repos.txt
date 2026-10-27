@@ -4592,3 +4592,11 @@ https://github.com/apioo/fusio
 https://github.com/A9T9/RPA
 # [AI-AGENTS] CYB3RMX/Qu1cksc0pe (1378 score) - All-in-One malware analysis tool.
 https://github.com/CYB3RMX/Qu1cksc0pe
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T14:53:40.869Z] ---
+# [AI-AGENTS] patrickchugh/terravision (1169 score) - Cloud architecture diagrams in both directions: AI prompt or JSON to diagram, di
+https://github.com/patrickchugh/terravision
+# [AI-AGENTS] modelcontextprotocol/php-sdk (1278 score) - The official PHP SDK for Model Context Protocol servers and clients. Maintained 
+https://github.com/modelcontextprotocol/php-sdk
+# [AI-AGENTS] svnscha/mcp-windbg (1118 score) - Model Context Protocol for WinDbg.
+https://github.com/svnscha/mcp-windbg

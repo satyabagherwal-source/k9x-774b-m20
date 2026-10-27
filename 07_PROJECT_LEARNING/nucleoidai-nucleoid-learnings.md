@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `b2ca6a62`  
+> **Source Version**: `8c9b7d76`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:14:27.054Z  
+> **Timestamp**: 2026-10-27T14:54:07.652Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:14:26.821Z  
+> **Harvest Timestamp**: 2026-10-27T14:54:07.045Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -922,887 +922,397 @@ export function enlarge(matrix, rows, cols) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b2ca6a62` (2026-10-27)
-**Commit Message**: Add reward-driven proposal strategy learner
+### Incident Patch 1: `8c9b7d76` (2026-10-27)
+**Commit Message**: Add reactive base-two exponentiation (NUC 56)
 
-Add an opt-in, category-conditioned UCB1 bandit that learns which proposal approach (reuse_first or evidence_first) works best within a category, using the existing verified advisory rewards.
+Independently accepted in continuous mode: 9 cases use fewer tokens, 680 remain equal, and none increase. Preserve accepted powf semantics and record the actual reward-driven strategy update.
 
-- tests/proposals/strategy.rs: typed policy, receipts, UCB1 selection, and immutable single-owner checkpoint chain. New ignored commands select_proposal_strategy (caller, before drafting) and learn_proposal_strategy (evaluator, after the saved report).
-- tests/proposals.rs: evaluate_proposal now embeds strategy_learning attribution (not_configured or attributed); report types became deserializable with deny_unknown_fields so saved reports can be reloaded and revalidated.
-- tests/proposals/strategy_tests.rs: controlled regressions covering exploration, reward-dependent choice, persistence, provenance, tampering, and duplicate rejection.
-- Agent profiles, skills, proposals instructions, CONTRIBUTING.md and NUC 1 document the workflow, schemas, and limits.
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-Scoring formula, acceptance decisions, token policy, and uniform category selection are unchanged. Blocked or unscored outcomes never increment trials. This is not LLM-weight training.
-
-**File**: `.github/agents/nuc-evaluate.agent.md` (modified, +22/-3)
+**File**: `README.md` (modified, +14/-0)
 ```diff
-@@ -34,7 +34,8 @@ You independently evaluate exactly one completed NUC revision. Follow
-   comparisons, and failures never become successful skips. Decide Accepted,
-   Rejected, or Blocked from actual evidence, not the proposer's claim.
- - Treat candidate sources and the baseline as read-only. Write only new
--  reports in the session workspace and normal ignored build outputs.
-+  reports/learner checkpoints in the external session workspace and normal
-+  ignored build outputs; never overwrite old state or reports.
- - For optional advisory scoring, verify the caller's rubric/blob pin frozen
-   before drafting. After independent checks, create only a new external session
-   assessment bound to that criterion/rubric, baseline, proposal path and
-@@ -45,8 +46,22 @@ You independently evaluate exactly one completed NUC revision. Follow
-   are errors, never successful unscored fallbacks.
- - Use the Rust evaluator's actual measured elapsed seconds and scope, not
-   self-reported time or model/API estimates. Scores are advisory experience
--  reporting, not a learner; they never override gate/independent failures or
--  change category selection and token applicability.
-+  reporting; the separate optional UCB1 strategy learner consumes verified
-+  rewards without overriding gate/independent failures, uniform category
-+  selection, explicit requests, or token applicability.
-+- For configured learning, verify the caller's pinned policy and genuinely
-+  pre-draft selection/trial bindings, and preserve all four attribution
-+  variables into `evaluate_proposal` so its saved report binds the arm.
-+  Absent configuration is explicitly unattributed; partial/stale/malformed
-+  supplied configuration is an error, never a fallback or reset.
-+- After checking the actual saved report and overall independent evidence,
-+  pin the report and actually invoke `learn_proposal_strategy` under the
-+  skill's update contract. Write one fresh external checkpoint only for
-+  genuinely scored attributed rewards; blocked/unscored/unattributed outcomes
-+  do not increment trials. Return its path/pin or explicit skip/error.
-+  Both single and continuous trials may learn, never retroactive old reports.
-+  Do not claim evaluator authentication, concurrent/global-head protection,
-+  LLM-weight training, or measured proposal-quality improvement.
- - Do not repair the candidate, regenerate exports, rewrite assertions or
-   cases, spawn agents, combine pending proposals, commit, push, or merge.
- - If the candidate changed after handoff or needs repair, return the evidence
-@@ -71,6 +86,10 @@ or explicit unscored reason. Timing excludes compilation, external checks,
- proposal/model time and report writing; it is not language runtime performance
- or total proposal cost. The core report's decision does not replace your
- overall decision from all independent checks.
-+Return policy/selection/trial attribution, report pin, selected approach and
-+learning update/skip/error with new checkpoint path/raw blob pin when created.
-+The caller retains the single-owner chain head for future pre-draft selection;
-+learning itself never starts another proposal.
- Do not offset a required-gate per-case increase with savings elsewhere. The caller owns
- integration and status/index updates; outcome metadata does not recursively
- trigger more agents.
-```
-
-**File**: `.github/agents/nuc-proposal.agent.md` (modified, +21/-1)
-```diff
-@@ -48,7 +48,23 @@ You draft and prototype exactly one added or updated NUC revision. Follow
-   rubric and full Git blob pin frozen before drafting. Preserve them outside
-   the repository; never assess your own usefulness or independent checks.
-   Missing optional evidence is unscored, not zero; scoring does not change
--  verdicts, token policy, or category selection and implements no learner.
-+  verdicts, token policy, or category selection. The separate optional
-+  category-conditioned bandit consumes verified rewards, not LLM weights.
-+- For configured learning, require the caller-frozen policy and pre-draft
-+  selection receipt paths/raw blob pins, trial identity and selected strategy.
-+  Verify their proposal/baseline/category/mode/parent bindings and actually
-+  consume `reuse_first` (accepted primitives/helpers, minimal additive change)
-+  or `evidence_first` (concrete failing/unsupported case, minimal preserving
-+  extension). The caller must run the selector before drafting; do not reselect,
-+  retrofit attribution, or silently reset invalid/missing state.
-+- Preserve requested feature/category, uniform category draw, and every
-+  safeguard under either strategy. Record how the selected approach was used,
-+  not just its label. Absent learning config is explicitly `not_configured`;
-+  partial/stale/mismatched supplied config stops preparation.
-+- Do not update your own trial's learner, run `learn_proposal_strategy` on it,
-+  or create its actual assessment/evaluation/checkpoint. Only the independent
-+  evaluator may learn from the saved final report; both attributed modes are
-+  eligible without authorizing continuation or model-weight training.
+@@ -1072,6 +1072,20 @@ assert([first.x@0, second.x@first], [10, 30])
+   transactional. See the root
+   `nucleoid.spec.md` **Class-level state version anchors** contract.
  
- ## Handoff
- 
-@@ -59,6 +75,10 @@ runtime applicability and supporting rationale, expected token ran/skipped polic
- candidate worktree, changed files, development and syntax-compatibility checks,
- any supplied frozen rubric path/blob pin, and any blockers. Do not populate
- the independent evaluator's assessment.
-+Include any supplied policy/selection paths and raw pins, algorithm/scope,
-+trial identity, selected approach and concrete consumption actions. Preserve
-+all four strategy attribution variables for the evaluator; otherwise mark
-+the handoff explicitly unattributed.
- If the caller-owned Rust improvement pass is pending, return only a preparation
- checkpoint and await a same-revision follow-up to recheck/finalize; do not
- freeze or declare readiness before that pass and final validation.
-```
-
-**File**: `.github/instructions/proposals.instructions.md` (modified, +58/-3)
-```diff
-@@ -56,8 +56,61 @@ exclude compilation, external checks, proposal/model time and report writing.
- Return its raw seconds/scope, usefulness basis, eligibility, formula and
- base/adjusted reward or unscored reason. Scoring never changes deterministic
- gate results, token applicability or the independent overall decision; preserve
--all mode/category/compatibility safeguards. This is advisory experience
--reporting, not a learned proposal-selection or training mechanism.
-+all mode/category/compatibility safeguards. Scoring alone reports experience;
-+the separate opt-in category-conditioned UCB1 strategy learner below uses the
-+verified reward without training LLM weights or changing this score formula.
++**Reactive base two powers**
 +
-+## Reward-driven strategy learning
-+
-+Follow [NUC 1](../../docs/nuc-0001.md#reward-driven-proposal-strategies) and
-+the [callable command/schema contract](../../CONTRIBUTING.md#reward-driven-proposal-strategies).
-+The fixed ordered strategies are `reuse_first` (accepted primitives/helpers
-+and a minimal additive implementation) and `evidence_first` (a concrete
-+unsupported/failing case or counterexample, then a minimal preserving
-+fix/extension). Both keep the requested feature/category and all mandatory
-+baselines/checks. The learner never reweights categories: unspecified category
-+selection stays uniform, while explicit requests and mode/stop rules prevail.
-+
-+When configured, the caller actually runs `select_proposal_strategy` before
-+drafting/dispatch, using its latest retained immutable policy head or explicit
-+empty-history genesis. Freeze policy and receipt raw full blob pins, unique
-+trial ID, proposal path, accepted baseline, category, mode and chosen strategy.
-+The fresh proposer verifies and executes the selected approach and hands off
-+concrete consumption evidence and unchanged attribution. Never backfill old
-+reports, reselect after seeing a candidate, or silently reset invalid state.
-+
-+The independent evaluator preserves the pinned policy/receipt into the actual
-+`evaluate_proposal` report. After checking that saved report and the complete
-+independent outcome, it pins the report and actually invokes the separate
-+`learn_proposal_strategy` command with a fresh external checkpoint path.
-+Reports precede checkpoints, avoiding circular hashes or multi-output pretend
-+success. The existing reward is validated against score/evidence and report
-+provenance; it is not supplied as a self-reported number.
-+
-+Only genuinely scored attributed outcomes count: useful with the unchanged
-+time discount, assessed neutral 0, or known core/external rejection -1.
-+Blocked/unresolved/unscored/unknown/missing evidence and unattributed outcomes
-+never increment trials. `all_attributed_trials` includes both modes, even
-+explicit single Documentation trials; it never authorizes continuation.
-+Absent learning config is explicitly `not_configured`; partial, malformed,
-+stale, duplicate or mismatched supplied inputs are errors, never fallbacks.
-+Deduplicate trial IDs and actual evaluated proposal blobs, not just report
-+bytes/timing. Preserve all acceptance, token, compatibility and version rules.
-+
-+The evaluator may write only new external session reports/checkpoints, never
-+candidate sources or prior artifacts. Return the new checkpoint path/raw pin
-+or explicit skip/error; the caller retains one head and all ancestors,
-+receipts, reports and scoring evidence for subsequent validation/selection.
-+Use that updated head for the next authorized proposal, or keep the old head
-+on a legitimate skip. A learner error pauses the caller as a process blocker
-+without changing the already-recorded gate/independent decision.
-+
-+This is a single-owner immutable checkpoint chain, not concurrent/global-head
-+protection or cryptographic evaluator authentication/proof of pre-draft timing.
-+The category-conditioned two-arm bandit is real reward-driven strategy
-+learning, not LLM-weight training or full multi-step RL. Cold starts, small
-+samples, rubric/reward proxies and noisy partial timing limit conclusions;
-+do not claim improved proposal quality from fixtures or one trial.
- 
- ## Execution mode and token policy
- 
-@@ -129,7 +182,9 @@ Pin the accepted Git revision and record its token baseline before editing
- runtime behavior or executable cases. Give the proposer its requested change,
- proposal path and confirmed category, execution mode and runtime applicability
- with supporting rationale, baseline revision and immutable JSON artifact,
--and candidate worktree. Use `.github/agents/nuc-proposal.agent.md` and
-+and candidate worktree. When configured, also supply the pre-draft strategy
-+receipt and policy paths/raw pins, trial identity and actionable approach.
-+Use `.github/agents/nuc-proposal.agent.md` and
- `.github/skills/nuc-proposal/SKILL.md` for drafting, prototyping, equivalent
- case rewrites, synchronization, and development checks. It must not run the
- acceptance gate or mark the proposal Accepted or Rejected.
-```
-
-**File**: `.github/skills/nuc-evaluate/SKILL.md` (modified, +75/-2)
-```diff
-@@ -31,7 +31,8 @@ matches the accepted revision. Missing prerequisites block evaluation; never
- invent measurements or guess an uncertain category.
- 
- Treat candidate sources, generated exports, and the baseline as read-only.
--Only new session reports and normal ignored build outputs may be written.
-+Only new external session reports/learner checkpoints and normal ignored build
-+outputs may be written; never overwrite old state or reports.
- Do not repair code, rewrite cases or assertions, regenerate exports, replace
- the baseline, or change proposal status/index metadata. A source change after
- handoff requires a fresh proposal/evaluation pair, not an in-place repair.
-@@ -89,6 +90,16 @@ or provenance-mismatched inputs must surface explicit errors; never drop them
- and retry as a successful unscored fallback. A claim of passed integrity/legacy
- checks that contradicts the core gate is an input error, not usable evidence.
- 
-+For optional strategy learning, require the caller's policy and pre-draft
-+selection receipt, both raw full blob pins, trial identity and selected
-+approach consumed by the proposer. Verify their bindings to this
-+proposal/baseline/category/mode and unchanged policy; never choose a strategy
-+after reading the candidate or assign an older report to an arm. The original
-+uniform category selection, explicit requests and token matrix still apply.
-+All four attribution variables below are required together; partial/invalid
-+configuration is an error, not `not_configured`. Missing all configuration
-+means the trial is explicitly unattributed and cannot train a policy.
-+
- ## Measure and decide
- 
- The **token non-regression gate** requires each compared case to use the same
-@@ -131,6 +142,12 @@ From the supplied candidate worktree, set:
- - Optionally, `NUC_PROPOSAL_ASSESSMENT` to your new absolute external assessment
-   JSON path; this requires the pinned rubric. Confirm its proposal blob still
-   matches the frozen handoff. Unset absent optional variables, not empty strings.
-+- For configured strategy learning, preserve `NUC_STRATEGY_POLICY`,
-+  `NUC_STRATEGY_POLICY_REVISION`, `NUC_STRATEGY_SELECTION`, and
-+  `NUC_STRATEGY_SELECTION_REVISION` from the pre-draft handoff. Use absolute
-+  external JSON paths and raw `git hash-object --no-filters` pins. Do not create
-+  a different receipt, change the strategy, or update the policy before this
-+  evaluation. Any supplied trial/category hints must match the receipt.
- 
- Run the deterministic evaluator in every mode; only its token portion is
- optional:
-@@ -184,7 +201,58 @@ The top-level `decision` is still the deterministic core gate's result, not a
- replacement for your overall independent decision. External failures still
- reject and missing independent prerequisites still block, regardless of score.
- Scoring never changes category selection, acceptance or token policy; no
--learner, adaptive strategy or model training is implemented.
-+score is itself evidence of trained LLM weights or improved proposal quality.
-+
-+## Update the attributed strategy policy
-+
-+Follow [NUC 1](../../../docs/nuc-0001.md#reward-driven-proposal-strategies)
-+and the [update command contract](../../../CONTRIBUTING.md#reward-driven-proposal-strategies).
-+After the actual `evaluate_proposal` report is saved, **read and independently
-+check it**: final handed-off proposal blob, preserved mode/category/runtime,
-+receipt and policy pins/trial identity, advisory evidence/reward, and overall
-+independent outcome. A report's core decision never replaces that outcome.
-+If an early input/infrastructure failure produced no report, return that
-+blocker without fabricating a reward or checkpoint. Failed or unresolved
-+external evidence must not be reported as passed.
-+
-+For a configured, genuinely pre-attributed trial, **actually invoke** the
-+separate learner after those checks, even in single mode:
-+
-+```powershell
-+$env:NUC_PROPOSAL_REPORT_REVISION = (git --no-pager hash-object --no-filters -- $env:NUC_PROPOSAL_REPORT).Trim()
-+$env:NUC_STRATEGY_CHECKPOINT = '<fresh absolute external session JSON path>'
-+cargo test --test proposals learn_proposal_strategy -- --ignored --exact --nocapture
++```nuc
++level = 2
++multiplier = Math.exp2(level)
++assert(multiplier, 4)
++level = 5
++assert(multiplier, 32)
 +```
 +
-+Use the same pinned parent policy/selection, baseline, proposal and preserved
-+mode/runtime inputs as evaluation. The report already exists before the
-+checkpoint; never run evaluation again merely to add attribution or create
-+self-referential hashes. This command verifies the saved report, actual final
-+proposal, scoring artifacts/formula and parent/receipt provenance before
-+writing **one new create-once checkpoint**. Candidate sources and prior
-+artifacts stay read-only.
++- Accepted [NUC 56](docs/nuc-0056.md) names `Math.exp2(value)` while retaining
++  the exact accepted `Math.pow(2, value)` numeric operation and reactive call
++  behavior. Ordinary `Math.pow` remains supported.
 +
-+Only existing verifier **scored** rewards count: useful with its unchanged
-+time discount, neutral 0, or genuine core/known external rejection -1.
-+Blocked/unscored/unknown/missing evidence do not increment trials or create
-+a checkpoint; record the explicit skip reason and retain the prior head.
-+Unconfigured/legacy rep
+ ## Benchmark
+ 
+ This is the comparation our sample order app in Nucleoid IDE against MySQL and Postgres with using Express.js and Sequelize libraries.
 ```
 
-**File**: `.github/skills/nuc-proposal/SKILL.md` (modified, +68/-6)
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +6/-0)
 ```diff
-@@ -113,8 +113,56 @@ Require the supplied rubric/pin when scoring is requested; preserve its
- criterion, proposal path, and accepted-baseline binding through the handoff.
- Do not alter the rubric or assess your own usefulness/independent checks.
- Missing optional usefulness evidence is legitimately unscored, not zero;
--acceptance checks and token policy are unchanged. This is experience reporting,
--not an implemented learner or adaptive selection/training policy.
-+acceptance checks and token policy are unchanged. Scoring alone reports
-+experience; optional category-conditioned UCB1 learning consumes verified
-+rewards under the separate protocol below, never trains LLM weights.
-+
-+## Select and consume a proposal strategy
-+
-+Follow [NUC 1's strategy policy](../../../docs/nuc-0001.md#reward-driven-proposal-strategies)
-+and the [callable commands and schemas](../../../CONTRIBUTING.md#reward-driven-proposal-strategies).
-+Category selection is still caller-owned and uniformly random when unspecified;
-+explicit requested categories/features and the single-proposal stop rule are
-+unchanged. A strategy selects an approach within that category, not another
-+feature or category.
-+
-+For configured learning, the **caller must actually run**
-+`cargo test --test proposals select_proposal_strategy -- --ignored --exact --nocapture`
-+**before drafting or dispatching the proposer**. Use the latest verified
-+single-owner checkpoint (or an explicit frozen empty-history genesis), not an
-+older head or fabricated history. Fix `NUC_PROPOSAL`, accepted
-+`NUC_PROPOSAL_BASELINE`, preserved `NUC_PROPOSAL_MODE`/runtime inputs,
-+`NUC_STRATEGY_CATEGORY`, unique `NUC_STRATEGY_TRIAL_ID`, pinned
-+`NUC_STRATEGY_POLICY`/`NUC_STRATEGY_POLICY_REVISION` and fresh
-+`NUC_STRATEGY_SELECTION`; unset any old selection pin/checkpoint output.
-+After success, freeze `NUC_STRATEGY_SELECTION_REVISION` using
-+`git hash-object --no-filters` before drafting. Do not select again in the
-+worker, backfill attribution, or silently reset missing/invalid state.
-+
-+Inside the proposal agent, require both policy/receipt paths and raw full blob
-+pins when learning is configured. Verify them and their algorithm, parent,
-+trial ID, proposal path, accepted baseline, confirmed category and mode against
-+the caller's inputs. Partial, stale, changed, or mismatched inputs stop work;
-+return the blocker instead of dropping learning. With no learning configuration,
-+record `not_configured`/unattributed and proceed with the ordinary safeguards.
-+Use no invented reward or self-assessed benefit.
-+
-+**Execute the selected approach**, in stable registry order:
-+
-+- `reuse_first`: start from accepted primitives/helpers and implement the
-+  requested feature with a minimal additive extension.
-+- `evidence_first`: start from a concrete unsupported/failing use case or
-+  counterexample for the requested feature, then make the minimal preserving
-+  fix/extension.
-+
-+Both preserve all baseline, behavior/integrity, compatibility, development,
-+independent-evaluation and applicable token requirements. Neither changes the
-+feature scope, category, rewards or acceptance criteria. Include concrete
-+preparation actions showing strategy consumption in the handoff; merely logging
-+a label is insufficient. Never run `learn_proposal_strategy` on your own trial,
-+write its real assessment/report/checkpoint, or populate an independent score.
-+Both single and continuous genuinely attributed trials may later learn, but
-+only the independent evaluator may update from this revision's saved report.
- 
- When token comparison is required, new measured cases need behavior-equivalent
- accepted-syntax programs with the same document, title, canonical assertions,
-@@ -196,6 +244,15 @@ a fresh report path; do not launch it yourself. The caller owns integration
- and evaluation status/index updates. The proposal agent must not commit, push,
- or merge.
- 
-+For configured learning, also hand off the unchanged policy and selection
-+paths/raw pins, algorithm/scope, trial identity, selected strategy and how it
-+was followed. Preserve all four `NUC_STRATEGY_POLICY`,
-+`NUC_STRATEGY_POLICY_REVISION`, `NUC_STRATEGY_SELECTION` and
-+`NUC_STRATEGY_SELECTION_REVISION` inputs into evaluation. Unconfigured trials
-+are explicitly unattributed; do not retrofit old reports. Only new external
-+session checkpoints may be written after independent evaluation, never old
-+policy or candidate sources.
-+
- ## Record rejected outcomes (caller only)
- 
- After the independent evaluator returns `Rejected`, the coordinating caller
-@@ -247,10 +304,15 @@ workers across cycles or combine pending proposals.
- 
- Use actual independent behavior/compatibility results and token measurements
- when comparison ran as feedback for the next enhancement; report legitimate
--skips rather than inventing counts. Preserve earlier artifacts and all
--acceptance, compatibility and version-protection rules. This is iterative
--proposal/evaluation feedback, not separate 
+@@ -457,3 +457,9 @@
+ {"id":"spec-0457","description":"Nucleoid restores class anchors histories and declarations on caught rollback","code":"class Sample(seed):\n    this.x = seed\n    this.enabled = true\nif $Sample.enabled:\n    $Sample.x = $Sample.x@first - 1\nitem = Sample(10)\noriginal = item.x@first\ntry:\n    delete item.x\n    item.x = 50\n    $Sample.extra = $Sample.x@first\n    throw \"RESTORE_ANCHOR\"\ncatch error:\n    assert(error, \"RESTORE_ANCHOR\")\nassert(item.x, 9)\nassert(item.x@first, 10)\nassert(item.x@previous, 10)\nassert(item.x@2, null)\nassert(item.extra, null)\nassert(original, 10)\nitem.enabled = true\nassert(item.x, 9)\ndelete item.x\nitem.x = 30\nassert(item.x, 29)\nassert(item.x@first, 30)\nassert(original, 30)\n[item.x, original]","return":"[29,30]"}
+ {"id":"spec-0458","description":"Nucleoid protects direct class history cycles and read only destinations","code":"class Sample:\n    this.x = 10\n    this.items = [1, 2]\n    this.enabled = true\nitem = Sample()\ntry:\n    $Sample.x = $Sample.x@last - 1\ncatch error:\n    assert(error, TypeError(\"Circular Dependency\"))\ntry:\n    $Sample.x = $Sample.x@previous - 1\ncatch error:\n    assert(error, TypeError(\"Circular Dependency\"))\ntry:\n    $Sample.x = $Sample.x@first + $Sample.x\ncatch error:\n    assert(error, TypeError(\"Circular Dependency\"))\ntry:\n    $Sample.x@first = 4\ncatch error:\n    assert(error, TypeError(\"State versions are read-only\"))\ntry:\n    delete $Sample.x@first\ncatch error:\n    assert(error, TypeError(\"State versions are read-only\"))\ntry:\n    if $Sample.enabled:\n        $Sample.items@first.push(3)\ncatch error:\n    assert(error, TypeError(\"State versions are read-only\"))\ntry:\n    $Sample.bad = Math.PI@first\ncatch error:\n    assert(error, TypeError(\"State versions require a variable or object property\"))\nclass Empty\n$Empty.x = $Empty.x@first.value\ntry:\n    absent = Empty()\ncatch error:\n    assert(error, ReferenceError(\"$Empty.x@first is not defined\"))\nassert(item.x, 10)\nassert(item.x@first, 10)\nassert(item.x@1, null)\nassert(item.items, [1, 2])\nassert(item.items@1, null)","return":null}
+ {"id":"spec-0459","description":"Nucleoid preserves moving class conditionals beside fixed first anchors","code":"class Counter(seed):\n    this.x = seed\n    this.enabled = false\nif $Counter.enabled:\n    $Counter.x = $Counter.x@last - 1\nitem = Counter(10)\nitem.enabled = true\nassert(item.x, 9)\nitem.enabled = false\nitem.enabled = true\nassert(item.x, 8)\nassert(item.x@first, 10)\nassert(item.x@previous, 9)\nclass Anchor(seed):\n    this.x = seed\n    this.y = seed\n    this.enabled = false\nif $Anchor.enabled:\n    $Anchor.x = $Anchor.x@first - 1\n    $Anchor.y = $Anchor.y@0 - 1\nanchored = Anchor(10)\nanchored.enabled = true\nassert([anchored.x, anchored.y], [9, 9])\nanchored.enabled = false\nanchored.enabled = true\nassert([anchored.x, anchored.y], [9, 9])\nassert([anchored.x@first, anchored.y@first], [10, 10])\nassert([anchored.x@2, anchored.y@2], [null, null])\nclass Previous(seed):\n    this.x = seed\n    this.x = seed + 10\n    this.enabled = false\nif $Previous.enabled:\n    $Previous.x = $Previous.x@previous - 1\nprevious = Previous(10)\nassert(previous.x@previous, 10)\nprevious.enabled = true\nassert(previous.x, 9)\nassert(previous.x@previous, 20)\nprevious.enabled = false\nprevious.enabled = true\nassert(previous.x, 19)\nassert(previous.x@first, 10)\nassert(previous.x@1, 20)\nassert(previous.x@2, 9)\nassert(previous.x@previous, 9)\nassert(previous.x@3, 19)\nassert(previous.x@4, null)\n[item.x, anchored.x, anchored.y, previous.x, previous.x@previous]","return":"[8,9,9,19,9]"}
++{"id":"spec-0460","description":"Nucleoid keeps base two exponentiation reactive","code":"power = 2\nconverted = Math.exp2(power)\nassert(converted, 4)\npower = 3\nassert(converted, 8)\npower = -2\nassert(converted, 0.25)\npower = 0\nassert(converted, 1)\npower = -0\nassert(converted, 1)\npower = 4\nassert(converted, 16)\nconverted","return":"16"}
++{"id":"spec-0461","description":"Nucleoid preserves base two exponential coercion and omissions","code":"text = \" 3 \"\nconverted = Math.exp2(text)\nassert(converted, 8)\ntext = true\nassert(converted, 2)\ntext = false\nassert(converted, 1)\ntext = []\nassert(converted, 1)\ntext = [\"-1\"]\nassert(converted, 0.5)\ntext = Date(2)\nassert(converted, 4)\ntext = [1, 2]\nassert(Number.isNaN(converted), true)\ntext = \"invalid\"\nassert(Number.isNaN(converted), true)\nliteral = Math.exp2(null)\nassert(literal, 1)\nomitted = Math.exp2()\nassert(Number.isNaN(omitted), true)","return":null}
++{"id":"spec-0462","description":"Nucleoid preserves base two exponential extremes and underflow","code":"power = 1023\nconverted = Math.exp2(power)\nassert(Number.isFinite(converted), true)\npower = 1024\nassert(converted, Number.POSITIVE_INFINITY)\npower = -1074\nassert(converted, 5e-324)\npower = -1075\nassert(converted, 0)\nassert(1 / converted, Number.POSITIVE_INFINITY)\npo
 ```
 
-**File**: `CONTRIBUTING.md` (modified, +184/-4)
+**File**: `dataset/nucleoid.synth.36.jsonl` (added, +4/-0)
 ```diff
-@@ -247,10 +247,11 @@ or GitHub Actions proposal trigger.
- #### Advisory usefulness/cost scoring
+@@ -0,0 +1,4 @@
++{"id":"synth-36-0001","description":"A named power of two keeps a scaled capacity live as either input changes","code":"stage = 2\ncapacity = 5\nfactor = Math.exp2(stage)\nscaled = capacity * factor\nassert(scaled, 20)\nstage = -1\nassert(scaled, 2.5)\ncapacity = 8\nassert(scaled, 4)\nscaled","return":"4"}
++{"id":"synth-36-0002","description":"Base two scaling retains intrinsic input coercion while extra values are numerically ignored","code":"input = \" 3 \"\nfactor = Math.exp2(input, Date(99), [1, 2])\nassert(factor, 8)\ninput = true\nassert(factor, 2)\ninput = []\nassert(factor, 1)\nassert(Math.exp2(null), 1)\nassert(Number.isNaN(Math.exp2()), true)\nfactor","return":"1"}
++{"id":"synth-36-0003","description":"Independent class powers recover when a missing exponent is restored","code":"class Gain(exponent):\n    this.exponent = exponent\n$Gain.factor = Math.exp2($Gain.exponent)\nfirst = Gain(2)\nsecond = Gain(-1)\nassert([first.factor, second.factor], [4, 0.5])\ndelete first.exponent\nassert(first.factor, null)\nassert(second.factor, 0.5)\nfirst.exponent = 3\nassert([first.factor, second.factor], [8, 0.5])\n[first.factor, second.factor]","return":"[8,0.5]"}
++{"id":"synth-36-0004","description":"A failed exponent update rolls back while an ignored optional read still controls deferral","code":"class Dial\ndial = Dial()\ndial.power = 2\nscale = Math.exp2(dial.power, dial.optional)\nassert(scale, null)\ndial.optional = 9\nassert(scale, 4)\ntry:\n    dial.power = 3\n    throw \"RESTORE_POWER\"\ncatch error:\n    assert(error, \"RESTORE_POWER\")\nassert(dial.power, 2)\nassert(scale, 4)\ndelete dial.optional\nassert(scale, null)\ndial.optional = 0\nassert(scale, 4)\ndial.power = -2\nassert(scale, 0.25)\nscale","return":"0.25"}
+```
+
+**File**: `docs/README.md` (modified, +55/-0)
+```diff
+@@ -1279,6 +1279,11 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md).
+ - Built-in calls participate in the dependency graph like any other expression.
+ - Mutating a list re-evaluates its dependents.
+ - `Math.max` and `Math.min` propagate `NaN`, including when an argument cannot be coerced to a number.
++- Accepted [NUC 56](nuc-0056.md) adds only static `Math.exp2(value)`, computing
++  exactly the accepted `Math.pow(2, value)` host powf operation after intrinsic
++  first-input conversion and the existing supplied-Undefined gate. The
++  [base-two contract](../nucleoid.spec.md#reactive-base-two-exponentiation)
++  defines numeric equivalence, ignored extras and inherited reactive behavior.
+ - The [NUC 50 candidate](nuc-0050.md) adds only static
+   `Math.toRadians(value)`: intrinsically convert the first input, compute
+   `factor = PI / 180.0`, then multiply by that factor, never multiply by PI
+@@ -1708,6 +1713,55 @@ assert(radians, -Math.PI / 2)
  
- The existing Rust `evaluate_proposal` entry point also reports advisory
--experience scores. It does not implement a learner, adaptive proposal/category
--selection, model training, paid calls, or a language/runtime feature. Scores
--never change deterministic verdicts, independent acceptance requirements, or
--the single/continuous token policy.
-+experience scores. The separate opt-in UCB1 strategy learner below consumes
-+verified rewards; the scorer's formula and decisions are unchanged. Neither
-+mechanism trains LLM weights, reweights categories, makes paid calls, or changes
-+the language/runtime. Scores and learning never change independent acceptance
-+requirements or the single/continuous token policy.
+ ---
  
- Before drafting, the **caller**, not the proposer, may create and freeze a
- usefulness rubric outside the repository. Its exact JSON schema is:
-@@ -380,6 +381,185 @@ cargo test --test proposals evaluate_proposal -- --ignored --nocapture
-   existing process, irrespective of an advisory score. Return both evidence and
-   scoring limitations honestly.
- 
-+#### Reward-driven proposal strategies
++## Reactive base two exponentiation
 +
-+The ignored `select_proposal_strategy` and `learn_proposal_strategy` entry
-+points in `tests/proposals.rs` use `tests/proposals/strategy.rs`. This is a
-+persisted reward-driven bandit, not just advice logging. It learns an approach
-+within a caller-confirmed category; it cannot change the requested feature,
-+uniform category draw, acceptance checks, token policy, or continuation mode.
-+It uses no new dependencies, runtime features, LLM-weight training or paid calls.
++### Nucleoid names reactive base two powers
 +
-+The fixed typed arm registry is ordered:
-+
-+1. `reuse_first`: prioritize accepted primitives/helpers, then a minimal
-+   additive implementation of the requested feature.
-+2. `evidence_first`: start from a concrete unsupported/failing use case or
-+   counterexample for that feature, then the minimal preserving fix/extension.
-+
-+Both require the same mandatory baselines and checks. The proposer must
-+describe how it followed the selected approach in its handoff; a logged but
-+unused label is not strategy consumption.
-+
-+**State and receipts.** Before drafting, the caller freezes an external
-+create-once JSON policy. The exact supported genesis schema is:
-+
-+```json
-+{
-+  "algorithm": "nuc-category-strategy-ucb1-v1",
-+  "reward_metric": "nuc-advisory-usefulness-evaluator-time-v1",
-+  "learning_scope": "all_attributed_trials",
-+  "history": []
-+}
++```
++def scale power => Math.exp2(power)
++power = 3
++ratio = scale(power)
++assert(ratio, 8)
++power = -2
++assert(ratio, 0.25)
++power = 0
++assert(ratio, 1)
++ratio
 +```
 +
-+Both single and continuous attributed trials can learn, including explicit
-+Documentation requests; a single trial never authorizes continuation.
-+There is no automatic genesis/reset or import of older unassigned reports.
-+Retain the latest verified checkpoint and all ancestors, receipts, reports,
-+rubrics and assessments outside the repository.
++- This is the complete new `tests/reference.md` program, without its title
++  and expected-return metadata; it returns `1`. Accepted [NUC 56](nuc-0056.md)
++  and the [root contract](../nucleoid.spec.md#reactive-base-two-exponentiation)
++  specify only unshadowed static `Math.exp2(value)`.
++- After Math's existing any-supplied-Undefined gate, intrinsically convert the
++  first argument with `Value::to_number` and compute `2.0_f64.powf(first)`.
++  Omission supplies numeric NaN. Ordinary `Math.pow(2, value)` stays supported.
++- Match every non-NaN result by bits and NaNs by classification against the
++  accepted pow operation, including fractional and extreme exponents,
++  infinities, subnormals and positive-zero underflow. Both zero exponents
++  yield one. Do not substitute native `f64::exp2`, exponent/log algebra,
++  shortcuts or rescaled/fused math; no accuracy or speed claim is made.
++- Literal null converts to zero without changing live assignment or
++  parameter-null deferral. Numbers, booleans, strings, lists, dates and
++  nonnumeric values retain their intrinsic conversions and NaN results.
++- Every supplied expression evaluates once left to right. Ignored extras
++  are not numerically converted, but retain dependencies, effects, strict
++  errors and the supplied-Undefined gate, including deletion and recovery.
++- Conversion and the fixed base do not consult shadowable Number or Math
++  constants. State/local Math bindings and ordinary `.Math` members retain
++  lookup; `Math.exp2` value reads remain unsupported/Undefined, not methods
++  that can be stored and called indirectly.
++- Independent class rules, functions, receivers, scopes, frames, graph
++  subscriptions and transaction rollback are inherited unchanged. There are
++  no new arity, numeric, type or range errors. Strict unknown arguments keep
++  `ReferenceError("<name> is not defined")`, even after Undefined; numeric
++  `Math = 7` keeps `TypeError("number.exp2 is not a function")`.
++- Sibling helpers, unknown/random static errors and accepted syntax remain
++  unchanged. No aliases, parser/lexer changes, public Rust APIs/types,
++  dependencies, versions or resource limits are introduced.
 +
-+`select_proposal_strategy` writes this receipt schema before drafting (angle
-+brackets describe values, not actual observations):
++---
 +
-+```json
-+{
-+  "algorithm": "nuc-category-strategy-ucb1-v1",
-+  "policy_revision": "<raw full parent policy Git blob ID>",
-+  "trial_id": "<unique caller-owned trial ID>",
-+  "proposal_path": "docs\\nuc-0001.md",
-+  "baseline_revision": "<full accepted commit ID>",
-+  "category": "Documentation",
-+  "mode": "single",
-+  "strategy": "reuse_first"
-+}
+ ## Reactive inverse interpolation
+ 
+ ### Unclamped inverse interpolation relationships stay live
+@@ -2150,6 +2204,7 @@ name.value                             read without depending
+ items.flatMap(callback)                 ordered one-level projection (Accepted NUC 41)
+ Math.remap(start, end, targetStart, targetEnd, value) unclamped static remapping (Accepted NUC 39)
+ Math.toRadians(value)                   static division-first degree conversion (NUC 50 candidate)
++Math.exp2(value)                        static powf-based base-two power (Accepted NUC 56)
+ Name[0]  Name["id"]  Name.find(...)    address an instance
+ value[start:end]  value[-n:]           slice, negative counts from the end
+ 
+```
+
+**File**: `docs/examples.md` (modified, +25/-0)
+```diff
+@@ -2511,6 +2511,31 @@ assert(child.x@3, null)
+   and the root **Class-level state version anchors** contract in
+   `nucleoid.spec.md`.
+ 
++## Reactive base two exponentiation
++
++**Reactive power of two scaling**
++
++```nuc
++power = -1
++amount = 80
++factor = Math.exp2(power)
++scaled = amount * factor
++assert(scaled, 40)
++amount = 20
++assert(scaled, 10)
++power = -2
++assert(scaled, 5)
++power = 2
++assert(scaled, 80)
++scaled
++# return: 80
 +```
 +
-+All five registered categories and both modes are typed; strategy order is
-+stable. Each category first explores unobserved arms in that order. Thereafter
-+it maximizes `mean + sqrt(2 * ln(category_trials) / arm_trials)` with
-+registry-order ties. Raw `r` in `[-1, 1]` is normalized to `(r + 1) / 2`.
-+Neutral `0` is observed as `0.5`; missing evidence is never a zero observation.
-+Counts/means are derived from history, not trusted serialized counters.
-+Counts must remain exactly representable (`<= 2^53 - 1`); all rewards/UCB
-+values must be finite. Cold start needs no special case or Infinity sentinel.
++- Accepted [NUC 56](nuc-0056.md) provides the named base-two helper without
++  changing accepted `Math.pow(2, power)`. The factor and scaled amount remain
++  live; see the [root contract](../nucleoid.spec.md#reactive-base-two-exponentiation)
++  for intrinsic conversion, ignored extras, deferral and numeric edge cases.
 +
-+A nonempty policy keeps the same four top-level fields. Each `history` item
-+is a strict typed object with:
-+
-+| Field | Value |
-+| --- | --- |
-+| `parent` | `{ "path": <absolute JSON path>, "revision": <raw blob pin> }` of the preceding policy |
-+| `selection` | `{ "path": <absolute JSON path>, "revision": <raw blob pin>, "input": <complete receipt above> }` |
-+| `evaluation` | `{ "path": <absolute JSON path>, "revision": <raw blob pin> }` of the already-saved evaluator report |
-+| `proposal_revision` | Actual final proposal blob from that report |
-+| `raw_reward` | Verified existing advisory final reward, before bandit normalization |
-+
-+The full chronological history and exact parent-prefix bindings are validated
-+on reload. Deduplicate **both** trial ID and actual evaluated proposal blob,
-+not merely report bytes; a rerun's elapsed time cannot earn a second update.
-+Unknown algorithm/metric/scope/strategy/category, nonfinite/out-of-range reward,
-+bad counters, changed artifacts
+ ## Copyright
+ 
+ Copyright 2020 Nucleoid
 ```
 
-**File**: `docs/nuc-0001.md` (modified, +33/-2)
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -116,7 +116,7 @@ Created: 31-Jul-2026
- - The caller completes the required Rust improvement pass, when applicable, before the final frozen proposal handoff.
- - The proposal agent returns a frozen handoff: proposal path and Git blob revision, execution mode, confirmed category and selection rationale when applicable, runtime applicability and supporting rationale, accepted baseline revision and artifact, candidate worktree, changed files, development and syntax-compatibility checks, and explicit blockers. It then stops editing the candidate.
- - After the completed handoff, the caller launches the fresh evaluation agent with that handoff and a fresh report path. The evaluator verifies the proposal blob and baseline revision independently.
--- The evaluator treats candidate sources, canonical training JSONL, generated normative exports, and the baseline as read-only; no repairs, case rewrites, regeneration, or status/index edits. It may write only new session reports and normal ignored build outputs.
-+- The evaluator treats candidate sources, canonical training JSONL, generated normative exports, and the baseline as read-only; no repairs, case rewrites, regeneration, or status/index edits. It may write new external session reports and learner checkpoints, and normal ignored build outputs, never overwrite prior artifacts.
- - The evaluator independently validates behavior, development checks, and export consistency, then runs `evaluate_proposal` with the preserved mode and validated applicability. This always checks behavior and integrity and runs token comparison only when required; only this role returns the acceptance decision.
- - A substantive revision, repair, rebase, or source change after handoff requires a new fresh proposal/evaluation pair, not an in-place evaluator repair.
- - The checked corpus is `nucleoid.spec.md`, `tests/reference.md`, and the `nuc` blocks in `README.md` and `docs/examples.md`. Generated Rust scaffolding, JSONL, and synthesized training cases are not token-scored.
-@@ -139,7 +139,7 @@ Created: 31-Jul-2026
- ### Advisory Usefulness and Evaluation Cost
+@@ -86,6 +86,7 @@ Created: 31-Jul-2026
+ | [41](nuc-0041.md) | Reactive Flat Mapping | Accepted |
+ | [42](nuc-0042.md) | Reactive Literal String Replacement | Accepted |
+ | [50](nuc-0050.md) | Reactive Degree to Radian Conversion | Accepted |
++| [56](nuc-0056.md) | Reactive Base Two Exponentiation | Accepted |
  
- - `tests/proposals.rs` adds callable advisory scoring to `evaluate_proposal`; scores never change its deterministic verdict, token applicability, category selection, or the independent acceptance requirements above.
--- This is scoring and experience reporting, not a proposal-selection learner, reinforcement-learning policy update, model training, paid call, or language/runtime feature.
-+- Scoring alone reports experience; the separate opt-in bandit below learns proposal strategies from those verified rewards. Neither mechanism trains LLM weights, makes paid calls, or changes the language/runtime.
- - Before drafting, the caller may freeze one independently testable usefulness criterion in a create-once session JSON rubric: `criterion_id`, `proposal_path`, `baseline_revision`, and `criterion`.
- - Keep scoring inputs outside the repository; pin the rubric's full Git blob using `git hash-object --no-filters` before drafting and preserve that pin through both handoffs. A criterion invented or changed after seeing the candidate cannot demonstrate usefulness for that revision.
- - The proposer preserves the caller-owned rubric and pin; it neither assesses its own usefulness nor supplies independent-check claims.
-@@ -169,6 +169,37 @@ Created: 31-Jul-2026
- - The existing top-level `decision` remains the deterministic core gate's result; advisory eligibility does not replace the evaluator's overall decision from all independent checks. Failed or unresolved external checks still require Rejected or Blocked under the ordinary rules.
- - Return scores and their limitations with the independent evaluation evidence; never infer usefulness merely from acceptance or use rewards to bypass a failure. JSON schemas and optional input paths are in [CONTRIBUTING.md](../CONTRIBUTING.md#advisory-usefulnesscost-scoring).
+ ### Reasoning enhancement
  
-+### Reward-Driven Proposal Strategies
+@@ -160,6 +161,7 @@ Created: 31-Jul-2026
+ | [53](nuc-0053.md) | Read-Only State Version Access | Standards Track | Runtime features | Accepted |
+ | [54](nuc-0054.md) | Literal Parameter Defaults | Standards Track | Runtime features | Accepted |
+ | [55](nuc-0055.md) | Class-Level State Version Anchors | Standards Track | Runtime features | Accepted |
++| [56](nuc-0056.md) | Reactive Base Two Exponentiation | Standards Track | Utility enhancement | Accepted |
+ 
+ ## Copyright
+ 
+```
+
+**File**: `docs/nuc-0056.md` (added, +237/-0)
+```diff
+@@ -0,0 +1,237 @@
++# NUC 56 -- Reactive Base Two Exponentiation
 +
-+- `tests/proposals.rs` and its focused `tests/proposals/strategy.rs` helper implement opt-in, category-conditioned UCB1 strategy learning: `nuc-category-strategy-ucb1-v1`.
-+- Category selection remains the unchanged uniform random draw above when unspecified; explicit categories, requested features, and single-proposal stop rules always take precedence. The learner chooses an approach **within** the confirmed category, never a category or replacement feature.
-+- The fixed typed strategy registry has this stable order; proposers must execute the selected approach, not merely record its label:
++```
++NUC: 56
++Title: Reactive Base Two Exponentiation
++Author: GitHub Copilot <223556219+Copilot@users.noreply.github.com>
++Status: Accepted
++Type: Standards Track
++Category: Utility enhancement
++Created: 27-Oct-2026
++```
 +
-+| Order | Strategy | Required preparation approach |
-+| --- | --- | --- |
-+| 1 | `reuse_first` | Prioritize accepted primitives/helpers; make a minimal additive implementation for the requested feature. |
-+| 2 | `evidence_first` | Begin with a concrete unsupported/failing use case or counterexample for the requested feature, then make the minimal preserving fix/extension. |
++## Abstract
 +
-+- Both strategies retain every man
++- Add only unshadowed static `Math.exp2(value)`, naming the existing
++  `Math.pow(2, value)` numeric operation.
++- Intrinsically convert the first argument and compute exactly
++  `2.0_f64.powf(first)`, retaining Math's supplied-Undefined gate.
++- Preserve accepted pow syntax, numeric results, argument evaluation,
++  reactive dependencies, shadowing, deferral and transaction recovery.
++
++## Motivation
++
++- Name base-two scaling directly in live multipliers, functions and
++  independent class rules without repeating a fixed base argument.
++- Make the helper usable in complete executable examples while preserving
++  their accepted numeric controls, assertions and explicit expected returns.
++- Provide a callable utility, not a numerics rewrite or a claim of improved
++  accuracy, runtime speed or proposal quality.
++
++## Rationale
++
++- The caller's one uniform draw from the live NUC 1 eligible registry selected
++  index `2` of four, `Utility enhancement`. A standard Math helper clearly
++  fits that confirmed category; there is no redraw or reclassification.
++- Consume the caller-selected `reuse_first` approach: inspect accepted Math
++  dispatch, intrinsic conversion, argument evaluation and the analogous
++  `Math.toRadians` route, then add one match arm using the accepted powf
++  primitive without changing those shared helpers.
++- `Math.pow(2, value)` already defines the required host operation. Native
++  `f64::exp2`, exponent/log algebra, integer shortcuts and fused/rescaled
++  calculations could change rounding or classification and are out of scope.
++- Reuse already accepted calls, classes, functions, scopes and transactions;
++  no pending proposal is a dependency.
++- Exclude aliases, `Math.toDegrees`, first-class Math method values, numeric
++  configuration, parser/lexer changes, public Rust API/type changes,
++  dependencies and project version changes.
++
++## Specification
++
++### Numeric and call contract
++
++- The authoritative
++  [base-two section](../nucleoid.spec.md#reactive-base-two-exponentiation)
++  and its six entries specify the implemented contract and take precedence.
++- Evaluate all supplied argument expressions exactly once left to right per
++  call, including ignored extras and expressions after Undefined.
++- If any supplied value is Undefined, return Undefined before numeric
++  conversion. Preserve every argument's reads, dependencies, effects and
++  strict errors; an earlier Undefined does not skip a later expression.
++- Otherwise intrinsically convert only the first supplied value using the
++  dispatcher's existing `Value::to_number`. Omission supplies numeric NaN.
++- Numbers retain their values; literal null converts to zero; booleans,
++  strings, empty/singleton lists and dates retain existing conversion.
++  Other nonnumeric values yield numeric NaN, not a new type error.
++- Compute exactly `2.0_f64.powf(first)`, matching accepted
++  `Math.pow(2, value)` without any native exp2 substitution, algebraic
++  transformation, higher precision, rescaling or input shortcut.
++- Both zero exponents yield one. Fractional exponents, finite extremes,
++  overflow, subnormal rounding and positive-zero underflow match accepted
++  powf. Positive infinity yields positive infinity, negative infinity yields
++  positive zero, and numeric NaN yields numeric NaN.
++- Compare every non-NaN result, including zero, by bits against accepted pow;
++  compare expected NaNs by classification, not payload.
++- Extra values are numerically ignored and not converted, but participate
++  in the supplied-Undefined gate and retain their evaluation and dependencies.
++- Literal-null conversion does not override live assignment or parameter-null
++  deferral. Missing properties, deletion and later definition retain
++  inherited deferral and recovery.
++- Intrinsic conversion and the fixed base do not resolve or track shadowable
++  Number or Math constants. State/local Math bindings and ordinary `.Math`
++  members keep their lookup.
++- Reading `Math.exp2` as a value remains unsupported/Undefined, like sibling
++  static helper reads, not a first-class method reference.
++- Independent class rules, functions, receivers, call frames, scopes, graph
++  subscriptions, transactions, error positions and caught values use unchanged
++  machinery. Preserve inherited noncapture and parameter-local limitations.
++- Ordinary `Math.pow`, all sibling Math helpers, constants and every accepted
++  syntax form remain supported unchanged.
++- New RHS call ASTs and rule-source strings intentionally differ from their
++  accepted-pow counterparts. Protect observations and reactive behavior,
++  not identical whole-program ASTs for the new forms.
++
++### Normative
 ```
 
-**File**: `tests/proposals.rs` (modified, +86/-40)
+**File**: `nucleoid.spec.md` (modified, +178/-0)
 ```diff
-@@ -5,6 +5,8 @@
- //! process environment.
+@@ -2065,6 +2065,61 @@ statement positions; caught values and transaction recovery are unchanged.
+   behavior without requiring identical rule-source strings or immediate
+   dependency graphs. Unchanged historical programs retain their complete ASTs.
  
- mod common;
-+#[path = "proposals/strategy.rs"]
-+mod strategy;
++## Reactive base two exponentiation
++
++- Accepted [NUC 56](docs/nuc-0056.md) adds only unshadowed static
++  `Math.exp2(value)`. The accepted `Math.pow(2, value)` remains supported
++  unchanged; this names that operation rather than changing its numerics.
++- Reuse Math's existing any-supplied-`Undefined` gate before its intrinsic
++  first-argument `Value::to_number` conversion. Omission supplies numeric NaN,
++  not Undefined. Only the first supplied value is numerically converted.
++- Compute exactly `2.0_f64.powf(first)`, the same host operation used by
++  accepted `Math.pow(2, value)`. Do not substitute native `f64::exp2`,
++  exponent/log algebra, integer shortcuts, fused/rescaled math or higher
++  precision. Every non-NaN result agrees by bits; NaNs agree by classification,
++  without a payload guarantee. No accuracy or speed improvement is specified.
++- Positive and negative zero exponents both yield one. Finite exponents,
++  overflow, subnormal rounding and positive-zero underflow match accepted
++  powf. Positive infinity yields positive infinity, negative infinity yields
++  positive zero, and numeric NaN yields numeric NaN.
++- Literal null converts to zero, booleans to zero/one, strings and
++  empty/singleton lists keep intrinsic conversion, and dates contribute
++  milliseconds. Other nonnumeric conversions produce numeric NaN, not new
++  type errors. Literal-null conversion does not override inherited live
++  assignment or parameter-null deferral.
++- Evaluate all supplied argument expressions exactly once left to right per
++  call, including ignored extras and expressions after Undefined. Extra values
++  are not numerically converted, but retain reads, dependencies, effects,
++  strict errors and the any-supplied-Undefined gate.
++- Missing properties, deletion and later definition retain deferral and
++  recovery. Independent class rules, functions, scopes, call frames,
++  receiver lookup, graph subscriptions, transactions and rollback use the
++  existing machinery unchanged.
++- Intrinsic conversion and the fixed base never resolve or track shadowable
++  `Number` or Math constants. State/local Math bindings and ordinary `.Math`
++  members keep their lookup. Reading `Math.exp2` as a value remains
++  unsupported/Undefined, like sibling static helpers, not a first-class method.
++- Introduce no arity, conversion, numeric or range error. Strict unknown
++  arguments, including extras and expressions after Undefined, retain
++  `ReferenceError("<name> is not defined")`. Unknown static methods retain
++  `TypeError("Math.<name> is not a function")`, and `Math.random()` retains
++  `TypeError("Math.random is not supported")`, after their unchanged gate.
++  Calling through numeric `Math = 7` retains the ordinary receiver error
++  `TypeError("number.exp2 is not a function")`. Preserve error positions,
++  caught values and transactional recovery.
++- All sibling Math helpers, accepted syntax and inherited scope limitations
++  remain unchanged. Add no alias, first-class method, parser/lexer change,
++  public Rust API/type, dependency, version change or resource limit.
++- The six appended entries titled `Nucleoid keeps base two exponentiation
++  reactive`, `Nucleoid preserves base two exponential coercion and omissions`,
++  `Nucleoid preserves base two exponential extremes and underflow`,
++  `Nucleoid applies base two exponentiation to independent class rules`,
++  `Nucleoid restores base two exponential relationships after failed
++  transactions`, and `Nucleoid preserves ignored exponential reads and missing
++  extras` preserve the caller's executed accepted-pow counterparts, ordered
++  assertions and expected return. New RHS call ASTs intentionally differ;
++  unchanged historical sources and their complete ASTs remain protected.
++
+ ## Read-only state versions
  
- use std::collections::HashSet;
- use std::env;
-@@ -27,14 +29,14 @@ const TIMING_SCOPE: &str = "elapsed deterministic evaluator work: input validati
-     legacy/candidate checks, and blob stability verification; excludes compilation, external \
-     suites/Clippy, proposal/model time, score calculation, and report writing";
- 
--#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
- #[serde(rename_all = "snake_case")]
- enum ExecutionMode {
-     Continuous,
-     Single,
- }
- 
--#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
- enum Category {
-     #[serde(rename = "Syntax enhancement")]
-     Syntax,
-@@ -62,8 +64,8 @@ impl Category {
-     }
- }
- 
--#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
--#[serde(tag = "kind", rename_all = "snake_case")]
-+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-+#[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
- enum RuntimeApplicability {
-     NotApplicable,
-     NewFeature,
-@@ -79,7 +81,8 @@ struct PolicyInputs<'a> {
-     evidence: Option<&'a str>,
- }
- 
--#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
-+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-+#[serde(deny_unknown_fields)]
- struct EvaluationPolicy {
-     mode: ExecutionMode,
-     category: Category,
-@@ -164,7 +167,7 @@ fn required_rationale(variable: &str, value: Option<&str>) -> Result<String, Gat
-         .ok_or_else(|| GateError::Input(format!("{variable} needs a nonblank rationale")))
- }
- 
--#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
- #[serde(rename_all = "snake_case")]
- enum TokenSkipReason {
-     SingleProposal,
-@@ -272,32 +275,33 @@ struct Baseline {
-     cases: Vec<MeasuredCase>,
- }
- 
--#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
- #[serde(rename_all = "snake_case")]
- enum Decision {
-     Accepted,
-     Rejected,
-     Blocked,
- }
- 
--#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
- #[serde(rename_all = "snake_case")]
- enum TokenChange {
-     Less,
-     Same,
-     More,
- }
- 
--#[derive(Debug, Serialize)]
-+#[derive(Debug, Serialize, Deserialize)]
-+#[serde(deny_unknown_fields)]
- struct Comparison {
-     id: CaseId,
-     before: usize,
-     after: usize,
-     change: TokenChange,
- }
- 
--#[derive(Debug, Serialize)]
--#[serde(tag = "kind", rename_all = "snake_case")]
-+#[derive(Debug, Serialize, Deserialize)]
-+#[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
- enum Issue {
-     MissingCase { id: CaseId },
-     UnpairedCase { id: CaseId },
-@@ -309,8 +313,8 @@ enum Issue {
-     MoreTokens { id: CaseId },
- }
- 
--#[derive(Debug, Serialize)]
--#[serde(tag = "status", rename_all = "snake_case")]
-+#[derive(Debug, Serialize, Deserialize)]
-+#[serde(tag = "status", rename_all = "snake_case", deny_unknown_fields)]
- enum TokenCheck {
-     Ran {
-         metric: String,
-@@ -321,13 +325,15 @@ enum TokenCheck {
-     },
- }
- 
--#[derive(Debug, Serialize)]
-+#[derive(Debug, Serialize, Deserialize)]
-+#[serde(deny_unknown_fields)]
- struct BehaviorChecks {
-     legacy_cases_passed: usize,
-     candidate_cases_passed: usize,
- }
- 
--#[derive(Debug, Serialize)]
-+#[derive(Debug, Serialize, Deserialize)]
-+#[serde(deny_unknown_fields)]
- struct Proposal {
-     path: String,
-     revision: String,
-@@ -437,14 +443,16 @@ struct UsefulnessAssessment {
-     usefulness: UsefulnessJudgment,
- }
- 
--#[derive(Debug, Clone, Serialize)]
-+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-+#[serde(deny_unknown_fields)]
- struct ScoringArtifact<T> {
-     path: PathBuf,
-     revision: String,
-     input: T,
- }
- 
--#[derive(Debug, Default, Clone, Serialize)]
-+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
-+#[serde(deny_unknown_fields)]
- struct ScoringEvidence {
-     rubric: Option<ScoringArtifact<UsefulnessRubric>>,
-     assessment: Option<ScoringArtifact<UsefulnessAssessment>>,
-@@ -457,7 +465,7 @@ struct ScoringPaths<'a> {
-     assessment: Option<&'a Path>,
- }
- 
--#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
- #[serde(rename_all = "snake_case")]
- enum IndependentEligibility {
-     NotAssessed,
-@@ -466,7 +474,7 @@ enum IndependentEligibility {
-     Unresolved,
- }
- 
--#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
- #[serde(rename_all = "snake_case")]
- enum RewardBasis {
-     GateRejected,
-@@ -475,7 +483,7 @@ enum RewardBasis {
-     NoDemonstratedBenefit,
- }
- 
--#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
-+#[derive(Debug, Clone, 
-```
-
----
-
-### Incident Patch 2: `58e64527` (2026-10-27)
-**Commit Message**: Update dataset.cross.1.json
-
-**File**: `arc/src/dataset/dataset.cross.1.json` (modified, +10/-10)
-```diff
-@@ -1,8 +1,8 @@
- {
-   "declarations": [
-     "class Obj(x: int, y: int, orientation: int, vertex_color: int):\n    this.x = x\n    this.y = y\n    this.orientation = orientation\n    this.tag = 'l7544'\n    this.vertex_color = vertex_color",
--    "if $Obj.vertex_color == 1:\n    $Obj.tag = 'l1707'\n    $Obj.marker_color = 7",
--    "if $Obj.vertex_color == 2:\n    $Obj.tag = 'l2404'\n    $Obj.marker_color = 4"
-+    "if $Obj.vertex_color == 1:\n    $Obj.tag = 'l1707'\n    $Obj.marker_color = 7\n    $Obj.x = $Obj.x@first - 1\n    $Obj.y = $Obj.y@first - 1",
-+    "if $Obj.vertex_color == 2:\n    $Obj.tag = 'l2404'\n    $Obj.marker_color = 4\n    $Obj.x = $Obj.x@first - 1\n    $Obj.y = $Obj.y@first - 1"
-   ],
-   "dataset": [
-     {
-@@ -61,7 +61,7 @@
-           ],
-           "implementation": "obj08c8feaa60ea = Obj(x=2, y=3, orientation=0, vertex_color=2)",
-           "input_value": {"id":"obj08c8feaa60ea","x":2,"y":3,"orientation":0,"tag":"l7544","vertex_color":2},
--          "output_value": {"id":"obj08c8feaa60ea","x":2,"y":3,"orientation":0,"tag":"l2404","vertex_color":2,"marker_color":4}
-+          "output_value": {"id":"obj08c8feaa60ea","x":1,"y":2,"orientation":0,"tag":"l2404","vertex_color":2,"marker_color":4}
-         },
-         {
-           "instance_name": "objfa5219213773",
-@@ -95,7 +95,7 @@
-           ],
-           "implementation": "objfa5219213773 = Obj(x=6, y=6, orientation=0, vertex_color=1)",
-           "input_value": {"id":"objfa5219213773","x":6,"y":6,"orientation":0,"tag":"l7544","vertex_color":1},
--          "output_value": {"id":"objfa5219213773","x":6,"y":6,"orientation":0,"tag":"l1707","vertex_color":1,"marker_color":7}
-+          "output_value": {"id":"objfa5219213773","x":5,"y":5,"orientation":0,"tag":"l1707","vertex_color":1,"marker_color":7}
-         }
-       ]
-     },
-@@ -189,7 +189,7 @@
-           ],
-           "implementation": "obj21a7f426034a = Obj(x=6, y=2, orientation=0, vertex_color=2)",
-           "input_value": {"id":"obj21a7f426034a","x":6,"y":2,"orientation":0,"tag":"l7544","vertex_color":2},
--          "output_value": {"id":"obj21a7f426034a","x":6,"y":2,"orientation":0,"tag":"l2404","vertex_color":2,"marker_color":4}
-+          "output_value": {"id":"obj21a7f426034a","x":5,"y":1,"orientation":0,"tag":"l2404","vertex_color":2,"marker_color":4}
-         },
-         {
-           "instance_name": "objcde3bc7c38d0",
-@@ -223,7 +223,7 @@
-           ],
-           "implementation": "objcde3bc7c38d0 = Obj(x=2, y=3, orientation=0, vertex_color=1)",
-           "input_value": {"id":"objcde3bc7c38d0","x":2,"y":3,"orientation":0,"tag":"l7544","vertex_color":1},
--          "output_value": {"id":"objcde3bc7c38d0","x":2,"y":3,"orientation":0,"tag":"l1707","vertex_color":1,"marker_color":7}
-+          "output_value": {"id":"objcde3bc7c38d0","x":1,"y":2,"orientation":0,"tag":"l1707","vertex_color":1,"marker_color":7}
-         },
-         {
-           "instance_name": "obj29bc97757305",
-@@ -257,7 +257,7 @@
-           ],
-           "implementation": "obj29bc97757305 = Obj(x=6, y=6, orientation=0, vertex_color=1)",
-           "input_value": {"id":"obj29bc97757305","x":6,"y":6,"orientation":0,"tag":"l7544","vertex_color":1},
--          "output_value": {"id":"obj29bc97757305","x":6,"y":6,"orientation":0,"tag":"l1707","vertex_color":1,"marker_color":7}
-+          "output_value": {"id":"obj29bc97757305","x":5,"y":5,"orientation":0,"tag":"l1707","vertex_color":1,"marker_color":7}
-         },
-         {
-           "instance_name": "obj0665d91891db",
-@@ -291,7 +291,7 @@
-           ],
-           "implementation": "obj0665d91891db = Obj(x=1, y=7, orientation=0, vertex_color=2)",
-           "input_value": {"id":"obj0665d91891db","x":1,"y":7,"orientation":0,"tag":"l7544","vertex_color":2},
--          "output_value": {"id":"obj0665d91891db","x":1,"y":7,"orientation":0,"tag":"l2404","vertex_color":2,"marker_color":4}
-+          "output_value": {"id":"obj0665d91891db","x":0,"y":6,"orientation":0,"tag":"l2404","vertex_color":2,"marker_color":4}
-         }
-       ]
-     },
-@@ -351,7 +351,7 @@
-           ],
-           "implementation": "objd17b9a54c68f = Obj(x=2, y=2, orientation=0, vertex_color=2)",
-           "input_value": {"id":"objd17b9a54c68f","x":2,"y":2,"orientation":0,"tag":"l7544","vertex_color":2},
--          "output_value": {"id":"objd17b9a54c68f","x":2,"y":2,"orientation":0,"tag":"l2404","vertex_color":2,"marker_color":4}
-+          "output_value": {"id":"objd17b9a54c68f","x":1,"y":1,"orientation":0,"tag":"l2404","vertex_color":2,"marker_color":4}
-         },
-         {
-           "instance_name": "objd10bd2a040e8",
-@@ -419,7 +419,7 @@
-           ],
-           "implementation": "obje5d0a226a83e = Obj(x=3, y=7, orientation=0, vertex_color=1)",
-           "input_value": {"id":"obje5d0a226a83e","x":3,"y":7,"orientation":0,"tag":"l7544","vertex_color":1},
--          "output_value": {"id":"obje5d0a226a83e","x":3,"y":7,"orientation":0,"tag":"l1707","vertex_color":1,"marker_color":7}
-+          "output_va
-```
-
-**File**: `arc/src/dataset/dataset.curve.1.json` (modified, +9/-9)
-```diff
-@@ -1,8 +1,8 @@
- {
-   "declarations": [
-     "class Obj(x: int, y: int, orientation: int, vertex_color: int):\n    this.x = x\n    this.y = y\n    this.orientation = orientation\n    this.tag = 'l7544'\n    this.vertex_color = vertex_color",
--    "if $Obj.vertex_color == 4:\n    $Obj.tag = 'l6840'\n    $Obj.rim_color = 8\n    $Obj.rim_direction = 'up'",
--    "if $Obj.vertex_color == 9:\n    $Obj.tag = 'l9906'\n    $Obj.rim_color = 2\n    $Obj.rim_direction = 'down'"
-+    "if $Obj.vertex_color == 4:\n    $Obj.tag = 'l6840'\n    $Obj.rim_color = 8\n    $Obj.rim_direction = 'up'\n    $Obj.x = $Obj.x@first - 1\n    $Obj.y = $Obj.y@first - 1",
-+    "if $Obj.vertex_color == 9:\n    $Obj.tag = 'l9906'\n    $Obj.rim_color = 2\n    $Obj.rim_direction = 'down'\n    $Obj.x = $Obj.x@first - 1"
-   ],
-   "dataset": [
-     {
-@@ -49,7 +49,7 @@
-           ],
-           "implementation": "objf742ec5620c9 = Obj(x=3, y=2, orientation=0, vertex_color=4)",
-           "input_value": {"id":"objf742ec5620c9","x":3,"y":2,"orientation":0,"tag":"l7544","vertex_color":4},
--          "output_value": {"id":"objf742ec5620c9","x":3,"y":2,"orientation":0,"tag":"l6840","vertex_color":4,"rim_color":8,"rim_direction":"up"}
-+          "output_value": {"id":"objf742ec5620c9","x":2,"y":1,"orientation":0,"tag":"l6840","vertex_color":4,"rim_color":8,"rim_direction":"up"}
-         },
-         {
-           "instance_name": "obj866f45cb5433",
-@@ -77,7 +77,7 @@
-           ],
-           "implementation": "obj866f45cb5433 = Obj(x=1, y=4, orientation=0, vertex_color=4)",
-           "input_value": {"id":"obj866f45cb5433","x":1,"y":4,"orientation":0,"tag":"l7544","vertex_color":4},
--          "output_value": {"id":"obj866f45cb5433","x":1,"y":4,"orientation":0,"tag":"l6840","vertex_color":4,"rim_color":8,"rim_direction":"up"}
-+          "output_value": {"id":"obj866f45cb5433","x":0,"y":3,"orientation":0,"tag":"l6840","vertex_color":4,"rim_color":8,"rim_direction":"up"}
-         }
-       ]
-     },
-@@ -125,7 +125,7 @@
-           ],
-           "implementation": "objaf6df8ed9e79 = Obj(x=4, y=1, orientation=0, vertex_color=4)",
-           "input_value": {"id":"objaf6df8ed9e79","x":4,"y":1,"orientation":0,"tag":"l7544","vertex_color":4},
--          "output_value": {"id":"objaf6df8ed9e79","x":4,"y":1,"orientation":0,"tag":"l6840","vertex_color":4,"rim_color":8,"rim_direction":"up"}
-+          "output_value": {"id":"objaf6df8ed9e79","x":3,"y":0,"orientation":0,"tag":"l6840","vertex_color":4,"rim_color":8,"rim_direction":"up"}
-         },
-         {
-           "instance_name": "obj1394309b01df",
-@@ -153,7 +153,7 @@
-           ],
-           "implementation": "obj1394309b01df = Obj(x=1, y=3, orientation=180, vertex_color=9)",
-           "input_value": {"id":"obj1394309b01df","x":1,"y":3,"orientation":180,"tag":"l7544","vertex_color":9},
--          "output_value": {"id":"obj1394309b01df","x":1,"y":3,"orientation":180,"tag":"l9906","vertex_color":9,"rim_color":2,"rim_direction":"down"}
-+          "output_value": {"id":"obj1394309b01df","x":0,"y":3,"orientation":180,"tag":"l9906","vertex_color":9,"rim_color":2,"rim_direction":"down"}
-         }
-       ]
-     },
-@@ -201,7 +201,7 @@
-           ],
-           "implementation": "obj55882ea787c6 = Obj(x=2, y=1, orientation=0, vertex_color=4)",
-           "input_value": {"id":"obj55882ea787c6","x":2,"y":1,"orientation":0,"tag":"l7544","vertex_color":4},
--          "output_value": {"id":"obj55882ea787c6","x":2,"y":1,"orientation":0,"tag":"l6840","vertex_color":4,"rim_color":8,"rim_direction":"up"}
-+          "output_value": {"id":"obj55882ea787c6","x":1,"y":0,"orientation":0,"tag":"l6840","vertex_color":4,"rim_color":8,"rim_direction":"up"}
-         },
-         {
-           "instance_name": "obj98ba2cb040e8",
-@@ -229,7 +229,7 @@
-           ],
-           "implementation": "obj98ba2cb040e8 = Obj(x=4, y=1, orientation=180, vertex_color=9)",
-           "input_value": {"id":"obj98ba2cb040e8","x":4,"y":1,"orientation":180,"tag":"l7544","vertex_color":9},
--          "output_value": {"id":"obj98ba2cb040e8","x":4,"y":1,"orientation":180,"tag":"l9906","vertex_color":9,"rim_color":2,"rim_direction":"down"}
-+          "output_value": {"id":"obj98ba2cb040e8","x":3,"y":1,"orientation":180,"tag":"l9906","vertex_color":9,"rim_color":2,"rim_direction":"down"}
-         },
-         {
-           "instance_name": "obj1c4ff1a88360",
-@@ -257,7 +257,7 @@
-           ],
-           "implementation": "obj1c4ff1a88360 = Obj(x=2, y=3, orientation=180, vertex_color=9)",
-           "input_value": {"id":"obj1c4ff1a88360","x":2,"y":3,"orientation":180,"tag":"l7544","vertex_color":9},
--          "output_value": {"id":"obj1c4ff1a88360","x":2,"y":3,"orientation":180,"tag":"l9906","vertex_color":9,"rim_color":2,"rim_direction":"down"}
-+          "output_value": {"id":"obj1c4ff1a88360","x":1,"y":3,"orientation":180,"tag":"l9906","vertex_color":9,"rim_color":2,"rim_direction":"down"}
-         }
-       ]
-     }
-```
-
-**File**: `arc/src/dataset/dataset.line.1.json` (modified, +6/-6)
-```diff
-@@ -2,9 +2,9 @@
-   "declarations": [
-     "class Obj(x: int, y: int, orientation: int, endpoint_position: str):\n    this.x = x\n    this.y = y\n    this.orientation = orientation\n    this.tag = 'l8001'\n    this.endpoint_position = endpoint_position",
-     "if $Obj.orientation == 90 and $Obj.endpoint_position == 'left':\n    $Obj.tag = 'l4102'\n    $Obj.extension_direction = 'right'",
--    "if $Obj.orientation == 90 and $Obj.endpoint_position == 'right':\n    $Obj.tag = 'l4102'\n    $Obj.extension_direction = 'left'",
-+    "if $Obj.orientation == 90 and $Obj.endpoint_position == 'right':\n    $Obj.tag = 'l4102'\n    $Obj.extension_direction = 'left'\n    $Obj.x = $Obj.x@first - 1",
-     "if $Obj.orientation == 0 and $Obj.endpoint_position == 'up':\n    $Obj.tag = 'l6012'\n    $Obj.extension_direction = 'down'",
--    "if $Obj.orientation == 0 and $Obj.endpoint_position == 'down':\n    $Obj.tag = 'l6012'\n    $Obj.extension_direction = 'up'"
-+    "if $Obj.orientation == 0 and $Obj.endpoint_position == 'down':\n    $Obj.tag = 'l6012'\n    $Obj.extension_direction = 'up'\n    $Obj.y = $Obj.y@first - 1"
-   ],
-   "dataset": [
-     {
-@@ -91,7 +91,7 @@
-           ],
-           "implementation": "obj1383c0d06fda = Obj(x=4, y=5, orientation=90, endpoint_position='right')",
-           "input_value": {"id":"obj1383c0d06fda","x":4,"y":5,"orientation":90,"tag":"l8001","endpoint_position":"right"},
--          "output_value": {"id":"obj1383c0d06fda","x":4,"y":5,"orientation":90,"tag":"l4102","endpoint_position":"right","extension_direction":"left"}
-+          "output_value": {"id":"obj1383c0d06fda","x":3,"y":5,"orientation":90,"tag":"l4102","endpoint_position":"right","extension_direction":"left"}
-         }
-       ]
-     },
-@@ -147,7 +147,7 @@
-           ],
-           "implementation": "objfef9b8e1a36c = Obj(x=0, y=3, orientation=0, endpoint_position='down')",
-           "input_value": {"id":"objfef9b8e1a36c","x":0,"y":3,"orientation":0,"tag":"l8001","endpoint_position":"down"},
--          "output_value": {"id":"objfef9b8e1a36c","x":0,"y":3,"orientation":0,"tag":"l6012","endpoint_position":"down","extension_direction":"up"}
-+          "output_value": {"id":"objfef9b8e1a36c","x":0,"y":2,"orientation":0,"tag":"l6012","endpoint_position":"down","extension_direction":"up"}
-         },
-         {
-           "instance_name": "objb3a27e31f269",
-@@ -235,7 +235,7 @@
-           ],
-           "implementation": "obj3f1a34c478cd = Obj(x=3, y=0, orientation=90, endpoint_position='right')",
-           "input_value": {"id":"obj3f1a34c478cd","x":3,"y":0,"orientation":90,"tag":"l8001","endpoint_position":"right"},
--          "output_value": {"id":"obj3f1a34c478cd","x":3,"y":0,"orientation":90,"tag":"l4102","endpoint_position":"right","extension_direction":"left"}
-+          "output_value": {"id":"obj3f1a34c478cd","x":2,"y":0,"orientation":90,"tag":"l4102","endpoint_position":"right","extension_direction":"left"}
-         },
-         {
-           "instance_name": "obja034f4182e12",
-@@ -267,7 +267,7 @@
-           ],
-           "implementation": "obja034f4182e12 = Obj(x=1, y=4, orientation=0, endpoint_position='down')",
-           "input_value": {"id":"obja034f4182e12","x":1,"y":4,"orientation":0,"tag":"l8001","endpoint_position":"down"},
--          "output_value": {"id":"obja034f4182e12","x":1,"y":4,"orientation":0,"tag":"l6012","endpoint_position":"down","extension_direction":"up"}
-+          "output_value": {"id":"obja034f4182e12","x":1,"y":3,"orientation":0,"tag":"l6012","endpoint_position":"down","extension_direction":"up"}
-         },
-         {
-           "instance_name": "obj4eba52e160b2",
+ - A postfix `reference@0`, `@1`, ... reads a non-negative, oldest-first
+@@ -13612,4 +13667,127 @@ assert(previous.x@3, 19)
+ assert(previous.x@4, null)
+ [item.x, anchored.x, anchored.y, previous.x, previous.x@previous]
+ # return: [8,9,9,19,9]
++---
++# Nucleoid keeps base two exponentiation reactive
++
++power = 2
++converted = Math.exp2(power)
++assert(converted, 4)
++power = 3
++assert(converted, 8)
++power = -2
++assert(converted, 0.25)
++power = 0
++assert(converted, 1)
++power = -0
++assert(converted, 1)
++power = 4
++assert(converted, 16)
++converted
++# return: 16
++---
++# Nucleoid preserves base two exponential coercion and omissions
++
++text = " 3 "
++converted = Math.exp2(text)
++assert(converted, 8)
++text = true
++assert(converted, 2)
++text = false
++assert(converted, 1)
++text = []
++assert(converted, 1)
++text = ["-1"]
++assert(converted, 0.5)
++text = Date(2)
++assert(converted, 4)
++text = [1, 2]
++assert(Number.isNaN(converted), t
 ```
 
 #### Recent Merged Pull Requests:
@@ -1831,46 +1341,41 @@ Scoring formula, acceptance decisions, token policy, and uniform category select
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add reward-driven proposal strategy learner
+## X. Add reactive base-two exponentiation (NUC 56)
 
 **RULE**:
-When implementing operations in `.github/agents/nuc-evaluate.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b2ca6a62`: Add reward-driven proposal strategy learner. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8c9b7d76`: Add reactive base-two exponentiation (NUC 56). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/agents/nuc-evaluate.agent.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  reports/learner checkpoints in the external session workspace and normal
-  ignored build outputs; never overwrite old state or reports.
-  reporting; the separate optional UCB1 strategy learner consumes verified
-  rewards without overriding gate/independent failures, uniform category
-  selection, explicit requests, or token applicability.
-- For configured learning, verify the caller's pinned policy and genuinely
-  pre-draft selection/trial bindings, and preserve all four attribution
-  variables into `evaluate_proposal` so its saved report binds the arm.
-  Absent configuration is explicitly unattributed; partial/stale/malformed
-  supplied configuration is an error, never a fallback or reset.
-- After checking the actual saved report and overall independent evidence,
-  pin the report and actually invoke `learn_proposal_strategy` under the
-  skill's update contract. Write one fresh external checkpoint only for
-  genuinely scored attributed rewards; blocked/unscored/unattributed outcomes
-  do not increment trials. Return its path/pin or explicit skip/error.
-  Both single and continuous trials may learn, never retroactive old reports.
-  Do not claim evaluator authentication, concurrent/
+**Reactive base two powers**
+
+```nuc
+level = 2
+multiplier = Math.exp2(level)
+assert(multiplier, 4)
+level = 5
+assert(multiplier, 32)
+```
+
+- Accepted [NUC 56](docs/nuc-0056.md) names `Math.exp2(value)` while retaining
+  the exact accepted `Math.pow(2, value)` numeric operation and reactive call
+  behavior. Ordinary `Math.pow` remains supported.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  reports in the session workspace and normal ignored build outputs.
-  reporting, not a learner; they never override gate/independent failures or
-  change category selection and token applicability.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b2ca6a62` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8c9b7d76` are properly handled with clean fallback behavior.
