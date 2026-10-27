@@ -5240,3 +5240,7 @@
 | `CYCLE-20261027-YC73` | `2026-10-27T11:34:17.151Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4713` | Yes (`41bd8eb5...`) |
 | `CYCLE-20261027-YCQZ` | `2026-10-27T11:34:17.867Z` | `webrtc-rs/webrtc` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/webrtc-rs-webrtc-learnings.md` | Yes (`f0fda1bb...`) |
 | `CYCLE-20261027-4G5J` | `2026-10-27T11:39:02.215Z` | `webrecorder/pywb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4714, Rule 4715, Rule 4716` | Yes (`ed341d24...`) |
+| `CYCLE-20261027-HXIQ` | `2026-10-27T11:49:31.250Z` | `webrecorder/browsertrix-crawler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4717` | Yes (`b8480fd5...`) |
+| `CYCLE-20261027-HZA3` | `2026-10-27T11:49:33.531Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4017` | Yes (`df447fe4...`) |
+| `CYCLE-20261027-I3YR` | `2026-10-27T11:49:39.603Z` | `FastVideo/FastH3-Omni-Comfy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4718, Rule 4719` | Yes (`355bd5a1...`) |
+| `CYCLE-20261027-I54E` | `2026-10-27T11:49:41.102Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4720` | Yes (`7a95f2d2...`) |

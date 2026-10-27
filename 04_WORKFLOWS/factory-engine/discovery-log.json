@@ -18859,5 +18859,17 @@
     "qualityScore": 2745,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-27T10:53:56.640Z"
+  },
+  {
+    "name": "FastVideo/FastH3-Omni-Comfy",
+    "fullName": "FastVideo/FastH3-Omni-Comfy",
+    "url": "https://huggingface.co/FastVideo/FastH3-Omni-Comfy",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: FastVideo/FastH3-Omni-Comfy (165 likes, 324335 downloads)",
+    "likes": 165,
+    "downloads": 324335,
+    "qualityScore": 3650,
+    "discoveredAt": "2026-10-27T11:47:10.101Z"
   }
 ]

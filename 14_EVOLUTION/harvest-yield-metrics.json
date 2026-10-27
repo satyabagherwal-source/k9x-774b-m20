@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T11:39:02.223Z",
-  "total_cycles_completed": 5217,
-  "total_learnings_persisted": 5217,
-  "total_rules_promoted": 4619,
+  "last_updated": "2026-10-27T11:49:41.109Z",
+  "total_cycles_completed": 5221,
+  "total_learnings_persisted": 5221,
+  "total_rules_promoted": 4624,
   "history": [
-    {
-      "timestamp": "2026-10-25T23:39:26.440Z",
-      "repository": "PeerDB-io/peerdb",
-      "learningId": "learn-github-peerdb-io-peerdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:45:52.434Z",
-      "repository": "SimonSchubert/Kai",
-      "learningId": "learn-github-simonschubert-kai",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:45:58.165Z",
-      "repository": "openai-community/gpt2",
-      "learningId": "learn-huggingface-openai-community-gpt2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:53:23.075Z",
-      "repository": "Qwen/Qwen3-VL-8B-Instruct",
-      "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T23:53:32.525Z",
       "repository": "prof18/feed-flow",
@@ -1403,6 +1375,34 @@
       "repository": "webrecorder/pywb",
       "learningId": "learn-github-webrecorder-pywb",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:49:31.257Z",
+      "repository": "webrecorder/browsertrix-crawler",
+      "learningId": "learn-github-webrecorder-browsertrix-crawler",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:49:33.538Z",
+      "repository": "wcandillon/react-native-skia",
+      "learningId": "learn-github-wcandillon-react-native-skia",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:49:39.610Z",
+      "repository": "FastVideo/FastH3-Omni-Comfy",
+      "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:49:41.109Z",
+      "repository": "apache/zookeeper",
+      "learningId": "learn-github-apache-zookeeper",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

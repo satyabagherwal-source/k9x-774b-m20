@@ -5249,3 +5249,7 @@ Every entry in this ledger must capture:
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `442b6191` | Multi-dimensional audit evidence | 2026-10-27T11:34:17.154Z |
 | `learn-github-webrtc-rs-webrtc` | `https://github.com/webrtc-rs/webrtc` | `1c07e9f0` | Multi-dimensional audit evidence | 2026-10-27T11:34:17.870Z |
 | `learn-github-webrecorder-pywb` | `https://github.com/webrecorder/pywb` | `20bf53e0` | Multi-dimensional audit evidence | 2026-10-27T11:39:02.219Z |
+| `learn-github-webrecorder-browsertrix-crawler` | `https://github.com/webrecorder/browsertrix-crawler` | `e582608a` | Multi-dimensional audit evidence | 2026-10-27T11:49:31.253Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `39d14f72` | Multi-dimensional audit evidence | 2026-10-27T11:49:33.534Z |
+| `learn-huggingface-fastvideo-fasth3-omni-comfy` | `https://huggingface.co/FastVideo/FastH3-Omni-Comfy` | `hf-fastvid` | Multi-dimensional audit evidence | 2026-10-27T11:49:39.605Z |
+| `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `858c8d77` | Multi-dimensional audit evidence | 2026-10-27T11:49:41.105Z |

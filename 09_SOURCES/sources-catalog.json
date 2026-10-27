@@ -5123,10 +5123,10 @@
     "repository": "apache/zookeeper",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/zookeeper",
-    "sourceVersion": "777b3723",
+    "sourceVersion": "858c8d77",
     "license": "Apache-2.0",
-    "contentHash": "f3394aa9ee3fdd3b2e07d24151baa4005f71f8656b6562cf3078bca82398e711",
-    "lastHarvestedAt": "2026-10-22T15:56:59.618Z",
+    "contentHash": "7a95f2d25ae44afa6653bfc3636caeece71580d8910dad39d18de882ba3b5b2b",
+    "lastHarvestedAt": "2026-10-27T11:49:41.105Z",
     "learningId": "learn-github-apache-zookeeper"
   },
   "primer-react": {
@@ -9253,10 +9253,10 @@
     "repository": "webrecorder/browsertrix-crawler",
     "platform": "github",
     "sourceUrl": "https://github.com/webrecorder/browsertrix-crawler",
-    "sourceVersion": "2cbb827e",
+    "sourceVersion": "e582608a",
     "license": "AGPL-3.0",
-    "contentHash": "a098e9b86d0c4b7014db00e7885b7ba53b2bc3413ffe33fad4539d3641d3f860",
-    "lastHarvestedAt": "2026-10-19T22:12:59.806Z",
+    "contentHash": "b8480fd5e02bcd5d17973a1e32980a7446fb6d95d35f334d9321fd09fb3b5149",
+    "lastHarvestedAt": "2026-10-27T11:49:31.253Z",
     "learningId": "learn-github-webrecorder-browsertrix-crawler"
   },
   "pointfreeco-isowords": {
@@ -10193,10 +10193,10 @@
     "repository": "wcandillon/react-native-skia",
     "platform": "github",
     "sourceUrl": "https://github.com/wcandillon/react-native-skia",
-    "sourceVersion": "5148abb4",
+    "sourceVersion": "39d14f72",
     "license": "MIT",
-    "contentHash": "d1f2fc049415177d8829e96184d098ecd6efd466f753e4d40c8d1cb8e1fb0709",
-    "lastHarvestedAt": "2026-10-23T05:33:17.372Z",
+    "contentHash": "df447fe43e6dc29f03f13354a28bef3ee5c52371b6c4798f8e336bc94f118fa4",
+    "lastHarvestedAt": "2026-10-27T11:49:33.534Z",
     "learningId": "learn-github-wcandillon-react-native-skia"
   },
   "testing-library-dom-testing-library": {
@@ -10858,5 +10858,15 @@
     "contentHash": "8e72ecb89c151fcff984a1101e11f938be6d6e3cb74d315d5cf90b2d4667d160",
     "lastHarvestedAt": "2026-10-27T10:54:24.962Z",
     "learningId": "learn-github-scrapecreators-social-media-research-skills"
+  },
+  "hf-fastvideo-fasth3-omni-comfy": {
+    "repository": "FastVideo/FastH3-Omni-Comfy",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/FastVideo/FastH3-Omni-Comfy",
+    "sourceVersion": "hf-fastvideo-fasth3-omni-comfy",
+    "license": "Open-Source",
+    "contentHash": "355bd5a19d59cefb3eebbc37700814d5055c8720ad46c6a9d7083ff48bd2761c",
+    "lastHarvestedAt": "2026-10-27T11:49:39.605Z",
+    "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy"
   }
 }

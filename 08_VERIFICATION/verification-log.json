@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-A4XE",
-    "timestamp": "2026-10-25T08:24:09.842Z",
-    "repository": "open-ani/animeko",
-    "learningId": "learn-github-open-ani-animeko",
-    "contentHash": "288b3b5c564a931bd9a0aa205c311bdf2b40188475546aa6eeeac01fb7d1dc81",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-AQI7",
-    "timestamp": "2026-10-25T08:24:37.807Z",
-    "repository": "milvus-io/milvus",
-    "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "6697442573ee5b14266e12c155aec0da031cb5f4c06c385cbd1fe0b64d78e85d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-TY51",
-    "timestamp": "2026-10-25T08:39:34.165Z",
-    "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-    "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-    "contentHash": "f07af78d3b11f21fc062ab95f283d1bf74829336c76a3ef425df48c217aa807a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-ZNPA",
-    "timestamp": "2026-10-25T08:44:00.574Z",
-    "repository": "makecindy/cindy",
-    "learningId": "learn-github-makecindy-cindy",
-    "contentHash": "c3ec7797c0670ea6d6e960e981b450d7bd5840fc05014713426e8007af6d1216",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-01S8",
     "timestamp": "2026-10-25T08:44:18.825Z",
     "repository": "komi-store/komi-store",
@@ -7492,6 +7432,66 @@
     "contentHash": "ed341d24b0403e83ecec7af2565ed9d4ba99f859c56195ab12937cc3a909c304",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-HXIQ",
+    "timestamp": "2026-10-27T11:49:31.250Z",
+    "repository": "webrecorder/browsertrix-crawler",
+    "learningId": "learn-github-webrecorder-browsertrix-crawler",
+    "contentHash": "b8480fd5e02bcd5d17973a1e32980a7446fb6d95d35f334d9321fd09fb3b5149",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-HZA3",
+    "timestamp": "2026-10-27T11:49:33.531Z",
+    "repository": "wcandillon/react-native-skia",
+    "learningId": "learn-github-wcandillon-react-native-skia",
+    "contentHash": "df447fe43e6dc29f03f13354a28bef3ee5c52371b6c4798f8e336bc94f118fa4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-I3YR",
+    "timestamp": "2026-10-27T11:49:39.603Z",
+    "repository": "FastVideo/FastH3-Omni-Comfy",
+    "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy",
+    "contentHash": "355bd5a19d59cefb3eebbc37700814d5055c8720ad46c6a9d7083ff48bd2761c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-I54E",
+    "timestamp": "2026-10-27T11:49:41.102Z",
+    "repository": "apache/zookeeper",
+    "learningId": "learn-github-apache-zookeeper",
+    "contentHash": "7a95f2d25ae44afa6653bfc3636caeece71580d8910dad39d18de882ba3b5b2b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

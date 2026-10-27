@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md`  
 > **Source**: github ([https://github.com/webrecorder/browsertrix-crawler](https://github.com/webrecorder/browsertrix-crawler))  
-> **Source Version**: `2cbb827e`  
+> **Source Version**: `e582608a`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T22:12:59.507Z  
+> **Timestamp**: 2026-10-27T11:49:30.910Z  
 > **Learning ID**: `learn-github-webrecorder-browsertrix-crawler`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/webrecorder/browsertrix-crawler](https://github.com/webrecorder/browsertrix-crawler))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T22:12:59.374Z  
+> **Harvest Timestamp**: 2026-10-27T11:49:29.520Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Run a high-fidelity browser-based web archiving crawler in a single Docker container
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 1168 stars
+- **Stars / Engagement**: 1178 stars
 
 ---
 
@@ -2638,452 +2638,136 @@ export class OriginOverride {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1d11a7e5` (2026-09-26)
-**Commit Message**: browser: add configurable --browserStartTimeout (#1160)
+### Incident Patch 1: `e582608a` (2026-10-23)
+**Commit Message**: build(deps): bump the npm_and_yarn group across 1 directory with 5 updates (#1180)
 
-puppeteer.launch() used its hardcoded 30s default for browser startup,
-too short on loaded VMs where
-the launch fails with a TimeoutError and aborts the crawl. Adds
---browserStartTimeout (seconds, default
-30) for crawl and create-login-profile, plus an actionable fatal on
-launch timeout.
+Bumps the npm_and_yarn group with 5 updates in the / directory:
 
-**File**: `docs/docs/user-guide/cli-options.md` (modified, +9/-0)
+| Package | From | To |
+| --- | --- | --- |
+| [js-yaml](https://github.com/nodeca/js-yaml) | `4.3.1` | `4.3.2` |
+| [sharp](https://github.com/lovell/sharp) | `0.35.3` | `0.35.5` |
+| [undici](https://github.com/nodejs/undici) | `7.29.0` | `7.29.1` |
+| [handlebars](https://github.com/handlebars-lang/handlebars.js) |
+`4.7.9` | `4.7.10` |
+| [ip-address](https://github.com/beaugunderson/ip-address) | `10.5.0` |
+`10.7.4` |
+
+**File**: `package.json` (modified, +3/-3)
 ```diff
-@@ -174,6 +174,11 @@ Options:
-       --profile, --loadProfile              Path or HTTP(S) URL to tar.gz file w
-                                             hich contains the browser profile di
-                                             rectory                     [string]
-+      --browserStartTimeout                 Timeout (in seconds) for the browser
-+                                             process to start and connect. Raise
-+                                             this on hosts under high load where
-+                                            browser startup is slow.
-+                                                          [number] [default: 30]
-       --saveProfile                         If set, save profile if crawl succee
-                                             ded successfully. If no value provid
-                                             ed, save back to save location as sp
-@@ -419,6 +424,10 @@ Options:
-                             e browser profile directory   [string] [default: ""]
-   --windowSize              Browser window dimensions, specified as: width,heigh
-                             t                    [string] [default: "1360,1020"]
-+  --browserStartTimeout     Timeout (in seconds) for the browser process to star
-+                            t and connect. Raise this on hosts under high load w
-+                            here browser startup is slow.
-+                                                          [number] [default: 30]
-   --cookieDays              If >0, set all cookies, including session cookies, t
-                             o have this duration in days before saving profile
-                                                            [number] [default: 7]
+@@ -30,17 +30,17 @@
+     "ioredis": "^5.3.2",
+     "iso-639-1": "^3.1.5",
+     "js-levenshtein": "^1.1.6",
+-    "js-yaml": "^4.3.1",
++    "js-yaml": "^4.3.2",
+     "normalize-url": "^9.0.0",
+     "p-queue": "^7.3.4",
+     "pixelmatch": "^5.3.0",
+     "pngjs": "^7.0.0",
+     "puppeteer-core": "^25.11.0",
+     "robots-parser": "^3.0.1",
+     "sax": "^1.3.0",
+-    "sharp": "^0.35.3",
++    "sharp": "^0.35.5",
+     "tsc": "^2.0.4",
+-    "undici": "^7.29.0",
++    "undici": "^7.29.1",
+     "uuid": "^14.0.0",
+     "warcio": "^2.4.12",
+     "ws": "^8.20.1",
 ```
 
-**File**: `src/crawler.ts` (modified, +1/-0)
+**File**: `yarn.lock` (modified, +161/-183)
 ```diff
-@@ -2098,6 +2098,7 @@ self.__bx_behaviors.selectMainBehavior();
-       headless: this.params.headless,
-       emulateDevice: this.emulateDevice,
-       swOpt: this.params.serviceWorker,
-+      browserStartTimeout: this.params.browserStartTimeout,
-       chromeOptions: {
-         proxyServer: this.proxyServer,
-         proxyPacUrl: this.proxyPacUrl,
-```
-
-**File**: `src/create-login-profile.ts` (modified, +13/-1)
-```diff
-@@ -15,7 +15,11 @@ import { Browser } from "./util/browser.js";
- import { initStorage } from "./util/storage.js";
- import { CDPSession, Page, PuppeteerLifeCycleEvent } from "puppeteer-core";
- import { getInfoString } from "./util/file_reader.js";
--import { DISPLAY, ExitCodes } from "./util/constants.js";
-+import {
-+  DISPLAY,
-+  ExitCodes,
-+  BROWSER_STARTUP_TIMEOUT_SECS,
-+} from "./util/constants.js";
- import { initProxy, loadProxyConfig } from "./util/proxy.js";
- import { sleep } from "./util/timing.js";
+@@ -683,7 +683,7 @@
+   resolved "https://registry.yarnpkg.com/@colors/colors/-/colors-1.5.0.tgz#bb504579c1cae923e6576a4f5da43d25f97bdbd9"
+   integrity sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==
  
-@@ -117,6 +121,13 @@ function initArgs() {
-         default: getDefaultWindowSize(),
-       },
+-"@emnapi/runtime@^1.11.1":
++"@emnapi/runtime@^1.11.3":
+   version "1.11.3"
+   resolved "https://registry.yarnpkg.com/@emnapi/runtime/-/runtime-1.11.3.tgz#84257ae3b0531eb2aec1ffa23d70700da007ba95"
+   integrity sha512-Xz4Tpyki7XyrpbUK1jR1AhdAdaXyhhY4lZ3neLodmhpuWfy2PAQN5B46sAiU4liOXGLkHypn/qU+jvfWSCYYLA==
+@@ -758,161 +758,161 @@
+   resolved "https://registry.yarnpkg.com/@img/colour/-/colour-1.1.0.tgz#b0c2c2fa661adf75effd6b4964497cd80010bb9d"
+   integrity sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==
  
-+      browserStartTimeout: {
-+        describe:
-+          "Timeout (in seconds) for the browser process to start and connect. Raise this on hosts under high load where browser startup is slow.",
-+        type: "number",
-+        default: BROWSER_STARTUP_TIMEOUT_SECS,
-+      },
-+
-       cookieDays: {
-         describe:
-           "If >0, set all cookies, including session cookies, to have this duration in days before saving profile",
-@@ -208,6 +219,7 @@ async function main() {
-     profileUrl: params.profile,
-     headless: params.headless,
-     signals: false,
-+    browserStartTimeout: params.browserStartTimeout,
-     chromeOptions: {
-       proxyServer,
-       proxyPacUrl,
-```
-
-**File**: `src/util/argParser.ts` (modified, +20/-0)
-```diff
-@@ -24,6 +24,7 @@ import {
-   RateLimitRule,
-   DEFAULT_MAX_RATE_LIMIT_RETRIES,
-   ExitCodes,
-+  BROWSER_STARTUP_TIMEOUT_SECS,
- } from "./constants.js";
- import { interpolateFilename } from "./storage.js";
- import { screenshotTypes } from "./screenshots.js";
-@@ -424,6 +425,13 @@ class ArgParser {
-           type: "string",
-         },
+-"@img/sharp-darwin-arm64@0.35.3":
+-  version "0.35.3"
+-  resolved "https://registry.yarnpkg.com/@img/sharp-darwin-arm64/-/sharp-darwin-arm64-0.35.3.tgz#8b2740884bc58b127fc3020479a01294fa1095cb"
+-  integrity sha512-RMnFX7YQsMoh7lWfcM4NEHHymBX/rLuKNPVM84XE9ONPcaSCDgE7CHIHpSgPcO2xcRthgBy1HfNO319mwhIAkg==
++"@img/sharp-darwin-arm64@0.35.5":
++  version "0.35.5"
++  resolved "https://registry.yarnpkg.com/@img/sharp-darwin-arm64/-/sharp-darwin-arm64-0.35.5.tgz#b1e0276d4e9bf26a7fde7b2adcbe076c71015fc2"
++  integrity sha512-QRUlFQ0WxvdWyqqG/WtI3iupfD5rBzmCHXSdPsY91sAtVtTo7Q4cb6zOccZ3gqEqkr0f1As1ehLqmEpDsRf+lg==
+   optionalDependencies:
+-    "@img/sharp-libvips-darwin-arm64" "1.3.2"
++    "@img/sharp-libvips-darwin-arm64" "1.3.4"
  
-+        browserStartTimeout: {
-+          describe:
-+            "Timeout (in seconds) for the browser process to start and connect. Raise this on hosts under high load where browser startup is slow.",
-+          default: BROWSER_STARTUP_TIMEOUT_SECS,
-+          type: "number",
-+        },
-+
-         saveProfile: {
-           describe:
-             "If set, save profile if crawl succeeded successfully. If no value provided, save back to save location as specified in --profile",
-@@ -989,6 +997,18 @@ class ArgParser {
-       argv.diskUtilization = 90;
-     }
+-"@img/sharp-darwin-x64@0.35.3":
+-  version "0.35.3"
+-  resolved "https://registry.yarnpkg.com/@img/sharp-darwin-x64/-/sharp-darwin-x64-0.35.3.tgz#92df91320faf57cc54b331185770d5a93d510049"
+-  integrity sha512-Xo+5uFBtLN0BKqieTxiFzFPQAUlBbbH5iBKyRX/z1JrbnYsHTfKJnUfL8+p2TPXr1pXqao4eeL4Rl144uDpK9w==
++"@img/sharp-darwin-x64@0.35.5":
++  version "0.35.5"
++  resolved "https://registry.yarnpkg.com/@img/sharp-darwin-x64/-/sharp-darwin-x64-0.35.5.tgz#bff811f9610ef322415e87f7551fd5d773122928"
++  integrity sha512-+BR255RhDlpygUpOc/Jdt1nT6DQ3XG/ERo5wbcdOf5Q320dKtPCKPLR1LJs9VGXRaMa8l1uUa0tkCNOXiAxZUw==
+   optionalDependencies:
+-    "@img/sharp-libvips-darwin-x64" "1.3.2"
++    "@img/sharp-libvips-darwin-x64" "1.3.4"
  
-+    if (!(argv.browserStartTimeout > 0)) {
-+      logger.warn(
-+        "Invalid --browserStartTimeout, using default",
-+        {
-+          value: argv.browserStartTimeout,
-+          default: BROWSER_STARTUP_TIMEOUT_SECS,
-+        },
-+        "general",
-+      );
-+      argv.browserStartTimeout = BROWSER_STARTUP_TIMEOUT_SECS;
-+    }
-+
-     if (argv.saveStorage) {
-       logger.info("Saving localStorage and sessionStorage");
-     }
-```
-
-**File**: `src/util/browser.ts` (modified, +27/-2)
-```diff
-@@ -16,6 +16,7 @@ import { initStorage, S3StorageSync, UploadResult } from "./storage.js";
- import {
-   DISPLAY,
-   PAGE_OP_TIMEOUT_SECS,
-+  BROWSER_STARTUP_TIMEOUT_SECS,
-   type ServiceWorkerOpt,
- } from "./constants.js";
- 
-@@ -29,6 +30,7 @@ import puppeteer, {
-   CDPSession,
-   Target,
-   Browser as PptrBrowser,
-+  TimeoutError,
- } from "puppeteer-core";
- import { Recorder } from "./recorder.js";
- import { timedRun } from "./timing.js";
-@@ -54,6 +56,9 @@ type LaunchOpts = {
- 
-   swOpt?: ServiceWorkerOpt;
- 
-+  // timeout (in seconds) for browser process startup / devtools connection
-+  browserStartTimeout?: number;
-+
-   recording: boolean;
- };
- 
-@@ -110,6 +115,7 @@ export class Browser {
-     emulateDevice = {},
-     swOpt = "disabled",
-     ondisconnect = null,
-+    browserStartTimeout,
-     recording = true,
-   }: LaunchOpts) {
-     if (this.isLaunched()) {
-@@ -140,6 +146,9 @@ export class Browser {
-       height: this.screenHeight - (recording ? 0 : BROWSER_HEIGHT_OFFSET),
-     };
- 
-+    const startTimeoutSecs =
-+      browserStartTimeout ?? BROWSER_STARTUP_TIMEOUT_SECS;
-+
-     const launchOpts: LaunchOptions = {
-       args,
-       headless,
-@@ -150,6 +159,9 @@ export class Browser {
-       handleSIGINT: signals,
-       handleSIGTERM: signals,
-       protocolTimeout: 0,
-+      // puppeteer's own default here is 30000ms, which is too short on hosts
-+      // under high load where the browser process is slow to start
-+      timeout: startTimeoutSecs * 1000,
- 
-       defaultViewport,
-       waitForInitialPage: false,
-@@ -158,7 +170,7 @@ export class Browser {
-         ? undefined
-         : (target) => this.targetFilter(target),
-     };
--    await this._init(launchOpts, recording, ondisconnect);
-+    await this._init(launchOpts, recording, ondisconnect, startTimeoutSecs);
-   }
- 
-   targetFilter(target: Target) {
-@@ -524,8 +536,21 @@ export class Browser {
-     recording: boolean,
-     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-     ondisconnect: Function | null = null,
-+    startTimeoutSecs = BROWSER_STARTUP_TIMEOUT_SECS,
-   ) {
--    this.browser = await puppeteer.launch(launchOpts);
-+    try {
-+      this.browser = await puppeteer.launch(launchOpts);
-+    } catch (e) {
-+      if (e instanceof TimeoutError || (e as Error).name === "TimeoutError") {
-+        await logger.fatal(
-+          "Browser did not start within the configured startup timeout. " +
-+            "On hosts under high load, raise --browserStartTimeout.",
-+          { startTimeoutSecs, ...formatErr(e) },
-+          "browser",
-+        );
-+      }
-+      throw e;
-+    }
- 
-     const target = this.browser.target();
- 
-```
-
-**File**: `src/util/constants.ts` (modified, +5/-0)
-```diff
-@@ -50,6 +50,11 @@ export const FETCH_HEADERS_TIMEOUT_SECS = 30;
- export const PAGE_OP_TIMEOUT_SECS = 5;
- export const SITEMAP_INITIAL_FETCH_TIMEOUT_SECS = 30;
- 
-+// time to wait (in seconds) for the browser process to start and the
-+// devtools connection to be established before puppeteer.launch() times out.
-+// can be raised via --browserStartTimeout on hosts where browser startup is slow.
-+export const BROWSER_STARTUP_TIMEOUT_SECS = 30;
-+
- export const ROBOTS_CACHE_LIMIT = 100;
- 
- // max JS dialogs (alert/prompt) to allow per page
-```
-
-**File**: `tests/browser-start-timeout.test.ts` (added, +38/-0)
-```diff
-@@ -0,0 +1,38 @@
-+import { execSync } from "child_process";
-+import { ErrorWithStatus } from "./utils";
-+
-+// exit code used by logger.fatal() when not restarting on error
-+const FATAL = 17;
-+
-+function runCrawl(extraArgs: string): { status: number; output: string } {
-+  let status = 0;
-+  let output = "";
-+  try {
-+    output = execSync(
-+      `docker run --rm webrecorder/browsertrix-crawler crawl --url https://webrecorder.net/ --limit 1 ${extraArgs}`,
-+      { encoding: "utf-8", stdio: "pipe" },
-+    );
-+  } catch (e) {
-+    status = (e as ErrorWithStatus).status;
-+    const err = e as ErrorWithStatus & { stdout?: Buffer; stderr?: Buffer };
-+    output = `${err.stdout ?? ""}${err.stderr ?? ""}`;
-+  }
-+  return { status, output };
-+}
-+
-+test("crawl succeeds with a raised --browserStartTimeout", () => {
-+  const { status } = runCrawl("--browserStartTimeout 120");
-+  expect(status).toBe(0);
-+});
-+
-+test("invalid --browserStartTimeout falls back to the default, crawl still runs", () => {
-+  const { status } = runCrawl("--browserStartTimeout 0");
-+  expect(status).toBe(0);
-+});
-+
-+test("crawl fails with an actionable message when browser startup times out", () => {
-+  // 0.001s -> 1ms, browser cannot start that fast, must hit the timeout
-+  const { status, output } = runCrawl("--browserStartTimeout 0.001");
-+  expect(status).toBe(FATAL);
-+  expect(output).toContain("--browserStartTimeout");
-+});
-```
-
----
-
-### Incident Patch 2: `2cbb827e` (2026-10-19)
-**Commit Message**: build(deps): bump browserslist
-
-Bumps the npm_and_yarn group with 1 update in the / directory: [browserslist](https://github.com/browserslist/browserslist).
-
-
-Updates `browserslist` from 4.24.2 to 4.29.4
-- [Release notes](https://github.com/browserslist/browserslist/releases)
-- [Changelog](https://github.com/browserslist/browserslist/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/browserslist/browserslist/compare/4.24.2...4.29.4)
-
----
-updated-dependencies:
-- dependency-name: browserslist
-  dependency-version: 4.28.9
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `yarn.lock` (modified, +31/-25)
-```diff
-@@ -2106,6 +2106,11 @@ base64-js@^1.0.2, base64-js@^1.1.2, base64-js@^1.3.1, base64-js@^1.5.1:
-   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
-   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
- 
-+baseline-browser-mapping@^2.11.29:
-+  version "2.11.29"
-+  resolved "https://registry.yarnpkg.com/baseline-browser-mapping/-/baseline-browser-mapping-2.11.29.tgz#dbed0ed2c17943aa4427863c91300865d9d8ca23"
-+  integrity sha512-YeesxhUmR4h5y5V8KF8iBCqJb8YFrBJ++XBTeGcWIaQOYXGN19JM0FoiOjAhwuDoln8owMgXcWBmgHtYSkky2w==
-+
- basic-auth@^2.0.1:
-   version "2.0.1"
-   resolved "https://registry.yarnpkg.com/basic-auth/-/basic-auth-2.0.1.tgz#b998279bf47ce38344b4f3cf916d4679bbf51e3a"
-@@ -2148,14 +2153,15 @@ brotli@^1.3.3:
-     base64-js "^1.1.2"
- 
- browserslist@^4.24.0:
--  version "4.24.2"
--  resolved "https://registry.yarnpkg.com/browserslist/-/browserslist-4.24.2.tgz#f5845bc91069dbd55ee89faf9822e1d885d16580"
--  integrity sha512-ZIc+Q62revdMcqC6aChtW4jz3My3klmCO1fEmINZY/8J3EpBg5/A/D0AKmBveUh6pgoeycoMkVMko84tuYS+Gg==
-+  version "4.29.4"
-+  resolved "https://registry.yarnpkg.com/browserslist/-/browserslist-4.29.4.tgz#c1efdbce30bc57a44e5a4bd849ff8e64d6a141b2"
-+  integrity sha512-2TcbbiwXEq+N0kD36tykpCfyyQigUXmuwNQbnPp4Xk4PX9JOqVIKjJlIDjpH7uY6tmRGoAd+apeT1p60T8wsdA==
+-"@img/sharp-freebsd-wasm32@0.35.3":
+-  version "0.35.3"
+-  resolved "https://registry.yarnpkg.com/@img/sharp-freebsd-wasm32/-/sharp-freebsd-wasm32-0.35.3.tgz#48018c1379a8f507d681d6cd8dbe43d9795dc809"
+-  integrity sha512-lUxcqWIj2wMQ9BrwNjngcr1gWUr5xgaGThBRqPPalIC2n67Cqj1uPh8NnA/ZhAg8hUbKl+kVHKwgUIwe6ZYPrg==
++"@img/sharp-freebsd-wasm32@0.35.5":
++  version "0.35.5"
++  resolved "https://registry.yarnpkg.com/@img/sharp-freebsd-wasm32/-/sharp-freebsd-wasm32-0.35.5.tgz#53b6041958608afa2f5f08323091101407e99086"
++  integrity sha512-Y/z91nEZ4uIBX5X3nfTovjU9lHNKFYbL2lpHCLVNmXQK03VIZvXBBt0KxbPGp2SdGSF+2mQU4e+hQaWOt86iAw==
    dependencies:
--    caniuse-lite "^1.0.30001669"
--    electron-to-chromium "^1.5.41"
--    node-releases "^2.0.18"
--    update-browserslist-db "^1.1.1"
-+    baseline-browser-mapping "^2.11.29"
-+    caniuse-lite "^1.0.30001816"
-+    electron-to-chromium "^1.5.459"
-+    node-releases "^2.0.59"
-+    update-browserslist-db "^1.3.4"
+-    "@img/sharp-wasm32" "0.35.3"
++    "@img/sharp-wasm32" "0.35.5"
  
- browsertrix-behaviors@^0.15.0:
-   version "0.15.0"
-@@ -2251,10 +2257,10 @@ camelcase@^6.2.0:
-   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-6.3.0.tgz#5685b95eb209ac9c0c177467778c9c84df58ba9a"
-   integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
+-"@img/sharp-libvips-darwin-arm64@1.3.2":
+-  version "1.3.2"
+-  resolved "https://registry.yarnpkg.com/@img/sharp-libvips-darwin-arm64/-/sharp-libvips-darwin-arm64-1.3.2.tgz#227b41ffc6c99612bceaba56f994a1933d779573"
+-  integrity sha512-9J6ypZFpQBj4YnePGoq/S38w6nz+vqg5WZLrLGY4YuSemdMq47GMLBPO42MzwdGwpg/agZ7xzZcFHa48xlywfg==
++"@img/sharp-libvips-darwin-arm64@1.3.4":
++  version "1.3.4"
++  resolved "https://registry.yarnpkg.com/@img/sharp-libvips-darwin-arm64/-/sharp-libvips-darwin-arm64-1.3.4.tgz#f29cbba302384f9a08bdb04d14c57b5cf71da4a4"
++  integrity sha512-5R89nBYiRdUlSWJxPhO+GVtaXzXSxKnRu/xqMn3KTA3L9EB9Oy/P+Nn2f2vlhPuUdy/Zusb2DarbyTpGCfEDuw==
  
--caniuse-lite@^1.0.30001669:
--  version "1.0.30001683"
--  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001683.tgz#7f026a2d5d319a9cf8915a1451173052caaadc81"
--  integrity sha512-iqmNnThZ0n70mNwvxpEC2nBJ037ZHZUoBI5Gorh1Mw6IlEAZujEoU1tXA628iZfzm7R9FvFzxbfdgml82a3k8Q==
-+caniuse-lite@^1.0.30001816:
-+  version "1.0.30001816"
-+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001816.tgz#80567cffb179fd8a1702816bc80de8efc9784021"
-+  integrity sha512-+8Yx7BXCoqk6IF8yTicjfUR6D/ldJzdlsodlEOiOSPmhK844WIgk67/zIQaGAOxNkZyyvBlrRFnLvqKIoqbAFw==
+-"@img/sharp-libvips-darwin-x64@1.3.2":
+-  version "1.3.2"
+-  resolved "https://registry.yarnpkg.com/@img/sharp-libvips-darwin-x64/-/sharp-libvips-darwin-x64-1.3.2.tgz#694903ec410c00945ce5b0c26dac83d7184c8b86"
+-  integrity sha512-m2pW1n6cns9VaubNwsZ+c3CRYjxNQWgJ5gPlnL1nbBcpkBvFm6SCFN5o0psFHI8w9n11NKhFkeEDns98tiqbEw==
++"@img/sharp-libvips-darwin-x64@1.3.4":
++  version "1.3.4"
++  resolved "https://registry.yarnpkg.com/@img/sharp-libvips-darwin-x64/-/sharp-libvips-darwin-x64-1.3.4.tgz#527f52721a89dd75614663aef87162a781739bab"
++  integrity sha512-iR2OKH80yi0U+dUplyh3/xdpFvps6YkCwsXenIJxqxR1v9o+xtKTGbS9H7cps+2Vxjc8B1j96p75NmTGjIhtpQ==
  
- chalk@^2.4.2:
-   version "2.4.2"
-@@ -2592,10 +2598,10 @@ dunder-proto@^1.0.0, dunder-proto@^1.0.1:
-     es-errors "^1.3.0"
-     gopd "^1.2.0"
+-"@img/sharp-libvips-linux-arm64@1.3.2":
+-  version "1.3.2"
+-  resolved "https://registry.yarnpkg.com/@img/sharp-libvips-linux-arm64/-/sharp-libvips-linux-arm64-1.3.2.tgz#49ddf156728666a21deed0716f3bb72bb351179e"
+-  integrity sha512-dqVSFynCox4C/J8kT16V7SIFAns0IjgLwkvYT7p8LQVmJ5OS5b6tI9IGflxTeuBS//zXeFIUbwt5dwxyZ17cnA==
++"@img/sharp-libvips-linux-arm64@1.3.4":
++  version "1.3.4"
++  resolved "https://registry.yarnpkg.com/@img/sharp-libvips-linux-arm64/-/sharp-libvips-linux-arm64-1.3.4.tgz#78c11c6b0a4b4045c72dacacdec3b10f3e521349"
++  integrity sha512-Y3dgX/6lE2QhQb+Gxy0WZxfg9MEm/JBjamZpS2IklP7xIQoKN4hzAm7KcMVGtaVDt3neE9OKBC7vAfonA/Lr1A==
  
--electron-to-chromium@^1.5.41:
--  version "1.5.64"
--  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.64.tgz#ac8c4c89075d35a1514b620f47dfe48a71ec3697"
--  integrity sha512-IXEuxU+5ClW2IGEYFC2T7szbyVgehupCWQe5GNh+H065CD6U6IFN0s4KeAMFGNmQolRU4IV7zGBWSYMmZ8uuqQ==
-+electron-to-chromium@^1.5.459:
-+  version "1.5.459"
-+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.459.tgz#98f4b60fc757b882c387c4fb884625d084dca8b3"
-+  integrity sha512-4SC9HHSFjO/liAhifpdOL5hG9b4BP7/5G3y3UPZVO8trlAXr1CaUEEJL0gWK3kOcYcZrOA5rkwG45Gra/lTIgg==
- 
- emittery@^0.13.1:
-   version "0.13.1"
-@@ -4655,10 +4661,10 @@ node-int64@^0.4.0:
-   resolved "https://registry.yarnpkg.com/node-int64/-/node-int64-0.4.0.tgz#87a9065cdb355d3182d8f94ce11188b825c68a3b"
-   integrity sha512-O5lz91xSOeoXP6DulyHfllpq+Eg00MWitZIbtPfoSEvqIHdl5gfcY6hYzDWnj0qD5tz52PI08u9qUvSVeUBeHw==
- 
--node-releases@^2.0.18:
--  version "2.0.18"
--  resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-2.0.18.tgz#f010e8d35e2fe8d6b2944f03f70213ecedc4ca3f"
--  integrity sha512-d9VeXT4SJ7ZeOqGX6R5EM022wpL+eWPooLI+5UpWn2jCT1aosUQEhQP214x33Wkwx3JQMvIm+tIoVOdodFS40g==
-+node-releases@^2.0.59:
-+  version "2.0.59"
-+  resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-2.0.59.tgz#172a7e253e3cca1ae00e8015a82b54e7fcc68fd3"
-+  integrity sha512-5qr2okC4ItAI0hG5SaV0HoYMpnM/Y6+Oqr7AmPYy/2uEoGvS+GbSKLeRxSS1uAdu59yz0ouzcuXievSgg///WA==
- 
- normalize-path@^3.0.0:
-   version "3.0.0"
-@@ -4911,7 +4917,7 @@ path-parser@^6.1.0:
-     search-params "3.0.0"
-     tslib "^1.10.0"
- 
--picocolors@^1.0.0, picocolors@^1.1.0, picocolors@^1.1.1:
-+picocolors@^1.0.0, picocolors@^1.1.1:
-   version "1.1.1"
-   resolved "https://registry.yarnpkg.com/picocolors/-/picocolors-1.1.1.tgz#3d321af3eab939b083c8f929a1d12cda81c26b6b"
-   integrity sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==
-@@ -5939,13 +5945,13 @@ unique-string@^3.0.0:
-   dependencies:
-     crypto-random-string "^4.0.0"
- 
--update-browserslist-db@^1.1.1:
--  version "1.1.1"
--  resolved "https://registry.yarnpkg.com/update-browserslist-db/-/update-browserslist-db-1.1.1.tgz#80846fba1d79e82547fb661f8
-```
-
----
-
-### Incident Patch 3: `b8c38c4d` (2026-10-02)
-**Commit Message**: test fix: pageinfo_test static assets (#1174)
-
-need to update tests, as paths for static font assets have changed!
-
-**File**: `tests/pageinfo-records.test.ts` (modified, +4/-4)
-```diff
-@@ -124,9 +124,9 @@ function validateResourcesIndex(json: Record<string, unknown>) {
-       { status: 200, mime: "text/css", type: "stylesheet" },
-     "https://fonts.googleapis.com/css?family=Source+Code+Pro|Source+Sans+Pro&display=swap":
-       { status: 200, mime: "text/css", type: "stylesheet" },
--    "https://fonts.gstatic.com/s/sourcesanspro/v23/6xK3dSBYKcSV-LCoeQqfX1RYOo3qOK7l.woff2":
-+    "https://fonts.gstatic.com/s/sourcesanspro/v24/6xK3dSBYKcSV-LCoeQqfX1RYOo3qOK7l.woff2":
-       { status: 200, mime: "font/woff2", type: "font" },
--    "https://fonts.gstatic.com/s/sourcesanspro/v23/6xKydSBYKcSV-LCoeQqfX1RYOo3ig4vwlxdu.woff2":
-+    "https://fonts.gstatic.com/s/sourcesanspro/v24/6xKydSBYKcSV-LCoeQqfX1RYOo3ig4vwlxdu.woff2":
-       { status: 200, mime: "font/woff2", type: "font" },
-     "https://old.webrecorder.net/assets/favicon.ico": {
-       status: 200,
-@@ -167,9 +167,9 @@ function validateResourcesAbout(json: Record<string, unknown>) {
-       mime: "image/svg+xml",
-       type: "image",
-     },
--    "https://fonts.gstatic.com/s/sourcesanspro/v23/6xK3dSBYKcSV-LCoeQqfX1RYOo3qOK7l.woff2":
-+    "https://fonts.gstatic.com/s/sourcesanspro/v24/6xK3dSBYKcSV-LCoeQqfX1RYOo3qOK7l.woff2":
-       { status: 200, mime: "font/woff2", type: "font" },
--    "https://fonts.gstatic.com/s/sourcesanspro/v23/6xKydSBYKcSV-LCoeQqfX1RYOo3ig4vwlxdu.woff2":
-+    "https://fonts.gstatic.com/s/sourcesanspro/v24/6xKydSBYKcSV-LCoeQqfX1RYOo3ig4vwlxdu.woff2":
-       { status: 200, mime: "font/woff2", type: "font" },
-   });
- }
+-"@img/sharp-libvips-linux-arm@1.3.2":
+-  version "1.3.2"
+-  resolved "https://registry.yarnpkg.com/@img/sha
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1183** (2026-10-23): deps: update for 1.15.1 (@ikreymer)
+- **PR #1182** (2026-10-22): deps: bump brave to 1.97.59 (@ikreymer)
+- **PR #1180** (2026-10-23): build(deps): bump the npm_and_yarn group across 1 directory with 5 updates (@dependabot[bot])
 - **PR #1178** (2026-10-14): docs: update site-specific behaviours (@mistydemeo)
 - **PR #1174** (2026-10-02): test fix: pageinfo_test static assets (@ikreymer)
 - **PR #1173** (2026-10-02): make sha1 digests make working again for response records (@aponb)
-- **PR #1172** (2026-10-01): deps: bump brave to 1.96.60 (@ikreymer)
-- **PR #1171** (2026-10-01): Add try/catch to request fail/continue calls (@ikreymer)
-- **PR #1170** (2026-10-01): QA Random Sampling + Docs Update (@ikreymer)
 
 ---
 
@@ -3103,36 +2787,32 @@ need to update tests, as paths for static font assets have changed!
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. browser: add configurable --browserStartTimeout (#1160)
+## X. build(deps): bump the npm_and_yarn group across 1 directory with 5 updates (#118
 
 **RULE**:
-When implementing operations in `docs/docs/user-guide/cli-options.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webrecorder/browsertrix-crawler. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webrecorder/browsertrix-crawler. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1d11a7e5`: browser: add configurable --browserStartTimeout (#1160). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e582608a`: build(deps): bump the npm_and_yarn group across 1 directory with 5 updates (#1180). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/docs/user-guide/cli-options.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      --browserStartTimeout                 Timeout (in seconds) for the browser
-                                             process to start and connect. Raise
-                                             this on hosts under high load where
-                                            browser startup is slow.
-                                                          [number] [default: 30]
-  --browserStartTimeout     Timeout (in seconds) for the browser process to star
-                            t and connect. Raise this on hosts under high load w
-                            here browser startup is slow.
-                                                          [number] [default: 30]
+    "js-yaml": "^4.3.2",
+    "sharp": "^0.35.5",
+    "undici": "^7.29.1",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    "js-yaml": "^4.3.1",
+    "sharp": "^0.35.3",
+    "undici": "^7.29.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1d11a7e5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e582608a` are properly handled with clean fallback behavior.

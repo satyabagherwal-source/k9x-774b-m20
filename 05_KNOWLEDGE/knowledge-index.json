@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T11:39:02.158Z",
-  "total_verified_learnings": 1102,
+  "last_updated": "2026-10-27T11:49:41.057Z",
+  "total_verified_learnings": 1103,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2241,8 +2241,8 @@
       "slug": "apache-zookeeper",
       "platform": "github",
       "source_url": "https://github.com/apache/zookeeper",
-      "source_version": "777b3723",
-      "content_hash": "f3394aa9ee3fdd3b2e07d24151baa4005f71f8656b6562cf3078bca82398e711",
+      "source_version": "858c8d77",
+      "content_hash": "7a95f2d25ae44afa6653bfc3636caeece71580d8910dad39d18de882ba3b5b2b",
       "dossier_path": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
       "promoted_rules": [
@@ -2260,6 +2260,11 @@
           "number": 3621,
           "title": "ZOOKEEPER-5109: Do not pass server JVM flags to status diagnostic client",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4720,
+          "title": "ZOOKEEPER-5103: Address memory leaks in the C client",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2267,7 +2272,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:56:59.557Z",
+      "verified_at": "2026-10-27T11:49:41.047Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52417,13 +52422,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
-      "slug": "shopify-react-native-skia",
+      "slug": "wcandillon-react-native-skia",
       "platform": "github",
-      "source_url": "https://github.com/Shopify/react-native-skia",
-      "source_version": "bbd1b685",
-      "content_hash": "e014a1031fb833966f990acce1aa907791b9c7c48302852eea8a50b7e778b1b2",
-      "dossier_path": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+      "source_url": "https://github.com/wcandillon/react-native-skia",
+      "source_version": "39d14f72",
+      "content_hash": "df447fe43e6dc29f03f13354a28bef3ee5c52371b6c4798f8e336bc94f118fa4",
+      "dossier_path": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
       "promoted_rules": [
         {
           "number": 2002,
@@ -52453,7 +52458,7 @@
         {
           "number": 4017,
           "title": "🤖): present Android canvases off the main thread (#4318)",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52461,7 +52466,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T03:38:35.736Z",
+      "verified_at": "2026-10-27T11:49:33.473Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65740,14 +65745,19 @@
       "slug": "webrecorder-browsertrix-crawler",
       "platform": "github",
       "source_url": "https://github.com/webrecorder/browsertrix-crawler",
-      "source_version": "2cbb827e",
-      "content_hash": "a098e9b86d0c4b7014db00e7885b7ba53b2bc3413ffe33fad4539d3641d3f860",
+      "source_version": "e582608a",
+      "content_hash": "b8480fd5e02bcd5d17973a1e32980a7446fb6d95d35f334d9321fd09fb3b5149",
       "dossier_path": "07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
       "promoted_rules": [
         {
           "number": 2848,
           "title": "browser: add configurable --browserStartTimeout (#1160)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4717,
+          "title": "build(deps): bump the npm_and_yarn group across 1 directory with 5 updates (#118",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -65756,7 +65766,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T22:12:59.736Z",
+      "verified_at": "2026-10-27T11:49:31.193Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -120976,14 +120986,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 4017,
       "title": "🤖): present Android canvases off the main thread (#4318)",
-      "source_url": "https://github.com/Shopify/react-native-skia",
-      "source_version": "bbd1b685",
+      "source_url": "https://github.com/wcandillon/react-native-skia",
+      "source_version": "39d14f72",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-25T03:38:35.736Z"
+      "verified_at": "2026-10-27T11:49:33.473Z"
     },
     "rule-4018": {
       "learning_id": "rule-4018",
@@ -131538,6 +131548,100 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T11:39:02.146Z"
+    },
+    "rule-4717": {
+      "learning_id": "rule-4717",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4717,
+      "title": "build(deps): bump the npm_and_yarn group across 1 directory with 5 updates (#118",
+      "source_url": "https://github.com/webrecorder/browsertrix-crawler",
+      "source_version": "e582608a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:49:31.193Z"
+    },
+    "learn-huggingface-fastvideo-fasth3-omni-comfy": {
+      "learning_id": "learn-huggingface-fastvideo-fasth3-omni-comfy",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "FastVideo/FastH3-Omni-Comfy",
+      "repository": "FastVideo/FastH3-Omni-Comfy",
+      "slug": "hf-fastvideo-fasth3-omni-comfy",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/FastVideo/FastH3-Omni-Comfy",
+      "source_version": "hf-fastvideo-fasth3-omni-comfy",
+      "content_hash": "355bd5a19d59cefb3eebbc37700814d5055c8720ad46c6a9d7083ff48bd2761c",
+      "dossier_path": "07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4718,
+          "title": "Precision-Format Homogeneity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4719,
+          "title": "Hardware-Gated Format Selection",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T11:49:39.546Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4718": {
+      "learning_id": "rule-4718",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4718,
+      "title": "Precision-Format Homogeneity Invariant",
+      "source_url": "https://huggingface.co/FastVideo/FastH3-Omni-Comfy",
+      "source_version": "hf-fastvideo-fasth3-omni-comfy",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:49:39.546Z"
+    },
+    "rule-4719": {
+      "learning_id": "rule-4719",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4719,
+      "title": "Hardware-Gated Format Selection",
+      "source_url": "https://huggingface.co/FastVideo/FastH3-Omni-Comfy",
+      "source_version": "hf-fastvideo-fasth3-omni-comfy",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:49:39.546Z"
+    },
+    "rule-4720": {
+      "learning_id": "rule-4720",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4720,
+      "title": "ZOOKEEPER-5103: Address memory leaks in the C client",
+      "source_url": "https://github.com/apache/zookeeper",
+      "source_version": "858c8d77",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:49:41.047Z"
     }
   },
   "aliases": {

@@ -4500,3 +4500,7 @@ https://github.com/Gaurav-Gosain/tuios
 https://github.com/liyupi/mianshiya
 # [AI-AGENTS] ScrapeCreators/social-media-research-skills (2745 score) - AI agent skills for social media research. Outlier posts, comment mining, compet
 https://github.com/ScrapeCreators/social-media-research-skills
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T11:49:18.483Z] ---
+# [HUGGINGFACE-AI-MODELS] FastVideo/FastH3-Omni-Comfy (3650 score) - Verified Hugging Face Model: FastVideo/FastH3-Omni-Comfy (165 likes, 324335 down
+https://huggingface.co/FastVideo/FastH3-Omni-Comfy
