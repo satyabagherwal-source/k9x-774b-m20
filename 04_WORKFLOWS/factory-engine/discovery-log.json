@@ -19408,5 +19408,50 @@
     "qualityScore": 1423,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-27T15:04:08.787Z"
+  },
+  {
+    "name": "datagouv-mcp",
+    "fullName": "datagouv/datagouv-mcp",
+    "url": "https://github.com/datagouv/datagouv-mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Official data.gouv.fr Model Context Protocol (MCP) server that allows AI chatbots to search, explore, and analyze datasets from the French national Open Data platform, directly through conversation.",
+    "stars": 1603,
+    "forks": 141,
+    "openIssues": 9,
+    "language": "Python",
+    "qualityScore": 1112,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T16:14:46.308Z"
+  },
+  {
+    "name": "LitterBox",
+    "fullName": "BlackSnufkin/LitterBox",
+    "url": "https://github.com/BlackSnufkin/LitterBox",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A self-hosted sandbox for red teams to test payloads against modern detection before deployment. MCP integration lets an LLM agent drive analysis end to end.",
+    "stars": 1552,
+    "forks": 173,
+    "openIssues": 1,
+    "language": "YARA",
+    "qualityScore": 1080,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T16:14:46.308Z"
+  },
+  {
+    "name": "paperdebugger",
+    "fullName": "PaperDebugger/paperdebugger",
+    "url": "https://github.com/PaperDebugger/paperdebugger",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A Plugin-Based Multi-Agent System for In-Editor Academic Writing, Review, and Editing",
+    "stars": 1549,
+    "forks": 74,
+    "openIssues": 16,
+    "language": "TypeScript",
+    "qualityScore": 979,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T16:14:46.308Z"
   }
 ]

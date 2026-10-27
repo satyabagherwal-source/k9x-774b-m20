@@ -11228,5 +11228,35 @@
     "contentHash": "e1f8e9830d38ed9a48f047c086688f7be6c185cd5550ae5b2daf946309750761",
     "lastHarvestedAt": "2026-10-27T15:04:32.878Z",
     "learningId": "learn-github-zereight-gitlab-mcp"
+  },
+  "datagouv-datagouv-mcp": {
+    "repository": "datagouv/datagouv-mcp",
+    "platform": "github",
+    "sourceUrl": "https://github.com/datagouv/datagouv-mcp",
+    "sourceVersion": "01db2a6f",
+    "license": "MIT",
+    "contentHash": "2f11b7cd8a9a780326d665f17ba34995a0263c03b9dfd689002c53b91454fc8c",
+    "lastHarvestedAt": "2026-10-27T16:18:12.787Z",
+    "learningId": "learn-github-datagouv-datagouv-mcp"
+  },
+  "blacksnufkin-litterbox": {
+    "repository": "BlackSnufkin/LitterBox",
+    "platform": "github",
+    "sourceUrl": "https://github.com/BlackSnufkin/LitterBox",
+    "sourceVersion": "a609527c",
+    "license": "GPL-3.0",
+    "contentHash": "1e938f227b15e434bffcde7f7ded5d91fba210821c177f710cdd655013c03eca",
+    "lastHarvestedAt": "2026-10-27T16:18:18.162Z",
+    "learningId": "learn-github-blacksnufkin-litterbox"
+  },
+  "paperdebugger-paperdebugger": {
+    "repository": "PaperDebugger/paperdebugger",
+    "platform": "github",
+    "sourceUrl": "https://github.com/PaperDebugger/paperdebugger",
+    "sourceVersion": "191bd322",
+    "license": "AGPL-3.0",
+    "contentHash": "dbdabc46b20d6e485afbb7bea0f3ff9414554609565da3da3eff413366e43978",
+    "lastHarvestedAt": "2026-10-27T16:18:19.708Z",
+    "learningId": "learn-github-paperdebugger-paperdebugger"
   }
 }

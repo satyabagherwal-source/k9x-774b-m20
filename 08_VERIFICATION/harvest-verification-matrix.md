@@ -5421,3 +5421,6 @@
 | `CYCLE-20261027-PRYS` | `2026-10-27T15:39:34.228Z` | `jhspetersson/fselect` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4890` | Yes (`2d5bd257...`) |
 | `CYCLE-20261027-PY7H` | `2026-10-27T15:39:42.317Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4891` | Yes (`fec04798...`) |
 | `CYCLE-20261027-Q1O6` | `2026-10-27T15:39:46.806Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4892` | Yes (`14d63982...`) |
+| `CYCLE-20261027-3GZ3` | `2026-10-27T16:18:12.783Z` | `datagouv/datagouv-mcp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4893` | Yes (`2f11b7cd...`) |
+| `CYCLE-20261027-3L4F` | `2026-10-27T16:18:18.159Z` | `BlackSnufkin/LitterBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4894` | Yes (`1e938f22...`) |
+| `CYCLE-20261027-3MBD` | `2026-10-27T16:18:19.705Z` | `PaperDebugger/paperdebugger` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4895` | Yes (`dbdabc46...`) |

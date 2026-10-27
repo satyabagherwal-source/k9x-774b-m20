@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-8HF4",
-    "timestamp": "2026-10-25T17:42:45.040Z",
-    "repository": "envoyproxy/envoy",
-    "learningId": "learn-github-envoyproxy-envoy",
-    "contentHash": "760d8fd10919287c97c56f8bd94160306f1b2b0f83b793ec91e9125956a3a67c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-8IYT",
-    "timestamp": "2026-10-25T17:42:47.045Z",
-    "repository": "mitmproxy/mitmproxy",
-    "learningId": "learn-github-mitmproxy-mitmproxy",
-    "contentHash": "51a007fe3f62facf98ed06d4bc83b1c392617c46691a7489178e046bd867519d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-8MHA",
-    "timestamp": "2026-10-25T17:42:51.598Z",
-    "repository": "Qwen/Qwen3-0.6B",
-    "learningId": "learn-huggingface-qwen-qwen3-0-6b",
-    "contentHash": "e30ad12c2112d687a6b96fe0a0bfa773981665c43cf0ed6eae1751fa14aa9ede",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-GOS1",
     "timestamp": "2026-10-25T17:49:07.825Z",
     "repository": "google-t5/t5-small",
@@ -7490,6 +7445,51 @@
     "repository": "databendlabs/databend",
     "learningId": "learn-github-databendlabs-databend",
     "contentHash": "14d63982ab38a716915864dc2e61341a2d3b1edb6648f917c501f4390a8f218c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-3GZ3",
+    "timestamp": "2026-10-27T16:18:12.783Z",
+    "repository": "datagouv/datagouv-mcp",
+    "learningId": "learn-github-datagouv-datagouv-mcp",
+    "contentHash": "2f11b7cd8a9a780326d665f17ba34995a0263c03b9dfd689002c53b91454fc8c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-3L4F",
+    "timestamp": "2026-10-27T16:18:18.159Z",
+    "repository": "BlackSnufkin/LitterBox",
+    "learningId": "learn-github-blacksnufkin-litterbox",
+    "contentHash": "1e938f227b15e434bffcde7f7ded5d91fba210821c177f710cdd655013c03eca",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-3MBD",
+    "timestamp": "2026-10-27T16:18:19.705Z",
+    "repository": "PaperDebugger/paperdebugger",
+    "learningId": "learn-github-paperdebugger-paperdebugger",
+    "contentHash": "dbdabc46b20d6e485afbb7bea0f3ff9414554609565da3da3eff413366e43978",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

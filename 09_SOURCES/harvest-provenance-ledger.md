@@ -5430,3 +5430,6 @@ Every entry in this ledger must capture:
 | `learn-github-jhspetersson-fselect` | `https://github.com/jhspetersson/fselect` | `f85f1b54` | Multi-dimensional audit evidence | 2026-10-27T15:39:34.231Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `bc843c52` | Multi-dimensional audit evidence | 2026-10-27T15:39:42.320Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `ad9996eb` | Multi-dimensional audit evidence | 2026-10-27T15:39:46.810Z |
+| `learn-github-datagouv-datagouv-mcp` | `https://github.com/datagouv/datagouv-mcp` | `01db2a6f` | Multi-dimensional audit evidence | 2026-10-27T16:18:12.787Z |
+| `learn-github-blacksnufkin-litterbox` | `https://github.com/BlackSnufkin/LitterBox` | `a609527c` | Multi-dimensional audit evidence | 2026-10-27T16:18:18.162Z |
+| `learn-github-paperdebugger-paperdebugger` | `https://github.com/PaperDebugger/paperdebugger` | `191bd322` | Multi-dimensional audit evidence | 2026-10-27T16:18:19.708Z |

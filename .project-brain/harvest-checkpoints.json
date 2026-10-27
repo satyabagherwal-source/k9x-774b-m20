@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T15:39:46.819Z",
+  "last_updated": "2026-10-27T16:18:19.715Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -16874,6 +16874,51 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-27T15:04:32.886Z"
+    },
+    "datagouv/datagouv-mcp": {
+      "repository": "datagouv/datagouv-mcp",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-datagouv-datagouv-mcp",
+      "content_hash": "2f11b7cd8a9a780326d665f17ba34995a0263c03b9dfd689002c53b91454fc8c",
+      "verified_at": "2026-10-27T16:18:12.794Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T16:18:12.794Z"
+    },
+    "BlackSnufkin/LitterBox": {
+      "repository": "BlackSnufkin/LitterBox",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-blacksnufkin-litterbox",
+      "content_hash": "1e938f227b15e434bffcde7f7ded5d91fba210821c177f710cdd655013c03eca",
+      "verified_at": "2026-10-27T16:18:18.170Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T16:18:18.170Z"
+    },
+    "PaperDebugger/paperdebugger": {
+      "repository": "PaperDebugger/paperdebugger",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-paperdebugger-paperdebugger",
+      "content_hash": "dbdabc46b20d6e485afbb7bea0f3ff9414554609565da3da3eff413366e43978",
+      "verified_at": "2026-10-27T16:18:19.715Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T16:18:19.715Z"
     }
   },
   "repos": {

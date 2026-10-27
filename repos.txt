@@ -4604,3 +4604,11 @@ https://github.com/svnscha/mcp-windbg
 # --- Automatically Discovered by AI Scout Engine [2026-10-27T15:04:26.019Z] ---
 # [AI-AGENTS] zereight/gitlab-mcp (1423 score) - MCP server for GitLab: 277 tools for projects, MRs, issues, pipelines, wikis and
 https://github.com/zereight/gitlab-mcp
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T16:18:04.689Z] ---
+# [AI-AGENTS] datagouv/datagouv-mcp (1112 score) - Official data.gouv.fr Model Context Protocol (MCP) server that allows AI chatbot
+https://github.com/datagouv/datagouv-mcp
+# [AI-AGENTS] BlackSnufkin/LitterBox (1080 score) - A self-hosted sandbox for red teams to test payloads against modern detection be
+https://github.com/BlackSnufkin/LitterBox
+# [AI-AGENTS] PaperDebugger/paperdebugger (979 score) - A Plugin-Based Multi-Agent System for In-Editor Academic Writing, Review, and Ed
+https://github.com/PaperDebugger/paperdebugger
