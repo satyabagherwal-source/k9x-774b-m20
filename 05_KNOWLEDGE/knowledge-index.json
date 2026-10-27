@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T14:57:47.592Z",
+  "last_updated": "2026-10-27T15:01:19.015Z",
   "total_verified_learnings": 1138,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7704,8 +7704,8 @@
       "slug": "dalance-procs",
       "platform": "github",
       "source_url": "https://github.com/dalance/procs",
-      "source_version": "b10d652b",
-      "content_hash": "a410684395c940f0f4544d81d41323fbd59fd99478a517ddf7b00fb0a81d21d9",
+      "source_version": "c41ae259",
+      "content_hash": "898a8fb65959104790de4bb6a974bbcf44639b11e94c333a6d24355e22afe056",
       "dossier_path": "07_PROJECT_LEARNING/dalance-procs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dalance-procs-learnings.md",
       "promoted_rules": [
@@ -7723,6 +7723,11 @@
           "number": 3544,
           "title": "build(deps): bump libc from 0.2.190 to 0.2.191",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4869,
+          "title": "build(deps): bump tokio from 1.53.3 to 1.54.1",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7730,7 +7735,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T15:16:21.431Z",
+      "verified_at": "2026-10-27T15:01:10.584Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14927,8 +14932,8 @@
       "slug": "hashicorp-terraform",
       "platform": "github",
       "source_url": "https://github.com/hashicorp/terraform",
-      "source_version": "55988303",
-      "content_hash": "d959109a48f54e272b0a4e984ec3e31b8e604c06e90990563c2eb1a1c4826884",
+      "source_version": "ae75cbe4",
+      "content_hash": "a1f66b6acef9656a5a0962dd98b5ea3fabfad771044c36e396692f7f8ef92bba",
       "dossier_path": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "promoted_rules": [
@@ -14966,6 +14971,11 @@
           "number": 4309,
           "title": "test: Refactor and add test case for graph rendering in Dot format. (#39437)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4870,
+          "title": "Make `taint` and `untaint` commands use the `views` package (#39452)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14973,7 +14983,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T13:30:56.346Z",
+      "verified_at": "2026-10-27T15:01:16.876Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38737,8 +38747,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "5946dcf5",
-      "content_hash": "913b890a5964ae86eece90f80e79e927ff9e0345634b44896ee1b3fb3e24a61b",
+      "source_version": "b1c943e6",
+      "content_hash": "9fa2b4473384bd249cab19b06aba41d1c3e98f5c92474cc345f34c68b4e75e58",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -38781,6 +38791,11 @@
           "number": 4788,
           "title": "clean up workspace dependencies and build configuration (#2210)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4871,
+          "title": "oauth-capture): rewrite form-urlencoded OAuth token responses (#1836)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38788,7 +38803,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:10:46.156Z",
+      "verified_at": "2026-10-27T15:01:19.001Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -135413,6 +135428,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T14:57:47.580Z"
+    },
+    "rule-4869": {
+      "learning_id": "rule-4869",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4869,
+      "title": "build(deps): bump tokio from 1.53.3 to 1.54.1",
+      "source_url": "https://github.com/dalance/procs",
+      "source_version": "c41ae259",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T15:01:10.584Z"
+    },
+    "rule-4870": {
+      "learning_id": "rule-4870",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4870,
+      "title": "Make `taint` and `untaint` commands use the `views` package (#39452)",
+      "source_url": "https://github.com/hashicorp/terraform",
+      "source_version": "ae75cbe4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T15:01:16.876Z"
+    },
+    "rule-4871": {
+      "learning_id": "rule-4871",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4871,
+      "title": "oauth-capture): rewrite form-urlencoded OAuth token responses (#1836)",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "b1c943e6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T15:01:19.001Z"
     }
   },
   "aliases": {

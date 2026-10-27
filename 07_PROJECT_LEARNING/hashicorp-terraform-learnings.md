@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source**: github ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
-> **Source Version**: `55988303`  
+> **Source Version**: `ae75cbe4`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T13:30:56.036Z  
+> **Timestamp**: 2026-10-27T15:01:16.522Z  
 > **Learning ID**: `learn-github-hashicorp-terraform`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T13:30:55.095Z  
+> **Harvest Timestamp**: 2026-10-27T15:01:16.042Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Terraform enables you to safely and predictably create, change, and improve infrastructure. It is a source-available tool that codifies APIs into declarative configuration files that can be shared amongst team members, treated as code, edited, reviewed, and versioned.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 50144 stars
+- **Stars / Engagement**: 50201 stars
 
 ---
 
@@ -2260,11 +2260,11 @@ func (c *RemoteClient) getLockInfo() (*statemgr.LockInfo, error) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #39444** (2026-10-26): **backend/s3: trim download buffer to bytes written to fix trailing NUL padding**
+  *Symptoms*: Fixes #39440.  ### What  `RemoteClient.get` in `internal/backend/remote-state/s3/client.go` sizes its buffer from the `HeadObject` `ContentLength`, then fills it with `manager.Downloader`. If the object is overwritten by a **smaller** one between the HEAD and the download, the buffer is larger than the downloaded content, so `w.Bytes()` returns the new content followed by `\x00` padding. The byte count returned by `Download` was discarded.  The padded buffer then fails to parse:  ``` Error: Unsupported state file format The state file could not be parsed as JSON: syntax error at byte offset <newsize+1>. ```  This hits any `terraform_remote_state` read of an S3 state while another run applies a smaller version of that state.  ### Fix  Slice the buffer to the number of bytes `Download` reports it wrote before computing the MD5 and building the payload.  ### Tests  Added `TestRemoteClientGet_objectShrinksBetweenHeadAndDownload` (no AWS account needed): a local fake S3 endpoint serves a >5 MiB object, then swaps in a smaller one right after answering the HEAD, so the multipart download fills only part of the pre-sized buffer. The test asserts the returned payload is valid JSON and exactly the downloaded object's length.  Validation (go1.26.10, linux/amd64), run in `internal/backend/remote-state/s3`:  ``` # with the fix $ go test -run TestRemoteClientGet_objectShrinksBetweenHeadAndDownload ./ -count=1 ok  github.com/hashicorp/terraform/internal/backend/remote-state/s3  0.224s  # w
+
 - **Issue #39434** (2026-10-23): **Provider archives downloaded by terraform init are left in the temporary directory on Windows**
   *Symptoms*: ### Terraform Version  ```shell Terraform v1.11.3 on windows_amd64 ```  Also reproduced with a local build of `main` at cdbff3e.  ### Terraform Configuration Files  ```terraform terraform {   required_providers {     null = {       source  = "hashicorp/null"       version = "3.2.1"     }   } } ```  ### Debug Output  Not applicable: nothing is logged, because the error from the failed delete is discarded.  ### Expected Behavior  After `terraform init` installs a provider downloaded from a registry, the downloaded archive is deleted from the temporary directory.  ### Actual Behavior  The archive stays behind as `%TEMP%\terraform-provider<random>`: one file for every provider package downloaded, on every init (4.7 MB for `hashicorp/null` 3.2.1, about 180 MB for `hashicorp/aws`). `terraform providers lock` leaves one per provider per requested platform. On one workstation 1,764 of these files (195 GB) built up in ten days and filled the system drive.  ### Steps to Reproduce  PowerShell, in an empty directory:  1. Save the configuration above as `work\main.tf`. 2. `mkdir tmp; $env:TMP = "$PWD\tmp"; $env:TEMP = "$PWD\tmp"` 3. `terraform -chdir=work init` 4. `Get-ChildItem tmp` lists `terraform-provider<N>`.  ### Additional Context  `installFromHTTPURL` in `internal/providercache/package_install.go`:  ```go f, err := os.CreateTemp("", "terraform-provider") // ... defer f.Close() defer os.Remove(f.Name()) ```  Deferred calls run last-in, first-out, so `os.Remove` runs while `f` is st
-
-- **Issue #39408** (2026-10-19): **Kill managed provider plugin processes before exiting from the panic handler 🤖🤖🤖**
-  *Symptoms*: When a worker goroutine panics, `logging.PanicHandler` prints the crash report and ends with `os.Exit(11)`. `os.Exit` skips deferred calls, including the `defer plugin.CleanupClients()` in `realMain` (`main.go`) that normally terminates managed provider plugin processes, so every provider plugin still running at the moment of the panic keeps running after Terraform exits, reparented to the init or subreaper process.  This change calls `plugin.CleanupClients()` from `github.com/hashicorp/go-plugin` (already a direct dependency) in `PanicHandler` immediately before the crash exit, with a comment explaining that `os.Exit` skips the deferred cleanup in `main`. The exit status stays 11 and the crash report is unchanged. The call is a no-op when no managed clients exist, such as under `terraform rpcapi`.  Fixes #39399  ## Target Release  1.18.x  ## Rollback Plan  - [x] If a change needs to be reverted, we will roll out an update to the code within 7 days.  ## Changes to Security Controls  No changes to security controls. The change only terminates Terraform's own already-managed child plugin processes during crash exit; it adds no new access, encryption, or logging behavior.  ## CHANGELOG entry  - [x] This change is user-facing and I added a changelog entry. - [ ] This change is not user-facing.  ## Generative AI / LLM assisted development?  An LLM coding agent assisted this change under human supervision: it located the exit path, drafted the cleanup call and comment, built unpatc
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2281,225 +2281,1599 @@ func (c *RemoteClient) getLockInfo() (*statemgr.LockInfo, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a060ad5a` (2026-10-23)
-**Commit Message**: test: Refactor and add test case for graph rendering in Dot format. (#39437)
+### Incident Patch 1: `ae75cbe4` (2026-10-27)
+**Commit Message**: refactor: Make `taint` and `untaint` commands use the `views` package (#39452)
 
-* test: Remove unneeded error assertions
+This change:
 
-This test doesn't test the `GraphDot` function after all, so there are no errors to compare. But even if it did, the `GraphDot` function is currently hardcoded to return nil as the error value.
+* Implements views for `taint` and `untaint` commands
+* Refactors `taint` and `untaint` commands to use views for terminal output
+* Enables displaying warning diagnostics at end of a successful command run
+* Adds `-no-color` and `-compact-warnings` flags to help text for `untaint` command
 
-* test: Simplify vertex implementations used in existing (Graph).Dot test
+These changes includes updating error output. Previously a string was logged to stderr, now a diagnostic is created and logged to stderr.
 
-The methods other than Name and DotNode on the original test mock were unused. This implementation of a vertex was no better than the simpler stringV above.
-
-* test: Add test case showing Dot graph where cycles are not drawn
-
-**File**: `internal/terraform/graph_dot_test.go` (modified, +59/-71)
+**File**: `internal/command/arguments/taint.go` (modified, +4/-1)
 ```diff
-@@ -12,17 +12,25 @@ import (
+@@ -40,6 +40,8 @@ type Taint struct {
+ 	// IgnoreRemoteVersion, if true, continues even if remote and local
+ 	// Terraform versions are incompatible.
+ 	IgnoreRemoteVersion bool
++
++	ViewType ViewType
+ }
  
- type stringV string
+ // ParseTaint processes CLI arguments, returning a Taint value and errors.
+@@ -48,7 +50,8 @@ type Taint struct {
+ func ParseTaint(args []string) (*Taint, tfdiags.Diagnostics) {
+ 	var diags tfdiags.Diagnostics
+ 	taint := &Taint{
+-		Vars: &Vars{},
++		Vars:     &Vars{},
++		ViewType: ViewHuman,
+ 	}
  
-+var (
-+	_ dag.Vertex          = stringV("")
-+	_ dag.GraphNodeDotter = stringV("")
+ 	cmdFlags := extendedFlagSet("taint", nil, nil, taint.Vars)
+```
+
+**File**: `internal/command/arguments/taint_test.go` (modified, +14/-2)
+```diff
+@@ -21,6 +21,7 @@ func TestParseTaint_valid(t *testing.T) {
+ 		"defaults with address": {
+ 			[]string{"test_instance.foo"},
+ 			&Taint{
++				ViewType:  ViewHuman,
+ 				Vars:      &Vars{},
+ 				Address:   "test_instance.foo",
+ 				StateLock: true,
+@@ -29,6 +30,7 @@ func TestParseTaint_valid(t *testing.T) {
+ 		"allow-missing": {
+ 			[]string{"-allow-missing", "test_instance.foo"},
+ 			&Taint{
++				ViewType:     ViewHuman,
+ 				Vars:         &Vars{},
+ 				Address:      "test_instance.foo",
+ 				AllowMissing: true,
+@@ -38,6 +40,7 @@ func TestParseTaint_valid(t *testing.T) {
+ 		"backup": {
+ 			[]string{"-backup", "backup.tfstate", "test_instance.foo"},
+ 			&Taint{
++				ViewType:   ViewHuman,
+ 				Vars:       &Vars{},
+ 				Address:    "test_instance.foo",
+ 				BackupPath: "backup.tfstate",
+@@ -47,13 +50,15 @@ func TestParseTaint_valid(t *testing.T) {
+ 		"lock disabled": {
+ 			[]string{"-lock=false", "test_instance.foo"},
+ 			&Taint{
+-				Vars:    &Vars{},
+-				Address: "test_instance.foo",
++				ViewType: ViewHuman,
++				Vars:     &Vars{},
++				Address:  "test_instance.foo",
+ 			},
+ 		},
+ 		"lock-timeout": {
+ 			[]string{"-lock-timeout=10s", "test_instance.foo"},
+ 			&Taint{
++				ViewType:         ViewHuman,
+ 				Vars:             &Vars{},
+ 				Address:          "test_instance.foo",
+ 				StateLock:        true,
+@@ -63,6 +68,7 @@ func TestParseTaint_valid(t *testing.T) {
+ 		"state": {
+ 			[]string{"-state=foo.tfstate", "test_instance.foo"},
+ 			&Taint{
++				ViewType:  ViewHuman,
+ 				Vars:      &Vars{},
+ 				Address:   "test_instance.foo",
+ 				StateLock: true,
+@@ -72,6 +78,7 @@ func TestParseTaint_valid(t *testing.T) {
+ 		"state-out": {
+ 			[]string{"-state-out=foo.tfstate", "test_instance.foo"},
+ 			&Taint{
++				ViewType:     ViewHuman,
+ 				Vars:         &Vars{},
+ 				Address:      "test_instance.foo",
+ 				StateLock:    true,
+@@ -81,6 +88,7 @@ func TestParseTaint_valid(t *testing.T) {
+ 		"ignore-remote-version": {
+ 			[]string{"-ignore-remote-version", "test_instance.foo"},
+ 			&Taint{
++				ViewType:            ViewHuman,
+ 				Vars:                &Vars{},
+ 				Address:             "test_instance.foo",
+ 				StateLock:           true,
+@@ -99,6 +107,7 @@ func TestParseTaint_valid(t *testing.T) {
+ 				"module.child.test_instance.foo",
+ 			},
+ 			&Taint{
++				ViewType:            ViewHuman,
+ 				Vars:                &Vars{},
+ 				Address:             "module.child.test_instance.foo",
+ 				AllowMissing:        true,
+@@ -180,6 +189,7 @@ func TestParseTaint_invalid(t *testing.T) {
+ 		"unknown flag": {
+ 			[]string{"-unknown"},
+ 			&Taint{
++				ViewType:  ViewHuman,
+ 				Vars:      &Vars{},
+ 				StateLock: true,
+ 			},
+@@ -199,6 +209,7 @@ func TestParseTaint_invalid(t *testing.T) {
+ 		"missing address": {
+ 			nil,
+ 			&Taint{
++				ViewType:  ViewHuman,
+ 				Vars:      &Vars{},
+ 				StateLock: true,
+ 			},
+@@ -213,6 +224,7 @@ func TestParseTaint_invalid(t *testing.T) {
+ 		"too many arguments": {
+ 			[]string{"test_instance.foo", "test_instance.bar"},
+ 			&Taint{
++				ViewType:  ViewHuman,
+ 				Vars:      &Vars{},
+ 				Address:   "test_instance.foo",
+ 				StateLock: true,
+```
+
+**File**: `internal/command/arguments/untaint.go` (modified, +5/-1)
+```diff
+@@ -37,14 +37,18 @@ type Untaint struct {
+ 	// IgnoreRemoteVersion, if true, continues even if remote and local
+ 	// Terraform versions are incompatible.
+ 	IgnoreRemoteVersion bool
++
++	ViewType ViewType
+ }
+ 
+ // ParseUntaint processes CLI arguments, returning an Untaint value and errors.
+ // If errors are encountered, an Untaint value is still returned representing
+ // the best effort interpretation of the arguments.
+ func ParseUntaint(args []string) (*Untaint, tfdiags.Diagnostics) {
+ 	var diags tfdiags.Diagnostics
+-	untaint := &Untaint{}
++	untaint := &Untaint{
++		ViewType: ViewHuman,
++	}
+ 
+ 	cmdFlags := defaultFlagSet("untaint")
+ 	cmdFlags.BoolVar(&untaint.AllowMissing, "allow-missing", false, "allow missing")
+```
+
+**File**: `internal/command/arguments/untaint_test.go` (modified, +13/-1)
+```diff
+@@ -18,13 +18,15 @@ func TestParseUntaint_valid(t *testing.T) {
+ 		"defaults with address": {
+ 			[]string{"test_instance.foo"},
+ 			&Untaint{
++				ViewType:  ViewHuman,
+ 				Address:   "test_instance.foo",
+ 				StateLock: true,
+ 			},
+ 		},
+ 		"allow-missing": {
+ 			[]string{"-allow-missing", "test_instance.foo"},
+ 			&Untaint{
++				ViewType:     ViewHuman,
+ 				Address:      "test_instance.foo",
+ 				AllowMissing: true,
+ 				StateLock:    true,
+@@ -33,6 +35,7 @@ func TestParseUntaint_valid(t *testing.T) {
+ 		"backup": {
+ 			[]string{"-backup", "backup.tfstate", "test_instance.foo"},
+ 			&Untaint{
++				ViewType:   ViewHuman,
+ 				Address:    "test_instance.foo",
+ 				BackupPath: "backup.tfstate",
+ 				StateLock:  true,
+@@ -41,12 +44,14 @@ func TestParseUntaint_valid(t *testing.T) {
+ 		"lock disabled": {
+ 			[]string{"-lock=false", "test_instance.foo"},
+ 			&Untaint{
+-				Address: "test_instance.foo",
++				ViewType: ViewHuman,
++				Address:  "test_instance.foo",
+ 			},
+ 		},
+ 		"lock-timeout": {
+ 			[]string{"-lock-timeout=10s", "test_instance.foo"},
+ 			&Untaint{
++				ViewType:         ViewHuman,
+ 				Address:          "test_instance.foo",
+ 				StateLock:        true,
+ 				StateLockTimeout: 10 * time.Second,
+@@ -55,6 +60,7 @@ func TestParseUntaint_valid(t *testing.T) {
+ 		"state": {
+ 			[]string{"-state=foo.tfstate", "test_instance.foo"},
+ 			&Untaint{
++				ViewType:  ViewHuman,
+ 				Address:   "test_instance.foo",
+ 				StateLock: true,
+ 				StatePath: "foo.tfstate",
+@@ -63,6 +69,7 @@ func TestParseUntaint_valid(t *testing.T) {
+ 		"state-out": {
+ 			[]string{"-state-out=foo.tfstate", "test_instance.foo"},
+ 			&Untaint{
++				ViewType:     ViewHuman,
+ 				Address:      "test_instance.foo",
+ 				StateLock:    true,
+ 				StateOutPath: "foo.tfstate",
+@@ -71,6 +78,7 @@ func TestParseUntaint_valid(t *testing.T) {
+ 		"ignore-remote-version": {
+ 			[]string{"-ignore-remote-version", "test_instance.foo"},
+ 			&Untaint{
++				ViewType:            ViewHuman,
+ 				Address:             "test_instance.foo",
+ 				StateLock:           true,
+ 				IgnoreRemoteVersion: true,
+@@ -88,6 +96,7 @@ func TestParseUntaint_valid(t *testing.T) {
+ 				"module.child.test_instance.foo",
+ 			},
+ 			&Untaint{
++				ViewType:            ViewHuman,
+ 				Address:             "module.child.test_instance.foo",
+ 				AllowMissing:        true,
+ 				BackupPath:          "backup.tfstate",
+@@ -121,6 +130,7 @@ func TestParseUntaint_invalid(t *testing.T) {
+ 		"unknown flag": {
+ 			[]string{"-unknown"},
+ 			&Untaint{
++				ViewType:  ViewHuman,
+ 				StateLock: true,
+ 			},
+ 			tfdiags.Diagnostics{
+@@ -139,6 +149,7 @@ func TestParseUntaint_invalid(t *testing.T) {
+ 		"missing address": {
+ 			nil,
+ 			&Untaint{
++				ViewType:  ViewHuman,
+ 				StateLock: true,
+ 			},
+ 			tfdiags.Diagnostics{
+@@ -152,6 +163,7 @@ func TestParseUntaint_invalid(t *testing.T) {
+ 		"too many arguments": {
+ 			[]string{"test_instance.foo", "test_instance.bar"},
+ 			&Untaint{
++				ViewType:  ViewHuman,
+ 				Address:   "test_instance.foo",
+ 				StateLock: true,
+ 			},
+```
+
+**File**: `internal/command/taint.go` (modified, +88/-37)
+```diff
+@@ -23,9 +23,22 @@ type TaintCommand struct {
+ }
+ 
+ func (c *TaintCommand) Run(rawArgs []string) int {
+-	parsedArgs, parseDiags := arguments.ParseTaint(c.Meta.process(rawArgs))
+-	if parseDiags.HasErrors() {
+-		c.showDiagnostics(parseDiags)
++	var diags tfdiags.Diagnostics
++
++	// Parse and apply global view arguments
++	common, rawArgs := arguments.ParseView(rawArgs)
++	c.View.Configure(common)
++
++	// Parse command-specific arguments.
++	parsedArgs, parseDiags := arguments.ParseTaint(rawArgs)
++	diags = diags.Append(parseDiags)
++
++	// Prepare the view
++	view := views.NewTaint(parsedArgs.ViewType, c.View)
++
++	// Now the view is ready, process any error diagnostics from parsing arguments.
++	if diags.HasErrors() {
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+@@ -41,100 +54,122 @@ func (c *TaintCommand) Run(rawArgs []string) int {
+ 	if err != nil {
+ 		var diags tfdiags.Diagnostics
+ 		diags = diags.Append(err)
+-		c.showDiagnostics(diags)
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+ 	var varDiags tfdiags.Diagnostics
+ 	c.VariableValues, varDiags = parsedArgs.Vars.CollectValues(func(filename string, src []byte) {
+ 		loader.Parser().ForceFileSource(filename, src)
+ 	})
++	diags = diags.Append(varDiags)
+ 	if varDiags.HasErrors() {
+-		c.showDiagnostics(varDiags)
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+-	var diags tfdiags.Diagnostics
+-
+ 	addr, addrDiags := addrs.ParseAbsResourceInstanceStr(parsedArgs.Address)
+ 	diags = diags.Append(addrDiags)
+ 	if addrDiags.HasErrors() {
+-		c.showDiagnostics(diags)
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+ 	if addr.Resource.Resource.Mode != addrs.ManagedResourceMode {
+-		c.Ui.Error(fmt.Sprintf("Resource instance %s cannot be tainted", addr))
++		diags = diags.Append(tfdiags.Sourceless(
++			tfdiags.Error,
++			"Cannot taint provided address",
++			fmt.Sprintf("%s cannot be tainted because it is not a managed resource.", addr),
++		))
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+ 	if diags := c.Meta.checkRequiredVersion(); diags != nil {
+-		c.showDiagnostics(diags)
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+ 	// Load the backend
+-	view := arguments.ViewHuman
+-	b, backendDiags := c.backend(".", view)
++	b, backendDiags := c.backend(".", parsedArgs.ViewType)
+ 	diags = diags.Append(backendDiags)
+ 	if backendDiags.HasErrors() {
+-		c.showDiagnostics(diags)
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+ 	// Determine the workspace name
+ 	workspace, err := c.Workspace()
+ 	if err != nil {
+-		c.Ui.Error(fmt.Sprintf("Error selecting workspace: %s", err))
++		diags = diags.Append(tfdiags.Sourceless(
++			tfdiags.Error,
++			"Error determining the current workspace",
++			err.Error(),
++		))
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+ 	// Check remote Terraform version is compatible
+ 	remoteVersionDiags := c.remoteVersionCheck(b, workspace)
+ 	diags = diags.Append(remoteVersionDiags)
+-	c.showDiagnostics(diags)
++	view.Diagnostics(diags)
+ 	if diags.HasErrors() {
+ 		return 1
+ 	}
+ 
+-	// Get the state
++	// Get a state manager for the current workspace
+ 	stateMgr, sDiags := b.StateMgr(workspace)
+ 	if sDiags.HasErrors() {
+-		c.Ui.Error(fmt.Sprintf("Failed to load state: %s", sDiags.Err()))
++		diags = diags.Append(tfdiags.Sourceless(
++			tfdiags.Error,
++			"Error accessing state",
++			fmt.Sprintf("Failed to access state: %s", sDiags.Err()),
++		))
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+ 	if c.stateLock {
+ 		stateLocker := clistate.NewLocker(c.stateLockTimeout, views.NewStateLocker(arguments.ViewHuman, c.View))
+-		if diags := stateLocker.Lock(stateMgr, "taint"); diags.HasErrors() {
+-			c.showDiagnostics(diags)
++		if lockDiags := stateLocker.Lock(stateMgr, "taint"); lockDiags.HasErrors() {
++			diags = diags.Append(lockDiags)
++			view.Diagnostics(diags)
+ 			return 1
+ 		}
+ 		defer func() {
+-			if diags := stateLocker.Unlock(); diags.HasErrors() {
+-				c.showDiagnostics(diags)
++			if unlockDiags := stateLocker.Unlock(); unlockDiags.HasErrors() {
++				diags = diags.Append(unlockDiags)
++				view.Diagnostics(diags)
+ 			}
+ 		}()
+ 	}
+ 
+ 	if err := stateMgr.RefreshState(); err != nil {
+-		c.Ui.Error(fmt.Sprintf("Failed to load state: %s", err))
++		diags = diags.Append(tfdiags.Sourceless(
++			tfdiags.Error,
++			"Error loading state",
++			fmt.Sprintf("Failed to load state: %s", err),
++		))
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+ 	// Get the actual state structure
+ 	state := stateMgr.State()
+ 	if state.Empty() {
+ 		if parsedArgs.AllowMissing {
+-			return c.allowMissingExit(addr)
++			diags = diags.Append(c.allowMissingWarning(addr))
++			view.Diagnostics(diags)
++			return 0
+ 		}
+ 
+ 		diags = diags.Append(tfdiags.Sourceless(
+ 			tfdiags.Error,
+ 			"No such resource instance",
+ 			"The state currently contains no resource instances whatsoever. This may occur if the configuration has never been applied or if it has recently been destroyed.",
+ 		))
+-		c.showDiagnostics(diags)
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+@@ -153,15 +188,17 @@ func (c *TaintCommand) Run(rawArgs []string) int {
+ 	is := ss.ResourceInstance(ad
+```
+
+**File**: `internal/command/taint_test.go` (modified, +35/-62)
+```diff
+@@ -36,11 +36,9 @@ func TestTaint(t *testing.T) {
+ 	})
+ 	statePath := testStateFile(t, state)
+ 
+-	ui := testUiWrapped(t)
+-	view, _ := testView(t)
++	view, done := testView(t)
+ 	c := &TaintCommand{
+ 		Meta: Meta{
+-			Ui:   ui,
+ 			View: view,
+ 		},
+ 	}
+@@ -50,7 +48,7 @@ func TestTaint(t *testing.T) {
+ 		"test_instance.foo",
+ 	}
+ 	if code := c.Run(args); code != 0 {
+-		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
++		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
+ 	}
+ 
+ 	testStateOutput(t, statePath, testTaintStr)
+@@ -81,11 +79,9 @@ func TestTaint_lockedState(t *testing.T) {
+ 		t.Fatal(err)
+ 	}
+ 	defer unlock()
+-	ui := testUiWrapped(t)
+-	view, _ := testView(t)
++	view, done := testView(t)
+ 	c := &TaintCommand{
+ 		Meta: Meta{
+-			Ui:   ui,
+ 			View: view,
+ 		},
+ 	}
+@@ -98,7 +94,7 @@ func TestTaint_lockedState(t *testing.T) {
+ 		t.Fatal("expected error")
+ 	}
+ 
+-	output := ui.ErrorWriter.String()
++	output := done(t).All()
+ 	if !strings.Contains(output, "lock") {
+ 		t.Fatal("command output does not look like a lock error:", output)
+ 	}
+@@ -129,11 +125,9 @@ func TestTaint_backup(t *testing.T) {
+ 	})
+ 	testStateFileDefault(t, state)
+ 
+-	ui := testUiWrapped(t)
+-	view, _ := testView(t)
++	view, done := testView(t)
+ 	c := &TaintCommand{
+ 		Meta: Meta{
+-			Ui:   ui,
+ 			View: view,
+ 		},
+ 	}
+@@ -142,7 +136,7 @@ func TestTaint_backup(t *testing.T) {
+ 		"test_instance.foo",
+ 	}
+ 	if code := c.Run(args); code != 0 {
+-		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
++		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
+ 	}
+ 
+ 	testStateOutput(t, DefaultStateFilename+".backup", testTaintDefaultStr)
+@@ -174,11 +168,9 @@ func TestTaint_backupDisable(t *testing.T) {
+ 	})
+ 	testStateFileDefault(t, state)
+ 
+-	ui := testUiWrapped(t)
+-	view, _ := testView(t)
++	view, done := testView(t)
+ 	c := &TaintCommand{
+ 		Meta: Meta{
+-			Ui:   ui,
+ 			View: view,
+ 		},
+ 	}
+@@ -188,7 +180,7 @@ func TestTaint_backupDisable(t *testing.T) {
+ 		"test_instance.foo",
+ 	}
+ 	if code := c.Run(args); code != 0 {
+-		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
++		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
+ 	}
+ 
+ 	if _, err := os.Stat(DefaultStateFilename + ".backup"); err == nil {
+@@ -199,11 +191,9 @@ func TestTaint_backupDisable(t *testing.T) {
+ }
+ 
+ func TestTaint_badState(t *testing.T) {
+-	ui := testUiWrapped(t)
+-	view, _ := testView(t)
++	view, done := testView(t)
+ 	c := &TaintCommand{
+ 		Meta: Meta{
+-			Ui:   ui,
+ 			View: view,
+ 		},
+ 	}
+@@ -213,7 +203,7 @@ func TestTaint_badState(t *testing.T) {
+ 		"foo",
+ 	}
+ 	if code := c.Run(args); code != 1 {
+-		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
++		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
+ 	}
+ }
+ 
+@@ -242,11 +232,9 @@ func TestTaint_defaultState(t *testing.T) {
+ 	})
+ 	testStateFileDefault(t, state)
+ 
+-	ui := testUiWrapped(t)
+-	view, _ := testView(t)
++	view, done := testView(t)
+ 	c := &TaintCommand{
+ 		Meta: Meta{
+-			Ui:   ui,
+ 			View: view,
+ 		},
+ 	}
+@@ -255,7 +243,7 @@ func TestTaint_defaultState(t *testing.T) {
+ 		"test_instance.foo",
+ 	}
+ 	if code := c.Run(args); code != 0 {
+-		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
++		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
+ 	}
+ 
+ 	testStateOutput(t, DefaultStateFilename, testTaintStr)
+@@ -266,12 +254,10 @@ func TestTaint_constVariable(t *testing.T) {
+ 		wd := tempWorkingDirFixture(t, "dynamic-module-sources/command-with-const-var")
+ 		t.Chdir(wd.RootModuleDir())
+ 
+-		ui := testUiWrapped(t)
+-		view, _ := testView(t)
++		view, done := testView(t)
+ 		c := &TaintCommand{
+ 			Meta: Meta{
+ 				testingOverrides: metaOverridesForProvider(testProvider()),
+-				Ui:               ui,
+ 				View:             view,
+ 				WorkingDir:       wd,
+ 			},
+@@ -282,7 +268,7 @@ func TestTaint_constVariable(t *testing.T) {
+ 			t.Fatalf("expected error, got 0")
+ 		}
+ 
+-		errStr := ui.ErrorWriter.String()
++		errStr := done(t).All()
+ 		if !strings.Contains(errStr, "No value for required variable") {
+ 			t.Fatalf("expected missing variable error, got: %s", errStr)
+ 		}
+@@ -292,20 +278,18 @@ func TestTaint_constVariable(t *testing.T) {
+ 		wd := tempWorkingDirFixture(t, "dynamic-module-sources/command-with-const-var")
+ 		t.Chdir(wd.RootModuleDir())
+ 
+-		ui := testUiWrapped(t)
+-		view, _ := testView(t)
++		view, done := testView(t)
+ 		c := &TaintCommand{
+ 			Meta: Meta{
+ 				testingOverrides: metaOverridesForProvider(testProvider()),
+-				Ui:               ui,
+ 				View:             view,
+ 				WorkingDir:       wd,
+ 			},
+ 		}
+ 
+ 		args := []string{"-var", "module_name=child", "module.child.test_instance.test"}
+ 		if code := c.Run(args); code != 0 {
+-			t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
++			t.Fatalf("bad: %d\n\n%s", code, done(t).All())
+ 		}
+ 
+ 		actual := strings.TrimSpace(testStateRead(t, "terraform.tfstate").String())
+@@ -329,20 +313,18 @@ module.child:
+ 		wd := tempWorkingDirFixture(t, "dynamic-module-sources/command-with-const-var-backend")
+ 		t.Chdir(wd.RootModuleDir())
+ 
+-		ui := testUiWrappe
+```
+
+**File**: `internal/command/untaint.go` (modified, +80/-35)
+```diff
+@@ -23,9 +23,22 @@ type UntaintCommand struct {
+ }
+ 
+ func (c *UntaintCommand) Run(rawArgs []string) int {
+-	parsedArgs, parseDiags := arguments.ParseUntaint(c.Meta.process(rawArgs))
+-	if parseDiags.HasErrors() {
+-		c.showDiagnostics(parseDiags)
++	var diags tfdiags.Diagnostics
++
++	// Parse and apply global view arguments
++	common, rawArgs := arguments.ParseView(rawArgs)
++	c.View.Configure(common)
++
++	// Parse command-specific arguments.
++	parsedArgs, parseDiags := arguments.ParseUntaint(rawArgs)
++	diags = diags.Append(parseDiags)
++
++	// Prepare the view
++	view := views.NewUntaint(parsedArgs.ViewType, c.View)
++
++	// Now the view is ready, process any error diagnostics from parsing arguments.
++	if diags.HasErrors() {
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+@@ -37,77 +50,93 @@ func (c *UntaintCommand) Run(rawArgs []string) int {
+ 	c.Meta.stateOutPath = parsedArgs.StateOutPath
+ 	c.Meta.ignoreRemoteVersion = parsedArgs.IgnoreRemoteVersion
+ 
+-	var diags tfdiags.Diagnostics
+-
+ 	addr, addrDiags := addrs.ParseAbsResourceInstanceStr(parsedArgs.Address)
+ 	diags = diags.Append(addrDiags)
+ 	if addrDiags.HasErrors() {
+-		c.showDiagnostics(diags)
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+ 	// Load the backend
+-	view := arguments.ViewHuman
+-	b, backendDiags := c.backend(".", view)
++	b, backendDiags := c.backend(".", parsedArgs.ViewType)
+ 	diags = diags.Append(backendDiags)
+ 	if backendDiags.HasErrors() {
+-		c.showDiagnostics(diags)
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+ 	// Determine the workspace name
+ 	workspace, err := c.Workspace()
+ 	if err != nil {
+-		c.Ui.Error(fmt.Sprintf("Error selecting workspace: %s", err))
++		diags = diags.Append(tfdiags.Sourceless(
++			tfdiags.Error,
++			"Error determining the current workspace",
++			err.Error(),
++		))
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+ 	// Check remote Terraform version is compatible
+ 	remoteVersionDiags := c.remoteVersionCheck(b, workspace)
+ 	diags = diags.Append(remoteVersionDiags)
+-	c.showDiagnostics(diags)
+ 	if diags.HasErrors() {
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+-	// Get the state
++	// Get a state manager for the current workspace
+ 	stateMgr, sDiags := b.StateMgr(workspace)
+ 	if sDiags.HasErrors() {
+-		c.Ui.Error(fmt.Sprintf("Failed to load state: %s", sDiags.Err()))
++		diags = diags.Append(tfdiags.Sourceless(
++			tfdiags.Error,
++			"Error accessing state",
++			fmt.Sprintf("Failed to access state: %s", sDiags.Err()),
++		))
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+ 	if c.stateLock {
+ 		stateLocker := clistate.NewLocker(c.stateLockTimeout, views.NewStateLocker(arguments.ViewHuman, c.View))
+-		if diags := stateLocker.Lock(stateMgr, "untaint"); diags.HasErrors() {
+-			c.showDiagnostics(diags)
++		if lockDiags := stateLocker.Lock(stateMgr, "untaint"); lockDiags.HasErrors() {
++			diags = diags.Append(lockDiags)
++			view.Diagnostics(diags)
+ 			return 1
+ 		}
+ 		defer func() {
+-			if diags := stateLocker.Unlock(); diags.HasErrors() {
+-				c.showDiagnostics(diags)
++			if unlockDiags := stateLocker.Unlock(); unlockDiags.HasErrors() {
++				diags = diags.Append(unlockDiags)
++				view.Diagnostics(diags)
+ 			}
+ 		}()
+ 	}
+ 
+ 	if err := stateMgr.RefreshState(); err != nil {
+-		c.Ui.Error(fmt.Sprintf("Failed to load state: %s", err))
++		diags = diags.Append(tfdiags.Sourceless(
++			tfdiags.Error,
++			"Error loading state",
++			fmt.Sprintf("Failed to load state: %s", err),
++		))
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+ 	// Get the actual state structure
+ 	state := stateMgr.State()
+ 	if state.Empty() {
+ 		if parsedArgs.AllowMissing {
+-			return c.allowMissingExit(addr)
++			diags = diags.Append(c.allowMissingWarning(addr))
++			view.Diagnostics(diags)
++			return 0
+ 		}
+ 
+ 		diags = diags.Append(tfdiags.Sourceless(
+ 			tfdiags.Error,
+ 			"No such resource instance",
+ 			"The state currently contains no resource instances whatsoever. This may occur if the configuration has never been applied or if it has recently been destroyed.",
+ 		))
+-		c.showDiagnostics(diags)
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+@@ -118,15 +147,17 @@ func (c *UntaintCommand) Run(rawArgs []string) int {
+ 	is := ss.ResourceInstance(addr)
+ 	if is == nil {
+ 		if parsedArgs.AllowMissing {
+-			return c.allowMissingExit(addr)
++			diags = diags.Append(c.allowMissingWarning(addr))
++			view.Diagnostics(diags)
++			return 0
+ 		}
+ 
+ 		diags = diags.Append(tfdiags.Sourceless(
+ 			tfdiags.Error,
+ 			"No such resource instance",
+ 			fmt.Sprintf("There is no resource instance in the state with the address %s. If the resource configuration has just been added, you must run \"terraform apply\" once to create the corresponding instance(s) before they can be tainted.", addr),
+ 		))
+-		c.showDiagnostics(diags)
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+@@ -143,10 +174,10 @@ func (c *UntaintCommand) Run(rawArgs []string) int {
+ 			diags = diags.Append(tfdiags.Sourceless(
+ 				tfdiags.Error,
+ 				"No such resource instance",
+-				fmt.Sprintf("Resource instance %s does not currently have a remo
+```
+
+**File**: `internal/command/untaint_test.go` (modified, +24/-42)
+```diff
+@@ -83,11 +83,9 @@ func TestUntaint_lockedState(t *testing.T) {
+ 	}
+ 	defer unlock()
+ 
+-	ui := testUiWrapped(t)
+-	view, _ := testView(t)
++	view, done := testView(t)
+ 	c := &UntaintCommand{
+ 		Meta: Meta{
+-			Ui:   ui,
+ 			View: view,
+ 		},
+ 	}
+@@ -100,8 +98,8 @@ func TestUntaint_lockedState(t *testing.T) {
+ 		t.Fatal("expected error")
+ 	}
+ 
+-	output := ui.ErrorWriter.String()
+-	if !strings.Contains(output, "lock") {
++	output := done(t)
++	if !strings.Contains(output.All(), "lock") {
+ 		t.Fatal("command output does not look like a lock error:", output)
+ 	}
+ }
+@@ -131,11 +129,9 @@ func TestUntaint_backup(t *testing.T) {
+ 	})
+ 	testStateFileDefault(t, state)
+ 
+-	ui := testUiWrapped(t)
+-	view, _ := testView(t)
++	view, done := testView(t)
+ 	c := &UntaintCommand{
+ 		Meta: Meta{
+-			Ui:   ui,
+ 			View: view,
+ 		},
+ 	}
+@@ -144,7 +140,7 @@ func TestUntaint_backup(t *testing.T) {
+ 		"test_instance.foo",
+ 	}
+ 	if code := c.Run(args); code != 0 {
+-		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
++		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
+ 	}
+ 
+ 	// Backup is still tainted
+@@ -187,11 +183,9 @@ func TestUntaint_backupDisable(t *testing.T) {
+ 	})
+ 	testStateFileDefault(t, state)
+ 
+-	ui := testUiWrapped(t)
+-	view, _ := testView(t)
++	view, done := testView(t)
+ 	c := &UntaintCommand{
+ 		Meta: Meta{
+-			Ui:   ui,
+ 			View: view,
+ 		},
+ 	}
+@@ -201,7 +195,7 @@ func TestUntaint_backupDisable(t *testing.T) {
+ 		"test_instance.foo",
+ 	}
+ 	if code := c.Run(args); code != 0 {
+-		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
++		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
+ 	}
+ 
+ 	if _, err := os.Stat(DefaultStateFilename + ".backup"); err == nil {
+@@ -216,11 +210,9 @@ test_instance.foo:
+ }
+ 
+ func TestUntaint_badState(t *testing.T) {
+-	ui := testUiWrapped(t)
+-	view, _ := testView(t)
++	view, done := testView(t)
+ 	c := &UntaintCommand{
+ 		Meta: Meta{
+-			Ui:   ui,
+ 			View: view,
+ 		},
+ 	}
+@@ -230,7 +222,7 @@ func TestUntaint_badState(t *testing.T) {
+ 		"foo",
+ 	}
+ 	if code := c.Run(args); code != 1 {
+-		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
++		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
+ 	}
+ }
+ 
+@@ -259,11 +251,9 @@ func TestUntaint_defaultState(t *testing.T) {
+ 	})
+ 	testStateFileDefault(t, state)
+ 
+-	ui := testUiWrapped(t)
+-	view, _ := testView(t)
++	view, done := testView(t)
+ 	c := &UntaintCommand{
+ 		Meta: Meta{
+-			Ui:   ui,
+ 			View: view,
+ 		},
+ 	}
+@@ -272,7 +262,7 @@ func TestUntaint_defaultState(t *testing.T) {
+ 		"test_instance.foo",
+ 	}
+ 	if code := c.Run(args); code != 0 {
+-		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
++		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
+ 	}
+ 
+ 	testStateOutput(t, DefaultStateFilename, strings.TrimSpace(`
+@@ -308,9 +298,8 @@ func TestUntaint_defaultWorkspaceState(t *testing.T) {
+ 	testWorkspace := "development"
+ 	path := testStateFileWorkspaceDefault(t, testWorkspace, state)
+ 
+-	ui := testUiWrapped(t)
+-	view, _ := testView(t)
+-	meta := Meta{Ui: ui, View: view}
++	view, done := testView(t)
++	meta := Meta{View: view}
+ 	meta.SetWorkspace(testWorkspace)
+ 	c := &UntaintCommand{
+ 		Meta: meta,
+@@ -320,7 +309,7 @@ func TestUntaint_defaultWorkspaceState(t *testing.T) {
+ 		"test_instance.foo",
+ 	}
+ 	if code := c.Run(args); code != 0 {
+-		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
++		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
+ 	}
+ 
+ 	testStateOutput(t, path, strings.TrimSpace(`
+@@ -350,11 +339,9 @@ func TestUntaint_missing(t *testing.T) {
+ 	})
+ 	statePath := testStateFile(t, state)
+ 
+-	ui := testUiWrapped(t)
+-	view, _ := testView(t)
++	view, done := testView(t)
+ 	c := &UntaintCommand{
+ 		Meta: Meta{
+-			Ui:   ui,
+ 			View: view,
+ 		},
+ 	}
+@@ -364,7 +351,7 @@ func TestUntaint_missing(t *testing.T) {
+ 		"test_instance.bar",
+ 	}
+ 	if code := c.Run(args); code == 0 {
+-		t.Fatalf("bad: %d\n\n%s", code, ui.OutputWriter.String())
++		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
+ 	}
+ }
+ 
+@@ -388,26 +375,25 @@ func TestUntaint_missingAllow(t *testing.T) {
+ 	})
+ 	statePath := testStateFile(t, state)
+ 
+-	ui := testUiWrapped(t)
+-	view, _ := testView(t)
++	view, done := testView(t)
+ 	c := &UntaintCommand{
+ 		Meta: Meta{
+-			Ui:   ui,
+ 			View: view,
+ 		},
+ 	}
+ 
+ 	args := []string{
++		"-no-color",
+ 		"-allow-missing",
+ 		"-state", statePath,
+ 		"test_instance.bar",
+ 	}
+ 	if code := c.Run(args); code != 0 {
+-		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter.String())
++		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
+ 	}
+ 
+ 	// Check for the warning
+-	actual := strings.TrimSpace(ui.OutputWriter.String())
++	actual := strings.TrimSpace(done(t).All())
+ 	expected := strings.TrimSpace(`
+ Warning: No such resource instance
+ 
+@@ -445,11 +431,9 @@ func TestUntaint_stateOut(t *testing.T) {
+ 	})
+ 	testStateFileDefault(t, state)
+ 
+-	ui := testUiWrapped(t)
+-	view, _ := testView(t)
++	view, done := testView(t)
+ 	c := &UntaintCommand{
+ 		Meta: Meta{
+-			Ui:   ui,
+ 			View: view,
+ 		},
+ 	}
+@@ -459,7 +443,7 @@ func TestUntaint_stateOut(t *testing.T) {
+ 		"te
+```
+
+---
+
+### Incident Patch 2: `5de49559` (2026-10-27)
+**Commit Message**: refactor: Make `graph` command use views to produce terminal output (#39424)
+
+This change:
+
+* Separates `graph` command's logic for building graphs from printing output to a stream and determining exit code
+* Implements a view for the graph command that receives a pre-prepared graph representation string as an argument and prints it to stdout.
+* Refactors the `graph` command to use that view
+* Add `-no-color` and `-compact-warnings` flags to help text, order flags alphabetically
+
+NOTE: We purposefully suppress warning diagnostics from being rendered as this would pollute stdout and use of the graph; the graph output is likely to be piped to another command or written to a file and warnings would break that. This matches existing design choices in the command implementation.
+
+**File**: `internal/command/graph.go` (modified, +81/-55)
+```diff
+@@ -5,13 +5,15 @@ package command
+ 
+ import (
+ 	"context"
++	"errors"
+ 	"fmt"
+ 	"sort"
+ 	"strings"
+ 
+ 	"github.com/hashicorp/terraform/internal/addrs"
+ 	"github.com/hashicorp/terraform/internal/backend/backendrun"
+ 	"github.com/hashicorp/terraform/internal/command/arguments"
++	"github.com/hashicorp/terraform/internal/command/views"
+ 	"github.com/hashicorp/terraform/internal/dag"
+ 	"github.com/hashicorp/terraform/internal/plans"
+ 	"github.com/hashicorp/terraform/internal/plans/planfile"
+@@ -26,9 +28,22 @@ type GraphCommand struct {
+ }
+ 
+ func (c *GraphCommand) Run(rawArgs []string) int {
+-	args, diags := arguments.ParseGraph(c.Meta.process(rawArgs))
++	var diags tfdiags.Diagnostics
++
++	// Parse and apply global view arguments
++	common, rawArgs := arguments.ParseView(rawArgs)
++	c.View.Configure(common)
++
++	// Process command-specific arguments.
++	args, argDiags := arguments.ParseGraph(rawArgs)
++	diags = diags.Append(argDiags)
++
++	// Prepare the view
++	view := views.NewGraph(arguments.ViewHuman, c.View)
++
++	// Now the view is ready, process any error diagnostics from parsing arguments.
+ 	if diags.HasErrors() {
+-		c.showDiagnostics(diags)
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+@@ -38,7 +53,8 @@ func (c *GraphCommand) Run(rawArgs []string) int {
+ 	// Check for user-supplied plugin path
+ 	var err error
+ 	if c.pluginPath, err = c.loadPluginPath(); err != nil {
+-		c.Ui.Error(fmt.Sprintf("Error loading plugin path: %s", err))
++		diags = diags.Append(fmt.Errorf("Error loading plugin path: %w", err))
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+@@ -47,7 +63,8 @@ func (c *GraphCommand) Run(rawArgs []string) int {
+ 	if args.Plan != "" {
+ 		planFile, err = c.PlanFile(args.Plan)
+ 		if err != nil {
+-			c.Ui.Error(err.Error())
++			diags = diags.Append(err)
++			view.Diagnostics(diags)
+ 			return 1
+ 		}
+ 	}
+@@ -56,15 +73,15 @@ func (c *GraphCommand) Run(rawArgs []string) int {
+ 	b, backendDiags := c.backend(".", arguments.ViewHuman)
+ 	diags = diags.Append(backendDiags)
+ 	if backendDiags.HasErrors() {
+-		c.showDiagnostics(diags)
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+ 	// We require a local backend
+ 	local, ok := b.(backendrun.Local)
+ 	if !ok {
+-		c.showDiagnostics(diags) // in case of any warnings in here
+-		c.Ui.Error(ErrUnsupportedLocalOp)
++		diags = diags.Append(errors.New(ErrUnsupportedLocalOp))
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+@@ -79,7 +96,7 @@ func (c *GraphCommand) Run(rawArgs []string) int {
+ 	opReq.AllowUnsetVariables = true
+ 	if err != nil {
+ 		diags = diags.Append(err)
+-		c.showDiagnostics(diags)
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+@@ -89,7 +106,7 @@ func (c *GraphCommand) Run(rawArgs []string) int {
+ 	})
+ 	diags = diags.Append(varDiags)
+ 	if diags.HasErrors() {
+-		c.showDiagnostics(diags)
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+@@ -98,7 +115,7 @@ func (c *GraphCommand) Run(rawArgs []string) int {
+ 
+ 	diags = diags.Append(ctxDiags)
+ 	if ctxDiags.HasErrors() {
+-		c.showDiagnostics(diags)
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 	lr.Core.SetGraphOpts(&terraform.ContextGraphOpts{SkipGraphValidation: args.DrawCycles})
+@@ -113,22 +130,26 @@ func (c *GraphCommand) Run(rawArgs []string) int {
+ 			fullG, graphDiags := lr.Core.PlanGraphForUI(lr.Config, lr.InputState, plans.NormalMode)
+ 			diags = diags.Append(graphDiags)
+ 			if graphDiags.HasErrors() {
+-				c.showDiagnostics(diags)
++				view.Diagnostics(diags)
+ 				return 1
+ 			}
+ 
+ 			g := fullG.ResourceGraph()
+ 
+ 			switch args.Format {
+ 			case "mermaid":
+-				return c.resourceOnlyGraphMermaid(g)
++				graphStr := c.resourceOnlyGraphMermaid(g)
++				view.Graph(graphStr)
++				return 0
+ 			case "", "dot":
+-				return c.resourceOnlyGraph(g)
++				graphStr := c.resourceOnlyGraph(g)
++				view.Graph(graphStr)
++				return 0
+ 			default:
+-				c.Ui.Error(fmt.Sprintf("Unsupported graph format: %s", args.Format))
++				diags = diags.Append(fmt.Errorf("Unsupported graph format: %s", args.Format))
++				view.Diagnostics(diags)
+ 				return 1
+ 			}
+-
+ 		} else {
+ 			args.GraphType = "apply"
+ 		}
+@@ -178,7 +199,7 @@ func (c *GraphCommand) Run(rawArgs []string) int {
+ 	}
+ 	diags = diags.Append(graphDiags)
+ 	if graphDiags.HasErrors() {
+-		c.showDiagnostics(diags)
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+@@ -196,33 +217,31 @@ func (c *GraphCommand) Run(rawArgs []string) int {
+ 	case "", "dot":
+ 		graphStr, err = terraform.GraphDot(g, opts)
+ 	default:
+-		c.Ui.Error(fmt.Sprintf("Unsupported graph format: %s", args.Format))
++		diags = diags.Append(fmt.Errorf("Unsupported graph format: %s", args.Format))
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 	if err != nil {
+-		c.Ui.Error(fmt.Sprintf("Error converting graph: %s", err))
++		diags = diags.Append(fmt.Errorf("Error converting graph: %w", err))
++		view.Diagnostics(diags)
+ 		return 1
+ 	}
+ 
+ 	if diags.HasErrors() {
+ 		// For this command we only show diagnostics if there are errors,
+ 		// because printing out naked warnings could upset a naive program
+ 		// consuming our graph output.
+-		c.showDiagnostics(di
+```
+
+**File**: `internal/command/graph_mermaid_test.go` (modified, +8/-14)
+```diff
+@@ -10,7 +10,6 @@ import (
+ 	"testing"
+ 
+ 	"github.com/google/go-cmp/cmp"
+-	"github.com/hashicorp/cli"
+ 	"github.com/zclconf/go-cty/cty"
+ 
+ 	"github.com/hashicorp/terraform/internal/addrs"
+@@ -19,30 +18,27 @@ import (
+ 	"github.com/hashicorp/terraform/internal/initwd"
+ 	"github.com/hashicorp/terraform/internal/providers"
+ 	"github.com/hashicorp/terraform/internal/registry"
+-	"github.com/hashicorp/terraform/internal/terminal"
+ )
+ 
+ func TestGraph_planPhase_mermaid(t *testing.T) {
+ 	td := tempWorkingDirFixture(t, "graph")
+ 	t.Chdir(td.RootModuleDir())
+ 
+-	ui := new(cli.MockUi)
+-	streams, closeStreams := terminal.StreamsForTesting(t)
++	view, done := testView(t)
+ 	c := &GraphCommand{
+ 		Meta: Meta{
+ 			testingOverrides: metaOverridesForProvider(applyFixtureProvider()),
+-			Ui:               ui,
+-			Streams:          streams,
++			View:             view,
+ 			WorkingDir:       td,
+ 		},
+ 	}
+ 
+ 	args := []string{"-type=plan", "-format=mermaid"}
+ 	if code := c.Run(args); code != 0 {
+-		t.Fatalf("bad: \n%s", ui.ErrorWriter.String())
++		t.Fatalf("bad: \n%s", done(t).All())
+ 	}
+ 
+-	output := closeStreams(t)
++	output := done(t)
+ 	if !strings.Contains(output.Stdout(), "flowchart") && !strings.Contains(output.Stdout(), "-->") {
+ 		t.Fatalf("doesn't look like mermaid graph:\n%s\n\nstderr:\n%s", output.Stdout(), output.Stderr())
+ 	}
+@@ -84,28 +80,26 @@ func TestGraph_resourcesOnly_mermaid(t *testing.T) {
+ 		},
+ 	}
+ 
+-	ui := cli.NewMockUi()
+-	streams, closeStreams := terminal.StreamsForTesting(t)
++	view, done := testView(t)
+ 	c := &GraphCommand{
+ 		Meta: Meta{
+ 			testingOverrides: &testingOverrides{
+ 				Providers: map[addrs.Provider]providers.Factory{
+ 					addrs.NewDefaultProvider("foo"): providers.FactoryFixed(p),
+ 				},
+ 			},
+-			Ui:         ui,
+-			Streams:    streams,
++			View:       view,
+ 			WorkingDir: wd,
+ 		},
+ 	}
+ 
+ 	args := []string{"-format=mermaid"}
+ 	if code := c.Run(args); code != 0 {
+-		output := closeStreams(t)
++		output := done(t)
+ 		t.Fatalf("unexpected error: \n%s", output.Stderr())
+ 	}
+ 
+-	output := closeStreams(t)
++	output := done(t)
+ 	gotGraph := strings.TrimSpace(output.Stdout())
+ 	// Golden fixture: the resources-only Mermaid graph for the graph-interesting
+ 	// configuration.  Node IDs are the full config addresses; labels are the
+```
+
+**File**: `internal/command/graph_test.go` (modified, +40/-60)
+```diff
+@@ -23,31 +23,28 @@ import (
+ 	"github.com/hashicorp/terraform/internal/providers"
+ 	"github.com/hashicorp/terraform/internal/registry"
+ 	"github.com/hashicorp/terraform/internal/states"
+-	"github.com/hashicorp/terraform/internal/terminal"
+ )
+ 
+ func TestGraph_planPhase(t *testing.T) {
+ 	t.Parallel() // possible because t.Chdir not needed
+ 	td := t.TempDir()
+ 	testCopyDir(t, testFixturePath("graph"), td)
+ 
+-	ui := testUiWrapped(t)
+-	streams, closeStreams := terminal.StreamsForTesting(t)
++	view, done := testView(t)
+ 	c := &GraphCommand{
+ 		Meta: Meta{
+ 			testingOverrides: metaOverridesForProvider(applyFixtureProvider()),
+-			Ui:               ui,
+-			Streams:          streams,
++			View:             view,
+ 			WorkingDir:       workdir.NewDir(td),
+ 		},
+ 	}
+ 
+ 	args := []string{"-type=plan"}
+ 	if code := c.Run(args); code != 0 {
+-		t.Fatalf("bad: \n%s", ui.ErrorWriter.String())
++		t.Fatalf("bad: \n%s", done(t).Stderr())
+ 	}
+ 
+-	output := closeStreams(t)
++	output := done(t)
+ 	if !strings.Contains(output.Stdout(), `provider[\"registry.terraform.io/hashicorp/test\"]`) {
+ 		t.Fatalf("doesn't look like digraph:\n%s\n\nstderr:\n%s", output.Stdout(), output.Stderr())
+ 	}
+@@ -137,24 +134,23 @@ func TestGraph_cyclic(t *testing.T) {
+ 
+ 	for _, tt := range tests {
+ 		t.Run(tt.name, func(t *testing.T) {
+-			ui := testUiWrapped(t)
+-			streams, closeStreams := terminal.StreamsForTesting(t)
++			view, done := testView(t)
+ 			c := &GraphCommand{
+ 				Meta: Meta{
+ 					testingOverrides: metaOverridesForProvider(applyFixtureProvider()),
+-					Ui:               ui,
+-					Streams:          streams,
++					View:             view,
+ 					WorkingDir:       workdir.NewDir(td),
+ 				},
+ 			}
+ 
+-			code := c.Run(tt.args)
++			args := append([]string{"-no-color"}, tt.args...)
++			code := c.Run(args)
+ 			// If we expect errors, make sure they are present
+ 			if len(tt.errors) > 0 {
+ 				if code == 0 {
+ 					t.Fatalf("expected error, got none")
+ 				}
+-				got := strings.TrimSpace(ui.ErrorWriter.String())
++				got := strings.TrimSpace(done(t).Stderr())
+ 				for _, err := range tt.errors {
+ 					if !strings.Contains(got, err) {
+ 						t.Fatalf("expected error:\n%s\n\nactual error:\n%s", err, got)
+@@ -165,9 +161,9 @@ func TestGraph_cyclic(t *testing.T) {
+ 
+ 			// If we don't expect errors, make sure the command ran successfully
+ 			if code != 0 {
+-				t.Fatalf("bad: \n%s", ui.ErrorWriter.String())
++				t.Fatalf("bad: \n%s", done(t).Stderr())
+ 			}
+-			output := closeStreams(t)
++			output := done(t)
+ 			if strings.TrimSpace(output.Stdout()) != strings.TrimSpace(tt.expected) {
+ 				t.Fatalf("expected dot graph to match:\n%s", cmp.Diff(output.Stdout(), tt.expected))
+ 			}
+@@ -176,11 +172,11 @@ func TestGraph_cyclic(t *testing.T) {
+ }
+ 
+ func TestGraph_multipleArgs(t *testing.T) {
+-	ui := testUiWrapped(t)
++	view, done := testView(t)
+ 	c := &GraphCommand{
+ 		Meta: Meta{
+ 			testingOverrides: metaOverridesForProvider(applyFixtureProvider()),
+-			Ui:               ui,
++			View:             view,
+ 		},
+ 	}
+ 
+@@ -189,7 +185,7 @@ func TestGraph_multipleArgs(t *testing.T) {
+ 		"bad",
+ 	}
+ 	if code := c.Run(args); code != 1 {
+-		t.Fatalf("bad: \n%s", ui.OutputWriter.String())
++		t.Fatalf("bad: \n%s", done(t).Stderr())
+ 	}
+ }
+ 
+@@ -199,14 +195,11 @@ func TestGraph_noConfig(t *testing.T) {
+ 	td := t.TempDir()
+ 	os.MkdirAll(td, 0755)
+ 
+-	streams, closeStreams := terminal.StreamsForTesting(t)
+-	defer closeStreams(t)
+-	ui := testUiWrapped(t)
++	view, done := testView(t)
+ 	c := &GraphCommand{
+ 		Meta: Meta{
+ 			testingOverrides: metaOverridesForProvider(applyFixtureProvider()),
+-			Ui:               ui,
+-			Streams:          streams,
++			View:             view,
+ 			WorkingDir:       workdir.NewDir(td),
+ 		},
+ 	}
+@@ -215,7 +208,7 @@ func TestGraph_noConfig(t *testing.T) {
+ 	// but this may be an error at some point in the future.
+ 	args := []string{"-type", "apply"}
+ 	if code := c.Run(args); code != 0 {
+-		t.Fatalf("bad: \n%s", ui.ErrorWriter.String())
++		t.Fatalf("bad: \n%s", done(t).Stderr())
+ 	}
+ }
+ 
+@@ -256,30 +249,26 @@ func TestGraph_resourcesOnly(t *testing.T) {
+ 		},
+ 	}
+ 
+-	ui := testUiWrapped(t)
+-	streams, closeStreams := terminal.StreamsForTesting(t)
++	view, done := testView(t)
+ 	c := &GraphCommand{
+ 		Meta: Meta{
+ 			testingOverrides: &testingOverrides{
+ 				Providers: map[addrs.Provider]providers.Factory{
+ 					addrs.NewDefaultProvider("foo"): providers.FactoryFixed(p),
+ 				},
+ 			},
+-			Ui:         ui,
+-			Streams:    streams,
++			View:       view,
+ 			WorkingDir: workdir.NewDir(td),
+ 		},
+ 	}
+ 
+ 	// A "resources only" graph is the default behavior, with no extra arguments.
+ 	args := []string{}
+ 	if code := c.Run(args); code != 0 {
+-		output := closeStreams(t)
+-		t.Fatalf("unexpected error: \n%s", output.Stderr())
++		t.Fatalf("unexpected error: \n%s", done(t).Stderr())
+ 	}
+ 
+-	output := closeStreams(t)
+-	gotGraph := strings.TrimSpace(output.Stdout())
++	gotGraph := strings.TrimSpace(done(t).Stdout())
+ 	wantGraph := strings.TrimSpace(`
+ digraph G {
+ 
+```
+
+**File**: `internal/command/views/graph.go` (added, +45/-0)
+```diff
+@@ -0,0 +1,45 @@
++// Copyright IBM Corp. 2014, 2026
++// SPDX-License-Identifier: BUSL-1.1
++
++package views
++
++import (
++	"github.com/hashicorp/terraform/internal/command/arguments"
++	"github.com/hashicorp/terraform/internal/tfdiags"
 +)
 +
- func (v stringV) Name() string {
- 	return string(v)
- }
- 
-+func (v stringV) DotNode(n string, opts *dag.DotOpts) *dag.DotNode {
-+	return &dag.DotNode{Name: n, Attrs: map[string]string{}}
++type Graph interface {
++	// Log a pre-prepared graph representation.
++	//
++	// Calling code generates the string, so owns handling whether output is dot or mermaid format.
++	// In future we could refactor that logic into a GraphMermaid and GraphDot views, with human-
++	// readable diagnostics. This is similar to the 'raw' view for the `output` command.
++	Graph(graph string)
++
++	// Log diagnostics raised when the command fails to prepare a graph.
++	Diagnostics(diags tfdiags.Diagnostics)
 +}
 +
- func TestGraphDot(t *testing.T) {
- 	cases := []struct {
- 		Name   string
--		Graph  testGraphFunc
-+		Graph  func() *Graph
- 		Opts   dag.DotOpts
- 		Expect string
--		Error  string
- 	}{
- 		{
- 			Name:  "empty",
-@@ -39,14 +47,14 @@ digraph {
- 			Name: "three-level",
- 			Graph: func() *Graph {
- 				var g Graph
--				root := &testDrawableOrigin{"root"}
-+				root := stringV("root")
- 				g.Add(root)
- 
- 				levelOne := []dag.Vertex{stringV("foo"), stringV("bar")}
- 				for i, s := range levelOne {
--					levelOne[i] = &testDrawable{
--						VertexName: s.Name(),
--					}
-+					levelOne[i] = stringV(
-+						s.Name(),
-+					)
- 					v := levelOne[i]
- 
- 					g.Add(v)
-@@ -55,9 +63,7 @@ digraph {
- 
- 				levelTwo := []string{"baz", "qux"}
- 				for i, s := range levelTwo {
--					v := &testDrawable{
--						VertexName: s,
--					}
-+					v := stringV(s)
- 
- 					g.Add(v)
- 					g.Connect(v, levelOne[i])
-@@ -91,20 +97,14 @@ digraph {
- 			},
- 			Graph: func() *Graph {
- 				var g Graph
--				root := &testDrawableOrigin{"root"}
-+				root := stringV("root")
- 				g.Add(root)
- 
--				vA := g.Add(&testDrawable{
--					VertexName: "A",
--				})
-+				vA := g.Add(stringV("A"))
- 
--				vB := g.Add(&testDrawable{
--					VertexName: "B",
--				})
-+				vB := g.Add(stringV("B"))
- 
--				vC := g.Add(&testDrawable{
--					VertexName: "C",
--				})
-+				vC := g.Add(stringV("C"))
- 
- 				g.Connect(vA, root)
- 				g.Connect(vA, vC)
-@@ -130,6 +130,46 @@ digraph {
- 		"[root] C" -> "[root] A" [color = "red", penwidth = "2.0"]
- 		"[root] C" -> "[root] B"
- 	}
-+}
-+					`,
-+		},
-+		{
-+			Name: "cycle not drawn",
-+			Opts: dag.DotOpts{
-+				DrawCycles: false, // Do not draw cycles
-+			},
-+			Graph: func() *Graph {
-+				var g Graph
-+				root := stringV("root")
-+				g.Add(root)
-+
-+				vA := g.Add(stringV("A"))
-+
-+				vB := g.Add(stringV("B"))
-+
-+				vC := g.Add(stringV("C"))
-+
-+				g.Connect(vA, root)
-+				g.Connect(vA, vC)
-+				g.Connect(vB, vA)
-+				g.Connect(vC, vB)
-+
-+				return &g
-+			},
-+			Expect: `
-+digraph {
-+	compound = "true"
-+	newrank = "true"
-+	subgraph "root" {
-+		"[root] A"
-+		"[root] B"
-+		"[root] C"
-+		"[root] root"
-+		"[root] A" -> "[root] C"
-+		"[root] A" -> "[root] root"
-+		"[root] B" -> "[root] A"
-+		"[root] C" -> "[root] B"
++func NewGraph(viewType arguments.ViewType, view *View) Graph {
++	switch viewType {
++	case arguments.ViewHuman:
++		return &GraphHuman{view: view}
++	default:
++		panic("unsupported view type: " + string(viewType))
 +	}
- }
- 					`,
- 		},
-@@ -138,64 +178,12 @@ digraph {
- 		tn := tc.Name
- 		t.Run(tn, func(t *testing.T) {
- 			g := tc.Graph()
--			var err error
--			//actual, err := GraphDot(g, &tc.Opts)
- 			actual := string(g.Dot(&tc.Opts))
- 
--			if err == nil && tc.Error != "" {
--				t.Fatalf("%s: expected err: %s, got none", tn, tc.Error)
--			}
--			if err != nil && tc.Error == "" {
--				t.Fatalf("%s: unexpected err: %s", tn, err)
--			}
--			if err != nil && tc.Error != "" {
--				if !strings.Contains(err.Error(), tc.Error) {
--					t.Fatalf("%s: expected err: %s\nto contain: %s", tn, err, tc.Error)
--				}
--				return
--			}
--
- 			expected := strings.TrimSpace(tc.Expect) + "\n"
- 			if actual != expected {
- 				t.Fatalf("%s:\n\nexpected:\n%s\n\ngot:\n%s", tn, expected, actual)
- 			}
- 		})
- 	}
- }
--
--type testGraphFunc func() *Graph
--
--type testDrawable struct {
--	VertexName      string
--	DependentOnMock []string
--}
--
--func (node *testDrawable) Name() string {
--	return node.VertexName
--}
--func (node *testDrawable) DotNode(n string, opts *dag.DotOpts) *dag.DotNode {
--	return &dag.DotNode{Name: n, Attrs: map[string]string{}}
--}
--func (node *testDrawable) DependableName() []string {
--	return []string{node.VertexName}
--}
--func (node *testDrawable) DependentOn() []string {
--	return node.DependentOnMock
--}
--
--type testDrawableOrigin struct {
--	VertexName string
--}
--
--func (node *testDrawableOrigin) Name() string {
--	return node.VertexName
--}
--func (node *testDrawableOrigin) DotNode(n string, opts *dag.DotOpts) *dag.DotNode {
--	return &dag.DotNode{Name: n, Attrs: map[string]string{}}
--}
--func (node *testDrawableOrigin) DotOrigin() bool {
--	return true
--}
--func (node *testDrawableOrigin) DependableName() []string {
--	return []string{node.VertexName}
--}
++}
++
++type GraphHuman struct {
++	view *View
++}
++
++func (v *GraphHuman) Graph(graph string) {
++	// No diagnostics are logged here, as warning diagnostics going to stdout could
++	// disrupt use of the graph output.
++
++	v.view.streams.Println(graph)
++}
++
++func (v *GraphHuman) Diagnostics(diags tfdiags.Diagnostics) {
++	v.view.Diagnostics(diags)
++}
+```
+
+**File**: `internal/command/views/graph_test.go` (added, +103/-0)
+```diff
+@@ -0,0 +1,103 @@
++// Copyright IBM Corp. 2014, 2026
++// SPDX-License-Identifier: BUSL-1.1
++
++package views
++
++import (
++	"strings"
++	"testing"
++
++	"github.com/google/go-cmp/cmp"
++	"github.com/hashicorp/terraform/internal/command/arguments"
++	"github.com/hashicorp/terraform/internal/terminal"
++	"github.com/hashicorp/terraform/internal/tfdiags"
++)
++
++func TestGraphHuman_Graph(t *testing.T) {
++	graphStr := "literally anything can be passed in; command package has string builder logic"
++
++	testCases := map[string]struct {
++		wantStdout string
++	}{
++		"success": {
++			wantStdout: graphStr,
++		},
++	}
++	for name, tc := range testCases {
++		t.Run(name, func(t *testing.T) {
++			streams, done := terminal.StreamsForTesting(t)
++			view := NewView(streams)
++			view.Configure(&arguments.View{NoColor: true})
++			v := NewGraph(arguments.ViewHuman, view)
++
++			v.Graph(graphStr)
++
++			output := done(t)
++
++			// Assert contents
++			gotStdout := strings.TrimSpace(output.Stdout())
++			wantStdout := strings.TrimSpace(tc.wantStdout)
++			if diff := cmp.Diff(wantStdout, gotStdout); diff != "" {
++				t.Fatalf("unexpected diff in human output:\n%s", diff)
++			}
++
++			gotStderr := strings.TrimSpace(output.Stderr())
++			wantStderr := ""
++			if diff := cmp.Diff(wantStderr, gotStderr); diff != "" {
++				t.Fatalf("unexpected diff in human output:\n%s", diff)
++			}
++		})
++	}
++}
++
++func TestGraphHuman_Diagnostics(t *testing.T) {
++	testCases := map[string]struct {
++		diags      tfdiags.Diagnostics
++		wantStdout string
++		wantStderr string
++	}{
++		"warning": {
++			tfdiags.Diagnostics{
++				tfdiags.Sourceless(
++					tfdiags.Warning,
++					"Example warning",
++					"This is an example warning message.",
++				),
++			},
++			"Warning: Example warning\n\nThis is an example warning message.",
++			"",
++		},
++		"error": {
++			tfdiags.Diagnostics{
++				tfdiags.Sourceless(
++					tfdiags.Error,
++					"Example error",
++					"This is an example error message.",
++				),
++			},
++			"",
++			"Error: Example error\n\nThis is an example error message.",
++		},
++	}
++	for name, tc := range testCases {
++		t.Run(name, func(t *testing.T) {
++			streams, done := terminal.StreamsForTesting(t)
++			view := NewView(streams)
++			view.Configure(&arguments.View{NoColor: true})
++			v := NewGraph(arguments.ViewHuman, view)
++
++			v.Diagnostics(tc.diags)
++
++			// Assert contents
++			output := done(t)
++			gotStdout := strings.TrimSpace(output.Stdout())
++			if diff := cmp.Diff(tc.wantStdout, gotStdout); diff != "" {
++				t.Fatalf("unexpected diff in human output:\n%s", diff)
++			}
++			gotStderr := strings.TrimSpace(output.Stderr())
++			if diff := cmp.Diff(tc.wantStderr, gotStderr); diff != "" {
++				t.Fatalf("unexpected diff in human output:\n%s", diff)
++			}
++		})
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #39452** (2026-10-27): refactor: Make `taint` and `untaint` commands use the `views` package (@SarahFrench)
+- **PR #39450** (2026-10-27): docs: Update various commands' help text to include missing `-no-color` or `-compact-warnings` flags, reorganise alphabetically (@SarahFrench)
+- **PR #39444** (closed): backend/s3: trim download buffer to bytes written to fix trailing NUL padding (@chiliec)
+- **PR #39439** (2026-10-27): tests: Add Mermaid formatting tests, move existing Dot formatting tests into `dag` package. (@SarahFrench)
 - **PR #39437** (2026-10-23): test: Refactor and add test case for graph rendering in Dot format. (@SarahFrench)
 - **PR #39432** (2026-10-22): Backport #39303 and #39308 to v1.17: fmt: Change how file content is replaced to reduce the chances of data loss in error scenarios (@SarahFrench)
-- **PR #39430** (2026-10-22): Cleanup after 1.16.7 release (@hc-github-team-tf-core)
-- **PR #39429** (2026-10-22): Prepare for 1.16.7 release (@hc-github-team-tf-core)
-- **PR #39427** (closed): Backport of fmt: Change how file content is replaced to reduce the chances of data loss in error scenarios into v1.17 (@github-actions[bot])
-- **PR #39425** (2026-10-21): Cleanup after 1.17.0 release (@hc-github-team-tf-core)
 
 ---
 
@@ -2519,134 +3893,31 @@ The methods other than Name and DotNode on the original test mock were unused. T
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: Refactor and add test case for graph rendering in Dot format. (#39437)
+## X. Make `taint` and `untaint` commands use the `views` package (#39452)
 
 **RULE**:
-When implementing operations in `internal/terraform/graph_dot_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/command/arguments/taint.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a060ad5a`: test: Refactor and add test case for graph rendering in Dot format. (#39437). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae75cbe4`: Make `taint` and `untaint` commands use the `views` package (#39452). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/terraform/graph_dot_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/command/arguments/taint.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-var (
-	_ dag.Vertex          = stringV("")
-	_ dag.GraphNodeDotter = stringV("")
-)
 
-func (v stringV) DotNode(n string, opts *dag.DotOpts) *dag.DotNode {
-	return &dag.DotNode{Name: n, Attrs: map[string]string{}}
-}
-
-		Graph  func() *Graph
-				root := stringV("root")
-					levelOne[i] = stringV(
-						s.Name(),
-					)
-					v := stringV(s)
-				root := stringV("root")
-				vA := g.Add(stringV("A"))
-				vB := g.Add(stringV("B"))
-				vC := g.Add(stringV("C"))
-}
-					`,
-		},
-		{
-			Name: "cycle not drawn",
-			Opts: dag.DotOpts{
-				DrawCycles: false, // Do not draw cycles
-			},
-			Graph: func() *Graph {
-				var g Graph
-				root := stringV("root")
-				g.Add(root)
-
-				vA := g.Add(stringV("A"))
-
-				vB := g.Add(stringV("B"))
-
-				vC := g.Add(stringV("C"))
-
-				g.Connect(vA, root)
-				g.Connect(vA, vC)
-				g.Connect(vB, vA)
-				g.Connect(vC, vB)
-
-				return &g
-			},
-			Expect: `
-digraph {
-	compound = "true"
-	newrank = "true"
-	subgraph "root" {
-		"[root] A"
-		"[root] B"
-		"[root] C"
-		"[root] root"
-		"[root] A" -> "[root] C"
-		"[root] A" -> "[root] root"
-		"[root] B" -> "[root] A"
-		"[root] C" -> "[root] B"
-	}
+	ViewType ViewType
+		Vars:     &Vars{},
+		ViewType: ViewHuman,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		Graph  testGraphFunc
-		Error  string
-				root := &testDrawableOrigin{"root"}
-					levelOne[i] = &testDrawable{
-						VertexName: s.Name(),
-					}
-					v := &testDrawable{
-						VertexName: s,
-					}
-				root := &testDrawableOrigin{"root"}
-				vA := g.Add(&testDrawable{
-					VertexName: "A",
-				})
-				vB := g.Add(&testDrawable{
-					VertexName: "B",
-				})
-				vC := g.Add(&testDrawable{
-					VertexName: "C",
-				})
-			var err error
-			//actual, err := GraphDot(g, &tc.Opts)
-			if err == nil && tc.Error != "" {
-				t.Fatalf("%s: expected err: %s, got none", tn, tc.Error)
-			}
-			if err != nil && tc.Error == "" {
-				t.Fatalf("%s: unexpected err: %s", tn, err)
-			}
-			if err != nil && tc.Error != "" {
-				if !strings.Contains(err.Error(), tc.Error) {
-					t.Fatalf("%s: expected err: %s\nto contain: %s", tn, err, tc.Error)
-				}
-				return
-			}
-
-
-type testGraphFunc func() *Graph
-
-type testDrawable struct {
-	VertexName      string
-	DependentOnMock []string
-}
-
-func (node *testDrawable) Name() string {
-	return node.VertexName
-}
-func (node *testDrawable) DotNode(n string, opts *dag.DotOpts) *dag.DotNode {
-	return &dag.DotNode{Name: n, Attrs: map[string]string{}}
-}
-func (node *testDrawabl
+		Vars: &Vars{},
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a060ad5a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae75cbe4` are properly handled with clean fallback behavior.

@@ -5403,3 +5403,6 @@ Every entry in this ledger must capture:
 | `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `bccbb730` | Multi-dimensional audit evidence | 2026-10-27T14:53:58.291Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `8c9b7d76` | Multi-dimensional audit evidence | 2026-10-27T14:54:08.076Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `fbb588ee` | Multi-dimensional audit evidence | 2026-10-27T14:57:47.652Z |
+| `learn-github-dalance-procs` | `https://github.com/dalance/procs` | `c41ae259` | Multi-dimensional audit evidence | 2026-10-27T15:01:10.681Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `ae75cbe4` | Multi-dimensional audit evidence | 2026-10-27T15:01:16.953Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `b1c943e6` | Multi-dimensional audit evidence | 2026-10-27T15:01:19.082Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source**: github ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
-> **Source Version**: `5946dcf5`  
+> **Source Version**: `b1c943e6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:10:45.831Z  
+> **Timestamp**: 2026-10-27T15:01:18.639Z  
 > **Learning ID**: `learn-github-nolabs-ai-nono`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:10:45.394Z  
+> **Harvest Timestamp**: 2026-10-27T15:01:18.188Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: agent runtime security - zero trust, zero setup, zero latency agent sandboxing
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4698 stars
+- **Stars / Engagement**: 4701 stars
 
 ---
 
@@ -2946,11 +2946,14 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2197** (2026-10-27): **nono 0.80 not published on Arch**
+  *Symptoms*: ### What happened?  For some reason the automatted publishing ot he Arch package for 0.80 failed. The workflow did run and everything was good but publishing to AUR failed. Probably transient. Would you mind kicking it off again?  ### What did you expect to happen?  n/a  ### Steps to reproduce  n/a  ### Relevant output or logs  ```shell  ```  ### nono version  n/a  ### Operating system  Linux  ### OS version / distro  n/a  ### Kernel version (Linux only)  _No response_  ### Profile (if relevant)  ```json  ```  ### Additional context  _No response_
+  **Post-Mortem & Fix Analysis**:
+  > ## 🛡️ nogent issue triage  **Assessment:** not-actionable  **Suggested resolution:** Re-run the GitHub Actions AUR publishing workflow for release 0.80 or manually push the updated PKGBUILD to AUR.  **Notes for maintainers:** This is an administrative release task regarding the Arch Linux AUR package deployment failure.  <sub>Automated triage suggestion. Not a maintainer decision.</sub>
+  > Done, should be published. It skipped, as the `0.80.0` release failed on downstream dispatch to previously archived repo's which have since been removed! Thanks
+
 - **Issue #2189** (2026-10-23): **fix(proxy): honor connect ports in supervised mode**
   *Symptoms*: ## Linked Issue  Closes #2186  ## Summary  In supervised proxy mode (ProxyOnly), `decide_network_notification` in `crates/nono-cli/src/exec_strategy/supervisor_linux.rs` only consulted `proxy_port`, `localhost_ports` (`--open-port`), and `localhost_port_ranges` when deciding `connect()`/`sendto()` notifications. `connect_port` / `--allow-connect-port` grants (`CapabilitySet::tcp_connect_ports`) were silently ignored, so a raw `connect()` to an explicitly granted port was denied with `EACCES` — while every other enforcement point honors the same grant: Landlock (`crates/nono/src/sandbox/linux.rs:954`, `:1215`), Seatbelt (`crates/nono/src/sandbox/macos.rs:917`), the tool sandboxes, the proxy's own direct-connect routing (`crates/nono-cli/src/proxy_runtime.rs:2985`), and `nono why`.  This makes the seccomp-notify connect policy consistent with those points:  - `SYS_CONNECT` to a port in `tcp_connect_ports` is now allowed, loopback or not, per the grant's documented semantics. This also resolves the issue's secondary observation that non-loopback raw TCP was unreachable in proxy mode even with an explicit grant. - Previous rules are unchanged: the proxy port and `--open-port`/`--open-port-range` localhost IPC grants remain loopback-only. - A `connect_port` grant does not authorize the datagram-style `sendto`/`sendmsg`/`sendmmsg`; those keep their existing loopback localhost-IPC semantics (only `SYS_CONNECT` is affected).  No profile-format, policy-resolution, or library/CLI bound
-
-- **Issue #2186** (2026-10-23): **ProxyOnly mode silently ignores network.connect_port / --allow-connect-port**
-  *Symptoms*: ### What happened?  `network.connect_port` grants are silently ignored when the session runs in supervised proxy mode (ProxyOnly, active whenever the proxy is started — e.g. by `allow_domain` or `credentials`). Every raw `connect()` outside the proxy port returns `EACCES`, even to ports explicitly listed in `connect_port`.  The profile is parsed correctly: `connect_port` is merged during profile resolution (`profile/mod.rs`, `dedup_append`) and populated into `CapabilitySet::tcp_connect_ports` (`capability_ext.rs:1054-1063`). `sandbox/linux.rs` even emits Landlock `ConnectTcp` rules for `tcp_connect_ports` in ProxyOnly mode. But when the proxy is active, nono selects the supervised exec strategy with the seccomp-notify network supervisor, and its connect policy (`exec_strategy/supervisor_linux.rs`, `decide_network_notification`) never consults `tcp_connect_ports`:  ```rust let allowed_port = sockaddr.port == config.proxy_port     || config.caps.localhost_ports().contains(&sockaddr.port)     || config.caps.localhost_port_ranges().iter().any(|&(start, end)| ...); if sockaddr.is_loopback && allowed_port { ... } else { Deny }  // Deny -> EACCES ```  Only `proxy_port`, `open_port` (`localhost_ports`), and `open_port_range` are checked. The comment on that block documents the same: "Allow connect/sendto/sendmsg/sendmmsg only to loopback + proxy port or an explicit bidirectional localhost IPC grant (`--open-port`)."  `nono why --host 127.0.0.1 --port 5432` reports `ALLOWED / Reason:
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2967,555 +2970,458 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a39ad272` (2026-10-27)
-**Commit Message**: chore: clean up workspace dependencies and build configuration (#2210)
+### Incident Patch 1: `b1c943e6` (2026-10-27)
+**Commit Message**: fix(oauth-capture): rewrite form-urlencoded OAuth token responses (#1836)
 
-- upgrade keyring to v4 and use the pure Rust zbus backend on Linux
-- switch the Edition 2024 workspace to Cargo resolver 3
-- remove unused dependencies and redundant cross compilation config
-- replace stale audit exceptions with the temporary AWS advisory exception
-- add MSRV and headless feature checks to CI
-- update active repository and pack references to nolabs-ai
-- clean up Makefile, Docker, Nix, and packaging configuration
+* fix(oauth-capture): rewrite form-urlencoded OAuth token responses
 
-Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
+Signed-off-by: James Carnegie <[REDACTED_EMAIL]>
 
-**File**: `.cargo/audit.toml` (modified, +7/-10)
+* fix(oauth-capture): fail closed on smuggled token shapes and off-format content types
+
+A pre-push review pass found three fail-open gaps in the form-response
+path. Configured dotted paths were invisible to both the rewrite and the
+marker check, so credentials.token=secret arriving as a literal form key
+was forwarded with the real token intact. A UTF-8 BOM made looks_like_json
+miss a JSON body, dropping it into the form path where the whole blob
+folds into one pair with an empty value that skips the marker scan. And
+explicit Json/Form modes accepted Content-Types that are neither, which
+config.rs documents as rejected. Dotted paths now join the markers, pair
+names are matched by substring so token material cannot hide in a
+blob-shaped name with an empty value, BOM-prefixed JSON fails closed like
+any other unparseable JSON, and an unrecognized Content-Type is rejected
+in every mode.
+
+Gaps found by a pre-push codex review; fixes prepared with agent
+assistance.
+
+Signed-off-by: James Carnegie <
+
+**File**: `crates/nono-cli/src/proxy_runtime.rs` (modified, +1/-0)
 ```diff
-@@ -1,17 +1,14 @@
- # Workspace cargo-audit configuration.
- #
--# These ignores are limited to AWS-LC X.509 validation advisories which do not
--# affect the code paths used in this workspace:
--# - `nono-proxy` uses the `ring` rustls provider for TLS, not AWS-LC.
--# - Sigstore certificate parsing/chain validation goes through `x509-cert` and
--#   `rustls-webpki`, not AWS-LC X.509 validation APIs.
--# - We do not enable CRL checking in the rustls or sigstore paths we use.
-+# Temporary exception: `aws-config`'s required `credentials-login` feature
-+# pins `p256` 0.13 and therefore vulnerable `crypto-bigint` 0.5.5.
-+# Remove once AWS adopts `p256` 0.14. Review by 2026-11-10.
- #
--# Revisit these ignores if we add any direct use of AWS-LC X.509 hostname
--# validation, name constraints, or CRL-based revocation checks.
-+# Upstream: https://github.com/smithy-lang/smithy-rs/tree/main/aws/rust-runtime/aws-config
-+# Crate: https://crates.io/crates/aws-config
-+# Advisory: https://rustsec.org/advisories/RUSTSEC-2026-0387.html
- 
- [advisories]
- ignore = [
--    "RUSTSEC-2026-0044", # AWS-LC X.509 CN/name-constraints bypass
--    "RUSTSEC-2026-0048", # AWS-LC CRL distribution point scope check bypass
-+    "RUSTSEC-2026-0387",
- ]
+@@ -2650,6 +2650,7 @@ fn synthesize_credential_provider_proxy_config(
+                         nono_proxy::config::OAuthTokenRequestBodyFormat::Form
+                     }
+                 },
++                response_body: nono_proxy::config::OAuthTokenRequestBodyFormat::Auto,
+                 request_nonce_fields: endpoint.request_nonce_fields.clone(),
+             });
+             if let Some(host_port) = origin_host_port(&endpoint.host)? {
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +19/-0)
+**File**: `crates/nono-proxy/src/config.rs` (modified, +6/-0)
 ```diff
-@@ -166,6 +166,25 @@ jobs:
-       - name: Run doc tests
-         run: cargo test --doc --workspace --verbose --no-fail-fast
- 
-+      - name: Check headless feature set
-+        run: cargo check --workspace --no-default-features --locked
-+
-+  msrv:
-+    name: MSRV (Rust 1.95)
-+    needs: changes
-+    if: ${{ !startsWith(github.head_ref, 'dependabot/github_actions/') && needs.changes.outputs.run_code_jobs == 'true' }}
-+    runs-on: ubuntu-latest
-+    steps:
-+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-+
-+      - name: Install Rust 1.95
-+        uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7 # stable
-+        with:
-+          toolchain: 1.95.0
-+
-+      - name: Check workspace MSRV
-+        run: cargo check --workspace --locked
-+
-   fmt:
-     name: Rustfmt
-     needs: changes
+@@ -332,6 +332,12 @@ pub struct OAuthTokenEndpointConfig {
+     /// Request body encoding for token refresh/exchange requests.
+     #[serde(default)]
+     pub request_body: OAuthTokenRequestBodyFormat,
++    /// Response body encoding for token endpoint replies. `Auto` selects JSON
++    /// or form encoding from the response's `Content-Type` header; a body
++    /// whose content type matches neither, or contradicts an explicit
++    /// `Json`/`Form` setting, is rejected rather than guessed at.
++    #[serde(default)]
++    pub response_body: OAuthTokenRequestBodyFormat,
+     /// JSON request fields where phantom tokens must be resolved before
+     /// forwarding token refresh/exchange requests upstream.
+     #[serde(default)]
 ```
 
-**File**: `.github/workflows/nix.yml` (modified, +1/-1)
+**File**: `crates/nono-proxy/src/forward.rs` (modified, +126/-2)
 ```diff
-@@ -35,7 +35,7 @@ jobs:
-     timeout-minutes: 30
-     steps:
-       - name: Checkout
--        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
-           persist-credentials: false
+@@ -340,8 +340,20 @@ where
+             Ok(Ok(0)) => break,
+             Ok(Ok(n)) => n,
+             Ok(Err(e)) => {
+-                debug!("Upstream read error: {}", e);
+-                break;
++                // rustls surfaces a peer TCP-closing without a TLS `close_notify` as
++                // `UnexpectedEof` rather than `Ok(0)` (see the rustls manual's "Unexpected
++                // EOF" section). Many real upstreams skip `close_notify` on an otherwise
++                // clean shutdown, so we can't treat every occurrence as a transport
++                // failure without breaking them. It's still only safe to treat as EOF once
++                // the response's own HTTP framing shows the body was fully received —
++                // otherwise a truncated body could hide an unrewritten token field.
++                if e.kind() == std::io::ErrorKind::UnexpectedEof && is_complete_http1_response(&raw)
++                {
++                    break;
++                }
++                return Err(ProxyError::HttpParse(format!(
++                    "upstream read error while buffering response for OAuth capture rewrite: {e}"
++                )));
+             }
+             Err(_) => {
+                 return Err(ProxyError::HttpParse(
+@@ -439,6 +451,65 @@ fn find_header_end(raw: &[u8]) -> Option<usize> {
+     raw.windows(4).position(|window| window == b"\r\n\r\n")
+ }
  
-```
-
-**File**: `.github/workflows/release.yml` (modified, +1/-1)
-```diff
-@@ -311,7 +311,7 @@ jobs:
-       pull-requests: write
-     steps:
-       - name: Checkout default branch
--        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
-           ref: ${{ github.event.repository.default_branch }}
-           persist-credentials: false
-```
-
-**File**: `Cargo.lock` (modified, +135/-315)
-```diff
-@@ -10,13 +10,13 @@ checksum = "320119579fcad9c21884f5c4861d16174d0e06250625266f50fe6898340abefa"
- 
- [[package]]
- name = "aes"
--version = "0.8.4"
-+version = "0.9.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b169f7a6d4742236a0a00c541b845991d0ac43e546831af1249753ab4c3aa3a0"
-+checksum = "35f0f96ce78e38c3dc6d8948aa8163d06385be74000f3c7a95bf1eef35d3ea32"
- dependencies = [
-- "cfg-if",
-  "cipher",
-- "cpufeatures 0.2.17",
-+ "cpubits",
-+ "cpufeatures 0.3.0",
- ]
- 
- [[package]]
-@@ -42,15 +42,6 @@ dependencies = [
-  "memchr",
- ]
- 
--[[package]]
--name = "alloca"
--version = "0.4.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e5a7d05ea6aea7e9e64d25b9156ba2fee3fdd659e34e41063cd2fc7cd020d7f4"
--dependencies = [
-- "cc",
--]
--
- [[package]]
- name = "allocator-api2"
- version = "0.2.21"
-@@ -80,12 +71,6 @@ dependencies = [
-  "libc",
- ]
- 
--[[package]]
--name = "anes"
--version = "0.1.6"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "4b46cbb362ab8752921c97e041f5e366ee6297bd428a31275b9fcf1e380f7299"
--
- [[package]]
- name = "anstream"
- version = "1.0.0"
-@@ -142,6 +127,17 @@ version = "1.0.103"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "2a4385e2e34eb35d6b3efe798b9eb88096925d87726c0798709bf56d9ed84af3"
- 
-+[[package]]
-+name = "apple-native-keyring-store"
-+version = "1.0.2"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "2b350bfd03649e07aa05c0a81b3e15934374e585c98204a57e20b9d49f49bb9a"
-+dependencies = [
-+ "keyring-core",
-+ "log",
-+ "security-framework",
-+]
++/// Whether `raw` already holds a complete HTTP/1.1 response by its own framing:
++/// a `Content-Length` body that has been fully received, or a chunked body
++/// whose terminal chunk has arrived. Conflicting duplicate `Content-Length`
++/// values never count as complete.
++///
++/// A body with neither header is close-delimited per RFC 7230 §3.3.3, but this
++/// function is only reached on a peer closing *without* TLS `close_notify` —
++/// exactly the truncation `close_notify` exists to detect. Without a length or
++/// terminal chunk to corroborate that the close was intentional, there is no
++/// way to tell a clean close-delimited end from an attacker cutting the
++/// connection mid-body, so that case returns `false` (fail closed) rather than
++/// assuming completion.
++///
++/// Returns `false` if the headers themselves haven't finished arriving yet,
++/// since completeness can't be judged without them.
++fn is_complete_http1_response(raw: &[u8]) -> bool {
++    let Some(header_end) = find_header_end(raw) else {
++        return false;
++    };
++    let Ok(head_str) = std::str::from_utf8(&raw[..header_end]) else {
++        return false;
++    };
++    let body = &raw[header_end + 4..];
 +
- [[package]]
- name = "arc-swap"
- version = "1.9.2"
-@@ -261,17 +257,6 @@ dependencies = [
-  "slab",
- ]
- 
--[[package]]
--name = "async-fs"
--version = "2.2.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8034a681df4aed8b8edbd7fbe472401ecf009251c8b40556b304567052e294c5"
--dependencies = [
-- "async-lock",
-- "blocking",
-- "futures-lite",
--]
--
- [[package]]
- name = "async-io"
- version = "2.6.0"
-@@ -915,11 +900,11 @@ dependencies = [
- 
- [[package]]
- name = "block-padding"
--version = "0.3.3"
-+version = "0.4.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "a8894febbff9f758034a5b8e12d87918f56dfc64a8e1fe757d65e29041538d93"
-+checksum = "710f1dd022ef4e93f8a438b4ba958de7f64308434fa6a87104481645cc30068b"
- dependencies = [
-- "generic-array",
-+ "hybrid-array",
- ]
- 
- [[package]]
-@@ -1009,17 +994,11 @@ dependencies = [
-  "either",
- ]
- 
--[[package]]
--name = "cast"
--version = "0.3.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "37b2a672a2cb129a2e41c10b1224bb368f9f37a2b16b612598138befd7b37eb5"
--
- [[package]]
- name = "cbc"
--version = "0.1.2"
-+version = "0.2.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "26b52a9543ae338f279b96b0b9fed9c8093744685043739079ce85cd58f289a6"
-+checksum = "ce2dc9ee5f88d11e0beb842c88b33c8a5cf0d1329c4b19494af42b07dbfe8896"
- dependencies = [
-  "cipher",
- ]
-@@ -1092,40 +1071,13 @@ dependencies = [
-  "windows-link",
- ]
- 
--[[package]]
--name = "ciborium"
--version = "0.2.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "42e69ffd6f0917f5c029256a24d0161db17cea3997d185db0d35926308770f0e"
--dependencies = [
-- "ciborium-io",
-- "ciborium-ll",
-- "serde",
--]
--
--[[package]]
--name = "ciborium-io"
--version = "0.2.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "05afea1e0a06c9be33d539b876f1ce3692f4afea2cb41f740e7743225ed1c757"
--
--[[package]]
--name = "ciborium-ll"
--version = "0.2.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "57663b653d948a338bfb3eeba9bb2fd5fcfaecb9e199e87e1eda4d9e8b240fd9"
--dependencies = [
-- "ciborium-io",
-- "half",
--]
--
- [[package]]
- name = "cipher"
--version = "0.4.4"
-+version = "0.5.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "773f3b9af64447d2ce9850330c473515014aa235e6a783b02db81ff39e4a3dad"
-+checksum = "e8cf2a2c93cd704877c0858356ed03480ff301ee950b43f1cbe4573b088bfa6c"
- dependencies = [
-- "crypto-common 0.1.7",
-+ "crypto-common 0.2.2",
-  "inout",
- ]
- 
-@@ -1217,7 +1169,7 @@ version = "3.1.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "faf9468729b8cbcea668e36183cb69d317348c2e08e994829fb56ebfdfbaac34"
- dependencies = [
-- "windows-sys 0.59.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -1268,16 +1220,6 @@ version = "0.10.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "a6ef517f0926dd24a1582492c791b6a4818a4d94e789a334894aa15b0d12f55c"
- 
--[[package]]
--name = "core-foundation"
--version = "0.9.4"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "91e195e091a93c46f7102ec7818a2aa394e1e1771c3ab4825963fa03e45afb8f"
--dependencies = [
-- "core-foundation-sys",
-- "libc",
--]
--
- [[package]]
- name = "core-foundation"
- version = "0.10.1"
-@@ -1300,6 +1242,12 @@ version = "1.0.0"
- s
++    let mut content_lengths: Vec<usize> = Vec::new();
++    let mut chunked = false;
++    for line in head_str.split("\r\n").skip(1) {
++        let Some((name, value)) = line.split_once(':') else {
++            continue;
++        };
++        let name = name.trim();
++        let value = value.trim();
++        if name.eq_ignore_ascii_case("transfer-encoding")
++            && value
++                .split(',')
++                .any(|part| part.trim().eq_ignore_ascii_case("chunked"))
++        {
++            chunked = true;
++        }
++        if name.eq_ignore_ascii_case("content-length") {
++            // Conflicting duplicate values are a request-smuggling vector
++            // (RFC 7230 §3.3.2) and an unparseable one proves nothing, so
++            // neither may vouch for the body's completeness.
++            let Ok(len) = value.parse::<usize>() else {
++                return false;
++            };
++            content_lengths.push(len);
++        }
++    }
++
++    if chunked {
++        return decode_chunked_body(body).is_ok();
++    }
++    if let Some(first) = content_lengths.first() {
++        return content_lengths.iter().all(|len| len == first) && body.len() >= *first;
++    }
++    false
++}
++
+ fn decode_chunked_body(body: &[u8]) -> Result<Vec<u8>> {
+     let mut pos = 0;
+     let mut out = Vec::new();
+@@ -550,4 +621,57 @@ mod tests {
+             "unexpected error: {err}"
+         );
+     }
++
++    #[test]
++    fn is_complete_http1_response_false_before_headers_finish() {
++        assert!(!is_complete_http1_response(
++            b"HTTP/1.1 200 OK\r\nContent-Len"
++        ));
++    }
++
++    #[test]
++    fn is_complete_http1_response_content_length_needs_full_body() {
++        let full = b"HTTP/1.1 200 OK\r\nContent-Length: 4\r\n\r\nabcd";
++        let truncated = b"HTTP/1.1 200 OK\r\nContent-Length: 4\r\n\r\nab";
++        assert!(is_complete_http1_response(full));
++        assert!(!is_complete_http1_response(truncated));
++    }
++
++    #[test]
++    fn is_complete_http1_response_chunked_needs_terminal_chunk() {
++        let full = b"HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n4\r\nabcd\r\n0\r\n\r\n";
++        let truncated = b"HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n4\r\nab";
++        assert!(is_complete_http1_response(full));
++        assert!(!is_complete_http1_response(truncated));
++    }
++
++    #[test]
++    fn is_complete_http1_response_no
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `crates/nono-proxy/src/oauth_capture/endpoint.rs` (modified, +2/-0)
+```diff
+@@ -11,6 +11,7 @@ pub struct LoadedOAuthEndpoint {
+     pub(super) path: String,
+     pub(super) response_fields: Vec<ResponseField>,
+     pub(super) request_body: OAuthTokenRequestBodyFormat,
++    pub(super) response_body: OAuthTokenRequestBodyFormat,
+     pub(super) request_nonce_fields: Vec<String>,
+     pub(super) admitted_consumers: HashSet<String>,
+ }
+@@ -55,6 +56,7 @@ pub(super) fn load_endpoint(
+         path: endpoint.path.clone(),
+         response_fields: endpoint_response_fields(endpoint)?,
+         request_body: endpoint.request_body,
++        response_body: endpoint.response_body,
+         request_nonce_fields: endpoint.request_nonce_fields.clone(),
+         admitted_consumers,
+     })
+```
+
+**File**: `crates/nono-proxy/src/oauth_capture/mod.rs` (modified, +26/-4)
+```diff
+@@ -310,6 +310,7 @@ mod tests {
+                 path: "/oauth/token".to_string(),
+                 response_fields: opaque_fields(["access_token", "refresh_token"]),
+                 request_body: OAuthTokenRequestBodyFormat::Auto,
++                response_body: OAuthTokenRequestBodyFormat::Auto,
+                 request_nonce_fields: vec!["refresh_token".to_string()],
+             }],
+             admitted_consumers: vec!["proxy.openai_oauth".to_string()],
+@@ -326,6 +327,7 @@ mod tests {
+                     path: "/oauth/token".to_string(),
+                     response_fields: opaque_fields(["access_token", "refresh_token"]),
+                     request_body: OAuthTokenRequestBodyFormat::Auto,
++                    response_body: OAuthTokenRequestBodyFormat::Auto,
+                     request_nonce_fields: vec!["refresh_token".to_string()],
+                 }],
+                 admitted_consumers: vec!["proxy.openai_oauth".to_string()],
+@@ -342,6 +344,7 @@ mod tests {
+         let rewritten = store
+             .rewrite_response_body(
+                 endpoint,
++                &[],
+                 br#"{"access_token":"real-access","refresh_token":"real-refresh"}"#,
+             )
+             .unwrap();
+@@ -374,6 +377,7 @@ mod tests {
+                 path: "/oauth/token".to_string(),
+                 response_fields: opaque_fields(["access_token", "refresh_token", "id_token"]),
+                 request_body: OAuthTokenRequestBodyFormat::Auto,
++                response_body: OAuthTokenRequestBodyFormat::Auto,
+                 request_nonce_fields: vec!["refresh_token".to_string()],
+             }],
+             admitted_consumers: vec!["proxy.codex_oauth".to_string()],
+@@ -383,6 +387,7 @@ mod tests {
+         let rewritten = store
+             .rewrite_response_body(
+                 endpoint,
++                &[],
+                 br#"{"access_token":"real-access","refresh_token":"real-refresh","id_token":"real-id"}"#,
+             )
+             .unwrap();
+@@ -413,6 +418,7 @@ mod tests {
+                     fields
+                 },
+                 request_body: OAuthTokenRequestBodyFormat::Auto,
++                response_body: OAuthTokenRequestBodyFormat::Auto,
+                 request_nonce_fields: vec!["refresh_token".to_string()],
+             }],
+             admitted_consumers: vec!["proxy.codex_oauth".to_string()],
+@@ -422,6 +428,7 @@ mod tests {
+         let rewritten = store
+             .rewrite_response_body(
+                 endpoint,
++                &[],
+                 br#"{"access_token":"real-access","refresh_token":"real-refresh","id_token":"real-id"}"#,
+             )
+             .unwrap();
+@@ -454,6 +461,7 @@ mod tests {
+         let err = store
+             .rewrite_response_body(
+                 endpoint,
++                &[],
+                 br#"{"access_token":"real-access","refresh_token":"real-refresh","id_token":"real-id"}"#,
+             )
+             .expect_err("unlisted token fields must fail closed");
+@@ -471,6 +479,7 @@ mod tests {
+         let rewritten = store
+             .rewrite_response_body(
+                 endpoint,
++                &[],
+                 br#"{"access_token":"real-access","refresh_token":"real-refresh"}"#,
+             )
+             .unwrap();
+@@ -519,6 +528,7 @@ mod tests {
+         let rewritten = store
+             .rewrite_response_body(
+                 endpoint,
++                &[],
+                 br#"{"access_token":"real-access","refresh_token":"real-refresh"}"#,
+             )
+             .unwrap();
+@@ -559,6 +569,7 @@ mod tests {
+                     path: "/login/oauth/access_token".to_string(),
+                     response_fields: opaque_fields(["access_token"]),
+                     request_body: OAuthTokenRequestBodyFormat::Auto,
++                    response_body: OAuthTokenRequestBodyFormat::Auto,
+                     request_nonce_fields: vec!["refresh_token".to_string()],
+                 }],
+                 admitted_consumers: vec!["proxy.github".to_string()],
+@@ -570,6 +581,7 @@ mod tests {
+                     path: "/oauth/token".to_string(),
+                     response_fields: opaque_fields(["access_token"]),
+                     request_body: OAuthTokenRequestBodyFormat::Auto,
++                    response_body: OAuthTokenRequestBodyFormat::Auto,
+                     request_nonce_fields: vec!["refresh_token".to_string()],
+                 }],
+                 admitted_consumers: vec!["proxy.other".to_string()],
+@@ -584,6 +596,7 @@ mod tests {
+         let rewritten = store
+             .rewrite_response_body(
+                 other_endpoint,
++                &[],
+                 br#"{"access_token":"other-provider-token"}"#,
+             )
+             .unwrap();
+@@ -712,6 +725,7 @@ mod tests {
+         let rewritten = store
+             .rewrite_response_body(
+                 endpoint,
++                &[],
+                 br#"{"access_token":"real-access","refresh_token":"real-refresh"}"#,
+     
+```
+
+**File**: `crates/nono-proxy/src/oauth_capture/rewrite.rs` (modified, +841/-25)
 ```diff
 @@ -1,5 +1,5 @@
- [workspace]
--resolver = "2"
-+resolver = "3"
- members = [
-     "crates/nono",
-     "crates/nono-cli",
-```
-
-**File**: `Cross.toml` (removed, +0/-7)
-```diff
-@@ -1,7 +0,0 @@
--# cross-rs configuration for cross-compilation
--# https://github.com/cross-rs/cross/wiki/Configuration
--#
--# The aarch64-unknown-linux-gnu build needs no extra system libraries: the
--# Linux keyring backend is pure-Rust (zbus Secret Service), so nothing links
--# libdbus, and aws-lc-sys builds with the cross image's own toolchain. The
--# default cross images are sufficient; no target-specific setup is required.
-```
-
-**File**: `Makefile` (modified, +17/-8)
-```diff
-@@ -1,12 +1,12 @@
- # nono - Makefile for library and CLI
- #
- # Usage:
--#   make              Build everything
-+#   make              Build the workspace
- #   make test         Run all tests
- #   make check        Run clippy and format check
--#   make release      Build release binaries
-+#   make build-release Build release binaries
+ use super::OAuthCaptureStore;
+-use super::endpoint::{LoadedOAuthEndpoint, ResponseFieldFormat, provider_consumer};
++use super::endpoint::{LoadedOAuthEndpoint, ResponseField, ResponseFieldFormat, provider_consumer};
+ use crate::config::OAuthTokenRequestBodyFormat;
+ use crate::error::{ProxyError, Result};
+ use crate::jwt_phantom::jwt_shaped_phantom;
+@@ -139,12 +139,80 @@ impl OAuthCaptureStore {
+     pub fn rewrite_response_body(
+         &self,
+         endpoint: &LoadedOAuthEndpoint,
++        headers: &[(String, String)],
+         body: &[u8],
+     ) -> Result<Vec<u8>> {
+         if body.is_empty() {
+             return Ok(body.to_vec());
+         }
  
--.PHONY: all build build-lib build-cli build-ffi build-arm64 test test-workspace test-lib test-cli test-ffi test-doc test-one test-repeat test-spiffe check clippy fmt clean install audit help roadmap roadmap-check
-+.PHONY: all build build-lib build-cli build-ffi build-release build-release-lib build-release-cli build-arm64 test test-workspace test-lib test-cli test-ffi test-doc test-one test-repeat test-spiffe check clippy clippy-fix fmt fmt-check roadmap roadmap-check clean install run run-setup run-dry watch watch-test doc doc-lib audit lint-docs ci help
- 
- # Keep Rust panic locations available in both local and CI test output. A
- # caller can still override this (for example, RUST_BACKTRACE=full make test).
-@@ -16,7 +16,8 @@ RUST_BACKTRACE ?= 1
- all: build
- 
- # Build targets
--build: build-lib build-cli
-+build:
-+	cargo build --workspace
- 
- build-lib:
- 	cargo build -p nono
-@@ -146,11 +147,10 @@ audit:
- 
- # Lint: forbid legacy #594 schema tokens in docs and rustdoc outside the
- # allowlist (see scripts/lint-docs.sh).
--.PHONY: lint-docs
- lint-docs:
- 	bash scripts/lint-docs.sh
- 
--# CI simulation (what CI would run)
-+# Core local checks. GitHub CI additionally runs platform and workflow jobs.
- ci: check test test-doc audit lint-docs
- 	@echo "CI checks passed"
- 
-@@ -159,11 +159,13 @@ help:
- 	@echo "nono Makefile targets:"
- 	@echo ""
- 	@echo "Build:"
--	@echo "  make build          Build library and CLI (debug)"
-+	@echo "  make build          Build the workspace (debug)"
- 	@echo "  make build-lib      Build library only"
- 	@echo "  make build-cli      Build CLI only"
- 	@echo "  make build-ffi      Build C FFI bindings"
- 	@echo "  make build-release  Build release binaries"
-+	@echo "  make build-release-lib Build release library"
-+	@echo "  make build-release-cli Build release CLI"
- 	@echo "  make build-arm64    Build CLI for Linux ARM64 (cargo on Linux ARM64; cross elsewhere)"
- 	@echo ""
- 	@echo "Test:"
-@@ -180,6 +182,7 @@ help:
- 	@echo "Check:"
- 	@echo "  make check          Run clippy and format check"
- 	@echo "  make clippy         Run clippy linter"
-+	@echo "  make clippy-fix     Apply automatic Clippy fixes"
- 	@echo "  make fmt            Format code"
- 	@echo "  make fmt-check      Check formatting"
- 	@echo ""
-@@ -193,5 +196,11 @@ help:
- 	@echo "  make install        Install CLI to ~/.cargo/bin"
- 	@echo "  make clean          Clean build artifacts"
- 	@echo "  make doc            Generate and open documentation"
--	@echo "  make ci             Simulate CI checks"
-+	@echo "  make doc-lib        Generate library documentation"
-+	@echo "  make run            Run CLI help"
-+	@echo "  make run-setup      Check setup requirements"
-+	@echo "  make run-dry        Preview a sandboxed command"
-+	@echo "  make watch          Rebuild the CLI on changes"
-+	@echo "  make watch-test     Rerun tests on changes"
-+	@echo "  make ci             Run core local CI checks"
- 	@echo "  make help           Show this help"
-```
-
----
-
-### Incident Patch 2: `4c03401d` (2026-10-27)
-**Commit Message**: perf(linux): read only the ELF regions the exec gate parses (#2195)
-
-* perf(linux): read only the ELF regions the exec gate parses
-
-parse_elf read each file it parsed in full, to get the ELF header, the
-program headers, PT_INTERP, PT_DYNAMIC and the dynamic string table. With
-command_policies, the session exec gate parses every executable in the
-trusted PATH directories and their dependency closures at each start, so
-a PATH with large binaries costs gigabytes of reads before the command
-runs (nolabs-ai/nono#2143).
-
-Open the file once and read only those regions, with positional reads.
-A region that runs past the end of the file comes back short, so the
-parser's bounds checks fail exactly where they failed on the whole file.
-Each region also has an upper bound: program headers 64 KiB (the
-kernel's own limit), the interpreter path PATH_MAX (likewise), the
-dynamic section 1 MiB, the dynamic string table 64 MiB. A region over
-its bound is a parse error, handled as any other (the gate skips a PATH
-executable it cannot parse). The string table is not read when no
-DT_NEEDED, DT_RPATH or DT_RUNPATH entry points into it.
-
-The whole-file parser stays in the tests as the oracle: the bounded
-p
-
-**File**: `crates/nono-cli/src/tool-sandbox/platform/linux.rs` (modified, +697/-44)
-```diff
-@@ -45,7 +45,7 @@ use std::fs::{self, File};
- use std::io::{Read, Write};
- use std::os::fd::{AsRawFd, FromRawFd, OwnedFd, RawFd};
- use std::os::unix::ffi::{OsStrExt, OsStringExt};
--use std::os::unix::fs::{DirBuilderExt, MetadataExt, PermissionsExt};
-+use std::os::unix::fs::{DirBuilderExt, FileExt, MetadataExt, PermissionsExt};
- use std::os::unix::net::{UnixListener, UnixStream};
- use std::os::unix::process::CommandExt;
- use std::path::{Path, PathBuf};
-@@ -5562,9 +5562,9 @@ thread_local! {
-     /// determine the result.
-     static ELF_LIB_CACHE: RefCell<HashMap<ElfLibCacheKey, PathBuf>> =
-         RefCell::new(HashMap::new());
--    /// Memoizes `parse_elf` (which reads the whole file) keyed by canonical path,
--    /// so each shared object is read+parsed once per pass rather than once per
--    /// dependency closure that references it.
-+    /// Memoizes `parse_elf` keyed by canonical path, so each shared object is
-+    /// read+parsed once per pass rather than once per dependency closure that
-+    /// references it.
-     static ELF_PARSE_CACHE: RefCell<HashMap<PathBuf, ParsedElf>> = RefCell::new(HashMap::new());
-     /// Memoizes file identity (dev+ino) keyed by canonical path, so the per-edge
-     /// `statx` used for closure dedup runs once per file per pass.
-@@ -5684,7 +5684,7 @@ fn resolve_elf_recursive(
-     Ok(())
- }
- 
--#[derive(Clone)]
-+#[derive(Clone, Debug, PartialEq)]
- struct ParsedElf {
-     interpreter: Option<PathBuf>,
-     needed: Vec<String>,
-@@ -5713,91 +5713,171 @@ struct LoadSegment {
-     filesz: u64,
- }
- 
-+/// Upper bounds on each region [`parse_elf`] reads. A region over its bound is a
-+/// parse error, so the file is skipped (or the launch fails) rather than read
-+/// without limit.
-+///
-+/// The program header table: the kernel refuses an executable whose table is
-+/// over 64 KiB (`load_elf_phdrs`); real tables are under 1 KiB.
-+const ELF_MAX_PHDRS_BYTES: usize = 64 * 1024;
-+/// The interpreter path: the kernel refuses a `PT_INTERP` longer than `PATH_MAX`.
-+const ELF_MAX_INTERP_BYTES: usize = libc::PATH_MAX as usize;
-+/// `PT_DYNAMIC`: 65,536 64-bit entries; real objects have well under a hundred.
-+const ELF_MAX_DYNAMIC_BYTES: usize = 1024 * 1024;
-+/// The dynamic string table: large C++ libraries reach a few MiB
-+/// (`libclang-cpp.so`: 3.7 MiB). It bounds an explicit `DT_STRSZ`, and how much
-+/// of the file is read as the table when `DT_STRSZ` is absent.
-+const ELF_MAX_DYNSTR_BYTES: usize = 64 * 1024 * 1024;
-+
-+/// Reads the ELF header, program headers, `PT_INTERP`, `PT_DYNAMIC` and the
-+/// dynamic string table of `path`, and no other part of the file: executables on
-+/// `PATH` reach hundreds of MiB, and the session gate parses every one of them.
- fn parse_elf(path: &Path) -> Result<ParsedElf> {
--    let data = fs::read(path).map_err(|source| NonoError::ConfigRead {
-+    let file = File::open(path).map_err(|source| NonoError::ConfigRead {
-         path: path.to_path_buf(),
-         source,
-     })?;
--    if data.len() < 64 || &data[0..4] != b"\x7fELF" {
-+    let header = read_elf_region(&file, path, 0, 64, 64)?;
-+    if header.len() < 64 || &header[0..4] != b"\x7fELF" {
-         return Ok(ParsedElf {
-             interpreter: None,
-             needed: Vec::new(),
-             search_dirs: Vec::new(),
-         });
-     }
--    if data[5] != 1 {
-+    if header[5] != 1 {
-         return Err(NonoError::SandboxInit(format!(
-             "command-mediation supports little-endian ELF only: {}",
-             path.display()
-         )));
-     }
--    match data[4] {
--        1 => parse_elf32(path, &data),
--        2 => parse_elf64(path, &data),
-+    match header[4] {
-+        1 => parse_elf32(path, &file, &header),
-+        2 => parse_elf64(path, &file, &header),
-         _ => Err(NonoError::SandboxInit(format!(
-             "unknown ELF class for {}",
-             path.display()
-         ))),
-     }
- }
- 
--fn parse_elf64(path: &Path, data: &[u8]) -> Result<ParsedElf> {
--    let phoff = le_u64(data, 32)? as usize;
--    let phentsize = le_u16(data, 54)? as usize;
--    let phnum = le_u16(data, 56)? as usize;
-+/// Reads `len` bytes of `file` at `offset`, or fewer at end of file. A short
-+/// region makes the parsers' bounds checks fail exactly where they would on the
-+/// whole file; `len` over `max_len` is an error.
-+fn read_elf_region(
-+    file: &File,
-+    path: &Path,
-+    offset: u64,
-+    len: usize,
-+    max_len: usize,
-+) -> Result<Vec<u8>> {
-+    if len > max_len {
-+        return Err(NonoError::SandboxInit(format!(
-+            "ELF region of {len} bytes exceeds the {max_len}-byte limit: {}",
-+            path.display()
-+        )));
++        // config.rs documents that a Content-Type matching neither encoding is
++        // rejected rather than guessed at, in every mode, not only Auto.
++        let hint = match content_type_hint(headers) {
++            Some(ContentTypeHint::Other) => {
++                return Err(ProxyError::HttpParse(format!(
++                    "OAuth token response for provider '{}' has a Content-Type that is neither \
++                     JSON nor form-urlencoded",
++                    endpoint.provider
++                )));
++            }
++            hint => hint,
++        };
++        match endpoint.response_body {
++            OAuthTokenRequestBodyFormat::Json => {
++                if matches!(hint, Some(ContentTypeHint::Form)) {
++                    return Err(ProxyError::HttpParse(format!(
++                        "OAuth token response for provider '{}' is configured as JSON but the \
++                         Content-Type header indicates form-urlencoded",
++                        endpoint.provider
++                    )));
++                }
++                self.rewrite_json_response_body(endpoint, body)
++            }
++            OAuthTokenRequestBodyFormat::Form => {
++                if matches!(hint, Some(ContentTypeHint::Json)) {
++                    return Err(ProxyError::HttpParse(format!(
++                        "OAuth token response for provider '{}' is configured as form-urlencoded \
++                         but the Content-Type header indicates JSON",
++                        endpoint.provider
++                    )));
++                }
++                self.rewrite_form_response_body(endpoint, body)
++            }
++            OAuthTokenRequestBodyFormat::Auto => {
++                if matches!(hint, Some(ContentTypeHint::Json)) {
++                    self.rewrite_json_response_body(endpoint, body)
++                } else if matches!(hint, Some(ContentTypeHint::Form)) {
++                    self.rewrite_form_response_body(endpoint, body)
++                } else {
++                    if serde_json::from_slice::<Value>(body).is_ok() {
++                        return self.rewrite_json_response_body(endpoint, body);
++                    }
++                    if looks_like_json(body) {
++                        // A body that opens like JSON but fails to parse is far
++                        // more likely truncated (e.g. from a peer closing
++                        // without TLS close_notify mid-response) than
++                        // genuinely form-urlencoded. `url::form_urlencoded`
++                        // accepts almost any bytes, so treating this as a form
++                        // body risks forwarding a real token still present in
++                        // the unparsed JSON text. Fail closed instead.
++                        return Err(ProxyError::HttpParse(format!(
++                            "OAuth token response for provider '{}' looks like JSON but failed \
++                             to parse; refusing to reinterpret as form-urlencoded",
++                            endpoint.provider
++                        )));
++                    }
++                    self.rewrite_form_response_body(endpoint, body)
++                }
++            }
++        }
 +    }
-+    let mut buf = vec![0; len];
-+    let mut filled = 0;
-+    while filled < len {
-+        match file.read_at(&mut buf[filled..], offset.saturating_add(filled as u64)) {
-+            Ok(0) => break,
-+            Ok(read) => filled += read,
-+            Err(err) if err.kind() == std::io::ErrorKind::Interrupted => {}
-+            Err(source) => 
++
++    fn rewrite_json_response_body(
++        &self,
++        endpoint: &LoadedOAuthEndpoint,
++        body: &[u8],
++    ) -> Result<Vec<u8>> {
+         let mut json: Value = serde_json::from_slice(body).map_err(|err| {
+             ProxyError::HttpParse(format!(
+                 "OAuth token response body is not JSON for provider '{}': {err}",
+@@ -168,30 +236,7 @@ impl OAuthCaptureStore {
+             if real.is_empty() {
+                 continue;
+             }
+-            let (key, visible) = match &field.template {
+-                Some(template) => {
+-                    if !template.matches(real) {
+-                        tracing::warn!(
+-                            provider = %endpoint.provider,
+-                            path = %field.path,
+-                            "OAuth capture format does not match the captured token shape; \
+-                             a prefix-sniffing client may classify the phantom wrongly"
+-                        );
+-                    }
+-                    let phantom = template.render(&super::generate_phant
+```
+
+**File**: `crates/nono-proxy/src/server.rs` (modified, +1/-0)
+```diff
+@@ -3549,6 +3549,7 @@ mod tests {
+                         },
+                     ],
+                     request_body: crate::config::OAuthTokenRequestBodyFormat::Auto,
++                    response_body: crate::config::OAuthTokenRequestBodyFormat::Auto,
+                     request_nonce_fields: vec!["refresh_token".to_string()],
+                 }],
+                 admitted_consumers: vec!["proxy.openai_oauth".to_string()],
+```
+
+**File**: `crates/nono-proxy/src/tls_intercept/h2_forward.rs` (modified, +1/-0)
+```diff
+@@ -1972,6 +1972,7 @@ mod tests {
+                         },
+                     ],
+                     request_body: crate::config::OAuthTokenRequestBodyFormat::Auto,
++                    response_body: crate::config::OAuthTokenRequestBodyFormat::Auto,
+                     request_nonce_fields: vec!["refresh_token".to_string()],
+                 }],
+                 admitted_consumers: vec!["proxy.test".to_string()],
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #2212** (2026-10-27): chore(deps): bump the routine-rust group across 1 directory with 9 updates (@dependabot[bot])
 - **PR #2210** (2026-10-27): chore: clean up workspace dependencies and build configuration (@SequeI)
+- **PR #2206** (2026-10-27): chore(deps): bump vt100 from 0.16.2 to 0.18.1 (@dependabot[bot])
 - **PR #2205** (2026-10-27): chore(deps): bump jsonschema from 0.58.6 to 0.60.1 (@dependabot[bot])
 - **PR #2204** (closed): chore(deps): bump the routine-rust group with 8 updates (@dependabot[bot])
 - **PR #2203** (2026-10-27): chore(deps): bump the routine-actions group with 2 updates (@dependabot[bot])
-- **PR #2202** (2026-10-27): chore(deps): bump the sigstore group across 1 directory with 2 updates (@dependabot[bot])
 
 ---
 
@@ -3535,43 +3441,28 @@ p
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. clean up workspace dependencies and build configuration (#2210)
+## X. oauth-capture): rewrite form-urlencoded OAuth token responses (#1836)
 
 **RULE**:
-When implementing operations in `.cargo/audit.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/nono-cli/src/proxy_runtime.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a39ad272`: clean up workspace dependencies and build configuration (#2210). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b1c943e6`: oauth-capture): rewrite form-urlencoded OAuth token responses (#1836). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/audit.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-cli/src/proxy_runtime.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Temporary exception: `aws-config`'s required `credentials-login` feature
-# pins `p256` 0.13 and therefore vulnerable `crypto-bigint` 0.5.5.
-# Remove once AWS adopts `p256` 0.14. Review by 2026-11-10.
-# Upstream: https://github.com/smithy-lang/smithy-rs/tree/main/aws/rust-runtime/aws-config
-# Crate: https://crates.io/crates/aws-config
-# Advisory: https://rustsec.org/advisories/RUSTSEC-2026-0387.html
-    "RUSTSEC-2026-0387",
+                response_body: nono_proxy::config::OAuthTokenRequestBodyFormat::Auto,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-# These ignores are limited to AWS-LC X.509 validation advisories which do not
-# affect the code paths used in this workspace:
-# - `nono-proxy` uses the `ring` rustls provider for TLS, not AWS-LC.
-# - Sigstore certificate parsing/chain validation goes through `x509-cert` and
-#   `rustls-webpki`, not AWS-LC X.509 validation APIs.
-# - We do not enable CRL checking in the rustls or sigstore paths we use.
-# Revisit these ignores if we add any direct use of AWS-LC X.509 hostname
-# validation, name constraints, or CRL-based revocation checks.
-    "RUSTSEC-2026-0044", # AWS-LC X.509 CN/name-constraints bypass
-    "RUSTSEC-2026-0048", # AWS-LC CRL distribution point scope check bypass
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a39ad272` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b1c943e6` are properly handled with clean fallback behavior.
