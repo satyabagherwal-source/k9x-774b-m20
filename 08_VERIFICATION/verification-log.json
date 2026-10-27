@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-I3C7",
-    "timestamp": "2026-10-25T07:06:22.183Z",
-    "repository": "zed-industries/zed",
-    "learningId": "learn-github-zed-industries-zed",
-    "contentHash": "972ebfcd523d3eb7f591fde86040afd44775cfa65f1a5aedbb46cc4d66367415",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-XEHG",
-    "timestamp": "2026-10-25T07:18:16.468Z",
-    "repository": "Qwen/Qwen3.8-27B",
-    "learningId": "learn-huggingface-qwen-qwen3-8-27b",
-    "contentHash": "56ba0a6f4fcc6b971e6be76466a88ef8469d426b3c9622139049f0d9d4f88837",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-Y3PO",
-    "timestamp": "2026-10-25T07:18:49.164Z",
-    "repository": "lobehub/lobe-ui",
-    "learningId": "learn-github-lobehub-lobe-ui",
-    "contentHash": "83cbd79402e2f43c05c1b4797fa6716085dcd7973467eb15cffe2909185976ea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-YC4W",
-    "timestamp": "2026-10-25T07:19:00.080Z",
-    "repository": "Mintplex-Labs/anything-llm",
-    "learningId": "learn-github-mintplex-labs-anything-llm",
-    "contentHash": "785d38a67ba7a61222ce601aea746b8ef94536d776a28ad668c756688689a7d4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-YCOY",
     "timestamp": "2026-10-25T07:19:00.802Z",
     "repository": "beclab/Olares",
@@ -7490,6 +7430,66 @@
     "repository": "apache/shardingsphere",
     "learningId": "learn-github-apache-shardingsphere",
     "contentHash": "863f9cd072427293d4d68699d7d9ae46ba06d19a4e6eabad542e070dbcbb6452",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-237R",
+    "timestamp": "2026-10-27T11:09:12.519Z",
+    "repository": "scrapy-plugins/scrapy-zyte-api",
+    "learningId": "learn-github-scrapy-plugins-scrapy-zyte-api",
+    "contentHash": "399601477ea5b2c4f306cea415b46543ad4ab4cb2cb07dc320b4acfb7ca90b24",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-24UP",
+    "timestamp": "2026-10-27T11:09:14.641Z",
+    "repository": "Planetable/Planet",
+    "learningId": "learn-github-planetable-planet",
+    "contentHash": "6d1b3788b4652da6974526cb28693898a436cb4de8bbd0d0a30ccbecc83eb655",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-2A1Z",
+    "timestamp": "2026-10-27T11:09:21.383Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "b4634f3c7160b883646b97c4b6a29977a6d8d934a870929278b99ec07183b14d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-2BC3",
+    "timestamp": "2026-10-27T11:09:23.043Z",
+    "repository": "rqlite/rqlite",
+    "learningId": "learn-github-rqlite-rqlite",
+    "contentHash": "ff4730875f434bc49b59013b332527edf471f85daee8778ce8e4f8582578a3da",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

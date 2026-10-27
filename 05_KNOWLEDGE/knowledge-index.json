@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T11:03:02.281Z",
+  "last_updated": "2026-10-27T11:09:23.007Z",
   "total_verified_learnings": 1102,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12172,8 +12172,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "259984cd",
-      "content_hash": "802f16620230337f1eae2c8a58cca69bbf1c86fb72dd47bcbc588728f80da48a",
+      "source_version": "b1d59903",
+      "content_hash": "b4634f3c7160b883646b97c4b6a29977a6d8d934a870929278b99ec07183b14d",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -12276,6 +12276,11 @@
           "number": 4615,
           "title": "fdev): write build artifacts atomically (#5997)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4702,
+          "title": "core): repair degenerate visited-peers bloom indices, gated on the floor (#6011)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12283,7 +12288,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T13:51:47.147Z",
+      "verified_at": "2026-10-27T11:09:21.339Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41527,14 +41532,19 @@
       "slug": "planetable-planet",
       "platform": "github",
       "source_url": "https://github.com/Planetable/Planet",
-      "source_version": "0fd2b7fe",
-      "content_hash": "f13400fdff90b2de6f82118cb5222182ec7312a588c1ad0dac8fda000ef4d76c",
+      "source_version": "5294e71c",
+      "content_hash": "6d1b3788b4652da6974526cb28693898a436cb4de8bbd0d0a30ccbecc83eb655",
       "dossier_path": "07_PROJECT_LEARNING/planetable-planet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/planetable-planet-learnings.md",
       "promoted_rules": [
         {
           "number": 3017,
           "title": "macOS 12 crash from dangling unowned planet references",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4701,
+          "title": "crash from concurrent cmark-gfm extension registration",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -41543,7 +41553,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T03:13:13.779Z",
+      "verified_at": "2026-10-27T11:09:14.585Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44063,8 +44073,8 @@
       "slug": "rqlite-rqlite",
       "platform": "github",
       "source_url": "https://github.com/rqlite/rqlite",
-      "source_version": "b84d5f97",
-      "content_hash": "1f005ead0f4b056db2eb98a86c8a6be26c5343f4bd09bda811e75bc2c3029744",
+      "source_version": "a742e3f8",
+      "content_hash": "ff4730875f434bc49b59013b332527edf471f85daee8778ce8e4f8582578a3da",
       "dossier_path": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "promoted_rules": [
@@ -44087,6 +44097,11 @@
           "number": 3607,
           "title": "Require the load permission for inter-node load chunk commands",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4703,
+          "title": "Merge pull request #2991 from rqlite/remove-node-json",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44094,7 +44109,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T03:06:18.939Z",
+      "verified_at": "2026-10-27T11:09:23.000Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65570,8 +65585,8 @@
       "slug": "scrapy-plugins-scrapy-zyte-api",
       "platform": "github",
       "source_url": "https://github.com/scrapy-plugins/scrapy-zyte-api",
-      "source_version": "681d1450",
-      "content_hash": "63d5124d0b6b8dacf2e14668ec5e3050670118f417113fe60284c04d75f0d3b8",
+      "source_version": "9b63ad94",
+      "content_hash": "399601477ea5b2c4f306cea415b46543ad4ab4cb2cb07dc320b4acfb7ca90b24",
       "dossier_path": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-zyte-api-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-zyte-api-learnings.md",
       "promoted_rules": [
@@ -65580,6 +65595,11 @@
           "number": 2834,
           "title": "Merge pull request #328 from AdrianAtZyte/session-close-deadlock",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4700,
+          "title": "Upgrade docs/requirements.txt (#347)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -65587,7 +65607,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T21:52:46.339Z",
+      "verified_at": "2026-10-27T11:09:12.475Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -131215,6 +131235,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T11:03:02.262Z"
+    },
+    "rule-4700": {
+      "learning_id": "rule-4700",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4700,
+      "title": "Upgrade docs/requirements.txt (#347)",
+      "source_url": "https://github.com/scrapy-plugins/scrapy-zyte-api",
+      "source_version": "9b63ad94",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:09:12.475Z"
+    },
+    "rule-4701": {
+      "learning_id": "rule-4701",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4701,
+      "title": "crash from concurrent cmark-gfm extension registration",
+      "source_url": "https://github.com/Planetable/Planet",
+      "source_version": "5294e71c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:09:14.585Z"
+    },
+    "rule-4702": {
+      "learning_id": "rule-4702",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4702,
+      "title": "core): repair degenerate visited-peers bloom indices, gated on the floor (#6011)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "b1d59903",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:09:21.339Z"
+    },
+    "rule-4703": {
+      "learning_id": "rule-4703",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4703,
+      "title": "Merge pull request #2991 from rqlite/remove-node-json",
+      "source_url": "https://github.com/rqlite/rqlite",
+      "source_version": "a742e3f8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:09:23.000Z"
     }
   },
   "aliases": {

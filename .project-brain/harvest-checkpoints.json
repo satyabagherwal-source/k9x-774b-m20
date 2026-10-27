@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T11:03:02.381Z",
+  "last_updated": "2026-10-27T11:09:23.052Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "802f16620230337f1eae2c8a58cca69bbf1c86fb72dd47bcbc588728f80da48a",
-      "verified_at": "2026-10-26T13:51:47.231Z",
+      "content_hash": "b4634f3c7160b883646b97c4b6a29977a6d8d934a870929278b99ec07183b14d",
+      "verified_at": "2026-10-27T11:09:21.392Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T13:51:47.231Z"
+      "last_updated": "2026-10-27T11:09:21.392Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -7491,14 +7491,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rqlite-rqlite",
-      "content_hash": "1f005ead0f4b056db2eb98a86c8a6be26c5343f4bd09bda811e75bc2c3029744",
-      "verified_at": "2026-10-25T03:06:19.006Z",
+      "content_hash": "ff4730875f434bc49b59013b332527edf471f85daee8778ce8e4f8582578a3da",
+      "verified_at": "2026-10-27T11:09:23.052Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T03:06:19.006Z"
+      "last_updated": "2026-10-27T11:09:23.052Z"
     },
     "arco-design/arco-design": {
       "repository": "arco-design/arco-design",
@@ -13821,14 +13821,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-scrapy-plugins-scrapy-zyte-api",
-      "content_hash": "63d5124d0b6b8dacf2e14668ec5e3050670118f417113fe60284c04d75f0d3b8",
-      "verified_at": "2026-10-19T21:52:46.414Z",
+      "content_hash": "399601477ea5b2c4f306cea415b46543ad4ab4cb2cb07dc320b4acfb7ca90b24",
+      "verified_at": "2026-10-27T11:09:12.527Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T21:52:46.414Z"
+      "last_updated": "2026-10-27T11:09:12.527Z"
     },
     "yannickl/DynamicColor": {
       "repository": "yannickl/DynamicColor",
@@ -15261,14 +15261,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-planetable-planet",
-      "content_hash": "f13400fdff90b2de6f82118cb5222182ec7312a588c1ad0dac8fda000ef4d76c",
-      "verified_at": "2026-10-20T03:13:13.849Z",
+      "content_hash": "6d1b3788b4652da6974526cb28693898a436cb4de8bbd0d0a30ccbecc83eb655",
+      "verified_at": "2026-10-27T11:09:14.649Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T03:13:13.849Z"
+      "last_updated": "2026-10-27T11:09:14.649Z"
     },
     "mswjs/msw": {
       "repository": "mswjs/msw",

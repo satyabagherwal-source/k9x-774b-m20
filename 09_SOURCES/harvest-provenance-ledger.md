@@ -5232,3 +5232,7 @@ Every entry in this ledger must capture:
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `51370d96` | Multi-dimensional audit evidence | 2026-10-27T10:58:02.643Z |
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `ac848fa8` | Multi-dimensional audit evidence | 2026-10-27T11:02:57.055Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `ba932f9a` | Multi-dimensional audit evidence | 2026-10-27T11:03:02.372Z |
+| `learn-github-scrapy-plugins-scrapy-zyte-api` | `https://github.com/scrapy-plugins/scrapy-zyte-api` | `9b63ad94` | Multi-dimensional audit evidence | 2026-10-27T11:09:12.521Z |
+| `learn-github-planetable-planet` | `https://github.com/Planetable/Planet` | `5294e71c` | Multi-dimensional audit evidence | 2026-10-27T11:09:14.644Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `b1d59903` | Multi-dimensional audit evidence | 2026-10-27T11:09:21.386Z |
+| `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `a742e3f8` | Multi-dimensional audit evidence | 2026-10-27T11:09:23.046Z |

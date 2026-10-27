@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source**: github ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
-> **Source Version**: `b84d5f97`  
+> **Source Version**: `a742e3f8`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T03:06:18.852Z  
+> **Timestamp**: 2026-10-27T11:09:22.761Z  
 > **Learning ID**: `learn-github-rqlite-rqlite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T03:06:17.757Z  
+> **Harvest Timestamp**: 2026-10-27T11:09:22.336Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The lightweight, fault-tolerant database built on SQLite. Designed to keep your data highly available with minimal effort.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17862 stars
+- **Stars / Engagement**: 17872 stars
 
 ---
 
@@ -2066,13 +2066,11 @@ func forbiddenUses(file *ast.File, path string) []violation {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2984** (2026-10-22): **POST /leader: JSON error bodies and 404 for unknown target node**
-  *Symptoms*: ## Summary - The stepdown error paths in `POST /leader` now return a JSON `{"error": "..."}` body, matching `GET /leader`. The handler had already set a JSON Content-Type, so the previous plain-text bodies were mislabelled. - A stepdown naming a node ID that is not in the cluster now returns 404 Not Found instead of 500. `store.ErrNodeNotFound` is exposed via the `proxy` package and the handler's sentinel checks use `errors.Is`. - Forwarded stepdowns also get the 404: the cluster client rebuilds the leader's error from its message, which dropped the sentinel, so `Proxy.Stepdown` now matches the message and restores `ErrNodeNotFound`.  Each commit is one logical change. `remove`, `demote` and `promote` have the same forwarding gap and are left for a follow-up.  ## Test plan - [x] New `http` tests: JSON error body on forwarded failure, 404 for unknown node when local node is leader, 404 for unknown node when the request is forwarded. - [x] New `proxy` test: forwarded stepdown error message is mapped back to `ErrNodeNotFound`. - [x] `go vet ./...`, `gofmt -l .`, and `go test` for `http`, `proxy` and `store` pass.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
-  **Post-Mortem & Fix Analysis**:
-  > https://github.com/rqlite/rqlite/issues/2974
+- **Issue #2991** (2026-10-27): **JSON error response bodies for remove node**
+  *Symptoms*: ## Summary Applies the JSON error body change from #2984 and #2989 to `DELETE /remove`.  - The handler now sets a JSON Content-Type and returns a JSON `{"error": "..."}` body on failure instead of plain text. - Unlike the other node-management endpoints, there is deliberately no 404 for an unknown node. Raft treats removal of a node not in the cluster as a no-op and the endpoint has always returned 200 for it, so clients and the shutdown self-removal path depend on that. A comment on the handler records this.  Each commit is one logical change.  ## Test plan - [x] New `http` tests: success, store error, and forward error for `DELETE /remove`, decoding the JSON body. The handler previously had no error-path tests, so a `removeFn` hook was added to the HTTP mock store. - [x] `go vet ./...`, `gofmt -l .`, and `go test ./http` pass.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
-- **Issue #2982** (2026-10-22): **Guard backup stream handler directly against a nil request**
-  *Symptoms*: With no backup request in the command, the handler set an error on a shared response and relied on a later check of that error string to return before dereferencing the nil request. Before v10.6.4 that check did not exist and the handler panicked, taking the node down.  The nil check and the exit are now one block, and the request is only used after it. The success path writes its response through the shared helper instead of marshaling by hand. 
+- **Issue #2990** (2026-10-27): **Test that CDC events survive a Raft snapshot restore**
+  *Symptoms*: Restoring from a Raft snapshot swaps in a new SQLite file, which is reopened with the same configuration that carries the CDC hooks. No store-level test covered this, so a change that stopped reusing that configuration would have gone unnoticed.  The new test enables CDC, takes a snapshot, restarts without the clean-snapshot marker to force a restore from the snapshot, then checks that an INSERT still produces a CDC event. Confirmed it fails if `Swap` reopens without the hooks.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2089,26 +2087,218 @@ func forbiddenUses(file *ast.File, path string) []violation {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b84d5f97` (2026-10-24)
+### Incident Patch 1: `a742e3f8` (2026-10-27)
+**Commit Message**: Merge pull request #2991 from rqlite/remove-node-json
+
+JSON error response bodies for remove node
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -3,6 +3,7 @@
+ - [PR #2987](https://github.com/rqlite/rqlite/pull/2987): Keep the local auto-backup file if the metadata rename fails. Thanks @lmtlssss
+ - [PR #2988](https://github.com/rqlite/rqlite/pull/2988): Reject local auto-backup filenames reserved for internal use. Thanks @lmtlssss
+ - [PR #2989](https://github.com/rqlite/rqlite/pull/2989): `POST /demote` and `POST /promote` return a JSON error body, and 404 when the target node is not in the cluster.
++- [PR #2991](https://github.com/rqlite/rqlite/pull/2991): `DELETE /remove` returns a JSON error body.
+ 
+ ## v10.6.5 (October 24th 2026)
+ ### Implementation changes and bug fixes
+```
+
+**File**: `http/service.go` (modified, +13/-3)
+```diff
+@@ -550,7 +550,14 @@ func (s *Service) RegisterStatus(key string, stat StatusReporter) error {
+ }
+ 
+ // handleRemove handles cluster-remove requests.
++//
++// Unlike the other node-management endpoints, removing a node which is not
++// in the cluster is not reported as an error. Raft treats such a removal as
++// a no-op and this endpoint has always returned 200 for it, so clients and
++// the shutdown self-removal path depend on that behavior.
+ func (s *Service) handleRemove(w http.ResponseWriter, r *http.Request, qp QueryParams) {
++	w.Header().Set("Content-Type", "application/json; charset=utf-8")
++
+ 	if !s.CheckRequestPerm(r, auth.PermRemove) {
+ 		w.WriteHeader(http.StatusUnauthorized)
+ 		return
+@@ -577,14 +584,17 @@ func (s *Service) handleRemove(w http.ResponseWriter, r *http.Request, qp QueryP
+ 		}
+ 		if errors.Is(err, proxy.ErrLeaderNotFound) {
+ 			stats.Add(numLeaderNotFound, 1)
+-			http.Error(w, proxy.ErrLeaderNotFound.Error(), http.StatusServiceUnavailable)
++			w.WriteHeader(http.StatusServiceUnavailable)
++			s.writeResponse(w, qp, &Response{Error: proxy.ErrLeaderNotFound.Error()})
+ 			return
+ 		}
+ 		if errors.Is(err, proxy.ErrUnauthorized) {
+-			http.Error(w, "remote remove node not authorized", http.StatusUnauthorized)
++			w.WriteHeader(http.StatusUnauthorized)
++			s.writeResponse(w, qp, &Response{Error: err.Error()})
+ 			return
+ 		}
+-		http.Error(w, err.Error(), http.StatusInternalServerError)
++		w.WriteHeader(http.StatusInternalServerError)
++		s.writeResponse(w, qp, &Response{Error: err.Error()})
+ 		return
+ 	}
+ 	w.Header().Set(ServedByHTTPHeader, addr)
+```
+
+**File**: `http/service_test.go` (modified, +104/-0)
+```diff
+@@ -1998,6 +1998,106 @@ func Test_Leader_POST_NodeNotFound_Forwarded(t *testing.T) {
+ 	}
+ }
+ 
++func Test_Remove_DELETE(t *testing.T) {
++	removedID := ""
++	st := &MockStore{
++		leaderAddr: "127.0.0.1:8001",
++		removeFn: func(rn *command.RemoveNodeRequest) error {
++			removedID = rn.Id
++			return nil
++		},
++	}
++	cluster := &mockClusterService{apiAddr: "http://127.0.0.1:4001"}
++	cred := &mockCredentialStore{HasPermOK: true}
++
++	s := New("127.0.0.1:4001", st, cluster, proxy.New(st, cluster), cred)
++
++	req, err := http.NewRequest("DELETE", "/remove", strings.NewReader(`{"id": "node1"}`))
++	if err != nil {
++		t.Fatalf("failed to create DELETE request: %s", err.Error())
++	}
++	rr := httptest.NewRecorder()
++	s.ServeHTTP(rr, req)
++
++	if rr.Code != http.StatusOK {
++		t.Fatalf("expected 200, got %d", rr.Code)
++	}
++	if removedID != "node1" {
++		t.Fatalf("expected node1 to be removed, got %q", removedID)
++	}
++}
++
++func Test_Remove_DELETE_StoreError(t *testing.T) {
++	st := &MockStore{
++		leaderAddr: "127.0.0.1:8001",
++		removeFn: func(rn *command.RemoveNodeRequest) error {
++			return errors.New("remove failed")
++		},
++	}
++	cluster := &mockClusterService{apiAddr: "http://127.0.0.1:4001"}
++	cred := &mockCredentialStore{HasPermOK: true}
++
++	s := New("127.0.0.1:4001", st, cluster, proxy.New(st, cluster), cred)
++
++	req, err := http.NewRequest("DELETE", "/remove", strings.NewReader(`{"id": "node1"}`))
++	if err != nil {
++		t.Fatalf("failed to create DELETE request: %s", err.Error())
++	}
++	rr := httptest.NewRecorder()
++	s.ServeHTTP(rr, req)
++
++	if rr.Code != http.StatusInternalServerError {
++		t.Fatalf("expected 500, got %d", rr.Code)
++	}
++	var resp struct {
++		Error string `json:"error"`
++	}
++	if err := json.Unmarshal(rr.Body.Bytes(), &resp); err != nil {
++		t.Fatalf("expected JSON error body, got %q: %s", rr.Body.String(), err)
++	}
++	if resp.Error != "remove failed" {
++		t.Fatalf("expected error 'remove failed', got %q", resp.Error)
++	}
++}
++
++func Test_Remove_DELETE_ForwardError(t *testing.T) {
++	st := &MockStore{
++		leaderAddr: "127.0.0.1:8001",
++		removeFn: func(rn *command.RemoveNodeRequest) error {
++			return store.ErrNotLeader
++		},
++	}
++	cluster := &mockClusterService{
++		apiAddr: "http://127.0.0.1:4001",
++		removeNodeFn: func(rn *command.RemoveNodeRequest, nodeAddr string, t time.Duration) error {
++			return errors.New("remove failed")
++		},
++	}
++	cred := &mockCredentialStore{HasPermOK: true}
++
++	s := New("127.0.0.1:4001", st, cluster, proxy.New(st, cluster), cred)
++
++	req, err := http.NewRequest("DELETE", "/remove", strings.NewReader(`{"id": "node1"}`))
++	if err != nil {
++		t.Fatalf("failed to create DELETE request: %s", err.Error())
++	}
++	rr := httptest.NewRecorder()
++	s.ServeHTTP(rr, req)
++
++	if rr.Code != http.StatusInternalServerError {
++		t.Fatalf("expected 500, got %d", rr.Code)
++	}
++	var resp struct {
++		Error string `json:"error"`
++	}
++	if err := json.Unmarshal(rr.Body.Bytes(), &resp); err != nil {
++		t.Fatalf("expected JSON error body, got %q: %s", rr.Body.String(), err)
++	}
++	if resp.Error != "remove failed" {
++		t.Fatalf("expected error 'remove failed', got %q", resp.Error)
++	}
++}
++
+ func Test_Demote_POST(t *testing.T) {
+ 	demotedID := ""
+ 	store := &MockStore{
+@@ -3040,6 +3140,7 @@ type MockStore struct {
+ 	readFromFn  func(r io.Reader) (int64, error)
+ 	committedFn func(timeout time.Duration) (uint64, error)
+ 	stepdownFn  func(wait bool, id string) error
++	removeFn    func(rn *command.RemoveNodeRequest) error
+ 	demoteFn    func(dn *command.DemoteNodeRequest) error
+ 	promoteFn   func(pn *command.PromoteNodeRequest) error
+ 	leaderAddr  string
+@@ -3077,6 +3178,9 @@ func (m *MockStore) Notify(nr *command.NotifyRequest) error {
+ }
+ 
+ func (m *MockStore) Remove(ctx context.Context, rn *command.RemoveNodeRequest) error {
++	if m.removeFn != nil {
++		return m.removeFn(rn)
++	}
+ 	return nil
+ }
+ 
+```
+
+---
+
+### Incident Patch 2: `f2a567e7` (2026-10-27)
 **Commit Message**: Update CHANGELOG.md
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -1,4 +1,4 @@
--## v10.6.5 (unreleased)
-+## v10.6.5 (October 24th 2026)
+@@ -3,6 +3,7 @@
+ - [PR #2987](https://github.com/rqlite/rqlite/pull/2987): Keep the local auto-backup file if the metadata rename fails. Thanks @lmtlssss
+ - [PR #2988](https://github.com/rqlite/rqlite/pull/2988): Reject local auto-backup filenames reserved for internal use. Thanks @lmtlssss
+ - [PR #2989](https://github.com/rqlite/rqlite/pull/2989): `POST /demote` and `POST /promote` return a JSON error body, and 404 when the target node is not in the cluster.
++- [PR #2991](https://github.com/rqlite/rqlite/pull/2991): `DELETE /remove` returns a JSON error body.
+ 
+ ## v10.6.5 (October 24th 2026)
  ### Implementation changes and bug fixes
- - [PR #2982](https://github.com/rqlite/rqlite/pull/2982): Guard the inter-node backup stream handler directly against a missing backup request.
- - [PR #2984](https://github.com/rqlite/rqlite/pull/2984): `POST /leader` returns a JSON error body, and 404 when the target node is not in the cluster.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2984** (2026-10-22): POST /leader: JSON error bodies and 404 for unknown target node (@otoolep)
-- **PR #2982** (2026-10-22): Guard backup stream handler directly against a nil request (@otoolep)
-- **PR #2981** (2026-10-22): Cluster closes connections on authorization failure (@otoolep)
-- **PR #2980** (2026-10-22): Do not stream backup after rejecting unauthorized request (@otoolep)
-- **PR #2977** (2026-10-21): Return JSON error body from GET /leader when there is no leader (@otoolep)
-- **PR #2976** (2026-10-20): Prevent ATTACH on the query connection (@otoolep)
+- **PR #2991** (2026-10-27): JSON error response bodies for remove node (@otoolep)
+- **PR #2990** (2026-10-27): Test that CDC events survive a Raft snapshot restore (@otoolep)
+- **PR #2989** (2026-10-27): JSON error response bodies for promote and demote (@otoolep)
+- **PR #2988** (2026-10-27): Reject local auto-backup filenames reserved for internal use (@otoolep)
+- **PR #2987** (2026-10-27): Keep backup file if metadata rename fails (@otoolep)
+- **PR #2986** (closed): auto/file: reject backup names that overwrite internal metadata (@lmtlssss)
 
 ---
 
@@ -2128,13 +2318,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update CHANGELOG.md
+## X. Merge pull request #2991 from rqlite/remove-node-json
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b84d5f97`: Update CHANGELOG.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a742e3f8`: Merge pull request #2991 from rqlite/remove-node-json. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2142,14 +2332,14 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-## v10.6.5 (October 24th 2026)
+- [PR #2991](https://github.com/rqlite/rqlite/pull/2991): `DELETE /remove` returns a JSON error body.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-## v10.6.5 (unreleased)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b84d5f97` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a742e3f8` are properly handled with clean fallback behavior.

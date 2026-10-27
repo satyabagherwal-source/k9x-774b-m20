@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T11:03:02.377Z",
-  "total_cycles_completed": 5200,
-  "total_learnings_persisted": 5200,
-  "total_rules_promoted": 4601,
+  "last_updated": "2026-10-27T11:09:23.049Z",
+  "total_cycles_completed": 5204,
+  "total_learnings_persisted": 5204,
+  "total_rules_promoted": 4605,
   "history": [
-    {
-      "timestamp": "2026-10-25T22:31:56.775Z",
-      "repository": "sentence-transformers/all-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:38:51.209Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:41:43.613Z",
-      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
-      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:48:06.463Z",
-      "repository": "black-forest-labs/flux-3-image-klein",
-      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T22:48:13.522Z",
       "repository": "Open-Source-Legal/OpenContracts",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-27T11:03:02.377Z",
       "repository": "apache/shardingsphere",
       "learningId": "learn-github-apache-shardingsphere",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:09:12.525Z",
+      "repository": "scrapy-plugins/scrapy-zyte-api",
+      "learningId": "learn-github-scrapy-plugins-scrapy-zyte-api",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:09:14.647Z",
+      "repository": "Planetable/Planet",
+      "learningId": "learn-github-planetable-planet",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:09:21.389Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:09:23.049Z",
+      "repository": "rqlite/rqlite",
+      "learningId": "learn-github-rqlite-rqlite",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

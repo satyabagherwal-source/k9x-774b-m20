@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "259984cd",
+    "sourceVersion": "b1d59903",
     "license": "NOASSERTION",
-    "contentHash": "802f16620230337f1eae2c8a58cca69bbf1c86fb72dd47bcbc588728f80da48a",
-    "lastHarvestedAt": "2026-10-26T13:51:47.223Z",
+    "contentHash": "b4634f3c7160b883646b97c4b6a29977a6d8d934a870929278b99ec07183b14d",
+    "lastHarvestedAt": "2026-10-27T11:09:21.386Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -4913,10 +4913,10 @@
     "repository": "rqlite/rqlite",
     "platform": "github",
     "sourceUrl": "https://github.com/rqlite/rqlite",
-    "sourceVersion": "b84d5f97",
+    "sourceVersion": "a742e3f8",
     "license": "MIT",
-    "contentHash": "1f005ead0f4b056db2eb98a86c8a6be26c5343f4bd09bda811e75bc2c3029744",
-    "lastHarvestedAt": "2026-10-25T03:06:18.998Z",
+    "contentHash": "ff4730875f434bc49b59013b332527edf471f85daee8778ce8e4f8582578a3da",
+    "lastHarvestedAt": "2026-10-27T11:09:23.046Z",
     "learningId": "learn-github-rqlite-rqlite"
   },
   "arco-design-arco-design": {
@@ -9183,10 +9183,10 @@
     "repository": "scrapy-plugins/scrapy-zyte-api",
     "platform": "github",
     "sourceUrl": "https://github.com/scrapy-plugins/scrapy-zyte-api",
-    "sourceVersion": "681d1450",
+    "sourceVersion": "9b63ad94",
     "license": "BSD-3-Clause",
-    "contentHash": "63d5124d0b6b8dacf2e14668ec5e3050670118f417113fe60284c04d75f0d3b8",
-    "lastHarvestedAt": "2026-10-19T21:52:46.406Z",
+    "contentHash": "399601477ea5b2c4f306cea415b46543ad4ab4cb2cb07dc320b4acfb7ca90b24",
+    "lastHarvestedAt": "2026-10-27T11:09:12.521Z",
     "learningId": "learn-github-scrapy-plugins-scrapy-zyte-api"
   },
   "yannickl-dynamiccolor": {
@@ -10143,10 +10143,10 @@
     "repository": "Planetable/Planet",
     "platform": "github",
     "sourceUrl": "https://github.com/Planetable/Planet",
-    "sourceVersion": "0fd2b7fe",
+    "sourceVersion": "5294e71c",
     "license": "MIT",
-    "contentHash": "f13400fdff90b2de6f82118cb5222182ec7312a588c1ad0dac8fda000ef4d76c",
-    "lastHarvestedAt": "2026-10-20T03:13:13.841Z",
+    "contentHash": "6d1b3788b4652da6974526cb28693898a436cb4de8bbd0d0a30ccbecc83eb655",
+    "lastHarvestedAt": "2026-10-27T11:09:14.644Z",
     "learningId": "learn-github-planetable-planet"
   },
   "mswjs-msw": {

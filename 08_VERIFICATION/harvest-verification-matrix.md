@@ -5223,3 +5223,7 @@
 | `CYCLE-20261027-NQC0` | `2026-10-27T10:58:02.640Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4697` | Yes (`c2fa65f2...`) |
 | `CYCLE-20261027-U1I3` | `2026-10-27T11:02:57.051Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4698` | Yes (`6ba4eebf...`) |
 | `CYCLE-20261027-U5LT` | `2026-10-27T11:03:02.369Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4699` | Yes (`863f9cd0...`) |
+| `CYCLE-20261027-237R` | `2026-10-27T11:09:12.519Z` | `scrapy-plugins/scrapy-zyte-api` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4700` | Yes (`39960147...`) |
+| `CYCLE-20261027-24UP` | `2026-10-27T11:09:14.641Z` | `Planetable/Planet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4701` | Yes (`6d1b3788...`) |
+| `CYCLE-20261027-2A1Z` | `2026-10-27T11:09:21.383Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4702` | Yes (`b4634f3c...`) |
+| `CYCLE-20261027-2BC3` | `2026-10-27T11:09:23.043Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4703` | Yes (`ff473087...`) |
