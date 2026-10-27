@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "bb48ec18",
+    "sourceVersion": "8742357a",
     "license": "NOASSERTION",
-    "contentHash": "dc38c3b9533bc17bb3aeecbc83674ee19f157b178330fd0e1f24ed89bf6fae3d",
-    "lastHarvestedAt": "2026-10-27T09:04:45.411Z",
+    "contentHash": "b3ba51b4d09d4e011d753ab3cc67e22ea35a11c57d75aa1e152edcd3841906a0",
+    "lastHarvestedAt": "2026-10-27T10:39:42.948Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -7083,10 +7083,10 @@
     "repository": "emberstack/kubernetes-reflector",
     "platform": "github",
     "sourceUrl": "https://github.com/emberstack/kubernetes-reflector",
-    "sourceVersion": "65460492",
+    "sourceVersion": "9a470efc",
     "license": "MIT",
-    "contentHash": "93da8a4c6fbe8fadccd4cb3b19004f8526822ef848974583c98f9debcc5260a6",
-    "lastHarvestedAt": "2026-10-25T19:38:36.254Z",
+    "contentHash": "072be09e4557a1b56c956e0040be2f28caafb43d267dd2d520a2487f78884afa",
+    "lastHarvestedAt": "2026-10-27T10:37:45.058Z",
     "learningId": "learn-github-emberstack-kubernetes-reflector"
   },
   "arxanas-git-branchless": {
@@ -9083,10 +9083,10 @@
     "repository": "scrapy/scrapy",
     "platform": "github",
     "sourceUrl": "https://github.com/scrapy/scrapy",
-    "sourceVersion": "4d372f02",
+    "sourceVersion": "3e4d0faf",
     "license": "BSD-3-Clause",
-    "contentHash": "8b6f7bb172ff47036b65b49a39a02c95e78750795e27fcdca823885aeb1cdf1f",
-    "lastHarvestedAt": "2026-10-22T17:19:09.760Z",
+    "contentHash": "3854b119172d7cfc2f7a100f51bcf971e28d74719833fa52d9061441d1967341",
+    "lastHarvestedAt": "2026-10-27T10:39:32.195Z",
     "learningId": "learn-github-scrapy-scrapy"
   },
   "krzysztofzablocki-inject": {

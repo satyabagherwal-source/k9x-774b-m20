@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-F9NB",
-    "timestamp": "2026-10-25T06:08:11.159Z",
-    "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-    "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-    "contentHash": "cef9b87c00186dd8afd757faa30e5385abaa0f03ab9b9bcdc68acf1739444d0c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-YTJ5",
-    "timestamp": "2026-10-25T06:23:23.393Z",
-    "repository": "duckdb/duckdb",
-    "learningId": "learn-github-duckdb-duckdb",
-    "contentHash": "715de2caf0ce631f2a32657f3aa3facf7b947860dad6f468fd510cadddd107c0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-1CY2",
-    "timestamp": "2026-10-25T06:25:21.866Z",
-    "repository": "google/tcmalloc",
-    "learningId": "learn-github-google-tcmalloc",
-    "contentHash": "3ca18d390dd9e963ab984f44e7d602a06dd6bfb47b0d2fde5c67256625ca915b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-1ZUW",
     "timestamp": "2026-10-25T06:25:51.560Z",
     "repository": "black-forest-labs/flux-3-image-klein-comfy",
@@ -7490,6 +7445,51 @@
     "repository": "KeyboardKit/KeyboardKit",
     "learningId": "learn-github-keyboardkit-keyboardkit",
     "contentHash": "861c2cf3b0515048eae0f06cb8711107710cabe16f2c719b22cf5fb3b747fe2f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-XMU8",
+    "timestamp": "2026-10-27T10:37:45.056Z",
+    "repository": "emberstack/kubernetes-reflector",
+    "learningId": "learn-github-emberstack-kubernetes-reflector",
+    "contentHash": "072be09e4557a1b56c956e0040be2f28caafb43d267dd2d520a2487f78884afa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-ZXI9",
+    "timestamp": "2026-10-27T10:39:32.193Z",
+    "repository": "scrapy/scrapy",
+    "learningId": "learn-github-scrapy-scrapy",
+    "contentHash": "3854b119172d7cfc2f7a100f51bcf971e28d74719833fa52d9061441d1967341",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-05SY",
+    "timestamp": "2026-10-27T10:39:42.946Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "b3ba51b4d09d4e011d753ab3cc67e22ea35a11c57d75aa1e152edcd3841906a0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

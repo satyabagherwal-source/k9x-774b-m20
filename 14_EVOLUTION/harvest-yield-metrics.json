@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T10:26:43.840Z",
-  "total_cycles_completed": 5181,
-  "total_learnings_persisted": 5181,
-  "total_rules_promoted": 4580,
+  "last_updated": "2026-10-27T10:39:42.951Z",
+  "total_cycles_completed": 5184,
+  "total_learnings_persisted": 5184,
+  "total_rules_promoted": 4585,
   "history": [
-    {
-      "timestamp": "2026-10-25T21:46:49.067Z",
-      "repository": "FermionResearch/Phonon-2",
-      "learningId": "learn-huggingface-fermionresearch-phonon-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T21:46:49.700Z",
-      "repository": "topgrade-rs/topgrade",
-      "learningId": "learn-github-topgrade-rs-topgrade",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T21:53:16.121Z",
-      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T21:53:22.211Z",
       "repository": "callstack/react-native-builder-bob",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-27T10:26:43.840Z",
       "repository": "KeyboardKit/KeyboardKit",
       "learningId": "learn-github-keyboardkit-keyboardkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T10:37:45.061Z",
+      "repository": "emberstack/kubernetes-reflector",
+      "learningId": "learn-github-emberstack-kubernetes-reflector",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T10:39:32.199Z",
+      "repository": "scrapy/scrapy",
+      "learningId": "learn-github-scrapy-scrapy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T10:39:42.951Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

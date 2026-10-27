@@ -5213,3 +5213,6 @@ Every entry in this ledger must capture:
 | `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `47aa0886` | Multi-dimensional audit evidence | 2026-10-27T10:21:53.588Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `4a9dcea3` | Multi-dimensional audit evidence | 2026-10-27T10:22:04.974Z |
 | `learn-github-keyboardkit-keyboardkit` | `https://github.com/KeyboardKit/KeyboardKit` | `b9cb190e` | Multi-dimensional audit evidence | 2026-10-27T10:26:43.835Z |
+| `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `9a470efc` | Multi-dimensional audit evidence | 2026-10-27T10:37:45.058Z |
+| `learn-github-scrapy-scrapy` | `https://github.com/scrapy/scrapy` | `3e4d0faf` | Multi-dimensional audit evidence | 2026-10-27T10:39:32.195Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `8742357a` | Multi-dimensional audit evidence | 2026-10-27T10:39:42.948Z |

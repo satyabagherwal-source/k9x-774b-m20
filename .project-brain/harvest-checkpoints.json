@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T10:26:43.843Z",
+  "last_updated": "2026-10-27T10:39:42.954Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "dc38c3b9533bc17bb3aeecbc83674ee19f157b178330fd0e1f24ed89bf6fae3d",
-      "verified_at": "2026-10-27T09:04:45.419Z",
+      "content_hash": "b3ba51b4d09d4e011d753ab3cc67e22ea35a11c57d75aa1e152edcd3841906a0",
+      "verified_at": "2026-10-27T10:39:42.953Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T09:04:45.419Z"
+      "last_updated": "2026-10-27T10:39:42.953Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -10671,14 +10671,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-emberstack-kubernetes-reflector",
-      "content_hash": "93da8a4c6fbe8fadccd4cb3b19004f8526822ef848974583c98f9debcc5260a6",
-      "verified_at": "2026-10-25T19:38:36.262Z",
+      "content_hash": "072be09e4557a1b56c956e0040be2f28caafb43d267dd2d520a2487f78884afa",
+      "verified_at": "2026-10-27T10:37:45.063Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T19:38:36.262Z"
+      "last_updated": "2026-10-27T10:37:45.063Z"
     },
     "arxanas/git-branchless": {
       "repository": "arxanas/git-branchless",
@@ -13671,14 +13671,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-scrapy-scrapy",
-      "content_hash": "8b6f7bb172ff47036b65b49a39a02c95e78750795e27fcdca823885aeb1cdf1f",
-      "verified_at": "2026-10-22T17:19:09.772Z",
+      "content_hash": "3854b119172d7cfc2f7a100f51bcf971e28d74719833fa52d9061441d1967341",
+      "verified_at": "2026-10-27T10:39:32.201Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T17:19:09.772Z"
+      "last_updated": "2026-10-27T10:39:32.201Z"
     },
     "krzysztofzablocki/Inject": {
       "repository": "krzysztofzablocki/Inject",

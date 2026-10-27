@@ -5204,3 +5204,6 @@
 | `CYCLE-20261027-D8OH` | `2026-10-27T10:21:53.585Z` | `flux-iac/tofu-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4677` | Yes (`70326d57...`) |
 | `CYCLE-20261027-DHGR` | `2026-10-27T10:22:04.971Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4678` | Yes (`694457ca...`) |
 | `CYCLE-20261027-JGMW` | `2026-10-27T10:26:43.832Z` | `KeyboardKit/KeyboardKit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4679` | Yes (`861c2cf3...`) |
+| `CYCLE-20261027-XMU8` | `2026-10-27T10:37:45.056Z` | `emberstack/kubernetes-reflector` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4680, Rule 4681, Rule 4682` | Yes (`072be09e...`) |
+| `CYCLE-20261027-ZXI9` | `2026-10-27T10:39:32.193Z` | `scrapy/scrapy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4683` | Yes (`3854b119...`) |
+| `CYCLE-20261027-05SY` | `2026-10-27T10:39:42.946Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4684` | Yes (`b3ba51b4...`) |

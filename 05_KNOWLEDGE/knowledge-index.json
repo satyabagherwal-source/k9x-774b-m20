@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T10:26:43.775Z",
+  "last_updated": "2026-10-27T10:39:42.897Z",
   "total_verified_learnings": 1099,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7976,8 +7976,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "bb48ec18",
-      "content_hash": "dc38c3b9533bc17bb3aeecbc83674ee19f157b178330fd0e1f24ed89bf6fae3d",
+      "source_version": "8742357a",
+      "content_hash": "b3ba51b4d09d4e011d753ab3cc67e22ea35a11c57d75aa1e152edcd3841906a0",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -8210,6 +8210,11 @@
           "number": 4668,
           "title": "viz): Advanced Filter and Export CSV on live results; data viewer date-filter fi",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4684,
+          "title": "build(deps): bump anthropics/claude-code-action from 1.0.261 to 1.0.262 (#4943)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8217,7 +8222,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T09:04:45.339Z",
+      "verified_at": "2026-10-27T10:39:42.890Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10145,8 +10150,8 @@
       "slug": "emberstack-kubernetes-reflector",
       "platform": "github",
       "source_url": "https://github.com/emberstack/kubernetes-reflector",
-      "source_version": "65460492",
-      "content_hash": "93da8a4c6fbe8fadccd4cb3b19004f8526822ef848974583c98f9debcc5260a6",
+      "source_version": "9a470efc",
+      "content_hash": "072be09e4557a1b56c956e0040be2f28caafb43d267dd2d520a2487f78884afa",
       "dossier_path": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
       "promoted_rules": [
@@ -10169,6 +10174,21 @@
           "number": 4426,
           "title": "build: enable cross-platform Docker builds",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4680,
+          "title": "Mandatory HTTP Watch Session Idle Timeout and Silent Deadlock Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4681,
+          "title": "Mandatory Sanitization of Kubernetes Object Metadata Before Reflection",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4682,
+          "title": "Strict Least-Privilege Helm RBAC Pruning on Subsystem Deprecation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10176,7 +10196,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T19:38:36.183Z",
+      "verified_at": "2026-10-27T10:37:45.006Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65234,8 +65254,8 @@
       "slug": "scrapy-scrapy",
       "platform": "github",
       "source_url": "https://github.com/scrapy/scrapy",
-      "source_version": "4d372f02",
-      "content_hash": "8b6f7bb172ff47036b65b49a39a02c95e78750795e27fcdca823885aeb1cdf1f",
+      "source_version": "3e4d0faf",
+      "content_hash": "3854b119172d7cfc2f7a100f51bcf971e28d74719833fa52d9061441d1967341",
       "dossier_path": "07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
       "promoted_rules": [
@@ -65249,6 +65269,11 @@
           "number": 3657,
           "title": "Add CONCURRENT_CONNECTIONS_PER_HANDLER and CONNECTION_KEEPALIVE_TIMEOUT (#7932)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4683,
+          "title": "Upgrade docs requirements (#8411)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -65256,7 +65281,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:19:09.687Z",
+      "verified_at": "2026-10-27T10:39:32.152Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -130746,6 +130771,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T10:26:43.763Z"
+    },
+    "rule-4680": {
+      "learning_id": "rule-4680",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4680,
+      "title": "Mandatory HTTP Watch Session Idle Timeout and Silent Deadlock Guard",
+      "source_url": "https://github.com/emberstack/kubernetes-reflector",
+      "source_version": "9a470efc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T10:37:45.006Z"
+    },
+    "rule-4681": {
+      "learning_id": "rule-4681",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4681,
+      "title": "Mandatory Sanitization of Kubernetes Object Metadata Before Reflection",
+      "source_url": "https://github.com/emberstack/kubernetes-reflector",
+      "source_version": "9a470efc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T10:37:45.006Z"
+    },
+    "rule-4682": {
+      "learning_id": "rule-4682",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4682,
+      "title": "Strict Least-Privilege Helm RBAC Pruning on Subsystem Deprecation",
+      "source_url": "https://github.com/emberstack/kubernetes-reflector",
+      "source_version": "9a470efc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T10:37:45.006Z"
+    },
+    "rule-4683": {
+      "learning_id": "rule-4683",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4683,
+      "title": "Upgrade docs requirements (#8411)",
+      "source_url": "https://github.com/scrapy/scrapy",
+      "source_version": "3e4d0faf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T10:39:32.152Z"
+    },
+    "rule-4684": {
+      "learning_id": "rule-4684",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4684,
+      "title": "build(deps): bump anthropics/claude-code-action from 1.0.261 to 1.0.262 (#4943)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "8742357a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T10:39:42.890Z"
     }
   },
   "aliases": {
