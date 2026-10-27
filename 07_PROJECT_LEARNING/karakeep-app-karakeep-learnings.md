@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md`  
 > **Source**: github ([https://github.com/karakeep-app/karakeep](https://github.com/karakeep-app/karakeep))  
-> **Source Version**: `85054d9a`  
+> **Source Version**: `fb25e427`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T09:20:48.542Z  
+> **Timestamp**: 2026-10-27T13:22:16.910Z  
 > **Learning ID**: `learn-github-karakeep-app-karakeep`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/karakeep-app/karakeep](https://github.com/karakeep-app/karakeep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T09:20:47.733Z  
+> **Harvest Timestamp**: 2026-10-27T13:22:16.584Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A self-hostable bookmark-everything app (links, notes and images) with AI-based automatic tagging and full text search
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 29906 stars
+- **Stars / Engagement**: 30085 stars
 
 ---
 
@@ -470,35 +470,10 @@ async function injectSingleFileContentScript(tabId: number): Promise<void> {
   if (!files || files.length === 0) {
     throw new Error("SingleFile content script not declared in manifest");
   }
-  // The bundle is an ES module (crxjs emits chunks with `import.meta`), so
-  // `executeScript({ files })` — which loads as a classic script — fails.
-  // Use a dynamic import in the isolated world instead.
-  const urls = files.map((f) => chrome.runtime.getURL(f));
-  const [result] = await chrome.scripting.executeScript({
-    target: { tabId },
-    func: async (moduleUrls: string[]) => {
-      try {
-        for (const url of moduleUrls) {
-          await import(/* @vite-ignore */ url);
-        }
-        return { ok: true as const };
-      } catch (e) {
-        return {
-          ok: false as const,
-          error: e instanceof Error ? e.message : String(e),
-        };
-      }
-    },
-    args: [urls],
-  });
-  const res = result?.result;
-  // Treat the re-entry guard as success — the listener is already registered
-  // from a concurrent injection, so the retried sendMessage will succeed.
-  if (!res || (!res.ok && !res.error?.includes("already loaded"))) {
-    throw new Error(
-      `Failed to inject SingleFile content script: ${res?.error ?? "unknown error"}`,
-    );
-  }
+  // The content script is built as a standalone IIFE (see `standaloneFiles` in
+  // vite.config.ts), so it registers its CAPTURE_PAGE listener synchronously
+  // and the listener exists once `executeScript` resolves.
+  await chrome.scripting.executeScript({ target: { tabId }, files });
 }
 
 /**
@@ -757,11 +732,11 @@ export function cleanupApiClient() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3152** (2026-10-10): **Safari search bar too narrow when avatar image too large**
-  *Symptoms*: ### Describe the Bug  The search bar in the main page in Safari doesn't fill the available header space, as it does in Chrome and Firefox. In Safari it is very narrow.  <img width="1200" height="134" alt="Image" src="https://github.com/user-attachments/assets/2710d1f7-dc96-4a8d-b141-273921af9266" />  ### Steps to Reproduce  1. Set a large profile picture (mine is a 640px-wide JPG). 2. Refresh Karakeep in Safari on macOS.   - Running this in the Safari console: ```js   const img = document.querySelector('header img');   const btn = img.closest('button');   ({ natural: img.naturalWidth, button: btn.getBoundingClientRect().width, wrapper: btn.parentElement.getBoundingClientRect().width }) ```   returned `{ natural: 640, button: 40, wrapper: 577.16 }`. - Running `btn.style.width = '40px'` fixes the layout immediately. - Resizing the profile picture to 40×40 also fixes it, but the avatar looks blurry on Retina displays.  ### Expected Behaviour  The search bar needs to fill the entire available space, as it does in Chrome:  <img width="1568" height="79" alt="Image" src="https://github.com/user-attachments/assets/1999b89b-4933-42be-ab5f-f13ca666a0ef" />  ### Screenshots or Additional Context  For now I've reduced my avatar picture size to expand the search bar.  ### Device Details  Safari Version 27.0, MacOS  ### Exact Karakeep Version  0.33.2  ### Environment Details  Docker  ### Debug Logs  _No response_  ### Have you checked the troubleshooting guide?  - [x] I have checked the tr
+- **Issue #3240** (2026-10-27): **Karakeep Chrome extension no longer capturing page with SingleFile after today's update**
+  *Symptoms*: ### Describe the Bug  It seems I watched as functionality literally disappeared before my eyes lol  One minute, I had pulled a page with the SingleFile experimental functionality enabled and it worked fine, as evident by the presence of a file included in that bookmark labelled `Precrawled Archive` with the correct snapshot of the site. The next minute, after a browser restart and presumably a Vivaldi automatic update of the addon, the same snapshots are now no longer functioning. What previously took noticably extra time as the snapshot was saved and then uploaded is now instant, and on the Karakeep side of things, all scraping is happening based on the container's own browser instead of anything to do with my own. It worked fine literally 2 hours ago prior to the latest update as indicated on the Chrome addon's page: https://chromewebstore.google.com/detail/karakeep/kgcjekpmcjjogibpjebkhaanilehneje  ### Steps to Reproduce  1. Go to any page with the Client-side crawling option enabled in your browser addon 2. Save a page 3. Check Karakeep, see no inclusion of a Precrawled Archive attachment  ### Expected Behaviour  Precrawled Archive as saved by SingleFile should be included in the Karakeep bookmark  ### Screenshots or Additional Context  _No response_  ### Device Details  Xiaomi Pad 6 on Android 14  ### Exact Karakeep Version  v0.34.1  ### Environment Details  Docker on Debian  ### Debug Logs  _No response_  ### Have you checked the troubleshooting guide?  - [x] I have che
 
-- **Issue #3133** (2026-10-04): **Screenshots render CJK (Chinese/Japanese/Korean) text as tofu boxes — karakeep-chrome image is missing CJK fonts**
-  *Symptoms*: ### Describe the Bug  After migrating to the new `ghcr.io/karakeep-app/karakeep-chrome:release` image, page screenshots taken during crawling no longer render Chinese characters correctly. All Chinese text in the screenshot appears as empty boxes (tofu, □), while English/Latin text on the same page renders fine.   ### Steps to Reproduce  1. Deploy Karakeep using the standard docker-compose setup with the new chrome image: ```yaml    chrome:      image: ghcr.io/karakeep-app/karakeep-chrome:release      restart: unless-stopped      init: true      command:        - --disable-gpu        - --disable-dev-shm-usage        - --hide-scrollbars        - --disable-blink-features=AutomationControlled        - --window-size=1440,900 ``` 2. Bookmark a URL whose page content is primarily in Simplified Chinese (e.g. a Chinese news site or blog post). 3. Wait for the crawler to finish and open the bookmark's Screenshot tab. 4. Observe that all Chinese characters are rendered as empty rectangles (□□□□), while any English text on the same page displays normally.   ### Expected Behaviour  Screenshots should render CJK text correctly, the same way they render Latin text.      ### Screenshots or Additional Context  _No response_  ### Device Details  _No response_  ### Exact Karakeep Version  0.33.2  ### Environment Details  _No response_  ### Debug Logs  _No response_  ### Have you checked the troubleshooting guide?  - [x] I have checked the troubleshooting guide and I haven't found a solution to
+- **Issue #3202** (2026-10-23): **Inference Job Still Working Even After Being Disabled**
+  *Symptoms*: ### Describe the Bug  My Current .env file KARAKEEP_VERSION=release NEXTAUTH_SECRET=Redacted MEILI_MASTER_KEY=Redacted NEXTAUTH_URL=Redacted WORKERS_DISABLED_WORKERS=inference,embeddings LOG_LEVEL=${LOG_LEVEL:-debug} MAX_ASSET_SIZE_MB=100 DB_WAL_MODE=true RATE_LIMITING_ENABLED=true DISABLE_SIGNUPS=true SEMANTIC_SEARCH_ENABLED=false EMBEDDING_ENABLE_AUTO_INDEXING=false INFERENCE_ENABLE_AUTO_TAGGING=false INFERENCE_ENABLE_AUTO_SUMMARIZATION=false MEILI_MASTER_KEY=Redacted CRAWLER_NUM_WORKERS=1 SEARCH_NUM_WORKERS=1 WEBHOOK_NUM_WORKERS=1 ASSET_PREPROCESSING_NUM_WORKERS=1 RULE_ENGINE_NUM_WORKERS=1 BROWSER_WEB_URL=http://chrome:9222 BROWSER_CONNECT_ONDEMAND=false CRAWLER_DOWNLOAD_BANNER_IMAGE=true CRAWLER_STORE_SCREENSHOT=true CRAWLER_FULL_PAGE_SCREENSHOT=false CRAWLER_STORE_PDF=false CRAWLER_FULL_PAGE_ARCHIVE=false CRAWLER_JOB_TIMEOUT_SEC=60 CRAWLER_NAVIGATE_TIMEOUT_SEC=30 CRAWLER_PARSE_TIMEOUT_SEC=60 CRAWLER_ENABLE_ADBLOCKER=true CRAWLER_ENABLE_AUTOCONSENT=true CRAWLER_VIDEO_DOWNLOAD=false   Even though when I bookmark something, the tag section shows a loading skeleton and it keeps loading!  ### Steps to Reproduce  deploy with inference and embeddings off  ### Expected Behaviour  It should not load the skeleton  ### Screenshots or Additional Context  <img width="490" height="471" alt="Image" src="https://github.com/user-attachments/assets/9f86589c-b3e1-4040-9a37-ac1d51983ed0" />  ### Device Details  Chrome Latest  ### Exact Karakeep Version  0.33.2  ### Environment Details  Dock
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -846,13 +821,83 @@ Observed empirical fixes and code patches:
  
 ```
 
+---
+
+### Incident Patch 3: `844c1f95` (2026-10-25)
+**Commit Message**: fix(users): block account deletion while a subscription is past_due
+
+Stripe keeps retrying charges on past_due subscriptions, so deleting the
+account would drop the customer mapping while the user can still be billed.
+
+**File**: `packages/trpc/models/users.ts` (modified, +4/-1)
+```diff
+@@ -153,9 +153,12 @@ export class User {
+       },
+     });
+ 
++    // past_due subscriptions are still being retried by Stripe, so they can
++    // charge the user just like active ones.
+     if (
+       subscription?.status === "active" ||
+-      subscription?.status === "trialing"
++      subscription?.status === "trialing" ||
++      subscription?.status === "past_due"
+     ) {
+       throw new TRPCError({
+         code: "BAD_REQUEST",
+```
+
+**File**: `packages/trpc/routers/users.test.ts` (modified, +33/-0)
+```diff
+@@ -716,6 +716,39 @@ describe("User Routes", () => {
+       expect(deletedUser).toHaveLength(1);
+     });
+ 
++    test<CustomTestContext>("deleteAccount refuses past_due Stripe subscription", async ({
++      db,
++    }) => {
++      const user = await createTestUser(db, {
++        name: "Test User",
++        email: "deletepastdueaccount@test.com",
++        password: "pass1234",
++      });
++      const caller = getApiCaller(db, user.id, user.email, user.role || "user");
++
++      await db.insert(subscriptions).values({
++        userId: user.id,
++        stripeCustomerId: "cus_123",
++        stripeSubscriptionId: "sub_123",
++        status: "past_due",
++        tier: "paid",
++      });
++
++      await expect(() =>
++        caller.users.deleteAccount({
++          password: "pass1234",
++        }),
++      ).rejects.toThrow(
++        /Can't delete user while subscription is active. Please cancel your subscription first and try again./,
++      );
++
++      const deletedUser = await db
++        .select()
++        .from(users)
++        .where(eq(users.id, user.id));
++      expect(deletedUser).toHaveLength(1);
++    });
++
+     test<CustomTestContext>("deleteAccount - wrong password", async ({
+       db,
+     }) => {
+```
+
 #### Recent Merged Pull Requests:
-- **PR #3218** (2026-10-22): chore(docker): bump karakeep-chrome to Google Chrome 156.0.8078.47 (@MohamedBassem)
-- **PR #3217** (2026-10-22): Use node:24-slim instead of node:24.18.1-slim to get security updates (@eriktews)
-- **PR #3208** (2026-10-18): docs: add a guide for upgrading meilisearch (@lightsabit)
-- **PR #3201** (2026-10-17): chore(web): upgrade better-auth to 1.7.10 (@MohamedBassem)
-- **PR #3200** (2026-10-17): fix(mobile): show grabbers on settings sheets (@MohamedBassem)
-- **PR #3199** (2026-10-17): fix(trpc): prevent cycles in list hierarchies (@MohamedBassem)
+- **PR #3241** (2026-10-27): fix(extension): restore client-side SingleFile capture (@MohamedBassem)
+- **PR #3236** (2026-10-26): feat(mobile): in-app subscriptions for cloud via RevenueCat (@MohamedBassem)
+- **PR #3234** (2026-10-25): feat(extension): adopt the web's new dark mode styling (@MohamedBassem)
+- **PR #3233** (2026-10-25): feat(web) modernize dark mode styling (@MohamedBassem)
+- **PR #3232** (2026-10-25): feat(extension): polish the popup UI and allow editing titles (@MohamedBassem)
+- **PR #3231** (2026-10-25): fix(crawler): preserve proxy auth for external CDP contexts (@MohamedBassem)
 
 ---
 

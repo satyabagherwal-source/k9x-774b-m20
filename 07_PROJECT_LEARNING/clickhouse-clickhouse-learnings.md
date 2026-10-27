@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `a3c14189`  
+> **Source Version**: `d491ad88`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T22:07:24.007Z  
+> **Timestamp**: 2026-10-27T13:22:24.028Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T22:07:23.999Z  
+> **Harvest Timestamp**: 2026-10-27T13:22:23.593Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 50595 stars
+- **Stars / Engagement**: 50632 stars
 
 ---
 
@@ -1338,545 +1338,449 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `081ec820` (2026-10-25)
-**Commit Message**: Merge pull request #127691 from groeneai/fix-05238-parallel-distinct-block-split
+### Incident Patch 1: `66543afe` (2026-10-27)
+**Commit Message**: Merge pull request #116619 from groeneai/fix-executable-pool-slot-leak-on-spawn-error
 
-Make the `parallel` case of `05238_workload_memory_spilling_distinct` independent of block scheduling
+Fix leaked executable_pool slots and orphaned child processes on command startup failure
 
-**File**: `tests/queries/0_stateless/05238_workload_memory_spilling_distinct.sh` (modified, +4/-2)
+**File**: `src/Common/ShellCommand.cpp` (modified, +25/-22)
 ```diff
-@@ -65,9 +65,11 @@ FROM (SELECT DISTINCT [number % 1048576] AS k FROM numbers(4194304))
- # Preliminary sets may be released too; final deduplication must still remove every duplicate.
- # A parallel final `DISTINCT` splits the keys into smaller per-stream sets that may fit the budget, so it is
- # disabled to keep spilling the single final set.
-+# The first half of the input holds each key once, so however the blocks are split between the 4 streams, one of
-+# them sees at least a quarter of the keys, and its preliminary set exceeds `min_bytes_to_spill`.
- run_query parallel "
--SELECT count() = 1048576, sum(k) = 549755289600
--FROM (SELECT DISTINCT number % 1048576 AS k FROM numbers_mt(8388608))
-+SELECT count() = 4194304, sum(k) = 8796090925056
-+FROM (SELECT DISTINCT number % 4194304 AS k FROM numbers_mt(8388608))
- SETTINGS max_threads = 4, allow_parallel_distinct = 0
- "
+@@ -66,11 +66,10 @@ namespace ErrorCodes
+     extern const int BAD_ARGUMENTS;
+ }
  
-```
-
----
-
-### Incident Patch 2: `ae6fcab7` (2026-10-25)
-**Commit Message**: Merge pull request #116083 from ClickHouse/clickbench-small-memory
-
-Fit the insert pipeline and merges into a small server's memory
-
-**File**: `src/Formats/FormatFactory.cpp` (modified, +7/-1)
-```diff
-@@ -295,8 +295,14 @@ FormatSettings getFormatSettings(const ContextPtr & context, const Settings & se
-         size_t budget = static_cast<size_t>(static_cast<double>(memory_limit) * 0.9);
-         format_settings.parquet.memory_high_watermark = std::min<size_t>(
-             format_settings.parquet.memory_high_watermark, budget / 8);
-+        /// The reader does not hold one block of `prefer_block_bytes` but a whole pipeline of them:
-+        /// prefetched, decoded and ready-to-deliver row subgroups across the row groups it reads in
-+        /// parallel, and downstream (for an `INSERT`) the blocks the squashing stage has accumulated
-+        /// so far. Measured on a 105-column table, the default 16 MiB preferred block size costs about
-+        /// 290 MiB of live reader memory, so the cap has to be a much smaller fraction of the budget
-+        /// than the block size alone suggests.
-         format_settings.parquet.prefer_block_bytes = std::min<size_t>(
--            format_settings.parquet.prefer_block_bytes, budget / 64);
-+            format_settings.parquet.prefer_block_bytes, budget / 256);
-     }
-     format_settings.pretty.charset = settings[Setting::output_format_pretty_grid_charset].toString() == "ASCII" ? FormatSettings::Pretty::Charset::ASCII : FormatSettings::Pretty::Charset::UTF8;
-     format_settings.pretty.color = settings[Setting::output_format_pretty_color].valueOr(2);
-```
-
-**File**: `src/Interpreters/InsertDependenciesBuilder.cpp` (modified, +14/-17)
-```diff
-@@ -1,7 +1,7 @@
- #include <Interpreters/InsertDependenciesBuilder.h>
- #include <Interpreters/InterpreterInsertQuery.h>
-+#include <Interpreters/capInsertBlockSizeBytesToMemoryLimit.h>
- 
--#include <Common/MemoryTracker.h>
- #include <Access/Common/AccessType.h>
- #include <Access/Common/AccessFlags.h>
- #include <Processors/ForkProcessor.h>
-@@ -150,16 +150,6 @@ namespace ErrorCodes
- 
- namespace
+-ShellCommand::ShellCommand(pid_t pid_, int & in_fd_, int & out_fd_, int & err_fd_, const ShellCommand::Config & config_)
++ShellCommand::ShellCommand(int & in_fd_, int & out_fd_, int & err_fd_, const ShellCommand::Config & config_)
+     : in(in_fd_)
+     , out(out_fd_)
+     , err(err_fd_)
+-    , pid(pid_)
+     , config(config_)
  {
--/// Cap `min_insert_block_size_bytes` by a fraction of the server-wide memory hard limit so
--/// squashing does not accumulate more data than the host can hold. Shared between direct
--/// INSERT and materialized-view pipelines so the cap is applied symmetrically.
--size_t capMinBlockSizeBytesForMemoryLimit(size_t value)
--{
--    if (auto memory_limit = total_memory_tracker.getHardLimit(); memory_limit > 0)
--        return std::min<size_t>(value, static_cast<size_t>(static_cast<double>(memory_limit) * 0.9) / 8);
--    return value;
--}
+ }
+@@ -99,6 +98,9 @@ UInt64 ShellCommand::remainingTerminationTimeoutMs()
+ 
+ ShellCommand::~ShellCommand()
+ {
++    if (pid == -1)
++        return;
++
+     if (do_not_terminate)
+         return;
+ 
+@@ -240,6 +242,26 @@ std::unique_ptr<ShellCommand> ShellCommand::executeImpl(
+             fds->tryIncreaseSize(pipe_capacity);
+     }
+ 
++    std::unique_ptr<ShellCommand> res(new ShellCommand(
++        pipe_stdin.fds_rw[1],
++        pipe_stdout.fds_rw[0],
++        pipe_stderr.fds_rw[0],
++        config));
++
++    for (size_t i = 0; i < config.read_fds.size(); ++i)
++    {
++        auto & fds = *read_pipe_fds[i];
++        auto fd = config.read_fds[i];
++        res->read_fds.emplace(fd, fds.fds_rw[0]);
++    }
++
++    for (size_t i = 0; i < config.write_fds.size(); ++i)
++    {
++        auto & fds = *write_pipe_fds[i];
++        auto fd = config.write_fds[i];
++        res->write_fds.emplace(fd, fds.fds_rw[1]);
++    }
++
+     pid_t pid = reinterpret_cast<pid_t(*)()>(real_vfork)();
+ 
+     if (pid == -1)
+@@ -296,30 +318,11 @@ std::unique_ptr<ShellCommand> ShellCommand::executeImpl(
+         _exit(static_cast<int>(ReturnCodes::CANNOT_EXEC));
+     }
+ 
+-    std::unique_ptr<ShellCommand> res(new ShellCommand(
+-        pid,
+-        pipe_stdin.fds_rw[1],
+-        pipe_stdout.fds_rw[0],
+-        pipe_stderr.fds_rw[0],
+-        config));
++    res->pid = pid;
+ 
+     if (config.register_in_udf_process_registry)
+         res->udf_registry_generation = UDFProcessRegistry::instance().add(pid);
+ 
+-    for (size_t i = 0; i < config.read_fds.size(); ++i)
+-    {
+-        auto & fds = *read_pipe_fds[i];
+-        auto fd = config.read_fds[i];
+-        res->read_fds.emplace(fd, fds.fds_rw[0]);
+-    }
 -
- /// True when `target` is an Enum that contains `source` with the same in-memory width, i.e. `source`
- /// is a narrower Enum whose members are a subset of `target`. This mirrors the compatibility that
- /// StorageInMemoryMetadata::check allows but that is not type equality.
-@@ -552,7 +542,8 @@ class ExecutingInnerQueryFromViewTransform final : public ExceptionKeepingTransf
-         StorageID view_id_, StoragePtr view_storage_, StorageMetadataPtr view_metadata_,
-         StorageID inner_id_, StoragePtr inner_storage_, StorageMetadataPtr inner_metadata_,
-         ContextPtr context_,
--        bool async_insert_)
-+        bool async_insert_,
-+        size_t num_squashing_pipelines_)
-         : ExceptionKeepingTransform(input_header, output_header)
-         , select_query(select_query_)
-         , source_id(source_id_)
-@@ -566,6 +557,7 @@ class ExecutingInnerQueryFromViewTransform final : public ExceptionKeepingTransf
-         , inner_storage(inner_storage_)
-         , context(context_)
-         , async_insert(async_insert_)
-+        , num_squashing_pipelines(num_squashing_pipelines_)
-     {
-     }
- 
-@@ -611,6 +603,8 @@ class ExecutingInnerQueryFromViewTransform final : public ExceptionKeepingTransf
-     StoragePtr inner_storage;
-     ContextPtr context;
-     bool async_insert = false;
-+    /// See `InsertDependenciesBuilder::getNumSquashesSharingViewsBudget`.
-+    size_t num_squashing_pipelines = 1;
- 
-     struct State
-     {
-@@ -730,7 +724,7 @@ class ExecutingInnerQueryFromViewTransform final : public ExceptionKeepingTransf
-         pipeline.addTransform(std::make_shared<SquashingTransform>(
-             pipeline.getSharedHeader(),
-             settings[Setting::min_insert_block_size_rows],
--            capMinBlockSizeBytesForMemoryLimit(settings[Setting::min_insert_block_size_bytes]),
-+            capInsertBlockSizeBytesToMemoryLimit(settings[Setting::min_insert_block_size_bytes], num_squashing_pipelines),
-             settings[Setting::max_insert_block_size],
-             settings[Setting::max_insert_block_size_bytes],
-             squash_with_strict_limits)
-@@ -1025,14 +1019,15 @@ bool InsertDependenciesBuilder::forwardedInsertHidesDependentViewForwardingToSep
- InsertDependenciesBuilder::InsertDependenciesBuilder(
-     StoragePtr table, ASTPtr query, SharedHeader insert_header,
-     bool async_insert_, bool skip_destination_table_, size_t max_insert_threads,
--    ContextPtr context)
-+    ContextPtr context, size_t num_concurrent_copies_)
-     : init_table_id(table->getStorageID())
-     , init_storage(table)
-     , init_query(query)
-     , init_header(std::move(insert_header))
-     , init_context(context)
-     , async_insert(async_insert_)
-     , skip_destination_table(skip_destination_table_)
-+    , num_concurrent_copies(std::max<size_t>(1, num_concurrent_copies_))
-     , views_error_registry(std::make_shared<ViewErrorsRegistry>())
-     , logger(getLogger("InsertDependenciesBuilder"))
- {
-@@ -1231,7 +1226,7 @@ VectorWithMemoryTracking<Chain> InsertDependenciesBuilder::createChainWithDepend
-                     std::make_shared<PlanSquashingTransform>(
-                         output_header,
-                         table_prefers_large_blocks ? settings[Setting::min_insert_block_size_rows] : settings[Setting::max_block_size],
--                        table_prefers_large_blocks ? capMinBlockSizeBytesForMemoryLimit(settings[Setting::min_insert_block_size_bytes]) : 0ULL,
-+                        table_prefers_large_blocks ? capInsertBlockSizeBytesToMemoryLimit(settings[Setting::min_insert_block_size_bytes], getNumSquashesSharingViewsBudget()) : 0ULL,
-                         settings[Setting::max_insert_block_size],
-                         settings[Setting::max_insert_block_size_bytes],
-                         squash_with_strict_limits));
-@@ -1715,7 +1710,8 @@ Chain InsertDependenciesBuilder::createSelect(StorageIDMaybeEmpty view_id) const
-             view_id, storages.at(view_id), metadata_snapshots.at(view_id),
-             inner_table_id, inner_storage, metadata_snapshots.at(inner_tabl
+-    for (size_t i = 0; i < config.write_fds.size(); ++i)
+-    {
+-        auto & fds = *write_pipe_fds[i];
+-        auto fd = config.write_fds[i];
+-        res->write_fds.emplace(fd, fds.fds_rw[1]);
+-    }
+-
+     LOG_TRACE(
+         getLogger(),
+         "Started shell command '{}' with pid {} and file descriptors: out {}, err {}",
 ```
 
-**File**: `src/Interpreters/InsertDependenciesBuilder.h` (modified, +32/-1)
+**File**: `src/Common/ShellCommand.h` (modified, +2/-2)
 ```diff
-@@ -10,6 +10,7 @@
- 
- #include <Common/Logger.h>
- 
-+#include <algorithm>
- #include <exception>
- #include <memory>
- #include <unordered_map>
-@@ -124,6 +125,30 @@ class InsertDependenciesBuilder : public std::enable_shared_from_this<InsertDepe
-         return sink_stream_size;
-     }
- 
-+    /// The squashing stages of this insert that hold blocks at the same time share the memory budget of
-+    /// `capInsertBlockSizeBytesToMemoryLimit`. The budget is split in two halves when there are dependent
-+    /// materialized views (otherwise the root takes all of it):
-+    ///   - the head squash of the root (the target table or the inner table of the target view) takes
-+    ///     one half. It is the squash that decides how large the source blocks are, and every dependent
-+    ///     view processes every such block, so it is not split further by the number of views: that
-+    ///     would multiply the per-block work of the views;
-+    ///   - the squashes of the dependent views share the other half: for every view, the squash of the
-+    ///     view query result inside `ExecutingInnerQueryFromViewTransform`, one per sink stream, since
-+    ///     every sink chain runs its own copy of the view query, and the sink squash shared between the
-+    ///     sink streams when `materialized_views_squash_parallel_inserts` is in effect.
-+    /// Both are multiplied by `num_concurrent_copies`, the number of copies of this whole insert that
-+    /// run at the same time (the nested `INSERT` of every branch of a forwarding storage like `Alias`).
-+    size_t getNumSquashesSharingRootBudget() const
-+    {
-+        return (getNumDependentViews() ? 2 : 1) * num_concurrent_copies;
-+    }
-+
-+    size_t getNumSquashesSharingViewsBudget() const
-+    {
-+        const size_t squashes_per_view = sink_stream_size + (squash_parallel_inserts ? 1 : 0);
-+        return 2 * std::max<size_t>(1, getNumDependentViews() * squashes_per_view) * num_concurrent_copies;
-+    }
-+
-     /// Whether a synchronous insert into `storage` would actually deduplicate blocks, i.e. some sink
-     /// consults the deduplication block ids. For MergeTree-family engines this mirrors how
-     /// `MergeTreeSink` / `ReplicatedMergeTreeSink` compute their own `deduplicate` flag (an enabled
-@@ -221,11 +246,15 @@ class InsertDependenciesBuilder : public std::enable_shared_from_this<InsertDepe
-         bool async_insert_,
-         bool skip_destination_table_,
-         size_t max_insert_threads,
--        ContextPtr context);
-+        ContextPtr context,
-+        size_t num_concurrent_copies_ = 1);
- 
+@@ -139,7 +139,7 @@ class ShellCommand final
+     std::unordered_map<int, WriteBufferFromFile> write_fds;
  private:
-     bool isView(StorageIDMaybeEmpty id) const;
  
-+    /// `dependent_views` has an entry for the root and one for every materialized view.
-+    size_t getNumDependentViews() const { return dependent_views.empty() ? 0 : dependent_views.size() - 1; }
-+
-     std::pair<ContextPtr, ContextPtr> createSelectInsertContext(const DependencyPath & path);
-     bool observePath(const DependencyPath & path);
-     String debugTree() const;
-@@ -253,6 +282,8 @@ class InsertDependenciesBuilder : public std::enable_shared_from_this<InsertDepe
-     bool async_insert = false;
-     bool skip_destination_table = false;
-     size_t sink_stream_size = 1;
-+    /// See `getNumSquashesSharingRootBudget`.
-+    size_t num_concurrent_copies = 1;
+-    pid_t pid;
++    pid_t pid = -1;
+     Config config;
+     bool wait_called = false;
+     bool do_not_terminate = false;
+@@ -168,7 +168,7 @@ class ShellCommand final
+     /// deadline has passed, so both wait paths stop at one shared budget.
+     UInt64 remainingTerminationTimeoutMs();
  
-     /// When the insertion is made into a materialized view, the root_view is the view itself and dependent_views contains its inner table.
-     /// When the insertion is made into a regular table (it is init_table_id), the root_view is {} / StorageID::createEmpty() and dependent_views contains init_table_id.
+-    ShellCommand(pid_t pid_, int & in_fd_, int & out_fd_, int & err_fd_, const Config & config);
++    ShellCommand(int & in_fd_, int & out_fd_, int & err_fd_, const Config & config);
+ 
+     bool tryWaitProcessWithTimeout(size_t timeout_in_seconds);
+     struct tryWaitResult;
 ```
 
-**File**: `src/Interpreters/InterpreterInsertQuery.cpp` (modified, +9/-10)
+**File**: `src/Processors/Sources/ShellCommandSource.cpp` (modified, +41/-18)
 ```diff
-@@ -1,5 +1,6 @@
- #include <Interpreters/InterpreterFactory.h>
- #include <Interpreters/InterpreterInsertQuery.h>
-+#include <Interpreters/capInsertBlockSizeBytesToMemoryLimit.h>
- #include <Core/ProtocolDefines.h>
- #include <Interpreters/ClientInfo.h>
- #include <Storages/StorageInput.h>
-@@ -543,7 +544,7 @@ QueryPipeline InterpreterInsertQuery::addInsertToSelectPipeline(
-     auto insert_dependencies = InsertDependenciesBuilder::create(
-         table, query_ptr, std::make_shared<const Block>(std::move(query_sample_block)),
-         async_insert, /*skip_destination_table*/ no_destination, max_insert_threads,
--        context);
-+        context, num_concurrent_copies);
-     returning_insert_views_serial = query.returning && insert_dependencies->getViewProcessingNumThreads() == 1;
+@@ -11,6 +11,8 @@
+ #include <Common/setThreadName.h>
+ #include <Common/ThreadGroupSwitcher.h>
+ #include <Common/ErrnoException.h>
++#include <Common/LockMemoryExceptionInThread.h>
++#include <Common/scope_guard_safe.h>
  
-     const auto & settings = context->getSettingsRef();
-@@ -647,8 +648,7 @@ QueryPipeline InterpreterInsertQuery::addInsertToSelectPipeline(
+ #include <IO/WriteHelpers.h>
+ #include <IO/ReadHelpers.h>
+@@ -510,27 +512,29 @@ namespace
+             , command(std::move(command_))
+             , configuration(configuration_)
+             , timeout_command_out(command->out.getFD(), command->err.getFD(), command_read_timeout_milliseconds, stderr_reaction, configuration_.sampler.get())
+-            , command_holder(std::move(command_holder_))
+             , process_pool(process_pool_)
+             , check_exit_code(check_exit_code_)
+         {
+-            auto context_for_reading = Context::createCopy(context);
+-            /// Currently parallel parsing input format cannot read exactly max_block_size rows from input,
+-            /// so it will be blocked on ReadBufferFromFileDescriptor because this file descriptor represent pipe that does not have eof.
+-            if (configuration.read_fixed_number_of_rows)
+-                context_for_reading->setSetting("input_format_parallel_parsing", false);
+-            /// Here header auto detection can only cause troubles, since if it
+-            /// will find "header" the number of input and output rows will not
+-            /// match.
+-            context_for_reading->setSetting("input_format_csv_detect_header", false);
+-            context_for_reading->setSetting("input_format_tsv_detect_header", false);
+-            context_for_reading->setSetting("input_format_custom_detect_header", false);
+-            context = context_for_reading;
+-
+-            auto thread_group = CurrentThread::getGroup();
+-
+             try
              {
-                 size_t min_block_size_bytes = table->prefersLargeBlocks() ? context->getSettingsRef()[Setting::min_insert_block_size_bytes] : 0ULL;
-                 /// On low-memory systems, cap squashing block size to avoid accumulating too much data.
--                if (auto memory_limit = total_memory_tracker.getHardLimit(); memory_limit > 0)
--                    min_block_size_bytes = std::min<size_t>(min_block_size_bytes, static_cast<size_t>(static_cast<double>(memory_limit) * 0.9) / 8);
-+                min_block_size_bytes = capInsertBlockSizeBytesToMemoryLimit(min_block_size_bytes, insert_dependencies->getNumSquashesSharingRootBudget());
-                 return std::make_shared<PlanSquashingTransform>(
-                     in_header,
-                     table->prefersLargeBlocks() ? settings[Setting::min_insert_block_size_rows] : settings[Setting::max_block_size],
-@@ -744,10 +744,8 @@ void InterpreterInsertQuery::applyTrivialInsertSelectOptimization(ASTInsertQuery
-                 new_settings[Setting::max_block_size] = settings[Setting::min_insert_block_size_rows];
-             if (settings[Setting::min_insert_block_size_bytes])
++                /// Not in the initializer list: if a member throws, the caller still owns the holder and returns it.
++                command_holder = std::move(command_holder_);
++
++                auto context_for_reading = Context::createCopy(context);
++                /// Currently parallel parsing input format cannot read exactly max_block_size rows from input,
++                /// so it will be blocked on ReadBufferFromFileDescriptor because this file descriptor represent pipe that does not have eof.
++                if (configuration.read_fixed_number_of_rows)
++                    context_for_reading->setSetting("input_format_parallel_parsing", false);
++                /// Here header auto detection can only cause troubles, since if it
++                /// will find "header" the number of input and output rows will not
++                /// match.
++                context_for_reading->setSetting("input_format_csv_detect_header", false);
++                context_for_reading->setSetting("input_format_tsv_detect_header", false);
++                context_for_reading->setSetting("input_format_custom_detect_header", false);
++                context = context_for_reading;
++
++                auto thread_group = CurrentThread::getGroup();
++
+                 for (auto && send_data_task : send_data_tasks)
+                 {
+                     send_data_threads.emplace_back([thread_group, task = std::move(send_data_task), this]() mutable
+@@ -657,10 +661,21 @@ namespace
              {
--                size_t block_size_bytes = settings[Setting::min_insert_block_size_bytes];
-                 /// On low-memory systems, cap the input format block size.
--                if (auto memory_limit = total_memory_tracker.getHardLimit(); memory_limit > 0)
--                    block_size_bytes = std::min<size_t>(block_size_bytes, static_cast<size_t>(static_cast<double>(memory_limit) * 0.9) / 8);
-+                size_t block_size_bytes = capInsertBlockSizeBytesToMemoryLimit(settings[Setting::min_insert_block_size_bytes], /*num_simultaneous_squashes=*/ 1);
-                 new_settings[Setting::preferred_block_size_bytes] = block_size_bytes;
+                 bool valid_command = configuration.read_fixed_number_of_rows && current_read_rows >= configuration.number_of_rows_to_read;
+ 
++                LockMemoryExceptionInThread lock_memory_tracker(VariableContext::Global);
++
++                /// A worker that will not be reused is reaped before its slot is published.
+                 if (command && valid_command)
+                     command_holder->returnCommand(std::move(command));
+-
+-                process_pool->returnObject(std::move(command_holder));
++                else
++                    command = nullptr;
++                try
++                {
++                    process_pool->returnObject(std::move(command_holder));
++                }
++                catch (...)
++                {
++                    tryLogCurrentException("ShellCommandSource");
++                }
              }
          }
-@@ -1109,7 +1107,8 @@ QueryPipeline InterpreterInsertQuery::buildInsertPipeline(ASTInsertQuery & query
-         async_insert,
-         /*skip_destination_table*/ no_destination,
-         insert_threads,
--        context);
-+        context,
-+        num_concurrent_copies);
-     returning_insert_views_serial = query.returning && insert_dependencies->getViewProcessingNumThreads() == 1;
  
-     QueryPipeline pipeline
-@@ -1207,10 +1206,10 @@ QueryPipeline InterpreterInsertQuery::buildPushPipelineFromDependencies(
-     if (should_squash)
-     {
-         bool table_prefers_large_blocks = table->prefersLargeBlocks();
--        size_t min_block_size_bytes = table_prefers_large_blocks ? settings[Setting::min_insert_block_size_bytes] : 0ULL;
-         /// On low-memory systems, cap squashing block size to avoid accumulating too much data.
--        if (auto memory_limit = total_memory_tracker.getHardLimit(); memory_limit > 0)
--            min_block_size_bytes = std::min<size_t>(min_block_size_bytes, static_cast<size_t>(static_cast<double>(memory_limit) * 0.9) / 8);
-+        size_t min_block_size_bytes = capInsertBlockSizeBytesToMemoryLimit(
-+            table_prefers_large_blocks ? settings[Setting::min_insert_block_size_bytes] : 0ULL,
-+            insert_dependencies->getNumSquashesSharingRootBudget());
-         add_head_transform(std::make_shared<PlanSquashingTransform>(
-             insert_header,
-             table_prefers_large_blocks ? settings[Setting::min_insert_block_size_rows] : settings[Setting::max_block_size],
+@@ -844,6 +859,14 @@ Pipe ShellCommandSourceCoordinator::createPipe(
+     std::unique_ptr<ShellCommand> process;
+     std::unique_ptr<ShellCommandHolder> process_holder;
+ 
++    SCOPE_EXIT_SAFE({
++        if (process_holder && process_pool)
++        {
++            process.reset();
++            process_pool->returnObject(std::move(process_holder));
++        }
++    });
++
+     auto destructor_strategy = ShellCommand::DestructorStrategy{true /*terminate_in_destructor*/, SIGTERM, configuration.command_termination_timeout_seconds};
+     command_config.terminate_in_destructor_strategy = destructor_strategy;
+ 
 ```
 
-**File**: `src/Interpreters/InterpreterInsertQuery.h` (modified, +16/-0)
+**File**: `tests/queries/0_stateless/05046_executable_pool_slot_leak_on_spawn_error.reference` (added, +2/-0)
 ```diff
-@@ -1,6 +1,8 @@
- #pragma once
- 
- #include <QueryPipeline/BlockIO.h>
-+
-+#include <algorithm>
- #include <IO/ReadBuffer.h>
- #include <Interpreters/IInterpreter.h>
- #include <Interpreters/ClusterProxy/executeQuery.h>
-@@ -66,6 +68,19 @@ class InterpreterInsertQuery : public IInterpreter, WithMutableContext
-     /// Never set this for a user-visible target table.
-     void setSkipTargetInsertAccessCheck(bool skip) { skip_target_insert_access_check = skip; }
- 
-+    /// This `INSERT` is one of `copies` copies that run at the same time, e.g. the nested `INSERT` that every
-+    /// branch of the fan-out of a forwarding storage (`Alias`) runs. Keep it single-stream: with the fan-out
-+    /// already in place, letting every copy fan out again would multiply the number of real sink branches
-+    /// (part writers, squashing and compression buffers) up to `max_insert_threads^2`. The squashing stages
-+    /// of the copies share the memory budget, see `InsertDependenciesBuilder::getNumSquashesSharingRootBudget`.
-+    /// Unlike setting `max_insert_threads` to one in the context, this leaves the setting to the forwarding
-+    /// storages that the nested `INSERT` reaches in turn, so every hop counts the copies of the outermost fan-out.
-+    void setOneOfConcurrentCopies(size_t copies)
-+    {
-+        num_concurrent_copies = std::max<size_t>(1, copies);
-+        max_insert_threads = 1;
-+    }
-+
-     /// The pipeline is built only to be printed by `EXPLAIN PIPELINE` and is not executed.
-     void setExplainOnly(bool value) { explain_only = value; }
- 
-@@ -124,6 +139,7 @@ class InterpreterInsertQuery : public IInterpreter, WithMutableContext
- 
-     size_t max_threads = 0;
-     size_t max_insert_threads = 0;
-+    size_t num_concurrent_copies = 1;
- 
-     /// For INSERT ... RETURNING: the processor with the copy of the data written into the table.
-     ProcessorPtr returning_output;
+@@ -0,0 +1,2 @@
++first call failed as expected
++Pipe capacity 2147483648 exceeds maximum supported value
 ```
 
-**File**: `src/Interpreters/capInsertBlockSizeBytesToMemoryLimit.cpp` (added, +46/-0)
+**File**: `tests/queries/0_stateless/05046_executable_pool_slot_leak_on_spawn_error.sh` (added, +58/-0)
 ```diff
-@@ -0,0 +1,46 @@
-+#include <Interpreters/capInsertBlockSizeBytesToMemoryLimit.h>
+@@ -0,0 +1,58 @@
++#!/usr/bin/env bash
++# An executable_pool worker whose process fails to start must not cost the pool a slot.
++# The function below is configured with a pipe capacity that is out of range, so every
++# attempt to start a worker fails. With a pool of one, the second call must still report
++# that configuration error instead of waiting for a worker the pool can no longer create.
++# Both calls have to run in one clickhouse-local process, because a fresh process gets a
++# fresh pool.
 +
-+#include <Common/MemoryTracker.h>
++CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
++# shellcheck source=../shell_config.sh
++. "$CUR_DIR"/../shell_config.sh
 +
-+#include <algorithm>
++WORK_DIR=$(mktemp -d "${CLICKHOUSE_TMP}/exec_pool_slot_leak_XXXXXX")
++trap 'rm -rf "${WORK_DIR}"' EXIT
 +
-+namespace DB
-+{
++cat > "${WORK_DIR}/echo_udf.sh" << 'SCRIPT'
++#!/usr/bin/env bash
++while IFS= read -r x; do printf '%s\n' "$x"; done
++SCRIPT
++chmod +x "${WORK_DIR}/echo_udf.sh"
 +
-+/// `min_insert_block_size_bytes` is not the amount of memory an `INSERT` needs, it is the size of one
-+/// block; the pipeline holds several of those at once. The squashing transform accumulates the next
-+/// block while the previous one is being concatenated, and the concatenated block is still alive in
-+/// the sink (where the writer additionally holds a permuted copy of one column at a time). Blocks are
-+/// also measured by their logical byte size while the columns behind them are `PODArray`s whose
-+/// capacity is rounded up, so a "256 MiB" block costs noticeably more than 256 MiB of memory.
-+/// Measured end to end, `INSERT ... SELECT` into a `MergeTree` table peaks at around five times
-+/// `min_insert_block_size_bytes` per insert stream.
-+///
-+/// Cap the threshold so those copies stay a bounded share of the server's memory limit. On a server
-+/// with several GiB of RAM or more this leaves the setting untouched; on a small one it is the
-+/// difference between the insert completing and failing with `MEMORY_LIMIT_EXCEEDED`.
-+///
-+/// One operation can run several squashing pipelines at once: an `INSERT` squashes for the target
-+/// table and again for every dependent materialized view (the view query result in every sink stream,
-+/// and possibly once more before the view's sink), and a merge or a mutation squashes once
-+/// for the projection input and once per rebuilt projection. Each of them holds its own copies, so
-+/// the share is split between `num_simultaneous_squashes` of them.
-+size_t capInsertBlockSizeBytesToMemoryLimit(size_t min_block_size_bytes, size_t num_simultaneous_squashes)
-+{
-+    const Int64 memory_limit = total_memory_tracker.getHardLimit();
-+    if (memory_limit <= 0)
-+        return min_block_size_bytes;
++cat > "${WORK_DIR}/udf.xml" << EOF
++<functions>
++    <function>
++        <type>executable_pool</type>
++        <name>leak_udf</name>
++        <return_type>UInt64</return_type>
++        <argument><type>UInt64</type></argument>
++        <format>TabSeparated</format>
++        <command>echo_udf.sh</command>
++        <execute_direct>1</execute_direct>
++        <pool_size>1</pool_size>
++        <max_command_execution_time>1</max_command_execution_time>
++        <command_pipe_capacity>2147483648</command_pipe_capacity>
++    </function>
++</functions>
++EOF
 +
-+    /// Use 90% of the hard limit as the budget, leaving headroom for spikes and overhead, and allow the
-+    /// insert's blocks to take at most 40% of that budget - the rest is for the source (a format parser
-+    /// or another table's read pipeline), background merges and the server itself.
-+    static constexpr double budget_of_the_limit = 0.9;
-+    static constexpr double share_for_insert_blocks = 0.4;
-+    static constexpr double copies_held_by_the_pipeline = 5;
++cat > "${WORK_DIR}/config.xml" << EOF
++<clickhouse>
++    <user_scripts_path>${WORK_DIR}/</user_scripts_path>
++    <user_defined_executable_functions_config>${WORK_DIR}/udf.xml</user_defined_executable_functions_config>
++</clickhouse>
++EOF
 +
-+    const double budget = static_cast<double>(memory_limit) * budget_of_the_limit;
-+    const double copies = copies_held_by_the_pipeline * static_cast<double>(std::max<size_t>(1, num_simultaneous_squashes));
-+    return std::min(min_block_size_bytes, static_cast<size_t>(budget * share_for_insert_blocks / copies));
-+}
++# The last statement is deliberately not annotated so that its error reaches stderr.
++cat > "${WORK_DIR}/queries.sql" << 'EOF'
++SELECT leak_udf(1); -- { serverError UDF_EXECUTION_FAILED }
++SELECT 'first call failed as expected';
++SELECT leak_udf(2);
++EOF
 +
-+}
-```
-
-**File**: `src/Interpreters/capInsertBlockSizeBytesToMemoryLimit.h` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+#pragma once
++$CLICKHOUSE_LOCAL --config-file="${WORK_DIR}/config.xml" --queries-file="${WORK_DIR}/queries.sql" \
++    < /dev/null > "${WORK_DIR}/out.txt" 2> "${WORK_DIR}/err.txt"
 +
-+#include <cstddef>
-+
-+namespace DB
-+{
-+
-+/// Caps `min_insert_block_size_bytes` (or a value playing its role) so that the several block-sized
-+/// copies a writing pipeline holds at once stay a bounded share of the server's memory limit. Shared
-+/// between the direct `INSERT` pipeline, the dependent materialized-view pipelines and the projection
-+/// squashes of merges and mutations, so the cap is applied symmetrically. `num_simultaneous_squashes` is
-+/// the number of such squashing pipelines the caller's operation keeps alive at once; they share the
-+/// budget. See the definition for the memory model behind it.
-+size_t capInsertBlockSizeBytesToMemoryLimit(size_t min_block_size_bytes, size_t num_simultaneous_squashes);
-+
-+}
-```
-
-**File**: `src/Storages/MergeTree/Compaction/MergePredicates/DistributedMergePredicate.h` (modified, +1/-1)
-```diff
-@@ -183,7 +183,7 @@ class DistributedMergePredicate : public IMergePredicate
-         return {};
-     }
- 
--    PartsRange getPatchesToApplyOnMerge(const PartsRange & range) const override
-+    PartsRange getPatchesToApplyOnMerge(PartsRangeView range) const override
-     {
-         if (range.empty())
-             return {};
++cat "${WORK_DIR}/out.txt"
++grep -oE 'Pipe capacity [0-9]+ exceeds maximum supported value|Could not get process from pool' \
++    "${WORK_DIR}/err.txt" | tail -1
 ```
 
 ---
 
-### Incident Patch 3: `55f660b0` (2026-10-25)
-**Commit Message**: Merge pull request #126531 from ClickHouse/fix-array-reduce-in-ranges-bounds
+### Incident Patch 2: `ff013fec` (2026-10-26)
+**Commit Message**: Merge pull request #127781 from groeneai/fix-flaky-05218-text-index-columns-cache
 
-Fix wrong results of `arrayReduceInRanges` for ranges that do not fit in the array
+Fix flaky test `05218_text_index_substreams_opened_lazily` with the columns cache
 
-**File**: `src/Functions/array/arrayReduceInRanges.cpp` (modified, +25/-14)
+**File**: `tests/queries/0_stateless/05218_text_index_substreams_opened_lazily.sh` (modified, +3/-1)
 ```diff
-@@ -276,27 +276,36 @@ ColumnPtr FunctionArrayReduceInRanges::executeImpl(
-                 Int64 index = indices_col.getInt(j);
-                 UInt64 length = lengths_col.getUInt(j);
+@@ -35,7 +35,9 @@ for i in $(seq 1 $PARTS); do
+         FROM numbers(8)"
+ done
  
--                /// Keep the same as in arraySlice
-+                /// Keep the same as in arraySlice: the range is clipped to the array.
-+                /// The bounds are compared with the remaining size instead of being added to the user-controlled
-+                /// `index` and `length`, which could wrap around.
-+                const size_t size = end - begin;
+-SETTINGS_COMMON="use_query_condition_cache = 0, use_query_cache = 0, use_text_index_negative_tokens_cache = 1,
++# use_columns_cache = 0: a column served from the columns cache opens no data file, which blinds the FileOpen counts.
++SETTINGS_COMMON="use_query_condition_cache = 0, use_query_cache = 0, use_columns_cache = 0,
++    use_text_index_negative_tokens_cache = 1,
+     use_skip_indexes = 1, use_skip_indexes_on_data_read = 1, load_marks_asynchronously = 0,
+     enable_parallel_replicas = 0, max_threads = 1"
  
-                 if (index > 0)
-                 {
--                    local_begin = index - 1;
--                    if (local_begin + length < end - begin)
--                        local_end = local_begin + length;
--                    else
--                        local_end = end - begin;
-+                    const UInt64 offset = static_cast<UInt64>(index) - 1;
-+                    if (offset < size)
-+                    {
-+                        local_begin = offset;
-+                        local_end = local_begin + std::min<UInt64>(length, size - local_begin);
-+                    }
-                 }
-                 else if (index < 0)
-                 {
--                    if (end - begin + index > 0)
--                        local_begin = end - begin + index;
--                    else
--                        local_begin = 0;
+```
+
+---
+
+### Incident Patch 3: `bb4f6365` (2026-10-26)
+**Commit Message**: Merge pull request #127819 from oleg-milanov/fix-obfuscate-datetime-uint32-edge-days
+
+Keep the date of `DateTime` in `obfuscate` on the first and last days of its range
+
+**File**: `src/Common/Obfuscator/Models.h` (modified, +34/-24)
+```diff
+@@ -564,6 +564,31 @@ static Int64 makeDateTimeOnDayOf(const DateLUTImpl & date_lut, Int64 time, UInt8
+     return res;
+ }
+ 
++/// The obfuscated `value` of a type with the range [`min`, `max`], in units of 1 / `scale_multiplier` seconds,
++/// kept on the local day of the source value `src_value`, whose whole seconds are `src_whole`.
++/// At the ends of the range of the type, the source local day can be representable only in part, e.g. `1970-01-01`
++/// in `DateTime('Asia/Tokyo')` or `2262-04-12` in `DateTime64(9, 'Pacific/Kiritimati')`, and the obfuscated time of
++/// day can fall outside of this part. Fold the value into the representable part of the source day. The range is
++/// extended to contain the source value, so it is never empty, even for a value outside of the date lookup table.
++static Int128 foldIntoRepresentablePartOfDay(
++    const DateLUTImpl & date_lut, Int128 value, Int64 src_whole, Int128 src_value, Int64 scale_multiplier, Int128 min, Int128 max)
++{
++    if (value >= min && value <= max)
++        return value;
++
++    Int128 day_begin = Int128(makeDateTimeOnDayOf(date_lut, src_whole, 0, 0, 0)) * scale_multiplier;
++    Int128 day_end = (Int128(makeDateTimeOnDayOf(date_lut, src_whole, 23, 59, 59)) + 1) * scale_multiplier - 1;
++
++    Int128 range_begin = std::min<Int128>(std::max<Int128>(day_begin, min), src_value);
++    Int128 range_end = std::max<Int128>(std::min<Int128>(day_end, max), src_value);
++    Int128 range_size = range_end - range_begin + 1;
++
++    Int128 offset = (value - range_begin) % range_size;
++    if (offset < 0)
++        offset += range_size;
++    return range_begin + offset;
++}
++
+ 
+ /// Leave date part as is and apply pseudorandom permutation to time difference with previous value within the same log2 class.
+ class DateTimeModel : public IModel
+@@ -604,12 +629,15 @@ class DateTimeModel : public IModel
+             /// time of `new_datetime` keeps it inside the source local day even across DST transitions,
+             /// where day lengths differ from 24 hours and a raw "seconds since midnight" offset added to
+             /// the source midnight could otherwise spill onto a neighbouring displayed date.
+-            res_data[i] = static_cast<UInt32>(makeDateTimeOnDayOf(
++            const Int64 res_datetime = makeDateTimeOnDayOf(
+                 date_lut,
+                 src_datetime,
+                 static_cast<UInt8>(date_lut.toHour(new_datetime)),
+                 static_cast<UInt8>(date_lut.toMinute(new_datetime)),
+-                static_cast<UInt8>(date_lut.toSecond(new_datetime))));
++                static_cast<UInt8>(date_lut.toSecond(new_datetime)));
++
++            res_data[i] = static_cast<UInt32>(foldIntoRepresentablePartOfDay(
++                date_lut, res_datetime, src_datetime, src_datetime, 1, 0, std::numeric_limits<UInt32>::max()));
+ 
+             src_prev_value = src_datetime;
+             res_prev_value = res_data[i];
+@@ -688,29 +716,11 @@ class DateTime64Model : public IModel
+                 res_fraction = transform(res_fraction, seed);
+             while (res_fraction >= static_cast<UInt64>(scale_multiplier));
+ 
+-            Int128 res_value = Int128(res_whole) * scale_multiplier + Int128(res_fraction);
 -
--                    if (local_begin + length < end - begin)
--                        local_end = local_begin + length;
-+                    /// Written this way to not overflow for the minimum `Int64`.
-+                    const UInt64 offset_from_end = static_cast<UInt64>(-(index + 1)) + 1;
-+                    if (offset_from_end <= size)
-+                    {
-+                        local_begin = size - offset_from_end;
-+                        local_end = local_begin + std::min<UInt64>(length, size - local_begin);
-+                    }
-                     else
--                        local_end = end - begin;
-+                    {
-+                        /// The range starts before the array: skip the part of it that is before the start.
-+                        const UInt64 before_start = offset_from_end - size;
-+                        if (length > before_start)
-+                            local_end = std::min<UInt64>(length - before_start, size);
-+                    }
-                 }
-             }
+-            /// At the ends of the range of `Int64`, the source local day can be representable only in part,
+-            /// e.g. `2262-04-12` in `DateTime64(9, 'Pacific/Kiritimati')`, and the obfuscated time of day can
+-            /// fall outside of this part. Fold the value into the representable part of the source day.
+-            /// The range is extended to contain the source value, so it is never empty, even for a value
+-            /// outside of the date lookup table.
+-            if (res_value < std::numeric_limits<Int64>::min() || res_value > std::numeric_limits<Int64>::max())
+-            {
+-                Int128 day_begin = Int128(makeDateTimeOnDayOf(date_lut, src_whole, 0, 0, 0)) * scale_multiplier;
+-                Int128 day_end = (Int128(makeDateTimeOnDayOf(date_lut, src_whole, 23, 59, 59)) + 1) * scale_multiplier - 1;
+-
+-                Int128 range_begin = std::min<Int128>(std::max<Int128>(day_begin, std::numeric_limits<Int64>::min()), src_value);
+-                Int128 range_end = std::max<Int128>(std::min<Int128>(day_end, std::numeric_limits<Int64>::max()), src_value);
+-                Int128 range_size = range_end - range_begin + 1;
+-
+-                Int128 offset = (res_value - range_begin) % range_size;
+-                if (offset < 0)
+-                    offset += range_size;
+-                res_value = range_begin + offset;
+-            }
++            const Int128 res_value = Int128(res_whole) * scale_multiplier + Int128(res_fraction);
  
-@@ -473,6 +482,8 @@ REGISTER_FUNCTION(ArrayReduceInRanges)
-     FunctionDocumentation::Description description = R"(
- Applies an aggregate function to array elements in the given ranges and returns an array containing the result corresponding to each range.
- The function will return the same result as multiple `arrayReduce(agg_func, arraySlice(arr1, index, length), ...)`.
-+The only difference is that the length is unsigned: a length greater than the maximum `Int64` value selects the rest of the array,
-+while `arraySlice` interprets such a value as a negative length.
- )";
-     FunctionDocumentation::Syntax syntax = "arrayReduceInRanges(agg_f, ranges, arr1[, arr2, ... ,arrN])";
-     FunctionDocumentation::Arguments arguments = {
+-            res_data[i] = static_cast<Int64>(res_value);
++            res_data[i] = static_cast<Int64>(foldIntoRepresentablePartOfDay(
++                date_lut, res_value, src_whole, src_value, scale_multiplier,
++                std::numeric_limits<Int64>::min(), std::numeric_li
 ```
 
-**File**: `tests/queries/0_stateless/01096_array_reduce_in_ranges.reference` (modified, +1/-1)
+**File**: `tests/queries/0_stateless/05452_obfuscate_datetime_uint32_edge_days.reference` (added, +5/-0)
 ```diff
-@@ -1,5 +1,5 @@
- [['a','b','c'],['b','c','d'],['c','d','e']]
--[0,0,0,0,0,0,0,100,300,0,200,400,0,300,700,0,500,400,0,600,700,0,900,400]
-+[0,0,0,0,0,0,0,100,300,0,200,400,0,300,700,0,500,400,100,600,700,0,900,400]
- 1
- 1
- 1
+@@ -0,0 +1,5 @@
++Asia/Tokyo, first day	['1970-01-01','2000-01-01']
++America/New_York, first day	['1969-12-31','2000-01-01']
++UTC, last day	['2000-01-01','2106-02-07']
++Asia/Tokyo, last day	['2000-01-01','2106-02-07']
++America/New_York, last day	['2000-01-01','2106-02-07']
 ```
 
-**File**: `tests/queries/0_stateless/05407_array_reduce_in_ranges_bounds.reference` (added, +7/-0)
+**File**: `tests/queries/0_stateless/05452_obfuscate_datetime_uint32_edge_days.sql` (added, +26/-0)
 ```diff
-@@ -0,0 +1,7 @@
-+0
-+[0,1,6,3]
-+[0,10]
-+[6]
-+[5,6]
-+[397]
-+[0,0]
-```
-
-**File**: `tests/queries/0_stateless/05407_array_reduce_in_ranges_bounds.sql` (added, +27/-0)
-```diff
-@@ -0,0 +1,27 @@
-+-- `arrayReduceInRanges` returns the same as `arrayReduce` over `arraySlice` for every range with a length that fits in `Int64`.
-+-- The arrays longer than 64 elements also use the pre-aggregated path.
-+SELECT count()
-+FROM
-+(
-+    SELECT
-+        range(n) AS arr,
-+        arrayJoin(range(-260, 260, 7)) AS i,
-+        arrayJoin([0, 1, 2, 5, 63, 64, 65, 100, 300, 9223372036854775807]) AS l,
-+        arrayReduceInRanges('sum', [(i, l)], arr)[1] AS res,
-+        arrayReduce('sum', arraySlice(arr, i, l)) AS expected
-+    FROM (SELECT arrayJoin([0, 1, 3, 64, 200]) AS n)
-+)
-+WHERE res != expected;
+@@ -0,0 +1,26 @@
++-- `DateTime` holds the instants from 0 to 4294967295. Outside of UTC, the local days of these instants,
++-- `1970-01-01` in 'Asia/Tokyo' and `1969-12-31` in 'America/New_York', are representable only in part,
++-- and so is the local day `2106-02-07` of the last instant in every time zone, including UTC.
++-- `obfuscate` keeps the source date of `DateTime` values on these days, instead of wrapping the obfuscated
++-- time of day around into another century. The rows on these days alternate with rows on an ordinary day,
++-- which makes the obfuscated time of day fall anywhere in the day.
 +
-+-- A range that starts before the array is clipped, as in `arraySlice`.
-+SELECT arrayReduceInRanges('sum', [(-5, 2), (-5, 3), (-5, 10), (-3, 2)], [1, 2, 3]);
-+SELECT arrayReduceInRanges('sum', [(-210, 1), (-210, 15)], range(200));
-+SELECT arrayReduceInRanges('sum', [(-9223372036854775808, 18446744073709551615)], [1, 2, 3]);
++SET obfuscate_seed = 'seed';
++SET max_threads = 1;
 +
-+-- A huge length does not wrap around and selects the rest of the array.
-+-- Unlike `arraySlice`, which interprets a length greater than the maximum `Int64` value as a negative length.
-+SELECT arrayReduceInRanges('sum', [(2, 18446744073709551615), (1, 9223372036854775808)], [1, 2, 3]);
-+SELECT arrayReduceInRanges('sum', [(-2, 18446744073709551615)], range(200));
++SELECT 'Asia/Tokyo, first day', arraySort(groupUniqArray(toDate32(x))) FROM (SELECT x FROM obfuscate(
++    SELECT if(number % 2 = 0, toDateTime(0, 'Asia/Tokyo') + toIntervalSecond(number),
++        toDateTime('2000-01-01 00:00:00', 'Asia/Tokyo') + toIntervalSecond(number * 37)) AS x FROM numbers(2000)) LIMIT 2000);
++SELECT 'America/New_York, first day', arraySort(groupUniqArray(toDate32(x))) FROM (SELECT x FROM obfuscate(
++    SELECT if(number % 2 = 0, toDateTime(0, 'America/New_York') + toIntervalSecond(number),
++        toDateTime('2000-01-01 00:00:00', 'America/New_York') + toIntervalSecond(number * 37)) AS x FROM numbers(2000)) LIMIT 2000);
 +
-+-- A range that starts after the array is empty.
-+SELECT arrayReduceInRanges('sum', [(4, 1), (9223372036854775807, 18446744073709551615)], [1, 2, 3]);
++SELECT 'UTC, last day', arraySort(groupUniqArray(toDate32(x))) FROM (SELECT x FROM obfuscate(
++    SELECT if(number % 2 = 0, toDateTime(4294967295, 'UTC') - toIntervalSecond(number),
++        toDateTime('2000-01-01 00:00:00', 'UTC') + toIntervalSecond(number * 37)) AS x FROM numbers(2000)) LIMIT 2000);
++SELECT 'Asia/Tokyo, last day', arraySort(groupUniqArray(toDate32(x))) FROM (SELECT x FROM obfuscate(
++    SELECT if(number % 2 = 0, toDateTime(4294967295, 'Asia/Tokyo') - toIntervalSecond(number),
++        toDateTime('2000-01-01 00:00:00', 'Asia/Tokyo') + toIntervalSecond(number * 37)) AS x FROM numbers(2000)) LIMIT 2000);
++SELECT 'America/New_York, last day', arraySort(groupUniqArray(toDate32(x))) FROM (SELECT x FROM obfuscate(
++    SELECT if(number % 2 = 0, toDateTime(4294967295, 'America/New_York') - toIntervalSecond(number),
++        toDateTime('2000-01-01 00:00:00', 'America/New_York') + toIntervalSecond(number * 37)) AS x FROM numbers(2000)) LIMIT 2000);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #127778** (2026-10-25): Backport #127419 to 26.10: Bump `brotli` from v1.2.0 to v1.2.1 (@robot-clickhouse-ci-2)
-- **PR #127773** (2026-10-25): Fix a race in SQLancer++ feedback statistics that fails the FUZZING oracle (@groeneai)
-- **PR #127771** (2026-10-25): Backport #127453 to 26.10: Respect input_format_null_as_default for nulls in non-nullable Arrow fields (@robot-clickhouse-ci-1)
-- **PR #127770** (2026-10-25): Backport #127453 to 26.9: Respect input_format_null_as_default for nulls in non-nullable Arrow fields (@robot-clickhouse-ci-1)
-- **PR #127769** (2026-10-25): Backport #127453 to 26.8: Respect input_format_null_as_default for nulls in non-nullable Arrow fields (@robot-clickhouse-ci-1)
-- **PR #127768** (2026-10-25): Docs: regenerate reference documentation from source (@clickhouse-gh[bot])
+- **PR #127931** (2026-10-27): Backport #123622 to 26.9: Send the query id with OpenAI AI function requests (@robot-ch-test-poll)
+- **PR #127928** (2026-10-27): Docs: regenerate reference documentation from source (@clickhouse-gh[bot])
+- **PR #127918** (closed): Refuse `DETACH DATABASE` of a `MaterializedPostgreSQL` database with tables before stopping its replication (@buggins)
+- **PR #127904** (2026-10-27): Backport #127411 to 26.10: Bump `c-ares` from 1.34.8 to 1.34.9 (@robot-clickhouse-ci-1)
+- **PR #127903** (2026-10-27): Backport #127411 to 26.9: Bump `c-ares` from 1.34.8 to 1.34.9 (@robot-clickhouse-ci-1)
+- **PR #127902** (2026-10-27): Backport #127411 to 26.8: Bump `c-ares` from 1.34.8 to 1.34.9 (@robot-clickhouse-ci-1)
 
 ---
 
@@ -1896,32 +1800,73 @@ Fix wrong results of `arrayReduceInRanges` for ranges that do not fit in the arr
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #127691 from groeneai/fix-05238-parallel-distinct-block-split
+## X. Merge pull request #116619 from groeneai/fix-executable-pool-slot-leak-on-spawn-
 
 **RULE**:
-When implementing operations in `tests/queries/0_stateless/05238_workload_memory_spilling_distinct.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Common/ShellCommand.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `081ec820`: Merge pull request #127691 from groeneai/fix-05238-parallel-distinct-block-split. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `66543afe`: Merge pull request #116619 from groeneai/fix-executable-pool-slot-leak-on-spawn-error. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/queries/0_stateless/05238_workload_memory_spilling_distinct.sh`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Common/ShellCommand.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-# The first half of the input holds each key once, so however the blocks are split between the 4 streams, one of
-# them sees at least a quarter of the keys, and its preliminary set exceeds `min_bytes_to_spill`.
-SELECT count() = 4194304, sum(k) = 8796090925056
-FROM (SELECT DISTINCT number % 4194304 AS k FROM numbers_mt(8388608))
+ShellCommand::ShellCommand(int & in_fd_, int & out_fd_, int & err_fd_, const ShellCommand::Config & config_)
+    if (pid == -1)
+        return;
+
+    std::unique_ptr<ShellCommand> res(new ShellCommand(
+        pipe_stdin.fds_rw[1],
+        pipe_stdout.fds_rw[0],
+        pipe_stderr.fds_rw[0],
+        config));
+
+    for (size_t i = 0; i < config.read_fds.size(); ++i)
+    {
+        auto & fds = *read_pipe_fds[i];
+        auto fd = config.read_fds[i];
+        res->read_fds.emplace(fd, fds.fds_rw[0]);
+    }
+
+    for (size_t i = 0; i < config.write_fds.size(); ++i)
+    {
+        auto & fds = *write_pipe_fds[i];
+        auto fd = config.write_fds[i];
+        res->write_fds.emplace(fd, fds.fds_rw[1]);
+    }
+
+    res->pid = pid;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-SELECT count() = 1048576, sum(k) = 549755289600
-FROM (SELECT DISTINCT number % 1048576 AS k FROM numbers_mt(8388608))
+ShellCommand::ShellCommand(pid_t pid_, int & in_fd_, int & out_fd_, int & err_fd_, const ShellCommand::Config & config_)
+    , pid(pid_)
+    std::unique_ptr<ShellCommand> res(new ShellCommand(
+        pid,
+        pipe_stdin.fds_rw[1],
+        pipe_stdout.fds_rw[0],
+        pipe_stderr.fds_rw[0],
+        config));
+    for (size_t i = 0; i < config.read_fds.size(); ++i)
+    {
+        auto & fds = *read_pipe_fds[i];
+        auto fd = config.read_fds[i];
+        res->read_fds.emplace(fd, fds.fds_rw[0]);
+    }
+
+    for (size_t i = 0; i < config.write_fds.size(); ++i)
+    {
+        auto & fds = *write_pipe_fds[i];
+        auto fd = config.write_fds[i];
+        res->write_fds.emplace(fd, fds.fds_rw[1]);
+    }
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `081ec820` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `66543afe` are properly handled with clean fallback behavior.

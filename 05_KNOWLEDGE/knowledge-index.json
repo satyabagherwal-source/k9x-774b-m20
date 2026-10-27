@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T13:18:08.008Z",
+  "last_updated": "2026-10-27T13:22:24.461Z",
   "total_verified_learnings": 1114,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6451,8 +6451,8 @@
       "slug": "clickhouse-clickhouse",
       "platform": "github",
       "source_url": "https://github.com/ClickHouse/ClickHouse",
-      "source_version": "a3c14189",
-      "content_hash": "075eec4cce42203d4fb22e3f0747be30bb35e9f51b27947d94a192b0a15a4c60",
+      "source_version": "d491ad88",
+      "content_hash": "4a442519d897f584d35ad8356f6b3e2b01e37acceef65683607327e15c208509",
       "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "promoted_rules": [
@@ -6500,6 +6500,11 @@
           "number": 4469,
           "title": "Merge pull request #127691 from groeneai/fix-05238-parallel-distinct-block-split",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4798,
+          "title": "Merge pull request #116619 from groeneai/fix-executable-pool-slot-leak-on-spawn-",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6507,7 +6512,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T22:07:24.309Z",
+      "verified_at": "2026-10-27T13:22:24.440Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -6715,17 +6720,23 @@
       "slug": "cloudwego-volo",
       "platform": "github",
       "source_url": "https://github.com/cloudwego/volo",
-      "source_version": "26ea87de",
-      "content_hash": "8bf74d34e2f854d0fd9dd47adc6f49b16afd64a951800584569e53f0d0891ed9",
+      "source_version": "80913ce4",
+      "content_hash": "f1ac5848331bef55cda361fe6e8fb2db9ededfc7d5ff1fb21f5f21f9fbd2dc77",
       "dossier_path": "07_PROJECT_LEARNING/cloudwego-volo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cloudwego-volo-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 4797,
+          "title": "volo-thrift): count biz-error headers in TTHeader encode_size (#677)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T04:40:19.137Z",
+      "verified_at": "2026-10-27T13:22:12.872Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31024,8 +31035,8 @@
       "slug": "karakeep-app-karakeep",
       "platform": "github",
       "source_url": "https://github.com/karakeep-app/karakeep",
-      "source_version": "85054d9a",
-      "content_hash": "48892469082366e816eb36a80ed29bf0b3d94b214160cd063cb8cf129adf3af8",
+      "source_version": "fb25e427",
+      "content_hash": "cc18b1c2190d806ca6f57eb7ba957c0799f38e827f4f5930fd543c2d8e4ce4c9",
       "dossier_path": "07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
       "promoted_rules": [
@@ -31042,7 +31053,7 @@
         {
           "number": 3849,
           "title": "ci: unpin Node.js now that 24.22 fixes the addon cleanup crash",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31050,7 +31061,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T09:20:48.705Z",
+      "verified_at": "2026-10-27T13:22:17.165Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32606,8 +32617,8 @@
       "slug": "kumahq-kuma",
       "platform": "github",
       "source_url": "https://github.com/kumahq/kuma",
-      "source_version": "c0ee7238",
-      "content_hash": "163ce8038da220358666e8d7d3385416644c8ae649540d57674e38f84daee60c",
+      "source_version": "7339e5a9",
+      "content_hash": "d9dee7b6525c610f59808baff03ef3a3350785a70b4bff26002a2ef11b51fcc0",
       "dossier_path": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "promoted_rules": [
@@ -32642,7 +32653,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T08:56:55.667Z",
+      "verified_at": "2026-10-27T13:22:18.382Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -118738,13 +118749,13 @@
       "rule_number": 3849,
       "title": "ci: unpin Node.js now that 24.22 fixes the addon cleanup crash",
       "source_url": "https://github.com/karakeep-app/karakeep",
-      "source_version": "85054d9a",
+      "source_version": "fb25e427",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-23T09:20:48.705Z"
+      "verified_at": "2026-10-27T13:22:17.165Z"
     },
     "rule-3850": {
       "learning_id": "rule-3850",
@@ -133375,6 +133386,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T13:18:07.990Z"
+    },
+    "rule-4797": {
+      "learning_id": "rule-4797",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4797,
+      "title": "volo-thrift): count biz-error headers in TTHeader encode_size (#677)",
+      "source_url": "https://github.com/cloudwego/volo",
+      "source_version": "80913ce4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:22:12.872Z"
+    },
+    "rule-4798": {
+      "learning_id": "rule-4798",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4798,
+      "title": "Merge pull request #116619 from groeneai/fix-executable-pool-slot-leak-on-spawn-",
+      "source_url": "https://github.com/ClickHouse/ClickHouse",
+      "source_version": "d491ad88",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:22:24.440Z"
     }
   },
   "aliases": {

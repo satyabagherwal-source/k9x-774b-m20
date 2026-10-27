@@ -5314,3 +5314,8 @@
 | `CYCLE-20261027-NLI6` | `2026-10-27T13:17:54.462Z` | `vikejs/vike` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4793` | Yes (`653d01f5...`) |
 | `CYCLE-20261027-NLYC` | `2026-10-27T13:17:55.044Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4794` | Yes (`eab86212...`) |
 | `CYCLE-20261027-NW0E` | `2026-10-27T13:18:08.078Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4795` | Yes (`64452c16...`) |
+| `CYCLE-20261027-T4WI` | `2026-10-27T13:22:12.882Z` | `nodejs/undici` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4796` | Yes (`07b032a4...`) |
+| `CYCLE-20261027-T4ZA` | `2026-10-27T13:22:12.982Z` | `cloudwego/volo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4797` | Yes (`f1ac5848...`) |
+| `CYCLE-20261027-T8A1` | `2026-10-27T13:22:17.257Z` | `karakeep-app/karakeep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3849` | Yes (`cc18b1c2...`) |
+| `CYCLE-20261027-T98I` | `2026-10-27T13:22:18.498Z` | `kumahq/kuma` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kumahq-kuma-learnings.md` | Yes (`d9dee7b6...`) |
+| `CYCLE-20261027-TDVY` | `2026-10-27T13:22:24.526Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4798` | Yes (`4a442519...`) |

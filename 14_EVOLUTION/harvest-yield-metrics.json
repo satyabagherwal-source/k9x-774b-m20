@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T13:18:08.088Z",
-  "total_cycles_completed": 5291,
-  "total_learnings_persisted": 5291,
-  "total_rules_promoted": 4701,
+  "last_updated": "2026-10-27T13:22:24.534Z",
+  "total_cycles_completed": 5296,
+  "total_learnings_persisted": 5296,
+  "total_rules_promoted": 4705,
   "history": [
-    {
-      "timestamp": "2026-10-26T09:53:30.466Z",
-      "repository": "ParadevAI/Paradev",
-      "learningId": "learn-github-paradevai-paradev",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T09:54:01.428Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T09:54:12.432Z",
-      "repository": "gocd/gocd",
-      "learningId": "learn-github-gocd-gocd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T10:15:10.616Z",
-      "repository": "briaai/Fibo-2.0-dev",
-      "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T10:15:18.898Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-26T10:21:30.904Z",
       "repository": "markmead/hyperui",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-27T13:18:08.088Z",
       "repository": "RediSearch/RediSearch",
       "learningId": "learn-github-redisearch-redisearch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:22:12.894Z",
+      "repository": "nodejs/undici",
+      "learningId": "learn-github-nodejs-undici",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:22:12.990Z",
+      "repository": "cloudwego/volo",
+      "learningId": "learn-github-cloudwego-volo",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:22:17.264Z",
+      "repository": "karakeep-app/karakeep",
+      "learningId": "learn-github-karakeep-app-karakeep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:22:18.506Z",
+      "repository": "kumahq/kuma",
+      "learningId": "learn-github-kumahq-kuma",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:22:24.534Z",
+      "repository": "ClickHouse/ClickHouse",
+      "learningId": "learn-github-clickhouse-clickhouse",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

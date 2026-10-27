@@ -5323,3 +5323,8 @@ Every entry in this ledger must capture:
 | `learn-github-vikejs-vike` | `https://github.com/vikejs/vike` | `2c972989` | Multi-dimensional audit evidence | 2026-10-27T13:17:54.467Z |
 | `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `4a2899d9` | Multi-dimensional audit evidence | 2026-10-27T13:17:55.048Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `f787c19f` | Multi-dimensional audit evidence | 2026-10-27T13:18:08.082Z |
+| `learn-github-nodejs-undici` | `https://github.com/nodejs/undici` | `34399c4e` | Multi-dimensional audit evidence | 2026-10-27T13:22:12.886Z |
+| `learn-github-cloudwego-volo` | `https://github.com/cloudwego/volo` | `80913ce4` | Multi-dimensional audit evidence | 2026-10-27T13:22:12.985Z |
+| `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `fb25e427` | Multi-dimensional audit evidence | 2026-10-27T13:22:17.260Z |
+| `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `7339e5a9` | Multi-dimensional audit evidence | 2026-10-27T13:22:18.502Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `d491ad88` | Multi-dimensional audit evidence | 2026-10-27T13:22:24.529Z |

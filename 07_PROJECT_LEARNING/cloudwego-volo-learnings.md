@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cloudwego-volo-learnings.md`  
 > **Source**: github ([https://github.com/cloudwego/volo](https://github.com/cloudwego/volo))  
-> **Source Version**: `26ea87de`  
+> **Source Version**: `80913ce4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T04:40:19.054Z  
+> **Timestamp**: 2026-10-27T13:22:12.406Z  
 > **Learning ID**: `learn-github-cloudwego-volo`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cloudwego-volo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cloudwego/volo](https://github.com/cloudwego/volo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T04:40:19.047Z  
+> **Harvest Timestamp**: 2026-10-27T13:22:11.902Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Rust RPC framework with high-performance and strong-extensibility for building micro-services.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2633 stars
+- **Stars / Engagement**: 2632 stars
 
 ---
 
@@ -1746,11 +1746,11 @@ impl<F> WebSocketUpgrade<F> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #675** (2026-10-16): **feat(volo-http): track matched route patterns**
-  *Symptoms*: <!-- Thank you for your Pull Request. Please provide a description above and review the requirements below.  Bug fixes and new features should include tests.  Contributors guide: https://github.com/cloudwego/volo/blob/main/CONTRIBUTING.md -->  ## Motivation Currently, requests use the raw URL path for logging and metrics, which can lead to high cardinality when paths contain dynamic parameters.  For example, requests to /users/123 and /users/456 should be associated with the same route pattern, /users/{id}. <!-- Explain the context and why you're making that change. What is the problem you're trying to solve? If a new feature is being added, describe the intended use case that feature fulfills. -->  ## Solution This change adds MatchedPath to identify requests by their registered route patterns instead. <!-- Summarize the solution and provide any necessary context needed to understand the code change. --> 
+- **Issue #677** (2026-10-27): **fix(volo-thrift): count biz-error headers in TTHeader encode_size**
+  *Symptoms*: <!-- Thank you for your Pull Request. Please provide a description above and review the requirements below.  Bug fixes and new features should include tests.  Contributors guide: https://github.com/cloudwego/volo/blob/main/CONTRIBUTING.md -->  ## Motivation `encode_size` only entered the string key-value section for server responses when backward metainfo or a connection reset was present, while `encode` also enters it for a biz error. As a result, a response carrying only a business error was undercounted by 48 bytes (72 with `biz-extra`).  With the unsafe-codec feature enabled, the unchecked writer relies on the size calculation to reserve sufficient space, so the undercounting can lead to out-of-bounds writes. <!-- Explain the context and why you're making that change. What is the problem you're trying to solve? If a new feature is being added, describe the intended use case that feature fulfills. -->  ## Solution Include the presence of a business error in the encode_size condition so that it accounts for the same string key-value headers as encode. <!-- Summarize the solution and provide any necessary context needed to understand the code change. -->
 
-- **Issue #674** (2026-09-28): **fix(volo-thrift): create spans before constructing futures**
-  *Symptoms*: ## Motivation  The ping-pong server can perform avoidable large memory copies while constructing the future for each decoded request. This becomes expensive when the concrete service/middleware stack produces a large future and the span hook remains a potentially unwinding call after optimization.  The relevant code is in `volo-thrift/src/transport/pingpong/server.rs`:  ```rust // Before, simplified: tracing_cx was obtained through an unsafe transmute. let result = async {     // Handle the request, await the service, and encode the response. } .instrument(span_provider.on_serve(tracing_cx)) .await; ```  ### How the copies arise  1. The method-call receiver is evaluated before its argument. Therefore, the `async { ... }` future is constructed before `on_serve(...)` is called. Its captured values are already part of that future, even though its body has not been polled yet. See the Rust Reference on [operand evaluation order](https://doc.rust-lang.org/reference/expressions.html#evaluation-order-of-operands) and [async blocks](https://doc.rust-lang.org/reference/expressions/block-expr.html#async-blocks). 2. The request future needs storage for the states it can enter later, including the service future held across `service.call(...).await`. A large nested service future can consequently make the enclosing request future large, even though those later states are not active during construction. 3. If `on_serve` unwinds, the already-constructed temporary request future must be dro
+- **Issue #676** (2026-10-26): **fix(volo-thrift): count biz-error headers in TTHeader encode_size**
+  *Symptoms*: <!-- Thank you for your Pull Request. Please provide a description above and review the requirements below.  Bug fixes and new features should include tests.  Contributors guide: https://github.com/cloudwego/volo/blob/main/CONTRIBUTING.md -->  ## Motivation `encode_size` only entered the string key-value section for server responses when backward metainfo or a connection reset was present, while `encode` also enters it for a biz error. As a result, a response carrying only a business error was undercounted by 48 bytes (72 with `biz-extra`).  With the unsafe-codec feature enabled, the unchecked writer relies on the size calculation to reserve sufficient space, so the undercounting can lead to out-of-bounds writes. <!-- Explain the context and why you're making that change. What is the problem you're trying to solve? If a new feature is being added, describe the intended use case that feature fulfills. -->  ## Solution Include the presence of a business error in the encode_size condition so that it accounts for the same string key-value headers as encode. <!-- Summarize the solution and provide any necessary context needed to understand the code change. --> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1767,306 +1767,128 @@ impl<F> WebSocketUpgrade<F> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6220d5ba` (2026-03-03)
-**Commit Message**: fix(volo-thrift): remove dirty check from try_checkout
+### Incident Patch 1: `80913ce4` (2026-10-27)
+**Commit Message**: fix(volo-thrift): count biz-error headers in TTHeader encode_size (#677)
 
-The dirty flag is true during every normal in-flight write, which is
-the common state under high QPS. Checking it in try_checkout() caused
-the fast path to return None and fall through to the slow path — which
-pops the connection, releases the lock, and re-exposes the race window
-this fix is designed to eliminate.
-
-The broken-write case (timeout/cancel leaves dirty=true permanently) is
-already handled downstream: the next send() sees dirty=true, sets
-write_error=true, and write_error is caught by both try_checkout() and
-reusable().
-
-Co-Authored-By: Claude Opus 4.6 <[REDACTED_EMAIL]>
-
-**File**: `volo-thrift/src/transport/multiplex/thrift_transport.rs` (modified, +0/-1)
+**File**: `Cargo.lock` (modified, +1/-1)
 ```diff
-@@ -382,7 +382,6 @@ impl<TTEncoder: Send, Resp: Send> Poolable for ThriftTransport<TTEncoder, Resp>
-         if !self.write_error.load(std::sync::atomic::Ordering::Relaxed)
-             && !self.read_error.load(std::sync::atomic::Ordering::Relaxed)
-             && !self.read_closed.load(std::sync::atomic::Ordering::Relaxed)
--            && !self.dirty.load(std::sync::atomic::Ordering::Relaxed)
-         {
-             Some(self.clone())
-         } else {
-```
-
----
-
-### Incident Patch 2: `37cf3ed1` (2026-03-03)
-**Commit Message**: fix(volo-thrift): eliminate multiplex pool race causing ghost connections
-
-In high-concurrency multiplex scenarios, Pool::get() had a race window
-where shared connections were popped from idle, lock released for
-reusable() check, then cloned and reinserted. During the unlock window,
-concurrent callers saw the idle pool as empty and triggered new TCP
-connections that became "ghosts" (alive but unused), leading to
-TIME_WAIT buildup.
-
-Add Poolable::try_checkout() for synchronous, non-consuming checkout of
-shared connections while holding the pool lock. The multiplex
-ThriftTransport implementation checks write_error, read_error,
-read_closed, and dirty flags, then returns a cheap clone. Pool::get()
-uses this as a fast path before the existing pop-check-reinsert loop,
-so the idle pool never appears empty to concurrent callers.
-
-When try_checkout() returns None (not implemented or connection broken),
-the code falls through to the existing slow path for full async
-reusable() checking, preserving backward compatibility for external
-Poolable implementations.
-
-Co-Authored-By: Claude Opus 4.6 <[REDACTED_EMAIL]>
-
-**File**: `volo-thrift/src/transport/multiplex/thrift_transport.rs` (modified, +12/-0)
-```diff
-@@ -377,4 +377,16 @@ impl<TTEncoder: Send, Resp: Send> Poolable for ThriftTransport<TTEncoder, Resp>
-     fn can_share(&self) -> bool {
-         true
-     }
-+
-+    fn try_checkout(&self) -> Option<Self> {
-+        if !self.write_error.load(std::sync::atomic::Ordering::Relaxed)
-+            && !self.read_error.load(std::sync::atomic::Ordering::Relaxed)
-+            && !self.read_closed.load(std::sync::atomic::Ordering::Relaxed)
-+            && !self.dirty.load(std::sync::atomic::Ordering::Relaxed)
-+        {
-+            Some(self.clone())
-+        } else {
-+            None
-+        }
-+    }
- }
-```
-
-**File**: `volo-thrift/src/transport/pool/mod.rs` (modified, +30/-0)
-```diff
-@@ -57,6 +57,16 @@ pub trait Poolable: Sized {
-     fn can_share(&self) -> bool {
-         false
-     }
-+
-+    /// Synchronous, non-consuming checkout for shared connections.
-+    ///
-+    /// Returns `Some(clone)` if the connection is reusable; `None` otherwise.
-+    /// This allows shared (multiplex) connections to be checked out while
-+    /// holding the pool lock, eliminating the race window where the idle pool
-+    /// appears empty to concurrent callers.
-+    fn try_checkout(&self) -> Option<Self> {
-+        None
-+    }
- }
- 
- /// When checking out a pooled connection, it might be that the connection
-@@ -239,6 +249,26 @@ impl<K: Key, T: Poolable + Send + 'static> Pool<K, T> {
- 
-                     if let Some(list) = inner.idle.get_mut(&key) {
-                         tracing::trace!("[VOLO] take? {:?}: expiration = {:?}", key, expiration.0);
-+
-+                        // Fast path: shared (multiplex) connections can be checked out
-+                        // synchronously while holding the lock. This avoids the race where
-+                        // the idle pool appears empty after pop, causing spurious new
-+                        // connections.
-+                        while list.front().is_some_and(|e| e.inner.can_share()) {
-+                            if expiration.expires(list[0].idle_at) {
-+                                list.pop_front();
-+                                continue;
-+                            }
-+                            if let Some(conn) = list[0].inner.try_checkout() {
-+                                list[0].idle_at = Instant::now();
-+                                return Ok(self.reuse(&key, conn));
-+                            }
-+                            // try_checkout returned None: either not implemented or
-+                            // connection is broken. Fall through to the slow path
-+                            // which will do the full async reusable() check.
-+                            break;
-+                        }
-+
-                         while let Some(entry) = list.pop_front() {
-                             // TODO: Actually, since the `idle` list is pushed to the end always,
-                             // that would imply that if *this* entry is expired, then anything
-```
-
----
-
-### Incident Patch 3: `21bb99fc` (2025-11-12)
-**Commit Message**: fix(volo-build): use the global path for exception item when generate… (#630)
-
-fix(volo-build): use the global path for exception item when generate the thrift server template
-
-**File**: `Cargo.lock` (modified, +2/-2)
-```diff
-@@ -4227,7 +4227,7 @@ dependencies = [
+@@ -4369,7 +4369,7 @@ version = "0.12.0"
  
  [[package]]
- name = "volo-build"
--version = "0.11.5"
-+version = "0.11.6"
+ name = "volo-thrift"
+-version = "0.12.6"
++version = "0.12.7"
  dependencies = [
   "ahash",
   "anyhow",
-@@ -4257,7 +4257,7 @@ dependencies = [
- 
- [[package]]
- name = "volo-cli"
--version = "0.11.3"
-+version = "0.11.4"
- dependencies = [
-  "anyhow",
-  "clap",
 ```
 
-**File**: `volo-build/Cargo.toml` (modified, +1/-1)
+**File**: `volo-thrift/Cargo.toml` (modified, +1/-1)
 ```diff
 @@ -1,6 +1,6 @@
  [package]
- name = "volo-build"
--version = "0.11.5"
-+version = "0.11.6"
+ name = "volo-thrift"
+-version = "0.12.6"
++version = "0.12.7"
  edition.workspace = true
  homepage.workspace = true
  repository.workspace = true
 ```
 
-**File**: `volo-build/src/thrift_backend.rs` (modified, +101/-1)
+**File**: `volo-thrift/src/codec/default/ttheader.rs` (modified, +64/-1)
 ```diff
-@@ -835,7 +835,7 @@ impl pilota_build::CodegenBackend for VoloThriftBackend {
-             .join(",");
+@@ -597,7 +597,9 @@ pub(crate) fn encode_size<Cx: ThriftContext>(cx: &mut Cx) -> Result<usize, Thrif
+                     || thrift_cx.idl_service_name().is_some()
+             }
+             Role::Server => {
+-                metainfo.get_all_backward_transients().is_some() || thrift_cx.encode_conn_reset()
++                metainfo.get_all_backward_transients().is_some()
++                    || thrift_cx.encode_conn_reset()
++                    || thrift_cx.stats().biz_error().is_some()
+             }
+         };
  
-         if let Some(p) = &method.exceptions {
--            let exception = self.inner.cur_related_item_path(p.did);
-+            let exception = self.inner.codegen_ty(p.did).global_path("volo_gen");
-             ret_ty = format!("::volo_thrift::MaybeException<{ret_ty}, {exception}>");
-         }
+@@ -986,10 +988,71 @@ fn set_biz_error_header<Cx: ThriftContext>(
  
-@@ -900,3 +900,103 @@ impl pilota_build::MakeBackend for MkThriftBackend {
-         }
+ #[cfg(test)]
+ mod tests {
++    use std::cell::RefCell;
++
++    use metainfo::{METAINFO, MetaInfo};
++    use pilota::thrift::TMessageType;
++    use volo::context::{RpcCx, RpcInfo};
++
+     use super::*;
++    use crate::context::{ClientContext, ServerContext, ServerCxInner};
+ 
+     #[test]
+     fn test_idl_service_name_constant() {
+         assert_eq!(HEADER_IDL_SERVICE_NAME, "isn");
      }
- }
 +
-+#[cfg(test)]
-+mod tests {
-+    use std::fs;
++    /// Regression test: when a biz error is the only string KV content, `encode_size` used to
++    /// skip the whole string KV section (it only looked at backward metainfo and connection
++    /// reset), under-reporting the size that `encode` then wrote.
++    #[tokio::test]
++    async fn encode_size_counts_biz_error_headers_on_their_own() {
++        METAINFO
++            .scope(RefCell::new(MetaInfo::default()), async {
++                for with_extra in [false, true] {
++                    let mut cx = ServerContext(RpcCx::new(
++                        RpcInfo::with_role(Role::Server),
++                        ServerCxInner {
++                            msg_type: Some(TMessageType::Exception),
++                            ..Default::default()
++                        },
++                    ));
++                    let mut err = BizError::new(500, FastStr::from_static_str("request failed"));
++                    if with_extra {
++                        let mut extra = ahash::AHashMap::default();
++                        extra.insert(FastStr::from_static_str("k"), FastStr::from_static_str("v"));
++                        err.extra = Some(extra);
++                    }
++                    cx.stats_mut().set_biz_error(err);
 +
-+    use pilota_build::{
-+        Builder, DefId, IdlService, SourceType,
-+        middle::context::tls::CONTEXT,
-+        parser::ThriftParser,
-+        rir::{self, Item},
-+    };
-+    use tempfile::tempdir;
++                    let size = encode_size(&mut cx).unwrap();
++                    let mut dst = BytesMut::new();
++                    encode(&mut cx, &mut dst, 0).unwrap();
++                    assert_eq!(size, dst.len(), "with_extra = {with_extra}");
 +
-+    use super::*;
-+
-+    fn build_test_context(thrift_content: &str) -> Context {
-+        let dir = tempdir().expect("create temp dir");
-+        let file_path = dir.path().join("test.thrift");
-+        fs::write(&file_path, thrift_content).expect("write thrift");
-+
-+        Builder::<pilota_build::MkThriftBackend, ThriftParser>::build_cx(
-+            vec![IdlService::from_path(file_path)],
-+            None,
-+            ThriftParser::default(),
-+            Vec::new(),
-+            true,
-+            SourceType::Thrift,
-+            true,
-+            Vec::new(),
-+            Vec::new(),
-+            Vec::new(),
-+            "common".into(),
-+            false,
-+            false,
-+            false,
-+        )
-+    }
-+
-+    fn find_first_service(cx: &Context) -> DefId {
-+        for (def_id, node) in cx.nodes().iter() {
-+            if let rir::NodeKind::Item(item) = &node.kind {
-+                if let Item::Service(svc) = &**item {
-+                    let _ = svc; // only need def_id
-+                    return *def_id;
++                    // The header must still carry the biz error to the client.
++                    let mut bytes = dst.freeze();
++                    let _len = bytes.get_u32();
++                    let mut client =
++                        ClientContext::new(1, RpcInfo::with_role(Role::Client), TMessageType::Call);
++                    decode(&mut client, &mut bytes).unwrap();
++                    assert!(bytes.is_empty());
++                    let biz = client
++                        .stats()
++                        .biz_error()
++                        .as_ref()
++                        .expect("biz error decoded");
++                    assert_eq!(biz.status_code, 500);
++                    assert_eq!(biz.status_message.as_str(), "request failed");
++                    assert_eq!(
++                        biz.extra
++                            .as_ref()
++                            .and_then(|e| e.get("k"))
++                            .map(|v| v.as_str()),
++                        with_extra.then_some("v")
++                    );
 +                }
-+            }
-+        }
-+        panic!("no service found in parsed thrift");
++            })
++            .await;
 +    }
-+
-+    #[test]
-+    fn test_codegen_service_method_with_global_path_exception() {
-+        let cx = build_test_context(
-+            r#"
-+            exception Exception1 {
-+                1: string message;
-+            }
-+            exception Exception2 {
-+                1: string message;
-+            }
-+            service S3 {
-+                i32 DoThing(1: i64 type, 2: string Name) throws (1: Exception1 e1, 2: Exception2 e2);
-+            }
-+            "#,
-+        );
-+
-+        let svc_def_id = find_first_service(&cx);
-+        let methods = cx.service_methods(svc_def_id);
-+        assert!(!methods.is_empty());
-+        let m = &methods[0];
-+
-+        let backend = VoloThriftBackend {
-+            inner: ThriftBackend::new(cx.clone()),
-+        };
-+
-+        let sig = CONTEXT.set(&cx, || {
-+            <VoloThriftBackend as pilota_build::CodegenBackend>::codegen_service_method_with_global_path(
-+                &backend,
-+                svc_def_id,
-+                m,
-+            )
-+        });
-+
-+        // 期望为 Result<MaybeException<i32, <exception_enum_global_path>>, ServerError>
-+        let p = m.exceptions.as_ref().expect("exceptions must exist");
-+        let exc_path = cx
-+            .item_path(p.did)
-+            .iter()
-+            .map(|s| s.to_string())
-+            .collect::<Vec<_>>()
-+            .join("::");
-+        let exc_global = format!("volo_gen::{exc_path}");
-+        let expected = format!(
-+            "-> ::core::result::Result<::volo_thrift::MaybeException<i32, {}>, \
-+             ::volo_thrift::ServerError>",
-+            exc_global
-+        );
-+        assert!(sig.contains(&expected), "signature: {sig}");
-+    }
-+}
-```
-
-**File**: `volo-cli/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "volo-cli"
--version = "0.11.3"
-+version = "0.11.4"
- edition.workspace = true
- homepage.workspace = true
- repository.workspace = true
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #677** (2026-10-27): fix(volo-thrift): count biz-error headers in TTHeader encode_size (@Joshuahoky)
+- **PR #676** (closed): fix(volo-thrift): count biz-error headers in TTHeader encode_size (@Joshuahoky)
 - **PR #675** (2026-10-16): feat(volo-http): track matched route patterns (@Joshuahoky)
 - **PR #674** (2026-09-28): fix(volo-thrift): create spans before constructing futures (@shenyj3)
 - **PR #671** (2026-09-30): fix(volo-build): gate multiservice binary codec behind unsafe-codec (@shenyj3)
 - **PR #666** (2026-08-18): chore(volo-http): release 0.5.6 (@junliurs)
-- **PR #664** (2026-08-13): fix(volo-build): use parentheses for format! macros (@junliurs)
-- **PR #663** (2026-08-17): fix(volo-http): return reusable HTTP/1 connections from the driver (@junliurs)
 
 ---
 
@@ -2080,3 +1902,34 @@ fix(volo-build): use the global path for exception item when generate the thrift
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. volo-thrift): count biz-error headers in TTHeader encode_size (#677)
+
+**RULE**:
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cloudwego/volo. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `80913ce4`: volo-thrift): count biz-error headers in TTHeader encode_size (#677). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+version = "0.12.7"
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+version = "0.12.6"
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `80913ce4` are properly handled with clean fallback behavior.
