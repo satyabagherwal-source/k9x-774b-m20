@@ -5596,3 +5596,5 @@ Every entry in this ledger must capture:
 | `learn-github-michael-denyer-pstack-claude` | `https://github.com/michael-denyer/pstack-claude` | `abd512a6` | Multi-dimensional audit evidence | 2026-10-27T23:52:32.170Z |
 | `learn-github-onejs-one` | `https://github.com/onejs/one` | `96fa7367` | Multi-dimensional audit evidence | 2026-10-27T23:52:37.856Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `6b124303` | Multi-dimensional audit evidence | 2026-10-27T23:52:42.372Z |
+| `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `52965b80` | Multi-dimensional audit evidence | 2026-10-27T23:59:19.274Z |
+| `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `1f6fd502` | Multi-dimensional audit evidence | 2026-10-27T23:59:30.632Z |

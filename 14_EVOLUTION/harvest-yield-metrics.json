@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T23:52:42.376Z",
-  "total_cycles_completed": 5564,
-  "total_learnings_persisted": 5564,
-  "total_rules_promoted": 4978,
+  "last_updated": "2026-10-27T23:59:30.638Z",
+  "total_cycles_completed": 5566,
+  "total_learnings_persisted": 5566,
+  "total_rules_promoted": 4980,
   "history": [
-    {
-      "timestamp": "2026-10-27T14:50:31.251Z",
-      "repository": "clockworklabs/SpacetimeDB",
-      "learningId": "learn-github-clockworklabs-spacetimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T14:53:47.489Z",
-      "repository": "patrickchugh/terravision",
-      "learningId": "learn-github-patrickchugh-terravision",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T14:53:52.263Z",
       "repository": "modelcontextprotocol/php-sdk",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-27T23:52:42.376Z",
       "repository": "aleo-labs-protocol/snarkOS",
       "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T23:59:19.280Z",
+      "repository": "fallow-rs/fallow",
+      "learningId": "learn-github-fallow-rs-fallow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T23:59:30.638Z",
+      "repository": "apple/foundationdb",
+      "learningId": "learn-github-apple-foundationdb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T23:52:42.380Z",
+  "last_updated": "2026-10-27T23:59:30.641Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4896,14 +4896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fallow-rs-fallow",
-      "content_hash": "cb096ca078d816a34d999f106370195bdf880f497ca1e219f9b1394173ce2a21",
-      "verified_at": "2026-10-26T12:20:03.766Z",
+      "content_hash": "a38fda494c5ecf862828cc02db489dcf81c2f2352f69232a4a8d27c67f28e862",
+      "verified_at": "2026-10-27T23:59:19.283Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T12:20:03.766Z"
+      "last_updated": "2026-10-27T23:59:19.283Z"
     },
     "expo/create-react-native-app": {
       "repository": "expo/create-react-native-app",
@@ -7581,14 +7581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apple-foundationdb",
-      "content_hash": "9f57772010db3c703916a86e7a5d073f6d6bab3cda93ba07c2ddc0c36d727985",
-      "verified_at": "2026-10-27T11:16:07.750Z",
+      "content_hash": "f2938dfb7266ca12b65fccf7339bb15b096374d163e4914b5dab0351382efc0a",
+      "verified_at": "2026-10-27T23:59:30.641Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T11:16:07.750Z"
+      "last_updated": "2026-10-27T23:59:30.641Z"
     },
     "kucherenko/jscpd": {
       "repository": "kucherenko/jscpd",

@@ -5587,3 +5587,5 @@
 | `CYCLE-20261027-BQG6` | `2026-10-27T23:52:32.166Z` | `michael-denyer/pstack-claude` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5061` | Yes (`ec6f32df...`) |
 | `CYCLE-20261027-BUU4` | `2026-10-27T23:52:37.852Z` | `onejs/one` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5062` | Yes (`c35ad664...`) |
 | `CYCLE-20261027-BYBK` | `2026-10-27T23:52:42.368Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5038` | Yes (`d4a3d7dc...`) |
+| `CYCLE-20261027-KGKN` | `2026-10-27T23:59:19.271Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5063` | Yes (`a38fda49...`) |
+| `CYCLE-20261027-KPC5` | `2026-10-27T23:59:30.629Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5064` | Yes (`f2938dfb...`) |

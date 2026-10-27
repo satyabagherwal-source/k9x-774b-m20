@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source**: github ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
-> **Source Version**: `f2d8b806`  
+> **Source Version**: `52965b80`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T12:20:03.348Z  
+> **Timestamp**: 2026-10-27T23:59:18.747Z  
 > **Learning ID**: `learn-github-fallow-rs-fallow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T12:20:01.781Z  
+> **Harvest Timestamp**: 2026-10-27T23:59:17.505Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Codebase intelligence for TypeScript and JavaScript. Health, complexity hotspots, duplication, architecture boundaries, circular dependencies, design-system drift, and unused code, from one graph. CLI, GitHub Action, LSP, MCP, and VS Code. Rust, MIT licensed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5250 stars
+- **Stars / Engagement**: 5261 stars
 
 ---
 
@@ -1263,15 +1263,11 @@ pub fn run_setup_hooks_with_label(opts: &SetupHooksOptions<'_>, command_label: &
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3840** (2026-10-23): **Class inside ::view-transition-*(...) reported as unused export in SCSS Modules**
-  *Symptoms*: ### What happened?  fallow reports classes used in view transitions as unused in SCSS modules.  ### Reproduction  1. Create an SCSS modules file with a view transition class 2. Import the SCSS modules file in a JS file and use it  ```scss //app.module.scss .foo {   view-transition-name: demo; }  ::view-transition-new(.demo) {   animation-duration: 200ms; } ```  ```js // app.js import css from './app.module.scss'  console.log(css.foo); ```  fallow reports `.demo` as unused but it's actually used.  ``` ● Unused exports (1)   app.module.scss     :5 demo ```  ### Expected behavior  fallow should not report it as unused export  ### Fallow version  3.35.0  ### Operating system  Windows  ### Configuration  ```toml  ```
-  **Post-Mortem & Fix Analysis**:
-  > Fixed in v3.36.0 (`npm install fallow@3.36.0`). The class scan now skips the argument of `::view-transition-new(.demo)` and the other `::view-transition-*()` pseudo-elements, so `demo` is no longer reported as an unused export.  Thanks for reporting this together with #3839. 
+- **Issue #3886** (2026-10-27): **unused-dependencies: inspect literal local shell helpers invoked by package scripts**
+  *Symptoms*: Package command analysis credits direct binaries and discovers JavaScript or TypeScript helper files, but does not read an invoked shell helper's contents.  For example:  ```json { "scripts": { "build": "bash scripts/build.sh" } } ```  ```sh # scripts/build.sh report-cli --format json ```  If an installed local package declares the `report-cli` binary and the helper is its only usage, command analysis does not discover that usage. A useful regression fixture would declare an otherwise unused package as a negative control.  The [command analysis entry point](https://github.com/fallow-rs/fallow/blob/9c6fc8a2bb1e8a207441ec5f7a5d7b361a34b180/crates/core/src/scripts/mod.rs#L1383) processes supplied command strings. [Command accumulation](https://github.com/fallow-rs/fallow/blob/9c6fc8a2bb1e8a207441ec5f7a5d7b361a34b180/crates/core/src/scripts/mod.rs#L1464) collects binary and file information without reading invoked shell files. There is already separate [shell-content reading for hook directories](https://github.com/fallow-rs/fallow/blob/9c6fc8a2bb1e8a207441ec5f7a5d7b361a34b180/crates/core/src/scripts/hooks.rs#L144).  ## Requested behavior  Read statically named, project-local shell helpers without executing them, and feed supported commands into the existing binary-to-package analysis. Bound recursion and detect cycles. Respect working-directory changes or expose unresolved context rather than assuming a package is unused.  Cover `bash scripts/build.sh`, a directly invoked execut
 
-- **Issue #3839** (2026-10-23): **Function/mixin call reported as unused export in SCSS Modules**
-  *Symptoms*: ### What happened?  fallow reports namespaced function calls like `math.div()` / `utils.bar()` and mixin calls like `@include utils.baz()` as unused exports in `*.module.scss` files.  ### Reproduction  1. Create an SCSS file with a function / mixin 2. Create an SCSS module file that imports and uses them 3. import the SCSS module file and use it in your app   ```scss // utils.scss @function bar() {   @return red; }  @mixin baz {   border: 1px solid red; } ```  ```scss // app.module.scsss @use './utils'; @use 'sass:math';  .foo {   height: math.div(100px, 10);   background: utils.bar();    @include utils.baz(); } ```  ```js // app.js import css from './app.module.scss'  console.log(css.foo); ```  fallow reports the function / mixin calls as unused:  ``` ● Unused exports (3)   app.module.scss (3)     :6 div     :7 bar     :9 baz ```  ### Expected behavior  fallow shouldn't recognize them as CSS classes and not report them as unused.  ### Fallow version  3.35.0  ### Operating system  Windows  ### Configuration  ```toml  ```
-  **Post-Mortem & Fix Analysis**:
-  > Released in v3.36.0 (`npm install fallow@3.36.0`).  In SCSS Modules, a namespaced call such as `math.div(100px, 10)` or `utils.bar()`, and a namespaced mixin such as `@include utils.baz`, no longer give a false `unused-export`. In `.module.sass` files the `+utils.baz` shorthand is skipped too. A compound selector such as `button.primary` still exports `primary`.  Thanks for the report. 
+- **Issue #3885** (2026-10-27): **audit: align API and MCP base-worktree cleanup with the CLI snapshot lifecycle**
+  *Symptoms*: The CLI deregisters its detached base snapshot before publishing the snapshot as ready. Programmatic audit uses a separate `TemporaryBaseWorktree` implementation, which keeps the worktree registered until `Drop`.  That makes internal base worktrees visible to Git-aware tools throughout API and MCP analysis. If the host process terminates before `Drop`, its registered worktree can remain behind. Normal return and cooperative cancellation do perform cleanup.  ## Current routes  - [Programmatic audit creates TemporaryBaseWorktree](https://github.com/fallow-rs/fallow/blob/9c6fc8a2bb1e8a207441ec5f7a5d7b361a34b180/crates/api/src/runtime/audit.rs#L194). - [Supported MCP audit requests use the typed API](https://github.com/fallow-rs/fallow/blob/9c6fc8a2bb1e8a207441ec5f7a5d7b361a34b180/crates/mcp/src/tools/audit.rs#L36). - [Temporary worktree creation](https://github.com/fallow-rs/fallow/blob/9c6fc8a2bb1e8a207441ec5f7a5d7b361a34b180/crates/engine/src/repo_refs.rs#L107) and [Drop cleanup](https://github.com/fallow-rs/fallow/blob/9c6fc8a2bb1e8a207441ec5f7a5d7b361a34b180/crates/engine/src/repo_refs.rs#L1197). - [Decision-surface base analysis](https://github.com/fallow-rs/fallow/blob/9c6fc8a2bb1e8a207441ec5f7a5d7b361a34b180/crates/api/src/runtime/decision_surface.rs#L264) uses the same implementation. - [CLI deregistration before readiness](https://github.com/fallow-rs/fallow/blob/9c6fc8a2bb1e8a207441ec5f7a5d7b361a34b180/crates/cli/src/base_worktree.rs#L120) provides the existing compari
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1288,601 +1284,1030 @@ pub fn run_setup_hooks_with_label(opts: &SetupHooksOptions<'_>, command_label: &
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `658cdad3` (2026-10-25)
-**Commit Message**: fix(cli): name the unenforced failing gates of a bare machine run (#3875)
+### Incident Patch 1: `de0b6fe7` (2026-10-27)
+**Commit Message**: fix(security): trust module-relative path bases and check every path segment (#3926)
 
-* fix(cli): name the unenforced failing gates of a bare machine run
+* fix(security): trust module-relative path bases and check every path segment
 
-Bare fallow in a machine format exits 0 on findings, while fallow
-dead-code exits 1 on the same findings. The run gave no sign of this.
-Now a bare machine run that exits 0 with a failing findings gate prints
-one stderr line, also under --quiet. The line names each gate, the
---format value and --fail-on-issues. The exit code and stdout do not
-change.
+A path that starts from import.meta.url, import.meta.dirname,
+import.meta.filename, __dirname, __filename or process.cwd() and adds only
+literal segments cannot carry caller input. Sink capture now treats such an
+argument like a literal. A module-scope const that holds such a path is
+also trusted. fileURLToPath(value) and new URL(value, import.meta.url) stay
+candidates when value is not known.
 
-Closes #3826
+The path.join and path.resolve matcher checked only the first argument.
+The row is now variadic: it checks every argument and keeps one candidate
+for each call. It prefers a source-backed argument. A path.relative
+containment guard now clears every argument of the guarded call.
 
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-* docs: say what exit 0 means for a bare machine run
-
-The schema exit codes, the skill, AGENTS.md and the npm README said that
-exit 0 means no error-severity findings. Bare fallow in a machine format
-exits 0 on findings unless --fail-on-issues is set, so an agent that
-followed the contract read a failing run as clean. Define 0 as no
-enforced gate failed, say that 1 means findings and not a tool failure,
-and tell agents how to gate.
-
-Refs #3826
+Closes #3711
+Closes #3712
 
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
----------
+* fix(extract): bump the extraction cache version for path-traversal facts
 
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+The cached security sinks and sanitized sink arguments change meaning in
+this branch. Trusted module-relative paths are no longer sinks. A
+path.relative guard now covers every argument, not only argume
 
-**File**: `.agents/skills/fallow/SKILL.md` (modified, +2/-2)
+**File**: `changelog.d/fix-path-traversal-trusted-bases-3711.md` (added, +6/-0)
 ```diff
-@@ -42,7 +42,7 @@ cargo install fallow-cli   # build from source
- 
- ## Agent Rules
- 1. **Always use `--format json --quiet`** for machine-readable output and parse stdout as JSON. Compact JSON is the default; never depend on whitespace or add `--pretty` in agent pipelines. Keep stderr separate so diagnostics remain visible; never merge it into the JSON stream with `2>&1`.
--2. **Preserve and interpret the exit status.** Codes 0 and 1 are successful analysis outcomes: 0 is clean and 1 means findings. Treat every other code according to `fallow schema.exit_codes`. Do not force a successful status, because that hides validation, license, setup, network, and security-gate outcomes.
-+2. **Preserve and interpret the exit status.** Codes 0 and 1 are successful analysis outcomes. 0 means no enforced gate failed, and 1 means an enforced gate failed: findings, not a tool failure. Bare `fallow` in a machine format exits 0 on findings unless you pass `--fail-on-issues`. To gate, pass `--fail-on-issues`, run `fallow dead-code` or `fallow audit`, or read `gate_outcomes`: `status: "fail"` with `enforced: false` is a failing gate that did not set the exit code. Treat every other code according to `fallow schema.exit_codes`. Do not force a successful status, because that hides validation, license, setup, network, and security-gate outcomes.
- 3. **Use `--explain`** to include a `_meta` object in JSON output with metric definitions, ranges, and interpretation hints. In human format, `--explain` prints a `Description:` line under each section header.
- 4. **Use the root `kind` field** to identify typed JSON envelopes (`dead-code`, `dead-code-grouped`, `architecture`, `architecture-grouped`, `health`, `dupes`, `combined`, `audit`, etc.).
- 5. **Use issue type filters** (`--unused-exports`, `--unused-files`, etc.) to limit output scope
-@@ -375,7 +375,7 @@ fallow hooks install --target git   # pre-commit gate; --branch <ref> sets the f
- 
- ## Exit Codes
- 
--Codes 0 and 1 are successful analysis outcomes: 0 is clean and 1 means findings. Read `fallow schema.exit_codes` for validation, resource, runtime, network, security-gate, and upload failures instead of maintaining another copied table.
-+Codes 0 and 1 are successful analysis outcomes. 0 means no enforced gate failed, and 1 means an enforced gate failed: findings, not a tool failure. Bare `fallow` in a machine format exits 0 on findings unless you pass `--fail-on-issues`. To gate, pass `--fail-on-issues`, run `fallow dead-code` or `fallow audit`, or read `gate_outcomes`: `status: "fail"` with `enforced: false` is a failing gate that did not set the exit code. Read `fallow schema.exit_codes` for validation, resource, runtime, network, security-gate, and upload failures instead of maintaining another copied table.
- 
- When `--format json` is active and exit code is 2, errors are emitted as JSON on stdout:
- ```json
-```
-
-**File**: `.agents/skills/fallow/references/gotchas.md` (modified, +2/-0)
-```diff
-@@ -181,6 +181,8 @@ Error-severity findings can trigger exit code 1. Default severity varies by rule
- 
- Exit code 1 always means that an enforced gate failed. A load warning or a workspace diagnostic (for example `node-modules-missing` or a tsconfig `extends` that does not resolve) never changes the exit code. The only exceptions are `source-parse-degraded` and `source-nesting-too-deep` with `--fail-on-parse-error`. To find the gate, read `gate_outcomes` in the JSON output and look for an entry with `status: "fail"` and `enforced: true`. Under `--quiet` and in every machine format, fallow also prints one stderr line that names the failed gates, for example `[X] Exit code 1: gate health-findings (3 at or above error) failed.` On `health`, the `complexity-*` rules default to `error`, so each complexity finding fails the run. Set them to `warn` or pass `--report-only` to report without a failure.
- 
-+Bare `fallow` in a machine format (`json`, `sarif`, `codeclimate`, the GitHub formats, and the comment and review formats) exits 0 on findings. `fallow dead-code --format json` exits 1 on the same findings. The bare machine run reports only, because the GitHub Action and the GitLab template read its JSON output and not its exit code. Its `gate_outcomes` entries then have `status: "fail"` and `enforced: false`, and stderr has one line, also under `--quiet`, for example `[W] Exit code 0: gate error-severity-findings (2 at or above error) failed, but bare fallow does not enforce it in --format json. To exit 1 on it, pass --fail-on-issues.` To gate on a bare machine run, pass `--fail-on-issues` or `--ci`.
+@@ -0,0 +1,6 @@
++### Fixed
 +
- ---
- 
- ## `--fail-on-issues` Promotes Warn to Error
++- **`fallow security` no longer reports module-relative paths as path-traversal candidates.** A path that starts from `import.meta.url`, `import.meta.dirname`, `import.meta.filename`, `__dirname`, `__filename` or `process.cwd()` and adds only literal segments cannot carry caller input. Examples are `path.resolve(fileURLToPath(new URL(".", import.meta.url)), "..")` and `fs.readFileSync(path.join(__dirname, "template.html"))`. A module-scope `const` that holds such a path is also trusted. The rule applies to every sink argument, so `res.sendFile(path.join(__dirname, "index.html"))` is also clear. `fileURLToPath(value)` and `new URL(value, import.meta.url)` stay candidates when `value` is not known.
++  (Closes [#3711](https://github.com/fallow-rs/fallow/issues/3711))
++- **`fallow security` now checks every `path.join` and `path.resolve` segment.** Before, the path-traversal matcher checked only the first argument, so `path.resolve(".", input)` and `path.join(".", input)` gave no candidate. The matcher now checks each argument and reports one candidate for each call. A `path.relative` containment guard on the result still clears the call.
++  (Closes [#3712](https://github.com/fallow-rs/fallow/issues/3712))
 ```
 
-**File**: `.claude/skills/fallow/SKILL.md` (modified, +2/-2)
+**File**: `crates/core/src/analyze/security/tainted_sink.rs` (modified, +24/-3)
 ```diff
-@@ -43,7 +43,7 @@ cargo install fallow-cli   # build from source
+@@ -295,7 +295,7 @@ type TaintedSinkSource<'a> = (&'a str, &'a str, Option<u32>);
  
- ## Agent Rules
- 1. **Always use `--format json --quiet`** for machine-readable output and parse stdout as JSON. Compact JSON is the default; never depend on whitespace or add `--pretty` in agent pipelines. Keep stderr separate so diagnostics remain visible; never merge it into the JSON stream with `2>&1`.
--2. **Preserve and interpret the exit status.** Codes 0 and 1 are successful analysis outcomes: 0 is clean and 1 means findings. Treat every other code according to `fallow schema.exit_codes`. Do not force a successful status, because that hides validation, license, setup, network, and security-gate outcomes.
-+2. **Preserve and interpret the exit status.** Codes 0 and 1 are successful analysis outcomes. 0 means no enforced gate failed, and 1 means an enforced gate failed: findings, not a tool failure. Bare `fallow` in a machine format exits 0 on findings unless you pass `--fail-on-issues`. To gate, pass `--fail-on-issues`, run `fallow dead-code` or `fallow audit`, or read `gate_outcomes`: `status: "fail"` with `enforced: false` is a failing gate that did not set the exit code. Treat every other code according to `fallow schema.exit_codes`. Do not force a successful status, because that hides validation, license, setup, network, and security-gate outcomes.
- 3. **Use `--explain`** to include a `_meta` object in JSON output with metric definitions, ranges, and interpretation hints. In human format, `--explain` prints a `Description:` line under each section header.
- 4. **Use the root `kind` field** to identify typed JSON envelopes (`dead-code`, `dead-code-grouped`, `architecture`, `architecture-grouped`, `health`, `dupes`, `combined`, `audit`, etc.).
- 5. **Use issue type filters** (`--unused-exports`, `--unused-files`, etc.) to limit output scope
-@@ -376,7 +376,7 @@ fallow hooks install --target git   # pre-commit gate; --branch <ref> sets the f
+ fn matcher_admits_sink(matcher: &Matcher, sink: &SinkSite, source: Option<(&str, &str)>) -> bool {
+     matcher.sink_shape == sink.sink_shape
+-        && matcher.arg_index == sink.arg_index
++        && matcher.admits_arg_index(sink.arg_index)
+         && (sink.arg_is_non_literal || matcher.is_literal_aware())
+         && matcher.admits_arg_kind(sink.arg_kind)
+         && matcher.literal_value_satisfied(sink.arg_literal.as_ref())
+@@ -645,6 +645,11 @@ fn collect_module_tainted_sinks(
+         run.context.request_receivers,
+     );
  
- ## Exit Codes
- 
--Codes 0 and 1 are successful analysis outcomes: 0 is clean and 1 means findings. Read `fallow schema.exit_codes` for validation, resource, runtime, network, security-gate, and upload failures instead of maintaining another copied table.
-+Codes 0 and 1 are successful analysis outcomes. 0 means no enforced gate failed, and 1 means an enforced gate failed: findings, not a tool failure. Bare `fallow` in a machine format exits 0 on findings unless you pass `--fail-on-issues`. To gate, pass `--fail-on-issues`, run `fallow dead-code` or `fallow audit`, or read `gate_outcomes`: `status: "fail"` with `enforced: false` is a failing gate that did not set the exit code. Read `fallow schema.exit_codes` for validation, resource, runtime, network, security-gate, and upload failures instead of maintaining another copied table.
- 
- When `--format json` is active and exit code is 2, errors are emitted as JSON on stdout:
- ```json
-```
-
-**File**: `.claude/skills/fallow/references/gotchas.md` (modified, +2/-0)
-```diff
-@@ -181,6 +181,8 @@ Error-severity findings can trigger exit code 1. Default severity varies by rule
- 
- Exit code 1 always means that an enforced gate failed. A load warning or a workspace diagnostic (for example `node-modules-missing` or a tsconfig `extends` that does not resolve) never changes the exit code. The only exceptions are `source-parse-degraded` and `source-nesting-too-deep` with `--fail-on-parse-error`. To find the gate, read `gate_outcomes` in the JSON output and look for an entry with `status: "fail"` and `enforced: true`. Under `--quiet` and in every machine format, fallow also prints one stderr line that names the failed gates, for example `[X] Exit code 1: gate health-findings (3 at or above error) failed.` On `health`, the `complexity-*` rules default to `error`, so each complexity finding fails the run. Set them to `warn` or pass `--report-only` to report without a failure.
- 
-+Bare `fallow` in a machine format (`json`, `sarif`, `codeclimate`, the GitHub formats, and the comment and review formats) exits 0 on findings. `fallow dead-code --format json` exits 1 on the same findings. The bare machine run reports only, because the GitHub Action and the GitLab template read its JSON output and not its exit code. Its `gate_outcomes` entries then have `status: "fail"` and `enforced: false`, and stderr has one line, also under `--quiet`, for example `[W] Exit code 0: gate error-severity-findings (2 at or above error) failed, but bare fallow does not enforce it in --format json. To exit 1 on it, pass --fail-on-issues.` To gate on a bare machine run, pass `--fail-on-issues` or `--ci`.
++    // A variadic row (`path.join` segments, #3712) can admit several arguments
++    // of one call. Keep one candidate per call and row, and prefer a
++    // source-backed argument over a source-free one.
++    let mut variadic_calls: FxHashMap<(u32, *const Matcher), usize> = FxHashMap::default();
 +
- ---
+     for sink in &module.security_sinks {
+         let Some((matcher, source)) = match_tainted_sink(run, module, sink, &tainted_locals) else {
+             continue;
+@@ -663,15 +668,31 @@ fn collect_module_tainted_sinks(
+             continue;
+         }
  
- ## `--fail-on-issues` Promotes Warn to Error
-```
-
-**File**: `AGENTS.md` (modified, +4/-2)
-```diff
-@@ -76,8 +76,10 @@ ownership and high-value paths. Important invariants:
- - Resolve current flags and commands from `fallow --help` and
-   `fallow <command> --help`, not from copied flag catalogues.
- 
--Exit codes are `0` for success without error-severity findings, `1` for
--error-severity findings, and `2` for invalid input or execution errors. Some
-+Exit codes are `0` when no enforced gate failed, `1` when an enforced gate
-+failed (findings, not a tool failure), and `2` for invalid input or execution
-+errors. Bare `fallow` in a machine format exits 0 on findings unless you pass
-+`--fail-on-issues`. To gate, pass that flag or read `gate_outcomes`. Some
- runtime workflows define additional documented exit codes.
- 
- ## Validation
-```
-
-**File**: `changelog.d/fix-bare-machine-exit-note.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+### Changed
-+
-+- **A bare machine run that exits 0 on a failing gate now says so on stderr.** Bare `fallow` in `--format json`, `sarif`, `codeclimate`, the GitHub formats and the comment and review formats exits 0 on findings, while `fallow dead-code --format json` exits 1 on the same findings. Before, nothing showed why. Now such a run prints one stderr line, also under `--quiet`, that names each failing findings gate and the flag that enforces it: `[W] Exit code 0: gate error-severity-findings (2 at or above error) failed, but bare fallow does not enforce it in --format json. To exit 1 on it, pass --fail-on-issues.` The exit code and stdout do not change. Thanks [@Smrtnyk](https://github.com/Smrtnyk) for the report. (Closes [#3826](https://github.com/fallow-rs/fallow/issues/3826))
-+
-+- **The exit-code contract no longer says that exit 0 means a clean run.** `fallow schema` (`exit_codes`), the fallow skill, `AGENTS.md` and the npm README said that 0 means no error-severity findings. For bare `fallow` in a machine format, that was false. They now say that 0 means no enforced gate failed, that 1 means findings and not a tool failure, and that a bare machine run gates on findings only with `--fail-on-issues`. To see a failing gate that did not set the exit code, read `gate_outcomes`.
-```
-
-**File**: `crates/cli/src/combined/output.rs` (modified, +34/-1)
-```diff
-@@ -878,10 +878,13 @@ pub(super) fn print_combined_exit_reason(
-     health_result: Option<&HealthResult>,
-     code: u8,
- ) {
-+    let machine = combined_machine_format(opts.output);
-     if code == 0 {
-+        if machine && !opts.fail_on_issues {
-+            print_unenforced_gates_line(opts, check_result, dupes_result, health_result);
+-        findings.push(build_tainted_sink_finding(&TaintedSinkFindingInput {
++        let finding = build_tainted_sink_finding(&TaintedSinkFindingInput {
+             matcher,
+             sink,
+             node,
+             source,
+             sink_line_col: (line, col),
+             line_offsets_by_file: run.line_offsets_by_file,
+             file_id,
+-        }));
++        });
++        if !matcher.variadic {
++            findings.push(finding);
++            continue;
 +        }
-         return;
++        match variadic_calls.entry((sink.span_start, std::ptr::from_ref(matcher))) {
++            std::collections::hash_map::Entry::Occupied(slot) => {
++                let existing = &mut findings[*slot.get()];
++                if finding.source_backed && !existing.source_backed {
++                    *existing = finding;
++                }
++            }
++            std::collections::hash_map::Entry::Vacant(slot) => {
++                slot.insert(findings.len());
++                findings.push(finding);
++            }
++        }
      }
--    let machine = combined_machine_format(opts.output);
-     let mut gates = combined_gate_outcomes(
-         check_result,
-         dupes_result,
-@@ -905,6 +908,36 @@ pub(super) fn print_combined_exit_reason(
-     });
  }
  
-+/// Print the line that names the failing findings gates a bare machine run
-+/// exits 0 on. Printed also under `--quiet`, like the exit-reason line: an
-+/// agent that runs `--format json --quiet` is the reader who sees only the
-+/// exit code.
-+fn print_unenforced_gates_line(
-+    opts: &CombinedOptions<'_>,
-+    check_result: Option<&CheckResult>,
-+    dupes_result: Option<&DupesResult>,
-+    health_result: Option<&HealthResult>,
-+) {
-+    let gates = combined_gate_outcomes(
-+        check_result,
-+        dupes_result,
-+        health_result,
-+        CombinedGateFlags {
-+            fail_on_stale_baseline: opts.fail_on_stale_baseline,
-+            fail_on_issues: false,
-+        },
-+    );
-+    if let Some(line) = crate::report::gate_outcome_text::unenforced_gates_line(
-+        gates.as_ref(),
-+        opts.output.flag_label(),
-+    ) {
-+        eprintln!(
-+            "{}",
-+            crate::report::human_status_line(crate::report::HumanStatus::Warning, line)
-+        );
-+    }
-+}
-+
- /// The section prints of the human path fail the run on the findings rules
- /// and on the duplication threshold also without `--fail-on-issues`. The
- /// envelope of the machine path keeps `enforced: false` for them, so the
 ```
 
-**File**: `crates/cli/src/report/gate_outcome_text.rs` (modified, +87/-0)
+**File**: `crates/core/tests/integration_test/security_catalogue_categories.rs` (modified, +60/-0)
 ```diff
-@@ -328,6 +328,45 @@ pub fn exit_reason_line(
-     Some(line)
+@@ -637,6 +637,66 @@ fn path_traversal_url_guard_still_fires() {
+     assert_candidate(&results, "src/url-guard.ts", "path-traversal", 22);
  }
  
-+/// The stderr line of a bare machine run that exits 0 although a findings gate
-+/// failed, or `None` when no such gate failed.
-+///
-+/// Without `--fail-on-issues`, bare `fallow` in a machine format publishes the
-+/// findings gates with `enforced: false` and exits 0, while `fallow dead-code`
-+/// exits 1 on the same findings. Without this line, the exit code looks like a
-+/// pass (#3826). `format` is the `--format` spelling, so the line names the
-+/// run the way the user typed it.
-+pub fn unenforced_gates_line(
-+    gates: Option<&fallow_output::GateOutcomes>,
-+    format: &str,
-+) -> Option<String> {
-+    let envelope = serde_json::json!({ "gate_outcomes": gates? });
-+    let failed: Vec<GateLine> = read_gate_outcomes(&envelope)
-+        .into_iter()
-+        .filter(|gate| {
-+            gate.status == "fail"
-+                && !gate.enforced
-+                && crate::gates::FAIL_ON_ISSUES_GATES
-+                    .iter()
-+                    .any(|name| name.as_str() == gate.name)
++#[test]
++fn path_traversal_trusted_module_relative_base_does_not_fire() {
++    let results = analyze_with_security_sink("security-path-traversal");
++    let module_root: Vec<_> = results
++        .security_findings
++        .iter()
++        .filter(|f| {
++            f.path
++                .to_string_lossy()
++                .replace('\\', "/")
++                .ends_with("src/module-root.ts")
 +        })
++        .map(|f| (f.line, f.category.clone()))
 +        .collect();
-+    if failed.is_empty() {
-+        return None;
-+    }
-+    let refs: Vec<&GateLine> = failed.iter().collect();
-+    let (noun, pronoun) = if refs.len() == 1 {
-+        ("gate", "it")
-+    } else {
-+        ("gates", "them")
-+    };
-+    Some(format!(
-+        "Exit code 0: {noun} {} failed, but bare fallow does not enforce {pronoun} in \
-+         --format {format}. To exit 1 on {pronoun}, pass --fail-on-issues.",
-+        join(&refs)
-+    ))
++    assert!(
++        module_root.is_empty(),
++        "module-relative paths from trusted bases and literal segments must not be flagged: {module_root:?}"
++    );
 +}
 +
- /// The hint for a findings gate under `--fail-on-issues` or `--ci`. A rule
- /// set to `warn` does not help there, because the flag promotes it to `error`.
- const FAIL_ON_ISSUES_HINT: &str = "Under --fail-on-issues (also set by --ci), a rule set to \
-@@ -940,4 +979,52 @@ mod tests {
-             exit_reason_line(Some(&only_regression), 1, false, &[GateName::Regression]).is_none()
++#[test]
++fn path_traversal_untrusted_url_against_module_base_still_fires() {
++    let results = analyze_with_security_sink("security-path-traversal");
++    assert_candidate(
++        &results,
++        "src/module-root-url-input.ts",
++        "path-traversal",
++        22,
++    );
++    assert_candidate(
++        &results,
++        "src/module-root-file-url.ts",
++        "path-traversal",
++        22,
++    );
++}
++
++#[test]
++fn path_traversal_dynamic_later_segment_fires() {
++    let results = analyze_with_security_sink("security-path-traversal");
++    assert_candidate(
++        &results,
++        "src/later-segment-resolve.ts",
++        "path-traversal",
++        22,
++    );
++    assert_candidate(&results, "src/later-segment-join.ts", "path-traversal", 22);
++    assert_candidate(&results, "src/trusted-base-input.ts", "path-traversal", 22);
++}
++
++#[test]
++fn path_traversal_reports_one_candidate_per_call() {
++    let results = analyze_with_security_sink("security-path-traversal");
++    assert_eq!(
++        anchored_count(&results, "src/multi-dynamic.ts"),
++        1,
++        "two dynamic segments in one path.join call must produce one candidate"
++    );
++}
++
+ // ── open-redirect (CWE-601), ungated (broad tier) ────────────────────────────
+ 
+ #[test]
+```
+
+**File**: `crates/extract/src/cache/types.rs` (modified, +1/-1)
+```diff
+@@ -10,7 +10,7 @@ use crate::MemberKind;
+ /// extraction semantics change, and give the reason in the commit message and
+ /// the CHANGELOG. A stale version serves old extraction results from a warm
+ /// cache. The `assert_cached_type_size!` guards below catch shape changes.
+-pub(super) const CACHE_VERSION: u32 = 389;
++pub(super) const CACHE_VERSION: u32 = 390;
+ 
+ /// Duplication token cache version. Bump it when duplicate tokenization,
+ /// normalization, or the on-disk token cache schema changes, and give the
+```
+
+**File**: `crates/extract/src/visitor/mod.rs` (modified, +5/-5)
+```diff
+@@ -1124,12 +1124,12 @@ pub(crate) struct ModuleInfoExtractor {
+     module_sanitizer_bindings: FxHashMap<String, Option<SanitizerScope>>,
+     /// Nested lexical sanitizer binding stack for functions and blocks.
+     sanitizer_binding_stack: Vec<FxHashMap<String, Option<SanitizerScope>>>,
+-    /// Module-scope literal-backed string allowlists. `false` means the name
+-    /// shadows an outer allowlist but is not trusted itself.
++    /// Module-scope literal-backed string allowlists; `false` shadows without trust.
+     module_literal_allowlist_bindings: FxHashMap<String, bool>,
+-    /// Module-scope literal constants that can be propagated into security sink
+-    /// argument classification.
++    /// Module-scope literal constants for security sink argument classification.
+     module_static_sink_literals: FxHashMap<String, SinkLiteralValue>,
++    /// Module-scope `const` locals bound to a trusted module-relative path.
++    module_trusted_path_bindings: FxHashSet<String>,
+     /// Nested lexical literal allowlist bindings.
+     literal_allowlist_binding_stack: Vec<FxHashMap<String, bool>>,
+     /// Module-scope locals initialized from risky literal regex patterns.
+@@ -1332,7 +1332,7 @@ pub(crate) struct PendingTypedReactProps {
+ #[derive(Debug, Clone, Copy)]
+ pub(crate) struct SecurityPathSinkBinding {
+     span_start: u32,
+-    arg_index: u32,
++    arg_count: u32,
+ }
+ 
+ impl ModuleInfoExtractor {
+```
+
+**File**: `crates/extract/src/visitor/visit_impl_scope_bindings.rs` (modified, +7/-0)
+```diff
+@@ -351,8 +351,15 @@ impl ModuleInfoExtractor {
+         }
+         if decl.kind != VariableDeclarationKind::Const {
+             self.module_static_sink_literals.remove(id.name.as_str());
++            self.module_trusted_path_bindings.remove(id.name.as_str());
+             return;
+         }
++        if self.is_trusted_static_path_expr(init) {
++            self.module_trusted_path_bindings
++                .insert(id.name.to_string());
++        } else {
++            self.module_trusted_path_bindings.remove(id.name.as_str());
++        }
+         if let Some(value) = self.static_sink_literal_value(init) {
+             self.module_static_sink_literals
+                 .insert(id.name.to_string(), value);
+```
+
+**File**: `crates/extract/src/visitor/visit_impl_security_sanitizers.rs` (modified, +13/-7)
+```diff
+@@ -15,6 +15,9 @@ use super::{
+ };
+ use crate::js_text::JsText;
+ 
++#[path = "visit_impl_trusted_paths.rs"]
++mod trusted_paths;
++
+ fn statement_exits_current_flow(stmt: &Statement<'_>) -> bool {
+     match stmt {
+         Statement::ReturnStatement(_) | Statement::ThrowStatement(_) => true,
+@@ -416,11 +419,14 @@ impl ModuleInfoExtractor {
+         let Some(binding) = self.path_sink_binding(local) else {
+             return;
+         };
+-        self.sanitized_sink_args.push(SanitizedSinkArg {
+-            span_start: binding.span_start,
+-            arg_index: binding.arg_index,
+-            scope: SanitizerScope::Path,
+-        });
++        // The guard checks the call result, so it covers every path segment.
++        for arg_index in 0..binding.arg_count {
++            self.sanitized_sink_args.push(SanitizedSinkArg {
++                span_start: binding.span_start,
++                arg_index,
++                scope: SanitizerScope::Path,
++            });
++        }
+     }
+ 
+     pub(super) fn record_fail_closed_guard_after_statement(&mut self, stmt: &Statement<'_>) {
+@@ -500,7 +506,7 @@ impl ModuleInfoExtractor {
+         Some(rel.name.as_str())
+     }
+ 
+-    fn is_node_path_method_call(&self, call: &CallExpression<'_>, method: &str) -> bool {
++    pub(super) fn is_node_path_method_call(&self, call: &CallExpression<'_>, method: &str) -> bool {
+         let Expression::StaticMemberExpression(member) = &call.callee else {
+             return false;
+         };
+@@ -530,7 +536,7 @@ impl ModuleInfoExtractor {
+         }
+         Some(SecurityPathSinkBinding {
+             span_start: call.span.start,
+-            arg_index: 0,
++            arg_count: u32::try_from(call.arguments.len()).unwrap_or(u32::MAX),
+         })
+     }
+ 
+```
+
+**File**: `crates/extract/src/visitor/visit_impl_security_sinks.rs` (modified, +5/-1)
+```diff
+@@ -617,7 +617,11 @@ impl ModuleInfoExtractor {
+             span,
+         } = input;
+         let arg_literal = self.static_sink_literal_value(arg_expr);
+-        let arg_is_non_literal = arg_literal.is_none() && is_non_literal_arg(arg_expr);
++        // A path built only from trusted module-relative bases and literal
++        // segments is treated like a literal (issue #3711).
++        let arg_is_non_literal = arg_literal.is_none()
++            && is_non_literal_arg(arg_expr)
++            && !self.is_trusted_static_path_expr(arg_expr);
+         if arg_is_non_literal
+             && should_skip_clamped_resource_amplification_arg(
+                 callee_path,
+```
+
+---
+
+### Incident Patch 2: `b63c5f04` (2026-10-27)
+**Commit Message**: fix(api): deregister the programmatic base snapshot before analysis (#3941)
+
+The API, MCP and decision-surface base snapshot is now removed from Git registration before analysis, as the CLI already did. The cleanup of snapshots from stopped processes moves into the engine and runs for every snapshot. It keeps a snapshot whose owner is alive or cannot be inspected, and a snapshot younger than 60 seconds. Every Git command that Fallow starts now runs through one wrapper, which blocks repository discovery inside a snapshot and refuses an implicitly discovered bare repository.
+
+Fixes #3885
+
+**File**: `.github/workflows/ci.yml` (modified, +1/-0)
+```diff
+@@ -172,6 +172,7 @@ jobs:
+               - 'crates/engine/src/changed_files.rs'
+               - 'crates/engine/src/churn.rs'
+               - 'crates/engine/src/repo_refs.rs'
++              - 'crates/engine/src/base_worktree_orphans.rs'
+               - 'crates/engine/src/shell_quote.rs'
+               - 'crates/engine/src/write_guard.rs'
+               - 'crates/engine/Cargo.toml'
+```
+
+**File**: `Cargo.lock` (modified, +2/-0)
+```diff
+@@ -1326,6 +1326,7 @@ dependencies = [
+  "fallow-graph",
+  "fallow-mutation",
+  "fallow-output",
++ "fallow-process",
+  "fallow-security",
+  "fallow-types",
+  "globset",
+@@ -1351,6 +1352,7 @@ dependencies = [
+  "tracing",
+  "tracing-subscriber",
+  "url",
++ "windows-sys 0.61.2",
+  "xxhash-rust",
+ ]
+ 
+```
+
+**File**: `changelog.d/fix-api-base-worktree-lifecycle-3885.md` (added, +22/-0)
+```diff
+@@ -0,0 +1,22 @@
++### Fixed
++
++- **Programmatic and MCP audits no longer show their base snapshot in `git worktree list`.**
++  The API, the MCP `audit` tool, and the decision surface now remove the Git
++  registration of the base snapshot before the base analysis starts, as
++  `fallow audit` does. They also remove the snapshots that a stopped process
++  left behind. A snapshot stays when its owner process can still run, when
++  Fallow cannot inspect that process, or when the snapshot is younger than one
++  minute.
++  (Closes [#3885](https://github.com/fallow-rs/fallow/issues/3885))
++
++### Security
++
++- **Git commands in an audit base snapshot no longer read a repository from the base commit.**
++  The `.git` file of a base snapshot pointed at a relative path. A base commit
++  could supply a directory at that path, or a directory shaped as a bare
++  repository, and Git then read its config. That config can run commands, for
++  example through `core.fsmonitor`. The `.git` file now names an absolute path
++  that cannot exist, and each Git command that Fallow runs inside a snapshot
++  gets a `GIT_DIR` that does not exist. Every Git command that Fallow starts
++  also sets `safe.bareRepository=explicit`, so Git does not use a directory
++  shaped as a bare repository that it finds on its own.
+```
+
+**File**: `crates/api/src/audit_run/base_files.rs` (modified, +1/-5)
+```diff
+@@ -3,9 +3,7 @@
+ 
+ use std::io::Write as _;
+ use std::path::{Path, PathBuf};
+-use std::process::Command;
+ 
+-use fallow_engine::changed_files::clear_ambient_git_env;
+ use rustc_hash::{FxHashMap, FxHashSet};
+ 
+ /// Whether the head run can stand in for the base snapshot.
+@@ -147,14 +145,12 @@ impl BaseFileReader {
+     /// available. The caller then treats the files as not reusable.
+     #[must_use]
+     pub fn spawn(root: &Path) -> Option<Self> {
+-        let mut command = Command::new("git");
++        let mut command = fallow_engine::changed_files::git_command_in(root);
+         command
+             .args(["cat-file", "--batch"])
+-            .current_dir(root)
+             .stdin(std::process::Stdio::piped())
+             .stdout(std::process::Stdio::piped())
+             .stderr(std::process::Stdio::null());
+-        clear_ambient_git_env(&mut command);
+         let mut child = fallow_process::ScopedChild::spawn(&mut command).ok()?;
+         let stdin = child.take_stdin()?;
+         let stdout = child.take_stdout()?;
+```
+
+**File**: `crates/api/src/diff_risk/mod.rs` (modified, +1/-4)
+```diff
+@@ -20,7 +20,6 @@ pub mod clones;
+ pub mod text;
+ 
+ use std::path::{Path, PathBuf};
+-use std::process::Command;
+ 
+ use fallow_config::{ResolvedConfig, RulesConfig, Severity};
+ use fallow_engine::changed_files::RenamedFile;
+@@ -176,12 +175,10 @@ impl BaseSource {
+ /// resolve one. The changed-file list uses the merge base too, so a base
+ /// branch that moved on does not read as a change of this branch.
+ pub(crate) fn merge_base(root: &Path, base_ref: &str) -> String {
+-    let mut command = Command::new("git");
++    let mut command = fallow_engine::changed_files::git_command_in(root);
+     command
+         .args(["merge-base", "--end-of-options", base_ref, "HEAD"])
+-        .current_dir(root)
+         .stderr(std::process::Stdio::null());
+-    fallow_engine::changed_files::clear_ambient_git_env(&mut command);
+     command
+         .output()
+         .ok()
+```
+
+**File**: `crates/api/src/mutation/worktree.rs` (modified, +6/-7)
+```diff
+@@ -13,11 +13,8 @@
+ 
+ use std::collections::BTreeMap;
+ use std::path::{Path, PathBuf};
+-use std::process::{Command, Stdio};
+ 
+-use fallow_engine::changed_files::{
+-    ChangedFilesError, clear_ambient_git_env, resolve_git_toplevel,
+-};
++use fallow_engine::changed_files::{ChangedFilesError, resolve_git_toplevel};
+ use sha2::{Digest, Sha256};
+ 
+ /// The most ignored files that a start snapshot fingerprints. The run checks
+@@ -211,7 +208,7 @@ pub fn snapshot(
+         Err(ChangedFilesError::NotARepository) => return Ok(None),
+         Err(error) => return Err(error.describe()),
+     };
+-    let mut command = Command::new("git");
++    let mut command = fallow_engine::changed_files::git_command_in(&toplevel);
+     command.args([
+         "status",
+         "--porcelain=v1",
+@@ -222,8 +219,6 @@ pub fn snapshot(
+     if start.is_none() {
+         command.arg("--ignored=matching");
+     }
+-    command.current_dir(&toplevel).stdin(Stdio::null());
+-    clear_ambient_git_env(&mut command);
+     let output = fallow_process::output(&mut command)
+         .map_err(|error| format!("cannot run git status: {error}"))?;
+     if !output.status.success() {
+@@ -260,6 +255,10 @@ pub fn snapshot(
+ 
+ #[cfg(test)]
+ mod tests {
++    use std::process::Command;
++
++    use fallow_engine::changed_files::clear_ambient_git_env;
++
+     use super::*;
+ 
+     fn git(root: &Path, args: &[&str]) {
+```
+
+**File**: `crates/api/src/runtime/audit.rs` (modified, +234/-0)
+```diff
+@@ -1701,4 +1701,238 @@ mod tests {
+             Some("merge-base with origin/main")
          );
      }
 +
-+    #[test]
-+    fn the_unenforced_line_names_only_failing_findings_gates_that_are_not_enforced() {
-+        use fallow_output::{GateName, GateOutcome, GateStatus};
-+        let gates = typed_gates(&[
-+            (
-+                GateName::ErrorSeverityFindings,
-+                crate::gates::error_severity_outcome(2, false),
-+            ),
-+            (
-+                GateName::HealthFindings,
-+                crate::gates::health_findings_outcome(0, false),
-+            ),
-+            (
-+                GateName::StaleBaseline,
-+                GateOutcome::measured(GateStatus::Fail, false, 1.0, 0.0),
-+            ),
-+        ]);
-+        assert_eq!(
-+            unenforced_gates_line(Some(&gates), "sarif").as_deref(),
-+            Some(
-+                "Exit code 0: gate error-severity-findings (2 at or above error) failed, but \
-+                 bare fallow does not enforce it in --format sarif. To exit 1 on it, pass \
-+                 --fail-on-issues."
-+            )
-+        );
-+
-+        let both = typed_gates(&[
-+            (
-+                GateName::ErrorSeverityFindings,
-+                crate::gates::error_severity_outcome(2, false),
-+            ),
-+            (
-+                GateName::HealthFindings,
-+                crate::gates::health_findings_outcome(3, false),
-+            ),
-+        ]);
-+        let line = unenforced_gates_line(Some(&both), "json").expect("two gates failed");
-+        assert!(line.contains("gates error-severity-findings"), "{line}");
-+        assert!(line.contains("enforce them"), "{line}");
-+
-+        let enforced = typed_gates(&[(
-+            GateName::ErrorSeverityFindings,
-+            crate::gates::error_severity_outcome(2, true),
-+        )]);
-+        assert!(unenforced_gates_line(Some(&enforced), "json").is_none());
-+        assert!(unenforced_gates_line(None, "json").is_none());
++    fn registered_worktree_count(root: &Path) -> usize {
++        let output = fallow_engine::changed_files::clear_ambient_git_env(&mut Command::new("git"))
++            .args(["worktree", "list", "--porcelain"])
++            .current_dir(root)
++            .output()
++            .expect("git worktree list");
++        assert!(output.status.success(), "git worktree list failed");
++        String::from_utf8_lossy(&output.stdout)
++            .lines()
++            .filter(|line| line.starts_with("worktree "))
++            .count()
 +    }
++
++    /// #3885: the base snapshot of the programmatic audit, which MCP also
++    /// uses, is not registered with Git while the base analysis reads it.
++    #[test]
++    fn programmatic_base_snapshot_is_unregistered_during_base_analysis() {
++        use crate::audit_run::AuditBackend as _;
++
++        let project = tempfile::tempdir().expect("temp dir");
++        let root = project.path();
++        std::fs::write(
++            root.join("package.json"),
++            r#"{"name":"base-snapshot","main":"index.ts"}"#,
++        )
++        .expect("write manifest");
++        std::fs::write(root.join("index.ts"), "export const used = 1;\n").expect("write entry");
++        git(root, &["init", "-b", "main"]);
++        git(root, &["add", "."]);
++        git(
++            root,
++            &[
++                "-c",
++                "user.email=test@example.com",
++                "-c",
++                "user.name=Test",
++                "-c",
++                "commit.gpgsign=false",
++                "commit",
++                "-m",
++                "initial",
++            ],
++        );
++        let options = AuditOptions {
++            analysis: AnalysisOptions {
++                root: Some(root.to_path_buf()),
++                ..AnalysisOptions::default()
++            },
++            ..AuditOptions::default()
++        };
++        let analysis = analysis_options_for_audit(&options, "HEAD");
++        let resolved = audit_section_context(&analysis).expect("context resolves");
++        let config = load_programmatic_audit_config(&resolved).expect("config loads");
++        let backend = ProgrammaticAuditBackend {
++            options: &options,
++            analysis: &analysis,
++            resolved: &resolved,
++            config: &config,
++        };
++
++        let checkout = backend
++            .create_base_checkout("HEAD", None)
++            .unwrap_or_else(|_| panic!("base checkout is created"));
++        assert_eq!(
++            registered_worktree_count(root),
++            1,
++            "only the main worktree may be registered while the base analysis runs"
++        );
++        let base = backend
++            .run_base(checkout.path(), None)
++            .unwrap_or_else(|_| panic!("base analysis runs on the unregistered snapshot"));
++        assert!(base.subanalyses.dead_code.is_some());
++        assert_eq!(registered_worktree_count(root), 1);
++
++        let path = checkout.path().to_path_buf();
++        drop(checkout);
++        assert!(!path.exists(), "the base snapshot is removed on drop");
++        assert_eq!(registered_worktree_count(root), 1);
++    }
++
++    #[cfg(unix)]
++    fn commit_all(root: &Path, message: &str) {
++        git(root, &["add", "-f", "."]);
++        git(
++            root,
++            &[
++                "-c",
++                "user.email=test@example.com",
++                "-c",
++                "user.name=Test",
++                "-c",
++                "commit.gpgsign=false",
++                "commit",
++                "-m",
++                message,
++            ],
++        );
++    }
++
++    /// The base commit is untrusted. A gitdir that it commits under the name
++    /// of the snapshot stub, or as a nested bare repository, must not run its
++    /// config during the audit.
++    #[cfg(unix)]
++    #[test]
++    fn audit_never_runs_a_git_config_from_the_base_commit() {
++        let project = tempfile::tempdir().expect("temp dir");
++        let root = project.path().join("repo");
++        let marker = project.path().join("fsmonitor-ran");
++        std::fs::create_dir_all(&root).expect("create repo");
++        std::fs::write(
++            root.join("package.json"),
++            r#"{"name":"crafted-base","main":"index.ts"}"#,
++        )
++        .expect("write manifest");
++        std::fs::write(root.join("index.ts"), "export const used = 1;\n").expect("write entry");
++        for dir in ["fallow-audit-unregistered", "pkg"] {
++            let gitdir = root.join(dir);
++            std::fs::create_dir_all(gitdir.join("objects")).expect("create objects");
++            std::fs::create_dir_all(gitdir.join("refs")).expect("create refs");
++            std::fs::write(gitdir.join("objects/.keep"), "").expect("write keep");
++            std::fs::write(gitdir.join("refs/.keep"), "").expect("write keep");
++            std::fs::write(gitdir.join("HEAD"), "ref: refs/h
+```
+
+**File**: `crates/cli/src/agent_install/mcp.rs` (modified, +1/-2)
+```diff
+@@ -922,9 +922,8 @@ pub fn merge_codex(
+ }
+ 
+ fn is_git_tracked(root: &Path, relative: &str) -> bool {
+-    Command::new("git")
++    fallow_engine::changed_files::git_command_in(root)
+         .args(["ls-files", "--error-unmatch", relative])
+-        .current_dir(root)
+         .output()
+         .is_ok_and(|output| output.status.success())
  }
 ```
 
 ---
 
-### Incident Patch 2: `316fe600` (2026-10-26)
-**Commit Message**: fix(deps): patch publisher and test dependency vulnerabilities (#3881)
+### Incident Patch 3: `0299785a` (2026-10-27)
+**Commit Message**: fix(resolve): escape the tsconfig directory in include globs (#3951)
+
+* fix(resolve): escape the tsconfig directory in include globs
+
+Fallow built each tsconfig `include` and `exclude` glob from the full
+joined path. Glob syntax in the tsconfig directory, such as `app/[id]`,
+`{a,b}`, `*` or `?`, then changed the pattern. The pattern did not
+match the files of that directory, so a referenced config could drop
+out of the chain and its `paths` aliases did not apply.
+
+The tsconfig directory and the entry segments before the first
+wildcard are now escaped literal text. In the entry, only `*` and `?`
+are wildcards, the same as tsc, so brackets and braces are literal. A
+tsconfig in the file system root no longer gets a double `/`.
+
+The matching code moves to `tsconfig_scope.rs`, because
+`specifier.rs` must not grow.
 
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
-**File**: `.github/dependabot.yml` (modified, +24/-0)
-```diff
-@@ -71,6 +71,30 @@ updates:
-       - dependency-name: mocha
-         update-types: ["version-update:semver-major"]
- 
-+  - package-ecosystem: npm
-+    directory: /.github/publishers/marketplace
-+    schedule:
-+      interval: weekly
-+    cooldown:
-+      default-days: 7
-+    open-pull-requests-limit: 5
-+
-+  - package-ecosystem: npm
-+    directory: /.github/publishers/open-vsx
-+    schedule:
-+      interval: weekly
-+    cooldown:
-+      default-days: 7
-+    open-pull-requests-limit: 5
-+
-+  - package-ecosystem: npm
-+    directory: /tools/mutation-runner
-+    schedule:
-+      interval: weekly
-+    cooldown:
-+      default-days: 7
-+    open-pull-requests-limit: 5
-+
-   - package-ecosystem: npm
-     directory: /npm/fallow
-     schedule:
-```
+* test(resolve): replace the invalid glob test with a literal bracket test
 
-**File**: `.github/publishers/marketplace/package-lock.json` (modified, +7/-7)
-```diff
-@@ -169,22 +169,22 @@
-       }
-     },
-     "node_modules/@azure/msal-node": {
--      "version": "6.0.1",
--      "resolved": "https://registry.npmjs.org/@azure/msal-node/-/msal-node-6.0.1.tgz",
--      "integrity": "sha512-ixSO1Y/kCVRthRs+hSx/5qkwaunX1/RAePhlMN0wIpIQ4WEZ6AREGGnGd1AP0qspHVsAwzWQKGubpjh50JyJIQ==",
-+      "version": "7.1.1",
-+      "resolved": "https://registry.npmjs.org/@azure/msal-node/-/msal-node-7.1.1.tgz",
-+      "integrity": "sha512-zHXTJB38XVrsNaXrPBCMqEUjeyQysFfgmKtUHRDsEKTRjNIPckJ/w6fE5wBXrmJXBim1D3C7O7LOag0msPTrgw==",
-       "license": "MIT",
-       "dependencies": {
--        "@azure/msal-common": "16.14.1",
-+        "@azure/msal-common": "16.14.3",
-         "jsonwebtoken": "^9.0.0"
-       },
-       "engines": {
-         "node": ">=20"
-       }
-     },
-     "node_modules/@azure/msal-node/node_modules/@azure/msal-common": {
--      "version": "16.14.1",
--      "resolved": "https://registry.npmjs.org/@azure/msal-common/-/msal-common-16.14.1.tgz",
--      "integrity": "sha512-Or6xhPNyi4zHW25158yxBoyxuCqNSPa5YBVqfF1J5Ks4MJWBo/USXdp05DQIPu1Zli00YZu6t0+h6KvHJealxQ==",
-+      "version": "16.14.3",
-+      "resolved": "https://registry.npmjs.org/@azure/msal-common/-/msal-common-16.14.3.tgz",
-+      "integrity": "sha512-tz3GvMrR9V/plb2lDdW8qaO8CPpfZevdExBKjltzzbAtyhK0eB2UIvji1aU+gkyHj3fxQ2ie+LNHyMXdmo8wOg==",
-       "license": "MIT",
-       "engines": {
-         "node": ">=0.8.0"
-```
+A stray bracket in a tsconfig entry is now literal text, so it no longer builds an invalid glob. The old test then made a file system call, which Miri isolation blocks. The new test keeps a wildcard in the entry and checks that the bracket matches on
 
-**File**: `.github/publishers/marketplace/package.json` (modified, +3/-0)
-```diff
-@@ -7,5 +7,8 @@
-   },
-   "dependencies": {
-     "@vscode/vsce": "4.0.0"
-+  },
-+  "overrides": {
-+    "@azure/msal-node": "7.1.1"
-   }
- }
-```
-
-**File**: `.github/publishers/open-vsx/package-lock.json` (modified, +17/-58)
-```diff
-@@ -8,7 +8,7 @@
-       "name": "fallow-open-vsx-publisher",
-       "version": "1.0.0",
-       "dependencies": {
--        "ovsx": "1.2.0"
-+        "ovsx": "1.3.0"
-       },
-       "engines": {
-         "node": ">=22"
-@@ -169,22 +169,22 @@
-       }
-     },
-     "node_modules/@azure/msal-node": {
--      "version": "6.0.1",
--      "resolved": "https://registry.npmjs.org/@azure/msal-node/-/msal-node-6.0.1.tgz",
--      "integrity": "sha512-ixSO1Y/kCVRthRs+hSx/5qkwaunX1/RAePhlMN0wIpIQ4WEZ6AREGGnGd1AP0qspHVsAwzWQKGubpjh50JyJIQ==",
-+      "version": "7.1.1",
-+      "resolved": "https://registry.npmjs.org/@azure/msal-node/-/msal-node-7.1.1.tgz",
-+      "integrity": "sha512-zHXTJB38XVrsNaXrPBCMqEUjeyQysFfgmKtUHRDsEKTRjNIPckJ/w6fE5wBXrmJXBim1D3C7O7LOag0msPTrgw==",
-       "license": "MIT",
-       "dependencies": {
--        "@azure/msal-common": "16.14.1",
-+        "@azure/msal-common": "16.14.3",
-         "jsonwebtoken": "^9.0.0"
-       },
-       "engines": {
-         "node": ">=20"
-       }
-     },
-     "node_modules/@azure/msal-node/node_modules/@azure/msal-common": {
--      "version": "16.14.1",
--      "resolved": "https://registry.npmjs.org/@azure/msal-common/-/msal-common-16.14.1.tgz",
--      "integrity": "sha512-Or6xhPNyi4zHW25158yxBoyxuCqNSPa5YBVqfF1J5Ks4MJWBo/USXdp05DQIPu1Zli00YZu6t0+h6KvHJealxQ==",
-+      "version": "16.14.3",
-+      "resolved": "https://registry.npmjs.org/@azure/msal-common/-/msal-common-16.14.3.tgz",
-+      "integrity": "sha512-tz3GvMrR9V/plb2lDdW8qaO8CPpfZevdExBKjltzzbAtyhK0eB2UIvji1aU+gkyHj3fxQ2ie+LNHyMXdmo8wOg==",
-       "license": "MIT",
-       "engines": {
-         "node": ">=0.8.0"
-@@ -1452,12 +1452,12 @@
-       "license": "MIT"
-     },
-     "node_modules/commander": {
--      "version": "6.2.1",
--      "resolved": "https://registry.npmjs.org/commander/-/commander-6.2.1.tgz",
--      "integrity": "sha512-U7VdrJFnJgo4xjrHpTzu0yrHPGImdsmD95ZlgYSEajAn2JKzDhDTPG9kBTefmObL2w/ngeZnilk+OV9CG3d7UA==",
-+      "version": "14.0.3",
-+      "resolved": "https://registry.npmjs.org/commander/-/commander-14.0.3.tgz",
-+      "integrity": "sha512-H+y0Jo/T1RZ9qPP4Eh1pkcQcLRglraJaSLoyOtHxu6AapkjWVCy2Sit1QQ4x3Dng8qDlSsZEet7g5Pq06MvTgw==",
-       "license": "MIT",
-       "engines": {
--        "node": ">= 6"
-+        "node": ">=20"
-       }
-     },
-     "node_modules/cross-keychain": {
-@@ -1674,26 +1674,6 @@
-         }
-       }
-     },
--    "node_modules/follow-redirects": {
--      "version": "1.16.1",
--      "resolved": "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.16.1.tgz",
--      "integrity": "sha512-FNvFGzoMLWmE6Yj9spb/zjd7yiNCHiAW9/Tg9CXrQ8wuu32HtlJOwWO11OJafl5FfY3DxTdQ0vj42zU1kvv5jg==",
--      "funding": [
--        {
--          "type": "individual",
--          "url": "https://github.com/sponsors/RubenVerborgh"
--        }
--      ],
--      "license": "MIT",
--      "engines": {
--        "node": ">=4.0"
--      },
--      "peerDependenciesMeta": {
--        "debug": {
--          "optional": true
--        }
--      }
--    },
-     "node_modules/function-bind": {
-       "version": "1.1.2",
-       "resolved": "https://registry.npmjs.org/function-bind/-/function-bind-1.1.2.tgz",
-@@ -2011,15 +1991,6 @@
-         "safe-buffer": "^5.0.1"
-       }
-     },
--    "node_modules/leven": {
--      "version": "3.1.0",
--      "resolved": "https://registry.npmjs.org/leven/-/leven-3.1.0.tgz",
--      "integrity": "sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==",
--      "license": "MIT",
--      "engines": {
--        "node": ">=6"
--      }
--    },
-     "node_modules/lodash.includes": {
-       "version": "4.3.0",
-       "resolved": "https://registry.npmjs.org/lodash.includes/-/lodash.includes-4.3.0.tgz",
-@@ -2189,20 +2160,17 @@
-       }
-     },
-     "node_modules/ovsx": {
--      "version": "1.2.0",
--      "resolved": "https://registry.npmjs.org/ovsx/-/ovsx-1.2.0.tgz",
--      "integrity": "sha512-12mauBqsLehlJ0cRiroQz4uKYVjblVS5OobgSJ278CdCtkDfRQD+SI3NQ00GNalDqzp5PDN11yx84miFUojeMw==",
-+      "version": "1.3.0",
-+      "resolved": "https://registry.npmjs.org/ovsx/-/ovsx-1.3.0.tgz",
-+      "integrity": "sha512-U5B1YCo+6knEipsEF9O+iO+uwK+vTm8qNQyvc5zzE/2P6Zfzjhw4Xj4UJ7WZ1aU/kVGI70FuUWxv/GVXK5JmXw==",
-       "license": "EPL-2.0",
-       "dependencies": {
-         "@inquirer/prompts": "^7.10.1",
--        "@vscode/vsce": "^3.7.1",
--        "commander": "^6.2.1",
-+        "@vscode/vsce": "^4.0.0",
-+        "commander": "^14.0.3",
-         "cross-keychain": "^1.1.0",
--        "follow-redirects": "^1.16.0",
-         "is-ci": "^2.0.0",
--        "leven": "^3.1.0",
-         "semver": "^7.6.0",
--        "tmp": "^0.2.3",
-         "yauzl-promise": "^4.0.0"
-       },
-       "bin": {
-@@ -2529,15 +2497,6 @@
-         "url": "https://github.com/sponsors/SuperchupuDev"
-       }
-     },
--    "node_modules/tmp": {
--      "version": "0.2.7",
--      "resolved": "https://registry.npmjs.org/tmp/-/tmp-0.2.7.tgz",
--      "integrity": "sha512-e0votIpp4Uo2AJYSzVHV6xCcawuiez3DzqDAbrTc3YxBkplN6e+dM13Z
-```
-
-**File**: `.github/publishers/open-vsx/package.json` (modified, +3/-2)
-```diff
-@@ -6,9 +6,10 @@
-     "node": ">=22"
-   },
-   "dependencies": {
--    "ovsx": "1.2.0"
-+    "ovsx": "1.3.0"
-   },
-   "overrides": {
--    "@vscode/vsce": "4.0.0"
-+    "@vscode/vsce": "4.0.0",
-+    "@azure/msal-node": "7.1.1"
-   }
- }
-```
-
-**File**: `.vex/openvex.json` (modified, +0/-13)
-```diff
-@@ -5,19 +5,6 @@
-   "timestamp": "2026-10-19T00:00:00Z",
-   "version": 1,
-   "statements": [
--    {
--      "vulnerability": {
--        "name": "GHSA-73rr-hh4g-fpgx"
--      },
--      "products": [
--        {
--          "@id": "pkg:github/fallow-rs/fallow"
--        }
--      ],
--      "status": "not_affected",
--      "justification": "vulnerable_code_not_in_execute_path",
--      "impact_statement": "Development dependency, not in the bundled extension; the parent package range blocks the patched version. Source: editors/vscode/osv-scanner.toml"
--    },
-     {
-       "vulnerability": {
-         "name": "RUSTSEC-2024-0436"
-```
-
-**File**: `changelog.d/fix-security-dependency-updates.md` (added, +3/-0)
+**File**: `changelog.d/fix-tsconfig-glob-directory-escape.md` (added, +3/-0)
 ```diff
 @@ -0,0 +1,3 @@
-+### Security
++### Fixed
 +
-+- **Update vulnerable development and publication dependencies.** Patch the VS Code tools, extension publishers and mutation-runner tests. Add Dependabot coverage for the isolated publishers and mutation runner.
++- **A tsconfig in a directory whose name holds glob characters now applies to its files.** Fallow matched the `include` and `exclude` patterns of a tsconfig with the directory of that tsconfig as part of the glob. A directory such as `app/[id]`, `{a,b}`, `*` or `?` then changed the meaning of the pattern, so the pattern did not match the files in that directory. Fallow then could drop a referenced config, and its `paths` aliases did not apply. Fallow now treats the tsconfig directory as literal text. In the entry itself, Fallow reads only `*` and `?` as wildcards, the same as `tsc`, so an entry such as `app/[id]/**/*` matches the `[id]` directory.
 ```
 
-**File**: `docs/development/dependency-updates.md` (modified, +13/-0)
+**File**: `crates/graph/src/resolve/mod.rs` (modified, +1/-0)
 ```diff
-@@ -58,6 +58,19 @@ These causes made a person act on a Dependabot pull request in the past:
- - `github/codeql-action` sub-actions on different versions. The
-   `codeql-action` group in `.github/dependabot.yml` prevents this.
+@@ -31,6 +31,7 @@ mod specifier;
+ mod static_imports;
+ #[cfg(test)]
+ mod tests;
++mod tsconfig_scope;
+ mod types;
+ mod upgrades;
+ mod work;
+```
+
+**File**: `crates/graph/src/resolve/specifier.rs` (modified, +8/-75)
+```diff
+@@ -5,7 +5,6 @@ use std::fs;
+ use std::path::{Path, PathBuf};
+ use std::sync::Arc;
  
-+## Security overrides
-+
-+The isolated Marketplace and Open VSX publishers override `@azure/msal-node`
-+to the patched major because Azure Identity still requests the vulnerable
-+major. The extension applies the same override in `pnpm-workspace.yaml`.
-+Remove these overrides when Azure Identity's supported range includes the
-+patched release, and rerun the publisher authentication and extension suites.
-+
-+The extension also overrides Mocha's `diff` and `serialize-javascript`
-+dependencies. Keep Mocha compatible with the VS Code engine floor. Remove an
-+override when Mocha requests a patched version, then run the extension's
-+integration suites in the oldest supported host.
-+
- ## Setup
+-use globset::{Glob, GlobSetBuilder};
+ use oxc_resolver::{Resolution, ResolveError, ResolveOptions, Resolver};
+ use serde_json::Value;
  
- | Setting | Scope | Use |
+@@ -28,6 +27,7 @@ use super::path_info::{
+     normalize_npm_specifier,
+ };
+ use super::react_native::{build_condition_names, build_extensions};
++use super::tsconfig_scope::{glob_values_match, resolve_tsconfig_relative_path};
+ use super::types::{DenoImportMapEntry, ResolveContext, ResolveResult};
+ use super::workspace_alias::{
+     resolve_failed_bare_package_specifier, try_aliased_workspace_package_fallback,
+@@ -566,38 +566,6 @@ fn tsconfig_applies_to_file(
+         .is_some_and(|exclude| glob_values_match(tsconfig_dir, exclude, from_file))
+ }
+ 
+-fn glob_values_match(base_dir: &Path, values: &[Value], path: &Path) -> bool {
+-    let mut builder = GlobSetBuilder::new();
+-    let mut has_patterns = false;
+-    for value in values.iter().filter_map(Value::as_str) {
+-        let mut pattern = resolve_tsconfig_relative_path(base_dir, value);
+-        if !has_glob_meta(value) && pattern.is_dir() {
+-            pattern = pattern.join("**/*");
+-        }
+-        let Some(pattern) = pattern.to_str() else {
+-            continue;
+-        };
+-        let Ok(glob) = Glob::new(pattern) else {
+-            continue;
+-        };
+-        builder.add(glob);
+-        has_patterns = true;
+-    }
+-    has_patterns && builder.build().is_ok_and(|set| set.is_match(path))
+-}
+-
+-fn has_glob_meta(value: &str) -> bool {
+-    value
+-        .bytes()
+-        .any(|byte| matches!(byte, b'*' | b'?' | b'[' | b']' | b'{'))
+-}
+-
+-/// Join a tsconfig `files`, `include` or `exclude` entry to its directory
+-/// without `./` and `..`, as the globs match path text (issue #3946).
+-fn resolve_tsconfig_relative_path(base_dir: &Path, path: &str) -> PathBuf {
+-    normalize_path_lexically(&base_dir.join(path))
+-}
+-
+ fn same_path(left: &Path, right: &Path) -> bool {
+     if left == right {
+         return true;
+@@ -2205,7 +2173,7 @@ mod tests {
+ 
+     use super::super::package_credit::package_usage_name_for_resolved_package;
+     use super::{
+-        SpecifierNormalization, extension_alias_matches, glob_values_match, has_glob_meta,
++        SpecifierNormalization, extension_alias_matches, glob_values_match,
+         is_bare_style_package_reference, is_bare_style_subpath, is_js_ts_extension,
+         is_node_modules_path, is_plain_css_file, is_relative_tsconfig_extends,
+         is_safe_static_dir_relative_path, is_style_file, is_tsconfig_error,
+@@ -2784,33 +2752,6 @@ mod tests {
+         assert_eq!(result, None);
+     }
+ 
+-    // ---- has_glob_meta (lines 370-374) ----
+-
+-    #[test]
+-    fn has_glob_meta_detects_star_wildcard() {
+-        assert!(has_glob_meta("src/**/*.ts"));
+-    }
+-
+-    #[test]
+-    fn has_glob_meta_detects_question_mark() {
+-        assert!(has_glob_meta("src/?.ts"));
+-    }
+-
+-    #[test]
+-    fn has_glob_meta_detects_bracket_group() {
+-        assert!(has_glob_meta("src/[abc].ts"));
+-    }
+-
+-    #[test]
+-    fn has_glob_meta_detects_brace_group() {
+-        assert!(has_glob_meta("src/{a,b}.ts"));
+-    }
+-
+-    #[test]
+-    fn has_glob_meta_plain_path_returns_false() {
+-        assert!(!has_glob_meta("src/components"));
+-    }
+-
+     // ---- path_alias_specificity (lines 734-738) ----
+ 
+     #[test]
+@@ -3086,17 +3027,16 @@ mod tests {
+         );
+     }
+ 
+-    // ---- glob_values_match: invalid glob is skipped (line 362) ----
++    // ---- glob_values_match: a stray bracket is literal text ----
+ 
+     #[test]
+-    fn glob_values_match_invalid_glob_pattern_is_skipped() {
++    fn glob_values_match_stray_bracket_is_literal_text() {
+         let base = Path::new("/project");
++        let values = [serde_json::json!("[invalid/*")];
+         let source = Path::new("/project/src/index.ts");
+-        let result = glob_values_match(base, &[serde_json::json!("[invalid")], source);
+-        assert!(
+-            !result,
+-            "an invalid glob pattern must not accidentally match"
+-        );
++        assert!(!glob_values_match(base, &values, source));
++        let literal = Path::new("/project/[invalid/index.ts");
++        assert!(glob_values_match(base, &values, literal));
+     }
+ 
+     // ---- glob_values_match: no patterns at all returns false ----
+@@ -3184,13 +3124,6 @@ mod tests {
+         assert!(is_bare_style_subpath("antd/lib/style/index.less"));
+     }
+ 
+-    // ---- has_glob_meta: closing brace or bracket alone ----
+-
+-    #[test]
+-    fn has_glob_meta_closing_bracket_detected() {
+-        assert!(has_glob_meta("src/[a-z]"));
+-    }
+-
+     // ---- path_alias_specificity: wildcard-only pattern ----
+ 
+     #[test]
+```
+
+**File**: `crates/graph/src/resolve/specifier_tsconfig_include_tests.rs` (modified, +136/-0)
+```diff
+@@ -1,6 +1,7 @@
+ //! Tests for the scope of `include` patterns in a referenced tsconfig.
+ 
+ use std::fs;
++use std::path::Path;
+ 
+ use tempfile::tempdir;
+ 
+@@ -50,3 +51,138 @@ fn referenced_tsconfig_paths_alias_resolves_existing_asset_file() {
+         );
+     });
+ }
++
++/// A referenced tsconfig in a directory whose name holds glob syntax, such
++/// as a Next.js `[id]` route segment, applies to its files. The directory is
++/// literal text, so the config stays in the chain and its `paths` apply.
++#[test]
++#[cfg_attr(miri, ignore = "tempdir is blocked by Miri isolation")]
++fn referenced_tsconfig_in_glob_syntax_directory_applies_to_its_files() {
++    let temp = tempdir().unwrap();
++    let root = temp.path();
++    let app = root.join("app/[id]");
++    fs::create_dir_all(app.join("src")).unwrap();
++    fs::write(app.join("src/index.ts"), "").unwrap();
++    fs::write(
++        root.join("tsconfig.json"),
++        r#"{"files":[],"references":[{"path":"./app/[id]/tsconfig.app.json"}]}"#,
++    )
++    .unwrap();
++    fs::write(
++        app.join("tsconfig.app.json"),
++        r#"{"compilerOptions":{"paths":{"@lib/*":["./src/*"]}},"include":["./src/**/*"]}"#,
++    )
++    .unwrap();
++    let from_file = app.join("src/index.ts");
++
++    with_ctx_at_root(root, |ctx| {
++        let chain = super::local_tsconfig_chain(ctx, &from_file);
++        assert!(
++            chain
++                .iter()
++                .any(|path| path.ends_with("[id]/tsconfig.app.json")),
++            "the referenced config must stay in the chain, got {chain:?}"
++        );
++        assert!(super::matches_nearest_tsconfig_path_alias(
++            ctx,
++            &from_file,
++            "@lib/util"
++        ));
++    });
++}
++
++/// Glob syntax in the tsconfig directory matches only that literal
++/// directory, while a wildcard in the entry keeps its glob meaning.
++#[test]
++fn glob_values_match_treats_tsconfig_directory_as_literal() {
++    let include = [serde_json::json!("src/**/*.ts")];
++    for dir in ["[id]", "{a,b}", "*", "?"] {
++        let base = Path::new("/repo").join(dir);
++        assert!(
++            super::glob_values_match(&base, &include, &base.join("src/index.ts")),
++            "a file under `{dir}` must match"
++        );
++    }
++    let base = Path::new("/repo/[id]");
++    assert!(!super::glob_values_match(
++        base,
++        &include,
++        Path::new("/repo/i/src/index.ts")
++    ));
++    let base = Path::new("/repo/{a,b}");
++    assert!(!super::glob_values_match(
++        base,
++        &include,
++        Path::new("/repo/a/src/index.ts")
++    ));
++    let base = Path::new("/repo/*");
++    assert!(!super::glob_values_match(
++        base,
++        &include,
++        Path::new("/repo/other/src/index.ts")
++    ));
++    assert!(!super::glob_values_match(
++        base,
++        &include,
++        Path::new("/repo/*/src/index.js")
++    ));
++}
++
++/// A `..` entry leaves the tsconfig directory before glob syntax starts.
++#[test]
++fn glob_values_match_resolves_parent_segments_before_the_glob() {
++    let include = [serde_json::json!("../shared/**/*.ts")];
++    let base = Path::new("/repo/[id]/app");
++    assert!(super::glob_values_match(
++        base,
++        &include,
++        Path::new("/repo/[id]/shared/util.ts")
++    ));
++    assert!(!super::glob_values_match(
++        base,
++        &include,
++        Path::new("/repo/[id]/app/shared/util.ts")
++    ));
++}
++
++/// A tsconfig in the file system root joins its entries without a second `/`.
++#[test]
++fn glob_values_match_handles_tsconfig_in_root_directory() {
++    let include = [serde_json::json!("**/*")];
++    assert!(super::glob_values_match(
++        Path::new("/"),
++        &include,
++        Path::new("/a/b.ts")
++    ));
++}
++
++/// tsc reads only `*` and `?` as wildcards, so brackets and braces in an
++/// entry, such as a Next.js `app/[id]` route segment, are literal text.
++#[test]
++fn glob_values_match_treats_brackets_and_braces_in_entry_as_literal() {
++    let include = [
++        serde_json::json!("app/[id]/**/*"),
++        serde_json::json!("lib/{a,b}/*.ts"),
++    ];
++    let base = Path::new("/repo");
++    assert!(super::glob_values_match(
++        base,
++        &include,
++        Path::new("/repo/app/[id]/page.ts")
++    ));
++    assert!(!super::glob_values_match(
++        base,
++        &include,
++        Path::new("/repo/app/i/page.ts")
++    ));
++    assert!(super::glob_values_match(
++        base,
++        &include,
++        Path::new("/repo/lib/{a,b}/x.ts")
++    ));
++    assert!(!super::glob_values_match(
++        base,
++        &include,
++        Path::new("/repo/lib/a/x.ts")
++    ));
++}
+```
+
+**File**: `crates/graph/src/resolve/tsconfig_scope.rs` (added, +57/-0)
+```diff
+@@ -0,0 +1,57 @@
++//! Match file paths against the `files`, `include` and `exclude` entries of a
++//! tsconfig, relative to the directory of that tsconfig.
++
++use std::path::{Path, PathBuf};
++
++use globset::{Glob, GlobSetBuilder};
++use serde_json::Value;
++
++use super::fallbacks::normalize_path_lexically;
++
++pub(super) fn glob_values_match(base_dir: &Path, values: &[Value], path: &Path) -> bool {
++    let mut builder = GlobSetBuilder::new();
++    let mut has_patterns = false;
++    for value in values.iter().filter_map(Value::as_str) {
++        let Ok(glob) = Glob::new(&tsconfig_entry_glob(base_dir, value)) else {
++            continue;
++        };
++        builder.add(glob);
++        has_patterns = true;
++    }
++    has_patterns && builder.build().is_ok_and(|set| set.is_match(path))
++}
++
++/// Build the glob for one `include` or `exclude` entry. tsc reads only `*`
++/// and `?` as wildcards, so the tsconfig directory, the entry segments before
++/// the first wildcard and any bracket or brace are literal path text. A
++/// directory such as `app/[id]` then matches only itself.
++fn tsconfig_entry_glob(base_dir: &Path, value: &str) -> String {
++    let glob_start = value
++        .find(['*', '?'])
++        .map(|wildcard| value[..wildcard].rfind('/').map_or(0, |slash| slash + 1));
++    let (literal, rest) = value.split_at(glob_start.unwrap_or(value.len()));
++    let literal = resolve_tsconfig_relative_path(base_dir, literal);
++    let rest = if glob_start.is_none() && literal.is_dir() {
++        "**/*"
++    } else {
++        rest
++    };
++    let mut glob = globset::escape(&literal.to_string_lossy().replace('\\', "/"));
++    if !rest.is_empty() && !glob.ends_with('/') {
++        glob.push('/');
++    }
++    for symbol in rest.chars() {
++        if matches!(symbol, '[' | ']' | '{' | '}') {
++            glob.extend(['[', symbol, ']']);
++        } else {
++            glob.push(symbol);
++        }
++    }
++    glob
++}
++
++/// Join a tsconfig `files`, `include` or `exclude` entry to its directory
++/// without `./` and `..`, as the globs match path text (issue #3946).
++pub(super) fn resolve_tsconfig_relative_path(base_dir: &Path, path: &str) -> PathBuf {
++    normalize_path_lexically(&base_dir.join(path))
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3902** (2026-10-26): chore(deps): bump CodSpeedHQ/action from 5.4.2 to 5.5.0 (@dependabot[bot])
-- **PR #3896** (2026-10-26): chore(deps-dev): bump vitest from 5.0.4 to 5.0.5 in /viz-frontend (@dependabot[bot])
-- **PR #3892** (2026-10-26): chore(deps): bump knip from 6.41.0 to 6.42.0 in /benchmarks (@dependabot[bot])
-- **PR #3890** (2026-10-26): chore(deps-dev): bump @commitlint/cli from 21.2.3 to 21.2.4 (@dependabot[bot])
-- **PR #3889** (2026-10-26): chore(deps-dev): bump @commitlint/config-conventional from 21.2.3 to 21.2.4 (@dependabot[bot])
-- **PR #3881** (2026-10-26): fix(deps): patch publisher and test dependency vulnerabilities (@BartWaardenburg)
+- **PR #3966** (2026-10-27): chore(docker): pin FALLOW_VERSION 3.37.0 with refreshed checksums (@BartWaardenburg)
+- **PR #3965** (2026-10-27): fix(extract): name a function assigned to a declared variable in the inventory (@BartWaardenburg)
+- **PR #3964** (2026-10-27): chore(napi): sync package.json / package-lock / index.js to v3.37.0 (@BartWaardenburg)
+- **PR #3959** (2026-10-27): chore: release v3.37.0 (@BartWaardenburg)
+- **PR #3958** (2026-10-27): chore: release v3.37.0 (@BartWaardenburg)
+- **PR #3957** (2026-10-27): test(engine): make the cancelled parse test independent of runner speed (@BartWaardenburg)
 
 ---
 
@@ -1902,30 +2327,33 @@ Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): name the unenforced failing gates of a bare machine run (#3875)
+## X. security): trust module-relative path bases and check every path segment (#3926)
 
 **RULE**:
-When implementing operations in `.agents/skills/fallow/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/fix-path-traversal-trusted-bases-3711.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `658cdad3`: cli): name the unenforced failing gates of a bare machine run (#3875). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `de0b6fe7`: security): trust module-relative path bases and check every path segment (#3926). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/skills/fallow/SKILL.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-path-traversal-trusted-bases-3711.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-2. **Preserve and interpret the exit status.** Codes 0 and 1 are successful analysis outcomes. 0 means no enforced gate failed, and 1 means an enforced gate failed: findings, not a tool failure. Bare `fallow` in a machine format exits 0 on findings unless you pass `--fail-on-issues`. To gate, pass `--fail-on-issues`, run `fallow dead-code` or `fallow audit`, or read `gate_outcomes`: `status: "fail"` with `enforced: false` is a failing gate that did not set the exit code. Treat every other code according to `fallow schema.exit_codes`. Do not force a successful status, because that hides validation, license, setup, network, and security-gate outcomes.
-Codes 0 and 1 are successful analysis outcomes. 0 means no enforced gate failed, and 1 means an enforced gate failed: findings, not a tool failure. Bare `fallow` in a machine format exits 0 on findings unless you pass `--fail-on-issues`. To gate, pass `--fail-on-issues`, run `fallow dead-code` or `fallow audit`, or read `gate_outcomes`: `status: "fail"` with `enforced: false` is a failing gate that did not set the exit code. Read `fallow schema.exit_codes` for validation, resource, runtime, network, security-gate, and upload failures in
+### Fixed
+
+- **`fallow security` no longer reports module-relative paths as path-traversal candidates.** A path that starts from `import.meta.url`, `import.meta.dirname`, `import.meta.filename`, `__dirname`, `__filename` or `process.cwd()` and adds only literal segments cannot carry caller input. Examples are `path.resolve(fileURLToPath(new URL(".", import.meta.url)), "..")` and `fs.readFileSync(path.join(__dirname, "template.html"))`. A module-scope `const` that holds such a path is also trusted. The rule applies to every sink argument, so `res.sendFile(path.join(__dirname, "index.html"))` is also clear. `fileURLToPath(value)` and `new URL(value, import.meta.url)` stay candidates when `value` is not known.
+  (Closes [#3711](https://github.com/fallow-rs/fallow/issues/3711))
+- **`fallow security` now checks every `path.join` and `path.resolve` segment.** Before, the path-traversal matcher checked only the first argument, so `path.resolve(".", input)` and `path.join(".", input)` gave no candidate. The matcher now checks each argument and reports one candidate for each call. A `path.relative` containment guard on the result still clears the call.
+  (Closes [#3712](https://github.com/f
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-2. **Preserve and interpret the exit status.** Codes 0 and 1 are successful analysis outcomes: 0 is clean and 1 means findings. Treat every other code according to `fallow schema.exit_codes`. Do not force a successful status, because that hides validation, license, setup, network, and security-gate outcomes.
-Codes 0 and 1 are successful analysis outcomes: 0 is clean and 1 means findings. Read `fallow schema.exit_codes` for validation, resource, runtime, network, security-gate, and upload failures instead of maintaining another copied table.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `658cdad3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `de0b6fe7` are properly handled with clean fallback behavior.

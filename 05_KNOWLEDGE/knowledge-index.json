@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T23:52:42.306Z",
+  "last_updated": "2026-10-27T23:59:30.547Z",
   "total_verified_learnings": 1154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2432,8 +2432,8 @@
       "slug": "apple-foundationdb",
       "platform": "github",
       "source_url": "https://github.com/apple/foundationdb",
-      "source_version": "414a6ec8",
-      "content_hash": "9f57772010db3c703916a86e7a5d073f6d6bab3cda93ba07c2ddc0c36d727985",
+      "source_version": "1f6fd502",
+      "content_hash": "f2938dfb7266ca12b65fccf7339bb15b096374d163e4914b5dab0351382efc0a",
       "dossier_path": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "promoted_rules": [
@@ -2466,6 +2466,11 @@
           "number": 4707,
           "title": "dd/cdc: fix long-double to long-int comparison warning",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5064,
+          "title": "show mutation log type in status output in fdbbackup, fdbcli, fdbrestore (#14321",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2473,7 +2478,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:16:07.655Z",
+      "verified_at": "2026-10-27T23:59:30.523Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11673,8 +11678,8 @@
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "f2d8b806",
-      "content_hash": "cb096ca078d816a34d999f106370195bdf880f497ca1e219f9b1394173ce2a21",
+      "source_version": "52965b80",
+      "content_hash": "a38fda494c5ecf862828cc02db489dcf81c2f2352f69232a4a8d27c67f28e862",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "promoted_rules": [
@@ -11717,6 +11722,11 @@
           "number": 4600,
           "title": "cli): name the unenforced failing gates of a bare machine run (#3875)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5063,
+          "title": "security): trust module-relative path bases and check every path segment (#3926)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11724,7 +11734,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T12:20:03.680Z",
+      "verified_at": "2026-10-27T23:59:19.182Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -139558,6 +139568,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T23:52:37.782Z"
+    },
+    "rule-5063": {
+      "learning_id": "rule-5063",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5063,
+      "title": "security): trust module-relative path bases and check every path segment (#3926)",
+      "source_url": "https://github.com/fallow-rs/fallow",
+      "source_version": "52965b80",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T23:59:19.182Z"
+    },
+    "rule-5064": {
+      "learning_id": "rule-5064",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5064,
+      "title": "show mutation log type in status output in fdbbackup, fdbcli, fdbrestore (#14321",
+      "source_url": "https://github.com/apple/foundationdb",
+      "source_version": "1f6fd502",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T23:59:30.523Z"
     }
   },
   "aliases": {

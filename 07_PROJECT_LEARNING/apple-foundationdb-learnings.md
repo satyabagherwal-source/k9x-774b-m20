@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source**: github ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
-> **Source Version**: `414a6ec8`  
+> **Source Version**: `1f6fd502`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T11:16:07.224Z  
+> **Timestamp**: 2026-10-27T23:59:30.067Z  
 > **Learning ID**: `learn-github-apple-foundationdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T11:16:06.220Z  
+> **Harvest Timestamp**: 2026-10-27T23:59:29.274Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FoundationDB - the open source, distributed, transactional key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 16820 stars
+- **Stars / Engagement**: 16819 stars
 
 ---
 
@@ -1955,82 +1955,539 @@ constexpr std::string_view to_string(WaitState st) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eaa66379` (2026-10-23)
-**Commit Message**: dd/cdc: fix long-double to long-int comparison warning
+### Incident Patch 1: `1f6fd502` (2026-10-27)
+**Commit Message**: show mutation log type in status output in fdbbackup, fdbcli, fdbrestore (#14321)
 
-> error: implicit conversion from 'type' (aka 'long long') to 'long double'
-> changes value from 9223372036854775807 to 9223372036854775808
-> [-Werror,-Wimplicit-const-int-float-conversion]
+* fdbbackup: show mutation log type in status output
 
-**File**: `fdbserver/datadistributor/NativeCdcBalancer.cpp` (modified, +1/-1)
+Add a 'Mutation Log Type:' line after 'Snapshot Mode:' in fdbbackup
+status. dir_backup_tests checks that it matches the type the backup
+was started with.
+
+* fdbbackup: show mutation log type in status JSON outputs
+
+Add MutationLogType to `fdbbackup status --json` and mutation_log_type
+to each backup tag in the backup agent's layer status (fdbcli
+`status json` cluster.layers.backup). Extend dir_backup_test.sh to
+check the JSON output.
+
+* fdbrestore: show mutation log type in status output
+
+Add "Mutation Log Type:" after "Snapshot Method:" in `fdbrestore status`.
+Extend dir_backup_test.sh to check it after the restore.
+
+**File**: `fdbbackup/backup.cpp` (modified, +5/-1)
 ```diff
-@@ -268,7 +268,7 @@ class NativeCdcLoadModel {
+@@ -1439,6 +1439,7 @@ AsyncResult<std::string> getLayerStatus(Reference<ReadYourWritesTransaction> tr,
+ 		std::vector<Future<Reference<IBackupContainer>>> tagContainers;
+ 		std::vector<Future<int64_t>> tagRangeBytes;
+ 		std::vector<Future<int64_t>> tagLogBytes;
++		std::vector<Future<MutationLogType>> tagMutationLogTypes;
+ 		Future<Optional<Value>> fBackupPaused = tr->get(fba.taskBucket->getPauseKey(), snapshot);
  
- Version nativeCdcDurationVersions(double seconds) {
- 	const long double versions = static_cast<long double>(seconds) * SERVER_KNOBS->VERSIONS_PER_SECOND;
--	if (versions >= std::numeric_limits<Version>::max()) {
-+	if (versions >= (long double)std::numeric_limits<Version>::max()) {
- 		return std::numeric_limits<Version>::max();
- 	}
- 	return static_cast<Version>(versions);
+ 		tr->setOption(FDBTransactionOptions::ACCESS_SYSTEM_KEYS);
+@@ -1453,12 +1454,14 @@ AsyncResult<std::string> getLayerStatus(Reference<ReadYourWritesTransaction> tr,
+ 			tagStates.push_back(config.stateEnum().getOrThrow(tr, snapshot));
+ 			tagRangeBytes.push_back(config.rangeBytesWritten().getD(tr, snapshot, 0));
+ 			tagLogBytes.push_back(config.logBytesWritten().getD(tr, snapshot, 0));
++			tagMutationLogTypes.push_back(config.mutationLogType().getD(tr, snapshot, MutationLogType::DEFAULT));
+ 			tagContainers.push_back(config.backupContainer().getOrThrow(tr, snapshot));
+ 			tagLastRestorableVersions.push_back(fba.getLastRestorable(tr, StringRef(tag->tagName), snapshot));
+ 		}
+ 
+ 		co_await (waitForAll(tagLastRestorableVersions) && waitForAll(tagStates) && waitForAll(tagContainers) &&
+-		          waitForAll(tagRangeBytes) && waitForAll(tagLogBytes) && success(fBackupPaused));
++		          waitForAll(tagRangeBytes) && waitForAll(tagLogBytes) && waitForAll(tagMutationLogTypes) &&
++		          success(fBackupPaused));
+ 
+ 		std::vector<Future<Void>> encryptionSetupResults;
+ 		std::vector<int> encryptionContainerIndices;
+@@ -1513,6 +1516,7 @@ AsyncResult<std::string> getLayerStatus(Reference<ReadYourWritesTransaction> tr,
+ 			tagRoot.create("running_backup_is_restorable") = (status == EBackupState::STATE_RUNNING_DIFFERENTIAL);
+ 			tagRoot.create("range_bytes_written") = tagRangeBytes[j].get();
+ 			tagRoot.create("mutation_log_bytes_written") = tagLogBytes[j].get();
++			tagRoot.create("mutation_log_type") = mutationLogTypeToString(tagMutationLogTypes[j].get());
+ 			tagRoot.create("mutation_stream_id") = backupTagUids[j].toString();
+ 			tagRoot.create("file_level_encryption") =
+ 			    tagContainers[j].get()->getEncryptionKeyFileName().present() ? true : false;
 ```
 
----
-
-### Incident Patch 2: `0bc59d50` (2026-10-23)
-**Commit Message**: bindings/c: fix a variable-length-array compile warning on clang 21
-
-    error: variable length array folded to constant array as an extension [-Werror,-Wgnu-folding-constant]
-      59 |         int64_t sizes[numKeys];
-
-**File**: `bindings/c/test/txn_size_test.c` (modified, +1/-1)
+**File**: `fdbbackup/tests/dir_backup_test.sh` (modified, +72/-0)
 ```diff
-@@ -28,8 +28,8 @@
- #include <foundationdb/fdb_c_options.g.h>
- 
- pthread_t netThread;
--const int numKeys = 100;
- uint8_t** keys = NULL;
-+#define numKeys 100
- 
- #define KEY_SIZE 16
- #define VALUE_SIZE 100
-```
-
----
-
-### Incident Patch 3: `7cd4693a` (2026-10-23)
-**Commit Message**: flow/MemoryTracker: fix unused variable warning on macOS
-
-**File**: `flow/MemoryTracker.cpp` (modified, +2/-2)
-```diff
-@@ -107,6 +107,8 @@ inline std::uint32_t xorshift32(std::uint32_t& s) {
- 	return x;
+@@ -106,6 +106,68 @@ function backup {
+   fi
  }
  
-+#ifdef __linux__
++# Check that 'fdbbackup status' reports the mutation log type the backup was started with.
++# $1 The build directory
++# $2 The scratch directory
++function check_status_mutation_log_type {
++  local local_build_dir="${1}"
++  local scratch_dir="${2}"
++  local expected="default"
++  if [[ "${USE_PARTITIONED_LOG}" == "true" ]]; then
++    expected="partitioned-log-experimental"
++  fi
 +
- // Per-thread stack bounds, populated lazily on first use of captureFramesFP.
- // Used by captureFramesFP to terminate the FP walk when it crosses into
- // FP-elided code (notably glibc's pthread shutdown / TLS-destructor
-@@ -121,8 +123,6 @@ inline std::uint32_t xorshift32(std::uint32_t& s) {
- thread_local uintptr_t gStackLow = 0;
- thread_local uintptr_t gStackHigh = 0;
++  local status_output
++  if ! status_output=$("${local_build_dir}"/bin/fdbbackup status -t "${TAG}" \
++      -C "${scratch_dir}/loopback_cluster/fdb.cluster" --log --logdir="${scratch_dir}" 2>&1); then
++    err "fdbbackup status failed: ${status_output}"
++    return 1
++  fi
++  if ! grep -qx "Mutation Log Type: ${expected}" <<< "${status_output}"; then
++    err "Expected 'Mutation Log Type: ${expected}' in status output: ${status_output}"
++    return 1
++  fi
++
++  local json_output
++  if ! json_output=$("${local_build_dir}"/bin/fdbbackup status --json -t "${TAG}" \
++      -C "${scratch_dir}/loopback_cluster/fdb.cluster" --log --logdir="${scratch_dir}"); then
++    err "fdbbackup status --json failed: ${json_output}"
++    return 1
++  fi
++  local json_type
++  if ! json_type=$(jq -r '.MutationLogType' <<< "${json_output}"); then
++    err "Failed to parse status --json output: ${json_output}"
++    return 1
++  fi
++  if [[ "${json_type}" != "${expected}" ]]; then
++    err "Expected MutationLogType '${expected}' in status --json, got '${json_type}'"
++    return 1
++  fi
++}
++
++# Check that 'fdbrestore status' reports the mutation log type the backup was started with.
++# $1 The build directory
++# $2 The scratch directory
++function check_restore_status_mutation_log_type {
++  local local_build_dir="${1}"
++  local scratch_dir="${2}"
++  local expected="default"
++  if [[ "${USE_PARTITIONED_LOG}" == "true" ]]; then
++    expected="partitioned-log-experimental"
++  fi
++
++  local status_output
++  if ! status_output=$("${local_build_dir}"/bin/fdbrestore status -t "${TAG}" \
++      --dest-cluster-file "${scratch_dir}/loopback_cluster/fdb.cluster" --log --logdir="${scratch_dir}" 2>&1); then
++    err "fdbrestore status failed: ${status_output}"
++    return 1
++  fi
++  if ! grep -qE "  Mutation Log Type: ${expected}( |$)" <<< "${status_output}"; then
++    err "Expected 'Mutation Log Type: ${expected}' in restore status output: ${status_output}"
++    return 1
++  fi
++}
++
+ # Run the fdbrestore command.
+ # $1 The build directory
+ # $2 The scratch directory
+@@ -197,6 +259,11 @@ function test_dir_backup_and_restore {
+     err "Failed backup"
+     return 1
+   fi
++  log "Check status mutation log type"
++  if ! check_status_mutation_log_type "${local_build_dir}" "${scratch_dir}"; then
++    err "Failed status mutation log type check"
++    return 1
++  fi
  
--#ifdef __linux__
--
- void initStackBoundsForThread() {
- 	pthread_attr_t attr;
- 	if (pthread_getattr_np(pthread_self(), &attr) == 0) {
+   test_fdbcli_status_json_for_bkup "${local_build_dir}" "${scratch_dir}"
+ 
+@@ -231,6 +298,11 @@ function test_dir_backup_and_restore {
+     err "Failed restore"
+     return 1
+   fi
++  log "Check restore status mutation log type"
++  if ! check_restore_status_mutation_log_type "${local_build_dir}" "${scratch_dir}"; then
++    err "Failed restore status mutation log type check"
++    return 1
++  fi
+   log "Verify restore"
+   if ! verify_data "${local_build_dir}" "${scratch_dir}"; then
+     err "Failed verification of data in fdb"
+```
+
+**File**: `fdbclient/FileBackupAgent.cpp` (modified, +17/-2)
+```diff
+@@ -682,6 +682,7 @@ class RestoreConfig : public KeyBackedTaskConfig {
+ 		Key removePrefix;
+ 		Key url;
+ 		bool bulkLoadComplete;
++		MutationLogType mutationLogType;
+ 	};
+ 
+ 	static Future<StatusSnapshot> getStatusSnapshot_impl(RestoreConfig restore,
+@@ -1001,6 +1002,8 @@ Future<RestoreConfig::StatusSnapshot> RestoreConfig::getStatusSnapshot_impl(Rest
+ 	Future<Version> restoreVersion = restore.restoreVersion().getD(tr);
+ 	Future<ERestoreState> restoreState = restore.stateEnum().getD(tr);
+ 	Future<Optional<bool>> bulkLoadComplete = restore.bulkLoadComplete().get(tr);
++	Future<MutationLogType> mutationLogType =
++	    restore.mutationLogType().getD(tr, Snapshot::False, MutationLogType::DEFAULT);
+ 	Future<Version> readVersion = tr->getReadVersion();
+ 
+ 	UID uid = restore.getUid();
+@@ -1009,7 +1012,8 @@ Future<RestoreConfig::StatusSnapshot> RestoreConfig::getStatusSnapshot_impl(Rest
+ 	          success(firstConsistentVersion) && success(tag) && success(lastError) && success(submittedTasks) &&
+ 	          success(triggeredTasks) && success(runningTasks) && success(totalTasks) && success(useRangeFileRestore) &&
+ 	          success(ranges) && success(addPrefix) && success(removePrefix) && success(url) &&
+-	          success(restoreVersion) && success(restoreState) && success(bulkLoadComplete) && success(readVersion));
++	          success(restoreVersion) && success(restoreState) && success(bulkLoadComplete) &&
++	          success(mutationLogType) && success(readVersion));
+ 
+ 	StatusSnapshot s;
+ 	s.uid = uid;
+@@ -1037,6 +1041,7 @@ Future<RestoreConfig::StatusSnapshot> RestoreConfig::getStatusSnapshot_impl(Rest
+ 	s.removePrefix = removePrefix.get();
+ 	s.url = url.get();
+ 	s.bulkLoadComplete = bulkLoadComplete.get().present() && bulkLoadComplete.get().get();
++	s.mutationLogType = mutationLogType.get();
+ 
+ 	TraceEvent("FileRestoreProgress")
+ 	    .detail("RestoreUID", s.uid)
+@@ -1112,6 +1117,7 @@ std::string RestoreConfig::renderFullStatusText(const StatusSnapshot& s) {
+ 	                    s.restoreVersion);
+ 
+ 	returnStr += format("  Snapshot Method: %s", s.useRangeFile ? "rangefile" : "bulkload");
++	returnStr += format("  Mutation Log Type: %s", mutationLogTypeToString(s.mutationLogType).c_str());
+ 
+ 	auto [snapshotPhase, mutationLogPhase] = statusPhases(s);
+ 	if (snapshotPhase != nullptr) {
+@@ -1127,6 +1133,7 @@ JsonBuilderObject RestoreConfig::renderStatusJSON(const StatusSnapshot& s) {
+ 	doc.setKey("UID", s.uid.toString());
+ 	doc.setKey("State", s.stateText);
+ 	doc.setKey("SnapshotMethod", s.useRangeFile ? "rangefile" : "bulkload");
++	doc.setKey("MutationLogType", mutationLogTypeToString(s.mutationLogType));
+ 	doc.setKey("URL", s.url.toString());
+ 
+ 	JsonBuilderArray rangeList;
+@@ -7864,10 +7871,13 @@ class FileBackupAgentImpl {
+ 					if (backupState != EBackupState::STATE_NEVERRAN) {
+ 						Reference<IBackupContainer> bc;
+ 						TimestampedVersion latestRestorable;
++						MutationLogType mutationLogType;
+ 
+ 						co_await (
+ 						    store(latestRestorable, getTimestampedVersion(tr, config.getLatestRestorableVersion(tr))) &&
+-						    store(bc, config.backupContainer().getOrThrow(tr)));
++						    store(bc, config.backupContainer().getOrThrow(tr)) &&
++						    store(mutationLogType,
++						          config.mutationLogType().getD(tr, Snapshot::False, MutationLogType::DEFAULT)));
+ 						bc = fileBackup::getBackupContainerWithProxy(bc);
+ 
+ 						doc.setKey("Restorable", latestRestorable.present());
+@@ -7882,6 +7892,7 @@ class FileBackupAgentImpl {
+ 							doc.setKey("LatestRestorablePoint", o);
+ 						}
+ 						doc.setKey("DestinationURL", bc->getURL());
++						doc.setKey("MutationLogType", mutationLogTypeToString(mutationLogType));
+ 					}
+ 
+ 					if (backupState == EBackupState::STATE_RUNNING_DIFFERENTIAL ||
+@@ -8138,6 +8149,10 @@ class FileBackupAgentImpl {
+ 					}
+ 					statusText += format("Snapshot Mode: %s\n", snapshotModeText.c_str());
+ 
++					MutationLogType mutationLogType =
++					    co_await config.mutationLogType().getD(tr, Snapshot::False, MutationLogType::DEFAULT);
++					statusText += format("Mutation Log Type: %s\n", mutationLogTypeToString(mutationLogType).c_str());
++
+ 					// Check if backup is BulkLoad compatible (has bulkdump_data/).
+ 					// In rangefile mode no bulkdump task ever runs, so the answer is
+ 					// always "no" and the line carries no information — skip it.
+```
+
+---
+
+### Incident Patch 2: `448b1522` (2026-10-27)
+**Commit Message**: Replay partitioned mutation logs on a bulkload restore (#14327)
+
+* Replay partitioned mutation logs on a bulkload restore
+
+A bulkload restore makes two independent choices: the range data comes
+from SST files, and the mutation log is then replayed. Only the first is
+about bulkload. StartFullRestoreTaskFunc nevertheless picked the classic
+dispatcher for the replay whenever the bulkload branch was taken, reading
+mutationLogType and never consulting it, so RestoreDispatchPartitioned
+was reachable only through the rangefile path.
+
+The classic dispatcher queues blocks with `j < f.fileSize` and hands them
+to decodeMutationLogFileBlock, which rejects every one: a partitioned log
+block opens with PARTITIONED_MLOG_VERSION, not BACKUP_AGENT_MLOG_VERSION.
+A restore task that throws is logged and retried rather than aborted, so
+the restore never terminates. Measured on a partitioned-log backup whose
+ranges contain data: 2823 restore_unsupported_file_version and climbing,
+941 FileRestoreCorruptLogFileBlock, and the run never completes. With the
+dispatcher chosen by log layout: zero of each, and it completes.
+
+Choose the dispatcher by the container's log layout inside the bulkload
+branch, exactl
+
+**File**: `fdbclient/FileBackupAgent.cpp` (modified, +19/-12)
+```diff
+@@ -7062,6 +7062,9 @@ struct StartFullRestoreTaskFunc : RestoreTaskFuncBase {
+ 		mutationLogType = co_await restore.mutationLogType().getD(tr, Snapshot::False, MutationLogType::DEFAULT);
+ 		restoreVersion = co_await restore.restoreVersion().getOrThrow(tr);
+ 
++		// Set only on the bulkload path: the log dispatch below waits for the SST ingest to finish.
++		Reference<TaskFuture> bulkLoadDone;
++
+ 		if (!useRangeFileRestore) {
+ 			// Use BulkLoad for range data restoration, then apply logs
+ 			Reference<IBackupContainer> bc = co_await restore.sourceContainer().getOrThrow(tr);
+@@ -7083,7 +7086,7 @@ struct StartFullRestoreTaskFunc : RestoreTaskFuncBase {
+ 			    .detail("RestoreVersion", restoreVersion);
+ 
+ 			// Create a future that BulkLoad will signal when done
+-			Reference<TaskFuture> bulkLoadDone = futureBucket->future(tr);
++			bulkLoadDone = futureBucket->future(tr);
+ 
+ 			// Add BulkLoad task for range data
+ 			co_await BulkLoadRestoreTaskFunc::addTask(tr,
+@@ -7098,8 +7101,22 @@ struct StartFullRestoreTaskFunc : RestoreTaskFuncBase {
+ 			// replay logs only. submitRestore rejects --incremental with bulkload, so this can only ever
+ 			// overwrite false.
+ 			restore.onlyApplyMutationLogs().set(tr, true);
++		}
+ 
+-			// Add RestoreDispatch task that waits for BulkLoad to complete
++		// The log replay is independent of where the range data came from, so the dispatcher follows the
++		// container's log layout on both paths.
++		if (mutationLogType == MutationLogType::PARTITIONED_LOG) {
++			Version endVersion =
++			    std::min(firstVersion + CLIENT_KNOBS->RESTORE_PARTITIONED_BATCH_VERSION_SIZE, restoreVersion);
++			co_await RestoreDispatchPartitionedTaskFunc::addTask(tr,
++			                                                     taskBucket,
++			                                                     task,
++			                                                     firstVersion,
++			                                                     firstVersion,
++			                                                     endVersion,
++			                                                     TaskCompletionKey::noSignal(),
++			                                                     bulkLoadDone);
++		} else {
+ 			co_await RestoreDispatchTaskFunc::addTask(tr,
+ 			                                          taskBucket,
+ 			                                          task,
+@@ -7110,16 +7127,6 @@ struct StartFullRestoreTaskFunc : RestoreTaskFuncBase {
+ 			                                          0,
+ 			                                          TaskCompletionKey::noSignal(),
+ 			                                          bulkLoadDone);
+-		} else if (mutationLogType == MutationLogType::PARTITIONED_LOG) {
+-			// Traditional restore with partitioned logs
+-			Version endVersion =
+-			    std::min(firstVersion + CLIENT_KNOBS->RESTORE_PARTITIONED_BATCH_VERSION_SIZE, restoreVersion);
+-			co_await RestoreDispatchPartitionedTaskFunc::addTask(
+-			    tr, taskBucket, task, firstVersion, firstVersion, endVersion);
+-		} else {
+-			// Traditional restore with non-partitioned logs
+-			co_await RestoreDispatchTaskFunc::addTask(
+-			    tr, taskBucket, task, 0, "", 0, CLIENT_KNOBS->RESTORE_DISPATCH_BATCH_SIZE);
+ 		}
+ 
+ 		// Initialize apply mutations map.
+```
+
+**File**: `fdbserver/workloads/BackupS3BlobCorrectness.cpp` (modified, +11/-3)
+```diff
+@@ -158,6 +158,10 @@ struct BackupS3BlobCorrectnessWorkload : TestWorkload {
+ 	// expectBulkEncryptionRejection: assert --encryption-key-file is refused on a bulkdump backup. Only
+ 	// the backup side is probed; the comment at the probe records why the restore side cannot be.
+ 	bool expectBulkEncryptionRejection;
++	// mutationLogType: 0 = classic blog mutation logs, 1 = partitioned logs written by backup workers,
++	// -1 = pick one of the two at random per seed.
++	// Only the real backup uses it; the refusal probes keep passing DEFAULT so they stay independent of it.
++	int mutationLogType;
+ 	// expectBulkPrefixRejection: assert --add-prefix/--remove-prefix is refused on a bulkload restore.
+ 	bool expectBulkPrefixRejection;
+ 	// expectRestoreFailure: the bulkload restore is expected NOT to complete, so the workload asserts the
+@@ -240,6 +244,10 @@ struct BackupS3BlobCorrectnessWorkload : TestWorkload {
+ 		performValidation = getOption(options, "performValidation"_sr, false);
+ 		expectBulkIncrementalRejection = getOption(options, "expectBulkIncrementalRejection"_sr, false);
+ 		expectBulkEncryptionRejection = getOption(options, "expectBulkEncryptionRejection"_sr, false);
++		mutationLogType = getOption(options, "mutationLogType"_sr, 0);
++		if (mutationLogType < 0) {
++			mutationLogType = deterministicRandom()->coinflip() ? 1 : 0;
++		}
+ 		expectBulkPrefixRejection = getOption(options, "expectBulkPrefixRejection"_sr, false);
+ 		// Mutually exclusive with performValidation, whose audit compares restored contents that by
+ 		// definition do not exist when the restore is expected to fail.
+@@ -269,7 +277,7 @@ struct BackupS3BlobCorrectnessWorkload : TestWorkload {
+ 			// An idle instance still needs non-empty ranges to construct; reuse the last active backup's.
+ 			MultiBackupRanges::addRanges(
+ 			    multiBackupScenario, std::min(multiBackupIndex, multiBackupCount - 1), multiBackupCount, backupRanges);
+-		} else if (backupRangePrefix.size() > 0) {
++		} else if (!backupRangePrefix.empty()) {
+ 			// Narrower than normalKeys so the out-of-range sentinels below have an outside to occupy.
+ 			backupRanges.push_back_deep(backupRanges.arena(), prefixRange(backupRangePrefix));
+ 		} else {
+@@ -676,7 +684,7 @@ struct BackupS3BlobCorrectnessWorkload : TestWorkload {
+ 			                                   tag.toString(),
+ 			                                   backupRanges,
+ 			                                   StopWhenDone{ !stopDifferentialDelay },
+-			                                   MutationLogType::DEFAULT,
++			                                   (MutationLogType)mutationLogType,
+ 			                                   IncrementalBackupOnly::False,
+ 			                                   encryptionKeyFileName,
+ 			                                   encryptionKeyFileName.present() ? DEFAULT_ENCRYPTION_BLOCK_SIZE : 0,
+@@ -770,7 +778,7 @@ struct BackupS3BlobCorrectnessWorkload : TestWorkload {
+ 		    .detail("AbortAndRestartAfter", abortAndRestartAfter)
+ 		    .detail("DifferentialAfter", stopDifferentialAfter);
+ 
+-		if (backupRangePrefix.size() > 0) {
++		if (!backupRangePrefix.empty()) {
+ 			KeyRange prefixed = prefixRange(backupRangePrefix);
+ 			RangeResult sample =
+ 			    co_await runRYWTransaction(cx, [=](Reference<ReadYourWritesTransaction> tr) -> Future<RangeResult> {
+```
+
+**File**: `tests/CMakeLists.txt` (modified, +1/-0)
+```diff
+@@ -194,6 +194,7 @@ if(WITH_PYTHON)
+   add_fdb_test(TEST_FILES slow/BackupS3BlobBulkLoadRestoreWithChaos.toml)
+   add_fdb_test(TEST_FILES slow/BackupS3BlobBulkLoadRestoreKeyRange.toml)
+   add_fdb_test(TEST_FILES slow/BackupS3BlobBulkLoadIncrementalRejected.toml)
++  add_fdb_test(TEST_FILES slow/BackupS3BlobBulkLoadPartitionedLog.toml)
+   add_fdb_test(TEST_FILES slow/BackupS3BlobBulkLoadRestoreJobIncomplete.toml)
+   add_fdb_test(TEST_FILES fast/BulkLoading.toml)
+   add_fdb_test(TEST_FILES fast/BulkLoadingDestTeamFailure.toml)
+```
+
+**File**: `tests/slow/BackupS3BlobBulkLoadPartitionedLog.toml` (added, +116/-0)
+```diff
+@@ -0,0 +1,116 @@
++# A bulkload restore of a backup whose mutation log is partitioned
++#
++# bulkload supplies the range data from SSTs and then replays the mutation log. Those are independent
++# choices, but StartFullRestoreTaskFunc used to pick the classic dispatcher for the replay whenever the
++# bulkload branch was taken, without consulting the log layout. The classic reader rejects a partitioned
++# block on its first byte, and a failing restore task is retried rather than aborted, so the restore sat
++# at zero log bytes applied forever.
++#
++# This test exercises the combination end to end: bulkdump snapshot + partitioned logs + bulkload restore.
++#
++# Based on BackupS3BlobBulkLoadIncrementalRejected.toml
++testClass = "Backup"
++
++[configuration]
++# Both guards under test write their user-facing message to stderr, and the harness scores stderr at
++# severity 40 by default -- which fails the run for the very output this test exists to provoke.
++StderrSeverity = 30
++storageEngineExcludeTypes = ["ssd-sharded-rocksdb"] # TODO(BulkLoad): remove after allowing bulkloading with fetchKey and shardedrocksdb
++disableTss = true # TODO(BulkLoad): support TSS
++
++# HA (multi-region) configuration - randomly enabled for test coverage
++# Note: generateFearless controls "fearless DR" configs, simpleConfig=false allows complex configs
++generateFearless = true
++simpleConfig = false
++minimumRegions = 2
++# singleRegion not set - allows random HA configuration
++
++# Ensure enough storage servers for non-overlapping BulkLoad teams
++# Triple replication needs 6+ servers (3 src + 3 different dest) to avoid overlapping
++extraMachineCountDC = 3
++# Dedicated storage-class machines so bulk-load team selection can find a team disjoint from the
++# source: it rejects any team sharing a server with the source (DDTeamCollection). Without these,
++# runs fail with DDBulkLoadEngineTaskGetTeamFailedToFindValidTeam reporting ValidTeamSize 0 with
++# every candidate team duplicated, the task is marked Error, and the restore is incomplete.
++# extraMachineCountDC above adds ordinary machines, which do not supply that capacity. Per DC, so
++# this holds for the multi-region variants too. See tests/fast/BulkLoading.toml for the same guard.
++extraStorageMachineCountPerDC = 5
++
++config = "triple usable_regions=1 storage_engine=ssd-2 perpetual_storage_wiggle=0 commit_proxies=3 grv_proxies=3 resolvers=3 logs=3"
++
++# Disable buggify and fault injection to avoid interference with MockS3/BulkLoad
++buggify = false
++faultInjection = false
++
++# Required knobs for BulkLoad functionality
++[[knobs]]
++bulkload_sim_failure_injection = false
++shard_encode_location_metadata = true
++enable_read_lock_on_range = true
++enable_version_vector = false
++enable_version_vector_tlog_unicast = false
++enable_version_vector_reply_recovery = false
++min_byte_sampling_probability = 0.5
++cc_enforce_use_unfit_dd_in_sim = true
++disable_audit_storage_final_replica_check_in_sim = true
++max_trace_lines = 5000000
++# Linux/Joshua runs 4x slower than macOS
++# Even single-region runs need 3600s+ on Joshua (observed ~4000s in worst cases)
++bulkdump_job_timeout = 5400
++bulkload_job_timeout = 5400
++
++[[flow_knobs]]
++MAX_BUGGIFIED_DELAY = 0.0
++
++# S3/Blobstore settings
++blobstore_max_connection_life = 300
++blobstore_request_timeout_min = 300
++blobstore_request_tries = 5
++blobstore_connect_tries = 5
++blobstore_connect_timeout = 30
++http_send_size = 1024
++http_read_size = 1024
++connection_monitor_loop_time = 0.1
++connection_monitor_timeout = 1.0
++connection_monitor_idle_timeout = 60.0
++dd_team_zero_server_left_log_delay = 0
++dd_rebalance_parallelism = 1
++
++[[test]]
++testTitle = 'BackupS3BlobBulkLoadPartitionedLog'
++useDB = true
++clearAfterTest = false
++simBackupAgents = 'BackupToFile'
++waitForQuiescence = false
++waitForQuiescenceEnd = false
++runConsistencyCheck = false
++connectionFailuresDisableDuration = 1000000
++runFailureWorkloads = false
++timeout = 7200
++
++    [[test.workload]]
++    testName = 'Cycle'
++    keyPrefix = 'd/'
++    nodeCount = 200
++    transactionsPerSecond = 150.0
++    testDuration = 120.0
++
++    [[test.workload]]
++    testName = 'BackupS3BlobCorrectness'
++    backupAfter = 10.0
++    restoreStartAfterBackupFinished = 30.0
++    abortAndRestartAfter = 0.0
++    # Differential, so there are mutation-log files for the restore to replay.
++    stopDifferentialAfter = 60.0
++    performRestore = true
++    # Aligned with the Cycle prefix so the backup actually holds data: with a random
++    # alphanumeric range the log files are empty and the mismatch below cannot occur.
++    backupRangePrefix = 'd/'
++    skipDirtyRestore = false
++    backupURL = 'blobstore://mocks3:mocksecret:mocktoken@127.0.0.1:8080/backup_container?bucket=backup_bucket&region=us-east-1&secure_connection=0&cwpf=1&cu=1'
++    # BulkDump/BulkLoad integration options
++    snapshotMode = 1           # 1 = BULKDUMP (creates SST files instead of range files)
++    useRangeFileRestore = false # false = use BulkLoad for restore
++    
+```
+
+**File**: `tests/slow/BackupS3BlobBulkLoadRestoreKeyRange.toml` (modified, +1/-0)
+```diff
+@@ -115,3 +115,4 @@ timeout = 7200
+     # BulkDump/BulkLoad integration options
+     snapshotMode = 1           # 1 = BULKDUMP (creates SST files instead of range files)
+     useRangeFileRestore = false # false = use BulkLoad for restore
++    mutationLogType = -1       # -1 = classic or partitioned logs, chosen per seed
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14365** (closed): [backup] Bound restore dispatch and adapt oversized transactions (@mpatou-openai)
 - **PR #14358** (closed): [release-7.4] defer rocksdb format update, adapt 7.4.9 release notes (@ploxiln)
 - **PR #14355** (2026-10-24): [release-8.0] docs updates: coordinator hostnames, trace event severity (@ploxiln)
 - **PR #14354** (2026-10-26): build: dedup and consolidate compiler warning disable flags (@ploxiln)
 - **PR #14353** (2026-10-23): docs: document the trace event severity levels (@VanshBhardwaj24)
-- **PR #14351** (2026-10-23): Fix onMainThread coroutine completion lifetime (@mpatou-openai)
-- **PR #14350** (2026-10-23): Add key-range, prefix and derived-lock options to SubmitBackup and RestoreBackup (@nos-a)
+- **PR #14352** (2026-10-27): [release-8.0] Cancel YieldedAsyncMap::destroyOnCancelYield without throwing (@saintstack)
 
 ---
 
@@ -2050,28 +2507,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. dd/cdc: fix long-double to long-int comparison warning
+## X. show mutation log type in status output in fdbbackup, fdbcli, fdbrestore (#14321
 
 **RULE**:
-When implementing operations in `fdbserver/datadistributor/NativeCdcBalancer.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fdbbackup/backup.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eaa66379`: dd/cdc: fix long-double to long-int comparison warning. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1f6fd502`: show mutation log type in status output in fdbbackup, fdbcli, fdbrestore (#14321). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbserver/datadistributor/NativeCdcBalancer.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbbackup/backup.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-	if (versions >= (long double)std::numeric_limits<Version>::max()) {
+		std::vector<Future<MutationLogType>> tagMutationLogTypes;
+			tagMutationLogTypes.push_back(config.mutationLogType().getD(tr, snapshot, MutationLogType::DEFAULT));
+		          waitForAll(tagRangeBytes) && waitForAll(tagLogBytes) && waitForAll(tagMutationLogTypes) &&
+		          success(fBackupPaused));
+			tagRoot.create("mutation_log_type") = mutationLogTypeToString(tagMutationLogTypes[j].get());
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-	if (versions >= std::numeric_limits<Version>::max()) {
+		          waitForAll(tagRangeBytes) && waitForAll(tagLogBytes) && success(fBackupPaused));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eaa66379` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1f6fd502` are properly handled with clean fallback behavior.

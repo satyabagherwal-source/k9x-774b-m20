@@ -3183,10 +3183,10 @@
     "repository": "fallow-rs/fallow",
     "platform": "github",
     "sourceUrl": "https://github.com/fallow-rs/fallow",
-    "sourceVersion": "f2d8b806",
+    "sourceVersion": "52965b80",
     "license": "MIT",
-    "contentHash": "cb096ca078d816a34d999f106370195bdf880f497ca1e219f9b1394173ce2a21",
-    "lastHarvestedAt": "2026-10-26T12:20:03.757Z",
+    "contentHash": "a38fda494c5ecf862828cc02db489dcf81c2f2352f69232a4a8d27c67f28e862",
+    "lastHarvestedAt": "2026-10-27T23:59:19.274Z",
     "learningId": "learn-github-fallow-rs-fallow"
   },
   "expo-create-react-native-app": {
@@ -4973,10 +4973,10 @@
     "repository": "apple/foundationdb",
     "platform": "github",
     "sourceUrl": "https://github.com/apple/foundationdb",
-    "sourceVersion": "414a6ec8",
+    "sourceVersion": "1f6fd502",
     "license": "Apache-2.0",
-    "contentHash": "9f57772010db3c703916a86e7a5d073f6d6bab3cda93ba07c2ddc0c36d727985",
-    "lastHarvestedAt": "2026-10-27T11:16:07.742Z",
+    "contentHash": "f2938dfb7266ca12b65fccf7339bb15b096374d163e4914b5dab0351382efc0a",
+    "lastHarvestedAt": "2026-10-27T23:59:30.632Z",
     "learningId": "learn-github-apple-foundationdb"
   },
   "kucherenko-jscpd": {
