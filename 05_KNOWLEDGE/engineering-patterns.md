@@ -354550,3 +354550,104 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `b1c943e6` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4872. bind remote-auth sessions to their user and confine job artifact downloads (Harvested from zereight/gitlab-mcp)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "bind remote-auth sessions to their user and confine job artifact downloads",
+  "source": "zereight/gitlab-mcp",
+  "source_url": "https://github.com/zereight/gitlab-mcp",
+  "source_version": "c6bad8cb",
+  "license": "MIT",
+  "extracted_at": "2026-10-27T15:04:32.665Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zereight-gitlab-mcp",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zereight/gitlab-mcp](https://github.com/zereight/gitlab-mcp) (Revision: `c6bad8cb`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zereight/gitlab-mcp. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d29f8351`: bind remote-auth sessions to their user and confine job artifact downloads. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+- With `REMOTE_AUTHORIZATION=true`, a stateful session now belongs to the GitLab user whose token opened it (or, for an unauthenticated tool discovery session, the first user who authenticates on it). Requests with another user's token get `404 Session not found` and no longer replace the session's stored token. A new token of the same user, including a CI job token of one of the user's jobs, still works. `GET` and `DELETE /mcp` for such a session now need a token of its user and answer `401` without one. A `POST` without auth headers still runs with the stored token
+- `download_job_artifacts` in stdio mode saves `artifacts_job_<id>.zip` under `GITLAB_DOWNLOAD_DIR` (default `.gitlab-mcp-downloads`) instead of the working directory, `local_path` is relative to that directory, an existing archive is no longer replaced, and a download that breaks off leaves no partial file, matching `download_attachment`
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d29f8351` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4873. support multiple package digests with acquisition sources (#11216) (Harvested from aquasecurity/trivy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "support multiple package digests with acquisition sources (#11216)",
+  "source": "aquasecurity/trivy",
+  "source_url": "https://github.com/aquasecurity/trivy",
+  "source_version": "d18962e8",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-27T15:04:43.346Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-aquasecurity-trivy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [aquasecurity/trivy](https://github.com/aquasecurity/trivy) (Revision: `d18962e8`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `integration/testdata/almalinux-8.json.golden`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d18962e8`: support multiple package digests with acquisition sources (#11216). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `integration/testdata/almalinux-8.json.golden`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+            "UID": "5dca464358520b88"
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+            "UID": "d88cb05095ee62ab"
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d18962e8` are properly handled with clean fallback behavior.

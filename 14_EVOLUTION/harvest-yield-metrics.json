@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T15:01:19.088Z",
-  "total_cycles_completed": 5374,
-  "total_learnings_persisted": 5374,
-  "total_rules_promoted": 4779,
+  "last_updated": "2026-10-27T15:04:43.547Z",
+  "total_cycles_completed": 5376,
+  "total_learnings_persisted": 5376,
+  "total_rules_promoted": 4781,
   "history": [
-    {
-      "timestamp": "2026-10-27T09:13:31.645Z",
-      "repository": "gardener/gardener",
-      "learningId": "learn-github-gardener-gardener",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T09:46:50.509Z",
-      "repository": "smallstep/cli",
-      "learningId": "learn-github-smallstep-cli",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T10:09:02.832Z",
       "repository": "Kong/kubernetes-ingress-controller",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-27T15:01:19.088Z",
       "repository": "nolabs-ai/nono",
       "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T15:04:32.883Z",
+      "repository": "zereight/gitlab-mcp",
+      "learningId": "learn-github-zereight-gitlab-mcp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T15:04:43.547Z",
+      "repository": "aquasecurity/trivy",
+      "learningId": "learn-github-aquasecurity-trivy",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

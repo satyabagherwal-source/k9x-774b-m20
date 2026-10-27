@@ -4600,3 +4600,7 @@ https://github.com/patrickchugh/terravision
 https://github.com/modelcontextprotocol/php-sdk
 # [AI-AGENTS] svnscha/mcp-windbg (1118 score) - Model Context Protocol for WinDbg.
 https://github.com/svnscha/mcp-windbg
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T15:04:26.019Z] ---
+# [AI-AGENTS] zereight/gitlab-mcp (1423 score) - MCP server for GitLab: 277 tools for projects, MRs, issues, pipelines, wikis and
+https://github.com/zereight/gitlab-mcp

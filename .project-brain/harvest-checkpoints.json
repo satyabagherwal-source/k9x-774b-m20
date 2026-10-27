@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T15:01:19.092Z",
+  "last_updated": "2026-10-27T15:04:43.550Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7116,14 +7116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aquasecurity-trivy",
-      "content_hash": "f9245df20c7c4facad4c86fab142c9899a938c1b5d553c4da057797d32ec6d15",
-      "verified_at": "2026-10-25T13:42:19.169Z",
+      "content_hash": "f3dc4928dc390f2ff3d781b367173c0e3cbf5e2b884f2e3243a575f3b05874ff",
+      "verified_at": "2026-10-27T15:04:43.550Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T13:42:19.169Z"
+      "last_updated": "2026-10-27T15:04:43.550Z"
     },
     "sfu-db/connector-x": {
       "repository": "sfu-db/connector-x",
@@ -16859,6 +16859,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-27T14:53:56.389Z"
+    },
+    "zereight/gitlab-mcp": {
+      "repository": "zereight/gitlab-mcp",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-zereight-gitlab-mcp",
+      "content_hash": "e1f8e9830d38ed9a48f047c086688f7be6c185cd5550ae5b2daf946309750761",
+      "verified_at": "2026-10-27T15:04:32.886Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T15:04:32.886Z"
     }
   },
   "repos": {

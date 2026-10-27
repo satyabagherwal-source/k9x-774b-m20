@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T15:01:19.015Z",
-  "total_verified_learnings": 1138,
+  "last_updated": "2026-10-27T15:04:43.480Z",
+  "total_verified_learnings": 1139,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2646,8 +2646,8 @@
       "slug": "aquasecurity-trivy",
       "platform": "github",
       "source_url": "https://github.com/aquasecurity/trivy",
-      "source_version": "3a0164d6",
-      "content_hash": "f9245df20c7c4facad4c86fab142c9899a938c1b5d553c4da057797d32ec6d15",
+      "source_version": "d18962e8",
+      "content_hash": "f3dc4928dc390f2ff3d781b367173c0e3cbf5e2b884f2e3243a575f3b05874ff",
       "dossier_path": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "promoted_rules": [
@@ -2685,6 +2685,11 @@
           "number": 4310,
           "title": "deps): bump the common group across 1 directory with 14 updates (#11463)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4873,
+          "title": "support multiple package digests with acquisition sources (#11216)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2692,7 +2697,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T13:42:19.099Z",
+      "verified_at": "2026-10-27T15:04:43.467Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -135470,6 +135475,67 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T15:01:19.001Z"
+    },
+    "learn-github-zereight-gitlab-mcp": {
+      "learning_id": "learn-github-zereight-gitlab-mcp",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "zereight/gitlab-mcp",
+      "repository": "zereight/gitlab-mcp",
+      "slug": "zereight-gitlab-mcp",
+      "platform": "github",
+      "source_url": "https://github.com/zereight/gitlab-mcp",
+      "source_version": "c6bad8cb",
+      "content_hash": "e1f8e9830d38ed9a48f047c086688f7be6c185cd5550ae5b2daf946309750761",
+      "dossier_path": "07_PROJECT_LEARNING/zereight-gitlab-mcp-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/zereight-gitlab-mcp-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4872,
+          "title": "bind remote-auth sessions to their user and confine job artifact downloads",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T15:04:32.786Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4872": {
+      "learning_id": "rule-4872",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4872,
+      "title": "bind remote-auth sessions to their user and confine job artifact downloads",
+      "source_url": "https://github.com/zereight/gitlab-mcp",
+      "source_version": "c6bad8cb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T15:04:32.786Z"
+    },
+    "rule-4873": {
+      "learning_id": "rule-4873",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4873,
+      "title": "support multiple package digests with acquisition sources (#11216)",
+      "source_url": "https://github.com/aquasecurity/trivy",
+      "source_version": "d18962e8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T15:04:43.467Z"
     }
   },
   "aliases": {

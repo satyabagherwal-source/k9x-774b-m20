@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-KSU2",
-    "timestamp": "2026-10-25T16:28:20.858Z",
-    "repository": "canberkkkkkk/ema-lightning",
-    "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
-    "contentHash": "200645d600c2a4323b7d0c9adbcd33790de1a17d313c9c463402cd5e86d8b5a2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-L3D4",
-    "timestamp": "2026-10-25T16:28:34.504Z",
-    "repository": "LLPhant/LLPhant",
-    "learningId": "learn-github-llphant-llphant",
-    "contentHash": "b353f0570ac925111758507b71de7726d47650dfd6903477499084cbf9ac718c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-SUXP",
     "timestamp": "2026-10-25T16:34:36.829Z",
     "repository": "Megabit/Blazorise",
@@ -7490,6 +7460,36 @@
     "repository": "nolabs-ai/nono",
     "learningId": "learn-github-nolabs-ai-nono",
     "contentHash": "9fa2b4473384bd249cab19b06aba41d1c3e98f5c92474cc345f34c68b4e75e58",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-GQJV",
+    "timestamp": "2026-10-27T15:04:32.875Z",
+    "repository": "zereight/gitlab-mcp",
+    "learningId": "learn-github-zereight-gitlab-mcp",
+    "contentHash": "e1f8e9830d38ed9a48f047c086688f7be6c185cd5550ae5b2daf946309750761",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-GYS2",
+    "timestamp": "2026-10-27T15:04:43.538Z",
+    "repository": "aquasecurity/trivy",
+    "learningId": "learn-github-aquasecurity-trivy",
+    "contentHash": "f3dc4928dc390f2ff3d781b367173c0e3cbf5e2b884f2e3243a575f3b05874ff",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -4663,10 +4663,10 @@
     "repository": "aquasecurity/trivy",
     "platform": "github",
     "sourceUrl": "https://github.com/aquasecurity/trivy",
-    "sourceVersion": "3a0164d6",
+    "sourceVersion": "d18962e8",
     "license": "Apache-2.0",
-    "contentHash": "f9245df20c7c4facad4c86fab142c9899a938c1b5d553c4da057797d32ec6d15",
-    "lastHarvestedAt": "2026-10-25T13:42:19.162Z",
+    "contentHash": "f3dc4928dc390f2ff3d781b367173c0e3cbf5e2b884f2e3243a575f3b05874ff",
+    "lastHarvestedAt": "2026-10-27T15:04:43.542Z",
     "learningId": "learn-github-aquasecurity-trivy"
   },
   "sfu-db-connector-x": {
@@ -11218,5 +11218,15 @@
     "contentHash": "8a980d6488fe91e812078b7b1b2f7a5a3c900d62a655cbbf17c590639a4614bb",
     "lastHarvestedAt": "2026-10-27T14:53:56.380Z",
     "learningId": "learn-github-svnscha-mcp-windbg"
+  },
+  "zereight-gitlab-mcp": {
+    "repository": "zereight/gitlab-mcp",
+    "platform": "github",
+    "sourceUrl": "https://github.com/zereight/gitlab-mcp",
+    "sourceVersion": "c6bad8cb",
+    "license": "MIT",
+    "contentHash": "e1f8e9830d38ed9a48f047c086688f7be6c185cd5550ae5b2daf946309750761",
+    "lastHarvestedAt": "2026-10-27T15:04:32.878Z",
+    "learningId": "learn-github-zereight-gitlab-mcp"
   }
 }

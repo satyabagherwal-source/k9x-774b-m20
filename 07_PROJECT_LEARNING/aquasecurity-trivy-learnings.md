@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source**: github ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
-> **Source Version**: `3a0164d6`  
+> **Source Version**: `d18962e8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T13:42:18.820Z  
+> **Timestamp**: 2026-10-27T15:04:43.131Z  
 > **Learning ID**: `learn-github-aquasecurity-trivy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T13:42:17.952Z  
+> **Harvest Timestamp**: 2026-10-27T15:04:43.124Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find vulnerabilities, misconfigurations, secrets, SBOM in containers, Kubernetes, code repositories, clouds and more
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38704 stars
+- **Stars / Engagement**: 38772 stars
 
 ---
 
@@ -1002,227 +1002,219 @@ type TracingConfiguration struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3a0164d6` (2026-10-23)
-**Commit Message**: chore(deps): bump the common group across 1 directory with 14 updates (#11463)
+### Incident Patch 1: `d18962e8` (2026-10-27)
+**Commit Message**: feat: support multiple package digests with acquisition sources (#11216)
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +33/-28)
+**File**: `integration/testdata/almalinux-8.json.golden` (modified, +1/-1)
 ```diff
-@@ -4,15 +4,15 @@ go 1.27.0
- 
- require (
- 	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3
--	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.1
-+	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.15.0
- 	github.com/Azure/azure-sdk-for-go/sdk/containers/azcontainerregistry v0.2.3
- 	github.com/BurntSushi/toml v1.6.0
- 	github.com/CycloneDX/cyclonedx-go v0.12.0
- 	github.com/GoogleCloudPlatform/docker-credential-gcr/v2 v2.2.1
- 	github.com/Masterminds/sprig/v3 v3.3.0
- 	github.com/NYTimes/gziphandler v1.1.1
- 	github.com/alecthomas/chroma v0.10.0
--	github.com/alicebob/miniredis/v2 v2.39.0
-+	github.com/alicebob/miniredis/v2 v2.40.0
- 	github.com/apparentlymart/go-cidr v1.1.1
- 	github.com/aquasecurity/bolt-fixtures v0.0.0-20200903104109-d34e7f983986
- 	github.com/aquasecurity/go-gem-version v0.0.0-20201115065557-8eed6fe000ce
-@@ -34,18 +34,18 @@ require (
- 	github.com/aws/aws-sdk-go-v2/service/ecr v1.66.4
- 	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3
- 	github.com/bitnami/go-version v0.0.0-20231130084017-bb00604d650c
--	github.com/bmatcuk/doublestar/v4 v4.10.2
-+	github.com/bmatcuk/doublestar/v4 v4.10.3
- 	github.com/cenkalti/backoff/v6 v6.0.1
- 	github.com/cheggaaa/pb/v3 v3.2.1
--	github.com/containerd/containerd/v2 v2.4.1
-+	github.com/containerd/containerd/v2 v2.4.2
- 	github.com/containerd/platforms v1.0.0-rc.5
- 	github.com/distribution/reference v0.6.0
- 	github.com/docker/cli v29.9.1+incompatible
- 	github.com/docker/go-units v0.5.0
- 	github.com/fatih/color v1.19.0
- 	github.com/go-git/go-git/v5 v5.19.3
- 	github.com/go-viper/mapstructure/v2 v2.5.0
--	github.com/gocsaf/csaf/v3 v3.6.0
-+	github.com/gocsaf/csaf/v3 v3.7.0
- 	github.com/golang-jwt/jwt/v5 v5.3.1
- 	github.com/google/go-containerregistry v0.22.1
- 	github.com/google/go-github/v62 v62.0.0
-@@ -82,7 +82,7 @@ require (
- 	github.com/moby/moby/api v1.56.1
- 	github.com/moby/moby/client v0.6.2
- 	github.com/nikolalohinski/gonja/v2 v2.9.1
--	github.com/open-policy-agent/opa v1.21.1
-+	github.com/open-policy-agent/opa v1.21.2
- 	github.com/opencontainers/go-digest v1.0.0
- 	github.com/opencontainers/image-spec v1.1.1
- 	github.com/openvex/go-vex v0.2.9
-@@ -112,19 +112,19 @@ require (
- 	github.com/zclconf/go-cty v1.19.0
- 	github.com/zclconf/go-cty-yaml v1.2.0
- 	go.etcd.io/bbolt v1.5.0
--	golang.org/x/crypto v0.57.0
--	golang.org/x/mod v0.41.0
--	golang.org/x/net v0.60.0
-+	golang.org/x/crypto v0.58.0
-+	golang.org/x/mod v0.42.0
-+	golang.org/x/net v0.61.0
- 	golang.org/x/sync v0.24.0
--	golang.org/x/term v0.46.0
--	golang.org/x/text v0.42.0
--	golang.org/x/tools v0.51.0
--	golang.org/x/vuln v1.8.0
-+	golang.org/x/term v0.47.0
-+	golang.org/x/text v0.43.0
-+	golang.org/x/tools v0.52.0
-+	golang.org/x/vuln v1.9.0
- 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da
- 	google.golang.org/protobuf v1.36.12
- 	gopkg.in/ini.v1 v1.67.3
- 	gopkg.in/yaml.v3 v3.0.1
--	helm.sh/helm/v4 v4.3.0
-+	helm.sh/helm/v4 v4.3.1
- 	k8s.io/api v0.37.1
- 	k8s.io/apimachinery v0.37.1
- 	k8s.io/utils v0.0.0-20260626114624-be93311217bd
-@@ -159,7 +159,7 @@ require (
- 	dario.cat/mergo v1.0.2 // indirect
- 	github.com/Azure/azure-sdk-for-go/sdk/internal v1.13.0 // indirect
- 	github.com/Azure/go-ansiterm v0.0.0-20261006220739-8c912ac31dd4 // indirect
--	github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0 // indirect
-+	github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1 // indirect
- 	github.com/DataDog/zstd v1.5.5 // indirect
- 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.34.0 // indirect
- 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.57.0 // indirect
-@@ -198,6 +198,7 @@ require (
- 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.4 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/sts v1.51.4 // indirect
- 	github.com/aws/smithy-go v1.28.5 // indirect
-+	github.com/beorn7/perks v1.0.1 // indirect
- 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
- 	github.com/blang/semver/v4 v4.0.0 // indirect
- 	github.com/briandowns/spinner v1.23.0 // indirect
-@@ -210,7 +211,7 @@ require (
- 	github.com/chai2010/gettext-go v1.0.2 // indirect
- 	github.com/cli/browser v1.3.0 // indirect
- 	github.com/clipperhouse/uax29/v2 v2.7.0 // indirect
--	github.com/cloudflare/circl v1.6.4 // indirect
-+	github.com/cloudflare/circl v1.6.5 // indirect
- 	github.com/cncf/xds/go v0.0.0-20260202195803-dba9d589def2 // indirect
- 	github.com/containerd/cgroups/v3 v3.1.3 // indirect
- 	github.com/containerd/containerd/api v1.12.0 // indirect
-@@ -288,7 +289,7 @@ require (
- 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
- 	github.com/google/btree v1.1.3 // indirect
- 	github.com/google/cel-go v0.30.0 // indirect
--	github.com/google/gnostic-models v0.7.0 // indirect
-+	github.com/google/gnostic-models v0.7.1 // indirect
- 	github.com/google/go-cmp v0.7.0 // indirect
- 	github.com/google/go-github/v31 v31.0.0 // indirect
- 	github.com/google/go-querystring v1.1.0 // indirect
-@@ -369,6 +370,10 @@ require (
- 	github.com/planetsca
+@@ -75,7 +75,7 @@
+           "PkgName": "openssl-libs",
+           "PkgIdentifier": {
+             "PURL": "pkg:rpm/alma/openssl-libs@1.1.1k-4.el8?arch=x86_64\u0026distro=alma-8.5\u0026epoch=1",
+-            "UID": "d88cb05095ee62ab"
++            "UID": "5dca464358520b88"
+           },
+           "InstalledVersion": "1:1.1.1k-4.el8",
+           "FixedVersion": "1:1.1.1k-5.el8_5",
 ```
 
-**File**: `go.sum` (modified, +66/-66)
+**File**: `integration/testdata/alpine-310.json.golden` (modified, +4/-4)
 ```diff
-@@ -63,8 +63,8 @@ github.com/AdaLogics/go-fuzz-headers v0.0.0-20240806141605-e8a1dd7889d6 h1:He8af
- github.com/AdaLogics/go-fuzz-headers v0.0.0-20240806141605-e8a1dd7889d6/go.mod h1:8o94RPi1/7XTJvwPpRSzSUedZrtlirdB3r9Z20bi2f8=
- github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3 h1:qgnWTiWs1G7AqcKZegFvkJD1bmXJcaDU3uC0ELSgZ5U=
- github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3/go.mod h1:XtxD48QPInqoj+GMlcRlXHEYsoOxFnP6w2JgIZ9rDS4=
--github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.1 h1:u93s+zU2JD62im61Bm5CZIc1ZrOJaIAWEg0WOrMVkEo=
--github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.1/go.mod h1:oXtinPO4OLj9d1DOTrqrL1oRwGhcqadvAmrl6wTeGlk=
-+github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.15.0 h1:w3gDUJlJ0BfBsHH02DCBDwbkmMSXJqBj6nBOCo9iocY=
-+github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.15.0/go.mod h1:7scl8mG/IFLVjJ9ef/ltdND2T1z0CkgVSaQoUxLvmeU=
- github.com/Azure/azure-sdk-for-go/sdk/azidentity/cache v0.4.0 h1:xFaZZ+IubdftrDHnGGwZ6QvQ3KHTtWl2MCK+GMt2vxs=
- github.com/Azure/azure-sdk-for-go/sdk/azidentity/cache v0.4.0/go.mod h1:mCBhUhlMjLLJKr5aqw2TNS/VqJOie8MzWq3DAMJeKso=
- github.com/Azure/azure-sdk-for-go/sdk/containers/azcontainerregistry v0.2.3 h1:ldKsKtEIblsgsr6mPwrd9yRntoX6uLz/K89wsldwx/k=
-@@ -75,8 +75,8 @@ github.com/Azure/go-ansiterm v0.0.0-20261006220739-8c912ac31dd4 h1:m2xcjRABtG288
- github.com/Azure/go-ansiterm v0.0.0-20261006220739-8c912ac31dd4/go.mod h1:MTUE7ZuZO89FAtAwozGg6AWD83pcdefnEq5gF82MB8s=
- github.com/AzureAD/microsoft-authentication-extensions-for-go/cache v0.1.1 h1:WJTmL004Abzc5wDB5VtZG2PJk5ndYDgVacGqfirKxjM=
- github.com/AzureAD/microsoft-authentication-extensions-for-go/cache v0.1.1/go.mod h1:tCcJZ0uHAmvjsVYzEFivsRTN00oz5BEsRgQHu5JZ9WE=
--github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0 h1:Nljr4q1GRA/5vCrMONS+g4u4LRHNgOXVSh3O43J2CnI=
--github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0/go.mod h1:Y33QHnf0FfdVewFFISOGe20mkZbxX4H839o955/PoeI=
-+github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1 h1:0O6j18nQDoIff6/mtosT5LNU2WehEwp+LqfX6699oqY=
-+github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1/go.mod h1:xdYAf5bjkOpsd3auA8riiJW4vneBubt9caavL7626jQ=
- github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
- github.com/BurntSushi/toml v1.0.0/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
- github.com/BurntSushi/toml v1.6.0 h1:dRaEfpa2VI55EwlIW72hMRHdWouJeRF7TPYhI+AUQjk=
-@@ -130,8 +130,8 @@ github.com/alecthomas/chroma v0.10.0 h1:7XDcGkCQopCNKjZHfYrNLraA+M7e0fMiJ/Mfikbf
- github.com/alecthomas/chroma v0.10.0/go.mod h1:jtJATyUxlIORhUOFNA9NZDWGAQ8wpxQQqNSB4rjA/1s=
- github.com/alessio/shellescape v1.4.1 h1:V7yhSDDn8LP4lc4jS8pFkt0zCnzVJlG5JXy9BVKJUX0=
- github.com/alessio/shellescape v1.4.1/go.mod h1:PZAiSCk0LJaZkiCSkPv8qIobYglO3FPpyFjDCtHLS30=
--github.com/alicebob/miniredis/v2 v2.39.0 h1:M7WbmV5BmV56L8KTG0rw6vEQ+woTOghpDgin2xv4A0g=
--github.com/alicebob/miniredis/v2 v2.39.0/go.mod h1:TcL7YfarKPGDAthEtl5NBeHZfeUQj6OXMm/+iu5cLMM=
-+github.com/alicebob/miniredis/v2 v2.40.0 h1:6IgTQbvm2JiMYZ8yur/acNJzVjtSOWCelxXbk/LUBXc=
-+github.com/alicebob/miniredis/v2 v2.40.0/go.mod h1:TcL7YfarKPGDAthEtl5NBeHZfeUQj6OXMm/+iu5cLMM=
- github.com/anchore/go-struct-converter v0.1.0 h1:2rDRssAl6mgKBSLNiVCMADgZRhoqtw9dedlWa0OhD30=
- github.com/anchore/go-struct-converter v0.1.0/go.mod h1:rYqSE9HbjzpHTI74vwPvae4ZVYZd1lue2ta6xHPdblA=
- github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be h1:9AeTilPcZAjCFIImctFaOjnTIavg87rW78vTPkQqLI8=
-@@ -230,8 +230,8 @@ github.com/bitnami/go-version v0.0.0-20231130084017-bb00604d650c h1:C4UZIaS+HAw+
- github.com/bitnami/go-version v0.0.0-20231130084017-bb00604d650c/go.mod h1:9iglf1GG4oNRJ39bZ5AZrjgAFD2RwQbXw6Qf7Cs47wo=
- github.com/blang/semver/v4 v4.0.0 h1:1PFHFE6yCCTv8C1TeyNNarDzntLi7wMI5i/pzqYIsAM=
- github.com/blang/semver/v4 v4.0.0/go.mod h1:IbckMUScFkM3pff0VJDNKRiT6TG/YpiHIM2yvyW5YoQ=
--github.com/bmatcuk/doublestar/v4 v4.10.2 h1:eF7W7HWKg3z9NrWV9pTLnNeoXaqq3Tq9DNKXVMfoCnw=
--github.com/bmatcuk/doublestar/v4 v4.10.2/go.mod h1:xBQ8jztBU6kakFMg+8WGxn0c6z1fTSPVIjEY1Wr7jzc=
-+github.com/bmatcuk/doublestar/v4 v4.10.3 h1:1UIv1+fqH3++ViVkpnaPTB+Pi1UHycnPFAq14zgK+gI=
-+github.com/bmatcuk/doublestar/v4 v4.10.3/go.mod h1:xBQ8jztBU6kakFMg+8WGxn0c6z1fTSPVIjEY1Wr7jzc=
- github.com/bradleyjkemp/cupaloy/v2 v2.8.0 h1:any4BmKE+jGIaMpnU8YgH/I2LPiLBufr6oMMlVBbn9M=
- github.com/bradleyjkemp/cupaloy/v2 v2.8.0/go.mod h1:bm7JXdkRd4BHJk9HpwqAI8BoAY1lps46Enkdqw6aRX0=
- github.com/briandowns/spinner v1.23.0 h1:alDF2guRWqa/FOZZYWjlMIx2L6H0wyewPxo/CH4Pt2A=
-@@ -266,8 +266,8 @@ github.com/cli/browser v1.3.0 h1:LejqCrpWr+1pRqmEPDGnTZOjsMe7sehifLynZJuqJpo=
- github.com/cli/browser v1.3.0/go.mod h1:HH8s+fOAxjhQoBUAsKuPCbqUuxZDhQ2/aD+SzsEfBTk=
- github.com/clipperhouse/uax29/v2 v2.7.0 h1:+gs4oBZ2gPfVrKPthwbMzWZDaAFPGYK72F0NJv2v7Vk=
- github.com/clipperhouse/uax29/v2 v2.7.0/go.mod h1:EFJ2TJMRUaplDxHKj1qAEhCtQPW2tJSwu5BF98AuoVM=
--github.com/cloudflare/circl v1.6.4 h1:pOXuDTCEYyzydgUpQ0CQz3LsinKjiSk6nNP5Lt5K64U=
--
+@@ -77,7 +77,7 @@
+           "PkgName": "libcrypto1.1",
+           "PkgIdentifier": {
+             "PURL": "pkg:apk/alpine/libcrypto1.1@1.1.1c-r0?arch=x86_64\u0026distro=3.10.2",
+-            "UID": "c3465bd7087640a7"
++            "UID": "ca703c0f76eeea3c"
+           },
+           "InstalledVersion": "1.1.1c-r0",
+           "FixedVersion": "1.1.1d-r0",
+@@ -151,7 +151,7 @@
+           "PkgName": "libcrypto1.1",
+           "PkgIdentifier": {
+             "PURL": "pkg:apk/alpine/libcrypto1.1@1.1.1c-r0?arch=x86_64\u0026distro=3.10.2",
+-            "UID": "c3465bd7087640a7"
++            "UID": "ca703c0f76eeea3c"
+           },
+           "InstalledVersion": "1.1.1c-r0",
+           "FixedVersion": "1.1.1d-r2",
+@@ -235,7 +235,7 @@
+           "PkgName": "libssl1.1",
+           "PkgIdentifier": {
+             "PURL": "pkg:apk/alpine/libssl1.1@1.1.1c-r0?arch=x86_64\u0026distro=3.10.2",
+-            "UID": "5743e53dcec3d29c"
++            "UID": "d38bd441d749eee0"
+           },
+           "InstalledVersion": "1.1.1c-r0",
+           "FixedVersion": "1.1.1d-r0",
+@@ -309,7 +309,7 @@
+           "PkgName": "libssl1.1",
+           "PkgIdentifier": {
+             "PURL": "pkg:apk/alpine/libssl1.1@1.1.1c-r0?arch=x86_64\u0026distro=3.10.2",
+-            "UID": "5743e53dcec3d29c"
++            "UID": "d38bd441d749eee0"
+           },
+           "InstalledVersion": "1.1.1c-r0",
+           "FixedVersion": "1.1.1d-r2",
 ```
 
----
-
-### Incident Patch 2: `759e6246` (2026-10-23)
-**Commit Message**: chore(deps): bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.338.4 to 1.339.0 in the aws group (#11461)
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +1/-1)
+**File**: `integration/testdata/alpine-39-high-critical.json.golden` (modified, +2/-2)
 ```diff
-@@ -30,7 +30,7 @@ require (
- 	github.com/aws/aws-sdk-go-v2 v1.47.3
- 	github.com/aws/aws-sdk-go-v2/config v1.33.9
- 	github.com/aws/aws-sdk-go-v2/credentials v1.20.9
--	github.com/aws/aws-sdk-go-v2/service/ec2 v1.338.4
-+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.339.0
- 	github.com/aws/aws-sdk-go-v2/service/ecr v1.66.4
- 	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3
- 	github.com/bitnami/go-version v0.0.0-20231130084017-bb00604d650c
+@@ -77,7 +77,7 @@
+           "PkgName": "musl",
+           "PkgIdentifier": {
+             "PURL": "pkg:apk/alpine/musl@1.1.20-r4?arch=x86_64\u0026distro=3.9.4",
+-            "UID": "54bca8ef3ee9e338"
++            "UID": "bcb00cc2c0b22746"
+           },
+           "InstalledVersion": "1.1.20-r4",
+           "FixedVersion": "1.1.20-r5",
+@@ -124,7 +124,7 @@
+           "PkgName": "musl-utils",
+           "PkgIdentifier": {
+             "PURL": "pkg:apk/alpine/musl-utils@1.1.20-r4?arch=x86_64\u0026distro=3.9.4",
+-            "UID": "792dadf1e7110cf2"
++            "UID": "1e01f6837333f3a7"
+           },
+           "InstalledVersion": "1.1.20-r4",
+           "FixedVersion": "1.1.20-r5",
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `integration/testdata/alpine-39-ignore-cveids.json.golden` (modified, +2/-2)
 ```diff
-@@ -198,8 +198,8 @@ github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6 h1:Qmn60RWuk9+bd2ddvJJqwf3Cpac3
- github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6/go.mod h1:h/YJhe4AVyQxEUMluph10iqV7mjajH7A9L+BHF5ppis=
- github.com/aws/aws-sdk-go-v2/service/ebs v1.22.1 h1:SeDJWG4pmye+/aO6k+zt9clPTUy1MXqUmkW8rbAddQg=
- github.com/aws/aws-sdk-go-v2/service/ebs v1.22.1/go.mod h1:wRzaW0v9GGQS0h//wpsVDw3Hah5gs5UP+NxoyGeZIGM=
--github.com/aws/aws-sdk-go-v2/service/ec2 v1.338.4 h1:1PZfVMz36He601uRm1PiKyDcsEKBk76QYwyISwjOjjY=
--github.com/aws/aws-sdk-go-v2/service/ec2 v1.338.4/go.mod h1:RttUwBa++DWLLpzTAQdcQzqI9uBF9cfRI/ek8gXzLR4=
-+github.com/aws/aws-sdk-go-v2/service/ec2 v1.339.0 h1:QeML374NiRru1tMjY46LznOzY7VMbWstpnhrFPgscvM=
-+github.com/aws/aws-sdk-go-v2/service/ec2 v1.339.0/go.mod h1:RttUwBa++DWLLpzTAQdcQzqI9uBF9cfRI/ek8gXzLR4=
- github.com/aws/aws-sdk-go-v2/service/ecr v1.66.4 h1:qnnwXADWCoti36pKognFfw3L4bPYW1wIlsm4JqYmjDY=
- github.com/aws/aws-sdk-go-v2/service/ecr v1.66.4/go.mod h1:uDza1Eipo/Olii3CCgLglHmAni24PScSAhpfIKbUl0c=
- github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.21 h1:e6YW5uME30TkrElR+4/xcY7NB6CCj2dcv7vtmGXhfhQ=
+@@ -77,7 +77,7 @@
+           "PkgName": "libcrypto1.1",
+           "PkgIdentifier": {
+             "PURL": "pkg:apk/alpine/libcrypto1.1@1.1.1b-r1?arch=x86_64\u0026distro=3.9.4",
+-            "UID": "3148053bd3cfcabf"
++            "UID": "4c2e06fcb981c785"
+           },
+           "InstalledVersion": "1.1.1b-r1",
+           "FixedVersion": "1.1.1d-r2",
+@@ -161,7 +161,7 @@
+           "PkgName": "libssl1.1",
+           "PkgIdentifier": {
+             "PURL": "pkg:apk/alpine/libssl1.1@1.1.1b-r1?arch=x86_64\u0026distro=3.9.4",
+-            "UID": "603cbbc71f2d6dec"
++            "UID": "aa0a5547076415c"
+           },
+           "InstalledVersion": "1.1.1b-r1",
+           "FixedVersion": "1.1.1d-r2",
+```
+
+**File**: `integration/testdata/alpine-39.json.golden` (modified, +6/-6)
+```diff
+@@ -77,7 +77,7 @@
+           "PkgName": "libcrypto1.1",
+           "PkgIdentifier": {
+             "PURL": "pkg:apk/alpine/libcrypto1.1@1.1.1b-r1?arch=x86_64\u0026distro=3.9.4",
+-            "UID": "3148053bd3cfcabf"
++            "UID": "4c2e06fcb981c785"
+           },
+           "InstalledVersion": "1.1.1b-r1",
+           "FixedVersion": "1.1.1d-r0",
+@@ -151,7 +151,7 @@
+           "PkgName": "libcrypto1.1",
+           "PkgIdentifier": {
+             "PURL": "pkg:apk/alpine/libcrypto1.1@1.1.1b-r1?arch=x86_64\u0026distro=3.9.4",
+-            "UID": "3148053bd3cfcabf"
++            "UID": "4c2e06fcb981c785"
+           },
+           "InstalledVersion": "1.1.1b-r1",
+           "FixedVersion": "1.1.1d-r2",
+@@ -235,7 +235,7 @@
+           "PkgName": "libssl1.1",
+           "PkgIdentifier": {
+             "PURL": "pkg:apk/alpine/libssl1.1@1.1.1b-r1?arch=x86_64\u0026distro=3.9.4",
+-            "UID": "603cbbc71f2d6dec"
++            "UID": "aa0a5547076415c"
+           },
+           "InstalledVersion": "1.1.1b-r1",
+           "FixedVersion": "1.1.1d-r0",
+@@ -309,7 +309,7 @@
+           "PkgName": "libssl1.1",
+           "PkgIdentifier": {
+             "PURL": "pkg:apk/alpine/libssl1.1@1.1.1b-r1?arch=x86_64\u0026distro=3.9.4",
+-            "UID": "603cbbc71f2d6dec"
++            "UID": "aa0a5547076415c"
+           },
+           "InstalledVersion": "1.1.1b-r1",
+           "FixedVersion": "1.1.1d-r2",
+@@ -393,7 +393,7 @@
+           "PkgName": "musl",
+           "PkgIdentifier": {
+             "PURL": "pkg:apk/alpine/musl@1.1.20-r4?arch=x86_64\u0026distro=3.9.4",
+-            "UID": "54bca8ef3ee9e338"
++            "UID": "bcb00cc2c0b22746"
+           },
+           "InstalledVersion": "1.1.20-r4",
+           "FixedVersion": "1.1.20-r5",
+@@ -440,7 +440,7 @@
+           "PkgName": "musl-utils",
+           "PkgIdentifier": {
+             "PURL": "pkg:apk/alpine/musl-utils@1.1.20-r4?arch=x86_64\u0026distro=3.9.4",
+-            "UID": "792dadf1e7110cf2"
++            "UID": "1e01f6837333f3a7"
+           },
+           "InstalledVersion": "1.1.20-r4",
+           "FixedVersion": "1.1.20-r5",
+```
+
+**File**: `integration/testdata/alpine-distroless.json.golden` (modified, +1/-1)
+```diff
+@@ -72,7 +72,7 @@
+           "PkgName": "git",
+           "PkgIdentifier": {
+             "PURL": "pkg:apk/alpine/git@2.35.1-r2?arch=x86_64\u0026distro=3.16",
+-            "UID": "c6d52f037391dfc7"
++            "UID": "e193e6e3ab14f788"
+           },
+           "InstalledVersion": "2.35.1-r2",
+           "FixedVersion": "2.35.2-r0",
+```
+
+**File**: `integration/testdata/amazon-1.json.golden` (modified, +1/-1)
+```diff
+@@ -76,7 +76,7 @@
+           "PkgName": "curl",
+           "PkgIdentifier": {
+             "PURL": "pkg:rpm/amazon/curl@7.61.1-11.91.amzn1?arch=x86_64\u0026distro=amazon-AMI%20release%202018.03",
+-            "UID": "e50eea8f63fe4bb6"
++            "UID": "68fd3f1ad2a38ef6"
+           },
+           "InstalledVersion": "7.61.1-11.91.amzn1",
+           "FixedVersion": "7.61.1-12.93.amzn1",
+```
+
+**File**: `integration/testdata/amazon-2.json.golden` (modified, +2/-2)
+```diff
+@@ -76,7 +76,7 @@
+           "PkgName": "curl",
+           "PkgIdentifier": {
+             "PURL": "pkg:rpm/amazon/curl@7.61.1-9.amzn2.0.1?arch=x86_64\u0026distro=amazon-2%20%28Karoo%29",
+-            "UID": "dfda69b8a2968a7f"
++            "UID": "5a9e866744e82bce"
+           },
+           "InstalledVersion": "7.61.1-9.amzn2.0.1",
+           "FixedVersion": "7.61.1-12.amzn2.0.1",
+@@ -149,7 +149,7 @@
+           "PkgName": "curl",
+           "PkgIdentifier": {
+             "PURL": "pkg:rpm/amazon/curl@7.61.1-9.amzn2.0.1?arch=x86_64\u0026distro=amazon-2%20%28Karoo%29",
+-            "UID": "dfda69b8a2968a7f"
++            "UID": "5a9e866744e82bce"
+           },
+           "InstalledVersion": "7.61.1-9.amzn2.0.1",
+           "FixedVersion": "7.61.1-11.amzn2.0.2",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11475** (closed): fix(python): resolve unambiguous name-only selectors in pylock.toml (@yunaremaia)
+- **PR #11474** (closed): fix(apk): trim fuzzy version requirements and bump analyzer version (@yunaremaia)
+- **PR #11468** (2026-10-26): chore(deps): bump alpine to 3.24.3 in container images (@DmitriyLewen)
 - **PR #11465** (closed): fix(nodejs): handle optionalDependencies in pnpm v9 importers (@cloudwithpreetham)
 - **PR #11463** (2026-10-23): chore(deps): bump the common group across 1 directory with 14 updates (@dependabot[bot])
 - **PR #11462** (2026-10-23): chore(deps): bump the docker group with 3 updates (@dependabot[bot])
-- **PR #11461** (2026-10-23): chore(deps): bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.338.4 to 1.339.0 in the aws group (@dependabot[bot])
-- **PR #11455** (closed): fix(java): use repositories from pom.xml when resolving BOMs imported with scope=import (@imunishsoni)
-- **PR #11450** (2026-10-21): ci(helm): bump Trivy version to 0.76.1 for Trivy Helm Chart 0.28.1 (@repo-trivy-write-33ed3c[bot])
 
 ---
 
@@ -1242,61 +1234,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump the common group across 1 directory with 14 updates (#11463)
+## X. support multiple package digests with acquisition sources (#11216)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `integration/testdata/almalinux-8.json.golden`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3a0164d6`: deps): bump the common group across 1 directory with 14 updates (#11463). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d18962e8`: support multiple package digests with acquisition sources (#11216). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `integration/testdata/almalinux-8.json.golden`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.15.0
-	github.com/alicebob/miniredis/v2 v2.40.0
-	github.com/bmatcuk/doublestar/v4 v4.10.3
-	github.com/containerd/containerd/v2 v2.4.2
-	github.com/gocsaf/csaf/v3 v3.7.0
-	github.com/open-policy-agent/opa v1.21.2
-	golang.org/x/crypto v0.58.0
-	golang.org/x/mod v0.42.0
-	golang.org/x/net v0.61.0
-	golang.org/x/term v0.47.0
-	golang.org/x/text v0.43.0
-	golang.org/x/tools v0.52.0
-	golang.org/x/vuln v1.9.0
-	helm.sh/helm/v4 v4.3.1
-	github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1 // indirect
-	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/cloudflare/circl v1.6.5 // indirect
-	github.com/google/gnostic-models v0.7.1 // indirect
+            "UID": "5dca464358520b88"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.1
-	github.com/alicebob/miniredis/v2 v2.39.0
-	github.com/bmatcuk/doublestar/v4 v4.10.2
-	github.com/containerd/containerd/v2 v2.4.1
-	github.com/gocsaf/csaf/v3 v3.6.0
-	github.com/open-policy-agent/opa v1.21.1
-	golang.org/x/crypto v0.57.0
-	golang.org/x/mod v0.41.0
-	golang.org/x/net v0.60.0
-	golang.org/x/term v0.46.0
-	golang.org/x/text v0.42.0
-	golang.org/x/tools v0.51.0
-	golang.org/x/vuln v1.8.0
-	helm.sh/helm/v4 v4.3.0
-	github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0 // indirect
-	github.com/cloudflare/circl v1.6.4 // indirect
-	github.com/google/gnostic-models v0.7.0 // indirect
+            "UID": "d88cb05095ee62ab"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3a0164d6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d18962e8` are properly handled with clean fallback behavior.

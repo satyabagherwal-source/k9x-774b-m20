@@ -19393,5 +19393,20 @@
     "qualityScore": 1118,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-27T14:53:08.448Z"
+  },
+  {
+    "name": "gitlab-mcp",
+    "fullName": "zereight/gitlab-mcp",
+    "url": "https://github.com/zereight/gitlab-mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "MCP server for GitLab: 277 tools for projects, MRs, issues, pipelines, wikis and more via the GitLab REST/GraphQL API",
+    "stars": 2072,
+    "forks": 363,
+    "openIssues": 14,
+    "language": "TypeScript",
+    "qualityScore": 1423,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T15:04:08.787Z"
   }
 ]
