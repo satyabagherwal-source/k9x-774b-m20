@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/devexpress-testcafe-learnings.md`  
 > **Source**: github ([https://github.com/DevExpress/testcafe](https://github.com/DevExpress/testcafe))  
-> **Source Version**: `4ae235c8`  
+> **Source Version**: `1e12423d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T03:13:11.561Z  
+> **Timestamp**: 2026-10-27T16:58:38.631Z  
 > **Learning ID**: `learn-github-devexpress-testcafe`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/devexpress-testcafe-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DevExpress/testcafe](https://github.com/DevExpress/testcafe))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T03:13:10.216Z  
+> **Harvest Timestamp**: 2026-10-27T16:58:38.413Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -601,11 +601,11 @@ export function parseConfig (str) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #8566** (2026-10-26): **fix: report setNativeDialogHandler(null) without throwing**
+  *Symptoms*: ## Purpose  `t.setNativeDialogHandler(null)` is the documented way to remove a native dialog handler. The command it creates has `dialogHandler: null`. When a reporter implements `reportTestActionDone`, `CommandFormatter._prepareDialogHandler` passes that null to `_prepareClientFunction`, which reads `command.fnCode`. The test then fails with:  ``` TypeError: Cannot read properties of null (reading 'fnCode')     at CommandFormatter._prepareClientFunction (lib/reporter/command/command-formatter.js)     at CommandFormatter._prepareDialogHandler (lib/reporter/command/command-formatter.js)     at CommandFormatter.format (lib/reporter/command/command-formatter.js) ```  Without such a reporter the command runs fine, so the same test passes or fails depending on which reporter is attached.  ## Approach  `_prepareDialogHandler` returns `null` when `command.dialogHandler` is null, so the reporter receives `{ type: 'set-native-dialog-handler', dialogHandler: null }`. Non-null handlers are formatted as before.  ## Tests  `test/server/test-controller-events-test.js`: "Should report setNativeDialogHandler(null)" calls `setNativeDialogHandler(null)` with a reporter that implements `reportTestActionDone` and checks the reported command. Without the fix it fails with the TypeError above.  Verified locally: `npx gulp lint` clean; full server suite (`test/server/*-test.js`) 829 passing, 1 pending, 0 failing.  ## References  No existing issue found.  ## Pre-Merge TODO - [x] Write tests for your
+
 - **Issue #8565** (2026-10-07): **Skip failing client tests on iOS Safari**
   *Symptoms*: The `test / safari` job failed on iOS Safari 15.2 in the “click after scrolling” and contenteditable caret-position tests.  - **iOS test gating** — Skip these cases on iOS while keeping them enabled on other browsers. For example:   ```js   (isIOS ? QUnit.skip : asyncTest)('click after scrolling', ...);   ```
-
-- **Issue #8564** (2026-10-07): **build: fixed vulnerabilities**
-  *Symptoms*: <!-- Thank you for your contribution.  Before making a PR, please read our contributing guidelines at https://github.com/DevExpress/testcafe/blob/master/CONTRIBUTING.md#code-contribution  We recommend creating a *draft* PR, so that you can mark it as 'ready for review' when you are done. -->  ## Purpose closes https://github.com/DevExpress/dxvcs/issues/47789  ## Approach _Describe how your changes address the issue or implement the desired functionality in as much detail as possible._  ## References _Provide a link to the existing issue(s), if any._  ## Pre-Merge TODO - [ ] Write tests for your proposed changes - [ ] Make sure that existing tests do not fail 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -622,163 +622,89 @@ export function parseConfig (str) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a6d0e5cd` (2026-06-02)
-**Commit Message**: build(deps-dev): bump picomatch from 2.3.1 to 2.3.2 in /examples/basic (#8497)
+### Incident Patch 1: `1e12423d` (2026-10-26)
+**Commit Message**: fix: report setNativeDialogHandler(null) without throwing (#8566)
 
-Bumps [picomatch](https://github.com/micromatch/picomatch) from 2.3.1 to
-2.3.2.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/micromatch/picomatch/releases">picomatch's
-releases</a>.</em></p>
-<blockquote>
-<h2>2.3.2</h2>
-<p>This is a security release fixing several security relevant
-issues.</p>
-<h2>What's Changed</h2>
-<ul>
-<li>fix: exception when glob pattern contains constructor by <a
-href="https://github.com/Jason3S"><code>@​Jason3S</code></a> in <a
-href="https://redirect.github.com/micromatch/picomatch/pull/144">micromatch/picomatch#144</a></li>
-<li>Fix for <a
-href="https://github.com/micromatch/picomatch/security/advisories/GHSA-c2c7-rcm5-vvqj">CVE-2026-33671</a></li>
-<li>Fix for <a
-href="https://github.com/micromatch/picomatch/security/advisories/GHSA-3v7f-55p6-f55p">CVE-2026-33672</a></li>
-</ul>
-<p><strong>Full Changelog</strong>: <a
-href="https://github.com/micromatch/picomatch/compare/2.3.1...2.3.2">https://github.com/micromatch/picomatch/compare/2.3.1...2.3.2</a></p>
-</blockquote>
-</details>
-<details>
-<summary>Changelog</summary>
-<p><em>Sourced from <
+## Purpose
 
-**File**: `examples/basic/package-lock.json` (modified, +3/-3)
-```diff
-@@ -4176,9 +4176,9 @@
-       "license": "ISC"
-     },
-     "node_modules/picomatch": {
--      "version": "2.3.1",
--      "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-2.3.1.tgz",
--      "integrity": "sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==",
-+      "version": "2.3.2",
-+      "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-2.3.2.tgz",
-+      "integrity": "sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA==",
-       "dev": true,
-       "license": "MIT",
-       "engines": {
+`t.setNativeDialogHandler(null)` is the documented way to remove a
+native dialog handler. The command it creates has `dialogHandler: null`.
+When a reporter implements `reportTestActionDone`,
+`CommandFormatter._prepareDialogHandler` passes that null to
+`_prepareClientFunction`, which reads `command.fnCode`. The test then
+fails with:
+
+```
+TypeError: Cannot read properties of null (reading 'fnCode')
+    at CommandFormatter._prepareClientFunction (lib/reporter/command/command-formatter.js)
+    at CommandFormatter._prepareDialogHandler (lib/reporter/command/command-formatter.js)
+    at CommandFormatter.format (lib/reporter/command/command-formatter.js)
 ```
 
----
+Without such a reporter the command runs fine, so the same test passes
+or fails depending on which reporter is attached.
 
-### Incident Patch 2: `8ab2d865` (2026-06-02)
-**Commit Message**: build(deps-dev): bump picomatch from 2.3.1 to 2.3.2 in /examples/using-assertions (#8496)
+## Approach
 
-Bumps [picomatch](https://github.com/micromatch/picomatch) from 2.3.1 to
-2.3.2.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/micromatch/picomatch/releases">picomatch's
-releases</a>.</em></p>
-<blockquote>
-<h2>2.3.2</h2>
-<p>This is a security release fixing several security relevant
-issues.</p>
-<h2>What's Changed</h2>
-<ul>
-<li>fix: exception when glob pattern contains constructor by <a
-href="https://github.com/Jason3S"><code>@​Jason3S</code></a> in <a
-href="https://redirect.github.com/micromatch/picomatch/pull/144">micromatch/picomatch#144</a></li>
-<li>Fix for <a
-href="https://github.com/micromatch/picomatch/security/advisories/GHSA-c2c7-rcm5-vvqj">CVE-2026-33671</a></li>
-<li>Fix for <a
-href="https://github.com/micromatch/picomatch/security/advisories/GHSA-3v7f-55p6-f55p">CVE-2026-33672</a></li>
-</ul>
-<p><strong>Full Changelog</strong>: <a
-href="https://github.com/micromatch/picomatch/compare/2.3.1...2.3.2">https://github.com/micromatch/picomatch/compare/2.3.1...2.3.2</a></p>
-</blockquote>
-</details>
-<details>
-<summary>Changelog</summary>
-<p><em>Sou
+`_prepareDialogHandler` returns `null` when `command.dialogHandler` is
+null, so the reporter receives `{ type: 'set-native-dialog-handler',
+dialogHandler: null }`. Non-null handlers are formatted as before.
 
-**File**: `examples/using-assertions/package-lock.json` (modified, +3/-3)
+## Tests
+
+`test/server/test-controller-events-test.js`: "Should report
+setNativeDialogHandler(null)" calls `setNative
+
+**File**: `src/reporter/command/command-formatter.ts` (modified, +4/-1)
 ```diff
-@@ -4176,9 +4176,9 @@
-       "license": "ISC"
-     },
-     "node_modules/picomatch": {
--      "version": "2.3.1",
--      "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-2.3.1.tgz",
--      "integrity": "sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==",
-+      "version": "2.3.2",
-+      "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-2.3.2.tgz",
-+      "integrity": "sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA==",
-       "dev": true,
-       "license": "MIT",
-       "engines": {
+@@ -115,7 +115,10 @@ export class CommandFormatter {
+         };
+     }
+ 
+-    private _prepareDialogHandler (command: SetNativeDialogHandlerCommand): object {
++    private _prepareDialogHandler (command: SetNativeDialogHandlerCommand): object | null {
++        if (!command.dialogHandler)
++            return null;
++
+         return this._prepareClientFunction(command.dialogHandler);
+     }
+ 
 ```
 
----
-
-### Incident Patch 3: `7ac2e765` (2026-06-02)
-**Commit Message**: build(deps-dev): bump picomatch from 2.3.1 to 2.3.2 in /examples/running-tests-in-chrome-using-bitbucket-pipelines-ci (#8499)
-
-Bumps [picomatch](https://github.com/micromatch/picomatch) from 2.3.1 to
-2.3.2.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/micromatch/picomatch/releases">picomatch's
-releases</a>.</em></p>
-<blockquote>
-<h2>2.3.2</h2>
-<p>This is a security release fixing several security relevant
-issues.</p>
-<h2>What's Changed</h2>
-<ul>
-<li>fix: exception when glob pattern contains constructor by <a
-href="https://github.com/Jason3S"><code>@​Jason3S</code></a> in <a
-href="https://redirect.github.com/micromatch/picomatch/pull/144">micromatch/picomatch#144</a></li>
-<li>Fix for <a
-href="https://github.com/micromatch/picomatch/security/advisories/GHSA-c2c7-rcm5-vvqj">CVE-2026-33671</a></li>
-<li>Fix for <a
-href="https://github.com/micromatch/picomatch/security/advisories/GHSA-3v7f-55p6-f55p">CVE-2026-33672</a></li>
-</ul>
-<p><strong>Full Changelog</strong>: <a
-href="https://github.com/micromatch/picomatch/compare/2.3.1...2.3.2">https://github.com/micromatch/picomatch/compare/2.3.1...2.3.2</a></p>
-</blockquote>
-</details>
-<details>
-<su
-
-**File**: `examples/running-tests-in-chrome-using-bitbucket-pipelines-ci/package-lock.json` (modified, +3/-3)
+**File**: `test/server/test-controller-events-test.js` (modified, +16/-0)
 ```diff
-@@ -4437,9 +4437,9 @@
-       "license": "ISC"
-     },
-     "node_modules/picomatch": {
--      "version": "2.3.1",
--      "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-2.3.1.tgz",
--      "integrity": "sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==",
-+      "version": "2.3.2",
-+      "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-2.3.2.tgz",
-+      "integrity": "sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA==",
-       "dev": true,
-       "license": "MIT",
-       "engines": {
+@@ -304,6 +304,22 @@ describe('TestController action events', () => {
+         expect(log).eql(actionsKeys);
+     });
+ 
++    it('Should report setNativeDialogHandler(null)', async () => {
++        let reportedCommand = null;
++
++        initializeReporter({
++            async reportTestActionDone (name, { command }) {
++                reportedCommand = command;
++            },
++        });
++
++        await messageBus.emit('start', task);
++
++        await testController.setNativeDialogHandler(null);
++
++        expect(reportedCommand).eql({ type: 'set-native-dialog-handler', dialogHandler: null, actionId: 'SetNativeDialogHandlerCommand' });
++    });
++
+     it('Show only modified action options', async () => {
+         const doneLog  = [];
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8566** (2026-10-26): fix: report setNativeDialogHandler(null) without throwing (@sam-yh)
 - **PR #8565** (closed): Skip failing client tests on iOS Safari (@Copilot)
 - **PR #8564** (2026-10-07): build: fixed vulnerabilities (@Aleksey28)
 - **PR #8563** (closed): fix: kill a restarting local Chrome instead of closing its window (@sam-yh)
 - **PR #8561** (closed): fix: retry a failed browser relaunch once (@sam-yh)
 - **PR #8559** (closed): build(deps): bump baseline-browser-mapping from 2.10.33 to 2.11.22 (@dependabot[bot])
-- **PR #8558** (closed): build(deps-dev): bump baseline-browser-mapping from 2.10.0 to 2.11.21 in /examples/basic (@dependabot[bot])
 
 ---
 
@@ -798,32 +724,31 @@ href="https://github.com/micromatch/picomatch/compare/2.3.1...2.3.2">https://git
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps-dev): bump picomatch from 2.3.1 to 2.3.2 in /examples/basic (#8497)
+## X. report setNativeDialogHandler(null) without throwing (#8566)
 
 **RULE**:
-When implementing operations in `examples/basic/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DevExpress/testcafe. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/reporter/command/command-formatter.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DevExpress/testcafe. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a6d0e5cd`: build(deps-dev): bump picomatch from 2.3.1 to 2.3.2 in /examples/basic (#8497). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1e12423d`: report setNativeDialogHandler(null) without throwing (#8566). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/basic/package-lock.json`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/reporter/command/command-formatter.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-      "version": "2.3.2",
-      "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-2.3.2.tgz",
-      "integrity": "sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA==",
+    private _prepareDialogHandler (command: SetNativeDialogHandlerCommand): object | null {
+        if (!command.dialogHandler)
+            return null;
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-      "version": "2.3.1",
-      "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-2.3.1.tgz",
-      "integrity": "sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==",
+    private _prepareDialogHandler (command: SetNativeDialogHandlerCommand): object {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a6d0e5cd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1e12423d` are properly handled with clean fallback behavior.

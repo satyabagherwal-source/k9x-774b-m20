@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T16:52:01.995Z",
+  "last_updated": "2026-10-27T16:58:49.438Z",
   "total_verified_learnings": 1142,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -39945,8 +39945,8 @@
       "slug": "ontos-ai-knowhere",
       "platform": "github",
       "source_url": "https://github.com/Ontos-AI/knowhere",
-      "source_version": "6bc056af",
-      "content_hash": "4550215e6504560aae5ef3542e15faf4b83309c888d087e4c89647a2e646db48",
+      "source_version": "e025ca1a",
+      "content_hash": "b2658a611c3bd8b95f348fef620e09bd867e4702e88c41d42a5db18414d4ac3c",
       "dossier_path": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "promoted_rules": [
@@ -39964,6 +39964,11 @@
           "number": 4313,
           "title": "Merge pull request #468 from Ontos-AI/fix/wangbinqi/page-body-text-preview",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4911,
+          "title": "introduce PAGE_MEMORY_EMBED_CONCURRENCY configuration for improved embedding per",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39971,7 +39976,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T13:42:26.223Z",
+      "verified_at": "2026-10-27T16:58:49.425Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49327,8 +49332,8 @@
       "slug": "tamagui-tamagui",
       "platform": "github",
       "source_url": "https://github.com/tamagui/tamagui",
-      "source_version": "32f3ba8b",
-      "content_hash": "7a3183da86dfc5510dfb76ae5b44b808f6c8a9e68e30c253f0c9cbd5ede69015",
+      "source_version": "40199fd3",
+      "content_hash": "7ce693eaa668b209e1c9f19821b859f7243d9a8a6c1af2b74c1a334368087f95",
       "dossier_path": "07_PROJECT_LEARNING/tamagui-tamagui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tamagui-tamagui-learnings.md",
       "promoted_rules": [
@@ -49366,6 +49371,11 @@
           "number": 3899,
           "title": "security): pin Next to patched 16.4.1",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4908,
+          "title": "test: lock the inferred native props workspace fixture",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49373,7 +49383,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T15:09:45.648Z",
+      "verified_at": "2026-10-27T16:58:35.665Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54402,8 +54412,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "a6a48cd8",
-      "content_hash": "b0ea55d144beb7fd565894a5fb55d2899abee847d4a67063bb29dbf15ec787bd",
+      "source_version": "f872ced5",
+      "content_hash": "7fb1761d6c355ddac324af58292cb0a991d60d0c6835f1a9f98c3deae2cce6c8",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -54451,6 +54461,11 @@
           "number": 4835,
           "title": "gpu): add goldshmidt_division (#3926)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4910,
+          "title": "gpu): add checks for compressed noise squashed ctxt (#4099)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54458,7 +54473,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T14:10:56.168Z",
+      "verified_at": "2026-10-27T16:58:46.883Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68443,14 +68458,19 @@
       "slug": "devexpress-testcafe",
       "platform": "github",
       "source_url": "https://github.com/DevExpress/testcafe",
-      "source_version": "4ae235c8",
-      "content_hash": "0a162a59fcb8a139c08dc541ea92aeb724774258583a114a354f80787c578879",
+      "source_version": "1e12423d",
+      "content_hash": "21cafec67df0fd2ff6528c36d05aa69604aec278f8f7a46e33752769301d316f",
       "dossier_path": "07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
       "promoted_rules": [
         {
           "number": 3016,
           "title": "build(deps-dev): bump picomatch from 2.3.1 to 2.3.2 in /examples/basic (#8497)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4909,
+          "title": "report setNativeDialogHandler(null) without throwing (#8566)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -68459,7 +68479,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T03:13:11.790Z",
+      "verified_at": "2026-10-27T16:58:38.984Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -136266,6 +136286,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T16:52:01.982Z"
+    },
+    "rule-4908": {
+      "learning_id": "rule-4908",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4908,
+      "title": "test: lock the inferred native props workspace fixture",
+      "source_url": "https://github.com/tamagui/tamagui",
+      "source_version": "40199fd3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T16:58:35.665Z"
+    },
+    "rule-4909": {
+      "learning_id": "rule-4909",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4909,
+      "title": "report setNativeDialogHandler(null) without throwing (#8566)",
+      "source_url": "https://github.com/DevExpress/testcafe",
+      "source_version": "1e12423d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T16:58:38.984Z"
+    },
+    "rule-4910": {
+      "learning_id": "rule-4910",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4910,
+      "title": "gpu): add checks for compressed noise squashed ctxt (#4099)",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "f872ced5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T16:58:46.883Z"
+    },
+    "rule-4911": {
+      "learning_id": "rule-4911",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4911,
+      "title": "introduce PAGE_MEMORY_EMBED_CONCURRENCY configuration for improved embedding per",
+      "source_url": "https://github.com/Ontos-AI/knowhere",
+      "source_version": "e025ca1a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T16:58:49.425Z"
     }
   },
   "aliases": {

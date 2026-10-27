@@ -2293,10 +2293,10 @@
     "repository": "Ontos-AI/knowhere",
     "platform": "github",
     "sourceUrl": "https://github.com/Ontos-AI/knowhere",
-    "sourceVersion": "6bc056af",
+    "sourceVersion": "e025ca1a",
     "license": "Apache-2.0",
-    "contentHash": "4550215e6504560aae5ef3542e15faf4b83309c888d087e4c89647a2e646db48",
-    "lastHarvestedAt": "2026-10-25T13:42:26.283Z",
+    "contentHash": "b2658a611c3bd8b95f348fef620e09bd867e4702e88c41d42a5db18414d4ac3c",
+    "lastHarvestedAt": "2026-10-27T16:58:49.504Z",
     "learningId": "learn-github-ontos-ai-knowhere"
   },
   "bitterbot-ai-bitterbot-desktop": {
@@ -2453,10 +2453,10 @@
     "repository": "tamagui/tamagui",
     "platform": "github",
     "sourceUrl": "https://github.com/tamagui/tamagui",
-    "sourceVersion": "7ea8fdab",
+    "sourceVersion": "40199fd3",
     "license": "MIT",
-    "contentHash": "5d30a16be8d055d89dfd1e88eaceb61281c48ab93fc4f93f63723011ecee0ab9",
-    "lastHarvestedAt": "2026-10-26T02:57:21.275Z",
+    "contentHash": "7ce693eaa668b209e1c9f19821b859f7243d9a8a6c1af2b74c1a334368087f95",
+    "lastHarvestedAt": "2026-10-27T16:58:35.744Z",
     "learningId": "learn-github-tamagui-tamagui"
   },
   "burntsushi-ripgrep": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "a6a48cd8",
+    "sourceVersion": "f872ced5",
     "license": "NOASSERTION",
-    "contentHash": "b0ea55d144beb7fd565894a5fb55d2899abee847d4a67063bb29dbf15ec787bd",
-    "lastHarvestedAt": "2026-10-27T14:10:56.250Z",
+    "contentHash": "7fb1761d6c355ddac324af58292cb0a991d60d0c6835f1a9f98c3deae2cce6c8",
+    "lastHarvestedAt": "2026-10-27T16:58:46.966Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -10133,10 +10133,10 @@
     "repository": "DevExpress/testcafe",
     "platform": "github",
     "sourceUrl": "https://github.com/DevExpress/testcafe",
-    "sourceVersion": "4ae235c8",
+    "sourceVersion": "1e12423d",
     "license": "MIT",
-    "contentHash": "0a162a59fcb8a139c08dc541ea92aeb724774258583a114a354f80787c578879",
-    "lastHarvestedAt": "2026-10-20T03:13:11.852Z",
+    "contentHash": "21cafec67df0fd2ff6528c36d05aa69604aec278f8f7a46e33752769301d316f",
+    "lastHarvestedAt": "2026-10-27T16:58:39.067Z",
     "learningId": "learn-github-devexpress-testcafe"
   },
   "planetable-planet": {

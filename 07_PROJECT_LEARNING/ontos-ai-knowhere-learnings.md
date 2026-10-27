@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source**: github ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
-> **Source Version**: `6bc056af`  
+> **Source Version**: `e025ca1a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T13:42:25.926Z  
+> **Timestamp**: 2026-10-27T16:58:49.072Z  
 > **Learning ID**: `learn-github-ontos-ai-knowhere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T13:42:24.110Z  
+> **Harvest Timestamp**: 2026-10-27T16:58:48.717Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Knowhere extracts, parses, and outputs structured chunks ready for AI Agents and RAG.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 3773 stars
+- **Stars / Engagement**: 3802 stars
 
 ---
 
@@ -1009,675 +1009,368 @@ class ResponseCode(Enum):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7e303128` (2026-10-23)
-**Commit Message**: Merge pull request #468 from Ontos-AI/fix/wangbinqi/page-body-text-preview
+### Incident Patch 1: `457dcc42` (2026-10-27)
+**Commit Message**: feat: introduce PAGE_MEMORY_EMBED_CONCURRENCY configuration for improved embedding performance
 
-fix: publish body-only previews for page chunks
+- Added PAGE_MEMORY_EMBED_CONCURRENCY setting to .env.example files for both API and worker services, allowing for configurable concurrency in page-image embeddings.
+- Updated AIConfig to set the default concurrency to 10, enhancing the embedding process for scanned M0 documents.
+- Enhanced tests to validate the new concurrency settings and ensure proper integration within the embedding workflow.
+- Refactored relevant code sections to utilize the new concurrency configuration, improving overall performance and scalability.
 
-**File**: `apps/api/tests/contract/test_canonical_demo_bundle_contract.py` (modified, +32/-0)
+**File**: `apps/api/.env.example` (modified, +1/-0)
 ```diff
-@@ -7,6 +7,9 @@
- from contextlib import AbstractAsyncContextManager
- from pathlib import Path
- from threading import Event
-+import json
-+from io import BytesIO
-+from zipfile import ZipFile
- from typing import Literal
+@@ -101,6 +101,7 @@ VERCEL_KEY=
+ # Page-image and query embeddings use VERCEL_KEY.
+ # EMBEDDING_MODEL=google/gemini-embedding-2
+ # EMBEDDING_DIM=3072
++# PAGE_MEMORY_EMBED_CONCURRENCY=10
  
- import pytest
-@@ -20,6 +23,35 @@ def _write_source(directory: Path, content: str) -> None:
-     (directory / "source.md").write_text(content, encoding="utf-8")
+ # Optional retrieval overrides have code defaults. Retrieval is evidence-only:
+ # evidence is the primary output; evidence_text is deprecated and always empty;
+```
+
+**File**: `apps/api/tests/contract/test_scope_enrichment_publish_contract.py` (modified, +2/-0)
+```diff
+@@ -1325,6 +1325,7 @@ async def _verify_visual_m0_retrieval_and_tools() -> None:
+                 vis_rows = vis_res.payload["fused_rows"]
+                 assert len(vis_rows) == 2
+                 assert vis_rows[0]["chunk_id"] == "scan-m0-p2"
++                assert vis_rows[0]["matched_page_nums"] == [2]
+ 
+                 # 2. Classic route answers via visual channel even though lexical is empty.
+                 classic_outcome = await _run_classic_topk_route(
+@@ -1544,6 +1545,7 @@ async def _verify_chunk_max_pool_and_flag_off() -> None:
+                 merged_rows = merged_res.payload["fused_rows"]
+                 assert len(merged_rows) == 1
+                 assert merged_rows[0]["chunk_id"] == "merged-sec"
++                assert merged_rows[0]["matched_page_nums"] == [2, 1]
+                 assert abs(float(merged_rows[0]["score"]) - page2_score) < 1e-9
+ 
+                 monkeypatch.setattr(settings, "VISUAL_RETRIEVAL_ENABLED", False)
+```
+
+**File**: `apps/worker/.env.example` (modified, +1/-0)
+```diff
+@@ -95,6 +95,7 @@ VERCEL_KEY=
+ # Page-image embeddings use VERCEL_KEY.
+ # EMBEDDING_MODEL=google/gemini-embedding-2
+ # EMBEDDING_DIM=3072
++# PAGE_MEMORY_EMBED_CONCURRENCY=10
+ 
+ # Optional retrieval overrides have code defaults. Retrieval is evidence-only:
+ # evidence is the primary output; evidence_text is deprecated and always empty;
+```
+
+**File**: `apps/worker/tests/contract/test_page_memory_retrieval_contract.py` (modified, +5/-3)
+```diff
+@@ -75,14 +75,15 @@ def test_table_search_text_uses_summary_keywords_and_caption_not_content() -> No
  
  
-+@pytest.mark.asyncio
-+async def test_canonical_bundle_keeps_page_body_preview_metadata(
-+    api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
-+    tmp_path: Path,
-+) -> None:
-+    async with api_client_factory():
-+        from app.services.demo.canonical_bundle import CanonicalDemoBundleStore
-+        from shared.services.redis import RedisServiceFactory
-+        from shared.services.storage.job_file_storage import JobFileStorage
-+        from shared.services.storage.zip_chunk_schema import ZipChunkSchemaBuilder
-+
-+        directory = tmp_path / "preview-source"
-+        _write_source(directory, "original content")
-+        chunks = ZipChunkSchemaBuilder().format_chunks([
-+            {"chunk_id": f"page-{index}", "type": "page", "path": f"doc.pdf/Section {index}", "content": "header\nbody\nfooter", "metadata": {"body_text_preview": preview}}
-+            for index, preview in enumerate(["body", ""])
-+        ], {}, {})
-+        (directory / "chunks.json").write_text(json.dumps({"chunks": chunks}))
-+        bundle = await CanonicalDemoBundleStore(redis_service=RedisServiceFactory.get_service()).ensure_bundle(
-+            source_id="contract-body-preview", source_directory=directory,
-+        )
-+        storage = JobFileStorage()
-+        payload = storage.storage_adapter.download_fileobj(bundle.zip_key, storage.results_bucket)
-+        with ZipFile(BytesIO(payload)) as archive:
-+            archived = json.loads(archive.read("chunks.json"))["chunks"]
-+        assert [chunk["metadata"]["body_text_preview"] for chunk in archived] == ["body", ""]
-+        assert all(chunk["content"] == "header\nbody\nfooter" for chunk in archived)
-+
-+
  @pytest.mark.asyncio
- @pytest.mark.parametrize("stage", ("upload", "marker"))
- async def test_cancellation_retains_lease_until_storage_work_finishes(
-```
-
-**File**: `apps/api/tests/contract/test_shared_demo_corpus_contract.py` (modified, +51/-0)
-```diff
-@@ -211,6 +211,57 @@ def reject_artifact_reads(*args: Any, **kwargs: Any) -> None:
-         assert invalid_revision.status_code == 404
- 
- 
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("is_demo", [False, True])
-+async def test_page_body_preview_survives_private_and_demo_publication(
-+    developer_api_client_factory: ClientFactory, is_demo: bool,
-+) -> None:
-+    async with developer_api_client_factory() as client:
-+        from shared.core.database import get_db_context
-+        from shared.models.database.job import Job
-+        from shared.models.database.job_result import JobResult
-+        from shared.services.retrieval.publication_service import RetrievalPublicationService
-+
-+        if is_demo:
-+            job = await create_demo(client, file_name="preview.pdf")
-+        else:
-+            response = await client.post("/api/v2/jobs", json={
-+                "namespace": "preview-contract", "source_type": "file", "file_name": "preview.pdf",
-+            })
-+            assert response.status_code == 200, response.text
-+            job = response.json()
-+        revision = str(uuid4())
-+        raw_content = "iv\nTable of Contents\nBody text\nfooter"
-+
-+        def publish(db: Session) -> None:
-+            record = db.execute(select(Job).where(Job.job_id == job["job_id"])).scalar_one()
-+            db.add(JobResult(id=revision, job_id=record.job_id, delivery_mode="url", document_metadata={"parse_track": "page_memory"}))
-+            db.flush()
-+            chunks = [{
-+                "chunk_id": f"body-preview-{index}", "type": "page", "content": raw_content,
-+                "path": f"preview.pdf/Section {index}",
-+                "metadata": {"page_nums": [index + 1], "body_text_preview": preview},
-+            } for index, preview in enumerate(["Body text", ""])]
-+            service = RetrievalPublicationService()
-+            service.publish_document_state(db, job_id=record.job_id, job_result_id=revision, chunks=chunks)
-+            service.publish_document_graph(db, job_id=record.job_id, job_result_id=revision)
-+            record.status = "done"
-+
-+        async with get_db_context() as db:
-+            await db.run_sync(publish)
-+            await db.commit()
-+        response = await client.get(
-+            f"/api/v1/documents/{job['document_id']}/chunks",
-+            params={"job_result_id": revision, "page_size": 200},
-+        )
-+        assert response.status_code == 200, response.text
-+        assert response.json()["job_result_id"] == revision
-+        chunks = {chunk["chunk_id"]: chunk for chunk in response.json()["chunks"]}
-+        assert chunks["body-preview-0"]["metadata"]["body_text_preview"] == "Body text"
-+        assert chunks["body-preview-1"]["metadata"]["body_text_preview"] == ""
-+        assert all(chunk["content"] == raw_content for chunk in chunks.values())
-+
-+
- @pytest.mark.asyncio
- async def test_preparing_readiness_and_removed_materialization(
-     developer_api_client_factory: ClientFactory,
-```
-
-**File**: `apps/worker/app/services/document_agent/pdf_text.py` (modified, +16/-0)
-```diff
-@@ -173,6 +173,22 @@ def page_bands_map(raw: Any) -> dict[int, PageTextBands]:
-     return {int(page): PageTextBands.from_any(value) for page, value in raw.items()}
- 
- 
-+def page_body_content_map(raw: Any) -> dict[int, str]:
-+    """Keep only explicitly classified body lines; plain legacy text is unknown."""
-+    if not isinstance(raw, dict):
-+        return {}
-+    result: dict[int, str] = {}
-+    for page, value in raw.items():
-+        has_regions = isinstance(value, PageTextBands) or (
-+            isinstance(value, dict) and isinstance(value.get("lines"), list)
-+        )
-+        result[int(page)] = (
-+            "\n".join(line.text for line in PageTextBands.from_any(value).lines if line.region == "body")
-+            if has_regions else ""
-+        )
-+    return result
-+
-+
- def strip_margin_text(
-     content: str,
-     margin: str,
-```
-
-**File**: `apps/worker/app/services/document_parser/profiling/doc_profiler.py` (modified, +4/-1)
-```diff
-@@ -8,7 +8,7 @@
- 
- from loguru import logger
- from app.services.document_agent.coordinator import ProfileCoordinator
--from app.services.document_agent.pdf_text import page_content_map
-+from app.services.document_agent.pdf_text import page_body_content_map, page_content_map
- from app.services.document_agent.visual import purge_debug_visual_dirs, visual_debug_enabled
- from app.services.document_parser.orchestration.oversized_pdf_policy import (
-     build_oversized_pdf_profile_failed_exception,
-@@ -164,6 +164,9 @@ def _profile_pdf_with_db(
-         page_full_text_cache=page_content_map(
-             coordinator.blackboard.page_full_text_cache
-         ),
-+        page_body_text_cache=page_body_content_map(
-+            coordinator.blackboard.page_full_text_cache
-+        ),
+-async def test_page_result_assembly_uses_summary_not_raw_content() -> None:
++async def test_page_result_assembly_keeps_refined_content() -> None:
+     rows = [
+         {
+             "chunk_id": "page-node-1",
+             "chunk_type": "page",
+-            "content": "RAW OCR SHOULD NOT LEAK",
++            "content": "verbatim refined body",
+             "chunk_metadata": {
+                 "summary": "制度标准总则摘要",
++                "enrichment_state": "refined",
+                 "page_nums": [225],
+             },
+         }
+@@ -94,7 +95,8 @@ async def test_page_result_assembly_uses_summary_not_raw_content() -> None:
+         exclude_sections=[],
      )
-     if profile.page_count > settings.MAX_PDF_PAGE_LIMIT:
-         if oversized_policy != "page_memory":
+ 
+-    assert assembled[0]["content"] == "制度标准总则摘要"
++    assert assembled[0]["content"] == "verbatim refined body"
++    assert assembled[0]["content_source"] == "content"
+ 
+ 
+ @pytest.mark.asyncio
 ```
 
-**File**: `apps/worker/app/services/document_parser/profiling/profile_model.py` (modified, +2/-0)
+**File**: `deploy/ecs/task-definition-worker.staging.json` (modified, +1/-0)
 ```diff
-@@ -44,6 +44,7 @@ class ParserDocumentProfile:
-     anatomy: Any | None = None
-     metrics: dict[str, Any] = field(default_factory=dict)
-     page_full_text_cache: dict[int, str] = field(default_factory=dict)
-+    page_body_text_cache: dict[int, str] = field(default_factory=dict)
- 
-     @property
-     def is_pdf(self) -> bool:
-@@ -60,6 +61,7 @@ def has_structural_anatomy(self) -> bool:
-     def to_dict(self) -> dict[str, Any]:
-         data = asdict(self)
-         data.pop("page_full_text_cache", None)
-+        data.pop("page_body_text_cache", None)
-         data["routing_category"] = self.routing_category.value
-         if self.anatomy is not None and hasattr(self.anatomy, "to_dict"):
-             data["anatomy"] = self.anatomy.to_dict()
+@@ -53,6 +53,7 @@
+         {"name": "TRANSFORMERS_CACHE", "value": "/mnt/models/huggingface"},
+         {"name": "BILLING_ENABLED", "value": "true"},
+         {"name": "SUMMARY_LLM_MAX_CONCURRENT", "value": "8"},
++        {"name": "PAGE_MEMORY_EMBED_CONCURRENCY", "value": "10"},
+         {"name": "DS_URL", "value": "https://api.deepseek.com/v1/chat/completions"},
+         {"name": "ALI_URL", "value": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions"},
+         {"name": "ARK_URL", "value": "https://ark.cn-beijing.volces.com/api/v3/chat/completions"},
 ```
 
-**File**: `apps/worker/app/services/page_memory/body_text_preview.py` (added, +7/-0)
+**File**: `deploy/ecs/test_render_task_definitions.py` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,7 @@
-+"""Bound the display preview without changing stored PAGE content."""
-+
-+from collections.abc import Iterable
-+
-+
-+def build_body_text_preview(texts: Iterable[str]) -> str:
-+    return " ".join(" ".join(texts).split())[:180]
+@@ -70,6 +70,7 @@
+     "PDF_PROFILE_TOC_ENABLED": "true",
+     "REDIS_SYNC_MAX_CONNECTIONS": "200",
+     "SUMMARY_LLM_MAX_CONCURRENT": "8",
++    "PAGE_MEMORY_EMBED_CONCURRENCY": "10",
+     "WORKER_CONCURRENCY": "10",
+ }
+ 
 ```
 
-**File**: `apps/worker/app/services/page_memory/memory_service.py` (modified, +9/-1)
+**File**: `packages/shared-python/shared/core/config/ai.py` (modified, +2/-2)
 ```diff
-@@ -37,6 +37,7 @@
+@@ -71,8 +71,8 @@ class AIConfig(BaseModel):
+         ),
+     )
+     PAGE_MEMORY_EMBED_CONCURRENCY: int = Field(
+-        default=8,
+-        description="Local per-job page embedding concurrency for scanned M0 documents.",
++        default=10,
++        description="Local per-job page-image embedding concurrency for progressive M0.",
+     )
  
- from shared.core.exceptions.domain_exceptions import ValidationException
- from shared.models.schemas.page_memory_config import PageMemoryConfig, resolve_asset_model
-+from app.services.page_memory.body_text_preview import build_body_text_preview
- 
- 
- @dataclass(frozen=True)
-@@ -122,6 +123,7 @@ def run(request: PageMemoryInput) -> tuple[str, pd.DataFrame]:
-                 page_texts=coerce_page_text_cache(
-                     getattr(profile, "page_full_text_cache", None)
-                 ),
-+                body_text_by_page=getattr(profile, "page_body_text_cache", None),
-             )
-         else:
-             parsed_df = _build_page_dataframe(
-@@ -454,6 +456,7 @@ def _build_page_dataframe(
-             page_assets_by_page=page_assets_by_page,
-             node_summary_max_pages=page_memory_config.node_summary_max_pages,
-             node_assembly_concurrency=page_memory_config.node_assembly_concurrency,
-+            body_text_by_page=getattr(profile, "page_body_text_cache", None),
-         )
-     logger.info(
-         "[page_memory] C7 assembled {} node rows (verdict={})",
-@@ -834,6 +837,7 @@ def _build_whole_doc_dataframe(
-     verdict: str,
-     trace_recorder: Any | None = None,
-     page_texts: dict[int, str] | None = None,
-+    body_text_by_page: dict[int, str] | None = None,
- ) -> pd.DataFrame:
-     pages = list(range(1, page_count + 1)) if page_count > 0 else [1]
-     texts = coerce_page_text_cache(page_texts)
-@@ -853,7 +857,11 @@ def _build_whole_doc_dataframe(
-         "connectto": "",
-         "addtime": get_str_time(),
-         "page_nums": ",".join(str(page) for page in pages),
--        "extra_metadata": {},
-+        "extra_metadata": {
-+            "body_text_preview": build_body_text_preview(
-+                (body_text_by_page or {}).get(page, "") for page in pages
-+            ),
-+        },
-     }
-     _record_trace_stage(
-         trace_recorder,
+     # Runtime LLM controls.
 ```
 
-**File**: `apps/worker/app/services/page_memory/node_assembler.py` (modified, +51/-0)
+**File**: `packages/shared-python/shared/services/ai/embedding/multimodal_client.py` (modified, +1/-1)
 ```diff
-@@ -37,6 +37,8 @@
-     build_asset_rows,
- )
- from app.services.page_memory.page_tagger import PageTagResult
-+from app.services.page_memory.body_text_preview import build_body_text_preview
-+from app.services.document_parser.structure.body_boundary import normalize_match_text
- from app.services.page_memory.skeleton_extractor import SectionSkeleton
- from shared.services.ai.summary.engine import summarize
+@@ -315,7 +315,7 @@ def embed_images(
+         return []
  
-@@ -211,6 +213,50 @@ def build_node_content(
-     return "\n\n".join(segment for segment in segments if segment).strip()
- 
- 
-+def _find_body_heading(lines: list[str], title: str) -> int | None:
-+    target = normalize_match_text(title)
-+    if not target:
-+        return None
-+    for start in range(len(lines)):
-+        for end in range(start + 1, min(start + 3, len(lines)) + 1):
-+            if normalize_match_text(" ".join(lines[start:end])) == target:
-+                return start
-+    return None
-+
-+
-+def _preview_owned_body(
-+    *,
-+    view: NodePageView,
-+    page_to_leaves: dict[int, list[LeafNode]],
-+    body_text_by_page: dict[int, str],
-+) -> str:
-+    """Respect physical ownership and conservative same-page title boundaries."""
-+    texts: list[str] = []
-+    for page in view.owned_pages:
-+        lines = body_text_by_page.get(page, "").splitlines()
-+        leaves = page_to_leaves.get(page, [])
-+        current_index = next(index for index, leaf in enumerate(leaves) if leaf.section_path == view.leaf.section_path)
-+        following = next((leaf for leaf in leaves[current_index + 1:] if leaf.start_page == page), None)
-+        start = 0
-+        if page == view.leaf.start_page and view.leaf.title != "Root":
-+            located = _find_body_heading(lines, view.leaf.title)
-+            if located is None:
-+                if following is not None:
-+                    break
-+                continue
-+            start = located
-+        end = len(lines)
-+        if following is not None:
-+            located = _find_body_heading(lines[start:], following.title)
-+            if located is None:
-+                break
-+            end = start + located
-+        texts.append("\n".join(lines[start:end]))
-+        if following is not None:
-+            break
-+    return build_body_text_preview(texts)
-+
-+
- def next_title_on_page(
-     leaf: LeafNode,
-     *,
-@@ -391,6 +437,7 @@ def build_node_rows(
-     page_assets_by_page: dict[int, list[PageAsset]] | None = None,
-     node_summary_max_pages: int = _NODE_SUMMARY_MAX_PAGES_DEFAULT,
-     node_assembly_concurrency: int = 3,
-+    body_text_by_page: dict[int, str] | None = None,
- ) -> list[dict[str, Any]]:
-     """Assemble one row per leaf section node (node-granularity chunks)."""
-     available_pages = set(raw_text_by_page.keys())
-@@ -473,6 +520,10 @@ def _summarize_one(
-                     output_dir=output_dir,
-                 ),
-             }
-+            row["extra_metadata"]["body_text_preview"] = _preview_owned_body(
-+                view=view, page_to_leaves=page_to_leaves,
-+                body_text_by_page=body_text_by_page or {},
-+            )
-             rows.append(row)
-             rows_by_path[leaf.section_path] = row
- 
+     default_concurrency = int(
+-        getattr(settings, "PAGE_MEMORY_EMBED_CONCURRENCY", 8) or 8
++        getattr(settings, "PAGE_MEMORY_EMBED_CONCURRENCY", 10) or 10
+     )
+     resolved_concurrency = max(int(concurrency or default_concurrency), 1)
+     tracker_root_id = get_current_token_tracker_root_id()
 ```
 
 ---
 
-### Incident Patch 2: `f36a4445` (2026-10-23)
-**Commit Message**: fix: publish body-only previews for page chunks
+### Incident Patch 2: `b88d06f0` (2026-10-27)
+**Commit Message**: fix: prevent namespace generation creation collisions
 
-**File**: `apps/api/tests/contract/test_canonical_demo_bundle_contract.py` (modified, +32/-0)
+**File**: `apps/api/tests/contract/test_progressive_final_retrieval_concurrency_contract.py` (modified, +61/-0)
 ```diff
-@@ -7,6 +7,9 @@
- from contextlib import AbstractAsyncContextManager
- from pathlib import Path
- from threading import Event
-+import json
-+from io import BytesIO
-+from zipfile import ZipFile
- from typing import Literal
- 
- import pytest
-@@ -20,6 +23,35 @@ def _write_source(directory: Path, content: str) -> None:
-     (directory / "source.md").write_text(content, encoding="utf-8")
- 
- 
-+@pytest.mark.asyncio
-+async def test_canonical_bundle_keeps_page_body_preview_metadata(
-+    api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
-+    tmp_path: Path,
+@@ -367,3 +367,64 @@ async def query() -> None:
+         asyncio.run(query())
+     finally:
+         engine.dispose()
++
++
++def test_namespace_generation_primary_keys_do_not_alias_distinct_scopes(
++    monkeypatch: pytest.MonkeyPatch,
++    postgresql_proc: PostgreSQLProcess,
 +) -> None:
-+    async with api_client_factory():
-+        from app.services.demo.canonical_bundle import CanonicalDemoBundleStore
-+        from shared.services.redis import RedisServiceFactory
-+        from shared.services.storage.job_file_storage import JobFileStorage
-+        from shared.services.storage.zip_chunk_schema import ZipChunkSchemaBuilder
-+
-+        directory = tmp_path / "preview-source"
-+        _write_source(directory, "original content")
-+        chunks = ZipChunkSchemaBuilder().format_chunks([
-+            {"chunk_id": f"page-{index}", "type": "page", "path": f"doc.pdf/Section {index}", "content": "header\nbody\nfooter", "metadata": {"body_text_preview": preview}}
-+            for index, preview in enumerate(["body", ""])
-+        ], {}, {})
-+        (directory / "chunks.json").write_text(json.dumps({"chunks": chunks}))
-+        bundle = await CanonicalDemoBundleStore(redis_service=RedisServiceFactory.get_service()).ensure_bundle(
-+            source_id="contract-body-preview", source_directory=directory,
-+        )
-+        storage = JobFileStorage()
-+        payload = storage.storage_adapter.download_fileobj(bundle.zip_key, storage.results_bucket)
-+        with ZipFile(BytesIO(payload)) as archive:
-+            archived = json.loads(archive.read("chunks.json"))["chunks"]
-+        assert [chunk["metadata"]["body_text_preview"] for chunk in archived] == ["body", ""]
-+        assert all(chunk["content"] == "header\nbody\nfooter" for chunk in archived)
++    configure_contract_environment(monkeypatch, postgresql_proc)
++    asyncio.run(prepare_contract_storage())
++    engine: Engine = create_engine(
++        make_url(get_contract_database_url()).set(drivername="postgresql+psycopg2")
++    )
++    try:
++        with Session(engine) as db:
++            first: int = advance_namespace_generation(db, user_id="owner:part", namespace="scope")
++            db.commit()
++        with Session(engine) as db:
++            second: int = advance_namespace_generation(db, user_id="owner", namespace="part:scope")
++            db.commit()
++        assert (first, second) == (1, 1)
++    finally:
++        engine.dispose()
 +
 +
- @pytest.mark.asyncio
- @pytest.mark.parametrize("stage", ("upload", "marker"))
- async def test_cancellation_retains_lease_until_storage_work_finishes(
-```
-
-**File**: `apps/api/tests/contract/test_shared_demo_corpus_contract.py` (modified, +51/-0)
-```diff
-@@ -211,6 +211,57 @@ def reject_artifact_reads(*args: Any, **kwargs: Any) -> None:
-         assert invalid_revision.status_code == 404
- 
- 
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("is_demo", [False, True])
-+async def test_page_body_preview_survives_private_and_demo_publication(
-+    developer_api_client_factory: ClientFactory, is_demo: bool,
++def test_simultaneous_first_publications_share_one_namespace_generation(
++    monkeypatch: pytest.MonkeyPatch,
++    postgresql_proc: PostgreSQLProcess,
 +) -> None:
-+    async with developer_api_client_factory() as client:
-+        from shared.core.database import get_db_context
-+        from shared.models.database.job import Job
-+        from shared.models.database.job_result import JobResult
-+        from shared.services.retrieval.publication_service import RetrievalPublicationService
++    from threading import Barrier
++    from shared.models.database.document import RetrievalNamespaceGeneration
 +
-+        if is_demo:
-+            job = await create_demo(client, file_name="preview.pdf")
-+        else:
-+            response = await client.post("/api/v2/jobs", json={
-+                "namespace": "preview-contract", "source_type": "file", "file_name": "preview.pdf",
-+            })
-+            assert response.status_code == 200, response.text
-+            job = response.json()
-+        revision = str(uuid4())
-+        raw_content = "iv\nTable of Contents\nBody text\nfooter"
++    configure_contract_environment(monkeypatch, postgresql_proc)
++    asyncio.run(prepare_contract_storage())
++    engine: Engine = create_engine(
++        make_url(get_contract_database_url()).set(drivername="postgresql+psycopg2")
++    )
++    try:
++        for attempt in range(4):
++            barrier: Barrier = Barrier(2)
++            namespace: str = f"first-publication-{attempt}"
 +
-+        def publish(db: Session) -> None:
-+            record = db.execute(select(Job).where(Job.job_id == job["job_id"])).scalar_one()
-+            db.add(JobResult(id=revision, job_id=record.job_id, delivery_mode="url", document_metadata={"parse_track": "page_memory"}))
-+            db.flush()
-+            chunks = [{
-+                "chunk_id": f"body-preview-{index}", "type": "page", "content": raw_content,
-+                "path": f"preview.pdf/Section {index}",
-+                "metadata": {"page_nums": [index + 1], "body_text_preview": preview},
-+            } for index, preview in enumerate(["Body text", ""])]
-+            service = RetrievalPublicationService()
-+            service.publish_document_state(db, job_id=record.job_id, job_result_id=revision, chunks=chunks)
-+            service.publish_document_graph(db, job_id=record.job_id, job_result_id=revision)
-+            record.status = "done"
++            def publish() -> int:
++                barrier.wait(timeout=5)
++                with Session(engine) as db:
++                    generation: int = advance_namespace_generation(
++                        db, user_id="parallel-owner", namespace=namespace,
++                    )
++                    db.commit()
++                    return generation
 +
-+        async with get_db_context() as db:
-+            await db.run_sync(publish)
-+            await db.commit()
-+        response = await client.get(
-+            f"/api/v1/documents/{job['document_id']}/chunks",
-+            params={"job_result_id": revision, "page_size": 200},
-+        )
-+        assert response.status_code == 200, response.text
-+        assert response.json()["job_result_id"] == revision
-+        chunks = {chunk["chunk_id"]: chunk for chunk in response.json()["chunks"]}
-+        assert chunks["body-preview-0"]["metadata"]["body_text_preview"] == "Body text"
-+        assert chunks["body-preview-1"]["metadata"]["body_text_preview"] == ""
-+        assert all(chunk["content"] == raw_content for chunk in chunks.values())
-+
-+
- @pytest.mark.asyncio
- async def test_preparing_readiness_and_removed_materialization(
-     developer_api_client_factory: ClientFactory,
++            with ThreadPoolExecutor(max_workers=2) as executor:
++                publications = [executor.submit(publish) for _ in range(2)]
++                assert sorted(task.result(timeout=10) for task in publications) == [1, 2]
++            with Session(engine) as db:
++                rows = db.scalars(select(RetrievalNamespaceGeneration).where(
++                    RetrievalNamespaceGeneration.user_id == "parallel-owner",
++                    RetrievalNamespaceGeneration.namespace == namespace,
++                )).all()
++                assert len(rows) == 1
++                assert rows[0].generation == 2
++    finally:
++        engine.dispose()
 ```
 
-**File**: `apps/worker/app/services/document_agent/pdf_text.py` (modified, +16/-0)
+**File**: `docs/design/progressive-ingestion-implementation-report.md` (modified, +9/-0)
 ```diff
-@@ -173,6 +173,22 @@ def page_bands_map(raw: Any) -> dict[int, PageTextBands]:
-     return {int(page): PageTextBands.from_any(value) for page, value in raw.items()}
- 
- 
-+def page_body_content_map(raw: Any) -> dict[int, str]:
-+    """Keep only explicitly classified body lines; plain legacy text is unknown."""
-+    if not isinstance(raw, dict):
-+        return {}
-+    result: dict[int, str] = {}
-+    for page, value in raw.items():
-+        has_regions = isinstance(value, PageTextBands) or (
-+            isinstance(value, dict) and isinstance(value.get("lines"), list)
-+        )
-+        result[int(page)] = (
-+            "\n".join(line.text for line in PageTextBands.from_any(value).lines if line.region == "body")
-+            if has_regions else ""
-+        )
-+    return result
+@@ -215,3 +215,12 @@ capacity measurements predate main's native M0 page-image generation and are
+ historical evidence, not a rerun of capacity acceptance for this integrated tree.
+ PR creation does not publish the SDK, update Hipo's released dependency, deploy
+ services, or close the remaining product/deployed acceptance work.
 +
 +
- def strip_margin_text(
-     content: str,
-     margin: str,
++An expanded full Worker run also exposed a namespace-generation initialization
++race: simultaneous first publications generated the same primary key, while the
++insert's conflict target only covered the owner/namespace constraint. Use the
++model's independent UUID primary keys and retain owner/namespace conflict
++arbitration. The existing concurrent parse/billing contract reproduced the failure;
++new PostgreSQL contracts cover first-publication contention and distinct scopes
++whose colon-joined identifiers previously aliased.
 ```
 
-**File**: `apps/worker/app/services/document_parser/profiling/doc_profiler.py` (modified, +4/-1)
+**File**: `packages/shared-python/shared/services/retrieval/serving_generation.py` (modified, +0/-4)
 ```diff
-@@ -8,7 +8,7 @@
+@@ -4,8 +4,6 @@
  
- from loguru import logger
- from app.services.document_agent.coordinator import ProfileCoordinator
--from app.services.document_agent.pdf_text import page_content_map
-+from app.services.document_agent.pdf_text import page_body_content_map, page_content_map
- from app.services.document_agent.visual import purge_debug_visual_dirs, visual_debug_enabled
- from app.services.document_parser.orchestration.oversized_pdf_policy import (
-     build_oversized_pdf_profile_failed_exception,
-@@ -164,6 +164,9 @@ def _profile_pdf_with_db(
-         page_full_text_cache=page_content_map(
-             coordinator.blackboard.page_full_text_cache
-         ),
-+        page_body_text_cache=page_body_content_map(
-+            coordinator.blackboard.page_full_text_cache
-+        ),
-     )
-     if profile.page_count > settings.MAX_PDF_PAGE_LIMIT:
-         if oversized_policy != "page_memory":
+ from shared.services.retrieval.corpus_storage import CorpusStorage
+ 
+-from hashlib import sha256
+-
+ from sqlalchemy import select
+ from sqlalchemy.dialects.postgresql import insert
+ from sqlalchemy.orm import Session
+@@ -22,11 +20,9 @@ def lock_namespace_generation(
+     """Create if needed, then lock and return one namespace generation row."""
+     corpusStorage: CorpusStorage = CorpusStorage.resolve_namespace(namespace)
+     user_id = corpusStorage.resolve_owner(user_id)
+-    generation_id = f"rng_{sha256(f'{user_id}:{namespace}'.encode()).hexdigest()}"
+     db.execute(
+         insert(corpusStorage.RetrievalNamespaceGeneration)
+         .values(
+-            id=generation_id,
+             user_id=user_id,
+             namespace=namespace,
+             generation=0,
 ```
 
-**File**: `apps/worker/app/services/document_parser/profiling/profile_model.py` (modified, +2/-0)
+---
+
+### Incident Patch 3: `01c009a8` (2026-10-27)
+**Commit Message**: docs: keep progressive reader requirements open for discussion
+
+**File**: `docs/design/progressive-ingestion-development-plan.md` (modified, +36/-4)
 ```diff
-@@ -44,6 +44,7 @@ class ParserDocumentProfile:
-     anatomy: Any | None = None
-     metrics: dict[str, Any] = field(default_factory=dict)
-     page_full_text_cache: dict[int, str] = field(default_factory=dict)
-+    page_body_text_cache: dict[int, str] = field(default_factory=dict)
+@@ -1,19 +1,51 @@
+ # Progressive ingestion development plan
  
-     @property
-     def is_pdf(self) -> bool:
-@@ -60,6 +61,7 @@ def has_structural_anatomy(self) -> bool:
-     def to_dict(self) -> dict[str, Any]:
-         data = asdict(self)
-         data.pop("page_full_text_cache", None)
-+        data.pop("page_body_text_cache", None)
-         data["routing_category"] = self.routing_category.value
-         if self.anatomy is not None and hasattr(self.anatomy, "to_dict"):
-             data["anatomy"] = self.anatomy.to_dict()
+-Status: Implementation and local automated validation complete. SDK publication,
+-dependency pinning, deployed acceptance and capacity validation remain pending.
+-See the [implementation report](progressive-ingestion-implementation-report.md).
++Status: In progress; requirement discussion remains open as of 2026-10-27.
++Implemented and locally verified subsets do not close the overall requirement
++or establish final product acceptance. SDK publication, dependency pinning and
++deployed acceptance remain pending. Measured mixed-workload capacity evidence is
++recorded separately in the [capacity follow-up](progressive-mixed-capacity-validation.md).
++See the [implementation report](progressive-ingestion-implementation-report.md)
++for earlier implementation evidence.
+ 
+ The agreed behavior and investigation evidence are recorded in the
+ [hardening plan](progressive-ingestion-hardening-plan.md) and
+ [ADR index](../adr/README.md). This document defines the development sequence.
+ 
++## Discussion checkpoint: first-snapshot reading (2026-10-27)
++
++The user explicitly keeps this requirement unfinished and wants to continue
++discussing it. Retain the following two points as the current checkpoint:
++
++1. **Page assets and List reading.** Text-native PDF/PPTX baselines do not
++   pre-generate per-page image assets or native-document visual indexes. They
++   retain page text and immutable `source.pdf` (the converted PDF for PPTX).
++   Scanned/textless visual baselines already carry page images. Ordinary List
++   reading must display original native pages from that retained PDF on demand,
++   not only when opening a citation. Share the selected PDF document/worker and
++   paint nearby visible pages; do not wait for VLM enhancement or render the
++   whole document during initial ingestion. This follow-up is implemented in
++   Hipo commit `787846ed`, with local verification; implementation is not final
++   acceptance or deployed-client evidence.
++2. **Tree reading.** The baseline is not empty: show the document root and
++   source-ordered `Page N` leaves, with navigation to the corresponding List
++   page. It does not yet expose the enhanced chapter/resource hierarchy.
++   Images/Tables remain visible but disabled until final synchronization.
++   Final publication replaces the flat page tree with the chapter/resource tree
++   while preserving List/Tree mode and source-page position. Retained citations
++   continue to read their own immutable snapshot. This behavior is implemented
++   and locally tested; overall scope and acceptance remain under discussion.
++
++Continue requirements discussion from these points. Do not describe the overall
++progressive requirement as complete merely because this subset's tests pass.
++
+ ## Target behavior
+ 
+ - Keep `ingestion_mode=full|progressive`, defaulting to full. Hipo selects
+   progressive for supported PDF/PPTX inputs; other formats retain full ingestion.
+ - Publish a readable baseline before full enhancement. Text-native baselines
+-  expose page text; scanned baselines expose complete required page images.
++  expose page text and immutable source PDF for on-demand List page display;
++  scanned baselines expose complete required page images.
+   Missing page vectors do not block initial completion and are repaired later.
+ - One business Job uses multiple Celery tasks. After baseline publication the
+   Job stays done while structure, scope refinement, and vector repair continue.
 ```
 
-**File**: `apps/worker/app/services/page_memory/body_text_preview.py` (added, +7/-0)
+**File**: `docs/design/progressive-ingestion-hardening-plan.md` (modified, +4/-3)
 ```diff
-@@ -0,0 +1,7 @@
-+"""Bound the display preview without changing stored PAGE content."""
-+
-+from collections.abc import Iterable
-+
-+
-+def build_body_text_preview(texts: Iterable[str]) -> str:
-+    return " ".join(" ".join(texts).split())[:180]
+@@ -1,8 +1,9 @@
+ # Progressive ingestion hardening plan
+ 
+-Status: Workflow, reviewed reader behavior, and early Ask availability agreed.
+-Technical implementation and validation plan; application-code implementation
+-is not authorized.
++Status: Historical investigation and acceptance rationale. Application-code
++implementation was subsequently authorized and progressed; the overall
++requirement remains open for further discussion as of 2026-10-27. Current List
++and Tree decisions are recorded in the development plan's discussion checkpoint.
+ 
+ The execution-oriented development sequence is maintained in the
+ [development plan](progressive-ingestion-development-plan.md). This document
 ```
 
-**File**: `apps/worker/app/services/page_memory/memory_service.py` (modified, +9/-1)
+**File**: `docs/design/progressive-ingestion-implementation-report.md` (modified, +8/-3)
 ```diff
-@@ -37,6 +37,7 @@
+@@ -1,8 +1,13 @@
+ # Progressive ingestion implementation and verification
  
- from shared.core.exceptions.domain_exceptions import ValidationException
- from shared.models.schemas.page_memory_config import PageMemoryConfig, resolve_asset_model
-+from app.services.page_memory.body_text_preview import build_body_text_preview
+-Implementation and local automated validation are complete. Nothing was pushed,
+-published, merged, or deployed. This report does not establish production capacity
+-or deployed-client acceptance.
++Overall requirement status: in progress and under continued discussion as of
++2026-10-27. This report records an earlier implemented and locally verified
++subset; it does not establish final product acceptance or deployed-client
++acceptance. The [development plan discussion checkpoint](progressive-ingestion-development-plan.md#discussion-checkpoint-first-snapshot-reading-2026-10-27)
++records the latest List/Tree decisions and the user's explicit unfinished status.
++Subsequent capacity evidence is in the [mixed-workload follow-up](progressive-mixed-capacity-validation.md).
++The original implementation described below was not pushed, published, merged,
++or deployed at the time of that report.
  
- 
- @dataclass(frozen=True)
-@@ -122,6 +123,7 @@ def run(request: PageMemoryInput) -> tuple[str, pd.DataFrame]:
-                 page_texts=coerce_page_text_cache(
-                     getattr(profile, "page_full_text_cache", None)
-                 ),
-+                body_text_by_page=getattr(profile, "page_body_text_cache", None),
-             )
-         else:
-             parsed_df = _build_page_dataframe(
-@@ -454,6 +456,7 @@ def _build_page_dataframe(
-             page_assets_by_page=page_assets_by_page,
-             node_summary_max_pages=page_memory_config.node_summary_max_pages,
-             node_assembly_concurrency=page_memory_config.node_assembly_concurrency,
-+            body_text_by_page=getattr(profile, "page_body_text_cache", None),
-         )
-     logger.info(
-         "[page_memory] C7 assembled {} node rows (verdict={})",
-@@ -834,6 +837,7 @@ def _build_whole_doc_dataframe(
-     verdict: str,
-     trace_recorder: Any | None = None,
-     page_texts: dict[int, str] | None = None,
-+    body_text_by_page: dict[int, str] | None = None,
- ) -> pd.DataFrame:
-     pages = list(range(1, page_count + 1)) if page_count > 0 else [1]
-     texts = coerce_page_text_cache(page_texts)
-@@ -853,7 +857,11 @@ def _build_whole_doc_dataframe(
-         "connectto": "",
-         "addtime": get_str_time(),
-         "page_nums": ",".join(str(page) for page in pages),
--        "extra_metadata": {},
-+        "extra_metadata": {
-+            "body_text_preview": build_body_text_preview(
-+                (body_text_by_page or {}).get(page, "") for page in pages
-+            ),
-+        },
-     }
-     _record_trace_stage(
-         trace_recorder,
-```
-
-**File**: `apps/worker/app/services/page_memory/node_assembler.py` (modified, +51/-0)
-```diff
-@@ -37,6 +37,8 @@
-     build_asset_rows,
- )
- from app.services.page_memory.page_tagger import PageTagResult
-+from app.services.page_memory.body_text_preview import build_body_text_preview
-+from app.services.document_parser.structure.body_boundary import normalize_match_text
- from app.services.page_memory.skeleton_extractor import SectionSkeleton
- from shared.services.ai.summary.engine import summarize
- 
-@@ -211,6 +213,50 @@ def build_node_content(
-     return "\n\n".join(segment for segment in segments if segment).strip()
- 
- 
-+def _find_body_heading(lines: list[str], title: str) -> int | None:
-+    target = normalize_match_text(title)
-+    if not target:
-+        return None
-+    for start in range(len(lines)):
-+        for end in range(start + 1, min(start + 3, len(lines)) + 1):
-+            if normalize_match_text(" ".join(lines[start:end])) == target:
-+                return start
-+    return None
-+
-+
-+def _preview_owned_body(
-+    *,
-+    view: NodePageView,
-+    page_to_leaves: dict[int, list[LeafNode]],
-+    body_text_by_page: dict[int, str],
-+) -> str:
-+    """Respect physical ownership and conservative same-page title boundaries."""
-+    texts: list[str] = []
-+    for page in view.owned_pages:
-+        lines = body_text_by_page.get(page, "").splitlines()
-+        leaves = page_to_leaves.get(page, [])
-+        current_index = next(index for index, leaf in enumerate(leaves) if leaf.section_path == view.leaf.section_path)
-+        following = next((leaf for leaf in leaves[current_index + 1:] if leaf.start_page == page), None)
-+        start = 0
-+        if page == view.leaf.start_page and view.leaf.title != "Root":
-+            located = _find_body_heading(lines, view.leaf.title)
-+            if located is None:
-+                if following is not None:
-+                    break
-+                continue
-+            start = located
-+        end = len(lines)
-+        if following is not None:
-+            located = _find_body_heading(lines[start:], following.title)
-+            if located is None:
-+                break
-+            end = start + located
-+        texts.append("\n".join(lines[start:end]))
-+        if following is not None:
-+            break
-+    return build_body_text_preview(texts)
-+
-+
- def next_title_on_page(
-     leaf: LeafNode,
-     *,
-@@ -391,6 +437,7 @@ def build_node_rows(
-     page_assets_by_page: dict[int, list[PageAsset]] | None = None,
-     node_summary_max_pages: int = _NODE_SUMMARY_MAX_PAGES_DEFAULT,
-     node_assembly_concurrency: int = 3,
-+    body_text_by_page: dict[int, str] | None = None,
- ) -> list[dict[str, Any]]:
-     """Assemble one row per leaf section node (node-granularity chunks)."""
-     available_pages = set(raw_text_by_page.keys())
-@@ -473,6 +520,10 @@ def _summarize_one(
-                     output_dir=output_dir,
-                 ),
-             }
-+            row["extra_metadata"]["body_text_preview"] = _preview_owned_body(
-+                view=view, page_to_leaves=page_to_leaves,
-+                body_text_by_page=body_text_by_page or {},
-+            )
-             rows.append(row)
-             rows_by_path[leaf.section_path] = row
+ ## Delivery locations
  
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #470** (2026-10-24): chore: promote main to staging (query-mode-router + pending) (@EricNGOntos)
-- **PR #469** (2026-10-24): feat: add retrieval query mode router (agent vs classic) (@EricNGOntos)
-- **PR #468** (2026-10-23): fix: publish body-only previews for page chunks (@suguanYang)
-- **PR #467** (2026-10-22): feat: expose revision-pinned demo document structure (@suguanYang)
-- **PR #466** (2026-10-22): Preserve opening pages at the document root (@suguanYang)
-- **PR #464** (2026-10-16): feat: IPTC domain taxonomy, TOC keywords, and image region metadata (@EricNGOntos)
+- **PR #478** (2026-10-27): feat: publish progressive ingestion snapshots atomically (@suguanYang)
+- **PR #477** (2026-10-27): chore: promote main to staging (defer page embeddings) (@EricNGOntos)
+- **PR #476** (2026-10-27): Defer page embeddings for electronic PDFs after M0 (@EricNGOntos)
+- **PR #475** (2026-10-27): Unify DeepSeek Flash defaults and keep page-kind counts JSON-safe (@EricNGOntos)
+- **PR #474** (2026-10-27): chore: promote main to staging (TOC ownership + page-memory cleanup) (@EricNGOntos)
+- **PR #473** (2026-10-27): feat: page-memory TOC ownership and progressive retrieval pipeline (@EricNGOntos)
 
 ---
 
@@ -1697,43 +1390,21 @@ fix: publish body-only previews for page chunks
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #468 from Ontos-AI/fix/wangbinqi/page-body-text-preview
+## X. introduce PAGE_MEMORY_EMBED_CONCURRENCY configuration for improved embedding per
 
 **RULE**:
-When implementing operations in `apps/api/tests/contract/test_canonical_demo_bundle_contract.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/api/.env.example`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7e303128`: Merge pull request #468 from Ontos-AI/fix/wangbinqi/page-body-text-preview. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `457dcc42`: introduce PAGE_MEMORY_EMBED_CONCURRENCY configuration for improved embedding performance. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/api/tests/contract/test_canonical_demo_bundle_contract.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/api/.env.example`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-import json
-from io import BytesIO
-from zipfile import ZipFile
-@pytest.mark.asyncio
-async def test_canonical_bundle_keeps_page_body_preview_metadata(
-    api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
-    tmp_path: Path,
-) -> None:
-    async with api_client_factory():
-        from app.services.demo.canonical_bundle import CanonicalDemoBundleStore
-        from shared.services.redis import RedisServiceFactory
-        from shared.services.storage.job_file_storage import JobFileStorage
-        from shared.services.storage.zip_chunk_schema import ZipChunkSchemaBuilder
-
-        directory = tmp_path / "preview-source"
-        _write_source(directory, "original content")
-        chunks = ZipChunkSchemaBuilder().format_chunks([
-            {"chunk_id": f"page-{index}", "type": "page", "path": f"doc.pdf/Section {index}", "content": "header\nbody\nfooter", "metadata": {"body_text_preview": preview}}
-            for index, preview in enumerate(["body", ""])
-        ], {}, {})
-        (directory / "chunks.json").write_text(json.dumps({"chunks": chunks}))
-        bundle = await CanonicalDemoBundleStore(redis_service=RedisServiceFactory.get_service()).ensure_bundle(
- 
+# PAGE_MEMORY_EMBED_CONCURRENCY=10
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1743,4 +1414,4 @@ async def test_canonical_bundle_keeps_page_body_preview_metadata(
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7e303128` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `457dcc42` are properly handled with clean fallback behavior.

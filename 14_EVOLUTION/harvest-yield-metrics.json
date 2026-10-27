@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T16:52:02.068Z",
-  "total_cycles_completed": 5414,
-  "total_learnings_persisted": 5414,
-  "total_rules_promoted": 4815,
+  "last_updated": "2026-10-27T16:58:49.513Z",
+  "total_cycles_completed": 5418,
+  "total_learnings_persisted": 5418,
+  "total_rules_promoted": 4819,
   "history": [
-    {
-      "timestamp": "2026-10-27T11:34:17.159Z",
-      "repository": "trinodb/trino",
-      "learningId": "learn-github-trinodb-trino",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T11:34:17.875Z",
-      "repository": "webrtc-rs/webrtc",
-      "learningId": "learn-github-webrtc-rs-webrtc",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T11:39:02.223Z",
-      "repository": "webrecorder/pywb",
-      "learningId": "learn-github-webrecorder-pywb",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T11:49:31.257Z",
-      "repository": "webrecorder/browsertrix-crawler",
-      "learningId": "learn-github-webrecorder-browsertrix-crawler",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T11:49:33.538Z",
       "repository": "wcandillon/react-native-skia",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-27T16:52:02.068Z",
       "repository": "crate/crate",
       "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T16:58:35.749Z",
+      "repository": "tamagui/tamagui",
+      "learningId": "learn-github-tamagui-tamagui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T16:58:39.073Z",
+      "repository": "DevExpress/testcafe",
+      "learningId": "learn-github-devexpress-testcafe",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T16:58:46.972Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T16:58:49.513Z",
+      "repository": "Ontos-AI/knowhere",
+      "learningId": "learn-github-ontos-ai-knowhere",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

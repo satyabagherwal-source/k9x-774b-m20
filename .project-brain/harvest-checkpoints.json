@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T16:52:02.072Z",
+  "last_updated": "2026-10-27T16:58:49.517Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3576,14 +3576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ontos-ai-knowhere",
-      "content_hash": "4550215e6504560aae5ef3542e15faf4b83309c888d087e4c89647a2e646db48",
-      "verified_at": "2026-10-25T13:42:26.291Z",
+      "content_hash": "b2658a611c3bd8b95f348fef620e09bd867e4702e88c41d42a5db18414d4ac3c",
+      "verified_at": "2026-10-27T16:58:49.516Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T13:42:26.291Z"
+      "last_updated": "2026-10-27T16:58:49.516Z"
     },
     "Bitterbot-AI/bitterbot-desktop": {
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -3816,14 +3816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tamagui-tamagui",
-      "content_hash": "5d30a16be8d055d89dfd1e88eaceb61281c48ab93fc4f93f63723011ecee0ab9",
-      "verified_at": "2026-10-26T02:57:21.283Z",
+      "content_hash": "7ce693eaa668b209e1c9f19821b859f7243d9a8a6c1af2b74c1a334368087f95",
+      "verified_at": "2026-10-27T16:58:35.753Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T02:57:21.283Z"
+      "last_updated": "2026-10-27T16:58:35.753Z"
     },
     "BurntSushi/ripgrep": {
       "repository": "BurntSushi/ripgrep",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "b0ea55d144beb7fd565894a5fb55d2899abee847d4a67063bb29dbf15ec787bd",
-      "verified_at": "2026-10-27T14:10:56.258Z",
+      "content_hash": "7fb1761d6c355ddac324af58292cb0a991d60d0c6835f1a9f98c3deae2cce6c8",
+      "verified_at": "2026-10-27T16:58:46.976Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T14:10:56.258Z"
+      "last_updated": "2026-10-27T16:58:46.976Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -15246,14 +15246,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-devexpress-testcafe",
-      "content_hash": "0a162a59fcb8a139c08dc541ea92aeb724774258583a114a354f80787c578879",
-      "verified_at": "2026-10-20T03:13:11.859Z",
+      "content_hash": "21cafec67df0fd2ff6528c36d05aa69604aec278f8f7a46e33752769301d316f",
+      "verified_at": "2026-10-27T16:58:39.076Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T03:13:11.859Z"
+      "last_updated": "2026-10-27T16:58:39.076Z"
     },
     "Planetable/Planet": {
       "repository": "Planetable/Planet",

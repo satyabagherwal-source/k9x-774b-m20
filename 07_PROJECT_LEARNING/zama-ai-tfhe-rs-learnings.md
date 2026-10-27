@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `a6a48cd8`  
+> **Source Version**: `f872ced5`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T14:10:55.706Z  
+> **Timestamp**: 2026-10-27T16:58:46.529Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T14:10:55.431Z  
+> **Harvest Timestamp**: 2026-10-27T16:58:46.071Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1927,804 +1927,258 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a6a48cd8` (2026-10-27)
-**Commit Message**: feat(gpu): add goldshmidt_division (#3926)
+### Incident Patch 1: `9412db3e` (2026-10-27)
+**Commit Message**: fix(gpu): add checks for compressed noise squashed ctxt (#4099)
 
-**File**: `.github/workflows/gpu_integer_classic_tests_h100_2gpu_par.yml` (modified, +5/-0)
+Fix a gpu noise test that triggers the new assertions
+
+**File**: `tfhe/src/integer/gpu/list_compression/server_keys.rs` (modified, +134/-111)
 ```diff
-@@ -166,6 +166,11 @@ jobs:
-           done
-           exit "${STATUS}"
+@@ -364,6 +364,56 @@ impl<T: UnsignedInteger> CudaPackedGlweCiphertextList<T> {
+     }
+ }
  
-+      # Separate build: the golden test needs the gpu-goldschmidt-trace feature.
-+      - name: Run Goldschmidt division golden trace test
-+        run: |
-+          make test_integer_goldschmidt_golden_trace_gpu
++/// Concatenates the given LWE lists into a single contiguous list on GPU 0.
++///
++/// All lists must have `lwe_dimension` as their LWE dimension, callers are
++/// responsible for checking this. The iterator must not be empty.
++fn flatten_lwe_lists<'a, T, I>(
++    lwe_lists: I,
++    lwe_dimension: LweDimension,
++    streams: &CudaStreams,
++) -> CudaLweCiphertextList<T>
++where
++    T: UnsignedInteger,
++    I: IntoIterator<Item = &'a CudaLweCiphertextList<T>>,
++    I::IntoIter: Clone,
++{
++    let lwe_lists = lwe_lists.into_iter();
++    let ciphertext_modulus = lwe_lists.clone().next().unwrap().ciphertext_modulus();
 +
-   slack-notify:
-     name: gpu_integer_classic_tests_h100_2gpu_par/slack-notify
-     needs: [setup-instance, cuda-tests-linux]
-```
-
-**File**: `Makefile` (modified, +7/-0)
-```diff
-@@ -1178,6 +1178,13 @@ test_signed_integer_gpu_ci: install_cargo_nextest
- 		--cargo-profile "$(CARGO_PROFILE)" --backend "gpu" \
- 		--signed-only --tfhe-package "tfhe"
- 
-+.PHONY: test_integer_goldschmidt_golden_trace_gpu # Check every Goldschmidt division iterate against the Lean-generated golden trace on gpu backend
-+test_integer_goldschmidt_golden_trace_gpu:
-+	RUSTFLAGS="$(RUSTFLAGS)" cargo test --profile $(CARGO_PROFILE) \
-+		--features=integer,gpu-goldschmidt-trace -p tfhe --lib -- \
-+		integer::gpu::server_key::radix::goldschmidt_division::tests::test_goldschmidt_division_golden_trace \
-+		--exact --nocapture
++    // Compute total number of lwe ciphertexts we will be handling
++    let total_num_blocks: usize = lwe_lists.clone().map(|x| x.lwe_ciphertext_count().0).sum();
 +
- .PHONY: test_signed_integer_fake_multi_gpu # Run the tests for signed integer ci on gpu backend
- test_signed_integer_fake_multi_gpu: install_cargo_nextest
- 	BIG_TESTS_INSTANCE="$(BIG_TESTS_INSTANCE)" \
-```
-
-**File**: `backends/tfhe-cuda-backend/Cargo.toml` (modified, +3/-0)
-```diff
-@@ -24,3 +24,6 @@ experimental-multi-arch = []
- profile = ["tfhe-cuda-common/profile"]
- debug = ["tfhe-cuda-common/debug"]
- debug-fake-multi-gpu = []
-+# Test-only: Goldschmidt division writes its fixed-point iterates to a CSV
-+# (trivial ciphertexts only), for the golden trace test.
-+goldschmidt-trace = []
-```
-
-**File**: `backends/tfhe-cuda-backend/build.rs` (modified, +6/-0)
-```diff
-@@ -44,6 +44,12 @@ fn main() {
-             cmake_config.define("USE_NVTOOLS", "OFF");
-         }
- 
-+        if cfg!(feature = "goldschmidt-trace") {
-+            cmake_config.define("GOLDSCHMIDT_TRACE", "ON");
-+        } else {
-+            cmake_config.define("GOLDSCHMIDT_TRACE", "OFF");
++    let lwe_ciphertext_count = LweCiphertextCount(total_num_blocks);
++
++    let mut d_vec = unsafe {
++        CudaVec::new_async(
++            lwe_dimension.to_lwe_size().0 * lwe_ciphertext_count.0,
++            streams,
++            0,
++        )
++    };
++    let mut offset: usize = 0;
++    for lwe_list in lwe_lists {
++        let dest_ptr = unsafe { d_vec.as_mut_c_ptr(0).add(offset * std::mem::size_of::<T>()) };
++        let size = lwe_list.0.d_vec.len * std::mem::size_of::<T>();
++        unsafe {
++            cuda_memcpy_async_gpu_to_gpu(
++                dest_ptr,
++                lwe_list.0.d_vec.as_c_ptr(0),
++                size as u64,
++                streams.ptr[0],
++                streams.gpu_indexes[0].get(),
++            );
 +        }
++        streams.synchronize();
 +
-         if cfg!(feature = "debug") {
-             cmake_config.define("CMAKE_BUILD_TYPE", "Debug");
-         } else if cfg!(feature = "debug-fake-multi-gpu") {
-```
-
-**File**: `backends/tfhe-cuda-backend/cuda/CMakeLists.txt` (modified, +5/-0)
-```diff
-@@ -131,6 +131,11 @@ if(${FAKE_MULTI_GPU})
-   add_definitions(-DDEBUG_FAKE_MULTI_GPU)
- endif()
- 
-+if(GOLDSCHMIDT_TRACE)
-+  message(STATUS "Goldschmidt division trace is enabled")
-+  add_definitions(-DGOLDSCHMIDT_TRACE)
-+endif()
++        offset += lwe_list.0.d_vec.len;
++    }
 +
- # in production, should use -arch=sm_70 --ptxas-options=-v to see register spills -lineinfo for better debugging to use
- # nvtx when profiling -lnvToolsExt
- string(FIND "${CMAKE_CUDA_FLAGS}" "-ccbin" _cuda_has_ccbin)
-```
-
-**File**: `backends/tfhe-cuda-backend/cuda/include/integer/goldschmidt_division.h` (added, +464/-0)
-```diff
-@@ -0,0 +1,464 @@
-+#pragma once
-+#include "cmux.h"
-+#include "comparison.h"
-+#include "ilog2.h"
-+#include "integer_utilities.h"
-+#include "mul_add_fixed_point.h"
-+#include "multiplication.h"
-+#include "shift_and_rotate.h"
-+#include "vector_find.h"
-+
-+// ---------------------------------------------------------------------------
-+// Goldschmidt division
-+// ---------------------------------------------------------------------------
-+//
-+// Divides two n-block unsigned radix integers by iterating a fixed-point
-+// reciprocal instead of doing long division, so the work is a handful of wide
-+// multiplications rather than one sequential step per bit.
-+//
-+// Everything runs in a fixed point two blocks wider than the operands
-+// (68 bits for a 64-bit division), in two different scalings:
-+//
-+//     d  =  Q0.68   normalised into [1/2, 1)   -- the MSB of the field is set
-+//     n  =  Q64.4   the numerator, rescaled by the same factor as d
-+//
-+//     bit  67                                    4  3      0
-+//          +-------------------------------------+--+------+
-+//     d    |0. 1 d62 d61 ................... d0  |  0 ...  |   d in [1/2, 1)
-+//          +-------------------------------------+--+------+
-+//          +----------------------------------------+------+
-+//     n    | floor(N * 2^lz / 2^60)                 | .frac|   n = N/D * 2^4
-+//          +----------------------------------------+------+
-+//
-+// The iteration multiplies both by the same factor until d converges to 1, at
-+// which point n holds the quotient:
-+//
-+//     d <- d * (1 + x),   n <- n * (1 + x)     with x = 1 - d
-+//
-+// so that d becomes 1 - x^2 and the number of correct bits doubles each round.
-+// Three rounds after a 9-bit seed cover 64 bits. The seed comes from a
-+// 512-entry lookup table on d's top 10 bits, chosen so that (1 + x0) * d < 1 --
-+// keeping every intermediate below 1 means the quotient only ever approaches
-+// the true value from below, so a single +1 correction at the end suffices.
-+//
-+// The per-round truncation schedule is the one the correctness proof pins down:
-+// round i takes x from `s` significant blocks whose LSB weighs beta^-t, and the
-+// multiplication drops everything below one ulp of the output.
-+//
-+//     round | s (blocks of x) | t (x's LSB weight) | x's leading zero blocks
-+//     ------+-----------------+--------------------+------------------------
-+//     seed  |        5        |         5          |           0
-+//       0   |        5        |         9          |           4
-+//       1   |        9        |        17          |           8
-+//       2   |       16        |        32          |          16
-+//
-+// x is a true negation of d, carry propagated. The tempting shortcut - read the
-+// bitwise complement and skip the +1, since only the top blocks are ever used -
-+// is wrong: it lowers x by one ulp exactly when 1 - d is representable at x's
-+// scale, which for a power-of-two denominator is every single round. The losses
-+// compound to two ulps of quotient, one more than the final correction can
-+// absorb, and u64::MAX / 1 comes out short.
-+#define GOLDSCHMIDT_ITERATIONS 3u
-+#define GOLDSCHMIDT_LUT_PRECISION 9u
-+
-+/// @brief Scratch for the Goldschmidt division: the truncation schedule, the
-+/// fixed-point iteration state, the seed table, and the sub-buffers of every
-+/// step (normalisation, seed lookup, the four multiply-adds, and the
-+/// remainder-based correction). See the file banner above for the algorithm.
-+template <typename Torus> struct int_goldschmidt_division_buffer {
-+  int_radix_params params;
-+  bool gpu_memory_allocated;
-+
-+  /// @brief Operand width, 32 for a 64-bit division.
-+  uint32_t num_blocks;
-+  /// @brief Fixed-point width, num_blocks + 2.
-+  uint32_t fp_blocks;
-+  /// @brief Significant blocks of the seed factor x0.
-+  uint32_t x0_blocks;
-+  /// @brief Width of the leading-zero counter, enough to hold the bit count.
-+  uint32_t counter_blocks;
-+
-+  /// @brief Per-round significant blocks of x (the `s` of the schedule).
-+  uint32_t x_blocks[GOLDSCHMIDT_ITERATIONS];
-+  /// @brief Per-round leading zero blocks of x. The LSB of x weighs
-+  /// beta^-(x_zero_blocks + x_blocks), which is the `t` of the schedule.
-+  uint32_t x_zero_blocks[GOLDSCHMIDT_ITERATIONS];
-+
-+  /// @brief Numerator of the current round, fp_blocks. Swaps with next_n
-+  /// every round.
-+  CudaRadixCiphertextFFI current_n;
-+  /// @brief Denominator of the current round, fp_blocks. Swaps with next_d
-+  /// every round.
-+  CudaRadixCiphertextFFI current_d;
-+  /// @brief Output of the numerator multiply-add of the current round.
-+  CudaRadixCiphertextFFI next_n;
-+  /// @brief Output of the denominator multiply-add of the current round.
-+  CudaRadixCiphertextFFI next_d;
-+
-+  /// @brief The denominator at operand width, shifted by the leading-zero
-+  /// count.
-+  CudaRadixCiphertextFFI shifted_d;
-+  /// @brief The numerator widened to twice the operand width, so the same
-+  /// shift ca
-```
-
-**File**: `backends/tfhe-cuda-backend/cuda/include/integer/ilog2.h` (modified, +1/-0)
-```diff
-@@ -1,3 +1,4 @@
-+#pragma once
- #include "integer_utilities.h"
- 
- template <typename Torus> struct int_prepare_count_of_consecutive_bits_buffer {
-```
-
-**File**: `backends/tfhe-cuda-backend/cuda/include/integer/integer.h` (modified, +20/-0)
-```diff
-@@ -487,6 +487,26 @@ void cuda_mul_low_partial_sum_64_async(
- void cleanup_cuda_mul_low_partial_sum_64(CudaStreamsFFI streams,
-                                          int8_t **mem_ptr_void);
- 
-+// Goldschmidt division: quotient and remainder of two unsigned radix integers,
-+// computed by iterating a fixed-point reciprocal rather than by long division.
-+// Only 64-bit operands at 2 bits per block, 3 iterations and a 9-bit seed are
-+// supported - that is the shape the truncation schedule is proved for. A zero
-+// denominator returns an all-ones quotient and the numerator as remainder.
-+uint64_t scratch_cuda_goldschmidt_division_64_async(
-+    CudaStreamsFFI streams, int8_t **mem_ptr, uint32_t num_blocks,
-+    uint32_t iterations, uint32_t lut_precision, uint32_t message_modulus,
-+    uint32_t carry_modulus, CudaLweBootstrapKeyParamsFFI bsk_params,
-+    CudaLweKeyswitchKeyParamsFFI ksk_params, bool allocate_gpu_memory);
-+
-+void cuda_goldschmidt_division_64_async(
-+    CudaStreamsFFI streams, CudaRadixCiphertextFFI *quotient,
-+    CudaRadixCiphertextFFI *remainder, CudaRadixCiphertextFFI const *numerator,
-+    CudaRadixCiphertextFFI const *denominator, uint32_t iterations,
-+    int8_t *mem_ptr, void *const *bsks, void *const *ksks);
-+
-+void cleanup_cuda_goldschmidt_division_64(CudaStreamsFFI streams,
-+                                          int8_t **mem_ptr_void);
-+
- uint64_t scratch_cuda_integer_scalar_mul_64_async(
-     CudaStreamsFFI streams, int8_t **mem_ptr,
-     CudaLweBootstrapKeyParamsFFI bsk_params,
-```
-
----
-
-### Incident Patch 2: `d22e3fcf` (2026-10-27)
-**Commit Message**: feat(gpu): GPU version of count_ones and count_zeros
-
-**File**: `backends/tfhe-cuda-backend/cuda/include/integer/count_bits.h` (added, +405/-0)
-```diff
-@@ -0,0 +1,405 @@
-+#pragma once
-+#include "integer_utilities.h"
-+
-+/**
-+ * @brief Backs count_ones and count_zeros, following the CPU count_bits_2_2.
-+ * Only 2_2 parameters are accepted, the bit value to count is fixed at
-+ * construction.
-+ *
-+ * Instead of one sum term per block, the counts of 6 blocks and of a completer
-+ * c are added without PBS into a chunk filled up to degree 15. The final sum
-+ * then gets about 6 times fewer terms, for one extra PBS layer splitting each
-+ * chunk into its message and carry.
-+ *
-+ *     regular blocks   (b0 b1)  (b2 b3)  (b4 b5)     c
-+ *     count LUTs         0..4     0..4     0..4     0..3
-+ *                          \        |        /       /
-+ *     no PBS                +-------+-------+-------+
-+ *                                   |
-+ *                  chunk, degree <= 15, noise level 4
-+ *                               /         \
-+ *     extract LUTs          message      carry
-+ *                               \         /
-+ *                          one term of the sum
-+ *
-+ * c is a completer count. A duo [d0 d1 d2] is packed as (d0 d1) and (d1 d2),
-+ * giving two counts in 0..3 that complete two chunks. A single block gives a
-+ * count in 0..2. Completers left without a chunk are summed as they are.
-+ *
-+ * Zeros are counted directly by the LUTs, so count_zeros costs the same as
-+ * count_ones, unlike the generic CPU path that derives it from the number of
-+ * ones.
-+ */
-+template <typename Torus> struct int_count_bits_buffer {
-+  /// @brief A 2_2 block holds up to 15, 3 pair counts in 0..4 reach 12 and
-+  /// leave exactly the room of a completer in 0..3. A 4th pair would overflow.
-+  static constexpr uint32_t PAIRS_PER_CHUNK = 3;
-+  /// A pair packs 2 blocks as the 4 bits of one PBS input.
-+  static constexpr uint32_t BLOCKS_PER_CHUNK = 2 * PAIRS_PER_CHUNK;
-+
-+  int_radix_params params;
-+  bool allocate_gpu_memory;
-+  /// Blocks of the input, the split and the buffers below are sized for them.
-+  uint32_t num_radix_blocks;
-+  /// @brief Low blocks of the output the sum runs on, just enough to hold the
-+  /// number of input bits, the largest count.
-+  uint32_t counter_num_blocks;
-+
-+  // Split of the input, regular blocks come first, then duos, then singles
-+  //
-+  /// Groups of 6 regular blocks, each one ends up as a (message, carry) term.
-+  uint32_t num_chunks;
-+  /// Multiple of 3, each group of 3 blocks tops up 2 chunks.
-+  uint32_t num_duo_blocks;
-+  /// Blocks counted alone, they top up chunks too while some remain.
-+  uint32_t num_single_blocks;
-+  /// Chunks that got a completer, the others stay at degree 12.
-+  uint32_t num_completed_chunks;
-+  /// Chunks plus the completers that found no chunk, handed to the sum.
-+  uint32_t num_terms;
-+
-+  // Layout of the counts, the index of a count picks its LUT
-+  //
-+  /// Two per duo, the pairs (d0 d1) and (d1 d2).
-+  uint32_t num_duo_counts;
-+  /// Start of the duo counts, after the 3 packed pairs of each chunk.
-+  uint32_t first_duo_count;
-+  /// Start of the single block counts, the ones that take LUT 3.
-+  uint32_t first_single_count;
-+  /// Packed pairs of each chunk, then duo pairs, then single blocks.
-+  uint32_t num_lut_inputs;
-+
-+  // Count stage
-+  //
-+  /// Four LUTs picked per block, so that all the counts take one PBS call.
-+  int_radix_lut<Torus> *count_lut = nullptr;
-+  /// Input block of each duo block, b0 b0+1 b0+1 b0+2 per duo.
-+  std::vector<Torus> h_duo_block_indexes;
-+  /// GPU copy of h_duo_block_indexes, read by the copy kernel.
-+  Torus *d_duo_block_indexes = nullptr;
-+  /// Duo blocks laid out as [d0 d1 d1 d2], pack_blocks then gives both pairs.
-+  CudaRadixCiphertextFFI duo_blocks;
-+  /// Packed regular blocks, then packed duo pairs, then single blocks.
-+  CudaRadixCiphertextFFI lut_inputs;
-+  /// Bit counts, in the same order as lut_inputs.
-+  CudaRadixCiphertextFFI counts;
-+
-+  // Chunk stage, unused without chunk
-+  //
-+  /// Message and carry LUTs, both read each chunk.
-+  int_radix_lut<Torus> *extract_lut = nullptr;
-+  /// Chunk of each extract LUT input, the same chunk for message and carry.
-+  std::vector<Torus> h_extract_indexes_in;
-+  /// Block of each extract LUT output, the messages then the carries.
-+  std::vector<Torus> h_extract_indexes_out;
-+  /// Chunk sums, input of both extract LUTs.
-+  CudaRadixCiphertextFFI chunks;
-+  /// Messages of all the chunks, then their carries.
-+  CudaRadixCiphertextFFI chunks_message_carry;
-+
-+  // Sum stage
-+  //
-+  /// Term block of each chunk message, chunk carry, then leftover completer.
-+  std::vector<Torus> h_term_block_indexes;
-+  /// GPU copy of h_term_block_indexes, read by the copy kernel.
-+  Torus *d_term_block_indexes = nullptr;
-+  /// num_terms zero padded radix ciphertexts of counter_num_blocks blocks.
-+  CudaRadixCiphertextFFI sum_input_cts;
-+  /// Partial sum reducing degrees for one propagation.
-+  int_sum_ciphertexts_vec_memory<Torus> *sum_mem = nullptr;
-+  /// Single carry propagation that cleans the summ
-```
-
-**File**: `backends/tfhe-cuda-backend/cuda/include/integer/integer.h` (modified, +16/-0)
-```diff
-@@ -693,6 +693,22 @@ void cuda_integer_count_of_consecutive_bits_64_async(
- void cleanup_cuda_integer_count_of_consecutive_bits_64(CudaStreamsFFI streams,
-                                                        int8_t **mem_ptr_void);
- 
-+uint64_t scratch_cuda_integer_count_bits_64_async(
-+    CudaStreamsFFI streams, int8_t **mem_ptr,
-+    CudaLweBootstrapKeyParamsFFI bsk_params,
-+    CudaLweKeyswitchKeyParamsFFI ksk_params, uint32_t num_blocks,
-+    uint32_t counter_num_blocks, uint32_t message_modulus,
-+    uint32_t carry_modulus, BitValue bit_value, bool allocate_gpu_memory);
-+
-+void cuda_integer_count_bits_64_async(CudaStreamsFFI streams,
-+                                      CudaRadixCiphertextFFI *output_ct,
-+                                      CudaRadixCiphertextFFI const *input_ct,
-+                                      int8_t *mem_ptr, void *const *bsks,
-+                                      void *const *ksks);
-+
-+void cleanup_cuda_integer_count_bits_64(CudaStreamsFFI streams,
-+                                        int8_t **mem_ptr_void);
-+
- uint64_t scratch_cuda_integer_grouped_oprf_64_async(
-     CudaStreamsFFI streams, int8_t **mem_ptr,
-     CudaLweBootstrapKeyParamsFFI bsk_params,
-```
-
-**File**: `backends/tfhe-cuda-backend/cuda/src/integer/count_bits.cu` (added, +50/-0)
-```diff
-@@ -0,0 +1,50 @@
-+#include "count_bits.cuh"
-+
-+uint64_t scratch_cuda_integer_count_bits_64_async(
-+    CudaStreamsFFI streams, int8_t **mem_ptr,
-+    CudaLweBootstrapKeyParamsFFI bsk_params,
-+    CudaLweKeyswitchKeyParamsFFI ksk_params, uint32_t num_blocks,
-+    uint32_t counter_num_blocks, uint32_t message_modulus,
-+    uint32_t carry_modulus, BitValue bit_value, bool allocate_gpu_memory) {
-+  int_radix_params params(bsk_params, ksk_params, message_modulus,
-+                          carry_modulus);
-+
-+  return scratch_integer_count_bits<uint64_t>(
-+      CudaStreams(streams), params, (int_count_bits_buffer<uint64_t> **)mem_ptr,
-+      num_blocks, counter_num_blocks, bit_value, allocate_gpu_memory);
++    CudaLweCiphertextList::from_cuda_vec(d_vec, lwe_ciphertext_count, ciphertext_modulus)
 +}
 +
-+/**
-+ * @brief GPU entry point of count_ones and count_zeros, the bit value to count
-+ * is the one given to the scratch call.
-+ *
-+ * @param output_ct At least the counter_num_blocks given to the scratch call,
-+ * the blocks above the counter are set to zero
-+ * @param input_ct  Ciphertext to count, with clean carries
-+ * @param mem_ptr   Buffer from scratch_cuda_integer_count_bits_64_async
-+ */
-+void cuda_integer_count_bits_64_async(CudaStreamsFFI streams,
-+                                      CudaRadixCiphertextFFI *output_ct,
-+                                      CudaRadixCiphertextFFI const *input_ct,
-+                                      int8_t *mem_ptr, void *const *bsks,
-+                                      void *const *ksks) {
-+  GPU_ASSERT(output_ct != input_ct,
-+             "Output and input pointers must be different for out-of-place "
-+             "operations");
+ impl CudaCompressionKey {
+     pub fn from_compression_key(compression_key: &CompressionKey, streams: &CudaStreams) -> Self {
+         Self {
+@@ -376,56 +426,6 @@ impl CudaCompressionKey {
+         }
+     }
+ 
+-    fn flatten(
+-        ciphertexts_slice: &[CudaRadixCiphertext],
+-        streams: &CudaStreams,
+-    ) -> CudaLweCiphertextList<u64> {
+-        let first_ct = &ciphertexts_slice.first().unwrap().d_blocks;
+-
+-        // We assume all ciphertexts will have the same lwe dimension
+-        let lwe_dimension = first_ct.lwe_dimension();
+-        let ciphertext_modulus = first_ct.ciphertext_modulus();
+-
+-        // Compute total number of lwe ciphertexts we will be handling
+-        let total_num_blocks: usize = ciphertexts_slice
+-            .iter()
+-            .map(|x| x.d_blocks.lwe_ciphertext_count().0)
+-            .sum();
+-
+-        let lwe_ciphertext_count = LweCiphertextCount(total_num_blocks);
+-
+-        let mut d_vec = unsafe {
+-            CudaVec::new_async(
+-                lwe_dimension.to_lwe_size().0 * lwe_ciphertext_count.0,
+-                streams,
+-                0,
+-            )
+-        };
+-        let mut offset: usize = 0;
+-        for ciphertext in ciphertexts_slice {
+-            let dest_ptr = unsafe {
+-                d_vec
+-                    .as_mut_c_ptr(0)
+-                    .add(offset * std::mem::size_of::<u64>())
+-            };
+-            let size = ciphertext.d_blocks.0.d_vec.len * std::mem::size_of::<u64>();
+-            unsafe {
+-                cuda_memcpy_async_gpu_to_gpu(
+-                    dest_ptr,
+-                    ciphertext.d_blocks.0.d_vec.as_c_ptr(0),
+-                    size as u64,
+-                    streams.ptr[0],
+-                    streams.gpu_indexes[0].get(),
+-                );
+-            }
+-            streams.synchronize();
+-
+-            offset += ciphertext.d_blocks.0.d_vec.len;
+-        }
+-
+-        CudaLweCiphertextList::from_cuda_vec(d_vec, lwe_ciphertext_count, ciphertext_modulus)
+-    }
+-
+     pub fn compress_ciphertexts_into_list(
+         &self,
+         ciphertexts: &[CudaRadixCiphertext],
+@@ -469,7 +469,38 @@ impl CudaCompressionKey {
+         let first_ct_info = first_ct.info.blocks.first().unwrap();
+         let message_modulus = first_ct_info.message_modulus;
+         let carry_modulus = first_ct_info.carry_modulus;
+-        let lwe_dimension = first_ct.d_blocks.lwe_dimension();
++        let input_ciphertext_modulus = first_ct.d_blocks.ciphertext_modulus();
 +
-+  host_integer_count_bits<uint64_t, uint64_t>(
-+      CudaStreams(streams), output_ct, input_ct,
-+      (int_count_bits_buffer<uint64_t> *)mem_ptr, bsks, (uint64_t **)ksks);
-+}
++        assert!(
++            self.lwe_per_glwe.0 <= compressed_polynomial_size.0,
++            "Cannot pack more than polynomial_size(={}) elements per glwe, {} requested",
++            compressed_polynomial_size.0,
++            self.lwe_per_glwe.0,
++        );
 +
-+void cleanup_cuda_integer_count_bits_64(CudaStreamsFFI streams,
-+                                        int8_t **mem_ptr_void) {
-+
-+  int_count_bits_buffer<uint64_t> *mem_ptr =
-+      (int_count_bits_buffer<uint64_t> *)(*mem_ptr_void);
-+
-+  mem_ptr->release(CudaStreams(streams));
-+
-+  delete mem_ptr;
-+  *mem_ptr_void = nullptr;
-+}
++        let lwe_dimension = lwe_pksk.input_key_lwe_dimension();
++        for ct in ciphertexts {
++            assert_eq!(
++                lwe_dimension,
++                ct.d_blocks.lwe_dimension(),
++                "All ciphertexts do not have the same lwe dimension as the packing keyswitch key"
++            );
++            assert_eq!(
++                input_ciphertext_modulus,
++                ct.d_blocks.
 ```
 
-**File**: `backends/tfhe-cuda-backend/cuda/src/integer/count_bits.cuh` (added, +256/-0)
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_noise_distribution/br_rerand_dp_ks_ms.rs` (modified, +52/-53)
 ```diff
-@@ -0,0 +1,256 @@
-+#ifndef COUNT_BITS_CUH
-+#define COUNT_BITS_CUH
-+
-+#include "integer.cuh"
-+#include "integer/count_bits.h"
-+#include "integer/integer_utilities.h"
-+#include "multiplication.cuh"
-+
-+template <typename Torus>
-+__host__ uint64_t scratch_integer_count_bits(
-+    CudaStreams streams, const int_radix_params params,
-+    int_count_bits_buffer<Torus> **mem_ptr, uint32_t num_radix_blocks,
-+    uint32_t counter_num_blocks, BitValue bit_value,
-+    const bool allocate_gpu_memory) {
-+
-+  uint64_t size_tracker = 0;
-+
-+  *mem_ptr = new int_count_bits_buffer<Torus>(
-+      streams, params, num_radix_blocks, counter_num_blocks, bit_value,
-+      allocate_gpu_memory, size_tracker);
-+
-+  return size_tracker;
-+}
-+
-+/**
-+ * @brief First PBS layer, fills mem_ptr->counts with the bit count of each
-+ * packed pair and of each single block of input_ct.
-+ *
-+ * Regular and duo blocks are packed by pairs so that one PBS counts two
-+ * blocks, single blocks go as they are.
-+ *
-+ * @param input_ct Ciphertext to count, with clean carries
-+ */
-+template <typename Torus, typename KSTorus>
-+__host__ void
-+host_integer_count_bits_counts(CudaStreams streams,
-+                               CudaRadixCiphertextFFI const *input_ct,
-+                               int_count_bits_buffer<Torus> *mem_ptr,
-+                               void *const *bsks, KSTorus *const *ksks) {
-+
-+  auto stream = streams.stream(0);
-+  auto gpu_index = streams.gpu_index(0);
-+  auto message_modulus = mem_ptr->params.message_modulus;
-+  auto carry_modulus = mem_ptr->params.carry_modulus;
-+  auto lut_inputs = &mem_ptr->lut_inputs;
-+  const uint32_t num_regular_blocks =
-+      mem_ptr->BLOCKS_PER_CHUNK * mem_ptr->num_chunks;
-+  const uint32_t num_duo_counts = mem_ptr->num_duo_counts;
-+  const uint32_t first_duo_count = mem_ptr->first_duo_count;
-+  const uint32_t first_single_count = mem_ptr->first_single_count;
-+
-+  if (num_regular_blocks > 0) {
-+    CudaRadixCiphertextFFI regular_blocks;
-+    as_radix_ciphertext_slice<Torus>(&regular_blocks, input_ct, 0,
-+                                     num_regular_blocks);
-+    CudaRadixCiphertextFFI packed_regular_blocks;
-+    as_radix_ciphertext_slice<Torus>(&packed_regular_blocks, lut_inputs, 0,
-+                                     first_duo_count);
-+    pack_blocks<Torus>(stream, gpu_index, &packed_regular_blocks,
-+                       &regular_blocks, num_regular_blocks, message_modulus,
-+                       message_modulus, carry_modulus);
-+  }
-+
-+  if (num_duo_counts > 0) {
-+    copy_radix_ciphertext_blocks_from_indexes_async<Torus>(
-+        stream, gpu_index, &mem_ptr->duo_blocks, input_ct,
-+        mem_ptr->d_duo_block_indexes, mem_ptr->h_duo_block_indexes.data(),
-+        2 * num_duo_counts);
-+    CudaRadixCiphertextFFI packed_duo_blocks;
-+    as_radix_ciphertext_slice<Torus>(&packed_duo_blocks, lut_inputs,
-+                                     first_duo_count, first_single_count);
-+    pack_blocks<Torus>(stream, gpu_index, &packed_duo_blocks,
-+                       &mem_ptr->duo_blocks, 2 * num_duo_counts,
-+                       message_modulus, message_modulus, carry_modulus);
-+  }
-+
-+  if (mem_ptr->num_single_blocks > 0) {
-+    const uint32_t first_single_block =
-+        num_regular_blocks + mem_ptr->num_duo_blocks;
-+    copy_radix_ciphertext_slice_async<Torus>(
-+        stream, gpu_index, lut_inputs, first_single_count,
-+        first_single_count + mem_ptr->num_single_blocks, input_ct,
-+        first_single_block, input_ct->num_radix_blocks);
-+  }
-+
-+  host_apply_univariate_lut<Torus>(streams, &mem_ptr->counts, lut_inputs,
-+                                   mem_ptr->count_lut, ksks, bsks);
-+}
-+
-+/**
-+ * @brief Adds the counts of each chunk, then splits the chunks into their
-+ * message and carry with the second PBS layer, the extra cost of this path.
-+ *
-+ * The additions need no PBS, degree <= 15 and noise level <= 4 fit the 2_2
-+ * limits.
-+ */
-+template <typename Torus, typename KSTorus>
-+__host__ void
-+host_integer_count_bits_chunks(CudaStreams streams,
-+                               int_count_bits_buffer<Torus> *mem_ptr,
-+                               void *const *bsks, KSTorus *const *ksks) {
-+
-+  auto stream = streams.stream(0);
-+  auto gpu_index = streams.gpu_index(0);
-+  auto message_modulus = mem_ptr->params.message_modulus;
-+  auto carry_modulus = mem_ptr->params.carry_modulus;
-+  auto chunks = &mem_ptr->chunks;
-+  const uint32_t num_chunks = mem_ptr->num_chunks;
-+  const uint32_t num_completed_chunks = mem_ptr->num_completed_chunks;
-+
-+  constexpr uint32_t pairs_per_chunk =
-+      int_count_bits_buffer<Torus>::PAIRS_PER_CHUNK;
-+  CudaRadixCiphertextFFI regular_counts[pairs_per_chunk];
-+  for (uint32_t i = 0; i < pairs_per_chunk; ++i) {
-+    as_radix_ciphertext_slice<Torus>(&regular_counts[i], &mem_ptr->counts,
-+                                     i * num_chunks, (i + 1) * num_chunks);
-+  }
-+  host_addition<Torus>(stream, gpu_index, chunks, &regular_counts[0],
-+         
-```
-
-**File**: `backends/tfhe-cuda-backend/cuda/src/integer/radix_ciphertext.cuh` (modified, +79/-0)
-```diff
-@@ -7,6 +7,7 @@
- #include "integer/integer.h"
- #include "integer/radix_ciphertext.h"
- #include "utils/helper.cuh"
-+#include "utils/helper_multi_gpu.cuh"
+@@ -1,6 +1,5 @@
++use crate::core_crypto::entities::compressed_modulus_switched_glwe_ciphertext::CompressedModulusSwitchedGlweCiphertext;
+ use crate::core_crypto::gpu::lwe_ciphertext_list::CudaLweCiphertextList;
+-use crate::core_crypto::prelude::{GlweCiphertext, LweCiphertextList};
+-use crate::integer::gpu::ciphertext::CudaUnsignedRadixCiphertext;
  
- inline CudaLweCiphertextListFFI
- to_lwe_ciphertext_list(CudaRadixCiphertextFFI *radix) {
-@@ -153,6 +154,84 @@ void copy_radix_ciphertext_async(cudaStream_t const stream,
-       input_radix, 0, input_radix->num_radix_blocks);
- }
+ use crate::shortint::server_key::tests::noise_distribution::utils::noise_simulation::{
+     DynLwe, NoiseSimulationLwe, NoiseSimulationLweKeyswitchKey, NoiseSimulationModulusSwitchConfig,
+@@ -46,7 +45,6 @@ use crate::shortint::PaddingBit;
+ use rayon::prelude::*;
  
-+/**
-+ * @brief Block i of output_radix gets block indexes[i] of input_radix, for i
-+ * below num_blocks, in one kernel instead of one copy per block.
-+ *
-+ * @param output_radix Its num_blocks first blocks receive the copied blocks
-+ * @param input_radix  Blocks to copy, an index can repeat
-+ * @param d_indexes    Input block of each output block, on the GPU of stream
-+ * @param h_indexes    Host copy of d_indexes, the degrees and noise levels move
-+ * on the host
-+ * @param num_blocks   Blocks copied, nothing is launched for 0
-+ */
-+template <typename Torus>
-+void copy_radix_ciphertext_blocks_from_indexes_async(
-+    cudaStream_t const stream, uint32_t const gpu_index,
-+    CudaRadixCiphertextFFI *output_radix,
-+    const CudaRadixCiphertextFFI *input_radix, Torus const *d_indexes,
-+    Torus const *h_indexes, uint32_t num_blocks) {
-+  if (num_blocks == 0) {
-+    return;
-+  }
-+  GPU_ASSERT(output_radix->lwe_dimension == input_radix->lwe_dimension,
-+             "Cuda error: input and output lwe dimension must be equal");
-+  GPU_ASSERT(num_blocks <= output_radix->num_radix_blocks,
-+             "Cuda error: the output does not have enough blocks");
-+  for (uint32_t i = 0; i < num_blocks; ++i) {
-+    GPU_ASSERT(h_indexes[i] < input_radix->num_radix_blocks,
-+               "Cuda error: input index exceeds input num radix blocks");
-+    output_radix->degrees[i] = input_radix->degrees[h_indexes[i]];
-+    output_radix->noise_levels[i] = input_radix->noise_levels[h_indexes[i]];
-+  }
-+
-+  cuda_set_device(gpu_index);
-+  align_with_indexes<Torus><<<num_blocks, 256, 0, stream>>>(
-+      (Torus *)output_radix->ptr, (Torus const *)input_radix->ptr, d_indexes,
-+      output_radix->lwe_dimension + 1);
-+  check_cuda_error(cudaGetLastError());
-+}
-+
-+/**
-+ * @brief Block i of input_radix goes to block indexes[i] of output_radix, for
-+ * i below num_blocks, in one kernel instead of one copy per block.
-+ *
-+ * @param output_radix Receives each input block at its index, the others are
-+ * left untouched
-+ * @param input_radix  Its num_blocks first blocks are copied
-+ * @param d_indexes    Output block of each input block, all distinct, on the
-+ * GPU of stream
-+ * @param h_indexes    Host copy of d_indexes, the degrees and noise levels move
-+ * on the host
-+ * @param num_blocks   Blocks copied, nothing is launched for 0
-+ */
-+template <typename Torus>
-+void copy_radix_ciphertext_blocks_to_indexes_async(
-+    cudaStream_t const stream, uint32_t const gpu_index,
-+    CudaRadixCiphertextFFI *output_radix,
-+    const CudaRadixCiphertextFFI *input_radix, Torus const *d_indexes,
-+    Torus const *h_indexes, uint32_t num_blocks) {
-+  if (num_blocks == 0) {
-+    return;
-+  }
-+  GPU_ASSERT(output_radix->lwe_dimension == input_radix->lwe_dimension,
-+             "Cuda error: input and output lwe dimension must be equal");
-+  GPU_ASSERT(num_blocks <= input_radix->num_radix_blocks,
-+             "Cuda error: the input does not have enough blocks");
-+  for (uint32_t i = 0; i < num_blocks; ++i) {
-+    GPU_ASSERT(h_indexes[i] < output_radix->num_radix_blocks,
-+               "Cuda error: output index exceeds output num radix blocks");
-+    output_radix->degrees[h_indexes[i]] = input_radix->degrees[i];
-+    output_radix->noise_levels[h_indexes[i]] = input_radix->noise_levels[i];
-+  }
-+
-+  cuda_set_device(gpu_index);
-+  realign_with_indexes<Torus><<<num_blocks, 256, 0, stream>>>(
-+      (Torus *)output_radix->ptr, (Torus const *)input_radix->ptr, d_indexes,
-+      output_radix->lwe_dimension + 1);
-+  check_cuda_error(cudaGetLastError());
-+}
-+
- // end_lwe_index is exclusive
- template <typename Torus>
- void set_zero_radix_ciphertext_slice_async(cudaStream_t const stream,
-```
-
-**File**: `backends/tfhe-cuda-backend/src/bindings.rs` (modified, +27/-0)
-```diff
-@@ -1636,6 +1636,33 @@ unsafe extern "C" {
-         mem_ptr_void: *mut *mut i8,
-     );
- }
-+unsafe extern "C" {
-+    pub fn scratch_cuda_integer_count_bits_64_async(
-+        streams: CudaStreamsFFI,
-+        mem_ptr: *mut *mut i8,
-+        bsk_params: CudaLweBootstrapKeyParamsFFI,
-+        ksk_params: CudaLweKeyswitchKeyParamsFFI,
-+        num_blocks: u32,
-+        counter_num_blocks: u32,
-+        message_modulus: u32,
-+        carry_modulus: u32,
-+        bit_value: BitValue,
-+        allocate_gpu_memory: bool,
-+    ) -> u64;
-+}
-+unsafe extern "C" {
-+    pub fn cuda_integer_count_bits_64_async(
-+        streams: CudaStreamsFFI,
-+        output_ct: *mut CudaRadixCiphertextFFI,
-+        input_ct: *const CudaRadixCiphertextFFI,
-+        mem_ptr: *mut i8,
-+        bsks: *const *mut ffi::c_void,
-+        ksks: *const *mut ffi::c_void,
-+    );
-+}
-+unsafe extern "C" {
-+    pub fn cleanup_cuda_integer_count_bits_64(streams: CudaStreamsFFI, mem_ptr_void: *mut *mut i8);
-+}
- unsafe extern "C" {
-     pub fn scratch_cuda_integer_grouped_oprf_64_async(
-         streams: CudaStreamsFFI,
-```
-
-**File**: `scripts/check_scratch_cleanup.py` (modified, +8/-8)
-```diff
-@@ -54,29 +54,29 @@
- # Bindings parsed from bindings.rs
- # Scratch functions: Two more than cleanup functions because of
- #  'scratch_cuda_programmable_bootstrap_32_async' and
--EXPECTED_SCRATCH_COUNT = 82
-+EXPECTED_SCRATCH_COUNT = 83
+ use crate::core_crypto::gpu::CudaStreams;
+-use crate::integer::gpu::ciphertext::compressed_ciphertext_list::CudaCompressedCiphertextListBuilder;
+ use crate::integer::gpu::key_switching_key::{CudaKeySwitchingKey, CudaKeySwitchingKeyMaterial};
+ use crate::integer::gpu::server_key::radix::tests_noise_distribution::utils::noise_simulation::CudaSideResources;
+ use crate::integer::gpu::CudaServerKey;
+@@ -55,7 +53,11 @@ use crate::integer::{CompactPrivateKey, CompactPublicKey, CompressedServerKey, R
+ use crate::shortint::ShortintParameterSet;
+ use crate::GpuIndex;
  
- # Cuda operation functions
--EXPECTED_CUDA_COUNT = 120
-+EXPECTED_CUDA_COUNT = 121
+-use crate::integer::ciphertext::DataKind;
++use crate::integer::ciphertext::{CompressedCiphertextList, DataKind};
++use crate::shortint::atomic_pattern::AtomicPattern;
++use crate::shortint::ciphertext::{
++    CompressedCiphertextList as ShortintCompressedCiphertextList, CompressedCiphertextListMeta,
++};
+ use crate::integer::gpu::server_key::radix::tests_noise_distribution::utils::noise_simulation::CudaDynLwe;
+ use crate::integer::gpu::unchecked_small_scalar_mul_integer;
+ use std::num::NonZeroUsize;
+@@ -67,7 +69,6 @@ use crate::integer::gpu::{cuda_backend_rerand_assign, cuda_backend_rerand_withou
  
- # Cleanup functions
--EXPECTED_CLEANUP_COUNT = 82
-+EXPECTED_CLEANUP_COUNT = 83
+ use crate::core_crypto::gpu::lwe_compact_ciphertext_list::CudaLweCompactCiphertextList;
+ use crate::core_crypto::prelude::LweCiphertext;
+-use crate::integer::gpu::server_key::radix::{CudaRadixCiphertext, CudaRadixCiphertextInfo};
+ use crate::integer::ClientKey;
+ use crate::shortint::server_key::tests::noise_distribution::utils::to_json::{
+     TestJsonGuard, TestResult,
+@@ -982,8 +983,9 @@ fn sanity_check_encrypt_br_rerand_dp_ks_ms_pbs_gpu(
+         .map(|mat| CudaKeySwitchingKey::from_cuda_key_switching_key_material(mat, &cuda_sks));
  
- # Check 3: Rust call-site scanning
- # Number of functions in ffi.rs files
--EXPECTED_CHECK3_RUST_FNS = 142
-+EXPECTED_CHECK3_RUST_FNS = 143
- # Number of functions in ffi.rs files that
--EXPECTED_CHECK3_ASYNC_CUDA_CALLS = 106
-+EXPECTED_CHECK3_ASYNC_CUDA_CALLS = 107
+     let comp_private_key = cks.new_compression_private_key(compression_params);
+-    let (cuda_compression_key, cuda_decompression_key) =
++    let (_cuda_compression_key, cuda_decompression_key) =
+         radix_cks.new_cuda_compression_decompression_keys(&comp_private_key, &streams);
++    let storage_modulus = comp_private_key.key.params.storage_log_modulus();
  
- # Number of instances of Rust calls to the scratch/cuda/cleanup in a
- # triplet sequence.
--EXPECTED_CHECK3_SCRATCH_CUDA_CLEANUP_TRIPLET_CALLS = 124
-+EXPECTED_CHECK3_SCRATCH_CUDA_CLEANUP_TRIPLET_CALLS = 125
+     let modulus_switch_config = cuda_sks.noise_simulation_modulus_switch_config();
+     let compute_br_input_modulus_log = sks.key.br_input_modulus_log();
+@@ -1022,63 +1024,60 @@ fn sanity_check_encrypt_br_rerand_dp_ks_ms_pbs_gpu(
+         // Manually build as the seed is made non Clone to protect user normally
+         let noise_simulation_rerand_seed = ReRandomizationSeed(rerand_xof_seed);
  
- # Check 5: Rust async-caller scanning
--EXPECTED_CHECK5_ASYNC_CALLERS = 135
-+EXPECTED_CHECK5_ASYNC_CALLERS = 136
+-        let sample_input = ShortintEngine::with_thread_local_mut(|engine| {
++        // Easier to start with a GLWE and get the LWE for noise simulation + shortint
++        // rather than trying to have an LWE be inserted back in a GLWE
++        let sample_input_as_glwe = ShortintEngine::with_thread_local_mut(|engine| {
+             comp_private_key
+                 .key
+-                .encrypt_noiseless_decompression_input_dyn_lwe(&cks.key, 0, engine)
++                .encrypt_noiseless_glwe(&cks.key, 0, engine)
+         });
+-        let sample_lwe_dimension = sample_input.lwe_dimension();
  
- # Check 6: Rust cleanup-caller scanning
--EXPECTED_CHECK6_CLEANUP_CALLERS = 122
-+EXPECTED_CHECK6_CLEANUP_CALLERS = 123
+-        let sample_input_lwe_ciphertext = sample_input.as_lwe_64();
+-        let h_ct_list = LweCiphertextList::from_container(
+-            sample_input_lwe_ciphertext.into_container(),
+-            sample_input_lwe_ciphertext.lwe_size(),
+-            sample_input_lwe_ciphertext.ciphertext_modulus(),
+-        );
+-        let d_blocks = CudaLweCiphertextList::from_lwe_ciphertext_list(
+-            &h_ct_list,
+-            &cuda_side_resources.streams,
++        let glwe_for_shortint_list = CompressedModulusSwitchedGlweCiphertext::compress(
++            &sample_input_as_glwe,
++            storage_modulus,
++            LweCiphertextCount(1),
+         );
  
- 
- def check_paths_exist():
-```
-
-**File**: `tfhe-benchmark/benches/integer/bench.rs` (modified, +28/-0)
-```diff
-@@ -1994,6 +1994,18 @@ mod cuda {
-         display_name: ilog2
-     );
- 
-+    define_cuda_server_key_bench_clean_input_unary_fn!(
-+        method_name: unchecked_count_ones,
-+        method_name_cpu: unchecked_count_ones_parallelized,
-+        display_name: count_ones
-+    );
-+
-+    define_cuda_server_key_bench_clean_input_unary_fn!(
-+        method_name: unchecked_count_zeros,
-+        method_name_cpu: unchecked_count_zeros_parallelized,
-+        display_name: count_zeros
-+    );
-+
-     define_cuda_server_key_bench_clean_input_scalar_fn!(
-         method_name: unchecked_scalar_bitand,
-         method_name_cpu: unchecked_scalar_bitand_parallelized,
-@@ -2332,6 +2344,18 @@ mod cuda {
-         display_name: ilog2
-     );
- 
-+    define_cuda_server_key_bench_clean_input_unary_fn!(
-+        method_name: count_ones,
-+        method_name_cpu: count_ones_parallelized,
-+        display_name: count_ones
-+    );
-+
-+    define_cuda_server_key_bench_clean_input_unary_fn!(
-+        method_name: count_zeros,
-+        method_name_cpu: count_zeros_parallelized,
-+        display_name: count_zeros
-+    );
-+
-     define_cuda_server_key_bench_clean_input_scalar_fn!(
-         method_name: scalar_sub,
-         method_name_cpu: scalar_sub_parallelized,
-@@ -2508,6 +2532,8 @@ mod cuda {
-         cuda_unchecked_rotate_left,
-         cuda_unchecked_rotate_right,
-         cuda_unchecked_ilog2,
-+        cuda_unchecked_count_ones,
-+        cuda_unchecked_count_zeros,
-     );
- 
-     criterion_group!(
-@@ -2569,6 +2595,8 @@ mod cuda {
-         cuda_trailing_zeros,
-         cuda_trailing_ones,
-         cuda_ilog2,
-+        cuda_count_ones,
-+        cuda_count_zeros,
-         oprf::cuda::cuda_unsigned_oprf,
-         vector_find::cuda::cuda_match_value,
-         mul_add_fixed_point::cuda::cuda_mul_add_fixed_point,
+-        let gpu_sample_ct = CudaUnsignedRadixCiphertext {
+-            ciphertext: CudaRadixCiphertext {
+-                d_blocks,
+-                info: CudaRadixCiphertextInfo {
+-                    blocks: [cuda_side_resources.block_info].to_vec(),
+-                },
+-            },
+-        };
++        let sample_input = {
++            let mut tmp = LweCiphertextOwned::new(
++                0u64,
++                sample_input_as_glwe
++                    .glwe_size()
++                    .to_glwe_dimension()
++                    .to_equivalent_lwe_dimension(sample_input_as_glwe.polynomial_size())
++                    .to_lw
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4111** (2026-10-27): chore(deps-dev): bump fast-uri from 3.1.8 to 3.1.9 in /utils/wasm-par-mq/web_tests (@dependabot[bot])
 - **PR #4108** (2026-10-26): chore: move CODEOWNERS back because reviewable does not check all locations (@IceTDrinker)
 - **PR #4107** (2026-10-26): chore(data-extractor): update tokio to 1.54.1 (@nsarlin-zama)
 - **PR #4106** (2026-10-26): chore(deps): bump zizmorcore/zizmor-action from 0.6.4 to 0.7.1 (@dependabot[bot])
+- **PR #4104** (2026-10-27): Mz/remove wopbs from parameter set (@mayeul-zama)
 - **PR #4101** (2026-10-23): chore(gpu): run multi-bit h100 and zk memcheck workflows weekly on cron (@agnesLeroy)
-- **PR #4100** (2026-10-23): fix(gpu): boolean array should use boolean bitnot (@agnesLeroy)
-- **PR #4097** (closed): chore: with a license checker, check them in CI (@IceTDrinker)
 
 ---
 
@@ -2744,32 +2198,92 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gpu): add goldshmidt_division (#3926)
+## X. gpu): add checks for compressed noise squashed ctxt (#4099)
 
 **RULE**:
-When implementing operations in `.github/workflows/gpu_integer_classic_tests_h100_2gpu_par.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tfhe/src/integer/gpu/list_compression/server_keys.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a6a48cd8`: gpu): add goldshmidt_division (#3926). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9412db3e`: gpu): add checks for compressed noise squashed ctxt (#4099). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/gpu_integer_classic_tests_h100_2gpu_par.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/integer/gpu/list_compression/server_keys.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      # Separate build: the golden test needs the gpu-goldschmidt-trace feature.
-      - name: Run Goldschmidt division golden trace test
-        run: |
-          make test_integer_goldschmidt_golden_trace_gpu
+/// Concatenates the given LWE lists into a single contiguous list on GPU 0.
+///
+/// All lists must have `lwe_dimension` as their LWE dimension, callers are
+/// responsible for checking this. The iterator must not be empty.
+fn flatten_lwe_lists<'a, T, I>(
+    lwe_lists: I,
+    lwe_dimension: LweDimension,
+    streams: &CudaStreams,
+) -> CudaLweCiphertextList<T>
+where
+    T: UnsignedInteger,
+    I: IntoIterator<Item = &'a CudaLweCiphertextList<T>>,
+    I::IntoIter: Clone,
+{
+    let lwe_lists = lwe_lists.into_iter();
+    let ciphertext_modulus = lwe_lists.clone().next().unwrap().ciphertext_modulus();
 
+    // Compute total number of lwe ciphertexts we will be handling
+    let total_num_blocks: usize = lwe_lists.clone().map(|x| x.lwe_ciphertext_count().0).sum();
+
+    let lwe_ciphertext_count = LweCiphertextCount(total_num_blocks);
+
+    let mut d_vec = unsafe {
+        CudaVec::new_async(
+            lwe_dimension.to_lwe_size().0 * lwe_ciphertext_count.0,
+            streams,
+            0,
+        )
+    };
+    let mut offset: usize = 0;
+    for lwe_list in lwe_lists {
+        let dest_ptr = unsafe { d_vec.as_mut_c_ptr(0).add(offset * std::mem::size_of::<T>()) };
+        let size = lwe_
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    fn flatten(
+        ciphertexts_slice: &[CudaRadixCiphertext],
+        streams: &CudaStreams,
+    ) -> CudaLweCiphertextList<u64> {
+        let first_ct = &ciphertexts_slice.first().unwrap().d_blocks;
+
+        // We assume all ciphertexts will have the same lwe dimension
+        let lwe_dimension = first_ct.lwe_dimension();
+        let ciphertext_modulus = first_ct.ciphertext_modulus();
+
+        // Compute total number of lwe ciphertexts we will be handling
+        let total_num_blocks: usize = ciphertexts_slice
+            .iter()
+            .map(|x| x.d_blocks.lwe_ciphertext_count().0)
+            .sum();
+
+        let lwe_ciphertext_count = LweCiphertextCount(total_num_blocks);
+
+        let mut d_vec = unsafe {
+            CudaVec::new_async(
+                lwe_dimension.to_lwe_size().0 * lwe_ciphertext_count.0,
+                streams,
+                0,
+            )
+        };
+        let mut offset: usize = 0;
+        for ciphertext in ciphertexts_slice {
+            let dest_ptr = unsafe {
+                d_vec
+                    .as_mut_c_ptr(0)
+                    .add(offset * std::mem::size_of::<u64>())
+            };
+            let size = ciphertext.d_blocks.0.d
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a6a48cd8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9412db3e` are properly handled with clean fallback behavior.
