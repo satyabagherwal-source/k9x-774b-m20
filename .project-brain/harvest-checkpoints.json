@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T16:58:49.517Z",
+  "last_updated": "2026-10-27T17:10:00.947Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2198,14 +2198,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tickernelz-opencode-mem",
-      "content_hash": "a856bb24c8fb6c55b74891a947df2bc6c0edd304fad75d58afddbfb991107799",
-      "verified_at": "2026-10-25T13:57:20.671Z",
+      "content_hash": "86a4a89e24999dba3e70342f64b6cbd4f18283be76bc387578d9655e671abbe0",
+      "verified_at": "2026-10-27T17:05:13.806Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T13:57:20.671Z"
+      "last_updated": "2026-10-27T17:05:13.806Z"
     },
     "autotrust/JEV-35B-NVFP4": {
       "repository": "autotrust/JEV-35B-NVFP4",
@@ -3846,14 +3846,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cosscom-coss",
-      "content_hash": "7ba9197dab8f10aeb7a0fc82b901171d4c9dcdc2d8b6bf7a8014c24fdd799a93",
-      "verified_at": "2026-10-23T11:24:38.262Z",
+      "content_hash": "67122c0d74315fed3f8d7aaa95b94dfc1b8a4d02af7dc4ff1e1dbf3fe054d4f9",
+      "verified_at": "2026-10-27T17:10:00.946Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T11:24:38.262Z"
+      "last_updated": "2026-10-27T17:10:00.946Z"
     },
     "sharkdp/bat": {
       "repository": "sharkdp/bat",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "13fe10d0d042d1a096f61af4803a32c095da1d4ad17f630904afd23ff636b6f9",
-      "verified_at": "2026-10-27T14:14:21.287Z",
+      "content_hash": "9a9df49b4d8d50c63ff5b4fec3c1560d108c08489fefadd4109d5861ab0abca3",
+      "verified_at": "2026-10-27T17:05:12.233Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T14:14:21.287Z"
+      "last_updated": "2026-10-27T17:05:12.233Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -8241,14 +8241,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dnscontrol-dnscontrol",
-      "content_hash": "a95bd6ff1e2aba908b129746af2e5fb316ffaecdfc4785f5e9961c8a3056a8c4",
-      "verified_at": "2026-10-26T11:15:42.621Z",
+      "content_hash": "f4c07c7835a349f42442338ddfbac6a3625e4f0ee1f58e62532be6f44e8497a9",
+      "verified_at": "2026-10-27T17:05:09.989Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T11:15:42.621Z"
+      "last_updated": "2026-10-27T17:05:09.989Z"
     },
     "ydb-platform/ydb": {
       "repository": "ydb-platform/ydb",
@@ -11001,14 +11001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zenbu-labs-terminal-browser",
-      "content_hash": "5ff769c710f7a0774aad9b4c705c0a050c1e774997a608f62918bdf5c8cec485",
-      "verified_at": "2026-10-20T17:29:22.614Z",
+      "content_hash": "535ccf426e428c75a430816cea90d0d784ee0d4a6348a54aceded51dbee9a174",
+      "verified_at": "2026-10-27T17:05:01.022Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T17:29:22.614Z"
+      "last_updated": "2026-10-27T17:05:01.022Z"
     },
     "kosi-libs/Kodein": {
       "repository": "kosi-libs/Kodein",

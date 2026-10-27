@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source**: github ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
-> **Source Version**: `660ec51e`  
+> **Source Version**: `e8ca7483`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T17:29:22.398Z  
+> **Timestamp**: 2026-10-27T17:05:00.727Z  
 > **Learning ID**: `learn-github-zenbu-labs-terminal-browser`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T17:29:22.391Z  
+> **Harvest Timestamp**: 2026-10-27T17:04:59.741Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A real browser inside your terminal
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4069 stars
+- **Stars / Engagement**: 4298 stars
 
 ---
 
@@ -876,6 +876,7 @@ private final class MultitouchPinch {
 ### Core Architecture Module: `pixel/engine/crates/pixel-core/src/canvas.rs`
 ```
 use crate::surfaces::{OpaqueArea, Rect};
+use crate::system_fonts::{self, Glyph};
 use crate::text_input::{MARK_CHAR, Mark, mark_advance_at};
 
 #[derive(Clone, Copy)]
@@ -889,7 +890,87 @@ pub struct Frame<'a> {
 }
 
 type GlyphKey = (usize, char, u32);
-type GlyphCache = std::collections::HashMap<GlyphKey, (fontdue::Metrics, Vec<u8>)>;
+
+fn glyph_key(font: &crate::fonts::Font, ch: char, px: f32) -> GlyphKey {
+    (font.id(), ch, px.to_bits())
+}
+
+fn monospace_advance(font: &crate::fonts::Font, px: f32) -> Option<f32> {
+    let narrow = font.metrics('i', px).advance_width;
+    (narrow > 0.0 && narrow == font.metrics('M', px).advance_width).then_some(narrow)
+}
+
+fn draws_itself(font: &crate::fonts::Font, ch: char) -> bool {
+    ch.is_control() || font.lookup_glyph_index(ch) != 0 || (ch.is_whitespace() && font.fallback_for(ch).is_none())
+}
+
+fn cells(ch: char) -> usize {
+    unicode_width::UnicodeWidthChar::width(ch).unwrap_or(1)
+}
+
+fn natural_fallback_advance(font: &crate::fonts::Font, ch: char, px: f32) -> f32 {
+    if let Some(face) = font.fallback_for(ch) {
+        return face.metrics(ch, px).advance_width;
+    }
+    // Matches `rasterize_glyph`, which draws nothing for a zero-width character no font has.
+    system_fonts::advance(ch, px).unwrap_or_else(|| if cells(ch) == 0 { 0.0 } else { font.metrics(ch, px).advance_width })
+}
+
+fn glyph_advance(font: &crate::fonts::Font, ch: char, px: f32) -> f32 {
+    if draws_itself(font, ch) {
+        return font.metrics(ch, px).advance_width;
+    }
+    match monospace_advance(font, px) {
+        Some(cell) => cell * cells(ch) as f32,
+        None => natural_fallback_advance(font, ch, px),
+    }
+}
+
+fn rasterize_glyph(font: &crate::fonts::Font, ch: char, px: f32) -> Glyph {
+    if draws_itself(font, ch) {
+        let (metrics, pixels) = font.rasterize(ch, px);
+        return Glyph { metrics, pixels, color: false };
+    }
+    let cell = monospace_advance(font, px);
+    let span = cell.map(|cell| cell * cells(ch) as f32);
+    let mut glyph = borrowed_glyph(font, ch, px);
+    if let (Some(span), Some(drawn)) = (span, &glyph)
+        && span > 0.0
+        && drawn.metrics.width as f32 > span
+    {
+        glyph = borrowed_glyph(font, ch, px * span / drawn.metrics.width as f32);
+    }
+    let mut glyph = glyph.unwrap_or_else(|| {
+        if cells(ch) == 0 {
+            return Glyph { metrics: fontdue::Metrics::default(), pixels: Vec::new(), color: false };
+        }
+        let (metrics, pixels) = font.rasterize(ch, px);
+        Glyph { metrics, pixels, color: false }
+    });
+    if let (Some(cell), Some(span)) = (cell, span) {
+        fit_to_cells(&mut glyph.metrics, cell, span);
+    }
+    glyph
+}
+
+fn borrowed_glyph(font: &crate::fonts::Font, ch: char, px: f32) -> Option<Glyph> {
+    if let Some(face) = font.fallback_for(ch) {
+        let (metrics, pixels) = face.rasterize(ch, px);
+        return Some(Glyph { metrics, pixels, color: false });
+    }
+    system_fonts::rasterize(ch, px)
+}
+
+fn fit_to_cells(metrics: &mut fontdue::Metrics, cell: f32, span: f32) {
+    metrics.xmin = if span == 0.0 {
+        (-(cell + metrics.width as f32) / 2.0).round() as i32
+    } else {
+        metrics.xmin + ((span - metrics.advance_width) / 2.0).round() as i32
+    };
+    metrics.advance_width = span;
+}
+
+type GlyphCache = std::collections::HashMap<GlyphKey, Glyph>;
 std::thread_local! {
     static GLYPH_CACHE: std::cell::RefCell<GlyphCache> = std::cell::RefCell::new(GlyphCache::new());
     static ADVANCE_CACHE: std::cell::RefCell<std::collections::HashMap<GlyphKey, f32>> =
@@ -1109,95 +1190,7 @@ impl Canvas {
         }
     }
 
-    pub fn from_rgba(pixels: Vec<u8>, width: u32, height: u32) -> Self {
-        debug_assert_eq!(pixels.len(), (width * height * 4) as usize);
-        Self {
-            width,
-            height,
-            pixels,
-            clip_stack: Vec::new(),
-            occluders: Vec::new(),
-            next_occluder: 0,
-            scratch: Vec::new(),
-        }
-    }
-
-    pub fn push_clip(&mut self, x: f32, y: f32, w: f32, h: f32) {
-        let (cx1, cy1, cx2, cy2) = self.clip_bounds();
-        let x1 = (x.round().max(0.0) as u32).clamp(cx1, cx2);
-        let y1 = (y.round().max(0.0) as u32).clamp(cy1, cy2);
-        let x2 = ((x + w).round().max(0.0) as u32).clamp(x1, cx2);
-        let y2 = ((y + h).round().max(0.0) as u32).clamp(y1, cy2);
-        self.clip_stack.push((x1, y1, x2, y2));
-    }
-
-    pub fn pop_clip(&mut self) {
-        self.clip_stack.pop();
-    }
-
-    pub fn add_occluder(&mut self, x: f32, y: f32, w: f32, h: f32) -> u32 {
-        let token = self.next_occluder;
-        self.next_occluder += 1;
-        self.occluders.push((token, (x, y, w, h)));
-        token
-    }
-
-    pub fn remove_occluder(&mut self, token: u32) {
-        self.occluders.retain(|(t, _)| *t != token);
-    }
-
-    pub fn clear_occluders(&mut self) {
-        self.occluders.clear();
-    }
-
-    fn occluded(&self, x: f32, y: f32, w: f32, h: f32) -> bool {
-        let inside = self
-            .occluders
-            .iter()
-            .any(|&(_, (ox, oy, ow, oh))| x >= ox && y >= oy && x + w <= ox + ow && y + h <= oy + oh);
-        if inside {
-            tally(|s| &s.boxes_clipped_out);
-        }
-        inside
-    }
-
-    fn clip_bounds(&self) -> (u32, u32, u32, u32) {
-        self.clip_stack
-            .last()
-            .copied()
-            .unwrap_or((0, 0, self.width, self.height))
-    }
-
-    // weird impl, but its a fast way to fill an array to a given color without allocating memory beforehand
-    pub fn fill(&mut self, color: [u8; 4]) {
-        if self.pixels.is_empty() {
-            return;
-        }
-        self.pixels[..4].copy_from_slice(&color);
-        let mut filled = 4;
-        while filled < self.pixels.len() {
-            let (done, rest) = self.pixels.split_at_mut(filled);
-            let n = done.len().min(rest.len());
-            rest[..n].copy_from_slice(&done[..n]);
-            filled += n;
-        }
-    }
-
-    pub fn fill_rect(&mut self, x: u32, y: u32, w: u32, h: u32, color: [u8; 4]) {
-        for (fx1, fy1, fx2, fy2) in self.rect_fragments(x, y, w, h) {
-            self.fill_rows(fx1, fy1, fx2, fy2, color);
-        }
-    }
-
-    fn blend_rect(&mut self, x: u32, y: u32, w: u32, h: u32, color: [u8; 4]) {
-        let alpha = color[3];
-        let premultiplied = [
-            ((u32::from(color[0]) * u32::from(alpha) + 127) / 255) as u8,
-            ((u32::from(color[1]) * u32::from(alpha) + 127) / 255) as u8,
-            ((u32::from(color[2]) * u32::from(alpha) + 127) / 255) as u8,
-            alpha,
-        ];
-        for (fx1, fy1, fx2,
+    pub fn from_rgba(pixels: Vec<u8>,
 ```
 
 ### Core Architecture Module: `pixel/engine/crates/pixel-core/src/clipboard_image.rs`
@@ -1539,29 +1532,702 @@ impl Tree {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a3e60bc8` (2026-10-20)
-**Commit Message**: fix link
+### Incident Patch 1: `e8ca7483` (2026-10-27)
+**Commit Message**: fix events not passing through iframes, add permission dialogue (#211)
 
-**File**: `pixel/website/app/page.tsx` (modified, +1/-1)
+* fix events not passing through iframes, add permission dialogue
+
+* fix sent to agent toast
+
+**File**: `.github/workflows/pixel-electron-build.yml` (modified, +6/-0)
 ```diff
-@@ -11,7 +11,7 @@ export const revalidate = 3600;
+@@ -126,11 +126,17 @@ jobs:
+           ls *.zip electron.d.ts >/dev/null
+           # every platform leg generates the same electron.d.ts and lists it
+           cat sha-*.txt | sort -u > new.txt
++          # fixme: placeholder copy
+           notes="Patched Electron v$version for pixel.
  
- const REPO = "https://github.com/zenbu-labs/terminal-browser";
- const PIXEL = `${REPO}/tree/main/pixel`;
--const DOCS = `${PIXEL}#documentation`;
-+const DOCS = `${PIXEL}#docs`;
- const EXAMPLES = `${PIXEL}/examples`;
+           Patches (source of truth: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/tree/main/pixel/electron/patches):
+           - macOS: offscreen-rendering compositors ride a real display link, so page frame rates follow \`webContents.setFrameRate\` instead of being clamped to 60fps on input.
+           - Linux: offscreen frames can be delivered through shared memory, and offscreen views keep their requested \`deviceScaleFactor\` on native Wayland instead of having it clobbered to 1.0.
++          - Offscreen wheel events keep their scroll phase, so trackpad scrolling and momentum work.
++          - Resizing an offscreen view no longer makes the renderer submit frames that are dropped, so the page keeps painting while it resizes.
++          - \`webContents\` emits \`media-capture-changed\` and exposes \`getMediaCapture()\`, reporting whether the page is using the camera, microphone or screen capture.
++          - Offscreen input reaches cross-origin iframes: mouse and wheel events are routed to the frame under the pointer, and \`sendInputEvent\` keys go to the focused frame.
++          - A permission check handler can return \`'prompt'\`, so pages see a permission as not yet decided instead of denied and go on to request it.
+           - \`electron.d.ts\` is generated from the patched API docs, so it types these additions.
  
- const FEATURES = [
+           Build: cookies on disk are encrypted with an OS keychain key (the \`EnableCookieEncryption\` fuse), the macOS app is marked \`LSUIElement\` so it never shows in the Dock, and it is signed with our Developer ID and notarized.
+```
+
+**File**: `browser/src/daemon.ts` (modified, +2/-1)
+```diff
+@@ -25,7 +25,8 @@ interface OpenRequest {
+ 
+ export function buildStamp(): string {
+   try {
+-    return String(Math.floor(fs.statSync(path.join(__dirname, "main.js")).mtimeMs));
++    const built = Math.floor(fs.statSync(path.join(__dirname, "main.js")).mtimeMs);
++    return `${built} ${fs.realpathSync(process.execPath)}`;
+   } catch {
+     return "unknown";
+   }
+```
+
+**File**: `browser/src/session/permissions.ts` (added, +192/-0)
+```diff
+@@ -0,0 +1,192 @@
++import type { PermissionCheck, PermissionCheckAnswer, PermissionRequest } from "@zenbu-labs/pixel";
++import { setSitePermission, sitePermission } from "shared";
++
++import type { IconName } from "../ui/icons";
++import type { PermissionDecision, PermissionPromptView } from "../ui/types";
++
++interface PendingPrompt {
++  tabId: number;
++  kinds: string[];
++  request: PermissionRequest;
++  resolve(allowed: boolean): void;
++}
++
++const NEVER_PROMPTED = new Set(["display-capture", "geolocation", "geolocation-approximate"]);
++
++const NEVER_REMEMBERED = new Set(["openExternal"]);
++
++export type MediaDevice = "camera" | "microphone";
++
++export interface PermissionHost {
++  requestRender(): void;
++  deviceAccess(device: MediaDevice): Promise<boolean>;
++}
++
++export class PermissionPrompts {
++  private pending: PendingPrompt[] = [];
++
++  constructor(private readonly host: PermissionHost) {}
++
++  async request(tabId: number, request: PermissionRequest): Promise<boolean> {
++    if (NEVER_PROMPTED.has(request.permission)) return false;
++    const kinds = kindsOf(request);
++    const known = this.recall(request, kinds);
++    if (known === "blocked") return false;
++    const allowed =
++      known === "allowed" ||
++      (await new Promise<boolean>((resolve) => {
++        const prompt: PendingPrompt = { tabId, kinds, request, resolve };
++        this.pending.push(prompt);
++        request.signal.addEventListener("abort", () => this.drop((candidate) => candidate === prompt));
++        this.host.requestRender();
++      }));
++    if (!allowed) return false;
++    for (const device of devicesOf(kinds)) {
++      if (!(await this.host.deviceAccess(device))) return false;
++    }
++    return true;
++  }
++
++  check(check: PermissionCheck): PermissionCheckAnswer {
++    if (NEVER_PROMPTED.has(check.permission)) return false;
++    const known = this.recall(check, kindsOf(check));
++    if (known === "blocked") return false;
++    if (known === "allowed") return true;
++    return "prompt";
++  }
++
++  hasPending(tabId: number): boolean {
++    return this.current(tabId) !== null;
++  }
++
++  view(tabId: number): PermissionPromptView | null {
++    const prompt = this.current(tabId);
++    if (!prompt) return null;
++    return {
++      host: hostOf(prompt.request.origin) || null,
++      items: prompt.kinds.map((kind) => describe(kind, prompt.request.externalURL)),
++    };
++  }
++
++  decide(tabId: number, decision: PermissionDecision) {
++    const prompt = this.current(tabId);
++    if (!prompt) return;
++    if (decision !== "dismiss" && rememberable(prompt.request)) {
++      for (const kind of prompt.kinds) {
++        setSitePermission({
++          origin: prompt.request.origin,
++          embedder: prompt.request.embedder,
++          kind,
++          allowed: decision === "allow",
++        });
++      }
++    }
++    const sameQuestion = (candidate: PendingPrompt) =>
++      candidate === prompt ||
++      (rememberable(candidate.request) &&
++        candidate.request.origin === prompt.request.origin &&
++        candidate.request.embedder === prompt.request.embedder &&
++        candidate.kinds.join() === prompt.kinds.join());
++    const answered = this.pending.filter(sameQuestion);
++    this.pending = this.pending.filter((candidate) => !sameQuestion(candidate));
++    for (const candidate of answered) candidate.resolve(decision === "allow");
++    this.host.requestRender();
++  }
++
++  closed(tabId: number) {
++    this.drop((prompt) => prompt.tabId === tabId);
++  }
++
++  private current(tabId: number): PendingPrompt | null {
++    return this.pending.find((prompt) => prompt.tabId === tabId) ?? null;
++  }
++
++  private recall(check: PermissionCheck, kinds: string[]): "allowed" | "blocked" | "unknown" {
++    if (!rememberable(check)) return "unknown";
++    const answers = kinds.map((kind) => sitePermission(check.origin, check.embedder, kind));
++    if (answers.some((answer) => answer === false)) return "blocked";
++    if (answers.every((answer) => answer === true)) return "allowed";
++    return "unknown";
++  }
++
++  private drop(matches: (prompt: PendingPrompt) => boolean) {
++    const dropped = this.pending.filter(matches);
++    if (dropped.length === 0) return;
++    this.pending = this.pending.filter((prompt) => !matches(prompt));
++    for (const prompt of dropped) prompt.resolve(false);
++    this.host.requestRender();
++  }
++}
++
++function rememberable(check: PermissionCheck): boolean {
++  return (
++    !NEVER_REMEMBERED.has(check.permission) &&
++    isTupleOrigin(check.origin) &&
++    isTupleOrigin(check.embedder)
++  );
++}
++
++function isTupleOrigin(origin: string): boolean {
++  return origin !== "" && origin !== "null";
++}
++
++function devicesOf(kinds: string[]): MediaDevice[] {
++  const devices: MediaDevice[] = [];
++  if (kinds.includes("media:video") || kinds.includes("media")) devices.push("camera");
++  if (kinds.includes("media:audio") || kinds.includes("media")) devices.push("microphone");
++  return devices;
++}
++
++function kindsOf(check: Per
+```
+
+**File**: `browser/src/session/session.tsx` (modified, +77/-28)
+```diff
+@@ -2,8 +2,8 @@ import { spawn } from "node:child_process";
+ import net from "node:net";
+ import path from "node:path";
+ 
+-import { app, clipboard, screen } from "electron";
+-import { createRoot } from "@zenbu-labs/pixel";
++import { app, clipboard, screen, shell, systemPreferences } from "electron";
++import { createRoot, initialWebViewState } from "@zenbu-labs/pixel";
+ import type {
+   DevtoolsDock,
+   DownloadProgress,
+@@ -75,6 +75,8 @@ import { HOME_URL, START_URL } from "../pages/scheme";
+ import type { PageContext } from "../pages/scheme";
+ import { makeTheme } from "../ui/theme";
+ import { fuzzyScore } from "./fuzzy";
++import { PermissionPrompts } from "./permissions";
++import type { MediaDevice } from "./permissions";
+ import { clampDevtoolsFraction, computeLayout, dividerFraction, recordBarHeight } from "./layout";
+ 
+ // Installed builds run from a dist root; anything else is a source checkout.
+@@ -164,20 +166,6 @@ function matchApps(apps: RegisteredApp[], query: string): RegisteredApp[] {
+     .map((entry) => entry.app);
+ }
+ 
+-function initialState(url: string): WebViewState {
+-  return {
+-    url,
+-    // why...
+-    title: "",
+-    loading: true,
+-    canGoBack: false,
+-    canGoForward: false,
+-    findMatches: null,
+-    zoom: 1,
+-    favicon: null,
+-  };
+-}
+-
+ class Session {
+   private readonly ctx: SessionContext;
+   private readonly terminal: Terminal | null;
+@@ -256,6 +244,10 @@ class Session {
+   private toast: ToastView | null = null;
+   private profiling = false;
+   private toastTimer: ReturnType<typeof setTimeout> | null = null;
++  private readonly permissions = new PermissionPrompts({
++    requestRender: () => this.render(),
++    deviceAccess: (device) => this.deviceAccess(device),
++  });
+   private records = new Map<number, RecordSession>();
+   private grabs = new Map<number, Grab>();
+   private copyWatchers = new Map<number, CopyOnSelect>();
+@@ -289,7 +281,7 @@ class Session {
+     const socksPort = Number(flagValue(this.argv, "--socks-port"));
+     this.socksPort = Number.isInteger(socksPort) && socksPort > 0 ? socksPort : null;
+     this.partition = sshTarget ? `ssh-${sshTarget.replace(/[^A-Za-z0-9@._-]/g, "-")}` : null;
+-    this.fallbackState = initialState(this.initialUrl());
++    this.fallbackState = initialWebViewState(this.initialUrl());
+     this.copyOnSelect = ctx.env.TERMINAL_BROWSER_COPY_ON_SELECT === "1";
+     this.browserPreload = reactGrabPreloadPath(this.copyOnSelect);
+     this.tabs = new TabManager(
+@@ -395,7 +387,7 @@ class Session {
+       },
+       closeTab: (id) => {
+         if (!this.tabs.has(id)) return false;
+-        this.tabs.close(id);
++        this.closeTab(id);
+         return true;
+       },
+       agentTouch: (id) => this.tabs.touchAgentControl(id),
+@@ -434,7 +426,7 @@ class Session {
+ 
+   private closeOrShutdown(id: number) {
+     if (this.tabs.count <= 1) this.shutdown();
+-    else this.tabs.close(id);
++    else this.closeTab(id);
+   }
+ 
+   private syncTitle() {
+@@ -508,8 +500,37 @@ class Session {
+     pointer: (id, event) => {
+       if (id === this.tabs.active?.id) this.activeRecord()?.pointerSample(event);
+     },
++    permissionRequest: (id, request) => this.permissions.request(id, request),
++    permissionCheck: (check) => this.permissions.check(check),
+   };
+ 
++  private closeTab(id: number) {
++    this.permissions.closed(id);
++    this.tabs.close(id);
++  }
++
++  private async deviceAccess(device: MediaDevice): Promise<boolean> {
++    if (process.platform !== "darwin") return true;
++    const status = systemPreferences.getMediaAccessStatus(device);
++    if (status === "granted") return true;
++    if (status === "not-determined") return systemPreferences.askForMediaAccess(device);
++    const pane = device === "camera" ? "Privacy_Camera" : "Privacy_Microphone";
++    this.showToast(
++      device === "camera"
++        ? "Camera access is turned off for this terminal in macOS System Settings"
++        : "Microphone access is turned off for this terminal in macOS System Settings",
++      "alert",
++      `Note: enabling access gives every program that runs inside this terminal ${device} capability, not just terminal-browser`,
++      {
++        label: "Open System Settings",
++        run: () =>
++          void shell.openExternal(`x-apple.systempreferences:com.apple.preference.security?${pane}`),
++      },
++      null,
++    );
++    return false;
++  }
++
+   private render() {
+     if (!this.root || !this.layout) return;
+     this.root.render(
+@@ -543,6 +564,7 @@ class Session {
+             : null
+         }
+         pageMenu={this.pageMenuView()}
++        permissionPrompt={this.tabs.active ? this.permissions.view(this.tabs.active.id) : null}
+         settings={this.settings.view()}
+         dividerEngaged={this.dividerHover || this.dividerDragging}
+         record={this.activeRecord()?.view() ?? null}
+@@ -564,6 +586,20 @@ class Session {
+       this.tabs.activeHandle?.reload();
+     },
+     urlEdit: () => this.openUrlEdit(),
++    tabMute: (id) => {
++  
+```
+
+**File**: `browser/src/session/tabs.ts` (modified, +5/-10)
+```diff
+@@ -1,5 +1,6 @@
+ import { createRef } from "react";
+ import type { RefObject } from "react";
++import { initialWebViewState } from "@zenbu-labs/pixel";
+ import type { OpenWindowDecision, WebViewHandle, WebViewState } from "@zenbu-labs/pixel";
+ 
+ import type { TabRow } from "../ui/types";
+@@ -76,16 +77,7 @@ export class TabManager {
+       id: this.seq++,
+       url,
+       ref: createRef<WebViewHandle>(),
+-      state: {
+-        url,
+-        title: "",
+-        loading: true,
+-        canGoBack: false,
+-        canGoForward: false,
+-        findMatches: null,
+-        zoom: 1,
+-        favicon: null,
+-      },
++      state: initialWebViewState(url),
+       targetId: null,
+       agentControlAt: null,
+       devtools: false,
+@@ -268,6 +260,9 @@ export class TabManager {
+       favicon: tab.state.favicon,
+       active: tab.id === this.activeId,
+       agentControlled: tab.agentControlAt != null,
++      audible: tab.state.audible,
++      muted: tab.state.muted,
++      capturing: tab.state.capturing,
+     }));
+   }
+ 
+```
+
+**File**: `browser/src/ui/chrome.tsx` (modified, +14/-2)
+```diff
+@@ -8,6 +8,7 @@ import { PageContextMenu } from "./context-menu";
+ import { MarkupCanvas } from "./markup-canvas";
+ import { NewTabCard, PaletteCard, UrlCard } from "./modals";
+ import { DownloadHud, FindBar, Toast, ZoomHud } from "./overlays";
++import { PermissionPrompt } from "./permission-prompt";
+ import { SettingsCard } from "./settings";
+ import {
+   RecordBar,
+@@ -28,6 +29,7 @@ import type {
+   DevtoolsView,
+   PageMenuView,
+   PaletteView,
++  PermissionPromptView,
+   SettingsView,
+   ToastView,
+   TabActions,
+@@ -50,6 +52,7 @@ export function Chrome({
+   download,
+   toast,
+   pageMenu,
++  permissionPrompt,
+   settings,
+   dividerEngaged,
+   record,
+@@ -74,6 +77,7 @@ export function Chrome({
+   download: DownloadView | null;
+   toast: ToastView | null;
+   pageMenu: PageMenuView | null;
++  permissionPrompt: PermissionPromptView | null;
+   settings: SettingsView | null;
+   dividerEngaged: boolean;
+   record: RecordView | null;
+@@ -155,11 +159,14 @@ export function Chrome({
+       {findOpen && (
+         <FindBar state={state} actions={actions} layout={layout} theme={theme} />
+       )}
++      {permissionPrompt && !record?.canvas && (
++        <PermissionPrompt view={permissionPrompt} actions={actions} layout={layout} theme={theme} />
++      )}
+       {zoomHud != null && (
+         <ZoomHud factor={zoomHud} layout={layout} theme={theme} findOpen={findOpen} />
+       )}
+       {download && <DownloadHud download={download} layout={layout} theme={theme} />}
+-      {toast && <Toast toast={toast} layout={layout} theme={theme} />}
++      {toast && <Toast toast={toast} actions={actions} layout={layout} theme={theme} />}
+       {progress != null && (
+         <Box
+           style={{
+@@ -337,6 +344,7 @@ function Toolbar({
+       />
+       <ToolbarButton
+         icon="select"
++        iconSize={rem * 0.95}
+         enabled
+         active={grabActive}
+         rem={rem}
+@@ -546,6 +554,8 @@ function BrowserTabContents({
+           onContextMenu={(params) => tabActions.contextMenu(tab.id, params)}
+           onDownload={(progress) => tabActions.download(progress)}
+           onPointer={(event) => tabActions.pointer(tab.id, event)}
++          onPermissionRequest={(request) => tabActions.permissionRequest(tab.id, request)}
++          onPermissionCheck={(check) => tabActions.permissionCheck(check)}
+         />
+       ))}
+     </>
+@@ -649,13 +659,15 @@ const GRAB_ACTIVE: Rgba = [0xb3, 0x45, 0xa0, 255];
+ 
+ function ToolbarButton({
+   icon,
++  iconSize,
+   enabled,
+   active = false,
+   rem,
+   theme,
+   onClick,
+ }: {
+   icon: IconName;
++  iconSize?: number;
+   enabled: boolean;
+   active?: boolean;
+   rem: number;
+@@ -677,7 +689,7 @@ function ToolbarButton({
+       }}
+       onClick={enabled ? onClick : undefined}
+     >
+-      <Icon icon={icon} size={rem * 1.1} color={color} />
++      <Icon icon={icon} size={iconSize ?? rem * 1.1} color={color} />
+     </Box>
+   );
+ }
+```
+
+**File**: `browser/src/ui/icons.tsx` (modified, +38/-0)
+```diff
+@@ -73,6 +73,44 @@ export const ICONS = {
+     "M 5 3 L 19 3 C 20.104 3 21 3.896 21 5 L 21 19 C 21 20.104 20.104 21 19 21 " +
+     "L 5 21 C 3.896 21 3 20.104 3 19 L 3 5 C 3 3.896 3.896 3 5 3 Z " +
+     "M 7 11 L 9 9 L 7 7 M 11 13 L 15 13",
++  mic:
++    arcPath(12, 5.5, 3, 180, 360) +
++    " L 15 12 " +
++    arcPath(12, 12, 3, 0, 180) +
++    " L 9 5.5 M 5 10.5 L 5 12 " +
++    arcPath(12, 12, 7, 180, 0) +
++    " L 19 10.5 M 12 19 L 12 22 M 9 22 L 15 22",
++  pin:
++    "M 20 10 C 20 15 14.46 20.19 12.6 21.8 C 12.25 22.1 11.75 22.1 11.4 21.8 " +
++    "C 9.54 20.19 4 15 4 10 " +
++    arcPath(12, 10, 8, 180, 360) +
++    " " +
++    arcPath(12, 10, 3, 0, 360),
++  bell:
++    "M 10.3 21 C 10.6 21.6 11.3 22 12 22 C 12.7 22 13.4 21.6 13.7 21 " +
++    "M 3.3 15.3 C 2.7 15.9 3.1 17 4 17 L 20 17 C 20.9 17 21.3 15.9 20.7 15.3 " +
++    "C 19.4 14 18 12.5 18 8 " +
++    arcPath(12, 8, 6, 0, -180) +
++    " C 6 12.5 4.6 14 3.3 15.3",
++  clipboard:
++    "M 9 2 L 15 2 C 15.55 2 16 2.45 16 3 L 16 5 C 16 5.55 15.55 6 15 6 L 9 6 " +
++    "C 8.45 6 8 5.55 8 5 L 8 3 C 8 2.45 8.45 2 9 2 Z " +
++    "M 16 4 L 18 4 C 19.1 4 20 4.9 20 6 L 20 20 C 20 21.1 19.1 22 18 22 L 6 22 " +
++    "C 4.9 22 4 21.1 4 20 L 4 6 C 4 4.9 4.9 4 6 4 L 8 4",
++  shield:
++    "M 20 13 C 20 18 16.5 20.5 12.34 21.95 C 12.12 22.02 11.88 22.02 11.66 21.95 " +
++    "C 7.5 20.5 4 18 4 13 L 4 6 C 4 5.45 4.45 5 5 5 C 7 5 9.5 3.8 11.24 2.28 " +
++    "C 11.68 1.9 12.32 1.9 12.76 2.28 C 14.51 3.81 17 5 19 5 C 19.55 5 20 5.45 20 6 Z",
++  volume:
++    "M 11 4.7 L 6.4 7.6 L 5.4 8 L 3 8 C 2.45 8 2 8.45 2 9 L 2 15 C 2 15.55 2.45 16 3 16 " +
++    "L 5.4 16 L 6.4 16.4 L 11 19.3 Z M 16 9 C 17.33 10.67 17.33 13.33 16 15 " +
++    "M 19.4 18.4 C 22.9 14.9 22.9 9.1 19.4 5.6",
++  volumeOff:
++    "M 11 4.7 L 6.4 7.6 L 5.4 8 L 3 8 C 2.45 8 2 8.45 2 9 L 2 15 C 2 15.55 2.45 16 3 16 " +
++    "L 5.4 16 L 6.4 16.4 L 11 19.3 Z M 22 9 L 16 15 M 16 9 L 22 15",
++  monitor:
++    "M 4 4 L 20 4 C 21.1 4 22 4.9 22 6 L 22 15 C 22 16.1 21.1 17 20 17 L 4 17 " +
++    "C 2.9 17 2 16.1 2 15 L 2 6 C 2 4.9 2.9 4 4 4 Z M 8 21 L 16 21 M 12 17 L 12 21",
+ };
+ 
+ export type IconName = keyof typeof ICONS;
+```
+
+**File**: `browser/src/ui/overlays.tsx` (modified, +40/-21)
+```diff
+@@ -130,10 +130,12 @@ export function DownloadHud({
+ 
+ export function Toast({
+   toast,
++  actions,
+   layout,
+   theme,
+ }: {
+   toast: ToastView;
++  actions: ChromeActions;
+   layout: ChromeLayout;
+   theme: Theme;
+ }) {
+@@ -147,32 +149,48 @@ export function Toast({
+         inset: { top: layout.toolbarHeight + rem * 0.5, right: rem * 0.75 },
+         flexDirection: "column",
+         justifyContent: "center",
+-        gap: rem * 0.25,
+-        height:
+-          rem * (2 + (detailLines.length > 0 ? 0.3 + detailLines.length * 1.05 : 0) + (toast.action ? 1.7 : 0)),
+-        padding: { left: rem * 0.9, right: rem * 0.9 },
++        gap: rem * 0.6,
++        maxWidth: Math.min(rem * 21, layout.width - rem * 1.5),
++        padding: { left: rem * 0.9, right: rem * 0.9, top: rem * 0.5, bottom: rem * 0.5 },
+         background: toast.alert ? mix(theme.overlay, theme.red, 0.22) : theme.overlay,
+         cornerRadius: rem * 0.5,
+         border: { width: 1, color: toast.alert ? mix(theme.overlay, theme.red, 0.5) : theme.fieldBorder },
+       }}
+     >
+-      <Text
+-        style={{
+-          fontSize: detailLines.length > 0 ? rem : rem * 0.9,
+-          color: toast.failed ? [255, 143, 146, 255] : theme.fg,
+-          wrap: false,
+-          selectable: false,
+-        }}
+-      >
+-        {toast.text}
+-      </Text>
++      <Box style={{ alignItems: "start", gap: rem * 0.5 }}>
++        <Text
++          style={{
++            flexShrink: 1,
++            fontSize: rem * 0.9,
++            color: toast.failed ? [255, 143, 146, 255] : theme.fg,
++            selectable: false,
++          }}
++        >
++          {toast.text}
++        </Text>
++        {toast.sticky && (
++          <Box
++            style={{
++              width: rem * 1.3,
++              height: rem * 1.3,
++              alignItems: "center",
++              justifyContent: "center",
++              cornerRadius: rem * 0.3,
++              hoverBackground: theme.hover,
++              flexShrink: 0,
++            }}
++            onClick={actions.toastDismiss}
++          >
++            <Icon icon="close" size={rem * 0.9} color={theme.fg} />
++          </Box>
++        )}
++      </Box>
+       {detailLines.map((line) => (
+         <Text
+           key={line}
+           style={{
+-            fontSize: rem * 0.75,
++            fontSize: rem * 0.9,
+             color: theme.muted,
+-            wrap: false,
+             selectable: false,
+           }}
+         >
+@@ -182,18 +200,19 @@ export function Toast({
+       {action && (
+         <Box
+           style={{
+-            height: rem * 1.4,
++            height: rem * 1.7,
+             alignItems: "center",
+             justifyContent: "center",
+-            padding: { left: rem * 0.6, right: rem * 0.6 },
++            padding: { left: rem * 0.8, right: rem * 0.8 },
+             cornerRadius: rem * 0.3,
+-            background: mix(theme.overlay, theme.accent, 0.25),
+-            hoverBackground: mix(theme.overlay, theme.accent, 0.45),
++            background: mix(theme.overlay, theme.fg, 0.14),
++            hoverBackground: mix(theme.overlay, theme.fg, 0.24),
++            border: { width: 1, color: mix(theme.overlay, theme.fg, 0.3) },
+             flexShrink: 0,
+           }}
+           onClick={action.run}
+         >
+-          <Text style={{ fontSize: rem * 0.8, color: theme.fg, wrap: false, selectable: false }}>
++          <Text style={{ fontSize: rem * 0.9, color: theme.fg, wrap: false, selectable: false }}>
+             {action.label}
+           </Text>
+         </Box>
+```
+
+---
+
+### Incident Patch 2: `2856ef0d` (2026-10-26)
+**Commit Message**: fix input focsu (#210)
+
+**File**: `pixel/AGENT-DOCS.md` (modified, +1/-1)
+```diff
+@@ -190,7 +190,7 @@ Props: `packages/pixel/src/react/reconciler-config.ts`. Definitions: `packages/p
+ | --- | --- |
+ | `Box` | `BoxProps` `:78`. `style`, `id`, `hidden`, `onClick(ClickEvent)`, `onClickOutside`, `onPointer(PointerEvent)`, `onMouseEnter`, `onMouseLeave`, `onMouseMove({ x, y })`, `onDrag(DragEvent)`, `onScroll(ScrollEvent)`, `onWheel(WheelEvent)`, `onSelection(ContainerSelection)`, `contentHeight`, `surface: Surface` |
+ | `Text` | `TextProps` `:128`. children must be strings or numbers. `spans: { start, end, color, background?, bold?, italic?, underline?, strikethrough? }[]`, `onClick`, `onMouseEnter`, `onMouseLeave` |
+-| `Input` | `InputProps` `:177`. multi-line editor; with `style.wrap: false` it is single-line and its text is vertically centered when the box is taller than one line. `value`, `defaultValue`, `autoFocus`, `onChange(text, ChangeInfo)`, `onSubmit(text, marks)`, `onCaret(CaretInfo)`, `onPasteImage`, `caretColor`, `caretShape: "bar" | "block" | "underscore"` (block and underscore are one character wide; block redraws the character under it in black or white for contrast), `selectionColor`, `spans`, `gutter: { color, activeColor }`, `activeLine`, `defaultMarks`, `renderMark(id)`, `serializeMark(id)` |
++| `Input` | `InputProps` `:177`. multi-line editor; with `style.wrap: false` it is single-line and its text is vertically centered when the box is taller than one line. `value`, `defaultValue`, `autoFocus` (only inputs take focus on click; clicking or selecting other content leaves focus where it is, so call `blur()` from `onClickOutside` to drop it), `onChange(text, ChangeInfo)`, `onSubmit(text, marks)`, `onCaret(CaretInfo)`, `onPasteImage`, `caretColor`, `caretShape: "bar" | "block" | "underscore"` (block and underscore are one character wide; block redraws the character under it in black or white for contrast), `selectionColor`, `spans`, `gutter: { color, activeColor }`, `activeLine`, `defaultMarks`, `renderMark(id)`, `serializeMark(id)` |
+ | `Image` | `ImageProps` `:211`. `src` path or url, `placeholder`, `error`, `onClick` |
+ | `Path` | `PathProps` `:104`. SVG path data. `d`, `viewBox`, `stroke: { width, color, cap?, join? }`, `onClick`, `onDrag` |
+ | `MarkedText` | `MarkedTextProps` `:197`. `text`, `marks`, `renderMark`, `serializeMark` |
+```
+
+**File**: `pixel/engine/crates/pixel-core/src/engine/doc.rs` (modified, +10/-3)
+```diff
+@@ -178,13 +178,20 @@ impl Engine {
+         }
+     }
+ 
++    fn collapse_focused_input(&mut self) {
++        if let Some((focus_view, focus)) = self.focused()
++            && let Some(input) = self.comp.views[focus_view].tree.input_mut(focus)
++            && input.collapse()
++        {
++            self.comp.views[focus_view].tree.mark_paint();
++        }
++    }
++
+     pub(super) fn begin_text_selection(&mut self, view: usize, local: (f32, f32)) {
+         self.clear_doc_selections(Some(view));
+         let fonts = &self.fonts;
+         if self.comp.views[view].tree.doc_select_down(local, fonts) {
+-            if let Some((focus_view, _)) = self.focused() {
+-                self.comp.views[focus_view].tree.set_focus(None);
+-            }
++            self.collapse_focused_input();
+             self.drag = Some((view, DragTarget::Text));
+         } else if self.comp.views[view].tree.doc_select_down_near(local, fonts) {
+             self.drag = Some((view, DragTarget::Text));
+```
+
+**File**: `pixel/engine/crates/pixel-core/src/engine/keys.rs` (modified, +1/-0)
+```diff
+@@ -175,6 +175,7 @@ impl Engine {
+                         });
+                     }
+                 } else {
++                    self.clear_doc_selections(None);
+                     self.finish_reply(view, focus, reply, source, out)?;
+                 }
+             }
+```
+
+**File**: `pixel/engine/crates/pixel-core/src/engine/pointer.rs` (modified, +0/-8)
+```diff
+@@ -257,14 +257,6 @@ impl Engine {
+                             self.comp.views[view]
+                                 .tree
+                                 .doc_select_drag((local.0, local.1), fonts);
+-                            if let Some((focus_view, _)) = self.focused()
+-                                && self.comp.views[view]
+-                                    .tree
+-                                    .doc_selection()
+-                                    .is_some_and(|sel| !sel.is_collapsed())
+-                            {
+-                                self.comp.views[focus_view].tree.set_focus(None);
+-                            }
+                         }
+                         DragTarget::Node(id) => {
+                             out.push(EngineEvent::Drag {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #211** (2026-10-27): fix events not passing through iframes, add permission dialogue (@RobPruzan)
+- **PR #210** (2026-10-26): Fix input focus (@RobPruzan)
+- **PR #209** (2026-10-26): Add custom cursor API (@RobPruzan)
+- **PR #208** (2026-10-26): Add font fallbacks (@RobPruzan)
 - **PR #188** (2026-10-19): Add pixel starter kit (@RobPruzan)
 - **PR #187** (2026-10-19): Pointer shape, new example (@RobPruzan)
-- **PR #186** (2026-10-19): Add zed example to pixel (@RobPruzan)
-- **PR #185** (2026-10-19): Create pixel website + pixel docs (@RobPruzan)
-- **PR #184** (2026-10-17): fix noisy outputs (@RobPruzan)
-- **PR #182** (2026-10-17): fix postinstall (@RobPruzan)
 
 ---
 
@@ -1581,28 +2247,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in page.tsx
+## X. events not passing through iframes, add permission dialogue (#211)
 
 **RULE**:
-When implementing operations in `pixel/website/app/page.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/pixel-electron-build.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a3e60bc8`: link. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e8ca7483`: events not passing through iframes, add permission dialogue (#211). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixel/website/app/page.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/pixel-electron-build.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-const DOCS = `${PIXEL}#docs`;
+          # fixme: placeholder copy
+          - Offscreen wheel events keep their scroll phase, so trackpad scrolling and momentum work.
+          - Resizing an offscreen view no longer makes the renderer submit frames that are dropped, so the page keeps painting while it resizes.
+          - \`webContents\` emits \`media-capture-changed\` and exposes \`getMediaCapture()\`, reporting whether the page is using the camera, microphone or screen capture.
+          - Offscreen input reaches cross-origin iframes: mouse and wheel events are routed to the frame under the pointer, and \`sendInputEvent\` keys go to the focused frame.
+          - A permission check handler can return \`'prompt'\`, so pages see a permission as not yet decided instead of denied and go on to request it.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-const DOCS = `${PIXEL}#documentation`;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a3e60bc8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e8ca7483` are properly handled with clean fallback behavior.

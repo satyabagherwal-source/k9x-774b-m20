@@ -5450,3 +5450,8 @@ Every entry in this ledger must capture:
 | `learn-github-devexpress-testcafe` | `https://github.com/DevExpress/testcafe` | `1e12423d` | Multi-dimensional audit evidence | 2026-10-27T16:58:39.067Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `f872ced5` | Multi-dimensional audit evidence | 2026-10-27T16:58:46.966Z |
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `e025ca1a` | Multi-dimensional audit evidence | 2026-10-27T16:58:49.504Z |
+| `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `e8ca7483` | Multi-dimensional audit evidence | 2026-10-27T17:05:01.016Z |
+| `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `148c2d48` | Multi-dimensional audit evidence | 2026-10-27T17:05:09.983Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `2b5ab29c` | Multi-dimensional audit evidence | 2026-10-27T17:05:12.228Z |
+| `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `83c386bc` | Multi-dimensional audit evidence | 2026-10-27T17:05:13.801Z |
+| `learn-github-cosscom-coss` | `https://github.com/cosscom/coss` | `4960bab3` | Multi-dimensional audit evidence | 2026-10-27T17:10:00.940Z |

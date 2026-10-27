@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `3391b242`  
+> **Source Version**: `2b5ab29c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T14:14:20.876Z  
+> **Timestamp**: 2026-10-27T17:05:11.966Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T14:14:20.486Z  
+> **Harvest Timestamp**: 2026-10-27T17:05:11.338Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1259,14 +1259,11 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49633** (2026-10-26): **Kube-OVN generic-veth: сбои доставки L7/DNS в прокси и NOTRACK на ovn0**
-  *Symptoms*: ## Проблема и цель обращения  При Kube-OVN + Cilium generic-veth включение HTTP L7 или DNS/FQDN-политик ломает соответствующие соединения, хотя базовая связность и L3/L4 работают. В изолированной лаборатории обнаружены два разрыва пути через прокси: доставка TO_PROXY из OVS-подключённого endpoint в стек хоста и NOTRACK для ответов через ovn0.  Прилагаю воспроизведение и экспериментальный opt-in патч к Cilium v1.19.5 для обсуждения архитектуры перед PR. Это не заявление о полной поддержке L7 для всех chaining CNI. Новая настройка `cni-chaining-proxy-device` существует только в прототипе; имя/API предварительные.  ## Окружение и границы воспроизведения  - Kubernetes 1.34.9; один узел; Ubuntu 24.04; Linux 6.8.0-147-generic; IPv4. - Сетевые чарты Cozystack v1.6.3, Kube-OVN 1.15.10, Cilium 1.19.5. - Исходный образ: `ghcr.io/cozystack/cozystack/cilium:v1.6.3@sha256:136a7dfff4d6adcd448424c2354144160028a8e96eb6558b917fd3ee6d7b39fe`. - Это downstream-образ, не pristine upstream: Cozystack добавляет IPv6-passthrough BPF-патч. Воспроизведение на актуальном upstream-релизе/main пока НЕ выполнено. - Цепочка kube-ovn → portmap → cilium-cni, generic-veth; native routing; host legacy routing; TCX; kube-proxy replacement; masquerading Cilium отключён; DNSProxyEnableTransparentMode=false; BPF TPROXY отключён. - Полный Cozystack не установлен. PodCIDR 10.80.0.0/16; маршрутизация к подам через ovn0. - Контрольный стенд с Cilium как основной сетью проходит проверки, но использует tunnel/VXLAN и д
-  **Post-Mortem & Fix Analysis**:
-  > 👋 Welcome to the Cilium and eBPF community! 🐝 Thanks for helping to make Cilium better by reporting this issue. Please make sure the issue you are reporting is for a [maintained stable release](https://github.com/cilium/cilium/#stable-releases) and review the [triage process](https://docs.cilium.io/en/latest/contributing/development/reviewers_committers/triage/) to understand how the project works through issues.  📬 If you're using Cilium in your organization, please [add your name to our Adopters list](https://github.com/cilium/cilium/blob/main/USERS.md). 🙏 It really helps the project gain momentum and credibility.  **Resources:** - If you are new to eBPF, you can learn more on our community website: https://ebpf.io 🐝 - If you are new to Cilium, we have great [getting started guides](https://docs.cilium.io/en/stable/#getting-started) - Subscribe to eCHO News for your bi-weekly [Cilium and eBPF update](https://cilium.io/newsletter/) - [Slack](https://docs.cilium.io/en/stable/commu
-  > Superseded by the English-language report #49634, which preserves the reproducer, experimental patch, test results, and limitations. Closing this report only to avoid duplicates; the underlying problem is not resolved.
+- **Issue #49648** (2026-10-27): **test commit: do not merge**
+  *Symptoms*: if joe sees this message : do not the commit :>  Please ensure your pull request adheres to the following guidelines:  - [ ] For first time contributors, read [Submitting a pull request] - [ ] All code is covered by unit and/or runtime tests where feasible. - [ ] All commits contain a well written commit description including a title,       description and a `Fixes: #XXX` line if the commit addresses a particular       GitHub issue. - [ ] If your commit description contains a `Fixes: <commit-id>` tag, then       please add the commit author[s] as reviewer[s] to this issue. - [ ] All commits are signed off. See the section [Developer’s Certificate of Origin] - [ ] Provide a title or release-note blurb suitable for the release notes. - [ ] Describe how you have tested this change in a live environment such as       [kind], if applicable. - [ ] Disclose use of machine learning models (including LLMs and other generative AI)       in accordance with the [Cilium AI Policy], and indicate the rating using       [AI Influence Level].       Example: "This PR was prepared with AIL:N. I personally checked X." - [ ] Thanks for contributing!  <!-- Description of change -->  Fixes: #issue-number  ```release-note <!-- Enter the release note text here or remove this release-note section from your PR description. Do NOT put an "empty" release note here --> ```  [AI Influence Level]: https://danielmiessler.com/blog/ai-influence-level-ail [Cilium AI Policy]: https://github.com/cilium/community/
 
-- **Issue #49629** (2026-10-27): **loadbalancer/maps: use testutils.IsPrivileged() to pick real test maps**
-  *Symptoms*: ## Summary/Description  Noticed an issue where the loadbalancer restart tests fail when run as root without PRIVILEGED_TESTS, because newLBMaps() and the tests use different checks for "privileged". Specifically, `newLBMaps()` uin `pkg/loadbalancer/maps/lbmaps.go` and the loadbalancer script tests use two different checks for  checking privilege status:  | Code | Check | Effect | | --- | --- | --- | | `newLBMaps()` (`pkg/loadbalancer/maps/lbmaps.go`) | `os.Getuid() == 0` | if root, use real BPF maps, otherwise the in-memory fake | | `[privileged]` script condition (`pkg/loadbalancer/tests/script_test.go`) | `testutils.IsPrivileged()` (`PRIVILEGED_TESTS` set) | used by tests to stop themselves in privileged mode |  So, when the tests run as root without `PRIVILEGED_TESTS`, tests that simulate an agent restart (`restore-terminating-backend.txtar`, `prune-deleted-on-restart.txtar`) do:  ``` # Privileged mode uses real BPF maps, which are attached to the hive lifecycle. # Stop this test in privileged mode because we can't simulate the agent restarting # against BPF state that is not retained. [privileged] stop ```  In that setup `[privileged]` is false, so the test continues, but `newLBMaps()` hands it real maps. After `hive stop` / `hive/recreate` / `hive start`, the new hive tries to reopen the maps and fails.  This change modifies `newLBMaps()` to use `testutils.IsPrivileged()`, so both sides agree.  ### How to reproduce  Run the restart tests as root *
+- **Issue #49645** (2026-10-27): **l2announcer: Fix deadlock between stop() and leader events**
+  *Symptoms*: The L2 announcer's main loop can deadlock: stop() waits for a service's leader election to exit, while the election waits for the main loop to read its last event from the full 16-slot channel. The agent then announces no new IP until it restarts. This made GatewayHTTPListenerIsolation fail in 6 of the last 103 Gateway API conformance push runs on main.  This PR fixes it by having stop() close a channel that the election selects on next to the send. On agent shutdown, the elections stop before the main loop, so their events still arrive and withdraw the entries. It also drops leader events that arrive after the announcer replaced their service, which could otherwise remove the entries of the new one.  With this PR, the Gateway API conformance workflow passed 10 runs out of 10 on all four legs of its matrix: [1], [2], [3], [4], [5], [6], [7], [8], [9], [10].  [1]: https://github.com/cilium/cilium/actions/runs/40515410571 [2]: https://github.com/cilium/cilium/actions/runs/40515423460 [3]: https://github.com/cilium/cilium/actions/runs/40515435706 [4]: https://github.com/cilium/cilium/actions/runs/40515447532 [5]: https://github.com/cilium/cilium/actions/runs/40515459342 [6]: https://github.com/cilium/cilium/actions/runs/40515471701 [7]: https://github.com/cilium/cilium/actions/runs/40515484569 [8]: https://github.com/cilium/cilium/actions/runs/40515497992 [9]: https://github.com/cilium/cilium/actions/runs/40515510582 [10]: https://github.com/cilium/cilium/actions/runs/4051552362
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1283,360 +1280,435 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3391b242` (2026-09-18)
-**Commit Message**: network driver: document RX queue management
+### Incident Patch 1: `e64d9c5f` (2026-10-27)
+**Commit Message**: l2announcer: Fix deadlock between stop() and leader events
 
-Document RX queue discovery, reservation, leasing, cleanup, workload
-metadata, configuration, and allocation verification.
+stop() runs on the main loop and waits for the service's leader
+election to exit, but the election sends an event on its way out, on a
+16-slot channel that only the main loop reads. Once the channel fills
+up, for example when deleting 17 selected services at once, the main
+loop hangs and the agent announces no new IP until it restarts. This
+made GatewayHTTPListenerIsolation fail in 6 of the last 103 Gateway API
+conformance push runs on main, with the agent stuck in:
 
-Signed-off-by: Aaron Campbell <[REDACTED_EMAIL]>
+  goroutine 677 [chan receive, 4 minutes]:
+  github.com/cilium/cilium/pkg/l2announcer.(*selectedService).stop(...)
 
-**File**: `pkg/networkdriver/README.md` (modified, +221/-31)
+This commit fixes it by having stop() close a channel that the election
+selects on next to the send, as stop() already resets the leader state.
+On agent shutdown, the elections stop before the main loop, so their
+events still arrive and withdraw the entries.
+
+This commit was prepared with AIL:3. I personally checked that a local
+test deleting 17 leading services blocks without this change.
+
+Fixes: 9827f467a9e5 ("Add l2 announcer cell")
+Signed-off-by: André Martins <[REDACTED_EMAIL]>
+
+**File**: `pkg/l2announcer/l2announcer.go` (modified, +16/-5)
 ```diff
-@@ -12,10 +12,15 @@ can claim devices via the standard DRA framework.
- - Kubernetes v1.34+. Device managers that publish consumable capacity also
-   require the `DRAConsumableCapacity` feature gate. Enable it explicitly on
-   Kubernetes v1.34 and v1.35; it is enabled by default starting in v1.36.
--- Container Runtime NRI support (and have it enabled). The agent 
-+- Container runtime with NRI support enabled. The agent
-   depends on `/var/run/nri/nri.sock` for plugin registration.
-+- Container runtime CDI support. The agent writes CDI specifications to
-+  `/var/run/cdi` so DRA device metadata can be mounted into containers.
- - Cilium agent with `--enable-network-driver` (set automatically
--  when the Helm flag is enabled)
-+  when the Helm flag is enabled).
-+- The RX queue manager additionally requires a Linux kernel with netdev RX
-+  queue leasing and netkit support (upstream Linux v7.1 or an equivalent
-+  backport), and a NIC driver that implements RX queue leasing.
+@@ -878,6 +878,7 @@ func (l2a *L2Announcer) addSelectedService(svc *loadbalancer.Service, extAddrs,
+ 		byPolicies:        byPolicies,
+ 		lock:              l2a.newLeaseLock(svc),
+ 		done:              make(chan struct{}),
++		stopped:           make(chan struct{}),
+ 		leaderChannel:     l2a.leaderChannel,
+ 		leaseDuration:     leaseDuration,
+ 		renewDeadline:     renewDeadline,
+@@ -1216,9 +1217,10 @@ type selectedService struct {
+ 	leaderChannel   chan leaderElectionEvent
  
- ## Use cases
+ 	// Leader election goroutine lifetime management
+-	ctx    context.Context
+-	cancel context.CancelFunc
+-	done   chan struct{}
++	ctx     context.Context
++	cancel  context.CancelFunc
++	done    chan struct{}
++	stopped chan struct{}
+ }
  
-@@ -25,6 +30,8 @@ hand-off from the host, such as:
+ func (ss *selectedService) serviceLeaderElection(ctx context.Context, health cell.Health) error {
+@@ -1242,15 +1244,22 @@ func (ss *selectedService) serviceLeaderElection(ctx context.Context, health cel
  
- - DPDK-based applications (VNFs, packet-processing pipelines)
- - High-frequency trading or other low-latency workloads
-+- Applications that consume a dedicated NIC receive queue, including
-+  `io_uring` zero-copy receive applications
+ 				Callbacks: leaderelection.LeaderCallbacks{
+ 					OnStartedLeading: func(ctx context.Context) {
+-						ss.leaderChannel <- leaderElectionEvent{
++						select {
++						case ss.leaderChannel <- leaderElectionEvent{
+ 							typ:             leaderElectionLeading,
+ 							selectedService: ss,
++						}:
++						case <-ctx.Done():
+ 						}
+ 					},
+ 					OnStoppedLeading: func() {
+-						ss.leaderChannel <- leaderElectionEvent{
++						// The main loop, the only reader of leaderChannel, waits for this goroutine in stop().
++						select {
++						case ss.leaderChannel <- leaderElectionEvent{
+ 							typ:             leaderElectionStoppedLeading,
+ 							selectedService: ss,
++						}:
++						case <-ss.stopped:
+ 						}
+ 					},
+ 				},
+@@ -1261,8 +1270,10 @@ func (ss *selectedService) serviceLeaderElection(ctx context.Context, health cel
  
- ## Device Managers
- 
-@@ -35,13 +42,16 @@ whenever the device set changes, then blocks until context cancellation.
- 
- Available device managers:
- 
--| Manager         | Key in CRD     | `DeviceManagerType` string | Devices managed                                          |
--|-----------------|----------------|----------------------------|-----------------------------------------------------------|
--| `sriov`         | `sriov`        | `sr-iov`                   | SR-IOV Virtual Functions (legacy mode)                    |
--| `dummy`         | `dummy`        | `dummy`                    | Linux dummy interfaces                                    |
-+| Manager   | Key in CRD | `DeviceManagerType` string | Devices managed                                                  |
-+|-----------|------------|----------------------------|------------------------------------------------------------------|
-+| `sriov`   | `sriov`    | `sr-iov`                   | SR-IOV Virtual Functions (legacy mode)                           |
-+| `dummy`   | `dummy`    | `dummy`                    | Linux dummy interfaces                                           |
-+| `rxqueue` | `rxQueue`  | `rxQueue`                  | Physical NIC RX queue capacity                                   |
- 
--Both current managers publish dedicated devices. Each published dummy device
--or SR-IOV Virtual Function can be allocated to one claim at a time.
-+The dummy and SR-IOV managers publish dedicated devices. Each published dummy
-+device or SR-IOV Virtual Function can be allocated to one claim at a time. The
-+RX queue manager publishes each physical interface as a shareable device whose
-+capacity can be consumed by several claims.
- 
- ### Device allocation model
- 
-@@ -105,6 +115,36 @@ It cannot inspect the API server's feature-gate configuration. On v1.34 or
- later with `DRAConsumableCapacity` disabled, `ResourceSlice` publication
- reports an error when the API server omits the feature-gated fields.
- 
-+### RX queue device manager
-+
-+The RX queue manager (`pkg/networkdriver/rxqueue`) publishes one shareable DRA
-+device for each configured physical interface. Its `rxQueues` capacity is the
-+number of queues configured for reservation. Each claim consumes exactly one
-+unit of that capacity. Kubernetes schedules capacity from the parent device;
-+physical queue IDs remain an implementation detail of the manager.
-+
-+At startup, the manager resolves each configured interface and enumerates its
-+active RX queues through the netdev generic netlink API. The interface must be
-+up and must have more active queues than the configured reservation. The
-+manager selects the highest-numbered queues and always leaves at least one
-+queue outside the reserved set. `count` defaults to one. Discovery runs once,
-+so interface or queue-count changes require an agent restart.
-+
-+At `PrepareResourceClaims` time, the manager:
-+
-+1. Validates that the scheduler assigned one unit of `rxQueues` capacity and
-+   supplied a `ShareID`.
-+2. Selects an unleased physical queue from the reserved set.
-+3. Records the queue reservation against that share and returns the
-+   allocation-specific state.
-+
-+Repeated preparation of the same share returns the same queue. Different
-+shares cannot reserve the same queue. Cleanup releases the in-memory
-+reservation only after the kernel reports that no active lease remains.
-+
-+After an agent restart, recovery restores the reservation for the physical
-+queue recorded in `PreparedDevice`.
-+
- ### SR-IOV device manager
- 
- The SR-IOV manager (`pkg/networkdriver/sriov`) discovers VFs by walking
-@@ -166,10 +206,12 @@ device manager, and `Dev` is that manager's current device object.
- 
- Each device man
+ func (ss *selectedService) stop() {
+ 	if ss.cancel != nil {
++		close(ss.stopped)
+ 		ss.cancel()
+ 		<-ss.done
++		ss.cancel = nil
+ 		ss.currentlyLeader = false
+ 	}
+ }
 ```
 
 ---
 
-### Incident Patch 2: `1927ef1d` (2026-09-14)
-**Commit Message**: network driver: register the RX queue manager
+### Incident Patch 2: `4e6983e1` (2026-10-14)
+**Commit Message**: loadbalancer: Fix leak of expanded NodePort frontends with two scopes
 
-Construct the RX queue manager when enabled by node configuration and
-include it in the generic device-manager set consumed by the network
-driver.
+The BPF reconciler expands each NodePort frontend (0.0.0.0) into one frontend per NodePort node address. It records the expanded addresses in `nodePortAddrByPort`, keyed by address family, L4 proto and port. The key does not include the scope.
 
-Require the netkit or netkit-l2 datapath before initializing the manager.
-A veth endpoint cannot host the queue lease that the manager advertises.
-Leave other device managers and disabled RX queue configurations unchanged.
+A NodePort service whose `externalTrafficPolicy` and `internalTrafficPolicy` differ will have two frontends for the same port, one in the external scope and one in the internal scope. Both frontends use the same `nodePortAddrByPort` entry. After a user deletes the service, `Delete()` for the first frontend removes the expanded frontends of its scope and then deletes the shared entry. `Delete()` for the second frontend then finds no addresses and does not remove the expanded frontends of its scope.
 
-Verify disabled and incomplete configurations at the registration
-boundary, and cover serialization through the generic allocation
-persistence path.
+The leaked frontends keep their service map slots, their reverse NAT entry, their service ID, and their backend references. The reconciler still holds these references, so pruning does not remove the entries. Only an agent restart clears them. The same collision leaks the external scope frontends when a service changes from two scopes to one and a user deletes it later.
 
-Signed-off-by: Aaron Campbell <[REDACTED_EMAIL]>
+Add th
 
-**File**: `pkg/networkdriver/cell.go` (modified, +3/-0)
+**File**: `pkg/loadbalancer/reconciler/bpf_reconciler.go` (modified, +7/-2)
 ```diff
-@@ -16,6 +16,7 @@ import (
- 	kube_types "k8s.io/apimachinery/pkg/types"
- 	"k8s.io/client-go/util/workqueue"
+@@ -153,6 +153,11 @@ type nodePortAddrKey struct {
  
-+	"github.com/cilium/cilium/pkg/datapath/connector"
- 	"github.com/cilium/cilium/pkg/ipam"
- 	"github.com/cilium/cilium/pkg/k8s/apis/cilium.io/v2alpha1"
- 	k8sClient "github.com/cilium/cilium/pkg/k8s/client"
-@@ -61,6 +62,7 @@ type networkDriverParams struct {
- 	Configs         resource.Resource[*v2alpha1.CiliumNetworkDriverNodeConfig]
- 	ResourceClaims  resource.Resource[*resourceapi.ResourceClaim]
- 	Pods            resource.Resource[*corev1.Pod]
-+	ConnectorConfig connector.Config
- 	DaemonCfg       *option.DaemonConfig
- 	DB              *statedb.DB
- 	DeviceTable     statedb.RWTable[*DRADevice]
-@@ -132,6 +134,7 @@ func registerNetworkDriver(params networkDriverParams) *Driver {
- 		jg:              params.JobGroup,
- 		resourceClaims:  params.ResourceClaims,
- 		pods:            params.Pods,
-+		datapathMode:    params.ConnectorConfig.GetOperationalMode(),
- 		kubeClient:      params.ClientSet,
- 		deviceManagers:  make(map[types.DeviceManagerType]types.DeviceManager),
- 		configCRD:       params.Configs,
+ 	// port is the Layer 4 port number of the key
+ 	port uint16
++
++	// scope is the lookup scope of the key. A NodePort service with mixed
++	// traffic policies has an external and an internal frontend for the same
++	// port, and each must track its own expanded addresses.
++	scope uint8
+ }
+ 
+ type backendState struct {
+@@ -423,7 +428,7 @@ func (ops *BPFOps) Delete(_ context.Context, txn statedb.ReadTxn, _ statedb.Revi
+ 
+ 	if isExpansion {
+ 		proto := loadbalancer.L4TypeAsProtocolNumber(fe.Address.Protocol())
+-		key := nodePortAddrKey{family: fe.Address.IsIPv6(), port: fe.Address.Port(), protocol: proto}
++		key := nodePortAddrKey{family: fe.Address.IsIPv6(), port: fe.Address.Port(), protocol: proto, scope: fe.Address.Scope()}
+ 		addrs := ops.nodePortAddrByPort[key]
+ 		for _, addr := range addrs {
+ 			fe = fe.Clone()
+@@ -910,7 +915,7 @@ func (ops *BPFOps) Update(_ context.Context, txn statedb.ReadTxn, _ statedb.Revi
+ 		// For NodePort create entries for each node address.
+ 		// For HostPort only create them if the address was not specified (HostIP is unset).
+ 		proto := loadbalancer.L4TypeAsProtocolNumber(fe.Address.Protocol())
+-		key := nodePortAddrKey{family: fe.Address.IsIPv6(), port: fe.Address.Port(), protocol: proto}
++		key := nodePortAddrKey{family: fe.Address.IsIPv6(), port: fe.Address.Port(), protocol: proto, scope: fe.Address.Scope()}
+ 		old := sets.New(ops.nodePortAddrByPort[key]...)
+ 
+ 		// Collect matching node addresses for datapath candidates, skipping those
 ```
 
-**File**: `pkg/networkdriver/devicemanagers/managers.go` (modified, +10/-1)
+**File**: `pkg/loadbalancer/tests/testdata/nodeport-two-scopes.txtar` (added, +189/-0)
 ```diff
-@@ -8,6 +8,7 @@ import (
+@@ -0,0 +1,189 @@
++#! --lb-test-fault-probability=0.0
++#
++# Tests that the NodePort frontends expanded from the surrogate 0.0.0.0
++# frontends are removed for both the external and internal scope. Mixed
++# traffic policies produce two frontends per NodePort that share the same
++# port and protocol, but differ in scope.
++
++# Add a node address to expand NodePort frontends to
++db/insert node-addresses addrv4.yaml
++
++# Start the test application
++hive start
++
++# Add a NodePort service with eTP=Local and iTP=Cluster, which gives
++# frontends in both scopes.
++k8s/add endpointslice.yaml service-mixed.yaml
++db/cmp frontends frontends-mixed.table
++
++# Check BPF maps
++lb/maps-dump lbmaps.actual
++* cmp lbmaps-mixed.expected lbmaps.actual
++
++# Delete the service
++k8s/delete service-mixed.yaml
++
++# Both the external and internal scoped node address frontends must be
++# removed.
++* db/empty services frontends
++* lb/maps-empty
++
++# Add the service back and switch it to a single scope.
++k8s/add service-mixed.yaml
++db/cmp frontends frontends-mixed.table
++k8s/update service-cluster.yaml
++db/cmp frontends frontends-cluster.table
++
++# Check BPF maps
++lb/maps-dump lbmaps.actual
++* cmp lbmaps-cluster.expected lbmaps.actual
++
++# Delete everything
++k8s/delete service-cluster.yaml endpointslice.yaml
++
++# The external scoped node address frontend must still be removed after
++# the internal scope was dropped.
++* db/empty services frontends backends
++* lb/maps-empty
++
++#####
++
++-- addrv4.yaml --
++addr: 1.1.1.1
++nodeport: true
++primary: true
++devicename: test
++
++-- frontends-mixed.table --
++Address               Type        ServiceName   PortName   Backends                               Status
++0.0.0.0:30781/TCP     NodePort    test/echo     http       10.244.1.1:80/TCP                      Done
++0.0.0.0:30781/TCP/i   NodePort    test/echo     http       10.244.1.1:80/TCP, 10.244.2.1:80/TCP   Done
++10.96.50.104:80/TCP   ClusterIP   test/echo     http       10.244.1.1:80/TCP, 10.244.2.1:80/TCP   Done
++
++-- frontends-cluster.table --
++Address               Type        ServiceName   PortName   Backends                               Status
++0.0.0.0:30781/TCP     NodePort    test/echo     http       10.244.1.1:80/TCP, 10.244.2.1:80/TCP   Done
++10.96.50.104:80/TCP   ClusterIP   test/echo     http       10.244.1.1:80/TCP, 10.244.2.1:80/TCP   Done
++
++-- lbmaps-mixed.expected --
++BE: ID=1 ADDR=10.244.1.1:80/TCP STATE=active
++BE: ID=2 ADDR=10.244.2.1:80/TCP STATE=active
++REV: ID=1 ADDR=0.0.0.0:30781
++REV: ID=2 ADDR=1.1.1.1:30781
++REV: ID=3 ADDR=0.0.0.0:30781
++REV: ID=4 ADDR=1.1.1.1:30781
++REV: ID=5 ADDR=10.96.50.104:80
++SVC: ID=0 ADDR=10.96.50.104:0/ANY SLOT=0 LBALG=undef AFFTimeout=0 COUNT=0 QCOUNT=0 FLAGS=ClusterIP+non-routable
++SVC: ID=1 ADDR=0.0.0.0:30781/TCP SLOT=0 LBALG=undef AFFTimeout=0 COUNT=1 QCOUNT=0 FLAGS=NodePort+Local+two-scopes+non-routable
++SVC: ID=1 ADDR=0.0.0.0:30781/TCP SLOT=1 BEID=1 COUNT=0 QCOUNT=0 FLAGS=NodePort+Local+two-scopes+non-routable
++SVC: ID=2 ADDR=1.1.1.1:30781/TCP SLOT=0 LBALG=undef AFFTimeout=0 COUNT=1 QCOUNT=0 FLAGS=NodePort+Local+two-scopes
++SVC: ID=2 ADDR=1.1.1.1:30781/TCP SLOT=1 BEID=1 COUNT=0 QCOUNT=0 FLAGS=NodePort+Local+two-scopes
++SVC: ID=3 ADDR=0.0.0.0:30781/TCP/i SLOT=0 LBALG=undef AFFTimeout=0 COUNT=2 QCOUNT=0 FLAGS=NodePort+Local+two-scopes+non-routable
++SVC: ID=3 ADDR=0.0.0.0:30781/TCP/i SLOT=1 BEID=1 COUNT=0 QCOUNT=0 FLAGS=NodePort+Local+two-scopes+non-routable
++SVC: ID=3 ADDR=0.0.0.0:30781/TCP/i SLOT=2 BEID=2 COUNT=0 QCOUNT=0 FLAGS=NodePort+Local+two-scopes+non-routable
++SVC: ID=4 ADDR=1.1.1.1:30781/TCP/i SLOT=0 LBALG=undef AFFTimeout=0 COUNT=2 QCOUNT=0 FLAGS=NodePort+Local+two-scopes
++SVC: ID=4 ADDR=1.1.1.1:30781/TCP/i SLOT=1 BEID=1 COUNT=0 QCOUNT=0 FLAGS=NodePort+Local+two-scopes
++SVC: ID=4 ADDR=1.1.1.1:30781/TCP/i SLOT=2 BEID=2 COUNT=0 QCOUNT=0 FLAGS=NodePort+Local+two-scopes
++SVC: ID=5 ADDR=10.96.50.104:80/TCP SLOT=0 LBALG=undef AFFTimeout=0 COUNT=2 QCOUNT=0 FLAGS=ClusterIP+Local+non-routable
++SVC: ID=5 ADDR=10.96.50.104:80/TCP SLOT=1 BEID=1 COUNT=0 QCOUNT=0 FLAGS=ClusterIP+Local+non-routable
++SVC: ID=5 ADDR=10.96.50.104:80/TCP SLOT=2 BEID=2 COUNT=0 QCOUNT=0 FLAGS=ClusterIP+Local+non-routable
++-- lbmaps-cluster.expected --
++BE: ID=3 ADDR=10.244.1.1:80/TCP STATE=active
++BE: ID=4 ADDR=10.244.2.1:80/TCP STATE=active
++REV: ID=10 ADDR=10.96.50.104:80
++REV: ID=6 ADDR=0.0.0.0:30781
++REV: ID=7 ADDR=1.1.1.1:30781
++SVC: ID=0 ADDR=10.96.50.104:0/ANY SLOT=0 LBALG=undef AFFTimeout=0 COUNT=0 QCOUNT=0 FLAGS=ClusterIP+non-routable
++SVC: ID=10 ADDR=10.96.50.104:80/TCP SLOT=0 LBALG=undef AFFTimeout=0 COUNT=2 QCOUNT=0 FLAGS=ClusterIP+non-routable
++SVC: ID=10 ADDR=10.96.50.104:80/TCP SLOT=1 BEID=3 COUNT=0 QCOUNT=0 FLAGS=ClusterIP+non-routable
++SVC: ID=10 ADDR=10.96.50.104:80/TCP SLOT=2 BEID=4 COUNT=0 QCOUNT=0 FLAGS=ClusterIP+non-routable
++SVC: ID=6 ADDR=0.0.0.0:30781/TCP SLOT=0 LBALG=undef AFFTimeout=0 COUNT=2 QCOUNT=0 FLAGS=NodePort+non-routable
++SVC: ID=6 ADDR=0.0.0.0:30781/TCP SLOT=1 BEID=3 COUNT=0 QCOUNT=0 F
+```
+
+---
+
+### Incident Patch 3: `01a4fc2f` (2026-10-14)
+**Commit Message**: datapath: turn `DEBUG_TAGGED` into runtime config
+
+Migrate `DEBUG_TAGGED` config macro to runtime config.
+
+Signed-off-by: Leonardo Di Giovanna <[REDACTED_EMAIL]>
+
+**File**: `bpf/include/bpf/config/node.h` (modified, +2/-0)
+```diff
+@@ -195,6 +195,8 @@ NODE_CONFIG(bool, enable_masquerade_ipv6, "Masquerade IPv6 traffic")
  
- 	"github.com/cilium/cilium/pkg/k8s/apis/cilium.io/v2alpha1"
- 	"github.com/cilium/cilium/pkg/networkdriver/dummy"
-+	"github.com/cilium/cilium/pkg/networkdriver/rxqueue"
- 	"github.com/cilium/cilium/pkg/networkdriver/sriov"
- 	"github.com/cilium/cilium/pkg/networkdriver/types"
- )
-@@ -27,7 +28,6 @@ func InitManagers(logger *slog.Logger, managerConfigs *v2alpha1.CiliumNetworkDri
+ NODE_CONFIG(bool, debug, "Enable debugging trace statements")
  
- 		result[types.DeviceManagerTypeDummy] = dummyMgr
- 	}
++NODE_CONFIG(bool, debug_tagged, "Enable debugging trace statements for tagged packets")
++
+ struct dsr_config {
+ 	/* Enable DSR load balancing. */
+ 	bool enable;
+```
+
+**File**: `bpf/lib/dbg.h` (modified, +4/-11)
+```diff
+@@ -180,10 +180,7 @@ struct debug_capture_msg {
+ 
+ #include "events.h"
+ #include "utils.h"
 -
- 	if managerConfigs.SRIOV != nil && managerConfigs.SRIOV.Enabled {
- 		sriovMgr, err := sriov.NewManager(logger, managerConfigs.SRIOV)
- 		if err != nil {
-@@ -37,5 +37,14 @@ func InitManagers(logger *slog.Logger, managerConfigs *v2alpha1.CiliumNetworkDri
- 		result[types.DeviceManagerTypeSRIOV] = sriovMgr
+-#ifdef DEBUG_TAGGED
+ #include "trace_id.h"
+-#endif
+ 
+ /* This takes both literals and modifiers, e.g.,
+  * printk("hello\n");
+@@ -210,7 +207,7 @@ struct debug_capture_msg {
+ static __always_inline void cilium_dbg3(const struct __ctx_buff *ctx, __u8 type,
+ 					__u32 arg1, __u32 arg2, __u32 arg3)
+ {
+-	if (!CONFIG(debug) && !is_defined(DEBUG_TAGGED))
++	if (!CONFIG(debug) && !CONFIG(debug_tagged))
+ 		return;
+ 
+ 	struct debug_msg msg = {
+@@ -219,10 +216,8 @@ static __always_inline void cilium_dbg3(const struct __ctx_buff *ctx, __u8 type,
+ 		.arg2	= arg2,
+ 		.arg3	= arg3,
+ 	};
+-#ifdef DEBUG_TAGGED
+-	if (!load_ip_trace_id())
++	if (CONFIG(debug_tagged) && !load_ip_trace_id())
+ 		return;
+-#endif
+ 	dbg_extension_hook(ctx, msg);
+ 	ctx_event_output(ctx, &cilium_events, BPF_F_CURRENT_CPU,
+ 			 &msg, sizeof(msg));
+@@ -237,7 +232,7 @@ cilium_dbg(const struct __ctx_buff *ctx, __u8 type, __u32 arg1, __u32 arg2)
+ static __always_inline void cilium_dbg_capture2(const struct __ctx_buff *ctx, __u8 type,
+ 						__u32 arg1, __u32 arg2)
+ {
+-	if (!CONFIG(debug) && !is_defined(DEBUG_TAGGED))
++	if (!CONFIG(debug) && !CONFIG(debug_tagged))
+ 		return;
+ 
+ 	__u64 ctx_len = ctx_full_len(ctx);
+@@ -248,10 +243,8 @@ static __always_inline void cilium_dbg_capture2(const struct __ctx_buff *ctx, __
+ 		.arg1	= arg1,
+ 		.arg2	= arg2,
+ 	};
+-#ifdef DEBUG_TAGGED
+-	if (!load_ip_trace_id())
++	if (CONFIG(debug_tagged) && !load_ip_trace_id())
+ 		return;
+-#endif
+ 	dbg_capture_extension_hook(ctx, msg);
+ 	ctx_event_output(ctx, &cilium_events,
+ 			 (cap_len << 32) | BPF_F_CURRENT_CPU,
+```
+
+**File**: `pkg/datapath/config/endpoint.go` (modified, +1/-0)
+```diff
+@@ -61,6 +61,7 @@ func Endpoint(ep endpoint.Config, lnc *Config) any {
+ 	cfg.EnablePolicyAccounting = lnc.EnablePolicyAccounting
+ 	cfg.EnableTraceNotify = ep.GetOptions().IsEnabled(option.TraceNotify)
+ 	cfg.Debug = ep.GetOptions().IsEnabled(option.Debug)
++	cfg.DebugTagged = ep.GetOptions().IsEnabled(option.DebugTagged)
+ 	cfg.DebugLB = ep.GetOptions().IsEnabled(option.DebugLB)
+ 	cfg.EnableDropNotify = ep.GetOptions().IsEnabled(option.DropNotify)
+ 
+```
+
+**File**: `pkg/datapath/config/host.go` (modified, +3/-0)
+```diff
+@@ -63,6 +63,7 @@ func CiliumHost(ep endpoint.Config, lnc *Config) any {
+ 	cfg.EnablePolicyAccounting = lnc.EnablePolicyAccounting
+ 	cfg.EnableDropNotify = ep.GetOptions().IsEnabled(option.DropNotify)
+ 	cfg.Debug = ep.GetOptions().IsEnabled(option.Debug)
++	cfg.DebugTagged = ep.GetOptions().IsEnabled(option.DebugTagged)
+ 
+ 	cfg.TunnelProtocol = lnc.TunnelProtocol
+ 	cfg.TunnelPort = lnc.TunnelPort
+@@ -120,6 +121,7 @@ func CiliumNet(ep endpoint.Config, lnc *Config, link netlink.Link) any {
+ 	cfg.EnablePolicyAccounting = lnc.EnablePolicyAccounting
+ 	cfg.EnableDropNotify = ep.GetOptions().IsEnabled(option.DropNotify)
+ 	cfg.Debug = ep.GetOptions().IsEnabled(option.Debug)
++	cfg.DebugTagged = ep.GetOptions().IsEnabled(option.DebugTagged)
+ 
+ 	cfg.TunnelProtocol = lnc.TunnelProtocol
+ 	cfg.TunnelPort = lnc.TunnelPort
+@@ -196,6 +198,7 @@ func Netdev(ep endpoint.Config, lnc *Config, link netlink.Link, masq4, masq6 net
+ 	cfg.EnablePolicyAccounting = lnc.EnablePolicyAccounting
+ 	cfg.EnableDropNotify = ep.GetOptions().IsEnabled(option.DropNotify)
+ 	cfg.Debug = ep.GetOptions().IsEnabled(option.Debug)
++	cfg.DebugTagged = ep.GetOptions().IsEnabled(option.DebugTagged)
+ 
+ 	cfg.TunnelProtocol = lnc.TunnelProtocol
+ 	cfg.TunnelPort = lnc.TunnelPort
+```
+
+**File**: `pkg/datapath/config/node.go` (modified, +1/-0)
+```diff
+@@ -165,6 +165,7 @@ func NodeConfig(lnc *Config) Node {
+ 
+ 	node.EnableTraceNotify = option.Config.Opts.IsEnabled(option.TraceNotify)
+ 	node.Debug = option.Config.Opts.IsEnabled(option.Debug)
++	node.DebugTagged = option.Config.Opts.IsEnabled(option.DebugTagged)
+ 	node.DebugLB = option.Config.Opts.IsEnabled(option.DebugLB)
+ 	node.EnableDropNotify = option.Config.Opts.IsEnabled(option.DropNotify)
+ 
+```
+
+**File**: `pkg/datapath/config/node_config.go` (modified, +5/-3)
+```diff
+@@ -32,6 +32,8 @@ type Node struct {
+ 	Debug bool `config:"debug"`
+ 	// Enable debugging trace statements for load balancer.
+ 	DebugLB bool `config:"debug_lb"`
++	// Enable debugging trace statements for tagged packets.
++	DebugTagged bool `config:"debug_tagged"`
+ 	// Index of the interface used to connect nodes in the cluster.
+ 	DirectRoutingDevIfIndex uint32 `config:"direct_routing_dev_ifindex"`
+ 	// Enable BPF Host Routing.
+@@ -151,10 +153,10 @@ func NewNode() *Node {
+ 		0x0,
+ 		cast[types.MACAddr]([]byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}),
+ 		0x0, 0x8, cast[types.DSRConfig]([]byte{0x0, 0x0, 0x0}), false,
+-		false, 0x0, false, false, false, false, false, false, false,
++		false, false, 0x0, false, false, false, false, false, false,
+ 		false, false, false, false, false, false, false, false, false,
+-		false, false, false, 0x0, 0x0, false, 0x0, 0x0, 0x0, 0x0, cast[types.V4Addr]([]byte{0x0, 0x0, 0x0, 0x0}),
+-		cast[types.V4Addr]([]byte{0x0, 0x0, 0x0, 0x0}),
++		false, false, false, false, 0x0, 0x0, false, 0x0, 0x0, 0x0,
++		0x0, cast[types.V4Addr]([]byte{0x0, 0x0, 0x0, 0x0}), cast[types.V4Addr]([]byte{0x0, 0x0, 0x0, 0x0}),
+ 		cast[types.IPv4SNATExclusionPrefix]([]byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}),
+ 		cast[types.V6Addr]([]byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}),
+ 		cast[types.IPv6SNATExclusionPrefix]([]byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}),
+```
+
+**File**: `pkg/datapath/loader/verifier_load_test.go` (modified, +1/-0)
+```diff
+@@ -32,6 +32,7 @@ func setBasePermutations(t *config.Node) {
+ 	t.MonitorReportFlags = 0xff
+ 	t.TracingIPOptionType = 1
+ 	t.Debug = true
++	t.DebugTagged = true
+ 	t.DebugLB = true
+ 	t.EventsMapRateLimit = 1000
+ 	t.EnableIdentityMark = true
+```
+
+**File**: `pkg/option/runtime_options.go` (modified, +0/-1)
+```diff
+@@ -35,7 +35,6 @@ var (
  	}
  
-+	if managerConfigs.RXQueue != nil && managerConfigs.RXQueue.Enabled {
-+		rxQueueMgr, err := rxqueue.NewManager(logger, managerConfigs.RXQueue)
-+		if err != nil {
-+			return nil, err
-+		}
-+
-+		result[types.DeviceManagerTypeRXQueue] = rxQueueMgr
-+	}
-+
- 	return result, nil
- }
-```
-
-**File**: `pkg/networkdriver/devicemanagers/managers_test.go` (modified, +18/-0)
-```diff
-@@ -58,4 +58,22 @@ func TestInitManagers(t *testing.T) {
- 		assert.NotContains(t, mgrs, types.DeviceManagerTypeDummy)
+ 	specDebugTagged = Option{
+-		Define:      "DEBUG_TAGGED",
+ 		Description: "Enable debugging trace statements for tagged packets",
+ 	}
  
- 	})
-+
-+	t.Run("RX queue disabled does not show up in the map", func(t *testing.T) {
-+		cfg := &v2alpha1.CiliumNetworkDriverDeviceManagerConfig{
-+			RXQueue: &v2alpha1.RXQueueDeviceManagerConfig{Enabled: false},
-+		}
-+		mgrs, err := InitManagers(hivetest.Logger(t), cfg)
-+		require.NoError(t, err)
-+		assert.NotContains(t, mgrs, types.DeviceManagerTypeRXQueue)
-+	})
-+
-+	t.Run("RX queue enabled requires interfaces", func(t *testing.T) {
-+		cfg := &v2alpha1.CiliumNetworkDriverDeviceManagerConfig{
-+			RXQueue: &v2alpha1.RXQueueDeviceManagerConfig{Enabled: true},
-+		}
-+		mgrs, err := InitManagers(hivetest.Logger(t), cfg)
-+		require.Error(t, err)
-+		assert.NotContains(t, mgrs, types.DeviceManagerTypeRXQueue)
-+	})
- }
-```
-
-**File**: `pkg/networkdriver/dra_test.go` (modified, +26/-0)
-```diff
-@@ -35,6 +35,7 @@ import (
- 	"github.com/cilium/cilium/pkg/networkdriver/config"
- 	"github.com/cilium/cilium/pkg/networkdriver/dummy"
- 	networkdriverIPAM "github.com/cilium/cilium/pkg/networkdriver/ipam"
-+	"github.com/cilium/cilium/pkg/networkdriver/rxqueue"
- 	"github.com/cilium/cilium/pkg/networkdriver/sriov"
- 	"github.com/cilium/cilium/pkg/networkdriver/types"
- 	nodetypes "github.com/cilium/cilium/pkg/node/types"
-@@ -93,6 +94,31 @@ func TestSerializeDevice(t *testing.T) {
- 		require.NoError(t, err)
- 		require.Equal(t, dev.IfName(), restored.IfName())
- 	})
-+
-+	t.Run("RX queue device round-trip", func(t *testing.T) {
-+		dev := &rxqueue.RXQueueDevice{
-+			PhysicalIfName:   "eth0",
-+			TotalRXQueues:    8,
-+			ReservedQueueIDs: []uint32{7, 6},
-+		}
-+		capacity := map[resourceapi.QualifiedName]apiresource.Quantity{
-+			types.RXQueuesCapacity: apiresource.MustParse("1"),
-+		}
-+		a := allocation{Device: dev, Manager: types.DeviceManagerTypeRXQueue, ConsumedCapacity: capacity}
-+
-+		raw, err := serializeDevice(a)
-+		require.NoError(t, err)
-+
-+		serialized, err := deserializeDevice(raw)
-+		require.NoError(t, err)
-+		require.Equal(t, types.DeviceManagerTypeRXQueue, serialized.Manager)
-+		require.Equal(t, capacity, serialized.ConsumedCapacity)
-+
-+		mgr := &rxqueue.RXQueueManager{}
-+		restored, err := mgr.RestoreDevice(serialized.Dev)
-+		require.NoError(t, err)
-+		require.Equal(t, dev.IfName(), restored.IfName())
-+	})
- }
- 
- func TestAllocationInterfaceName(t *testing.T) {
-```
-
-**File**: `pkg/networkdriver/driver.go` (modified, +23/-0)
-```diff
-@@ -28,6 +28,7 @@ import (
- 	"k8s.io/dynamic-resource-allocation/resourceslice"
- 	"k8s.io/utils/ptr"
- 
-+	"github.com/cilium/cilium/pkg/datapath/connector"
- 	"github.com/cilium/cilium/pkg/ipam"
- 	"github.com/cilium/cilium/pkg/k8s/apis/cilium.io/v2alpha1"
- 	"github.com/cilium/cilium/pkg/k8s/resource"
-@@ -60,6 +61,7 @@ type Driver struct {
- 	jg             job.Group
- 	resourceClaims resource.Resource[*resourceapi.ResourceClaim]
- 	pods           resource.Resource[*corev1.Pod]
-+	datapathMode   connector.Mode
- 
- 	configCRD resource.Resource[*v2alpha1.CiliumNetworkDriverNodeConfig]
- 	config    *v2alpha1.CiliumNetworkDriverNodeConfigSpec
-@@ -220,6 +222,10 @@ func (driver *Driver) Start(ctx cell.HookContext) error {
- 		}
- 		driver.setConfig(&cfg)
- 
-+		if err := validateRXQueueDatapath(driver.config.DeviceManagerConfigs, driver.datapathMode); err != nil {
-+			return err
-+		}
-+
- 		mgrs, err := devicemanagers.InitManagers(driver.logger, driver.config.DeviceManagerConfigs)
- 		if err != nil {
- 			return err
-@@ -395,6 +401,23 @@ func (driver *Driver) validateConsumableCapacityVersion(k8sVersion semver.Versio
- 	return nil
- }
- 
-+// validateRXQueueDatapath requires netkit when RX queue management is enabled.
-+func validateRXQueueDatapath(
-+	configs *v2alpha1.CiliumNetworkDriverDeviceManagerConfig,
-+	mode connector.Mode,
-+) error {
-+	if configs == nil || configs.RXQueue == nil || !configs.RXQueue.Enabled {
-+		return nil
-+	}
-+	if !mode.IsNetkit() {
-+		return fmt.Errorf(
-+			"RX queue device manager requires the netkit or netkit-l2 datapath, got %q",
-+			mode,
-+		)
-+	}
-+	return nil
-+}
-+
- func (driver *Driver) withLock(f func() error) error {
- 	driver.lock.Lock()
- 	defer driver.lock.Unlock()
-```
-
-**File**: `pkg/networkdriver/driver_test.go` (modified, +19/-0)
-```diff
-@@ -40,6 +40,7 @@ import (
- 	"k8s.io/dynamic-resource-allocation/resourceslice"
- 	"k8s.io/utils/ptr"
- 
-+	"github.com/cilium/cilium/pkg/datapath/connector"
- 	"github.com/cilium/cilium/pkg/k8s/apis/cilium.io/v2alpha1"
- 	k8sClient "github.com/cilium/cilium/pkg/k8s/client/testutils"
- 	"github.com/cilium/cilium/pkg/networkdriver/dummy"
-@@ -127,6 +128,24 @@ func deviceLogicalPoolAttr(t *testing.T, devices []resourceapi.Device, name stri
- 	return ""
- }
- 
-+func TestValidateRXQueueDatapath(t *testing.T) {
-+	disabled := &v2alpha1.CiliumNetworkDriverDeviceManagerConfig{
-+		RXQueue: &v2alpha1.RXQueueDeviceManagerConfig{},
-+	}
-+	enabled := &v2alpha1.CiliumNetworkDriverDeviceManagerConfig{
-+		RXQueue: &v2alpha1.RXQueueDeviceManagerConfig{Enabled: true},
-+	}
-+
-+	require.NoError(t, validateRXQueueDatapath(nil, connector.ModeVeth))
-+	require.NoError(t, validateRXQueueDatapath(&v2alpha1.CiliumNetworkDriverDeviceManagerConfig{}, connector.ModeVeth))
-+	require.NoError(t, validateRXQueueDatapath(disabled, connector.ModeVeth))
-+	for _, mode := range []connector.Mode{connector.ModeNetkit, connector.ModeNetkitL2} {
-+		require.NoError(t, validateRXQueueDatapath(enabled, mode))
-+	}
-+	require.ErrorContains(t, validateRXQueueDatapath(enabled, connector.ModeVeth),
-+		"requires the netkit or netkit-l2 datapath")
-+}
-+
- // matchingDevice is a trackedDevice whose Match() returns the supplied bool.
- // GetAttrs returns a non-nil map; buildPoolsFromTable handles it without issue.
- type matchingDevice struct {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49648** (closed): test commit: do not merge (@Artyop)
+- **PR #49645** (2026-10-27): l2announcer: Fix deadlock between stop() and leader events (@aanm)
+- **PR #49642** (2026-10-27): renovate: Bump go-control-plane/envoy with cilium-envoy (@aanm)
+- **PR #49632** (2026-10-27): bpf: migrate ENABLE_IPV4 to runtime config part 5 (@lconnery)
 - **PR #49629** (2026-10-27): loadbalancer/maps: use testutils.IsPrivileged() to pick real test maps (@Bigdelle)
 - **PR #49627** (2026-10-27): v1.18 Backports 2026-10-26 (@nbusseneau)
-- **PR #49626** (2026-10-27): v1.19 Backports 2026-10-26 (@nbusseneau)
-- **PR #49621** (2026-10-27): ci: allow more time for proxy policy updates during upgrades (@jrajahalme)
-- **PR #49616** (2026-10-27): egressgw: test: make policy reconciliation robust (@julianwiedmann)
-- **PR #49611** (2026-10-26): USERS.md: add Forterro (@ecthelion77)
 
 ---
 
@@ -1656,49 +1728,47 @@ Signed-off-by: Aaron Campbell <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. network driver: document RX queue management
+## X. l2announcer: Fix deadlock between stop() and leader events
 
 **RULE**:
-When implementing operations in `pkg/networkdriver/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/l2announcer/l2announcer.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3391b242`: network driver: document RX queue management. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e64d9c5f`: l2announcer: Fix deadlock between stop() and leader events. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/networkdriver/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/l2announcer/l2announcer.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Container runtime with NRI support enabled. The agent
-- Container runtime CDI support. The agent writes CDI specifications to
-  `/var/run/cdi` so DRA device metadata can be mounted into containers.
-  when the Helm flag is enabled).
-- The RX queue manager additionally requires a Linux kernel with netdev RX
-  queue leasing and netkit support (upstream Linux v7.1 or an equivalent
-  backport), and a NIC driver that implements RX queue leasing.
-- Applications that consume a dedicated NIC receive queue, including
-  `io_uring` zero-copy receive applications
-| Manager   | Key in CRD | `DeviceManagerType` string | Devices managed                                                  |
-|-----------|------------|----------------------------|------------------------------------------------------------------|
-| `sriov`   | `sriov`    | `sr-iov`                   | SR-IOV Virtual Functions (legacy mode)                           |
-| `dummy`   | `dummy`    | `dummy`                    | Linux dummy interfaces                                           |
-| `rxqueue` | `rxQueue`  | `rxQueue`                  | Physical NIC RX queue capacity                                   |
-The dummy and SR-IOV manag
+		stopped:           make(chan struct{}),
+	ctx     context.Context
+	cancel  context.CancelFunc
+	done    chan struct{}
+	stopped chan struct{}
+						select {
+						case ss.leaderChannel <- leaderElectionEvent{
+						}:
+						case <-ctx.Done():
+						// The main loop, the only reader of leaderChannel, waits for this goroutine in stop().
+						select {
+						case ss.leaderChannel <- leaderElectionEvent{
+						}:
+						case <-ss.stopped:
+		close(ss.stopped)
+		ss.cancel = nil
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-- Container Runtime NRI support (and have it enabled). The agent 
-  when the Helm flag is enabled)
-| Manager         | Key in CRD     | `DeviceManagerType` string | Devices managed                                          |
-|-----------------|----------------|----------------------------|-----------------------------------------------------------|
-| `sriov`         | `sriov`        | `sr-iov`                   | SR-IOV Virtual Functions (legacy mode)                    |
-| `dummy`         | `dummy`        | `dummy`                    | Linux dummy interfaces                                    |
-Both current managers publish dedicated devices. Each published dummy device
-or SR-IOV Virtual Function can be allocated to one claim at a time.
+	ctx    context.Context
+	cancel context.CancelFunc
+	done   chan struct{}
+						ss.leaderChannel <- leaderElectionEvent{
+						ss.leaderChannel <- leaderElectionEvent{
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3391b242` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e64d9c5f` are properly handled with clean fallback behavior.

@@ -1413,10 +1413,10 @@
     "repository": "tickernelz/opencode-mem",
     "platform": "github",
     "sourceUrl": "https://github.com/tickernelz/opencode-mem",
-    "sourceVersion": "2acd554c",
+    "sourceVersion": "83c386bc",
     "license": "MIT",
-    "contentHash": "a856bb24c8fb6c55b74891a947df2bc6c0edd304fad75d58afddbfb991107799",
-    "lastHarvestedAt": "2026-10-25T13:57:20.663Z",
+    "contentHash": "86a4a89e24999dba3e70342f64b6cbd4f18283be76bc387578d9655e671abbe0",
+    "lastHarvestedAt": "2026-10-27T17:05:13.801Z",
     "learningId": "learn-github-tickernelz-opencode-mem"
   },
   "hf-autotrust-jev-35b-nvfp4": {
@@ -2473,10 +2473,10 @@
     "repository": "cosscom/coss",
     "platform": "github",
     "sourceUrl": "https://github.com/cosscom/coss",
-    "sourceVersion": "f2ec86f7",
+    "sourceVersion": "4960bab3",
     "license": "AGPL-3.0",
-    "contentHash": "7ba9197dab8f10aeb7a0fc82b901171d4c9dcdc2d8b6bf7a8014c24fdd799a93",
-    "lastHarvestedAt": "2026-10-23T11:24:38.249Z",
+    "contentHash": "67122c0d74315fed3f8d7aaa95b94dfc1b8a4d02af7dc4ff1e1dbf3fe054d4f9",
+    "lastHarvestedAt": "2026-10-27T17:10:00.940Z",
     "learningId": "learn-github-cosscom-coss"
   },
   "sharkdp-bat": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "3391b242",
+    "sourceVersion": "2b5ab29c",
     "license": "Apache-2.0",
-    "contentHash": "13fe10d0d042d1a096f61af4803a32c095da1d4ad17f630904afd23ff636b6f9",
-    "lastHarvestedAt": "2026-10-27T14:14:21.279Z",
+    "contentHash": "9a9df49b4d8d50c63ff5b4fec3c1560d108c08489fefadd4109d5861ab0abca3",
+    "lastHarvestedAt": "2026-10-27T17:05:12.228Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -5413,10 +5413,10 @@
     "repository": "DNSControl/dnscontrol",
     "platform": "github",
     "sourceUrl": "https://github.com/DNSControl/dnscontrol",
-    "sourceVersion": "ec3d8013",
+    "sourceVersion": "148c2d48",
     "license": "MIT",
-    "contentHash": "a95bd6ff1e2aba908b129746af2e5fb316ffaecdfc4785f5e9961c8a3056a8c4",
-    "lastHarvestedAt": "2026-10-26T11:15:42.613Z",
+    "contentHash": "f4c07c7835a349f42442338ddfbac6a3625e4f0ee1f58e62532be6f44e8497a9",
+    "lastHarvestedAt": "2026-10-27T17:05:09.983Z",
     "learningId": "learn-github-dnscontrol-dnscontrol"
   },
   "ydb-platform-ydb": {
@@ -7303,10 +7303,10 @@
     "repository": "zenbu-labs/terminal-browser",
     "platform": "github",
     "sourceUrl": "https://github.com/zenbu-labs/terminal-browser",
-    "sourceVersion": "660ec51e",
+    "sourceVersion": "e8ca7483",
     "license": "MIT",
-    "contentHash": "5ff769c710f7a0774aad9b4c705c0a050c1e774997a608f62918bdf5c8cec485",
-    "lastHarvestedAt": "2026-10-20T17:29:22.603Z",
+    "contentHash": "535ccf426e428c75a430816cea90d0d784ee0d4a6348a54aceded51dbee9a174",
+    "lastHarvestedAt": "2026-10-27T17:05:01.016Z",
     "learningId": "learn-github-zenbu-labs-terminal-browser"
   },
   "kosi-libs-kodein": {

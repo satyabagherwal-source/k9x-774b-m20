@@ -5441,3 +5441,8 @@
 | `CYCLE-20261027-JH3R` | `2026-10-27T16:58:39.063Z` | `DevExpress/testcafe` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4909` | Yes (`21cafec6...`) |
 | `CYCLE-20261027-JN76` | `2026-10-27T16:58:46.962Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4910` | Yes (`7fb1761d...`) |
 | `CYCLE-20261027-JP5O` | `2026-10-27T16:58:49.500Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4911` | Yes (`b2658a61...`) |
+| `CYCLE-20261027-RNTH` | `2026-10-27T17:05:01.013Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4912` | Yes (`535ccf42...`) |
+| `CYCLE-20261027-RUQL` | `2026-10-27T17:05:09.981Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4913` | Yes (`f4c07c78...`) |
+| `CYCLE-20261027-RWGX` | `2026-10-27T17:05:12.225Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4914` | Yes (`9a9df49b...`) |
+| `CYCLE-20261027-RXOM` | `2026-10-27T17:05:13.798Z` | `tickernelz/opencode-mem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4915` | Yes (`86a4a89e...`) |
+| `CYCLE-20261027-Y38N` | `2026-10-27T17:10:00.935Z` | `cosscom/coss` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4916` | Yes (`67122c0d...`) |

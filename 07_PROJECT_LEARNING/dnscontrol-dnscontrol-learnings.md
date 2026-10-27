@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source**: github ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
-> **Source Version**: `ec3d8013`  
+> **Source Version**: `148c2d48`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T11:15:42.207Z  
+> **Timestamp**: 2026-10-27T17:05:09.728Z  
 > **Learning ID**: `learn-github-dnscontrol-dnscontrol`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T11:15:41.803Z  
+> **Harvest Timestamp**: 2026-10-27T17:05:09.267Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -688,11 +688,11 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5036** (2026-10-25): **fix(p/NAMECHEAP): stop corrupting TXT records longer than 255 bytes**
-  *Symptoms*: Since v5, pushing a TXT record longer than 255 bytes to Namecheap breaks it. `generateRecords()` uploads `rc.GetRDATA().String()`, so the value goes up in quoted form (`"seg1" "seg2"`). Namecheap stores that as-is and does its own splitting, so the zone ends up with a space at the start of the second segment. The next `preview` sees the difference and wants to push again, and every push breaks it again.  This goes back to sending `rc.GetTargetTXTJoined()` for TXT, which is what the provider did before #4811. (#4566 modernized this code, but the TXT upload changed in #4811.)  I tested it on my own domain with a 348-byte TXT record (values shortened):  - before: `"…lenawa" " qfuxd9wsnwq…fx2phs"`, and `preview` showed a MODIFY on every run - after: `"…lenawa" "qfuxd9wsnwq…fx2phs"`, and `preview` shows `0 corrections`  I also moved the record building out of `generateRecords()` into `toNative()` so it could get a unit test, like the newer providers have. I haven't run the integration tests. The long-TXT cases in `complex TXT` weren't among the ones skipped in #4635, so they already run for NAMECHEAP and should pass now. 
+- **Issue #5046** (2026-10-27): **fix(p/CLOUDPRESS): halve zone fetches and make retry backoff configurable**
+  *Symptoms*: Accounts with many zones (431 in our case) hit HTTP 429 while gathering records, and the retry backoff (1s doubling, capped at 30s, ~61s total) gave up before the rate limit reset. CloudPress does not send a usable `Retry-After` header, so the fallback backoff is all we have.  - **Fetch each zone once.** `GetNameservers` and `GetZoneRecords` both called `GET /api/dns_zones/<id>`, because the list endpoint returns neither nameservers nor records, so every zone cost two requests. The full zone is now cached by ID; writes to a zone drop its cached copy. - **Configurable backoff.** New optional `retry_base_delay` and `retry_max_delay` settings (Go durations, defaults `1s` and `30s`, so existing setups behave the same). For example `10s` / `10m` waits 10s, 20s, 40s, 80s, 160s, 320s. A `Retry-After` in seconds is now capped by `retry_max_delay` as well. - Documented under "Rate limiting" in the provider docs, with a unit test for the retry delays.  `bin/generate-all.sh` produced no changes; `go test ./providers/cloudpress` passes.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
-- **Issue #5035** (2026-10-25): **fix(LOC): preserve thousandths of arcseconds in coordinates**
-  *Symptoms*: `LOC()` rounds the seconds of latitude and longitude to two decimals, although a LOC record holds thousandths of a second of arc and [RFC 1876](https://www.rfc-editor.org/rfc/rfc1876.html#section-3) writes them up to `59.999`.  ```js D("foo.com", "none",   LOC("a", 42, 21, 43.952, "N", 71, 5, 6.344, "W", -24.01, 1, 200, 10)); ```  `dnscontrol push` stores `42 21 43.950 N 71 05 6.340 W -24.01m 1m 200m 10m` instead of `42 21 43.952 N 71 05 6.344 W -24.01m 1m 200m 10m`, about 6 cm off. When the provider already holds the precise record, `dnscontrol preview` proposes to replace it with the rounded one.  Cause: [`MakeLOC` formats both seconds with `%.2f`](https://github.com/DNSControl/dnscontrol/blob/eb029724dd6b14aba9bf8586735379b72fd8933d/models/makers.go#L218) before it parses the record. This came in with [the dnsv2 refactor](https://github.com/DNSControl/dnscontrol/commit/be513877a30aaa0dcb675fee60e75a5902b4d90f).  Fix: use `%.3f` for both seconds. The nine `045-loc` golden records go back to the values they had before that refactor.  Test: the existing `045-loc.js` case fails without the fix and passes with it. `go test -p 1 -count=1 ./pkg/js/ ./models/` passes. 
+- **Issue #5045** (2026-10-26): **build(deps-dev): bump fast-uri from 3.1.8 to 3.1.9**
+  *Symptoms*: Bumps [fast-uri](https://github.com/fastify/fast-uri) from 3.1.8 to 3.1.9. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/fastify/fast-uri/releases">fast-uri's releases</a>.</em></p> <blockquote> <h2>v3.1.9</h2> <h2>Security</h2> <p>This security release fixes four URI parsing and normalization vulnerabilities in fast-uri 3.x. Applications that process untrusted URI input should upgrade to v3.1.9.</p> <ul> <li><strong>Medium — URI scheme spoofing through percent-encoded schemes</strong> (<a href="https://github.com/fastify/fast-uri/security/advisories/GHSA-w74x-v6f9-j3xg">GHSA-w74x-v6f9-j3xg</a>, CVE-2026-110306): percent-encoded scheme input is now rejected instead of being decoded into a live scheme.</li> <li><strong>Medium — Host confusion during domain-host canonicalization</strong> (<a href="https://github.com/fastify/fast-uri/security/advisories/GHSA-wjr9-j795-jxcr">GHSA-wjr9-j795-jxcr</a>, CVE-2026-110180): malformed domain hosts containing ambiguous delimiters or stripped control characters are now rejected instead of being silently rewritten.</li> <li><strong>Low — Incorrect relative-reference normalization</strong> (<a href="https://github.com/fastify/fast-uri/security/advisories/GHSA-xhq7-xmqj-769h">GHSA-xhq7-xmqj-769h</a>, CVE-2026-110095): dot-segment removal now preserves the resolution semantics of relative references.</li> <li><strong>Low — Scheme injection in suffix references</strong> (<a href="https://github.com/f
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -709,467 +709,297 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ec3d8013` (2026-10-25)
-**Commit Message**: fix(D_EXTEND): ignore the empty tag when extending a subdomain (#5034)
+### Incident Patch 1: `01079f52` (2026-10-26)
+**Commit Message**: build(deps): bump zod and puppeteer (#5044)
 
-`D_EXTEND()` puts records under the wrong name, or stops with a panic,
-when the empty tag is written on only one of the two names, although
-`example.com` and `example.com!` are documented as equivalent.
+Bumps [zod](https://github.com/colinhacks/zod) and
+[puppeteer](https://github.com/puppeteer/puppeteer). These dependencies
+needed to be updated together.
+Updates `zod` from 3.25.76 to 4.6.7
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a
+href="https://github.com/colinhacks/zod/releases">zod's
+releases</a>.</em></p>
+<blockquote>
+<h2>v4.6.7</h2>
+<h2>Commits:</h2>
+<ul>
+<li>b500a2ee95134f81d74da7911d7378dd2853d042 4.6.7</li>
+</ul>
+<h2>v4.6.6</h2>
+<blockquote>
+<p>Six malicious commits pushed to <code>main</code> on September 21
+with a compromised git credential were reverted the same day in <a
+href="https://redirect.github.com/colinhacks/zod/issues/6620">#6620</a>
+and have since been removed from the history of <code>main</code>. None
+were ever published to npm. The npm provenance for 4.6.6 names 284243fb,
+the pre-rewrite copy of 9c219833 with identical contents.</p>
+</blockquote>
+<h2>Commits:</h2>
+<ul>
+<li>0cd3af5e9f50ad11bbcd4407a46a21b8848ba574 docs: load the en locale
+directly in Zod Mini</li>
+<li>9d5e60f162997b764b40d45aa02481888db50dea docs: import locales from
+zod/locales, not z.locales</li>
+<li>34a626f307871ecbb01239
 
-```js
-D("example.com!", REG_NONE, DnsProvider(DSP_BIND), A("@", "192.0.2.1"));
-D_EXTEND("sub.example.com", A("www", "192.0.2.2"));
-```
-
-`dnscontrol print-ir` shows `www.su` instead of `www.sub`. With
-`D("example.com", ...)` and `D_EXTEND("sub.example.com!", ...)`,
-`dnscontrol check` stops with `panic: short (www.sub.) is not supposed
-to end with a dot`.
-
-Cause: [the domain match removes the
-tag](https://github.com/DNSControl/dnscontrol/blob/eb029724dd6b14aba9bf8586735379b72fd8933d/pkg/js/helpers.js#L375-L376)
-from [both
-names](https://github.com/DNSControl/dnscontrol/blob/eb029724dd6b14aba9bf8586735379b72fd8933d/pkg/js/helpers.js#L380-L383),
-but [the subdomain is cut out by
-length](https://github.com/DNSControl/dnscontrol/blob/eb029724dd6b14aba9bf8586735379b72fd8933d/pkg/js/helpers.js#L345-L348)
-from names that still carry it.
-
-Fix: remove the tag from both names before taking the length.
-
-Test: one case per di
-
-**File**: `pkg/js/helpers.js` (modified, +4/-4)
+**File**: `package-lock.json` (modified, +43/-43)
 ```diff
-@@ -342,10 +342,10 @@ function D_EXTEND(name) {
-         name = name.substring(name.indexOf(".") + 1);
-     }
- 
--    domain.obj.subdomain = name.substr(
--        0,
--        name.length - domain.obj.name.length - 1
--    );
-+    // The empty tag is not part of the name: "example.com!" is "example.com".
-+    name = _removeEmptyTag(name)[0];
-+    var domainName = _removeEmptyTag(domain.obj.name)[0];
-+    domain.obj.subdomain = name.substr(0, name.length - domainName.length - 1);
- 
-     for (var i = 1; i < arguments.length; i++) {
-         var m = arguments[i];
-```
-
-**File**: `pkg/js/parse_tests/037-splithor.js` (modified, +8/-0)
-```diff
-@@ -56,3 +56,11 @@ D("example-b.net!", REG, DnsProvider(DNS_OUTSIDE),
- D_EXTEND("example-b.net",
-     A("main", "203.0.113.12"),
- );
-+
-+D_EXTEND("sub.example-b.net",
-+    A("main", "203.0.113.12"),
-+);
-+
-+D_EXTEND("sub.empty.example.net!",
-+    A("main", "203.0.113.22"),
-+);
-```
-
-**File**: `pkg/js/parse_tests/037-splithor.json` (modified, +26/-0)
-```diff
-@@ -252,6 +252,19 @@
-           "type": "A",
-           "typenum": 1
-         },
-+        {
-+          "comparablev3": "203.0.113.22",
-+          "filepos": "[line:65:5]",
-+          "name": "main.sub",
-+          "name_unicode": "main.sub",
-+          "rdata": {
-+            "Addr": "203.0.113.22"
-+          },
-+          "subdomain": "sub",
-+          "ttl": 300,
-+          "type": "A",
-+          "typenum": 1
-+        },
-         {
-           "comparablev3": "203.0.113.2",
-           "filepos": "[line:45:5]",
-@@ -286,6 +299,19 @@
-           "type": "A",
-           "typenum": 1
-         },
-+        {
-+          "comparablev3": "203.0.113.12",
-+          "filepos": "[line:61:5]",
-+          "name": "main.sub",
-+          "name_unicode": "main.sub",
-+          "rdata": {
-+            "Addr": "203.0.113.12"
-+          },
-+          "subdomain": "sub",
-+          "ttl": 300,
-+          "type": "A",
-+          "typenum": 1
-+        },
-         {
-           "comparablev3": "203.0.113.1",
-           "filepos": "[line:53:5]",
-```
-
-**File**: `pkg/js/parse_tests/037-splithor/empty.example.net.zone` (modified, +1/-0)
-```diff
-@@ -1,3 +1,4 @@
- $TTL 300
- main             IN A     203.0.113.22
-+main.sub         IN A     203.0.113.22
- www              IN A     203.0.113.2
-```
-
-**File**: `pkg/js/parse_tests/037-splithor/example-b.net.zone` (modified, +1/-0)
-```diff
-@@ -1,3 +1,4 @@
- $TTL 300
- main             IN A     203.0.113.12
-+main.sub         IN A     203.0.113.12
- www              IN A     203.0.113.1
+@@ -399,12 +399,12 @@
+       }
+     },
+     "node_modules/@puppeteer/browsers": {
+-      "version": "3.2.0",
+-      "resolved": "https://registry.npmjs.org/@puppeteer/browsers/-/browsers-3.2.0.tgz",
+-      "integrity": "sha512-LlBrE8oqGfU7b1Nk2d5Q1SbuPhZxTj0cJEMDPEws28OjNMELlflekmPPuf4FnK03x0ZRjKaYwJElUcKK4kyqJA==",
++      "version": "3.2.6",
++      "resolved": "https://registry.npmjs.org/@puppeteer/browsers/-/browsers-3.2.6.tgz",
++      "integrity": "sha512-MJP29gVoHznmqmwhH1tlZqzfeQ3aylTpSSa6WKZXtkwYUH02i9imBmWGTyZrbnAou5paX78SE4jMAUqnEPf8ug==",
+       "license": "Apache-2.0",
+       "dependencies": {
+-        "modern-tar": "^0.8.0",
++        "modern-tar": "^0.8.6",
+         "yargs": "^18.0.0"
+       },
+       "bin": {
+@@ -1081,13 +1081,13 @@
+       }
+     },
+     "node_modules/chromium-bidi": {
+-      "version": "17.0.2",
+-      "resolved": "https://registry.npmjs.org/chromium-bidi/-/chromium-bidi-17.0.2.tgz",
+-      "integrity": "sha512-5v9GQFhTktFvotn/OFNJBmKLKRAb6n9r0bVCwf7sHgWc3/JryK0bj1nn93L3pHFrfgcsu6Be6EWsDi+1XHTGDg==",
++      "version": "157.0.8090-0",
++      "resolved": "https://registry.npmjs.org/chromium-bidi/-/chromium-bidi-157.0.8090-0.tgz",
++      "integrity": "sha512-KJw7IQgqXwxpJgJlEIPg5mr2ZoqA+jkTRtc5EABI7sUJ3bu3cpI7NuEBoj4Gn1AsF78CaT9So5WQWspK3/wYag==",
+       "license": "Apache-2.0",
+       "dependencies": {
+         "mitt": "^3.0.1",
+-        "zod": "^3.24.1"
++        "zod": "^4.6.5"
+       },
+       "engines": {
+         "node": ">=20.19.0 <22.0.0 || >=22.12.0"
+@@ -1484,9 +1484,9 @@
+       }
+     },
+     "node_modules/devtools-protocol": {
+-      "version": "0.0.1653615",
+-      "resolved": "https://registry.npmjs.org/devtools-protocol/-/devtools-protocol-0.0.1653615.tgz",
+-      "integrity": "sha512-pGVkY3T/qXxAp2nFPodwYqOevk6ncNMSmvL8QfRCx5ZWGd6Vor7AFNmyaA8Zs6uJyP1QAfjuLandCgvSix1BNA==",
++      "version": "0.0.1704951",
++      "resolved": "https://registry.npmjs.org/devtools-protocol/-/devtools-protocol-0.0.1704951.tgz",
++      "integrity": "sha512-GQhQOs9u/Mvm1zMtJIH872JS4AskuZdUSsPNPk4ChahtWAUqgz6atEtIsMt+nO7MqF1Ic4HxII/k8Cu36JivNg==",
+       "license": "BSD-3-Clause"
+     },
+     "node_modules/emoji-regex": {
+@@ -2835,9 +2835,9 @@
+       "license": "MIT"
+     },
+     "node_modules/modern-tar": {
+-      "version": "0.8.4",
+-      "resolved": "https://registry.npmjs.org/modern-tar/-/modern-tar-0.8.4.tgz",
+-      "integrity": "sha512-gN54ddmyzEg10orwZ2u4OOv+bjpMWdIl5jIkodK97bMq8QBSL5c0D7YX0lT1Ooz+99S7+PvFbnxzdjgHo1r41g==",
++      "version": "0.8.6",
++      "resolved": "https://registry.npmjs.org/modern-tar/-/modern-tar-0.8.6.tgz",
++      "integrity": "sha512-LYSks0tNVqbtez/9OB0YFP6qLRSqkdAxJWOQpVaR67lNTbj2zNLyYpowkRMia5lXLCZKzxwoxkxH2MbbBR2aEg==",
+       "license": "MIT",
+       "engines": {
+         "node": ">=18.0.0"
+@@ -3068,18 +3068,18 @@
+       }
+     },
+     "node_modules/puppeteer": {
+-      "version": "25.6.0",
+-      "resolved": "https://registry.npmjs.org/puppeteer/-/puppeteer-25.6.0.tgz",
+-      "integrity": "sha512-TXUolDddU4AwISjOOrGk2AhJDpbM/ZDt2KvGIqz74EOk+8bKwXFo+acUvP1sQx3hUda7owOeNuuT1UnJT1o0qA==",
++      "version": "25.16.0",
++      "resolved": "https://registry.npmjs.org/puppeteer/-/puppeteer-25.16.0.tgz",
++      "integrity": "sha512-LOr3reYnxAYYfQkpopz1fQnL0LdvqhpR5U2Fu+QnwzTX2gpVTHsn91UETo5NNC1md2/oC54Zu1ChBXgZDNSP1A==",
+       "hasInstallScript": true,
+       "license": "Apache-2.0",
+       "dependencies": {
+-        "@puppeteer/browsers": "3.2.0",
+-        "chromium-bidi": "17.0.2",
+-        "devtools-protocol": "0.0.1653615",
++        "@puppeteer/browsers": "3.2.6",
++        "chromium-bidi": "157.0.8090-0",
++        "devtools-protocol": "0.0.1704951",
+         "lilconfig": "^3.1.3",
+-        "puppeteer-core": "25.6.0",
+-        "typed-query-selector": "^2.12.2"
++        "puppeteer-core": "25.16.0",
++        "typed-query-selector": "^2.12.3"
+       },
+       "bin": {
+         "puppeteer": "lib/puppeteer/node/cli.js"
+@@ -3089,17 +3089,17 @@
+       }
+     },
+     "node_modules/puppeteer-core": {
+-      "version": "25.6.0",
+-      "resolved": "https://registry.npmjs.org/puppeteer-core/-/puppeteer-core-25.6.0.tgz",
+-      "integrity": "sha512-GJ67rjZdVQzZmD2Ab0cgttfQN9j387QYMv3t6MN3/4nmjursNt6M5Utj4/T/4y0AwNrSwJzjw6Q/zuWFEIizOg==",
++      "version": "25.16.0",
++      "resolved": "https://registry.npmjs.org/puppeteer-core/-/puppeteer-core-25.16.0.tgz",
++      "integrity": "sha512-VA5Pf54N8shfopNkZZXCdiiwfnnY8ZJYAMqFQRhlH5mGUhfwf53Ar770GPtdpTDLUqvQeYpIBtC9/G2Jij2IJw==",
+       "license": "Apache-2.0",
+       "dependencies": {
+-        "@puppeteer/browsers": "3.2.0",
+-        "chromium-bidi": "17.0.2",
+-        "devtools-protocol": "0.0.1653615",
+-        "typed-query-selector": "^2.12.2",
+-        "webdriver-bidi-protocol": "0.4.2",
+-        "ws": "^8.21.1"
++        "@puppeteer/browsers": "3.2.6",
++        "chromium-bidi": "157.0.8090-0",
++        "devtools-protocol": "0.0.1704951",
++        "typed-query-selector": "^2.12.3",
++        "webdriver-bidi-protocol": "1
 ```
 
 ---
 
-### Incident Patch 2: `ee93a555` (2026-10-25)
-**Commit Message**: fix(p/NAMECHEAP): stop corrupting TXT records longer than 255 bytes (#5036)
+### Incident Patch 2: `08c0d2a4` (2026-10-26)
+**Commit Message**: build(deps-dev): bump fast-uri from 3.1.8 to 3.1.9 (#5045)
 
-Since v5, pushing a TXT record longer than 255 bytes to Namecheap breaks
-it. `generateRecords()` uploads `rc.GetRDATA().String()`, so the value
-goes up in quoted form (`"seg1" "seg2"`). Namecheap stores that as-is
-and does its own splitting, so the zone ends up with a space at the
-start of the second segment. The next `preview` sees the difference and
-wants to push again, and every push breaks it again.
+Bumps [fast-uri](https://github.com/fastify/fast-uri) from 3.1.8 to
+3.1.9.
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a
+href="https://github.com/fastify/fast-uri/releases">fast-uri's
+releases</a>.</em></p>
+<blockquote>
+<h2>v3.1.9</h2>
+<h2>Security</h2>
+<p>This security release fixes four URI parsing and normalization
+vulnerabilities in fast-uri 3.x. Applications that process untrusted URI
+input should upgrade to v3.1.9.</p>
+<ul>
+<li><strong>Medium — URI scheme spoofing through percent-encoded
+schemes</strong> (<a
+href="https://github.com/fastify/fast-uri/security/advisories/GHSA-w74x-v6f9-j3xg">GHSA-w74x-v6f9-j3xg</a>,
+CVE-2026-110306): percent-encoded scheme input is now rejected instead
+of being decoded into a live scheme.</li>
+<li><strong>Medium — Host confusion during domain-host
+canonicalization</strong> (<a
+href="https://github.com/fastify/fast-uri/security/advisories/GHSA-wjr9-j795-jxcr">GHSA-wjr9-j795-jxcr</a>,
+CVE-2026-110180): malformed domain hosts containing ambiguous delimiters
+or stripped control characters are now rejected instead of being
+silently rewritten.</li>
+<li><strong>Low — Incor
 
-This goes back to sending `rc.GetTargetTXTJoined()` for TXT, which is
-what the provider did before #4811. (#4566 modernized this code, but the
-TXT upload changed in #4811.)
-
-I tested it on my own domain with a 348-byte TXT record (values
-shortened):
-
-- before: `"…lenawa" " qfuxd9wsnwq…fx2phs"`, and `preview` showed a
-MODIFY on every run
-- after: `"…lenawa" "qfuxd9wsnwq…fx2phs"`, and `preview` shows `0
-corrections`
-
-I also moved the record building out of `generateRecords()` into
-`toNative()` so it could get a unit test, like the newer providers have.
-I haven't run the integration tests. The long-TXT cases in `complex TXT`
-weren't among the ones skipped in #4635, so they already run for
-NAMECHEAP and should
-
-**File**: `providers/namecheap/namecheapProvider.go` (modified, +9/-2)
+**File**: `package-lock.json` (modified, +3/-3)
 ```diff
-@@ -306,12 +306,12 @@ func toSRVRecords(result *nc.DomainSRVGetRecordsResult, dc *models.DomainConfig)
- 	return records, nil
- }
- 
--func (n *namecheapProvider) generateRecords(dc *models.DomainConfig) error {
-+func toNative(records models.Records) ([]nc.DomainDNSHost, []nc.DomainSRVRecord) {
- 	var recs []nc.DomainDNSHost
- 	var srvRecs []nc.DomainSRVRecord
- 
- 	id := 1
--	for _, rc := range dc.Records {
-+	for _, rc := range records {
- 
- 		if rc.Type == "SRV" {
- 			recServiceAndProtocol := strings.SplitAfterN(rc.GetLabel(), ".", 2)
-@@ -342,6 +342,8 @@ func (n *namecheapProvider) generateRecords(dc *models.DomainConfig) error {
- 				f := rc.AsMX()
- 				rec.MXPref = int(f.Preference)
- 				rec.Address = f.Mx
-+			case dnsv2.TypeTXT:
-+				rec.Address = rc.GetTargetTXTJoined()
- 			default:
- 				rec.Address = rc.GetRDATA().String()
+@@ -1573,9 +1573,9 @@
+       "license": "MIT"
+     },
+     "node_modules/fast-uri": {
+-      "version": "3.1.8",
+-      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.8.tgz",
+-      "integrity": "sha512-GZMtZUTNRpOVIECoXwLNZS5xUGE+mVNbTB8h/7Rwh2TFWcBQiPzTgyZi05BF9UMZKkLJv8XBRJTlU7zg8+ZfMg==",
++      "version": "3.1.9",
++      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.9.tgz",
++      "integrity": "sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==",
+       "dev": true,
+       "funding": [
+         {
+```
+
+---
+
+### Incident Patch 3: `f0e54a98` (2026-10-26)
+**Commit Message**: fix(IGNORE): bug: *.foo and **.foo both act like **.foo (*.foo has no "stop" pattern) (#5038)
+
+[`IGNORE.md`](https://github.com/DNSControl/dnscontrol/blob/ec3d8013718ba1dbc838c096e2e51a2572204d7e/documentation/language-reference/domain-modifiers/IGNORE.md?plain=1#L47-L49)
+says `IGNORE("*.foo")` ignores `bar.foo` but not `foo.bar.foo`.
+DNSControl ignores both.
+
+```js
+D("example.com", REG, DnsProvider(BIND), {no_ns: "true"},
+  SOA("@", "ns1.example.com.", "hostmaster.example.com.", 3600, 600, 604800, 1440),
+  IGNORE_NAME("*.foo"),
+  A("www", "192.0.2.1")
+);
+```
+
+With `www`, `bar.foo` and `x.bar.foo` in the BIND zone file, `preview`
+proposes nothing:
+
+```
+******************** Domain: example.com
+Done. 0 corrections.
+```
+
+Cause: [`compileUnmanagedConfigs` calls `glob.Compile` with no
+separator](https://github.com/DNSControl/dnscontrol/blob/ec3d8013718ba1dbc838c096e2e51a2572204d7e/pkg/diff2/handsoff.go#L256),
+and gobwas/glob then treats `*` and `**` alike. Before diff2, `pkg/diff`
+passed `'.'`.
+
+Fix: pass `'.'` for the label pattern. `preview` then ignores `bar.foo`
+only:
+
+```
+******************** Domain: example.com
+1 correction (bind)
+#1: 1 records not being deleted because of IGNORE*
+
+**File**: `pkg/diff2/handsoff.go` (modified, +1/-1)
+```diff
+@@ -253,7 +253,7 @@ func compileUnmanagedConfigs(configs []*models.UnmanagedConfig) error {
+ 		if c.LabelPattern == "" || c.LabelPattern == "*" {
+ 			c.LabelGlob = nil // nil indicates "always match"
+ 		} else {
+-			c.LabelGlob, err = glob.Compile(c.LabelPattern)
++			c.LabelGlob, err = glob.Compile(c.LabelPattern, '.')
+ 			if err != nil {
+ 				return err
  			}
-@@ -351,6 +353,11 @@ func (n *namecheapProvider) generateRecords(dc *models.DomainConfig) error {
- 
- 		id++
- 	}
-+	return recs, srvRecs
-+}
-+
-+func (n *namecheapProvider) generateRecords(dc *models.DomainConfig) error {
-+	recs, srvRecs := toNative(dc.Records)
- 	sld, tld := splitDomain(dc.Name)
- 	var err error
- 	doWithRetry(func() error {
 ```
 
-**File**: `providers/namecheap/namecheapProvider_test.go` (modified, +15/-0)
+**File**: `pkg/diff2/handsoff_test.go` (modified, +23/-0)
 ```diff
-@@ -6,8 +6,10 @@ import (
- 	"net/http/httptest"
- 	"net/url"
- 	"reflect"
-+	"strings"
- 	"testing"
- 
-+	"github.com/DNSControl/dnscontrol/v5/models"
- 	nc "github.com/willpower232/go-namecheap"
- )
- 
-@@ -93,3 +95,16 @@ func TestListZonesPaginates(t *testing.T) {
- 		t.Fatalf("pages requested = %v, want %v", requests, wantRequests)
- 	}
+@@ -222,6 +222,29 @@ FOREIGN:
+ 	`)
  }
-+
-+func TestToNativeLongTXT(t *testing.T) {
-+	dc := models.MustNewDomainConfig("example.com")
-+	rc, err := dc.NewRecordConfig("long", 300, "TXT", strings.Repeat("a", 300))
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	recs, _ := toNative(models.Records{rc})
-+	if got := recs[0].Address; got != strings.Repeat("a", 300) {
-+		t.Errorf("address = %q, want the joined value", got)
+ 
++func Test_ignore_lab_glob(t *testing.T) {
++	existingZone := `
++bar.foo IN A 1.1.1.1
++x.bar.foo IN A 2.2.2.2
++`
++	for _, tt := range []struct {
++		pattern string
++		ignored string
++	}{
++		{"*.foo", "bar.foo A 1.1.1.1\n"},
++		{"**.foo", "bar.foo A 1.1.1.1\nx.bar.foo A 2.2.2.2\n"},
++	} {
++		t.Run(tt.pattern, func(t *testing.T) {
++			desiredJs := fmt.Sprintf(`
++D("f.com", "none",
++	IGNORE_NAME(%q),
++{})
++`, tt.pattern)
++			handsoffHelper(t, existingZone, desiredJs, false, "IGNORED:\n"+tt.ignored+"FOREIGN:\n")
++		})
 +	}
 +}
-```
-
----
-
-### Incident Patch 3: `d0901a69` (2026-10-25)
-**Commit Message**: fix(LOC): preserve thousandths of arcseconds in coordinates (#5035)
-
-`LOC()` rounds the seconds of latitude and longitude to two decimals,
-although a LOC record holds thousandths of a second of arc and [RFC
-1876](https://www.rfc-editor.org/rfc/rfc1876.html#section-3) writes them
-up to `59.999`.
-
-```js
-D("foo.com", "none",
-  LOC("a", 42, 21, 43.952, "N", 71, 5, 6.344, "W", -24.01, 1, 200, 10));
-```
-
-`dnscontrol push` stores `42 21 43.950 N 71 05 6.340 W -24.01m 1m 200m
-10m` instead of `42 21 43.952 N 71 05 6.344 W -24.01m 1m 200m 10m`,
-about 6 cm off. When the provider already holds the precise record,
-`dnscontrol preview` proposes to replace it with the rounded one.
-
-Cause: [`MakeLOC` formats both seconds with
-`%.2f`](https://github.com/DNSControl/dnscontrol/blob/eb029724dd6b14aba9bf8586735379b72fd8933d/models/makers.go#L218)
-before it parses the record. This came in with [the dnsv2
-refactor](https://github.com/DNSControl/dnscontrol/commit/be513877a30aaa0dcb675fee60e75a5902b4d90f).
-
-Fix: use `%.3f` for both seconds. The nine `045-loc` golden records go
-back to the values they had before that refactor.
-
-Test: the existing `045-loc.js` case fails without the fix and passes
-with it. `
-
-**File**: `models/makers.go` (modified, +1/-1)
-```diff
-@@ -215,7 +215,7 @@ func MakeLOC(origin string, _ map[string]string, isEnabled nrc.Flags, args ...an
- 	// The 12-item version needs to be turned into the 7-item packed version.
- 	// The easiest way to do that is to let dnsv2 do it for us.
- 	// It is a little extra parsing, but why re-invent the wheel?
--	x := fmt.Sprintf("%d %d %.2f %s %d %d %.2f %s %.2f %.2f %0.2f %0.2f ", a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11)
-+	x := fmt.Sprintf("%d %d %.3f %s %d %d %.3f %s %.2f %.2f %0.2f %0.2f ", a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11)
- 	// y := fmt.Sprintf("0=%d 1=%d 2=%.2f 3=%s 4=%d 5=%d 6=%.2f 7=%s 8=%.2f 9=%.2f 10=%0.2f 11=%0.2f ", a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11)
- 	// fmt.Printf("DEBUG: loc y=%q\n", y)
- 	rd, err := dnsv2.NewData(dnsv2.TypeLOC, x, origin)
-```
-
-**File**: `pkg/js/parse_tests/045-loc.json` (modified, +27/-27)
-```diff
-@@ -24,15 +24,15 @@
-           "typenum": 29
-         },
-         {
--          "comparablev3": "42 21 43.950 N 71 05 6.340 W -24.01m 1m 200m 10m",
-+          "comparablev3": "42 21 43.952 N 71 05 6.344 W -24.01m 1m 200m 10m",
-           "filepos": "[line:4:5]",
-           "name": "a",
-           "name_unicode": "a",
-           "rdata": {
-             "Altitude": 9997599,
-             "HorizPre": 36,
--            "Latitude": 2299987598,
--            "Longitude": 1891577308,
-+            "Latitude": 2299987600,
-+            "Longitude": 1891577304,
-             "Size": 18,
-             "Version": 0,
-             "VertPre": 19
-@@ -60,15 +60,15 @@
-           "typenum": 29
-         },
-         {
--          "comparablev3": "51 30 3.030 N 00 07 28.650 W 6m 0.00m 0.00m 0.00m",
-+          "comparablev3": "51 30 3.033 N 00 07 28.651 W 6m 0.00m 0.00m 0.00m",
-           "filepos": "[line:23:5]",
-           "name": "big-ben",
-           "name_unicode": "big-ben",
-           "rdata": {
-             "Altitude": 10000600,
-             "HorizPre": 0,
--            "Latitude": 2332886678,
--            "Longitude": 2147034998,
-+            "Latitude": 2332886681,
-+            "Longitude": 2147034997,
-             "Size": 0,
-             "Version": 0,
-             "VertPre": 0
-@@ -96,15 +96,15 @@
-           "typenum": 29
-         },
-         {
--          "comparablev3": "42 21 28.760 N 71 00 51.620 W -44m 2000m 0.00m 0.00m",
-+          "comparablev3": "42 21 28.764 N 71 00 51.617 W -44m 2000m 0.00m 0.00m",
-           "filepos": "[line:7:5]",
-           "name": "d",
-           "name_unicode": "d",
-           "rdata": {
-             "Altitude": 9995600,
-             "HorizPre": 0,
--            "Latitude": 2299972408,
--            "Longitude": 1891832028,
-+            "Latitude": 2299972412,
-+            "Longitude": 1891832031,
-             "Size": 37,
-             "Version": 0,
-             "VertPre": 0
-@@ -114,15 +114,15 @@
-           "typenum": 29
-         },
-         {
--          "comparablev3": "42 21 28.760 N 71 00 51.620 W 42849672.95m 2000m 0.00m 0.00m",
-+          "comparablev3": "42 21 28.764 N 71 00 51.617 W 42849672.95m 2000m 0.00m 0.00m",
-           "filepos": "[line:8:5]",
-           "name": "d-alt-highest",
-           "name_unicode": "d-alt-highest",
-           "rdata": {
-             "Altitude": 4294967295,
-             "HorizPre": 0,
--            "Latitude": 2299972408,
--            "Longitude": 1891832028,
-+            "Latitude": 2299972412,
-+            "Longitude": 1891832031,
-             "Size": 37,
-             "Version": 0,
-             "VertPre": 0
-@@ -132,15 +132,15 @@
-           "typenum": 29
-         },
-         {
--          "comparablev3": "42 21 28.760 N 71 00 51.620 W -100000m 2000m 0.00m 0.00m",
-+          "comparablev3": "42 21 28.764 N 71 00 51.617 W -100000m 2000m 0.00m 0.00m",
-           "filepos": "[line:9:5]",
-           "name": "d-alt-lowest",
-           "name_unicode": "d-alt-lowest",
-           "rdata": {
-             "Altitude": 0,
-             "HorizPre": 0,
--            "Latitude": 2299972408,
--            "Longitude": 1891832028,
-+            "Latitude": 2299972412,
-+            "Longitude": 1891832031,
-             "Size": 37,
-             "Version": 0,
-             "VertPre": 0
-@@ -150,15 +150,15 @@
-           "typenum": 29
-         },
-         {
--          "comparablev3": "42 21 28.760 N 71 00 51.620 W 0m 1m 90000000m 0.00m",
-+          "comparablev3": "42 21 28.764 N 71 00 51.617 W 0m 1m 90000000m 0.00m",
-           "filepos": "[line:12:5]",
-           "name": "d-horizprecision-hi",
-           "name_unicode": "d-horizprecision-hi",
-           "rdata": {
-             "Altitude": 10000000,
-             "HorizPre": 153,
--            "Latitude": 2299972408,
--            "Longitude": 1891832028,
-+            "Latitude": 2299972412,
-+            "Longitude": 1891832031,
-             "Size": 18,
-             "Version": 0,
-             "VertPre": 0
-@@ -168,15 +168,15 @@
-           "typenum": 29
-         },
-         {
--          "comparablev3": "42 21 28.760 N 71 00 51.620 W 0m 90000000m 0.00m 0.00m",
-+          "comparablev3": "42 21 28.764 N 71 00 51.617 W 0m 90000000m 0.00m 0.00m",
-           "filepos": "[line:17:5]",
-           "name": "d-size-hi",
-           "name_unicode": "d-size-hi",
-           "rdata": {
-             "Altitude": 10000000,
-             "HorizPre": 0,
--            "Latitude": 2299972408,
--            "Longitude": 1891832028,
-+            "Latitude": 2299972412,
-+            "Longitude": 1891832031,
-             "Size": 153,
-             "Version": 0,
-             "VertPre": 0
-@@ -186,15 +186,15 @@
-           "typenum": 29
-         },
-         {
--          "comparablev3": "42 21 28.760 N 71 00 51.620 W 0m 1m 0.00m 90000000m",
-+          "comparablev3": "42 21 28.764 N 71 00 51.617 W 0m 1m 0.00m 90000000m",
-           "filepos": "[line:18:5]",
-           "name": "d-vertprecision-hi",
-           "name_unicode": "d-vertprecision-hi",
-           "rdata": {
-             "
-```
-
-**File**: `pkg/js/parse_tests/045-loc/foo.com.zone` (modified, +9/-9)
-```diff
-@@ -1,15 +1,15 @@
- $TTL 300
- @                IN LOC   42 21 54.000 N 71 06 18.000 W -24m 30m 0.00m 0.00m
--a                IN LOC   42 21 43.950 N 71 05 6.340 W -24.01m 1m 200m 10m
-+a                IN LOC   42 21 43.952 N 71 05 6.344 W -24.01m 1m 200m 10m
- b                IN LOC   52 14 5.000 N 00 08 50.000 E 10.33m 0.00m 0.00m 0.00m
--big-ben          IN LOC   51 30 3.030 N 00 07 28.650 W 6m 0.00m 0.00m 0.00m
-+big-ben          IN LOC   51 30 3.033 N 00 07 28.651 W 6m 0.00m 0.00m 0.00m
- c                IN LOC   32 07 19.000 S 116 02 25.000 E 10m 0.00m 0.00m 0.00m
--d                IN LOC   42 21 28.760 N 71 00 51.620 W -44m 2000m 0.00m 0.00m
--d-alt-highest    IN LOC   42 21 28.760 N 71 00 51.620 W 42849672.95m 2000m 0.00m 0.00m
--d-alt-lowest     IN LOC   42 21 28.760 N 71 00 51.620 W -100000m 2000m 0.00m 0.00m
--d-horizprecision-hi IN LOC 42 21 28.760 N 71 00 51.620 W 0m 1m 90000000m 0.00m
--d-size-hi        IN LOC   42 21 28.760 N 71 00 51.620 W 0m 90000000m 0.00m 0.00m
--d-vertprecision-hi IN LOC 42 21 28.760 N 71 00 51.620 W 0m 1m 0.00m 90000000m
-+d                IN LOC   42 21 28.764 N 71 00 51.617 W -44m 2000m 0.00m 0.00m
-+d-alt-highest    IN LOC   42 21 28.764 N 71 00 51.617 W 42849672.95m 2000m 0.00m 0.00m
-+d-alt-lowest     IN LOC   42 21 28.764 N 71 00 51.617 W -100000m 2000m 0.00m 0.00m
-+d-horizprecision-hi IN LOC 42 21 28.764 N 71 00 51.617 W 0m 1m 90000000m 0.00m
-+d-size-hi        IN LOC   42 21 28.764 N 71 00 51.617 W 0m 90000000m 0.00m 0.00m
-+d-vertprecision-hi IN LOC 42 21 28.764 N 71 00 51.617 W 0m 1m 0.00m 90000000m
- fraser-island    IN LOC   25 14 24.000 S 153 09 0.000 E 3m 0.00m 0.00m 0.00m
- guinness-brewery IN LOC   53 20 40.000 N 06 17 20.000 W 300m 0.00m 0.00m 0.00m
- hawaii           IN LOC   21 30 0.000 N 158 00 0.000 W 920m 0.00m 0.00m 0.00m
-@@ -20,4 +20,4 @@ opera-house3     IN LOC   33 51 31.000 S 151 12 51.000 E 4m 0.00m 0.00m 0.00m
- opera-house4     IN LOC   33 51 31.000 S 151 12 51.000 E 4m 0.00m 0.00m 0.00m
- ribblehead-viaduct IN LOC 54 12 38.000 N 02 22 13.000 W 300m 0.00m 0.00m 0.00m
- tasmania         IN LOC   42 00 0.000 S 147 00 0.000 E 3m 0.00m 0.00m 0.00m
--white-house      IN LOC   38 53 51.940 N 77 02 11.580 W 19m 0.00m 0.00m 0.00m
-+white-house      IN LOC   38 53 51.935 N 77 02 11.584 W 19m 0.00m 0.00m 0.00m
++
+ func Test_ignore_target(t *testing.T) {
+ 	existingZone := `
+ foo1 IN A 1.1.1.1
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5036** (2026-10-25): fix(p/NAMECHEAP): stop corrupting TXT records longer than 255 bytes (@louneskmt)
-- **PR #5035** (2026-10-25): fix(LOC): preserve thousandths of arcseconds in coordinates (@spicysharkco)
-- **PR #5034** (2026-10-25): fix(D_EXTEND): ignore the empty tag when extending a subdomain (@spicysharkco)
-- **PR #5031** (2026-10-21): chore: update dependencies (@TomOnTime)
-- **PR #5030** (2026-10-21): fix(diff2): MODIFY messages not showing provider-specific fields (@cvas22)
-- **PR #5029** (2026-10-21): feat(p/CONSTELLIX): add Constellix DNS provider (@ZeroClover)
+- **PR #5046** (2026-10-27): fix(p/CLOUDPRESS): halve zone fetches and make retry backoff configurable (@arnoschoon)
+- **PR #5045** (2026-10-26): build(deps-dev): bump fast-uri from 3.1.8 to 3.1.9 (@dependabot[bot])
+- **PR #5044** (2026-10-26): build(deps): bump zod and puppeteer (@dependabot[bot])
+- **PR #5042** (2026-10-27): fix(p/LUADNS): bug: occasional "Server returned bad status code (500)" fails a push (@TomOnTime)
+- **PR #5041** (closed): fix(p/LUADNS): bug: occasional "Server returned bad status code (500)" fails a push (@TomOnTime)
+- **PR #5040** (2026-10-26): fix(AZURE_DNS): bug: intermittent "resource type does not match the type in the request body" errors (@TomOnTime)
 
 ---
 
@@ -1189,34 +1019,60 @@ with it. `
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. D_EXTEND): ignore the empty tag when extending a subdomain (#5034)
+## X. build(deps): bump zod and puppeteer (#5044)
 
 **RULE**:
-When implementing operations in `pkg/js/helpers.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ec3d8013`: D_EXTEND): ignore the empty tag when extending a subdomain (#5034). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `01079f52`: build(deps): bump zod and puppeteer (#5044). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/js/helpers.js`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    // The empty tag is not part of the name: "example.com!" is "example.com".
-    name = _removeEmptyTag(name)[0];
-    var domainName = _removeEmptyTag(domain.obj.name)[0];
-    domain.obj.subdomain = name.substr(0, name.length - domainName.length - 1);
+      "version": "3.2.6",
+      "resolved": "https://registry.npmjs.org/@puppeteer/browsers/-/browsers-3.2.6.tgz",
+      "integrity": "sha512-MJP29gVoHznmqmwhH1tlZqzfeQ3aylTpSSa6WKZXtkwYUH02i9imBmWGTyZrbnAou5paX78SE4jMAUqnEPf8ug==",
+        "modern-tar": "^0.8.6",
+      "version": "157.0.8090-0",
+      "resolved": "https://registry.npmjs.org/chromium-bidi/-/chromium-bidi-157.0.8090-0.tgz",
+      "integrity": "sha512-KJw7IQgqXwxpJgJlEIPg5mr2ZoqA+jkTRtc5EABI7sUJ3bu3cpI7NuEBoj4Gn1AsF78CaT9So5WQWspK3/wYag==",
+        "zod": "^4.6.5"
+      "version": "0.0.1704951",
+      "resolved": "https://registry.npmjs.org/devtools-protocol/-/devtools-protocol-0.0.1704951.tgz",
+      "integrity": "sha512-GQhQOs9u/Mvm1zMtJIH872JS4AskuZdUSsPNPk4ChahtWAUqgz6atEtIsMt+nO7MqF1Ic4HxII/k8Cu36JivNg==",
+      "version": "0.8.6",
+      "resolved": "https://registry.npmjs.org/modern-tar/-/modern-tar-0.8.6.tgz",
+      "integrity": "sha512-LYSks0tNVqbtez/9OB0YFP6qLRSqkdAxJWOQpVaR67lNTbj2zNLyYpowkRMia5lXLCZKzxwoxkxH2MbbBR2aEg==",
+      "version": "25.16.0",
+      "resolved": "https://registry.npmjs.org/puppeteer/-/puppeteer-25.16.0.tgz",
+      "integrity": "sha512-LOr3reYnxAYYfQkpopz1fQnL0LdvqhpR5U2Fu+QnwzTX2gpVTH
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-    domain.obj.subdomain = name.substr(
-        0,
-        name.length - domain.obj.name.length - 1
-    );
+      "version": "3.2.0",
+      "resolved": "https://registry.npmjs.org/@puppeteer/browsers/-/browsers-3.2.0.tgz",
+      "integrity": "sha512-LlBrE8oqGfU7b1Nk2d5Q1SbuPhZxTj0cJEMDPEws28OjNMELlflekmPPuf4FnK03x0ZRjKaYwJElUcKK4kyqJA==",
+        "modern-tar": "^0.8.0",
+      "version": "17.0.2",
+      "resolved": "https://registry.npmjs.org/chromium-bidi/-/chromium-bidi-17.0.2.tgz",
+      "integrity": "sha512-5v9GQFhTktFvotn/OFNJBmKLKRAb6n9r0bVCwf7sHgWc3/JryK0bj1nn93L3pHFrfgcsu6Be6EWsDi+1XHTGDg==",
+        "zod": "^3.24.1"
+      "version": "0.0.1653615",
+      "resolved": "https://registry.npmjs.org/devtools-protocol/-/devtools-protocol-0.0.1653615.tgz",
+      "integrity": "sha512-pGVkY3T/qXxAp2nFPodwYqOevk6ncNMSmvL8QfRCx5ZWGd6Vor7AFNmyaA8Zs6uJyP1QAfjuLandCgvSix1BNA==",
+      "version": "0.8.4",
+      "resolved": "https://registry.npmjs.org/modern-tar/-/modern-tar-0.8.4.tgz",
+      "integrity": "sha512-gN54ddmyzEg10orwZ2u4OOv+bjpMWdIl5jIkodK97bMq8QBSL5c0D7YX0lT1Ooz+99S7+PvFbnxzdjgHo1r41g==",
+      "version": "25.6.0",
+      "resolved": "https://registry.npmjs.org/puppeteer/-/puppeteer-25.6.0.tgz",
+      "integrity": "sha512-TXUolDddU4AwISjOOrGk2AhJDpbM/ZDt2KvGIqz74EOk+8bKwXFo+acUvP1sQx3
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ec3d8013` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `01079f52` are properly handled with clean fallback behavior.

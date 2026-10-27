@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-V2TF",
-    "timestamp": "2026-10-25T18:28:18.819Z",
-    "repository": "react-bootstrap/react-bootstrap",
-    "learningId": "learn-github-react-bootstrap-react-bootstrap",
-    "contentHash": "f991a88efa37ff43d16712c775834fa8f7d91b8b98d63903532ac2b73ea2b997",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-V455",
-    "timestamp": "2026-10-25T18:28:20.537Z",
-    "repository": "grpc/grpc-rust",
-    "learningId": "learn-github-grpc-grpc-rust",
-    "contentHash": "66d6323c7237f376be7300f07de219871bdfe7a1f8ecc465a48989236056f21e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-3CBV",
-    "timestamp": "2026-10-25T18:34:44.395Z",
-    "repository": "CompVis/stable-diffusion-v1-4",
-    "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
-    "contentHash": "93d9d2f03d3f0164e733243634d005078d44b01a2cfd4a1859c2525fd15518e7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-3CHB",
-    "timestamp": "2026-10-25T18:34:44.591Z",
-    "repository": "microsoft/fluentui",
-    "learningId": "learn-github-microsoft-fluentui",
-    "contentHash": "5c3c7badcc9bb5e72c3af8cf3768e88054710d349029ce733d521e065e0846c2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-B48A",
-    "timestamp": "2026-10-25T18:40:47.146Z",
-    "repository": "salvo-rs/salvo",
-    "learningId": "learn-github-salvo-rs-salvo",
-    "contentHash": "b4ec955abd099a1daf7a95d7849302b55332daff5834cb57d4f53d3e28c6c3d6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-BEBD",
     "timestamp": "2026-10-25T18:41:00.217Z",
     "repository": "meta-llama/Meta-Llama-3-8B",
@@ -7490,6 +7415,81 @@
     "repository": "Ontos-AI/knowhere",
     "learningId": "learn-github-ontos-ai-knowhere",
     "contentHash": "b2658a611c3bd8b95f348fef620e09bd867e4702e88c41d42a5db18414d4ac3c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-RNTH",
+    "timestamp": "2026-10-27T17:05:01.013Z",
+    "repository": "zenbu-labs/terminal-browser",
+    "learningId": "learn-github-zenbu-labs-terminal-browser",
+    "contentHash": "535ccf426e428c75a430816cea90d0d784ee0d4a6348a54aceded51dbee9a174",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-RUQL",
+    "timestamp": "2026-10-27T17:05:09.981Z",
+    "repository": "DNSControl/dnscontrol",
+    "learningId": "learn-github-dnscontrol-dnscontrol",
+    "contentHash": "f4c07c7835a349f42442338ddfbac6a3625e4f0ee1f58e62532be6f44e8497a9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-RWGX",
+    "timestamp": "2026-10-27T17:05:12.225Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "9a9df49b4d8d50c63ff5b4fec3c1560d108c08489fefadd4109d5861ab0abca3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-RXOM",
+    "timestamp": "2026-10-27T17:05:13.798Z",
+    "repository": "tickernelz/opencode-mem",
+    "learningId": "learn-github-tickernelz-opencode-mem",
+    "contentHash": "86a4a89e24999dba3e70342f64b6cbd4f18283be76bc387578d9655e671abbe0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-Y38N",
+    "timestamp": "2026-10-27T17:10:00.935Z",
+    "repository": "cosscom/coss",
+    "learningId": "learn-github-cosscom-coss",
+    "contentHash": "67122c0d74315fed3f8d7aaa95b94dfc1b8a4d02af7dc4ff1e1dbf3fe054d4f9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
