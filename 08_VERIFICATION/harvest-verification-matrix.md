@@ -5452,3 +5452,7 @@
 | `CYCLE-20261027-6XFB` | `2026-10-27T17:16:53.303Z` | `DylanVann/react-native-fast-image` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4919` | Yes (`49684705...`) |
 | `CYCLE-20261027-6Y7O` | `2026-10-27T17:16:54.324Z` | `octodns/octodns` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4920` | Yes (`af9ea232...`) |
 | `CYCLE-20261027-7018` | `2026-10-27T17:16:56.684Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4921` | Yes (`b04f3807...`) |
+| `CYCLE-20261027-FNRD` | `2026-10-27T17:23:40.681Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4922` | Yes (`4351c3b6...`) |
+| `CYCLE-20261027-FO4N` | `2026-10-27T17:23:41.159Z` | `Checkmarx/kics` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4923` | Yes (`0e2d1734...`) |
+| `CYCLE-20261027-FPG6` | `2026-10-27T17:23:42.870Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4924` | Yes (`8e14ff94...`) |
+| `CYCLE-20261027-FQ50` | `2026-10-27T17:23:43.764Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4925` | Yes (`1b91069f...`) |

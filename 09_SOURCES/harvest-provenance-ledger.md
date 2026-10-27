@@ -5461,3 +5461,7 @@ Every entry in this ledger must capture:
 | `learn-github-dylanvann-react-native-fast-image` | `https://github.com/DylanVann/react-native-fast-image` | `3eef0244` | Multi-dimensional audit evidence | 2026-10-27T17:16:53.306Z |
 | `learn-github-octodns-octodns` | `https://github.com/octodns/octodns` | `d3d4a37a` | Multi-dimensional audit evidence | 2026-10-27T17:16:54.327Z |
 | `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `df14a286` | Multi-dimensional audit evidence | 2026-10-27T17:16:56.687Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `b205363a` | Multi-dimensional audit evidence | 2026-10-27T17:23:40.684Z |
+| `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `0f99087a` | Multi-dimensional audit evidence | 2026-10-27T17:23:41.162Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `26ce6d2e` | Multi-dimensional audit evidence | 2026-10-27T17:23:42.873Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `54d4c0fa` | Multi-dimensional audit evidence | 2026-10-27T17:23:43.767Z |

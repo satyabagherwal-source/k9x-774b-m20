@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `abcdcf19`  
+> **Source Version**: `26ce6d2e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T14:26:33.766Z  
+> **Timestamp**: 2026-10-27T17:23:42.441Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T14:26:33.110Z  
+> **Harvest Timestamp**: 2026-10-27T17:23:41.418Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32366 stars
+- **Stars / Engagement**: 32367 stars
 
 ---
 
@@ -1445,540 +1445,413 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `abcdcf19` (2026-10-27)
-**Commit Message**: Merge pull request #7940 from mazzz3r/feat/info-placeholders
+### Incident Patch 1: `26ce6d2e` (2026-10-27)
+**Commit Message**: Merge pull request #7959 from arxhr007/fix/7949-validate-missing-path
 
-feat(templates): fill placeholders in info description, impact and remediation
+fix(loader): fail -validate when a template path can't be found
 
-**File**: `SYNTAX-REFERENCE.md` (modified, +18/-0)
+**File**: `pkg/catalog/loader/loader.go` (modified, +10/-4)
 ```diff
-@@ -530,6 +530,16 @@ Description of the template.
+@@ -631,10 +631,10 @@ func (store *Store) noteMissingCapabilities(templatePath string, missingCaps []t
+ // erroring out on discovering any faulty templates.
+ func (store *Store) ValidateTemplates() error {
+ 	templatePaths, errs := store.config.Catalog.GetTemplatesPath(store.finalTemplates)
+-	store.logErroredTemplates(errs)
++	notFound := store.logErroredTemplates(errs)
  
- You can go in-depth here on what the template actually does.
+ 	workflowPaths, errs := store.config.Catalog.GetTemplatesPath(store.finalWorkflows)
+-	store.logErroredTemplates(errs)
++	notFound += store.logErroredTemplates(errs)
  
-+Description, impact and remediation may hold {{placeholders}} filled for
-+each finding: named extractors, payloads, variables and DSL helpers
-+(network helpers excluded), and the result fields host, port, ip, url,
-+scheme, path, matched-at, matcher-name and extractor-name, which win over
-+values of the same name. Use join(", ", name) for an extractor with
-+several values, and brackets for a hyphenated name inside a helper:
-+to_upper([matcher-name]). Unknown placeholders stay as written, and so
-+does a field whose expression fails. Global matcher templates match on
-+other templates' responses, so only the result fields fill their text.
-+
+ 	templatePathsMap := make(map[string]struct{}, len(templatePaths))
+ 	for _, path := range templatePaths {
+@@ -646,7 +646,8 @@ func (store *Store) ValidateTemplates() error {
+ 		workflowPathsMap[path] = struct{}{}
+ 	}
  
+-	if store.areTemplatesValid(templatePathsMap) && store.areWorkflowsValid(workflowPathsMap) {
++	// a path that can't be resolved is not validated, so it can't count as valid
++	if store.areTemplatesValid(templatePathsMap) && store.areWorkflowsValid(workflowPathsMap) && notFound == 0 {
+ 		return nil
+ 	}
  
- Examples:
-@@ -543,6 +553,10 @@ description: Bower is a package manager which stores package information in the
- description: Subversion ALM for the enterprise before 8.8.2 allows reflected XSS at multiple locations
- ```
+@@ -1056,10 +1057,15 @@ func workflowContainsProtocol(workflow []*workflows.WorkflowTemplate) bool {
+ 	return false
+ }
  
-+```yaml
-+description: Redis {{version}} on {{host}}:{{port}} accepts the default password
-+```
-+
- 
- </div>
- 
-@@ -559,6 +573,8 @@ Impact of the template.
- 
- You can go in-depth here on impact of the template.
- 
-+Supports the same placeholders as description.
-+
- 
- 
- Examples:
-@@ -665,6 +681,8 @@ Remediation steps for the template.
- 
- You can go in-depth here on how to mitigate the problem found by this template.
- 
-+Supports the same placeholders as description.
-+
- 
- 
- Examples:
+-func (s *Store) logErroredTemplates(erred map[string]error) {
++// logErroredTemplates logs the templates that could not be found and returns
++// how many of them were not handled by the NotFoundCallback.
++func (s *Store) logErroredTemplates(erred map[string]error) int {
++	notFound := 0
+ 	for template, err := range erred {
+ 		if s.NotFoundCallback == nil || !s.NotFoundCallback(template) {
+ 			s.logger.Error().Msgf("Could not find template '%s': %s", template, err)
++			notFound++
+ 		}
+ 	}
++	return notFound
+ }
 ```
 
-**File**: `pkg/model/model.go` (modified, +63/-0)
+**File**: `pkg/catalog/loader/loader_test.go` (modified, +43/-20)
 ```diff
-@@ -1,9 +1,13 @@
- package model
+@@ -176,25 +176,8 @@ func TestLoadTemplatesOnlyMetadataLogsCachedTemplateParseErrors(t *testing.T) {
+ 	require.Contains(t, output.String(), "Could not load template")
+ }
  
- import (
-+	"slices"
+-func TestValidateTemplatesRejectsRuntimeCompilationError(t *testing.T) {
+-	templatePath := filepath.Join(t.TempDir(), "invalid-regex-group.yaml")
+-	require.NoError(t, os.WriteFile(templatePath, []byte(`id: invalid-regex-group
+-
+-info:
+-  name: Invalid Regex Group
+-  author: pdteam
+-  severity: info
+-
+-http:
+-  - method: GET
+-    path:
+-      - "{{BaseURL}}"
+-    extractors:
+-      - type: regex
+-        group: -1
+-        regex:
+-          - "(a)(b)"
+-`), 0o600))
++func newValidateStore(t *testing.T, executionID, templatePath string) (*Store, *bytes.Buffer) {
++	t.Helper()
+ 
+ 	options := testutils.DefaultOptions.Copy()
+ 	var output bytes.Buffer
+@@ -203,7 +186,7 @@ http:
+ 	logger.SetWriter(&utils.CaptureWriter{Buffer: &output})
+ 	logger.SetMaxLevel(levels.LevelDebug)
+ 	options.Logger = logger
+-	options.ExecutionId = "loader-invalid-regex-group"
++	options.ExecutionId = executionID
+ 	options.Templates = []string{templatePath}
+ 	options.Validate = true
+ 	options.TemplateLoadingConcurrency = 1
+@@ -226,10 +209,50 @@ http:
+ 
+ 	store, err := New(NewConfig(options, catalog, executerOpts))
+ 	require.NoError(t, err)
++	return store, &output
++}
++
++func TestValidateTemplatesRejectsRuntimeCompilationError(t *testing.T) {
++	templatePath := filepath.Join(t.TempDir(), "invalid-regex-group.yaml")
++	require.NoError(t, os.WriteFile(templatePath, []byte(`id: invalid-regex-group
++
++info:
++  name: Invalid Regex Group
++  author: pdteam
++  severity: info
++
++http:
++  - method: GET
++    path:
++      - "{{BaseURL}}"
++    extractors:
++      - type: regex
++        group: -1
++        regex:
++          - "(a)(b)"
++`), 0o600))
++
++	store, output := newValidateStore(t, "loader-invalid-regex-group", templatePath)
+ 	require.Error(t, store.ValidateTemplates())
+ 	require.Contains(t, output.String(), "regex extractor group must be >= 0")
+ }
+ 
++func TestValidateTemplatesRejectsMissingTemplatePath(t *testing.T) {
++	templatePath := filepath.Join(t.TempDir(), "no-such-templates")
++
++	store, output := newValidateStore(t, "loader-missing-template-path", templatePath)
++	require.Error(t, store.ValidateTemplates())
++	require.Contains(t, output.String(), "Could not find template")
++}
++
++func TestValidateTemplatesAcceptsMissingPathHandledByCallback(t *testing.T) {
++	templatePath := filepath.Join(t.TempDir(), "no-such-templates")
++
++	store, _ := newValidateStore(t, "loader-missing-path-callback", templatePath)
++	store.NotFoundCallback = func(string) bool { return true }
++	require.NoError(t, store.ValidateTemplates())
++}
++
+ func TestRemoteTemplates(t *testing.T) {
+ 	catalog := disk.NewCatalog("")
+ 
+```
+
+---
+
+### Incident Patch 2: `a4afaa41` (2026-10-27)
+**Commit Message**: fix(loader): fail -validate when a template path can't be found
+
+`nuclei -validate -t /no/such/path` logged "Could not find template" and
+then still printed "All templates validated successfully" and exited 0,
+so a mistyped path in a CI step passed. ValidateTemplates ignored the
+paths that GetTemplatesPath could not resolve.
+
+Count the paths that aren't handled by NotFoundCallback and return the
+validation error when there is any. Paths the callback resolves are
+still accepted.
+
+Fixes #7949
+
+**File**: `pkg/catalog/loader/loader.go` (modified, +10/-4)
+```diff
+@@ -631,10 +631,10 @@ func (store *Store) noteMissingCapabilities(templatePath string, missingCaps []t
+ // erroring out on discovering any faulty templates.
+ func (store *Store) ValidateTemplates() error {
+ 	templatePaths, errs := store.config.Catalog.GetTemplatesPath(store.finalTemplates)
+-	store.logErroredTemplates(errs)
++	notFound := store.logErroredTemplates(errs)
+ 
+ 	workflowPaths, errs := store.config.Catalog.GetTemplatesPath(store.finalWorkflows)
+-	store.logErroredTemplates(errs)
++	notFound += store.logErroredTemplates(errs)
+ 
+ 	templatePathsMap := make(map[string]struct{}, len(templatePaths))
+ 	for _, path := range templatePaths {
+@@ -646,7 +646,8 @@ func (store *Store) ValidateTemplates() error {
+ 		workflowPathsMap[path] = struct{}{}
+ 	}
+ 
+-	if store.areTemplatesValid(templatePathsMap) && store.areWorkflowsValid(workflowPathsMap) {
++	// a path that can't be resolved is not validated, so it can't count as valid
++	if store.areTemplatesValid(templatePathsMap) && store.areWorkflowsValid(workflowPathsMap) && notFound == 0 {
+ 		return nil
+ 	}
+ 
+@@ -1056,10 +1057,15 @@ func workflowContainsProtocol(workflow []*workflows.WorkflowTemplate) bool {
+ 	return false
+ }
+ 
+-func (s *Store) logErroredTemplates(erred map[string]error) {
++// logErroredTemplates logs the templates that could not be found and returns
++// how many of them were not handled by the NotFoundCallback.
++func (s *Store) logErroredTemplates(erred map[string]error) int {
++	notFound := 0
+ 	for template, err := range erred {
+ 		if s.NotFoundCallback == nil || !s.NotFoundCallback(template) {
+ 			s.logger.Error().Msgf("Could not find template '%s': %s", template, err)
++			notFound++
+ 		}
+ 	}
++	return notFound
+ }
+```
+
+**File**: `pkg/catalog/loader/loader_test.go` (modified, +43/-20)
+```diff
+@@ -176,25 +176,8 @@ func TestLoadTemplatesOnlyMetadataLogsCachedTemplateParseErrors(t *testing.T) {
+ 	require.Contains(t, output.String(), "Could not load template")
+ }
+ 
+-func TestValidateTemplatesRejectsRuntimeCompilationError(t *testing.T) {
+-	templatePath := filepath.Join(t.TempDir(), "invalid-regex-group.yaml")
+-	require.NoError(t, os.WriteFile(templatePath, []byte(`id: invalid-regex-group
+-
+-info:
+-  name: Invalid Regex Group
+-  author: pdteam
+-  severity: info
+-
+-http:
+-  - method: GET
+-    path:
+-      - "{{BaseURL}}"
+-    extractors:
+-      - type: regex
+-        group: -1
+-        regex:
+-          - "(a)(b)"
+-`), 0o600))
++func newValidateStore(t *testing.T, executionID, templatePath string) (*Store, *bytes.Buffer) {
++	t.Helper()
+ 
+ 	options := testutils.DefaultOptions.Copy()
+ 	var output bytes.Buffer
+@@ -203,7 +186,7 @@ http:
+ 	logger.SetWriter(&utils.CaptureWriter{Buffer: &output})
+ 	logger.SetMaxLevel(levels.LevelDebug)
+ 	options.Logger = logger
+-	options.ExecutionId = "loader-invalid-regex-group"
++	options.ExecutionId = executionID
+ 	options.Templates = []string{templatePath}
+ 	options.Validate = true
+ 	options.TemplateLoadingConcurrency = 1
+@@ -226,10 +209,50 @@ http:
+ 
+ 	store, err := New(NewConfig(options, catalog, executerOpts))
+ 	require.NoError(t, err)
++	return store, &output
++}
++
++func TestValidateTemplatesRejectsRuntimeCompilationError(t *testing.T) {
++	templatePath := filepath.Join(t.TempDir(), "invalid-regex-group.yaml")
++	require.NoError(t, os.WriteFile(templatePath, []byte(`id: invalid-regex-group
++
++info:
++  name: Invalid Regex Group
++  author: pdteam
++  severity: info
++
++http:
++  - method: GET
++    path:
++      - "{{BaseURL}}"
++    extractors:
++      - type: regex
++        group: -1
++        regex:
++          - "(a)(b)"
++`), 0o600))
++
++	store, output := newValidateStore(t, "loader-invalid-regex-group", templatePath)
+ 	require.Error(t, store.ValidateTemplates())
+ 	require.Contains(t, output.String(), "regex extractor group must be >= 0")
+ }
+ 
++func TestValidateTemplatesRejectsMissingTemplatePath(t *testing.T) {
++	templatePath := filepath.Join(t.TempDir(), "no-such-templates")
++
++	store, output := newValidateStore(t, "loader-missing-template-path", templatePath)
++	require.Error(t, store.ValidateTemplates())
++	require.Contains(t, output.String(), "Could not find template")
++}
++
++func TestValidateTemplatesAcceptsMissingPathHandledByCallback(t *testing.T) {
++	templatePath := filepath.Join(t.TempDir(), "no-such-templates")
++
++	store, _ := newValidateStore(t, "loader-missing-path-callback", templatePath)
++	store.NotFoundCallback = func(string) bool { return true }
++	require.NoError(t, store.ValidateTemplates())
++}
++
+ func TestRemoteTemplates(t *testing.T) {
+ 	catalog := disk.NewCatalog("")
+ 
+```
+
+---
+
+### Incident Patch 3: `0f34b1b6` (2026-10-27)
+**Commit Message**: Merge pull request #7960 from projectdiscovery/fix/7957-exclude-hosts-match
+
+fix exclude-hosts matching unrelated hosts at dial time
+
+**File**: `pkg/protocols/common/protocolstate/state.go` (modified, +30/-1)
+```diff
+@@ -5,11 +5,14 @@ import (
+ 	"fmt"
+ 	"net"
+ 	"net/url"
++	"regexp"
+ 	"slices"
 +	"strings"
-+
- 	"github.com/invopop/jsonschema"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/severity"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/stringslice"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/marker"
- )
+ 	"time"
  
- type schemaMetadata struct {
-@@ -47,15 +51,28 @@ type Info struct {
- 	//
- 	//   You can go in-depth here on what the template actually does.
- 	//
-+	//   Description, impact and remediation may hold {{placeholders}} filled for
-+	//   each finding: named extractors, payloads, variables and DSL helpers
-+	//   (network helpers excluded), and the result fields host, port, ip, url,
-+	//   scheme, path, matched-at, matcher-name and extractor-name, which win over
-+	//   values of the same name. Use join(", ", name) for an extractor with
-+	//   several values, and brackets for a hyphenated name inside a helper:
-+	//   to_upper([matcher-name]). Unknown placeholders stay as written, and so
-+	//   does a field whose expression fails. Global matcher templates match on
-+	//   other templates' responses, so only the result fields fill their text.
-+	//
- 	// examples:
- 	//   - value: "\"Bower is a package manager which stores package information in the bower.json file\""
- 	//   - value: "\"Subversion ALM for the enterprise before 8.8.2 allows reflected XSS at multiple locations\""
-+	//   - value: "\"Redis {{version}} on {{host}}:{{port}} accepts the default password\""
- 	Description string `json:"description,omitempty" yaml:"description,omitempty" jsonschema:"title=description of the template,description=In-depth explanation on what the template does,type=string,example=Bower is a package manager which stores package information in the bower.json file"`
- 	// description: |
- 	//   Impact of the template.
- 	//
- 	//   You can go in-depth here on impact of the template.
- 	//
-+	//   Supports the same placeholders as description.
-+	//
- 	// examples:
- 	//   - value: "\"Successful exploitation of this vulnerability could allow an attacker to execute arbitrary SQL queries, potentially leading to unauthorized access, data leakage, or data manipulation.\""
- 	//   - value: "\"Successful exploitation of this vulnerability could allow an attacker to execute arbitrary script code in the context of the victim's browser, potentially leading to session hijacking, defacement, or theft of sensitive information.\""
-@@ -89,11 +106,57 @@ type Info struct {
- 	//
- 	//   You can go in-depth here on how to mitigate the problem found by this template.
- 	//
-+	//   Supports the same placeholders as description.
-+	//
- 	// examples:
- 	//   - value: "\"Change the default administrative username and password of Apache ActiveMQ by editing the file jetty-realm.properties\""
- 	Remediation string `json:"remediation,omitempty" yaml:"remediation,omitempty" jsonschema:"title=remediation steps for the template,description=In-depth explanation on how to fix the issues found by the template,example=Change the default administrative username and password of Apache ActiveMQ by editing the file jetty-realm.properties,type=string"`
- }
- 
-+// TextField is a free-text field of the info, labeled as reports show it.
-+type TextField struct {
-+	Label string
-+	Value *string
-+}
-+
-+// PlaceholderFields returns the free-text fields that may hold {{placeholders}}
-+// filled for each finding. Rendering, redaction and the sarif export all walk
-+// this one list, so a field added here is handled by every one of them.
-+func (i *Info) PlaceholderFields() []TextField {
-+	return []TextField{
-+		{Label: "Description", Value: &i.Description},
-+		{Label: "Impact", Value: &i.Impact},
-+		{Label: "Remediation", Value: &i.Remediation},
-+	}
-+}
-+
-+// HasPlaceholders reports whether the field holds a {{...}} or §...§ marker
-+// the renderer could fill.
-+func (f TextField) HasPlaceholders() bool {
-+	return strings.Contains(*f.Value, marker.ParenthesisOpen) || strings.Contains(*f.Value, marker.General)
-+}
-+
-+// HasPlaceholders reports whether any placeholder field holds a marker.
-+func (i *Info) HasPlaceholders() bool {
-+	return slices.ContainsFunc(i.PlaceholderFields(), TextField.HasPlaceholders)
-+}
-+
-+// FilledFields returns the placeholder fields whose text differs from written,
-+// the info as the template wrote it. A nil written means nothing was filled.
-+func (i *Info) FilledFields(written *Info) []TextField {
-+	if written == nil {
-+		return nil
-+	}
-+	writtenFields := written.PlaceholderFields()
-+	var filled []TextField
-+	for n, field := range i.PlaceholderFields() {
-+		if *field.Value != *writtenFields[n].Value {
-+			filled = append(filled, field)
-+		}
-+	}
-+	return filled
-+}
-+
- // JSONSchemaProperty returns the JSON schema property for the Info object.
- func (i Info) JSONSchemaExtend(base *jsonschema.Schema) {
- 	// since we are re-using a stringslice and rawStringSlice everywhere, we can extend/edit the schema here
-```
-
-**File**: `pkg/model/model_test.go` (modified, +18/-0)
-```diff
-@@ -135,3 +135,21 @@ func TestUnmarshal(t *testing.T) {
- 	info2 := assertUnmarshalledTemplateInfo(t, yamlPayload2)
- 	require.Equal(t, info1, info2)
- }
-+
-+func TestInfoFilledFields(t *testing.T) {
-+	written := Info{Description: "{{host}} is exposed", Impact: "Data loss"}
-+	filled := written
-+	filled.Description = "example.com is exposed"
-+
-+	require.Nil(t, filled.FilledFields(nil))
-+	fields := filled.FilledFields(&written)
-+	require.Len(t, fields, 1)
-+	require.Equal(t, "Description", fields[0].Label)
-+	require.Equal(t, "example.com is exposed", *fields[0].Value)
-+}
-+
-+func TestInfoHasPlaceholders(t *testing.T) {
-+	require.False(t, (&Info{Description: "Redis is exposed"}).HasPlaceholders())
-+	require.True(t, (&Info{Impact: "{{host}} is exposed"}).HasPlaceholders())
-+	require.True(t, (&Info{Remediation: "rotate §password§"}).HasPlaceholders())
-+}
-```
-
-**File**: `pkg/output/output.go` (modified, +8/-0)
-```diff
-@@ -237,6 +237,11 @@ type ResultEvent struct {
- 	FileToIndexPosition map[string]int `json:"-"`
- 	TemplateVerifier    string         `json:"-"`
- 	Error               string         `json:"error,omitempty"`
-+	// TemplateInfo is the info as the template wrote it, kept only when
-+	// placeholders changed the text. The changed fields can carry response data,
-+	// so they are redacted like the raw request and response. It is bookkeeping,
-+	// so no exporter writes it; mongo serializes with bson tags, not json ones.
-+	TemplateInfo *model.Info `json:"-" bson:"-"`
- }
- 
- type IssueTrackerMetadata struct {
-@@ -364,6 +369,9 @@ func (w *StandardWriter) Write(event *ResultEvent) error {
- 	event.Response = redactWithPatterns(event.Response, patterns)
- 	event.CURLCommand = redactWithPatterns(event.CURLCommand, patterns)
- 	event.Matched = redactWithPatterns(event.Matched, patterns)
-+	for _, field := range event.Info.FilledFields(event.TemplateInfo) {
-+		*field.Value = redactWithPatterns(*field.Value, patterns)
-+	}
- 
- 	event.Timestamp = time.Now()
- 
-```
-
-**File**: `pkg/output/output_test.go` (modified, +33/-0)
-```diff
-@@ -6,8 +6,11 @@ import (
- 	"testing"
- 
+ 	"github.com/go-sql-driver/mysql"
  	"github.com/pkg/errors"
-+	"github.com/projectdiscovery/goflags"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/model"
++	"golang.org/x/net/idna"
+ 	"golang.org/x/net/proxy"
+ 
+ 	"github.com/projectdiscovery/fastdialer/fastdialer"
+@@ -18,6 +21,7 @@ import (
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/http/httpcache"
  	"github.com/projectdiscovery/nuclei/v3/pkg/types"
- 	"github.com/stretchr/testify/require"
-+	"go.mongodb.org/mongo-driver/bson"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/utils/expand"
++	iputil "github.com/projectdiscovery/utils/ip"
+ 	mapsutil "github.com/projectdiscovery/utils/maps"
  )
  
- func TestStandardWriterRequest(t *testing.T) {
-@@ -51,6 +54,36 @@ func TestStandardWriterRequest(t *testing.T) {
- 	})
- }
+@@ -101,8 +105,10 @@ func initDialers(options *types.Options) error {
+ 		switch {
+ 		case asn.IsASN(excludeTarget):
+ 			expandedDenyList = append(expandedDenyList, expand.ASN(excludeTarget)...)
+-		default:
++		case iputil.IsIP(excludeTarget) || iputil.IsCIDR(excludeTarget):
+ 			expandedDenyList = append(expandedDenyList, excludeTarget)
++		default:
++			expandedDenyList = append(expandedDenyList, excludeHostRules(excludeTarget)...)
+ 		}
+ 	}
  
-+// Only the fields filled from a response are redacted; text the template wrote
-+// stays as it is, even next to a filled field.
-+func TestStandardWriterRedactsFilledInfo(t *testing.T) {
-+	w, err := NewStandardWriter(&types.Options{Redact: goflags.StringSlice{"password"}})
-+	require.NoError(t, err)
-+	w.DisableStdout = true
-+
-+	written := model.Info{Description: "login with password: {{password}}", Remediation: "Rotate the password: it is public"}
-+	filled := &ResultEvent{TemplateInfo: &written, Info: model.Info{Description: "login with password: admin", Remediation: written.Remediation}}
-+	static := &ResultEvent{Info: model.Info{Description: "send the password: header"}}
-+	require.NoError(t, w.Write(filled))
-+	require.NoError(t, w.Write(static))
-+
-+	require.Equal(t, "login with password: ***", filled.Info.Description)
-+	require.Equal(t, "Rotate the password: it is public", filled.Info.Remediation)
-+	require.Equal(t, "send the password: header", static.Info.Description)
-+}
-+
-+// The mongo exporter serializes results with bson, which ignores json tags.
-+func TestResultEventKeepsTemplateInfoOutOfBSON(t *testing.T) {
-+	written := model.Info{Description: "{{host}} is exposed"}
-+	data, err := bson.Marshal(&ResultEvent{TemplateInfo: &written, Info: model.Info{Description: "example.com is exposed"}})
-+	require.NoError(t, err)
-+
-+	var doc bson.M
-+	require.NoError(t, bson.Unmarshal(data, &doc))
-+	require.NotContains(t, doc, "templateinfo")
-+	require.Contains(t, doc, "info")
-+}
-+
- type testWriteCloser struct {
- 	strings.Builder
+@@ -335,3 +341,26 @@ func Close(executionId string) {
+ 		StopActiveMemGuardian()
+ 	}
  }
-```
-
-**File**: `pkg/protocols/http/operators_test.go` (modified, +47/-0)
-```diff
-@@ -304,6 +304,53 @@ func TestHTTPMakeResult(t *testing.T) {
- 	require.Equal(t, "1.1.1.1", finalEvent.Results[0].ExtractedResults[0], "could not get correct extracted results")
- }
- 
-+func TestHTTPMakeResultRendersInfo(t *testing.T) {
-+	options := testutils.DefaultOptions
 +
-+	testutils.Init(options)
-+	templateID := "testing-http-info"
-+	request := &Request{
-+		ID:     templateID,
-+		Path:   []string{"{{BaseURL}}"},
-+		Method: HTTPMethodTypeHolder{MethodType: HTTPGet},
-+		Operators: operators.Operators{
-+			Matchers: []*matchers.Matcher{{
-+				Part:  "body",
-+				Type:  matchers.MatcherTypeHolder{MatcherType: matchers.WordsMatcher},
-+				Words: []string{"version"},
-+			}},
-+			Extractors: []*extractors.Extractor{{
-+				Name:       "version",
-+				Part:       "body",
-+				Type:       extractors.ExtractorTypeHolder{ExtractorType: extractors.RegexExtractor},
-+				Regex:      []string{`version: ([0-9.]+)`},
-+				RegexGroup: 1,
-+				Internal:   true,
-+			}},
-+		},
++// excludeHostRules turns an exclude entry into network policy deny rules.
++// networkpolicy treats non-IP entries as unanchored regexes, so a plain
++// "test.com" would also deny "latest.com". Plain hostnames match the host and
++// its subdomains instead; entries with regex syntax are kept as given.
++func excludeHostRules(target string) []string {
++	if strings.ContainsAny(target, `\^$*+?()[]{}|`) {
++		return []string{target}
 +	}
-+	description := "Version {{version}} on {{host}}:{{port}} accepts password {{replace_regex(password, '^(.{2}).*$', '$1***')}}"
-+	executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{
-+		ID:   templateID,
-+		Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.High}, Name: "test", Description: description},
-+	})
-+	require.NoError(t, request.Compile(executerOpts))
 +
-+	resp := &http.Response{Header: make(http.Header)}
-+	// The payload values of the request that matched travel in the event.
-+	payloads := map[string]interface{}{"password": "s3cr3t"}
-+	event := request.responseToDSLMap(resp, "https://example.com:8443/", "https://example.com:8443/", "", "", "server version: 7.2.4", "", time.Second, payloads)
-+	finalEvent := &output.InternalWrappedEvent{InternalEvent: event}
-+	result, ok := request.CompiledOperators.Execute(event, request.Match, request.Extract, false)
-+	require.True(t, ok)
-+	finalEvent.OperatorsResult = result
-+	finalEvent.Results = request.MakeResultEvent(finalEvent)
-+
-+	require.Len(t, finalEvent.Results, 1)
-+	require.Equal(t, "Version 7.2.4 on example.com:8443 accepts password s3***", finalEvent.Results[0].Info.Description)
-+	require.Equal(t, description, executerOpts.TemplateInfo.Description, "the template info must stay as written")
-+}
-+
- const exampleRawRequest = `GET / HTTP/1.1
- Host: example.com
- Upgrade-Insecure-Requests: 1
-```
-
-**File**: `pkg/protocols/info.go` (added, +80/-0)
-```diff
-@@ -0,0 +1,80 @@
-+package protocols
-+
-+import (
-+	"maps"
-+
-+	"github.com/projectdiscovery/gologger"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/output"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/render"
-+)
-+
-+// renderInfo fills the {{placeholders}} in the free text of each result's info
-+// with the values of the event that produced it, so a finding can say what was
-+// found and where. Name, severity, tags and classification stay as written:
-+// they identify the template for filtering, grouping and issue trackers.
-+//
-+// Each result holds its own copy of the info, so the template is never changed.
-+// When filling changes the text, the result keeps the info as written in
-+// TemplateInfo.
-+func renderInfo(results []*output.ResultEvent, data map[string]interface{}) []*output.ResultEvent {
-+	// A global matcher matches on another template's event, with that template's
-+	// payloads, variables and extracted values, so only the result fields fill
-+	// its info.
-+	if isGlobal, _ := data["global-matchers"].(bool); isGlobal {
-+		data = nil
++	host := strings.TrimSuffix(target, ".")
++	hosts := []string{host}
++	// the network DSL helpers only normalize plain rules, so add the IDNA form here
++	if ascii, err := idna.ToASCII(strings.ToLower(host)); err == nil && !strings.EqualFold(ascii, host) {
++		hosts = append(hosts, ascii)
 +	}
-+	for _, result := range results {
-+		if !result.Info.HasPlaceholders() {
-+			continue
-+		}
-+		written := result.Info
-+		values := infoValues(result, data)
-+		for _, field := range result.Info.PlaceholderFields() {
-+			if field.HasPlaceholders() {
-+				*field.Value = renderInfoText(result.TemplateID, *field.Value, values)
-+			}
-+		}
-+		if len(result.Info.FilledFields(&written)) > 0 {
-+			result.TemplateInfo = &written
-+		}
-+	}
-+	return results
-+}
 +
-+// infoValues returns the event data with the result's own fields on top, under
-+// their names in the JSON output. Those win over the event's keys: in an http
-+// event host is the raw input URL, while the output reports the hostname.
-+func infoValues(result *output.ResultEvent, data map[string]interface{}) map[string]interface{} {
-+	values := make(map[string]interface{}, len(data)+9)
-+	maps.Copy(values, data)
-+	for key, value := range map[string]string{
-+		"host":           result.Host,
-+		"port":           result.Port,
-+		"ip":             result.IP,
-+		"url":            result.URL,
-+		"scheme":         result.Scheme,
-+		"path":           result.Path,
-+		"matched-at":     result.Matched,
-+		"matcher-name":   result.MatcherName,
-+		"extractor-name": result.ExtractorName,
-+	} {
-+		if value != "" {
-+			values[key] = value
-+		}
++	rules := make([]string, 0, len(hosts))
++	for _, h := range hosts {
++		rules = append(rules, `(?i)(^|\.)`+regexp.QuoteMeta(h)+`\.?$`)
 +	}
-+	return values
-+}
-+
-+// renderInfoText renders the text through the shared renderer, as requests and
-+// matchers are, so nested placeholders and helpers behave the same way. Scan
-+// options are left out, so network helpers stay denied while results are built.
-+// If an expression fails, the text stays as written, as a word matcher's does:
-+// a typo in the template must not cost the finding.
-+func renderInfoText(templateID, text string, values map[string]interface{}) string {
-+	rendered, err := render.Render(render.Input{Text: text, Values: values})
-+	if err != nil {
-+		gologger.Verbose().Msgf("[%s] Could not render template info: %s\n", templateID, err)
-+		return text
-+	}
-+	return rendered.Text
++	return rules
 +}
 ```
 
-**File**: `pkg/protocols/info_test.go` (added, +120/-0)
+**File**: `pkg/protocols/common/protocolstate/state_test.go` (added, +29/-0)
 ```diff
-@@ -0,0 +1,120 @@
-+package protocols
+@@ -0,0 +1,29 @@
++package protocolstate
 +
 +import (
 +	"testing"
 +
-+	"github.com/projectdiscovery/nuclei/v3/pkg/model"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/output"
++	"github.com/projectdiscovery/nuclei/v3/pkg/types"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+func TestRenderInfoLeavesStaticInfoAlone(t *testing.T) {
-+	result := &output.ResultEvent{Host: "example.com", Info: model.Info{Description: "Redis is exposed"}}
++func TestExcludeTargetsMatchExactHost(t *testing.T) {
++	opts := types.DefaultOptions()
++	opts.ExecutionId = "test-exclude-targets"
++	opts.ExcludeTargets = []string{"test.com", "192.0.2.0/24", `^regex\.example$`, "bücher.example"}
++	require.NoError(t, Init(opts))
++	defer Close(opts.ExecutionId)
 +
-+	renderInfo([]*output.ResultEvent{result}, map[string]interface{}{"host": "example.com"})
-+
-+	require.Equal(t, "Redis is exposed", result.Info.Description)
-+	require.Nil(t, result.TemplateInfo)
++	np := GetDialersWithId(opts.ExecutionId).NetworkPolicy
++	require.False(t, np.Validate("test.com"))
++	require.False(t, np.Validate("TEST.com"))
++	require.False(t, np.Validate("test.com."))
++	require.False(t, np.Validate("sub.test.com"))
++	require.False(t, np.Validate("192.0.2.10"))
++	require.False(t, np.Validate("regex.example"))
++	require.False(t, np.Validate("xn--bcher-kva.example"))
++	require.True(t, np.Validate("latest.com"))
++	require.True(t, np.Validate("test.com.example.org"))
++	require.True(t, np.Validate("testXcom"))
++	require.True(t, np.Validate("sub.regex.example"))
 +}
-+
-+// Braces that fill nothing, like an SSTI payload in the description, leave the
-+// text static, so it is neither redacted nor moved off the sarif rule.
-+func TestRenderInfoLeavesUnfilledBracesStatic(t *testing.T) {
-+	result := &output.ResultEvent{Host: "example.com", Info: model.Info{Description: "Send {{7*7}} or {{config}} in the name parameter"}}
-+
-+	renderInfo([]*output.ResultEvent{result}, map[string]interface{}{})
-+
-+	require.Equal(t, "Send {{7*7}} or {{config}} in the name parameter", result.Info.Description)
-+	require.Nil(t, result.TemplateInfo)
-+}
-+
-+func TestRenderInfoFillsResultAndEventValues(t *testing.T) {
-+	result := &output.ResultEvent{
-+		Host:        "example.com",
-+		Port:        "6379",
-+		MatcherName: "auth",
-+		Info: model.Info{
-+			Name:        "Redis {{version}}",
-+			Description: "{{matcher-name}} on {{host}}:{{port}}, version {{version}}",
-+			Impact:      "{{to_upper(password)}}",
-+			Remediation: "{{credentials}} stays",
-+		},
-+	}
-+	// The event's host is the raw input, while the output reports the hostname.
-+	data := map[string]interface{}{"host": "redis://example.com:6379", "version": "7.2.4", "password": "admin"}
-+
-+	renderInfo([]*output.ResultEvent{result}, data)
-+
-+	require.Equal(t, "auth on example.com:6379, version 7.2.4", result.Info.Description)
-+	require.Equal(t, "ADMIN", result.Info.Impact)
-+	require.Equal(t, "{{credentials}} stays", result.Info.Remediation)
-+	require.Equal(t, "Redis {{version}}", result.Info.Name)
-+	require.Equal(t, "redis://example.com:6379", data["host"])
-+	require.NotNil(t, result.TemplateInfo)
-+	require.Equal(t, "{{matcher-name}} on {{host}}:{{port}}, version {{version}}", result.TemplateInfo.Description)
-+	require.Equal(t, "{{to_upper(password)}}", result.TemplateInfo.Impact)
-+}
-+
-+// Info renders like requests do, so the usual nested placeholder idiom and an
-+// expression spread over lines work too.
-+func TestRenderInfoFillsNestedAndMultilinePlaceholders(t *testing.T) {
-+	result := &output.ResultEvent{Info: model.Info{
-+		Description: "Authorization: Basic {{base64('{{username}}:{{password}}')}}",
-+		Remediation: "Upgrade from {{join(\", \",\n  versions)}}",
-+	}}
-+
-+	renderInfo([]*output.ResultEvent{result}, map[string]interface{}{
-+		"username": "admin", "password": "secret", "versions": []string{"7.2.4", "6.0.9"},
-+	})
-+
-+	require.Equal(t, "Authorization: Basic YWRtaW46c2VjcmV0", result.Info.Description)
-+	require.Equal(t, "Upgrade from 7.2.4, 6.0.9", result.Info.Remediation)
-+}
-+
-+// A hyphenated name reads as subtraction inside a helper unless it is bracketed,
-+// and the general §name§ marker fills like a {{name}} one.
-+func TestRenderInfoFillsBracketedNamesAndGeneralMarkers(t *testing.T) {
-+	result := &output.ResultEvent{MatcherName: "auth", Info: model.Info{
-+		Description: "{{to_upper([matcher-name])}} matched",
-+		Impact:      "default login §username§ accepted",
-+	}}
-+
-+	renderInfo([]*output.ResultEvent{result}, map[string]interface{}{"username": "admin"})
-+
-+	require.Equal(t, "AUTH matched", result.Info.Description)
-+	require.Equal(t, "default login admin accepted", result.Info.Impact)
-+}
-+
-+// A failing expression leaves its field as written; the other fields render.
-+func TestRenderInfoKeepsAFieldWithAFailingExpression(t *testing.T) {
-+	result := &output.ResultEvent{Host: "example.com", Info: model.Info{
-+		Description: "{{host}} {{to_upper(missing)}}",
-+		Impact:      "{{host}} is exposed",
-+	}}
-+
-+	renderInfo([]*output.ResultEvent{result}, map[string]interface{}{})
-+
-+	require.Equal(t, "{{host}} {{to_upper(missing)}}", result.Info.Description)
-+	require.Equal(t, "example.com is exposed", result.Info.Impact)
-+	require.Len(t, result.Info.FilledFields(result.TemplateInfo), 1)
-+}
-+
-+// A global matcher's event belongs to the template whose response it matched,
-+// so only the result fields fill its info.
-+func TestRenderInfoFillsGlobalMatcherInfoFromResultFieldsOnly(t *testing.T) {
-+	result := &output.ResultEvent{Host: "example.com", Info: model.Info{Description: "Leaked {{token}} on {{host}}"}}
-+
-+	renderInfo([]*output.ResultEvent{result}, map[string]interface{}{"global-matchers": true, "token": "origin-template-payload"})
-+
-+	require.Equal(t, "Leaked {{token}} on example.com", result.Info.Description)
-+}
-+
-+// Results are built without scan options, so a network helper never runs.
-+func TestRenderInfoDeniesNetworkHelpers(t *testing.T) {
-+	result := &output.ResultEve
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7960** (2026-10-27): fix exclude-hosts matching unrelated hosts at dial time (@dogancanbakir)
+- **PR #7959** (2026-10-27): fix(loader): fail -validate when a template path can't be found (@arxhr007)
 - **PR #7956** (closed): fix(http): bound large Flow request body memory (@knakul853)
 - **PR #7947** (2026-10-26): fix(trackers): follow X-Next-Page in gitlab duplicate search (@dwisiswant0)
 - **PR #7945** (2026-10-27): fix(trackers): gitea reporter pagination (@shifttymike)
 - **PR #7943** (2026-10-26): chore(deps): bump crate-ci/typos from 1.49.0 to 1.51.1 in the workflows group (@dependabot[bot])
-- **PR #7941** (2026-10-26): fix(offlinehttp): handle request body and unversioned HTTP/2 in passive mode (#7924) (@TassioSales)
-- **PR #7940** (2026-10-27): feat(templates): fill placeholders in info description, impact and remediation (@mazzz3r)
 
 ---
 
@@ -1998,45 +1871,40 @@ feat(templates): fill placeholders in info description, impact and remediation
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7940 from mazzz3r/feat/info-placeholders
+## X. Merge pull request #7959 from arxhr007/fix/7949-validate-missing-path
 
 **RULE**:
-When implementing operations in `SYNTAX-REFERENCE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/catalog/loader/loader.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `abcdcf19`: Merge pull request #7940 from mazzz3r/feat/info-placeholders. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `26ce6d2e`: Merge pull request #7959 from arxhr007/fix/7949-validate-missing-path. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `SYNTAX-REFERENCE.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/catalog/loader/loader.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-Description, impact and remediation may hold {{placeholders}} filled for
-each finding: named extractors, payloads, variables and DSL helpers
-(network helpers excluded), and the result fields host, port, ip, url,
-scheme, path, matched-at, matcher-name and extractor-name, which win over
-values of the same name. Use join(", ", name) for an extractor with
-several values, and brackets for a hyphenated name inside a helper:
-to_upper([matcher-name]). Unknown placeholders stay as written, and so
-does a field whose expression fails. Global matcher templates match on
-other templates' responses, so only the result fields fill their text.
-
-```yaml
-description: Redis {{version}} on {{host}}:{{port}} accepts the default password
-```
-
-Supports the same placeholders as description.
-
-Supports the same placeholders as description.
-
+	notFound := store.logErroredTemplates(errs)
+	notFound += store.logErroredTemplates(errs)
+	// a path that can't be resolved is not validated, so it can't count as valid
+	if store.areTemplatesValid(templatePathsMap) && store.areWorkflowsValid(workflowPathsMap) && notFound == 0 {
+// logErroredTemplates logs the templates that could not be found and returns
+// how many of them were not handled by the NotFoundCallback.
+func (s *Store) logErroredTemplates(erred map[string]error) int {
+	notFound := 0
+			notFound++
+	return notFound
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	store.logErroredTemplates(errs)
+	store.logErroredTemplates(errs)
+	if store.areTemplatesValid(templatePathsMap) && store.areWorkflowsValid(workflowPathsMap) {
+func (s *Store) logErroredTemplates(erred map[string]error) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `abcdcf19` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `26ce6d2e` are properly handled with clean fallback behavior.

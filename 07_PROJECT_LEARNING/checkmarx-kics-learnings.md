@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/checkmarx-kics-learnings.md`  
 > **Source**: github ([https://github.com/Checkmarx/kics](https://github.com/Checkmarx/kics))  
-> **Source Version**: `1f05308b`  
+> **Source Version**: `0f99087a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T19:37:02.835Z  
+> **Timestamp**: 2026-10-27T17:23:40.741Z  
 > **Learning ID**: `learn-github-checkmarx-kics`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/checkmarx-kics-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Checkmarx/kics](https://github.com/Checkmarx/kics))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T19:37:02.829Z  
+> **Harvest Timestamp**: 2026-10-27T17:23:40.425Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find security vulnerabilities, compliance issues, and infrastructure misconfigurations early in the development cycle of your infrastructure-as-code with KICS by Checkmarx.
 - **Primary Language / Ecosystem**: Open Policy Agent
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2722 stars
+- **Stars / Engagement**: 2727 stars
 
 ---
 
@@ -1602,11 +1602,16 @@ type SourceProvider interface {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8046** (2026-09-07): **bug(core): thread exhaustion when scanning large repositories**
-  *Symptoms*: ### Expected Behavior  KICS should complete the scan without crashing, even on repositories with a large number of files  ### Actual Behavior  KICS crashes with a fatal error during the "Preparing Scan Assets" phase before any queries are executed:   ``` runtime: program exceeds 10000 thread limit fatal error: thread exhaustion ```  In [`pkg/analyzer/analyzer.go:377`](https://github.com/Checkmarx/kics/blob/master/pkg/analyzer/analyzer.go#L377), `Analyze` spawns one goroutine per discovered file with no upper bound: ```go for _, file := range files {     wg.Add(1)     // analyze the files concurrently     a := &analyzerInfo{            // ...     }     go a.worker(results, unwanted, locCount, fileInfo, &wg) } ```  For a repository with tens of thousands of files this immediately creates tens of thousands of goroutines. If individual workers block on I/O, the Go scheduler is forced to spin up additional OS threads to keep progress — eventually hitting the hard 10000 thread limit and crashing the process.  Relevant part of stacktrace: ``` runtime stack: runtime.throw(...)         /usr/lib/go/src/runtime/panic.go:1229 runtime.checkmcount()         /usr/lib/go/src/runtime/proc.go:977 runtime.mReserveID()         /usr/lib/go/src/runtime/proc.go:993 runtime.startm(...)         /usr/lib/go/src/runtime/proc.go:3088 runtime.handoffp(...)         /usr/lib/go/src/runtime/proc.go:3137 runtime.retake(...)         /usr/lib/go/src/runtime/proc.go:6715 runtime.sysmon()         /usr/lib/go/src
+- **Issue #8158** (2026-10-27): **bug(dockerfile): KICS incorrect notification of newer v2.2.0 version**
+  *Symptoms*: ### Expected Behavior  Not to show that a newer version is available when it is not, when I am already running v2.2.0...weird  ### Actual Behavior  I see this message at the end of any KICS run:  > A new version 'v2.2.0' of KICS is available, please consider updating  ### Steps to Reproduce the Problem  1.  Run KICS v2.2.0 2. See the incorrect message displayed at the end of the process: "A new version 'v2.2.0' of KICS is available, please consider updating"  ### Specifications  -   Version: v2.2.0 -   Platform: linux/Dockerfile/arm64 -   Subsystem: N/A 
+  **Post-Mortem & Fix Analysis**:
+  > Hi @mjnowen,  Already fixed by https://github.com/Checkmarx/kics/pull/8155, next release coming soon.   Thanks for the warning eitherway!
 
-- **Issue #8008** (2026-04-02): **ci(deps): bump the all group across 1 directory with 21 updates**
-  *Symptoms*: Bumps the all group with 21 updates in the / directory:  | Package | From | To | | --- | --- | --- | | [actions/checkout](https://github.com/actions/checkout) | `4.2.2` | `6.0.2` | | [peter-evans/create-pull-request](https://github.com/peter-evans/create-pull-request) | `7.0.8` | `8.1.0` | | [actions/setup-go](https://github.com/actions/setup-go) | `5` | `6` | | [actions/upload-artifact](https://github.com/actions/upload-artifact) | `4.6.2` | `7.0.0` | | [actions/download-artifact](https://github.com/actions/download-artifact) | `4.1.3` | `8.0.1` | | [docker/setup-buildx-action](https://github.com/docker/setup-buildx-action) | `3.11.1` | `4.0.0` | | [actions/cache](https://github.com/actions/cache) | `4.2.3` | `5.0.4` | | [docker/build-push-action](https://github.com/docker/build-push-action) | `6.18.0` | `7.0.0` | | [actions/setup-python](https://github.com/actions/setup-python) | `5` | `6` | | [al-cheb/configure-pagefile-action](https://github.com/al-cheb/configure-pagefile-action) | `1.4` | `1.5` | | [securego/gosec](https://github.com/securego/gosec) | `2.22.5` | `2.25.0` | | [styfle/cancel-workflow-action](https://github.com/styfle/cancel-workflow-action) | `0.12.1` | `0.13.1` | | [actions/setup-node](https://github.com/actions/setup-node) | `4` | `6` | | [checkmarx/kics-github-action](https://github.com/checkmarx/kics-github-action) | `63fca4ca72e56edbb5a599ee756e6af1fdb1e785` | `05aa5eb70eede1355220f4ca5238d96b397e30a6` | | [docker/setup-qemu-action](https://github.com
+- **Issue #8135** (2026-10-21): **bug(docker): KICS v2.1.21 and v2.2.0 missing from Docker Hub**
+  *Symptoms*: ### Expected Behavior  It would be ideal if KICS releases can be published as images to Docker Hub in a timely manner.  ### Actual Behavior  KICS v2.1.21 (released Jul 30) and v2.2.0 (released last week) are still missing from Docker Hub as of today, Sep 25, 2026.  There appears to be a [GHA workflow for it](https://github.com/Checkmarx/kics/blob/master/.github/workflows/release-dkr-image.yml); is it failing?  ### Steps to Reproduce the Problem  https://hub.docker.com/r/checkmarx/kics/tags
+  **Post-Mortem & Fix Analysis**:
+  > Relatedly: please consider [building and releasing binaries](https://github.com/Checkmarx/kics/issues/7833). Go is great for building and releasing static binaries and it's puzzling why building from source is currently the only other supported installation method. (Related: https://github.com/Checkmarx/kics/discussions/4744)
+  > Hi @bsolomon1124 and anyone affected by the missing Docker Hub images for the last 2 releases. We're sorry that we weren't able to provide Docker Hub images for the latest KICS versions.  You've correctly identified the issue as the GitHub Action responsible for publishing the images was not working. We've been refactoring our release workflows to make them more secure and we're still merging the last pull requests that complete this process.  We'll also try to publish the missing images for v2.1.21 and v2.2.0. I'll update this issue either way once I know more. We expect the next KICS releases to be published to Docker Hub as usual again.  As for building and releasing binaries, we currently provide documentation so anyone in the community can build them on their end. That said, I understand that providing them from our side would be more convenient and reliable. I'll raise the discussion again with the relevant stakeholders, although I can't promise an outcome or timeline.  In the me
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1623,188 +1628,586 @@ type SourceProvider interface {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1f05308b` (2026-10-20)
-**Commit Message**: ci(release): AST-186869 clean build cache after each image build (#8150)
+### Incident Patch 1: `0f99087a` (2026-10-27)
+**Commit Message**: add: test coverage to password and secrets queries timeout (#8156)
 
-Run 39431627482 failed with "No space left on device" during the debian
-build. Each image is already saved to its OCI archive, so prune the buildx
-cache after every build (archives in runner.temp are kept) and log free disk.
-The last prune also leaves room for skopeo to unpack archives while pushing.
-
-Co-authored-by: Claude Opus 4.8 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/release-dkr-image.yml` (modified, +20/-0)
+**File**: `e2e/fixtures/samples/secrets/regex_rules_109_slow.json` (added, +13/-0)
 ```diff
-@@ -150,6 +150,12 @@ jobs:
-             SENTRY_DSN=${{ secrets.SENTRY_DSN }}
-             DESCRIPTIONS_URL=${{ secrets.DESCRIPTIONS_URL }}
-           labels: ${{ steps.meta.outputs.labels }}
-+      # Each image is already saved to its OCI archive, so drop the build cache to keep the
-+      # runner from running out of disk (the archives in runner.temp are not touched).
-+      - name: Clean build cache (main)
-+        run: |
-+          docker buildx prune --all --force
-+          df -h /
-       - name: Build alpine
-         uses: step-security/docker-build-push-action@846549baaf047e867d038826129a64d81df0f704 # v7.1.0
-         with:
-@@ -164,6 +170,10 @@ jobs:
-             SENTRY_DSN=${{ secrets.SENTRY_DSN }}
-             DESCRIPTIONS_URL=${{ secrets.DESCRIPTIONS_URL }}
-           labels: ${{ steps.meta.outputs.labels }}
-+      - name: Clean build cache (alpine)
-+        run: |
-+          docker buildx prune --all --force
-+          df -h /
-       - name: Build debian
-         uses: step-security/docker-build-push-action@846549baaf047e867d038826129a64d81df0f704 # v7.1.0
-         with:
-@@ -178,6 +188,10 @@ jobs:
-             SENTRY_DSN=${{ secrets.SENTRY_DSN }}
-             DESCRIPTIONS_URL=${{ secrets.DESCRIPTIONS_URL }}
-           labels: ${{ steps.meta.outputs.labels }}
-+      - name: Clean build cache (debian)
-+        run: |
-+          docker buildx prune --all --force
-+          df -h /
-       - name: Build ubi8
-         uses: step-security/docker-build-push-action@846549baaf047e867d038826129a64d81df0f704 # v7.1.0
-         with:
-@@ -192,6 +206,12 @@ jobs:
-             SENTRY_DSN=${{ secrets.SENTRY_DSN }}
-             DESCRIPTIONS_URL=${{ secrets.DESCRIPTIONS_URL }}
-           labels: ${{ steps.meta.outputs.labels }}
-+      # Also frees the space skopeo needs to unpack each archive while pushing.
-+      - name: Clean build cache (ubi8)
-+        run: |
-+          docker buildx prune --all --force
-+          df -h /
-+          ls -lh "${RUNNER_TEMP}"/kics-*.tar
-       # Each push gets a fresh login so the short-lived token is valid for the whole copy.
-       # The version tag is pushed before the floating tag; --preserve-digests keeps the pushed
-       # image byte-identical to what was built.
+@@ -0,0 +1,13 @@
++{
++  "rules": [
++    {
++      "id": "3c1a6b7e-5d2f-4e8a-9b41-7f0c2d9e6a15",
++      "name": "Slow Timeout Rule",
++      "regex": "([\\s\\S]{1,1000}[\\s\\S]{1,1000}[\\s\\S]{1,1000}ZZZ)",
++      "multiline": {
++        "detectLineGroup": 1
++      }
++    }
++  ],
++  "allowRules": []
++}
+```
+
+**File**: `e2e/testcases/e2e-cli-109_scan_secrets_timeout.go` (added, +41/-0)
+```diff
+@@ -0,0 +1,41 @@
++package testcases
++
++import (
++	"regexp"
++	"strings"
++)
++
++// E2E-CLI-109 - Kics scan command with timeout flag on the passwords and secrets query
++// should stop a secrets rule execution when reaching the provided timeout (seconds)
++// and should not report any timeout when the timeout is large enough
++func init() { //nolint
++	testSample := TestCase{
++		Name: "should timeout passwords and secrets rules when reaching the timeout limit [E2E-CLI-109]",
++		Args: args{
++			Args: []cmdArgs{
++				[]string{"scan", "-v", "--no-progress", "--timeout", "1",
++					"-p", "/path/assets/queries/common/passwords_and_secrets/test",
++					"--secrets-regexes-path", "/path/e2e/fixtures/samples/secrets/regex_rules_109_slow.json",
++					"--include-queries", "3c1a6b7e-5d2f-4e8a-9b41-7f0c2d9e6a15"},
++
++				[]string{"scan", "-v", "--no-progress", "--timeout", "60",
++					"-p", "/path/assets/queries/common/passwords_and_secrets/test",
++					"--secrets-regexes-path", "/path/e2e/fixtures/samples/secrets/regex_rules_109_slow.json",
++					"--include-queries", "3c1a6b7e-5d2f-4e8a-9b41-7f0c2d9e6a15"},
++			},
++		},
++		WantStatus: []int{0, 0},
++		Validation: func(outputText string) bool {
++			matchSecretsTimeout, _ := regexp.MatchString(
++				"Secrets query 'Slow Timeout Rule' executed with error: context deadline exceeded", outputText)
++			// the slow rule only times out with the 1-second limit
++			if strings.Contains(outputText, "Query execution timeout=1s") {
++				return matchSecretsTimeout
++			}
++			matchTimeoutLog, _ := regexp.MatchString("Query execution timeout=1m0s", outputText)
++			return matchTimeoutLog && !matchSecretsTimeout
++		},
++	}
++
++	Tests = append(Tests, testSample)
++}
+```
+
+**File**: `pkg/engine/secrets/inspector_test.go` (modified, +155/-0)
+```diff
+@@ -842,3 +842,158 @@ func TestSecretsDetectLine_MultilineMatchAtEndDoesNotPanic(t *testing.T) {
+ 		c.secretsDetectLine(query, file, vulnGroups)
+ 	})
+ }
++
++// executionTimeout is negative on purpose and a negative tests an already expired
++// context without relying on timing (waits)
++var testInspectTimeoutInput = []struct {
++	name             string
++	executionTimeout int
++	cancelContext    bool
++	wantErr          error
++	wantVuln         bool
++}{
++	{
++		name:             "timeout_not_reached",
++		executionTimeout: 60,
++		cancelContext:    false,
++		wantErr:          nil,
++		wantVuln:         true,
++	},
++	{
++		name:             "timeout_reached",
++		executionTimeout: -1,
++		cancelContext:    false,
++		wantErr:          context.DeadlineExceeded,
++		wantVuln:         false,
++	},
++	{
++		name:             "parent_context_canceled",
++		executionTimeout: 60,
++		cancelContext:    true,
++		wantErr:          context.Canceled,
++		wantVuln:         false,
++	},
++}
++
++func TestInspectQueryTimeout(t *testing.T) {
++	files := model.FileMetadatas{
++		{
++			ID:                "b032c51d-2e7c-4ffc-8a81-41405c166bc8",
++			Document:          model.Document{},
++			OriginalData:      OriginalData2,
++			LinesOriginalData: utils.SplitLines(OriginalData2),
++			Kind:              "K8S",
++			FilePath:          "assets/queries/common/passwords_and_secrets/test/positive1.yaml",
++		},
++	}
++
++	for _, in := range testInspectTimeoutInput {
++		ctx, cancel := context.WithCancel(context.Background())
++		if in.cancelContext {
++			cancel()
++		}
++
++		// only the Generic Password rule is loaded, so it is the rule at index 0
++		secretsInspector, err := NewInspector(
++			ctx,
++			map[string]bool{},
++			&tracker.CITracker{},
++			&source.QueryInspectorParameters{
++				IncludeQueries: source.IncludeQueries{ByIDs: []string{"487f4be7-3fd9-4506-a07a-eae252180c08"}},
++				ExcludeQueries: source.ExcludeQueries{ByIDs: []string{}},
++				InputDataPath:  "",
++			},
++			false,
++			in.executionTimeout,
++			assets.SecretsQueryRegexRulesJSON,
++			false,
++		)
++		require.NoError(t, err, "test[%s] NewInspector() should not return error", in.name)
++		require.Equal(t, 1, secretsInspector.GetQueriesLength(), "test[%s] NewInspector() should return 1 regex query", in.name)
++
++		basePaths := []string{filepath.FromSlash("assets/queries/")}
++		gotVulns, err := secretsInspector.inspectQuery(ctx, basePaths, files, 0)
++		cancel()
++
++		if in.wantErr != nil {
++			require.ErrorIs(t, err, in.wantErr, "test[%s] inspectQuery() should return %v", in.name, in.wantErr)
++		} else {
++			require.NoError(t, err, "test[%s] inspectQuery() should not return error", in.name)
++		}
++		require.Equal(t, in.wantVuln, len(gotVulns) > 0, "test[%s] inspectQuery() vulnerabilities found mismatch", in.name)
++	}
++}
++
++var testInspectFailedQueriesInput = []struct {
++	name             string
++	executionTimeout int
++	wantFailed       bool
++}{
++	{
++		name:             "timeout_not_reached",
++		executionTimeout: 60,
++		wantFailed:       false,
++	},
++	{
++		name:             "timeout_reached",
++		executionTimeout: -1,
++		wantFailed:       true,
++	},
++}
++
++func TestInspectFailedQueries(t *testing.T) {
++	files := model.FileMetadatas{
++		{
++			ID:                "b032c51d-2e7c-4ffc-8a81-41405c166bc8",
++			Document:          model.Document{},
++			OriginalData:      OriginalData2,
++			LinesOriginalData: utils.SplitLines(OriginalData2),
++			Kind:              "K8S",
++			FilePath:          "assets/queries/common/passwords_and_secrets/test/positive1.yaml",
++		},
++	}
++
++	for _, in := range testInspectFailedQueriesInput {
++		ctx := context.Background()
++		secretsInspector, err := NewInspector(
++			ctx,
++			map[string]bool{},
++			&tracker.CITracker{},
++			&source.QueryInspectorParameters{
++				IncludeQueries: source.IncludeQueries{ByIDs: []string{}},
++				ExcludeQueries: source.ExcludeQueries{ByIDs: []string{}},
++				InputDataPath:  "",
++			},
++			false,
++			in.executionTimeout,
++			assets.SecretsQueryRegexRulesJSON,
++			false,
++		)
++		require.NoError(t, err, "test[%s] NewInspector() should not return error", in.name)
++
++		currentQuery := make(chan int64, secretsInspector.GetQueriesLength())
++
++		basePaths := []string{filepath.FromSlash("assets/queries/")}
++		gotVulns, err := secretsInspector.Inspect(ctx, basePaths, files, currentQuery)
++
++		// a rule that times out does not abort the scan, it is only recorded as failed
++		require.NoError(t, err, "test[%s] Inspect() should not return error", in.name)
++		require.Len(t, currentQuery, secretsInspector.GetQueriesLength(),
++			"test[%s] Inspect() should step the progress once per rule", in.name)
++
++		failedQueries := secretsInspector.GetFailedQueries()
++		if !in.wantFailed {
++			require.Empty(t, failedQueries, "test[%s] GetFailedQueries() should be empty", in.name)
++			require.NotEmpty(t, gotVulns, "test[%s] Inspect() should return vulnerabilities", in.name)
++			continue
++		}
++
++		require.Empty(t, gotVulns, "test[%s] Inspect() should not return vulnerabilities", in.name)
++		requi
 ```
 
 ---
 
-### Incident Patch 2: `71c8f094` (2026-10-20)
-**Commit Message**: ci(release): AST-186869 push prebuilt OCI archives with a fresh login (#8149)
+### Incident Patch 2: `3b5c9048` (2026-10-27)
+**Commit Message**: fix(version): update version prefix comparison with latest version (#8155)
 
-Run 39394372350 built all four images, but the push step rebuilt the default
-image from scratch (no cache hits) and the Docker Hub OIDC token was rejected
-~7 minutes after login. Build each image once to an OCI archive before any
-login, then for each image log in again and copy the archive with
-`skopeo copy --all --preserve-digests`, version tag first. skopeo is
-installed from the Ubuntu archive if missing, as the first step.
+* fix: version comparison prefix bug with latest version
 
-Co-authored-by: Claude Opus 4.8 (1M context) <[REDACTED_EMAIL]>
+* update: golden images and package versions
 
-**File**: `.github/workflows/release-dkr-image.yml` (modified, +106/-75)
+* fix: vulnerabilities
+
+**File**: `.github/scripts/docs-generator/query-page-generator/query-page-generator.py` (modified, +43/-5)
 ```diff
-@@ -63,6 +63,15 @@ jobs:
-             echo "::error::tag input must look like vX.Y.Z, got '$INPUT_TAG'"
-             exit 1
-           fi
-+      # skopeo pushes the prebuilt images; install it from the Ubuntu archive if the runner lacks it.
-+      # Done first so a missing tool fails the run before the long builds.
-+      - name: Ensure skopeo
-+        run: |
-+          if ! command -v skopeo >/dev/null 2>&1; then
-+            sudo apt-get update -q
-+            sudo apt-get install -y -q skopeo
-+          fi
-+          skopeo --version
-       - name: Check out the repo
-         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-         with:
-@@ -74,19 +83,15 @@ jobs:
-         env:
-           UPDATE_FLOATING_TAGS: ${{ inputs.update_floating_tags }}
-         run: |
--          version=$(git describe --match='v*' --tags --abbrev=0)
-           # Floating tags (latest, alpine, debian, ubi8) are skipped when backfilling an older release
--          floating=("latest," "alpine," "debian," "ubi8,")
--          if [[ "$UPDATE_FLOATING_TAGS" != "true" ]]; then
--            floating=("" "" "" "")
-+          update_floating=false
-+          if [[ "$UPDATE_FLOATING_TAGS" == "true" ]]; then
-+            update_floating=true
-           fi
-           {
--            echo "version=${version}"
-+            echo "version=$(git describe --match='v*' --tags --abbrev=0)"
-             echo "commit=$(git rev-parse HEAD)"
--            echo "tags_main=${floating[0]:+checkmarx/kics:${floating[0]}}checkmarx/kics:${version}"
--            echo "tags_alpine=${floating[1]:+checkmarx/kics:${floating[1]}}checkmarx/kics:${version}-alpine"
--            echo "tags_debian=${floating[2]:+checkmarx/kics:${floating[2]}}checkmarx/kics:${version}-debian"
--            echo "tags_ubi8=${floating[3]:+checkmarx/kics:${floating[3]}}checkmarx/kics:${version}-ubi8"
-+            echo "update_floating=${update_floating}"
-           } >> "$GITHUB_OUTPUT"
-       # Disabled: toko-bifrost/ms-teams-deploy-card is blocked by the StepSecurity policy, which cancels the run.
-       # It only posts a release notification card to MS Teams.
-@@ -130,128 +135,154 @@ jobs:
-             org.opencontainers.image.licenses=Apache-2.0
-             org.opencontainers.image.revision=${{ steps.get-version.outputs.commit }}
-             org.opencontainers.image.created=${{ env.CREATED_AT }}
--      # Build every image before logging in: the Docker Hub OIDC token is short-lived and
--      # the emulated arm64 builds can outlast it. The push steps below reuse the build cache.
-+      # Build every image to an OCI archive before logging in: the Docker Hub OIDC token lives only
-+      # a few minutes and the emulated arm64 builds take much longer. Nothing is rebuilt after login.
-       - name: Build main
-         uses: step-security/docker-build-push-action@846549baaf047e867d038826129a64d81df0f704 # v7.1.0
-         with:
-           context: .
--          push: false
-+          outputs: type=oci,dest=${{ runner.temp }}/kics-main.tar
-           platforms: linux/amd64,linux/arm64
-           build-args: |
-             ENGINE_VERSION=${{ steps.get-version.outputs.version }}
-             VERSION=${{ steps.get-version.outputs.version }}
-             COMMIT=${{ steps.get-version.outputs.commit }}
-             SENTRY_DSN=${{ secrets.SENTRY_DSN }}
-             DESCRIPTIONS_URL=${{ secrets.DESCRIPTIONS_URL }}
-+          labels: ${{ steps.meta.outputs.labels }}
-       - name: Build alpine
-         uses: step-security/docker-build-push-action@846549baaf047e867d038826129a64d81df0f704 # v7.1.0
-         with:
-           context: .
-           file: ./docker/Dockerfile.alpine
--          push: false
-+          outputs: type=oci,dest=${{ runner.temp }}/kics-alpine.tar
-           platforms: linux/amd64,linux/arm64
-           build-args: |
-             ENGINE_VERSION=${{ steps.get-version.outputs.version }}
-             VERSION=${{ steps.get-version.outputs.version }}
-             COMMIT=${{ steps.get-version.outputs.commit }}
-             SENTRY_DSN=${{ secrets.SENTRY_DSN }}
-             DESCRIPTIONS_URL=${{ secrets.DESCRIPTIONS_URL }}
-+          labels: ${{ steps.meta.outputs.labels }}
-       - name: Build debian
-         uses: step-security/docker-build-push-action@846549baaf047e867d038826129a64d81df0f704 # v7.1.0
-         with:
-           context: .
-           file: ./docker/Dockerfile.debian
--          push: false
-+          outputs: type=oci,dest=${{ runner.temp }}/kics-debian.tar
-           platforms: linux/amd64,linux/arm64
-           build-args: |
-             ENGINE_VERSION=${{ steps.get-version.outputs.version }}
-             VERSION=${{ steps.get-version.outputs.version }}
-             COMMIT=${{ steps.get-version.outputs.commit }}
-             SENTRY_DSN=${{ secrets.SENTRY_DSN }}
-             DESCRIPTIONS_URL=${{ secrets.DESCRIPTIONS_URL }}
-+          labels: ${{ steps.meta.outputs.labels }}
-       - name: Build ubi8
-         uses: step-security/docker-build-push-action@846549b
+@@ -2,10 +2,32 @@
+ import argparse
+ import os
+ import json
++import re
+ import shutil
+ import time
+ from pathlib import Path
+ 
++# Values taken from "metadata.json" that are used to build file or folder names must be a single safe path component
++SAFE_PATH_COMPONENT = re.compile(r'^[A-Za-z0-9_-]+$')
++
++# Raises ValueError if the value can't be safely used as a single file/folder name
++def validate_path_component(value, field : str, source : str) -> str:
++    if not isinstance(value, str) or not SAFE_PATH_COMPONENT.fullmatch(value):
++        raise ValueError(f"\033[31mInvalid '{field}' value {value!r} in {source}\033[0m")
++    return value
++
++# Returns the unique line numbers of the expected results, making sure each one is an integer that points inside the test file
++# This bounds the number of items to the number of lines in the test file
++def get_expected_lines(test_results : list, file_content : str, source : str) -> list:
++    total_lines = file_content.count('\n') + 1
++    lines = set()
++    for item in test_results:
++        line = item['line']
++        if isinstance(line, bool) or not isinstance(line, int) or not 1 <= line <= total_lines:
++            raise ValueError(f"\033[31mInvalid 'line' value {line!r} in {source} (file has {total_lines} lines)\033[0m")
++        lines.add(line)
++    return list(lines)
++
+ # Searches for "metadata.json" files within the inputed directory
+ # Returns a dictionary of dictionaries (output of function get_query_info)
+ def get_meta_data_and_tests(input_path : str, metadata_file = 'metadata.json'):
+@@ -31,6 +53,12 @@ def get_query_info(query_path : str, metadata_file = 'metadata.json'):
+     with open(metadata_file_path, 'r') as f:
+         query_metadata_content = json.loads(f.read())
+ 
++    for field in ('id', 'platform'):
++        if field in query_metadata_content:
++            validate_path_component(query_metadata_content[field], field, metadata_file_path)
++    if 'cloudProvider' in query_metadata_content:
++        validate_path_component(query_metadata_content['cloudProvider'], 'cloudProvider', metadata_file_path)
++
+     # Find the index of the folder name in the directory path
+     folder_index = metadata_file_path.rfind('assets\queries')
+     # If the folder name is found, return everything after it
+@@ -51,6 +79,9 @@ def get_query_info(query_path : str, metadata_file = 'metadata.json'):
+     with open(expected_result_file_path) as f:
+         expected_results = json.loads(f.read())
+ 
++    if not isinstance(expected_results, list) or not all(isinstance(r, dict) for r in expected_results):
++        raise ValueError(f"\033[31m{expected_result_file_path} must contain a list of objects\033[0m")
++
+     files = sorted(os.listdir(os.path.join(query_path, 'test')), key=str.casefold)
+     positive_filenames = []
+     negative_filenames = []
+@@ -83,7 +114,7 @@ def get_query_info(query_path : str, metadata_file = 'metadata.json'):
+                          or f.get('filename')
+                          or f.get('file')) == p_filename)
+                 ]
+-            lines = list(set([item['line'] for item in test_results]))
++            lines = get_expected_lines(test_results, test_content, expected_result_file_path)
+             if lines != []:
+                 positive_test = dict(fileName=p_filename, lines=lines, code=test_content)
+                 true_positives.append(positive_test)
+@@ -213,15 +244,22 @@ def generate_md_docs(queries_database : str, output_path : str, template_file_pa
+             '<POSITIVE_TESTS>', format_positive_tests(query_data.get('true_positives'))).replace(
+             '<NEGATIVE_TESTS>', format_negative_tests(query_data.get('true_negatives')))
+ 
+-        cloud_provider = query_data.get('cloudProvider', '').lower()
++        # Re-validate right where the output path is built (empty cloud provider and 'common' map to no sub-folder)
++        safe_platform = validate_path_component(query_data.get('platform'), 'platform', key).lower()
++        safe_key = validate_path_component(key, 'id', key)
++        cloud_provider = query_data.get('cloudProvider', '')
++        safe_cloud_provider = validate_path_component(cloud_provider, 'cloudProvider', key).lower() if cloud_provider != '' else ''
+         platform_folder_path = os.path.join(output_path,
+-                                            f"{query_data.get('platform').lower()}-queries",
+-                                            cloud_provider if cloud_provider != 'common' else '')
++                                            f"{safe_platform}-queries",
++                                            safe_cloud_provider if safe_cloud_provider != 'common' else '')
++        # Defense in depth: the generated page must always stay inside the output folder
++        if os.path.commonpath([os.path.realpath(output_path), os.path.realpath(platform_folder_path)]) != os.path.realpath(output_path):
++            raise ValueError(f"\033[31mRefusing to write outside of the output folder: {platform_folder_path}\033[0m")
+
+```
+
+**File**: `Dockerfile` (modified, +2/-2)
+```diff
+@@ -1,5 +1,5 @@
+-ARG GO_BASE_IMAGE=checkmarx/go:1.27.2@sha256:fe921b37bca3d7b48d97ab726953ea294883e0dcacb248fcbaeefb661e913a0a
+-ARG GIT_BASE_IMAGE=checkmarx/git:2.56.0@sha256:be1ed19271f3ec1575d3a6eb88317b582a26ec81585bd51df26d7f188521949c
++ARG GO_BASE_IMAGE=checkmarx/go:1.27.3@sha256:0fe425ea9977dee00df4c1372e90f42658c4d38750949e8543b38bd981ef6700
++ARG GIT_BASE_IMAGE=checkmarx/git:2.56.0@sha256:4316851b6fbec95b370cd8a416570bced1f3fdfbbb8ae5fb88af1a13772b83dc
+ FROM ${GO_BASE_IMAGE} AS build_env
+ 
+ # Copy the source from the current directory to the Working Directory inside the container
+```
+
+**File**: `docker/Dockerfile.alpine` (modified, +2/-2)
+```diff
+@@ -1,4 +1,4 @@
+-FROM --platform=${BUILDPLATFORM:-linux/amd64} golang:1.26.3@sha256:2d6c80227255c3112a4d08e67ba98e58efd3846daf15d9d7d4c389565d881b1a AS build_env
++FROM --platform=${BUILDPLATFORM:-linux/amd64} golang:1.27.3@sha256:f20d83a83e18dbd2a4714b8ffd4b30b287b6243962dd75608e86abcc63ba4efc AS build_env
+ 
+ # Copy the source from the current directory to the Working Directory inside the container
+ WORKDIR /app
+@@ -27,7 +27,7 @@ RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build \
+     -o bin/kics cmd/console/main.go
+ 
+ # Runtime image - Alpine base with git preinstalled (wget/unzip come from busybox already)
+-FROM alpine/git:latest@sha256:6f8eae2205a85c51106a9650e574a37fb1d5e4f645e5f6ea57cb57b9462cd4cf
++FROM alpine/git:latest@sha256:e8ceedc73bd80992ae8d58a7d24c58b8322146c354f1d2e81a97db4452068ec0
+ 
+ RUN addgroup -g 1000 checkmarx && \
+     adduser -D -u 1000 -G checkmarx -h /app/bin -s /bin/sh checkmarx
+```
+
+**File**: `docker/Dockerfile.debian` (modified, +2/-2)
+```diff
+@@ -3,7 +3,7 @@
+ # it does not define an ENTRYPOINT as this is a requirement described here:
+ # https://docs.microsoft.com/en-us/azure/devops/pipelines/process/container-phases?view=azure-devops#linux-based-containers
+ #
+-FROM --platform=${BUILDPLATFORM:-linux/amd64} golang:1.26.3-bookworm@sha256:386d475a660466863d9f8c766fec64d7fdad3edac2c6a05020c09534d71edb4b AS build_env
++FROM --platform=${BUILDPLATFORM:-linux/amd64} golang:1.27.3-bookworm@sha256:972b4110ba0f47539a975c31e52c64765e1ff19f2d74469ae4a595c6676e80a5 AS build_env
+ 
+ # Create a group and user
+ RUN groupadd checkmarx && useradd -g checkmarx -M -s /bin/bash checkmarx
+@@ -47,7 +47,7 @@ USER checkmarx
+ # be sure to use /app/bin/kics as a path to the binary
+ #
+ # runtime image - buildpack-deps:scm already ships git, wget and ca-certificates
+-FROM buildpack-deps:bookworm-scm@sha256:de4e518f98c6533eceeee6f8b14a77a918856fa8282a1b711c0292d089157c0c
++FROM buildpack-deps:bookworm-scm@sha256:1314fd2a9c83b257b37132883b3c8e326d3909211bdcb419c9757399ebc34bf3
+ 
+ RUN groupadd checkmarx && useradd -g checkmarx -M -s /bin/bash checkmarx
+ 
+```
+
+**File**: `docker/Dockerfile.ubi8` (modified, +3/-3)
+```diff
+@@ -1,6 +1,6 @@
+-FROM golang:1.26.3@sha256:2d6c80227255c3112a4d08e67ba98e58efd3846daf15d9d7d4c389565d881b1a AS go_toolchain
++FROM golang:1.27.3@sha256:f20d83a83e18dbd2a4714b8ffd4b30b287b6243962dd75608e86abcc63ba4efc AS go_toolchain
+ 
+-FROM redhat/ubi8:latest@sha256:a94c5e31450d30190afe6f7a09628dd1dd7a3dc98784ba5ed1d19fd77098fcb2 AS build_env
++FROM redhat/ubi8:latest@sha256:bd097b288df365aec7bad694c87036534ce94d1a4974c943f417f757f8eb2ac4 AS build_env
+ 
+ ARG TARGETOS
+ ARG TARGETARCH
+@@ -33,7 +33,7 @@ RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build \
+   -a -installsuffix cgo \
+   -o bin/kics cmd/console/main.go
+ 
+-FROM redhat/ubi8:latest@sha256:a94c5e31450d30190afe6f7a09628dd1dd7a3dc98784ba5ed1d19fd77098fcb2
++FROM redhat/ubi8:latest@sha256:bd097b288df365aec7bad694c87036534ce94d1a4974c943f417f757f8eb2ac4
+ 
+ ARG RELEASE
+ ARG ENGINE_VERSION
+```
+
+**File**: `go.mod` (modified, +87/-86)
+```diff
+@@ -1,14 +1,14 @@
+ module github.com/Checkmarx/kics/v2
+ 
+-go 1.26.3
++go 1.26.8
+ 
+ require (
+ 	code.cloudfoundry.org/bytefmt v0.35.0
+ 	github.com/BurntSushi/toml v1.6.0
+ 	github.com/agnivade/levenshtein v1.2.1
+ 	github.com/alexmullins/zip v0.0.0-20180717182244-4affb64b04d0
+ 	github.com/antlr4-go/antlr/v4 v4.13.1
+-	github.com/aws/aws-sdk-go-v2 v1.43.0
++	github.com/aws/aws-sdk-go-v2 v1.47.1
+ 	github.com/bigkevmcd/go-configparser v0.0.0-20230427073640-c6b631f70126
+ 	github.com/cheggaaa/pb/v3 v3.1.7
+ 	github.com/emicklei/proto v1.14.0
+@@ -18,13 +18,13 @@ require (
+ 	github.com/google/pprof v0.0.0-20260402051712-545e8a4df936
+ 	github.com/google/uuid v1.6.0
+ 	github.com/gookit/color v1.5.4
+-	github.com/hashicorp/go-getter v1.8.6
++	github.com/hashicorp/go-getter v1.8.10
+ 	github.com/hashicorp/hcl v1.0.0
+ 	github.com/hashicorp/hcl/v2 v2.23.0
+ 	github.com/hashicorp/terraform-json v0.24.0
+ 	github.com/johnfercher/maroto v1.0.0
+ 	github.com/mackerelio/go-osstat v0.2.5
+-	github.com/moby/buildkit v0.32.2
++	github.com/moby/buildkit v0.34.1
+ 	github.com/open-policy-agent/opa v1.12.3
+ 	github.com/pkg/errors v0.9.1
+ 	github.com/relex/aini v1.6.0
+@@ -40,47 +40,47 @@ require (
+ 	github.com/yargevad/filepathx v1.0.0
+ 	github.com/zclconf/go-cty v1.16.2
+ 	golang.org/x/exp v0.0.0-20260603202125-055de637280b
+-	golang.org/x/net v0.60.0
+-	golang.org/x/text v0.42.0
++	golang.org/x/net v0.61.1-0.20261022225259-05c76ee9adc5
++	golang.org/x/text v0.43.1-0.20261021162616-972f2683e886
+ 	gopkg.in/yaml.v3 v3.0.1
+-	helm.sh/helm/v3 v3.22.0
++	helm.sh/helm/v3 v3.22.1
+ 	mvdan.cc/sh/v3 v3.11.0
+ 	sigs.k8s.io/controller-runtime v0.14.6
+ )
+ 
+ require (
+ 	cel.dev/expr v0.25.2 // indirect
+ 	cloud.google.com/go v0.123.0 // indirect
+-	cloud.google.com/go/auth v0.18.2 // indirect
++	cloud.google.com/go/auth v0.23.3 // indirect
+ 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
+-	cloud.google.com/go/compute/metadata v0.9.0 // indirect
+-	cloud.google.com/go/iam v1.5.3 // indirect
+-	cloud.google.com/go/monitoring v1.24.3 // indirect
+-	cloud.google.com/go/storage v1.61.3 // indirect
++	cloud.google.com/go/compute/metadata v0.9.1 // indirect
++	cloud.google.com/go/iam v1.12.0 // indirect
++	cloud.google.com/go/monitoring v1.30.0 // indirect
++	cloud.google.com/go/storage v1.68.0 // indirect
+ 	dario.cat/mergo v1.0.1 // indirect
+ 	filippo.io/edwards25519 v1.1.1 // indirect
+-	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.33.0 // indirect
+-	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.56.0 // indirect
+-	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.56.0 // indirect
++	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.34.0 // indirect
++	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.57.0 // indirect
++	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.57.0 // indirect
+ 	github.com/ProtonMail/go-crypto v1.4.1 // indirect
+ 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
+-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.14 // indirect
+-	github.com/aws/aws-sdk-go-v2/config v1.32.31 // indirect
+-	github.com/aws/aws-sdk-go-v2/credentials v1.19.30 // indirect
+-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.31 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.31 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.31 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.32 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.13 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.9.24 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.31 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.19.32 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/s3 v1.106.0 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/signin v1.5.0 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/sso v1.33.0 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.38.0 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/sts v1.45.0 // indirect
+-	github.com/aws/smithy-go v1.27.4 // indirect
++	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.20 // indirect
++	github.com/aws/aws-sdk-go-v2/config v1.33.6 // indirect
++	github.com/aws/aws-sdk-go-v2/credentials v1.20.6 // indirect
++	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.1 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.4 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.4 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.4 // indirect
++	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.19 // indirect
++	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.5 // indirect
++	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.4 // indirect
++	github.com/aws/aws-sdk-go-v2/service/in
+```
+
+**File**: `go.sum` (modified, +204/-208)
+```diff
+@@ -2,24 +2,24 @@ cel.dev/expr v0.25.2 h1:K6j46C81hXtZQfuX60cVWQFBJahKSE2gfRbNuvr5bFs=
+ cel.dev/expr v0.25.2/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
+ cloud.google.com/go v0.123.0 h1:2NAUJwPR47q+E35uaJeYoNhuNEM9kM8SjgRgdeOJUSE=
+ cloud.google.com/go v0.123.0/go.mod h1:xBoMV08QcqUGuPW65Qfm1o9Y4zKZBpGS+7bImXLTAZU=
+-cloud.google.com/go/auth v0.18.2 h1:+Nbt5Ev0xEqxlNjd6c+yYUeosQ5TtEUaNcN/3FozlaM=
+-cloud.google.com/go/auth v0.18.2/go.mod h1:xD+oY7gcahcu7G2SG2DsBerfFxgPAJz17zz2joOFF3M=
++cloud.google.com/go/auth v0.23.3 h1:UMK+oBtuNGMCR/6i6mmySUItqjOazpJrbmZyhGbGBWo=
++cloud.google.com/go/auth v0.23.3/go.mod h1:fClbry28fo7XkxhSeT6AQtAVAp6Jy0fW9N99PoPNPFM=
+ cloud.google.com/go/auth/oauth2adapt v0.2.8 h1:keo8NaayQZ6wimpNSmW5OPc283g65QNIiLpZnkHRbnc=
+ cloud.google.com/go/auth/oauth2adapt v0.2.8/go.mod h1:XQ9y31RkqZCcwJWNSx2Xvric3RrU88hAYYbjDWYDL+c=
+-cloud.google.com/go/compute/metadata v0.9.0 h1:pDUj4QMoPejqq20dK0Pg2N4yG9zIkYGdBtwLoEkH9Zs=
+-cloud.google.com/go/compute/metadata v0.9.0/go.mod h1:E0bWwX5wTnLPedCKqk3pJmVgCBSM6qQI1yTBdEb3C10=
+-cloud.google.com/go/iam v1.5.3 h1:+vMINPiDF2ognBJ97ABAYYwRgsaqxPbQDlMnbHMjolc=
+-cloud.google.com/go/iam v1.5.3/go.mod h1:MR3v9oLkZCTlaqljW6Eb2d3HGDGK5/bDv93jhfISFvU=
+-cloud.google.com/go/logging v1.13.1 h1:O7LvmO0kGLaHY/gq8cV7T0dyp6zJhYAOtZPX4TF3QtY=
+-cloud.google.com/go/logging v1.13.1/go.mod h1:XAQkfkMBxQRjQek96WLPNze7vsOmay9H5PqfsNYDqvw=
+-cloud.google.com/go/longrunning v0.8.0 h1:LiKK77J3bx5gDLi4SMViHixjD2ohlkwBi+mKA7EhfW8=
+-cloud.google.com/go/longrunning v0.8.0/go.mod h1:UmErU2Onzi+fKDg2gR7dusz11Pe26aknR4kHmJJqIfk=
+-cloud.google.com/go/monitoring v1.24.3 h1:dde+gMNc0UhPZD1Azu6at2e79bfdztVDS5lvhOdsgaE=
+-cloud.google.com/go/monitoring v1.24.3/go.mod h1:nYP6W0tm3N9H/bOw8am7t62YTzZY+zUeQ+Bi6+2eonI=
+-cloud.google.com/go/storage v1.61.3 h1:VS//ZfBuPGDvakfD9xyPW1RGF1Vy3BWUoVZXgW1KMOg=
+-cloud.google.com/go/storage v1.61.3/go.mod h1:JtqK8BBB7TWv0HVGHubtUdzYYrakOQIsMLffZ2Z/HWk=
+-cloud.google.com/go/trace v1.11.7 h1:kDNDX8JkaAG3R2nq1lIdkb7FCSi1rCmsEtKVsty7p+U=
+-cloud.google.com/go/trace v1.11.7/go.mod h1:TNn9d5V3fQVf6s4SCveVMIBS2LJUqo73GACmq/Tky0s=
++cloud.google.com/go/compute/metadata v0.9.1 h1:CTE1OWBQ0vnF5uHwdFAQJvMQ0Fi/KRcqqKTo9V0F8Ik=
++cloud.google.com/go/compute/metadata v0.9.1/go.mod h1:NtnlvB6X3t4R6xSWyVX/ZWk493PCxGQlhI/iqxh4M8I=
++cloud.google.com/go/iam v1.12.0 h1:Aki3bX9aHUDKPHfnRJfDcTdVedvy6quGBQcTqx3DRXk=
++cloud.google.com/go/iam v1.12.0/go.mod h1:FEZ4lXpADAC2AIpQY7LANNjjwyQ2jK439CI2VaD+sLY=
++cloud.google.com/go/logging v1.19.0 h1:NCqhdVUg3wQ8Cobdf16FDSuTGi3+6+hdSBHrY5TsR6Q=
++cloud.google.com/go/logging v1.19.0/go.mod h1:i40NZCHC9Gqvod4yE+yQfDWwlgwW/SrshkkGibCHxcA=
++cloud.google.com/go/longrunning v1.2.0 h1:WjYH3YHBGCxGJP9M4dWGHBfXr/cFIjMkNgWcJj7/iMM=
++cloud.google.com/go/longrunning v1.2.0/go.mod h1:5KMQALFGOCtFoi2xSOA1u3H7WKlhmckgiyFw7+LGQp0=
++cloud.google.com/go/monitoring v1.30.0 h1:r/d+JUbyKmJ8b07iznuKfzVzrIXTWxHQ3lBRm3x2LlY=
++cloud.google.com/go/monitoring v1.30.0/go.mod h1:htlUR0QWVMrjFzZmN4LGnMAve9xB/eduwjmINxVZ8RM=
++cloud.google.com/go/storage v1.68.0 h1:gqrAMJ51OZjYgU6AJ2U60um90YQhSjq8HEIQNtJ4C/8=
++cloud.google.com/go/storage v1.68.0/go.mod h1:UsS9OgFg/XHOSYakQ8ZtLWWeyGkk1WnmD/GsGfN0BHM=
++cloud.google.com/go/trace v1.16.0 h1:GmQovzFc5F0CNfl0VLgL64aoTtu7xsM0YajW2GlG9+E=
++cloud.google.com/go/trace v1.16.0/go.mod h1:r+bdAn16dKLSV1G2D5v3e58IlQlizfxWrUfjx7kM7X0=
+ code.cloudfoundry.org/bytefmt v0.35.0 h1:ZbGfHvOzJLpgC+N1Uy7duYmrRpvMkOC8gLqpfGWlNp8=
+ code.cloudfoundry.org/bytefmt v0.35.0/go.mod h1:4Z4NBcvSttXNZRFfH6yKUBBUljAgZw//9zD9w8BvhCk=
+ dario.cat/mergo v1.0.1 h1:Ra4+bf83h2ztPIQYNP99R6m+Y7KfnARDfID+a+vLl4s=
+@@ -35,14 +35,14 @@ github.com/BurntSushi/toml v1.6.0 h1:dRaEfpa2VI55EwlIW72hMRHdWouJeRF7TPYhI+AUQjk
+ github.com/BurntSushi/toml v1.6.0/go.mod h1:ukJfTF/6rtPPRCnwkur4qwRxa8vTRFBF0uk2lLoLwho=
+ github.com/DATA-DOG/go-sqlmock v1.5.2 h1:OcvFkGmslmlZibjAjaHm3L//6LiuBgolP7OputlJIzU=
+ github.com/DATA-DOG/go-sqlmock v1.5.2/go.mod h1:88MAG/4G7SMwSE3CeA0ZKzrT5CiOU3OJ+JlNzwDqpNU=
+-github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.33.0 h1:l7+6kwRMJNwdCvYdDl7Eax+wzEYHSnNY7zrrfbhDdTA=
+-github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.33.0/go.mod h1:pJTkW8hEUIIi3Pf65lPZOnn4Y81yCllX6IWk2jNXdkM=
+-github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.56.0 h1:O2sXMyJh8b7devAGdE+163xtRurt0RVpB6DIzX5vGfg=
+-github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.56.0/go.mod h1:hEpiGU18xf70qb3jbTcIggWAiEfX/cOIVc2OTe4OegA=
+-github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/cloudmock v0.56.0 h1:ZIT85vKP7LBS84XJ0WdJ3dPOX3iz4j3c0+lpajGQMyo=
+-github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/cloudmock v0.56.0/go.mod h1:rqP9UEhOXv9WhQ7Gjz+G5y/pf8+BJZW5/Ts0AhE0PwE=
+-github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.56.0 h1:0YP0+/ixwu+Uqeu/FGiBZNQ19huiUxxiPXIc9WsLKuQ=
+-github.com/GoogleCloudPlatform/opentelemetry-ope
+```
+
+**File**: `pkg/scan/client.go` (modified, +2/-1)
+```diff
+@@ -137,8 +137,9 @@ func CheckVersion(t *tracker.CITracker) {
+ 	}
+ 
+ 	latestVersionTag := strings.TrimPrefix(release.TagName, "v")
++	currentVersion := strings.TrimPrefix(constants.Version, "v")
+ 	t.TrackVersion(model.Version{
+-		Latest:           constants.Version == latestVersionTag,
++		Latest:           currentVersion == latestVersionTag,
+ 		LatestVersionTag: latestVersionTag,
+ 	})
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8156** (2026-10-27): test(pwd): add password and secrets timeout test coverage (@cx-artur-ribeiro)
+- **PR #8155** (2026-10-27): fix(version): update version prefix comparison with latest version (@cx-artur-ribeiro)
 - **PR #8150** (2026-10-20): ci(release): AST-186869 clean build cache after each image build (@cx-lior-poterman)
 - **PR #8149** (2026-10-20): ci(release): AST-186869 push prebuilt OCI archives with a fresh login (@cx-lior-poterman)
 - **PR #8148** (2026-10-19): ci(release): AST-186869 fix Docker Hub token expiry and automate release publish (@cx-lior-poterman)
 - **PR #8147** (2026-10-19): ci(release): AST-186869 unblock release-docker-image under StepSecurity policy (@cx-lior-poterman)
-- **PR #8146** (2026-10-19): ci(release): AST-186869 allow release-docker-image to build a given tag (@cx-lior-poterman)
-- **PR #8145** (2026-10-20): test(query): minor adjustments to passwords and secrets start-of-file sample comments (@AndrePereira123)
 
 ---
 
@@ -1824,40 +2227,33 @@ Co-authored-by: Claude Opus 4.8 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci(release): AST-186869 clean build cache after each image build (#8150)
+## X. add: test coverage to password and secrets queries timeout (#8156)
 
 **RULE**:
-When implementing operations in `.github/workflows/release-dkr-image.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Checkmarx/kics. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `e2e/fixtures/samples/secrets/regex_rules_109_slow.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Checkmarx/kics. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1f05308b`: ci(release): AST-186869 clean build cache after each image build (#8150). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0f99087a`: add: test coverage to password and secrets queries timeout (#8156). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Open Policy Agent data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-dkr-image.yml`.
+Subsystems managing Open Policy Agent data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e/fixtures/samples/secrets/regex_rules_109_slow.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```open policy agent
 // Verified production-grade fix pattern:
-      # Each image is already saved to its OCI archive, so drop the build cache to keep the
-      # runner from running out of disk (the archives in runner.temp are not touched).
-      - name: Clean build cache (main)
-        run: |
-          docker buildx prune --all --force
-          df -h /
-      - name: Clean build cache (alpine)
-        run: |
-          docker buildx prune --all --force
-          df -h /
-      - name: Clean build cache (debian)
-        run: |
-          docker buildx prune --all --force
-          df -h /
-      # Also frees the space skopeo needs to unpack each archive while pushing.
-      - name: Clean build cache (ubi8)
-        run: |
-          docker buildx prune --all --force
-          df -h /
-          ls -lh "${RUNNER_TEMP}"/kics-*.tar
+{
+  "rules": [
+    {
+      "id": "3c1a6b7e-5d2f-4e8a-9b41-7f0c2d9e6a15",
+      "name": "Slow Timeout Rule",
+      "regex": "([\\s\\S]{1,1000}[\\s\\S]{1,1000}[\\s\\S]{1,1000}ZZZ)",
+      "multiline": {
+        "detectLineGroup": 1
+      }
+    }
+  ],
+  "allowRules": []
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1867,4 +2263,4 @@ Subsystems managing Open Policy Agent data structures, boundary deserialization,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1f05308b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0f99087a` are properly handled with clean fallback behavior.

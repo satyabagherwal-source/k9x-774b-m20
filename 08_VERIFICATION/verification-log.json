@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-85JD",
-    "timestamp": "2026-10-25T19:06:28.489Z",
-    "repository": "mlua-rs/mlua",
-    "learningId": "learn-github-mlua-rs-mlua",
-    "contentHash": "9908bbca4161887edf9df438a17502a89bc24d1e72edc58c4468647231af1b87",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-GBJ3",
-    "timestamp": "2026-10-25T19:12:49.503Z",
-    "repository": "openai/whisper-large-v3",
-    "learningId": "learn-huggingface-openai-whisper-large-v3",
-    "contentHash": "2eb621946b1db8442fc54789c7cc27857859b9ce1b7284420b8bcb63a33672cc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-GBOX",
-    "timestamp": "2026-10-25T19:12:49.713Z",
-    "repository": "NVIDIA/cuda-rust",
-    "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "4a12ca1e59a8db9a73f29cd351751e3bba9816ba2095d2b56ccdf3878ae7693f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-GIRV",
-    "timestamp": "2026-10-25T19:12:58.891Z",
-    "repository": "gardener/gardener",
-    "learningId": "learn-github-gardener-gardener",
-    "contentHash": "f0464548799d1e6ed21a6fb552c61629855da69d9005c91ae464f7e1485af5a9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-OE4N",
     "timestamp": "2026-10-25T19:19:06.119Z",
     "repository": "ntex-rs/ntex",
@@ -7490,6 +7430,66 @@
     "repository": "mitmproxy/mitmproxy",
     "learningId": "learn-github-mitmproxy-mitmproxy",
     "contentHash": "b04f3807570f9796d2092e587998a5ac12086e9283fb37e64e54b1d5d6183813",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-FNRD",
+    "timestamp": "2026-10-27T17:23:40.681Z",
+    "repository": "wcandillon/react-native-skia",
+    "learningId": "learn-github-wcandillon-react-native-skia",
+    "contentHash": "4351c3b664b0bb370332e8744a0f19c71c711069e5c6f207871130aaf6ff8fb1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-FO4N",
+    "timestamp": "2026-10-27T17:23:41.159Z",
+    "repository": "Checkmarx/kics",
+    "learningId": "learn-github-checkmarx-kics",
+    "contentHash": "0e2d17346b970164c56e8d00dfbe10d246dc2b60ad38acceb7939d5519b80c3c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-FPG6",
+    "timestamp": "2026-10-27T17:23:42.870Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "8e14ff949ada5d7e1b7e2770e66f80d6e432072fc9117a87cec2352bc7f501c2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-FQ50",
+    "timestamp": "2026-10-27T17:23:43.764Z",
+    "repository": "volcengine/OpenViking",
+    "learningId": "learn-github-volcengine-openviking",
+    "contentHash": "1b91069fef41d0acd6d20af8e13105066b4717d6e1d305beac4ff3c5b2203007",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

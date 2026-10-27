@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T17:16:56.695Z",
+  "last_updated": "2026-10-27T17:23:43.777Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2541,14 +2541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-volcengine-openviking",
-      "content_hash": "3badd4738fbfc3e063083918a20c882ac23638cc4919097c972276e725ca510a",
-      "verified_at": "2026-10-26T09:54:01.431Z",
+      "content_hash": "1b91069fef41d0acd6d20af8e13105066b4717d6e1d305beac4ff3c5b2203007",
+      "verified_at": "2026-10-27T17:23:43.776Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T09:54:01.431Z"
+      "last_updated": "2026-10-27T17:23:43.776Z"
     },
     "Saffsanity/sill": {
       "repository": "Saffsanity/sill",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "9a2955f4d38ddd289ba410c49b7aafc7fe5226d23f456c6a9f4bf5fd819b99d6",
-      "verified_at": "2026-10-27T14:26:34.190Z",
+      "content_hash": "8e14ff949ada5d7e1b7e2770e66f80d6e432072fc9117a87cec2352bc7f501c2",
+      "verified_at": "2026-10-27T17:23:42.881Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T14:26:34.190Z"
+      "last_updated": "2026-10-27T17:23:42.881Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -7251,14 +7251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wcandillon-react-native-skia",
-      "content_hash": "df447fe43e6dc29f03f13354a28bef3ee5c52371b6c4798f8e336bc94f118fa4",
-      "verified_at": "2026-10-27T11:49:33.541Z",
+      "content_hash": "4351c3b664b0bb370332e8744a0f19c71c711069e5c6f207871130aaf6ff8fb1",
+      "verified_at": "2026-10-27T17:23:40.693Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T11:49:33.541Z"
+      "last_updated": "2026-10-27T17:23:40.693Z"
     },
     "saltstack/salt": {
       "repository": "saltstack/salt",
@@ -8376,14 +8376,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-checkmarx-kics",
-      "content_hash": "8f3f9c26d397b681dcdd03ec635147cc0ba252d4422fba578cc9c7b94aa29ba3",
-      "verified_at": "2026-10-20T19:37:03.108Z",
+      "content_hash": "0e2d17346b970164c56e8d00dfbe10d246dc2b60ad38acceb7939d5519b80c3c",
+      "verified_at": "2026-10-27T17:23:41.172Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T19:37:03.108Z"
+      "last_updated": "2026-10-27T17:23:41.172Z"
     },
     "olric-data/olric": {
       "repository": "olric-data/olric",

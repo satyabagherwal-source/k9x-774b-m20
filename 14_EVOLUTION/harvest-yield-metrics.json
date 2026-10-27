@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T17:16:56.692Z",
-  "total_cycles_completed": 5429,
-  "total_learnings_persisted": 5429,
-  "total_rules_promoted": 4829,
+  "last_updated": "2026-10-27T17:23:43.773Z",
+  "total_cycles_completed": 5433,
+  "total_learnings_persisted": 5433,
+  "total_rules_promoted": 4833,
   "history": [
-    {
-      "timestamp": "2026-10-27T12:04:32.778Z",
-      "repository": "actix/actix-web",
-      "learningId": "learn-github-actix-actix-web",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T12:07:40.743Z",
-      "repository": "lobehub/lobe-ui",
-      "learningId": "learn-github-lobehub-lobe-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T12:07:44.997Z",
-      "repository": "lxml/lxml",
-      "learningId": "learn-github-lxml-lxml",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T12:07:50.130Z",
-      "repository": "kubeedge/kubeedge",
-      "learningId": "learn-github-kubeedge-kubeedge",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T12:10:43.268Z",
       "repository": "transact-rs/sqlx",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-27T17:16:56.692Z",
       "repository": "mitmproxy/mitmproxy",
       "learningId": "learn-github-mitmproxy-mitmproxy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T17:23:40.689Z",
+      "repository": "wcandillon/react-native-skia",
+      "learningId": "learn-github-wcandillon-react-native-skia",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T17:23:41.168Z",
+      "repository": "Checkmarx/kics",
+      "learningId": "learn-github-checkmarx-kics",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T17:23:42.878Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T17:23:43.773Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

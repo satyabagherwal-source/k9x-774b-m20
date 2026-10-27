@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "d6271e63",
+    "sourceVersion": "54d4c0fa",
     "license": "AGPL-3.0",
-    "contentHash": "3badd4738fbfc3e063083918a20c882ac23638cc4919097c972276e725ca510a",
-    "lastHarvestedAt": "2026-10-26T09:54:01.424Z",
+    "contentHash": "1b91069fef41d0acd6d20af8e13105066b4717d6e1d305beac4ff3c5b2203007",
+    "lastHarvestedAt": "2026-10-27T17:23:43.767Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "abcdcf19",
+    "sourceVersion": "26ce6d2e",
     "license": "MIT",
-    "contentHash": "9a2955f4d38ddd289ba410c49b7aafc7fe5226d23f456c6a9f4bf5fd819b99d6",
-    "lastHarvestedAt": "2026-10-27T14:26:34.182Z",
+    "contentHash": "8e14ff949ada5d7e1b7e2770e66f80d6e432072fc9117a87cec2352bc7f501c2",
+    "lastHarvestedAt": "2026-10-27T17:23:42.873Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -4753,10 +4753,10 @@
     "repository": "wcandillon/react-native-skia",
     "platform": "github",
     "sourceUrl": "https://github.com/Shopify/react-native-skia",
-    "sourceVersion": "bbd1b685",
+    "sourceVersion": "b205363a",
     "license": "MIT",
-    "contentHash": "e014a1031fb833966f990acce1aa907791b9c7c48302852eea8a50b7e778b1b2",
-    "lastHarvestedAt": "2026-10-25T03:38:35.803Z",
+    "contentHash": "4351c3b664b0bb370332e8744a0f19c71c711069e5c6f207871130aaf6ff8fb1",
+    "lastHarvestedAt": "2026-10-27T17:23:40.684Z",
     "learningId": "learn-github-wcandillon-react-native-skia"
   },
   "saltstack-salt": {
@@ -5503,10 +5503,10 @@
     "repository": "Checkmarx/kics",
     "platform": "github",
     "sourceUrl": "https://github.com/Checkmarx/kics",
-    "sourceVersion": "1f05308b",
+    "sourceVersion": "0f99087a",
     "license": "Apache-2.0",
-    "contentHash": "8f3f9c26d397b681dcdd03ec635147cc0ba252d4422fba578cc9c7b94aa29ba3",
-    "lastHarvestedAt": "2026-10-20T19:37:03.101Z",
+    "contentHash": "0e2d17346b970164c56e8d00dfbe10d246dc2b60ad38acceb7939d5519b80c3c",
+    "lastHarvestedAt": "2026-10-27T17:23:41.162Z",
     "learningId": "learn-github-checkmarx-kics"
   },
   "olric-data-olric": {
