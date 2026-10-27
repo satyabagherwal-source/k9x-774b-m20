@@ -4584,3 +4584,11 @@ https://github.com/TokenRhythm/opensquilla
 https://github.com/eracle/OpenOutreach
 # [AI-AGENTS] lackeyjb/playwright-skill (1868 score) - General-purpose Playwright automation for coding agents
 https://github.com/lackeyjb/playwright-skill
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T14:43:01.010Z] ---
+# [AI-AGENTS] apioo/fusio (1487 score) - Self-Hosted API Management for Builders
+https://github.com/apioo/fusio
+# [AI-AGENTS] A9T9/RPA (1442 score) - Browser and desktop automation with an MCP server for AI assistants. Record macr
+https://github.com/A9T9/RPA
+# [AI-AGENTS] CYB3RMX/Qu1cksc0pe (1378 score) - All-in-One malware analysis tool.
+https://github.com/CYB3RMX/Qu1cksc0pe

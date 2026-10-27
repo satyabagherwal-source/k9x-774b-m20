@@ -5390,3 +5390,6 @@ Every entry in this ledger must capture:
 | `learn-github-nirdiamant-rag_techniques` | `https://github.com/NirDiamant/RAG_Techniques` | `9e2e9930` | Multi-dimensional audit evidence | 2026-10-27T14:33:26.025Z |
 | `learn-huggingface-unsloth-flint-gguf` | `https://huggingface.co/unsloth/flint-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-27T14:36:28.538Z |
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `7d4fd1fa` | Multi-dimensional audit evidence | 2026-10-27T14:36:39.135Z |
+| `learn-github-a9t9-rpa` | `https://github.com/A9T9/RPA` | `17b6302f` | Multi-dimensional audit evidence | 2026-10-27T14:43:12.028Z |
+| `learn-github-cyb3rmx-qu1cksc0pe` | `https://github.com/CYB3RMX/Qu1cksc0pe` | `180d44f4` | Multi-dimensional audit evidence | 2026-10-27T14:43:15.303Z |
+| `learn-github-apioo-fusio` | `https://github.com/apioo/fusio` | `9dedd6f6` | Multi-dimensional audit evidence | 2026-10-27T14:43:17.490Z |

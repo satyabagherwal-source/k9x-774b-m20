@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-SJCS",
-    "timestamp": "2026-10-25T15:38:22.588Z",
-    "repository": "neuron-core/neuron-ai",
-    "learningId": "learn-github-neuron-core-neuron-ai",
-    "contentHash": "f46b1bdbfd718a66bb7b93e623fd9e46c743d47d701e41324fafdf5c27fb28eb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-YMPL",
-    "timestamp": "2026-10-25T15:43:06.873Z",
-    "repository": "kajisho5/ffmpeg-skill",
-    "learningId": "learn-github-kajisho5-ffmpeg-skill",
-    "contentHash": "973b37627992402e40a401b8dd721fb79618a941f43a029a26df2ee11599e3f2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-6TX0",
-    "timestamp": "2026-10-25T15:49:29.460Z",
-    "repository": "PSRben/VisionHOPE",
-    "learningId": "learn-huggingface-psrben-visionhope",
-    "contentHash": "15dc6e3e17d206cd27f95e597581ee6eb8ed985868d4b88d864dedd1e683a57d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-6YVF",
     "timestamp": "2026-10-25T15:49:35.883Z",
     "repository": "thaw-app/Thaw",
@@ -7492,6 +7447,51 @@
     "contentHash": "f17a3e9665287b5f295a5a50d3fdd3b6d690551b94e9b191107cff170458a012",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-PA8O",
+    "timestamp": "2026-10-27T14:43:12.024Z",
+    "repository": "A9T9/RPA",
+    "learningId": "learn-github-a9t9-rpa",
+    "contentHash": "417a57aeb5dcedcf605ac12c77a1cb8c78c77d42bcdef3009c126b6f9b8d3962",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-PCRO",
+    "timestamp": "2026-10-27T14:43:15.300Z",
+    "repository": "CYB3RMX/Qu1cksc0pe",
+    "learningId": "learn-github-cyb3rmx-qu1cksc0pe",
+    "contentHash": "64eb85a298af66a77b6a599ced7a956a4df7620c372e06db4d69fa3cccb36925",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-PEGF",
+    "timestamp": "2026-10-27T14:43:17.487Z",
+    "repository": "apioo/fusio",
+    "learningId": "learn-github-apioo-fusio",
+    "contentHash": "df5a92b24298e30fde054c540b2ea4cb8e152f40630b8e23c055a83425053ba6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

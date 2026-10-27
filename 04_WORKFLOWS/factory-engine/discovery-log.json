@@ -19303,5 +19303,50 @@
     "qualityScore": 1868,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-27T14:32:51.156Z"
+  },
+  {
+    "name": "fusio",
+    "fullName": "apioo/fusio",
+    "url": "https://github.com/apioo/fusio",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Self-Hosted API Management for Builders",
+    "stars": 2127,
+    "forks": 246,
+    "openIssues": 173,
+    "language": "PHP",
+    "qualityScore": 1487,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T14:42:30.390Z"
+  },
+  {
+    "name": "RPA",
+    "fullName": "A9T9/RPA",
+    "url": "https://github.com/A9T9/RPA",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Browser and desktop automation with an MCP server for AI assistants. Record macros or write JavaScript to automate websites, extract data, and control desktop apps with OCR and image recognition.",
+    "stars": 2091,
+    "forks": 420,
+    "openIssues": 10,
+    "language": "TypeScript",
+    "qualityScore": 1442,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T14:42:30.391Z"
+  },
+  {
+    "name": "Qu1cksc0pe",
+    "fullName": "CYB3RMX/Qu1cksc0pe",
+    "url": "https://github.com/CYB3RMX/Qu1cksc0pe",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "All-in-One malware analysis tool.",
+    "stars": 2089,
+    "forks": 265,
+    "openIssues": 2,
+    "language": "YARA",
+    "qualityScore": 1378,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T14:42:30.391Z"
   }
 ]

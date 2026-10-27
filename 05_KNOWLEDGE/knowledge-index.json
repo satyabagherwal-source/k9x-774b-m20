@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T14:36:39.085Z",
-  "total_verified_learnings": 1132,
+  "last_updated": "2026-10-27T14:43:17.426Z",
+  "total_verified_learnings": 1135,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -134979,6 +134979,185 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T14:36:39.074Z"
+    },
+    "learn-github-a9t9-rpa": {
+      "learning_id": "learn-github-a9t9-rpa",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "A9T9/RPA",
+      "repository": "A9T9/RPA",
+      "slug": "a9t9-rpa",
+      "platform": "github",
+      "source_url": "https://github.com/A9T9/RPA",
+      "source_version": "17b6302f",
+      "content_hash": "417a57aeb5dcedcf605ac12c77a1cb8c78c77d42bcdef3009c126b6f9b8d3962",
+      "dossier_path": "07_PROJECT_LEARNING/a9t9-rpa-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/a9t9-rpa-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4855,
+          "title": "heading format in README.md",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T14:43:11.950Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4855": {
+      "learning_id": "rule-4855",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4855,
+      "title": "heading format in README.md",
+      "source_url": "https://github.com/A9T9/RPA",
+      "source_version": "17b6302f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:43:11.950Z"
+    },
+    "learn-github-cyb3rmx-qu1cksc0pe": {
+      "learning_id": "learn-github-cyb3rmx-qu1cksc0pe",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "CYB3RMX/Qu1cksc0pe",
+      "repository": "CYB3RMX/Qu1cksc0pe",
+      "slug": "cyb3rmx-qu1cksc0pe",
+      "platform": "github",
+      "source_url": "https://github.com/CYB3RMX/Qu1cksc0pe",
+      "source_version": "180d44f4",
+      "content_hash": "64eb85a298af66a77b6a599ced7a956a4df7620c372e06db4d69fa3cccb36925",
+      "dossier_path": "07_PROJECT_LEARNING/cyb3rmx-qu1cksc0pe-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/cyb3rmx-qu1cksc0pe-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4856,
+          "title": "News 18/09/2026 15:43 -> Enhance Windows, Linux, and Android analysis with live",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T14:43:15.227Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4856": {
+      "learning_id": "rule-4856",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4856,
+      "title": "News 18/09/2026 15:43 -> Enhance Windows, Linux, and Android analysis with live",
+      "source_url": "https://github.com/CYB3RMX/Qu1cksc0pe",
+      "source_version": "180d44f4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:43:15.227Z"
+    },
+    "learn-github-apioo-fusio": {
+      "learning_id": "learn-github-apioo-fusio",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "apioo/fusio",
+      "repository": "apioo/fusio",
+      "slug": "apioo-fusio",
+      "platform": "github",
+      "source_url": "https://github.com/apioo/fusio",
+      "source_version": "9dedd6f6",
+      "content_hash": "df5a92b24298e30fde054c540b2ea4cb8e152f40630b8e23c055a83425053ba6",
+      "dossier_path": "07_PROJECT_LEARNING/apioo-fusio-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/apioo-fusio-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4857,
+          "title": "The \"Active State\" Enforcement Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4858,
+          "title": "The \"Composer Keyword\" Ecosystem Discovery Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4859,
+          "title": "The \"MCP Tool Schema\" Fidelity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T14:43:17.413Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4857": {
+      "learning_id": "rule-4857",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4857,
+      "title": "The \"Active State\" Enforcement Invariant",
+      "source_url": "https://github.com/apioo/fusio",
+      "source_version": "9dedd6f6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:43:17.413Z"
+    },
+    "rule-4858": {
+      "learning_id": "rule-4858",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4858,
+      "title": "The \"Composer Keyword\" Ecosystem Discovery Invariant",
+      "source_url": "https://github.com/apioo/fusio",
+      "source_version": "9dedd6f6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:43:17.413Z"
+    },
+    "rule-4859": {
+      "learning_id": "rule-4859",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4859,
+      "title": "The \"MCP Tool Schema\" Fidelity Invariant",
+      "source_url": "https://github.com/apioo/fusio",
+      "source_version": "9dedd6f6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:43:17.413Z"
     }
   },
   "aliases": {
