@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "71221647",
+    "sourceVersion": "bb48ec18",
     "license": "NOASSERTION",
-    "contentHash": "757f49267bfe5c2a913b93ffbc3131ffc73c2f3bca9b79789a4be4069d75c0b4",
-    "lastHarvestedAt": "2026-10-26T18:12:35.366Z",
+    "contentHash": "dc38c3b9533bc17bb3aeecbc83674ee19f157b178330fd0e1f24ed89bf6fae3d",
+    "lastHarvestedAt": "2026-10-27T09:04:45.411Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "2a510f71",
+    "sourceVersion": "cfa33f54",
     "license": "Apache-2.0",
-    "contentHash": "f0464548799d1e6ed21a6fb552c61629855da69d9005c91ae464f7e1485af5a9",
-    "lastHarvestedAt": "2026-10-25T19:12:58.894Z",
+    "contentHash": "f78e5b11f293bd8d42d3d1a941b275bf52cc70234f906452905f0899303c0a7d",
+    "lastHarvestedAt": "2026-10-27T09:13:31.640Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {

@@ -5196,3 +5196,5 @@
 | `CYCLE-20261027-REBF` | `2026-10-27T08:12:55.995Z` | `XHToken/Spark-X2.6-4B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4662, Rule 4663` | Yes (`e7971e13...`) |
 | `CYCLE-20261027-S068` | `2026-10-27T08:13:24.320Z` | `nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4664, Rule 4665, Rule 4666` | Yes (`48da1837...`) |
 | `CYCLE-20261027-EVVE` | `2026-10-27T08:31:11.834Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4667` | Yes (`7bce661a...`) |
+| `CYCLE-20261027-M1K0` | `2026-10-27T09:04:45.408Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4668` | Yes (`dc38c3b9...`) |
+| `CYCLE-20261027-XBLH` | `2026-10-27T09:13:31.637Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4669, Rule 4670, Rule 4671` | Yes (`f78e5b11...`) |

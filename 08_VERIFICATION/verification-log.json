@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-V9NQ",
-    "timestamp": "2026-10-25T05:52:38.054Z",
-    "repository": "alexellis/k3sup",
-    "learningId": "learn-github-alexellis-k3sup",
-    "contentHash": "c70fbce74dca37ab64262cfcf709cd9729d44aae7732c5bd25ab2b5aaaec3f2e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-32OS",
-    "timestamp": "2026-10-25T05:58:42.268Z",
-    "repository": "sentence-transformers/all-MiniLM-L6-v2",
-    "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-    "contentHash": "98aac2a78a7f1e865bf452cbea0577f11caad81afb54ac62d139c8693fc90a7b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-34LV",
     "timestamp": "2026-10-25T05:58:44.755Z",
     "repository": "HuggingFaceBio/Carbon-X",
@@ -7492,6 +7462,36 @@
     "contentHash": "7bce661a9e2247f98637cd7adfe154f0be3dfca368d38ab9aa3d036080735566",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-M1K0",
+    "timestamp": "2026-10-27T09:04:45.408Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "dc38c3b9533bc17bb3aeecbc83674ee19f157b178330fd0e1f24ed89bf6fae3d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-XBLH",
+    "timestamp": "2026-10-27T09:13:31.637Z",
+    "repository": "gardener/gardener",
+    "learningId": "learn-github-gardener-gardener",
+    "contentHash": "f78e5b11f293bd8d42d3d1a941b275bf52cc70234f906452905f0899303c0a7d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

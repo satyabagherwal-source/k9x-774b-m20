@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T08:31:11.843Z",
-  "total_cycles_completed": 5173,
-  "total_learnings_persisted": 5173,
-  "total_rules_promoted": 4568,
+  "last_updated": "2026-10-27T09:13:31.645Z",
+  "total_cycles_completed": 5175,
+  "total_learnings_persisted": 5175,
+  "total_rules_promoted": 4572,
   "history": [
-    {
-      "timestamp": "2026-10-25T21:15:16.530Z",
-      "repository": "touchlab/SKIE",
-      "learningId": "learn-github-touchlab-skie",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T21:15:24.027Z",
-      "repository": "baidu/Unlimited-OCR",
-      "learningId": "learn-huggingface-baidu-unlimited-ocr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T21:25:38.042Z",
       "repository": "touchlab/xcode-kotlin",
@@ -1403,6 +1389,20 @@
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T09:04:45.416Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T09:13:31.645Z",
+      "repository": "gardener/gardener",
+      "learningId": "learn-github-gardener-gardener",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

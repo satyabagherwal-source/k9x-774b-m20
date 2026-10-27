@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T08:31:11.764Z",
+  "last_updated": "2026-10-27T09:13:31.579Z",
   "total_verified_learnings": 1099,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7976,8 +7976,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "71221647",
-      "content_hash": "757f49267bfe5c2a913b93ffbc3131ffc73c2f3bca9b79789a4be4069d75c0b4",
+      "source_version": "bb48ec18",
+      "content_hash": "dc38c3b9533bc17bb3aeecbc83674ee19f157b178330fd0e1f24ed89bf6fae3d",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -8205,6 +8205,11 @@
           "number": 4642,
           "title": "json): don't leave the intermediate CSV in the temp dir (#4924) (#4925)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4668,
+          "title": "viz): Advanced Filter and Export CSV on live results; data viewer date-filter fi",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8212,7 +8217,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T18:12:35.263Z",
+      "verified_at": "2026-10-27T09:04:45.339Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -12388,8 +12393,8 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "2a510f71",
-      "content_hash": "f0464548799d1e6ed21a6fb552c61629855da69d9005c91ae464f7e1485af5a9",
+      "source_version": "cfa33f54",
+      "content_hash": "f78e5b11f293bd8d42d3d1a941b275bf52cc70234f906452905f0899303c0a7d",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
@@ -12427,6 +12432,21 @@
           "number": 4420,
           "title": "Update blackbox-exporter to v0.29.1 (#16073)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4669,
+          "title": "Replay-Invariant Mutual Exclusion for In-Process Recovery and Background Controllers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4670,
+          "title": "Best-Effort Control Loop Unquarantine on Flow Failure",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4671,
+          "title": "Isolation of Global Flag-Registering Packages in Modular Binaries",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12434,7 +12454,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T19:12:58.826Z",
+      "verified_at": "2026-10-27T09:13:31.568Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -130518,6 +130538,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T08:31:11.756Z"
+    },
+    "rule-4668": {
+      "learning_id": "rule-4668",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4668,
+      "title": "viz): Advanced Filter and Export CSV on live results; data viewer date-filter fi",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "bb48ec18",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T09:04:45.339Z"
+    },
+    "rule-4669": {
+      "learning_id": "rule-4669",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4669,
+      "title": "Replay-Invariant Mutual Exclusion for In-Process Recovery and Background Controllers",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "cfa33f54",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T09:13:31.568Z"
+    },
+    "rule-4670": {
+      "learning_id": "rule-4670",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4670,
+      "title": "Best-Effort Control Loop Unquarantine on Flow Failure",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "cfa33f54",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T09:13:31.568Z"
+    },
+    "rule-4671": {
+      "learning_id": "rule-4671",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4671,
+      "title": "Isolation of Global Flag-Registering Packages in Modular Binaries",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "cfa33f54",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T09:13:31.568Z"
     }
   },
   "aliases": {

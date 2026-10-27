@@ -5205,3 +5205,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-xhtoken-spark-x2-6-4b-gguf` | `https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-10-27T08:12:55.997Z |
 | `learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-27T08:13:24.323Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `d75ef158` | Multi-dimensional audit evidence | 2026-10-27T08:31:11.840Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `bb48ec18` | Multi-dimensional audit evidence | 2026-10-27T09:04:45.411Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `cfa33f54` | Multi-dimensional audit evidence | 2026-10-27T09:13:31.640Z |
