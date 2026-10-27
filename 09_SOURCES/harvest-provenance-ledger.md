@@ -5559,3 +5559,8 @@ Every entry in this ledger must capture:
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `3a38840c` | Multi-dimensional audit evidence | 2026-10-27T21:18:40.526Z |
 | `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `bc8ad63e` | Multi-dimensional audit evidence | 2026-10-27T21:22:20.040Z |
 | `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-10-27T21:22:27.635Z |
+| `learn-github-xotahal-react-native-material-ui` | `https://github.com/xotahal/react-native-material-ui` | `254006ae` | Multi-dimensional audit evidence | 2026-10-27T21:28:56.545Z |
+| `learn-github-kirillzyusko-react-native-keyboard-controller` | `https://github.com/kirillzyusko/react-native-keyboard-controller` | `505d7132` | Multi-dimensional audit evidence | 2026-10-27T21:28:59.280Z |
+| `learn-github-open-ani-animeko` | `https://github.com/open-ani/animeko` | `2f33ea34` | Multi-dimensional audit evidence | 2026-10-27T21:29:01.290Z |
+| `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `ee95e83a` | Multi-dimensional audit evidence | 2026-10-27T21:29:02.702Z |
+| `learn-github-margelo-react-native-blur` | `https://github.com/margelo/react-native-blur` | `7edfaa0f` | Multi-dimensional audit evidence | 2026-10-27T21:29:55.684Z |

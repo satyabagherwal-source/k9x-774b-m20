@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-LE07",
-    "timestamp": "2026-10-26T00:24:41.767Z",
-    "repository": "google/gemma-4-26B-A4B-it",
-    "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
-    "contentHash": "26627e25d050ec65ac623b6eb6a2cdeac83f9cc4548d97a036d7c318460a904a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-LE6Q",
-    "timestamp": "2026-10-26T00:24:42.002Z",
-    "repository": "mantinedev/mantine",
-    "learningId": "learn-github-mantinedev-mantine",
-    "contentHash": "65652df768789b8f5dd82910cce1629911f0d67f8caa6bc7db4306722340a411",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-LFT6",
-    "timestamp": "2026-10-26T00:24:44.106Z",
-    "repository": "astral-sh/ruff",
-    "learningId": "learn-github-astral-sh-ruff",
-    "contentHash": "3ec6e6ad27b82e03130736c966bda782dd7fdc7b33e778291bdc4ea8fef4e207",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-VK5A",
-    "timestamp": "2026-10-26T00:32:36.286Z",
-    "repository": "biomejs/biome",
-    "learningId": "learn-github-biomejs-biome",
-    "contentHash": "6fa671c368d1cb5533139f52a31239205066a15c47b6f61428139072fe15afb0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-VPXQ",
-    "timestamp": "2026-10-26T00:32:43.790Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "2e37d5aae16acace2f34b8216c8d873626b9eac5c48fe70c4f54912cecfa7c7f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-ZPHV",
     "timestamp": "2026-10-26T00:35:49.843Z",
     "repository": "intfloat/multilingual-e5-small",
@@ -7492,6 +7417,81 @@
     "contentHash": "e22938979b5255c547bb3c3dd8e3fb3dd6a878bd3667df982b251229a5d59c4c",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-72LA",
+    "timestamp": "2026-10-27T21:28:56.542Z",
+    "repository": "xotahal/react-native-material-ui",
+    "learningId": "learn-github-xotahal-react-native-material-ui",
+    "contentHash": "d2bedebab578666b720eaaf6ee76b451a9828368d070a24376e32f1af5aa714d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-74P9",
+    "timestamp": "2026-10-27T21:28:59.277Z",
+    "repository": "kirillzyusko/react-native-keyboard-controller",
+    "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
+    "contentHash": "ed0f89b375ed7814ee805ec043984d174d45af697fd5dae4cbee84664aeefa2d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-7692",
+    "timestamp": "2026-10-27T21:29:01.286Z",
+    "repository": "open-ani/animeko",
+    "learningId": "learn-github-open-ani-animeko",
+    "contentHash": "db219afde42961d75b3f7f06240141fc7ddb0494547bd2a950aae396f9628127",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-77CA",
+    "timestamp": "2026-10-27T21:29:02.698Z",
+    "repository": "flux-iac/tofu-controller",
+    "learningId": "learn-github-flux-iac-tofu-controller",
+    "contentHash": "e403308ebc4d82a48215a20ff15cccce28cf123f1f462872529b66fd6954bab1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-8C81",
+    "timestamp": "2026-10-27T21:29:55.681Z",
+    "repository": "margelo/react-native-blur",
+    "learningId": "learn-github-margelo-react-native-blur",
+    "contentHash": "c72cf1e17387953f4059c369bdb8349ea548e92a9222a3ba3c2359a34339338c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

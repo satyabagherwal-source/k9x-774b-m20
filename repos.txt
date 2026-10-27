@@ -4632,3 +4632,11 @@ https://github.com/AgileRL/AgileRL
 https://github.com/alikon-art/DeterminFlow
 # [AI-AGENTS] sunbigfly/ppt-agent-skills (742 score) - A code-driven presentation generation framework. 像构建软件工程一样生成演示文稿。
 https://github.com/sunbigfly/ppt-agent-skills
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T21:28:45.508Z] ---
+# [MOBILE-CROSS-PLATFORM] margelo/react-native-blur (2560 score) - React Native Blur component
+https://github.com/margelo/react-native-blur
+# [MOBILE-CROSS-PLATFORM] xotahal/react-native-material-ui (2519 score) - Highly customizable material design components for React Native
+https://github.com/xotahal/react-native-material-ui
+# [MOBILE-CROSS-PLATFORM] kirillzyusko/react-native-keyboard-controller (2391 score) - ⌨️ Keyboard manager which works in identical way on both iOS and Android
+https://github.com/kirillzyusko/react-native-keyboard-controller

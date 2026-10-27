@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T21:22:27.640Z",
-  "total_cycles_completed": 5527,
-  "total_learnings_persisted": 5527,
-  "total_rules_promoted": 4931,
+  "last_updated": "2026-10-27T21:29:55.689Z",
+  "total_cycles_completed": 5532,
+  "total_learnings_persisted": 5532,
+  "total_rules_promoted": 4937,
   "history": [
-    {
-      "timestamp": "2026-10-27T14:01:00.917Z",
-      "repository": "smol-machines/smolvm",
-      "learningId": "learn-github-smol-machines-smolvm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T14:01:03.043Z",
-      "repository": "BlockRunAI/ClawRouter",
-      "learningId": "learn-github-blockrunai-clawrouter",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T14:01:04.698Z",
-      "repository": "czlonkowski/n8n-skills",
-      "learningId": "learn-github-czlonkowski-n8n-skills",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T14:04:08.459Z",
-      "repository": "rdfjs/N3.js",
-      "learningId": "learn-github-rdfjs-n3-js",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T14:07:18.043Z",
-      "repository": "yvgude/lean-ctx",
-      "learningId": "learn-github-yvgude-lean-ctx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T14:07:20.025Z",
       "repository": "RDFLib/rdflib",
@@ -1403,6 +1368,41 @@
       "repository": "autogluon/chronos-2",
       "learningId": "learn-huggingface-autogluon-chronos-2",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T21:28:56.551Z",
+      "repository": "xotahal/react-native-material-ui",
+      "learningId": "learn-github-xotahal-react-native-material-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T21:28:59.286Z",
+      "repository": "kirillzyusko/react-native-keyboard-controller",
+      "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T21:29:01.295Z",
+      "repository": "open-ani/animeko",
+      "learningId": "learn-github-open-ani-animeko",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T21:29:02.707Z",
+      "repository": "flux-iac/tofu-controller",
+      "learningId": "learn-github-flux-iac-tofu-controller",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T21:29:55.689Z",
+      "repository": "margelo/react-native-blur",
+      "learningId": "learn-github-margelo-react-native-blur",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

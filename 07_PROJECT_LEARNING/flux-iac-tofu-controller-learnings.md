@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md`  
 > **Source**: github ([https://github.com/flux-iac/tofu-controller](https://github.com/flux-iac/tofu-controller))  
-> **Source Version**: `47aa0886`  
+> **Source Version**: `ee95e83a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T10:21:53.186Z  
+> **Timestamp**: 2026-10-27T21:29:02.144Z  
 > **Learning ID**: `learn-github-flux-iac-tofu-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/flux-iac/tofu-controller](https://github.com/flux-iac/tofu-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T10:21:44.739Z  
+> **Harvest Timestamp**: 2026-10-27T21:29:01.693Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -974,10 +974,10 @@ package v1alpha1
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1921** (2026-10-27): **fix: recover from runner pods that fail or cannot start**
+- **Issue #1923** (2026-10-27): **fix: stop a pass hanging on a runner that never started**
   *Symptoms*: 
 
-- **Issue #1920** (2026-10-26): **chore: release 0.16.6**
+- **Issue #1921** (2026-10-27): **fix: recover from runner pods that fail or cannot start**
   *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
@@ -995,865 +995,162 @@ package v1alpha1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ac680305` (2026-10-26)
-**Commit Message**: fix: cancel runner calls when the runner connection stays down (#1907)
+### Incident Patch 1: `ee95e83a` (2026-10-27)
+**Commit Message**: fix: stop a pass hanging on a runner that never started (#1923)
 
-* fix: cancel runner calls when the runner connection stays down
-
-The runner client uses waitForReady:true, and every call made after
-setupTerraform (Plan, SaveTFPlan, LoadTFPlan, Apply, Destroy, outputs,
-CleanupDir, ...) runs on the reconcile context, which has no deadline.
-When the runner process dies mid-call, the call fails with UNAVAILABLE,
-the service config retries it, and the retry waits for a READY
-connection to a pod that no longer exists. The reconcile for that
-object never returns and only a controller restart frees it. #1838
-bounded the setupTerraform calls and left plan and apply for a
-follow-up.
-
-Add a unary client interceptor that watches the connection while each
-call is in flight. Once the connection has reached the runner, a call
-whose connection then stays out of READY for --runner-unreachable-timeout
-(default 5m, 0 disables) is cancelled and returned as UNAVAILABLE, so
-the reconcile errors and requeues and the next one recreates the
-runner. Later calls on the same connection fail fast instead of waiting
-the timeout out again.
-
-A fixed deadline would also cut legitimately long plans and appl
-
-**File**: `cmd/manager/main.go` (modified, +9/-0)
+**File**: `cmd/manager/main.go` (modified, +2/-1)
 ```diff
-@@ -92,6 +92,7 @@ func main() {
- 		runnerGRPCPort            int
- 		runnerCreationTimeout     time.Duration
- 		runnerRPCTimeout          time.Duration
-+		runnerUnreachableTimeout  time.Duration
- 		runnerGRPCMaxMessageSize  int
- 		allowBreakTheGlass        bool
- 		clusterDomain             string
-@@ -123,6 +124,13 @@ func main() {
+@@ -122,7 +122,8 @@ func main() {
+ 	flag.DurationVar(&runnerCreationTimeout, "runner-creation-timeout", 120*time.Second, "Timeout for creating a runner pod.")
+ 	flag.DurationVar(&runnerRPCTimeout, "runner-rpc-timeout", 30*time.Minute,
  		"Maximum duration for the batch of runner RPCs that set up Terraform (upload, "+
- 			"backend config, init, workspace select). Bounds the reconcile so a runner pod "+
+-			"backend config, init, workspace select). Bounds the reconcile so a runner pod "+
++			"backend config, init, workspace select), and for finalizing the runner's secrets on "+
++			"deletion. Bounds the reconcile so a runner pod "+
  			"that dies mid-RPC surfaces as an error and requeues instead of hanging forever.")
-+	flag.DurationVar(&runnerUnreachableTimeout, "runner-unreachable-timeout", 5*time.Minute,
-+		"Cancel a runner RPC once the connection to a runner that was reachable has not been "+
-+			"ready for this long, so a runner pod that dies mid-plan or mid-apply surfaces as an "+
-+			"error and requeues instead of hanging forever. Healthy long-running plans and applies "+
-+			"keep the connection ready and are not affected, and waiting for a runner that is still "+
-+			"starting is not counted. Set to 0 to disable, which also turns off the keepalive "+
-+			"pings that notice a runner whose node vanished without closing the connection.")
- 	flag.IntVar(&runnerGRPCMaxMessageSize, "runner-grpc-max-message-size", 4, "The maximum message size for gRPC connections in MiB.")
- 	flag.BoolVar(&allowBreakTheGlass, "allow-break-the-glass", false, "Allow break the glass mode.")
- 	flag.StringVar(&clusterDomain, "cluster-domain", "cluster.local", "The cluster domain used by the cluster.")
-@@ -259,6 +267,7 @@ func main() {
- 		RunnerGRPCPort:            runnerGRPCPort,
- 		RunnerCreationTimeout:     runnerCreationTimeout,
- 		RunnerRPCTimeout:          runnerRPCTimeout,
-+		RunnerUnreachableTimeout:  runnerUnreachableTimeout,
- 		RunnerGRPCMaxMessageSize:  runnerGRPCMaxMessageSize,
- 		AllowBreakTheGlass:        allowBreakTheGlass,
- 		ClusterDomain:             clusterDomain,
+ 	flag.DurationVar(&runnerUnreachableTimeout, "runner-unreachable-timeout", 5*time.Minute,
+ 		"Cancel a runner RPC once the connection to a runner that was reachable has not been "+
 ```
 
-**File**: `controllers/suite_test.go` (modified, +1/-0)
+**File**: `controllers/finalize.go` (modified, +10/-5)
 ```diff
-@@ -186,6 +186,7 @@ func TestMain(m *testing.M) {
- 		RunnerGRPCPort:            30000,
- 		RunnerCreationTimeout:     120 * time.Second,
- 		RunnerRPCTimeout:          30 * time.Minute,
-+		RunnerUnreachableTimeout:  5 * time.Minute,
- 		RunnerGRPCMaxMessageSize:  4,
- 		UsePodSubdomainResolution: false,
+@@ -133,23 +133,28 @@ func (r *TerraformReconciler) finalize(ctx context.Context, s *runnerSession, ob
+ 		outputSecretName = obj.Spec.WriteOutputsToSecret.Name
  	}
+ 
+-	finalizeSecretsReply, err := s.client.FinalizeSecrets(ctx, &runner.FinalizeSecretsRequest{
++	// Bound the call as setup does: without destroy, a runner that never came up
++	// would block it forever.
++	finalizeCtx, cancel := context.WithTimeout(ctx, r.RunnerRPCTimeout)
++	defer cancel()
++	finalizeSecretsReply, err := s.client.FinalizeSecrets(finalizeCtx, &runner.FinalizeSecretsRequest{
+ 		Namespace:                obj.Namespace,
+ 		Name:                     obj.Name,
+ 		Workspace:                obj.WorkspaceName(),
+ 		HasSpecifiedOutputSecret: hasSpecifiedOutputSecret,
+ 		OutputSecretName:         outputSecretName,
+ 	})
+ 	if err != nil {
+-		// Internal is transient and Unavailable means the runner could not be
+-		// reached; both block deletion, as removing the finalizer now would leave
+-		// the plan secrets behind. NotFound means there was nothing to delete.
++		// Internal is transient, and Unavailable and DeadlineExceeded mean the
++		// runner could not be reached; all block deletion, as removing the
++		// finalizer now would leave the plan secrets behind. NotFound means there
++		// was nothing to delete.
+ 		// Anything else is reported as an event and deletion proceeds. That
+ 		// includes PermissionDenied, which the runner reports when its service
+ 		// account may not read or delete the secrets: retrying does not fix it,
+ 		// so it must not block deletion forever.
+ 		switch status.Code(err) {
+-		case codes.Internal, codes.Unavailable:
++		case codes.Internal, codes.Unavailable, codes.DeadlineExceeded:
+ 			return ctrl.Result{}, err
+ 		case codes.NotFound:
+ 			// do nothing, fall through
 ```
 
-**File**: `controllers/tf_controller.go` (modified, +1/-0)
+**File**: `controllers/finalize_test.go` (modified, +30/-0)
 ```diff
-@@ -87,6 +87,7 @@ type TerraformReconciler struct {
- 	RunnerGRPCPort            int
- 	RunnerCreationTimeout     time.Duration
- 	RunnerRPCTimeout          time.Duration
-+	RunnerUnreachableTimeout  time.Duration
- 	RunnerGRPCMaxMessageSize  int
- 	AllowBreakTheGlass        bool
- 	ClusterDomain             string
-```
-
-**File**: `controllers/tf_controller_finalizer.go` (modified, +4/-3)
-```diff
-@@ -127,9 +127,10 @@ func (r *TerraformReconciler) finalize(ctx context.Context, patchHelper *patch.S
- 		traceLog.Info("Try getting a status from the error")
- 		if e, ok := status.FromError(err); ok {
- 			switch e.Code() {
--			case codes.Internal:
--				// transient error
--				traceLog.Info("Internal error, transient, requeue")
-+			case codes.Internal, codes.Unavailable:
-+				// transient error; Unavailable means the runner could not be reached,
-+				// and removing the finalizer now would leave its secrets behind
-+				traceLog.Info("Internal or unavailable error, transient, requeue")
- 				return terraform, controllerruntime.Result{Requeue: true}, err
- 			case codes.NotFound:
- 				// do nothing, fall through
-```
-
-**File**: `controllers/tf_controller_finalizer_test.go` (added, +46/-0)
-```diff
-@@ -0,0 +1,46 @@
-+package controllers
-+
-+import (
-+	"context"
-+	"testing"
-+
-+	. "github.com/onsi/gomega"
-+	"google.golang.org/grpc"
-+	"google.golang.org/grpc/codes"
-+	"google.golang.org/grpc/status"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+
-+	infrav1 "github.com/flux-iac/tofu-controller/api/v1alpha2"
-+	"github.com/flux-iac/tofu-controller/runner"
-+)
-+
-+// finalizeSecretsRunner fails FinalizeSecrets with err. Any other call panics on
-+// the nil embedded client, which would mean finalize went further than expected.
-+type finalizeSecretsRunner struct {
-+	runner.RunnerClient
-+	err error
-+}
-+
-+func (f finalizeSecretsRunner) FinalizeSecrets(context.Context, *runner.FinalizeSecretsRequest, ...grpc.CallOption) (*runner.FinalizeSecretsReply, error) {
-+	return nil, f.err
-+}
-+
-+func TestFinalizeRequeuesWhenRunnerUnavailable(t *testing.T) {
+@@ -385,6 +385,36 @@ func TestFinalizeSecretsUnavailableBlocksDeletion(t *testing.T) {
+ 	g.Expect(drainEvents(f.r.EventRecorder.(*events.FakeRecorder))).To(BeEmpty())
+ }
+ 
++// TestFinalizeSecretsBlocksDeletionWhenRunnerNeverStarts checks a deletion
++// against a runner that never serves times out and blocks deletion.
++func TestFinalizeSecretsBlocksDeletionWhenRunnerNeverStarts(t *testing.T) {
 +	g := NewWithT(t)
-+
-+	terraform := &infrav1.Terraform{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:       "finalize-unavailable",
-+			Namespace:  "flux-system",
-+			Finalizers: []string{infrav1.TerraformFinalizer},
-+		},
-+	}
-+	runnerClient := finalizeSecretsRunner{err: status.Error(codes.Unavailable, "runner unreachable")}
-+
-+	reconciler := &TerraformReconciler{}
-+	terraform, result, err := reconciler.finalize(context.Background(), nil, terraform, runnerClient, nil, "")
-+
-+	g.Expect(status.Code(err)).To(Equal(codes.Unavailable))
-+	g.Expect(result.Requeue).To(BeTrue())
-+	g.Expect(terraform.Finalizers).To(ContainElement(infrav1.TerraformFinalizer))
-+}
-```
-
-**File**: `controllers/tf_controller_reconcile.go` (modified, +2/-2)
-```diff
-@@ -94,7 +94,7 @@ func (r *TerraformReconciler) reconcile(ctx context.Context, patchHelper *patch.
- 				// check /tmp/.break-glass file exists
- 				reply, err := runnerClient.HasBreakTheGlassSessionDone(ctx, &runner.BreakTheGlassRequest{})
- 				if err != nil {
--					return nil, err
-+					return terraform, err
- 				}
- 				if reply.Success {
- 					done = true
-@@ -273,7 +273,7 @@ func (r *TerraformReconciler) reconcile(ctx context.Context, patchHelper *patch.
- 			log.Error(err, "error getting inventory")
- 		}
- 
--		for _, iv := range getInventoryReply.Inventories {
-+		for _, iv := range getInventoryReply.GetInventories() {
- 			inventoryEntries = append(inventoryEntries, infrav1.ResourceRef{
- 				Name:       iv.GetName(),
- 				Type:       iv.GetType(),
-```
-
-**File**: `controllers/tf_controller_runner.go` (modified, +29/-14)
-```diff
-@@ -10,6 +10,7 @@ import (
- 
- 	"github.com/fluxcd/pkg/runtime/logger"
- 	"google.golang.org/grpc"
-+	"google.golang.org/grpc/keepalive"
- 	corev1 "k8s.io/api/core/v1"
- 	v1 "k8s.io/api/core/v1"
- 	"k8s.io/apimachinery/pkg/api/errors"
-@@ -151,7 +152,34 @@ func (r *TerraformReconciler) getRunnerConnection(ctx context.Context, tlsSecret
- 		return nil, err
- 	}
- 
--	const retryPolicy = `{
-+	traceLog.Info("Return gRPC new client")
-+	maxMsgSize := r.RunnerGRPCMaxMessageSize * 1024 * 1024
-+	opts := []grpc.DialOption{
-+		grpc.WithTransportCredentials(credentials),
-+		grpc.WithDefaultServiceConfig(runnerServiceConfig),
-+		grpc.WithDefaultCallOptions(
-+			grpc.MaxCallRecvMsgSize(maxMsgSize),
-+			grpc.MaxCallSendMsgSize(maxMsgSize),
-+		),
-+		grpc.WithChainUnaryInterceptor(runnerUnreachableInterceptor(r.RunnerUnreachableTimeout)),
-+	}
-+	if r.RunnerUnreachableTimeout > 0 {
-+		// If the runner's node disappears without closing the TCP connection, a
-+		// call waiting on its reply sends nothing, so the connection stays READY
-+		// until the OS keepalive gives up hours later. Ping during calls so the
-+		// watchdog above gets to see it. Time must stay above the runner's default
-+		// 5m ping enforcement minimum, or the runner answers with GOAWAY
-+		// "too_many_pings". Timeout is generous so that a short network blip does
-+		// not drop the transport of a healthy apply.
-+		opts = append(opts, grpc.WithKeepaliveParams(keepalive.ClientParameters{
-+			Time:    6 * time.Minute,
-+			Timeout: 2 * time.Minute,
-+		}))
-+	}
-+	return grpc.NewClient(fmt.Sprintf("%s:%d", hostname, port), opts...)
-+}
-+
-+const runnerServiceConfig = `{
- "methodConfig": [{
-   "name": [{"service": "runner.Runner"}],
-   "waitForReady": true,
-@@ -164,19 +192,6 @@ func (r *TerraformReconciler) getRunnerConnection(ctx context.Context, tlsSecret
-   }
- }]}`
- 
--	traceLog.Info("Return gRPC new client")
--	maxMsgSize := r.RunnerGRPCMaxMessageSize * 1024 * 1024
--	return grpc.NewClient(
--		fmt.Sprintf("%s:%d", hostname, port),
--		grpc.WithTransportCredentials(credentials),
--		grpc.WithDefaultServiceConfig(retryPolicy),
--		grpc.WithDefaultCallOptions(
--			grpc.MaxCallRecvMsgSize(maxMsgSize),
--			grpc.MaxCallSendMsgSize(maxMsgSize),
--		),
--	)
--}
--
- func (r *TerraformReconciler) runnerPodSpec(terraform *infrav1.Terraform, tlsSecretName string) v1.PodSpec {
- 	serviceAccountName := terraform.Spec.ServiceAccountName
- 	if serviceAccountName == "" {
-```
-
-**File**: `controllers/tf_controller_runner_watchdog.go` (added, +131/-0)
-```diff
-@@ -0,0 +1,131 @@
-+package controllers
-+
-+import (
-+	"context"
-+	"errors"
-+	"fmt"
-+	"sync/atomic"
-+	"time"
-+
-+	"google.golang.org/grpc"
-+	"google.golang.org/grpc/codes"
-+	"google.golang.org/grpc/connectivity"
-+	"google.golang.org/grpc/status"
-+)
-+
-+// errRunnerUnreachable is the cancellation cause recorded when a runner call is
-+// abandoned because the connection to the runner stopped being READY.
-+var errRunnerUnreachable = errors.New("runner unreachable")
-+
-+// runnerConnectionState is shared by every call on one runner connection.
-+type runnerConnectionState struct {
-+	// reached is set once the connection has been READY or a call has
-+	// succeeded, so the runner is known to have been up.
-+	reached atomic.Bool
-+	// unreachable is set when a call was abandoned because the runner went
-+	// away, and cleared once the connection is READY again.
-+	unreachable atomic.Bool
-+}
-+
-+// runnerUnreachableInterceptor cancels a runner call once the connection to a
-+// runner it has already reached has not been READY for longer than timeout. A
-+// timeout of zero or less disables it. Build one per connection: the state it
-+// keeps describes a single runner.
-+//
-+// The runner client is created with waitForReady:true, so a call on a connection
-+// whose runner has gone away blocks until its context is done instead of failing
-+// with UNAVAILABLE. That includes the retry gRPC makes when an in-flight call
-+// fails because the runner process died mid-plan. Plan, Apply and the other
-+// calls made after setupTerraform run on the reconcile context, which has no
-+// deadline, so such a call parked the reconcile forever and only a controller
-+// restart freed it.
-+//
-+// A fixed deadline would also cut legitimately long plans and applies. Those
-+// keep the connection READY for their whole duration, so watching the
-+// connection fires only when the runner is actually unreachable.
-+func runnerUnreachableInterceptor(timeout time.Duration) grpc.UnaryClientInterceptor {
-+	if timeout <= 0 {
-+		return func(ctx context.Context, method string, req, reply any, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
-+			return invoker(ctx, method, req, reply, cc, opts...)
-+		}
++	obj := fakeTerraform("finalize-secrets-runner-never-starts")
++	f := newDeleteFixture(t, obj)
++	f.r.RunnerRPCTimeout = 500 * time.Millisecond
++	runnerClient := newWatchedRunnerClient(t, freeLocalAddr(t), 5*time.Minute)
++	f.r.lookupOrCreateRunner = func(context.Context, *infrav1.Terraform, string) (runner.RunnerClient, func() error, error) {
++		return runnerClient, func() error { return nil }, nil
 +	}
 +
-+	conn := &runnerConnectionState{}
-+	return func(ctx context.Context, method string, req, reply any, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
-+		// An earlier call already gave up on this runner. Fail the calls that
-+		// follow it, such as the deferred CleanupDir, instead of waiting out the
-+		// timeout again.
-+		if state := cc.GetState(); conn.unreachable.Load() && state != connectivity.Ready {
-+			if state == connectivity.Idle {
-+				// Keep trying, so that a recovered connection shows as READY again.
-+				cc.Connect()
-+			}
-+			return status.Errorf(codes.Unavailable, "%s: %v", method, errRunnerUnreachable)
-+		}
-+
-+		callCtx, cancel := context.WithCancelCause(ctx)
-+		defer cancel(nil)
-+		go watchRunnerConnection(callCtx, cc, timeout, conn, cancel)
-+
-+		err := invoker(callCtx, method, req, reply, cc, opts...)
-+		if err == nil {
-+			conn.reached.Store(true)
-+			return nil
-+		}
-+		if cause := context.Cause(callCtx); errors.Is(cause, errRunnerUnreachable) {
-+			conn.unreachable.Store(true)
-+			return status.Errorf(codes.Unavailable, "%s: %v", method, cause)
-+		}
-+		return err
-+	}
-+}
-+
-+// watchRunnerConnection calls cancel with errRunnerUnreachable once cc, having
-+// reached the runner, has been out of the READY state for timeout without
-+// interruption. It returns when ctx is done, which happens when the call
-+// finishes.
-+func watchRunnerConnection(ctx context.Context, cc *grpc.ClientConn, timeout time.Duration, conn *runnerConnectionState, cancel context.CancelCauseFunc) {
-+	var notReadySince time.Time
-+	for {
-+		state := cc.GetState()
-+		switch {
-+		case state == connectivity.Ready:
-+			conn.reached.Store(true)
-+			conn.unreachable.Store(false)
-+			notReadySince = time.Time{}
-+			cc.WaitForStateChange(ctx, state)
-+
-+		case !conn.reached.Load():
-+			// The runner is still starting. Its pod gets an IP before the image is
-+			// pulled, so a first call can legitimately wait a long time. That wait
-+			// is left to the caller's deadline; setupTerraform bounds its calls
-+			// with RunnerRPCTimeout.
-+			cc.WaitForStateChange(ctx, state)
-+
-+		default:
-+			if state == connectivity.Idle {
-+				// A GOAWAY leaves the channel IDLE while the call drains on the old
-+				// transport. Reconnect so that a live runner shows as READY again.
-+				// The runner never sends GOAWAY itself; if a proxy in front of it
-+				// does and reconnecting keeps failing for timeout, the call is
-+				// cancelled even though the old transport is still draining.
-+				cc.Connect()
-+			}
-+			if notReadySince.IsZero() {
-+				notReadySince = time.Now()
-+			}
-+			remaining := timeout - time.Since(notReadySince)
-+			if remaining <= 0 {
-+				cancel(fmt.Errorf("%w: connection not ready for %s (state %s)", errRunnerUnreachabl
-```
-
----
-
-### Incident Patch 2: `ceeb0b60` (2026-10-26)
-**Commit Message**: fix(drift): Ignore data-source-only reads (#1918)
-
-* fix(drift): Ignore data-source-only reads
-
-* fix(drift): Handle oversized plans and pending changes
-
-**File**: `controllers/drift_plan.go` (added, +57/-0)
-```diff
-@@ -0,0 +1,57 @@
-+package controllers
-+
-+import (
-+	"strings"
-+
-+	tfjson "github.com/hashicorp/terraform-json"
-+	"google.golang.org/grpc/codes"
-+	"google.golang.org/grpc/status"
-+)
-+
-+// Only message-size failures should fall back; other exhausted resources may
-+// indicate an unrelated runner failure.
-+func isPlanMessageSizeError(err error) bool {
-+	st, ok := status.FromError(err)
-+	return ok && st.Code() == codes.ResourceExhausted &&
-+		strings.Contains(st.Message(), "message larger than max")
-+}
-+
-+// planHasOnlyDataReads excludes deferred check reads without hiding resource or
-+// output changes. Keep the CLI result for plans with no reads at all.
-+func planHasOnlyDataReads(plan *tfjson.Plan) bool {
-+	if plan == nil {
-+		return false
-+	}
-+	hasRead := false
-+	for _, resource := range plan.ResourceChanges {
-+		if resource == nil || resource.Change == nil {
-+			return false
-+		}
-+		if resource.PreviousAddress != "" || resource.Change.Importing != nil {
-+			return false
-+		}
-+		for _, action := range resource.Change.Actions {
-+			switch action {
-+			case tfjson.ActionNoop:
-+			case tfjson.ActionRead:
-+				if resource.Mode != tfjson.DataResourceMode {
-+					return false
-+				}
-+				hasRead = true
-+			default:
-+				return false
-+			}
-+		}
-+	}
-+	for _, output := range plan.OutputChanges {
-+		if output == nil {
-+			return false
-+		}
-+		for _, action := range output.Actions {
-+			if action != tfjson.ActionNoop {
-+				return false
-+			}
-+		}
-+	}
-+	return hasRead
-+}
-```
-
-**File**: `controllers/drift_plan_test.go` (added, +59/-0)
-```diff
-@@ -0,0 +1,59 @@
-+package controllers
-+
-+import (
-+	"errors"
-+
-+	"testing"
-+
-+	tfjson "github.com/hashicorp/terraform-json"
-+	"github.com/stretchr/testify/assert"
-+	"google.golang.org/grpc/codes"
-+	"google.golang.org/grpc/status"
-+)
-+
-+func TestIsPlanMessageSizeError(t *testing.T) {
-+	for _, tt := range []struct {
-+		name string
-+		err  error
-+		want bool
-+	}{
-+		{name: "no error"},
-+		{name: "receive limit", err: status.Error(codes.ResourceExhausted, "grpc: received message larger than max (500 vs. 100)"), want: true},
-+		{name: "send limit", err: status.Error(codes.ResourceExhausted, "grpc: trying to send message larger than max (500 vs. 100)"), want: true},
-+		{name: "other resource exhaustion", err: status.Error(codes.ResourceExhausted, "quota exceeded")},
-+		{name: "other status", err: status.Error(codes.Internal, "message larger than max")},
-+		{name: "plain error", err: errors.New("message larger than max")},
-+	} {
-+		t.Run(tt.name, func(t *testing.T) {
-+			assert.Equal(t, tt.want, isPlanMessageSizeError(tt.err))
-+		})
-+	}
-+}
-+
-+func TestPlanHasOnlyDataReads(t *testing.T) {
-+	read := &tfjson.ResourceChange{Mode: tfjson.DataResourceMode, Change: &tfjson.Change{Actions: tfjson.Actions{tfjson.ActionRead}}}
-+	for _, tt := range []struct {
-+		name string
-+		plan *tfjson.Plan
-+		want bool
-+	}{
-+		{name: "nil plan"},
-+		{name: "empty plan", plan: &tfjson.Plan{}},
-+		{name: "read and pending move", plan: &tfjson.Plan{ResourceChanges: []*tfjson.ResourceChange{read, {Mode: tfjson.ManagedResourceMode, PreviousAddress: "example.old", Change: &tfjson.Change{Actions: tfjson.Actions{tfjson.ActionNoop}}}}}},
-+		{name: "read and pending import", plan: &tfjson.Plan{ResourceChanges: []*tfjson.ResourceChange{read, {Mode: tfjson.ManagedResourceMode, Change: &tfjson.Change{Actions: tfjson.Actions{tfjson.ActionNoop}, Importing: &tfjson.Importing{}}}}}},
-+		{name: "deferred check read", plan: &tfjson.Plan{ResourceChanges: []*tfjson.ResourceChange{read}}, want: true},
-+		{name: "read and unchanged resource", plan: &tfjson.Plan{ResourceChanges: []*tfjson.ResourceChange{read, {Mode: tfjson.ManagedResourceMode, Change: &tfjson.Change{Actions: tfjson.Actions{tfjson.ActionNoop}}}}}, want: true},
-+		{name: "read and output change", plan: &tfjson.Plan{ResourceChanges: []*tfjson.ResourceChange{read}, OutputChanges: map[string]*tfjson.Change{"value": {Actions: tfjson.Actions{tfjson.ActionUpdate}}}}},
-+		{name: "read and unchanged output", plan: &tfjson.Plan{ResourceChanges: []*tfjson.ResourceChange{read}, OutputChanges: map[string]*tfjson.Change{"value": {Actions: tfjson.Actions{tfjson.ActionNoop}}}}, want: true},
-+	} {
-+		t.Run(tt.name, func(t *testing.T) {
-+			assert.Equal(t, tt.want, planHasOnlyDataReads(tt.plan))
-+		})
-+	}
-+	for _, action := range []tfjson.Action{tfjson.ActionCreate, tfjson.ActionUpdate, tfjson.ActionDelete} {
-+		t.Run(string(action), func(t *testing.T) {
-+			plan := &tfjson.Plan{ResourceChanges: []*tfjson.ResourceChange{read, {Mode: tfjson.ManagedResourceMode, Change: &tfjson.Change{Actions: tfjson.Actions{action}}}}}
-+			assert.False(t, planHasOnlyDataReads(plan))
-+		})
-+	}
-+}
-```
-
-**File**: `controllers/tf_controller_drift_detect.go` (modified, +25/-0)
-```diff
-@@ -2,9 +2,13 @@ package controllers
- 
- import (
- 	"context"
-+	"encoding/json"
-+
- 	"fmt"
- 	"strings"
- 
-+	tfjson "github.com/hashicorp/terraform-json"
-+
- 	infrav1 "github.com/flux-iac/tofu-controller/api/v1alpha2"
- 	"github.com/flux-iac/tofu-controller/runner"
- 	"google.golang.org/grpc/status"
-@@ -115,6 +119,27 @@ func (r *TerraformReconciler) detectDrift(ctx context.Context, terraform *infrav
- 	drifted := planReply.Drifted
- 	log.Info(fmt.Sprintf("plan for drift: %s found drift: %v", planReply.Message, planReply.Drifted))
- 
-+	if drifted && !r.backendCompletelyDisable(terraform) {
-+		showReply, err := runnerClient.ShowPlanFile(ctx, &runner.ShowPlanFileRequest{
-+			TfInstance: tfInstance,
-+			Filename:   driftFilename,
-+		})
-+		if isPlanMessageSizeError(err) {
-+			log.Info("WARNING: JSON plan exceeds gRPC message-size limit; retaining exit-code-based drift detection", "error", err.Error())
-+		} else if err != nil {
-+			return infrav1.TerraformNotReady(terraform, revision, infrav1.DriftDetectionFailedReason, err.Error()), err
-+		} else {
-+			var plan tfjson.Plan
-+			if err := json.Unmarshal(showReply.JsonOutput, &plan); err != nil {
-+				return infrav1.TerraformNotReady(terraform, revision, infrav1.DriftDetectionFailedReason, err.Error()), err
-+			}
-+			if planHasOnlyDataReads(&plan) {
-+				drifted = false
-+				log.Info("ignoring data-source-only reads during drift detection")
-+			}
-+		}
-+	}
-+
- 	if drifted {
- 		var rawOutput string
- 		if r.backendCompletelyDisable(terraform) {
-```
-
----
-
-### Incident Patch 3: `47aa0886` (2026-10-27)
-**Commit Message**: fix: recover from runner pods that fail or cannot start (#1921)
-
-**File**: `controllers/prerequisites.go` (modified, +7/-0)
-```diff
-@@ -195,6 +195,13 @@ func (r *TerraformReconciler) shouldReconcile(terraform *infrav1.Terraform, sour
- 		return true, "retry interval has elapsed since last failed reconciliation", 0
- 	}
- 
-+	// reconcile if the last pass could not start the runner. That failure is
-+	// not counted as a reconciliation failure, so without this the retry would
-+	// wait for the full interval.
-+	if runnerFailed(terraform) {
-+		return true, "previously failed to start the runner", 0
-+	}
-+
- 	if terraform.Status.LastSuccessfulReconcileAt == nil {
- 		return true, "never successfuly reconciled before", 0
- 	}
-```
-
-**File**: `controllers/runner_pod.go` (modified, +56/-10)
-```diff
-@@ -463,7 +463,7 @@ func (r *TerraformReconciler) reconcileRunnerPod(ctx context.Context, terraform
- 
- 	defer watcher.Stop()
- 	// set a timeout for the watch
--	ctx, cancel := context.WithTimeout(ctx, timeout)
-+	watchCtx, cancel := context.WithTimeout(ctx, timeout)
- 	defer cancel()
- 
- 	for {
-@@ -480,23 +480,69 @@ func (r *TerraformReconciler) reconcileRunnerPod(ctx context.Context, terraform
- 					return "", fmt.Errorf("failed to cast object to pod: %v", event.Object)
- 				}
- 
-+				// A failed pod will never serve, for example one the kubelet
-+				// rejects or evicts under disk pressure. One evicted after it
-+				// ran still reports its last IP, so check before the IP.
-+				if runnerPod.Status.Phase == corev1.PodFailed {
-+					return "", r.deleteUnusableRunnerPod(ctx, runnerPod,
-+						fmt.Errorf("runner pod failed: %s: %s", runnerPod.Status.Reason, runnerPod.Status.Message))
-+				}
-+
-+				// The kubelet gives the pod its IP before it pulls the image
-+				// or builds the container config, so this too comes first.
-+				if waiting := runnerContainerCannotStart(runnerPod); waiting != nil {
-+					return "", r.deleteUnusableRunnerPod(ctx, runnerPod,
-+						fmt.Errorf("runner pod cannot start: %s: %s", waiting.Reason, waiting.Message))
-+				}
-+
- 				if runnerPod.Status.PodIP != "" {
- 					return runnerPod.Status.PodIP, nil
- 				}
--
- 			}
--		case <-ctx.Done():
-+		case <-watchCtx.Done():
-+			return "", r.deleteUnusableRunnerPod(ctx, &runnerPod, fmt.Errorf("failed to create and obtain pod ip"))
-+		}
-+	}
-+}
- 
--			if err := r.Delete(ctx, &runnerPod,
--				client.GracePeriodSeconds(1), // force kill = 1 second
--				client.PropagationPolicy(metav1.DeletePropagationForeground),
--			); err != nil {
--				return "", fmt.Errorf("failed to obtain pod ip and delete runner pod: %w", err)
--			}
-+// containerCannotStartReasons are the kubelet's waiting reasons for a
-+// container that will not start until someone fixes the pod's image, spec or
-+// secrets. Image pull failures (ErrImagePull, ImagePullBackOff) are left out:
-+// the kubelet reports them after a single failed pull, including a transient
-+// registry error, and retries with its own backoff.
-+var containerCannotStartReasons = map[string]bool{
-+	"InvalidImageName":           true,
-+	"ErrImageNeverPull":          true,
-+	"CreateContainerConfigError": true,
-+}
- 
--			return "", fmt.Errorf("failed to create and obtain pod ip")
-+// runnerContainerCannotStart returns the waiting state of a container in pod
-+// that cannot start, or nil.
-+func runnerContainerCannotStart(pod *corev1.Pod) *corev1.ContainerStateWaiting {
-+	for _, status := range pod.Status.ContainerStatuses {
-+		if waiting := status.State.Waiting; waiting != nil && containerCannotStartReasons[waiting.Reason] {
-+			return waiting
- 		}
- 	}
-+	return nil
-+}
-+
-+// deleteUnusableRunnerPod force-deletes a runner pod that will never serve,
-+// so the next pass creates a new one, and returns cause. The delete gets a
-+// context of its own: the wait that gave up on the pod may have used up ctx's
-+// deadline.
-+func (r *TerraformReconciler) deleteUnusableRunnerPod(ctx context.Context, pod *corev1.Pod, cause error) error {
-+	ctx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 30*time.Second)
++	// Cancelled at the end only so a hung pass does not leak past the test.
++	ctx, cancel := context.WithCancel(context.Background())
 +	defer cancel()
 +
-+	if err := r.Delete(ctx, pod,
-+		client.GracePeriodSeconds(1), // force kill = 1 second
-+		client.PropagationPolicy(metav1.DeletePropagationForeground),
-+	); err != nil && !errors.IsNotFound(err) {
-+		return fmt.Errorf("%w; failed to delete the runner pod: %v", cause, err)
-+	}
++	result := make(chan error, 1)
++	go func() {
++		_, err := f.r.Reconcile(ctx, ctrl.Request{NamespacedName: client.ObjectKeyFromObject(obj)})
++		result <- err
++	}()
 +
-+	return cause
++	var err error
++	g.Eventually(result, 10*time.Second).Should(Receive(&err))
++	g.Expect(status.Code(err)).To(Equal(codes.DeadlineExceeded))
++	g.Expect(f.gone(t, obj)).To(BeFalse())
++	g.Expect(stored(t, f.c, obj).Finalizers).To(ContainElement(infrav1.TerraformFinalizer))
++	g.Expect(drainEvents(f.r.EventRecorder.(*events.FakeRecorder))).To(BeEmpty())
++}
++
+ // TestFinalizeTreatsMissingDependencyAsReleased checks that a dependsOn target
+ // that no longer exists has nothing to release, so deletion completes.
+ func TestFinalizeTreatsMissingDependencyAsReleased(t *testing.T) {
+```
+
+**File**: `controllers/session.go` (modified, +8/-2)
+```diff
+@@ -127,9 +127,15 @@ func (s *runnerSession) Close(ctx context.Context) {
+ 	}
  }
  
- // reconcileRunnerSecret reconciles the runner secret used for mTLS
+-// cleanupDir asks the runner to remove tmpDir, whatever its value. Callers
+-// defer it before setup, which sets tmpDir.
++// cleanupDir asks the runner to remove tmpDir. Callers defer it before setup,
++// which sets tmpDir. It sends nothing while tmpDir is empty: there is no
++// directory to name, and a runner that never came up would block the call
++// forever (see runnerUnreachableInterceptor).
+ func (s *runnerSession) cleanupDir(ctx context.Context) {
++	if s.tmpDir == "" {
++		return
++	}
++
+ 	log := ctrl.LoggerFrom(ctx)
+ 
+ 	cleanupDirReply, err := s.client.CleanupDir(ctx, &runner.CleanupDirRequest{TmpDir: s.tmpDir})
 ```
 
-**File**: `controllers/runner_pod_test.go` (added, +214/-0)
+**File**: `controllers/session_test.go` (modified, +20/-0)
 ```diff
-@@ -0,0 +1,214 @@
-+package controllers
-+
-+import (
-+	"context"
-+	"strings"
-+	"testing"
-+	"time"
-+
-+	infrav1 "github.com/flux-iac/tofu-controller/api/v1alpha2"
-+	. "github.com/onsi/gomega"
-+	corev1 "k8s.io/api/core/v1"
-+	apierrors "k8s.io/apimachinery/pkg/api/errors"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/types"
-+	"k8s.io/apimachinery/pkg/util/wait"
-+	"k8s.io/client-go/kubernetes"
-+	"sigs.k8s.io/controller-runtime/pkg/client"
-+)
-+
-+// newRunnerPodReconciler returns a reconciler that talks to the envtest API
-+// server directly, so reconcileRunnerPod's pod watch and deletes behave as
-+// they do against a cluster. Nothing runs the pods it creates.
-+func newRunnerPodReconciler(t *testing.T, timeout time.Duration) *TerraformReconciler {
-+	t.Helper()
-+	clientset, err := kubernetes.NewForConfig(testEnv.Config)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	return &TerraformReconciler{
-+		Client:                k8sClient,
-+		Clientset:             clientset,
-+		RunnerGRPCPort:        30000,
-+		RunnerCreationTimeout: timeout,
-+	}
-+}
-+
-+func runnerPodTestTerraform(name string) *infrav1.Terraform {
-+	obj := fakeTerraform(name)
-+	obj.UID = types.UID(name + "-uid")
-+	obj.Spec.RunnerTerminationGracePeriodSeconds = new(int64)
-+	return obj
-+}
-+
-+func runnerPodTestSecret() *corev1.Secret {
-+	return &corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: "terraform-runner.tls-1", Namespace: "flux-system"}}
-+}
-+
-+func runnerPodKey(obj *infrav1.Terraform) client.ObjectKey {
-+	return client.ObjectKey{Namespace: obj.Namespace, Name: obj.Name + "-tf-runner"}
-+}
-+
-+// runnerPodDeleted reports whether the runner pod is gone or being deleted.
-+// envtest runs no garbage collector, so a foreground delete leaves the pod in
-+// place with a deletion timestamp.
-+func runnerPodDeleted(key client.ObjectKey) bool {
-+	var pod corev1.Pod
-+	err := k8sClient.Get(context.Background(), key, &pod)
-+	return apierrors.IsNotFound(err) || (err == nil && pod.DeletionTimestamp != nil)
-+}
-+
-+// removeRunnerPod removes the runner pod for good, finalizers included, when
-+// the test ends.
-+func removeRunnerPod(t *testing.T, key client.ObjectKey) {
-+	t.Cleanup(func() {
-+		var pod corev1.Pod
-+		if err := k8sClient.Get(context.Background(), key, &pod); err != nil {
-+			return
-+		}
-+		pod.Finalizers = nil
-+		_ = k8sClient.Update(context.Background(), &pod)
-+		_ = k8sClient.Delete(context.Background(), &pod, client.GracePeriodSeconds(0))
-+		_ = wait.PollUntilContextTimeout(context.Background(), 100*time.Millisecond, 10*time.Second, true, func(ctx context.Context) (bool, error) {
-+			return apierrors.IsNotFound(k8sClient.Get(ctx, key, &corev1.Pod{})), nil
-+		})
-+	})
-+}
-+
-+// setRunnerPodStatus waits for the runner pod to be created, then applies
-+// set to its status, standing in for the kubelet.
-+func setRunnerPodStatus(key client.ObjectKey, set func(*corev1.PodStatus)) {
-+	go func() {
-+		for {
-+			var pod corev1.Pod
-+			if err := k8sClient.Get(context.Background(), key, &pod); err == nil {
-+				set(&pod.Status)
-+				if err := k8sClient.Status().Update(context.Background(), &pod); err == nil {
-+					return
-+				}
-+			}
-+			time.Sleep(50 * time.Millisecond)
-+		}
-+	}()
-+}
-+
-+// TestReconcileRunnerPodTimeoutDeletesPod checks that a runner pod that never
-+// gets an IP is deleted once the creation timeout passes, so the next pass
-+// starts a fresh one.
-+func TestReconcileRunnerPodTimeoutDeletesPod(t *testing.T) {
-+	g := NewWithT(t)
-+	r := newRunnerPodReconciler(t, 2*time.Second)
-+	obj := runnerPodTestTerraform("runner-pod-timeout")
-+	removeRunnerPod(t, runnerPodKey(obj))
-+
-+	_, err := r.reconcileRunnerPod(context.Background(), obj, runnerPodTestSecret(), "main@sha1:5f75359fced864fd73935cf0a0972e45da1dc626")
-+	g.Expect(err).To(MatchError("failed to create and obtain pod ip"))
-+
-+	g.Expect(runnerPodDeleted(runnerPodKey(obj))).To(BeTrue(), "the runner pod should be deleted")
-+}
-+
-+// TestReconcileRunnerPodFailedPod checks that a failed runner pod ends the
-+// wait at once with the pod's reason, and is deleted. That holds both for a
-+// pod the kubelet rejected before it ran, which has no IP, and for one it
-+// evicted after it ran, which keeps reporting its last IP.
-+func TestReconcileRunnerPodFailedPod(t *testing.T) {
-+	for name, podIP := range map[string]string{
-+		"rejected before running": "",
-+		"evicted after running":   "10.0.0.1",
-+	} {
-+		t.Run(name, func(t *testing.T) {
-+			g := NewWithT(t)
-+			timeout := time.Minute
-+			r := newRunnerPodReconciler(t, timeout)
-+			obj := runnerPodTestTerraform("runner-pod-failed-" + strings.ReplaceAll(name, " ", "-"))
-+			key := runnerPodKey(obj)
-+			removeRunnerPod(t, key)
-+
-+			setRunnerPodStatus(key, func(status *corev1.PodStatus) {
-+				status.Phase = corev1.PodFailed
-+				status.Reason = "Evicted"
-+				status.Message = "The node had condition: [DiskPressure]."
-+				status.PodIP = podIP
-+			})
-+
-+			start := time.Now()
-+			_, err := r.reconcileRunnerPod(context.Background(), obj, runnerPodTestS
-```
-
-**File**: `controllers/tf_controller_interval_test.go` (modified, +42/-0)
-```diff
-@@ -543,3 +543,45 @@ func TestShouldReconcileIgnoresResolvedDrift(t *testing.T) {
- 	g.Expect(shouldReconcile).To(BeFalse())
- 	g.Expect(reason).To(Equal("interval has not elapsed since last successful reconciliation"))
+@@ -84,6 +84,26 @@ func TestWorkingDirRemovedWhenSetupFails(t *testing.T) {
+ 	g.Expect(fr.Requests("CleanupDir")).To(HaveLen(1))
  }
+ 
++// TestPassEndsWhenRunnerNeverStarts checks a pass against a runner that never
++// serves ends once setup's RunnerRPCTimeout expires.
++func TestPassEndsWhenRunnerNeverStarts(t *testing.T) {
++	g := NewWithT(t)
++	r, s, obj, _, _, _ := newLoggedPass(t, "runner-never-starts")
++	r.RunnerRPCTimeout = 500 * time.Millisecond
++	s.client = newWatchedRunnerClient(t, freeLocalAddr(t), 5*time.Minute)
 +
-+func TestShouldReconcileAfterRunnerFailure(t *testing.T) {
-+	Spec("This spec covers a pass that failed to start the runner, for example because its pod was evicted.")
-+	It("should reconcile again instead of waiting for the interval.")
++	// Cancelled at the end only so a hung pass does not leak past the test.
++	ctx, cancel := context.WithCancel(context.Background())
++	defer cancel()
 +
-+	for _, reason := range []string{infrav1.RunnerFailedReason, infrav1.RunnerQuotaExhaustedReason} {
-+		t.Run(reason, func(t *testing.T) {
-+			g := NewWithT(t)
-+			reconciler := &TerraformReconciler{}
++	result := make(chan error, 1)
++	go func() { result <- r.reconcileNormal(ctx, s, obj, helloWorldSource(newArtifactServer(t))) }()
 +
-+			lastReconcile := time.Now().Add(-6 * 24 * time.Hour)
-+			tf := &infrav1.Terraform{
-+				ObjectMeta: metav1.ObjectMeta{
-+					Generation: 1,
-+				},
-+				Spec: infrav1.TerraformSpec{
-+					Interval: metav1.Duration{Duration: 168 * time.Hour},
-+				},
-+				Status: infrav1.TerraformStatus{
-+					LastPlanAt:                &metav1.Time{Time: lastReconcile},
-+					LastSuccessfulReconcileAt: &metav1.Time{Time: lastReconcile},
-+					LastAttemptedRevision:     "main/1234",
-+					LastPlannedRevision:       "main/1234",
-+					ObservedGeneration:        1,
-+					Conditions: []metav1.Condition{
-+						{
-+							Message: "failed to create and obtain pod ip",
-+							Reason:  reason,
-+							Type:    meta.ReadyCondition,
-+							Status:  metav1.ConditionFalse,
-+						},
-+					},
-+				},
-+			}
-+
-+			shouldReconcile, why, requeueAfter := reconciler.shouldReconcile(tf, nil)
-+			g.Expect(shouldReconcile).To(BeTrue())
-+			g.Expect(why).To(Equal("previously failed to start the runner"))
-+			g.Expect(requeueAfter).To(BeZero())
-+		})
-+	}
++	var err error
++	g.Eventually(result, 10*time.Second).Should(Receive(&err))
++	g.Expect(status.Code(err)).To(Equal(codes.DeadlineExceeded))
 +}
++
+ // TestRunnerErrorSetsReadyFalse checks that a runner error sets Ready False and
+ // keeps Reconciling. The reason is RunnerQuotaExhausted on the quota retry
+ // path and RunnerFailed otherwise; the message is the error text.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1923** (2026-10-27): fix: stop a pass hanging on a runner that never started (@alexandermarston)
 - **PR #1921** (2026-10-27): fix: recover from runner pods that fail or cannot start (@alexandermarston)
 - **PR #1920** (2026-10-26): chore: release 0.16.6 (@alexandermarston)
 - **PR #1919** (2026-10-26): feat(chart): optionally bind the runner role per namespace (@alexandermarston)
 - **PR #1918** (2026-10-26): fix(drift): Ignore data-source-only reads (@cgroschupp)
 - **PR #1917** (2026-10-27): refactor: restructure the runner (@alexandermarston)
-- **PR #1913** (2026-10-27): refactor: restructure the Terraform reconciler (@alexandermarston)
 
 ---
 
@@ -1873,13 +1170,13 @@ A fixed deadline would also cut legitimately long plans and appl
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cancel runner calls when the runner connection stays down (#1907)
+## X. stop a pass hanging on a runner that never started (#1923)
 
 **RULE**:
 When implementing operations in `cmd/manager/main.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flux-iac/tofu-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ac680305`: cancel runner calls when the runner connection stays down (#1907). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ee95e83a`: stop a pass hanging on a runner that never started (#1923). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/manager/main.go`.
@@ -1887,22 +1184,15 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		runnerUnreachableTimeout  time.Duration
-	flag.DurationVar(&runnerUnreachableTimeout, "runner-unreachable-timeout", 5*time.Minute,
-		"Cancel a runner RPC once the connection to a runner that was reachable has not been "+
-			"ready for this long, so a runner pod that dies mid-plan or mid-apply surfaces as an "+
-			"error and requeues instead of hanging forever. Healthy long-running plans and applies "+
-			"keep the connection ready and are not affected, and waiting for a runner that is still "+
-			"starting is not counted. Set to 0 to disable, which also turns off the keepalive "+
-			"pings that notice a runner whose node vanished without closing the connection.")
-		RunnerUnreachableTimeout:  runnerUnreachableTimeout,
+			"backend config, init, workspace select), and for finalizing the runner's secrets on "+
+			"deletion. Bounds the reconcile so a runner pod "+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+			"backend config, init, workspace select). Bounds the reconcile so a runner pod "+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ac680305` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ee95e83a` are properly handled with clean fallback behavior.

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T21:22:27.572Z",
-  "total_verified_learnings": 1149,
+  "last_updated": "2026-10-27T21:29:55.572Z",
+  "total_verified_learnings": 1152,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -12339,8 +12339,8 @@
       "slug": "flux-iac-tofu-controller",
       "platform": "github",
       "source_url": "https://github.com/flux-iac/tofu-controller",
-      "source_version": "47aa0886",
-      "content_hash": "70326d57fdbe33fe5f07b9a03323a6186ec64a8e07ecc27295ecb0be9db1836a",
+      "source_version": "ee95e83a",
+      "content_hash": "e403308ebc4d82a48215a20ff15cccce28cf123f1f462872529b66fd6954bab1",
       "dossier_path": "07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
       "promoted_rules": [
@@ -12368,6 +12368,11 @@
           "number": 4677,
           "title": "cancel runner calls when the runner connection stays down (#1907)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5022,
+          "title": "stop a pass hanging on a runner that never started (#1923)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12375,7 +12380,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T10:21:53.517Z",
+      "verified_at": "2026-10-27T21:29:02.610Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40253,8 +40258,8 @@
       "slug": "open-ani-animeko",
       "platform": "github",
       "source_url": "https://github.com/open-ani/animeko",
-      "source_version": "2f2c4d63",
-      "content_hash": "288b3b5c564a931bd9a0aa205c311bdf2b40188475546aa6eeeac01fb7d1dc81",
+      "source_version": "2f33ea34",
+      "content_hash": "db219afde42961d75b3f7f06240141fc7ddb0494547bd2a950aae396f9628127",
       "dossier_path": "07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
       "promoted_rules": [
@@ -40282,6 +40287,11 @@
           "number": 4187,
           "title": "Delimited Sub-Token Regex Boundary Guarding for Media Metadata",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5021,
+          "title": "ci(codex-agent): QA 判定以 runner 能测到的为限, 实体设备等做不到的只列为未测试",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40289,7 +40299,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T08:24:09.776Z",
+      "verified_at": "2026-10-27T21:29:01.198Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -138577,6 +138587,194 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T21:22:27.558Z"
+    },
+    "learn-github-xotahal-react-native-material-ui": {
+      "learning_id": "learn-github-xotahal-react-native-material-ui",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "xotahal/react-native-material-ui",
+      "repository": "xotahal/react-native-material-ui",
+      "slug": "xotahal-react-native-material-ui",
+      "platform": "github",
+      "source_url": "https://github.com/xotahal/react-native-material-ui",
+      "source_version": "254006ae",
+      "content_hash": "d2bedebab578666b720eaaf6ee76b451a9828368d070a24376e32f1af5aa714d",
+      "dossier_path": "07_PROJECT_LEARNING/xotahal-react-native-material-ui-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/xotahal-react-native-material-ui-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 5019,
+          "title": "displaying a picture on avatar when image prop is a string",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T21:28:56.454Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5019": {
+      "learning_id": "rule-5019",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5019,
+      "title": "displaying a picture on avatar when image prop is a string",
+      "source_url": "https://github.com/xotahal/react-native-material-ui",
+      "source_version": "254006ae",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:28:56.454Z"
+    },
+    "learn-github-kirillzyusko-react-native-keyboard-controller": {
+      "learning_id": "learn-github-kirillzyusko-react-native-keyboard-controller",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "kirillzyusko/react-native-keyboard-controller",
+      "repository": "kirillzyusko/react-native-keyboard-controller",
+      "slug": "kirillzyusko-react-native-keyboard-controller",
+      "platform": "github",
+      "source_url": "https://github.com/kirillzyusko/react-native-keyboard-controller",
+      "source_version": "505d7132",
+      "content_hash": "ed0f89b375ed7814ee805ec043984d174d45af697fd5dae4cbee84664aeefa2d",
+      "dossier_path": "07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 5020,
+          "title": "race condition between recycling and resigning first responder (#1678)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T21:28:59.190Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5020": {
+      "learning_id": "rule-5020",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5020,
+      "title": "race condition between recycling and resigning first responder (#1678)",
+      "source_url": "https://github.com/kirillzyusko/react-native-keyboard-controller",
+      "source_version": "505d7132",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:28:59.190Z"
+    },
+    "rule-5021": {
+      "learning_id": "rule-5021",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5021,
+      "title": "ci(codex-agent): QA 判定以 runner 能测到的为限, 实体设备等做不到的只列为未测试",
+      "source_url": "https://github.com/open-ani/animeko",
+      "source_version": "2f33ea34",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:29:01.198Z"
+    },
+    "rule-5022": {
+      "learning_id": "rule-5022",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5022,
+      "title": "stop a pass hanging on a runner that never started (#1923)",
+      "source_url": "https://github.com/flux-iac/tofu-controller",
+      "source_version": "ee95e83a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:29:02.610Z"
+    },
+    "learn-github-margelo-react-native-blur": {
+      "learning_id": "learn-github-margelo-react-native-blur",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "margelo/react-native-blur",
+      "repository": "margelo/react-native-blur",
+      "slug": "margelo-react-native-blur",
+      "platform": "github",
+      "source_url": "https://github.com/margelo/react-native-blur",
+      "source_version": "7edfaa0f",
+      "content_hash": "c72cf1e17387953f4059c369bdb8349ea548e92a9222a3ba3c2359a34339338c",
+      "dossier_path": "07_PROJECT_LEARNING/margelo-react-native-blur-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/margelo-react-native-blur-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 5023,
+          "title": "External Binary Dependency Integrity and Build Reproducibility Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5024,
+          "title": "Cross-Platform Native Hierarchy Sibling-Ordering Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T21:29:55.555Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5023": {
+      "learning_id": "rule-5023",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5023,
+      "title": "External Binary Dependency Integrity and Build Reproducibility Invariant",
+      "source_url": "https://github.com/margelo/react-native-blur",
+      "source_version": "7edfaa0f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:29:55.555Z"
+    },
+    "rule-5024": {
+      "learning_id": "rule-5024",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5024,
+      "title": "Cross-Platform Native Hierarchy Sibling-Ordering Invariant",
+      "source_url": "https://github.com/margelo/react-native-blur",
+      "source_version": "7edfaa0f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:29:55.555Z"
     }
   },
   "aliases": {

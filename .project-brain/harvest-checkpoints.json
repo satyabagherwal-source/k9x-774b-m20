@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T21:22:27.644Z",
+  "last_updated": "2026-10-27T21:29:55.693Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9576,14 +9576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-ani-animeko",
-      "content_hash": "288b3b5c564a931bd9a0aa205c311bdf2b40188475546aa6eeeac01fb7d1dc81",
-      "verified_at": "2026-10-25T08:24:09.857Z",
+      "content_hash": "db219afde42961d75b3f7f06240141fc7ddb0494547bd2a950aae396f9628127",
+      "verified_at": "2026-10-27T21:29:01.298Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T08:24:09.857Z"
+      "last_updated": "2026-10-27T21:29:01.298Z"
     },
     "k3s-io/k3s": {
       "repository": "k3s-io/k3s",
@@ -10611,14 +10611,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-flux-iac-tofu-controller",
-      "content_hash": "70326d57fdbe33fe5f07b9a03323a6186ec64a8e07ecc27295ecb0be9db1836a",
-      "verified_at": "2026-10-27T10:21:53.596Z",
+      "content_hash": "e403308ebc4d82a48215a20ff15cccce28cf123f1f462872529b66fd6954bab1",
+      "verified_at": "2026-10-27T21:29:02.711Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T10:21:53.596Z"
+      "last_updated": "2026-10-27T21:29:02.711Z"
     },
     "clockworklabs/SpacetimeDB": {
       "repository": "clockworklabs/SpacetimeDB",
@@ -17024,6 +17024,51 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-27T20:01:17.015Z"
+    },
+    "xotahal/react-native-material-ui": {
+      "repository": "xotahal/react-native-material-ui",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-xotahal-react-native-material-ui",
+      "content_hash": "d2bedebab578666b720eaaf6ee76b451a9828368d070a24376e32f1af5aa714d",
+      "verified_at": "2026-10-27T21:28:56.554Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T21:28:56.554Z"
+    },
+    "kirillzyusko/react-native-keyboard-controller": {
+      "repository": "kirillzyusko/react-native-keyboard-controller",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-kirillzyusko-react-native-keyboard-controller",
+      "content_hash": "ed0f89b375ed7814ee805ec043984d174d45af697fd5dae4cbee84664aeefa2d",
+      "verified_at": "2026-10-27T21:28:59.289Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T21:28:59.289Z"
+    },
+    "margelo/react-native-blur": {
+      "repository": "margelo/react-native-blur",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-margelo-react-native-blur",
+      "content_hash": "c72cf1e17387953f4059c369bdb8349ea548e92a9222a3ba3c2359a34339338c",
+      "verified_at": "2026-10-27T21:29:55.692Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T21:29:55.692Z"
     }
   },
   "repos": {

@@ -19555,5 +19555,50 @@
     "qualityScore": 742,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-27T19:59:24.310Z"
+  },
+  {
+    "name": "react-native-blur",
+    "fullName": "margelo/react-native-blur",
+    "url": "https://github.com/margelo/react-native-blur",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "React Native Blur component",
+    "stars": 3880,
+    "forks": 565,
+    "openIssues": 250,
+    "language": "TypeScript",
+    "qualityScore": 2560,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T21:27:00.415Z"
+  },
+  {
+    "name": "react-native-material-ui",
+    "fullName": "xotahal/react-native-material-ui",
+    "url": "https://github.com/xotahal/react-native-material-ui",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Highly customizable material design components for React Native",
+    "stars": 3776,
+    "forks": 602,
+    "openIssues": 215,
+    "language": "JavaScript",
+    "qualityScore": 2519,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T21:27:00.415Z"
+  },
+  {
+    "name": "react-native-keyboard-controller",
+    "fullName": "kirillzyusko/react-native-keyboard-controller",
+    "url": "https://github.com/kirillzyusko/react-native-keyboard-controller",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "⌨️ Keyboard manager which works in identical way on both iOS and Android",
+    "stars": 3752,
+    "forks": 217,
+    "openIssues": 127,
+    "language": "TypeScript",
+    "qualityScore": 2391,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T21:27:00.415Z"
   }
 ]

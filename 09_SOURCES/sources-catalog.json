@@ -6303,10 +6303,10 @@
     "repository": "open-ani/animeko",
     "platform": "github",
     "sourceUrl": "https://github.com/open-ani/animeko",
-    "sourceVersion": "2f2c4d63",
+    "sourceVersion": "2f33ea34",
     "license": "AGPL-3.0",
-    "contentHash": "288b3b5c564a931bd9a0aa205c311bdf2b40188475546aa6eeeac01fb7d1dc81",
-    "lastHarvestedAt": "2026-10-25T08:24:09.845Z",
+    "contentHash": "db219afde42961d75b3f7f06240141fc7ddb0494547bd2a950aae396f9628127",
+    "lastHarvestedAt": "2026-10-27T21:29:01.290Z",
     "learningId": "learn-github-open-ani-animeko"
   },
   "k3s-io-k3s": {
@@ -7043,10 +7043,10 @@
     "repository": "flux-iac/tofu-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/flux-iac/tofu-controller",
-    "sourceVersion": "47aa0886",
+    "sourceVersion": "ee95e83a",
     "license": "Apache-2.0",
-    "contentHash": "70326d57fdbe33fe5f07b9a03323a6186ec64a8e07ecc27295ecb0be9db1836a",
-    "lastHarvestedAt": "2026-10-27T10:21:53.588Z",
+    "contentHash": "e403308ebc4d82a48215a20ff15cccce28cf123f1f462872529b66fd6954bab1",
+    "lastHarvestedAt": "2026-10-27T21:29:02.702Z",
     "learningId": "learn-github-flux-iac-tofu-controller"
   },
   "clockworklabs-spacetimedb": {
@@ -11328,5 +11328,35 @@
     "contentHash": "1391df14235017a42a1aa6db922a0acfdd8a9b8e422b0d0d6af20fce9079e592",
     "lastHarvestedAt": "2026-10-27T20:01:17.007Z",
     "learningId": "learn-github-sunbigfly-ppt-agent-skills"
+  },
+  "xotahal-react-native-material-ui": {
+    "repository": "xotahal/react-native-material-ui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/xotahal/react-native-material-ui",
+    "sourceVersion": "254006ae",
+    "license": "MIT",
+    "contentHash": "d2bedebab578666b720eaaf6ee76b451a9828368d070a24376e32f1af5aa714d",
+    "lastHarvestedAt": "2026-10-27T21:28:56.545Z",
+    "learningId": "learn-github-xotahal-react-native-material-ui"
+  },
+  "kirillzyusko-react-native-keyboard-controller": {
+    "repository": "kirillzyusko/react-native-keyboard-controller",
+    "platform": "github",
+    "sourceUrl": "https://github.com/kirillzyusko/react-native-keyboard-controller",
+    "sourceVersion": "505d7132",
+    "license": "MIT",
+    "contentHash": "ed0f89b375ed7814ee805ec043984d174d45af697fd5dae4cbee84664aeefa2d",
+    "lastHarvestedAt": "2026-10-27T21:28:59.280Z",
+    "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller"
+  },
+  "margelo-react-native-blur": {
+    "repository": "margelo/react-native-blur",
+    "platform": "github",
+    "sourceUrl": "https://github.com/margelo/react-native-blur",
+    "sourceVersion": "7edfaa0f",
+    "license": "MIT",
+    "contentHash": "c72cf1e17387953f4059c369bdb8349ea548e92a9222a3ba3c2359a34339338c",
+    "lastHarvestedAt": "2026-10-27T21:29:55.684Z",
+    "learningId": "learn-github-margelo-react-native-blur"
   }
 }

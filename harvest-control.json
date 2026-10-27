@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-27T21:22:16.812Z",
+  "lastUpdated": "2026-10-27T21:29:00.626Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -188,7 +188,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T21:22:10.744Z",
+        "lastActiveAt": "2026-10-27T21:28:48.339Z",
         "lastHarvestedAt": "2026-10-27T20:01:14.474Z",
         "totalHarvested": 1129,
         "lastError": null
@@ -198,9 +198,9 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T21:22:10.984Z",
-        "lastHarvestedAt": "2026-10-27T21:18:36.992Z",
-        "totalHarvested": 1426,
+        "lastActiveAt": "2026-10-27T21:29:58.228Z",
+        "lastHarvestedAt": "2026-10-27T21:29:58.228Z",
+        "totalHarvested": 1427,
         "lastError": null
       },
       {
@@ -208,9 +208,9 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T21:22:22.575Z",
-        "lastHarvestedAt": "2026-10-27T21:22:22.575Z",
-        "totalHarvested": 1540,
+        "lastActiveAt": "2026-10-27T21:28:59.106Z",
+        "lastHarvestedAt": "2026-10-27T21:28:59.106Z",
+        "totalHarvested": 1541,
         "lastError": null
       },
       {
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T21:22:30.178Z",
-        "lastHarvestedAt": "2026-10-27T21:22:30.178Z",
-        "totalHarvested": 5221,
+        "lastActiveAt": "2026-10-27T21:29:01.826Z",
+        "lastHarvestedAt": "2026-10-27T21:29:01.826Z",
+        "totalHarvested": 5222,
         "lastError": null
       },
       {
@@ -228,9 +228,9 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T21:22:18.319Z",
-        "lastHarvestedAt": "2026-10-27T21:01:40.518Z",
-        "totalHarvested": 1562,
+        "lastActiveAt": "2026-10-27T21:29:03.846Z",
+        "lastHarvestedAt": "2026-10-27T21:29:03.846Z",
+        "totalHarvested": 1563,
         "lastError": null
       },
       {
@@ -238,9 +238,9 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T21:22:22.102Z",
-        "lastHarvestedAt": "2026-10-27T21:08:32.148Z",
-        "totalHarvested": 1503,
+        "lastActiveAt": "2026-10-27T21:29:05.262Z",
+        "lastHarvestedAt": "2026-10-27T21:29:05.262Z",
+        "totalHarvested": 1504,
         "lastError": null
       },
       {
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T21:22:23.447Z",
+        "lastActiveAt": "2026-10-27T21:29:01.989Z",
         "lastHarvestedAt": "2026-10-27T21:18:43.056Z",
         "totalHarvested": 1311,
         "lastError": null
@@ -258,7 +258,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T21:22:25.890Z",
+        "lastActiveAt": "2026-10-27T21:29:03.412Z",
         "lastHarvestedAt": "2026-10-27T21:01:47.488Z",
         "totalHarvested": 1530,
         "lastError": null
@@ -268,7 +268,7 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-27T21:22:28.409Z",
+        "lastActiveAt": "2026-10-27T21:29:05.882Z",
         "lastHarvestedAt": "2026-10-27T20:53:03.033Z",
         "totalHarvested": 1198,
         "lastError": null
@@ -294,7 +294,7 @@
     "GITHUB_REST_API": {
       "service": "GITHUB_REST_API",
       "status": "HEALTHY",
-      "remaining": 4815,
+      "remaining": 4771,
       "resetEpoch": 0,
       "resetAt": null,
       "trippedAt": null,
@@ -303,14 +303,13 @@
     },
     "GITHUB_SEARCH_API": {
       "service": "GITHUB_SEARCH_API",
-      "status": "COOLING_DOWN",
-      "remaining": 6,
-      "resetEpoch": 1793136185623,
-      "resetAt": "2026-10-27T21:23:05.623Z",
-      "trippedAt": "2026-10-27T21:22:04.623Z",
-      "reason": "Secondary rate limit or HTTP 403 backoff (Remaining: 5 | Resource: search | URL: https://api.github.com/search/repositories?q=topic%3Asvelte%20OR%20topic%3Avue%20stars%3A%3E2500%20sort%3Astars&per_page=15&page=1)",
-      "consecutiveBlocks": 0,
-      "isSecondaryRateLimit": true
+      "status": "HEALTHY",
+      "remaining": 17,
+      "resetEpoch": 0,
+      "resetAt": null,
+      "trippedAt": null,
+      "reason": null,
+      "consecutiveBlocks": 0
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
