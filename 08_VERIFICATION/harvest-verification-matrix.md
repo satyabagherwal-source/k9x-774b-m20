@@ -5425,3 +5425,7 @@
 | `CYCLE-20261027-3L4F` | `2026-10-27T16:18:18.159Z` | `BlackSnufkin/LitterBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4894` | Yes (`1e938f22...`) |
 | `CYCLE-20261027-3MBD` | `2026-10-27T16:18:19.705Z` | `PaperDebugger/paperdebugger` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4895` | Yes (`dbdabc46...`) |
 | `CYCLE-20261027-C4VA` | `2026-10-27T16:24:56.998Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4896` | Yes (`822b6206...`) |
+| `CYCLE-20261027-KN13` | `2026-10-27T16:31:33.783Z` | `TanStack/query` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4897` | Yes (`1e792e2e...`) |
+| `CYCLE-20261027-KQOU` | `2026-10-27T16:31:38.526Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4898` | Yes (`f62b40e5...`) |
+| `CYCLE-20261027-KQTY` | `2026-10-27T16:31:38.710Z` | `keybase/client` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4899` | Yes (`f075295c...`) |
+| `CYCLE-20261027-KW24` | `2026-10-27T16:31:45.484Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4900` | Yes (`58780034...`) |

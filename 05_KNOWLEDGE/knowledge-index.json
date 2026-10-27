@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T16:24:56.939Z",
+  "last_updated": "2026-10-27T16:31:45.426Z",
   "total_verified_learnings": 1142,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13486,8 +13486,8 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "4a5b9e47",
-      "content_hash": "7b7d707a4d6863b837b15f61bcacaa266fd51e53cf1bde2fbb4e62b964b1db31",
+      "source_version": "6b3bd71c",
+      "content_hash": "f62b40e5fec047611c54ae36ad4198260d0e009a91de7f75688c1230a2c9db04",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
@@ -13520,6 +13520,11 @@
           "number": 4576,
           "title": "build(deps): bump org.mybatis:mybatis from 3.5.19 to 3.6.0 (#14696)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4898,
+          "title": "build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails (#14699)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13527,7 +13532,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T09:54:12.356Z",
+      "verified_at": "2026-10-27T16:31:38.451Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31461,8 +31466,8 @@
       "slug": "keybase-client",
       "platform": "github",
       "source_url": "https://github.com/keybase/client",
-      "source_version": "594ed87e",
-      "content_hash": "0f0c66d324a752e56ee280a9e9fc73aec64fd70f193578f0f2074695d8f5d156",
+      "source_version": "6cc54d38",
+      "content_hash": "f075295cc94e176eb2d9e5cae58b545e97311185abba91f01c592deb10e78557",
       "dossier_path": "07_PROJECT_LEARNING/keybase-client-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/keybase-client-learnings.md",
       "promoted_rules": [
@@ -31475,6 +31480,11 @@
           "number": 3190,
           "title": "share): make sharing into chat reliable on iOS and Android (#29789)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4899,
+          "title": "deps: LegendList 3.7.0, expo 58.0.19; drop desktop thread scroll workarounds 3.7",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31482,7 +31492,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T13:27:32.288Z",
+      "verified_at": "2026-10-27T16:31:38.637Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39064,8 +39074,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "8c9b7d76",
-      "content_hash": "78d396c1844f9adf76489c1d87d2afe624b150d9442ef389a5acef5c03b59a5e",
+      "source_version": "66f7eee7",
+      "content_hash": "58780034abdad909d59572c4f8a7f490e368bf5cccb172012df6e71e3c78c2ed",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -39153,6 +39163,11 @@
           "number": 4867,
           "title": "Add reactive base-two exponentiation (NUC 56)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4900,
+          "title": "Select ARC puzzle via CLI argument",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39160,7 +39175,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T14:54:08.002Z",
+      "verified_at": "2026-10-27T16:31:45.413Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68105,8 +68120,8 @@
       "slug": "tanstack-query",
       "platform": "github",
       "source_url": "https://github.com/TanStack/query",
-      "source_version": "d09972b8",
-      "content_hash": "091874c1198f18d51a0c15a33df4dbbed79e5f97df429ebf281deb45e4e5b815",
+      "source_version": "2941a23d",
+      "content_hash": "1e792e2edc8ec1d94718f62820dd82545e151b79b62f6c4d5f44f6ee6bf99190",
       "dossier_path": "07_PROJECT_LEARNING/tanstack-query-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tanstack-query-learnings.md",
       "promoted_rules": [
@@ -68119,6 +68134,11 @@
           "number": 3795,
           "title": "oxlint.config): enable 'no-debugging-utils', 'no-dom-import', 'no-manual-cleanup",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4897,
+          "title": "query-persist-client-core): catch errors when persisting in 'persistQueryClientS",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -68126,7 +68146,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T06:49:47.603Z",
+      "verified_at": "2026-10-27T16:31:33.710Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -136057,6 +136077,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T16:24:56.929Z"
+    },
+    "rule-4897": {
+      "learning_id": "rule-4897",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4897,
+      "title": "query-persist-client-core): catch errors when persisting in 'persistQueryClientS",
+      "source_url": "https://github.com/TanStack/query",
+      "source_version": "2941a23d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T16:31:33.710Z"
+    },
+    "rule-4898": {
+      "learning_id": "rule-4898",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4898,
+      "title": "build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails (#14699)",
+      "source_url": "https://github.com/gocd/gocd",
+      "source_version": "6b3bd71c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T16:31:38.451Z"
+    },
+    "rule-4899": {
+      "learning_id": "rule-4899",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4899,
+      "title": "deps: LegendList 3.7.0, expo 58.0.19; drop desktop thread scroll workarounds 3.7",
+      "source_url": "https://github.com/keybase/client",
+      "source_version": "6cc54d38",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T16:31:38.637Z"
+    },
+    "rule-4900": {
+      "learning_id": "rule-4900",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4900,
+      "title": "Select ARC puzzle via CLI argument",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "66f7eee7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T16:31:45.413Z"
     }
   },
   "aliases": {

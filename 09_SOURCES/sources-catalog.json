@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "8c9b7d76",
+    "sourceVersion": "66f7eee7",
     "license": "Apache-2.0",
-    "contentHash": "78d396c1844f9adf76489c1d87d2afe624b150d9442ef389a5acef5c03b59a5e",
-    "lastHarvestedAt": "2026-10-27T14:54:08.076Z",
+    "contentHash": "58780034abdad909d59572c4f8a7f490e368bf5cccb172012df6e71e3c78c2ed",
+    "lastHarvestedAt": "2026-10-27T16:31:45.488Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -4403,10 +4403,10 @@
     "repository": "keybase/client",
     "platform": "github",
     "sourceUrl": "https://github.com/keybase/client",
-    "sourceVersion": "20c651e0",
+    "sourceVersion": "6cc54d38",
     "license": "BSD-3-Clause",
-    "contentHash": "9099a9c80f78c37470884b278c2e449cadb258754b6c6b4d508fddea11e69990",
-    "lastHarvestedAt": "2026-10-25T02:42:36.986Z",
+    "contentHash": "f075295cc94e176eb2d9e5cae58b545e97311185abba91f01c592deb10e78557",
+    "lastHarvestedAt": "2026-10-27T16:31:38.713Z",
     "learningId": "learn-github-keybase-client"
   },
   "sealerio-sealer": {
@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "4a5b9e47",
+    "sourceVersion": "6b3bd71c",
     "license": "Apache-2.0",
-    "contentHash": "7b7d707a4d6863b837b15f61bcacaa266fd51e53cf1bde2fbb4e62b964b1db31",
-    "lastHarvestedAt": "2026-10-26T09:54:12.427Z",
+    "contentHash": "f62b40e5fec047611c54ae36ad4198260d0e009a91de7f75688c1230a2c9db04",
+    "lastHarvestedAt": "2026-10-27T16:31:38.529Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {
@@ -10053,10 +10053,10 @@
     "repository": "TanStack/query",
     "platform": "github",
     "sourceUrl": "https://github.com/TanStack/query",
-    "sourceVersion": "d09972b8",
+    "sourceVersion": "2941a23d",
     "license": "MIT",
-    "contentHash": "091874c1198f18d51a0c15a33df4dbbed79e5f97df429ebf281deb45e4e5b815",
-    "lastHarvestedAt": "2026-10-23T06:49:47.682Z",
+    "contentHash": "1e792e2edc8ec1d94718f62820dd82545e151b79b62f6c4d5f44f6ee6bf99190",
+    "lastHarvestedAt": "2026-10-27T16:31:33.786Z",
     "learningId": "learn-github-tanstack-query"
   },
   "apple-sample-food-truck": {

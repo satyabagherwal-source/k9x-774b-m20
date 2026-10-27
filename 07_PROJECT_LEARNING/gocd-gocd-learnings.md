@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source**: github ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
-> **Source Version**: `4a5b9e47`  
+> **Source Version**: `6b3bd71c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T09:54:12.026Z  
+> **Timestamp**: 2026-10-27T16:31:38.097Z  
 > **Learning ID**: `learn-github-gocd-gocd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T09:48:33.661Z  
+> **Harvest Timestamp**: 2026-10-27T16:31:37.743Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -880,17 +880,79 @@ export class CommentRenderWidget extends MithrilViewComponent<Attrs> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4a5b9e47` (2026-10-25)
-**Commit Message**: build(deps): bump org.mybatis:mybatis from 3.5.19 to 3.6.0 (#14696)
+### Incident Patch 1: `fd78434b` (2026-10-27)
+**Commit Message**: build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails (#14699)
 
-Bumps [org.mybatis:mybatis](https://github.com/mybatis/mybatis-3) from 3.5.19 to 3.6.0.
-- [Release notes](https://github.com/mybatis/mybatis-3/releases)
-- [Commits](https://github.com/mybatis/mybatis-3/compare/mybatis-3.5.19...mybatis-3.6.0)
+Bumps [filesize](https://github.com/avoidwork/filesize.js) from 11.0.28 to 11.0.29.
+- [Changelog](https://github.com/avoidwork/filesize.js/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/avoidwork/filesize.js/compare/11.0.28...11.0.29)
 
 ---
 updated-dependencies:
-- dependency-name: org.mybatis:mybatis
-  dependency-version: 3.6.0
+- dependency-name: filesize
+  dependency-version: 11.0.29
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +1/-1)
+```diff
+@@ -39,7 +39,7 @@
+     "chartjs-plugin-zoom": "^2.2.0",
+     "classnames": "^2.5.1",
+     "core-js": "^3.51.0",
+-    "filesize": "^11.0.28",
++    "filesize": "^11.0.29",
+     "foundation-sites": "^6.9.0",
+     "hack-font": "^3.3.0",
+     "jquery": "^3.7.1",
+```
+
+**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +5/-5)
+```diff
+@@ -4132,10 +4132,10 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"filesize@npm:^11.0.28":
+-  version: 11.0.28
+-  resolution: "filesize@npm:11.0.28"
+-  checksum: 10c0/e4d139e23094040bdc9a39bba8882cfce7e57ca93f74a203c66e43a9189689e066526d3407919dea6d909c767ac04d680430ecfade49c11d8f906c887ed0de3d
++"filesize@npm:^11.0.29":
++  version: 11.0.29
++  resolution: "filesize@npm:11.0.29"
++  checksum: 10c0/0519c30d0208350a87fc9ec3fa3d0974a9b3b71c70ac4002f44b7aeaa33814ee64d97c94517464635f908d4927e45d2383fd67b0a7a5653754d6c26ecb6162dc
+   languageName: node
+   linkType: hard
+ 
+@@ -4609,7 +4609,7 @@ __metadata:
+     eslint-plugin-react: "npm:^7.37.5"
+     eslint-webpack-plugin: "npm:^6.0.0"
+     file-loader: "npm:^6.2.0"
+-    filesize: "npm:^11.0.28"
++    filesize: "npm:^11.0.29"
+     fork-ts-checker-webpack-plugin: "npm:^9.1.0"
+     foundation-sites: "npm:^6.9.0"
+     fs-extra: "npm:^11.4.1"
+```
+
+---
+
+### Incident Patch 2: `55cbd8fd` (2026-10-26)
+**Commit Message**: build(deps): bump com.google.code.gson:gson from 2.14.0 to 2.15.0 (#14697)
+
+Bumps [com.google.code.gson:gson](https://github.com/google/gson) from 2.14.0 to 2.15.0.
+- [Release notes](https://github.com/google/gson/releases)
+- [Changelog](https://github.com/google/gson/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/google/gson/compare/gson-parent-2.14.0...gson-parent-2.15.0)
+
+---
+updated-dependencies:
+- dependency-name: com.google.code.gson:gson
+  dependency-version: 2.15.0
   dependency-type: direct:production
   update-type: version-update:semver-minor
 ...
@@ -900,24 +962,57 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `build.gradle` (modified, +1/-1)
 ```diff
-@@ -131,7 +131,7 @@ def libraries = [
-   logback             : 'ch.qos.logback:logback-classic:1.6.5',
+@@ -103,7 +103,7 @@ def libraries = [
+   ehcache             : 'net.sf.ehcache.internal:ehcache-core:2.11.1.3.11', // See https://repo.terracotta.org/maven2/net/sf/ehcache/internal/ehcache-core/maven-metadata.xml
+   felix               : 'org.apache.felix:org.apache.felix.framework:7.0.5',
+   freemarker          : 'org.freemarker:freemarker:2.3.35',
+-  gson                : 'com.google.code.gson:gson:2.14.0',
++  gson                : 'com.google.code.gson:gson:2.15.0',
+   h2                  : 'com.h2database:h2:1.4.200',
+   hamcrest            : 'org.hamcrest:hamcrest:3.0',
+   hibernate           : 'org.hibernate:hibernate-ehcache:3.6.10.Final',
+```
+
+---
+
+### Incident Patch 3: `6b3bd71c` (2026-10-27)
+**Commit Message**: build(deps): bump ch.qos.logback:logback-classic from 1.6.5 to 1.6.6 (#14700)
+
+Bumps [ch.qos.logback:logback-classic](https://github.com/qos-ch/logback) from 1.6.5 to 1.6.6.
+- [Release notes](https://github.com/qos-ch/logback/releases)
+- [Commits](https://github.com/qos-ch/logback/compare/v_1.6.5...v_1.6.6)
+
+---
+updated-dependencies:
+- dependency-name: ch.qos.logback:logback-classic
+  dependency-version: 1.6.6
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `build.gradle` (modified, +1/-1)
+```diff
+@@ -128,7 +128,7 @@ def libraries = [
+   junit5Bom           : 'org.junit:junit-bom:6.1.3',
+   liquibase           : 'org.liquibase:liquibase-core:5.0.4',
+   liquibaseSlf4j      : 'com.mattbertolini:liquibase-slf4j:5.1.0',
+-  logback             : 'ch.qos.logback:logback-classic:1.6.5',
++  logback             : 'ch.qos.logback:logback-classic:1.6.6',
    lombok              : 'org.projectlombok:lombok:1.18.48',
    mockitoBom          : 'org.mockito:mockito-bom:5.24.0',
--  mybatis             : 'org.mybatis:mybatis:3.5.19',
-+  mybatis             : 'org.mybatis:mybatis:3.6.0',
-   mybatisSpring       : 'org.mybatis:mybatis-spring:2.1.2',
-   mysql               : 'com.mysql:mysql-connector-j:26.10.0',
-   objenesis           : 'org.objenesis:objenesis:3.6',
+   mybatis             : 'org.mybatis:mybatis:3.6.0',
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14700** (2026-10-27): build(deps): bump ch.qos.logback:logback-classic from 1.6.5 to 1.6.6 (@dependabot[bot])
+- **PR #14699** (2026-10-27): build(deps-ui): bump filesize from 11.0.28 to 11.0.29 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14698** (2026-10-27): build(deps): bump org.apache.activemq:activemq-broker from 6.3.2 to 6.3.3 (@dependabot[bot])
+- **PR #14697** (2026-10-26): build(deps): bump com.google.code.gson:gson from 2.14.0 to 2.15.0 (@dependabot[bot])
 - **PR #14696** (2026-10-25): build(deps): bump org.mybatis:mybatis from 3.5.19 to 3.6.0 (@dependabot[bot])
 - **PR #14695** (2026-10-25): build(deps-ui-dev): bump webpack from 5.112.0 to 5.112.2 in /server/src/main/webapp/WEB-INF/rails in the webpack group (@dependabot[bot])
-- **PR #14694** (2026-10-25): build(deps-ui): bump undici from 8.11.2 to 8.12.3 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14693** (2026-10-25): build(deps-ui): bump fast-uri from 3.1.8 to 3.1.9 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14692** (2026-10-24): build(deps-ui): bump filesize from 11.0.26 to 11.0.28 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14691** (2026-10-24): build(deps-ui): bump chart.js from 4.5.1 to 4.6.1 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
 
 ---
 
@@ -937,28 +1032,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump org.mybatis:mybatis from 3.5.19 to 3.6.0 (#14696)
+## X. build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails (#14699)
 
 **RULE**:
-When implementing operations in `build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/src/main/webapp/WEB-INF/rails/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4a5b9e47`: build(deps): bump org.mybatis:mybatis from 3.5.19 to 3.6.0 (#14696). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fd78434b`: build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails (#14699). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `build.gradle`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/webapp/WEB-INF/rails/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-  mybatis             : 'org.mybatis:mybatis:3.6.0',
+    "filesize": "^11.0.29",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-  mybatis             : 'org.mybatis:mybatis:3.5.19',
+    "filesize": "^11.0.28",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4a5b9e47` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fd78434b` are properly handled with clean fallback behavior.

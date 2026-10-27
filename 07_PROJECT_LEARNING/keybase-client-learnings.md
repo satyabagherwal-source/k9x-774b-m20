@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/keybase-client-learnings.md`  
 > **Source**: github ([https://github.com/keybase/client](https://github.com/keybase/client))  
-> **Source Version**: `20c651e0`  
+> **Source Version**: `6cc54d38`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T02:42:36.652Z  
+> **Timestamp**: 2026-10-27T16:31:38.280Z  
 > **Learning ID**: `learn-github-keybase-client`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/keybase-client-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/keybase/client](https://github.com/keybase/client))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T02:42:35.682Z  
+> **Harvest Timestamp**: 2026-10-27T16:31:37.660Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Keybase Go Library, Client, Service, OS X, iOS, Android, Electron
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 9260 stars
+- **Stars / Engagement**: 9265 stars
 
 ---
 
@@ -1908,945 +1908,1025 @@ func ClassifyDomain(domain string) chat1.UnfurlType {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7874b7f1` (2026-10-20)
-**Commit Message**: include uid on all local rpcs (#29708)
+### Incident Patch 1: `1d295399` (2026-10-26)
+**Commit Message**: deps: LegendList 3.7.0, expo 58.0.19; drop desktop thread scroll workarounds 3.7.0 makes redundant (#29832)
 
-* test(chat): every chat notification names the account it is for
+* deps: LegendList 3.7.0, expo 58.0.19, storybook 10.6.4, keyboard-controller 1.22.9; security resolutions
 
-Goal: every NotifyChat notification the service sends carries, as uid,
-the account it was generated for.
+- @legendapp/list 3.6.0 -> 3.7.0
+- expo 58.0.17 -> 58.0.19 with babel-preset-expo and the expo-* modules on that release
+- storybook 10.6.3 -> 10.6.4, react-native-keyboard-controller 1.22.8 -> 1.22.9
+- resolutions: body-parser 2.4.0 and zod 4.6.7 (every installed copy was on an affected version)
+- lockfile re-resolves undici 7.30.1 and fast-uri 3.1.9
 
-Why: login and logout are not serialized against chat notifications, so
-during an account switch the GUI can receive the previous account's chat
-notifications after the switch. Today the GUI guards against that with a
-uid-keyed thread provider, store retirement and a gate on every action.
-With the account on every notification it can drop the stale ones instead.
+* e2e(desktop): clicks that land, a named renderer failure, current fixtures
 
-Six of the 29 notifications carry no uid today: ChatIdentifyUpdate,
-ChatTypingUpdate, ChatArchiveProgress, ChatArchiveComplete,
-ChatWelcomeMessageLoaded and ChatParticipantsInfo. The other 23 do.
+- clickUnoccluded moves the pointer and lets a frame pass before pressing. A press sent with the
+  move landed under a menu anchored to a row's hover toolbar, so every message-menu action
+  (Edit, Delete, react, Mark as unread, Reply) did nothing.
+- The renderer health check names the module request that failed, any error status, and what
+  Chromium logged during the reload, instead of only "Failed to fetch dynamically imported module".
+- The catch-up pill flow starts from a fresh open with the unread line never seen, as the iOS
+  flow does sin
 
-The test registers a GUI-like connection on the NotifyRouter, sends every
-notification in the NotifyChat protocol for a known account and checks the
-uid each one carries. It also fails if a NotifyChat notification is added
-without an entry. It needs no server and runs locally:
-
-  cd go && go test ./libkb -run TestChatNotificationsNameTheirAccount
-
-It fails today for exactly the six notifications above. Making it pass
-nee
-
-**File**: `go/chat/activitynotifier.go` (modified, +2/-2)
+**File**: `shared/chat/conversation/list-area/desktop-rules.test.ts` (modified, +5/-129)
 ```diff
-@@ -91,10 +91,10 @@ func (n *NotifyRouterActivityRouter) Activity(ctx context.Context, uid gregor1.U
- 	}
- }
+@@ -5,24 +5,14 @@ import {
+   pageOffset,
+   revealDestination,
+   rowWithinView,
+-  scrollerAtEnd,
+-  startCenterCheck,
+-  startEndCheck,
+-  stepCentering,
+-  stepEndCheck,
+-  stepLayoutCheck,
+-  type CenterCheck,
+-  type CenterStep,
+-  type EndCheck,
+-  type LayoutCheck,
++  atEnd,
+ } from './desktop-rules'
  
--func (n *NotifyRouterActivityRouter) TypingUpdate(ctx context.Context, updates []chat1.ConvTypingUpdate) {
-+func (n *NotifyRouterActivityRouter) TypingUpdate(ctx context.Context, uid gregor1.UID, updates []chat1.ConvTypingUpdate) {
- 	ctx = globals.BackgroundChatCtx(ctx, n.G())
- 	n.notifyCh <- func() {
--		n.G().NotifyRouter.HandleChatTypingUpdate(ctx, updates)
-+		n.G().NotifyRouter.HandleChatTypingUpdate(ctx, n.kuid(uid), updates)
- 	}
- }
+-describe('scrollerAtEnd', () => {
+-  const scroller = (scrollTop: number) => ({clientHeight: 500, scrollHeight: 2000, scrollTop})
++describe('atEnd', () => {
+   test('within two pixels of the end is at the end', () => {
+-    expect(scrollerAtEnd(scroller(1500))).toBe(true)
+-    expect(scrollerAtEnd(scroller(1498))).toBe(true)
+-    expect(scrollerAtEnd(scroller(1497))).toBe(false)
++    expect(atEnd(0)).toBe(true)
++    expect(atEnd(2)).toBe(true)
++    expect(atEnd(3)).toBe(false)
+   })
+ })
  
+@@ -94,117 +84,3 @@ describe('pageOffset', () => {
+     expect(pageOffset('down', {scroll: 1000, scrollLength: 400})).toBe(1400)
+   })
+ })
+-
+-// Feeds looks through a step function and records each action.
+-const run = <C, L, R extends {check: C}, P>(
+-  step: (c: C, l: L) => R,
+-  start: C,
+-  looks: Array<L>,
+-  pick: (r: R) => P
+-): Array<P> => {
+-  let check = start
+-  return looks.map(look => {
+-    const next = step(check, look)
+-    check = next.check
+-    return pick(next)
+-  })
+-}
+-
+-describe('stepEndCheck', () => {
+-  type Look = {atEnd: boolean; scroll: number; scrollHeight: number}
+-  const at = (scrollHeight: number): Look => ({atEnd: true, scroll: 0, scrollHeight})
+-  const off = (scroll: number): Look => ({atEnd: false, scroll, scrollHeight: 2000})
+-  const actions = (looks: Array<Look>, start: EndCheck = startEndCheck) =>
+-    run(stepEndCheck, start, looks, a => a.action)
+-
+-  test('the end holds at the end on two looks running with the content no taller', () => {
+-    expect(actions([at(2000), at(2000)])).toEqual(['wait', 'held'])
+-  })
+-  test('content still growing at the end is looked at again', () => {
+-    expect(actions([at(2000), at(2100), at(2100)])).toEqual(['wait', 'wait', 'held'])
+-  })
+-  test('away from the end, the list is corrected only once its offset held still', () => {
+-    expect(actions([off(100), off(200), off(200)])).toEqual(['wait', 'wait', 'correct'])
+-  })
+-  test('a correction starts the stillness over', () => {
+-    expect(actions([off(100), off(100), off(100), off(100)])).toEqual(['wait', 'correct', 'wait', 'correct'])
+-  })
+-  test('two corrections are the whole budget', () => {
+-    expect(actions([off(1), off(1), off(1), off(1), off(1), off(1)])).toEqual([
+-      'wait',
+-      'correct',
+-      'wait',
+-      'correct',
+-      'wait',
+-      'giveUp',
+-    ])
+-  })
+-  test('leaving the end between looks forgets the height it held at', () => {
+-    expect(actions([at(2000), off(100), at(2000), at(2000)])).toEqual(['wait', 'wait', 'wait', 'held'])
+-  })
+-})
+-
+-describe('stepCentering', () => {
+-  type Look = [offBy: number | undefined, scroll: number | undefined]
+-  const steps = (looks: Array<Look>, start: CenterCheck = startCenterCheck): Array<CenterStep> =>
+-    run((c: CenterCheck, [offBy, scroll]: Look) => stepCentering(c, offBy, scroll), start, looks, a => a.step)
+-  const wait: CenterStep = {type: 'wait'}
+-  const done: CenterStep = {type: 'done'}
+-  const mount: CenterStep = {type: 'mount'}
+-  const scrollTo = (offset: number): CenterStep => ({offset, type: 'scrollTo'})
+-
+-  test('a row not rendered is mounted first', () => {
+-    expect(steps([[undefined, 0]])).toEqual([mount])
+-  })
+-  test('a row off the middle is scrolled there, and one within eight pixels three times is done', () => {
+-    expect(steps([[200, 1000], [8, 1200], [-8, 1200], [0, 1200]])).toEqual([scrollTo(1200), wait, wait, done])
+-    expect(steps([[9, 1000]])).toEqual([scrollTo(1009)])
+-  })
+-  test('an unknown scroll offset counts as centred', () => {
+-    expect(steps([[200, undefined], [200, undefined], [200, undefined]])).toEqual([wait, wait, done])
+-  })
+-  test('a correction that moved nothing three times running is pinned against an edge', () => {
+-    expect(steps([[200, 0], [200, 0], [200, 0], [200, 0]])).toEqual([scrollTo(200), wait, wait, done])
+-  })
+-  test('the centred count carries across corrections, and is reset only by the row unmounting', () => {
+-    expect(steps([[0, 0], [0, 0], [100, 0], [0, 100]])).toEqual([wait, wait, scrollTo(100), done])
+-    expect(steps([[0, 0], [0, 0], [undefined, undefined], [0, 0]])).toEqual([wait, wait, mount, wait])
+-  })
+-  test('a centred look forgets the last correction, so it cannot count toward a pin', () => {
+-    expect(steps([[100, 0], [0, 100], [100, 100], [100, 100]])).toEqual([scrollTo(100), wait, scrollTo(200), wait])
+-  })
+-})
+-
+-describe('stepLayoutCheck', () => {
+-  type Look = {changes: number; scroll: number | undefined}
+-  const settles = (looks: Array<Look>) => {
+-    const start: LayoutCheck = {previousChanges: 0, previousScroll: undefined, quiet: 0}
+-    return run(stepLayoutCheck, start, looks, a => a.settled)
+-  }
+-  
 ```
 
-**File**: `go/chat/archive.go` (modified, +2/-2)
+**File**: `shared/chat/conversation/list-area/desktop-rules.ts` (modified, +3/-76)
 ```diff
-@@ -522,7 +522,7 @@ func NewChatArchiver(g *globals.Context, uid gregor1.UID, remoteClient func() ch
+@@ -1,8 +1,6 @@
+ // The desktop thread list's measuring and stepping rules, apart from the list they measure.
  
- func (c *ChatArchiver) notifyProgress(ctx context.Context, jobID chat1.ArchiveJobID, msgsComplete, msgsTotal int64) {
- 	c.Debug(ctx, "notifyProgress(%s) %d/%d", jobID, msgsComplete, msgsTotal)
--	c.G().NotifyRouter.HandleChatArchiveProgress(ctx, jobID, msgsComplete, msgsTotal)
-+	c.G().NotifyRouter.HandleChatArchiveProgress(ctx, keybase1.UID(c.uid.String()), jobID, msgsComplete, msgsTotal)
- }
+-// A row this close to the middle of the viewport is centred.
+-const centerTolerancePx = 8
+-// A scroller within this many pixels of its end counts as at the end.
++// A list within this many pixels of its end counts as at the end.
+ const endTolerancePx = 2
+ // A scroller within this many pixels of where the list put it is where the list put it.
+ const ownTolerancePx = 1
+@@ -12,8 +10,8 @@ const rowEdgeTolerancePx = 1
+ export type ScrollerLike = {clientHeight: number; scrollHeight: number; scrollTop: number}
+ export type RectLike = {height: number; top: number}
  
- func (c *ChatArchiver) archiveName(conv chat1.ConversationLocal) string {
-@@ -746,7 +746,7 @@ func (c *ChatArchiver) ArchiveChat(ctx context.Context, arg chat1.ArchiveChatJob
- 		}
+-export const distanceToEnd = (s: ScrollerLike) => s.scrollHeight - s.clientHeight - s.scrollTop
+-export const scrollerAtEnd = (s: ScrollerLike) => distanceToEnd(s) <= endTolerancePx
++// distanceFromEnd as the list reports it (getState), which it works out when asked.
++export const atEnd = (distanceFromEnd: number) => distanceFromEnd <= endTolerancePx
  
- 		// Alert the UI
--		c.G().NotifyRouter.HandleChatArchiveComplete(ctx, arg.JobID)
-+		c.G().NotifyRouter.HandleChatArchiveComplete(ctx, keybase1.UID(c.uid.String()), arg.JobID)
- 	}()
- 
- 	// Presume to resume
+ // How far the row sits below the middle of the view.
+ export const offsetFromMiddle = (row: RectLike, view: RectLike) => row.top + row.height / 2 - (view.top + view.height / 2)
+@@ -49,74 +47,3 @@ export const revealDestination = (p: {
+ // Where the composer's page keys move the list: a viewport up or down.
+ export const pageOffset = (direction: 'up' | 'down', p: {scroll: number; scrollLength: number}) =>
+   direction === 'up' ? Math.max(0, p.scroll - p.scrollLength) : p.scroll + p.scrollLength
+-
+-// One look at the list while confirming its end held. The end held once it was at the end on two looks
+-// in a row with the content no taller on the second: the list reports a size change before the
+-// scroller's extent catches up with it, and a row can measure again a frame after its first
+-// measurement. Away from the end, the list is corrected only once its offset held still across two
+-// looks, so it has finished its own scroll, and at most twice: one for the header, one for whatever
+-// re-measured alongside it. Past that something else owns the offset.
+-export type EndCheck = {corrections: number; heldAtHeight: number | undefined; previousScroll: number | undefined}
+-export const startEndCheck: EndCheck = {corrections: 0, heldAtHeight: undefined, previousScroll: undefined}
+-export const stepEndCheck = (
+-  check: EndCheck,
+-  look: {atEnd: boolean; scroll: number; scrollHeight: number}
+-): {action: 'held' | 'correct' | 'wait' | 'giveUp'; check: EndCheck} => {
+-  if (look.atEnd) {
+-    if (check.heldAtHeight === look.scrollHeight) return {action: 'held', check}
+-    return {action: 'wait', check: {...check, heldAtHeight: look.scrollHeight, previousScroll: undefined}}
+-  }
+-  if (look.scroll !== check.previousScroll) {
+-    return {action: 'wait', check: {...check, heldAtHeight: undefined, previousScroll: look.scroll}}
+-  }
+-  const corrections = check.corrections + 1
+-  const next = {corrections, heldAtHeight: undefined, previousScroll: undefined}
+-  return {action: corrections > 2 ? 'giveUp' : 'correct', check: next}
+-}
+-
+-// One step of centring a row. Until the row is rendered there is nothing to measure, so the list is
+-// asked to mount it. A row within the deadband three times is centred: chasing the remainder only
+-// fights the list's own sub-pixel adjustments. A correction that moved the scroller not at all three
+-// times running is pinned against an edge of the thread, where the row cannot reach the middle.
+-export type CenterCheck = {pinnedChecks: number; scrollAtLastRequest: number | undefined; settled: number}
+-export const startCenterCheck: CenterCheck = {pinnedChecks: 0, scrollAtLastRequest: undefined, settled: 0}
+-export type CenterStep = {type: 'mount'} | {type: 'done'} | {type: 'wait'} | {offset: number; type: 'scrollTo'}
+-export const stepCentering = (
+-  check: CenterCheck,
+-  offBy: number | undefined,
+-  scroll: number | undefined
+-): {check: CenterCheck; step: CenterStep} => {
+-  if (offBy === undefined) {
+-    return {check: {...check, pinnedChecks: 0, settled: 0}, step: {type: 'mount'}}
+-  }
+-  if (Math.abs(offBy) <= centerTolerancePx || scroll === undefined) {
+-    const settled = check.settled + 1
+-    return {
+-      check: {pinnedChecks: 0, scrollAtLastRequest: undefined, settled},
+-      step: {type: settled >= 3 ? 'done' : 'wait'},
+-    }
+-  }
+-  if (scroll === check.scrollAtLastRequest) {
+-    const pinnedChecks = check.pinnedChecks + 1
+-    return {check: {...check, pinnedChecks}, step: {type: pinnedChecks >= 3 ? 'done' : 'wait'}}
+-  }
+-  return {
+-    check: {...check, pinnedChecks: 0, scrollAtLastRequest: scroll},
+-    step: {offset: scroll + offBy, type: 'scrollTo'},
+-  }
+-}
+-
+-// One look at a dataset's initial layout, which ends once the list's offset held still and no row
+-// changed size across two looks running.
+-export type LayoutCheck = {previousChanges: number; previousScroll: number | undefined; quiet: number}
+-export const stepLayoutCheck =
 ```
 
-**File**: `go/chat/identify.go` (modified, +8/-8)
+**File**: `shared/chat/conversation/list-area/desktop-scroll.tsx` (modified, +64/-160)
 ```diff
-@@ -20,7 +20,7 @@ type DummyIdentifyNotifier struct{}
- 
- func (d DummyIdentifyNotifier) Reset()             {}
- func (d DummyIdentifyNotifier) ResetOnGUIConnect() {}
--func (d DummyIdentifyNotifier) Send(ctx context.Context, update keybase1.CanonicalTLFNameAndIDWithBreaks) {
-+func (d DummyIdentifyNotifier) Send(ctx context.Context, uid keybase1.UID, update keybase1.CanonicalTLFNameAndIDWithBreaks) {
+@@ -10,25 +10,17 @@ import {
+   indexOfOrdinal,
+   initialScrollTarget,
+   listAnchorsEnd,
+-  ownsEnd,
+   type ScrollDirective,
+   type ScrollEvent,
+ } from './scroll-target'
+ import {useHeldLatest, useScrollTarget} from './use-scroll-target'
+ import {
+-  distanceToEnd,
+   listMovedItself,
+   offsetFromMiddle as rowOffsetFromMiddle,
+   pageOffset,
+   revealDestination,
+   rowWithinView,
+-  scrollerAtEnd,
+-  startCenterCheck,
+-  startEndCheck,
+-  stepCentering,
+-  stepEndCheck,
+-  stepLayoutCheck,
+-  type LayoutCheck,
++  atEnd,
+   type RectLike,
+   type ScrollerLike,
+ } from './desktop-rules'
+@@ -59,11 +51,12 @@ const offsetFromMiddle = (scroller: unknown, ordinal: T.Chat.Ordinal) => {
+   return m && rowOffsetFromMiddle(m.row, m.view)
  }
  
- type SimpleIdentifyNotifier struct {
-@@ -40,12 +40,12 @@ func NewSimpleIdentifyNotifier(g *globals.Context) *SimpleIdentifyNotifier {
- func (d *SimpleIdentifyNotifier) Reset()             {}
- func (d *SimpleIdentifyNotifier) ResetOnGUIConnect() {}
- 
--func (d *SimpleIdentifyNotifier) Send(ctx context.Context, update keybase1.CanonicalTLFNameAndIDWithBreaks) {
-+func (d *SimpleIdentifyNotifier) Send(ctx context.Context, uid keybase1.UID, update keybase1.CanonicalTLFNameAndIDWithBreaks) {
- 	// Send to storage as well (charge forward on error)
- 	if err := d.storage.UpdateTLFIdentifyBreak(ctx, update.TlfID.ToBytes(), update.Breaks.Breaks); err != nil {
- 		d.Debug(ctx, "failed to update storage with TLF identify info: %s", err.Error())
- 	}
--	d.G().NotifyRouter.HandleChatIdentifyUpdate(ctx, update)
-+	d.G().NotifyRouter.HandleChatIdentifyUpdate(ctx, uid, update)
+-// With the scroller at its end when atEnd; a row not rendered is not in view.
+-const rowFullyVisible = (scroller: unknown, ordinal: T.Chat.Ordinal, atEnd: boolean) => {
++// With the list moved down by endShift first (to its end, for a list held there); a row not rendered
++// is not in view.
++const rowFullyVisible = (scroller: unknown, ordinal: T.Chat.Ordinal, endShift: number) => {
+   const m = measureRow(scroller, ordinal)
+   if (!m) return false
+-  return rowWithinView(m.row, m.view, atEnd ? distanceToEnd(scroller as ScrollerLike) : 0)
++  return rowWithinView(m.row, m.view, endShift)
  }
  
- type CachingIdentifyNotifier struct {
-@@ -81,7 +81,7 @@ func (i *CachingIdentifyNotifier) Reset() {
- 	i.identCache = make(map[string]keybase1.CanonicalTLFNameAndIDWithBreaks)
- }
+ export const useDesktopThreadScroll = (p: {
+@@ -85,8 +78,8 @@ export const useDesktopThreadScroll = (p: {
+     [listRef]
+   )
  
--func (i *CachingIdentifyNotifier) Send(ctx context.Context, update keybase1.CanonicalTLFNameAndIDWithBreaks) {
-+func (i *CachingIdentifyNotifier) Send(ctx context.Context, uid keybase1.UID, update keybase1.CanonicalTLFNameAndIDWithBreaks) {
- 	// Send to storage as well (charge forward on error)
- 	if err := i.storage.UpdateTLFIdentifyBreak(ctx, update.TlfID.ToBytes(), update.Breaks.Breaks); err != nil {
- 		i.Debug(ctx, "failed to update storage with TLF identify info: %s", err.Error())
-@@ -104,7 +104,7 @@ func (i *CachingIdentifyNotifier) Send(ctx context.Context, update keybase1.Cano
- 	i.Unlock()
+-  // Read by the loops below as they run, so they see the thread as it is now rather than when they
+-  // started.
++  // Read as the list reports and the reveal runs, so they see the thread as it is now rather than as it
++  // was rendered.
+   const messageOrdinalsRef = React.useRef(messageOrdinals)
+   React.useEffect(() => {
+     messageOrdinalsRef.current = messageOrdinals
+@@ -102,112 +95,67 @@ export const useDesktopThreadScroll = (p: {
+     anchorsEndRef.current = anchorsEnd
+   }, [anchorsEnd])
  
- 	i.Debug(ctx, "cache miss, sending notify: %s dat: %v", tlfName, update)
--	i.G().NotifyRouter.HandleChatIdentifyUpdate(ctx, update)
-+	i.G().NotifyRouter.HandleChatIdentifyUpdate(ctx, uid, update)
- }
- 
- type IdentifyChangedHandler struct {
-@@ -141,7 +141,7 @@ func (h *IdentifyChangedHandler) HandleUserChanged(uid keybase1.UID) (err error)
- 	if err != nil {
- 		return err
- 	}
--	if _, err := NewNameIdentifier(h.G()).Identify(ctx, []string{username}, true, func() keybase1.TLFID {
-+	if _, err := NewNameIdentifier(h.G()).Identify(ctx, me, []string{username}, true, func() keybase1.TLFID {
- 		return ""
- 	}, func() keybase1.CanonicalTlfName {
- 		return keybase1.CanonicalTlfName(username)
-@@ -163,7 +163,7 @@ func NewNameIdentifier(g *globals.Context) *NameIdentifier {
- 	}
- }
- 
--func (t *NameIdentifier) Identify(ctx context.Context, names []string, private bool,
-+func (t *NameIdentifier) Identify(ctx context.Context, uid keybase1.UID, names []string, private bool,
- 	getTLFID func() keybase1.TLFID, getCanonicalName func() keybase1.CanonicalTlfName,
- ) (res []keybase1.TLFIdentifyFailure, err error) {
- 	idNotifier := globals.CtxIdentifyNotifier(ctx)
-@@ -232,7 +232,7 @@ func (t *NameIdentifier) Identify(ctx context.Context, names []string, private b
- 	// Run the updates through the identify notifier
- 	if idNotifier != nil {
- 		t.Debug(ctx, "sending update through ident notifier: %d breaks", len(res))
--		idNotifier.Send(ctx, keybase1.CanonicalTLFNameAndIDWithBreaks{
-+		idNotifier.Send(ctx, uid, keybase1.CanonicalTLFNameAndIDWithBreaks{
- 			Breaks: keybase1.TLFBreak{
- 				Breaks: res,
- 			},
+-  // Every "is the list at its end?" asks the scroller, never the list's own isAtEnd. The list re-reads
+-  // that flag only when it scrolls or lays out, so it lags both ways: a row or the header growing at
+-  // the end with nothing scrolling leaves it reading at-end while the scroller is short, and a
+-  // composer collapse leaves it reading not-at-end while the scroller is at its end.
++  // Every "is the list at its end?" asks for the list's distanceFromEnd, never its isAtEnd flag. The
++  // distance is worked out when asked; the flag is re-read only when the list scrolls or lays out, so
++  // it lags both ways: a row or the header growing at the end with nothing scrolling, and a composer
++  // collapse.
++  const distanceFromEnd = React.useCallback(() => listRef.current?.getState().distanceFromEnd, [listRef])
+   const isScrolledToEnd = React.useCallback(() => {
+-    const scroller = scrollerOf()
+-    return !!scroller && scrollerAtEnd(scroller)
+-  }, [scrollerOf])
+-
+-  // The list resolves its initialScrollAtEnd target from the header size it has measured so far, and
+-  // SpecialTopMessage renders at its bare minHeight before the thread's intro content (retention
+-  // notice, new-chat card, the "digging" spinner) lands. maintainScrollAtEnd re-pins on a data, item,
+-  // footer or viewport layout change but has no header trigger, so a header that grows after the
+-  // target resolved leaves the list short by exactly that growth and nothing corrects it.
+-  //
+-  // The same holds for the other size changes that anchor misses: the viewport changing height while
+-  // a scroll it declines to interrupt is in flight, and a row changing by a few pixels, which it
+-  // leaves alone.
+-  //
+-  // Closed loop rather than a correction fired straight from the size change, for the same reason a
+-  // pin leaves a list already at its end alone: the header often settles while the thread is still
+-  // empty, and a scrollToEnd issued against that near-empty content becomes the target the list then
+-  // abandons its own bootstrap for, landing anywhere. Wait for the scroll offset to hold still, so
+-  // the list has finished its own initial scroll, and only then correct what it left on the table
+-  // (stepEndCheck).
+-  const endAnchor = useSchedule()
+-  const verifyEndAnchor = React.useCallback(() => {
+-    endAnchor.stop()
+-    endAnchor.start(async sleep => {
+-      let check = startEndCheck
+-      for (let elapsed = 0; elapsed < 2000; ) {
+-        if (!(await sleep(50))) return
+-        elapsed += 50
+-        // Checked after the sleep, not before: the reader may have taken the end during it.
+-        if (!ownsEnd(scrollTarget.state)) return
+-        const scroll = listRef.current?.getState().scroll
+-        const scroller = scrollerOf()
+-        if (scroll === undefined || !scroller) continue
+-        const next = stepEndCheck(check, {atEnd: isScrolledToEnd(), scroll, scrollHeight: scroller.scrollHeight})
+-        check = next.check
+-        if (next.action === 'held'
 ```
 
-**File**: `go/chat/participantsource.go` (modified, +21/-8)
+**File**: `shared/chat/conversation/list-area/index.tsx` (modified, +1/-9)
 ```diff
-@@ -17,6 +17,11 @@ import (
- 	"golang.org/x/sync/semaphore"
- )
+@@ -229,14 +229,7 @@ const DesktopThreadWrapper = function DesktopThreadWrapper() {
  
-+type participantNotify struct {
-+	uid   keybase1.UID
-+	parts map[chat1.ConvIDStr][]chat1.UIParticipant
-+}
-+
- type partDiskStorage struct {
- 	Uids []gregor1.UID
- 	Hash string
-@@ -43,15 +48,20 @@ func NewCachingParticipantSource(g *globals.Context, ri func() chat1.RemoteInter
- 		return g.LocalChatDb
- 	}
- 	notify, notifyCancel := libkb.ThrottleBatch(func(batchedInt any) {
--		batched, _ := batchedInt.(map[chat1.ConvIDStr][]chat1.UIParticipant)
--		g.NotifyRouter.HandleChatParticipantsInfo(context.Background(), batched)
-+		batched, _ := batchedInt.(map[keybase1.UID]map[chat1.ConvIDStr][]chat1.UIParticipant)
-+		for uid, parts := range batched {
-+			g.NotifyRouter.HandleChatParticipantsInfo(context.Background(), uid, parts)
-+		}
- 	}, func(batchedInt, singleInt any) any {
--		batched, _ := batchedInt.(map[chat1.ConvIDStr][]chat1.UIParticipant)
--		single, _ := singleInt.(map[chat1.ConvIDStr][]chat1.UIParticipant)
--		maps.Copy(batched, single)
-+		batched, _ := batchedInt.(map[keybase1.UID]map[chat1.ConvIDStr][]chat1.UIParticipant)
-+		single, _ := singleInt.(participantNotify)
-+		if batched[single.uid] == nil {
-+			batched[single.uid] = make(map[chat1.ConvIDStr][]chat1.UIParticipant)
-+		}
-+		maps.Copy(batched[single.uid], single.parts)
- 		return batched
- 	}, func() any {
--		return make(map[chat1.ConvIDStr][]chat1.UIParticipant)
-+		return make(map[keybase1.UID]map[chat1.ConvIDStr][]chat1.UIParticipant)
- 	},
- 		200*time.Millisecond, true)
- 	g.PushShutdownHook(func(_ libkb.MetaContext) error {
-@@ -177,8 +187,11 @@ func (s *CachingParticipantSource) GetWithNotifyNonblock(ctx context.Context, ui
- 				s.Debug(ctx, "GetWithNotifyNonblock: failed to map uids: %s", err)
- 				continue
- 			}
--			s.notify(map[chat1.ConvIDStr][]chat1.UIParticipant{
--				convIDStr: utils.PresentConversationParticipantsLocal(ctx, participants),
-+			s.notify(participantNotify{
-+				uid: keybase1.UID(uid.String()),
-+				parts: map[chat1.ConvIDStr][]chat1.UIParticipant{
-+					convIDStr: utils.PresentConversationParticipantsLocal(ctx, participants),
-+				},
- 			})
- 		}
- 	}(globals.BackgroundChatCtx(ctx, s.G()))
+   const getItemType = useGetItemType()
+ 
+-  const {
+-    initialScrollIndex,
+-    maintainScrollAtEnd,
+-    onItemSizeChanged,
+-    onLayout,
+-    onMetricsChange,
+-    scrollToBottom,
+-  } = useDesktopThreadScroll({
++  const {initialScrollIndex, maintainScrollAtEnd, onLayout, onMetricsChange, scrollToBottom} = useDesktopThreadScroll({
+     centeredOrdinal,
+     containsLatestMessage,
+     datasetKey,
+@@ -408,7 +401,6 @@ const DesktopThreadWrapper = function DesktopThreadWrapper() {
+           // Stays on while centered: the full thread response lands after the cached one and
+           // re-measures rows above the target, which slides it out of view unless anchored.
+           maintainVisibleContentPosition={{data: true}}
+-          onItemSizeChanged={onItemSizeChanged}
+           onLayout={onLayout}
+           onMetricsChange={onMetricsChange}
+           onLoad={onLoad}
 ```
 
-**File**: `go/chat/push.go` (modified, +6/-4)
+**File**: `shared/chat/conversation/list-area/native-scroll.tsx` (modified, +2/-2)
 ```diff
-@@ -153,7 +153,9 @@ func (g *gregorMessageOrderer) WaitForTurn(ctx context.Context, uid gregor1.UID,
- 			//
- 			//nolint:gosec // G115: Version difference for delay calculation, safe to convert
- 			max(
--				time.Duration(newVers-vers-1)*time.Second, 0), time.Minute)
-+				time.Duration(newVers-vers-1)*time.Second, 0,
-+			), time.Minute,
-+		)
+@@ -441,7 +441,7 @@ export const useNativeThreadScroll = (p: {
+   // end of the rise, and whether the keyboard counts as visible flips as it starts. The safe area's is
+   // compared by value, so a freeze/thaw re-mount changes nothing.
+   React.useEffect(() => {
+-    const coverChanged = () => dispatch({anchorsEnd: false, rowFullyVisible, type: 'viewportResized'})
++    const coverChanged = () => dispatch({rowFullyVisible, type: 'viewportResized'})
+     const subscriptions = [
+       KeyboardEvents.addListener('keyboardDidShow', coverChanged),
+       KeyboardEvents.addListener('keyboardDidHide', coverChanged),
+@@ -452,7 +452,7 @@ export const useNativeThreadScroll = (p: {
+   React.useEffect(() => {
+     if (coveredInsetRef.current === bottomInset) return
+     coveredInsetRef.current = bottomInset
+-    dispatch({anchorsEnd: false, rowFullyVisible, type: 'viewportResized'})
++    dispatch({rowFullyVisible, type: 'viewportResized'})
+   }, [bottomInset, dispatch, rowFullyVisible])
  
- 		deadline = deadline.Add(dur)
- 		waiters := g.addToWaitersLocked(ctx, uid, vers, newVers)
-@@ -614,7 +616,7 @@ func (g *PushHandler) Activity(ctx context.Context, m gregor.OutOfBandMessage) (
- 			}
- 
- 			// Update typing status to stopped
--			g.typingMonitor.Update(ctx, chat1.TyperInfo{
-+			g.typingMonitor.Update(ctx, gregor1.UID(uid), chat1.TyperInfo{
- 				Uid:      keybase1.UID(nm.Message.ClientHeader.Sender.String()),
- 				DeviceID: keybase1.DeviceID(nm.Message.ClientHeader.SenderDevice.String()),
- 			}, convID, chat1.TeamType_NONE, false)
-@@ -996,8 +998,8 @@ func (g *PushHandler) Typing(ctx context.Context, m gregor.OutOfBandMessage) (er
- 		return err
- 	}
- 
--	// Fire off update with all relevant info
--	g.typingMonitor.Update(ctx, chat1.TyperInfo{
-+	// The account is the gregor recipient, not the person who is typing.
-+	g.typingMonitor.Update(ctx, gregor1.UID(m.UID().Bytes()), chat1.TyperInfo{
- 		Uid:      kuid,
- 		DeviceID: kdid,
- 		Username: user.String(),
+   // With the keyboard open, maintainVisibleContentPosition adjusts contentOffset by a new message's
 ```
 
-**File**: `go/chat/teams.go` (modified, +4/-2)
+**File**: `shared/chat/conversation/list-area/scroll-target.test.ts` (modified, +10/-55)
 ```diff
-@@ -57,7 +57,8 @@ func getTeamCryptKey(mctx libkb.MetaContext, team *teams.Team, generation keybas
- 	// Need to convert this key in to a TeambotKey
- 	if botUID != nil {
- 		res, _, err = mctx.G().GetTeambotMemberKeyer().GetOrCreateTeambotKey(
--			mctx, team.ID, *botUID, appKey)
-+			mctx, team.ID, *botUID, appKey,
-+		)
- 		return res, err
- 	}
- 	return appKey, nil
-@@ -576,9 +577,10 @@ func (t *ImplicitTeamsNameInfoSource) identify(ctx context.Context, team *teams.
- 		return errors.New("invalid context with no chat metadata")
- 	}
- 	cb := make(chan struct{})
-+	accountUID := t.G().Env.GetUID()
- 	go func(ctx context.Context) {
- 		var idFails []keybase1.TLFIdentifyFailure
--		idFails, err = t.Identify(ctx, names, true,
-+		idFails, err = t.Identify(ctx, accountUID, names, true,
- 			func() keybase1.TLFID {
- 				return keybase1.TLFID(team.ID.String())
- 			},
+@@ -28,10 +28,8 @@ const released = (n: number) => state({endOwner: 'reader', lastCentered: ord(n)}
+ 
+ const leaveAlone: ScrollDirective = {stopCentering: false, type: 'leaveAlone'}
+ const stopCentering: ScrollDirective = {stopCentering: true, type: 'leaveAlone'}
+-const pinEnd: ScrollDirective = {retry: false, stopCentering: false, type: 'pinEnd', verify: false}
++const pinEnd: ScrollDirective = {retry: false, stopCentering: false, type: 'pinEnd'}
+ const pinEndStopCentering: ScrollDirective = {...pinEnd, stopCentering: true}
+-// The end moved with a size change: confirm it held once the list settles.
+-const verifyEnd: ScrollDirective = {...pinEnd, verify: true}
+ // The first load's pin, which asks for the first load to be reported again.
+ const pinEndRetry: ScrollDirective = {...pinEnd, retry: true}
+ const center = (n: number): ScrollDirective => ({ordinal: ord(n), type: 'center'})
+@@ -283,9 +281,9 @@ describe('headerMeasured', () => {
+       leaveAlone,
+       state({endOwner: 'reader', headerSize: 100}),
+     ],
+-    ['an unchanged size is not growth', state({headerSize: 100}), measured(100), leaveAlone, state({headerSize: 100})],
+-    ['growth re-pins the end once the list settles', state({headerSize: 100}), measured(152), verifyEnd, state({headerSize: 152})],
+-    ['so does shrinking', state({headerSize: 152}), measured(100), verifyEnd, state({headerSize: 100})],
++    ['an unchanged size is not a change', state({headerSize: 100}), measured(100), leaveAlone, state({headerSize: 100})],
++    ['growth re-pins the end', state({headerSize: 100}), measured(152), pinEnd, state({headerSize: 152})],
++    ['so does shrinking', state({headerSize: 152}), measured(100), pinEnd, state({headerSize: 100})],
+     [
+       'growth is recorded but ignored once the reader owns the end',
+       state({endOwner: 'reader', headerSize: 100}),
+@@ -300,13 +298,6 @@ describe('headerMeasured', () => {
+       leaveAlone,
+       state({headerSize: 152}),
+     ],
+-    [
+-      'growth does not depend on a centred target, only on who owns the end',
+-      state({headerSize: 100, lastCentered: ord(30)}),
+-      measured(152),
+-      verifyEnd,
+-      state({headerSize: 152, lastCentered: ord(30)}),
+-    ],
+   ])
+ })
+ 
+@@ -346,27 +337,25 @@ describe('appended', () => {
+ })
+ 
+ describe('viewportResized', () => {
+-  const resized = (anchorsEnd = true, rowFullyVisible = false): ScrollEvent => ({
+-    anchorsEnd,
++  const resized = (rowFullyVisible = false): ScrollEvent => ({
+     rowFullyVisible: () => rowFullyVisible,
+     type: 'viewportResized',
+   })
+   const holding = state({endOwner: 'reader', holdingEdit: true, lastEditing: ord(15)})
+   const holdingInView = state({holdingEdit: true, lastEditing: ord(15)})
+   runTable([
+-    ['an end the list holds is re-pinned once the list settles', fresh, resized(), verifyEnd, fresh],
+-    ['an end the list owns but its anchor does not hold is left alone', fresh, resized(false), leaveAlone, fresh],
++    ["an end the list holds is left to the list's own end anchor", fresh, resized(), leaveAlone, fresh],
+     ['a reader holding the end is left where they are', busy, resized(), leaveAlone, busy],
+     ['a held reveal the change cut off is aimed again', holding, resized(), reveal(15), holding],
+-    ['a held reveal still wholly in view is left where it is', holding, resized(true, true), leaveAlone, holding],
++    ['a held reveal still wholly in view is left where it is', holding, resized(true), leaveAlone, holding],
+     [
+       'a held edit that was in view and the change cut off is revealed, which takes the end from the list',
+       holdingInView,
+-      resized(false),
++      resized(),
+       reveal(15),
+       {...holdingInView, endOwner: 'reader'},
+     ],
+-    ['a held edit still wholly in view leaves the end the list holds to be re-pinned', holdingInView, resized(true, true), verifyEnd, holdingInView],
++    ["a held edit still wholly in view leaves the end to the list's own end anchor", holdingInView, resized(true), leaveAlone, holdingInView],
+     [
+       'a reveal no longer held is left alone',
+       state({endOwner: 'reader', lastEditing: ord(15)}),
+@@ -377,23 +366,6 @@ describe('viewportResized', () => {
+   ])
+ })
+ 
+-describe('rowResized', () => {
+-  const resized = (anchorsEnd = true): ScrollEvent => ({anchorsEnd, type: 'rowResized'})
+-  runTable([
+-    ['an end the list holds is re-pinned once the list settles', fresh, resized(), verifyEnd, fresh],
+-    ['an end the list owns but its anchor does not hold is left alone', fresh, resized(false), leaveAlone, fresh],
+-    ['a reader holding the end is left where they are', busy, resized(), leaveAlone, busy],
+-    ['a centred target is left to its centring', centred(30), resized(false), leaveAlone, centred(30)],
+-    [
+-      'a held reveal is left where it is',
+-      state({endOwner: 'reader', holdingEdit: true, lastEditing: ord(15)}),
+-      resized(),
+-      leaveAlone,
+-      state({endOwner: 'reader', holdingEdit: true, lastEditing: o
 ```
 
-**File**: `go/chat/tlf.go` (modified, +8/-3)
+**File**: `shared/chat/conversation/list-area/scroll-target.ts` (modified, +20/-34)
 ```diff
-@@ -45,7 +45,8 @@ func (t *KBFSNameInfoSource) tlfKeysClient() (*keybase1.TlfKeysClient, error) {
- 	}
- 	return &keybase1.TlfKeysClient{
- 		Cli: rpc.NewClient(
--			xp, libkb.NewContextifiedErrorUnwrapper(t.G().ExternalG()), libkb.LogTagsFromContext),
-+			xp, libkb.NewContextifiedErrorUnwrapper(t.G().ExternalG()), libkb.LogTagsFromContext,
-+		),
- 	}, nil
- }
+@@ -13,7 +13,7 @@ export type ScrollTargetState = {
+   endOwner: 'list' | 'reader'
+   // The last header size the list reported, whatever the dataset. The list reports the header only
+   // when its size changes, never for a new dataset, so the size from before a clear is still the one
+-  // the new dataset builds its position on: only a later, different size counts as growth.
++  // the new dataset builds its position on: only a later, different size counts as a change.
+   headerSize: number | undefined
+   // The target already centred in this dataset. Centring happens once per target: scrolling up
+   // prepends older messages, which moves the target's index, and re-centring on that would pull
+@@ -69,19 +69,13 @@ export type ScrollEvent =
+   | {type: 'readerAtEnd'}
+   // The header's size as the list measured it. Only a list whose header comes before its end in
+   // scroll order reports it: the native list is inverted, so its header sits at the far, oldest end
+-  // and growing it never moves the newest.
++  // and growing it never moves the newest. The desktop list's own end anchor has no header trigger.
+   | {type: 'headerMeasured'; hasMessages: boolean; size: number}
+   // The part of the list in view changed height: the composer growing or shrinking (typed lines, the
+   // edit or reply banner), a window resize, the keyboard rising or falling over the list's bottom.
+-  // anchorsEnd is whether the list's own end anchor is on (listAnchorsEnd) and the end moves with the
+-  // viewport: the native list's end stays over the keyboard through its keyboard scroll view, so it
+-  // reports false. rowFullyVisible says whether the ordinal's row is wholly in view as the list now
+-  // measures it, asked only when the decision turns on it.
+-  | {type: 'viewportResized'; anchorsEnd: boolean; rowFullyVisible: (ordinal: T.Chat.Ordinal) => boolean}
+-  // A row changed size after the list laid it out (a late measure, a re-measure: an image or a font
+-  // landing). anchorsEnd as for viewportResized. Only a list whose end moves with its rows reports it:
+-  // the native list is inverted, so its newest row sits on its bottom edge and grows away from it.
+-  | {type: 'rowResized'; anchorsEnd: boolean}
++  // rowFullyVisible says whether the ordinal's row is wholly in view as the list now measures it,
++  // asked only when the decision turns on it.
++  | {type: 'viewportResized'; rowFullyVisible: (ordinal: T.Chat.Ordinal) => boolean}
+   // Messages were appended. Only a list whose own anchoring can leave a new message out of view
+   // reports it; anchorHidesNewest says whether it would this time. That is the native list with the
+   // keyboard up, whose content-position anchor holds the old rows in place and so leaves a new one
+@@ -107,14 +101,12 @@ export type ScrollEvent =
+ // Every list carries out every directive; how is its own.
+ export type ScrollDirective =
+   // Bring the newest message into view and hold it there. How, and when, is the list's own: it knows
+-  // what it can scroll now and what it must wait out. verify: a size change moved the end, and the
+-  // list's own end anchor may already be re-pinning it, so confirm the end held once the list has
+-  // settled rather than scroll now. retry: report initialLoad again (retry: true) a moment later,
+-  // with the rows as they are then, so a centre requested in between is not undone by this pin.
+-  | {type: 'pinEnd'; retry: boolean; stopCentering: boolean; verify: boolean}
+-  // Bring the ordinal to the middle of the viewport and settle it there, measuring the rows as they
+-  // are at each step, so rows changing under it need no directive of their own. Its budget (steps,
+-  // time) is the target's, however often the rows change.
++  // what it can scroll now and what it must wait out. retry: report initialLoad again (retry: true) a
++  // moment later, with the rows as they are then, so a centre requested in between is not undone by
++  // this pin.
++  | {type: 'pinEnd'; retry: boolean; stopCentering: boolean}
++  // Bring the ordinal to the middle of the viewport and settle it there, following it as the rows
++  // around it measure, so rows changing under it need no directive of their own.
+   | {type: 'center'; ordinal: T.Chat.Ordinal}
+   // Bring the ordinal, not wholly in view, to the middle of the viewport.
+   | {type: 'reveal'; ordinal: T.Chat.Ordinal}
+@@ -133,16 +125,15 @@ export const initialScrollTargetState: ScrollTargetState = {
  
-@@ -192,6 +193,7 @@ func (t *KBFSNameInfoSource) CryptKeys(ctx context.Context, tlfName string) (res
- 		"CryptKeys(tlf=%s,mode=%v)", tlfName, identBehavior)()
+ const leaveAlone: ScrollDirective = {stopCentering: false, type: 'leaveAlone'}
+ type PinEnd = Extract<ScrollDirective, {type: 'pinEnd'}>
+-const pinEnd: PinEnd = {retry: false, stopCentering: false, type: 'pinEnd', verify: false}
+-const verifyEnd: PinEnd = {...pinEnd, verify: true}
++const pinEnd: PinEnd = {retry: false, stopCentering: false, type: 'pinEnd'}
  
- 	username := t.G().Env.GetUsername()
-+	accountUID := t.G().Env.GetUID()
- 	if len(username) == 0 {
- 		return res, libkb.LoginRequiredError{}
- 	}
-@@ -209,7 +211,8 @@ func (t *KBFSNameInfoSource) CryptKeys(ctx context.Context, tlfName string) (res
- 		t.Debug(ectx, "CryptKeys: running identify")
- 		var err error
- 		names := utils.SplitTLFName(tlfName)
--		ib, err = t.Identify(ectx, names, true,
-+		ib, err = t.Identify(
-+			ectx, accountUID, names, true,
- 			func() keybase1.TLFID {
- 				<-doneCh
- 				return res.NameIDBreaks.TlfID
-@@ -258,6 +261,7 @@ func (t *KBFSNameInfoSource) PublicCanonicalTLFNameAndID(ctx context.Context, tl
- 	}
- 	defer t.Trace(ctx, &err,
- 		"PublicCanonicalTLFNameAndID(tlf=%s,mode=%v)", tlfName, identBehavior)()
-+	accountUID := t.G().Env.GetUID()
- 
- 	// call Identify and CanonicalTLFNameAndIDWithBreaks concurrently:
- 	group, ectx := errgroup.WithContext(globals.BackgroundChatCtx(ctx, t.G()))
-@@ -268,7 +272,8 @@ func (t *KBFSNameInfoSource) PublicCanonicalTLFNameAndID(ctx context.Context, tl
- 		group.Go(func() error {
- 			var err error
- 			names := utils.SplitTLFName(tlfName)
--			ib, err = t.Identify(ectx, names, false,
-+			ib, err = t.Identify(
-+				ectx, accountUID, names, false,
- 				func() keybase1.TLFID {
- 					<-doneCh
- 					return res.TlfID
+ export const decideScroll = (state: ScrollTargetState, event: ScrollEvent): ScrollDecision => {
+   switch (event.type) {
+     case 'datasetChanged':
+-      // The end and t
 ```
 
-**File**: `go/chat/types/interfaces.go` (modified, +4/-4)
+**File**: `shared/ios/Podfile.lock` (modified, +28/-28)
 ```diff
-@@ -315,7 +315,7 @@ type TeamChannelSource interface {
- type ActivityNotifier interface {
- 	Activity(ctx context.Context, uid gregor1.UID, topicType chat1.TopicType, activity *chat1.ChatActivity,
- 		source chat1.ChatActivitySource)
--	TypingUpdate(ctx context.Context, updates []chat1.ConvTypingUpdate)
-+	TypingUpdate(ctx context.Context, uid gregor1.UID, updates []chat1.ConvTypingUpdate)
- 	JoinedConversation(ctx context.Context, uid gregor1.UID, convID chat1.ConversationID,
- 		topicType chat1.TopicType, conv *chat1.InboxUIItem)
- 	LeftConversation(ctx context.Context, uid gregor1.UID, convID chat1.ConversationID,
-@@ -357,7 +357,7 @@ type ActivityNotifier interface {
- type IdentifyNotifier interface {
- 	Reset()
- 	ResetOnGUIConnect()
--	Send(ctx context.Context, update keybase1.CanonicalTLFNameAndIDWithBreaks)
-+	Send(ctx context.Context, uid keybase1.UID, update keybase1.CanonicalTLFNameAndIDWithBreaks)
- }
- 
- type KeyFinder interface {
-@@ -470,8 +470,8 @@ type ShareIntentDonator interface {
- }
- 
- type StellarLoader interface {
--	LoadPayment(ctx context.Context, convID chat1.ConversationID, msgID chat1.MessageID, senderUsername string, paymentID stellar1.PaymentID) *chat1.UIPaymentInfo
--	LoadRequest(ctx context.Context, convID chat1.ConversationID, msgID chat1.MessageID, senderUsername string, requestID stellar1.KeybaseRequestID) *chat1.UIRequestInfo
-+	LoadPayment(ctx context.Context, uid keybase1.UID, convID chat1.ConversationID, msgID chat1.MessageID, senderUsername string, paymentID stellar1.PaymentID) *chat1.UIPaymentInfo
-+	LoadRequest(ctx context.Context, uid keybase1.UID, convID chat1.ConversationID, msgID chat1.MessageID, senderUsername string, requestID stellar1.KeybaseRequestID) *chat1.UIRequestInfo
- }
- 
- type StellarSender interface {
+@@ -5,7 +5,7 @@ PODS:
+     - ReactNativeDependencies
+   - EXConstants (58.0.13):
+     - ExpoModulesCore
+-  - Expo (58.0.17):
++  - Expo (58.0.19):
+     - ExpoModulesCore
+     - ExpoModulesJSI
+     - hermes-engine
+@@ -44,21 +44,21 @@ PODS:
+     - ZXingObjC/PDF417
+   - ExpoClipboard (58.0.4):
+     - ExpoModulesCore
+-  - ExpoContacts (58.0.8):
++  - ExpoContacts (58.0.9):
+     - ExpoModulesCore
+   - ExpoDocumentPicker (58.0.4):
+     - ExpoModulesCore
+   - ExpoDomWebView (58.0.2):
+     - ExpoModulesCore
+-  - ExpoFileSystem (58.0.10):
++  - ExpoFileSystem (58.0.11):
+     - ExpoModulesCore
+-  - ExpoFont (58.0.9):
++  - ExpoFont (58.0.10):
+     - ExpoModulesCore
+-  - ExpoGlassEffect (58.0.4):
++  - ExpoGlassEffect (58.0.5):
+     - ExpoModulesCore
+   - ExpoHaptics (58.0.7):
+     - ExpoModulesCore
+-  - ExpoImage (58.0.16):
++  - ExpoImage (58.0.17):
+     - ExpoModulesCore
+     - libavif/libdav1d
+     - SDWebImage (~> 5.21.0)
+@@ -71,14 +71,14 @@ PODS:
+     - ExpoModulesCore
+   - ExpoLocalization (58.0.5):
+     - ExpoModulesCore
+-  - ExpoLocation (58.0.18):
++  - ExpoLocation (58.0.19):
+     - ExpoModulesCore
+   - ExpoLogBox (58.0.13):
+     - React-Core
+-  - ExpoMediaLibrary (58.0.11):
++  - ExpoMediaLibrary (58.0.12):
+     - ExpoModulesCore
+     - React-Core
+-  - ExpoModulesCore (58.0.24):
++  - ExpoModulesCore (58.0.26):
+     - ExpoModulesJSI
+     - hermes-engine
+     - RCTRequired
+@@ -103,13 +103,13 @@ PODS:
+     - ReactCommon/turbomodule/core
+     - ReactNativeDependencies
+     - Yoga
+-  - ExpoModulesJSI (58.0.17):
++  - ExpoModulesJSI (58.0.19):
+     - React-Core
+     - ReactCommon
+-  - ExpoModulesWorklets (58.0.24):
++  - ExpoModulesWorklets (58.0.26):
+     - ExpoModulesCore
+     - ExpoModulesJSI
+-  - ExpoModulesWorkletsAdapter (58.0.24):
++  - ExpoModulesWorkletsAdapter (58.0.26):
+     - ExpoModulesCore
+     - ExpoModulesJSI
+     - ExpoModulesWorklets
+@@ -1540,7 +1540,7 @@ PODS:
+     - ReactCommon/turbomodule/core
+     - ReactNativeDependencies
+     - Yoga
+-  - react-native-keyboard-controller (1.22.8):
++  - react-native-keyboard-controller (1.22.9):
+     - hermes-engine
+     - RCTRequired
+     - RCTTypeSafety
+@@ -1554,7 +1554,7 @@ PODS:
+     - React-graphics
+     - React-ImageManager
+     - React-jsi
+-    - react-native-keyboard-controller/common (= 1.22.8)
++    - react-native-keyboard-controller/common (= 1.22.9)
+     - React-NativeModulesApple
+     - React-RCTFabric
+     - React-renderercss
+@@ -1564,7 +1564,7 @@ PODS:
+     - ReactCommon/turbomodule/core
+     - ReactNativeDependencies
+     - Yoga
+-  - react-native-keyboard-controller/common (1.22.8):
++  - react-native-keyboard-controller/common (1.22.9):
+     - hermes-engine
+     - RCTRequired
+     - RCTTypeSafety
+@@ -2805,30 +2805,30 @@ SPEC CHECKSUMS:
+   boost: 8502bfdc46e2804408af2e163049ece181009af4
+   DoubleConversion: 501a575c40c0b50c89685762dd3e415e6bb26fb0
+   EXConstants: e90e362a4ffafaa03999f456bf81d7fb8021db9d
+-  Expo: 59b8d370e11ea3cb357a4756ebfd645986b05eb9
++  Expo: 6b9af29d697c41a023a6141f3123ae30bc650061
+   ExpoAsset: 9548991f0332bd8ed8819299e0b413d713104a1a
+   ExpoAudio: 7f919daf0ebf1b0e1cf8b7464b7c85be6664a412
+   ExpoCamera: baa3429b8e3609ffd9f17888978e1963ca1171e5
+   ExpoCameraBarcodeScanning: 64af648214637c7e6e16f3d7e8a50d9828fcefdd
+   ExpoClipboard: 244adf0a38b60ec7105e217042dd266a722f5a5e
+-  ExpoContacts: 08c9f9a60cd48ada9691288028d8b9f70034a305
++  ExpoContacts: e406e96e4f37d3df65e22ecb66b3200cb15b9390
+   ExpoDocumentPicker: af0917aa6f1b54ab3a0f47977935a1e20ffb1537
+   ExpoDomWebView: b2a6d681b9d34c23b1f584321386ca8da1d36afb
+-  ExpoFileSystem: 6e11203047bfcbd318e6db7bb91210a95a4162b3
+-  ExpoFont: 1d6500b0c451edb1f9676276b477fb1838190ccb
+-  ExpoGlassEffect: 008d906ff11ffeb03a8e702af9d6a471c16c10eb
++  ExpoFileSystem: b35d87e5219408a4052ee5adde99962d014efb09
++  ExpoFont: b215bc738b2e3fba7ffed79903a6fccf66959dd0
++  ExpoGlassEffect: 6594e055df1e0b88d34cc189ba0b21589adec6bf
+   ExpoHaptics: c95d1e2162895e710b68dd912eec619900ebdf33
+-  ExpoImage: 002ec1de17e9d4328d7b930ed112244227b69a5c
++  ExpoImage: 04f6e13379ea155eec04e99499baefba1c313f77
+   ExpoImagePicker: a466134ec92fed0b38bbf9062c7eb5f3c8c49d94
+   ExpoKeepAwake: fd18a5d233329013c578030ad399d8e10b252b5f
+   ExpoLocalization: ed930f5d68e7b3c2073a04787358839e1a8e1680
+-  ExpoLocation: c079271e83490f69d29502dd90de48a60fd8c7cf
++  ExpoLocation: c53c819086d289897111caf450e73b45d0fdf4b6
+   ExpoLogBox: 624d64042d73abe0dc230a24b1a9f835adb2cec9
+-  ExpoMediaLibrary: 536f542d5fc1266c99627f66bdee9493b8139de9
+-  ExpoModulesCore: 8847c2b0e2f483fafe86dc35b0eace05f5eb077c
+-  ExpoModulesJSI: 395e66e5f1616673eb8e2df17ab562c175805146
+-  ExpoModulesWorklets: 1ffcd69fa7269a878dbc5ee7acd4e32af85c0406
+-  ExpoModulesWorkletsAdapter: ddd0413a9e844b0b5e6433168365a2b39cd5bd18
++  ExpoMediaLibrary: 2624e0e1268d19ceb8cb1d69936535caaeccf887
++  ExpoModulesCore: af9ed0865a1ea870751e9af562c5173c7ca38974
++  ExpoModulesJSI: 87b753f5491b015cb4abb3fed25f65b516d58d1d
++  ExpoModulesWorklets: 208e6112a0467df1cc21530e280d650a3adf6261
++  ExpoModulesWo
 ```
 
 ---
 
-### Incident Patch 2: `ded1e2dd` (2026-10-23)
-**Commit Message**: deps: webdriverio 10, immer, zustand, builder-bob; drop two security resolutions (#29829)
+### Incident Patch 2: `4e83d6bf` (2026-10-26)
+**Commit Message**: chat(desktop): hover reaction bar sits above the newest message; video and paging flow fixes (#29833)
 
-* deps: bump immer, zustand, builder-bob; refresh ip-address and serialize-javascript
+* chat(desktop): the hover reaction bar on the newest message sits above it
 
-* deps: webdriverio 10; drop serialize-javascript and basic-ftp resolutions
+The bar hangs below its row, and on the newest one that passes the list's bottom, so it was raised
+into its own row, over the row's bottom: an unfurl prompt's Yes/No, an attachment's controls, a
+link. It now sits wholly above the row there, and is only raised clear of the bottom for a row too
+near the top for that.
 
-* engine test: cancel a prompt with no event-loop turn after its push
+* e2e(desktop): reaction bar placement, a playing video, paging near the top
 
-**File**: `rnmodules/react-native-kb/package.json` (modified, +1/-1)
+- New flow: the hover bar on the newest message sits above it, inside the list.
+- The double-click fullscreen flow waits for the video to be playing: the element mounts before
+  its source loads, and a double-click on nothing loaded does nothing.
+- Paging picks its anchor row by the distance the scroller can actually move, so the last steps
+  near the top of a thread, where less than a full step is left, still find one.
+
+* e2e(desktop): poll for the hover bar's place; anchor paging steps by direction
+
+- The hover-bar flow polls until the bar has taken its place, instead of waiting a fixed 200ms
+  for the measurement 
+
+**File**: `shared/chat/conversation/messages/emoji-row.tsx` (modified, +19/-6)
 ```diff
-@@ -32,7 +32,7 @@
-     "react-native": "file:../../shared/node_modules/react-native",
-     "@types/react": "file:../../shared/node_modules/@types/react",
-     "typescript": "file:../../shared/node_modules/typescript",
--    "react-native-builder-bob": "0.43.2"
-+    "react-native-builder-bob": "0.44.1"
-   },
-   "peerDependencies": {
-     "react": "*",
-```
-
-**File**: `rnmodules/react-native-kb/yarn.lock` (modified, +365/-411)
-```diff
-@@ -2,17 +2,17 @@
- # yarn lockfile v1
- 
- 
--"@ark/schema@0.56.2":
--  version "0.56.2"
--  resolved "https://registry.yarnpkg.com/@ark/schema/-/schema-0.56.2.tgz#204292862d1b87a08975f66c498b6e0e138126cf"
--  integrity sha512-Qx4D2JFbBWpntiHZaTv7bGG4H/M2rigiknezKg/WVyDSaLdE4YCcWAOoFB7pjjDqHbbV2OqRfntm1nnXvwMexg==
-+"@ark/schema@0.56.8":
-+  version "0.56.8"
-+  resolved "https://registry.yarnpkg.com/@ark/schema/-/schema-0.56.8.tgz#7d2a9c226bc4613a1ca0f7a1496153227d5374f3"
-+  integrity sha512-R05TOe85oQBGFFw2zKMuZpqkXibLKuC/aJt6VwFn5Cjc4x3NkWfhvGRpRDycNkj3ddcHnOPtIsmjVowJO9Yxdw==
-   dependencies:
--    "@ark/util" "0.56.2"
-+    "@ark/util" "0.56.8"
- 
--"@ark/util@0.56.2":
--  version "0.56.2"
--  resolved "https://registry.yarnpkg.com/@ark/util/-/util-0.56.2.tgz#c6c09b48ce242c5b8527a273d2413a372e6e517a"
--  integrity sha512-9kU2sUE38FZEGG7l3hamYMBieLYEJh2L1mrYD2eXpT+78EnQSV1bhjxJhnxGBMSTbtwpBSDNSK+K60WvaI/DTQ==
-+"@ark/util@0.56.8":
-+  version "0.56.8"
-+  resolved "https://registry.yarnpkg.com/@ark/util/-/util-0.56.8.tgz#b9bc33d60875de9aeede7d2a2672ea6b6197a05f"
-+  integrity sha512-XLiQyGfpJcws1zCtp2Cva8s1oheCdFn1Rt6JSyC4NnkDrpwCJnlaiawuuOc1Z97vMH+jEzW5vyyf0xOju5wUQA==
- 
- "@babel/code-frame@^7.29.0", "@babel/code-frame@^7.29.7":
-   version "7.29.7"
-@@ -28,7 +28,7 @@
-   resolved "https://registry.yarnpkg.com/@babel/compat-data/-/compat-data-7.29.7.tgz#6f0237f0f36d2e51c0570a636faed9d2d0efe629"
-   integrity sha512-locTkQyKvwIEgBzVrn8693ebc97F2U8ZHjbXwDXJ5Fn2TCpNwTlKcaKLkdHop5c/icOFE7qt7Q9JC5hnKNa6Gg==
- 
--"@babel/core@^7.25.2", "@babel/core@^7.29.0":
-+"@babel/core@^7.25.2", "@babel/core@^7.29.7":
-   version "7.29.7"
-   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.29.7.tgz#80c10b17248082968b57a857b91640971f2070f7"
-   integrity sha512-RgHBCvtjbOK2gXSNBNIkNoEc9qoVEtau3hj8gEqKQuL3HZAibKarWFEI3Lfm6EYKkLalOh8eSrj9b+ch9H/VBA==
-@@ -479,7 +479,7 @@
-   dependencies:
-     "@babel/helper-plugin-utils" "^7.29.7"
- 
--"@babel/plugin-transform-flow-strip-types@^7.27.1":
-+"@babel/plugin-transform-flow-strip-types@^7.29.7":
-   version "7.29.7"
-   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-flow-strip-types/-/plugin-transform-flow-strip-types-7.29.7.tgz#911bcb31608c3576510d7e0c95ccf64f9e1812d0"
-   integrity sha512-wRHeUjUjCZnMHmiO5bRgjFLcoEh7JyTdByOW11ahhwNa4V0bmeGEaIvt51yq0zQp2yWIpqfxXXPyUP6GFJZHOQ==
-@@ -737,7 +737,7 @@
-   dependencies:
-     "@babel/helper-plugin-utils" "^7.29.7"
- 
--"@babel/plugin-transform-strict-mode@^7.27.1":
-+"@babel/plugin-transform-strict-mode@^7.29.7":
-   version "7.29.7"
-   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-strict-mode/-/plugin-transform-strict-mode-7.29.7.tgz#81a223852970e697a93e11932a5f809f0e0ec373"
-   integrity sha512-YjFcy7S8kEndK6dsK4UBISrMZa2MHiitApdZ7hTxAyQpX+Ct+aKgKOZoTx/Kcz6drgKxe50TIPUvZq7V4HGGKg==
-@@ -800,7 +800,7 @@
-     "@babel/helper-create-regexp-features-plugin" "^7.29.7"
-     "@babel/helper-plugin-utils" "^7.29.7"
- 
--"@babel/preset-env@^7.29.2":
-+"@babel/preset-env@^7.29.7":
-   version "7.29.7"
-   resolved "https://registry.yarnpkg.com/@babel/preset-env/-/preset-env-7.29.7.tgz#5e2ab5e764b493fdefc99c43aeaa70a9533a37fd"
-   integrity sha512-GYzX36n1nsciIb0uyH0GHwxwtNwPQIcpxSeiVLDtG/B7jB5xXgchnmL1f/jCX5o+pwnaDBtO60ONSJhEBJfxYA==
-@@ -886,7 +886,7 @@
-     "@babel/types" "^7.4.4"
-     esutils "^2.0.2"
- 
--"@babel/preset-react@^7.28.5":
-+"@babel/preset-react@^7.29.7":
-   version "7.29.7"
-   resolved "https://registry.yarnpkg.com/@babel/preset-react/-/preset-react-7.29.7.tgz#2ed18366e38c2081bbf1760dc01e88fa5674eb17"
-   integrity sha512-C+PV1TFUPTmBQGoPBL8j2QmLpZ117YTCwxIZeJOM96GbYMFSc7/pOXU5lVykwnZxyTqQxRsvoRk6f2FktZgGHA==
-@@ -898,7 +898,7 @@
-     "@babel/plugin-transform-react-jsx-development" "^7.29.7"
-     "@babel/plugin-transform-react-pure-annotations" "^7.29.7"
- 
--"@babel/preset-typescript@^7.28.5":
-+"@babel/preset-typescript@^7.29.7":
-   version "7.29.7"
-   resolved "https://registry.yarnpkg.com/@babel/preset-typescript/-/preset-typescript-7.29.7.tgz#de9be1f47b785c979ec7b3a71f4cd8bae5267b62"
-   integrity sha512-/Foi8vKY2EVbed/1eZx0gJEEwHAIxogrySI7rULcRIvhZzbvoE/b5qG5Ghc0WKAFKOHA9SD1x7RsFlOYdutIiQ==
-@@ -1044,11 +1044,16 @@
-   resolved "https://registry.yarnpkg.com/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.4.15.tgz#d7c6e6755c78567a951e04ab52ef0fd26de59f32"
-   integrity sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg==
- 
--"@jridgewell/sourcemap-codec@^1.5.0", "@jridgewell/sourcemap-codec@^1.5.5":
-+"@jridgewell/sourcemap-codec@^1.5.0":
-   version "1.5.5"
-   resolved "https://registry.yarnpkg.com/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.5.5.tgz#6912b00d2c631c0d15ce1a7ab57cd657f2a8f8ba"
-   integrity sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==
- 
-+"@jridgewell/sourcemap-codec@^1.6.0":
-+  version "1.6.0"
-+  resolved "https://registry.yarnpkg.com/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.6.0.tgz#f4c663e862f06dc98ca4d453862c46902789a18d"
-+ 
-```
-
-**File**: `shared/engine/session-cancel.test.ts` (modified, +2/-1)
-```diff
-@@ -228,8 +228,9 @@ describe('a service cancel of one prompt', () => {
-   // The GUI owes the service only once the handler has run and left the prompt unanswered
-   test("still on the listener's timer, keeps its waiting on and never reaches the handler", async () => {
-     const {ended, fake, held, onPrompt, sessionID} = await start()
-+    // The push arms the listener's timer before it returns, so cancel with no await in between:
-+    // any event-loop turn here lets a 0ms timer come due on a slow machine and run the handler
-     void fake.push(prompt, {kind: 0}, {sessionID})
--    await tick()
-     expect(waitingCount(fake)).toBe(1)
-     fake.cancelPush(prompt)
-     expect(waitingCount(fake)).toBe(1)
-```
-
-**File**: `shared/package.json` (modified, +9/-11)
-```diff
-@@ -134,7 +134,7 @@
-     "expo-task-manager": "58.0.12",
-     "expo-video": "58.0.12",
-     "google-libphonenumber": "3.2.47",
--    "immer": "11.2.7",
-+    "immer": "11.2.9",
-     "lodash": "4.18.1",
-     "lottie-react-native": "7.5.0",
-     "lottie-web": "5.13.0",
-@@ -151,7 +151,7 @@
-     "react-native-web": "0.21.4",
-     "react-native-webview": "16.0.0",
-     "react-native-worklets": "0.13.0",
--    "zustand": "5.0.15"
-+    "zustand": "5.0.16"
-   },
-   "devDependencies": {
-     "@babel/core": "7.29.7",
-@@ -179,12 +179,12 @@
-     "@types/react": "19.3.0",
-     "@types/react-dom": "19.3.0",
-     "@vitejs/plugin-react": "6.1.2",
--    "@wdio/appium-service": "9.32.0",
--    "@wdio/cli": "9.32.0",
--    "@wdio/globals": "9.31.3",
--    "@wdio/local-runner": "9.32.0",
--    "@wdio/mocha-framework": "9.32.0",
--    "@wdio/spec-reporter": "9.32.0",
-+    "@wdio/appium-service": "10.1.0",
-+    "@wdio/cli": "10.1.0",
-+    "@wdio/globals": "10.1.0",
-+    "@wdio/local-runner": "10.1.0",
-+    "@wdio/mocha-framework": "10.1.0",
-+    "@wdio/spec-reporter": "10.1.0",
-     "appium": "3.8.0",
-     "babel-jest": "30.5.2",
-     "babel-plugin-module-resolver": "5.0.3",
-@@ -206,12 +206,10 @@
-     "typescript-eslint": "8.72.0",
-     "typescript-native": "npm:typescript@7.0.2",
-     "vite": "8.3.5",
--    "webdriverio": "9.32.0"
-+    "webdriverio": "10.1.0"
-   },
-   "resolutions": {
-     "**/@types/react": "19.3.0",
--    "**/basic-ftp": "6.2.3",
--    "**/serialize-javascript": "7.1.2",
-     "**/shell-quote": "1.12.0"
-   },
-   "typecoverage": {
-```
-
-**File**: `shared/tests/e2e/ios-appium/wdio.android.conf.ts` (modified, +2/-0)
-```diff
-@@ -30,6 +30,8 @@ export const config: WebdriverIO.Config = {
-   },
-   capabilities: [androidCapabilities(serial)],
-   logLevel: 'warn',
-+  // Shares the iOS helpers, which rely on $() taking the first match.
-+  strictSelectors: false,
-   framework: 'mocha',
-   // Mirrors the iOS config: the one-session suite accumulates load over many
-   // flows; retries: 2 (each with a fresh escapeToTabs reset) absorbs transient
-```
-
-**File**: `shared/tests/e2e/ios-appium/wdio.conf.ts` (modified, +3/-0)
-```diff
-@@ -48,6 +48,9 @@ export const config: WebdriverIO.Config = {
-   },
-   capabilities: [iosCapabilities(udid, {wdaLocalPort, prebuilt: !isOld, derivedDataPath})],
-   logLevel: 'warn',
-+  // Selectors and helpers rely on $() taking the first match (e.g. `~More` matches several
-+  // elements), so don't throw on multiple matches.
-+  strictSelectors: false,
-   framework: 'mocha',
-   // 120s: the tablet settings-subpages flow can run long; phone tests finish well
-   // under this. retries: 2 — the one-session suite accumulates load over 16 flows
-```
-
-**File**: `shared/tests/e2e/visual/driver-ios.mts` (modified, +2/-0)
-```diff
-@@ -363,6 +363,8 @@ export async function openIos(opts: {device: string}): Promise<IosSession> {
-         logLevel: 'error',
-         path: '/',
-         port,
-+        // Helpers rely on $() taking the first match.
-+        strictSelectors: false,
-       }),
-       SESSION_MS,
-       'starting the Appium session'
-```
-
-**File**: `shared/tests/e2e/visual/wdio.visual.conf.ts` (modified, +1/-0)
-```diff
-@@ -12,4 +12,5 @@ export const config: Options.Testrunner & Capabilities.WithRequestedTestrunnerCa
-   port: appiumPort(),
-   runner: 'local',
-   specs: [],
-+  strictSelectors: false,
- }
-```
-
----
-
-### Incident Patch 3: `c8109b9c` (2026-10-21)
-**Commit Message**: desktop: OS window controls overlay on Windows and Linux (#29814)
-
-* desktop: use the OS window controls overlay on Windows and Linux
-
-Without the native frame, Windows and Linux now get the OS's own minimize,
-maximize and close buttons through Electron's title bar overlay, colored
-from the current theme and updated when it changes. The header reserves
-the overlay's width (env(titlebar-area-*)) instead of drawing its own
-buttons. macOS is unchanged.
-
-The hand-drawn buttons go, with the minimize and maximize calls and the
-maximized state they used.
-
-* desktop: size the window controls space from the live overlay, and let the header color show under it
-
-The header now reserves the width the OS window controls actually cover, read from
-navigator.windowControlsOverlay and updated on geometry changes, instead of guessing from the
-native frame setting (which only takes effect after a restart). With no visible overlay, such as
-in full screen or with the native frame, nothing is reserved.
-
-The overlay background is transparent, keeping the theme background's RGB for Linux's hover
-blending, so colored headers run under the controls.
-
-* desktop: transparent overlay color in Electron's format
-
-**File**: `shared/constants/remote-actions.tsx` (modified, +0/-5)
-```diff
-@@ -27,7 +27,6 @@ export const trackerIgnore = 'remote:trackerIgnore'
- export const trackerLoad = 'remote:trackerLoad'
- export const unlockFoldersSubmitPaperKey = 'remote:unlockFoldersSubmitPaperKey'
- export const updateNow = 'remote:updateNow'
--export const updateWindowMaxState = 'remote:updateWindowMaxState'
- export const updateWindowShown = 'remote:updateWindowShown'
- export const updateWindowState = 'remote:updateWindowState'
- 
-@@ -95,8 +94,6 @@ export const createTrackerLoad = (payload: {
- export const createUnlockFoldersSubmitPaperKey = (payload: {readonly paperKey: string}) =>
-   ({payload, type: unlockFoldersSubmitPaperKey}) as const
- export const createUpdateNow = (payload?: undefined) => ({payload, type: updateNow}) as const
--export const createUpdateWindowMaxState = (payload: {readonly max: boolean}) =>
--  ({payload, type: updateWindowMaxState}) as const
- export const createUpdateWindowShown = (payload: {readonly component: string}) =>
-   ({payload, type: updateWindowShown}) as const
- 
-@@ -124,7 +121,6 @@ export type TrackerIgnorePayload = ReturnType<typeof createTrackerIgnore>
- export type TrackerLoadPayload = ReturnType<typeof createTrackerLoad>
- type UnlockFoldersSubmitPaperKeyPayload = ReturnType<typeof createUnlockFoldersSubmitPaperKey>
- type UpdateNowPayload = ReturnType<typeof createUpdateNow>
--type UpdateWindowMaxStatePayload = ReturnType<typeof createUpdateWindowMaxState>
- type UpdateWindowShownPayload = ReturnType<typeof createUpdateWindowShown>
- type UpdateWindowStatePayload = ReturnType<typeof createUpdateWindowState>
- 
-@@ -154,7 +150,6 @@ export type Actions =
-   | TrackerLoadPayload
-   | UnlockFoldersSubmitPaperKeyPayload
-   | UpdateNowPayload
--  | UpdateWindowMaxStatePayload
-   | UpdateWindowShownPayload
-   | UpdateWindowStatePayload
-   | {readonly payload: undefined; readonly type: 'common:resetStore'}
-```
-
-**File**: `shared/desktop/app/bridge-rules.desktop.tsx` (modified, +2/-2)
-```diff
-@@ -125,11 +125,11 @@ const knownActions: {[K in Action['type']]: true} = {
-   closeWindows: true, copyToClipboard: true, ctlQuit: true, darwinCopyToChatTempUploadFile: true,
-   darwinCopyToKBFSTempUploadFile: true, dumpNodeLogger: true, exitApp: true, getPathType: true,
-   getRemoteProps: true, hideWindow: true, installCachedDokan: true, isDirectory: true, makeRenderer: true,
--  minimizeWindow: true, openPathInFinder: true, openURL: true, quitApp: true, readImageFromClipboard: true,
-+  openPathInFinder: true, openURL: true, quitApp: true, readImageFromClipboard: true,
-   relaunchApp: true, rendererNewProps: true, requestWindowsStartService: true,
-   selectFilesToUploadDialog: true, setNativeTheme: true, setOpenAtLogin: true, showContextMenu: true,
-   showInactive: true, showMainWindow: true, showNotification: true, showOpenDialog: true, showSaveDialog: true,
--  toggleMaximizeWindow: true, uninstallDokan: true, uninstallDokanDialog: true, uninstallKBFSDialog: true,
-+  uninstallDokan: true, uninstallDokanDialog: true, uninstallKBFSDialog: true,
-   winCheckRPCOwnership: true, windowsCheckMountFromOtherDokanInstall: true,
- }
- const knownForwards: ReadonlySet<unknown> = new Set(Object.values(RemoteGen).filter(v => typeof v === 'string'))
-```
-
-**File**: `shared/desktop/app/ipc-handlers.desktop.tsx` (modified, +0/-15)
-```diff
-@@ -495,21 +495,6 @@ export const setupIPCHandlers = (deps: {
-         Electron.BrowserWindow.fromWebContents(event.sender)?.close()
+@@ -83,7 +83,7 @@ function EmojiRowContainer(p: OwnProps) {
+     type ElLike = {
+       addEventListener: (t: string, cb: () => void) => void
+       removeEventListener: (t: string, cb: () => void) => void
+-      getBoundingClientRect: () => {bottom: number; height: number}
++      getBoundingClientRect: () => {bottom: number; height: number; top: number}
+       parentElement: ElLike | null
+     }
+     const el = popupAnchor.current as null | (ElLike & {closest?: (sel: string) => ElLike | null})
+@@ -112,17 +112,30 @@ function EmojiRowContainer(p: OwnProps) {
+       const matrix = /matrix\([^)]*,\s*(-?[\d.]+)\)\s*$/.exec(getStyle?.(el).transform ?? '')
+       return matrix ? -Number(matrix[1]) : 0
+     }
++    // The bar hangs below its row. Where that would pass the list's bottom, it sits wholly above the
++    // row instead: raised into its own row it would cover the row's bottom, where its controls are
++    // (an unfurl prompt's buttons, an attachment's). Only a row too near the top for that too is
++    // raised just clear of the bottom.
+     const measure = () => {
+       const rect = el.getBoundingClientRect()
+       // zero height means we're display:none and the rect is meaningless
+       if (rect.height === 0) {
          return
        }
--      case 'minimizeWindow': {
--        Electron.BrowserWindow.getFocusedWindow()?.minimize()
--        return
--      }
--      case 'toggleMaximizeWindow': {
--        const win = Electron.BrowserWindow.getFocusedWindow()
--        if (win) {
--          if (win.isMaximized()) {
--            win.unmaximize()
--          } else {
--            win.maximize()
--          }
--        }
--        return
--      }
-       case 'darwinCopyToChatTempUploadFile': {
-         try {
-           return await darwinCopyToChatTempUploadFile(action.payload)
+-      // add back the raise in effect so overflow is computed from our natural spot
+-      const overflow = rect.bottom + appliedRaise() - list.getBoundingClientRect().bottom
+-      // clear the edge rather than sitting flush on it, so a raised bar doesn't read as tight
+-      // against the input area
+-      setRaiseBy(overflow > 0 ? overflow + edgeClearance : 0)
++      // add back the raise in effect so everything is computed from our natural spot
++      const applied = appliedRaise()
++      const naturalTop = rect.top + applied
++      const naturalBottom = rect.bottom + applied
++      const listRect = list.getBoundingClientRect()
++      const overflow = naturalBottom - listRect.bottom
++      if (overflow <= 0) {
++        setRaiseBy(0)
++        return
++      }
++      const rowRect = row.getBoundingClientRect()
++      const flippedTop = rowRect.top - rect.height
++      // clear the edge rather than sitting flush on it, so the bar doesn't read as tight against it
++      setRaiseBy(flippedTop >= listRect.top + edgeClearance ? naturalTop - flippedTop : overflow + edgeClearance)
+     }
+     // the enter event that mounted us already fired, so measure directly too
+     measure()
 ```
 
-**File**: `shared/desktop/app/ipctypes.tsx` (modified, +0/-2)
+**File**: `shared/tests/e2e/electron/flows/chat-data.test.ts` (modified, +45/-0)
 ```diff
-@@ -56,8 +56,6 @@ export type Action =
-   | {type: 'darwinCopyToKBFSTempUploadFile'; payload: {originalFilePath: string; dir: string}}
-   | {type: 'darwinCopyToChatTempUploadFile'; payload: {originalFilePath: string; dst: string}}
-   | {type: 'closeWindow'}
--  | {type: 'minimizeWindow'}
--  | {type: 'toggleMaximizeWindow'}
-   | {type: 'openURL'; payload: {url: string}}
-   | {type: 'showInactive'}
-   | {type: 'showNotification'; payload: DesktopNotification}
-```
-
-**File**: `shared/desktop/app/main-window.desktop.tsx` (modified, +26/-11)
-```diff
-@@ -107,15 +107,6 @@ const setupWindowEvents = (win: Electron.BrowserWindow) => {
-   }
- 
-   win.on('close', hideInsteadOfClose)
--
--  if (!isDarwin) {
--    const emitMaxChange = () => {
--      R.remoteDispatch(RemoteGen.createUpdateWindowMaxState({max: win.isMaximized()}))
--    }
--
--    win.on('maximize', emitMaxChange)
--    win.on('unmaximize', emitMaxChange)
--  }
- }
- 
- const changeDock = (show: boolean) => {
-@@ -144,10 +135,31 @@ export const isScreenshotDisabled = () => disableScreenshot
- 
- const themeBackgroundColor = () => (Electron.nativeTheme.shouldUseDarkColors ? '#191919' : '#ffffff')
- 
-+// Without the native frame, Windows and Linux draw their own window controls over the top of the page
-+// (right, left or both, by the OS button layout), at the height of the header's top row. The overlay is
-+// see-through so the header's own color shows under the controls; it keeps the theme background's RGB
-+// because Linux blends the button hover against the overlay color with its alpha dropped. Spelled as
-+// rgba() since Electron reads 8-digit hex as #AARRGGBB. The symbols use the header's black_50_on_white.
-+let windowControlsOverlay = false
-+const transparentThemeBackground = () => {
-+  const hex = themeBackgroundColor()
-+  const [r, g, b] = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16))
-+  return `rgba(${r}, ${g}, ${b}, 0)`
-+}
-+const titleBarOverlay = () => ({
-+  color: transparentThemeBackground(),
-+  height: 40,
-+  symbolColor: Electron.nativeTheme.shouldUseDarkColors ? '#808080' : '#7f7f7f',
-+})
-+
- // only the main window uses themeBackgroundColor; the others (menubar, tracker) are transparent
- export const registerThemeBackgrounds = () => {
-   Electron.nativeTheme.on('updated', () => {
--    getMainWindow()?.setBackgroundColor(themeBackgroundColor())
-+    const win = getMainWindow()
-+    win?.setBackgroundColor(themeBackgroundColor())
-+    if (windowControlsOverlay) {
-+      win?.setTitleBarOverlay(titleBarOverlay())
-+    }
+@@ -202,6 +202,51 @@ test.describe('reactions', () => {
+     await removeReaction(page, text)
    })
+ 
++  // The bar hangs below its row, which on the newest one would pass the list's bottom: it sits above
++  // that row instead, covering none of it, so the row's own controls stay reachable.
++  test('the hover bar on the newest message sits above it, inside the list', async ({page}) => {
++    const text = await sendFresh(page)
++    await waitForScrollStable(page)
++    const row = rowWithText(page, text)
++    const bar = row.locator('.WrapperMessage-emojiButton')
++    await expect(async () => {
++      await row.hover({timeout: 1_000})
++      await expect(bar).toBeVisible({timeout: 500})
++    }).toPass({timeout: 10_000})
++    // the bar measures its place on the row's mouseenter and takes it a render later
++    const measure = async () =>
++      page.evaluate(
++      ([testID, marker]) => {
++        type R = {bottom: number; top: number}
++        type El = {getBoundingClientRect: () => R; querySelector: (s: string) => El | null; textContent: string | null}
++        const g = globalThis as unknown as {
++          document: {querySelector: (s: string) => El | null; querySelectorAll: (s: string) => ArrayLike<El>}
++          getComputedStyle: (e: El) => {overflowY: string}
++        }
++        const list = g.document.querySelector(`[data-testid="${testID}"]`)
++        const rowEl = Array.from(g.document.querySelectorAll(`[data-testid="${testID}"] [data-ordinal]`)).find(r =>
++          r.textContent?.includes(marker)
++        )
++        const barEl = rowEl?.querySelector('.WrapperMessage-emojiButton')
++        const scroller = list && Array.from((list as unknown as {children: ArrayLike<El>}).children).find(c => /auto|scroll/.test(g.getComputedStyle(c).overflowY))
++        if (!rowEl || !barEl || !scroller) return undefined
++        return {bar: barEl.getBoundingClientRect(), list: scroller.getBoundingClientRect(), row: rowEl.getBoundingClientRect()}
++      },
++      [T.CHAT_MESSAGE_LIST, text] as const
++    )
++    await expect
++      .poll(async () => {
++        const m = await measure()
++        return !!m && m.bar.bottom <= m.row.top + 1
++      }, {timeout: 5_000})
++      .toBe(true)
++    const rects = await measure()
++    expect(rects, 'the row, its hover bar and the list').toBeDefined()
++    const {bar: b, list: l, row: r} = rects!
++    expect(b.bottom, `the bar (${b.top}-${b.bottom}) covers none of its row (${r.top}-${r.bottom})`).toBeLessThanOrEqual(r.top + 1)
++    expect(b.top, `the bar (${b.top}-${b.bottom}) is inside the list (${l.top}-${l.bottom})`).toBeGreaterThanOrEqual(l.top)
++  })
++
+   test('a reaction on the newest message keeps the thread at its end', async ({page}) => {
+     const text = await sendFresh(page)
+     const before = await waitForScrollStable(page)
+```
+
+**File**: `shared/tests/e2e/electron/flows/chat-parity.test.ts` (modified, +3/-0)
+```diff
+@@ -187,6 +187,9 @@ test.describe('inline video', () => {
+     await clickUnoccluded(poster(row))
+     const video = row.locator('video')
+     await expect(video).toHaveCount(1, {timeout: 5_000})
++    // the element mounts before its source loads, and a double-click on a video with nothing loaded
++    // yet does nothing
++    await expect.poll(async () => (await videoState(row)).currentTime, {timeout: 10_000}).toBeGreaterThan(0)
+     const box = await video.boundingBox({timeout: 5_000})
+     if (!box) throw new Error('the video has no box')
+     await page.mouse.dblclick(box.x + box.width * 0.6, box.y + box.height * 0.3)
+```
+
+**File**: `shared/tests/e2e/electron/flows/chat-scroll.test.ts` (modified, +6/-4)
+```diff
+@@ -484,14 +484,16 @@ const scrollThroughPages = async (
+   let pageLoads = 0
+   for (let i = 0; i < 60 && !done(g); i++) {
+     const before = g
++    // the scroller clamps at either end of what has loaded so far
++    const room = step > 0 ? before.distanceFromEnd : before.scrollTop
++    const expected = Math.min(Math.abs(step), room) * Math.sign(step)
+     // a row wholly in view before the step that stays wholly in view after it
+     const anchor = before.rows.find(r =>
+-      step > 0 ? r.top >= step + 20 && r.bottom <= before.viewHeight : r.top >= 0 && r.bottom <= before.viewHeight + step - 20
++      step > 0
++        ? r.top >= expected + 20 && r.bottom <= before.viewHeight
++        : r.top >= 0 && r.bottom <= before.viewHeight + expected - 20
+     )
+     if (!anchor) throw new Error(`step ${i}: no row in view to anchor on`)
+-    // the scroller clamps at either end of what has loaded so far
+-    const room = step > 0 ? before.distanceFromEnd : before.scrollTop
+-    const expected = Math.min(Math.abs(step), room) * Math.sign(step)
+     await wheelThread(page, step)
+     g = await waitForScrollStable(page)
+     const pageLoaded = Math.abs(g.scrollHeight - before.scrollHeight) > 1000
+```
+
+---
+
+### Incident Patch 3: `66d83795` (2026-10-27)
+**Commit Message**: chat: show a sent message right away again (pending row was dropped for its empty uid) (#29838)
+
+* chat: name the sender's uid on the pending message notification
+
+The outbox notifier read the uid from the record's ClientHeader.Sender, which
+Prepare only stamps later, so the pending message went out with an empty uid.
+The client drops chat notifications that don't name the signed-in account, so a
+sent message only appeared once the server acked it. Use the outbox's own uid.
+
+* chat: let chat notifications with an empty uid through
+
+An empty uid names no account, so it is not evidence the notification is
+another account's. Drop only one whose uid names a different account, and
+everything while no account is signed in.
+
+* chat: review fixes: non-blocking test listener, accurate empty-uid comment
+
+**File**: `go/chat/deliverer.go` (modified, +2/-1)
+```diff
+@@ -132,8 +132,9 @@ func (s *Deliverer) Start(ctx context.Context, uid gregor1.UID) {
+ 		storage.PendingPreviewer(func(ctx context.Context, obr *chat1.OutboxRecord) error {
+ 			return attachments.AddPendingPreview(ctx, s.G(), obr)
+ 		}),
++		// The record's ClientHeader.Sender is not stamped until Prepare, after this runs, so the
++		// outbox's own uid is the only one to use here.
+ 		storage.NewMessageNotifier(func(ctx context.Context, obr chat1.OutboxRecord) {
+-			uid := obr.Msg.ClientHeader.Sender
+ 			convID := obr.ConvID
+ 
+ 			// fill in reply
+```
+
+**File**: `go/chat/sender_test.go` (modified, +53/-0)
+```diff
+@@ -371,6 +371,59 @@ func TestNonblockChannel(t *testing.T) {
+ 	require.Equal(t, obid, listener.obidsRemote[0], "wrong obid")
  }
  
-@@ -330,9 +342,12 @@ const MainWindow = () => {
-   setupDefaultSession()
-   loadWindowState()
- 
-+  windowControlsOverlay = !isDarwin && !useNativeFrame
-   const win = new Electron.BrowserWindow({
-     backgroundColor: themeBackgroundColor(),
--    frame: useNativeFrame,
-+    ...(windowControlsOverlay
-+      ? {titleBarOverlay: titleBarOverlay(), titleBarStyle: 'hidden' as const}
-+      : {frame: useNativeFrame}),
-     height: visualContentSize?.height ?? windowState.height,
-     minHeight: 600,
-     minWidth: 740,
++type outboxActivityListener struct {
++	libkb.NoopNotifyListener
++	uids chan keybase1.UID
++}
++
++func (n *outboxActivityListener) NewChatActivity(uid keybase1.UID, activity chat1.ChatActivity,
++	_ chat1.ChatActivitySource,
++) {
++	if typ, err := activity.ActivityType(); err != nil || typ != chat1.ChatActivityType_INCOMING_MESSAGE {
++		return
++	}
++	msg := activity.IncomingMessage().Message
++	if state, err := msg.State(); err == nil && state == chat1.MessageUnboxedState_OUTBOX {
++		// never block the notify router
++		select {
++		case n.uids <- uid:
++		default:
++		}
++	}
++}
++
++// The GUI posts with no Sender in the header, and the client drops a chat notification that does
++// not name the signed-in account, so the pending message must carry the outbox's uid.
++func TestOutboxNotifyNamesSenderUID(t *testing.T) {
++	ctx, world, ri, sender, blockingSender, _ := setupTest(t, 1)
++	defer world.Cleanup()
++
++	u := world.GetUsers()[0]
++	uid := u.User.GetUID().ToBytes()
++	tc := userTc(t, world, u)
++	conv := newBlankConv(ctx, t, tc, uid, ri, blockingSender, u.Username)
++
++	listener := &outboxActivityListener{uids: make(chan keybase1.UID, 10)}
++	tc.Context().NotifyRouter.AddListener(listener)
++
++	_, _, err := sender.Send(context.TODO(), conv.GetConvID(), chat1.MessagePlaintext{
++		ClientHeader: chat1.MessageClientHeader{
++			Conv:        conv.Metadata.IdTriple,
++			TlfName:     u.Username,
++			MessageType: chat1.MessageType_TEXT,
++		},
++		MessageBody: chat1.NewMessageBodyWithText(chat1.MessageText{Body: "hi"}),
++	}, 0, nil, nil, nil)
++	require.NoError(t, err)
++
++	select {
++	case got := <-listener.uids:
++		require.Equal(t, u.User.GetUID(), got)
++	case <-time.After(20 * time.Second):
++		require.Fail(t, "no outbox notification")
++	}
++}
++
+ type sentRecord struct {
+ 	msgID    *chat1.MessageID
+ 	outboxID *chat1.OutboxID
 ```
 
-**File**: `shared/desktop/renderer/preload.desktop.tsx` (modified, +0/-6)
+**File**: `shared/chat/notification-effects.test.tsx` (modified, +12/-0)
 ```diff
-@@ -154,9 +154,6 @@ if (isRenderer) {
-         })
-       )
-     },
--    minimizeWindow: () => {
--      ignorePromise(invoke({type: 'minimizeWindow'}))
--    },
-     openPathInFinder: async (path: string, isFolder: boolean) => {
-       const res = await invoke({
-         payload: {isFolder, path},
-@@ -240,9 +237,6 @@ if (isRenderer) {
-         })
-       )
-     },
--    toggleMaximizeWindow: () => {
--      ignorePromise(invoke({type: 'toggleMaximizeWindow'}))
--    },
-     uninstallDokan: async (execPath: string) => {
-       return invoke({payload: {execPath}, type: 'uninstallDokan'})
-     },
+@@ -1532,6 +1532,18 @@ describe("another account's chat notifications", () => {
+     expect(archive).toEqual([{jobID: 'job', messagesComplete: 1, messagesTotal: 2, uid: 'uid'}])
+   })
+ 
++  test('one with an empty uid names no account, so it reaches the router and engine action listeners', async () => {
++    await mountScreens([convA])
++    loadThread('A', false)
++    const archive = heard('chat.1.NotifyChat.ChatArchiveProgress')
++
++    await notify(typingFor(''))
++    await notify(archiveProgressFor(''))
++
++    expect(typersIn('A')).toEqual(['testuser-2'])
++    expect(archive).toEqual([{jobID: 'job', messagesComplete: 1, messagesTotal: 2, uid: ''}])
++  })
++
+   test('while no account is signed in every one is dropped, an empty uid included', async () => {
+     const archive = heard('chat.1.NotifyChat.ChatArchiveProgress')
+     await startSwitch('testuser-mac')
 ```
 
-**File**: `shared/desktop/renderer/remote-event-handler.desktop.tsx` (modified, +0/-3)
+**File**: `shared/chat/notification-router.tsx` (modified, +7/-3)
 ```diff
-@@ -193,9 +193,6 @@ export const eventFromRemoteWindows = (action: RemoteGen.Actions) => {
-     case RemoteGen.dumpLogs:
-       ignorePromise(dumpLogs(action.payload.reason))
-       break
--    case RemoteGen.updateWindowMaxState:
--      useShellState.getState().dispatch.setWindowMaximized(action.payload.max)
--      break
-     case RemoteGen.updateWindowState:
-       useShellState.getState().dispatch.updateWindowState(action.payload.windowState)
-       break
-```
-
-**File**: `shared/router-v2/header/index.desktop.tsx` (modified, +21/-90)
-```diff
-@@ -2,14 +2,11 @@ import type * as React from 'react'
- import * as Kb from '@/common-adapters'
- import * as Platform from '@/constants/platform'
- import SyncingFolders from './syncing-folders'
--import KB2 from '@/util/electron'
- import {useLoggedInScreens} from '../logged-in-screens'
--import {useShellState} from '@/stores/shell'
-+import {useWindowControlsInsets, type WindowControlsInsets} from '@/util/window-controls-overlay.desktop'
- import type {HeaderBackButtonProps} from '@react-navigation/elements'
- import type {NativeStackHeaderProps} from '@react-navigation/native-stack'
+@@ -104,9 +104,13 @@ const isNotifyChat = (action: EngineGen.Actions): action is NotifyChatAction =>
  
--const {closeWindow, minimizeWindow, toggleMaximizeWindow} = KB2.functions
--
- type HeaderTitleProps = {
-   children: React.ReactNode
-   tintColor?: string
-@@ -44,8 +41,8 @@ type Props = {
-   options: Options
-   back?: boolean
-   style?: Kb.Styles._StylesCrossPlatform
--  useNativeFrame: boolean
--  isMaximized: boolean
-+  // space the OS window controls cover at the top, all zeros when there are none
-+  windowControls: WindowControlsInsets
-   navigation: {
-     pop: () => void
-   }
-@@ -62,56 +59,16 @@ const PlainTitle = ({title}: {title: React.ReactNode}) => {
-   )
- }
+ // The service tags each chat notification with the uid of the account it was made for. Login and
+ // logout are not serialized against them, so through an account switch the previous account's can
+-// still arrive; while no account is signed in (uid '') none are ours.
+-export const isChatNotificationNotForSignedInAccount = (action: EngineGen.Actions, currentUID: string) =>
+-  isNotifyChat(action) && (!currentUID || action.payload.params.uid !== currentUID)
++// still arrive; while no account is signed in (uid '') none are ours. One with an empty uid names no
++// account, so it is not taken as another account's.
++export const isChatNotificationNotForSignedInAccount = (action: EngineGen.Actions, currentUID: string) => {
++  if (!isNotifyChat(action)) return false
++  const {uid} = action.payload.params
++  return !currentUID || (!!uid && uid !== currentUID)
++}
  
--const SystemButtons = ({isMaximized}: {isMaximized: boolean}) => {
--  const styles = useStyles()
--  const onMinimize = () => {
--    minimizeWindow?.()
--  }
--  const onToggleMaximizeWindow = () => {
--    toggleMaximizeWindow?.()
--  }
--  const onCloseWindow = () => {
--    closeWindow?.()
--  }
--  return (
--    <Kb.Box2 alignSelf="center" direction="horizontal">
--      <Kb.ClickableBox alignSelf="center"
--        className="hover_background_color_black_05  color_black_50 hover_color_black"
--        onClick={onMinimize}
--        style={styles.appIconBox}
--        direction="vertical"
--      >
--        <Kb.Icon color="inherit" onClick={onMinimize} style={styles.appIcon} type="iconfont-app-minimize" />
--      </Kb.ClickableBox>
--      <Kb.ClickableBox alignSelf="center"
--        className="hover_background_color_black_05 color_black_50 hover_color_black"
--        onClick={onToggleMaximizeWindow}
--        style={styles.appIconBox}
--        direction="vertical"
--      >
--        <Kb.Icon
--          color="inherit"
--          onClick={onToggleMaximizeWindow}
--          style={styles.appIcon}
--          type={isMaximized ? 'iconfont-app-un-maximize' : 'iconfont-app-maximize'}
--        />
--      </Kb.ClickableBox>
--      <Kb.ClickableBox alignSelf="center"
--        className="hover_background_color_red hover_color_white color_black_50"
--        onClick={onCloseWindow}
--        style={styles.appIconBox}
--        direction="vertical"
--      >
--        <Kb.Icon color="inherit" onClick={onCloseWindow} style={styles.appIcon} type="iconfont-app-close" />
--      </Kb.ClickableBox>
--    </Kb.Box2>
--  )
--}
-+// The OS draws the window controls over the top corners of the page (Windows and Linux without the
-+// native frame); keep the header's own controls out from under them
-+const WindowControlsSpace = ({width}: {width: number}) => (
-+  <Kb.Box2 direction="horizontal" style={{flexShrink: 0, width}} />
-+)
- 
- function DesktopHeader(p: Props) {
-   const styles = useStyles()
-   const theme = Kb.Styles.useTheme()
--  const {back, navigation, options, loggedIn, useNativeFrame, isMaximized} = p
-+  const {back, navigation, options, loggedIn, windowControls} = p
-   const {headerMode, title, headerTitle, headerRight, headerRightActions, subHeader} = options
-   const {headerTransparent, headerShadowVisible, headerBottomStyle, headerStyle, headerLeft} = options
- 
-@@ -151,7 +108,7 @@ function DesktopHeader(p: Props) {
-   }
- 
-   const showDivider = headerShadowVisible !== false
--  const windowDecorationsAreNeeded = !Platform.isMac && !useNativeFrame
-+  const windowControlsOverlay = windowControls.left > 0 || windowControls.right > 0
- 
-   // The whole header normally clears the system icons (traffic lights on Mac) because the left nav
-   // bar pushes it down/right -- unless you're logged out, in which case there's no nav bar and the
-@@ -200,13 +157,13 @@ function DesktopHeader(p: Props) {
-     backButton = defaultBackButton
-   }
- 
--  // Logged out: a top strip that holds only the system buttons (or, on Mac, just reserves space so the
--  // OS traffic lights have nothing beside them), then a row below with back on the left, title centered,
-+  // Logged out: a top strip that only reserves space for the OS window controls (the traffic lights on
-+  // Mac, the controls overlay elsewhere), then a row below with back on the left, title centered,
-   // actions on the right. The side sections share the same flex so the title stays centered regardless
-   // of their widths. Keeping the back/title/actions row in a fixed spot below the strip stops it from
-   // jumping between screens.
-   if (!loggedIn) {
--    const showTopStrip = loggedOutDarwin || windowDecorationsAreNeeded
-+    const showTopStrip = loggedOutDarwin || windowControlsOverlay
-     return (
-       <Kb.Box2
-         noShrink={true}
-@@ -223,12 +180,8
+ // What one notification does at each stage. The thread and reload parts are built when asked for.
+ type Stages = {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29831** (2026-10-24): ios: fix crash when pasting large photos into chat (@chrisnojima)
-- **PR #29830** (2026-10-23): Bump version to 6.7.1 (@chrisnojima)
-- **PR #29829** (2026-10-23): deps: webdriverio 10, immer, zustand, builder-bob; drop two security resolutions (@chrisnojima)
-- **PR #29827** (2026-10-23): markdown: stop nesting em, strong and del past 16 levels (@chrisnojima)
-- **PR #29826** (2026-10-23): markdown: unclosable fences no longer rescan the rest of the message (@chrisnojima)
-- **PR #29825** (2026-10-23): markdown: text stops and url starts found once per string (@chrisnojima)
+- **PR #29841** (2026-10-27): markdown: run the linear-time parse test locally only (@chrisnojima)
+- **PR #29840** (2026-10-27): ServerErrorThrottle unwrapping (@zoom-ua)
+- **PR #29839** (2026-10-27): deps: appium 3.9.0, worklets 0.13.1, typescript-eslint 8.72.1; drop body-parser and shell-quote resolutions (@chrisnojima)
+- **PR #29838** (2026-10-27): chat: show a sent message right away again (pending row was dropped for its empty uid) (@chrisnojima)
+- **PR #29837** (2026-10-27): Pass MaxMessageSize when verifying PGP sigs (@michalz-zoom)
+- **PR #29836** (2026-10-26): chat: inbox gear menus — drop Mark as unread from the team gear, add a gear to channel rows (@chrisnojima)
 
 ---
 
@@ -2866,30 +2946,68 @@ blending, so colored headers run under the controls.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. include uid on all local rpcs (#29708)
+## X. deps: LegendList 3.7.0, expo 58.0.19; drop desktop thread scroll workarounds 3.7
 
 **RULE**:
-When implementing operations in `go/chat/activitynotifier.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in keybase/client. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `shared/chat/conversation/list-area/desktop-rules.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in keybase/client. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7874b7f1`: include uid on all local rpcs (#29708). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1d295399`: deps: LegendList 3.7.0, expo 58.0.19; drop desktop thread scroll workarounds 3.7.0 makes redundant (#29832). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go/chat/activitynotifier.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `shared/chat/conversation/list-area/desktop-rules.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-func (n *NotifyRouterActivityRouter) TypingUpdate(ctx context.Context, uid gregor1.UID, updates []chat1.ConvTypingUpdate) {
-		n.G().NotifyRouter.HandleChatTypingUpdate(ctx, n.kuid(uid), updates)
+  atEnd,
+describe('atEnd', () => {
+    expect(atEnd(0)).toBe(true)
+    expect(atEnd(2)).toBe(true)
+    expect(atEnd(3)).toBe(false)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-func (n *NotifyRouterActivityRouter) TypingUpdate(ctx context.Context, updates []chat1.ConvTypingUpdate) {
-		n.G().NotifyRouter.HandleChatTypingUpdate(ctx, updates)
+  scrollerAtEnd,
+  startCenterCheck,
+  startEndCheck,
+  stepCentering,
+  stepEndCheck,
+  stepLayoutCheck,
+  type CenterCheck,
+  type CenterStep,
+  type EndCheck,
+  type LayoutCheck,
+describe('scrollerAtEnd', () => {
+  const scroller = (scrollTop: number) => ({clientHeight: 500, scrollHeight: 2000, scrollTop})
+    expect(scrollerAtEnd(scroller(1500))).toBe(true)
+    expect(scrollerAtEnd(scroller(1498))).toBe(true)
+    expect(scrollerAtEnd(scroller(1497))).toBe(false)
+
+// Feeds looks through a step function and records each action.
+const run = <C, L, R extends {check: C}, P>(
+  step: (c: C, l: L) => R,
+  start: C,
+  looks: Array<L>,
+  pick: (r: R) => P
+): Array<P> => {
+  let check = start
+  return looks.map(look => {
+    const next = step(check, look)
+    check = next.check
+    return pick(next)
+  })
+}
+
+describe('stepEndCheck', () => {
+  type Look = {atEnd: boolean; scroll: number; scrollHeight: number}
+  const at = (scrollHeight: number): Look => ({atEnd: true, scroll: 0, scrollHeight})
+  const off = (scroll: number): Look => ({atEnd: false, scroll, scrollHeight: 2000})
+  const actions = (looks: Array<Look>, start: EndCheck = startEndCheck) =>
+    run(stepEndCheck, start, looks, a =
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7874b7f1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1d295399` are properly handled with clean fallback behavior.

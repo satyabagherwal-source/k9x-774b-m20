@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T16:24:57.006Z",
+  "last_updated": "2026-10-27T16:31:45.497Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "78d396c1844f9adf76489c1d87d2afe624b150d9442ef389a5acef5c03b59a5e",
-      "verified_at": "2026-10-27T14:54:08.084Z",
+      "content_hash": "58780034abdad909d59572c4f8a7f490e368bf5cccb172012df6e71e3c78c2ed",
+      "verified_at": "2026-10-27T16:31:45.496Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T14:54:08.084Z"
+      "last_updated": "2026-10-27T16:31:45.496Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -6726,14 +6726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-keybase-client",
-      "content_hash": "9099a9c80f78c37470884b278c2e449cadb258754b6c6b4d508fddea11e69990",
-      "verified_at": "2026-10-25T02:42:37.004Z",
+      "content_hash": "f075295cc94e176eb2d9e5cae58b545e97311185abba91f01c592deb10e78557",
+      "verified_at": "2026-10-27T16:31:38.721Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T02:42:37.004Z"
+      "last_updated": "2026-10-27T16:31:38.721Z"
     },
     "sealerio/sealer": {
       "repository": "sealerio/sealer",
@@ -7866,14 +7866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gocd-gocd",
-      "content_hash": "7b7d707a4d6863b837b15f61bcacaa266fd51e53cf1bde2fbb4e62b964b1db31",
-      "verified_at": "2026-10-26T09:54:12.435Z",
+      "content_hash": "f62b40e5fec047611c54ae36ad4198260d0e009a91de7f75688c1230a2c9db04",
+      "verified_at": "2026-10-27T16:31:38.539Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T09:54:12.435Z"
+      "last_updated": "2026-10-27T16:31:38.539Z"
     },
     "citusdata/citus": {
       "repository": "citusdata/citus",
@@ -15126,14 +15126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tanstack-query",
-      "content_hash": "091874c1198f18d51a0c15a33df4dbbed79e5f97df429ebf281deb45e4e5b815",
-      "verified_at": "2026-10-23T06:49:47.690Z",
+      "content_hash": "1e792e2edc8ec1d94718f62820dd82545e151b79b62f6c4d5f44f6ee6bf99190",
+      "verified_at": "2026-10-27T16:31:33.795Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T06:49:47.690Z"
+      "last_updated": "2026-10-27T16:31:33.795Z"
     },
     "apple/sample-food-truck": {
       "repository": "apple/sample-food-truck",

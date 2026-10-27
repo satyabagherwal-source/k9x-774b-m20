@@ -5434,3 +5434,7 @@ Every entry in this ledger must capture:
 | `learn-github-blacksnufkin-litterbox` | `https://github.com/BlackSnufkin/LitterBox` | `a609527c` | Multi-dimensional audit evidence | 2026-10-27T16:18:18.162Z |
 | `learn-github-paperdebugger-paperdebugger` | `https://github.com/PaperDebugger/paperdebugger` | `191bd322` | Multi-dimensional audit evidence | 2026-10-27T16:18:19.708Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `97bc1c66` | Multi-dimensional audit evidence | 2026-10-27T16:24:57.000Z |
+| `learn-github-tanstack-query` | `https://github.com/TanStack/query` | `2941a23d` | Multi-dimensional audit evidence | 2026-10-27T16:31:33.786Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `6b3bd71c` | Multi-dimensional audit evidence | 2026-10-27T16:31:38.529Z |
+| `learn-github-keybase-client` | `https://github.com/keybase/client` | `6cc54d38` | Multi-dimensional audit evidence | 2026-10-27T16:31:38.713Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `66f7eee7` | Multi-dimensional audit evidence | 2026-10-27T16:31:45.488Z |
