@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source**: github ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
-> **Source Version**: `dbf079f5`  
+> **Source Version**: `414a6ec8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T03:14:24.879Z  
+> **Timestamp**: 2026-10-27T11:16:07.224Z  
 > **Learning ID**: `learn-github-apple-foundationdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T03:14:24.342Z  
+> **Harvest Timestamp**: 2026-10-27T11:16:06.220Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FoundationDB - the open source, distributed, transactional key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 16809 stars
+- **Stars / Engagement**: 16820 stars
 
 ---
 
@@ -1955,768 +1955,82 @@ constexpr std::string_view to_string(WaitState st) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dbf079f5` (2026-10-23)
-**Commit Message**: Add key-range, prefix and derived-lock options to SubmitBackup and RestoreBackup (#14350)
+### Incident Patch 1: `eaa66379` (2026-10-23)
+**Commit Message**: dd/cdc: fix long-double to long-int comparison warning
 
-The Perf v2 backup/restore tests drive SubmitBackup and RestoreBackup on real
-clusters, but SubmitBackup always backed up the whole keyspace and
-RestoreBackup always cleared the whole keyspace, restored the whole backup in
-place and locked the database. That cannot restore a key range, cannot
-restore beside live data, and would delete everything outside a sub-range
-backup.
+> error: implicit conversion from 'type' (aka 'long long') to 'long double'
+> changes value from 9223372036854775807 to 9223372036854775808
+> [-Werror,-Wimplicit-const-int-float-conversion]
 
-SubmitBackup takes backupRanges ("<begin>:<end>;...") or backupRangePrefix.
-RestoreBackup takes restoreRanges or restoreRangePrefix (a subset of the
-backup's ranges), addPrefix and removePrefix. Keys use the printable()
-escaping; the parser is BackupRangeSpec.h. Ranges must be non-empty, must not
-overlap and must stay below \xff: mutation logs only capture the standard
-system backup ranges, so a snapshot of other system keys would have no logs.
-
-RestoreBackup now clears and restores the backup's own ranges (read from
-BackupConfig) instead of all of normalKeys, so a default restore of a
-sub-range backup no longer deletes data outside it. Restore ranges must lie
-inside the backup's ranges and start with removePrefix, which f
-
-**File**: `fdbserver/workloads/BackupRangeSpec.h` (added, +165/-0)
+**File**: `fdbserver/datadistributor/NativeCdcBalancer.cpp` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,165 @@
-+/*
-+ * BackupRangeSpec.h
-+ *
-+ * This source file is part of the FoundationDB open source project
-+ *
-+ * Copyright 2013-2026 Apple Inc. and the FoundationDB project authors
-+ *
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+#pragma once
-+
-+#ifndef FDBSERVER_BACKUP_RANGE_SPEC_H
-+#define FDBSERVER_BACKUP_RANGE_SPEC_H
-+
-+#include <algorithm>
-+#include <cctype>
-+#include <string>
-+#include <vector>
-+
-+#include "fdbclient/BackupAgent.h"
-+#include "fdbclient/FDBTypes.h"
-+#include "fdbclient/SystemData.h"
-+#include "fdbserver/tester/workloads.h"
-+
-+// Test-option encoding of backup and restore key ranges. Workload options are plain strings, so keys use the same
-+// escaping as printable()/unprintable() (and fdbcli): printable ASCII is literal, a backslash is "\\", and any other
-+// byte is "\xNN".
-+//
-+//   ranges: "<begin>:<end>;<begin>:<end>;..."   e.g. "\x02perf\x00:\x02perf\x01;d/:e"
-+//   prefix: "<prefix>"                           shorthand for the single range [prefix, strinc(prefix))
-+//
-+// ';' and ':' separate fields, so a key containing either must write it as "\x3b" or "\x3a". An empty begin is the
-+// start of the keyspace. Ranges must be non-empty, not overlap each other and lie within normalKeys. The only system
-+// keys a backup may cover are the standard system backup ranges (see getSystemBackupRanges): mutation logs capture
-+// system-key mutations only inside those ranges, so any other system range would get a snapshot with no matching logs.
-+//
-+// Other range sources (random, named scenarios) can produce the same Standalone<VectorRef<KeyRangeRef>>.
-+namespace BackupRangeSpec {
-+
-+namespace detail {
-+
-+[[noreturn]] inline void invalid(StringRef option, std::string const& spec, const char* reason) {
-+	TraceEvent(SevWarnAlways, "InvalidBackupRangeSpec")
-+	    .detail("Option", option)
-+	    .detail("Spec", spec.substr(0, 200))
-+	    .detail("Reason", reason);
-+	throw test_specification_invalid();
-+}
-+
-+inline bool isSystemBackupRange(KeyRangeRef const& range) {
-+	return std::any_of(getSystemBackupRanges().begin(), getSystemBackupRanges().end(), [&](KeyRangeRef const& r) {
-+		return r == range;
-+	});
-+}
-+
-+// unprintable() asserts on malformed escapes, so check them first.
-+inline Key decodeKey(StringRef option, std::string const& spec, std::string const& escaped) {
-+	for (size_t i = 0; i < escaped.size(); ++i) {
-+		if (escaped[i] != '\\') {
-+			continue;
-+		}
-+		if (i + 1 < escaped.size() && escaped[i + 1] == '\\') {
-+			++i;
-+		} else if (i + 3 < escaped.size() && escaped[i + 1] == 'x' && isxdigit(escaped[i + 2]) &&
-+		           isxdigit(escaped[i + 3])) {
-+			i += 3;
-+		} else {
-+			invalid(option, spec, "bad escape sequence");
-+		}
-+	}
-+	return Key(unprintable(escaped));
-+}
-+
-+} // namespace detail
-+
-+// `option` names the option being parsed, for error reporting.
-+inline Standalone<VectorRef<KeyRangeRef>> parseRanges(StringRef option, std::string const& spec) {
-+	Standalone<VectorRef<KeyRangeRef>> ranges;
-+	size_t pos = 0;
-+	while (true) {
-+		size_t semi = spec.find(';', pos);
-+		std::string item = spec.substr(pos, semi == std::string::npos ? std::string::npos : semi - pos);
-+		size_t colon = item.find(':');
-+		if (colon == std::string::npos || item.find(':', colon + 1) != std::string::npos) {
-+			detail::invalid(option, spec, "each range must be <begin>:<end>");
-+		}
-+		Key begin = detail::decodeKey(option, spec, item.substr(0, colon));
-+		Key end = detail::decodeKey(option, spec, item.substr(colon + 1));
-+		if (begin >= end) {
-+			detail::invalid(option, spec, "range is empty or inverted");
-+		}
-+		if (end > allKeys.end) {
-+			detail::invalid(option, spec, "range extends past allKeys");
-+		}
-+		if (end > normalKeys.end && !detail::isSystemBackupRange(KeyRangeRef(begin, end))) {
-+			detail::invalid(option, spec, "range extends into system keys other than the system backup ranges");
-+		}
-+		ranges.push_back_deep(ranges.arena(), KeyRangeRef(begin, end));
-+		if (semi == std::string::npos) {
-+			break;
-+		}
-+		pos = semi + 1;
-+	}
-+
-+	std::vector<KeyRangeRef> sorted(ranges.begin(), ranges.end());
-+	std::sort(
-+	    sorted.begin(), sorted.end(), [](KeyRangeRef const& a, KeyRangeRef const& b) { return a.begin < b.begin; });
-+	for (size_t i = 1; i < sorted.size(); ++i) {
-+		if (sorted[i].begin < sorted[i - 1].end) {
-+			detail::invalid(option, spec, "ranges overlap");
-+		}
-+	}
-+	return ranges;
-+}
-+
-+// Returns [prefix, strinc(prefix)) for an escaped, non-empty 
-```
-
-**File**: `fdbserver/workloads/RestoreBackup.cpp` (modified, +73/-10)
-```diff
-@@ -18,6 +18,8 @@
-  * limitations under the License.
-  */
+@@ -268,7 +268,7 @@ class NativeCdcLoadModel {
  
-+#include <algorithm>
-+
- #include "fdbclient/DatabaseConfiguration.h"
- #include "fdbclient/FDBTypes.h"
- #include "fdbclient/ManagementAPI.h"
-@@ -30,6 +32,7 @@
- #include "fdbserver/core/Knobs.h"
- #include "fdbserver/tester/workloads.h"
- #include "fdbserver/tester/TestEncryptionUtils.h"
-+#include "BackupRangeSpec.h"
- 
- // TODO: explain the purpose of this workload and how it different from the
- // 20+ (literally) other backup/restore workloads.
-@@ -44,6 +47,11 @@ struct RestoreBackupWorkload : TestWorkload {
- 	double delayFor;
- 	StopWhenDone stopWhenDone{ false };
- 	Optional<std::string> encryptionKeyFileName;
-+	// A subset of the backup's ranges to restore; the whole backup when unset.
-+	Optional<Standalone<VectorRef<KeyRangeRef>>> restoreRanges;
-+	Key addPrefix;
-+	Key removePrefix;
-+	UID backupUID;
- 	// The extra describeBackup() call is skipped in simulation so existing seeds are unaffected.
- 	bool reportBackupMetrics;
- 	std::vector<PerfMetric> backupMetrics;
-@@ -55,6 +63,9 @@ struct RestoreBackupWorkload : TestWorkload {
- 		tag = getOption(options, "tag"_sr, "default"_sr);
- 		delayFor = getOption(options, "delayFor"_sr, 10.0);
- 		stopWhenDone.set(getOption(options, "stopWhenDone"_sr, false));
-+		restoreRanges = BackupRangeSpec::readOptionalRanges(options, "restoreRanges"_sr, "restoreRangePrefix"_sr);
-+		addPrefix = BackupRangeSpec::readKeyOption(options, "addPrefix"_sr);
-+		removePrefix = BackupRangeSpec::readKeyOption(options, "removePrefix"_sr);
- 		reportBackupMetrics = getOption(options, "reportBackupMetrics"_sr, !g_network->isSimulated());
- 
- 		std::string keyFileName = "simfdb/" + getTestEncryptionFileName();
-@@ -68,7 +79,6 @@ struct RestoreBackupWorkload : TestWorkload {
- 
- 	Future<Void> waitOnBackup(Database cx) {
- 		Version waitForVersion{ 0 };
--		UID backupUID;
- 		Transaction tr(cx);
- 		while (true) {
- 			Error err;
-@@ -117,7 +127,8 @@ struct RestoreBackupWorkload : TestWorkload {
- 
- 	static double versionsToSeconds(Version v) { return double(v) / SERVER_KNOBS->VERSIONS_PER_SECOND; }
- 
--	// Records metrics about the backup being restored. The snapshot is the restorable one with the greatest
-+	// Records metrics about the backup being restored, which describe the whole backup even when restoreRanges
-+	// selects a subset. The snapshot is the restorable one with the greatest
- 	// endVersion, which is the snapshot a restore to the latest restorable version uses.
- 	Future<Void> describeBackupMetrics() {
- 		BackupDescription desc = co_await backupContainer->describeBackup();
-@@ -152,14 +163,13 @@ struct RestoreBackupWorkload : TestWorkload {
- 		}
+ Version nativeCdcDurationVersions(double seconds) {
+ 	const long double versions = static_cast<long double>(seconds) * SERVER_KNOBS->VERSIONS_PER_SECOND;
+-	if (versions >= std::numeric_limits<Version>::max()) {
++	if (versions >= (long double)std::numeric_limits<Version>::max()) {
+ 		return std::numeric_limits<Version>::max();
  	}
- 
--	static Future<Void> clearDatabase(Database cx) {
-+	static Future<Void> clearRanges(Database cx, Standalone<VectorRef<KeyRangeRef>> ranges) {
- 		Transaction tr(cx);
- 		while (true) {
- 			Error err;
- 			try {
- 				tr.setOption(FDBTransactionOptions::ACCESS_SYSTEM_KEYS);
--				tr.clear(normalKeys);
--				for (auto& r : getSystemBackupRanges()) {
-+				for (auto const& r : ranges) {
- 					tr.clear(r);
- 				}
- 				co_await tr.commit();
-@@ -171,6 +181,50 @@ struct RestoreBackupWorkload : TestWorkload {
- 		}
- 	}
- 
-+	static std::string describeRange(KeyRangeRef const& r) { return printable(r.begin) + ":" + printable(r.end); }
-+
-+	static std::string describeRanges(std::vector<KeyRange> const& ranges) {
-+		std::string result;
-+		for (auto const& r : ranges) {
-+			result += (result.empty() ? "" : ";") + describeRange(r);
-+		}
-+		return result;
-+	}
-+
-+	// Returns the ranges to restore: restoreRanges if set, else the ranges the backup covers. Every restoreRanges
-+	// entry must lie within one backup range: submitBackup coalesces them, so a range spanning two is not covered.
-+	Future<Standalone<VectorRef<KeyRangeRef>>> getRangesToRestore(Database cx) {
-+		std::vector<KeyRange> backupRanges =
-+		    co_await BackupConfig(backupUID).backupRanges().getOrThrow(cx.getReference());
-+		Standalone<VectorRef<KeyRangeRef>> ranges;
-+		if (restoreRanges.present()) {
-+			for (auto const& r : restoreRanges.get()) {
-+				bool covered = std::any_of(
-+				    backupRanges.begin(), backupRanges.end(), [&](KeyRange const& b) { return b.contains(r); });
-+				if (!covered) {
-+					TraceEvent(SevWarnAlways, "RestoreRangeNotInBackup")
-+					    .detail("RestoreRange", describeRange(r))
-+					    .detail("BackupRanges", describeRanges(backupRanges));
-+					throw restore_error();
-+				}
-+				ranges.push_back_deep(ranges.arena(), r);
-+			}
-+		} else {
-+			for (auto const& r : backupRanges) {
-+				ranges.push_back_deep(ranges.arena(), r);
-+			}
-+		}
-+		for (auto const& r : ranges) {
-+			if (!r.begin.startsWith(removePrefix) || !r.end.startsWith(removePrefix)) {
-+				TraceEvent(SevWarnAlways, "RestoreRangeOutsideRemovePrefix")
-+				    .detail("RestoreRange", describeRange(r))
-+				    .detail("RemovePrefix", removePrefix);
-+				throw restore_error();
-+			}
-+		}
-+		co_return ranges;
-+	}
-+
- 	Future<Void> _start(Database cx) {
- 		Database
-```
-
-**File**: `fdbserver/workloads/SubmitBackup.cpp` (modified, +62/-1)
-```diff
-@@ -23,6 +23,7 @@
- #include "fdbclient/BackupContainerFileSystem.h"
- #include "fdbserver/tester/workloads.h"
- #include "fdbserver/tester/TestEncryptionUtils.h"
-+#include "BackupRangeSpec.h"
- 
- struct SubmitBackupWorkload : TestWorkload {
- 	static constexpr auto NAME = "SubmitBackup";
-@@ -37,6 +38,8 @@ struct SubmitBackupWorkload : TestWorkload {
- 	StopWhenDone stopWhenDone{ false };
- 	IncrementalBackupOnly incremental{ false };
- 	Optional<std::string> encryptionKeyFileName;
-+	// Whole keyspace (addDefaultBackupRanges) when unset.
-+	Optional<Standalone<VectorRef<KeyRangeRef>>> explicitBackupRanges;
- 
- 	explicit SubmitBackupWorkload(WorkloadContext const& wcx) : TestWorkload(wcx) {
- 		backupDir = getOption(options, "backupDir"_sr, "file://simfdb/backups/"_sr);
-@@ -46,6 +49,7 @@ struct SubmitBackupWorkload : TestWorkload {
- 		snapshotInterval = getOption(options, "snapshotInterval"_sr, 1e8);
- 		stopWhenDone.set(getOption(options, "stopWhenDone"_sr, true));
- 		incremental.set(getOption(options, "incremental"_sr, false));
-+		explicitBackupRanges = BackupRangeSpec::readOptionalRanges(options, "backupRanges"_sr, "backupRangePrefix"_sr);
- 
- 		if (getOption(options, "encrypted"_sr, deterministicRandom()->random01() < 0.5)) {
- 			encryptionKeyFileName = "simfdb/" + getTestEncryptionFileName();
-@@ -55,7 +59,11 @@ struct SubmitBackupWorkload : TestWorkload {
- 	Future<Void> _start(Database cx) {
- 		co_await delay(delayFor);
- 		Standalone<VectorRef<KeyRangeRef>> backupRanges;
--		addDefaultBackupRanges(backupRanges);
-+		if (explicitBackupRanges.present()) {
-+			backupRanges = explicitBackupRanges.get();
-+		} else {
-+			addDefaultBackupRanges(backupRanges);
-+		}
- 
- 		if (encryptionKeyFileName.present()) {
- 			co_await BackupContainerFileSystem::createTestEncryptionKeyFile(encryptionKeyFileName.get());
-@@ -90,3 +98,56 @@ struct SubmitBackupWorkload : TestWorkload {
- };
- 
- WorkloadFactory<SubmitBackupWorkload> SubmitBackupWorkloadFactory;
-+
-+TEST_CASE("/fdbserver/workloads/BackupRangeSpec/parse") {
-+	auto ranges = BackupRangeSpec::parseRanges("test"_sr, "\\x02perf\\x00:\\x02perf\\x01;d/:e;:\\x01a\\x3bb");
-+	ASSERT_EQ(ranges.size(), 3);
-+	ASSERT(ranges[0] == KeyRangeRef("\x02perf\x00"_sr, "\x02perf\x01"_sr));
-+	ASSERT(ranges[1] == KeyRangeRef("d/"_sr, "e"_sr));
-+	ASSERT(ranges[2] == KeyRangeRef(""_sr,
-+	                                "\x01"
-+	                                "a;b"_sr));
-+
-+	ASSERT(BackupRangeSpec::parsePrefixRange("test"_sr, "d\\\\") == prefixRange("d\\"_sr));
-+
-+	for (const char* bad : { "a",
-+	                         "a:b:c",
-+	                         "b:a",
-+	                         "a:a",
-+	                         "a:b;",
-+	                         "a:b;a1:c",
-+	                         "a:\\xff\\xff\\x00",
-+	                         "a\\x:b",
-+	                         "a\\q:b",
-+	                         "a:\\xff\\x00",
-+	                         "\\xff:\\xff\\x00",
-+	                         "a:b;\\xff\\x02/x:\\xff\\x02/y" }) {
-+		bool threw = false;
-+		try {
-+			BackupRangeSpec::parseRanges("test"_sr, bad);
-+		} catch (Error& e) {
-+			ASSERT_EQ(e.code(), error_code_test_specification_invalid);
-+			threw = true;
-+		}
-+		ASSERT(threw);
-+	}
-+
-+	for (const char* badPrefix : { "\\xff", "\\xff\\x02/x" }) {
-+		bool threw = false;
-+		try {
-+			BackupRangeSpec::parsePrefixRange("test"_sr, badPrefix);
-+		} catch (Error& e) {
-+			ASSERT_EQ(e.code(), error_code_test_specification_invalid);
-+			threw = true;
-+		}
-+		ASSERT(threw);
-+	}
-+
-+	Standalone<VectorRef<KeyValueRef>> options;
-+	options.push_back_deep(options.arena(), KeyValueRef("p"_sr, "d/"_sr));
-+	auto fromPrefix = BackupRangeSpec::readOptionalRanges(options, "r"_sr, "p"_sr);
-+	ASSERT(fromPrefix.present() && fromPrefix.get().size() == 1 && fromPrefix.get()[0] == prefixRange("d/"_sr));
-+	ASSERT(!BackupRangeSpec::readOptionalRanges(options, "r"_sr, "p"_sr).present());
-+
-+	return Void();
-+}
-```
-
-**File**: `tests/CMakeLists.txt` (modified, +1/-0)
-```diff
-@@ -179,6 +179,7 @@ if(WITH_PYTHON)
-   add_fdb_test(TEST_FILES slow/BackupS3BlobCorrectnessHeavyChaos.toml)
-   add_fdb_test(TEST_FILES fast/BackupCorrectness.toml)
-   add_fdb_test(TEST_FILES fast/BackupCorrectnessClean.toml)
-+  add_fdb_test(TEST_FILES fast/BackupRestoreRangeOptions.toml)
-   add_fdb_test(TEST_FILES fast/MultiBackupCorrectness.toml)
-   add_fdb_test(TEST_FILES fast/MultiBackupS3BlobCorrectness.toml)
-   add_fdb_test(TEST_FILES fast/BackupToDBCorrectness.toml)
-```
-
-**File**: `tests/fast/BackupRestoreRangeOptions.toml` (added, +117/-0)
-```diff
-@@ -0,0 +1,117 @@
-+# Two concurrent v1 backups with distinct tags and containers over three Cycle rings: backup A covers 'cy/' and
-+# 'cy2/' (backupRanges), backup B covers only 'cy/' (backupRangePrefix). The ring 'other/' is in no backup.
-+#
-+# Restore A with restoreRangePrefix = 'cy/', a strict subset of its ranges: it must clear and restore just 'cy/', so
-+# 'cy2/' and 'other/' must survive. Then restore B with no restore options: a default restore must clear and restore
-+# only its backup's own ranges, so 'cy2/' and 'other/' must survive again. The restores run after the writers stop and
-+# each ring is an independent cycle, so every ring is checked with the Cycle invariant.
-+
-+testClass = "Backup"
-+
-+[[test]]
-+testTitle = 'SubmitBackups'
-+clearAfterTest = false
-+simBackupAgents = 'BackupToFile'
-+runConsistencyCheck = false
-+
-+    [[test.workload]]
-+    testName = 'Cycle'
-+    nodeCount = 3000
-+    transactionsPerSecond = 3000.0
-+    testDuration = 10.0
-+    keyPrefix = 'cy/'
-+
-+    [[test.workload]]
-+    testName = 'Cycle'
-+    nodeCount = 1000
-+    transactionsPerSecond = 1000.0
-+    testDuration = 10.0
-+    keyPrefix = 'cy2/'
-+
-+    [[test.workload]]
-+    testName = 'Cycle'
-+    nodeCount = 1000
-+    transactionsPerSecond = 1000.0
-+    testDuration = 10.0
-+    keyPrefix = 'other/'
-+
-+    [[test.workload]]
-+    testName = 'SubmitBackup'
-+    tag = 'rangesA'
-+    backupDir = 'file://simfdb/backups/rangesA/'
-+    delayFor = 0
-+    stopWhenDone = false
-+    encrypted = false
-+    backupRanges = 'cy/:cy0;cy2/:cy20'
-+
-+    [[test.workload]]
-+    testName = 'SubmitBackup'
-+    tag = 'prefixB'
-+    backupDir = 'file://simfdb/backups/prefixB/'
-+    delayFor = 0
-+    stopWhenDone = false
-+    encrypted = false
-+    backupRangePrefix = 'cy/'
-+
-+[[test]]
-+testTitle = 'RestoreSubsetOfBackupA'
-+clearAfterTest = false
-+simBackupAgents = 'BackupToFile'
-+runConsistencyCheck = false
-+
-+    [[test.workload]]
-+    testName = 'RestoreBackup'
-+    tag = 'rangesA'
-+    delayFor = 0
-+    restoreRangePrefix = 'cy/'
-+
-+[[test]]
-+testTitle = 'VerifyAfterRestoreA'
-+checkOnly = true
-+# Without this the tester clears the database after the check, and the clear is also captured by backup B.
-+clearAfterTest = false
-+
-+    [[test.workload]]
-+    testName = 'Cycle'
-+    nodeCount = 3000
-+    keyPrefix = 'cy/'
-+
-+    [[test.workload]]
-+    testName = 'Cycle'
-+    nodeCount = 1000
-+    keyPrefix = 'cy2/'
-+
-+    [[test.workload]]
-+    testName = 'Cycle'
-+    nodeCount = 1000
-+    keyPrefix = 'other/'
-+
-+[[test]]
-+testTitle = 'RestoreBackupBDefault'
-+clearAfterTest = false
-+simBackupAgents = 'BackupToFile'
-+runConsistencyCheck = false
-+
-+    [[test.workload]]
-+    testName = 'RestoreBackup'
-+    tag = 'prefixB'
-+    delayFor = 0
-+
-+[[test]]
-+testTitle = 'VerifyCycles'
-+checkOnly = true
-+
-+    [[test.workload]]
-+    testName = 'Cycle'
-+    nodeCount = 3000
-+    keyPrefix = 'cy/'
-+
-+    [[test.workload]]
-+    testName = 'Cycle'
-+    nodeCount = 1000
-+    keyPrefix = 'cy2/'
-+
-+    [[test.workload]]
-+    testName = 'Cycle'
-+    nodeCount = 1000
-+    keyPrefix = 'other/'
+ 	return static_cast<Version>(versions);
 ```
 
 ---
 
-### Incident Patch 2: `1ac38607` (2026-10-23)
-**Commit Message**: Fix onMainThread coroutine completion lifetime (#14351)
+### Incident Patch 2: `0bc59d50` (2026-10-23)
+**Commit Message**: bindings/c: fix a variable-length-array compile warning on clang 21
 
-Detach the result cancellation future on the network thread before releasing the coroutine-owned result reference. C++ coroutine locals are destroyed before final_suspend, so retaining that future in the result allows a client thread to race completion and destroy the frame twice.
+    error: variable length array folded to constant array as an extension [-Werror,-Wgnu-folding-constant]
+      59 |         int64_t sizes[numKeys];
 
-Add deterministic coverage for ready and pending success, error, cancellation, and early release, plus concurrent client destruction. The lifetime regression fails against the original 8.0 header and passes with this fix.
-
-**File**: `flow/ThreadHelper.cpp` (modified, +138/-0)
+**File**: `bindings/c/test/txn_size_test.c` (modified, +1/-1)
 ```diff
-@@ -18,7 +18,9 @@
-  * limitations under the License.
-  */
+@@ -28,8 +28,8 @@
+ #include <foundationdb/fdb_c_options.g.h>
  
-+#include <atomic>
- #include <thread>
-+#include <vector>
+ pthread_t netThread;
+-const int numKeys = 100;
+ uint8_t** keys = NULL;
++#define numKeys 100
  
- #include "flow/flow.h"
- #include "flow/network.h"
-@@ -72,3 +74,139 @@ TEST_CASE("/flow/safeThreadFutureToFuture/Cancel") {
- 	}
- 	thread.join();
- }
-+
-+namespace {
-+
-+struct OnMainThreadLifetimeResult final : ThreadSingleAssignmentVar<int> {
-+	Future<int> operation;
-+	Future<Void> const* completion = nullptr;
-+	bool& detachedBeforeRelease;
-+	bool& destroyed;
-+
-+	OnMainThreadLifetimeResult(Future<int> operation, bool& detachedBeforeRelease, bool& destroyed)
-+	  : operation(std::move(operation)), detachedBeforeRelease(detachedBeforeRelease), destroyed(destroyed) {}
-+
-+	void delref() override {
-+		if (isReady() && completion->getPromiseReferenceCount() != 0) {
-+			// Keep an observer reference so this is safe even on the broken implementation. Before dropping the
-+			// coroutine's result reference, only that observer may still own its completion future. Otherwise a
-+			// client can destroy the result and release cancelFuture while final_suspend() is using the same SAV.
-+			detachedBeforeRelease = completion->getFutureReferenceCount() == 1;
-+		}
-+		ThreadSingleAssignmentVar<int>::delref();
-+	}
-+
-+	~OnMainThreadLifetimeResult() override { destroyed = true; }
-+};
-+
-+void testOnMainThreadLifetime(bool ready, bool error, bool cancel, bool releaseEarly) {
-+	Promise<Void> signal;
-+	Promise<int> operation;
-+	bool detachedBeforeRelease = false;
-+	bool destroyed = false;
-+	Future<Void> completion;
-+	auto* result = new OnMainThreadLifetimeResult(operation.getFuture(), detachedBeforeRelease, destroyed);
-+	ThreadFuture<int> client(result);
-+	result->addref(); // Owned by doOnMainThread.
-+	completion = internal_thread_helper::doOnMainThread<int>(
-+	    signal.getFuture(),
-+	    { [](ThreadSingleAssignmentVar<int>* result) {
-+		     return static_cast<OnMainThreadLifetimeResult*>(result)->operation;
-+	     },
-+	      [](ThreadSingleAssignmentVar<int>* result) {
-+		      static_cast<OnMainThreadLifetimeResult*>(result)->operation = Future<int>();
-+	      } },
-+	    result);
-+	result->completion = &completion;
-+	result->setCancel(Future<Void>(completion));
-+	if (releaseEarly) {
-+		client = ThreadFuture<int>();
-+	}
-+	auto finish = [&] {
-+		if (cancel) {
-+			completion.cancel();
-+		} else if (error) {
-+			operation.sendError(operation_failed());
-+		} else {
-+			operation.send(42);
-+		}
-+	};
-+	if (ready) {
-+		finish();
-+	}
-+	signal.send(Void());
-+	if (!ready) {
-+		finish();
-+	}
-+	ASSERT(completion.isReady() && !completion.isError());
-+	ASSERT(detachedBeforeRelease);
-+	ASSERT(destroyed == releaseEarly);
-+	if (!releaseEarly) {
-+		if (cancel || error) {
-+			ASSERT(client.isError());
-+			ASSERT(client.getError().code() == (cancel ? actor_cancelled() : operation_failed()).code());
-+		} else {
-+			ASSERT(client.get() == 42);
-+		}
-+		client.cancel();
-+		ASSERT(destroyed);
-+	}
-+}
-+
-+Future<int> onMainThreadTestOperation(int i) {
-+	if (i % 2) {
-+		co_await delay(0);
-+	}
-+	if (i % 3 == 0) {
-+		throw operation_failed();
-+	}
-+	co_return 42;
-+}
-+
-+} // namespace
-+
-+TEST_CASE("/flow/onMainThread/CompletionLifetime") {
-+	for (bool ready : { false, true }) {
-+		for (bool releaseEarly : { false, true }) {
-+			testOnMainThreadLifetime(ready, false, false, releaseEarly);
-+			testOnMainThreadLifetime(ready, true, false, releaseEarly);
-+			testOnMainThreadLifetime(ready, false, true, releaseEarly);
-+		}
-+	}
-+	return Void();
-+}
-+
-+TEST_CASE("/flow/onMainThread/ConcurrentDestroy") {
-+	if (g_network->isSimulated()) {
-+		co_return;
-+	}
-+	std::atomic<int> completed{ 0 };
-+	std::atomic<int> failures{ 0 };
-+	std::vector<std::thread> workers;
-+	workers.reserve(4);
-+	for (int worker = 0; worker < 4; ++worker) {
-+		workers.emplace_back([&] {
-+			for (int i = 0; i < 1000; ++i) {
-+				auto result = onMainThread([i] { return onMainThreadTestOperation(i); });
-+				if (i % 5 == 0) {
-+					result.cancel(); // Also exercise destruction before the operation completes.
-+					continue;
-+				}
-+				result.blockUntilReady();
-+				if (i % 3 == 0 ? !result.isError() || result.getError().code() != error_code_operation_failed
-+				               : result.isError() || result.get() != 42) {
-+					++failures;
-+				}
-+				result.cancel(); // Mirrors fdb_future_destroy() on a client thread.
-+			}
-+			++completed;
-+		});
-+	}
-+	while (completed.load() != 4) {
-+		co_await delay(0.001);
-+	}
-+	for (auto& worker : workers) {
-+		worker.join();
-+	}
-+	ASSERT(failures.load() == 0);
-+}
-```
-
-**File**: `flow/include/flow/ThreadHelper.h` (modified, +6/-2)
-```diff
-@@ -839,8 +839,12 @@ Future<Void> doOnMainThread(Future<Void> signal,
- 	}
- 
- 	function.destroy(result);
--	ThreadFuture<R> destroyResultAfterReturning(
--	    result); // Call result->delref(), but only after our return promise is no longer referenced on this thread
-+	// Coroutine locals are destroyed before final_suspend(), unlike the local guard in the generated Flow actor.
-+	// Detach our cancellation future while we still own a result reference, so a client thread cannot release it
-+	// concurrently with final_suspend() accessing the non-thread-safe SAV. Dropping the last future reference may
-+	// mark this running coroutine cancelled, but there are no more waits and its promise keeps the frame alive.
-+	result->setCancel(Future<Void>());
-+	ThreadFuture<R> destroyResult(result);
- 	co_return Void();
- }
- 
+ #define KEY_SIZE 16
+ #define VALUE_SIZE 100
 ```
 
 ---
 
-### Incident Patch 3: `30ea6843` (2026-10-23)
-**Commit Message**: docs: document the trace event severity levels (#14353)
+### Incident Patch 3: `7cd4693a` (2026-10-23)
+**Commit Message**: flow/MemoryTracker: fix unused variable warning on macOS
 
-Trace event severities were not documented anywhere, although
-monitored-metrics.rst and client-testing.rst refer to them by number.
-
-Add a "Trace event severities" section under "Managing trace files" in
-the administration guide, with a table of the levels and what each one
-is used for, based on how the code and the test harness treat them.
-
-**File**: `documentation/sphinx/source/administration.rst` (modified, +35/-0)
+**File**: `flow/MemoryTracker.cpp` (modified, +2/-2)
 ```diff
-@@ -624,6 +624,41 @@ By default, trace files are output to:
+@@ -107,6 +107,8 @@ inline std::uint32_t xorshift32(std::uint32_t& s) {
+ 	return x;
+ }
  
- Trace files are rolled every 10MB. These files are valuable to the FoundationDB development team for diagnostic purposes, and should be retained in case you need support from FoundationDB. Old trace files are automatically deleted so that there are no more than 100 MB worth of trace files per process. Both the log size and the maximum total size of the log files are configurable on a per process basis in the :ref:`configuration file <foundationdb-conf>`.
++#ifdef __linux__
++
+ // Per-thread stack bounds, populated lazily on first use of captureFramesFP.
+ // Used by captureFramesFP to terminate the FP walk when it crosses into
+ // FP-elided code (notably glibc's pthread shutdown / TLS-destructor
+@@ -121,8 +123,6 @@ inline std::uint32_t xorshift32(std::uint32_t& s) {
+ thread_local uintptr_t gStackLow = 0;
+ thread_local uintptr_t gStackHigh = 0;
  
-+.. _administration-trace-severities:
-+
-+Trace event severities
-+----------------------
-+
-+Every trace event has a ``Severity`` field holding one of the numeric levels below. A process writes only the events at or above its minimum trace severity, which is 10 by default, so events below that level do not appear in trace files.
-+
-+.. list-table::
-+   :header-rows: 1
-+   :widths: 12 22 66
-+
-+   * - ``Severity``
-+     - Name
-+     - Meaning
-+   * - 40
-+     - ``SevError``
-+     - A serious problem that is not expected to happen, often one that ends the process or the role running in it. A failed ``ASSERT`` is logged at this severity. Each event includes a backtrace, and the most recent one for a process is reported in that process's ``messages`` in :doc:`machine-readable status <mr-status>`. In simulation tests, any event at this severity fails the test.
-+   * - 30
-+     - ``SevWarnAlways``
-+     - A condition that is not fatal but is worth knowing about, which makes it a candidate for monitoring. Simulation tests report these events as warnings without failing.
-+   * - 20
-+     - ``SevWarn``
-+     - A condition that may be worth looking at when diagnosing a problem. Events at this severity are not expected to be monitored individually.
-+   * - 10
-+     - ``SevInfo``
-+     - Ordinary events that are useful in production. This is the default severity of a trace event and the lowest severity written by default.
-+   * - 5
-+     - ``SevDebug``
-+     - Detail for testing and debugging that is not needed in production. Not written by default.
-+   * - 1, 0
-+     - ``SevSample``, ``SevVerbose``
-+     - Very frequent or very detailed events. Not written by default.
-+
-+See :doc:`monitored-metrics` for how the two highest levels are used in monitoring.
-+
- .. _administration-disaster-recovery:
- 
- Disaster Recovery
+-#ifdef __linux__
+-
+ void initStackBoundsForThread() {
+ 	pthread_attr_t attr;
+ 	if (pthread_getattr_np(pthread_self(), &attr) == 0) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14358** (closed): [release-7.4] defer rocksdb format update, adapt 7.4.9 release notes (@ploxiln)
 - **PR #14355** (2026-10-24): [release-8.0] docs updates: coordinator hostnames, trace event severity (@ploxiln)
+- **PR #14354** (2026-10-26): build: dedup and consolidate compiler warning disable flags (@ploxiln)
 - **PR #14353** (2026-10-23): docs: document the trace event severity levels (@VanshBhardwaj24)
 - **PR #14351** (2026-10-23): Fix onMainThread coroutine completion lifetime (@mpatou-openai)
 - **PR #14350** (2026-10-23): Add key-range, prefix and derived-lock options to SubmitBackup and RestoreBackup (@nos-a)
-- **PR #14346** (2026-10-23): Cancel YieldedAsyncMap::destroyOnCancelYield without throwing (@saintstack)
-- **PR #14344** (2026-10-22): Fix grpc stop server null check (@akshay-v-kaushik)
 
 ---
 
@@ -2736,64 +2050,28 @@ is used for, based on how the code and the test harness treat them.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add key-range, prefix and derived-lock options to SubmitBackup and RestoreBackup
+## X. dd/cdc: fix long-double to long-int comparison warning
 
 **RULE**:
-When implementing operations in `fdbserver/workloads/BackupRangeSpec.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fdbserver/datadistributor/NativeCdcBalancer.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dbf079f5`: Add key-range, prefix and derived-lock options to SubmitBackup and RestoreBackup (#14350). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eaa66379`: dd/cdc: fix long-double to long-int comparison warning. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbserver/workloads/BackupRangeSpec.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbserver/datadistributor/NativeCdcBalancer.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-/*
- * BackupRangeSpec.h
- *
- * This source file is part of the FoundationDB open source project
- *
- * Copyright 2013-2026 Apple Inc. and the FoundationDB project authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#pragma once
-
-#ifndef FDBSERVER_BACKUP_RANGE_SPEC_H
-#define FDBSERVER_BACKUP_RANGE_SPEC_H
-
-#include <algorithm>
-#include <cctype>
-#include <string>
-#include <vector>
-
-#include "fdbclient/BackupAgent.h"
-#include "fdbclient/FDBTypes.h"
-#include "fdbclient/SystemData.h"
-#include "fdbserver/tester/workloads.h"
-
-// Test-option encoding of backup and restore key ranges. Workload options are plain strings, so keys use the same
-// escaping as printable()/unprintable() (an
+	if (versions >= (long double)std::numeric_limits<Version>::max()) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	if (versions >= std::numeric_limits<Version>::max()) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dbf079f5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eaa66379` are properly handled with clean fallback behavior.

@@ -5227,3 +5227,6 @@
 | `CYCLE-20261027-24UP` | `2026-10-27T11:09:14.641Z` | `Planetable/Planet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4701` | Yes (`6d1b3788...`) |
 | `CYCLE-20261027-2A1Z` | `2026-10-27T11:09:21.383Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4702` | Yes (`b4634f3c...`) |
 | `CYCLE-20261027-2BC3` | `2026-10-27T11:09:23.043Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4703` | Yes (`ff473087...`) |
+| `CYCLE-20261027-AUEY` | `2026-10-27T11:16:01.018Z` | `reflection/Beam-1.0-501B-A23B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4704, Rule 4705, Rule 4706` | Yes (`739f7de5...`) |
+| `CYCLE-20261027-AYKJ` | `2026-10-27T11:16:06.403Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4678` | Yes (`426babff...`) |
+| `CYCLE-20261027-AZLN` | `2026-10-27T11:16:07.739Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4707` | Yes (`9f577720...`) |

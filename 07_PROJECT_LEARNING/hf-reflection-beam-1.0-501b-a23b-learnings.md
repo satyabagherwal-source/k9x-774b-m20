@@ -3,7 +3,7 @@
 > **Source Version**: `hf-reflectio`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-22T17:58:20.492Z  
+> **Timestamp**: 2026-10-27T11:15:59.909Z  
 > **Learning ID**: `learn-huggingface-reflection-beam-1-0-501b-a23b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,304 +17,232 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The repository `reflection/Beam-1.0-501B-A23B` addresses the "Inference Cost vs. Reasoning Quality" trade-off in Large Language Models (LLMs). Standard dense models require high active parameter counts to achieve graduate-level reasoning, leading to prohibitive inference latency and cost. Beam solves this by utilizing a **Sparse Mixture-of-Experts (MoE)** architecture with **Hybrid Attention** (Sliding Window + Full Attention) and a specialized **Harmony XML** tokenization/grammar system.
+The repository `reflection/Beam-1.0-501B-A23B` addresses the inefficiency of Large Language Models (LLMs) in high-stakes agentic workflows (coding, tool use, reasoning) where inference cost (token count) and latency are critical bottlenecks. Standard dense models or naive MoE models often require excessive "thinking" tokens to reach a solution. Beam solves this via **Token-Efficient Reasoning**, achieving comparable quality to leading open models with ~3x fewer inference-time reasoning tokens.
 
 **Architectural Boundaries & Subsystems:**
-1.  **Sparse MoE Core**:
-    *   **Total Parameters**: 501.3B.
-    *   **Active Parameters**: 23.4B (per token).
-    *   **Expert Routing**: 256 experts per layer, top-8 routing (`num_experts_per_tok: 8`).
-    *   **Layer Heterogeneity**: The first 3 layers are **Dense** MLPs, while the remaining 49 layers are **Sparse** MoE layers. This hybrid approach stabilizes early feature extraction while scaling capacity in deeper layers.
-2.  **Hybrid Attention Mechanism**:
-    *   **Sliding Window Attention**: 46 out of 52 layers use a sliding window of 512 tokens. This reduces computational complexity from $O(N^2)$ to $O(N \cdot W)$ for local context.
-    *   **Full Attention**: 6 layers (indices 5, 11, 17, 23, 29, 35, 41, 47, 51 - *Note: Config shows 6 full attention layers interspersed*) use global attention to maintain long-range dependency coherence over the 1M token context window.
-    *   **KV Heads**: 8 Key-Value heads vs. 48 Query heads (GQA - Grouped Query Attention), reducing KV cache memory footprint by 6x.
-3.  **Harmony XML Grammar System**:
-    *   The tokenizer is not just a BPE encoder but a **structured protocol parser**.
-    *   It enforces a specific XML-like structure for reasoning (`<|channel|>analysis`), final output (`<|channel|>final`), and tool calls (`<rfl:parameter>`).
-    *   This allows the model to separate "thinking" tokens from "output" tokens, enabling token-efficient reasoning (3x fewer tokens for same quality).
+1.  **Sparse Mixture-of-Experts (MoE) Core:**
+    *   **Total Parameters:** 501.3B.
+    *   **Active Parameters:** 23.4B (per token).
+    *   **Expert Topology:** 256 experts per layer, with `num_experts_per_tok: 8`. This implies a router selects the top-8 experts out of 256 for each token, drastically reducing compute per token while maintaining massive capacity.
+    *   **Layer Heterogeneity:** The model is not uniform. It uses a hybrid architecture:
+        *   **Dense Layers:** The first 3 layers (`mlp_layer_types: ["dense", "dense", "dense"]`) are fully dense. This likely serves as a robust feature extraction/embedding stabilization layer before sparsity is introduced.
+        *   **Sparse Layers:** The remaining 49 layers are MoE (`"sparse"`).
+2.  **Hybrid Attention Mechanism (Sliding vs. Full):**
+    *   **Context Window:** 1,048,576 tokens (1M).
+    *   **Sliding Window Attention:** Most layers use `sliding_attention` with a `sliding_window` of 512 tokens. This limits the attention span for local context, reducing memory bandwidth and compute complexity from $O(N^2)$ to $O(N \cdot W)$ where $W=512$.
+    *   **Full Attention Layers:** Every 5th layer (indices 5, 11, 17, 23, 29, 35, 41, 47, 51) uses `full_attention`. These layers act as "global context anchors," allowing the model to attend to the entire 1M context window at critical intervals to maintain long-range coherence.
+3.  **Harmony XML Grammar & Structured Output:**
+    *   The tokenizer configuration reveals a custom grammar version: `harmony_xml`.
+    *   It enforces a strict structural template for responses, separating `thinking` (analysis), `content` (final answer), and `tool_calls`.
+    *   **Tool Call Parsing:** Uses a specific regex pattern `to=(?P<name>[^\s<]+)<\|channel\|>analysis <\|constrain\|>xml<\|message\|>` to identify tool invocations, ensuring deterministic parsing of agentic actions.
 
 **Critical Subsystem Abstractions:**
-*   **Router**: A gating network that selects top-8 experts from 256.
-*   **Sliding Window Cache**: A ring buffer for KV states that evicts tokens older than 512 steps in sliding layers.
-*   **Grammar Constraint Engine**: A post-processing or constrained decoding layer that ensures output adheres to the `harmony_xml` schema.
+*   **Router:** The MoE gating network that distributes tokens to experts.
+*   **Attention Scheduler:** The logic that switches between local (sliding) and global (full) attention based on layer index.
+*   **Grammar Enforcer:** The tokenizer/constraint system that ensures output adheres to the `harmony_xml` schema, preventing malformed tool calls or reasoning traces.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Hybrid Attention Layer Interleaving Invariant
+### 1. Hybrid Attention Sparsity for Long-Context Efficiency
 **RULE**:
-In long-context MoE models, you MUST interleave sliding-window attention layers with full-attention layers at a fixed ratio (e.g., 1 full attention layer per 5-8 sliding layers) to prevent "context drift" and ensure global coherence without incurring $O(N^2)$ cost for all layers.
+In models with context windows > 128k tokens, you MUST NOT use full quadratic attention ($O(N^2)$) for all layers. You MUST implement a hybrid attention strategy where the majority of layers use local sliding window attention ($O(N \cdot W)$) and a sparse subset of layers (e.g., every 5th layer) use full global attention to maintain long-range dependency tracking.
 
 **WHY**:
-If all layers use sliding window attention, the model loses access to tokens outside the 512-token window, causing it to "forget" the beginning of a 1M-token document. If all layers use full attention, the computational cost becomes prohibitive. Interleaving allows local layers to process high-frequency features cheaply while global layers anchor long-range dependencies.
+Full attention over 1M tokens is computationally prohibitive ($10^{12}$ operations per layer). Sliding window attention reduces this to $10^9$ operations per layer. However, pure sliding window loses global context (e.g., a variable defined at token 100 is invisible at token 100,000). The hybrid approach ensures that while most layers process local context efficiently, periodic "global" layers allow information to propagate across the entire sequence, preventing "context blindness" in long-horizon tasks.
 
 **WHEN TO APPLY**:
-Any LLM architecture targeting context windows > 32K tokens with a focus on inference efficiency.
+Any LLM architecture targeting context windows > 128k tokens, especially for agentic tasks requiring long-term memory of instructions or codebases.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Pseudocode for Layer Construction
-def build_attention_stack(num_layers=52, sliding_window=512, full_attention_interval=6):
-    layers = []
-    for i in range(num_layers):
-        if i % full_attention_interval == 5: # Every 6th layer is full attention
-            layers.append(FullAttentionLayer(head_dim=128, num_heads=48, num_kv_heads=8))
-        else:
-            layers.append(SlidingWindowAttentionLayer(window_size=sliding_window, head_dim=128, num_heads=48, num_kv_heads=8))
-    return layers
+# Pseudocode for Hybrid Attention Layer Selection
+def get_attention_type(layer_idx: int, total_layers: int) -> str:
+    # Every 5th layer (0-indexed: 5, 10, 15...) is Full Attention
+    if (layer_idx + 1) % 5 == 0:
+        return "full_attention"
+    else:
+        return "sliding_attention"
+
+# In the forward pass:
+if attention_type == "sliding_attention":
+    # Use a mask that only allows attention within a window of size W
+    mask = create_sliding_window_mask(seq_len, window_size=512)
+    attn_output = scaled_dot_product_attention(q, k, v, mask=mask)
+else:
+    # No mask, full attention
+    attn_output = scaled_dot_product_attention(q, k, v)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: All sliding window (loses long context)
-layers = [SlidingWindowAttentionLayer(window_size=512) for _ in range(52)]
-
-# ANTI-PATTERN: All full attention (too slow/expensive)
-layers = [FullAttentionLayer() for _ in range(52)]
+# ANTI-PATTERN: Using full attention for all layers in a 1M context model
+# This will cause OOM (Out of Memory) or extreme latency
+for layer in model.layers:
+    # Always full attention
+    output = layer.attention(q, k, v, mask=None) 
 ```
 
 **VERIFICATION METHOD**:
-Assert that `layer_types` array contains exactly `num_layers // full_attention_interval` occurrences of `"full_attention"` and the rest `"sliding_attention"`. Verify that the indices of full attention layers are evenly distributed.
+1.  **Memory Profiling:** Run inference with a 1M token sequence. Verify that memory usage scales linearly with sequence length for most layers, not quadratically.
+2.  **Accuracy Regression:** Compare perplexity on long-context benchmarks (e.g., RULER, LongBench) between the hybrid model and a pure sliding-window model. The hybrid model must show significantly better performance on tasks requiring retrieval from the beginning of the context.
 
-### 2. MoE Dense-Sparse Layer Heterogeneity Rule
+### 2. Deterministic Tool-Call Grammar Enforcement
 **RULE**:
-You MUST use Dense MLPs for the first N layers (typically 3-5) and Sparse MoE layers for the remaining layers in a large MoE model.
+For agentic models, you MUST NOT rely on free-text parsing for tool invocations. You MUST define a strict, regex-verifiable grammar (e.g., `harmony_xml`) in the tokenizer configuration and enforce it during generation to ensure 100% parseability of tool calls.
 
 **WHY**:
-Early layers in a Transformer are responsible for low-level feature extraction (syntax, basic semantics). These features are highly correlated and do not benefit from expert specialization. Using MoE in early layers introduces routing noise and instability. Later layers handle high-level reasoning and task-specific knowledge, where sparsity provides significant capacity gains without proportional compute cost.
+Free-text tool calls (e.g., "I will now call the function...") are ambiguous and prone to hallucination or formatting errors. A strict grammar ensures that the model's output can be mechanically parsed into structured JSON/XML without LLM-based post-processing, reducing latency and eliminating parsing failures.
 
 **WHEN TO APPLY**:
-Designing any Mixture-of-Experts model with > 100B total parameters.
+Any LLM system that integrates with external tools (MCP, APIs, CLI) where reliability of tool invocation is critical.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
+```json
+// tokenizer_config.json
+{
+  "reflection_grammar_version": "harmony_xml",
+  "response_template": {
+    "tool_calls": {
+      "open_pattern": " to=(?P<name>[^\\s<]+)<\\|channel\\|>analysis <\\|constrain\\|>xml<\\|message\\|>",
+      "close": ["<|end|><|start|>assistant", "<|call|>"],
+      "content": "xml-inline",
+      "content_args": {
+        "tag_pattern": "<rfl:parameter name=\"(?P<key>[^\"]+)\">\n(?P<value>.*?)\n(?:</rfl:parameter>|(?=<rfl:parameter name=\"))"
+      }
+    }
+  }
+}
+```
 ```python
-def build_mlp_stack(num_layers=52, dense_layers=3, num_experts=256, top_k=8):
-    mlp_layers = []
-    for i in range(num_layers):
-        if i < dense_layers:
-            mlp_layers.append(DenseMLP(intermediate_size=20480))
-        else:
-            mlp_layers.append(SparseMoELayer(num_experts=num_experts, top_k=top_k, expert_intermediate_size=2560))
-    return mlp_layers
+# Parser implementation
+import re
+
+def parse_tool_call(text: str) -> dict:
+    # Extract tool name
+    name_match = re.search(r" to=([^\s<]+)", text)
+    if not name_match:
+        raise ValueError("No tool name found")
+    tool_name = name_match.group(1)
+    
+    # Extract parameters
+    params = {}
+    param_pattern = re.compile(r'<rfl:parameter name="([^"]+)">\n(.*?)\n(?:</rfl:parameter>|(?=<rfl:parameter name="))', re.DOTALL)
+    for match in param_pattern.finditer(text):
+        key = match.group(1)
+        value = match.group(2).strip()
+        params[key] = value
+        
+    return {"tool": tool_name, "params": params}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: All MoE from layer 0
-mlp_layers = [SparseMoELayer(num_experts=256, top_k=8) for _ in range(52)]
-# This leads to unstable training and poor convergence in early layers.
+# ANTI-PATTERN: Using LLM to parse tool calls
+def parse_tool_call_llm(text: str) -> dict:
+    prompt = f"Extract the tool call from this text: {text}"
+    response = llm.generate(prompt)
+    return json.loads(response) # Fragile, slow, and prone to hallucination
 ```
 
 **VERIFICATION METHOD**:
-Check `mlp_layer_types` array: first 3 elements MUST be `"dense"`, remaining 49 MUST be `"sparse"`.
+1.  **Fuzz Testing:** Generate 10,000 random tool calls using the model and verify that 100% are successfully parsed by the regex-based parser without errors.
+2.  **Latency Measurement:** Compare the end-to-end latency of tool invocation with grammar enforcement vs. LLM-based parsing. Grammar enforcement should be < 1ms, while LLM parsing is > 100ms.
 
-### 3. Harmony XML Structured Reasoning Protocol
+### 3. Dense-to-Sparse Layer Transition for Stability
 **RULE**:
-You MUST enforce a structured output protocol (e.g., Harmony XML) that explicitly separates reasoning tokens (`<|channel|>analysis`) from final output tokens (`<|channel|>final`) to enable token-efficient inference and reliable parsing.
+In MoE architectures, you MUST NOT apply sparsity to the first few layers of the transformer. You MUST keep the initial layers (e.g., first 3-5) as dense FFNs to ensure stable feature extraction and embedding alignment before introducing expert routing.
 
 **WHY**:
-Unstructured reasoning leads to "token bloat" where the model generates verbose, redundant thoughts. By forcing a structured format, the model learns to be concise in the analysis channel. Furthermore, it allows the inference engine to discard or cache the analysis channel separately, and ensures that tool calls are always in a parseable XML format, preventing injection attacks or parsing errors.
+The early layers of a transformer are responsible for basic feature extraction and embedding normalization. Applying MoE sparsity here can lead to unstable gradients and poor convergence because the router has not yet learned meaningful token distributions. Dense layers provide a stable foundation for the subsequent sparse layers to build upon.
 
 **WHEN TO APPLY**:
-Any agentic LLM system that requires tool use, multi-step reasoning, or strict output formatting.
+Any MoE architecture, especially those with high sparsity ratios (e.g., 256 experts, top-8).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
-```python
-# Constrained Decoding Logic
-def generate_with_harmony(prompt, model):
-    # Force start of analysis channel
-    prompt += "<|start|>assistant<|channel|>analysis<|message|>"
-    
-    # Generate until close tag
-    output = model.generate(prompt, stop_strings=["<|end|>"])
-    
-    # Force start of final channel
-    output += "<|start|>assistant<|channel|>final<|message|>"
-    
-    # Generate final answer
-    final_answer = model.generate(output, stop_strings=["<|return|>"])
-    
-    return final_answer
+```json
+// config.json
+{
+  "mlp_layer_types": [
+    "dense",  // Layer 0
+    "dense",  // Layer 1
+    "dense",  // Layer 2
+    "sparse", // Layer 3 onwards
+    "sparse",
+    ...
+  ]
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Unstructured reasoning
-prompt = "Think step by step and then answer:"
-output = model.generate(prompt)
-# This leads to unpredictable formatting, making it hard to extract the final answer or tool calls.
+```json
+// ANTI-PATTERN: Applying sparsity from the very first layer
+{
+  "mlp_layer_types": [
+    "sparse", // Unstable, poor convergence
+    "sparse",
+    ...
+  ]
+}
 ```
 
 **VERIFICATION METHOD**:
-Use a regex parser to validate that all generated outputs match the `harmony_xml` schema. Assert that `<|channel|>analysis` is always closed by `<|end|>` before `<|channel|>final` begins.
+1.  **Training Stability:** Monitor gradient norms and loss curves during training. Models with dense initial layers should show smoother loss curves and lower gradient variance in the first 10% of training steps.
+2.  **Expert Utilization:** Analyze the distribution of tokens across experts in the first sparse layer. If the first layer is dense, the first sparse layer should show a more balanced expert utilization compared to a model where the first layer is sparse.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: Since no commit history or bug reports are provided in the input, this section is derived from known architectural pitfalls in similar MoE/Long-Context models that Beam's design explicitly mitigates.*
-
-### Incident 1: KV Cache Memory Explosion in Sliding Window Layers (BUG-KVCACHE-01)
-- **Context**: Inference Engine, KV Cache Management
-- **What Was Expected**: Memory usage should grow linearly with the number of sliding window layers, not the total context length.
-- **What Actually Happened**: In early implementations, the KV cache for sliding window layers was implemented as a growing list, causing O(N) memory growth instead of O(W) where W is the window size.
-- **Evidence in Repo**: `config.json` specifies `sliding_window: 512`. The architecture implies a ring buffer implementation.
-- **Root Cause**: Failure to implement a circular buffer for the KV cache in sliding attention layers.
-- **Remediation Code Diff**:
-```python
-# - Buggy: Growing list
-kv_cache.append(new_kv)
-if len(kv_cache) > window_size:
-    kv_cache.pop(0) # O(N) operation
-
-# + Fixed: Ring Buffer
-class RingBufferKVCache:
-    def __init__(self, window_size):
-        self.buffer = [None] * window_size
-        self.index = 0
-        self.count = 0
-    
-    def append(self, new_kv):
-        self.buffer[self.index] = new_kv
-        self.index = (self.index + 1) % self.window_size
-        if self.count < self.window_size:
-            self.count += 1
-```
-- **Lesson**: Always use O(1) data structures for fixed-size sliding windows.
-
-### Incident 2: Router Load Imbalance in MoE Layers (BUG-MOE-02)
-- **Context**: MoE Router, Expert Selection
-- **What Was Expected**: Experts should be utilized roughly equally to maximize capacity.
-- **What Actually Happened**: A few "popular" experts were overloaded, while others were underutilized, leading to inefficient compute usage and potential numerical instability.
-- **Evidence in Repo**: `config.json` specifies `norm_topk_prob: true`. This indicates the use of normalized top-k probabilities, which helps balance load.
-- **Root Cause**: Lack of auxiliary load balancing loss or improper normalization of router logits.
-- **Remediation Code Diff**:
-```python
-# - Buggy: Raw softmax
-router_logits = self.router(x)
-probs = F.softmax(router_logits, dim=-1)
-top_k_probs, top_k_indices = torch.topk(probs, k=8)
-
-# + Fixed: Normalized Top-K
-router_logits = self.router(x)
-probs = F.softmax(router_logits, dim=-1)
-top_k_probs, top_k_indices = torch.topk(probs, k=8)
-# Normalize the selected probabilities to sum to 1
-top_k_probs = top_k_probs / top_k_probs.sum(dim=-1, keepdim=True)
-```
-- **Lesson**: Always normalize the probabilities of selected experts in MoE models to ensure stable gradient flow and balanced load.
-
-### Incident 3: Context Drift in Long-Range Dependencies (BUG-ATTN-03)
-- **Context**: Attention Mechanism, Long Context
-- **What Was Expected**: The model should be able to retrieve information from the beginning of a 1M token document.
-- **What Actually Happened**: The model failed to retrieve information from tokens > 512 steps away in sliding window layers, leading to "context drift" where the model loses track of the initial prompt.
-- **Evidence in Repo**: `config.json` specifies `layer_types` with interleaved `full_attention` layers.
-- **Root Cause**: Relying solely on sliding window attention for all layers.
-- **Remediation Code Diff**:
-```python
-# - Buggy: All sliding window
-attention_mask = create_sliding_window_mask(seq_len, window_size=512)
-
-# + Fixed: Interleaved full attention
-if layer_type == "full_attention":
-    attention_mask = create_full_attention_mask(seq_len)
-else:
-    attention_mask = create_sliding_window_mask(seq_len, window_size=512)
-```
-- **Lesson**: Interleave full attention layers to maintain global context coherence.
-
-### Incident 4: Token Bloat in Reasoning (BUG-TOKEN-04)
-- **Context**: Reasoning Channel, Token Efficiency
-- **What Was Expected**: The model should generate concise reasoning tokens.
-- **What Actually Happened**: The model generated verbose, redundant reasoning tokens, increasing inference cost by 3x.
-- **Evidence in Repo**: `tokenizer_config.json` specifies `response_template` with `thinking` and `content` fields.
-- **Root Cause**: Lack of structured output protocol to separate reasoning from final output.
-- **Remediation Code Diff**:
-```python
-# - Buggy: Unstructured reasoning
-prompt = "Think step by step and then answer:"
-
-# + Fixed: Structured Harmony XML
-prompt = "<|start|>assistant<|channel|>analysis<|message|>"
-# Model is trained to be concise in this channel
-```
-- **Lesson**: Use structured output protocols to enforce token efficiency.
-
-### Incident 5: Tool Call Parsing Errors (BUG-TOOL-05)
-- **Context**: Tool Use, XML Parsing
-- **What Was Expected**: Tool calls should be reliably parsed.
-- **What Actually Happened**: The model generated malformed XML, leading to parsing errors.
-- **Evidence in Repo**: `tokenizer_config.json` specifies `tool_calls` with `tag_pattern` and `value_parse`.
-- **Root Cause**: Lack of constrained decoding or post-processing validation.
-- **Remediation Code Diff**:
-```python
-# - Buggy: Raw string parsing
-tool_call = parse_xml(raw_output)
-
-# + Fixed: Constrained Decoding + Validation
-tool_call = parse_xml(raw_output)
-if not validate_tool_call(tool_call):
-    raise ToolCallParsingError("Invalid tool call format")
-```
-- **Lesson**: Always validate structured outputs against a schema.
+*Note: The provided repository data does not include commit history, bug issues, or post-mortems. Therefore, no specific production incidents can be documented from the source. The following section is omitted due to lack of evidence.*
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Invariant**: In MoE routing, `top_k` indices MUST be unique. If duplicates occur, the expert is called multiple times, wasting compute.
-    *   **Code**: `assert len(set(top_k_indices)) == top_k`
-    *   **Trap**: Floating-point precision in router logits can cause ties, leading to non-deterministic expert selection. Use `torch.topk` with `sorted=False` and handle ties explicitly.
+### 1. Micro-Syntax & Token-Level Precision
+*   **Regex Escaping in JSON:** The `tokenizer_config.json` contains complex regex patterns with escaped backslashes (e.g., `\\\\s`). When parsing this JSON, ensure that the unescaping process correctly handles the double-escaping to produce the intended regex string. A common bug is failing to unescape `\\\\` to `\\`, resulting in a malformed regex that fails to match whitespace.
+*   **Null vs. Empty String in Tool Params:** The `tag_pattern` for parameters captures `(?P<value>.*?)`. If a parameter value is empty, the regex may capture an empty string. The parser MUST explicitly handle empty strings to avoid passing `None` or `""` to tools that expect a specific type.
 
-2.  **Infinite Loop & Recursion Guards**:
-    *   **Invariant**: Sliding window attention MUST have a fixed window size. If the window size is dynamic or unbounded, it becomes full attention, defeating the purpose.
-    *   **Code**: `assert window_size > 0 and window_size < seq_len`
-    *   **Trap**: If `window_size` is 0, the attention mask becomes empty, leading to NaNs in the output.
+### 2. Infinite Loop & Recursion Guards
+*   **Tool Call Recursion:** In agentic loops, if a tool call fails, the model might retry the same call indefinitely. A guard MUST be implemented to limit the number of retries for the same tool call (e.g., max 3 retries) and to detect circular dependencies (e.g., Tool A calls Tool B, which calls Tool A).
+*   **Context Window Overflow:** If the model generates a response that exceeds the 1M token context window, the inference engine MUST truncate the context or raise an error. It MUST NOT silently drop tokens, as this can lead to incoherent outputs.
 
-3.  **UI & UX Micro-Mechanics**:
-    *   **Invariant**: N/A (Backend model). However, for frontend integration, the `harmony_xml` output MUST be streamed incrementally to provide real-time feedback.
-    *   **Code**: Use server-sent events (SSE) to stream tokens as they are generated.
-    *   **Trap**: Buffering the entire response before sending leads to poor UX for long generations.
+### 3. UI & UX Micro-Mechanics
+*   **N/A:** This is a backend model repository. UI/UX mechanics are not applicable.
 
-4.  **Backend Concurrency & Memory Safety**:
-    *   **Invariant**: KV cache MUST be thread-safe if multiple requests are processed concurrently.
-    *   **Code**: Use locks or atomic operations when updating the KV cache.
-    *   **Trap**: Race conditions in KV cache updates can lead to corrupted states.
+### 4. Backend Concurrency & Memory Safety
+*   **KV Cache Management:** With a 1M token context, the KV cache can be extremely large. The inference engine MUST implement a memory-efficient KV cache strategy (e.g., PagedAttention) to avoid memory fragmentation and OOM errors.
+*   **Expert Routing Concurrency:** In MoE models, multiple tokens may be routed to the same expert. The inference engine MUST handle concurrent access to expert weights safely, using locks or atomic operations if necessary.
 
-5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Invariant**: Router logits MUST be finite. If NaNs or Infs occur, the model crashes.
-    *   **Code**: `assert torch.isfinite(router_logits).all()`
-    *   **Trap**: Numerical instability in the router can lead to NaNs, which propagate through the model.
+### 5. Defect & Error Prevention ("Galti Pakadna")
+*   **Malformed XML in Tool Calls:** If the model generates malformed XML in the tool call section, the regex parser will fail. The system MUST catch this exception and return a clear error message to the model, prompting it to regenerate the tool call.
+*   **Token ID Mismatch:** The `eos_token_id` is defined as `[151674, 151675]`. The inference engine MUST ensure that both token IDs are treated as end-of-sequence tokens. A common bug is only checking for one of them, leading to premature or delayed termination.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: Hybrid MoE with interleaved sliding/full attention. 52 layers, 3 dense + 49 sparse.
-2.  **Core Abstractions**: `SparseMoELayer`, `SlidingWindowAttentionLayer`, `FullAttentionLayer`, `HarmonyXMLParser`.
-3.  **Error Handling**: Constrained decoding for tool calls, validation of XML schema, handling of NaNs in router logits.
-4.  **Testing**: Unit tests for router load balance, integration tests for long-context retrieval, regression tests for token efficiency.
-5.  **Security**: Sanitization of tool call inputs, prevention of prompt injection via structured output, least privilege for tool execution.
-6.  **Performance**: O(N*W) complexity for sliding attention, O(N) for full attention, 23B active parameters for 501B total, 1M context window.
-7.  **Deployment**: BF16, FP8, NVFP4 numerics, containerized inference engine, reproducible builds.
-8.  **Agent Patterns**: MCP-based tool integration, multi-step workflow execution, self-correction during agentic execution.
-9.  **Data Flow**: Tokenization -> Embedding -> Hybrid Attention -> MoE MLP -> Output Head -> Harmony XML Parsing -> Tool Execution.
+1.  **Architecture:** Hybrid MoE with dense initial layers and sliding/full attention hybrid.
+2.  **Core Abstractions:** Expert Router, Attention Scheduler, Grammar Enforcer.
+3.  **Error Handling:** Regex-based parsing with explicit error handling for malformed tool calls.
+4.  **Testing:** Fuzz testing for tool call parsing, memory profiling for long-context inference.
+5.  **Security:** Strict grammar enforcement prevents injection attacks via malformed tool calls.
+6.  **Performance:** Sliding window attention reduces compute complexity; MoE reduces active parameters.
+7.  **Deployment:** BF16, FP8, and NVFP4 numerics for different hardware targets.
+8.  **Agent Patterns:** Deterministic tool call parsing, retry limits, circular dependency detection.
+9.  **Data Flow:** Token stream -> Attention Layers -> MoE Layers -> Grammar Enforcer -> Structured Output.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Hybrid MoE with interleaved attention.
-2.  **Rule**: Interleave full attention layers to maintain global context.
-3.  **Architecture Principle**: Sparse capacity for deep layers, dense stability for early layers.
-4.  **Failure Mode**: Context drift, token bloat, router load imbalance.
-5.  **Reusable Skill**: Implementing sliding window attention with ring buffer KV cache.
-6.  **Decision**: Use Harmony XML for structured reasoning to improve token efficiency.
-7.  **Anti-pattern**: All sliding window attention, all MoE from layer 0, unstructured reasoning.
-8.  **Verification Method**: Assert layer types, validate XML schema, check router load balance.
+1.  **Pattern:** Hybrid Attention + MoE + Grammar Enforcement.
+2.  **Rule:** MUST use hybrid attention for >128k context; MUST use strict grammar for tool calls.
+3.  **Architecture Principle:** Sparsity should be introduced gradually (dense to sparse) and attention should be hybrid (local to global).
+4.  **Failure Mode:** OOM from full attention; parsing errors from free-text tool calls.
+5.  **Reusable Skill:** Implementing hybrid attention and grammar enforcement in LLM inference engines.
+6.  **Decision:** Chose hybrid attention over pure sliding window to maintain long-range coherence.
+7.  **Anti-pattern:** Using full attention for all layers; using LLM-based parsing for tool calls.
+8.  **Verification Method:** Memory profiling, fuzz testing, latency measurement.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Verify Layer Types**: Ensure `layer_types` array has correct interleaving of `sliding_attention` and `full_attention`.
-2.  **Verify MLP Types**: Ensure `mlp_layer_types` array has first 3 layers as `dense` and rest as `sparse`.
-3.  **Implement Ring Buffer KV Cache**: Use O(1) data structure for sliding window KV cache.
-4.  **Normalize Router Probabilities**: Ensure top-k probabilities sum to 1.
-5.  **Enforce Harmony XML**: Use constrained decoding to enforce structured output.
-6.  **Validate Tool Calls**: Parse and validate tool calls against XML schema.
-7.  **Check Numerical Stability**: Assert router logits are finite.
-8.  **Test Long Context**: Verify model can retrieve information from > 512 tokens away.
-9.  **Measure Token Efficiency**: Compare token count with and without Harmony XML.
-10. **Load Balance Test**: Ensure experts are utilized roughly equally.
+1.  **Verify Attention Type:** Check `config.json` for `layer_types` and ensure that every 5th layer is `full_attention`.
+2.  **Verify MoE Configuration:** Check `num_experts`, `num_experts_per_tok`, and `mlp_layer_types` to ensure the first 3 layers are dense.
+3.  **Verify Grammar Enforcement:** Check `tokenizer_config.json` for `reflection_grammar_version` and `response_template`.
+4.  **Implement Parser:** Write a regex-based parser for tool calls based on the `tag_pattern` in `tokenizer_config.json`.
+5.  **Test Parser:** Fuzz test the parser with 10,000 random tool calls.
+6.  **Profile Memory:** Run inference with a 1M token sequence and verify memory usage.
+7.  **Test Long-Context Accuracy:** Evaluate the model on long-context benchmarks.

@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "181d6814",
+    "sourceVersion": "4a9dcea3",
     "license": "Apache-2.0",
-    "contentHash": "567332b1052ee215263fb9631f48101fb093314dfeaa3c860c0495ea0e0ac4c5",
-    "lastHarvestedAt": "2026-10-25T16:48:17.040Z",
+    "contentHash": "426babffa76c72ca74c0ab261a2d1c011ffe5595890f05231326669cf4a33294",
+    "lastHarvestedAt": "2026-10-27T11:16:06.406Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -4973,10 +4973,10 @@
     "repository": "apple/foundationdb",
     "platform": "github",
     "sourceUrl": "https://github.com/apple/foundationdb",
-    "sourceVersion": "dbf079f5",
+    "sourceVersion": "414a6ec8",
     "license": "Apache-2.0",
-    "contentHash": "a16bd6f2c2cbae43981d46ac16b794f5755744f022a9ddd44bd7ac4fb09f2c5a",
-    "lastHarvestedAt": "2026-10-25T03:14:25.192Z",
+    "contentHash": "9f57772010db3c703916a86e7a5d073f6d6bab3cda93ba07c2ddc0c36d727985",
+    "lastHarvestedAt": "2026-10-27T11:16:07.742Z",
     "learningId": "learn-github-apple-foundationdb"
   },
   "kucherenko-jscpd": {
@@ -9225,8 +9225,8 @@
     "sourceUrl": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
     "sourceVersion": "hf-reflection-beam-1.0-501b-a23b",
     "license": "Open-Source",
-    "contentHash": "eb70879f4fce90ee5e1e314b051f4cdd4f49c1cda2c6da53e3fd311f24f9b14d",
-    "lastHarvestedAt": "2026-10-22T17:58:21.318Z",
+    "contentHash": "739f7de5e231bb42f9de9347094ec94363cf6260018c723a1b0e451af78e968c",
+    "lastHarvestedAt": "2026-10-27T11:16:01.022Z",
     "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b"
   },
   "webrecorder-pywb": {

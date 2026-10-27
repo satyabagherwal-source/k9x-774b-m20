@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-YCOY",
-    "timestamp": "2026-10-25T07:19:00.802Z",
-    "repository": "beclab/Olares",
-    "learningId": "learn-github-beclab-olares",
-    "contentHash": "188379ec975094d9f6d30524604bf35e5f517c4926025c389d9b450d72484aa5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-YOXC",
-    "timestamp": "2026-10-25T07:19:16.656Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "f4f076c82c2139a6f2b01ca58d725f9a0c4e4635d58731ec33deb6196f428cd4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-2QN3",
-    "timestamp": "2026-10-25T07:22:25.503Z",
-    "repository": "callstack/agent-device",
-    "learningId": "learn-github-callstack-agent-device",
-    "contentHash": "340f6205ca1f05a2eaf0fe3187b03dcf35b8ef2de4c0ba5d333013e78cb74cdb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-NTC0",
     "timestamp": "2026-10-25T07:38:48.768Z",
     "repository": "astral-sh/uv",
@@ -7490,6 +7445,51 @@
     "repository": "rqlite/rqlite",
     "learningId": "learn-github-rqlite-rqlite",
     "contentHash": "ff4730875f434bc49b59013b332527edf471f85daee8778ce8e4f8582578a3da",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-AUEY",
+    "timestamp": "2026-10-27T11:16:01.018Z",
+    "repository": "reflection/Beam-1.0-501B-A23B",
+    "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
+    "contentHash": "739f7de5e231bb42f9de9347094ec94363cf6260018c723a1b0e451af78e968c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-AYKJ",
+    "timestamp": "2026-10-27T11:16:06.403Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "426babffa76c72ca74c0ab261a2d1c011ffe5595890f05231326669cf4a33294",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-AZLN",
+    "timestamp": "2026-10-27T11:16:07.739Z",
+    "repository": "apple/foundationdb",
+    "learningId": "learn-github-apple-foundationdb",
+    "contentHash": "9f57772010db3c703916a86e7a5d073f6d6bab3cda93ba07c2ddc0c36d727985",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

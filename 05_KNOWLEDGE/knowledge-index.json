@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T11:09:23.007Z",
+  "last_updated": "2026-10-27T11:16:07.672Z",
   "total_verified_learnings": 1102,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2372,8 +2372,8 @@
       "slug": "apple-foundationdb",
       "platform": "github",
       "source_url": "https://github.com/apple/foundationdb",
-      "source_version": "dbf079f5",
-      "content_hash": "a16bd6f2c2cbae43981d46ac16b794f5755744f022a9ddd44bd7ac4fb09f2c5a",
+      "source_version": "414a6ec8",
+      "content_hash": "9f57772010db3c703916a86e7a5d073f6d6bab3cda93ba07c2ddc0c36d727985",
       "dossier_path": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "promoted_rules": [
@@ -2401,6 +2401,11 @@
           "number": 4007,
           "title": "Add key-range, prefix and derived-lock options to SubmitBackup and RestoreBackup",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4707,
+          "title": "dd/cdc: fix long-double to long-int comparison warning",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2408,7 +2413,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T03:14:25.118Z",
+      "verified_at": "2026-10-27T11:16:07.655Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62637,13 +62642,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "4a9dcea3",
-      "content_hash": "694457ca976b3a347f14b7809c93e692951c39f65dda344ed17852169330d288",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "content_hash": "426babffa76c72ca74c0ab261a2d1c011ffe5595890f05231326669cf4a33294",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -62693,7 +62698,7 @@
         {
           "number": 4678,
           "title": "Merge pull request #4577 from aleo-labs-protocol/fix/devnet-sh-eval",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -62701,7 +62706,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T10:22:04.902Z",
+      "verified_at": "2026-10-27T11:16:06.295Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -103204,7 +103209,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
       "source_version": "hf-reflection-beam-1.0-501b-a23b",
-      "content_hash": "eb70879f4fce90ee5e1e314b051f4cdd4f49c1cda2c6da53e3fd311f24f9b14d",
+      "content_hash": "739f7de5e231bb42f9de9347094ec94363cf6260018c723a1b0e451af78e968c",
       "dossier_path": "07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md",
       "promoted_rules": [
@@ -103237,6 +103242,21 @@
           "number": 3680,
           "title": "Harmony XML Structured Reasoning Protocol",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4704,
+          "title": "Hybrid Attention Sparsity for Long-Context Efficiency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4705,
+          "title": "Deterministic Tool-Call Grammar Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4706,
+          "title": "Dense-to-Sparse Layer Transition for Stability",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -103244,7 +103264,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:58:21.235Z",
+      "verified_at": "2026-10-27T11:16:00.935Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -130829,14 +130849,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 4678,
       "title": "Merge pull request #4577 from aleo-labs-protocol/fix/devnet-sh-eval",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "4a9dcea3",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-27T10:22:04.902Z"
+      "verified_at": "2026-10-27T11:16:06.295Z"
     },
     "rule-4679": {
       "learning_id": "rule-4679",
@@ -131291,6 +131311,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T11:09:23.000Z"
+    },
+    "rule-4704": {
+      "learning_id": "rule-4704",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4704,
+      "title": "Hybrid Attention Sparsity for Long-Context Efficiency",
+      "source_url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
+      "source_version": "hf-reflection-beam-1.0-501b-a23b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:16:00.935Z"
+    },
+    "rule-4705": {
+      "learning_id": "rule-4705",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4705,
+      "title": "Deterministic Tool-Call Grammar Enforcement",
+      "source_url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
+      "source_version": "hf-reflection-beam-1.0-501b-a23b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:16:00.935Z"
+    },
+    "rule-4706": {
+      "learning_id": "rule-4706",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4706,
+      "title": "Dense-to-Sparse Layer Transition for Stability",
+      "source_url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
+      "source_version": "hf-reflection-beam-1.0-501b-a23b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:16:00.935Z"
+    },
+    "rule-4707": {
+      "learning_id": "rule-4707",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4707,
+      "title": "dd/cdc: fix long-double to long-int comparison warning",
+      "source_url": "https://github.com/apple/foundationdb",
+      "source_version": "414a6ec8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:16:07.655Z"
     }
   },
   "aliases": {

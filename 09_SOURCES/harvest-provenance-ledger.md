@@ -5236,3 +5236,6 @@ Every entry in this ledger must capture:
 | `learn-github-planetable-planet` | `https://github.com/Planetable/Planet` | `5294e71c` | Multi-dimensional audit evidence | 2026-10-27T11:09:14.644Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `b1d59903` | Multi-dimensional audit evidence | 2026-10-27T11:09:21.386Z |
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `a742e3f8` | Multi-dimensional audit evidence | 2026-10-27T11:09:23.046Z |
+| `learn-huggingface-reflection-beam-1-0-501b-a23b` | `https://huggingface.co/reflection/Beam-1.0-501B-A23B` | `hf-reflect` | Multi-dimensional audit evidence | 2026-10-27T11:16:01.022Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `4a9dcea3` | Multi-dimensional audit evidence | 2026-10-27T11:16:06.406Z |
+| `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `414a6ec8` | Multi-dimensional audit evidence | 2026-10-27T11:16:07.742Z |
