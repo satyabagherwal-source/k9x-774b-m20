@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
-> **Source Version**: `6acf1e16`  
+> **Source Version**: `d3b8e91b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T13:29:04.274Z  
+> **Timestamp**: 2026-10-27T18:29:33.430Z  
 > **Learning ID**: `learn-github-argoproj-argo-workflows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T13:29:03.765Z  
+> **Harvest Timestamp**: 2026-10-27T18:29:32.523Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Workflow Engine for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17054 stars
+- **Stars / Engagement**: 17058 stars
 
 ---
 
@@ -767,11 +767,11 @@ func githubMatch(secret string, r *http.Request) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #17299** (2026-10-26): **docs: replace the MinIO Helm install with the quick-start S3 server (cherry-pick #17246 for 4.0)**
-  *Symptoms*: Cherry-picked docs: replace the MinIO Helm install with the quick-start S3 server (#17246)
+- **Issue #17303** (2026-10-27): **fix(sync): release every semaphore holder in ReleaseAll (cherry-pick #17302 for 4.1)**
+  *Symptoms*: Cherry-picked fix(sync): release every semaphore holder in ReleaseAll (#17302)  Signed-off-by: Girish Mallya <22449332+girishmallya123@users.noreply.github.com>
 
-- **Issue #17298** (2026-10-26): **docs: replace the MinIO Helm install with the quick-start S3 server (cherry-pick #17246 for 4.1)**
-  *Symptoms*: Cherry-picked docs: replace the MinIO Helm install with the quick-start S3 server (#17246)  Signed-off-by: YoungjuKim <fjvbn2003@gmail.com>
+- **Issue #17302** (2026-10-27): **fix(sync): release every semaphore holder in ReleaseAll**
+  *Symptoms*: Title: fix(sync): release every semaphore holder in ReleaseAll  <!-- markdownlint-disable MD041 -- this is rendered within existing HTML, so allow starting without an H1 -->  See the [pull request guide](https://argo-workflows.readthedocs.io/en/latest/pull-requests/) for details on each item.  - [ ] Ran `make pre-commit -B` — not run in full (it also regenerates code and builds the UI); the touched package was verified with `gofmt`, `go vet`, and the unit tests below, and this change touches no generated files - [x] Signed-off commits with [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) messages - [x] PR title is a conventional commit message (it becomes the release notes entry) - [x] Unit or e2e tests cover the change - [ ] For features: an associated issue and a feature description file (`make feature-new`) — not a feature - [x] Opened as draft; will mark "Ready for review" once builds are green  <!-- Does this PR fix an issue -->  Fixes #17267  ### Motivation  When a workflow terminates, `Manager.ReleaseAll` releases the workflow's semaphore holders. The semaphore branch ranged over `holding.Holders` while `SemaphoreStatus.LockReleased` rewrote that same slice via `slices.DeleteFunc`, which compacts the shared backing array mid-iteration. Holders after the first were therefore skipped and their semaphore slots leaked — a workflow whose several nodes held the same semaphore (e.g. parallel steps under a template-level semaphore) permanently consumed slo
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -788,619 +788,675 @@ func githubMatch(secret string, r *http.Request) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6acf1e16` (2026-10-26)
-**Commit Message**: chore(deps): update dependency serialize-javascript to v7.1.3 [security] (#17297)
+### Incident Patch 1: `d3b8e91b` (2026-10-27)
+**Commit Message**: test(estimation): move fixtures into testdata (#17241)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Signed-off-by: augustkevinsanjaya <[REDACTED_EMAIL]>
+Signed-off-by: Kevin <[REDACTED_EMAIL]>
 
-**File**: `ui/yarn.lock` (modified, +3/-3)
+**File**: `test/util/unstructured.go` (modified, +5/-5)
 ```diff
-@@ -8386,9 +8386,9 @@ send@~0.19.0, send@~0.19.1:
-     statuses "~2.0.2"
- 
- serialize-javascript@^6.0.2, serialize-javascript@^7.0.5:
--  version "7.1.2"
--  resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-7.1.2.tgz#0161010a0815dd7b7e011cbc5a3644850b8c2289"
--  integrity sha512-GL2BWwVa6JydKO6l/ljVgjAZF4QJ3S7dWDWi53s5GZT8PJzD2fNxi67HANQGKAqPrwEpL5ba7gUBGi0Ls/sEoQ==
-+  version "7.1.4"
-+  resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-7.1.4.tgz#477af55bdec0d831fa3b209245f673217fd27380"
-+  integrity sha512-FqlEuoTq/zRmA4Lg6aOqyH3lCHbUtCB0bmHCeFniX2GBdDqMJM3FwdvEhlE5Pim1dlt2FfBdVPmUNNiGhhKqpw==
- 
- serve-index@^1.9.1:
-   version "1.9.2"
-```
-
----
-
-### Incident Patch 2: `750c81fc` (2026-10-26)
-**Commit Message**: docs: replace the MinIO Helm install with the quick-start S3 server (#17246)
-
-Signed-off-by: YoungjuKim <[REDACTED_EMAIL]>
-
-**File**: `.cspell.json` (modified, +2/-1)
-```diff
-@@ -91,6 +91,7 @@
-     "workflowkey",
-     "workflowtemplate",
-     "workflowtemplates",
--    "zstd"
-+    "zstd",
-+    "pgsty"
-   ]
- }
-```
-
-**File**: `docs/configure-artifact-repository.md` (modified, +11/-22)
-```diff
-@@ -100,38 +100,27 @@ aliyun oss lifecycle --method put oss://my-artifact-bucket lifecycle.json
- 
- ## Configuring MinIO
- 
--You can install MinIO into your cluster via Helm.
--
--First, [install `helm`](https://helm.sh/docs/intro/install/). Then, install MinIO with the below commands:
-+For a test setup, you can install the S3 compatible server that the [quick start](quick-start.md) uses.
-+It runs `docker.io/pgsty/silo`, a fork of the MinIO server that keeps the S3 API and the `MINIO_*` settings:
- 
- ```bash
--helm repo add minio https://charts.min.io/ # official minio Helm charts
--helm repo update
--helm install argo-artifacts minio/minio --set service.type=LoadBalancer --set fullnameOverride=argo-artifacts
-+kubectl apply -n argo -k "https://github.com/argoproj/argo-workflows//manifests/quick-start/base/minio?ref=v4.1.5"
- ```
- 
--Login to the MinIO UI using a web browser (port 9000) after obtaining the
--external IP using `kubectl`.
-+This creates:
- 
--```bash
--kubectl get service argo-artifacts
--```
-+- a Deployment and a Service named `minio`, with the S3 API on port 9000 and the web console on port 9001
-+- a bucket named `my-bucket`
-+- a Secret named `my-minio-cred` with the keys `accesskey` and `secretkey`, which you can reference from the [artifact repository configuration](artifact-repository-ref.md)
-+
-+The server stores data in the container file system and uses the fixed credentials `admin` and `password`, so do not use it for production artifacts.
- 
--On Minikube:
-+To open the web console, forward the port and log in with these credentials:
- 
- ```bash
--minikube service --url argo-artifacts
-+kubectl -n argo port-forward svc/minio 9001:9001
- ```
- 
--NOTE: When MinIO is installed via Helm, it generates
--credentials, which you will use to login to the UI:
--Use the commands shown below to see the credentials
--
--- `AccessKey`: `kubectl get secret argo-artifacts -o jsonpath='{.data.accesskey}' | base64 --decode`
--- `SecretKey`: `kubectl get secret argo-artifacts -o jsonpath='{.data.secretkey}' | base64 --decode`
--
--Create a bucket named `my-bucket` from the MinIO UI.
--
- If MinIO is configured to use TLS you need to set the parameter `insecure` to `false`. Additionally, if MinIO is protected by certificates generated by a custom CA, you first need to save the CA certificate in a Kubernetes secret, then set the `caSecret` parameter accordingly. This will allow Argo to correctly verify the server certificate presented by MinIO. For example:
- 
- ```bash
-```
-
----
-
-### Incident Patch 3: `f484e700` (2026-10-26)
-**Commit Message**: fix(executor): bound task result retries by time, not by backoff steps (#17212)
-
-Signed-off-by: Alan Clucas <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-Co-authored-by: Tim Collins <[REDACTED_EMAIL]>
-Co-authored-by: Mason Malone <[REDACTED_EMAIL]>
-
-**File**: `cmd/argoexec/executor/init.go` (modified, +1/-0)
-```diff
-@@ -85,6 +85,7 @@ func InitProcess(ctx context.Context, clientConfig clientcmd.ClientConfig) *exec
- 			InitlessPod:                  common.IsInitlessPod(),
- 			RetryBackoff:                 retry.ExecutorRetry(ctx),
- 			ResourceStateCheckInterval:   env.LookupEnvDurationOr(ctx, "RESOURCE_STATE_CHECK_INTERVAL", 5*time.Second),
-+			TaskResultRetryTimeout:       retry.ExecutorTaskResultRetryTimeout(ctx),
- 		},
- 	)
- 	CheckErr(err)
-```
-
-**File**: `docs/environment-variables.md` (modified, +1/-0)
-```diff
-@@ -136,6 +136,7 @@ Gains may vary under load: if the workflow informer is behind the controller's l
- | `EXECUTOR_RETRY_BACKOFF_FACTOR`        | `float`         | `1.6`   | The retry back-off factor when the workflow executor performs retries.                                 |
- | `EXECUTOR_RETRY_BACKOFF_JITTER`        | `float`         | `0.5`   | The retry back-off jitter when the workflow executor performs retries.                                 |
- | `EXECUTOR_RETRY_BACKOFF_STEPS`         | `int`           | `5`     | The retry back-off steps when the workflow executor performs retries.                                  |
-+| `EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS` | `int` | `600` | How long, in seconds, the workflow executor retries each final task result write (outputs, completion) through transient errors before giving up; the placeholder write when the pod starts gives up after 30 seconds whatever this is set to, and progress writes give up after 30 seconds and the executor tries again on the next update; the backoff schedule is fixed and not affected by `EXECUTOR_RETRY_BACKOFF_*`; the value must be positive, and non-positive values use the default. |
- | `REMOVE_LOCAL_ART_PATH`                | `bool`          | `false` | Whether to remove local artifacts.                                                                     |
- | `RESOURCE_STATE_CHECK_INTERVAL`        | `time.Duration` | `5s`    | The time interval between resource status checks against the specified success and failure conditions. |
- 
-```
-
-**File**: `util/retry/retry.go` (modified, +23/-0)
-```diff
-@@ -2,11 +2,13 @@ package retry
+@@ -2,14 +2,14 @@ package util
  
  import (
- 	"context"
-+	"math"
- 	"time"
- 
- 	"k8s.io/apimachinery/pkg/util/wait"
- 
- 	envutil "github.com/argoproj/argo-workflows/v4/util/env"
-+	"github.com/argoproj/argo-workflows/v4/util/logging"
+ 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+-	"sigs.k8s.io/yaml"
++
++	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
  )
  
- // DefaultRetry is a default retry backoff settings when retrying API calls
-@@ -39,3 +41,24 @@ func ExecutorRetry(ctx context.Context) wait.Backoff {
- 	jitter := envutil.LookupEnvFloatOr(ctx, "EXECUTOR_RETRY_BACKOFF_JITTER", 0.5)
- 	return wait.Backoff{Steps: steps, Duration: duration, Factor: factor, Jitter: jitter}
- }
-+
-+// DefaultExecutorTaskResultRetryTimeout is the default for
-+// ExecutorTaskResultRetryTimeout.
-+const DefaultExecutorTaskResultRetryTimeout = 10 * time.Minute
-+
-+// ExecutorTaskResultRetryTimeout is how long the WorkflowExecutor keeps
-+// retrying transient errors when writing its task result. Values that are
-+// not positive, or too large for a time.Duration, use the default.
-+func ExecutorTaskResultRetryTimeout(ctx context.Context) time.Duration {
-+	const maxSeconds = math.MaxInt64 / int64(time.Second)
-+	seconds := envutil.LookupEnvIntOr(ctx, "EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS", int(DefaultExecutorTaskResultRetryTimeout/time.Second))
-+	if seconds <= 0 || int64(seconds) > maxSeconds {
-+		logging.RequireLoggerFromContext(ctx).WithFields(logging.Fields{
-+			"EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS": seconds,
-+			"max":     maxSeconds,
-+			"default": DefaultExecutorTaskResultRetryTimeout,
-+		}).Warn(ctx, "EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS is out of range (1 to max), using the default")
-+		return DefaultExecutorTaskResultRetryTimeout
-+	}
-+	return time.Duration(seconds) * time.Second
-+}
-```
-
-**File**: `util/retry/retry_test.go` (added, +39/-0)
-```diff
-@@ -0,0 +1,39 @@
-+package retry
-+
-+import (
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/assert"
-+
-+	"github.com/argoproj/argo-workflows/v4/util/logging"
-+)
-+
-+func TestExecutorTaskResultRetryTimeout(t *testing.T) {
-+	ctx := logging.TestContext(t.Context())
-+	t.Run("Default", func(t *testing.T) {
-+		t.Setenv("EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS", "")
-+		assert.Equal(t, 10*time.Minute, ExecutorTaskResultRetryTimeout(ctx))
-+	})
-+	t.Run("FromEnv", func(t *testing.T) {
-+		t.Setenv("EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS", "90")
-+		assert.Equal(t, 90*time.Second, ExecutorTaskResultRetryTimeout(ctx))
-+	})
-+	t.Run("NegativeUsesDefault", func(t *testing.T) {
-+		t.Setenv("EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS", "-1")
-+		assert.Equal(t, 10*time.Minute, ExecutorTaskResultRetryTimeout(ctx))
-+	})
-+	t.Run("ZeroUsesDefault", func(t *testing.T) {
-+		t.Setenv("EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS", "0")
-+		assert.Equal(t, 10*time.Minute, ExecutorTaskResultRetryTimeout(ctx))
-+	})
-+	t.Run("TooLargeUsesDefault", func(t *testing.T) {
-+		// 1e10 seconds overflows time.Duration, which tops out near 9.2e9.
-+		t.Setenv("EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS", "10000000000")
-+		assert.Equal(t, 10*time.Minute, ExecutorTaskResultRetryTimeout(ctx))
-+	})
-+	t.Run("LargestAllowed", func(t *testing.T) {
-+		t.Setenv("EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS", "9223372036")
-+		assert.Equal(t, 9223372036*time.Second, ExecutorTaskResultRetryTimeout(ctx))
-+	})
-+}
-```
-
-**File**: `workflow/executor/executor.go` (modified, +96/-41)
-```diff
-@@ -4,6 +4,7 @@ import (
- 	"archive/tar"
- 	"archive/zip"
- 	"bufio"
-+	"cmp"
- 	"compress/gzip"
- 	"context"
- 	"encoding/json"
-@@ -53,6 +54,27 @@ const (
- 	tempOutArtDir = "/tmp/argo/outputs/artifacts"
- )
- 
-+// defaultTaskResultBackoff spaces out task result retries: the delay grows
-+// until it reaches Cap and then stays there. Only the retry timeout ends
-+// the retries.
-+var defaultTaskResultBackoff = wait.Backoff{
-+	Duration: time.Second,
-+	Factor:   2,
-+	Jitter:   0.1,
-+	Steps:    math.MaxInt32, // the delay only grows while steps remain
-+	Cap:      30 * time.Second,
-+}
-+
-+// defaultInterimResultRetryTimeout limits the retries of the task result
-+// writes before the final ones: InitializeOutput's placeholder and the
-+// progress reports. Neither waits long: a failed placeholder write errors
-+// the step, as it always has, and the progress monitor sends the latest
-+// progress again on its next tick. Waiting would hold up the
-+// deadline monitor and the resource action, which start after
-+// InitializeOutput. 30s is about what every write got before the retry
-+// timeout existed, when the backoff gave up on reaching its cap.
-+const defaultInterimResultRetryTimeout = 30 * time.Second
-+
- // Process holds the state shared by every task an argoexec process runs:
- // API clients, the container runtime, tracing and pod-scoped settings. It
- // is built once per process by NewProcess; the per-task state lives in the
-@@ -84,6 +106,13 @@ type Process struct {
- 	initlessPod                  bool
- 	retryBackoff                 wait.Backoff
- 	resourceStateCheckInterval   time.Duration
-+	// taskResultRetryTimeout limits the retries of the final task result
-+	// writes and interimResultRetryTimeout those of the writes before
-+	// them; taskResultBackoff spaces out the retries of both. NewProcess
-+	// resolves their defaults.
-+	taskResultRetryTimeout    time.Duration
-+	interimResultRetryTimeout time.Duration
-+	taskResultBackoff         wait.Backoff
- }
- 
- // WorkflowExecutor runs one task (one template on one node) within a
-@@ -162,6 +191,10 @@ type ProcessConfig struct {
- 	// ResourceStateCheckInterval is the poll interval for resource template
- 	// state checks (RESOURCE_STATE_CHECK_INTERVAL).
- 	ResourceStateCheckInterval time.Duration
-+	// TaskResultRetryTimeout bounds how long writes to the task result retry
-+	// transient errors (EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS); zero means
-+	// retry.DefaultExecutorTaskResultRetryTimeout.
-+	TaskResultRetryTimeout time.Duration
- }
- 
- // TaskConfig carries the per-task values a WorkflowExecutor is constructed
-@@ -259,6 +292,9 @@ func NewProcess(
- 		initlessPod:                  cfg.InitlessPod,
- 		retryBackoff:                 cfg.RetryBackoff,
- 		resourceStateCheckInterval:   cfg.ResourceStateCheckInterval,
-+		taskResultRetryTimeout:       cmp.Or(cfg.TaskResultRetryTimeout, retry.DefaultExecutorTaskResultRetryTimeout),
-+		interimResultRetryTimeout:    defaultInterimResultRetryTimeout,
-+		taskResultBackoff:            defaultTaskResultBackoff,
- 	}, nil
- }
- 
-@@ -1039,15 +1075,7 @@ func (we *WorkflowExecutor) CaptureScriptResult(ctx context.Context) error {
- func (we *WorkflowExecutor) FinalizeOutput(ctx context.Context) {
- 	logger := logging.RequireLoggerFromContext(ctx)
- 	var count uint64
--	err := retryutil.OnError(wait.Backoff{
--		Duration: time.Second,
--		Factor:   2,
--		Jitter:   0.1,
--		Steps:    math.MaxInt32, // effectively infinite retries
--		Cap:      30 * time.Second,
--	}, func(err error) bool {
--		return errorsutil.IsTransientErr(ctx, err)
--	}, func() error {
-+	err := we.retryTaskResult(ctx, we.taskResultRetryTimeout, func(ctx context.Context) error {
- 		err := we.patchTaskResultLabels(ctx, map[string]string{
- 			common.LabelKeyReportOutputsCompleted: "true",
- 		})
-@@ -1065,27 +1093,7 @@ func (we *WorkflowExecutor) FinalizeOutput(ctx context.Context) {
- }
- 
- func (we *WorkflowExecutor) InitializeOutput(ctx context.Context) {
--	logger := logging.RequireLoggerFromContext(ctx)
--	var count uint64
--	err := retryutil.OnError(wait.Backoff{
--		Duration: time.Second,
--		Factor:   2,
--		Jitter:   0.1,
--		Steps:    math.MaxInt32, // effectively infinite retries
--		Cap:      30 * time.Second,
--	}, func(err error) bool {
--		return errorsutil.IsTransientErr(ctx, err)
--	}, func() error {
--		err := we.upsertTaskResult(ctx, wfv1.NodeResult{})
--		if apierr.IsForbidden(err) {
--			logger.WithError(err).WithField("attempt", count).Warn(ctx, "failed to patch task result, see https://argo-workflows.readthedocs.io/en/latest/workflow-rbac/")
--		} else if err != nil && count%20 == 0 {
--			logger.WithError(err).WithField("attempt", count).Warn(ctx, "failed to patch task result")
--		}
--		count++
--		return err
--	})
++// MustUnmarshalUnstructured unmarshals an unstructured object from either a file
++// (if text starts with "@"), JSON (if it starts with "{") or a YAML string.
+ func MustUnmarshalUnstructured(text string) *unstructured.Unstructured {
+ 	v := &unstructured.Unstructured{}
+-	err := yaml.UnmarshalStrict([]byte(text), v)
 -	if err != nil {
-+	if err := we.reportResultWithin(ctx, we.interimResultRetryTimeout, wfv1.NodeResult{}); err != nil {
- 		we.AddError(ctx, err)
- 	}
+-		panic(err)
+-	}
++	wfv1.MustUnmarshal(text, v)
+ 	return v
  }
-@@ -1107,18 +1115,17 @@ func (we *WorkflowExecutor) ReportOutputsLogs(ctx context.Context) error {
- 	return we.reportResult(ctx, w
 ```
 
-**File**: `workflow/executor/executor_test.go` (modified, +174/-3)
+**File**: `workflow/controller/estimation/estimator_factory_test.go` (modified, +6/-37)
 ```diff
-@@ -4,8 +4,10 @@ import (
- 	"archive/tar"
- 	"archive/zip"
- 	"compress/gzip"
-+	"context"
- 	"fmt"
- 	"io"
-+	"math"
- 	"os"
- 	"os/exec"
- 	"path/filepath"
-@@ -18,8 +20,12 @@ import (
- 	"github.com/stretchr/testify/mock"
- 	"github.com/stretchr/testify/require"
- 	corev1 "k8s.io/api/core/v1"
-+	apierr "k8s.io/apimachinery/pkg/api/errors"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	k8sruntime "k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/util/wait"
- 	"k8s.io/client-go/kubernetes/fake"
-+	k8stesting "k8s.io/client-go/testing"
- 
- 	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
- 	argofake "github.com/argoproj/argo-workflows/v4/pkg/client/clientset/versioned/fake"
-@@ -649,9 +655,12 @@ func TestMonitorProgress(t *testing.T) {
- 			Namespace:                    fakeNamespace,
- 			AnnotationPatchTickDuration:  annotationPackTickDuration,
- 			ReadProgressFileTickDuration: readProgressFileTickDuration,
-+			TaskResultRetryTimeout:       90 * time.Second,
- 		},
- 	)
- 	require.NoError(t, err)
-+	assert.Equal(t, 90*time.Second, process.taskResultRetryTimeout)
-+	assert.Equal(t, defaultTaskResultBackoff, process.taskResultBackoff)
- 	we := process.NewExecutor(TaskConfig{
- 		WorkflowName:        fakeWorkflow,
- 		WorkflowUID:         fakeWorkflowUID,
-@@ -748,9 +757,11 @@ func TestReportOutputs(t *testing.T) {
- 		require.NoError(t, err)
- 		we := WorkflowExecutor{
- 			Process: &Process{
--				RuntimeExecutor:  &mockRuntimeExecutor,
--				taskResultClient: mockTaskResultClient,
--				Tracing:          tracing,
-+				RuntimeExecutor:        &mockRuntimeExecutor,
-+				taskResultClient:       mockTaskResultClient,
-+				Tracing:                tracing,
-+				taskResultRetryTimeout: time.Minute,
-+				taskResultBackoff:      defaultTaskResultBackoff,
- 			},
- 			Template: templateWithArtifacts,
- 		}
-@@ -762,6 +773,166 @@ func TestReportOutputs(t *testing.T) {
- 	})
- }
- 
-+// newFlakyTaskResultExecutor returns an executor whose task result API
-+// fails with a transient error until outage has passed (forever if
-+// outage is negative). Retries are scaled down to milliseconds: the
-+// backoff reaches its cap after 15ms.
-+func newFlakyTaskResultExecutor(t *testing.T, outage, retryTimeout time.Duration) (*WorkflowExecutor, *argofake.Clientset) {
-+	t.Helper()
-+	ctx := logging.TestContext(t.Context())
-+	tr, err := tracing.New(ctx, `argoexec`)
-+	require.NoError(t, err)
-+	clientset := argofake.NewClientset()
-+	start := time.Now()
-+	clientset.PrependReactor("*", "workflowtaskresults", func(k8stesting.Action) (bool, k8sruntime.Object, error) {
-+		if outage < 0 || time.Since(start) < outage {
-+			return true, nil, apierr.NewServiceUnavailable("API server unavailable")
-+		}
-+		return false, nil, nil
-+	})
-+	return &WorkflowExecutor{
-+		Process: &Process{
-+			taskResultClient:          clientset.ArgoprojV1alpha1().WorkflowTaskResults(fakeNamespace),
-+			Tracing:                   tr,
-+			taskResultRetryTimeout:    retryTimeout,
-+			interimResultRetryTimeout: retryTimeout,
-+			taskResultBackoff:         wait.Backoff{Duration: time.Millisecond, Factor: 2, Steps: math.MaxInt32, Cap: 10 * time.Millisecond},
-+		},
-+		workflow: fakeWorkflow,
-+		nodeID:   fakeNodeID,
-+	}, clientset
-+}
-+
-+func TestDefaultTaskResultBackoff(t *testing.T) {
-+	backoff := defaultTaskResultBackoff
-+	backoff.Jitter = 0
-+	delay := backoff.DelayFunc()
-+	var delays []time.Duration
-+	for range 8 {
-+		delays = append(delays, delay())
-+	}
-+	s := time.Second
-+	assert.Equal(t, []time.Duration{1 * s, 2 * s, 4 * s, 8 * s, 16 * s, 30 * s, 30 * s, 30 * s}, delays)
-+}
-+
-+func TestTaskResultRetries(t *testing.T) {
-+	t.Run("OutageLongerThanTimeoutFails", func(t *testing.T) {
-+		ctx := logging.TestContext(t.Context())
-+		we, _ := newFlakyTaskResultExecutor(t, -1, 100*time.Millisecond)
-+
-+		start := time.Now()
-+		err := we.reportResult(ctx, wfv1.NodeResult{Progress: "1/2"})
-+		require.Error(t, err)
-+		assert.True(t, apierr.IsServiceUnavailable(err), "returns the last API error, got %v", err)
-+		require.ErrorContains(t, err, "gave up writing task result after 100ms: ")
-+		assert.GreaterOrEqual(t, time.Since(start), 100*time.Millisecond)
-+
-+		we.InitializeOutput(ctx)
-+		we.FinalizeOutput(ctx)
-+		assert.Len(t, we.errors, 2)
-+	})
-+	t.Run("InterimWritesUseTheirOwnLimit", func(t *testing.T) {
-+		ctx := logging.TestContext(t.Context())
-+		we, _ := newFlakyTaskResultExecutor(t, -1, time.Minute)
-+		we.interimResultRetryTimeout = 50 * time.Millisecond
-+
-+		start := time.Now()
-+		we.InitializeOutput(ctx)
-+		assert.Less(t, time.Since(start), 10*time.Second)
-+		require.Len(t, we.errors, 1)
-+		assert.True(t, apierr.IsServiceUnavailable(we.errors[0]), "got %v", we.errors[0])
-+	})
-+	t.Run("OutagePastBackoffCapButShorterThanTimeoutSucceeds", func(t *testing.T) {
-+		ctx := logging.TestContext(t.Context())
-+		we, clientset := newFlakyTaskResultExecutor(t, 200*time.Millisecond, time.Minute)
-+
-+		require.NoError(t, we.reportResult(ctx, wfv1.NodeResult{Progress: "1/2"}))
-+		result, err := clien
-```
-
-**File**: `workflow/executor/postmain_test.go` (modified, +104/-0)
-```diff
-@@ -1,16 +1,25 @@
- package executor
- 
+@@ -3,8 +3,6 @@ package estimation
  import (
-+	"bytes"
-+	"context"
-+	"os"
-+	"path/filepath"
-+	"sync"
-+	"sync/atomic"
  	"testing"
-+	"time"
  
+-	"github.com/argoproj/argo-workflows/v4/util/logging"
+-
  	"github.com/stretchr/testify/assert"
  	"github.com/stretchr/testify/mock"
  	"github.com/stretchr/testify/require"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/types"
- 	"k8s.io/client-go/kubernetes/fake"
- 
+@@ -14,6 +12,7 @@ import (
+ 	sqldbmocks "github.com/argoproj/argo-workflows/v4/persist/sqldb/mocks"
  	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
- 	argofake "github.com/argoproj/argo-workflows/v4/pkg/client/clientset/versioned/fake"
-+	typedv1alpha1 "github.com/argoproj/argo-workflows/v4/pkg/client/clientset/versioned/typed/workflow/v1alpha1"
- 	"github.com/argoproj/argo-workflows/v4/util/logging"
- 	utilretry "github.com/argoproj/argo-workflows/v4/util/retry"
- 	"github.com/argoproj/argo-workflows/v4/workflow/executor/mocks"
-@@ -33,6 +42,10 @@ func newTestPostMainExecutor(t *testing.T, tmpl wfv1.Template, mockRuntime *mock
- 			Tracing:            tracingObj,
- 			memoizedConfigMaps: map[string]string{},
- 			retryBackoff:       utilretry.ExecutorRetry(ctx),
-+			// The defaults NewProcess would set.
-+			taskResultRetryTimeout:    utilretry.DefaultExecutorTaskResultRetryTimeout,
-+			interimResultRetryTimeout: defaultInterimResultRetryTimeout,
-+			taskResultBackoff:         defaultTaskResultBackoff,
- 		},
- 		workflow:    fakeWorkflow,
- 		workflowUID: types.UID(fakeWorkflowUID),
-@@ -135,3 +148,94 @@ func TestPostMain_WaitErrorIsAggregated(t *testing.T) {
- 	err := we.PostMain(ctx, ctx, false)
- 	require.Error(t, err, "Wait error must surface via HasError")
+ 	testutil "github.com/argoproj/argo-workflows/v4/test/util"
++	"github.com/argoproj/argo-workflows/v4/util/logging"
+ 	"github.com/argoproj/argo-workflows/v4/workflow/common"
+ 	"github.com/argoproj/argo-workflows/v4/workflow/controller/indexes"
+ 	hydratorfake "github.com/argoproj/argo-workflows/v4/workflow/hydrator/fake"
+@@ -22,44 +21,14 @@ import (
+ func Test_estimatorFactory(t *testing.T) {
+ 	informer := testutil.NewSharedIndexInformer()
+ 	ctx := logging.TestContext(t.Context())
+-	wfFailed := testutil.MustUnmarshalUnstructured(`
+-apiVersion: argoproj.io/v1alpha1
+-kind: Workflow
+-metadata:
+-  name: bad-baseline
+-  labels:
+-    workflows.argoproj.io/phase: Failed
+-`)
+-	informer.Indexer.SetByIndex(indexes.ClusterWorkflowTemplateIndex, "my-ns/my-cwft", testutil.MustUnmarshalUnstructured(`
+-apiVersion: argoproj.io/v1alpha1
+-kind: Workflow
+-metadata:
+-  name: my-cwft-baseline
+-  labels:
+-    workflows.argoproj.io/phase: Succeeded
+-`), wfFailed)
+-	informer.Indexer.SetByIndex(indexes.CronWorkflowIndex, "my-ns/my-cwf", testutil.MustUnmarshalUnstructured(`
+-apiVersion: argoproj.io/v1alpha1
+-kind: Workflow
+-metadata:
+-  name: my-cwf-baseline
+-  labels:
+-    workflows.argoproj.io/phase: Succeeded
+-`), wfFailed)
+-	informer.Indexer.SetByIndex(indexes.WorkflowTemplateIndex, "my-ns/my-wftmpl", testutil.MustUnmarshalUnstructured(`
+-apiVersion: argoproj.io/v1alpha1
+-kind: Workflow
+-metadata:
+-  name: my-wftmpl-baseline
+-  labels:
+-    workflows.argoproj.io/phase: Succeeded
+-`), wfFailed)
++	wfFailed := testutil.MustUnmarshalUnstructured("@testdata/estimator_factory/failed-baseline.yaml")
++	informer.Indexer.SetByIndex(indexes.ClusterWorkflowTemplateIndex, "my-ns/my-cwft", testutil.MustUnmarshalUnstructured("@testdata/estimator_factory/cwft-baseline.yaml"), wfFailed)
++	informer.Indexer.SetByIndex(indexes.CronWorkflowIndex, "my-ns/my-cwf", testutil.MustUnmarshalUnstructured("@testdata/estimator_factory/cwf-baseline.yaml"), wfFailed)
++	informer.Indexer.SetByIndex(indexes.WorkflowTemplateIndex, "my-ns/my-wftmpl", testutil.MustUnmarshalUnstructured("@testdata/estimator_factory/wftmpl-baseline.yaml"), wfFailed)
+ 	wfArchive := &sqldbmocks.WorkflowArchive{}
+ 	r, err := labels.ParseToRequirements("workflows.argoproj.io/workflow-template=my-archived-wftmpl")
+ 	require.NoError(t, err)
+-	wfArchive.On("GetWorkflowForEstimator", mock.Anything, "my-ns", r).Return(testutil.MustUnmarshalWorkflow(`
+-metadata:
+-  name: my-archived-wftmpl-baseline`), nil)
++	wfArchive.On("GetWorkflowForEstimator", mock.Anything, "my-ns", r).Return(wfv1.MustUnmarshalWorkflow("@testdata/estimator_factory/archived-wftmpl-baseline.yaml"), nil)
+ 	f := NewEstimatorFactory(ctx, informer, hydratorfake.Always, wfArchive)
+ 	t.Run("None", func(t *testing.T) {
+ 		p, err := f.NewEstimator(ctx, &wfv1.Workflow{})
+```
+
+**File**: `workflow/controller/estimation/testdata/estimator_factory/archived-wftmpl-baseline.yaml` (added, +2/-0)
+```diff
+@@ -0,0 +1,2 @@
++metadata:
++  name: my-archived-wftmpl-baseline
+```
+
+**File**: `workflow/controller/estimation/testdata/estimator_factory/cwf-baseline.yaml` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++apiVersion: argoproj.io/v1alpha1
++kind: Workflow
++metadata:
++  name: my-cwf-baseline
++  labels:
++    workflows.argoproj.io/phase: Succeeded
+```
+
+**File**: `workflow/controller/estimation/testdata/estimator_factory/cwft-baseline.yaml` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++apiVersion: argoproj.io/v1alpha1
++kind: Workflow
++metadata:
++  name: my-cwft-baseline
++  labels:
++    workflows.argoproj.io/phase: Succeeded
+```
+
+**File**: `workflow/controller/estimation/testdata/estimator_factory/failed-baseline.yaml` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++apiVersion: argoproj.io/v1alpha1
++kind: Workflow
++metadata:
++  name: bad-baseline
++  labels:
++    workflows.argoproj.io/phase: Failed
+```
+
+**File**: `workflow/controller/estimation/testdata/estimator_factory/wftmpl-baseline.yaml` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++apiVersion: argoproj.io/v1alpha1
++kind: Workflow
++metadata:
++  name: my-wftmpl-baseline
++  labels:
++    workflows.argoproj.io/phase: Succeeded
+```
+
+---
+
+### Incident Patch 2: `eab91f13` (2026-10-27)
+**Commit Message**: fix(sync): release every semaphore holder in ReleaseAll (#17302)
+
+Signed-off-by: Girish Mallya <[REDACTED_EMAIL]>
+Co-authored-by: Girish Mallya <[REDACTED_EMAIL]>
+
+**File**: `workflow/sync/sync_manager.go` (modified, +8/-1)
+```diff
+@@ -749,7 +749,14 @@ func (sm *Manager) ReleaseAll(ctx context.Context, wf *wfv1.Workflow) bool {
+ 				continue
+ 			}
+ 
+-			for _, holderKey := range holding.Holders {
++			// LockReleased rewrites holding.Holders in place (slices.DeleteFunc
++			// compacts the shared backing array), so iterate over a copy:
++			// ranging over the live slice skips holders as it shrinks, leaking
++			// their semaphore slots. The mutex branch below copies for the
++			// same reason.
++			holders := make([]string, len(holding.Holders))
++			copy(holders, holding.Holders)
++			for _, holderKey := range holders {
+ 				syncLockHolder.release(ctx, holderKey)
+ 				wf.Status.Synchronization.Semaphore.LockReleased(holderKey, holding.Semaphore)
+ 				sm.log.WithFields(logging.Fields{"holderKey": holderKey, "semaphore": holding.Semaphore}).Info(ctx, "Lock released")
+```
+
+**File**: `workflow/sync/sync_manager_test.go` (modified, +59/-0)
+```diff
+@@ -981,6 +981,65 @@ func TestSemaphoreTmplLevel(t *testing.T) {
+ 	})
  }
-+
-+// serialTaskResults wraps a task result client and records how many writes
-+// were in flight at once. Progress writes stall until their ctx ends, as
-+// they would against an API server that has stopped answering.
-+type serialTaskResults struct {
-+	typedv1alpha1.WorkflowTaskResultInterface
-+	progressStarted chan struct{}
-+	startOnce       sync.Once
-+	progressWrites  atomic.Int32
-+
-+	mu          sync.Mutex
-+	inFlight    int
-+	maxInFlight int
-+}
-+
-+func (c *serialTaskResults) begin() (end func()) {
-+	c.mu.Lock()
-+	defer c.mu.Unlock()
-+	c.inFlight++
-+	c.maxInFlight = max(c.maxInFlight, c.inFlight)
-+	return func() {
-+		c.mu.Lock()
-+		defer c.mu.Unlock()
-+		c.inFlight--
+ 
++// TestReleaseAllReleasesEverySemaphoreHolder is a regression test for
++// semaphore slots leaking on workflow termination: ReleaseAll ranged over
++// holding.Holders while LockReleased rewrote that same slice via
++// slices.DeleteFunc, so holders after the first were skipped and never
++// released.
++func TestReleaseAllReleasesEverySemaphoreHolder(t *testing.T) {
++	kube := fake.NewClientset()
++	cm := v1.ConfigMap{
++		ObjectMeta: metav1.ObjectMeta{
++			Name:      "my-config",
++			Namespace: "default",
++		},
++		Data: map[string]string{
++			"template": "3",
++		},
 +	}
-+}
 +
-+func (c *serialTaskResults) stallProgress(ctx context.Context) error {
-+	c.progressWrites.Add(1)
-+	c.startOnce.Do(func() { close(c.progressStarted) })
-+	<-ctx.Done()
-+	return ctx.Err()
-+}
++	ctx := logging.TestContext(t.Context())
++	_, err := kube.CoreV1().ConfigMaps("default").Create(ctx, &cm, metav1.CreateOptions{})
++	require.NoError(t, err)
 +
-+func (c *serialTaskResults) Create(ctx context.Context, tr *wfv1.WorkflowTaskResult, opts metav1.CreateOptions) (*wfv1.WorkflowTaskResult, error) {
-+	end := c.begin()
-+	defer end()
-+	if tr.Progress != "" {
-+		return nil, c.stallProgress(ctx)
++	syncLimitFunc := GetSyncLimitFunc(kube)
++	syncManager, err := NewLockManager(ctx, kube, "", nil, syncLimitFunc, func(key string) {
++	}, WorkflowExistenceFunc, false)
++	require.NoError(t, err)
++
++	wf := wfv1.MustUnmarshalWorkflow(wfWithTmplSemaphore)
++	tmpl := wf.Spec.Templates[2]
++
++	// Three nodes of the same workflow acquire the same semaphore, so the
++	// workflow's Holding entry for it ends up with three holders.
++	nodeNames := []string{
++		"semaphore-tmpl-level-xjvln-3448864205",
++		"semaphore-tmpl-level-xjvln-1607747183",
++		"semaphore-tmpl-level-xjvln-2790796867",
 +	}
-+	return c.WorkflowTaskResultInterface.Create(ctx, tr, opts)
-+}
-+
-+func (c *serialTaskResults) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts metav1.PatchOptions, subresources ...string) (*wfv1.WorkflowTaskResult, error) {
-+	end := c.begin()
-+	defer end()
-+	if bytes.Contains(data, []byte(`"progress"`)) {
-+		return nil, c.stallProgress(ctx)
++	for _, nodeName := range nodeNames {
++		status, _, msg, failedLockName, acquireErr := syncManager.TryAcquire(ctx, wf, nodeName, tmpl.Synchronization)
++		require.NoError(t, acquireErr)
++		assert.Empty(t, msg)
++		assert.Empty(t, failedLockName)
++		assert.True(t, status)
 +	}
-+	return c.WorkflowTaskResultInterface.Patch(ctx, name, pt, data, opts, subresources...)
++	require.NotNil(t, wf.Status.Synchronization)
++	require.NotNil(t, wf.Status.Synchronization.Semaphore)
++	require.Len(t, wf.Status.Synchronization.Semaphore.Holding, 1)
++	assert.Len(t, wf.Status.Synchronization.Semaphore.Holding[0].Holders, 3)
++
++	syncManager.ReleaseAll(ctx, wf)
++	assert.Nil(t, wf.Status.Synchronization)
++
++	// Every holder's slot must have been released, not just the first one.
++	sema := syncManager.syncLockMap["default/ConfigMap/my-config/template"]
++	require.NotNil(t, sema)
++	holders, err := sema.getCurrentHolders(ctx)
++	require.NoError(t, err)
++	assert.Empty(t, holders)
 +}
 +
-+// TestPostMain_ProgressReportsStopBeforeFinalReports verifies that main
-+// exiting while a progress report is stuck retrying stops the progress
-+// monitor, and cuts off the stuck report, before the final reports write
-+// the same task result. Both Collect variants are covered; the pod layouts
-+// differ only in Prepare.
-+func TestPostMain_ProgressReportsStopBeforeFinalReports(t *testing.T) {
-+	for name, tmpl := range map[string]wfv1.Template{
-+		"Container": {Name: "container-tmpl"},
-+		"Resource":  {Name: "resource-tmpl", Resource: &wfv1.ResourceTemplate{Action: "get"}},
-+	} {
-+		t.Run(name, func(t *testing.T) {
-+			ctx := logging.TestContext(t.Context())
-+			mockRuntime := &mocks.ContainerRuntimeExecutor{}
-+			we := newTestPostMainExecutor(t, tmpl, mockRuntime)
-+			taskResults := &serialTaskResults{WorkflowTaskResultInterface: we.taskResultClient, progressStarted: make(chan struct{})}
-+			we.taskResultClient = taskResults
-+			we.annotationPatchTickDuration = time.Millisecond
-+			we.readProgressFileTickDuration = time.Millisecond
-+			we.progressFile = filepath.Join(t.TempDir(), "progress")
-+			require.NoError(t, os.WriteFile(we.progressFile, []byte("1/2\n"), 0o600))
-+			// main exits while a progress report is stuck.
-+			mockRuntime.On("Wait", mock.Anything, []string{"main"}).Run(func(mock.Arguments) {
-+				select {
-+				case <-taskResults.progressStarted:
-+				case <-time.After(10 * time.Second):
-+				}
-+			}).Return(nil)
-+
-+			require.NoError(t, we.PostMain(ctx, ctx, false))
-+			we.FinalizeOutput(ctx)
-+			progressWrites := taskResults.progressWrites.Load()
-+			require.Positive(t, progressWrites, "no progress report was made")
-+			time.Sleep(20 * time.Millisecond) // many progress ticks
-+			assert.Equal(t, progressWrites, taskResults.progressWrites.Load(), "progress reports continued afte
+ type mockGetSyncLimit struct {
+ 	callCount  int
+ 	outputSize int
+```
+
+---
+
+### Incident Patch 3: `64a10624` (2026-10-27)
+**Commit Message**: refactor(controller): extract pod-level derivation from the pod builder (#17215)
+
+Signed-off-by: Alan Clucas <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `workflow/controller/AGENTS.md` (modified, +1/-1)
+```diff
+@@ -3,7 +3,7 @@
+ - `controller.go` is the plumbing (informers, workqueues, throttler, sync manager); `operator.go` is the logic. Each reconciliation builds a `wfOperationCtx` (`woc`) from a **DeepCopy** of the informer object — never mutate cache objects. `operate()` runs task-result reconciliation, pod reconciliation (then exports the `globalName` outputs of the nodes it completed, `exportCompletedNodes`, before any template substitutes the workflow's globals), then `reconcileTemplate` from the entrypoint (also used for exit handlers and hooks): it resolves the template and its arguments and hands the processed template to `executeProcessedTemplate` (`operator.go`), whose helpers live in `operator_template_execution.go` (node preparation, deadline and parallelism constraints, synchronization, memoization, retries, post-execution handling), and which dispatches per template type (container, containerSet, script, suspend, resource, data, http, plugin, steps, DAG). Operations self-limit to `MAX_OPERATION_TIME` (30s) and requeue.
+ - Steps and DAG templates share one `Engine` (`engine.go`). `dag.go` and `steps.go` only adapt the template's tasks to `dag.Task` (Steps through `StepAdapter`, each step depending on the steps of the previous non-empty group) and call `Execute` with them in dependency order (DAG: `dag.PullOrder`, the targets' ancestry; Steps: as written). Each cycle the Engine first finishes the task nodes that became fulfilled or still hold a lock (`reconcileFulfilledTasks`: `handleNodeFulfilled` releases the lock and, once per completion, emits completion metrics and exports `globalName` outputs). It then walks the tasks once, in that order (`visit`): the pure evaluator in `workflow/controller/dag` says whether a task is ready, waiting or omitted (`Evaluate`); a ready task becomes a `DesiredTask` (`desired_state.go`) dispatched through the `TaskReconciler` (`reconciler_k8s.go` → `executeProcessedTemplate`, where `processNodeRetries` alone decides retries; an expanded task is one unit, `reconcileTaskGroup`); then its lifecycle and exit hooks are driven (`processHooks`, `hook_handler.go`). A dependant is evaluated only after that, so it sees a same-cycle completion, omission or pending exit hook (#12192), and each task is dispatched at most once per cycle. A StepGroup node is created when the group starts (`parentsFor` → `startStepGroup`); once a group has failed, a later step that would start is recorded Omitted. A hook node in phase Error sets `hookErr`: no new task node is created (a TaskGroup it stops is marked `common.TaskGroupHookStoppedMessage` for `argo retry`), and `finalize` ends the boundary Error once nothing in it is running, unless it is already Failed or Error. A Steps boundary is assessed group by group (`stepGroupOutcome`). Controller-driven phase changes go through `markNodePhase`, which refuses transitions not in the table in `node_phase_sm.go`; pod reconciliation records a pod's own result directly (`Nodes.Set`), which is also how a finishing pod replaces a controller-recorded Error. Read `workflow/controller/dag/README.md` before changing readiness, omission, retry or task-group assessment.
+ - `woc.wf.Spec` and `woc.execWf.Status` are banned (`forbidigo` linter, configured in `.golangci.yml`): use `woc.execWf.Spec` (the template-merged spec) and `woc.wf.Status`. Escape hatch: `//nolint:forbidigo // not-woc-misuse` on the line.
+-- `workflowpod.go` turns a template into a pod. Two pod layouts, deliberately confined to `workflowpod_layout.go`: legacy (`init` init-container + `wait` sidecar) and init-less beta (single `supervisor` container, argoexec via image volume). Don't scatter layout conditionals elsewhere.
++- `workflowpod.go` turns a template into a pod. Two pod layouts, deliberately confined to `workflowpod_layout.go`: legacy (`init` init-container + `wait` sidecar) and init-less beta (single `supervisor` container, argoexec via image volume). Don't scatter layout conditionals elsewhere. Pod-level derivation (pod fields, the argoexec containers, deadlines) lives in `workflowpod_derive.go` as functions of explicit values, with no `woc` or other live state (the `apply*`/`add*` ones update what they are given in place); new derivation goes there too. Containers that need a lookup (artifact plugin containers) and the user containers' emissary wrapping stay in `workflowpod.go`.
+ - Outputs channel: the executor **never writes the Workflow**. It creates/patches a `WorkflowTaskResult` CR (named after the node ID); the controller merges it in `taskResultReconciliation` (`taskresult.go`). A node is only truly done when its phase is fulfilled **and** its task result is synced — `NodeStatus.Fulfilled()` checks both (`Phase.Fulfilled(node.TaskResultSynced)`); daemoned nodes are the exception, fulfilled as soon as they leave `Pending`.
+ - HTTP and Plugin templates get no pod: they go into a `WorkflowTaskSet` CR consumed by a single per-workflow **agent pod** (`agent.go`, `argoexec agent`),
+```
+
+**File**: `workflow/controller/agent.go` (modified, +3/-3)
+```diff
+@@ -232,9 +232,9 @@ func (woc *wfOperationCtx) createAgentPod(ctx context.Context) (*apiv1.Pod, erro
+ 
+ 	tmpl := &wfv1.Template{}
+ 	// Agent pods have no boundary node, so there is no boundary template to apply.
+-	woc.addSchedulingConstraints(ctx, pod, woc.execWf.Spec.DeepCopy(), tmpl, nil)
+-	woc.addMetadata(pod, tmpl)
+-	woc.addDNSConfig(pod)
++	applySchedulingConstraints(&pod.Spec, woc.execWf.Spec.DeepCopy(), tmpl, nil)
++	applyPodMetadata(&pod.ObjectMeta, &woc.execWf.Spec, tmpl)
++	applyDNSConfig(&pod.Spec, &woc.execWf.Spec)
+ 
+ 	if woc.execWf.Spec.HasPodSpecPatch() {
+ 		patchedPodSpec, patchErr := util.ApplyPodSpecPatch(pod.Spec, woc.execWf.Spec.PodSpecPatch)
+```
+
+**File**: `workflow/controller/artifact_gc.go` (modified, +1/-1)
+```diff
+@@ -512,7 +512,7 @@ func (woc *wfOperationCtx) createArtifactGCPod(ctx context.Context, strategy wfv
+ 	// so we run the standard init container to copy it into the
+ 	// /var/run/argo volume
+ 	if len(drivers) > 0 {
+-		initCtr := woc.standardInitContainer(ctx, &artifactDriverTmpl)
++		initCtr := standardInitContainer(&artifactDriverTmpl, woc.execContainerConfig(&artifactDriverTmpl), woc.getExecutorLogOpts(ctx))
+ 		initCtr.VolumeMounts = []corev1.VolumeMount{volumeMountVarArgo}
+ 		// Required for the init container to work
+ 		initCtr.Env = append(initCtr.Env, corev1.EnvVar{Name: common.EnvVarTemplate, Value: "{}"})
+```
+
+**File**: `workflow/controller/operator.go` (modified, +0/-36)
+```diff
+@@ -2595,42 +2595,6 @@ func getTimeoutAsDeadline(startedAt *time.Time, timeoutVal string) (*time.Time,
+ 	return &tmplDeadline, nil
+ }
+ 
+-// checkTemplateTimeouts checks if the template has exceeded its Timeout or PendingTimeout.
+-// It returns the deadline computed from Timeout (enforced via the pod's activeDeadlineSeconds)
+-// and the deadline computed from PendingTimeout (only set while the node is pending).
+-// ErrTimeout is returned if the node is pending past either deadline as of now.
+-// now is supplied by the caller rather than read from time.Now here so the
+-// caller controls which clock is used: the pure pod builder passes pb.in.now (the
+-// captured snapshot time) to keep build() deterministic for a given snapshot,
+-// while checkConstraints passes the current wall-clock.
+-func (woc *wfOperationCtx) checkTemplateTimeouts(tmpl *wfv1.Template, node *wfv1.NodeStatus, now time.Time) (deadline, pendingDeadline *time.Time, err error) {
+-	if node == nil {
+-		return nil, nil, nil
+-	}
+-
+-	if tmpl.Timeout != "" {
+-		deadline, err = getTimeoutAsDeadline(&node.StartedAt.Time, tmpl.Timeout)
+-		if err != nil {
+-			return nil, nil, err
+-		}
+-		if node.Phase == wfv1.NodePending && now.After(*deadline) {
+-			return nil, nil, ErrTimeout
+-		}
+-	}
+-
+-	if tmpl.PendingTimeout != "" && node.Phase == wfv1.NodePending {
+-		pendingDeadline, err = getTimeoutAsDeadline(&node.StartedAt.Time, tmpl.PendingTimeout)
+-		if err != nil {
+-			return nil, nil, err
+-		}
+-		if now.After(*pendingDeadline) {
+-			return nil, nil, ErrTimeout
+-		}
+-	}
+-
+-	return deadline, pendingDeadline, nil
+-}
+-
+ // recordWorkflowPhaseChange stores the metrics associated with the workflow phase changing
+ func (woc *wfOperationCtx) recordWorkflowPhaseChange(ctx context.Context) {
+ 	phase := metrics.ConvertWorkflowPhase(woc.wf.Status.Phase)
+```
+
+**File**: `workflow/controller/operator_template_execution.go` (modified, +1/-1)
+```diff
+@@ -60,7 +60,7 @@ func (woc *wfOperationCtx) checkConstraints(ctx context.Context, nodeName string
+ 	// Check the timeout and pendingTimeout deadlines for Pending nodes.
+ 	// This also covers the resource-forbidden and synchronization scenarios,
+ 	// where only the node exists, in a pending state, with no pod created.
+-	deadline, pendingDeadline, err := woc.checkTemplateTimeouts(processedTmpl, node, time.Now().UTC())
++	deadline, pendingDeadline, err := templateTimeoutDeadlines(processedTmpl, node, time.Now().UTC())
+ 	if err != nil {
+ 		woc.log.WithField("template", processedTmpl.Name).Warn(ctx, "Template exceeded its deadline")
+ 		if node != nil && node.Type == wfv1.NodeTypePod {
+```
+
+**File**: `workflow/controller/operator_test.go` (modified, +15/-49)
+```diff
+@@ -13132,71 +13132,37 @@ func TestWithSequenceExpressionPreservesGlobalScope(t *testing.T) {
+ 	})
+ }
+ 
+-func TestCheckTemplateTimeouts(t *testing.T) {
++// TestPendingTimeoutFailsNode checks that an operation fails a node pending past
++// its pendingTimeout but not yet past its timeout (executeProcessedTemplate's
++// checkConstraints). The deadline branches themselves are covered by
++// TestTemplateTimeoutDeadlines.
++func TestPendingTimeoutFailsNode(t *testing.T) {
+ 	ctx := logging.TestContext(t.Context())
+ 	cancel, controller := newController(ctx)
+ 	defer cancel()
+ 	wfcset := controller.wfclientset.ArgoprojV1alpha1().Workflows("my-ns")
+ 	wf := wfv1.MustUnmarshalWorkflow(pendingTimeoutWf)
++	// a timeout far beyond the pendingTimeout, so only the pendingTimeout can fail the node
++	wf.Spec.Templates[1].Timeout = "1h"
+ 	wf, err := wfcset.Create(ctx, wf, metav1.CreateOptions{})
+ 	require.NoError(t, err)
+ 	woc := newWorkflowOperationCtx(ctx, wf, controller)
+ 	woc.operate(ctx)
+-	wf = woc.wf
+ 	makePodsPhase(ctx, woc, apiv1.PodPending)
+-	woc = newWorkflowOperationCtx(ctx, wf, controller)
+-	woc.operate(ctx)
+-	wf = woc.wf
+ 
+-	node, err := wf.GetNodeByName("hello-world-dag.dag1")
+-	require.NoError(t, err)
+-	assert.NotNil(t, node)
+-	tmpl, err := woc.GetNodeTemplate(ctx, node)
++	// pendingTimeout is 2s: start the node 3s ago rather than sleeping
++	node, err := woc.wf.GetNodeByName("hello-world-dag.dag1")
+ 	require.NoError(t, err)
++	node.StartedAt = metav1.NewTime(time.Now().Add(-3 * time.Second))
++	woc.wf.Status.Nodes.Set(ctx, node.ID, *node)
+ 
+-	// both deadlines are returned while the node is pending
+-	deadline, pendingDeadline, err := woc.checkTemplateTimeouts(tmpl, node, time.Now().UTC())
+-
+-	require.NoError(t, err)
+-	deadlineUntil := time.Until(*deadline)
+-	assert.True(t, 0 <= deadlineUntil && deadlineUntil <= (time.Second*4))
+-	pendingUntil := time.Until(*pendingDeadline)
+-	assert.True(t, 0 <= pendingUntil && pendingUntil <= (time.Second*2))
+-	assert.True(t, pendingDeadline.Before(*deadline))
+-
+-	// pending timeout
+-	pendingUntil += 1 * time.Millisecond
+-	time.Sleep(pendingUntil)
+-	deadline, pendingDeadline, err = woc.checkTemplateTimeouts(tmpl, node, time.Now().UTC())
+-	assert.Nil(t, deadline)
+-	assert.Nil(t, pendingDeadline)
+-	require.ErrorIs(t, err, ErrTimeout)
+-
+-	makePodsPhase(ctx, woc, apiv1.PodRunning)
+-	woc = newWorkflowOperationCtx(ctx, wf, controller)
++	woc = newWorkflowOperationCtx(ctx, woc.wf, controller)
+ 	woc.operate(ctx)
+-	wf = woc.wf
+-
+-	node, err = wf.GetNodeByName("hello-world-dag.dag1")
+-	require.NoError(t, err)
+ 
+-	deadline, pendingDeadline, err = woc.checkTemplateTimeouts(tmpl, node, time.Now().UTC())
+-	require.NoError(t, err)
+-	assert.Nil(t, pendingDeadline)
+-	deadlineUntil = time.Duration(0)
+-	if deadline != nil {
+-		deadlineUntil = time.Until(*deadline)
+-	}
+-	assert.True(t, 0 < deadlineUntil && deadlineUntil < (time.Second*4))
+-
+-	// general timeout is not enforced by the controller for running nodes;
+-	// the deadline is still returned so it can be set as activeDeadlineSeconds
+-	deadlineUntil += 1 * time.Millisecond
+-	time.Sleep(deadlineUntil)
+-	deadline, pendingDeadline, err = woc.checkTemplateTimeouts(tmpl, node, time.Now().UTC())
+-	assert.NotNil(t, deadline)
+-	assert.Nil(t, pendingDeadline)
++	node, err = woc.wf.GetNodeByName("hello-world-dag.dag1")
+ 	require.NoError(t, err)
++	assert.Equal(t, wfv1.NodeFailed, node.Phase)
++	assert.Equal(t, ErrTimeout.Error(), node.Message)
+ }
+ 
+ // TestInferFailedReasonArtifactPluginSidecar ensures that a non-zero exit from
+```
+
+**File**: `workflow/controller/workflowpod.go` (modified, +143/-513)
+```diff
+@@ -4,27 +4,23 @@ import (
+ 	"context"
+ 	"encoding/json"
+ 	"fmt"
+-	"maps"
+ 	"os"
+ 	"path/filepath"
+-	"slices"
+ 	"strconv"
+ 	"time"
+ 
+-	"k8s.io/apimachinery/pkg/util/strategicpatch"
+-
+ 	"go.opentelemetry.io/contrib/propagators/envcar"
+ 	"go.opentelemetry.io/otel/propagation"
+ 	apiv1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/types"
+ 	"k8s.io/client-go/tools/cache"
+ 
+ 	"github.com/argoproj/argo-workflows/v4/config"
+ 	"github.com/argoproj/argo-workflows/v4/errors"
+ 	"github.com/argoproj/argo-workflows/v4/pkg/apis/workflow"
+ 	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
+ 	cmdutil "github.com/argoproj/argo-workflows/v4/util/cmd"
+-	"github.com/argoproj/argo-workflows/v4/util/intstr"
+ 	"github.com/argoproj/argo-workflows/v4/util/logging"
+ 	"github.com/argoproj/argo-workflows/v4/util/template"
+ 	varkeys "github.com/argoproj/argo-workflows/v4/util/variables/keys"
+@@ -146,28 +142,29 @@ type podBuilderInputs struct {
+ 	configMapIndexer   cache.Indexer
+ 
+ 	// controller-derived configuration (immutable for the duration of build)
+-	config                    *config.Config
+-	instanceID                string
+-	mainContainerDefaults     *apiv1.Container
+-	kubeConfig                *config.KubeConfig
+-	executorImage             string
++	config                *config.Config
++	mainContainerDefaults *apiv1.Container
++	// execCfg is the executor configuration, with no executor service account
++	// set (see podBuilder.execContainerConfig). Its kubeconfig, executor image
++	// and instance ID are also the pod's: the kubeconfig volume, the init-less
++	// argoexec image volume and the instance ID label are built from it.
++	execCfg                   execContainerConfig
+ 	progressPatchTickDuration time.Duration
+ 	progressFileTickDuration  time.Duration
+ 
+ 	// deadlines
+ 	// workflowDeadline is woc.workflowDeadline, the operation-cached terminate
+-	// deadline read by getDeadline.
++	// deadline that feeds ARGO_DEADLINE (see taskDeadline).
+ 	workflowDeadline *time.Time
+ 	// computedWorkflowDeadline is the result of woc.getWorkflowDeadline() (derived
+ 	// from execWf.Spec.ActiveDeadlineSeconds and the workflow StartedAt), used to
+ 	// clamp the pod's activeDeadlineSeconds.
+ 	computedWorkflowDeadline *time.Time
+ 
+ 	// now is a single wall-clock reading captured at newPodBuilder time. build
+-	// uses it for every relative-deadline computation so the build is
+-	// deterministic for a given snapshot: build never calls time.Now/Until/Since
+-	// itself, and it also threads now into the one dep that would otherwise read
+-	// the live clock (checkTemplateTimeouts) so no live wall-clock leaks in.
++	// uses it for every relative-deadline computation, including the template
++	// timeout (templateTimeoutDeadlines), so the build is deterministic for a
++	// given snapshot: build never calls time.Now/Until/Since itself.
+ 	now time.Time
+ 
+ 	// podStatusCaptureFinalizer is the value of the
+@@ -194,31 +191,24 @@ type podBuilderDeps interface {
+ 	// read-only entrypoint/image lookup for emissary command injection
+ 	lookupImage(ctx context.Context, image string, opts entrypoint.Options) (*entrypoint.Image, error)
+ 
+-	// shared container/decorator helpers (also used by agent.go / artifact_gc.go)
+-	newExecContainer(name string, tmpl *wfv1.Template) *apiv1.Container
++	// executor log flags, from the controller's command line and process state
+ 	getExecutorLogOpts(ctx context.Context) []string
+-	addMetadata(pod *apiv1.Pod, tmpl *wfv1.Template)
+-	addDNSConfig(pod *apiv1.Pod)
+-	addSchedulingConstraints(ctx context.Context, pod *apiv1.Pod, wfSpec *wfv1.WorkflowSpec, tmpl *wfv1.Template, boundaryTemplate *wfv1.Template)
+ 
+-	// workflow-pod-only helpers reaching live state / controller config
+-	IsArchiveLogs(tmpl *wfv1.Template) bool
+-	executorServiceAccountName(tmpl *wfv1.Template) string
++	// workflow-pod-only helpers reaching live state / controller config. The
++	// artifact plugin containers look up their plugin image's entrypoint; they
++	// are built from the execContainerConfig build passes in.
+ 	createArtifactVolumeMounts(ctx context.Context, tmpl *wfv1.Template) []apiv1.Volume
+ 	addInputArtifactsVolumes(ctx context.Context, pod *apiv1.Pod, tmpl *wfv1.Template) error
+-	newInitContainers(ctx context.Context, tmpl *wfv1.Template) ([]apiv1.Container, error)
+-	newSupervisorContainer(ctx context.Context, tmpl *wfv1.Template) *apiv1.Container
+-	buildArgoBinVolume() apiv1.Volume
+-	addArtifactPluginsLegacy(ctx context.Context, pod *apiv1.Pod, tmpl *wfv1.Template, config *config.Config) error
+-	addArtifactPluginsInitless(ctx context.Context, pod *apiv1.Pod, tmpl *wfv1.Template) error
++	newArtifactPluginInitContainers(ctx context.Context, tmpl *wfv1.Template, execCfg execContainerConfig) ([]apiv1.Container, error)
++	addArtifactPluginsLegacy(ctx context.Context, pod *apiv1.Pod, tmpl *wfv1.Template, config *config.Config, execCfg execContainerConfig) error
++	addArtifactPluginsInitless(ctx con
+```
+
+**File**: `workflow/controller/workflowpod_build_test.go` (modified, +102/-133)
+```diff
+@@ -2,6 +2,8 @@ package controller
+ 
+ import (
+ 	"context"
++	"fmt"
++	"slices"
+ 	"strings"
+ 	"testing"
+ 	"time"
+@@ -38,92 +40,44 @@ const testStubExecutorImage = "argoproj/argoexec:build-unit-test"
+ // stubPodBuilderDeps is a tiny hand-written implementation of podBuilderDeps.
+ // It does the minimum work each method must do for build to produce a
+ // representative pod, with NO fake.NewSimpleClientset and NO informer/cluster.
+-// Where a dep mutates the pod (init/supervisor/exec containers, scheduling,
+-// metadata, DNS), it reproduces just enough of the real behaviour to let the
+-// assertions below distinguish the two layouts.
++// Everything build derives from the snapshot (exec containers, scheduling,
++// metadata, DNS, archive logs, template timeouts) runs for real; tests set
++// those inputs on pb.in.
+ type stubPodBuilderDeps struct {
+-	executorImage     string
+-	archiveLogs       bool
+-	initContainerName string // name of the init container legacyLayout asks for
+-
+-	// gotTimeoutNow records the now value build threads into checkTemplateTimeouts,
+-	// so a test can assert build uses the captured snapshot time rather than the
+-	// live wall-clock.
+-	gotTimeoutNow time.Time
++	// node is what getNodeByName returns for any name.
++	node *wfv1.NodeStatus
+ }
+ 
+ func newStubDeps() *stubPodBuilderDeps {
+-	return &stubPodBuilderDeps{
+-		executorImage:     testStubExecutorImage,
+-		initContainerName: common.InitContainerName,
+-	}
++	return &stubPodBuilderDeps{}
+ }
+ 
+ // lookupImage returns a fixed entrypoint so build never reaches the network.
+ func (s *stubPodBuilderDeps) lookupImage(_ context.Context, _ string, _ entrypoint.Options) (*entrypoint.Image, error) {
+ 	return &entrypoint.Image{Entrypoint: []string{"/stub-entrypoint"}, Cmd: []string{"stub-cmd"}}, nil
+ }
+ 
+-// newExecContainer mirrors the real helper's essentials: an argoexec-image
+-// container carrying the executor image (so build's "mount /tmp on the
+-// executor container" branch fires).
+-func (s *stubPodBuilderDeps) newExecContainer(name string, _ *wfv1.Template) *apiv1.Container {
+-	return &apiv1.Container{Name: name, Image: s.executorImage}
+-}
+-
+ func (s *stubPodBuilderDeps) getExecutorLogOpts(_ context.Context) []string {
+ 	return []string{"--loglevel", "info"}
+ }
+ 
+-func (s *stubPodBuilderDeps) addMetadata(_ *apiv1.Pod, _ *wfv1.Template) {}
+-func (s *stubPodBuilderDeps) addDNSConfig(_ *apiv1.Pod)                  {}
+-func (s *stubPodBuilderDeps) addSchedulingConstraints(_ context.Context, _ *apiv1.Pod, _ *wfv1.WorkflowSpec, _ *wfv1.Template, _ *wfv1.Template) {
+-}
+-
+-func (s *stubPodBuilderDeps) IsArchiveLogs(_ *wfv1.Template) bool                { return s.archiveLogs }
+-func (s *stubPodBuilderDeps) executorServiceAccountName(_ *wfv1.Template) string { return "" }
+ func (s *stubPodBuilderDeps) createArtifactVolumeMounts(_ context.Context, _ *wfv1.Template) []apiv1.Volume {
+ 	return nil
+ }
+ func (s *stubPodBuilderDeps) addInputArtifactsVolumes(_ context.Context, _ *apiv1.Pod, _ *wfv1.Template) error {
+ 	return nil
+ }
+-
+-// newInitContainers reproduces the legacy layout's single standard init
+-// container (argoexec init). This is what build copies the var-argo mount onto.
+-func (s *stubPodBuilderDeps) newInitContainers(_ context.Context, _ *wfv1.Template) ([]apiv1.Container, error) {
+-	return []apiv1.Container{{Name: s.initContainerName, Image: s.executorImage, Command: []string{"argoexec", "init"}}}, nil
+-}
+-
+-// newSupervisorContainer reproduces the init-less supervisor: an argoexec-image
+-// container running `argoexec supervisor` and carrying ARGO_INITLESS_POD.
+-func (s *stubPodBuilderDeps) newSupervisorContainer(_ context.Context, _ *wfv1.Template) *apiv1.Container {
+-	return &apiv1.Container{
+-		Name:    common.SupervisorContainerName,
+-		Image:   s.executorImage,
+-		Command: []string{"argoexec", "supervisor"},
+-		Env:     []apiv1.EnvVar{{Name: common.EnvVarInitlessPod, Value: "true"}},
+-	}
++func (s *stubPodBuilderDeps) newArtifactPluginInitContainers(_ context.Context, _ *wfv1.Template, _ execContainerConfig) ([]apiv1.Container, error) {
++	return nil, nil
+ }
+-
+-// buildArgoBinVolume reproduces the argoexec-bin image volume.
+-func (s *stubPodBuilderDeps) buildArgoBinVolume() apiv1.Volume {
+-	return apiv1.Volume{
+-		Name: argoBinVolumeName,
+-		VolumeSource: apiv1.VolumeSource{
+-			Image: &apiv1.ImageVolumeSource{Reference: s.executorImage, PullPolicy: apiv1.PullIfNotPresent},
+-		},
+-	}
+-}
+-
+-func (s *stubPodBuilderDeps) addArtifactPluginsLegacy(_ context.Context, _ *apiv1.Pod, _ *wfv1.Template, _ *config.Config) error {
++func (s *stubPodBuilderDeps) addArtifactPluginsLegacy(_ context.Context, _ *apiv1.Pod, _ *wfv1.Template, _ *config.Config, _ execContainerConfig) error {
+ 	return nil
+ }
+-func (s *stubPodBuilderDeps) addArtifactPluginsInitless(_ context.Context, _ *apiv1.Pod, _ *wfv1.Template) error {
++func (s *stubPodBuilderDeps) addArtifactPluginsInitless(_ context.Context, _ *apiv1.Pod, _ *wfv1.Template, _ execContainerConfig) error {
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #17303** (2026-10-27): fix(sync): release every semaphore holder in ReleaseAll (cherry-pick #17302 for 4.1) (@argo-cd-cherry-pick-bot[bot])
+- **PR #17302** (2026-10-27): fix(sync): release every semaphore holder in ReleaseAll (@mallyagirish)
 - **PR #17299** (2026-10-26): docs: replace the MinIO Helm install with the quick-start S3 server (cherry-pick #17246 for 4.0) (@Joibel)
 - **PR #17298** (2026-10-26): docs: replace the MinIO Helm install with the quick-start S3 server (cherry-pick #17246 for 4.1) (@argo-cd-cherry-pick-bot[bot])
 - **PR #17297** (2026-10-26): chore(deps): update dependency serialize-javascript to v7.1.3 [security] (main) (@renovate[bot])
 - **PR #17274** (2026-10-22): docs: update CHANGELOG.md for v4.0.15 (@github-actions[bot])
-- **PR #17273** (2026-10-22): fix(build): install Go 1.26 in the Windows builder, not an exact patch (release-4.1) (@Joibel)
-- **PR #17271** (2026-10-22): fix(build): install Go 1.26 in the Windows builder, not an exact patch (release-4.0) (@Joibel)
 
 ---
 
@@ -1420,32 +1476,36 @@ Co-authored-by: Mason Malone <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update dependency serialize-javascript to v7.1.3 [security] (#17297)
+## X. test(estimation): move fixtures into testdata (#17241)
 
 **RULE**:
-When implementing operations in `ui/yarn.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `test/util/unstructured.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6acf1e16`: deps): update dependency serialize-javascript to v7.1.3 [security] (#17297). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d3b8e91b`: test(estimation): move fixtures into testdata (#17241). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/yarn.lock`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/util/unstructured.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  version "7.1.4"
-  resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-7.1.4.tgz#477af55bdec0d831fa3b209245f673217fd27380"
-  integrity sha512-FqlEuoTq/zRmA4Lg6aOqyH3lCHbUtCB0bmHCeFniX2GBdDqMJM3FwdvEhlE5Pim1dlt2FfBdVPmUNNiGhhKqpw==
+
+	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
+// MustUnmarshalUnstructured unmarshals an unstructured object from either a file
+// (if text starts with "@"), JSON (if it starts with "{") or a YAML string.
+	wfv1.MustUnmarshal(text, v)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-  version "7.1.2"
-  resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-7.1.2.tgz#0161010a0815dd7b7e011cbc5a3644850b8c2289"
-  integrity sha512-GL2BWwVa6JydKO6l/ljVgjAZF4QJ3S7dWDWi53s5GZT8PJzD2fNxi67HANQGKAqPrwEpL5ba7gUBGi0Ls/sEoQ==
+	"sigs.k8s.io/yaml"
+	err := yaml.UnmarshalStrict([]byte(text), v)
+	if err != nil {
+		panic(err)
+	}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6acf1e16` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d3b8e91b` are properly handled with clean fallback behavior.

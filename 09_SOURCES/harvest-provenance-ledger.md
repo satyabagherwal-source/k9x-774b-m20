@@ -5481,3 +5481,5 @@ Every entry in this ledger must capture:
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `9bfdd5f4` | Multi-dimensional audit evidence | 2026-10-27T18:10:19.839Z |
 | `learn-github-faker-js-faker` | `https://github.com/faker-js/faker` | `d9d77552` | Multi-dimensional audit evidence | 2026-10-27T18:17:23.855Z |
 | `learn-github-megabit-blazorise` | `https://github.com/Megabit/Blazorise` | `865d5e09` | Multi-dimensional audit evidence | 2026-10-27T18:22:20.093Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `e7b0e50d` | Multi-dimensional audit evidence | 2026-10-27T18:29:26.972Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `d3b8e91b` | Multi-dimensional audit evidence | 2026-10-27T18:29:33.799Z |

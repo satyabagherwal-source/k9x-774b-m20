@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T18:22:20.097Z",
-  "total_cycles_completed": 5449,
-  "total_learnings_persisted": 5449,
-  "total_rules_promoted": 4849,
+  "last_updated": "2026-10-27T18:29:33.804Z",
+  "total_cycles_completed": 5451,
+  "total_learnings_persisted": 5451,
+  "total_rules_promoted": 4851,
   "history": [
-    {
-      "timestamp": "2026-10-27T12:30:16.204Z",
-      "repository": "goodrain/rainbond",
-      "learningId": "learn-github-goodrain-rainbond",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T12:30:17.852Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T12:35:07.467Z",
       "repository": "marmotdata/marmot",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-27T18:22:20.097Z",
       "repository": "Megabit/Blazorise",
       "learningId": "learn-github-megabit-blazorise",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T18:29:26.976Z",
+      "repository": "apache/arrow",
+      "learningId": "learn-github-apache-arrow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T18:29:33.804Z",
+      "repository": "argoproj/argo-workflows",
+      "learningId": "learn-github-argoproj-argo-workflows",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

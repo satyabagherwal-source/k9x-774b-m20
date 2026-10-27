@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-2ORQ",
-    "timestamp": "2026-10-25T19:58:12.710Z",
-    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-    "contentHash": "1b309041d2cbc9bce210b295f76b5a19aa96633b897c7c5b72eec9e5bb7d53af",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-2WA9",
-    "timestamp": "2026-10-25T19:58:22.449Z",
-    "repository": "goharbor/harbor",
-    "learningId": "learn-github-goharbor-harbor",
-    "contentHash": "1b5aa31aeea2c080af387c6f63faec9f3f0d0d22e16a55659521c7ad0db5f166",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-AYLQ",
     "timestamp": "2026-10-25T20:04:38.702Z",
     "repository": "windmill-labs/windmill",
@@ -7490,6 +7460,36 @@
     "repository": "Megabit/Blazorise",
     "learningId": "learn-github-megabit-blazorise",
     "contentHash": "3b5bee275ce08ddf800951cad22918b191ed23e2eae6978766807dcd3661a060",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-S8QH",
+    "timestamp": "2026-10-27T18:29:26.969Z",
+    "repository": "apache/arrow",
+    "learningId": "learn-github-apache-arrow",
+    "contentHash": "a20a9122357e8dd1fd28fee16f880880290fe302b9c3354997fdae9387f8878b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-SE04",
+    "timestamp": "2026-10-27T18:29:33.796Z",
+    "repository": "argoproj/argo-workflows",
+    "learningId": "learn-github-argoproj-argo-workflows",
+    "contentHash": "7556256d09c8cfa874234a5f735caded2ae61be0022d2c3bee3beebd3a645637",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

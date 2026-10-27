@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source**: github ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
-> **Source Version**: `2c800e6b`  
+> **Source Version**: `e7b0e50d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T05:34:03.098Z  
+> **Timestamp**: 2026-10-27T18:29:26.619Z  
 > **Learning ID**: `learn-github-apache-arrow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T05:34:02.646Z  
+> **Harvest Timestamp**: 2026-10-27T18:29:25.609Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17219 stars
+- **Stars / Engagement**: 17235 stars
 
 ---
 
@@ -1377,14 +1377,13 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55159** (2026-10-23): **MINOR: [C++] Reject out-of-range scale deltas in decimal Rescale**
-  *Symptoms*: ### Rationale for this change  `DecimalRescale` (behind `Decimal{32,64,128,256}::Rescale`) looks up `GetScaleMultiplier(abs(new_scale - original_scale))` in the `kDecimal*PowersOfTen` tables, and the only bound on that index is a `DCHECK`. `Decimal*::FromString` rejects a large negative parsed scale but lets a positive one through, and the precision it reports only counts significant digits. So a CSV cell `1E-41` read as `decimal128(10, 2)` parses as precision 1, scale 41, passes the precision check in `DecimalValueDecoder::Decode`, and `Rescale(41, 2)` reads one entry past `kDecimal128PowersOfTen` (ASan reports a global-buffer-overflow READ of size 16 with `basic_decimal.cc` built with `NDEBUG`). `1E-100000` reads about 1.6 MB past the table. The JSON reader's decimal converter and the default `cast(string -> decimal)` take the same path, and the cast with `allow_decimal_truncate=true` calls `ReduceScaleBy(parsed_scale - out_scale)` directly with the same unbounded value. Debug builds abort on the `DCHECK` for all of these.  ### What changes are included in this PR?  - `DecimalRescale` returns `kRescaleDataLoss` when the scale delta exceeds `kMaxScale`. No multiplier that large fits in the type, so any non-zero value would overflow or lose digits; zero still rescales to zero. - The truncating branch of `StringToDecimal` returns zero when more than `kMaxScale` digits are dropped, which is the truncated result for any value the type can hold.  The check sits in `DecimalRescale
+- **Issue #55286** (2026-10-27): **GH-55285: [Python] Typo in Decimal32Array definition in array.pxi**
+  *Symptoms*: ### Rationale for this change  `python/pyarrow/array.pxi` defines the class as `Decima32Array` (missing `l`).  ### What changes are included in this PR?  Renaming of the class in `array.pxi` to `Decimal32Array`.  ### Are these changes tested?  I haven't added a special test for this.  ### Are there any user-facing changes?  No.  ### Was AI used for this PR?  **PR code and description written by:**  - [X] Human - [ ] AI  **Reviewed before submission by:**  - [X] Human - [ ] AI - [ ] Not reviewed  * GitHub Issue: #55285
 
-- **Issue #55114** (2026-10-23): **GH-55113: [CI][R] Install tzdata-legacy if available so tests are able to find required timezones**
-  *Symptoms*: ### Rationale for this change  GH runner upgrade from Ubuntu 24.04 to 26.04 made some R tests fail due to missing timezone. (Rhub)  ### What changes are included in this PR?  Install `tzdata-legacy` package if available to have the required timezone.  ### Are these changes tested?  Yes on CI  ### Are there any user-facing changes? No  ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [x] Human - [x] AI  **Reviewed before submission by:**  - [x] Human - [ ] AI - [ ] Not reviewed  * GitHub Issue: #55113
+- **Issue #55285** (2026-10-27): **[Python] Typo in Decimal32Array definition in array.pxi**
+  *Symptoms*: ### Describe the bug, including details regarding any error messages, version, and platform.  `python/pyarrow/array.pxi` defines the class as `Decima32Array` (missing `l`):  https://github.com/apache/arrow/blob/0b250b73d40d47643ce4df6031508a2a3b2ea186/python/pyarrow/array.pxi#L2772-L2775  while `lib.pxd` declares `Decimal32Array`:  https://github.com/apache/arrow/blob/0b250b73d40d47643ce4df6031508a2a3b2ea186/python/pyarrow/lib.pxd#L429-L430  The typo was introduced in https://github.com/apache/arrow/pull/44882 and was found when running mypy's `stubtest` against the type stubs in https://github.com/apache/arrow/pull/55264.  ### Component(s)  Python
   **Post-Mortem & Fix Analysis**:
-  > @thisisnic just a minor fix to CI
-  > Thanks for fixing this! The change makes sense, but I'm wondering if it's gonna be slightly more efficient to just do a text-replace swapping out "EST" for "America/New_York" and avoid installing another dependency?  
+  > Issue resolved by pull request 55286 https://github.com/apache/arrow/pull/55286
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1401,342 +1400,270 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2c800e6b` (2026-10-23)
-**Commit Message**: GH-54928: [Packaging][CI] Change TMPDIR for reproducible builds to avoid out of space (#54943)
-
-### TBD
+### Incident Patch 1: `2cadeab9` (2026-10-26)
+**Commit Message**: GH-47417: [C++] Fix JSON parser losing nulls in a null-typed list (#51108)
 
 ### Rationale for this change
 
-Several Linux Packaging jobs are currently failing with out of space on the verify reproducibility step. This is due to `/tmp` size. Ubuntu runner image changed from Ubuntu 24.04 to Ubuntu 26.04 where the `/tmp` folder is mounted.
-In the past the `/tmp` folder was on the root disk which had 145 GB of disk space.
-```
- Filesystem      Size  Used Avail Use% Mounted on
-/dev/root       145G   60G   85G  42% /
-tmpfs           7.9G   84K  7.9G   1% /dev/shm
-tmpfs           3.2G  988K  3.2G   1% /run
-tmpfs           5.0M     0  5.0M   0% /run/lock
-efivarfs        128M   32K  128M   1% /sys/firmware/efi/efivars
-/dev/sda16      881M   85M  735M  11% /boot
-/dev/sda15      105M  6.2M   99M   6% /boot/efi
-tmpfs           1.6G   12K  1.6G   1% /run/user/1001
-```
-With the new runner the `/tmp` folder is on `tmpfs` with 7.8GB.
-```
-2026-10-23T02:23:08.8104328Z Filesystem      Size  Used Avail Use% Mounted on
-2026-10-23T02:23:08.8104761Z /dev/root       145G   58G   88G  40% /
-2026-10-23T02:23:08.8105145Z tmpfs           7.9G     0  7.9G   0% /dev/shm
-2026-10-23T02:
+`{"a": [null, 1]}` silently parses to `[[1]]` in release builds, and aborts in debug.
 
-**File**: `.github/workflows/package_linux.yml` (modified, +2/-0)
-```diff
-@@ -349,6 +349,8 @@ jobs:
-         if: env.TASK_NAMESPACE == 'apt'
-         env:
-           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-+          # Required because the default /tmp is a size-limited tmpfs on some runner images.
-+          TMPDIR: ${{ runner.temp }}
-         run: |
-           # Validate reproducibility. Reprotest runs the build twice
-           # inside its own tempdir and doesn't copy artifacts back,
-```
-
----
-
-### Incident Patch 2: `2db03408` (2026-10-23)
-**Commit Message**: GH-51663: [C++][Gandiva] Race condition with Gandiva expressions (#51665)
-
-### Rationale for this change
-
-I originally identified [this issue in arrow-java](https://github.com/apache/arrow-java/issues/601) and fixed it on the arrow-java side with a coarse grained lock on the Projector and Filter Make methods. That fixed the issue but adds some undesirable overhead in certain multi threaded workflows.
-This issue captures the deeper problem that is occurring in the C++ side of Gandiva and was not touched by my previous fix though it is prevented from happening. I have a proposed solution for this and believe it is a better overall solution.
-
-`Projector::Make()` and `Filter::Make()` read the shared expression cache once to decide the `is_cached` status and then call `SetLLVMObjectCache()`. That performs its own second, unsynchronized read of the same key before pre-loading a cached object into the LLJIT.
-
-Those two reads could disagree. If another thread compiling the identical (schema, expressions, selection vector mode, configuration) tuple inserted between them, the first thread would:
-
-1. take the `is_cached == false` path, generating `expr_0_0` into its IR module, and
-2. also see
-
-**File**: `cpp/src/gandiva/engine.cc` (modified, +8/-3)
-```diff
-@@ -304,9 +304,14 @@ void RemoveBuildTargetAttributes(llvm::Module& module) {
- 
- }  // namespace
- 
--Status Engine::SetLLVMObjectCache(GandivaObjectCache& object_cache) {
--  auto cached_buffer = object_cache.getObject(nullptr);
--  if (cached_buffer) {
-+Status Engine::SetLLVMObjectCache(
-+    const std::shared_ptr<llvm::MemoryBuffer>& prev_cached_obj) {
-+  if (prev_cached_obj) {
-+    // Copy rather than hand over the cache's own buffer -- addObjectFile takes
-+    // ownership and may free it, but the shared cache map holds a reference to the
-+    // same object too.
-+    auto cached_buffer = llvm::MemoryBuffer::getMemBufferCopy(
-+        prev_cached_obj->getBuffer(), prev_cached_obj->getBufferIdentifier());
-     auto error = lljit_->addObjectFile(std::move(cached_buffer));
-     if (error) {
-       return Status::CodeGenError("Failed to add cached object file to LLJIT: ",
-```
-
-**File**: `cpp/src/gandiva/engine.h` (modified, +6/-2)
-```diff
-@@ -74,8 +74,12 @@ class GANDIVA_EXPORT Engine {
-   /// Optimise and compile the module.
-   Status FinalizeModule();
- 
--  /// Set LLVM ObjectCache.
--  Status SetLLVMObjectCache(GandivaObjectCache& object_cache);
-+  /// Pre-load the LLJIT with an already-compiled object for the current module, if
-+  /// one was found by the caller's own cache lookup. Takes the lookup result directly
-+  /// rather than re-querying the cache, so this can never disagree with the \p cached
-+  /// flag passed to \p Make -- avoiding the load being based on a newer cache state
-+  /// than the one that decided whether Make() would still build (and load) fresh IR.
-+  Status SetLLVMObjectCache(const std::shared_ptr<llvm::MemoryBuffer>& prev_cached_obj);
- 
-   /// Get the compiled function corresponding to the irfunction.
-   Result<void*> CompiledFunction(const std::string& function);
-```
-
-**File**: `cpp/src/gandiva/filter.cc` (modified, +5/-2)
-```diff
-@@ -76,8 +76,11 @@ Status Filter::Make(SchemaPtr schema, ConditionPtr condition,
-     ARROW_RETURN_NOT_OK(expr_validator.Validate(condition));
-   }
- 
--  // Set the object cache for LLVM
--  ARROW_RETURN_NOT_OK(llvm_gen->SetLLVMObjectCache(obj_cache));
-+  // Pre-load the already-compiled object from the cache lookup above, if there was
-+  // one. Reuses prev_cached_obj instead of letting SetLLVMObjectCache re-query the
-+  // shared cache, so this can never disagree with the is_cached snapshot that
-+  // decided whether Build() below still compiles.
-+  ARROW_RETURN_NOT_OK(llvm_gen->SetLLVMObjectCache(prev_cached_obj));
- 
-   ARROW_RETURN_NOT_OK(llvm_gen->Build({condition}, SelectionVector::Mode::MODE_NONE));
- 
-```
-
-**File**: `cpp/src/gandiva/llvm_generator.cc` (modified, +3/-2)
-```diff
-@@ -64,8 +64,9 @@ LLVMGenerator::GetCache() {
-   return shared_cache;
- }
- 
--Status LLVMGenerator::SetLLVMObjectCache(GandivaObjectCache& object_cache) {
--  return engine_->SetLLVMObjectCache(object_cache);
-+Status LLVMGenerator::SetLLVMObjectCache(
-+    const std::shared_ptr<llvm::MemoryBuffer>& prev_cached_obj) {
-+  return engine_->SetLLVMObjectCache(prev_cached_obj);
- }
- 
- Status LLVMGenerator::Add(const ExpressionPtr expr, const FieldDescriptorPtr output) {
-```
-
-**File**: `cpp/src/gandiva/llvm_generator.h` (modified, +5/-2)
-```diff
-@@ -58,8 +58,11 @@ class GANDIVA_EXPORT LLVMGenerator {
-   static std::shared_ptr<Cache<ExpressionCacheKey, std::shared_ptr<llvm::MemoryBuffer>>>
-   GetCache();
- 
--  /// \brief Set LLVM ObjectCache.
--  Status SetLLVMObjectCache(GandivaObjectCache& object_cache);
-+  /// \brief Pre-load the engine with an already-compiled object for the current
-+  /// module, if the caller's own cache lookup found one. See the equivalent Engine
-+  /// method for why this takes the lookup result directly instead of re-querying
-+  /// the cache.
-+  Status SetLLVMObjectCache(const std::shared_ptr<llvm::MemoryBuffer>& prev_cached_obj);
- 
-   /// \brief Build the code for the expression trees for default mode with a LLVM
-   /// ObjectCache. Each element in the vector represents an expression tree
-```
-
-**File**: `cpp/src/gandiva/projector.cc` (modified, +5/-2)
-```diff
-@@ -94,8 +94,11 @@ Status Projector::Make(SchemaPtr schema, const ExpressionVector& exprs,
-     }
-   }
- 
--  // Set the object cache for LLVM
--  ARROW_RETURN_NOT_OK(llvm_gen->SetLLVMObjectCache(obj_cache));
-+  // Pre-load the already-compiled object from the cache lookup above, if there was
-+  // one. Reuses prev_cached_obj instead of letting SetLLVMObjectCache re-query the
-+  // shared cache, so this can never disagree with the is_cached snapshot that
-+  // decided whether Build() below still compiles.
-+  ARROW_RETURN_NOT_OK(llvm_gen->SetLLVMObjectCache(prev_cached_obj));
- 
-   ARROW_RETURN_NOT_OK(llvm_gen->Build(exprs, selection_vector_mode));
- 
-```
-
-**File**: `cpp/src/gandiva/tests/CMakeLists.txt` (modified, +1/-0)
-```diff
-@@ -19,6 +19,7 @@ add_gandiva_test(projector-test
-                  SOURCES
-                  binary_test.cc
-                  boolean_expr_test.cc
-+                 cache_race_test.cc
-                  date_time_test.cc
-                  decimal_alignment_test.cc
-                  decimal_single_test.cc
-```
-
-**File**: `cpp/src/gandiva/tests/cache_race_test.cc` (added, +212/-0)
-```diff
-@@ -0,0 +1,212 @@
-+// Licensed to the Apache Software Foundation (ASF) under one
-+// or more contributor license agreements.  See the NOTICE file
-+// distributed with this work for additional information
-+// regarding copyright ownership.  The ASF licenses this file
-+// to you under the Apache License, Version 2.0 (the
-+// "License"); you may not use this file except in compliance
-+// with the License.  You may obtain a copy of the License at
-+//
-+//   http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing,
-+// software distributed under the License is distributed on an
-+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+// KIND, either express or implied.  See the License for the
-+// specific language governing permissions and limitations
-+// under the License.
-+
-+// Deterministic regression test for GH-51663.
-+//
-+// Projector::Make() and Filter::Make() read the shared expression cache once to decide
-+// `is_cached`. Before the fix, SetLLVMObjectCache() performed a *second*, independent
-+// read of the same key. A thread that saw a miss on the first read and a hit on the
-+// second one would both pre-load the cached object (defining e.g. "expr_0_0" in its
-+// JITDylib) and add its own compiled IR module defining the same symbol, so LLVM ORC's
-+// duplicate-symbol detection fired. (Originally reported against the Java bindings as
-+// apache/arrow-java#601.)
-+
-+#include <gtest/gtest.h>
-+
-+#include <atomic>
-+#include <memory>
-+#include <utility>
-+#include <vector>
-+
-+#include "arrow/memory_pool.h"
-+#include "gandiva/cache.h"
-+#include "gandiva/configuration.h"
-+#include "gandiva/exported_funcs.h"
-+#include "gandiva/exported_funcs_registry.h"
-+#include "gandiva/expression_cache_key.h"
-+#include "gandiva/filter.h"
-+#include "gandiva/llvm_generator.h"
-+#include "gandiva/projector.h"
-+#include "gandiva/tests/test_util.h"
-+#include "gandiva/tree_expr_builder.h"
-+
-+namespace gandiva {
-+
-+using arrow::boolean;
-+using arrow::int32;
-+
-+namespace {
-+
-+using ObjectCacheType = Cache<ExpressionCacheKey, std::shared_ptr<llvm::MemoryBuffer>>;
-+
-+struct PendingInjection {
-+  std::shared_ptr<ObjectCacheType> cache;
-+  std::shared_ptr<ExpressionCacheKey> key;
-+  std::shared_ptr<llvm::MemoryBuffer> object;
-+  std::atomic<bool> armed{false};
-+};
-+
-+PendingInjection* GetPendingInjection() {
-+  static PendingInjection instance;
-+  return &instance;
-+}
-+
-+// Registered once; fires only while armed.
-+class CacheRaceInjector : public ExportedFuncsBase {
-+ public:
-+  arrow::Status AddMappings(Engine* engine) const override {
-+    auto* pending = GetPendingInjection();
-+    // exchange() disarms, so this injects exactly once per arming even though the
-+    // registry keeps calling us on every subsequent Engine::Init().
-+    if (pending->armed.exchange(false)) {
-+      pending->cache->PutObjectCode(*pending->key, pending->object);
-+    }
-+    return arrow::Status::OK();
-+  }
-+};
-+
-+REGISTER_EXPORTED_FUNCS(CacheRaceInjector);
-+
-+// Arms the injection that will run inside the next Make()'s engine construction.
-+void ArmInjection(std::shared_ptr<ObjectCacheType> cache,
-+                  std::shared_ptr<ExpressionCacheKey> key,
-+                  std::shared_ptr<llvm::MemoryBuffer> object) {
-+  auto* pending = GetPendingInjection();
-+  pending->cache = std::move(cache);
-+  pending->key = std::move(key);
-+  pending->object = std::move(object);
-+  pending->armed.store(true);
-+}
-+
-+}  // namespace
-+
-+class TestCacheRace : public ::testing::Test {
-+ public:
-+  void SetUp() { pool_ = arrow::default_memory_pool(); }
-+
-+  void TearDown() { GetPendingInjection()->armed.store(false); }
-+
-+ protected:
-+  arrow::MemoryPool* pool_;
-+};
-+
-+TEST_F(TestCacheRace, TestProjectorCacheInsertedDuringMake) {
-+  auto field0 = field("f0", int32());
-+  auto field1 = field("f1", int32());
-+  auto schema = arrow::schema({field0, field1});
-+  auto field_sum = field("add", int32());
-+  auto sum_expr = TreeExprBuilder::MakeExpression("add", {field0, field1}, field_sum);
-+  ExpressionVector exprs = {sum_expr};
-+
-+  // Two separately built configurations with identical content: same hash, different
-+  // keys.
-+  auto config_a = ConfigurationBuilder().build();
-+  auto config_b = ConfigurationBuilder().build();
-+
-+  // Build once under config_a so the expression is cached.
-+  std::shared_ptr<Projector> warm_projector;
-+  ASSERT_OK(Projector::Make(schema, exprs, config_a, &warm_projector));
-+
-+  auto cache = LLVMGenerator::GetCache();
-+  ExpressionCacheKey key_a(schema, config_a, exprs, SelectionVector::Mode::MODE_NONE);
-+  auto cached_object = cache->GetObjectCode(key_a);
-+  ASSERT_NE(cached_object, nullptr) << "expected the first Make() to populate the cache";
-+
-+  // config_b has never been built, so Make()'s first read is a guaranteed miss.
-+  auto key_b = std::make_shared<ExpressionCacheKey>(schema, config_b, exprs,
-+                                                    SelectionVector::Mode::MODE_NONE);
-+
-```
-
----
-
-### Incident Patch 3: `0c6b47bc` (2026-10-23)
-**Commit Message**: GH-55113: [CI][R] Install tzdata-legacy if available so tests are able to find required timezones (#55114)
-
-### Rationale for this change
-
-GH runner upgrade from Ubuntu 24.04 to 26.04 made some R tests fail due to missing timezone. (Rhub)
+This was introduced in `b7054c21aab` (0.14.0).
 
 ### What changes are included in this PR?
 
-Install `tzdata-legacy` package if available to have the required timezone.
+`AppendNull` looks up its child from the parent and returns the updated `BuilderPtr`, instead of taking a copy from the caller. `Null()` writes it back to `builder_`, so `builder_` no longer drifts from the parent's copy.
 
 ### Are these changes tested?
 
-Yes on CI
+Two new tests, `BlockParser.NullsInList` (inferred schema) and `BlockParserWithSchema.NullsInList` (explicit schema), parse lists of nulls, including `{"a": [{"b": null}, null]}`. Both fail in debug without the fix.
 
 ### Are there any user-facing changes?
+
+`{"a": [null, 1]}` now parses to `[[null, 1]]`.
+
+**This PR contains a "Critical Fix".** Well-formed JSON silently loses list elements.
+
+* GitHub Issue: #47417
+
+### Was AI used for this PR?
+
+In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.
+
+**PR code and descriptio
+
+**File**: `cpp/src/arrow/json/parser.cc` (modified, +23/-18)
+```diff
+@@ -526,16 +526,15 @@ class RawBuilderSet {
+ 
+   /// Appending null is slightly tricky since null count is stored inline
+   /// for builders of Kind::kNull. Append nulls using this helper
+-  Status AppendNull(BuilderPtr parent, int field_index, BuilderPtr builder) {
++  Result<BuilderPtr> AppendNull(BuilderPtr parent, int field_index) {
++    BuilderPtr builder = parent.kind == Kind::kArray
++                             ? Cast<Kind::kArray>(parent)->value_builder()
++                             : Cast<Kind::kObject>(parent)->field_builder(field_index);
+     if (ARROW_PREDICT_FALSE(!builder.nullable)) {
+       return ParseError("a required field was null");
+     }
+     switch (builder.kind) {
+       case Kind::kNull: {
+-        DCHECK_EQ(builder, parent.kind == Kind::kArray
+-                               ? Cast<Kind::kArray>(parent)->value_builder()
+-                               : Cast<Kind::kObject>(parent)->field_builder(field_index));
+-
+         // increment null count stored inline
+         builder.index += 1;
+ 
+@@ -545,38 +544,43 @@ class RawBuilderSet {
+         } else {
+           Cast<Kind::kObject>(parent)->field_builder(field_index, builder);
+         }
+-        return Status::OK();
++        break;
+       }
+       case Kind::kBoolean:
+-        return Cast<Kind::kBoolean>(builder)->AppendNull();
++        RETURN_NOT_OK(Cast<Kind::kBoolean>(builder)->AppendNull());
++        break;
+ 
+       case Kind::kNumber:
+-        return Cast<Kind::kNumber>(builder)->AppendNull();
++        RETURN_NOT_OK(Cast<Kind::kNumber>(builder)->AppendNull());
++        break;
+ 
+       case Kind::kString:
+-        return Cast<Kind::kString>(builder)->AppendNull();
++        RETURN_NOT_OK(Cast<Kind::kString>(builder)->AppendNull());
++        break;
+ 
+       case Kind::kNumberOrString: {
+-        return Cast<Kind::kNumberOrString>(builder)->AppendNull();
++        RETURN_NOT_OK(Cast<Kind::kNumberOrString>(builder)->AppendNull());
++        break;
+       }
+ 
+       case Kind::kArray:
+-        return Cast<Kind::kArray>(builder)->AppendNull();
++        RETURN_NOT_OK(Cast<Kind::kArray>(builder)->AppendNull());
++        break;
+ 
+       case Kind::kObject: {
+         auto struct_builder = Cast<Kind::kObject>(builder);
+         RETURN_NOT_OK(struct_builder->AppendNull());
+ 
+         for (int i = 0; i < struct_builder->num_fields(); ++i) {
+-          auto field_builder = struct_builder->field_builder(i);
+-          RETURN_NOT_OK(AppendNull(builder, i, field_builder));
++          RETURN_NOT_OK(AppendNull(builder, i));
+         }
+-        return Status::OK();
++        break;
+       }
+ 
+       default:
+         return Status::NotImplemented("invalid builder Kind");
+     }
++    return builder;
+   }
+ 
+   Status Finish(const std::shared_ptr<Array>& scalar_values, BuilderPtr builder,
+@@ -669,7 +673,9 @@ class ParseImpl : public BlockParser {
+ 
+   Status Null() {
+     DCHECK(!builder_stack_.empty());
+-    return builder_set_.AppendNull(builder_stack_.back(), field_index_, builder_);
++    ARROW_ASSIGN_OR_RAISE(builder_,
++                          builder_set_.AppendNull(builder_stack_.back(), field_index_));
++    return Status::OK();
+   }
+ 
+   Status HandleUnexpectedField(std::string_view key, sj::value& value) {
+@@ -962,11 +968,10 @@ class ParseImpl : public BlockParser {
+       if (!absent_fields_stack_[i]) {
+         continue;
+       }
+-      auto field_builder = Cast<Kind::kObject>(parent)->field_builder(i);
+-      if (ARROW_PREDICT_FALSE(!field_builder.nullable)) {
++      if (ARROW_PREDICT_FALSE(!Cast<Kind::kObject>(parent)->field_builder(i).nullable)) {
+         return ParseError("a required field was absent");
+       }
+-      RETURN_NOT_OK(builder_set_.AppendNull(parent, i, field_builder));
++      RETURN_NOT_OK(builder_set_.AppendNull(parent, i));
+     }
+     absent_fields_stack_.Pop();
+     EndNested();
+```
+
+**File**: `cpp/src/arrow/json/parser_test.cc` (modified, +27/-0)
+```diff
+@@ -236,6 +236,22 @@ TEST(BlockParserWithSchema, FailOnIncompleteJson) {
+   ASSERT_RAISES(Invalid, ParseFromString(options, "{\"a\":0, \"b\"", &parsed));
+ }
+ 
++TEST(BlockParserWithSchema, NullsInList) {
++  auto options = ParseOptions::Defaults();
++  options.explicit_schema = schema({field("a", list(null()))});
++  for (auto behavior :
++       {UnexpectedFieldBehavior::Error, UnexpectedFieldBehavior::Ignore}) {
++    options.unexpected_field_behavior = behavior;
++    AssertParseColumns(options, R"({"a": [null, null]})", {field("a", list(null()))},
++                       {"[[null, null]]"});
++  }
++
++  auto type = list(struct_({field("b", null())}));
++  options.explicit_schema = schema({field("a", type)});
++  AssertParseColumns(options, R"({"a": [{"b": null}, null]})", {field("a", type)},
++                     {R"([[{"b": null}, null]])"});
++}
++
+ TEST(BlockParserWithSchema, ValidateIgnoredFields) {
+   auto options = ParseOptions::Defaults();
+   options.explicit_schema = schema({field("known", int64())});
+@@ -286,6 +302,17 @@ TEST(BlockParser, Null) {
+        R"([{"plain": null}, {"plain": null}])"});
+ }
+ 
++TEST(BlockParser, NullsInList) {
++  auto options = ParseOptions::Defaults();
++  options.unexpected_field_behavior = UnexpectedFieldBehavior::InferType;
++  AssertParseColumns(options, R"({"a": [null, null], "b": [null, "hi", null]})",
++                     {field("a", list(null())), field("b", list(utf8()))},
++                     {"[[null, null]]", R"([[null, "hi", null]])"});
++  AssertParseColumns(options, R"({"a": [{"b": null}, null]})",
++                     {field("a", list(struct_({field("b", null())})))},
++                     {R"([[{"b": null}, null]])"});
++}
++
+ TEST(BlockParser, InferNewFields) {
+   std::string src = R"(
+     {}
+```
+
+---
+
+### Incident Patch 2: `2ecb29d9` (2026-10-27)
+**Commit Message**: GH-55267: [C++][R] Arrow 26.0.0 fails to build on CRAN macOS builders: bundled simdjson C++20 concepts don't compile with the macOS 11 SDK (#55273)
+
+### Rationale for this change
+
+CRAN failures on 26.0.0 release due to regex not catching incompatible MacOSX11.sdk version
+
+### What changes are included in this PR?
+
+Make regex more permissive
+
+### Are these changes tested?
+
 No
+
+### Are there any user-facing changes?
+
+No
+
+**PR code and description written by:**
+
+- [x] Human
+- [x] AI
+
+**Reviewed before submission by:**
+
+- [x] Human
+- [x] AI
+- [ ] Not reviewed
+
+* GitHub Issue: #55267
+
+Authored-by: Nic Crane <[REDACTED_EMAIL]>
+Signed-off-by: Nic Crane <[REDACTED_EMAIL]>
+
+**File**: `cpp/cmake_modules/ThirdpartyToolchain.cmake` (modified, +13/-4)
+```diff
+@@ -2878,10 +2878,19 @@ function(build_simdjson)
+ 
+   target_compile_definitions(simdjson PUBLIC SIMDJSON_EXCEPTIONS=0)
+ 
+-  # The macOS 11.3 SDK has incomplete C++20 concepts support, which prevents
+-  # simdjson headers from compiling. Disable simdjson concepts for this SDK.
+-  if(CMAKE_OSX_SYSROOT AND CMAKE_OSX_SYSROOT MATCHES "MacOSX11\\.3\\.sdk$")
+-    message(STATUS "Disabling simdjson concepts for macOS SDK 11.3")
++  # macOS SDKs before 13.3 ship a libc++ without <ranges> and with incomplete
++  # <concepts>, but simdjson enables its C++20 concepts API from the compiler's
++  # __cpp_concepts alone, so its headers fail to compile against those SDKs
++  # (GH-55267). Disable simdjson concepts for them. Arrow doesn't use that part
++  # of the simdjson API. simdjson considers these SDKs unsupported and won't fix
++  # this upstream, see https://github.com/simdjson/simdjson/issues/2787.
++  #
++  # The SDK directory name may omit the minor version ("MacOSX11.sdk" on CRAN,
++  # "MacOSX11.3.sdk" in our as-cran CI job), so match both forms. This treats
++  # "MacOSX13.sdk" as too old, which is harmless.
++  if(CMAKE_OSX_SYSROOT AND CMAKE_OSX_SYSROOT MATCHES
++                           "MacOSX(1[0-2](\\.[0-9]+)?|13(\\.[0-2])?)\\.sdk$")
++    message(STATUS "Disabling simdjson concepts for macOS SDK older than 13.3")
+     target_compile_definitions(simdjson PUBLIC SIMDJSON_CONCEPT_DISABLED=1)
+   endif()
+ 
+```
+
+---
+
+### Incident Patch 3: `5f75a12e` (2026-10-27)
+**Commit Message**: GH-55124: [C++][Parquet] Allow masked nulls in required fields when writing (#55136)
+
+### Rationale for this change
+
+The Parquet writer checks the leaf array's physical null count without accounting for the parent struct's validity bitmap. As a result, it rejects nulls in required child fields even when they are masked by null parent rows.
+
+### What changes are included in this PR?
+
+Corrected the logic used by the column writer to validate the null values for required leaf fields.
+
+### Are these changes tested?
+
+Yes.
+
+### Are there any user-facing changes?
+
+No.
 
 ### Was AI used for this PR?
 
@@ -1753,34 +1680,130 @@ In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/de
 - [ ] AI
 - [ ] Not reviewed
 
-* GitHub Issue: #55113
+* GitHub Issue: #55124
 
-Authored-by: Raúl Cumplido <[REDACTED_EMAIL]>
-Signed-off-by: Raúl Cumplido <[REDACTED_EMAIL]>
+Authored-by: Zehua Zou <[REDACTED_EMAIL]>
+Signed-off-by: Antoine Pitrou <[REDACTED_EMAIL]>
 
-**File**: `ci/scripts/r_docker_configure.sh` (modified, +5/-0)
+**File**: `cpp/src/parquet/arrow/arrow_reader_writer_test.cc` (modified, +45/-0)
 ```diff
-@@ -85,6 +85,11 @@ else
-   "$PACKAGE_MANAGER" install -y rsync cmake curl
- fi
+@@ -3262,6 +3262,47 @@ TEST(ArrowReadWrite, NestedRequiredField) {
+                        /*row_group_size=*/8);
+ }
  
-+# Newer Debian/Ubuntu require tzdata-legacy for our tests, install it if available.
-+if [ "$PACKAGE_MANAGER" = "apt-get" ] && apt-cache show tzdata-legacy > /dev/null 2>&1; then
-+  apt-get install -y tzdata-legacy
-+fi
++TEST(ArrowReadWrite, NestedRequiredFieldWithMaskedNulls) {
++  // A required child null is valid when its parent is null.
++  // Reuse the child's bitmap to construct this case explicitly.
++  auto type =
++      ::arrow::struct_({::arrow::field("inner", ::arrow::int32(), /*nullable=*/false)});
++  auto inner = ::arrow::ArrayFromJSON(::arrow::int32(), "[42, 42, null, 42]");
++  ASSERT_OK_AND_ASSIGN(auto array, ::arrow::StructArray::Make({inner}, type->fields(),
++                                                              inner->null_bitmap()));
++  ASSERT_EQ(array->null_count(), 1);
++  ASSERT_EQ(array->field(0)->null_count(), 1);
 +
++  auto table = ::arrow::Table::Make(
++      ::arrow::schema({::arrow::field("outer", type, /*nullable=*/true)}), {array});
++  ASSERT_OK(table->ValidateFull());
++  CheckSimpleRoundtrip(table, /*row_group_size=*/4);
++
++  // Also test masked child nulls after null/empty lists in the same row group.
++  // Null/empty lists add definition levels without corresponding child values.
++  auto offsets = ::arrow::ArrayFromJSON(::arrow::int32(), "[null, 0, 0, 4]");
++  ASSERT_OK_AND_ASSIGN(auto list_array, ::arrow::ListArray::FromArrays(*offsets, *array));
++  auto list_type = list_array->type();
++  auto list_table = ::arrow::Table::Make(
++      ::arrow::schema({::arrow::field("outer", std::move(list_type))}),
++      {std::move(list_array)});
++  ASSERT_OK(list_table->ValidateFull());
++  CheckSimpleRoundtrip(list_table, /*row_group_size=*/3);
++
++  // Exposing the same child null under a valid parent must fail.
++  ASSERT_OK_AND_ASSIGN(auto unmasked,
++                       ::arrow::StructArray::Make({std::move(inner)}, type->fields()));
++  auto invalid_table = ::arrow::Table::Make(table->schema(), {std::move(unmasked)});
++  // Test partially null and all-null child arrays.
++  for (const auto& invalid_slice : {invalid_table, invalid_table->Slice(2, 1)}) {
++    ARROW_SCOPED_TRACE("num_rows = ", invalid_slice->num_rows());
++    auto sink = CreateOutputStream();
++    EXPECT_RAISES_WITH_MESSAGE_THAT(
++        Invalid, ::testing::HasSubstr("is declared non-nullable but contains nulls"),
++        WriteTable(*invalid_slice, ::arrow::default_memory_pool(), sink));
++  }
++}
++
+ TEST(ArrowReadWrite, Decimal) {
+   using ::arrow::field;
  
- # Update clang version to latest available.
- # The rhub/ubuntu-clang image ships clang-15 but CRAN's debian-clang now uses
+@@ -3843,6 +3884,10 @@ TEST(TestArrowWrite, InvalidSchema) {
+   CheckWritingNonNullableColumnWithNulls(
+       ::arrow::field("a", ::arrow::utf8(), /*nullable=*/false),
+       R"([{"a": "foo"}, {"a": null}])");
++  CheckWritingNonNullableColumnWithNulls(
++      ::arrow::field("a", ::arrow::list(::arrow::field("item", ::arrow::int32(),
++                                                       /*nullable=*/false))),
++      R"([{"a": null}, {"a": []}, {"a": [42, null]}])");
+ }
+ 
+ void DoNestedValidate(const std::shared_ptr<::arrow::DataType>& inner_type,
+```
+
+**File**: `cpp/src/parquet/arrow/path_internal.cc` (modified, +3/-1)
+```diff
+@@ -724,7 +724,9 @@ class PathBuilder {
+     // and the array does in fact contain nulls, we will end up
+     // traversing the null bitmap twice (once here and once when calculating
+     // rep/def levels).
+-    if (LazyNoNulls(array)) {
++    // Required leaf nulls must not lower definition levels: they may be masked by
++    // an ancestor, but otherwise WriteArrow() must reject them as invalid.
++    if (!nullable_in_parent_ || LazyNoNulls(array)) {
+       info_.path.emplace_back(AllPresentTerminalNode{info_.max_def_level});
+     } else if (LazyNullCount(array) == array.length()) {
+       info_.path.emplace_back(AllNullsTerminalNode(info_.max_def_level - 1));
+```
+
+**File**: `cpp/src/parquet/column_writer.cc` (modified, +21/-2)
+```diff
+@@ -1430,8 +1430,27 @@ class TypedColumnWriterImpl : public ColumnWriterImpl,
+         (level_info_.def_level == level_info_.repeated_ancestor_def_level + 1) &&
+         leaf_field_nullable;
+     if (!leaf_field_nullable && leaf_array.null_count() != 0) {
+-      return Status::Invalid("Column '", descr_->name(),
+-                             "' is declared non-nullable but contains nulls");
++      bool has_unmasked_nulls = true;
++      if (level_info_.HasNullableValues()) {
++        has_unmasked_nulls = false;
++        int64_t leaf_index = 0;
++        for (int64_t i = 0; i < num_levels; ++i) {
++          // Null or empty lists have no corresponding slot in the leaf array.
++          if (def_levels[i] < level_info_.repeated_ancestor_def_level) {
++            continue;
++          }
++          // A required leaf only needs to be valid when all ancestors are present.
++          if (def_levels[i] == level_info_.def_level && leaf_array.IsNull(leaf_index)) {
++            has_unmasked_nulls = true;
++            break;
++          }
++          ++leaf_index;
++        }
++      }
++      if (has_unmasked_nulls) {
++        return Status::Invalid("Column '", descr_->name(),
++                               "' is declared non-nullable but contains nulls");
++      }
+     }
+     bool maybe_parent_nulls = level_info_.HasNullableValues() && !single_nullable_element;
+     if (maybe_parent_nulls) {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55159** (closed): MINOR: [C++] Reject out-of-range scale deltas in decimal Rescale (@Nayana-Naik73)
-- **PR #55114** (2026-10-23): GH-55113: [CI][R] Install tzdata-legacy if available so tests are able to find required timezones (@raulcd)
-- **PR #54960** (2026-10-22): MINOR: [Dev] Update collaborators list (@rok)
-- **PR #54943** (2026-10-23): GH-54928: [Packaging][CI] Change TMPDIR for reproducible builds to avoid out of space (@raulcd)
-- **PR #54940** (closed): GH-54937: [C++] Fix DenseUnionArray::Make for sliced type_ids and value_offsets arrays (@JonSnow1807)
-- **PR #54923** (closed): GH-54903: [C++][OSS-Fuzz fuzzing] Update parquet encoding fuzzer and corpora/dict preparation (@arthurscchan)
+- **PR #55286** (2026-10-27): GH-55285: [Python] Typo in Decimal32Array definition in array.pxi (@AlenkaF)
+- **PR #55283** (closed): [C++][Parquet] Check for empty index batch in dictionary DecodeArrow (@Nayana-Naik73)
+- **PR #55274** (closed): GH-55255: [C++][Compute] Support binary views in conditional kernels (@umtong)
+- **PR #55273** (2026-10-27): GH-55267: [C++][R] Arrow 26.0.0 fails to build on CRAN macOS builders: bundled simdjson C++20 concepts don't compile with the macOS 11 SDK (@thisisnic)
+- **PR #55271** (2026-10-27): GH-49760: [Doc][C++] Elaborate on what constitutes a vulnerability (@pitrou)
+- **PR #55268** (closed): [C++] Include array offset when validating fixed_size_list values length (@Nayana-Naik73)
 
 ---
 
@@ -1800,29 +1823,67 @@ Signed-off-by: Raúl Cumplido <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GH-54928: [Packaging][CI] Change TMPDIR for reproducible builds to avoid out of 
+## X. GH-47417: [C++] Fix JSON parser losing nulls in a null-typed list (#51108)
 
 **RULE**:
-When implementing operations in `.github/workflows/package_linux.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cpp/src/arrow/json/parser.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2c800e6b`: GH-54928: [Packaging][CI] Change TMPDIR for reproducible builds to avoid out of space (#54943). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2cadeab9`: GH-47417: [C++] Fix JSON parser losing nulls in a null-typed list (#51108). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/package_linux.yml`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `cpp/src/arrow/json/parser.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-          # Required because the default /tmp is a size-limited tmpfs on some runner images.
-          TMPDIR: ${{ runner.temp }}
+  Result<BuilderPtr> AppendNull(BuilderPtr parent, int field_index) {
+    BuilderPtr builder = parent.kind == Kind::kArray
+                             ? Cast<Kind::kArray>(parent)->value_builder()
+                             : Cast<Kind::kObject>(parent)->field_builder(field_index);
+        break;
+        RETURN_NOT_OK(Cast<Kind::kBoolean>(builder)->AppendNull());
+        break;
+        RETURN_NOT_OK(Cast<Kind::kNumber>(builder)->AppendNull());
+        break;
+        RETURN_NOT_OK(Cast<Kind::kString>(builder)->AppendNull());
+        break;
+        RETURN_NOT_OK(Cast<Kind::kNumberOrString>(builder)->AppendNull());
+        break;
+        RETURN_NOT_OK(Cast<Kind::kArray>(builder)->AppendNull());
+        break;
+          RETURN_NOT_OK(AppendNull(builder, i));
+        break;
+    return builder;
+    ARROW_ASSIGN_OR_RAISE(builder_,
+                          builder_set_.AppendNull(builder_stack_.back(), field_index_));
+    return Status::OK();
+      if (ARROW_PREDICT_FALSE(!Cast<Kind::kObject>(parent)->field_builder(i).nullable)) {
+      RETURN_NOT_OK(builder_set_.AppendNull(parent, i));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  Status AppendNull(BuilderPtr parent, int field_index, BuilderPtr builder) {
+        DCHECK_EQ(builder, parent.kind == Kind::kArray
+                               ? Cast<Kind::kArray>(parent)->value_builder()
+                               : Cast<Kind::kObject>(parent)->field_builder(field_index));
+
+        return Status::OK();
+        return Cast<Kind::kBoolean>(builder)->AppendNull();
+        return Cast<Kind::kNumber>(builder)->AppendNull();
+        return Cast<Kind::kString>(builder)->AppendNull();
+        return Cast<Kind::kNumberOrString>(builder)->AppendNull();
+        return Cast<Kind::kArray>(builder)->AppendNull();
+          auto field_builder = struct_builder->field_builder(i);
+          RETURN_NOT_OK(AppendNull(builder, i, field_builder));
+        return Status::OK();
+    return builder_set_.AppendNull(builder_stack_.back(), field_index_, builder_);
+      auto field_builder = Cast<Kind::kObject>(parent)->field_builder(i);
+      if (ARROW_PREDICT_FALSE(!field_builder.nullable)) {
+      RETURN_NOT_OK(builder_set_.AppendNull(parent, i, field_builder));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2c800e6b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2cadeab9` are properly handled with clean fallback behavior.
