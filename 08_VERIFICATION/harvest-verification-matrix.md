@@ -5287,3 +5287,6 @@
 | `CYCLE-20261027-O9KA` | `2026-10-27T12:50:26.026Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4765` | Yes (`a9a8739d...`) |
 | `CYCLE-20261027-O9NC` | `2026-10-27T12:50:26.136Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md` | Yes (`5a605a37...`) |
 | `CYCLE-20261027-OD0D` | `2026-10-27T12:50:30.493Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4766` | Yes (`7c23e515...`) |
+| `CYCLE-20261027-SJI4` | `2026-10-27T12:53:45.532Z` | `Saffsanity/sill` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4767` | Yes (`f8c3c4e0...`) |
+| `CYCLE-20261027-SKYE` | `2026-10-27T12:53:47.414Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4768` | Yes (`0b0d79e2...`) |
+| `CYCLE-20261027-SOTK` | `2026-10-27T12:53:52.424Z` | `StarTrail-org/LEANN` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4769` | Yes (`b9333ed6...`) |

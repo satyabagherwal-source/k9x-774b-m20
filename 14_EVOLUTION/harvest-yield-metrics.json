@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T12:50:30.501Z",
-  "total_cycles_completed": 5264,
-  "total_learnings_persisted": 5264,
-  "total_rules_promoted": 4671,
+  "last_updated": "2026-10-27T12:53:52.431Z",
+  "total_cycles_completed": 5267,
+  "total_learnings_persisted": 5267,
+  "total_rules_promoted": 4674,
   "history": [
-    {
-      "timestamp": "2026-10-26T02:08:33.386Z",
-      "repository": "davo20019/seo-analysis",
-      "learningId": "learn-github-davo20019-seo-analysis",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T02:25:29.954Z",
-      "repository": "lancedb/lancedb",
-      "learningId": "learn-github-lancedb-lancedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T02:26:50.015Z",
-      "repository": "bvaughn/react-virtualized",
-      "learningId": "learn-github-bvaughn-react-virtualized",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-26T02:26:58.304Z",
       "repository": "serpapi/google-search-results-nodejs",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-27T12:50:30.501Z",
       "repository": "ytsaurus/ytsaurus",
       "learningId": "learn-github-ytsaurus-ytsaurus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T12:53:45.540Z",
+      "repository": "Saffsanity/sill",
+      "learningId": "learn-github-saffsanity-sill",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T12:53:47.422Z",
+      "repository": "kgateway-dev/kgateway",
+      "learningId": "learn-github-kgateway-dev-kgateway",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T12:53:52.431Z",
+      "repository": "StarTrail-org/LEANN",
+      "learningId": "learn-github-startrail-org-leann",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

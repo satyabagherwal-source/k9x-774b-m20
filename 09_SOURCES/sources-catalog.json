@@ -1613,10 +1613,10 @@
     "repository": "Saffsanity/sill",
     "platform": "github",
     "sourceUrl": "https://github.com/Saffsanity/sill",
-    "sourceVersion": "4d990e9b",
+    "sourceVersion": "6c5b5d24",
     "license": "Apache-2.0",
-    "contentHash": "998213a1cbbcd9391e9c8a7dae454c9b9ce2e98592bf78e86cd127fdf35b5b77",
-    "lastHarvestedAt": "2026-10-20T05:03:29.484Z",
+    "contentHash": "f8c3c4e05ee42f8b690e00d136c9320c57eaac7be893e23dd50ad2cd29ca31b9",
+    "lastHarvestedAt": "2026-10-27T12:53:45.535Z",
     "learningId": "learn-github-saffsanity-sill"
   },
   "textbee-textbee": {
@@ -2843,10 +2843,10 @@
     "repository": "kgateway-dev/kgateway",
     "platform": "github",
     "sourceUrl": "https://github.com/kgateway-dev/kgateway",
-    "sourceVersion": "bef37c08",
+    "sourceVersion": "32e8e3f7",
     "license": "Apache-2.0",
-    "contentHash": "4edc8929b03e3e5ff279926f620eb988bb60cdeef6b9f65a9828aa18dd413b88",
-    "lastHarvestedAt": "2026-10-25T06:55:58.691Z",
+    "contentHash": "0b0d79e2199ffdb671a9a3f5eafed034e04026bcc78b516779083a7551de3b26",
+    "lastHarvestedAt": "2026-10-27T12:53:47.417Z",
     "learningId": "learn-github-kgateway-dev-kgateway"
   },
   "freenet-freenet-core": {
@@ -5673,10 +5673,10 @@
     "repository": "StarTrail-org/LEANN",
     "platform": "github",
     "sourceUrl": "https://github.com/StarTrail-org/LEANN",
-    "sourceVersion": "b51ddc0b",
+    "sourceVersion": "a63f484a",
     "license": "MIT",
-    "contentHash": "8e5dd7f201e50d9974044e32c2736b8c2e9a9fb110201740d32082c8ce978b56",
-    "lastHarvestedAt": "2026-10-25T04:53:57.782Z",
+    "contentHash": "b9333ed6025adcd9ee89a7738c410ab19dd902e7c5071a7a7ef1f7ecb414733e",
+    "lastHarvestedAt": "2026-10-27T12:53:52.427Z",
     "learningId": "learn-github-startrail-org-leann"
   },
   "adonisjs-core": {

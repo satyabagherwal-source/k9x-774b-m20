@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-ZDVO",
-    "timestamp": "2026-10-25T11:31:45.540Z",
-    "repository": "argoproj/argo-events",
-    "learningId": "learn-github-argoproj-argo-events",
-    "contentHash": "02544d22d9c3a9e01ddf2dd6b9c8610c2fe87b43710fbd3a0f74ba5687c41ce0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-ZHNB",
-    "timestamp": "2026-10-25T11:31:50.423Z",
-    "repository": "SeaQL/sea-orm",
-    "learningId": "learn-github-seaql-sea-orm",
-    "contentHash": "5e8f2d6762c52b56e40adcf069942be4eea7d0871ea2b70e476d861203e0ca7b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-1R3F",
-    "timestamp": "2026-10-25T11:33:35.979Z",
-    "repository": "taiga-family/taiga-ui",
-    "learningId": "learn-github-taiga-family-taiga-ui",
-    "contentHash": "42b2fc8ddfb93d6b7b9d7038c3c8371b65850ca02bff56c65cd96d3bf62a8a8a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-369P",
     "timestamp": "2026-10-25T11:34:42.301Z",
     "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -7490,6 +7445,51 @@
     "repository": "ytsaurus/ytsaurus",
     "learningId": "learn-github-ytsaurus-ytsaurus",
     "contentHash": "7c23e515703ca38ac50da84d31321193b78488a49b83b10425c8dab85d11ba3b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-SJI4",
+    "timestamp": "2026-10-27T12:53:45.532Z",
+    "repository": "Saffsanity/sill",
+    "learningId": "learn-github-saffsanity-sill",
+    "contentHash": "f8c3c4e05ee42f8b690e00d136c9320c57eaac7be893e23dd50ad2cd29ca31b9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-SKYE",
+    "timestamp": "2026-10-27T12:53:47.414Z",
+    "repository": "kgateway-dev/kgateway",
+    "learningId": "learn-github-kgateway-dev-kgateway",
+    "contentHash": "0b0d79e2199ffdb671a9a3f5eafed034e04026bcc78b516779083a7551de3b26",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-SOTK",
+    "timestamp": "2026-10-27T12:53:52.424Z",
+    "repository": "StarTrail-org/LEANN",
+    "learningId": "learn-github-startrail-org-leann",
+    "contentHash": "b9333ed6025adcd9ee89a7738c410ab19dd902e7c5071a7a7ef1f7ecb414733e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

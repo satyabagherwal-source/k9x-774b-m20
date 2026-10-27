@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source**: github ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
-> **Source Version**: `bef37c08`  
+> **Source Version**: `32e8e3f7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T06:55:58.391Z  
+> **Timestamp**: 2026-10-27T12:53:47.004Z  
 > **Learning ID**: `learn-github-kgateway-dev-kgateway`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T06:55:58.297Z  
+> **Harvest Timestamp**: 2026-10-27T12:53:46.596Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Cloud-Native API Gateway and AI Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5723 stars
+- **Stars / Engagement**: 5726 stars
 
 ---
 
@@ -930,11 +930,11 @@ func FileDataSource(s string) *envoycorev3.DataSource {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14894** (2026-10-23): **removes XdsSuppressNackResend a.k.a. KGW_XDS_SUPPRESS_NACK_RESEND**
-  *Symptoms*: # Description I regret adding it yesterday.  <!-- Thanks for opening a PR! Please delete any sections that don’t apply. -->   <!-- A concise explanation of the change. You may include: - **Motivation:** why this change is needed - **What changed:** key implementation details - **Related issues:** e.g., `Fixes #123` -->  # Change Type /kind cleanup  <!-- Select one or more of the following by including the corresponding slash-command.  If you pick more than one, the release note is filed under whichever appears first here (manual reordering does not have any effect): ``` /kind breaking_change /kind feature /kind fix /kind deprecation /kind documentation /kind cleanup /kind install /kind bump (the following kinds are not included in release notes) /kind design /kind flake /kind test ``` -->  # Changelog  <!-- Provide the exact line to appear in the release notes for this PR.  A PR gets one release note, filed under the highest-precedence /kind above. If this change needs no release note, write "NONE" in the block below. -->  ```release-note NONE ```  # Additional Notes  I may need to edit other release notes if they mentioned it. We haven't released 2.5.0 so no need to have a release note. <!-- Any extra context or edge cases for reviewers. --> 
+- **Issue #14913** (2026-10-26): **Rename xDS scoping metrics and settings**
+  *Symptoms*: # Description  Also have the controller abort if the old env vars are used.  Following up on #14910 and referencing #13586  <!-- Thanks for opening a PR! Please delete any sections that don’t apply. -->   <!-- A concise explanation of the change. You may include: - **Motivation:** why this change is needed - **What changed:** key implementation details - **Related issues:** e.g., `Fixes #123` -->  # Change Type /kind cleanup  <!-- Select one or more of the following by including the corresponding slash-command.  If you pick more than one, the release note is filed under whichever appears first here (manual reordering does not have any effect): ``` /kind breaking_change /kind feature /kind fix /kind deprecation /kind documentation /kind cleanup /kind install /kind bump (the following kinds are not included in release notes) /kind design /kind flake /kind test ``` -->  # Changelog  <!-- Provide the exact line to appear in the release notes for this PR.  A PR gets one release note, filed under the highest-precedence /kind above. If this change needs no release note, write "NONE" in the block below. -->  ```release-note NONE ```  # Additional Notes  I need to edit all the 13586 PRs' descriptions after #14910 already and this adds to that changelog debt. <!-- Any extra context or edge cases for reviewers. --> 
 
-- **Issue #14892** (2026-10-23): **ci: build the shared e2e images in parallel**
-  *Symptoms*: # Description  The "Build End-to-End Images" job sits on the critical path of every e2e shard. Its "Build shared e2e images" step took 5:05 because `make save-e2e-shared-images` built the five images one after another: the controller `go build` (2:08), then the Rust module build (2:18), then the image builds themselves (~40s).  This runs the step with `make -j --output-sync=target`, so the Go and Rust builds overlap. `--output-sync` keeps each target's log together, so a target's output only shows up in the log once it finishes.  Running under `-j` exposed a race: the recipes that copy a Dockerfile into an image's output directory could run before `go build` had created that directory (`go build -o` only creates it at link time), failing with `cp: ...: No such file or directory`. Each copy recipe now creates its directory first, as the extproc-server target already did.  Before, from a recent e2e run: the step took 5:05 and the job 6:30. The step is now bounded by the slower of the two overlapping builds plus the controller image and `docker save` (~25s), so it should come in around 3 minutes; the two builds compete for the runner's 4 cores, so the overlap is not perfect. This PR's own "Build End-to-End Images" job gives the measured number.  # Change Type  /kind test  # Changelog  ```release-note NONE ```  # Additional Notes  - The serial and parallel builds produce the same five image tags (checked locally from the `docker save` archive manifest). - `flake-validation.yaml` 
+- **Issue #14912** (2026-10-26): **fix: keep ServiceEntry protocol HTTP on ALPN for BackendTLSPolicy**
+  *Symptoms*: # Description  Follow-up to #14882. `ParseAppProtocol` mapped `http` to `HTTP1AppProtocol` for every caller, so a ServiceEntry port with `protocol: HTTP` and a BackendTLSPolicy stayed on HTTP/1.1 instead of negotiating HTTP/2 via ALPN. A Service port named `http` does negotiate, and `HTTP` is the usual protocol on a ServiceEntry port, so the two disagreed.  - `ParseAppProtocol` treats `http` as the default again. - Only an explicit Service `appProtocol: http` selects HTTP/1.1. `BuildServiceBackendObjectIR` decides it from the Service port, so every caller of the exported builder gets the same answer. Service behavior is unchanged. - Adds a ServiceEntry test that fails without the fix, and moves the Service cases to test `BuildServiceBackendObjectIR` directly.  # Change Type  /kind fix  # Changelog  ```release-note ServiceEntry ports with protocol HTTP now negotiate HTTP/2 or HTTP/1.1 via ALPN when a BackendTLSPolicy is attached, like Service ports without an explicit appProtocol. ```  # Additional Notes  Static `Backend`s are unaffected: their `appProtocol` enum does not allow `http`. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -951,441 +951,556 @@ func FileDataSource(s string) *envoycorev3.DataSource {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a0c89773` (2026-10-23)
-**Commit Message**: fix(xds): keep a queued de-reference prune from rolling routes back (#14877)
+### Incident Patch 1: `3897c787` (2026-10-26)
+**Commit Message**: test: PodSecurityContext/SecurityContext API evolution future-proofing (#14787)
 
 Signed-off-by: David L. Chandler <[REDACTED_EMAIL]>
 
-**File**: `pkg/kgateway/proxy_syncer/dereference_grace.go` (modified, +26/-5)
+**File**: `pkg/deployer/merge_test.go` (modified, +36/-0)
 ```diff
-@@ -49,7 +49,7 @@ type dereferenceState struct {
- // when the cluster leaves.
- //
- // The windows it opens are recorded at now, before the snapshot is installed;
--// the caller passes them to settleDereferenceWindowsLocked once it is.
-+// the caller passes them and now to settleDereferenceWindowsLocked once it is.
- func (g *publishGate) graceDereferencedClustersLocked(
- 	proxyKey string,
- 	published envoycache.ResourceSnapshot,
-@@ -135,14 +135,16 @@ func (g *publishGate) graceDereferencedClustersLocked(
- // installation that blocks answering watches must not use it up. A publish
- // that installed nothing (failed, or computed for a superseded connection)
- // opens none. Windows already open keep their start. The prune is armed from
--// the recorded starts. Callers must hold the gate lock.
-+// the recorded starts. began is when the publish computed its graced clusters.
-+// Callers must hold the gate lock.
- func (g *publishGate) settleDereferenceWindowsLocked(
- 	ctx context.Context,
- 	cache envoycache.SnapshotCache,
- 	proxyKey string,
- 	wrap XdsSnapWrapper,
- 	opened []string,
- 	installed bool,
-+	began time.Time,
- ) {
- 	state := g.dereferenced[proxyKey]
- 	if state == nil {
-@@ -165,7 +167,19 @@ func (g *publishGate) settleDereferenceWindowsLocked(
- 		g.cancelDereferenceTimerLocked(proxyKey)
- 		return
+@@ -678,6 +678,42 @@ func TestDeepMergeSecurityContextWindowsOptions(t *testing.T) {
  	}
--	g.armDereferenceTimerLocked(ctx, cache, proxyKey, wrap, g.soonestDereferenceExpiryLocked(proxyKey, at))
-+	in := g.soonestDereferenceExpiryLocked(proxyKey, at)
-+	for _, left := range state.since {
-+		if closed := left.Add(g.dereferenceGrace); closed.After(began) && !closed.After(at) {
-+			// A window closed while this publish ran. Its prune is queued on
-+			// the gate lock, and re-arming for the windows still open would
-+			// cancel it, keeping the cluster until the next one closes. Prune
-+			// at once instead (a zero delay arms nothing); that publish re-arms
-+			// for the rest. It cannot repeat: it begins after the window closed.
-+			in = time.Nanosecond
-+			break
-+		}
-+	}
-+	g.armDereferenceTimerLocked(ctx, cache, proxyKey, wrap, in)
  }
  
- // soonestDereferenceExpiryLocked returns the time from at until the soonest
-@@ -196,10 +210,17 @@ func (g *publishGate) armDereferenceTimerLocked(
- 	in time.Duration,
- ) {
- 	state := g.dereferenced[proxyKey]
--	if state == nil || in <= 0 {
-+	if state == nil {
- 		return
- 	}
-+	// Record the latest build even when no window is still open. A prune that
-+	// fired before this publish took the gate lock may still be queued on it,
-+	// and the prune re-publishes state.wrap: an older build there would roll
-+	// the client's configuration back.
- 	state.wrap = wrap
-+	if in <= 0 {
-+		return
++// Keep these lists explicit: new upstream fields require a merge-semantics review,
++// even if existing fixtures are updated to populate them.
++func TestSecurityContextFieldsReviewed(t *testing.T) {
++	tests := []struct {
++		typ    reflect.Type
++		fields []string
++	}{
++		{
++			typ: reflect.TypeFor[corev1.SecurityContext](),
++			fields: []string{
++				"Capabilities", "Privileged", "SELinuxOptions", "WindowsOptions",
++				"RunAsUser", "RunAsGroup", "RunAsNonRoot", "ReadOnlyRootFilesystem",
++				"AllowPrivilegeEscalation", "ProcMount", "SeccompProfile", "AppArmorProfile",
++			},
++		},
++		{
++			typ: reflect.TypeFor[corev1.PodSecurityContext](),
++			fields: []string{
++				"SELinuxOptions", "WindowsOptions", "RunAsUser", "RunAsGroup", "RunAsNonRoot",
++				"SupplementalGroups", "SupplementalGroupsPolicy", "FSGroup", "Sysctls",
++				"FSGroupChangePolicy", "SeccompProfile", "AppArmorProfile", "SELinuxChangePolicy",
++			},
++		},
 +	}
- 	if state.timer != nil {
- 		state.timer.Stop()
- 	}
-@@ -317,6 +338,6 @@ func (g *publishGate) publishWithTransitionGracesLocked(
- 		// timer would otherwise re-publish an older build.
- 		publishErr = g.publishLocked(ctx, cache, snapWrap.proxyKey, resolved, snapWrap.synthesizedEndpoints, edsHashes)
- 	}
--	g.settleDereferenceWindowsLocked(ctx, cache, snapWrap.proxyKey, snapWrap, opened, publishErr == nil)
-+	g.settleDereferenceWindowsLocked(ctx, cache, snapWrap.proxyKey, snapWrap, opened, publishErr == nil, now)
- 	return publishErr
- }
++	for _, tt := range tests {
++		t.Run(tt.typ.Name(), func(t *testing.T) {
++			fields := make([]string, tt.typ.NumField())
++			for i := range tt.typ.NumField() {
++				fields[i] = tt.typ.Field(i).Name
++			}
++			assert.ElementsMatch(t, tt.fields, fields,
++				"%s fields changed: review the merge logic and merge tests before updating the reviewed field list", tt.typ.Name())
++		})
++	}
++}
++
+ func assertAllFieldsSet(t *testing.T, v any) {
+ 	t.Helper()
+ 	rv := reflect.ValueOf(v).Elem()
 ```
 
-**File**: `pkg/kgateway/proxy_syncer/flip_release_timing_test.go` (modified, +104/-3)
+---
+
+### Incident Patch 2: `d0af2513` (2026-10-26)
+**Commit Message**: test(e2e): bound admin API curl calls with a per-call timeout (#14899)
+
+Signed-off-by: omar <[REDACTED_EMAIL]>
+
+**File**: `test/e2e/tests/zone_aware_routing_test.go` (modified, +1/-0)
 ```diff
-@@ -3,28 +3,50 @@ package proxy_syncer
- import (
- 	"context"
- 	"slices"
-+	"sync"
- 	"sync/atomic"
- 	"testing"
- 	"time"
+@@ -268,6 +268,7 @@ func withZoneAGatewayEnvoyAdmin(
+ 		WithCurlOptions(
+ 			curl.WithRetries(10, 1, 10),
+ 			curl.WithRetryConnectionRefused(true),
++			curl.WithConnectionTimeout(10), // a stalled port-forward fails one poll instead of blocking Eventually
+ 			curl.WithHostPort(portForwarder.Address()),
+ 		)
  
-+	envoycachetypes "github.com/envoyproxy/go-control-plane/pkg/cache/types"
- 	envoycache "github.com/envoyproxy/go-control-plane/pkg/cache/v3"
- 	resourcev3 "github.com/envoyproxy/go-control-plane/pkg/resource/v3"
+```
+
+**File**: `test/e2e/testutils/assertions/admin.go` (modified, +1/-0)
+```diff
+@@ -38,6 +38,7 @@ func (p *Provider) AssertKgatewayAdminApi(
+ 		WithReceiver(io.Discard). // adminAssertion can overwrite this
+ 		WithCurlOptions(
+ 			curl.WithRetries(3, 0, 10),
++			curl.WithConnectionTimeout(10), // a stalled port-forward fails one poll instead of blocking Eventually
+ 			curl.WithHostPort(portForwarder.Address()),
+ 		)
+ 
+```
+
+**File**: `test/e2e/testutils/assertions/envoy.go` (modified, +1/-0)
+```diff
+@@ -39,6 +39,7 @@ func (p *Provider) AssertEnvoyAdminApi(
+ 		WithCurlOptions(
+ 			curl.WithRetries(10, 1, 10),
+ 			curl.WithRetryConnectionRefused(true),
++			curl.WithConnectionTimeout(10), // a stalled port-forward fails one poll instead of blocking Eventually
+ 			curl.WithHostPort(portForwarder.Address()),
+ 		)
+ 
+```
+
+---
+
+### Incident Patch 3: `0cb98ee1` (2026-10-26)
+**Commit Message**: fix(backendconfigpolicy): make tls.files client certs and strict validation work (#14905)
+
+Signed-off-by: omar <[REDACTED_EMAIL]>
+
+**File**: `pkg/kgateway/extensions2/plugins/backendconfigpolicy/tls.go` (modified, +8/-7)
+```diff
+@@ -115,18 +115,19 @@ func buildCertificateContext(tlsData *tlsData, tlsContext *envoytlsv3.CommonTlsC
+ 		return errors.New("invalid TLS config: for if providing a client certificate, both certChain and privateKey must be provided")
+ 	}
+ 
+-	// Validate the certificate and key pair, and get a sanitized version of the certificate chain.
+-	cleanedCertChain, err := pluginutils.CleanedSslKeyPair(tlsData.certChain, tlsData.privateKey)
+-	if err != nil {
+-		return fmt.Errorf("invalid certificate and key pair: %w", err)
+-	}
+-
+ 	var certChainData, privateKeyData *envoycorev3.DataSource
+ 	if tlsData.inlineDataSource {
++		// Validate the certificate and key pair, and get a sanitized version of the certificate chain.
++		cleanedCertChain, err := pluginutils.CleanedSslKeyPair(tlsData.certChain, tlsData.privateKey)
++		if err != nil {
++			return fmt.Errorf("invalid certificate and key pair: %w", err)
++		}
+ 		certChainData = pluginutils.InlineStringDataSource(cleanedCertChain)
+ 		privateKeyData = pluginutils.InlineStringDataSource(tlsData.privateKey)
+ 	} else {
+-		certChainData = pluginutils.FileDataSource(cleanedCertChain)
++		// Files are paths inside the Envoy container, so the controller cannot
++		// read them; Envoy loads and validates them.
++		certChainData = pluginutils.FileDataSource(tlsData.certChain)
+ 		privateKeyData = pluginutils.FileDataSource(tlsData.privateKey)
+ 	}
+ 
+```
+
+**File**: `pkg/kgateway/extensions2/plugins/backendconfigpolicy/tls_test.go` (modified, +38/-30)
+```diff
+@@ -96,6 +96,14 @@ r8/mqGkEdNyd5BqGOFWoUi7kDqslOAl359Gd5ndxAoGAK3TVwhuLR9XoicDjmo6b
+ -----END PRIVATE KEY-----
+ ` // must have this newline at the end
+ 
++// File paths for tls.files tests. They exist only inside the Envoy container,
++// so translation must pass them through without reading them.
++const (
++	certPath = "/etc/envoy/certs/tls.crt"
++	keyPath  = "/etc/envoy/certs/tls.key"
++	caPath   = "/etc/ssl/certs/ca-certificates.crt"
++)
++
+ func TestTranslateTLSConfig(t *testing.T) {
+ 	tests := []struct {
+ 		name      string
+@@ -150,9 +158,9 @@ func TestTranslateTLSConfig(t *testing.T) {
+ 			name: "file-based TLS config",
+ 			tlsConfig: &kgateway.TLS{
+ 				Files: &kgateway.TLSFiles{
+-					TLSCertificate: new(CACert),
+-					TLSKey:         new(TLSKey),
+-					RootCA:         new(CACert),
++					TLSCertificate: new(certPath),
++					TLSKey:         new(keyPath),
++					RootCA:         new(caPath),
+ 				},
+ 				Sni:                new("test.example.com"),
+ 				AllowRenegotiation: new(true),
+@@ -161,12 +169,12 @@ func TestTranslateTLSConfig(t *testing.T) {
+ 			expected: &envoytlsv3.UpstreamTlsContext{
+ 				CommonTlsContext: &envoytlsv3.CommonTlsContext{
+ 					TlsCertificates: []*envoytlsv3.TlsCertificate{{
+-						CertificateChain: &envoycorev3.DataSource{Specifier: &envoycorev3.DataSource_Filename{Filename: CACert}},
+-						PrivateKey:       &envoycorev3.DataSource{Specifier: &envoycorev3.DataSource_Filename{Filename: TLSKey}},
++						CertificateChain: &envoycorev3.DataSource{Specifier: &envoycorev3.DataSource_Filename{Filename: certPath}},
++						PrivateKey:       &envoycorev3.DataSource{Specifier: &envoycorev3.DataSource_Filename{Filename: keyPath}},
+ 					}},
+ 					ValidationContextType: &envoytlsv3.CommonTlsContext_ValidationContext{
+ 						ValidationContext: &envoytlsv3.CertificateValidationContext{
+-							TrustedCa: &envoycorev3.DataSource{Specifier: &envoycorev3.DataSource_Filename{Filename: CACert}},
++							TrustedCa: &envoycorev3.DataSource{Specifier: &envoycorev3.DataSource_Filename{Filename: caPath}},
+ 						},
+ 					},
+ 				},
+@@ -178,8 +186,8 @@ func TestTranslateTLSConfig(t *testing.T) {
+ 			name: "TLS config with parameters",
+ 			tlsConfig: &kgateway.TLS{
+ 				Files: &kgateway.TLSFiles{
+-					TLSCertificate: new(CACert),
+-					TLSKey:         new(TLSKey),
++					TLSCertificate: new(certPath),
++					TLSKey:         new(keyPath),
+ 				},
+ 				Parameters: &kgateway.TLSParameters{
+ 					MinVersion:          new(kgateway.TLSVersion1_2),
+@@ -194,8 +202,8 @@ func TestTranslateTLSConfig(t *testing.T) {
+ 			expected: &envoytlsv3.UpstreamTlsContext{
+ 				CommonTlsContext: &envoytlsv3.CommonTlsContext{
+ 					TlsCertificates: []*envoytlsv3.TlsCertificate{{
+-						CertificateChain: &envoycorev3.DataSource{Specifier: &envoycorev3.DataSource_Filename{Filename: CACert}},
+-						PrivateKey:       &envoycorev3.DataSource{Specifier: &envoycorev3.DataSource_Filename{Filename: TLSKey}},
++						CertificateChain: &envoycorev3.DataSource{Specifier: &envoycorev3.DataSource_Filename{Filename: certPath}},
++						PrivateKey:       &envoycorev3.DataSource{Specifier: &envoycorev3.DataSource_Filename{Filename: keyPath}},
+ 					}},
+ 					TlsParams: &envoytlsv3.TlsParameters{
+ 						TlsMinimumProtocolVersion: envoytlsv3.TlsParameters_TLSv1_2,
+@@ -256,15 +264,15 @@ func TestTranslateTLSConfig(t *testing.T) {
+ 			name: "should not error with only rootca",
+ 			tlsConfig: &kgateway.TLS{
+ 				Files: &kgateway.TLSFiles{
+-					RootCA: new(CACert),
++					RootCA: new(caPath),
+ 				},
+ 			},
+ 			wantErr: false,
+ 			expected: &envoytlsv3.UpstreamTlsContext{
+ 				CommonTlsContext: &envoytlsv3.CommonTlsContext{
+ 					ValidationContextType: &envoytlsv3.CommonTlsContext_ValidationContext{
+ 						ValidationContext: &envoytlsv3.CertificateValidationContext{
+-							TrustedCa: &envoycorev3.DataSource{Specifier: &envoycorev3.DataSource_Filename{Filename: CACert}},
++							TrustedCa: &envoycorev3.DataSource{Specifier: &envoycorev3.DataSource_Filename{Filename: caPath}},
+ 						},
+ 					},
+ 				},
+@@ -274,8 +282,8 @@ func TestTranslateTLSConfig(t *testing.T) {
+ 			name: "should error with san and no rootca",
+ 			tlsConfig: &kgateway.TLS{
+ 				Files: &kgateway.TLSFiles{
+-					TLSCertificate: new(CACert),
+-					TLSKey:         new(TLSKey),
++					TLSCertificate: new(certPath),
++					TLSKey:         new(keyPath),
+ 				},
+ 				VerifySubjectAltNames: []string{"test.example.com"},
+ 			},
+@@ -285,7 +293,7 @@ func TestTranslateTLSConfig(t *testing.T) {
+ 			name: "should error with only cert and no key",
+ 			tlsConfig: &kgateway.TLS{
+ 				Files: &kgateway.TLSFiles{
+-					TLSCertificate: new(CACert),
++					TLSCertificate: new(certPath),
+ 				},
+ 			},
+ 			wantErr: true,
+@@ -294,7 +302,7 @@ func TestTranslateTLSConfig(t *testing.T) {
+ 			name: "TLS config with only private key provided",
+ 			tlsConfig: &kgateway.TLS{
+ 				Files: &kgateway.TLSFiles{
+-					TLSKey: new(TLSKey),
++					TLSKey: new(keyPath),
+ 				},
+ 			},
+ 			wantErr: true,
+@@ -303,9 +311,9 @@ func TestTr
+```
+
+**File**: `pkg/kgateway/translator/gateway/gateway_translator_test.go` (modified, +2/-2)
+```diff
+@@ -4431,9 +4431,9 @@ func TestValidation(t *testing.T) {
+ 			minMode:   apisettings.ValidationStandard,
+ 		},
+ 		{
+-			name:      "BackendConfigPolicy Invalid TLS Files Non-existent",
++			name:      "BackendConfigPolicy TLS Files On Proxy Only",
+ 			category:  "backendconfigpolicy",
+-			inputFile: "invalid-tlsfiles-nonexistent.yaml",
++			inputFile: "tlsfiles-proxy-only.yaml",
+ 			minMode:   apisettings.ValidationStandard,
+ 		},
+ 		{
+```
+
+**File**: `pkg/kgateway/translator/gateway/testutils/inputs/route-replacement/backendconfigpolicy/tlsfiles-proxy-only.yaml` (renamed, +7/-7)
+```diff
+@@ -49,12 +49,13 @@ spec:
+         - name: backend-service
+           port: 443
+ ---
+-# BackendConfigPolicy with non-existent TLS file paths - should cause validation error in strict mode
+-# Reproduces issue: https://github.com/kgateway-dev/kgateway/issues/12336
++# BackendConfigPolicy with TLS files that exist only on the proxy. Translation and
++# strict validation cannot read them, so the policy is accepted in every mode;
++# Envoy reports bad paths when the proxy loads the config.
+ kind: BackendConfigPolicy
+ apiVersion: gateway.kgateway.dev/v1alpha1
+ metadata:
+-  name: invalid-tlsfiles-policy
++  name: tlsfiles-policy
+   namespace: gwtest
+ spec:
+   targetRefs:
+@@ -63,8 +64,7 @@ spec:
+       kind: Service
+   tls:
+     files:
+-      # These file paths don't exist in the proxy filesystem
+-      tlsCertificate: "/nonexistent/path/to/cert.pem"
+-      tlsKey: "/invalid/path/to/key.pem"
+-      rootCA: "/missing/path/to/ca.pem"
++      tlsCertificate: "/etc/proxy-certs/tls.crt"
++      tlsKey: "/etc/proxy-certs/tls.key"
++      rootCA: "/etc/ssl/certs/cacerts-custom.crt"
+     sni: "backend.example.com"
+```
+
+**File**: `pkg/kgateway/translator/gateway/testutils/outputs/route-replacement/standard/backendconfigpolicy/tlsfiles-proxy-only-out.yaml` (renamed, +32/-8)
+```diff
+@@ -1,3 +1,28 @@
++Clusters:
++- commonLbConfig:
++    localityWeightedLbConfig: {}
++  connectTimeout: 5s
++  edsClusterConfig:
++    edsConfig:
++      ads: {}
++      resourceApiVersion: V3
++  ignoreHealthOnHostRemoval: true
++  name: kube_gwtest_backend-service_443
++  transportSocket:
++    name: envoy.transport_sockets.tls
++    typedConfig:
++      '@type': type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
++      commonTlsContext:
++        tlsCertificates:
++        - certificateChain:
++            filename: /etc/proxy-certs/tls.crt
++          privateKey:
++            filename: /etc/proxy-certs/tls.key
++        validationContext:
++          trustedCa:
++            filename: /etc/ssl/certs/cacerts-custom.crt
++      sni: backend.example.com
++  type: EDS
+ Listeners:
+ - address:
+     socketAddress:
+@@ -111,7 +136,7 @@ Statuses:
+           kind: ""
+           name: example-gateway
+   policies:
+-    BackendConfigPolicy/gwtest/invalid-tlsfiles-policy:
++    BackendConfigPolicy/gwtest/tlsfiles-policy:
+       ancestors:
+       - ancestorRef:
+           group: ""
+@@ -120,14 +145,13 @@ Statuses:
+           namespace: gwtest
+         conditions:
+         - lastTransitionTime: null
+-          message: 'invalid certificate and key pair: tls: failed to find any PEM
+-            data in certificate input'
+-          reason: Invalid
+-          status: "False"
++          message: Policy accepted
++          reason: Valid
++          status: "True"
+           type: Accepted
+         - lastTransitionTime: null
+-          message: ""
+-          reason: Pending
+-          status: "False"
++          message: Attached to all targets
++          reason: Attached
++          status: "True"
+           type: Attached
+         controllerName: kgateway.dev/kgateway
+```
+
+**File**: `pkg/kgateway/translator/gateway/testutils/outputs/route-replacement/strict/backendconfigpolicy/tlsfiles-proxy-only-out.yaml` (renamed, +32/-8)
+```diff
+@@ -1,3 +1,28 @@
++Clusters:
++- commonLbConfig:
++    localityWeightedLbConfig: {}
++  connectTimeout: 5s
++  edsClusterConfig:
++    edsConfig:
++      ads: {}
++      resourceApiVersion: V3
++  ignoreHealthOnHostRemoval: true
++  name: kube_gwtest_backend-service_443
++  transportSocket:
++    name: envoy.transport_sockets.tls
++    typedConfig:
++      '@type': type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
++      commonTlsContext:
++        tlsCertificates:
++        - certificateChain:
++            filename: /etc/proxy-certs/tls.crt
++          privateKey:
++            filename: /etc/proxy-certs/tls.key
++        validationContext:
++          trustedCa:
++            filename: /etc/ssl/certs/cacerts-custom.crt
++      sni: backend.example.com
++  type: EDS
+ Listeners:
+ - address:
+     socketAddress:
+@@ -111,7 +136,7 @@ Statuses:
+           kind: ""
+           name: example-gateway
+   policies:
+-    BackendConfigPolicy/gwtest/invalid-tlsfiles-policy:
++    BackendConfigPolicy/gwtest/tlsfiles-policy:
+       ancestors:
+       - ancestorRef:
+           group: ""
+@@ -120,14 +145,13 @@ Statuses:
+           namespace: gwtest
+         conditions:
+         - lastTransitionTime: null
+-          message: 'invalid certificate and key pair: tls: failed to find any PEM
+-            data in certificate input'
+-          reason: Invalid
+-          status: "False"
++          message: Policy accepted
++          reason: Valid
++          status: "True"
+           type: Accepted
+         - lastTransitionTime: null
+-          message: ""
+-          reason: Pending
+-          status: "False"
++          message: Attached to all targets
++          reason: Attached
++          status: "True"
+           type: Attached
+         controllerName: kgateway.dev/kgateway
+```
+
+**File**: `pkg/validator/validator_test.go` (modified, +58/-0)
+```diff
+@@ -14,12 +14,14 @@ import (
+ 	envoyroutev3 "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
+ 	envoyhttpv3 "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/http/router/v3"
+ 	envoy_hcm "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/network/http_connection_manager/v3"
++	envoytlsv3 "github.com/envoyproxy/go-control-plane/envoy/extensions/transport_sockets/tls/v3"
+ 	envoymatcherv3 "github.com/envoyproxy/go-control-plane/envoy/type/matcher/v3"
+ 	"github.com/golang/protobuf/ptypes/duration"
  	"github.com/stretchr/testify/assert"
  	"github.com/stretchr/testify/require"
+ 
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/kgateway/utils"
++	"github.com/kgateway-dev/kgateway/v2/pkg/xds/bootstrap"
  )
  
- // slowInstallCache delays SetSnapshot while delay is set, standing in for an
--// install blocked on a stream.
-+// install blocked on a stream. It counts installs and keeps the slow ones.
- type slowInstallCache struct {
- 	envoycache.SnapshotCache
--	delay atomic.Int64
-+	delay    atomic.Int64
-+	installs atomic.Int64
-+
-+	mu   sync.Mutex
-+	slow []envoycache.ResourceSnapshot
- }
+ func TestBinaryValidator_Validate(t *testing.T) {
+@@ -273,6 +275,22 @@ func TestDockerValidator_Validate(t *testing.T) {
+ 			expectError: true,
+ 			errorMsg:    `error initializing configuration '/dev/fd/0': error adding listener named 'listener_0': address is necessary`,
+ 		},
++		{
++			name: "TLS files are checked against the validator's filesystem",
++			bootstrap: &envoybootstrapv3.Bootstrap{
++				Node: &envoycorev3.Node{Id: "test-id", Cluster: "test-cluster"},
++				StaticResources: &envoybootstrapv3.Bootstrap_StaticResources{
++					Clusters: []*envoyclusterv3.Cluster{fileTLSCluster()},
++				},
++			},
++			expectError: true,
++			errorMsg:    `error initializing configuration '/dev/fd/0': Invalid path: /proxy/only/ca.crt`,
++		},
++		{
++			name:        "validation bootstrap replaces TLS files that exist only on the proxy",
++			bootstrap:   mustBuildWithCluster(fileTLSCluster()),
++			expectError: false,
++		},
+ 		{
+ 			name: "invalid regex in route match",
+ 			bootstrap: &envoybootstrapv3.Bootstrap{
+@@ -539,3 +557,43 @@ func createMockBinary(t *testing.T, script string) string {
  
- func (c *slowInstallCache) SetSnapshot(ctx context.Context, node string, snapshot envoycache.ResourceSnapshot) error {
--	time.Sleep(time.Duration(c.delay.Load()))
-+	c.installs.Add(1)
-+	if delay := time.Duration(c.delay.Load()); delay > 0 {
-+		c.mu.Lock()
-+		c.slow = append(c.slow, snapshot)
-+		c.mu.Unlock()
-+		time.Sleep(delay)
+ 	return mockPath
+ }
++
++// fileTLSCluster returns a cluster that references TLS files that exist only
++// on the proxy.
++func fileTLSCluster() *envoyclusterv3.Cluster {
++	file := func(path string) *envoycorev3.DataSource {
++		return &envoycorev3.DataSource{Specifier: &envoycorev3.DataSource_Filename{Filename: path}}
 +	}
- 	return c.SnapshotCache.SetSnapshot(ctx, node, snapshot)
- }
- 
-+// firstSlowInstallClusters returns the clusters of the first snapshot installed
-+// while delay was set.
-+func (c *slowInstallCache) firstSlowInstallClusters(t *testing.T) map[string]envoycachetypes.ResourceWithTTL {
-+	t.Helper()
-+	c.mu.Lock()
-+	defer c.mu.Unlock()
-+	require.NotEmpty(t, c.slow, "nothing was installed slowly")
-+	return c.slow[0].GetResourcesAndTTL(resourcev3.ClusterType)
++	return &envoyclusterv3.Cluster{
++		Name:                 "file-tls",
++		ClusterDiscoveryType: &envoyclusterv3.Cluster_Type{Type: envoyclusterv3.Cluster_STATIC},
++		TransportSocket: &envoycorev3.TransportSocket{
++			Name: "envoy.transport_sockets.tls",
++			ConfigType: &envoycorev3.TransportSocket_TypedConfig{
++				TypedConfig: utils.MustMessageToAny(&envoytlsv3.UpstreamTlsContext{
++					CommonTlsContext: &envoytlsv3.CommonTlsContext{
++						TlsCertificates: []*envoytlsv3.TlsCertificate{{
++							CertificateChain: file("/proxy/only/tls.crt"),
++							PrivateKey:       file("/proxy/only/tls.key"),
++						}},
++						ValidationContextType: &envoytlsv3.CommonTlsContext_ValidationContext{
++							ValidationContext: &envoytlsv3.CertificateValidationContext{
++								TrustedCa: file("/proxy/only/ca.crt"),
++							},
++						},
++					},
++				}),
++			},
++		},
++	}
 +}
 +
- // A held flip's budget starts once its held snapshot is installed: an install
- // slower than the budget must not release the flip as soon as it lands.
- func TestFlipRelease_BudgetStartsAfterTheHeldSnapshotIsInstalled(t *testing.T) {
-@@ -133,3 +155,82 @@ func TestDereferenceGraceStartsAfterASlowFlipReleaseInstall(t *testing.T) {
- 	require.Eventually(t, func() bool { return !slices.Contains(publishedClusterNames(t, pt), "old") }, 2*time.Second, 5*time.Millisecond,
- 		"old still leaves once its grace closes")
- }
-+
-+// An installation that crosses an open window's deadline leaves that
-+// deadline's prune queued on the gate lock. The prune must re-publish the build
-+// just installed, not the older one it was armed with.
-+func TestDereferencePruneQueuedDuringASlowInstallKeepsTheNewerBuild(t *testing.T) {
-+	grace := 200 * time.Millisecond
-+	cache := &slowInstallCache{SnapshotCache: newTestSnapshotCache(t)}
-+	translator := NewProxyTranslator(cache, stubPriorXDS{has: true}, time.Hour, true, scopedClustersWithGrace(grace))
-+	pt := &translator
-+	t.Cleanup(func() { pt.gate.clientDeparted(publishGateTestClient) })
-+	ctx := context.Background()
-+
-+	pt.syncXds(ctx, routedBuild(t, "v1", "old", "old"))
-+	pt.syncXds(ctx, routedBuild(t, "v2", "new", "new")) // old's window opens; its prune is armed with v2
-+	time.Sleep(grace / 2)
-+	cache.delay.Store(int64(grace))
-+	pt.syncXds(ctx, routedBuild(t, "v3", "new", "new")) // still keeps old, and installs past its deadline
-+	cache.delay.Store(0)
-+	require.Contains(t, cache.firstSlowInstallClusters(t), "old", "v3 must begin inside old's window, or its prune runs before v3")
-+
-+	require.Eventually(t, func() bool { return !slices.Contains(publishedClusterNames(t, pt), "old") }, 2*time.Second, 5*time.Millisecond,
-+		"old's prune runs")
-+	assert.Equal(t, "v3", publishedListenerVersionOf(t, pt), "the prune re-publishes the newer build, not the one it was armed with")
++func mustBuildWithCluster(cluster *envoyclusterv3.Cluster) *envoybootstrapv3.Bootstrap {
++	builder := bootstrap.New()
++	builder.AddCluster(cluster)
++	bs, err := builder.Build()
++	if err != nil {
++		panic(err)
++	}
++	return bs
 +}
-+
-+// A window that closes during an installation must not wait for a later
-+// window: re-arming the prune for b would cancel a's, keeping a published
-+// until b's window closes.
-+func TestDereferenceWindowClosingDuringASlowInstallIsNotExtendedByALaterOne(t *testing.T) {
-+	grace := 300 * time.Millisecond
-+	cache := &slowInstallCache{SnapshotCache: newTestSnapshotCache(t)}
-+	translator := NewProxyTranslator(cache, stubPriorXDS{has: true}, time.Hour, true, scopedClustersWithGrace(grace))
-+	pt := &translator
-+	t.Cleanup(func() { pt.gate.clientDeparted(publishGateTestClient) })
-+	ctx := context.Background()
-+
-+	pt.syncXds(ctx, routedBuild(t, "v1", "c", "a", "b", "c"))
-+	pt.syncXds(ctx, routedBuild(t, "v2", "c", "b", "c")) // a's window opens
-+	time.Sleep(grace / 2)
-+	cache.delay.Store(int64(grace))
-+	pt.syncXds(ctx, routedBuild(t, "v3", "c", "c")) // b's window opens; a's closes during the installation
-+	cache.delay.Store(0)
-+	require.Contains(t, cache.firstSlowInstallClusters(t), "a", "v3 must begin inside a's window, or a's prune runs before v3")
-+
-+	require.Eventually(t, func() bool { return !slices.Contains(publishedClusterNames(t, pt), "a") }, grace/2, 5*time.Millisecond,
-+		"a leaves once the installation lands, not when b's window closes")
-+	assert.Contains(t, publishedClusterNames(t, pt), "b", "b keeps its window")
-+	assert.Equal(t, "v3", publishedListenerVersionOf(t, pt))
-+	require.Eventually(t, func() bool { return !slices.Contains(publishedClusterNam
 ```
 
-**File**: `pkg/kgateway/proxy_syncer/publish_gate.go` (modified, +4/-3)
+**File**: `pkg/xds/bootstrap/builder.go` (modified, +12/-4)
 ```diff
-@@ -449,7 +449,7 @@ func (g *publishGate) resolveDeferredLocked(
+@@ -232,14 +232,22 @@ func (b *ConfigBuilder) Build() (*envoybootstrapv3.Bootstrap, error) {
+ 			}},
+ 		}},
  	}
- 	// Arm after publishing: publishLocked and publishHeldLocked cancel the carry
- 	// expiry. The de-reference timer survives publishes.
--	g.settleDereferenceWindowsLocked(ctx, cache, snapWrap.proxyKey, snapWrap, opened, publishErr == nil)
-+	g.settleDereferenceWindowsLocked(ctx, cache, snapWrap.proxyKey, snapWrap, opened, publishErr == nil, now)
- 	g.armCarryExpiryLocked(ctx, cache, candidate)
- 	return publishErr
- }
-@@ -784,8 +784,9 @@ func (g *publishGate) releaseFlipLocked(ctx context.Context, cache envoycache.Sn
++	// TLS files exist only on the proxy, not where validation runs, so they
++	// are replaced with placeholders. Bad paths or contents surface when the
++	// proxy loads the config.
++	for _, cluster := range b.clusters {
++		staticResources.Clusters = append(staticResources.Clusters, withPlaceholderTLSFiles(cluster))
++	}
+ 	// Envoy requires the local cluster to be defined as a static cluster.
+-	staticResources.Clusters = append(slices.Clone(b.clusters), &envoyclusterv3.Cluster{
++	staticResources.Clusters = append(staticResources.Clusters, &envoyclusterv3.Cluster{
+ 		Name:                 validationLocalClusterName,
+ 		ClusterDiscoveryType: &envoyclusterv3.Cluster_Type{Type: envoyclusterv3.Cluster_STATIC},
+ 	})
+-	staticResources.Listeners = append(staticResources.Listeners, b.listeners...)
+-	if len(b.secrets) > 0 {
+-		staticResources.Secrets = append(staticResources.Secrets, b.secrets...)
++	for _, listener := range b.listeners {
++		staticResources.Listeners = append(staticResources.Listeners, withPlaceholderTLSFiles(listener))
++	}
++	for _, secret := range b.secrets {
++		staticResources.Secrets = append(staticResources.Secrets, withPlaceholderTLSFiles(secret))
  	}
- 	// The release publishes the held routes, so their de-references' windows
- 	// open now.
-+	now := time.Now()
- 	graced, opened := g.graceDereferencedClustersLocked(
--		proxyKey, published, pf.wrap.snap.Resources[envoycachetypes.Cluster], pf.wrap.translatedClusters, false, time.Now())
-+		proxyKey, published, pf.wrap.snap.Resources[envoycachetypes.Cluster], pf.wrap.translatedClusters, false, now)
- 	released, _, edsHashes := resolveDeferredPerCluster(g.boundCarryLocked(pf.wrap, published, time.Now()), published, false, graced, g.lastPublishedEDSLocked(proxyKey))
- 	// A reference-ahead window closing on its own is expected. Warn and count a
- 	// bounded publish only when the budget cut one short.
-@@ -805,7 +806,7 @@ func (g *publishGate) releaseFlipLocked(ctx context.Context, cache envoycache.Sn
- 	}
- 	err := g.setSnapshot(ctx, cache, proxyKey, released, pf.wrap.synthesizedEndpoints, edsHashes)
- 	// The release may grace clusters; arm their prune, or they linger until a later build.
--	g.settleDereferenceWindowsLocked(ctx, cache, proxyKey, pf.wrap, opened, err == nil)
-+	g.settleDereferenceWindowsLocked(ctx, cache, proxyKey, pf.wrap, opened, err == nil, now)
- 	if err != nil {
- 		logPublishFailure(proxyKey, err)
- 		return
-```
-
----
-
-### Incident Patch 2: `fa9dfc6f` (2026-10-23)
-**Commit Message**: ci: build the shared e2e images in parallel (#14892)
-
-Signed-off-by: omar <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/e2e.yaml` (modified, +3/-1)
-```diff
-@@ -41,7 +41,9 @@ jobs:
-           ENVOYINIT_LOCAL_CACHE_TO: /tmp/.buildx-cache-envoyinit-new
-         run: |
-           mkdir -p /tmp/.buildx-cache-envoyinit
--          make save-e2e-shared-images
-+          # Build the images in parallel. --output-sync keeps each target's log
-+          # together, so a target's output only appears once it finishes.
-+          make -j --output-sync=target save-e2e-shared-images
-       - name: Rotate envoyinit BuildKit cache
-         if: always()
-         run: |
-```
-
-**File**: `.github/workflows/flake-validation.yaml` (modified, +3/-1)
-```diff
-@@ -54,7 +54,9 @@ jobs:
-           ENVOYINIT_LOCAL_CACHE_TO: /tmp/.buildx-cache-envoyinit-new
-         run: |
-           mkdir -p /tmp/.buildx-cache-envoyinit
--          make save-e2e-shared-images
-+          # Build the images in parallel. --output-sync keeps each target's log
-+          # together, so a target's output only appears once it finishes.
-+          make -j --output-sync=target save-e2e-shared-images
-       - name: Rotate envoyinit BuildKit cache
-         if: always()
-         run: |
-```
-
-**File**: `Makefile` (modified, +5/-0)
-```diff
-@@ -781,6 +781,7 @@ $(CONTROLLER_OUTPUT_DIR)/kgateway-linux-$(GOARCH): $(K8S_GATEWAY_SOURCES)
- kgateway: $(CONTROLLER_OUTPUT_DIR)/kgateway-linux-$(GOARCH)
- 
- $(CONTROLLER_OUTPUT_DIR)/Dockerfile: cmd/kgateway/Dockerfile
-+	@mkdir -p $(dir $@)
- 	cp $< $@
- 
- $(CONTROLLER_OUTPUT_DIR)/.docker-stamp-$(VERSION)-$(GOARCH): $(CONTROLLER_OUTPUT_DIR)/kgateway-linux-$(GOARCH) $(CONTROLLER_OUTPUT_DIR)/Dockerfile $(ENVOY_MODULE_OUTPUT_DIR)/librust_module.so
-@@ -817,6 +818,7 @@ $(SDS_OUTPUT_DIR)/sds-linux-$(GOARCH): $(SDS_SOURCES)
- sds: $(SDS_OUTPUT_DIR)/sds-linux-$(GOARCH)
- 
- $(SDS_OUTPUT_DIR)/Dockerfile.sds: cmd/sds/Dockerfile
-+	@mkdir -p $(dir $@)
- 	cp $< $@
- 
- $(SDS_OUTPUT_DIR)/.docker-stamp-$(VERSION)-$(GOARCH): $(SDS_OUTPUT_DIR)/sds-linux-$(GOARCH) $(SDS_OUTPUT_DIR)/Dockerfile.sds
-@@ -881,9 +883,11 @@ $(ENVOY_MODULE_OUTPUT_DIR)/librust_module.so: $(ENVOY_MODULES_SRC_FILES) $(ENVOY
- 		$(ENVOY_MODULES_DIR)
- 
- $(ENVOYINIT_OUTPUT_DIR)/Dockerfile.envoyinit: $(ENVOYINIT_DOCKERFILE)
-+	@mkdir -p $(dir $@)
- 	cp $< $@
- 
- $(ENVOYINIT_OUTPUT_DIR)/docker-entrypoint.sh: cmd/envoyinit/docker-entrypoint.sh
-+	@mkdir -p $(dir $@)
- 	cp $< $@
- 
- $(ENVOYINIT_OUTPUT_DIR)/.docker-stamp-$(VERSION)-$(GOARCH): $(ENVOYINIT_OUTPUT_DIR)/envoyinit-linux-$(GOARCH) $(ENVOYINIT_OUTPUT_DIR)/Dockerfile.envoyinit $(ENVOYINIT_OUTPUT_DIR)/docker-entrypoint.sh $(ENVOY_MODULE_OUTPUT_DIR)/librust_module.so
-@@ -921,6 +925,7 @@ $(DUMMY_IDP_OUTPUT_DIR)/dummy-idp-linux-$(GOARCH): $(DUMMY_IDP_SOURCES)
- dummy-idp: $(DUMMY_IDP_OUTPUT_DIR)/dummy-idp-linux-$(GOARCH)
- 
- $(DUMMY_IDP_OUTPUT_DIR)/Dockerfile.dummy-idp: ./hack/dummy-idp/Dockerfile
-+	@mkdir -p $(dir $@)
- 	cp $< $@
- 
- $(DUMMY_IDP_OUTPUT_DIR)/.docker-stamp-$(DUMMY_IDP_VERSION)-$(GOARCH): $(DUMMY_IDP_OUTPUT_DIR)/dummy-idp-linux-$(GOARCH) $(DUMMY_IDP_OUTPUT_DIR)/Dockerfile.dummy-idp
-```
-
----
-
-### Incident Patch 3: `0ffceaf7` (2026-10-23)
-**Commit Message**: fix(extauth): emit filter state stats on ext-authz filters (#14824)
-
-Signed-off-by: ayushi-work <[REDACTED_EMAIL]>
-Signed-off-by: omar <[REDACTED_EMAIL]>
-Co-authored-by: omar <[REDACTED_EMAIL]>
-
-**File**: `pkg/kgateway/extensions2/plugins/trafficpolicy/gateway_extension.go` (modified, +3/-0)
-```diff
-@@ -191,6 +191,9 @@ func gatewayExtensionBuilder(
- 			}
- 
- 			// Common configuration for both gRPC and HTTP
-+			// Emit filter state stats so ext-auth latency can be access-logged
-+			// via %FILTER_STATE(ext_auth/<ns>/<name>:FIELD:latency_us)%.
-+			p.ExtAuth.EmitFilterStateStats = true
- 			if gExt.ExtAuth.WithRequestBody != nil {
- 				p.ExtAuth.WithRequestBody = &envoy_ext_authz_v3.BufferSettings{
- 					MaxRequestBytes:     uint32(gExt.ExtAuth.WithRequestBody.MaxRequestBytes), // nolint:gosec // G115: kubebuilder validation ensures safe for uint32
-```
-
-**File**: `pkg/kgateway/setup/testdata/standard/extauth-gw-and-route-disable-out.yaml` (modified, +1/-0)
-```diff
-@@ -82,6 +82,7 @@ listeners:
-           name: ext_auth/gwtest/basic-extauth
-           typedConfig:
-             '@type': type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
-+            emitFilterStateStats: true
-             filterEnabledMetadata:
-               filter: dev.kgateway.disable_ext_auth
-               invert: true
-```
-
-**File**: `pkg/kgateway/translator/gateway/testutils/outputs/reference-grant-mode/strict-extensionref-with-grant.yaml` (modified, +1/-0)
-```diff
-@@ -48,6 +48,7 @@ Listeners:
-           name: ext_auth/other-ns/extauth-ext
-           typedConfig:
-             '@type': type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
-+            emitFilterStateStats: true
-             filterEnabledMetadata:
-               filter: dev.kgateway.disable_ext_auth
-               invert: true
-```
-
-**File**: `pkg/kgateway/translator/gateway/testutils/outputs/setup/standard/extauth-gw-and-route.yaml` (modified, +2/-0)
-```diff
-@@ -97,6 +97,7 @@ Listeners:
-           name: ext_auth/gwtest/app-team-extauth
-           typedConfig:
-             '@type': type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
-+            emitFilterStateStats: true
-             filterEnabledMetadata:
-               filter: dev.kgateway.disable_ext_auth
-               invert: true
-@@ -113,6 +114,7 @@ Listeners:
-           name: ext_auth/gwtest/basic-extauth
-           typedConfig:
-             '@type': type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
-+            emitFilterStateStats: true
-             filterEnabledMetadata:
-               filter: dev.kgateway.disable_ext_auth
-               invert: true
-```
-
-**File**: `pkg/kgateway/translator/gateway/testutils/outputs/setup/standard/extauth-gw-only.yaml` (modified, +1/-0)
-```diff
-@@ -72,6 +72,7 @@ Listeners:
-           name: ext_auth/gwtest/basic-extauth
-           typedConfig:
-             '@type': type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
-+            emitFilterStateStats: true
-             filterEnabledMetadata:
-               filter: dev.kgateway.disable_ext_auth
-               invert: true
-```
-
-**File**: `pkg/kgateway/translator/gateway/testutils/outputs/setup/standard/extauth-route-only.yaml` (modified, +1/-0)
-```diff
-@@ -72,6 +72,7 @@ Listeners:
-           name: ext_auth/gwtest/basic-extauth
-           typedConfig:
-             '@type': type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
-+            emitFilterStateStats: true
-             filterEnabledMetadata:
-               filter: dev.kgateway.disable_ext_auth
-               invert: true
-```
-
-**File**: `pkg/kgateway/translator/gateway/testutils/outputs/traffic-policy/buffer-filter-stage.yaml` (modified, +1/-0)
-```diff
-@@ -65,6 +65,7 @@ Listeners:
-           name: ext_auth/default/extauth
-           typedConfig:
-             '@type': type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
-+            emitFilterStateStats: true
-             filterEnabledMetadata:
-               filter: dev.kgateway.disable_ext_auth
-               invert: true
-```
-
-**File**: `pkg/kgateway/translator/gateway/testutils/outputs/traffic-policy/extauth-cross-namespace.yaml` (modified, +2/-0)
-```diff
-@@ -48,6 +48,7 @@ Listeners:
-           name: ext_auth/default/allowed-extauth-ext
-           typedConfig:
-             '@type': type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
-+            emitFilterStateStats: true
-             filterEnabledMetadata:
-               filter: dev.kgateway.disable_ext_auth
-               invert: true
-@@ -112,6 +113,7 @@ Listeners:
-           name: ext_auth/default/allowed-extauth-ext
-           typedConfig:
-             '@type': type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
-+            emitFilterStateStats: true
-             filterEnabledMetadata:
-               filter: dev.kgateway.disable_ext_auth
-               invert: true
+ 	if clustersReferenceSystemCASecret(b.clusters) && !hasSecretNamed(staticResources.GetSecrets(), eiutils.SystemCaSecretName) {
+ 		staticResources.Secrets = append(staticResources.Secrets, SystemCAValidationSecretPlaceholder())
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14894** (2026-10-23): removes XdsSuppressNackResend a.k.a. KGW_XDS_SUPPRESS_NACK_RESEND (@chandler-solo)
-- **PR #14892** (2026-10-23): ci: build the shared e2e images in parallel (@puertomontt)
-- **PR #14891** (2026-10-23): ci: compile the e2e test binary while the cluster is set up (@puertomontt)
-- **PR #14884** (closed): backendtlspolicy: negotiate h2 via ALPN for TLS backends (@davidjumani)
-- **PR #14881** (2026-10-23): test: move CRD validation cases from e2e to in-process unit tests (@puertomontt)
-- **PR #14880** (2026-10-23): Support consecutive gateway failure outlier detection (@DuncanDoyle)
+- **PR #14913** (2026-10-26): Rename xDS scoping metrics and settings (@chandler-solo)
+- **PR #14912** (closed): fix: keep ServiceEntry protocol HTTP on ALPN for BackendTLSPolicy (@puertomontt)
+- **PR #14910** (2026-10-26): Expose xDS scoping Helm values and rename the scoping mode (@chandler-solo)
+- **PR #14909** (closed): Link fixes (@kristin-kronstain-brown)
+- **PR #14907** (2026-10-26): [2.4] Loadtest flake mitigation (@sheidkamp)
+- **PR #14905** (2026-10-26): fix(backendconfigpolicy): make tls.files client certs and strict validation work (@puertomontt)
 
 ---
 
@@ -1405,57 +1520,59 @@ Co-authored-by: omar <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. xds): keep a queued de-reference prune from rolling routes back (#14877)
+## X. test: PodSecurityContext/SecurityContext API evolution future-proofing (#14787)
 
 **RULE**:
-When implementing operations in `pkg/kgateway/proxy_syncer/dereference_grace.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/deployer/merge_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a0c89773`: xds): keep a queued de-reference prune from rolling routes back (#14877). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3897c787`: test: PodSecurityContext/SecurityContext API evolution future-proofing (#14787). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/kgateway/proxy_syncer/dereference_grace.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/deployer/merge_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// the caller passes them and now to settleDereferenceWindowsLocked once it is.
-// the recorded starts. began is when the publish computed its graced clusters.
-// Callers must hold the gate lock.
-	began time.Time,
-	in := g.soonestDereferenceExpiryLocked(proxyKey, at)
-	for _, left := range state.since {
-		if closed := left.Add(g.dereferenceGrace); closed.After(began) && !closed.After(at) {
-			// A window closed while this publish ran. Its prune is queued on
-			// the gate lock, and re-arming for the windows still open would
-			// cancel it, keeping the cluster until the next one closes. Prune
-			// at once instead (a zero delay arms nothing); that publish re-arms
-			// for the rest. It cannot repeat: it begins after the window closed.
-			in = time.Nanosecond
-			break
-		}
+// Keep these lists explicit: new upstream fields require a merge-semantics review,
+// even if existing fixtures are updated to populate them.
+func TestSecurityContextFieldsReviewed(t *testing.T) {
+	tests := []struct {
+		typ    reflect.Type
+		fields []string
+	}{
+		{
+			typ: reflect.TypeFor[corev1.SecurityContext](),
+			fields: []string{
+				"Capabilities", "Privileged", "SELinuxOptions", "WindowsOptions",
+				"RunAsUser", "RunAsGroup", "RunAsNonRoot", "ReadOnlyRootFilesystem",
+				"AllowPrivilegeEscalation", "ProcMount", "SeccompProfile", "AppArmorProfile",
+			},
+		},
+		{
+			typ: reflect.TypeFor[corev1.PodSecurityContext](),
+			fields: []string{
+				"SELinuxOptions", "WindowsOptions", "RunAsUser", "RunAsGroup", "RunAsNonRoot",
+				"SupplementalGroups", "SupplementalGroupsPolicy", "FSGroup", "Sysctls",
+				"FSGroupChangePolicy", "SeccompProfile", "AppArmorProfile", "SELinuxChangePolicy",
+			},
+		},
 	}
-	g.armDereferenceTimerLocked(ctx, cache, proxyKey, wrap, in)
-	if state == nil {
-	// Record the latest build even when no window is still open. A prune that
-	// fired before this publish took the gate lock may still be queued on it,
-	// and the prune re-publishes state.wrap: an older build there would roll
-	// the client's configuration back.
-	if in <= 0 {
-		return
-	}
-	g.settleDereferenceWindowsLocked(ctx, cache, 
+	for _, tt := range tests {
+		t.Run(tt.typ.Name(), func(t *testing.T) {
+			fields := make([]string, tt.typ.NumField())
+			for i := range tt.typ.NumField() {
+				fields[i] = tt.typ.Field(i).Name
+			}
+			assert.ElementsMatch(t, tt.fields, fields,
+				"%s fields changed: review the merge 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// the caller passes them to settleDereferenceWindowsLocked once it is.
-// the recorded starts. Callers must hold the gate lock.
-	g.armDereferenceTimerLocked(ctx, cache, proxyKey, wrap, g.soonestDereferenceExpiryLocked(proxyKey, at))
-	if state == nil || in <= 0 {
-	g.settleDereferenceWindowsLocked(ctx, cache, snapWrap.proxyKey, snapWrap, opened, publishErr == nil)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a0c89773` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3897c787` are properly handled with clean fallback behavior.

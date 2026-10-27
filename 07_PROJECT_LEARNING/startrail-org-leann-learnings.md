@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/startrail-org-leann-learnings.md`  
 > **Source**: github ([https://github.com/StarTrail-org/LEANN](https://github.com/StarTrail-org/LEANN))  
-> **Source Version**: `b51ddc0b`  
+> **Source Version**: `a63f484a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T04:53:57.431Z  
+> **Timestamp**: 2026-10-27T12:53:52.004Z  
 > **Learning ID**: `learn-github-startrail-org-leann`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/startrail-org-leann-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarTrail-org/LEANN](https://github.com/StarTrail-org/LEANN))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T04:53:56.066Z  
+> **Harvest Timestamp**: 2026-10-27T12:53:51.507Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: [MLsys2026 Best Paper]: https://arxiv.org/abs/2506.08276. RAG on Everything with LEANN. Enjoy 97% storage savings while running a fast, accurate, and 100% private RAG application on your personal device.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 13103 stars
+- **Stars / Engagement**: 13473 stars
 
 ---
 
@@ -1836,6 +1836,46 @@ def _query_lmstudio_context_limit(model_name: str, base_url: str) -> Optional[in
             const model = await client.embedding.load('{model_name
 ```
 
+### Core Architecture Module: `packages/leann-core/src/leann/embedding_server_endpoint.py`
+```
+"""Shared bind-endpoint handling for LEANN's local ZMQ embedding servers."""
+
+from __future__ import annotations
+
+import os
+from collections.abc import Mapping
+from typing import Protocol
+
+DEFAULT_EMBEDDING_SERVER_HOST = "127.0.0.1"
+EMBEDDING_SERVER_HOST_ENV = "LEANN_EMBEDDING_SERVER_HOST"
+
+
+class BindableSocket(Protocol):
+    def bind(self, endpoint: str) -> None: ...
+
+
+def zmq_bind_endpoint(port: int, environ: Mapping[str, str] | None = None) -> str:
+    """Return a ZMQ endpoint that stays on loopback unless explicitly overridden."""
+    env = os.environ if environ is None else environ
+    host = env.get(EMBEDDING_SERVER_HOST_ENV, DEFAULT_EMBEDDING_SERVER_HOST).strip()
+    host = host or DEFAULT_EMBEDDING_SERVER_HOST
+    if ":" in host and not host.startswith("["):
+        host = f"[{host}]"
+    return f"tcp://{host}:{port}"
+
+
+def bind_zmq_embedding_socket(
+    socket: BindableSocket,
+    port: int,
+    environ: Mapping[str, str] | None = None,
+) -> str:
+    """Bind an embedding-server socket and return the endpoint for logging/tests."""
+    endpoint = zmq_bind_endpoint(port, environ)
+    socket.bind(endpoint)
+    return endpoint
+
+```
+
 ### Core Architecture Module: `packages/leann-core/src/leann/embedding_server_manager.py`
 ```
 import atexit
@@ -2145,14 +2185,6 @@ class EmbeddingServerManager:
             actual_port = _get_avai
 ```
 
-### Core Architecture Module: `packages/leann-core/src/leann/integrations/__init__.py`
-```
-from .llamaindex import LeannHybridRetriever, LeannRetriever
-
-__all__ = ["LeannHybridRetriever", "LeannRetriever"]
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2180,490 +2212,792 @@ __all__ = ["LeannHybridRetriever", "LeannRetriever"]
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b51ddc0b` (2026-10-24)
-**Commit Message**: fix(chunking): keep first line of AST chunks that contains '|' (#444)
+### Incident Patch 1: `0463b761` (2026-10-26)
+**Commit Message**: fix(core): refuse to load a custom encoder as a vanilla BertModel (#445)
 
-Signed-off-by: ShryukGrandhi <[REDACTED_EMAIL]>
+jinaai/jina-embeddings-v2-base-code declares its architecture through
+config.auto_map while keeping model_type="bert". Loaded without
+trust_remote_code, transformers builds a plain BertModel, discards every
+weight it cannot map, randomly initialises ~70 tensors, and returns one
+constant vector for every input. Nothing raises -- the index builds,
+search returns results, and the ranking is noise.
 
-**File**: `packages/leann-core/src/leann/chunking_utils.py` (modified, +1/-11)
+On an 8-chunk retrieval probe, the silent path gives pairwise chunk
+cosine 1.0000 (mean and max) and recall@1 0.000; with the model's own
+code loaded, cosine is 0.064 mean / 0.239 max and recall@1 is 1.000.
+
+embedding_compute.py now reads config.auto_map before loading and raises
+with the model name and the remedy. trust_remote_code stays off by
+default, since it executes arbitrary Python from the model repository --
+the same default chat.py already uses -- and is enabled with
+LEANN_TRUST_REMOTE_CODE=1. The flag is threaded through all five
+SentenceTransformer call sites and folded into the model cache key.
+
+Also restore the task runner in benchmarks/contextbench/scripts/
+batch_run_random.py. It shipped commented out,
+
+**File**: `benchmarks/contextbench/scripts/batch_run_random.py` (modified, +43/-45)
 ```diff
-@@ -4,7 +4,6 @@
+@@ -5,9 +5,7 @@
+ import time
+ from pathlib import Path
+ 
+-# run_single_task is used by the task-running block below, which ships
+-# commented out so this script selects and prefetches without executing.
+-from auto_run import prefetch_task_repositories, run_single_task  # noqa: F401
++from auto_run import prefetch_task_repositories, run_single_task
+ from datasets import load_dataset
+ 
+ ROOT = Path(__file__).resolve().parents[1]
+@@ -90,9 +88,8 @@ def main():
+     else:
+         print("⏭️ PREFETCH_REPOS=0; skipping prefetch step.")
+ 
+-    # Incremented by the commented-out task-running block below.
+-    success_count = 0  # noqa: F841
+-    failure_count = 0  # noqa: F841
++    success_count = 0
++    failure_count = 0
+     for i, task in enumerate(selected_tasks):
+         instance_id = task["instance_id"]
+         repo_url = task["repo_url"]
+@@ -101,45 +98,46 @@ def main():
+         print(f"📦 [{i + 1}/{len(selected_tasks)}] Running: {instance_id}")
+         print(f"   repo: {repo_url}  source: {task.get('source', '?')}")
+ 
+-        # If want to run the task, uncomment the following code
+-    #     try:
+-    #         patch, elapsed, traj_data, usage = run_single_task(
+-    #             instance_id=instance_id,
+-    #             repo_url=repo_url,
+-    #             work_root=WORK_ROOT,
+-    #             mitm_script_path=str(MITM_SCRIPT),
+-    #             trace_dir=TRACE_DIR,
+-    #             model=MODEL,
+-    #             task=task,
+-    #         )
+-
+-    #         result_entry = {
+-    #             "instance_id": instance_id,
+-    #             "model_patch": patch if patch else "",
+-    #             "model_name_or_path": "claude-code-cli",
+-    #             "elapsed_seconds": round(elapsed, 1),
+-    #             "traj_data": traj_data,
+-    #             "token_usage": usage,
+-    #         }
+-
+-    #         with open(OUTPUT_FILE, "a", encoding="utf-8") as f:
+-    #             f.write(json.dumps(result_entry) + "\n")
+-    #         print(f"✅ Result saved for {instance_id}")
+-    #         success_count += 1
+-
+-    #     except Exception as e:
+-    #         print(f"❌ Error processing {instance_id}: {e}")
+-    #         failure_count += 1
+-    #     finally:
+-    #         cleanup_residuals()
+-    #         print("💤 Cooldown...")
+-    #         time.sleep(20)
+-
+-    # print(
+-    #     f"\n✅ Finished {len(selected_tasks)} random tasks: "
+-    #     f"{success_count} succeeded, {failure_count} failed. "
+-    #     f"Results in {OUTPUT_FILE}"
+-    # )
++        try:
++            patch, elapsed, agent_seconds, traj_data, usage = run_single_task(
++                instance_id=instance_id,
++                repo_url=repo_url,
++                work_root=WORK_ROOT,
++                mitm_script_path=str(MITM_SCRIPT),
++                trace_dir=TRACE_DIR,
++                model=MODEL,
++                task=task,
++            )
++
++            result_entry = {
++                "instance_id": instance_id,
++                "model_patch": patch if patch else "",
++                "model_name_or_path": "claude-code-cli",
++                "elapsed_seconds": round(elapsed, 1),
++                "latency_seconds": round(elapsed, 1),
++                "agent_seconds": round(agent_seconds, 1) if agent_seconds is not None else None,
++                "traj_data": traj_data,
++                "token_usage": usage,
++            }
++
++            with open(OUTPUT_FILE, "a", encoding="utf-8") as f:
++                f.write(json.dumps(result_entry) + "\n")
++            print(f"✅ Result saved for {instance_id}")
++            success_count += 1
++
++        except Exception as e:
++            print(f"❌ Error processing {instance_id}: {e}")
++            failure_count += 1
++        finally:
++            cleanup_residuals()
++            print("💤 Cooldown...")
++            time.sleep(20)
++
++    print(
++        f"\n✅ Finished {len(selected_tasks)} random tasks: "
++        f"{success_count} succeeded, {failure_count} failed. "
++        f"Results in {OUTPUT_FILE}"
++    )
+ 
+ 
+ if __name__ == "__main__":
+```
+
+**File**: `docs/CHANGELOG.md` (modified, +28/-0)
+```diff
+@@ -88,3 +88,31 @@ fixes). Newest entries at the bottom.
+ - `get_model_token_limit()` reads `max_seq_length` from Hugging Face sentence-transformers repos instead of assuming 2048 tokens for them.
+ - `create_text_chunks(max_tokens_per_chunk=...)` now only shrinks `chunk_size`; it previously replaced it, growing 256-token chunks to ~1700 for unknown models.
+ - Existing indexes are unchanged; rebuild with `--force` to re-chunk with the new sizes.
++
++## 2026-10-23: Refuse to load a custom encoder as a vanilla BertModel
++
++- `jinaai/jina-embeddings-v2-base-code` (and any encoder that declares its
++  architecture through `config.auto_map` while keeping `model_type="bert"`) was
++  being loaded without `trust_remote_code`. Transformers silently built a plain
++  `BertModel` instead, discarded every weight it could not map, randomly
++  initialised ~70 tensors (all 12 layers' feed-forward and output LayerNorm
++  weights, plus position embeddings), and returned one constant vector for every
++  input. Nothing raised: the index built, search returned results, and the
++  ranking was noise. Measured on an 8-chunk retrieval probe, pairwise chunk
++  cosine similarity was 1.0000 (mean and max) and recall@1 was 0.000; with the
++  model's own code loaded, cosine fell to 0.064 mean / 0.239 max and recall@1
++  reached 1.000.
++- `embedding_compute.py` now checks `config.auto_map` before loading and raises
++  with the model name and the fix, rather than producing a degenerate index.
++  Opt in with `LEANN_TRUST_REMOTE_CODE=1`; it stays off by default because
++  `trust_remote_code` executes arbitrary Python from the model repository, which
++  matches the existing default in `chat.py`.
++- The flag is now threaded through all five `SentenceTransformer(...)` call
++  sites in the loader cascade and included in the model cache key.
++- `benchmarks/contextbench/scripts/batch_run_random.py` executes tasks again.
++  The block had been commented out, and the commented code unpacked four values
++  from `run_single_task`, which has since returned five
++  (`patch, latency_seconds, agent_seconds, traj_data, usage`) — so uncommenting
++  it would have failed on the unpack. The restored block matches
++  `batch_run_selected.py`, which was already on the current contract, and
++  records `agent_seconds` and `latency_seconds` in each result row.
+```
+
+**File**: `packages/leann-core/src/leann/embedding_compute.py` (modified, +51/-1)
+```diff
+@@ -531,6 +531,46 @@ def compute_embeddings(
+         raise ValueError(f"Unsupported embedding mode: {mode}")
+ 
+ 
++def _resolve_trust_remote_code() -> bool:
++    """Whether to execute model-repository code when loading an embedding model.
++
++    Off by default: trust_remote_code runs arbitrary Python from the model repo.
++    Set LEANN_TRUST_REMOTE_CODE=1 for a model that needs it;
++    _assert_remote_code_available names the variable when it hits one.
++    """
++    return os.getenv("LEANN_TRUST_REMOTE_CODE", "").strip().lower() in {"1", "true", "yes"}
++
++
++def _assert_remote_code_available(model_name: str, trust_remote_code: bool) -> None:
++    """Refuse to load a model whose real architecture would be silently discarded.
++
++    jinaai/jina-embeddings-v2-base-code and other custom encoders declare their
++    architecture through config.auto_map while keeping model_type="bert". Loaded
++    without trust_remote_code, transformers builds a vanilla BertModel instead,
++    drops every weight it cannot map, randomly initialises the rest, and returns
++    one constant vector for every input. Nothing raises: the index builds, search
++    returns results, and the ranking is noise. Raise here instead.
++    """
++    if trust_remote_code:
++        return
++    try:
++        from transformers import AutoConfig
++
++        auto_map = getattr(AutoConfig.from_pretrained(model_name), "auto_map", None)
++    except Exception as exc:
++        # Offline, a private repo, or not a transformers model: nothing to assert.
++        logger.debug(f"Could not read the config for {model_name}: {exc}")
++        return
++    if auto_map:
++        raise ValueError(
++            f"{model_name} ships its own modeling code (config.auto_map: "
++            f"{sorted(auto_map)}). Loading it without trust_remote_code produces a "
++            "randomly initialised model that returns an identical embedding for every "
++            "input, so the index would rank by noise. Set LEANN_TRUST_REMOTE_CODE=1 to "
++            "run the model repository's code, or pick a model that does not need it."
++        )
++
++
+ def compute_embeddings_sentence_transformers(
+     texts: list[str],
+     model_name: str,
+@@ -588,8 +628,13 @@ def compute_embeddings_sentence_transformers(
+     if adaptive_optimization:
+         batch_size = _resolve_adaptive_batch_size(device, model_name)
+ 
++    trust_remote_code = _resolve_trust_remote_code()
++    _assert_remote_code_available(model_name, trust_remote_code)
++
+     # Create cache key
+-    cache_key = f"sentence_transformers_{model_name}_{device}_{use_fp16}_optimized"
++    cache_key = (
++        f"sentence_transformers_{model_name}_{device}_{use_fp16}_{trust_remote_code}_optimized"
++    )
+ 
+     pre_model_init_end_time = time.time()
+     logger.debug(
+@@ -653,6 +698,7 @@ def compute_embeddings_sentence_transformers(
+             model = SentenceTransformer(
+                 model_name,
+                 device=device,
++                trust_remote_code=trust_remote_code,
+                 model_kwargs=local_model_kwargs,
+                 tokenizer_kwargs=local_tokenizer_kwargs,
+                 local_files_only=True,
+@@ -668,6 +714,7 @@ def compute_embeddings_sentence_transformers(
+                     model = SentenceTransformer(
+                         model_name,
+                         device=device,
++                        trust_remote_code=trust_remote_code,
+                         local_files_only=True,
+                     )
+                     logger.info("Model loaded successfully! (local + basic)")
+@@ -676,6 +723,7 @@ def compute_embeddings_sentence_transformers(
+                     model = SentenceTransformer(
+                         model_name,
+                         device=device,
++                        trust_remote_code=trust_remote_code,
+                         local_files_only=False,
+                     )
+                     logger.info("Model loaded successfully! (network + basic)")
+@@ -693,6 +741,7 @@ def compute_embeddings_sentence_transformers(
+                 model = SentenceTransformer(
+                     model_name,
+                     device=device,
++                    trust_remote_code=trust_remote_code,
+                     model_kwargs=network_model_kwargs,
+                     tokenizer_kwargs=network_tokenizer_kwargs,
+                     local_files_only=False,
+@@ -706,6 +755,7 @@ def compute_embeddings_sentence_transformers(
+                     model = SentenceTransformer(
+                         model_name,
+                         device=device,
++                        trust_remote_code=trust_remote_code,
+                         local_files_only=False,
+                     )
+                     logger.info("Model loaded successfully! (network + basic)")
+```
+
+**File**: `tests/test_trust_remote_code.py` (added, +75/-0)
+```diff
+@@ -0,0 +1,75 @@
++"""Guards against silently loading a custom encoder as a vanilla BertModel.
++
++jinaai/jina-embeddings-v2-base-code declares its architecture through
++config.auto_map while keeping model_type="bert". Loaded without
++trust_remote_code, transformers builds a plain BertModel, discards the weights
++it cannot map, randomly initialises ~70 tensors, and returns one constant
++vector for every input. Nothing raises, so an index builds and searches
++normally while ranking by noise. These tests pin the refusal and the opt-in.
++"""
++
++import unittest
++from unittest.mock import patch
++
++from leann.embedding_compute import _assert_remote_code_available, _resolve_trust_remote_code
++
++JINA_AUTO_MAP = {
++    "AutoConfig": "jinaai/jina-bert-v2-qk-post-norm--configuration_bert.JinaBertConfig",
++    "AutoModel": "jinaai/jina-bert-v2-qk-post-norm--modeling_bert.JinaBertModel",
++}
++
++
++class _Config:
++    def __init__(self, auto_map=None):
++        if auto_map is not None:
++            self.auto_map = auto_map
++
++
++class TestResolveTrustRemoteCode(unittest.TestCase):
++    def test_absent_env_is_off(self):
++        with patch.dict("os.environ", {}, clear=True):
++            self.assertFalse(_resolve_trust_remote_code())
++
++    def test_truthy_values_enable_it(self):
++        for value in ("1", "true", "TRUE", "yes", " Yes "):
++            with patch.dict("os.environ", {"LEANN_TRUST_REMOTE_CODE": value}, clear=True):
++                self.assertTrue(_resolve_trust_remote_code(), value)
++
++    def test_other_values_leave_it_off(self):
++        for value in ("0", "false", "no", "", "maybe"):
++            with patch.dict("os.environ", {"LEANN_TRUST_REMOTE_CODE": value}, clear=True):
++                self.assertFalse(_resolve_trust_remote_code(), value)
++
++
++class TestAssertRemoteCodeAvailable(unittest.TestCase):
++    def _with_config(self, config):
++        return patch("transformers.AutoConfig.from_pretrained", return_value=config)
++
++    def test_rejects_auto_map_model_when_not_trusted(self):
++        with self._with_config(_Config(JINA_AUTO_MAP)):
++            with self.assertRaises(ValueError) as ctx:
++                _assert_remote_code_available("jinaai/jina-embeddings-v2-base-code", False)
++        message = str(ctx.exception)
++        self.assertIn("LEANN_TRUST_REMOTE_CODE", message)
++        self.assertIn("identical embedding", message)
++
++    def test_allows_auto_map_model_when_trusted(self):
++        with self._with_config(_Config(JINA_AUTO_MAP)):
++            _assert_remote_code_available("jinaai/jina-embeddings-v2-base-code", True)
++
++    def test_allows_ordinary_model(self):
++        with self._with_config(_Config()):
++            _assert_remote_code_available("sentence-transformers/all-MiniLM-L6-v2", False)
++
++    def test_allows_empty_auto_map(self):
++        with self._with_config(_Config({})):
++            _assert_remote_code_available("some/model", False)
++
++    def test_unreadable_config_does_not_block_loading(self):
++        # Offline, a private repo, or a non-transformers model: nothing to assert.
++        with patch("transformers.AutoConfig.from_pretrained", side_effect=OSError("offline")):
++            _assert_remote_code_available("some/model", False)
++
++
++if __name__ == "__main__":
++    unittest.main()
+```
+
+---
+
+### Incident Patch 2: `a63f484a` (2026-10-26)
+**Commit Message**: fix(release): publish all backends and test loopback bind (#447)
+
+Co-authored-by: Aakash Suresh <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/build-reusable.yml` (modified, +10/-0)
+```diff
+@@ -412,6 +412,16 @@ jobs:
+           retry 3 uv build --wheel --python ${{ matrix.python }} --find-links ${GITHUB_WORKSPACE}/packages/leann-core/dist
+           cd ../..
+ 
++          # Build GPU backends as thin Python wheels. Their CUDA runtime is supplied by
++          # the installed FlashLib dependency; compilation happens when those backends run.
++          cd packages/leann-backend-flashlib
++          retry 3 uv build --wheel --python ${{ matrix.python }}
++          cd ../..
++
++          cd packages/leann-backend-flashlib-ivf
++          retry 3 uv build --wheel --python ${{ matrix.python }}
++          cd ../..
++
+           # Build meta package (platform independent)
+           cd packages/leann
+           retry 3 uv build
+```
+
+**File**: `.github/workflows/release-manual.yml` (modified, +48/-1)
+```diff
+@@ -86,9 +86,10 @@ jobs:
+             COMMIT_SHA=$(git rev-parse HEAD)
+           else
+             ./scripts/bump_version.sh ${{ inputs.version }}
++            uv lock
+             git config user.name "GitHub Actions"
+             git config user.email "actions@github.com"
+-            git add packages/*/pyproject.toml
++            git add packages/*/pyproject.toml uv.lock docker/Dockerfile docker/Dockerfile.cpu docker/README.md
+             git commit -m "chore: release v${{ inputs.version }}"
+             git push origin main
+             COMMIT_SHA=$(git rev-parse HEAD)
+@@ -146,6 +147,52 @@ jobs:
+ 
+           echo "✅ Published to PyPI!"
+ 
++      - name: Verify every package reached PyPI
++        env:
++          RELEASE_VERSION: ${{ inputs.version }}
++        run: |
++          python - <<'PY'
++          import json
++          import os
++          import time
++          import urllib.error
++          import urllib.request
++
++          version = os.environ["RELEASE_VERSION"]
++          packages = [
++              "leann",
++              "leann-core",
++              "leann-backend-hnsw",
++              "leann-backend-diskann",
++              "leann-backend-ivf",
++              "leann-backend-flashlib",
++              "leann-backend-flashlib-ivf",
++          ]
++          deadline = time.time() + 180
++          missing = {}
++
++          for package in packages:
++              while True:
++                  try:
++                      url = f"https://pypi.org/pypi/{package}/json"
++                      with urllib.request.urlopen(url, timeout=20) as response:
++                          data = json.load(response)
++                      files = data.get("releases", {}).get(version, [])
++                      if files:
++                          print(f"OK {package} {version}: {len(files)} files")
++                          break
++                      missing[package] = "version has no files"
++                  except urllib.error.HTTPError as exc:
++                      missing[package] = f"HTTP {exc.code}"
++
++                  if time.time() >= deadline:
++                      raise SystemExit(
++                          f"PyPI verification failed for {package} {version}: {missing[package]}"
++                      )
++                  time.sleep(10)
++
++          PY
++
+       - name: Create release
+         run: |
+           # Check if tag already exists
+```
+
+**File**: `packages/leann-backend-diskann/leann_backend_diskann/diskann_embedding_server.py` (modified, +5/-10)
+```diff
+@@ -14,6 +14,7 @@
+ 
+ import numpy as np
+ import zmq
++from leann.embedding_server_endpoint import bind_zmq_embedding_socket
+ 
+ # Set up logging based on environment variable
+ LOG_LEVEL = os.getenv("LEANN_LOG_LEVEL", "WARNING").upper()
+@@ -123,11 +124,8 @@ def zmq_server_thread():
+         socket = context.socket(
+             zmq.REP
+         )  # REP socket for both BaseSearcher and DiskANN C++ REQ clients
+-        zmq_host = os.getenv("LEANN_EMBEDDING_SERVER_HOST", "127.0.0.1")
+-        if ":" in zmq_host and not zmq_host.startswith("["):
+-            zmq_host = f"[{zmq_host}]"  # literal IPv6 needs brackets in ZMQ endpoints
+-        socket.bind(f"tcp://{zmq_host}:{zmq_port}")
+-        logger.info(f"DiskANN ZMQ REP server listening on {zmq_host}:{zmq_port}")
++        endpoint = bind_zmq_embedding_socket(socket, zmq_port)
++        logger.info(f"DiskANN ZMQ REP server listening on {endpoint}")
+ 
+         socket.setsockopt(zmq.RCVTIMEO, 1000)
+         socket.setsockopt(zmq.SNDTIMEO, 1000)
+@@ -263,11 +261,8 @@ def zmq_server_thread_with_shutdown(shutdown_event):
+ 
+         context = zmq.Context()
+         rep_socket = context.socket(zmq.REP)
+-        zmq_host = os.getenv("LEANN_EMBEDDING_SERVER_HOST", "127.0.0.1")
+-        if ":" in zmq_host and not zmq_host.startswith("["):
+-            zmq_host = f"[{zmq_host}]"  # literal IPv6 needs brackets in ZMQ endpoints
+-        rep_socket.bind(f"tcp://{zmq_host}:{zmq_port}")
+-        logger.info(f"DiskANN ZMQ REP server listening on {zmq_host}:{zmq_port}")
++        endpoint = bind_zmq_embedding_socket(rep_socket, zmq_port)
++        logger.info(f"DiskANN ZMQ REP server listening on {endpoint}")
+ 
+         # Set receive timeout so we can check shutdown_event periodically
+         rep_socket.setsockopt(zmq.RCVTIMEO, 1000)  # 1 second timeout
+```
+
+**File**: `packages/leann-backend-hnsw/leann_backend_hnsw/hnsw_embedding_server.py` (modified, +3/-5)
+```diff
+@@ -15,6 +15,7 @@
+ import msgpack
+ import numpy as np
+ import zmq
++from leann.embedding_server_endpoint import bind_zmq_embedding_socket
+ 
+ # Set up logging based on environment variable
+ LOG_LEVEL = os.getenv("LEANN_LOG_LEVEL", "WARNING").upper()
+@@ -168,11 +169,8 @@ def zmq_server_thread_with_shutdown(shutdown_event):
+ 
+         context = zmq.Context()
+         rep_socket = context.socket(zmq.REP)
+-        zmq_host = os.getenv("LEANN_EMBEDDING_SERVER_HOST", "127.0.0.1")
+-        if ":" in zmq_host and not zmq_host.startswith("["):
+-            zmq_host = f"[{zmq_host}]"  # literal IPv6 needs brackets in ZMQ endpoints
+-        rep_socket.bind(f"tcp://{zmq_host}:{zmq_port}")
+-        logger.info(f"HNSW ZMQ REP server listening on {zmq_host}:{zmq_port}")
++        endpoint = bind_zmq_embedding_socket(rep_socket, zmq_port)
++        logger.info(f"HNSW ZMQ REP server listening on {endpoint}")
+         rep_socket.setsockopt(zmq.RCVTIMEO, 1000)
+         rep_socket.setsockopt(zmq.SNDTIMEO, 1000)
+         rep_socket.setsockopt(zmq.LINGER, 0)
+```
+
+**File**: `packages/leann-core/src/leann/embedding_server_endpoint.py` (added, +35/-0)
+```diff
+@@ -0,0 +1,35 @@
++"""Shared bind-endpoint handling for LEANN's local ZMQ embedding servers."""
++
++from __future__ import annotations
++
++import os
++from collections.abc import Mapping
++from typing import Protocol
++
++DEFAULT_EMBEDDING_SERVER_HOST = "127.0.0.1"
++EMBEDDING_SERVER_HOST_ENV = "LEANN_EMBEDDING_SERVER_HOST"
++
++
++class BindableSocket(Protocol):
++    def bind(self, endpoint: str) -> None: ...
++
++
++def zmq_bind_endpoint(port: int, environ: Mapping[str, str] | None = None) -> str:
++    """Return a ZMQ endpoint that stays on loopback unless explicitly overridden."""
++    env = os.environ if environ is None else environ
++    host = env.get(EMBEDDING_SERVER_HOST_ENV, DEFAULT_EMBEDDING_SERVER_HOST).strip()
++    host = host or DEFAULT_EMBEDDING_SERVER_HOST
++    if ":" in host and not host.startswith("["):
++        host = f"[{host}]"
++    return f"tcp://{host}:{port}"
++
++
++def bind_zmq_embedding_socket(
++    socket: BindableSocket,
++    port: int,
++    environ: Mapping[str, str] | None = None,
++) -> str:
++    """Bind an embedding-server socket and return the endpoint for logging/tests."""
++    endpoint = zmq_bind_endpoint(port, environ)
++    socket.bind(endpoint)
++    return endpoint
+```
+
+**File**: `scripts/bump_version.sh` (modified, +25/-16)
+```diff
+@@ -1,31 +1,40 @@
+ #!/bin/bash
+ 
++set -euo pipefail
++
+ if [ $# -eq 0 ]; then
+     echo "Usage: $0 <new_version>"
+     exit 1
+ fi
+ 
+ NEW_VERSION=$1
++if [[ ! "$NEW_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
++    echo "Invalid version '$NEW_VERSION'; expected X.Y.Z"
++    exit 1
++fi
+ 
+-# Get the directory where the script is located
+ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ PROJECT_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
+ 
+-# Update all pyproject.toml files
++sed_edit() {
++    if [[ "$OSTYPE" == "darwin"* ]]; then
++        sed -E -i '' "$@"
++    else
++        sed -E -i "$@"
++    fi
++}
++
+ echo "Updating versions in $PROJECT_ROOT/packages/"
++while IFS= read -r -d '' file; do
++    sed_edit "s/^version = \"[^\"]+\"/version = \"${NEW_VERSION}\"/" "$file"
++    sed_edit "s/(\"(leann-core|leann-backend-hnsw|leann-backend-diskann|leann-backend-ivf)(\[[^]]+\])?[=<>~!]*)[0-9]+\.[0-9]+\.[0-9]+/\1${NEW_VERSION}/g" "$file"
++done < <(find "$PROJECT_ROOT/packages" -name "pyproject.toml" -print0)
+ 
+-# Use different sed syntax for macOS vs Linux
+-if [[ "$OSTYPE" == "darwin"* ]]; then
+-    # Update version fields
+-    find "$PROJECT_ROOT/packages" -name "pyproject.toml" -exec sed -i '' "s/version = \".*\"/version = \"$NEW_VERSION\"/" {} \;
+-    # Update leann-core dependencies
+-    find "$PROJECT_ROOT/packages" -name "pyproject.toml" -exec sed -i '' "s/leann-core==[0-9.]*/leann-core==$NEW_VERSION/" {} \;
+-else
+-    # Update version fields
+-    find "$PROJECT_ROOT/packages" -name "pyproject.toml" -exec sed -i "s/version = \".*\"/version = \"$NEW_VERSION\"/" {} \;
+-    # Update leann-core dependencies
+-    find "$PROJECT_ROOT/packages" -name "pyproject.toml" -exec sed -i "s/leann-core==[0-9.]*/leann-core==$NEW_VERSION/" {} \;
+-fi
++for file in "$PROJECT_ROOT/docker/Dockerfile" "$PROJECT_ROOT/docker/Dockerfile.cpu"; do
++    sed_edit "s/^ARG LEANN_VERSION=.*/ARG LEANN_VERSION=${NEW_VERSION}/" "$file"
++done
++sed_edit "s/(--build-arg LEANN_VERSION=)[0-9]+\.[0-9]+\.[0-9]+/\1${NEW_VERSION}/g" \
++    "$PROJECT_ROOT/docker/README.md"
+ 
+-echo "✅ Version updated to $NEW_VERSION"
+-echo "✅ Dependencies updated to use leann-core==$NEW_VERSION"
++echo "✅ Package versions and internal dependencies updated to $NEW_VERSION"
++echo "✅ Docker defaults and examples updated to $NEW_VERSION"
+```
+
+**File**: `tests/test_embedding_server_bind.py` (added, +66/-0)
+```diff
+@@ -0,0 +1,66 @@
++from pathlib import Path
++
++import pytest
++from leann.embedding_server_endpoint import (
++    bind_zmq_embedding_socket,
++    zmq_bind_endpoint,
++)
++
++
++class RecordingSocket:
++    def __init__(self):
++        self.endpoint: str | None = None
++
++    def bind(self, endpoint: str) -> None:
++        self.endpoint = endpoint
++
++
++@pytest.mark.parametrize(
++    ("environment", "expected"),
++    [
++        ({}, "tcp://127.0.0.1:5555"),
++        ({"LEANN_EMBEDDING_SERVER_HOST": "0.0.0.0"}, "tcp://0.0.0.0:5555"),
++        ({"LEANN_EMBEDDING_SERVER_HOST": "::1"}, "tcp://[::1]:5555"),
++        ({"LEANN_EMBEDDING_SERVER_HOST": "[::1]"}, "tcp://[::1]:5555"),
++        ({"LEANN_EMBEDDING_SERVER_HOST": ""}, "tcp://127.0.0.1:5555"),
++    ],
++)
++def test_zmq_bind_endpoint_stays_local_by_default(environment, expected):
++    assert zmq_bind_endpoint(5555, environment) == expected
++
++
++def test_bind_zmq_embedding_socket_uses_resolved_loopback_endpoint(monkeypatch):
++    monkeypatch.delenv("LEANN_EMBEDDING_SERVER_HOST", raising=False)
++    socket = RecordingSocket()
++
++    endpoint = bind_zmq_embedding_socket(socket, 6123)
++
++    assert endpoint == "tcp://127.0.0.1:6123"
++    assert socket.endpoint == endpoint
++
++
++def test_bind_zmq_embedding_socket_creates_a_real_loopback_listener():
++    zmq = pytest.importorskip("zmq")
++    context = zmq.Context()
++    socket = context.socket(zmq.REP)
++    try:
++        bind_zmq_embedding_socket(socket, 0)
++        actual_endpoint = socket.getsockopt(zmq.LAST_ENDPOINT).decode()
++        assert actual_endpoint.startswith("tcp://127.0.0.1:")
++        assert not actual_endpoint.endswith(":*")
++    finally:
++        socket.close(linger=0)
++        context.term()
++
++
++def test_all_embedding_servers_use_the_shared_bind_helper():
++    root = Path(__file__).resolve().parents[1] / "packages"
++    servers = [
++        root / "leann-backend-hnsw/leann_backend_hnsw/hnsw_embedding_server.py",
++        root / "leann-backend-diskann/leann_backend_diskann/diskann_embedding_server.py",
++    ]
++
++    for server in servers:
++        source = server.read_text(encoding="utf-8")
++        assert "bind_zmq_embedding_socket(" in source
++        assert '.bind(f"tcp://' not in source
+```
+
+---
+
+### Incident Patch 3: `37795892` (2026-10-26)
+**Commit Message**: fix: compare numeric metadata strings by value (#446)
+
+Parse two numeric string operands as finite decimals before ordering them.
+Keep lexical comparison for dates and other non-numeric strings.
+
+Signed-off-by: Tianlang (Jackie) Chen <[REDACTED_EMAIL]>
+Co-authored-by: Tianlang (Jackie) Chen <[REDACTED_EMAIL]>
+
+**File**: `docs/metadata_filtering.md` (modified, +3/-0)
+```diff
+@@ -78,6 +78,9 @@ metadata_filters = {
+ {"word_count": {"<": 500}}      # Short passages
+ ```
+ 
++Numeric values stored as strings are ordered numerically (for example,
++`"10" > "2"`). Other strings, including ISO dates, retain lexical ordering.
++
+ #### Membership Operators
+ - `"in"`: Value is in list
+ - `"not_in"`: Value is not in list
+```
+
+**File**: `packages/leann-core/src/leann/metadata_filter.py` (modified, +10/-1)
+```diff
+@@ -7,6 +7,7 @@
  """
  
  import logging
--import re
- from pathlib import Path
- from typing import Any, Optional
++from decimal import Decimal, InvalidOperation
+ from typing import Any, Optional, Union
  
-@@ -291,16 +290,7 @@ def create_ast_chunks(
-                     # Merge document metadata + astchunk metadata
-                     combined_metadata = {**doc_metadata, **astchunk_metadata}
+ logger = logging.getLogger(__name__)
+@@ -223,7 +224,15 @@ def _numeric_compare(self, field_value: Any, expected_value: Any, compare_func)
+         try:
+             # Try to convert both values to numbers for comparison
+             if isinstance(field_value, str) and isinstance(expected_value, str):
+-                # String comparison if both are strings
++                # Numeric metadata can also be stored as strings. Keep lexical
++                # ordering for dates and other strings that are not numbers.
++                try:
++                    field_decimal = Decimal(field_value)
++                    expected_decimal = Decimal(expected_value)
++                    if field_decimal.is_finite() and expected_decimal.is_finite():
++                        return compare_func(field_decimal, expected_decimal)
++                except InvalidOperation:
++                    pass
+                 return compare_func(field_value, expected_value)
  
--                    # Trim partial first line left by overlap if using line numbers
--                    # (a valid line starts with digits followed by '|')
--                    stripped = chunk_text.strip()
--                    if stripped:
--                        first_line = stripped.split("\n", 1)[0]
--                        if "|" in first_line and not re.match(r"^\s*\d+\|", first_line):
--                            first_nl = stripped.find("\n")
--                            if first_nl != -1:
--                                stripped = stripped[first_nl + 1 :]
--                    all_chunks.append({"text": stripped, "metadata": combined_metadata})
-+                    all_chunks.append({"text": chunk_text.strip(), "metadata": combined_metadata})
- 
-             logger.info(
-                 f"Created {len(chunks)} AST chunks from {language} file: {doc.metadata.get('file_name', 'unknown')}"
+             # Numeric comparison - attempt to convert to float
 ```
 
-**File**: `tests/test_astchunk_integration.py` (modified, +16/-0)
+**File**: `tests/test_metadata_filter_numeric_strings.py` (added, +26/-0)
 ```diff
-@@ -625,6 +625,22 @@ def test_empty_content_value_handling(self):
-         # Should not have stringified the empty dict
-         assert "'content': ''" not in chunk["text"]
- 
-+    def test_first_line_containing_pipe_is_kept(self):
-+        """A chunk whose first line contains '|' (e.g. a union type hint) must not lose it."""
-+        code = "def merge(a: dict | None) -> dict:\n    return a or {}"
-+        mock_builder = Mock()
-+        mock_builder.chunkify.return_value = [
-+            {"content": code, "metadata": {"start_line_no": 0, "end_line_no": 1}}
-+        ]
-+        mock_astchunk = Mock()
-+        mock_astchunk.ASTChunkBuilder = Mock(return_value=mock_builder)
+@@ -0,0 +1,26 @@
++"""Regression tests for comparisons of metadata stored as strings."""
 +
-+        doc = MockDocument(code, "/test/merge.py", {"language": "python"})
-+        with patch.dict("sys.modules", {"astchunk": mock_astchunk}):
-+            chunks = create_ast_chunks([doc])
-+
-+        assert [c["text"] for c in chunks] == [code]
-+
- 
- class TestASTMetadataPreservation:
-     """Test metadata preservation in AST chunk dictionaries.
-```
-
----
-
-### Incident Patch 2: `db260981` (2026-10-24)
-**Commit Message**: fix(core): drop the build template from query embeddings on the fallback path (#442)
-
-* fix(core): drop the build template from query embeddings on the fallback path
-
-* test(core): cover templates sent to the provider on the fallback path
-
-**File**: `packages/leann-core/src/leann/searcher_base.py` (modified, +11/-9)
-```diff
-@@ -213,6 +213,15 @@ def __init__(self, index_path: str, backend_module_name: str, **kwargs):
-         self.zmq_connection = ReusableZMQConnection()
-         self._zmq_port: Optional[int] = None
- 
-+    def _search_provider_options(self) -> dict[str, Any]:
-+        # compute_query_embedding applies the query template itself; a build template
-+        # left in here would be prepended to the query by the provider as well.
-+        return {
-+            k: v
-+            for k, v in self.embedding_options.items()
-+            if k not in ("build_prompt_template", "query_prompt_template", "prompt_template")
-+        }
-+
-     def _load_meta(self) -> dict[str, Any]:
-         """Loads the metadata file associated with the index."""
-         # This is the corrected logic for finding the meta file.
-@@ -239,14 +248,7 @@ def _ensure_server_running(
-             or "mips"
-         )
- 
--        # Filter out ALL prompt templates from provider_options during search
--        # Templates are applied in compute_query_embedding (line 109-110) BEFORE server call
--        # The server should never apply templates during search to avoid double-templating
--        search_provider_options = {
--            k: v
--            for k, v in self.embedding_options.items()
--            if k not in ("build_prompt_template", "query_prompt_template", "prompt_template")
--        }
-+        search_provider_options = self._search_provider_options()
- 
-         server_started, actual_port = self.embedding_server_manager.start_server(
-             port=port if port is not None else 5557,
-@@ -335,7 +337,7 @@ def compute_query_embedding(
-             [query],
-             self.embedding_model,
-             embedding_mode,
--            provider_options=self.embedding_options,
-+            provider_options=self._search_provider_options(),
-         )
- 
-         # Cache the result (use original query before template)
-```
-
-**File**: `tests/test_prompt_template_persistence.py` (modified, +67/-0)
-```diff
-@@ -896,3 +896,70 @@ def mock_compute_embeddings(texts, model, mode, provider_options=None):
- 
-         # Empty string is falsy, so no template should be applied
-         assert captured_queries[0] == "vector database"
-+
-+    @pytest.mark.parametrize(
-+        "embedding_options, query_template",
-+        [
-+            (
-+                {
-+                    "build_prompt_template": "title: none | text: ",
-+                    "query_prompt_template": "task: search result | query: ",
-+                },
-+                "task: search result | query: ",
-+            ),
-+            ({"prompt_template": "search_query: "}, "search_query: "),
-+        ],
-+    )
-+    def test_fallback_path_does_not_add_build_template(
-+        self, temp_index_with_template, embedding_options, query_template
-+    ):
-+        """The provider must see only the query template, not the build template on top."""
-+        from leann.searcher_base import BaseSearcher
-+
-+        class TestSearcher(BaseSearcher):
-+            def search(
-+                self,
-+                query,
-+                top_k,
-+                complexity=64,
-+                beam_width=1,
-+                prune_ratio=0.0,
-+                recompute_embeddings=False,
-+                pruning_strategy="global",
-+                zmq_port=None,
-+                **kwargs,
-+            ):
-+                return {"labels": [], "distances": []}
-+
-+        searcher = object.__new__(TestSearcher)
-+        searcher.index_path = Path(temp_index_with_template)
-+        searcher.index_dir = searcher.index_path.parent
-+        with open(searcher.index_dir / f"{searcher.index_path.name}.meta.json") as f:
-+            searcher.meta = json.load(f)
-+        searcher.embedding_model = searcher.meta["embedding_model"]
-+        searcher.embedding_mode = searcher.meta["embedding_mode"]
-+        searcher.embedding_options = {"api_key": "test-key", **embedding_options}
-+        searcher.meta["embedding_options"] = searcher.embedding_options
-+        searcher.query_cache = Mock()
-+        searcher.query_cache.get.return_value = None
-+
-+        sent_inputs = []
-+
-+        def create(model, input, **kwargs):
-+            sent_inputs.extend(input)
-+            return Mock(data=[Mock(embedding=[0.1] * 768) for _ in input])
-+
-+        client = Mock()
-+        client.embeddings.create.side_effect = create
-+
-+        with (
-+            patch("openai.OpenAI", return_value=client),
-+            patch("leann.embedding_compute.get_model_token_limit", return_value=8192),
-+        ):
-+            searcher.compute_query_embedding(
-+                query="vector database",
-+                use_server_if_available=False,
-+                query_template=query_template,
-+            )
-+
-+        assert sent_inputs == [f"{query_template}vector database"]
-```
-
----
-
-### Incident Patch 3: `287859de` (2026-10-24)
-**Commit Message**: Fix --use-ocr PDF loading (#440)
-
-* fix: honor --use-ocr for PDFs with text layers
-
-* fix: adapt OCR extraction to LlamaIndex reader API
-
-**File**: `apps/document_rag.py` (modified, +51/-34)
-```diff
-@@ -14,7 +14,8 @@
- 
- from base_rag_example import BaseRAGExample
- from chunking import create_text_chunks
--from llama_index.core import SimpleDirectoryReader
-+from llama_index.core import Document, SimpleDirectoryReader
-+from llama_index.core.readers.base import BaseReader
- 
- # MinerU powers OCR for scanned PDFs. Probe for it rather than importing it:
- # the real import happens lazily in extract_pdf_with_ocr_fallback, so a run
-@@ -29,11 +30,22 @@ def extract_pdf_with_ocr_fallback(pdf_path: str, use_ocr: bool = False) -> str:
- 
-     Args:
-         pdf_path: Path to PDF file
--        use_ocr: Whether to try OCR if standard extraction fails
-+        use_ocr: Whether to force MinerU OCR instead of trying text extraction
- 
-     Returns:
-         Extracted text string
-     """
-+    if use_ocr:
-+        if not OCR_AVAILABLE:
-+            return ""
-+        try:
-+            from mineru import parse
-+
-+            return parse(pdf_path, ocr_mode="ocr").markdown()
-+        except Exception as e:
-+            print(f"  OCR failed for {pdf_path}: {e}")
-+            return ""
-+
-     # Try PyMuPDF first
-     try:
-         import fitz  # PyMuPDF
-@@ -63,19 +75,39 @@ def extract_pdf_with_ocr_fallback(pdf_path: str, use_ocr: bool = False) -> str:
-     except Exception:
-         pass
- 
--    # Try OCR if enabled
--    if use_ocr and OCR_AVAILABLE:
--        try:
--            from mineru import parse
-+    return ""  # Return empty if all fail
- 
--            # ocr_mode="ocr" forces the OCR pipeline instead of letting MinerU
--            # pick: we only get here once the text layer has already proven
--            # unusable, so its "auto" heuristic has nothing left to decide.
--            return parse(pdf_path, ocr_mode="ocr").markdown()
--        except Exception as e:
--            print(f"  OCR failed for {pdf_path}: {e}")
- 
--    return ""  # Return empty if all fail
-+class OcrPDFReader(BaseReader):
-+    def __init__(self, *, use_ocr: bool = False, auto_detect_scanned: bool = False):
-+        self.use_ocr = use_ocr
-+        self.auto_detect_scanned = auto_detect_scanned
-+
-+    def load_data(
-+        self,
-+        file: Path,
-+        extra_info: dict[str, Any] | None = None,
-+        **kwargs: Any,
-+    ) -> list[Document]:
-+        file_path = str(file)
-+        used_ocr = self.use_ocr
-+        text = extract_pdf_with_ocr_fallback(file_path, use_ocr=used_ocr)
-+
-+        if not used_ocr and self.auto_detect_scanned:
-+            if len(text.strip()) < 100:
-+                print(f"Detected scanned PDF: {Path(file_path).name}")
-+                text = extract_pdf_with_ocr_fallback(file_path, use_ocr=True)
-+                used_ocr = True
-+
-+        if used_ocr and text:
-+            print(f"OCR complete: {Path(file_path).name}")
-+        if not text.strip():
-+            return []
-+
-+        metadata = {"file_name": Path(file_path).name}
-+        if extra_info:
-+            metadata.update(extra_info)
-+        return [Document(text=text, metadata=metadata)]
- 
- 
- class DocumentRAG(BaseRAGExample):
-@@ -151,26 +183,6 @@ async def load_data(self, args) -> list[dict[str, Any]]:
-         use_ocr_for_all = args.use_ocr
-         auto_detect_scanned = args.auto_detect_scanned and OCR_AVAILABLE
- 
--        # Create custom PDF extractor with OCR fallback
--        def pdf_extractor(file_path: str) -> str:
--            """Custom extractor for PDFs with OCR support."""
--            # Check if we should try OCR
--            try_ocr = use_ocr_for_all
--
--            if not try_ocr and auto_detect_scanned:
--                # Quick check: try standard extraction first
--                text = extract_pdf_with_ocr_fallback(file_path, use_ocr=False)
--                # If we got very little text, it's likely scanned
--                if len(text.strip()) < 100:
--                    try_ocr = True
--                    print(f"Detected scanned PDF: {Path(file_path).name}")
--
--            # Extract with OCR if needed
--            text = extract_pdf_with_ocr_fallback(file_path, use_ocr=try_ocr)
--            if try_ocr and text:
--                print(f"OCR complete: {Path(file_path).name}")
--            return text
--
-         # Load documents with custom PDF extractor
-         reader_kwargs = {
-             "recursive": True,
-@@ -181,7 +193,12 @@ def pdf_extractor(file_path: str) -> str:
- 
-         # Add custom PDF extractor if we need OCR
-         if use_ocr_for_all or auto_detect_scanned:
--            reader_kwargs["file_extractor"] = {".pdf": pdf_extractor}
-+            reader_kwargs["file_extractor"] = {
-+                ".pdf": OcrPDFReader(
-+                    use_ocr=use_ocr_for_all,
-+                    auto_detect_scanned=auto_detect_scanned,
-+                )
-+            }
- 
-         documents = SimpleDirectoryReader(args.data_dir, **reader_kwargs).load_data(
-             show_progress=True
-```
-
-**File**: `tests/test_document_rag_ocr.py` (added, +142/-0)
-```diff
-@@ -0,0 +1,142 @@
-+import importlib.util
-+import sys
-+import types
-+from pathlib import Path
-+
-+REPO_ROOT = Path(__file__).resolve().parents[1]
++from leann.metadata_filter import MetadataFilterEngine
 +
 +
-+class _LlamaDocument:
-+    def __init__(self, text, metadata=None):
-+        self.text = text
-+        self.metadata = metadata or {}
++def test_numeric_strings_compare_by_value():
++    results = [
++        {"id": "ten", "metadata": {"chapter": "10"}},
++        {"id": "two", "metadata": {"chapter": "2"}},
++        {"id": "negative", "metadata": {"chapter": "-3"}},
++    ]
++
++    matched = MetadataFilterEngine().apply_filters(results, {"chapter": {">": "2"}})
++
++    assert [result["id"] for result in matched] == ["ten"]
 +
 +
-+def _load_document_rag(monkeypatch):
-+    base_rag = types.SimpleNamespace(BaseRAGExample=type("BaseRAGExample", (), {}))
-+    chunking = types.SimpleNamespace(create_text_chunks=lambda *args, **kwargs: [])
-+    llama_index_core = types.SimpleNamespace(
-+        Document=_LlamaDocument,
-+        SimpleDirectoryReader=type("SimpleDirectoryReader", (), {}),
-+    )
-+    llama_index = types.SimpleNamespace(core=llama_index_core)
-+    readers_base = types.SimpleNamespace(BaseReader=type("BaseReader", (), {}))
++def test_non_numeric_strings_keep_lexical_comparison():
++    results = [
++        {"id": "early", "metadata": {"date": "2024-01-01"}},
++        {"id": "late", "metadata": {"date": "2025-01-01"}},
++    ]
 +
-+    monkeypatch.setitem(sys.modules, "base_rag_example", base_rag)
-+    monkeypatch.setitem(sys.modules, "chunking", chunking)
-+    monkeypatch.setitem(sys.modules, "llama_index", llama_index)
-+    monkeypatch.setitem(sys.modules, "llama_index.core", llama_index_core)
-+    monkeypatch.setitem(sys.modules, "llama_index.core.readers", types.SimpleNamespace())
-+    monkeypatch.setitem(sys.modules, "llama_index.core.readers.base", readers_base)
++    matched = MetadataFilterEngine().apply_filters(results, {"date": {">": "2024-12-31"}})
 +
-+    path = REPO_ROOT / "apps" / "document_rag.py"
-+    spec = importlib.util.spec_from_file_location("document_rag_under_test", path)
-+    assert spec is not None
-+    assert spec.loader is not None
-+    module = importlib.util.module_from_spec(spec)
-+    monkeypatch.setitem(sys.modules, spec.name, module)
-+    spec.loader.exec_module(module)
-+    return module
-+
-+
-+class _Page:
-+    def __init__(self, text):
-+        self._text = text
-+
-+    def get_text(self):
-+        return self._text
-+
-+
-+class _Document:
-+    def __init__(self, text):
-+        self._page = _Page(text)
-+
-+    def __iter__(self):
-+        return iter([self._page])
-+
-+    def close(self):
-+        pass
-+
-+
-+def test_use_ocr_skips_text_extractors(monkeypatch):
-+    module = _load_document_rag(monkeypatch)
-+    monkeypatch.setattr(module, "OCR_AVAILABLE", True)
-+
-+    fitz_calls = []
-+    fitz = types.SimpleNamespace()
-+
-+    def open_pdf(path):
-+        fitz_calls.append(path)
-+        return _Document("text layer " * 20)
-+
-+    fitz.open = open_pdf
-+    monkeypatch.setitem(sys.modules, "fitz", fitz)
-+
-+    parse_calls = []
-+    mineru = types.SimpleNamespace()
-+
-+    class ParseResult:
-+        def markdown(self):
-+            return "ocr markdown"
-+
-+    def parse(path, **kwargs):
-+        parse_calls.append((path, kwargs))
-+        return ParseResult()
-+
-+    mineru.parse = parse
-+    monkeypatch.setitem(sys.modules, "mineru", mineru)
-+
-+    assert module.extract_pdf_with_ocr_fallback("paper.pdf", use_ocr=True) == "ocr markdown"
-+    assert fitz_calls == []
-+    assert parse_calls == [("paper.pdf", {"ocr_mode": "ocr"})]
-+
-+
-+def test_text_extraction_remains_the_default(monkeypatch):
-+    module = _load_document_rag(monkeypatch)
-+    monkeypatch.setattr(module, "OCR_AVAILABLE", True)
-+
-+    text = "text layer " * 20
-+    fitz = types.SimpleNamespace(open=lambda path: _Document(text))
-+    monkeypatch.setitem(sys.modules, "fitz", fitz)
-+
-+    mineru = types.SimpleNamespace()
-+
-+    def unexpected_parse(*args, **kwargs):
-+        raise AssertionError("MinerU should not run when use_ocr is false")
-+
-+    mineru.parse = unexpected_parse
-+    monkeypatch.setitem(sys.modules, "mineru", mineru)
-+
-+    assert module.extract_pdf_with_ocr_fallback("paper.pdf") == text
-+
-+
-+def test_ocr_reader_satisfies_simple_directory_reader_contract(monkeypatch):
-+    module = _load_document_rag(monkeypatch)
-+    monkeypatch.setattr(module, "OCR_AVAILABLE", True)
-+
-+    fitz_calls = []
-+    fitz = types.SimpleNamespace()
-+
-+    def open_pdf(path):
-+        fitz_calls.append(path)
-+        return _Document("text layer " * 20)
-+
-+    fitz.open = open_pdf
-+    monkeypatch.setitem(sys.modules, "fitz", fitz)
-+
-+    mineru = types.SimpleNamespace()
-+
-+    class ParseResult:
-+        def markdown(self):
-+            return "ocr markdown"
-+
-+    mineru.parse = lambda path, **kwargs: ParseResult()
-+    monkeypatch.setitem(sys.modules, "mineru", mineru)
-+
-+    reader = module.OcrPDFReader(use_ocr=True)
-+    documents = reader.load_data(Path("paper.pdf"), extra_info={"source": "test"})
-+
-+    assert len(documents) == 1
-+    assert documents[0].text == "ocr markdown"
-+    assert documents[0].metadata == {"file_name": "paper.pdf", "source": "test"}
-+    assert fitz_calls == []
++    assert [result["id"] for result in matched] == ["late"]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #447** (2026-10-26): fix(release): publish all backends and test loopback binding (@andylizf)
+- **PR #446** (2026-10-26): fix: compare numeric metadata strings by value (@jackiectl2)
+- **PR #445** (2026-10-26): fix(core): refuse to load a custom encoder as a vanilla BertModel (@ASuresh0524)
 - **PR #444** (2026-10-24): fix(chunking): keep first line of AST chunks that contains '|' (@ShryukGrandhi)
 - **PR #442** (2026-10-24): fix(core): drop the build template from query embeddings on the fallback path (@serhiizghama)
 - **PR #441** (2026-10-24): docs(search): restore ZMQ thread-safety warning (@andylizf)
-- **PR #440** (2026-10-24): Fix --use-ocr PDF loading (@andylizf)
-- **PR #439** (2026-10-21): chore: untrack the generated .leann index store (@ASuresh0524)
-- **PR #438** (2026-10-20): fix(deps): pin pymupdf below 2.0 (@ASuresh0524)
 
 ---
 
@@ -2683,38 +3017,86 @@ Signed-off-by: ShryukGrandhi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. chunking): keep first line of AST chunks that contains '|' (#444)
+## X. core): refuse to load a custom encoder as a vanilla BertModel (#445)
 
 **RULE**:
-When implementing operations in `packages/leann-core/src/leann/chunking_utils.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarTrail-org/LEANN. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `benchmarks/contextbench/scripts/batch_run_random.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarTrail-org/LEANN. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b51ddc0b`: chunking): keep first line of AST chunks that contains '|' (#444). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0463b761`: core): refuse to load a custom encoder as a vanilla BertModel (#445). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/leann-core/src/leann/chunking_utils.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `benchmarks/contextbench/scripts/batch_run_random.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-                    all_chunks.append({"text": chunk_text.strip(), "metadata": combined_metadata})
+from auto_run import prefetch_task_repositories, run_single_task
+    success_count = 0
+    failure_count = 0
+        try:
+            patch, elapsed, agent_seconds, traj_data, usage = run_single_task(
+                instance_id=instance_id,
+                repo_url=repo_url,
+                work_root=WORK_ROOT,
+                mitm_script_path=str(MITM_SCRIPT),
+                trace_dir=TRACE_DIR,
+                model=MODEL,
+                task=task,
+            )
+
+            result_entry = {
+                "instance_id": instance_id,
+                "model_patch": patch if patch else "",
+                "model_name_or_path": "claude-code-cli",
+                "elapsed_seconds": round(elapsed, 1),
+                "latency_seconds": round(elapsed, 1),
+                "agent_seconds": round(agent_seconds, 1) if agent_seconds is not None else None,
+                "traj_data": traj_data,
+                "token_usage": usage,
+            }
+
+            with open(OUTPUT_FILE, "a", encoding="utf-8") as f:
+                f.write(json.dumps(result_entry) + "\n")
+            print(f"✅ Result saved for {instance_id}")
+            success_count += 1
+
+        except Exception as e:
+     
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-import re
-                    # Trim partial first line left by overlap if using line numbers
-                    # (a valid line starts with digits followed by '|')
-                    stripped = chunk_text.strip()
-                    if stripped:
-                        first_line = stripped.split("\n", 1)[0]
-                        if "|" in first_line and not re.match(r"^\s*\d+\|", first_line):
-                            first_nl = stripped.find("\n")
-                            if first_nl != -1:
-                                stripped = stripped[first_nl + 1 :]
-                    all_chunks.append({"text": stripped, "metadata": combined_metadata})
+# run_single_task is used by the task-running block below, which ships
+# commented out so this script selects and prefetches without executing.
+from auto_run import prefetch_task_repositories, run_single_task  # noqa: F401
+    # Incremented by the commented-out task-running block below.
+    success_count = 0  # noqa: F841
+    failure_count = 0  # noqa: F841
+        # If want to run the task, uncomment the following code
+    #     try:
+    #         patch, elapsed, traj_data, usage = run_single_task(
+    #             instance_id=instance_id,
+    #             repo_url=repo_url,
+    #             work_root=WORK_ROOT,
+    #             mitm_script_path=str(MITM_SCRIPT),
+    #             trace_dir=TRACE_DIR,
+    #             model=MODEL,
+    #             task=task,
+    #         )
+
+    #         result_entry = {
+    #             "instance_id": instance_id,
+    #             "model_patch": patch if patch else "",
+    #             "model_name_or_path": "claude-code-cli",
+    #             "elapsed_seconds": round(elapsed, 1),
+    #             "traj_data": traj_data,
+    #             "token_usage": usage,
+    #         }
+
+    #         with open(OUTPUT_FILE, "a", encoding="utf-8")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b51ddc0b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0463b761` are properly handled with clean fallback behavior.

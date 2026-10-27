@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T12:50:30.425Z",
+  "last_updated": "2026-10-27T12:53:52.351Z",
   "total_verified_learnings": 1107,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -31381,8 +31381,8 @@
       "slug": "kgateway-dev-kgateway",
       "platform": "github",
       "source_url": "https://github.com/kgateway-dev/kgateway",
-      "source_version": "bef37c08",
-      "content_hash": "4edc8929b03e3e5ff279926f620eb988bb60cdeef6b9f65a9828aa18dd413b88",
+      "source_version": "32e8e3f7",
+      "content_hash": "0b0d79e2199ffdb671a9a3f5eafed034e04026bcc78b516779083a7551de3b26",
       "dossier_path": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "promoted_rules": [
@@ -31415,6 +31415,11 @@
           "number": 4124,
           "title": "ds): keep a queued de-reference prune from rolling routes back (#14877)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4768,
+          "title": "test: PodSecurityContext/SecurityContext API evolution future-proofing (#14787)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31422,7 +31427,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T06:55:58.635Z",
+      "verified_at": "2026-10-27T12:53:47.347Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47591,8 +47596,8 @@
       "slug": "startrail-org-leann",
       "platform": "github",
       "source_url": "https://github.com/StarTrail-org/LEANN",
-      "source_version": "b51ddc0b",
-      "content_hash": "8e5dd7f201e50d9974044e32c2736b8c2e9a9fb110201740d32082c8ce978b56",
+      "source_version": "a63f484a",
+      "content_hash": "b9333ed6025adcd9ee89a7738c410ab19dd902e7c5071a7a7ef1f7ecb414733e",
       "dossier_path": "07_PROJECT_LEARNING/startrail-org-leann-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/startrail-org-leann-learnings.md",
       "promoted_rules": [
@@ -47615,6 +47620,11 @@
           "number": 4055,
           "title": "chunking): keep first line of AST chunks that contains '|' (#444)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4769,
+          "title": "core): refuse to load a custom encoder as a vanilla BertModel (#445)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47622,7 +47632,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T04:53:57.716Z",
+      "verified_at": "2026-10-27T12:53:52.339Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63006,8 +63016,8 @@
       "slug": "saffsanity-sill",
       "platform": "github",
       "source_url": "https://github.com/Saffsanity/sill",
-      "source_version": "4d990e9b",
-      "content_hash": "998213a1cbbcd9391e9c8a7dae454c9b9ce2e98592bf78e86cd127fdf35b5b77",
+      "source_version": "6c5b5d24",
+      "content_hash": "f8c3c4e05ee42f8b690e00d136c9320c57eaac7be893e23dd50ad2cd29ca31b9",
       "dossier_path": "07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
       "promoted_rules": [
@@ -63020,6 +63030,11 @@
           "number": 3063,
           "title": "Merge pull request #110 from grub-basket/fix/ipad-shift-return",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4767,
+          "title": "Merge pull request #236 from Saffsanity/defaults-tiles-vd",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -63027,7 +63042,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T05:03:29.420Z",
+      "verified_at": "2026-10-27T12:53:45.465Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -132628,6 +132643,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T12:50:30.404Z"
+    },
+    "rule-4767": {
+      "learning_id": "rule-4767",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4767,
+      "title": "Merge pull request #236 from Saffsanity/defaults-tiles-vd",
+      "source_url": "https://github.com/Saffsanity/sill",
+      "source_version": "6c5b5d24",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:53:45.465Z"
+    },
+    "rule-4768": {
+      "learning_id": "rule-4768",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4768,
+      "title": "test: PodSecurityContext/SecurityContext API evolution future-proofing (#14787)",
+      "source_url": "https://github.com/kgateway-dev/kgateway",
+      "source_version": "32e8e3f7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:53:47.347Z"
+    },
+    "rule-4769": {
+      "learning_id": "rule-4769",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4769,
+      "title": "core): refuse to load a custom encoder as a vanilla BertModel (#445)",
+      "source_url": "https://github.com/StarTrail-org/LEANN",
+      "source_version": "a63f484a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:53:52.339Z"
     }
   },
   "aliases": {

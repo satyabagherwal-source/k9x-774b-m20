@@ -5296,3 +5296,6 @@ Every entry in this ledger must capture:
 | `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `32047636` | Multi-dimensional audit evidence | 2026-10-27T12:50:26.029Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `ce76ea8f` | Multi-dimensional audit evidence | 2026-10-27T12:50:26.139Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `1ec33547` | Multi-dimensional audit evidence | 2026-10-27T12:50:30.496Z |
+| `learn-github-saffsanity-sill` | `https://github.com/Saffsanity/sill` | `6c5b5d24` | Multi-dimensional audit evidence | 2026-10-27T12:53:45.535Z |
+| `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `32e8e3f7` | Multi-dimensional audit evidence | 2026-10-27T12:53:47.417Z |
+| `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `a63f484a` | Multi-dimensional audit evidence | 2026-10-27T12:53:52.427Z |
