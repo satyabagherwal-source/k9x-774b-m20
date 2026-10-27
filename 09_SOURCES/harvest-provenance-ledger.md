@@ -5534,3 +5534,7 @@ Every entry in this ledger must capture:
 | `learn-github-actions-actions-runner-controller` | `https://github.com/actions/actions-runner-controller` | `89f34c4f` | Multi-dimensional audit evidence | 2026-10-27T20:20:12.301Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `3a2a460c` | Multi-dimensional audit evidence | 2026-10-27T20:20:18.145Z |
 | `learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-27T20:25:14.520Z |
+| `learn-github-herdrdev-herdr` | `https://github.com/herdrdev/herdr` | `2713feb5` | Multi-dimensional audit evidence | 2026-10-27T20:31:51.886Z |
+| `learn-huggingface-comfy-org-fibo-2-0` | `https://huggingface.co/Comfy-Org/Fibo-2.0` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-27T20:31:58.925Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `f45222fb` | Multi-dimensional audit evidence | 2026-10-27T20:31:59.852Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `25abe0aa` | Multi-dimensional audit evidence | 2026-10-27T20:32:06.203Z |

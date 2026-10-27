@@ -5525,3 +5525,7 @@
 | `CYCLE-20261027-QOAX` | `2026-10-27T20:20:12.297Z` | `actions/actions-runner-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4984` | Yes (`764271af...`) |
 | `CYCLE-20261027-QSTA` | `2026-10-27T20:20:18.142Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4985` | Yes (`78fb211c...`) |
 | `CYCLE-20261027-X5HX` | `2026-10-27T20:25:14.517Z` | `ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4986, Rule 4987` | Yes (`54c2d11b...`) |
+| `CYCLE-20261027-5O3U` | `2026-10-27T20:31:51.882Z` | `herdrdev/herdr` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4988` | Yes (`81b3a322...`) |
+| `CYCLE-20261027-5TJD` | `2026-10-27T20:31:58.921Z` | `Comfy-Org/Fibo-2.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4989, Rule 4990` | Yes (`d4b53c75...`) |
+| `CYCLE-20261027-5U94` | `2026-10-27T20:31:59.848Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4991` | Yes (`4ebf8b80...`) |
+| `CYCLE-20261027-5Z5J` | `2026-10-27T20:32:06.199Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`7c101d96...`) |

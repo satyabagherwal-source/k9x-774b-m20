@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-WYWL",
-    "timestamp": "2026-10-25T22:41:43.605Z",
-    "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
-    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-    "contentHash": "bb8925a35b26941beb4768a5421690a0836959e4619eed0343bb6146488994a1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-56BB",
-    "timestamp": "2026-10-25T22:48:06.455Z",
-    "repository": "black-forest-labs/flux-3-image-klein",
-    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-    "contentHash": "5f9f03858394526020284e67ca16ccef16ea474dc1a11436c43af7b30d70b9ad",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-5BRE",
-    "timestamp": "2026-10-25T22:48:13.514Z",
-    "repository": "Open-Source-Legal/OpenContracts",
-    "learningId": "learn-github-open-source-legal-opencontracts",
-    "contentHash": "c486de2c441f5f5f8e08b2cd87c25ba13d1bf82b30dd59b409f78c1f1e3da700",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-DM2J",
-    "timestamp": "2026-10-25T22:54:40.123Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "b1b2657f26f4cb6a41bf626ece934b7204ad5a31746b266a029971b17b4853b9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-G9NM",
     "timestamp": "2026-10-25T22:56:44.002Z",
     "repository": "pyannote/speaker-diarization-community-1",
@@ -7492,6 +7432,66 @@
     "contentHash": "54c2d11b82afe63c9212309843b5a00fccc119ec6fd3323be2ebd76965de0b54",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-5O3U",
+    "timestamp": "2026-10-27T20:31:51.882Z",
+    "repository": "herdrdev/herdr",
+    "learningId": "learn-github-herdrdev-herdr",
+    "contentHash": "81b3a3224ff8ef5d4f16d9b71ed5ba65f1fd994c85736c69081888c458dd4aca",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-5TJD",
+    "timestamp": "2026-10-27T20:31:58.921Z",
+    "repository": "Comfy-Org/Fibo-2.0",
+    "learningId": "learn-huggingface-comfy-org-fibo-2-0",
+    "contentHash": "d4b53c752516398eec04a3dddf124186f58ae4ae929df1d368e59498f02e9ad0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-5U94",
+    "timestamp": "2026-10-27T20:31:59.848Z",
+    "repository": "nginx/kubernetes-ingress",
+    "learningId": "learn-github-nginx-kubernetes-ingress",
+    "contentHash": "4ebf8b8016c6edbc036309679f598278417f479d8ae6ecc94e9b437bfdaba147",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-5Z5J",
+    "timestamp": "2026-10-27T20:32:06.199Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "7c101d96d3d7b2952683a0f6043f131d3b836859b75def0e67c08389f76294f8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

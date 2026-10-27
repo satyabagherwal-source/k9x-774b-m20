@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "a078a8b7",
+    "sourceVersion": "25abe0aa",
     "license": "NOASSERTION",
-    "contentHash": "d696a44e4f0c603501224bb4a2aad4cb8e79dfb79e92d0658fc28d183612a93a",
-    "lastHarvestedAt": "2026-10-27T17:44:56.496Z",
+    "contentHash": "7c101d96d3d7b2952683a0f6043f131d3b836859b75def0e67c08389f76294f8",
+    "lastHarvestedAt": "2026-10-27T20:32:06.203Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -6663,10 +6663,10 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "c37cecee",
+    "sourceVersion": "f45222fb",
     "license": "Apache-2.0",
-    "contentHash": "df4dee240e30b63e81ba96ad5fd28a0bb373921668ad9ee7c95dbe3ccf3257ff",
-    "lastHarvestedAt": "2026-10-25T02:58:32.657Z",
+    "contentHash": "4ebf8b8016c6edbc036309679f598278417f479d8ae6ecc94e9b437bfdaba147",
+    "lastHarvestedAt": "2026-10-27T20:31:59.852Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {
@@ -7883,10 +7883,10 @@
     "repository": "herdrdev/herdr",
     "platform": "github",
     "sourceUrl": "https://github.com/herdrdev/herdr",
-    "sourceVersion": "5608de06",
+    "sourceVersion": "2713feb5",
     "license": "Apache-2.0",
-    "contentHash": "947cd5877ba76216580aa2b648760e9edb2f5d812acce271dbf737ae2754df52",
-    "lastHarvestedAt": "2026-10-25T08:23:58.889Z",
+    "contentHash": "81b3a3224ff8ef5d4f16d9b71ed5ba65f1fd994c85736c69081888c458dd4aca",
+    "lastHarvestedAt": "2026-10-27T20:31:51.886Z",
     "learningId": "learn-github-herdrdev-herdr"
   },
   "darrylmorley-whatcable": {
@@ -10615,8 +10615,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Fibo-2.0",
     "sourceVersion": "hf-comfy-org-fibo-2.0",
     "license": "Open-Source",
-    "contentHash": "a5a5dc18fadc36df27acab5008ef9d59c04d5ec1c373d48062f257dc26fdf8ac",
-    "lastHarvestedAt": "2026-10-24T19:35:00.395Z",
+    "contentHash": "d4b53c752516398eec04a3dddf124186f58ae4ae929df1d368e59498f02e9ad0",
+    "lastHarvestedAt": "2026-10-27T20:31:58.925Z",
     "learningId": "learn-huggingface-comfy-org-fibo-2-0"
   },
   "hf-ornith-ai-ornith-1.5-122b": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T20:25:14.413Z",
+  "last_updated": "2026-10-27T20:32:06.121Z",
   "total_verified_learnings": 1149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8207,8 +8207,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "a078a8b7",
-      "content_hash": "d696a44e4f0c603501224bb4a2aad4cb8e79dfb79e92d0658fc28d183612a93a",
+      "source_version": "25abe0aa",
+      "content_hash": "7c101d96d3d7b2952683a0f6043f131d3b836859b75def0e67c08389f76294f8",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -8463,7 +8463,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T17:44:56.396Z",
+      "verified_at": "2026-10-27T20:32:06.101Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15286,8 +15286,8 @@
       "slug": "herdrdev-herdr",
       "platform": "github",
       "source_url": "https://github.com/herdrdev/herdr",
-      "source_version": "5608de06",
-      "content_hash": "947cd5877ba76216580aa2b648760e9edb2f5d812acce271dbf737ae2754df52",
+      "source_version": "2713feb5",
+      "content_hash": "81b3a3224ff8ef5d4f16d9b71ed5ba65f1fd994c85736c69081888c458dd4aca",
       "dossier_path": "07_PROJECT_LEARNING/herdrdev-herdr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/herdrdev-herdr-learnings.md",
       "promoted_rules": [
@@ -15315,6 +15315,11 @@
           "number": 4181,
           "title": "Agent Integration Multi-Instance Session Isolation via Process Environment Traps",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4988,
+          "title": "install opencode and kilo integrations under XDG_CONFIG_HOME (#5585)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15322,7 +15327,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T08:23:58.818Z",
+      "verified_at": "2026-10-27T20:31:51.789Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38728,8 +38733,8 @@
       "slug": "nginx-kubernetes-ingress",
       "platform": "github",
       "source_url": "https://github.com/nginx/kubernetes-ingress",
-      "source_version": "c37cecee",
-      "content_hash": "df4dee240e30b63e81ba96ad5fd28a0bb373921668ad9ee7c95dbe3ccf3257ff",
+      "source_version": "f45222fb",
+      "content_hash": "4ebf8b8016c6edbc036309679f598278417f479d8ae6ecc94e9b437bfdaba147",
       "dossier_path": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "promoted_rules": [
@@ -38762,6 +38767,11 @@
           "number": 4003,
           "title": "Controller Hash-Label Decoupling for ReplicaSet Selectors",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4991,
+          "title": "Update github actions (main) (#11232)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38769,7 +38779,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T02:58:32.598Z",
+      "verified_at": "2026-10-27T20:31:59.773Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -120659,7 +120669,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/Fibo-2.0",
       "source_version": "hf-comfy-org-fibo-2.0",
-      "content_hash": "a5a5dc18fadc36df27acab5008ef9d59c04d5ec1c373d48062f257dc26fdf8ac",
+      "content_hash": "d4b53c752516398eec04a3dddf124186f58ae4ae929df1d368e59498f02e9ad0",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md",
       "promoted_rules": [
@@ -120677,6 +120687,16 @@
           "number": 3923,
           "title": "FFN Hidden Width Zero-Padding Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4989,
+          "title": "Heterogeneous Precision Preservation in Quantized Models",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4990,
+          "title": "Tensor Key Remapping for Cross-Engine Interoperability",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -120684,7 +120704,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T19:35:00.331Z",
+      "verified_at": "2026-10-27T20:31:58.826Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -137986,6 +138006,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T20:25:14.396Z"
+    },
+    "rule-4988": {
+      "learning_id": "rule-4988",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4988,
+      "title": "install opencode and kilo integrations under XDG_CONFIG_HOME (#5585)",
+      "source_url": "https://github.com/herdrdev/herdr",
+      "source_version": "2713feb5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:31:51.789Z"
+    },
+    "rule-4989": {
+      "learning_id": "rule-4989",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4989,
+      "title": "Heterogeneous Precision Preservation in Quantized Models",
+      "source_url": "https://huggingface.co/Comfy-Org/Fibo-2.0",
+      "source_version": "hf-comfy-org-fibo-2.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:31:58.826Z"
+    },
+    "rule-4990": {
+      "learning_id": "rule-4990",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4990,
+      "title": "Tensor Key Remapping for Cross-Engine Interoperability",
+      "source_url": "https://huggingface.co/Comfy-Org/Fibo-2.0",
+      "source_version": "hf-comfy-org-fibo-2.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:31:58.826Z"
+    },
+    "rule-4991": {
+      "learning_id": "rule-4991",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4991,
+      "title": "Update github actions (main) (#11232)",
+      "source_url": "https://github.com/nginx/kubernetes-ingress",
+      "source_version": "f45222fb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:31:59.773Z"
     }
   },
   "aliases": {

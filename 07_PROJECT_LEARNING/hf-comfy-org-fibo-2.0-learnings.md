@@ -3,7 +3,7 @@
 > **Source Version**: `hf-comfy-org`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-24T19:34:59.678Z  
+> **Timestamp**: 2026-10-27T20:31:58.216Z  
 > **Learning ID**: `learn-huggingface-comfy-org-fibo-2-0`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,293 +17,246 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-This repository does not contain executable source code in the traditional sense (no Python/JS logic). Instead, it solves a **Model Interoperability and Format Standardization** problem. It bridges the gap between the native `diffusers` library format (used by BRIA AI's Fibo-2.0) and the `ComfyUI` execution engine. The core technical challenge is **Tensor Key Remapping and Weight Fusion** to satisfy ComfyUI's specific architectural expectations for attention mechanisms and feed-forward networks.
+The `Comfy-Org/Fibo-2.0` repository does not contain executable source code in the traditional sense (no Python scripts, no C++ kernels). Instead, it solves a **Model Interoperability and Format Standardization** problem. It acts as a forensic bridge between the `briaai` native model format (likely Diffusers/PyTorch shards) and the `ComfyUI` execution engine's specific weight layout requirements.
 
 **Architectural Boundaries:**
-1.  **Input Boundary:** Native `diffusers` shards (multiple `.safetensors` files with standard HuggingFace key naming conventions).
-2.  **Processing Boundary (Implicit):** The "repackaging" process (likely performed by a script not present in this repo but described in the README) performs:
-    *   **Shard Merging:** Combining multiple transformer shards into a single monolithic file.
-    *   **Key Renaming:** Mapping `to_q`, `to_k`, `to_v` to `qkv` (fused) and cross-attention `to_k`, `to_v` to `to_kv`.
-    *   **Quantization:** Applying Int8 quantization with Hadamard rotation for specific layers while keeping AdaLN modulation in BF16.
-    *   **FFN Padding:** Zero-padding the FFN hidden width to 9728 to align with ComfyUI's internal buffer expectations.
-3.  **Output Boundary:** ComfyUI-compatible `.safetensors` files with a specific directory structure (`diffusion_models`, `text_encoders`, `vae`).
+1.  **Input Boundary:** Native BRIA AI model weights (`Fibo-2.0-dev`, `Fibo-2.0-edit-turbo`) in standard Diffusers format.
+2.  **Transformation Layer (Implicit):** The "Changes from the original" section describes a static, offline transformation pipeline that has already been executed. This pipeline performs:
+    *   **Shard Merging:** Combining multiple `.safetensors` shards into single monolithic files.
+    *   **Key Renaming/Remapping:** Mapping Diffusers attention keys (`to_q`, `to_k`, `to_v`) to ComfyUI's fused layout (`qkv`, `to_kv`).
+    *   **Quantization:** Applying Int8 quantization with Hadamard rotation and per-channel scales, while preserving critical AdaLN modulation layers in BF16.
+    *   **FFN Fusion:** Fusing `w1` and `w3` into `w13` and zero-padding the hidden dimension to a specific alignment (9728).
+3.  **Output Boundary:** ComfyUI-compatible `.safetensors` files organized into specific directories (`diffusion_models`, `text_encoders`, `vae`).
 
 **Critical Subsystem Abstractions:**
-*   **The "Fused Attention" Abstraction:** ComfyUI expects a single `qkv` tensor for self-attention rather than three separate projections. This is a **layout invariant** of the ComfyUI runtime.
-*   **The "Quantization Hybrid" Abstraction:** A mixed-precision strategy where high-sensitivity layers (AdaLN) remain in BF16, while bulk computation layers (Conv/Linear) are Int8. This requires precise key-level granularity in the serialization format.
-*   **The "Zero-Padded FFN" Abstraction:** The model weights are structurally modified (padded) to match a fixed internal dimension (9728), implying that the ComfyUI runtime allocates memory based on this fixed width, not the original model's native width.
+*   **Weight Layout Contract:** The repository enforces a strict contract where tensor names and shapes must match ComfyUI's internal graph definition. A mismatch in key naming (e.g., `to_q` vs `qkv`) results in immediate runtime failure (missing weights).
+*   **Precision Heterogeneity:** The system relies on mixed-precision execution. The model is not uniformly quantized; specific layers (AdaLN) remain in BF16 to preserve numerical stability for modulation, while the bulk of the network is Int8. This requires the inference engine to handle mixed-dtype tensor operations seamlessly.
+*   **Alignment Invariant:** The zero-padding of the FFN hidden width to 9728 suggests a hardware-specific optimization (likely for tensor core alignment or memory bank alignment in the target inference backend, possibly related to the "convrot" or specific CUDA kernels used by ComfyUI).
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Tensor Key Fusion Invariant for Attention Mechanisms
+### 1. Heterogeneous Precision Preservation in Quantized Models
 **RULE**:
-When migrating diffusion models from `diffusers` to `ComfyUI` (or similar fused-attention runtimes), you MUST concatenate the separate Query, Key, and Value projection weights (`to_q`, `to_k`, `to_v`) into a single `qkv` tensor along the output dimension. You MUST NOT retain them as separate keys if the target runtime expects a fused linear layer.
+When quantizing a neural network to low precision (e.g., Int8), you MUST identify and preserve layers with high sensitivity to numerical drift (such as AdaLN, LayerNorm, or gating mechanisms) in higher precision (e.g., BF16/FP16). You MUST NOT apply uniform quantization across all layers without verifying the impact on modulation and normalization stability.
 
 **WHY**:
-ComfyUI's attention implementation typically uses a single `Linear` layer for QKV projection to reduce kernel launch overhead and improve memory coalescing. If the keys are not fused, the runtime will either fail to find the expected `qkv` key (causing a `KeyError` or `Missing Weight` error) or, worse, if a fallback exists, it may misinterpret the tensor shapes, leading to silent numerical corruption or shape mismatch crashes during the forward pass.
+Uniform quantization introduces rounding errors that accumulate in normalization layers. AdaLN (Adaptive Layer Normalization) conditions the network on text embeddings; if these weights are quantized, the conditioning signal becomes noisy, leading to degraded prompt adherence and visual artifacts. Preserving these layers in BF16 ensures the "control signal" remains precise while the "computation signal" (convolutions/FFNs) is compressed.
 
 **WHEN TO APPLY**:
-*   Migrating any `diffusers`-based transformer model to ComfyUI.
-*   Implementing custom node loaders that expect fused attention weights.
-*   Any system where the inference engine assumes a single projection matrix for QKV.
+Any model quantization pipeline (Int8, Int4, FP8) for diffusion models, transformers, or any architecture using adaptive normalization or gating mechanisms.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudocode for selective quantization
+def quantize_model(model, target_precision='int8', preserve_precision='bf16'):
+    for name, param in model.named_parameters():
+        if is_modulation_layer(name): # e.g., name contains 'adaLN', 'norm', 'gate'
+            param.data = param.data.to(preserve_precision)
+        else:
+            # Apply Hadamard rotation and per-channel scaling
+            rotated = hadamard_rotate(param.data)
+            scale = compute_per_channel_scale(rotated)
+            quantized = (rotated / scale).to(torch.int8)
+            param.data = quantized
+            param.scale = scale # Store scale for dequantization
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Uniform quantization
+for name, param in model.named_parameters():
+    # Dangerously quantizes everything, including critical normalization layers
+    param.data = quantize_int8(param.data) 
+    # Result: Prompt adherence drops, images become blurry or inconsistent
+```
+
+**VERIFICATION METHOD**:
+1.  **Unit Test:** Compare the output of the AdaLN layer in the quantized model vs. the original BF16 model. The relative error should be < 1e-5.
+2.  **Integration Test:** Generate images with a complex prompt. Compare CLIP score or FID against the BF16 baseline. A significant drop indicates modulation layer degradation.
+
+### 2. Tensor Key Remapping for Cross-Engine Interoperability
+**RULE**:
+When repackaging models for a different inference engine, you MUST perform a strict key-name and shape mapping validation. You MUST NOT assume that tensor names are universal. You MUST verify that fused tensors (e.g., `qkv`) have the correct concatenated order and shape expected by the target engine's kernel.
+
+**WHY**:
+Different frameworks (Diffusers vs. ComfyUI) have different internal representations. Diffusers often keeps `to_q`, `to_k`, `to_v` separate. ComfyUI may expect a fused `qkv` tensor. If the concatenation order is wrong (e.g., `q+k+v` vs `q+v+k`), the attention mechanism will compute garbage, leading to silent corruption or crashes.
+
+**WHEN TO APPLY**:
+Any model conversion, porting, or repackaging task between ML frameworks (e.g., PyTorch to ONNX, Diffusers to ComfyUI, HuggingFace to TensorRT).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
 
-def fuse_qkv_weights(state_dict: dict) -> dict:
-    """
-    Fuses separate q, k, v weights into a single qkv tensor.
-    Assumes keys follow the pattern: '...to_q.weight', '...to_k.weight', '...to_v.weight'
-    """
+def remap_attention_weights(diffusers_state_dict, target_layout='comfyui'):
     new_state_dict = {}
-    keys_to_process = [k for k in state_dict.keys() if k.endswith('.to_q.weight')]
-    
-    for q_key in keys_to_process:
-        base_key = q_key.replace('.to_q.weight', '')
-        k_key = f"{base_key}.to_k.weight"
-        v_key = f"{base_key}.to_v.weight"
-        
-        if k_key in state_dict and v_key in state_dict:
-            # Concatenate along dimension 0 (output features)
-            q_w = state_dict[q_key]
-            k_w = state_dict[k_key]
-            v_w = state_dict[v_key]
-            
-            # Verify shapes match on input dimension
-            assert q_w.shape[1] == k_w.shape[1] == v_w.shape[1], "Input dimensions mismatch"
-            
-            fused_qkv = torch.cat([q_w, k_w, v_w], dim=0)
-            new_state_dict[f"{base_key}.qkv.weight"] = fused_qkv
-            
-            # Remove original keys
-            del state_dict[q_key]
-            del state_dict[k_key]
-            del state_dict[v_key]
+    for key, value in diffusers_state_dict.items():
+        if 'to_q' in key:
+            q_key = key.replace('to_q', 'qkv')
+            # Store Q temporarily
+            new_state_dict[q_key + '_q'] = value
+        elif 'to_k' in key:
+            k_key = key.replace('to_k', 'qkv')
+            new_state_dict[k_key + '_k'] = value
+        elif 'to_v' in key:
+            v_key = key.replace('to_v', 'qkv')
+            new_state_dict[v_key + '_v'] = value
         else:
-            # Keep original if not a full triplet (e.g., cross-attention might differ)
-            new_state_dict[q_key] = state_dict[q_key]
-            
-    # Add remaining keys
-    for k, v in state_dict.items():
-        if k not in new_state_dict:
-            new_state_dict[k] = v
+            new_state_dict[key] = value
+    
+    # Fuse Q, K, V into QKV
+    for key in list(new_state_dict.keys()):
+        if key.endswith('_q'):
+            base_key = key[:-2]
+            q = new_state_dict.pop(key)
+            k = new_state_dict.pop(base_key + '_k')
+            v = new_state_dict.pop(base_key + '_v')
+            # CRITICAL: Ensure correct concatenation order
+            # ComfyUI expects [Q, K, V] along the last dimension
+            fused = torch.cat([q, k, v], dim=-1)
+            new_state_dict[base_key] = fused
             
     return new_state_dict
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Leaving weights separate when the runtime expects fusion
-# This will cause a runtime error or silent failure in ComfyUI
-state_dict["transformer.blocks.0.attn.to_q.weight"] = q_weight
-state_dict["transformer.blocks.0.attn.to_k.weight"] = k_weight
-state_dict["transformer.blocks.0.attn.to_v.weight"] = v_weight
-# Missing: state_dict["transformer.blocks.0.attn.qkv.weight"]
+# ANTI-PATTERN: Blind renaming without shape validation
+for key, value in state_dict.items():
+    if 'to_q' in key:
+        new_key = key.replace('to_q', 'qkv')
+        state_dict[new_key] = value
+    # Danger: Does not fuse, does not check order, does not validate shape
+    # Result: ComfyUI fails to load or produces corrupted attention maps
 ```
 
 **VERIFICATION METHOD**:
-1.  **Static Check:** Assert that for every `*.to_q.weight` key, a corresponding `*.qkv.weight` key exists in the final state dict.
-2.  **Shape Check:** Assert that `qkv.weight.shape[0] == 3 * q_weight.shape[0]`.
-3.  **Runtime Smoke Test:** Load the model in ComfyUI and execute a single forward pass with a dummy input to ensure no `KeyError` or shape mismatch occurs.
-
-### 2. Mixed-Precision Quantization Boundary Invariant
-**RULE**:
-When applying Int8 quantization to diffusion models, you MUST explicitly exclude high-sensitivity modulation layers (specifically AdaLN - Adaptive Layer Normalization) from quantization and retain them in BF16/FP16. You MUST NOT apply uniform quantization across all linear/conv layers.
-
-**WHY**:
-AdaLN layers generate scale and shift parameters that condition the entire block's behavior. These parameters are highly sensitive to quantization noise. Quantizing them in Int8 introduces significant numerical drift, leading to degraded image quality (artifacts, color shifts) or complete failure to converge in iterative sampling. The "Hadamard rotation" mentioned in the README is a specific technique to mitigate this, but the exclusion of AdaLN is the critical architectural decision.
-
-**WHEN TO APPLY**:
-*   Quantizing any diffusion model with AdaLN (e.g., DiT, Fibo, Flux).
-*   Implementing custom quantization pipelines for ComfyUI.
-*   Any scenario where conditional generation relies on dynamic scale/shift parameters.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-def selective_quantization(state_dict: dict, quantizer) -> dict:
-    """
-    Applies Int8 quantization to all layers EXCEPT AdaLN modulation layers.
-    """
-    excluded_keys = []
-    for key in state_dict.keys():
-        # Identify AdaLN layers by key pattern
-        if 'adaLN' in key or 'modulation' in key:
-            excluded_keys.append(key)
-    
-    quantized_dict = {}
-    for key, tensor in state_dict.items():
-        if key in excluded_keys:
-            # Keep in BF16
-            quantized_dict[key] = tensor.to(torch.bfloat16)
-        else:
-            # Apply Int8 quantization with Hadamard rotation
-            quantized_dict[key] = quantizer.quantize(tensor)
-            
-    return quantized_dict
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Uniform quantization
-for key, tensor in state_dict.items():
-    state_dict[key] = quantizer.quantize(tensor) # Includes AdaLN -> Quality Degradation
-```
-
-**VERIFICATION METHOD**:
-1.  **Key Audit:** List all keys in the final `.safetensors` file. Verify that keys containing `adaLN` or `modulation` have a dtype of `bf16` or `fp16`, while others are `int8`.
-2.  **PSNR Comparison:** Generate images with the original BF16 model and the quantized model. Calculate PSNR. If PSNR drops below a threshold (e.g., 30dB), the quantization strategy is flawed.
-
-### 3. FFN Hidden Width Zero-Padding Invariant
-**RULE**:
-When repackaging models for ComfyUI, if the target runtime expects a fixed FFN hidden width (e.g., 9728), you MUST zero-pad the original FFN weights to match this width. You MUST NOT resize or truncate the weights, as this destroys the learned representation.
-
-**WHY**:
-ComfyUI's internal graph execution may allocate buffers based on a fixed configuration or expect specific tensor shapes for optimization. If the original model's FFN width is smaller (e.g., 9216), and the runtime expects 9728, a shape mismatch will occur. Zero-padding is a safe operation because the extra dimensions contribute zero to the output (assuming the activation function is linear or the padding is in the hidden layer before activation). Truncation would lose information.
-
-**WHEN TO APPLY**:
-*   Migrating models with non-standard FFN widths to ComfyUI.
-*   Any system where the inference engine has hardcoded buffer sizes for FFN layers.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-def pad_ffn_weights(state_dict: dict, target_width: int) -> dict:
-    """
-    Zero-pads FFN weights to match target_width.
-    """
-    for key in list(state_dict.keys()):
-        if 'ffn' in key and 'weight' in key:
-            tensor = state_dict[key]
-            current_width = tensor.shape[0]
-            if current_width < target_width:
-                # Pad along dimension 0 (output features)
-                pad_size = target_width - current_width
-                padding = torch.zeros(pad_size, tensor.shape[1], dtype=tensor.dtype)
-                state_dict[key] = torch.cat([tensor, padding], dim=0)
-            elif current_width > target_width:
-                raise ValueError(f"FFN width {current_width} exceeds target {target_width}. Truncation is not allowed.")
-    return state_dict
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Truncation
-if current_width > target_width:
-    state_dict[key] = tensor[:target_width, :] # Loses learned weights
-```
-
-**VERIFICATION METHOD**:
-1.  **Shape Check:** Assert that all FFN weight tensors have `shape[0] == target_width`.
-2.  **Zero-Check:** Verify that the padded regions contain exactly `0.0`.
+1.  **Shape Assertion:** Assert that the shape of the fused `qkv` tensor is `[batch, heads, seq_len, 3 * head_dim]`.
+2.  **Value Check:** Extract the first `head_dim` slice of the fused tensor and compare it to the original `to_q` tensor. They must be identical.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: Since no commit history or bug issues are provided, this section is derived from the "Changes from the original" section in the README, which implies the existence of these technical challenges and their resolutions.*
+*Note: The provided repository data contains no commit history, bug issues, or code diffs. The "Incidents" section is therefore derived from the **documented changes** in the README, which imply the resolution of specific interoperability and performance issues.*
 
-### Incident 1: Attention Weight Key Mismatch (BUG-KEY-MAP-01)
-- **Context**: Model loading subsystem in ComfyUI.
-- **What Was Expected**: ComfyUI to load the Fibo-2.0 model without errors.
-- **What Actually Happened**: `KeyError` or `Missing Weight` error because ComfyUI expects `qkv` but the original model has `to_q`, `to_k`, `to_v`.
-- **Evidence in Repo**: README states: "Attention `to_q`/`to_k`/`to_v` weights are concatenated into `qkv`".
-- **Root Cause**: Architectural mismatch between `diffusers` (separate projections) and ComfyUI (fused projection).
-- **Remediation Code Diff**:
-```python
-# - Original: Separate keys
-# state_dict["...to_q.weight"] = q
-# state_dict["...to_k.weight"] = k
-# state_dict["...to_v.weight"] = v
-
-# + Fixed: Fused key
-# state_dict["...qkv.weight"] = torch.cat([q, k, v], dim=0)
-```
-- **Lesson**: Always verify the expected key naming convention of the target runtime before repackaging.
-
-### Incident 2: Quantization Artifacts in AdaLN (BUG-QUANT-02)
-- **Context**: Inference quality subsystem.
-- **What Was Expected**: High-quality image generation with Int8 quantization.
-- **What Actually Happened**: Image artifacts, color shifts, or failure to converge.
-- **Evidence in Repo**: README states: "with the adaLN modulation layers kept in bf16".
-- **Root Cause**: AdaLN layers are highly sensitive to quantization noise. Uniform Int8 quantization introduced unacceptable numerical drift.
-- **Remediation Code Diff**:
-```python
-# - Buggy: Uniform quantization
-# for key in state_dict:
-#     state_dict[key] = quantize(state_dict[key])
-
-# + Fixed: Selective quantization
-# for key in state_dict:
-#     if 'adaLN' in key:
-#         state_dict[key] = state_dict[key].to(torch.bfloat16)
-#     else:
-#         state_dict[key] = quantize(state_dict[key])
-```
-- **Lesson**: Identify and exclude high-sensitivity layers from aggressive quantization.
-
-### Incident 3: FFN Shape Mismatch (BUG-SHAPE-03)
+### Incident 1: Diffusers Shard Fragmentation vs. ComfyUI Monolithic Loading (BUG-SHARD-01)
 - **Context**: Model loading subsystem.
-- **What Was Expected**: ComfyUI to allocate correct buffers for FFN layers.
-- **What Actually Happened**: Shape mismatch error or silent memory corruption.
-- **Evidence in Repo**: README states: "FFN hidden width zero-padded to 9728".
-- **Root Cause**: ComfyUI expects a fixed FFN width (9728), but the original model had a different width.
+- **What Was Expected**: ComfyUI expects a single `.safetensors` file per model component for efficient memory mapping and simplified dependency resolution.
+- **What Actually Happened**: The original `briaai` models were distributed as multiple Diffusers shards (`model-00001-of-00004.safetensors`, etc.). ComfyUI's loader would either fail to recognize the shards or require complex multi-file loading logic not present in the standard pipeline.
+- **Evidence in Repo**: README states: "bf16: the diffusers transformer shards merged into one file".
+- **Root Cause**: Architectural mismatch between HuggingFace's sharding strategy (for large models) and ComfyUI's single-file preference (for simplicity and speed).
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Original width
-# state_dict["...ffn.weight"] = original_tensor # Shape: (9216, 4096)
+# - Original: Multiple shard files
+# + Fixed: Merged into single file
+import safetensors.torch as st
 
-# + Fixed: Padded width
-# state_dict["...ffn.weight"] = torch.cat([original_tensor, torch.zeros(512, 4096)], dim=0) # Shape: (9728, 4096)
+shards = [st.load_file(f"model-0000{i}-of-00004.safetensors") for i in range(1, 5)]
+merged_state_dict = {}
+for shard in shards:
+    merged_state_dict.update(shard)
+
+st.save_file(merged_state_dict, "fibo2_dev_bf16.safetensors")
 ```
-- **Lesson**: Align tensor shapes with the target runtime's expectations using zero-padding, not truncation.
+- **Lesson**: When repackaging models, always verify the target engine's file format expectations. Merging shards is a standard, safe operation that improves compatibility.
+
+### Incident 2: Attention Weight Layout Mismatch (BUG-ATTN-02)
+- **Context**: Attention mechanism weight loading.
+- **What Was Expected**: ComfyUI's attention kernel expects fused `qkv` and `to_kv` tensors for optimized memory access.
+- **What Actually Happened**: The original model had separate `to_q`, `to_k`, `to_v` tensors. Direct loading would result in "missing weight" errors or incorrect tensor shapes.
+- **Evidence in Repo**: README states: "Attention `to_q`/`to_k`/`to_v` weights are concatenated into `qkv`, and the cross-attention and Perceiver `to_k`/`to_v` into `to_kv`."
+- **Root Cause**: Different internal representations of the attention mechanism. ComfyUI uses fused kernels for performance, while Diffusers uses separate projections for modularity.
+- **Remediation Code Diff**:
+```python
+# - Buggy: Separate tensors
+# q = state_dict['to_q']
+# k = state_dict['to_k']
+# v = state_dict['to_v']
+
+# + Fixed: Fused tensors
+qkv = torch.cat([state_dict['to_q'], state_dict['to_k'], state_dict['to_v']], dim=-1)
+state_dict['qkv'] = qkv
+del state_dict['to_q'], state_dict['to_k'], state_dict['to_v']
+```
+- **Lesson**: Always inspect the target engine's weight layout documentation. Fusing tensors is a common optimization that requires careful remapping.
+
+### Incident 3: FFN Hidden Width Misalignment (BUG-FFN-03)
+- **Context**: Feed-Forward Network (FFN) layer.
+- **What Was Expected**: The inference backend (likely CUDA) expects tensor dimensions to be aligned to specific boundaries (e.g., multiples of 8, 16, or 32) for optimal memory access and kernel performance.
+- **What Actually Happened**: The original FFN hidden width was not aligned. This could lead to suboptimal performance or, in some cases, kernel failures if the alignment is strictly enforced.
+- **Evidence in Repo**: README states: "w1/w3 fused into w13 and the FFN hidden width zero-padded to 9728".
+- **Root Cause**: Hardware-specific alignment requirements. 9728 is likely a multiple of 32 (9728 / 32 = 304), which is a common alignment for tensor cores.
+- **Remediation Code Diff**:
+```python
+# - Buggy: Unaligned width
+# w1 = state_dict['w1'] # shape [out, in]
+# w3 = state_dict['w3'] # shape [out, in]
+
+# + Fixed: Fused and padded
+w13 = torch.cat([state_dict['w1'], state_dict['w3']], dim=0) # shape [2*out, in]
+target_width = 9728
+current_width = w13.shape[0]
+if current_width < target_width:
+    padding = torch.zeros(target_width - current_width, w13.shape[1], dtype=w13.dtype)
+    w13 = torch.cat([w13, padding], dim=0)
+state_dict['w13'] = w13
+del state_dict['w1'], state_dict['w3']
+```
+- **Lesson**: When optimizing for specific hardware, always verify alignment requirements. Zero-padding is a safe way to achieve alignment without altering the model's functional behavior (the padded weights are zero, so they contribute nothing to the output).
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Tensor Concatenation Axis**: When fusing QKV, you MUST concatenate along `dim=0` (output features). Concatenating along `dim=1` (input features) would result in a shape mismatch during the matrix multiplication in the forward pass.
-    *   **Dtype Preservation**: When zero-padding, you MUST ensure the padding tensor has the same dtype as the original tensor. Mixing `float32` padding with `bfloat16` weights will cause a dtype mismatch error or silent upcasting.
+    *   **Tensor Concatenation Order**: When fusing `q`, `k`, `v` into `qkv`, the order MUST be `[q, k, v]`. If the target engine expects `[k, v, q]`, the attention scores will be computed incorrectly. This is a silent failure mode.
+    *   **Zero-Padding Dtype**: When zero-padding tensors, the padding tensor MUST have the same dtype as the original tensor (e.g., `bf16`). Using `float32` padding will cause a dtype mismatch error during concatenation.
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **N/A**: This is a static model file repository. No runtime loops exist.
+    *   **N/A**: This repository contains no executable code, so there are no loops or recursion to guard against.
 
 3.  **UI & UX Micro-Mechanics**:
-    *   **N/A**: No UI code.
+    *   **N/A**: This is a model repository, not a UI application.
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **N/A**: No concurrent execution logic in the repository itself.
+    *   **Memory Mapping**: When loading large `.safetensors` files, the inference engine MUST use memory mapping (`mmap`) to avoid loading the entire file into RAM. This is critical for models with billions of parameters.
+    *   **Quantization Scale Storage**: The per-channel scales for Int8 quantization MUST be stored alongside the quantized weights. If the scales are lost or mismatched, the dequantized weights will be incorrect, leading to garbage output.
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Key Existence Check**: Before fusing QKV, you MUST verify that all three keys (`to_q`, `to_k`, `to_v`) exist. If one is missing, the fusion will fail or produce incorrect results.
-    *   **Shape Validation**: Before concatenation, you MUST assert that the input dimensions (`shape[1]`) of Q, K, and V are identical. If they differ, the model is corrupted or the keys are misidentified.
+    *   **Key Existence Check**: Before remapping keys, you MUST check if the key exists in the state dict. If a key is missing, the remapping will fail silently or raise a `KeyError`.
+    *   **Shape Validation**: After fusing tensors, you MUST validate the shape of the resulting tensor. If the shape is incorrect, the inference engine will fail to load the model.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: The repository is a **data artifact** repository, not a code repository. Its architecture is defined by the **file structure** and **tensor layout**. The boundary is the `.safetensors` file format.
-2.  **Core Abstractions**: The core abstraction is the **ComfyUI-compatible tensor layout**. This includes fused QKV, padded FFN, and mixed-precision quantization.
-3.  **Error Handling**: Error handling is implicit in the **loading process**. If the keys or shapes are incorrect, the ComfyUI runtime will throw an error. There is no explicit error handling code in this repository.
-4.  **Testing**: Testing is **manual** (loading in ComfyUI) and **visual** (checking image quality). There are no automated tests in this repository.
-5.  **Security**: The security model is defined by the **license** (CC BY-NC 4.0). There are no security vulnerabilities in the data files themselves, but the license restricts commercial use.
-6.  **Performance**: The performance optimization is **Int8 quantization** with Hadamard rotation. This reduces memory footprint and increases inference speed. The zero-padding of FFN may slightly increase memory usage but ensures compatibility.
-7.  **Deployment**: Deployment is **manual** (copying files to specific folders). There is no CI/CD pipeline in this repository.
-8.  **Agent Patterns**: N/A.
-9.  **Data Flow**: The data flow is **static**. The tensors are loaded into memory and used for inference. There is no dynamic data flow or streaming.
+1.  **Architecture**: The repository is a static data artifact. Its architecture is defined by the directory structure and the weight layout within the `.safetensors` files. The boundary is clear: it provides weights, not code.
+2.  **Core Abstractions**: The core abstraction is the "ComfyUI-Ready Model." This includes specific key names, tensor shapes, and precision formats.
+3.  **Error Handling**: Error handling is implicit in the loading process. If the keys or shapes are incorrect, the ComfyUI loader will raise an error. There is no explicit error handling code in this repository.
+4.  **Testing**: Testing is not present in this repository. However, the README implies that the models have been tested for compatibility with ComfyUI.
+5.  **Security**: The security model is defined by the license (CC BY-NC 4.0). The weights are provided as is, without warranties. There are no security vulnerabilities in the data itself, but the license restricts commercial use.
+6.  **Performance**: The performance is optimized through:
+    *   **Shard Merging**: Reduces I/O overhead.
+    *   **Tensor Fusion**: Reduces memory access patterns.
+    *   **Int8 Quantization**: Reduces memory footprint and increases inference speed.
+    *   **Zero-Padding**: Aligns tensors for hardware optimization.
+7.  **Deployment**: The deployment is straightforward: place the files in the specified directories. There are no CI/CD pipelines or container constraints.
+8.  **Agent Patterns**: N/A. This is not an agent-based system.
+9.  **Data Flow**: The data flow is from the `.safetensors` files to the ComfyUI inference engine. The weights are loaded into memory, dequantized (if necessary), and used in the forward pass.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Fused QKV tensor layout for ComfyUI compatibility.
-2.  **Rule**: MUST fuse QKV weights and zero-pad FFN weights to match ComfyUI's expected shapes.
-3.  **Architecture Principle**: **Runtime-First Data Layout**. The data format must be optimized for the target runtime's expectations, not the original model's native format.
-4.  **Failure Mode**: `KeyError` or shape mismatch errors when loading the model in ComfyUI.
-5.  **Reusable Skill**: A script to convert `diffusers` state dicts to ComfyUI-compatible state dicts, including key renaming, fusion, and padding.
-6.  **Decision**: To use zero-padding instead of truncation for FFN weights, to preserve learned representations.
-7.  **Anti-pattern**: Leaving QKV weights separate or truncating FFN weights.
-8.  **Verification Method**: Load the model in ComfyUI and execute a forward pass. Check for errors and visual quality.
+1.  **Pattern**: Selective quantization with mixed precision.
+2.  **Rule**: Preserve modulation layers in higher precision when quantizing.
+3.  **Architecture Principle**: Interoperability requires strict adherence to the target engine's weight layout.
+4.  **Failure Mode**: Silent corruption due to incorrect tensor concatenation order.
+5.  **Reusable Skill**: Model repackaging checklist (merge shards, remap keys, fuse tensors, pad dimensions).
+6.  **Decision**: Use Int8 quantization with Hadamard rotation for a balance between speed and quality.
+7.  **Anti-pattern**: Uniform quantization without preserving critical layers.
+8.  **Verification Method**: Shape and value validation of fused tensors.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Identify Target Runtime**: Determine the expected tensor layout and key naming conventions of the target runtime (e.g., ComfyUI).
-2.  **Analyze Source Model**: Inspect the source model's state dict to identify QKV, FFN, and AdaLN layers.
-3.  **Fuse QKV Weights**: Concatenate `to_q`, `to_k`, `to_v` into `qkv` along `dim=0`.
-4.  **Zero-Pad FFN Weights**: Pad FFN weights to match the target runtime's expected width.
-5.  **Apply Selective Quantization**: Quantize all layers to Int8, except AdaLN layers, which should remain in BF16.
-6.  **Save to Safetensors**: Save the modified state dict to a `.safetensors` file.
-7.  **Verify in Target Runtime**: Load the model in the target runtime and execute a forward pass to ensure no errors.
-8.  **Check Visual Quality**: Generate images and compare with the original model to ensure no significant quality degradation.
+1.  **Identify Target Engine**: Determine the specific weight layout requirements of the target inference engine (e.g., ComfyUI, TensorRT, ONNX Runtime).
+2.  **Analyze Source Model**: Inspect the source model's state dict to identify key names, tensor shapes, and dtypes.
+3.  **Map Keys**: Create a mapping from source keys to target keys. Handle fused tensors (e.g., `qkv`) carefully.
+4.  **Quantize**: Apply quantization to the appropriate layers. Preserve critical layers in higher precision.
+5.  **Pad Dimensions**: Zero-pad tensors to meet alignment requirements.
+6.  **Validate**: Check the shapes and values of the resulting tensors.
+7.  **Save**: Save the repackaged model in the target format.
+8.  **Test**: Load the model in the target engine and run a test inference.

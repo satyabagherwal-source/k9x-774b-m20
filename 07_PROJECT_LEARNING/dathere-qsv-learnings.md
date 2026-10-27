@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `a078a8b7`  
+> **Source Version**: `25abe0aa`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T17:44:56.047Z  
+> **Timestamp**: 2026-10-27T20:32:05.977Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T17:44:54.846Z  
+> **Harvest Timestamp**: 2026-10-27T20:32:05.343Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,201 +2203,651 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a078a8b7` (2026-10-27)
-**Commit Message**: chore(mcp): v27.0.1 release of MCP Server and Claude Cowork plugin
+### Incident Patch 1: `5fae42a4` (2026-10-27)
+**Commit Message**: fix(get): --output overwrite temp starts owner-only and keeps the group (#4948)
 
-[skip ci]
+* fix(get): --output overwrite temp starts owner-only and keeps the group
+
+roborev 5926 (on #4945):
+- High: the overwrite temp was created with the umask's mode and only then
+  chmod'd to the destination's. Permissions are checked at open, so a local
+  user who opened it in that window kept reading the exported bytes. The temp
+  now starts 0600 and takes the destination's mode only after it is written.
+- High: temp + rename gave the file the process's (or a setgid directory's)
+  group, so copying a 0640 mode could open it to a different group. The temp's
+  group is now moved to the destination's with fchown; where that fails, group
+  bits are dropped.
+
+Tests: unit tests for the temp's mode and the group fallback, and a 0640
+overwrite case in the umask integration test; each mutation-checked.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.claude-plugin/marketplace.json` (modified, +2/-2)
-```diff
-@@ -6,14 +6,14 @@
-   },
-   "metadata": {
-     "description": "Blazingly fast data wrangling plugins for Claude Code — 57 skill-based commands for CSV, TSV, Excel, JSONL, and Parquet files",
--    "version": "26.0.0"
-+    "version": "27.0.1"
-   },
-   "plugins": [
-     {
-       "name": "qsv-data-wrangling",
-       "source": "./.claude/skills",
-       "description": "Blazingly fast tabular data wrangling with 57 qsv skill-based commands for CSV, TSV, Excel, JSONL, and Parquet files",
--      "version": "26.0.0",
-+      "version": "27.0.1",
-       "author": {
-         "name": "datHere, Inc.",
-         "email": "qsv@dathere.com",
-```
+* test(get): overwrite temp takes the destination's group when it differs
 
-**File**: `.claude/skills/.claude-plugin/plugin.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "qsv-data-wrangling",
--  "version": "26.0.0",
-+  "version": "27.0.1",
-   "description": "Blazingly fast tabular data wrangling with 57 qsv skill-based commands for CSV, TSV, Excel, JSONL, and Parquet files",
-   "author": {
-     "name": "datHere, Inc.",
-```
+Covers the fchown itself: the integration case runs as the file's own group,
+where fchown is a no-op. Uses one of the user's other groups (skips if none);
+fails if group_kept is hardcoded 
 
-**File**: `.claude/skills/CHANGELOG.md` (modified, +2/-1)
+**File**: `CHANGELOG.md` (modified, +5/-0)
 ```diff
-@@ -5,7 +5,8 @@ All notable changes to the qsv Agent Skills (MCP Server) project will be documen
+@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
  The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
  and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
  
--## [Unreleased]
-+## [27.0.1] - 2026-10-27
-+Companion release to qsv 27.0.1, "The Live Data Schematics Release". The MCP server tracks the qsv binary version per the policy adopted in 20.0.0, and `minimum_qsv_version` is raised to 27.0.1 because the regenerated skill JSONs advertise options that only exist in the new binary (`qsv-viz --no-daemon-bridge`, `qsv-validate --offline`, `qsv-pivotp --no-moarstats`) and no longer offer `--low-memory` on `qsv-sqlp`, `qsv-joinp` and `qsv-count`, which the new binary rejects. The skill count stays at **57**. Update your qsv binary first.
++## [Unreleased]
++
++### Fixed
++* `get`: overwriting an existing file with `--output` (`get`, `get cache-fetch`) no longer briefly exposes the new contents: the temp file that replaces it is owner-only (`0600`) while the data is written, and takes the old file's mode only afterwards. It also keeps the old file's group, so a group-readable file isn't handed to a different group; where the group can't be kept, the new file isn't group-readable, and other users get no access the old file denied its group. Setuid/setgid bits aren't carried over, as an in-place overwrite would have cleared them. Follow-up to [#4945](https://github.com/dathere/qsv/pull/4945). ([#4948](https://github.com/dathere/qsv/pull/4948))
++
+ ## [27.0.1] - 2026-10-27 📡 The "Live Data Schematics" Release 📊
  
- ### Added
- - **`qsv-viz` gains `--no-daemon-bridge`** ([#4848](https://github.com/dathere/qsv/pull/4848), [#4902](https://github.com/dathere/qsv/pull/4902)): it leaves the qsv-clientd bridge script out of a `smart` Data Schematic. The description explains what the bridge does by default (one "hello" request to 127.0.0.1, a "Live data" chip only if a qsv-clientd daemon answers) and that the recorded arguments omit the source URL of a `dc:` input.
+ ### Highlights
 ```
 
-**File**: `.claude/skills/README-MCP.md` (modified, +3/-3)
+**File**: `src/diskcache.rs` (modified, +120/-10)
 ```diff
-@@ -60,7 +60,7 @@ Excel and JSONL files are automatically converted to CSV before processing - no
- 
- The **MCP Desktop Extension** (MCPB) provides the easiest installation experience:
- 
--1. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-26.0.0.mcpb`) from [releases](https://github.com/dathere/qsv/releases/latest)
-+1. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-27.0.1.mcpb`) from [releases](https://github.com/dathere/qsv/releases/latest)
- 2. Open Claude Desktop Settings → Extensions
- 3. Click "Install from file" and select the `.mcpb` file
- 4. Configure your allowed directories when prompted
-@@ -621,8 +621,8 @@ For issues or questions:
- 
- ---
- 
--**Updated**: 2026-10-19
--**Version**: 26.0.0
-+**Updated**: 2026-10-27
-+**Version**: 27.0.1
- **Tools**: 23 tools at startup (10 core + 13 commonly-used; +1 app-only when MCP Apps enabled), all 57 discoverable via `qsv_search_tools`
- **Skills**: 57 qsv commands
- **Status**: Production Ready
-```
-
-**File**: `.claude/skills/README.md` (modified, +3/-3)
-```diff
-@@ -49,7 +49,7 @@ Each skill file provides:
- 
- **Installation**:
- 1. Install qsv: `brew install qsv` (macOS) or see [qsv installation](https://github.com/dathere/qsv#installation)
--2. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-26.0.0.mcpb`) from releases
-+2. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-27.0.1.mcpb`) from releases
- 3. Double-click the `.mcpb` file (opens with Claude Desktop)
- 4. **That's it!** qsv binary path is auto-detected, no manual configuration needed
- 5. Restart Claude Desktop
-@@ -467,8 +467,8 @@ MIT
- 
- ---
- 
--**Updated**: 2026-10-19
--**Version**: 26.0.0
-+**Updated**: 2026-10-27
-+**Version**: 27.0.1
- **Generator**: `qsv --update-mcp-skills`
- **Skills**: 57 commands
- **Usage Examples**: 263 from documentation
-```
-
-**File**: `.claude/skills/docs/desktop/README-MCPB.md` (modified, +2/-2)
-```diff
-@@ -576,7 +576,7 @@ Same license as qsv: MIT OR Apache-2.0
- 
- ---
- 
--**Updated**: 2026-10-19
--**Version**: 26.0.0
-+**Updated**: 2026-10-27
-+**Version**: 27.0.1
- **Format**: MCP Bundle (MCPB) v0.3
- **Compatibility**: Claude Desktop 1.0+
-```
-
-**File**: `.claude/skills/manifest.json` (modified, +2/-2)
-```diff
-@@ -1,7 +1,7 @@
- {
-   "manifest_version": "0.3",
-   "name": "qsv",
--  "version": "26.0.0",
-+  "version": "27.0.1",
-   "description": "Blazingly fast Data Wrangling Toolkit for Tabular Data",
-   "long_description": "Comprehensive data-wrangling toolkit for transforming, analyzing, querying & validating tabular data. Process local CSV, TSV, SSV, Excel/ODS, Parquet and JSONL files w/o uploading. Despite the warning, only accesses APPROVED DIRECTORIES on your computer.",
-   "author": {
-@@ -260,7 +260,7 @@
-         "Smart caching with stats/frequency files",
-         "Automatic Excel, Parquet and JSONL conversion"
-       ],
--      "minimum_qsv_version": "26.0.0"
-+      "minimum_qsv_version": "27.0.1"
+@@ -852,23 +852,22 @@ mod rich {
+     /// Write a file the user asked for (`--output`) atomically, with the
+     /// umask's mode, like every other qsv writer. Only the cache's own files are
+     /// owner-only: where an export goes, and who may read it, is the user's call.
+-    /// Overwriting an existing file keeps its mode, as `File::create` would: the
+-    /// temp gets that mode while still empty, so a file the user locked down is
+-    /// never replaced by a more readable one.
++    /// Overwriting an existing file keeps its mode and group, as `File::create`
++    /// would, so a file the user locked down is never replaced by a more
++    /// readable one.
+     fn write_user_file(path: &Path, bytes: &[u8]) -> std::io::Result<()> {
+         if let Some(parent) = path.parent() {
+             fs::create_dir_all(parent)?;
+         }
+-        let (tmp, mut file) = create_temp(
+-            |t| path.with_extension(format!("tmp-{t}")),
+-            |p| fs::OpenOptions::new().write(true).create_new(true).open(p),
+-        )?;
++        let existing = fs::metadata(path).ok();
++        let (tmp, mut file) = open_user_temp(path, existing.is_some())?;
+         let written = (|| {
++            file.write_all(bytes)?;
+             #[cfg(unix)]
+-            if let Ok(existing) = fs::metadata(path) {
+-                file.set_permissions(existing.permissions())?;
++            if let Some(existing) = &existing {
++                file.set_permissions(overwrite_permissions(&file, existing))?;
+             }
+-            file.write_all(bytes)
++            Ok(())
+         })();
+         drop(file);
+         if let Err(e) = written.and_then(|()| fs::rename(&tmp, path)) {
+@@ -878,6 +877,46 @@ mod rich {
+         Ok(())
      }
-   }
- }
+ 
++    /// The temp for `write_user_file`. An overwrite's temp starts owner-only and
++    /// takes the destination's mode only once written: permissions are checked at
++    /// open, so anyone who opened a briefly-readable temp would keep reading it
++    /// after a chmod.
++    fn open_user_temp(path: &Path, overwrite: bool) -> std::io::Result<(PathBuf, fs::File)> {
++        let make = |t: &str| path.with_extension(format!("tmp-{t}"));
++        if overwrite {
++            create_private_temp(make)
++        } else {
++            create_temp(make, |p| {
++                fs::OpenOptions::new().write(true).create_new(true).open(p)
++            })
++        }
++    }
++
++    /// The mode an overwrite's temp takes before it replaces `existing`. The temp
++    /// gets the process's (or a setgid directory's) group, not the destination's,
++    /// so its group is moved to the destination's first; where that isn't allowed,
++    /// group access is dropped rather than granted to a different group.
++    #[cfg(unix)]
++    fn overwrite_permissions(file: &fs::File, existing: &fs::Metadata) -> fs::Permissions {
++        use std::os::unix::fs::{MetadataExt, PermissionsExt, fchown};
++        let group_kept = fchown(file, None, Some(existing.gid())).is_ok();
++        fs::Permissions::from_mode(overwrite_mode(existing.mode(), group_kept))
++    }
++
++    /// Only the permission bits carry over: an in-place write would have cleared
++    /// setuid/setgid. When the group couldn't be kept, the destination's group
++    /// members now count as "other", so other keeps only what that group had,
++    /// as `DerivedFile` does.
++    #[cfg(unix)]
++    const fn overwrite_mode(existing_mode: u32, group_kept: bool) -> u32 {
++        let mode = existing_mode & 0o777;
++        if group_kept {
++            mode
++        } else {
++            (mode & 0o700) | (mode & 0o007 & ((mode & 0o070) >> 3))
++        }
++    }
++
+     fn atomic_write(path: &Path, bytes: &[u8]) -> std::io::Result<()> {
+         if let Some(parent) = path.parent() {
+             super::create_private_dir_all(parent)?;
+@@ -3660,6 +3699,77 @@ mod rich {
+             }
+         }
+ 
++        // An overwrite's temp must never be more readable than owner-only while
++        // the data goes in, whatever the umask.
++        #[cfg(unix)]
++        #[test]
++        fn overwrite_temp_starts_owner_only() {
++            use std::os::unix::fs::PermissionsExt;
++            let dir = tempfile::tempdir().unwrap();
++            let path = dir.path().join("out.csv");
++            let (tmp, file) = super::open_user_temp(&path, true).unwrap();
++            let mode = file.metadata().unwrap().permissions().mode() & 0o777;
++            drop(file);
++            std::fs::remove_file(tmp).unwrap();
++            assert_eq!(mode, 0o600);
++        }
++
++        // Group access survives only when the destination's group could be kept.
++        #[cfg(unix)]
++        #[test]
++        fn overwrite_mode_drops_group_bits_when_group_not_kept() {
++            assert_eq!(super::overwrite_mode(0o100640, true), 0o640);
++            assert_eq!(super::overwrite_mode(0o100640, false), 0o600);
++            assert_eq!(super::overwrite_mode(0o100664, false), 0o604);
++            assert_eq!(super::overwrite_mode(0o100600, f
 ```
 
-**File**: `.claude/skills/package-lock.json` (modified, +2/-2)
+**File**: `tests/test_get.rs` (modified, +13/-1)
 ```diff
-@@ -1,12 +1,12 @@
- {
-   "name": "@qsv/agent-skills",
--  "version": "26.0.0",
-+  "version": "27.0.1",
-   "lockfileVersion": 3,
-   "requires": true,
-   "packages": {
-     "": {
-       "name": "@qsv/agent-skills",
--      "version": "26.0.0",
-+      "version": "27.0.1",
-       "license": "MIT",
-       "dependencies": {
-         "@modelcontextprotocol/ext-apps": "^1.7.2",
+@@ -2858,7 +2858,7 @@ fn get_symlinked_cache_root_is_made_owner_only() {
+ // The cache is owner-only, but a file the user asks for with --output is not:
+ // it gets the umask's mode, as every other qsv writer's output does, and so do
+ // the directories created for it. Overwriting an existing file keeps that
+-// file's mode instead. qsv runs under a fixed umask (022), so the expected
++// file's mode and group instead. qsv runs under a fixed umask (022), so the expected
+ // modes don't depend on the umask the test suite happens to run with.
+ #[cfg(unix)]
+ #[test]
+@@ -2885,6 +2885,13 @@ fn get_output_and_cache_fetch_output_follow_the_umask() {
+         std::fs::Permissions::from_mode(0o600),
+     )
+     .unwrap();
++    // and one shared with its group, which an overwrite must keep sharing
++    wrk.create_from_string("shared.csv", "old\n");
++    std::fs::set_permissions(
++        wrk.path("shared.csv"),
++        std::fs::Permissions::from_mode(0o640),
++    )
++    .unwrap();
+ 
+     let mut get = dc_command(&wrk, "get", &cache_dir, &tmp_dir);
+     get.args(["--name", "t.csv", "src.csv", "--output", "dl/sub/got.csv"]);
+@@ -2898,6 +2905,10 @@ fn get_output_and_cache_fetch_output_follow_the_umask() {
+     over.args(["cache-fetch", "t.csv", "--output", "locked.csv"]);
+     umask_022(&mut over);
+     wrk.assert_success(&mut over);
++    let mut shared = dc_command(&wrk, "get", &cache_dir, &tmp_dir);
++    shared.args(["cache-fetch", "t.csv", "--output", "shared.csv"]);
++    umask_022(&mut shared);
++    wrk.assert_success(&mut shared);
+ 
+     for dir in ["dl", "dl/sub", "cf"] {
+         assert_eq!(mode_of(&wrk.path(dir)), 0o755, "{dir}");
+@@ -2906,6 +2917,7 @@ fn get_output_and_cache_fetch_output_follow_the_umask() {
+         ("dl/sub/got.csv", 0o644),
+         ("cf/fetched.csv", 0o644),
+         ("locked.csv", 0o600),
++        ("shared.csv", 0o640),
+     ] {
+         assert_eq!(mode_of(&wrk.path(file)), want, "{file}");
+         assert_eq!(
 ```
 
 ---
 
-### Incident Patch 2: `eb52a8da` (2026-10-27)
-**Commit Message**: docs(changelog): 27.0.1 contributors and v27 anchors
+### Incident Patch 2: `c0c37471` (2026-10-27)
+**Commit Message**: fix(viz): explain blank map panels in sandboxed iframes (#4947)
+
+* fix(viz): explain blank map panels in sandboxed iframes (#4946)
+
+In an <iframe sandbox> without allow-same-origin, the page's window.origin
+is "null" but location.origin stays the URL's, while MapLibre's blob:null
+worker reports "null". The MapLibre 4.7.1 bundled in plotly.js 3.7.0 drops
+every actor message whose origin differs from its own (file:// excepted),
+so tiles never finish loading and every map panel stays blank with no
+error. This is the CKAN Webpage-view sandbox the wiki recommends.
+
+FULLSCREEN_SCRIPT now adds a short note above each map panel when the page
+has an opaque origin and isn't a file: page. The text is localized in all
+eight locales (viz.map.sandboxed_notice). Rendering the maps needs a
+plotly.js upgrade; #4946 tracks it (plotly.js 4.1.2 alone isn't enough).
+
+Gallery schematics regenerated.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +11/-1)
+* docs(changelog): cite #4947 for the sandboxed-map note
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* test(viz): hold the English locale guard in the sandbox-notice test
+
+The test asserts English text, and the locale is process-global, so a
+paral
+
+**File**: `CHANGELOG.md` (modified, +2/-1)
 ```diff
-@@ -24,8 +24,18 @@ Also in this release:
- - **`get` ships in the prebuilt `qsv` binaries**, so `dc:` inputs work out of the box.
- - **Private caches on shared machines.** The `get` cache and the `dc:` copies other commands read are now readable by you only, and so is every file `stats` writes beside a private CSV. Before, other local users could read data `qsv get` had fetched, including private CKAN resources fetched with an API token.
+@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ ## [Unreleased]
  
--Read **Breaking Changes** before upgrading: `sqlp` subquery aliases, three `validate` schema behaviors, and `QSV_SNIFF_PREAMBLE`. `--low-memory` is gone from `sqlp`, `joinp` and `count`. The two security fixes at the top of **Fixed** also change behavior: a `get` cache shared with a group on purpose becomes owner-only, and `dc:` inputs stop with an error if another user has taken their temp folder.
-+Read **[Breaking Changes](#v27-breaking-changes)** before upgrading: `sqlp` subquery aliases, three `validate` schema behaviors, and `QSV_SNIFF_PREAMBLE`. `--low-memory` is gone from `sqlp`, `joinp` and `count`. The two security fixes at the top of **Fixed** also change behavior: a `get` cache shared with a group on purpose becomes owner-only, and `dc:` inputs stop with an error if another user has taken their temp folder.
+ ### Fixed
+-* `get`: overwriting an existing file with `--output` (`get`, `get cache-fetch`) no longer briefly exposes the new contents: the temp file that replaces it is owner-only (`0600`) while the data is written, and takes the old file's mode only afterwards. It also keeps the old file's group, so a group-readable file isn't handed to a different group; where the group can't be kept, the new file isn't group-readable, and other users get no access the old file denied its group. Setuid/setgid bits aren't carried over, as an in-place overwrite would have cleared them. Follow-up to [#4945](https://github.com/dathere/qsv/pull/4945). ([#4948](https://github.com/dathere/qsv/pull/4948))
++- **`viz smart`: a map in a sandboxed iframe now says why it's blank** ([#4947](https://github.com/dathere/qsv/pull/4947), [#4946](https://github.com/dathere/qsv/issues/4946)). Embedded in an `<iframe sandbox>` without `allow-same-origin` (the CKAN Webpage view the wiki recommends), every MapLibre map panel stayed empty with no error: the map library bundled with plotly.js 3.x rejects its own worker's messages when the page's origin is `null`. The schematic now shows a note above each such map telling the viewer to open it in its own tab. Pages opened from a file aren't affected. Rendering the maps there needs a plotly.js upgrade; #4946 tracks it.
++- `get`: overwriting an existing file with `--output` (`get`, `get cache-fetch`) no longer briefly exposes the new contents: the temp file that replaces it is owner-only (`0600`) while the data is written, and takes the old file's mode only afterwards. It also keeps the old file's group, so a group-readable file isn't handed to a different group; where the group can't be kept, the new file isn't group-readable, and other users get no access the old file denied its group. Setuid/setgid bits aren't carried over, as an in-place overwrite would have cleared them. Follow-up to [#4945](https://github.com/dathere/qsv/pull/4945). ([#4948](https://github.com/dathere/qsv/pull/4948))
  
-+### 🙏 Contributors
-+
-+Thanks to everyone who made 27.0.1 possible:
-+
-+- [@slonyik](https://github.com/slonyik) for reporting, with a clear repro, that `json` left a copy of the converted data in the system temp directory ([#4924](https://github.com/dathere/qsv/issues/4924), fixed in [#4925](https://github.com/dathere/qsv/pull/4925))
-+
-+---
-+<a id="v27-changes" name="v27-changes"></a>
-+
-+<a id="v27-breaking-changes" name="v27-breaking-changes"></a>
- ### Breaking Changes
- - **`sqlp`: the alias of a subquery in `FROM` can no longer be read as a table** ([#4907](https://github.com/dathere/qsv/pull/4907), Polars [#30207](https://github.com/pola-rs/polars/pull/30207)). Some queries that worked in qsv 26.0.0 now fail with `relation '<alias>' was not found`. The alias still qualifies the subquery's columns (`a.x`). Reading it as a table, whether in another subquery or in a later `FROM` item, now fails:
-   ```sql
+ ## [27.0.1] - 2026-10-27 📡 The "Live Data Schematics" Release 📊
+ 
+```
+
+**File**: `examples/viz/smart_allegheny_dogs.html` (modified, +25/-4)
+```diff
+@@ -76,7 +76,7 @@ <h1 class="qsv-viz-title">allegheny_dog_licenses.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>50,013 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>8</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 11:48 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 15:40 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 27.0.1</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -501,6 +501,25 @@ <h1 class="qsv-viz-title">allegheny_dog_licenses.csv — Data Schematic</h1>
+     var fl = gd._fullLayout || {};
+     return Object.keys(fl).filter(function (k) { return /^scene\d*$/.test(k); });
+   }
++  // A sandboxed frame without allow-same-origin gives the page an opaque origin but leaves
++  // location.origin as the URL's; MapLibre's worker (a blob:null URL) reports "null", and the
++  // MapLibre bundled with plotly.js 3.x drops every message whose origin differs from its own, so
++  // the map's tiles never finish loading and the panel stays blank with no error. file:// pages are
++  // exempt from that check. Say so above each map rather than leave an empty panel unexplained.
++  function sandboxNotice(gd) {
++    if (window.origin !== "null" || location.protocol === "file:") return;
++    var lay = (gd && gd.layout) || {};
++    if (!Object.keys(lay).some(function (k) { return /^map\d*$/.test(k); })) return;
++    var host = gd.parentNode;
++    if (!host || host.querySelector(":scope > .qsv-sandbox-map-note")) return;
++    var note = document.createElement("div");
++    note.className = "qsv-sandbox-map-note";
++    note.setAttribute("role", "note");
++    note.textContent = "This map can't load inside a sandboxed frame. Open this Data Schematic in its own browser tab to see it.";
++    note.style.cssText = "margin:4px 0;padding:6px 10px;border:1px solid #d97706;border-radius:6px;" +
++      "background:#fffbeb;color:#78350f;font:13px/1.4 system-ui,sans-serif";
++    host.insertBefore(note, gd);
++  }
+   function installGl3dScrollFix(gd) {
+     if (gd.__qsvGl3dFix || !sceneKeys(gd).length) return;
+     gd.__qsvGl3dFix = true;
+@@ -539,6 +558,8 @@ <h1 class="qsv-viz-title">allegheny_dog_licenses.csv — Data Schematic</h1>
+       // cluster bubbles: repaint plotly's black-by-default count labels and add hover/click-to-zoom
+       // (see installClusterUi). No-op for non-map panels and for maps that never cluster.
+       applyClusterUi(gd);
++      // map panels in a sandboxed (opaque-origin) frame can't load tiles: explain the blank panel
++      sandboxNotice(gd);
+       // gl3d panels: stop the WebGL canvas from eating the wheel inline so the page can scroll
+       // (scrollZoom:false suppresses the zoom but not the canvas preventDefault; see above).
+       installGl3dScrollFix(gd);
+@@ -941,7 +962,7 @@ <h1>allegheny_dog_licenses.csv — Data Schematic</h1>
+ <div class="qsv-dict-downloads">
+ <a class="qsv-dict-export" download="allegheny_dog_licenses_csv_data_schematic.schema.json" href="data:application/json;base64,ewogICIkc2NoZW1hIjogImh0dHBzOi8vanNvbi1zY2hlbWEub3JnL2RyYWZ0LzIwMjAtMTIvc2NoZW1hIiwKICAidGl0bGUiOiAiRGF0YSBEaWN0aW9uYXJ5IGZvciBhbGxlZ2hlbnlfZG9nX2xpY2Vuc2VzLmNzdiIsCiAgImRlc2NyaXB0aW9uIjogIlRoaXMgZGF0YXNldCBwcm92aWRlcyBhIGNvbXByZWhlbnNpdmUgcmVnaXN0cnkgb2YgZG9nIGxpY2Vuc2VzLCBlbmNvbXBhc3NpbmcgNTAsMDEzIGluZGl2aWR1YWwgcmVjb3Jkcy4gSXQgZGV0YWlscyBwZXQgY2hhcmFjdGVyaXN0aWNzIHN1Y2ggYXMgYnJlZWQgYW5kIGNvbG9yIGFsb25nc2lkZSBhZG1pbmlzdHJhdGl2ZSBpbmZvcm1hdGlvbiBsaWtlIGxpY2Vuc2UgdHlwZXMsIGVmZmVjdGl2ZSBkYXRlcywgYW5kIG93bmVyIHppcCBjb2Rlcy4gVGhlIGRhdGEgc2VydmVzIHRvIGRvY3VtZW50IHBldCBvd25lcnNoaXAgYW5kIHZhbGlkIGxpY2Vuc2luZyBwZXJpb2RzIGFjcm9zcyB2YXJpb3VzIGNhdGVnb3JpZXMgb2YgbGlmZXRpbWUgYW5kIHNlbmlvciByZWdpc3RyYXRpb25zLlxuXG4jIyMgTm90YWJsZSBDaGFyYWN0ZXJpc3RpY3NcblxuKiAqKlNlbnRpbmVsIFZhbHVlczoqKiBUaGUgYEV4cFllYXJgIGZpZWxkIGNvbnNpc3RzIGVudGlyZWx5IG9mIHRoZSB2YWx1ZSBgMjA5OWAsIHdoaWNoIHNlcnZlcyBhcyBhIHNlbnRpbmVsIGluZGljYXRpbmcgbm8gZXhwaXJhdGlvbi5cbiogKipQSUkvU2Vuc2l0aXZlIERhdGE6KiogVGhlIGRhdGFzZXQgY29udGFpbnMgUGVyc29uYWxseSBJZGVudGlmaWFibGUgSW5mb3JtYXRpb24gKFBJSSkgaW4gdGhlIGZvcm0gb2YgYERvZ05hbWVgIGFuZCBnZW9ncmFwaGljIGlkZW50aWZpZXJzIHZpYSBgT3duZXJaaXBgLlxuKiAqKkhpZ2ggQ2FyZGluYWxpdHk6KiogVGhlIGBEb2dOYW1lYCBhbmQgYEJyZWVkYCBmaWVsZHMgZXhoaWJpdCBoaWdoIGNhcmRpbmFsaXR5LCBpbmRpY2F0aW5nIGEgd2lkZSB2YXJpZXR5IG9mIHVuaXF1ZSB2YWx1ZXMgYWNyb3NzIHRoZSBkYXRhc2V0LlxuKiAqKkRpc3RyaWJ1dGlvbiBQYXR0ZXJuczoqKiBUaGUgYExpY2Vuc2VUeXBlYCBmaWVsZCBzaG93cyBhIGNvbmNlbnRyYXRpb24gaW4gbGlmZXRpbWUgcmVnaXN0cmF0aW9ucywgcG
+```
+
+**File**: `examples/viz/smart_cms_medicare.html` (modified, +23/-2)
+```diff
+@@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>30,007 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>4</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>97.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 11:48 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 15:40 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 27.0.1</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -604,6 +604,25 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
+     var fl = gd._fullLayout || {};
+     return Object.keys(fl).filter(function (k) { return /^scene\d*$/.test(k); });
+   }
++  // A sandboxed frame without allow-same-origin gives the page an opaque origin but leaves
++  // location.origin as the URL's; MapLibre's worker (a blob:null URL) reports "null", and the
++  // MapLibre bundled with plotly.js 3.x drops every message whose origin differs from its own, so
++  // the map's tiles never finish loading and the panel stays blank with no error. file:// pages are
++  // exempt from that check. Say so above each map rather than leave an empty panel unexplained.
++  function sandboxNotice(gd) {
++    if (window.origin !== "null" || location.protocol === "file:") return;
++    var lay = (gd && gd.layout) || {};
++    if (!Object.keys(lay).some(function (k) { return /^map\d*$/.test(k); })) return;
++    var host = gd.parentNode;
++    if (!host || host.querySelector(":scope > .qsv-sandbox-map-note")) return;
++    var note = document.createElement("div");
++    note.className = "qsv-sandbox-map-note";
++    note.setAttribute("role", "note");
++    note.textContent = "This map can't load inside a sandboxed frame. Open this Data Schematic in its own browser tab to see it.";
++    note.style.cssText = "margin:4px 0;padding:6px 10px;border:1px solid #d97706;border-radius:6px;" +
++      "background:#fffbeb;color:#78350f;font:13px/1.4 system-ui,sans-serif";
++    host.insertBefore(note, gd);
++  }
+   function installGl3dScrollFix(gd) {
+     if (gd.__qsvGl3dFix || !sceneKeys(gd).length) return;
+     gd.__qsvGl3dFix = true;
+@@ -642,6 +661,8 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
+       // cluster bubbles: repaint plotly's black-by-default count labels and add hover/click-to-zoom
+       // (see installClusterUi). No-op for non-map panels and for maps that never cluster.
+       applyClusterUi(gd);
++      // map panels in a sandboxed (opaque-origin) frame can't load tiles: explain the blank panel
++      sandboxNotice(gd);
+       // gl3d panels: stop the WebGL canvas from eating the wheel inline so the page can scroll
+       // (scrollZoom:false suppresses the zoom but not the canvas preventDefault; see above).
+       installGl3dScrollFix(gd);
+@@ -2497,7 +2518,7 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
+   else setTimeout(init, 0);
+ })();
+ </script>
+-<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"d686763d-5ca4-49bc-91d0-6475b8d99de2","fingerprint":{"algo":"blake3","digest":"ff0858a992d6fe65ecf8030a5b865c56f2a4305924037e3e82e598ab278e28fa","bytes":1049432},"rows":30007,"viz_args":["--smarter","--preview-threshold","500"],"redacted":[],"pid":null}</script>
++<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"d1fb5c8c-5165-4bf2-8f48-958cc88db516","fingerprint":{"algo":"blake3","digest":"ff0858a992d6fe65ecf8030a5b865c56f2a4305924037e3e82e598ab278e28fa","bytes":1049432},"rows":30007,"viz_args":["--smarter","--preview-threshold","500"],"redacted":[],"pid":null}</script>
+ <style id="qsv-live-style">
+ .qsv-live-chip, .qsv-live-panel, .qsv-live-dialog, .qsv-live-toast {
+   position: fixed; z-index: 2147482000; font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
+```
+
+**File**: `examples/viz/smart_cpdb.html` (modified, +23/-2)
+```diff
+@@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>12,587 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>7</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>98.8%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 11:48 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 15:40 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 27.0.1</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -644,6 +644,25 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
+     var fl = gd._fullLayout || {};
+     return Object.keys(fl).filter(function (k) { return /^scene\d*$/.test(k); });
+   }
++  // A sandboxed frame without allow-same-origin gives the page an opaque origin but leaves
++  // location.origin as the URL's; MapLibre's worker (a blob:null URL) reports "null", and the
++  // MapLibre bundled with plotly.js 3.x drops every message whose origin differs from its own, so
++  // the map's tiles never finish loading and the panel stays blank with no error. file:// pages are
++  // exempt from that check. Say so above each map rather than leave an empty panel unexplained.
++  function sandboxNotice(gd) {
++    if (window.origin !== "null" || location.protocol === "file:") return;
++    var lay = (gd && gd.layout) || {};
++    if (!Object.keys(lay).some(function (k) { return /^map\d*$/.test(k); })) return;
++    var host = gd.parentNode;
++    if (!host || host.querySelector(":scope > .qsv-sandbox-map-note")) return;
++    var note = document.createElement("div");
++    note.className = "qsv-sandbox-map-note";
++    note.setAttribute("role", "note");
++    note.textContent = "This map can't load inside a sandboxed frame. Open this Data Schematic in its own browser tab to see it.";
++    note.style.cssText = "margin:4px 0;padding:6px 10px;border:1px solid #d97706;border-radius:6px;" +
++      "background:#fffbeb;color:#78350f;font:13px/1.4 system-ui,sans-serif";
++    host.insertBefore(note, gd);
++  }
+   function installGl3dScrollFix(gd) {
+     if (gd.__qsvGl3dFix || !sceneKeys(gd).length) return;
+     gd.__qsvGl3dFix = true;
+@@ -682,6 +701,8 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
+       // cluster bubbles: repaint plotly's black-by-default count labels and add hover/click-to-zoom
+       // (see installClusterUi). No-op for non-map panels and for maps that never cluster.
+       applyClusterUi(gd);
++      // map panels in a sandboxed (opaque-origin) frame can't load tiles: explain the blank panel
++      sandboxNotice(gd);
+       // gl3d panels: stop the WebGL canvas from eating the wheel inline so the page can scroll
+       // (scrollZoom:false suppresses the zoom but not the canvas preventDefault; see above).
+       installGl3dScrollFix(gd);
+@@ -2537,7 +2558,7 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
+   else setTimeout(init, 0);
+ })();
+ </script>
+-<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"ac09cbf4-dab7-499a-a7b6-76f41d3a476e","fingerprint":{"algo":"blake3","digest":"530b533b644037036b22823af6c7b58ff863393c06b3819c37a16ab975e5bfad","bytes":1214414},"rows":12587,"viz_args":["--smarter","--dictionary","nyc_capital_projects_dict.schema.json","--preview-threshold","500"],"redacted":["--dictionary"],"pid":null}</script>
++<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"74e1d14e-9c45-41c4-ad92-a8ddf8c30ea8","fingerprint":{"algo":"blake3","digest":"530b533b644037036b22823af6c7b58ff863393c06b3819c37a16ab975e5bfad","bytes":1214414},"rows":12587,"viz_args":["--smarter","--dictionary","nyc_capital_projects_dict.schema.json","--preview-threshold","500"],"redacted":["--dictionary"],"pid":null}</script>
+ <style id="qsv-live-style">
+ .qsv-live-chip, .qsv-live-panel, .qsv-live-dialog, .qsv-live-toast {
+   position: fixed; z-index: 2147482000; font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
+```
+
+**File**: `examples/viz/smart_geo_outliers.html` (modified, +23/-2)
+```diff
+@@ -75,7 +75,7 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>200 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>10</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 11:48 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 15:40 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 27.0.1</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -541,6 +541,25 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
+     var fl = gd._fullLayout || {};
+     return Object.keys(fl).filter(function (k) { return /^scene\d*$/.test(k); });
+   }
++  // A sandboxed frame without allow-same-origin gives the page an opaque origin but leaves
++  // location.origin as the URL's; MapLibre's worker (a blob:null URL) reports "null", and the
++  // MapLibre bundled with plotly.js 3.x drops every message whose origin differs from its own, so
++  // the map's tiles never finish loading and the panel stays blank with no error. file:// pages are
++  // exempt from that check. Say so above each map rather than leave an empty panel unexplained.
++  function sandboxNotice(gd) {
++    if (window.origin !== "null" || location.protocol === "file:") return;
++    var lay = (gd && gd.layout) || {};
++    if (!Object.keys(lay).some(function (k) { return /^map\d*$/.test(k); })) return;
++    var host = gd.parentNode;
++    if (!host || host.querySelector(":scope > .qsv-sandbox-map-note")) return;
++    var note = document.createElement("div");
++    note.className = "qsv-sandbox-map-note";
++    note.setAttribute("role", "note");
++    note.textContent = "This map can't load inside a sandboxed frame. Open this Data Schematic in its own browser tab to see it.";
++    note.style.cssText = "margin:4px 0;padding:6px 10px;border:1px solid #d97706;border-radius:6px;" +
++      "background:#fffbeb;color:#78350f;font:13px/1.4 system-ui,sans-serif";
++    host.insertBefore(note, gd);
++  }
+   function installGl3dScrollFix(gd) {
+     if (gd.__qsvGl3dFix || !sceneKeys(gd).length) return;
+     gd.__qsvGl3dFix = true;
+@@ -579,6 +598,8 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
+       // cluster bubbles: repaint plotly's black-by-default count labels and add hover/click-to-zoom
+       // (see installClusterUi). No-op for non-map panels and for maps that never cluster.
+       applyClusterUi(gd);
++      // map panels in a sandboxed (opaque-origin) frame can't load tiles: explain the blank panel
++      sandboxNotice(gd);
+       // gl3d panels: stop the WebGL canvas from eating the wheel inline so the page can scroll
+       // (scrollZoom:false suppresses the zoom but not the canvas preventDefault; see above).
+       installGl3dScrollFix(gd);
+@@ -2924,7 +2945,7 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
+   else setTimeout(init, 0);
+ })();
+ </script>
+-<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"9781ac8e-3458-4294-8223-b82700056190","fingerprint":{"algo":"blake3","digest":"bd40d2c0b40542c2ad595c9f0a698886ccbc046365a02dba66197518f21e286d","bytes":13402},"rows":200,"viz_args":["--preview-threshold","500"],"redacted":[],"pid":null}</script>
++<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"bc0d081f-a814-42b2-afd4-fe15490566eb","fingerprint":{"algo":"blake3","digest":"bd40d2c0b40542c2ad595c9f0a698886ccbc046365a02dba66197518f21e286d","bytes":13402},"rows":200,"viz_args":["--preview-threshold","500"],"redacted":[],"pid":null}</script>
+ <style id="qsv-live-style">
+ .qsv-live-chip, .qsv-live-panel, .qsv-live-dialog, .qsv-live-toast {
+   position: fixed; z-index: 2147482000; font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
+```
+
+**File**: `examples/viz/smart_onboarding_funnel.html` (modified, +23/-2)
+```diff
+@@ -72,7 +72,7 @@
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>60 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>6</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 11:48 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 15:40 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 27.0.1</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -520,6 +520,25 @@
+     var fl = gd._fullLayout || {};
+     return Object.keys(fl).filter(function (k) { return /^scene\d*$/.test(k); });
+   }
++  // A sandboxed frame without allow-same-origin gives the page an opaque origin but leaves
++  // location.origin as the URL's; MapLibre's worker (a blob:null URL) reports "null", and the
++  // MapLibre bundled with plotly.js 3.x drops every message whose origin differs from its own, so
++  // the map's tiles never finish loading and the panel stays blank with no error. file:// pages are
++  // exempt from that check. Say so above each map rather than leave an empty panel unexplained.
++  function sandboxNotice(gd) {
++    if (window.origin !== "null" || location.protocol === "file:") return;
++    var lay = (gd && gd.layout) || {};
++    if (!Object.keys(lay).some(function (k) { return /^map\d*$/.test(k); })) return;
++    var host = gd.parentNode;
++    if (!host || host.querySelector(":scope > .qsv-sandbox-map-note")) return;
++    var note = document.createElement("div");
++    note.className = "qsv-sandbox-map-note";
++    note.setAttribute("role", "note");
++    note.textContent = "This map can't load inside a sandboxed frame. Open this Data Schematic in its own browser tab to see it.";
++    note.style.cssText = "margin:4px 0;padding:6px 10px;border:1px solid #d97706;border-radius:6px;" +
++      "background:#fffbeb;color:#78350f;font:13px/1.4 system-ui,sans-serif";
++    host.insertBefore(note, gd);
++  }
+   function installGl3dScrollFix(gd) {
+     if (gd.__qsvGl3dFix || !sceneKeys(gd).length) return;
+     gd.__qsvGl3dFix = true;
+@@ -558,6 +577,8 @@
+       // cluster bubbles: repaint plotly's black-by-default count labels and add hover/click-to-zoom
+       // (see installClusterUi). No-op for non-map panels and for maps that never cluster.
+       applyClusterUi(gd);
++      // map panels in a sandboxed (opaque-origin) frame can't load tiles: explain the blank panel
++      sandboxNotice(gd);
+       // gl3d panels: stop the WebGL canvas from eating the wheel inline so the page can scroll
+       // (scrollZoom:false suppresses the zoom but not the canvas preventDefault; see above).
+       installGl3dScrollFix(gd);
+@@ -2413,7 +2434,7 @@
+   else setTimeout(init, 0);
+ })();
+ </script>
+-<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"e82bb658-3bf4-41f8-8561-ce6871819b9f","fingerprint":{"algo":"blake3","digest":"99982234ec29b1011a433250814fc51e8cd825ceb947e0dcfa6837b09978163c","bytes":1938},"rows":60,"viz_args":["--dictionary","onboarding_funnel_dict.schema.json","--preview-threshold","500"],"redacted":["--dictionary"],"pid":null}</script>
++<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"73371f23-c216-46a7-a0c4-e8042736fc9a","fingerprint":{"algo":"blake3","digest":"99982234ec29b1011a433250814fc51e8cd825ceb947e0dcfa6837b09978163c","bytes":1938},"rows":60,"viz_args":["--dictionary","onboarding_funnel_dict.schema.json","--preview-threshold","500"],"redacted":["--dictionary"],"pid":null}</script>
+ <style id="qsv-live-style">
+ .qsv-live-chip, .qsv-live-panel, .qsv-live-dialog, .qsv-live-toast {
+   position: fixed; z-index: 2147482000; font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
+```
+
+**File**: `examples/viz/smart_regions_growth.html` (modified, +23/-2)
+```diff
+@@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">regions_growth.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>844 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>5</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 11:48 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 15:40 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 27.0.1</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -539,6 +539,25 @@ <h1 class="qsv-viz-title">regions_growth.csv — Data Schematic</h1>
+     var fl = gd._fullLayout || {};
+     return Object.keys(fl).filter(function (k) { return /^scene\d*$/.test(k); });
+   }
++  // A sandboxed frame without allow-same-origin gives the page an opaque origin but leaves
++  // location.origin as the URL's; MapLibre's worker (a blob:null URL) reports "null", and the
++  // MapLibre bundled with plotly.js 3.x drops every message whose origin differs from its own, so
++  // the map's tiles never finish loading and the panel stays blank with no error. file:// pages are
++  // exempt from that check. Say so above each map rather than leave an empty panel unexplained.
++  function sandboxNotice(gd) {
++    if (window.origin !== "null" || location.protocol === "file:") return;
++    var lay = (gd && gd.layout) || {};
++    if (!Object.keys(lay).some(function (k) { return /^map\d*$/.test(k); })) return;
++    var host = gd.parentNode;
++    if (!host || host.querySelector(":scope > .qsv-sandbox-map-note")) return;
++    var note = document.createElement("div");
++    note.className = "qsv-sandbox-map-note";
++    note.setAttribute("role", "note");
++    note.textContent = "This map can't load inside a sandboxed frame. Open this Data Schematic in its own browser tab to see it.";
++    note.style.cssText = "margin:4px 0;padding:6px 10px;border:1px solid #d97706;border-radius:6px;" +
++      "background:#fffbeb;color:#78350f;font:13px/1.4 system-ui,sans-serif";
++    host.insertBefore(note, gd);
++  }
+   function installGl3dScrollFix(gd) {
+     if (gd.__qsvGl3dFix || !sceneKeys(gd).length) return;
+     gd.__qsvGl3dFix = true;
+@@ -577,6 +596,8 @@ <h1 class="qsv-viz-title">regions_growth.csv — Data Schematic</h1>
+       // cluster bubbles: repaint plotly's black-by-default count labels and add hover/click-to-zoom
+       // (see installClusterUi). No-op for non-map panels and for maps that never cluster.
+       applyClusterUi(gd);
++      // map panels in a sandboxed (opaque-origin) frame can't load tiles: explain the blank panel
++      sandboxNotice(gd);
+       // gl3d panels: stop the WebGL canvas from eating the wheel inline so the page can scroll
+       // (scrollZoom:false suppresses the zoom but not the canvas preventDefault; see above).
+       installGl3dScrollFix(gd);
+@@ -2432,7 +2453,7 @@ <h1 class="qsv-viz-title">regions_growth.csv — Data Schematic</h1>
+   else setTimeout(init, 0);
+ })();
+ </script>
+-<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"df0da02f-c719-4852-9e4e-a2605f1dd815","fingerprint":{"algo":"blake3","digest":"11c45355afc05ac4e33e611f55109465bf22a716e0d543e5b31e5485f4300177","bytes":30192},"rows":844,"viz_args":["--preview-threshold","500"],"redacted":[],"pid":null}</script>
++<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"ca9c6180-ee6f-4351-a644-f59ecfbc371d","fingerprint":{"algo":"blake3","digest":"11c45355afc05ac4e33e611f55109465bf22a716e0d543e5b31e5485f4300177","bytes":30192},"rows":844,"viz_args":["--preview-threshold","500"],"redacted":[],"pid":null}</script>
+ <style id="qsv-live-style">
+ .qsv-live-chip, .qsv-live-panel, .qsv-live-dialog, .qsv-live-toast {
+   position: fixed; z-index: 2147482000; font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
+```
+
+**File**: `examples/viz/smart_sales.html` (modified, +23/-2)
+```diff
+@@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>500 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>13</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 11:48 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 15:40 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 27.0.1</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -588,6 +588,25 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
+     var fl = gd._fullLayout || {};
+     return Object.keys(fl).filter(function (k) { return /^scene\d*$/.test(k); });
+   }
++  // A sandboxed frame without allow-same-origin gives the page an opaque origin but leaves
++  // location.origin as the URL's; MapLibre's worker (a blob:null URL) reports "null", and the
++  // MapLibre bundled with plotly.js 3.x drops every message whose origin differs from its own, so
++  // the map's tiles never finish loading and the panel stays blank with no error. file:// pages are
++  // exempt from that check. Say so above each map rather than leave an empty panel unexplained.
++  function sandboxNotice(gd) {
++    if (window.origin !== "null" || location.protocol === "file:") return;
++    var lay = (gd && gd.layout) || {};
++    if (!Object.keys(lay).some(function (k) { return /^map\d*$/.test(k); })) return;
++    var host = gd.parentNode;
++    if (!host || host.querySelector(":scope > .qsv-sandbox-map-note")) return;
++    var note = document.createElement("div");
++    note.className = "qsv-sandbox-map-note";
++    note.setAttribute("role", "note");
++    note.textContent = "This map can't load inside a sandboxed frame. Open this Data Schematic in its own browser tab to see it.";
++    note.style.cssText = "margin:4px 0;padding:6px 10px;border:1px solid #d97706;border-radius:6px;" +
++      "background:#fffbeb;color:#78350f;font:13px/1.4 system-ui,sans-serif";
++    host.insertBefore(note, gd);
++  }
+   function installGl3dScrollFix(gd) {
+     if (gd.__qsvGl3dFix || !sceneKeys(gd).length) return;
+     gd.__qsvGl3dFix = true;
+@@ -626,6 +645,8 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
+       // cluster bubbles: repaint plotly's black-by-default count labels and add hover/click-to-zoom
+       // (see installClusterUi). No-op for non-map panels and for maps that never cluster.
+       applyClusterUi(gd);
++      // map panels in a sandboxed (opaque-origin) frame can't load tiles: explain the blank panel
++      sandboxNotice(gd);
+       // gl3d panels: stop the WebGL canvas from eating the wheel inline so the page can scroll
+       // (scrollZoom:false suppresses the zoom but not the canvas preventDefault; see above).
+       installGl3dScrollFix(gd);
+@@ -2481,7 +2502,7 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
+   else setTimeout(init, 0);
+ })();
+ </script>
+-<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"75ec4e93-727e-4478-bf4c-37272e92b7ef","fingerprint":{"algo":"blake3","digest":"cac5ea21c2a6669d8f3c688d8387b6b812c4633c951a793e96239ed32f1dd372","bytes":39740},"rows":500,"viz_args":["--hierarchy-style","sunburst","--max-charts","8","--preview-threshold","500"],"redacted":[],"pid":null}</script>
++<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"f2e09599-8836-4639-9fc5-4b3371e610f5","fingerprint":{"algo":"blake3","digest":"cac5ea21c2a6669d8f3c688d8387b6b812c4633c951a793e96239ed32f1dd372","bytes":39740},"rows":500,"viz_args":["--hierarchy-style","sunburst","--max-charts","8","--preview-threshold","500"],"redacted":[],"pid":null}</script>
+ <style id="qsv-live-style">
+ .qsv-live-chip, .qsv-live-panel, .qsv-live-dialog, .qsv-live-toast {
+   position: fixed; z-index: 2147482000; font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4949** (2026-10-27): feat(viz): smart Data Schematics report their own height when framed (@jqnatividad)
+- **PR #4948** (2026-10-27): fix(get): --output overwrite temp starts owner-only and keeps the group (@jqnatividad)
+- **PR #4947** (2026-10-27): fix(viz): explain blank map panels in sandboxed iframes (@jqnatividad)
 - **PR #4945** (2026-10-27): fix(get): --output files follow the umask, not the cache's 0600 (@jqnatividad)
 - **PR #4944** (2026-10-27): fix(get): step past stale cache temps; tighten a symlinked cache root (@jqnatividad)
 - **PR #4943** (2026-10-27): build(deps): bump anthropics/claude-code-action from 1.0.261 to 1.0.262 (@dependabot[bot])
-- **PR #4929** (2026-10-27): fix(stats): the .stats.csv.json sidecar is no more readable than its CSV (@jqnatividad)
-- **PR #4928** (2026-10-27): fix(get): make the get cache and its dc: copies owner-only (@jqnatividad)
-- **PR #4927** (2026-10-27): deps: polars-readstat-rs 0.27.0; writestat refuses XPT numbers past IBM float range (@jqnatividad)
 
 ---
 
@@ -2417,30 +2867,32 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mcp): v27.0.1 release of MCP Server and Claude Cowork plugin
+## X. get): --output overwrite temp starts owner-only and keeps the group (#4948)
 
 **RULE**:
-When implementing operations in `.claude-plugin/marketplace.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a078a8b7`: mcp): v27.0.1 release of MCP Server and Claude Cowork plugin. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5fae42a4`: get): --output overwrite temp starts owner-only and keeps the group (#4948). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude-plugin/marketplace.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    "version": "27.0.1"
-      "version": "27.0.1",
+## [Unreleased]
+
+### Fixed
+* `get`: overwriting an existing file with `--output` (`get`, `get cache-fetch`) no longer briefly exposes the new contents: the temp file that replaces it is owner-only (`0600`) while the data is written, and takes the old file's mode only afterwards. It also keeps the old file's group, so a group-readable file isn't handed to a different group; where the group can't be kept, the new file isn't group-readable, and other users get no access the old file denied its group. Setuid/setgid bits aren't carried over, as an in-place overwrite would have cleared them. Follow-up to [#4945](https://github.com/dathere/qsv/pull/4945). ([#4948](https://github.com/dathere/qsv/pull/4948))
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    "version": "26.0.0"
-      "version": "26.0.0",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a078a8b7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5fae42a4` are properly handled with clean fallback behavior.

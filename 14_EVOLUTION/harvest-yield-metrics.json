@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T20:25:14.525Z",
-  "total_cycles_completed": 5502,
-  "total_learnings_persisted": 5502,
-  "total_rules_promoted": 4899,
+  "last_updated": "2026-10-27T20:32:06.211Z",
+  "total_cycles_completed": 5506,
+  "total_learnings_persisted": 5506,
+  "total_rules_promoted": 4903,
   "history": [
-    {
-      "timestamp": "2026-10-27T13:28:23.905Z",
-      "repository": "automazeio/ccpm",
-      "learningId": "learn-github-automazeio-ccpm",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:28:29.288Z",
-      "repository": "okteto/okteto",
-      "learningId": "learn-github-okteto-okteto",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:28:29.625Z",
-      "repository": "zulip/zulip",
-      "learningId": "learn-github-zulip-zulip",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:28:34.877Z",
-      "repository": "duckdb/duckdb",
-      "learningId": "learn-github-duckdb-duckdb",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T13:31:49.702Z",
       "repository": "psf/requests",
@@ -1403,6 +1375,34 @@
       "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
       "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T20:31:51.891Z",
+      "repository": "herdrdev/herdr",
+      "learningId": "learn-github-herdrdev-herdr",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T20:31:58.930Z",
+      "repository": "Comfy-Org/Fibo-2.0",
+      "learningId": "learn-huggingface-comfy-org-fibo-2-0",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T20:31:59.858Z",
+      "repository": "nginx/kubernetes-ingress",
+      "learningId": "learn-github-nginx-kubernetes-ingress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T20:32:06.211Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

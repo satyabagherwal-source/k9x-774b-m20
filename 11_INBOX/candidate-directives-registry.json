@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T20:11:41.870Z",
+  "last_updated": "2026-10-27T20:32:06.209Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3060,6 +3060,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-5Z5T",
+      "directive_title": "get): --output overwrite temp starts owner-only and keeps the group (#4948)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "dathere/qsv",
+      "source_commit": "25abe0aa",
+      "date_staged": "2026-10-27",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-dathere-qsv"
     }
   ]
 }
