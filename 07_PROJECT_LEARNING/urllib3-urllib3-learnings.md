@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/urllib3-urllib3-learnings.md`  
 > **Source**: github ([https://github.com/urllib3/urllib3](https://github.com/urllib3/urllib3))  
-> **Source Version**: `d07367de`  
+> **Source Version**: `8883fd90`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T20:51:55.206Z  
+> **Timestamp**: 2026-10-27T13:35:09.087Z  
 > **Learning ID**: `learn-github-urllib3-urllib3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/urllib3-urllib3-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/urllib3/urllib3](https://github.com/urllib3/urllib3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T20:51:54.221Z  
+> **Harvest Timestamp**: 2026-10-27T13:35:08.583Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: urllib3 is a user-friendly HTTP client library for Python
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4079 stars
+- **Stars / Engagement**: 4080 stars
 
 ---
 
@@ -1795,11 +1795,13 @@ class SSLTransport:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5333** (2026-10-23): **Avoid building with vulnerable version of brotli & brotlicffi**
+  *Symptoms*: Prevent CVE-2026-111497  Signed-off-by: Loganaden Velvindron <logan@cyberstorm.mu> 
+  **Post-Mortem & Fix Analysis**:
+  > Thanks for your submission, [but dependency ranges aren't for fixing vulnerabilities](https://sethmlarson.dev/library-version-specifiers-not-for-vulnerabilities).
+
 - **Issue #5331** (2026-10-21): **docs: set the JSON content type in the orjson example**
   *Symptoms*: The orjson example sends encoded JSON through `body` but does not set `Content-Type`. Unlike `json=`, this does not add an application/json header, so a server may not parse the body as JSON and return the result shown in the guide.  Add the header and explain why it is needed. The example also uses HTTPS, as required by the documentation guidelines. No runtime behaviour changes.  Validation: ran the old and updated examples against a local HTTP server. The old request had no Content-Type; the updated request sent application/json and returned the expected JSON. The full Sphinx HTML build passed with warnings treated as errors, and `git diff --check` passed. Pre-commit had no applicable hooks for the changed RST file.  I did not call the live httpbin endpoint or run the full test/platform matrix for this documentation-only change.
-
-- **Issue #5330** (2026-10-21): **Honor Retry-After on PoolManager redirects**
-  *Symptoms*: PoolManager followed redirects without honoring the Retry-After header, while HTTPConnectionPool already sleeps for Retry-After before it follows a redirect. This change calls Retry.sleep_for_retry() in PoolManager.urlopen() before the redirected request is sent, so both code paths behave the same and retry_after_max caps the wait. A new test in test/with_dummyserver/test_poolmanager.py mocks time.sleep and checks the one second wait, the retry_after_max cap, and that a Retry-After date in the past causes no wait. This was split out of #5010 at the reviewer's request since it does not depend on strict mode. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1816,350 +1818,48 @@ class SSLTransport:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c284372e` (2026-10-21)
-**Commit Message**: Avoid overflow in retry backoff calculation (#5305)
+### Incident Patch 1: `8883fd90` (2026-10-22)
+**Commit Message**: Speed up parse_url() by ~28% for common ASCII hosts and plain paths (#5314)
 
-**File**: `changelog/5305.bugfix.rst` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+Fixed an ``OverflowError`` in retry backoff after many consecutive failures,
-+including when exponential backoff was disabled.
-```
-
-**File**: `src/urllib3/util/retry.py` (modified, +5/-1)
-```diff
-@@ -2,6 +2,7 @@
- 
- import email
- import logging
-+import math
- import random
- import re
- import time
-@@ -334,7 +335,10 @@ def get_backoff_time(self) -> float:
-         if consecutive_errors_len <= 1:
-             return 0
- 
--        backoff_value = self.backoff_factor * (2 ** (consecutive_errors_len - 1))
-+        try:
-+            backoff_value = math.ldexp(self.backoff_factor, consecutive_errors_len - 1)
-+        except OverflowError:
-+            backoff_value = math.inf if self.backoff_factor > 0 else -math.inf
-         if self.backoff_jitter != 0.0:
-             backoff_value += random.random() * self.backoff_jitter
-         return float(max(0, min(self.backoff_max, backoff_value)))
-```
-
-**File**: `test/test_retry.py` (modified, +27/-0)
-```diff
-@@ -181,6 +181,33 @@ def test_configurable_backoff_max(self) -> None:
-         retry = retry.increment(method="GET")
-         assert retry.get_backoff_time() == max_backoff
- 
-+    @pytest.mark.parametrize(
-+        "factor, consecutive_errors, expected",
-+        [
-+            (0.0, 1025, 0.0),
-+            (0.5, 1025, 120.0),
-+            (-0.5, 1025, 0.0),
-+            (1.0, 1025, 120.0),
-+            (-1.0, 1025, 0.0),
-+            (2.0**-1024, 1025, 1.0),
-+            (2**1024, 2, 120.0),
-+            (-(2**1024), 2, 0.0),
-+        ],
-+    )
-+    def test_backoff_overflow(
-+        self, factor: float, consecutive_errors: int, expected: float
-+    ) -> None:
-+        retry = Retry(total=None, backoff_factor=factor)
-+        for _ in range(consecutive_errors):
-+            retry = retry.increment(method="GET")
-+        assert retry.get_backoff_time() == expected
-+
-+    def test_zero_backoff_large_retry_count_with_jitter(self) -> None:
-+        history = (RequestHistory("GET", "/", None, 503, None),) * 1025
-+        retry = Retry(backoff_factor=0.0, backoff_jitter=0.4, history=history)
-+        with mock.patch("random.random", return_value=0.5):
-+            assert retry.get_backoff_time() == 0.2
-+
-     def test_configurable_retry_after_max(self) -> None:
-         """Configurable retry after is computed correctly"""
-         max_retry_after = Retry.DEFAULT_RETRY_AFTER_MAX
-```
-
----
-
-### Incident Patch 2: `d07367de` (2026-10-21)
-**Commit Message**: Fix JSON content type in the orjson documentation example (#5331)
-
-**File**: `changelog/5331.misc.rst` (added, +1/-0)
+**File**: `changelog/5314.misc.rst` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Corrected the custom JSON request example to set the ``Content-Type`` header.
++Improved performance of ``parse_url()`` for URLs with an ASCII host and no dot segments in the path.
 ```
 
-**File**: `docs/user-guide.rst` (modified, +8/-2)
+**File**: `src/urllib3/util/url.py` (modified, +8/-0)
 ```diff
-@@ -117,15 +117,21 @@ method of the response:
- 
- Alternatively, Custom JSON libraries such as `orjson` can be used to encode data,
- retrieve data by decoding and deserializing the :attr:`~response.HTTPResponse.data` 
--attribute of the request:
-+attribute of the response. When sending pre-encoded JSON with ``body``, set the
-+``Content-Type`` header explicitly; urllib3 does not infer it from the bytes:
- 
- .. code-block:: python
- 
-     import orjson
-     import urllib3
- 
-     encoded_data = orjson.dumps({"attribute": "value"})
--    resp = urllib3.request(method="POST", url="http://httpbin.org/post", body=encoded_data)
-+    resp = urllib3.request(
-+        "POST",
-+        "https://httpbin.org/post",
-+        body=encoded_data,
-+        headers={"Content-Type": "application/json"},
-+    )
- 
-     print(orjson.loads(resp.data)["json"])
-     # {'attribute': 'value'}
-```
-
----
-
-### Incident Patch 3: `01cd60b5` (2026-10-20)
-**Commit Message**: Fix redirect origin checks and Host header handling (#5126)
-
-**File**: `changelog/5126.bugfix.rst` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+Fixed ``PoolManager.urlopen()`` using the proxy's origin to decide when to
-+apply ``remove_headers_on_redirect``. The ``Host`` header is now updated on
-+cross-origin redirects.
-```
-
-**File**: `src/urllib3/connectionpool.py` (modified, +27/-16)
-```diff
-@@ -578,22 +578,7 @@ def is_same_host(self, url: str) -> bool:
-         Check if the given ``url`` is a member of the same host as this
-         connection pool.
-         """
--        if url.startswith("/"):
--            return True
--
--        # TODO: Add optional support for socket.gethostbyname checking.
--        scheme, _, host, port, *_ = parse_url(url)
--        scheme = scheme or "http"
--        if host is not None:
--            host = _normalize_host(host, scheme=scheme)
--
--        # Use explicit default port for comparison when none is given
--        if self.port is not None and port is None:
--            port = port_by_scheme.get(scheme)
--        elif self.port is None and port == port_by_scheme.get(scheme):
--            port = None
--
--        return (scheme, host, port) == (self.scheme, self.host, self.port)
-+        return _is_same_host(url, self.scheme, self.host, self.port)
- 
-     def urlopen(  # type: ignore[override]
-         self,
-@@ -1197,6 +1182,32 @@ def _normalize_host(host: str | None, scheme: str | None) -> str | None:
-     return host
+@@ -321,6 +321,10 @@ def _encode_invalid_chars(
  
  
-+def _is_same_host(
-+    url: str, scheme: str | None, host: str | None, port: int | None
-+) -> bool:
-+    """
-+    Check if the given ``url`` is a member of the same host as the given
-+    ``scheme``, ``host`` and ``port``. ``host`` is expected to be
-+    normalized with :func:`_normalize_host` already.
-+    """
-+    if url.startswith("/"):
-+        return True
+ def _remove_path_dot_segments(path: str) -> str:
++    # Fast path: without a '.' or '..' segment there is nothing to remove.
++    if "/." not in path and not path.startswith("."):
++        return path
 +
-+    # TODO: Add optional support for socket.gethostbyname checking.
-+    url_scheme, _, url_host, url_port, *_ = parse_url(url)
-+    url_scheme = url_scheme or "http"
-+    if url_host is not None:
-+        url_host = _normalize_host(url_host, scheme=url_scheme)
-+
-+    # Use explicit default port for comparison when none is given
-+    if port is not None and url_port is None:
-+        url_port = port_by_scheme.get(url_scheme)
-+    elif port is None and url_port == port_by_scheme.get(url_scheme):
-+        url_port = None
-+
-+    return (url_scheme, url_host, url_port) == (scheme, host, port)
-+
-+
- def _url_from_pool(
-     pool: HTTPConnectionPool | HTTPSConnectionPool, path: str | None = None
- ) -> str:
-```
-
-**File**: `src/urllib3/poolmanager.py` (modified, +17/-7)
-```diff
-@@ -10,7 +10,13 @@
- from ._collections import HTTPHeaderDict, RecentlyUsedContainer
- from ._request_methods import RequestMethods
- from .connection import ProxyConfig
--from .connectionpool import HTTPConnectionPool, HTTPSConnectionPool, port_by_scheme
-+from .connectionpool import (
-+    HTTPConnectionPool,
-+    HTTPSConnectionPool,
-+    _is_same_host,
-+    _normalize_host,
-+    port_by_scheme,
-+)
- from .exceptions import (
-     LocationValueError,
-     MaxRetryError,
-@@ -488,15 +494,19 @@ def urlopen(  # type: ignore[override]
-         if not isinstance(retries, Retry):
-             retries = Retry.from_int(retries, redirect=redirect)
- 
--        # Strip headers marked as unsafe to forward to the redirected location.
--        # Check remove_headers_on_redirect to avoid a potential network call within
--        # conn.is_same_host() which may use socket.gethostbyname() in the future.
--        if retries.remove_headers_on_redirect and not conn.is_same_host(
--            redirect_location
-+        # Strip headers marked as unsafe to forward to the redirected location,
-+        # along with Host, which ProxyManager._set_proxy_headers() derives from
-+        # the request URL and so has to be recomputed for the new location.
-+        # 'conn' is the proxy's pool when forwarding through an HTTP proxy, so
-+        # compare the request URL itself rather than asking the pool.
-+        scheme = u.scheme or "http"
-+        if kw["headers"] is not None and not _is_same_host(
-+            redirect_location, scheme, _normalize_host(u.host, scheme=scheme), u.port
-         ):
-+            headers_to_remove = retries.remove_headers_on_redirect | {"host"}
-             new_headers = kw["headers"].copy()
-             for header in kw["headers"]:
--                if header.lower() in retries.remove_headers_on_redirect:
-+                if header.lower() in headers_to_remove:
-                     new_headers.pop(header, None)
-             kw["headers"] = new_headers
- 
-```
-
-**File**: `test/with_dummyserver/test_poolmanager.py` (modified, +14/-0)
-```diff
-@@ -291,6 +291,20 @@ def test_redirect_cross_host_remove_headers(self) -> None:
-             assert "cookie" not in data
-             assert "Cookie" not in data
- 
-+    def test_redirect_cross_host_headers_none(self) -> None:
-+        with PoolManager() as http:
-+            r = http.urlopen(
-+                "GET",
-+                f"{self.base_url}/redirect?target={self.base_url_alt}/headers"
-+                "&status=302%20Found",
-+                headers=None,
-+            )
-+
-+            assert r.status == 200
-+            assert isinstance(r, HTTPResponse)
-+            assert r._pool is not None
-+            assert r._pool.host == self.host_alt
-+
-     def test_redirect_cross_host_no_remove_headers(self) -> None:
-         with PoolManager() as http:
-             r = http.request(
-```
-
-**File**: `test/with_dummyserver/test_socketlevel.py` (modified, +71/-0)
-```diff
-@@ -1246,6 +1246,77 @@ def echo_socket_handler(listener: socket.socket) -> None:
-                 ]
-             )
- 
-+    @pytest.mark.parametrize(
-+        ("redirect_target", "expected_host", "expected_authorization"),
-+        [
-+            pytest.param(
-+                "http://example.com/second", b"example.com", False, id="cross-host"
-+            ),
-+            pytest.param(
-+                "http://google.com/second", b"google.com", True, id="same-host"
-+            ),
-+            # A redirect to the proxy's own origin is still cross-host for the
-+            # request target, so the credentials have to go.
-+            pytest.param(None, None, False, id="proxy-origin"),
-+        ],
-+    )
-+    def test_redirect_rewrites_host_and_strips_credentials(
-+        self,
-+        redirect_target: str | None,
-+        expected_host: bytes | None,
-+        expected_authorization: bool,
-+    ) -> None:
-+        requests: list[bytes] = []
-+
-+        def redirect_socket_handler(listener: socket.socket) -> None:
-+            for first in (True, False):
-+                sock = listener.accept()[0]
-+
-+                buf = b""
-+                while not buf.endswith(b"\r\n\r\n"):
-+                    buf += sock.recv(65536)
-+                requests.append(buf)
-+
-+                if first:
-+                    sock.send(
-+                        b"HTTP/1.1 302 Found\r\n"
-+                        b"Location: %s\r\n"
-+                        b"Content-Length: 0\r\n"
-+                        b"Connection: close\r\n"
-+                        b"\r\n" % location
-+                    )
-+                else:
-+                    sock.send(
-+                        b"HTTP/1.1 200 OK\r\n"
-+                        b"Content-Length: 0\r\n"
-+                        b"Connection: close\r\n"
-+                        b"\r\n"
-+                    )
-+                sock.close()
-+
-+        self._start_server(redirect_socket_handler)
-+        base_url = f"http://{self.host}:{self.port}"
-+
-+        # The proxy's port is only known once the server is running.
-+        if redirect_target is None:
-+            redirect_target = f"{base_url}/second"
-+            expected_host = f"{self.host}:{self.port}".encode()
-+        location = redirect_target.encode()
-+
-+        with proxy_from_url(
-+            base_url, headers={"Authorization": "Bearer secret"}
-+        ) as proxy:
-+            r = proxy.request("GET", "http://google.com/first")
-+
-+            assert r.status == 200
-+
-+        assert len(requests) == 2
-+        assert requests[1].startswith(b"GET %s HTTP/1.1" % redirect_target.encode())
-+        assert b"Host: %s\r\n" % expected_host in requests[1]
-+        assert (
-+            b"Authorization: Bearer secret\r\n" in requests[1]
-+        ) is expected_authorization
-+
-     def test_headers(self) -> None:
-         def echo_socket_handler(listener: socket.socket) -> None:
-             sock = listener.accept()[0]
+     # See http://tools.ietf.org/html/rfc3986#section-5.2.4 for pseudo-code
+     segments = path.split("/")  # Turn the path into a list of segments
+     output = []  # Initialize the variable to use to store output
+@@ -390,6 +394,10 @@ def _normalize_host(host: str | None, scheme: str | None) -> str | None:
+                 else:
+                     return host.lower()
+             elif not _IPV4_RE.match(host):
++                # Fast path: for an ASCII host without percent-encoding,
++                # IDNA-encoding each label reduces to lower-casing it.
++                if "%" not in host and host.isascii():
++                    return host.lower()
+                 if "%" in host:
+                     address, separator, zone = host.partition("%")
+                     if ":" in address and host.isascii() and _IPV6_RE.match(address):
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5333** (closed): Avoid building with vulnerable version of brotli & brotlicffi (@loganaden)
 - **PR #5331** (2026-10-21): docs: set the JSON content type in the orjson example (@Mohamedajab)
 - **PR #5330** (2026-10-21): Honor Retry-After on PoolManager redirects (@theluckystrike)
 - **PR #5329** (2026-10-21): Correct the HTTPHeaderDict.add combine example (@skyon0522-ai)
+- **PR #5328** (closed): Honor a zero Retry-After delay instead of applying backoff (@DGrutt)
 - **PR #5327** (2026-10-20): Pin Python to 3.14 in the downstream GHA workflow (@illia-v)
-- **PR #5323** (closed): Reject NaN and infinite timeouts (@Cherith1222)
-- **PR #5313** (2026-10-14): Fix fingerprint verification test on PyPy 8.0.1 (@illia-v)
 
 ---
 
@@ -2179,22 +1879,21 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Avoid overflow in retry backoff calculation (#5305)
+## X. Speed up parse_url() by ~28% for common ASCII hosts and plain paths (#5314)
 
 **RULE**:
-When implementing operations in `changelog/5305.bugfix.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in urllib3/urllib3. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog/5314.misc.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in urllib3/urllib3. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c284372e`: Avoid overflow in retry backoff calculation (#5305). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8883fd90`: Speed up parse_url() by ~28% for common ASCII hosts and plain paths (#5314). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/5305.bugfix.rst`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/5314.misc.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-Fixed an ``OverflowError`` in retry backoff after many consecutive failures,
-including when exponential backoff was disabled.
+Improved performance of ``parse_url()`` for URLs with an ASCII host and no dot segments in the path.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2204,4 +1903,4 @@ including when exponential backoff was disabled.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c284372e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8883fd90` are properly handled with clean fallback behavior.

@@ -2733,10 +2733,10 @@
     "repository": "react-navigation/react-navigation",
     "platform": "github",
     "sourceUrl": "https://github.com/react-navigation/react-navigation",
-    "sourceVersion": "c1173a94",
+    "sourceVersion": "641efd1e",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "3fa6d6cd51e094e7c494618d55a63b100ace6e30afe4f17fba049365b54b9d62",
-    "lastHarvestedAt": "2026-10-23T10:09:38.401Z",
+    "contentHash": "6b8fdae4c4e6218ccfdb4851bdae0136e5464cb9788093d67f6d8e99d080611c",
+    "lastHarvestedAt": "2026-10-27T13:35:11.675Z",
     "learningId": "learn-github-react-navigation-react-navigation"
   },
   "easegress-io-easegress": {
@@ -3573,10 +3573,10 @@
     "repository": "PeerDB-io/peerdb",
     "platform": "github",
     "sourceUrl": "https://github.com/PeerDB-io/peerdb",
-    "sourceVersion": "b80c75cb",
+    "sourceVersion": "65ce26b8",
     "license": "AGPL-3.0",
-    "contentHash": "33d9989c180e7a1e82630d10e43b84a865b0f02580560122ec837ba31ed8fa2c",
-    "lastHarvestedAt": "2026-10-25T23:39:26.435Z",
+    "contentHash": "ead50e198a79458088b5bdcb46610eb458c45be64538e6c31ac9f3f874631696",
+    "lastHarvestedAt": "2026-10-27T13:35:14.802Z",
     "learningId": "learn-github-peerdb-io-peerdb"
   },
   "tailscale-tailscale": {
@@ -5993,10 +5993,10 @@
     "repository": "nezhahq/nezha",
     "platform": "github",
     "sourceUrl": "https://github.com/nezhahq/nezha",
-    "sourceVersion": "15fa673c",
+    "sourceVersion": "a6a16eab",
     "license": "WTFPL",
-    "contentHash": "bde7a8dd2a22d047b2e055b0064f6596402df48e33b2116a207c2ed73ea485f4",
-    "lastHarvestedAt": "2026-10-25T19:45:01.837Z",
+    "contentHash": "9cc592a839c79e5a463cc3c1c976ad5307ee4623478a9ec2a44993a59e45fdc6",
+    "lastHarvestedAt": "2026-10-27T13:35:08.421Z",
     "learningId": "learn-github-nezhahq-nezha"
   },
   "tiajinsha-jkvideo": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "aa93d669",
+    "sourceVersion": "e02cfcd7",
     "license": "MIT",
-    "contentHash": "e329dc2908d8195a47dbd08367bb3f142c76ced82b94bcd2a612381d4ba8f272",
-    "lastHarvestedAt": "2026-10-25T22:38:51.205Z",
+    "contentHash": "0721d572230a6ac84edeedfebc2346e44f47e8a83e8d4fb6d5c8d13da4646b64",
+    "lastHarvestedAt": "2026-10-27T13:35:20.635Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {
@@ -9633,10 +9633,10 @@
     "repository": "urllib3/urllib3",
     "platform": "github",
     "sourceUrl": "https://github.com/urllib3/urllib3",
-    "sourceVersion": "d07367de",
+    "sourceVersion": "8883fd90",
     "license": "MIT",
-    "contentHash": "dd005f976aa1dc04a008faa55fd8f1c6ca5a078c8c0e77c8d10f4689440d9edf",
-    "lastHarvestedAt": "2026-10-22T20:51:55.583Z",
+    "contentHash": "5b9d1f1da12d73671d7aa8b159c1f4807b419fe8f1a9b21ce57358d579eb7e57",
+    "lastHarvestedAt": "2026-10-27T13:35:09.552Z",
     "learningId": "learn-github-urllib3-urllib3"
   },
   "simibac-confettiswiftui": {

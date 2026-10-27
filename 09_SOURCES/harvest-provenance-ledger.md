@@ -5340,3 +5340,8 @@ Every entry in this ledger must capture:
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `d1de96c1` | Multi-dimensional audit evidence | 2026-10-27T13:28:34.874Z |
 | `learn-github-psf-requests` | `https://github.com/psf/requests` | `3c7baaa0` | Multi-dimensional audit evidence | 2026-10-27T13:31:49.696Z |
 | `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `fce3dc25` | Multi-dimensional audit evidence | 2026-10-27T13:31:54.281Z |
+| `learn-github-nezhahq-nezha` | `https://github.com/nezhahq/nezha` | `a6a16eab` | Multi-dimensional audit evidence | 2026-10-27T13:35:08.421Z |
+| `learn-github-urllib3-urllib3` | `https://github.com/urllib3/urllib3` | `8883fd90` | Multi-dimensional audit evidence | 2026-10-27T13:35:09.552Z |
+| `learn-github-react-navigation-react-navigation` | `https://github.com/react-navigation/react-navigation` | `641efd1e` | Multi-dimensional audit evidence | 2026-10-27T13:35:11.675Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `65ce26b8` | Multi-dimensional audit evidence | 2026-10-27T13:35:14.802Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `e02cfcd7` | Multi-dimensional audit evidence | 2026-10-27T13:35:20.635Z |

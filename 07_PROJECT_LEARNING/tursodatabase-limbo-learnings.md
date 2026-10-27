@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
-> **Source Version**: `aa93d669`  
+> **Source Version**: `e02cfcd7`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T22:38:50.807Z  
+> **Timestamp**: 2026-10-27T13:35:20.234Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T22:38:50.117Z  
+> **Harvest Timestamp**: 2026-10-27T13:35:19.821Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25043 stars
+- **Stars / Engagement**: 25068 stars
 
 ---
 
@@ -1376,11 +1376,11 @@ async fn main() -> Result<(), Error> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10721** (2026-10-25): **core: key the schema by namespace and resolve names to a namespace**
-  *Symptoms*: ## Description  Key the schema by namespace. A `Schema` keeps its objects per `NamespaceId`: every database has the root namespace, and a schema can have more, each with its own tables, views, indexes, triggers and sequences. Every object lookup on `Schema` takes a namespace id, and the resolver turns a written name into a `NamespaceRef`, the database and the namespace of the object, instead of a bare database id. The search order of unqualified names is a list of namespaces, and the scope of a view or trigger body is its namespace.  This is the catalog shape PostgreSQL schemas need: `pg_class` is keyed by `(relname, relnamespace)` and `namespace.c` walks a list of namespace ids, probing each. Core now has the same split. `Schema` is the catalog keyed by namespace, the resolver is the policy that picks the namespace, and the connection owns the names it knows. The follow-up, #10585, stores PostgreSQL schemas as namespaces of the main database, and nothing above `Schema` has to learn how they are stored.  Nothing changes in behavior. Only the root namespace exists, so every namespace is the root of a database and every lookup finds what it found before. The maps of a namespace are private to `schema.rs`; the code that used to reach into `schema.tables` and friends goes through named methods such as `tables`, `views`, `indices_including_backing`, `add_sequence`, `take_triggers` and `table_with_indices_mut`. Each method treats its name argument exactly as the map access it repla
+- **Issue #10884** (2026-10-27): **postgres/parser: merge the two function_name functions**
+  *Symptoms*: Main does not compile: `postgres/parser/translator.rs` defines `function_name` twice.  ``` error[E0428]: the name `function_name` is defined multiple times ```  Two PRs merged today each added one:  - 552a94fc9c (`auth.uid()`, `auth.email()`, `auth.jwt()`) lets those three `auth.` functions through. - 1005e89263 (reject quoted function names with uppercase letters) rejects `"LOWER"`.  Each built on its own; together they don't. This PR keeps one `function_name` that does both: `auth.` functions are returned first, then the name is resolved and checked for a schema and for uppercase letters.  **Testing**  - `cargo check -p turso_pg_parser` passes. - Both behaviors already have tests on main (`auth-functions.sqltest`, and the uppercase cases in `functions.sqltest`); CI runs them.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
-- **Issue #10719** (2026-10-25): **postgres: support timestamptz and date/time types**
-  *Symptoms*: Part 3 of 3: #10717 → #10718 → #10719. Replaces #10668.  ## What this does  tursopg gets PostgreSQL's date/time types: `timestamptz`, `timestamp`, `date`, `time` and `interval`. Input, output, arithmetic, `to_char` and error codes all follow PostgreSQL.  ```sql SELECT '2026-10-08 12:34:56.123456+02'::timestamptz;   -- 2026-10-08 10:34:56.123456+00 SELECT 'infinity'::timestamptz, 'epoch'::timestamptz;  -- infinity | 1970-01-01 00:00:00+00 SELECT '2026-01-31'::date + interval '1 month';        -- 2026-02-28 00:00:00 SELECT '2026-10-08'::date = '2026-10-08 00:00'::timestamp;  -- true SELECT 'garbage'::timestamptz;                         -- ERROR 22007 SELECT '2026-10-08 25:00'::timestamptz;                -- ERROR 22008 ```  It works the same in CAST, INSERT, WHERE and bind parameters. A parameter sent with a date OID is a date, so `$1 + 1` adds a day.  Also: - `now()` and `CURRENT_TIMESTAMP` give the transaction start time. `statement_timestamp()` and `clock_timestamp()` work as in PostgreSQL. - `interval * n` and `interval / n` work. - timestamptz is stored as UTC text, the same as before. `+00` is added when the value is shown.  Fixes #10262.  ## Dialect method  - `takes_operand_type_names`: `time` and `interval` values are both stored as text like `'01:00:00'`. For `a + b`, `datetime_pl` can't tell which is which from the value. With this method on, core passes each column's declared type to the function, so `time_col + interval_col` works in joins and with any column name.
+- **Issue #10875** (2026-10-27): **postgres: implement current_schemas from the session search path**
+  *Symptoms*: ## Description  Implement `current_schemas(boolean)` from the session's parsed search path. Return existing schema names in order, omit duplicates, and include implicit `pg_catalog` when requested. Preserve explicit catalog placement, return NULL for a NULL argument, and escape schema names in PostgreSQL array text syntax.  ## Motivation and context  pg_dump stops at `SELECT pg_catalog.current_schemas(false)` because the function is missing. Reading the session search path makes the result follow configuration changes, transaction rollback, and dropped schemas.  With this function implemented, pg_dump proceeds to the separate unsupported `COPY ... TO stdout` operation. Temporary PostgreSQL schemas and per-user schema privileges remain outside the current frontend's model.  ## Description of AI Usage  Codex implemented the function, regression coverage, and documentation under the author's direction, compared behavior against PostgreSQL, and prepared this PR. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1397,226 +1397,512 @@ async fn main() -> Result<(), Error> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `95617d89` (2026-10-25)
-**Commit Message**: Merge 'core/translate: check NOT NULL before STRICT column types in INSERT' from app/turso-github-handyman
+### Incident Patch 1: `8c29f3e6` (2026-10-27)
+**Commit Message**: Merge 'core/json: match SQLite's null document and null path handling' from 
 
-For a STRICT table, INSERT reported a column type error before a NOT
-NULL error, unlike SQLite. Because `OR IGNORE` does not apply to type
-errors, a row that SQLite skips made the whole statement fail:
+## Update: rebased onto `main` (2026-10-15)
 
-```sql
-CREATE TABLE t(a INT, b REAL NOT NULL) STRICT;
-INSERT OR IGNORE INTO t(a) VALUES ('x');  -- turso: cannot store TEXT value in INT column t.a; sqlite: row skipped
-INSERT INTO t(a) VALUES ('x');            -- turso: cannot store TEXT value in INT column t.a; sqlite: NOT NULL constraint failed: t.b
+`main` now has `json_edit_path()`, which already drops a
+`json_set()`/`json_insert()`/`json_replace()` pair whose path is SQL
+NULL without reading its value, and only checks for a BLOB value once
+the path is known to start with `$`. I took `main`'s version of those
+loops, so the `json_set()` ordering caveat below no longer applies. What
+this PR still adds:
+
+* the JSON `null` document result (first commit, unchanged);
+* a SQL NULL document returns SQL NULL before any path or value is read,
+in all the mutators;
+* `json_remove()`/`jsonb_remove()` return SQL NULL when one of their
+paths is SQL NULL.
+
+The second commit message is updated to match. Re-run after the rebase:
+`cargo test -p turso_core --lib -- json` (180 passed, including
+`test_null_path_drops_pair_without_reading_value`) and `cargo fmt -p
+turso_core --check` (clean). The conformance suite and clippy were not
+re-run for this rebase.
+
+---
+
+The JSON mutators (`json_set`, `json_insert`, `json_replace`,
+`json_remove` and the `jsonb_` variants) did not follow SQLite's
+handling of a JSON `null` document or of
+
+**File**: `core/json/mod.rs` (modified, +23/-2)
+```diff
+@@ -394,6 +394,9 @@ where
+     let first_arg = args.next().ok_or_else(|| {
+         crate::LimboError::InternalError("args should not be empty after length check".to_string())
+     })?;
++    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
++        return Ok(Value::Null);
++    }
+     let mut json = json_cache.get_or_insert_with(first_arg, make_jsonb_fn)?;
+ 
+     // TODO: when `array_chunks` is stabilized we can chunk by 2 here
+@@ -417,7 +420,7 @@ where
+ 
+     let el_type = json.element_type()?;
+ 
+-    json_string_to_db_type(json, el_type, OutputVariant::String)
++    json_document_to_db_type(json, el_type, OutputVariant::String)
+ }
+ 
+ pub fn jsonb_set<I, E, V>(args: I, json_cache: &JsonCacheCell) -> crate::Result<Value>
+@@ -435,6 +438,9 @@ where
+     let first_arg = args.next().ok_or_else(|| {
+         crate::LimboError::InternalError("args should not be empty after length check".to_string())
+     })?;
++    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
++        return Ok(Value::Null);
++    }
+     let mut json = json_cache.get_or_insert_with(first_arg, make_jsonb_fn)?;
+ 
+     // TODO: when `array_chunks` is stabilized we can chunk by 2 here
+@@ -456,7 +462,7 @@ where
+ 
+     let el_type = json.element_type()?;
+ 
+-    json_string_to_db_type(json, el_type, OutputVariant::Binary)
++    json_document_to_db_type(json, el_type, OutputVariant::Binary)
+ }
+ 
+ /// Implements the -> operator. Always returns a proper JSON value.
+@@ -850,6 +856,21 @@ fn json_edit_path<'a>(
+     json_path_from_db_value(path, true)
+ }
+ 
++pub fn json_document_to_db_type(
++    json: Jsonb,
++    element_type: ElementType,
++    output: OutputVariant,
++) -> crate::Result<Value> {
++    if element_type == ElementType::NULL {
++        return if matches!(output, OutputVariant::Binary) {
++            Ok(Value::Blob(json.data()))
++        } else {
++            Ok(Value::Text(Text::json("null".to_string())))
++        };
++    }
++    json_string_to_db_type(json, element_type, output)
++}
++
+ pub fn json_error_position(json: impl AsValueRef) -> crate::Result<Value> {
+     match json.as_value_ref() {
+         ValueRef::Text(t) => {
 ```
 
-`translate_insert` emitted the STRICT `TypeCheck` instructions and the
-custom-type encode step before the first `emit_notnulls`. SQLite checks
-NOT NULL first and type-checks the row later. The exception is a table
-with generated columns or BEFORE triggers: there SQLite type-checks the
-row first, before computing the generated columns or firing the
-triggers.
-
-The type checks now go after the NOT NULL checks of stored columns,
-except when the table has generated columns or BEFORE INSERT triggers.
-In those two cases the order stays as before, which already matches
-SQLite. Colu
-
-**File**: `core/schema.rs` (modified, +8/-2)
+**File**: `core/json/ops.rs` (modified, +294/-40)
 ```diff
-@@ -999,6 +999,12 @@ impl Schema {
-         self.type_registry.get(&type_registry_key(type_name))
+@@ -1,11 +1,11 @@
+ use super::{
+-    convert_dbtype_to_jsonb, curry_convert_dbtype_to_jsonb, json_edit_path,
+-    json_path_from_db_value, json_string_to_db_type,
++    convert_dbtype_to_jsonb, curry_convert_dbtype_to_jsonb, json_document_to_db_type,
++    json_edit_path, json_path_from_db_value, json_path_text,
+     jsonb::{DeleteOperation, InsertOperation, ReplaceOperation},
+     Conv, JsonCacheCell, OutputVariant,
+ };
+ use crate::{
+-    types::{AsValueRef, Text, Value},
++    types::{AsValueRef, Value},
+     ValueRef,
+ };
+ 
+@@ -39,14 +39,7 @@ pub fn json_patch(
+ 
+     let element_type = target.element_type()?;
+ 
+-    // A JSON null patch result stays JSON here: SQLite returns the
+-    // text 'null', while json_string_to_db_type would map it to SQL
+-    // NULL the way extraction does.
+-    if element_type == super::jsonb::ElementType::NULL {
+-        return Ok(Value::Text(Text::json("null".to_string())));
+-    }
+-
+-    json_string_to_db_type(target, element_type, OutputVariant::String)
++    json_document_to_db_type(target, element_type, OutputVariant::String)
+ }
+ 
+ pub fn jsonb_patch(
+@@ -74,14 +67,7 @@ pub fn jsonb_patch(
+ 
+     let element_type = target.element_type()?;
+ 
+-    // A JSON null patch result stays JSON here: SQLite returns the
+-    // JSONB null blob, while json_string_to_db_type would map it to
+-    // SQL NULL the way extraction does.
+-    if element_type == super::jsonb::ElementType::NULL {
+-        return Ok(Value::Blob(target.data()));
+-    }
+-
+-    json_string_to_db_type(target, element_type, OutputVariant::Binary)
++    json_document_to_db_type(target, element_type, OutputVariant::Binary)
+ }
+ 
+ pub fn json_remove<I, E, V>(args: I, json_cache: &JsonCacheCell) -> crate::Result<Value>
+@@ -99,22 +85,24 @@ where
+     let first_arg = args.next().ok_or_else(|| {
+         crate::LimboError::InternalError("args should not be empty after length check".to_string())
+     })?;
++    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
++        return Ok(Value::Null);
++    }
+     let mut json = json_cache.get_or_insert_with(first_arg, make_jsonb_fn)?;
+     for arg in args {
+-        if let ValueRef::Text(s) = arg.as_value_ref() {
+-            if s.as_str() == "$" {
+-                return Ok(Value::Null);
+-            }
+-        }
+-        if let Some(path) = json_path_from_db_value(&arg, true)? {
+-            let mut op = DeleteOperation::new();
+-            let _ = json.operate_on_path(&path, &mut op);
++        if json_path_text(arg.as_value_ref()).as_deref() == Some("$") {
++            return Ok(Value::Null);
+         }
++        let Some(path) = json_path_from_db_value(&arg, true)? else {
++            return Ok(Value::Null);
++        };
++        let mut op = DeleteOperation::new();
++        let _ = json.operate_on_path(&path, &mut op);
      }
  
-+    /// Whether the column's values are encoded before they are stored: an array column, or a
-+    /// column whose type is a custom type of a STRICT table.
-+    pub fn column_has_custom_type(&self, column: &Column, is_strict: bool) -> bool {
-+        column.is_array() || self.get_type_def(&column.ty_str, is_strict).is_some()
+     let el_type = json.element_type()?;
+ 
+-    json_string_to_db_type(json, el_type, OutputVariant::String)
++    json_document_to_db_type(json, el_type, OutputVariant::String)
+ }
+ 
+ pub fn jsonb_remove<I, E, V>(args: I, json_cache: &JsonCacheCell) -> crate::Result<Value>
+@@ -132,17 +120,19 @@ where
+     let first_arg = args.next().ok_or_else(|| {
+         crate::LimboError::InternalError("args should not be empty after length check".to_string())
+     })?;
++    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
++        return Ok(Value::Null);
 +    }
-+
-     /// Look up a custom type definition by name without a strictness check.
-     /// Only use this for operations that aren't column-scoped (e.g. DROP TYPE,
-     /// CREATE TABLE validation, CAST).
-@@ -3871,7 +3877,7 @@ impl BTreeTable {
-         let has_custom = table
-             .columns
-             .iter()
--            .any(|c| c.is_array() || schema.get_type_def(&c.ty_str, table.is_strict).is_some());
-+            .any(|c| schema.column_has_custom_type(c, table.is_strict));
-         if !has_custom {
-             return Arc::clone(table);
+     let mut json = json_cache.get_or_insert_with(first_arg, make_jsonb_fn)?;
+     for arg in args {
+-        if let ValueRef::Text(s) = arg.as_value_ref() {
+-            if s.as_str() == "$" {
+-                return Ok(Value::Null);
+-            }
+-        }
+-        if let Some(path) = json_path_from_db_value(&arg, true)? {
+-            let mut op = DeleteOperation::new();
+-            let _ = json.operate_on_path(&path, &mut op);
++        if json_path_text(arg.as_value_ref()).as_deref() == Some("$") {
++            return Ok(Value::Null);
          }
-@@ -3901,7 +3907,7 @@ impl BTreeTable {
-         let has_custom = table
-             .columns
-             .iter()
--            .any(|c| c.is_array() || schema.get_type_def(&c.ty_str, table.is_strict).is_some());
-+            .any(|c| schema.column_has_custom_type(c, table.is_strict));
-         if !has_custom {
-             return Ok(Arc::clone(table));
-         }
++        let Some(path) = json_path_from_db_value(&arg, true)? else {
++            return Ok(Value::Null);
++        };
++        let mut op = DeleteOperation::new();
++        let _ = json.operate_on_path(&path, &mut op);
+     }
+ 
+     Ok(Value::Blob(json.data()))
+@@ -163,6 +153,9 @@ where
+     let first_arg = args.next().ok_or_else(|| {
+         crate::LimboError::InternalError("args should not be empty after length check".to_string())
+     })?;
++    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
++        return Ok(Value::Null);
++    }
+     let mut json = json_cache.get_or_insert_with(first_arg, make_jsonb_fn)?;
+     // TODO: when `array_chunks` is stabilized we can chunk by 2 here
+     while args.len() > 1 {
+@@ -184,7 +177,7 @@ where
+ 
+     let el_type = json.element_type()?;
+ 
+-    json_string_to_db_type(json, el_type, super::OutputVariant::String)
++    json_document_to_db_type(json, el_type, OutputVariant::String)
+ }
+ 
+ pub fn jsonb_replace<I, E, V>(args: I, json_cache: &JsonCacheCell) -> crate::Result<Value>
+@@ -202,6 +195,9 @@ where
+     let 
 ```
 
-**File**: `core/translate/insert.rs` (modified, +60/-38)
-```diff
-@@ -681,40 +681,6 @@ pub fn translate_insert(
- 
-     program.preassign_label_to_next_insn(ctx.key_labels.key_ready_for_check);
- 
--    //TODO building the type-check table is expensive, we should cache it somehow.
--    let maybe_type_check_table = ctx
--        .table
--        .is_strict
--        .then(|| BTreeTable::type_check_table_ref(ctx.table, resolver.schema()));
--    if let Some(type_check_table) = &maybe_type_check_table {
--        // Pre-encoding TypeCheck: validate input types match the custom type's declared value type
--        // to catch things like a TEXT value inserted into an INTEGER-based custom type.
--        program.emit_insn(Insn::TypeCheck {
--            start_reg: insertion.first_col_register(),
--            count: insertion.num_non_virtual_cols,
--            check_generated: false,
--            table_reference: BTreeTable::input_type_check_table_ref(
--                ctx.table,
--                resolver.schema(),
--                None,
--            )?,
--        });
--
--        // Encode values for columns with custom types.
--        emit_custom_type_encode(program, resolver, &insertion, &ctx.table.name)?;
--
--        // Post-encode TypeCheck: validate that encode produced the correct storage type (BASE).
--        // We don't check generated columns in this initial pass because their dependencies could
--        // still be REPLACEd.
--        program.emit_insn(Insn::TypeCheck {
--            start_reg: insertion.first_col_register(),
--            count: insertion.num_non_virtual_cols,
--            check_generated: false,
--            table_reference: Arc::clone(type_check_table),
--        });
--    }
--    // Non-STRICT tables: Affinity was already emitted earlier (before BEFORE triggers).
--
-     // For AUTOINCREMENT tables with an explicit rowid, record it before CHECK
-     // constraints. SQLite advances sqlite_sequence even when INSERT OR IGNORE
-     // skips the row due to a CHECK failure.
-@@ -768,7 +734,57 @@ pub fn translate_insert(
-     //    1. replace `a` with 5 (the NOT NULL REPLACE action)
-     //    2. compute `b`
-     //    3. check that `b` isn't null (the NOT NULL constraint)
--    emit_notnulls(program, &ctx, &insertion, resolver, false)?;
-+    //
-+    // SQLite checks NOT NULL before the STRICT types, unless the table has generated columns or
-+    // BEFORE triggers: then the row is type checked first, before computing the generated
-+    // columns or firing the triggers. Columns with a custom type are always checked for NOT NULL
-+    // after encoding, because their NOT NULL check looks at the decoded value.
-+    //TODO building the type-check table is expensive, we should cache it somehow.
-+    let maybe_type_check_table = ctx
-+        .table
-+        .is_strict
-+        .then(|| BTreeTable::type_check_table_ref(ctx.table, resolver.schema()));
-+    let has_custom_type = |column: &Column| {
-+        resolver
-+            .schema()
-+            .column_has_custom_type(column, ctx.table.is_strict)
-+    };
-+    let types_checked_first = has_before_triggers || insertion.has_virtual_columns();
-+    if !types_checked_first {
-+        emit_notnulls(program, &ctx, &insertion, resolver, |column| {
-+            !column.is_virtual_generated() && !has_custom_type(column)
-+        })?;
-+    }
-+    if let Some(type_check_table) = &maybe_type_check_table {
-+        // Pre-encoding TypeCheck: validate input types match the custom type's declared value type
-+        // to catch things like a TEXT value inserted into an INTEGER-based custom type.
-+        program.emit_insn(Insn::TypeCheck {
-+            start_reg: insertion.first_col_register(),
-+            count: insertion.num_non_virtual_cols,
-+            check_generated: false,
-+            table_reference: BTreeTable::input_type_check_table_ref(
-+                ctx.table,
-+                resolver.schema(),
-+                None,
-+            )?,
-+        });
-+
-+        // Encode values for columns with custom types.
-+        emit_custom_type_encode(program, resolver, &insertion, &ctx.table.name)?;
-+
-+        // Post-encode TypeCheck: validate that encode produced the correct storage type (BASE).
-+        // We don't check generated columns in this initial pass because their dependencies could
-+        // still be REPLACEd.
-+        program.emit_insn(Insn::TypeCheck {
-+            start_reg: insertion.first_col_register(),
-+            count: insertion.num_non_virtual_cols,
-+            check_generated: false,
-+            table_reference: Arc::clone(type_check_table),
-+        });
-+    }
-+    emit_notnulls(program, &ctx, &insertion, resolver, |column| {
-+        !column.is_virtual_generated() && (types_checked_first || has_custom_type(column))
-+    })?;
- 
-     if insertion.has_virtual_columns() {
-         //TODO only compute the necessary virtual columns for CHECK and NOT NULL evaluation
-@@ -791,7 +807,13 @@ pub fn translate_insert(
-             });
-         }
- 
--        emit_notnulls(program, &ctx, &insertion, resolver, true)?;
-+      
+---
+
+### Incident Patch 2: `212ebc87` (2026-10-27)
+**Commit Message**: Merge 'core/translate: report expression index columns as cid -2 with NULL name in index_info pragmas' from app/turso-github-handyman
+
+## Problem
+
+```sql
+CREATE TABLE t(a, b, c, d);
+CREATE INDEX i_expr ON t(substr(b,1,1));
+SELECT seqno, cid, quote(name), key FROM pragma_index_xinfo('i_expr');
+-- Turso:
+-- 0|-1|'substr (b, 1, 1)'|1
+-- 1|-1|''|0
+-- SQLite:
+-- 0|-2|NULL|1
+-- 1|-1|NULL|0
 ```
 
-**File**: `sqlite/conformance/sqlite-sqltests/strict.sqltest` (modified, +35/-0)
+`PRAGMA index_info` has the same bug for the expression column.
+
+Both pragmas printed `IndexColumn::pos_in_table` and `name` directly.
+For an expression column, `pos_in_table` is `EXPR_INDEX_SENTINEL`
+(`usize::MAX`), which prints as `-1`. The name is the expression text.
+The rowid row of `index_xinfo` also had `''` as its name instead of
+NULL.
+
+The issue also says the output changed after an unrelated `ALTER TABLE
+... DROP COLUMN`. That no longer happens on main, but the values were
+wrong before and after the `ALTER`.
+
+## Fix
+
+Like SQLite, an expression column gets cid `-2` and a NULL name. The
+rowid row of `index_xinfo` gets a NULL name.
+
+`emit_index_column_cid_and_name` writes the cid and name for both
+pragmas. If `pos_in_table == EXPR_INDEX_SENTINEL`, it writes `-2` and
+NULL. Otherwise it write
+
+**File**: `core/translate/pragma.rs` (modified, +16/-6)
 ```diff
-@@ -99,3 +99,38 @@ test strict-primary-key-schema-sql-after-add-column {
- expect {
-     CREATE TABLE pk1 (code TEXT PRIMARY KEY, n INT, z INT) STRICT
+@@ -15,7 +15,7 @@ use super::integrity_check::{
+ use crate::function::Func;
+ use crate::namespace::{NamespaceId, NamespaceRef};
+ use crate::pragma::pragma_for;
+-use crate::schema::{BTreeTable, Index, Schema, Table};
++use crate::schema::{BTreeTable, Index, IndexColumn, Schema, Table, EXPR_INDEX_SENTINEL};
+ use crate::storage::encryption::{CipherMode, EncryptionKey};
+ use crate::storage::pager::AutoVacuumMode;
+ use crate::storage::pager::Pager;
+@@ -1136,8 +1136,7 @@ fn query_pragma(
+                     )? {
+                         for (seqno, col) in index.columns.iter().enumerate() {
+                             program.emit_int(seqno as i64, base_reg);
+-                            program.emit_int(col.pos_in_table as i64, base_reg + 1);
+-                            program.emit_string8(col.name.clone(), base_reg + 2);
++                            emit_index_column_cid_and_name(program, col, base_reg + 1);
+                             program.emit_result_row(base_reg, 3);
+                         }
+                     }
+@@ -1182,8 +1181,7 @@ fn query_pragma(
+                                 .unwrap_or_else(|| "BINARY".to_string());
+ 
+                             program.emit_int(seqno as i64, base_reg);
+-                            program.emit_int(col.pos_in_table as i64, base_reg + 1);
+-                            program.emit_string8(col.name.clone(), base_reg + 2);
++                            emit_index_column_cid_and_name(program, col, base_reg + 1);
+                             program.emit_int(desc as i64, base_reg + 3);
+                             program.emit_string8(coll, base_reg + 4);
+                             program.emit_int(1, base_reg + 5); // key column
+@@ -1195,7 +1193,7 @@ fn query_pragma(
+                             let seqno = index.columns.len();
+                             program.emit_int(seqno as i64, base_reg);
+                             program.emit_int(-1, base_reg + 1);
+-                            program.emit_string8(String::new(), base_reg + 2);
++                            program.emit_null(base_reg + 2, None);
+                             program.emit_int(0, base_reg + 3);
+                             program.emit_string8("BINARY".to_string(), base_reg + 4);
+                             program.emit_int(0, base_reg + 5); // not a key column
+@@ -1957,6 +1955,18 @@ fn without_rowid_primary_key_index(table: &BTreeTable) -> Result<Option<Index>>
+     Ok(Some(index))
+ }
+ 
++/// Emits the `cid` and `name` of PRAGMA index_info / index_xinfo. Like SQLite,
++/// an expression column has cid -2 and a NULL name.
++fn emit_index_column_cid_and_name(program: &mut ProgramBuilder, col: &IndexColumn, dest: usize) {
++    if col.pos_in_table == EXPR_INDEX_SENTINEL {
++        program.emit_int(-2, dest);
++        program.emit_null(dest + 1, None);
++    } else {
++        program.emit_int(col.pos_in_table as i64, dest);
++        program.emit_string8(col.name.clone(), dest + 1);
++    }
++}
++
+ /// 0-based index of `column` within `primary_key_columns`, if present.
+ fn column_pk_index(
+     column: &crate::schema::Column,
+```
+
+**File**: `docs/sql-reference/pragmas.mdx` (modified, +2/-0)
+```diff
+@@ -178,6 +178,8 @@ PRAGMA index_info(index-name);
+ -- 0     | 2   | email
+ ```
+ 
++An expression column (for example `CREATE INDEX i ON t(lower(name))`) has `cid` -2 and a NULL `name`.
++
+ The PRIMARY KEY of a `WITHOUT ROWID` table is reported as an index named `sqlite_autoindex_<table>_1`. Passing the table's name to `index_info` or `index_xinfo` also describes that index.
+ 
+ ### index_xinfo
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/pragma/index_info.sqltest` (modified, +26/-0)
+```diff
+@@ -112,3 +112,29 @@ expect {
+     pk|0|0|z
+     0|0|z
  }
 +
 +@cross-check-integrity
-+test strict-insert-or-ignore-not-null-checked-before-type {
-+    CREATE TABLE t7 (a INT, b REAL NOT NULL) STRICT;
-+    INSERT OR IGNORE INTO t7 (a) VALUES ('x');
-+    SELECT count(*) FROM t7;
++test pragma-index-info-expression-column {
++    CREATE TABLE t(a, b, c, d);
++    CREATE INDEX i_expr ON t(substr(b,1,1), a);
++    SELECT seqno, cid, quote(name) FROM pragma_index_info('i_expr');
++    ALTER TABLE t DROP COLUMN d;
++    ALTER TABLE t RENAME COLUMN a TO z;
++    PRAGMA index_info('i_expr');
++}
++expect {
++    0|-2|NULL
++    1|0|'a'
++    0|-2|
++    1|0|z
++}
++
++@cross-check-integrity
++test pragma-index-info-virtual-generated-column {
++    CREATE TABLE t(a, b, g AS (a*2));
++    CREATE INDEX i ON t(g);
++    PRAGMA index_info('i');
++}
++expect {
++    0|2|g
++}
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/pragma/index_xinfo.sqltest` (modified, +34/-0)
+```diff
+@@ -115,3 +115,37 @@ expect {
+     0|0|id|0|BINARY|1
+     1|1|v|0|BINARY|0
+ }
++
++@cross-check-integrity
++test pragma-index-xinfo-expression-column {
++    CREATE TABLE t(a, b, c, d);
++    CREATE INDEX i_expr ON t(substr(b,1,1), a);
++    SELECT seqno, cid, quote(name), key FROM pragma_index_xinfo('i_expr');
++    ALTER TABLE t DROP COLUMN d;
++    SELECT seqno, cid, quote(name), key FROM pragma_index_xinfo('i_expr');
++    ALTER TABLE t RENAME COLUMN a TO z;
++    PRAGMA index_xinfo('i_expr');
++}
++expect {
++    0|-2|NULL|1
++    1|0|'a'|1
++    2|-1|NULL|0
++    0|-2|NULL|1
++    1|0|'a'|1
++    2|-1|NULL|0
++    0|-2||0|BINARY|1
++    1|0|z|0|BINARY|1
++    2|-1||0|BINARY|0
++}
++
++@cross-check-integrity
++test pragma-index-xinfo-virtual-generated-column {
++    CREATE TABLE t(a, b, g AS (a*2));
++    CREATE INDEX i ON t(g COLLATE NOCASE DESC, g*2);
++    SELECT seqno, cid, quote(name), desc, coll, key FROM pragma_index_xinfo('i');
++}
++expect {
++    0|2|'g'|1|NOCASE|1
++    1|-2|NULL|0|BINARY|1
++    2|-1|NULL|0|BINARY|0
++}
+```
+
+---
+
+### Incident Patch 3: `89e24b3d` (2026-10-27)
+**Commit Message**: Merge 'core/json: return no rows from json_each/json_tree with a NULL path' from Yunus Ozen
+
+`json_each(json, NULL)` and `json_tree(json, NULL)` failed with `root
+path should be text`. SQLite parses the JSON first and then returns an
+empty result when the path is NULL, the same as for a NULL JSON
+argument.
+
+`JsonEachCursor::filter` now returns no rows for a NULL path right after
+the JSON is converted, so malformed JSON with a NULL path is still a
+`malformed JSON` error, like in SQLite. A non-text, non-NULL path keeps
+erroring as before.
+
+New `json-each-null-path.sqltest` covers json_each, json_tree, a NULL
+path coming from a join, and malformed JSON with a NULL path. The
+existing `json_tree` and `json_tree_columns` tests still pass.
+
+Fixes #9838
+
+I used Claude Code to make the change and write the tests, following the
+code pointer in the issue. I reviewed the diff and ran the tests myself,
+and compared the results with sqlite3.
+
+Closes #9877
+
+**File**: `core/json/vtab.rs` (modified, +5/-0)
+```diff
+@@ -252,6 +252,11 @@ impl InternalVirtualTableCursor for JsonEachCursor {
+         }
+         let root_path = match args.get(1) {
+             None => Cow::Borrowed("$"),
++            // Like SQLite, a NULL path is an empty result once the JSON has parsed.
++            Some(Value::Null) => {
++                convert_dbtype_to_jsonb(&args[0], Conv::Strict)?;
++                return Ok(false);
++            }
+             Some(path) => json_path_text(path.as_value_ref()).ok_or_else(|| {
+                 LimboError::InvalidArgument("root path should be text".to_owned())
+             })?,
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/json/json-each-null-path.sqltest` (added, +33/-0)
+```diff
+@@ -0,0 +1,33 @@
++@database :memory:
++
++# A NULL PATH makes json_each and json_tree return no rows, the same as a
++# NULL JSON argument. The JSON is still parsed first, so malformed JSON is
++# an error even with a NULL path.
++
++test json-each-null-path-is-empty {
++    SELECT count(*) FROM json_each('[1,2]', NULL);
 +}
 +expect {
 +    0
 +}
 +
-+test strict-insert-not-null-error-before-type-error {
-+    CREATE TABLE t8 (a INT, b REAL NOT NULL) STRICT;
-+    INSERT INTO t8 (a) VALUES ('x');
++test json-tree-null-path-is-empty {
++    SELECT count(*) FROM json_tree('[1,2]', NULL);
 +}
-+expect error {
-+    NOT NULL constraint failed: t8.b
-+}
-+
-+test strict-insert-generated-column-type-error-before-not-null {
-+    CREATE TABLE t9 (a INT, b TEXT NOT NULL, c INT AS (a + 1)) STRICT;
-+    INSERT OR IGNORE INTO t9 (a) VALUES ('x');
-+}
-+expect error {
-+    cannot store TEXT value in INT column t9.a
++expect {
++    0
 +}
 +
-+test strict-insert-before-trigger-type-error-before-not-null {
-+    CREATE TABLE t10 (a INT, b TEXT NOT NULL) STRICT;
-+    CREATE TRIGGER t10_before BEFORE INSERT ON t10 BEGIN SELECT 1; END;
-+    INSERT OR IGNORE INTO t10 (a) VALUES ('x');
++test json-each-null-path-from-join {
++    SELECT count(*) FROM (SELECT NULL AS p) JOIN json_each('[1,2]', p);
++}
++expect {
++    0
++}
++
++test json-each-null-path-still-parses-json {
++    SELECT count(*) FROM json_each('not json', NULL);
 +}
 +expect error {
-+    cannot store TEXT value in INT column t10.a
++    .*malformed JSON.*
 +}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10721** (2026-10-25): core: key the schema by namespace and resolve names to a namespace (@penberg)
-- **PR #10719** (closed): postgres: support timestamptz and date/time types (@jussisaurio)
-- **PR #10718** (closed): postgres: support casts to boolean, uuid and varchar(n) (@jussisaurio)
-- **PR #10717** (closed): core: convert literals and text compared with custom type columns (@jussisaurio)
-- **PR #10714** (2026-10-25): postgres: keep mod() integer when both arguments are integers (@turso-github-handyman[bot])
-- **PR #10713** (2026-10-25): postgres: expose empty pg_seclabels catalog (@pedrocarlo)
+- **PR #10884** (2026-10-27): postgres/parser: merge the two function_name functions (@jussisaurio)
+- **PR #10875** (2026-10-27): postgres: implement current_schemas from the session search path (@pedrocarlo)
+- **PR #10874** (2026-10-27): core/translate: fill existing rows for ADD COLUMN with a non-constant default in tursopg (@turso-github-handyman[bot])
+- **PR #10869** (closed): core: rewrite views when renaming their table (@abrahamperz)
+- **PR #10868** (2026-10-26): postgres: expose sequence parameters through pg_sequence (@pedrocarlo)
+- **PR #10861** (2026-10-27): core/translate: run nondeterministic WHERE terms once per row (@Raviikumar001)
 
 ---
 
@@ -1636,36 +1922,51 @@ SQLite. Colu
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'core/translate: check NOT NULL before STRICT column types in INSERT' from
+## X. Merge 'core/json: match SQLite's null document and null path handling' from
 
 **RULE**:
-When implementing operations in `core/schema.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/json/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `95617d89`: Merge 'core/translate: check NOT NULL before STRICT column types in INSERT' from app/turso-github-handyman. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8c29f3e6`: Merge 'core/json: match SQLite's null document and null path handling' from. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/schema.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/json/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Whether the column's values are encoded before they are stored: an array column, or a
-    /// column whose type is a custom type of a STRICT table.
-    pub fn column_has_custom_type(&self, column: &Column, is_strict: bool) -> bool {
-        column.is_array() || self.get_type_def(&column.ty_str, is_strict).is_some()
+    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
+        return Ok(Value::Null);
     }
+    json_document_to_db_type(json, el_type, OutputVariant::String)
+    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
+        return Ok(Value::Null);
+    }
+    json_document_to_db_type(json, el_type, OutputVariant::Binary)
+pub fn json_document_to_db_type(
+    json: Jsonb,
+    element_type: ElementType,
+    output: OutputVariant,
+) -> crate::Result<Value> {
+    if element_type == ElementType::NULL {
+        return if matches!(output, OutputVariant::Binary) {
+            Ok(Value::Blob(json.data()))
+        } else {
+            Ok(Value::Text(Text::json("null".to_string())))
+        };
+    }
+    json_string_to_db_type(json, element_type, output)
+}
 
-            .any(|c| schema.column_has_custom_type(c, table.is_strict));
-            .any(|c| schema.column_has_custom_type(c, table.is_strict));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            .any(|c| c.is_array() || schema.get_type_def(&c.ty_str, table.is_strict).is_some());
-            .any(|c| c.is_array() || schema.get_type_def(&c.ty_str, table.is_strict).is_some());
+    json_string_to_db_type(json, el_type, OutputVariant::String)
+    json_string_to_db_type(json, el_type, OutputVariant::Binary)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `95617d89` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8c29f3e6` are properly handled with clean fallback behavior.

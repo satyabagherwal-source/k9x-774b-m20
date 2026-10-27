@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md`  
 > **Source**: github ([https://github.com/react-navigation/react-navigation](https://github.com/react-navigation/react-navigation))  
-> **Source Version**: `c1173a94`  
+> **Source Version**: `641efd1e`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T10:09:38.048Z  
+> **Timestamp**: 2026-10-27T13:35:11.229Z  
 > **Learning ID**: `learn-github-react-navigation-react-navigation`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react-navigation/react-navigation](https://github.com/react-navigation/react-navigation))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T10:09:37.853Z  
+> **Harvest Timestamp**: 2026-10-27T13:35:10.846Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Routing and navigation for React Native and Web apps
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 24511 stars
+- **Stars / Engagement**: 24514 stars
 
 ---
 
@@ -577,14 +577,11 @@ export function BaseNavigationContainer<ParamList extends {} = RootParamList>({
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #13296** (2026-10-25): **Native bottom tabs (Android): tabPress doesn't say whether native already popped to top**
+  *Symptoms*: ### Current behavior  With the native bottom tabs on Android, re-pressing a tab whose nested stack has screens pushed pops to the root natively *before* `tabPress` is emitted. When a `tabPress` listener runs, the stack is already popped and `navigation.isFocused()` is `true` for the root screen.  A root screen with its own scroll to top on `tabPress` (because the native scroll to top can't reach its list, e.g. lists inside a horizontal pager) then scrolls to top right after the pop, and the user loses their scroll position.  With the JS tabs, `isFocused()` is still `false` at that point, so the same listener does nothing. On iOS with the native tabs it's also `false`, but only because the pop is animated and the JS state catches up later.  The event doesn't help to tell the cases apart: `data` is the same after a native pop and after a re-press on the root screen:  `{ origin: 'native', behavior: { scrollToTop: true, popToTop: true } }`  `behavior` reflects the `tabBarRepeatedPressBehavior` config, not what native actually did. `useScrollToTop` sidesteps this by ignoring `origin: 'native'` entirely, so it can't act as a fallback when native doesn't find the scroll view either.  react-native-screens already sends this info (`TabSelectedEvent.hasTriggeredSpecialEffect`, iOS + Android), but it's dropped in `onTabSelected`: https://github.com/react-navigation/react-navigation/blob/7db23d23b7/packages/bottom-tabs/src/views/BottomTabViewNativeImpl.tsx#L219-L253 https://github.com/so
+
 - **Issue #13285** (2026-10-12): **[iOS][bottom-tabs/unstable] Tab bar and scroll edge effect flash dark when switching tabs**
   *Symptoms*: ### Current behavior  When you tap an item in the native bottom tab bar, the active tab switches normally. Then, for about 1 second, the tab bar turns dark before going back to light. The scroll edge effect behind the tab bar flashes dark in the same way.  The project uses the default theme with no custom color scheme. The simulator is on factory settings in light mode.  https://github.com/user-attachments/assets/61fd7ded-ae85-45f2-a517-ece00407cdda  Steps to reproduce:  1. Run the repro on an iOS 26 simulator. 2. Switch between the 1st and 3rd tab using the tab bar. 3. Watch the tab bar and the scroll edge effect behind it turn dark for about 1 second, then go back to light.   ### Expected behavior  The tab bar and scroll edge effect keep light appearance during the tab switch transition.  #### Root cause  `NativeBottomTabView` passes the theme background to each `Tabs.Screen` as `nativeContainerStyle`:  ```tsx <Tabs.Screen   // ...   nativeContainerStyle={{ backgroundColor: colors.background }} /> ```  `Tabs.Screen` in `react-native-screens` doesn't support `nativeContainerStyle`; only `Tabs.Host` does. The prop is silently dropped, so every tab's root view stays transparent. On iOS 26, the Liquid Glass tab bar and scroll edge effects adapt to the content behind them. During a tab switch they appear to read the transparent container as dark, which causes the flash.  Passing the color through `style`, which `Tabs.Screen` does support, makes the tab view opaque and removes th
-
-- **Issue #13273** (2026-10-13): **Opening the drawer no longer dismisses the keyboard**
-  *Symptoms*: ### Current behavior  We have a screen with a focused `TextInput`, so the keyboard is up. A button on it calls `navigation.openDrawer()`. With `react-native-drawer-layout` version 4.2.11 and 5.0.0-alpha.19 the keyboard stays up over the open drawer:  <img width="200" alt="Image" src="https://github.com/user-attachments/assets/9c9fd201-8a55-4e18-873a-67927588dbfb" />  ### Expected behavior  With version 4.2.3 the keyboard dismisses when the drawer opens:  <img width="200" alt="Image" src="https://github.com/user-attachments/assets/c7001626-ce37-4e46-9820-aeba7e292119" />  ### Reproduction  https://github.com/Nezz/expo-repro/tree/repro/DrawerKeyboard  ### Platform  - [ ] Android - [x] iOS - [ ] Web - [ ] Windows - [ ] MacOS  ### Packages  - [ ] @react-navigation/bottom-tabs - [x] @react-navigation/drawer - [ ] @react-navigation/material-top-tabs - [ ] @react-navigation/stack - [ ] @react-navigation/native-stack - [x] react-native-drawer-layout - [ ] react-native-tab-view  ### Environment  - [x] I've removed the packages that I don't use  | package                        | version                     | | ------------------------------ | --------------------------- | | @react-navigation/native       | 7.5.0                       | | @react-navigation/drawer       | 7.14.3                      | | react-native-drawer-layout     | 4.2.11  | | react-native-screens           | 4.26.2                      | | react-native-safe-area-context | 5.7.0                       | | react-nativ
-  **Post-Mortem & Fix Analysis**:
-  > Couldn't find version numbers for the following packages in the issue: - `@react-navigation/native` - `@react-navigation/drawer`  Can you update the issue to include version numbers for those packages? The version numbers must match the format 1.2.3.
-  > I traced this to ff63bcd5c (0306f1958 on 7.x, first released in 4.2.10). The keyboard used to close only as a side effect: toggling `aria-hidden` on the plain content `View` made Fabric un-flatten it, which re-parented the focused input. The content is now an `Animated.View`, which is never flattened, so nothing blurs the input anymore. It happens on Android too.  #13287 dismisses the keyboard explicitly when the drawer is opened programmatically. I checked it with your repro on the iOS simulator. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -601,303 +598,268 @@ export function BaseNavigationContainer<ParamList extends {} = RootParamList>({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c1173a94` (2026-10-21)
-**Commit Message**: ci: perform steps in parallel when possible
+### Incident Patch 1: `641efd1e` (2026-10-27)
+**Commit Message**: fix: respect max width for drawer
 
-**File**: `.github/workflows/ci.yml` (modified, +14/-11)
+fixes #12105
+
+**File**: `packages/react-native-drawer-layout/src/utils/getDrawerWidth.tsx` (modified, +17/-3)
 ```diff
-@@ -32,15 +32,21 @@ jobs:
-       - name: Setup
-         uses: ./.github/actions/setup
+@@ -13,9 +13,11 @@ const DRAWER_DEFAULT_WIDTH_WEB = `min(calc(100% - ${APPROX_APP_BAR_HEIGHT}px), $
+ export function getDrawerWidthNative({
+   containerWidth,
+   customWidth,
++  customMaxWidth,
+ }: {
+   containerWidth: number;
+   customWidth: DimensionValue | undefined | null;
++  customMaxWidth: DimensionValue | undefined | null;
+ }) {
+   'worklet';
  
--      - name: Lint files
--        run: pnpm lint
-+      - parallel:
-+          - name: Lint files
-+            run: pnpm lint
+@@ -26,18 +28,30 @@ export function getDrawerWidthNative({
+     0
+   );
  
--      - name: Typecheck files
--        run: |
--          pnpm typecheck
--          pnpm typecheck:standalone:static
--          pnpm typecheck:standalone:dynamic
--          pnpm typecheck:declarations
-+          - name: Typecheck files
-+            run: pnpm typecheck
+-  const width = customWidth ?? defaultWidth;
++  let width = customWidth ?? defaultWidth;
++  let maxWidth = customMaxWidth ?? containerWidth;
+ 
+   if (typeof width === 'string' && width.endsWith('%')) {
+     // Try to calculate width if a percentage is given
+     const percentage = Number(width.replace(/%$/, ''));
+ 
+     if (Number.isFinite(percentage)) {
+-      return containerWidth * (percentage / 100);
++      width = containerWidth * (percentage / 100);
+     }
+   }
+ 
+-  return typeof width === 'number' ? width : defaultWidth;
++  if (typeof maxWidth === 'string' && maxWidth.endsWith('%')) {
++    const percentage = Number(maxWidth.replace(/%$/, ''));
 +
-+          - name: Typecheck standalone static config
-+            run: pnpm typecheck:standalone:static
++    if (Number.isFinite(percentage)) {
++      maxWidth = containerWidth * (percentage / 100);
++    }
++  }
 +
-+          - name: Typecheck standalone dynamic config
-+            run: pnpm typecheck:standalone:dynamic
-+
-+          - name: Typecheck declarations
-+            run: pnpm typecheck:declarations
++  return Math.min(
++    typeof width === 'number' ? width : defaultWidth,
++    typeof maxWidth === 'number' ? maxWidth : containerWidth
++  );
+ }
  
-   unit-test:
-     runs-on: ubuntu-latest
-@@ -69,9 +75,6 @@ jobs:
-       - name: Build packages in the monorepo
-         run: pnpm lerna run prepack
- 
--      - name: Verify types are correct
--        run: pnpm typecheck
--
-       - name: Bundle example JavaScript with Metro
-         run: pnpm example exec expo export --platform all
- 
+ export function getDrawerWidthWeb({
 ```
 
-**File**: `.github/workflows/e2e-android.yml` (modified, +65/-53)
+**File**: `packages/react-native-drawer-layout/src/views/Drawer.native.tsx` (modified, +7/-2)
 ```diff
-@@ -53,32 +53,33 @@ jobs:
-           path: android-debug-build/
-           key: android-debug-build-${{ runner.os }}-${{ env.API_LEVEL }}-${{ env.ORG_GRADLE_PROJECT_reactNativeArchitectures }}-${{ steps.calculate-fingerprint.outputs.fingerprint }}
+@@ -88,7 +88,8 @@ export function Drawer({
+   children,
+   style,
+ }: DrawerProps) {
+-  const { width: customWidth } = StyleSheet.flatten(drawerStyle) || {};
++  const { width: customWidth, maxWidth: customMaxWidth } =
++    StyleSheet.flatten(drawerStyle) || {};
  
--      - name: Maximize build space
--        if: steps.restore-debug-build.outputs.cache-hit != 'true'
--        uses: AdityaGarg8/remove-unwanted-software@90e01b21170618765a73370fcc3abbd1684a7793
--        with:
--          remove-dotnet: 'true'
--          remove-haskell: 'true'
--          remove-codeql: 'true'
--          remove-docker-images: 'true'
--
--      - name: Setup JDK
--        if: steps.restore-debug-build.outputs.cache-hit != 'true'
--        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
--        with:
--          distribution: ${{ env.JAVA_DISTRIBUTION }}
--          java-version: ${{ env.JAVA_VERSION }}
--
--      - name: Cache Gradle
--        if: steps.restore-debug-build.outputs.cache-hit != 'true'
--        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
--        with:
--          path: |
--            ~/.gradle/caches
--            ~/.gradle/wrapper
--          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
--          restore-keys: |
--            gradle-${{ runner.os }}-
-+      - parallel:
-+          - name: Maximize build space
-+            if: steps.restore-debug-build.outputs.cache-hit != 'true'
-+            uses: AdityaGarg8/remove-unwanted-software@90e01b21170618765a73370fcc3abbd1684a7793
-+            with:
-+              remove-dotnet: 'true'
-+              remove-haskell: 'true'
-+              remove-codeql: 'true'
-+              remove-docker-images: 'true'
-+
-+          - name: Setup JDK
-+            if: steps.restore-debug-build.outputs.cache-hit != 'true'
-+            uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
-+            with:
-+              distribution: ${{ env.JAVA_DISTRIBUTION }}
-+              java-version: ${{ env.JAVA_VERSION }}
-+
-+          - name: Cache Gradle
-+            if: steps.restore-debug-build.outputs.cache-hit != 'true'
-+            uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
-+            with:
-+              path: |
-+                ~/.gradle/caches
-+                ~/.gradle/wrapper
-+              key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-+              restore-keys: |
-+                gradle-${{ runner.os }}-
+   const isOpen = drawerType === 'permanent' ? true : open;
+   const isRight = drawerPosition === 'right';
+@@ -100,6 +101,7 @@ export function Drawer({
+       const drawerWidth = getDrawerWidthNative({
+         containerWidth,
+         customWidth,
++        customMaxWidth,
+       });
  
-       - name: Build Android App
-         if: steps.restore-debug-build.outputs.cache-hit != 'true'
-@@ -126,30 +127,23 @@ jobs:
-       - name: Checkout
-         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+       if (drawerPosition === 'left') {
+@@ -108,7 +110,7 @@ export function Drawer({
  
--      - name: Setup
--        uses: ./.github/actions/setup
--
--      - name: Install nightly react-native-screens
--        if: github.event_name == 'schedule'
--        run: pnpm --recursive update react-native-screens@nightly --no-save
--
--      - name: Download debug build artifact
--        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
--        with:
--          name: android-debug-build
--          path: android-debug-build
--
--      - name: Install AVD dependencies
--        run: |
--          sudo apt update
--          sudo apt-get install -y libpulse0 libgl1 libxkbfile1
--
-       - name: Setup JDK
-         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
-         with:
-           distribution: ${{ env.JAVA_DISTRIBUTION }}
-           java-version: ${{ env.JAVA_VERSION }}
+       return open ? 0 : drawerWidth;
+     },
+-    [customWidth, drawerPosition]
++    [customMaxWidth, customWidth, drawerPosition]
+   );
  
-+      - parallel:
-+          - name: Install AVD dependencies
-+            run: |
-+              sudo apt update
-+              sudo apt-get install -y libpulse0 libgl1 libxkbfile1
-+
-+          - name: Install Android SDK components
-+            run: |
-+              yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null 2>&1 || true
-+              "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install emulator "platform-tools" "system-images;android-${{ env.API_LEVEL }};google_apis;x86_64"
-+
-       - name: Setup Android SDK
-         run: |
-           {
-@@ -158,11 +152,6 @@ jobs:
-             echo "$ANDROID_HOME/cmdline-tools/latest/bin"
-           } >> "$GITHUB_PATH"
+   const hideStatusBar = React.useCallback(
+@@ -474,6 +476,7 @@ export function Drawer({
+     const drawerWidth = getDrawerWidthNative({
+       containerWidth: layoutWidth.get(),
+       customWidth,
++      customMaxWidth,
+     });
  
--      - name: Install Android SDK components
--        run: |
--          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null 2>&1 || true
--          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install emulator "platform-tools" "system-images;android-${{ env.API_LEVEL }};google_apis;x86_64"
--
-       - name: Enable KVM
-         run: |
-           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-@@ -173,22 +162,45 @@ jobs:
-         run: |
-           avdmanager create avd -n "${{ env.AVD_NAME }}" -d "${{ env.EMULATOR_PROFILE }}" -k "system-images;android-${{ env.API_LEVEL }};google_apis;x86_64"
+     // Comment stolen from react-native-gesture-handler/DrawerLayout
+@@ -524,6 +527,7 @@ export function Drawer({
+     const drawerWidth = getDrawerWidthNative({
+       containerWidth: layoutWidth.get(),
+       customWidth,
++      customMaxWidth,
+     });
  
--      - name: Sta
+     const distanceFromEdge = layoutWidth.get() - drawerWidth;
+@@ -576,6 +580,7 @@ export function Drawer({
+     const drawerWidth = getDrawerWidthNative({
+       containerWidth: layoutWidth.get(),
+       customWidth,
++      customMaxWidth,
+     });
+ 
+     return {
 ```
 
-**File**: `.github/workflows/e2e-ios.yml` (modified, +75/-64)
+---
+
+### Incident Patch 2: `fe8fb3f1` (2026-10-26)
+**Commit Message**: fix: show theme background behind cards in stack
+
+fixes #10951
+fixes #8734
+fixes #9883
+
+**File**: `packages/stack/src/views/Stack/StackView.tsx` (modified, +45/-35)
 ```diff
-@@ -56,41 +56,42 @@ jobs:
-         with:
-           xcode-version: ${{ env.XCODE_VERSION }}
+@@ -7,6 +7,7 @@ import {
+   type Route,
+   StackActions,
+   type StackNavigationState,
++  ThemeContext,
+ } from '@react-navigation/native';
+ import * as React from 'react';
+ import { StyleSheet, View } from 'react-native';
+@@ -522,43 +523,52 @@ export class StackView extends React.Component<Props, State> {
+     } = this.state;
  
--      - name: Install build dependencies
--        if: steps.restore-debug-build.outputs.cache-hit != 'true'
--        run: brew install ccache
--
--      - name: Cache CocoaPods
--        if: steps.restore-debug-build.outputs.cache-hit != 'true'
--        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
--        with:
--          path: |
--            example/ios/Pods
--            ~/.cocoapods
--            ~/Library/Caches/CocoaPods
--          key: ios-pods-${{ runner.os }}-${{ steps.calculate-fingerprint.outputs.fingerprint }}
--          restore-keys: |
--            ios-pods-${{ runner.os }}-
--
--      - name: Cache DerivedData
--        if: steps.restore-debug-build.outputs.cache-hit != 'true'
--        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
--        with:
--          path: example/ios/build
--          key: ios-deriveddata-${{ runner.os }}-${{ env.XCODE_VERSION }}-${{ steps.calculate-fingerprint.outputs.fingerprint }}
--          restore-keys: |
--            ios-deriveddata-${{ runner.os }}-${{ env.XCODE_VERSION }}-
--            ios-deriveddata-${{ runner.os }}-
--
--      - name: Cache ccache
--        if: steps.restore-debug-build.outputs.cache-hit != 'true'
--        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
--        with:
--          path: ~/.ccache
--          key: ios-ccache-${{ runner.os }}-${{ env.XCODE_VERSION }}-${{ steps.calculate-fingerprint.outputs.fingerprint }}
--          restore-keys: |
--            ios-ccache-${{ runner.os }}-${{ env.XCODE_VERSION }}-
--            ios-ccache-${{ runner.os }}-
-+      - parallel:
-+          - name: Install build dependencies
-+            if: steps.restore-debug-build.outputs.cache-hit != 'true'
-+            run: brew install ccache
-+
-+          - name: Cache CocoaPods
-+            if: steps.restore-debug-build.outputs.cache-hit != 'true'
-+            uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
-+            with:
-+              path: |
-+                example/ios/Pods
-+                ~/.cocoapods
-+                ~/Library/Caches/CocoaPods
-+              key: ios-pods-${{ runner.os }}-${{ steps.calculate-fingerprint.outputs.fingerprint }}
-+              restore-keys: |
-+                ios-pods-${{ runner.os }}-
-+
-+          - name: Cache DerivedData
-+            if: steps.restore-debug-build.outputs.cache-hit != 'true'
-+            uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
-+            with:
-+              path: example/ios/build
-+              key: ios-deriveddata-${{ runner.os }}-${{ env.XCODE_VERSION }}-${{ steps.calculate-fingerprint.outputs.fingerprint }}
-+              restore-keys: |
-+                ios-deriveddata-${{ runner.os }}-${{ env.XCODE_VERSION }}-
-+                ios-deriveddata-${{ runner.os }}-
-+
-+          - name: Cache ccache
-+            if: steps.restore-debug-build.outputs.cache-hit != 'true'
-+            uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
-+            with:
-+              path: ~/.ccache
-+              key: ios-ccache-${{ runner.os }}-${{ env.XCODE_VERSION }}-${{ steps.calculate-fingerprint.outputs.fingerprint }}
-+              restore-keys: |
-+                ios-ccache-${{ runner.os }}-${{ env.XCODE_VERSION }}-
-+                ios-ccache-${{ runner.os }}-
+     return (
+-      <GestureHandlerWrapper style={styles.container}>
+-        <SafeAreaProviderCompat>
+-          <SafeAreaInsetsContext.Consumer>
+-            {(insets) => (
+-              <ModalPresentationContext.Consumer>
+-                {(isParentModal) => (
+-                  <HeaderShownContext.Consumer>
+-                    {(isParentHeaderShown) => (
+-                      <CardStack
+-                        insets={insets!}
+-                        isParentHeaderShown={isParentHeaderShown}
+-                        isParentModal={isParentModal}
+-                        getPreviousRoute={this.getPreviousRoute}
+-                        routes={routes}
+-                        openingRouteKeys={openingRouteKeys}
+-                        closingRouteKeys={closingRouteKeys}
+-                        replacingRouteKeys={replacingRouteKeys}
+-                        onOpenRoute={this.handleOpenRoute}
+-                        onCloseRoute={this.handleCloseRoute}
+-                        onTransitionStart={this.handleTransitionStart}
+-                        onTransitionEnd={this.handleTransitionEnd}
+-                        renderHeader={this.renderHeader}
+-                        state={state}
+-                        descriptors={descriptors}
+-                        onGestureStart={this.handleGestureStart}
+-                        onGestureEnd={this.handleGestureEnd}
+-                        onGestureCancel={this.handleGestureCancel}
+-                        {...rest}
+-                      />
++      <ThemeContext.Consumer>
++        {(theme) => (
++          <GestureHandlerWrapper
++            style={[
++              styles.container,
++              { backgroundColor: theme?.colors.background },
++            ]}
++          >
++            <SafeAreaProviderCompat>
++              <SafeAreaInsetsContext.Consumer>
++                {(insets) => (
++                  <ModalPresentationContext.Consumer>
++                    {(isParentModal) => (
++                      <HeaderShownContext.Consumer>
++                        {(isParentHeaderShown) => (
++                          <CardStack
++                            insets={insets!}
++                            isParentHeaderShown={isParentHeaderShown}
++                            isParentModal={isParentModal}
++                            getPreviousRoute={this.getPreviousRoute}
++                            routes={routes}
++                            openingRouteKeys={openingRouteKeys}
++                            closingRouteKeys={closingRouteKeys}
++                            replacingRouteKeys={replacingRouteKeys}
++                            onOpenRoute={this.handleOpenRoute}
++                            onCloseRoute={this.handleCloseRoute}
++                            onTransitionStart={this.handleTransitionStart}
++                            onTransitionEnd={this.handleTransitionEnd}
++                            renderHeader={this.renderHeader}
++                            state={state}
++                            descriptors={descriptors}
++                            onGestureStart={this.handleGestureStart}
++                            onGestureEnd={this.handleGestureEnd}
++                            onGestureCancel={this.handleGestureCancel}
++                            {...rest}
++                          />
++                        )}
++                      </HeaderShownContext.Consumer>
+                     )}
+-                  </HeaderShownContext.Consumer>
++                  </ModalPresentationContext.Consumer>
+                 )}
+-              </ModalPresentationContext.Consumer>
+-            )}
+-          </SafeAreaInsetsContext.Consumer>
+-        </SafeAreaProviderCompat>
+-      </GestureHandlerWrapper>
++              </SafeAreaInsetsContext.Consumer>
++            </SafeAreaProviderCompat>
++          </GestureHandlerWrapper>
++        )}
++      </ThemeContext.Consumer>
+     );
+   }
+ }
+```
+
+---
+
+### Incident Patch 3: `d8d49c22` (2026-10-26)
+**Commit Message**: fix: don't show card overlay through transparent modals
+
+fixes #11825
+
+**File**: `packages/stack/src/views/Stack/Card.tsx` (modified, +1/-1)
+```diff
+@@ -596,7 +596,7 @@ function Card({
+           collapsable={false}
+         />
+       ) : null}
+-      {(overlayEnabled ?? overlayStyle != null) ? (
++      {(overlayEnabled ?? (overlayStyle != null && !isTransparent)) ? (
+         <View style={[StyleSheet.absoluteFill, { pointerEvents: 'box-none' }]}>
+           {overlay({ style: overlayStyle })}
+         </View>
+```
+
+**File**: `packages/stack/src/views/Stack/CardStack.tsx` (modified, +4/-1)
+```diff
+@@ -476,7 +476,10 @@ export class CardStack extends React.Component<Props, State> {
+           isAnimationEnabled &&
+           getIsGestureEnabledByDefault(cardStyleInterpolator),
+         headerStyleInterpolator = transitionPreset.headerStyleInterpolator,
+-        cardOverlayEnabled,
++        cardOverlayEnabled = descriptor.options.presentation ===
++        'transparentModal'
++          ? false
++          : undefined,
+         cardShadowEnabled,
+       } = optionsForTransitionConfig;
  
-       - name: Set ccache directory
-         if: steps.restore-debug-build.outputs.cache-hit != 'true'
-@@ -151,6 +152,36 @@ jobs:
-       - name: Checkout
-         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
- 
-+      - name: Use appropriate Xcode version
-+        uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90
-+        with:
-+          xcode-version: ${{ env.XCODE_VERSION }}
-+
-+      - name: Boot iOS Simulator
-+        id: boot-simulator
-+        timeout-minutes: 5
-+        run: |
-+          DEVICE_ID=$(xcrun simctl list devices available | grep "$SIMULATOR_NAME" | head -n 1 | awk -F "[()]" '{print $2}')
-+
-+          if [ -z "$DEVICE_ID" ]; then
-+            echo "No available simulator found for the criteria."
-+            xcrun simctl list devices available
-+            exit 1
-+          fi
-+
-+          echo "Booting $SIMULATOR_NAME simulator with DEVICE_ID=$DEVICE_ID..."
-+          xcrun simctl boot "$DEVICE_ID" || true
-+
-+          while ! xcrun simctl list devices | grep "$DEVICE_ID" | grep -q "(Booted)"; do
-+            sleep 2
-+          done
-+
-+          echo "Simulator is booted!"
-+
-+          # Add deep link handler so we don't see a prompt when running tests
-+          /usr/libexec/PlistBuddy "$HOME/Library/Developer/CoreSimulator/Devices/${DEVICE_ID}/data/Library/Preferences/com.apple.launchservices.schemeapproval.plist" -c "add com.apple.CoreSimulator.CoreSimulatorBridge-->rne string org.reactnavigation.playground"
-+        background: true
-+
-       - name: Setup
-         uses: ./.github/actions/setup
- 
-@@ -167,11 +198,6 @@ jobs
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #13310** (2026-10-23): fix: correctly set default SFSymbol color (@satya164)
+- **PR #13308** (2026-10-23): fix: tweak JS header to be closer to native (@satya164)
 - **PR #13305** (2026-10-21): ci: perform steps in parallel when possible (@satya164)
+- **PR #13298** (2026-10-23): fix: preserve navigation from a screen effect when navigator mount is delayed (@kaelanvoss)
 - **PR #13295** (2026-10-13): cherry picks from main and other updates (@satya164)
 - **PR #13293** (2026-10-13): refactor: reduce re-renders in Material Top Tabs indicator (@satya164)
-- **PR #13292** (2026-10-13): refactor: minimize re-renders in Bottom Tabs (@satya164)
-- **PR #13291** (2026-10-13): refactor: minimize re-renders in Drawer (@satya164)
-- **PR #13290** (2026-10-13): refactor: minimize re-renders in Native Stack (@satya164)
 
 ---
 
@@ -917,51 +879,46 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: perform steps in parallel when possible
+## X. respect max width for drawer
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-navigation/react-navigation. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native-drawer-layout/src/utils/getDrawerWidth.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-navigation/react-navigation. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c1173a94`: ci: perform steps in parallel when possible. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `641efd1e`: respect max width for drawer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-drawer-layout/src/utils/getDrawerWidth.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      - parallel:
-          - name: Lint files
-            run: pnpm lint
-          - name: Typecheck files
-            run: pnpm typecheck
+  customMaxWidth,
+  customMaxWidth: DimensionValue | undefined | null;
+  let width = customWidth ?? defaultWidth;
+  let maxWidth = customMaxWidth ?? containerWidth;
+      width = containerWidth * (percentage / 100);
+  if (typeof maxWidth === 'string' && maxWidth.endsWith('%')) {
+    const percentage = Number(maxWidth.replace(/%$/, ''));
 
-          - name: Typecheck standalone static config
-            run: pnpm typecheck:standalone:static
+    if (Number.isFinite(percentage)) {
+      maxWidth = containerWidth * (percentage / 100);
+    }
+  }
 
-          - name: Typecheck standalone dynamic config
-            run: pnpm typecheck:standalone:dynamic
-
-          - name: Typecheck declarations
-            run: pnpm typecheck:declarations
+  return Math.min(
+    typeof width === 'number' ? width : defaultWidth,
+    typeof maxWidth === 'number' ? maxWidth : containerWidth
+  );
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-      - name: Lint files
-        run: pnpm lint
-      - name: Typecheck files
-        run: |
-          pnpm typecheck
-          pnpm typecheck:standalone:static
-          pnpm typecheck:standalone:dynamic
-          pnpm typecheck:declarations
-      - name: Verify types are correct
-        run: pnpm typecheck
-
+  const width = customWidth ?? defaultWidth;
+      return containerWidth * (percentage / 100);
+  return typeof width === 'number' ? width : defaultWidth;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c1173a94` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `641efd1e` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nezhahq-nezha-learnings.md`  
 > **Source**: github ([https://github.com/nezhahq/nezha](https://github.com/nezhahq/nezha))  
-> **Source Version**: `15fa673c`  
+> **Source Version**: `a6a16eab`  
 > **License**: WTFPL  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T19:45:01.452Z  
+> **Timestamp**: 2026-10-27T13:35:07.984Z  
 > **Learning ID**: `learn-github-nezhahq-nezha`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nezhahq-nezha-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nezhahq/nezha](https://github.com/nezhahq/nezha))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T19:45:01.444Z  
+> **Harvest Timestamp**: 2026-10-27T13:35:06.688Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: :trollface: Self-hosted, lightweight server and website monitoring and O&M tool
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10371 stars
+- **Stars / Engagement**: 10375 stars
 
 ---
 
@@ -67,6 +67,13 @@ func openFsTransferStream(ctx context.Context, serverID uint64, req *model.FsTra
 	if server == nil || server.GetTaskStream() == nil {
 		return nil, func() {}, errors.New("server offline")
 	}
+	releaseControl, controlErr := singleton.BeginServerControlFromContext(ctx, serverID)
+	if controlErr != nil {
+		return nil, func() {}, controlErr
+	}
+	var controlOnce sync.Once
+	releaseAdmission := func() { controlOnce.Do(releaseControl) }
+	defer releaseAdmission()
 	handler := rpc.NezhaHandlerSingleton
 
 	streamID, err := uuid.GenerateUUID()
@@ -102,6 +109,7 @@ func openFsTransferStream(ctx context.Context, serverID uint64, req *model.FsTra
 		return nil, func() {}, err
 	}
 
+	releaseAdmission() // Registered streams are now covered by ownership revocation.
 	agentStream, ok := handler.WaitForAgent(ctx, streamID, 30*time.Second)
 	if !ok {
 		cleanup()
@@ -799,6 +807,25 @@ func recordToIPType(record string) string {
 
 ```
 
+### Core Architecture Module: `pkg/utils/bearer_credential.go`
+```
+package utils
+
+import "strings"
+
+// BearerCredential extracts a bearer token using HTTP's case-insensitive
+// authentication scheme rules. Authentication and NAT credential filtering
+// must use the same parser so a valid credential cannot bypass stripping.
+func BearerCredential(header string) string {
+	scheme, credential, ok := strings.Cut(strings.TrimSpace(header), " ")
+	if !ok || !strings.EqualFold(scheme, "Bearer") {
+		return ""
+	}
+	return strings.TrimSpace(credential)
+}
+
+```
+
 ### Core Architecture Module: `pkg/utils/bytes.go`
 ```
 package utils
@@ -903,202 +930,6 @@ func GjsonIter(json string) (iter.Seq2[string, string], error) {
 
 ```
 
-### Core Architecture Module: `pkg/utils/http.go`
-```
-package utils
-
-import (
-	"context"
-	"crypto/tls"
-	"errors"
-	"net"
-	"net/http"
-	"net/netip"
-	"net/url"
-	"time"
-)
-
-// HttpClient / HttpClientSkipTlsVerify must not be used to dispatch
-// requests to user-controlled URLs (SSRF risk, GHSA-6x26-5727-rrm9).
-// For any attacker-controlled URL use NewRestrictedHTTPClient instead.
-var (
-	HttpClientSkipTlsVerify *http.Client
-	HttpClient              *http.Client
-)
-
-var ErrHTTPURLTargetNotAllowed = errors.New("HTTP URL target is not allowed")
-
-var blockedHTTPClientCIDRs = mustParseHTTPClientCIDRs([]string{
-	"0.0.0.0/8",
-	"10.0.0.0/8",
-	"100.64.0.0/10",
-	"127.0.0.0/8",
-	"169.254.0.0/16",
-	"172.16.0.0/12",
-	"192.0.0.0/24",
-	"192.0.2.0/24",
-	"192.168.0.0/16",
-	"198.18.0.0/15",
-	"198.51.100.0/24",
-	"203.0.113.0/24",
-	"224.0.0.0/4",
-	"240.0.0.0/4",
-	"::/128",
-	"::1/128",
-	"::ffff:0:0/96",
-	"64:ff9b::/96",
-	"64:ff9b:1::/48",
-	"100::/64",
-	"2001::/23",
-	"2001:db8::/32",
-	"2002::/16",
-	"fc00::/7",
-	"fe80::/10",
-	"ff00::/8",
-})
-
-func init() {
-	HttpClientSkipTlsVerify = httpClient(_httpClient{
-		Transport: httpTransport(_httpTransport{
-			SkipVerifyTLS: true,
-		}),
-	})
-	HttpClient = httpClient(_httpClient{
-		Transport: httpTransport(_httpTransport{
-			SkipVerifyTLS: false,
-		}),
-	})
-
-	http.DefaultClient.Timeout = time.Minute * 10
-}
-
-type _httpTransport struct {
-	SkipVerifyTLS bool
-}
-
-func httpTransport(conf _httpTransport) *http.Transport {
-	return &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: conf.SkipVerifyTLS},
-		Proxy:           http.ProxyFromEnvironment,
-	}
-}
-
-type _httpClient struct {
-	Transport *http.Transport
-}
-
-func httpClient(conf _httpClient) *http.Client {
-	return &http.Client{
-		Transport: conf.Transport,
-		Timeout:   time.Minute * 10,
-	}
-}
-
-func NewRestrictedHTTPClient(rawURL string, skipVerifyTLS bool) (*http.Client, error) {
-	parsedURL, ip, err := ResolveAllowedHTTPURL(rawURL)
-	if err != nil {
-		return nil, err
-	}
-	return buildRestrictedHTTPClient(parsedURL, ip, skipVerifyTLS), nil
-}
-
-// buildRestrictedHTTPClient assembles a client whose DialContext is pinned to
-// the already-vetted IP. Separated from NewRestrictedHTTPClient so tests can
-// exercise the SNI / redirect behavior without relying on live DNS.
-func buildRestrictedHTTPClient(parsedURL *url.URL, ip net.IP, skipVerifyTLS bool) *http.Client {
-	port := parsedURL.Port()
-	if port == "" {
-		if parsedURL.Scheme == "https" {
-			port = "443"
-		} else {
-			port = "80"
-		}
-	}
-	// Pin outbound webhooks to the vetted IP so DNS changes cannot retarget private hosts.
-	targetAddress := net.JoinHostPort(ip.String(), port)
-	dialer := &net.Dialer{}
-
-	return &http.Client{
-		Transport: &http.Transport{
-			DialContext: func(ctx context.Context, network, address string) (net.Conn, error) {
-				return dialer.DialContext(ctx, network, targetAddress)
-			},
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: skipVerifyTLS, ServerName: parsedURL.Hostname()},
-		},
-		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-			return http.ErrUseLastResponse
-		},
-		Timeout: time.Minute * 10,
-	}
-}
-
-func ResolveAllowedHTTPURL(rawURL string) (*url.URL, net.IP, error) {
-	parsedURL, err := url.Parse(rawURL)
-	if err != nil {
-		return nil, nil, err
-	}
-	if parsedURL.Scheme != "http" && parsedURL.Scheme != "https" {
-		return nil, nil, ErrHTTPURLTargetNotAllowed
-	}
-
-	host := parsedURL.Hostname()
-	if host == "" {
-		return nil, nil, ErrHTTPURLTargetNotAllowed
-	}
-	if ip := net.ParseIP(host); ip != nil {
-		if !HTTPURLTargetIPAllowed(ip) {
-			return nil, nil, ErrHTTPURLTargetNotAllowed
-		}
-		return parsedURL, ip, nil
-	}
-
-	ips, err := net.LookupIP(host)
-	if err != nil {
-		return nil, nil, err
-	}
-	if len(ips) == 0 {
-		return nil, nil, ErrHTTPURLTargetNotAllowed
-	}
-	for _, ip := range ips {
-		if !HTTPURLTargetIPAllowed(ip) {
-			return nil, nil, ErrHTTPURLTargetNotAllowed
-		}
-	}
-
-	return parsedURL, ips[0], nil
-}
-
-func HTTPURLTargetIPAllowed(ip net.IP) bool {
-	parsedIP, ok := netipFromIP(ip)
-	if !ok {
-		return false
-	}
-	for _, cidr := range blockedHTTPClientCIDRs {
-		if cidr.Contains(parsedIP) {
-			return false
-		}
-	}
-	return parsedIP.IsGlobalUnicast()
-}
-
-func netipFromIP(ip net.IP) (netip.Addr, bool) {
-	parsedIP, ok := netip.AddrFromSlice(ip)
-	if !ok {
-		return netip.Addr{}, false
-	}
-	return parsedIP.Unmap(), true
-}
-
-func mustParseHTTPClientCIDRs(cidrs []string) []netip.Prefix {
-	prefixes := make([]netip.Prefix, 0, len(cidrs))
-	for _, cidr := range cidrs {
-		prefixes = append(prefixes, netip.MustParsePrefix(cidr))
-	}
-	return prefixes
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1131,114 +962,826 @@ func mustParseHTTPClientCIDRs(cidrs []string) []netip.Prefix {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `15fa673c` (2026-10-25)
-**Commit Message**: test: cover embedded and local frontend path confinement
+### Incident Patch 1: `7cd0371b` (2026-10-26)
+**Commit Message**: security: close OAuth and agent control lifecycle regressions
+
+Restore session-aware OAuth binding and read public authentication URLs from committed host policy snapshots. Keep MCP, configuration, upgrade and alert-command admission tied to actual transport sends, while allowing transfer rollback and reply processing to complete without circular lock waits.
+
+Add authenticated-route, persistence rollback, transfer-result ordering and stalled-send regression coverage. Capture task identity before request contexts can be recycled.
 
 Co-authored-by: naiba/CloudCode <[REDACTED_EMAIL]>
 
-**File**: `cmd/dashboard/controller/frontend_path_security_test.go` (added, +72/-0)
+**File**: `cmd/dashboard/controller/controller.go` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,72 @@
+@@ -87,10 +87,11 @@ func routers(r *gin.Engine, frontendDist fs.FS) {
+ 
+ 	api := r.Group("api/v1")
+ 	api.POST("/login", authMiddleware.LoginHandler)
+-	api.GET("/oauth2/:provider", commonHandler(oauth2redirect))
+ 
+ 	fallbackAuthMw := fallbackAuthMiddleware(authMiddleware)
+ 	fallbackAuth := api.Group("", fallbackAuthMw)
++	// Binding needs the real JWT session; anonymous OAuth login remains available.
++	fallbackAuth.GET("/oauth2/:provider", commonHandler(oauth2redirect))
+ 	fallbackAuth.GET("/setting", commonHandler(listConfig))
+ 	fallbackAuth.GET("/oauth2/callback", commonHandler(oauth2callback(authMiddleware)))
+ 
+```
+
+**File**: `cmd/dashboard/controller/mcp_oauth.go` (modified, +2/-1)
+```diff
+@@ -53,7 +53,8 @@ func mcpOAuthIssuer() (string, error) {
+ 	if singleton.Conf == nil || !singleton.Conf.MCPEnabled() {
+ 		return "", errors.New("MCP is disabled")
+ 	}
+-	host := singleton.Conf.DashboardHost
++	// Issuers must not observe a host before persistence succeeds or during rollback.
++	host := singleton.Conf.NATDomainPolicySnapshot().DashboardHost
+ 	u, err := url.Parse("https://" + host)
+ 	if err != nil || host == "" || u.Host != host || u.Hostname() == "" || u.User != nil || u.Path != "" || u.RawQuery != "" || u.Fragment != "" || strings.ContainsAny(host, "\\\r\n\t ") || singleton.Conf.JWTSecretKey == "" {
+ 		return "", errors.New("configure dashboard_host as the public HTTPS host before using MCP OAuth")
+```
+
+**File**: `cmd/dashboard/controller/mcp_transfer.go` (modified, +4/-2)
+```diff
+@@ -107,9 +107,11 @@ func mcpTransferURLBase(c *gin.Context) (string, error) {
+ 	}
+ 
+ 	requestHost := strings.TrimSpace(c.Request.Host)
+-	host := strings.TrimSpace(singleton.Conf.DashboardHost)
++	// Bearer URLs must use only persisted host settings, including reservations.
++	policy := singleton.Conf.NATDomainPolicySnapshot()
++	host := strings.TrimSpace(policy.DashboardHost)
+ 	if host == "" {
+-		if !singleton.IsReservedDashboardHost(requestHost) {
++		if !policy.IsReservedHost(requestHost) {
+ 			return "", errMCPTransferHostNotConfigured
+ 		}
+ 		host = requestHost
+```
+
+**File**: `cmd/dashboard/controller/oauth2.go` (modified, +6/-2)
+```diff
+@@ -39,8 +39,12 @@ func getRedirectURL(c *gin.Context) string {
+ 		scheme = "https://"
+ 	}
+ 	host := c.Request.Host
+-	if !singleton.IsReservedDashboardHost(host) && singleton.Conf != nil && singleton.Conf.DashboardHost != "" {
+-		host = singleton.Conf.DashboardHost
++	if singleton.Conf != nil {
++		// Check reservations and canonical host from one committed configuration.
++		policy := singleton.Conf.NATDomainPolicySnapshot()
++		if !policy.IsReservedHost(host) && policy.DashboardHost != "" {
++			host = policy.DashboardHost
++		}
+ 	}
+ 	return scheme + host + "/api/v1/oauth2/callback"
+ }
+```
+
+**File**: `cmd/dashboard/controller/oauth_route_and_config_regression_test.go` (added, +161/-0)
+```diff
+@@ -0,0 +1,161 @@
 +package controller
 +
 +import (
++	"encoding/json"
++	"errors"
 +	"net/http"
-+	"os"
-+	"path/filepath"
-+	"strings"
++	"net/http/httptest"
++	"net/url"
 +	"testing"
-+	"testing/fstest"
++	"time"
 +
 +	"github.com/gin-gonic/gin"
 +	"github.com/nezhahq/nezha/model"
 +	"github.com/nezhahq/nezha/service/singleton"
++	"github.com/patrickmn/go-cache"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+func TestFrontendPathConfinementForEmbeddedAndLocalOverrides(t *testing.T) {
-+	for _, mode := range []string{"embedded", "local-override"} {
-+		t.Run(mode, func(t *testing.T) {
-+			t.Chdir(t.TempDir())
-+			original := singleton.Conf
-+			singleton.Conf = &singleton.ConfigClass{Config: &model.Config{ConfigDashboard: model.ConfigDashboard{UserTemplate: "user-dist", AdminTemplate: "admin-dist"}}}
-+			t.Cleanup(func() { singleton.Conf = original })
-+			files := fstest.MapFS{
-+				"user-dist/index.html":             &fstest.MapFile{Data: []byte("embedded user index")},
-+				"user-dist/assets/application.js":  &fstest.MapFile{Data: []byte("embedded user asset")},
-+				"admin-dist/index.html":            &fstest.MapFile{Data: []byte("embedded admin index")},
-+				"admin-dist/assets/application.js": &fstest.MapFile{Data: []byte("embedded admin asset")},
-+				"data/config.yaml":                 &fstest.MapFile{Data: []byte("outside-secret-canary")},
-+				"other-dist/private.txt":           &fstest.MapFile{Data: []byte("other-theme-canary")},
++func TestOAuthBindingThroughAuthenticatedDashboardRoute(t *testing.T) {
++	session := setupMCPOAuthSession(t)
++	previousCache := singleton.Cache
++	singleton.Cache = cache.New(time.Minute, time.Minute)
++	t.Cleanup(func() { singleton.Cache = previousCache })
++	singleton.Conf.Oauth2 = map[string]*model.Oauth2Config{"github": {ClientID: "dashboard", Endpoint: model.Oauth2Endpoint{AuthURL: "https://provider.example/authorize"}}}
++	for _, test := range []struct {
++		name, action     string
++		browser, success bool
++	}{
++		{"authenticated binding", "2", true, true},
++		{"anonymous binding", "2", false, false},
++		{"anonymous login", "1", false, true},
++	} {
++		t.Run(test.name, func(t *testing.T) {
++			response := session.request(t, http.MethodGet, "/api/v1/oauth2/github?type="+test.action, nil, test.browser)
++			var body struct {
++				Success bool                      `json:"success"`
++				Data    model.Oauth2LoginResponse `json:"data"`
 +			}
-+			// Distinct contents prove local files are served instead of silently falling back to embedded files.
-+			expectedSource := "embedded "
-+			if mode == "local-override" {
-+				expectedSource = "local "
-+				for name, file := range files {
-+					require.NoError(t, os.MkdirAll(filepath.Dir(name), 0750))
-+					require.NoError(t, os.WriteFile(name, []byte(strings.ReplaceAll(string(file.Data), "embedded ", "local ")), 0600))
-+				}
-+				outside, err := filepath.Abs("data/config.yaml")
-+				require.NoError(t, err)
-+				for _, directory := range []string{"user-dist", "admin-dist"} {
-+					require.NoError(t, os.Symlink(outside, filepath.Join(directory, "outside-link.txt")))
-+				}
++			require.NoError(t, json.Unmarshal(response.Body.Bytes(), &body))
++			require.Equal(t, test.success, body.Success, response.Body.String())
++			if !test.success {
++				require.Empty(t, response.Result().Cookies())
++				require.Empty(t, body.Data.Redirect)
++				return
 +			}
-+			gin.SetMode(gin.TestMode)
-+			router := gin.New()
-+			router.NoRoute(fallbackToFrontend(files))
-+			for _, role := range []struct{ prefix, name string }{{"/", "user"}, {"/dashboard/", "admin"}} {
-+				valid := performFrontendFallbackRequest(t, router, role.prefix+"assets/application.js")
-+				require.Equal(t, http.StatusOK, valid.Code)
-+				require.Equal(t, expectedSource+role.name+" asset", valid.Body.String())
-+				attacks := []string{"../data/config.yaml", "../../data/config.yaml", "%2e%2e/data/config.yaml", "%2e%2e%2fdata/config.yaml", "%252e%252e/data/config.yaml", "..%5cdata%5cconfig.yaml", "../other-dist/private.txt", "../admin-dist/assets/application.js", "../user-dist/assets/application.js", "/etc/passwd", "C:/Windows/win.ini"}
-+				if mode == "local-override" {
-+					outside, err := filepath.Abs("data/config.yaml")
-+					require.NoError(t, err)
-+					attacks = append(attacks, "outside-link.txt", filepath.ToSlash(outside))
-+				}
-+				for _, attack := range attacks {
-+					response := performFrontendFallbackRequest(t, router, role.prefix+attack)
-+					require.Equal(t, http.StatusNotFound, response.Code, role.prefix+attack)
-+					require.Equal(t, expectedSource+role.name+" index", response.Body.String(), role.prefix+attack)
++			redirect, err := url.Parse(body.Data.Redirect)
++			require.NoError(t, err)
++			require.Equal(t, "provider.example", redirect.Host)
++			var stateCookie *http.Cookie
++			for _, cookie := range response.Result().Cookies() {
++				if cookie.Name == "nz-o2s" {
++					stateCookie = cookie
 +				}
 +			}
-+			for _, attack := range []string{"/dashboard../data/config.yaml", "/dashboard%2e%2e/data/config.yaml", "/dashboard%2e%2e%2fdata/config.yaml"} {
-+				response := performFrontendFallbackRequest(t, router, attack)
-+				require.Equal(t, http.StatusNotFound, response.Code, attack)
-+				require.Equal(t, expectedSource+"user index", response.Body.String(), attack)
++			require.NotNil(t, stateCookie)
++			cached, ok := singleton.Cache.Get(model.CacheKeyOauth2State + stateCookie.Value)
++			require.True(t, ok)
++			state := cached.(*model.Oauth2State)
++			require.Equal(t, redirect.Query().Get("state"), state.State)
++			require.Equal(t, "github", state.Provider)
++			if test.browser {
++				require.Equal(t, session.userID, state.UserID)
++				var stored model.JWTSession
++				require.NoError(t, singleton.DB.Where("key_id = ?", state.SessionID).First(&stored).Error)
++				require.Equal(t, session.userID, stored.UserID)
++				require.Equal(t, model.RTypeBind, state.Action)
++			} else {
++				require.Zero(t, state.UserID)
++				require.Empty(t, state.SessionID)
++				require.Equal(t, model.RTypeLogin, state.Action)
 +			}
 +		})
 +	}
 +}
++
++func TestPublicAuthenticationURLsWaitForConfigCommit(t *testing.T) {
++	for _, reader := range []string{"issuer", "transfer", "oauth callback"} {
++		for _, rollback := range []bool{false, true} {
++			name := reader + "/commit"
++			if rollback {
++				name = reader + "/rollback"
++			}
++			t.Run(name, func(t *testing.T) {
++				cleanup, _ := setupMCPTest(t)
++				defer cleanup()
++				singleton.Conf.JWTSecretKey = "configuration-commit-signing-key"
++				entered, finish := make(chan struct{}), make(chan struct{})
++				committed := make(chan error, 1)
++				persistenceError := errors.New("persistence failed")
++				go func() {
++					committed <- singleton.Conf.CommitNATDomainPolicy(model.SettingForm{DashboardHost: "new.example.com"}, func() error {
++						close(entered)
++						<-finish
++						if rollback {
++							return persistenceError
++						}
++						return nil
++					})
++				}()
++				<-entered
++				type outcome struct {
++					value string
++					err   error
++				}
++				started, result := make(chan struct{}), make(chan outcome, 1)
++				go func() {
++					c, _ := gin.CreateTestContext(httptest.NewRecorder())
++					c.Request = httptest.NewRequest(http.MethodGet, "https://untrusted.example/", nil)
++					c.Request.Header.Set("X-Forwarded-Proto", "https")
++					close(started)
++					var value string
++					var err error
++					switch reader {
++					case "issuer":
++						value, err = mcpOAuthIssuer()
++					case "transfer":
++						value, err = mcpTransferURLBase(c)
++					default:
++						value = getRedirectURL(c)
++					}
++					result <- outcome{value, err}
++				}()
++				<-started
++				var early *outcome
++				select {
++				case got := <-result:
++					early = &got
++				case <-time.After(50 * time.Millisecond):
++				}
++				close(finish)
++				err := <-committed
++				if rollback {
++					require.ErrorIs(t, err, persistenceError)
++				} else {
++					require.NoError(t, err)
++				}
++				var got outcome
++				if early != nil {
++					got = *early
++					t.Error("authentication URL read uncommitted configuration")
++				} else {
++					select {
++					case got = <-result:
++					case <-time.After(time.Second):
++						t.Fatal("configuration reader did not resume")
++					}
++				}
++				require.NoError(t, got.err)
++				host := "new.example.com"
++				if rollback {
++					host = "example.com"
++				}
++				want := "https://" + host
++				if reader == "oauth callback" {
++				
+```
+
+**File**: `cmd/dashboard/controller/server.go` (modified, +13/-15)
+```diff
+@@ -200,9 +200,11 @@ func forceUpdateServer(c *gin.Context) (*model.ServerTaskResponse, error) {
+ 			continue
+ 		}
+ 		if server.GetTaskStream() != nil {
+-			if err := server.SendTask(&pb.Task{
++			// Upgrade is a control operation too; recheck ownership and pending
++			// transitions at the actual send, including timeout cleanup.
++			if err := server.SendTaskGuarded(&pb.Task{
+ 				Type: model.TaskTypeUpgrade,
+-			}); err != nil {
++			}, serverTaskAdmission(c, sid)); err != nil {
+ 				if errors.Is(err, model.ErrTaskStreamOffline) {
+ 					forceUpdateResp.Offline = append(forceUpdateResp.Offline, sid)
+ 				} else {
+@@ -245,26 +247,28 @@ func getServerConfig(c *gin.Context) (string, error) {
+ 	if controlErr != nil {
+ 		return "", controlErr
+ 	}
+-	defer releaseControl()
++	releaseControl() // Waiting for ConfigCache must not block ownership rollback.
+ 	if s.GetTaskStream() == nil {
+ 		return "", nil
+ 	}
+ 
+-	if err := s.SendTask(&pb.Task{
++	if err := s.SendTaskGuarded(&pb.Task{
+ 		Type: model.TaskTypeReportConfig,
+-	}); err != nil {
++	}, serverTaskAdmission(c, id)); err != nil {
+ 		if errors.Is(err, model.ErrTaskStreamOffline) {
+ 			return "", nil
+ 		}
+ 		return "", err
+ 	}
+ 
+ 	timeout := time.NewTimer(time.Second * 10)
++	defer timeout.Stop()
+ 	select {
++	case <-c.Request.Context().Done():
++		return "", c.Request.Context().Err()
+ 	case <-timeout.C:
+ 		return "", singleton.Localizer.ErrorT("operation timeout")
+ 	case data := <-s.ConfigCache:
+-		timeout.Stop()
+ 		switch data := data.(type) {
+ 		case string:
+ 			return data, nil
+@@ -330,15 +334,9 @@ func setServerConfig(c *gin.Context) (*model.ServerTaskResponse, error) {
+ 					respMu.Unlock()
+ 					continue
+ 				}
+-				releaseControl, controlErr := beginServerControl(c, s.ID)
+-				if controlErr != nil {
+-					respMu.Lock()
+-					resp.Failure = append(resp.Failure, s.ID)
+-					respMu.Unlock()
+-					continue
+-				}
+-				sendErr := s.SendTask(task)
+-				releaseControl()
++				// The transport can still be sending after its deadline returns.
++				// Keep ownership admission with the actual Send, not the HTTP call.
++				sendErr := s.SendTaskGuarded(task, serverTaskAdmission(c, s.ID))
+ 				if err := sendErr; err != nil {
+ 					respMu.Lock()
+ 					if errors.Is(err, model.ErrTaskStreamOffline) {
+```
+
+**File**: `cmd/dashboard/controller/server_config_lease_regression_test.go` (added, +134/-0)
+```diff
+@@ -0,0 +1,134 @@
++package controller
++
++import (
++	"context"
++	"testing"
++	"time"
++
++	"github.com/gin-gonic/gin"
++	"github.com/nezhahq/nezha/model"
++	pb "github.com/nezhahq/nezha/proto"
++	"github.com/nezhahq/nezha/service/singleton"
++	"github.com/stretchr/testify/require"
++)
++
++type configurationLeaseTaskStream struct {
++	pb.NezhaService_RequestTaskServer
++	sent   chan *pb.Task
++	resume chan struct{}
++}
++
++func (s *configurationLeaseTaskStream) Context() context.Context { return context.Background() }
++func (s *configurationLeaseTaskStream) Send(task *pb.Task) error {
++	if task.Type == model.TaskTypeServerTransferApply {
++		return nil
++	}
++	s.sent <- task
++	if s.resume != nil {
++		<-s.resume
++	}
++	return nil
++}
++
++func setupConfigurationLeaseTransfer(t *testing.T) (*model.Server, uint64) {
++	t.Helper()
++	cleanup := setupRetryServerTransferFixture(t)
++	previousConf, previousLoc := singleton.Conf, singleton.Loc
++	singleton.Conf = &singleton.ConfigClass{Config: &model.Config{}}
++	singleton.Loc = time.UTC
++	t.Cleanup(func() { cleanup(); singleton.Conf, singleton.Loc = previousConf, previousLoc })
++	db, err := singleton.DB.DB()
++	require.NoError(t, err)
++	db.SetMaxOpenConns(1)
++	t.Cleanup(func() { db.Close() })
++	seedServer(t, 1, 100)
++	transferID := seedPendingTransfer(t, 1, 100, 200, 100)
++	server, ok := singleton.ServerShared.Get(1)
++	require.True(t, ok)
++	return server, transferID
++}
++
++func TestServerConfigReadReleasesControlBeforeWaitingForReply(t *testing.T) {
++	server, transferID := setupConfigurationLeaseTransfer(t)
++	stream := &configurationLeaseTaskStream{sent: make(chan *pb.Task, 1)}
++	server.SetTaskStream(stream)
++	c := ctxAs(1, model.RoleAdmin)
++	c.Params = gin.Params{{Key: "id", Value: "1"}}
++	type outcome struct {
++		data string
++		err  error
++	}
++	done := make(chan outcome, 1)
++	go func() { data, err := getServerConfig(c); done <- outcome{data, err} }()
++	require.Equal(t, uint64(model.TaskTypeReportConfig), (<-stream.sent).Type)
++	rollback := make(chan error, 1)
++	go func() {
++		_, err := singleton.ServerTransferShared.MarkFailed(transferID, "agent rejected transfer")
++		rollback <- err
++		server.ConfigCache <- "agent configuration"
++	}()
++	var got outcome
++	select {
++	case got = <-done:
++	case <-time.After(time.Second):
++		t.Error("configuration read blocked rollback while waiting for its reply")
++		server.ConfigCache <- "cleanup configuration"
++		got = <-done
++	}
++	require.NoError(t, <-rollback)
++	require.NoError(t, got.err)
++	require.Equal(t, "agent configuration", got.data)
++	require.Equal(t, uint64(100), server.GetUserID())
++}
++
++func TestServerConfigWriteKeepsControlUntilTimedOutSendReturns(t *testing.T) {
++	server, transferID := setupConfigurationLeaseTransfer(t)
++	stream := &configurationLeaseTaskStream{sent: make(chan *pb.Task, 1), resume: make(chan struct{})}
++	server.SetTaskStream(stream)
++	c := ctxAs(1, model.RoleAdmin)
++	bindJSON(c, model.ServerConfigForm{Servers: []uint64{1}, Config: `{"debug":true}`})
++	type outcome struct {
++		response *model.ServerTaskResponse
++		err      error
++	}
++	done := make(chan outcome, 1)
++	go func() { response, err := setServerConfig(c); done <- outcome{response, err} }()
++	task := <-stream.sent
++	require.Equal(t, uint64(model.TaskTypeApplyConfig), task.Type)
++	require.Equal(t, `{"debug":true}`, task.Data)
++	got := <-done
++	require.NoError(t, got.err)
++	require.Equal(t, []uint64{1}, got.response.Failure)
++	require.Empty(t, got.response.Success)
++	rollback := make(chan error, 1)
++	go func() {
++		_, err := singleton.ServerTransferShared.MarkFailed(transferID, "agent rejected transfer")
++		rollback <- err
++	}()
++	var early bool
++	select {
++	case err := <-rollback:
++		require.NoError(t, err)
++		early = true
++	case <-time.After(100 * time.Millisecond):
++	}
++	close(stream.resume)
++	if !early {
++		require.NoError(t, <-rollback)
++	}
++	require.False(t, early, "ownership changed while the old configuration was still being sent")
++	require.Equal(t, uint64(100), server.GetUserID())
++}
++
++func TestForceUpdateRejectsPendingTransferOwner(t *testing.T) {
++	server, _ := setupConfigurationLeaseTransfer(t)
++	stream := &configurationLeaseTaskStream{sent: make(chan *pb.Task, 1)}
++	server.SetTaskStream(stream)
++	c := ctxAs(200, model.RoleMember)
++	bindJSON(c, []uint64{server.ID})
++	response, err := forceUpdateServer(c)
++	require.NoError(t, err)
++	require.Empty(t, response.Success)
++	require.Equal(t, []uint64{server.ID}, response.Failure)
++	require.Empty(t, stream.sent, "the pending destination must not dispatch an Agent upgrade")
++}
+```
+
+**File**: `cmd/dashboard/controller/server_control.go` (modified, +17/-3)
+```diff
+@@ -7,11 +7,25 @@ import (
+ )
+ 
+ func beginServerControl(c *gin.Context, serverID uint64) (func(), error) {
++	return serverTaskAdmission(c, serverID)()
++}
++
++// Capture request identity before sending: a timed-out Send can outlive Gin's
++// request context. Its final admission must not read a recycled *gin.Context.
++func serverTaskAdmission(c *gin.Context, serverID uint64) func() (func(), error) {
+ 	user, ok := c.Get(model.CtxKeyAuthorizedUser)
+ 	if !ok || !patAllowsServer(c, serverID) {
+-		return nil, singleton.Localizer.ErrorT("permission denied")
++		err := singleton.Localizer.ErrorT("permission denied")
++		return func() (func(), error) { return nil, err }
+ 	}
+ 	caller := user.(*model.User)
+-	release, _, err := singleton.BeginServerControl(serverID, caller.ID, caller.Role.IsAdmin())
+-	return release, err
++	userID, admin := caller.ID, caller.Role.IsAdmin()
++	ctx := c.Request.Context()
++	return func() (func(), error) {
++		if err := ctx.Err(); err != nil {
++			return nil, err
++		}
++		release, _, err := singleton.BeginServerControl(serverID, userID, admin)
++		return release, err
++	}
+ }
 ```
 
 ---
 
-### Incident Patch 2: `6c972641` (2026-10-25)
-**Commit Message**: chore: update bundled official frontend releases
+### Incident Patch 2: `027bfcf6` (2026-10-26)
+**Commit Message**: security: enforce dashboard authorization and resource boundaries
+
+Harden tenant permissions, transfer admission, authentication and bounded request handling. Add member NAT domain settings, migration guidance and regression coverage.
 
 Co-authored-by: naiba/CloudCode <[REDACTED_EMAIL]>
 
-**File**: `service/singleton/frontend-templates.yaml` (modified, +2/-2)
+**File**: `cmd/dashboard/controller/access_log.go` (added, +43/-0)
 ```diff
-@@ -2,14 +2,14 @@
-   name: "OfficialAdmin"
-   repository: "https://github.com/nezhahq/admin-frontend"
-   author: "nezhahq"
--  version: "v2.4.0"
-+  version: "v2.5.0"
-   is_admin: true
-   is_official: true
- - path: "user-dist"
-   name: "Official"
-   repository: "https://github.com/hamster1963/nezha-dash-v2"
-   author: "hamster1963"
--  version: "v2.5.1"
-+  version: "v2.6.0"
-   is_official: true
- - path: "nezha-pixel-dist"
-   name: "Nezha-Pixel"
+@@ -0,0 +1,43 @@
++package controller
++
++import (
++	"fmt"
++	"github.com/gin-gonic/gin"
++	"log"
++	"net/http"
++	"net/url"
++	"strings"
++)
++
++func credentialFreeRequestPath(path string) string {
++	parsed, err := url.ParseRequestURI(path)
++	if err != nil {
++		return "[invalid request path]"
++	}
++	path = parsed.Path // Never log query values: JWT, OAuth codes and state can all appear here.
++	for _, prefix := range []string{"/mcp/download/", "/mcp/upload/"} {
++		if strings.HasPrefix(path, prefix) {
++			return prefix + "[redacted]"
++		}
++	}
++	return path
++}
++
++func dashboardRequestLogger() gin.HandlerFunc {
++	return gin.LoggerWithFormatter(func(entry gin.LogFormatterParams) string {
++		return fmt.Sprintf("[GIN] %s | %d | %s | %q | %s %q\n", entry.TimeStamp.Format("2006/01/02 15:04:05"), entry.StatusCode, entry.Latency, entry.ClientIP, entry.Method, credentialFreeRequestPath(entry.Path))
++	})
++}
++
++func dashboardRecovery() gin.HandlerFunc {
++	return func(c *gin.Context) {
++		defer func() {
++			if recover() != nil {
++				// Gin's default recovery dumps the request, including cookie and URL credentials.
++				log.Printf("NEZHA>> recovered request panic: %s %q", c.Request.Method, credentialFreeRequestPath(c.Request.URL.RequestURI()))
++				c.AbortWithStatus(http.StatusInternalServerError)
++			}
++		}()
++		c.Next()
++	}
++}
+```
+
+**File**: `cmd/dashboard/controller/access_log_test.go` (added, +29/-0)
+```diff
+@@ -0,0 +1,29 @@
++package controller
++
++import (
++	"bytes"
++	"net/http/httptest"
++	"testing"
++
++	"github.com/gin-gonic/gin"
++	"github.com/stretchr/testify/require"
++)
++
++func TestAccessLogOmitsCredentialURLs(t *testing.T) {
++	var output bytes.Buffer
++	original := gin.DefaultWriter
++	gin.DefaultWriter = &output
++	defer func() { gin.DefaultWriter = original }()
++	router := gin.New()
++	router.Use(dashboardRequestLogger())
++	router.GET("/ws", func(c *gin.Context) { c.Status(204) })
++	router.GET("/mcp/download/:token", func(c *gin.Context) { c.Status(204) })
++	for _, path := range []string{"/ws?token=synthetic-session-credential", "/mcp/download/synthetic-transfer-credential?query=sensitive"} {
++		router.ServeHTTP(httptest.NewRecorder(), httptest.NewRequest("GET", path, nil))
++	}
++	require.NotContains(t, output.String(), "synthetic-session-credential")
++	require.NotContains(t, output.String(), "synthetic-transfer-credential")
++	require.NotContains(t, output.String(), "query=sensitive")
++	require.Contains(t, output.String(), "/ws")
++	require.Contains(t, output.String(), "/mcp/download/")
++}
+```
+
+**File**: `cmd/dashboard/controller/agentcompat_capability_nat_test.go` (modified, +5/-0)
+```diff
+@@ -18,6 +18,11 @@ import (
+ func TestAgentcompatNATCapabilityUsesExactCurrentProfilePermission(t *testing.T) {
+ 	cleanup, userID := setupMCPTest(t)
+ 	t.Cleanup(cleanup)
++	oldUsers := singleton.UserInfoMap
++	singleton.UserInfoMap = map[uint64]model.UserInfo{userID: {Role: model.RoleMember}, 999: {Role: model.RoleMember}}
++	t.Cleanup(func() { singleton.UserInfoMap = oldUsers })
++	singleton.Conf.DashboardHost = "panel.example"
++	singleton.Conf.NATMemberDomains = []string{"private-profile.example", "foreign-profile.example"}
+ 	handler := rpc.NewNezhaHandler()
+ 	originalHandler := rpc.NezhaHandlerSingleton
+ 	originalNAT := singleton.NATShared
+```
+
+**File**: `cmd/dashboard/controller/alertrule.go` (modified, +3/-0)
+```diff
+@@ -195,6 +195,9 @@ func validateRule(c *gin.Context, r *model.AlertRule) error {
+ 					return singleton.Localizer.ErrorT("duration is too large")
+ 				}
+ 			} else {
++				if rule.CycleStart != nil && rule.CycleStart.Year() < 2000 {
++					return singleton.Localizer.ErrorT("cycle_start must be in year 2000 or later")
++				}
+ 				if !rule.HasSafeCycleUnit() {
+ 					return singleton.Localizer.ErrorT("invalid cycle unit")
+ 				}
+```
+
+**File**: `cmd/dashboard/controller/controller.go` (modified, +2/-1)
+```diff
+@@ -29,7 +29,8 @@ import (
+ 
+ func ServeWeb(frontendDist fs.FS) http.Handler {
+ 	gin.SetMode(gin.ReleaseMode)
+-	r := gin.Default()
++	r := gin.New()
++	r.Use(dashboardRequestLogger(), dashboardRecovery())
+ 
+ 	if singleton.Conf.Debug {
+ 		gin.SetMode(gin.DebugMode)
+```
+
+**File**: `cmd/dashboard/controller/cron.go` (modified, +35/-2)
+```diff
+@@ -3,6 +3,7 @@ package controller
+ import (
+ 	"slices"
+ 	"strconv"
++	"sync/atomic"
+ 
+ 	"github.com/gin-gonic/gin"
+ 	"github.com/jinzhu/copier"
+@@ -43,6 +44,11 @@ func listCron(c *gin.Context) ([]*model.Cron, error) {
+ // @Success 200 {object} model.CommonResponse[uint64]
+ // @Router /cron [post]
+ func createCron(c *gin.Context) (uint64, error) {
++	// Scheduled commands execute autonomously; write scope cannot imply execution.
++	if tok := APITokenFromContext(c); tok != nil && !tok.HasScope(model.ScopeCronExec) {
++		return 0, singleton.Localizer.ErrorT("permission denied")
++	}
++
+ 	var cf model.CronForm
+ 	var cr model.Cron
+ 
+@@ -81,17 +87,28 @@ func createCron(c *gin.Context) (uint64, error) {
+ 	}
+ 
+ 	var err error
++	var committed atomic.Bool
+ 	if cf.TaskType == model.CronTypeCronTask {
+-		if cr.CronJobID, err = singleton.CronShared.AddFunc(cr.Scheduler, singleton.CronTrigger(&cr)); err != nil {
++		if cr.CronJobID, err = singleton.CronShared.AddFunc(cr.Scheduler, func() {
++			// Scheduler callbacks must not observe an uncommitted row or its mutable ID.
++			if committed.Load() {
++				singleton.CronTrigger(&cr)()
++			}
++		}); err != nil {
+ 			return 0, err
+ 		}
+ 	}
+ 
+ 	if err = singleton.DB.Create(&cr).Error; err != nil {
++		// Registration is provisional until persistence succeeds.
++		if cr.CronJobID != 0 {
++			singleton.CronShared.Remove(cr.CronJobID)
++		}
+ 		return 0, newGormError("%v", err)
+ 	}
+ 
+ 	singleton.CronShared.Update(&cr)
++	committed.Store(true)
+ 	return cr.ID, nil
+ }
+ 
+@@ -108,6 +125,11 @@ func createCron(c *gin.Context) (uint64, error) {
+ // @Success 200 {object} model.CommonResponse[any]
+ // @Router /cron/{id} [patch]
+ func updateCron(c *gin.Context) (any, error) {
++	// Scheduled commands execute autonomously; write scope cannot imply execution.
++	if tok := APITokenFromContext(c); tok != nil && !tok.HasScope(model.ScopeCronExec) {
++		return nil, singleton.Localizer.ErrorT("permission denied")
++	}
++
+ 	idStr := c.Param("id")
+ 	id, err := strconv.ParseUint(idStr, 10, 64)
+ 	if err != nil {
+@@ -157,18 +179,29 @@ func updateCron(c *gin.Context) (any, error) {
+ 		return nil, singleton.Localizer.ErrorT("scheduled tasks cannot be triggered by alarms")
+ 	}
+ 
++	var committed atomic.Bool
++	cr.CronJobID = 0 // Only remove the newly registered job on failure, never the prior live job.
+ 	// 对于计划任务类型，需要更新CronJob
+ 	if cf.TaskType == model.CronTypeCronTask {
+-		if cr.CronJobID, err = singleton.CronShared.AddFunc(cr.Scheduler, singleton.CronTrigger(&cr)); err != nil {
++		if cr.CronJobID, err = singleton.CronShared.AddFunc(cr.Scheduler, func() {
++			// Scheduler callbacks must not observe an uncommitted row or its mutable ID.
++			if committed.Load() {
++				singleton.CronTrigger(&cr)()
++			}
++		}); err != nil {
+ 			return nil, err
+ 		}
+ 	}
+ 
+ 	if err = singleton.DB.Save(&cr).Error; err != nil {
++		if cr.CronJobID != 0 {
++			singleton.CronShared.Remove(cr.CronJobID)
++		}
+ 		return nil, newGormError("%v", err)
+ 	}
+ 
+ 	singleton.CronShared.Update(&cr)
++	committed.Store(true)
+ 	return nil, nil
+ }
+ 
+```
+
+**File**: `cmd/dashboard/controller/cron_service_cover_pat_test.go` (modified, +7/-0)
+```diff
+@@ -124,6 +124,7 @@ func TestCreateCron_RejectsCoverAllForServerLimitedPAT(t *testing.T) {
+ 	setupCoverPATFixture(t)
+ 
+ 	tok := &model.APIToken{ID: 17, UserID: 100}
++	tok.SetScopes([]string{model.ScopeCronWrite, model.ScopeCronExec})
+ 	tok.SetServerIDs([]uint64{1})
+ 
+ 	r := coverPATRouter(t, tok, commonHandler(createCron))
+@@ -161,6 +162,7 @@ func TestCreateCron_RejectsCoverIgnoreAllWithEmptyServersForLimitedPAT(t *testin
+ 	setupCoverPATFixture(t)
+ 
+ 	tok := &model.APIToken{ID: 18, UserID: 100}
++	tok.SetScopes([]string{model.ScopeCronWrite, model.ScopeCronExec})
+ 	tok.SetServerIDs([]uint64{1})
+ 
+ 	r := coverPATRouter(t, tok, commonHandler(createCron))
+@@ -195,6 +197,7 @@ func TestCreateService_AllowsCoverIgnoreAllEmptySkipForLimitedPAT(t *testing.T)
+ 	setupCoverPATFixture(t)
+ 
+ 	tok := &model.APIToken{ID: 21, UserID: 100}
++	tok.SetScopes([]string{model.ScopeCronWrite, model.ScopeCronExec})
+ 	tok.SetServerIDs([]uint64{1})
+ 
+ 	r := coverPATRouter(t, tok, commonHandler(createService))
+@@ -220,6 +223,7 @@ func TestCreateService_RejectsCoverAllForServerLimitedPAT(t *testing.T) {
+ 	setupCoverPATFixture(t)
+ 
+ 	tok := &model.APIToken{ID: 19, UserID: 100}
++	tok.SetScopes([]string{model.ScopeCronWrite, model.ScopeCronExec})
+ 	tok.SetServerIDs([]uint64{1})
+ 
+ 	r := coverPATRouter(t, tok, commonHandler(createService))
+@@ -256,6 +260,7 @@ func TestCreateCron_RejectsCoverAllWithDenyListCoveringOnlyWhitelistedServers(t
+ 	setupCoverPATFixture(t)
+ 
+ 	tok := &model.APIToken{ID: 31, UserID: 100}
++	tok.SetScopes([]string{model.ScopeCronWrite, model.ScopeCronExec})
+ 	tok.SetServerIDs([]uint64{1})
+ 
+ 	r := coverPATRouter(t, tok, commonHandler(createCron))
+@@ -292,6 +297,7 @@ func TestCreateCron_AllowsCoverAllWhenDenyListCoversAllNonWhitelistedServers(t *
+ 	setupCoverPATFixture(t)
+ 
+ 	tok := &model.APIToken{ID: 41, UserID: 100}
++	tok.SetScopes([]string{model.ScopeCronWrite, model.ScopeCronExec})
+ 	tok.SetServerIDs([]uint64{1})
+ 
+ 	r := coverPATRouter(t, tok, commonHandler(createCron))
+@@ -321,6 +327,7 @@ func TestCreateService_RejectsCoverAllWithSkipListCoveringOnlyWhitelistedServers
+ 	setupCoverPATFixture(t)
+ 
+ 	tok := &model.APIToken{ID: 32, UserID: 100}
++	tok.SetScopes([]string{model.ScopeCronWrite, model.ScopeCronExec})
+ 	tok.SetServerIDs([]uint64{1})
+ 
+ 	r := coverPATRouter(t, tok, commonHandler(createService))
+```
+
+**File**: `cmd/dashboard/controller/dashboard_credential_nat_flow_test.go` (modified, +10/-4)
+```diff
+@@ -31,12 +31,15 @@ func setupNATFlowTest(t *testing.T) (*rpcService.NezhaHandler, *model.Server, *n
+ 	setupDashboardCredentialTest(t)
+ 
+ 	require.NoError(t, singleton.DB.AutoMigrate(&model.Server{}))
++	originalUsers := singleton.UserInfoMap
++	singleton.UserInfoMap = map[uint64]model.UserInfo{1: {Role: model.RoleAdmin}}
+ 	originalServerShared, originalHandler := singleton.ServerShared, rpcService.NezhaHandlerSingleton
+ 	t.Cleanup(func() {
++		singleton.UserInfoMap = originalUsers
+ 		singleton.ServerShared, rpcService.NezhaHandlerSingleton = originalServerShared, originalHandler
+ 	})
+ 
+-	serverRow := &model.Server{Common: model.Common{ID: 7}, UUID: "nat-credential-flow-test", Name: "nat-credential-flow-test"}
++	serverRow := &model.Server{Common: model.Common{ID: 7, UserID: 1}, UUID: "nat-credential-flow-test", Name: "nat-credential-flow-test"}
+ 	require.NoError(t, singleton.DB.Create(serverRow).Error)
+ 	singleton.ServerShared = singleton.NewServerClass()
+ 	handler := rpcService.NewNezhaHandler()
+@@ -103,7 +106,7 @@ func TestServeNATWithRealClassifierStripsDashboardCredentialsFromAllChannels(t *
+ 
+ 			done := make(chan struct{})
+ 			go func() {
+-				rpc.ServeNAT(writer, request, &model.NAT{ServerID: server.ID, Host: "target.example"})
++				rpc.ServeNAT(writer, request, &model.NAT{Common: model.Common{UserID: 1}, ServerID: server.ID, Host: "target.example"})
+ 				close(done)
+ 			}()
+ 			select {
+@@ -161,7 +164,7 @@ func TestServeNATWithRealClassifierKeepsForeignCredentials(t *testing.T) {
+ 
+ 	done := make(chan struct{})
+ 	go func() {
+-		rpc.ServeNAT(writer, request, &model.NAT{ServerID: server.ID, Host: "target.example"})
++		rpc.ServeNAT(writer, request, &model.NAT{Common: model.Common{UserID: 1}, ServerID: server.ID, Host: "target.example"})
+ 		close(done)
+ 	}()
+ 	select {
+@@ -242,7 +245,10 @@ type natFlowAgent struct {
+ 	once      sync.Once
+ }
+ 
+-func (agent *natFlowAgent) Read([]byte) (int, error) { return 0, io.EOF }
++func (agent *natFlowAgent) Read([]byte) (int, error) {
++	<-agent.writeDone
++	return 0, io.EOF
++}
+ func (agent *natFlowAgent) Write(data []byte) (int, error) {
+ 	agent.mu.Lock()
+ 	agent.written.Write(data)
 ```
 
 #### Recent Merged Pull Requests:
@@ -1267,57 +1810,29 @@ Co-authored-by: naiba/CloudCode <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: cover embedded and local frontend path confinement
+## X. security: close OAuth and agent control lifecycle regressions
 
 **RULE**:
-When implementing operations in `cmd/dashboard/controller/frontend_path_security_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nezhahq/nezha. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/dashboard/controller/controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nezhahq/nezha. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `15fa673c`: test: cover embedded and local frontend path confinement. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7cd0371b`: security: close OAuth and agent control lifecycle regressions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/dashboard/controller/frontend_path_security_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/dashboard/controller/controller.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-package controller
-
-import (
-	"net/http"
-	"os"
-	"path/filepath"
-	"strings"
-	"testing"
-	"testing/fstest"
-
-	"github.com/gin-gonic/gin"
-	"github.com/nezhahq/nezha/model"
-	"github.com/nezhahq/nezha/service/singleton"
-	"github.com/stretchr/testify/require"
-)
-
-func TestFrontendPathConfinementForEmbeddedAndLocalOverrides(t *testing.T) {
-	for _, mode := range []string{"embedded", "local-override"} {
-		t.Run(mode, func(t *testing.T) {
-			t.Chdir(t.TempDir())
-			original := singleton.Conf
-			singleton.Conf = &singleton.ConfigClass{Config: &model.Config{ConfigDashboard: model.ConfigDashboard{UserTemplate: "user-dist", AdminTemplate: "admin-dist"}}}
-			t.Cleanup(func() { singleton.Conf = original })
-			files := fstest.MapFS{
-				"user-dist/index.html":             &fstest.MapFile{Data: []byte("embedded user index")},
-				"user-dist/assets/application.js":  &fstest.MapFile{Data: []byte("embedded user asset")},
-				"admin-dist/index.html":            &fstest.MapFile{Data: []byte("embedded admin index")},
-				"admin-dist/assets/application.js": &fstest.MapFile{Data: []byte("embedded admin asset")},
-				"data/config.yaml":                 &fstest.MapFile{Data: []byte("outside-secret-canary")},
-			
+	// Binding needs the real JWT session; anonymous OAuth login remains available.
+	fallbackAuth.GET("/oauth2/:provider", commonHandler(oauth2redirect))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	api.GET("/oauth2/:provider", commonHandler(oauth2redirect))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `15fa673c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7cd0371b` are properly handled with clean fallback behavior.

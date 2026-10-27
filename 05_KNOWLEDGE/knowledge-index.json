@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T13:31:54.213Z",
+  "last_updated": "2026-10-27T13:35:20.573Z",
   "total_verified_learnings": 1117,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -38292,8 +38292,8 @@
       "slug": "nezhahq-nezha",
       "platform": "github",
       "source_url": "https://github.com/nezhahq/nezha",
-      "source_version": "15fa673c",
-      "content_hash": "bde7a8dd2a22d047b2e055b0064f6596402df48e33b2116a207c2ed73ea485f4",
+      "source_version": "a6a16eab",
+      "content_hash": "9cc592a839c79e5a463cc3c1c976ad5307ee4623478a9ec2a44993a59e45fdc6",
       "dossier_path": "07_PROJECT_LEARNING/nezhahq-nezha-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nezhahq-nezha-learnings.md",
       "promoted_rules": [
@@ -38321,6 +38321,11 @@
           "number": 4427,
           "title": "test: cover embedded and local frontend path confinement",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4808,
+          "title": "security: close OAuth and agent control lifecycle regressions",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38328,7 +38333,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T19:45:01.766Z",
+      "verified_at": "2026-10-27T13:35:08.348Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41299,8 +41304,8 @@
       "slug": "peerdb-io-peerdb",
       "platform": "github",
       "source_url": "https://github.com/PeerDB-io/peerdb",
-      "source_version": "b80c75cb",
-      "content_hash": "33d9989c180e7a1e82630d10e43b84a865b0f02580560122ec837ba31ed8fa2c",
+      "source_version": "65ce26b8",
+      "content_hash": "ead50e198a79458088b5bdcb46610eb458c45be64538e6c31ac9f3f874631696",
       "dossier_path": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "promoted_rules": [
@@ -41338,6 +41343,11 @@
           "number": 4492,
           "title": "clickhouse): reuse table mapping and column setting lookups (#4971)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4811,
+          "title": "deps): update gomod dependencies (#4891)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41345,7 +41355,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T23:39:26.361Z",
+      "verified_at": "2026-10-27T13:35:14.730Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43442,8 +43452,8 @@
       "slug": "react-navigation-react-navigation",
       "platform": "github",
       "source_url": "https://github.com/react-navigation/react-navigation",
-      "source_version": "c1173a94",
-      "content_hash": "3fa6d6cd51e094e7c494618d55a63b100ace6e30afe4f17fba049365b54b9d62",
+      "source_version": "641efd1e",
+      "content_hash": "6b8fdae4c4e6218ccfdb4851bdae0136e5464cb9788093d67f6d8e99d080611c",
       "dossier_path": "07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md",
       "promoted_rules": [
@@ -43456,6 +43466,11 @@
           "number": 3868,
           "title": "ci: perform steps in parallel when possible",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4810,
+          "title": "respect max width for drawer",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43463,7 +43478,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T10:09:38.327Z",
+      "verified_at": "2026-10-27T13:35:11.593Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50994,13 +51009,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "aa93d669",
-      "content_hash": "6c8a53c370fd0a3a87ab52b03a28eb3bef43a5eabaeb13a933cf73ae61a73337",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "e02cfcd7",
+      "content_hash": "0721d572230a6ac84edeedfebc2346e44f47e8a83e8d4fb6d5c8d13da4646b64",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
@@ -51056,6 +51071,11 @@
           "number": 4510,
           "title": "Merge 'core: key the schema by namespace and resolve names to a namespace' from",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4812,
+          "title": "Merge 'core/json: match SQLite's null document and null path handling' from",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51063,7 +51083,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T00:48:37.159Z",
+      "verified_at": "2026-10-27T13:35:20.560Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66903,8 +66923,8 @@
       "slug": "urllib3-urllib3",
       "platform": "github",
       "source_url": "https://github.com/urllib3/urllib3",
-      "source_version": "d07367de",
-      "content_hash": "dd005f976aa1dc04a008faa55fd8f1c6ca5a078c8c0e77c8d10f4689440d9edf",
+      "source_version": "8883fd90",
+      "content_hash": "5b9d1f1da12d73671d7aa8b159c1f4807b419fe8f1a9b21ce57358d579eb7e57",
       "dossier_path": "07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
       "promoted_rules": [
@@ -66917,6 +66937,11 @@
           "number": 3734,
           "title": "Avoid overflow in retry backoff calculation (#5305)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4809,
+          "title": "Speed up parse_url() by ~28% for common ASCII hosts and plain paths (#5314)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -66924,7 +66949,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T20:51:55.518Z",
+      "verified_at": "2026-10-27T13:35:09.458Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -133668,6 +133693,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T13:31:54.197Z"
+    },
+    "rule-4808": {
+      "learning_id": "rule-4808",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4808,
+      "title": "security: close OAuth and agent control lifecycle regressions",
+      "source_url": "https://github.com/nezhahq/nezha",
+      "source_version": "a6a16eab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:35:08.348Z"
+    },
+    "rule-4809": {
+      "learning_id": "rule-4809",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4809,
+      "title": "Speed up parse_url() by ~28% for common ASCII hosts and plain paths (#5314)",
+      "source_url": "https://github.com/urllib3/urllib3",
+      "source_version": "8883fd90",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:35:09.458Z"
+    },
+    "rule-4810": {
+      "learning_id": "rule-4810",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4810,
+      "title": "respect max width for drawer",
+      "source_url": "https://github.com/react-navigation/react-navigation",
+      "source_version": "641efd1e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:35:11.593Z"
+    },
+    "rule-4811": {
+      "learning_id": "rule-4811",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4811,
+      "title": "deps): update gomod dependencies (#4891)",
+      "source_url": "https://github.com/PeerDB-io/peerdb",
+      "source_version": "65ce26b8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:35:14.730Z"
+    },
+    "rule-4812": {
+      "learning_id": "rule-4812",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4812,
+      "title": "Merge 'core/json: match SQLite's null document and null path handling' from",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "e02cfcd7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:35:20.560Z"
     }
   },
   "aliases": {

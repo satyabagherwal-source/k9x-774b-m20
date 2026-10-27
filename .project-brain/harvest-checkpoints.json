@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T13:31:54.291Z",
+  "last_updated": "2026-10-27T13:35:20.645Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4236,14 +4236,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-navigation-react-navigation",
-      "content_hash": "3fa6d6cd51e094e7c494618d55a63b100ace6e30afe4f17fba049365b54b9d62",
-      "verified_at": "2026-10-23T10:09:38.416Z",
+      "content_hash": "6b8fdae4c4e6218ccfdb4851bdae0136e5464cb9788093d67f6d8e99d080611c",
+      "verified_at": "2026-10-27T13:35:11.684Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T10:09:38.416Z"
+      "last_updated": "2026-10-27T13:35:11.684Z"
     },
     "easegress-io/easegress": {
       "repository": "easegress-io/easegress",
@@ -5481,14 +5481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-peerdb-io-peerdb",
-      "content_hash": "33d9989c180e7a1e82630d10e43b84a865b0f02580560122ec837ba31ed8fa2c",
-      "verified_at": "2026-10-25T23:39:26.444Z",
+      "content_hash": "ead50e198a79458088b5bdcb46610eb458c45be64538e6c31ac9f3f874631696",
+      "verified_at": "2026-10-27T13:35:14.811Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T23:39:26.444Z"
+      "last_updated": "2026-10-27T13:35:14.811Z"
     },
     "tailscale/tailscale": {
       "repository": "tailscale/tailscale",
@@ -9111,14 +9111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nezhahq-nezha",
-      "content_hash": "bde7a8dd2a22d047b2e055b0064f6596402df48e33b2116a207c2ed73ea485f4",
-      "verified_at": "2026-10-25T19:45:01.845Z",
+      "content_hash": "9cc592a839c79e5a463cc3c1c976ad5307ee4623478a9ec2a44993a59e45fdc6",
+      "verified_at": "2026-10-27T13:35:08.429Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T19:45:01.845Z"
+      "last_updated": "2026-10-27T13:35:08.429Z"
     },
     "tiajinsha/JKVideo": {
       "repository": "tiajinsha/JKVideo",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "6c8a53c370fd0a3a87ab52b03a28eb3bef43a5eabaeb13a933cf73ae61a73337",
-      "verified_at": "2026-10-26T00:48:37.253Z",
+      "content_hash": "0721d572230a6ac84edeedfebc2346e44f47e8a83e8d4fb6d5c8d13da4646b64",
+      "verified_at": "2026-10-27T13:35:20.644Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T00:48:37.253Z"
+      "last_updated": "2026-10-27T13:35:20.644Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -14496,14 +14496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-urllib3-urllib3",
-      "content_hash": "dd005f976aa1dc04a008faa55fd8f1c6ca5a078c8c0e77c8d10f4689440d9edf",
-      "verified_at": "2026-10-22T20:51:55.591Z",
+      "content_hash": "5b9d1f1da12d73671d7aa8b159c1f4807b419fe8f1a9b21ce57358d579eb7e57",
+      "verified_at": "2026-10-27T13:35:09.560Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T20:51:55.591Z"
+      "last_updated": "2026-10-27T13:35:09.560Z"
     },
     "simibac/ConfettiSwiftUI": {
       "repository": "simibac/ConfettiSwiftUI",
