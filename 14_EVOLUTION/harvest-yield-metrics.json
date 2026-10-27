@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T18:29:33.804Z",
-  "total_cycles_completed": 5451,
-  "total_learnings_persisted": 5451,
-  "total_rules_promoted": 4851,
+  "last_updated": "2026-10-27T18:36:29.918Z",
+  "total_cycles_completed": 5456,
+  "total_learnings_persisted": 5456,
+  "total_rules_promoted": 4855,
   "history": [
-    {
-      "timestamp": "2026-10-27T12:35:07.467Z",
-      "repository": "marmotdata/marmot",
-      "learningId": "learn-github-marmotdata-marmot",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T12:38:28.074Z",
-      "repository": "fb55/css-select",
-      "learningId": "learn-github-fb55-css-select",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T12:38:30.815Z",
-      "repository": "laurent22/joplin",
-      "learningId": "learn-github-laurent22-joplin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T12:43:19.910Z",
-      "repository": "grpc/grpc-rust",
-      "learningId": "learn-github-grpc-grpc-rust",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T12:46:32.596Z",
-      "repository": "carbon-design-system/carbon-components-svelte",
-      "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T12:46:35.576Z",
       "repository": "cheeriojs/dom-serializer",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-27T18:29:33.804Z",
       "repository": "argoproj/argo-workflows",
       "learningId": "learn-github-argoproj-argo-workflows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T18:36:18.947Z",
+      "repository": "webpack/webpack",
+      "learningId": "learn-github-webpack-webpack",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T18:36:19.504Z",
+      "repository": "astral-sh/ruff",
+      "learningId": "learn-github-astral-sh-ruff",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T18:36:23.115Z",
+      "repository": "rook/rook",
+      "learningId": "learn-github-rook-rook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T18:36:27.658Z",
+      "repository": "lioensky/VCPToolBox",
+      "learningId": "learn-github-lioensky-vcptoolbox",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T18:36:29.918Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

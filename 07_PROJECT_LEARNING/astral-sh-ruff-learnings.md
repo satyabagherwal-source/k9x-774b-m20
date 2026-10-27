@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
-> **Source Version**: `e139fbd6`  
+> **Source Version**: `731a26b8`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T00:24:43.738Z  
+> **Timestamp**: 2026-10-27T18:36:19.065Z  
 > **Learning ID**: `learn-github-astral-sh-ruff`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T00:24:43.730Z  
+> **Harvest Timestamp**: 2026-10-27T18:36:16.693Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python linter and code formatter, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 50289 stars
+- **Stars / Engagement**: 50316 stars
 
 ---
 
@@ -1548,7 +1548,7 @@ impl Renderer for AzureRenderer<'_> {
     fn render(&self, f: &mut std::fmt::Formatter, diagnostics: &[Diagnostic]) -> std::fmt::Result {
         for diag in diagnostics {
             let severity = match diag.severity() {
-                Severity::Info | Severity::Warning => "warning",
+                Severity::Hint | Severity::Info | Severity::Warning => "warning",
                 Severity::Error | Severity::Fatal => "error",
             };
             write!(f, "##vso[task.logissue type={severity};")?;
@@ -1703,6 +1703,7 @@ impl Renderer for ConciseRenderer<'_> {
                 }
             } else {
                 let (severity, severity_style) = match diag.severity() {
+                    Severity::Hint => ("hint", stylesheet.info),
                     Severity::Info => ("info", stylesheet.info),
                     Severity::Warning => ("warning", stylesheet.warning),
                     Severity::Error => ("error", stylesheet.error),
@@ -2102,14 +2103,17 @@ impl<'a> Diff<'a> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29691** (2026-10-24): **[ty] Bound tuple expansion in type displays**
-  *Symptoms*: ## Summary  With 18 assignments of the form `b = (a, a)`, `ty check --output-format concise` used to print 3 MiB for a single `call-non-callable` error. It now prints 1.7 KiB.  Each assignment reuses the previous tuple type twice, so spelling out the type in the error message doubles the number of `int`s at each step:  ```python def f(x: int):     a = (x, x)     b = (a, a)     b()  # Object of type `tuple[tuple[int, int], tuple[int, int]]` is not callable ```  We now share a budget of 256 elements across a tuple and its nested tuples. If a tuple's elements exceed the remaining budget, we display it as `tuple[...]`. Deep tuples still display in full when they fit. Inlay hints omit the text edit when the type contains an abbreviation, so editors won't insert `tuple[...]` as an annotation. 
+- **Issue #29761** (2026-10-27): **Accept a bare raise before a semicolon**
+  *Symptoms*: ## Summary  A bare `raise` can end at a semicolon. For example, Python accepts this handler and re-raises the current exception.  ```python try:     work() except ValueError:     raise; report() ```  The parser tried to read the semicolon as the start of an exception expression and reported a syntax error. We now recognize both a newline and a semicolon as terminators for a bare `raise`. 
   **Post-Mortem & Fix Analysis**:
-  > <!-- generated-comment typing-conformance --> <!-- report-run:40139169587:1 -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.25%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.77%</b>. The number of fully passing files held steady at <b>136/146</b>.  </details>  ---  Results for [afffccc](https://github.com/astral-sh/ruff/commit/afffccc49633eb3095b421b0d073b2522ed693fd) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/40139169587/attempts/1) 
-  > <!-- generated-comment memory --> <!-- report-run:40139169527:1 -->  ## Memory usage report  Memory usage unchanged ✅  ---  Results for [afffccc](https://github.com/astral-sh/ruff/commit/afffccc49633eb3095b421b0d073b2522ed693fd) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/40139169527/attempts/1) 
+  > <!-- generated-comment memory --> <!-- report-run:40461250353:1 -->  ## Memory usage report  Memory usage unchanged ✅  ---  Results for [8d206dc](https://github.com/astral-sh/ruff/commit/8d206dcaeff4a7cfd7fe6224dc07c8be68fbbc13) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/40461250353/attempts/1) 
+  > <!-- generated-comment ty-ecosystem --> <!-- report-run:40461250280:1 -->  ## `ecosystem-analyzer` results  No diagnostic changes detected ✅  [Full report with detailed diff](https://dqhfo45wdv0ek.cloudfront.net/ruff/pull-requests/29761/ty-ecosystem/40461250280/1/diff.html) · [Timing results](https://dqhfo45wdv0ek.cloudfront.net/ruff/pull-requests/29761/ty-ecosystem/40461250280/1/timing.html)  ---  Results for [8d206dc](https://github.com/astral-sh/ruff/commit/8d206dcaeff4a7cfd7fe6224dc07c8be68fbbc13) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/40461250280/attempts/1) 
 
-- **Issue #29649** (2026-10-24): **[ty] Avoid expanding declared bounds in captured ParamSpecs**
-  *Symptoms*: Passing overloaded generic functions to `Callable[P, object]` can cause the constraint solver to enumerate combinations of signatures specialized to their declared type-variable bounds. The captured signatures already retain those bounds, so this adds substantial work without new call-site evidence.  Track the replacement constraint's provenance and skip this specialization for locally bound variables in captured ParamSpec signatures when the replacement comes solely from a validity constraint. Evidence and mixed constraints still specialize local variables, and free variables retain normal substitution, including expansion of free ParamSpecs into overloads.  Preserving the generic parameters also lets a callback constrained to `(str, bytes)` receive either type when forwarded through a `ParamSpec`, instead of being restricted to its first constraint.  Fixes https://github.com/astral-sh/ty/issues/4796.  ## Test plan  Compared against `90bcf19c58b4` using the same Linux/aarch64 environment and optimized dev profile (Rust 1.99.0, opt-level 1, LTO off):  - The issue's NumPy reproducer, using NumPy 2.5.4 and Python 3.12 semantics, improved from an 11.03 s mean across three runs to 0.101 s across ten runs (about 110× faster). Every run completed without diagnostics. - The six-overload benchmark improved from 225 ms to 22.5 ms across ten Criterion samples (about 10× faster), with no diagnostics before or after.  ## Ecosystem report  Analyzed head `5c07a3b83f78d45ccf9994f0bfa681ee25
+- **Issue #29759** (2026-10-27): **[ty] Fix a panic when checking truthiness in a loop**
+  *Symptoms*: ## Summary  Ty could panic on `assert predicate` inside a loop where `predicate` starts as a lambda and a later iteration rebinds it to a class. When cycle recovery added the class to the operand type, ty looked up its metaclass to determine its truthiness. That lookup could introduce a new inference cycle while Salsa was recovering the first one.  Reachability now evaluates the predicate from the operand types that expression inference has already normalized. Outside loops, it caches the result so repeated walks of the same condition can reuse it. Inside a loop, a condition can depend on an assignment it guards, so the caller reads the inferred operands directly. Expression inference no longer stores predicate truthiness or recomputes it during recovery.  The 163-project ecosystem run produced identical diagnostics. Checking isort took 291 ms, up from 248 ms on the base revision, which gives back some of the speedup from #29706. The average timing factor across projects was 1.02×. CodSpeed found no significant changes among the 214 benchmarks it compared. [Ecosystem diff](https://dqhfo45wdv0ek.cloudfront.net/ruff/pull-requests/29759/ty-ecosystem/40467940782/1/diff.html) · [Timings](https://dqhfo45wdv0ek.cloudfront.net/ruff/pull-requests/29759/ty-ecosystem/40467940782/1/timing.html) · [CodSpeed](https://github.com/astral-sh/ruff/pull/29759#issuecomment-6435864937)  Closes https://github.com/astral-sh/ty/issues/4834. 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- generated-comment typing-conformance --> <!-- report-run:40467940795:1 -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.25%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.77%</b>. The number of fully passing files held steady at <b>136/146</b>.  </details>  ---  Results for [cdf3608](https://github.com/astral-sh/ruff/commit/cdf3608e0e8dd8db8d787dd8b2c5bfc13089da12) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/40467940795/attempts/1) 
+  > <!-- generated-comment memory --> <!-- report-run:40467940774:1 -->  ## Memory usage report  ### Summary  | Project | Old | New | Diff | Outcome | |---------|-----|-----|------|---------| | sphinx | 194.08MB | 194.15MB | +0.04% (72.29kB) | ⏫ | | flake8 | 38.10MB | 38.09MB | -0.02% (7.71kB) | ⬇️ | | trio | 93.04MB | 92.99MB | -0.05% (44.67kB) | ⬇️ | | prefect | 476.57MB | 476.41MB | -0.03% (160.07kB) | ⬇️ |  ### Significant changes  <details> <summary>Click to expand detailed breakdown</summary>  ### sphinx  | Name | Old | New | Diff | Outcome | |------|-----|-----|------|---------| | `infer_expression_types_impl` | 12.82MB | 12.69MB | -1.01% (132.09kB) |⬇️ | | `cached_predicate_truthiness` | 916.12kB | 1.00MB | +11.84% (108.45kB) |⏫ | | `infer_definition_types` | 12.36MB | 12.41MB | +0.40% (51.01kB) |⏫ | | `evaluate_projected_narrowing_checkpoint` | 225.74kB | 233.29kB | +3.34% (7.55kB) |⏫ | | `infer_expression_type_impl` | 289.12kB | 296.19kB | +2.44% (7.06kB) |⏫ | | `loop_header_reac
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2126,252 +2130,632 @@ impl<'a> Diff<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e139fbd6` (2026-10-25)
-**Commit Message**: [ty] Reuse each generic context's inferable type variables (#29700)
+### Incident Patch 1: `691b60a3` (2026-10-27)
+**Commit Message**: [ty] Fix a panic when checking truthiness in a loop (#29759)
 
 ## Summary
 
-Checking 4,800 calls to a generic function with four parameters took 108
-→ 100 ms of CPU time. Each parameter uses the same set of type
-variables, but ty rebuilt that set for every argument. Ty now computes
-it once per generic context.
+Ty could panic on `assert predicate` inside a loop where `predicate`
+starts as a lambda and a later iteration rebinds it to a class. When
+cycle recovery added the class to the operand type, ty looked up its
+metaclass to determine its truthiness. That lookup could introduce a new
+inference cycle while Salsa was recovering the first one.
 
-Calls with plain `int` parameters were essentially unchanged. Checking
-all of
-[PyTorch](https://github.com/pytorch/pytorch/tree/ab92945cea42e47ae398aead69af0872d340ea0f)
-showed no consistent speedup.
+Reachability now evaluates the predicate from the operand types that
+expression inference has already normalized. Outside loops, it caches
+the result so repeated walks of the same condition can reuse it. Inside
+a loop, a condition can depend on an assignment it guards, so the caller
+reads the inferred operands directly. Expression inference no longer
+stores predicate truthiness or recomputes it during recovery.
 
-**File**: `crates/ty_python_semantic/src/types/generics.rs` (modified, +4/-0)
+The 163-project ecosystem run produced identical diagnostics. Checking
+isort took 291 ms, up from 248 ms on the base revision, which gives back
+some of the speedup from #29706. The average timing factor across
+projects was 1.02×. CodSpeed found no significant changes among the 214
+benchmarks it compared. [Ecosystem
+diff](https://dqhfo45wdv0ek.cloudfront.net/ruff/pull-r
+
+**File**: `crates/ty_python_core/src/expression.rs` (modified, +1/-1)
 ```diff
-@@ -371,6 +371,7 @@ pub(super) fn walk_generic_context<'db, V: TypeVisitor<'db> + ?Sized>(
- // The Salsa heap is tracked separately.
- impl get_size2::GetSize for GenericContext<'_> {}
+@@ -91,7 +91,7 @@ pub enum ExpressionContext {
+ pub enum ExpressionKind {
+     /// An ordinary value expression, such as `1` in `self.x: int = 1`.
+     Normal,
+-    /// A predicate whose truthiness is recorded in its evaluation context.
++    /// A predicate evaluated in value or condition context.
+     Predicate {
+         context: ExpressionContext,
+         in_loop: bool,
+```
+
+**File**: `crates/ty_python_semantic/resources/corpus/ty_4834_predicate_truthiness_cycle.py` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++# Regression test for https://github.com/astral-sh/ty/issues/4834
++
++class C("", (lambda: value, (predicate := lambda: value))):
++    pass
++
++# Read the lambda before the loop adds the class as another possible value of predicate.
++predicate
++while True:
++    assert predicate
++    value = 0
++    predicate = C
+```
+
+**File**: `crates/ty_python_semantic/resources/mdtest/loops/for.md` (modified, +15/-0)
+```diff
+@@ -1943,6 +1943,21 @@ for _ in range(1_000_000):
+         x = 2
+ ```
  
-+#[salsa::tracked]
- impl<'db> GenericContext<'db> {
-     /// Creates a generic context from a list of PEP-695 type parameters.
-     pub(crate) fn from_type_params(
-@@ -539,6 +540,9 @@ impl<'db> GenericContext<'db> {
-     }
++The condition can depend on an earlier iteration. Here `y` starts at `2` and only ever receives `1`
++or `2` from `x`, so the loop never decrements `x`.
++
++```py
++def f(n: int):
++    x = 1
++    y = 2
++    for _ in range(n):
++        if not y:
++            x, y = x - 1, x
++        else:
++            x, y = 2, x
++    reveal_type(x)  # revealed: Literal[1, 2]
++```
++
+ ### Large reachability constraint graphs fall back to `Unknown`
  
-     /// Returns the typevars directly bound by this generic context.
-+    ///
-+    /// Argument inference reuses this set for each parameter of each candidate overload.
-+    #[salsa::tracked(returns(copy), heap_size=ruff_memory_usage::heap_size)]
-     pub(crate) fn inferable_typevars(self, db: &'db dyn Db) -> TypeVarSet<'db> {
-         TypeVarSet::from_typevars(db, self.variables(db))
+ ```py
+```
+
+**File**: `crates/ty_python_semantic/src/types/infer.rs` (modified, +24/-51)
+```diff
+@@ -45,7 +45,7 @@
+ 
+ use crate::ProgramEnvironment;
+ use itertools::Either;
+-use ruff_db::parsed::{ParsedModuleRef, parsed_module};
++use ruff_db::parsed::parsed_module;
+ use ruff_python_ast as ast;
+ use ruff_text_size::{Ranged, TextRange};
+ use rustc_hash::FxHashMap;
+@@ -579,7 +579,7 @@ pub(crate) fn infer_expression_types<'db>(
+ }
+ 
+ /// A loop predicate can depend on bindings it guards in the previous iteration.
+-/// Reading inference directly keeps the extra truthiness query out of that cycle.
++/// Evaluate it in the caller's query to keep an extra query out of that cycle.
+ pub(crate) fn infer_predicate_truthiness<'db>(
+     db: &'db dyn Db,
+     expression: Expression<'db>,
+@@ -588,24 +588,38 @@ pub(crate) fn infer_predicate_truthiness<'db>(
+         expression.kind(db),
+         ExpressionKind::Predicate { in_loop: true, .. }
+     ) {
+-        recorded_predicate_truthiness(db, expression)
++        evaluate_predicate_truthiness(db, expression)
+     } else {
+         cached_predicate_truthiness(db, expression)
      }
+ }
+ 
+-/// Keep reachability queries cached when an operand's type changes but its truthiness stays the same.
++/// Reachability walks can revisit the same predicate for many different bindings.
+ #[salsa::tracked(
+     returns(copy),
+     cycle_initial = |_, _, _| Truthiness::Ambiguous,
+     heap_size = get_size2::GetSize::get_heap_size
+ )]
+ fn cached_predicate_truthiness<'db>(db: &'db dyn Db, expression: Expression<'db>) -> Truthiness {
+-    recorded_predicate_truthiness(db, expression)
++    evaluate_predicate_truthiness(db, expression)
+ }
+ 
+-fn recorded_predicate_truthiness<'db>(db: &'db dyn Db, expression: Expression<'db>) -> Truthiness {
+-    infer_expression_types_impl(db, InferExpression::Bare(expression)).predicate_truthiness
++/// A widened operand can require a new metaclass lookup, so evaluate truthiness after
++/// expression inference has normalized the operand types.
++fn evaluate_predicate_truthiness<'db>(db: &'db dyn Db, expression: Expression<'db>) -> Truthiness {
++    let ExpressionKind::Predicate { context, .. } = expression.kind(db) else {
++        return Truthiness::Ambiguous;
++    };
++    let inference = infer_expression_types(db, expression, TypeContext::default());
++    let env = ProgramEnvironment::from_scope(expression.scope(db));
++    let module = parsed_module(db, expression.python_file(db)).load(db);
++    TruthinessAnalyzer::new(
++        db,
++        &env,
++        |node| inference.expression_type(node),
++        |node| inference.comparison_truthiness(node),
++    )
++    .truthiness(expression.node_ref(db).node(&module), context)
+ }
+ 
+ #[salsa::tracked(
+@@ -614,7 +628,7 @@ fn recorded_predicate_truthiness<'db>(db: &'db dyn Db, expression: Expression<'d
+     cycle_fn=|db, cycle, previous: &ExpressionInference<'db>, inference: ExpressionInference<'db>, input: InferExpression<'db>| {
+         let (expression, _) = input.into_inner(db);
+         let env = ProgramEnvironment::from_scope(expression.scope(db));
+-        inference.cycle_normalized(db, &env, previous, cycle, input)
++        inference.cycle_normalized(db, &env, previous, cycle)
+     },
+     heap_size=ruff_memory_usage::heap_size
+ )]
+@@ -639,7 +653,7 @@ pub(super) fn infer_expression_types_impl<'db>(
+ 
+     let env = ProgramEnvironment::from_file(program_file);
+ 
+-    let mut inference = TypeInferenceBuilder::new(
++    TypeInferenceBuilder::new(
+         db,
+         &env,
+         InferenceRegion::Expression(expression, tcx),
+@@ -648,9 +662,7 @@ pub(super) fn infer_expression_types_impl<'db>(
+         index,
+         &module,
+     )
+-    .finish_expression();
+-    inference.record_predicate_truthiness(db, &env, input, Some(module));
+-    inference
++    .finish_expression()
+ }
+ 
+ fn expression_cycle_initial<'db>(
+@@ -2027,9 +2039,6 @@ pub(crate) struct ExpressionInference<'db> {
+     /// The types of every expression in this region.
+     expressions: FrozenMap<ExpressionNodeKey, Type<'db>>,
+ 
+-    /// The predicate's possible outcomes in its evaluation context.
+-    predicate_truthiness: Truthiness,
+-
+     extra: Option<Box<ExpressionInferenceExtra<'db>>>,
+ 
+     /// The scope this region is part of.
+@@ -2098,39 +2107,13 @@ struct ExpressionInferenceExtra<'db> {
+ }
+ 
+ impl<'db> ExpressionInference<'db> {
+-    /// Reachability always asks for a predicate's truthiness without an expected type.
+-    fn record_predicate_truthiness(
+-        &mut self,
+-        db: &'db dyn Db,
+-        env: &ProgramEnvironment<'db>,
+-        input: InferExpression<'db>,
+-        module: Option<ParsedModuleRef>,
+-    ) {
+-        let InferExpression::Bare(expression) = input else {
+-            return;
+-        };
+-        let ExpressionKind::Predicate { context, .. } = expression.kind(db) else {
+-            return;
+-        };
+-        let module =
+-            module.unwrap_or_else(|| parsed_module(db, expression.python_file(db)).load(db));
+-        self.predicate_truthiness = TruthinessAnalyzer::new(
+-            db,
+-            
+```
+
+**File**: `crates/ty_python_semantic/src/types/infer/builder.rs` (modified, +0/-1)
+```diff
+@@ -12949,7 +12949,6 @@ impl<'db> FullExpressionCacheEntry<'db> {
+         });
+ 
+         ExpressionInference {
+-            predicate_truthiness: Truthiness::Ambiguous,
+             expressions: FrozenMap::from(self.expressions),
+             extra,
+             #[cfg(debug_assertions)]
+```
+
+**File**: `crates/ty_python_semantic/src/types/infer/tests.rs` (modified, +0/-1)
+```diff
+@@ -574,7 +574,6 @@ fn comparison_truthiness_widens_across_sparse_cycle_results() -> anyhow::Result<
+     let inference = |ty, truthiness: Option<Truthiness>| {
+         (
+             ExpressionInference {
+-                predicate_truthiness: Truthiness::Ambiguous,
+                 expressions: [(expression, ty)].into_iter().collect(),
+                 extra: truthiness.map(|truthiness| {
+                     Box::new(ExpressionInferenceExtra {
 ```
 
 ---
 
-### Incident Patch 2: `229cb6eb` (2026-10-25)
-**Commit Message**: [ty] Skip method signature inference for concrete decorator results (#29708)
+### Incident Patch 2: `fb2f9218` (2026-10-26)
+**Commit Message**: [ty] Fix narrowing of strings and integers compared with enum members (#29743)
 
-## Summary
+A plain string can compare equal to a `StrEnum` member. Previously, `if
+value == Color.RED` narrowed a `str` to the enum and allowed
+`value.name`, even when `value` was the string `"red"`. The same problem
+affected integers compared with `IntEnum` members.
 
-Checking
-[`discord/state.py`](https://github.com/Rapptz/discord.py/blob/65232c38702be5844cf2ce865a4777eb1928b5d0/discord/state.py)
-opened 100 Python files instead of 112. To decide whether `Interaction`
-was abstract, we used to follow the return annotation on
-[`Interaction.command`](https://github.com/Rapptz/discord.py/blob/65232c38702be5844cf2ce865a4777eb1928b5d0/discord/interactions.py#L355)
-into `discord.ext.commands`.
+Keep the matching `str` or `int` type in equality checks, tuple
+membership tests, and `match` value patterns. A value already known to
+belong to the enum can still narrow to a specific member.
 
-```python
-def cached_slot_property[Owner, Value](
-    name: str,
-) -> Callable[[Callable[[Owner], Value]], CachedSlotProperty[Owner, Value]]: ...
+Closes astral-sh/ty#4827
 
-class Interaction:
-    @cached_slot_property("_cs_command")
-    def command(self) -> Command[Any, ..., Any] | ContextMenu | None: ...
-```
+## Test plan
 
-The decorator always returns a `CachedSlotProperty`. The return
-annotation on `command` determines the type of the cached value, but it
-cannot make the descriptor abstract. We now skip the method’s signature
-when its sole decorator rules out an abstract method or property.
+Ran the reproducer with Python 3.13. The plain values `"a"` and `1`
+entered all three kinds of branches, and `.name` on the string raised
+`AttributeError`. With both default and strict equality settings, ty now
+reveals `str` and `int` in those branches and reports the invalid
+`.name` access.
 
-Checking all of discord.py showed no measurable speedup.
+## Ecosystem report
 
-**File**: `crates/ty_python_semantic/resources/mdtest/abstract.md` (modified, +34/-0)
+Apprise loses a false warning about converting a plain string to an enum
+member. pip gains an assignment error where typeshed requires
+`VerifyMode` and CPython also accepts the plain integer `2`. Both
+changes are expected. [Analyzed head
+`e0388646c9f0d4ac09dfea732b05ca2d84839950`](https://github.com/astral-sh/ru
+
+**File**: `crates/ty_python_semantic/resources/mdtest/narrow/conditionals/eq.md` (modified, +23/-0)
 ```diff
-@@ -542,3 +542,37 @@ class Alias:
- 
- Alias()  # error: [call-non-callable]
+@@ -864,6 +864,29 @@ def loop_back():
+             value = Integer.Y
  ```
-+
-+A decorator can also return an abstract method. Here the decorator replaces `Decorated.method` with
-+`Abstract.method`, so `Decorated` is abstract.
+ 
++The comparison narrows a `str | int` to the matching builtin type. A plain string can equal
++`String.X` and reach the `.name` access.
 +
 +```py
-+from abc import ABC
-+from collections.abc import Callable
-+from typing import TypeVar
++def compare_with_enum_member(value: str | int):
++    if value == String.X:
++        reveal_type(value)  # revealed: str
++        value.name  # error: [unresolved-attribute]
 +
++    if Integer.X == value:
++        reveal_type(value)  # revealed: int
++```
++
++Members of other `IntEnum` classes can also compare equal to `Integer.X`.
++
++```py
++def compare_int_enums(value: IntEnum):
++    if value != Integer.X:
++        reveal_type(value)  # revealed: IntEnum & ~Literal[Integer.X]
++    else:
++        reveal_type(value)  # revealed: IntEnum
++```
++
+ A custom `__new__` can replace the value declared in an `IntEnum` class body. We can still narrow
+ the members of `Foo`, whose runtime values are known, but must preserve all of `Shifted` because its
+ members' runtime values cannot be determined statically:
+```
+
+**File**: `crates/ty_python_semantic/resources/mdtest/narrow/conditionals/in.md` (modified, +13/-0)
+```diff
+@@ -1442,6 +1442,19 @@ def _(colors: list[Color]):
+     reveal_type(inline)  # revealed: list[Color]
+ ```
+ 
++Membership succeeds for the plain integer `1` as well as for the enum member `Code.OK`.
++
++```py
++from enum import IntEnum
++
++class Code(IntEnum):
++    OK = 1
++
++def check_membership(value: int):
++    if value in (Code.OK,):
++        reveal_type(value)  # revealed: int
++```
++
+ An enum that can have additional runtime members can still be narrowed by a membership test against
+ an explicit member. The other branch excludes that member without assuming that the declared members
+ are exhaustive.
+```
+
+**File**: `crates/ty_python_semantic/resources/mdtest/narrow/match.md` (modified, +6/-0)
+```diff
+@@ -4032,6 +4032,12 @@ class Color(StrEnum):
+     GREEN = "g"
+     BLUE = "b"
+ 
++def match_string(value: str):
++    match value:
++        case Color.GREEN as captured:
++            reveal_type(value)  # revealed: str
++            reveal_type(captured)  # revealed: str
++
+ def test_literal_as_enum(x: Literal["g"]) -> None:
+     match x:
+         case Color.RED:
+```
+
+**File**: `crates/ty_python_semantic/src/types/equality.rs` (modified, +18/-10)
+```diff
+@@ -1530,7 +1530,20 @@ fn compare_literal_to_other<'db>(
+     };
+     let condition_expects_equality = operator.condition_expects_equality(branch);
+ 
+-    // Treat broad builtin types as if only the literal itself can compare equal. This is
++    let literal_constraint = || {
++        if !condition_expects_equality {
++            ComparisonResult::CanNarrow(literal_type.negate(db, env))
++        } else if matches!(literal, LiteralValueTypeKind::Enum(_))
++            && literal_semantics != KnownComparisonSemantics::Object
++        {
++            // A plain string can compare equal to a `StrEnum` member.
++            ComparisonResult::Ambiguous
++        } else {
++            ComparisonResult::CanNarrow(literal_type)
++        }
++    };
++
++    // Treat broad builtin types as if only the builtin literal itself can compare equal. This is
+     // intentionally unsafe: subclasses, including `bool` for `int`, can compare equal without
+     // inhabiting the literal type. Explicitly typed subclasses do not take this path.
+     if evaluator.soundness_policy.allow_unsafe_equality
+@@ -1539,7 +1552,7 @@ fn compare_literal_to_other<'db>(
+         && let Some(other_semantics) = unsafe_narrowable_builtin_semantics(db, other)
+     {
+         return if literal_semantics == other_semantics {
+-            ComparisonResult::CanNarrow(literal_type)
++            literal_constraint()
+         } else {
+             operator.result_from_equality(false)
+         };
+@@ -1564,17 +1577,12 @@ fn compare_literal_to_other<'db>(
+             if literal_operand == LiteralOperand::Other
+                 && !other.is_disjoint_from(db, env, literal_type) =>
+         {
+-            ComparisonResult::CanNarrow(literal_type.negate_if(
+-                db,
+-                env,
+-                !condition_expects_equality,
+-            ))
++            literal_constraint()
+         }
+-        Some(_) => ComparisonResult::Ambiguous,
+         None if literal_operand == LiteralOperand::Other && !condition_expects_equality => {
+-            ComparisonResult::CanNarrow(literal_type.negate(db, env))
++            literal_constraint()
+         }
+-        None => ComparisonResult::Ambiguous,
++        _ => ComparisonResult::Ambiguous,
+     }
+ }
+ 
+```
+
+---
+
+### Incident Patch 3: `3c8166b6` (2026-10-26)
+**Commit Message**: [ty] Fix hang when negating recursive unions of instance types (#29652)
+
+Fixes a hang when a recursive alias combines positive and negative
+references, such as `type A = list[A | ~A] | list[~A]`.
+
+Retain negated recursive aliases whose union members resolve to nominal
+instance types, so mapping does not repeatedly unfold the alias into
+itself. Other union members still undergo normalization to preserve
+literal exclusions and positive constraints.
+
+Fixes https://github.com/astral-sh/ty/issues/4799.
+
+## Test plan
+
+Checked the original reproducer and equivalent spellings using `Not[A]`
+and `Intersection[object, Not[A]]` with timeout-bounded debug binaries.
+The patched checker completes on all three; the original reproducer
+hangs on the baseline.
+
+**File**: `crates/ty_python_semantic/resources/mdtest/annotations/intersection_types.md` (modified, +40/-0)
+```diff
+@@ -242,6 +242,46 @@ def _(c: C, d: D):
+     reveal_type(d)  # revealed: D
+ ```
+ 
++## Negated recursive aliases in unions of containers
++
++A recursive alias can appear positively and negatively in one container's element type and
++negatively in another union member.
++
++Regression test for <https://github.com/astral-sh/ty/issues/4799>.
++
++```toml
++[environment]
++python-version = "3.12"
++```
++
++```py
++from typing import TypeAlias
++
++type A = list[A | ~A] | list[~A]
++B: TypeAlias = "list[B | ~B] | list[~B]"
++
++def _(a: A, b: B):
++    reveal_type(a)  # revealed: list[A | ~A] | list[~A]
++    reveal_type(b)  # revealed: B
++```
++
++## Negated recursive aliases through an aliased container
++
++The recursion can pass through another alias for a container in the union.
++
++```toml
++[environment]
++python-version = "3.12"
++```
++
++```py
++type Container = list[A | ~A]
++type A = Container | list[~A]
++
++def _(value: A):
++    reveal_type(value)  # revealed: list[Divergent]
++```
++
+ ## Intersections inside `type[...]`
+ 
+ ```toml
+```
+
+**File**: `crates/ty_python_semantic/resources/mdtest/narrow/type_guards.md` (modified, +44/-0)
+```diff
+@@ -1298,6 +1298,50 @@ def overwritten_target(value: object):
+         reveal_type(value)  # revealed: TypeGuard[list[int] @ value] & ~AlwaysTruthy
+ ```
+ 
++## Negative TypeIs narrowing with recursive unions
++
++Excluding a recursive union still exposes its literal exclusions. Removing `True` from `bool` leaves
++a value whose truthiness is known.
++
++```toml
++[environment]
++python-version = "3.12"
++```
++
++```py
++from typing import Literal, assert_type
++from typing_extensions import TypeIs
++
++type RecursiveBool = Literal[True] | list[RecursiveBool]
++
++def is_recursive_bool(value: object) -> TypeIs[RecursiveBool]:
++    raise NotImplementedError
++
++def f(value: bool):
++    if not is_recursive_bool(value):
++        assert_type(bool(value), Literal[False])
++```
++
++Excluding an enum member also narrows the remaining members' `name` and `value` attributes.
++
++```py
++from enum import Enum
++
++class Color(Enum):
++    RED = 1
++    BLUE = 2
++
++type RecursiveColor = Literal[Color.RED] | list[RecursiveColor]
++
++def is_recursive_color(value: object) -> TypeIs[RecursiveColor]:
++    raise NotImplementedError
++
++def f(value: Color):
++    if not is_recursive_color(value):
++        assert_type(value.name, Literal["BLUE"])
++        assert_type(value.value, Literal[2])
++```
++
+ ## Recursive TypeIs targets
+ 
+ An unresolved recursive `TypeIs` target does not make the negative branch unreachable. We retain the
+```
+
+**File**: `crates/ty_python_semantic/resources/mdtest/pep613_type_aliases.md` (modified, +20/-0)
+```diff
+@@ -680,6 +680,26 @@ def f(x: B | Not[B]):
+     reveal_type(x)  # revealed: B | ~B
+ ```
+ 
++## Negated recursive unions
++
++Negating a recursive union is equivalent to intersecting the negations of its members, including
++when the alias contains gradual types.
++
++```py
++from typing import Any, TypeAlias, TypeVar, assert_type
++from ty_extensions import Intersection, Not
++
++A: TypeAlias = "int | list[tuple[Any, A]]"
 +T = TypeVar("T")
 +
-+def replace_with(value: T) -> Callable[[object], T]:
-+    return lambda _: value
++def identity(x: T) -> T:
++    return x
 +
-+class Decorated(ABC):
-+    @replace_with(Abstract.method)
-+    def method(self) -> None:
-+        pass
-+
-+Decorated()  # error: [call-non-callable]
++def f(x: Not[A], y: Intersection[Not[int], Not[list[tuple[Any, A]]]]):
++    assert_type(identity(x), Intersection[Not[int], Not[list[tuple[Any, A]]]])
++    assert_type(identity(y), Not[A])
 +```
 +
-+Python applies the inner decorator first. It returns a plain object, which the outer decorator
-+replaces with `Abstract.method`.
+ ## Specializing non-generic recursive aliases
+ 
+ A recursive alias without type variables cannot be specialized. Quoting the entire definition does
+```
+
+**File**: `crates/ty_python_semantic/resources/mdtest/pep695_type_aliases.md` (modified, +19/-0)
+```diff
+@@ -1868,6 +1868,25 @@ def f(x: Not[A], y: Not[list[tuple[Any, A]]]):
+     assert_type(identity(y), Not[A])
+ ```
+ 
++### Negated recursive unions
++
++Negating a recursive union is equivalent to intersecting the negations of its members, including
++when the alias contains gradual types.
 +
 +```py
-+class Stacked(ABC):
-+    @replace_with(Abstract.method)
-+    @replace_with(object())
-+    def method(self) -> None:
-+        pass
++from typing import Any, assert_type
++from ty_extensions import Intersection, Not
 +
-+Stacked()  # error: [call-non-callable]
++type A = int | list[tuple[Any, A]]
++
++def identity[T](x: T) -> T:
++    return x
++
++def f(x: Not[A], y: Intersection[Not[int], Not[list[tuple[Any, A]]]]):
++    assert_type(identity(x), Intersection[Not[int], Not[list[tuple[Any, A]]]])
++    assert_type(identity(y), Not[A])
 +```
-```
-
-**File**: `crates/ty_python_semantic/src/types/abstract_methods.rs` (modified, +2/-6)
-```diff
-@@ -18,7 +18,7 @@ use crate::{
-         ClassBase, ClassLiteral, ClassType, LintDiagnosticGuard, Parameters, Signature, Type,
-         binding_type,
-         diagnostic::{AbstractMethodAnnotationPolicy, abstract_method_span},
--        function::{AbstractMethodKind, FunctionDecorators},
-+        function::AbstractMethodKind,
-         infer::{function_known_decorators, infer_definition_types},
-     },
- };
-@@ -389,11 +389,7 @@ fn might_be_explicitly_abstract<'db>(db: &'db dyn Db, definition: Definition<'db
-     if !function.has_decorators() {
-         return false;
-     }
--    let decorators = function_known_decorators(db, definition);
--    decorators
--        .known_decorators()
--        .contains(FunctionDecorators::ABSTRACT_METHOD)
--        || decorators.has_unknown_decorators()
-+    function_known_decorators(db, definition).may_produce_abstract_method()
- }
- 
- #[derive(Debug, Clone, PartialEq, Eq, get_size2::GetSize, salsa::SalsaValue)]
-```
-
-**File**: `crates/ty_python_semantic/src/types/infer.rs` (modified, +7/-6)
-```diff
-@@ -309,7 +309,7 @@ pub(crate) fn is_discarded_dict_key_assignment<'db>(
- #[salsa::tracked(
-     returns(ref),
-     cycle_initial=|_, _, _| FunctionDecoratorInference {
--        has_unknown_decorators: true,
-+        may_produce_abstract_method: true,
-         ..FunctionDecoratorInference::default()
-     },
-     heap_size=ruff_memory_usage::heap_size
-@@ -356,8 +356,9 @@ pub(crate) struct FunctionDecoratorInference<'db> {
-     called_functions: Box<[FunctionType<'db>]>,
-     legacy_aliases: Box<[Definition<'db>]>,
-     known_decorators: FunctionDecorators,
--    /// Whether any decorator is unrecognized, or decorator inference is incomplete.
--    has_unknown_decorators: bool,
-+    /// Whether a decorator could produce an explicitly abstract method, or decorator
-+    /// inference is incomplete.
-+    may_produce_abstract_method: bool,
-     context: InferContextResult,
- }
- 
-@@ -387,12 +388,12 @@ impl<'db> FunctionDecoratorInference<'db> {
-         &self.legacy_aliases
-     }
- 
--    pub(super) fn known_decorators(&self) -> FunctionDecorators {
-+    fn known_decorators(&self) -> FunctionDecorators {
-         self.known_decorators
-     }
- 
--    pub(super) fn has_unknown_decorators(&self) -> bool {
--        self.has_unknown_decorators
-+    pub(super) fn may_produce_abstract_method(&self) -> bool {
-+        self.may_produce_abstract_method
-     }
- 
-     fn context_result(&self) -> &InferContextResult {
-```
-
-**File**: `crates/ty_python_semantic/src/types/infer/builder.rs` (modified, +24/-5)
-```diff
-@@ -12254,25 +12254,44 @@ impl<'db, 'ast> TypeInferenceBuilder<'db, 'ast> {
-     }
- 
-     pub(super) fn finish_function_decorator_inference(mut self) -> FunctionDecoratorInference<'db> {
-+        // Specializing a nominal return type can change a descriptor's type arguments, but it
-+        // cannot turn the descriptor into an abstract function, bound method, or property.
-+        fn returns_nominal_instance<'db>(db: &'db dyn Db, decorator: Type<'db>) -> bool {
-+            let Type::Callable(callable) = decorator else {
-+                return false;
-+            };
-+            if callable.kind(db) != CallableTypeKind::Regular {
-+                return false;
-+            }
-+            let [signature] = callable.signatures(db).overloads.as_slice() else {
-+                return false;
-+            };
-+            matches!(signature.return_ty, Type::NominalInstance(_))
-+        }
 +
-         self.infer_region();
+ ### Recursive invariant
  
-         let mut known_decorators = FunctionDecorators::empty();
--        let mut has_unknown_decorators = true;
-+        let mut may_produce_abstract_method = true;
-         if let InferenceRegion::FunctionDecorators(definition) = self.region
-             && let DefinitionKind::Function(function) = definition.kind(self.db())
-         {
--            has_unknown_decorators = false;
--            for decorator in &function.node(self.module()).decorator_list {
-+            may_produce_abstract_method = false;
-+            let decorators = &function.node(self.module()).decorator_list;
-+            for decorator in decorators {
-                 let ty = self.expression_type(&decorator.expression);
-                 let flags = FunctionDecorators::from_decorator_type(self.db(), ty);
-                 known_decorators |= flags;
-                 if flags.is_empty()
-                     && !matches!(ty, Type::ClassLiteral(class)
-                         if class.known(self.db()) == Some(KnownClass::Property))
-+                    && !(decorators.len() == 1 && returns_nominal_instance(self.db(), ty))
-                 {
--                    has_unknown_decorators = true;
-+                    may_produce_abstract_method = true;
-                 }
+ ```py
+```
+
+**File**: `crates/ty_python_semantic/src/types/set_theoretic/builder.rs` (modified, +13/-4)
+```diff
+@@ -1361,9 +1361,9 @@ impl<'db> IntersectionBuilder<'db> {
+     /// by default to preserve existing intersection normalization.
+     ///
+     /// Unfolding aliases after their mapping has completed can repeatedly insert a recursive
+-    /// type into itself, so mapped intersections retain positive aliases as well. The builder still
+-    /// expands set operations to distribute and flatten them, and simplifies elements using their
+-    /// alias values.
++    /// type into itself, so mapped intersections retain positive aliases as well. Direct unions and
++    /// intersections still distribute and flatten, and elements are simplified using their alias
++    /// values.
+     pub(crate) fn preserve_positive_aliases(mut self, preserve: bool) -> Self {
+         self.preserve_positive_aliases = preserve;
+         self
+@@ -1605,7 +1605,16 @@ impl<'db> IntersectionBuilder<'db> {
+             Type::TypeAlias(_) | Type::Recursive(_) => {
+                 self.add_negative_impl::<L>(ty, seen_aliases)?;
              }
-+            may_produce_abstract_method |=
-+                known_decorators.contains(FunctionDecorators::ABSTRACT_METHOD);
-         }
- 
-         let Self {
-@@ -12314,7 +12333,7 @@ impl<'db, 'ast> TypeInferenceBuilder<'db, 'ast> {
-                 .collect::<Vec<_>>()
-                 .into_boxed_slice(),
-             known_decorators,
--            has_unknown_decorators,
-+            may_produce_abstract_method,
-             context,
-         }
-     }
+-            Type::Union(union) => {
++            // Retain recursive unions of instance types: their negations expose no positive
++            // constraints or literal exclusions, and unfolding during mapping can repeatedly
++            // insert the alias's body. Other members still need normalization, for example
++            // `bool & ~(Literal[True] | list[A])` simplifies to `Literal[False]`.
++            Type::Union(union)
++                if !union.elements(db).iter().all(|element| {
++                    matches!(element.resolve_type_alias(db), Type::NominalInstance(_))
++                }) || (!matches!(original, Type::Recursive(_))
++                    && !matches!(original, Type::TypeAlias(alias) if alias.is_recursive(db))) =>
++            {
+                 for elem in union.elements(db) {
+                     self.add_negative_impl::<L>(*elem, seen_aliases)?;
+                 }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29716** (2026-10-25): [ty] Reuse class member lookups when checking overrides (@charliermarsh)
-- **PR #29713** (closed): [ty] Read annotated receiver attributes without checking their initializers (@charliermarsh)
-- **PR #29712** (closed): [ty] Reuse predicate results when narrowing bindings of one place (@charliermarsh)
-- **PR #29711** (closed): [ty] Skip guarded module calls when both paths continue (@charliermarsh)
-- **PR #29709** (2026-10-25): [ty] Check for instance storage without inferring method assignments (@charliermarsh)
-- **PR #29708** (2026-10-25): [ty] Skip method signature inference for concrete decorator results (@charliermarsh)
+- **PR #29763** (closed): [ty] Evaluate single-predicate narrowing directly (@charliermarsh)
+- **PR #29762** (closed): Treat relative `__future__` imports as ordinary imports (F407, F404) (@DipanshuAmbilkar03)
+- **PR #29761** (2026-10-27): Accept a bare raise before a semicolon (@charliermarsh)
+- **PR #29759** (2026-10-27): [ty] Fix a panic when checking truthiness in a loop (@charliermarsh)
+- **PR #29757** (closed): [ty] Defer branch constraints for unchanged places (@charliermarsh)
+- **PR #29756** (closed): [`ruff`] Skip `with` blocks before `yield` in `unnecessary-assign-bef… (@frogscooper)
 
 ---
 
@@ -2391,31 +2775,28 @@ Checking all of discord.py showed no measurable speedup.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [ty] Reuse each generic context's inferable type variables (#29700)
+## X. [ty] Fix a panic when checking truthiness in a loop (#29759)
 
 **RULE**:
-When implementing operations in `crates/ty_python_semantic/src/types/generics.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/ty_python_core/src/expression.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e139fbd6`: [ty] Reuse each generic context's inferable type variables (#29700). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `691b60a3`: [ty] Fix a panic when checking truthiness in a loop (#29759). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty_python_semantic/src/types/generics.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty_python_core/src/expression.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#[salsa::tracked]
-    ///
-    /// Argument inference reuses this set for each parameter of each candidate overload.
-    #[salsa::tracked(returns(copy), heap_size=ruff_memory_usage::heap_size)]
+    /// A predicate evaluated in value or condition context.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    /// A predicate whose truthiness is recorded in its evaluation context.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e139fbd6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `691b60a3` are properly handled with clean fallback behavior.

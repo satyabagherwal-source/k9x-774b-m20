@@ -1893,10 +1893,10 @@
     "repository": "webpack/webpack",
     "platform": "github",
     "sourceUrl": "https://github.com/webpack/webpack",
-    "sourceVersion": "8c3cbd32",
+    "sourceVersion": "c93aa8f9",
     "license": "MIT",
-    "contentHash": "45316092831289580398738bf873284a93d126c6096ed3d46dab00edf79e9ad2",
-    "lastHarvestedAt": "2026-10-23T10:38:41.399Z",
+    "contentHash": "ec0105c6bef820c86b88b2dfdad3845bdfbe63edd469f511611a02202af8ccb2",
+    "lastHarvestedAt": "2026-10-27T18:36:18.942Z",
     "learningId": "learn-github-webpack-webpack"
   },
   "rollup-rollup": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "10786a52",
+    "sourceVersion": "5fd0491e",
     "license": "Apache-2.0",
-    "contentHash": "63b27a4dbe91fc5e0361f0f109b92344fea8816f7c191d31ed423281491cd4d7",
-    "lastHarvestedAt": "2026-10-27T18:03:37.561Z",
+    "contentHash": "ae3edf81fa95361564f3fb7ba16527961578598481a86375111082c7fbe96a01",
+    "lastHarvestedAt": "2026-10-27T18:36:29.909Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "b98e4117",
+    "sourceVersion": "9e08585d",
     "license": "NOASSERTION",
-    "contentHash": "1c6f23415e3625ef6d0a5e0e35cdb756e041db5de4545b9c4f0de8333eec0abc",
-    "lastHarvestedAt": "2026-10-26T12:13:37.963Z",
+    "contentHash": "12f417f74d74b39567d78617a041e24869fd9b3315a806b782604df790014920",
+    "lastHarvestedAt": "2026-10-27T18:36:27.635Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {
@@ -5963,10 +5963,10 @@
     "repository": "rook/rook",
     "platform": "github",
     "sourceUrl": "https://github.com/rook/rook",
-    "sourceVersion": "d4548cbb",
+    "sourceVersion": "d0d87977",
     "license": "Apache-2.0",
-    "contentHash": "975efc18daa9cad1371637bddb5edeb11dbc8ae5f3ce04b9cefb9ae0637761d5",
-    "lastHarvestedAt": "2026-10-24T20:05:03.157Z",
+    "contentHash": "5cc1ad7235d095578cbc472313f8505dc5c9d79c49cde9cfff1b5e0ab91f0bde",
+    "lastHarvestedAt": "2026-10-27T18:36:23.109Z",
     "learningId": "learn-github-rook-rook"
   },
   "genkit-ai-genkit": {
@@ -7623,10 +7623,10 @@
     "repository": "astral-sh/ruff",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/ruff",
-    "sourceVersion": "e139fbd6",
+    "sourceVersion": "731a26b8",
     "license": "MIT",
-    "contentHash": "3ec6e6ad27b82e03130736c966bda782dd7fdc7b33e778291bdc4ea8fef4e207",
-    "lastHarvestedAt": "2026-10-26T00:24:44.109Z",
+    "contentHash": "889704d5f4e9495be5e3118a475b14b6eeb6b5b0bdbee2ecdcfad9fa323b5741",
+    "lastHarvestedAt": "2026-10-27T18:36:19.499Z",
     "learningId": "learn-github-astral-sh-ruff"
   },
   "touchlab-kampkit": {

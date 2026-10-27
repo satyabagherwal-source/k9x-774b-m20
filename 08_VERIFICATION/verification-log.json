@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-AYLQ",
-    "timestamp": "2026-10-25T20:04:38.702Z",
-    "repository": "windmill-labs/windmill",
-    "learningId": "learn-github-windmill-labs-windmill",
-    "contentHash": "34cc763778dd68501203d40d3d4b0876fbc5ea8bbb55d9544fe33ddc8f2a4483",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-B0IA",
-    "timestamp": "2026-10-25T20:04:41.170Z",
-    "repository": "openai/gpt-oss-120b",
-    "learningId": "learn-huggingface-openai-gpt-oss-120b",
-    "contentHash": "7d20cf47c2afe248be5c89b3797a0d0db0e48243535d7e3d323fcdab69bc6804",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-B1TD",
-    "timestamp": "2026-10-25T20:04:42.865Z",
-    "repository": "Dicklesworthstone/destructive_command_guard",
-    "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-    "contentHash": "19fb1a2ee3657d007a787783ff3da0eee7d70938bb663828e9bc0862c0f90e6f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-B5JE",
-    "timestamp": "2026-10-25T20:04:47.690Z",
-    "repository": "buresdv/Cork",
-    "learningId": "learn-github-buresdv-cork",
-    "contentHash": "87048aa7a243e6046f08d0dc8a015c3ba8c10e3e9424051ef1172d26b17ae73f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-JNPO",
-    "timestamp": "2026-10-25T20:11:24.492Z",
-    "repository": "zai-org/GLM-5.2",
-    "learningId": "learn-huggingface-zai-org-glm-5-2",
-    "contentHash": "5d96b458ecf0ab0fc7f3a0aa02c21cc4f70227fbb971919f255003ecf900e8e1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-RT8C",
     "timestamp": "2026-10-25T20:17:44.892Z",
     "repository": "stabilityai/stable-diffusion-3-medium",
@@ -7490,6 +7415,81 @@
     "repository": "argoproj/argo-workflows",
     "learningId": "learn-github-argoproj-argo-workflows",
     "contentHash": "7556256d09c8cfa874234a5f735caded2ae61be0022d2c3bee3beebd3a645637",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-12M3",
+    "timestamp": "2026-10-27T18:36:18.939Z",
+    "repository": "webpack/webpack",
+    "learningId": "learn-github-webpack-webpack",
+    "contentHash": "ec0105c6bef820c86b88b2dfdad3845bdfbe63edd469f511611a02202af8ccb2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-131J",
+    "timestamp": "2026-10-27T18:36:19.495Z",
+    "repository": "astral-sh/ruff",
+    "learningId": "learn-github-astral-sh-ruff",
+    "contentHash": "889704d5f4e9495be5e3118a475b14b6eeb6b5b0bdbee2ecdcfad9fa323b5741",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-15TT",
+    "timestamp": "2026-10-27T18:36:23.105Z",
+    "repository": "rook/rook",
+    "learningId": "learn-github-rook-rook",
+    "contentHash": "5cc1ad7235d095578cbc472313f8505dc5c9d79c49cde9cfff1b5e0ab91f0bde",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-19BJ",
+    "timestamp": "2026-10-27T18:36:27.631Z",
+    "repository": "lioensky/VCPToolBox",
+    "learningId": "learn-github-lioensky-vcptoolbox",
+    "contentHash": "12f417f74d74b39567d78617a041e24869fd9b3315a806b782604df790014920",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-1B2Q",
+    "timestamp": "2026-10-27T18:36:29.906Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "ae3edf81fa95361564f3fb7ba16527961578598481a86375111082c7fbe96a01",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

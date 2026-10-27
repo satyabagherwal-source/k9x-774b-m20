@@ -5483,3 +5483,8 @@ Every entry in this ledger must capture:
 | `learn-github-megabit-blazorise` | `https://github.com/Megabit/Blazorise` | `865d5e09` | Multi-dimensional audit evidence | 2026-10-27T18:22:20.093Z |
 | `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `e7b0e50d` | Multi-dimensional audit evidence | 2026-10-27T18:29:26.972Z |
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `d3b8e91b` | Multi-dimensional audit evidence | 2026-10-27T18:29:33.799Z |
+| `learn-github-webpack-webpack` | `https://github.com/webpack/webpack` | `c93aa8f9` | Multi-dimensional audit evidence | 2026-10-27T18:36:18.942Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `731a26b8` | Multi-dimensional audit evidence | 2026-10-27T18:36:19.499Z |
+| `learn-github-rook-rook` | `https://github.com/rook/rook` | `d0d87977` | Multi-dimensional audit evidence | 2026-10-27T18:36:23.109Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `9e08585d` | Multi-dimensional audit evidence | 2026-10-27T18:36:27.635Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `5fd0491e` | Multi-dimensional audit evidence | 2026-10-27T18:36:29.909Z |

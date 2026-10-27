@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T18:29:33.750Z",
+  "last_updated": "2026-10-27T18:36:29.844Z",
   "total_verified_learnings": 1145,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3394,8 +3394,8 @@
       "slug": "astral-sh-ruff",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/ruff",
-      "source_version": "e139fbd6",
-      "content_hash": "3ec6e6ad27b82e03130736c966bda782dd7fdc7b33e778291bdc4ea8fef4e207",
+      "source_version": "731a26b8",
+      "content_hash": "889704d5f4e9495be5e3118a475b14b6eeb6b5b0bdbee2ecdcfad9fa323b5741",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "promoted_rules": [
@@ -3428,6 +3428,11 @@
           "number": 4501,
           "title": "[ty] Reuse each generic context's inferable type variables (#29700)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4943,
+          "title": "[ty] Fix a panic when checking truthiness in a loop (#29759)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3435,7 +3440,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T00:24:44.041Z",
+      "verified_at": "2026-10-27T18:36:19.419Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33767,8 +33772,8 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "b98e4117",
-      "content_hash": "1c6f23415e3625ef6d0a5e0e35cdb756e041db5de4545b9c4f0de8333eec0abc",
+      "source_version": "9e08585d",
+      "content_hash": "12f417f74d74b39567d78617a041e24869fd9b3315a806b782604df790014920",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
@@ -33793,7 +33798,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T12:13:37.890Z",
+      "verified_at": "2026-10-27T18:36:27.546Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39164,8 +39169,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "10786a52",
-      "content_hash": "63b27a4dbe91fc5e0361f0f109b92344fea8816f7c191d31ed423281491cd4d7",
+      "source_version": "5fd0491e",
+      "content_hash": "ae3edf81fa95361564f3fb7ba16527961578598481a86375111082c7fbe96a01",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -39263,6 +39268,11 @@
           "number": 4935,
           "title": "Make generated spec record test lookup robust",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4945,
+          "title": "Add genesis puzzle ID comment to app start",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39270,7 +39280,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T18:03:37.500Z",
+      "verified_at": "2026-10-27T18:36:29.830Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44611,8 +44621,8 @@
       "slug": "rook-rook",
       "platform": "github",
       "source_url": "https://github.com/rook/rook",
-      "source_version": "d4548cbb",
-      "content_hash": "975efc18daa9cad1371637bddb5edeb11dbc8ae5f3ce04b9cefb9ae0637761d5",
+      "source_version": "d0d87977",
+      "content_hash": "5cc1ad7235d095578cbc472313f8505dc5c9d79c49cde9cfff1b5e0ab91f0bde",
       "dossier_path": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "promoted_rules": [
@@ -44635,6 +44645,11 @@
           "number": 3939,
           "title": "ci: build release images with the newest Go patch release",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4944,
+          "title": "build(deps): bump the github-dependencies group across 1 directory with 10 updat",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44642,7 +44657,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T20:05:03.119Z",
+      "verified_at": "2026-10-27T18:36:23.028Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68070,8 +68085,8 @@
       "slug": "webpack-webpack",
       "platform": "github",
       "source_url": "https://github.com/webpack/webpack",
-      "source_version": "8c3cbd32",
-      "content_hash": "45316092831289580398738bf873284a93d126c6096ed3d46dab00edf79e9ad2",
+      "source_version": "c93aa8f9",
+      "content_hash": "ec0105c6bef820c86b88b2dfdad3845bdfbe63edd469f511611a02202af8ccb2",
       "dossier_path": "07_PROJECT_LEARNING/webpack-webpack-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webpack-webpack-learnings.md",
       "promoted_rules": [
@@ -68109,6 +68124,11 @@
           "number": 3884,
           "title": "Lexical Identifier Collision Prevention in Code-Generated Function Wrappers",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4942,
+          "title": "test: cover each printer from its own unit tests and fix what that found (#22903",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -68116,7 +68136,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T10:38:41.332Z",
+      "verified_at": "2026-10-27T18:36:18.849Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -137000,6 +137020,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T18:29:33.739Z"
+    },
+    "rule-4942": {
+      "learning_id": "rule-4942",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4942,
+      "title": "test: cover each printer from its own unit tests and fix what that found (#22903",
+      "source_url": "https://github.com/webpack/webpack",
+      "source_version": "c93aa8f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T18:36:18.849Z"
+    },
+    "rule-4943": {
+      "learning_id": "rule-4943",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4943,
+      "title": "[ty] Fix a panic when checking truthiness in a loop (#29759)",
+      "source_url": "https://github.com/astral-sh/ruff",
+      "source_version": "731a26b8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T18:36:19.419Z"
+    },
+    "rule-4944": {
+      "learning_id": "rule-4944",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4944,
+      "title": "build(deps): bump the github-dependencies group across 1 directory with 10 updat",
+      "source_url": "https://github.com/rook/rook",
+      "source_version": "d0d87977",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T18:36:23.028Z"
+    },
+    "rule-4945": {
+      "learning_id": "rule-4945",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4945,
+      "title": "Add genesis puzzle ID comment to app start",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "5fd0491e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T18:36:29.830Z"
     }
   },
   "aliases": {
