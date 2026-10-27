@@ -5253,3 +5253,6 @@
 | `CYCLE-20261027-V3LX` | `2026-10-27T11:59:45.669Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4726` | Yes (`8b6b6c3b...`) |
 | `CYCLE-20261027-V7T7` | `2026-10-27T11:59:51.115Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4727` | Yes (`929c70ca...`) |
 | `CYCLE-20261027-194Y` | `2026-10-27T12:04:32.770Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4728, Rule 4729` | Yes (`e2e690fe...`) |
+| `CYCLE-20261027-5A69` | `2026-10-27T12:07:40.737Z` | `lobehub/lobe-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4730` | Yes (`060061c2...`) |
+| `CYCLE-20261027-5DGE` | `2026-10-27T12:07:44.990Z` | `lxml/lxml` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4731` | Yes (`dfe92188...`) |
+| `CYCLE-20261027-5HEZ` | `2026-10-27T12:07:50.123Z` | `kubeedge/kubeedge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4732` | Yes (`e6109a13...`) |

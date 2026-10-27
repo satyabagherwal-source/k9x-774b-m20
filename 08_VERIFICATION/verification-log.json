@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-X2VV",
-    "timestamp": "2026-10-25T09:37:59.515Z",
-    "repository": "lodestones/Kromoss",
-    "learningId": "learn-huggingface-lodestones-kromoss",
-    "contentHash": "133cdee81537e0c7f9f3684bbae12e31120d8a5c08901adf98f7830266b41863",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-XL82",
-    "timestamp": "2026-10-25T09:38:23.282Z",
-    "repository": "cloudscape-design/components",
-    "learningId": "learn-github-cloudscape-design-components",
-    "contentHash": "49e4e5efa691f8d8000f69e470e1a8d7e50dbd343c430264b81927800a7584f8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-HN8F",
-    "timestamp": "2026-10-25T09:53:59.007Z",
-    "repository": "mitmproxy/mitmproxy",
-    "learningId": "learn-github-mitmproxy-mitmproxy",
-    "contentHash": "3c65adf1fb2c52706911638e242ec2cbbc6b98998e38a432bb545844fe3f3db4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-HNIX",
     "timestamp": "2026-10-25T09:53:59.386Z",
     "repository": "NirDiamant/RAG_Techniques",
@@ -7492,6 +7447,51 @@
     "contentHash": "e2e690fe008ab3736b1dfc55de9edcc266bcd7053749fad8f995bab920846c7b",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-5A69",
+    "timestamp": "2026-10-27T12:07:40.737Z",
+    "repository": "lobehub/lobe-ui",
+    "learningId": "learn-github-lobehub-lobe-ui",
+    "contentHash": "060061c23ade6ec42b518e1d94edea36b72971df3bba266f596b93ffa70cf377",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-5DGE",
+    "timestamp": "2026-10-27T12:07:44.990Z",
+    "repository": "lxml/lxml",
+    "learningId": "learn-github-lxml-lxml",
+    "contentHash": "dfe92188afb1d4b2fad67ecb255b85612890d4bfd9b7d790371c22b586803bcc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-5HEZ",
+    "timestamp": "2026-10-27T12:07:50.123Z",
+    "repository": "kubeedge/kubeedge",
+    "learningId": "learn-github-kubeedge-kubeedge",
+    "contentHash": "e6109a1398d9f83b95ea43c450e72b07732bec453231374918b9761bbb4d09ae",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

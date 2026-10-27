@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T12:04:32.691Z",
+  "last_updated": "2026-10-27T12:07:50.083Z",
   "total_verified_learnings": 1103,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32084,8 +32084,8 @@
       "slug": "kubeedge-kubeedge",
       "platform": "github",
       "source_url": "https://github.com/kubeedge/kubeedge",
-      "source_version": "e3001611",
-      "content_hash": "87b3a1f4a5b3705ff64f4a052e0dcbe2d3dae0cf2bdeb0c4d5c665d1b417b31b",
+      "source_version": "1e5b0d26",
+      "content_hash": "e6109a1398d9f83b95ea43c450e72b07732bec453231374918b9761bbb4d09ae",
       "dossier_path": "07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md",
       "promoted_rules": [
@@ -32103,6 +32103,11 @@
           "number": 3167,
           "title": "Merge pull request #7334 from adity1raut/fix/configupdatejob-report-after-restar",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4732,
+          "title": "Merge pull request #7379 from EncHawk/master",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32110,7 +32115,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T12:40:47.864Z",
+      "verified_at": "2026-10-27T12:07:50.076Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33603,8 +33608,8 @@
       "slug": "lobehub-lobe-ui",
       "platform": "github",
       "source_url": "https://github.com/lobehub/lobe-ui",
-      "source_version": "b0602f5c",
-      "content_hash": "83cbd79402e2f43c05c1b4797fa6716085dcd7973467eb15cffe2909185976ea",
+      "source_version": "a5441425",
+      "content_hash": "060061c23ade6ec42b518e1d94edea36b72971df3bba266f596b93ffa70cf377",
       "dossier_path": "07_PROJECT_LEARNING/lobehub-lobe-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lobehub-lobe-ui-learnings.md",
       "promoted_rules": [
@@ -33637,6 +33642,11 @@
           "number": 4144,
           "title": "Fiber-Level Host Mutation Verification for Render Invariants",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4730,
+          "title": "🐛 fix(docs): freeze the demo references of the restored component pages",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33644,7 +33654,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T07:18:49.096Z",
+      "verified_at": "2026-10-27T12:07:40.689Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65901,8 +65911,8 @@
       "slug": "lxml-lxml",
       "platform": "github",
       "source_url": "https://github.com/lxml/lxml",
-      "source_version": "0117cfef",
-      "content_hash": "e8b671d0373abe0cf3a0afce19355b17e6b8260435a61c18e2d846f2b73be6fc",
+      "source_version": "ebaa7fc0",
+      "content_hash": "dfe92188afb1d4b2fad67ecb255b85612890d4bfd9b7d790371c22b586803bcc",
       "dossier_path": "07_PROJECT_LEARNING/lxml-lxml-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lxml-lxml-learnings.md",
       "promoted_rules": [
@@ -65915,6 +65925,11 @@
           "number": 3694,
           "title": "Build: Disable \"CYTHON_USE_TP_FINALIZE\" in PyPy again to work around crashes in",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4731,
+          "title": "Build: bump pypa/cibuildwheel (GH-536)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -65922,7 +65937,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T18:37:28.686Z",
+      "verified_at": "2026-10-27T12:07:44.936Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -131813,6 +131828,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T12:04:32.679Z"
+    },
+    "rule-4730": {
+      "learning_id": "rule-4730",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4730,
+      "title": "🐛 fix(docs): freeze the demo references of the restored component pages",
+      "source_url": "https://github.com/lobehub/lobe-ui",
+      "source_version": "a5441425",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:07:40.689Z"
+    },
+    "rule-4731": {
+      "learning_id": "rule-4731",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4731,
+      "title": "Build: bump pypa/cibuildwheel (GH-536)",
+      "source_url": "https://github.com/lxml/lxml",
+      "source_version": "ebaa7fc0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:07:44.936Z"
+    },
+    "rule-4732": {
+      "learning_id": "rule-4732",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4732,
+      "title": "Merge pull request #7379 from EncHawk/master",
+      "source_url": "https://github.com/kubeedge/kubeedge",
+      "source_version": "1e5b0d26",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:07:50.076Z"
     }
   },
   "aliases": {

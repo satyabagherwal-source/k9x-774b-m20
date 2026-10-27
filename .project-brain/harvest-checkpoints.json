@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T12:04:32.782Z",
+  "last_updated": "2026-10-27T12:07:50.133Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3741,14 +3741,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kubeedge-kubeedge",
-      "content_hash": "87b3a1f4a5b3705ff64f4a052e0dcbe2d3dae0cf2bdeb0c4d5c665d1b417b31b",
-      "verified_at": "2026-10-20T12:40:47.948Z",
+      "content_hash": "e6109a1398d9f83b95ea43c450e72b07732bec453231374918b9761bbb4d09ae",
+      "verified_at": "2026-10-27T12:07:50.132Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T12:40:47.948Z"
+      "last_updated": "2026-10-27T12:07:50.132Z"
     },
     "giancarloerra/SocratiCode": {
       "repository": "giancarloerra/SocratiCode",
@@ -7971,14 +7971,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lobehub-lobe-ui",
-      "content_hash": "83cbd79402e2f43c05c1b4797fa6716085dcd7973467eb15cffe2909185976ea",
-      "verified_at": "2026-10-25T07:18:49.179Z",
+      "content_hash": "060061c23ade6ec42b518e1d94edea36b72971df3bba266f596b93ffa70cf377",
+      "verified_at": "2026-10-27T12:07:40.746Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T07:18:49.179Z"
+      "last_updated": "2026-10-27T12:07:40.746Z"
     },
     "gitui-org/gitui": {
       "repository": "gitui-org/gitui",
@@ -14016,14 +14016,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lxml-lxml",
-      "content_hash": "e8b671d0373abe0cf3a0afce19355b17e6b8260435a61c18e2d846f2b73be6fc",
-      "verified_at": "2026-10-22T18:37:28.779Z",
+      "content_hash": "dfe92188afb1d4b2fad67ecb255b85612890d4bfd9b7d790371c22b586803bcc",
+      "verified_at": "2026-10-27T12:07:44.999Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T18:37:28.779Z"
+      "last_updated": "2026-10-27T12:07:44.999Z"
     },
     "mazzzystar/Queryable": {
       "repository": "mazzzystar/Queryable",

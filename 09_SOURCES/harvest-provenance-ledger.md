@@ -5262,3 +5262,6 @@ Every entry in this ledger must capture:
 | `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `35842157` | Multi-dimensional audit evidence | 2026-10-27T11:59:45.672Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `2d15aef3` | Multi-dimensional audit evidence | 2026-10-27T11:59:51.118Z |
 | `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `88d7742d` | Multi-dimensional audit evidence | 2026-10-27T12:04:32.773Z |
+| `learn-github-lobehub-lobe-ui` | `https://github.com/lobehub/lobe-ui` | `a5441425` | Multi-dimensional audit evidence | 2026-10-27T12:07:40.740Z |
+| `learn-github-lxml-lxml` | `https://github.com/lxml/lxml` | `ebaa7fc0` | Multi-dimensional audit evidence | 2026-10-27T12:07:44.993Z |
+| `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `1e5b0d26` | Multi-dimensional audit evidence | 2026-10-27T12:07:50.126Z |
