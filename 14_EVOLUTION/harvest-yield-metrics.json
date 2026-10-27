@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T21:08:29.594Z",
-  "total_cycles_completed": 5522,
-  "total_learnings_persisted": 5522,
-  "total_rules_promoted": 4924,
+  "last_updated": "2026-10-27T21:18:40.530Z",
+  "total_cycles_completed": 5525,
+  "total_learnings_persisted": 5525,
+  "total_rules_promoted": 4927,
   "history": [
-    {
-      "timestamp": "2026-10-27T13:54:28.116Z",
-      "repository": "feathersjs/feathers",
-      "learningId": "learn-github-feathersjs-feathers",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:54:35.244Z",
-      "repository": "meilisearch/meilisearch",
-      "learningId": "learn-github-meilisearch-meilisearch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:57:47.900Z",
-      "repository": "frankbria/ralph-claude-code",
-      "learningId": "learn-github-frankbria-ralph-claude-code",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T13:57:52.368Z",
       "repository": "ntegrals/openbrowser",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-27T21:08:29.594Z",
       "repository": "gardener/gardener",
       "learningId": "learn-github-gardener-gardener",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T21:18:31.572Z",
+      "repository": "Automattic/harper",
+      "learningId": "learn-github-automattic-harper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T21:18:34.460Z",
+      "repository": "mui/base-ui",
+      "learningId": "learn-github-mui-base-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T21:18:40.530Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

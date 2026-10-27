@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T21:08:29.515Z",
+  "last_updated": "2026-10-27T21:18:40.475Z",
   "total_verified_learnings": 1149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3752,8 +3752,8 @@
       "slug": "automattic-harper",
       "platform": "github",
       "source_url": "https://github.com/Automattic/harper",
-      "source_version": "255dee03",
-      "content_hash": "aabd0041d1bbc165e59dac7fbb708e2e3c6a513b8292b25cd8c65bba5f1480d8",
+      "source_version": "ebd0d4be",
+      "content_hash": "150927f2abf587f69c4b9b3d1908716359c3c970ddceca63b4003712d7a62234",
       "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "promoted_rules": [
@@ -3791,6 +3791,11 @@
           "number": 4556,
           "title": "add undergo/underwent/undergone to `irregular_verbs.json` (#4689)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5012,
+          "title": "ls): avoid config/doc_state lock-order deadlock (#4711)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3798,7 +3803,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T03:10:13.992Z",
+      "verified_at": "2026-10-27T21:18:31.492Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37802,8 +37807,8 @@
       "slug": "mui-base-ui",
       "platform": "github",
       "source_url": "https://github.com/mui/base-ui",
-      "source_version": "e3d288fe",
-      "content_hash": "bfda050ecf41d67dc3e8132480362a5c18f95ad5e07ba6461c46f387cc9518e7",
+      "source_version": "cc9075a4",
+      "content_hash": "09ab3184c97e6f78011893ed314ffe081456d8bb1ffcccd55a01d44919fc7e10",
       "dossier_path": "07_PROJECT_LEARNING/mui-base-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mui-base-ui-learnings.md",
       "promoted_rules": [
@@ -37851,6 +37856,11 @@
           "number": 4636,
           "title": "Bump @vitest/ui to 5.0.5 [SECURITY] (#6096)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5013,
+          "title": "[select] Fix a React 18 flake in a closing test (#6114)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37858,7 +37868,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T18:05:21.315Z",
+      "verified_at": "2026-10-27T21:18:34.392Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49461,8 +49471,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "b3766d4f",
-      "content_hash": "dd7e014c3481811cfdb6184f2e6cbafa95b95670e2de30d217a03f95deace83d",
+      "source_version": "3a38840c",
+      "content_hash": "ec4182434da72188e7dae0b864fbaf72a8cb99cd4aa349876734704ee8971807",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -49550,6 +49560,11 @@
           "number": 4928,
           "title": "cmd/k8s-operator/e2e: add 4via6 egress tests (#21854)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5014,
+          "title": "ipn/ipnlocal: check the tailscaled socket on every serve unix dial",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49557,7 +49572,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T17:37:58.214Z",
+      "verified_at": "2026-10-27T21:18:40.464Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -138444,6 +138459,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T21:08:29.497Z"
+    },
+    "rule-5012": {
+      "learning_id": "rule-5012",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5012,
+      "title": "ls): avoid config/doc_state lock-order deadlock (#4711)",
+      "source_url": "https://github.com/Automattic/harper",
+      "source_version": "ebd0d4be",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:18:31.492Z"
+    },
+    "rule-5013": {
+      "learning_id": "rule-5013",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5013,
+      "title": "[select] Fix a React 18 flake in a closing test (#6114)",
+      "source_url": "https://github.com/mui/base-ui",
+      "source_version": "cc9075a4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:18:34.392Z"
+    },
+    "rule-5014": {
+      "learning_id": "rule-5014",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5014,
+      "title": "ipn/ipnlocal: check the tailscaled socket on every serve unix dial",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "3a38840c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:18:40.464Z"
     }
   },
   "aliases": {

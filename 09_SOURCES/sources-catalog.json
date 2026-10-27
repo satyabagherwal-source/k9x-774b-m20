@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "255dee03",
+    "sourceVersion": "ebd0d4be",
     "license": "Apache-2.0",
-    "contentHash": "aabd0041d1bbc165e59dac7fbb708e2e3c6a513b8292b25cd8c65bba5f1480d8",
-    "lastHarvestedAt": "2026-10-26T03:10:14.067Z",
+    "contentHash": "150927f2abf587f69c4b9b3d1908716359c3c970ddceca63b4003712d7a62234",
+    "lastHarvestedAt": "2026-10-27T21:18:31.568Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "b3766d4f",
+    "sourceVersion": "3a38840c",
     "license": "BSD-3-Clause",
-    "contentHash": "dd7e014c3481811cfdb6184f2e6cbafa95b95670e2de30d217a03f95deace83d",
-    "lastHarvestedAt": "2026-10-27T17:37:58.361Z",
+    "contentHash": "ec4182434da72188e7dae0b864fbaf72a8cb99cd4aa349876734704ee8971807",
+    "lastHarvestedAt": "2026-10-27T21:18:40.526Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -4133,10 +4133,10 @@
     "repository": "mui/base-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/mui/base-ui",
-    "sourceVersion": "e3d288fe",
+    "sourceVersion": "cc9075a4",
     "license": "MIT",
-    "contentHash": "bfda050ecf41d67dc3e8132480362a5c18f95ad5e07ba6461c46f387cc9518e7",
-    "lastHarvestedAt": "2026-10-26T18:05:21.404Z",
+    "contentHash": "09ab3184c97e6f78011893ed314ffe081456d8bb1ffcccd55a01d44919fc7e10",
+    "lastHarvestedAt": "2026-10-27T21:18:34.456Z",
     "learningId": "learn-github-mui-base-ui"
   },
   "ekzhang-bore": {

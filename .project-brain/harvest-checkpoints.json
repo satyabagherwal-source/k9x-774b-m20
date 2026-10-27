@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T21:08:29.599Z",
+  "last_updated": "2026-10-27T21:18:40.534Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3516,14 +3516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-automattic-harper",
-      "content_hash": "aabd0041d1bbc165e59dac7fbb708e2e3c6a513b8292b25cd8c65bba5f1480d8",
-      "verified_at": "2026-10-26T03:10:14.075Z",
+      "content_hash": "150927f2abf587f69c4b9b3d1908716359c3c970ddceca63b4003712d7a62234",
+      "verified_at": "2026-10-27T21:18:31.575Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T03:10:14.075Z"
+      "last_updated": "2026-10-27T21:18:31.575Z"
     },
     "sudheerj/reactjs-interview-questions": {
       "repository": "sudheerj/reactjs-interview-questions",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "dd7e014c3481811cfdb6184f2e6cbafa95b95670e2de30d217a03f95deace83d",
-      "verified_at": "2026-10-27T17:37:58.488Z",
+      "content_hash": "ec4182434da72188e7dae0b864fbaf72a8cb99cd4aa349876734704ee8971807",
+      "verified_at": "2026-10-27T21:18:40.533Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T17:37:58.488Z"
+      "last_updated": "2026-10-27T21:18:40.533Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -6321,14 +6321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mui-base-ui",
-      "content_hash": "bfda050ecf41d67dc3e8132480362a5c18f95ad5e07ba6461c46f387cc9518e7",
-      "verified_at": "2026-10-26T18:05:21.412Z",
+      "content_hash": "09ab3184c97e6f78011893ed314ffe081456d8bb1ffcccd55a01d44919fc7e10",
+      "verified_at": "2026-10-27T21:18:34.463Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T18:05:21.412Z"
+      "last_updated": "2026-10-27T21:18:34.463Z"
     },
     "ekzhang/bore": {
       "repository": "ekzhang/bore",

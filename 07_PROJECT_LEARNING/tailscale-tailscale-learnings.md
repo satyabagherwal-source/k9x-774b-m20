@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `b3766d4f`  
+> **Source Version**: `3a38840c`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T17:37:57.927Z  
+> **Timestamp**: 2026-10-27T21:18:40.159Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T17:37:57.486Z  
+> **Harvest Timestamp**: 2026-10-27T21:18:39.666Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38167 stars
+- **Stars / Engagement**: 38175 stars
 
 ---
 
@@ -821,465 +821,761 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b3766d4f` (2026-10-27)
-**Commit Message**: cmd/k8s-operator/e2e: add 4via6 egress tests (#21854)
+### Incident Patch 1: `3a38840c` (2026-10-27)
+**Commit Message**: ipn/ipnlocal: check the tailscaled socket on every serve unix dial
 
-Add end-to-end tests for egress to a 4via6 target (an address behind a
-subnet router advertising a 4via6 route). Tests include:
+The unix-socket reverse proxy checked its backend against the tailscaled
+socket only when the handler was built, but each backend connection
+re-resolved the path from scratch. A backend that was benign at config
+time could later be replaced with a symlink to the tailscaled socket by
+anyone able to write to its directory, and the next dial followed it.
+The proxy dials as root, so the same swap could redirect a serve or
+funnel backend at any root-only unix socket on the host.
 
-- TestConnector4via6Egress/HAEgress: egress to an in-cluster Connector
-subnet router. Test requires a dual stack cluster.
+Move the check to the dial itself, in a dialServeUnixSocket method
+shared by the HTTP transport, the h2c transport and the TCP-forward
+handler, all of which previously dialed unix on their own. It refuses
+tailscaled's socket with ErrProxyToTailscaledSocket immediately before
+connecting.
 
-- TestHostSubnetRouter4via6Egress/HAEgress: egress to a subnet router that
-runs on the test host as a tsnet node. Use RegisterFallbackTCPHandler to
-mock the backend response without requiring forwarding on to a backend node
-(for test simplicity).
+On Linux 5.6 and newer, the dial pins the resolved socket inode with
+openat2(2): an O_PATH descriptor opened with RESOLVE_NO_MAGICLINKS,
+and RESOLVE_BENEATH under the socket's parent directory where the path
+allows it, or by whole path otherwise. The pinned file is checked
+against the tailscaled socket, and the connection is made to the pinned
+file through /pro
 
-Also update end-to-end test acl for 4via6 routes, and install a dedicated
-ProxyClass to accept routes.
-
-Updates tailscale/corp#45732
-
-Signed-off-by: Becky Pauley <[REDACTED_EMAIL]>
-
-**File**: `cmd/k8s-operator/e2e/acl.hujson` (modified, +9/-0)
+**File**: `ipn/ipnlocal/serve.go` (modified, +56/-19)
 ```diff
-@@ -11,6 +11,9 @@
- 		// wide subnet maximises compatibility for most clusters.
- 		"routes": {
- 			"10.0.0.0/8": ["tag:k8s"],
-+			// Tailscale 4via6 range, so dynamically-computed 4via6 subnet routes
-+			// advertised by Connectors in the e2e tests are auto-approved.
-+			"fd7a:115c:a1e0:b1a::/64": ["tag:k8s"],
- 		},
- 		"services": {
- 			"tag:k8s": ["tag:k8s"],
-@@ -29,5 +32,11 @@
- 				}],
- 			},
- 		},
-+		{
-+			// Allow egress proxies to reach 4via6 targets.
-+			"src": ["tag:k8s"],
-+			"dst": ["fd7a:115c:a1e0:b1a::/64"],
-+			"ip":  ["tcp:80", "tcp:443"],
-+		},
- 	],
- }
-\ No newline at end of file
-```
-
-**File**: `cmd/k8s-operator/e2e/helpers_test.go` (modified, +22/-17)
-```diff
-@@ -113,20 +113,36 @@ func newHTTPClient(cl *tsnet.Server) *http.Client {
- 	}
+@@ -80,8 +80,11 @@ const (
+ // current etag of a resource.
+ var ErrETagMismatch = errors.New("etag mismatch")
+ 
+-// ErrProxyToTailscaledSocket is returned when attempting to proxy
+-// to the tailscaled socket itself, which would create a loop.
++// ErrProxyToTailscaledSocket is returned when attempting to proxy to the
++// tailscaled socket itself. The LocalAPI authorizes a unix-socket caller by
++// the peer credentials of the dialing process, which would be tailscaled
++// running as root, so such a proxy would hand a remote client a
++// root-authorized LocalAPI.
+ var ErrProxyToTailscaledSocket = errors.New("cannot proxy to tailscaled socket")
+ 
+ var serveHTTPContextKey ctxkey.Key[*serveHTTPContext]
+@@ -699,27 +702,20 @@ func (b *LocalBackend) tcpHandlerForServeTCP(tcph ipn.TCPPortHandlerView, dport
+ 		return func(conn net.Conn) error {
+ 			defer conn.Close()
+ 			conn = b.meteredConnForService(conn, forVIPService)
+-			// Never forward to tailscaled's own socket: the local API
+-			// authorizes a unix-socket caller by the peer credentials of the
+-			// dialing process, which here is tailscaled itself, so a forward
+-			// would hand a remote peer a root-authorized local API.
+-			socketPath, isUnix := strings.CutPrefix(backDst, "unix:")
+-			if isUnix && b.isTailscaledSocket(socketPath) {
+-				b.logf("localbackend: refusing TCP proxy on port %v (from %v) to the tailscaled socket %q", dport, srcAddr, socketPath)
+-				return ErrProxyToTailscaledSocket
+-			}
+ 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+ 			var backConn net.Conn
+ 			var err error
+-			if isUnix {
+-				var d net.Dialer
+-				backConn, err = d.DialContext(ctx, "unix", socketPath)
++			if socketPath, isUnix := strings.CutPrefix(backDst, "unix:"); isUnix {
++				backConn, err = b.dialServeUnixSocket(ctx, socketPath)
+ 			} else {
+ 				backConn, err = b.dialer.SystemDial(ctx, "tcp", backDst)
+ 			}
+ 			cancel()
+ 			if err != nil {
+-				b.logf("localbackend: failed to TCP proxy port %v (from %v) to %s: %v", dport, srcAddr, backDst, err)
++				// dialServeUnixSocket already logged a refusal; don't double-log.
++				if !errors.Is(err, ErrProxyToTailscaledSocket) {
++					b.logf("localbackend: failed to TCP proxy port %v (from %v) to %s: %v", dport, srcAddr, backDst, err)
++				}
+ 				return nil
+ 			}
+ 			defer backConn.Close()
+@@ -1033,6 +1029,49 @@ func (rp *reverseProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+ 	p.ServeHTTP(w, r)
  }
  
--func verifyConnectorTailnet(t *testing.T, cn *tsapi.Connector, cl *tsnet.Server) error {
-+// tailnetDomain returns the tailnet's MagicDNS domain for the given
-+// tailnet client.
-+func tailnetDomain(t *testing.T, cl *tsnet.Server) string {
- 	t.Helper()
- 	lc, err := cl.LocalClient()
- 	if err != nil {
--		return err
-+		t.Fatalf("getting local client: %v", err)
- 	}
- 	status, err := lc.Status(t.Context())
- 	if err != nil {
--		return err
-+		t.Fatalf("getting tailnet status: %v", err)
- 	}
--	_, expectedTailnet, ok := strings.Cut(strings.TrimSuffix(status.Self.DNSName, "."), ".")
-+	_, domain, ok := strings.Cut(strings.TrimSuffix(status.Self.DNSName, "."), ".")
- 	if !ok {
--		return fmt.Errorf("unexpected DNSName format %q", status.Self.DNSName)
-+		t.Fatalf("unexpected DNSName format %q", status.Self.DNSName)
- 	}
-+	return domain
++// dialServeUnixSocket dials a unix-socket serve/funnel backend. It returns
++// ErrProxyToTailscaledSocket if the backend is tailscaled's own socket,
++// which would give the caller a root-authorized LocalAPI.
++//
++// The configured path can be replaced by anyone who can write to its
++// directory, so the socket is re-checked on every dial, not only at
++// config time. dialServeUnixSocketSafe avoids re-resolving the path
++// where the platform allows it. On the remaining dials,
++// refuseIfConnectedToTailscaledSocket re-checks the connected peer.
++func (b *LocalBackend) dialServeUnixSocket(ctx context.Context, socketPath string) (net.Conn, error) {
++	if b.isTailscaledSocket(socketPath) {
++		b.logf("serve: refusing to proxy to the tailscaled socket %q", socketPath)
++		return nil, ErrProxyToTailscaledSocket
++	}
++	conn, err := b.dialServeUnixSocketSafe(ctx, socketPath)
++	if err != nil {
++		return nil, err
++	}
++	if err := b.refuseIfConnectedToTailscaledSocket(conn); err != nil {
++		conn.Close()
++		return nil, err
++	}
++	return conn, nil
 +}
 +
-+// via6FQDN returns the hyphenated 4via6 MagicDNS name for an IPv4 address and
-+// site ID on the given tailnet, e.g. "10-1-0-5-via-7.example.ts.net".
-+func via6FQDN(t *testing.T, ip netip.Addr, siteID int, cl *tsnet.Server) string {
-+	t.Helper()
-+	hyphenatedIP := strings.ReplaceAll(ip.String(), ".", "-")
-+	return fmt.Sprintf("%s-via-%d.%s", hyphenatedIP, siteID, tailnetDomain(t, cl))
++// refuseIfConnectedToTailscaledSocket returns ErrProxyToTailscaledSocket
++// if conn is a unix connection to the tailscaled socket. The peer address
++// is the path the listening socket was bound to, not the path that was
++// dialed, so the check still sees the tailscaled socket through a symlink
++// swapped in before the dial. This check is best-effort: connections
++// that have no determinable peer name are allowed.
++func (b *LocalBackend) refuseIfConnectedToTailscaledSocket(conn net.Conn) error {
++	ua, ok := conn.RemoteAddr().(*net.UnixAddr)
++	if !ok || ua.Name == "" {
++		return nil
++	}
++	if ua.Name == b.sys.SocketPath || b.isTailscaledSocket(ua.Name) {
++		b.logf("serve: refusing connected unix backend peer %q: it is the tailscaled socket", ua.Name)
++		return ErrProxyToTailscaledSocket
++	}
++	return nil
 +}
 +
-+func verifyConnectorTailnet(t *testing.T, cn *tsapi.Connector, cl *tsnet.Server) error {
-+	t.Helper()
-+	expectedTailnet := tailnetDomain(t, cl)
- 	if err := tstest.WaitFor(3*time.Minute, func() error {
- 		var secrets corev1.SecretList
- 		if err := kubeClient.List(t.Context(), &secrets,
-@@ -162,18 +178,7 @@ func verifyConnectorTailnet(t *testing.T, cn *tsapi.Connector, cl *tsnet.Server)
- func verifyProxyGroupTailnet(t *testing.T, pg *tsapi.ProxyGroup, cl *tsnet.Server) error {
- 	t.Helper()
- 	// Determine the expected tailnet Magic DNS Name.
--	lc, err := cl.LocalClient()
--	if err != nil {
--		return err
--	}
--	status, err := lc.Status(t.Context())
--	if err != nil {
--		return err
--	}
--	_, expectedTailnet, ok := strings.Cut(strings.TrimSuffix(status.Self.DNSName, "."), ".")
--	if !ok {
--		return fmt.Errorf("unexpected DNSName format %q", status.Self.DNSName)
--	}
-+	expectedTailnet := tailnetDomain(t, cl)
- 	// Read the device FQDN from the first state secret for the ProxyGroup,
- 	// and verify that this matches the expected tailnet.
- 	if err := tstest.WaitFor(3*time.Minute, func() error {
+ // getTransport returns the Transport used for regular (non-GRPC) requests
+ // to the backend. The Transport gets created lazily, at most once.
+ func (rp *reverseProxy) getTransport() *http.Transport {
+@@ -1042,8 +1081,7 @@ func (rp *reverseProxy) getTransport() *http.Transport {
+ 		dial := rp.lb.dialer.SystemDial
+ 		if rp.socketPath != "" {
+ 			dial = func(ctx context.Context, _, _ string) (net.Conn, error) {
+-				var d net.Dialer
+-				return d.DialContext(ctx, "unix", rp.socketPath)
++				return rp.lb.dialServeUnixSocket(ctx, rp.socketPath)
+ 			}
+ 		}
+ 
+@@ -1073,8 +1111,7 @@ func (rp *reverseProxy) getH2CTransport() http.RoundTripper {
+ 			Protocols
 ```
 
-**File**: `cmd/k8s-operator/e2e/via6_test.go` (added, +365/-0)
+**File**: `ipn/ipnlocal/serve_test.go` (modified, +35/-0)
 ```diff
-@@ -0,0 +1,365 @@
+@@ -2301,3 +2301,38 @@ func TestSetServeConfigRejectsTailscaledSocket(t *testing.T) {
+ 		t.Fatal("setServeConfigLocked accepted a forward to the tailscaled socket; want it refused")
+ 	}
+ }
++
++// TestReverseProxyRechecksTailscaledSocketPerDial verifies that a unix
++// backend that becomes a symlink to the tailscaled socket after the
++// handler was built is refused at dial time.
++func TestReverseProxyRechecksTailscaledSocketPerDial(t *testing.T) {
++	b := newTestBackend(t)
++	sock := mkTempSocket(t)
++	b.sys.SocketPath = sock
++	benign := mkTempSocket(t)
++
++	// Benign at config time, so the handler is built.
++	h, err := b.proxyHandlerForBackend("unix:" + benign)
++	if err != nil {
++		t.Fatalf("proxyHandlerForBackend(benign) = %v; want handler", err)
++	}
++	rp, ok := h.(*reverseProxy)
++	if !ok {
++		t.Fatalf("handler is %T; want *reverseProxy", h)
++	}
++	if _, err := rp.lb.dialServeUnixSocket(t.Context(), rp.socketPath); errors.Is(err, ErrProxyToTailscaledSocket) {
++		t.Fatalf("dial to the benign path was refused as the tailscaled socket")
++	}
++
++	// The path is swapped for a symlink to the tailscaled socket after the
++	// handler exists; the next dial must catch it.
++	if err := os.Remove(benign); err != nil {
++		t.Fatal(err)
++	}
++	if err := os.Symlink(sock, benign); err != nil {
++		t.Fatal(err)
++	}
++	if _, err := rp.lb.dialServeUnixSocket(t.Context(), rp.socketPath); !errors.Is(err, ErrProxyToTailscaledSocket) {
++		t.Fatalf("dial after the symlink swap = %v; want ErrProxyToTailscaledSocket", err)
++	}
++}
+```
+
+**File**: `ipn/ipnlocal/serve_unix_linux.go` (added, +101/-0)
+```diff
+@@ -0,0 +1,101 @@
 +// Copyright (c) Tailscale Inc & contributors
 +// SPDX-License-Identifier: BSD-3-Clause
 +
-+package e2e
++//go:build linux && !ts_omit_serve
++
++package ipnlocal
 +
 +import (
-+	"bufio"
-+	"fmt"
++	"context"
 +	"net"
-+	"net/http"
-+	"net/netip"
-+	"testing"
-+	"time"
++	"path/filepath"
++	"strconv"
 +
-+	corev1 "k8s.io/api/core/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+
-+	"tailscale.com/ipn"
-+	kube "tailscale.com/k8s-operator"
-+	tsapi "tailscale.com/k8s-operator/apis/v1alpha1"
-+	"tailscale.com/net/tsaddr"
-+	"tailscale.com/tstest"
++	"golang.org/x/sys/unix"
 +)
 +
-+const via6SiteID = 7
++// dialServeUnixSocketSafe dials socketPath. Where the platform allows
++// it, it connects to a pinned descriptor instead of the path, so that
++// swapping the path cannot retarget the connect. It returns
++// ErrProxyToTailscaledSocket if the dialed socket is tailscaled's own.
++// When no descriptor can be pinned, it dials the path directly.
++func (b *LocalBackend) dialServeUnixSocketSafe(ctx context.Context, socketPath string) (net.Conn, error) {
++	if fd, ok := pinUnixSocketPath(socketPath); ok {
++		defer unix.Close(fd)
 +
-+// via6BackendIP is the dummy IPv4 embedded in the advertised 4via6 route; it is
-+// never dialed.
-+var via6BackendIP = netip.MustParseAddr("10.0.0.1")
-+
-+type via6Target struct {
-+	viaIP   string // e.g. "fd7a:115c:a1e0:b1a::7:a00:1"
-+	viaFQDN string // e.g. "10-0-0-1-via-7.<tailnet>.ts.net"
++		// Check the inode held by the pin, which is the inode the
++		// connect below uses.
++		if b.isTailscaledSocketFd(fd) {
++			b.logf("serve: refusing to proxy to the tailscaled socket %q", socketPath)
++			return nil, ErrProxyToTailscaledSocket
++		}
++		conn, err := dialPinnedUnixSocket(ctx, fd)
++		if err == nil {
++			return conn, nil
++		}
++		// No usable /proc, or the pinned socket is gone. The peer is
++		// re-checked by the caller.
++		b.logf("serve: dialing %q by path: connecting through the pinned descriptor failed: %v", socketPath, err)
++	}
++	var d net.Dialer
++	return d.DialContext(ctx, "unix", socketPath)
 +}
 +
-+// TestHostSubnetRouter4via6Egress tests the operator's 4via6 egress
-+// using a subnet router outside the cluster (runs as a tsnet node advertising a 4via6 route).
++// pinUnixSocketPath returns an O_PATH descriptor referring to the file
++// that socketPath resolves to, or ok=false if the kernel or the path do
++// not support it (openat2(2), Linux 5.6 and newer). The resolution never
++// follows magic links, and is restricted to the socket's parent directory
++// when possible.
++func pinUnixSocketPath(socketPath string) (fd int, ok bool) {
++	if dir, base := filepath.Split(filepath.Clean(socketPath)); dir != "" && base != "." && base != ".." && base != "/" {
++		if dirFD, err := unix.Open(dir, unix.O_PATH|unix.O_DIRECTORY|unix.O_CLOEXEC, 0); err == nil {
++			defer unix.Close(dirFD)
++			if fd, err := unix.Openat2(dirFD, base, &unix.OpenHow{
++				Flags: unix.O_PATH | unix.O_CLOEXEC,
++				Resolve: unix.RESOLVE_BENEATH |
++					unix.RESOLVE_NO_MAGICLINKS,
++			}); err == nil {
++				return fd, true
++			}
++		}
++	}
++	fd, err := unix.Openat2(unix.AT_FDCWD, socketPath, &unix.OpenHow{
++		Flags:   unix.O_PATH | unix.O_CLOEXEC,
++		Resolve: unix.RESOLVE_NO_MAGICLINKS,
++	})
++	if err != nil {
++		return -1, false
++	}
++	return fd, true
++}
++
++// dialPinnedUnixSocket connects to the unix listener referred to by the
++// O_PATH descriptor fd, via its /proc/self/fd name, so that the connect
++// uses the pinned file and not the socket path.
++func dialPinnedUnixSocket(ctx context.Context, fd int) (net.Conn, error) {
++	var d net.Dialer
++	return d.DialContext(ctx, "unix", "/proc/self/fd/"+strconv.Itoa(fd))
++}
++
++// isTailscaledSocketFd reports whether fd and the tailscaled socket
++// (b.sys.SocketPath) refer to the same file, compared by device and inode.
++// tailscaled's socket path is stat'ed on each call, so the directory holding
++// it must not be writable by the attacker for this to be meaningful.
 +//
-+// See [TestMain] for test requirements.
-+func TestHostSubnetRouter4via6Egress(t *testing.T) {
-+	if tnClient == nil {
-+		t.Skip("TestHostSubnetRouter4via6Egress requires a working tailnet client")
++// st_dev and st_ino are filesystem-provided, and FUSE and some network
++// filesystems can report zero or duplicate values. A match made that
++// way still refuses the dial, so such values need no special handling.
++func (b *LocalBackend) isTailscaledSocketFd(fd int) bool {
++	socketPath := b.sys.SocketPath
++	if socketPath == "" {
++		return false
 +	}
-+	if !clusterIPv6Support {
-+		t.Skip("4via6 egress requires an IPv6-capable cluster")
++	var self, pinned unix.Stat_t
++	if err := unix.Stat(socketPath, &self); err != nil {
++		return false
 +	}
-+	t.Parallel()
++	if err := unix.Fstat(fd, &pinned); err != nil {
++		return false
++	}
++	return self.Dev == pinned.Dev && self.Ino == pinned.Ino
++}
+```
+
+**File**: `ipn/ipnlocal/serve_unix_linux_test.go` (added, +181/-0)
+```diff
+@@ -0,0 +1,181 @@
++// Copyright (c) Tailscale Inc & contributors
++// SPDX-License-Identifier: BSD-3-Clause
 +
-+	target := startVia6SubnetRouter(t)
-+	proxyClass := applyAcceptRoutesProxyClass(t)
++//go:build linux && !ts_omit_serve
 +
-+	t.Run("ViaIP", func(t *testing.T) {
-+		svc := egressService(generateName("test-4via6"), map[string]string{
-+			"tailscale.com/tailnet-ip":  target.viaIP,
-+			"tailscale.com/proxy-class": proxyClass.Name,
-+		})
-+		createAndCleanup(t, kubeClient, svc)
-+		waitForEgress(t, svc.Name, kube.SvcIsReady)
-+		requireTargetIsReachable(t, egressURL(svc.Name))
-+	})
++package ipnlocal
 +
-+	t.Run("ViaFQDN", func(t *testing.T) {
-+		svc := egressService(generateName("test-4via6"), map[string]string{
-+			"tailscale.com/tailnet-fqdn": target.viaFQDN,
-+			"tailscale.com/proxy-class":  proxyClass.Name,
-+		})
-+		createAndCleanup(t, kubeClient, svc)
-+		waitForEgress(t, svc.Name, kube.SvcIsReady)
-+		requireTargetIsReachable(t, egressURL(svc.Name))
-+	})
++import (
++	"bytes"
++	"context"
++	"io"
++	"os"
++	"path/filepath"
++	"strconv"
++	"syscall"
++	"testing"
++
++	"golang.org/x/sys/unix"
++)
++
++// openat2Supported reports whether the kernel supports openat2(2)
++// (Linux 5.6 and newer).
++func openat2Supported() bool {
++	fd, err := unix.Openat2(unix.AT_FDCWD, "/", &unix.OpenHow{Flags: unix.O_PATH | unix.O_CLOEXEC})
++	if err == nil {
++		unix.Close(fd)
++		return true
++	}
++	return false
 +}
 +
-+// See [TestHostSubnetRouter4via6Egress] and [TestMain] for test requirements.
-+func TestHostSubnetRouter4via6HAEgress(t *testing.T) {
-+	if tnClient == nil {
-+		t.Skip("TestHostSubnetRouter4via6HAEgress requires a working tailnet client")
++// TestPinUnixSocketPathResistsSymlinkSwap checks that replacing the dial
++// path with a symlink after pinning does not change the pinned descriptor,
++// and that a later pin of the swapped path refers to the tailscaled socket.
++func TestPinUnixSocketPathResistsSymlinkSwap(t *testing.T) {
++	if !openat2Supported() {
++		t.Skip("kernel does not support openat2(2); the dial falls back to the pre/post checks")
 +	}
-+	if !clusterIPv6Support {
-+		t.Skip("4via6 egress requires an IPv6-capable cluster")
++
++	dir := unixSocketTestDir(t)
++	tsSock := filepath.Join(dir, "tailscaled.sock")
++	mustListenUnix(t, tsSock)
++	backend := filepath.Join(dir, "backend.sock")
++	serveUnixEchoListener(t, backend)
++
++	b := newTestBackend(t)
++	b.sys.SocketPath = tsSock
++
++	// Backend behind a sibling symlink.
++	alias := filepath.Join(dir, "alias.sock")
++	if err := os.Symlink("backend.sock", alias); err != nil {
++		t.Fatal(err)
 +	}
-+	t.Parallel()
 +
-+	target := startVia6SubnetRouter(t)
-+	proxyClass := applyAcceptRoutesProxyClass(t)
-+
-+	pg := &tsapi.ProxyGroup{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name: generateName("egress-4via6"),
-+		},
-+		Spec: tsapi.ProxyGroupSpec{
-+			Type:       tsapi.ProxyGroupTypeEgress,
-+			ProxyClass: proxyClass.Name,
-+		},
++	fd, ok := pinUnixSocketPath(alias)
++	if !ok {
++		t.Fatalf("pinUnixSocketPath(%q) did not pin", alias)
 +	}
-+	createAndCleanup(t, kubeClient, pg)
++	defer unix.Close(fd)
 +
-+	t.Run("ViaIP", func(t *testing.T) {
-+		svc := egressService(generateName("test-4via6"), map[string]string{
-+			"tailscale.com/tailnet-ip":  target.viaIP,
-+			"tailscale.com/proxy-group": pg.Name,
-+		})
-+		createAndCleanup(t, kubeClient, svc)
-+		waitForEgress(t, svc.Name, pgEgressReady)
-+		requireTargetIsReachable(t, egressURL(svc.Name))
-+	})
++	if b.isTailscaledSocketFd(fd) {
++		t.Fatal("pin of the benign alias matches the tailscaled socket")
++	}
 +
-+	t.Run("ViaFQDN", func(t *testing.T) {
-+		svc := egressService(generateName("test-4via6"), map[string]string{
-+			"tailscale.com/tailnet-fqdn": target.viaFQDN,
-+			"tailscale.com/proxy-group":  pg.Name,
-+		})
-+		createAndCleanup(t, kubeClient, svc)
-+		waitForEgress(t, svc.Name, pgEgressReady)
-+		requireTargetIsReachable(t, egressURL(svc.Name))
-+	})
++	// Replace the path with a symlink to the tailscaled socket after the pin.
++	if err := os.Remove(alias); err != nil {
++		t.Fatal(err)
++	}
++	if err := os.Symlink("tailscaled.sock", alias); err != nil {
++		t.Fatal(err)
++	}
++
++	// The pinned descriptor is unchanged...
++	if b.isTailscaledSocketFd(fd) {
++		t.Fatal("pin followed the swap onto the tailscaled socket")
++	}
++	// ...and the connect through it reaches the benign backend, not the
++	// socket the path now leads to.
++	c, err := dialPinnedUnixSocket(context.Background(), fd)
++	if err != nil {
++		t.Fatalf("dial through the pinned descriptor: %v", err)
++	}
++	defer c.Close()
++	msg := []byte("hello backend")
++	if _, err := c.Write(msg); err != nil {
++		t.Fatal(err)
++	}
++	got := make([]byte, len(msg))
++	if _, err := io.ReadFull(c, got); err != nil {
++		t.Fatal(err)
++	}
++	if !bytes.Equal(got, msg) {
++		t.Fatalf("echo through pin = %q; want %q", got, msg)
++	}
++
++	// A new pin of the swapped path is the tailscaled socket.
++	fd, ok = pinUnixSocketPath(alias)
++	if !ok {
++		t.Fatalf("pinUnixSocketPath(%q) on the swapped path did not pin", alias)
++	}
++	defer unix.Close(fd)
++	if !b.isTailscaledSocketFd(fd) {
++		t.Fatal("pin of the swapped alias is not the tailscaled socket")
++	}
 +}
 +
-+// startVia6SubnetRouter brings up a tsnet node on the test host that advertises a
-+// 4via6 route and acts as a subnet router, serving the forwarded flow in-process
-+// via a RegisterFallbackTCPHandler. It returns the egress target's tailnet IP and FQDN.
-+func startVia6SubnetRouter(t *testing.T) via6Target {
++// TestPinUnixSocketPathAbsoluteSymlinkBackend checks that a backend behind
++// an absolute symlink, which RESOLVE_BENEATH cannot resolve, is still
++// pinned and dialable.
++func TestPinUnixSocketPathAbsoluteSymlinkBackend(t *testing.T) {
++	if !openat2Supported() {
++		t.Skip("kernel does not support openat2(2); the dial falls back to the pre/post checks")
++	}
++
++	dir := unixSocketTestDir(t)
++	backend := filepath.Join(dir, "backend.sock")
++	serveUnixEchoListener(t, backend)
++
++	alias := filepath.Join(dir, "alias.sock")
++	if err := os.Symlink(backend, alias); err != nil {
++		t.Fatal(err)
++	}
++
++	fd, ok := pinUnixSocketPath(alias)
++	if !ok {
++		t.Fatalf("pinUnixSocketPath(%q) did not pin", alias)
++	}
++	defer unix.Close(fd)
++
++	c, err := dialPinnedUnixSocket(context.Background(), fd)
++	if err != nil {
++		t.Fatalf("dial through the pinned descriptor: %v", err)
++	}
++	defer c.Close()
++	msg := []byte("hello backend")
++	if _, err := c.Write(msg); err != nil {
++		t.Fatal(err)
++	}
++	got := make([]byte, len(msg))
++	if _, err := io.ReadFull(c, got); err != nil {
++		t.Fatal(err)
++	}
++	if !bytes.Equal(got, msg) {
++		t.Fatalf("echo through pin = %q; want %q", got, msg)
++	}
++}
++
++// TestPinUnixSocketPathRefusesMagicLinks checks that a path that is a magic
++// link (here, /proc/self/fd of the listener) is not pinned.
++func TestPinUnixSocketPathRefusesMagicLinks(t *testing.T) {
++	if !openat2Supported() {
++		t.Skip("kernel does not support openat2(2); the dial falls back to the pre/post checks")
++	}
++
++	dir := unixSocketTestDir(t)
++	tsSock := filepath.Join(dir, "tailscaled.sock")
++	ln := mustListenUnix(t, tsSock)
++
++	sc, ok := ln.(syscall.Conn)
++	if !ok {
++		t.Fatalf("%T does not expose its descriptor", ln)
++	}
++	rc, err := sc.SyscallConn()
++	if err != nil {
++		t.Fatal(err)
++	}
++	var lnFD int
++	if err := rc.Control(func(fd uintptr) { lnFD = int(fd) }); err != nil {
++		t.Fatal(err)
++	}
++
++	magic := filepath.Join(dir, "magic.sock")
++	if err := os.Symlink("/proc/self/fd/"+strconv.Itoa(lnFD), magic); err != nil {
++		t.Fatal(err)
++	}
++
++	if fd, ok := pinUnixSocketPath(mag
+```
+
+**File**: `ipn/ipnlocal/serve_unix_other.go` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++// Copyright (c) Tailscale Inc & contributors
++// SPDX-License-Identifier: BSD-3-Clause
++
++//go:build !linux && !ts_omit_serve
++
++package ipnlocal
++
++import (
++	"context"
++	"net"
++)
++
++// dialServeUnixSocketSafe dials socketPath directly. This platform has no
++// openat2(2) equivalent, so swapping the path can still retarget the
++// connect. The caller re-checks the connected peer.
++func (b *LocalBackend) dialServeUnixSocketSafe(ctx context.Context, socketPath string) (net.Conn, error) {
++	var d net.Dialer
++	return d.DialContext(ctx, "unix", socketPath)
++}
+```
+
+**File**: `ipn/ipnlocal/serve_unix_test.go` (modified, +135/-1)
+```diff
+@@ -1,11 +1,13 @@
+ // Copyright (c) Tailscale Inc & contributors
+ // SPDX-License-Identifier: BSD-3-Clause
+ 
+-//go:build unix
++//go:build unix && !ts_omit_serve
+ 
+ package ipnlocal
+ 
+ import (
++	"bytes"
++	"context"
+ 	"errors"
+ 	"fmt"
+ 	"io"
+@@ -320,3 +322,135 @@ func TestTCPForwardUnixSocket(t *testing.T) {
+ 		t.Fatal("handler did not finish in time")
+ 	}
+ }
++
++// unixSocketTestDir returns a directory for creating unix sockets, on a
++// path short enough for sockaddr_un's sun_path limit.
++func unixSocketTestDir(t *testing.T) string {
 +	t.Helper()
++	dir, err := os.MkdirTemp("/tmp", "ts-serve-unix-*")
++	if err != nil {
++		t.Fatal(err)
++	}
++	t.Cleanup(func() { os.RemoveAll(dir) })
++	return dir
++}
 +
-+	srv := newTailnetNode(t, tsClient, generateName("test-4via6-router"))
-+	srv.RegisterFallbackTCPHandler(func(src, dst netip.AddrPort) (func(net.Conn), bool) {
-+		// Mock the backend.
-+		return func(c net.Conn) {
-+			defer c.Close()
-+			req, err := http.ReadRequest(bufio.NewReader(c))
++// mustListenUnix binds a unix listener at path, removing any existing file
++// there first (mkTempSocket leaves a regular file behind).
++func mustListenUnix(t *testing.T, path string) net.Listener {
++	t.Helper()
++	if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
++		t.Fatal(err)
++	}
++	ln, err := net.Listen("unix", path)
++	if err != nil {
++		t.Fatal(err)
++	}
++	t.Cleanup(func() { ln.Close(); os.Remove(path) })
++	return ln
++}
++
++// serveUnixEchoListener binds an echoing unix listener at path.
++func serveUnixEchoListener(t *testing.T, path string) {
++	t.Helper()
++	ln := mustListenUnix(t, path)
++	go func() {
++		for {
++			c, err := ln.Accept()
 +			if err != nil {
 +				return
 +			}
-+			resp := http.Response{StatusCode: http.StatusOK, ProtoMajor: 1, ProtoMinor: 1, Close: true, Request: req}
-+			if err := resp.Write(c); err != nil {
-+				t.Logf("writing 4via6 response: %v", err)
-+			}
-+		}, true
-+	})
++			go func() {
++				defer c.Close()
++				io.Copy(c, c)
++			}()
++		}
++	}()
++}
 +
-+	via, err := tsaddr.MapVia(via6SiteID, netip.PrefixFrom(via6BackendIP, 32))
++// TestRefuseIfConnectedToTailscaledSocket verifies the post-dial peer
++// check: the peer of a unix connection is named by the path its listener
++// was bound to, not the path dialed, so a connection to the tailscaled
++// socket is refused, including one made through a symlink
++func TestRefuseIfConnectedToTailscaledSocket(t *testing.T) {
++	dir := unixSocketTestDir(t)
++	tsSock := filepath.Join(dir, "tailscaled.sock")
++	mustListenUnix(t, tsSock)
++
++	b := newTestBackend(t)
++	b.sys.SocketPath = tsSock
++
++	// Skip if this platform does not name path-bound peers.
++	c, err := net.Dial("unix", tsSock)
 +	if err != nil {
-+		t.Fatalf("computing 4via6 route for %s: %v", via6BackendIP, err)
++		t.Fatal(err)
++	}
++	defer c.Close()
++	ua, ok := c.RemoteAddr().(*net.UnixAddr)
++	if !ok || ua.Name == "" {
++		t.Skipf("platform does not name unix socket peers (RemoteAddr = %v)", c.RemoteAddr())
 +	}
 +
-+	lc, err := srv.LocalClient()
++	if err := b.refuseIfConnectedToTailscaledSocket(c); !errors.Is(err, ErrProxyToTailscaledSocket) {
++		t.Fatalf("refuseIfConnectedToTailscaledSocket(tailscaled peer) = %v; want ErrProxyToTailscaledSocket", err)
++	}
++
++	// A connection through a symlink still names the bound path.
++	alias := filepath.Join(dir, "alias.sock")
++	if err := os.Symlink(tsSock, alias); err != nil {
++		t.Fatal(err)
++	}
++	c, err = net.Dial("unix", alias)
 +	if err != nil {
-+		t.Fatalf("getting subnet router local client: %v", err)
++		t.Fatal(err)
 +	}
-+	if _, err := lc.EditPrefs(t.Context(), &ipn.MaskedPrefs{
-+		AdvertiseRoutesSet: true,
-+		Prefs: ipn.Prefs{
-+			AdvertiseRoutes: []netip.Prefix{via},
-+		},
-+	}); err != nil {
-+		t.Fatalf("advertising 4via6 route %s: %v", via, err)
++	defer c.Close()
++	if err := b.refuseIfConnectedToTailscaledSocket(c); !errors.Is(err, ErrProxyToTailscaledSocket) {
++		t.Fatalf("refuseIfConnectedToTailscaledSocket(symlinked tailscaled peer) = %v; want ErrProxyToTailscaledSocket", err)
 +	}
 +
-+	return via6Target{
-+		viaIP:   via.Addr().String(),
-+		viaFQDN: via6FQDN(t, via6BackendIP, via6SiteID, srv),
++	// A connection to any other socket is left alone.
++	benign := filepath.Join(dir, "benign.sock")
++	mustListenUnix(t, benign)
++	c, err = net.Dial("unix", benign)
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer c.Close()
++	if err := b.refuseIfConnectedToTailscaledSocket(c); err != nil {
++		t.Fatalf("refuseIfConnectedToTailscaledSocket(benign peer) = %v; want nil", err)
 +	}
 +}
 +
-+// Test
++// TestDialServeUnixSocketServesBenignBackend dials a benign unix backend
++// end to end through dialServeUnixSocket and checks that traffic flows.
++func TestDialServeUnixSocketServesBenignBackend(t *testing.T) {
++	dir := unixSocketTestDir(t)
++	// The backend is behind a symlink, as a serve config may reference it.
++	backend := filepath.Join(dir, "backend.sock")
++	serveUnixEchoListener(t, backend)
++	alias := filepath.Join(dir, "alias.sock")
++	if err := os.Symlink(backend, alias); err != nil {
++		t.Fatal(err)
++	}
++
++	b := newTestBackend(t)
++
++	conn, err := b.dialServeUnixSocket(context.Background(), alias)
++	if err != nil {
++		t.Fatalf("dialServeUnixSocket(%q) = %v; want connection", alias, err)
++	}
++	defer conn.Close()
++
++	msg := []byte("hello backend")
++	if _, err := conn.Write(msg); err != nil {
++		t.Fatal(err)
++	}
++	got := make([]byte, len(msg))
++	if _, err := io.ReadFull(conn, got); err != nil {
++		t.Fatal(err)
++	}
++	if !bytes.Equal(got, msg) {
++		t.Fatalf("echo = %q; want %q", got, msg)
++	}
++}
 ```
 
 ---
 
-### Incident Patch 2: `ce19ee0b` (2026-10-27)
-**Commit Message**: net/routemanager: keep the coarse CGNAT and ULA routes when a peer advertises them (#21901)
+### Incident Patch 2: `822061d8` (2026-10-27)
+**Commit Message**: ipn/ipnlocal: reset alwayson override before reconciling prefs (#21998)
 
-A peer can advertise 100.64.0.0/10 or fd7a:115c:a1e0::/48 as a subnet
-route. Those prefixes are also the coarse routes that stand in for peers'
-individual addresses, so one OS route entry has two reasons to exist.
-applyDirty set that entry from one reason at a time, so removing the
-advertising peer deleted the /10 while coarsening still wanted it, and
-turning coarsening off deleted the /10 while a peer still advertised it.
-Set each coarse prefix once, from both inputs, as rebuildAll already does.
+https://github.com/tailscale/tailscale/commit/09982e1918f27c740320a4879bbafdd9f379733a
+introduced an alwayson override reset before applying policy settings
+during Start.
+A prefs reconciliation refactor in
+https://github.com/tailscale/tailscale/commit/cb7b49941eae3a933c4c5b7dc56398bce24d7e08
+changed the ordering so that Start reconciled prefs before clearing the
+override. If the user disconnected with a reason, reconciliation would
+preserve WantRunning=false, and Start could retain that stale value
+after the override was cleared.
+https://github.com/tailscale/tailscale/commit/f4aea70f7a199e5ac155e225fe7ad4de374e9dea
+added cached netmap startup, so processing the cached netmap can
+reconcile the current prefs to WantRunning=true while Start still holds
+a local prefs snapshot with WantRunning=false. Start can then notify the
+frontend with the stale value even though the backend is transitioning
+to Running with WantRunning=true.
 
-Fixes #21890
+This resets the alwayson override before reconciling prefs, restoring
+the original Start ordering and ensuring that the prefs used throughout
+Start reflect the effective alwayson policy
 
-Signed-off-by: Brendan Creane <[REDACTED_EMAIL]>
+U
 
-**File**: `net/routemanager/routemanager.go` (modified, +12/-3)
+**File**: `ipn/ipnlocal/local.go` (modified, +3/-2)
 ```diff
-@@ -946,14 +946,22 @@ func (rm *RouteManager) applyDirty(dirty set.Set[netip.Prefix], res *Result) {
- 			}
- 			cgnatDirty = append(cgnatDirty, pfx)
- 		case osPlain:
-+			if pfx == tsaddr.CGNATRange() || pfx == tsaddr.TailscaleULARange() {
-+				// A peer can advertise the CGNAT /10 or the ULA /48
-+				// as a subnet route. Those prefixes double as the
-+				// coarse routes, so they are set below from both
-+				// inputs rather than from the advertised route alone.
-+				continue
-+			}
- 			var ch bool
- 			osr, ch = tableSet(osr, pfx, wantOS)
- 			osChanged = osChanged || ch
- 		}
+@@ -3202,6 +3202,9 @@ func (b *LocalBackend) startLocked(opts ipn.Options) error {
+ 		prefsChanged = true
+ 		prefsChangedWhy = append(prefsChangedWhy, "opts.UpdatePrefs")
  	}
- 
- 	var ch bool
--	osr, ch = tableSet(osr, tsaddr.TailscaleULARange(), len(rm.ulaPfxs) > 0)
-+	_, advULA := rm.desiredFor(tsaddr.TailscaleULARange())
-+	osr, ch = tableSet(osr, tsaddr.TailscaleULARange(), advULA || len(rm.ulaPfxs) > 0)
- 	osChanged = osChanged || ch
- 
- 	wantCoarse := len(rm.cgnatPfxs) > rm.cgnatThreshold()
-@@ -963,9 +971,10 @@ func (rm *RouteManager) applyDirty(dirty set.Set[netip.Prefix], res *Result) {
- 			osr, ch = tableSet(osr, pfx, !wantCoarse)
- 			osChanged = osChanged || ch
- 		}
--		osr, ch = tableSet(osr, tsaddr.CGNATRange(), wantCoarse)
--		osChanged = osChanged || ch
++	// Reset the always-on override whenever Start is called.
++	b.resetAlwaysOnOverrideLocked()
++
+ 	// Apply any syspolicy overrides, resolve exit node ID, etc.
+ 	// As of 2025-07-03, this is primarily needed in two cases:
+ 	//  - when opts.UpdatePrefs is not nil
+@@ -3241,8 +3244,6 @@ func (b *LocalBackend) startLocked(opts ipn.Options) error {
  	}
-+	_, advCGNAT := rm.desiredFor(tsaddr.CGNATRange())
-+	osr, ch = tableSet(osr, tsaddr.CGNATRange(), advCGNAT || rm.coarseCGNAT)
-+	osChanged = osChanged || ch
- 	for _, pfx := range cgnatDirty {
- 		osr, ch = tableSet(osr, pfx, !rm.coarseCGNAT && rm.cgnatPfxs.Contains(pfx))
- 		osChanged = osChanged || ch
+ 	prefs := newPrefs.View()
+ 
+-	// Reset the always-on override whenever Start is called.
+-	b.resetAlwaysOnOverrideLocked()
+ 	b.setAtomicValuesFromPrefsLocked(prefs)
+ 	b.updateNoSNATExitNodeWarning(prefs)
+ 
 ```
 
-**File**: `net/routemanager/routemanager_test.go` (modified, +100/-0)
+**File**: `ipn/ipnlocal/local_test.go` (modified, +39/-0)
 ```diff
-@@ -273,6 +273,106 @@ func TestFullRebuildWhileCoarse(t *testing.T) {
- 	wantOutbound(t, rm, "100.64.0.2", k2, true)
+@@ -415,6 +415,45 @@ func TestLazyMachineKeyGeneration(t *testing.T) {
+ 	time.Sleep(500 * time.Millisecond)
  }
  
-+// TestAdvertisedCGNATRangeWhileCoarse checks that the CGNAT /10 stays
-+// in the OS route set while either CGNAT coarsening or an accepted
-+// subnet route for exactly that prefix still wants it. The two inputs
-+// share one table entry, and the incremental path used to let the
-+// subnet route's removal delete the entry out from under coarsening.
-+func TestAdvertisedCGNATRangeWhileCoarse(t *testing.T) {
-+	cgnat := tsaddr.CGNATRange()
-+	p3 := peerView{
-+		ID:        3,
-+		Key:       k3,
-+		SelfAddrs: []netip.Prefix{pfx("100.64.0.3/32")},
-+		Routes:    []netip.Prefix{cgnat},
-+	}
-+	rm := New(t.Logf)
-+	commit(rm, func(m *Mutation) {
-+		m.SetPrefs(Prefs{RouteAll: true})
-+		m.SetTailnetConfig(TailnetConfig{OneCGNAT: true})
-+		m.upsertPeer(peer1())
-+		m.upsertPeer(peer2())
++func TestStartResetsAlwaysOnOverrideBeforeReconcilingPrefs(t *testing.T) {
++	var polc policytest.Config
++	polc.Set(pkey.AlwaysOn, true)
++
++	sys := tsd.NewSystem()
++	sys.PolicyClient.Set(polc)
++
++	b := newTestLocalBackendWithSys(t, sys)
++	b.ForTest().SetControlClientGetter(func(opts controlclient.Options) (controlclient.Client, error) {
++		return newClient(t, opts), nil
 +	})
-+	wantOSRoutes(t, rm, "100.64.0.0/10", "fd7a:115c:a1e0::/48")
-+
-+	// Adding the advertiser while coarse changes nothing in the OS
-+	// route set: the /10 is already there.
-+	res := commit(rm, func(m *Mutation) { m.upsertPeer(p3) })
-+	if res.OSRoutesChanged {
-+		t.Errorf("adding /10 advertiser while coarse: %+v", res)
-+	}
-+	wantOSRoutes(t, rm, "100.64.0.0/10", "fd7a:115c:a1e0::/48")
-+
-+	// Removing it leaves two CGNAT peers, so coarsening stays on and
-+	// the /10 must survive.
-+	res = commit(rm, func(m *Mutation) { m.RemovePeer(3) })
-+	if res.OSRoutesChanged {
-+		t.Errorf("removing /10 advertiser while coarse: %+v", res)
-+	}
-+	wantOSRoutes(t, rm, "100.64.0.0/10", "fd7a:115c:a1e0::/48")
-+
-+	// Now the reverse: coarsening turns off while the /10 is still
-+	// advertised. Only the advertiser remains, so its own /32 comes
-+	// back and the /10 stays as a plain route.
-+	commit(rm, func(m *Mutation) {
-+		m.upsertPeer(p3)
-+		m.RemovePeer(1)
-+		m.RemovePeer(2)
++	b.ForTest().SetPrefs(&ipn.Prefs{
++		ControlURL:  "https://localhost:1/",
++		WantRunning: false,
 +	})
-+	if rm.coarseCGNAT {
-+		t.Fatal("coarseCGNAT still set with one CGNAT peer")
-+	}
-+	wantOSRoutes(t, rm, "100.64.0.0/10", "100.64.0.3/32")
 +
-+	// Either way, the incremental result matches a fresh build.
-+	fresh := New(t.Logf)
-+	commit(fresh, func(m *Mutation) {
-+		m.SetPrefs(Prefs{RouteAll: true})
-+		m.SetTailnetConfig(TailnetConfig{OneCGNAT: true})
-+		m.upsertPeer(p3)
-+	})
-+	if !fresh.OSRoutes().Equal(rm.OSRoutes()) {
-+		t.Errorf("incremental OSRoutes = %v; fresh build = %v",
-+			slices.Collect(rm.OSRoutes().All()), slices.Collect(fresh.OSRoutes().All()))
++	// Simulate a user disconnecting while AlwaysOn.OverrideWithReason is
++	// enabled. The override prevents Always-On from immediately setting
++	// WantRunning back to true.
++	b.mu.Lock()
++	b.overrideAlwaysOn = true
++	b.mu.Unlock()
++
++	if err := b.Start(ipn.Options{}); err != nil {
++		t.Fatalf("Start: %v", err)
++	}
++
++	if got := b.Prefs().WantRunning(); !got {
++		t.Errorf("WantRunning = false after Start with Always-On enabled; want true")
++	}
++
++	b.mu.Lock()
++	overrideAlwaysOn := b.overrideAlwaysOn
++	b.mu.Unlock()
++	if overrideAlwaysOn {
++		t.Error("overrideAlwaysOn remains set after Start")
 +	}
 +}
 +
-+// TestAdvertisedULARange is the IPv6 counterpart of
-+// TestAdvertisedCGNATRangeWhileCoarse: the ULA /48 is both the coarse
-+// route for peers' /128s and a prefix a peer can advertise.
-+func TestAdvertisedULARange(t *testing.T) {
-+	ula := tsaddr.TailscaleULARange()
-+	adv := peerView{
-+		ID:        1,
-+		Key:       k1,
-+		SelfAddrs: []netip.Prefix{pfx("100.64.0.1/32")},
-+		Routes:    []netip.Prefix{ula},
-+	}
-+	rm := New(t.Logf)
-+	commit(rm, func(m *Mutation) {
-+		m.SetPrefs(Prefs{RouteAll: true})
-+		m.upsertPeer(adv)
-+		m.upsertPeer(peer2())
-+	})
-+	wantOSRoutes(t, rm, "100.64.0.1/32", "100.64.0.2/32", "fd7a:115c:a1e0::/48")
-+
-+	// peer2 was the only peer with a ULA self address. Its removal
-+	// must not take the /48 with it while adv still advertises it.
-+	res := commit(rm, func(m *Mutation) { m.RemovePeer(2) })
-+	if !res.OSRoutesChanged {
-+		t.Errorf("removing peer2: %+v", res)
-+	}
-+	wantOSRoutes(t, rm, "100.64.0.1/32", "fd7a:115c:a1e0::/48")
-+
-+	// And removing the advertiser while a /128 peer is present must
-+	// not take it either.
-+	commit(rm, func(m *Mutation) {
-+		m.upsertPeer(peer2())
-+		m.RemovePeer(1)
-+	})
-+	wantOSRoutes(t, rm, "100.64.0.2/32", "fd7a:115c:a1e0::/48")
-+}
-+
- // TestSingleIPPlainRoute checks that a single-IP route outside the
- // CGNAT and ULA ranges is programmed individually, not coarsened.
- func TestSingleIPPlainRoute(t *testing.T) {
+ func TestZeroExitNodeViaLocalAPI(t *testing.T) {
+ 	lb := newTestLocalBackend(t)
+ 	user := &ipnauth.TestActor{}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22002** (2026-10-27): Raggi/104release (@raggi)
+- **PR #21999** (2026-10-27): ipn/ipnlocal: check the tailscaled socket on every serve unix dial (@raggi)
+- **PR #21998** (2026-10-27): ipn/ipnlocal: reset alwayson override before reconciling prefs (@kari-ts)
+- **PR #21992** (closed): ipn/ipnlocal: recheck the tailscaled socket on every serve unix dial (@samj-ts)
 - **PR #21982** (2026-10-27): ssh/tailssh: parse UIDs consistently in isRootUser() (@fmarier)
 - **PR #21980** (2026-10-27): derp/derphttp: bound response body read on non-101 upgrade response (@pawel-ts)
-- **PR #21979** (2026-10-27): tstest/natlab/vnet: fix TCPConn leak (@fmarier)
-- **PR #21977** (2026-10-26): ssh/tailssh: set $LOGNAME to same value as $USER in incubator (@oxtoacart)
-- **PR #21973** (2026-10-27): ssh/tailssh: release reverse-forward cancellation callbacks (@raggi)
-- **PR #21972** (2026-10-26): ssh/tailssh: give delegated action fetches one timeout owner (@raggi)
 
 ---
 
@@ -1299,36 +1595,63 @@ Signed-off-by: Brendan Creane <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cmd/k8s-operator/e2e: add 4via6 egress tests (#21854)
+## X. ipn/ipnlocal: check the tailscaled socket on every serve unix dial
 
 **RULE**:
-When implementing operations in `cmd/k8s-operator/e2e/acl.hujson`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ipn/ipnlocal/serve.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b3766d4f`: cmd/k8s-operator/e2e: add 4via6 egress tests (#21854). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3a38840c`: ipn/ipnlocal: check the tailscaled socket on every serve unix dial. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/k8s-operator/e2e/acl.hujson`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ipn/ipnlocal/serve.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			// Tailscale 4via6 range, so dynamically-computed 4via6 subnet routes
-			// advertised by Connectors in the e2e tests are auto-approved.
-			"fd7a:115c:a1e0:b1a::/64": ["tag:k8s"],
-		{
-			// Allow egress proxies to reach 4via6 targets.
-			"src": ["tag:k8s"],
-			"dst": ["fd7a:115c:a1e0:b1a::/64"],
-			"ip":  ["tcp:80", "tcp:443"],
-		},
+// ErrProxyToTailscaledSocket is returned when attempting to proxy to the
+// tailscaled socket itself. The LocalAPI authorizes a unix-socket caller by
+// the peer credentials of the dialing process, which would be tailscaled
+// running as root, so such a proxy would hand a remote client a
+// root-authorized LocalAPI.
+			if socketPath, isUnix := strings.CutPrefix(backDst, "unix:"); isUnix {
+				backConn, err = b.dialServeUnixSocket(ctx, socketPath)
+				// dialServeUnixSocket already logged a refusal; don't double-log.
+				if !errors.Is(err, ErrProxyToTailscaledSocket) {
+					b.logf("localbackend: failed to TCP proxy port %v (from %v) to %s: %v", dport, srcAddr, backDst, err)
+				}
+// dialServeUnixSocket dials a unix-socket serve/funnel backend. It returns
+// ErrProxyToTailscaledSocket if the backend is tailscaled's own socket,
+// which would give the caller a root-authorized LocalAPI.
+//
+// The configured path can be replaced by anyone who can write to its
+// directory, so the socket is re-checked on every dial, not only at
+// config time. dialServeUnixSocketSafe avoids re-resolving the path
+// where the platform allows it. On the remaining dials,
+// refuseIfConnectedToTailscaledSoc
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// ErrProxyToTailscaledSocket is returned when attempting to proxy
+// to the tailscaled socket itself, which would create a loop.
+			// Never forward to tailscaled's own socket: the local API
+			// authorizes a unix-socket caller by the peer credentials of the
+			// dialing process, which here is tailscaled itself, so a forward
+			// would hand a remote peer a root-authorized local API.
+			socketPath, isUnix := strings.CutPrefix(backDst, "unix:")
+			if isUnix && b.isTailscaledSocket(socketPath) {
+				b.logf("localbackend: refusing TCP proxy on port %v (from %v) to the tailscaled socket %q", dport, srcAddr, socketPath)
+				return ErrProxyToTailscaledSocket
+			}
+			if isUnix {
+				var d net.Dialer
+				backConn, err = d.DialContext(ctx, "unix", socketPath)
+				b.logf("localbackend: failed to TCP proxy port %v (from %v) to %s: %v", dport, srcAddr, backDst, err)
+				var d net.Dialer
+				return d.DialContext(ctx, "unix", rp.socketPath)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b3766d4f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3a38840c` are properly handled with clean fallback behavior.
