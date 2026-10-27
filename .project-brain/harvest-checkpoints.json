@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T20:04:49.936Z",
+  "last_updated": "2026-10-27T20:11:41.875Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "ae3edf81fa95361564f3fb7ba16527961578598481a86375111082c7fbe96a01",
-      "verified_at": "2026-10-27T18:36:29.922Z",
+      "content_hash": "ef973ae5ed53d005ea72d39c611fc33312fa495285a7da565243ecb37c3c9545",
+      "verified_at": "2026-10-27T20:11:41.874Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T18:36:29.922Z"
+      "last_updated": "2026-10-27T20:11:41.874Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -5691,14 +5691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pixeltable-pixeltable",
-      "content_hash": "fef38ac3f29fd6114d436625aafe4d66571b12b72da542925547eb497baed028",
-      "verified_at": "2026-10-25T16:48:19.166Z",
+      "content_hash": "cdfb59edd8a185e971e489543217dce77f71473d5b4ee47bb8ee3f8cb7b0c033",
+      "verified_at": "2026-10-27T20:11:41.006Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T16:48:19.166Z"
+      "last_updated": "2026-10-27T20:11:41.007Z"
     },
     "honojs/hono": {
       "repository": "honojs/hono",

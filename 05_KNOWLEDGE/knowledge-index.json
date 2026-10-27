@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T20:04:49.888Z",
+  "last_updated": "2026-10-27T20:11:41.789Z",
   "total_verified_learnings": 1149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -39244,8 +39244,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "5fd0491e",
-      "content_hash": "ae3edf81fa95361564f3fb7ba16527961578598481a86375111082c7fbe96a01",
+      "source_version": "73085699",
+      "content_hash": "ef973ae5ed53d005ea72d39c611fc33312fa495285a7da565243ecb37c3c9545",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -39355,7 +39355,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T18:36:29.830Z",
+      "verified_at": "2026-10-27T20:11:41.771Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42125,8 +42125,8 @@
       "slug": "pixeltable-pixeltable",
       "platform": "github",
       "source_url": "https://github.com/pixeltable/pixeltable",
-      "source_version": "b10e5045",
-      "content_hash": "fef38ac3f29fd6114d436625aafe4d66571b12b72da542925547eb497baed028",
+      "source_version": "cb995107",
+      "content_hash": "cdfb59edd8a185e971e489543217dce77f71473d5b4ee47bb8ee3f8cb7b0c033",
       "dossier_path": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "promoted_rules": [
@@ -42144,6 +42144,11 @@
           "number": 3903,
           "title": "Gemini's empty-response crash and leaked async client; add ImagesResponse.safety",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4983,
+          "title": "handle ARRAY column in EmbeddingIndex get_metadata and describe (#1699)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42151,7 +42156,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T16:48:19.083Z",
+      "verified_at": "2026-10-27T20:11:40.905Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -137891,6 +137896,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T20:04:49.879Z"
+    },
+    "rule-4983": {
+      "learning_id": "rule-4983",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4983,
+      "title": "handle ARRAY column in EmbeddingIndex get_metadata and describe (#1699)",
+      "source_url": "https://github.com/pixeltable/pixeltable",
+      "source_version": "cb995107",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:11:40.905Z"
     }
   },
   "aliases": {

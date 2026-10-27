@@ -5529,3 +5529,5 @@ Every entry in this ledger must capture:
 | `learn-github-internet-development-www-sacred` | `https://github.com/internet-development/www-sacred` | `a4412efd` | Multi-dimensional audit evidence | 2026-10-27T20:04:44.166Z |
 | `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `f75ea631` | Multi-dimensional audit evidence | 2026-10-27T20:04:46.222Z |
 | `learn-github-stakater-reloader` | `https://github.com/stakater/Reloader` | `41b3ad27` | Multi-dimensional audit evidence | 2026-10-27T20:04:49.929Z |
+| `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `cb995107` | Multi-dimensional audit evidence | 2026-10-27T20:11:40.999Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `73085699` | Multi-dimensional audit evidence | 2026-10-27T20:11:41.865Z |

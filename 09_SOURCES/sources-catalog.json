@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "5fd0491e",
+    "sourceVersion": "73085699",
     "license": "Apache-2.0",
-    "contentHash": "ae3edf81fa95361564f3fb7ba16527961578598481a86375111082c7fbe96a01",
-    "lastHarvestedAt": "2026-10-27T18:36:29.909Z",
+    "contentHash": "ef973ae5ed53d005ea72d39c611fc33312fa495285a7da565243ecb37c3c9545",
+    "lastHarvestedAt": "2026-10-27T20:11:41.865Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3713,10 +3713,10 @@
     "repository": "pixeltable/pixeltable",
     "platform": "github",
     "sourceUrl": "https://github.com/pixeltable/pixeltable",
-    "sourceVersion": "b10e5045",
+    "sourceVersion": "cb995107",
     "license": "Apache-2.0",
-    "contentHash": "fef38ac3f29fd6114d436625aafe4d66571b12b72da542925547eb497baed028",
-    "lastHarvestedAt": "2026-10-25T16:48:19.158Z",
+    "contentHash": "cdfb59edd8a185e971e489543217dce77f71473d5b4ee47bb8ee3f8cb7b0c033",
+    "lastHarvestedAt": "2026-10-27T20:11:40.999Z",
     "learningId": "learn-github-pixeltable-pixeltable"
   },
   "honojs-hono": {

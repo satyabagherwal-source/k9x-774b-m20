@@ -5520,3 +5520,5 @@
 | `CYCLE-20261027-6S5F` | `2026-10-27T20:04:44.163Z` | `internet-development/www-sacred` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/internet-development-www-sacred-learnings.md` | Yes (`1f65b77c...`) |
 | `CYCLE-20261027-6TQJ` | `2026-10-27T20:04:46.219Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4981` | Yes (`53db82dd...`) |
 | `CYCLE-20261027-6WLI` | `2026-10-27T20:04:49.926Z` | `stakater/Reloader` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4982` | Yes (`36ad7fe4...`) |
+| `CYCLE-20261027-FPS3` | `2026-10-27T20:11:40.995Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4983` | Yes (`cdfb59ed...`) |
+| `CYCLE-20261027-FQG5` | `2026-10-27T20:11:41.861Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`ef973ae5...`) |
