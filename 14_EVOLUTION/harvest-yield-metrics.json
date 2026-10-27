@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T13:25:28.214Z",
-  "total_cycles_completed": 5300,
-  "total_learnings_persisted": 5300,
-  "total_rules_promoted": 4709,
+  "last_updated": "2026-10-27T13:28:34.877Z",
+  "total_cycles_completed": 5306,
+  "total_learnings_persisted": 5306,
+  "total_rules_promoted": 4712,
   "history": [
-    {
-      "timestamp": "2026-10-26T10:33:20.692Z",
-      "repository": "Louis-CFM/coucou",
-      "learningId": "learn-github-louis-cfm-coucou",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T10:33:25.004Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T10:33:27.192Z",
-      "repository": "cachix/devenv",
-      "learningId": "learn-github-cachix-devenv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T11:04:09.238Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T11:15:42.618Z",
-      "repository": "DNSControl/dnscontrol",
-      "learningId": "learn-github-dnscontrol-dnscontrol",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T11:15:43.482Z",
-      "repository": "xerj-org/xerj",
-      "learningId": "learn-github-xerj-org-xerj",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-26T11:15:46.101Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1403,6 +1361,48 @@
       "repository": "dragonflydb/dragonfly",
       "learningId": "learn-github-dragonflydb-dragonfly",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:28:17.481Z",
+      "repository": "nexu-io/html-anything",
+      "learningId": "learn-github-nexu-io-html-anything",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:28:22.606Z",
+      "repository": "lemomo-ai/lemo-opuscar",
+      "learningId": "learn-github-lemomo-ai-lemo-opuscar",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:28:23.905Z",
+      "repository": "automazeio/ccpm",
+      "learningId": "learn-github-automazeio-ccpm",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:28:29.288Z",
+      "repository": "okteto/okteto",
+      "learningId": "learn-github-okteto-okteto",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:28:29.625Z",
+      "repository": "zulip/zulip",
+      "learningId": "learn-github-zulip-zulip",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:28:34.877Z",
+      "repository": "duckdb/duckdb",
+      "learningId": "learn-github-duckdb-duckdb",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

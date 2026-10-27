@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T13:25:28.217Z",
+  "last_updated": "2026-10-27T13:28:34.880Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4056,14 +4056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zulip-zulip",
-      "content_hash": "8e5dbaf828f3d177a3bc1ed46a2562cb3f288af3c50af841565b551d49b35b83",
-      "verified_at": "2026-10-23T09:51:51.978Z",
+      "content_hash": "459bcd659afa4425bee2c9b8dabdad4dc0f709dfe091f86ce65e403484557a88",
+      "verified_at": "2026-10-27T13:28:29.627Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T09:51:51.978Z"
+      "last_updated": "2026-10-27T13:28:29.627Z"
     },
     "goodrain/rainbond": {
       "repository": "goodrain/rainbond",
@@ -5316,14 +5316,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-okteto-okteto",
-      "content_hash": "7b2e3fd54464d29549bd5f7d8beeec34c16f495c4a14884b236605b3ce0b4bd8",
-      "verified_at": "2026-10-25T09:34:26.146Z",
+      "content_hash": "8e665ef6d0b10f4f0e47c7db90e58c2f8af2c39f3da29a6a12425a0a81db43d2",
+      "verified_at": "2026-10-27T13:28:29.292Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T09:34:26.146Z"
+      "last_updated": "2026-10-27T13:28:29.292Z"
     },
     "supervc-stack/VectorChord": {
       "repository": "supervc-stack/VectorChord",
@@ -9381,14 +9381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duckdb-duckdb",
-      "content_hash": "715de2caf0ce631f2a32657f3aa3facf7b947860dad6f468fd510cadddd107c0",
-      "verified_at": "2026-10-25T06:23:23.408Z",
+      "content_hash": "34d3f1d4e30216a41a1e60d17bb0485cd55baf6ca4a96a14d1ba2283d6b60d96",
+      "verified_at": "2026-10-27T13:28:34.880Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T06:23:23.408Z"
+      "last_updated": "2026-10-27T13:28:34.880Z"
     },
     "megh-bari/pattern-craft": {
       "repository": "megh-bari/pattern-craft",
@@ -16499,6 +16499,51 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-27T13:03:42.063Z"
+    },
+    "nexu-io/html-anything": {
+      "repository": "nexu-io/html-anything",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-nexu-io-html-anything",
+      "content_hash": "63295139a3071fd7c236620e89974d1b482c1f8d3cdc33098f4b92a4ea92f799",
+      "verified_at": "2026-10-27T13:28:17.484Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T13:28:17.484Z"
+    },
+    "lemomo-ai/lemo-opuscar": {
+      "repository": "lemomo-ai/lemo-opuscar",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-lemomo-ai-lemo-opuscar",
+      "content_hash": "0a4c6a8138343b687be811f15ee09007130f6814a4ea7c3815ee6274ee0d9e27",
+      "verified_at": "2026-10-27T13:28:22.608Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T13:28:22.608Z"
+    },
+    "automazeio/ccpm": {
+      "repository": "automazeio/ccpm",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-automazeio-ccpm",
+      "content_hash": "426fdfa8200dbb78499bec9135cdbe388e393f688504a4fd4bb134c4f82e34f3",
+      "verified_at": "2026-10-27T13:28:23.908Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T13:28:23.908Z"
     }
   },
   "repos": {

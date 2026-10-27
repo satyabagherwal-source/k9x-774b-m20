@@ -2613,10 +2613,10 @@
     "repository": "zulip/zulip",
     "platform": "github",
     "sourceUrl": "https://github.com/zulip/zulip",
-    "sourceVersion": "0975780a",
+    "sourceVersion": "3e9bc1e1",
     "license": "Apache-2.0",
-    "contentHash": "8e5dbaf828f3d177a3bc1ed46a2562cb3f288af3c50af841565b551d49b35b83",
-    "lastHarvestedAt": "2026-10-23T09:51:51.966Z",
+    "contentHash": "459bcd659afa4425bee2c9b8dabdad4dc0f709dfe091f86ce65e403484557a88",
+    "lastHarvestedAt": "2026-10-27T13:28:29.621Z",
     "learningId": "learn-github-zulip-zulip"
   },
   "goodrain-rainbond": {
@@ -3463,10 +3463,10 @@
     "repository": "okteto/okteto",
     "platform": "github",
     "sourceUrl": "https://github.com/okteto/okteto",
-    "sourceVersion": "903f657d",
+    "sourceVersion": "e5c46263",
     "license": "Apache-2.0",
-    "contentHash": "7b2e3fd54464d29549bd5f7d8beeec34c16f495c4a14884b236605b3ce0b4bd8",
-    "lastHarvestedAt": "2026-10-25T09:34:26.132Z",
+    "contentHash": "8e665ef6d0b10f4f0e47c7db90e58c2f8af2c39f3da29a6a12425a0a81db43d2",
+    "lastHarvestedAt": "2026-10-27T13:28:29.283Z",
     "learningId": "learn-github-okteto-okteto"
   },
   "supervc-stack-vectorchord": {
@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "1641475e",
+    "sourceVersion": "d1de96c1",
     "license": "MIT",
-    "contentHash": "715de2caf0ce631f2a32657f3aa3facf7b947860dad6f468fd510cadddd107c0",
-    "lastHarvestedAt": "2026-10-25T06:23:23.396Z",
+    "contentHash": "34d3f1d4e30216a41a1e60d17bb0485cd55baf6ca4a96a14d1ba2283d6b60d96",
+    "lastHarvestedAt": "2026-10-27T13:28:34.874Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {
@@ -10978,5 +10978,35 @@
     "contentHash": "ac6b36b598abe127f28163f28e1a5dcf986de0cbedecedaa4be2893dd7f26a97",
     "lastHarvestedAt": "2026-10-27T13:03:42.055Z",
     "learningId": "learn-github-alex2yang97-yahoo-finance-mcp"
+  },
+  "nexu-io-html-anything": {
+    "repository": "nexu-io/html-anything",
+    "platform": "github",
+    "sourceUrl": "https://github.com/nexu-io/html-anything",
+    "sourceVersion": "975fb3bc",
+    "license": "Apache-2.0",
+    "contentHash": "63295139a3071fd7c236620e89974d1b482c1f8d3cdc33098f4b92a4ea92f799",
+    "lastHarvestedAt": "2026-10-27T13:28:17.473Z",
+    "learningId": "learn-github-nexu-io-html-anything"
+  },
+  "lemomo-ai-lemo-opuscar": {
+    "repository": "lemomo-ai/lemo-opuscar",
+    "platform": "github",
+    "sourceUrl": "https://github.com/lemomo-ai/lemo-opuscar",
+    "sourceVersion": "413a6bd6",
+    "license": "MIT",
+    "contentHash": "0a4c6a8138343b687be811f15ee09007130f6814a4ea7c3815ee6274ee0d9e27",
+    "lastHarvestedAt": "2026-10-27T13:28:22.602Z",
+    "learningId": "learn-github-lemomo-ai-lemo-opuscar"
+  },
+  "automazeio-ccpm": {
+    "repository": "automazeio/ccpm",
+    "platform": "github",
+    "sourceUrl": "https://github.com/automazeio/ccpm",
+    "sourceVersion": "3294c85b",
+    "license": "MIT",
+    "contentHash": "426fdfa8200dbb78499bec9135cdbe388e393f688504a4fd4bb134c4f82e34f3",
+    "lastHarvestedAt": "2026-10-27T13:28:23.900Z",
+    "learningId": "learn-github-automazeio-ccpm"
   }
 }

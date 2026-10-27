@@ -5332,3 +5332,9 @@ Every entry in this ledger must capture:
 | `learn-github-axios-axios` | `https://github.com/axios/axios` | `0a9b58d5` | Multi-dimensional audit evidence | 2026-10-27T13:25:18.688Z |
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `43b82f58` | Multi-dimensional audit evidence | 2026-10-27T13:25:23.866Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `1042051b` | Multi-dimensional audit evidence | 2026-10-27T13:25:28.209Z |
+| `learn-github-nexu-io-html-anything` | `https://github.com/nexu-io/html-anything` | `975fb3bc` | Multi-dimensional audit evidence | 2026-10-27T13:28:17.473Z |
+| `learn-github-lemomo-ai-lemo-opuscar` | `https://github.com/lemomo-ai/lemo-opuscar` | `413a6bd6` | Multi-dimensional audit evidence | 2026-10-27T13:28:22.602Z |
+| `learn-github-automazeio-ccpm` | `https://github.com/automazeio/ccpm` | `3294c85b` | Multi-dimensional audit evidence | 2026-10-27T13:28:23.900Z |
+| `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `e5c46263` | Multi-dimensional audit evidence | 2026-10-27T13:28:29.283Z |
+| `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `3e9bc1e1` | Multi-dimensional audit evidence | 2026-10-27T13:28:29.621Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `d1de96c1` | Multi-dimensional audit evidence | 2026-10-27T13:28:34.874Z |

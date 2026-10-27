@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T13:25:28.159Z",
-  "total_verified_learnings": 1114,
+  "last_updated": "2026-10-27T13:28:34.814Z",
+  "total_verified_learnings": 1117,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -9613,8 +9613,8 @@
       "slug": "duckdb-duckdb",
       "platform": "github",
       "source_url": "https://github.com/duckdb/duckdb",
-      "source_version": "1641475e",
-      "content_hash": "715de2caf0ce631f2a32657f3aa3facf7b947860dad6f468fd510cadddd107c0",
+      "source_version": "d1de96c1",
+      "content_hash": "34d3f1d4e30216a41a1e60d17bb0485cd55baf6ca4a96a14d1ba2283d6b60d96",
       "dossier_path": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "promoted_rules": [
@@ -9664,7 +9664,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T06:23:23.327Z",
+      "verified_at": "2026-10-27T13:28:34.802Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39420,8 +39420,8 @@
       "slug": "okteto-okteto",
       "platform": "github",
       "source_url": "https://github.com/okteto/okteto",
-      "source_version": "903f657d",
-      "content_hash": "7b2e3fd54464d29549bd5f7d8beeec34c16f495c4a14884b236605b3ce0b4bd8",
+      "source_version": "e5c46263",
+      "content_hash": "8e665ef6d0b10f4f0e47c7db90e58c2f8af2c39f3da29a6a12425a0a81db43d2",
       "dossier_path": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "promoted_rules": [
@@ -39439,6 +39439,11 @@
           "number": 4213,
           "title": "build(deps): bump renovatebot/github-action from 46.3.8 to 46.3.9 (#5215)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4804,
+          "title": "build(deps): bump body-parser from 1.20.6 to 1.20.9 in /samples/node.js (#5222)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39446,7 +39451,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T09:34:26.063Z",
+      "verified_at": "2026-10-27T13:28:29.222Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54844,8 +54849,8 @@
       "slug": "zulip-zulip",
       "platform": "github",
       "source_url": "https://github.com/zulip/zulip",
-      "source_version": "0975780a",
-      "content_hash": "8e5dbaf828f3d177a3bc1ed46a2562cb3f288af3c50af841565b551d49b35b83",
+      "source_version": "3e9bc1e1",
+      "content_hash": "459bcd659afa4425bee2c9b8dabdad4dc0f709dfe091f86ce65e403484557a88",
       "dossier_path": "07_PROJECT_LEARNING/zulip-zulip-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zulip-zulip-learnings.md",
       "promoted_rules": [
@@ -54868,6 +54873,11 @@
           "number": 3862,
           "title": "Conditional Unique Constraint for Nullable Relational Partitioning",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4805,
+          "title": "auth: Fix 500 on signup with a long external auth method name.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54875,7 +54885,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T09:51:51.887Z",
+      "verified_at": "2026-10-27T13:28:29.566Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -133491,6 +133501,135 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T13:25:28.148Z"
+    },
+    "learn-github-nexu-io-html-anything": {
+      "learning_id": "learn-github-nexu-io-html-anything",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "nexu-io/html-anything",
+      "repository": "nexu-io/html-anything",
+      "slug": "nexu-io-html-anything",
+      "platform": "github",
+      "source_url": "https://github.com/nexu-io/html-anything",
+      "source_version": "975fb3bc",
+      "content_hash": "63295139a3071fd7c236620e89974d1b482c1f8d3cdc33098f4b92a4ea92f799",
+      "dossier_path": "07_PROJECT_LEARNING/nexu-io-html-anything-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/nexu-io-html-anything-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T13:28:17.419Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-lemomo-ai-lemo-opuscar": {
+      "learning_id": "learn-github-lemomo-ai-lemo-opuscar",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "lemomo-ai/lemo-opuscar",
+      "repository": "lemomo-ai/lemo-opuscar",
+      "slug": "lemomo-ai-lemo-opuscar",
+      "platform": "github",
+      "source_url": "https://github.com/lemomo-ai/lemo-opuscar",
+      "source_version": "413a6bd6",
+      "content_hash": "0a4c6a8138343b687be811f15ee09007130f6814a4ea7c3815ee6274ee0d9e27",
+      "dossier_path": "07_PROJECT_LEARNING/lemomo-ai-lemo-opuscar-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/lemomo-ai-lemo-opuscar-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4803,
+          "title": "Library audit: fixes, cleanup and English throughout",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T13:28:22.542Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4803": {
+      "learning_id": "rule-4803",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4803,
+      "title": "Library audit: fixes, cleanup and English throughout",
+      "source_url": "https://github.com/lemomo-ai/lemo-opuscar",
+      "source_version": "413a6bd6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:28:22.542Z"
+    },
+    "learn-github-automazeio-ccpm": {
+      "learning_id": "learn-github-automazeio-ccpm",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "automazeio/ccpm",
+      "repository": "automazeio/ccpm",
+      "slug": "automazeio-ccpm",
+      "platform": "github",
+      "source_url": "https://github.com/automazeio/ccpm",
+      "source_version": "3294c85b",
+      "content_hash": "426fdfa8200dbb78499bec9135cdbe388e393f688504a4fd4bb134c4f82e34f3",
+      "dossier_path": "07_PROJECT_LEARNING/automazeio-ccpm-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/automazeio-ccpm-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T13:28:23.794Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4804": {
+      "learning_id": "rule-4804",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4804,
+      "title": "build(deps): bump body-parser from 1.20.6 to 1.20.9 in /samples/node.js (#5222)",
+      "source_url": "https://github.com/okteto/okteto",
+      "source_version": "e5c46263",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:28:29.222Z"
+    },
+    "rule-4805": {
+      "learning_id": "rule-4805",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4805,
+      "title": "auth: Fix 500 on signup with a long external auth method name.",
+      "source_url": "https://github.com/zulip/zulip",
+      "source_version": "3e9bc1e1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:28:29.566Z"
     }
   },
   "aliases": {

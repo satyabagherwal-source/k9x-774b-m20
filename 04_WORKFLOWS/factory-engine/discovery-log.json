@@ -19033,5 +19033,50 @@
     "qualityScore": 507,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-27T13:03:05.087Z"
+  },
+  {
+    "name": "html-anything",
+    "fullName": "nexu-io/html-anything",
+    "url": "https://github.com/nexu-io/html-anything",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "✨ The agentic HTML editor — your local AI agent writes the HTML, you ship it. 🚀 75 Skills × 9 Surfaces (magazine · deck · poster · XHS / tweet · prototype · data report · Hyperframes) 🛡️ Sandboxed preview · 📤 1-click to WeChat / X / Zhihu / HTML / PNG 🔑 Zero API key — Claude Code / Cursor / Codex / Gemini / Copilot / OpenCode / Qwen / Aider.",
+    "stars": 9259,
+    "forks": 886,
+    "openIssues": 59,
+    "language": "HTML",
+    "qualityScore": 5263,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T13:28:07.277Z"
+  },
+  {
+    "name": "lemo-opuscar",
+    "fullName": "lemomo-ai/lemo-opuscar",
+    "url": "https://github.com/lemomo-ai/lemo-opuscar",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A toolbox of film styles made in code for Claude Code: 59 ready to use, and your own. Each style is a style prompt plus a demo film made entirely in code by Claude Opus 5.5, with no video model. By Lemomo. · 一套用代码做片的风格工具箱：59 种现成风格，也能做出你自己的",
+    "stars": 8468,
+    "forks": 950,
+    "openIssues": 8,
+    "language": "JavaScript",
+    "qualityScore": 4785,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T13:28:07.277Z"
+  },
+  {
+    "name": "ccpm",
+    "fullName": "automazeio/ccpm",
+    "url": "https://github.com/automazeio/ccpm",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Project management skill system for Agents that uses GitHub Issues and Git worktrees for parallel agent execution.",
+    "stars": 8420,
+    "forks": 841,
+    "openIssues": 6,
+    "language": "Shell",
+    "qualityScore": 4724,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T13:28:07.277Z"
   }
 ]

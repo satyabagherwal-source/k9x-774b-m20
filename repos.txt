@@ -4536,3 +4536,11 @@ https://github.com/afrise/MCPSharp
 https://github.com/hookdeck/hookdeck-cli
 # [AI-AGENTS] Alex2Yang97/yahoo-finance-mcp (507 score) - This is a Model Context Protocol (MCP) server that provides comprehensive financ
 https://github.com/Alex2Yang97/yahoo-finance-mcp
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T13:28:10.610Z] ---
+# [AI-AGENTS] nexu-io/html-anything (5263 score) - ✨ The agentic HTML editor — your local AI agent writes the HTML, you ship it. 🚀
+https://github.com/nexu-io/html-anything
+# [AI-AGENTS] lemomo-ai/lemo-opuscar (4785 score) - A toolbox of film styles made in code for Claude Code: 59 ready to use, and your
+https://github.com/lemomo-ai/lemo-opuscar
+# [AI-AGENTS] automazeio/ccpm (4724 score) - Project management skill system for Agents that uses GitHub Issues and Git workt
+https://github.com/automazeio/ccpm

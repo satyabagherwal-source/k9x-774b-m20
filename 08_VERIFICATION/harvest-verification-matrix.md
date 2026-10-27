@@ -5323,3 +5323,9 @@
 | `CYCLE-20261027-X49P` | `2026-10-27T13:25:18.685Z` | `axios/axios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4800` | Yes (`8d3e5104...`) |
 | `CYCLE-20261027-X89J` | `2026-10-27T13:25:23.863Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4801` | Yes (`7dcaa10a...`) |
 | `CYCLE-20261027-XBM6` | `2026-10-27T13:25:28.206Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4802` | Yes (`8cacac34...`) |
+| `CYCLE-20261027-0Y7Y` | `2026-10-27T13:28:17.470Z` | `nexu-io/html-anything` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nexu-io-html-anything-learnings.md` | Yes (`63295139...`) |
+| `CYCLE-20261027-126F` | `2026-10-27T13:28:22.599Z` | `lemomo-ai/lemo-opuscar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4803` | Yes (`0a4c6a81...`) |
+| `CYCLE-20261027-136G` | `2026-10-27T13:28:23.896Z` | `automazeio/ccpm` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/automazeio-ccpm-learnings.md` | Yes (`426fdfa8...`) |
+| `CYCLE-20261027-17C0` | `2026-10-27T13:28:29.280Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4804` | Yes (`8e665ef6...`) |
+| `CYCLE-20261027-17LE` | `2026-10-27T13:28:29.618Z` | `zulip/zulip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4805` | Yes (`459bcd65...`) |
+| `CYCLE-20261027-1BN3` | `2026-10-27T13:28:34.863Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md` | Yes (`34d3f1d4...`) |

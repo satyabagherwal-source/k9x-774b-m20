@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-ZWCJ",
-    "timestamp": "2026-10-25T13:24:07.939Z",
-    "repository": "ionic-team/ionic-framework",
-    "learningId": "learn-github-ionic-team-ionic-framework",
-    "contentHash": "2202f74328cd859185be83dc4aa5274e8a41e2e6dbeaa96b36a7426915b24774",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-ZWPV",
-    "timestamp": "2026-10-25T13:24:08.419Z",
-    "repository": "fastino/GLiNER2.5-Decide",
-    "learningId": "learn-huggingface-fastino-gliner2-5-decide",
-    "contentHash": "7513d467af7e2a28b25463521673f690b178d8eceda48f86e28d68f30d9bee9d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-ZX4O",
-    "timestamp": "2026-10-25T13:24:08.952Z",
-    "repository": "Kuddev/pebrel",
-    "learningId": "learn-github-kuddev-pebrel",
-    "contentHash": "1cab1a3ff33d1e36a6385bc7116f666a4ec0fe085d273b4e2be6daffbd56af36",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-8GU9",
-    "timestamp": "2026-10-25T13:30:47.745Z",
-    "repository": "cosscom/ui",
-    "learningId": "learn-github-cosscom-ui",
-    "contentHash": "6f54a28b0436c89d6bff4321927144a121b94ca9643f46e7645a48557b633613",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-8IIY",
-    "timestamp": "2026-10-25T13:30:49.930Z",
-    "repository": "zeronsh/zeron",
-    "learningId": "learn-github-zeronsh-zeron",
-    "contentHash": "9bca7a61ab0b9339430f43e68696c1a68c94e637c5d9b6b25f31c51bf45ba8ba",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-8LGC",
-    "timestamp": "2026-10-25T13:30:53.724Z",
-    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "f084f76d4c09dbbb467b25eb4e23afec6e40d9fe5ec5a99596540ef167cfc4d1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-8LSS",
     "timestamp": "2026-10-25T13:30:54.172Z",
     "repository": "NativeScript/NativeScript",
@@ -7492,6 +7402,96 @@
     "contentHash": "8cacac3431d19d42451ff060fd2f13ee473633b371fbed95b2505efbbdae813b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-0Y7Y",
+    "timestamp": "2026-10-27T13:28:17.470Z",
+    "repository": "nexu-io/html-anything",
+    "learningId": "learn-github-nexu-io-html-anything",
+    "contentHash": "63295139a3071fd7c236620e89974d1b482c1f8d3cdc33098f4b92a4ea92f799",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-126F",
+    "timestamp": "2026-10-27T13:28:22.599Z",
+    "repository": "lemomo-ai/lemo-opuscar",
+    "learningId": "learn-github-lemomo-ai-lemo-opuscar",
+    "contentHash": "0a4c6a8138343b687be811f15ee09007130f6814a4ea7c3815ee6274ee0d9e27",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-136G",
+    "timestamp": "2026-10-27T13:28:23.896Z",
+    "repository": "automazeio/ccpm",
+    "learningId": "learn-github-automazeio-ccpm",
+    "contentHash": "426fdfa8200dbb78499bec9135cdbe388e393f688504a4fd4bb134c4f82e34f3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-17C0",
+    "timestamp": "2026-10-27T13:28:29.280Z",
+    "repository": "okteto/okteto",
+    "learningId": "learn-github-okteto-okteto",
+    "contentHash": "8e665ef6d0b10f4f0e47c7db90e58c2f8af2c39f3da29a6a12425a0a81db43d2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-17LE",
+    "timestamp": "2026-10-27T13:28:29.618Z",
+    "repository": "zulip/zulip",
+    "learningId": "learn-github-zulip-zulip",
+    "contentHash": "459bcd659afa4425bee2c9b8dabdad4dc0f709dfe091f86ce65e403484557a88",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-1BN3",
+    "timestamp": "2026-10-27T13:28:34.863Z",
+    "repository": "duckdb/duckdb",
+    "learningId": "learn-github-duckdb-duckdb",
+    "contentHash": "34d3f1d4e30216a41a1e60d17bb0485cd55baf6ca4a96a14d1ba2283d6b60d96",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
