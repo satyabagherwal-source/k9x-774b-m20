@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T09:13:31.645Z",
-  "total_cycles_completed": 5175,
-  "total_learnings_persisted": 5175,
-  "total_rules_promoted": 4572,
+  "last_updated": "2026-10-27T09:46:50.509Z",
+  "total_cycles_completed": 5176,
+  "total_learnings_persisted": 5176,
+  "total_rules_promoted": 4575,
   "history": [
-    {
-      "timestamp": "2026-10-25T21:25:38.042Z",
-      "repository": "touchlab/xcode-kotlin",
-      "learningId": "learn-github-touchlab-xcode-kotlin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T21:27:18.761Z",
       "repository": "Aleph-Alpha/Kolibri-1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-27T09:13:31.645Z",
       "repository": "gardener/gardener",
       "learningId": "learn-github-gardener-gardener",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T09:46:50.509Z",
+      "repository": "smallstep/cli",
+      "learningId": "learn-github-smallstep-cli",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

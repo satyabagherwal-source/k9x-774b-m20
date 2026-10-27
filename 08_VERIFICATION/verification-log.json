@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-34LV",
-    "timestamp": "2026-10-25T05:58:44.755Z",
-    "repository": "HuggingFaceBio/Carbon-X",
-    "learningId": "learn-huggingface-huggingfacebio-carbon-x",
-    "contentHash": "bdf9980e019d2532492bcaac4fd8dc9199fc35081f43577c367ee50d25019759",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-3EPF",
     "timestamp": "2026-10-25T05:58:57.843Z",
     "repository": "ClickHouse/ClickHouse",
@@ -7490,6 +7475,21 @@
     "repository": "gardener/gardener",
     "learningId": "learn-github-gardener-gardener",
     "contentHash": "f78e5b11f293bd8d42d3d1a941b275bf52cc70234f906452905f0899303c0a7d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-45XH",
+    "timestamp": "2026-10-27T09:46:50.501Z",
+    "repository": "smallstep/cli",
+    "learningId": "learn-github-smallstep-cli",
+    "contentHash": "348993ae2d587e4449326201814dd95e30e7a9b0a97c8c13f0ac24f087eb10a4",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

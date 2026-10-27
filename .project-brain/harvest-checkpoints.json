@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T09:13:31.649Z",
+  "last_updated": "2026-10-27T09:46:50.513Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3561,14 +3561,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-smallstep-cli",
-      "content_hash": "6ae6cc87899dda2a4ea78f40cec3554f89b728f062024327887d0a811dc48fc9",
-      "verified_at": "2026-10-21T02:33:51.909Z",
+      "content_hash": "348993ae2d587e4449326201814dd95e30e7a9b0a97c8c13f0ac24f087eb10a4",
+      "verified_at": "2026-10-27T09:46:50.512Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T02:33:51.909Z"
+      "last_updated": "2026-10-27T09:46:50.512Z"
     },
     "Ontos-AI/knowhere": {
       "repository": "Ontos-AI/knowhere",

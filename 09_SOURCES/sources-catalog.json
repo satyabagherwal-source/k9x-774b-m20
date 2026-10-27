@@ -2283,10 +2283,10 @@
     "repository": "smallstep/cli",
     "platform": "github",
     "sourceUrl": "https://github.com/smallstep/cli",
-    "sourceVersion": "9c05f5c1",
+    "sourceVersion": "824bfd6b",
     "license": "Apache-2.0",
-    "contentHash": "6ae6cc87899dda2a4ea78f40cec3554f89b728f062024327887d0a811dc48fc9",
-    "lastHarvestedAt": "2026-10-21T02:33:51.904Z",
+    "contentHash": "348993ae2d587e4449326201814dd95e30e7a9b0a97c8c13f0ac24f087eb10a4",
+    "lastHarvestedAt": "2026-10-27T09:46:50.504Z",
     "learningId": "learn-github-smallstep-cli"
   },
   "ontos-ai-knowhere": {

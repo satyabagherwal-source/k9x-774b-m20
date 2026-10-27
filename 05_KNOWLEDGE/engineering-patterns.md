@@ -341216,3 +341216,293 @@ func TestForbiddenImports(t *testing.T) {
 ```
 
 ---
+
+
+---
+
+## 4672. Asynchronous Subprocess Stdin Ingestion with Guaranteed Pipe Teardown (Harvested from smallstep/cli)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Asynchronous Subprocess Stdin Ingestion with Guaranteed Pipe Teardown",
+  "source": "smallstep/cli",
+  "source_url": "https://github.com/smallstep/cli",
+  "source_version": "824bfd6b",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-27T09:46:49.885Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-smallstep-cli",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [smallstep/cli](https://github.com/smallstep/cli) (Revision: `824bfd6b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When piping raw binary payloads, cryptographic digests, or sensitive tokens to an external subprocess via `exec.Cmd`, you MUST feed `cmd.StdinPipe()` inside a dedicated, concurrent goroutine and immediately defer `stdin.Close()`. You MUST NOT write payloads directly on the caller thread before or after calling `cmd.Output()`, `cmd.Run()`, or `cmd.CombinedOutput()`.
+
+**WHY**:
+Writing to `cmd.StdinPipe()` synchronously on the same thread before calling `cmd.Output()` or `cmd.Wait()` causes fatal deadlocks if the data exceeds the kernel's OS-level pipe buffer capacity (typically 64KB on Linux). The parent thread blocks waiting to flush the remaining bytes to the pipe, while the child process blocks waiting for the pipe to close (EOF) before emitting output, halting the runtime.
+
+**WHEN TO APPLY**:
+Any time an application executes an external helper CLI or subprocess (such as KMS plugins, GPG, HSM wrappers, or compression utilities) and passes input through standard input.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package cryptoutil
+
+import (
+	"encoding/base64"
+	"fmt"
+	"os/exec"
+)
+
+func ExecuteSubprocessSigning(executable string, args []string, digest []byte) ([]byte, error) {
+	cmd := exec.Command(executable, args...)
+	
+	stdin, err := cmd.StdinPipe()
+	if err != nil {
+		return nil, fmt.Errorf("failed to open stdin pipe: %w", err)
+	}
+
+	// Invariant: Writing must execute concurrently to allow cmd.Output() 
+	// to concurrently read stdout and prevent pipe buffer deadlocks.
+	go func() {
+		defer stdin.Close()
+		_, _ = stdin.Write(digest)
+	}()
+
+	out, err := cmd.Output()
+	if err != nil {
+		if exitErr, ok := err.(*exec.ExitError); ok {
+			return nil, fmt.Errorf("command %q failed with: %s", cmd.String(), string(exitErr.Stderr))
+		}
+		return nil, fmt.Errorf("command %q failed: %w", cmd.String(), err)
+	}
+
+	return base64.StdEncoding.DecodeString(string(out))
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Synchronous writing leads to OS pipe deadlocks.
+func BadSubprocessSigning(executable string, args []string, digest []byte) ([]byte, error) {
+	cmd := exec.Command(executable, args...)
+	stdin, _ := cmd.StdinPipe()
+	
+	// If digest + overhead exceeds kernel pipe capacity, this blocks forever
+	// because cmd.Output() hasn't started consuming stdout!
+	_, _ = stdin.Write(digest)
+	_ = stdin.Close()
+	
+	return cmd.Output()
+}
+```
+
+**VERIFICATION METHOD**:
+Run an integration test executing a subprocess that echoes large blocks (>128KB) through stdin to stdout, verifying that the test completes within a strict timeout (<2 seconds) without deadlock.
+
+---
+
+
+---
+
+## 4673. Dual-Channel Protobuf Flag Mutexing (Harvested from smallstep/cli)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Channel Protobuf Flag Mutexing",
+  "source": "smallstep/cli",
+  "source_url": "https://github.com/smallstep/cli",
+  "source_version": "824bfd6b",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-27T09:46:50.094Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-smallstep-cli",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [smallstep/cli](https://github.com/smallstep/cli) (Revision: `824bfd6b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When configuring polymorphic or mutually exclusive protobuf field variants via CLI flags (e.g., `wh.Auth` accepting either `BearerToken` or `BasicAuth`), you MUST explicitly isolate the configuration paths, overwrite the entire variant struct pointer, and clear or refrain from reading sibling fields. In update actions, you MUST check the existing runtime type via a safe type-assertion before modifying sub-fields.
+
+**WHY**:
+In Go protobuf v2, variant interfaces generated from `oneof` fields will panic or serialize invalid wire messages if partial sub-structs are instantiated without the wrapping variant container, or if state from a previous variant leaks into a newly selected variant.
+
+**WHEN TO APPLY**:
+Subcommands updating protobuf-backed APIs where state changes between different authentication types, protocol engines, or connection methods.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package webhook
+
+import (
+	"github.com/urfave/cli"
+	"github.com/smallstep/linkedca"
+	"github.com/smallstep/cli/utils"
+)
+
+func ApplyAuthFlags(ctx *cli.Context, wh *linkedca.Webhook) error {
+	if ctx.IsSet("bearer-token-file") {
+		bearerTkn, err := utils.ReadStringPasswordFromFile(ctx.String("bearer-token-file"))
+		if err != nil {
+			return err
+		}
+		// Atomically replace oneof variant container with new bearer token
+		wh.Auth = &linkedca.Webhook_BearerToken{
+			BearerToken: &linkedca.BearerToken{
+				BearerToken: bearerTkn,
+			},
+		}
+		return nil
+	}
+
+	if ctx.IsSet("basic-auth-username") || ctx.IsSet("basic-auth-password-file") {
+		// Defensively extract existing basic auth variant if present, otherwise instantiate
+		wba, _ := wh.GetAuth().(*linkedca.Webhook_BasicAuth)
+		if wba == nil || wba.BasicAuth == nil {
+			wba = &linkedca.Webhook_BasicAuth{
+				BasicAuth: &linkedca.BasicAuth{},
+			}
+		}
+
+		if ctx.IsSet("basic-auth-username") {
+			wba.BasicAuth.Username = ctx.String("basic-auth-username")
+		}
+		if ctx.IsSet("basic-auth-password-file") {
+			password, err := utils.ReadStringPasswordFromFile(ctx.String("basic-auth-password-file"))
+			if err != nil {
+				return err
+			}
+			wba.BasicAuth.Password = password
+		}
+		wh.Auth = wba
+	}
+	return nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Modifying inner struct pointer without verifying the variant wrapper
+func BadApplyAuthFlags(ctx *cli.Context, wh *linkedca.Webhook) {
+	// PANIC HAZARD: If wh.Auth is currently Webhook_BearerToken, 
+	// GetBasicAuth() returns nil or default, leading to nil dereference
+	// or lost runtime mutation.
+	basicAuth := wh.GetBasicAuth()
+	basicAuth.Username = ctx.String("basic-auth-username") // SIGSEGV
+}
+```
+
+**VERIFICATION METHOD**:
+Compile with `govet` and execute unit tests asserting that switching an entity from `BasicAuth` to `BearerToken` completely replaces the inner protobuf oneof without residual memory pointers.
+
+---
+
+
+---
+
+## 4674. Cross-Platform SSH-Agent Lifetime Zeroing (Harvested from smallstep/cli)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Cross-Platform SSH-Agent Lifetime Zeroing",
+  "source": "smallstep/cli",
+  "source_url": "https://github.com/smallstep/cli",
+  "source_version": "824bfd6b",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-27T09:46:50.314Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-smallstep-cli",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [smallstep/cli](https://github.com/smallstep/cli) (Revision: `824bfd6b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When adding keys or certificates to an SSH Agent using `golang.org/x/crypto/ssh/agent`, you MUST evaluate `runtime.GOOS == "windows"` and unconditionally set `LifetimeSecs` to `0` on Windows systems, regardless of the certificate's actual mathematical validity window.
+
+**WHY**:
+The Windows implementation of OpenSSH Authentication Agent does not support the OpenSSH extension for key lifetimes (`SSH_AGENT_CONSTRAIN_LIFETIME`). Passing a non-zero `LifetimeSecs` causes the Windows agent to return an immediate failure response (`SSH_AGENT_FAILURE`), causing certificate injection to fail for Windows operators.
+
+**WHEN TO APPLY**:
+All SSH agent integration code interfacing with local daemon sockets or named pipes (`\\.\pipe\openssh-ssh-agent`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package sshutil
+
+import (
+	"runtime"
+	"time"
+
+	"github.com/pkg/errors"
+	"github.com/smallstep/cli/internal/cast"
+	"golang.org/x/crypto/ssh"
+	"golang.org/x/crypto/ssh/agent"
+)
+
+func AddCertToAgent(a agent.ExtendedAgent, subject string, cert *ssh.Certificate, privKey any) error {
+	var lifetime uint64
+	now := cast.Uint64(time.Now().Unix())
+
+	switch {
+	case cert.ValidBefore == ssh.CertTimeInfinity:
+		lifetime = 0
+	case cert.ValidBefore <= now:
+		return errors.New("certificate is already expired")
+	default:
+		lifetime = cert.ValidBefore - now
+	}
+
+	// INVARIANT: Windows SSH agent fails if lifetime constraint is passed.
+	if runtime.GOOS == "windows" {
+		lifetime = 0
+	}
+
+	return a.Add(agent.AddedKey{
+		PrivateKey:   privKey,
+		Certificate:  cert,
+		Comment:      subject,
+		LifetimeSecs: cast.Uint32(lifetime),
+	})
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Blindly applying computed lifetime across all OS platforms
+func BadAddCertToAgent(a agent.ExtendedAgent, cert *ssh.Certificate, privKey any) error {
+	lifetime := cert.ValidBefore - uint64(time.Now().Unix())
+	// Breaks permanently on Windows OpenSSH agent!
+	return a.Add(agent.AddedKey{
+		PrivateKey:   privKey,
+		Certificate:  cert,
+		LifetimeSecs: uint32(lifetime),
+	})
+}
+```
+
+**VERIFICATION METHOD**:
+Unit testing with OS virtual targeting or mocking `agent.Agent` to assert that when running under `windows`, the serialized agent packet payload contains zero constraints.
+
+---

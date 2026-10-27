@@ -5207,3 +5207,4 @@ Every entry in this ledger must capture:
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `d75ef158` | Multi-dimensional audit evidence | 2026-10-27T08:31:11.840Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `bb48ec18` | Multi-dimensional audit evidence | 2026-10-27T09:04:45.411Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `cfa33f54` | Multi-dimensional audit evidence | 2026-10-27T09:13:31.640Z |
+| `learn-github-smallstep-cli` | `https://github.com/smallstep/cli` | `824bfd6b` | Multi-dimensional audit evidence | 2026-10-27T09:46:50.504Z |
