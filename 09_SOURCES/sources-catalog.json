@@ -2065,8 +2065,8 @@
     "sourceUrl": "https://huggingface.co/autogluon/chronos-2",
     "sourceVersion": "hf-autogluon-chronos-2",
     "license": "Open-Source",
-    "contentHash": "7a9665dc086b730983d645df63a59850e7d958a9f53bb84c4b4817dc5ff188c3",
-    "lastHarvestedAt": "2026-10-24T20:11:17.031Z",
+    "contentHash": "e22938979b5255c547bb3c3dd8e3fb3dd6a878bd3667df982b251229a5d59c4c",
+    "lastHarvestedAt": "2026-10-27T21:22:27.635Z",
     "learningId": "learn-huggingface-autogluon-chronos-2"
   },
   "deeplethe-solid-glass": {
@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "f5dec9c4",
+    "sourceVersion": "bc8ad63e",
     "license": "NOASSERTION",
-    "contentHash": "2bedfec73c9306fe6ca481f0bba41d89f939f06cb8e34ad99177233954ce4bd3",
-    "lastHarvestedAt": "2026-10-26T05:00:08.766Z",
+    "contentHash": "33022b5a66cf8bebeffaf32081260a898005df4efc5c5772a8f31d246dc1ca55",
+    "lastHarvestedAt": "2026-10-27T21:22:20.040Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {

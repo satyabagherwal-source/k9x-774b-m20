@@ -5557,3 +5557,5 @@ Every entry in this ledger must capture:
 | `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `ebd0d4be` | Multi-dimensional audit evidence | 2026-10-27T21:18:31.568Z |
 | `learn-github-mui-base-ui` | `https://github.com/mui/base-ui` | `cc9075a4` | Multi-dimensional audit evidence | 2026-10-27T21:18:34.456Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `3a38840c` | Multi-dimensional audit evidence | 2026-10-27T21:18:40.526Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `bc8ad63e` | Multi-dimensional audit evidence | 2026-10-27T21:22:20.040Z |
+| `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-10-27T21:22:27.635Z |

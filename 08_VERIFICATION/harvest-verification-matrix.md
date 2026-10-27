@@ -5548,3 +5548,5 @@
 | `CYCLE-20261027-TOCT` | `2026-10-27T21:18:31.565Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5012` | Yes (`150927f2...`) |
 | `CYCLE-20261027-TQL1` | `2026-10-27T21:18:34.453Z` | `mui/base-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5013` | Yes (`09ab3184...`) |
 | `CYCLE-20261027-TV9N` | `2026-10-27T21:18:40.523Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5014` | Yes (`ec418243...`) |
+| `CYCLE-20261027-YKN9` | `2026-10-27T21:22:20.037Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5015` | Yes (`33022b5a...`) |
+| `CYCLE-20261027-YQI8` | `2026-10-27T21:22:27.632Z` | `autogluon/chronos-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5016, Rule 5017, Rule 5018` | Yes (`e2293897...`) |

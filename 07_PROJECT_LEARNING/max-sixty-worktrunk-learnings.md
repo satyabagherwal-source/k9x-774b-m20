@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source**: github ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
-> **Source Version**: `f5dec9c4`  
+> **Source Version**: `bc8ad63e`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T05:00:08.354Z  
+> **Timestamp**: 2026-10-27T21:22:19.606Z  
 > **Learning ID**: `learn-github-max-sixty-worktrunk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T05:00:04.986Z  
+> **Harvest Timestamp**: 2026-10-27T21:22:18.823Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9479 stars
+- **Stars / Engagement**: 9519 stars
 
 ---
 
@@ -1834,6 +1834,7 @@ use crate::display::{format_relative_time_short, shorten_path};
 use anstyle::{Effects, Style};
 use unicode_width::UnicodeWidthStr;
 use worktrunk::styling::{DETACHED, StyledLine, truncate_visible};
+use worktrunk::utils::escape_controls;
 
 use super::columns::{ColumnKind, DiffVariant};
 use super::layout::{
@@ -2085,9 +2086,7 @@ impl LayoutConfig {
         self.render_line(|column| {
             let mut cell = StyledLine::new();
             if !column.header.is_empty() {
-                cell.push_styled(column.header.to_string(), style);
-            }
-       
+                cell.push_styled(column.header.to_
 ```
 
 
@@ -2119,297 +2118,999 @@ impl LayoutConfig {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7427b2fa` (2026-10-26)
-**Commit Message**: test(picker): wait for rendered rows before the escape-abort snapshot (#4527)
+### Incident Patch 1: `94338ed2` (2026-10-26)
+**Commit Message**: fix: support slash-named remotes in branch inventory (#4271)
 
-`test_switch_picker_abort_with_escape` failed on Windows in the
-`affected` run on main ([run
-39373658313](https://github.com/max-sixty/worktrunk/actions/runs/39373658313)).
-Its list snapshot held only the prompt line `>`, with no header and no
-`@ main` row. The commit that triggered the run (#4516, trash draining)
-doesn't touch the picker, so this is a test timing race.
+Git permits remote names such as `team/fork`. Splitting
+`team/fork/feature` at its first slash prevented `wt switch feature`
+from finding the remote branch and misidentified remote names in list
+and CI consumers.
 
-**Cause.** This is the only capture-before-abort test that passes no
-inputs (`&[]`). So the only thing that gates its capture is
-`boot_picker_pty`: it waits for the `> ` prompt, then for the screen to
-sit unchanged for `STABLE_DURATION` (500ms). Items load asynchronously.
-On a loaded Windows runner the prompt can stay quiet for 500ms before
-the first row arrives, and the test captures that frame.
+Resolve remote-tracking refs against the longest configured remote
+prefix once per inventory scan, and retain that boundary through list
+JSON, CI lookup, and picker deduplication. Read local branches’ upstream
+remote directly from Git’s tracking metadata. Remote HEAD queries remain
+supported, and orphaned refs retain the conventional first-segment
+fallback.
 
-**Fix.** Gate the capture on `"has no file changes"`. That preview text
-appears only after the list has a selected row, so it confirms both
-panels before the capture. The sibling tests already gate the same way
-(`&[("", Some("plain-branch"))]`, `&[("", Some("@ main"))]`). If the
-preview never renders, the test now panics after 30s and shows the
+Validation: regression reproduction fails with the original parser; 263
+focused tests pass, including slash-named and overlapping remotes,
+remote HEAD queries, and local tracking. Pre-commit/Clippy and
+documentation checks pass. The full local suite reports 5,316 passes and
+three PowerShell failures; standalone PowerShell also crashes with
+“Stack overflow” on this machine.
 
-**File**: `tests/integration_tests/switch_picker.rs` (modified, +5/-1)
+> _This was written by Codex on behalf of max-sixty_
+
+---------
+
+Co-authored-by: worktrunk-bot <[REDACTED_EMAIL]>
+Co-authored-by: Maximilian Roos <[REDACTED_EMAIL]>
+
+**File**: `src/commands/config/state.rs` (modified, +6/-1)
 ```diff
-@@ -859,7 +859,11 @@ fn test_switch_picker_abort_with_escape(repo: TestRepo) {
-         &["switch"],
-         repo.root_path(),
-         &env_vars,
--        &[], // No inputs before abort
-+        // Settle: the preview renders only after the list has a selected row,
-+        // so gating on it confirms both panels before capture. Without a gate,
-+        // a prompt that sits quiet for STABLE_DURATION on a slow runner gets
-+        // captured before any rows arrive.
-+        &[("", Some("has no file changes"))],
+@@ -817,7 +817,12 @@ pub fn handle_state_get(
+ 
+             let branch_ref = match (local_sha, remote_sha) {
+                 (Some(sha), _) => BranchRef::local_branch(&branch_name, sha),
+-                (None, Some(sha)) => BranchRef::remote_branch(&branch_name, sha),
++                (None, Some(sha)) => {
++                    let (remote, branch) = repo
++                        .split_remote_branch_name(&branch_name)
++                        .context("remote branch has no remote prefix")?;
++                    BranchRef::remote_branch(remote, branch, sha)
++                }
+                 (None, None) => {
+                     return Err(worktrunk::git::GitError::BranchNotFound {
+                         // Offering `--create` for a name git rejects sends the
+```
+
+**File**: `src/commands/list/ci_status/mod.rs` (modified, +19/-12)
+```diff
+@@ -41,22 +41,19 @@ pub struct CiBranchName {
+ impl CiBranchName {
+     /// Create from a [`BranchRef`], using its short name and remote/local kind.
+     ///
+-    /// For remote branches (e.g., "origin/feature"), splits at the first `/`
+-    /// to extract the remote name and bare branch name.
++    /// For remote branches, uses the remote and branch components retained by
++    /// [`BranchRef`] when the repository inventory parsed the ref.
+     /// For local branches, the name is already bare.
+     ///
+     /// Returns `None` for detached HEAD (no short name).
+     pub fn from_branch_ref(branch_ref: &BranchRef) -> Option<Self> {
+         let short = branch_ref.short_name()?;
+-        if branch_ref.is_remote() {
+-            // Remote branch — split "origin/feature" into remote + bare name.
+-            if let Some((remote, name)) = short.split_once('/') {
+-                return Some(Self {
+-                    full_name: short.to_string(),
+-                    remote: Some(remote.to_string()),
+-                    name: name.to_string(),
+-                });
+-            }
++        if let Some((remote, name)) = branch_ref.remote_parts() {
++            return Some(Self {
++                full_name: short.to_string(),
++                remote: Some(remote.to_string()),
++                name: name.to_string(),
++            });
+         }
+         // Local branch — name is already bare
+         Some(Self {
+@@ -875,14 +872,24 @@ mod tests {
+ 
+     #[test]
+     fn test_ci_branch_name_from_remote_branch_ref() {
+-        let branch_ref = BranchRef::remote_branch("origin/feature", "abc123");
++        let branch_ref = BranchRef::remote_branch("origin", "feature", "abc123");
+         let ci = CiBranchName::from_branch_ref(&branch_ref).expect("remote has short_name");
+         assert_eq!(ci.full_name, "origin/feature");
+         assert_eq!(ci.name, "feature");
+         assert_eq!(ci.remote.as_deref(), Some("origin"));
+         assert!(ci.is_remote());
+     }
+ 
++    #[test]
++    fn test_ci_branch_name_from_slash_named_remote_branch_ref() {
++        let branch_ref = BranchRef::remote_branch("team/fork", "feature", "abc123");
++        let ci = CiBranchName::from_branch_ref(&branch_ref).expect("remote has short_name");
++        assert_eq!(ci.full_name, "team/fork/feature");
++        assert_eq!(ci.name, "feature");
++        assert_eq!(ci.remote.as_deref(), Some("team/fork"));
++        assert!(ci.is_remote());
++    }
++
+     #[test]
+     fn test_ci_branch_name_from_detached_head() {
+         let detached =
+```
+
+**File**: `src/commands/list/collect/mod.rs` (modified, +19/-11)
+```diff
+@@ -431,7 +431,9 @@ use color_print::cformat;
+ use crossbeam_channel as chan;
+ use once_cell::sync::OnceCell;
+ use rayon::prelude::*;
+-use worktrunk::git::{ErrorExt, LocalBranch, Repository, WorktreeId, WorktreeInfo, WorktreeRef};
++use worktrunk::git::{
++    ErrorExt, LocalBranch, RemoteBranch, Repository, WorktreeId, WorktreeInfo, WorktreeRef,
++};
+ use worktrunk::styling::{
+     INFO_SYMBOL, eprintln, format_with_gutter, hint_message, info_message, terminal_width,
+     truncate_visible, warning_message,
+@@ -1127,7 +1129,7 @@ pub fn collect(
+     };
+     // Remote branches that aren't tracked by any local branch. Filtering
+     // happens over the cached inventories — no extra subprocess.
+-    let remote_branches: Vec<(String, String)> = if show_remotes {
++    let remote_branches: Vec<RemoteBranch> = if show_remotes {
+         let tracked: HashSet<&str> = repo
+             .local_branches()?
+             .iter()
+@@ -1136,7 +1138,7 @@ pub fn collect(
+         repo.remote_branches()?
+             .iter()
+             .filter(|r| !tracked.contains(r.short_name.as_str()))
+-            .map(|r| (r.short_name.clone(), r.commit_sha.clone()))
++            .cloned()
+             .collect()
+     } else {
+         Vec::new()
+@@ -1198,7 +1200,11 @@ pub fn collect(
+                 .iter()
+                 .map(|(_, sha)| sha.as_str()),
+         )
+-        .chain(remote_branches.iter().map(|(_, sha)| sha.as_str()))
++        .chain(
++            remote_branches
++                .iter()
++                .map(|branch| branch.commit_sha.as_str()),
++        )
+         .filter(|sha| *sha != worktrunk::git::NULL_OID)
+         .collect();
+     let commit_details_map = repo.commit_details_many(&all_shas).unwrap_or_else(|err| {
+@@ -1226,8 +1232,8 @@ pub fn collect(
+         |(_, sha)| sha.as_str(),
+     );
+     let remote_branches =
+-        sort_by_timestamp_desc_with_cache(remote_branches, &commit_details_map, |(_, sha)| {
+-            sha.as_str()
++        sort_by_timestamp_desc_with_cache(remote_branches, &commit_details_map, |branch| {
++            branch.commit_sha.as_str()
+         });
+ 
+     // Branches living in more than one worktree. Every row on such a branch
+@@ -1274,11 +1280,13 @@ pub fn collect(
      );
  
-     assert_valid_abort_exit_code(result.exit_code);
+     let remote_start_idx = all_items.len();
+-    all_items.extend(
+-        remote_branches
+-            .iter()
+-            .map(|(name, sha)| ListItem::new_remote_branch(sha.clone(), name.clone())),
+-    );
++    all_items.extend(remote_branches.iter().map(|branch| {
++        ListItem::new_remote_branch(
++            branch.commit_sha.clone(),
++            branch.remote_name.clone(),
++            branch.local_name.clone(),
++        )
++    }));
+ 
+     // Abbreviated SHAs land here, before layout and the skeleton, rather than
+     // with the rest of the commit bundle below. The Commit cell and a detached
+```
+
+**File**: `src/commands/list/collect/tasks.rs` (modified, +1/-1)
+```diff
+@@ -669,7 +669,7 @@ fn compute_upstream(ctx: &TaskContext) -> anyhow::Result<TaskResult> {
+         });
+     };
+ 
+-    let remote = upstream_branch.split_once('/').map(|(r, _)| r.to_string());
++    let remote = repo.branch(branch).upstream_remote()?;
+     // Resolve upstream ref to a SHA via the snapshot, then compute
+     // ahead/behind by SHA. Branch SHA is taken from `branch_ref.commit_sha`
+     // — for the upstream comparison we want the branch's actual tip,
+```
+
+**File**: `src/commands/list/json_v2.rs` (modified, +18/-25)
+```diff
+@@ -39,7 +39,7 @@ use worktrunk::git::{
+ use super::ci_status::{CiSource, CiStatus, PrStatus, ReviewState};
+ use super::custom_columns::ResolvedCustomColumn;
+ use super::json_output::JsonDiff;
+-use super::model::{BranchScope, Collected, ItemKind, ListItem, MainState, WorktreeData};
++use super::model::{Collected, ItemKind, ListItem, MainState, WorktreeData};
+ 
+ /// Tri-state field encoding the absence rule (see module docs).
+ #[derive(Debug, Clone, PartialEq)]
+@@ -595,19 +595,14 @@ impl JsonItemV2 {
+         ci_provider_override: Option<&str>,
+         custom_columns: &[ResolvedCustomColumn],
+     ) -> Self {
+-        let (worktree_data, remote_scope) = match item.kind() {
+-            ItemKind::Worktree(data) => (Some(data.as_ref()), false),
+-            ItemKind::Branch(scope) => (None, *scope == BranchScope::Remote),
++        let worktree_data = match item.kind() {
++            ItemKind::Worktree(data) => Some(data.as_ref()),
++            ItemKind::Branch(_) => None,
+         };
+ 
+-        // Remote rows store the remote-qualified short name ("origin/feature");
+-        // split it into the remote and the bare branch name.
+-        let (branch, remote) = match (item.branch(), remote_scope) {
+-            (Some(name), true) => match name.split_once('/') {
+-                Some((remote, branch)) => (Some(branch.to_string()), Some(remote.to_string())),
+-                None => (Some(name.to_string()), None),
+-            },
+-            (name, _) => (name.map(str::to_string), None),
++        let (branch, remote) = match item.branch_ref().remote_parts() {
++            Some((remote, branch)) => (Some(branch.to_string()), Some(remote.to_string())),
++            None => (item.branch().map(str::to_string), None),
+         };
+ 
+         // HEAD — null for unborn branches (no sentinel strings).
+@@ -1099,13 +1094,21 @@ mod tests {
+ 
+     #[test]
+     fn test_remote_row_splits_branch_and_remote() {
+-        let mut item = item_with("origin/feature");
+-        item.reclassify_as_branch(BranchScope::Remote, "origin/feature".into());
++        let item = ListItem::new_remote_branch("a".repeat(40), "origin".into(), "feature".into());
+         let json = to_value(&convert(&item, Collected::default()));
+         assert_eq!(json["branch"], "feature");
+         assert_eq!(json["remote"], "origin");
+     }
+ 
++    #[test]
++    fn test_remote_row_preserves_slash_named_remote() {
++        let item =
++            ListItem::new_remote_branch("a".repeat(40), "team/fork".into(), "feature".into());
++        let json = to_value(&convert(&item, Collected::default()));
++        assert_eq!(json["branch"], "feature");
++        assert_eq!(json["remote"], "team/fork");
++    }
++
+     #[test]
+     fn test_unborn_branch_head_is_null() {
+         let item = ListItem::new_branch(worktrunk::git::NULL_OID.to_string(), "new".into());
+@@ -1126,8 +1129,7 @@ mod tests {
+         // default branch — the name check must compare the remote-stripped
+         // "main", not the raw "origin/main", so it gets no self-referential
+         // relation object.
+-        let mut item = item_with("origin/main");
+-        item.reclassify_as_branch(BranchScope::Remote, "origin/main".into());
++        let item = ListItem::new_remote_branch("a".repeat(40), "origin".into(), "main".into());
+         let json = to_value(&convert(&item, Collected::default()));
+         assert_eq!(json["branch"], "main");
+         assert!(json.get("default_branch").is_none());
+@@ -1337,15 +1339,6 @@ mod tests {
+         }
+     }
+ 
+-    #[test]
+-    fn test_remote_row_without_slash_keeps_name() {
+-        let mut item = item_with("weird");
+-        item.reclassify_as_branch(BranchScope::Remote, "weird".into());
+-        let json = to_value(&convert(&item, Collected::default()));
+-        assert_eq!(json["branch"], "weird");
+-        assert!(json.get("remote").is_none());
+-    }
+-
+     #[test]
+     fn test_loaded_item_serializes_gated_families() {
+         // One item with every gated family loaded: PR + checks through the
+```
+
+**File**: `src/commands/list/mod.rs` (modified, +5/-1)
+```diff
+@@ -413,7 +413,11 @@ mod tests {
+         let items = vec![
+             ListItem::new_branch("aaaaaaa".to_string(), "feature/login".to_string()),
+             ListItem::new_branch("bbbbbbb".to_string(), "main".to_string()),
+-            ListItem::new_remote_branch("ccccccc".to_string(), "origin/feature".to_string()),
++            ListItem::new_remote_branch(
++                "ccccccc".to_string(),
++                "origin".to_string(),
++                "feature".to_string(),
++            ),
+         ];
+         let metrics = SummaryMetrics::from_items(&items);
+         assert_eq!(
+```
+
+**File**: `src/commands/list/model/item.rs` (modified, +10/-22)
+```diff
+@@ -386,20 +386,14 @@ pub struct Collected {
+ impl ListItem {
+     /// Create a ListItem for a local branch without a worktree.
+     pub(crate) fn new_branch(head: String, branch: String) -> Self {
+-        Self::new_branch_with_scope(head, branch, BranchScope::Local)
++        let branch_ref = BranchRef::local_branch(&branch, &head);
++        Self::new(branch_ref, ItemKind::Branch(BranchScope::Local))
+     }
+ 
+     /// Create a ListItem for a remote-tracking branch (no local worktree).
+-    pub(crate) fn new_remote_branch(head: String, branch: String) -> Self {
+-        Self::new_branch_with_scope(head, branch, BranchScope::Remote)
+-    }
+-
+-    fn new_branch_with_scope(head: String, branch: String, scope: BranchScope) -> Self {
+-        let branch_ref = match scope {
+-            BranchScope::Local => BranchRef::local_branch(&branch, &head),
+-            BranchScope::Remote => BranchRef::remote_branch(&branch, &head),
+-        };
+-        Self::new(branch_ref, ItemKind::Branch(scope))
++    pub(crate) fn new_remote_branch(head: String, remote_name: String, branch: String) -> Self {
++        let branch_ref = BranchRef::remote_branch(&remote_name, &branch, &head);
++        Self::new(branch_ref, ItemKind::Branch(BranchScope::Remote))
+     }
+ 
+     /// Create a row for a registered worktree.
+@@ -466,13 +460,10 @@ impl ListItem {
+     /// invariant. The picker's removal morph reclassifies a throwaway clone
+     /// (`build_morph_branch_row`), so the live row's `PickerRowId` is
+     /// unaffected: a morphed row's previews stay under its worktree key.
+-    pub(crate) fn reclassify_as_branch(&mut self, scope: BranchScope, branch: String) {
++    pub(crate) fn reclassify_as_branch(&mut self, branch: String) {
+         let head = self.head().to_string();
+-        self.branch_ref = match scope {
+-            BranchScope::Local => BranchRef::local_branch(&branch, &head),
+-            BranchScope::Remote => BranchRef::remote_branch(&branch, &head),
+-        };
+-        self.kind = ItemKind::Branch(scope);
++        self.branch_ref = BranchRef::local_branch(&branch, &head);
++        self.kind = ItemKind::Branch(BranchScope::Local);
+     }
+ 
+     pub fn branch(&self) -> Option<&str> {
+@@ -1185,11 +1176,8 @@ mod tests {
+         let mut item = ListItem::new_worktree(worktree_ref, WorktreeData::default());
+         assert_eq!(item.id(), &worktree_id);
+ 
+-        item.reclassify_as_branch(BranchScope::Remote, "feature".into());
+-        assert_eq!(
+-            item.id(),
+-            BranchRef::remote_branch("feature", "abc123").id()
+-        );
++        item.reclassify_as_branch("feature".into());
++        assert_eq!(item.id(), BranchRef::local_branch("feature", "abc123").id());
+     }
+ 
+     #[test]
+```
+
+**File**: `src/commands/picker/mod.rs` (modified, +4/-4)
+```diff
+@@ -131,7 +131,7 @@ use crate::output::print_json;
+ use super::hook_plan::{ApprovedHookPlan, HookPlanBuilder};
+ use super::hooks::HookAnnouncer;
+ use super::list::collect;
+-use super::list::model::{BranchScope, ListItem};
++use super::list::model::ListItem;
+ use super::list::progressive::RenderTarget;
+ use super::list::render::PLACEHOLDER;
+ use super::repository_ext::{RemoveTarget, RepositoryCliExt};
+@@ -840,7 +840,7 @@ fn build_morph_branch_row(
+     default_branch: Option<&str>,
+ ) -> (String, LocalContent) {
+     let mut branch_item = worktree_item.clone();
+-    branch_item.reclassify_as_branch(BranchScope::Local, branch.to_string());
++    branch_item.reclassify_as_branch(branch.to_string());
+     branch_item.status_symbols = Default::default();
+     branch_item.refresh_status_symbols(default_branch);
+     let line = layout
+@@ -2566,7 +2566,7 @@ pub mod tests {
+         resolve_shortcut_branch, resolve_shortcut_url, summary_command_and_hint,
+         switch_pipeline_repo,
+     };
+-    use crate::commands::list::model::{BranchScope, ListItem, WorktreeData};
++    use crate::commands::list::model::{ListItem, WorktreeData};
+     use crate::commands::worktree::RemovalPlan;
+     use insta::assert_yaml_snapshot;
+     use skim::prelude::SkimItem;
+@@ -4346,7 +4346,7 @@ pub mod tests {
+             local,
+             LocalContent::from_item(&{
+                 let mut b = ListItem::new_branch("abc123".to_string(), "feature".to_string());
+-                b.reclassify_as_branch(BranchScope::Local, "feature".into());
++                b.reclassify_as_branch("feature".into());
+                 b
+             }),
+             "the morphed row's diff signals are the branch's (working_tree empty)"
 ```
 
 ---
 
-### Incident Patch 2: `f5dec9c4` (2026-10-26)
-**Commit Message**: fix(push): read the push range from the target branch, not a same-named tag (#4499)
+### Incident Patch 2: `7eb2f3ce` (2026-10-26)
+**Commit Message**: fix(shell): configure remaining shells after an rc file error (#4583)
 
-When a tag shares the target branch's name, `wt step push <target>` and
-`wt merge` compared against the tag instead of the branch. With a tag
-`main` at the feature commit, both reported "Already up to date with
-main" and left `refs/heads/main` where it was. This PR makes every range
-in the push path read the target SHA that `MergeContext::prepare`
-already snapshots from `refs/heads/<target>`.
+A UTF-16 `.bashrc` stopped the install scan before it reached later
+shells, leaving PowerShell integration unconfigured. `wt config shell
+install` now records rc-file errors and continues configuring other
+shells; it leaves the unreadable file untouched, reports partial failure
+with a nonzero exit, and identifies a UTF-16 byte-order mark with a
+re-save hint. The first-run shell prompt also reports a file that
+becomes unreadable after confirmation. Path-resolution failures still
+stop the scan, since a missing home blocks every shell and a cancelled
+PowerShell profile query must stop the command.
 
-Git resolves a bare `main` to `refs/tags/main` before `refs/heads/main`.
-The fast-forward check already used the qualified ref, but four later
-reads passed the bare name: the commit count, the overlap check against
-the target worktree's uncommitted changes, the commit graph, and the
-diffstat. A tag pointing elsewhere also skewed the count, graph, and
-diffstat shown before the push.
+A regression test with a UTF-16 `.bashrc` and a valid `.zshrc` failed
+before the change and now confirms zsh installs while Bash remains
+unchanged. A second test covers an rc file becoming invalid during the
+first-run prompt. The existing single-shell read-error test also passes.
+These tests exercise the shared install path on Linux; I have not run
+the Windows PowerShell profile flow.
 
-Two regression tests in `tests/integration_tests/push.rs` fail on `main`
-and pass here. One checks that the push advances the branch despite the
-tag. The other checks that a dirty target worktree's overlapping file is
-still refused. Before this fix, the overlap went unchecked because the
-zero commit count made the push a no-op, so
+Closes #4582 — automated triage
 
-**File**: `src/commands/repository_ext.rs` (modified, +6/-1)
+---------
+
+Co-authored-by: worktrunk-bot <[REDACTED_EMAIL]>
+
+**File**: `src/commands/configure_shell.rs` (modified, +30/-5)
 ```diff
-@@ -71,6 +71,9 @@ pub trait RepositoryCliExt {
-     /// so this only names the files that genuinely conflict, before anything
-     /// moves.
-     ///
-+    /// The push range is `target_tip..source_sha`; `target_branch` only names
-+    /// the branch in the error.
-+    ///
-     /// The caller has already established that `target_worktree` exists on disk
-     /// (`MergeContext::prepare` refuses a registered-but-missing worktree), so
-     /// the status read here is free to fail if the directory is gone.
-@@ -83,6 +86,7 @@ pub trait RepositoryCliExt {
-         &self,
-         target_worktree: Option<&PathBuf>,
-         target_branch: &str,
-+        target_tip: &str,
-         source_sha: &str,
-     ) -> anyhow::Result<()>;
+@@ -117,6 +117,7 @@ pub struct ScanResult {
+     pub configured: Vec<ConfigureResult>,
+     pub completion_results: Vec<CompletionResult>,
+     pub skipped: Vec<(Shell, PathBuf)>, // Shell + first path that was checked
++    pub failures: Vec<String>,
+     /// Zsh was configured but compinit is missing (completions won't work without it)
+     pub zsh_needs_compinit: bool,
+     /// Legacy/stranded files cleaned up during install, paired with the shell
+@@ -359,7 +360,7 @@ pub fn handle_configure_shell(
+     shell::validate_shell_command_name(&cmd)?;
  
-@@ -443,6 +447,7 @@ impl RepositoryCliExt for Repository {
-         &self,
-         target_worktree: Option<&PathBuf>,
-         target_branch: &str,
-+        target_tip: &str,
-         source_sha: &str,
-     ) -> anyhow::Result<()> {
-         let Some(wt_path) = target_worktree else {
-@@ -461,7 +466,7 @@ impl RepositoryCliExt for Repository {
-             return Ok(());
-         }
+     // First, do a dry-run to see what would be changed
+-    let mut preview = scan_shell_configs(shell_filter, true, &cmd)?;
++    let mut preview = scan_shell_configs_inner(shell_filter, true, &cmd, true)?;
+     preview.completion_results = preview_shell_completions(&preview.configured, &cmd)?;
  
--        let push_files = self.changed_files(target_branch, source_sha)?;
-+        let push_files = self.changed_files(target_tip, source_sha)?;
-         let wt_files = parse_porcelain_z(&wt_status_output);
- 
-         let overlapping: Vec<String> = push_files
-```
-
-**File**: `src/commands/worktree/push.rs` (modified, +12/-5)
-```diff
-@@ -160,6 +160,8 @@ impl MergeContext {
- 
-         // Snapshot target SHA early for TOCTOU safety (used by both strategies
-         // for the fast-forward check; --no-ff also uses it for update-ref).
-+        // Every later range reads this SHA rather than the bare branch name,
-+        // which git would resolve to a same-named tag first.
-         let target_ref = format!("refs/heads/{}", target_branch);
-         let target_tip = repo
-             .run_command(&["rev-parse", &target_ref])?
-@@ -197,7 +199,12 @@ impl MergeContext {
-         // Refuse when uncommitted changes in the target worktree overlap the
-         // push range. Non-overlapping changes stay in place: the two-tree
-         // merge in `advance_target` carries them through untouched.
--        repo.ensure_no_target_conflicts(target_worktree_path.as_ref(), &target_branch, &head_sha)?;
-+        repo.ensure_no_target_conflicts(
-+            target_worktree_path.as_ref(),
-+            &target_branch,
-+            &target_tip,
-+            &head_sha,
-+        )?;
- 
-         // TODO(#3519 follow-up): when `target_branch` was behind its upstream
-         // (see `Repository::span_upstream`), this count mixes the carried
-@@ -206,11 +213,11 @@ impl MergeContext {
-         // overstates what the branch itself contributed. Splitting them needs
-         // a carried-count threaded through `MergeContext`; deferred as
-         // cosmetic.
--        let commit_count = repo.count_commits(&target_branch, &head_sha)?;
-+        let commit_count = repo.count_commits(&target_tip, &head_sha)?;
- 
-         let stats_summary = if commit_count > 0 {
-             repo.current_worktree()
--                .prepare_commit_diff(&target_branch, &head_sha)
-+                .prepare_commit_diff(&target_tip, &head_sha)
-                 .stats_summary()
-         } else {
-             Vec::new()
-@@ -267,12 +274,12 @@ impl MergeContext {
-             "--graph",
-             "--oneline",
-             "--end-of-options",
--            &format!("{}..{}", self.target_branch, self.head_sha),
-+            &format!("{}..{}", self.target_tip, self.head_sha),
-         ])?;
-         eprintln!("{}", format_with_gutter(&log_output, None));
- 
-         // Diff statistics
--        crate::commands::show_diffstat(&self.repo, &self.target_branch, &self.head_sha)?;
-+        crate::commands::show_diffstat(&self.repo, &self.target_tip, &self.head_sha)?;
- 
-         Ok(())
+     // If nothing to do, return early
+@@ -435,7 +436,7 @@ pub(crate) fn apply_confirmed_shell_config(
+         return Ok(preview);
      }
-```
-
-**File**: `tests/integration_tests/push.rs` (modified, +67/-0)
-```diff
-@@ -65,6 +65,73 @@ fn test_push_to_default_branch(#[from(repo_with_feature_worktree)] repo: TestRep
-     snapshot_push("push_to_default", &repo, &[], Some(feature_wt));
- }
  
-+/// A tag named after the target branch must not stand in for the branch. Git
-+/// resolves a bare `main` to `refs/tags/main` before `refs/heads/main`, so
-+/// with such a tag at the feature commit, `main..HEAD` counted zero commits
-+/// and the push reported "Already up to date" without moving the branch.
-+#[rstest]
-+fn test_push_ignores_tag_named_like_target(mut repo: TestRepo) {
-+    repo.add_main_worktree();
-+    let feature_wt =
-+        repo.add_worktree_with_commit("feature", "test.txt", "test content", "Add test file");
-+    let feature_sha = repo.head_sha_in(&feature_wt);
-+    repo.run_git(&["tag", "main", &feature_sha]);
-+
-+    let output = repo
-+        .wt_command()
-+        .args(["step", "push", "main"])
-+        .current_dir(&feature_wt)
-+        .output()
-+        .expect("failed to run command");
-+    let stderr = String::from_utf8_lossy(&output.stderr);
-+    assert!(output.status.success(), "push failed: {stderr}");
-+    assert!(
-+        !stderr.contains("Already up to date"),
-+        "push should not compare against the tag: {stderr}"
-+    );
-+
-+    let main_sha = repo
-+        .git_command()
-+        .args(["rev-parse", "refs/heads/main"])
-+        .run()
-+        .unwrap();
-+    assert_eq!(
-+        String::from_utf8_lossy(&main_sha.stdout).trim(),
-+        feature_sha
-+    );
+-    let mut result = scan_shell_configs(shell_filter, false, cmd)?;
++    let mut result = scan_shell_configs_inner(shell_filter, false, cmd, true)?;
+     result.completion_results =
+         apply_shell_completions(preview.completion_results, &result.configured, cmd)?;
+ 
+@@ -563,6 +564,20 @@ pub fn scan_shell_configs(
+     shell_filter: Option<Shell>,
+     dry_run: bool,
+     cmd: &str,
++) -> Result<ScanResult, ShellConfigError> {
++    scan_shell_configs_inner(shell_filter, dry_run, cmd, false)
 +}
 +
-+/// The overlap check against the target worktree's uncommitted changes reads
-+/// the push range from the branch, not a same-named tag. With the tag at the
-+/// feature commit, the range looked empty and the overlap went unreported.
-+#[rstest]
-+fn test_push_dirty_target_overlap_ignores_tag_named_like_target(mut repo: TestRepo) {
-+    std::fs::write(repo.root_path().join("conflict.txt"), "old content").unwrap();
-+    let feature_wt = repo.add_worktree_with_commit(
-+        "feature",
-+        "conflict.txt",
-+        "new content",
-+        "Add conflict file",
-+    );
-+    let feature_sha = repo.head_sha_in(&feature_wt);
-+    repo.run_git(&["tag", "main", &feature_sha]);
++/// Preview an install while retaining rc-file failures so other shells can be offered.
++pub(crate) fn preview_shell_configs_for_install(cmd: &str) -> Result<ScanResult, ShellConfigError> {
++    scan_shell_configs_inner(None, true, cmd, true)
++}
 +
-+    let output = repo
-+        .wt_command()
-+        .args(["step", "push", "main"])
-+        .current_dir(&feature_wt)
-+        .output()
-+        .expect("failed to run command");
++fn scan_shell_configs_inner(
++    shell_filter: Option<Shell>,
++    dry_run: bool,
++    cmd: &str,
++    continue_on_error: bool,
+ ) -> Result<ScanResult, ShellConfigError> {
+     shell::validate_shell_command_name(cmd)?;
+ 
+@@ -585,6 +600,7 @@ pub fn scan_shell_configs(
+ 
+     let mut results = Vec::new();
+     let mut skipped = Vec::new();
++    let mut failures = Vec::new();
+ 
+     for shell in shells {
+         let paths = shell
+@@ -645,9 +661,11 @@ pub fn scan_shell_configs(
+                     Ok(Some(result)) => results.push(result),
+                     Ok(None) => {} // No action needed
+                     Err(e) => {
+-                        // For non-critical errors, we could continue with other shells
+-                        // but for now we'll fail fast
+-                        return Err(format!("Failed to configure {shell}: {e}").into());
++                        let message = format!("Failed to configure {shell}: {e}");
++                        if !continue_on_error {
++                            return Err(message.into());
++                        }
++                        failures.push(message);
+                     }
+                 }
+             }
+@@ -674,6 +692,7 @@ pub fn scan_shell_configs(
+         configured: results,
+         completion_results: Vec::new(),
+         skipped,
++        failures,
+         zsh_needs_compinit: false,   // Caller handles compinit detection
+         legacy_cleanups: Vec::new(), // Caller handles legacy cleanup
+     })
+@@ -863,6 +882,12 @@ fn contains_shell_integration(
+     shell: Shell,
+     cmd: &str,
+ ) -> Result<bool, String> {
++    if content.starts_with(&[0xff, 0xfe]) || content.starts_with(&[0xfe, 0xff]) {
++        return Err(format!(
++            "{} is not UTF-8 (looks like UTF-16); re-save it as UTF-8 to configure {shell}",
++            format_path_for_display(path)
++        ));
++    }
+     // Check for the canonical line and older/manual forms for this shell.
+     for line in content.split(|byte| *byte == b'\n') {
+         let line = std::str::from_utf8(line).map_err(|e| {
+```
+
+**File**: `src/main.rs` (modified, +15/-4)
+```diff
+@@ -555,16 +555,27 @@ fn handle_config_shell_command(action: ConfigShellCommand, yes: bool) -> anyhow:
+                     // Show skipped shells first so user knows what was tried
+                     if scan_result.configured.is_empty() {
+                         crate::output::print_skipped_shells(&scan_result.skipped);
++                        if !scan_result.failures.is_empty() {
++                            return Err(anyhow::anyhow!(scan_result.failures.join("\n")));
++                        }
+                         return Err(worktrunk::git::GitError::Other {
+                             message: "No shell config files found".into(),
+                         }
+                         .into());
+                     }
+-                    // For --dry-run, preview was already shown by handler
+-                    if dry_run {
+-                        return Ok(());
++                    // For --dry-run, preview was already shown by handler.
++                    if !dry_run {
++                        crate::output::print_shell_install_result(&scan_result, &cmd);
++                    }
++                    if !scan_result.failures.is_empty() {
++                        for failure in &scan_result.failures {
++                            eprintln!("{}", warning_message(failure));
++                        }
++                        return Err(anyhow::anyhow!(
++                            "Could not configure {} shell(s)",
++                            scan_result.failures.len()
++                        ));
+                     }
+-                    crate::output::print_shell_install_result(&scan_result, &cmd);
+                     Ok(())
+                 })
+         }
+```
+
+**File**: `src/output/shell_integration.rs` (modified, +13/-3)
+```diff
+@@ -84,8 +84,8 @@ use worktrunk::styling::{
+ 
+ use crate::commands::configure_shell::{
+     ConfigAction, ShellConfigError, UninstallScanResult, apply_confirmed_shell_config,
+-    collect_legacy_cleanups, format_matched_lines, preview_shell_completions, prompt_for_install,
+-    scan_shell_configs,
++    collect_legacy_cleanups, format_matched_lines, preview_shell_completions,
++    preview_shell_configs_for_install, prompt_for_install, scan_shell_configs,
+ };
+ 
+ /// Git config key tracking how many times the shell-integration install hint
+@@ -522,7 +522,7 @@ pub fn prompt_shell_integration(
+ 
+     // Scan ALL shells (same as `wt config shell install`)
+     // Only includes shells where config files already exist
+-    let mut scan = scan_shell_configs(None, true, binary_name)
++    let mut scan = preview_shell_configs_for_install(binary_name)
+         .map_err(|e| e.context("Failed to scan shell configs"))?;
+ 
+     // No config files exist - show install hint
+@@ -569,6 +569,16 @@ pub fn prompt_shell_integration(
+ 
+     print_shell_install_result(&install_result, binary_name);
+ 
++    if !install_result.failures.is_empty() {
++        for failure in &install_result.failures {
++            eprintln!("{}", warning_message(failure));
++        }
++        anyhow::bail!(
++            "Could not configure {} shell(s)",
++            install_result.failures.len()
++        );
++    }
++
+     Ok(true)
+ }
+ 
+```
+
+**File**: `tests/integration_tests/configure_shell.rs` (modified, +29/-0)
+```diff
+@@ -177,6 +177,35 @@ fn test_configure_shell_bashrc_directory_fails(repo: TestRepo, temp_home: TempDi
+     assert!(bashrc.is_dir());
+ }
+ 
++#[rstest]
++fn test_configure_shell_continues_after_invalid_bashrc(repo: TestRepo, temp_home: TempDir) {
++    let bashrc = temp_home.path().join(".bashrc");
++    let zshrc = temp_home.path().join(".zshrc");
++    let utf16_bashrc = b"\xff\xfe#\0 \0t\0e\0s\0t\0\n\0";
++    fs::write(&bashrc, utf16_bashrc).unwrap();
++    fs::write(&zshrc, "# zsh config\n").unwrap();
++
++    let mut cmd = wt_command();
++    repo.configure_wt_cmd(&mut cmd);
++    set_temp_home_env(&mut cmd, temp_home.path());
++    cmd.env("SHELL", "/bin/zsh");
++    cmd.args(["config", "shell", "install", "--yes"])
++        .current_dir(repo.root_path());
++    let output = cmd.output().unwrap();
++
 +    let stderr = String::from_utf8_lossy(&output.stderr);
-+    assert!(!output.status.success(), "push should refuse: {stderr}");
++    assert!(!output.status.success(), "{stderr}");
++    assert!(stderr.contains("Failed to configure bash"), "{stderr}");
++    assert!(stderr.contains("not UTF-8 (looks like UTF-16)"), "{stderr}");
++    assert!(stderr.contains("Configured 1 shell"), "{stderr}");
 +    assert!(
-+        stderr.contains("conflicting uncommitted changes") && stderr.contains("conflict.txt"),
-+        "the overlap check should refuse and name the file: {stderr}"
++        fs::read_to_string(&zshrc)
++            .unwrap()
++            .contains("config shell init zsh")
 +    );
-+    let main_contents = std::fs::read_to_string(repo.root_path().join("conflict.txt")).unwrap();
-+    assert_eq!(main_contents, "old content");
++    assert_eq!(fs::read(&bashrc).unwrap(), utf16_bashrc);
 +}
 +
  #[rstest]
- fn test_push_with_dirty_target(mut repo: TestRepo) {
-     // Make main worktree (repo root) dirty with a conflicting file
+ fn test_configure_shell_already_exists(repo: TestRepo, temp_home: TempDir) {
+     // Create a fake .zshrc file with the line already present
+```
+
+**File**: `tests/integration_tests/shell_integration_prompt.rs` (modified, +65/-0)
+```diff
+@@ -653,6 +653,71 @@ mod pty_tests {
+         });
+     }
+ 
++    #[rstest]
++    fn test_prompt_reports_shell_that_fails_after_confirmation(repo: TestRepo) {
++        let temp_home = TempDir::new().unwrap();
++        let bashrc = temp_home.path().join(".bashrc");
++        let zshrc = temp_home.path().join(".zshrc");
++        fs::write(&bashrc, "# bash config\n").unwrap();
++        fs::write(&zshrc, "# zsh config\n").unwrap();
++
++        let mut env_vars = repo.test_env_vars();
++        env_vars.push(("SHELL".to_string(), "/bin/bash".to_string()));
++        let cmd = build_pty_command(
++            wt_bin().to_str().unwrap(),
++            &["switch", "--create", "feature"],
++            repo.root_path(),
++            &env_vars,
++            Some(temp_home.path()),
++        );
++        let invalid_bashrc = b"\xff\xfe#\0 \0t\0e\0s\0t\0\n\0";
++        let (output, exit_code) = exec_cmd_in_pty_prompted_with(cmd, &["y\n"], "[y/N", |_| {
++            fs::write(&bashrc, invalid_bashrc).unwrap();
++        });
++
++        // The installation offer is best-effort; its failure does not undo the switch.
++        assert_eq!(exit_code, 0, "{output}");
++        assert!(output.contains("Failed to configure bash"), "{output}");
++        assert!(output.contains("Configured 1 shell"), "{output}");
++        assert_eq!(fs::read(&bashrc).unwrap(), invalid_bashrc);
++        assert!(
++            fs::read_to_string(&zshrc)
++                .unwrap()
++                .contains("config shell init zsh")
++        );
++    }
++
++    #[rstest]
++    fn test_prompt_installs_other_shells_when_bashrc_is_invalid(repo: TestRepo) {
++        let temp_home = TempDir::new().unwrap();
++        let bashrc = temp_home.path().join(".bashrc");
++        let zshrc = temp_home.path().join(".zshrc");
++        let invalid_bashrc = b"\xff\xfe#\0 \0t\0e\0s\0t\0\n\0";
++        fs::write(&bashrc, invalid_bashrc).unwrap();
++        fs::write(&zshrc, "# zsh config\n").unwrap();
++
++        let mut env_vars = repo.test_env_vars();
++        env_vars.push(("SHELL".to_string(), "/bin/bash".to_string()));
++        let cmd = build_pty_command(
++            wt_bin().to_str().unwrap(),
++            &["switch", "--create", "feature"],
++            repo.root_path(),
++            &env_vars,
++            Some(temp_home.path()),
++        );
++        let (output, exit_code) = exec_cmd_in_pty_prompted_with(cmd, &["y\n"], "[y/N", |_| {});
++
++        assert_eq!(exit_code, 0, "{output}");
++        assert!(output.contains("Failed to configure bash"), "{output}");
++        assert!(output.contains("Configured 1 shell"), "{output}");
++        assert_eq!(fs::read(&bashrc).unwrap(), invalid_bashrc);
++        assert!(
++            fs::read_to_string(&zshrc)
++                .unwrap()
++                .contains("config shell init zsh")
++        );
++    }
++
+     #[rstest]
+     #[case(false)]
+     #[case(true)]
 ```
 
 ---
 
-### Incident Patch 3: `9cf6c949` (2026-10-26)
-**Commit Message**: skills(running-tend): post nightly ci-fix diagnoses on the auto-filed nightly issue (#4512)
+### Incident Patch 3: `8ee0a701` (2026-10-26)
+**Commit Message**: fix: don't cd into a directory removed before wt exits (#4602)
 
-When a scheduled nightly fails, `create-issue-on-nightly-failure` opens
-a `Nightly tests failed` issue before `tend-ci-fix` starts. ci-fix's
-dedup only searches the bot's `ci-fix:`-titled issues, so it can't see
-that issue. When ci-fix can't produce a fix for a durable cause, it
-opens a second, open tracker for the same run. This adds a short
-`running-tend` section: look up the open `Nightly tests failed` issue by
-title and post a durable diagnosis there instead of opening a `ci-fix:`
-tracking issue. A fix PR closes it with `Fixes #<n>`. Transient
-diagnoses still file their closed `tend-outage` tracker, because
-ci-fix's repeat-occurrence escalation counts only those. The lookup
-command in the section returns #4509 today.
+The shell wrapper acts on the cd directive only after wt exits, and work
+that runs in between can remove the directory it names. `wt switch -x`
+writes the directive before starting the program, so a program that
+removes its own worktree (an agent session that ends with `wt remove`)
+left the wrapper to `cd` into a missing directory: fish printed `cd: The
+directory '…' does not exist` and the wrapper returned failure. A hook
+or alias whose nested `wt switch` targets a worktree that a later step
+removes hits the same thing.
 
-The fix belongs in the overlay rather than upstream because the
-auto-filed issue comes from this repo's own `nightly.yaml` job and
-`.github/nightly-failure.md` template, not from tend.
+As wt finishes, `finish_command` now reads the directive file and
+empties it when the directory it names no longer exists, so the shell
+stays where it started. The outermost wt finishes last, after everything
+it runs in the foreground, so this one check covers every writer — the
+`-x` program, hooks, aliases, and nested wt — without touching the five
+shell wrappers. It is best-effort: if the file can't be read or emptied,
+the wrapper's own `cd` error still names the directory.
 
-Today's case left two open trackers for one failure. ci-fix
-[39211195743](https://github.com/max-sixty/worktrunk/actions/runs/39211195743)
-opened #4511 for nightly run 39206247278, which #4
+One behavior change: a hook that writes a directive naming a path that
+doesn't exist (a typo, say) used to surface a `cd` erro
 
-**File**: `.claude/skills/running-tend/SKILL.md` (modified, +10/-0)
+**File**: `src/main.rs` (modified, +1/-0)
 ```diff
-@@ -124,6 +124,16 @@ failure, not a broken link:
- When in doubt, post a comment on the failed run summarizing the diagnosis and
- wait — don't open a PR.
+@@ -1103,6 +1103,7 @@ fn print_cwd_removed_hint_if_needed() {
+ fn finish_command(verbose_level: u8, command_line: &str, error: Option<&anyhow::Error>) {
+     let error_text = error.map(|err| err.to_string());
+     diagnostic::write_if_verbose(verbose_level, command_line, error_text.as_deref());
++    output::withdraw_missing_cd_target();
+     let _ = output::terminate_output();
+ }
  
-+## CI Fix: A Failed Scheduled Nightly Already Has Its Issue
-+
-+When a scheduled `nightly` run fails, its `create-issue-on-nightly-failure` job opens (or updates) an open `Nightly tests failed` issue labelled `ci`, and `tend-triage` diagnoses it there. That issue is the tracker for the failure. The `ci-fix:` title search in `/tend-ci-runner:ci-fix` cannot find it, so look it up by title before filing anything:
-+
-+```bash
-+gh issue list --state open --label ci --search '"Nightly tests failed" in:title' --json number,title
-+```
-+
-+Post a durable diagnosis on that issue, unless a comment there already covers it, instead of opening a `ci-fix:` tracking issue. A fix PR closes it with `Fixes #<n>`. A transient diagnosis still files its closed `tend-outage` tracker, since the repeat-occurrence escalation in `/tend-ci-runner:ci-fix` counts only those.
-+
- ## Applying GitHub Suggestions
+```
+
+**File**: `src/output/global.rs` (modified, +32/-1)
+```diff
+@@ -8,7 +8,10 @@
+ //!
+ //! `WORKTRUNK_DIRECTIVE_CD_FILE` holds one raw path. The wrapper changes to it
+ //! after wt exits. `--execute` needs no directive: wt starts the external
+-//! program directly with its working directory set to the switch target. The
++//! program directly with its working directory set to the switch target.
++//! Because that program can remove the target before wt exits (a session that
++//! ends by removing its own worktree), wt withdraws a target that no longer
++//! exists as it finishes, leaving the shell where it started. The
+ //! retired exec-file variable is recognized only to warn when an old wrapper
+ //! redirects `--execute` output away from the terminal.
+ //!
+@@ -305,6 +308,34 @@ pub fn change_directory(path: impl AsRef<Path>) -> anyhow::Result<()> {
+     }
+ }
  
- Apply the literal suggestion only — change the lines it covers, nothing more.
++/// Withdraw a directory change whose target no longer exists.
++///
++/// Called as wt finishes, after everything it runs in the foreground: an
++/// `--execute` program that removes the worktree it
++/// started in, or a hook or alias whose nested wt switches somewhere a later
++/// step removes. Emptying the file keeps the wrapper from `cd`-ing into a
++/// missing directory, so the shell stays where it was. Best-effort: if the
++/// file can't be read or emptied, the wrapper's own `cd` error names the
++/// directory.
++pub fn withdraw_missing_cd_target() {
++    let mode = state()
++        .lock()
++        .expect("OUTPUT_STATE lock poisoned")
++        .mode
++        .clone();
++    let DirectiveMode::ShellIntegration { cd_file } = mode else {
++        return;
++    };
++    let Ok(target) = std::fs::read_to_string(&cd_file) else {
++        return;
++    };
++    // Strip only the line terminator: a directory name can end in spaces.
++    let target = target.trim_end_matches(['\n', '\r']);
++    if !target.is_empty() && !Path::new(target).is_dir() {
++        let _ = std::fs::File::create(&cd_file);
++    }
++}
++
+ /// Mark that the current working directory's worktree has been removed.
+ ///
+ /// Called by the removal handler (e.g., during `wt merge`) when it knows the
+```
+
+**File**: `src/output/mod.rs` (modified, +1/-1)
+```diff
+@@ -42,7 +42,7 @@ pub(crate) use global::{
+     change_directory, execute, is_shell_integration_active, mark_cwd_removed,
+     post_hook_display_path, pre_hook_display_path, print_outdated_shell_wrapper_hint_once,
+     retired_shell_wrapper_active, set_verbosity, terminate_output, to_logical_path,
+-    was_cwd_removed,
++    was_cwd_removed, withdraw_missing_cd_target,
+ };
+ // Re-export output handlers
+ pub(crate) use handlers::{
+```
+
+**File**: `tests/integration_tests/switch.rs` (modified, +49/-0)
+```diff
+@@ -1132,6 +1132,55 @@ fn test_switch_no_cd_execute_runs_in_worktree(mut repo: TestRepo) {
+     );
+ }
+ 
++/// An `--execute` program can remove the worktree it started in, as a session
++/// does when it ends by removing its own worktree. The shell wrapper would then
++/// `cd` into a directory that no longer exists, so wt withdraws the directive
++/// and the shell stays where it was.
++///
++/// Unix only: Windows refuses to delete a directory that a running process
++/// holds as its cwd, so there the program can't remove the worktree it runs in.
++#[cfg(unix)]
++#[rstest]
++fn test_switch_execute_that_removes_worktree_withdraws_cd(mut repo: TestRepo) {
++    let worktree = repo.add_worktree("feature");
++    let root = repo.root_path().to_string_lossy().to_string();
++    let worktree_arg = worktree.to_string_lossy().to_string();
++
++    let (cd_path, _guard) = directive_file();
++    let mut cmd = repo.wt_command();
++    configure_directive_file(&mut cmd, &cd_path);
++    cmd.current_dir(repo.root_path()).args([
++        "switch",
++        "feature",
++        "--execute",
++        "git",
++        "--",
++        "-C",
++        &root,
++        "worktree",
++        "remove",
++        "--force",
++        &worktree_arg,
++    ]);
++
++    let output = cmd.output().unwrap();
++    assert!(
++        output.status.success(),
++        "switch --execute failed:\nstdout: {}\nstderr: {}",
++        String::from_utf8_lossy(&output.stdout),
++        String::from_utf8_lossy(&output.stderr)
++    );
++    assert!(
++        !worktree.exists(),
++        "the --execute program should remove the worktree"
++    );
++    assert_eq!(
++        fs::read_to_string(&cd_path).unwrap(),
++        "",
++        "wt left a cd directive to the removed worktree"
++    );
++}
++
+ /// A switch from a subdirectory keeps the user's position, so the `--execute`
+ /// program starts in `<worktree>/<subdir>` — not at the worktree root the
+ /// background hooks run in. The header names the program's own directory
+```
+
+**File**: `tests/integration_tests/user_hooks.rs` (modified, +73/-4)
+```diff
+@@ -23,12 +23,14 @@ use worktrunk::config::HookSource;
+ #[rstest]
+ #[cfg(unix)]
+ fn test_concurrent_hooks_log_labels_and_pass_cd_directive(repo: TestRepo) {
+-    repo.write_project_config(
++    // The directive names a directory that exists, or wt withdraws it on exit.
++    let target = repo.home_path().to_string_lossy().to_string();
++    repo.write_project_config(&format!(
+         r#"[pre-start]
+-first = 'printf CD > "$WORKTRUNK_DIRECTIVE_CD_FILE"'
++first = "printf %s '{target}' > \"$WORKTRUNK_DIRECTIVE_CD_FILE\""
+ second = 'true'
+ "#,
+-    );
++    ));
+     let cd_file = repo.home_path().join("cd-directive");
+     let output = repo
+         .wt_command()
+@@ -37,7 +39,7 @@ second = 'true'
+         .output()
+         .unwrap();
+     assert!(output.status.success(), "{output:?}");
+-    assert_eq!(fs::read_to_string(cd_file).unwrap(), "CD");
++    assert_eq!(fs::read_to_string(cd_file).unwrap(), target);
+     let log = fs::read_to_string(repo.root_path().join(".git/wt/logs/commands.jsonl")).unwrap();
+     let mut labels: Vec<String> = log
+         .lines()
+@@ -5018,6 +5020,73 @@ setup = "'{wt_toml}' switch --create hook-created --no-hooks"
+     );
+ }
+ 
++/// A nested wt's directive outlives its target when a later step removes the
++/// worktree it switched to. The outer wt withdraws it on exit, so the shell
++/// wrapper doesn't `cd` into a missing directory.
++#[rstest]
++fn test_directive_to_worktree_removed_by_later_step_is_withdrawn(repo: TestRepo) {
++    use crate::common::{configure_directive_file, directive_file, wt_bin};
++
++    repo.commit("initial");
++    let created = repo.root_path().parent().unwrap().join("repo.hook-created");
++
++    let wt_toml = wt_bin().to_string_lossy().replace('\\', r"\\");
++    let created_toml = created.to_string_lossy().replace('\\', r"\\");
++    repo.write_test_config(&format!(
++        r#"
++[pre-start]
++setup = "'{wt_toml}' switch --create hook-created --no-hooks && git worktree remove --force '{created_toml}'"
++"#,
++    ));
++
++    let (cd_path, _guard) = directive_file();
++    let mut cmd = repo.wt_command();
++    configure_directive_file(&mut cmd, &cd_path);
++    cmd.args(["hook", "pre-start", "setup"]);
++    let output = cmd.output().unwrap();
++
++    assert!(
++        output.status.success(),
++        "hook failed: stdout={}\nstderr={}",
++        String::from_utf8_lossy(&output.stdout),
++        String::from_utf8_lossy(&output.stderr),
++    );
++    assert!(
++        !created.exists(),
++        "the hook should remove the worktree it created"
++    );
++    assert_eq!(
++        fs::read_to_string(&cd_path).unwrap(),
++        "",
++        "wt left a cd directive to the removed worktree"
++    );
++}
++
++/// A directive to a directory whose name ends in a space names a directory
++/// that exists, so wt keeps it. Unix only: Windows drops trailing spaces from
++/// directory names.
++#[cfg(unix)]
++#[rstest]
++fn test_directive_to_directory_ending_in_space_is_kept(repo: TestRepo) {
++    let target = repo.home_path().join("dir ");
++    fs::create_dir(&target).unwrap();
++    let target = target.to_string_lossy().to_string();
++    repo.write_project_config(&format!(
++        r#"[pre-start]
++cd = '''printf '%s\n' '{target}' > "$WORKTRUNK_DIRECTIVE_CD_FILE"'''
++"#,
++    ));
++    let cd_file = repo.home_path().join("cd-directive");
++    let output = repo
++        .wt_command()
++        .args(["hook", "pre-start", "--yes"])
++        .env("WORKTRUNK_DIRECTIVE_CD_FILE", &cd_file)
++        .output()
++        .unwrap();
++    assert!(output.status.success(), "{output:?}");
++    assert_eq!(fs::read_to_string(cd_file).unwrap(), format!("{target}\n"));
++}
++
+ // ============================================================================
+ // Pre-* Pipeline Concurrent Execution Tests
+ // ============================================================================
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4594** (2026-10-26): chore: bump astral-sh/setup-uv from 10.3.0 to 10.3.2 in /.github/actions/tend-setup (@dependabot[bot])
-- **PR #4592** (closed): chore: bump max-sixty/tend from 0.3.14 to 0.3.15 (@dependabot[bot])
-- **PR #4590** (2026-10-26): chore: bump jdx/packslip from 1.7.0 to 1.11.0 (@dependabot[bot])
-- **PR #4589** (2026-10-26): chore: bump the docs-site group across 1 directory with 5 updates (@dependabot[bot])
-- **PR #4586** (2026-10-26): ci: bump cargo-nextest pin to 0.9.149 (@worktrunk-bot)
-- **PR #4584** (2026-10-23): Retain partial JSON results when later command steps fail (@max-sixty)
+- **PR #4613** (2026-10-27): feat(completion): complete remote-qualified switch branches (@worktrunk-bot)
+- **PR #4611** (2026-10-27): Prevent log permission repair from changing symlink targets (@worktrunk-bot)
+- **PR #4609** (2026-10-27): Serialize signal scope retirement with signal receipt (@max-sixty)
+- **PR #4608** (2026-10-27): Read the cd directive file as-is in every shell wrapper (@max-sixty)
+- **PR #4607** (closed): test(signals): wait for wt receipt before alias child exits (@worktrunk-bot)
+- **PR #4606** (2026-10-27): Keep legacy project approvals within SSH port boundaries (@max-sixty)
 
 ---
 
@@ -2429,32 +3130,33 @@ opened #4511 for nightly run 39206247278, which #4
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(picker): wait for rendered rows before the escape-abort snapshot (#4527)
+## X. support slash-named remotes in branch inventory (#4271)
 
 **RULE**:
-When implementing operations in `tests/integration_tests/switch_picker.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/commands/config/state.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7427b2fa`: test(picker): wait for rendered rows before the escape-abort snapshot (#4527). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `94338ed2`: support slash-named remotes in branch inventory (#4271). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/integration_tests/switch_picker.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/commands/config/state.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // Settle: the preview renders only after the list has a selected row,
-        // so gating on it confirms both panels before capture. Without a gate,
-        // a prompt that sits quiet for STABLE_DURATION on a slow runner gets
-        // captured before any rows arrive.
-        &[("", Some("has no file changes"))],
+                (None, Some(sha)) => {
+                    let (remote, branch) = repo
+                        .split_remote_branch_name(&branch_name)
+                        .context("remote branch has no remote prefix")?;
+                    BranchRef::remote_branch(remote, branch, sha)
+                }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        &[], // No inputs before abort
+                (None, Some(sha)) => BranchRef::remote_branch(&branch_name, sha),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7427b2fa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `94338ed2` are properly handled with clean fallback behavior.

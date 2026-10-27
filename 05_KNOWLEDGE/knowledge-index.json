@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T21:18:40.475Z",
+  "last_updated": "2026-10-27T21:22:27.572Z",
   "total_verified_learnings": 1149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -35077,8 +35077,8 @@
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "f5dec9c4",
-      "content_hash": "2bedfec73c9306fe6ca481f0bba41d89f939f06cb8e34ad99177233954ce4bd3",
+      "source_version": "bc8ad63e",
+      "content_hash": "33022b5a66cf8bebeffaf32081260a898005df4efc5c5772a8f31d246dc1ca55",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "promoted_rules": [
@@ -35111,6 +35111,11 @@
           "number": 4557,
           "title": "test(picker): wait for rendered rows before the escape-abort snapshot (#4527)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5015,
+          "title": "support slash-named remotes in branch inventory (#4271)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35118,7 +35123,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T05:00:08.678Z",
+      "verified_at": "2026-10-27T21:22:19.967Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -69734,7 +69739,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autogluon/chronos-2",
       "source_version": "hf-autogluon-chronos-2",
-      "content_hash": "7a9665dc086b730983d645df63a59850e7d958a9f53bb84c4b4817dc5ff188c3",
+      "content_hash": "e22938979b5255c547bb3c3dd8e3fb3dd6a878bd3667df982b251229a5d59c4c",
       "dossier_path": "07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md",
       "promoted_rules": [
@@ -69777,6 +69782,21 @@
           "number": 3945,
           "title": "Arcsinh Normalization for Heavy-Tailed Data",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5016,
+          "title": "Scale-Invariant Input Normalization via Arcsinh",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5017,
+          "title": "Patch-Based Tokenization for Long-Context Efficiency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5018,
+          "title": "Quantile Output for Probabilistic Forecasting",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -69784,7 +69804,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T20:11:16.983Z",
+      "verified_at": "2026-10-27T21:22:27.558Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -138501,6 +138521,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T21:18:40.464Z"
+    },
+    "rule-5015": {
+      "learning_id": "rule-5015",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5015,
+      "title": "support slash-named remotes in branch inventory (#4271)",
+      "source_url": "https://github.com/max-sixty/worktrunk",
+      "source_version": "bc8ad63e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:22:19.967Z"
+    },
+    "rule-5016": {
+      "learning_id": "rule-5016",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5016,
+      "title": "Scale-Invariant Input Normalization via Arcsinh",
+      "source_url": "https://huggingface.co/autogluon/chronos-2",
+      "source_version": "hf-autogluon-chronos-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:22:27.558Z"
+    },
+    "rule-5017": {
+      "learning_id": "rule-5017",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5017,
+      "title": "Patch-Based Tokenization for Long-Context Efficiency",
+      "source_url": "https://huggingface.co/autogluon/chronos-2",
+      "source_version": "hf-autogluon-chronos-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:22:27.558Z"
+    },
+    "rule-5018": {
+      "learning_id": "rule-5018",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5018,
+      "title": "Quantile Output for Probabilistic Forecasting",
+      "source_url": "https://huggingface.co/autogluon/chronos-2",
+      "source_version": "hf-autogluon-chronos-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:22:27.558Z"
     }
   },
   "aliases": {

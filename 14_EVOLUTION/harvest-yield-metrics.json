@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T21:18:40.530Z",
-  "total_cycles_completed": 5525,
-  "total_learnings_persisted": 5525,
-  "total_rules_promoted": 4927,
+  "last_updated": "2026-10-27T21:22:27.640Z",
+  "total_cycles_completed": 5527,
+  "total_learnings_persisted": 5527,
+  "total_rules_promoted": 4931,
   "history": [
-    {
-      "timestamp": "2026-10-27T13:57:52.368Z",
-      "repository": "ntegrals/openbrowser",
-      "learningId": "learn-github-ntegrals-openbrowser",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:57:56.466Z",
-      "repository": "lastmile-ai/mcp-agent",
-      "learningId": "learn-github-lastmile-ai-mcp-agent",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T14:01:00.917Z",
       "repository": "smol-machines/smolvm",
@@ -1403,6 +1389,20 @@
       "repository": "tailscale/tailscale",
       "learningId": "learn-github-tailscale-tailscale",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T21:22:20.045Z",
+      "repository": "max-sixty/worktrunk",
+      "learningId": "learn-github-max-sixty-worktrunk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T21:22:27.640Z",
+      "repository": "autogluon/chronos-2",
+      "learningId": "learn-huggingface-autogluon-chronos-2",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
