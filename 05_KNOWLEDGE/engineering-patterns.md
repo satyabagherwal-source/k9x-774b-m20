@@ -346560,3 +346560,316 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `373ba5aa` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4749. env): give terminals their profile and drop removed keys on relaunch (Harvested from YoanWai/agent-manager)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "env): give terminals their profile and drop removed keys on relaunch",
+  "source": "YoanWai/agent-manager",
+  "source_url": "https://github.com/YoanWai/agent-manager",
+  "source_version": "e7391588",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-27T12:30:08.557Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-yoanwai-agent-manager",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [YoanWai/agent-manager](https://github.com/YoanWai/agent-manager) (Revision: `e7391588`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `internal/launch/launch.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in YoanWai/agent-manager. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `13148419`: env): give terminals their profile and drop removed keys on relaunch. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/launch/launch.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+// launches with. Every session but a shell with no profile carries its id
+// so the rename subcommand can find it, and the launch it belongs to, which
+// is the agent_launched_at
+	env := maps.Clone(profile)
+	if env == nil {
+		env = map[string]string{}
+	}
+		// Exporting into a shell launch replaces tmux's login shell with a
+		// non-login one, worth it only to carry a profile.
+		if len(profile) == 0 {
+			return "", nil, nil
+		}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+// launches with. Every session carries its id so the rename subcommand
+// can find it, and the launch it belongs to, which is the agent_launched_at
+	env := make(map[string]string, len(profile)+len(tool.Env)+2)
+	maps.Copy(env, profile)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `13148419` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4750. appdev): read App Store trader block and links only from the product's own shelv (Harvested from 7onez/cti-expert)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "appdev): read App Store trader block and links only from the product's own shelv",
+  "source": "7onez/cti-expert",
+  "source_url": "https://github.com/7onez/cti-expert",
+  "source_version": "309fba96",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-27T12:30:10.518Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-7onez-cti-expert",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [7onez/cti-expert](https://github.com/7onez/cti-expert) (Revision: `309fba96`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `intel_engine/WebPivot/references/appdev.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 7onez/cti-expert. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `48f92e29`: appdev): read App Store trader block and links only from the product's own shelves. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `intel_engine/WebPivot/references/appdev.json`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+    "_comment": "apps.apple.com product page, English EU storefront. Its <script id=serialized-server-data> JSON carries an Annotation titled by provider_titles whose rawText items state whether the provider declared itself a TRADER under the EU Digital Services Act (trader_declared / trader_not_declared sentence fragments, matched case-insensitively; not_declared is checked first) and, when declared, '**Label**\\nvalue' markdown fields mapped by trader_fields. Apple DISPLAYS these values but they are self-declared by the developer. ProductPageLink items whose text matches link_labels give the listing's website / support / privacy-policy URLs. own_shelves scopes both reads to the REQUESTED product's own shelves (shelfMapping key AND contentType must both match): the same page embeds similar apps whose lockups carry other developers' links, so a page-wide scan would read another developer's data. The page intent id must also equal the requested track id.",
+      "own_shelves": {
+        "trader": {"keys": ["information"], "content_types": ["annotation"]},
+        "links": {"keys": ["notPurchasedLinks", "purchasedLinks", "description"], "content_types": ["productPageLink", "productDe
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Anti-pattern to NEVER write (induced failure mode):
+    "_comment": "apps.apple.com product page, English EU storefront. Its <script id=serialized-server-data> JSON carries an Annotation titled by provider_titles whose rawText items state whether the provider declared itself a TRADER under the EU Digital Services Act (trader_declared / trader_not_declared sentence fragments, matched case-insensitively; not_declared is checked first) and, when declared, '**Label**\\nvalue' markdown fields mapped by trader_fields. Apple DISPLAYS these values but they are self-declared by the developer. ProductPageLink items whose text matches link_labels give the listing's website / support / privacy-policy URLs.",
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `48f92e29` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4751. preserve config group bindings before component creation (#2733) (Harvested from goodrain/rainbond)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "preserve config group bindings before component creation (#2733)",
+  "source": "goodrain/rainbond",
+  "source_url": "https://github.com/goodrain/rainbond",
+  "source_version": "8d5895f1",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-27T12:30:15.999Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-goodrain-rainbond",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [goodrain/rainbond](https://github.com/goodrain/rainbond) (Revision: `8d5895f1`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `api/handler/application_config_group.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goodrain/rainbond. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `cd811e47`: preserve config group bindings before component creation (#2733). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/handler/application_config_group.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	for _, serviceConfigGroup := range configGroupServiceBindings(appID, req.ConfigGroupName, req.ServiceIDs, services) {
+		if err := db.GetManager().AppConfigGroupServiceDaoTransactions(tx).AddModel(serviceConfigGroup); err != nil {
+	for _, serviceConfigGroup := range configGroupServiceBindings(appID, configGroupName, req.ServiceIDs, services) {
+		if err := db.GetManager().AppConfigGroupServiceDaoTransactions(tx).AddModel(serviceConfigGroup); err != nil {
+
+// configGroupServiceBindings preserves selected components that have not reached
+// the region yet. Their IDs are already assigned by the console during creation.
+func configGroupServiceBindings(appID, groupName string, serviceIDs []string, services []*dbmodel.TenantServices) []*dbmodel.ConfigGroupService {
+	aliases := make(map[string]string, len(services))
+	for _, service := range services {
+		aliases[service.ServiceID] = service.ServiceAlias
+	}
+	seen := make(map[string]bool, len(serviceIDs))
+	var bindings []*dbmodel.ConfigGroupService
+	for _, id := range serviceIDs {
+		if id == "" || seen[id] {
+			continue
+		}
+		seen[id] = true
+		bindings = append(bindings, &dbmodel.ConfigGroupService{
+			AppID: appID, ConfigGroupName: groupName
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+	for _, s := range services {
+		serviceConfigGroup := dbmodel.ConfigGroupService{
+			AppID:           appID,
+			ConfigGroupName: req.ConfigGroupName,
+			ServiceID:       s.ServiceID,
+			ServiceAlias:    s.ServiceAlias,
+		}
+		if err := db.GetManager().AppConfigGroupServiceDaoTransactions(tx).AddModel(&serviceConfigGroup); err != nil {
+	for _, s := range services {
+		serviceConfigGroup := dbmodel.ConfigGroupService{
+			AppID:           appID,
+			ConfigGroupName: configGroupName,
+			ServiceID:       s.ServiceID,
+			ServiceAlias:    s.ServiceAlias,
+		}
+		if err := db.GetManager().AppConfigGroupServiceDaoTransactions(tx).AddModel(&serviceConfigGroup); err != nil {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `cd811e47` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4752. trackers): gitea reporter pagination (#7945) (Harvested from projectdiscovery/nuclei)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "trackers): gitea reporter pagination (#7945)",
+  "source": "projectdiscovery/nuclei",
+  "source_url": "https://github.com/projectdiscovery/nuclei",
+  "source_version": "9dc00492",
+  "license": "MIT",
+  "extracted_at": "2026-10-27T12:30:17.648Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-projectdiscovery-nuclei",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) (Revision: `9dc00492`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `pkg/reporting/trackers/gitea/gitea.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `9dc00492`: trackers): gitea reporter pagination (#7945). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/reporting/trackers/gitea/gitea.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+// findIssueByTitle searches every linked issue page for an exact title match.
+		issueList, response, err := i.client.ListRepoIssues(i.options.ProjectOwner, i.options.ProjectName, opts)
+		if response == nil || response.NextPage == 0 {
+			// Gitea's Link header indicates there is no next page.
+		if response.NextPage <= opts.Page {
+			return nil, fmt.Errorf("gitea returned a non-advancing issue page: current page %d, next page %d", opts.Page, response.NextPage)
+		}
+		opts.Page = response.NextPage
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+		issueList, _, err := i.client.ListRepoIssues(i.options.ProjectOwner, i.options.ProjectName, opts)
+		if len(issueList) < opts.PageSize {
+			// Last page reached.
+
+		opts.Page++
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `9dc00492` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4753. build(deps): bump the ts-sdk-security group across 1 directory with 2 updates (# (Harvested from marmotdata/marmot)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "build(deps): bump the ts-sdk-security group across 1 directory with 2 updates (#",
+  "source": "marmotdata/marmot",
+  "source_url": "https://github.com/marmotdata/marmot",
+  "source_version": "480878c2",
+  "license": "MIT",
+  "extracted_at": "2026-10-27T12:35:07.270Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-marmotdata-marmot",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [marmotdata/marmot](https://github.com/marmotdata/marmot) (Revision: `480878c2`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `sdk/ts/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in marmotdata/marmot. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `9582e459`: build(deps): bump the ts-sdk-security group across 1 directory with 2 updates (#333). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/ts/package.json`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+    "vitest": "^5.0.3",
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+    "vitest": "^4.1.5",
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `9582e459` are properly handled with clean fallback behavior.

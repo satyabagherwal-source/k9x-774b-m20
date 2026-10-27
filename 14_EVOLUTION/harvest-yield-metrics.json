@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T12:21:58.804Z",
-  "total_cycles_completed": 5247,
-  "total_learnings_persisted": 5247,
-  "total_rules_promoted": 4653,
+  "last_updated": "2026-10-27T12:35:07.467Z",
+  "total_cycles_completed": 5252,
+  "total_learnings_persisted": 5252,
+  "total_rules_promoted": 4658,
   "history": [
-    {
-      "timestamp": "2026-10-26T01:10:18.441Z",
-      "repository": "pola-rs/polars",
-      "learningId": "learn-github-pola-rs-polars",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T01:10:25.453Z",
-      "repository": "t8y2/dbx",
-      "learningId": "learn-github-t8y2-dbx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T01:22:51.834Z",
-      "repository": "tokio-rs/tokio",
-      "learningId": "learn-github-tokio-rs-tokio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T01:22:55.896Z",
-      "repository": "chrisbanes/skills",
-      "learningId": "learn-github-chrisbanes-skills",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T01:25:49.501Z",
-      "repository": "vuetifyjs/vuetify",
-      "learningId": "learn-github-vuetifyjs-vuetify",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-26T01:37:17.637Z",
       "repository": "zed-industries/zed",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-27T12:21:58.804Z",
       "repository": "ydb-platform/ydb",
       "learningId": "learn-github-ydb-platform-ydb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T12:30:08.758Z",
+      "repository": "YoanWai/agent-manager",
+      "learningId": "learn-github-yoanwai-agent-manager",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T12:30:10.711Z",
+      "repository": "7onez/cti-expert",
+      "learningId": "learn-github-7onez-cti-expert",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T12:30:16.204Z",
+      "repository": "goodrain/rainbond",
+      "learningId": "learn-github-goodrain-rainbond",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T12:30:17.852Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T12:35:07.467Z",
+      "repository": "marmotdata/marmot",
+      "learningId": "learn-github-marmotdata-marmot",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -4504,3 +4504,11 @@ https://github.com/ScrapeCreators/social-media-research-skills
 # --- Automatically Discovered by AI Scout Engine [2026-10-27T11:49:18.483Z] ---
 # [HUGGINGFACE-AI-MODELS] FastVideo/FastH3-Omni-Comfy (3650 score) - Verified Hugging Face Model: FastVideo/FastH3-Omni-Comfy (165 likes, 324335 down
 https://huggingface.co/FastVideo/FastH3-Omni-Comfy
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T12:29:56.803Z] ---
+# [AI-AGENTS] marmotdata/marmot (652 score) - The open-source context layer for your AI. Catalog your tables, topics, queues a
+https://github.com/marmotdata/marmot
+# [AI-AGENTS] YoanWai/agent-manager (784 score) - The fastest developer workflow for every AI coding agent. Live status, quick pro
+https://github.com/YoanWai/agent-manager
+# [AI-AGENTS] 7onez/cti-expert (591 score) - CTI Expert — Cyber Threat Intelligence & OSINT analysis skill for Claude Code / 
+https://github.com/7onez/cti-expert

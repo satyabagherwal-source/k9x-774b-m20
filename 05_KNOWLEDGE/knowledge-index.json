@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T12:21:58.743Z",
-  "total_verified_learnings": 1103,
+  "last_updated": "2026-10-27T12:35:07.402Z",
+  "total_verified_learnings": 1106,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -13549,8 +13549,8 @@
       "slug": "goodrain-rainbond",
       "platform": "github",
       "source_url": "https://github.com/goodrain/rainbond",
-      "source_version": "8538e7cf",
-      "content_hash": "de93f8981e52714b203380cfb790e1bf5aa95aad2b0402748af4987beac14dfc",
+      "source_version": "8d5895f1",
+      "content_hash": "374ac5e281d9c38f943c90efa88a7a9261738ed962e7dbaaa90d653092adb09e",
       "dossier_path": "07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
       "promoted_rules": [
@@ -13563,6 +13563,11 @@
           "number": 4455,
           "title": "release): save the chart index before searching it (#2724)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4751,
+          "title": "preserve config group bindings before component creation (#2733)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13570,7 +13575,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T21:33:46.178Z",
+      "verified_at": "2026-10-27T12:30:16.130Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42102,8 +42107,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "263bc134",
-      "content_hash": "c795260ee83d098ae0e853ef0a1588f0c0f2a51290340e3c8917e00642158d3a",
+      "source_version": "9dc00492",
+      "content_hash": "2fae450924efcbb1903329c8859fd9508e8d61c740cd5709549650aa2ebfd1c5",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -42156,6 +42161,11 @@
           "number": 4579,
           "title": "Merge pull request #7941 from TassioSales/fix/passive-raw-response-http-body",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4752,
+          "title": "trackers): gitea reporter pagination (#7945)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42163,7 +42173,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T10:15:18.823Z",
+      "verified_at": "2026-10-27T12:30:17.778Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -132174,6 +132184,175 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T12:21:58.729Z"
+    },
+    "learn-github-yoanwai-agent-manager": {
+      "learning_id": "learn-github-yoanwai-agent-manager",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "YoanWai/agent-manager",
+      "repository": "YoanWai/agent-manager",
+      "slug": "yoanwai-agent-manager",
+      "platform": "github",
+      "source_url": "https://github.com/YoanWai/agent-manager",
+      "source_version": "e7391588",
+      "content_hash": "8e49582c35e166024ffa807958268bab7032bf2e958bbb2ba9933c3d36e5cbea",
+      "dossier_path": "07_PROJECT_LEARNING/yoanwai-agent-manager-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/yoanwai-agent-manager-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4749,
+          "title": "env): give terminals their profile and drop removed keys on relaunch",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T12:30:08.680Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4749": {
+      "learning_id": "rule-4749",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4749,
+      "title": "env): give terminals their profile and drop removed keys on relaunch",
+      "source_url": "https://github.com/YoanWai/agent-manager",
+      "source_version": "e7391588",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:30:08.680Z"
+    },
+    "learn-github-7onez-cti-expert": {
+      "learning_id": "learn-github-7onez-cti-expert",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "7onez/cti-expert",
+      "repository": "7onez/cti-expert",
+      "slug": "7onez-cti-expert",
+      "platform": "github",
+      "source_url": "https://github.com/7onez/cti-expert",
+      "source_version": "309fba96",
+      "content_hash": "ce81dd764e1397462bb71bd513c354b49e7ae609476c12e824f4d4567435857e",
+      "dossier_path": "07_PROJECT_LEARNING/7onez-cti-expert-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/7onez-cti-expert-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4750,
+          "title": "appdev): read App Store trader block and links only from the product's own shelv",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T12:30:10.635Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4750": {
+      "learning_id": "rule-4750",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4750,
+      "title": "appdev): read App Store trader block and links only from the product's own shelv",
+      "source_url": "https://github.com/7onez/cti-expert",
+      "source_version": "309fba96",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:30:10.636Z"
+    },
+    "rule-4751": {
+      "learning_id": "rule-4751",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4751,
+      "title": "preserve config group bindings before component creation (#2733)",
+      "source_url": "https://github.com/goodrain/rainbond",
+      "source_version": "8d5895f1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:30:16.130Z"
+    },
+    "rule-4752": {
+      "learning_id": "rule-4752",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4752,
+      "title": "trackers): gitea reporter pagination (#7945)",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "9dc00492",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:30:17.778Z"
+    },
+    "learn-github-marmotdata-marmot": {
+      "learning_id": "learn-github-marmotdata-marmot",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "marmotdata/marmot",
+      "repository": "marmotdata/marmot",
+      "slug": "marmotdata-marmot",
+      "platform": "github",
+      "source_url": "https://github.com/marmotdata/marmot",
+      "source_version": "480878c2",
+      "content_hash": "c21f01f0ca39312242c9931a14b1913585a4988478295e5b14a65735d91fa15b",
+      "dossier_path": "07_PROJECT_LEARNING/marmotdata-marmot-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/marmotdata-marmot-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4753,
+          "title": "build(deps): bump the ts-sdk-security group across 1 directory with 2 updates (#",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T12:35:07.390Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4753": {
+      "learning_id": "rule-4753",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4753,
+      "title": "build(deps): bump the ts-sdk-security group across 1 directory with 2 updates (#",
+      "source_url": "https://github.com/marmotdata/marmot",
+      "source_version": "480878c2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:35:07.390Z"
     }
   },
   "aliases": {

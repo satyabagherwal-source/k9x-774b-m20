@@ -5279,3 +5279,8 @@ Every entry in this ledger must capture:
 | `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `8050b1b0` | Multi-dimensional audit evidence | 2026-10-27T12:21:52.899Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `8ca46580` | Multi-dimensional audit evidence | 2026-10-27T12:21:58.122Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `df783638` | Multi-dimensional audit evidence | 2026-10-27T12:21:58.799Z |
+| `learn-github-yoanwai-agent-manager` | `https://github.com/YoanWai/agent-manager` | `e7391588` | Multi-dimensional audit evidence | 2026-10-27T12:30:08.753Z |
+| `learn-github-7onez-cti-expert` | `https://github.com/7onez/cti-expert` | `309fba96` | Multi-dimensional audit evidence | 2026-10-27T12:30:10.706Z |
+| `learn-github-goodrain-rainbond` | `https://github.com/goodrain/rainbond` | `8d5895f1` | Multi-dimensional audit evidence | 2026-10-27T12:30:16.200Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `9dc00492` | Multi-dimensional audit evidence | 2026-10-27T12:30:17.847Z |
+| `learn-github-marmotdata-marmot` | `https://github.com/marmotdata/marmot` | `480878c2` | Multi-dimensional audit evidence | 2026-10-27T12:35:07.462Z |

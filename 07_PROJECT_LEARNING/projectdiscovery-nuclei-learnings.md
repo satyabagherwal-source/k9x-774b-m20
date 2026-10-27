@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `263bc134`  
+> **Source Version**: `9dc00492`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T10:15:18.512Z  
+> **Timestamp**: 2026-10-27T12:30:17.437Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T10:15:17.376Z  
+> **Harvest Timestamp**: 2026-10-27T12:30:16.214Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32315 stars
+- **Stars / Engagement**: 32365 stars
 
 ---
 
@@ -1445,213 +1445,456 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `263bc134` (2026-10-26)
-**Commit Message**: Merge pull request #7941 from TassioSales/fix/passive-raw-response-http-body
+### Incident Patch 1: `9dc00492` (2026-10-27)
+**Commit Message**: fix(trackers): gitea reporter pagination (#7945)
 
-fix(offlinehttp): handle request body and unversioned HTTP/2 in passive mode (#7924)
-
-**File**: `pkg/protocols/offlinehttp/read_response.go` (modified, +18/-8)
+**File**: `pkg/reporting/trackers/gitea/gitea.go` (modified, +8/-5)
 ```diff
-@@ -3,20 +3,32 @@ package offlinehttp
- import (
- 	"bufio"
- 	"errors"
-+	"io"
- 	"net/http"
- 	"regexp"
- 	"strings"
- )
- 
--var noMinor = regexp.MustCompile(`^HTTP/([0-9]) `)
-+var (
-+	noMinor             = regexp.MustCompile(`^HTTP/([0-9]) `)
-+	responseStatusRegex = regexp.MustCompile(`(?m)^HTTP/[0-9](?:\.[0-9])?\s+[0-9]{3}`)
-+)
- 
- // readResponseFromString reads a raw http response from a string.
- func readResponseFromString(data string) (*http.Response, error) {
- 	// Check if "data" contains RFC compatible Request followed by a response
- 	br := bufio.NewReader(strings.NewReader(data))
- 	if req, err := http.ReadRequest(br); err == nil {
--		if resp, err := http.ReadResponse(br, req); err == nil {
--			return resp, nil
-+		if req.Body != nil {
-+			_, _ = io.Copy(io.Discard, req.Body)
-+			_ = req.Body.Close()
-+		}
-+		remaining, _ := io.ReadAll(br)
-+		if len(remaining) > 0 {
-+			remainingStr := addMinorVersionToHTTP(string(remaining))
-+			if resp, err := http.ReadResponse(bufio.NewReader(strings.NewReader(remainingStr)), req); err == nil {
-+				return resp, nil
-+			}
- 		}
- 	}
- 
-@@ -25,13 +37,11 @@ func readResponseFromString(data string) (*http.Response, error) {
- 	if strings.HasPrefix(data, "HTTP/") {
- 		final = addMinorVersionToHTTP(data)
- 	} else {
--		lastIndex := strings.LastIndex(data, "HTTP/")
--		if lastIndex == -1 {
-+		loc := responseStatusRegex.FindStringIndex(data)
-+		if loc == nil {
- 			return nil, errors.New("malformed raw http response")
- 		}
--		final = data[lastIndex:] // choose last http/ in case of it being later.
--
--		final = addMinorVersionToHTTP(final)
-+		final = addMinorVersionToHTTP(data[loc[0]:])
- 	}
- 	return http.ReadResponse(bufio.NewReader(strings.NewReader(final)), nil)
+@@ -156,6 +156,7 @@ func (i *Integration) ShouldFilter(event *output.ResultEvent) bool {
+ 	return true
  }
+ 
++// findIssueByTitle searches every linked issue page for an exact title match.
+ func (i *Integration) findIssueByTitle(title string) (*gitea.Issue, error) {
+ 	// Fetch issues in pages to ensure older issues are also checked for duplicates.
+ 	pageSize := i.options.DuplicateIssuePageSize
+@@ -177,7 +178,7 @@ func (i *Integration) findIssueByTitle(title string) (*gitea.Issue, error) {
+ 			return nil, nil
+ 		}
+ 
+-		issueList, _, err := i.client.ListRepoIssues(i.options.ProjectOwner, i.options.ProjectName, opts)
++		issueList, response, err := i.client.ListRepoIssues(i.options.ProjectOwner, i.options.ProjectName, opts)
+ 		if err != nil {
+ 			return nil, err
+ 		}
+@@ -188,12 +189,14 @@ func (i *Integration) findIssueByTitle(title string) (*gitea.Issue, error) {
+ 			}
+ 		}
+ 
+-		if len(issueList) < opts.PageSize {
+-			// Last page reached.
++		if response == nil || response.NextPage == 0 {
++			// Gitea's Link header indicates there is no next page.
+ 			return nil, nil
+ 		}
+-
+-		opts.Page++
++		if response.NextPage <= opts.Page {
++			return nil, fmt.Errorf("gitea returned a non-advancing issue page: current page %d, next page %d", opts.Page, response.NextPage)
++		}
++		opts.Page = response.NextPage
+ 	}
+ }
+ 
 ```
 
-**File**: `pkg/protocols/offlinehttp/read_response_test.go` (modified, +41/-0)
+**File**: `pkg/reporting/trackers/gitea/gitea_test.go` (added, +172/-0)
 ```diff
-@@ -199,3 +199,44 @@ Server: Google Frontend
- 
- 	})
- }
+@@ -0,0 +1,172 @@
++package gitea
 +
++import (
++	"encoding/json"
++	"fmt"
++	"net/http"
++	"net/http/httptest"
++	"strconv"
++	"strings"
++	"testing"
 +
-+func TestReadResponse_HTTPInBodyCases(t *testing.T) {
-+	tests := []struct {
-+		name         string
-+		data         string
-+		expectedBody string
-+		statusCode   int
-+	}{
-+		{
-+			name:         "http2 response without minor version and HTTP/ in body (#7924)",
-+			data:         "GET / HTTP/1.1\r\nHost: example.com\r\n\r\nHTTP/2 200 OK\r\nContent-Length: 27\r\n\r\nSupports HTTP/2 and HTTP/3.",
-+			expectedBody: "Supports HTTP/2 and HTTP/3.",
-+			statusCode:   200,
-+		},
-+		{
-+			name:         "request with body and HTTP/ in response body (#7924)",
-+			data:         "POST /search HTTP/1.1\r\nHost: example.com\r\nContent-Length: 3\r\n\r\nq=1HTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\nSupports HTTP/2 and HTTP/3.",
-+			expectedBody: "Supports HTTP/2 and HTTP/3.",
-+			statusCode:   200,
-+		},
-+		{
-+			name:         "control http 1.1 with HTTP/ in response body (#7924)",
-+			data:         "GET / HTTP/1.1\r\nHost: example.com\r\n\r\nHTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\nSupports HTTP/2 and HTTP/3.",
-+			expectedBody: "Supports HTTP/2 and HTTP/3.",
-+			statusCode:   200,
-+		},
-+	}
++	"github.com/projectdiscovery/nuclei/v3/pkg/model"
++	"github.com/projectdiscovery/nuclei/v3/pkg/output"
++	"github.com/stretchr/testify/require"
++)
 +
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			resp, err := readResponseFromString(tt.data)
-+			require.NoError(t, err, "could not read response from string")
-+			require.Equal(t, tt.statusCode, resp.StatusCode)
++const testIssueTitle = "Test finding (template-id) found on example.com"
 +
-+			body, err := io.ReadAll(resp.Body)
-+			require.NoError(t, err)
-+			require.Equal(t, tt.expectedBody, string(body))
-+		})
++type issueRequest struct {
++	Page    string
++	Limit   string
++	State   string
++	Keyword string
++}
++
++type fakeGitea struct {
++	server       *httptest.Server
++	requests     []issueRequest
++	comments     []int64
++	created      int
++	issueHandler func(http.ResponseWriter, *http.Request, issueRequest)
++}
++
++// newFakeGitea starts a local Gitea API stub and returns its tracker integration.
++func newFakeGitea(t *testing.T, issueHandler func(http.ResponseWriter, *http.Request, issueRequest)) (*Integration, *fakeGitea) {
++	t.Helper()
++
++	fake := &fakeGitea{issueHandler: issueHandler}
++	fake.server = httptest.NewServer(http.HandlerFunc(fake.serveHTTP))
++	t.Cleanup(fake.server.Close)
++
++	integration, err := New(&Options{
++		BaseURL:             fake.server.URL,
++		Token:               "test-token",
++		ProjectOwner:        "owner",
++		ProjectName:         "repo",
++		DuplicateIssueCheck: true,
++	})
++	require.NoError(t, err)
++	return integration, fake
++}
++
++// serveHTTP records tracker requests and serves the configured fake API responses.
++func (f *fakeGitea) serveHTTP(w http.ResponseWriter, r *http.Request) {
++	w.Header().Set("Content-Type", "application/json")
++	switch {
++	case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/version"):
++		_, _ = w.Write([]byte(`{"version":"1.21.0"}`))
++	case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/labels"):
++		_, _ = w.Write([]byte("[]"))
++	case r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, "/issues"):
++		query := r.URL.Query()
++		request := issueRequest{
++			Page:    query.Get("page"),
++			Limit:   query.Get("limit"),
++			State:   query.Get("state"),
++			Keyword: query.Get("q"),
++		}
++		f.requests = append(f.requests, request)
++		f.issueHandler(w, r, request)
++	case r.Method == http.MethodPost && strings.Contains(r.URL.Path, "/comments"):
++		parts := strings.Split(strings.Trim(r.URL.Path, "/"), "/")
++		issueNumber, _ := strconv.ParseInt(parts[len(parts)-2], 10, 64)
++		f.comments = append(f.comments, issueNumber)
++		_, _ = w.Write([]byte(`{"id":1}`))
++	case r.Method == http.MethodPost && strings.HasSuffix(r.URL.Path, "/issues"):
++		f.created++
++		_, _ = w.Write([]byte(`{"number":99,"title":"created","url":"https://gitea.test/issues/99"}`))
++	default:
++		http.NotFound(w, r)
 +	}
 +}
++
++// writeIssuePage writes issue objects as a JSON API response.
++func writeIssuePage(w http.ResponseWriter, issues ...map[string]any) {
++	_ = json.NewEncoder(w).Encode(issues)
++}
++
++// TestCreateIssueFollowsLinkAfterCappedPageAndComments verifies duplicate detection continues after a capped page.
++func TestCreateIssueFollowsLinkAfterCappedPageAndComments(t *testing.T) {
++	var server *httptest.Server
++	integration, fake := newFakeGitea(t, func(w http.ResponseWriter, r *http.Request, request issueRequest) {
++		if request.Page == "1" {
++			// Gitea may return only 50 items despite a requested limit of 100.
++			w.Header().Set("Link", fmt.Sprintf("<%s%s?limit=100&page=2&state=all>; rel=\"next\"", server.URL, r.URL.Path))
++			issues := make([]map[string]any, 50)
++			for index := range issues {
++				issues[index] = map[string]any{"number": index + 1, "title": "unrelated issue"}
++			}
++			writeIssuePage(w, issues...)
++			return
++		}
++		writeIssuePage(w, map[string]any{"number": 42, "title": testIssueTitle, "url": "https://gitea.test/issues/42"})
++	})
++	server = fake.server
++
++	response, err := integration.CreateIssue(testGiteaEvent())
++	require.NoError(t, err)
++	require.Equal(t, "42", response.IssueID)
++	require.Equal(t, "https://gitea.test/issues/42", response.IssueURL)
++	require.Equal(t, []int64{42}, fake.comments)
++	require.Zero(t, fake.created)
++	require.Equal(t, []string{"1", "2"}, []string{fake.requests[0].Page, fake.requests[1].Page})
++	for _, request := range fake.requests {
++		require.Equal(t, "100", request.Limit)
++		require.Equal(t, "all", request.State)
++		require.Empty(t, request.Keyword)
++	}
++}
++
++// TestFindIssueByTitleRespectsMaxPages verifies the configured page limit stops further requests.
++func TestFindIssueByTitleRespectsMaxPages(t *testing.T) {
++	var server *httptest.Server
++	integration, fake := newFakeGitea(t, func(w http.ResponseWriter, r *http.Request, request issueRequest) {
++		w.Header().Set("Link", fmt.Sprintf("<%s%s?page=2>; rel=\"next\"", server.URL, r.URL.Path))
++		writeIssuePage(w, map[string]any{"number": 1, "title": "unrelated"})
++	})
++	server = fake.server
++	integration.options.DuplicateIssueMaxPages = 1
++
++	issue, err := integration.findIssueByTitle(testIssueTitle)
++	require.NoError(t, err)
++	require.Nil(t, issue)
++	require.Len(t, fake.requests, 1)
++	require.Equal(
 ```
 
 ---
 
-### Incident Patch 2: `aa761b9c` (2026-10-25)
-**Commit Message**: fix(offlinehttp): handle request body and unversioned HTTP/2 in passive mode (#7924)
+### Incident Patch 2: `3d2f411e` (2026-10-26)
+**Commit Message**: Merge pull request #7925 from projectdiscovery/dwisiswant0/fix/offlinehttp/read-status-lines-by-position-not-text-search
 
-Signed-off-by: TassioSales <[REDACTED_EMAIL]>
+fix(offlinehttp): read status lines by position, not text search
 
-**File**: `pkg/protocols/offlinehttp/read_response.go` (modified, +18/-8)
+**File**: `pkg/protocols/offlinehttp/read_response.go` (modified, +79/-38)
 ```diff
-@@ -3,20 +3,32 @@ package offlinehttp
- import (
- 	"bufio"
- 	"errors"
-+	"io"
- 	"net/http"
- 	"regexp"
+@@ -9,54 +9,95 @@ import (
  	"strings"
  )
  
--var noMinor = regexp.MustCompile(`^HTTP/([0-9]) `)
-+var (
-+	noMinor             = regexp.MustCompile(`^HTTP/([0-9]) `)
-+	responseStatusRegex = regexp.MustCompile(`(?m)^HTTP/[0-9](?:\.[0-9])?\s+[0-9]{3}`)
-+)
+-var (
+-	noMinor             = regexp.MustCompile(`^HTTP/([0-9]) `)
+-	responseStatusRegex = regexp.MustCompile(`(?m)^HTTP/[0-9](?:\.[0-9])?\s+[0-9]{3}`)
+-)
++// noMinor matches a leading status-line protocol with no minor version, such
++// as "HTTP/2 ". The go parser only accepts HTTP/X.Y.
++var noMinor = regexp.MustCompile(`^HTTP/[0-9] `)
++
++// errNotRequest marks data that does not start with an HTTP request, so the
++// caller parses it as a bare response instead.
++var errNotRequest = errors.New("not an http request")
  
- // readResponseFromString reads a raw http response from a string.
+-// readResponseFromString reads a raw http response from a string.
++// readResponseFromString reads one raw HTTP response. Data may be the response
++// itself or a request followed by that response. A status line is recognized
++// only where a response starts, never by searching the body for "HTTP/".
  func readResponseFromString(data string) (*http.Response, error) {
- 	// Check if "data" contains RFC compatible Request followed by a response
- 	br := bufio.NewReader(strings.NewReader(data))
- 	if req, err := http.ReadRequest(br); err == nil {
--		if resp, err := http.ReadResponse(br, req); err == nil {
--			return resp, nil
-+		if req.Body != nil {
-+			_, _ = io.Copy(io.Discard, req.Body)
-+			_ = req.Body.Close()
-+		}
-+		remaining, _ := io.ReadAll(br)
-+		if len(remaining) > 0 {
-+			remainingStr := addMinorVersionToHTTP(string(remaining))
-+			if resp, err := http.ReadResponse(bufio.NewReader(strings.NewReader(remainingStr)), req); err == nil {
-+				return resp, nil
-+			}
+-	// Check if "data" contains RFC compatible Request followed by a response
+-	br := bufio.NewReader(strings.NewReader(data))
+-	if req, err := http.ReadRequest(br); err == nil {
+-		if req.Body != nil {
+-			_, _ = io.Copy(io.Discard, req.Body)
+-			_ = req.Body.Close()
+-		}
+-		remaining, _ := io.ReadAll(br)
+-		if len(remaining) > 0 {
+-			remainingStr := addMinorVersionToHTTP(string(remaining))
+-			if resp, err := http.ReadResponse(bufio.NewReader(strings.NewReader(remainingStr)), req); err == nil {
+-				return resp, nil
+-			}
++	resp, err := readRequestResponse(data)
++	if err == nil || !errors.Is(err, errNotRequest) {
++		return resp, err
++	}
++	return readResponse(data, nil)
++}
++
++// readRequestResponse reads a raw HTTP request from the start of data and the
++// response that follows it.
++func readRequestResponse(data string) (*http.Response, error) {
++	sr := strings.NewReader(data)
++	br := bufio.NewReader(sr)
++	// unread bytes are either still in sr or buffered in br
++	unread := func() string { return data[len(data)-sr.Len()-br.Buffered():] }
++
++	req, err := http.ReadRequest(br)
++	if err != nil {
++		return nil, errNotRequest
++	}
++	afterHeaders := unread()
++	// the response follows the request body, so it has to be read first.
++	// a dump that keeps Content-Length but drops the body is tried at the headers.
++	if _, err := io.Copy(io.Discard, req.Body); err == nil {
++		if resp, err := readResponse(unread(), req); err == nil {
++			return resp, nil
  		}
  	}
++	return readResponse(afterHeaders, req)
++}
++
++// maxInterimResponses bounds how many interim responses are skipped before the
++// final one. Each skip copies the remainder of data.
++const maxInterimResponses = 5
  
-@@ -25,13 +37,11 @@ func readResponseFromString(data string) (*http.Response, error) {
- 	if strings.HasPrefix(data, "HTTP/") {
- 		final = addMinorVersionToHTTP(data)
- 	} else {
--		lastIndex := strings.LastIndex(data, "HTTP/")
--		if lastIndex == -1 {
-+		loc := responseStatusRegex.FindStringIndex(data)
-+		if loc == nil {
- 			return nil, errors.New("malformed raw http response")
+-	// otherwise tries to patch known cases such as http minor version
+-	var final string
+-	if strings.HasPrefix(data, "HTTP/") {
+-		final = addMinorVersionToHTTP(data)
+-	} else {
+-		loc := responseStatusRegex.FindStringIndex(data)
+-		if loc == nil {
+-			return nil, errors.New("malformed raw http response")
++// readResponse reads a raw HTTP response whose status line starts data, after
++// any leading blank lines. Interim responses such as 100 Continue are skipped,
++// as the HTTP client does. The last interim response is returned when no final
++// response follows it.
++func readResponse(data string, req *http.Request) (*http.Response, error) {
++	var lastInterim *http.Response
++	for range maxInterimResponses + 1 {
++		data = strings.TrimLeft(data, "\r\n")
++		data = addMinorVersionToHTTP(data)
++		sr := strings.NewReader(data)
++		br := bufio.NewReader(sr)
++		resp, err := http.ReadResponse(br, req)
++		if err != nil {
++			if lastInterim != nil {
++				return lastInterim, nil
++			}
++			return nil, err
++		}
++		if !isInterimResponse(resp) {
++			return resp, nil
++		}
++		if lastInterim != nil && lastInterim.Body != nil {
++			_ = lastInterim.Body.Close()
  		}
--		final = data[lastIndex:] // choose last http/ in case of it being later.
--
--		final = addMinorVersionToHTTP(final)
-+		final = addMinorVersionToHTTP(data[loc[0]:])
+-		final = addMinorVersionToHTTP(data[loc[0]:])
++		lastInterim = resp
++		data = data[len(data)-sr.Len()-br.Buffered():]
  	}
- 	return http.ReadResponse(bufio.NewReader(strings.NewReader(final)), nil)
+-	return http.ReadResponse(bufio.NewReader(strings.NewReader(final)), nil)
++	return lastInterim, nil
  }
+ 
+-// addMinorVersionToHTTP tries to add a minor version to http status header
+-// fixing the compatibility issue with go standard library.
++// isInterimResponse reports whether resp is an interim response, such as
++// 100 Continue, that comes before the final response. 101 Switching Protocols
++// is the response.
++func isInterimResponse(resp *http.Response) bool {
++	return resp != nil && resp.StatusCode >= 100 && resp.StatusCode <= 199 && resp.StatusCode != http.StatusSwitchingProtocols
++}
++
++// addMinorVersionToHTTP inserts ".0" into a leading protocol such as HTTP/2.
++// Only those bytes change, so the reason phrase, headers, and body stay intact.
+ func addMinorVersionToHTTP(data string) string {
+-	matches := noMinor.FindAllStringSubmatch(data, 1)
+-	if len(matches) == 0 {
+-		return data
+-	}
+-	if len(matches[0]) < 2 {
++	if !noMinor.MatchString(data) {
+ 		return data
+ 	}
+-	replacedVersion := strings.Replace(matches[0][0], matches[0][1], matches[0][1]+".0", 1)
+-	d
 ```
 
-**File**: `pkg/protocols/offlinehttp/read_response_test.go` (modified, +41/-0)
+**File**: `pkg/protocols/offlinehttp/read_response_test.go` (modified, +183/-21)
 ```diff
-@@ -199,3 +199,44 @@ Server: Google Frontend
+@@ -6,6 +6,7 @@ import (
+ 	"net/http"
+ 	"net/http/httptest"
+ 	"net/http/httputil"
++	"strings"
+ 	"testing"
+ 	"time"
  
+@@ -200,43 +201,204 @@ Server: Google Frontend
  	})
  }
-+
-+
-+func TestReadResponse_HTTPInBodyCases(t *testing.T) {
-+	tests := []struct {
-+		name         string
-+		data         string
-+		expectedBody string
-+		statusCode   int
-+	}{
-+		{
-+			name:         "http2 response without minor version and HTTP/ in body (#7924)",
-+			data:         "GET / HTTP/1.1\r\nHost: example.com\r\n\r\nHTTP/2 200 OK\r\nContent-Length: 27\r\n\r\nSupports HTTP/2 and HTTP/3.",
-+			expectedBody: "Supports HTTP/2 and HTTP/3.",
-+			statusCode:   200,
+ 
++func TestReadResponseFromStringPreservesHTTPVersionText(t *testing.T) {
++	const body = "Supports HTTP/2 and HTTP/3."
+ 
+-func TestReadResponse_HTTPInBodyCases(t *testing.T) {
+ 	tests := []struct {
+-		name         string
+-		data         string
+-		expectedBody string
+-		statusCode   int
++		name       string
++		data       string
++		wantProto  string
++		wantStatus string
++		wantVia    string
++		wantMethod string
+ 	}{
+ 		{
+-			name:         "http2 response without minor version and HTTP/ in body (#7924)",
+-			data:         "GET / HTTP/1.1\r\nHost: example.com\r\n\r\nHTTP/2 200 OK\r\nContent-Length: 27\r\n\r\nSupports HTTP/2 and HTTP/3.",
+-			expectedBody: "Supports HTTP/2 and HTTP/3.",
+-			statusCode:   200,
++			name:       "body-with-content-length",
++			data:       "HTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\n" + body,
++			wantProto:  "HTTP/1.1",
++			wantStatus: "200 OK",
+ 		},
+ 		{
+-			name:         "request with body and HTTP/ in response body (#7924)",
+-			data:         "POST /search HTTP/1.1\r\nHost: example.com\r\nContent-Length: 3\r\n\r\nq=1HTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\nSupports HTTP/2 and HTTP/3.",
+-			expectedBody: "Supports HTTP/2 and HTTP/3.",
+-			statusCode:   200,
++			name:       "body-without-content-length",
++			data:       "HTTP/1.1 200 OK\r\n\r\n" + body,
++			wantProto:  "HTTP/1.1",
++			wantStatus: "200 OK",
+ 		},
+ 		{
+-			name:         "control http 1.1 with HTTP/ in response body (#7924)",
+-			data:         "GET / HTTP/1.1\r\nHost: example.com\r\n\r\nHTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\nSupports HTTP/2 and HTTP/3.",
+-			expectedBody: "Supports HTTP/2 and HTTP/3.",
+-			statusCode:   200,
++			name:       "body-with-chunked-encoding",
++			data:       "HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n1b\r\n" + body + "\r\n0\r\n\r\n",
++			wantProto:  "HTTP/1.1",
++			wantStatus: "200 OK",
 +		},
 +		{
-+			name:         "request with body and HTTP/ in response body (#7924)",
-+			data:         "POST /search HTTP/1.1\r\nHost: example.com\r\nContent-Length: 3\r\n\r\nq=1HTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\nSupports HTTP/2 and HTTP/3.",
-+			expectedBody: "Supports HTTP/2 and HTTP/3.",
-+			statusCode:   200,
++			name:       "header-value",
++			data:       "HTTP/1.1 200 OK\r\nVia: HTTP/2 edge\r\nContent-Length: 27\r\n\r\n" + body,
++			wantProto:  "HTTP/1.1",
++			wantStatus: "200 OK",
++			wantVia:    "HTTP/2 edge",
 +		},
 +		{
-+			name:         "control http 1.1 with HTTP/ in response body (#7924)",
-+			data:         "GET / HTTP/1.1\r\nHost: example.com\r\n\r\nHTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\nSupports HTTP/2 and HTTP/3.",
-+			expectedBody: "Supports HTTP/2 and HTTP/3.",
-+			statusCode:   200,
++			name:       "reason-phrase",
++			data:       "HTTP/1.1 200 Use HTTP/2 instead\r\nContent-Length: 27\r\n\r\n" + body,
++			wantProto:  "HTTP/1.1",
++			wantStatus: "200 Use HTTP/2 instead",
++		},
++		{
++			name:       "status-line-without-minor-version",
++			data:       "HTTP/2 200 OK\r\nVia: HTTP/2 edge\r\nContent-Length: 27\r\n\r\n" + body,
++			wantProto:  "HTTP/2.0",
++			wantStatus: "200 OK",
++			wantVia:    "HTTP/2 edge",
++		},
++		{
++			name:       "http3-status-line-without-minor-version",
++			data:       "HTTP/3 200 OK\r\nContent-Length: 27\r\n\r\n" + body,
++			wantProto:  "HTTP/3.0",
++			wantStatus: "200 OK",
++		},
++		{
++			name:       "request-then-status-line-without-minor-version",
++			data:       "GET / HTTP/1.1\r\nHost: example.com\r\n\r\nHTTP/2 200 OK\r\nContent-Length: 27\r\n\r\n" + body,
++			wantProto:  "HTTP/2.0",
++			wantStatus: "200 OK",
++			wantMethod: "GET",
++		},
++		{
++			name:       "blank-line-before-response",
++			data:       "GET / HTTP/1.1\r\nHost: example.com\r\n\r\n\r\nHTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\n" + body,
++			wantProto:  "HTTP/1.1",
++			wantStatus: "200 OK",
++			wantMethod: "GET",
++		},
++		{
++			name:       "request-with-body-then-response",
++			data:       "POST /search HTTP/1.1\r\nHost: example.com\r\nContent-Length: 3\r\n\r\nq=1HTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\n" + body,
++			wantProto:  "HTTP/1.1",
++			wantStatus: "200 OK",
++			wantMethod: "POST",
++		},
++		{
++			name:       "request-without-saved-body-then-response",
++			data:       "POST /search HTTP/1.1\r\nHost: example.com\r\nContent-Length: 3\r\n\r\nHTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\n" + body,
++			wantProto:  "HTTP/1.1",
++			wantStatus: "200 OK",
++			wantMethod: "POST",
++		},
++		{
++			name:       "request-then-interim-response",
++			data:       "POST /search HTTP/1.1\r\nHost: example.com\r\nExpect: 100-continue\r\nContent-Length: 3\r\n\r\nq=1HTTP/1.1 100 Continue\r\n\r\nHTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\n" + body,
++			wantProto:  "HTTP/1.1",
++			wantStatus: "200 OK",
++			wantMethod: "POST",
++		},
++		{
++			name:       "interim-response-without-minor-version",
++			data:       "HTTP/2 103 Early Hints\r\nLink: </style.css>; rel=preload\r\n\r\nHTTP/2 200 OK\r\nContent-Length: 27\r\n\r\n" + body,
++			wantProto:  "HTTP/2.0",
++			wantStatus: "200 OK",
 +		},
 +	}
 +
@@ -1659,23 +1902,242 @@ Signed-off-by: TassioSales <[REDACTED_EMAIL]>
 +		t.Run(tt.name, func(t *testing.T) {
 +			resp, err := readResponseFromString(tt.data)
 +			require.NoError(t, err, "could not read response from string")
-+			require.Equal(t, tt.statusCode, resp.StatusCode)
 +
-+			body, err := io.ReadAll(resp.Body)
++			respBody, err := io.ReadAll(resp.Body)
++			require.NoError(t, err, "could not read response body")
++			require.Equal(t, body, string(respBody), "could not get correct parsed body")
++			require.Equal(t, tt.wantProto, res
+```
+
+---
+
+### Incident Patch 3: `421ec706` (2026-10-26)
+**Commit Message**: Merge pull request #7947 from projectdiscovery/dwisiswant0/fix/trackers/follow-x-next-page-in-gitlab-duplicate-search
+
+fix(trackers): follow X-Next-Page in gitlab duplicate search
+
+**File**: `cmd/nuclei/issue-tracker-config.yaml` (modified, +2/-1)
+```diff
+@@ -57,7 +57,8 @@
+ #    severity: low
+ #  # duplicate-issue-check (optional) flag to enable duplicate tracking issue check
+ #  duplicate-issue-check: false
+-#  # duplicate-issue-page-size (optional) controls how many issues to fetch per page when searching for duplicates
++#  # duplicate-issue-page-size (optional) sets the number of issues to request per page when searching for duplicates
++#  # (GitLab returns at most 100 issues per page)
+ #  duplicate-issue-page-size: 100
+ #  # duplicate-issue-max-pages (optional) limits how many pages to fetch when searching for duplicates (0 = no limit)
+ #  duplicate-issue-max-pages: 0
+```
+
+**File**: `pkg/reporting/trackers/gitlab/gitlab.go` (modified, +11/-7)
+```diff
+@@ -41,7 +41,8 @@ type Options struct {
+ 	DenyList *filters.Filter `yaml:"deny-list"`
+ 	// DuplicateIssueCheck is a bool to enable duplicate tracking issue check and update the newest
+ 	DuplicateIssueCheck bool `yaml:"duplicate-issue-check" default:"false"`
+-	// DuplicateIssuePageSize controls how many issues are fetched per page when searching for duplicates.
++	// DuplicateIssuePageSize is the number of issues to request per page when searching for duplicates.
++	// GitLab returns at most 100 issues per page.
+ 	// If unset or <=0, a default of 100 is used.
+ 	DuplicateIssuePageSize int `yaml:"duplicate-issue-page-size" default:"100"`
+ 	// DuplicateIssueMaxPages limits how many pages are fetched when searching for duplicates.
+@@ -161,23 +162,23 @@ func (i *Integration) findIssueByTitle(title string) (*gitlab.Issue, error) {
+ 	if pageSize <= 0 {
+ 		pageSize = 100
+ 	}
+-	maxPages := i.options.DuplicateIssueMaxPages
++	maxPages := int64(i.options.DuplicateIssueMaxPages)
+ 
+ 	searchIn := "title"
+ 	searchState := "all"
+-	page := 1
++	page := int64(1)
+ 
+ 	for {
+ 		if maxPages > 0 && page > maxPages {
+ 			return nil, nil
+ 		}
+ 
+-		issues, _, err := i.client.Issues.ListProjectIssues(i.options.ProjectName, &gitlab.ListProjectIssuesOptions{
++		issues, resp, err := i.client.Issues.ListProjectIssues(i.options.ProjectName, &gitlab.ListProjectIssuesOptions{
+ 			In:     &searchIn,
+ 			State:  &searchState,
+ 			Search: &title,
+ 			ListOptions: gitlab.ListOptions{
+-				Page:    int64(page),
++				Page:    page,
+ 				PerPage: int64(pageSize),
+ 			},
+ 		})
+@@ -191,11 +192,14 @@ func (i *Integration) findIssueByTitle(title string) (*gitlab.Issue, error) {
+ 			}
+ 		}
+ 
+-		if len(issues) < pageSize {
++		// GitLab caps per_page at 100, so a short page is not necessarily
++		// the last one. Follow X-Next-Page instead, and stop when it is
++		// empty or does not move forward.
++		if resp.NextPage <= page {
+ 			return nil, nil
+ 		}
+ 
+-		page++
++		page = resp.NextPage
+ 	}
+ }
+ 
+```
+
+**File**: `pkg/reporting/trackers/gitlab/gitlab_test.go` (added, +137/-0)
+```diff
+@@ -0,0 +1,137 @@
++package gitlab
++
++import (
++	"encoding/json"
++	"fmt"
++	"net/http"
++	"net/http/httptest"
++	"slices"
++	"strconv"
++	"sync"
++	"testing"
++
++	"github.com/stretchr/testify/require"
++)
++
++type fakeIssue struct {
++	ID    int64  `json:"id"`
++	IID   int64  `json:"iid"`
++	Title string `json:"title"`
++}
++
++// fakeGitLab serves the GitLab API endpoints that findIssueByTitle uses. Like
++// GitLab, it caps per_page at maxPerPage and names the next page in the
++// X-Next-Page header, which is empty on the last page. Every issue counts as
++// a search hit, which leaves the exact title match to the tracker.
++type fakeGitLab struct {
++	issues     []fakeIssue
++	maxPerPage int
++
++	mu    sync.Mutex
++	pages []int
++}
++
++func newFakeGitLab(issueCount, maxPerPage int) *fakeGitLab {
++	f := &fakeGitLab{maxPerPage: maxPerPage}
++	for n := 1; n <= issueCount; n++ {
++		f.issues = append(f.issues, fakeIssue{ID: int64(n), IID: int64(n), Title: fmt.Sprintf("issue %d", n)})
++	}
++	return f
++}
++
++func (f *fakeGitLab) ServeHTTP(w http.ResponseWriter, r *http.Request) {
++	w.Header().Set("Content-Type", "application/json")
++	switch r.URL.Path {
++	case "/api/v4/user":
++		_, _ = w.Write([]byte(`{"id":1}`))
++	case "/api/v4/projects/1234/issues":
++		f.listIssues(w, r)
++	default:
++		http.NotFound(w, r)
++	}
++}
++
++func (f *fakeGitLab) listIssues(w http.ResponseWriter, r *http.Request) {
++	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
++	perPage, _ := strconv.Atoi(r.URL.Query().Get("per_page"))
++	if perPage <= 0 || perPage > f.maxPerPage {
++		perPage = f.maxPerPage
++	}
++
++	f.mu.Lock()
++	f.pages = append(f.pages, page)
++	f.mu.Unlock()
++
++	nextPage := ""
++	if page*perPage < len(f.issues) {
++		nextPage = strconv.Itoa(page + 1)
++	}
++	w.Header().Set("X-Next-Page", nextPage)
++
++	start := min((page-1)*perPage, len(f.issues))
++	end := min(start+perPage, len(f.issues))
++	_ = json.NewEncoder(w).Encode(f.issues[start:end])
++}
++
++func (f *fakeGitLab) requestedPages() []int {
++	f.mu.Lock()
++	defer f.mu.Unlock()
++	return slices.Clone(f.pages)
++}
++
++func TestFindIssueByTitle(t *testing.T) {
++	tests := []struct {
++		name      string
++		title     string
++		maxPages  int
++		wantIID   int64
++		wantPages []int
++	}{
++		{
++			name:      "match after a server-capped first page",
++			title:     "issue 110",
++			wantIID:   110,
++			wantPages: []int{1, 2},
++		},
++		{
++			name:      "no match checks every page once",
++			title:     "missing",
++			wantPages: []int{1, 2},
++		},
++		{
++			name:      "max pages stops the search",
++			title:     "issue 110",
++			maxPages:  1,
++			wantPages: []int{1},
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			// GitLab caps per_page at 100, so a configured page size of
++			// 150 still splits 120 issues into two pages.
++			fake := newFakeGitLab(120, 100)
++			server := httptest.NewServer(fake)
++			t.Cleanup(server.Close)
++
++			integration, err := New(&Options{
++				BaseURL:                server.URL,
++				Token:                  "token",
++				ProjectName:            "1234",
++				DuplicateIssuePageSize: 150,
++				DuplicateIssueMaxPages: tt.maxPages,
++			})
 +			require.NoError(t, err)
-+			require.Equal(t, tt.expectedBody, string(body))
++
++			issue, err := integration.findIssueByTitle(tt.title)
++			require.NoError(t, err)
++			if tt.wantIID == 0 {
++				require.Nil(t, issue)
++			} else {
++				require.NotNil(t, issue)
++				require.Equal(t, tt.wantIID, issue.IID)
++			}
++			require.Equal(t, tt.wantPages, fake.requestedPages())
 +		})
 +	}
 +}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7956** (closed): fix(http): bound large Flow request body memory (@knakul853)
+- **PR #7947** (2026-10-26): fix(trackers): follow X-Next-Page in gitlab duplicate search (@dwisiswant0)
+- **PR #7945** (2026-10-27): fix(trackers): gitea reporter pagination (@shifttymike)
 - **PR #7943** (2026-10-26): chore(deps): bump crate-ci/typos from 1.49.0 to 1.51.1 in the workflows group (@dependabot[bot])
 - **PR #7941** (2026-10-26): fix(offlinehttp): handle request body and unversioned HTTP/2 in passive mode (#7924) (@TassioSales)
 - **PR #7930** (2026-10-25): Keep template options on compiled-cache hits (@Mzack9999)
-- **PR #7929** (2026-10-25): Read the nuclei ignore file after init updates it (@Mzack9999)
-- **PR #7928** (2026-10-25): http: stop copying large request bodies (fixes OOM on multi-MB body templates) (@Ice3man543)
-- **PR #7926** (2026-10-25): apply host backoff to javascript template dials (@dogancanbakir)
 
 ---
 
@@ -1695,52 +2157,39 @@ Signed-off-by: TassioSales <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7941 from TassioSales/fix/passive-raw-response-http-body
+## X. trackers): gitea reporter pagination (#7945)
 
 **RULE**:
-When implementing operations in `pkg/protocols/offlinehttp/read_response.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/reporting/trackers/gitea/gitea.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `263bc134`: Merge pull request #7941 from TassioSales/fix/passive-raw-response-http-body. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9dc00492`: trackers): gitea reporter pagination (#7945). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/protocols/offlinehttp/read_response.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/reporting/trackers/gitea/gitea.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"io"
-var (
-	noMinor             = regexp.MustCompile(`^HTTP/([0-9]) `)
-	responseStatusRegex = regexp.MustCompile(`(?m)^HTTP/[0-9](?:\.[0-9])?\s+[0-9]{3}`)
-)
-		if req.Body != nil {
-			_, _ = io.Copy(io.Discard, req.Body)
-			_ = req.Body.Close()
+// findIssueByTitle searches every linked issue page for an exact title match.
+		issueList, response, err := i.client.ListRepoIssues(i.options.ProjectOwner, i.options.ProjectName, opts)
+		if response == nil || response.NextPage == 0 {
+			// Gitea's Link header indicates there is no next page.
+		if response.NextPage <= opts.Page {
+			return nil, fmt.Errorf("gitea returned a non-advancing issue page: current page %d, next page %d", opts.Page, response.NextPage)
 		}
-		remaining, _ := io.ReadAll(br)
-		if len(remaining) > 0 {
-			remainingStr := addMinorVersionToHTTP(string(remaining))
-			if resp, err := http.ReadResponse(bufio.NewReader(strings.NewReader(remainingStr)), req); err == nil {
-				return resp, nil
-			}
-		loc := responseStatusRegex.FindStringIndex(data)
-		if loc == nil {
-		final = addMinorVersionToHTTP(data[loc[0]:])
+		opts.Page = response.NextPage
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-var noMinor = regexp.MustCompile(`^HTTP/([0-9]) `)
-		if resp, err := http.ReadResponse(br, req); err == nil {
-			return resp, nil
-		lastIndex := strings.LastIndex(data, "HTTP/")
-		if lastIndex == -1 {
-		final = data[lastIndex:] // choose last http/ in case of it being later.
+		issueList, _, err := i.client.ListRepoIssues(i.options.ProjectOwner, i.options.ProjectName, opts)
+		if len(issueList) < opts.PageSize {
+			// Last page reached.
 
-		final = addMinorVersionToHTTP(final)
+		opts.Page++
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `263bc134` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9dc00492` are properly handled with clean fallback behavior.

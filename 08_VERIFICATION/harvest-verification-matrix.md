@@ -5270,3 +5270,8 @@
 | `CYCLE-20261027-NJPC` | `2026-10-27T12:21:52.896Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4746` | Yes (`ecaff472...`) |
 | `CYCLE-20261027-NNQF` | `2026-10-27T12:21:58.119Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4747` | Yes (`753de2a8...`) |
 | `CYCLE-20261027-NO99` | `2026-10-27T12:21:58.797Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4748` | Yes (`32fc7a9e...`) |
+| `CYCLE-20261027-Y6B2` | `2026-10-27T12:30:08.750Z` | `YoanWai/agent-manager` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4749` | Yes (`8e49582c...`) |
+| `CYCLE-20261027-Y7TB` | `2026-10-27T12:30:10.703Z` | `7onez/cti-expert` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4750` | Yes (`ce81dd76...`) |
+| `CYCLE-20261027-YC1W` | `2026-10-27T12:30:16.196Z` | `goodrain/rainbond` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4751` | Yes (`374ac5e2...`) |
+| `CYCLE-20261027-YDBO` | `2026-10-27T12:30:17.844Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4752` | Yes (`2fae4509...`) |
+| `CYCLE-20261027-4KSJ` | `2026-10-27T12:35:07.459Z` | `marmotdata/marmot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4753` | Yes (`c21f01f0...`) |

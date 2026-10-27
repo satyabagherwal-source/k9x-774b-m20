@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-021Q",
-    "timestamp": "2026-10-25T10:36:17.630Z",
-    "repository": "sqldelight/sqldelight",
-    "learningId": "learn-github-sqldelight-sqldelight",
-    "contentHash": "b87622244e28bad37682da7949bfa3d4e0a46f31490325d1b33cc5a1bcc97a44",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-03VA",
-    "timestamp": "2026-10-25T10:36:19.990Z",
-    "repository": "ducaale/xh",
-    "learningId": "learn-github-ducaale-xh",
-    "contentHash": "dd4b014c5feb388029603192d2762b09704d45235dfc93e898ba92b19e403bcc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-07Y1",
-    "timestamp": "2026-10-25T10:36:25.273Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "2e9744e529d6c61820464ae9fc8e1636471e8ec9dd9009efc45f33311eb92a67",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-0886",
-    "timestamp": "2026-10-25T10:36:25.638Z",
-    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-    "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-    "contentHash": "0d3171e686841fd01d464dd9e1114ff656852a88070e72ee8c118ce616c7e9b8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-8WLS",
-    "timestamp": "2026-10-25T10:43:10.480Z",
-    "repository": "BurntSushi/ripgrep",
-    "learningId": "learn-github-burntsushi-ripgrep",
-    "contentHash": "fac00586c8a6c72669e1b4330ea05fb0669d6c6436027f518918ccbfa9153e63",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-96XI",
     "timestamp": "2026-10-25T10:43:23.862Z",
     "repository": "clockworklabs/SpacetimeDB",
@@ -7490,6 +7415,81 @@
     "repository": "ydb-platform/ydb",
     "learningId": "learn-github-ydb-platform-ydb",
     "contentHash": "32fc7a9ed96dacff6f2cd178b4e327ad4a794a83470ead9cd0570644a6e1381e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-Y6B2",
+    "timestamp": "2026-10-27T12:30:08.750Z",
+    "repository": "YoanWai/agent-manager",
+    "learningId": "learn-github-yoanwai-agent-manager",
+    "contentHash": "8e49582c35e166024ffa807958268bab7032bf2e958bbb2ba9933c3d36e5cbea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-Y7TB",
+    "timestamp": "2026-10-27T12:30:10.703Z",
+    "repository": "7onez/cti-expert",
+    "learningId": "learn-github-7onez-cti-expert",
+    "contentHash": "ce81dd764e1397462bb71bd513c354b49e7ae609476c12e824f4d4567435857e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-YC1W",
+    "timestamp": "2026-10-27T12:30:16.196Z",
+    "repository": "goodrain/rainbond",
+    "learningId": "learn-github-goodrain-rainbond",
+    "contentHash": "374ac5e281d9c38f943c90efa88a7a9261738ed962e7dbaaa90d653092adb09e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-YDBO",
+    "timestamp": "2026-10-27T12:30:17.844Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "2fae450924efcbb1903329c8859fd9508e8d61c740cd5709549650aa2ebfd1c5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-4KSJ",
+    "timestamp": "2026-10-27T12:35:07.459Z",
+    "repository": "marmotdata/marmot",
+    "learningId": "learn-github-marmotdata-marmot",
+    "contentHash": "c21f01f0ca39312242c9931a14b1913585a4988478295e5b14a65735d91fa15b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

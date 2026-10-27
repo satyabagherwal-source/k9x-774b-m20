@@ -18871,5 +18871,50 @@
     "downloads": 324335,
     "qualityScore": 3650,
     "discoveredAt": "2026-10-27T11:47:10.101Z"
+  },
+  {
+    "name": "marmot",
+    "fullName": "marmotdata/marmot",
+    "url": "https://github.com/marmotdata/marmot",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The open-source context layer for your AI. Catalog your tables, topics, queues and APIs then expose real metadata to your AI agents.",
+    "stars": 626,
+    "forks": 31,
+    "openIssues": 40,
+    "language": "Go",
+    "qualityScore": 652,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T12:29:44.150Z"
+  },
+  {
+    "name": "agent-manager",
+    "fullName": "YoanWai/agent-manager",
+    "url": "https://github.com/YoanWai/agent-manager",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The fastest developer workflow for every AI coding agent. Live status, quick prompts, worktrees, and diff review from one tmux TUI. Discord: discord.gg/ecS88An7pF",
+    "stars": 625,
+    "forks": 70,
+    "openIssues": 108,
+    "language": "Go",
+    "qualityScore": 784,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T12:29:44.150Z"
+  },
+  {
+    "name": "cti-expert",
+    "fullName": "7onez/cti-expert",
+    "url": "https://github.com/7onez/cti-expert",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "CTI Expert — Cyber Threat Intelligence & OSINT analysis skill for Claude Code / Codex. 120+ commands, 57 techniques, 79 typed MCP tools, deterministic case pipeline + ICD-203 reports. No API keys required for core.",
+    "stars": 617,
+    "forks": 89,
+    "openIssues": 3,
+    "language": "Python",
+    "qualityScore": 591,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T12:29:44.150Z"
   }
 ]
