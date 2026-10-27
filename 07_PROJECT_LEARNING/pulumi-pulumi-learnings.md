@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source**: github ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
-> **Source Version**: `6c8c05f7`  
+> **Source Version**: `fd029321`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T02:50:59.742Z  
+> **Timestamp**: 2026-10-27T15:08:14.074Z  
 > **Learning ID**: `learn-github-pulumi-pulumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T02:50:59.736Z  
+> **Harvest Timestamp**: 2026-10-27T15:08:12.426Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25815 stars
+- **Stars / Engagement**: 25823 stars
 
 ---
 
@@ -1340,6 +1340,7 @@ import (
 
 	"github.com/blang/semver"
 	"github.com/opentracing/opentracing-go"
+	cloudapitype "github.com/pulumi/pulumi-cloud-sdk/go/apitype"
 	"go.opentelemetry.io/otel"
 
 	"github.com/pulumi/pulumi/pkg/v3/engine"
@@ -1539,7 +1540,7 @@ type Client struct {
 	insecure   bool
 	restClient restClient
 
-	// If true, do not probe the backend with GET /api/capabilitie
+	
 ```
 
 ### Core Architecture Module: `pkg/backend/httpstate/client/console.go`
@@ -1698,13 +1699,15 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #25343** (2026-10-22): **Workflow failure: On Push at dev-release / build-release (windows, arm64, ubuntu-latest) / windows-arm64 (+2 more)**
-  *Symptoms*: ## Workflow Failure  [On Push](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-push.yml) has failed. See the list of failures below:  - [2026-10-22T18:05:21.000Z](https://github.com/pulumi/pulumi/actions/runs/39826434219)   - ❌ [dev-release / build-release (windows, arm64, ubuntu-latest) / windows-arm64](https://github.com/pulumi/pulumi/actions/runs/39826434219/job/119994147041): Check Windows binaries are signed (failure)   - ❌ [dev-release / build-release (linux, arm64, ubuntu-latest) / linux-arm64](https://github.com/pulumi/pulumi/actions/runs/39826434219/job/119994147209): Run ./.github/actions/retry (cancelled)   - ❌ [dev-release / build-release (windows, amd64, ubuntu-latest) / windows-amd64](https://github.com/pulumi/pulumi/actions/runs/39826434219/job/119994147243): Post Run actions/setup-go@v6 (cancelled)
+- **Issue #25398** (2026-10-27): **Workflow failure: Run full language matrix of tests daily**
+  *Symptoms*: ## Workflow Failure  [Run full language matrix of tests daily](https://github.com/pulumi/pulumi/blob/master/.github/workflows/cron-test-all.yml) has failed. See the list of failures below:  - [2026-10-27T06:16:08.000Z](https://github.com/pulumi/pulumi/actions/runs/40456222746)
   **Post-Mortem & Fix Analysis**:
-  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-10-22T18:07:30.000Z](https://github.com/pulumi/pulumi/actions/runs/39826338859)
+  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-10-27T12:37:40.000Z](https://github.com/pulumi/pulumi/actions/runs/40456222746)
 
-- **Issue #25335** (2026-10-23): **Go program generation types an apply over an optional object as a value, not a pointer, so the program fails**
-  *Symptoms*: > [!NOTE] > This issue was authored by an AI agent on @iwahbe's behalf.  ## What happened?  A PCL program reads an optional object property of a resource inside an expression that needs an apply. The generated Go program types the `ApplyT` parameter as the object type (`Data`), but the output is a `DataPtrOutput`, whose element type is `*Data`. As a result the Go program does not compile when it compares the value to `null`, and panics at run time otherwise.  ## Example  `optionalData` is an optional property of type `optional-primitive-ref:index:Data` (the provider from the `l2-primitive-ref-optional` conformance test).  ```hcl resource "setRes" "optional-primitive-ref:index:Resource" {     data = {}     optionalData = {         string = "optional parent"     } }  output "setOptionalIsNull" {     value = setRes.optionalData == null ? "null" : "not null" }  output "setOptionalJSON" {     value = toJSON(setRes.optionalData) } ```  Go program generation emits:  ```go ctx.Export("setOptionalIsNull", setRes.OptionalData.ApplyT(func(optionalData optionalprimitiveref.Data) (string, error) { 	var tmp6 string 	if optionalData == nil { ```  ```console ./main.go:109:23: invalid operation: optionalData == nil (mismatched types optionalprimitiveref.Data and untyped nil) ```  Without the `null` comparison (`setOptionalJSON` only), the program compiles but panics:  ```console panic: applier's first input parameter must be assignable from *optionalprimitiveref.Data, got optionalprimitiveref
+- **Issue #25389** (2026-10-26): **Workflow failure: Pull Request on #25339**
+  *Symptoms*: ## Workflow Failure  Triggered by PR: https://github.com/pulumi/pulumi/pull/25339  [Pull Request](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-pr.yml) has failed. See the list of failures below:  - [2026-10-26T11:33:57.000Z](https://github.com/pulumi/pulumi/actions/runs/40306969476)
+  **Post-Mortem & Fix Analysis**:
+  > Looks like this succeeded on its retry.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1721,142 +1724,391 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6c8c05f7` (2026-10-25)
-**Commit Message**: Switch Call and Invoke to use property.Map (#25383)
+### Incident Patch 1: `fd029321` (2026-10-27)
+**Commit Message**: Fix secret container redaction in JSON output (#25400)
 
-This switches over all the `Call` and `Invoke` code to `property.Map`
-except for one call to `errorToMessage` in `Call`.
+Fixes #25215.
 
-We duplicate the `extendOutputDependencies` and `addOutputDependencies`
-methods to work with `property.Value` with just a 2 suffix. This
-duplication should be short-lived such that we can remove the old
-methods and the 2 suffix shortly.
+The migration in #25035 changed secrets from distinct wrappers to flags
+on property values. The JSON display scrubber still checked maps and
+arrays before checking secrecy, so it rebuilt secret containers without
+their secret flags and exposed their contents.
 
-**File**: `pkg/resource/deploy/source_eval.go` (modified, +38/-13)
+Handle secrecy before type-specific rendering, and remove the secret
+flag when explicitly showing secrets. Add regression tests for secret
+maps, arrays, strings, invalid UTF-8, nested values, and preview JSON
+old/new inputs and outputs.
+
+**File**: `changelog/pending/cli-display-fix-20261027-125123.yaml` (added, +4/-0)
 ```diff
-@@ -1115,8 +1115,8 @@ func (rm *resmon) Invoke(
+@@ -0,0 +1,4 @@
++component: cli/display
++kind: fix
++body: Fix secret maps and arrays leaking into JSON preview and update output
++time: 2026-10-27T12:51:23.971759+01:00
+```
+
+**File**: `pkg/backend/display/json.go` (modified, +6/-4)
+```diff
+@@ -47,6 +47,12 @@ func byteStringDisplay(s string) string {
+ // not true any secret values are replaced with "[secret]". Strings containing bytes that are not valid UTF-8 are
+ // replaced with their b"<base64>" rendering.
+ func massagePropertyValue(v property.Value, showSecrets bool) property.Value {
++	if v.Secret() {
++		if !showSecrets {
++			return property.New("[secret]")
++		}
++		v = v.WithSecret(false)
++	}
+ 	switch {
+ 	case v.IsString() && !utf8.ValidString(v.AsString()):
+ 		return property.New(byteStringDisplay(v.AsString()))
+@@ -64,10 +70,6 @@ func massagePropertyValue(v property.Value, showSecrets bool) property.Value {
+ 			new[k] = massagePropertyValue(e, showSecrets)
  		}
- 		rootSet.Add(urn)
+ 		return property.New(new)
+-	case v.Secret() && showSecrets:
+-		return massagePropertyValue(v.WithSecret(false), showSecrets)
+-	case v.Secret():
+-		return property.New("[secret]")
+ 	default:
+ 		return v
  	}
--	for _, v := range resource.ToResourcePropertyMap(args) {
--		addOutputDependencies(rootSet, v)
-+	for _, v := range args.All {
-+		addOutputDependencies2(rootSet, v)
- 	}
- 
- 	if rootSet.Cardinality() > 0 && rm.registrations.HasUnresolved(rootSet) {
-@@ -1314,7 +1314,7 @@ func (rm *resmon) Call(ctx context.Context, req *pulumirpc.ResourceCallRequest)
- 	if err != nil {
- 		return nil, fmt.Errorf("failed to unmarshal %v args: %w", tok, err)
- 	}
--	filteredArgs, err := plugin.FilterProperties(rawArgs, plugin.FilterOptions{
-+	args, err := plugin.FilterProperties(rawArgs, plugin.FilterOptions{
- 		KeepUnknowns:     true,
- 		KeepSecrets:      true,
- 		KeepResources:    true,
-@@ -1324,7 +1324,6 @@ func (rm *resmon) Call(ctx context.Context, req *pulumirpc.ResourceCallRequest)
- 	if err != nil {
- 		return nil, fmt.Errorf("failed to unmarshal %v args: %w", tok, err)
- 	}
--	args := resource.ToResourcePropertyMap(filteredArgs)
- 
- 	argDependencies := map[resource.PropertyKey][]resource.URN{}
- 	for name, deps := range req.GetArgDependencies() {
-@@ -1343,8 +1342,9 @@ func (rm *resmon) Call(ctx context.Context, req *pulumirpc.ResourceCallRequest)
- 	defer stackTraceHandle.Release()
- 
- 	// If we have output values we can add the dependencies from them to the args dependencies map we send to the provider.
--	for key, output := range args {
--		argDependencies[key] = extendOutputDependencies(argDependencies[key], output)
-+	for key, output := range args.All {
-+		pk := resource.PropertyKey(key)
-+		argDependencies[pk] = extendOutputDependencies2(argDependencies[pk], output)
- 	}
- 
- 	info := plugin.CallInfo{
-@@ -1365,11 +1365,11 @@ func (rm *resmon) Call(ctx context.Context, req *pulumirpc.ResourceCallRequest)
- 	loggedInfo.Config = nil
- 	logging.V(5).Infof(
- 		"ResourceMonitor.Call received: tok=%v #args=%v #info=%v config=%v #options=%v",
--		tok, len(args), loggedInfo, configLogValue(info.Config, rm.constructInfo.ConfigSecretKeys), options,
-+		tok, args.Len(), loggedInfo, configLogValue(info.Config, rm.constructInfo.ConfigSecretKeys), options,
- 	)
- 	ret, err := prov.Call(ctx, plugin.CallRequest{
- 		Tok:     tok,
--		Args:    resource.FromResourcePropertyMap(args),
-+		Args:    args,
- 		Info:    info,
- 		Options: options,
- 	})
-@@ -1380,7 +1380,7 @@ func (rm *resmon) Call(ctx context.Context, req *pulumirpc.ResourceCallRequest)
- 			rpcError = err
- 		}
- 
--		message := errorToMessage(rpcError, args, rm.opts.ShowSecrets)
-+		message := errorToMessage(rpcError, resource.ToResourcePropertyMap(args), rm.opts.ShowSecrets)
- 		rm.diagnostics.Errorf(diag.GetCallFailedError(), tok, message)
- 
- 		rm.abortChan <- true
-@@ -1391,9 +1391,9 @@ func (rm *resmon) Call(ctx context.Context, req *pulumirpc.ResourceCallRequest)
- 	if ret.ReturnDependencies == nil {
- 		ret.ReturnDependencies = map[resource.PropertyKey][]resource.URN{}
- 	}
--	retReturn := resource.ToResourcePropertyMap(ret.Return)
--	for k, v := range retReturn {
--		ret.ReturnDependencies[k] = extendOutputDependencies(ret.ReturnDependencies[k], v)
-+	for k, v := range ret.Return.All {
-+		pk := resource.PropertyKey(k)
-+		ret.ReturnDependencies[pk] = extendOutputDependencies2(ret.ReturnDependencies[pk], v)
- 	}
- 
- 	returnDependencies := map[string]*pulumirpc.CallResponse_ReturnDependencies{}
-@@ -1405,7 +1405,7 @@ func (rm *resmon) Call(ctx context.Context, req *pulumirpc.ResourceCallRequest)
- 		returnDependencies[string(name)] = &pulumirpc.CallResponse_ReturnDependencies{Urns: urns}
- 	}
- 
--	filteredRet, err := plugin.FilterProperties(resource.FromResourcePropertyMap(retReturn), plugin.FilterOptions{
-+	filteredRet, err := plugin.FilterProperties(ret.Return, plugin.FilterOptions{
- 		KeepUnknowns:         true,
- 		KeepSecrets:          true,
- 		KeepResources:        true,
-@@ -3698,3 +3698,28 @@ func addOutputDependencies(deps mapset.Set[resource.URN], v resource.PropertyVal
- 		addOutputDependencies(deps, v.SecretValue().Element)
- 	}
- }
+```
+
+**File**: `pkg/backend/display/json_test.go` (added, +119/-0)
+```diff
+@@ -0,0 +1,119 @@
++// Copyright 2026, Pulumi Corporation.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
-+func extendOutputDependencies2(deps []resource.URN, v property.Value) []resource.URN {
-+	set := mapset.NewSet(deps...)
-+	addOutputDependencies2(set, v)
-+	return set.ToSlice()
++package display
++
++import (
++	"encoding/json"
++	"testing"
++
++	"github.com/pulumi/pulumi/pkg/v3/engine"
++	pkgresource "github.com/pulumi/pulumi/pkg/v3/resource"
++	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
++	"github.com/pulumi/pulumi/sdk/v3/go/property"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++)
++
++func TestMassageSecretsRedactsContainers(t *testing.T) {
++	t.Parallel()
++
++	for name, value := range map[string]property.Value{
++		"map":           property.New(map[string]property.Value{"k": property.New("DUMMY")}),
++		"array":         property.New([]property.Value{property.New("DUMMY")}),
++		"string":        property.New("DUMMY"),
++		"invalid UTF-8": property.New("DUMMY\xff"),
++	} {
++		t.Run(name, func(t *testing.T) {
++			t.Parallel()
++
++			secret := value.WithSecret(true)
++			input := property.NewMap(map[string]property.Value{
++				"secret": secret,
++				"nested": property.New([]property.Value{
++					property.New(map[string]property.Value{"secret": secret}),
++				}),
++				"public": property.New("visible"),
++			})
++			expected := property.NewMap(map[string]property.Value{
++				"secret": property.New("[secret]"),
++				"nested": property.New([]property.Value{
++					property.New(map[string]property.Value{"secret": property.New("[secret]")}),
++				}),
++				"public": property.New("visible"),
++			})
++
++			actual := MassageSecrets(input, false)
++			assert.True(t, expected.Equals(actual))
++			assert.False(t, actual.HasSecrets())
++
++			shown := massagePropertyValue(secret, true)
++			assert.True(t, massagePropertyValue(value, true).Equals(shown))
++			assert.False(t, shown.HasSecrets())
++		})
++	}
 +}
 +
-+func addOutputDependencies2(deps mapset.Set[resource.URN], v property.Value) {
-+	deps.Append(v.Dependencies()...)
++func TestPreviewMetadataStepRedactsSecretMaps(t *testing.T) {
++	t.Parallel()
 +
-+	if v.IsResourceReference() {
-+		ref := v.AsResourceReference()
-+		addOutputDependencies2(deps, ref.ID)
++	var apiEvent apitype.EngineEvent
++	require.NoError(t, json.Unmarshal([]byte(`{
++		"resourcePreEvent": {"metadata": {
++			"op": "update",
++			"urn": "urn:pulumi:dev::test::random:index/randomPet:RandomPet::pet",
++			"old": {
++				"type": "random:index/randomPet:RandomPet",
++				"urn": "urn:pulumi:dev::test::random:index/randomPet:RandomPet::pet",
++				"inputs": {"keepers": {
++					"4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
++					"plaintext": "{\"k\":\"DUMMY-old\"}"
++				}}
++			},
++			"new": {
++				"type": "random:index/randomPet:RandomPet",
++				"urn": "urn:pulumi:dev::test::random:index/randomPet:RandomPet::pet",
++				"inputs": {"keepers": {
++					"4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
++					"plaintext": "{\"k\":\"DUMMY-new\"}"
++				}}
++			}
++		}}
++	}`), &apiEvent))
++	event, err := ConvertJSONEvent(apiEvent)
++	require.NoError(t, err)
++	metadata := event.Payload().(engine.ResourcePreEventPayload).Metadata
++	for _, state := range []*engine.StepEventStateMetadata{metadata.Old, metadata.New} {
++		require.NotNil(t, state)
++		require.True(t, state.Inputs["keepers"].IsSecret())
++		// JSON event replay does not populate the engine's internal resource state.
++		state.State = pkgresource.NewState{ //nolint:requiredfield // Only properties and identity matter here.
++			Type: state.Type, URN: state.URN,
++			Inputs: state.Inputs, Outputs: state.Inputs,
++		}.Make()
 +	}
-+	if v.IsMap() {
-+		for _, elem := range v.AsMap().All {
-+			addOutputDependencies2(deps, elem)
-+		}
-+	}
-+	if v.IsArray() {
-+		for _, elem := range v.AsArray().All {
-+			addOutputDependencies2(deps, elem)
++
++	step := getPreviewMetadataStep(metadata, Options{})
++	encoded, err := json.Marshal(step)
++	require.NoError(t, err)
++	assert.NotContains(t, string(encoded), "DUMMY")
++	var decoded map[string]any
++	require.NoError(t, json.Unmarshal(encoded, &decoded))
++	for _, key := range []string{"oldState", "newState"} {
++		state := decoded[key].(map[string]any)
++		for _, field := range []string{"inputs", "outputs"} {
++			assert.Equal(t, map[string]any{"keepers": "[secret]"}, state[field])
 +		}
 +	}
 +}
 ```
 
+---
+
+### Incident Patch 2: `cdc22a0a` (2026-10-27)
+**Commit Message**: [programgen/go] Fix tuple of optional string outputs not compiling (#25381)
+
+## Summary
+A tuple of optional string outputs got generated as `pulumi.StringArray`
+in Go, but the elements are `StringPtrOutput`, which isn't a
+`StringInput`, so the program didn't compile. There's no
+`StringPtrArray` in the SDK, so programgen now falls back to
+`pulumi.Array` when the element type is optional. That compiles and
+keeps the nulls.
+
+Also extended the `l2-primitive-ref-optional` conformance program with
+the `tupleOfOptional` output from the issue (expects `["hello", null]`)
+and regenerated the language snapshots.
+
+Fixes #25358
+
+## Test plan
+- [x] Added appropriate unit tests - For all changes
+- [ ] Added a test in `pkg/engine/lifecycletest` - For all
+engine/protocol changes
+- [x] Added a conformance test in `pkg/testing/pulumi-test-language` -
+For language protocol changes
+- [ ] Added a golden test in `pkg/backend/display` - For changes to the
+output renderers
+
+## Validation
+- [x] golangci-lint on `pkg/codegen/go` and
+`pkg/testing/pulumi-test-language/tests` clean
+- [x] `go test -tags all ./codegen/go/
+./codegen/go/gen_program_test/...` pass
+- [x] `l2-primitive-ref-optional` conformance passes
+
+**File**: `changelog/pending/20261024--programgen-go--tuple-optional-output.yaml` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++component: programgen/go
++kind: fix
++body: Fix Go program generation for a tuple of optional strings
++time: 2026-10-24T15:30:00Z
+```
+
+**File**: `pkg/codegen/go/gen_program_expression_test.go` (modified, +30/-0)
+```diff
+@@ -223,6 +223,36 @@ func TestArgumentTypeName(t *testing.T) {
+ 	mixedTuple := model.NewTupleType(model.NewTupleType(one, two), model.NewTupleType(model.StringType))
+ 	assert.Equal(t, "pulumi.Array", g.argumentTypeName(mixedTuple, true /*isInput*/))
+ 
++	// Regression test for https://github.com/pulumi/pulumi/issues/25358:
++	// a tuple of optional string outputs is a pointer output (StringPtrOutput),
++	// which does not implement StringInput, so it cannot be a pulumi.StringArray.
++	optionalString := model.NewOptionalType(model.StringType)
++	optionalStringOutput := model.NewOutputType(optionalString)
++	optionalStringTuple := model.NewTupleType(optionalStringOutput, optionalStringOutput)
++	assert.Equal(t, "pulumi.Array", g.argumentTypeName(optionalStringTuple, true /*isInput*/))
++	assert.Equal(t, "pulumi.Array", g.argumentTypeName(
++		model.NewOutputType(optionalStringTuple), false /*isInput*/))
++	assert.Equal(t, "[]*string", g.argumentTypeName(
++		model.NewTupleType(optionalString, optionalString), false /*isInput*/))
++	nestedOptional := model.NewTupleType(optionalStringTuple, optionalStringTuple)
++	assert.Equal(t, "pulumi.ArrayArray", g.argumentTypeName(nestedOptional, true /*isInput*/))
++
++	// The same pointer-output fallback applies to the other scalar primitives.
++	for _, primitive := range []model.Type{model.NumberType, model.IntType, model.BoolType} {
++		optional := model.NewOutputType(model.NewOptionalType(primitive))
++		tuple := model.NewTupleType(optional, optional)
++		assert.Equal(t, "pulumi.Array", g.argumentTypeName(tuple, true /*isInput*/))
++	}
++
++	// Optional lists are not pointer outputs. A tuple of optional number-list
++	// outputs stays a Float64ArrayArray (pulumi/pulumi#25387).
++	optionalNumberList := model.NewOutputType(model.NewOptionalType(model.NewListType(model.NumberType)))
++	optionalNumberListTuple := model.NewTupleType(optionalNumberList, optionalNumberList)
++	assert.Equal(t, "pulumi.Float64ArrayArray", g.argumentTypeName(optionalNumberListTuple, true /*isInput*/))
++	optionalBoolMap := model.NewOutputType(model.NewOptionalType(model.NewMapType(model.BoolType)))
++	optionalBoolMapTuple := model.NewTupleType(optionalBoolMap, optionalBoolMap)
++	assert.Equal(t, "pulumi.BoolMapArray", g.argumentTypeName(optionalBoolMapTuple, true /*isInput*/))
++
+ 	// Asset and Archive opaque types must be qualified with the pulumi package, otherwise nested compositions
+ 	// render bare names like []AssetMap which is invalid Go.
+ 	assert.Equal(t, "pulumi.AssetOrArchive", g.argumentTypeName(pcl.AssetType, false /*isInput*/))
+```
+
+**File**: `pkg/codegen/go/gen_program_expressions.go` (modified, +22/-0)
+```diff
+@@ -1590,6 +1590,20 @@ func isPulumiInterfaceType(typeName string) bool {
+ 	return false
+ }
+ 
++// optionalPrimitive reports whether t is an optional string, number, int, or bool.
++// Those are the primitives whose Go optional output is a pointer output.
++func optionalPrimitive(t model.Type) bool {
++	if !model.IsOptionalType(t) {
++		return false
++	}
++	switch pcl.UnwrapOption(t) {
++	case model.StringType, model.NumberType, model.IntType, model.BoolType:
++		return true
++	default:
++		return false
++	}
++}
++
+ // argumentTypeName computes the go type for the given model type.
+ func (g *generator) argumentTypeName(destType model.Type, isInput bool) (result string) {
+ 	if cns, ok := destType.(*model.ConstType); ok {
+@@ -1778,6 +1792,14 @@ func (g *generator) argumentTypeName(destType model.Type, isInput bool) (result
+ 				if argTypeName == "pulumi.Any" {
+ 					return "pulumi.Array"
+ 				}
++				// Optional string, number, int, and bool outputs are pointer outputs
++				// (StringPtrOutput and the other Ptr outputs). They do not implement
++				// the non-pointer input interface, and the SDK has no pointer-element
++				// array type such as StringPtrArray. Optional lists, maps, and objects
++				// are not pointer outputs, so they keep a typed array name.
++				if optionalPrimitive(model.ResolveOutputs(elmType)) {
++					return "pulumi.Array"
++				}
+ 				return argTypeName + "Array"
+ 			}
+ 			return "[]" + argTypeName
+```
+
+**File**: `pkg/testing/pulumi-test-language/tests/l2_primitive_ref_optional.go` (modified, +6/-0)
+```diff
+@@ -124,6 +124,12 @@ func init() {
+ 					// Comparison of an optional object to null yields whether the object is set.
+ 					AssertPropertyMapMember(l, outputs, "setOptionalData", property.New("not null"))
+ 					AssertPropertyMapMember(l, outputs, "unsetOptionalData", property.New("null"))
++
++					// A tuple of optional string outputs keeps nulls.
++					AssertPropertyMapMember(l, outputs, "tupleOfOptional", property.New([]property.Value{
++						property.New("hello"),
++						property.New(property.Null),
++					}))
+ 				},
+ 			},
+ 		},
+```
+
+**File**: `pkg/testing/pulumi-test-language/tests/testdata/l2-primitive-ref-optional/main.pp` (modified, +4/-0)
+```diff
+@@ -81,6 +81,10 @@
+     value = unsetRes.optionalData == null ? "null" : "not null"
+ }
+ 
++output "tupleOfOptional" {
++    value = [setRes.data.string, unsetRes.data.string]
++}
++
+ optionalLists = [setRes.data.numberArray, unsetRes.data.numberArray]
+ 
+ resource "fromOptionalLists" "optional-primitive-ref:index:Resource" {
+```
+
+**File**: `sdk/go/pulumi-language-go/testdata/extra-types/projects/l2-primitive-ref-optional/main.go` (modified, +4/-0)
+```diff
+@@ -122,6 +122,10 @@ func main() {
+ 			}
+ 			return tmp7, nil
+ 		}).(pulumi.StringOutput))
++		ctx.Export("tupleOfOptional", pulumi.Array{
++			setRes.Data.String(),
++			unsetRes.Data.String(),
++		})
+ 		optionalLists := pulumi.Float64ArrayArray{
+ 			setRes.Data.NumberArray(),
+ 			unsetRes.Data.NumberArray(),
+```
+
+**File**: `sdk/go/pulumi-language-go/testdata/local/projects/l2-primitive-ref-optional/main.go` (modified, +4/-0)
+```diff
+@@ -122,6 +122,10 @@ func main() {
+ 			}
+ 			return tmp7, nil
+ 		}).(pulumi.StringOutput))
++		ctx.Export("tupleOfOptional", pulumi.Array{
++			setRes.Data.String(),
++			unsetRes.Data.String(),
++		})
+ 		optionalLists := pulumi.Float64ArrayArray{
+ 			setRes.Data.NumberArray(),
+ 			unsetRes.Data.NumberArray(),
+```
+
+**File**: `sdk/go/pulumi-language-go/testdata/published/projects/l2-primitive-ref-optional/main.go` (modified, +4/-0)
+```diff
+@@ -122,6 +122,10 @@ func main() {
+ 			}
+ 			return tmp7, nil
+ 		}).(pulumi.StringOutput))
++		ctx.Export("tupleOfOptional", pulumi.Array{
++			setRes.Data.String(),
++			unsetRes.Data.String(),
++		})
+ 		optionalLists := pulumi.Float64ArrayArray{
+ 			setRes.Data.NumberArray(),
+ 			unsetRes.Data.NumberArray(),
+```
+
 #### Recent Merged Pull Requests:
-- **PR #25383** (2026-10-25): Switch Call and Invoke to use property.Map (@Frassle)
-- **PR #25378** (2026-10-25): Migrate URNRegistration to property.Map (@Frassle)
-- **PR #25370** (2026-10-25): Migrate resource transforms to property.Map (@Frassle)
-- **PR #25365** (2026-10-23): Migrate invoke transforms to property.Map (@Frassle)
-- **PR #25364** (2026-10-23): Migrate Exists to use property.Map (@Frassle)
-- **PR #25363** (2026-10-23): Update first-party Pulumi dependencies (@pulumi-renovate[bot])
+- **PR #25400** (2026-10-27): Fix secret container redaction in JSON output (@iwahbe)
+- **PR #25394** (2026-10-27): Stop `pulumi whoami` from creating agent accounts (@i-am-tom)
+- **PR #25393** (2026-10-27): Default schema version to the plugin version in `package add` (@Frassle)
+- **PR #25392** (2026-10-27): Register providers started from a path with the host (@iwahbe)
+- **PR #25391** (2026-10-27): Print the Go import path that matches the generated SDK (@iwahbe)
+- **PR #25388** (2026-10-27): Migrate errorToMessage to property.Map (@Frassle)
 
 ---
 
@@ -1876,69 +2128,31 @@ methods and the 2 suffix shortly.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Switch Call and Invoke to use property.Map (#25383)
+## X. secret container redaction in JSON output (#25400)
 
 **RULE**:
-When implementing operations in `pkg/resource/deploy/source_eval.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog/pending/cli-display-fix-20261027-125123.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6c8c05f7`: Switch Call and Invoke to use property.Map (#25383). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fd029321`: secret container redaction in JSON output (#25400). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/resource/deploy/source_eval.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/cli-display-fix-20261027-125123.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	for _, v := range args.All {
-		addOutputDependencies2(rootSet, v)
-	args, err := plugin.FilterProperties(rawArgs, plugin.FilterOptions{
-	for key, output := range args.All {
-		pk := resource.PropertyKey(key)
-		argDependencies[pk] = extendOutputDependencies2(argDependencies[pk], output)
-		tok, args.Len(), loggedInfo, configLogValue(info.Config, rm.constructInfo.ConfigSecretKeys), options,
-		Args:    args,
-		message := errorToMessage(rpcError, resource.ToResourcePropertyMap(args), rm.opts.ShowSecrets)
-	for k, v := range ret.Return.All {
-		pk := resource.PropertyKey(k)
-		ret.ReturnDependencies[pk] = extendOutputDependencies2(ret.ReturnDependencies[pk], v)
-	filteredRet, err := plugin.FilterProperties(ret.Return, plugin.FilterOptions{
-
-func extendOutputDependencies2(deps []resource.URN, v property.Value) []resource.URN {
-	set := mapset.NewSet(deps...)
-	addOutputDependencies2(set, v)
-	return set.ToSlice()
-}
-
-func addOutputDependencies2(deps mapset.Set[resource.URN], v property.Value) {
-	deps.Append(v.Dependencies()...)
-
-	if v.IsResourceReference() {
-		ref := v.AsResourceReference()
-		addOutputDependencies2(deps, ref.ID)
-	}
-	if v.IsMap() {
-		for _, elem := range v.AsMap().All {
-			addOutpu
+component: cli/display
+kind: fix
+body: Fix secret maps and arrays leaking into JSON preview and update output
+time: 2026-10-27T12:51:23.971759+01:00
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	for _, v := range resource.ToResourcePropertyMap(args) {
-		addOutputDependencies(rootSet, v)
-	filteredArgs, err := plugin.FilterProperties(rawArgs, plugin.FilterOptions{
-	args := resource.ToResourcePropertyMap(filteredArgs)
-	for key, output := range args {
-		argDependencies[key] = extendOutputDependencies(argDependencies[key], output)
-		tok, len(args), loggedInfo, configLogValue(info.Config, rm.constructInfo.ConfigSecretKeys), options,
-		Args:    resource.FromResourcePropertyMap(args),
-		message := errorToMessage(rpcError, args, rm.opts.ShowSecrets)
-	retReturn := resource.ToResourcePropertyMap(ret.Return)
-	for k, v := range retReturn {
-		ret.ReturnDependencies[k] = extendOutputDependencies(ret.ReturnDependencies[k], v)
-	filteredRet, err := plugin.FilterProperties(resource.FromResourcePropertyMap(retReturn), plugin.FilterOptions{
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6c8c05f7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fd029321` are properly handled with clean fallback behavior.

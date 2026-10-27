@@ -5399,3 +5399,4 @@
 | `CYCLE-20261027-CL0N` | `2026-10-27T15:01:19.079Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4871` | Yes (`9fa2b447...`) |
 | `CYCLE-20261027-GQJV` | `2026-10-27T15:04:32.875Z` | `zereight/gitlab-mcp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4872` | Yes (`e1f8e983...`) |
 | `CYCLE-20261027-GYS2` | `2026-10-27T15:04:43.538Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4873` | Yes (`f3dc4928...`) |
+| `CYCLE-20261027-LHN8` | `2026-10-27T15:08:14.612Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4874` | Yes (`8def4060...`) |

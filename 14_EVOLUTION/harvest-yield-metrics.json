@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T15:04:43.547Z",
-  "total_cycles_completed": 5376,
-  "total_learnings_persisted": 5376,
-  "total_rules_promoted": 4781,
+  "last_updated": "2026-10-27T15:08:14.621Z",
+  "total_cycles_completed": 5377,
+  "total_learnings_persisted": 5377,
+  "total_rules_promoted": 4782,
   "history": [
-    {
-      "timestamp": "2026-10-27T10:09:02.832Z",
-      "repository": "Kong/kubernetes-ingress-controller",
-      "learningId": "learn-github-kong-kubernetes-ingress-controller",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T10:21:50.668Z",
       "repository": "slatedb/slatedb",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-27T15:04:43.547Z",
       "repository": "aquasecurity/trivy",
       "learningId": "learn-github-aquasecurity-trivy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T15:08:14.621Z",
+      "repository": "pulumi/pulumi",
+      "learningId": "learn-github-pulumi-pulumi",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

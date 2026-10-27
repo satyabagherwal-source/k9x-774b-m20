@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T15:04:43.480Z",
+  "last_updated": "2026-10-27T15:08:14.552Z",
   "total_verified_learnings": 1139,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -42635,8 +42635,8 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "6c8c05f7",
-      "content_hash": "3eaf606e0d01a2fa7d242a1e9eb3e7393b7baca61f757008b5171a43a575bef1",
+      "source_version": "fd029321",
+      "content_hash": "8def4060b1fd6a71ea559a0652132eda989bcac2bcfc1ee9dda75467db724fdb",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
@@ -42689,6 +42689,11 @@
           "number": 4551,
           "title": "Switch Call and Invoke to use property.Map (#25383)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4874,
+          "title": "secret container redaction in JSON output (#25400)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42696,7 +42701,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T02:51:00.019Z",
+      "verified_at": "2026-10-27T15:08:14.531Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -135536,6 +135541,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T15:04:43.467Z"
+    },
+    "rule-4874": {
+      "learning_id": "rule-4874",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4874,
+      "title": "secret container redaction in JSON output (#25400)",
+      "source_url": "https://github.com/pulumi/pulumi",
+      "source_version": "fd029321",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T15:08:14.531Z"
     }
   },
   "aliases": {

@@ -5408,3 +5408,4 @@ Every entry in this ledger must capture:
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `b1c943e6` | Multi-dimensional audit evidence | 2026-10-27T15:01:19.082Z |
 | `learn-github-zereight-gitlab-mcp` | `https://github.com/zereight/gitlab-mcp` | `c6bad8cb` | Multi-dimensional audit evidence | 2026-10-27T15:04:32.878Z |
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `d18962e8` | Multi-dimensional audit evidence | 2026-10-27T15:04:43.542Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `fd029321` | Multi-dimensional audit evidence | 2026-10-27T15:08:14.616Z |

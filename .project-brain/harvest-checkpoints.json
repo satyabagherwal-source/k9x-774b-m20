@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T15:04:43.550Z",
+  "last_updated": "2026-10-27T15:08:14.625Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7191,14 +7191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "3eaf606e0d01a2fa7d242a1e9eb3e7393b7baca61f757008b5171a43a575bef1",
-      "verified_at": "2026-10-26T02:51:00.085Z",
+      "content_hash": "8def4060b1fd6a71ea559a0652132eda989bcac2bcfc1ee9dda75467db724fdb",
+      "verified_at": "2026-10-27T15:08:14.624Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T02:51:00.085Z"
+      "last_updated": "2026-10-27T15:08:14.624Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",

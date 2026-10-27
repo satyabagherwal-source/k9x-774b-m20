@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "6c8c05f7",
+    "sourceVersion": "fd029321",
     "license": "Apache-2.0",
-    "contentHash": "3eaf606e0d01a2fa7d242a1e9eb3e7393b7baca61f757008b5171a43a575bef1",
-    "lastHarvestedAt": "2026-10-26T02:51:00.078Z",
+    "contentHash": "8def4060b1fd6a71ea559a0652132eda989bcac2bcfc1ee9dda75467db724fdb",
+    "lastHarvestedAt": "2026-10-27T15:08:14.616Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {
