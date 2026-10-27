@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-96XI",
-    "timestamp": "2026-10-25T10:43:23.862Z",
-    "repository": "clockworklabs/SpacetimeDB",
-    "learningId": "learn-github-clockworklabs-spacetimedb",
-    "contentHash": "6268861045df576e319009a9a57b9bc4027c6af139a379df0fd0287b194199c3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-9A1T",
-    "timestamp": "2026-10-25T10:43:27.905Z",
-    "repository": "meta-llama/Llama-3.1-8B-Instruct",
-    "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-    "contentHash": "5ae60e76de227c03683fdfbba0b2d9c913b4afe65dd77f4d619888c5dd0ddd2c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-H5QD",
-    "timestamp": "2026-10-25T10:49:35.557Z",
-    "repository": "kotest/kotest",
-    "learningId": "learn-github-kotest-kotest",
-    "contentHash": "d6c72f84c36804f2852634acf85889325a1489168d1ab035719bb8a307901f84",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-LR76",
     "timestamp": "2026-10-25T10:53:10.002Z",
     "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
@@ -7492,6 +7447,51 @@
     "contentHash": "c21f01f0ca39312242c9931a14b1913585a4988478295e5b14a65735d91fa15b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-8VKY",
+    "timestamp": "2026-10-27T12:38:28.066Z",
+    "repository": "fb55/css-select",
+    "learningId": "learn-github-fb55-css-select",
+    "contentHash": "b4b9408b0c8d31ae2e48cd953e3ec33bb1e7eb722d1ab98c677257a9d911d664",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-8XP3",
+    "timestamp": "2026-10-27T12:38:30.807Z",
+    "repository": "laurent22/joplin",
+    "learningId": "learn-github-laurent22-joplin",
+    "contentHash": "d039810c5a5ae12d4b6acf651ce00ea0592bd94a7f1c36b8508aa4f558cc17c4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-F4RH",
+    "timestamp": "2026-10-27T12:43:19.901Z",
+    "repository": "grpc/grpc-rust",
+    "learningId": "learn-github-grpc-grpc-rust",
+    "contentHash": "a1a6cc71ee5ba75a4d6fc68096ce4ba53c7da7fb986746143c16528619d9bd02",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

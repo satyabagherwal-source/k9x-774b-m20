@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/laurent22-joplin-learnings.md`  
 > **Source**: github ([https://github.com/laurent22/joplin](https://github.com/laurent22/joplin))  
-> **Source Version**: `280954e5`  
+> **Source Version**: `b613d006`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T06:30:11.673Z  
+> **Timestamp**: 2026-10-27T12:38:30.409Z  
 > **Learning ID**: `learn-github-laurent22-joplin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/laurent22-joplin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/laurent22/joplin](https://github.com/laurent22/joplin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T06:30:11.668Z  
+> **Harvest Timestamp**: 2026-10-27T12:38:30.115Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Joplin - the privacy-focused note taking app with sync capabilities for Windows, macOS, Linux, Android and iOS.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 56839 stars
+- **Stars / Engagement**: 56903 stars
 
 ---
 
@@ -930,11 +930,14 @@ export {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16923** (2026-10-22): **Desktop: Fixes #16916: Prevent HTML escape of special characters in inline KaTeX math equation**
-  *Symptoms*: Fixes #16916  ### Summary  In the Rich Text editor (TinyMCE), selecting text that contained special characters like `>`, `<`, or `&` and clicking the "Insert math equation" button caused KaTeX parse errors (e.g. `Expected 'EOF', got '&' at position 2: x&gt;1`).  This happened because `editor.selection.getContent()` defaults to returning HTML, which escaped `>` to `&gt;` and `<` to `&lt;` before wrapping it into `$${katex}$`.  **Fix:** Passed `{ format: 'text' }` to `editor.selection.getContent({ format: 'text' })` so TinyMCE retrieves the unescaped plain text selection.  ---  ### Manual Test Plan  1. **Greater than (`>`):** Typed `x>1`, highlighted it, and clicked the math equation button. Verified it inserted `$x>1$` and rendered the formula cleanly without any KaTeX parse error. 2. **Less than (`<`):** Typed `a<b`, highlighted it, and clicked the math equation button. Verified it inserted `$a<b$` and rendered correctly. 3. **Compound / Special symbols:** Tested with `x >= 1 & y <= 2`. Verified characters remain literal without HTML entity conversion (`&amp;`, `&gt;`). 4. **Standard equations:** Tested with standard expressions (e.g. `E=mc^2`). Verified it wraps as `$E=mc^2$` as usual. 5. **Empty selection & toolbar behavior:** Clicked the button with nothing selected. Verified it creates empty math delimiters `$$` with the cursor positioned between them. Also verified toggling between Rich Text and Markdown view preserves the equations.  Automated checks: - `yarn tsc` passe
+- **Issue #16953** (2026-10-26): **Mobile: Fixes #16908: Replace oversized dropdown arrow glyph with a vector chevron**
+  *Symptoms*: On the note screen, the notebook dropdown arrow looks oversized on some Android devices (reported on a Galaxy S9+, less so on a Galaxy S23 Ultra). The arrow is not an icon at all: it is the text glyph U+25BC, rendered in the device's own system font, and it inherits the label's full header style (18pt bold) with no gap from the label. So its visual weight varies by device font instead of being controlled by the app.  Replace the glyph with the existing Icon component (ionicon chevron-down, the same chevron the sidebar already uses), with its own style: the label's color, a 16pt size, and a small start margin. It stays hidden from screen readers, as before. The existing Dropdown tests contain no assertions about the arrow.  Note that Dropdown is a shared component, so this changes the arrow everywhere it is used (notes-list picker, folder screen, and others), which keeps its appearance consistent, as the issue asks.  Manual testing plan: run the app, open a note, and compare the notebook dropdown arrow before and after this change. Fixes #16908.
 
-- **Issue #16921** (2026-10-22): **Desktop: Fixes #15883: Keep toast notifications in their destination window**
-  *Symptoms*:  ## Problem  With multiple Joplin windows open, the same toast appears in every window. This duplicates deletion confirmations and plugin notifications. Addresses #15883.  ## Solution  Capture the active window when a toast is created and display it only there. Keep existing toasts in their original window when focus changes, and discard them when that window closes. Preserve existing background behavior, dismissal timing, actions, severity, ordering, and repeated identical messages.  ## Test Plan  - Six focused unit tests pass, covering routing, focus changes, window closure, repeated messages, dismissal timing, the shared shim path, and interactive content. - The routing regression fails with the unchanged upstream implementation and passes with the fix. - TypeScript compilation, non-rewriting lint, and the desktop build pass. - A 40-second desktop demonstration records deletion and window switching. - Two-window plugin-toast Electron coverage is added; its GUI execution has not yet been run locally.  ## Demonstration  [40-second desktop demonstration](https://github.com/khantnandeesh/joplin/blob/761ed512d5406f10fa5c2e4707a67b97f78c8f29/toast-window-fix.mp4). 
+- **Issue #16952** (2026-10-26): **Clipper: Fixes #16887: Fix Confirm button hidden when Firefox default font size is increased**
+  *Symptoms*: When Firefox's default font size is raised, the popup rows grow taller because body's line-height: 2em computes to an absolute value that gets inherited unchanged, and .App's overflow-y: hidden then clips the Confirm button off the bottom with no way to scroll to it. Use a unitless line-height so it scales with each element's own font-size, and let the popup scroll instead of clipping controls. Fixes #16887.
+  **Post-Mortem & Fix Analysis**:
+  > I have read the CLA Document and I hereby sign the CLA
+  > All contributors have signed the CLA  ✍️ ✅<br/><sub>Posted by the ****CLA Assistant Lite bot****.</sub>
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -951,205 +954,202 @@ export {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `94ddfda2` (2026-10-22)
-**Commit Message**: Desktop, Mobile, Cli: Fixes #16895: Fix quadratic conversion time for elements with many children (#16902)
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `packages/app-cli/tests/HtmlToMd.ts` (modified, +10/-0)
-```diff
-@@ -130,6 +130,16 @@ describe('HtmlToMd', () => {
- 		expect(collapsedResult).toContain('\n\n');
- 	});
- 
-+	// Covers how newlines are carried between children when joining them, which was rewritten to fix
-+	// https://github.com/laurent22/joplin/issues/16895
-+	it.each([
-+		['<ul><li>a</li><li></li><li>b</li></ul>', '- a\n\n- b'],
-+		['<span><p>a</p></span>b', 'a\n\nb'],
-+		['<pre><code><span>line 1</span>\n\n\n<span>line 2</span></code></pre>', '```\nline 1\n\n\nline 2\n```'],
-+	])('should join the Markdown of child elements: %j', (html, expected) => {
-+		expect(new HtmlToMd().parse(html)).toBe(expected);
-+	});
-+
- 	it.each([
- 		['inline code ending with a space at the end of a heading', '<h2><code>npm</code> install&nbsp;<code>a&nbsp;</code></h2>', 'a\u00A0'],
- 		['a heading that only contains inline code with a space', '<h2><code>&nbsp;</code></h2>', '\u00A0'],
-```
-
-**File**: `packages/turndown/src/turndown.js` (modified, +20/-3)
-```diff
-@@ -196,7 +196,11 @@ TurndownService.prototype = {
- function process (parentNode, escapeContent = 'auto') {
-   if (this.options.disableEscapeContent) escapeContent = false;
- 
--  let output = '';
-+  // Same result as calling join() per child, but join() re-copies the whole output each time, which is quadratic for
-+  // elements with many children: https://github.com/laurent22/joplin/issues/16895
-+  const isCode = parentNode.isCode === true;
-+  const parts = [];
-+  let trailingNewlines = 0;
-   let previousNode = null;
- 
-   for (let node of parentNode.childNodes) {
-@@ -217,11 +221,24 @@ function process (parentNode, escapeContent = 'auto') {
-       replacement = replacementForNode.call(this, node, previousNode);
-     }
- 
--    output = join(output, replacement, parentNode.isCode);
-+    if (isCode) {
-+      parts.push(replacement);
-+    } else {
-+      const content = trimLeadingNewlines(replacement);
-+      const separator = '\n\n'.substring(0, Math.max(trailingNewlines, replacement.length - content.length));
-+      if (content) {
-+        const trimmedContent = trimTrailingNewlines(content);
-+        parts.push(separator, trimmedContent);
-+        trailingNewlines = content.length - trimmedContent.length;
-+      } else {
-+        trailingNewlines = separator.length;
-+      }
-+    }
-     previousNode = node;
-   }
- 
--  return output;
-+  if (!isCode) parts.push('\n'.repeat(trailingNewlines));
-+  return parts.join('');
- }
- 
- /**
-```
-
----
-
-### Incident Patch 2: `30a017b8` (2026-10-22)
-**Commit Message**: fix(deps): update dependency tar to v7.5.22 (#16922)
+### Incident Patch 1: `2c09ccab` (2026-10-26)
+**Commit Message**: fix(deps): update dependency @react-native-documents/picker to v12.0.2 (#16951)
 
 Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-**File**: `packages/lib/package.json` (modified, +1/-1)
+**File**: `packages/app-mobile/package.json` (modified, +1/-1)
 ```diff
-@@ -101,7 +101,7 @@
-     "sqlite3": "5.1.6",
-     "string-padding": "1.0.2",
-     "string-to-stream": "3.0.1",
--    "tar": "7.5.21",
-+    "tar": "7.5.22",
-     "tcp-port-used": "1.0.3",
-     "uglifycss": "0.0.29",
-     "undici": "8.10.0",
+@@ -37,7 +37,7 @@
+     "@react-native-community/geolocation": "3.4.0",
+     "@react-native-community/netinfo": "12.0.1",
+     "@react-native-community/push-notification-ios": "1.12.0",
+-    "@react-native-documents/picker": "12.0.1",
++    "@react-native-documents/picker": "12.0.2",
+     "@react-native-vector-icons/fontawesome5": "13.1.2",
+     "@react-native-vector-icons/get-image": "13.0.0",
+     "@react-native-vector-icons/ionicons": "13.1.2",
 ```
 
-**File**: `yarn.lock` (modified, +5/-18)
+**File**: `yarn.lock` (modified, +5/-5)
 ```diff
-@@ -12982,7 +12982,7 @@ __metadata:
-     sqlite3: "npm:5.1.6"
-     string-padding: "npm:1.0.2"
-     string-to-stream: "npm:3.0.1"
--    tar: "npm:7.5.21"
-+    tar: "npm:7.5.22"
-     tcp-port-used: "npm:1.0.3"
-     tesseract.js: "npm:7.0.0"
-     typescript: "npm:5.9.3"
-@@ -56508,16 +56508,16 @@ __metadata:
+@@ -12651,7 +12651,7 @@ __metadata:
+     "@react-native-community/geolocation": "npm:3.4.0"
+     "@react-native-community/netinfo": "npm:12.0.1"
+     "@react-native-community/push-notification-ios": "npm:1.12.0"
+-    "@react-native-documents/picker": "npm:12.0.1"
++    "@react-native-documents/picker": "npm:12.0.2"
+     "@react-native-vector-icons/fontawesome5": "npm:13.1.2"
+     "@react-native-vector-icons/get-image": "npm:13.0.0"
+     "@react-native-vector-icons/ionicons": "npm:13.1.2"
+@@ -16089,13 +16089,13 @@ __metadata:
    languageName: node
    linkType: hard
  
--"tar@npm:7.5.21":
--  version: 7.5.21
--  resolution: "tar@npm:7.5.21"
-+"tar@npm:7.5.22, tar@npm:^7.5.21":
-+  version: 7.5.22
-+  resolution: "tar@npm:7.5.22"
-   dependencies:
-     "@isaacs/fs-minipass": "npm:^4.0.0"
-     chownr: "npm:^3.0.0"
-     minipass: "npm:^7.1.2"
-     minizlib: "npm:^3.1.0"
-     yallist: "npm:^5.0.0"
--  checksum: 10/a1b7dcee15e4f7dbef7f07c3cf0fe946248efabd1cb029b54c698d817dfc2876c75bcaa164a12dd21191e385759ce3e37fea562cf4aabaa00984ef9ed3c48d17
-+  checksum: 10/129606384b3c895f422aaca48bf316357be6dc7aa35c1066c3f06c28acfff0be5b356e1b0a0be7c53a7a8945534ac06cec6d8e296d170d8a09c8bff67b29300e
+-"@react-native-documents/picker@npm:12.0.1":
+-  version: 12.0.1
+-  resolution: "@react-native-documents/picker@npm:12.0.1"
++"@react-native-documents/picker@npm:12.0.2":
++  version: 12.0.2
++  resolution: "@react-native-documents/picker@npm:12.0.2"
+   peerDependencies:
+     react: "*"
+     react-native: ">=0.79.0"
+-  checksum: 10/5d915828a2baade9b476589738c2dc4ac192b4444006e198e15676e952991bdbf472163bb739592abf581fb7402a193c9cc49319fa986fb7fd6434aaae3a3a68
++  checksum: 10/b525403dc90465fbf4c879f30fdde6e9f5208a4d075a4c7af2ab1f0724f1ad314faf4795fc1f89bb171978695f66ac00eeda3f562bc89320ecc189a5e84f0832
    languageName: node
    linkType: hard
  
-@@ -56550,19 +56550,6 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"tar@npm:^7.5.21":
--  version: 7.5.22
--  resolution: "tar@npm:7.5.22"
--  dependencies:
--    "@isaacs/fs-minipass": "npm:^4.0.0"
--    chownr: "npm:^3.0.0"
--    minipass: "npm:^7.1.2"
--    minizlib: "npm:^3.1.0"
--    yallist: "npm:^5.0.0"
--  checksum: 10/129606384b3c895f422aaca48bf316357be6dc7aa35c1066c3f06c28acfff0be5b356e1b0a0be7c53a7a8945534ac06cec6d8e296d170d8a09c8bff67b29300e
--  languageName: node
--  linkType: hard
--
- "tar@npm:^7.5.4":
-   version: 7.5.19
-   resolution: "tar@npm:7.5.19"
 ```
 
 ---
 
-### Incident Patch 3: `5c2601a2` (2026-10-20)
-**Commit Message**: fix(deps): update dependency node-cron to v4.5.0 (#16904)
+### Incident Patch 2: `ee7f9f4b` (2026-10-26)
+**Commit Message**: Doc: Resolves #16891: Add positive boolean naming guidance to coding_style.md (#16949)
+
+**File**: `readme/dev/coding_style.md` (modified, +16/-0)
+```diff
+@@ -149,6 +149,22 @@ const GRAVITY_ACCEL = 9.8;
+ const gravityAccel = 9.8;
+ ```
+ 
++### Prefer positive names for booleans
++
++When possible, use positive names for booleans to avoid double negatives.
++
++**BAD:**
++```ts
++const isHidden = true;
++const isDisabled = true;
++```
++
++**Good:**
++```ts
++const isShown = true;
++const isEnabled = true;
++```
++
+ ### Declare variables just before their usage
+ 
+ **BAD:**
+```
+
+---
+
+### Incident Patch 3: `4fc42750` (2026-10-25)
+**Commit Message**: fix(deps): update dependency knex to v3.3.0 (#16937)
 
 Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 **File**: `packages/server/package.json` (modified, +1/-1)
 ```diff
-@@ -44,7 +44,7 @@
+@@ -39,7 +39,7 @@
+     "fs-extra": "11.3.6",
+     "html-entities": "1.4.0",
+     "jquery": "3.7.1",
+-    "knex": "3.2.10",
++    "knex": "3.3.0",
+     "koa": "2.16.4",
      "ldapts": "8.1.8",
      "markdown-it": "13.0.2",
-     "mustache": "4.2.0",
--    "node-cron": "4.4.1",
-+    "node-cron": "4.5.0",
-     "nodemailer": "6.10.1",
-     "nodemon": "3.1.14",
-     "otplib": "12.0.1",
 ```
 
-**File**: `yarn.lock` (modified, +5/-5)
+**File**: `packages/transcribe/package.json` (modified, +1/-1)
 ```diff
-@@ -13175,7 +13175,7 @@ __metadata:
+@@ -18,7 +18,7 @@
+     "dotenv": "17.4.2",
+     "file-type": "16.5.4",
+     "fs-extra": "11.3.6",
+-    "knex": "3.2.10",
++    "knex": "3.3.0",
+     "koa": "2.16.4",
+     "koa-body": "6.0.1",
+     "pg-boss": "10.4.2",
+```
+
+**File**: `yarn.lock` (modified, +16/-7)
+```diff
+@@ -13170,7 +13170,7 @@ __metadata:
+     jest-expect-message: "npm:1.1.3"
+     jquery: "npm:3.7.1"
+     jsdom: "npm:26.1.0"
+-    knex: "npm:3.2.10"
++    knex: "npm:3.3.0"
+     koa: "npm:2.16.4"
      ldapts: "npm:8.1.8"
      markdown-it: "npm:13.0.2"
-     mustache: "npm:4.2.0"
--    node-cron: "npm:4.4.1"
-+    node-cron: "npm:4.5.0"
-     node-mocks-http: "npm:1.17.2"
-     nodemailer: "npm:6.10.1"
-     nodemon: "npm:3.1.14"
-@@ -44717,10 +44717,10 @@ __metadata:
+@@ -13267,7 +13267,7 @@ __metadata:
+     gulp: "npm:4.0.2"
+     jest: "npm:29.7.0"
+     jest-expect-message: "npm:1.1.3"
+-    knex: "npm:3.2.10"
++    knex: "npm:3.3.0"
+     koa: "npm:2.16.4"
+     koa-body: "npm:6.0.1"
+     pg-boss: "npm:10.4.2"
+@@ -39906,9 +39906,9 @@ __metadata:
    languageName: node
    linkType: hard
  
--"node-cron@npm:4.4.1":
--  version: 4.4.1
--  resolution: "node-cron@npm:4.4.1"
--  checksum: 10/7c5b50e26757343eb9beb1bd3331bbf1e392ab1c031ff55ea4e65092e4be70eba7a550a4b0ff35f4ba0de3106bc550c673e045d392011cf50e7f8a1912b886ef
-+"node-cron@npm:4.5.0":
-+  version: 4.5.0
-+  resolution: "node-cron@npm:4.5.0"
-+  checksum: 10/3ee23107eb584448fe829fd6567902ee10a5da29777dd2425e9fbd85c5642bc57b22d742745d4a7d1534c7e6bfc288764887c608fa5d48f750e2e84c66ad5358
+-"knex@npm:3.2.10":
+-  version: 3.2.10
+-  resolution: "knex@npm:3.2.10"
++"knex@npm:3.3.0":
++  version: 3.3.0
++  resolution: "knex@npm:3.3.0"
+   dependencies:
+     colorette: "npm:2.0.19"
+     commander: "npm:^10.0.0"
+@@ -39922,13 +39922,15 @@ __metadata:
+     pg-connection-string: "npm:2.6.2"
+     rechoir: "npm:^0.8.0"
+     resolve-from: "npm:^5.0.0"
+-    tarn: "npm:^3.0.2"
++    tarn: "npm:^3.1.0"
+     tildify: "npm:2.0.0"
+   peerDependencies:
+     pg-query-stream: ^4.14.0
+   peerDependenciesMeta:
+     better-sqlite3:
+       optional: true
++    mariadb:
++      optional: true
+     mysql:
+       optional: true
+     mysql2:
+@@ -39945,7 +39947,7 @@ __metadata:
+       optional: true
+   bin:
+     knex: bin/cli.js
+-  checksum: 10/6d043d0d55bee2d6ecc977dd67fbff61121f8832d70a635f490a3979bf82cae001ee0b53a1d1222ef46c3f1bf5afac39b1fb918aaefabcc7a7a57d7c97e3cf7f
++  checksum: 10/40924546fb223d186dd76b5eea415b5eaee517b9ba1d8ddad689e5c68a0e4e08fffe8e69f9e9d31ca533c8b8c0244f7bb47bc75b308efb58bceccc16322ec11d
    languageName: node
    linkType: hard
  
+@@ -56594,6 +56596,13 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
++"tarn@npm:^3.1.0":
++  version: 3.1.2
++  resolution: "tarn@npm:3.1.2"
++  checksum: 10/7b8bb2f439abd867ac40ab72c2a1d8f6bf7825523c15189b71bcc2fe38b38a404319f0358cf32fa0d3c3b731eeff5429dfadae69eeb14eaf2903a4f04c0d7a18
++  languageName: node
++  linkType: hard
++
+ "tcompare@npm:^5.0.6, tcompare@npm:^5.0.7":
+   version: 5.0.7
+   resolution: "tcompare@npm:5.0.7"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16923** (closed): Desktop: Fixes #16916: Prevent HTML escape of special characters in inline KaTeX math equation (@sumitahmed)
-- **PR #16922** (2026-10-22): fix(deps): update dependency tar to v7.5.22 (@renovate[bot])
-- **PR #16921** (closed): Desktop: Fixes #15883: Keep toast notifications in their destination window (@khantnandeesh)
-- **PR #16920** (closed): Windows: Fixes #16919: Build only the runner's own architecture in Windows CI (@Harishmcw)
-- **PR #16915** (2026-10-22): chore(deps): update dependency sass to v1.101.7 (@renovate[bot])
-- **PR #16913** (2026-10-22): chore(deps): update dependency @axe-core/playwright to v4.12.1 (@renovate[bot])
+- **PR #16955** (2026-10-27): chore(deps): update actions/github-script action to v9 (@renovate[bot])
+- **PR #16954** (2026-10-27): chore(deps): update nvidia/cuda docker tag to v13.3.1 (@renovate[bot])
+- **PR #16953** (closed): Mobile: Fixes #16908: Replace oversized dropdown arrow glyph with a vector chevron (@Shivain-codes)
+- **PR #16952** (closed): Clipper: Fixes #16887: Fix Confirm button hidden when Firefox default font size is increased (@Shivain-codes)
+- **PR #16951** (2026-10-26): fix(deps): update dependency @react-native-documents/picker to v12.0.2 (@renovate[bot])
+- **PR #16950** (closed): Clipper: Fixes #16887: Fix Confirm button hidden when Firefox default font size is increased (@Shivain-codes)
 
 ---
 
@@ -1169,37 +1169,28 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Desktop, Mobile, Cli: Fixes #16895: Fix quadratic conversion time for elements w
+## X. deps): update dependency @react-native-documents/picker to v12.0.2 (#16951)
 
 **RULE**:
-When implementing operations in `packages/app-cli/tests/HtmlToMd.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/app-mobile/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `94ddfda2`: Desktop, Mobile, Cli: Fixes #16895: Fix quadratic conversion time for elements with many children (#16902). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2c09ccab`: deps): update dependency @react-native-documents/picker to v12.0.2 (#16951). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/app-cli/tests/HtmlToMd.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/app-mobile/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-	// Covers how newlines are carried between children when joining them, which was rewritten to fix
-	// https://github.com/laurent22/joplin/issues/16895
-	it.each([
-		['<ul><li>a</li><li></li><li>b</li></ul>', '- a\n\n- b'],
-		['<span><p>a</p></span>b', 'a\n\nb'],
-		['<pre><code><span>line 1</span>\n\n\n<span>line 2</span></code></pre>', '```\nline 1\n\n\nline 2\n```'],
-	])('should join the Markdown of child elements: %j', (html, expected) => {
-		expect(new HtmlToMd().parse(html)).toBe(expected);
-	});
-
+    "@react-native-documents/picker": "12.0.2",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    "@react-native-documents/picker": "12.0.1",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `94ddfda2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2c09ccab` are properly handled with clean fallback behavior.

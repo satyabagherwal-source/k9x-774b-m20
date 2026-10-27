@@ -5284,3 +5284,6 @@ Every entry in this ledger must capture:
 | `learn-github-goodrain-rainbond` | `https://github.com/goodrain/rainbond` | `8d5895f1` | Multi-dimensional audit evidence | 2026-10-27T12:30:16.200Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `9dc00492` | Multi-dimensional audit evidence | 2026-10-27T12:30:17.847Z |
 | `learn-github-marmotdata-marmot` | `https://github.com/marmotdata/marmot` | `480878c2` | Multi-dimensional audit evidence | 2026-10-27T12:35:07.462Z |
+| `learn-github-fb55-css-select` | `https://github.com/fb55/css-select` | `6e4c7a63` | Multi-dimensional audit evidence | 2026-10-27T12:38:28.069Z |
+| `learn-github-laurent22-joplin` | `https://github.com/laurent22/joplin` | `b613d006` | Multi-dimensional audit evidence | 2026-10-27T12:38:30.810Z |
+| `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `818532da` | Multi-dimensional audit evidence | 2026-10-27T12:43:19.905Z |

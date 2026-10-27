@@ -5275,3 +5275,6 @@
 | `CYCLE-20261027-YC1W` | `2026-10-27T12:30:16.196Z` | `goodrain/rainbond` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4751` | Yes (`374ac5e2...`) |
 | `CYCLE-20261027-YDBO` | `2026-10-27T12:30:17.844Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4752` | Yes (`2fae4509...`) |
 | `CYCLE-20261027-4KSJ` | `2026-10-27T12:35:07.459Z` | `marmotdata/marmot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4753` | Yes (`c21f01f0...`) |
+| `CYCLE-20261027-8VKY` | `2026-10-27T12:38:28.066Z` | `fb55/css-select` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4754` | Yes (`b4b9408b...`) |
+| `CYCLE-20261027-8XP3` | `2026-10-27T12:38:30.807Z` | `laurent22/joplin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4755` | Yes (`d039810c...`) |
+| `CYCLE-20261027-F4RH` | `2026-10-27T12:43:19.901Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4756, Rule 4757, Rule 4758` | Yes (`a1a6cc71...`) |

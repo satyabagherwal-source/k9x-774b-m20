@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T12:35:07.467Z",
-  "total_cycles_completed": 5252,
-  "total_learnings_persisted": 5252,
-  "total_rules_promoted": 4658,
+  "last_updated": "2026-10-27T12:43:19.910Z",
+  "total_cycles_completed": 5255,
+  "total_learnings_persisted": 5255,
+  "total_rules_promoted": 4663,
   "history": [
-    {
-      "timestamp": "2026-10-26T01:37:17.637Z",
-      "repository": "zed-industries/zed",
-      "learningId": "learn-github-zed-industries-zed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T01:37:18.166Z",
-      "repository": "ISTIFANO/seo-auditor",
-      "learningId": "learn-github-istifano-seo-auditor",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T01:37:19.843Z",
-      "repository": "joreilly/Confetti",
-      "learningId": "learn-github-joreilly-confetti",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-26T01:37:27.551Z",
       "repository": "SeaQL/sea-orm",
@@ -1403,6 +1382,27 @@
       "repository": "marmotdata/marmot",
       "learningId": "learn-github-marmotdata-marmot",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T12:38:28.074Z",
+      "repository": "fb55/css-select",
+      "learningId": "learn-github-fb55-css-select",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T12:38:30.815Z",
+      "repository": "laurent22/joplin",
+      "learningId": "learn-github-laurent22-joplin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T12:43:19.910Z",
+      "repository": "grpc/grpc-rust",
+      "learningId": "learn-github-grpc-grpc-rust",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

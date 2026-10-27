@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T12:35:07.471Z",
+  "last_updated": "2026-10-27T12:43:19.914Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8211,14 +8211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-grpc-grpc-rust",
-      "content_hash": "66d6323c7237f376be7300f07de219871bdfe7a1f8ecc465a48989236056f21e",
-      "verified_at": "2026-10-25T18:28:20.548Z",
+      "content_hash": "a1a6cc71ee5ba75a4d6fc68096ce4ba53c7da7fb986746143c16528619d9bd02",
+      "verified_at": "2026-10-27T12:43:19.913Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T18:28:20.548Z"
+      "last_updated": "2026-10-27T12:43:19.913Z"
     },
     "crazycodeboy/react-native-splash-screen": {
       "repository": "crazycodeboy/react-native-splash-screen",
@@ -14136,14 +14136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fb55-css-select",
-      "content_hash": "58e405469fba78ad6466a727890e5873dd91c8764b9740c4b1f9c55a4e30e44a",
-      "verified_at": "2026-10-22T19:03:16.177Z",
+      "content_hash": "b4b9408b0c8d31ae2e48cd953e3ec33bb1e7eb722d1ab98c677257a9d911d664",
+      "verified_at": "2026-10-27T12:38:28.077Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T19:03:16.177Z"
+      "last_updated": "2026-10-27T12:38:28.077Z"
     },
     "sindresorhus/KeyboardShortcuts": {
       "repository": "sindresorhus/KeyboardShortcuts",
@@ -15486,14 +15486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-laurent22-joplin",
-      "content_hash": "48eff3e3f8470357f6d69255b39357f75bb0756f90859596f66e3c0ccb74af66",
-      "verified_at": "2026-10-23T06:30:11.974Z",
+      "content_hash": "d039810c5a5ae12d4b6acf651ce00ea0592bd94a7f1c36b8508aa4f558cc17c4",
+      "verified_at": "2026-10-27T12:38:30.819Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T06:30:11.974Z"
+      "last_updated": "2026-10-27T12:38:30.819Z"
     },
     "appwrite/appwrite": {
       "repository": "appwrite/appwrite",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T12:35:07.402Z",
+  "last_updated": "2026-10-27T12:43:19.840Z",
   "total_verified_learnings": 1106,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14182,8 +14182,8 @@
       "slug": "grpc-grpc-rust",
       "platform": "github",
       "source_url": "https://github.com/grpc/grpc-rust",
-      "source_version": "0ecf9253",
-      "content_hash": "66d6323c7237f376be7300f07de219871bdfe7a1f8ecc465a48989236056f21e",
+      "source_version": "818532da",
+      "content_hash": "a1a6cc71ee5ba75a4d6fc68096ce4ba53c7da7fb986746143c16528619d9bd02",
       "dossier_path": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "promoted_rules": [
@@ -14231,6 +14231,21 @@
           "number": 4412,
           "title": "Upgrade to Protobuf 36.2 (#2956)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4756,
+          "title": "Type-State Consumptive Channel Lifecycle Transitions",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4757,
+          "title": "Protocol Framing Invariant Enforcement via Stream Validation Decorators",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4758,
+          "title": "Builder Public Re-Export Parity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14238,7 +14253,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T18:28:20.458Z",
+      "verified_at": "2026-10-27T12:43:19.828Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32888,8 +32903,8 @@
       "slug": "laurent22-joplin",
       "platform": "github",
       "source_url": "https://github.com/laurent22/joplin",
-      "source_version": "280954e5",
-      "content_hash": "48eff3e3f8470357f6d69255b39357f75bb0756f90859596f66e3c0ccb74af66",
+      "source_version": "b613d006",
+      "content_hash": "d039810c5a5ae12d4b6acf651ce00ea0592bd94a7f1c36b8508aa4f558cc17c4",
       "dossier_path": "07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
       "promoted_rules": [
@@ -32902,6 +32917,11 @@
           "number": 3789,
           "title": "Desktop, Mobile, Cli: Fixes #16895: Fix quadratic conversion time for elements w",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4755,
+          "title": "deps): update dependency @react-native-documents/picker to v12.0.2 (#16951)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32909,7 +32929,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T06:30:11.899Z",
+      "verified_at": "2026-10-27T12:38:30.735Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66204,8 +66224,8 @@
       "slug": "fb55-css-select",
       "platform": "github",
       "source_url": "https://github.com/fb55/css-select",
-      "source_version": "6b225dee",
-      "content_hash": "58e405469fba78ad6466a727890e5873dd91c8764b9740c4b1f9c55a4e30e44a",
+      "source_version": "6e4c7a63",
+      "content_hash": "b4b9408b0c8d31ae2e48cd953e3ec33bb1e7eb722d1ab98c677257a9d911d664",
       "dossier_path": "07_PROJECT_LEARNING/fb55-css-select-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fb55-css-select-learnings.md",
       "promoted_rules": [
@@ -66218,6 +66238,11 @@
           "number": 3705,
           "title": "build(deps-dev): bump eslint from 10.12.0 to 10.13.0 (#1921)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4754,
+          "title": "build(deps): bump github/codeql-action from 4.39.0 to 4.39.1 (#1925)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -66225,7 +66250,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T19:03:16.100Z",
+      "verified_at": "2026-10-27T12:38:27.999Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -132353,6 +132378,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T12:35:07.390Z"
+    },
+    "rule-4754": {
+      "learning_id": "rule-4754",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4754,
+      "title": "build(deps): bump github/codeql-action from 4.39.0 to 4.39.1 (#1925)",
+      "source_url": "https://github.com/fb55/css-select",
+      "source_version": "6e4c7a63",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:38:27.999Z"
+    },
+    "rule-4755": {
+      "learning_id": "rule-4755",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4755,
+      "title": "deps): update dependency @react-native-documents/picker to v12.0.2 (#16951)",
+      "source_url": "https://github.com/laurent22/joplin",
+      "source_version": "b613d006",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:38:30.735Z"
+    },
+    "rule-4756": {
+      "learning_id": "rule-4756",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4756,
+      "title": "Type-State Consumptive Channel Lifecycle Transitions",
+      "source_url": "https://github.com/grpc/grpc-rust",
+      "source_version": "818532da",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:43:19.828Z"
+    },
+    "rule-4757": {
+      "learning_id": "rule-4757",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4757,
+      "title": "Protocol Framing Invariant Enforcement via Stream Validation Decorators",
+      "source_url": "https://github.com/grpc/grpc-rust",
+      "source_version": "818532da",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:43:19.828Z"
+    },
+    "rule-4758": {
+      "learning_id": "rule-4758",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4758,
+      "title": "Builder Public Re-Export Parity Invariant",
+      "source_url": "https://github.com/grpc/grpc-rust",
+      "source_version": "818532da",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:43:19.828Z"
     }
   },
   "aliases": {

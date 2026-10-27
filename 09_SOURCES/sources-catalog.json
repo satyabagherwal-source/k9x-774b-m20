@@ -5393,10 +5393,10 @@
     "repository": "grpc/grpc-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/grpc/grpc-rust",
-    "sourceVersion": "0ecf9253",
+    "sourceVersion": "818532da",
     "license": "MIT",
-    "contentHash": "66d6323c7237f376be7300f07de219871bdfe7a1f8ecc465a48989236056f21e",
-    "lastHarvestedAt": "2026-10-25T18:28:20.540Z",
+    "contentHash": "a1a6cc71ee5ba75a4d6fc68096ce4ba53c7da7fb986746143c16528619d9bd02",
+    "lastHarvestedAt": "2026-10-27T12:43:19.905Z",
     "learningId": "learn-github-grpc-grpc-rust"
   },
   "crazycodeboy-react-native-splash-screen": {
@@ -9393,10 +9393,10 @@
     "repository": "fb55/css-select",
     "platform": "github",
     "sourceUrl": "https://github.com/fb55/css-select",
-    "sourceVersion": "6b225dee",
+    "sourceVersion": "6e4c7a63",
     "license": "BSD-2-Clause",
-    "contentHash": "58e405469fba78ad6466a727890e5873dd91c8764b9740c4b1f9c55a4e30e44a",
-    "lastHarvestedAt": "2026-10-22T19:03:16.165Z",
+    "contentHash": "b4b9408b0c8d31ae2e48cd953e3ec33bb1e7eb722d1ab98c677257a9d911d664",
+    "lastHarvestedAt": "2026-10-27T12:38:28.069Z",
     "learningId": "learn-github-fb55-css-select"
   },
   "sindresorhus-keyboardshortcuts": {
@@ -10313,10 +10313,10 @@
     "repository": "laurent22/joplin",
     "platform": "github",
     "sourceUrl": "https://github.com/laurent22/joplin",
-    "sourceVersion": "280954e5",
+    "sourceVersion": "b613d006",
     "license": "NOASSERTION",
-    "contentHash": "48eff3e3f8470357f6d69255b39357f75bb0756f90859596f66e3c0ccb74af66",
-    "lastHarvestedAt": "2026-10-23T06:30:11.968Z",
+    "contentHash": "d039810c5a5ae12d4b6acf651ce00ea0592bd94a7f1c36b8508aa4f558cc17c4",
+    "lastHarvestedAt": "2026-10-27T12:38:30.810Z",
     "learningId": "learn-github-laurent22-joplin"
   },
   "appwrite-appwrite": {
