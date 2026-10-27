@@ -5578,3 +5578,4 @@
 | `CYCLE-20261027-KHMY` | `2026-10-27T23:03:21.418Z` | `lodestones/MOSS-Image-SFT-8-steps-dmd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5046, Rule 5047, Rule 5048` | Yes (`097b839e...`) |
 | `CYCLE-20261027-T8DI` | `2026-10-27T23:10:09.318Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5049` | Yes (`bfe4ea99...`) |
 | `CYCLE-20261027-TFRT` | `2026-10-27T23:10:18.905Z` | `dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5050, Rule 5051, Rule 5052` | Yes (`6d065bcc...`) |
+| `CYCLE-20261027-8C1K` | `2026-10-27T23:21:53.912Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5053, Rule 5054, Rule 5055` | Yes (`05ad899c...`) |

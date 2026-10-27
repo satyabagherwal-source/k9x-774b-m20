@@ -366448,3 +366448,318 @@ def bad_allocate_kv_cache(max_seq_len, num_layers, head_dim, num_kv_heads, unifo
 3.  Compare this with the actual memory allocated by the inference engine.
 4.  Assert that the allocated memory is >= the calculated size.
 5.  Run a long-context generation (e.g., 500k tokens) and monitor for OOM errors.
+
+
+---
+
+## 5053. Dual-Phase Kernel-Level Open File Descriptor (OFD) Locking (Harvested from etcd-io/etcd)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Phase Kernel-Level Open File Descriptor (OFD) Locking",
+  "source": "etcd-io/etcd",
+  "source_url": "https://github.com/etcd-io/etcd",
+  "source_version": "2b7b001a",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-27T23:21:53.491Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-etcd-io-etcd",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [etcd-io/etcd](https://github.com/etcd-io/etcd) (Revision: `2b7b001a`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Distributed storage engines persisting transaction logs MUST use Open File Descriptor (OFD) locks (`F_OFD_SETLK` / `F_OFD_SETLKW`) on systems supporting them, falling back to advisory flocking (`syscall.Flock`) ONLY when OFD support is absent. Legacy POSIX process-wide locks (`lockf` / classic `F_SETLK`) MUST NOT be used for data directory contention.
+
+**WHY**:
+Classic `syscall.Flock` fails with `EBADF` on certain network/NFS mounts. Conversely, traditional POSIX record locks (`F_SETLK`/`lockf`) associate locks with the pair of `(PID, inode)` rather than the open file description. If any thread in the process opens and closes *any* file descriptor pointing to the same file (e.g., a status checker or backup routine), POSIX silently releases *all* locks held by that process on that file. OFD locks bind directly to the file table entry in the kernel, ensuring thread isolation and persistence through arbitrary `close()` operations on duplicate descriptors.
+
+**WHEN TO APPLY**:
+Apply to any database engine, consensus log manager, or local lockfile implementation targeting Linux/Unix filesystems where multi-threaded access or shared filesystem mounts (NFS, CephFS, CIFS) can occur.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// client/pkg/fileutil/lock_linux.go
+package fileutil
+
+import (
+	"errors"
+	"fmt"
+	"io"
+	"os"
+	"syscall"
+	"golang.org/x/sys/unix"
+)
+
+var (
+	wrlck = syscall.Flock_t{
+		Type:   syscall.F_WRLCK,
+		Whence: int16(io.SeekStart),
+		Start:  0,
+		Len:    0, // 0 indicates lock covers until EOF, regardless of growth
+	}
+	linuxTryLockFile = flockTryLockFile
+	linuxLockFile    = flockLockFile
+)
+
+func init() {
+	// Probe the kernel runtime for OFD support
+	getlk := syscall.Flock_t{Type: syscall.F_RDLCK}
+	if err := syscall.FcntlFlock(0, unix.F_OFD_GETLK, &getlk); err == nil {
+		linuxTryLockFile = ofdTryLockFile
+		linuxLockFile = ofdLockFile
+	}
+}
+
+func ofdTryLockFile(path string, flag int, perm os.FileMode) (*LockedFile, error) {
+	f, err := os.OpenFile(path, flag, perm)
+	if err != nil {
+		return nil, fmt.Errorf("ofdTryLockFile failed to open %q (%w)", path, err)
+	}
+
+	flock := wrlck
+	if err = syscall.FcntlFlock(f.Fd(), unix.F_OFD_SETLK, &flock); err != nil {
+		f.Close()
+		if errors.Is(err, syscall.EWOULDBLOCK) || errors.Is(err, syscall.EAGAIN) {
+			err = ErrLocked
+		}
+		return nil, err
+	}
+	return &LockedFile{f}, nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Never use lockf or F_SETLK for multi-threaded engine locks
+func unsafeLock(path string) (*os.File, error) {
+	f, _ := os.OpenFile(path, os.O_RDWR, 0600)
+	// HAZARD: Calling fcntl with F_SETLK binds lock to (PID, inode).
+	// If another routine in the same runtime opens and closes 'path', 
+	// the kernel silently releases THIS lock without notification.
+	flock := syscall.Flock_t{Type: syscall.F_WRLCK, Whence: 0, Start: 0, Len: 0}
+	_ = syscall.FcntlFlock(f.Fd(), syscall.F_SETLK, &flock)
+	return f, nil
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using a concurrent test executing across separate Go routines:
+```go
+func TestLockFcntlThreadIndependence(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "engine.lock")
+	l1, err := TryLockFile(path, os.O_RDWR|os.O_CREATE, 0600)
+	require.NoError(t, err)
+	defer l1.Close()
+
+	// Secondary descriptor in the same process MUST fail to acquire
+	_, err = TryLockFile(path, os.O_RDWR|os.O_CREATE, 0600)
+	require.ErrorIs(t, err, ErrLocked)
+
+	// Opening and closing a separate descriptor MUST NOT release l1
+	tmp, err := os.Open(path)
+	require.NoError(t, err)
+	tmp.Close()
+
+	// Third attempt must still fail because l1 remains active
+	_, err = TryLockFile(path, os.O_RDWR|os.O_CREATE, 0600)
+	require.ErrorIs(t, err, ErrLocked)
+}
+```
+
+---
+
+
+---
+
+## 5054. Pre-Execution Permission Invariant Verification (Harvested from etcd-io/etcd)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Pre-Execution Permission Invariant Verification",
+  "source": "etcd-io/etcd",
+  "source_url": "https://github.com/etcd-io/etcd",
+  "source_version": "2b7b001a",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-27T23:21:53.642Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-etcd-io-etcd",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [etcd-io/etcd](https://github.com/etcd-io/etcd) (Revision: `2b7b001a`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+State directories containing security-critical transaction data MUST verify directory permissions against strict octal masks (`0700` / `PrivateDirMode`) prior to operation. If a directory already exists with broad permissions, the system MUST log a high-severity security alert and MUST NOT silently inherit unprivileged access.
+
+**WHY**:
+In shared host environments, running container agents, or systems configured with permissive `umask` values (e.g., `0022` or `0000`), key-value state engines store TLS certificates, identity tokens, and plaintext transaction logs. If directories are created or left with world-readable permissions, local unprivileged attackers can inspect or tamper with consensus state files, triggering consensus poisoning or unauthorized credential retrieval.
+
+**WHEN TO APPLY**:
+Apply during engine boot, WAL initialization, snapshot restoration, and backend database disk configuration.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// client/pkg/fileutil/fileutil.go
+const PrivateDirMode = 0o700
+
+func CheckDirPermission(dir string, perm os.FileMode) error {
+	if !Exist(dir) {
+		return fmt.Errorf("directory %q empty, cannot check permission", dir)
+	}
+	dirInfo, err := os.Stat(dir)
+	if err != nil {
+		return err
+	}
+	dirMode := dirInfo.Mode().Perm()
+	if dirMode != perm {
+		return fmt.Errorf("directory %q exist, but the permission is %q. "+
+			"The recommended permission is %q to prevent possible unprivileged access to the data",
+			dir, dirInfo.Mode(), os.FileMode(PrivateDirMode))
+	}
+	return nil
+}
+
+func TouchDirAll(lg *zap.Logger, dir string) error {
+	verify.Assert(lg != nil, "nil log isn't allowed")
+	if Exist(dir) {
+		if err := CheckDirPermission(dir, PrivateDirMode); err != nil {
+			lg.Warn("check file permission", zap.Error(err))
+		}
+	} else {
+		if err := os.MkdirAll(dir, PrivateDirMode); err != nil {
+			return err
+		}
+	}
+	return IsDirWriteable(dir)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Never trust unconstrained MkdirAll or accept existing permissions blindly
+func unsafeInitDir(dir string) error {
+	// HAZARD: Blindly ignores what permissions exist or what umask applied.
+	// Leaves sensitive WAL files readable by all users on the OS.
+	return os.MkdirAll(dir, 0777)
+}
+```
+
+**VERIFICATION METHOD**:
+Execute an automated test with non-standard directory modes:
+```go
+func TestCheckDirPermission(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "permissive-data")
+	require.NoError(t, os.Mkdir(dir, 0755))
+	err := CheckDirPermission(dir, 0700)
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "The recommended permission is")
+}
+```
+
+---
+
+
+---
+
+## 5055. Protobuf Header Deep Immutability Boundary (Harvested from etcd-io/etcd)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Protobuf Header Deep Immutability Boundary",
+  "source": "etcd-io/etcd",
+  "source_url": "https://github.com/etcd-io/etcd",
+  "source_version": "2b7b001a",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-27T23:21:53.784Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-etcd-io-etcd",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [etcd-io/etcd](https://github.com/etcd-io/etcd) (Revision: `2b7b001a`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Protobuf API structures that include nested headers (`*ResponseHeader`) returned to internal caches, watchers, or RPC interceptors MUST NOT return shallow references. Any mutation, cloning, or exposure across concurrency boundaries MUST execute a complete deep clone via proto serialization primitives, guaranteeing that pointer mutations do not corrupt concurrent reads.
+
+**WHY**:
+In gRPC Go servers, response messages and headers often pass through middleware interceptors (metrics collectors, tracing interceptors, rate limiters, and audit loggers). If an internal component mutates a `ResponseHeader` field (such as `Revision`, `RaftTerm`, or `MemberId`) on a shared object pointer, it introduces a severe data race with concurrent client streaming watchers, causing intermittent corrupted response headers.
+
+**WHEN TO APPLY**:
+Apply to all gRPC/Protobuf response envelope generation routines, especially consensus revision metadata attachments.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// api/etcdserverpb/util.go
+package etcdserverpb
+
+import "google.golang.org/protobuf/proto"
+
+// Clone returns a deep copy of h, or an empty ResponseHeader if h is nil.
+func (h *ResponseHeader) Clone() *ResponseHeader {
+	if h == nil {
+		return &ResponseHeader{}
+	}
+	return proto.Clone(h).(*ResponseHeader)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Shallow assignment across concurrent response boundaries
+func (h *ResponseHeader) ShallowClone() *ResponseHeader {
+	if h == nil {
+		return &ResponseHeader{}
+	}
+	// HAZARD: If ResponseHeader contains pointer fields, slices, or internal
+	// protobuf extension state, shallow dereference shares internal heap structures!
+	copyHeader := *h
+	return &copyHeader
+}
+```
+
+**VERIFICATION METHOD**:
+```go
+func TestResponseHeaderDeepClone(t *testing.T) {
+	var original *ResponseHeader = nil
+	clonedNil := original.Clone()
+	require.NotNil(t, clonedNil)
+	require.Equal(t, uint64(0), clonedNil.Revision)
+
+	header := &ResponseHeader{
+		ClusterId: 100,
+		MemberId:  200,
+		Revision:  300,
+		RaftTerm:  4,
+	}
+	cloned := header.Clone()
+	require.Equal(t, header, cloned)
+
+	// Mutate clone; original must be unaffected
+	cloned.Revision = 999
+	require.Equal(t, uint64(300), header.Revision)
+	require.NotSame(t, header, cloned)
+}
+```
+
+---
