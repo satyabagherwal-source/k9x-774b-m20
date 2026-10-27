@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-01S8",
-    "timestamp": "2026-10-25T08:44:18.825Z",
-    "repository": "komi-store/komi-store",
-    "learningId": "learn-github-komi-store-komi-store",
-    "contentHash": "e00d3972e26a1d9416b723b69c0eeef59b8d3772e903ca19541693175d3e7afb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-G9U5",
-    "timestamp": "2026-10-25T08:56:55.757Z",
-    "repository": "kumahq/kuma",
-    "learningId": "learn-github-kumahq-kuma",
-    "contentHash": "163ce8038da220358666e8d7d3385416644c8ae649540d57674e38f84daee60c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-HF11",
-    "timestamp": "2026-10-25T08:57:49.141Z",
-    "repository": "carbon-design-system/carbon-components-svelte",
-    "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
-    "contentHash": "5df24ddc2152e418339cd60e6dc76b25655855be52adf69119e20a32fa320fe4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-HL7S",
-    "timestamp": "2026-10-25T08:57:57.160Z",
-    "repository": "deepseek-ai/DeepSeek-R1",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
-    "contentHash": "b2457edfc7be59abbfe404af160bd87c4a4d2ec380164815733cfb42e1299a2d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-HX0Y",
-    "timestamp": "2026-10-25T08:58:12.466Z",
-    "repository": "nguyenphutrong/quotio",
-    "learningId": "learn-github-nguyenphutrong-quotio",
-    "contentHash": "871525d88a20911bb5d57cb15c3bbdeb735ac995ed34940af0fc827e8ea846a4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-1C5Z",
     "timestamp": "2026-10-25T09:13:18.551Z",
     "repository": "moonshotai/Kimi-K3",
@@ -7490,6 +7415,81 @@
     "repository": "apache/zookeeper",
     "learningId": "learn-github-apache-zookeeper",
     "contentHash": "7a95f2d25ae44afa6653bfc3636caeece71580d8910dad39d18de882ba3b5b2b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-QE4Z",
+    "timestamp": "2026-10-27T11:56:06.035Z",
+    "repository": "primer/react",
+    "learningId": "learn-github-primer-react",
+    "contentHash": "35d8c706aad5c35ad416fa27d93275356dbfa0e1f4abc12e6772914622a733bc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-QE8O",
+    "timestamp": "2026-10-27T11:56:06.168Z",
+    "repository": "smol-rs/smol",
+    "learningId": "learn-github-smol-rs-smol",
+    "contentHash": "c48c82740f826af4a23471b1da2830775f470b5bef80dbe89ab50732b2a8be3c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-QFQB",
+    "timestamp": "2026-10-27T11:56:08.099Z",
+    "repository": "ArchiveBox/ArchiveBox",
+    "learningId": "learn-github-archivebox-archivebox",
+    "contentHash": "192b8e55c828a258cf185160ff8a35d7855a187c74feb2c8ed68a4c5be5d4ab8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-QJKB",
+    "timestamp": "2026-10-27T11:56:13.067Z",
+    "repository": "fission/fission",
+    "learningId": "learn-github-fission-fission",
+    "contentHash": "3926dd9198818ba121bb932b931f782728906d87fbfd28e05d1c070674578109",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-QNAX",
+    "timestamp": "2026-10-27T11:56:17.913Z",
+    "repository": "citusdata/citus",
+    "learningId": "learn-github-citusdata-citus",
+    "contentHash": "8d342f16db3544a3ab6c5c861af1de8821b68ad306908b9a4be95bae276cd37b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

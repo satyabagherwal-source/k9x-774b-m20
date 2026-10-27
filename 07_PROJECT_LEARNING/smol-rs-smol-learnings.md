@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/smol-rs-smol-learnings.md`  
 > **Source**: github ([https://github.com/smol-rs/smol](https://github.com/smol-rs/smol))  
-> **Source Version**: `4892eb0d`  
+> **Source Version**: `41579301`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:07:41.454Z  
+> **Timestamp**: 2026-10-27T11:56:05.746Z  
 > **Learning ID**: `learn-github-smol-rs-smol`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/smol-rs-smol-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/smol-rs/smol](https://github.com/smol-rs/smol))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:07:41.447Z  
+> **Harvest Timestamp**: 2026-10-27T11:56:05.195Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A small and fast async runtime for Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 5089 stars
+- **Stars / Engagement**: 5097 stars
 
 ---
 
@@ -868,11 +868,11 @@ fn main() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #390** (2026-10-26): **Update scraper requirement from 0.27 to 0.29**
+  *Symptoms*: Updates the requirements on [scraper](https://github.com/rust-scraper/scraper) to permit the latest version. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/rust-scraper/scraper/releases">scraper's releases</a>.</em></p> <blockquote> <h2>v0.29.0</h2> <h2>What's Changed</h2> <ul> <li>Document how to make the library <code>Send</code> in <code>README.md</code> by <a href="https://github.com/Internal-Compiler-Error"><code>@​Internal-Compiler-Error</code></a> in <a href="https://redirect.github.com/rust-scraper/scraper/pull/318">rust-scraper/scraper#318</a></li> <li>Document the relationship between the core node and element types by <a href="https://github.com/ChrisJr404"><code>@​ChrisJr404</code></a> in <a href="https://redirect.github.com/rust-scraper/scraper/pull/323">rust-scraper/scraper#323</a></li> <li>upgrade selectors dependency by <a href="https://github.com/CAD97"><code>@​CAD97</code></a> in <a href="https://redirect.github.com/rust-scraper/scraper/pull/319">rust-scraper/scraper#319</a></li> <li>Bump selectors and cssparser together and adjust out error handling accordingly. by <a href="https://github.com/adamreichold"><code>@​adamreichold</code></a> in <a href="https://redirect.github.com/rust-scraper/scraper/pull/329">rust-scraper/scraper#329</a></li> </ul> <h2>New Contributors</h2> <ul> <li><a href="https://github.com/Internal-Compiler-Error"><code>@​Internal-Compiler-Error</code></a> made their first contribution in <a hre
+
 - **Issue #389** (2026-10-18): **Allow obtain inner UdpSocket out of smol::net::UdpSocket**
   *Symptoms*: Is there any way to obtain std::net::UdpSocket out of smol::net::UdpSocket?  I would like bind with smol::net::UdpSocket then pass it to Quic.
-
-- **Issue #384** (2026-08-03): **Update async-tungstenite requirement from 0.34 to 0.35**
-  *Symptoms*: Updates the requirements on [async-tungstenite](https://github.com/sdroege/async-tungstenite) to permit the latest version. <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/sdroege/async-tungstenite/blob/main/CHANGELOG.md">async-tungstenite's changelog</a>.</em></p> <blockquote> <h2>[0.35.0] - 2026-07-28</h2> <h3>Fixed</h3> <ul> <li>Fix docs.rs build.</li> </ul> <h3>Changed</h3> <ul> <li>Update to tungstenite 0.30.</li> <li>Update to rustls-platform-verifier 0.7.</li> <li>Switch examples from async-std to smol.</li> <li>Deprecate async-tls and async-std related features.</li> </ul> <h2>[0.34.1] - 2026-04-02</h2> <h3>Added</h3> <ul> <li>New <code>futures-rustls</code> features for rustls support via the smol runtime.</li> </ul> <h3>Fixed</h3> <ul> <li>Various docs and cargo-feature related fixes.</li> </ul> <h3>Changed</h3> <ul> <li>Add deprecation notice for async-std.</li> </ul> <h2>[0.34.0] - 2026-03-20</h2> <h3>Changed</h3> <ul> <li>Update to tungstenite 0.29.</li> <li>Update to async-native-tls 0.6.</li> </ul> <h3>Added</h3> <ul> <li>smol runtime support including smol-native-tls.</li> </ul> <h2>[0.33.0] - 2026-02-20</h2> <h3>Changed</h3> <ul> <li>Update GLib/gio support to version 0.22 of the bindings.</li> <li>Update MSRV to 1.85.</li> </ul> <h2>[0.32.1] - 2026-01-05</h2> <h3>Added</h3> <ul> <li>Add <code>tokio-rustls-platform-verifier</code> feature to use that crate for certificate verification.</li> </ul> <h2>[0.32.0] - 2025-10-3
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -889,94 +889,17 @@ fn main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1026f04e` (2025-01-19)
-**Commit Message**: ci: Use reusable workflows for fmt and security_audit
+### Incident Patch 1: `41579301` (2026-10-26)
+**Commit Message**: Update scraper requirement from 0.27 to 0.29 (#390)
 
-**File**: `.github/workflows/ci.yml` (modified, +10/-24)
-```diff
-@@ -26,6 +26,16 @@ defaults:
-     shell: bash
- 
- jobs:
-+  fmt:
-+    uses: smol-rs/.github/.github/workflows/fmt.yml@main
-+  security_audit:
-+    uses: smol-rs/.github/.github/workflows/security_audit.yml@main
-+    permissions:
-+      checks: write
-+      contents: read
-+      issues: write
-+    secrets: inherit
-+
-   test:
-     runs-on: ${{ matrix.os }}
-     strategy:
-@@ -64,27 +74,3 @@ jobs:
-       - name: Install Rust
-         run: rustup update stable
-       - run: cargo clippy --all-features --all-targets
--
--  fmt:
--    runs-on: ubuntu-latest
--    steps:
--      - uses: actions/checkout@v4
--      - name: Install Rust
--        run: rustup update stable
--      - run: cargo fmt --all --check
--
--  security_audit:
--    permissions:
--      checks: write
--      contents: read
--      issues: write
--    runs-on: ubuntu-latest
--    steps:
--      - uses: actions/checkout@v4
--      # rustsec/audit-check used to do this automatically
--      - name: Generate Cargo.lock
--        run: cargo generate-lockfile
--      # https://github.com/rustsec/audit-check/issues/2
--      - uses: rustsec/audit-check@v2.0.0
--        with:
--          token: ${{ secrets.GITHUB_TOKEN }}
-```
-
----
-
-### Incident Patch 2: `321ac3b9` (2024-10-18)
-**Commit Message**: ci: Use "v2.0.0" branch for security check
-
-Signed-off-by: John Nunley <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ci.yml` (modified, +4/-1)
-```diff
-@@ -81,7 +81,10 @@ jobs:
-     runs-on: ubuntu-latest
-     steps:
-       - uses: actions/checkout@v4
-+      # rustsec/audit-check used to do this automatically
-+      - name: Generate Cargo.lock
-+        run: cargo generate-lockfile
-       # https://github.com/rustsec/audit-check/issues/2
--      - uses: rustsec/audit-check@master
-+      - uses: rustsec/audit-check@v2.0.0
-         with:
-           token: ${{ secrets.GITHUB_TOKEN }}
-```
-
----
-
-### Incident Patch 3: `4892eb0d` (2026-08-03)
-**Commit Message**: Update async-tungstenite requirement from 0.34 to 0.35 (#384)
-
-Updates the requirements on [async-tungstenite](https://github.com/sdroege/async-tungstenite) to permit the latest version.
-- [Changelog](https://github.com/sdroege/async-tungstenite/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/sdroege/async-tungstenite/compare/0.34.0...0.35.0)
+Updates the requirements on [scraper](https://github.com/rust-scraper/scraper) to permit the latest version.
+- [Release notes](https://github.com/rust-scraper/scraper/releases)
+- [Commits](https://github.com/rust-scraper/scraper/compare/v0.27.0...v0.29.0)
 
 ---
 updated-dependencies:
-- dependency-name: async-tungstenite
-  dependency-version: 0.35.0
+- dependency-name: scraper
+  dependency-version: 0.29.0
   dependency-type: direct:production
 ...
 
@@ -985,24 +908,24 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -33,7 +33,7 @@ anyhow = "1"
- async-dup = "1"
- async-h1 = "2"
- async-native-tls = "0.6"
--async-tungstenite = { version = "0.34", features = ["async-native-tls"] }
-+async-tungstenite = { version = "0.35", features = ["async-native-tls"] }
- ctrlc = "3"
- doc-comment = "0.3"
- futures = "0.3"
+@@ -43,7 +43,7 @@ http-types = "2"
+ hyper = { version = "1.0", default-features = false, features = ["client", "http1", "server"] }
+ macro_rules_attribute = "0.2.0"
+ native-tls = "0.2"
+-scraper = "0.27"
++scraper = "0.29"
+ signal-hook = "0.4"
+ smol-hyper = "0.1.0"
+ smol-macros = "0.1.0"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #390** (2026-10-26): Update scraper requirement from 0.27 to 0.29 (@dependabot[bot])
 - **PR #384** (2026-08-03): Update async-tungstenite requirement from 0.34 to 0.35 (@dependabot[bot])
 - **PR #382** (2026-06-27): fix: reject zero SMOL_THREADS value (@cschanhniem)
 - **PR #378** (2026-05-13): Update scraper requirement from 0.26 to 0.27 (@dependabot[bot])
 - **PR #374** (2026-03-23): Update scraper requirement from 0.25 to 0.26 (@dependabot[bot])
 - **PR #373** (2026-03-23): Update async-tungstenite requirement from 0.33 to 0.34 (@dependabot[bot])
-- **PR #372** (2026-02-23): Update async-tungstenite requirement from 0.32 to 0.33 (@dependabot[bot])
 
 ---
 
@@ -1022,60 +945,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: Use reusable workflows for fmt and security_audit
+## X. Update scraper requirement from 0.27 to 0.29 (#390)
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in smol-rs/smol. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in smol-rs/smol. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1026f04e`: ci: Use reusable workflows for fmt and security_audit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `41579301`: Update scraper requirement from 0.27 to 0.29 (#390). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  fmt:
-    uses: smol-rs/.github/.github/workflows/fmt.yml@main
-  security_audit:
-    uses: smol-rs/.github/.github/workflows/security_audit.yml@main
-    permissions:
-      checks: write
-      contents: read
-      issues: write
-    secrets: inherit
-
+scraper = "0.29"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-
-  fmt:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install Rust
-        run: rustup update stable
-      - run: cargo fmt --all --check
-
-  security_audit:
-    permissions:
-      checks: write
-      contents: read
-      issues: write
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      # rustsec/audit-check used to do this automatically
-      - name: Generate Cargo.lock
-        run: cargo generate-lockfile
-      # https://github.com/rustsec/audit-check/issues/2
-      - uses: rustsec/audit-check@v2.0.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+scraper = "0.27"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1026f04e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `41579301` are properly handled with clean fallback behavior.

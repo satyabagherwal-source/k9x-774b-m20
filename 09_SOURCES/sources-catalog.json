@@ -2273,10 +2273,10 @@
     "repository": "fission/fission",
     "platform": "github",
     "sourceUrl": "https://github.com/fission/fission",
-    "sourceVersion": "b983965d",
+    "sourceVersion": "ae2aabf5",
     "license": "Apache-2.0",
-    "contentHash": "3e46e18e338815ab4c2329de4de62072d6ab45b1c998b06d3cdd155da43e1e2c",
-    "lastHarvestedAt": "2026-10-22T18:24:16.106Z",
+    "contentHash": "3926dd9198818ba121bb932b931f782728906d87fbfd28e05d1c070674578109",
+    "lastHarvestedAt": "2026-10-27T11:56:13.070Z",
     "learningId": "learn-github-fission-fission"
   },
   "smallstep-cli": {
@@ -5133,20 +5133,20 @@
     "repository": "primer/react",
     "platform": "github",
     "sourceUrl": "https://github.com/primer/react",
-    "sourceVersion": "190fafd9",
+    "sourceVersion": "f733dcb2",
     "license": "MIT",
-    "contentHash": "36721dc20052739b00d07c3cbd20e661f320b735eec5acdba64989b1c975f237",
-    "lastHarvestedAt": "2026-10-25T21:08:40.996Z",
+    "contentHash": "35d8c706aad5c35ad416fa27d93275356dbfa0e1f4abc12e6772914622a733bc",
+    "lastHarvestedAt": "2026-10-27T11:56:06.039Z",
     "learningId": "learn-github-primer-react"
   },
   "smol-rs-smol": {
     "repository": "smol-rs/smol",
     "platform": "github",
     "sourceUrl": "https://github.com/smol-rs/smol",
-    "sourceVersion": "4892eb0d",
+    "sourceVersion": "41579301",
     "license": "Apache-2.0",
-    "contentHash": "6840503ada1417ca224c2953e63d934031d703b6e80d1c8666582583e75ed7ed",
-    "lastHarvestedAt": "2026-10-19T03:07:41.701Z",
+    "contentHash": "c48c82740f826af4a23471b1da2830775f470b5bef80dbe89ab50732b2a8be3c",
+    "lastHarvestedAt": "2026-10-27T11:56:06.171Z",
     "learningId": "learn-github-smol-rs-smol"
   },
   "ptomasroos-react-native-scrollable-tab-view": {
@@ -5173,10 +5173,10 @@
     "repository": "citusdata/citus",
     "platform": "github",
     "sourceUrl": "https://github.com/citusdata/citus",
-    "sourceVersion": "5ca742e8",
+    "sourceVersion": "f24c6fc4",
     "license": "AGPL-3.0",
-    "contentHash": "844a7c23aac2f87afeeae978527ed78296f5981b4720ab4488a7b86f12d39cf6",
-    "lastHarvestedAt": "2026-10-25T03:45:10.950Z",
+    "contentHash": "8d342f16db3544a3ab6c5c861af1de8821b68ad306908b9a4be95bae276cd37b",
+    "lastHarvestedAt": "2026-10-27T11:56:17.916Z",
     "learningId": "learn-github-citusdata-citus"
   },
   "reshaped-ui-reshaped": {
@@ -9283,10 +9283,10 @@
     "repository": "ArchiveBox/ArchiveBox",
     "platform": "github",
     "sourceUrl": "https://github.com/ArchiveBox/ArchiveBox",
-    "sourceVersion": "c55089ea",
+    "sourceVersion": "4ab614bc",
     "license": "MIT",
-    "contentHash": "4fb5f49350057dfd736c351f85bcdc65d8eb3fc2ef639795911b3ddbae8c7db3",
-    "lastHarvestedAt": "2026-10-22T18:24:11.983Z",
+    "contentHash": "192b8e55c828a258cf185160ff8a35d7855a187c74feb2c8ed68a4c5be5d4ab8",
+    "lastHarvestedAt": "2026-10-27T11:56:08.102Z",
     "learningId": "learn-github-archivebox-archivebox"
   },
   "buriy-python-readability": {

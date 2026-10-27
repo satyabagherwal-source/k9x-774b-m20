@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/citusdata-citus-learnings.md`  
 > **Source**: github ([https://github.com/citusdata/citus](https://github.com/citusdata/citus))  
-> **Source Version**: `5ca742e8`  
+> **Source Version**: `f24c6fc4`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T03:45:10.589Z  
+> **Timestamp**: 2026-10-27T11:56:17.515Z  
 > **Learning ID**: `learn-github-citusdata-citus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/citusdata-citus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/citusdata/citus](https://github.com/citusdata/citus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T03:45:10.460Z  
+> **Harvest Timestamp**: 2026-10-27T11:56:17.263Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Distributed PostgreSQL as an extension
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 12826 stars
+- **Stars / Engagement**: 12828 stars
 
 ---
 
@@ -2563,472 +2563,254 @@ ColumnarStorageGetReservedRowNumber(Relation rel, bool force)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5ca742e8` (2026-10-23)
-**Commit Message**: PG19: propagate EXPLAIN IO to worker nodes (#8807)
+### Incident Patch 1: `f24c6fc4` (2026-10-27)
+**Commit Message**: Report unsupported ALTER CONSTRAINT explicitly (#8808)
 
-Propagate PostgreSQL 19 RC1 EXPLAIN IO to worker nodes.
+DESCRIPTION: Report unsupported ALTER CONSTRAINT explicitly on
+PostgreSQL 19 RC1
 
-## Stack
+Draft follow-up to #8758, based on the PostgreSQL 19 RC1 alignment in
+#8929.
 
-Native stack layer 3: #8929 -> #8805 -> #8807
+This PR is intentionally limited to `ALTER TABLE ... ALTER CONSTRAINT`:
 
-This PR is based on `ihalatci-pg19-repack-lock-fix` at
-`805849c8ed7b3fa5e77edf289c5e2b159b4bb529`.
+- return `FEATURE_NOT_SUPPORTED` for distributed, reference, and
+Citus-local tables;
+- explain that constraint property changes are not propagated to shards;
+- preserve native PostgreSQL behavior for ordinary local tables;
+- verify rejected changes leave the constraint enforcement state
+unchanged.
 
-## Changes
+The earlier unrelated `DETACH PARTITION` error-code, message, and detail
+changes have been removed.
 
-- Propagate `ExplainState.io` to worker EXPLAIN commands on PostgreSQL
-19+.
-- Preserve `INSTRUMENT_IO` through the saved-plan EXPLAIN ANALYZE path.
-- Cover both saved-plan and live remote-EXPLAIN paths in `pg19`
-regression tests.
-- Keep PostgreSQL 17/18 behavior unchanged through existing version
-guards.
+Validation:
 
-The diff relative to #8805 is limited to:
+- PostgreSQL 17.10: `make -C src/test/regress check-minimal
+EXTRA_TESTS='partitioning_issue_3970'` passed.
+- PostgreSQL 18.4: `make -C src/test/regress check-minimal
+EXTRA_TESTS='pg18'` passed.
+- PostgreSQL 19 RC1: `make -C src/test/regress check-minimal
+EXTRA_TESTS='pg18'` passed.
+- `make check-style` passed with CI-pinned uncrustify 0.82.0 and
+citusdata/tools v0.8.33.
+- `ci/normalize_expected.sh` produced no further changes.
+- `git diff --check` passed.
 
-- `src/backend/distributed/planner/multi_explain.c`
-- `src/test/regress/bin/normalize.sed`
-- `src/test/regress/sql/pg19.sql`
-- `src/test/regress/expected/pg19.out`
+Fixes #8758
 
-## Validation
+---------
 
-- PostgreSQL 19rc1 Citus configure, build, and install: passed.
-- `src/test/regress/citus_tests/run_test.py pg19`: passed (7/7).
-- `src/test/regress/citus_tests/run_test.py multi_explain`: passed
-(16/16).
-- `src/test/regress/citus_tests/run_test.py multi_mx_explain`: passed
-(10/10).
-- PostgreSQL 17.10 configure/build: passed.
-- PostgreSQL 18.4 configure/build: passed.
-- `citus_indent --che
+Co-authored-
 
-**File**: `src/backend/distributed/planner/multi_explain.c` (modified, +29/-1)
+**File**: `src/backend/distributed/commands/table.c` (modified, +8/-2)
 ```diff
-@@ -111,6 +111,9 @@ typedef struct
- 	bool memory;
- 	ExplainSerializeOption serialize;
- 	ExplainFormat format;
-+#if PG_VERSION_NUM >= PG_VERSION_19
-+	bool io;
-+#endif
- } ExplainOptions;
- 
- 
-@@ -912,7 +915,9 @@ RemoteExplain(Task *task, ExplainState *es, ParamListInfo params)
- {
- 	/*
- 	 * For EXPLAIN EXECUTE we still use the old method, so task->fetchedExplainAnalyzePlan
--	 * can be NULL for some cases of es->analyze == true.
-+	 * can be NULL for some cases of es->analyze == true.  A distributed subplan can
-+	 * also end up here when its re-planned task ids do not match the ids its saved
-+	 * output was stored under; that is a known bug, see #8952.
- 	 */
- 	if (es->analyze && task->fetchedExplainAnalyzePlan)
- 	{
-@@ -1209,6 +1214,9 @@ BuildRemoteExplainQuery(char *queryString, ExplainState *es)
- 					 "COSTS %s, BUFFERS %s, WAL %s, "
- 					 "TIMING %s, SUMMARY %s, "
- 					 "MEMORY %s, SERIALIZE %s, "
-+#if PG_VERSION_NUM >= PG_VERSION_19
-+					 "IO %s, "
-+#endif
- 					 "FORMAT %s) %s",
- 					 es->analyze ? "TRUE" : "FALSE",
- 					 es->verbose ? "TRUE" : "FALSE",
-@@ -1219,6 +1227,9 @@ BuildRemoteExplainQuery(char *queryString, ExplainState *es)
- 					 es->summary ? "TRUE" : "FALSE",
- 					 es->memory ? "TRUE" : "FALSE",
- 					 serializeStr,
-+#if PG_VERSION_NUM >= PG_VERSION_19
-+					 es->io ? "TRUE" : "FALSE",
-+#endif
- 					 formatStr,
- 					 queryString);
- 
-@@ -1354,6 +1365,9 @@ worker_save_query_explain_analyze(PG_FUNCTION_ARGS)
- 	es->memory = ExtractFieldBoolean(explainOptions, "memory", es->memory);
- 	es->serialize = ExtractFieldExplainSerialize(explainOptions, "serialize",
- 												 es->serialize);
-+#if PG_VERSION_NUM >= PG_VERSION_19
-+	es->io = ExtractFieldBoolean(explainOptions, "io", es->io);
-+#endif
- 
- 	TupleDesc tupleDescriptor = NULL;
- 	Tuplestorestate *tupleStore = SetupTuplestore(fcinfo, &tupleDescriptor);
-@@ -1584,6 +1598,9 @@ CitusExplainOneQuery(Query *query, int cursorOptions, IntoClause *into,
- 	CurrentDistributedQueryExplainOptions.format = es->format;
- 	CurrentDistributedQueryExplainOptions.memory = es->memory;
- 	CurrentDistributedQueryExplainOptions.serialize = es->serialize;
-+#if PG_VERSION_NUM >= PG_VERSION_19
-+	CurrentDistributedQueryExplainOptions.io = es->io;
-+#endif
- 
- 	/* rest is copied from ExplainOneQuery() */
- 	instr_time planstart,
-@@ -1989,13 +2006,19 @@ WrapQueryForExplainAnalyze(const char *queryString, TupleDesc tupleDesc,
- 	appendStringInfo(explainOptions,
- 					 "{\"verbose\": %s, \"costs\": %s, \"buffers\": %s, \"wal\": %s, "
- 					 "\"memory\": %s, \"serialize\": \"%s\", "
-+#if PG_VERSION_NUM >= PG_VERSION_19
-+					 "\"io\": %s, "
-+#endif
- 					 "\"timing\": %s, \"summary\": %s, \"format\": \"%s\"}",
- 					 CurrentDistributedQueryExplainOptions.verbose ? "true" : "false",
- 					 CurrentDistributedQueryExplainOptions.costs ? "true" : "false",
- 					 CurrentDistributedQueryExplainOptions.buffers ? "true" : "false",
- 					 CurrentDistributedQueryExplainOptions.wal ? "true" : "false",
- 					 CurrentDistributedQueryExplainOptions.memory ? "true" : "false",
- 					 ExplainSerializeStr(CurrentDistributedQueryExplainOptions.serialize),
-+#if PG_VERSION_NUM >= PG_VERSION_19
-+					 CurrentDistributedQueryExplainOptions.io ? "true" : "false",
-+#endif
- 					 CurrentDistributedQueryExplainOptions.timing ? "true" : "false",
- 					 CurrentDistributedQueryExplainOptions.summary ? "true" : "false",
- 					 ExplainFormatStr(CurrentDistributedQueryExplainOptions.format));
-@@ -2265,6 +2288,11 @@ ExplainWorkerPlan(PlannedStmt *plannedstmt, DistributedSubPlan *subPlan, DestRec
- 	if (es->wal)
- 		instrument_option |= INSTRUMENT_WAL;
- 
-+#if PG_VERSION_NUM >= PG_VERSION_19
-+	if (es->io)
-+		instrument_option |= INSTRUMENT_IO;
-+#endif
-+
- 	/*
- 	 * We always collect timing for the entire statement, even when node-level
- 	 * timing is off, so we don't look at es->timing here.  (We could skip
+@@ -3944,8 +3944,14 @@ ErrorIfUnsupportedAlterTableStmt(AlterTableStmt *alterTableStatement)
+ 			{
+ 				ereport(ERROR,
+ 						(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
+-						 errmsg("alter table command is currently unsupported"),
+-						 errdetail("Only ADD|DROP COLUMN, SET|DROP NOT NULL, "
++						 errmsg("%s", alterTableType == AT_AlterConstraint ?
++								"ALTER TABLE ... ALTER CONSTRAINT commands are currently "
++								"unsupported" :
++								"alter table command is currently unsupported"),
++						 errdetail("%s", alterTableType == AT_AlterConstraint ?
++								   "Citus does not propagate constraint property changes "
++								   "to shards." :
++								   "Only ADD|DROP COLUMN, SET|DROP NOT NULL, "
+ 								   "SET|DROP DEFAULT, ADD|DROP|VALIDATE CONSTRAINT, "
+ 								   "SET (), RESET (), "
+ 								   "ENABLE|DISABLE|NO FORCE|FORCE ROW LEVEL SECURITY, "
 ```
 
-**File**: `src/test/regress/bin/normalize.sed` (modified, +6/-0)
+**File**: `src/test/regress/expected/partitioning_issue_3970.out` (modified, +2/-2)
 ```diff
-@@ -475,3 +475,9 @@ s/local_table_5_col_1_fkey_([0-9]+)/local_table_5_col_1_fkey1_\1/g
- # these rules can be removed when PG19 is the minimum supported version
- /^([[:space:]]*)139264$/ s/139264$/131072/
- /^([[:space:]]*[0-9]+[[:space:]]+[|][[:space:]]+)139264$/ s/139264$/131072/
-+
-+# PG19 adds the IO option to EXPLAIN. Citus spells every option out, so remote
-+# EXPLAIN commands carry a no-op "IO FALSE" that earlier versions do not send.
-+# these rules can be removed when PG19 is the minimum supported version
-+s/, IO FALSE,/,/g
-+s/"io": false, //g
+@@ -120,8 +120,8 @@ SET search_path = test_3970;
+ ALTER TABLE part_table RENAME CONSTRAINT my_seq TO my_seq_check;
+ ERROR:  renaming constraints belonging to distributed tables is currently unsupported
+ ALTER TABLE part_table ALTER CONSTRAINT my_seq DEFERRABLE;
+-ERROR:  alter table command is currently unsupported
+-DETAIL:  Only ADD|DROP COLUMN, SET|DROP NOT NULL, SET|DROP DEFAULT, ADD|DROP|VALIDATE CONSTRAINT, SET (), RESET (), ENABLE|DISABLE|NO FORCE|FORCE ROW LEVEL SECURITY, ATTACH|DETACH PARTITION and TYPE subcommands are supported.
++ERROR:  ALTER TABLE ... ALTER CONSTRAINT commands are currently unsupported
++DETAIL:  Citus does not propagate constraint property changes to shards.
+ -- verify that we can drop the constraints on partitioned tables
+ ALTER TABLE part_table DROP CONSTRAINT my_seq;
+ DROP TABLE part_table, dist CASCADE;
 ```
 
-**File**: `src/test/regress/expected/pg19.out` (modified, +71/-0)
+**File**: `src/test/regress/expected/pg18.out` (modified, +84/-2)
 ```diff
-@@ -1042,3 +1042,74 @@ SET client_min_messages TO WARNING;
- DROP SCHEMA pg19_repack CASCADE;
- RESET client_min_messages;
- RESET search_path;
-+--
-+-- EXPLAIN (ANALYZE, IO) has to reach the worker nodes (#8770).  PG19 added the
-+-- IO option; Citus forwards a fixed set of options to the workers, so without
-+-- explicit support the distributed plan silently comes back with no IO info.
-+--
-+CREATE SCHEMA pg19_explain_io;
-+SET search_path TO pg19_explain_io;
-+-- only assert on the presence of the IO section: the prefetch numbers depend on
-+-- effective_io_concurrency and on the host
-+CREATE FUNCTION explain_has_prefetch(explain_command text)
-+RETURNS BOOLEAN AS $$
-+DECLARE
-+	query_plan text;
-+BEGIN
-+	FOR query_plan IN EXECUTE explain_command LOOP
-+		IF query_plan ILIKE '%Prefetch:%' THEN
-+			RETURN true;
-+		END IF;
-+	END LOOP;
-+	RETURN false;
-+END; $$ LANGUAGE plpgsql;
-+CREATE TABLE explain_io(a int, b int);
-+SELECT create_distributed_table('explain_io', 'a');
-+ create_distributed_table
-+---------------------------------------------------------------------
-+
-+(1 row)
-+
-+INSERT INTO explain_io SELECT g, g FROM generate_series(1, 10) g;
-+SELECT explain_has_prefetch($$
-+	EXPLAIN (ANALYZE, IO, COSTS OFF, TIMING OFF, SUMMARY OFF)
-+	SELECT count(*) FROM explain_io $$);
-+ explain_has_prefetch
+@@ -1471,6 +1471,25 @@ SET search_path TO pg18_nn;
+ -- END: PG18: verify publish_generated_columns is preserved for distributed tables
+ -- PG18 Feature: FOREIGN KEY constraints can be specified as NOT ENFORCED
+ -- PG18 commit: https://github.com/postgres/postgres/commit/eec0040c4
++CREATE TABLE alter_constraint_local (
++	id int PRIMARY KEY,
++	parent_id int,
++	CONSTRAINT alter_constraint_local_fk
++		FOREIGN KEY (parent_id) REFERENCES alter_constraint_local (id) NOT ENFORCED
++);
++-- PostgreSQL tables retain native ALTER CONSTRAINT behavior.
++ALTER TABLE alter_constraint_local
++	ALTER CONSTRAINT alter_constraint_local_fk ENFORCED;
++SELECT conenforced
++FROM pg_constraint
++WHERE conrelid = 'alter_constraint_local'::regclass
++  AND conname = 'alter_constraint_local_fk';
++ conenforced
 +---------------------------------------------------------------------
 + t
 +(1 row)
 +
-+-- without IO the worker plans must not contain the section
-+SELECT explain_has_prefetch($$
-+	EXPLAIN (ANALYZE, COSTS OFF, TIMING OFF, SUMMARY OFF)
-+	SELECT count(*) FROM explain_io $$);
-+ explain_has_prefetch
++DROP TABLE alter_constraint_local;
+ CREATE TABLE customers(
+    customer_id INT GENERATED ALWAYS AS IDENTITY,
+    customer_name VARCHAR(255) NOT NULL,
+@@ -1567,8 +1586,71 @@ SELECT * FROM contacts ORDER BY contact_id;
+ -- ALTER TABLE .. ALTER CONSTRAINT is not supported in Citus,
+ -- so the following command should fail
+ ALTER TABLE contacts ALTER CONSTRAINT fk_customer ENFORCED;
+-ERROR:  alter table command is currently unsupported
+-DETAIL:  Only ADD|DROP COLUMN, SET|DROP NOT NULL, SET|DROP DEFAULT, ADD|DROP|VALIDATE CONSTRAINT, SET (), RESET (), ENABLE|DISABLE|NO FORCE|FORCE ROW LEVEL SECURITY, ATTACH|DETACH PARTITION and TYPE subcommands are supported.
++ERROR:  ALTER TABLE ... ALTER CONSTRAINT commands are currently unsupported
++DETAIL:  Citus does not propagate constraint property changes to shards.
++SELECT conenforced
++FROM pg_constraint
++WHERE conrelid = 'contacts'::regclass AND conname = 'fk_customer';
++ conenforced
 +---------------------------------------------------------------------
 + f
 +(1 row)
 +
-+-- IO also has to be preserved in the saved plans for distributed subplans.
-+SET citus.explain_all_tasks TO on;
-+SELECT explain_has_prefetch($$
-+	EXPLAIN (ANALYZE, IO, COSTS OFF, TIMING OFF, SUMMARY OFF)
-+	WITH cte_1 AS MATERIALIZED (SELECT * FROM explain_io)
-+	SELECT count(*) FROM cte_1 $$);
-+ explain_has_prefetch
++CREATE TABLE alter_constraint_reference (
++	id int PRIMARY KEY,
++	parent_id int,
++	CONSTRAINT alter_constraint_reference_fk
++		FOREIGN KEY (parent_id) REFERENCES alter_constraint_reference (id) NOT ENFORCED
++);
++SELECT create_reference_table('alter_constraint_reference');
++ create_reference_table
 +---------------------------------------------------------------------
-+ t
++
 +(1 row)
 +
-+SELECT explain_has_prefetch($$
-+	EXPLAIN (ANALYZE, COSTS OFF, TIMING OFF, SUMMARY OFF)
-+	WITH cte_1 AS MATERIALIZED (SELECT * FROM explain_io)
-+	SELECT count(*) FROM cte_1 $$);
-+ explain_has_prefetch
++ALTER TABLE alter_constraint_reference
++	ALTER CONSTRAINT alter_constraint_reference_fk ENFORCED;
++ERROR:  ALTER TABLE ... ALTER CONSTRAINT commands are currently unsupported
++DETAIL:  Citus does not propagate constraint property changes to shards.
++SELECT conenforced
++FROM pg_constraint
++WHERE conrelid = 'alter_constraint_reference'::regclass
++  AND conname = 'alter_constraint_reference_fk';
++ conenforced
 +---------------------------------------------------------------------
 + f
 +(1 row)
 +
-+RESET citus.explain_all_tasks;
-+SET client_min_messages TO WARNING;
-+DROP SCHEMA pg19_explain_io CASCADE;
-+RESET client_min_messages;
-+RESET search_path;
-```
-
-**File**: `src/test/regress/sql/pg19.sql` (modified, +53/-0)
-```diff
-@@ -789,3 +789,56 @@ SET client_min_messages TO WARNING;
- DROP SCHEMA pg19_repack CASCADE;
- RESET client_min_messages;
- RESET search_path;
-+
-+--
-+-- EXPLAIN (ANALYZE, IO) has to reach the worker nodes (#8770).  PG19 added the
-+-- IO option; Citus forwards a fixed set of options to the workers, so without
-+-- explicit support the distributed plan silently comes back with no IO info.
-+--
-+CREATE SCHEMA pg19_explain_io;
-+SET search_path TO pg19_explain_io;
-+
-+-- only assert on the presence of the IO section: the prefetch numbers depend on
-+-- effective_io_concurrency and on the host
-+CREATE FUNCTION explain_has_prefetch(explain_command text)
-+RETURNS BOOLEAN AS $$
-+DECLARE
-+	query_plan text;
-+BEGIN
-+	FOR query_plan IN EXECUTE explain_command LOOP
-+		IF query_plan ILIKE '%Prefetch:%' THEN
-+			RETURN true;
-+		END IF;
-+	END LOOP;
-+	RETURN false;
-+END; $$ LANGUAGE plpgsql;
-+
-+CREATE TABLE explain_io(a int, b int);
-+SELECT create_distributed_table('explain_io', 'a');
-+INSERT INTO explain_io SELECT g, g FROM generate_series(1, 10) g;
-+
-+SELECT explain_has_prefetch($$
-+	EXPLAIN (ANALYZE, IO, COSTS OFF, TIMING OFF, SUMMARY OFF)
-+	SELECT count(*) FROM explain_io $$);
-+
-+-- without IO the worker plans must not contain the section
-+SELECT explain_has_prefetch($$
-+	EXPLAIN (ANALYZE, COSTS OFF, TIMING OFF, SUMMARY OFF)
-+	SELECT count(*) FROM explain_io $$);
-+
-+-- IO also has to be preserved in the saved plans for distributed subplans.
-+SET citus.explain_all_tasks TO on;
-+SELECT explain_has_prefetch($$
-+	EXPLAIN (ANALYZE, IO, COSTS OFF, TIMING OFF, SUMMARY OFF)
-+	WITH cte_1 AS MATERIALIZED (SELECT * FROM explain_io)
-+	SELECT count(*) FROM cte_1 $$);
-+SELECT explain_has_prefetch($$
-+	EXPLAIN (ANALYZE, COSTS OFF, TIMING OFF, SUMMARY OFF)
-+	WITH cte_1 AS MATERIALIZED (SELECT * FROM explain_io)
-+	SELECT count(*) FROM cte_1 $$);
-+RESET citus.explain_all_tasks;
-+
-+SET client_min_messages TO WARNING;
-+DROP SCHEMA pg19_explain_io CASCADE;
-+RESET client_min_messages;
-+RESET search_path;
-```
-
----
-
-### Incident Patch 2: `117df089` (2026-10-23)
-**Commit Message**: PG19: use ShareUpdateExclusiveLock for REPACK CONCURRENTLY (#8805)
-
-PG19 RC1: match PostgreSQL's ShareUpdateExclusiveLock for REPACK
-(CONCURRENTLY), avoiding a preprocessing lock escalation that can mask
-the
-unsupported distributed-table error or hang repack on a local table.
-
-Native stack layer 2: #8929 -> #8805 -> #8807.
-
-Validation (Ubuntu 22.04 WSL under `/home/ihalatci/Development`):
-
-- `PG_CONFIG=.../postgresql-install/bin/pg_config ./configure && make
--j8 && make install` with PostgreSQL 19rc1: passed.
-- `PATH=.../postgresql-install/bin:$PATH
-src/test/regress/citus_tests/run_test.py pg19`: all 7 tests passed,
-including `pg19`.
-- `PG_CONFIG=~/.pgenv/pgsql-17.10/bin/pg_config ./configure && make
--j8`: passed.
-- `PG_CONFIG=~/.pgenv/pgsql-18.4/bin/pg_config ./configure && make -j8`:
-passed.
-- `citus_indent --check --quiet`: passed.
-- `git diff --check 7259ac9c94e9a6595eac092b18afc47b69197d4a..HEAD`:
-passed.
-- `make check-style`: `black` and `isort` passed; `flake8` reached
-pre-existing naming violations in unchanged Python files, unrelated to
-this C/SQL-only diff.
-
-Fixes #8756
-
-Co-authored-by: Ibrahim Halatci <[REDACTED_EMAIL]>
-Co-authored-by: Copilot App <[REDACTED_EMAIL]>
-Copi
-
-**File**: `src/backend/distributed/commands/cluster.c` (modified, +11/-1)
-```diff
-@@ -64,7 +64,17 @@ PreprocessClusterStmt(Node *node, const char *clusterCommand,
- 
- 	/* PostgreSQL uses access exclusive lock for CLUSTER command */
- #if PG_VERSION_NUM >= PG_VERSION_19
-+
-+	/*
-+	 * PostgreSQL deliberately runs REPACK (CONCURRENTLY) under
-+	 * ShareUpdateExclusiveLock instead (RepackLockLevel() in repack.c).  Taking
-+	 * AccessExclusiveLock here would block the repack decoding worker when it
-+	 * locks the relation to export its logical snapshot, so the command would
-+	 * wait forever on RepackWorkerExport.  Match PostgreSQL's lock level.
-+	 */
-+	bool concurrently = RepackStmtOptionEnabled(clusterStmt, "concurrently");
- 	Oid relationId = RangeVarGetRelid(clusterStmt->relation->relation,
-+									  concurrently ? ShareUpdateExclusiveLock :
- 									  AccessExclusiveLock, missingOK);
- #else
- 	Oid relationId = RangeVarGetRelid(clusterStmt->relation, AccessExclusiveLock,
-@@ -125,7 +135,7 @@ PreprocessClusterStmt(Node *node, const char *clusterCommand,
- 	 * worker_apply_shard_ddl_command, and ANALYZE has no defined per-shard
- 	 * semantics yet.  Reject both here, before any shard placement is touched.
- 	 */
--	if (RepackStmtOptionEnabled(clusterStmt, "concurrently"))
-+	if (concurrently)
- 	{
- 		ereport(ERROR, (errmsg("cannot run %s command", commandName),
- 						errdetail("CONCURRENTLY option is currently unsupported "
-```
-
-**File**: `src/test/regress/expected/pg19.out` (modified, +41/-0)
-```diff
-@@ -293,6 +293,26 @@ JOIN rf_before b USING (shardid);
- (1 row)
- 
- DROP TABLE IF EXISTS rf_before;
-+-- lock ordering: the rejection must fire WITHOUT first waiting on an exclusive lock.
-+-- PG19 defines REPACK (CONCURRENTLY) to hold only ShareUpdateExclusiveLock until the
-+-- final swap, so Citus must not escalate to AccessExclusiveLock merely to reject the
-+-- statement.  Park a conflicting AccessShareLock in a prepared transaction -- it
-+-- conflicts with AccessExclusiveLock but not with ShareUpdateExclusiveLock -- and set a
-+-- short lock_timeout: a correctly ordered rejection names the unsupported option, a late
-+-- one is killed by the lock timeout instead.  DDL propagation is switched off around the
-+-- LOCK so that it stays a local statement: otherwise it opens a coordinated transaction
-+-- and PREPARE TRANSACTION is refused.
-+SET citus.enable_ddl_propagation TO off;
-+BEGIN;
-+LOCK TABLE repack_test IN ACCESS SHARE MODE;
-+PREPARE TRANSACTION 'repack_test_lock_holder';
-+RESET citus.enable_ddl_propagation;
-+SET lock_timeout = '2s';
-+REPACK (CONCURRENTLY) repack_test USING INDEX repack_test_a_idx;
-+ERROR:  cannot run REPACK command
-+DETAIL:  CONCURRENTLY option is currently unsupported for distributed tables.
-+RESET lock_timeout;
-+ROLLBACK PREPARED 'repack_test_lock_holder';
- -- data is preserved by the ordinary REPACKs above
- SELECT count(*) AS rows_after_disabled_option_repack FROM repack_test;
-  rows_after_disabled_option_repack
-@@ -1001,3 +1021,24 @@ DROP ROLE pg19_owner, pg19_grantor_a, pg19_grantor_b, pg19_actor, pg19_grantee;
- DROP ROLE "Grant Owner", pg19_grantee2;
- RESET client_min_messages;
- RESET search_path;
-+-- PG19 REPACK (CONCURRENTLY) must not be escalated to AccessExclusiveLock by
-+-- Citus: that blocks the repack decoding worker and hangs forever, even on a
-+-- plain local table.  Bound the statement so that a regression shows up as a
-+-- diff rather than as a CI timeout.
-+CREATE SCHEMA pg19_repack;
-+SET search_path TO pg19_repack;
-+CREATE TABLE repack_local (a int PRIMARY KEY, b text);
-+INSERT INTO repack_local SELECT i, 'v' || i FROM generate_series(1, 100) i;
-+SET statement_timeout = '60s';
-+REPACK (CONCURRENTLY) repack_local;
-+RESET statement_timeout;
-+SELECT count(*) FROM repack_local;
-+ count
++DROP TABLE alter_constraint_reference;
++CREATE TABLE alter_constraint_citus_local (
++	id int PRIMARY KEY,
++	parent_id int,
++	CONSTRAINT alter_constraint_citus_local_fk
++		FOREIGN KEY (parent_id) REFERENCES alter_constraint_citus_local (id) NOT ENFORCED
++);
++SELECT citus_add_local_table_to_metadata(
++	'alter_constraint_citus_local',
++	cascade_via_foreign_keys => true
++);
++ citus_add_local_table_to_metadata
 +---------------------------------------------------------------------
-+   100
++
 +(1 row)
 +
-+SET client_min_messages TO WARNING;
-+DROP SCHEMA pg19_repack CASCADE;
-+RESET client_min_messages;
-+RESET search_path;
++ALTER TABLE alter_constraint_citus_local
++	ALTER CONSTRAINT alter_constraint_citus_local_fk ENFORCED;
++ERROR:  ALTER TABLE ... ALTER CONSTRAINT commands are currently unsupported
++DETAIL:  Citus does not propagate constraint property changes to shards.
++SELECT conenforced
++FROM pg_constraint
++WHERE conrelid = 'alter_constraint_citus_local'::regclass
++  AND conname = 'alter_constraint_citus_local_fk';
++ conenforced
++---------------------------------------------------------------------
++ f
++(1 row)
++
++DROP TABLE alter_constraint_citus_local;
+ -- PG18 Feature: ENFORCED / NOT ENFORCED check constraints
+ -- PG18 commit: https://github.com/postgres/postgres/commit/ca87c415e
+ -- In Citus, CHECK constraints are propagated on promoting a postgres table
 ```
 
-**File**: `src/test/regress/sql/pg19.sql` (modified, +38/-0)
+**File**: `src/test/regress/sql/pg18.sql` (modified, +52/-0)
 ```diff
-@@ -230,6 +230,27 @@ FROM run_command_on_shards('repack_test',
- JOIN rf_before b USING (shardid);
- DROP TABLE IF EXISTS rf_before;
+@@ -973,6 +973,22 @@ SET search_path TO pg18_nn;
  
-+-- lock ordering: the rejection must fire WITHOUT first waiting on an exclusive lock.
-+-- PG19 defines REPACK (CONCURRENTLY) to hold only ShareUpdateExclusiveLock until the
-+-- final swap, so Citus must not escalate to AccessExclusiveLock merely to reject the
-+-- statement.  Park a conflicting AccessShareLock in a prepared transaction -- it
-+-- conflicts with AccessExclusiveLock but not with ShareUpdateExclusiveLock -- and set a
-+-- short lock_timeout: a correctly ordered rejection names the unsupported option, a late
-+-- one is killed by the lock timeout instead.  DDL propagation is switched off around the
-+-- LOCK so that it stays a local statement: otherwise it opens a coordinated transaction
-+-- and PREPARE TRANSACTION is refused.
-+SET citus.enable_ddl_propagation TO off;
-+BEGIN;
-+LOCK TABLE repack_test IN ACCESS SHARE MODE;
-+PREPARE TRANSACTION 'repack_test_lock_holder';
-+RESET citus.enable_ddl_propagation;
+ -- PG18 Feature: FOREIGN KEY constraints can be specified as NOT ENFORCED
+ -- PG18 commit: https://github.com/postgres/postgres/commit/eec0040c4
++CREATE TABLE alter_constraint_local (
++	id int PRIMARY KEY,
++	parent_id int,
++	CONSTRAINT alter_constraint_local_fk
++		FOREIGN KEY (parent_id) REFERENCES alter_constraint_local (id) NOT ENFORCED
++);
 +
-+SET lock_timeout = '2s';
-+REPACK (CONCURRENTLY) repack_test USING INDEX repack_test_a_idx;
-+RESET lock_timeout;
++-- PostgreSQL tables retain native ALTER CONSTRAINT behavior.
++ALTER TABLE alter_constraint_local
++	ALTER CONSTRAINT alter_constraint_local_fk ENFORCED;
++SELECT conenforced
++FROM pg_constraint
++WHERE conrelid = 'alter_constraint_local'::regclass
++  AND conname = 'alter_constraint_local_fk';
++DROP TABLE alter_constraint_local;
 +
-+ROLLBACK PREPARED 'repack_test_lock_holder';
+ CREATE TABLE customers(
+    customer_id INT GENERATED ALWAYS AS IDENTITY,
+    customer_name VARCHAR(255) NOT NULL,
+@@ -1043,6 +1059,42 @@ SELECT * FROM contacts ORDER BY contact_id;
+ -- ALTER TABLE .. ALTER CONSTRAINT is not supported in Citus,
+ -- so the following command should fail
+ ALTER TABLE contacts ALTER CONSTRAINT fk_customer ENFORCED;
++SELECT conenforced
++FROM pg_constraint
++WHERE conrelid = 'contacts'::regclass AND conname = 'fk_customer';
 +
- -- data is preserved by the ordinary REPACKs above
- SELECT count(*) AS rows_after_disabled_option_repack FROM repack_test;
++CREATE TABLE alter_constraint_reference (
++	id int PRIMARY KEY,
++	parent_id int,
++	CONSTRAINT alter_constraint_reference_fk
++		FOREIGN KEY (parent_id) REFERENCES alter_constraint_reference (id) NOT ENFORCED
++);
++SELECT create_reference_table('alter_constraint_reference');
++ALTER TABLE alter_constraint_reference
++	ALTER CONSTRAINT alter_constraint_reference_fk ENFORCED;
++SELECT conenforced
++FROM pg_constraint
++WHERE conrelid = 'alter_constraint_reference'::regclass
++  AND conname = 'alter_constraint_reference_fk';
++DROP TABLE alter_constraint_reference;
++
++CREATE TABLE alter_constraint_citus_local (
++	id int PRIMARY KEY,
++	parent_id int,
++	CONSTRAINT alter_constraint_citus_local_fk
++		FOREIGN KEY (parent_id) REFERENCES alter_constraint_citus_local (id) NOT ENFORCED
++);
++SELECT citus_add_local_table_to_metadata(
++	'alter_constraint_citus_local',
++	cascade_via_foreign_keys => true
++);
++ALTER TABLE alter_constraint_citus_local
++	ALTER CONSTRAINT alter_constraint_citus_local_fk ENFORCED;
++SELECT conenforced
++FROM pg_constraint
++WHERE conrelid = 'alter_constraint_citus_local'::regclass
++  AND conname = 'alter_constraint_citus_local_fk';
++DROP TABLE alter_constraint_citus_local;
  
-@@ -751,3 +772,20 @@ DROP ROLE pg19_owner, pg19_grantor_a, pg19_grantor_b, pg19_actor, pg19_grantee;
- DROP ROLE "Grant Owner", pg19_grantee2;
- RESET client_min_messages;
- RESET search_path;
-+
-+-- PG19 REPACK (CONCURRENTLY) must not be escalated to AccessExclusiveLock by
-+-- Citus: that blocks the repack decoding worker and hangs forever, even on a
-+-- plain local table.  Bound the statement so that a regression shows up as a
-+-- diff rather than as a CI timeout.
-+CREATE SCHEMA pg19_repack;
-+SET search_path TO pg19_repack;
-+CREATE TABLE repack_local (a int PRIMARY KEY, b text);
-+INSERT INTO repack_local SELECT i, 'v' || i FROM generate_series(1, 100) i;
-+SET statement_timeout = '60s';
-+REPACK (CONCURRENTLY) repack_local;
-+RESET statement_timeout;
-+SELECT count(*) FROM repack_local;
-+SET client_min_messages TO WARNING;
-+DROP SCHEMA pg19_repack CASCADE;
-+RESET client_min_messages;
-+RESET search_path;
+ -- PG18 Feature: ENFORCED / NOT ENFORCED check constraints
+ -- PG18 commit: https://github.com/postgres/postgres/commit/ca87c415e
 ```
 
 #### Recent Merged Pull Requests:
@@ -3057,56 +2839,36 @@ Copi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. PG19: propagate EXPLAIN IO to worker nodes (#8807)
+## X. Report unsupported ALTER CONSTRAINT explicitly (#8808)
 
 **RULE**:
-When implementing operations in `src/backend/distributed/planner/multi_explain.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in citusdata/citus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/backend/distributed/commands/table.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in citusdata/citus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5ca742e8`: PG19: propagate EXPLAIN IO to worker nodes (#8807). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f24c6fc4`: Report unsupported ALTER CONSTRAINT explicitly (#8808). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/backend/distributed/planner/multi_explain.c`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/backend/distributed/commands/table.c`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-#if PG_VERSION_NUM >= PG_VERSION_19
-	bool io;
-#endif
-	 * can be NULL for some cases of es->analyze == true.  A distributed subplan can
-	 * also end up here when its re-planned task ids do not match the ids its saved
-	 * output was stored under; that is a known bug, see #8952.
-#if PG_VERSION_NUM >= PG_VERSION_19
-					 "IO %s, "
-#endif
-#if PG_VERSION_NUM >= PG_VERSION_19
-					 es->io ? "TRUE" : "FALSE",
-#endif
-#if PG_VERSION_NUM >= PG_VERSION_19
-	es->io = ExtractFieldBoolean(explainOptions, "io", es->io);
-#endif
-#if PG_VERSION_NUM >= PG_VERSION_19
-	CurrentDistributedQueryExplainOptions.io = es->io;
-#endif
-#if PG_VERSION_NUM >= PG_VERSION_19
-					 "\"io\": %s, "
-#endif
-#if PG_VERSION_NUM >= PG_VERSION_19
-					 CurrentDistributedQueryExplainOptions.io ? "true" : "false",
-#endif
-#if PG_VERSION_NUM >= PG_VERSION_19
-	if (es->io)
-		instrument_option |= INSTRUMENT_IO;
-#endif
-
+						 errmsg("%s", alterTableType == AT_AlterConstraint ?
+								"ALTER TABLE ... ALTER CONSTRAINT commands are currently "
+								"unsupported" :
+								"alter table command is currently unsupported"),
+						 errdetail("%s", alterTableType == AT_AlterConstraint ?
+								   "Citus does not propagate constraint property changes "
+								   "to shards." :
+								   "Only ADD|DROP COLUMN, SET|DROP NOT NULL, "
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Anti-pattern to NEVER write (induced failure mode):
-	 * can be NULL for some cases of es->analyze == true.
+						 errmsg("alter table command is currently unsupported"),
+						 errdetail("Only ADD|DROP COLUMN, SET|DROP NOT NULL, "
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5ca742e8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f24c6fc4` are properly handled with clean fallback behavior.

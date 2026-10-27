@@ -5244,3 +5244,8 @@
 | `CYCLE-20261027-HZA3` | `2026-10-27T11:49:33.531Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4017` | Yes (`df447fe4...`) |
 | `CYCLE-20261027-I3YR` | `2026-10-27T11:49:39.603Z` | `FastVideo/FastH3-Omni-Comfy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4718, Rule 4719` | Yes (`355bd5a1...`) |
 | `CYCLE-20261027-I54E` | `2026-10-27T11:49:41.102Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4720` | Yes (`7a95f2d2...`) |
+| `CYCLE-20261027-QE4Z` | `2026-10-27T11:56:06.035Z` | `primer/react` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3483` | Yes (`35d8c706...`) |
+| `CYCLE-20261027-QE8O` | `2026-10-27T11:56:06.168Z` | `smol-rs/smol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4721` | Yes (`c48c8274...`) |
+| `CYCLE-20261027-QFQB` | `2026-10-27T11:56:08.099Z` | `ArchiveBox/ArchiveBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4722` | Yes (`192b8e55...`) |
+| `CYCLE-20261027-QJKB` | `2026-10-27T11:56:13.067Z` | `fission/fission` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4723` | Yes (`3926dd91...`) |
+| `CYCLE-20261027-QNAX` | `2026-10-27T11:56:17.913Z` | `citusdata/citus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4724` | Yes (`8d342f16...`) |

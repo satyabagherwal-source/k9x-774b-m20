@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T11:49:41.057Z",
+  "last_updated": "2026-10-27T11:56:17.856Z",
   "total_verified_learnings": 1103,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6277,8 +6277,8 @@
       "slug": "citusdata-citus",
       "platform": "github",
       "source_url": "https://github.com/citusdata/citus",
-      "source_version": "5ca742e8",
-      "content_hash": "844a7c23aac2f87afeeae978527ed78296f5981b4720ab4488a7b86f12d39cf6",
+      "source_version": "f24c6fc4",
+      "content_hash": "8d342f16db3544a3ab6c5c861af1de8821b68ad306908b9a4be95bae276cd37b",
       "dossier_path": "07_PROJECT_LEARNING/citusdata-citus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/citusdata-citus-learnings.md",
       "promoted_rules": [
@@ -6296,6 +6296,11 @@
           "number": 4021,
           "title": "PG19: propagate EXPLAIN IO to worker nodes (#8807)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4724,
+          "title": "Report unsupported ALTER CONSTRAINT explicitly (#8808)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6303,7 +6308,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T03:45:10.881Z",
+      "verified_at": "2026-10-27T11:56:17.844Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11864,8 +11869,8 @@
       "slug": "fission-fission",
       "platform": "github",
       "source_url": "https://github.com/fission/fission",
-      "source_version": "b983965d",
-      "content_hash": "3e46e18e338815ab4c2329de4de62072d6ab45b1c998b06d3cdd155da43e1e2c",
+      "source_version": "ae2aabf5",
+      "content_hash": "3926dd9198818ba121bb932b931f782728906d87fbfd28e05d1c070674578109",
       "dossier_path": "07_PROJECT_LEARNING/fission-fission-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fission-fission-learnings.md",
       "promoted_rules": [
@@ -11878,6 +11883,11 @@
           "number": 3691,
           "title": "deps): bump the github-actions group with 5 updates (#3743)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4723,
+          "title": "Dependency sweep 2026-10-25: go 1.27.3 (GO-2026-6809), controller-tools 0.23, mi",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11885,7 +11895,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T18:24:16.042Z",
+      "verified_at": "2026-10-27T11:56:12.997Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41835,8 +41845,8 @@
       "slug": "primer-react",
       "platform": "github",
       "source_url": "https://github.com/primer/react",
-      "source_version": "190fafd9",
-      "content_hash": "36721dc20052739b00d07c3cbd20e661f320b735eec5acdba64989b1c975f237",
+      "source_version": "f733dcb2",
+      "content_hash": "35d8c706aad5c35ad416fa27d93275356dbfa0e1f4abc12e6772914622a733bc",
       "dossier_path": "07_PROJECT_LEARNING/primer-react-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/primer-react-learnings.md",
       "promoted_rules": [
@@ -41891,7 +41901,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T21:08:40.928Z",
+      "verified_at": "2026-10-27T11:56:05.963Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46699,14 +46709,19 @@
       "slug": "smol-rs-smol",
       "platform": "github",
       "source_url": "https://github.com/smol-rs/smol",
-      "source_version": "4892eb0d",
-      "content_hash": "6840503ada1417ca224c2953e63d934031d703b6e80d1c8666582583e75ed7ed",
+      "source_version": "41579301",
+      "content_hash": "c48c82740f826af4a23471b1da2830775f470b5bef80dbe89ab50732b2a8be3c",
       "dossier_path": "07_PROJECT_LEARNING/smol-rs-smol-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/smol-rs-smol-learnings.md",
       "promoted_rules": [
         {
           "number": 2054,
           "title": "ci: Use reusable workflows for fmt and security_audit",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4721,
+          "title": "Update scraper requirement from 0.27 to 0.29 (#390)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -46715,7 +46730,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:07:41.635Z",
+      "verified_at": "2026-10-27T11:56:06.100Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65783,8 +65798,8 @@
       "slug": "archivebox-archivebox",
       "platform": "github",
       "source_url": "https://github.com/ArchiveBox/ArchiveBox",
-      "source_version": "c55089ea",
-      "content_hash": "4fb5f49350057dfd736c351f85bcdc65d8eb3fc2ef639795911b3ddbae8c7db3",
+      "source_version": "4ab614bc",
+      "content_hash": "192b8e55c828a258cf185160ff8a35d7855a187c74feb2c8ed68a4c5be5d4ab8",
       "dossier_path": "07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
       "promoted_rules": [
@@ -65798,6 +65813,11 @@
           "number": 3690,
           "title": "isolate live screencast previews by snapshot",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4722,
+          "title": "Include actual replay redirect in routing regression failures",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -65805,7 +65825,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T18:24:11.921Z",
+      "verified_at": "2026-10-27T11:56:08.030Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -112691,13 +112711,13 @@
       "rule_number": 3483,
       "title": "react-compiler): enable useSafeTimeout, token remove buttons, and UnderlinePanel",
       "source_url": "https://github.com/primer/react",
-      "source_version": "190fafd9",
+      "source_version": "f733dcb2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-25T21:08:40.928Z"
+      "verified_at": "2026-10-27T11:56:05.964Z"
     },
     "rule-3484": {
       "learning_id": "rule-3484",
@@ -131642,6 +131662,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T11:49:41.047Z"
+    },
+    "rule-4721": {
+      "learning_id": "rule-4721",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4721,
+      "title": "Update scraper requirement from 0.27 to 0.29 (#390)",
+      "source_url": "https://github.com/smol-rs/smol",
+      "source_version": "41579301",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:56:06.100Z"
+    },
+    "rule-4722": {
+      "learning_id": "rule-4722",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4722,
+      "title": "Include actual replay redirect in routing regression failures",
+      "source_url": "https://github.com/ArchiveBox/ArchiveBox",
+      "source_version": "4ab614bc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:56:08.030Z"
+    },
+    "rule-4723": {
+      "learning_id": "rule-4723",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4723,
+      "title": "Dependency sweep 2026-10-25: go 1.27.3 (GO-2026-6809), controller-tools 0.23, mi",
+      "source_url": "https://github.com/fission/fission",
+      "source_version": "ae2aabf5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:56:12.997Z"
+    },
+    "rule-4724": {
+      "learning_id": "rule-4724",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4724,
+      "title": "Report unsupported ALTER CONSTRAINT explicitly (#8808)",
+      "source_url": "https://github.com/citusdata/citus",
+      "source_version": "f24c6fc4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:56:17.844Z"
     }
   },
   "aliases": {

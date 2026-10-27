@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/primer-react-learnings.md`  
 > **Source**: github ([https://github.com/primer/react](https://github.com/primer/react))  
-> **Source Version**: `190fafd9`  
+> **Source Version**: `f733dcb2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T21:08:40.720Z  
+> **Timestamp**: 2026-10-27T11:56:05.731Z  
 > **Learning ID**: `learn-github-primer-react`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/primer-react-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/primer/react](https://github.com/primer/react))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T21:08:40.190Z  
+> **Harvest Timestamp**: 2026-10-27T11:56:04.329Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An implementation of GitHub's Primer Design System using React
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3923 stars
+- **Stars / Engagement**: 3924 stars
 
 ---
 
@@ -787,11 +787,11 @@ export type {StateLabelProps} from './StateLabel'
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #8607** (2026-10-26): **SelectPanel synchronizes selection and loading state from effects**
+  *Symptoms*: ## Description  SelectPanel synchronizes intermediate selection, loading state, and selected-item ordering from passive effects. These effects can call multiple state setters during commit, producing cascading follow-up renders on pages that mount closed or data-backed SelectPanels.  Expected behavior: SelectPanel should preserve controlled/uncontrolled selection and loading semantics without avoidable commit-spawned updates.  ## Steps to reproduce  1. Render closed SelectPanels with empty and preloaded item arrays in a React 19 profiling build. 2. Change `items`, `open`, and controlled selection values. 3. Record commits in Chrome DevTools. 4. Observe state publication from the selection/loading/sort synchronization effects.  ## Version  `@primer/react` 38.42.0  ## Browser  Chrome  ## Acceptance criteria  - Preserve loading announcements and selected-item ordering. - Preserve modal intermediate selection behavior. - Add tests for mount, open/close, item arrival, and controlled selection changes. - Fix this in Primer React rather than requiring a downstream patch. 
+
 - **Issue #8531** (2026-10-14): **MCP constructs incorrect component documentation URLs**
   *Symptoms*: ### Description  `@primer/mcp` constructs incorrect documentation URLs. ActionBar usage requests return the Primer homepage instead of guidance; ConfirmationDialog also uses the wrong slug.  ### Steps to reproduce  1. Call `get_component_usage_guidelines` with `{"name":"ActionBar"}`: it requests `actionbar/guidelines` instead of `action-bar/guidelines`. 2. Call `get_component` with `{"name":"ConfirmationDialog"}`: it requests `confirmationdialog/llms.txt` instead of `confirmation-dialog/llms.txt`.  Expected: retrieve the component's published documentation. ConfirmationDialog's usage and batch requests are affected too.  ### Version  `@primer/mcp` 1.1.0; React catalogue 38.40.1.  Fix: primer/react#8530. 
-
-- **Issue #8487** (2026-10-14): **FormControl renders duplicate non-choice inputs when layout="horizontal"**
-  *Symptoms*: ### Description  FormControl's horizontal layout includes the same non-choice input twice in its render output.  The component finds the input in childrenWithoutSlots and renders a cloned version of it. However, the subsequent filter only excludes Checkbox and Radio, leaving non-choice inputs such as TextInput, Textarea, and Select in the remaining children. The original input is therefore rendered alongside the clone.  Expected behavior: A FormControl containing one input should render exactly one input, regardless of whether its layout is horizontal or vertical.  Actual behavior indicated by the source: With layout="horizontal" and a direct TextInput child, both the cloned TextInput and the original TextInput are included in the render output.  Relevant code in packages/react/src/FormControl/FormControl.tsx: - Lines 71–76: find the input without removing it from childrenWithoutSlots. - Lines 138–154: render the cloned input. - Lines 155–159: render remaining children, excluding only Checkbox and Radio.  The vertical branch excludes all expectedInputComponents and does not have this duplication.  This report is based on source inspection of commit 8c0b708fc. Browser reproduction has not yet been performed.  ### Steps to reproduce  1. Render the following example using the affected source checkout:  ```tsx import {BaseStyles, FormControl, TextInput, ThemeProvider} from '@primer/react'  export default function App() {   return (     <ThemeProvider>       <BaseStyles>         <
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -951,7 +951,316 @@ Copilot-Session: e632d4e3-54d2-4423-9888-8e37b00494a3
 
 ---
 
-### Incident Patch 2: `fb6001c8` (2026-10-20)
+### Incident Patch 2: `f733dcb2` (2026-10-26)
+**Commit Message**: SelectPanel: Improve rendering performance (#8613)
+
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+
+**File**: `.changeset/select-panel-rendering.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'@primer/react': patch
++---
++
++SelectPanel: Improve rendering performance when opening and updating items or selection
+```
+
+**File**: `packages/react/src/SelectPanel/SelectPanel.test.tsx` (modified, +229/-0)
+```diff
+@@ -14,6 +14,7 @@ import classes from './SelectPanel.test.module.css'
+ import {implementsClassName} from '../utils/testing'
+ import {getAnchoredPosition} from '@primer/behaviors'
+ import type {AnchorPosition} from '@primer/behaviors'
++import {createRenderCounter} from '../utils/testing/profiler'
+ 
+ // Mock getAnchoredPosition to verify displayInViewport is forwarded
+ vi.mock('@primer/behaviors', async () => {
+@@ -100,6 +101,234 @@ function BasicSelectPanel(passthroughProps: Record<string, unknown>) {
+ 
+ globalThis.Element.prototype.scrollTo = vi.fn()
+ 
++describe('SelectPanel state synchronization', () => {
++  const synchronizedItems: ItemInput[] = [
++    {id: 'one', text: 'item one'},
++    {id: 'two', text: 'item two'},
++    {id: 'three', text: 'item three'},
++  ]
++  const selectedItems = [synchronizedItems[1]]
++
++  function MultiSelectPanel({
++    items: panelItems,
++    loading,
++    onOpenChange = () => {},
++    open,
++  }: {
++    items: ItemInput[]
++    loading?: boolean
++    onOpenChange?: SelectPanelProps['onOpenChange']
++    open: boolean
++  }) {
++    return (
++      <SelectPanel
++        title="test title"
++        items={panelItems}
++        placeholder="Select items"
++        placeholderText="Filter items"
++        selected={selectedItems}
++        onSelectedChange={() => {}}
++        onFilterChange={() => {}}
++        loading={loading}
++        open={open}
++        onOpenChange={onOpenChange}
++      />
++    )
++  }
++
++  function SingleSelectModal({
++    onSelectedChange = () => {},
++    open,
++    selected,
++  }: {
++    onSelectedChange?: (selected: ItemInput | undefined) => void
++    open: boolean
++    selected: ItemInput | undefined
++  }) {
++    return (
++      <SelectPanel
++        title="test title"
++        items={synchronizedItems}
++        placeholder="Select an item"
++        placeholderText="Filter items"
++        selected={selected}
++        onSelectedChange={onSelectedChange}
++        onFilterChange={() => {}}
++        open={open}
++        onOpenChange={() => {}}
++        variant="modal"
++        onCancel={() => {}}
++      />
++    )
++  }
++
++  it('does not commit a follow-up update when mounted closed with preloaded items', async () => {
++    const [Wrap, counter] = createRenderCounter()
++
++    render(
++      <Wrap>
++        <MultiSelectPanel items={synchronizedItems} open={false} />
++      </Wrap>,
++    )
++    await act(async () => {})
++
++    expect(counter.mountCount).toBe(1)
++    expect(counter.updateCount).toBe(0)
++  })
++
++  it('orders the selected item in the opening commit and focuses the filter input', async () => {
++    const committedOrders: string[][] = []
++    const recordOrder = () => {
++      const order = Array.from(document.querySelectorAll<HTMLElement>('[role="option"]'), option =>
++        option.textContent.trim(),
++      )
++
++      if (order.length > 0) {
++        committedOrders.push(order)
++      }
++    }
++    const renderPanel = (open: boolean) => (
++      <React.Profiler id="select-panel-open" onRender={recordOrder}>
++        <FeatureFlags flags={{primer_react_select_panel_order_selected_at_top: true}}>
++          <MultiSelectPanel items={synchronizedItems} open={open} />
++        </FeatureFlags>
++      </React.Profiler>
++    )
++    const {rerender} = render(renderPanel(false))
++
++    await act(async () => {})
++    committedOrders.length = 0
++    rerender(renderPanel(true))
++    await act(async () => {})
++
++    expect(committedOrders.length).toBeGreaterThan(0)
++    expect(committedOrders.every(order => order[0] === 'item two')).toBe(true)
++    expect(screen.getByLabelText('Filter items')).toHaveFocus()
++  })
++
++  it('commits item arrival once while closed', async () => {
++    const [Wrap, counter] = createRenderCounter()
++    const renderPanel = (panelItems: ItemInput[]) => (
++      <Wrap>
++        <MultiSelectPanel items={panelItems} open={false} />
++      </Wrap>
++    )
++    const {rerender} = render(renderPanel([]))
++
++    await act(async () => {})
++    counter.reset()
++    rerender(renderPanel(synchronizedItems))
++    await act(async () => {})
++
++    expect(counter.updateCount).toBe(1)
++    expect(counter.nestedUpdateCount).toBe(0)
++  })
++
++  it('orders arriving items without replacing or blurring the filter input', async () => {
++    const committedOrders: string[][] = []
++    const recordOrder = () => {
++      const order = Array.from(document.querySelectorAll<HTMLElement>('[role="option"]'), option =>
++        option.textContent.trim(),
++      )
++
++      if (order.length > 0) {
++        committedOrders.push(order)
++      }
++    }
++    const renderPanel = (panelItems: ItemInput[]) => (
++      <React.Profiler id="select-panel-items" onRender={recordOrder}>
++        <FeatureFlags flags={{primer_react_select_panel_order_selected_at_top: true}}>
++          <MultiSelectPanel items={panelItems} loading={false} open />
++        </FeatureFlags>
++      </React.Profiler>
++    )
++    const {rerender} = render(renderPanel([]))
++
++    const input = await screen.findByLabe
+```
+
+**File**: `packages/react/src/SelectPanel/SelectPanel.tsx` (modified, +108/-64)
+```diff
+@@ -162,6 +162,16 @@ const doesItemsIncludeItem = (items: ItemInput[], item: ItemInput) => {
+   return items.some(i => areItemsEqual(i, item))
+ }
+ 
++const getSelectedItems = (
++  selected: SelectPanelSingleSelection['selected'] | SelectPanelMultiSelection['selected'],
++): ItemInput[] => {
++  if (isMultiSelectVariant(selected)) {
++    return selected
++  }
++
++  return selected ? [selected] : []
++}
++
+ const defaultRenderAnchor: NonNullable<SelectPanelProps['renderAnchor']> = props => {
+   const {children, ...rest} = props
+   return (
+@@ -212,18 +222,65 @@ function Panel({
+ }: SelectPanelProps): JSX.Element {
+   const titleId = useId()
+   const subtitleId = useId()
+-  const [dataLoadedOnce, setDataLoadedOnce] = useState(false)
+-  const [isLoading, setIsLoading] = useState(false)
+   const [filterValue, setInternalFilterValue] = useProvidedStateOrCreate(externalFilterValue, undefined, '')
+   const {safeSetTimeout, safeClearTimeout} = useSafeTimeout()
+   const loadingDelayTimeoutId = useRef<number | null>(null)
+   const loadingManagedInternally = loading === undefined
+   const loadingManagedExternally = !loadingManagedInternally
++  const [loadingState, setLoadingState] = useState(() => ({
++    dataLoadedOnce: items.length > 0,
++    isLoading: loadingManagedInternally && open && items.length === 0,
++    items,
++    open,
++  }))
++
++  if (loadingState.items !== items || loadingState.open !== open) {
++    let {dataLoadedOnce, isLoading} = loadingState
++
++    if (loadingState.items !== items) {
++      if (loadingManagedExternally) {
++        dataLoadedOnce ||= items.length > 0
++      } else if (isLoading || items.length > 0) {
++        dataLoadedOnce = true
++        isLoading = false
++      }
++    }
++
++    if (loadingState.open !== open && open && loadingManagedInternally && !dataLoadedOnce && items.length === 0) {
++      isLoading = true
++    }
++
++    setLoadingState({
++      dataLoadedOnce,
++      isLoading,
++      items,
++      open,
++    })
++  }
++
++  const {dataLoadedOnce, isLoading} = loadingState
+   const [inputRef, setInputRef] = React.useState<React.RefObject<HTMLInputElement> | null>(null)
+   const [listContainerElement, setListContainerElement] = useState<HTMLElement | null>(null)
+   const [needsNoItemsAnnouncement, setNeedsNoItemsAnnouncement] = useState<boolean>(false)
+   const isNarrowScreenSize = useResponsiveValue({narrow: true, regular: false, wide: false}, false)
+-  const [selectedOnSort, setSelectedOnSort] = useState<ItemInput[]>([])
++  const itemsAreEmpty = items.length === 0
++  const [sortState, setSortState] = useState(() => ({
++    itemsWereEmpty: itemsAreEmpty,
++    open,
++    selected: getSelectedItems(selected),
++  }))
++
++  if (sortState.open !== open || sortState.itemsWereEmpty !== itemsAreEmpty) {
++    const shouldResetSelection = sortState.open !== open || (sortState.itemsWereEmpty && !itemsAreEmpty)
++
++    setSortState({
++      itemsWereEmpty: itemsAreEmpty,
++      open,
++      selected: shouldResetSelection ? getSelectedItems(selected) : sortState.selected,
++    })
++  }
++
++  const selectedOnSort = sortState.selected
+   const initialHeightRef = useRef(0)
+   const initialScaleRef = useRef(1)
+   const noticeRef = useRef<HTMLDivElement>(null)
+@@ -242,15 +299,28 @@ function Panel({
+   // Single select modals work differently, they have an intermediate state where the user has selected an item but
+   // has not yet confirmed the selection. This is the only time the user can cancel the selection.
+   const isSingleSelectModal = variant === 'modal' && !isMultiSelectVariant(selected)
+-  const [intermediateSelected, setIntermediateSelected] = useState<ItemInput | undefined>(
+-    isSingleSelectModal ? selected : undefined,
+-  )
++  const selectedForSingleSelectModal = isSingleSelectModal && !isMultiSelectVariant(selected) ? selected : undefined
++  const [intermediateSelectionState, setIntermediateSelectionState] = useState(() => ({
++    isSingleSelectModal,
++    open,
++    selected,
++    value: selectedForSingleSelectModal,
++  }))
++
++  if (
++    intermediateSelectionState.isSingleSelectModal !== isSingleSelectModal ||
++    intermediateSelectionState.open !== open ||
++    intermediateSelectionState.selected !== selected
++  ) {
++    setIntermediateSelectionState({
++      isSingleSelectModal,
++      open,
++      selected,
++      value: selectedForSingleSelectModal,
++    })
++  }
+ 
+-  // Reset the intermediate selected item when the panel is open/closed
+-  useEffect(() => {
+-    // eslint-disable-next-line react-hooks/set-state-in-effect, react-you-might-not-need-an-effect/no-derived-state
+-    setIntermediateSelected(isSingleSelectModal ? selected : undefined)
+-  }, [isSingleSelectModal, open, selected])
++  const intermediateSelected = intermediateSelectionState.value
+ 
+   const onListContainerRefChanged: FilteredActionListProps['onListContainerRefChanged'] = useCallback(
+     (node: HTMLElement | null) => {
+@@ -270,13 +340,14 @@ function Panel({
+   )
+ 
+   const resetSort = useCallback(() => {
+-    if (is
+```
+
+---
+
+### Incident Patch 3: `fb6001c8` (2026-10-20)
 **Commit Message**: docs: fix ADR 017 cross-reference and typos in contributor docs (#8568)
 
 **File**: `contributor-docs/CONTRIBUTING.md` (modified, +1/-1)
@@ -1052,113 +1361,13 @@ Copilot-Session: e632d4e3-54d2-4423-9888-8e37b00494a3
  
 ```
 
----
-
-### Incident Patch 3: `e0524db5` (2026-10-20)
-**Commit Message**: fix(mcp): use component slug in primer.style URLs (#8582)
-
-Co-authored-by: Josh Black <[REDACTED_EMAIL]>
-
-**File**: `.changeset/tired-bobcats-tan.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"@primer/mcp": patch
-+---
-+
-+Update component MCP tools to match on the slug of components for HTTP requests to primer.style
-```
-
-**File**: `packages/mcp/src/server.test.ts` (modified, +50/-0)
-```diff
-@@ -482,6 +482,56 @@ describe('MCP server', () => {
-     },
-   )
- 
-+  it.each([
-+    {
-+      tool: 'get_component_examples',
-+      expectedPath: '/product/components/text-input',
-+      rawIdPath: '/product/components/text_input',
-+    },
-+    {
-+      tool: 'get_component_accessibility_guidelines',
-+      expectedPath: '/product/components/text-input/accessibility',
-+      rawIdPath: '/product/components/text_input/accessibility',
-+    },
-+  ] as const)('$tool uses the TextInput slug in its URL', async ({tool, expectedPath, rawIdPath}) => {
-+    const expectedUrl = `https://primer.style${expectedPath}`
-+    const rawIdUrl = `https://primer.style${rawIdPath}`
-+    const responseBody = 'synthetic-text-input-documentation'
-+    const homepageBody = 'homepage-body-not-text-input-documentation'
-+    const fetchMock = vi.mocked(fetch)
-+    fetchMock.mockImplementation(async input => {
-+      const url = input.toString()
-+
-+      if (url === expectedUrl) {
-+        return responseWithFinalUrl(`<main><p>${responseBody}</p></main>`, expectedUrl)
-+      }
-+
-+      if (url === rawIdUrl) {
-+        return responseWithFinalUrl(`<main><p>${homepageBody}</p></main>`, 'https://primer.style/')
-+      }
-+
-+      throw new Error(`Unexpected fetch request: ${url}`)
-+    })
-+
-+    const result = await client.callTool({name: tool, arguments: {name: 'TextInput'}})
-+
-+    expect(result.isError).not.toBe(true)
-+    expect(result.content).toContainEqual(
-+      expect.objectContaining({
-+        type: 'text',
-+        text: expect.stringContaining(responseBody),
-+      }),
-+    )
-+    expect(result.content).not.toContainEqual(
-+      expect.objectContaining({
-+        type: 'text',
-+        text: expect.stringContaining(homepageBody),
-+      }),
-+    )
-+    expect(fetchMock).toHaveBeenCalledTimes(1)
-+    expect(fetchMock.mock.calls[0]?.[0].toString()).toBe(expectedUrl)
-+  })
-+
-   it.each(['ConfirmationDialog', 'confirmationdialog'])(
-     'retrieves ConfirmationDialog documentation for %s from its published URL',
-     async name => {
-```
-
-**File**: `packages/mcp/src/server.ts` (modified, +2/-2)
-```diff
-@@ -253,7 +253,7 @@ Use \`get_component\` for exactly one component and \`get_component_batch\` for
-         }
-       }
- 
--      const url = new URL(`/product/components/${match.id}`, 'https://primer.style')
-+      const url = new URL(`/product/components/${match.slug}`, 'https://primer.style')
-       const response = await fetch(url)
-       if (!response.ok) {
-         throw new Error(`Failed to fetch ${url}: ${response.statusText}`)
-@@ -387,7 +387,7 @@ ${text}`,
-         }
-       }
- 
--      const url = new URL(`/product/components/${match.id}/accessibility`, 'https://primer.style')
-+      const url = new URL(`/product/components/${match.slug}/accessibility`, 'https://primer.style')
-       const response = await fetch(url)
-       if (!response.ok) {
-         if ((response.status >= 400 && response.status < 500) || (response.status >= 300 && response.status < 400)) {
-```
-
 #### Recent Merged Pull Requests:
 - **PR #8617** (closed): feat(Avatar): add placeholder prop for text display without image src (@Kavi274)
 - **PR #8616** (2026-10-23): chore(deps): bump next from 16.3.8 to 16.4.3 (@dependabot[bot])
+- **PR #8613** (2026-10-26): SelectPanel: Improve rendering performance (@alexus37)
 - **PR #8604** (2026-10-23): chore(deps-dev): bump @vitest/browser from 5.0.0 to 5.0.5 (@dependabot[bot])
 - **PR #8603** (closed): chore(deps-dev): bump storybook from 10.5.10 to 10.6.2 in /packages/react (@dependabot[bot])
 - **PR #8602** (2026-10-21): chore(deps-dev): bump rolldown from 1.2.13 to 1.2.14 in the rolldown group (@dependabot[bot])
-- **PR #8601** (closed): chore(deps): bump the react group across 1 directory with 4 updates (@dependabot[bot])
 
 ---
 

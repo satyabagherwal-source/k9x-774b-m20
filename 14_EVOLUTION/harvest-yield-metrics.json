@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T11:49:41.109Z",
-  "total_cycles_completed": 5221,
-  "total_learnings_persisted": 5221,
-  "total_rules_promoted": 4624,
+  "last_updated": "2026-10-27T11:56:17.921Z",
+  "total_cycles_completed": 5226,
+  "total_learnings_persisted": 5226,
+  "total_rules_promoted": 4629,
   "history": [
-    {
-      "timestamp": "2026-10-25T23:53:32.525Z",
-      "repository": "prof18/feed-flow",
-      "learningId": "learn-github-prof18-feed-flow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:06:01.433Z",
-      "repository": "tencent/Hy-Memory-30B-A3B",
-      "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:12:05.734Z",
-      "repository": "nomic-ai/nomic-embed-text-v1.5",
-      "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:12:17.560Z",
-      "repository": "mitmproxy/mitmproxy",
-      "learningId": "learn-github-mitmproxy-mitmproxy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:18:22.980Z",
-      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-      "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-26T00:18:23.961Z",
       "repository": "projectdiscovery/nuclei",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-27T11:49:41.109Z",
       "repository": "apache/zookeeper",
       "learningId": "learn-github-apache-zookeeper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:56:06.044Z",
+      "repository": "primer/react",
+      "learningId": "learn-github-primer-react",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:56:06.176Z",
+      "repository": "smol-rs/smol",
+      "learningId": "learn-github-smol-rs-smol",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:56:08.107Z",
+      "repository": "ArchiveBox/ArchiveBox",
+      "learningId": "learn-github-archivebox-archivebox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:56:13.075Z",
+      "repository": "fission/fission",
+      "learningId": "learn-github-fission-fission",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:56:17.921Z",
+      "repository": "citusdata/citus",
+      "learningId": "learn-github-citusdata-citus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

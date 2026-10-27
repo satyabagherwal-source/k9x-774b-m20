@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/archivebox-archivebox-learnings.md`  
 > **Source**: github ([https://github.com/ArchiveBox/ArchiveBox](https://github.com/ArchiveBox/ArchiveBox))  
-> **Source Version**: `c55089ea`  
+> **Source Version**: `4ab614bc`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T18:24:11.639Z  
+> **Timestamp**: 2026-10-27T11:56:07.696Z  
 > **Learning ID**: `learn-github-archivebox-archivebox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/archivebox-archivebox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ArchiveBox/ArchiveBox](https://github.com/ArchiveBox/ArchiveBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T18:24:11.631Z  
+> **Harvest Timestamp**: 2026-10-27T11:56:07.437Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🗃 Open source self-hosted web archiving. Takes URLs/browser history/bookmarks/Pocket/Pinboard/etc., saves HTML, JS, PDFs, media, and more...
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 28848 stars
+- **Stars / Engagement**: 28894 stars
 
 ---
 
@@ -1642,13 +1642,11 @@ def register_admin(admin_site):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1930** (2026-10-23): **Bug: Security: public snapshot detail page leaks metadata (full UUID, owner, size) of private/unlisted snapshots of the same URL**
+  *Symptoms*: ### Provide a screenshot and describe the bug  This issue affects anonymous (non-logged-in) users on the default configuration. Per SECURITY.md: "Any reports related to non-logged-in users will be prioritized as this is a surface we care a lot about hardening."  Snapshot.get_html_details_context() (core/models.py:3866-3884) builds the "other captures of this URL" list with:      type(self).objects.filter(url=self.url).exclude(id=self.id)  and applies no permission filtering. templates/core/snapshot.html:1268 renders url_snapshots unconditionally, and snapshot_capture_list.html outputs {% snapshot_detail_url capture %} links containing the full UUID, owner username, and date, plus capture.url and output_size.  As a result, any anonymous visitor to a public snapshot detail page can read metadata of private/unlisted snapshots of the same URL, including: - full snapshot UUID - owner username - capture timestamp - output size - original URL  This is not a new design requirement: memento/views.py:23-30 already applies public_snapshots_queryset for the same kind of public discovery, with an explicit comment about not leaking unlisted snapshots. The related_snapshots path appears to be missing the same permission filter.  Suggested classification: CWE-639 (Authorization Bypass Through User-Controlled Key), related CWE-200 (Exposure of Sensitive Information). OWASP A01:2021 Broken Access Control.  ### Steps to reproduce  ```markdown 1. Start ArchiveBox dev 0.9.74rc338 (commit c55089ea
+
 - **Issue #1926** (2026-10-18): **docs: mark sonic as the SEARCH_BACKEND_ENGINE default**
   *Symptoms*: In `docs/Configuration.md`, the `SEARCH_BACKEND_ENGINE` entry contradicts itself. The "Possible Values" line brackets `ripgrep` as the default (`[`ripgrep`]/`sqlite`/`sonic``), while the bullet list just below says "**`sonic`** *(default)*". The code default is `sonic`:  ```python # archivebox/config/common.py SEARCH_BACKEND_ENGINE: str = Field(default="sonic", json_schema_extra={"scope": _SCOPE_CRAWL_EXECUTION}) ```  The Dockerfile and docker-compose.yml don't override it. `ripgrep` is only the runtime fallback when Sonic isn't available (`search/config.py`), which the ripgrep bullet already explains. This changes the line to `[`sonic`]/`ripgrep`/`sqlite``.  I checked the other 49 bracketed defaults on the page against the `Field(default=...)` values in `archivebox/config` and the abx-plugins `config.json` schemas, and they all match.  This change was written with an AI coding assistant (Claude Code).  🤖 Generated with [Claude Code](https://claude.com/claude-code)   <!-- This is an auto-generated description by cubic. --> --- ## Summary by cubic Fixes the `SEARCH_BACKEND_ENGINE` doc so the "Possible Values" line marks `sonic` as the default, matching the code default and the bullet list below it.  <sup>Written for commit d2e3c6b3dd23cf06d0f87cf3bd1aba9392e74b13. Summary will update on new commits.</sup>  <a href="https://cubic.dev/pr/ArchiveBox/ArchiveBox/pull/1926?utm_source=github" target="_blank" rel="noopener noreferrer" data-no-image-dialog="true"><picture><source medi
-
-- **Issue #1925** (2026-10-18): **Add RepoCloud one-click deploy option**
-  *Symptoms*: Added RepoCloud to the list of hosting providers in the README.  The button links to https://repocloud.io/details/ArchiveBox/ where users can deploy ArchiveBox with one click.  Used the RepoCloud deploy SVG with `height="22px"` to match the existing hosting provider badges.  <!-- This is an auto-generated description by cubic. --> --- ## Summary by cubic Adds RepoCloud as a one-click deploy option in the README's list of paid ArchiveBox hosting providers.  - Includes the RepoCloud deploy button styled to match the existing hosting provider badges, linking to https://repocloud.io/details/ArchiveBox/ with pricing listed at USD $3-50+/mo.  <sup>Written for commit 6d66487b94e2be15548b8d60c997168597afd17b. Summary will update on new commits.</sup>  <a href="https://cubic.dev/pr/ArchiveBox/ArchiveBox/pull/1925?utm_source=github" target="_blank" rel="noopener noreferrer" data-no-image-dialog="true"><picture><source media="(prefers-color-scheme: dark)" srcset="https://www.cubic.dev/buttons/review-in-cubic-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://www.cubic.dev/buttons/review-in-cubic-light.svg"><img alt="View guided diff" src="https://www.cubic.dev/buttons/review-in-cubic-light.svg"></picture></a>  <!-- End of auto-generated description by cubic. -->  
-  **Post-Mortem & Fix Analysis**:
-  > Needs price range
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1665,348 +1663,22 @@ def register_admin(admin_site):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e60387e2` (2026-10-20)
-**Commit Message**: fix: isolate live screencast previews by snapshot
+### Incident Patch 1: `ae724be4` (2026-10-26)
+**Commit Message**: Include actual replay redirect in routing regression failures
 
-**File**: `archivebox/api/v1_core.py` (modified, +42/-2)
+**File**: `archivebox/tests/test_urls.py` (modified, +3/-1)
 ```diff
-@@ -3,7 +3,9 @@
- import math
- import json
- import mimetypes
-+import os
- import re
-+from hashlib import sha256
- from html import unescape
- from collections import defaultdict
- from pathlib import Path, PurePosixPath
-@@ -13,7 +15,7 @@
+@@ -799,7 +799,9 @@ def test_web_admin_routing(self) -> None:
  
- from django.db import IntegrityError
- from django.db.models import Model, Q
--from django.http import HttpRequest, HttpResponse
-+from django.http import FileResponse, HttpRequest, HttpResponse
- from django.http.multipartparser import MultiPartParser, MultiPartParserError
- from django.core.exceptions import ValidationError
- from django.core.files.storage import FileSystemStorage
-@@ -29,7 +31,7 @@
- from ninja.errors import HttpError
+                 resp = client.get(f"/original/{snapshot.domain}/index.html", HTTP_HOST=control_host)
+                 assert resp.status_code in (301, 302)
+-                assert resp["Location"] == f"http://{snapshot_host}/responses/{snapshot.domain}/index.html"
++                assert resp["Location"] == f"http://{snapshot_host}/responses/{snapshot.domain}/index.html", (
++                    control_host, resp["Location"], str(snapshot.id), snapshot.url,
++                )
  
- from archivebox.core.models import Snapshot, ArchiveResult, Tag
--from archivebox.core.permissions import public_snapshots_queryset
-+from archivebox.core.permissions import can_view_snapshot, public_snapshots_queryset
- from archivebox.api.auth import authenticated_user_from_request
- from archivebox.config.common import get_config
- from archivebox.core.routes_util import build_snapshot_detail_url, build_web_url
-@@ -943,6 +945,44 @@ def get_snapshot(request: HttpRequest, snapshot_id: str, with_archiveresults: bo
-     return _get_snapshot_by_ref(snapshot_id)
- 
- 
-+@router.get("/snapshot/{snapshot_id}/screencast.jpg", auth=None, url_name="snapshot_screencast")
-+def snapshot_screencast(request: HttpRequest, snapshot_id: str):
-+    try:
-+        snapshot = Snapshot.objects.select_related("crawl__created_by").get(pk=UUID(snapshot_id))
-+    except (ValueError, Snapshot.DoesNotExist):
-+        raise HttpError(404, "Snapshot not found")
-+    authenticated_user_from_request(request)
-+    if not can_view_snapshot(request, snapshot):
-+        raise HttpError(404, "Snapshot not found")
-+    try:
-+        started_at = float(request.GET["after"]) if request.GET.get("after") else None
-+    except ValueError:
-+        raise HttpError(400, "Invalid screencast start time")
-+
-+    # Match the hook's lexical path.resolve(SNAP_DIR) without probing remote
-+    # storage. Never substitute another capture's shared crawl frame.
-+    snapshot_dir = snapshot.get_storage_path_for_version(snapshot.fs_version)
-+    candidates = [snapshot_dir]
-+    if snapshot_dir.name == snapshot.pk.hex:
-+        candidates.append(snapshot_dir.with_name(str(UUID(snapshot.pk.hex))))
-+    live_root = Path(get_config(snapshot=snapshot, resolve_plugins=False).TMP_DIR) / "chrome_screencast"
-+    for directory in candidates:
-+        try:
-+            frame = (live_root / sha256(os.path.abspath(directory).encode()).hexdigest() / "latest.jpg").open("rb")
-+        except (FileNotFoundError, IsADirectoryError, NotADirectoryError):
-+            continue
-+        if started_at is not None and os.fstat(frame.fileno()).st_mtime < started_at:
-+            frame.close()
-+            continue
-+        response = FileResponse(frame, content_type="image/jpeg")
-+        response["Cache-Control"] = "no-store, no-cache, max-age=0, must-revalidate"
-+        response["Pragma"] = "no-cache"
-+        response["Expires"] = "0"
-+        response["X-Content-Type-Options"] = "nosniff"
-+        return response
-+    raise HttpError(404, "No frame for this capture yet")
-+
-+
- @router.post("/snapshots", response=SnapshotSchema, url_name="create_snapshot")
- def create_snapshot(request: HttpRequest, data: SnapshotCreateSchema):
-     tags = normalize_tag_list(data.tags)
-```
-
-**File**: `archivebox/misc/monkey_patches.py` (modified, +2/-0)
-```diff
-@@ -52,6 +52,8 @@ def write_entry(self, host, date, request, status=None, length=None, ident=None,
-             return
-         if "GET /api/v1/crawls/crawl/" in request and "/files/chrome_screencast/latest.jpg" in request:
-             return
-+        if "GET /api/v1/core/snapshot/" in request and "/screencast.jpg" in request:
-+            return
-         if "GET /admin/jsi18n/" in request:
-             return
-         if request.endswith("/favicon.ico") or request.endswith("/robots.txt") or request.endswith("/screenshot.png"):
-```
-
-**File**: `archivebox/progressmonitor/views.py` (modified, +11/-8)
-```diff
-@@ -206,13 +206,13 @@ def snapshot_display_url(url: str) -> str:
- 
-         running_screencasts = {}
- 
--        def screencast_frame_url(crawl_id: str) -> str:
--            started_at = running_screencasts.get(crawl_id)
-+        def screencast_frame_url(snapshot_id: str) -> str:
-+            started_at = running_screencasts.get(snapshot_id)
-             if started_at is None:
-                 return ""
-             # File existence/freshness belongs to the image request, never to
-             # the one-second JSON poll (archive storage may be remote).
--            rel = f"/api/v1/crawls/crawl/{crawl_id}/files/chrome_screencast/latest.jpg?v={int(now.timestamp())}&after={started_at.timestamp()}"
-+            rel = f"/api/v1/core/snapshot/{snapshot_id}/screencast.jpg?v={int(now.timestamp())}&after={started_at.timestamp()}"
-             return f"{api_base}{rel}" if api_base else rel
- 
-         machine = Machine.current_readonly()
-@@ -596,12 +596,12 @@ def find_crawl_for_process(proc_pwd: Path) -> Crawl | None:
-                         attempt_started_at_by_snapshot.get(snapshot_id, proc["started_at"]),
-                     )
-             _plugin, _label, phase, _hook_name = _process_label(proc["cmd"])
--            if _plugin == "chrome_screencast" and proc["started_at"]:
-+            if _plugin == "chrome_screencast" and snapshot_id and proc["started_at"]:
-                 # CDP sends frames only when the page changes. Keep a still
-                 # frame visible for its live capture, never for a previous run.
-                 # This query already selects RUNNING rows; trust the runner's
-                 # recorded state instead of probing its PID during every poll.
--                running_screencasts[crawl_id] = max(proc["started_at"], running_screencasts.get(crawl_id, proc["started_at"]))
-+                running_screencasts[snapshot_id] = max(proc["started_at"], running_screencasts.get(snapshot_id, proc["started_at"]))
-             if crawl_id and proc["pid"]:
-                 crawl_process_pids.setdefault(crawl_id, proc["pid"])
-             if phase == "snapshot" and snapshot_id and proc["pid"]:
-@@ -708,8 +708,8 @@ def find_crawl_for_process(proc_pwd: Path) -> Crawl | None:
-             crawl_setup_completed = sum(1 for item in crawl_setup_plugins if item.get("status") == "succeeded")
-             crawl_setup_failed = sum(1 for item in crawl_setup_plugins if item.get("status") == "failed")
-             crawl_setup_pending = sum(1 for item in crawl_setup_plugins if item.get("status") == "queued")
--            crawl_screencast_url = screencast_frame_url(crawl_id)
--            crawl_screencast_link = f"/admin/crawls/crawl/{crawl_id.replace('-', '')}/change/" if crawl_screencast_url else ""
-+            crawl_screencast_url = ""
-+            crawl_screencast_link = ""
- 
-             # Get active snapshots for this crawl (already prefetched)
-             active_snapshots_for_crawl = []
-@@ -785,8 +785,11 @@ def find_crawl_for_process(proc_pwd: Path) -> Crawl | None:
-                     snapshot_preview_url = snapshot_favicon_url
- 
-                 if snapshot["status"] == Snapshot.StatusChoices.STARTED:
--                    snapshot_screencast_url = screencast_frame_url(crawl_id)
-+                    snapshot_screencast_url = screencast_frame_url(str(snapshot["id"]))
-                     snapshot_screencast_link = snapshot_view_url(snapshot) if snapshot_screencast_url else ""
-+                    if snapshot_screencast_url and not crawl_screencast_url:
-+                        crawl_screencast_url = snapshot_screencast_url
-+                        crawl_screencast_link = snapshot_screencast_link
- 
-                 def plugin_sort_key(ar):
-                     status_order = {
-```
-
-**File**: `archivebox/tests/test_snapshot_screencast.py` (added, +69/-0)
-```diff
-@@ -0,0 +1,69 @@
-+import hashlib
-+import os
-+import time
-+from pathlib import Path
-+
-+import pytest
-+
-+from archivebox.config.common import get_config
-+from archivebox.core.models import Snapshot
-+from archivebox.crawls.models import Crawl
-+
-+
-+pytestmark = pytest.mark.django_db(transaction=True)
-+
-+
-+def test_snapshot_screencasts_are_isolated_and_private(client, api_admin_user, api_headers):
-+    crawl = Crawl.objects.create(urls="https://example.com/a\nhttps://example.com/b", created_by=api_admin_user, permissions="public")
-+    snapshots = [
-+        Snapshot.objects.create(url=f"https://example.com/{name}", crawl=crawl, config={"PERMISSIONS": "private"}) for name in ("a", "b")
-+    ]
-+    jpeg = (Path(__file__).parent / "fixtures/bablosoft-lazy-image/pic.jpg").read_bytes()
-+    frames = []
-+    urls = []
-+    for index, snapshot in enumerate(snapshots):
-+        key = hashlib.sha256(os.path.abspath(snapshot.output_dir).encode()).hexdigest()
-+        frame = get_config(snapshot=snapshot).TMP_DIR / "chrome_screencast" / key / "latest.jpg"
-+        frame.parent.mkdir(parents=True, exist_ok=True)
-+        # A distinct valid JPEG comment keeps these real image bytes identifiable.
-+        frame.write_bytes(jpeg[:2] + b"\xff\xfe\x00\x03" + bytes([65 + index]) + jpeg[2:])
-+        frames.append(frame)
-+        urls.append(f"/api/v1/core/snapshot/{snapshot.pk}/screencast.jpg")
-+
-+    for url, frame in zip(urls, frames):
-+        assert client.get(url).status_code == 404
-+        response = client.get(url, **api_headers)
-+        assert response.status_code == 200
-+        assert b"".join(response.streaming_content) == frame.read_bytes()
-+        assert response["Cache-Control"] == "no-store, no-cache, max-age=0, must-revalidate"
-+
-+    # A sibling's live frame and the old shared crawl frame must never fill a
-+    # missing snapshot frame, even when the crawl itself is public.
-+    shared_key = hashlib.sha256(os.path.abspath(crawl.output_dir).encode()).hexdigest()
-+    shared = get_config(crawl=crawl).TMP_DIR / "chrome_screencast" / shared_key / "latest.jpg"
-+    shared.parent.mkdir(parents=True, exist_ok=True)
-+    shared.write_bytes(jpeg)
-+    frames[0].unlink()
-+    assert client.get(urls[0], **api_headers).status_code == 404
-+    response = client.get(urls[1], **api_headers)
-+    assert response.status_code == 200
-+    assert b"".join(response.streaming_content) == frames[1].read_bytes()
-+
-+
-+def test_snapshot_screencast_requires_fresh_frame_and_full_unlisted_id(client, api_admin_user):
-+    crawl = Crawl.objects.create(urls="https://example.com/unlisted", created_by=api_admin_user)
-+    snapshot = Snapshot.objects.create(url=crawl.urls, crawl=crawl, config={"PERMISSIONS": "unlisted"})
-+    key = hashlib.sha256(os.path.abspath(snapshot.output_dir).encode()).hexdigest()
-+    frame = get_config(snapshot=snapshot).TMP_DIR / "chrome_screencast" / key / "latest.jpg"
-+    frame.parent.mkdir(parents=True, exist_ok=True)
-+    frame.write_bytes((Path(__file__).parent / "fixtures/bablosoft-lazy-image/pic.jpg").read_bytes())
-+    now = time.time()
-+    os.utime(frame, (now - 10, now - 10))
-+    url = f"/api/v1/core/snapshot/{snapshot.pk}/screencast.jpg"
-+    assert client.get(f"{url}?after={now}").status_code == 404
-+    assert client.get(f"{url}?after=invalid").status_code == 400
-+    assert client.get(url.replace(str(snapshot.pk), str(snapshot.pk)[:8])).status_code == 404
-+    os.utime(frame, (now + 1, now + 1))
-+    response = client.get(f"{url}?after={now}")
-+    assert response.status_code == 200
-+    assert b"".join(response.streaming_content) == frame.read_bytes()
-```
-
-**File**: `archivebox/tests/test_ui_live_progress.py` (modified, +104/-6)
-```diff
-@@ -565,7 +565,7 @@ def run_snapshot():
-                 assert saved["screencastImageHasContent"] is True, saved
-                 assert saved["snapshotId"] == str(snapshot.pk).replace("-", "")
-                 assert saved["runningExtractors"] > 0
--                assert saved["screencastImageUrl"].split("?")[0].endswith(f"/crawl/{crawl.pk}/files/chrome_screencast/latest.jpg")
-+                assert saved["screencastImageUrl"].split("?")[0].endswith(f"/snapshot/{snapshot.pk}/screencast.jpg")
-                 png = Path(variant["path"]).read_bytes()
-                 assert png[:8] == b"\x89PNG\r\n\x1a\n"
-                 assert unpack(">II", png[16:24]) == (variant["width"], variant["height"])
-@@ -856,9 +856,9 @@ def test_live_progress_keeps_still_browser_frame_while_screencast_runs(
-             },
-         )
-         snapshot.refresh_from_db()
--        durable_dir = Path(snapshot.crawl.output_dir) / "chrome_screencast"
--        crawl_key = hashlib.sha256(str(snapshot.crawl.output_dir.resolve()).encode()).hexdigest()
--        frame = Path(get_config(crawl=crawl).TMP_DIR) / "chrome_screencast" / crawl_key / "latest.jpg"
-+        durable_dir = Path(snapshot.output_dir) / "chrome_screencast"
-+        snapshot_key = hashlib.sha256(os.path.abspath(snapshot.output_dir).encode()).hexdigest()
-+        frame = Path(get_config(snapshot=snapshot).TMP_DIR) / "chrome_screencast" / snapshot_key / "latest.jpg"
-         errors = []
- 
-         def run_snapshot():
-@@ -900,7 +900,9 @@ def observe(frame, event, arg):
-             assert response.status_code == 200, response.content
-             assert process_probes == []
-             active_crawl = next(item for item in response.json()["active_crawls"] if item["id"] == str(crawl.pk))
--            assert active_crawl["screencast_url"].startswith(f"/api/v1/crawls/crawl/{crawl.pk}/files/chrome_screencast/latest.jpg")
-+            assert active_crawl["screencast_url"].startswith(f"/api/v1/core/snapshot/{snapshot.pk}/screencast.jpg")
-+            active_snapshot = next(item for item in active_crawl["active_snapshots"] if item["id"] == str(snapshot.pk))
-+            assert active_snapshot["screencast_url"] == active_crawl["screencast_url"]
-             image_response = client.get(active_crawl["screencast_url"], HTTP_HOST=ADMIN_TEST_HOST)
-             assert image_response.status_code == 200
-             assert b"".join(image_response.streaming_content) == frame.read_bytes()
-@@ -915,10 +917,106 @@ def observe(frame, event, arg):
-         assert len(kept_frames) == keep_frames
-         assert all(saved.read_bytes().startswith(b"\xff\xd8\xff") for saved in kept_frames)
-         for saved in kept_frames:
--            response = client.get(f"/api/v1/crawls/crawl/{crawl.pk}/files/chrome_screencast/{saved.name}", HTTP_HOST=ADMIN_TEST_HOST)
-+            from archivebox.core.routes_util import build_snapshot_url
-+            from urllib.parse import urlsplit
-+
-+            saved_url = urlsplit(build_snapshot_url(str(snapshot.pk), f"chrome_screencast/{saved.name}"))
-+            response = client.get(saved_url.path, HTTP_HOST=saved_url.netloc)
-             assert response.status_code == 200
-             assert b"".join(response.streaming_content) == saved.read_bytes()
- 
-+    def test_live_progress_keeps_concurrent_snapshot_frames_separate(
-+        self,
-+        client,
-+        admin_user,
-+        crawl,
-+        painted_http_server,
-+        cached_abxpkg_lib_dir,
-+        tmp_path,
-+    ):
-+        import hashlib
-+
-+        from archivebox.config.common import get_config
-+        from archivebox.core.models import Snapshot
-+        from archivebox.crawls.models import Crawl
-+        from archivebox.machine.models import Machine
-+        from archivebox.services.runner import run_crawl
-+
-+        resolve_abxpkg_chrome_env(cached_abxpkg_lib_dir)
-+        machine = Machine.current()
-+        machine.config = {**machine.config, "TMP_DIR": str(tmp_path / "local-runtime")}
-+        machine.save(update_fields=["config"])
-+        config = {
-+            "PLUGINS": "chrome,chrome_screencast",
-+            "CHROME_HEADLESS": True,
-+            "CHROME_SANDBOX": False,
-+            "CHROME_ISOLATION": "snapshot",
-+            "CRAWL_MAX_CONCURRENT_SNAPSHOTS": 2,
-+            "CHROME_TIMEOUT": 90,
-+            "CHROME_PAGELOAD_TIMEOUT": 90,
-+            "CHROME_DELAY_AFTER_LOAD": 30,
-+            "CHROME_SCREENCAST_KEEP": 0,
-+            "TIMEOUT": 90,
-+        }
-+        Crawl.objects.filter(pk=crawl.pk).update(status=Crawl.StatusChoices.STARTED, retry_at=timezone.now(), config=config)
-+        snapshots = [
-+            Snapshot.objects.create(
-+                crawl=crawl,
-+                url=f"{painted_http_server.url}?capture={index}",
-+                config=config,
-+                retry_at=timezone.now(),
-+            )
-+            for index in range(3)
-+        ]
-+        # Three real captures allow the runner's initial solo warmup; if an
-+        # earlier capture already taught its
-```
-
-**File**: `bin/take_screenshot.js` (modified, +2/-2)
-```diff
-@@ -163,7 +163,7 @@ async function liveProgressState(readyOnly = false, rejectedFrameUrl = '') {
-   state.ready = state.progressMonitorVisible && state.progressDetailsVisible
-     && state.snapshotStarted && state.runningExtractors > 0
-     && state.screencastVisible && !state.screencastPlaceholderVisible && state.screencastImageLoaded
--    && /\/api\/v1\/crawls\/crawl\/[^/]+\/files\/chrome_screencast\/latest\.jpg$/.test(new URL(src || 'about:blank').pathname);
-+    && /\/api\/v1\/core\/snapshot\/[^/]+\/screencast\.jpg$/.test(new URL(src || 'about:blank').pathname);
-   if (!readyOnly) return state;
-   if (!state.ready || src === rejectedFrameUrl) return false;
-   try {
-@@ -291,7 +291,7 @@ async function main() {
-     const screencastResponses = new Map();
-     if (requireLiveProgress) {
-       page.on('response', (response) => {
--        if (/\/files\/chrome_screencast\/latest\.jpg$/.test(new URL(response.url()).pathname) && response.ok()) {
-+        if (/\/api\/v1\/core\/snapshot\/[^/]+\/screencast\.jpg$/.test(new URL(response.url()).pathname) && response.ok()) {
-           screencastResponses.set(response.url(), response);
-         }
-       });
+             resp = client.get("/static/jquery.min.js", HTTP_HOST=snapshot_host)
+             assert resp.status_code == 200
 ```
 
 #### Recent Merged Pull Requests:
@@ -2035,52 +1707,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. isolate live screencast previews by snapshot
+## X. Include actual replay redirect in routing regression failures
 
 **RULE**:
-When implementing operations in `archivebox/api/v1_core.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ArchiveBox/ArchiveBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `archivebox/tests/test_urls.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ArchiveBox/ArchiveBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e60387e2`: isolate live screencast previews by snapshot. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae724be4`: Include actual replay redirect in routing regression failures. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `archivebox/api/v1_core.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `archivebox/tests/test_urls.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-import os
-from hashlib import sha256
-from django.http import FileResponse, HttpRequest, HttpResponse
-from archivebox.core.permissions import can_view_snapshot, public_snapshots_queryset
-@router.get("/snapshot/{snapshot_id}/screencast.jpg", auth=None, url_name="snapshot_screencast")
-def snapshot_screencast(request: HttpRequest, snapshot_id: str):
-    try:
-        snapshot = Snapshot.objects.select_related("crawl__created_by").get(pk=UUID(snapshot_id))
-    except (ValueError, Snapshot.DoesNotExist):
-        raise HttpError(404, "Snapshot not found")
-    authenticated_user_from_request(request)
-    if not can_view_snapshot(request, snapshot):
-        raise HttpError(404, "Snapshot not found")
-    try:
-        started_at = float(request.GET["after"]) if request.GET.get("after") else None
-    except ValueError:
-        raise HttpError(400, "Invalid screencast start time")
-
-    # Match the hook's lexical path.resolve(SNAP_DIR) without probing remote
-    # storage. Never substitute another capture's shared crawl frame.
-    snapshot_dir = snapshot.get_storage_path_for_version(snapshot.fs_version)
-    candidates = [snapshot_dir]
-    if snapshot_dir.name == snapshot.pk.hex:
-        candidate
+                assert resp["Location"] == f"http://{snapshot_host}/responses/{snapshot.domain}/index.html", (
+                    control_host, resp["Location"], str(snapshot.id), snapshot.url,
+                )
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-from django.http import HttpRequest, HttpResponse
-from archivebox.core.permissions import public_snapshots_queryset
+                assert resp["Location"] == f"http://{snapshot_host}/responses/{snapshot.domain}/index.html"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e60387e2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae724be4` are properly handled with clean fallback behavior.

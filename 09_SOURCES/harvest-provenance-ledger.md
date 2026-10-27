@@ -5253,3 +5253,8 @@ Every entry in this ledger must capture:
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `39d14f72` | Multi-dimensional audit evidence | 2026-10-27T11:49:33.534Z |
 | `learn-huggingface-fastvideo-fasth3-omni-comfy` | `https://huggingface.co/FastVideo/FastH3-Omni-Comfy` | `hf-fastvid` | Multi-dimensional audit evidence | 2026-10-27T11:49:39.605Z |
 | `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `858c8d77` | Multi-dimensional audit evidence | 2026-10-27T11:49:41.105Z |
+| `learn-github-primer-react` | `https://github.com/primer/react` | `f733dcb2` | Multi-dimensional audit evidence | 2026-10-27T11:56:06.039Z |
+| `learn-github-smol-rs-smol` | `https://github.com/smol-rs/smol` | `41579301` | Multi-dimensional audit evidence | 2026-10-27T11:56:06.171Z |
+| `learn-github-archivebox-archivebox` | `https://github.com/ArchiveBox/ArchiveBox` | `4ab614bc` | Multi-dimensional audit evidence | 2026-10-27T11:56:08.102Z |
+| `learn-github-fission-fission` | `https://github.com/fission/fission` | `ae2aabf5` | Multi-dimensional audit evidence | 2026-10-27T11:56:13.070Z |
+| `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `f24c6fc4` | Multi-dimensional audit evidence | 2026-10-27T11:56:17.916Z |
