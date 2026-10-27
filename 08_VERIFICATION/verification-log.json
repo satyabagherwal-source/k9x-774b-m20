@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-LR76",
-    "timestamp": "2026-10-25T10:53:10.002Z",
-    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-    "contentHash": "74d3ceb26ae2fc6486b330d81216cfdeaf887fb65fe9b7564c46357ce4baa7a0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-929U",
-    "timestamp": "2026-10-25T11:11:17.442Z",
-    "repository": "t8y2/dbx",
-    "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "c791a12dbdba80724c4a8503b7adf9b0873a646ddf953cdc9582291a58dbcffb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-A1DH",
-    "timestamp": "2026-10-25T11:12:02.933Z",
-    "repository": "XingChen-AGI/TeleOCR",
-    "learningId": "learn-huggingface-xingchen-agi-teleocr",
-    "contentHash": "1bc85b2012862b883d21d4f1bbf8404db963c0be30217f80661df3c7f81bc414",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-DCZH",
-    "timestamp": "2026-10-25T11:14:37.949Z",
-    "repository": "sharkdp/fd",
-    "learningId": "learn-github-sharkdp-fd",
-    "contentHash": "ac671da348afaab40eb960e0540018643b7dd08d4f7e8b5436d5ef93085e6924",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-L9IS",
     "timestamp": "2026-10-25T11:20:46.708Z",
     "repository": "guokaigdg/animal-island-ui",
@@ -7492,6 +7432,66 @@
     "contentHash": "a1a6cc71ee5ba75a4d6fc68096ce4ba53c7da7fb986746143c16528619d9bd02",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-J9FV",
+    "timestamp": "2026-10-27T12:46:32.587Z",
+    "repository": "carbon-design-system/carbon-components-svelte",
+    "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
+    "contentHash": "218a2c8bcc1841faf17e4f72ed1dfb41c5a041c450153c4497b262937dfa6210",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-JBQN",
+    "timestamp": "2026-10-27T12:46:35.567Z",
+    "repository": "cheeriojs/dom-serializer",
+    "learningId": "learn-github-cheeriojs-dom-serializer",
+    "contentHash": "6bfe8bf37d60bc34e8f92aa39c87af9487bd65bab2744342f118d43d948cde34",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-JF0M",
+    "timestamp": "2026-10-27T12:46:39.814Z",
+    "repository": "appwrite/appwrite",
+    "learningId": "learn-github-appwrite-appwrite",
+    "contentHash": "c540c8c9de1d48feb6f22c1df1b89cbd4466b0544a787f36f36aacdf704b549c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-JHWI",
+    "timestamp": "2026-10-27T12:46:43.554Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "996c07471cfc335a2bd8d3fe808e6eda64d37849f29dff150239f25c2f50e07c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

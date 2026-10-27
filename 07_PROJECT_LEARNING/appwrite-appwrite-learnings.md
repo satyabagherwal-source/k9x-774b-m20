@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source**: github ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
-> **Source Version**: `a9f8ae18`  
+> **Source Version**: `f7aeed8f`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T06:36:22.130Z  
+> **Timestamp**: 2026-10-27T12:46:39.415Z  
 > **Learning ID**: `learn-github-appwrite-appwrite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T06:36:20.885Z  
+> **Harvest Timestamp**: 2026-10-27T12:46:39.095Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source cloud for agents & devs. Including Auth, Databases, Storage, Functions, Messaging, Hosting, Realtime, WAF and more
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 57752 stars
+- **Stars / Engagement**: 57771 stars
 
 ---
 
@@ -1926,426 +1926,600 @@ export function DomainsEmptyState({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ed930d0d` (2026-10-23)
-**Commit Message**: fix(mqtt): scope the push ledger unique index to the topic instance
+### Incident Patch 1: `f7aeed8f` (2026-10-27)
+**Commit Message**: Merge pull request #14540 from appwrite/fix-redis-read-timeout
 
-Deduplication looks a message up by (messageId, topicInternalId), but the unique index still covered (messageId, topic). A topic recreated under the same id, or a row written before the instance binding, made the lookup miss while the insert collided, so the publish failed. The index now covers (messageId, topicInternalId); NULLs are distinct under it, so pre-upgrade rows never block a publish. V25 drops the old index and creates the new one.
+fix(redis): time out unresponsive Redis connections
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `app/config/collections/common.php` (modified, +1/-1)
+**File**: `app/init/registers.php` (modified, +11/-6)
 ```diff
-@@ -386,7 +386,7 @@
-         'indexes' => [
-             Index::key(key: '_key_topicInternalId_sequence', attributes: ['topicInternalId', 'sequence'], orders: [OrderDirection::Asc, OrderDirection::Asc]),
-             Index::key(key: '_key_messageInternalId', attributes: ['messageInternalId'], orders: [OrderDirection::Asc]),
--            Index::unique(key: '_key_message_topic', attributes: ['messageId', 'topic'], orders: [OrderDirection::Asc, OrderDirection::Asc]),
-+            Index::unique(key: '_key_message_topicInternalId', attributes: ['messageId', 'topicInternalId'], orders: [OrderDirection::Asc, OrderDirection::Asc]),
-         ],
-     ],
+@@ -150,6 +150,10 @@
  
-```
-
-**File**: `src/Appwrite/Messaging/Adapter/Push/Appwrite.php` (modified, +5/-3)
-```diff
-@@ -145,11 +145,13 @@ private function createUserTopic(string $name): string
-      * (getDocument FOR UPDATE). A concurrent attempt for the same message blocks on that
-      * lock, then re-reads the ledger row this transaction committed rather than racing a
-      * second increment — so the topic sequence can't advance without a matching row, and
--     * two attempts can't open a gap. The unique index on (messageId, topic) remains as a
--     * correctness backstop.
-+     * two attempts can't open a gap. The unique index on (messageId, topicInternalId) remains
-+     * as a correctness backstop.
-      *
-      * Rows are bound to the locked topic's internal id, so a topic deleted and recreated under
--     * the same id never shares a ledger, or a deduplication key, with its predecessor.
-+     * the same id never shares a ledger, or a deduplication key, with its predecessor. Rows
-+     * written before that binding have a null topicInternalId, which the unique index treats
-+     * as distinct, so they never block a publish.
-      */
-     private function persist(string $topic, string $payload): int
-     {
-```
-
-**File**: `src/Appwrite/Migration/Version/V25.php` (modified, +11/-2)
-```diff
-@@ -489,8 +489,9 @@ private function migrateCollections(): void
-                     $this->createCollection($id);
-                     // Ledger rows are bound to their topic instance. Rows written before the
-                     // binding keep a null topicInternalId and are never replayed; the age-based
--                    // prune removes them. A failure other than an existing attribute or index
--                    // propagates, since publishing needs the attribute.
-+                    // prune removes them. NULLs are distinct under the unique index, so they never
-+                    // block a publish. A failure other than an existing attribute or index
-+                    // propagates, since publishing needs the attribute and the instance-scoped index.
-                     try {
-                         $this->createAttributeFromCollection($this->dbForProject, $id, 'topicInternalId');
-                     } catch (Duplicate) {
-@@ -503,6 +504,14 @@ private function migrateCollections(): void
-                         $this->dbForProject->deleteIndex($id, '_key_topic_sequence');
-                     } catch (NotFound) {
+     $poolTimeout = (float) System::getEnv('_APP_CONNECTIONS_TIMEOUT', 10);
+ 
++    // Bounds every Redis connect and reply, so an unresponsive Redis fails a request
++    // instead of holding it. Must stay above the 2 s a queue retry blocks on a pop.
++    $redisTimeout = (float) System::getEnv('_APP_REDIS_TIMEOUT', 3);
++
+     foreach ($connections as $key => $connection) {
+         $type = $connection['type'];
+         $multiple = $connection['multiple'];
+@@ -204,13 +208,14 @@
+                 'postgresql' => function () use ($dsnHost, $dsnPort, $dsnUser, $dsnPass, $dsnDatabase) {
+                     return new PDO("pgsql:host={$dsnHost};port={$dsnPort};dbname={$dsnDatabase};connect_timeout=3", $dsnUser, $dsnPass, APP_DATABASE_PDO_ATTRIBUTES + [\PDO::ATTR_PERSISTENT => false]);
+                 },
+-                default => function () use ($dsnHost, $dsnPort, $dsnUser, $dsnPass) {
++                default => function () use ($dsnHost, $dsnPort, $dsnUser, $dsnPass, $redisTimeout) {
+                     $redis = new \Redis();
+-                    @$redis->pconnect($dsnHost, (int)$dsnPort);
++                    @$redis->pconnect($dsnHost, (int)$dsnPort, $redisTimeout);
++                    // Not the pconnect argument: a socket reused from the persistent pool keeps its old read timeout
++                    $redis->setOption(\Redis::OPT_READ_TIMEOUT, $redisTimeout);
+                     if ($dsnPass !== null && $dsnPass !== '') {
+                         $redis->auth($dsnUser !== null && $dsnUser !== '' ? [$dsnUser, $dsnPass] : $dsnPass);
                      }
-+                    try {
-+                        $this->dbForProject->deleteIndex($id, '_key_message_topic');
-+                    } catch (NotFound) {
-+                    }
-+                    try {
-+                        $this->createIndexFromCollection($this->dbForProject, $id, '_key_message_topicInternalId');
-+                    } catch (Duplicate) {
-+                    }
-                     $this->dbForProject->purgeCachedCollection($id);
-                     break;
+-                    $redis->setOption(\Redis::OPT_READ_TIMEOUT, -1);
  
+                     return $redis;
+                 },
+@@ -231,7 +236,7 @@
+                 default => $poolSize,
+             };
+ 
+-            $pool = new Pool(new SwoolePool(), $name, $connectionPoolSize, function () use ($type, $resource, $dsn) {
++            $pool = new Pool(new SwoolePool(), $name, $connectionPoolSize, function () use ($type, $resource, $dsn, $redisTimeout) {
+                 // Get Adapter
+                 switch ($type) {
+                     case 'database':
+@@ -253,8 +258,8 @@
+                     case 'publisher':
+                         // Publishers never block on receive, so one connection backs both broker slots.
+                         return match ($dsn->getScheme()) {
+-                            'redis' => (function () use ($dsn) {
+-                                $connection = Queue\Connection\Redis::fromDSN($dsn);
++                            'redis' => (function () use ($dsn, $redisTimeout) {
++                                $connection = Queue\Connection\Redis::fromDSN($dsn, $redisTimeout, $redisTimeout);
+                                 return new Queue\Broker\Redis($connection, $connection);
+                             })(),
+                             default => null
 ```
 
-**File**: `tests/unit/Appwrite/Messaging/Adapter/Push/AppwriteTest.php` (modified, +44/-0)
+**File**: `app/mqtt.php` (modified, +3/-2)
 ```diff
-@@ -10,6 +10,7 @@
- use PHPUnit\Framework\TestCase;
- use Utopia\Cache\Adapter\None as NoCache;
- use Utopia\Cache\Cache;
-+use Utopia\Config\Config;
- use Utopia\Database\Adapter\Memory;
- use Utopia\Database\Attribute;
- use Utopia\Database\Collection;
-@@ -131,6 +132,7 @@ protected function setUp(): void
-                 Attribute::string(key: 'messageInternalId', size: 255),
-                 Attribute::integer(key: 'sequence', required: true),
-             ],
-+            indexes: Config::getParam('collections', [])['projects']['pushLedger']['indexes'],
-             permissions: $any,
-             documentSecurity: false,
-         ));
-@@ -303,6 +305,48 @@ public function testRecreatedTopicGetsItsOwnLedger(): void
-         $this->assertSame(1, $rows['msg-2']->getAttribute('sequence'));
+@@ -136,13 +136,14 @@
+     $host = System::getEnv('_APP_REDIS_HOST', 'localhost');
+     $port = System::getEnv('_APP_REDIS_PORT', 6379);
+     $pass = System::getEnv('_APP_REDIS_PASS', '');
++    $timeout = (float) System::getEnv('_APP_REDIS_TIMEOUT', 3);
+ 
+     $redis = new \Redis();
+-    @$redis->pconnect($host, (int)$port);
++    @$redis->pconnect($host, (int)$port, $timeout);
++    $redis->setOption(\Redis::OPT_READ_TIMEOUT, $timeout);
+     if ($pass) {
+         $redis->auth($pass);
      }
+-    $redis->setOption(\Redis::OPT_READ_TIMEOUT, -1);
  
-+    public function testMessageReusedOnRecreatedTopicPublishes(): void
-+    {
-+        $this->seedTopic('topic-1', 0);
-+        $broker = new FakeBroker();
-+        $this->adapter($broker, messageId: 'msg-1')->send(new Push(to: ['topic-1'], title: 'deleted topic'));
-+        $this->database->deleteDocument('topics', 'topic-1');
-+        $this->seedTopic('topic-1', 0);
-+        $recreated = (string) $this->topic('topic-1')->getSequence();
-+
-+        $response = $this->adapter($broker, messageId: 'msg-1')->send(new Push(to: ['topic-1'], title: 'recreated topic'));
-+
-+        $this->assertSame(1, $response['deliveredTo'], 'a message id already in the deleted topic\'s ledger must still publish to the recreated topic');
-+        $this->assertSame('success', $response['results'][0]['status']);
-+        $this->assertCount(2, $broker->published);
-+        $rows = \array_values(\array_filter(
-+            $this->ledger(),
-+            static fn (Document $row): bool => $row->getAttribute('topicInternalId') === $recreated,
-+        ));
-+        $this->assertCount(1, $rows);
-+        $this->assertSame(1, $rows[0]->getAttribute('sequence'));
-+    }
-+
-+    public function testLedgerRowWithoutTopicInstanceDoesNotBlockPublish(): void
-+    {
-+        $this->seedTopic('topic-1', 3);
-+        $this->database->skipValidation(fn () => $this->database->createDocument('pushLedger', new Document([
-+            'topic' => 'topic-1',
-+            'data' => '{}',
-+            'messageId' => 'msg-1',
-+            'messageInternalId' => 'internal-1',
-+            'sequence' => 3,
-+        ])));
-+
-+        $broker = new FakeBroker();
-+        $response = $this->adapter($broker, messageId: 'msg-1')->send(new Push(to: ['topic-1'], title: 'after upgrade'));
-+
-+        $this->assertSame(1, $response['deliveredTo'], 'a ledger row written before topic instances were recorded must not block a publish of the same message');
-+        $this->assertSame('success', $response['results'][0]['status']);
-+        $this->assertCount(2, $this->ledger());
-+        $this->assertSame(4, $this->topic('topic-1')->getAttribute('sequence'));
-+    }
-+
-     public function testEachTopicGetsItsOwnSequence(): void
-     {
-         // Two topics at different tails: each advances independently.
+     return $ctx['redis'] = $redis;
+ }, []);
 ```
 
-**File**: `tests/unit/Migration/Version/V25Test.php` (modified, +19/-1)
+**File**: `packages/cache/src/Adapter/Redis.php` (modified, +16/-4)
 ```diff
-@@ -315,8 +315,9 @@ public function testBindsExistingPushLedgerToTopicInstances(): void
-             $indexes = $collection['indexes'];
-             if ($id === 'pushLedger') {
-                 $attributes = \array_filter($attributes, static fn (Attribute $attribute): bool => $attribute->key !== 'topicInternalId');
--                $indexes = \array_filter($indexes, static fn (Index $index): bool => $index->key !== '_key_topicInternalId_sequence');
-+                $indexes = \array_filter($indexes, static fn (Index $index): bool => !\in_array($index->key, ['_key_topicInternalId_sequence', '_key_message_topicInternalId'], true));
-                 $indexes[] = Index::key(key: '_key_topic_sequence', attributes: ['topic', 'sequence']);
-+                $indexes[] = Index::unique(key: '_key_message_topic', attributes: ['messageId', 'topic']);
+@@ -299,7 +299,7 @@ protected function leaseEvalSha(string $sha, string $key, array $args): mixed
              }
-             $database->createCollection(Collection::create(
-                 id: $id,
-@@ -325,6 +326,12 @@ public function testBindsExistingPushLedgerToTopicInstances(): void
-             ));
-         }
-         $database->createCollection(Collection::create(id: 'audit'));
-+        $authorization->skip(fn () => $database->createDocument('pushLedger', new Document([
-+            'topic' => 'news',
-+            'data' => ['body' => 'before upgrade'],
-+            'messageId' => 'message',
-+            'sequence' => 1,
-+        ])));
  
-         $migration = new V25();
-         $migration->setProject(new Document(['$id' => 'project', '$sequence' => '1']), $database, $database, $authorization);
-@@ -337,6 +344,17 @@ public function testBindsExistingPushLedgerToTopicInstances(): void
-         $this->assertContains('topicInternalId', $attributes);
-         $this->assertContains('_key_topicInternalId_sequence', $indexes);
-         $this->assertNotContains('_key_topic_sequence', $indexes, 'replay no longer reads by topic id, so its index must go');
-+        $this->assertContains('_key_message_topicInternalId', $indexes);
-+        $this->assertNotContains('_key_message_topic', $indexes, 'deduplication keys on the topic instance, so the topic id unique index must go');
-+
-+        $published = $authorization->skip(fn () => $database->createDocument('pushLedger', new Document([
-+            'topic' => 'news',
-+            'topicInternalId' => '7',
-+            'data' => ['body' => 'after upgrade'],
-+            'messageId' => 'message',
-+            'sequence' => 2,
-+        ])));
-+        $this->assertSame('7', $published->getAttribute('topicInternalId'), 'a row written before the upgrade must not block the same message on a topic instance');
+             return $this->confirmScript($result, $error);
+-        });
++        }, idempotent: false);
      }
  
-     public function testBackfillsLegacyTypeOnExistingTransactions(): void
-```
-
----
-
-### Incident Patch 2: `518749a7` (2026-10-23)
-**Commit Message**: Merge pull request #14771 from appwrite/security/vcs-fanout-after-verify
-
-fix(vcs): verify the GitHub webhook signature before fanning the event out
-
-**File**: `src/Appwrite/Platform/Modules/VCS/Http/GitHub/Events/Create.php` (modified, +5/-2)
-```diff
-@@ -64,8 +64,6 @@ public function action(
-         callable $deploymentsFactory,
-         array $platform
-     ) {
--        $this->preprocessEvent($request);
--
-         $vcs = $vcsFactory->fromProvider('github');
+     protected function leaseEval(string $script, string $key, array $args): mixed
+@@ -309,7 +309,7 @@ protected function leaseEval(string $script, string $key, array $args): mixed
+             $result = $this->redis->eval($script, [$key, ...$args], 1);
  
-         $event = $request->getHeaderLine('x-github-event', '');
-@@ -82,6 +80,11 @@ public function action(
-             throw new Exception(Exception::GENERAL_ACCESS_FORBIDDEN, 'Invalid webhook payload signature. Please make sure the webhook secret has same value in your GitHub app and in the _APP_VCS_GITHUB_WEBHOOK_SECRET environment variable');
-         }
- 
-+        // Only a validly-signed delivery is preprocessed (on Cloud this fans the event out to
-+        // other regions). Running it before the signature check let an unauthenticated POST
-+        // trigger N cross-region forwards — an amplification vector.
-+        $this->preprocessEvent($request);
-+
-         $parsedPayloads = $vcs->getEvents($event, $payload);
- 
-         foreach ($parsedPayloads as $parsedPayload) {
-```
-
----
-
-### Incident Patch 3: `02672c8d` (2026-10-23)
-**Commit Message**: fix(query): validate AST identifiers without regex
-
-AGENTS.md disallows regex validation, so Func and Cast now check names and
-types with strspn and string functions through a shared Grammar class. The
-accepted grammar is unchanged except that a trailing newline is now
-rejected: the previous pattern's `$` anchor matched before a final "\n", so
-"NOW\n" was accepted as a function name and "INT\n" as a cast type.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `packages/query/src/AST/Call/Func.php` (modified, +2/-1)
-```diff
-@@ -3,6 +3,7 @@
- namespace Utopia\Query\AST\Call;
- 
- use Utopia\Query\AST\Expression;
-+use Utopia\Query\AST\Grammar;
- use Utopia\Query\Exception\ValidationException;
- 
- readonly class Func implements Expression
-@@ -16,7 +17,7 @@ public function __construct(
-         public bool $distinct = false,
-         public ?Expression $filter = null,
-     ) {
--        if (!\preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $name)) {
-+        if (!Grammar::isIdentifier($name)) {
-             throw new ValidationException('Invalid function name: ' . $name);
-         }
-     }
-```
-
-**File**: `packages/query/src/AST/Expression/Cast.php` (modified, +2/-1)
-```diff
-@@ -3,6 +3,7 @@
- namespace Utopia\Query\AST\Expression;
- 
- use Utopia\Query\AST\Expression;
-+use Utopia\Query\AST\Grammar;
- use Utopia\Query\Exception\ValidationException;
- 
- readonly class Cast implements Expression
-@@ -11,7 +12,7 @@ public function __construct(
-         public Expression $expression,
-         public string $type,
-     ) {
--        if (!\preg_match('/^[A-Za-z_][A-Za-z0-9_]*(\s+[A-Za-z_][A-Za-z0-9_]*)*(\s*\(\s*[A-Za-z0-9_,\s]+\s*\))?$/', $type)) {
-+        if (!Grammar::isType($type)) {
-             throw new ValidationException('Invalid cast type: ' . $type);
-         }
-     }
-```
-
-**File**: `packages/query/src/AST/Grammar.php` (added, +49/-0)
-```diff
-@@ -0,0 +1,49 @@
-+<?php
-+
-+namespace Utopia\Query\AST;
-+
-+final class Grammar
-+{
-+    private const string IDENTIFIER_CHARACTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_';
-+
-+    private const string WHITESPACE = " \t\n\v\f\r";
-+
-+    private const string TYPE_ARGUMENT_CHARACTERS = self::IDENTIFIER_CHARACTERS . ',' . self::WHITESPACE;
-+
-+    public static function isIdentifier(string $value): bool
-+    {
-+        return $value !== ''
-+            && !\ctype_digit($value[0])
-+            && \strspn($value, self::IDENTIFIER_CHARACTERS) === \strlen($value);
-+    }
-+
-+    public static function isType(string $value): bool
-+    {
-+        $open = \strpos($value, '(');
-+
-+        if ($open === false) {
-+            return self::isWords($value);
-+        }
-+
-+        if (!\str_ends_with($value, ')')) {
-+            return false;
-+        }
-+
-+        $arguments = \substr($value, $open + 1, -1);
-+
-+        return $arguments !== ''
-+            && \strspn($arguments, self::TYPE_ARGUMENT_CHARACTERS) === \strlen($arguments)
-+            && self::isWords(\rtrim(\substr($value, 0, $open), self::WHITESPACE));
-+    }
-+
-+    private static function isWords(string $value): bool
-+    {
-+        $words = \explode(' ', \strtr($value, self::WHITESPACE, \str_repeat(' ', \strlen(self::WHITESPACE))));
-+
-+        if ($words[0] === '' || $words[\array_key_last($words)] === '') {
-+            return false;
-+        }
-+
-+        return \array_all($words, fn (string $word): bool => $word === '' || self::isIdentifier($word));
-+    }
-+}
-```
-
-**File**: `packages/query/tests/Regression/SecurityRegressionTest.php` (modified, +67/-0)
-```diff
-@@ -73,6 +73,9 @@
-  *      testCastRejectsSqlInType
-  *      testCastAcceptsParameterisedType
-  *      testToAstRejectsUnsupportedFilterInsteadOfEmittingRaw
-+ *      testFuncRejectsTrailingWhitespaceInName
-+ *      testCastRejectsTrailingWhitespaceInType
-+ *      testCastAcceptsMultiWordType
-  */
- class SecurityRegressionTest extends TestCase
- {
-@@ -497,6 +500,70 @@ public function testCastRejectsSqlInType(): void
-         new Cast(new Column('price'), 'TEXT) OR (1=1');
+             return $this->confirmScript($result, (string) $this->redis->getLastError());
+-        });
++        }, idempotent: false);
      }
  
-+    /**
-+     * @return array<string, array{string}>
-+     */
-+    public static function trailingWhitespaceFunctionNameProvider(): array
-+    {
-+        return [
-+            'newline' => ["NOW\n"],
-+            'carriage return and newline' => ["NOW\r\n"],
-+            'space' => ['NOW '],
-+            'tab' => ["NOW\t"],
-+        ];
-+    }
+     /**
+@@ -343,6 +343,10 @@ public function ping(): bool
+ 
+             return true;
+         } catch (Exception) {
++            if ($this->redis->isConnected()) {
++                $this->redis->close();
++            }
 +
-+    #[DataProvider('trailingWhitespaceFunctionNameProvider')]
-+    public function testFuncRejectsTrailingWhitespaceInName(string $name): void
-+    {
-+        $this->expectException(ValidationException::class);
-+        $this->expectExceptionMessage('Invalid function name');
-+
-+        new Func($name);
-+    }
-+
-+    /**
-+     * @return array<string, array{string}>
-+     */
-+    public static function trailingWhitespaceCastTypeProvider(): array
-+    {
-+        return [
-+            'newline after word' => ["INT\n"],
-+            'newline after arguments' => ["DECIMAL(10, 2)\n"],
-+            'space after word' => ['INT '],
-+            'space after arguments' => ['DECIMAL(10, 2) '],
-+        ];
-+    }
-+
-+    #[DataProvider('trailingWhitespaceCastTypeProvider')]
-+    public function testCastRejectsTrailingWhitespaceInType(string $type): void
-+    {
-+        $this->expectException(ValidationException::class);
-+        $this->expectExceptionMessage('Invalid cast type');
-+
-+        new Cast(new Column('price'), $type);
-+    }
-+
-+    /**
-+     * @return array<string, array{string}>
-+     */
-+    public static function multiWordCastTypeProvider(): array
-+    {
-+        return [
-+            'two words' => ['DOUBLE PRECISION'],
-+            'tab separated' => ["DOUBLE\tPRECISION"],
-+            'four words' => ['TIMESTAMP WITH TIME ZONE'],
-+            'words and arguments' => ['CHARACTER VARYING (255)'],
-+            'whitespace inside arguments' => ["NUMERIC( 10 ,\n2 )"],
-+        ];
-+    }
-+
-+    #[DataProvider('multiWordCastTypeProvider')]
-+    public function testCastAcceptsMultiWordType(string $type): void
-+    {
-+        $this->assertSame($type, new Cast(new Column('price'), $type)->type);
-+    }
-+
-     public function testCastAcceptsParameterisedType(): void
+             return false;
+         }
+     }
+@@ -373,10 +377,11 @@ public function getRetryDelay(): int
+     /**
+      * Execute a Redis command with retry logic
+      *
++     * A script is not idempotent: when its reply is lost Redis may already have run it, so it is never replayed.
+      *
+      * @throws \RedisException
+      */
+-    private function execute(callable $callback): mixed
++    private function execute(callable $callback, bool $idempotent = true): mixed
      {
-         $cast = new Cast(new Column('price'), 'DECIMAL(10, 2)');
+         $attempts = 0;
+         $maxAttempts = 1 + $this->maxRetries;
+@@ -389,9 +394,15 @@ private function execute(callable $callback): mixed
+                     throw $th;
+                 }
+ 
++                // phpredis leaves the socket open when a script reply times out, and
++                // the next command would read that reply as its own
++                if ($this->redis->isConnected()) {
++                    $this->redis->close();
++                }
++
+                 $attempts++;
+ 
+-                if ($attempts >= $maxAttempts) {
++                if (! $idempotent || $attempts >= $maxAttempts) {
+                     throw $th;
+                 }
+ 
+@@ -421,6 +432,7 @@ private function isConnectionError(Exception $e): bool
+             'went away',
+             'socket',
+             'read error on connection',
++            'protocol error', // how phpredis reports a timed-out script reply
+             'connection lost',
+             'timed out',
+             'timeout',
+```
+
+**File**: `packages/lock/src/Distributed.php` (modified, +11/-1)
+```diff
+@@ -202,7 +202,17 @@ private function runScript(string $script, array $arguments): mixed
+     {
+         $method = 'eval';
+ 
+-        return $this->redis->$method($script, $arguments, 1);
++        try {
++            return $this->redis->$method($script, $arguments, 1);
++        } catch (\RedisException $e) {
++            // phpredis leaves the socket open when a script reply times out, and the
++            // next command on this connection would read that reply as its own
++            if ($this->redis->isConnected()) {
++                $this->redis->close();
++            }
++
++            throw $e;
++        }
+     }
+ 
+     /**
+```
+
+**File**: `packages/queue/src/Connection/Redis.php` (modified, +18/-8)
+```diff
+@@ -316,13 +316,23 @@ protected function call(callable $command, bool $idempotent = false): mixed
+     /**
+      * phpredis errors that mean the socket is gone rather than the command
+      * being wrong. Anything else (WRONGTYPE, OOM, ...) is the caller's to see.
++     * A timed-out reply counts too: the socket still holds it, and the next
++     * command would read it as its own.
+      */
+     private function isTransportError(\RedisException $e): bool
+     {
+-        return (bool) preg_match(
+-            '/went away|Connection (lost|closed|refused)|read error on connection/',
+-            $e->getMessage(),
+-        );
++        $errors = [
++            'went away',
++            'connection lost',
++            'connection closed',
++            'connection refused',
++            'read error on connection',
++            'protocol error',
++            'timed out',
++        ];
++
++        $message = strtolower($e->getMessage());
++        return array_any($errors, fn (string $needle): bool => str_contains($message, $needle));
+     }
+ 
+     protected function getRedis(): \Redis
+@@ -339,15 +349,15 @@ protected function getRedis(): \Redis
+             try {
+                 $redis->connect($this->host, $this->port, $connectTimeout);
+ 
++                if ($this->readTimeout >= 0) {
++                    $redis->setOption(\Redis::OPT_READ_TIMEOUT, $this->readTimeout);
++                }
++
+                 if ($this->password !== null && $this->password !== '') {
+                     $hasUser = $this->user !== null && $this->user !== '';
+                     $redis->auth($hasUser ? [$this->user, $this->password] : $this->password);
+                 }
+ 
+-                if ($this->readTimeout >= 0) {
+-                    $redis->setOption(\Redis::OPT_READ_TIMEOUT, $this->readTimeout);
+-                }
+-
+                 $this->redis = $redis;
+                 return $this->redis;
+             } catch (\RedisException $e) {
+```
+
+**File**: `src/Appwrite/PubSub/Adapter/Redis.php` (modified, +3/-0)
+```diff
+@@ -21,6 +21,9 @@ public function ping($message = null): bool
+ 
+     public function subscribe($channels, $callback)
+     {
++        // A subscriber waits for the next message for as long as it takes
++        $this->client->setOption(\Redis::OPT_READ_TIMEOUT, -1);
++
+         return $this->client->subscribe($channels, $callback);
+     }
+ 
+```
+
+---
+
+### Incident Patch 2: `9ce72542` (2026-10-27)
+**Commit Message**: Merge remote-tracking branch 'origin/main' into sync-redis-timeout
+
+**File**: `.env` (modified, +1/-0)
+```diff
+@@ -10,6 +10,7 @@ _APP_TRUSTED_PROXIES=127.0.0.1,::1,10.0.0.0/8,100.64.0.0/10,172.16.0.0/12,192.16
+ _APP_WORKER_PER_CORE=6
+ _APP_WORKERS_NUM=1
+ _APP_WORKER_MAX_COROUTINES=1
++_APP_MEMORY_LIMIT=512M
+ _APP_WORKER_SCREENSHOTS_ROUTER=http://appwrite
+ _APP_REALTIME_TAIL_RATE=50
+ _APP_COMPRESSION_ENABLED=enabled
+```
+
+**File**: `.github/workflows/console-production.yml` (modified, +9/-9)
+```diff
+@@ -90,14 +90,14 @@ jobs:
+                   cleanup: false
+ 
+             - name: Login to GitHub Container Registry
+-              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
++              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+               with:
+                   registry: ${{ env.REGISTRY_GITHUB }}
+                   username: ${{ github.actor }}
+                   password: ${{ secrets.GITHUB_TOKEN }}
+ 
+             - name: Login to Docker Hub
+-              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
++              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+               with:
+                   registry: ${{ env.REGISTRY_DOCKERHUB }}
+                   username: ${{ vars.DOCKERHUB_USERNAME }}
+@@ -137,14 +137,14 @@ jobs:
+         timeout-minutes: 10
+         steps:
+             - name: Login to GitHub Container Registry
+-              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
++              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+               with:
+                   registry: ${{ env.REGISTRY_GITHUB }}
+                   username: ${{ github.actor }}
+                   password: ${{ secrets.GITHUB_TOKEN }}
+ 
+             - name: Login to Docker Hub
+-              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
++              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+               with:
+                   registry: ${{ env.REGISTRY_DOCKERHUB }}
+                   username: ${{ vars.DOCKERHUB_USERNAME }}
+@@ -202,14 +202,14 @@ jobs:
+                   cleanup: false
+ 
+             - name: Login to GitHub Container Registry
+-              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
++              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+               with:
+                   registry: ${{ env.REGISTRY_GITHUB }}
+                   username: ${{ github.actor }}
+                   password: ${{ secrets.GITHUB_TOKEN }}
+ 
+             - name: Login to Docker Hub
+-              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
++              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+               with:
+                   registry: ${{ env.REGISTRY_DOCKERHUB }}
+                   username: ${{ vars.DOCKERHUB_USERNAME }}
+@@ -245,14 +245,14 @@ jobs:
+               uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
+ 
+             - name: Login to GitHub Container Registry
+-              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
++              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+               with:
+                   registry: ${{ env.REGISTRY_GITHUB }}
+                   username: ${{ github.actor }}
+                   password: ${{ secrets.GITHUB_TOKEN }}
+ 
+             - name: Login to Docker Hub
+-              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
++              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+               with:
+                   registry: ${{ env.REGISTRY_DOCKERHUB }}
+                   username: ${{ vars.DOCKERHUB_USERNAME }}
+@@ -288,7 +288,7 @@ jobs:
+                   persist-credentials: false
+ 
+             - name: Login to GitHub Container Registry
+-              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
++              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+               with:
+                   registry: ${{ env.REGISTRY_GITHUB }}
+                   username: ${{ github.actor }}
+```
+
+**File**: `.github/workflows/console-staging.yml` (modified, +5/-5)
+```diff
+@@ -69,14 +69,14 @@ jobs:
+                   cleanup: false
+ 
+             - name: Login to GitHub Container Registry
+-              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
++              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+               with:
+                   registry: ${{ env.REGISTRY_GITHUB }}
+                   username: ${{ github.actor }}
+                   password: ${{ secrets.GITHUB_TOKEN }}
+ 
+             - name: Login to Docker Hub
+-              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
++              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+               with:
+                   registry: ${{ env.REGISTRY_DOCKERHUB }}
+                   username: ${{ vars.DOCKERHUB_USERNAME }}
+@@ -114,14 +114,14 @@ jobs:
+         timeout-minutes: 10
+         steps:
+             - name: Login to GitHub Container Registry
+-              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
++              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+               with:
+                   registry: ${{ env.REGISTRY_GITHUB }}
+                   username: ${{ github.actor }}
+                   password: ${{ secrets.GITHUB_TOKEN }}
+ 
+             - name: Login to Docker Hub
+-              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
++              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+               with:
+                   registry: ${{ env.REGISTRY_DOCKERHUB }}
+                   username: ${{ vars.DOCKERHUB_USERNAME }}
+@@ -157,7 +157,7 @@ jobs:
+                   persist-credentials: false
+ 
+             - name: Login to GitHub Container Registry
+-              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
++              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+               with:
+                   registry: ${{ env.REGISTRY_GITHUB }}
+                   username: ${{ github.actor }}
+```
+
+**File**: `Dockerfile` (modified, +1/-0)
+```diff
+@@ -43,6 +43,7 @@ COPY ./src /usr/src/code/src
+ COPY ./packages /usr/src/code/packages
+ COPY ./dev /usr/src/code/dev
+ COPY ./docker/opcache.ini /usr/local/etc/php/conf.d/zz-opcache.ini
++COPY ./docker/php.ini /usr/local/etc/php/conf.d/zz-php.ini
+ COPY ./mongo-init.js /usr/src/code/mongo-init.js
+ COPY ./mongo-entrypoint.sh /usr/src/code/mongo-entrypoint.sh
+ COPY ./clickhouse-config.xml /usr/src/code/clickhouse-config.xml
+```
+
+**File**: `README-CN.md` (modified, +4/-4)
+```diff
+@@ -83,7 +83,7 @@ docker run -it --rm \
+     --volume /var/run/docker.sock:/var/run/docker.sock \
+     --volume "$(pwd)"/appwrite:/usr/src/code/appwrite:rw \
+     --entrypoint="install" \
+-    appwrite/appwrite:2.6.1
++    appwrite/appwrite:2.6.2
+ ```
+ 
+ ### Windows
+@@ -96,7 +96,7 @@ docker run -it --rm ^
+     --volume //var/run/docker.sock:/var/run/docker.sock ^
+     --volume "%cd%"/appwrite:/usr/src/code/appwrite:rw ^
+     --entrypoint="install" ^
+-    appwrite/appwrite:2.6.1
++    appwrite/appwrite:2.6.2
+ ```
+ 
+ #### PowerShell
+@@ -107,7 +107,7 @@ docker run -it --rm `
+     --volume /var/run/docker.sock:/var/run/docker.sock `
+     --volume ${pwd}/appwrite:/usr/src/code/appwrite:rw `
+     --entrypoint="install" `
+-    appwrite/appwrite:2.6.1
++    appwrite/appwrite:2.6.2
+ ```
+ 
+ 安装程序运行后，打开终端打印出的 URL（其中包含一次性密钥）完成安装向导。安装完成后，访问 http://localhost 即可从浏览器进入 Appwrite 控制台。请注意，在非 Linux 本机主机上，安装完成后服务器可能需要几分钟才能启动。
+@@ -123,7 +123,7 @@ docker run -it --rm \
+     --volume /var/run/docker.sock:/var/run/docker.sock \
+     --volume "$(pwd)"/appwrite:/usr/src/code/appwrite:rw \
+     --entrypoint="install" \
+-    appwrite/appwrite:2.6.1
++    appwrite/appwrite:2.6.2
+ ```
+ 
+ 升级时，请为 `--entrypoint="upgrade"` 使用相同的 `--env DOCKER_API_VERSION=...` 参数。
+```
+
+**File**: `README.md` (modified, +4/-4)
+```diff
+@@ -83,7 +83,7 @@ docker run -it --rm \
+     --volume /var/run/docker.sock:/var/run/docker.sock \
+     --volume "$(pwd)"/appwrite:/usr/src/code/appwrite:rw \
+     --entrypoint="install" \
+-    appwrite/appwrite:2.6.1
++    appwrite/appwrite:2.6.2
+ ```
+ 
+ ### Windows
+@@ -96,7 +96,7 @@ docker run -it --rm ^
+     --volume //var/run/docker.sock:/var/run/docker.sock ^
+     --volume "%cd%"/appwrite:/usr/src/code/appwrite:rw ^
+     --entrypoint="install" ^
+-    appwrite/appwrite:2.6.1
++    appwrite/appwrite:2.6.2
+ ```
+ 
+ #### PowerShell
+@@ -107,7 +107,7 @@ docker run -it --rm `
+     --volume /var/run/docker.sock:/var/run/docker.sock `
+     --volume ${pwd}/appwrite:/usr/src/code/appwrite:rw `
+     --entrypoint="install" `
+-    appwrite/appwrite:2.6.1
++    appwrite/appwrite:2.6.2
+ ```
+ 
+ Once the installer is running, open the URL printed in the terminal (it includes a one-time secret) to complete the setup wizard. After installation, go to http://localhost to access the Appwrite console from your browser. Please note that on non-Linux native hosts, the server might take a few minutes to start after completing the installation.
+@@ -123,7 +123,7 @@ docker run -it --rm \
+     --volume /var/run/docker.sock:/var/run/docker.sock \
+     --volume "$(pwd)"/appwrite:/usr/src/code/appwrite:rw \
+     --entrypoint="install" \
+-    appwrite/appwrite:2.6.1
++    appwrite/appwrite:2.6.2
+ ```
+ 
+ Use the same `--env DOCKER_API_VERSION=...` flag with `--entrypoint="upgrade"` when upgrading.
+```
+
+**File**: `app/config/errors.php` (modified, +2/-2)
+```diff
+@@ -668,7 +668,7 @@
+     ],
+     Exception::PROVIDER_REPOSITORY_NOT_FOUND => [
+         'name' => Exception::PROVIDER_REPOSITORY_NOT_FOUND,
+-        'description' => 'VCS (Version Control System) repository with the requested ID could not be found. Check to see if the ID is correct, and if it belongs to installationId you provided.',
++        'description' => 'VCS (Version Control System) repository with the requested ID could not be found. Check to see if the ID is correct, and if the installation you provided still has access to it.',
+         'code' => 404,
+     ],
+     Exception::REPOSITORY_NOT_FOUND => [
+@@ -1314,7 +1314,7 @@
+     ],
+     Exception::KEY_CREATION_DENIED => [
+         'name' => Exception::KEY_CREATION_DENIED,
+-        'description' => 'An API key cannot be created from a request authorized with an API key. Authenticate with a session instead. To create a short-lived key from a server, use the ephemeral key endpoint.',
++        'description' => 'This request cannot create or change the key. A JWT cannot create or change keys, an API key cannot create another stored API key, and a key never gives out scopes it does not hold or an expiry later than its own. Authenticate with a session instead, or use the ephemeral key endpoint for a short-lived key within your key\'s grant.',
+         'code' => 403,
+     ],
+     Exception::PLATFORM_NOT_FOUND => [
+```
+
+**File**: `app/config/sdks.php` (modified, +5/-5)
+```diff
+@@ -81,7 +81,7 @@
+             [
+                 'key' => 'apple',
+                 'name' => 'Apple',
+-                'version' => '20.2.0',
++                'version' => '21.1.1',
+                 'url' => 'https://github.com/appwrite/sdk-for-apple',
+                 'package' => 'https://github.com/appwrite/sdk-for-apple',
+                 'enabled' => true,
+@@ -101,7 +101,7 @@
+                 'key' => 'android',
+                 'name' => 'Android',
+                 'namespace' => 'io.appwrite',
+-                'version' => '29.2.0',
++                'version' => '31.0.1',
+                 'url' => 'https://github.com/appwrite/sdk-for-android',
+                 'package' => 'https://search.maven.org/artifact/io.appwrite/sdk-for-android',
+                 'enabled' => true,
+@@ -143,7 +143,7 @@
+             [
+                 'key' => 'unity',
+                 'name' => 'Unity',
+-                'version' => '0.9.0',
++                'version' => '0.11.1',
+                 'url' => 'https://github.com/appwrite/sdk-for-unity',
+                 'package' => 'https://github.com/appwrite/sdk-for-unity',
+                 'enabled' => true,
+@@ -232,7 +232,7 @@
+                 'key' => 'cli',
+                 'name' => 'Command Line',
+                 'description' => 'The Appwrite CLI manages your Appwrite projects from the terminal. Create and link projects, deploy functions and sites, sync tables, buckets, teams and other resources through `appwrite.config.json`, and call any Appwrite API. For full API documentation and tutorials go to [https://appwrite.io/docs](https://appwrite.io/docs)',
+-                'version' => '28.4.0',
++                'version' => '28.9.0',
+                 'url' => 'https://github.com/appwrite/sdk-for-cli',
+                 'package' => 'https://www.npmjs.com/package/appwrite-cli',
+                 'enabled' => true,
+@@ -395,7 +395,7 @@
+             [
+                 'key' => 'python',
+                 'name' => 'Python',
+-                'version' => '24.4.0',
++                'version' => '27.0.0',
+                 'url' => 'https://github.com/appwrite/sdk-for-python',
+                 'package' => 'https://pypi.org/project/appwrite/',
+                 'enabled' => true,
+```
+
+---
+
+### Incident Patch 3: `baa1fb13` (2026-10-27)
+**Commit Message**: fix(console): only filter rules by protocol on Cloud
+
+Self-hosted proxy rules have no protocol attribute, so a debug override
+of the function email flag there must not add the filter.
+
+Co-authored-by: Torsten Dittmann <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01CzfEfcEhnbtMP4Jup6V2zN
+
+**File**: `apps/console/src/lib/function-smtp-domain.ts` (modified, +5/-5)
+```diff
+@@ -1,5 +1,5 @@
+ import { Query, type Models } from '@appwrite.io/console'
+-import { isFeatureEnabled } from '@/lib/console-profiles'
++import { isCloudProfile, isFeatureEnabled } from '@/lib/console-profiles'
+ import { getApexDomain } from '@/lib/utils/proxy-domains'
+ 
+ /**
+@@ -40,12 +40,12 @@ export function getSmtpRecordName(domain: string): string {
+ 
+ /**
+  * Extra list queries for views that only want web (HTTP) domains. Filtering
+- * on the server keeps email rows from taking up the fetched page. Only sent
+- * behind the function email flag: self-hosted rules have no `protocol`
+- * attribute to query.
++ * on the server keeps email rows from taking up the fetched page. Only sent on
++ * Cloud behind the function email flag: self-hosted rules have no
++ * `protocol` attribute to query, even with the flag turned on in debug.
+  */
+ export function webDomainQueries(): string[] {
+-  return isFeatureEnabled('functionEmail')
++  return isCloudProfile() && isFeatureEnabled('functionEmail')
+     ? [Query.equal('protocol', ['http'])]
+     : []
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14872** (2026-10-23): fix(users): require users.write to read MFA recovery codes (@HarshMN2345)
-- **PR #14871** (2026-10-23): fix(query): match exact searches without InnoDB phrase positions (@abnegate)
-- **PR #14870** (2026-10-23): fix(migrations): apply the outbound host policy to migration sources (@abnegate)
-- **PR #14868** (2026-10-23): fix(migrations): check source key scopes for DocumentsDB and VectorsDB (@abnegate)
-- **PR #14867** (2026-10-23): fix(mqtt): scope stored push messages to the topic instance (@abnegate)
-- **PR #14866** (2026-10-23): fix(query): tighten function name and cast type parsing in the AST (@abnegate)
+- **PR #15010** (2026-10-27): feat(console): ship function email on Cloud, with email domains in one table (@TorstenDittmann)
+- **PR #15009** (2026-10-27): feat(cdn): add CloudFront certificate provider (@TorstenDittmann)
+- **PR #15008** (2026-10-27): docs(console): blog post on TanStack Redact 0.2.0 (@aishwaripahwa12)
+- **PR #15007** (2026-10-27): fix(schedule): restart combined scheduler loops that stop (@HarshMN2345)
+- **PR #15006** (2026-10-27): fix(vcs): ask Entire for every permission an installation holds (@Meldiron)
+- **PR #15004** (2026-10-27): feat(console): add Gitea to Git connect (@HarshMN2345)
 
 ---
 
@@ -2365,28 +2539,43 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mqtt): scope the push ledger unique index to the topic instance
+## X. Merge pull request #14540 from appwrite/fix-redis-read-timeout
 
 **RULE**:
-When implementing operations in `app/config/collections/common.php`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `app/init/registers.php`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ed930d0d`: mqtt): scope the push ledger unique index to the topic instance. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f7aeed8f`: Merge pull request #14540 from appwrite/fix-redis-read-timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/config/collections/common.php`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/init/registers.php`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-            Index::unique(key: '_key_message_topicInternalId', attributes: ['messageId', 'topicInternalId'], orders: [OrderDirection::Asc, OrderDirection::Asc]),
+    // Bounds every Redis connect and reply, so an unresponsive Redis fails a request
+    // instead of holding it. Must stay above the 2 s a queue retry blocks on a pop.
+    $redisTimeout = (float) System::getEnv('_APP_REDIS_TIMEOUT', 3);
+
+                default => function () use ($dsnHost, $dsnPort, $dsnUser, $dsnPass, $redisTimeout) {
+                    @$redis->pconnect($dsnHost, (int)$dsnPort, $redisTimeout);
+                    // Not the pconnect argument: a socket reused from the persistent pool keeps its old read timeout
+                    $redis->setOption(\Redis::OPT_READ_TIMEOUT, $redisTimeout);
+            $pool = new Pool(new SwoolePool(), $name, $connectionPoolSize, function () use ($type, $resource, $dsn, $redisTimeout) {
+                            'redis' => (function () use ($dsn, $redisTimeout) {
+                                $connection = Queue\Connection\Redis::fromDSN($dsn, $redisTimeout, $redisTimeout);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-            Index::unique(key: '_key_message_topic', attributes: ['messageId', 'topic'], orders: [OrderDirection::Asc, OrderDirection::Asc]),
+                default => function () use ($dsnHost, $dsnPort, $dsnUser, $dsnPass) {
+                    @$redis->pconnect($dsnHost, (int)$dsnPort);
+                    $redis->setOption(\Redis::OPT_READ_TIMEOUT, -1);
+            $pool = new Pool(new SwoolePool(), $name, $connectionPoolSize, function () use ($type, $resource, $dsn) {
+                            'redis' => (function () use ($dsn) {
+                                $connection = Queue\Connection\Redis::fromDSN($dsn);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ed930d0d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f7aeed8f` are properly handled with clean fallback behavior.

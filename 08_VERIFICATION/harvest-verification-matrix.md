@@ -5278,3 +5278,7 @@
 | `CYCLE-20261027-8VKY` | `2026-10-27T12:38:28.066Z` | `fb55/css-select` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4754` | Yes (`b4b9408b...`) |
 | `CYCLE-20261027-8XP3` | `2026-10-27T12:38:30.807Z` | `laurent22/joplin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4755` | Yes (`d039810c...`) |
 | `CYCLE-20261027-F4RH` | `2026-10-27T12:43:19.901Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4756, Rule 4757, Rule 4758` | Yes (`a1a6cc71...`) |
+| `CYCLE-20261027-J9FV` | `2026-10-27T12:46:32.587Z` | `carbon-design-system/carbon-components-svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4759` | Yes (`218a2c8b...`) |
+| `CYCLE-20261027-JBQN` | `2026-10-27T12:46:35.567Z` | `cheeriojs/dom-serializer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4760` | Yes (`6bfe8bf3...`) |
+| `CYCLE-20261027-JF0M` | `2026-10-27T12:46:39.814Z` | `appwrite/appwrite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4761` | Yes (`c540c8c9...`) |
+| `CYCLE-20261027-JHWI` | `2026-10-27T12:46:43.554Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4762` | Yes (`996c0747...`) |

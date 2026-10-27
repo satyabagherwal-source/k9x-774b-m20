@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "7a365049",
+    "sourceVersion": "2b62983a",
     "license": "BSD-3-Clause",
-    "contentHash": "0045ab93d5452137cdc90a291de955d3300bf1a0414a236961c697a173519510",
-    "lastHarvestedAt": "2026-10-26T18:32:20.239Z",
+    "contentHash": "996c07471cfc335a2bd8d3fe808e6eda64d37849f29dff150239f25c2f50e07c",
+    "lastHarvestedAt": "2026-10-27T12:46:43.558Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -5523,10 +5523,10 @@
     "repository": "carbon-design-system/carbon-components-svelte",
     "platform": "github",
     "sourceUrl": "https://github.com/carbon-design-system/carbon-components-svelte",
-    "sourceVersion": "21400fab",
+    "sourceVersion": "c980ccd4",
     "license": "Apache-2.0",
-    "contentHash": "1e2713ce5151383255000ef9407b969acb49c652878fee78d0e35c002b740591",
-    "lastHarvestedAt": "2026-10-25T22:00:36.304Z",
+    "contentHash": "218a2c8bcc1841faf17e4f72ed1dfb41c5a041c450153c4497b262937dfa6210",
+    "lastHarvestedAt": "2026-10-27T12:46:32.591Z",
     "learningId": "learn-github-carbon-design-system-carbon-components-svelte"
   },
   "shadcn-ui-lint": {
@@ -9413,10 +9413,10 @@
     "repository": "cheeriojs/dom-serializer",
     "platform": "github",
     "sourceUrl": "https://github.com/cheeriojs/dom-serializer",
-    "sourceVersion": "d924d49e",
+    "sourceVersion": "7f3cd35e",
     "license": "MIT",
-    "contentHash": "b3efe3089c46c54fa85ef9d75600851e64cb1e1170a456447bc9e3bff0b3f75b",
-    "lastHarvestedAt": "2026-10-22T19:09:45.683Z",
+    "contentHash": "6bfe8bf37d60bc34e8f92aa39c87af9487bd65bab2744342f118d43d948cde34",
+    "lastHarvestedAt": "2026-10-27T12:46:35.571Z",
     "learningId": "learn-github-cheeriojs-dom-serializer"
   },
   "paololeonardi-waterfallgrid": {
@@ -10323,10 +10323,10 @@
     "repository": "appwrite/appwrite",
     "platform": "github",
     "sourceUrl": "https://github.com/appwrite/appwrite",
-    "sourceVersion": "a9f8ae18",
+    "sourceVersion": "f7aeed8f",
     "license": "BSD-3-Clause",
-    "contentHash": "689785b47463c070e6777097be1d487417dc235527adf8357bf55cfb95572fc0",
-    "lastHarvestedAt": "2026-10-23T06:36:22.361Z",
+    "contentHash": "c540c8c9de1d48feb6f22c1df1b89cbd4466b0544a787f36f36aacdf704b549c",
+    "lastHarvestedAt": "2026-10-27T12:46:39.818Z",
     "learningId": "learn-github-appwrite-appwrite"
   },
   "expo-expo": {

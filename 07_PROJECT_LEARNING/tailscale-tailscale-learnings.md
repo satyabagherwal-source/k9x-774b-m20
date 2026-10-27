@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `7a365049`  
+> **Source Version**: `2b62983a`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T18:32:19.853Z  
+> **Timestamp**: 2026-10-27T12:46:43.147Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T18:32:18.291Z  
+> **Harvest Timestamp**: 2026-10-27T12:46:42.930Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38122 stars
+- **Stars / Engagement**: 38153 stars
 
 ---
 
@@ -821,86 +821,261 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `df839896` (2026-10-26)
-**Commit Message**: go.mod: bump gliderssh for window resize fix
+### Incident Patch 1: `2b62983a` (2026-10-26)
+**Commit Message**: tstest/natlab/vnet: fix TCPConn leak
+
+Explicitly close the other end of the losing connection.
+
+This is a follow-up to 31baee90c079ed52efc83fdf29860baf2637cb8d.
+
+Updates #cleanup
+
+Change-Id: I5bf36a7451da05545e7242ee5c1bff02fa44b362
+Signed-off-by: Francois Marier <[REDACTED_EMAIL]>
+
+**File**: `tstest/natlab/vnet/vnet.go` (modified, +1/-0)
+```diff
+@@ -3196,6 +3196,7 @@ func (s *Server) takeAgentConnOne(n *node) (ac *agentConn, miss int) {
+ 		s.agentConns.Delete(ac)
+ 		if st := tcp.EndpointState(ac.ep.State()); st != tcp.StateEstablished {
+ 			log.Printf("takeAgentConn: discarding idle agent conn for %v that the agent already closed (state %v)", n.mac, st)
++			ac.tc.Close()
+ 			continue
+ 		}
+ 		return ac, 0
+```
+
+---
+
+### Incident Patch 2: `e8ebe6ab` (2026-10-26)
+**Commit Message**: ssh/tailssh: parse UIDs consistently in isRootUser()
+
+Since the incubator parses the UID in base 0 via flags.IntVar()
+and isRootUser() uses base 10, it was possible to get inconsistent
+results between the two using non-base 10 numbers.
 
 Updates tailscale/corp#50380
 
+Change-Id: I9b2fb16bc37153df7b695533cc73a3499cb774eb
+Signed-off-by: Francois Marier <[REDACTED_EMAIL]>
+
+**File**: `ssh/tailssh/tailssh_test.go` (modified, +11/-0)
+```diff
+@@ -1734,6 +1734,17 @@ func TestIsRootUser(t *testing.T) {
+ 		{uid: "0", username: "alice", want: true},
+ 		// A non-canonical numeric uid 0 is also root.
+ 		{uid: "00", username: "alice", want: true},
++		{uid: "+0", username: "alice", want: true},
++		{uid: "-0", username: "alice", want: true},
++		{uid: "0b0", username: "alice", want: true},
++		{uid: "0B0", username: "alice", want: true},
++		{uid: "0o0", username: "alice", want: true},
++		{uid: "0O0", username: "alice", want: true},
++		{uid: "0x0", username: "alice", want: true},
++		{uid: "0X0", username: "alice", want: true},
++		{uid: "-0x0", username: "alice", want: true},
++		{uid: "0_0", username: "alice", want: true},
++		{uid: "0x_0", username: "alice", want: true},
+ 		{uid: "00000000", username: "alice", want: true},
+ 		{uid: "1000", username: "root", want: true},
+ 		{uid: "1000", username: "alice", want: false},
+```
+
+**File**: `ssh/tailssh/user_unix.go` (modified, +1/-1)
+```diff
+@@ -36,7 +36,7 @@ func isRootUser(u *userMeta) bool {
+ 	// denotes root, and must not bypass the non-root checks that later
+ 	// parse the uid numerically (e.g. the incubator's --uid). Non-numeric
+ 	// uids keep the previous string behavior (not root).
+-	if uid, err := strconv.ParseUint(u.Uid, 10, 32); err == nil {
++	if uid, err := strconv.ParseInt(u.Uid, 0, strconv.IntSize); err == nil {
+ 		return uid == 0
+ 	}
+ 	return false
+```
+
+---
+
+### Incident Patch 3: `f5fdb18b` (2026-10-26)
+**Commit Message**: ssh/tailssh: give delegated action fetches one timeout owner
+
+Let fetchSSHAction own the per-fetch deadline and pass the connection cancellation context directly from clientAuth. Remove the duplicate timeout and its deferred cancellation inside the action loop. Derive the longer transport watchdog from the fetch timeout, keeping both durations unchanged.
+
+Use virtual time to test the fetch deadline across retries, earlier parent deadlines, and parent cancellation. Verify that a successful fetch releases its request context.
+
+Updates tailscale/corp#50380
+
+Change-Id: I185958ca19566f04cbd68f33e4b1dad3d18aebb7
 Signed-off-by: James Tucker <[REDACTED_EMAIL]>
 
-**File**: `flake.nix` (modified, +1/-1)
+**File**: `ssh/tailssh/delegate_test.go` (added, +97/-0)
 ```diff
-@@ -173,4 +173,4 @@
-     });
-   };
+@@ -0,0 +1,97 @@
++// Copyright (c) Tailscale Inc & contributors
++// SPDX-License-Identifier: BSD-3-Clause
++
++//go:build (linux && !android) || (darwin && !ios) || freebsd || openbsd || plan9
++
++package tailssh
++
++import (
++	"context"
++	"errors"
++	"io"
++	"net/http"
++	"strings"
++	"testing"
++	"testing/synctest"
++	"time"
++)
++
++type delegateBackend struct {
++	ipnLocalBackend
++	request func(*http.Request) (*http.Response, error)
++}
++
++func (b *delegateBackend) DoNoiseRequest(req *http.Request) (*http.Response, error) {
++	return b.request(req)
++}
++
++func TestFetchSSHActionTimeout(t *testing.T) {
++	for _, mode := range []string{"timeout", "retry-timeout", "parent-deadline", "parent-cancel"} {
++		t.Run(mode, func(t *testing.T) {
++			synctest.Test(t, func(t *testing.T) {
++				start := time.Now()
++				wantDeadline := start.Add(delegateFetchTimeout)
++				wantElapsed := delegateFetchTimeout
++				wantErr := context.DeadlineExceeded
++				ctx, cancel := context.WithCancel(context.Background())
++				defer cancel()
++				switch mode {
++				case "parent-deadline":
++					var stop context.CancelFunc
++					ctx, stop = context.WithTimeout(ctx, time.Minute)
++					defer stop()
++					wantElapsed = time.Minute
++					wantDeadline = start.Add(wantElapsed)
++				case "parent-cancel":
++					time.AfterFunc(time.Minute, cancel)
++					wantElapsed = time.Minute
++					wantErr = context.Canceled
++				}
++				calls := 0
++				b := &delegateBackend{request: func(req *http.Request) (*http.Response, error) {
++					calls++
++					if got, ok := req.Context().Deadline(); !ok || !got.Equal(wantDeadline) {
++						t.Errorf("request deadline = %v, %v; want %v", got, ok, wantDeadline)
++					}
++					if mode == "retry-timeout" {
++						return nil, errors.New("temporarily unavailable")
++					}
++					<-req.Context().Done()
++					return nil, req.Context().Err()
++				}}
++				c := &conn{srv: &server{lb: b, logf: t.Logf}}
++				if _, err := c.fetchSSHAction(ctx, "https://unused/action"); !errors.Is(err, wantErr) {
++					t.Errorf("fetchSSHAction error = %v, want %v", err, wantErr)
++				}
++				if got := time.Since(start); got != wantElapsed {
++					t.Errorf("fetch duration = %v, want %v", got, wantElapsed)
++				}
++				if calls == 0 || mode == "retry-timeout" && calls < 2 {
++					t.Errorf("request calls = %d", calls)
++				}
++			})
++		})
++	}
++}
++
++func TestFetchSSHActionCancelsRequestOnSuccess(t *testing.T) {
++	var requestContext context.Context
++	b := &delegateBackend{request: func(req *http.Request) (*http.Response, error) {
++		requestContext = req.Context()
++		return &http.Response{
++			StatusCode: http.StatusOK,
++			Body:       io.NopCloser(strings.NewReader(`{"Accept":true}`)),
++		}, nil
++	}}
++	c := &conn{srv: &server{lb: b, logf: t.Logf}}
++	action, err := c.fetchSSHAction(context.Background(), "https://unused/action")
++	if err != nil {
++		t.Fatal(err)
++	}
++	if !action.Accept {
++		t.Fatal("delegated action did not accept")
++	}
++	if err := requestContext.Err(); err != context.Canceled {
++		t.Errorf("request context error = %v, want context.Canceled", err)
++	}
++}
+```
+
+**File**: `ssh/tailssh/tailssh.go` (modified, +15/-15)
+```diff
+@@ -490,19 +490,16 @@ func (c *conn) clientAuth(cm ssh.ConnMetadata) (perms *ssh.Permissions, retErr e
+ 
+ 			url := action.HoldAndDelegate
+ 
+-			// The delegate wait is bounded by fetchSSHAction's own 30-minute
+-			// context. Extend the login grace to cover it plus buffer, so
+-			// the grace timer never kills a live approval flow. A wedged
+-			// fetch still gets torn down at the raw socket.
++			// Allow the delegate fetch to reach its own timeout before
++			// login grace closes the transport. Keep the transport deadline
++			// in case the fetch does not return on context cancellation.
+ 			c.extendLoginGrace(holdDelegateGrace)
+ 
+ 			// Connection teardown also cancels the delegate fetch.
+-			parent := c.preAuthCtx
+-			if parent == nil {
+-				parent = context.Background()
++			ctx := c.preAuthCtx
++			if ctx == nil {
++				ctx = context.Background()
+ 			}
+-			ctx, cancel := context.WithTimeout(parent, 30*time.Minute)
+-			defer cancel()
+ 
+ 			metricHolds.Add(1)
+ 			url = c.expandDelegateURLLocked(url)
+@@ -921,11 +918,14 @@ func (c *conn) newSSHSession(s gliderssh.Session) *sshSession {
+ 	}
  }
--# nix-direnv cache busting line: sha256-SP0C5kiVlGP3oXgJZbn60ltJoY0pnjDLUPU+KPpLiIk=
-\ No newline at end of file
-+# nix-direnv cache busting line: sha256-lC6oLZoxHpGRk+UUTRqw48hkJZNHje0EwcMaG8mfDEY=
-\ No newline at end of file
-```
-
-**File**: `flakehashes.json` (modified, +2/-2)
-```diff
-@@ -4,7 +4,7 @@
-     "sri": "sha256-sdlgTLTkdhTvGCeQTwAsR+Do8rNwBzBUp5QPc09BPgI="
-   },
-   "vendor": {
--    "goModSum": "sha256-c6skz9VfdqDE2R9d7TScija/jid2r6+bHdpWObt4ls0=",
--    "sri": "sha256-SP0C5kiVlGP3oXgJZbn60ltJoY0pnjDLUPU+KPpLiIk="
-+    "goModSum": "sha256-8/LNXdfr/G7JZWAEb4BRWjwjxwmoW5CmsV1Y2IGl5Vk=",
-+    "sri": "sha256-lC6oLZoxHpGRk+UUTRqw48hkJZNHje0EwcMaG8mfDEY="
-   }
+ 
+-// holdDelegateGrace is how long the login-grace timer is extended for a
+-// conn waiting on a HoldAndDelegate approval. It is fetchSSHAction's own
+-// 30-minute cap plus buffer, so the grace timer never kills a live
+-// approval flow. A wedged fetch is still torn down at the socket.
+-const holdDelegateGrace = 35 * time.Minute
++const (
++	// delegateFetchTimeout bounds one delegated action fetch, including retries.
++	delegateFetchTimeout = 30 * time.Minute
++
++	// holdDelegateGrace is the login-grace period while fetching a delegated
++	// action. It allows the fetch to time out before closing the transport.
++	holdDelegateGrace = delegateFetchTimeout + 5*time.Minute
++)
+ 
+ // armLoginGrace arms the pre-auth login-grace timer; on expiry the
+ // connection is closed at the raw socket. The timer is stopped at auth
+@@ -1276,7 +1276,7 @@ func acceptEnvNarrowed(old, fresh []string) bool {
  }
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -112,7 +112,7 @@ require (
- 	github.com/studio-b12/gowebdav v0.13.0
- 	github.com/tailscale/certstore v0.1.1-0.20260409135935-3638fb84b77d
- 	github.com/tailscale/depaware v0.0.0-20260720165112-f20f66241ec6
--	github.com/tailscale/gliderssh v0.3.4-0.20261025202817-66627641389f
-+	github.com/tailscale/gliderssh v0.3.4-0.20261026144310-31f7cf365d3a
- 	github.com/tailscale/go-winio v0.0.0-20231025203758-c4f33415bf55
- 	github.com/tailscale/goexpect v0.0.0-20210902213824-6e8c725cea41
- 	github.com/tailscale/golang-x-crypto v0.0.0-20260720160339-c86ca1284b96
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -1126,8 +1126,8 @@ github.com/tailscale/certstore v0.1.1-0.20260409135935-3638fb84b77d h1:JcGKBZAL7
- github.com/tailscale/certstore v0.1.1-0.20260409135935-3638fb84b77d/go.mod h1:XrBNfAFN+pwoWuksbFS9Ccxnopa15zJGgXRFN90l3K4=
- github.com/tailscale/depaware v0.0.0-20260720165112-f20f66241ec6 h1:5Fr4ItdQ3LDbyuRmDAoDO29xu33QdFYo/2K+l+FTtiw=
- github.com/tailscale/depaware v0.0.0-20260720165112-f20f66241ec6/go.mod h1:F4qVQ0ffCtHizbxsWWCMGl8OIieayJWw8XetPiILDNA=
--github.com/tailscale/gliderssh v0.3.4-0.20261025202817-66627641389f h1:9XxzXnE8gJ9d2E8JF6Lau5z/czQG+1W8pO7z9z65dcY=
--github.com/tailscale/gliderssh v0.3.4-0.20261025202817-66627641389f/go.mod h1:wn16Km1EZOX4UEAyaZa3dBwfFGOJ7neck40NcwosJUw=
-+github.com/tailscale/gliderssh v0.3.4-0.20261026144310-31f7cf365d3a h1:LQfS++EBVN2Bk9/FbFjJmdP/CsebU0OupOX58tO4p04=
-+github.com/tailscale/gliderssh v0.3.4-0.20261026144310-31f7cf365d3a/go.mod h1:wn16Km1EZOX4UEAyaZa3dBwfFGOJ7neck40NcwosJUw=
- github.com/tailscale/go-winio v0.0.0-20231025203758-c4f33415bf55 h1:Gzfnfk2TWrk8Jj4P4c1a3CtQyMaTVCznlkLZI++hok4=
- github.com/tailscale/go-winio v0.0.0-20231025203758-c4f33415bf55/go.mod h1:4k4QO+dQ3R5FofL+SanAUZe+/QfeK0+OIuwDIRu2vSg=
- github.com/tailscale/goexpect v0.0.0-20210902213824-6e8c725cea41 h1:/V2rCMMWcsjYaYO2MeovLw+ClP63OtXgCF2Y1eb8+Ns=
-```
-
-**File**: `shell.nix` (modified, +1/-1)
-```diff
-@@ -16,4 +16,4 @@
- ) {
-   src =  ./.;
- }).shellNix
--# nix-direnv cache busting line: sha256-SP0C5kiVlGP3oXgJZbn60ltJoY0pnjDLUPU+KPpLiIk=
-\ No newline at end of file
-+# nix-direnv cache busting line: sha256-lC6oLZoxHpGRk+UUTRqw48hkJZNHje0EwcMaG8mfDEY=
-\ No newline at end of file
+ 
+ func (c *conn) fetchSSHAction(ctx context.Context, url string) (*tailcfg.SSHAction, error) {
+-	ctx, cancel := context.WithTimeout(ctx, 30*time.Minute)
++	ctx, cancel := context.WithTimeout(ctx, delegateFetchTimeout)
+ 	defer cancel()
+ 	bo := backoff.NewBackoff("fetch-ssh-action", c.logf, 10*time.Second)
+ 	for {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #21958** (2026-10-26): ssh/tailssh: enforce recording failure before notifying control (@raggi)
-- **PR #21957** (2026-10-26): ssh/tailssh: initialize username hint exclusions (@raggi)
-- **PR #21956** (2026-10-26): wgengine/magicsock: ensure discoKey nodeKey match (@cmol)
-- **PR #21953** (2026-10-26): go.mod: bump gliderssh for window resize fix (@raggi)
-- **PR #21945** (2026-10-25): go.mod: update gliderssh for resource exhaustion fixes (@raggi)
-- **PR #21944** (2026-10-26): ssh/tailssh: enforce SSH policy at the connection level (@raggi)
+- **PR #21982** (2026-10-27): ssh/tailssh: parse UIDs consistently in isRootUser() (@fmarier)
+- **PR #21980** (2026-10-27): derp/derphttp: bound response body read on non-101 upgrade response (@pawel-ts)
+- **PR #21979** (2026-10-27): tstest/natlab/vnet: fix TCPConn leak (@fmarier)
+- **PR #21977** (2026-10-26): ssh/tailssh: set $LOGNAME to same value as $USER in incubator (@oxtoacart)
+- **PR #21973** (2026-10-27): ssh/tailssh: release reverse-forward cancellation callbacks (@raggi)
+- **PR #21972** (2026-10-26): ssh/tailssh: give delegated action fetches one timeout owner (@raggi)
 
 ---
 
@@ -920,28 +1095,28 @@ Signed-off-by: James Tucker <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. go.mod: bump gliderssh for window resize fix
+## X. tstest/natlab/vnet: fix TCPConn leak
 
 **RULE**:
-When implementing operations in `flake.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tstest/natlab/vnet/vnet.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `df839896`: go.mod: bump gliderssh for window resize fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2b62983a`: tstest/natlab/vnet: fix TCPConn leak. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flake.nix`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tstest/natlab/vnet/vnet.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# nix-direnv cache busting line: sha256-lC6oLZoxHpGRk+UUTRqw48hkJZNHje0EwcMaG8mfDEY=
+			ac.tc.Close()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-# nix-direnv cache busting line: sha256-SP0C5kiVlGP3oXgJZbn60ltJoY0pnjDLUPU+KPpLiIk=
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `df839896` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2b62983a` are properly handled with clean fallback behavior.

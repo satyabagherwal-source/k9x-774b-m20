@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T12:43:19.914Z",
+  "last_updated": "2026-10-27T12:46:43.567Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "0045ab93d5452137cdc90a291de955d3300bf1a0414a236961c697a173519510",
-      "verified_at": "2026-10-26T18:32:20.247Z",
+      "content_hash": "996c07471cfc335a2bd8d3fe808e6eda64d37849f29dff150239f25c2f50e07c",
+      "verified_at": "2026-10-27T12:46:43.566Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T18:32:20.247Z"
+      "last_updated": "2026-10-27T12:46:43.566Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -8406,14 +8406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-carbon-design-system-carbon-components-svelte",
-      "content_hash": "1e2713ce5151383255000ef9407b969acb49c652878fee78d0e35c002b740591",
-      "verified_at": "2026-10-25T22:00:36.311Z",
+      "content_hash": "218a2c8bcc1841faf17e4f72ed1dfb41c5a041c450153c4497b262937dfa6210",
+      "verified_at": "2026-10-27T12:46:32.599Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T22:00:36.311Z"
+      "last_updated": "2026-10-27T12:46:32.599Z"
     },
     "shadcn-ui/lint": {
       "repository": "shadcn-ui/lint",
@@ -14166,14 +14166,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cheeriojs-dom-serializer",
-      "content_hash": "b3efe3089c46c54fa85ef9d75600851e64cb1e1170a456447bc9e3bff0b3f75b",
-      "verified_at": "2026-10-22T19:09:45.695Z",
+      "content_hash": "6bfe8bf37d60bc34e8f92aa39c87af9487bd65bab2744342f118d43d948cde34",
+      "verified_at": "2026-10-27T12:46:35.579Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T19:09:45.695Z"
+      "last_updated": "2026-10-27T12:46:35.579Z"
     },
     "paololeonardi/WaterfallGrid": {
       "repository": "paololeonardi/WaterfallGrid",
@@ -15501,14 +15501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-appwrite-appwrite",
-      "content_hash": "689785b47463c070e6777097be1d487417dc235527adf8357bf55cfb95572fc0",
-      "verified_at": "2026-10-23T06:36:22.413Z",
+      "content_hash": "c540c8c9de1d48feb6f22c1df1b89cbd4466b0544a787f36f36aacdf704b549c",
+      "verified_at": "2026-10-27T12:46:39.826Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T06:36:22.413Z"
+      "last_updated": "2026-10-27T12:46:39.826Z"
     },
     "expo/expo": {
       "repository": "expo/expo",

@@ -5287,3 +5287,7 @@ Every entry in this ledger must capture:
 | `learn-github-fb55-css-select` | `https://github.com/fb55/css-select` | `6e4c7a63` | Multi-dimensional audit evidence | 2026-10-27T12:38:28.069Z |
 | `learn-github-laurent22-joplin` | `https://github.com/laurent22/joplin` | `b613d006` | Multi-dimensional audit evidence | 2026-10-27T12:38:30.810Z |
 | `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `818532da` | Multi-dimensional audit evidence | 2026-10-27T12:43:19.905Z |
+| `learn-github-carbon-design-system-carbon-components-svelte` | `https://github.com/carbon-design-system/carbon-components-svelte` | `c980ccd4` | Multi-dimensional audit evidence | 2026-10-27T12:46:32.591Z |
+| `learn-github-cheeriojs-dom-serializer` | `https://github.com/cheeriojs/dom-serializer` | `7f3cd35e` | Multi-dimensional audit evidence | 2026-10-27T12:46:35.571Z |
+| `learn-github-appwrite-appwrite` | `https://github.com/appwrite/appwrite` | `f7aeed8f` | Multi-dimensional audit evidence | 2026-10-27T12:46:39.818Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `2b62983a` | Multi-dimensional audit evidence | 2026-10-27T12:46:43.558Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md`  
 > **Source**: github ([https://github.com/carbon-design-system/carbon-components-svelte](https://github.com/carbon-design-system/carbon-components-svelte))  
-> **Source Version**: `21400fab`  
+> **Source Version**: `c980ccd4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T22:00:35.953Z  
+> **Timestamp**: 2026-10-27T12:46:32.159Z  
 > **Learning ID**: `learn-github-carbon-design-system-carbon-components-svelte`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/carbon-design-system/carbon-components-svelte](https://github.com/carbon-design-system/carbon-components-svelte))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T22:00:35.774Z  
+> **Harvest Timestamp**: 2026-10-27T12:46:30.605Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Svelte implementation of the Carbon Design System
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 2918 stars
+- **Stars / Engagement**: 2917 stars
 
 ---
 
@@ -172,8 +172,8 @@ group("toggleCheckboxNode (cascade check) — deep/narrow (chain)", () => {
 
 ### Core Architecture Module: `e2e/fixtures/notification-queue.ts`
 ```
-import { mount } from "./mount";
 import NotificationQueueFixture from "./NotificationQueueFixture.svelte";
+import { mount } from "./mount";
 
 mount(NotificationQueueFixture);
 
@@ -306,11 +306,9 @@ type Join<K, P> = K extends string | number
  * otherwise widen `PropertyPath` to plain `string`.
  */
 export type KeysWithoutIndexSignature<T> = {
-  [K in keyof T as string extends K
-    ? never
-    : number extends K
-      ? never
-      : K]: T[K];
+  [
+    K in keyof T as string extends K ? never : number extends K ? never : K
+  ]: T[K];
 };
 
 // For performance, the maximum traversal depth is 3.
@@ -335,15 +333,14 @@ export type PropertyPathIgnoringIndexSignatures<T, D extends number = 3> = [
   : T extends object
     ? {
         [K in keyof KeysWithoutIndexSignature<T>]-?: K extends string | number
-          ?
-              | `${K}`
-              | Join<
-                  K,
-                  PropertyPathIgnoringIndexSignatures<
-                    KeysWithoutIndexSignature<T>[K],
-                    PathDepth[D]
-                  >
+          ? | `${K}`
+            | Join<
+                K,
+                PropertyPathIgnoringIndexSignatures<
+                  KeysWithoutIndexSignature<T>[K],
+                  PathDepth[D]
                 >
+              >
           : never;
       }[keyof KeysWithoutIndexSignature<T>]
     : "";
@@ -1062,11 +1059,11 @@ export declare function observeModalClose(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5065** (2026-10-25): **fix(big-number): put the percent sign where the locale puts it**
-  *Symptoms*: `percentage` and `deltaPercentage` appended an ASCII "%" after the number in every locale. Turkish writes "%12", French "12 %" and Egyptian Arabic "١٢٪". Both now format with Intl's "percent" unit, which follows the locale's percent pattern. The percent sign, and the space some locales put beside it, keep the smaller type step.  | Change | Before | After | | :--- | :--- | :--- | | White | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5065/percent-locales-white-before.png"> | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5065/percent-locales-white-after.png"> | | Gray 100 | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5065/percent-locales-g100-before.png"> | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5065/percent-locales-g100-after.png"> |  **Notes** - The "percent" unit gives the same text as `style: "percent"` (checked   in about 170 locales) and takes the number as given. `value / 100`   can print "12.300000000000001%". - Percentages are no longer abbreviated ("1,234.5%", not "1.2K%").   ICU's compact percent patterns put Turkish's sign after the "%"   ("%+4,2") and swap French's no-break space for a plain one.  
+- **Issue #5140** (2026-10-27): **fix(date-picker): match the locale's month names in the input pattern**
+  *Symptoms*: Stacked on #5139. With `locale="fr"` and `dateFormat="j M Y"`, the derived `pattern` used `\w+` for the month, which rejects "10 févr. 2026" (accents, periods, "1月"). `F`, `M`, `D` and `l` now match an alternation of the locale's names, so the input accepts exactly what the parser reads.    ---  | Before | After | | --- | --- | | ![Before](https://gist.githubusercontent.com/metonym/a4cfc1e285beeb0f7e8f60f5e0c02fa0/raw/a9c1cbcc6c92fe05e1ed3916fcc7838fcdedea99/fr-before.png) | ![After](https://gist.githubusercontent.com/metonym/a4cfc1e285beeb0f7e8f60f5e0c02fa0/raw/1521378a40f33cce4935fbd51e1b43dfe47f36bc/fr-after.png) |  
 
-- **Issue #5057** (2026-10-25): **fix(link): keep a visited link's color while pressed or disabled**
-  *Symptoms*: A link with `visited` showed the hover color while pressed, and a disabled one showed the visited color. The rules for the prop came after the pressed and disabled rules they tie, so they won by order. They now sit ahead of those rules in the link mixin.  | Change | Before | After | | :--- | :--- | :--- | | Pressed, White | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5057/visited-pressed-white-before.png"> | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5057/visited-pressed-white-after.png"> | | Pressed, Gray 100 | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5057/visited-pressed-g100-before.png"> | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5057/visited-pressed-g100-after.png"> | | Pressed color (White) | `#0043ce` (hover) | `#0f62fe` (link) | | Disabled, hovered, White | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5057/visited-disabled-hover-white-before.png"> | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5057/visited-disabled-hover-white-after.png"> | | Disabled, hovered, Gray 100 | <img width="400
+- **Issue #5139** (2026-10-27): **fix(date-picker): accept a time in the derived input pattern**
+  *Symptoms*: With `dateFormat="m/d/Y H:i"`, the derived `pattern` kept `H` and `i` as literal letters, so native validation rejected "02/10/2026 14:30". The hour, minute and second tokens now match one or two digits, and `K` matches any non-digit run so names like "p. m." pass.   ---  | Before | After | | --- | --- | | ![Before](https://gist.githubusercontent.com/metonym/a4cfc1e285beeb0f7e8f60f5e0c02fa0/raw/3943711f33a13a2d9955eda3bd51017f553270f9/time-pattern-before.png) | ![After](https://gist.githubusercontent.com/metonym/a4cfc1e285beeb0f7e8f60f5e0c02fa0/raw/038a847f782ade49ea75bc1b489dfa7166ff2686/time-pattern-after.png) | 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1083,460 +1080,637 @@ export declare function observeModalClose(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `39000589` (2026-10-17)
-**Commit Message**: fix(slider): move the number input below a short track
+### Incident Patch 1: `518ba1d7` (2026-10-26)
+**Commit Message**: fix(types): type the four remaining `any` contexts
 
-An invalid or warning slider's number input is 96px wide, to hold its
-icon, and beside the shortest track it overflowed a 200px container by
-26px.
+ComboButton's menu placement, InputGroup's form size, SidePanel's
+section level and the overflow chip's `items` were `any` stores in
+their generated context types. sveld's next release reports such
+types, so annotate them.
 
-The slider's row now wraps, and the track's flex basis is its 48px
-minimum, so the input moves to a second line only when it doesn't fit
-beside even that; the track then grows back toward 200px. The track's
-200px width still sizes a container sized to its content, and every
-layout with room for one line is unchanged.
-
-**File**: `css/vendor/carbon-components/scss/components/slider/_slider.scss` (modified, +11/-5)
+**File**: `scripts/svelte-types-baseline.json` (modified, +1/-1)
 ```diff
-@@ -20,20 +20,26 @@
-   .#{$prefix}--slider-container {
-     display: flex;
-     max-width: 100%;
-+    // ccs: wraps the number input onto a second line in a container too
-+    // narrow for it beside even the shortest track (the track's flex basis
-+    // below), instead of overflowing.
-+    flex-wrap: wrap;
-     align-items: center;
-+    row-gap: $carbon--spacing-03;
-     user-select: none;
-   }
- 
-   .#{$prefix}--slider {
-     position: relative;
-     // ccs: 200px where there's room, as before, and down to 48px when the
-     // container is narrower: a 200px minimum pushed the number input out
--    // of narrow containers. `width` (not `flex-basis`), so the container
--    // sizes to it.
-+    // of narrow containers. `width` sizes a content-sized container to the
-+    // 200px track; the 48px flex basis decides when the row wraps, and the
-+    // track grows from it back to 200px.
-     width: to-rem(200px);
-     min-width: to-rem(48px);
--    max-width: to-rem(640px);
--    flex-shrink: 1;
-+    max-width: to-rem(200px);
-+    flex: 1 1 to-rem(48px);
-     padding: $spacing-05 0;
-     margin: 0 $carbon--spacing-05;
-     cursor: pointer;
-@@ -44,7 +50,7 @@
-   }
- 
-   .#{$prefix}--slider-container--full-width .#{$prefix}--slider {
--    flex-grow: 1;
-+    max-width: to-rem(640px);
-   }
- 
-   // ccs: `hideRangeLabels`. The track's side margins space it from the range
+@@ -13,7 +13,7 @@
+   "Checkbox/InlineCheckbox.svelte": 3,
+   "CodeSnippet/CodeSnippet.svelte": 2,
+   "ComboBox/ComboBox.svelte": 38,
+-  "ComboButton/ComboButton.svelte": 5,
++  "ComboButton/ComboButton.svelte": 4,
+   "ComposedModal/ComposedModal.svelte": 2,
+   "ConfirmModal/ConfirmModal.svelte": 3,
+   "ContainedList/ContainedListItem.svelte": 1,
 ```
 
-**File**: `e2e/fixtures/SliderFitFixture.svelte` (modified, +8/-0)
+**File**: `src/ComboButton/ComboButton.svelte` (modified, +1/-0)
 ```diff
-@@ -11,6 +11,14 @@
-     <RangeSlider labelText="Price" valueFrom={20} valueTo={60} />
-   </div>
- {/each}
-+<!-- An invalid slider's number input is wider (it holds the icon). -->
-+<div data-testid="invalid-200" style="width: 200px; margin: 1rem;">
-+  <Slider labelText="Volume" value={40} invalid invalidText="Too loud" />
-+</div>
-+<!-- A slider in a container sized to its content. -->
-+<div data-testid="content-sized" style="display: inline-block; margin: 1rem;">
-+  <Slider labelText="Volume" value={40} />
-+</div>
- <div data-testid="full-600" style="width: 600px; margin: 1rem;">
-   <Slider fullWidth labelText="Volume" value={40} />
- </div>
+@@ -133,6 +133,7 @@
+ 
+   let triggerRef = null;
+ 
++  /** @type {import("svelte/store").Writable<null | HTMLDivElement>} */
+   const placementGroup = writable(null);
+   setContext(MENU_PLACEMENT_CONTEXT_KEY, placementGroup);
+   $: placementGroup.set(ref);
 ```
 
-**File**: `e2e/slider-fit.test.ts` (modified, +6/-2)
+**File**: `src/InputGroup/InputGroup.svelte` (modified, +1/-0)
 ```diff
-@@ -2,14 +2,17 @@ import { expect, test } from "./helpers/host";
+@@ -73,6 +73,7 @@
+   const ownSize = writable(normalizeSize(size, FIELD_SIZE_ALIASES));
+   $: ownSize.set(normalizeSize(size, FIELD_SIZE_ALIASES));
  
- /**
-  * Sliders fit a container narrower than their 200px track plus labels
-- * and number inputs, keep the 200px track where there's room, and still
-- * fill the row with fullWidth.
-+ * and number inputs, keep the 200px track where there's room (also in a
-+ * container sized to its content), and still fill the row with
-+ * fullWidth. Where even the shortest track leaves no room for the number
-+ * input, the input moves to a second line.
-  */
- test("sliders fit their container", async ({ page }) => {
-   await page.goto("/slider-fit.html");
++  /** @type {import("svelte/store").Readable<undefined | "xs" | "sm" | "md" | "xl">} */
+   const sharedSize = derived(
+     [ownSize, formSize],
+     ([$ownSize, $formSize]) => $ownSize ?? $formSize,
+```
+
+**File**: `src/SidePanel/SidePanel.svelte` (modified, +1/-0)
+```diff
+@@ -240,6 +240,7 @@
  
-   const fits = [
-     "slider-200",
-+    "invalid-200",
-     "slider-320",
-     "range-320",
-     "slider-600",
-@@ -32,5 +35,6 @@ test("sliders fit their container", async ({ page }) => {
-   const track = (id: string) =>
-     page.getByTestId(id).locator(".bx--slider").boundingBox();
-   expect((await track("slider-600"))?.width).toBeCloseTo(200, 0);
-+  expect((await track("content-sized"))?.width).toBeCloseTo(200, 0);
-   expect((await track("full-600"))?.width).toBeGreaterThan(400);
- });
+   // The title is one level below the enclosing `Section`, or an `h2`.
+   const parentSection = getContext("carbon:Section") ?? readable(1);
++  /** @type {import("svelte/store").Writable<number>} */
+   const sectionLevel = writable(Math.min($parentSection + 1, 6));
+   $: sectionLevel.set(Math.min($parentSection + 1, 6));
+   setContext("carbon:Section", sectionLevel);
+```
+
+**File**: `src/UserAvatarGroup/UserAvatarGroupOverflow.svelte` (modified, +1/-0)
+```diff
+@@ -22,6 +22,7 @@
+   // `size`. The chip's tooltip joins the group's tooltip handoff through
+   // the `TooltipGroup` context, which this does not shadow.
+   setContext("carbon:UserAvatarGroup", {
++    /** @type {import("svelte/store").Readable<Array<{ id: string; name: string; node?: HTMLElement }>>} */
+     items: readable([]),
+     max: readable(0),
+     /** @type {import("svelte/store").Readable<import("./UserAvatarGroup.svelte").UserAvatarGroupProps["size"]>} */
 ```
 
 ---
 
-### Incident Patch 2: `3d72d221` (2026-10-21)
-**Commit Message**: fix(list-box): keep an inline label's words whole in a narrow row
+### Incident Patch 2: `a7610a04` (2026-10-26)
+**Commit Message**: fix(types): accept `undefined` on props that default to it
 
-An inline Dropdown or MultiSelect in a row short of space broke its
-label down to a letter a line ("R/e/g/i/o/n/s"). Labels may break
-inside a word so a long word can't run out of its component (#4682),
-but that also let the label's grid track shrink below its words.
+299 props default to `undefined` but typed their JSDoc without it, so
+their scripts failed strict null checks, and under
+`exactOptionalPropertyTypes` a consumer couldn't pass `size={undefined}`.
+Their `@type` now includes `undefined`: `size?: "sm" | "md"` becomes
+`size?: "sm" | "md" | undefined`. Without `exactOptionalPropertyTypes`
+the two are the same type. Props that feed a group's context
+(CheckboxGroup, RadioButtonGroup, TileGroup, SelectableTileGroup) are
+left for a separate change, since the context's type would widen too.
+1,390 errors to 1,162.
 
-The inline label now uses `word-break: normal` with `overflow-wrap:
-break-word`, so the track can't shrink below the longest word while
-the label still wraps between words.
-
-A single word wider than the room beside the control now runs past its
-box instead of breaking, because the track can't shrink below it.
-
-**File**: `css/_long-words.scss` (modified, +10/-0)
+**File**: `scripts/svelte-types-baseline.json` (modified, +82/-122)
 ```diff
-@@ -24,6 +24,16 @@
-   .#{$prefix}--btn {
-     word-break: break-word;
-   }
-+
-+  // `word-break` also lets a box shrink below its longest word, so in a
-+  // row short of space an inline Dropdown's or MultiSelect's label went to
-+  // a letter a line ("R/e/g/i/o/n/s"). Words stay whole here and the label
-+  // still wraps between them. A single word wider than the room left beside
-+  // the control now runs past its box instead of breaking.
-+  .#{$prefix}--list-box__wrapper--inline > .#{$prefix}--label {
-+    word-break: normal;
-+    overflow-wrap: break-word;
-+  }
- }
- 
- @include exports("long-words") {
+@@ -1,163 +1,126 @@
+ {
+-  "Accordion/Accordion.svelte": 3,
+-  "Accordion/AccordionItem.svelte": 6,
+-  "Accordion/AccordionSkeleton.svelte": 1,
++  "Accordion/Accordion.svelte": 2,
++  "Accordion/AccordionItem.svelte": 5,
+   "ActionSet/ActionSet.svelte": 4,
+-  "AILabel/AILabel.svelte": 2,
++  "AILabel/AILabel.svelte": 1,
+   "AILabel/Decorator.svelte": 1,
+-  "BadgeIndicator/BadgeIndicator.svelte": 1,
+-  "BigNumber/BigNumber.svelte": 11,
++  "BigNumber/BigNumber.svelte": 7,
+   "Bleed/Bleed.svelte": 1,
+-  "Box/Box.svelte": 2,
+-  "Breadcrumb/BreadcrumbItem.svelte": 3,
+-  "Breakpoint/Breakpoint.svelte": 2,
+-  "Button/Button.svelte": 13,
+-  "Button/ButtonSkeleton.svelte": 2,
+-  "Card/Card.svelte": 6,
++  "Breadcrumb/BreadcrumbItem.svelte": 2,
++  "Button/Button.svelte": 9,
++  "Card/Card.svelte": 5,
+   "Carousel/Carousel.svelte": 2,
+-  "Chat/ChatButton.svelte": 1,
+-  "Chat/ChatButtonSkeleton.svelte": 1,
+-  "Checkbox/Checkbox.svelte": 7,
++  "Checkbox/Checkbox.svelte": 6,
+   "Checkbox/CheckboxGroup.svelte": 6,
+   "Checkbox/InlineCheckbox.svelte": 3,
+-  "CodeSnippet/CodeSnippet.svelte": 4,
+-  "ComboBox/ComboBox.svelte": 42,
+-  "ComboBox/ComboBoxSkeleton.svelte": 1,
+-  "ComboButton/ComboButton.svelte": 6,
+-  "ComposedModal/ComposedModal.svelte": 6,
+-  "ComposedModal/ModalFooter.svelte": 3,
+-  "ConfirmModal/ConfirmModal.svelte": 5,
+-  "ContainedList/ContainedListItem.svelte": 3,
+-  "ContentSwitcher/ContentSwitcher.svelte": 3,
+-  "ContentSwitcher/ContentSwitcherSkeleton.svelte": 1,
++  "CodeSnippet/CodeSnippet.svelte": 2,
++  "ComboBox/ComboBox.svelte": 38,
++  "ComboButton/ComboButton.svelte": 5,
++  "ComposedModal/ComposedModal.svelte": 5,
++  "ConfirmModal/ConfirmModal.svelte": 3,
++  "ContainedList/ContainedListItem.svelte": 2,
++  "ContentSwitcher/ContentSwitcher.svelte": 2,
+   "ContentSwitcher/Switch.svelte": 2,
+   "ContextMenu/ContextMenu.svelte": 13,
+   "ContextMenu/ContextMenuOption.svelte": 20,
+-  "CopyButton/CopyButton.svelte": 4,
+-  "CopyInput/CopyInput.svelte": 4,
+-  "CopyInput/CopyInputSkeleton.svelte": 1,
+-  "DataTable/DataTable.svelte": 127,
+-  "DataTable/DataTableSkeleton.svelte": 3,
+-  "DataTable/Table.svelte": 3,
+-  "DataTable/Toolbar.svelte": 2,
++  "CopyButton/CopyButton.svelte": 3,
++  "DataTable/DataTable.svelte": 121,
++  "DataTable/DataTableSkeleton.svelte": 2,
+   "DataTable/ToolbarBatchActions.svelte": 6,
+   "DataTable/ToolbarColumnVisibility.svelte": 2,
+   "DataTable/ToolbarContent.svelte": 3,
+   "DataTable/ToolbarDensity.svelte": 1,
+   "DataTable/ToolbarMenu.svelte": 3,
+   "DataTable/ToolbarSearch.svelte": 18,
+   "DatePicker/DatePicker.svelte": 59,
+-  "DatePicker/DatePickerInput.svelte": 11,
+-  "DatePicker/DatePickerSkeleton.svelte": 2,
++  "DatePicker/DatePickerInput.svelte": 8,
+   "Dialog/Dialog.svelte": 4,
+   "Disclosure/Disclosure.svelte": 3,
+-  "Dropdown/Dropdown.svelte": 21,
+-  "Dropdown/DropdownSkeleton.svelte": 1,
+-  "EmptyState/EmptyState.svelte": 2,
++  "Dropdown/Dropdown.svelte": 16,
++  "EmptyState/EmptyState.svelte": 1,
+   "FileUploader/FileDownloadItem.svelte": 2,
+   "FileUploader/FileUploader.svelte": 5,
+-  "FileUploader/FileUploaderButton.svelte": 6,
++  "FileUploader/FileUploaderButton.svelte": 5,
+   "FileUploader/FileUploaderDropContainer.svelte": 6,
+-  "Form/Form.svelte": 1,
+-  "FormHelperText/FormHelperText.svelte": 2,
+   "FormItem/FormItem.svelte": 4,
+-  "FormLabel/FormLabel.svelte": 2,
+-  "FormRequirement/FormRequirement.svelte": 1,
+-  "Grid/Column.svelte": 11,
+-  "ImageLoader/ImageLoader.svelte": 7,
+-  "InlineEdit/InlineEdit.svelte": 12,
+-  "InlineLoading/InlineLoading.svelte": 2,
++  "Grid/Column.svelte": 5,
++  "ImageLoader/ImageLoader.svelte": 6,
++  "InlineEdit/InlineEdit.svelte": 9,
+   "InputGroup/InputGroup.svelte": 3,
+   "InterstitialScreen/InterstitialScreen.svelte": 1,
+   "InterstitialScreen/InterstitialScreenFooter.svelte": 6,
+-  "InterstitialScreen/InterstitialScreenHeader.svelte": 2,
+-  "Link/Link.svelte": 2,
+-  "Link/LinkDownload.svelte": 3,
+-  "ListBox/ListBox.svelte": 3,
++  "InterstitialScreen/InterstitialScreenHeader.svelte": 1,
++  "Link/Link.svelte": 1,
++  "Link/LinkDownload.svelte": 2,
+   "ListBox/ListBoxField.svelte": 3,
+-  "ListBox/ListBoxMenu.svelte": 1,
+-  "ListBox/ListBoxMenuItem.svelte": 2,
+-  "ListBox/ListBoxSelection.svelte": 4,
++  "ListBox/ListBoxMenuItem.svelte": 1,
++  "ListBox/ListBoxSelection.svelte": 3,
+   "LocalStorage/StorageBinding.svelte": 1,
+-  "Menu/Menu.svelte": 3,
++  "Menu/Menu.svelte": 2,
+   "Menu/MenuItem.svelte": 6,
+-  "MenuButton/MenuButton.svelte": 3,
+-  "Meter/Meter.svelte": 11,
+-  "Modal/Modal.svelte": 16,
+-  "MultiSelect/MultiSelect.svelte": 62,
+-  "MultiSelect/MultiSelectSkeleton.svelte": 1,
++  "MenuButton/MenuButton.svelte": 1,
++  "Meter/Meter.svelte": 8,
++  "Modal/Modal.svelte": 10,
++  "MultiSelect/MultiSelect.svelte": 58,
+   "Notification/Callout.svelte": 1,
+   "Notification/InlineNotification.svelte": 1,
+-  "Notification/NotificationButton.svelte": 2,
++  "Notification/NotificationButton.svelte": 1,
+   "Notification/NotificationQueue.svelte": 
 ```
 
-**File**: `e2e/fixtures/LongWordsFixture.svelte` (modified, +47/-0)
+**File**: `src/AILabel/AILabel.svelte` (modified, +1/-1)
 ```diff
-@@ -4,8 +4,10 @@
-     AccordionItem,
-     Button,
-     Checkbox,
-+    Dropdown,
-     InlineNotification,
-     Link,
-+    MultiSelect,
-     RadioButton,
-     TextInput,
-     Tile,
-@@ -15,6 +17,11 @@
+@@ -61,7 +61,7 @@
+    * Set the alignment of the explanation relative to the button.
+    * Defaults to `"end"` inside a field or tile `decorator` slot,
+    * otherwise `"start"`.
+-   * @type {"start" | "center" | "end"}
++   * @type {"start" | "center" | "end" | undefined}
+    */
+   export let align = undefined;
  
-   const word = "Datenschutzgrundverordnungskonformitätsprüfung";
-   const url = "https://api.example.com/v2/organizations/8f14e45fceea167a";
-+  const regions = [
-+    { id: "us", text: "US East" },
-+    { id: "eu", text: "EU West" },
-+    { id: "ap", text: "Asia Pacific" },
-+  ];
- </script>
- 
- <div data-testid="column" style="width: 12rem">
-@@ -40,3 +47,43 @@
-     timeout={0}
-   />
- </div>
-+
-+<!-- Inline controls in a row that shrinks: the filter beside each gives
-+     way, so each label keeps its words whole and the row stays inside its
-+     box. -->
-+<div style="display: grid; gap: 1rem">
-+  {#each [
-+    { id: "dropdown", label: "Region" },
-+    { id: "multiselect", label: "Regions" },
-+  ] as { id, label }}
-+    <div data-testid="rows-{id}" style="display: flex; gap: 1rem; width: 22rem">
-+      {#if id === "dropdown"}
-+        <Dropdown
-+          type="inline"
-+          labelText={label}
-+          items={regions}
-+          selectedId="us"
-+        />
-+      {:else}
-+        <MultiSelect
-+          type="inline"
-+          labelText={label}
-+          placeholder="Choose regions"
-+          items={regions}
-+          selectedIds={["us", "eu"]}
-+        />
-+      {/if}
-+      <div style="flex: 1 1 14rem; min-width: 0">
-+        <TextInput labelText="Filter" hideLabel placeholder="Filter" />
-+      </div>
-+    </div>
-+  {/each}
-+  <div data-testid="rows-words" style="width: 12rem">
-+    <Dropdown
-+      type="inline"
-+      labelText="A label with several words in it"
-+      items={regions}
-+      selectedId="us"
-+    />
-+  </div>
-+</div>
 ```
 
-**File**: `e2e/long-words.test.ts` (modified, +54/-0)
+**File**: `src/Accordion/Accordion.svelte` (modified, +1/-1)
 ```diff
-@@ -27,4 +27,58 @@ test.describe("long words stay inside their column", () => {
-       });
-       expect(spills).toEqual([]);
-     });
+@@ -10,7 +10,7 @@
+   /**
+    * Specify the size of the accordion.
+    * Also accepts Carbon v11's `"md"` (the 40px default) and `"lg"` (`"xl"`).
+-   * @type {"sm" | "md" | "lg" | "xl"}
++   * @type {"sm" | "md" | "lg" | "xl" | undefined}
+    */
+   export let size = undefined;
+ 
+```
+
+**File**: `src/Accordion/AccordionItem.svelte` (modified, +1/-1)
+```diff
+@@ -29,7 +29,7 @@
+   /**
+    * Specify a custom label for the accordion button.
+    * This is important for accessibility when the accordion has no visible title.
+-   * @type {string}
++   * @type {string | undefined}
+    */
+   export let ariaLabel = undefined;
+ 
+```
+
+**File**: `src/Accordion/AccordionSkeleton.svelte` (modified, +1/-1)
+```diff
+@@ -11,7 +11,7 @@
+   /**
+    * Specify the size of the accordion.
+    * Also accepts Carbon v11's `"md"` (the 40px default) and `"lg"` (`"xl"`).
+-   * @type {"sm" | "md" | "lg" | "xl"}
++   * @type {"sm" | "md" | "lg" | "xl" | undefined}
+    */
+   export let size = undefined;
+ 
+```
+
+**File**: `src/BadgeIndicator/BadgeIndicator.svelte` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@
+    * Omit or set to `0` to render an empty dot.
+    * A numeric count greater than `999` displays as "999+".
+    * Pass a string to override the displayed value (e.g. `"1.2k"`).
+-   * @type {number | string}
++   * @type {number | string | undefined}
+    */
+   export let count = undefined;
+ 
+```
+
+**File**: `src/BigNumber/BigNumber.svelte` (modified, +9/-9)
+```diff
+@@ -22,15 +22,15 @@
+ 
+   /**
+    * The primary value to display (the "numerator" of a fraction).
+-   * @type {number}
++   * @type {number | undefined}
+    */
+   export let value = undefined;
+ 
+   /**
+    * The number to render after the slash (the "denominator" of a fraction).
+    * Hidden when it formats identically to `value`, or when `percentage` is `true`;
+    * see `forceShowTotal`.
+-   * @type {number}
++   * @type {number | undefined}
+    */
+   export let total = undefined;
+ 
+@@ -55,7 +55,7 @@
+ 
+   /**
+    * Render a trend indicator next to the value.
+-   * @type {"up" | "down" | "flat"}
++   * @type {"up" | "down" | "flat" | undefined}
+    */
+   export let trend = undefined;
+ 
+@@ -64,7 +64,7 @@
+    * `"error"` for `trend="down"`, and `"neutral"` for `trend="flat"` — set this when
+    * the direction's meaning is reversed for the metric (e.g. a falling error rate,
+    * or a rising failure count).
+-   * @type {"success" | "error" | "neutral"}
++   * @type {"success" | "error" | "neutral" | undefined}
+    */
+   export let trendColor = undefined;
+ 
+@@ -79,7 +79,7 @@
+ 
+   /**
+    * Determines how `value` and `total` are formatted. Defaults to the runtime locale.
+-   * @type {string}
++   * @type {string | undefined}
+    */
+   export let locale = undefined;
+ 
+@@ -89,7 +89,7 @@
+   /**
+    * Additional options merged into the `Intl.NumberFormat` options used to format
+    * `value` and `total`. Consumer keys take precedence over the component's defaults.
+-   * @type {Intl.NumberFormatOptions}
++   * @type {Intl.NumberFormatOptions | undefined}
+    * @example
+    * `{ style: "currency", currency: "USD" }`
+    * @example
+@@ -100,20 +100,20 @@
+   /**
+    * Provide a custom formatter for `value` and `total`, replacing Intl formatting
+    * entirely. Non-number inputs still render the dash.
+-   * @type {(value: number) => string}
++   * @type {((value: number) => string) | undefined}
+    */
+   export let format = undefined;
+ 
+   /**
+    * Override the text announced to assistive technology for the trend indicator.
+    * Defaults to "Trending up", "Trending down", or "No change" based on `trend`.
+-   * @type {string}
++   * @type {string | undefined}
+    */
+   export let trendDescription = undefined;
+ 
+   /**
+    * The signed change in `value` since the last period.
+-   * @type {number}
++   * @type {number | undefined}
+    */
+   export let delta = undefined;
+ 
+```
+
+**File**: `src/Box/Box.svelte` (modified, +2/-2)
+```diff
+@@ -99,7 +99,7 @@
+ 
+   /**
+    * Set the background fill using a Carbon theme token.
+-   * @type {"background" | "layer-01" | "layer-02" | "layer-03" | "layer-accent" | "field" | "inverse" | "brand"}
++   * @type {"background" | "layer-01" | "layer-02" | "layer-03" | "layer-accent" | "field" | "inverse" | "brand" | undefined}
+    */
+   export let fill = undefined;
+ 
+@@ -189,7 +189,7 @@
+ 
+   /**
+    * Set the border using a Carbon border token.
+-   * @type {"subtle" | "strong" | "interactive" | "disabled"}
++   * @type {"subtle" | "strong" | "interactive" | "disabled" | undefined}
+    */
+   export let border = undefined;
+ 
+```
+
+---
+
+### Incident Patch 3: `b4589272` (2026-10-26)
+**Commit Message**: fix: derive notification and header menu ids from an `id` prop
+
+InlineNotification and ToastNotification (actionable, with a title or
+subtitle) and an open HeaderSwitcher or ProfileMenu put a `uniqueId()`
+in the server's markup, and had no prop to fix it, so prerendered HTML
+changed on every build and the ids changed on hydration. Each takes an
+`id` now and derives its title, subtitle or menu id from it.
+
+**File**: `docs/src/pages/server-rendering.svx` (modified, +1/-3)
+```diff
+@@ -182,7 +182,7 @@ Pass your own `id` or `name` to make the markup identical on every render. Ids m
+ 
+ | Component | Props that fix its ids |
+ | :--- | :--- |
+-| TextInput, PasswordInput, TextArea, NumberInput, Search, Slider, Toggle, Select, Dropdown, ComboBox, MultiSelect, Modal, ComposedModal, InterstitialScreen, Pagination, CodeSnippet, CopyInput, Tag, TooltipIcon, TooltipDefinition, Disclosure, Carousel, Toggletip, HeaderSearch, TreeView, TableContainer, FormGroup, ProgressBar, Meter, FileUploader | `id` |
++| TextInput, PasswordInput, TextArea, NumberInput, Search, Slider, Toggle, Select, Dropdown, ComboBox, MultiSelect, Modal, ComposedModal, InterstitialScreen, Pagination, CodeSnippet, CopyInput, Tag, TooltipIcon, TooltipDefinition, Disclosure, Carousel, Toggletip, HeaderSearch, HeaderSwitcher, ProfileMenu, InlineNotification, ToastNotification, TreeView, TableContainer, FormGroup, ProgressBar, Meter, FileUploader | `id` |
+ | DataTable | `id` (`inputName` sets the selection name) |
+ | OverflowMenu | `id`, and `id` on each `OverflowMenuItem` |
+ | Tooltip | `tooltipId` and `triggerId` |
+@@ -195,8 +195,6 @@ Pass your own `id` or `name` to make the markup identical on every render. Ids m
+ | TagSet | `id` on `TagSet` and on each `Tag` |
+ | DatePicker | `id` on `DatePicker` and on each `DatePickerInput` |
+ 
+-Two cases still render a random id on the server: `InlineNotification` and `ToastNotification` with `actionable` and a `title` or `subtitle`, and `HeaderSwitcher` and `ProfileMenu` rendered open. <!-- FIX: SSR-20 -->
+-
+ ## Locale and time
+ 
+ `Pagination` formats its item and page counts with the runtime locale, so a server in one locale and a browser in another print `12,345` and `12.345`. Svelte replaces the text on hydration. Pass `itemText`, `itemRangeText`, `pageText`, and `pageRangeText` functions that format with a fixed locale. `BigNumber`, `Meter`, and `RelativeTime` accept `locale`. `RelativeTime` also accepts `now` and `timeZone`. Pass fixed values from the request to keep prerendered HTML correct.
+```
+
+**File**: `src/Notification/InlineNotification.svelte` (modified, +12/-2)
+```diff
+@@ -83,6 +83,14 @@
+    */
+   export let open = true;
+ 
++  /**
++   * Set an id for the top-level element. The title and subtitle ids derive
++   * from it as `{id}-title` and `{id}-subtitle`, so the server and the
++   * browser render the same ids.
++   * @type {string | undefined}
++   */
++  export let id = undefined;
 +
-+  // A word is split when its range has client rects on more than one line.
-+  const splitWords = (root: Element) => {
-+    const out: string[] = [];
-+    const range = document.createRange();
-+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-+      for (const match of (node.textContent ?? "").matchAll(/\S+/g)) {
-+        range.setStart(node, match.index ?? 0);
-+        range.setEnd(node, (match.index ?? 0) + match[0].length);
-+        const tops = new Set(
-+          [...range.getClientRects()]
-+            .filter((rect) => rect.width > 0)
-+            .map((rect) => Math.round(rect.top)),
-+        );
-+        if (tops.size > 1) out.push(match[0]);
-+      }
+   import { createEventDispatcher, onMount, setContext } from "svelte";
+   import { writable } from "svelte/store";
+   import { splitAriaNaming } from "../utils/aria-naming.js";
+@@ -94,8 +102,9 @@
+   import { statusIconLabel } from "./status-icon-label.js";
+ 
+   const dispatch = createEventDispatcher();
+-  const titleId = uniqueId();
+-  const subtitleId = uniqueId();
++  const fallbackId = uniqueId();
++  $: titleId = `${id ?? fallbackId}-title`;
++  $: subtitleId = `${id ?? fallbackId}-subtitle`;
+ 
+   /** @type {null | HTMLDivElement} */
+   let notificationRef = null;
+@@ -178,6 +187,7 @@
+     class:bx--inline-notification--warning-alt={kind === "warning-alt"}
+     class:bx--inline-notification--low-contrast-warning-alt={lowContrast &&
+       kind === "warning-alt"}
++    {id}
+     {...rest}
+     on:click
+     on:mouseover
+```
+
+**File**: `src/Notification/ToastNotification.svelte` (modified, +12/-2)
+```diff
+@@ -85,6 +85,14 @@
+    */
+   export let open = true;
+ 
++  /**
++   * Set an id for the top-level element. The title and subtitle ids derive
++   * from it as `{id}-title` and `{id}-subtitle`, so the server and the
++   * browser render the same ids.
++   * @type {string | undefined}
++   */
++  export let id = undefined;
++
+   import {
+     createEventDispatcher,
+     getContext,
+@@ -101,8 +109,9 @@
+   import { statusIconLabel } from "./status-icon-label.js";
+ 
+   const dispatch = createEventDispatcher();
+-  const titleId = uniqueId();
+-  const subtitleId = uniqueId();
++  const fallbackId = uniqueId();
++  $: titleId = `${id ?? fallbackId}-title`;
++  $: subtitleId = `${id ?? fallbackId}-subtitle`;
+ 
+   /** @type {null | HTMLDivElement} */
+   let notificationRef = null;
+@@ -190,6 +199,7 @@
+     class:bx--toast-notification--low-contrast-warning-alt={lowContrast &&
+       kind === "warning-alt"}
+     style:width={fullWidth ? "100%" : undefined}
++    {id}
+     {...rest}
+     on:click
+     on:mouseover
+```
+
+**File**: `src/UIShell/HeaderSwitcher.svelte` (modified, +10/-1)
+```diff
+@@ -59,6 +59,13 @@
+   /** Set to `true` to prevent the menu from closing when clicking outside */
+   export let preventCloseOnClickOutside = false;
+ 
++  /**
++   * Set an id for the trigger button. The menu id derives from it as
++   * `{id}-menu`, so the server and the browser render the same id.
++   * @type {string | undefined}
++   */
++  export let id = undefined;
++
+   import { createEventDispatcher, setContext, tick } from "svelte";
+   import { get } from "svelte/store";
+   import { slide } from "svelte/transition";
+@@ -76,7 +83,8 @@
+ 
+   const dispatch = createEventDispatcher();
+ 
+-  const menuId = `${uniqueId()}-menu`;
++  const fallbackId = uniqueId();
++  $: menuId = `${id ?? fallbackId}-menu`;
+ 
+   /** @type {null | HTMLDivElement} */
+   let refMenu = null;
+@@ -165,6 +173,7 @@
+     aria-expanded={isOpen}
+     aria-controls={isOpen ? menuId : undefined}
+     aria-label={text ? undefined : iconDescription}
++    {id}
+     class:bx--header__action={true}
+     class:bx--header__action--active={isOpen}
+     class:bx--header__action--text={true}
+```
+
+**File**: `src/UIShell/ProfileMenu.svelte` (modified, +10/-1)
+```diff
+@@ -42,6 +42,13 @@
+   /** Set to `true` to prevent the menu from closing when clicking outside */
+   export let preventCloseOnClickOutside = false;
+ 
++  /**
++   * Set an id for the trigger button. The menu id derives from it as
++   * `{id}-menu`, so the server and the browser render the same id.
++   * @type {string | undefined}
++   */
++  export let id = undefined;
++
+   import { createEventDispatcher, setContext, tick } from "svelte";
+   import { get } from "svelte/store";
+   import { slide } from "svelte/transition";
+@@ -58,7 +65,8 @@
+ 
+   const dispatch = createEventDispatcher();
+ 
+-  const menuId = `${uniqueId()}-menu`;
++  const fallbackId = uniqueId();
++  $: menuId = `${id ?? fallbackId}-menu`;
+ 
+   /** @type {null | HTMLDivElement} */
+   let refMenu = null;
+@@ -144,6 +152,7 @@
+   aria-expanded={isOpen}
+   aria-controls={isOpen ? menuId : undefined}
+   aria-label={iconDescription}
++  {id}
+   class:bx--header__action={true}
+   class:bx--header__action--active={isOpen}
+   class:bx--profile-menu__trigger={true}
+```
+
+**File**: `tests/SsrLayout/StableIds.ssr.test.ts` (added, +24/-0)
+```diff
+@@ -0,0 +1,24 @@
++// @vitest-environment node
++import { render } from "svelte/server";
++import StableIds from "./StableIds.test.svelte";
++
++describe("ids from an explicit id", () => {
++  const html = () => render(StableIds).body;
++
++  it("render the same markup on every server render", () => {
++    expect(html()).toBe(html());
++  });
++
++  it("derive from the id", () => {
++    const body = html();
++
++    for (const id of [
++      'id="inline-title"',
++      'id="toast-subtitle"',
++      'id="switcher-menu"',
++      'id="profile-menu"',
++    ]) {
++      expect(body).toContain(id);
 +    }
-+    return out;
-+  };
-+
-+  test("the split-word detector flags a word broken across lines", async ({
-+    page,
-+  }) => {
-+    await page.goto("/long-words.html");
-+    const flagged = await page.evaluate((source) => {
-+      const el = document.createElement("div");
-+      el.style.cssText = "width: 3ch; word-break: break-all";
-+      el.textContent = "Regions";
-+      document.body.append(el);
-+      const out = new Function(`return (${source})`)()(el);
-+      el.remove();
-+      return out;
-+    }, splitWords.toString());
-+    expect(flagged).toEqual(["Regions"]);
 +  });
-+
-+  // A word that fits its row stays whole, and the row stays in its box: the
-+  // control beside it gives way, not the label.
-+  for (const id of ["rows-dropdown", "rows-multiselect", "rows-words"])
-+    test(`an inline label in ${id} keeps its words whole inside its box`, async ({
-+      page,
-+    }) => {
-+      await page.goto("/long-words.html");
-+      const box = page.getByTestId(id);
-+      await expect(box).toBeVisible();
-+      const spill = await box.evaluate((root) => {
-+        const edge = root.getBoundingClientRect().right;
-+        const control = root.querySelector(".bx--list-box");
-+        return Math.round((control?.getBoundingClientRect().right ?? 0) - edge);
-+      });
-+      expect(spill).toBeLessThanOrEqual(0);
-+      expect(await box.evaluate(splitWords)).toEqual([]);
-+    });
- });
++});
 ```
 
----
-
-### Incident Patch 3: `3274f971` (2026-10-17)
-**Commit Message**: fix(pin-code-input): fit the segments to a narrow container
-
-Segments had a minimum width equal to their width, and the fieldset
-holding them took their full width whatever its container's, so six
-segments overflowed a 200px container by 76px.
-
-The fieldset now stops at its container's width, and segments shrink
-there, down to a minimum (24px at the default size) that still fits a
-character. Where there's room they keep their size.
-
-**File**: `css/_fluid-pin-code-input.scss` (modified, +4/-4)
+**File**: `tests/SsrLayout/StableIds.test.svelte` (added, +21/-0)
 ```diff
-@@ -59,7 +59,7 @@
-     .#{$prefix}--pin-code-input__field.#{$prefix}--text-input {
-     block-size: to-rem(40px);
-     inline-size: to-rem(40px);
--    min-inline-size: to-rem(40px);
-+    min-inline-size: to-rem(24px);
-     padding: 0;
-     border: none;
-     border-block-end: none;
-@@ -78,21 +78,21 @@
-     .#{$prefix}--pin-code-input__field.#{$prefix}--text-input--xs {
-     block-size: to-rem(24px);
-     inline-size: to-rem(24px);
--    min-inline-size: to-rem(24px);
-+    min-inline-size: to-rem(16px);
-   }
- 
-   .#{$prefix}--pin-code-input--fluid
-     .#{$prefix}--pin-code-input__field.#{$prefix}--text-input--sm {
-     block-size: to-rem(32px);
-     inline-size: to-rem(32px);
--    min-inline-size: to-rem(32px);
-+    min-inline-size: to-rem(20px);
-   }
- 
-   .#{$prefix}--pin-code-input--fluid
-     .#{$prefix}--pin-code-input__field.#{$prefix}--text-input--xl {
-     block-size: to-rem(48px);
-     inline-size: to-rem(48px);
--    min-inline-size: to-rem(48px);
-+    min-inline-size: to-rem(28px);
-   }
- 
-   // v10 applies invalid outlines on unfocused inputs. Suppress those in the
-```
-
-**File**: `css/_pin-code-input.scss` (modified, +12/-4)
-```diff
-@@ -10,7 +10,12 @@
- /// @access private
- /// @group components
- @mixin pin-code-input {
-+  // The fieldset takes its segments' width but no more than its container's,
-+  // so they shrink to fit a narrow one. (A fieldset's default minimum is its
-+  // content width.)
-   .#{$prefix}--pin-code-input .#{$prefix}--pin-code-input__fieldset {
-+    min-inline-size: 0;
-+    max-inline-size: 100%;
-     border: 0;
-     margin: 0;
-     padding: 0;
-@@ -26,11 +31,14 @@
-     gap: $carbon--spacing-01;
-   }
- 
-+  // Segments keep their size where there's room and shrink, down to the
-+  // minimum, in a narrower container rather than overflowing it. One
-+  // character still fits at the minimum.
-   .#{$prefix}--pin-code-input__field.#{$prefix}--text-input {
-     @include type-style("body-compact-01");
- 
-     width: to-rem(40px);
--    min-width: to-rem(40px);
-+    min-width: to-rem(24px);
-     height: to-rem(40px);
-     padding: 0;
-     text-align: center;
-@@ -54,19 +62,19 @@
- 
-   .#{$prefix}--pin-code-input__field.#{$prefix}--text-input--xs {
-     width: to-rem(24px);
--    min-width: to-rem(24px);
-+    min-width: to-rem(16px);
-     height: to-rem(24px);
-   }
- 
-   .#{$prefix}--pin-code-input__field.#{$prefix}--text-input--sm {
-     width: to-rem(32px);
--    min-width: to-rem(32px);
-+    min-width: to-rem(20px);
-     height: to-rem(32px);
-   }
- 
-   .#{$prefix}--pin-code-input__field.#{$prefix}--text-input--xl {
-     width: to-rem(48px);
--    min-width: to-rem(48px);
-+    min-width: to-rem(28px);
-     height: to-rem(48px);
-   }
- 
-```
-
-**File**: `e2e/fixtures/PinCodeInputFixture.svelte` (modified, +12/-0)
-```diff
-@@ -35,6 +35,18 @@
-     />
-   </div>
- 
-+  <!-- Six segments plus a status icon, in containers of two widths. -->
-+  {#each [200, 400] as width (width)}
-+    <div data-testid="pin-code-input-{width}" style="width: {width}px">
-+      <PinCodeInput
-+        labelText="Six-digit code"
-+        count={6}
-+        invalid
-+        invalidText="Incorrect code"
-+      />
-+    </div>
-+  {/each}
+@@ -0,0 +1,21 @@
++<script lang="ts">
++  import InlineNotification from "carbon-components-svelte/Notification/InlineNotification.svelte";
++  import ToastNotification from "carbon-components-svelte/Notification/ToastNotification.svelte";
++  import HeaderSwitcher from "carbon-components-svelte/UIShell/HeaderSwitcher.svelte";
++  import ProfileMenu from "carbon-components-svelte/UIShell/ProfileMenu.svelte";
++</script>
 +
-   <div data-testid="pin-code-input-disabled">
-     <PinCodeInput labelText="Verification code" disabled={true} value="0182" />
-   </div>
-```
-
-**File**: `e2e/pin-code-input.test.ts` (modified, +29/-0)
-```diff
-@@ -153,4 +153,33 @@ test.describe("PinCodeInput", () => {
-     ).toHaveText("");
-     await expect(segment(section, "Verification code", 1)).toHaveValue("");
-   });
-+
-+  // Segments keep their size where there's room and shrink, down to a
-+  // minimum, in a container too narrow for them.
-+  test("fits six segments to a narrow container", async ({ page }) => {
-+    const widths = (id: string) =>
-+      page
-+        .getByTestId(id)
-+        .locator(".bx--pin-code-input__field")
-+        .evaluateAll((fields) =>
-+          fields.map((f) => Math.round(f.getBoundingClientRect().width)),
-+        );
-+    const overflow = (id: string) =>
-+      page.getByTestId(id).evaluate((box) => {
-+        const edge = box.getBoundingClientRect().right;
-+        return Math.max(
-+          0,
-+          ...[...box.querySelectorAll("*")].map(
-+            (el) => el.getBoundingClientRect().right - edge,
-+          ),
-+        );
-+      });
-+
-+    expect(await widths("pin-code-input-400")).toEqual(Array(6).fill(40));
-+    expect(await overflow("pin-code-input-400")).toBeLessThanOrEqual(0);
-+
-+    const narrow = await widths("pin-code-input-200");
-+    expect(narrow.every((w) => w >= 24 && w < 40)).toBe(true);
-+    expect(await overflow("pin-code-input-200")).toBeLessThanOrEqual(0);
-+  });
- });
++<InlineNotification
++  id="inline"
++  actionable
++  title="Saved"
++  subtitle="Your changes are live."
++/>
++<ToastNotification
++  id="toast"
++  actionable
++  title="Saved"
++  subtitle="Your changes are live."
++/>
++<HeaderSwitcher id="switcher" isOpen text="Products" />
++<ProfileMenu id="profile" isOpen />
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5081** (2026-10-25): chore(scripts): skip full runs for deleted fixtures and type-check files (@metonym)
-- **PR #5078** (2026-10-25): docs(breadcrumb): close the separator example (@metonym)
-- **PR #5077** (2026-10-25): docs(contributing): add CI probing, dead globs and flake triage (@metonym)
-- **PR #5076** (2026-10-25): chore(scripts): compile CSS at a ref with crassus compileAt (@metonym)
-- **PR #5075** (2026-10-25): chore(bench): scope the DOM preload to the component tier (@metonym)
-- **PR #5074** (2026-10-25): chore(scripts): annotate sveld diagnostics on the PR diff (@metonym)
+- **PR #5140** (2026-10-27): fix(date-picker): match the locale's month names in the input pattern (@metonym)
+- **PR #5139** (2026-10-27): fix(date-picker): accept a time in the derived input pattern (@metonym)
+- **PR #5138** (2026-10-27): fix(date-picker): name AM and PM in the picker's locale (@metonym)
+- **PR #5137** (2026-10-27): fix(date-picker): parse the AM/PM token (@metonym)
+- **PR #5136** (2026-10-27): fix(tag-input): drop the placeholder when read-only with tags (@metonym)
+- **PR #5135** (2026-10-26): chore: format the InterstitialScreen steps fixture (@metonym)
 
 ---
 
@@ -1556,42 +1730,28 @@ character. Where there's room they keep their size.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. slider): move the number input below a short track
+## X. types): type the four remaining `any` contexts
 
 **RULE**:
-When implementing operations in `css/vendor/carbon-components/scss/components/slider/_slider.scss`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in carbon-design-system/carbon-components-svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/svelte-types-baseline.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in carbon-design-system/carbon-components-svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `39000589`: slider): move the number input below a short track. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `518ba1d7`: types): type the four remaining `any` contexts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `css/vendor/carbon-components/scss/components/slider/_slider.scss`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/svelte-types-baseline.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    // ccs: wraps the number input onto a second line in a container too
-    // narrow for it beside even the shortest track (the track's flex basis
-    // below), instead of overflowing.
-    flex-wrap: wrap;
-    row-gap: $carbon--spacing-03;
-    // of narrow containers. `width` sizes a content-sized container to the
-    // 200px track; the 48px flex basis decides when the row wraps, and the
-    // track grows from it back to 200px.
-    max-width: to-rem(200px);
-    flex: 1 1 to-rem(48px);
-    max-width: to-rem(640px);
+  "ComboButton/ComboButton.svelte": 4,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    // of narrow containers. `width` (not `flex-basis`), so the container
-    // sizes to it.
-    max-width: to-rem(640px);
-    flex-shrink: 1;
-    flex-grow: 1;
+  "ComboButton/ComboButton.svelte": 5,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `39000589` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `518ba1d7` are properly handled with clean fallback behavior.

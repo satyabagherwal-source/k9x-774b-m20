@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T12:43:19.840Z",
+  "last_updated": "2026-10-27T12:46:43.494Z",
   "total_verified_learnings": 1106,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2538,8 +2538,8 @@
       "slug": "appwrite-appwrite",
       "platform": "github",
       "source_url": "https://github.com/appwrite/appwrite",
-      "source_version": "a9f8ae18",
-      "content_hash": "689785b47463c070e6777097be1d487417dc235527adf8357bf55cfb95572fc0",
+      "source_version": "f7aeed8f",
+      "content_hash": "c540c8c9de1d48feb6f22c1df1b89cbd4466b0544a787f36f36aacdf704b549c",
       "dossier_path": "07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
       "promoted_rules": [
@@ -2552,6 +2552,11 @@
           "number": 3792,
           "title": "mqtt): scope the push ledger unique index to the topic instance",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4761,
+          "title": "Merge pull request #14540 from appwrite/fix-redis-read-timeout",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2559,7 +2564,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T06:36:22.321Z",
+      "verified_at": "2026-10-27T12:46:39.741Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -5340,8 +5345,8 @@
       "slug": "carbon-design-system-carbon-components-svelte",
       "platform": "github",
       "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
-      "source_version": "21400fab",
-      "content_hash": "1e2713ce5151383255000ef9407b969acb49c652878fee78d0e35c002b740591",
+      "source_version": "c980ccd4",
+      "content_hash": "218a2c8bcc1841faf17e4f72ed1dfb41c5a041c450153c4497b262937dfa6210",
       "dossier_path": "07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md",
       "promoted_rules": [
@@ -5414,6 +5419,11 @@
           "number": 4461,
           "title": "slider): move the number input below a short track",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4759,
+          "title": "types): type the four remaining `any` contexts",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5421,7 +5431,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T22:00:36.235Z",
+      "verified_at": "2026-10-27T12:46:32.515Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48760,8 +48770,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "7a365049",
-      "content_hash": "0045ab93d5452137cdc90a291de955d3300bf1a0414a236961c697a173519510",
+      "source_version": "2b62983a",
+      "content_hash": "996c07471cfc335a2bd8d3fe808e6eda64d37849f29dff150239f25c2f50e07c",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -48839,6 +48849,11 @@
           "number": 4647,
           "title": "go.mod: bump gliderssh for window resize fix",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4762,
+          "title": "tstest/natlab/vnet: fix TCPConn leak",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48846,7 +48861,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T18:32:20.169Z",
+      "verified_at": "2026-10-27T12:46:43.482Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66267,8 +66282,8 @@
       "slug": "cheeriojs-dom-serializer",
       "platform": "github",
       "source_url": "https://github.com/cheeriojs/dom-serializer",
-      "source_version": "d924d49e",
-      "content_hash": "b3efe3089c46c54fa85ef9d75600851e64cb1e1170a456447bc9e3bff0b3f75b",
+      "source_version": "7f3cd35e",
+      "content_hash": "6bfe8bf37d60bc34e8f92aa39c87af9487bd65bab2744342f118d43d948cde34",
       "dossier_path": "07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
       "promoted_rules": [
@@ -66281,6 +66296,11 @@
           "number": 3706,
           "title": "build(deps-dev): bump eslint from 10.12.0 to 10.13.0 (#1751)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4760,
+          "title": "build(deps): bump github/codeql-action from 4.39.0 to 4.39.1 (#1754)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -66288,7 +66308,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T19:09:45.617Z",
+      "verified_at": "2026-10-27T12:46:35.497Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -132448,6 +132468,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T12:43:19.828Z"
+    },
+    "rule-4759": {
+      "learning_id": "rule-4759",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4759,
+      "title": "types): type the four remaining `any` contexts",
+      "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
+      "source_version": "c980ccd4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:46:32.515Z"
+    },
+    "rule-4760": {
+      "learning_id": "rule-4760",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4760,
+      "title": "build(deps): bump github/codeql-action from 4.39.0 to 4.39.1 (#1754)",
+      "source_url": "https://github.com/cheeriojs/dom-serializer",
+      "source_version": "7f3cd35e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:46:35.497Z"
+    },
+    "rule-4761": {
+      "learning_id": "rule-4761",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4761,
+      "title": "Merge pull request #14540 from appwrite/fix-redis-read-timeout",
+      "source_url": "https://github.com/appwrite/appwrite",
+      "source_version": "f7aeed8f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:46:39.741Z"
+    },
+    "rule-4762": {
+      "learning_id": "rule-4762",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4762,
+      "title": "tstest/natlab/vnet: fix TCPConn leak",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "2b62983a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:46:43.482Z"
     }
   },
   "aliases": {
