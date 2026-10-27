@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T14:46:57.080Z",
+  "last_updated": "2026-10-27T14:50:31.171Z",
   "total_verified_learnings": 1135,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6599,8 +6599,8 @@
       "slug": "clockworklabs-spacetimedb",
       "platform": "github",
       "source_url": "https://github.com/clockworklabs/SpacetimeDB",
-      "source_version": "bae35972",
-      "content_hash": "b0ca96c9580bfb4a3aa3cb74b94eb2e5c8a55722f2120780efd19421c9cd7c49",
+      "source_version": "e3166533",
+      "content_hash": "1560c987b2305e2dd3f6f5b43c9cd84932cc6923848e72f0ec11d1da7ae8f899",
       "dossier_path": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "promoted_rules": [
@@ -6643,6 +6643,11 @@
           "number": 4512,
           "title": "[5/6] Async IDC: Rust cli UX (#6313)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4862,
+          "title": "Version bump 2.14.0 (#6378)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6650,7 +6655,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T00:54:49.073Z",
+      "verified_at": "2026-10-27T14:50:31.153Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35752,8 +35757,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "c2602604",
-      "content_hash": "d9ac0e8329491c5b9ff8881c0caab533d41caada3b9fb296a0809592b1de06c4",
+      "source_version": "20452bdc",
+      "content_hash": "057b7852c28dd99ea8726a25d82b206f97046ffcffe89923e84c19854ba030a1",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -35826,6 +35831,11 @@
           "number": 4777,
           "title": "agent-lightning): charge dict violations by their severity in policy_penalty (#4",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4861,
+          "title": "agent-sre): split experiment traffic by relative variant weights (#4460)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35833,7 +35843,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:00:29.215Z",
+      "verified_at": "2026-10-27T14:50:28.835Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54315,8 +54325,8 @@
       "slug": "zarf-dev-zarf",
       "platform": "github",
       "source_url": "https://github.com/zarf-dev/zarf",
-      "source_version": "2904d9e1",
-      "content_hash": "e0b4c9cc5161acb8f20b9ca1d9a61117ba53961b07c7fb497ea94ef5d7f3d428",
+      "source_version": "d2830dca",
+      "content_hash": "74b0dcfc7ad210ee0afa29138c3b944c4928ca4f6944d9da6e9ac07567e33f3f",
       "dossier_path": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "promoted_rules": [
@@ -54349,6 +54359,11 @@
           "number": 4298,
           "title": "feat!: stop duplicating package data in package secret (#5527)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4860,
+          "title": "cmd): don't redefine vendored tool flag shorthands (#5496)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54356,7 +54371,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T12:56:52.286Z",
+      "verified_at": "2026-10-27T14:50:28.550Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -135158,6 +135173,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T14:43:17.413Z"
+    },
+    "rule-4860": {
+      "learning_id": "rule-4860",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4860,
+      "title": "cmd): don't redefine vendored tool flag shorthands (#5496)",
+      "source_url": "https://github.com/zarf-dev/zarf",
+      "source_version": "d2830dca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:50:28.550Z"
+    },
+    "rule-4861": {
+      "learning_id": "rule-4861",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4861,
+      "title": "agent-sre): split experiment traffic by relative variant weights (#4460)",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "20452bdc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:50:28.835Z"
+    },
+    "rule-4862": {
+      "learning_id": "rule-4862",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4862,
+      "title": "Version bump 2.14.0 (#6378)",
+      "source_url": "https://github.com/clockworklabs/SpacetimeDB",
+      "source_version": "e3166533",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:50:31.153Z"
     }
   },
   "aliases": {

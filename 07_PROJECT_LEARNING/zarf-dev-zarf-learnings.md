@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source**: github ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
-> **Source Version**: `2904d9e1`  
+> **Source Version**: `d2830dca`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T12:56:52.029Z  
+> **Timestamp**: 2026-10-27T14:50:28.060Z  
 > **Learning ID**: `learn-github-zarf-dev-zarf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T12:56:51.601Z  
+> **Harvest Timestamp**: 2026-10-27T14:50:26.378Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Airgap Native Package Manager for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2072 stars
+- **Stars / Engagement**: 2077 stars
 
 ---
 
@@ -1459,11 +1459,11 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5533** (2026-10-26): **chore(deps): bump the codeql group with 3 updates**
+  *Symptoms*: Bumps the codeql group with 3 updates: [github/codeql-action/upload-sarif](https://github.com/github/codeql-action), [github/codeql-action/init](https://github.com/github/codeql-action) and [github/codeql-action/analyze](https://github.com/github/codeql-action).  Updates `github/codeql-action/upload-sarif` from 4.38.3 to 4.39.0 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action/upload-sarif's releases</a>.</em></p> <blockquote> <h2>v4.39.0</h2> <ul> <li><em>Breaking change</em>: Bump the minimum required CodeQL bundle version to 2.20.7. <a href="https://redirect.github.com/github/codeql-action/pull/4205">#4205</a></li> <li>The <code>codeql-action/analyze</code> step now validates that a correct argument for the <code>checkout_path</code> input has been provided. The <code>checkout_path</code> input must be set to the path where the repository that is being analyzed is checked out at on the runner, if that path is something other than the workspace root. If the path does not point to a repository checkout or is different from the path that was used by <code>codeql-action/init</code>, then the CodeQL Action now produces a warning. <a href="https://redirect.github.com/github/codeql-action/pull/4148">#4148</a></li> <li>Resolved an issue with third-party caching implementations that prevented caches from being restored correctly. <a href="https://redirect.github.com/github/codeql-action/pul
+
 - **Issue #5527** (2026-10-23): **feat!: stop duplicating package data in package secret**
   *Symptoms*: ## Description  Originally we had v1alpha1 packages publish their data both to `Data` and `PackageData` however we didn't anticipate users with very large package secrets (mostly from annotation data) running into problems saving their package secrets. This essentially reverts that change, while keeping v1beta1 double publishing both versions as it will have annotation size limits  ## Related Issue  Fixes #5516   ## Checklist before merging  - [ ] Test, docs, adr added or updated as needed - [ ] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
-
-- **Issue #5516** (2026-10-23): **Remove duplicate package data in package state secret**
-  *Symptoms*: In #5250, we deprecated the original package `data` field to to simplify reading deployment Secrets outside of Go, however some users have reported that they are running into size limits since they have enormous annotations (will be limited in v1beta1 see #5515).  Seeing that this is causing a real problem, I'd be in favor of losing the same benefit of an easier state transition. Keep `data` for v1alpha1 and `PackageData` is only for v1beta1 onward, avoiding duplicate `v1alpha1` data. Remove the original field when v1alpha1 support is deleted. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1480,242 +1480,721 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2904d9e1` (2026-10-23)
-**Commit Message**: feat!: stop duplicating package data in package secret (#5527)
+### Incident Patch 1: `d2830dca` (2026-10-27)
+**Commit Message**: fix(cmd): don't redefine vendored tool flag shorthands (#5496)
 
-Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
+Signed-off-by: Allen Conlon <[REDACTED_EMAIL]>
 
-**File**: `src/pkg/cluster/zarf_test.go` (modified, +18/-7)
+**File**: `src/cmd/root.go` (modified, +10/-2)
 ```diff
-@@ -28,16 +28,15 @@ func TestGetDeployedPackageWarnsOnUnrecognizedAPIVersion(t *testing.T) {
- 	t.Parallel()
+@@ -228,15 +228,23 @@ func setupRootFlags(rootCmd *cobra.Command) {
+ 	// Features
+ 	rootCmd.PersistentFlags().StringToStringVar(&features, "features", vpr.GetStringMapString(VFeatures), "Provide a comma-separated list of feature names to bools to enable or disable. Ex. --features \"foo=true,bar=false,baz=true\"")
  
- 	const futureVersion = "zarf.dev/v9"
--	knownDefinition, err := json.Marshal(v1alpha1.ZarfPackage{
-+	legacy := v1alpha1.ZarfPackage{
- 		APIVersion: v1alpha1.APIVersion,
- 		Metadata:   v1alpha1.ZarfMetadata{Name: "future-package"},
--	})
--	require.NoError(t, err)
++	// A vendored tool defines its own flags, and pflag panics when a shorthand is redefined.
++	// That happens whenever root flags are registered alongside one, i.e. when they are given
++	// before the subcommand: `zarf --log-level info tools helm list`.
++	logShorthand, archShorthand := "l", "a"
++	if vendorCmdInArgs(os.Args) {
++		logShorthand, archShorthand = "", ""
 +	}
- 	deployed := state.DeployedPackage{
- 		Name: "future-package",
-+		Data: legacy,
- 		PackageData: map[string]json.RawMessage{
--			v1alpha1.APIVersion: knownDefinition,
--			futureVersion:       json.RawMessage(`{"apiVersion":"zarf.dev/v9"}`),
-+			futureVersion: json.RawMessage(`{"apiVersion":"zarf.dev/v9"}`),
- 		},
- 	}
- 	secretData, err := json.Marshal(deployed)
-@@ -55,7 +54,7 @@ func TestGetDeployedPackageWarnsOnUnrecognizedAPIVersion(t *testing.T) {
- 	ctx := logger.WithContext(t.Context(), slog.New(slog.NewJSONHandler(&logs, nil)))
- 	known := deployed
- 	known.Name = "known-package"
--	known.PackageData = map[string]json.RawMessage{v1alpha1.APIVersion: knownDefinition}
-+	known.PackageData = nil
- 	knownData, err := json.Marshal(known)
- 	require.NoError(t, err)
- 	knownSecret := secret.DeepCopy()
-@@ -99,8 +98,20 @@ func TestRecordPackageDefinitionDeployment(t *testing.T) {
- 	recordedDefinition, err := recorded.Definition()
- 	require.NoError(t, err)
- 	require.Equal(t, convert.PackageToV1alpha1(definition), convert.PackageToV1alpha1(recordedDefinition))
--	require.Contains(t, recorded.PackageData, v1alpha1.APIVersion)
-+	require.NotContains(t, recorded.PackageData, v1alpha1.APIVersion)
- 	require.Contains(t, recorded.PackageData, v1beta1.APIVersion)
-+	require.Equal(t, convert.PackageToV1alpha1(definition), recorded.Data)
 +
-+	secret, err := c.Clientset.CoreV1().Secrets(state.ZarfNamespaceName).Get(ctx, recorded.GetSecretName(), metav1.GetOptions{})
-+	require.NoError(t, err)
-+	var serialized struct {
-+		Data        v1alpha1.ZarfPackage       `json:"data"`
-+		PackageData map[string]json.RawMessage `json:"packageData"`
-+	}
-+	require.NoError(t, json.Unmarshal(secret.Data["data"], &serialized))
-+	require.Equal(t, convert.PackageToV1alpha1(definition), serialized.Data)
-+	require.Len(t, serialized.PackageData, 1)
-+	require.Contains(t, serialized.PackageData, v1beta1.APIVersion)
+ 	// Logs
+-	rootCmd.PersistentFlags().StringVarP(&LogLevelCLI, "log-level", "l", vpr.GetString(VLogLevel), lang.RootCmdFlagLogLevel)
++	rootCmd.PersistentFlags().StringVarP(&LogLevelCLI, "log-level", logShorthand, vpr.GetString(VLogLevel), lang.RootCmdFlagLogLevel)
+ 	rootCmd.PersistentFlags().StringVar(&LogFormat, "log-format", vpr.GetString(VLogFormat), "Select a logging format. Defaults to 'console'. Valid options are: 'console', 'json', 'dev'.")
+ 	rootCmd.PersistentFlags().BoolVar(&IsColorDisabled, "no-color", vpr.GetBool(VNoColor), "Disable terminal color codes in logging and stdout prints.")
+ 	rootCmd.PersistentFlags().BoolVar(&showNoProgressDeprecation, "no-progress", v.GetBool("no_progress"), "Disable fancy UI progress bars, spinners, logos, etc")
+ 	_ = rootCmd.PersistentFlags().MarkDeprecated("no-progress", "Progress bars and spinners were removed with --log-format=legacy, this flag will be removed in a future version of Zarf.")
  
- 	loaded, err := c.GetDeployedPackage(ctx, "beta-package")
- 	require.NoError(t, err)
+ 	// Core functionality
+-	rootCmd.PersistentFlags().StringVarP(&config.CLIArch, "architecture", "a", vpr.GetString(VArchitecture), lang.RootCmdFlagArch)
++	rootCmd.PersistentFlags().StringVarP(&config.CLIArch, "architecture", archShorthand, vpr.GetString(VArchitecture), lang.RootCmdFlagArch)
+ 	cachePath = vpr.GetString(VCache)
+ 	if cachePath == "" {
+ 		cachePath = vpr.GetString(VZarfCache)
 ```
 
-**File**: `src/pkg/state/state.go` (modified, +11/-20)
+**File**: `src/cmd/vendor.go` (modified, +15/-2)
 ```diff
-@@ -822,9 +822,10 @@ const (
- type DeployedPackage struct {
- 	Name   string `json:"name"`
- 	Digest string `json:"digest"`
--	// Deprecated: use PackageData or Definition() instead. This field is kept so older clients can read package deployment state.
--	Data                v1alpha1.ZarfPackage       `json:"data"`
--	PackageData         map[string]json.RawMessage `json:"packageData"`
-+	// Data contains the v1alpha1 definition
-+	Data v1alpha1.ZarfPackage `json:"data"`
-+	// PackageData contains the v1beta1 definition and future definitions
-+	PackageData         map[string]json.RawMessage `json:"packageData,omitempty"`
- 	CLIVersion          string                     `json:"cliVersion"`
- 	Generation          int                        `json:"generation"`
- 	DeployedComponents  []DeployedComponent        `json:"deployedComponents"`
-@@ -866,16 +867,8 @@ func NewDeployedPackage(definition api.Package, digest, cliVersion string, compo
- // Data always contains the v1alpha1 form to allow older Zarf clients to read the
- // deployed package secret.
- func (d *DeployedPackage) SetPackageDefinition(definition api.Package) error {
--	alpha := convert.PackageToV1alpha1(definition)
--	alphaData, err := json.Marshal(alpha)
--	if err != nil {
--		return fmt.Errorf("marshal %s package data: %w", v1alpha1.APIVersion, err)
--	}
--
--	d.Data = alpha
--	d.PackageData = map[string]json.RawMessage{
--		v1alpha1.APIVersion: alphaData,
--	}
-+	d.Data = convert.PackageToV1alpha1(definition)
-+	d.PackageData = nil
- 
- 	switch definition.GetAPIVersion() {
- 	case "", v1alpha1.APIVersion:
-@@ -885,21 +878,16 @@ func (d *DeployedPackage) SetPackageDefinition(definition api.Package) error {
- 		if err != nil {
- 			return fmt.Errorf("marshal %s package data: %w", v1beta1.APIVersion, err)
- 		}
--		d.PackageData[v1beta1.APIVersion] = betaData
-+		d.PackageData = map[string]json.RawMessage{v1beta1.APIVersion: betaData}
- 		return nil
- 	default:
- 		return fmt.Errorf("unsupported package API version %q", definition.APIVersion)
- 	}
+@@ -23,8 +23,6 @@ var vendorCmds = []string{
+ 	"k9s",
+ 	"monitor",
+ 	"m",
+-	"wait",
+-	"w",
+ 	"crane",
+ 	"registry",
+ 	"r",
+@@ -46,6 +44,21 @@ func checkVendorOnlyFromPath(cmd *cobra.Command) bool {
+ 	return IsVendorCmd(args, vendorCmds)
  }
  
- // Definition returns the latest package definition this Zarf version
--// understands. Deployed package secrets written before PackageData was added
--// fall back to their legacy v1alpha1 Data field.
-+// understands, falling back to the v1alpha1 Data field.
- func (d DeployedPackage) Definition() (api.Package, error) {
--	if len(d.PackageData) == 0 {
--		return convert.PackageFromV1alpha1(d.Data), nil
--	}
--
- 	if data, found := d.PackageData[v1beta1.APIVersion]; found {
- 		var pkg v1beta1.Package
- 		if err := json.Unmarshal(data, &pkg); err != nil {
-@@ -914,6 +902,9 @@ func (d DeployedPackage) Definition() (api.Package, error) {
- 		}
- 		return convert.PackageFromV1alpha1(pkg), nil
- 	}
-+	if len(d.PackageData) == 0 || d.Data.Metadata.Name != "" {
-+		return convert.PackageFromV1alpha1(d.Data), nil
++// vendorCmdInArgs reports whether the invocation targets a vendored tool, allowing for root
++// flags before the subcommand as in `zarf --log-level info tools helm list`. Unlike
++// IsVendorCmd that form still needs the root flags registered, so this is only used to avoid
++// colliding with the flags the vendored command defines for itself.
++// shortcut: a literal "tools" argument elsewhere (say a directory named tools) also matches,
++// costing only the -l/-a shorthands; upgrade to real flag parsing if that ever bites.
++func vendorCmdInArgs(args []string) bool {
++	for i, arg := range args {
++		if arg == "tools" || arg == "t" {
++			return i+1 < len(args) && slices.Contains(vendorCmds, args[i+1])
++		}
 +	}
- 
- 	return api.Package{}, fmt.Errorf("deployed package has no supported package data")
- }
++	return false
++}
++
+ // IsVendorCmd checks if the command is a vendor command.
+ func IsVendorCmd(args []string, vendoredCmds []string) bool {
+ 	if config.ActionsCommandZarfPrefix != "" {
 ```
 
-**File**: `src/pkg/state/state_test.go` (modified, +71/-1)
+**File**: `src/cmd/vendor_test.go` (added, +35/-0)
 ```diff
-@@ -13,6 +13,7 @@ import (
- 	"testing"
- 
- 	"github.com/stretchr/testify/require"
-+	"github.com/zarf-dev/zarf/src/api"
- 	"github.com/zarf-dev/zarf/src/api/convert"
- 	"github.com/zarf-dev/zarf/src/api/v1alpha1"
- 	"github.com/zarf-dev/zarf/src/api/v1beta1"
-@@ -54,7 +55,7 @@ func TestDeployedPackagePackageDefinition(t *testing.T) {
- 	require.Equal(t, PackageConnectivityConnected, deployed.PackageConnectivity)
- 	require.Equal(t, "override", deployed.NamespaceOverride)
- 	require.Equal(t, convert.PackageToV1alpha1(definition), deployed.Data)
--	require.Contains(t, deployed.PackageData, v1alpha1.APIVersion)
-+	require.NotContains(t, deployed.PackageData, v1alpha1.APIVersion)
- 	require.Contains(t, deployed.PackageData, v1beta1.APIVersion)
- 
- 	actual, err := deployed.Definition()
-@@ -75,6 +76,75 @@ func TestDeployedPackagePackageDefinition_legacyData(t *testing.T) {
- 	require.True(t, alpha.AllowsNamespaceOverride())
- }
- 
-+func TestDeployedPackagePackageDefinition_v1alpha1Serialization(t *testing.T) {
+@@ -0,0 +1,35 @@
++// SPDX-License-Identifier: Apache-2.0
++// SPDX-FileCopyrightText: 2021-Present The Zarf Authors
++
++// Package cmd contains the CLI commands for Zarf.
++package cmd
++
++import (
++	"testing"
++
++	"github.com/stretchr/testify/require"
++)
++
++func TestVendorCmdInArgs(t *testing.T) {
 +	t.Parallel()
 +
-+	for _, version := range []string{"", v1alpha1.APIVersion} {
-+		t.Run(version, func(t *testing.T) {
++	tests := []struct {
++		name     string
++		args     []string
++		expected bool
++	}{
++		{name: "plain vendor command", args: []string{"zarf", "tools", "kubectl", "get", "nodes"}, expected: true},
++		{name: "root flag before subcommand", args: []string{"zarf", "--log-level", "info", "tools", "helm", "list"}, expected: true},
++		{name: "tools alias", args: []string{"zarf", "-l", "debug", "t", "helm", "list"}, expected: true},
++		{name: "non-vendored tools subcommand", args: []string{"zarf", "--log-level", "info", "tools", "update-creds"}, expected: false},
++		{name: "wait-for is not vendored", args: []string{"zarf", "tools", "wait", "pod", "foo", "ready"}, expected: false},
++		{name: "tools with nothing after it", args: []string{"zarf", "tools"}, expected: false},
++		{name: "not a tools invocation", args: []string{"zarf", "package", "deploy", "tools"}, expected: false},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
 +			t.Parallel()
-+
-+			definition := convert.PackageFromV1alpha1(v1alpha1.ZarfPackage{
-+				APIVersion: version,
-+				Kind:       v1alpha1.ZarfPackageConfig,
-+				Metadata:   v1alpha1.ZarfMetadata{Name: "alpha-package"},
-+			})
-+			deployed, err := NewDeployedPackage(definition, "", "", nil, 1)
-+			require.NoError(t, err)
-+			serialized, err := json.Marshal(deployed)
-+			require.NoError(t, err)
-+			var fields map[string]json.RawMessage
-+			require.NoError(t, json.Unmarshal(serialized, &fields))
-+			require.NotContains(t, fields, "packageData")
-+			var legacy v1alpha1.ZarfPackage
-+			require.NoError(t, json.Unmarshal(fields["data"], &legacy))
-+			require.Equal(t, convert.PackageToV1alpha1(definition), legacy)
-+
-+			var loaded DeployedPackage
-+			require.NoError(t, json.Unmarshal(serialized, &loaded))
-+			actual, err := loaded.Definition()
-+			require.NoError(t, err)
-+			require.Equal(t, definition, actual)
++			require.Equal(t, tt.expected, vendorCmdInArgs(tt.args))
 +		})
 +	}
 +}
-+
-+func TestDeployedPackageSetPackageDefinition_replacesStoredVersions(t *testing.T) {
-+	t.Parallel()
-+
-+	deployed, err := NewDeployedPackage(api.Package{
-+		APIVersion: v1beta1.APIVersion,
-+		Metadata:   api.PackageMetadata{Name: "package"},
-+	}, "", "", nil, 1)
-+	require.NoError(t, err)
-+	alpha := convert.PackageFromV1alpha1(v1alpha1.ZarfPackage{
-+		APIVersion: v1alpha1.APIVersion,
-+		Kind:       v1alpha1.ZarfPackageConfig,
-+		Metadata:   v1alpha1.ZarfMetadata{Name: "package", Version: "2.0.0"},
-+	})
-+	require.NoError(t, deployed.SetPackageDefinition(alpha))
-+	actual, err := deployed.Definition()
-+	require.NoError(t, err)
-+	require.Equal(t, alpha, actual)
-+	serialized, err := json.Marshal(deployed)
-+	require.NoError(t, err)
-+	var fields map[string]json.RawMessage
-+	require.NoError(t, json.Unmarshal(serialized, &fields))
-+	require.NotContains(t, fields, "packageData")
-+}
-+
-+func TestDeployedPackagePackageDefinition_unknownVersionFallsBackToData(t *testing.T) {
-+	t.Parallel()
-+
-+	legacy := v1alpha1.ZarfPackage{Metadata: v1alpha1.ZarfMetadata{Name: "future-package"}}
-+	deployed := DeployedPackage{
-+		Data:        legacy,
-+		PackageData: map[string]json.RawMessage{"zarf.dev/v9": []byte(`{}`)},
-+	}
-+	definition, err := deployed.Definition()
-+	require.NoError(t, err)
-+	require.Equal(t, convert.PackageFromV1alpha1(legacy), definition)
-+}
-+
- func TestDeployedPackagePackageDefinition_noSupportedData(t *testing.T) {
+```
+
+---
+
+### Incident Patch 2: `0af03527` (2026-10-26)
+**Commit Message**: feat: remove BuildData from output of zarf dev upgrade (#5522)
+
+Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
+
+**File**: `src/cmd/dev_upgrade.go` (modified, +1/-0)
+```diff
+@@ -84,6 +84,7 @@ func (o *devUpgradeSchemaOptions) run(cmd *cobra.Command, args []string) error {
+ 			return err
+ 		}
+ 		result := convert.PackageV1alpha1ToV1beta1(pkg)
++		result.Build = v1beta1.BuildData{}
+ 		for ci := range result.Components {
+ 			for fi := range result.Components[ci].Files {
+ 				file := &result.Components[ci].Files[fi]
+```
+
+**File**: `src/test/e2e/00_use_cli_test.go` (modified, +30/-0)
+```diff
+@@ -56,6 +56,36 @@ func TestTrustedRootCreate(t *testing.T) {
+ func TestUseCLI(t *testing.T) {
  	t.Parallel()
  
++	t.Run("zarf dev upgrade", func(t *testing.T) {
++		t.Parallel()
++		dir := t.TempDir()
++		require.NoError(t, os.WriteFile(filepath.Join(dir, "zarf.yaml"), []byte(`apiVersion: zarf.dev/v1alpha1
++kind: ZarfPackageConfig
++metadata:
++  name: upgrade
++  version: 1.0.0
++components:
++  - name: app
++    images:
++      - ghcr.io/stefanprodan/podinfo:6.4.0
++`), 0o600))
++
++		stdOut, stdErr, err := e2e.Zarf(t, "dev", "upgrade", dir)
++		require.NoError(t, err, stdOut, stdErr)
++		require.YAMLEq(t, `apiVersion: zarf.dev/v1beta1
++kind: ZarfPackageConfig
++metadata:
++  name: upgrade
++  version: 1.0.0
++components:
++  - name: app
++    optional: true
++    images:
++      - name: ghcr.io/stefanprodan/podinfo:6.4.0
++        source: registry
++`, stdOut)
++	})
++
+ 	// TODO once cmd is refactored to accept an io.Writer, move this test to DevInspectDefinitionOptions.Run()
+ 	t.Run("zarf dev inspect definition", func(t *testing.T) {
+ 		t.Parallel()
+```
+
+---
+
+### Incident Patch 3: `92837997` (2026-10-26)
+**Commit Message**: fix!: remove ###ZARF builtins from v1beta1 (#5506)
+
+Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
+
+**File**: `src/cmd/dev_upgrade.go` (modified, +8/-0)
+```diff
+@@ -8,6 +8,7 @@ import (
+ 	"errors"
+ 	"fmt"
+ 	"os"
++	"strings"
+ 
+ 	goyaml "github.com/goccy/go-yaml"
+ 	"github.com/spf13/cobra"
+@@ -83,6 +84,13 @@ func (o *devUpgradeSchemaOptions) run(cmd *cobra.Command, args []string) error {
+ 			return err
+ 		}
+ 		result := convert.PackageV1alpha1ToV1beta1(pkg)
++		for ci := range result.Components {
++			for fi := range result.Components[ci].Files {
++				file := &result.Components[ci].Files[fi]
++				// Match v1alpha1 deployment, which replaces only the first occurrence.
++				file.Destination = strings.Replace(file.Destination, "###ZARF_TEMP###", "{{ .Runtime.TempDir }}", 1)
++			}
++		}
+ 		out, err := goyaml.Marshal(result)
+ 		if err != nil {
+ 			return fmt.Errorf("marshaling %s package: %w", o.to, err)
+```
+
+**File**: `src/cmd/dev_upgrade_test.go` (modified, +42/-0)
+```diff
+@@ -4,13 +4,55 @@
+ package cmd
+ 
+ import (
++	"bytes"
++	"os"
++	"path/filepath"
+ 	"testing"
+ 
++	"github.com/goccy/go-yaml"
+ 	"github.com/stretchr/testify/require"
+ 	"github.com/zarf-dev/zarf/src/api/v1alpha1"
+ 	"github.com/zarf-dev/zarf/src/api/v1beta1"
+ )
+ 
++func TestDevUpgradeTemporaryFileDestinations(t *testing.T) {
++	t.Parallel()
++	dir := t.TempDir()
++	require.NoError(t, os.WriteFile(filepath.Join(dir, "zarf.yaml"), []byte(`kind: ZarfPackageConfig
++metadata:
++  name: temporary-files
++components:
++  - name: first
++    files:
++      - source: payload
++        target: "###ZARF_TEMP###/payload"
++      - source: plain
++        target: /opt/plain
++  - name: second
++    files:
++      - source: binary
++        target: "prefix/###ZARF_TEMP###/binary"
++        template: false
++`), 0o600))
++
++	var output bytes.Buffer
++	cmd := newDevUpgradeSchemaCommand()
++	cmd.SetArgs([]string{dir})
++	cmd.SetOut(&output)
++	require.NoError(t, cmd.ExecuteContext(t.Context()))
++
++	var pkg v1beta1.Package
++	require.NoError(t, yaml.Unmarshal(output.Bytes(), &pkg))
++	require.Equal(t, v1beta1.APIVersion, pkg.APIVersion)
++	require.Len(t, pkg.Components, 2)
++	require.Len(t, pkg.Components[0].Files, 2)
++	require.Equal(t, "{{ .Runtime.TempDir }}/payload", pkg.Components[0].Files[0].Destination)
++	require.Equal(t, "/opt/plain", pkg.Components[0].Files[1].Destination)
++	require.Len(t, pkg.Components[1].Files, 1)
++	require.Equal(t, "prefix/{{ .Runtime.TempDir }}/binary", pkg.Components[1].Files[0].Destination)
++	require.False(t, pkg.Components[1].Files[0].EnableTemplating)
++}
++
+ func TestCheckRemovedFields(t *testing.T) {
+ 	t.Parallel()
+ 	tests := []struct {
+```
+
+**File**: `src/internal/packager/helm/template.go` (modified, +33/-24)
+```diff
+@@ -73,9 +73,11 @@ func TemplateChart(ctx context.Context, zarfChart api.Chart, chart *chartv2.Char
+ 	// Namespace must be specified.
+ 	client.Namespace = zarfChart.Namespace
+ 
+-	client.PostRenderer, err = newTemplateRenderer(actionCfg, variableConfig)
+-	if err != nil {
+-		return "", fmt.Errorf("unable to create helm renderer: %w", err)
++	if len(variableConfig.GetAllTemplates()) > 0 {
++		client.PostRenderer, err = newTemplateRenderer(actionCfg, variableConfig)
++		if err != nil {
++			return "", fmt.Errorf("unable to create helm renderer: %w", err)
++		}
+ 	}
+ 
+ 	// Perform the loadedChart installation.
+@@ -117,7 +119,6 @@ func newTemplateRenderer(actionConfig *action.Configuration, vc *variables.Varia
+ 
+ // Run satisfies the Helm post-renderer interface and templates the Zarf vars in the rendered manifests.
+ func (tr *templateRenderer) Run(renderedManifests *bytes.Buffer) (*bytes.Buffer, error) {
+-	// This is very low cost and consistent for how we replace elsewhere, also good for debugging
+ 	hooks, resources, err := getTemplatedManifests(renderedManifests, tr.variableConfig, tr.actionConfig)
+ 	if err != nil {
+ 		return nil, err
+@@ -137,32 +138,40 @@ func (tr *templateRenderer) Run(renderedManifests *bytes.Buffer) (*bytes.Buffer,
+ }
+ 
+ func getTemplatedManifests(renderedManifests *bytes.Buffer, variableConfig *variables.VariableConfig, actionConfig *action.Configuration) (_ []*releasev1.Hook, _ []releaseutil.Manifest, err error) {
+-	tmpdir, err := utils.MakeTempDir(config.CommonOptions.TempDirectory)
+-	if err != nil {
+-		return nil, nil, fmt.Errorf("unable to create tmpdir:  %w", err)
+-	}
+-	defer func() {
+-		err = errors.Join(err, os.RemoveAll(tmpdir))
+-	}()
+-	path := filepath.Join(tmpdir, "chart.yaml")
++	path := "chart.yaml"
++	content := renderedManifests.String()
++	if len(variableConfig.GetAllTemplates()) > 0 {
++		var tmpdir string
++		tmpdir, err = utils.MakeTempDir(config.CommonOptions.TempDirectory)
++		if err != nil {
++			return nil, nil, fmt.Errorf("unable to create tmpdir:  %w", err)
++		}
++		defer func() {
++			err = errors.Join(err, os.RemoveAll(tmpdir))
++		}()
++		path = filepath.Join(tmpdir, "chart.yaml")
+ 
+-	if err := os.WriteFile(path, renderedManifests.Bytes(), helpers.ReadWriteUser); err != nil {
+-		return nil, nil, fmt.Errorf("unable to write the post-render file for the helm chart")
+-	}
++		if err := os.WriteFile(path, renderedManifests.Bytes(), helpers.ReadWriteUser); err != nil {
++			return nil, nil, fmt.Errorf("unable to write the post-render file for the helm chart")
++		}
+ 
+-	// Run the template engine against the chart output
+-	if err := variableConfig.ReplaceTextTemplate(path); err != nil {
+-		return nil, nil, fmt.Errorf("error templating the helm chart: %w", err)
+-	}
++		// Run the template engine against the chart output
++		if err := variableConfig.ReplaceTextTemplate(path); err != nil {
++			return nil, nil, fmt.Errorf("error templating the helm chart: %w", err)
++		}
+ 
+-	// Read back the templated file contents
+-	buff, err := os.ReadFile(path)
+-	if err != nil {
+-		return nil, nil, fmt.Errorf("error reading temporary post-rendered helm chart: %w", err)
++		// Read back the templated file contents
++		var buff []byte
++		buff, err = os.ReadFile(path)
++		if err != nil {
++			return nil, nil, fmt.Errorf("error reading temporary post-rendered helm chart: %w", err)
++		}
++
++		content = string(buff)
+ 	}
+ 
+ 	// Use helm to re-split the manifest byte (same call used by helm to pass this data to postRender)
+-	hooks, resources, err := releaseutil.SortManifests(map[string]string{path: string(buff)},
++	hooks, resources, err := releaseutil.SortManifests(map[string]string{path: content},
+ 		actionConfig.Capabilities.APIVersions,
+ 		releaseutil.InstallOrder,
+ 	)
+```
+
+**File**: `src/internal/packager/helm/zarf.go` (modified, +25/-21)
+```diff
+@@ -18,6 +18,7 @@ import (
+ 	"sigs.k8s.io/cli-utils/pkg/object"
+ 
+ 	"github.com/zarf-dev/zarf/src/api"
++	"github.com/zarf-dev/zarf/src/api/v1alpha1"
+ 	"github.com/zarf-dev/zarf/src/internal/healthchecks"
+ 	"github.com/zarf-dev/zarf/src/internal/packager/template"
+ 	"github.com/zarf-dev/zarf/src/pkg/logger"
+@@ -32,14 +33,14 @@ func UpdateZarfRegistryValues(ctx context.Context, opts InstallUpgradeOptions) e
+ 	if err != nil {
+ 		return fmt.Errorf("error getting init package: %w", err)
+ 	}
+-	initPkgName, err := findPackageWithService(pkgs, api.ServiceRegistry)
++	initPkg, err := findPackageWithService(pkgs, api.ServiceRegistry)
+ 	if err != nil {
+ 		return fmt.Errorf("error finding init package with registry service: %w", err)
+ 	}
+-	if initPkgName == "" {
++	if initPkg == nil {
+ 		return fmt.Errorf("error finding init package with registry service")
+ 	}
+-	opts.PkgName = initPkgName
++	opts.PkgName = initPkg.Metadata.Name
+ 	if opts.State.RegistryInfo.RegistryMode == state.RegistryModeProxy {
+ 		err := opts.Cluster.InitRegistryCerts(ctx)
+ 		if err != nil {
+@@ -96,14 +97,14 @@ func UpdateZarfAgentValues(ctx context.Context, opts InstallUpgradeOptions) erro
+ 	if err != nil {
+ 		return fmt.Errorf("error getting init package: %w", err)
+ 	}
+-	initPkgName, err := findPackageWithService(pkgs, api.ServiceAgent)
++	initPkg, err := findPackageWithService(pkgs, api.ServiceAgent)
+ 	if err != nil {
+ 		return fmt.Errorf("error finding init package with agent service: %w", err)
+ 	}
+-	if initPkgName == "" {
++	if initPkg == nil {
+ 		return fmt.Errorf("error finding init package with agent service")
+ 	}
+-	opts.PkgName = initPkgName
++	opts.PkgName = initPkg.Metadata.Name
+ 	deployment, err := opts.Cluster.Clientset.AppsV1().Deployments(state.ZarfNamespaceName).Get(ctx, "agent-hook", metav1.GetOptions{})
+ 	if err != nil {
+ 		return err
+@@ -155,17 +156,20 @@ func UpdateZarfAgentValues(ctx context.Context, opts InstallUpgradeOptions) erro
+ 				Namespace:   "zarf",
+ 				ReleaseName: rel.Name(),
+ 			}
+-			opts.VariableConfig.SetConstants([]api.Constant{
+-				{
+-					Name:  "AGENT_IMAGE",
+-					Value: agentImage.Path,
+-				},
+-				{
+-					Name:  "AGENT_IMAGE_TAG",
+-					Value: agentImage.Tag,
+-				},
+-			})
+-			applicationTemplates, err := template.GetZarfTemplates(ctx, api.ServiceAgent, opts.State)
++			// TODO, once the v1beta1 init package is released, we will have to match the values
++			if initPkg.GetAPIVersion() == v1alpha1.APIVersion {
++				opts.VariableConfig.SetConstants([]api.Constant{
++					{
++						Name:  "AGENT_IMAGE",
++						Value: agentImage.Path,
++					},
++					{
++						Name:  "AGENT_IMAGE_TAG",
++						Value: agentImage.Tag,
++					},
++				})
++			}
++			applicationTemplates, err := template.GetZarfTemplates(ctx, initPkg.GetAPIVersion(), api.ServiceAgent, opts.State)
+ 			if err != nil {
+ 				return fmt.Errorf("error setting up the templates: %w", err)
+ 			}
+@@ -220,17 +224,17 @@ func UpdateZarfAgentValues(ctx context.Context, opts InstallUpgradeOptions) erro
+ 	return nil
+ }
+ 
+-func findPackageWithService(pkgs []state.DeployedPackage, service api.ServiceName) (string, error) {
++func findPackageWithService(pkgs []state.DeployedPackage, service api.ServiceName) (*api.Package, error) {
+ 	for _, deployedPackage := range pkgs {
+ 		definition, err := deployedPackage.Definition()
+ 		if err != nil {
+-			return "", err
++			return nil, err
+ 		}
+ 		for _, component := range definition.Components {
+ 			if component.Service.Name == service {
+-				return deployedPackage.Name, nil
++				return &definition, nil
+ 			}
+ 		}
+ 	}
+-	return "", nil
++	return nil, nil
+ }
+```
+
+**File**: `src/internal/packager/template/template.go` (modified, +6/-2)
+```diff
+@@ -13,6 +13,7 @@ import (
+ 	"github.com/zarf-dev/zarf/src/pkg/state"
+ 
+ 	"github.com/zarf-dev/zarf/src/api"
++	"github.com/zarf-dev/zarf/src/api/v1alpha1"
+ 
+ 	"github.com/zarf-dev/zarf/src/config"
+ 	"github.com/zarf-dev/zarf/src/pkg/interactive"
+@@ -36,9 +37,12 @@ func GetZarfVariableConfig(ctx context.Context, isInteractive bool) *variables.V
+ 	return variables.New("zarf", prompt, logger.From(ctx))
+ }
+ 
+-// GetZarfTemplates returns the template keys and values to be used for templating.
+-func GetZarfTemplates(ctx context.Context, service api.ServiceName, s *state.State) (templateMap map[string]*variables.TextTemplate, err error) {
++// GetZarfTemplates returns legacy template keys and values for v1alpha1 packages.
++func GetZarfTemplates(ctx context.Context, apiVersion string, service api.ServiceName, s *state.State) (templateMap map[string]*variables.TextTemplate, err error) {
+ 	templateMap = make(map[string]*variables.TextTemplate)
++	if apiVersion != v1alpha1.APIVersion {
++		return templateMap, nil
++	}
+ 
+ 	if s != nil {
+ 		s.Reconcile()
+```
+
+**File**: `src/internal/packager/template/template_test.go` (modified, +2/-1)
+```diff
+@@ -10,6 +10,7 @@ import (
+ 
+ 	"github.com/stretchr/testify/require"
+ 	"github.com/zarf-dev/zarf/src/api"
++	"github.com/zarf-dev/zarf/src/api/v1alpha1"
+ 	"github.com/zarf-dev/zarf/src/pkg/state"
+ 	"github.com/zarf-dev/zarf/src/pkg/variables"
+ )
+@@ -116,7 +117,7 @@ func TestGetZarfTemplatesForIPv6SeedRegistry(t *testing.T) {
+ 				},
+ 				IPFamily: test.IPFamily,
+ 			}
+-			templateMap, err := GetZarfTemplates(context.Background(), api.ServiceSeedRegistry, &state)
++			templateMap, err := GetZarfTemplates(context.Background(), v1alpha1.APIVersion, api.ServiceSeedRegistry, &state)
+ 			require.NoError(t, err)
+ 			require.Equal(t, test.expectedRegistryAddress, templateMap["###ZARF_SEED_REGISTRY###"].Value)
+ 			require.Equal(t, test.expectedIPv6Enabled, templateMap["###ZARF_IPV6_ONLY###"].Value)
+```
+
+**File**: `src/pkg/packager/deploy.go` (modified, +81/-49)
+```diff
+@@ -105,6 +105,9 @@ type deployer struct {
+ 	c    *cluster.Cluster
+ 	vc   *variables.VariableConfig
+ 	vals value.Values
++
++	// runtimeDir holds runtime files across components. v1alpha1 uses the package layout.
++	runtimeDir string
+ }
+ 
+ // DeployResult is the result of a successful deploy
+@@ -242,15 +245,26 @@ func (d *deployer) isConnectedToCluster() bool {
+ 	return d.c != nil
+ }
+ 
+-func (d *deployer) deployComponents(ctx context.Context, pkgLayout *layout.PackageLayout, opts DeployOptions) ([]state.DeployedComponent, error) {
++func (d *deployer) deployComponents(ctx context.Context, pkgLayout *layout.PackageLayout, opts DeployOptions) (deployedComponents []state.DeployedComponent, err error) {
+ 	l := logger.From(ctx)
+ 	pkg := pkgLayout.Definition()
+-	deployedComponents := []state.DeployedComponent{}
++	deployedComponents = []state.DeployedComponent{}
+ 	cwd, err := os.Getwd()
+ 	if err != nil {
+ 		return nil, fmt.Errorf("failed to get working directory: %w", err)
+ 	}
+ 
++	d.runtimeDir = pkgLayout.DirPath()
++	if pkg.GetAPIVersion() != v1alpha1.APIVersion {
++		d.runtimeDir, err = utils.MakeTempDir(config.CommonOptions.TempDirectory)
++		if err != nil {
++			return nil, err
++		}
++		defer func() {
++			err = errors.Join(err, os.RemoveAll(d.runtimeDir))
++		}()
++	}
++
+ 	for _, component := range pkg.Components {
+ 		packageGeneration := 1
+ 		// Connect to cluster if a component requires it.
+@@ -452,14 +466,14 @@ func (d *deployer) deployInitComponent(ctx context.Context, pkgLayout *layout.Pa
+ 				return nil, fmt.Errorf("injector image is required for proxy registry mode when no previous proxy injector image is saved in cluster state; provide --injector-image")
+ 			}
+ 
+-			payloadCMs, shasum, err := d.c.CreateInjectorConfigMaps(ctx, pkgLayout.DirPath(), pkgLayout.GetImageDirPath(), component.GetImages(), pkg.Metadata.Name)
++			payloadCMs, shasum, err := d.c.CreateInjectorConfigMaps(ctx, d.runtimeDir, pkgLayout.GetImageDirPath(), component.GetImages(), pkg.Metadata.Name)
+ 			if err != nil {
+ 				return nil, err
+ 			}
+ 			d.s.InjectorInfo.PayLoadConfigMapAmount = len(payloadCMs)
+ 			d.s.InjectorInfo.PayLoadShaSum = shasum
+ 		case state.RegistryModeNodePort:
+-			seedImage, seedPort, err := d.c.StartInjection(ctx, pkgLayout.DirPath(), pkgLayout.GetImageDirPath(), component.GetImages(), pkg.Metadata.Name, pkg.Metadata.Architecture, cluster.ZarfInjectorOptions{
++			seedImage, seedPort, err := d.c.StartInjection(ctx, d.runtimeDir, pkgLayout.GetImageDirPath(), component.GetImages(), pkg.Metadata.Name, pkg.Metadata.Architecture, cluster.ZarfInjectorOptions{
+ 				InjectorNodePort: uint16(d.s.InjectorInfo.Port),
+ 				RegistryNodePort: uint16(d.s.RegistryInfo.Port),
+ 				IPFamily:         d.s.IPFamily,
+@@ -533,7 +547,7 @@ func (d *deployer) deployComponent(ctx context.Context, pkgLayout *layout.Packag
+ 		}
+ 	}
+ 
+-	applicationTemplates, err := ptmpl.GetZarfTemplates(ctx, component.Service.Name, d.s)
++	applicationTemplates, err := ptmpl.GetZarfTemplates(ctx, pkgLayout.Definition().GetAPIVersion(), component.Service.Name, d.s)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -550,7 +564,7 @@ func (d *deployer) deployComponent(ctx context.Context, pkgLayout *layout.Packag
+ 	}
+ 
+ 	if hasFiles {
+-		if err := processComponentFiles(ctx, pkgLayout, component, d.vc, d.vals, template.StateAccess{State: d.s, AccessKeys: component.StateAccess}); err != nil {
++		if err := d.processComponentFiles(ctx, pkgLayout, component); err != nil {
+ 			return nil, fmt.Errorf("unable to process the component files: %w", err)
+ 		}
+ 	}
+@@ -746,8 +760,10 @@ func (d *deployer) installManifests(ctx context.Context, pkgLayout *layout.Packa
+ 				return installedCharts, fmt.Errorf("unable to find manifest file %s", manifest.Files[idx])
+ 			}
+ 			// Apply ###ZARF_VAR_*### substitution before Helm sees the file.
+-			if err := d.vc.ReplaceTextTemplate(path); err != nil {
+-				return installedCharts, fmt.Errorf("error templating manifest %s: %w", path, err)
++			if pkg.GetAPIVersion() == v1alpha1.APIVersion {
++				if err := d.vc.ReplaceTextTemplate(path); err != nil {
++					return installedCharts, fmt.Errorf("error templating manifest %s: %w", path, err)
++				}
+ 			}
+ 			if manifest.EnableTemplating {
+ 				l.Debug("start manifest template", "manifest", manifest.Name, "path", path)
+@@ -768,9 +784,11 @@ func (d *deployer) installManifests(ctx context.Context, pkgLayout *layout.Packa
+ 		for idx := range manifest.Kustomize.Files {
+ 			kustomization := layout.KustomizationFileName(manifest.Name, idx)
+ 			manifest.Files = append(manifest.Files, kustomization)
+-			path := filepath.Join(manifestDir, kustomization)
+-			if err := d.vc.ReplaceTextTemplate(path); err != nil {
+-				return installedCharts, fmt.Errorf("error templating kustomization %s: %w", path, err)
++			if pkg.GetAPIVersion() == v1alpha1.APIVersion {
++				path := filepath.Join(manifestDir, kustomization)
++				if err := d.vc.ReplaceTextTemplate(path); err != nil {
++					return installedCharts, fmt.Errorf("error templating k
+```
+
+**File**: `src/pkg/packager/deploy_test.go` (modified, +130/-1)
+```diff
+@@ -338,7 +338,8 @@ func TestDeployProxyInjectorImage(t *testing.T) {
+ 			require.NoError(t, err)
+ 			require.NoError(t, os.WriteFile(filepath.Join(pkgLayout.DirPath(), "zarf-injector"), []byte("injector"), 0o600))
+ 			d := deployer{
+-				c: &cluster.Cluster{Clientset: fake.NewClientset()},
++				runtimeDir: pkgLayout.DirPath(),
++				c:          &cluster.Cluster{Clientset: fake.NewClientset()},
+ 				s: &state.State{
+ 					RegistryInfo: state.RegistryInfo{RegistryMode: state.RegistryModeProxy},
+ 					InjectorInfo: state.InjectorInfo{Image: tt.saved},
+@@ -378,3 +379,131 @@ func TestArchitectureOverridePreservesAgentCertificateCheck(t *testing.T) {
+ 	err = d.verifyPackageIsDeployable(t.Context(), pkgLayout, true)
+ 	require.ErrorContains(t, err, "the Zarf agent certificate is expired")
+ }
++
++func TestDeployFileTemplatesByAPIVersion(t *testing.T) {
++	t.Parallel()
++	for _, tt := range []struct {
++		name, apiVersion, destination, expectedText string
++		fail                                        bool
++	}{
++		{"legacy", v1alpha1.APIVersion, "###ZARF_TEMP###/zarf-injector", "supplied\n", false},
++		{"beta", v1beta1.APIVersion, "{{ .Runtime.TempDir }}/zarf-injector", "###ZARF_VAR_INPUT###", false},
++		{"beta failure", v1beta1.APIVersion, "{{ .Runtime.TempDir }}/zarf-injector", "###ZARF_VAR_INPUT###", true},
++	} {
++		t.Run(tt.name, func(t *testing.T) {
++			t.Parallel()
++			ctx := testutil.TestContext(t)
++			dir := t.TempDir()
++			binary := []byte{0, 1, 2, 3, 255}
++			require.NoError(t, os.WriteFile(filepath.Join(dir, "injector"), binary, 0o600))
++			require.NoError(t, os.WriteFile(filepath.Join(dir, "text"), []byte("###ZARF_VAR_INPUT###"), 0o600))
++			output := t.TempDir()
++			injectorLink := filepath.Join(output, "injector-link")
++			observedBinary := filepath.Join(output, "observed-injector")
++			server := httptest.NewServer(http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {
++				contents, err := os.ReadFile(injectorLink)
++				if assert.NoError(t, err) {
++					assert.NoError(t, os.WriteFile(observedBinary, contents, 0o600))
++				}
++			}))
++			t.Cleanup(server.Close)
++			timeout := 5
++			pkg := api.Package{
++				APIVersion: tt.apiVersion,
++				Kind:       api.ZarfPackageConfig,
++				Metadata:   api.PackageMetadata{Name: "file-templates"},
++				Components: []api.Component{
++					{Name: "files", Files: []api.File{
++						{Source: "injector", Destination: tt.destination, Executable: true, Symlinks: []string{injectorLink}},
++						{Source: "text", Destination: filepath.Join(output, "text")},
++					}},
++					{Name: "consumer", Actions: api.ComponentActions{OnDeploy: api.ActionSet{
++						OnSuccess: []api.Action{{MaxTotalSeconds: &timeout, Wait: &api.ActionWait{
++							Network: &api.ActionWaitNetwork{Protocol: "http", Address: server.Listener.Addr().String()},
++						}}},
++					}}},
++				},
++			}
++			if tt.fail {
++				pkg.Components[1].Actions.OnDeploy.OnSuccess = append(pkg.Components[1].Actions.OnDeploy.OnSuccess, api.Action{Cmd: "exit 1"})
++			}
++			if tt.apiVersion == v1beta1.APIVersion {
++				pkg.Components[0].Files = append(pkg.Components[0].Files,
++					api.File{Source: "text", Destination: "{{ .Runtime.TempDir }}/" + layout.ZarfYAML},
++					api.File{Source: "text", Destination: filepath.Join(output, "###ZARF_TEMP###", "literal")},
++				)
++			}
++			pkgLayout, err := assemble.AssemblePackage(ctx, &load.ResolvedPackage{Definition: pkg, Resources: load.NewResourceSet(dir)}, assemble.AssembleOptions{SkipSBOM: true})
++			require.NoError(t, err)
++			t.Cleanup(func() { require.NoError(t, pkgLayout.Cleanup()) })
++			definitionPath := filepath.Join(pkgLayout.DirPath(), layout.ZarfYAML)
++			originalDefinition, err := os.ReadFile(definitionPath)
++			require.NoError(t, err)
++			_, err = Deploy(ctx, pkgLayout, DeployOptions{SetVariables: map[string]string{"INPUT": "supplied"}})
++			if tt.fail {
++				require.ErrorContains(t, err, `command "exit 1" failed`)
++			} else {
++				require.NoError(t, err)
++			}
++
++			actualBinary, err := os.ReadFile(observedBinary)
++			require.NoError(t, err)
++			require.Equal(t, binary, actualBinary)
++			definition, err := os.ReadFile(definitionPath)
++			require.NoError(t, err)
++			require.Equal(t, string(originalDefinition), string(definition), "temporary files must not overwrite the package definition")
++			if tt.apiVersion == v1alpha1.APIVersion {
++				stagedBinary, err := os.ReadFile(filepath.Join(pkgLayout.DirPath(), "zarf-injector"))
++				require.NoError(t, err, "legacy temporary files must remain in the package layout after deployment")
++				require.Equal(t, binary, stagedBinary)
++			} else {
++				injectorPath, err := os.Readlink(injectorLink)
++				require.NoError(t, err)
++				require.NoDirExists(t, filepath.Dir(injectorPath), "temporary files must be cleaned up after deployment")
++			}
++			text, err := os.ReadFile(filepath.Join(output, "text"))
++			require.NoError(t, err)
++			require.Equal(t, tt.expectedText, string(text))
++			if tt.apiVersion == v1beta1.APIVersion {
++				literal, e
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5533** (2026-10-26): chore(deps): bump the codeql group with 3 updates (@dependabot[bot])
 - **PR #5527** (2026-10-23): feat!: stop duplicating package data in package secret (@AustinAbro321)
+- **PR #5526** (2026-10-27): feat(v1beta1)!: limit annotation size (@AustinAbro321)
+- **PR #5522** (2026-10-26): feat: remove BuildData from output of zarf dev upgrade (@AustinAbro321)
 - **PR #5513** (2026-10-22): test: cover localhost NodePorts with nftables in kind (@aditya-rai-5)
 - **PR #5509** (2026-10-21): chore: update go version to 1.26.10 (@brandtkeller)
-- **PR #5508** (2026-10-21): docs: remove outdated note from package-signing doc (@jonnyborbs)
-- **PR #5504** (2026-10-21): feat!: remove defense unicorn shortcuts from oci package refs (@AustinAbro321)
-- **PR #5502** (2026-10-21): feat(oci): support custom credential providers (@s-urbaniak)
 
 ---
 
@@ -1735,51 +2214,38 @@ Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. feat!: stop duplicating package data in package secret (#5527)
+## X. cmd): don't redefine vendored tool flag shorthands (#5496)
 
 **RULE**:
-When implementing operations in `src/pkg/cluster/zarf_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/cmd/root.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2904d9e1`: feat!: stop duplicating package data in package secret (#5527). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d2830dca`: cmd): don't redefine vendored tool flag shorthands (#5496). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/cluster/zarf_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmd/root.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	legacy := v1alpha1.ZarfPackage{
+	// A vendored tool defines its own flags, and pflag panics when a shorthand is redefined.
+	// That happens whenever root flags are registered alongside one, i.e. when they are given
+	// before the subcommand: `zarf --log-level info tools helm list`.
+	logShorthand, archShorthand := "l", "a"
+	if vendorCmdInArgs(os.Args) {
+		logShorthand, archShorthand = "", ""
 	}
-		Data: legacy,
-			futureVersion: json.RawMessage(`{"apiVersion":"zarf.dev/v9"}`),
-	known.PackageData = nil
-	require.NotContains(t, recorded.PackageData, v1alpha1.APIVersion)
-	require.Equal(t, convert.PackageToV1alpha1(definition), recorded.Data)
 
-	secret, err := c.Clientset.CoreV1().Secrets(state.ZarfNamespaceName).Get(ctx, recorded.GetSecretName(), metav1.GetOptions{})
-	require.NoError(t, err)
-	var serialized struct {
-		Data        v1alpha1.ZarfPackage       `json:"data"`
-		PackageData map[string]json.RawMessage `json:"packageData"`
-	}
-	require.NoError(t, json.Unmarshal(secret.Data["data"], &serialized))
-	require.Equal(t, convert.PackageToV1alpha1(definition), serialized.Data)
-	require.Len(t, serialized.PackageData, 1)
-	require.Contains(t, serialized.PackageData, v1beta1.APIVersion)
+	rootCmd.PersistentFlags().StringVarP(&LogLevelCLI, "log-level", logShorthand, vpr.GetString(VLogLevel), lang.RootCmdFlagLogLevel)
+	rootCmd.PersistentFlags().StringVarP(&config.CLIArch, "architecture", archShorthand, vpr.GetString(VArchitecture), lang.RootCmdFlagArch)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	knownDefinition, err := json.Marshal(v1alpha1.ZarfPackage{
-	})
-	require.NoError(t, err)
-			v1alpha1.APIVersion: knownDefinition,
-			futureVersion:       json.RawMessage(`{"apiVersion":"zarf.dev/v9"}`),
-	known.PackageData = map[string]json.RawMessage{v1alpha1.APIVersion: knownDefinition}
-	require.Contains(t, recorded.PackageData, v1alpha1.APIVersion)
+	rootCmd.PersistentFlags().StringVarP(&LogLevelCLI, "log-level", "l", vpr.GetString(VLogLevel), lang.RootCmdFlagLogLevel)
+	rootCmd.PersistentFlags().StringVarP(&config.CLIArch, "architecture", "a", vpr.GetString(VArchitecture), lang.RootCmdFlagArch)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2904d9e1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d2830dca` are properly handled with clean fallback behavior.

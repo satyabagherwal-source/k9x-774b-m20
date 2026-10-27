@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T14:46:57.162Z",
+  "last_updated": "2026-10-27T14:50:31.256Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3321,14 +3321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-agent-governance-toolkit",
-      "content_hash": "d9ac0e8329491c5b9ff8881c0caab533d41caada3b9fb296a0809592b1de06c4",
-      "verified_at": "2026-10-27T13:00:29.299Z",
+      "content_hash": "057b7852c28dd99ea8726a25d82b206f97046ffcffe89923e84c19854ba030a1",
+      "verified_at": "2026-10-27T14:50:28.936Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:00:29.299Z"
+      "last_updated": "2026-10-27T14:50:28.936Z"
     },
     "SynaLinks/synalinks-skills": {
       "repository": "SynaLinks/synalinks-skills",
@@ -6816,14 +6816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zarf-dev-zarf",
-      "content_hash": "e0b4c9cc5161acb8f20b9ca1d9a61117ba53961b07c7fb497ea94ef5d7f3d428",
-      "verified_at": "2026-10-25T12:56:52.348Z",
+      "content_hash": "74b0dcfc7ad210ee0afa29138c3b944c4928ca4f6944d9da6e9ac07567e33f3f",
+      "verified_at": "2026-10-27T14:50:28.662Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T12:56:52.348Z"
+      "last_updated": "2026-10-27T14:50:28.662Z"
     },
     "vlcn-io/cr-sqlite": {
       "repository": "vlcn-io/cr-sqlite",
@@ -10626,14 +10626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clockworklabs-spacetimedb",
-      "content_hash": "b0ca96c9580bfb4a3aa3cb74b94eb2e5c8a55722f2120780efd19421c9cd7c49",
-      "verified_at": "2026-10-26T00:54:49.124Z",
+      "content_hash": "1560c987b2305e2dd3f6f5b43c9cd84932cc6923848e72f0ec11d1da7ae8f899",
+      "verified_at": "2026-10-27T14:50:31.255Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T00:54:49.124Z"
+      "last_updated": "2026-10-27T14:50:31.255Z"
     },
     "apollographql/apollo-kotlin": {
       "repository": "apollographql/apollo-kotlin",

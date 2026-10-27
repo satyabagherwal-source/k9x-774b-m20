@@ -5394,3 +5394,6 @@ Every entry in this ledger must capture:
 | `learn-github-cyb3rmx-qu1cksc0pe` | `https://github.com/CYB3RMX/Qu1cksc0pe` | `180d44f4` | Multi-dimensional audit evidence | 2026-10-27T14:43:15.303Z |
 | `learn-github-apioo-fusio` | `https://github.com/apioo/fusio` | `9dedd6f6` | Multi-dimensional audit evidence | 2026-10-27T14:43:17.490Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `222c3929` | Multi-dimensional audit evidence | 2026-10-27T14:46:57.153Z |
+| `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `d2830dca` | Multi-dimensional audit evidence | 2026-10-27T14:50:28.653Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `20452bdc` | Multi-dimensional audit evidence | 2026-10-27T14:50:28.927Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `e3166533` | Multi-dimensional audit evidence | 2026-10-27T14:50:31.246Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source**: github ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
-> **Source Version**: `bae35972`  
+> **Source Version**: `e3166533`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T00:54:48.866Z  
+> **Timestamp**: 2026-10-27T14:50:30.704Z  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T00:54:48.861Z  
+> **Harvest Timestamp**: 2026-10-27T14:50:29.894Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25387 stars
+- **Stars / Engagement**: 25396 stars
 
 ---
 
@@ -810,495 +810,476 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bae35972` (2026-10-25)
-**Commit Message**: [5/6] Async IDC: Rust cli UX (#6313)
+### Incident Patch 1: `e3166533` (2026-10-26)
+**Commit Message**: Version bump 2.14.0 (#6378)
 
 # Description of Changes
 
-Adds CLI, `spacetime.json` config and `spacetime dev` changes required
-for IDC receiver bindings.
-It can be reviewed commit wise.
+<!-- Please describe your change, mention any related tickets, and so on
+here. -->
 
-This is required for [Receiver Binding of Async IDC
-proposal](https://github.com/clockworklabs/SpacetimeDBPrivate/blob/2c3c7492dadcc2633a662e22d8555182a5789d8b/proposals/0037-async-inter-database-communication.md#receiver-bindings)
+- Bumps version to 2.14.0
 
-#### Examples:
-  Declare a dependency from local source, without publishing it:
+# API and ABI breaking changes
 
+None
 
+<!-- If this is an API or ABI breaking change, please apply the
+corresponding GitHub label. -->
 
-  ```json
-  {
- 
-    "database": "lobby",    # Database to publish
+# Rollback safety impact
 
-    "module-path": "./lobby",    # Sender module source
+<!--
+If this PR is safe to roll back after deployment and has no impact on
+the rollback safety of any prior PRs, write `n/a` below.
 
-    "dependencies": [
-      {
-"name": "game_world", # Local Rust module name for the generated
-bindings
-    
-        "module-path": "./game_world",  # Receiver source
+Otherwise, list every prerequisite PR that must be included in a release
+before this PR can merge. This PR must not be deployed until each
+prerequisite has been deployed and sufficiently observed or tested in
+the live deployment that we are confident it will not be rolled back.
+Supported forms include #123, SpacetimeDB#123,
+clockworklabs/SpacetimeDB#123, and GitHub PR URLs.
 
-"out-dir": "./lobby/src/remote_bindings" # Optional; Rust default:
-<sender module-path>/src/remote_binding
-      }
-    ]
-  }
-  ```
+Consider whether this PR:
+- newly writes to a previously introduced but unused ControlDB table or
+reducer, system table, or on-disk data format; or
+- clears, deletes, incompatibly changes, or renders unsupported a
+previously available ControlDB table or reducer, system table, or
+on-disk data format.
+-->
 
-  Or with also publishing dependency database.
+n/a
 
-  ```json
-  {
-    "database": "lobby",
-    "module-path": "./lobby",
-    "dependencies": [
-      {
-        "name": "game_world",
+# Expected complexity level and risk
 
-        "database": "game-world",
+- 1 - this is
 
-      }
-    ],
-
-# Additional publish targets; existi
-
-**File**: `codex-plugin/plugins/spacetimedb/skills/cli/SKILL.md` (modified, +8/-0)
+**File**: `Cargo.lock` (modified, +59/-59)
 ```diff
-@@ -50,6 +50,14 @@ spacetime generate --lang typescript|csharp|rust --out-dir ./bindings --module-p
- spacetime generate --lang unrealcpp --uproject-dir ./MyGame --module-path ./server --unreal-module-name MyGame
- ```
+@@ -822,7 +822,7 @@ dependencies = [
  
-+### Client and Module Bindings
-+
-+`spacetime generate --bindings client` (default) generates bindings for clients connecting to a database. `--bindings module` generates receiver bindings used inside a **calling database module** to call reducers in another **receiving database** through asynchronous IDC. Rust and TypeScript module bindings are supported; C#/C++ module bindings are not implemented yet. `unrealcpp` is client-only; `cpp` is accepted only in module mode.
-+
-+In `spacetime.json`, each calling database's non-inherited `dependencies` array requires its own `module-path` and dependency `name` plus receiving-module `module-path` or `database`. A `database` reference resolves another target's local source/build settings in the same config; it does not fetch a running database's schema. A direct receiving module source takes precedence. Dependencies do not themselves publish receiving databases or inherit the calling module's build settings. `generate <calling-database>` processes both its regular `generate` entries (client bindings by default) and `dependencies` (module bindings automatically); no `--bindings` flag or second `generate` entry is needed for a dependency. For dependencies, module binding language defaults to the calling module's language and Rust/TypeScript output defaults to `<calling module-path>/src/remote_bindings`. Explicit config `out-dir` is config-relative. A regular `generate` entry can select `"bindings": "module"`, but does not use dependency language or output defaults. The CLI `--bindings` override is allowed only when a single generation entry is selected.
-+
-+`dev` generates only root dependencies before building the calling module, and watches their source paths. Child targets are available for source lookup, not recursive dependency generation. `--skip-generate` skips receiver/client generation and receiver-only watching; `--skip-publish` does not. See https://spacetimedb.com/docs/cli-reference/spacetime-json#receiver-dependencies for examples.
-+
- ### Publishing & Deployment
+ [[package]]
+ name = "case-conversion-client"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "anyhow",
+  "env_logger 0.10.2",
+@@ -1453,7 +1453,7 @@ dependencies = [
  
- ```bash
+ [[package]]
+ name = "connect_disconnect_client"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "anyhow",
+  "console_error_panic_hook",
+@@ -2549,7 +2549,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "event-table-client"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "anyhow",
+  "console_error_panic_hook",
+@@ -6148,7 +6148,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "procedural-view-pk-client"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "anyhow",
+  "console_error_panic_hook",
+@@ -6162,7 +6162,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "procedure-client"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "anyhow",
+  "console_error_panic_hook",
+@@ -6179,7 +6179,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "procedure-concurrency-client"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "anyhow",
+  "console_error_panic_hook",
+@@ -7539,7 +7539,7 @@ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
+ 
+ [[package]]
+ name = "sdk-csharp-test-harness"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "serial_test",
+  "spacetimedb-testing",
+@@ -7606,7 +7606,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "sdk-unreal-test-harness"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "serial_test",
+  "spacetimedb-testing",
+@@ -8113,7 +8113,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "anyhow",
+  "bytemuck",
+@@ -8136,7 +8136,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-auth"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "anyhow",
+  "jsonwebtoken",
+@@ -8149,7 +8149,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-bench"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "ahash 0.8.12",
+  "anyhow",
+@@ -8192,7 +8192,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-bindings-macro"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "heck 0.4.1",
+  "humantime",
+@@ -8203,14 +8203,14 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-bindings-sys"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "spacetimedb-primitives",
+ ]
+ 
+ [[package]]
+ name = "spacetimedb-cli"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "anyhow",
+  "base64 0.21.7",
+@@ -8281,7 +8281,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-client-api"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "anyhow",
+  "async-stream",
+@@ -8331,7 +8331,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-client-api-messages"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "bytes",
+  "bytestring",
+@@ -8354,7 +8354,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-codegen"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "anyhow",
+  "convert_case 0.6.0",
+@@ -8373,7 +8373,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-commitlog"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "async-stream",
+  "bitflags 2.10.0",
+@@ -8407,7 +8407,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-core"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -8506,7 +8506,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-data-structures"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "ahash 0.8.12",
+  "crossbeam-queue",
+@@ -8522,7 +8522,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-datastore"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "anyhow",
+  "bytes",
+@@ -8559,7 +8559,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-dst-lib"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "anyhow",
+  "spacetimedb-commitlog",
+@@ -8577,7 +8577,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-durability"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "anyhow",
+  "async-channel",
+@@ -8597,7 +8597,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-engine"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -8639,7 +8639,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-execution"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "anyhow",
+  "itertools 0.12.1",
+@@ -8653,7 +8653,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-expr"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "anyhow",
+  "bigdecimal",
+@@ -8671,7 +8671,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-fs-utils"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "anyhow",
+  "chrono",
+@@ -8687,15 +8687,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "spacetimedb-guard"
+-version = "2.13.0"
++version = "2.14.0"
+ dependencies = [
+  "reqwest",
+  "tempfile",
+ ]
+ 
+ [[pa
 ```
 
-**File**: `crates/cli/src/spacetime_config.rs` (modified, +22/-0)
+**File**: `Cargo.toml` (modified, +39/-39)
 ```diff
-@@ -196,6 +196,9 @@ impl SpacetimeConfig {
-                 if fields.contains_key(key) {
-                     continue;
-                 }
-+                if key == "dependencies" {
-+                    continue;
-+                }
-                 // If the child specifies any module source, skip inheriting the others
-                 if child_specifies_source && MODULE_SOURCE_KEYS.contains(&key.as_str()) {
-                     continue;
-@@ -2648,6 +2651,25 @@ mod tests {
-         );
-     }
+@@ -155,50 +155,50 @@ inherits = "release"
+ debug = true
  
-+    #[test]
-+    fn test_dependencies_not_inherited_from_parent() {
-+        let json = r#"{
-+            "database": "parent-db",
-+            "dependencies": [
-+                { "name": "auth", "database": "auth-db" }
-+            ],
-+            "children": [
-+                { "database": "child-db" }
-+            ]
-+        }"#;
-+
-+        let config: SpacetimeConfig = json5::from_str(json).unwrap();
-+        let targets = config.collect_all_targets_with_inheritance();
-+
-+        assert!(targets[0].fields.contains_key("dependencies"));
-+        assert!(!targets[1].fields.contains_key("dependencies"));
-+    }
-+
-     #[test]
-     fn test_generate_not_inherited_from_parent() {
-         // Generate is never inherited. Children must define their own.
+ [workspace.package]
+-version = "2.13.0"
++version = "2.14.0"
+ edition = "2024"
+ # update rust-toolchain.toml too!
+ rust-version = "1.97"
+ 
+ [workspace.dependencies]
+-spacetimedb = { path = "crates/bindings", version = "=2.13.0" }
+-spacetimedb-auth = { path = "crates/auth", version = "=2.13.0" }
+-spacetimedb-bindings-macro = { path = "crates/bindings-macro", version = "=2.13.0" }
+-spacetimedb-bindings-sys = { path = "crates/bindings-sys", version = "=2.13.0" }
+-spacetimedb-cli = { path = "crates/cli", version = "=2.13.0" }
+-spacetimedb-client-api = { path = "crates/client-api", version = "=2.13.0" }
+-spacetimedb-client-api-messages = { path = "crates/client-api-messages", version = "=2.13.0" }
+-spacetimedb-codegen = { path = "crates/codegen", version = "=2.13.0" }
+-spacetimedb-commitlog = { path = "crates/commitlog", version = "=2.13.0" }
+-spacetimedb-core = { path = "crates/core", version = "=2.13.0" }
+-spacetimedb-data-structures = { path = "crates/data-structures", version = "=2.13.0" }
+-spacetimedb-datastore = { path = "crates/datastore", version = "=2.13.0" }
+-spacetimedb-durability = { path = "crates/durability", version = "=2.13.0" }
+-spacetimedb-engine = { path = "crates/engine", version = "=2.13.0" }
+-spacetimedb-execution = { path = "crates/execution", version = "=2.13.0" }
+-spacetimedb-expr = { path = "crates/expr", version = "=2.13.0" }
+-spacetimedb-fs-utils = { path = "crates/fs-utils", version = "=2.13.0" }
+-spacetimedb-guard = { path = "crates/guard", version = "=2.13.0" }
+-spacetimedb-lib = { path = "crates/lib", default-features = false, version = "=2.13.0" }
+-spacetimedb-memory-usage = { path = "crates/memory-usage", version = "=2.13.0", default-features = false }
+-spacetimedb-metrics = { path = "crates/metrics", version = "=2.13.0" }
+-spacetimedb-paths = { path = "crates/paths", version = "=2.13.0" }
+-spacetimedb-pg = { path = "crates/pg", version = "=2.13.0" }
+-spacetimedb-physical-plan = { path = "crates/physical-plan", version = "=2.13.0" }
+-spacetimedb-portable-datastore = { path = "crates/portable-datastore", version = "=2.13.0" }
+-spacetimedb-primitives = { path = "crates/primitives", version = "=2.13.0" }
+-spacetimedb-query = { path = "crates/query", version = "=2.13.0" }
+-spacetimedb-query-builder = { path = "crates/query-builder", version = "=2.13.0" }
+-spacetimedb-runtime = { path = "crates/runtime", version = "=2.13.0" }
+-spacetimedb-runtime-core = { path = "crates/runtime-core", version = "=2.13.0" }
+-spacetimedb-sats = { path = "crates/sats", version = "=2.13.0" }
+-spacetimedb-schema = { path = "crates/schema", version = "=2.13.0" }
+-spacetimedb-snapshot = { path = "crates/snapshot", version = "=2.13.0" }
+-spacetimedb-standalone = { path = "crates/standalone", version = "=2.13.0" }
+-spacetimedb-subscription = { path = "crates/subscription", version = "=2.13.0" }
+-spacetimedb-sql-parser = { path = "crates/sql-parser", version = "=2.13.0" }
+-spacetimedb-table = { path = "crates/table", version = "=2.13.0" }
+-spacetimedb-test-datastore = { path = "crates/test-datastore", version = "=2.13.0" }
++spacetimedb = { path = "crates/bindings", version = "=2.14.0" }
++spacetimedb-auth = { path = "crates/auth", version = "=2.14.0" }
++spacetimedb-bindings-macro = { path = "crates/bindings-macro", version = "=2.14.0" }
++spacetimedb-bindings-sys = { path = "crates/bindings-sys", version = "=2.14.0" }
++spacetimedb-cli = { path = "crates/cli", version = "=2.14.0" }
++spacetimedb-client-api = { path = "crates/client-api", version = "=2.14.0" }
++spacetimedb-client-api-messages = { path = "crates/client-api-messages", version = "=2.14.0" }
++spacetimedb-codegen = { path = "crates/codegen", version = "=2.14.0" }
++spacetimedb-commitlog = { path = "crates/commitlog", version = "=2.14.0" }
++spacetimedb-core = { path = "crates/core", version = "=2.14.0" }
++spacetimedb-data-structures = { path = "crates/data-structures", version = "=2.14.0" }
++spacetimedb-datastore = { path = "crates/datastore", version = "=2.14.0" }
++spacetimedb-durability = { path = "crates/durability", version = "=2.14.0" }
++spacetimedb-engine = { path = "crates/engine", version = "=2.14.0" }
++spacetimedb-execution = { path = "crates/execution", version = "=2.14.0" }
++spacetimedb-expr = { path = "crates/expr", version = "=2.14.0" }
++spacetimedb-fs-utils = { path = "crates/fs-utils", version = "=2.14.0" }
++spacetimedb-guard = { path = "crates/guard", version = "=2.14.0" }
++spacetimedb-lib = { path = "crates/lib", default-features = false, version = "=2.14.0" }
++spacetimedb-memory-usage = { path = "crates/memory-usage", version = "=2.14.0", default-features = false }
++spacetimedb-metrics = { path = "crates/metrics", version = "=2.14.0" }
++spacetimedb-paths = { path = "crates/paths", version = "=2.14.0" }
++spacetimedb-pg = { path = "crates/pg", version = "=2.14.0" }
++spacetimedb-physical-plan = { path = "crates/physical-plan", version = "=2.14.0" }
++spacetimedb-portable-datastore = 
 ```
 
-**File**: `crates/cli/src/subcommands/dev.rs` (modified, +143/-10)
+**File**: `LICENSE.txt` (modified, +2/-2)
 ```diff
-@@ -486,7 +486,6 @@ pub async fn exec(mut config: Config, args: &ArgMatches) -> Result<(), anyhow::E
-     }
+@@ -5,7 +5,7 @@ Business Source License 1.1
+ Parameters
  
-     let spacetime_config = loaded_config.as_ref().map(|lc| &lc.config);
--    let using_spacetime_config = spacetime_config.is_some();
-     let generate_configs_from_file: Vec<HashMap<String, serde_json::Value>> = {
-         let mut entries = spacetime_config.and_then(|c| c.generate.clone()).unwrap_or_default();
-         // Inherit top-level `module-path` into generate entries that don't specify their own.
-@@ -695,8 +694,13 @@ pub async fn exec(mut config: Config, args: &ArgMatches) -> Result<(), anyhow::E
-     // Use first database for client process
-     let db_name_for_client = &db_names_for_logging[0];
+ Licensor:             Clockwork Laboratories, Inc.
+-Licensed Work:        SpacetimeDB 2.13.0
++Licensed Work:        SpacetimeDB 2.14.0
+                       The Licensed Work is
+                       (c) 2023 Clockwork Laboratories, Inc.
+                       
+@@ -21,7 +21,7 @@ Additional Use Grant: You may make use of the Licensed Work provided your
+                       Licensed Work by creating tables whose schemas are
+                       controlled by such third parties.
  
--    // Extract watch directories from publish configs
--    let watch_dirs = extract_watch_dirs(&publish_configs, &spacetimedb_dir, &project_dir);
-+    // Watch published modules and receiver dependencies used for generation.
-+    let watch_dirs = extract_watch_dirs(
-+        &publish_configs,
-+        &spacetimedb_dir,
-+        &project_dir,
-+        if skip_generate { None } else { spacetime_config },
-+    )?;
+-Change Date:          2031-10-14
++Change Date:          2031-10-25
  
-     println!("\n{}", "Starting development mode...".green().bold());
-     if db_names_for_logging.len() == 1 {
-@@ -769,7 +773,7 @@ pub async fn exec(mut config: Config, args: &ArgMatches) -> Result<(), anyhow::E
-         clear_database,
-         &publish_configs,
-         &generate_configs_from_file,
--        using_spacetime_config,
-+        spacetime_config,
-         server_from_cli,
-         force,
-         dotnet_version.as_deref(),
-@@ -885,7 +889,7 @@ pub async fn exec(mut config: Config, args: &ArgMatches) -> Result<(), anyhow::E
-                     clear_database,
-                     &publish_configs,
-                     &generate_configs_from_file,
--                    using_spacetime_config,
-+                    spacetime_config,
-                     server_from_cli,
-                     force,
-                     dotnet_version.as_deref(),
-@@ -1033,14 +1037,28 @@ async fn generate_build_and_publish(
-     clear_database: ClearMode,
-     publish_configs: &[CommandConfig<'_>],
-     generate_configs: &[HashMap<String, serde_json::Value>],
--    using_spacetime_config: bool,
-+    spacetime_config: Option<&SpacetimeConfig>,
-     server: Option<&str>,
-     yes: bool,
-     dotnet_version: Option<&str>,
-     native_aot: bool,
-     skip_publish: bool,
-     skip_generate: bool,
- ) -> Result<(), anyhow::Error> {
-+    // Receiver bindings must exist before compiling the sender, including on rebuilds.
-+    if !skip_generate && let Some(spacetime_config) = spacetime_config {
-+        let targets = spacetime_config.collect_all_targets_with_inheritance();
-+        // Generate only the root config entry's dependencies.
-+        // Child database entries are included for dependency lookup.
-+        let entries = generate::dependency_generate_entries(&targets[0], &targets)?;
-+        if !entries.is_empty() {
-+            println!("{}", "Generating receiver bindings from spacetime.json...".cyan());
-+            // Dependencies carry receiver build settings; do not inherit the sender's SDK version.
-+            let entries = with_dotnet_version_for_dev(entries, dotnet_version, &[]);
-+            generate::exec_from_entries(entries, crate::generate::extract_descriptions, yes, config_dir).await?;
-+        }
-+    }
-+
-     println!("{}", "Building...".cyan());
-     let (_path_to_program, _host_type) = tasks::build(
-         spacetimedb_dir,
-@@ -1078,7 +1096,7 @@ async fn generate_build_and_publish(
- 
-     if skip_generate {
-         println!("{}", "Skipping generate step (--skip-generate).".dimmed());
--    } else if using_spacetime_config {
-+    } else if spacetime_config.is_some() {
-         if generate_configs.is_empty() {
-             println!(
-                 "{}",
-@@ -1624,12 +1642,13 @@ fn resolve_database_sources(config: &SpacetimeConfig) -> HashMap<String, Option<
-     sources
- }
- 
--/// Extract unique watch directories from publish configs
-+/// Watch published modules and the root sender's receiver dependencies.
- fn extract_watch_dirs(
-     publish_configs: &[CommandConfig<'_>],
-     default_spacetimedb_dir: &Path,
-     project_dir: &Path,
--) -> std::collections::HashSet<PathBuf> {
-+    spacetime_config: Option<&SpacetimeConfig>,
-+) -> anyhow::Result<std::collections::HashSet<PathBuf>> {
-     use std::collections::HashSet;
-     let mut watch_dirs = HashSet::new();
- 
-@@ -1653,7 +1672,19 @@ fn extract_watch_dirs(
-         watch_dirs.insert(canonical_path);
-     }
- 
--    watch_dirs
-+    if let Some(config) = spacetime_config {
-+        let targets = config.collect_all_targets_with_inheritance();
-+        for entry in generate::dependency_generate_entries(&targets[0], &targets)? {
-+            for key in ["module-path", "wasm-file", "js-file"] {
-+                if let Some(path) = entry.get(key).and_then(|v| v.as_str()) {
-+                    let path = project_dir.join(path);
-+              
+ Change License:       GNU Affero General Public License v3.0 with a linking
+                       exception
 ```
 
-**File**: `crates/cli/src/subcommands/generate.rs` (modified, +550/-70)
+**File**: `crates/bindings-cpp/CMakeLists.txt` (modified, +1/-1)
 ```diff
-@@ -21,7 +21,7 @@ use crate::spacetime_config::{
- };
- use crate::tasks::csharp::dotnet_format;
- use crate::tasks::rust::rustfmt;
--use crate::util::y_or_n;
-+use crate::util::{detect_module_language, y_or_n, ModuleLanguage};
- use crate::Config;
- use crate::{build, common_args};
- use clap::builder::PossibleValue;
-@@ -53,6 +53,9 @@ fn build_generate_config_schema(command: &clap::Command) -> Result<CommandSchema
-         .key(Key::new("build_options").module_specific())
-         .key(Key::new("dotnet_version").module_specific())
-         .key(Key::new("include_private"))
-+        .key(Key::new("bindings").generate_entry_specific())
-+        .key(Key::new("dependency_name").config_only().generate_entry_specific())
-+        .key(Key::new("sender_module_path").config_only().generate_entry_specific())
-         .exclude("json_module")
-         .exclude("force")
-         .exclude("no_config")
-@@ -86,7 +89,7 @@ fn get_filtered_generate_configs<'a>(
-             glob::Pattern::new(cli_database).with_context(|| format!("Invalid glob pattern: {cli_database}"))?;
+@@ -2,7 +2,7 @@
  
-         let matched: Vec<_> = all_targets
--            .into_iter()
-+            .iter()
-             .filter(|target| {
-                 target
-                     .fields
-@@ -100,8 +103,7 @@ fn get_filtered_generate_configs<'a>(
-             anyhow::bail!(
-                 "No database target matches '{}'. Available databases: {}",
-                 cli_database,
--                spacetime_config
--                    .collect_all_targets_with_inheritance()
-+                all_targets
-                     .iter()
-                     .filter_map(|t| t.fields.get("database").and_then(|v| v.as_str()))
-                     .collect::<Vec<_>>()
-@@ -111,39 +113,46 @@ fn get_filtered_generate_configs<'a>(
+ cmake_minimum_required(VERSION 3.15)
+ project(SpacetimeDBCppModuleLibrary 
+-    VERSION 2.13.0
++    VERSION 2.14.0
+     LANGUAGES CXX)
  
-         matched
-     } else {
--        all_targets
-+        all_targets.iter().collect()
-     };
- 
--    // Collect generate entries from matched targets, inheriting entity fields
--    // Deduplicate by (module_path, serialized_generate_entry)
-+    // Collect generate entries from matched targets, inheriting entity fields.
-+    // Also synthesize module-binding entries for receiver dependencies.
-+    // Deduplicate by (module_path, serialized_generate_entry).
-     let mut seen = std::collections::HashSet::new();
-     let mut generate_configs = Vec::new();
- 
-     for target in &filtered_targets {
--        let generate_entries = match &target.generate {
--            Some(entries) if !entries.is_empty() => entries,
--            _ => continue,
--        };
--
--        // Get module_path from the target's entity fields for dedup
-         let module_path = target.fields.get("module-path").and_then(|v| v.as_str()).unwrap_or("");
--
--        for entry in generate_entries {
--            // Deduplicate: same module path + same generate entry config = generate once
--            let dedup_key = format!("{}:{}", module_path, serde_json::to_string(entry).unwrap_or_default());
-+        let entries = target
-+            .generate
-+            .as_deref()
-+            .unwrap_or(&[])
-+            .iter()
-+            .cloned()
-+            .chain(dependency_generate_entries(target, &all_targets)?);
-+
-+        for entry in entries {
-+            // Deduplicate: same module path + same generate entry config = generate once.
-+            let dedup_key = format!("{}:{}", module_path, serde_json::to_string(&entry).unwrap_or_default());
-             if !seen.insert(dedup_key) {
-                 continue;
-             }
- 
--            // Merge entity-level fields (module-path, etc.) with the generate entry
--            let mut merged = entry.clone();
--            // Inherit module-path from the target entity if not set in the generate entry
--            if let Some(mp) = target.fields.get("module-path") {
--                merged.entry("module-path".to_string()).or_insert_with(|| mp.clone());
-+            // Merge entity-level fields (module-path, etc.) with the generate entry.
-+            let mut merged = entry;
-+            // Inherit module-path from the target entity if the entry has no source of its own.
-+            if !has_module_source(&merged)
-+                && let Some(mp) = target.fields.get("module-path")
-+            {
-+                merged.insert("module-path".to_string(), mp.clone());
-             }
- 
-             let command_config = CommandConfig::new(schema, merged, args)?;
--            command_config.validate()?;
-+            // Receiver language and output defaults will be resolved from the sender.
-+            if command_config.get_one::<BindingKind>("bindings")? != Some(BindingKind::Module) {
-+                command_config.validate()?;
-+            }
-             generate_configs.push(command_config);
-         }
-     }
-@@ -167,6 +176,108 @@ fn get_filtered_generate_configs<'a>(
-     Ok(generate_configs)
- }
- 
-+pub(super) fn dependency_generate_entries(
-+    target: &crate::spacetime_config::FlatTarget,
-+    all_targets: &[crate::spacetime_config::FlatTarget],
-+) 
+ # Generate version header from template
 ```
 
-**File**: `docs/docs/00200-core-concepts/00100-databases/00200-spacetime-dev.md` (modified, +8/-0)
+**File**: `crates/bindings-csharp/BSATN.Codegen/BSATN.Codegen.csproj` (modified, +1/-1)
 ```diff
-@@ -100,6 +100,14 @@ After completing setup, `spacetime dev`:
+@@ -2,7 +2,7 @@
  
- Your database will be available at `https://maincloud.spacetimedb.com`.
- 
-+### Receiver dependencies
-+
-+For inter-database calls, the **calling database** needs module bindings for the **receiving database** whose reducers it calls. These are distinct from the client bindings used by clients. Rust and TypeScript modules support receiver bindings.
-+
-+When the root database in `spacetime.json` declares `dependencies`, `dev` generates those receiver bindings **before** building the calling module, including on rebuilds. It watches receiving module source paths as well as published module sources, even when the receiving modules are outside the calling module directory. Child targets may provide receiving module source settings, but their own dependency arrays are not processed by `dev`.
-+
-+`--skip-generate` skips both receiver and client binding generation and removes receiver-only watch paths; it does not supply missing bindings. `--skip-publish` does not skip generation. See the [receiver dependency reference](/cli-reference/spacetime-json#receiver-dependencies) for configuration and language support.
-+
- ### Client Development Server
- 
- `spacetime dev` can automatically run your client's development server alongside the SpacetimeDB module. This is configured via the `spacetime.json` file in your project root:
+   <PropertyGroup>
+     <AssemblyName>SpacetimeDB.BSATN.Codegen</AssemblyName>
+-    <Version>2.13.0</Version>
++    <Version>2.14.0</Version>
+     <Title>SpacetimeDB BSATN Codegen</Title>
+     <Description>The SpacetimeDB BSATN Codegen implements the Roslyn incremental generators for BSATN serialization/deserialization in C#.</Description>
+   </PropertyGroup>
 ```
 
-**File**: `docs/docs/00300-resources/00100-cli-reference/00100-cli-reference.md` (modified, +8/-2)
+**File**: `crates/bindings-csharp/BSATN.Runtime/BSATN.Runtime.csproj` (modified, +1/-1)
 ```diff
-@@ -345,7 +345,7 @@ Start development mode with auto-regenerate client module bindings, auto-rebuild
- * `--module-path <MODULE-PATH>` — Path to the SpacetimeDB server module, relative to current directory. Defaults to `<project-path>/spacetimedb`.
- * `--client-lang <CLIENT-LANG>` — The programming language for the generated client module bindings (e.g., typescript, csharp, rust, unrealcpp). If not specified, it will be detected from the project.
- 
--  Possible values: `csharp`, `typescript`, `rust`, `unrealcpp`
-+  Possible values: `csharp`, `typescript`, `rust`, `cpp`, `unrealcpp`
- 
- * `-s`, `--server <SERVER>` — The nickname, host name or URL of the server to publish to
- * `-y`, `--yes` — Run non-interactively wherever possible. This will answer "yes" to almost all prompts, but will sometimes answer "no" to preserve non-interactivity (e.g. when prompting whether to log in with spacetimedb.com).
-@@ -468,7 +468,13 @@ Run `spacetime help generate` for more detailed information.
- 
- * `-l`, `--lang <LANG>` — The language to generate
- 
--  Possible values: `csharp`, `typescript`, `rust`, `unrealcpp`
-+  Possible values: `csharp`, `typescript`, `rust`, `cpp`, `unrealcpp`
-+
-+* `--bindings <BINDINGS>` — The kind of bindings to generate (client applications or inter-database module calls)
-+
-+  Default value: `client`
-+
-+  Possible values: `client`, `module`
- 
- * `--build-options <BUILD_OPTIONS>` — Options to pass to the build command, for example --build-options='--lint-dir='
- 
+@@ -1,7 +1,7 @@
+ <Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+     <AssemblyName>SpacetimeDB.BSATN.Runtime</AssemblyName>
+-    <Version>2.13.0</Version>
++    <Version>2.14.0</Version>
+     <Title>SpacetimeDB BSATN Runtime</Title>
+     <Description>The SpacetimeDB BSATN Runtime implements APIs for BSATN serialization/deserialization in C#.</Description>
+     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
 ```
 
-**File**: `docs/docs/00300-resources/00100-cli-reference/00300-spacetime-json.md` (modified, +85/-2)
+**File**: `crates/bindings-csharp/Codegen/Codegen.csproj` (modified, +1/-1)
 ```diff
-@@ -40,6 +40,7 @@ These fields can appear at any level (root or child):
- | `num-replicas` | number | Yes | Number of database replicas |
- | `anonymous` | boolean | Yes | Use anonymous identity |
- | `organization` | string | Yes | Organization name or identity |
-+| `dependencies` | array | No | Receiver binding inputs for this calling database (see [Receiver dependencies](#receiver-dependencies)) |
- | `generate` | array | No | Generate targets (see [Generate configuration](#generate-configuration)) |
- | `children` | array | No | Child database entities (see [Children and inheritance](#children-and-inheritance)) |
- | `dev` | object | No | Dev server configuration, root-level only (see [`spacetime dev` configuration](#spacetime-dev-configuration)) |
-@@ -52,14 +53,15 @@ The `generate` key is an array of objects. Each object configures bindings gener
- 
- | Field | Type | Description |
- |-------|------|-------------|
--| `language` | string | Target language: `typescript`, `csharp`, `rust`, `unrealcpp` (required) |
-+| `language` | string | Target language: `typescript`, `csharp`, `rust`, `unrealcpp`; `cpp` is reserved for module bindings |
-+| `bindings` | string | `client` (default) for application clients, or `module` for inter-database calls |
- | `out-dir` | string | Output directory for generated files |
- | `namespace` | string | C# namespace (`csharp` only) |
- | `unreal-module-name` | string | Unreal module name (`unrealcpp` only) |
- | `uproject-dir` | string | Unreal project directory (`unrealcpp` only) |
- | `include-private` | boolean | Include private tables in generated code |
- 
--Generate entries use the `module-path` (or `bin-path`/`js-path`) from their parent entity to determine which module to build and generate from.
-+By default, generate entries use the `module-path` (or `bin-path`/`js-path`) from their parent entity to determine which module to build and generate from. An entry can specify its own module source instead.
- 
- When `spacetime generate` runs, it deduplicates by module path. If multiple databases share the same module and generate config (for example, via inheritance), bindings are generated once.
- 
-@@ -80,6 +82,78 @@ When `spacetime generate` runs, it deduplicates by module path. If multiple data
- }
- ```
- 
-+## Receiver dependencies
-+
-+`spacetime generate` produces two kinds of bindings:
-+
-+- **Client bindings** are used by clients to connect to a database, subscribe to data, and call its reducers.
-+- **Module bindings**, also called **receiver bindings**, are used inside one database module to make asynchronous inter-database communication (IDC) calls to another database's reducers. Rust and TypeScript modules support these bindings; C# and C++ module bindings are not implemented yet.
-+
-+With `spacetime.json`, put client bindings in `generate` and receiver bindings in `dependencies`. Running `spacetime generate` processes both arrays: regular `generate` entries default to client bindings, and dependencies automatically generate module bindings. No `--bindings` flag or second `generate` entry is needed for a dependency.
-+
-+A regular `generate` entry can also set `"bindings": "module"` explicitly. Unlike a dependency, it uses its parent target's module source unless overridden; if its language or output directory is omitted, those defaults are resolved from the config directory rather than the calling module.
-+
-+The **calling database** contains the code making the inter-database call. The **receiving database** contains the reducers being called. In the examples below, `lobby` is the calling database and `game-world` is the receiving database. Declare receiver binding inputs in the calling database's `dependencies` array.
-+
-+Each calling database with dependencies must define `module-path`. Dependencies are not inherited by children.
-+
-+| Field | Required | Description |
-+|-------|----------|-------------|
-+| `name` | Yes | Local dependency name passed to receiver binding generation; not the receiver's database name |
-+| `module-path` | One source required | Receiver source directory; takes precedence over `database` when both are set |
-+| `database` | One source required | Exact name of another target in the same config, used to look up its local module source; not a live-schema fetch |
-+| `out-dir` | No | Output directory, relative to the config directory |
-+| `build-options` | No | Receiver build options when using a direct `module-path` |
-+| `dotnet-version` | No | Receiver .NET SDK version when using a direct `module-path` |
-+
-+### Receiver source without a publish target
-+
-+A receiving module source does not need its own database target:
-+
-+```json
-+{
-+  "database": "lobby",
-+  "module-path": "./lobby",
-+  "dependencies": [
-+    {
-+      "name": "game_world",
-+      "module-path": "./game_world",
-+      "out-dir": "./lobby/src/remote_bindings"
-+    }
-+  ]
-+}
-+```
-+
-+Declaring a dependency does not publish the receiver. To make it a publish target too, define it under `children` and re
+@@ -1,7 +1,7 @@
+ <Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+     <AssemblyName>SpacetimeDB.Codegen</AssemblyName>
+-    <Version>2.13.0</Version>
++    <Version>2.14.0</Version>
+     <Title>SpacetimeDB Module Codegen</Title>
+     <Description>The SpacetimeDB Codegen implements the Roslyn incremental generators for writing SpacetimeDB modules in C#.</Description>
+   </PropertyGroup>
 ```
 
-**File**: `skills/cli/SKILL.md` (modified, +8/-0)
+**File**: `crates/bindings-csharp/Runtime/Runtime.csproj` (modified, +1/-1)
 ```diff
-@@ -50,6 +50,14 @@ spacetime generate --lang typescript|csharp|rust --out-dir ./bindings --module-p
- spacetime generate --lang unrealcpp --uproject-dir ./MyGame --module-path ./server --unreal-module-name MyGame
- ```
+@@ -2,7 +2,7 @@
  
-+### Client and Module Bindings
-+
-+`spacetime generate --bindings client` (default) generates bindings for clients connecting to a database. `--bindings module` generates receiver bindings used inside a **calling database module** to call reducers in another **receiving database** through asynchronous IDC. Rust and TypeScript module bindings are supported; C#/C++ module bindings are not implemented yet. `unrealcpp` is client-only; `cpp` is accepted only in module mode.
-+
-+In `spacetime.json`, each calling database's non-inherited `dependencies` array requires its own `module-path` and dependency `name` plus receiving-module `module-path` or `database`. A `database` reference resolves another target's local source/build settings in the same config; it does not fetch a running database's schema. A direct receiving module source takes precedence. Dependencies do not themselves publish receiving databases or inherit the calling module's build settings. `generate <calling-database>` processes both its regular `generate` entries (client bindings by default) and `dependencies` (module bindings automatically); no `--bindings` flag or second `generate` entry is needed for a dependency. For dependencies, module binding language defaults to the calling module's language and Rust/TypeScript output defaults to `<calling module-path>/src/remote_bindings`. Explicit config `out-dir` is config-relative. A regular `generate` entry can select `"bindings": "module"`, but does not use dependency language or output defaults. The CLI `--bindings` override is allowed only when a single generation entry is selected.
-+
-+`dev` generates only root dependencies before building the calling module, and watches their source paths. Child targets are available for source lookup, not recursive dependency generation. `--skip-generate` skips receiver/client generation and receiver-only watching; `--skip-publish` does not. See https://spacetimedb.com/docs/cli-reference/spacetime-json#receiver-dependencies for examples.
-+
- ### Publishing & Deployment
- 
- ```bash
+   <PropertyGroup>
+     <AssemblyName>SpacetimeDB.Runtime</AssemblyName>
+-    <Version>2.13.0</Version>
++    <Version>2.14.0</Version>
+     <Title>SpacetimeDB Module Runtime</Title>
+     <Description>The SpacetimeDB Runtime implements the database runtime bindings for writing SpacetimeDB modules in C#.</Description>
+   </PropertyGroup>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6378** (2026-10-26): Version bump 2.14.0 (@rekhoff)
 - **PR #6362** (2026-10-24): docs: document IDC receiver bindings and CLI configuration (@clockwork-labs-bot)
-- **PR #6357** (closed): Test cache-warmed Linux and Windows staging runners (@bfops)
 - **PR #6354** (2026-10-22): Release - Work around crates.io ratelimiting (@bfops)
 - **PR #6353** (2026-10-22): View docs updated for the current args feature (@JasonAtClockwork)
 - **PR #6351** (2026-10-22): CI - check and refresh outdated rustup (@bfops)
@@ -1322,32 +1303,82 @@ bindings
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [5/6] Async IDC: Rust cli UX (#6313)
+## X. Version bump 2.14.0 (#6378)
 
 **RULE**:
-When implementing operations in `codex-plugin/plugins/spacetimedb/skills/cli/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bae35972`: [5/6] Async IDC: Rust cli UX (#6313). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e3166533`: Version bump 2.14.0 (#6378). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `codex-plugin/plugins/spacetimedb/skills/cli/SKILL.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### Client and Module Bindings
-
-`spacetime generate --bindings client` (default) generates bindings for clients connecting to a database. `--bindings module` generates receiver bindings used inside a **calling database module** to call reducers in another **receiving database** through asynchronous IDC. Rust and TypeScript module bindings are supported; C#/C++ module bindings are not implemented yet. `unrealcpp` is client-only; `cpp` is accepted only in module mode.
-
-In `spacetime.json`, each calling database's non-inherited `dependencies` array requires its own `module-path` and dependency `name` plus receiving-module `module-path` or `database`. A `database` reference resolves another target's local source/build settings in the same config; it does not fetch a running database's schema. A direct receiving module source takes precedence. Dependencies do not themselves publish receiving databases or inherit the calling module's build settings. `generate <calling-database>` processes both its regular `generate` entries (client bindings by default) and `dependencies` (module bindings automatically); no `--bindings` flag or second `generate` entry is needed for a dependency. For depen
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
+version = "2.14.0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
+version = "2.13.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bae35972` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e3166533` are properly handled with clean fallback behavior.

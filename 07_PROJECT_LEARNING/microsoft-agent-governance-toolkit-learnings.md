@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Source Version**: `c2602604`  
+> **Source Version**: `20452bdc`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:00:28.873Z  
+> **Timestamp**: 2026-10-27T14:50:28.342Z  
 > **Learning ID**: `learn-github-microsoft-agent-governance-toolkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:00:28.032Z  
+> **Harvest Timestamp**: 2026-10-27T14:50:27.849Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution sandboxing, and reliability engineering for autonomous AI agents. Covers 10/10 OWASP Agentic Top 10.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 6479 stars
+- **Stars / Engagement**: 6481 stars
 
 ---
 
@@ -405,235 +405,98 @@ export function writeHookOutput(payload) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c3f0555d` (2026-10-27)
-**Commit Message**: fix(agent-lightning): charge dict violations by their severity in policy_penalty (#4422)
+### Incident Patch 1: `e490800d` (2026-10-27)
+**Commit Message**: fix(agent-sre): split experiment traffic by relative variant weights (#4460)
 
-* fix(agent-lightning): charge dict violations by severity in policy_penalty
-
-policy_penalty read each violation's severity with getattr, so a
-violation given as a dict (the form kernel.get_recent_violations() may
-return, which GovernedEnvironment already accepts) always got the
-default medium penalty: a critical dict cost -10 instead of -100.
-PolicyReward computes its penalty through policy_penalty, so kernel
-violations reported as dicts were mis-charged there too. Dicts are now
-read by their "severity" key; objects, unknown severities and the
-missing-severity default are unchanged.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
-
-* docs(changelog): add PR number to the agent-lightning policy_penalty entry
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
-
----------
+Experiment.assign compared one random.random() draw against the running
+sum of the variant weights, so the split was only right when the weights
+summed to 1. Three variants with the default weight 0.5 never sent
+traffic to the third, 70/30 sent everything to the first, and 0.1/0.1
+split 10/90. Scale the draw by the total weight so each variant gets
+weight / total; a variant with weight <= 0 gets no traffic.
 
 Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **Haystack `AuditLogger` records a snapshot of the entry metadata.** `run` stored the caller's `metadata` dict itself, so changing that dict after the call changed the recorded entry and made `verify_chain` report the log as tampered, and metadata that JSON cannot hold (a `datetime`, keys mixing `int` and `str`) raised `TypeError` from `run`. The metadata is now stored as a JSON snapshot taken when the entry is recorded, with other values stored as their `str()`; chain hashes for JSON metadata are unchanged (#4402).
+@@ -44,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - **`agent-lightning` `PolicyReward` reports the penalty it applied in multiplicative mode.** With `RewardConfig(multiplicative=True)` a violation scales the base reward by `multiplicative_factor`, but `get_stats()` (`total_penalties`, `avg_penalty`) and the `policy_penalty` value emitted to Agent-Lightning were still taken from the additive severity table, so a critical violation that turned a base reward of 1.0 into 0.5 was recorded as a penalty of -100 instead of -0.5. In multiplicative mode the penalty is now the amount the scaling took off the base reward; additive mode is unchanged (#4418).
  - **`agent-runtime` `DockerDeployer.deploy` no longer lets `env` override the governance settings.** The `AGT_*` variables built from `GovernanceConfig` went on the `docker run` command line first and the `env` entries after them, and Docker keeps the last `-e` for a name, so `env={"AGT_KILL_SWITCH": "false"}` started the container with the kill switch off although `config.kill_switch_enabled` was `True` (likewise for the policy path, trust level, audit flag and limits). `deploy` now raises `ValueError` before running Docker when `env` names one of those variables or has an `=` in a name; other variables, including other `AGT_` names, are passed as before.
-+- **`agent-lightning` `policy_penalty` charges dict violations by their severity.** It read each violation's severity with `getattr`, so a violation given as a dict, the form a kernel's `get_recent_violations()` may return and that `GovernedEnvironment` already accepts, always got the default medium penalty: `{"severity": "critical"}` cost -10 instead of -100 and `{"severity": "low"}` -10 instead of -1. `PolicyReward` uses `policy_penalty`, so a rollout without `violations` whose kernel returned dicts was rewarded the same way. Dict violations are now charged by their `"severity"` key; object violations, unknown severities and the medium default when the severity is missing are unchanged (#4422).
+ - **`agent-lightning` `policy_penalty` charges dict violations by their severity.** It read each violation's severity with `getattr`, so a violation given as a dict, the form a kernel's `get_recent_violations()` may return and that `GovernedEnvironment` already accepts, always got the default medium penalty: `{"severity": "critical"}` cost -10 instead of -100 and `{"severity": "low"}` -10 instead of -1. `PolicyReward` uses `policy_penalty`, so a rollout without `violations` whose kernel returned dicts was rewarded the same way. Dict violations are now charged by their `"severity"` key; object violations, unknown severities and the medium default when the severity is missing are unchanged (#4422).
++- **`agent-sre` A/B experiments split traffic by relative variant weights.** `Experiment.assign` compared one `random.random()` draw against the running sum of the weights, so it only worked when the weights summed to 1: three variants with the default weight 0.5 never sent traffic to the third, percentage weights such as 70/30 sent everything to the first, and two variants weighted 0.1 split 10/90. Each variant now gets its weight divided by the total of all weights, and a variant with a weight of 0 or less gets no traffic.
  
  ### Added
  - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
 ```
 
-**File**: `agent-governance-python/agent-lightning/src/agent_lightning_gov/reward.py` (modified, +12/-2)
+**File**: `agent-governance-python/agent-sre/src/agent_sre/experiments/__init__.py` (modified, +5/-2)
 ```diff
-@@ -56,7 +56,10 @@ def policy_penalty(
-     full PolicyReward class.
+@@ -140,10 +140,13 @@ def assign(self) -> str:
+         if self.status != ExperimentStatus.RUNNING:
+             return self.variants[0].name
  
-     Args:
--        violations: List of PolicyViolation objects
-+        violations: List of violations, each a PolicyViolation (or any
-+            object with a ``severity`` attribute) or a dict with a
-+            ``"severity"`` key, as returned by
-+            ``kernel.get_recent_violations()``
-         critical_penalty: Penalty for critical violations
-         high_penalty: Penalty for high severity violations
-         medium_penalty: Penalty for medium severity violations
-@@ -78,7 +81,14 @@ def policy_penalty(
- 
-     total_penalty = 0.0
-     for violation in violations:
--        severity = getattr(violation, "severity", "medium")
-+        # Kernels may report violations as dicts (see
-+        # ``GovernedEnvironment._pull_kernel_violations``); reading only the
-+        # attribute charged every dict the medium penalty, whatever its
-+        # severity.
-+        if isinstance(violation, dict):
-+            severity = violation.get("severity", "medium")
-+        else:
-+            severity = getattr(violation, "severity", "medium")
-         total_penalty += severity_penalties.get(severity, medium_penalty)
- 
-     return total_penalty
+-        r = random.random()  # noqa: S311 — non-cryptographic use for experiment randomization
++        # Weights are relative: each variant gets weight / total of the traffic,
++        # so they need not sum to 1. A variant with weight <= 0 gets none.
++        total = sum(max(v.weight, 0.0) for v in self.variants)
++        r = random.random() * total  # noqa: S311 — non-cryptographic use for experiment randomization
+         cumulative = 0.0
+         for v in self.variants:
+-            cumulative += v.weight
++            cumulative += max(v.weight, 0.0)
+             if r < cumulative:
+                 self._assignments[v.name] = self._assignments.get(v.name, 0) + 1
+                 return v.name
 ```
 
-**File**: `agent-governance-python/agent-lightning/tests/test_lightning_comprehensive.py` (modified, +18/-0)
+**File**: `agent-governance-python/agent-sre/tests/test_experiments.py` (modified, +29/-0)
 ```diff
-@@ -592,6 +592,24 @@ def test_custom_penalties(self):
-         r = policy_penalty([_FakeViolation("critical")], critical_penalty=-200.0)
-         assert r == pytest.approx(-200.0)
+@@ -147,6 +147,35 @@ def test_traffic_split(self):
+         assert counts["a"] > 600
+         assert counts["b"] > 100
  
-+    def test_dict_violations_use_their_severity(self):
-+        violations = [{"severity": "critical"}, {"severity": "low"}]
-+        assert policy_penalty(violations) == pytest.approx(-101.0)
++    def _split(self, variants: list[Variant], n: int = 3000) -> dict[str, int]:
++        random.seed(7)
++        exp = Experiment(name="test", variants=variants)
++        exp.start()
++        counts = {v.name: 0 for v in variants}
++        for _ in range(n):
++            counts[exp.assign()] += 1
++        return counts
 +
-+    def test_dict_violation_unknown_or_missing_severity_is_medium(self):
-+        violations = [{"severity": "unknown_level"}, {"policy": "p"}]
-+        assert policy_penalty(violations) == pytest.approx(-20.0)
++    def test_traffic_split_three_default_weights(self):
++        # Three variants with the default weight 0.5 each get a third of the traffic.
++        counts = self._split([Variant("a"), Variant("b"), Variant("c")])
++        for name in ("a", "b", "c"):
++            assert 850 < counts[name] < 1150
 +
-+    def test_policy_reward_charges_kernel_dict_violations_by_severity(self):
-+        # A rollout without ``violations`` falls back to the kernel, which
-+        # may return dicts; a critical one must cost the critical penalty.
-+        kernel = _make_mock_kernel()
-+        kernel.get_recent_violations = MagicMock(
-+            return_value=[{"policy": "p", "severity": "critical"}]
-+        )
-+        reward = PolicyReward(kernel, base_reward_fn=lambda _r: 1.0)
-+        assert reward(object(), emit=False) == pytest.approx(-99.0)
++    def test_traffic_split_percentage_weights(self):
++        counts = self._split([Variant("a", weight=70), Variant("b", weight=30)])
++        assert 1950 < counts["a"] < 2250
++        assert 750 < counts["b"] < 1050
++
++    def test_traffic_split_weights_below_one(self):
++        counts = self._split([Variant("a", weight=0.1), Variant("b", weight=0.1)])
++        assert 1350 < counts["a"] < 1650
++        assert 1350 < counts["b"] < 1650
++
++    def test_traffic_split_zero_weight_gets_no_traffic(self):
++        counts = self._split([Variant("a", weight=0.0), Variant("b", weight=1.0)])
++        assert counts == {"a": 0, "b": 3000}
 +
  
- class TestCreatePolicyReward:
-     def test_factory_with_defaults(self):
-```
-
-**File**: `docs/specs/AGENT-LIGHTNING-FAST-PATH-1.0.md` (modified, +11/-6)
-```diff
-@@ -488,13 +488,16 @@ accept:
- 
- | Parameter | Type | Default | Description |
- | --- | --- | --- | --- |
--| `violations` | list[Any] | (required) | List of PolicyViolation objects |
-+| `violations` | list[Any] | (required) | List of PolicyViolation objects or violation dicts |
- | `critical_penalty` | float | -100.0 | Penalty for critical violations |
- | `high_penalty` | float | -50.0 | Penalty for high-severity violations |
- | `medium_penalty` | float | -10.0 | Penalty for medium-severity violations |
- | `low_penalty` | float | -1.0 | Penalty for low-severity violations |
- 
--**[Pure Specification]**
-+Each violation MAY be an object with a `severity` attribute (such as a
-+`PolicyViolation`) or a dict with a `"severity"` key, the shape a
-+kernel's `get_recent_violations()` may return (Section 9.8). Both forms
-+MUST be charged by their severity. **[Pure Specification]**
- 
- ### 7.2 Severity Mapping
- 
-@@ -510,7 +513,8 @@ severity_penalties = {
- 
- total_penalty = 0.0
- for violation in violations:
--    severity = violation.severity  (default "medium" if absent)
-+    severity = violation["severity"] if violation is a dict
-+               else violation.severity  (default "medium" if absent)
-     total_penalty += severity_penalties.get(severity, medium_penalty)
- ```
- 
-@@ -1211,8 +1215,8 @@ An implementation is conformant if it satisfies all MUST requirements:
-    caller-supplied; preserves caller-supplied penalty.
- 8. PolicyViolationError stores the violation and formats the message
-    correctly.
--9. `policy_penalty` falls back to medium penalty for unknown
--   severities.
-+9. `policy_penalty` charges object and dict violations by their
-+   severity and falls back to medium penalty for unknown severities.
- 10. PolicyReward supports both additive and multiplicative penalty
-     modes.
- 11. PolicyReward clamps rewards to `[min_reward, max_reward]`.
-@@ -1242,7 +1246,8 @@ Conformance tests MUST cover:
- - PolicyViolation caller-supplied penalty preservation.
- - PolicyViolationType enum values.
- - PolicyViolationError message formatting.
--- `policy_penalty` with known and unknown severities.
-+- `policy_penalty` with known and unknown severities, for object and
-+  dict violations.
- - PolicyReward additive mode computation.
- - PolicyReward multiplicative mode computation.
- - PolicyReward clean bonus application.
-```
-
----
-
-### Incident Patch 2: `cdf29304` (2026-10-27)
-**Commit Message**: chore(deps): Bump setuptools in /agent-governance-python/requirements (#4452)
-
-Bumps [setuptools](https://github.com/pypa/setuptools) from 83.0.0 to 84.1.0.
-- [Release notes](https://github.com/pypa/setuptools/releases)
-- [Changelog](https://github.com/pypa/setuptools/blob/main/NEWS.rst)
-- [Commits](https://github.com/pypa/setuptools/compare/v83.0.0...v84.1.0)
-
----
-updated-dependencies:
-- dependency-name: setuptools
-  dependency-version: 84.1.0
-  dependency-type: direct:production
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `agent-governance-python/requirements/ci-build.txt` (modified, +3/-3)
-```diff
-@@ -1,9 +1,9 @@
- # Hashed CI build dependencies (Scorecard Pinned-Dependencies compliance)
- build==1.2.2 \
-     --hash=sha256:277ccc71619d98afdd841a0e96ac9fe1593b823af481d3b0cea748e8894e0613
--setuptools==83.0.0 \
--    --hash=sha256:025bccbbf0fa05b6192bc64ae1e7b16e001fd6d6d4d5de03c97b1c1ade523bef \
--    --hash=sha256:29b23c360f22f414dc7336bb39178cc7bcbf6021ed2733cde173f09dba19abb3
-+setuptools==84.1.0 \
-+    --hash=sha256:23657205b63d4d31395ab917815247f694aafad28cd21316bf5fd45a51048ea0 \
-+    --hash=sha256:5231689c6ac8156cd155cfb98c3fd6fb252c3e7e9bd3d78b64d3c55f132624c9
- # build transitive dependencies
- packaging==25.0 \
-     --hash=sha256:29572ef2b1f17581046b3a2227d5c611fb25ec70ca1ba8554b24b0e69331a484
-```
-
----
-
-### Incident Patch 3: `76bdbe6b` (2026-10-27)
-**Commit Message**: chore(deps-dev): Update setuptools requirement (#4448)
-
-Updates the requirements on [setuptools](https://github.com/pypa/setuptools) to permit the latest version.
-- [Release notes](https://github.com/pypa/setuptools/releases)
-- [Changelog](https://github.com/pypa/setuptools/blob/main/NEWS.rst)
-- [Commits](https://github.com/pypa/setuptools/compare/v84.0.0...v84.2.0)
-
----
-updated-dependencies:
-- dependency-name: setuptools
-  dependency-version: 84.2.0
-  dependency-type: direct:development
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `agent-governance-python/agent-primitives/pyproject.toml` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- [build-system]
--requires = ["setuptools>=84.0.0", "wheel"]
-+requires = ["setuptools>=84.2.0", "wheel"]
- build-backend = "setuptools.build_meta"
- 
- [project]
+ class TestMetricSummary:
+     def test_to_dict(self):
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4457** (2026-10-27): chore(deps): Bump body-parser from 2.3.0 to 2.4.0 in /agent-governance-python/agent-os/extensions/copilot (@dependabot[bot])
-- **PR #4456** (2026-10-27): chore(deps): Bump zod from 4.6.5 to 4.6.7 in /agent-governance-python/agent-os/extensions/mcp-server (@dependabot[bot])
-- **PR #4455** (2026-10-27): chore(deps): Bump fast-uri from 3.1.8 to 3.1.9 in /agent-governance-python/agent-os/extensions/mcp-server (@dependabot[bot])
-- **PR #4454** (2026-10-27): chore(deps-dev): Bump fast-uri from 3.1.7 to 3.1.9 in /agent-governance-python/agentmesh-integrations/mastra-agentmesh (@dependabot[bot])
-- **PR #4452** (2026-10-27): chore(deps): Bump setuptools from 83.0.0 to 84.1.0 in /agent-governance-python/requirements (@dependabot[bot])
-- **PR #4451** (2026-10-27): chore(deps-dev): Update opentelemetry-sdk requirement from <2.0,>=1.44.0 to >=1.45.1,<2.0 in /agent-governance-python/agent-sre (@dependabot[bot])
+- **PR #4464** (closed): fix(python): add AgentControl close support (@MaryamIjazMaryam)
+- **PR #4463** (2026-10-27): chore(deps): Bump zod from 4.4.3 to 4.6.7 in /agent-governance-python/agent-mesh/packages/mcp-proxy (@dependabot[bot])
+- **PR #4462** (2026-10-27): chore(deps): Bump body-parser from 2.2.2 to 2.4.0 in /agent-governance-python/agent-mesh/packages/mcp-proxy (@dependabot[bot])
+- **PR #4460** (2026-10-27): fix(agent-sre): split experiment traffic by relative variant weights (@ShivamSharma43)
+- **PR #4459** (2026-10-27): chore(deps): Bump fast-uri from 3.1.8 to 3.1.9 in /agent-governance-python/agent-mesh/packages/mcp-proxy (@dependabot[bot])
+- **PR #4458** (2026-10-27): chore(deps): Bump body-parser from 1.20.6 to 1.20.9 in /agent-governance-python/agent-mesh/services/api (@dependabot[bot])
 
 ---
 
@@ -653,13 +516,13 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agent-lightning): charge dict violations by their severity in policy_penalty (#4
+## X. agent-sre): split experiment traffic by relative variant weights (#4460)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c3f0555d`: agent-lightning): charge dict violations by their severity in policy_penalty (#4422). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e490800d`: agent-sre): split experiment traffic by relative variant weights (#4460). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -667,7 +530,7 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **`agent-lightning` `policy_penalty` charges dict violations by their severity.** It read each violation's severity with `getattr`, so a violation given as a dict, the form a kernel's `get_recent_violations()` may return and that `GovernedEnvironment` already accepts, always got the default medium penalty: `{"severity": "critical"}` cost -10 instead of -100 and `{"severity": "low"}` -10 instead of -1. `PolicyReward` uses `policy_penalty`, so a rollout without `violations` whose kernel returned dicts was rewarded the same way. Dict violations are now charged by their `"severity"` key; object violations, unknown severities and the medium default when the severity is missing are unchanged (#4422).
+- **`agent-sre` A/B experiments split traffic by relative variant weights.** `Experiment.assign` compared one `random.random()` draw against the running sum of the weights, so it only worked when the weights summed to 1: three variants with the default weight 0.5 never sent traffic to the third, percentage weights such as 70/30 sent everything to the first, and two variants weighted 0.1 split 10/90. Each variant now gets its weight divided by the total of all weights, and a variant with a weight of 0 or less gets no traffic.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -677,4 +540,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c3f0555d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e490800d` are properly handled with clean fallback behavior.

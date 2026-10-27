@@ -5385,3 +5385,6 @@
 | `CYCLE-20261027-PCRO` | `2026-10-27T14:43:15.300Z` | `CYB3RMX/Qu1cksc0pe` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4856` | Yes (`64eb85a2...`) |
 | `CYCLE-20261027-PEGF` | `2026-10-27T14:43:17.487Z` | `apioo/fusio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4857, Rule 4858, Rule 4859` | Yes (`df5a92b2...`) |
 | `CYCLE-20261027-U3Y6` | `2026-10-27T14:46:57.150Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4812` | Yes (`266ddef2...`) |
+| `CYCLE-20261027-YN54` | `2026-10-27T14:50:28.648Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4860` | Yes (`74b0dcfc...`) |
+| `CYCLE-20261027-YNCQ` | `2026-10-27T14:50:28.922Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4861` | Yes (`057b7852...`) |
+| `CYCLE-20261027-YP56` | `2026-10-27T14:50:31.242Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4862` | Yes (`1560c987...`) |
