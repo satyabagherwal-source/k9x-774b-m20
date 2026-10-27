@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T12:56:55.376Z",
-  "total_verified_learnings": 1108,
+  "last_updated": "2026-10-27T13:00:31.990Z",
+  "total_verified_learnings": 1111,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -4009,8 +4009,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "f0ffc917",
-      "content_hash": "188379ec975094d9f6d30524604bf35e5f517c4926025c389d9b450d72484aa5",
+      "source_version": "2662cc4b",
+      "content_hash": "c8e3dc421b65e0dffcecf4646f3fadcc185d8946fe4bf61f240d95e20ed0f7c1",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -4068,6 +4068,11 @@
           "number": 4150,
           "title": "PWA App Shell Navigation Isolation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4776,
+          "title": "cli): raise Multus memory limit to 256Mi to avoid install OOM (#4303)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4075,7 +4080,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T07:19:00.735Z",
+      "verified_at": "2026-10-27T13:00:27.456Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8944,8 +8949,8 @@
       "slug": "dkhamsing-open-source-ios-apps",
       "platform": "github",
       "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
-      "source_version": "a38718e9",
-      "content_hash": "ec30f362ba091e991c92a21b7378e0ad00873ac5beafc8aa2a447df29fd7cecc",
+      "source_version": "99bbbbff",
+      "content_hash": "51c5a9325089a6aadd839e666211d2072233b5e76f8a5cb60ea5f82b6b9b408e",
       "dossier_path": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "promoted_rules": [
@@ -8968,6 +8973,21 @@
           "number": 3807,
           "title": "Referential Integrity & Disjunctive Tag Partitioning Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4778,
+          "title": "Single Source of Truth for Generated Documentation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4779,
+          "title": "Soft-Delete via Tagging for Historical Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4780,
+          "title": "Schema-First Data Validation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8975,7 +8995,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T07:21:47.603Z",
+      "verified_at": "2026-10-27T13:00:31.977Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35631,8 +35651,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "fcc8eb13",
-      "content_hash": "e3b43b91d1de4090c75517df924818a66a534b0611ae74fd63ce0414c7c46c8e",
+      "source_version": "c2602604",
+      "content_hash": "d9ac0e8329491c5b9ff8881c0caab533d41caada3b9fb296a0809592b1de06c4",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -35700,6 +35720,11 @@
           "number": 4661,
           "title": "Metric-Reward Calculation Equivalence Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4777,
+          "title": "agent-lightning): charge dict violations by their severity in policy_penalty (#4",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35707,7 +35732,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T08:12:12.914Z",
+      "verified_at": "2026-10-27T13:00:29.215Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -132770,6 +132795,217 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T12:56:55.369Z"
+    },
+    "learn-github-joooook-12306-mcp": {
+      "learning_id": "learn-github-joooook-12306-mcp",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Joooook/12306-mcp",
+      "repository": "Joooook/12306-mcp",
+      "slug": "joooook-12306-mcp",
+      "platform": "github",
+      "source_url": "https://github.com/Joooook/12306-mcp",
+      "source_version": "ff6439da",
+      "content_hash": "bf285928bf9b26bc79300e0b6e8c0013bd404251830bebce3f9469567dde4978",
+      "dossier_path": "07_PROJECT_LEARNING/joooook-12306-mcp-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/joooook-12306-mcp-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4773,
+          "title": "修复`get-tickets`，改为动态获取查询url",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T13:00:13.825Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4773": {
+      "learning_id": "rule-4773",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4773,
+      "title": "修复`get-tickets`，改为动态获取查询url",
+      "source_url": "https://github.com/Joooook/12306-mcp",
+      "source_version": "ff6439da",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:00:13.825Z"
+    },
+    "learn-github-0xmassi-webclaw": {
+      "learning_id": "learn-github-0xmassi-webclaw",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "0xMassi/webclaw",
+      "repository": "0xMassi/webclaw",
+      "slug": "0xmassi-webclaw",
+      "platform": "github",
+      "source_url": "https://github.com/0xMassi/webclaw",
+      "source_version": "c1ff788f",
+      "content_hash": "0409f14898fd12334ec8394418457003f5e8a88c3e6b5a625016be5b6493374d",
+      "dossier_path": "07_PROJECT_LEARNING/0xmassi-webclaw-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/0xmassi-webclaw-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4774,
+          "title": "bench): bound the crawl benchmark's fetches and arms in time",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T13:00:20.474Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4774": {
+      "learning_id": "rule-4774",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4774,
+      "title": "bench): bound the crawl benchmark's fetches and arms in time",
+      "source_url": "https://github.com/0xMassi/webclaw",
+      "source_version": "c1ff788f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:00:20.474Z"
+    },
+    "learn-github-amoylab-unla": {
+      "learning_id": "learn-github-amoylab-unla",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "AmoyLab/Unla",
+      "repository": "AmoyLab/Unla",
+      "slug": "amoylab-unla",
+      "platform": "github",
+      "source_url": "https://github.com/AmoyLab/Unla",
+      "source_version": "de8ab0b9",
+      "content_hash": "1fdddd9d29e0edc46e5d724ede182965463dbc72e4727a5e70fc3f4f5f0dac72",
+      "dossier_path": "07_PROJECT_LEARNING/amoylab-unla-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/amoylab-unla-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4775,
+          "title": "upgrade packages to fix new CVEs",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T13:00:21.972Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4775": {
+      "learning_id": "rule-4775",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4775,
+      "title": "upgrade packages to fix new CVEs",
+      "source_url": "https://github.com/AmoyLab/Unla",
+      "source_version": "de8ab0b9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:00:21.972Z"
+    },
+    "rule-4776": {
+      "learning_id": "rule-4776",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4776,
+      "title": "cli): raise Multus memory limit to 256Mi to avoid install OOM (#4303)",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "2662cc4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:00:27.456Z"
+    },
+    "rule-4777": {
+      "learning_id": "rule-4777",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4777,
+      "title": "agent-lightning): charge dict violations by their severity in policy_penalty (#4",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "c2602604",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:00:29.215Z"
+    },
+    "rule-4778": {
+      "learning_id": "rule-4778",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4778,
+      "title": "Single Source of Truth for Generated Documentation",
+      "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
+      "source_version": "99bbbbff",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:00:31.977Z"
+    },
+    "rule-4779": {
+      "learning_id": "rule-4779",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4779,
+      "title": "Soft-Delete via Tagging for Historical Integrity",
+      "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
+      "source_version": "99bbbbff",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:00:31.977Z"
+    },
+    "rule-4780": {
+      "learning_id": "rule-4780",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4780,
+      "title": "Schema-First Data Validation",
+      "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
+      "source_version": "99bbbbff",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:00:31.977Z"
     }
   },
   "aliases": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T12:56:55.418Z",
+  "last_updated": "2026-10-27T13:00:32.062Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3291,14 +3291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dkhamsing-open-source-ios-apps",
-      "content_hash": "ec30f362ba091e991c92a21b7378e0ad00873ac5beafc8aa2a447df29fd7cecc",
-      "verified_at": "2026-10-23T07:21:47.661Z",
+      "content_hash": "51c5a9325089a6aadd839e666211d2072233b5e76f8a5cb60ea5f82b6b9b408e",
+      "verified_at": "2026-10-27T13:00:32.061Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T07:21:47.661Z"
+      "last_updated": "2026-10-27T13:00:32.061Z"
     },
     "moby/buildkit": {
       "repository": "moby/buildkit",
@@ -3321,14 +3321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-agent-governance-toolkit",
-      "content_hash": "e3b43b91d1de4090c75517df924818a66a534b0611ae74fd63ce0414c7c46c8e",
-      "verified_at": "2026-10-27T08:12:12.978Z",
+      "content_hash": "d9ac0e8329491c5b9ff8881c0caab533d41caada3b9fb296a0809592b1de06c4",
+      "verified_at": "2026-10-27T13:00:29.299Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T08:12:12.978Z"
+      "last_updated": "2026-10-27T13:00:29.299Z"
     },
     "SynaLinks/synalinks-skills": {
       "repository": "SynaLinks/synalinks-skills",
@@ -4581,14 +4581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-beclab-olares",
-      "content_hash": "188379ec975094d9f6d30524604bf35e5f517c4926025c389d9b450d72484aa5",
-      "verified_at": "2026-10-25T07:19:00.818Z",
+      "content_hash": "c8e3dc421b65e0dffcecf4646f3fadcc185d8946fe4bf61f240d95e20ed0f7c1",
+      "verified_at": "2026-10-27T13:00:27.539Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T07:19:00.818Z"
+      "last_updated": "2026-10-27T13:00:27.539Z"
     },
     "cryfs/cryfs": {
       "repository": "cryfs/cryfs",
@@ -16409,6 +16409,51 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-27T12:56:51.443Z"
+    },
+    "Joooook/12306-mcp": {
+      "repository": "Joooook/12306-mcp",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-joooook-12306-mcp",
+      "content_hash": "bf285928bf9b26bc79300e0b6e8c0013bd404251830bebce3f9469567dde4978",
+      "verified_at": "2026-10-27T13:00:13.909Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T13:00:13.909Z"
+    },
+    "0xMassi/webclaw": {
+      "repository": "0xMassi/webclaw",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-0xmassi-webclaw",
+      "content_hash": "0409f14898fd12334ec8394418457003f5e8a88c3e6b5a625016be5b6493374d",
+      "verified_at": "2026-10-27T13:00:20.558Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T13:00:20.558Z"
+    },
+    "AmoyLab/Unla": {
+      "repository": "AmoyLab/Unla",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-amoylab-unla",
+      "content_hash": "1fdddd9d29e0edc46e5d724ede182965463dbc72e4727a5e70fc3f4f5f0dac72",
+      "verified_at": "2026-10-27T13:00:22.057Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T13:00:22.057Z"
     }
   },
   "repos": {

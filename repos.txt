@@ -4520,3 +4520,11 @@ https://github.com/papersgpt/papersgpt-for-zotero
 # --- Automatically Discovered by AI Scout Engine [2026-10-27T12:56:35.414Z] ---
 # [HUGGINGFACE-AI-MODELS] baidu/Unlimited-OCR-2 (2143 score) - Verified Hugging Face Model: baidu/Unlimited-OCR-2 (163 likes, 513 downloads)
 https://huggingface.co/baidu/Unlimited-OCR-2
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T13:00:06.463Z] ---
+# [AI-AGENTS] Joooook/12306-mcp (1579 score) - This is a 12306 ticket search server based on the Model Context Protocol (MCP).
+https://github.com/Joooook/12306-mcp
+# [AI-AGENTS] 0xMassi/webclaw (1528 score) - Fast, local-first web content extraction for LLMs. Scrape, crawl, extract struct
+https://github.com/0xMassi/webclaw
+# [AI-AGENTS] AmoyLab/Unla (1529 score) - 🧩 MCP Gateway - A lightweight gateway service that instantly transforms existin
+https://github.com/AmoyLab/Unla

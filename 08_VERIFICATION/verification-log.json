@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-RO8E",
-    "timestamp": "2026-10-25T11:53:45.326Z",
-    "repository": "cachix/devenv",
-    "learningId": "learn-github-cachix-devenv",
-    "contentHash": "94b160fb181074953b3019383e19a0b9549a05b50da4e950e2a098dd5ae18622",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-RPZQ",
-    "timestamp": "2026-10-25T11:53:47.606Z",
-    "repository": "Lightricks/LTX-2.5",
-    "learningId": "learn-huggingface-lightricks-ltx-2-5",
-    "contentHash": "81c7d7ade0a91f8e2fd8e3141331aefe0651bcd5a80422cb4f083843c0120b75",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-ZDTV",
-    "timestamp": "2026-10-25T11:59:45.091Z",
-    "repository": "watchexec/watchexec",
-    "learningId": "learn-github-watchexec-watchexec",
-    "contentHash": "fa5f6e694489a9a0f1d4888e9dc7181692a85fad95507da8711653f28ecb48f1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-ZIEB",
-    "timestamp": "2026-10-25T11:59:51.011Z",
-    "repository": "apollographql/apollo-kotlin",
-    "learningId": "learn-github-apollographql-apollo-kotlin",
-    "contentHash": "a4a7294e609f5f660a4f7187e647a16526be77d2a684bdfc64e1bbada1adfa5e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-ZJVW",
-    "timestamp": "2026-10-25T11:59:52.940Z",
-    "repository": "clastix/kamaji",
-    "learningId": "learn-github-clastix-kamaji",
-    "contentHash": "a7aace4e10de28c62daade59f447c5bbcdd49c7aa89e2dce431c9c8b44cca51f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-ZNTT",
-    "timestamp": "2026-10-25T11:59:58.049Z",
-    "repository": "langchain4j/langchain4j",
-    "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "979f0a51f5143395114948845c8e6a42cda351ed8f64def0167af5def252e59d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-ZOTH",
     "timestamp": "2026-10-25T11:59:59.333Z",
     "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -7492,6 +7402,96 @@
     "contentHash": "5b5b93ae6be4c6a11a043d849ed472689d4b8e5727dd0a4e7e90fe6c1399c7dc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-0V61",
+    "timestamp": "2026-10-27T13:00:13.897Z",
+    "repository": "Joooook/12306-mcp",
+    "learningId": "learn-github-joooook-12306-mcp",
+    "contentHash": "bf285928bf9b26bc79300e0b6e8c0013bd404251830bebce3f9469567dde4978",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-10AQ",
+    "timestamp": "2026-10-27T13:00:20.546Z",
+    "repository": "0xMassi/webclaw",
+    "learningId": "learn-github-0xmassi-webclaw",
+    "contentHash": "0409f14898fd12334ec8394418457003f5e8a88c3e6b5a625016be5b6493374d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-11GC",
+    "timestamp": "2026-10-27T13:00:22.044Z",
+    "repository": "AmoyLab/Unla",
+    "learningId": "learn-github-amoylab-unla",
+    "contentHash": "1fdddd9d29e0edc46e5d724ede182965463dbc72e4727a5e70fc3f4f5f0dac72",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-15ON",
+    "timestamp": "2026-10-27T13:00:27.527Z",
+    "repository": "beclab/Olares",
+    "learningId": "learn-github-beclab-olares",
+    "contentHash": "c8e3dc421b65e0dffcecf4646f3fadcc185d8946fe4bf61f240d95e20ed0f7c1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-171J",
+    "timestamp": "2026-10-27T13:00:29.287Z",
+    "repository": "microsoft/agent-governance-toolkit",
+    "learningId": "learn-github-microsoft-agent-governance-toolkit",
+    "contentHash": "d9ac0e8329491c5b9ff8881c0caab533d41caada3b9fb296a0809592b1de06c4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-1969",
+    "timestamp": "2026-10-27T13:00:32.049Z",
+    "repository": "dkhamsing/open-source-ios-apps",
+    "learningId": "learn-github-dkhamsing-open-source-ios-apps",
+    "contentHash": "51c5a9325089a6aadd839e666211d2072233b5e76f8a5cb60ea5f82b6b9b408e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

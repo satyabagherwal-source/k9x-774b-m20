@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T12:56:55.416Z",
-  "total_cycles_completed": 5269,
-  "total_learnings_persisted": 5269,
-  "total_rules_promoted": 4677,
+  "last_updated": "2026-10-27T13:00:32.058Z",
+  "total_cycles_completed": 5275,
+  "total_learnings_persisted": 5275,
+  "total_rules_promoted": 4685,
   "history": [
-    {
-      "timestamp": "2026-10-26T02:44:41.436Z",
-      "repository": "yattee/yattee",
-      "learningId": "learn-github-yattee-yattee",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T02:50:51.545Z",
-      "repository": "assistant-ui/assistant-ui",
-      "learningId": "learn-github-assistant-ui-assistant-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T02:50:54.746Z",
-      "repository": "JeffLi1993/seo-audit-skill",
-      "learningId": "learn-github-jeffli1993-seo-audit-skill",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T02:51:00.082Z",
-      "repository": "pulumi/pulumi",
-      "learningId": "learn-github-pulumi-pulumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T02:51:02.285Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T02:57:21.280Z",
-      "repository": "tamagui/tamagui",
-      "learningId": "learn-github-tamagui-tamagui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-26T02:57:21.342Z",
       "repository": "orcarouter/OrcaCyber-Nano-1.0",
@@ -1403,6 +1361,48 @@
       "repository": "litmuschaos/litmus",
       "learningId": "learn-github-litmuschaos-litmus",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:00:13.905Z",
+      "repository": "Joooook/12306-mcp",
+      "learningId": "learn-github-joooook-12306-mcp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:00:20.555Z",
+      "repository": "0xMassi/webclaw",
+      "learningId": "learn-github-0xmassi-webclaw",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:00:22.053Z",
+      "repository": "AmoyLab/Unla",
+      "learningId": "learn-github-amoylab-unla",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:00:27.536Z",
+      "repository": "beclab/Olares",
+      "learningId": "learn-github-beclab-olares",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:00:29.295Z",
+      "repository": "microsoft/agent-governance-toolkit",
+      "learningId": "learn-github-microsoft-agent-governance-toolkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:00:32.058Z",
+      "repository": "dkhamsing/open-source-ios-apps",
+      "learningId": "learn-github-dkhamsing-open-source-ios-apps",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

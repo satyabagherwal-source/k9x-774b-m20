@@ -2103,10 +2103,10 @@
     "repository": "dkhamsing/open-source-ios-apps",
     "platform": "github",
     "sourceUrl": "https://github.com/dkhamsing/open-source-ios-apps",
-    "sourceVersion": "a38718e9",
+    "sourceVersion": "99bbbbff",
     "license": "CC0-1.0",
-    "contentHash": "ec30f362ba091e991c92a21b7378e0ad00873ac5beafc8aa2a447df29fd7cecc",
-    "lastHarvestedAt": "2026-10-23T07:21:47.651Z",
+    "contentHash": "51c5a9325089a6aadd839e666211d2072233b5e76f8a5cb60ea5f82b6b9b408e",
+    "lastHarvestedAt": "2026-10-27T13:00:32.053Z",
     "learningId": "learn-github-dkhamsing-open-source-ios-apps"
   },
   "moby-buildkit": {
@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "fcc8eb13",
+    "sourceVersion": "c2602604",
     "license": "MIT",
-    "contentHash": "e3b43b91d1de4090c75517df924818a66a534b0611ae74fd63ce0414c7c46c8e",
-    "lastHarvestedAt": "2026-10-27T08:12:12.972Z",
+    "contentHash": "d9ac0e8329491c5b9ff8881c0caab533d41caada3b9fb296a0809592b1de06c4",
+    "lastHarvestedAt": "2026-10-27T13:00:29.290Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {
@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "f0ffc917",
+    "sourceVersion": "2662cc4b",
     "license": "AGPL-3.0",
-    "contentHash": "188379ec975094d9f6d30524604bf35e5f517c4926025c389d9b450d72484aa5",
-    "lastHarvestedAt": "2026-10-25T07:19:00.805Z",
+    "contentHash": "c8e3dc421b65e0dffcecf4646f3fadcc185d8946fe4bf61f240d95e20ed0f7c1",
+    "lastHarvestedAt": "2026-10-27T13:00:27.530Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {
@@ -10918,5 +10918,35 @@
     "contentHash": "d3bddca3d24d3c13e9cb71814a29757e9757d84a7f8f31c0c690d8e0a18d910c",
     "lastHarvestedAt": "2026-10-27T12:56:51.438Z",
     "learningId": "learn-huggingface-baidu-unlimited-ocr-2"
+  },
+  "joooook-12306-mcp": {
+    "repository": "Joooook/12306-mcp",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Joooook/12306-mcp",
+    "sourceVersion": "ff6439da",
+    "license": "MIT",
+    "contentHash": "bf285928bf9b26bc79300e0b6e8c0013bd404251830bebce3f9469567dde4978",
+    "lastHarvestedAt": "2026-10-27T13:00:13.900Z",
+    "learningId": "learn-github-joooook-12306-mcp"
+  },
+  "0xmassi-webclaw": {
+    "repository": "0xMassi/webclaw",
+    "platform": "github",
+    "sourceUrl": "https://github.com/0xMassi/webclaw",
+    "sourceVersion": "c1ff788f",
+    "license": "AGPL-3.0",
+    "contentHash": "0409f14898fd12334ec8394418457003f5e8a88c3e6b5a625016be5b6493374d",
+    "lastHarvestedAt": "2026-10-27T13:00:20.549Z",
+    "learningId": "learn-github-0xmassi-webclaw"
+  },
+  "amoylab-unla": {
+    "repository": "AmoyLab/Unla",
+    "platform": "github",
+    "sourceUrl": "https://github.com/AmoyLab/Unla",
+    "sourceVersion": "de8ab0b9",
+    "license": "MIT",
+    "contentHash": "1fdddd9d29e0edc46e5d724ede182965463dbc72e4727a5e70fc3f4f5f0dac72",
+    "lastHarvestedAt": "2026-10-27T13:00:22.048Z",
+    "learningId": "learn-github-amoylab-unla"
   }
 }

@@ -5292,3 +5292,9 @@
 | `CYCLE-20261027-SOTK` | `2026-10-27T12:53:52.424Z` | `StarTrail-org/LEANN` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4769` | Yes (`b9333ed6...`) |
 | `CYCLE-20261027-WIY4` | `2026-10-27T12:56:51.436Z` | `baidu/Unlimited-OCR-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4770, Rule 4771` | Yes (`d3bddca3...`) |
 | `CYCLE-20261027-WM0I` | `2026-10-27T12:56:55.410Z` | `litmuschaos/litmus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4772` | Yes (`5b5b93ae...`) |
+| `CYCLE-20261027-0V61` | `2026-10-27T13:00:13.897Z` | `Joooook/12306-mcp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4773` | Yes (`bf285928...`) |
+| `CYCLE-20261027-10AQ` | `2026-10-27T13:00:20.546Z` | `0xMassi/webclaw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4774` | Yes (`0409f148...`) |
+| `CYCLE-20261027-11GC` | `2026-10-27T13:00:22.044Z` | `AmoyLab/Unla` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4775` | Yes (`1fdddd9d...`) |
+| `CYCLE-20261027-15ON` | `2026-10-27T13:00:27.527Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4776` | Yes (`c8e3dc42...`) |
+| `CYCLE-20261027-171J` | `2026-10-27T13:00:29.287Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4777` | Yes (`d9ac0e83...`) |
+| `CYCLE-20261027-1969` | `2026-10-27T13:00:32.049Z` | `dkhamsing/open-source-ios-apps` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4778, Rule 4779, Rule 4780` | Yes (`51c5a932...`) |

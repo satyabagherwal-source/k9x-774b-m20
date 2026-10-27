@@ -5301,3 +5301,9 @@ Every entry in this ledger must capture:
 | `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `a63f484a` | Multi-dimensional audit evidence | 2026-10-27T12:53:52.427Z |
 | `learn-huggingface-baidu-unlimited-ocr-2` | `https://huggingface.co/baidu/Unlimited-OCR-2` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-10-27T12:56:51.438Z |
 | `learn-github-litmuschaos-litmus` | `https://github.com/litmuschaos/litmus` | `97a397fb` | Multi-dimensional audit evidence | 2026-10-27T12:56:55.412Z |
+| `learn-github-joooook-12306-mcp` | `https://github.com/Joooook/12306-mcp` | `ff6439da` | Multi-dimensional audit evidence | 2026-10-27T13:00:13.900Z |
+| `learn-github-0xmassi-webclaw` | `https://github.com/0xMassi/webclaw` | `c1ff788f` | Multi-dimensional audit evidence | 2026-10-27T13:00:20.549Z |
+| `learn-github-amoylab-unla` | `https://github.com/AmoyLab/Unla` | `de8ab0b9` | Multi-dimensional audit evidence | 2026-10-27T13:00:22.048Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `2662cc4b` | Multi-dimensional audit evidence | 2026-10-27T13:00:27.530Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `c2602604` | Multi-dimensional audit evidence | 2026-10-27T13:00:29.290Z |
+| `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `99bbbbff` | Multi-dimensional audit evidence | 2026-10-27T13:00:32.053Z |
