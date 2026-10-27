@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T22:42:44.483Z",
+  "last_updated": "2026-10-27T22:54:47.744Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "7c101d96d3d7b2952683a0f6043f131d3b836859b75def0e67c08389f76294f8",
-      "verified_at": "2026-10-27T20:32:06.214Z",
+      "content_hash": "339707eaffe1c49a9bff286c56942954cf082fbad87061e690f8530c7a0d9ac8",
+      "verified_at": "2026-10-27T22:50:02.223Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T20:32:06.214Z"
+      "last_updated": "2026-10-27T22:50:02.223Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -4311,14 +4311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cachix-devenv",
-      "content_hash": "002f05a275b0ec80650e8c9532a395639447a215f421580af0de7134af833cf5",
-      "verified_at": "2026-10-26T10:33:27.196Z",
+      "content_hash": "ebd77dc2c879a739db7ecf8fa1a74000d533111e91fb61aae78eb7f7fbebcb4e",
+      "verified_at": "2026-10-27T22:54:47.743Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T10:33:27.196Z"
+      "last_updated": "2026-10-27T22:54:47.743Z"
     },
     "pubkey/rxdb": {
       "repository": "pubkey/rxdb",
@@ -10041,14 +10041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lysine-dev-okio",
-      "content_hash": "9820bd0d0f88195fe020c993187d4b96868b3b2e274c4753dadda0aad8b9ce5e",
-      "verified_at": "2026-10-25T10:16:58.800Z",
+      "content_hash": "6fa84d1f7b6c76c28639b425ee987c529f91bfa784a13b741200c170a89095ef",
+      "verified_at": "2026-10-27T22:49:52.101Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T10:16:58.800Z"
+      "last_updated": "2026-10-27T22:49:52.101Z"
     },
     "nginx/kubernetes-ingress": {
       "repository": "nginx/kubernetes-ingress",
@@ -11046,14 +11046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-loft-sh-vcluster",
-      "content_hash": "5b1cea13e7516ab30f008965f51f5bbcb387ca6a948990380189680598751cc7",
-      "verified_at": "2026-10-25T04:53:53.777Z",
+      "content_hash": "890cdfd1b9b73e92ee7264da32eb3e44b062c50a7b9321a7a1ace65cfe8e9b26",
+      "verified_at": "2026-10-27T22:49:54.145Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T04:53:53.777Z"
+      "last_updated": "2026-10-27T22:49:54.145Z"
     },
     "arkivanov/Decompose": {
       "repository": "arkivanov/Decompose",

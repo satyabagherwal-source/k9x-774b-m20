@@ -5578,3 +5578,7 @@ Every entry in this ledger must capture:
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `46349d39` | Multi-dimensional audit evidence | 2026-10-27T22:06:30.641Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `6b124303` | Multi-dimensional audit evidence | 2026-10-27T22:36:27.647Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `d1dc56f1` | Multi-dimensional audit evidence | 2026-10-27T22:42:44.477Z |
+| `learn-github-lysine-dev-okio` | `https://github.com/lysine-dev/okio` | `3377b13c` | Multi-dimensional audit evidence | 2026-10-27T22:49:52.094Z |
+| `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `2dd27678` | Multi-dimensional audit evidence | 2026-10-27T22:49:54.138Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `acf15714` | Multi-dimensional audit evidence | 2026-10-27T22:50:02.216Z |
+| `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `b31d7faa` | Multi-dimensional audit evidence | 2026-10-27T22:54:47.736Z |

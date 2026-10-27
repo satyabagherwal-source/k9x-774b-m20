@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-81JK",
-    "timestamp": "2026-10-26T01:10:18.320Z",
-    "repository": "kamgurgul/cpu-info",
-    "learningId": "learn-github-kamgurgul-cpu-info",
-    "contentHash": "470112a05500432bcac49c0444cecfc7d3eb51902c0cfef65cc91b223cc4f5a4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-81MP",
-    "timestamp": "2026-10-26T01:10:18.433Z",
-    "repository": "pola-rs/polars",
-    "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "c5336b981c79df7f2067eb3766c95b6d533f441e728f61626ea480593afc980d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-871H",
-    "timestamp": "2026-10-26T01:10:25.445Z",
-    "repository": "t8y2/dbx",
-    "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "b51fbef7c2f8c996fff4fbda399c9be043f55dc54b3ab135f9e3aee67c87a8c2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-O6YA",
-    "timestamp": "2026-10-26T01:22:51.826Z",
-    "repository": "tokio-rs/tokio",
-    "learningId": "learn-github-tokio-rs-tokio",
-    "contentHash": "8c6f15c90c8600e847a98f51569a070ff5b735c7162379a5f24cfaee3e3c047a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-OA34",
     "timestamp": "2026-10-26T01:22:55.888Z",
     "repository": "chrisbanes/skills",
@@ -7490,6 +7430,66 @@
     "repository": "slatedb/slatedb",
     "learningId": "learn-github-slatedb-slatedb",
     "contentHash": "2915d00f220b37724de1a9943ac21faf64e1abe939b060a708fda6298b670c30",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-355N",
+    "timestamp": "2026-10-27T22:49:52.091Z",
+    "repository": "lysine-dev/okio",
+    "learningId": "learn-github-lysine-dev-okio",
+    "contentHash": "6fa84d1f7b6c76c28639b425ee987c529f91bfa784a13b741200c170a89095ef",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-36QF",
+    "timestamp": "2026-10-27T22:49:54.135Z",
+    "repository": "loft-sh/vcluster",
+    "learningId": "learn-github-loft-sh-vcluster",
+    "contentHash": "890cdfd1b9b73e92ee7264da32eb3e44b062c50a7b9321a7a1ace65cfe8e9b26",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-3CYT",
+    "timestamp": "2026-10-27T22:50:02.213Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "339707eaffe1c49a9bff286c56942954cf082fbad87061e690f8530c7a0d9ac8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-9H9X",
+    "timestamp": "2026-10-27T22:54:47.733Z",
+    "repository": "cachix/devenv",
+    "learningId": "learn-github-cachix-devenv",
+    "contentHash": "ebd77dc2c879a739db7ecf8fa1a74000d533111e91fb61aae78eb7f7fbebcb4e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

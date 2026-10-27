@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T22:42:44.440Z",
+  "last_updated": "2026-10-27T22:54:47.683Z",
   "total_verified_learnings": 1152,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5195,8 +5195,8 @@
       "slug": "cachix-devenv",
       "platform": "github",
       "source_url": "https://github.com/cachix/devenv",
-      "source_version": "7d3fbffc",
-      "content_hash": "002f05a275b0ec80650e8c9532a395639447a215f421580af0de7134af833cf5",
+      "source_version": "b31d7faa",
+      "content_hash": "ebd77dc2c879a739db7ecf8fa1a74000d533111e91fb61aae78eb7f7fbebcb4e",
       "dossier_path": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "promoted_rules": [
@@ -5239,6 +5239,11 @@
           "number": 4586,
           "title": "deps): bump docker/login-action from 4.6.0 to 4.7.0 (#3320)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5043,
+          "title": "cli): load YAML from remote --from sources (#3167)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5246,7 +5251,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T10:33:27.115Z",
+      "verified_at": "2026-10-27T22:54:47.672Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8227,8 +8232,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "25abe0aa",
-      "content_hash": "7c101d96d3d7b2952683a0f6043f131d3b836859b75def0e67c08389f76294f8",
+      "source_version": "acf15714",
+      "content_hash": "339707eaffe1c49a9bff286c56942954cf082fbad87061e690f8530c7a0d9ac8",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -8476,6 +8481,11 @@
           "number": 4930,
           "title": "mcp): v27.0.1 release of MCP Server and Claude Cowork plugin",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5042,
+          "title": "docs(benchmarks): regenerate Data Schematic for the 27.0.1 run (#4950)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8483,7 +8493,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T20:32:06.101Z",
+      "verified_at": "2026-10-27T22:50:02.134Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34177,8 +34187,8 @@
       "slug": "loft-sh-vcluster",
       "platform": "github",
       "source_url": "https://github.com/loft-sh/vcluster",
-      "source_version": "e702d7ba",
-      "content_hash": "5b1cea13e7516ab30f008965f51f5bbcb387ca6a948990380189680598751cc7",
+      "source_version": "2dd27678",
+      "content_hash": "890cdfd1b9b73e92ee7264da32eb3e44b062c50a7b9321a7a1ace65cfe8e9b26",
       "dossier_path": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "promoted_rules": [
@@ -34211,6 +34221,11 @@
           "number": 4054,
           "title": "karpenter): reap nodes whose platform machine is gone (#2608)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5041,
+          "title": "vclusterctl): prevent panic when listing on no secrets (#2636)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34218,7 +34233,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T04:53:53.701Z",
+      "verified_at": "2026-10-27T22:49:54.075Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34504,14 +34519,19 @@
       "slug": "lysine-dev-okio",
       "platform": "github",
       "source_url": "https://github.com/lysine-dev/okio",
-      "source_version": "334c028c",
-      "content_hash": "9820bd0d0f88195fe020c993187d4b96868b3b2e274c4753dadda0aad8b9ce5e",
+      "source_version": "3377b13c",
+      "content_hash": "6fa84d1f7b6c76c28639b425ee987c529f91bfa784a13b741200c170a89095ef",
       "dossier_path": "07_PROJECT_LEARNING/lysine-dev-okio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lysine-dev-okio-learnings.md",
       "promoted_rules": [
         {
           "number": 4235,
           "title": "Allow throttler to apply the new rate immediately (#1880)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5040,
+          "title": "Update Gradle to v9.8.2 (#1888)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -34520,7 +34540,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T10:16:58.749Z",
+      "verified_at": "2026-10-27T22:49:52.032Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -139060,6 +139080,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T22:42:44.432Z"
+    },
+    "rule-5040": {
+      "learning_id": "rule-5040",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5040,
+      "title": "Update Gradle to v9.8.2 (#1888)",
+      "source_url": "https://github.com/lysine-dev/okio",
+      "source_version": "3377b13c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T22:49:52.032Z"
+    },
+    "rule-5041": {
+      "learning_id": "rule-5041",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5041,
+      "title": "vclusterctl): prevent panic when listing on no secrets (#2636)",
+      "source_url": "https://github.com/loft-sh/vcluster",
+      "source_version": "2dd27678",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T22:49:54.075Z"
+    },
+    "rule-5042": {
+      "learning_id": "rule-5042",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5042,
+      "title": "docs(benchmarks): regenerate Data Schematic for the 27.0.1 run (#4950)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "acf15714",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T22:50:02.134Z"
+    },
+    "rule-5043": {
+      "learning_id": "rule-5043",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5043,
+      "title": "cli): load YAML from remote --from sources (#3167)",
+      "source_url": "https://github.com/cachix/devenv",
+      "source_version": "b31d7faa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T22:54:47.672Z"
     }
   },
   "aliases": {

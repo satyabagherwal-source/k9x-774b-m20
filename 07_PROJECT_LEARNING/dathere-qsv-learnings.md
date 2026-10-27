@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `25abe0aa`  
+> **Source Version**: `acf15714`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T20:32:05.977Z  
+> **Timestamp**: 2026-10-27T22:50:01.831Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T20:32:05.343Z  
+> **Harvest Timestamp**: 2026-10-27T22:50:01.189Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,259 +2203,321 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5fae42a4` (2026-10-27)
-**Commit Message**: fix(get): --output overwrite temp starts owner-only and keeps the group (#4948)
+### Incident Patch 1: `acf15714` (2026-10-27)
+**Commit Message**: docs(benchmarks): regenerate Data Schematic for the 27.0.1 run (#4950)
 
-* fix(get): --output overwrite temp starts owner-only and keeps the group
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-roborev 5926 (on #4945):
-- High: the overwrite temp was created with the umask's mode and only then
-  chmod'd to the destination's. Permissions are checked at open, so a local
-  user who opened it in that window kept reading the exported bytes. The temp
-  now starts 0600 and takes the destination's mode only after it is written.
-- High: temp + rename gave the file the process's (or a setgid directory's)
-  group, so copying a 0640 mode could open it to a different group. The temp's
-  group is now moved to the destination's with fchown; where that fails, group
-  bits are dropped.
-
-Tests: unit tests for the temp's mode and the group fallback, and a 0640
-overwrite case in the umask integration test; each mutation-checked.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test(get): overwrite temp takes the destination's group when it differs
-
-Covers the fchown itself: the integration case runs as the file's own group,
-where fchown is a no-op. Uses one of the user's other groups (skips if none);
-fails if group_kept is hardcoded 
-
-**File**: `CHANGELOG.md` (modified, +5/-0)
+**File**: `benchmarks/Benchmarks.wiki.md` (modified, +2/-2)
 ```diff
-@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
+@@ -1,6 +1,6 @@
+ # Benchmarks
+ 
+-qsv's benchmark suite runs 305 benchmarks on a **1,000,000-row × 41-column, 520 MB**
++qsv's benchmark suite runs 303 benchmarks on a **1,000,000-row × 41-column, 520 MB**
+ sample of NYC's 311 data, timed with [hyperfine](https://github.com/sharkdp/hyperfine)
+ (2 warmups + 3 timed runs each). See
+ [`scripts/results/README.md`](https://github.com/dathere/qsv/blob/master/scripts/results/README.md)
+@@ -25,6 +25,6 @@ without losing speed, and this release's biggest speedups.
+ > **Note:** cross-version numbers are not strictly apples-to-apples — commands gain features
+ > over time. Treat the historical trend as a broad trajectory, not an exact speedup.
+ 
+-_Last generated for qsv 26.0.0 (aarch64-apple-darwin). Regenerate with
++_Last generated for qsv 27.0.1 (aarch64-apple-darwin). Regenerate with
+ `python3 scripts/gen_benchmark_viz.py` and copy this page's link — the Data Schematic itself
+ redeploys to GitHub Pages automatically on push to `master`._
+```
+
+**File**: `benchmarks/change_by_family.html` (modified, +22/-1)
+```diff
+@@ -16,7 +16,7 @@
+ 
+         <script type="module">
+             const graph_div = document.getElementById("plotly-html-element");
+-            await Plotly.newPlot(graph_div, {"data":[{"type":"box","x":["apply","apply","apply","apply","apply","apply","apply","apply","exclude","exclude","exclude","exclude","exclude","exclude","exclude","exclude","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","luau","luau","luau","luau","luau","luau","luau","luau","luau","luau","luau","luau","luau","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","search","search","search","search","search","search","search","search","search","search","slice","slice","slice","slice","slice","slice","split","split","split","split","split","split","split","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","tojsonl","tojsonl","tojsonl","tojsonl","tojsonl","tojsonl","tojsonl","tojsonl","validate","validate","validate","validate","validate","validate","validate","validate","validate","validate","validate","validate","validate","validate"],"y":[1.5,2.3,6.22,4.22,6.9,3.7,4.15,4.15,7.29,8.84,8.58,7.96,5.2,5.09,5.7,6.04,2.41,1.94,0.34,0.34,1.14,0.89,1.76,2.14,2.79,1.69,1.13,0.17,1.89,1.64,2.53,1.02,3.25,1.48,6.89,3.92,-0.58,1.34,4.03,3.32,2.37,1.64,2.39,2.31,3.5,1.94,2.49,2.42,2.13,2.39,4.04,2.63,2.37,2.57,6.73,6.46,5.6,0.29,5.6,6.09,-0.02,-0.05,-0.15,6.25,-1.11,6.12,5.25,7.19,-1.72,0.01,-0.73,6.19,4.61,7.22,1.72,2.64,3.08,4.45,4.18,1.9,2.64,3.8,7.22,9.86,-3.74,9.48,-3.04,10.13,-4.22,-8.0,-15.77,8.44,8.89,22.83,4.63,-0.05,-0.12,0.97,3.35,0.97,-1.64,-2.63,-0.96,0.96,-0.29,-0.33,0.15,0.04,0.87,0.25,1.0,1.58,-1.67,-3.2,2.0,0.58,-4.84,2.41,-0.56,0.54,0.91,-2.8,3.29,2.76,-4.84,-4.73,21.7,22.07,28.64,16.28,14.69,20.44,19.25,13.2,2.43,2.11,5.87,2.85,2.78,3.52,4.89,3.22,3.78,7.18,10.33,7.4,2.63,3.21],"boxpoints":"outliers","quartilemethod":"linear"}],"layout":{"title":{"text":"Release-over-release change by command family"},"uirevision":"qsv-viz","xaxis":{"title":{"text":"family"}},"yaxis":{"title":{"text":"% faster vs previous version"},"range":[-19.0,32.0]}},"config":{"responsive":true},"frames":null});
++            await Plotly.newPlot(graph_div, {"data":[{"type":"box","x":["apply","apply","apply","apply","apply","apply","apply","apply","exclude","exclude","exclude","exclude","exclude","exclude","exclude","exclude","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","luau","luau","luau","luau","luau","luau","luau","luau","luau","luau","luau","luau","luau","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","search","search","search","search","search","search","search","search","search","search","slice","slice","slice","slice","slice","slice","split","split","split","split","split","split","split","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","tojsonl","tojsonl","tojsonl","tojsonl","tojsonl","tojsonl","tojsonl","tojsonl","validate","validate","validate","validate","validate","validate","validate","validate","validate","validate","validate","validate","validate","validate"],"y":[0.83,-0.7,-2.68,-0.38,-2.28,-3.35,-3.41,-1.51,-1.69,-2.46,-1.31,-1.47,-2.31,-2.19,-0.96,-1.51,-8.5,-13.31,-0.06,0.09,0.82,-2.29,-1.22,0.33,-7.33,-14.79,-14.8,1.35,-9.55,1.53,-15.64,1.02,-10.6,0.93,-3.8,-14.6,3.27,11.52,-18.33,-0.12,-11.74,-1.4,-2.22,-1.72,-2.68,-3.85,-3.31,-3.29,-0.25,-0.84,0.03,-1.69,-0.26,-0.66,0.4,0.19,0.08,2.1,-0.73,-0.63,1.85,2.94,2.07,-0.76,2.57,-2.17,-0.58,-0.06,4.2,2.06,2.92,-1.55,0.71,-2.06,1.03,-0.08,-0.41,-1.88,0.16,0.88,0.68,-2.16,-1.67,-3.16,5.83,-2.68,5.53,-3.04,6.32,16.42,17.62,-2.65,3.95,-32.14,4.32,1.21,-1.34,0.38,6.09,3.34,6.47,15.91,-0.69,-2.22,0.33,0.18,-0.09,1.32,6.91,-0.75,-1.56,1.51,1.18,1.55,1.55,1.91,1.8,-0.62,1.02,-0.82,-0.51,4.01,-4.69,0.6,-0.71,7.11,0.31,0.9,0.39,0.41,5.17,-2.95,0.09,6.5,5.27,-0.1,-1.52,-0.38,-0.34,0.48,0.37,2.19,1.72,2.35,0.44,-1.08,0.38,0.29,-1.79,1.82,1.09,1.56,1.8,
+```
+
+**File**: `benchmarks/count_callout.html` (modified, +22/-1)
+```diff
+@@ -16,7 +16,7 @@
+ 
+         <script type="module">
+             const graph_div = document.getElementById("plotly-html-element");
+-            await Plotly.newPlot(graph_div, {"data":[{"type":"bar","x":["no index","with index"],"y":[5714286.0,90909091.0],"textposition":"outside","texttemplate":["5.71M","90.9M"],"textfont":{"size":10},"cliponaxis":false}],"layout":{"title":{"text":"count: the index-read superpower"},"uirevision":"qsv-viz","xaxis":{"title":{"text":"index_status"}},"yaxis":{"title":{"text":"records/sec"}}},"config":{"responsive":true},"frames":null});
++            await Plotly.newPlot(graph_div, {"data":[{"type":"bar","x":["no index","with index"],"y":[5524862.0,100000000.0],"textposition":"outside","texttemplate":["5.52M","100M"],"textfont":{"size":10},"cliponaxis":false}],"layout":{"title":{"text":"count: the index-read superpower"},"uirevision":"qsv-viz","xaxis":{"title":{"text":"index_status"}},"yaxis":{"title":{"text":"records/sec"}}},"config":{"responsive":true},"frames":null});
+         </script>
+     </div>
+ <style>
+@@ -378,6 +378,25 @@
+     var fl = gd._fullLayout || {};
+     return Object.keys(fl).filter(function (k) { return /^scene\d*$/.test(k); });
+   }
++  // A sandboxed frame without allow-same-origin gives the page an opaque origin but leaves
++  // location.origin as the URL's; MapLibre's worker (a blob:null URL) reports "null", and the
++  // MapLibre bundled with plotly.js 3.x drops every message whose origin differs from its own, so
++  // the map's tiles never finish loading and the panel stays blank with no error. file:// pages are
++  // exempt from that check. Say so above each map rather than leave an empty panel unexplained.
++  function sandboxNotice(gd) {
++    if (window.origin !== "null" || location.protocol === "file:") return;
++    var lay = (gd && gd.layout) || {};
++    if (!Object.keys(lay).some(function (k) { return /^map\d*$/.test(k); })) return;
++    var host = gd.parentNode;
++    if (!host || host.querySelector(":scope > .qsv-sandbox-map-note")) return;
++    var note = document.createElement("div");
++    note.className = "qsv-sandbox-map-note";
++    note.setAttribute("role", "note");
++    note.textContent = "This map can't load inside a sandboxed frame. Open this Data Schematic in its own browser tab to see it.";
++    note.style.cssText = "margin:4px 0;padding:6px 10px;border:1px solid #d97706;border-radius:6px;" +
++      "background:#fffbeb;color:#78350f;font:13px/1.4 system-ui,sans-serif";
++    host.insertBefore(note, gd);
++  }
+   function installGl3dScrollFix(gd) {
+     if (gd.__qsvGl3dFix || !sceneKeys(gd).length) return;
+     gd.__qsvGl3dFix = true;
+@@ -416,6 +435,8 @@
+       // cluster bubbles: repaint plotly's black-by-default count labels and add hover/click-to-zoom
+       // (see installClusterUi). No-op for non-map panels and for maps that never cluster.
+       applyClusterUi(gd);
++      // map panels in a sandboxed (opaque-origin) frame can't load tiles: explain the blank panel
++      sandboxNotice(gd);
+       // gl3d panels: stop the WebGL canvas from eating the wheel inline so the page can scroll
+       // (scrollZoom:false suppresses the zoom but not the canvas preventDefault; see above).
+       installGl3dScrollFix(gd);
+```
+
+**File**: `benchmarks/freq_growth.html` (modified, +22/-1)
+```diff
+@@ -16,7 +16,7 @@
+ 
+         <script type="module">
+             const graph_div = document.getElementById("plotly-html-element");
+-            await Plotly.newPlot(graph_div, {"data":[{"type":"scatter","name":"frequency","mode":"lines","x":["0.113.0","0.114.0","0.115.0","0.116.0","0.117.0","0.118.0","0.119.0","0.120.0","0.121.0","0.122.0","0.123.0","0.124.1","0.125.0","0.126.0","0.127.0","0.128.0","0.129.1","0.130.0","0.131.1","0.132.0","0.133.1","0.134.0","0.135.0","0.136.0","0.137.0","0.138.0","1.0.0","2.0.0","2.1.0","2.2.1","3.0.0","3.1.1","3.2.0","3.3.0","4.0.0","5.0.3","5.1.0","6.0.1","7.0.1","7.1.0","8.0.0","8.1.1","9.1.0","10.0.0","11.0.2","12.0.0","14.0.0","15.0.0","15.0.1","16.0.0","16.1.0","17.0.0","18.0.0","19.0.0","19.1.0","20.0.0","20.1.0","21.0.0","21.1.0","22.0.1","23.0.1","24.0.0","25.0.0","26.0.0"],"y":[1.0,0.9949144080264717,0.9391003680746984,0.9720571285924462,0.977424220696102,0.9508277697222709,0.9525327044726652,0.8492673029631872,0.8522655449152047,0.8555612209669795,0.9752704791344667,0.9835773886348306,0.9785050749693271,0.938064660048758,0.8359013581053448,0.9253174843448748,0.9305039914593923,0.9201867461240619,0.9138556488577999,0.9198680667314648,0.909163094801808,0.9393924908512458,0.8309326152424353,0.9341050685957393,0.8944640078182677,0.9256414750606818,0.9460847580957844,0.9314839305916283,0.9205054255166589,0.9176452779681002,1.0804160890602676,0.9535577898521859,0.947436489852717,0.8633502764543731,0.89748615072473,0.9057505696394142,0.9454128757097255,0.8265374952862007,0.9608050903721644,0.9350929747127902,0.9545881865549164,0.9688650233432655,0.9559611636046889,1.0883857295367996,1.0777843284097368,1.0734290433775766,1.017885880909511,1.0186666454213738,0.9894410894586169,1.0592982679775012,1.0289281218629998,1.090621796608189,1.0661020730094488,1.0648193884542456,1.0618397361334628,1.050914344290593,1.0451250019917462,1.3521699410974255,1.5253668796507274,1.6556483266676227,1.0937660999484802,1.887463683827552,1.875468060357877,1.9229990917637312]},{"type":"scatter","name":"frequency_index","mode":"lines","x":["0.113.0","0.114.0","0.115.0","0.116.0","0.117.0","0.118.0","0.119.0","0.120.0","0.121.0","0.122.0","0.123.0","0.124.1","0.125.0","0.126.0","0.127.0","0.128.0","0.129.1","0.130.0","0.131.1","0.132.0","0.133.1","0.134.0","0.135.0","0.136.0","0.137.0","0.138.0","1.0.0","2.0.0","2.1.0","2.2.1","3.0.0","3.1.1","3.2.0","3.3.0","4.0.0","5.0.3","5.1.0","6.0.1","7.0.1","7.1.0","8.0.0","8.1.1","9.1.0","10.0.0","11.0.2","12.0.0","14.0.0","15.0.0","15.0.1","16.0.0","16.1.0","17.0.0","18.0.0","19.0.0","19.1.0","20.0.0","20.1.0","21.0.0","21.1.0","22.0.1","23.0.1","24.0.0","25.0.0","26.0.0"],"y":[1.0,0.9509949603187892,0.8442397364631818,1.0464454341492817,1.0052311807253123,0.9956666694571878,0.986282146803737,0.852848843049928,0.8521540032816529,0.8605632387904765,1.0071660583330542,0.9716298178347789,0.9582834527676389,0.986282146803737,0.8691409520141982,0.9268785788433848,0.8921104292937749,0.9005552439473596,0.9044469745169608,1.0402044335800154,0.9947196363392827,1.048542510799317,0.9816558115393631,0.9985161403743763,1.0013834008639453,0.9881448196765228,0.36009861701771423,1.0613039128687674,1.0269334125841343,0.3503331882262331,1.1575727070287647,1.1240016910558215,1.0776985734855842,1.0866519606201654,1.0548850165756958,0.9928328952215115,1.0433155158557412,1.103845059103238,0.8845697434952952,0.8749539564008975,0.897466137025751,0.8875699025550011,0.9013306600140643,0.9219780748752637,0.9083732377858889,0.8898344104745002,0.8181748735893916,0.8055777634531025,0.8168971637142953,0.8018743930616482,0.7688799685229213,0.8324944329102903,0.8200982402973579,0.8391707547801628,0.8371563473194253,1.1003635351438235,1.0855238924421524,1.8230753775575126,1.9970333271941867,1.8686522619964505,2.084552791079262,3.095992532565382,3.353991561464019,3.3647762281083615]},{"type":"scatter","name":"frequency_no_limit","mode":"lines","x":["0.127.0","0.128.0","0.129.1","0.130.0","0.131.1","0.132.0","0.133.1","0.134.0","0.135.0","0.136.0","0.137.0","0.138.0","1.0.0","2.0.0","2.1.0","2.2.1","3.0.0","3.1.1","3.2.0","3.3.0","4.0.0","5.0.3","5.1.0","6.0.1","7.0.1","7.1.0","8.0.0","8.1.1","9.1.0","10.0.0","11.0.2","12.0.0","14.0.0","15.0.0","15.0.1","16.0.0","16.1.0","17.0.0","18.0.0","19.0.0","19.1.0","20.0.0","20.1.0","21.0.0","21.1.0","22.0.1","23.0.1","24.0.0","25.0.0","26.0.0"],"y":[1.0,1.0716226519365288,1.0720729479549909,1.0759055811121288,1.01588316865121,1.046206511894467,0.923644122869409,1.093144754818935,1.0110629544535812,1.082506511382767,1.0364586264948037,1.1004313631176859,1.0877974895996971,1.0889539316471113,1.0820459813638852,1.0734238360103774,1.1930541839152216,1.1685335189098742,1.1706724249975695,1.1288307142820593,1.1226391440282049,1.1179826738372896,1.2003305582135528,1.169065686931693,1.122889877038485,0.89740414579357,0.908395462244214,1.1248650391194666,1.10637731736147,1.2062713954571271,1.1927727489036828,1.2511014342951587,1.2681512789942024,1.27383626
+```
+
+**File**: `benchmarks/gainers.html` (modified, +22/-1)
+```diff
+@@ -16,7 +16,7 @@
+ 
+         <script type="module">
+             const graph_div = document.getElementById("plotly-html-element");
+-            await Plotly.newPlot(graph_div, {"data":[{"type":"scatter","mode":"markers","x":["tojsonl_index","writestat_sav","writestat_xpt","writestat_dta","split_index","tojsonl_batchall","tojsonl","tojsonl_no_boolean","tojsonl_trim","tojsonl_index_j1","tojsonl_j1","tojsonl_trim_j1","snappy_compress","count_flexible","sortcheck_sorted"],"y":[28.64,26.81,24.33,23.94,22.83,22.07,21.7,20.44,19.25,16.28,14.69,13.2,12.08,11.28,11.06],"hovertext":["name: tojsonl_index\u003cbr\u003edelta (%): 28.64\u003cbr\u003edelta (%): 28.64\u003cbr\u003edelta (%): 28.64","name: writestat_sav\u003cbr\u003edelta (%): 26.81\u003cbr\u003edelta (%): 26.81\u003cbr\u003edelta (%): 26.81","name: writestat_xpt\u003cbr\u003edelta (%): 24.33\u003cbr\u003edelta (%): 24.33\u003cbr\u003edelta (%): 24.33","name: writestat_dta\u003cbr\u003edelta (%): 23.94\u003cbr\u003edelta (%): 23.94\u003cbr\u003edelta (%): 23.94","name: split_index\u003cbr\u003edelta (%): 22.83\u003cbr\u003edelta (%): 22.83\u003cbr\u003edelta (%): 22.83","name: tojsonl_batchall\u003cbr\u003edelta (%): 22.07\u003cbr\u003edelta (%): 22.07\u003cbr\u003edelta (%): 22.07","name: tojsonl\u003cbr\u003edelta (%): 21.7\u003cbr\u003edelta (%): 21.7\u003cbr\u003edelta (%): 21.7","name: tojsonl_no_boolean\u003cbr\u003edelta (%): 20.44\u003cbr\u003edelta (%): 20.44\u003cbr\u003edelta (%): 20.44","name: tojsonl_trim\u003cbr\u003edelta (%): 19.25\u003cbr\u003edelta (%): 19.25\u003cbr\u003edelta (%): 19.25","name: tojsonl_index_j1\u003cbr\u003edelta (%): 16.28\u003cbr\u003edelta (%): 16.28\u003cbr\u003edelta (%): 16.28","name: tojsonl_j1\u003cbr\u003edelta (%): 14.69\u003cbr\u003edelta (%): 14.69\u003cbr\u003edelta (%): 14.69","name: tojsonl_trim_j1\u003cbr\u003edelta (%): 13.2\u003cbr\u003edelta (%): 13.2\u003cbr\u003edelta (%): 13.2","name: snappy_compress\u003cbr\u003edelta (%): 12.08\u003cbr\u003edelta (%): 12.08\u003cbr\u003edelta (%): 12.08","name: count_flexible\u003cbr\u003edelta (%): 11.28\u003cbr\u003edelta (%): 11.28\u003cbr\u003edelta (%): 11.28","name: sortcheck_sorted\u003cbr\u003edelta (%): 11.06\u003cbr\u003edelta (%): 11.06\u003cbr\u003edelta (%): 11.06"],"hoverinfo":"text","marker":{"size":[40,36,32,31,29,27,27,24,22,16,13,10,8,6,6],"color":[28.64,26.81,24.33,23.94,22.83,22.07,21.7,20.44,19.25,16.28,14.69,13.2,12.08,11.28,11.06],"colorscale":"Viridis","showscale":true,"colorbar":{"title":{"text":"delta (%)"}}}}],"layout":{"title":{"text":"Biggest speedups this release"},"uirevision":"qsv-viz","xaxis":{"title":{"text":"name"}},"yaxis":{"title":{"text":"% faster vs previous version"}}},"config":{"responsive":true},"frames":null});
++            await Plotly.newPlot(graph_div, {"data":[{"type":"scatter","mode":"markers","x":["schema_index","extsort_spill","extsort","pivotp_smart","pivotp_basic","partition","pivotp_dates_rows","split_chunks","split","extdedup","snappy_compress","sqlp_format_arrow","excel_metadata_short","frequency_sketch_index","readstat_dta_select"],"y":[76.48,48.25,42.29,36.87,36.1,26.13,24.62,17.62,16.42,16.1,16.05,15.91,12.32,11.52,10.04],"hovertext":["name: schema_index\u003cbr\u003edelta (%): 76.48\u003cbr\u003edelta (%): 76.48\u003cbr\u003edelta (%): 76.48","name: extsort_spill\u003cbr\u003edelta (%): 48.25\u003cbr\u003edelta (%): 48.25\u003cbr\u003edelta (%): 48.25","name: extsort\u003cbr\u003edelta (%): 42.29\u003cbr\u003edelta (%): 42.29\u003cbr\u003edelta (%): 42.29","name: pivotp_smart\u003cbr\u003edelta (%): 36.87\u003cbr\u003edelta (%): 36.87\u003cbr\u003edelta (%): 36.87","name: pivotp_basic\u003cbr\u003edelta (%): 36.1\u003cbr\u003edelta (%): 36.1\u003cbr\u003edelta (%): 36.1","name: partition\u003cbr\u003edelta (%): 26.13\u003cbr\u003edelta (%): 26.13\u003cbr\u003edelta (%): 26.13","name: pivotp_dates_rows\u003cbr\u003edelta (%): 24.62\u003cbr\u003edelta (%): 24.62\u003cbr\u003edelta (%): 24.62","name: split_chunks\u003cbr\u003edelta (%): 17.62\u003cbr\u003edelta (%): 17.62\u003cbr\u003edelta (%): 17.62","name: split\u003cbr\u003edelta (%): 16.42\u003cbr\u003edelta (%): 16.42\u003cbr\u003edelta (%): 16.42","name: extdedup\u003cbr\u003edelta (%): 16.1\u003cbr\u003edelta (%): 16.1\u003cbr\u003edelta (%): 16.1","name: snappy_compress\u003cbr\u003edelta (%): 16.05\u003cbr\u003edelta (%): 16.05\u003cbr\u003edelta (%): 16.05","name: sqlp_format_arrow\u003cbr\u003edelta (%): 15.91\u003cbr\u003edelta (%): 15.91\u003cbr\u003edelta (%): 15.91","name: excel_metadata_short\u003cbr\u003edelta (%): 12.32\u003cbr\u003edelta (%): 12.32\u003cbr\u003edelta (%): 12.32","name: frequency_sketch_index\u003cbr\u003edelta (%): 11.52\u003cbr\u003edelta (%): 11.52\u003cbr\u003edelta (%): 11.52","name: readstat_dta_select\u003cbr\u003edelta (%): 10.04\u003cbr\u003edelta (%): 10.04\u003cbr\u003edelta (%): 10.04"],"hoverinfo":"text","marker":{"size":[40,26,23,20,19,14,13,10,9,9,9,9,7,7,6],"color":[76.48,48.25,42.29,36.87,36.1,26.13,24.62,1
+```
+
+**File**: `benchmarks/heatmap.html` (modified, +22/-1)
+```diff
+@@ -16,7 +16,7 @@
+ 
+         <script type="module">
+             const graph_div = document.getElementById("plotly-html-element");
+-            await Plotly.newPlot(graph_div, {"data":[{"type":"heatmap","colorscale":"Viridis","x":["16.0.0","16.1.0","17.0.0","18.0.0","19.0.0","19.1.0","20.0.0","20.1.0","21.0.0","21.1.0","22.0.1","23.0.1","24.0.0","25.0.0","26.0.0"],"y":["searchset","stats","count","frequency","search"],"z":[[0.6318607562195442,0.6601396931244702,0.6035804033145729,0.6059050033889601,0.5937108829987483,0.6043535393393132,0.6880466940174942,0.7065868546107793,0.7055305185769766,0.7217125670948021,0.9477911343293163,0.9652353108875299,0.9516129184516134,0.9792532393361036,1.0],[0.83177559613085,0.7772924707074325,0.7091633324302801,0.732510166469146,0.7235772372195121,0.7177418637096834,0.7772924707074325,0.767241345551727,0.751054738911402,0.9780218078461681,1.0,0.9888888849333337,0.8476190188000025,0.9621620091783912,0.9944132924692834],[1.0,0.3030303,0.90909091,1.0,0.90909091,0.90909091,0.90909091,0.90909091,0.90909091,0.90909091,0.90909091,1.0,0.90909091,1.0,0.90909091],[0.2383143301961726,0.228508499941221,0.24741450143277705,0.24373039533699029,0.24939868148436573,0.24880000646880016,0.32702428350263135,0.3226139923879638,0.5418117740871061,0.5935114824312986,0.5553570684392838,0.6195219681075712,0.9201184039230785,0.9967948339166657,1.0],[0.6666666666666666,0.6845637898791932,0.6144577649638583,0.5619834592727277,0.5284974727461113,0.5326370405639702,0.7846153814769232,0.7527675148782293,0.7906976412093037,0.9532709460560784,0.9902912324271858,0.9488372102511627,0.9400921386359459,0.9622640816603804,1.0]]}],"layout":{"title":{"text":"Relative throughput vs each command\u0027s recent peak"},"uirevision":"qsv-viz","xaxis":{"title":{"text":"version"}},"yaxis":{"title":{"text":"name"}}},"config":{"responsive":true},"frames":null});
++            await Plotly.newPlot(graph_div, {"data":[{"type":"heatmap","colorscale":"Viridis","x":["16.1.0","17.0.0","18.0.0","19.0.0","19.1.0","20.0.0","20.1.0","21.0.0","21.1.0","22.0.1","23.0.1","24.0.0","25.0.0","26.0.0","27.0.1"],"y":["count","frequency","search","searchset","stats"],"z":[[0.3030303,0.90909091,1.0,0.90909091,0.90909091,0.90909091,0.90909091,0.90909091,0.90909091,0.90909091,1.0,0.90909091,1.0,0.90909091,1.0],[0.22777377188832806,0.24661898452665784,0.24294672401254136,0.24859678480354988,0.24800003472000487,0.3259727956361914,0.3215766850207359,0.5400696756097546,0.5916031528244414,0.5535714174999985,0.6175300064542009,0.91715992840239,0.9935898191025747,0.9967846795498552,1.0],[0.6845637898791932,0.6144577649638583,0.5619834592727277,0.5284974727461113,0.5326370405639702,0.7846153814769232,0.7527675148782293,0.7906976412093037,0.9532709460560784,0.9902912324271858,0.9488372102511627,0.9400921386359459,0.9622640816603804,1.0,0.9807691248461585],[0.6573423385315323,0.6010227197954561,0.6033374693325061,0.5911950217609957,0.601792579641484,0.6851310829737834,0.7035926792814642,0.7025408194918361,0.7186542962691408,0.9437748512450298,0.9611451077709784,0.9475804404839119,0.975103634979273,0.9957624808475039,1.0],[0.7772924707074325,0.7091633324302801,0.732510166469146,0.7235772372195121,0.7177418637096834,0.7772924707074325,0.767241345551727,0.751054738911402,0.9780218078461681,1.0,0.9888888849333337,0.8476190188000025,0.9621620091783912,0.9944132924692834,0.9673912927391314]]}],"layout":{"title":{"text":"Relative throughput vs each command\u0027s recent peak"},"uirevision":"qsv-viz","xaxis":{"title":{"text":"version"},"type":"category"},"yaxis":{"title":{"text":"name"},"type":"category"}},"config":{"responsive":true},"frames":null});
+         </script>
+     </div>
+ <style>
+@@ -378,6 +378,25 @@
+     var fl = gd._fullLayout || {};
+     return Object.keys(fl).filter(function (k) { return /^scene\d*$/.test(k); });
+   }
++  // A sandboxed frame without allow-same-origin gives the page an opaque origin but leaves
++  // location.origin as the URL's; MapLibre's worker (a blob:null URL) reports "null", and the
++  // MapLibre bundled with plotly.js 3.x drops every message whose origin differs from its own, so
++  // the map's tiles never finish loading and the panel stays blank with no error. file:// pages are
++  // exempt from that check. Say so above each map rather than leave an empty panel unexplained.
++  function sandboxNotice(gd) {
++    if (window.origin !== "null" || location.protocol === "file:") return;
++    var lay = (gd && gd.layout) || {};
++    if (!Object.keys(lay).some(function (k) { return /^map\d*$/.test(k); })) return;
++    var host = gd.parentNode;
++    if (!host || host.querySelector(":scope > .qsv-sandbox-map-note")) return;
++    var note = document.createElement("div");
++    note.className = "qsv-sandbox-map-note";
++    note.setAttribute("role", "note");
++    note.textContent = "This map can't load inside a sandboxed frame. Open this Data Schematic in its own browser tab to see it.";
++    note.style.cssText = "margin:4px 0;padding:6px 
+```
+
+**File**: `benchmarks/index.html` (modified, +8/-8)
+```diff
+@@ -49,13 +49,13 @@
+ <header>
+ <h1 id=top>qsv benchmark Data Schematic<a class=anchor href='#top' aria-label='Permalink to “qsv benchmark Data Schematic”'>#</a></h1>
+ <p class=sub>Interactive charts of the qsv benchmark suite, rendered with <code>qsv viz</code> — a live showcase of the command charting its own performance.</p>
+-<div class=meta><span><b>qsv</b> 26.0.0</span><span><b>Platform</b> aarch64-apple-darwin</span><span><b>CPU</b> Apple M2 Pro (12 cores)</span><span><b>RAM</b> 32 GiB</span><span><b>Build</b> prebuilt-pgo</span><span><b>Dataset</b> NYC 311 — 1M rows × 41 cols (520 MB)</span></div>
++<div class=meta><span><b>qsv</b> 27.0.1</span><span><b>Platform</b> aarch64-apple-darwin</span><span><b>CPU</b> Apple M2 Pro (12 cores)</span><span><b>RAM</b> 32 GiB</span><span><b>Build</b> prebuilt-pgo</span><span><b>Dataset</b> NYC 311 — 1M rows × 41 cols (520 MB)</span></div>
+ </header>
+ <div class=caveat><b>Read me first.</b> Throughput is records/sec = the rows a benchmark reads ÷ the mean of 3 runs (2 warmups) via hyperfine. That is the full 1M rows for almost every benchmark; <code>geoconvert_csv2geojsonl</code> (745,305 rows), <code>to_ods</code> (500,000) and the <code>pragmastat_50k*</code> series (50,000) read a smaller subset. Cross-version numbers are <b>not strictly apples-to-apples</b> — commands gain features over time, so a command's benchmark in an old release may do less work than today's. Read the historical charts (the trend, the flagship deep-dives and the heatmap) as broad trajectory, not exact speedup. <code>count</code> gets its own panel below (not the shared-scale charts) because with an index it just reads a stored row count (tens of millions of records/sec) and would flatten every other bar.</div>
+ <main>
+ <section>
+ <h2 id=index_advantage>The index advantage<a class=anchor href='#index_advantage' aria-label='Permalink to “The index advantage”'>#</a></h2>
+-<p class=desc>Build an index once and qsv can skip the opening scan on every run after. The payoff is lopsided — 5.8x for stats down to 2.5x for tojsonl on this run, and next to nothing for streaming commands, so only the pairs where an index actually moves the needle are shown here.</p>
++<p class=desc>Build an index once and qsv can skip the opening scan on every run after. The payoff is lopsided — 5.6x for stats down to 2.5x for tojsonl on this run, and next to nothing for streaming commands, so only the pairs where an index actually moves the needle are shown here.</p>
+ <iframe class=chart loading=lazy scrolling=no src='index_advantage.html'></iframe>
+ <details class=vizsrc><summary>see the qsv viz command</summary><pre><code>figs.append(viz(&quot;bar&quot;, index_src,
+                 [&quot;--x&quot;, &quot;command&quot;, &quot;--y&quot;, &quot;recs_per_sec&quot;, &quot;--series&quot;, &quot;index_status&quot;,
+@@ -68,7 +68,7 @@ <h2 id=index_advantage>The index advantage<a class=anchor href='#index_advantage
+ </section>
+ <section>
+ <h2 id=count_callout>count with an index is effectively instant<a class=anchor href='#count_callout' aria-label='Permalink to “count with an index is effectively instant”'>#</a></h2>
+-<p class=desc>The index advantage at its extreme. With an index, count doesn&#x27;t scan at all — it reads a row count qsv already stored, a ~16x jump from ~5.7M to ~91M rows/sec. It sits on its own axis precisely because that number would flatten every other bar on the page. The un-indexed bar scans the file to count it, so it tracks whatever the current scan path costs; the indexed bar reads the stored count and does not.</p>
++<p class=desc>The index advantage at its extreme. With an index, count doesn&#x27;t scan at all — it reads a row count qsv already stored, a ~18x jump from ~5.5M to ~100M rows/sec. It sits on its own axis precisely because that number would flatten every other bar on the page. The un-indexed bar scans the file to count it, so it tracks whatever the current scan path costs; the indexed bar reads the stored count and does not.</p>
+ <iframe class=chart loading=lazy scrolling=no src='count_callout.html'></iframe>
+ <details class=vizsrc><summary>see the qsv viz command</summary><pre><code>figs.append(viz(&quot;bar&quot;, prep_count(),
+                 [&quot;--x&quot;, &quot;index_status&quot;, &quot;--y&quot;, &quot;recs_per_sec&quot;,
+@@ -82,7 +82,7 @@ <h2 id=count_callout>count with an index is effectively instant<a class=anchor h
+ </section>
+ <section>
+ <h2 id=index_superpowers>The index superpowers<a class=anchor href='#index_superpowers' aria-label='Permalink to “The index superpowers”'>#</a></h2>
+-<p class=desc>Some commands don&#x27;t just skip the opening scan with an index — they skip almost all the work. slice and sample seek straight to the rows they need; schema reuses cached statistics. That&#x27;s a different order of magnitude: slice_one_middle leads at 44x faster, with the rest of the seek-and-reuse tier 7x to 40x faster — versus the low single digits for the scan-skippers abo
+```
+
+**File**: `benchmarks/index_advantage.html` (modified, +22/-1)
+```diff
+@@ -16,7 +16,7 @@
+ 
+         <script type="module">
+             const graph_div = document.getElementById("plotly-html-element");
+-            await Plotly.newPlot(graph_div, {"data":[{"type":"bar","x":["frequency","search","searchset","stats","tojsonl"],"y":[724113.0,1776199.0,755287.0,958773.0,157085.0],"name":"no index"},{"type":"bar","x":["frequency","search","searchset","stats","tojsonl"],"y":[3215434.0,4901961.0,2118644.0,5586592.0,388802.0],"name":"with index"}],"layout":{"title":{"text":"The index advantage"},"uirevision":"qsv-viz","xaxis":{"title":{"text":"command"}},"yaxis":{"title":{"text":"records/sec"}}},"config":{"responsive":true},"frames":null});
++            await Plotly.newPlot(graph_div, {"data":[{"type":"bar","x":["frequency","search","searchset","stats","tojsonl"],"y":[667111.0,1742160.0,758150.0,973710.0,156912.0],"name":"no index"},{"type":"bar","x":["frequency","search","searchset","stats","tojsonl"],"y":[3225806.0,4807692.0,2127660.0,5434783.0,387297.0],"name":"with index"}],"layout":{"title":{"text":"The index advantage"},"uirevision":"qsv-viz","xaxis":{"title":{"text":"command"}},"yaxis":{"title":{"text":"records/sec"}}},"config":{"responsive":true},"frames":null});
+         </script>
+     </div>
+ <style>
+@@ -378,6 +378,25 @@
+     var fl = gd._fullLayout || {};
+     return Object.keys(fl).filter(function (k) { return /^scene\d*$/.test(k); });
+   }
++  // A sandboxed frame without allow-same-origin gives the page an opaque origin but leaves
++  // location.origin as the URL's; MapLibre's worker (a blob:null URL) reports "null", and the
++  // MapLibre bundled with plotly.js 3.x drops every message whose origin differs from its own, so
++  // the map's tiles never finish loading and the panel stays blank with no error. file:// pages are
++  // exempt from that check. Say so above each map rather than leave an empty panel unexplained.
++  function sandboxNotice(gd) {
++    if (window.origin !== "null" || location.protocol === "file:") return;
++    var lay = (gd && gd.layout) || {};
++    if (!Object.keys(lay).some(function (k) { return /^map\d*$/.test(k); })) return;
++    var host = gd.parentNode;
++    if (!host || host.querySelector(":scope > .qsv-sandbox-map-note")) return;
++    var note = document.createElement("div");
++    note.className = "qsv-sandbox-map-note";
++    note.setAttribute("role", "note");
++    note.textContent = "This map can't load inside a sandboxed frame. Open this Data Schematic in its own browser tab to see it.";
++    note.style.cssText = "margin:4px 0;padding:6px 10px;border:1px solid #d97706;border-radius:6px;" +
++      "background:#fffbeb;color:#78350f;font:13px/1.4 system-ui,sans-serif";
++    host.insertBefore(note, gd);
++  }
+   function installGl3dScrollFix(gd) {
+     if (gd.__qsvGl3dFix || !sceneKeys(gd).length) return;
+     gd.__qsvGl3dFix = true;
+@@ -416,6 +435,8 @@
+       // cluster bubbles: repaint plotly's black-by-default count labels and add hover/click-to-zoom
+       // (see installClusterUi). No-op for non-map panels and for maps that never cluster.
+       applyClusterUi(gd);
++      // map panels in a sandboxed (opaque-origin) frame can't load tiles: explain the blank panel
++      sandboxNotice(gd);
+       // gl3d panels: stop the WebGL canvas from eating the wheel inline so the page can scroll
+       // (scrollZoom:false suppresses the zoom but not the canvas preventDefault; see above).
+       installGl3dScrollFix(gd);
+```
+
+---
+
+### Incident Patch 2: `b99d3180` (2026-10-27)
+**Commit Message**: Merge branch 'master' of https://github.com/dathere/qsv
+
+**File**: `CHANGELOG.md` (modified, +9/-0)
+```diff
+@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
  The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
  and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
  
 +## [Unreleased]
 +
++### Added
++- `viz smart`: a Data Schematic embedded in an iframe now reports its own height to the embedding page (`postMessage({qsvVizHeight: <px>}, "*")`), so a host such as CKAN can size the iframe to its content without injecting a script. It reports only when framed, on load, on resize (including the data viewer drawer opening and closing, so the iframe grows and shrinks), and when its content reflows. The data viewer now accepts the embedding page's `qsvVizViewport` answer only from that page. The gallery generator injects only its scroll-forwarding script into these pages. ([#4949](https://github.com/dathere/qsv/pull/4949))
++
 +### Fixed
-+* `get`: overwriting an existing file with `--output` (`get`, `get cache-fetch`) no longer briefly exposes the new contents: the temp file that replaces it is owner-only (`0600`) while the data is written, and takes the old file's mode only afterwards. It also keeps the old file's group, so a group-readable file isn't handed to a different group; where the group can't be kept, the new file isn't group-readable, and other users get no access the old file denied its group. Setuid/setgid bits aren't carried over, as an in-place overwrite would have cleared them. Follow-up to [#4945](https://github.com/dathere/qsv/pull/4945). ([#4948](https://github.com/dathere/qsv/pull/4948))
++- **`viz smart`: a map in a sandboxed iframe now says why it's blank** ([#4947](https://github.com/dathere/qsv/pull/4947), [#4946](https://github.com/dathere/qsv/issues/4946)). Embedded in an `<iframe sandbox>` without `allow-same-origin` (the CKAN Webpage view the wiki recommends), every MapLibre map panel stayed empty with no error: the map library bundled with plotly.js 3.x rejects its own worker's messages when the page's origin is `null`. The schematic now shows a note above each such map telling the viewer to open it in its own tab. Pages opened from a file aren't affected. Rendering the maps there needs a plotly.js upgrade; #4946 tracks it.
++- `get`: overwriting an existing file with `--output` (`get`, `get cache-fetch`) no longer briefly exposes the new contents: the temp file that replaces it is owner-only (`0600`) while the data is written, and takes the old file's mode only afterwards. It also keeps the old file's group, so a group-readable file isn't handed to a different group; where the group can't be kept, the new file isn't group-readable, and other users get no access the old file denied its group. Setuid/setgid bits aren't carried over, as an in-place overwrite would have cleared them. Follow-up to [#4945](https://github.com/dathere/qsv/pull/4945). ([#4948](https://github.com/dathere/qsv/pull/4948))
 +
  ## [27.0.1] - 2026-10-27 📡 The "Live Data Schematics" Release 📊
  
  ### Highlights
 ```
 
-**File**: `src/diskcache.rs` (modified, +120/-10)
+**File**: `examples/viz/gen_gallery.py` (modified, +24/-9)
 ```diff
-@@ -852,23 +852,22 @@ mod rich {
-     /// Write a file the user asked for (`--output`) atomically, with the
-     /// umask's mode, like every other qsv writer. Only the cache's own files are
-     /// owner-only: where an export goes, and who may read it, is the user's call.
--    /// Overwriting an existing file keeps its mode, as `File::create` would: the
--    /// temp gets that mode while still empty, so a file the user locked down is
--    /// never replaced by a more readable one.
-+    /// Overwriting an existing file keeps its mode and group, as `File::create`
-+    /// would, so a file the user locked down is never replaced by a more
-+    /// readable one.
-     fn write_user_file(path: &Path, bytes: &[u8]) -> std::io::Result<()> {
-         if let Some(parent) = path.parent() {
-             fs::create_dir_all(parent)?;
-         }
--        let (tmp, mut file) = create_temp(
--            |t| path.with_extension(format!("tmp-{t}")),
--            |p| fs::OpenOptions::new().write(true).create_new(true).open(p),
--        )?;
-+        let existing = fs::metadata(path).ok();
-+        let (tmp, mut file) = open_user_temp(path, existing.is_some())?;
-         let written = (|| {
-+            file.write_all(bytes)?;
-             #[cfg(unix)]
--            if let Ok(existing) = fs::metadata(path) {
--                file.set_permissions(existing.permissions())?;
-+            if let Some(existing) = &existing {
-+                file.set_permissions(overwrite_permissions(&file, existing))?;
-             }
--            file.write_all(bytes)
-+            Ok(())
-         })();
-         drop(file);
-         if let Err(e) = written.and_then(|()| fs::rename(&tmp, path)) {
-@@ -878,6 +877,46 @@ mod rich {
-         Ok(())
-     }
+@@ -268,13 +268,21 @@
+ # drawer (issue #4283) reserves its space via body margin-bottom while open, and on close the
+ # iframe must SHRINK back. Body margins are counted because that reserved drawer space is exactly
+ # a body margin; fixed-position chrome (the drawer, theme toggle, logo) is deliberately excluded.
+-RESIZE_REPORTER_JS = (
+-    "<script>(function(){function r(){var b=document.body,c=getComputedStyle(b);"
++#
++# `qsv viz smart` now reports its own height (its `<script id="qsv-embed-height">`, the same
++# formula), so for those pages only the user-scroll half is injected; the full reporter is kept for
++# pre-generated Data Schematics built before that. Both injected variants are a bare `<script>`
++# with no literal `<` inside, which is what `inject_resize_reporter`'s strip regex relies on, and
++# the native script's id keeps it out of that match.
++NATIVE_HEIGHT_REPORTER = '<script id="qsv-embed-height">'
++_HEIGHT_REPORTER = (
++    "function r(){var b=document.body,c=getComputedStyle(b);"
+     "parent.postMessage({qsvVizHeight:Math.ceil(b.offsetHeight+"
+     "(parseFloat(c.marginTop)||0)+(parseFloat(c.marginBottom)||0))},\"*\");}"
+     "addEventListener(\"load\",r);addEventListener(\"resize\",r);"
+     "if(window.ResizeObserver)new ResizeObserver(r).observe(document.body);"
+-    "setTimeout(r,200);setTimeout(r,800);"
++    "setTimeout(r,200);setTimeout(r,800);")
++_USER_SCROLL_REPORTER = (
+     # a deep-linked Data Schematic fills the viewport, so the reader's scroll input lands INSIDE this
+     # iframe, not the parent gallery window. Forward it so the parent's jump stabilizer can tell the
+     # reader has taken over and stop re-aligning / cancel its pending on-load re-arm (see JUMP_JS).
+@@ -287,7 +295,9 @@
+     # drawer's reveal scroll after a TOC jump.
+     "var us=function(){parent.postMessage({qsvUserScroll:1},\"*\");};"
+     "[\"wheel\",\"touchstart\",\"keydown\",\"pointerdown\"].forEach(function(t){"
+-    "addEventListener(t,us,{capture:true,passive:true});});})();</script>")
++    "addEventListener(t,us,{capture:true,passive:true});});")
++RESIZE_REPORTER_JS = "<script>(function(){" + _HEIGHT_REPORTER + _USER_SCROLL_REPORTER + "})();</script>"
++USER_SCROLL_REPORTER_JS = "<script>(function(){" + _USER_SCROLL_REPORTER + "})();</script>"
  
-+    /// The temp for `write_user_file`. An overwrite's temp starts owner-only and
-+    /// takes the destination's mode only once written: permissions are checked at
-+    /// open, so anyone who opened a briefly-readable temp would keep reading it
-+    /// after a chmod.
-+    fn open_user_temp(path: &Path, overwrite: bool) -> std::io::Result<(PathBuf, fs::File)> {
-+        let make = |t: &str| path.with_extension(format!("tmp-{t}"));
-+        if overwrite {
-+            create_private_temp(make)
-+        } else {
-+            create_temp(make, |p| {
-+                fs::OpenOptions::new().write(true).create_new(true).open(p)
-+            })
-+        }
-+    }
-+
-+    /// The mode an overwrite's temp takes before it replaces `existing`. The temp
-+    /// gets the process's (or a setgid directory's) group, not the destination's,
-+    /// so its group is moved to the destination's first; where that isn't allowed,
-+    /// group access is dropped rather than granted to a different group.
-+    #[cfg(unix)]
-+    fn overwrite_permissions(file: &fs::File, existing: &fs::Metadata) -> fs::Permissions {
-+        use std::os::unix::fs::{MetadataExt, PermissionsExt, fchown};
-+        let group_kept = fchown(file, None, Some(existing.gid())).is_ok();
-+        fs::Permissions::from_mode(overwrite_mode(existing.mode(), group_kept))
-+    }
-+
-+    /// Only the permission bits carry over: an in-place write would have cleared
-+    /// setuid/setgid. When the group couldn't be kept, the destination's group
-+    /// members now count as "other", so other keeps only what that group had,
-+    /// as `DerivedFile` does.
-+    #[cfg(unix)]
-+    const fn overwrite_mode(existing_mode: u32, group_kept: bool) -> u32 {
-+        let mode = existing_mode & 0o777;
-+        if group_kept {
-+            mode
-+        } else {
-+            (mode & 0o700) | (mode & 0o007 & ((mode & 0o070) >> 3))
-+        }
-+    }
-+
-     fn atomic_write(path: &Path, bytes: &[u8]) -> std::io::Result<()> {
-         if let Some(parent) = path.parent() {
-             super::create_private_dir_all(parent)?;
-@@ -3660,6 +3699,77 @@ mod rich {
-             }
-         }
+ # Trace types plotly.js draws with WebGL. Chrome keeps only ~16 live WebGL contexts per page (and
+ # same-origin iframes share that budget), dropping the OLDEST when a new one is created — the lost
+@@ -1706,14 +1716,19 @@ def inject_resize_reporter(html):
+     first-match replace would inject the reporter inside that script string, where it never runs —
+     leaving the iframe stuck at its initial height (the Allegheny dog-licenses Data Schematic clipping).
  
-+        // An overwrite's temp must never be more readable than owner-only while
-+        // the data goes in, whatever the umask.
-+        #[cfg(unix)]
-+        #[test]
-+        fn overwrite_temp_starts_owner_only() {
-+            use std::os::unix::fs::PermissionsExt;
-+            let dir = tempfile::tempdir().unwrap();
-+            let path = dir.path().join("out.csv");
-+            let (tmp, file) = super::open_user_temp(&path, true).unwrap();
-+            let mode = file.metadata().unwrap().permissions().mode() & 0o777;
-+            drop(file);
-+            std::fs::remove_file(tmp).unwrap();
-+            assert_eq!(mode, 0o600);
-+        }
+-    Idempotent: strip any previously-injected reporter (a <script> containing qsvVizHeight; it has no
+-    literal `<` in its body) before re-adding the current one, so re-running against an already-built
++    A Data Schematic that reports its own height (NATIVE_HEIGHT_REPORTER) gets only the user-scroll
++    half; an older one gets the full reporter.
 +
-+        // Group access survives only when the destination's group could be kept.
-+        #[cfg(unix)]
-+        #[test]
-+        fn overwrite_mode_drops_group_bits_when_group_not_kept() {
-+            assert_eq!(super::overwrite_mode(0o100640, true), 0o640);
-+            assert_eq!(super::overwrite_mode(0o100640, false), 0o600);
-+            assert_eq!(super::overwrite_mode(0o100664, false), 0o604);
-+            assert_eq!(super::overwrite_mode(0o100600, f
++    Idempotent: strip any previously-injected reporter (a bare <script> containing qsvVizHeight or
++    qsvUserScroll; neither has a literal `<` in its body, and the native one carries an id, so it is
++    never matched) before re-adding the current one, so re-running against an already-built
+     Data Schematic (e.g. the reused pre-generated ones) refreshes the reporter instead of duplicating it."""
+-    html = re.sub(r"<script>[^<]*qsvVizHeight[^<]*</script>\n?", "", html)
++    html = re.sub(r"<script>[^<]*(?:qsvVizHeight|qsvUserScroll)[^<]*</script>\n?", "", html)
++    reporter = USER_SCROLL_REPORTER_JS if NATIVE_HEIGHT_REPORTER in html else RESIZE_REPORTER_JS
+     idx = html.rfind("</body>")
+     if idx == -1:
+-        return html + RESIZE_REPORTER_JS
+-    return html[:idx] + RESIZE_REPORTER_JS + "\n" + html[idx:]
++        return html + reporter
++    return html[:idx] + reporter + "\n" + html[idx:]
+ 
+ 
+ def grid_cols(args):
 ```
 
-**File**: `tests/test_get.rs` (modified, +13/-1)
-```diff
-@@ -2858,7 +2858,7 @@ fn get_symlinked_cache_root_is_made_owner_only() {
- // The cache is owner-only, but a file the user asks for with --output is not:
- // it gets the umask's mode, as every other qsv writer's output does, and so do
- // the directories created for it. Overwriting an existing file keeps that
--// file's mode instead. qsv runs under a fixed umask (022), so the expected
-+// file's mode and group instead. qsv runs under a fixed umask (022), so the expected
- // modes don't depend on the umask the test suite happens to run with.
- #[cfg(unix)]
- #[test]
-@@ -2885,6 +2885,13 @@ fn get_output_and_cache_fetch_output_follow_the_umask() {
-         std::fs::Permissions::from_mode(0o600),
-     )
-     .unwrap();
-+    // and one shared with its group, which an overwrite must keep sharing
-+    wrk.create_from_string("shared.csv", "old\n");
-+    std::fs::set_permissions(
-+        wrk.path("shared.csv"),
-+        std::fs::Permissions::from_mode(0o640),
-+    )
-+    .unwrap();
- 
-     let mut get = dc_command(&wrk, "get", &cache_dir, &tmp_dir);
-     get.args(["--name", "t.csv", "src.csv", "--output", "dl/sub/got.csv"]);
-@@ -2898,6 +2905,10 @@ fn get_output_and_cache_fetch_output_follow_the_umask() {
-     over.args(["cache-fetch", "t.csv", "--output", "locked.csv"]);
-     umask_022(&mut over);
-     wrk.assert_success(&mut over);
-+    let mut shared = dc_command(&wrk, "get", &cache_dir, &tmp_dir);
-+    shared.args(["cache-fetch", "t.csv", "--output", "shared.csv"]);
-+    umask_022(&mut shared);
-+    wrk.assert_success(&mut shared);
- 
-     for dir in ["dl", "dl/sub", "cf"] {
-         assert_eq!(mode_of(&wrk.path(dir)), 0o755, "{dir}");
-@@ -2906,6 +2917,7 @@ fn get_output_and_cache_fetch_output_follow_the_umask() {
-         ("dl/sub/got.csv", 0o644),
-         ("cf/fetched.csv", 0o644),
-         ("locked.csv", 0o600),
-+        ("shared.csv", 0o640),
-     ] {
-         assert_eq!(mode_of(&wrk.path(file)), want, "{file}");
-         assert_eq!(
-```
-
----
-
-### Incident Patch 2: `c0c37471` (2026-10-27)
-**Commit Message**: fix(viz): explain blank map panels in sandboxed iframes (#4947)
-
-* fix(viz): explain blank map panels in sandboxed iframes (#4946)
-
-In an <iframe sandbox> without allow-same-origin, the page's window.origin
-is "null" but location.origin stays the URL's, while MapLibre's blob:null
-worker reports "null". The MapLibre 4.7.1 bundled in plotly.js 3.7.0 drops
-every actor message whose origin differs from its own (file:// excepted),
-so tiles never finish loading and every map panel stays blank with no
-error. This is the CKAN Webpage-view sandbox the wiki recommends.
-
-FULLSCREEN_SCRIPT now adds a short note above each map panel when the page
-has an opaque origin and isn't a file: page. The text is localized in all
-eight locales (viz.map.sandboxed_notice). Rendering the maps needs a
-plotly.js upgrade; #4946 tracks it (plotly.js 4.1.2 alone isn't enough).
-
-Gallery schematics regenerated.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(changelog): cite #4947 for the sandboxed-map note
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test(viz): hold the English locale guard in the sandbox-notice test
-
-The test asserts English text, and the locale is process-global, so a
-paral
-
-**File**: `CHANGELOG.md` (modified, +2/-1)
-```diff
-@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ## [Unreleased]
- 
- ### Fixed
--* `get`: overwriting an existing file with `--output` (`get`, `get cache-fetch`) no longer briefly exposes the new contents: the temp file that replaces it is owner-only (`0600`) while the data is written, and takes the old file's mode only afterwards. It also keeps the old file's group, so a group-readable file isn't handed to a different group; where the group can't be kept, the new file isn't group-readable, and other users get no access the old file denied its group. Setuid/setgid bits aren't carried over, as an in-place overwrite would have cleared them. Follow-up to [#4945](https://github.com/dathere/qsv/pull/4945). ([#4948](https://github.com/dathere/qsv/pull/4948))
-+- **`viz smart`: a map in a sandboxed iframe now says why it's blank** ([#4947](https://github.com/dathere/qsv/pull/4947), [#4946](https://github.com/dathere/qsv/issues/4946)). Embedded in an `<iframe sandbox>` without `allow-same-origin` (the CKAN Webpage view the wiki recommends), every MapLibre map panel stayed empty with no error: the map library bundled with plotly.js 3.x rejects its own worker's messages when the page's origin is `null`. The schematic now shows a note above each such map telling the viewer to open it in its own tab. Pages opened from a file aren't affected. Rendering the maps there needs a plotly.js upgrade; #4946 tracks it.
-+- `get`: overwriting an existing file with `--output` (`get`, `get cache-fetch`) no longer briefly exposes the new contents: the temp file that replaces it is owner-only (`0600`) while the data is written, and takes the old file's mode only afterwards. It also keeps the old file's group, so a group-readable file isn't handed to a different group; where the group can't be kept, the new file isn't group-readable, and other users get no access the old file denied its group. Setuid/setgid bits aren't carried over, as an in-place overwrite would have cleared them. Follow-up to [#4945](https://github.com/dathere/qsv/pull/4945). ([#4948](https://github.com/dathere/qsv/pull/4948))
- 
- ## [27.0.1] - 2026-10-27 📡 The "Live Data Schematics" Release 📊
- 
-```
-
-**File**: `examples/viz/smart_allegheny_dogs.html` (modified, +25/-4)
+**File**: `examples/viz/smart_allegheny_dogs.html` (modified, +49/-5)
 ```diff
 @@ -76,7 +76,7 @@ <h1 class="qsv-viz-title">allegheny_dog_licenses.csv — Data Schematic</h1>
  <tr><td class="qsv-viz-meta-k">Rows:</td><td>50,013 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
  <tr><td class="qsv-viz-meta-k">Columns:</td><td>8</td></tr>
  <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
 -<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 11:48 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 15:40 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 20:18 UTC</td></tr>
  <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 27.0.1</td></tr>
  </table>
  <div class="qsv-viz-grid">
@@ -2499,14 +2561,14 @@ paral
  <a class="qsv-dict-export" download="allegheny_dog_licenses_csv_data_schematic.schema.json" href="data:application/json;base64,ewogICIkc2NoZW1hIjogImh0dHBzOi8vanNvbi1zY2hlbWEub3JnL2RyYWZ0LzIwMjAtMTIvc2NoZW1hIiwKICAidGl0bGUiOiAiRGF0YSBEaWN0aW9uYXJ5IGZvciBhbGxlZ2hlbnlfZG9nX2xpY2Vuc2VzLmNzdiIsCiAgImRlc2NyaXB0aW9uIjogIlRoaXMgZGF0YXNldCBwcm92aWRlcyBhIGNvbXByZWhlbnNpdmUgcmVnaXN0cnkgb2YgZG9nIGxpY2Vuc2VzLCBlbmNvbXBhc3NpbmcgNTAsMDEzIGluZGl2aWR1YWwgcmVjb3Jkcy4gSXQgZGV0YWlscyBwZXQgY2hhcmFjdGVyaXN0aWNzIHN1Y2ggYXMgYnJlZWQgYW5kIGNvbG9yIGFsb25nc2lkZSBhZG1pbmlzdHJhdGl2ZSBpbmZvcm1hdGlvbiBsaWtlIGxpY2Vuc2UgdHlwZXMsIGVmZmVjdGl2ZSBkYXRlcywgYW5kIG93bmVyIHppcCBjb2Rlcy4gVGhlIGRhdGEgc2VydmVzIHRvIGRvY3VtZW50IHBldCBvd25lcnNoaXAgYW5kIHZhbGlkIGxpY2Vuc2luZyBwZXJpb2RzIGFjcm9zcyB2YXJpb3VzIGNhdGVnb3JpZXMgb2YgbGlmZXRpbWUgYW5kIHNlbmlvciByZWdpc3RyYXRpb25zLlxuXG4jIyMgTm90YWJsZSBDaGFyYWN0ZXJpc3RpY3NcblxuKiAqKlNlbnRpbmVsIFZhbHVlczoqKiBUaGUgYEV4cFllYXJgIGZpZWxkIGNvbnNpc3RzIGVudGlyZWx5IG9mIHRoZSB2YWx1ZSBgMjA5OWAsIHdoaWNoIHNlcnZlcyBhcyBhIHNlbnRpbmVsIGluZGljYXRpbmcgbm8gZXhwaXJhdGlvbi5cbiogKipQSUkvU2Vuc2l0aXZlIERhdGE6KiogVGhlIGRhdGFzZXQgY29udGFpbnMgUGVyc29uYWxseSBJZGVudGlmaWFibGUgSW5mb3JtYXRpb24gKFBJSSkgaW4gdGhlIGZvcm0gb2YgYERvZ05hbWVgIGFuZCBnZW9ncmFwaGljIGlkZW50aWZpZXJzIHZpYSBgT3duZXJaaXBgLlxuKiAqKkhpZ2ggQ2FyZGluYWxpdHk6KiogVGhlIGBEb2dOYW1lYCBhbmQgYEJyZWVkYCBmaWVsZHMgZXhoaWJpdCBoaWdoIGNhcmRpbmFsaXR5LCBpbmRpY2F0aW5nIGEgd2lkZSB2YXJpZXR5IG9mIHVuaXF1ZSB2YWx1ZXMgYWNyb3NzIHRoZSBkYXRhc2V0LlxuKiAqKkRpc3RyaWJ1dGlvbiBQYXR0ZXJuczoqKiBUaGUgYExpY2Vuc2VUeXBlYCBmaWVsZCBzaG93cyBhIGNvbmNlbnRyYXRpb24gaW4gbGlmZXRpbWUgcmVnaXN0cmF0aW9ucywgcG
 ```
 
-**File**: `examples/viz/smart_cms_medicare.html` (modified, +23/-2)
+**File**: `examples/viz/smart_cms_medicare.html` (modified, +47/-3)
 ```diff
 @@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
  <tr><td class="qsv-viz-meta-k">Rows:</td><td>30,007 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
  <tr><td class="qsv-viz-meta-k">Columns:</td><td>4</td></tr>
  <tr><td class="qsv-viz-meta-k">Completeness:</td><td>97.0%</td></tr>
 -<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 11:48 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 15:40 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 20:17 UTC</td></tr>
  <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 27.0.1</td></tr>
  </table>
  <div class="qsv-viz-grid">
@@ -2545,25 +2607,38 @@ paral
        // gl3d panels: stop the WebGL canvas from eating the wheel inline so the page can scroll
        // (scrollZoom:false suppresses the zoom but not the canvas preventDefault; see above).
        installGl3dScrollFix(gd);
-@@ -2497,7 +2518,7 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
+@@ -1345,6 +1366,8 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
+   }
+   if (window.self !== window.top) {
+     addEventListener("message", function (ev) {
++      // only the embedding page knows its viewport; any other frame's answer is ignored
++      if (ev.source !== window.parent) return;
+       var d = ev.data;
+       if (!d || typeof d.qsvVizViewport !== "number" || !(d.qsvVizViewport > 0)) return;
+       parentVh = d.qsvVizViewport;
+@@ -2497,7 +2520,7 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
    else setTimeout(init, 0);
  })();
  </script>
 -<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"d686763d-5ca4-49bc-91d0-6475b8d99de2","fingerprint":{"algo":"blake3","digest":"ff0858a992d6fe65ecf8030a5b865c56f2a4305924037e3e82e598ab278e28fa","bytes":1049432},"rows":30007,"viz_args":["--smarter","--preview-threshold","500"],"redacted":[],"pid":null}</script>
-+<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"d1fb5c8c-5165-4bf2-8f48-958cc88db516","fingerprint":{"algo":"blake3","digest":"ff0858a992d6fe65ecf8030a5b865c56f2a4305924037e3e82e598ab278e28fa","bytes":1049432},"rows":30007,"viz_args":["--smarter","--preview-threshold","500"],"redacted":[],"pid":null}</script>
++<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"cf560cc0-b5e2-4d54-b5a3-b936146a4f93","fingerprint":{"algo":"blake3","digest":"ff0858a992d6fe65ecf8030a5b865c56f2a4305924037e3e82e598ab278e28fa","bytes":1049432},"rows":30007,"viz_args":["--smarter","--preview-threshold","500"],"redacted":[],"pid":null}</script>
  <style id="qsv-live-style">
  .qsv-live-chip, .qsv-live-panel, .qsv-live-dialog, .qsv-live-toast {
    position: fixed; z-index: 2147482000; font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
+@@ -3192,6 +3215,27 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
+ })();
+ </script>
+ <div class="qsv-page-f
 ```
 
-**File**: `examples/viz/smart_cpdb.html` (modified, +23/-2)
+**File**: `examples/viz/smart_cpdb.html` (modified, +47/-3)
 ```diff
 @@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
  <tr><td class="qsv-viz-meta-k">Rows:</td><td>12,587 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
  <tr><td class="qsv-viz-meta-k">Columns:</td><td>7</td></tr>
  <tr><td class="qsv-viz-meta-k">Completeness:</td><td>98.8%</td></tr>
 -<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 11:48 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 15:40 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 20:17 UTC</td></tr>
  <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 27.0.1</td></tr>
  </table>
  <div class="qsv-viz-grid">
@@ -2602,25 +2677,35 @@ paral
        // gl3d panels: stop the WebGL canvas from eating the wheel inline so the page can scroll
        // (scrollZoom:false suppresses the zoom but not the canvas preventDefault; see above).
        installGl3dScrollFix(gd);
-@@ -2537,7 +2558,7 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
+@@ -1385,6 +1406,8 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
+   }
+   if (window.self !== window.top) {
+     addEventListener("message", function (ev) {
++      // only the embedding page knows its viewport; any other frame's answer is ignored
++      if (ev.source !== window.parent) return;
+       var d = ev.data;
+       if (!d || typeof d.qsvVizViewport !== "number" || !(d.qsvVizViewport > 0)) return;
+       parentVh = d.qsvVizViewport;
+@@ -2537,7 +2560,7 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
    else setTimeout(init, 0);
  })();
  </script>
 -<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"ac09cbf4-dab7-499a-a7b6-76f41d3a476e","fingerprint":{"algo":"blake3","digest":"530b533b644037036b22823af6c7b58ff863393c06b3819c37a16ab975e5bfad","bytes":1214414},"rows":12587,"viz_args":["--smarter","--dictionary","nyc_capital_projects_dict.schema.json","--preview-threshold","500"],"redacted":["--dictionary"],"pid":null}</script>
-+<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"74e1d14e-9c45-41c4-ad92-a8ddf8c30ea8","fingerprint":{"algo":"blake3","digest":"530b533b644037036b22823af6c7b58ff863393c06b3819c37a16ab975e5bfad","bytes":1214414},"rows":12587,"viz_args":["--smarter","--dictionary","nyc_capital_projects_dict.schema.json","--preview-threshold","500"],"redacted":["--dictionary"],"pid":null}</script>
++<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"690737d8-d9ba-4112-9049-4118260baf0c","fingerprint":{"algo":"blake3","digest":"530b533b644037036b22823af6c7b58ff863393c06b3819c37a16ab975e5bfad","bytes":1214414},"rows":12587,"viz_args":["--smarter","--dictionary","nyc_capital_projects_dict.schema.json","--preview-threshold","500"],"redacted":["--dictionary"],"pid":null}</script>
  <style id="qsv-live-style">
  .qsv-live-chip, .qsv-live-panel, .qsv-live-dialog, .qsv-live-toast {
    position: fixed; z-index: 2147482000; font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
+@@ -3232,6 
 ```
 
-**File**: `examples/viz/smart_geo_outliers.html` (modified, +23/-2)
+**File**: `examples/viz/smart_geo_outliers.html` (modified, +47/-3)
 ```diff
 @@ -75,7 +75,7 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
  <tr><td class="qsv-viz-meta-k">Rows:</td><td>200 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
  <tr><td class="qsv-viz-meta-k">Columns:</td><td>10</td></tr>
  <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
 -<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 11:48 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 15:40 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 20:17 UTC</td></tr>
  <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 27.0.1</td></tr>
  </table>
  <div class="qsv-viz-grid">
@@ -2659,25 +2744,38 @@ paral
        // gl3d panels: stop the WebGL canvas from eating the wheel inline so the page can scroll
        // (scrollZoom:false suppresses the zoom but not the canvas preventDefault; see above).
        installGl3dScrollFix(gd);
-@@ -2924,7 +2945,7 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
+@@ -1282,6 +1303,8 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
+   }
+   if (window.self !== window.top) {
+     addEventListener("message", function (ev) {
++      // only the embedding page knows its viewport; any other frame's answer is ignored
++      if (ev.source !== window.parent) return;
+       var d = ev.data;
+       if (!d || typeof d.qsvVizViewport !== "number" || !(d.qsvVizViewport > 0)) return;
+       parentVh = d.qsvVizViewport;
+@@ -2924,7 +2947,7 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
    else setTimeout(init, 0);
  })();
  </script>
 -<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"9781ac8e-3458-4294-8223-b82700056190","fingerprint":{"algo":"blake3","digest":"bd40d2c0b40542c2ad595c9f0a698886ccbc046365a02dba66197518f21e286d","bytes":13402},"rows":200,"viz_args":["--preview-threshold","500"],"redacted":[],"pid":null}</script>
-+<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"bc0d081f-a814-42b2-afd4-fe15490566eb","fingerprint":{"algo":"blake3","digest":"bd40d2c0b40542c2ad595c9f0a698886ccbc046365a02dba66197518f21e286d","bytes":13402},"rows":200,"viz_args":["--preview-threshold","500"],"redacted":[],"pid":null}</script>
++<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"efc83606-96ab-417a-81db-17b70faf133e","fingerprint":{"algo":"blake3","digest":"bd40d2c0b40542c2ad595c9f0a698886ccbc046365a02dba66197518f21e286d","bytes":13402},"rows":200,"viz_args":["--preview-threshold","500"],"redacted":[],"pid":null}</script>
  <style id="qsv-live-style">
  .qsv-live-chip, .qsv-live-panel, .qsv-live-dialog, .qsv-live-toast {
    position: fixed; z-index: 2147482000; font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
+@@ -3619,6 +3642,27 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
+ })();
+ </script>
+ <div class="qsv-page-foot"><footer id="qsv-credits">Charts: <a href="https://plotly.com/javascript/" ta
 ```
 
-**File**: `examples/viz/smart_onboarding_funnel.html` (modified, +23/-2)
+**File**: `examples/viz/smart_onboarding_funnel.html` (modified, +47/-3)
 ```diff
 @@ -72,7 +72,7 @@
  <tr><td class="qsv-viz-meta-k">Rows:</td><td>60 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
  <tr><td class="qsv-viz-meta-k">Columns:</td><td>6</td></tr>
  <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
 -<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 11:48 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 15:40 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 20:17 UTC</td></tr>
  <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 27.0.1</td></tr>
  </table>
  <div class="qsv-viz-grid">
@@ -2716,25 +2814,38 @@ paral
        // gl3d panels: stop the WebGL canvas from eating the wheel inline so the page can scroll
        // (scrollZoom:false suppresses the zoom but not the canvas preventDefault; see above).
        installGl3dScrollFix(gd);
-@@ -2413,7 +2434,7 @@
+@@ -1261,6 +1282,8 @@
+   }
+   if (window.self !== window.top) {
+     addEventListener("message", function (ev) {
++      // only the embedding page knows its viewport; any other frame's answer is ignored
++      if (ev.source !== window.parent) return;
+       var d = ev.data;
+       if (!d || typeof d.qsvVizViewport !== "number" || !(d.qsvVizViewport > 0)) return;
+       parentVh = d.qsvVizViewport;
+@@ -2413,7 +2436,7 @@
    else setTimeout(init, 0);
  })();
  </script>
 -<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"e82bb658-3bf4-41f8-8561-ce6871819b9f","fingerprint":{"algo":"blake3","digest":"99982234ec29b1011a433250814fc51e8cd825ceb947e0dcfa6837b09978163c","bytes":1938},"rows":60,"viz_args":["--dictionary","onboarding_funnel_dict.schema.json","--preview-threshold","500"],"redacted":["--dictionary"],"pid":null}</script>
-+<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"73371f23-c216-46a7-a0c4-e8042736fc9a","fingerprint":{"algo":"blake3","digest":"99982234ec29b1011a433250814fc51e8cd825ceb947e0dcfa6837b09978163c","bytes":1938},"rows":60,"viz_args":["--dictionary","onboarding_funnel_dict.schema.json","--preview-threshold","500"],"redacted":["--dictionary"],"pid":null}</script>
++<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"c113b6ff-e77f-4c16-94f7-46a27f5524e2","fingerprint":{"algo":"blake3","digest":"99982234ec29b1011a433250814fc51e8cd825ceb947e0dcfa6837b09978163c","bytes":1938},"rows":60,"viz_args":["--dictionary","onboarding_funnel_dict.schema.json","--preview-threshold","500"],"redacted":["--dictionary"],"pid":null}</script>
  <style id="qsv-live-style">
  .qsv-live-chip, .qsv-live-panel, .qsv-live-dialog, .qsv-live-toast {
    position: fixed; z-index: 2147482000; font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
+@@ -3108,6 +3131,27 @@
+ })();
+ </script>
+ <div class="qsv-page-foot"><footer id="qsv-credits">Charts: <a href="https://plotly.com/javascript/" target="_blank" rel="noopener">plotly.js</a> (MIT) &middot; Table: <a href="https://datatables.net/" target="_blank" rel="noopener">DataTables</a> (MIT) &middot; Tour: <a href="https://driverjs.com/" target="_blank" rel="noopener">driver.js</a> (MIT) &middot; <a href="https://g
 ```
 
-**File**: `examples/viz/smart_regions_growth.html` (modified, +23/-2)
+**File**: `examples/viz/smart_regions_growth.html` (modified, +47/-3)
 ```diff
 @@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">regions_growth.csv — Data Schematic</h1>
  <tr><td class="qsv-viz-meta-k">Rows:</td><td>844 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
  <tr><td class="qsv-viz-meta-k">Columns:</td><td>5</td></tr>
  <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
 -<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 11:48 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 15:40 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 20:18 UTC</td></tr>
  <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 27.0.1</td></tr>
  </table>
  <div class="qsv-viz-grid">
@@ -2773,81 +2884,37 @@ paral
        // gl3d panels: stop the WebGL canvas from eating the wheel inline so the page can scroll
        // (scrollZoom:false suppresses the zoom but not the canvas preventDefault; see above).
        installGl3dScrollFix(gd);
-@@ -2432,7 +2453,7 @@ <h1 class="qsv-viz-title">regions_growth.csv — Data Schematic</h1>
+@@ -1280,6 +1301,8 @@ <h1 class="qsv-viz-title">regions_growth.csv — Data Schematic</h1>
+   }
+   if (window.self !== window.top) {
+     addEventListener("message", function (ev) {
++      // only the embedding page knows its viewport; any other frame's answer is ignored
++      if (ev.source !== window.parent) return;
+       var d = ev.data;
+       if (!d || typeof d.qsvVizViewport !== "number" || !(d.qsvVizViewport > 0)) return;
+       parentVh = d.qsvVizViewport;
+@@ -2432,7 +2455,7 @@ <h1 class="qsv-viz-title">regions_growth.csv — Data Schematic</h1>
    else setTimeout(init, 0);
  })();
  </script>
 -<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"df0da02f-c719-4852-9e4e-a2605f1dd815","fingerprint":{"algo":"blake3","digest":"11c45355afc05ac4e33e611f55109465bf22a716e0d543e5b31e5485f4300177","bytes":30192},"rows":844,"viz_args":["--preview-threshold","500"],"redacted":[],"pid":null}</script>
-+<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"ca9c6180-ee6f-4351-a644-f59ecfbc371d","fingerprint":{"algo":"blake3","digest":"11c45355afc05ac4e33e611f55109465bf22a716e0d543e5b31e5485f4300177","bytes":30192},"rows":844,"viz_args":["--preview-threshold","500"],"redacted":[],"pid":null}</script>
++<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"f1e53940-3fb2-43d5-930a-12c1da8b4546","fingerprint":{"algo":"blake3","digest":"11c45355afc05ac4e33e611f55109465bf22a716e0d543e5b31e5485f4300177","bytes":30192},"rows":844,"viz_args":["--preview-threshold","500"],"redacted":[],"pid":null}</script>
  <style id="qsv-live-style">
  .qsv-live-chip, .qsv-live-panel, .qsv-live-dialog, .qsv-live-toast {
    position: fixed; z-index: 2147482000; font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
-```
-
-**File**: `examples/viz/smart_sales.html` (modified, +23/-2)
-```diff
-@@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>500 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>13</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 11:48 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-27 15:40 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 27.0.1</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -588,6 +588,25 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
-     var fl = gd._fullLayout || {};
-     return Object.keys(fl).filter(function (k) { return /^scene\d*$/.test(k); });
-   }
-+  // A sandboxed frame without allow-same-origin gives the page an opaque origin but leaves
-+  // location.origin as the URL's; MapLibre's worker (a blob:null URL) reports "null", and the
-+  // MapLibre bundled with plotly.js 3.x drops every message whose origin differs from its own, so
-+  // the map's tiles never finish loading and the panel stays blank with no error. file:// pages are
-+  // exempt from that check. Say so above each map rather than leave an empty panel unexplained.
-+  function sandboxNotice(gd) {
-+    if (window.origin !== "null" || location.protocol === "file:") return;
-+    var lay = (gd && gd.layout) || {};
-+    if (!Object.keys(lay).some(function (k) { return /^map\d*$/.test(k); })) return;
-+    var host = gd.parentNode;
-+    if (!host || host.querySelector(":scope > .qsv-sandbox-map-note")) return;
-+    var note = document.createElement("div");
-+    note.className = "qsv-sandbox-map-note";
-+    note.setAttribute("role", "note");
-+    note.textContent = "This map can't load inside a sandboxed frame. Open this Data Schematic in its own browser tab to see it.";
-+    note.style.cssText = "margin:4px 0;padding:6px 10px;border:1px solid #d97706;border-radius:6px;" +
-+      "background:#fffbeb;color:#78350f;font:13px/1.4 system-ui,sans-serif";
-+    host.insertBefore(note, gd);
-+  }
-   function installGl3dScrollFix(gd) {
-     if (gd.__qsvGl3dFix || !sceneKeys(gd).length) return;
-     gd.__qsvGl3dFix = true;
-@@ -626,6 +645,8 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
-       // cluster bubbles: repaint plotly's black-by-default count labels and add hover/click-to-zoom
-       // (see installClusterUi). No-op for non-map panels and for maps that never cluster.
-       applyClusterUi(gd);
-+      // map panels in a sandboxed (opaque-origin) frame can't load tiles: explain the blank panel
-+      sandboxNotice(gd);
-       // gl3d panels: stop the WebGL canvas from eating the wheel inline so the page can scroll
-       // (scrollZoom:false suppresses the zoom but not the canvas preventDefault; see above).
-       installGl3dScrollFix(gd);
-@@ -2481,7 +2502,7 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
-   else setTimeout(init, 0);
+@@ -3127,6 +3150,27 @@ <h1 class="qsv-viz-title">regions_growth.csv — Data Schematic</h1>
  })();
  </script>
--<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"75ec4e93-727e-4478-bf4c-37272e92b7ef","fingerprint":{"algo":"blake3","digest":"cac5ea21c2a6669d8f3c688d8387b6b812c4633c951a793e96239ed32f1dd372","bytes":39740},"rows":500,"viz_args":["--hierarchy-style","sunburst","--max-charts","8","--preview-threshold","500"],"redacted":[],"pid":null}</script>
-+<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"27.0.1","schematic_uuid":"f2e09599-8836-4639-9fc5-4b3371e610f5","fingerprint":{"algo":"blake3","digest":"cac5ea21c2a6669d8f3c688d8387b6b812c4633c951a793e96239ed32f1dd372","bytes":39740},"rows":500,"viz_args":["--hierarchy-style","sunburst","--max-charts","8","--preview-threshold","500"],"redacted":[],"pid":null}</script>
- <style id="qsv-live-style">
- .qsv-live-chip, .qsv-live-panel, .qsv-live-dialog, .qsv-live-toast {
-   position: fixed; z-index: 2147482000; font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
+ <div class="qsv-page-foot"><footer id="qsv-credits">Charts: <a href="https://plotly.com/javascript/" tar
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4950** (2026-10-27): docs(benchmarks): regenerate Data Schematic for the 27.0.1 run (@jqnatividad)
 - **PR #4949** (2026-10-27): feat(viz): smart Data Schematics report their own height when framed (@jqnatividad)
 - **PR #4948** (2026-10-27): fix(get): --output overwrite temp starts owner-only and keeps the group (@jqnatividad)
 - **PR #4947** (2026-10-27): fix(viz): explain blank map panels in sandboxed iframes (@jqnatividad)
 - **PR #4945** (2026-10-27): fix(get): --output files follow the umask, not the cache's 0600 (@jqnatividad)
 - **PR #4944** (2026-10-27): fix(get): step past stale cache temps; tighten a symlinked cache root (@jqnatividad)
-- **PR #4943** (2026-10-27): build(deps): bump anthropics/claude-code-action from 1.0.261 to 1.0.262 (@dependabot[bot])
 
 ---
 
@@ -2867,32 +2934,30 @@ paral
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. get): --output overwrite temp starts owner-only and keeps the group (#4948)
+## X. docs(benchmarks): regenerate Data Schematic for the 27.0.1 run (#4950)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `benchmarks/Benchmarks.wiki.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5fae42a4`: get): --output overwrite temp starts owner-only and keeps the group (#4948). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `acf15714`: docs(benchmarks): regenerate Data Schematic for the 27.0.1 run (#4950). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `benchmarks/Benchmarks.wiki.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## [Unreleased]
-
-### Fixed
-* `get`: overwriting an existing file with `--output` (`get`, `get cache-fetch`) no longer briefly exposes the new contents: the temp file that replaces it is owner-only (`0600`) while the data is written, and takes the old file's mode only afterwards. It also keeps the old file's group, so a group-readable file isn't handed to a different group; where the group can't be kept, the new file isn't group-readable, and other users get no access the old file denied its group. Setuid/setgid bits aren't carried over, as an in-place overwrite would have cleared them. Follow-up to [#4945](https://github.com/dathere/qsv/pull/4945). ([#4948](https://github.com/dathere/qsv/pull/4948))
-
+qsv's benchmark suite runs 303 benchmarks on a **1,000,000-row × 41-column, 520 MB**
+_Last generated for qsv 27.0.1 (aarch64-apple-darwin). Regenerate with
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+qsv's benchmark suite runs 305 benchmarks on a **1,000,000-row × 41-column, 520 MB**
+_Last generated for qsv 26.0.0 (aarch64-apple-darwin). Regenerate with
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5fae42a4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `acf15714` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lysine-dev-okio-learnings.md`  
 > **Source**: github ([https://github.com/lysine-dev/okio](https://github.com/lysine-dev/okio))  
-> **Source Version**: `334c028c`  
+> **Source Version**: `3377b13c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T10:16:58.529Z  
+> **Timestamp**: 2026-10-27T22:49:51.744Z  
 > **Learning ID**: `learn-github-lysine-dev-okio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lysine-dev-okio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lysine-dev/okio](https://github.com/lysine-dev/okio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T10:16:58.331Z  
+> **Harvest Timestamp**: 2026-10-27T22:49:51.048Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern I/O library for Android, Java, and Kotlin Multiplatform.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 9052 stars
+- **Stars / Engagement**: 9054 stars
 
 ---
 
@@ -1200,11 +1200,11 @@ internal open external class Stats : StatsBase<Number> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1887** (2026-10-21): **Update actions/setup-java action to v6.1.0**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [actions/setup-java](https://redirect.github.com/actions/setup-java) | action | minor | `v6.0.1` → `v6.1.0` |  ---  ### Release Notes  <details> <summary>actions/setup-java</summary>  ### [`v6.1.0`](https://redirect.github.com/actions/setup-java/releases/tag/v6.1.0)  [Compare Source](https://redirect.github.com/actions/setup-java/compare/v6.0.1...v6.1.0)  #### What's Changed  - Preserve compound Liberica build versions from .sdkmanrc by [@&#8203;brunoborges](https://redirect.github.com/brunoborges) with [@&#8203;Copilot](https://redirect.github.com/Copilot) in [#&#8203;1268](https://redirect.github.com/actions/setup-java/pull/1268) - Support Temurin on Linux RISC-V by [@&#8203;yawkat](https://redirect.github.com/yawkat) in [#&#8203;1269](https://redirect.github.com/actions/setup-java/pull/1269) - Stop GPG agent before removing signature-verification home by [@&#8203;brunoborges](https://redirect.github.com/brunoborges) with [@&#8203;Copilot](https://redirect.github.com/Copilot) in [#&#8203;1273](https://redirect.github.com/actions/setup-java/pull/1273) - Prefer Zulu 4-segment hotfix builds when resolving version ranges by [@&#8203;brunoborges](https://redirect.github.com/brunoborges) in [#&#8203;1278](https://redirect.github.com/actions/setup-java/pull/1278) - Support Temurin JEP 322 patch versions like 26.0.2.1+1 by [@&#8203;brunoborges](https://redirect.github.com/brunoborges) 
+- **Issue #1889** (2026-10-27): **test: accept a late signal in AwaitSignalTest.signaled**
+  *Symptoms*: ## Why  The test can fail when a signal arrives late, even though the wait returns before its timeout.  AwaitSignalTest.signaled checked elapsed time against a narrow expectation of 1000 ms. Scheduling the signal after 1000 ms does not guarantee it will execute that promptly.  ## What changed  The test now records that the scheduled callback signaled the condition while holding the lock and checks that flag after the wait returns. It accepts elapsed times of at least 950 ms and less than 4500 ms, allowing scheduling delays while keeping completion below the configured 5000 ms timeout.  ## Testing  The compilation check `./gradlew --no-daemon :okio:testClasses` timed out after 300 seconds; no test execution was shown.  Fixes #1509 
 
-- **Issue #1885** (2026-10-21): **Update dependency com.gradleup.tapmoc:com.gradleup.tapmoc.gradle.plugin to v0.5.0**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [com.gradleup.tapmoc:com.gradleup.tapmoc.gradle.plugin](https://redirect.github.com/GradleUp/tapmoc) | `0.4.2` → `0.5.0` | ![age](https://developer.mend.io/api/mc/badges/age/maven/com.gradleup.tapmoc:com.gradleup.tapmoc.gradle.plugin/0.5.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/com.gradleup.tapmoc:com.gradleup.tapmoc.gradle.plugin/0.4.2/0.5.0?slim=true) |  ---  ### Release Notes  <details> <summary>GradleUp/tapmoc (com.gradleup.tapmoc:com.gradleup.tapmoc.gradle.plugin)</summary>  ### [`v0.5.0`](https://redirect.github.com/GradleUp/tapmoc/blob/HEAD/CHANGELOG.md#050)  *2026-10-08*  Tapmoc 0.5.0 changes the internal machinery that tried to auto-detect the api/runtime outgoing configuration for dependency checking. Instead of using Gradle attribute-aware resolution, Tapmoc 0.5.0 instead acts on "known" outgoing configuration names such as `"apiElements"`, `"runtimeElements"`, `"releaseApiElements"`, etc...  Relying only on attributes was creating hard to diagnose resolution issues (see [#&#8203;100](https://redirect.github.com/GradleUp/tapmoc/issues/100), [gradle/gradle#12126](https://redirect.github.com/gradle/gradle/issues/12126) and <https://github.com/liutikas/gmm-wiki>).  This change should be transparent for most cases unless you de
+- **Issue #1888** (2026-10-26): **Update Gradle to v9.8.2**
+  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [gradle](https://gradle.org) ([source](https://redirect.github.com/gradle/gradle)) | patch | `9.8.1` → `9.8.2` |  ---  ### Release Notes  <details> <summary>gradle/gradle (gradle)</summary>  ### [`v9.8.2`](https://redirect.github.com/gradle/gradle/releases/tag/v9.8.2): 9.8.2  [Compare Source](https://redirect.github.com/gradle/gradle/compare/v9.8.1...v9.8.2)  The Gradle team is excited to announce Gradle 9.8.2.  Here are the highlights of this release:  - Java 27 support - Maven mirror settings reuse - Linked problem locations in build output  [Read the Release Notes](https://docs.gradle.org/9.8.2/release-notes.html)  We would like to thank the following community members for their contributions to this release of Gradle: [Aman Gautam](https://redirect.github.com/Gautam-aman), [Björn Kautler](https://redirect.github.com/Vampire), [Eng Zer Jun](https://redirect.github.com/Juneezee), [Hashim Khan](https://redirect.github.com/Hashim1999164), [Julian Krannich](https://redirect.github.com/jkrannich), [KBS](https://redirect.github.com/youdie006), [Labh R Jethe](https://redirect.github.com/itsCodeTide), [Mark Dodgson](https://redirect.github.com/doddi), [Maxim](https://redirect.github.com/kroune), [monkey](https://redirect.github.com/Develop-KIM), [nataphon-ktsystems](https://redirect.github.com/nataphon-ktsystems), [Paul King](https://redirect.github.com/paulk-asert), [Qiu Tian](https://redirect.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1221,111 +1221,32 @@ internal open external class Stats : StatsBase<Number> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3f58c6bc` (2026-10-21)
-**Commit Message**: Allow throttler to apply the new rate immediately (#1880)
+### Incident Patch 1: `3377b13c` (2026-10-26)
+**Commit Message**: Update Gradle to v9.8.2 (#1888)
 
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
----------
-Co-authored-by: Jake Wharton <[REDACTED_EMAIL]>
-
-**File**: `okio/src/jvmMain/kotlin/okio/Throttler.kt` (modified, +7/-5)
+**File**: `gradle/wrapper/gradle-wrapper.properties` (modified, +2/-2)
 ```diff
-@@ -39,20 +39,21 @@ import kotlin.concurrent.withLock
-  *    bytes that will be returned before any waiting.
-  */
- class Throttler internal constructor(
-+  private val getCurrentNanoTime: () -> Long,
-+) {
-   /**
-    * The nanoTime that we've consumed all bytes through. This is never greater than the current
--   * nanoTime plus nanosForMaxByteCount.
-+   * nanoTime plus maxByteCount.
-    */
--  private var allocatedUntil: Long,
--) {
-+  private var allocatedUntil: Long = getCurrentNanoTime()
-   private var bytesPerSecond: Long = 0L
-   private var waitByteCount: Long = 8 * 1024 // 8 KiB.
-   private var maxByteCount: Long = 256 * 1024 // 256 KiB.
- 
-   val lock: ReentrantLock = ReentrantLock()
-   val condition: Condition = lock.newCondition()
- 
--  constructor() : this(allocatedUntil = System.nanoTime())
-+  constructor() : this(getCurrentNanoTime = System::nanoTime)
- 
-   /** Sets the rate at which bytes will be allocated. Use 0 for no limit. */
-   @JvmOverloads
-@@ -66,6 +67,7 @@ class Throttler internal constructor(
-       require(waitByteCount > 0)
-       require(maxByteCount >= waitByteCount)
- 
-+      this.allocatedUntil = getCurrentNanoTime()
-       this.bytesPerSecond = bytesPerSecond
-       this.waitByteCount = waitByteCount
-       this.maxByteCount = maxByteCount
-@@ -82,7 +84,7 @@ class Throttler internal constructor(
- 
-     lock.withLock {
-       while (true) {
--        val now = System.nanoTime()
-+        val now = getCurrentNanoTime()
-         val byteCountOrWaitNanos = byteCountOrWaitNanos(now, byteCount)
-         if (byteCountOrWaitNanos >= 0) return byteCountOrWaitNanos
-         condition.awaitNanos(-byteCountOrWaitNanos)
-```
-
-**File**: `okio/src/jvmTest/kotlin/okio/ThrottlerTakeTest.kt` (modified, +25/-1)
-```diff
-@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test
- class ThrottlerTakeTest {
-   private var nowNanos = 0L
-   private var elapsedNanos = 0L
--  private val throttler = Throttler(allocatedUntil = nowNanos)
-+  private val throttler = Throttler(getCurrentNanoTime = ::nowNanos)
- 
-   @Test fun takeByByteCount() {
-     throttler.bytesPerSecond(bytesPerSecond = 20, waitByteCount = 5, maxByteCount = 10)
-@@ -54,6 +54,30 @@ class ThrottlerTakeTest {
-     assertElapsed(250L)
-   }
- 
-+  @Test fun rateMustBeAppliedImmediately() {
-+    val firstRate = 1 * 1024L // 1 KiB/s
-+    val secondRate = 10 * 1024L // 10 KiB/s
-+
-+    // initial rate
-+    throttler.bytesPerSecond(
-+      bytesPerSecond = firstRate,
-+      waitByteCount = firstRate,
-+      maxByteCount = firstRate,
-+    )
-+    take(firstRate)
-+    assertElapsed(0L)
-+
-+    // increase the rate
-+    throttler.bytesPerSecond(
-+      bytesPerSecond = secondRate,
-+      waitByteCount = secondRate,
-+      maxByteCount = secondRate,
-+    )
-+    // take should immediately return our requested byte count without waiting
-+    take(secondRate)
-+    assertElapsed(0L)
-+  }
-+
-   @Test fun takeFullyTimeElapsed() {
-     throttler.bytesPerSecond(bytesPerSecond = 20, waitByteCount = 5, maxByteCount = 10)
- 
+@@ -1,7 +1,7 @@
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+-distributionSha256Sum=dce76f55f8e251a3a1f130eb120f30b3d271de2b76c9b0729d316b5a1b6dc01f
+-distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.1-bin.zip
++distributionSha256Sum=21bd5da2de49b642904077f38c0efdc7778e92b3ed0889392dca61b97e389607
++distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.2-bin.zip
+ networkTimeout=10000
+ retries=0
+ retryBackOffMs=500
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1889** (closed): test: accept a late signal in AwaitSignalTest.signaled (@mvanhorn)
+- **PR #1888** (2026-10-26): Update Gradle to v9.8.2 (@renovate[bot])
 - **PR #1887** (2026-10-21): Update actions/setup-java action to v6.1.0 (@renovate[bot])
 - **PR #1885** (2026-10-21): Update dependency com.gradleup.tapmoc:com.gradleup.tapmoc.gradle.plugin to v0.5.0 (@renovate[bot])
 - **PR #1884** (2026-10-19): Update dependency python to 3.15 (@renovate[bot])
 - **PR #1882** (2026-10-14): Update Gradle to v9.8.1 (@renovate[bot])
-- **PR #1881** (2026-10-14): Update actions/upload-artifact action to v7.0.2 (@renovate[bot])
-- **PR #1880** (2026-10-21): fix: allow throttler to apply the new rate immediately (@amir1376)
 
 ---
 
@@ -1345,38 +1266,30 @@ Co-authored-by: Jake Wharton <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Allow throttler to apply the new rate immediately (#1880)
+## X. Update Gradle to v9.8.2 (#1888)
 
 **RULE**:
-When implementing operations in `okio/src/jvmMain/kotlin/okio/Throttler.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lysine-dev/okio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gradle/wrapper/gradle-wrapper.properties`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lysine-dev/okio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3f58c6bc`: Allow throttler to apply the new rate immediately (#1880). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3377b13c`: Update Gradle to v9.8.2 (#1888). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `okio/src/jvmMain/kotlin/okio/Throttler.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/wrapper/gradle-wrapper.properties`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-  private val getCurrentNanoTime: () -> Long,
-) {
-   * nanoTime plus maxByteCount.
-  private var allocatedUntil: Long = getCurrentNanoTime()
-  constructor() : this(getCurrentNanoTime = System::nanoTime)
-      this.allocatedUntil = getCurrentNanoTime()
-        val now = getCurrentNanoTime()
+distributionSha256Sum=21bd5da2de49b642904077f38c0efdc7778e92b3ed0889392dca61b97e389607
+distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.2-bin.zip
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-   * nanoTime plus nanosForMaxByteCount.
-  private var allocatedUntil: Long,
-) {
-  constructor() : this(allocatedUntil = System.nanoTime())
-        val now = System.nanoTime()
+distributionSha256Sum=dce76f55f8e251a3a1f130eb120f30b3d271de2b76c9b0729d316b5a1b6dc01f
+distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.1-bin.zip
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3f58c6bc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3377b13c` are properly handled with clean fallback behavior.

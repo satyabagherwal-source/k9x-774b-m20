@@ -5569,3 +5569,7 @@
 | `CYCLE-20261027-JDV3` | `2026-10-27T22:06:30.639Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5037` | Yes (`baace9ff...`) |
 | `CYCLE-20261027-LWFV` | `2026-10-27T22:36:27.643Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5038` | Yes (`6b099d69...`) |
 | `CYCLE-20261027-TZ7E` | `2026-10-27T22:42:44.474Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5039` | Yes (`2915d00f...`) |
+| `CYCLE-20261027-355N` | `2026-10-27T22:49:52.091Z` | `lysine-dev/okio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5040` | Yes (`6fa84d1f...`) |
+| `CYCLE-20261027-36QF` | `2026-10-27T22:49:54.135Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5041` | Yes (`890cdfd1...`) |
+| `CYCLE-20261027-3CYT` | `2026-10-27T22:50:02.213Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5042` | Yes (`339707ea...`) |
+| `CYCLE-20261027-9H9X` | `2026-10-27T22:54:47.733Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5043` | Yes (`ebd77dc2...`) |

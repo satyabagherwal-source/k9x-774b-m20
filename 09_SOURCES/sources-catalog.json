@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "25abe0aa",
+    "sourceVersion": "acf15714",
     "license": "NOASSERTION",
-    "contentHash": "7c101d96d3d7b2952683a0f6043f131d3b836859b75def0e67c08389f76294f8",
-    "lastHarvestedAt": "2026-10-27T20:32:06.203Z",
+    "contentHash": "339707eaffe1c49a9bff286c56942954cf082fbad87061e690f8530c7a0d9ac8",
+    "lastHarvestedAt": "2026-10-27T22:50:02.216Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -2783,10 +2783,10 @@
     "repository": "cachix/devenv",
     "platform": "github",
     "sourceUrl": "https://github.com/cachix/devenv",
-    "sourceVersion": "7d3fbffc",
+    "sourceVersion": "b31d7faa",
     "license": "Apache-2.0",
-    "contentHash": "002f05a275b0ec80650e8c9532a395639447a215f421580af0de7134af833cf5",
-    "lastHarvestedAt": "2026-10-26T10:33:27.188Z",
+    "contentHash": "ebd77dc2c879a739db7ecf8fa1a74000d533111e91fb61aae78eb7f7fbebcb4e",
+    "lastHarvestedAt": "2026-10-27T22:54:47.736Z",
     "learningId": "learn-github-cachix-devenv"
   },
   "pubkey-rxdb": {
@@ -6653,10 +6653,10 @@
     "repository": "lysine-dev/okio",
     "platform": "github",
     "sourceUrl": "https://github.com/lysine-dev/okio",
-    "sourceVersion": "334c028c",
+    "sourceVersion": "3377b13c",
     "license": "Apache-2.0",
-    "contentHash": "9820bd0d0f88195fe020c993187d4b96868b3b2e274c4753dadda0aad8b9ce5e",
-    "lastHarvestedAt": "2026-10-25T10:16:58.794Z",
+    "contentHash": "6fa84d1f7b6c76c28639b425ee987c529f91bfa784a13b741200c170a89095ef",
+    "lastHarvestedAt": "2026-10-27T22:49:52.094Z",
     "learningId": "learn-github-lysine-dev-okio"
   },
   "nginx-kubernetes-ingress": {
@@ -7333,10 +7333,10 @@
     "repository": "loft-sh/vcluster",
     "platform": "github",
     "sourceUrl": "https://github.com/loft-sh/vcluster",
-    "sourceVersion": "e702d7ba",
+    "sourceVersion": "2dd27678",
     "license": "Apache-2.0",
-    "contentHash": "5b1cea13e7516ab30f008965f51f5bbcb387ca6a948990380189680598751cc7",
-    "lastHarvestedAt": "2026-10-25T04:53:53.765Z",
+    "contentHash": "890cdfd1b9b73e92ee7264da32eb3e44b062c50a7b9321a7a1ace65cfe8e9b26",
+    "lastHarvestedAt": "2026-10-27T22:49:54.138Z",
     "learningId": "learn-github-loft-sh-vcluster"
   },
   "arkivanov-decompose": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md`  
 > **Source**: github ([https://github.com/loft-sh/vcluster](https://github.com/loft-sh/vcluster))  
-> **Source Version**: `e702d7ba`  
+> **Source Version**: `2dd27678`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T04:53:53.421Z  
+> **Timestamp**: 2026-10-27T22:49:53.795Z  
 > **Learning ID**: `learn-github-loft-sh-vcluster`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/loft-sh/vcluster](https://github.com/loft-sh/vcluster))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T04:53:51.765Z  
+> **Harvest Timestamp**: 2026-10-27T22:49:53.208Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: vCluster creates tenant clusters: fully isolated environments delivered as managed Kubernetes, or as the foundation for Slurm, Ray, Run:ai and inference clusters. Each gets its own API server, CRDs and RBAC, and runs on an existing cluster or standalone on bare metal. CNCF Certified Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11356 stars
+- **Stars / Engagement**: 11365 stars
 
 ---
 
@@ -1465,541 +1465,116 @@ func ResumeVCluster(ctx context.Context, kubeClient *kubernetes.Clientset, name,
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e702d7ba` (2026-10-23)
-**Commit Message**: fix(karpenter): reap nodes whose platform machine is gone (#2608)
+### Incident Patch 1: `2dd27678` (2026-10-27)
+**Commit Message**: fix(vclusterctl): prevent panic when listing on no secrets (#2636)
 
-* fix(karpenter): reap nodes whose platform machine is gone
+Monorepo-Commit: d2808f20a3b2d948816224df6040ca580f84fbb6
 
-* chore(deps): bump loft-sh api and agentapi to v5.0.0-alpha.6
-
-Monorepo-Commit: e7d0b45ec0c2e99b049ba0dd6728c6bf1695ce8f
-
-**File**: `go.mod` (modified, +2/-2)
+**File**: `cmd/vclusterctl/cmd/platform/get/secret.go` (modified, +1/-1)
 ```diff
-@@ -23,9 +23,9 @@ require (
- 	github.com/invopop/jsonschema v0.14.0
- 	github.com/kubernetes-csi/external-snapshotter/client/v8 v8.6.0
- 	github.com/loft-sh/admin-apis v0.0.0-20260928151145-c0a92a2b2cf8
--	github.com/loft-sh/agentapi/v5 v5.0.0-alpha.1
-+	github.com/loft-sh/agentapi/v5 v5.0.0-alpha.6
- 	github.com/loft-sh/analytics-client v0.0.0-20240219162240-2f4c64b2494e
--	github.com/loft-sh/api/v5 v5.0.0-alpha.1
-+	github.com/loft-sh/api/v5 v5.0.0-alpha.6
- 	github.com/loft-sh/e2e-framework v0.0.0-20260721073036-aa8d4d6d0958
- 	github.com/loft-sh/image v0.0.0-20250625154753-87447a6ad364
- 	github.com/loft-sh/utils v0.0.29
+@@ -317,5 +317,5 @@ func (cmd *SecretCmd) listSharedSecretsWithFallback(ctx context.Context, namespa
+ 		}
+ 		errs = append(errs, fmt.Errorf("listing shared secrets in namespace %s failed: %w", ns, err))
+ 	}
+-	return nil, stderrors.Join(errs...)
++	return secrets, stderrors.Join(errs...)
+ }
 ```
 
-**File**: `go.sum` (modified, +4/-4)
+**File**: `cmd/vclusterctl/cmd/platform/get/secret_test.go` (added, +82/-0)
 ```diff
-@@ -348,12 +348,12 @@ github.com/lithammer/dedent v1.1.0 h1:VNzHMVCBNG1j0fh3OrsFRkVUwStdDArbgBWoPAffkt
- github.com/lithammer/dedent v1.1.0/go.mod h1:jrXYCQtgg0nJiN+StA2KgR7w6CiQNv9Fd/Z9BP0jIOc=
- github.com/loft-sh/admin-apis v0.0.0-20260928151145-c0a92a2b2cf8 h1:cWuxRoc6g0QDRxmibH6DVukNibs88Mmdao56Didm5Vg=
- github.com/loft-sh/admin-apis v0.0.0-20260928151145-c0a92a2b2cf8/go.mod h1:pp+2PgOsRCTb1DXnEev/HCc0gvj5t0nHuTIMU8C8b90=
--github.com/loft-sh/agentapi/v5 v5.0.0-alpha.1 h1:slgrIXISUjIMyEL+Z6AnIwwoQb5BLNThHPwPE9QuHSQ=
--github.com/loft-sh/agentapi/v5 v5.0.0-alpha.1/go.mod h1:sXdRxueSDpaEBDHeyjkEtHyvHdQ3HRyALZ5dIH/dpjk=
-+github.com/loft-sh/agentapi/v5 v5.0.0-alpha.6 h1:72w4OZmI0sMbB6j13XOoH8rpS46wwrTpq/JiscVDYY0=
-+github.com/loft-sh/agentapi/v5 v5.0.0-alpha.6/go.mod h1:sXdRxueSDpaEBDHeyjkEtHyvHdQ3HRyALZ5dIH/dpjk=
- github.com/loft-sh/analytics-client v0.0.0-20240219162240-2f4c64b2494e h1:JcPnMaoczikvpasi8OJ47dCkWZjfgFubWa4V2SZo7h0=
- github.com/loft-sh/analytics-client v0.0.0-20240219162240-2f4c64b2494e/go.mod h1:FFWcGASyM2QlWTDTCG/WBVM/XYr8btqYt335TFNRCFg=
--github.com/loft-sh/api/v5 v5.0.0-alpha.1 h1:pSyW08z2r4qKhABTqHC7cfVhDDinlrj+pYLIht1EtNc=
--github.com/loft-sh/api/v5 v5.0.0-alpha.1/go.mod h1:Yr+BOuhcYpw+YHm05MM1baxd8VOhXNnbxo7YCG5Kdlo=
-+github.com/loft-sh/api/v5 v5.0.0-alpha.6 h1:hKjdjoQbONk3fooSPFGkw0NxwL8a+dQhFnfEUuR3Jks=
-+github.com/loft-sh/api/v5 v5.0.0-alpha.6/go.mod h1:bTEKAZz9EHt4FM8H9RVjhuUfBjsRnwF53GpWwLl0jlc=
- github.com/loft-sh/apiserver v0.0.0-20260707184419-aef558a5ae8d h1:i+nBgAm6Wuc/9ALNniOdRWJfgz/og5AOgbs4pJVolqE=
- github.com/loft-sh/apiserver v0.0.0-20260707184419-aef558a5ae8d/go.mod h1:YfIUirXHfVcUb3bVtj7yzIAVT6etrHj9wkOkMgnEuz0=
- github.com/loft-sh/e2e-framework v0.0.0-20260721073036-aa8d4d6d0958 h1:ruX0UEryszOsjlDf38QtEK1zn9xMhy4C9iJazauVjIg=
-```
-
-**File**: `vendor/github.com/loft-sh/agentapi/v5/pkg/apis/loft/cluster/types.go` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+package cluster
-+
-+import metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+
-+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-+
-+type Metal3BMCConsoleOptions struct {
-+	metav1.TypeMeta `json:",inline"`
-+
-+	// Method is the BMC console transport: "ssh" or "ipmi" (Serial-over-LAN).
-+	Method string `json:"method,omitempty"`
-+
-+	// Port on the BMC. Defaults to 22 for ssh and 623 for ipmi.
-+	// +optional
-+	Port int `json:"port,omitempty"`
-+
-+	// Encryption activates the IPMI Serial-over-LAN payload with encryption and
-+	// authentication, negotiating an AES cipher suite. Only valid for ipmi.
-+	// +optional
-+	Encryption bool `json:"encryption,omitempty"`
-+}
-```
-
-**File**: `vendor/github.com/loft-sh/agentapi/v5/pkg/apis/loft/cluster/v1/metal3bmc_types.go` (added, +67/-0)
-```diff
-@@ -0,0 +1,67 @@
-+package v1
+@@ -0,0 +1,82 @@
++package get
 +
 +import (
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+)
++	"errors"
++	"testing"
 +
-+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-+
-+// Metal3BMC addresses the BMC of the metal3 BareMetalHost with the same name and
-+// namespace. It has no verbs of its own and only carries the redfish and console
-+// subresources, which the agent serves from inside the cluster that can reach the BMC.
-+// +k8s:openapi-gen=true
-+// +resource:path=metal3bmcs,rest=Metal3BMCREST
-+// +subresource:request=Metal3BMCRedfish,path=redfish,kind=Metal3BMCRedfish,rest=Metal3BMCRedfishREST
-+// +subresource:request=Metal3BMCConsole,path=console,kind=Metal3BMCConsole,rest=Metal3BMCConsoleREST
-+type Metal3BMC struct {
-+	metav1.TypeMeta   `json:",inline"`
-+	metav1.ObjectMeta `json:"metadata,omitempty"`
-+
-+	Spec   Metal3BMCSpec   `json:"spec,omitempty"`
-+	Status Metal3BMCStatus `json:"status,omitempty"`
-+}
-+
-+type Metal3BMCSpec struct {
-+}
-+
-+type Metal3BMCStatus struct {
-+}
-+
-+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-+
-+// Metal3BMCRedfish sends a single Redfish request to the BareMetalHost's BMC and
-+// returns the BMC's response. A BMC HTTP status is carried in Status.StatusCode;
-+// only resolution or transport failures surface as an API error.
-+// +subresource-request
-+type Metal3BMCRedfish struct {
-+	metav1.TypeMeta   `json:",inline"`
-+	metav1.ObjectMeta `json:"metadata,omitempty"`
-+
-+	Spec   Metal3BMCRedfishSpec   `json:"spec,omitempty"`
-+	Status Metal3BMCRedfishStatus `json:"status,omitempty"`
-+}
-+
-+// Metal3BMCRedfishSpec is the Redfish request to send to the BMC.
-+type Metal3BMCRedfishSpec struct {
-+	Method string `json:"method,omitempty"`
-+	Path   string `json:"path,omitempty"`
-+	Body   []byte `json:"body,omitempty"`
-+}
-+
-+// Metal3BMCRedfishStatus is the BMC's response.
-+type Metal3BMCRedfishStatus struct {
-+	StatusCode int                 `json:"statusCode,omitempty"`
-+	Header     map[string][]string `json:"header,omitempty"`
-+	Body       []byte              `json:"body,omitempty"`
-+}
-+
-+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-+
-+// Metal3BMCConsole attaches a WebSocket (v4.channel.k8s.io) to the BareMetalHost's
-+// BMC serial console over SSH or IPMI Serial-over-LAN. It is connect-only; options
-+// are passed as Metal3BMCConsoleOptions query parameters.
-+// +subresource-request
-+type Metal3BMCConsole struct {
-+	metav1.TypeMeta   `json:",inline"`
-+	metav1.ObjectMeta `json:"metadata,omitempty"`
-+}
-```
-
-**File**: `vendor/github.com/loft-sh/agentapi/v5/pkg/apis/loft/cluster/v1/options.go` (added, +37/-0)
-```diff
-@@ -0,0 +1,37 @@
-+package v1
-+
-+import (
++	managementv1 "github.com/loft-sh/api/v5/pkg/apis/management/v1"
++	loftclient "github.com/loft-sh/api/v5/pkg/clientset/versioned"
++	loftfake "github.com/loft-sh/api/v5/pkg/clientset/versioned/fake"
++	"github.com/loft-sh/log"
++	"github.com/loft-sh/vcluster/pkg/platform/clihelper"
++	"github.com/loft-sh/vcluster/pkg/platform/kube"
 +	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 +	"k8s.io/apimachinery/pkg/runtime"
++	clienttesting "k8s.io/client-go/testing"
 +)
 +
-+// +k8s:conversion-gen:explicit-from=net/url.Values
-+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-+
-+type Metal3BMCConsoleOptions struct {
-+	metav1.TypeMeta `json:",inline"`
-+
-+	// Method is the BMC console transport: "ssh" or "ipmi" (Serial-over-LAN).
-+	Method string `json:"method,omitempty"`
-+
-+	// Port on the BMC. Defaults to 22 for ssh and 623 for ipmi.
-+	// +optional
-+	Port int `json:"port,omitempty"`
-+
-+	// Encryption activates the IPMI Serial-over-LAN payload with encryption and
-+	// authentication, negotiating an AES cipher suite. Only valid for ipmi.
-+	// +optional
-+	Encryption bool `json:"encryption,omitempty"`
++type secretTestClient struct {
++	kube.Interface
++	loftClient loftclient.Interface
 +}
 +
-+func InstallOptions(scheme *runtime.Scheme) error {
-+	return addKnownOptionsTypes(scheme)
++func (c *secretTestClient) Loft() loftclient.Interface {
++	return c.loftClient
 +}
 +
-+func addKnownOptionsTypes(scheme *runtime.Scheme) error {
-+	scheme.AddKnownTypes(
-+		SchemeGroupVersion,
-+		&Metal3BMCConsoleOptions{},
-+	)
-+	return nil
++func TestListSharedSecretsWithFallback(t *testing.T) {
++	listErr := errors.New("list failed")
++	tests := []struct {
++		name            string
++		namespace       string
++		secretNamespace string
++		failedNamespace string
++		wantError       bool
++	}{
++		{name: "all namespaces empty"},
++		{name: "explicit namespace and fallbacks empty", namespace: "custom"},
++		{name: "default namespace has a secret", secretNamespace: clihelper.DefaultPlatformNamespace},
++		{name: "legacy namespace has a secret", secretNamespace: clihelper.LegacyPlatformNamespace},
++		{name: "explicit namespace has a secret", namespace: "custom", secretNamespace: "custom"},
++		{name: "list errors are preserved", failedNamespace: clihelper.DefaultPlatformNamespace, wantError: true},
++		{name: "fallback succeeds after an error", failedNamespace: clihelper.DefaultPlatformNamespace, secretNamespace: clihelper.LegacyPlatformNamespace},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			var objects []runtime.Object
++			if tt.secretNamespace != "" {
++				objects = append(objects, &managementv1.SharedSecret{
++					ObjectMeta: metav1.ObjectMeta{Name: "test-secret", Namespace: tt.secretNamespace},
++				})
++			}
++			client := loftfake.NewSimpleClientset(objects...)
++			client.PrependReactor("list", "sharedsecrets", func(action clienttesting.Action) (bool, runtime.Object, error) {
++				if action.GetNamespace() == tt.failedNamespace {
++					return true, nil, listErr
++				}
++				return false, nil, nil
++			})
++			cmd := &SecretCmd{log: log.GetInstance()}
++			secrets, err := cmd.listSharedSecretsWithFallback(t.Context(), tt.namespace, &secretTestClient{loftClient: client})
++			if tt.wantError {
++				if !errors.Is(err, listErr) {
++					t.Fatalf("expected list error, got %v", err)
++				}
++				return
++			}
++			if err != nil {
++				t.Fatal(err)
++			}
++			if secrets == nil {
++				t.Fatal("successful list must return a non-nil list, even when no secrets exist")
++			}
++			if tt.secretNamespace == "" {
++				if len(secrets.Items) != 0 {
++					t.Fatalf("expected no secrets, got %v", secrets.Items)
++				}
++			} else if len(secrets.Items) != 1 || secrets.Items[0].Namespace != tt.secretNamespace || secrets.Items[0].Name != "test-secret" {
++				t.Fatalf("expected test-secret in namespace %s, got %v", tt.secretNamespace, secrets.Items)
++			}
++		})
++	}
 +}
-```
-
-**File**: `vendor/github.com/loft-sh/agentapi/v5/pkg/apis/loft/cluster/v1/zz_generated.api.register.go` (modified, +41/-0)
-```diff
-@@ -18,6 +18,10 @@ func addKnownTypes(scheme *runtime.Scheme) error {
- 		&IronicNode{},
- 		&IronicNodeList{},
- 		&IronicNodeAbort{},
-+		&Metal3BMC{},
-+		&Metal3BMCList{},
-+		&Metal3BMCConsole{},
-+		&Metal3BMCRedfish{},
- 	)
- 	return nil
- }
-@@ -32,6 +36,19 @@ var (
- 			nil,
- 			cluster.NewIronicNodeAbortREST,
- 		),
-+		cluster.ClusterMetal3BMCStorage,
-+		builders.NewApiResourceWithStorage(
-+			cluster.InternalMetal3BMCConsoleREST,
-+			func() runtime.Object { return &Metal3BMCConsole{} }, // Register versioned resource
-+			nil,
-+			cluster.NewMetal3BMCConsoleREST,
-+		),
-+		builders.NewApiResourceWithStorage(
-+			cluster.InternalMetal3BMCRedfishREST,
-+			func() runtime.Object { return &Metal3BMCRedfish{} }, // Register versioned resource
-+			nil,
-+			cluster.NewMetal3BMCRedfishREST,
-+		),
- 	)
- 
- 	// Required by code generated by go2idl
-@@ -86,3 +103,27 @@ type IronicNodeAbortList struct {
- 	metav1.ListMeta `json:"metadata,omitempty"`
- 	Items           []IronicNodeAbort `json:"items"`
- }
-+
-+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-+
-+type Metal3BMCList struct {
-+	metav1.TypeMeta `json:",inline"`
-+	metav1.ListMeta `json:"metadata,omitempty"`
-+	Items           []Metal3BMC `json:"items"`
-+}
-+
-+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-+
-+type Metal3BMCConsoleList struct {
-+	metav1.TypeMeta `json:",inline"`
-+	metav1.ListMeta `json:"metadata,omitempty"`
-+	Items           []Metal3BMCConsole `json:"items"`
-+}
-+
-+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-+
-+type Metal3BMCRedfishList struct {
-+	metav1.TypeMeta `json:",inline"`
-+	metav1.ListMeta `json:"metadata,omitempty"`
-+	Items           []Metal3BMCRedfish `json:"items"`
-+}
-```
-
-**File**: `vendor/github.com/loft-sh/agentapi/v5/pkg/apis/loft/cluster/v1/zz_generated.conversion.go` (modified, +406/-0)
-```diff
-@@ -6,6 +6,7 @@
- package v1
- 
- import (
-+	url "net/url"
- 	unsafe "unsafe"
- 
- 	cluster "github.com/loft-sh/agentapi/v5/pkg/apis/loft/cluster"
-@@ -161,6 +162,121 @@ func RegisterConversions(s *runtime.Scheme) error {
- 	}); err != nil {
- 		return err
- 	}
-+	if err := s.AddGeneratedConversionFunc((*Metal3BMC)(nil), (*cluster.Metal3BMC)(nil), func(a, b interface{}, scope conversion.Scope) error {
-+		return Convert_v1_Metal3BMC_To_cluster_Metal3BMC(a.(*Metal3BMC), b.(*cluster.Metal3BMC), scope)
-+	}); err != nil {
-+		return err
-+	}
-+	if err := s.AddGeneratedConversionFunc((*cluster.Metal3BMC)(nil), (*Metal3BMC)(nil), func(a, b interface{}, scope conversion.Scope) error {
-+		return Convert_cluster_Metal3BMC_To_v1_Metal3BMC(a.(*cluster.Metal3BMC), b.(*Metal3BMC), scope)
-+	}); err != nil {
-+		return err
-+	}
-+	if err := s.AddGeneratedConversionFunc((*Metal3BMCConsole)(nil), (*cluster.Metal3BMCConsole)(nil), func(a, b interface{}, scope conversion.Scope) error {
-+		return Convert_v1_Metal3BMCConsole_To_cluster_Metal3BMCConsole(a.(*Metal3BMCConsole), b.(*cluster.Metal3BMCConsole), scope)
-+	}); err != nil {
-+		return err
-+	}
-+	if err := s.AddGeneratedConversionFunc((*cluster.Metal3BMCConsole)(nil), (*Metal3BMCConsole)(nil), func(a, b interface{}, scope conversion.Scope) error {
-+		return Convert_cluster_Metal3BMCConsole_To_v1_Metal3BMCConsole(a.(*cluster.Metal3BMCConsole), b.(*Metal3BMCConsole), scope)
-+	}); err != nil {
-+		return err
-+	}
-+	if err := s.AddGeneratedConversionFunc((*Metal3BMCConsoleList)(nil), (*cluster.Metal3BMCConsoleList)(nil), func(a, b interface{}, scope conversion.Scope) error {
-+		return Convert_v1_Metal3BMCConsoleList_To_cluster_Metal3BMCConsoleList(a.(*Metal3BMCConsoleList), b.(*cluster.Metal3BMCConsoleList), scope)
-+	}); err != nil {
-+		return err
-+	}
-+	if err := s.AddGeneratedConversionFunc((*cluster.Metal3BMCConsoleList)(nil), (*Metal3BMCConsoleList)(nil), func(a, b interface{}, scope conversion.Scope) error {
-+		return Convert_cluster_Metal3BMCConsoleList_To_v1_Metal3BMCConsoleList(a.(*cluster.Metal3BMCConsoleList), b.(*Metal3BMCConsoleList), scope)
-+	}); err != nil {
-+		return err
-+	}
-+	if err := s.AddGeneratedConversionFunc((*Metal3BMCConsoleOptions)(nil), (*cluster.Metal3BMCConsoleOptions)(nil), func(a, b interface{}, scope conversion.Scope) error {
-+		return Convert_v1_Metal3BMCConsoleOptions_To_cluster_Metal3BMCConsoleOptions(a.(*Metal3BMCConsoleOptions), b.(*cluster.Metal3BMCConsoleOptions), scope)
-+	}); err != nil {
-+		return err
-+	}
-+	if err := s.AddGeneratedConversionFunc((*cluster.Metal3BMCConsoleOptions)(nil), (*Metal3BMCConsoleOptions)(nil), func(a, b interface{}, scope conversion.Scope) error {
-+		return Convert_cluster_Metal3BMCConsoleOptions_To_v1_Metal3BMCConsoleOptions(a.(*cluster.Metal3BMCConsoleOptions), b.(*Metal3BMCConsoleOptions), scope)
-+	}); err != nil {
-+		return err
-+	}
-+	if err := s.AddGeneratedConversionFunc((*Metal3BMCList)(nil), (*cluster.Metal3BMCList)(nil), func(a, b interface{}, scope conversion.Scope) error {
-+		return Convert_v1_Metal3BMCList_To_cluster_Metal3BMCList(a.(*Metal3BMCList), b.(*cluster.Metal3BMCList), scope)
-+	}); err != nil {
-+		return err
-+	}
-+	if err := s.AddGeneratedConversionFunc((*cluster.Metal3BMCList)(nil), (*Metal3BMCList)(nil), func(a, b interface{}, scope conversion.Scope) error {
-+		return Convert_cluster_Metal3BMCList_To_v1_Metal3BMCList(a.(*cluster.Metal3BMCList), b.(*Metal3BMCList), scope)
-+	}); err != nil {
-+		return err
-+	}
-+	if err := s.AddGeneratedConversionFunc((*Metal3BMCRedfish)(nil), (*cluster.Metal3BMCRedfish)(nil), func(a, b interface{}, scope conversion.Scope) error {
-+		return Convert_v1_Metal3BMCRedfish_To_cluster_Metal3BMCRedfish(a.(*Metal3BMCRedfish), b.(*cluster.Metal3BMCRedfish), scope)
-+	}); err != nil {
-+		return err
-+	}
-+	if err := s.AddGeneratedConversionFunc((*cluster.Metal3BMCRedfish)(nil), (*Metal3BMCRedfish)(nil), func(a, b interface{}, scope conversion.Scope) error {
-+		return Convert_cluster_Metal3BMCRedfish_To_v1_Metal3BMCRedfish(a.(*cluster.Metal3BMCRedfish), b.(*Metal3BMCRedfish), scope)
-+	}); err != nil {
-+		return err
-+	}
-+	if err := s.AddGeneratedConversionFunc((*Metal3BMCRedfishList)(nil), (*cluster.Metal3BMCRedfishList)(nil), func(a, b interface{}, scope conversion.Scope) error {
-+		return Convert_v1_Metal3BMCRedfishList_To_cluster_Metal3BMCRedfishList(a.(*Metal3BMCRedfishList), b.(*cluster.Metal3BMCRedfishList), scope)
-+	}); err != nil {
-+		return err
-+	}
-+	if err := s.AddGeneratedConversionFunc((*cluster.Metal3BMCRedfishList)(nil), (*Metal3BMCRedfishList)(nil), func(a, b interface{}, scope conversion.Scope) error {
-+		return Convert_cluster_Metal3BMCRedfishList_To_v1_Metal3BMCRedfishList(a.(*cluster.Metal3BMCRedfishList), b.(*Metal3BMCRedfishList), scope)
-+	}); err != nil {
-+		return err
-+	}
-+	if err := s.AddGeneratedConversionFunc((*Metal3BMCRedfishSpec)(nil), (*cluster.Metal3BMCRedfishSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
-+		return Convert_v1_Metal3BMCRedfishSpec_To
-```
-
-**File**: `vendor/github.com/loft-sh/agentapi/v5/pkg/apis/loft/cluster/v1/zz_generated.deepcopy.go` (modified, +295/-0)
-```diff
-@@ -397,6 +397,301 @@ func (in *LastActivityInfo) DeepCopy() *LastActivityInfo {
- 	return out
- }
- 
-+// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
-+func (in *Metal3BMC) DeepCopyInto(out *Metal3BMC) {
-+	*out = *in
-+	out.TypeMeta = in.TypeMeta
-+	in.ObjectMeta.DeepCopyInto(&out.ObjectMeta)
-+	out.Spec = in.Spec
-+	out.Status = in.Status
-+	return
-+}
-+
-+// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new Metal3BMC.
-+func (in *Metal3BMC) DeepCopy() *Metal3BMC {
-+	if in == nil {
-+		return nil
-+	}
-+	out := new(Metal3BMC)
-+	in.DeepCopyInto(out)
-+	return out
-+}
-+
-+// DeepCopyObject is an autogenerated deepcopy function, copying the receiver, creating a new runtime.Object.
-+func (in *Metal3BMC) DeepCopyObject() runtime.Object {
-+	if c := in.DeepCopy(); c != nil {
-+		return c
-+	}
-+	return nil
-+}
-+
-+// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
-+func (in *Metal3BMCConsole) DeepCopyInto(out *Metal3BMCConsole) {
-+	*out = *in
-+	out.TypeMeta = in.TypeMeta
-+	in.ObjectMeta.DeepCopyInto(&out.ObjectMeta)
-+	return
-+}
-+
-+// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new Metal3BMCConsole.
-+func (in *Metal3BMCConsole) DeepCopy() *Metal3BMCConsole {
-+	if in == nil {
-+		return nil
-+	}
-+	out := new(Metal3BMCConsole)
-+	in.DeepCopyInto(out)
-+	return out
-+}
-+
-+// DeepCopyObject is an autogenerated deepcopy function, copying the receiver, creating a new runtime.Object.
-+func (in *Metal3BMCConsole) DeepCopyObject() runtime.Object {
-+	if c := in.DeepCopy(); c != nil {
-+		return c
-+	}
-+	return nil
-+}
-+
-+// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
-+func (in *Metal3BMCConsoleList) DeepCopyInto(out *Metal3BMCConsoleList) {
-+	*out = *in
-+	out.TypeMeta = in.TypeMeta
-+	in.ListMeta.DeepCopyInto(&out.ListMeta)
-+	if in.Items != nil {
-+		in, out := &in.Items, &out.Items
-+		*out = make([]Metal3BMCConsole, len(*in))
-+		for i := range *in {
-+			(*in)[i].DeepCopyInto(&(*out)[i])
-+		}
-+	}
-+	return
-+}
-+
-+// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new Metal3BMCConsoleList.
-+func (in *Metal3BMCConsoleList) DeepCopy() *Metal3BMCConsoleList {
-+	if in == nil {
-+		return nil
-+	}
-+	out := new(Metal3BMCConsoleList)
-+	in.DeepCopyInto(out)
-+	return out
-+}
-+
-+// DeepCopyObject is an autogenerated deepcopy function, copying the receiver, creating a new runtime.Object.
-+func (in *Metal3BMCConsoleList) DeepCopyObject() runtime.Object {
-+	if c := in.DeepCopy(); c != nil {
-+		return c
-+	}
-+	return nil
-+}
-+
-+// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
-+func (in *Metal3BMCConsoleOptions) DeepCopyInto(out *Metal3BMCConsoleOptions) {
-+	*out = *in
-+	out.TypeMeta = in.TypeMeta
-+	return
-+}
-+
-+// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new Metal3BMCConsoleOptions.
-+func (in *Metal3BMCConsoleOptions) DeepCopy() *Metal3BMCConsoleOptions {
-+	if in == nil {
-+		return nil
-+	}
-+	out := new(Metal3BMCConsoleOptions)
-+	in.DeepCopyInto(out)
-+	return out
-+}
-+
-+// DeepCopyObject is an autogenerated deepcopy function, copying the receiver, creating a new runtime.Object.
-+func (in *Metal3BMCConsoleOptions) DeepCopyObject() runtime.Object {
-+	if c := in.DeepCopy(); c != nil {
-+		return c
-+	}
-+	return nil
-+}
-+
-+// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
-+func (in *Metal3BMCList) DeepCopyInto(out *Metal3BMCList) {
-+	*out = *in
-+	out.TypeMeta = in.TypeMeta
-+	in.ListMeta.DeepCopyInto(&out.ListMeta)
-+	if in.Items != nil {
-+		in, out := &in.Items, &out.Items
-+		*out = make([]Metal3BMC, len(*in))
-+		for i := range *in {
-+			(*in)[i].DeepCopyInto(&(*out)[i])
-+		}
-+	}
-+	return
-+}
-+
-+// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new Metal3BMCList.
-+func (in *Metal3BMCList) DeepCopy() *Metal3BMCList {
-+	if in == nil {
-+		return nil
-+	}
-+	out := new(Metal3BMCList)
-+	in.DeepCopyInto(out)
-+	return out
-+}
-+
-+// DeepCopyObject is an autogenerated deepcopy function, copying the receiver, creating a new runtime.Object.
-+func (in *Metal3BMCList) DeepCopyObject() runtime.Object {
-+	if c := in.DeepCopy(); c != nil {
-+		return c
-+	}
-+	return nil
-+}
-+
-+// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
-+func (in *Metal3BMCRedfish) DeepCopyInto(out *Metal3BMCRedfish) {
-+	*out = *in
-+	out.TypeMeta = in.TypeMeta
-+	in.ObjectMeta.DeepCopyInto(&out.ObjectMeta)
-+	in.Spec.DeepCopyInto(&out.Spec)
-+	in.Status.DeepCopyInto(&out.Status)
-+	return
-+}
-+
-+// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new Metal3BMCRedfish.
-+func (in *Metal3BMCRedfish) DeepCopy() *Metal3BMCRedfish {
-+	if in == nil {
-+		
-```
-
----
-
-### Incident Patch 2: `bdb22c17` (2026-10-22)
-**Commit Message**: fix(cli): download kubectl from dl.k8s.io instead of the frozen gcs bucket (#2564)
-
-* fix(cli): download kubectl from dl.k8s.io instead of the frozen gcs bucket
-
-* fix(cli): download kubectl from dl.k8s.io in the staged cli image too
-
-Monorepo-Commit: b2fc0cf4ddc02bcc22032b0497fa38d4acd8c9c4
-
-**File**: `Dockerfile.cli.release` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ RUN wget -O helm3.tar.gz "https://get.helm.sh/helm-${HELM_VERSION}-linux-${TARGE
- 	&& rm -R "linux-${TARGETARCH}"
- 
- # Add kubectl
--RUN wget -O kubectl https://storage.googleapis.com/kubernetes-release/release/`wget -q -O- https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/${TARGETARCH}/kubectl \
-+RUN wget -O kubectl https://dl.k8s.io/release/`wget -q -O- https://dl.k8s.io/release/stable.txt`/bin/linux/${TARGETARCH}/kubectl \
- 	&& chmod +x kubectl \
- 	&& mv kubectl /usr/local/bin/kubectl
- 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4242** (closed): fix: prevent platform get secret -a panic when no secrets exist (@seanschneeweiss)
 - **PR #4237** (2026-10-22): chore(deps): bump go to 1.26.10 (backport v0.34 oss) (@loft-bot)
 - **PR #4236** (2026-10-23): chore(deps): bump go to 1.26.10 (backport v0.35 oss) (@loft-bot)
 - **PR #4235** (2026-10-23): chore(deps): bump go to 1.26.10 (backport v0.36 oss) (@loft-bot)
 - **PR #4234** (2026-10-22): fix(snapshot): keep the kine revision bump when restoring an embedded database (backport v0.36 oss) (@loft-bot)
 - **PR #4233** (closed): chore(deps): bump go to 1.26.10 (v0.34) (@c2ndev)
-- **PR #4230** (2026-10-21): ci: authenticate private go modules with a credential helper (backport v0.36 oss) (@Piotr1215)
 
 ---
 
@@ -2019,30 +1594,28 @@ Monorepo-Commit: b2fc0cf4ddc02bcc22032b0497fa38d4acd8c9c4
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. karpenter): reap nodes whose platform machine is gone (#2608)
+## X. vclusterctl): prevent panic when listing on no secrets (#2636)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/vclusterctl/cmd/platform/get/secret.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e702d7ba`: karpenter): reap nodes whose platform machine is gone (#2608). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2dd27678`: vclusterctl): prevent panic when listing on no secrets (#2636). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/vclusterctl/cmd/platform/get/secret.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/loft-sh/agentapi/v5 v5.0.0-alpha.6
-	github.com/loft-sh/api/v5 v5.0.0-alpha.6
+	return secrets, stderrors.Join(errs...)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/loft-sh/agentapi/v5 v5.0.0-alpha.1
-	github.com/loft-sh/api/v5 v5.0.0-alpha.1
+	return nil, stderrors.Join(errs...)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e702d7ba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2dd27678` are properly handled with clean fallback behavior.

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T22:42:44.480Z",
-  "total_cycles_completed": 5546,
-  "total_learnings_persisted": 5546,
-  "total_rules_promoted": 4953,
+  "last_updated": "2026-10-27T22:54:47.740Z",
+  "total_cycles_completed": 5550,
+  "total_learnings_persisted": 5550,
+  "total_rules_promoted": 4957,
   "history": [
-    {
-      "timestamp": "2026-10-27T14:23:11.834Z",
-      "repository": "ooples/token-optimizer-mcp",
-      "learningId": "learn-github-ooples-token-optimizer-mcp",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T14:26:28.131Z",
-      "repository": "Ataraxy-Labs/sem",
-      "learningId": "learn-github-ataraxy-labs-sem",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T14:26:34.187Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T14:29:45.644Z",
-      "repository": "fastapi/fastapi",
-      "learningId": "learn-github-fastapi-fastapi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T14:29:59.601Z",
       "repository": "weaviate/weaviate",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-27T22:42:44.480Z",
       "repository": "slatedb/slatedb",
       "learningId": "learn-github-slatedb-slatedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T22:49:52.098Z",
+      "repository": "lysine-dev/okio",
+      "learningId": "learn-github-lysine-dev-okio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T22:49:54.142Z",
+      "repository": "loft-sh/vcluster",
+      "learningId": "learn-github-loft-sh-vcluster",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T22:50:02.220Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T22:54:47.740Z",
+      "repository": "cachix/devenv",
+      "learningId": "learn-github-cachix-devenv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

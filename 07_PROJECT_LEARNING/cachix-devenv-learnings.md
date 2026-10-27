@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cachix-devenv-learnings.md`  
 > **Source**: github ([https://github.com/cachix/devenv](https://github.com/cachix/devenv))  
-> **Source Version**: `7d3fbffc`  
+> **Source Version**: `b31d7faa`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T10:33:26.769Z  
+> **Timestamp**: 2026-10-27T22:54:47.371Z  
 > **Learning ID**: `learn-github-cachix-devenv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cachix-devenv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cachix/devenv](https://github.com/cachix/devenv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T10:33:08.674Z  
+> **Harvest Timestamp**: 2026-10-27T22:49:45.665Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast, Declarative, Reproducible, and Composable Developer Environments using Nix
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7780 stars
+- **Stars / Engagement**: 7781 stars
 
 ---
 
@@ -1188,7 +1188,7 @@ impl CachixManager {
 use miette::{IntoDiagnostic, Result, WrapErr, bail};
 use pathdiff;
 use schemars::JsonSchema;
-use schematic::ConfigLoader;
+use schematic::ConfigLoader as SchematicLoader;
 use semver::{Version, VersionReq};
 use serde::{Deserialize, Serialize};
 use std::{
@@ -1465,7 +1465,7 @@ impl Clean {
     /// project should exit the current shell.
     const ALWAYS_KEEP: &'static [&'static str] = &["_DEVENV_HOOK_DIR"];
 
-    /// Return host environment variables filtered by the clean/kee
+    /// Return host environment variables filter
 ```
 
 ### Core Architecture Module: `devenv-core/src/dotenv.rs`
@@ -1700,53 +1700,673 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7d3fbffc` (2026-10-26)
-**Commit Message**: chore(deps): bump docker/login-action from 4.6.0 to 4.7.0 (#3320)
+### Incident Patch 1: `ecf7dcd5` (2026-10-26)
+**Commit Message**: fix(cli): load YAML from remote --from sources (#3167)
 
-Bumps [docker/login-action](https://github.com/docker/login-action) from 4.6.0 to 4.7.0.
-- [Release notes](https://github.com/docker/login-action/releases)
-- [Commits](https://github.com/docker/login-action/compare/v4.6.0...v4.7.0)
+* fix(cli): load YAML from remote --from sources
+
+Remote non-path `--from` sources now load `devenv.yaml`, `devenv.local.yaml`, YAML imports, YAML inputs, and Nix modules.
+
+Devenv locks and fetches each source with Nix before the final configuration merge. This preserves tokens, offline caches, and Nix flake references.
+
+Live `path:` sources stay live, and target configuration keeps higher precedence. Failed source configuration creates no preliminary lock file.
+
+This supports the shared Rails environment at `github:rafaelfranca/devenv?dir=rails/rails`. Each Rails checkout can persist that source with `devenv --from SOURCE allow`.
+
+Normal `devenv` commands then use the saved binding without a repeated `--from` flag. The final lock keeps the original remote reference.
+
+* docs: add out-of-tree devenvs guide
+
+* Fix fetched source validation and overrides
+
+* fix(cli): correct fetched source resolution
+
+* fix(cli): compose remote sources and local YAML overrides
+
+* refactor(nix): share source materialization and locking
+
+---------
+
+Co-authored-by: Domen Kožar <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -11,6 +11,7 @@
+ 
+ ### Bug Fixes
+ 
++- Fetched `--from` sources now load YAML configuration, local overrides, and YAML imports alongside their Nix modules. Source-local YAML imports are followed, and relative input overrides in the target's `devenv.local.yaml` resolve from the target directory.
+ - Locked inputs with complete source metadata now reuse sources from the Nix store or configured binary caches without contacting their original remote, so `devenv shell` works when that remote is unavailable ([#3244](https://github.com/cachix/devenv/pull/3244)).
+ - Fixed cold remote YAML imports failing to load fetched sources, and allowed root input follows to reference inputs declared by imported YAML.
+ - Fixed remote YAML discovery resolving relative local inputs from the filesystem root instead of the project directory.
+```
+
+**File**: `README.md` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@
+ - **[Instant environments](https://devenv.sh/blog/2024/10/03/devenv-13-instant-developer-environments-with-nix-caching/)** with incremental Nix evaluation caching (sub 100ms when nothing changed)
+ - **[LSP for devenv.nix](https://devenv.sh/lsp/)** with autocomplete, hover docs, and go to definition via bundled nixd
+ - **[Ad hoc environments](https://devenv.sh/ad-hoc-developer-environments/)** from the CLI without any config files (`--option languages.rust.enable:bool true`)
+-- **[Out of tree devenvs](https://devenv.sh/ad-hoc-developer-environments/)** to use configs from other repos (`--from github:myorg/configs`)
++- **[Out of tree devenvs](https://devenv.sh/guides/out-of-tree-devenvs/)** to use configs from other repos (`--from github:myorg/configs`)
+ 
+ ### Languages, packages, and services
+ 
+```
+
+**File**: `devenv-core/src/config.rs` (modified, +161/-29)
+```diff
+@@ -495,16 +495,22 @@ impl Config {
+     }
+ 
+     /// Like [`Config::load`], but additionally merges the configuration of an
+-    /// out-of-tree source directory (a `path:` `--from` source).
++    /// out-of-tree source directory.
+     ///
+     /// The source's `devenv.yaml` import graph merges at the lowest precedence
+     /// (the project's own configuration wins), and the source's inputs and
+     /// imports are rewritten to absolute `path:` form so they resolve from the
+-    /// live source directory regardless of the project root. The source's
+-    /// module (`devenv.nix`) is appended to `imports` as an absolute `path:`
+-    /// import, so it must exist even when the source has no `devenv.yaml`.
++    /// source directory regardless of the project root. The source's module
++    /// (`devenv.nix`) is appended to `imports` as an absolute `path:` import,
++    /// so it must exist even when the source has no `devenv.yaml`.
+     pub fn load_with_source(source_dir: Option<&Path>) -> Result<Self> {
+-        Self::load_from_with_source("./", source_dir)
++        Self::load_from_with_source_root("./", source_dir, None)
++    }
++
++    /// Like [`Config::load_with_source`], with an explicit repository root for
++    /// imports from a fetched source whose store tree has no `.git` metadata.
++    pub fn load_with_source_root(source_dir: &Path, source_repository_root: &Path) -> Result<Self> {
++        Self::load_from_with_source_root("./", Some(source_dir), Some(source_repository_root))
+     }
+ 
+     /// Like [`Config::load_with_source`], with locked filesystem locations for
+@@ -562,6 +568,35 @@ impl Config {
+         source_dir: Option<&Path>,
+         input_sources: &BTreeMap<String, PathBuf>,
+     ) -> Result<Self>
++    where
++        P: AsRef<Path>,
++    {
++        Self::load_from_with_source_root_and_input_sources(path, source_dir, None, input_sources)
++    }
++
++    fn load_from_with_source_root<P>(
++        path: P,
++        source_dir: Option<&Path>,
++        source_repository_root: Option<&Path>,
++    ) -> Result<Self>
++    where
++        P: AsRef<Path>,
++    {
++        Self::load_from_with_source_root_and_input_sources(
++            path,
++            source_dir,
++            source_repository_root,
++            &BTreeMap::new(),
++        )
++    }
++
++    /// Load a source's YAML graph with its repository root and locked input locations.
++    pub fn load_from_with_source_root_and_input_sources<P>(
++        path: P,
++        source_dir: Option<&Path>,
++        source_repository_root: Option<&Path>,
++        input_sources: &BTreeMap<String, PathBuf>,
++    ) -> Result<Self>
+     where
+         P: AsRef<Path>,
+     {
+@@ -611,14 +646,21 @@ impl Config {
+         let mut source_yamls = Vec::new();
+         let mut source_dir_only_imports = Vec::new();
+         let mut source_module_imports = Vec::new();
+-        // Canonical root of the out-of-tree source (`None` if it doesn't
+-        // resolve). Reused to import the source module and to classify which
+-        // inputs were defined by source-side configs.
+-        let source_root_canon = source_dir.and_then(|d| d.canonicalize().ok());
++        let source_dir_canon = source_dir.and_then(|dir| dir.canonicalize().ok());
++        let detected_source_repository_root = source_dir
++            .filter(|_| source_repository_root.is_none())
++            .and_then(Self::detect_git_root);
++        let source_repository_root =
++            source_repository_root.or(detected_source_repository_root.as_deref());
++        let source_containment_root = source_repository_root
++            .or(source_dir)
++            .and_then(|root| root.canonicalize().ok());
+         if let Some(source_dir) = source_dir {
+-            let source_git_root = Self::detect_git_root(source_dir);
+-            let source_yaml = source_dir.join(YAML_CONFIG);
+-            if source_yaml.exists() {
++            for source_yaml in [YAML_CONFIG, YAML_LOCAL_CONFIG]
++                .map(|name| source_dir.join(name))
++                .into_iter()
++                .filter(|path| path.exists())
++            {
+                 let canonical =
+                     source_yaml
+                         .canonicalize()
+@@ -653,7 +695,7 @@ impl Config {
+                     &source_result.config.imports,
+                     source_dir,
+                     ImportRoots {
+-                        git_root: source_git_root.as_deref(),
++                        git_root: source_repository_root,
+                         input_sources,
+                     },
+                     &mut source_yamls,
+@@ -680,7 +722,7 @@ impl Config {
+                         let resolved = Self::resolve_import_path(
+                             import,
+                             source_dir,
+-                            source_git_root.as_deref(),
++                            source_repository_root,
+                             input_sources,
+                         )?
+                         .expect("file imports always resolve");
+@@ -6
+```
+
+**File**: `devenv-nix-backend/bootstrap/lock-sources.nix` (modified, +12/-4)
+```diff
+@@ -102,14 +102,22 @@ let
+         (resolveInput lockFile.nodes.${nodeName}.inputs.${builtins.head path})
+         (builtins.tail path);
+ 
++  nodeSource =
++    key:
++    let
++      node = lockFile.nodes.${key};
++    in
++    {
++      repository_root = (sourceInfo key node).outPath;
++      dir = if key == lockFile.root then "" else node.locked.dir or "";
++    };
+ in
+ {
+-  inherit sourceInfo resolveInput;
++  inherit sourceInfo resolveInput nodeSource;
+   nodePath =
+     key:
+     let
+-      node = lockFile.nodes.${key};
+-      subdir = if key == lockFile.root then "" else node.locked.dir or "";
++      source = nodeSource key;
+     in
+-    (sourceInfo key node).outPath + (if subdir == "" then "" else "/${subdir}");
++    source.repository_root + (if source.dir == "" then "" else "/${source.dir}");
+ }
+```
+
+**File**: `devenv-nix-backend/bootstrap/resolve-input-paths.nix` (modified, +8/-1)
+```diff
+@@ -21,7 +21,14 @@ else
+       else
+         {
+           inherit name;
+-          value = toString (sources.nodePath (sources.resolveInput rootInputs.${name}));
++          value =
++            let
++              source = sources.nodeSource (sources.resolveInput rootInputs.${name});
++            in
++            {
++              repository_root = toString source.repository_root;
++              inherit (source) dir;
++            };
+         }
+     ) names
+   )
+```
+
+**File**: `devenv-nix-backend/src/backend.rs` (modified, +3/-12)
+```diff
+@@ -16,7 +16,7 @@
+ //! let (flake_settings, fetchers_settings) = build_settings()?;
+ //! let logger_setup = logger::setup_nix_logger()?;
+ //! let fingerprint = lock::with_lock_scope(&logger_setup.bridge, || {
+-//!     let eval_state = lock::build_eval_state(&store, &root, &flake_settings)?;
++//!     let eval_state = lock::build_eval_state(&store, &root, &flake_settings, false)?;
+ //!     lock::validate_and_load(&eval_state, &store, &fetchers_settings,
+ //!         &flake_settings, &root, &lock_file, &inputs)
+ //! })?;
+@@ -1495,7 +1495,7 @@ fn build_eval_state(
+         .to_str()
+         .ok_or_else(|| miette!("Nixpkgs config path contains invalid UTF-8"))?;
+ 
+-    let mut builder = EvalStateBuilder::new(store.clone())
++    let builder = EvalStateBuilder::new(store.clone())
+         .to_miette()
+         .wrap_err("Failed to create eval state builder")?
+         .base_directory(root_str)
+@@ -1508,16 +1508,7 @@ fn build_eval_state(
+         .to_miette()
+         .wrap_err("Failed to configure flakes")?;
+ 
+-    // `devenv update` sets this so branch and tag inputs are re-resolved
+-    // instead of served from cache within tarball-ttl. The eval state's own
+-    // fetchers::Settings is what governs locking, so the override must land
+-    // here rather than on the global config or the locker's settings argument.
+-    if refresh_fetchers {
+-        builder = builder
+-            .fetch_setting("tarball-ttl", "0")
+-            .to_miette()
+-            .wrap_err("Failed to set tarball-ttl")?;
+-    }
++    let builder = crate::lock::apply_fetcher_refresh(builder, refresh_fetchers)?;
+ 
+     let mut eval_state = builder
+         .build()
+```
+
+**File**: `devenv-nix-backend/src/lib.rs` (modified, +119/-71)
+```diff
+@@ -28,6 +28,7 @@ mod file_limit;
+ 
+ pub mod lock;
+ pub mod project;
++pub mod source;
+ 
+ pub mod primops;
+ pub use primops::{
+@@ -67,6 +68,62 @@ pub mod umask_guard;
+ // Helpers for shaping Nix errors into miette diagnostics
+ mod error;
+ 
++fn create_flake_input_base(
++    fetch_settings: &FetchersSettings,
++    flake_settings: &FlakeSettings,
++    parse_flags: &FlakeReferenceParseFlags,
++    input: &Input,
++) -> Result<Option<FlakeInput>> {
++    let (flake_ref, is_flake) = if let Some(url) = &input.url {
++        let (flake_ref, _fragment) =
++            FlakeReference::parse_with_fragment(fetch_settings, flake_settings, parse_flags, url)?;
++        (flake_ref, input.flake)
++    } else if let Some(follows_target) = &input.follows {
++        let (placeholder_ref, _) = FlakeReference::parse_with_fragment(
++            fetch_settings,
++            flake_settings,
++            parse_flags,
++            follows_target,
++        )?;
++        (placeholder_ref, true)
++    } else {
++        return Ok(None);
++    };
++
++    let mut flake_input = FlakeInput::new(&flake_ref, is_flake)?;
++    if let Some(follows_path) = &input.follows {
++        flake_input.set_follows(follows_path)?;
++    }
++    Ok(Some(flake_input))
++}
++
++fn create_flake_input(
++    fetch_settings: &FetchersSettings,
++    flake_settings: &FlakeSettings,
++    parse_flags: &FlakeReferenceParseFlags,
++    input: &Input,
++) -> Result<Option<FlakeInput>> {
++    let Some(mut flake_input) =
++        create_flake_input_base(fetch_settings, flake_settings, parse_flags, input)?
++    else {
++        return Ok(None);
++    };
++
++    if !input.inputs.is_empty() {
++        let mut overrides = FlakeInputs::new()?;
++        for (nested_name, nested_input) in &input.inputs {
++            if let Some(nested_flake_input) =
++                create_flake_input_base(fetch_settings, flake_settings, parse_flags, nested_input)?
++            {
++                overrides.add(nested_name, nested_flake_input)?;
++            }
++        }
++        flake_input.set_overrides(overrides)?;
++    }
++
++    Ok(Some(flake_input))
++}
++
+ /// Convert devenv inputs to FlakeInputs
+ ///
+ /// # Arguments
+@@ -84,78 +141,12 @@ pub fn create_flake_inputs(
+     // Preserve relative paths so they can be resolved during locking via source_path context
+     parse_flags.set_preserve_relative_paths(true)?;
+ 
+-    // Convert each devenv input to a FlakeInput
+-    for (name, input) in inputs.iter() {
+-        let mut flake_input = if let Some(url) = &input.url {
+-            let (flake_ref, _fragment) = FlakeReference::parse_with_fragment(
+-                fetch_settings,
+-                flake_settings,
+-                &parse_flags,
+-                url,
+-            )?;
+-            FlakeInput::new(&flake_ref, input.flake)?
+-        } else if let Some(follows_target) = &input.follows {
+-            // Top-level input has only follows - use follows target as placeholder reference
+-            // (the reference gets cleared internally by set_follows)
+-            let (placeholder_ref, _) = FlakeReference::parse_with_fragment(
+-                fetch_settings,
+-                flake_settings,
+-                &parse_flags,
+-                follows_target,
+-            )?;
+-            FlakeInput::new(&placeholder_ref, true)?
+-        } else {
+-            continue;
+-        };
+-
+-        // Set follows relationship before adding to collection
+-        // (C API does not support modifying inputs after they're added)
+-        if let Some(follows_path) = &input.follows {
+-            flake_input.set_follows(follows_path)?;
++    for (name, input) in inputs {
++        if let Some(flake_input) =
++            create_flake_input(fetch_settings, flake_settings, &parse_flags, input)?
++        {
++            flake_inputs.add(name, flake_input)?;
+         }
+-
+-        // Handle nested input overrides (e.g., git-hooks.inputs.nixpkgs.follows = "nixpkgs")
+-        if !input.inputs.is_empty() {
+-            let mut overrides = FlakeInputs::new()?;
+-
+-            for (nested_name, nested_input) in input.inputs.iter() {
+-                let mut nested_flake_input = if let Some(nested_url) = &nested_input.url {
+-                    // Nested input has a URL - parse it
+-                    let (nested_ref, _) = FlakeReference::parse_with_fragment(
+-                        fetch_settings,
+-                        flake_settings,
+-                        &parse_flags,
+-                        nested_url,
+-                    )?;
+-                    FlakeInput::new(&nested_ref, nested_input.flake)?
+-                } else if let Some(follows_target) = &nested_input.follows {
+-                    // Nested input has only follows - use follows target as placeholder reference
+-                    // (the reference gets cleared internally by set_follows)
+-                    let (placeholder_ref, _) = FlakeReference::parse_with_fragment(
+-                        fetch_settings,
+-                        flake_settings,
+-                 
+```
+
+**File**: `devenv-nix-backend/src/lock.rs` (modified, +172/-20)
+```diff
+@@ -19,6 +19,7 @@ use nix_bindings_flake::{EvalStateBuilderExt, FlakeSettings, LockFile};
+ use nix_bindings_store::store::Store;
+ 
+ use crate::anyhow_ext::AnyhowToMiette;
++use crate::source::{MaterializedSource, select_source_path};
+ 
+ const LOCK_SOURCES: &str = include_str!("../bootstrap/lock-sources.nix");
+ const RESOLVE_INPUT_PATHS: &str = include_str!("../bootstrap/resolve-input-paths.nix");
+@@ -33,7 +34,7 @@ pub fn build_eval_state(
+     let root_str = root
+         .to_str()
+         .ok_or_else(|| miette::miette!("Root path contains invalid UTF-8"))?;
+-    let mut builder = EvalStateBuilder::new(store.clone())
++    let builder = EvalStateBuilder::new(store.clone())
+         .to_miette()
+         .wrap_err("Failed to create eval state builder")?
+         .base_directory(root_str)
+@@ -42,16 +43,24 @@ pub fn build_eval_state(
+         .flakes(flake_settings)
+         .to_miette()
+         .wrap_err("Failed to configure flakes")?;
++    apply_fetcher_refresh(builder, refresh_fetchers)?
++        .build()
++        .to_miette()
++        .wrap_err("Failed to build eval state")
++}
++
++/// Apply `--refresh` semantics to an eval state's fetcher cache.
++pub(crate) fn apply_fetcher_refresh(
++    mut builder: EvalStateBuilder,
++    refresh_fetchers: bool,
++) -> Result<EvalStateBuilder> {
+     if refresh_fetchers {
+         builder = builder
+             .fetch_setting("tarball-ttl", "0")
+             .to_miette()
+-            .wrap_err("Failed to refresh imported input sources")?;
++            .wrap_err("Failed to set tarball-ttl")?;
+     }
+-    builder
+-        .build()
+-        .to_miette()
+-        .wrap_err("Failed to build eval state")
++    Ok(builder)
+ }
+ 
+ /// Run `f` inside a "Validating lock" activity + `begin_eval` scope.
+@@ -117,7 +126,12 @@ pub fn input_paths(
+     let lock_json = std::fs::read_to_string(&lock_path)
+         .into_diagnostic()
+         .wrap_err_with(|| format!("Failed to read {}", lock_path.display()))?;
+-    input_paths_from_json(eval_state, root, names, &lock_json)
++    Ok(
++        input_sources_from_json(eval_state, root, names, &lock_json)?
++            .into_iter()
++            .map(|(name, source)| (name, source.path().to_path_buf()))
++            .collect(),
++    )
+ }
+ 
+ pub(crate) fn input_paths_from_lock(
+@@ -126,19 +140,33 @@ pub(crate) fn input_paths_from_lock(
+     names: &BTreeSet<String>,
+     lock_file: &LockFile,
+ ) -> Result<BTreeMap<String, PathBuf>> {
++    Ok(input_sources_from_lock(eval_state, root, names, lock_file)?
++        .into_iter()
++        .map(|(name, source)| (name, source.path().to_path_buf()))
++        .collect())
++}
++
++/// Materialize inputs through the same source resolver used by Nix evaluation,
++/// retaining repository roots for source-relative YAML imports.
++pub(crate) fn input_sources_from_lock(
++    eval_state: &mut EvalState,
++    root: &Path,
++    names: &BTreeSet<String>,
++    lock_file: &LockFile,
++) -> Result<BTreeMap<String, MaterializedSource>> {
+     let lock_json = lock_file
+         .to_string()
+         .to_miette()
+         .wrap_err("Failed to serialize composed lock file")?;
+-    input_paths_from_json(eval_state, root, names, &lock_json)
++    input_sources_from_json(eval_state, root, names, &lock_json)
+ }
+ 
+-fn input_paths_from_json(
++fn input_sources_from_json(
+     eval_state: &mut EvalState,
+     root: &Path,
+     names: &BTreeSet<String>,
+     lock_json: &str,
+-) -> Result<BTreeMap<String, PathBuf>> {
++) -> Result<BTreeMap<String, MaterializedSource>> {
+     if names.is_empty() {
+         return Ok(BTreeMap::new());
+     }
+@@ -174,20 +202,21 @@ fn input_paths_from_json(
+         .to_miette()
+         .wrap_err("Failed to read imported input sources")?
+         .s;
+-    let paths: BTreeMap<String, PathBuf> = serde_json::from_str(&json)
++    #[derive(serde::Deserialize)]
++    struct SourceLocation {
++        repository_root: PathBuf,
++        dir: String,
++    }
++    let locations: BTreeMap<String, SourceLocation> = serde_json::from_str(&json)
+         .into_diagnostic()
+         .wrap_err("Failed to parse imported input sources")?;
+ 
+-    paths
++    locations
+         .into_iter()
+-        .map(|(name, path)| {
+-            let path = path.canonicalize().into_diagnostic().wrap_err_with(|| {
+-                format!(
+-                    "Failed to canonicalize source for imported input '{name}': {}",
+-                    path.display()
+-                )
+-            })?;
+-            Ok((name, path))
++        .map(|(name, location)| {
++            let source = select_source_path(&location.repository_root, Some(&location.dir))
++                .wrap_err_with(|| format!("Invalid source for imported input '{name}'"))?;
++            Ok((name, source))
+         })
+         .collect()
+ }
+@@ -216,3 +245,126 @@ pub fn update(
+     )
+     .to_miette()
+ }
++
++#[cfg(all(test, feature = "test-nix-store"))]
++mod tests {
++    use std::io::{Read, Write};
++    use std::net::{TcpListener, TcpStream};
++    use std::sync::Arc;
++    use std::sync::
+```
 
 ---
-updated-dependencies:
-- dependency-name: docker/login-action
-  dependency-version: 4.7.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+### Incident Patch 2: `b31d7faa` (2026-10-27)
+**Commit Message**: fix: preserve bundled SQLite in source builds (#3324)
 
-**File**: `.github/workflows/containers.yml` (modified, +2/-2)
+* fix: restore flake evaluation and bundled SQLite builds
+
+* fix: retain devenv rolling and scope this change to SQLite
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -43,7 +43,7 @@ jobs:
-         uses: docker/setup-buildx-action@v4
+@@ -11,6 +11,7 @@
  
-       - name: Log in to the Container registry
--        uses: docker/login-action@v4.6.0
-+        uses: docker/login-action@v4.7.0
-         with:
-           registry: ${{ env.REGISTRY }}
-           username: ${{ github.repository_owner }}
-@@ -170,7 +170,7 @@ jobs:
-           ref: ${{ env.REF }}
+ ### Bug Fixes
  
-       - name: Log in to the Container registry
--        uses: docker/login-action@v4.6.0
-+        uses: docker/login-action@v4.7.0
-         with:
-           registry: ${{ env.REGISTRY }}
-           username: ${{ github.repository_owner }}
++- Fixed SQLite linking failures when building devenv from source.
+ - Fetched `--from` sources now load YAML configuration, local overrides, and YAML imports alongside their Nix modules. Source-local YAML imports are followed, and relative input overrides in the target's `devenv.local.yaml` resolve from the target directory.
+ - Locked inputs with complete source metadata now reuse sources from the Nix store or configured binary caches without contacting their original remote, so `devenv shell` works when that remote is unavailable ([#3244](https://github.com/cachix/devenv/pull/3244)).
+ - Fixed cold remote YAML imports failing to load fetched sources, and allowed root input follows to reference inputs declared by imported YAML.
+```
+
+**File**: `nix/crate-config.nix` (modified, +7/-0)
+```diff
+@@ -238,6 +238,13 @@ in
+   # openssl-sys needs openssl
+   openssl-sys = opensslOverride;
+ 
++  # Cargo enables bundled SQLite. Keep it for both target crates and host
++  # proc-macros: nixpkgs otherwise forces pkg-config, which can select the
++  # target's static SQLite for host crates and omit its zlib link dependency.
++  libsqlite3-sys = attrs: {
++    LIBSQLITE3_SYS_USE_PKG_CONFIG = "0";
++  };
++
+   # Pingora enables flate2's bundled zlib-ng backend.
+   libz-ng-sys = attrs: {
+     nativeBuildInputs = (attrs.nativeBuildInputs or [ ]) ++ [ cmake ];
+```
+
+---
+
+### Incident Patch 3: `2737bdf5` (2026-10-26)
+**Commit Message**: fix: remove follows from nixpkgs-python
+
+Helps avoid cache invalidation and compilation issues.
+
+**File**: `docs/src/content/docs/languages/python.md` (modified, +0/-3)
+```diff
+@@ -42,9 +42,6 @@ Under the hood, this pulls the Python build from [nixpkgs-python](https://github
+ inputs:
+   nixpkgs-python:
+     url: github:cachix/nixpkgs-python
+-    inputs:
+-      nixpkgs:
+-        follows: nixpkgs
+ ```
+ 
+ If you don't need a specific version, you can skip this — devenv uses the default Python 3 from nixpkgs.
+```
+
+**File**: `docs/src/individual-docs/languages/python.md` (modified, +0/-3)
+```diff
+@@ -37,9 +37,6 @@ Under the hood, this pulls the Python build from [nixpkgs-python](https://github
+ inputs:
+   nixpkgs-python:
+     url: github:cachix/nixpkgs-python
+-    inputs:
+-      nixpkgs:
+-        follows: nixpkgs
+ ```
+ 
+ If you don't need a specific version, you can skip this — devenv uses the default Python 3 from nixpkgs.
+```
+
+**File**: `examples/python-django/devenv.yaml` (modified, +0/-3)
+```diff
+@@ -1,6 +1,3 @@
+ inputs:
+   nixpkgs-python:
+     url: github:cachix/nixpkgs-python
+-    inputs:
+-      nixpkgs:
+-        follows: nixpkgs
+```
+
+**File**: `examples/python/devenv.yaml` (modified, +0/-3)
+```diff
+@@ -1,6 +1,3 @@
+ inputs:
+   nixpkgs-python:
+     url: github:cachix/nixpkgs-python
+-    inputs:
+-      nixpkgs:
+-        follows: nixpkgs
+```
+
+**File**: `src/modules/languages/python/default.nix` (modified, +0/-1)
+```diff
+@@ -28,7 +28,6 @@ let
+     name = "nixpkgs-python";
+     url = "github:cachix/nixpkgs-python";
+     attribute = "languages.python.version";
+-    follows = [ "nixpkgs" ];
+   };
+ 
+   uv2nix = config.lib.getInput {
+```
+
+**File**: `tests/python-native-libs-poetry/devenv.yaml` (modified, +0/-3)
+```diff
+@@ -1,6 +1,3 @@
+ inputs:
+   nixpkgs-python:
+     url: github:cachix/nixpkgs-python
+-    inputs:
+-      nixpkgs:
+-        follows: nixpkgs
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3324** (2026-10-27): fix: preserve bundled SQLite in source builds (@domenkozar)
+- **PR #3322** (2026-10-27): refactor(config): simplify project loading APIs (@domenkozar)
 - **PR #3320** (2026-10-26): chore(deps): bump docker/login-action from 4.6.0 to 4.7.0 (@dependabot[bot])
 - **PR #3317** (2026-10-25): feat(tui): detach from an attached process manager with q (@ozenyunus35)
 - **PR #3315** (2026-10-25): fix: npm install lock (@tonyd33)
 - **PR #3313** (2026-10-22): fix(rust): preserve large linker response files through Nix wrappers (@domenkozar)
-- **PR #3312** (2026-10-22): fix(bootstrap): substitute locked inputs through native Nix fetcher (@domenkozar)
-- **PR #3311** (2026-10-22): feat: compose remote YAML and resolve updates together (@domenkozar)
 
 ---
 
@@ -1766,30 +2386,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump docker/login-action from 4.6.0 to 4.7.0 (#3320)
+## X. cli): load YAML from remote --from sources (#3167)
 
 **RULE**:
-When implementing operations in `.github/workflows/containers.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7d3fbffc`: deps): bump docker/login-action from 4.6.0 to 4.7.0 (#3320). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ecf7dcd5`: cli): load YAML from remote --from sources (#3167). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/containers.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        uses: docker/login-action@v4.7.0
-        uses: docker/login-action@v4.7.0
+- Fetched `--from` sources now load YAML configuration, local overrides, and YAML imports alongside their Nix modules. Source-local YAML imports are followed, and relative input overrides in the target's `devenv.local.yaml` resolve from the target directory.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: docker/login-action@v4.6.0
-        uses: docker/login-action@v4.6.0
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7d3fbffc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ecf7dcd5` are properly handled with clean fallback behavior.
