@@ -5474,3 +5474,6 @@ Every entry in this ledger must capture:
 | `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `691b8d2c` | Multi-dimensional audit evidence | 2026-10-27T17:49:42.164Z |
 | `learn-github-avajs-ava` | `https://github.com/avajs/ava` | `95297b66` | Multi-dimensional audit evidence | 2026-10-27T17:56:51.320Z |
 | `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `1eeb8527` | Multi-dimensional audit evidence | 2026-10-27T17:56:55.315Z |
+| `learn-github-mochajs-mocha` | `https://github.com/mochajs/mocha` | `2a386426` | Multi-dimensional audit evidence | 2026-10-27T18:03:26.257Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `cb990c63` | Multi-dimensional audit evidence | 2026-10-27T18:03:34.600Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `10786a52` | Multi-dimensional audit evidence | 2026-10-27T18:03:37.561Z |

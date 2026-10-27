@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "71322f76",
+    "sourceVersion": "10786a52",
     "license": "Apache-2.0",
-    "contentHash": "c6d1ecbe0a099a0156a8a30ef252b41be22cad42510cae753443568edda201ad",
-    "lastHarvestedAt": "2026-10-27T17:31:04.567Z",
+    "contentHash": "63b27a4dbe91fc5e0361f0f109b92344fea8816f7c191d31ed423281491cd4d7",
+    "lastHarvestedAt": "2026-10-27T18:03:37.561Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2763,10 +2763,10 @@
     "repository": "xerj-org/xerj",
     "platform": "github",
     "sourceUrl": "https://github.com/xerj-org/xerj",
-    "sourceVersion": "045aada9",
+    "sourceVersion": "cb990c63",
     "license": "Apache-2.0",
-    "contentHash": "95334b12138597f8b484f7aa11c9da9f1e664431955c81d7d00481f640556086",
-    "lastHarvestedAt": "2026-10-26T11:15:43.477Z",
+    "contentHash": "4dadc4f0f1520cc9dca4234788e3c00239b0d3be566a9e165cddbb1a900c8d2f",
+    "lastHarvestedAt": "2026-10-27T18:03:34.600Z",
     "learningId": "learn-github-xerj-org-xerj"
   },
   "markmead-hyperui": {
@@ -10243,10 +10243,10 @@
     "repository": "mochajs/mocha",
     "platform": "github",
     "sourceUrl": "https://github.com/mochajs/mocha",
-    "sourceVersion": "cb21a4eb",
+    "sourceVersion": "2a386426",
     "license": "MIT",
-    "contentHash": "7186845e72e11f08b375515bef93ffda4531097a9caba53238cf1b4ec3ca458b",
-    "lastHarvestedAt": "2026-10-20T03:59:27.276Z",
+    "contentHash": "b6358dac7fbac407e6b254c0f2316f3fa330ac96a33624f6f8ac6faca44023bd",
+    "lastHarvestedAt": "2026-10-27T18:03:26.257Z",
     "learningId": "learn-github-mochajs-mocha"
   },
   "justjavac-free-programming-books-zh_cn": {

@@ -5465,3 +5465,6 @@
 | `CYCLE-20261027-D4LT` | `2026-10-27T17:49:42.161Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4931` | Yes (`a3518add...`) |
 | `CYCLE-20261027-MBQT` | `2026-10-27T17:56:51.317Z` | `avajs/ava` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/avajs-ava-learnings.md` | Yes (`5c8a012a...`) |
 | `CYCLE-20261027-METR` | `2026-10-27T17:56:55.311Z` | `kcl-lang/kcl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4932` | Yes (`a1754bc9...`) |
+| `CYCLE-20261027-USHA` | `2026-10-27T18:03:26.254Z` | `mochajs/mocha` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4933` | Yes (`b6358dac...`) |
+| `CYCLE-20261027-UYX1` | `2026-10-27T18:03:34.597Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4934` | Yes (`4dadc4f0...`) |
+| `CYCLE-20261027-V17A` | `2026-10-27T18:03:37.558Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4935` | Yes (`63b27a4d...`) |

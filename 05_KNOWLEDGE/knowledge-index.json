@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T17:56:55.240Z",
+  "last_updated": "2026-10-27T18:03:37.511Z",
   "total_verified_learnings": 1145,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -39144,8 +39144,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "71322f76",
-      "content_hash": "c6d1ecbe0a099a0156a8a30ef252b41be22cad42510cae753443568edda201ad",
+      "source_version": "10786a52",
+      "content_hash": "63b27a4dbe91fc5e0361f0f109b92344fea8816f7c191d31ed423281491cd4d7",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -39238,6 +39238,11 @@
           "number": 4900,
           "title": "Select ARC puzzle via CLI argument",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4935,
+          "title": "Make generated spec record test lookup robust",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39245,7 +39250,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T17:31:04.488Z",
+      "verified_at": "2026-10-27T18:03:37.500Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53566,8 +53571,8 @@
       "slug": "xerj-org-xerj",
       "platform": "github",
       "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "045aada9",
-      "content_hash": "95334b12138597f8b484f7aa11c9da9f1e664431955c81d7d00481f640556086",
+      "source_version": "cb990c63",
+      "content_hash": "4dadc4f0f1520cc9dca4234788e3c00239b0d3be566a9e165cddbb1a900c8d2f",
       "dossier_path": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "promoted_rules": [
@@ -53620,6 +53625,11 @@
           "number": 4589,
           "title": "engine): background merges skip the zstd-19 stored encode (ingest ~5x regression",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4934,
+          "title": "code): show the matching window of a long definition, not its head (#2464) (#247",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53627,7 +53637,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T11:15:43.405Z",
+      "verified_at": "2026-10-27T18:03:34.541Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68757,14 +68767,19 @@
       "slug": "mochajs-mocha",
       "platform": "github",
       "source_url": "https://github.com/mochajs/mocha",
-      "source_version": "cb21a4eb",
-      "content_hash": "7186845e72e11f08b375515bef93ffda4531097a9caba53238cf1b4ec3ca458b",
+      "source_version": "2a386426",
+      "content_hash": "b6358dac7fbac407e6b254c0f2316f3fa330ac96a33624f6f8ac6faca44023bd",
       "dossier_path": "07_PROJECT_LEARNING/mochajs-mocha-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mochajs-mocha-learnings.md",
       "promoted_rules": [
         {
           "number": 3032,
           "title": "disable timeouts whenever the Node.js inspector is active (#6397)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4933,
+          "title": "fix site deploy (#6452)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -68773,7 +68788,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T03:59:27.238Z",
+      "verified_at": "2026-10-27T18:03:26.195Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -136829,6 +136844,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T17:56:55.223Z"
+    },
+    "rule-4933": {
+      "learning_id": "rule-4933",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4933,
+      "title": "fix site deploy (#6452)",
+      "source_url": "https://github.com/mochajs/mocha",
+      "source_version": "2a386426",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T18:03:26.195Z"
+    },
+    "rule-4934": {
+      "learning_id": "rule-4934",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4934,
+      "title": "code): show the matching window of a long definition, not its head (#2464) (#247",
+      "source_url": "https://github.com/xerj-org/xerj",
+      "source_version": "cb990c63",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T18:03:34.541Z"
+    },
+    "rule-4935": {
+      "learning_id": "rule-4935",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4935,
+      "title": "Make generated spec record test lookup robust",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "10786a52",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T18:03:37.500Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mochajs-mocha-learnings.md`  
 > **Source**: github ([https://github.com/mochajs/mocha](https://github.com/mochajs/mocha))  
-> **Source Version**: `cb21a4eb`  
+> **Source Version**: `2a386426`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T03:59:27.093Z  
+> **Timestamp**: 2026-10-27T18:03:25.912Z  
 > **Learning ID**: `learn-github-mochajs-mocha`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mochajs-mocha-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mochajs/mocha](https://github.com/mochajs/mocha))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T03:59:26.535Z  
+> **Harvest Timestamp**: 2026-10-27T18:03:24.609Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ☕️ Classic, reliable, trusted test framework for Node.js and the browser
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 22911 stars
+- **Stars / Engagement**: 22913 stars
 
 ---
 
@@ -1025,11 +1025,11 @@ export function parseQuery(qs) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6438** (2026-10-19): **fix(cli): add --worker-terminate-timeout option**
-  *Symptoms*: ## Problem  When running  under a V8-coverage tool (, or  in V8 mode), each worker is asked to terminate at the end of the run and force-killed () after workerpool's default **1000 ms** . Node writes the  profile *as the process exits*, so a worker that needs longer to flush has its coverage silently discarded — the parallel report is dramatically lower than the serial one, with exit code 0.  ## Fix  Expose workerpool's existing  option through Mocha's CLI and config so the grace period is configurable:     already forwards unknown options into , so the plumbing is one line in  plus CLI metadata and typings.  ## Tests  - :  coerces to a number. - : the option is passed through to . - Full unit suites pass locally: 1311 passing ( + ), prettier/eslint clean.  Fixes #6219
+- **Issue #6452** (2026-10-27): **chore: fix site deploy**
+  *Symptoms*: <!-- 👋 Hi, thanks for sending a PR to mocha! 💖. Please fill out all fields below and make sure each item is true and [x] checked. Otherwise we may not be able to review your PR. -->  ## PR Checklist  - [x] Addresses an existing open issue: fixes #000 (or is a [trivial change](https://github.com/mochajs/mocha/blob/main/.github/CONTRIBUTING.md#trivial-changes)) - [x] That issue was marked as [`status: accepting prs`](https://github.com/mochajs/mocha/issues?q=is%3Aopen+is%3Aissue+label%3A%22status%3A+accepting+prs%22) - [x] Steps in [CONTRIBUTING.md](https://github.com/mochajs/mocha/blob/main/.github/CONTRIBUTING.md) were taken  ## Overview  Site hasn't been deploying since ~2026-11-12, oops! Looks like a recent upgrade introduced some bug? AI found the fix to be "use this version of satteri", lgtm, upgraded Astro while I was here :) 
 
-- **Issue #6434** (2026-10-18): **chore: fix mocha.yml syntax**
-  *Symptoms*: <!-- 👋 Hi, thanks for sending a PR to mocha! 💖. Please fill out all fields below and make sure each item is true and [x] checked. Otherwise we may not be able to review your PR. -->  ## PR Checklist  - [x] Addresses an existing open issue: fixes #000 (is a [trivial change](https://github.com/mochajs/mocha/blob/main/.github/CONTRIBUTING.md#trivial-changes)) - [x] That issue was marked as [`status: accepting prs`](https://github.com/mochajs/mocha/issues?q=is%3Aopen+is%3Aissue+label%3A%22status%3A+accepting+prs%22) - [x] Steps in [CONTRIBUTING.md](https://github.com/mochajs/mocha/blob/main/.github/CONTRIBUTING.md) were taken  ## Overview  Missed a space in last PR lol
+- **Issue #6450** (2026-10-25): **feat: allow JSON reporter indentation**
+  *Symptoms*: Closes [#4889](https://github.com/mochajs/mocha/issues/4889).  Add `reporterOption.indentation` for JSON reporter console and file output. Keep the two-space default, support compact JSON with `indentation=0`, and preserve string indentation such as tabs. Include API, CLI, browser, and fallback coverage plus documentation.  Validation: - Passed formatting, TypeScript, smoke, 167 reporter tests, 14 CLI reporter tests, and all 8 Chromium tests with webpack compatibility. - `npm run lint` fails on cached docs Knip reporting `src/content.config.ts` as unused; reproduced on unchanged `main`. Uncached docs lint passes. - The previous same-commit full `npm test` run failed on Windows `mkfifo` and parallel timeouts; the bounded integration retry passed. Full gate was not rerun during review. Linux and multi-version CI remain pending. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1046,230 +1046,34 @@ export function parseQuery(qs) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f57f4b19` (2026-10-08)
-**Commit Message**: feat: disable timeouts whenever the Node.js inspector is active (#6397)
+### Incident Patch 1: `2a386426` (2026-10-27)
+**Commit Message**: chore: fix site deploy (#6452)
 
-**File**: `lib/cli/node-flags.cjs` (modified, +11/-0)
+**File**: `docs/package.json` (modified, +4/-3)
 ```diff
-@@ -6,6 +6,7 @@
-  * @module
-  */
- 
-+const inspector = require("node:inspector");
- const nodeFlags = process.allowedNodeEnvironmentFlags;
- const {
-   isMochaFlag,
-@@ -69,6 +70,16 @@ function impliesNoTimeouts(flag) {
-   return debugFlags.has(flag);
- }
- 
-+/**
-+ * Returns `true` if the Node.js inspector is active.
-+ * @returns {boolean}
-+ * @private
-+ */
-+function isInspectorActive() {
-+  return inspector.url() !== undefined;
-+}
-+
- exports.isNodeFlag = isNodeFlag;
- exports.impliesNoTimeouts = impliesNoTimeouts;
-+exports.isInspectorActive = isInspectorActive;
- exports.unparseNodeFlags = unparseNodeFlags;
-```
-
-**File**: `lib/cli/run.cjs` (modified, +5/-0)
-```diff
-@@ -20,6 +20,7 @@ const {
-   validateLegacyPlugin,
-   runMocha,
- } = require("./run-helpers.cjs");
-+const { isInspectorActive } = require("./node-flags.cjs");
- const { ONE_AND_DONES } = require("./one-and-dones.js");
- const debug = require("debug")("mocha:cli:run");
- 
-@@ -136,6 +137,10 @@ exports.normalizeRunOptions = normalizeRunOptions;
- 
- exports.handler = async function (argv) {
-   normalizeRunOptions(argv);
-+  if (isInspectorActive()) {
-+    debug("inspector is active; disabling timeouts");
-+    argv.timeout = 0;
-+  }
-   debug("running with config", argv);
-   const mocha = new Mocha(argv);
- 
-```
-
-**File**: `test/integration/fixtures/options/open-inspector.fixture.cjs` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+'use strict';
-+
-+const inspector = require('node:inspector');
-+
-+if (inspector.url() === undefined) {
-+  inspector.open(0);
-+}
-```
-
-**File**: `test/integration/options/timeout.spec.cjs` (modified, +60/-0)
-```diff
-@@ -88,6 +88,66 @@ describe("--timeout", function () {
-     );
-   });
- 
-+  it('should disable timeout with "-n inspect=0"', function (done) {
-+    var fixture = "options/slow-test.fixture.js";
-+    runMochaJSON(
-+      fixture,
-+      ["-n", "inspect=0", "--timeout", "200"],
-+      function (err, res) {
-+        if (err) {
-+          done(err);
-+          return;
-+        }
-+        expect(res, "to have passed").and("to have passed test count", 2);
-+        done();
-+      },
-+    );
-+  });
-+
-+  it("should disable timeout when the inspector is enabled via NODE_OPTIONS", function (done) {
-+    var fixture = "options/slow-test.fixture.js";
-+    var nodeOptions = process.env.NODE_OPTIONS || "";
-+    runMochaJSON(
-+      fixture,
-+      ["--timeout", "200"],
-+      function (err, res) {
-+        if (err) {
-+          done(err);
-+          return;
-+        }
-+        expect(res, "to have passed").and("to have passed test count", 2);
-+        done();
-+      },
-+      {
-+        env: {
-+          ...process.env,
-+          NODE_OPTIONS: `${nodeOptions} --inspect=0`.trim(),
-+        },
-+      },
-+    );
-+  });
-+
-+  it("should disable timeout when the inspector is opened without inspect flags", function (done) {
-+    var fixture = "options/slow-test.fixture.js";
-+    runMochaJSON(
-+      fixture,
-+      [
-+        "--require",
-+        require.resolve("../fixtures/options/open-inspector.fixture.cjs"),
-+        "--timeout",
-+        "200",
-+      ],
-+      function (err, res) {
-+        if (err) {
-+          done(err);
-+          return;
-+        }
-+        expect(res, "to have passed").and("to have passed test count", 2);
-+        done();
-+      },
-+    );
-+  });
-+
-   it("should complete tests having unref'd async behavior", function (done) {
-     runMochaJSON(
-       "options/timeout-unref.fixture.js",
-```
-
-**File**: `test/node-unit/cli/node-flags.spec.cjs` (modified, +19/-0)
-```diff
-@@ -1,9 +1,12 @@
- "use strict";
- 
-+const inspector = require("node:inspector");
-+const sinon = require("sinon");
- const nodeEnvFlags = [...process.allowedNodeEnvironmentFlags];
- const {
-   isNodeFlag,
-   impliesNoTimeouts,
-+  isInspectorActive,
-   unparseNodeFlags,
- } = require("../../../lib/cli/node-flags.cjs");
- 
-@@ -93,6 +96,22 @@ describe("node-flags", function () {
-     });
-   });
- 
-+  describe("isInspectorActive()", function () {
-+    afterEach(function () {
-+      sinon.restore();
-+    });
-+
-+    it("should return false if the inspector is not active", function () {
-+      sinon.stub(inspector, "url").returns(undefined);
-+      expect(isInspectorActive(), "to be false");
-+    });
-+
-+    it("should return true if the inspector is active", function () {
-+      sinon.stub(inspector, "url").returns("ws://127.0.0.1:9229/some-uuid");
-+      expect(isInspectorActive(), "to be true");
-+    });
-+  });
-+
-   describe("unparseNodeFlags()", function () {
-     it("should handle single v8 flags", function () {
-       expect(unparseNodeFlags({ "v8-numeric": 100 }), "to equal", [
-```
-
----
-
-### Incident Patch 2: `98b932f2` (2026-10-08)
-**Commit Message**: chore: increase timeout for TypeScript integration test (#6407)
-
-Co-authored-by: mark-wiemer <[REDACTED_EMAIL]>
-
-**File**: `test/integration/options/node-flags.spec.cjs` (modified, +1/-1)
-```diff
-@@ -53,7 +53,7 @@ describe('node flags using "--node-option"', function () {
- 
-   // Regression test for https://github.com/mochajs/mocha/issues/6319
-   it("should run TypeScript specs with --node-option import=tsx", async function () {
--    this.timeout(10000);
-+    this.timeout(20000);
-     const result = await runMochaAsync("options/node-flags/tsx.fixture.ts", [
-       "--node-option",
-       "import=tsx",
-```
-
----
-
-### Incident Patch 3: `430901f6` (2026-10-01)
-**Commit Message**: Fix flaky `--exit` integration timeout by avoiding a hard-coded port (#6364)
-
-Co-authored-by: copilot-swe-agent[bot] <[REDACTED_EMAIL]>
-Co-authored-by: mark-wiemer <[REDACTED_EMAIL]>
-
-**File**: `test/integration/fixtures/exit.fixture.cjs` (modified, +1/-1)
-```diff
-@@ -4,5 +4,5 @@ var net = require('net');
- 
- it('should hang when --no-exit used', function (done) {
-   var server = net.createServer();
--  server.listen(55554, done);
-+  server.listen(0, done);
- });
+@@ -14,9 +14,10 @@
+     "start": "astro dev"
+   },
+   "dependencies": {
+-    "@astrojs/check": "^0.9.10",
+-    "@astrojs/starlight": "^0.42.0",
+-    "astro": "^7.3.2",
++    "@astrojs/check": "^0.9.12",
++    "@astrojs/starlight": "^0.42.7",
++    "astro": "^7.4.2",
++    "satteri": "^0.10.5",
+     "starlight-blog": "^0.29.0",
+     "starlight-package-managers": "^0.12.0",
+     "typescript": "^5.9.3"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6452** (2026-10-27): chore: fix site deploy (@mark-wiemer)
+- **PR #6450** (closed): feat: allow JSON reporter indentation (@k0shir0)
+- **PR #6449** (closed): fix: preserve lone surrogates in HTML reporter replay links (@jipeng6036-del)
+- **PR #6444** (closed): fix: handle circular objects passed to done() (@anyingiit)
 - **PR #6438** (closed): fix(cli): add --worker-terminate-timeout option (@NUAAwqy)
 - **PR #6434** (2026-10-18): chore: fix mocha.yml syntax (@mark-wiemer)
-- **PR #6432** (closed): fix: evaluate --fail-zero against aggregate test count in parallel mode (@NUAAwqy)
-- **PR #6430** (closed): feat(cli)!: set default --ignore to exclude node_modules and .git contents (@saadkhantareen)
-- **PR #6426** (closed): fix: prefer a local Mocha config over an ancestor filename (@Gaalbu)
-- **PR #6420** (closed): fix: exit with an error when a reporter throws (@ozenyunus35)
 
 ---
 
@@ -1289,38 +1093,33 @@ Co-authored-by: mark-wiemer <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. disable timeouts whenever the Node.js inspector is active (#6397)
+## X. fix site deploy (#6452)
 
 **RULE**:
-When implementing operations in `lib/cli/node-flags.cjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mochajs/mocha. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mochajs/mocha. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f57f4b19`: disable timeouts whenever the Node.js inspector is active (#6397). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2a386426`: fix site deploy (#6452). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/cli/node-flags.cjs`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-const inspector = require("node:inspector");
-/**
- * Returns `true` if the Node.js inspector is active.
- * @returns {boolean}
- * @private
- */
-function isInspectorActive() {
-  return inspector.url() !== undefined;
-}
-
-exports.isInspectorActive = isInspectorActive;
+    "@astrojs/check": "^0.9.12",
+    "@astrojs/starlight": "^0.42.7",
+    "astro": "^7.4.2",
+    "satteri": "^0.10.5",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    "@astrojs/check": "^0.9.10",
+    "@astrojs/starlight": "^0.42.0",
+    "astro": "^7.3.2",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f57f4b19` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2a386426` are properly handled with clean fallback behavior.

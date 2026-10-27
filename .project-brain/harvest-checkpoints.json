@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T17:56:55.325Z",
+  "last_updated": "2026-10-27T18:03:37.568Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "c6d1ecbe0a099a0156a8a30ef252b41be22cad42510cae753443568edda201ad",
-      "verified_at": "2026-10-27T17:31:04.575Z",
+      "content_hash": "63b27a4dbe91fc5e0361f0f109b92344fea8816f7c191d31ed423281491cd4d7",
+      "verified_at": "2026-10-27T18:03:37.568Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T17:31:04.575Z"
+      "last_updated": "2026-10-27T18:03:37.568Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4281,14 +4281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xerj-org-xerj",
-      "content_hash": "95334b12138597f8b484f7aa11c9da9f1e664431955c81d7d00481f640556086",
-      "verified_at": "2026-10-26T11:15:43.485Z",
+      "content_hash": "4dadc4f0f1520cc9dca4234788e3c00239b0d3be566a9e165cddbb1a900c8d2f",
+      "verified_at": "2026-10-27T18:03:34.608Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T11:15:43.485Z"
+      "last_updated": "2026-10-27T18:03:34.608Z"
     },
     "markmead/hyperui": {
       "repository": "markmead/hyperui",
@@ -15381,14 +15381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mochajs-mocha",
-      "content_hash": "7186845e72e11f08b375515bef93ffda4531097a9caba53238cf1b4ec3ca458b",
-      "verified_at": "2026-10-20T03:59:27.282Z",
+      "content_hash": "b6358dac7fbac407e6b254c0f2316f3fa330ac96a33624f6f8ac6faca44023bd",
+      "verified_at": "2026-10-27T18:03:26.264Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T03:59:27.282Z"
+      "last_updated": "2026-10-27T18:03:26.264Z"
     },
     "justjavac/free-programming-books-zh_CN": {
       "repository": "justjavac/free-programming-books-zh_CN",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source**: github ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
-> **Source Version**: `045aada9`  
+> **Source Version**: `cb990c63`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T11:15:43.074Z  
+> **Timestamp**: 2026-10-27T18:03:34.242Z  
 > **Learning ID**: `learn-github-xerj-org-xerj`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T11:15:43.066Z  
+> **Harvest Timestamp**: 2026-10-27T18:03:34.086Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Local-first search engine and MCP server for AI agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM25 full-text, vector and hybrid search, code search without grep, agent memory and RAG. Elasticsearch-compatible API; Corpus Hub serves hundreds of reference memory corpora.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 15711 stars
+- **Stars / Engagement**: 17043 stars
 
 ---
 
@@ -1868,6 +1868,7 @@ pub mod microbatch;
 pub mod neural;
 #[cfg(feature = "onnx-experimental")]
 pub mod onnx;
+pub mod semantic_lexical;
 
 pub use chunker::{Chunk, TextChunker};
 pub use embed::{EmbeddingProxy, EmbeddingProxyConfig};
@@ -1884,11 +1885,11 @@ pub use xerj_common::Result;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2472** (2026-10-27): **corpus add: rejects a local Windows drive path (F:\...) as an unsafe repo name, though autoindex accepts it**
+  *Symptoms*: On Windows, `xerj corpus add` rejects a local drive path such as `F:\Projects\Roblox\LunarGame` as an "unsafe repo name" (because of the drive colon and backslashes), while `xerj autoindex` accepts the same path natively. Expected: `corpus add` should accept local Windows paths (or derive a safe repo name from them) the way autoindex does, or at least explain how to add a local directory.  Reported by an agent field report on xerj v1.0.0-rc.99, windows x86_64. Everything else in the run (get.ps1 install, autoindex, corpus index, code/search/def) worked.  ---  Field report received via `POST https://xerj.org/api/field-report` on Oct 26, 2026 11:15 AM PT (no GitHub available to the agent).  | Field | Value | |---|---| | agent | Gemini 4 Argon (High) | | used_for | Indexed LunarGame Roblox Luau + Blender Python project (4,397 files, 1,089 code files, 161,901 records) under --prefix lunargame and cloned/indexed roblox-refs (MadStudioRoblox/ProfileStore + Sleitnick/RbxUtil) for Luau reference coding. | | verdict | Windows get.ps1 install, background node, .xerjignore pruning of 62MB .rbxlx/.blend/.fbx binaries, xerj autoindex --prefix lunargame (1,089/1,089 code files indexed, 0 code files junked), xerj corpus add/index roblox-refs, xerj code roblox-refs, xerj search, and xerj def all worked cleanly. Note: xerj corpus add rejected a local Windows drive path F:\Projects\Roblox\LunarGame as an unsafe repo name due to the colon/backslashes, whereas xerj autoindex handled it natively.
+
 - **Issue #2438** (2026-10-26): **Indexing ~5x slower since rc.78: background merges use zstd level 19**
   *Symptoms*: ## Summary  Bulk indexing under the memory governor has been about 5x slower since **v1.0.0-rc.78**. The README and BENCHMARK_VS_ES.md claims (faster and smaller than Elasticsearch/Lucene) were measured before rc.78.  Cause: ec712826 / PR #1042 ("ZBS4 stored-section slim ... merge-path zstd chooser"). Every **background** merge now tries a zstd level 19 + long-distance matching (window 2^24) candidate on each stored JSON column and keeps the smaller one (`engine/crates/xerj-storage/src/stored_codec.rs:272` `RAW_LONG_LEVEL = 19`; called from `engine/crates/xerj-engine/src/index.rs:14250` via `encode_stored_v2_merge_at_level`).  zstd 19 runs at about 2 MB/s per thread, so the stored part of a merge batch went from **2.4-3.3 s to 94-107 s**. RSS sits at or above the parent breaker's 95% watermark while the merge runs. The breaker latches and `_bulk` gets 429s until the merge finishes. The loader stalls for 60-100 s at a time, and in one run it dropped 34,398 docs after its retry budget ran out.  The codec comment says "merges are background work, so the extra encode pass is not on any back-pressure-critical path". With the memory governor, that is not true.  Two side findings from the same runs: - The `xerj-drain-free` helper thread was skipped with "memory is at the governor watermark". The thread that frees memory was refused because memory was high. - `_forcemerge?max_num_segments=1` stopped at 2 segments. At a 2 GiB cap the per-batch byte cap is 32 MiB. Once every segment is
-
-- **Issue #2428** (2026-10-26): **[URGENT] autoindex client aborts on thread spawn EAGAIN (os error 11) after 73 min, losing the run**
-  *Symptoms*: **Benchmark setup (Oct 25, 2026):** xerj v1.0.0-rc.99 (x86_64-unknown-linux-musl release binary), 15 GB RAM Linux box, one `xerj autoindex` run over a ~5 GB folder of real data (146,199 files: Rust and Go dependency sources, the xerj repo, JSONL audit data, CVE JSON and mbox, ADS-B flight-trace JSON). Command: `xerj autoindex /workspace/bench/src --prefix b5 --state-dir state2 --max-index-size 25GB --approve proceed --workers 4 --no-graph`  ## Summary The rc.99 run-4 autoindex client (`--workers 4 --no-graph`) aborted after ~1h13m with `Resource temporarily unavailable (os error 11)` when it tried to start a new thread. That's EAGAIN from thread creation under memory or thread pressure. The whole run was lost: 8.6 GB of state and 748 MB indexed, unfinished.  ## Asks - Every client-side thread spawn (scan, fetch, prepare, bulk senders, progress) goes through the fallible spawn path that rc.100 already uses for the scan and fetch pools. On failure, run the work inline or back off and retry, never abort. - Keep the thread count bounded for the whole run; check for per-dataset or per-index thread or runtime creation that grows with the ~450 datasets. - Make resume work after such an abort, without `--fresh`.  Severity: critical (part of #1122). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1905,1026 +1906,334 @@ pub use xerj_common::Result;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `12e36e31` (2026-10-26)
-**Commit Message**: fix(engine): background merges skip the zstd-19 stored encode (ingest ~5x regression since rc.78) (#2441)
+### Incident Patch 1: `b127e7db` (2026-10-27)
+**Commit Message**: fix(code): show the matching window of a long definition, not its head (#2464) (#2474)
 
-* fix(engine): background merges skip the level-19 stored encode; drain-free starts at the watermark; force-merge converges past the batch cap
+* fix(code): show the matching window of a long definition, not its head (#2464)
 
-Since rc.78 (ec712826, #1042) every background merge ran a zstd-19 + LDM
-candidate on each stored JSON column. That made the stored encode ~35x
-slower (2.4-3.3 s -> 94-107 s per merge batch on a 1M-doc corpus) and held
-RSS at the breaker watermark for the whole merge, so ingest got 429s.
+symbol_passage picked the right definition, then kept only its first
+width chars, so a long definition showed its signature even when the
+text that matched sat far below. In the #2464 repro, --full 300 printed
+none of the four query terms; on pandas v3.1.0, the 19,825-char
+to_datetime definition was cut at its first 800. The no-symbol path
+already uses best_window; the symbol path never did.
 
-- Background merges encode stored columns at the operator's level only.
-  An explicit _forcemerge (or XERJ_MERGE_MAX_EFFORT=true) keeps level 19.
-- xerj-drain-free frees memory, so it now ignores the watermark spawn gate.
-- A force-merge whose segments each exceed half the batch cap merges the
-  two smallest instead of stopping short of max_num_segments.
+When the definition is longer than width, run best_window over it. A
+window at offset 0 keeps the old truncation byte-for-byte; otherwise the
+window follows "... [kind name: showing N of M chars from offset O,
+window centred on the match]", with O measured within the definition.
+The label and citations are unchanged. /_ask and the hub search API use
+the same function. Two new unit tests; the window test fails on the
+unfixed code. CHANGELOG and the xerj-code README are updated.
 
-* style: rustfmt
+* fix(code): put the window marker after the window (#2464)
 
-* docs(changelog): ingest regression fix (#2438)
+Review of #2474 found that the window marker led the passage. The hub
+search API caps hits
 
-* test(storage): force-merge level-19 test uses a JSON fallback column (cardinality above the dict cap)
-
----------
-
-Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +17/-0)
+**File**: `CHANGELOG.md` (modified, +9/-0)
 ```diff
-@@ -121,6 +121,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   queries on stray digits. Re-index to drop them from existing indices.
-   (#2423)
- 
-+- **Indexing is fast again under a memory cap** (issue
-+  [#2438](https://github.com/xerj-org/xerj/issues/2438), part of
-+  [#2423](https://github.com/xerj-org/xerj/issues/2423)). Since rc.78 every
-+  background merge also tried a very slow, very small compression (zstd level
-+  19) on the stored documents. That made each merge ~35x slower in that step,
-+  kept memory at the limit for the whole merge, and made `_bulk` answer 429
-+  until it ended, so indexing was about 5x slower and a loader could give up
-+  and drop documents. Background merges now use the normal compression level.
-+  An explicit `_forcemerge` still uses the slow, small one, so the force-merged
-+  size is unchanged; set `XERJ_MERGE_MAX_EFFORT=true` to use it for every
-+  merge. No data format change.
-+- **The helper thread that frees memory now starts when memory is high.**
-+  `xerj-drain-free` was refused with "memory is at the governor watermark",
-+  which is exactly when it is needed.
-+- **`_forcemerge?max_num_segments=1` now reaches one segment** when every
-+  segment is larger than half the per-merge size cap (it used to stop at two).
-+
- - Server startup now reports the resolved data directory, its configuration
-   source and whether this launch created it. New-directory guidance points
-   operators back to their previous `--data-dir` or `--config` when they expected
-```
-
-**File**: `engine/crates/xerj-common/src/thread_spawn.rs` (modified, +16/-0)
-```diff
-@@ -325,6 +325,22 @@ where
-     try_spawn_with(&StdSpawn, true, name, f)
- }
- 
-+/// Spawn a helper whose only job is to *free* memory (e.g. the memtable's
-+/// `xerj-drain-free`, which drops drained generations off the publish path).
-+///
-+/// Ignores the watermark gate on purpose: the gate closes exactly when RSS
-+/// is at the governor watermark, which is exactly when a memory-relief
-+/// helper should run. Gating it meant the drain's frees ran inline on the
-+/// publish thread under pressure (logged as "best-effort helper thread was
-+/// not started"). A real OS failure is still an `Err` with the job handed
-+/// back, and the caller drops it inline.
-+pub fn try_spawn_memory_relief<F>(name: &str, f: F) -> Result<SpawnedThread, SpawnFailure<F>>
-+where
-+    F: FnOnce() + Send + 'static,
-+{
-+    try_spawn_with(&StdSpawn, true, name, f)
-+}
-+
- /// [`try_spawn`] with an explicit stack size.
- ///
- /// Used by the in-process shard call, whose handler does not fit on the
-```
-
-**File**: `engine/crates/xerj-common/tests/memory_relief_spawn_at_watermark.rs` (added, +33/-0)
-```diff
-@@ -0,0 +1,33 @@
-+//! A memory-relief helper (`xerj-drain-free`) must start when the governor
-+//! watermark gate is closed — that is when it is needed. Its own test binary
-+//! because the spawn gate is process-global (first install wins).
-+
-+use std::sync::mpsc;
-+use std::time::Duration;
-+
-+use xerj_common::thread_spawn::{
-+    install_spawn_gate, spawn_allowed, try_spawn, try_spawn_memory_relief,
-+};
-+
-+fn at_watermark() -> bool {
-+    false
-+}
-+
-+#[test]
-+fn drain_free_helper_starts_at_the_watermark() {
-+    assert!(install_spawn_gate(at_watermark));
-+    assert!(!spawn_allowed(), "gate simulates RSS at the watermark");
-+
-+    // An ordinary best-effort helper is refused at the watermark...
-+    assert!(try_spawn("xerj-best-effort", || {}).is_err());
-+
-+    // ...but the memory-relief helper starts and runs its job.
-+    let (tx, rx) = mpsc::channel();
-+    let handle = try_spawn_memory_relief("xerj-drain-free", move || {
-+        tx.send(()).unwrap();
-+    })
-+    .unwrap_or_else(|f| panic!("relief spawn refused at the watermark: {}", f.error));
-+    rx.recv_timeout(Duration::from_secs(10))
-+        .expect("relief job ran");
-+    handle.join().unwrap();
-+}
-```
-
-**File**: `engine/crates/xerj-engine/src/index.rs` (modified, +148/-23)
-```diff
-@@ -105,6 +105,128 @@ async fn await_publication_barrier<T>(rx: tokio::sync::oneshot::Receiver<T>, wha
-     }
- }
- 
-+/// Forcemerge batch selection over segments sorted smallest first: chunks
-+/// of at most `chunk_len` segments whose input stays under `cap` bytes
-+/// (`0` = no cap, #948). Returns index lists into `sizes`.
-+///
-+/// Convergence: when every segment is already larger than half the cap,
-+/// no chunk can hold two, and the old selection returned nothing — an
-+/// explicit `max_num_segments=1` stopped at 2+ segments (seen on a 2 GiB
-+/// cap: two 16-27 MB segments vs a 32 MiB batch cap). In that case the two
-+/// smallest segments are merged anyway: one minimal batch is the least an
-+/// explicit force-merge must do to make progress, and the caller loops
-+/// passes until it reaches its target.
-+pub(crate) fn forcemerge_chunks(sizes: &[u64], chunk_len: usize, cap: u64) -> Vec<Vec<usize>> {
-+    let chunk_len = chunk_len.max(2);
-+    let mut chunks: Vec<Vec<usize>> = Vec::new();
-+    let mut batch: Vec<usize> = Vec::new();
-+    let mut batch_bytes = 0u64;
-+    for (i, &size) in sizes.iter().enumerate() {
-+        if !batch.is_empty()
-+            && (batch.len() >= chunk_len || (cap > 0 && batch_bytes.saturating_add(size) > cap))
-+        {
-+            chunks.push(std::mem::take(&mut batch));
-+            batch_bytes = 0;
-+        }
-+        batch_bytes = batch_bytes.saturating_add(size);
-+        batch.push(i);
-+    }
-+    if !batch.is_empty() {
-+        chunks.push(batch);
-+    }
-+    chunks.retain(|c| c.len() >= 2);
-+    if chunks.is_empty() && sizes.len() >= 2 {
-+        chunks.push(vec![0, 1]);
-+    }
-+    chunks
-+}
-+
-+#[cfg(test)]
-+mod forcemerge_chunks_tests {
-+    use super::forcemerge_chunks;
-+    const MIB: u64 = 1024 * 1024;
-+
-+    #[test]
-+    fn segments_over_the_cap_still_converge_to_one() {
-+        // The corpus200 case: two segments, each over half a 32 MiB cap.
-+        assert_eq!(
-+            forcemerge_chunks(&[16 * MIB, 27 * MIB], 16, 32 * MIB),
-+            vec![vec![0, 1]]
-+        );
-+        // Three oversized segments: merge the two smallest this pass.
-+        assert_eq!(
-+            forcemerge_chunks(&[40 * MIB, 50 * MIB, 60 * MIB], 16, 32 * MIB),
-+            vec![vec![0, 1]]
-+        );
-+    }
-+
-+    #[test]
-+    fn cap_and_count_still_split_batches() {
-+        let sizes = [MIB; 5];
-+        assert_eq!(
-+            forcemerge_chunks(&sizes, 2, 0),
-+            vec![vec![0, 1], vec![2, 3]]
-+        );
-+        assert_eq!(
-+            forcemerge_chunks(&[10 * MIB, 10 * MIB, 10 * MIB, 10 * MIB], 16, 25 * MIB),
-+            vec![vec![0, 1], vec![2, 3]]
-+        );
-+    }
-+
-+    #[test]
-+    fn one_segment_is_nothing_to_do() {
-+        assert!(forcemerge_chunks(&[MIB], 16, 32 * MIB).is_empty());
-+        assert!(forcemerge_chunks(&[], 16, 32 * MIB).is_empty());
-+    }
-+}
-+
-+/// Whether a merge runs the level-19 long-effort stored encode
-+/// (`encode_stored_v2_forcemerge_at_level`).
-+///
-+/// An explicit `_forcemerge` always does: the operator asked for the
-+/// smallest index. A background (tiered) merge does only when the
-+/// operator opts in with `XERJ_MERGE_MAX_EFFORT=true|1|yes|on`. Since
-+/// rc.78 every background merge ran it, which made the stored encode ~35x
-+/// slower and held the breaker latched (429 to ingest) for the whole merge.
-+pub(crate) fn merge_uses_long_effort_stored_encode(
-+    explicit_forcemerge: bool,
-+    opt_in: Option<&str>,
-+) -> bool {
-+    if explicit_forcemerge {
-+        return true;
-+    }
-+    matches!(
-+        opt_in.map(|v| v.trim().to_ascii_lowercase()).as_deref(),
-+        Some("1" | "true" | "yes" | "on")
-+    )
-+}
-+
-+#[cfg(test)]
-+mod merge_long_effort_tests {
-+    use super::merge_uses_long_effort_stored_encode as uses;
-+
-+    #[test]
-+    fn background_merge_uses_fast_encode_by_default() {
-+        assert!(!uses(false, None));
-+        assert!(!uses(false, Some("")));
-+        assert!(!uses(false, Some("false")));
-+        assert!(!uses(false, Some("0")));
-+    }
-+
-+    #[test]
-+    fn forcemerge_always_uses_long_effort_encode() {
-+        assert!(uses(true, None));
-+        assert!(uses(true, Some("false")));
-+    }
-+
-+    #[test]
-+    fn background_long_effort_is_opt_in() {
-+        for v in ["1", "true", "TRUE", " yes ", "on"] {
-+            assert!(uses(false, Some(v)), "{v}");
-+        }
-+    }
-+}
-+
- #[cfg(test)]
- mod collection_publication_fail_closed_tests {
-     use super::*;
-@@ -13620,24 +13742,10 @@ impl Index {
-                 let sizes: Vec<u64> = segs.iter().map(|s| s.size_bytes).collect();
-                 let ids: Vec<SegmentId> = segs.into_iter().map(|s| s.id.clone()).collect();
-                 let chunk_len = (mc.max_merge_count as usize).max(2);
--                let mut chunks: Vec<Vec<SegmentId>> = Vec::new();
--                let mut batch: Vec<SegmentId> = Vec::new();
--                let mut batch_bytes = 0u64;
--                for (id, size) in ids.into_iter().zip(sizes) {
--                    i
-```
-
-**File**: `engine/crates/xerj-engine/src/memtable.rs` (modified, +7/-4)
-```diff
-@@ -2825,9 +2825,10 @@ impl FrozenClaim {
-                 removed_bytes,
-             )
-         });
--        // Free the dead generations off the publish critical path.  If
--        // the thread cannot be created — the governor watermark is already
--        // engaged, `pthread_create` fails, or (the #1122 failure) the new
-+        // Free the dead generations off the publish critical path. The
-+        // spawn ignores the watermark gate: at the watermark is exactly when
-+        // this memory-relief helper must run. If the thread cannot be
-+        // created — `pthread_create` fails, or (the #1122 failure) the new
-         // thread's stack cannot be reserved — the Arcs drop inline: same
-         // correctness, we only lose the async-free optimisation. The spawn
-         // itself must not panic: std panics *inside* the child when its
-@@ -2838,7 +2839,9 @@ impl FrozenClaim {
-         // flush storm under pressure does not emit a line per generation.
-         static DRAIN_FREE_DEGRADED: AtomicBool = AtomicBool::new(false);
-         if let Err(failure) =
--            xerj_common::thread_spawn::try_spawn("xerj-drain-free", move || drop(dead))
-+            xerj_common::thread_spawn::try_spawn_memory_relief("xerj-drain-free", move || {
-+                drop(dead)
-+            })
-         {
-             xerj_common::thread_spawn::warn_best_effort_degraded(
-                 &DRAIN_FREE_DEGRADED,
-```
-
-**File**: `engine/crates/xerj-storage/src/stored_codec.rs` (modified, +121/-20)
-```diff
-@@ -70,7 +70,8 @@
- //! * form `0` — the payload is a zstd frame written at the encode-time level
- //!   (the only form ZBS2 segments can carry);
- //! * form `1` — `[0x01][level: u8][window_log: u8][zstd frame]`, written by
--//!   the merge-path effort chooser (see [`RAW_LONG_LEVEL`]): level 19 +
-+//!   the merge-path effort chooser (see [`RAW_LONG_LEVEL`]): level 19 on an
-+//!   explicit `_forcemerge` (background merges do not run it), plus
- //!   long-distance matching + an explicit window, which finds repeats tens
- //!   of MB apart that a default window cannot.  `level`/`window_log` are
- //!   informational — the zstd frame is self-describing.
-@@ -269,6 +270,17 @@ impl ColCodec {
- /// column; the chooser keeps whichever candidate is smaller, so a column
- /// that level 3 already answers (e.g. short ids) is stored exactly as
- /// before.
-+///
-+/// Level 19 is reserved for an explicit `_forcemerge`
-+/// ([`encode_stored_v2_forcemerge_at_level`]) or an operator opt-in.
-+/// Background merges skip this candidate: zstd 19 encodes at ~2 MB/s per
-+/// thread, and on a 1M-doc / 200 MB corpus at a 2 GiB cap the stored
-+/// encode was 98% of every background merge (`XERJ_PROF merge-batch`:
-+/// stored_us 94-107 s vs 2.4-3.3 s before this chooser existed, rc.77).
-+/// While a merge runs its working set keeps RSS above the governor
-+/// watermark, so the parent breaker answered 429 to ingest for the whole
-+/// merge: bulk throughput fell from ~41k docs/s (rc.77) to ~5-14k docs/s
-+/// (rc.78-rc.99).
- const RAW_LONG_LEVEL: i32 = 19;
- const RAW_LONG_WINDOW_LOG_MAX: u32 = 24;
- 
-@@ -294,23 +306,32 @@ pub fn encode_stored_v2(stored_docs_json: &[u8]) -> Vec<u8> {
- /// operator changes `compression.level` interleave with no migration and no
- /// format flag.
- pub fn encode_stored_v2_at_level(stored_docs_json: &[u8], level: i32) -> Vec<u8> {
--    encode_stored_v2_at_level_inner(stored_docs_json, level, false)
-+    encode_stored_v2_at_level_inner(stored_docs_json, level, None)
- }
- 
--/// Merge-path variant of [`encode_stored_v2_at_level`]: in addition to the
--/// operator's level, each JSON fallback column is also compressed at
--/// [`RAW_LONG_LEVEL`] with long-distance matching, and the smaller payload is
--/// kept (the same measured-chooser rule the `.dv` ZNV2 codec uses).  Merges
--/// are background work, so the extra encode pass is not on any
--/// back-pressure-critical path; flush never calls this.
-+/// Background-merge entry. Encodes exactly like [`encode_stored_v2_at_level`]
-+/// at the operator's level: **no** long-effort candidate. Background merges
-+/// are on the back-pressure path — their working set holds RSS at the
-+/// breaker watermark while they run, so their encode speed is ingest
-+/// throughput (see [`RAW_LONG_LEVEL`]). Use
-+/// [`encode_stored_v2_forcemerge_at_level`] for the max-effort encode.
- pub fn encode_stored_v2_merge_at_level(stored_docs_json: &[u8], level: i32) -> Vec<u8> {
--    encode_stored_v2_at_level_inner(stored_docs_json, level, true)
-+    encode_stored_v2_at_level_inner(stored_docs_json, level, None)
-+}
-+
-+/// Explicit-`_forcemerge` (or operator opt-in) variant: in addition to the
-+/// operator's level, each JSON fallback column is also compressed at
-+/// [`RAW_LONG_LEVEL`] (19) with long-distance matching, and the smaller
-+/// payload is kept (the same measured-chooser rule the `.dv` ZNV2 codec
-+/// uses). A force-merge is an operator request for the smallest index.
-+pub fn encode_stored_v2_forcemerge_at_level(stored_docs_json: &[u8], level: i32) -> Vec<u8> {
-+    encode_stored_v2_at_level_inner(stored_docs_json, level, Some(RAW_LONG_LEVEL))
- }
- 
- fn encode_stored_v2_at_level_inner(
-     stored_docs_json: &[u8],
-     level: i32,
--    long_effort_chooser: bool,
-+    long_effort_level: Option<i32>,
- ) -> Vec<u8> {
-     // Parse the JSON array of documents.  Failure → v1 fallback.
-     let docs: Vec<serde_json::Value> = match serde_json::from_slice(stored_docs_json) {
-@@ -381,7 +402,7 @@ fn encode_stored_v2_at_level_inner(
-             &columns,
-             Some(stored_docs_json),
-             level,
--            long_effort_chooser,
-+            long_effort_level,
-         ),
-         present_nulls,
-     )
-@@ -545,7 +566,7 @@ fn encode_stored_v2_from_values_inner(
-             &columns,
-             stored_docs_json,
-             STORED_ZSTD_LEVEL,
--            false,
-+            None,
-         ),
-         present_nulls,
-     )
-@@ -559,15 +580,16 @@ fn encode_stored_v2_from_values_inner(
- /// fast path on large segments where the columnar form always wins and
- /// serialising a multi-MB JSON array per flush is measurable CPU).
- ///
--/// `long_effort_chooser` adds a second, higher-effort zstd candidate for
--/// each JSON fallback column (see [`RAW_LONG_LEVEL`]) — merge only.
-+/// `long_effort_level` adds a second, higher-effort zstd candidate (LDM +
-+/// explicit window) at that level for each JSON fallback column (see
-+/// [`RAW_LONG_LEVEL`]) — force-merge only.
- fn encode_v2_columns(
-    
-```
-
----
-
-### Incident Patch 2: `6cdb32e2` (2026-10-26)
-**Commit Message**: autoindex: bound phase-A memory and cap long dataset names (part of #1122) (#2417)
-
-* autoindex: bound phase-A memory and cap long dataset names (part of #1122)
-
-- Phase A scanned every file and collected all FileScans/sketches (one set of
-  FieldAccs per file) before clustering; on a 146k-file tree that is GBs of
-  client RSS. Scan in file-ordered chunks and fold sketches into a new
-  incremental dataset::Clusterer; clustering is order-dependent, so feeding in
-  file order keeps the plan identical. Tests use a 3-file chunk so every
-  multi-file phase-A test crosses chunk boundaries.
-- The run kept every cluster (all FieldAccs) alive until end-of-run key
-  correlation. Keep only correlate::KeyStats (n, distinct, overflow, int range,
-  raw values for fields with >=10 distinct) and look datasets up by slug, which
-  also fixes the clusters/datasets zip misaligning after a refused dataset.
-- Slugs longer than 128 chars are truncated with a stable 8-hex hash suffix so
-  index names never exceed the server's 255-byte limit.
-
-* autoindex: keep is_candidate's doc comment on is_candidate (clippy doc_lazy_continuation)
-
----------
-
-Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +12/-0)
-```diff
-@@ -79,6 +79,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -112,6 +112,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
  ### Fixed
  
-+- `xerj autoindex` no longer runs out of memory while planning a large folder.
-+  It used to keep the sampled values of every file in memory at once before
-+  grouping them into datasets, and kept them all until the end of the run;
-+  on a 5 GB folder of about 146,000 files that was several GB on the client
-+  before anything was indexed. Files are now grouped as they are read, and only
-+  what the end-of-run key correlation needs is kept. The datasets and index
-+  names it plans are unchanged (part of #1122).
-+- `xerj autoindex` no longer fails a run because a dataset name built from a
-+  long path (for example a Go module path) is over the 255-character index name
-+  limit. Names longer than 128 characters are shortened and end in a short
-+  hash, so they stay the same on every run and never clash (part of #1122).
++- `xerj code` shows the part of a long definition that matched the query,
++  not its first `--full` characters (#2464). The matching text could sit
++  thousands of characters below the signature, so a hit named the right
++  function but showed none of the query terms. Such passages now end with
++  `... [function name: showing N of M chars from offset O, window centred on the match]`;
++  the `@ line N` label and citations are unchanged, and a definition whose
++  head is already the best window still ends `truncated at N chars`. Hub ask
++  passages (`xerj ask`) and hub search API hits change the same way.
 +
- - Server startup now reports the resolved data directory, its configuration
-   source and whether this launch created it. New-directory guidance points
-   operators back to their previous `--data-dir` or `--config` when they expected
+ - A segment merge's output-write step (doc-values build, stored encode, FTS
+   side-car build) is now charged to the merge budget before it starts, and a
+   background batch yields instead of starting it when it would take RSS to
 ```
 
-**File**: `engine/crates/xerj-autoindex/src/correlate.rs` (modified, +189/-1)
+**File**: `engine/crates/xerj-common/src/xccode/passage.rs` (modified, +107/-5)
 ```diff
-@@ -7,7 +7,7 @@
- use crate::esclient::Es;
- use anyhow::Result;
- use serde_json::{json, Value};
--use std::collections::HashSet;
-+use std::collections::{HashMap, HashSet};
- 
- pub struct Candidate {
-     pub slug: String,
-@@ -70,6 +70,90 @@ impl KeyCorr {
+@@ -106,7 +106,10 @@ fn symbol_spans(src: &Value) -> Vec<(String, String, i64, Option<i64>)> {
+ /// name contains every query term — `addReplyNull` still returns
+ /// addReplyNull. A multi-term question must not let a generic one-word name
+ /// (`type Token`) outrank the span that covers the rest of the question
+-/// (#2327). Truncation keeps the label so the truncation is visible.
++/// (#2327). Truncation keeps the label so the truncation is visible. A
++/// definition longer than `width` shows its densest [`best_window`], not its
++/// head: the match can sit far below the signature (#2464). When that window
++/// is the head, the output is the plain truncation it always was.
+ pub fn symbol_passage(
+     body: &str,
+     src: &Value,
+@@ -157,10 +160,25 @@ pub fn symbol_passage(
      }
+     let (_, _, name, kind, start, mut text) = best?;
+     if py_len(&text) > width {
+-        text = format!(
+-            "{}\n    ... [{kind} {name} truncated at {width} chars]",
+-            take_chars(&text, width)
+-        );
++        let (window, offset, total) = best_window(&text, query, width);
++        text = if offset == 0 {
++            format!(
++                "{}\n    ... [{kind} {name} truncated at {width} chars]",
++                take_chars(&text, width)
++            )
++        } else {
++            // The offset is into the definition, so the label's start line
++            // (and every citation built from it) is unchanged. The marker
++            // trails the window, as the truncation marker does, so a budget
++            // that cuts from the end drops the marker before any code.
++            format!(
++                "{window}\n    ... [{kind} {name}: showing {} of {} chars from offset {}, \
++                 window centred on the match]",
++                commaus(py_len(&window)),
++                commaus(total),
++                commaus(offset)
++            )
++        };
+     }
+     Some((text, format!("{kind} {name} @ line {start}")))
  }
+@@ -818,6 +836,90 @@ mod tests {
+         assert!(symbol_passage(body, &src, "zzzzz", 800).is_none());
+     }
  
-+/// What end-of-run key correlation needs from one sampled field, kept in
-+/// place of the field's full phase-A accumulator.
-+#[derive(Debug, Clone, PartialEq)]
-+pub struct KeyFieldStats {
-+    pub n: u64,
-+    pub distinct: usize,
-+    pub overflow: bool,
-+    pub int_range: Option<(i64, i64)>,
-+    pub values: HashSet<String>,
-+}
-+
-+/// dataset slug → field name → stats.
-+pub type KeyStats = HashMap<String, HashMap<String, KeyFieldStats>>;
-+
-+/// Fewest distinct sampled values [`is_candidate`] accepts for any type.
-+const MIN_CANDIDATE_DISTINCT: usize = 10;
-+
-+/// Keep only the correlation inputs of every cluster's fields, so the phase-A
-+/// accumulators (byte histograms, length/token samples, hashed distinct sets)
-+/// can be dropped once the plan is built instead of living to the end of the
-+/// run. Fields with too few distinct values to ever be a candidate are left
-+/// out; the type-dependent checks run at the end against the final specs.
-+pub fn key_stats(clusters: &[crate::dataset::Cluster]) -> KeyStats {
-+    let mut out = KeyStats::new();
-+    for c in clusters {
-+        let fields: HashMap<String, KeyFieldStats> = c
-+            .fields
-+            .iter()
-+            .filter(|(_, acc)| acc.distinct.len() >= MIN_CANDIDATE_DISTINCT)
-+            .map(|(name, acc)| {
-+                (
-+                    name.clone(),
-+                    KeyFieldStats {
-+                        n: acc.n,
-+                        distinct: acc.distinct.len(),
-+                        overflow: acc.distinct_overflow,
-+                        int_range: (acc.long_ok > 0).then_some((acc.int_min, acc.int_max)),
-+                        values: acc.raw_values.clone(),
-+                    },
-+                )
-+            })
++    /// #2464: a definition longer than `width` whose match sits below its
++    /// signature shows the matching window of THAT definition, with the
++    /// offset into the definition; the label (and so the citation) keeps the
++    /// definition's start line.
++    #[test]
++    fn long_definition_shows_the_matching_window_not_its_head() {
++        let filler: Vec<String> = (0..30)
++            .map(|i| format!("    Filler line {i}: unrelated parameters and options."))
 +            .collect();
-+        if !fields.is_empty() {
-+            out.insert(c.slug.clone(), fields);
-+        }
-+    }
-+    out
-+}
-+
-+/// Key-overlap candidates among `datasets`' fields, from stats captured by
-+/// [`key_stats`]. Looked up by slug, so datasets refused after planning
-+/// simply drop out.
-+pub fn candidates(stats: &KeyStats, datasets: &[crate::state::PlanDataset]) -> Vec<Candidate> {
-+    let mut cands = Vec::new();
-+    for d in datasets {
-+        let Some(fields) = stats.get(&d.slug) else {
-+            continue;
-+        };
-+        for spec in &d.specs {
-+            let Some(st) = fields.get(&spec.name) else {
-+                continue;
-+            };
-+            if is_candidate(
-+                &spec.es_type,
-+                spec.semantic.as_deref(),
-+                st.distinct,
-+                st.n,
-+                st.overflow,
-+                st.int_range,
-+            ) {
-+                cands.push(Candidate {
-+                    slug: d.slug.clone(),
-+                    index: d.index.clone(),
-+                    field: spec.name.clone(),
-+                    kind: spec.es_type.clone(),
-+                    values: st.values.clone(),
-+                    sampled_n: st.n,
-+                });
-+            }
-+        }
-+    }
-+    cands
-+}
-+
- /// Key-like candidate filter. Deviations from the design draft (recorded):
- /// - keyword fields qualify at cardinality ≥ 20 regardless of distinct/n
- ///   ratio (join keys like user ids have LOW sample ratios in big datasets);
-@@ -351,6 +435,110 @@ pub fn time_alignment(series: &[TimeSeries]) -> Vec<Value> {
- mod tests {
-     use super::*;
- 
-+    fn spec(name: &str, es_type: &str) -> crate::infer::FieldSpec {
-+        crate::infer::FieldSpec {
-+            name: name.into(),
-+            es_type: es_type.into(),
-+            date_enc: None,
-+            semantic: None,
-+            cardinality_est: 0,
-+            cardinality_overflow: false,
-+            null_ratio: 0.0,
-+            avg_len: 0.0,
-+            coverage: 1.0,
-+            examples: vec![],
-+            notes: vec![],
-+            date_min: None,
-+            date_max: None,
-+            date_evidence: vec![],
-+            num_min: None,
-+            num_max: None,
-+        }
++        let def = format!(
++            "def long_function(arg):\n    \"\"\"\n    Do many things.\n\n{}\n\n    \
++             Localize a naive timestamp to a timezone first, then convert it.\n    \
++             \"\"\"\n    return arg",
++            filler.join("\n")
++        );
++        let body = format!("def short_helper(x):\n    return x\n{def}");
++        let src = json!({
++            "symbols": [
++                { "name": "short_helper", "kind": "function", "line": 1, "end_line": 2 },
++                { "name": "long_function", "kind": "function", "line": 3 }
++            ]
++        });
++        let (text, label) =
++            symbol_passage(&body, &src, "localize naive timestamp timezone", 300).unwrap();
++        assert_eq!(label, "function long_function @ line 3");
++        assert!(text.contains("Localize a naive timestamp"), "{text}");
++        assert!(!text.contains("def long_function"), "not the head: {text}");
++        let (window, marker) = text.rsplit_once('\n').unwrap();
++        // The window comes first, so a cut from the end loses the marker
++        // before the match.
++        assert!(
++            take_chars(&text, 300).contains("Localize a naive timestamp"),
++            "{text}"
++        );
++        let prefix = "    ... [function long_function: showing ";
++        assert!(marker.starts_with(prefix), "{marker}");
++        assert!(
++            marker.ends_with(", window centred on the match]"),
++            "{marker}"
++        );
++        // The offset is into the definition, not into the file body.
++        let offset: usize = marker
++            .split_once(" from offset ")
++            .and_then(|(_, r)| r.split_once(", window"))
++            .map(|(n, _)| n.replace(',', ""))
++            .and_then(|n| n.parse().ok())
++            .unwrap();
++        assert!(offset > 0);
++        let from_offset: String = def.chars().skip(offset).collect();
++        assert!(from_offset.starts_with(window), "offset {offset}: {window}");
++        assert!(window.chars().count() <= 300);
++        assert!(marker.contains(&format!(" of {} chars", commaus(def.chars().count()))));
 +    }
 +
-+    fn plan_dataset(slug: &str, specs: Vec<crate::infer::FieldSpec>) -> crate::state::PlanDataset {
-+        crate::state::PlanDataset {
-+            slug: slug.into(),
-+            index: format!("ax-{slug}"),
-+            family: "jsonl".into(),
-+            group: None,
-+            specs,
-+            time_field: None,
-+            semantic_field: None,
-+            text_analyzer: None,
-+            scope: None,
-+            sampled_records: 1,
-+            file_count: 1,
-+        }
-+    }
-+
-+    fn cluster(
-+        slug: &str,
-+        field: &str,
-+        values: impl Iterator<Item = String>,
-+    ) -> crate::dataset::Cluster {
-+        let mut acc = crate::infer::FieldAcc::default();
-+     
++    /// When the densest window is the head, the output is byte-for-byte the
++    /// plain truncation it was before #2464; a short definition is untouched.
++    #[test]
++    fn head_window_and_short_definition_are_unchanged() {
++        let def = format!(
++            "fn n
 ```
 
-**File**: `engine/crates/xerj-autoindex/src/dataset.rs` (modified, +237/-99)
+**File**: `tools/xerj-code/README.md` (modified, +7/-0)
 ```diff
-@@ -135,31 +135,61 @@ pub(crate) fn demotable_family(f: Family) -> bool {
- /// Cluster sketches into datasets. `rels` and `scopes` are indexed by
- /// `Sketch::file_idx`: `rels` are root-relative paths (slug naming), `scopes`
- /// the repository scope of each file ("" = root) — see `module` docs.
-+///
-+/// Equivalent to feeding every sketch, in order, to a [`Clusterer`] and
-+/// calling [`Clusterer::finish`].
- pub fn cluster(sketches: Vec<Sketch>, rels: &[String], scopes: &[String]) -> Vec<Cluster> {
--    // scope → docs cluster (BTreeMap: deterministic scope order).
--    let mut docs: BTreeMap<String, Cluster> = BTreeMap::new();
--    let mut data: Vec<Cluster> = Vec::new();
--    fn docs_cluster<'a>(docs: &'a mut BTreeMap<String, Cluster>, scope: &str) -> &'a mut Cluster {
--        docs.entry(scope.to_string()).or_insert_with(|| Cluster {
--            family: Family::Code,
--            group: None,
--            members: Vec::new(),
--            fields: HashMap::new(),
--            key_fields: HashSet::new(),
--            records: 0,
--            population: 0,
--            slug: String::new(),
--            scope: scope.to_string(),
--            is_docs: true,
--            demoted: Vec::new(),
--        })
--    }
--
-+    let mut clusterer = Clusterer::default();
-     for sk in sketches {
-         let scope = scopes[sk.file_idx].as_str();
-+        clusterer.push(sk, scope);
-+    }
-+    clusterer.finish(rels)
-+}
-+
-+fn docs_cluster<'a>(docs: &'a mut BTreeMap<String, Cluster>, scope: &str) -> &'a mut Cluster {
-+    docs.entry(scope.to_string()).or_insert_with(|| Cluster {
-+        family: Family::Code,
-+        group: None,
-+        members: Vec::new(),
-+        fields: HashMap::new(),
-+        key_fields: HashSet::new(),
-+        records: 0,
-+        population: 0,
-+        slug: String::new(),
-+        scope: scope.to_string(),
-+        is_docs: true,
-+        demoted: Vec::new(),
-+    })
-+}
-+
-+/// Incremental form of [`cluster`]: sketches are folded into their dataset as
-+/// they arrive, so a caller never has to hold every file's sketch at once.
-+///
-+/// A sketch carries one [`FieldAcc`] per sampled field (a 1 KiB byte histogram,
-+/// up to 512 length samples and up to [`crate::infer::RAW_CAP`] raw values
-+/// each). Phase A used to collect every file's sketches before clustering:
-+/// tens of KiB per file, and 4.4 GB of client RSS on a 146k-file folder before
-+/// a single document was sent. Folding them as they are produced bounds that
-+/// to the clusters themselves. Sketches must be pushed in file order for the
-+/// result to match [`cluster`] exactly (clustering is greedy and
-+/// order-dependent).
-+#[derive(Default)]
-+pub struct Clusterer {
-+    // scope → docs cluster (BTreeMap: deterministic scope order).
-+    docs: BTreeMap<String, Cluster>,
-+    data: Vec<Cluster>,
-+}
-+
-+impl Clusterer {
-+    /// Fold one sketch into its dataset. `scope` is the repository scope of
-+    /// `sk.file_idx`.
-+    pub fn push(&mut self, sk: Sketch, scope: &str) {
-+        let docs = &mut self.docs;
-+        let data = &mut self.data;
-         // Documents: no data-derived names, no sub-file group.
-         if sk.key_fields.is_empty() && sk.group.is_none() {
--            let c = docs_cluster(&mut docs, scope);
-+            let c = docs_cluster(docs, scope);
-             c.members.push(sk.file_idx);
-             c.records += sk.records;
-             c.population += sk.population;
-@@ -171,7 +201,7 @@ pub fn cluster(sketches: Vec<Sketch>, rels: &[String], scopes: &[String]) -> Vec
-                     }
-                 }
-             }
--            continue;
-+            return;
-         }
-         // Data: schema clustering within (scope, family, group).
-         let names: HashSet<&str> = sk.key_fields.iter().map(|s| s.as_str()).collect();
-@@ -219,92 +249,96 @@ pub fn cluster(sketches: Vec<Sketch>, rels: &[String], scopes: &[String]) -> Vec
-         }
-     }
+@@ -149,6 +149,13 @@ match. Window offsets refer to the original source, including when Unicode
+ lowercasing changes its length. `--full N` changes the character limit, and
+ `--full 0` keeps the explicit file-head mode.
  
--    // Demote small config clusters — one record each, or a short multi-doc
--    // YAML/JSON/XML file — to their scope's document dataset. Their sampled
--    // fields are dropped — the caller re-samples the demoted files through
--    // the document renderer, which is also what indexes them.
--    //
--    // A file that also produced a grouped dataset (a second top-level JSON
--    // array) must not be folded: folding marks the whole file `as_document`
--    // and phase B then drops the grouped rows.
--    let grouped_files: HashSet<usize> = data
--        .iter()
--        .filter(|c| c.group.is_some())
--        .flat_map(|c| c.members.iter().copied())
--        .collect();
--    let mut kept: Vec<Cluster> = Vec::with_capacity(data.len());
--    let mut capped: BTreeMap<String, Vec<Cluster>> = BTreeMap::new();
--    for c in data {
--        let shares_grouped_sibling = c.members.iter().any(|m| grouped_files.contains(m));
--        if small_structured_config(&c) && !shares_grouped_sibling {
--            let d = docs_cluster(&mut docs, &c.scope);
--            d.members.ext
-```
-
-**File**: `engine/crates/xerj-autoindex/src/lib.rs` (modified, +96/-93)
-```diff
-@@ -5247,18 +5247,17 @@ struct PhaseA {
- /// `--progress json` stays a single parseable stream (#241).
- fn report_pdf_spool_fallbacks(
-     files: &[walk::FileEntry],
--    scans: &[FileScan],
-+    fallbacks: &[(usize, Vec<extract::pdf::SpoolFallback>)],
-     ctx: &PhaseAContext<'_>,
- ) {
-     let pdf_spool_budget = ctx.budget;
-     let pr = ctx.progress;
--    let reasons: Vec<(&str, &extract::pdf::SpoolFallback)> = scans
-+    let reasons: Vec<(&str, &extract::pdf::SpoolFallback)> = fallbacks
-         .iter()
--        .enumerate()
--        .flat_map(|(index, scan)| {
--            scan.pdf_spool_fallbacks
-+        .flat_map(|(index, per_file)| {
-+            per_file
-                 .iter()
--                .map(move |fallback| (files[index].rel.as_str(), fallback))
-+                .map(move |fallback| (files[*index].rel.as_str(), fallback))
-         })
-         .collect();
-     for (path, fallback) in &reasons {
-@@ -5296,6 +5295,13 @@ fn report_pdf_spool_fallbacks(
-     }
- }
- 
-+/// Files phase A scans before folding their sketches into clusters. Large
-+/// enough that the scan pool stays busy across a chunk, small enough that the
-+/// sketches held at once stay bounded whatever the folder's file count.
-+// Tests use a tiny chunk so every multi-file phase-A test crosses chunk
-+// boundaries.
-+const PHASE_A_CHUNK_FILES: usize = if cfg!(test) { 3 } else { 2048 };
++A matching definition longer than the limit is windowed the same way: the
++passage shows the part of that definition around the query terms, with a
++marker giving the window's offset from the definition's start, and the
++`kind name @ line N` label still names the definition's first line. When the
++head of the definition is already the best window, it is shown with a
++`truncated at N chars` marker.
 +
- /// Sniff + sample every file, cluster into datasets, and assemble the plan.
- /// Pure planning: reads the tree, never the server — which is what makes the
- /// #173/#196 grouping behaviour testable end-to-end without a cluster.
-@@ -5320,77 +5326,95 @@ fn build_phase_a(
-     // Patterns were validated (loudly) at run start; a failure here would be
-     // a programming error, not user input.
-     let stub_matcher = StubMatcher::compile(&cfg.stub_globs).expect("validated at startup");
--    let scans: Vec<FileScan> = crate::pool::install(|| {
--        files
--            .par_iter()
--            .zip(digests.par_iter())
--            .map(|(f, digest)| {
--                let _in_flight = pr.file(&f.rel, f.size);
--                scan_file(
--                    &f.path,
--                    f.size,
--                    digest,
--                    ctx,
--                    cfg.sample,
--                    cfg.max_file_bytes,
--                    stub_matcher.matches(&f.rel),
--                )
--            })
--            .collect()
--    });
--
--    report_pdf_spool_fallbacks(files, &scans, ctx);
--    note_worker_address_space_cap(pr);
--
-     let rels: Vec<String> = files.iter().map(|f| f.rel.clone()).collect();
-     let scopes = compute_scopes(root, &rels);
-     // (family, gzip) per file, from the scan's sniff — reused for assignments
-     // and demoted-file re-sampling instead of re-sniffing every file.
--    let file_meta: Vec<Option<(Family, bool)>> = scans
--        .iter()
--        .map(|sc| sc.sniffed.as_ref().map(|s| (s.family, s.gzip)))
--        .collect();
--    let mut sketches = Vec::new();
-+    let mut file_meta: Vec<Option<(Family, bool)>> = Vec::with_capacity(files.len());
-     let mut junk_files = Vec::new();
-     let mut pdf_spools: Vec<Option<extract::pdf::ExtractionSpool>> =
-         (0..files.len()).map(|_| None).collect();
--    for (i, mut sc) in scans.into_iter().enumerate() {
--        let family = sc
--            .sniffed
--            .as_ref()
--            .map(|s| s.family)
--            .unwrap_or(Family::Binary);
--        // A file that phase A junks is never indexed, so its artifact is
--        // refunded here rather than held to the phase A→B boundary.
--        pdf_spools[i] =
--            take_pdf_spool_if_indexable(&mut sc.pdf_spool, sc.junk.is_some(), pdf_spool_budget);
--        if let Some((status, reason)) = sc.junk {
--            junk_files.push(JunkFile {
--                file_key: keys[i].clone(),
--                rel: files[i].rel.clone(),
--                format: format_str(sc.sniffed.as_ref()),
--                status,
--                reason,
--                bytes: files[i].size,
--            });
--            continue;
--        }
--        for gs in sc.sketches {
--            sketches.push(dataset::Sketch {
--                file_idx: i,
--                group: gs.group,
--                family,
--                fields: gs.fields,
--                key_fields: gs.key_fields,
--                records: gs.records,
--                population: gs.population,
--            });
-+    let mut pdf_fallbacks: Vec<(usize, Vec<extract::pdf::SpoolFallback>)> = Vec::new();
-+    // Scan in file-ordered chunks and fold each chunk's sketches into the
-+    // clusters before the next chunk is scanned. Collecting every file's scan
-+    // first held one set of field accumulators per file for the whole folder
-+    // at once: 4.4 GB of client RSS on a 146k-file tree before anything was
-+    // indexed (part of #1122). Folding in file order keeps the clustering
-+    // identical to the collect-all version (see `dataset::Clusterer`).
-+  
+ ## Hybrid retrieval, fused server-side
+ 
+ With `--mode hybrid`, `xerj code` sends **one native top-level `hybrid` query**
 ```
 
 ---
 
-### Incident Patch 3: `b3d0865d` (2026-10-26)
-**Commit Message**: fix(autoindex): bounded, reused replay workers and retryable thread spawn (#2428) (#2437)
+### Incident Patch 2: `527cc307` (2026-10-26)
+**Commit Message**: fix(ci): load installer function fixtures through file URLs (#2332)
 
-**File**: `CHANGELOG.md` (modified, +8/-0)
+On Windows, importing the temporary fixture as a raw absolute path makes Node treat the drive letter as a URL scheme. The existing installer route test exits with ERR_UNSUPPORTED_ESM_URL_SCHEME before any assertion.
+
+Convert the path with node:url pathToFileURL before dynamic import. No handler bytes or assertions change. The original harness failed on Windows / Node 22.18.0 before the fix; all 64 assertions passed afterwards, both with the usual temporary path and one containing spaces, # and %. Linux/macOS and Node 20 were not executed locally. Prepared with Codex.
+
+Co-authored-by: Jun516 <[REDACTED_EMAIL]>
+
+**File**: `.github/scripts/functions-get-test.mjs` (modified, +2/-2)
 ```diff
-@@ -79,6 +79,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -14,7 +14,7 @@
+ import { readFileSync, writeFileSync, mkdtempSync } from 'node:fs';
+ import { tmpdir } from 'node:os';
+ import { join, dirname, resolve } from 'node:path';
+-import { fileURLToPath } from 'node:url';
++import { fileURLToPath, pathToFileURL } from 'node:url';
+ 
+ const REPO = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
+ const SRC = join(REPO, 'functions', 'get.js');
+@@ -28,7 +28,7 @@ const PS1_BODY = readFileSync(join(REPO, 'landing', 'get.ps1'), 'utf8');
+ const src = readFileSync(SRC, 'utf8');
+ const tmp = join(mkdtempSync(join(tmpdir(), 'xerj-fn-')), 'get.mjs');
+ writeFileSync(tmp, src);
+-const fn = await import(tmp);
++const fn = await import(pathToFileURL(tmp).href);
+ 
+ let failures = 0;
+ const ok = (cond, name, extra = '') => {
+```
+
+---
+
+### Incident Patch 3: `159b9405` (2026-10-27)
+**Commit Message**: fix(corpus): accept a Windows path in corpus add (#2472) (#2501)
+
+`xerj corpus add <name> F:\Projects\Foo` named the repo by the text after
+the last '/', so a backslash-separated Windows path stayed one token
+("F:\Projects\Foo") and the repo-name gate refused it as unsafe, while
+`xerj autoindex` took the same path. The name now comes from the last
+segment split on either separator (repo_name_from_source), so the repo is
+"Foo", as `F:/Projects/Foo` already gave. The name gate is unchanged.
+
+Test: repo_name_from_source_splits_windows_paths covers drive, trailing
+separator, .git suffix, UNC, forward-slash drive, Unix, https and scp-form
+sources, and checks each name passes valid_repo_name.
+
+Co-authored-by: Term56 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +5/-0)
+```diff
+@@ -147,6 +147,11 @@ continues in #2427 and #1122, which stay open.
  
  ### Fixed
  
-+- `xerj autoindex` no longer aborts a long run with `Resource temporarily
-+  unavailable (os error 11)` when the machine refuses to start a thread. The
-+  sync replay used to start a new thread for every operation (hundreds of
-+  thousands on a large folder); it now starts at most the window width of
-+  workers once per replay and reuses them. Starting a replay worker or an
-+  indexing worker now retries with a short backoff when thread creation is
-+  refused, and the replay finishes on the calling thread if no worker can be
-+  started, so a refusal is no longer fatal (#2428).
- - `xerj autoindex` no longer runs out of memory while planning a large folder.
-   It used to keep the sampled values of every file in memory at once before
-   grouping them into datasets, and kept them all until the end of the run;
++- `xerj corpus add` accepts a local Windows path such as
++  `F:\Projects\Foo` (#2472). The repo name was the text after the last `/`,
++  so a `\`-separated path stayed whole and was refused as an unsafe repo
++  name; it now names the repo `Foo`, as `F:/Projects/Foo` already did.
++
+ - `xerj code` shows the part of a long definition that matched the query,
+   not its first `--full` characters (#2464). The matching text could sit
+   thousands of characters below the signature, so a hit named the right
 ```
 
-**File**: `engine/crates/xerj-autoindex/src/lib.rs` (modified, +11/-1)
+**File**: `engine/crates/xerj-autoindex/src/xc.rs` (modified, +41/-15)
 ```diff
-@@ -11368,10 +11368,20 @@ fn run_index_report_inner(
-     // an error: workers that did start share the queue, the pipe stops
-     // counting the ones that never did, and if none started this thread
-     // works the queue itself. The failed closure is dropped unrun.
-+    // #2428: a refused spawn is retried with backoff first; a transient
-+    // `EAGAIN` must not cost the run a worker, let alone the run.
-     xerj_common::thread_spawn::scope(|scope| {
-         let mut started = 0usize;
-         for _ in 0..worker_count {
--            match scope.spawn("autoindex-worker", worker) {
-+            match crate::sync_executor::spawn_scoped_with_backoff(
-+                scope,
-+                &xerj_common::thread_spawn::StdSpawn,
-+                xerj_common::thread_spawn::spawn_allowed,
-+                "autoindex-worker",
-+                crate::sync_executor::WORKER_SPAWN_ATTEMPTS,
-+                crate::sync_executor::WORKER_SPAWN_BACKOFF,
-+                worker,
-+            ) {
-                 Ok(_) => started += 1,
-                 Err(error) => {
-                     pr.note(&format!(
-```
-
-**File**: `engine/crates/xerj-autoindex/src/sync_executor.rs` (modified, +315/-17)
-```diff
-@@ -344,6 +344,83 @@ pub(crate) fn replay_windowed<T: Sync>(
-     hooks: &mut dyn ReplayHooks<T>,
-     apply: &(dyn Fn(&T) -> Result<()> + Sync),
- ) -> Result<()> {
-+    replay_windowed_with(
-+        &xerj_common::thread_spawn::StdSpawn,
-+        xerj_common::thread_spawn::spawn_allowed,
-+        items,
-+        width,
-+        hooks,
-+        apply,
-+    )
+@@ -762,6 +762,18 @@ enum XerjignoreCarry {
+ /// symlink-to-a-dataset into the clone.
+ const XERJIGNORE_CARRY_MAX_BYTES: u64 = 1024 * 1024;
+ 
++/// Repo directory name for a plain-URL or local-path source: its last path
++/// segment without `.git`. #2472: a Windows path (`F:\Projects\Foo`) has
++/// `\`-separated segments, so both separators split.
++fn repo_name_from_source(url: &str) -> String {
++    url.trim_end_matches(['/', '\\'])
++        .rsplit(['/', '\\'])
++        .next()
++        .unwrap_or("")
++        .trim_end_matches(".git")
++        .to_string()
 +}
 +
-+/// How many times a refused worker spawn is retried before the run
-+/// continues with the workers it already has (#2428).
-+pub(crate) const WORKER_SPAWN_ATTEMPTS: u32 = 3;
-+/// First pause after a refused worker spawn; doubled on each retry.
-+pub(crate) const WORKER_SPAWN_BACKOFF: std::time::Duration = std::time::Duration::from_millis(50);
-+
-+/// Start `f` on a scoped helper thread, retrying a refused spawn (`EAGAIN`
-+/// from `pthread_create`, or the spawn gate saying no) up to `attempts`
-+/// times with a doubling `backoff` (#2428). A refused spawn is a transient
-+/// thread or memory limit, not a reason to lose the run: `Err` after the
-+/// last attempt means `f` never ran and the caller carries on with the
-+/// threads it has, or does the work itself.
-+pub(crate) fn spawn_scoped_with_backoff<'scope, 'env, S, G, F>(
-+    scope: &xerj_common::thread_spawn::Scope<'scope, 'env>,
-+    spawner: &S,
-+    gate: G,
-+    name: &str,
-+    attempts: u32,
-+    backoff: std::time::Duration,
-+    f: F,
-+) -> std::io::Result<()>
-+where
-+    S: xerj_common::thread_spawn::Spawn + ?Sized,
-+    G: Fn() -> bool,
-+    F: FnOnce() + Send + Copy + 'scope,
-+{
-+    let attempts = attempts.max(1);
-+    let mut delay = backoff;
-+    let mut attempt = 1;
-+    loop {
-+        match scope.spawn_with(spawner, gate(), name, f) {
-+            Ok(()) => return Ok(()),
-+            Err(error) if attempt >= attempts => return Err(error),
-+            Err(_) => {
-+                std::thread::sleep(delay);
-+                delay = delay.saturating_mul(2);
-+                attempt += 1;
-+            }
+ /// Filesystem root of a local checkout named by `url`, if `url` is one.
+ ///
+ /// `git clone` of a filesystem path or a `file://` URL checks out committed
+@@ -1105,21 +1117,12 @@ fn run_corpus_add(args: &[String]) -> i32 {
+         (
+             resolved,
+             urls.iter()
+-                .map(|u| {
+-                    let repo = u
+-                        .trim_end_matches('/')
+-                        .rsplit('/')
+-                        .next()
+-                        .unwrap_or("")
+-                        .trim_end_matches(".git")
+-                        .to_string();
+-                    CorpusSource {
+-                        repo,
+-                        url: u.clone(),
+-                        sha: String::new(),
+-                        declared: String::new(),
+-                        paths: Vec::new(),
+-                    }
++                .map(|u| CorpusSource {
++                    repo: repo_name_from_source(u),
++                    url: u.clone(),
++                    sha: String::new(),
++                    declared: String::new(),
++                    paths: Vec::new(),
+                 })
+                 .collect(),
+         )
+@@ -5413,6 +5416,29 @@ precedence = ["a", "b"]
+         assert!(local_checkout_root("file://localhost/no/such/xerj-path-2199").is_none());
+     }
+ 
++    /// #2472: a Windows drive or UNC path names its repo by the last
++    /// `\`-separated segment, as a URL or a Unix path does by its last `/` one.
++    #[test]
++    fn repo_name_from_source_splits_windows_paths() {
++        for (source, repo) in [
++            (r"F:\Projects\Roblox\LunarGame", "LunarGame"),
++            (r"F:\Projects\Roblox\LunarGame\", "LunarGame"),
++            (r"F:\src\widget.git", "widget"),
++            (r"\\server\share\widget", "widget"),
++            ("C:/src/widget/", "widget"),
++            ("/home/me/widget", "widget"),
++            ("https://github.com/xerj-org/xerj.git", "xerj"),
++            ("git@github.com:xerj-org/xerj.git", "xerj"),
++        ] {
++            let name = repo_name_from_source(source);
++            assert_eq!(name, repo, "{source}");
++            assert!(
++                xccode::pathgate::valid_repo_name(&name).is_ok(),
++                "{source} -> {name}"
++            );
 +        }
 +    }
-+}
 +
-+/// [`replay_windowed`] with an explicit spawner and spawn gate, so the
-+/// spawn-failure paths are testable without exhausting a real machine.
-+///
-+/// #2428: the window used to start one thread per *operation*. A corpus
-+/// replay is hundreds of thousands of operations, so a long run made
-+/// hundreds of thousands of `pthread_create` calls, and under memory or
-+/// thread pressure one of them eventually got `EAGAIN`. Now at most
-+/// `width` workers are started once per replay and reused for every item.
-+/// A refused worker spawn is retried with backoff; if it is still refused
-+/// the replay continues on the workers that did start, and if none did,
-+/// every item is applied on the calling thread. Ordering and failure
-+/// semantics are unchanged.
-+pub(crate) fn replay_windowed_with<T, S, G>(
-+    spawner: &S,
-+    gate: G,
-+    items: &[T],
-+    width: usize,
-+    hooks: &mut dyn ReplayHooks<T>,
-+    apply: &(dyn Fn(&T) -> Result<()> + Sync),
-+) -> Result<()>
-+where
-+    T: Sync,
-+    S: xerj_common::thread_spawn::Spawn + ?Sized,
-+    G: Fn() -> bool,
-+{
-     if items.is_empty() {
-         return Ok(());
-     }
-@@ -355,19 +432,68 @@ pub(crate) fn replay_windowed<T: Sync>(
-         }
-         return Ok(());
-     }
--    /// One dispatched operation: on its own thread, or — when that thread
--    /// could not be started (#1122) — already applied inline.
--    enum Dispatched<'scope> {
--        Thread(xerj_common::thread_spawn::ScopedJoinHandle<'scope, Result<()>>),
-+    /// One dispatched operation: queued to a worker, or — when no worker
-+    /// could be started (#1122, #2428) — already applied inline.
-+    enum Dispatched {
-+        Worker(std::sync::mpsc::Receiver<Result<()>>),
-         Inline(Result<()>),
-     }
-+    type Job<'a, T> = (&'a T, std::sync::mpsc::Sender<Result<()>>);
-+    let (job_tx, job_rx) = std::sync::mpsc::channel::<Job<'_, T>>();
-+    let job_rx = std::sync::Mutex::new(job_rx);
-+    let job_rx = &job_rx;
-+    // A worker takes queued items until the sender is dropped. A panic in
-+    // `apply` (unwind builds) becomes that item's error and the worker
-+    // keeps serving the queue.
-+    let worker = move || loop {
-+        let job = {
-+            let rx = job_rx
-+                .lock()
-+                .unwrap_or_else(|poisoned| poisoned.into_inner());
-+            rx.recv()
-+        };
-+        let Ok((item, reply)) = job else { break };
-+        let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| apply(item)))
-+            .unwrap_or_else(|panic| {
-+                Err(anyhow::anyhow!(
-+                    "replay apply panicked: {}",
-+                    panic_message(panic)
-+                ))
-+            });
-+        // The scheduler may have stopped listening after a `begin` error.
-+        let _ = reply.send(outcome);
-+    };
-     // #1122: `Builder::spawn_scoped` can abort the process after returning
-     // `Ok`, when the child cannot map its alternate signal stack. This
--    // scope uses `pthread_
+     /// #2339: `--own` is explicit. A local path with no LICENSE is not marked
+     /// own by itself. The marker persists across a re-add, a `--from` file
+     /// cannot set it, and `xerj corpus own` sets and clears it.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2454** (2026-10-26): Cold FTS top-k: walk on identities, hydrate only the page's winners (@xerj-org)
-- **PR #2452** (2026-10-26): fix(memory): bound merge/FST buffers under the governor and add breaker release hysteresis (#2427) (@xerj-org)
-- **PR #2445** (2026-10-26): chore: sign CLA for PensiveFei (@PensiveFei)
-- **PR #2444** (2026-10-26): docs: add an agent field report for the DeepSeek Harness MCP registration (@PensiveFei)
-- **PR #2443** (2026-10-26): Cut cold first-query search latency (#2422) (@xerj-org)
-- **PR #2441** (2026-10-26): fix(engine): background merges skip the zstd-19 stored encode (ingest ~5x regression since rc.78) (@xerj-org)
+- **PR #2522** (2026-10-27): hub: author-approved contribution candidates (6406 repos) (@xerj-org)
+- **PR #2521** (2026-10-27): hub: author-approved contribution candidates (6392 repos) (@xerj-org)
+- **PR #2517** (2026-10-27): hub: one shared contributor badge file (deploys fail: over 20,000 Pages files) (@xerj-org)
+- **PR #2511** (2026-10-27): hub: author-approved contribution candidates (6377 repos) (@xerj-org)
+- **PR #2510** (2026-10-27): hub: author-approved contribution candidates (6363 repos) (@xerj-org)
+- **PR #2507** (2026-10-27): hub: author-approved contribution candidates (6343 repos) (@xerj-org)
 
 ---
 
@@ -2944,13 +2253,13 @@ Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. engine): background merges skip the zstd-19 stored encode (ingest ~5x regression
+## X. code): show the matching window of a long definition, not its head (#2464) (#247
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `12e36e31`: engine): background merges skip the zstd-19 stored encode (ingest ~5x regression since rc.78) (#2441). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b127e7db`: code): show the matching window of a long definition, not its head (#2464) (#2474). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2958,22 +2267,14 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Indexing is fast again under a memory cap** (issue
-  [#2438](https://github.com/xerj-org/xerj/issues/2438), part of
-  [#2423](https://github.com/xerj-org/xerj/issues/2423)). Since rc.78 every
-  background merge also tried a very slow, very small compression (zstd level
-  19) on the stored documents. That made each merge ~35x slower in that step,
-  kept memory at the limit for the whole merge, and made `_bulk` answer 429
-  until it ended, so indexing was about 5x slower and a loader could give up
-  and drop documents. Background merges now use the normal compression level.
-  An explicit `_forcemerge` still uses the slow, small one, so the force-merged
-  size is unchanged; set `XERJ_MERGE_MAX_EFFORT=true` to use it for every
-  merge. No data format change.
-- **The helper thread that frees memory now starts when memory is high.**
-  `xerj-drain-free` was refused with "memory is at the governor watermark",
-  which is exactly when it is needed.
-- **`_forcemerge?max_num_segments=1` now reaches one segment** when every
-  segment is larger than half the per-merge size cap (it used to stop at two).
+- `xerj code` shows the part of a long definition that matched the query,
+  not its first `--full` characters (#2464). The matching text could sit
+  thousands of characters below the signature, so a hit named the right
+  function but showed none of the query terms. Such passages now end with
+  `... [function name: showing N of M chars from offset O, window centred on the match]`;
+  the `@ line N` label and citations are unchanged, and a definition whose
+  head is already the best window still ends `truncated at N chars`. Hub ask
+  passages (`xerj ask`) and hub search API hits change the same way.
 
 ```
 
@@ -2984,4 +2285,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `12e36e31` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b127e7db` are properly handled with clean fallback behavior.
