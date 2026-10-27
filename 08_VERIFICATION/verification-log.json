@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-EQAQ",
-    "timestamp": "2026-10-25T14:31:39.170Z",
-    "repository": "angular/angular",
-    "learningId": "learn-github-angular-angular",
-    "contentHash": "739e0d11fe6e9799fa2780aa52c28465342d32af2bbccd4853ab41186d676b87",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-ETN8",
     "timestamp": "2026-10-25T14:31:43.508Z",
     "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
@@ -7490,6 +7475,21 @@
     "repository": "czlonkowski/n8n-skills",
     "learningId": "learn-github-czlonkowski-n8n-skills",
     "contentHash": "925746295faf7aa52e6b3ccf1326ff552f7804efd1746d50dd56517341100c84",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-B1XI",
+    "timestamp": "2026-10-27T14:04:08.454Z",
+    "repository": "rdfjs/N3.js",
+    "learningId": "learn-github-rdfjs-n3-js",
+    "contentHash": "f0164119b7e39960db27a2b690233de76d5ca12ff0bf7cd1e15c880fa9d665fd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

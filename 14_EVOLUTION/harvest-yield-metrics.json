@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T14:01:04.698Z",
-  "total_cycles_completed": 5330,
-  "total_learnings_persisted": 5330,
-  "total_rules_promoted": 4733,
+  "last_updated": "2026-10-27T14:04:08.459Z",
+  "total_cycles_completed": 5331,
+  "total_learnings_persisted": 5331,
+  "total_rules_promoted": 4734,
   "history": [
-    {
-      "timestamp": "2026-10-26T13:40:39.402Z",
-      "repository": "RecursiveSI/flint",
-      "learningId": "learn-huggingface-recursivesi-flint",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-26T13:51:47.228Z",
       "repository": "freenet/freenet-core",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-27T14:01:04.698Z",
       "repository": "czlonkowski/n8n-skills",
       "learningId": "learn-github-czlonkowski-n8n-skills",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:04:08.459Z",
+      "repository": "rdfjs/N3.js",
+      "learningId": "learn-github-rdfjs-n3-js",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -5353,3 +5353,4 @@
 | `CYCLE-20261027-7180` | `2026-10-27T14:01:00.912Z` | `smol-machines/smolvm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4825` | Yes (`b7402781...`) |
 | `CYCLE-20261027-72UW` | `2026-10-27T14:01:03.032Z` | `BlockRunAI/ClawRouter` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/blockrunai-clawrouter-learnings.md` | Yes (`9bea8861...`) |
 | `CYCLE-20261027-7450` | `2026-10-27T14:01:04.692Z` | `czlonkowski/n8n-skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4826` | Yes (`92574629...`) |
+| `CYCLE-20261027-B1XI` | `2026-10-27T14:04:08.454Z` | `rdfjs/N3.js` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4827` | Yes (`f0164119...`) |

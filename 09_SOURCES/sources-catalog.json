@@ -9713,10 +9713,10 @@
     "repository": "rdfjs/N3.js",
     "platform": "github",
     "sourceUrl": "https://github.com/rdfjs/N3.js",
-    "sourceVersion": "407fa7c6",
+    "sourceVersion": "ce8f71be",
     "license": "NOASSERTION",
-    "contentHash": "a0c5b7594c2f54bd60ef520ea4ebc6bceaba96366e84d9e645926c813a4ea3a2",
-    "lastHarvestedAt": "2026-10-20T00:44:01.675Z",
+    "contentHash": "f0164119b7e39960db27a2b690233de76d5ca12ff0bf7cd1e15c880fa9d665fd",
+    "lastHarvestedAt": "2026-10-27T14:04:08.456Z",
     "learningId": "learn-github-rdfjs-n3-js"
   },
   "iziz-libphonenumber-ios": {

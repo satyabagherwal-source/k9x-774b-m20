@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T14:01:04.701Z",
+  "last_updated": "2026-10-27T14:04:08.461Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -14616,14 +14616,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rdfjs-n3-js",
-      "content_hash": "a0c5b7594c2f54bd60ef520ea4ebc6bceaba96366e84d9e645926c813a4ea3a2",
-      "verified_at": "2026-10-20T00:44:01.679Z",
+      "content_hash": "f0164119b7e39960db27a2b690233de76d5ca12ff0bf7cd1e15c880fa9d665fd",
+      "verified_at": "2026-10-27T14:04:08.461Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T00:44:01.679Z"
+      "last_updated": "2026-10-27T14:04:08.461Z"
     },
     "iziz/libPhoneNumber-iOS": {
       "repository": "iziz/libPhoneNumber-iOS",

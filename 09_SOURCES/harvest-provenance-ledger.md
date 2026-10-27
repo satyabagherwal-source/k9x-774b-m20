@@ -5362,3 +5362,4 @@ Every entry in this ledger must capture:
 | `learn-github-smol-machines-smolvm` | `https://github.com/smol-machines/smolvm` | `f75836ce` | Multi-dimensional audit evidence | 2026-10-27T14:01:00.914Z |
 | `learn-github-blockrunai-clawrouter` | `https://github.com/BlockRunAI/ClawRouter` | `d14d145d` | Multi-dimensional audit evidence | 2026-10-27T14:01:03.035Z |
 | `learn-github-czlonkowski-n8n-skills` | `https://github.com/czlonkowski/n8n-skills` | `e037563e` | Multi-dimensional audit evidence | 2026-10-27T14:01:04.694Z |
+| `learn-github-rdfjs-n3-js` | `https://github.com/rdfjs/N3.js` | `ce8f71be` | Multi-dimensional audit evidence | 2026-10-27T14:04:08.456Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T14:01:04.655Z",
+  "last_updated": "2026-10-27T14:04:08.423Z",
   "total_verified_learnings": 1123,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -105066,14 +105066,19 @@
       "slug": "rdfjs-n3.js",
       "platform": "github",
       "source_url": "https://github.com/rdfjs/N3.js",
-      "source_version": "407fa7c6",
-      "content_hash": "a0c5b7594c2f54bd60ef520ea4ebc6bceaba96366e84d9e645926c813a4ea3a2",
+      "source_version": "ce8f71be",
+      "content_hash": "f0164119b7e39960db27a2b690233de76d5ca12ff0bf7cd1e15c880fa9d665fd",
       "dossier_path": "07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
       "promoted_rules": [
         {
           "number": 2931,
           "title": "ci: announce each fix once and close issues fixed on next-major (#843)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4827,
+          "title": "deps-dev): Bump eslint from 10.12.0 to 10.13.0 in the minor group (#873)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -105082,7 +105087,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T00:44:01.618Z",
+      "verified_at": "2026-10-27T14:04:08.416Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -134195,6 +134200,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T14:01:04.647Z"
+    },
+    "rule-4827": {
+      "learning_id": "rule-4827",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4827,
+      "title": "deps-dev): Bump eslint from 10.12.0 to 10.13.0 in the minor group (#873)",
+      "source_url": "https://github.com/rdfjs/N3.js",
+      "source_version": "ce8f71be",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:04:08.416Z"
     }
   },
   "aliases": {
