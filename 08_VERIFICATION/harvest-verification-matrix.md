@@ -5190,3 +5190,5 @@
 | `CYCLE-20261027-NA6U` | `2026-10-27T07:13:44.790Z` | `ollaya-dev/ollaya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4649, Rule 4650, Rule 4651` | Yes (`5196da70...`) |
 | `CYCLE-20261027-P6L9` | `2026-10-27T07:15:13.437Z` | `thetahealth/mirobody` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4652, Rule 4653, Rule 4654` | Yes (`7ac0cc7e...`) |
 | `CYCLE-20261027-WLK5` | `2026-10-27T07:20:59.429Z` | `sourcey/sourcey` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4655` | Yes (`d0a4336e...`) |
+| `CYCLE-20261027-ROCO` | `2026-10-27T07:45:09.384Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4656, Rule 4657, Rule 4658` | Yes (`fac4e39c...`) |
+| `CYCLE-20261027-YU60` | `2026-10-27T07:50:43.512Z` | `projectcontour/contour` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/projectcontour-contour-learnings.md` | Yes (`6964b2cb...`) |

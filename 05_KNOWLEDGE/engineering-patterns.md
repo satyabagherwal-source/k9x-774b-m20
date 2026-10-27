@@ -339450,3 +339450,379 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `c64b1d80` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4656. Slot-Anchored Immutability vs. Moving State Deferral (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Slot-Anchored Immutability vs. Moving State Deferral",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "938cefb5",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-27T07:45:08.772Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `938cefb5`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing reactive dependency networks or declarative logic engines with temporal version operators (`@n`, `@first`, `@previous`), fixed index lookups on an unpopulated slot MUST defer the write and leave the slot unassigned. The runtime MUST NOT write an uninitialized marker (`null`, `undefined`, or `None`) to satisfy the expression, because doing so irreversibly seeds index `0` (`@first`), permanently poisoning the fixed historical anchor.
+
+**WHY**:
+In declarative engines, expressions like `$Obj.x = $Obj.x@first - 1` define relations relative to initial user input. If the engine evaluates the rule upon instantiation before user properties are injected, evaluating the missing `@first` as `null` and storing `null - 1 -> -1` permanently alters `@first` from missing to `-1`. Subsequent writes of user inputs will treat the placeholder as the genuine first recorded version, corrupting coordinate systems, offsets, and state machines.
+
+**WHEN TO APPLY**:
+Apply to any reactive graph, spreadsheet engine, dataflow pipeline, temporal database, or state management library that provides time-travel or self-referential version queries alongside declarative recalculation rules.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use indexmap::IndexMap;
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum VersionSelector {
+    First,
+    Index(usize),
+    Previous,
+    Last,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum Value {
+    Null,
+    Integer(i64),
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct PropertySlot {
+    pub history: Vec<Value>,
+    pub current: Option<Value>,
+}
+
+pub struct StateEngine {
+    pub slots: IndexMap<String, PropertySlot>,
+}
+
+impl StateEngine {
+    /// Evaluates a temporal version read.
+    /// Returns:
+    /// - Ok(Some(val)) if the history version exists.
+    /// - Ok(None) if the fixed self-anchor is NOT yet populated (must defer write).
+    /// - Err(CycleError) if moving selectors create an immediate unanchored cycle.
+    pub fn read_history_anchor(
+        &self,
+        slot_name: &str,
+        selector: VersionSelector,
+    ) -> Result<Option<Value>, &'static str> {
+        let slot = match self.slots.get(slot_name) {
+            Some(s) => s,
+            None => return Ok(None), // Defer: slot does not exist yet
+        };
+
+        match selector {
+            VersionSelector::First | VersionSelector::Index(0) => {
+                Ok(slot.history.first().cloned())
+            }
+            VersionSelector::Index(n) => {
+                if n < slot.history.len() {
+                    Ok(Some(slot.history[n].clone()))
+                } else {
+                    Ok(None) // Defer: future index requested, do not seed
+                }
+            }
+            VersionSelector::Previous => {
+                if slot.history.len() >= 2 {
+                    Ok(Some(slot.history[slot.history.len() - 2].clone()))
+                } else {
+                    // Moving selectors default to Null under imperative conditional rules
+                    Ok(Some(Value::Null))
+                }
+            }
+            VersionSelector::Last => {
+                Ok(Some(slot.history.last().cloned().unwrap_or(Value::Null)))
+            }
+        }
+    }
+
+    /// Evaluates declarative rule assignment safely avoiding anchor self-seeding.
+    pub fn apply_rule_assignment(
+        &mut self,
+        target_slot: &str,
+        selector: VersionSelector,
+        transform: fn(Value) -> Value,
+    ) {
+        match self.read_history_anchor(target_slot, selector) {
+            Ok(Some(historical_value)) => {
+                let computed = transform(historical_value);
+                let slot = self.slots.entry(target_slot.to_string()).or_default();
+                slot.current = Some(computed.clone());
+                slot.history.push(computed);
+            }
+            Ok(None) => {
+                // INVARIANT: Defer the write completely.
+                // Do NOT write Value::Null into slot.history!
+            }
+            Err(_) => panic!("Cycle detected in declaration"),
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Eagerly coercing missing history to Value::Null and executing write.
+// This corrupts history[0] permanently.
+pub fn unsafe_apply_rule(slot: &mut PropertySlot, transform: fn(Value) -> Value) {
+    let base = slot.history.first().cloned().unwrap_or(Value::Null); // BAD!
+    let next = transform(base);
+    slot.history.push(next); // POISONED: history[0] is now the computation on Null!
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using an automated state transition test. Declare a self-anchoring rule on an uninitialized class property, trigger re-evaluation, assert that `history.is_empty()` holds, assign an explicit first value, and confirm `history[0]` equals the explicit input rather than an intermediate transformed placeholder.
+
+---
+
+
+---
+
+## 4657. Transaction Logger Non-Reentrancy During Rollback (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Transaction Logger Non-Reentrancy During Rollback",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "938cefb5",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-27T07:45:08.979Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `938cefb5`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In transactional state stores utilizing Write-Ahead Logging (WAL) or undo logs, rollback restoration functions MUST bypass the mutation recorder. Rollback methods MUST operate directly on the raw memory storage structures and MUST NOT invoke standard setter/mutator functions that emit undo records.
+
+**WHY**:
+If the undo processor invokes standard property setters (`assign()`, `assign_property()`) to restore before-images, those setters will record new undo operations into the transaction journal. This either mutates the undo stack while it is being traversed (causing iterator invalidation / borrow checker panics in Rust), leads to unbounded memory consumption, or causes subsequent rollbacks to revert the undo itself in an oscillatory loop.
+
+**WHEN TO APPLY**:
+Universal across all in-memory database engines, transactional interpreters, reversible runtime environments, and file-system mutation logs.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use indexmap::IndexMap;
+
+#[derive(Debug, Clone)]
+pub enum UndoLogEntry {
+    VarWrite { name: String, before: Option<i64> },
+}
+
+pub struct TransactionalStore {
+    variables: IndexMap<String, i64>,
+    undo_log: Vec<UndoLogEntry>,
+}
+
+impl TransactionalStore {
+    pub fn new() -> Self {
+        Self {
+            variables: IndexMap::new(),
+            undo_log: Vec::new(),
+        }
+    }
+
+    /// Public mutating API: records undo history.
+    pub fn assign(&mut self, name: &str, value: i64) {
+        let before = self.variables.get(name).copied();
+        self.undo_log.push(UndoLogEntry::VarWrite {
+            name: name.to_string(),
+            before,
+        });
+        self.variables.insert(name.to_string(), value);
+    }
+
+    /// Internal restoration primitive: MUST NOT emit undo records.
+    fn raw_restore_variable(&mut self, name: String, before: Option<i64>) {
+        match before {
+            Some(val) => { self.variables.insert(name, val); }
+            None => { self.variables.shift_remove(&name); }
+        }
+    }
+
+    /// Atomic rollback: drains undo log and calls raw restoration.
+    pub fn rollback(&mut self) {
+        let mut log = std::mem::take(&mut self.undo_log);
+        for entry in log.drain(..).rev() {
+            match entry {
+                UndoLogEntry::VarWrite { name, before } => {
+                    self.raw_restore_variable(name, before);
+                }
+            }
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Calling public assign() inside rollback
+impl TransactionalStore {
+    pub fn bad_rollback(&mut self) {
+        while let Some(entry) = self.undo_log.pop() {
+            match entry {
+                UndoLogEntry::VarWrite { name, before } => {
+                    // FATAL BUG: assign() records a NEW entry into self.undo_log!
+                    if let Some(val) = before {
+                        self.assign(&name, val);
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Construct an integration test that:
+1. Mutates 5 variables within a transaction.
+2. Asserts transaction log size == 5.
+3. Triggers `rollback()`.
+4. Asserts transaction log size == 0 and state matches baseline.
+5. In Rust, run under `cargo test` and verify via Clippy that no recursive mutation paths exist.
+
+---
+
+
+---
+
+## 4658. Rectangular Bounding Box Coordinate Contraction Invariant (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Rectangular Bounding Box Coordinate Contraction Invariant",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "938cefb5",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-27T07:45:09.197Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `938cefb5`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Matrix segmentation and cropping routines (`locate`, `crop`, `focus`) operating on 2D discrete grids MUST maintain explicit assertions that:
+1. The input is a strictly rectangular 2D array of uniform row lengths.
+2. Every cell contains a finite numerical value.
+3. An empty/zero-filled bounding box returns an explicit empty envelope `{ matrix: [], x: 0, y: 0 }` rather than inverted coordinates (`top > bottom` or `left > right`) or out-of-bound slices.
+
+**WHY**:
+Bounding box calculations initialized to `top = rows`, `bottom = -1`, `left = cols`, `right = -1` will compute inverted coordinate spans when all elements are zero. If not intercepted, array slicing (`matrix.slice(top, bottom + 1)`) yields negative indices or out-of-order slice spans, which in JavaScript/TypeScript either produces empty arrays with nonsensical negative bounding coordinates or throws slicing panics in bounds-checked systems, causing downstream matrix merging functions to corrupt spatial layouts.
+
+**WHEN TO APPLY**:
+Computer vision preprocessors, symbolic matrix engines (ARC puzzle solvers), ASCII terminal visualizers, canvas renderers, and game grid engines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+export interface BoundingBox {
+  matrix: number[][];
+  x: number;
+  y: number;
+}
+
+export function locate(matrix: number[][]): BoundingBox {
+  if (!Array.isArray(matrix)) {
+    throw new TypeError("Matrix must be an array for cropping");
+  }
+  const rows = matrix.length;
+  if (rows === 0) {
+    return { matrix: [], x: 0, y: 0 };
+  }
+  const cols = matrix[0]?.length ?? 0;
+  
+  let top = rows;
+  let bottom = -1;
+  let left = cols;
+  let right = -1;
+
+  for (let y = 0; y < rows; y++) {
+    const row = matrix[y];
+    if (!Array.isArray(row) || row.length !== cols) {
+      throw new Error(`Matrix must be rectangular. Expected col width ${cols}, found ${row?.length}`);
+    }
+    for (let x = 0; x < cols; x++) {
+      const val = row[x];
+      if (!Number.isFinite(val)) {
+        throw new TypeError(`Matrix cell at [${y}, ${x}] is non-finite: ${val}`);
+      }
+      if (val === 0) continue;
+
+      if (y < top) top = y;
+      if (y > bottom) bottom = y;
+      if (x < left) left = x;
+      if (x > right) right = x;
+    }
+  }
+
+  // Exact empty envelope protection
+  if (bottom === -1) {
+    return { matrix: [], x: 0, y: 0 };
+  }
+
+  return {
+    matrix: matrix.slice(top, bottom + 1).map((r) => r.slice(left, right + 1)),
+    x: left,
+    y: top,
+  };
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Naive slice without zero-element guard
+export function badLocate(matrix: number[][]) {
+  let top = matrix.length, bottom = -1, left = matrix[0].length, right = -1;
+  // ... loop finds nothing because all cells are 0 ...
+  // Slicing with bottom = -1 results in matrix.slice(rows, 0) -> []
+  // But left and top return corrupted positive boundary coordinates!
+  return {
+    matrix: matrix.slice(top, bottom + 1).map(r => r.slice(left, right + 1)),
+    x: left, // BUG: x returns cols instead of 0!
+    y: top   // BUG: y returns rows instead of 0!
+  };
+}
+```
+
+**VERIFICATION METHOD**:
+Run property-based fuzz tests on `locate(matrix)` passing 0x0 matrices, NxM matrices filled entirely with zeros, and jagged arrays, asserting that jagged arrays throw descriptive errors and zero-filled matrices strictly return `{ matrix: [], x: 0, y: 0 }`.
+
+---

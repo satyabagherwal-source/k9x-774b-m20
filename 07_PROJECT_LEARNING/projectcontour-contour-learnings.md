@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectcontour-contour-learnings.md`  
 > **Source**: github ([https://github.com/projectcontour/contour](https://github.com/projectcontour/contour))  
-> **Source Version**: `0f487604`  
+> **Source Version**: `223a398d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T22:32:58.628Z  
+> **Timestamp**: 2026-10-27T07:50:43.304Z  
 > **Learning ID**: `learn-github-projectcontour-contour`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectcontour-contour-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectcontour/contour](https://github.com/projectcontour/contour))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T22:32:58.621Z  
+> **Harvest Timestamp**: 2026-10-27T07:39:53.088Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Contour is a Kubernetes ingress controller using Envoy proxy.
 - **Primary Language / Ecosystem**: HTML
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3958 stars
+- **Stars / Engagement**: 3955 stars
 
 ---
 
@@ -1592,13 +1592,15 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7771** (2026-10-20): **bump to go1.27.3, mockery v2.53.8, golangci-lint v2.15.0**
-  *Symptoms*: Bump Go to 1.27.3 and step required compatible versions of mockery and golangci-lint to fix error `export data version 5 is greater than maximum supported version 4` https://github.com/golang/go/issues/81188  - Go [1.27.3](https://go.dev/doc/devel/release#go1.27.0) - Mockery [v2.15.0](https://github.com/vektra/mockery/releases/tag/v2.53.8) - golangci-lint [v2.15.0](https://github.com/golangci/golangci-lint/releases/tag/v2.15.0)
+- **Issue #7785** (2026-10-26): **main: Bump to Envoy v1.40.1**
+  *Symptoms*: Updates to Envoy v1.40.1. For further info see https://github.com/envoyproxy/envoy/releases/tag/v1.40.1
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/projectcontour/contour/pull/7771?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 84.04%. Comparing base ([`16f633e`](https://app.codecov.io/gh/projectcontour/contour/commit/16f633eeb2146042c9ef1684c8d546d150757cb4?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)) to head ([`2306395`](https://app.codecov.io/gh/projectcontour/contour/commit/230639531e53925c69e9527016faee14fd8edf69?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)).  <details><summary>Additional details and impacted files</summary>    [![Impacted file tree graph](https://app.codecov.io/gh/projectcontour/contour
+  > ## [Codecov](https://app.codecov.io/gh/projectcontour/contour/pull/7785?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 84.08%. Comparing base ([`a550f10`](https://app.codecov.io/gh/projectcontour/contour/commit/a550f10be45cc7ac06477d7a66d6a90734296bc9?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)) to head ([`75c05ec`](https://app.codecov.io/gh/projectcontour/contour/commit/75c05ec83bd33183ca46607da1263b7155ecd0d9?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)).  <details><summary>Additional details and impacted files</summary>    [![Impacted file tree graph](https://app.codecov.io/gh/projectcontour/contour
 
-- **Issue #7770** (2026-10-19): **build(deps): bump ossf/scorecard-action from 2.4.4 to 2.5.0**
-  *Symptoms*: Bumps [ossf/scorecard-action](https://github.com/ossf/scorecard-action) from 2.4.4 to 2.5.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/ossf/scorecard-action/releases">ossf/scorecard-action's releases</a>.</em></p> <blockquote> <h2>v2.5.0</h2> <h2>What's Changed</h2> <p>This release moves the action to Scorecard v5.6.0, the first Scorecard release since its hosted services moved to new infrastructure.</p> <p>For changes to checks and results, and what the infrastructure move means for you, see the <a href="https://github.com/ossf/scorecard/releases/tag/v5.6.0">Scorecard v5.6.0 release notes</a>.</p> <ul> <li>The action's container image is built with Go 1.27.2 on a refreshed distroless base. by <a href="https://github.com/justaugustus"><code>@​justaugustus</code></a> in <a href="https://redirect.github.com/ossf/scorecard-action/pull/1716">ossf/scorecard-action#1716</a></li> <li>The installer (<code>cmd/installer</code>) now creates <code>.github/workflows/scorecard.yml</code>, and still recognizes existing <code>scorecards.yml</code> and <code>scorecards-analysis.yml</code> workflows. by <a href="https://github.com/justaugustus"><code>@​justaugustus</code></a> in <a href="https://redirect.github.com/ossf/scorecard-action/pull/1716">ossf/scorecard-action#1716</a></li> <li>The Scorecard version in results now always matches the Scorecard release the action is built with. by <a href="https://github.com/justaugustus"><code>@​justaug
+- **Issue #7779** (2026-10-26): **Add an Ingress Class printer column to the HTTPProxy CRD**
+  *Symptoms*: Fixes #7747.  Adds an `Ingress Class` column showing `.spec.ingressClassName`, placed after `TLS Secret` as proposed in the issue. The kubebuilder marker in `apis/projectcontour/v1/httpproxy.go` is updated and the generated CRD YAML in `examples/` carries the matching entry.  The CRDs were edited by hand to mirror what the marker generates, since I did not run `make generate`; the CI generate check will confirm they match.
+  **Post-Mortem & Fix Analysis**:
+  > Closing this as a duplicate of #7748, which was opened earlier and adds the same column. Sorry for the noise.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1615,257 +1617,296 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0f487604` (2026-10-20)
-**Commit Message**: bump to go1.27.3, mockery v2.53.8, golangci-lint v2.15.0 (#7771)
+### Incident Patch 1: `223a398d` (2026-10-26)
+**Commit Message**: main: Bump to Envoy v1.40.1 (#7785)
 
 Signed-off-by: Tero Saarni <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/build_daily.yaml` (modified, +1/-1)
+**File**: `changelogs/unreleased/7768-tsaarni-small.md` (removed, +0/-1)
 ```diff
-@@ -12,7 +12,7 @@ permissions:
- 
- env:
-   GOPROXY: https://proxy.golang.org/
--  GO_VERSION: 1.27.0
-+  GO_VERSION: 1.27.3
- 
- jobs:
-   e2e-envoy-deployment:
+@@ -1 +0,0 @@
+-Updates Envoy to v1.40.0. See the [Envoy release notes](https://www.envoyproxy.io/docs/envoy/v1.40.0/version_history/v1.40/v1.40.0) for more information about the content of the release.
 ```
 
-**File**: `.github/workflows/build_tag.yaml` (modified, +1/-1)
+**File**: `changelogs/unreleased/7785-tsaarni-small.md` (added, +1/-0)
 ```diff
-@@ -18,7 +18,7 @@ permissions:
- 
- env:
-   GOPROXY: https://proxy.golang.org/
--  GO_VERSION: 1.27.0
-+  GO_VERSION: 1.27.3
- 
- jobs:
-   build:
+@@ -0,0 +1 @@
++Updates Envoy to v1.40.1. See the [Envoy release notes](https://www.envoyproxy.io/docs/envoy/v1.40.1/version_history/v1.40/v1.40.1) for more information about the content of the release.
 ```
 
-**File**: `.github/workflows/codeql-analysis.yml` (modified, +1/-1)
+**File**: `cmd/contour/gatewayprovisioner.go` (modified, +1/-1)
 ```diff
-@@ -18,7 +18,7 @@ concurrency:
+@@ -36,7 +36,7 @@ func registerGatewayProvisioner(app *kingpin.Application) (*kingpin.CmdClause, *
  
- env:
-   GOPROXY: https://proxy.golang.org/
--  GO_VERSION: 1.27.0
-+  GO_VERSION: 1.27.3
- 
- jobs:
-   CodeQL-Build:
+ 	provisionerConfig := &gatewayProvisionerConfig{
+ 		contourImage:          "ghcr.io/projectcontour/contour:main",
+-		envoyImage:            "docker.io/envoyproxy/envoy:distroless-v1.40.0",
++		envoyImage:            "docker.io/envoyproxy/envoy:distroless-v1.40.1",
+ 		metricsBindAddress:    ":8080",
+ 		leaderElection:        false,
+ 		leaderElectionID:      "0d879e31.projectcontour.io",
 ```
 
-**File**: `.github/workflows/prbuild.yaml` (modified, +2/-2)
+**File**: `examples/contour/03-envoy.yaml` (modified, +1/-1)
 ```diff
-@@ -13,7 +13,7 @@ permissions:
- 
- env:
-   GOPROXY: https://proxy.golang.org/
--  GO_VERSION: 1.27.0
-+  GO_VERSION: 1.27.3
- 
- jobs:
-   lint:
-@@ -29,7 +29,7 @@ jobs:
-     - name: golangci-lint
-       uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
-       with:
--        version: v2.13.1
-+        version: v2.15.0
-         args: --build-tags=e2e,conformance,gcp,oidc,none
-   codespell:
-     name: Codespell
+@@ -46,7 +46,7 @@ spec:
+         - --log-level info
+         command:
+         - envoy
+-        image: docker.io/envoyproxy/envoy:distroless-v1.40.0
++        image: docker.io/envoyproxy/envoy:distroless-v1.40.1
+         imagePullPolicy: IfNotPresent
+         name: envoy
+         env:
 ```
 
-**File**: `Makefile` (modified, +1/-1)
+**File**: `examples/deployment/03-envoy-deployment.yaml` (modified, +1/-1)
 ```diff
-@@ -40,7 +40,7 @@ endif
- IMAGE_PLATFORMS ?= linux/amd64,linux/arm64
+@@ -58,7 +58,7 @@ spec:
+             - --log-level info
+           command:
+             - envoy
+-          image: docker.io/envoyproxy/envoy:distroless-v1.40.0
++          image: docker.io/envoyproxy/envoy:distroless-v1.40.1
+           imagePullPolicy: IfNotPresent
+           name: envoy
+           env:
+```
+
+**File**: `examples/render/contour-deployment.yaml` (modified, +1/-1)
+```diff
+@@ -10174,7 +10174,7 @@ spec:
+             - --log-level info
+           command:
+             - envoy
+-          image: docker.io/envoyproxy/envoy:distroless-v1.40.0
++          image: docker.io/envoyproxy/envoy:distroless-v1.40.1
+           imagePullPolicy: IfNotPresent
+           name: envoy
+           env:
+```
+
+**File**: `examples/render/contour-gateway.yaml` (modified, +1/-1)
+```diff
+@@ -9972,7 +9972,7 @@ spec:
+         - --log-level info
+         command:
+         - envoy
+-        image: docker.io/envoyproxy/envoy:distroless-v1.40.0
++        image: docker.io/envoyproxy/envoy:distroless-v1.40.1
+         imagePullPolicy: IfNotPresent
+         name: envoy
+         env:
+```
+
+**File**: `examples/render/contour.yaml` (modified, +1/-1)
+```diff
+@@ -10162,7 +10162,7 @@ spec:
+         - --log-level info
+         command:
+         - envoy
+-        image: docker.io/envoyproxy/envoy:distroless-v1.40.0
++        image: docker.io/envoyproxy/envoy:distroless-v1.40.1
+         imagePullPolicy: IfNotPresent
+         name: envoy
+         env:
+```
+
+---
+
+### Incident Patch 2: `a550f10b` (2026-10-26)
+**Commit Message**: internal/envoy: support the body_size_limit filter (#7683)
+
+* internal/envoy: support the body_size_limit filter
+
+This commit adds support for configuring the body_size_limit
+filter in Envoy.
+
+Fixes #7682
+
+Signed-off-by: István Váradi <[REDACTED_EMAIL]>
+
+* internal/envoy: mark deprecated field nolint
+
+The `ContentType` field of the `Compressor_CommonDirectionConfig` struct
+from the `envoy/extensions/filters/http/compressor/v3` module in the
+Envoy Go control plane has become deprecated in Envoy v1.40.0 and is
+replaced by `ContentTypeMatcher`.
+
+This patch marks the field //nolint:staticcheck where used.
+
+Signed-off-by: István Váradi <[REDACTED_EMAIL]>
+
+* Apply batched suggestions from code review
+
+Co-authored-by: Tero Saarni <[REDACTED_EMAIL]>
+Signed-off-by: István Váradi <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: István Váradi <[REDACTED_EMAIL]>
+Co-authored-by: Tero Saarni <[REDACTED_EMAIL]>
+
+**File**: `apis/projectcontour/v1alpha1/contourconfig.go` (modified, +8/-0)
+```diff
+@@ -451,6 +451,14 @@ type EnvoyListenerConfig struct {
+ 	// +kubebuilder:validation:Minimum=1
+ 	// +optional
+ 	MaxConnectionsToAcceptPerSocketEvent *uint32 `json:"maxConnectionsToAcceptPerSocketEvent,omitempty"`
++
++	// MaxRequestBodyBytes defines the maximum request body size in bytes for all routes.
++	// Requests with a larger body are rejected with 413. Minimum value is 1.
++	// If not specified, there is no limit.
++	//
++	// +kubebuilder:validation:Minimum=1
++	// +optional
++	MaxRequestBodyBytes *uint64 `json:"maxRequestBodyBytes,omitempty"`
+ }
  
- # Base build image to use.
--BUILD_BASE_IMAGE ?= golang:1.27.0@sha256:65b6f280bf050ec5af12716857e8ea8439d694dbba8f31ceeb7630670071f2bb
-+BUILD_BASE_IMAGE ?= golang:1.27.3@sha256:957861185dbf29d93668ace41e011d091c6e779953d47f0316ef2cc58e28fe2b
+ // SocketOptions defines configurable socket options for Envoy listeners.
+```
+
+**File**: `apis/projectcontour/v1alpha1/zz_generated.deepcopy.go` (modified, +5/-0)
+```diff
+@@ -674,6 +674,11 @@ func (in *EnvoyListenerConfig) DeepCopyInto(out *EnvoyListenerConfig) {
+ 		*out = new(uint32)
+ 		**out = **in
+ 	}
++	if in.MaxRequestBodyBytes != nil {
++		in, out := &in.MaxRequestBodyBytes, &out.MaxRequestBodyBytes
++		*out = new(uint64)
++		**out = **in
++	}
+ }
  
- # Enable build with CGO.
- BUILD_CGO_ENABLED ?= 0
+ // DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new EnvoyListenerConfig.
 ```
 
-**File**: `changelogs/unreleased/7771-tsaarni-small.md` (renamed, +1/-1)
+**File**: `changelogs/unreleased/7683-ivaradi-small.md` (added, +1/-0)
 ```diff
-@@ -1 +1 @@
--Updates Go to go1.27.0. See the [Go release notes](https://go.dev/doc/devel/release#go1.27.0) for more information about the content of the release.
-+Updates Go to go1.27.3. See the [Go release notes](https://go.dev/doc/devel/release#go1.27.0) for more information about the content of the release.
+@@ -0,0 +1 @@
++Support configuring the Envoy `body_size_limit` filter.
 ```
 
-**File**: `tools/go.mod` (modified, +49/-49)
+**File**: `cmd/contour/serve.go` (modified, +1/-0)
 ```diff
-@@ -16,12 +16,12 @@ require (
- 	4d63.com/gocheckcompilerdirectives v1.4.0 // indirect
- 	4d63.com/gochecknoglobals v0.2.2 // indirect
- 	charm.land/lipgloss/v2 v2.0.6 // indirect
--	codeberg.org/chavacava/garif v0.2.0 // indirect
-+	codeberg.org/chavacava/garif v0.2.1 // indirect
- 	codeberg.org/polyfloyd/go-errorlint v1.9.0 // indirect
- 	dev.gaijin.team/go/exhaustruct/v4 v4.0.0 // indirect
--	dev.gaijin.team/go/exhaustruct/v5 v5.0.3 // indirect
-+	dev.gaijin.team/go/exhaustruct/v5 v5.2.0 // indirect
- 	dev.gaijin.team/go/golib v0.8.1 // indirect
--	github.com/4meepo/tagalign v1.4.3 // indirect
-+	github.com/4meepo/tagalign v1.4.4 // indirect
- 	github.com/Abirdcfly/dupword v0.1.8 // indirect
- 	github.com/AdminBenni/iota-mixing v1.0.0 // indirect
- 	github.com/AlwxSin/noinlineerr v1.0.6 // indirect
-@@ -36,7 +36,7 @@ require (
- 	github.com/OpenPeeDeeP/depguard/v2 v2.2.1 // indirect
- 	github.com/ahmetb/gen-crd-api-reference-docs v0.3.1-0.20241111191808-71fefeed8910 // indirect
- 	github.com/alecthomas/chroma/v2 v2.27.0 // indirect
--	github.com/alecthomas/go-check-sumtype v0.3.1 // indirect
-+	github.com/alecthomas/go-check-sumtype v0.5.1-0.20260828200218-ae6904d28606 // indirect
- 	github.com/alexkohler/nakedret/v2 v2.0.6 // indirect
- 	github.com/alexkohler/prealloc v1.1.0 // indirect
- 	github.com/alfatraining/structtag v1.0.0 // indirect
-@@ -49,7 +49,7 @@ require (
- 	github.com/blizzy78/varnamelen v0.8.0 // indirect
- 	github.com/bombsimon/wsl/v4 v4.7.0 // indirect
- 	github.com/bombsimon/wsl/v5 v5.9.0 // indirect
--	github.com/breml/bidichk v0.3.3 // indirect
-+	github.com/breml/bidichk v0.3.4 // indirect
- 	github.com/breml/errchkjson v0.4.1 // indirect
- 	github.com/butuzov/ireturn v0.4.1 // indirect
- 	github.com/butuzov/mirror v1.3.3 // indirect
-@@ -69,7 +69,7 @@ require (
- 	github.com/clipperhouse/uax29/v2 v2.7.0 // indirect
- 	github.com/curioswitch/go-reassign v0.3.0 // indirect
- 	github.com/daixiang0/gci v0.14.0 // indirect
--	github.com/dave/dst v0.27.3 // indirect
-+	github.com/dave/dst v0.28.0 // indirect
- 	github.com/denis-tingaikin/go-header v0.5.0 // indirect
- 	github.com/dlclark/regexp2/v2 v2.2.1 // indirect
- 	github.com/ettle/strcase v0.2.0 // indirect
-@@ -79,9 +79,9 @@ require (
- 	github.com/fsnotify/fsnotify v1.10.0 // indirect
- 	github.com/fxamacker/cbor/v2 v2.9.1 // indirect
- 	github.com/fzipp/gocyclo v0.6.0 // indirect
--	github.com/ghostiam/protogetter v0.3.21 // indirect
--	github.com/go-critic/go-critic v0.14.4 // indirect
--	github.com/go-logr/logr v1.4.3 // indirect
-+	github.com/ghostiam/protogetter v1.0.1 // indirect
-+	github.com/go-critic/go-critic v0.15.0 // indirect
-+	github.com/go-logr/logr v1.4.4 // indirect
- 	github.com/go-openapi/jsonpointer v0.23.1 // indirect
- 	github.com/go-openapi/jsonreference v0.21.5 // indirect
- 	github.com/go-openapi/swag v0.26.0 // indirect
-@@ -108,23 +108,24 @@ require (
- 	github.com/go-xmlfmt/xmlfmt v1.1.3 // indirect
- 	github.com/gobuffalo/flect v1.0.3 // indirect
- 	github.com/gobwas/glob v0.2.3 // indirect
--	github.com/godoc-lint/godoc-lint v0.11.2 // indirect
--	github.com/gofrs/flock v0.13.0 // indirect
-+	github.com/godoc-lint/godoc-lint v0.11.4 // indirect
-+	github.com/gofrs/flock v0.13.1 // indirect
- 	github.com/golangci/asciicheck v0.5.0 // indirect
-+	github.com/golangci/canonicalheader v0.0.0-20260928145534-e18e5c5a078f // indirect
- 	github.com/golangci/dupl v0.0.0-20260401084720-c99c5cf5c202 // indirect
- 	github.com/golangci/go-printf-func-name v0.1.1 // indirect
- 	github.com/golangci/gofmt v0.0.0-20260820135601-e84e05053792 // indirect
--	github.com/golangci/golangci-lint/v2 v2.13.1 // indirect
--	github.com/golangci/golines v0.15.0 // indirect
-+	github.com/golangci/golangci-lint/v2 v2.15.0 // indirect
-+	github.com/golangci/golines v0.16.0 // indirect
- 	github.com/golangci/misspell v0.8.0 // indirect
- 	github.com/golangci/plugin-module-register v0.1.2 // indirect
- 	github.com/golangci/revgrep v0.8.0 // indirect
--	github.com/golangci/rowserrcheck v0.0.0-20260419091836-c5f79b8a11ba // indirect
-+	github.com/golangci/rowserrcheck v0.0.0-20261005233414-e0740d52dee8 // indirect
- 	github.com/golangci/swaggoswag v0.0.0-20250504205917-77f2aca3143e // indirect
- 	github.com/golangci/unconvert v0.0.0-20250410112200-a129a6e6413e // indirect
- 	github.com/google/gnostic-models v0.7.1 // indirect
- 	github.com/google/go-cmp v0.7.0 // indirect
--	github.com/google/pprof v0.0.0-20260709232956-b9395ee17fa0 // indirect
-+	github.com/google/pprof v0.0.0-20260802141513-ef3492d7dac3 // indirect
- 	github.com/gordonklaus/ineffassign v0.2.0 // indirect
- 	github.com/gostaticanalysis/analysisutil v0.7.1 // indirect
- 	github.com/gostaticanalysis/comment v1.5.0 // indirect
-@@ -143,16 +144,15 @@ require (
- 	github.com/json-iterator/go v1.1.12 // indirect
- 	github.com/julz/importas v0.2.0 // indirect
- 	github.com/karamaru-alpha/copyloopvar v1.2.2 // indirect
--	github.com/kisielk/errcheck v1.20.0 // indirect
-+	github.com/kisielk/errcheck v1.30.0 // indirect
- 	github.com/kkHAIKE/contextcheck v1.1.6 // i
+@@ -475,6 +475,7 @@ func (s *Server) doServe() error {
+ 		PerConnectionBufferLimitBytes:        contourConfiguration.Envoy.Listener.PerConnectionBufferLimitBytes,
+ 		SocketOptions:                        contourConfiguration.Envoy.Listener.SocketOptions,
+ 		MaxConnectionsToAcceptPerSocketEvent: contourConfiguration.Envoy.Listener.MaxConnectionsToAcceptPerSocketEvent,
++		MaxRequestBodyBytes:                  contourConfiguration.Envoy.Listener.MaxRequestBodyBytes,
+ 	}
+ 
+ 	if listenerConfig.TracingConfig, err = s.setupTracingService(contourConfiguration.Tracing); err != nil {
 ```
 
-**File**: `tools/go.sum` (modified, +110/-110)
+**File**: `cmd/contour/servecontext.go` (modified, +1/-0)
 ```diff
-@@ -6,18 +6,18 @@ cel.dev/expr v0.25.1 h1:1KrZg61W6TWSxuNZ37Xy49ps13NUovb66QLprthtwi4=
- cel.dev/expr v0.25.1/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
- charm.land/lipgloss/v2 v2.0.6 h1:EaGKeuA8FvF+v2BT5VmZd2LoYLaMZJXA5n34th8nCIQ=
- charm.land/lipgloss/v2 v2.0.6/go.mod h1:ipDDJNSGa1hlwDtSfW1s2/xR8Vdhbut4PXh2zEKZd0Q=
--codeberg.org/chavacava/garif v0.2.0 h1:F0tVjhYbuOCnvNcU3YSpO6b3Waw6Bimy4K0mM8y6MfY=
--codeberg.org/chavacava/garif v0.2.0/go.mod h1:P2BPbVbT4QcvLZrORc2T29szK3xEOlnl0GiPTJmEqBQ=
-+codeberg.org/chavacava/garif v0.2.1 h1:K9oYxSlvlXrHXyW26Z4q61bTpJDo1wbvXcYKar/F/LM=
-+codeberg.org/chavacava/garif v0.2.1/go.mod h1:oHnDSmc0f9K1MeE+MQD/yjkiIB5Xsn5y3S9Dg96Xk84=
- codeberg.org/polyfloyd/go-errorlint v1.9.0 h1:VkdEEmA1VBpH6ecQoMR4LdphVI3fA4RrCh2an7YmodI=
- codeberg.org/polyfloyd/go-errorlint v1.9.0/go.mod h1:GPRRu2LzVijNn4YkrZYJfatQIdS+TrcK8rL5Xs24qw8=
- dev.gaijin.team/go/exhaustruct/v4 v4.0.0 h1:873r7aNneqoBB3IaFIzhvt2RFYTuHgmMjoKfwODoI1Y=
- dev.gaijin.team/go/exhaustruct/v4 v4.0.0/go.mod h1:aZ/k2o4Y05aMJtiux15x8iXaumE88YdiB0Ai4fXOzPI=
--dev.gaijin.team/go/exhaustruct/v5 v5.0.3 h1:yOeA7DNjlT8y4yfmN6nWWYYggA13N523YAj9/TXbuTM=
--dev.gaijin.team/go/exhaustruct/v5 v5.0.3/go.mod h1:KwtBsX8nHHH1YxhxkpiBq6bfsmw5WnazWpNvJPHgY9Y=
-+dev.gaijin.team/go/exhaustruct/v5 v5.2.0 h1:HZB49Fshn8qHJCi9VzYtrcnR1jbLteRHXfnQz8Adams=
-+dev.gaijin.team/go/exhaustruct/v5 v5.2.0/go.mod h1:5IshpqhgGdKIrF8lBmi3M6YKmI7T3hMzAL9nrflko88=
- dev.gaijin.team/go/golib v0.8.1 h1:JYju4x9BSo+QD/AYeHULVDcvEhiFg8wOi6pT0IaZF5E=
- dev.gaijin.team/go/golib v0.8.1/go.mod h1:c5fu7t1RSGMxSQgcUYO1sODbzsYnOCXJLmHeNG1Eb+0=
--github.com/4meepo/tagalign v1.4.3 h1:Bnu7jGWwbfpAie2vyl63Zup5KuRv21olsPIha53BJr8=
--github.com/4meepo/tagalign v1.4.3/go.mod h1:00WwRjiuSbrRJnSVeGWPLp2epS5Q/l4UEy0apLLS37c=
-+github.com/4meepo/tagalign v1.4.4 h1:052JDGj2pBORc6NkD30dDXpsUpoYszDeUwr9/5YZuVA=
-+github.com/4meepo/tagalign v1.4.4/go.mod h1:00WwRjiuSbrRJnSVeGWPLp2epS5Q/l4UEy0apLLS37c=
- github.com/Abirdcfly/dupword v0.1.8 h1:SrhcUuGsROBuChFxHALRYzyyPODWn9zwghmzPvD9Cd8=
- github.com/Abirdcfly/dupword v0.1.8/go.mod h1:XZrhVnI7YGpsTiWZANSQaBJ4QpL/Tq5vIEdKJJAs9WI=
- github.com/AdminBenni/iota-mixing v1.0.0 h1:Os6lpjG2dp/AE5fYBPAA1zfa2qMdCAWwPMCgpwKq7wo=
-@@ -48,8 +48,8 @@ github.com/alecthomas/assert/v2 v2.11.0 h1:2Q9r3ki8+JYXvGsDyBXwH3LcJ+WK5D0gc5E8v
- github.com/alecthomas/assert/v2 v2.11.0/go.mod h1:Bze95FyfUr7x34QZrjL+XP+0qgp/zg8yS+TtBj1WA3k=
- github.com/alecthomas/chroma/v2 v2.27.0 h1:FodwmyOBgJULFYmDqibcp9pvfDLWdtPRh9v/r5BXYZs=
- github.com/alecthomas/chroma/v2 v2.27.0/go.mod h1:NjJ3ciIgrqBNeIkWZ4e46nseoLDslxU1LmfCoL+wcY8=
--github.com/alecthomas/go-check-sumtype v0.3.1 h1:u9aUvbGINJxLVXiFvHUlPEaD7VDULsrxJb4Aq31NLkU=
--github.com/alecthomas/go-check-sumtype v0.3.1/go.mod h1:A8TSiN3UPRw3laIgWEUOHHLPa6/r9MtoigdlP5h3K/E=
-+github.com/alecthomas/go-check-sumtype v0.5.1-0.20260828200218-ae6904d28606 h1:dXPJ+uOJLWb8rjlAuLX7JPiRJtZKw/53Ol+WxdDJ1Eo=
-+github.com/alecthomas/go-check-sumtype v0.5.1-0.20260828200218-ae6904d28606/go.mod h1:ZH31IJyNpxpStxP2ayCcPQz+3T2G/OnxIQqe4LWvSDw=
- github.com/alecthomas/repr v0.5.2 h1:SU73FTI9D1P5UNtvseffFSGmdNci/O6RsqzeXJtP0Qs=
- github.com/alecthomas/repr v0.5.2/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
- github.com/alexkohler/nakedret/v2 v2.0.6 h1:ME3Qef1/KIKr3kWX3nti3hhgNxw6aqN5pZmQiFSsuzQ=
-@@ -80,8 +80,8 @@ github.com/bombsimon/wsl/v4 v4.7.0 h1:1Ilm9JBPRczjyUs6hvOPKvd7VL1Q++PL8M0SXBDf+j
- github.com/bombsimon/wsl/v4 v4.7.0/go.mod h1:uV/+6BkffuzSAVYD+yGyld1AChO7/EuLrCF/8xTiapg=
- github.com/bombsimon/wsl/v5 v5.9.0 h1:WCrgZ7RQnZO5oEwbVTlYgBdU3wL294kR1BSWV8vTfsU=
- github.com/bombsimon/wsl/v5 v5.9.0/go.mod h1:kjo4HiAV5FDkHC8/uzJq9mBffEEd6WT/nvN7DoMovDM=
--github.com/breml/bidichk v0.3.3 h1:WSM67ztRusf1sMoqH6/c4OBCUlRVTKq+CbSeo0R17sE=
--github.com/breml/bidichk v0.3.3/go.mod h1:ISbsut8OnjB367j5NseXEGGgO/th206dVa427kR8YTE=
-+github.com/breml/bidichk v0.3.4 h1:70G6w80G6GDZTUURHTC5gBKVjMLMw2736CzXquSf5Ek=
-+github.com/breml/bidichk v0.3.4/go.mod h1:GOHprnh4i0V7HrvWjtbvbpicTUcqoYt9zYESKcJkk4M=
- github.com/breml/errchkjson v0.4.1 h1:keFSS8D7A2T0haP9kzZTi7o26r7kE3vymjZNeNDRDwg=
- github.com/breml/errchkjson v0.4.1/go.mod h1:a23OvR6Qvcl7DG/Z4o0el6BRAjKnaReoPQFciAl9U3s=
- github.com/butuzov/ireturn v0.4.1 h1:vWb3NO4t77iku/sjCQ/2pHTQeOmxEhjIriJqRLg1Y+I=
-@@ -124,8 +124,8 @@ github.com/curioswitch/go-reassign v0.3.0 h1:dh3kpQHuADL3cobV/sSGETA8DOv457dwl+f
- github.com/curioswitch/go-reassign v0.3.0/go.mod h1:nApPCCTtqLJN/s8HfItCcKV0jIPwluBOvZP+dsJGA88=
- github.com/daixiang0/gci v0.14.0 h1:h6AcLqmjIOBgojhtzY2CvBnA6RawPTkBHgtMvYD5YZ8=
- github.com/daixiang0/gci v0.14.0/go.mod h1:w9E+SWQ4aPQ+xYPUdqitGDoXpT4mayqOfk7Szz2U6wQ=
--github.com/dave/dst v0.27.3 h1:P1HPoMza3cMEquVf9kKy8yXsFirry4zEnWOdYPOoIzY=
--github.com/dave/dst v0.27.3/go.mod h1:jHh6EOibnHgcUW3WjKHisiooEkYwqpHLBSX1iOBhEyc=
-+github.com/dave/dst v0.28.0 h1:EIEuRC5XmVKuZF2OeyMahXX9ARVt6Xxr8vI0WtIY7K8=
-+github.com/dave/dst v0.28.0/go.mod h1:C4mfimBeSHfsgskhR/mUYSE05s2ih+PW6g9FP3c49tE=
- github.com/dave/jennifer v1.7.1 
+@@ -576,6 +576,7 @@ func (ctx *serveContext) convertToContourConfigurationSpec() contour_v1alpha1.Co
+ 				HTTP2MaxConcurrentStreams:            ctx.Config.Listener.HTTP2MaxConcurrentStreams,
+ 				MaxConnectionsPerListener:            ctx.Config.Listener.MaxConnectionsPerListener,
+ 				MaxConnectionsToAcceptPerSocketEvent: ctx.Config.Listener.MaxConnectionsToAcceptPerSocketEvent,
++				MaxRequestBodyBytes:                  ctx.Config.Listener.MaxRequestBodyBytes,
+ 				TLS: &contour_v1alpha1.EnvoyListenerTLS{
+ 					EnvoyTLS: contour_v1alpha1.EnvoyTLS{
+ 						MinimumProtocolVersion: ctx.Config.TLS.MinimumProtocolVersion,
+```
+
+**File**: `examples/contour/01-contour-config.yaml` (modified, +1/-0)
+```diff
+@@ -185,6 +185,7 @@ data:
+     #  socket-options:
+     #    tos: 64
+     #    traffic-class: 64
++    #  max-request-body-bytes: 1000
+     #
+     # omEnforcedHealthListener:
+     #   address: 0.0.0.0
+```
+
+**File**: `examples/contour/01-crds.yaml` (modified, +16/-0)
+```diff
+@@ -367,6 +367,14 @@ spec:
+                         format: int32
+                         minimum: 1
+                         type: integer
++                      maxRequestBodyBytes:
++                        description: |-
++                          MaxRequestBodyBytes defines the maximum request body size in bytes for all routes.
++                          Requests with a larger body are rejected with 413. Minimum value is 1.
++                          If not specified, there is no limit.
++                        format: int64
++                        minimum: 1
++                        type: integer
+                       maxRequestsPerConnection:
+                         description: |-
+                           Defines the maximum requests for downstream connections. If not specified, there is no limit.
+@@ -4631,6 +4639,14 @@ spec:
+                             format: int32
+                             minimum: 1
+                             type: integer
++                          maxRequestBodyBytes:
++                            description: |-
++                              MaxRequestBodyBytes defines the maximum request body size in bytes for all routes.
++                              Requests with a larger body are rejected with 413. Minimum value is 1.
++                              If not specified, there is no limit.
++                            format: int64
++                            minimum: 1
++                            type: integer
+                           maxRequestsPerConnection:
+                             description: |-
+                               Defines the maximum requests for downstream connections. If not specified, there is no limit.
+```
+
+**File**: `examples/render/contour-deployment.yaml` (modified, +17/-0)
+```diff
+@@ -218,6 +218,7 @@ data:
+     #  socket-options:
+     #    tos: 64
+     #    traffic-class: 64
++    #  max-request-body-bytes: 1000
+     #
+     # omEnforcedHealthListener:
+     #   address: 0.0.0.0
+@@ -592,6 +593,14 @@ spec:
+                         format: int32
+                         minimum: 1
+                         type: integer
++                      maxRequestBodyBytes:
++                        description: |-
++                          MaxRequestBodyBytes defines the maximum request body size in bytes for all routes.
++                          Requests with a larger body are rejected with 413. Minimum value is 1.
++                          If not specified, there is no limit.
++                        format: int64
++                        minimum: 1
++                        type: integer
+                       maxRequestsPerConnection:
+                         description: |-
+                           Defines the maximum requests for downstream connections. If not specified, there is no limit.
+@@ -4856,6 +4865,14 @@ spec:
+                             format: int32
+                             minimum: 1
+                             type: integer
++                          maxRequestBodyBytes:
++                            description: |-
++                              MaxRequestBodyBytes defines the maximum request body size in bytes for all routes.
++                              Requests with a larger body are rejected with 413. Minimum value is 1.
++                              If not specified, there is no limit.
++                            format: int64
++                            minimum: 1
++                            type: integer
+                           maxRequestsPerConnection:
+                             description: |-
+                               Defines the maximum requests for downstream connections. If not specified, there is no limit.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7785** (2026-10-26): main: Bump to Envoy v1.40.1 (@tsaarni)
+- **PR #7779** (closed): Add an Ingress Class printer column to the HTTPProxy CRD (@cvas22)
+- **PR #7778** (closed): internal/dag: support BackendTLSPolicy for GRPCRoute backends (@cvas22)
 - **PR #7771** (2026-10-20): bump to go1.27.3, mockery v2.53.8, golangci-lint v2.15.0 (@tsaarni)
 - **PR #7770** (2026-10-19): build(deps): bump ossf/scorecard-action from 2.4.4 to 2.5.0 (@dependabot[bot])
 - **PR #7769** (2026-10-16): Update compatibility matrix (@tsaarni)
-- **PR #7768** (2026-10-14): main: Bump to Envoy v1.40.0 (@tsaarni)
-- **PR #7766** (closed): Add metrics for /healthz endpoint (@Sun-Wukhan)
-- **PR #7765** (closed): Add metrics for /healthz endpoint (@Sun-Wukhan)
 
 ---
 
@@ -1879,34 +1920,3 @@ Signed-off-by: Tero Saarni <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. bump to go1.27.3, mockery v2.53.8, golangci-lint v2.15.0 (#7771)
-
-**RULE**:
-When implementing operations in `.github/workflows/build_daily.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectcontour/contour. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `0f487604`: bump to go1.27.3, mockery v2.53.8, golangci-lint v2.15.0 (#7771). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing HTML data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build_daily.yaml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```html
-// Verified production-grade fix pattern:
-  GO_VERSION: 1.27.3
-```
-
-**NEGATIVE CONSTRAINT**:
-```html
-// Anti-pattern to NEVER write (induced failure mode):
-  GO_VERSION: 1.27.0
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0f487604` are properly handled with clean fallback behavior.

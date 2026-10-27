@@ -5199,3 +5199,5 @@ Every entry in this ledger must capture:
 | `learn-github-ollaya-dev-ollaya` | `https://github.com/ollaya-dev/ollaya` | `9b8698e3` | Multi-dimensional audit evidence | 2026-10-27T07:13:44.794Z |
 | `learn-github-thetahealth-mirobody` | `https://github.com/thetahealth/mirobody` | `18bbe471` | Multi-dimensional audit evidence | 2026-10-27T07:15:13.440Z |
 | `learn-github-sourcey-sourcey` | `https://github.com/sourcey/sourcey` | `9c4ee18d` | Multi-dimensional audit evidence | 2026-10-27T07:20:59.433Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `938cefb5` | Multi-dimensional audit evidence | 2026-10-27T07:45:09.387Z |
+| `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `223a398d` | Multi-dimensional audit evidence | 2026-10-27T07:50:43.515Z |

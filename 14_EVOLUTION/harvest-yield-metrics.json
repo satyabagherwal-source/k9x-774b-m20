@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T07:20:59.438Z",
-  "total_cycles_completed": 5167,
-  "total_learnings_persisted": 5167,
-  "total_rules_promoted": 4556,
+  "last_updated": "2026-10-27T07:50:43.520Z",
+  "total_cycles_completed": 5169,
+  "total_learnings_persisted": 5169,
+  "total_rules_promoted": 4559,
   "history": [
-    {
-      "timestamp": "2026-10-25T20:55:45.203Z",
-      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-      "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T21:02:04.835Z",
-      "repository": "datalab-to/indra-ocr",
-      "learningId": "learn-huggingface-datalab-to-indra-ocr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T21:02:15.988Z",
       "repository": "tailscale/tailscale",
@@ -1403,6 +1389,20 @@
       "repository": "sourcey/sourcey",
       "learningId": "learn-github-sourcey-sourcey",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T07:45:09.391Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T07:50:43.520Z",
+      "repository": "projectcontour/contour",
+      "learningId": "learn-github-projectcontour-contour",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T07:20:59.372Z",
+  "last_updated": "2026-10-27T07:50:43.446Z",
   "total_verified_learnings": 1097,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -38558,8 +38558,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "1167438a",
-      "content_hash": "1d018500b01a19e3b9d8af4dba62c04d3a44cc90ef4e848df1f730960317f1c2",
+      "source_version": "938cefb5",
+      "content_hash": "fac4e39c956b6153a70f021a03663963168cb38106b4009c33c7685acc466220",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -38622,6 +38622,21 @@
           "number": 4635,
           "title": "Make NUC token gate depend on mode and category",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4656,
+          "title": "Slot-Anchored Immutability vs. Moving State Deferral",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4657,
+          "title": "Transaction Logger Non-Reentrancy During Rollback",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4658,
+          "title": "Rectangular Bounding Box Coordinate Contraction Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38629,7 +38644,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T17:58:31.421Z",
+      "verified_at": "2026-10-27T07:45:09.316Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41819,8 +41834,8 @@
       "slug": "projectcontour-contour",
       "platform": "github",
       "source_url": "https://github.com/projectcontour/contour",
-      "source_version": "0f487604",
-      "content_hash": "38a4b00de174bfaf3231b1553b73bffb8f5b122cc3a4ff21d12a4cbac399f3cc",
+      "source_version": "223a398d",
+      "content_hash": "6964b2cbf6858c564595d404042e380fd36ab2129f8e91f543de83d9da68ef38",
       "dossier_path": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "promoted_rules": [
@@ -41845,7 +41860,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T22:32:58.976Z",
+      "verified_at": "2026-10-27T07:50:43.428Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -130234,6 +130249,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T07:20:59.360Z"
+    },
+    "rule-4656": {
+      "learning_id": "rule-4656",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4656,
+      "title": "Slot-Anchored Immutability vs. Moving State Deferral",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "938cefb5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T07:45:09.316Z"
+    },
+    "rule-4657": {
+      "learning_id": "rule-4657",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4657,
+      "title": "Transaction Logger Non-Reentrancy During Rollback",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "938cefb5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T07:45:09.316Z"
+    },
+    "rule-4658": {
+      "learning_id": "rule-4658",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4658,
+      "title": "Rectangular Bounding Box Coordinate Contraction Invariant",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "938cefb5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T07:45:09.316Z"
     }
   },
   "aliases": {

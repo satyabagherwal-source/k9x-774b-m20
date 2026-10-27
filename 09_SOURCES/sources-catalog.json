@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "1167438a",
+    "sourceVersion": "938cefb5",
     "license": "Apache-2.0",
-    "contentHash": "1d018500b01a19e3b9d8af4dba62c04d3a44cc90ef4e848df1f730960317f1c2",
-    "lastHarvestedAt": "2026-10-26T17:58:31.464Z",
+    "contentHash": "fac4e39c956b6153a70f021a03663963168cb38106b4009c33c7685acc466220",
+    "lastHarvestedAt": "2026-10-27T07:45:09.387Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -6793,10 +6793,10 @@
     "repository": "projectcontour/contour",
     "platform": "github",
     "sourceUrl": "https://github.com/projectcontour/contour",
-    "sourceVersion": "0f487604",
+    "sourceVersion": "223a398d",
     "license": "Apache-2.0",
-    "contentHash": "38a4b00de174bfaf3231b1553b73bffb8f5b122cc3a4ff21d12a4cbac399f3cc",
-    "lastHarvestedAt": "2026-10-20T22:32:59.049Z",
+    "contentHash": "6964b2cbf6858c564595d404042e380fd36ab2129f8e91f543de83d9da68ef38",
+    "lastHarvestedAt": "2026-10-27T07:50:43.515Z",
     "learningId": "learn-github-projectcontour-contour"
   },
   "topoteretes-cognee": {
