@@ -5208,3 +5208,4 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `bb48ec18` | Multi-dimensional audit evidence | 2026-10-27T09:04:45.411Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `cfa33f54` | Multi-dimensional audit evidence | 2026-10-27T09:13:31.640Z |
 | `learn-github-smallstep-cli` | `https://github.com/smallstep/cli` | `824bfd6b` | Multi-dimensional audit evidence | 2026-10-27T09:46:50.504Z |
+| `learn-github-kong-kubernetes-ingress-controller` | `https://github.com/Kong/kubernetes-ingress-controller` | `76d2886d` | Multi-dimensional audit evidence | 2026-10-27T10:09:02.828Z |

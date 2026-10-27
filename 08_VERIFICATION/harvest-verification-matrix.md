@@ -5199,3 +5199,4 @@
 | `CYCLE-20261027-M1K0` | `2026-10-27T09:04:45.408Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4668` | Yes (`dc38c3b9...`) |
 | `CYCLE-20261027-XBLH` | `2026-10-27T09:13:31.637Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4669, Rule 4670, Rule 4671` | Yes (`f78e5b11...`) |
 | `CYCLE-20261027-45XH` | `2026-10-27T09:46:50.501Z` | `smallstep/cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4672, Rule 4673, Rule 4674` | Yes (`348993ae...`) |
+| `CYCLE-20261027-WPYH` | `2026-10-27T10:09:02.825Z` | `Kong/kubernetes-ingress-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4675` | Yes (`8c7926a0...`) |

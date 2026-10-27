@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T09:46:50.513Z",
+  "last_updated": "2026-10-27T10:09:02.835Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10551,14 +10551,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kong-kubernetes-ingress-controller",
-      "content_hash": "3cf0cbaa68acc6c69595bc720a69e5fa22830d62ef3ad9da4ff55308c59f6f0c",
-      "verified_at": "2026-10-22T16:58:15.139Z",
+      "content_hash": "8c7926a09de531fdb3f3a6f7fb374f49bf243d9cb6f6de844e7e2672ed61e906",
+      "verified_at": "2026-10-27T10:09:02.835Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:58:15.139Z"
+      "last_updated": "2026-10-27T10:09:02.835Z"
     },
     "Comfy-Org/z_image_turbo": {
       "repository": "Comfy-Org/z_image_turbo",

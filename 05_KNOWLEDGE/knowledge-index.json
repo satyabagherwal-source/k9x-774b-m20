@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T09:46:50.445Z",
+  "last_updated": "2026-10-27T10:09:02.778Z",
   "total_verified_learnings": 1099,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -31569,8 +31569,8 @@
       "slug": "kong-kubernetes-ingress-controller",
       "platform": "github",
       "source_url": "https://github.com/Kong/kubernetes-ingress-controller",
-      "source_version": "98b3bb68",
-      "content_hash": "3cf0cbaa68acc6c69595bc720a69e5fa22830d62ef3ad9da4ff55308c59f6f0c",
+      "source_version": "76d2886d",
+      "content_hash": "8c7926a09de531fdb3f3a6f7fb374f49bf243d9cb6f6de844e7e2672ed61e906",
       "dossier_path": "07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
       "promoted_rules": [
@@ -31613,6 +31613,11 @@
           "number": 3649,
           "title": "deps): bump go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc (#80",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4675,
+          "title": "deps): bump golang from `f241642` to `f20d83a` (#8135)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31620,7 +31625,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:58:15.047Z",
+      "verified_at": "2026-10-27T10:09:02.767Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -130651,6 +130656,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T09:46:50.433Z"
+    },
+    "rule-4675": {
+      "learning_id": "rule-4675",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4675,
+      "title": "deps): bump golang from `f241642` to `f20d83a` (#8135)",
+      "source_url": "https://github.com/Kong/kubernetes-ingress-controller",
+      "source_version": "76d2886d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T10:09:02.767Z"
     }
   },
   "aliases": {

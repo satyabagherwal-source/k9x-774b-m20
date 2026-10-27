@@ -6993,10 +6993,10 @@
     "repository": "Kong/kubernetes-ingress-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/Kong/kubernetes-ingress-controller",
-    "sourceVersion": "98b3bb68",
+    "sourceVersion": "76d2886d",
     "license": "Apache-2.0",
-    "contentHash": "3cf0cbaa68acc6c69595bc720a69e5fa22830d62ef3ad9da4ff55308c59f6f0c",
-    "lastHarvestedAt": "2026-10-22T16:58:15.125Z",
+    "contentHash": "8c7926a09de531fdb3f3a6f7fb374f49bf243d9cb6f6de844e7e2672ed61e906",
+    "lastHarvestedAt": "2026-10-27T10:09:02.828Z",
     "learningId": "learn-github-kong-kubernetes-ingress-controller"
   },
   "hf-comfy-org-z_image_turbo": {

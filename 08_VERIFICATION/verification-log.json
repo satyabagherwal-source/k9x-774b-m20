@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-3EPF",
-    "timestamp": "2026-10-25T05:58:57.843Z",
-    "repository": "ClickHouse/ClickHouse",
-    "learningId": "learn-github-clickhouse-clickhouse",
-    "contentHash": "7558a29a4775b9ac1dfb8b1e20a9bd2a777bfc4336da419f5fe02fbd9fa89f9e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-3F1K",
     "timestamp": "2026-10-25T05:58:58.280Z",
     "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "348993ae2d587e4449326201814dd95e30e7a9b0a97c8c13f0ac24f087eb10a4",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-WPYH",
+    "timestamp": "2026-10-27T10:09:02.825Z",
+    "repository": "Kong/kubernetes-ingress-controller",
+    "learningId": "learn-github-kong-kubernetes-ingress-controller",
+    "contentHash": "8c7926a09de531fdb3f3a6f7fb374f49bf243d9cb6f6de844e7e2672ed61e906",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
