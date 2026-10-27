@@ -5256,3 +5256,6 @@
 | `CYCLE-20261027-5A69` | `2026-10-27T12:07:40.737Z` | `lobehub/lobe-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4730` | Yes (`060061c2...`) |
 | `CYCLE-20261027-5DGE` | `2026-10-27T12:07:44.990Z` | `lxml/lxml` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4731` | Yes (`dfe92188...`) |
 | `CYCLE-20261027-5HEZ` | `2026-10-27T12:07:50.123Z` | `kubeedge/kubeedge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4732` | Yes (`e6109a13...`) |
+| `CYCLE-20261027-970F` | `2026-10-27T12:10:43.263Z` | `transact-rs/sqlx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4733` | Yes (`97953ba0...`) |
+| `CYCLE-20261027-9BIH` | `2026-10-27T12:10:49.097Z` | `react/react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4734` | Yes (`386ee133...`) |
+| `CYCLE-20261027-9I96` | `2026-10-27T12:10:57.834Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4735` | Yes (`3fbaf08d...`) |

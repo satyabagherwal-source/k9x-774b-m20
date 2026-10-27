@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T12:07:50.133Z",
+  "last_updated": "2026-10-27T12:10:57.843Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8046,14 +8046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-transact-rs-sqlx",
-      "content_hash": "62148b7bff48adb4a1790d20ad1ebf3a4feed3717ec5f919548ba9ea9bbcb1ff",
-      "verified_at": "2026-10-23T10:09:34.214Z",
+      "content_hash": "97953ba01cb4153bede6b805d8f22ad410c2358fa03c4c82c907edb947e63c8e",
+      "verified_at": "2026-10-27T12:10:43.271Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T10:09:34.214Z"
+      "last_updated": "2026-10-27T12:10:43.271Z"
     },
     "bergside/typeui": {
       "repository": "bergside/typeui",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "c693eee1ee3afac7d13df97f92c96218c326ae1c24b7ff4e8928289526f130a4",
-      "verified_at": "2026-10-25T20:23:52.612Z",
+      "content_hash": "3fbaf08dca470a2cbf90219bb41f0bb0aea31c81c640f434e960eef88c76b0d4",
+      "verified_at": "2026-10-27T12:10:57.842Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T20:23:52.612Z"
+      "last_updated": "2026-10-27T12:10:57.842Z"
     },
     "React95/React95": {
       "repository": "React95/React95",
@@ -15426,14 +15426,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-react-native",
-      "content_hash": "a04b5269518276f86de4ade449f6a6a02184d73fc59d456e89725ac042827d4b",
-      "verified_at": "2026-10-23T06:02:53.973Z",
+      "content_hash": "386ee13396ac5776997666740bcb0ac1d7577c393e81b94522472b64ce7bf9ba",
+      "verified_at": "2026-10-27T12:10:49.105Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T06:02:53.973Z"
+      "last_updated": "2026-10-27T12:10:49.105Z"
     },
     "faker-js/faker": {
       "repository": "faker-js/faker",

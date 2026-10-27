@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md`  
 > **Source**: github ([https://github.com/transact-rs/sqlx](https://github.com/transact-rs/sqlx))  
-> **Source Version**: `f574e07d`  
+> **Source Version**: `242eb8ca`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T10:09:33.834Z  
+> **Timestamp**: 2026-10-27T12:10:42.977Z  
 > **Learning ID**: `learn-github-transact-rs-sqlx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/transact-rs/sqlx](https://github.com/transact-rs/sqlx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T10:09:32.528Z  
+> **Harvest Timestamp**: 2026-10-27T12:10:42.057Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🧰 The Rust SQL Toolkit. An async, pure Rust SQL crate featuring compile-time checked queries without a DSL. Supports PostgreSQL, MySQL, and SQLite.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 17591 stars
+- **Stars / Engagement**: 17601 stars
 
 ---
 
@@ -981,244 +981,110 @@ impl FromStr for AnyKind {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `36f3a5c1` (2026-10-21)
-**Commit Message**: fix(macros): tolerate unreadable dotenv with query source (#4371)
+### Incident Patch 1: `48fb9e42` (2026-10-26)
+**Commit Message**: Fix incorrect paths and typos in docs and comments (#4413)
 
-* fix(macros): tolerate unreadable dotenv with query source
+- src/macros/test.md: the `#[sqlx::test]` fixtures example pointed at
+  `examples/postgres/social-axum-with-tests`, which does not exist. The
+  directory is `examples/postgres/axum-social-with-tests`.
+- sqlx-cli/README.md: `sqlx migrate add` creates
+  `migrations/<timestamp>_<name>.sql`, not `<timestamp>-<name>.sql`. The
+  separator is an underscore, as the reversible-migration example further
+  down the same file already shows.
+- sqlx-postgres/src/options/pgpass.rs: "Superfluous escape in in pgpass
+  file" warning had a doubled "in"; the two sibling warnings in the same
+  function are already correct.
+- examples/sqlite/extension/sqlx.toml: "the full path the the extension"
+  -> "the full path to the extension".
+- examples/postgres/axum-social-with-tests/Cargo.toml: "Auxilliary" ->
+  "Auxiliary".
+- sqlx-cli/tests/migrate.rs: doubled "to" in a comment.
 
-Ignore dotenv I/O errors only when a query source was established before reading that file. Continue to report parse errors and mid-file I/O failures when the current file established the source.
-
-Fixes #4348
-
-Developed with AI assistance.
-
-Signed-off-by: zhanglangning <[REDACTED_EMAIL]>
-
-* fix(macros): reject partially read dotenv files
-
-Once a dotenv file yields a key/value pair, preserve subsequent I/O errors
-instead of accepting a partial configuration.
-
-Add regression coverage for denied file permissions and changes to ignored
-dotenv paths.
-
----------
-
-Signed-off-by: zhanglangning <[REDACTED_EMAIL]>
-
-**File**: `sqlx-macros-core/src/query/metadata.rs` (modified, +461/-30)
+**File**: `examples/postgres/axum-social-with-tests/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -14,12 +14,21 @@ pub struct Metadata {
-     workspace_root: Arc<Mutex<Option<PathBuf>>>,
- }
+@@ -21,7 +21,7 @@ time = "0.3.48"
+ uuid = { version = "1.12.1", features = ["serde"] }
+ validator = { version = "0.20.0", features = ["derive"] }
  
-+#[cfg_attr(test, derive(Debug))]
- pub struct MacrosEnv {
-     pub database_url: Option<String>,
-     pub offline_dir: Option<PathBuf>,
-     pub offline: Option<bool>,
- }
- 
-+#[derive(thiserror::Error, Debug)]
-+#[error("error reading dotenv file {path:?}")]
-+struct DotenvError {
-+    path: PathBuf,
-+    #[source]
-+    error: dotenvy::Error,
-+}
-+
- impl Metadata {
-     pub fn env(&self) -> crate::Result<Arc<MacrosEnv>> {
-         let workspace_root = self.workspace_root();
-@@ -98,14 +107,22 @@ fn load_env(
-     config: &Config,
-     builder: &mut MtimeCacheBuilder,
- ) -> crate::Result<Arc<MacrosEnv>> {
--    #[derive(thiserror::Error, Debug)]
--    #[error("error reading dotenv file {path:?}")]
--    struct DotenvError {
--        path: PathBuf,
--        #[source]
--        error: dotenvy::Error,
--    }
-+    let from_env = MacrosEnv {
-+        database_url: crate::env_opt(config.common.database_url_var())?,
-+        offline_dir: crate::env_opt("SQLX_OFFLINE_DIR")?.map(PathBuf::from),
-+        offline: crate::env_opt("SQLX_OFFLINE")?.map(|val| is_truthy_bool(&val)),
-+    };
- 
-+    load_env_from_sources(manifest_dir, workspace_root, config, builder, from_env)
-+}
-+
-+fn load_env_from_sources(
-+    manifest_dir: &Path,
-+    workspace_root: &Path,
-+    config: &Config,
-+    builder: &mut MtimeCacheBuilder,
-+    from_env: MacrosEnv,
-+) -> crate::Result<Arc<MacrosEnv>> {
-     let mut from_dotenv = MacrosEnv {
-         database_url: None,
-         offline_dir: None,
-@@ -139,43 +156,457 @@ fn load_env(
-                 builder.add_path(dir.to_path_buf());
-                 continue;
-             }
-+            Err(dotenvy::Error::Io(_))
-+                if has_query_source_without_dotenv(&from_env, &from_dotenv) =>
-+            {
-+                builder.add_path(path.clone());
-+                continue;
-+            }
-             Err(e) => {
-                 builder.add_path(path.clone());
-                 return Err(DotenvError { path, error: e }.into());
-             }
-         };
- 
--        for res in dotenv {
--            let (name, val) = res.map_err(|e| DotenvError {
--                path: path.clone(),
--                error: e,
--            })?;
--
--            match &*name {
--                "SQLX_OFFLINE_DIR" => from_dotenv.offline_dir = Some(val.into()),
--                "SQLX_OFFLINE" => from_dotenv.offline = Some(is_truthy_bool(&val)),
--                _ if name == config.common.database_url_var() => {
--                    from_dotenv.database_url = Some(val)
--                }
--                _ => continue,
--            }
--        }
-+        read_dotenv(&path, dotenv, config, &from_env, &mut from_dotenv)?;
-     }
- 
-     Ok(Arc::new(MacrosEnv {
-         // Make set variables take precedent
--        database_url: crate::env_opt(config.common.database_url_var())?
--            .or(from_dotenv.database_url),
--        offline_dir: crate::env_opt("SQLX_OFFLINE_DIR")?
--            .map(PathBuf::from)
--            .or(from_dotenv.offline_dir),
--        offline: crate::env_opt("SQLX_OFFLINE")?
--            .map(|val| is_truthy_bool(&val))
--            .or(from_dotenv.offline),
-+        database_url: from_env.database_url.or(from_dotenv.database_url),
-+        offline_dir: from_env.offline_dir.or(from_dotenv.offline_dir),
-+        offline: from_env.offline.or(from_dotenv.offline),
-     }))
- }
- 
-+fn read_dotenv(
-+    path: &Path,
-+    dotenv: impl Iterator<Item = dotenvy::Result<(String, String)>>,
-+    config: &Config,
-+    from_env: &MacrosEnv,
-+    from_dotenv: &mut MacrosEnv,
-+) -> crate::Result<()> {
-+    let ignore_io_error = has_query_source_without_dotenv(from_env, from_dotenv);
-+    let mut read_any_pair = false;
-+
-+    for res in dotenv {
-+        let (name, val) = match res {
-+            Ok(pair) => pair,
-+            Err(dotenvy::Error::Io(_)) if ignore_io_error && !read_any_pair => {
-+                break;
-+            }
-+            Err(error) => {
-+                return Err(DotenvError {
-+                    path: path.to_path_buf(),
-+                    error,
-+                }
-+                .into());
-+            }
-+        };
-+        read_any_pair = true;
-+
-+        match &*name {
-+            "SQLX_OFFLINE_DIR" => from_dotenv.offline_dir = Some(val.into()),
-+            "SQLX_OFFLINE" => from_dotenv.offline = Some(is_truthy_bool(&val)),
-+            _ if name == config.common.database_url_var() => from_dotenv.database_url = Some(val),
-+            _ => continue,
-+        }
-+    }
-+
-+    Ok(())
-+}
-+
-+fn has_query_source_without_dotenv(from_env: &MacrosEnv, from_dotenv: &MacrosEnv) -> bool {
-+    let offline = from_env.offline.or(from_dotenv.offline);
-+    let database_url = from_env
-+        .database_url
-+        .as_deref()
-+        .or(from_dotenv.database_url.as_deref());
-+
-+    offline == Some(true) || database_url.is_some_and(|url| !url.is_empty())
-+}
-+
- /// Returns `true` if `val` is `"true"` (
+-# Auxilliary crates
++# Auxiliary crates
+ anyhow = "1.0.58"
+ dotenvy = "0.15.7"
+ thiserror = "2.0.18"
 ```
 
----
-
-### Incident Patch 2: `f574e07d` (2026-10-22)
-**Commit Message**: fix(sqlite): return an error instead of panicking on out-of-range INTEGER PrimitiveDateTime (#4433)
-
-Decoding `time::PrimitiveDateTime` from an INTEGER column called
-`OffsetDateTime::from_unix_timestamp(..).unwrap()`, so any value outside
-`time`'s range (e.g. a millisecond Unix timestamp such as 1700000000000)
-panicked while decoding the row. `OffsetDateTime` and the chrono types
-already return an error here; do the same.
-
-Co-authored-by: breken-ai <[REDACTED_EMAIL]>
-
-**File**: `sqlx-sqlite/src/types/time.rs` (modified, +1/-1)
+**File**: `examples/sqlite/extension/sqlx.toml` (modified, +1/-1)
 ```diff
-@@ -165,7 +165,7 @@ fn decode_datetime(value: SqliteValueRef<'_>) -> Result<PrimitiveDateTime, BoxDy
-     let dt = match value.type_info().0 {
-         DataType::Text => decode_datetime_from_text(value.text_borrowed()?),
-         DataType::Int4 | DataType::Integer => {
--            let parsed = OffsetDateTime::from_unix_timestamp(value.int64()?).unwrap();
-+            let parsed = OffsetDateTime::from_unix_timestamp(value.int64()?)?;
-             Some(PrimitiveDateTime::new(parsed.date(), parsed.time()))
+@@ -6,7 +6,7 @@
+ #
+ # When the extension file is installed in a non-standard location, as
+ # in this example, there are two options:
+-# * Provide the full path the the extension, as seen below.
++# * Provide the full path to the extension, as seen below.
+ # * Add the non-standard location to the library search path, which on
+ #   Linux means adding it to the LD_LIBRARY_PATH environment variable.
+ unsafe-load-extensions = [
+```
+
+**File**: `sqlx-cli/README.md` (modified, +1/-1)
+```diff
+@@ -57,7 +57,7 @@ sqlx database drop
+ sqlx migrate add <name>
+ ```
+ 
+-Creates a new file in `migrations/<timestamp>-<name>.sql`. Add your database schema changes to
++Creates a new file in `migrations/<timestamp>_<name>.sql`. Add your database schema changes to
+ this new file.
+ 
+ ---
+```
+
+**File**: `sqlx-cli/tests/migrate.rs` (modified, +1/-1)
+```diff
+@@ -206,7 +206,7 @@ async fn skip_reversible_migrations() {
+             .success();
+         assert_eq!(db.applied_migrations().await, vec![20230101000000]);
+ 
+-        // Skip to to non-existent version.
++        // Skip to non-existent version.
+         db.run_migration(MigrateCommand::Skip, Some(20230901000000999), false)
+             .failure();
+         assert_eq!(db.applied_migrations().await, vec![20230101000000]);
+```
+
+**File**: `sqlx-postgres/src/options/pgpass.rs` (modified, +1/-1)
+```diff
+@@ -222,7 +222,7 @@ fn find_next_field<'a>(line: &mut &'a str) -> Result<Cow<'a, str>, PGPassLinePar
+             last_added = idx + 1;
+         } else {
+             if escaping && c != '\\' && c != ':' {
+-                tracing::warn!("Superfluous escape in in pgpass file");
++                tracing::warn!("Superfluous escape in pgpass file");
+             }
+             escaping = false;
          }
- 
 ```
 
-**File**: `tests/sqlite/types.rs` (modified, +15/-0)
+**File**: `src/macros/test.md` (modified, +1/-1)
 ```diff
-@@ -166,6 +166,21 @@ mod time_tests {
-         "'20:45:31.133'" == time!(20:45:31.133),
-         "'19:44'" == time!(19:44),
-     ));
-+
-+    // An INTEGER holding a Unix timestamp that is out of range for `time` (for example a
-+    // millisecond timestamp) must fail to decode instead of panicking.
-+    #[sqlx_macros::test]
-+    async fn it_errors_on_out_of_range_integer_primitive_date_time() -> anyhow::Result<()> {
-+        let mut conn = new::<Sqlite>().await?;
-+
-+        let result = sqlx::query_scalar::<_, PrimitiveDateTime>("SELECT 1700000000000")
-+            .fetch_one(&mut conn)
-+            .await;
-+
-+        assert!(result.is_err(), "expected a decode error, got {result:?}");
-+
-+        Ok(())
-+    }
- }
- 
- #[cfg(feature = "bstr")]
+@@ -239,7 +239,7 @@ use serde_json::json;
+ // #[sqlx::test(fixtures(path = "./fixtures", scripts("users", "posts")))]
+ #[sqlx::test(fixtures("users", "posts"))]
+ async fn test_create_comment(pool: PgPool) -> sqlx::Result<()> {
+-    // See examples/postgres/social-axum-with-tests for a more in-depth example. 
++    // See examples/postgres/axum-social-with-tests for a more in-depth example. 
+     let mut app = create_app(pool);     
+     
+     let comment = test_request(
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4486** (closed): Fix typo: Auxilliary -> Auxiliary (@pei711)
 - **PR #4474** (closed): breaking: Make the embedded TLS root certs opt in (@markuskobler)
 - **PR #4472** (2026-10-21): doc: add `AI_POLICY.md` (@abonander)
 - **PR #4464** (closed): postgres: send no Close of the unnamed portal before Sync (@airhorns)
 - **PR #4463** (2026-10-15): fix(macros): only report Ambiguous{DateTime,Numeric}Type when preferred crate is Inferred (@rscorer)
 - **PR #4458** (2026-10-16): fix(mysql): harden protocol decoders against malformed packets from hostile servers (@portlandhodl)
-- **PR #4455** (closed): fix(pool): bound the `PoolInner::close()` join and idle drain (@daniel-pinder)
 
 ---
 
@@ -1238,90 +1104,28 @@ Co-authored-by: breken-ai <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. macros): tolerate unreadable dotenv with query source (#4371)
+## X. incorrect paths and typos in docs and comments (#4413)
 
 **RULE**:
-When implementing operations in `sqlx-macros-core/src/query/metadata.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `examples/postgres/axum-social-with-tests/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `36f3a5c1`: macros): tolerate unreadable dotenv with query source (#4371). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `48fb9e42`: incorrect paths and typos in docs and comments (#4413). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sqlx-macros-core/src/query/metadata.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/postgres/axum-social-with-tests/Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#[cfg_attr(test, derive(Debug))]
-#[derive(thiserror::Error, Debug)]
-#[error("error reading dotenv file {path:?}")]
-struct DotenvError {
-    path: PathBuf,
-    #[source]
-    error: dotenvy::Error,
-}
-
-    let from_env = MacrosEnv {
-        database_url: crate::env_opt(config.common.database_url_var())?,
-        offline_dir: crate::env_opt("SQLX_OFFLINE_DIR")?.map(PathBuf::from),
-        offline: crate::env_opt("SQLX_OFFLINE")?.map(|val| is_truthy_bool(&val)),
-    };
-    load_env_from_sources(manifest_dir, workspace_root, config, builder, from_env)
-}
-
-fn load_env_from_sources(
-    manifest_dir: &Path,
-    workspace_root: &Path,
-    config: &Config,
-    builder: &mut MtimeCacheBuilder,
-    from_env: MacrosEnv,
-) -> crate::Result<Arc<MacrosEnv>> {
-            Err(dotenvy::Error::Io(_))
-                if has_query_source_without_dotenv(&from_env, &from_dotenv) =>
-            {
-                builder.add_path(path.clone());
-                continue;
-            }
-        read_dotenv(&path, dotenv, config, &from_env, &mut from_dotenv)?;
-        database_url: from_env.database_url.or(from_dotenv.database_url),
-        offline_dir: from_env.offline_dir.or(from_dotenv.offline_dir),
-        
+# Auxiliary crates
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    #[derive(thiserror::Error, Debug)]
-    #[error("error reading dotenv file {path:?}")]
-    struct DotenvError {
-        path: PathBuf,
-        #[source]
-        error: dotenvy::Error,
-    }
-        for res in dotenv {
-            let (name, val) = res.map_err(|e| DotenvError {
-                path: path.clone(),
-                error: e,
-            })?;
-
-            match &*name {
-                "SQLX_OFFLINE_DIR" => from_dotenv.offline_dir = Some(val.into()),
-                "SQLX_OFFLINE" => from_dotenv.offline = Some(is_truthy_bool(&val)),
-                _ if name == config.common.database_url_var() => {
-                    from_dotenv.database_url = Some(val)
-                }
-                _ => continue,
-            }
-        }
-        database_url: crate::env_opt(config.common.database_url_var())?
-            .or(from_dotenv.database_url),
-        offline_dir: crate::env_opt("SQLX_OFFLINE_DIR")?
-            .map(PathBuf::from)
-            .or(from_dotenv.offline_dir),
-        offline: crate::env_opt("SQLX_OFFLINE")?
-            .map(|val| is_truthy_bool(&val))
-            .or(from_dotenv.offline),
+# Auxilliary crates
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `36f3a5c1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `48fb9e42` are properly handled with clean fallback behavior.

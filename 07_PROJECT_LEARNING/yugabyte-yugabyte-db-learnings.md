@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `545b420b`  
+> **Source Version**: `fb9ac9b9`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T20:23:52.372Z  
+> **Timestamp**: 2026-10-27T12:10:57.520Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T20:23:52.367Z  
+> **Harvest Timestamp**: 2026-10-27T12:10:56.642Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10628 stars
+- **Stars / Engagement**: 10633 stars
 
 ---
 
@@ -2250,11 +2250,11 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #35783** (2026-10-24): **SIGSEGV (PC=0) on the first RPC when the container's CPU count is smaller than the host CPU ids: `ThreadSafeObjectPool` sizes per-CPU pools from `/proc/cpuinfo` but indexes them by `sched_getcpu()`**
-  *Symptoms*: **Environment:** YugabyteDB 2025.2.7.0-b107 (official tarball; 2024.2 LTS behaves the same), single node started with `yugabyted start --advertise_address=127.0.0.1 --base_dir=/var/lib/yugabyte --background=true`. Running inside an unprivileged Incus 7.5.1 container (`images:ubuntu/24.04`, cgroup v2) with lxcfs virtualising `/proc/cpuinfo`, on a 128-thread host, Ubuntu 24.04, kernel 7.2.11. The same build runs crash-free on the host itself and in VMs.  **What happens:** with a floating CPU limit (`limits.cpu=4`, so the container sees 4 processors in `/proc/cpuinfo`, `nproc` and `SC_NPROCESSORS_ONLN`, while its threads are scheduled on host CPUs 23, 80, 119, 122), yb-master and yb-admin die with SIGSEGV at address 0 on the first RPC, and `yugabyted start` fails. The crash is deterministic.  | CPU limit | CPUs visible | host CPU ids seen by `sched_getcpu()` | result | | --- | --- | --- | --- | | 4 (floating) | 4 | 23, 80, 119, 122 | SIGSEGV, PC=0 on the first RPC | | pinned 0-3 | 4 | 0-3 | no crash: 10 min of YSQL + YCQL load, about 1080 iterations | | pinned 4-7 | 4 | 4-7 | SIGSEGV, PC=0, same stack |  **Stack** (YugabyteDB's own signal handler):  ``` *** SIGSEGV (@0x0) received by PID ... ; stack trace: ***     @ yb::Trace::GetAndInitArena()     @ yb::Trace::NewEntry()     @ yb::Trace::MaybeGetNewTrace()     @ yb::Trace::MaybeGetNewTraceForParent()     @ yb::rpc::RpcCommand::RpcCommand()     @ yb::master::GetLeaderMasterRpc::SendRpc()     @ yb::client::YBClient::Data::DoSetMa
+- **Issue #35865** (2026-10-27): **[#35734] YSQL: Take object locks before ysql_enable_object_locking_infra is promoted**
+  *Symptoms*: ### Background  Two flags control object locking: - The gflag enable_object_locking_for_table_locks. It is on in release builds.   It takes effect at the rolling restart. - The AutoFlag ysql_enable_object_locking_infra. It is promoted at upgrade   finalize.  A transaction reads the AutoFlag once, when it starts, and keeps that value until it ends (YBCSetObjectLockingInfraForCurrTxn).  - A legacy transaction read the AutoFlag as false. It does not rely on object   locks. All its requests, DMLs and DDLs, get the catalog version check.   Transactional DDL is off for it, so each of its DDLs is an autonomous DDL:   the DDL runs in its own DDL transaction. - A non-legacy transaction read the AutoFlag as true. It relies on object   locks, and its requests skip the catalog version check. Its DDLs are   concurrent DDLs.  Before this change, the AutoFlag value also controlled whether a transaction takes object locks.  ### Objectives  Rules for two transactions that use the same object at the same time: 1. Legacy and legacy: the catalog version check catches a DDL conflict. The    check is not complete, because the catalog cache can be stale in legacy    mode, but it gives some protection. 2. Non-legacy and non-legacy: object locks serialize them. 3. Legacy and non-legacy: allowed if both run only DMLs. Not allowed if one    of them runs a DDL.  Users must also be able to run concurrent DDLs immediately after finalize. An error is acceptable, but the goal is no error.  ### Problem  A tr
 
-- **Issue #35766** (2026-10-24): **[#35199] YSQL: Fix PgIndexBackfillMultiMaster.MasterFailoverAtEachIndexBuildPhase/0 by lengthening the YSQL lease**
-  *Symptoms*: ## Summary  Under sanitizers, master leader failover after the SIGKILL can take about 20s because of 10 missed heartbeats and a possible split vote, which is longer than the base fixture's 10s `master_ysql_operation_lease_ttl_ms`. When the leases expire, the tservers kill their Postgres sessions, including the in-flight `CREATE INDEX` and the test's own connection. `PgIndexBackfillMultiMaster` now overrides `UpdateMiniClusterOptions` to set `--master_ysql_operation_lease_ttl_ms=40000`, so the leases outlast the failover.  --- _Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._  ## Test plan  ./yb_build.sh tsan --clang21 --cxx-test pg_index_backfill-test --gtest-filter PgIndexBackfillMultiMaster.MasterFailoverAtEachIndexBuildPhase/0 -n 100 --stop-at-failure -- -p 6 ./yb_build.sh asan --clang21 --cxx-test pg_index_backfill-test --gtest-filter PgIndexBackfillMultiMaster.MasterFailoverAtEachIndexBuildPhase/0 -n 100 --stop-at-failure -- -p 6 Ran the above locally each with no failures. Before the fix, this test reproduced locally (same test command and -p / env as above, without --stop-at-failure) -- with the CSI dashboard rate for reference: - clang21-asan: 9/14 iterations failed locally; CSI 17/50 - clang21-tsan: 9/9 iterations failed locally; CSI 25/48 Machine: GCP n2-standard-16, AlmaLinux 8.10 (Cerulean Leopard) x86_64, 16 vCPU, 63 GiB RAM, Intel(R) Xeon(R) CPU @ 2.80GHz 
+- **Issue #35852** (2026-10-26): **[BACKPORT 2025.2][#33919] DocDB: Fix flaky WriteStallCascadeTest.WriteStallCanBlockElection (#34492)**
+  *Symptoms*: ## Summary  In `WriteStallCanBlockElection`, the test shuts down one follower and then calls `GetLeaderPeerForTablet()`. That function only works if some peer is `LEADER_AND_READY`. On slow nodes the shutdown can take about 3 seconds, and two things can go wrong in that window: - The leader can lose its lease, because the stalled follower never acknowledges it. - The stalled follower can take over as leader.  When either happens, the call fails with `Expected exactly one leader ... 0 vs 1`.  **Fix:** The step-down logic is now a shared helper, `StepDownOriginalLeaderIfStillLeader()`. It finds the peer on the original leader's tserver directly. If that peer is still the leader, it steps it down. If it isn't, it skips the step-down. Both `WriteStallCanBlockElection` and `ElectionSucceedsDespiteFollowerWriteStall` use it, since both tests had the same pattern.  `GetTabletLayout()` now keeps retrying for up to 10 seconds. Right after startup, a peer may not have become a follower yet. That is what caused `Need at least 2followers: 1 vs 2` on master arm release.  Jira: DB-23519  ## Upgrade/Rollback safety  Test-only change.  Original commit: 5960e19d735f41dd45b0a57a3901459334376ce5 / #34492  ## Test plan  - [x] `yb_build.sh debug --cxx-test write_stall_cascade-test -n 50` - [x] `yb_build.sh asan --cxx-test write_stall_cascade-test -n 50` - [ ] `yb_build.sh tsan --cxx-test write_stall_cascade-test -n 50`  🤖 Generated with [Claude Code](https://claude.com/claude-code)    --------- 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2271,513 +2271,594 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `545b420b` (2026-10-25)
-**Commit Message**: [PLAT-23030] YBA: Add v2 API for the host's cloud info (#35720)
+### Incident Patch 1: `6a8130b4` (2026-10-26)
+**Commit Message**: [DB-24956] CDCSDK: Retry DROP REPLICATION SLOT WAIT across RPC timeouts
+
+Summary:
+**Problem**
+`DROP WAIT` of replication slot would fail after the RPC deadline (~62s on CDC universes, ~602s default) even when the slot was still legitimately held by another session. PostgreSQL's WAIT has no deadline and blocks indefinitely until the slot is released or the backend is cancelled.
+
+**Solution**
+`DROP ... WAIT` matches PostgreSQL: `YbTryAcquireReplicationSlotLock` retries when wait=true and the acquire RPC returns a timeout, so the drop keeps waiting across RPC deadlines instead of failing early.
+Cancellation: `CHECK_FOR_INTERRUPTS`() runs before each attempt so disconnect, cancel, or statement_timeout can exit the loop (after the in-flight RPC returns).
+Observability: The first few timeouts log at `DEBUG1`; after 3 consecutive timeouts the message escalates to `WARNING` and notes that the slot may still be held by another session.
+Optional cap: GUC `yb_replication_slot_wait_max_retries` (default 0 = unlimited) caps the retry count, causing `DROP WAIT` to fail with `LOCK_NOT_AVAILABLE` after N RPC timeouts instead of waiting forever.
+
+Test Plan:
+  - Added `testDropReplicationSlotWaitRet
+
+**File**: `java/yb-pgsql/src/test/java/org/yb/pgsql/TestPgReplicationSlot.java` (modified, +135/-0)
+```diff
+@@ -7055,6 +7055,141 @@ public void testDropReplicationSlotWaitRequiresExclusiveLock() throws Exception
+     replConn0.close();
+   }
+ 
++  @Test
++  public void testDropReplicationSlotWaitRetriesAcrossRpcTimeout() throws Exception {
++    // Verify that DROP_REPLICATION_SLOT ... WAIT keeps waiting even after the advisory-lock
++    // RPC deadline expires.  We force a short RPC deadline by setting
++    // ysql_client_read_write_timeout_ms to 5 seconds, then hold the slot alive for longer than
++    // that before releasing it.  The drop must succeed rather than failing with a timeout error.
++    Map<String, String> tserverFlags = getTServerFlagsWithExclusiveLock();
++    tserverFlags.put("ysql_client_read_write_timeout_ms", "5000");
++    restartClusterWithFlags(getMasterFlags(), tserverFlags);
++
++    String slotName = "drop_slot_wait_retry_test";
++
++    try (Statement stmt = connection.createStatement()) {
++      stmt.execute("DROP TABLE IF EXISTS t_drop_wait_retry");
++      stmt.execute("CREATE TABLE t_drop_wait_retry(k int primary key, v text)");
++      stmt.execute("INSERT INTO t_drop_wait_retry VALUES (1, 'a')");
++    }
++
++    Connection replConn0 = getConnectionBuilder().withTServer(0).replicationConnect();
++    PGReplicationConnection replApi0 =
++        replConn0.unwrap(PGConnection.class).getReplicationAPI();
++
++    createSlot(replApi0, slotName, "test_decoding");
++    assertReplicationSlotExists(slotName, true);
++
++    PGReplicationStream stream0 = replApi0.replicationStream()
++        .logical()
++        .withSlotName(slotName)
++        .withStartPosition(LogSequenceNumber.valueOf(0L))
++        .start();
++
++    // Start the WAIT drop on a different tserver while the slot is held.
++    AtomicReference<Exception> dropError = new AtomicReference<>();
++    Thread dropThread = new Thread(() -> {
++      try (Connection replConn1 = getConnectionBuilder().withTServer(1).replicationConnect();
++           Statement stmt = replConn1.createStatement()) {
++        stmt.execute("DROP_REPLICATION_SLOT " + slotName + " WAIT");
++      } catch (Exception e) {
++        dropError.set(e);
++      }
++    });
++    dropThread.start();
++
++    // Hold the slot alive for longer than the 5-second RPC timeout so that the first
++    // advisory-lock acquire RPC definitely times out.  The retry loop must issue a new
++    // acquire and eventually succeed.
++    Thread.sleep(15000);
++    assertTrue("DROP_REPLICATION_SLOT ... WAIT must still be blocked after the first RPC timeout",
++        dropThread.isAlive());
++    assertReplicationSlotExists(slotName, true);
++
++    // Release the slot; the retrying drop must now complete.
++    stream0.close();
++    replConn0.close();
++
++    dropThread.join(30000);
++    assertFalse("DROP_REPLICATION_SLOT ... WAIT must complete after the slot is released",
++        dropThread.isAlive());
++    if (dropError.get() != null) {
++      throw new AssertionError("DROP_REPLICATION_SLOT ... WAIT failed unexpectedly",
++          dropError.get());
++    }
++    assertReplicationSlotExists(slotName, false);
++  }
++
++  @Test
++  public void testDropReplicationSlotWaitMaxRetriesGuc() throws Exception {
++    // Verify that yb_replication_slot_wait_max_retries caps the retry loop: when set to 2,
++    // DROP_REPLICATION_SLOT ... WAIT must fail with LOCK_NOT_AVAILABLE after 2 RPC timeouts
++    // rather than blocking indefinitely.
++    Map<String, String> tserverFlags = getTServerFlagsWithExclusiveLock();
++    tserverFlags.put("ysql_client_read_write_timeout_ms", "5000");
++    restartClusterWithFlags(getMasterFlags(), tserverFlags);
++
++    String slotName = "drop_slot_wait_max_retries_test";
++
++    try (Statement stmt = connection.createStatement()) {
++      stmt.execute("DROP TABLE IF EXISTS t_drop_wait_maxretries");
++      stmt.execute("CREATE TABLE t_drop_wait_maxretries(k int primary key, v text)");
++      stmt.execute("INSERT INTO t_drop_wait_maxretries VALUES (1, 'a')");
++    }
++
++    Connection replConn0 = getConnectionBuilder().withTServer(0).replicationConnect();
++    PGReplicationConnection replApi0 =
++        replConn0.unwrap(PGConnection.class).getReplicationAPI();
++
++    createSlot(replApi0, slotName, "test_decoding");
++    assertReplicationSlotExists(slotName, true);
++
++    PGReplicationStream stream0 = replApi0.replicationStream()
++        .logical()
++        .withSlotName(slotName)
++        .withStartPosition(LogSequenceNumber.valueOf(0L))
++        .start();
++
++    // Set max retries to 2 on tserver 1 and issue DROP WAIT from there.
++    // The slot remains held by tserver 0 throughout, so the drop must hit the cap and fail.
++    AtomicReference<Exception> dropError = new AtomicReference<>();
++    Thread dropThread = new Thread(() -> {
++      try (Connection replConn1 = getConnectionBuilder().withTServer(1).replicationConnect();
++           Statement stmt = replConn1.createStatement()) {
++        stmt.execute("SET yb_replication_slot_wait_max_retries = 2");
++        stmt.execute("DROP_REPLICATION_SLOT " + sl
+```
+
+**File**: `src/postgres/src/backend/replication/slot.c` (modified, +72/-4)
+```diff
+@@ -162,6 +162,9 @@ YbBuildReplicationSlotLockTag(const char *slot_name, LOCKTAG *tag)
+ 						 /* objsubid= */ 2);
+ }
+ 
++/* Number of consecutive RPC timeouts before escalating the log message to WARNING. */
++#define YB_SLOT_WAIT_WARN_RETRIES 3
++
+ /*
+  * YB: Try to acquire an exclusive session-level advisory lock for the
+  * named replication slot.  Returns false if it is already held.
+@@ -170,19 +173,84 @@ YbBuildReplicationSlotLockTag(const char *slot_name, LOCKTAG *tag)
+  * static yb_slot_locktag on successful acquisition, so that the
+  * ReplicationSlotShmemExit() sentinel never sees a stale "lock held"
+  * value when the acquire failed.
++ *
++ * When wait=true, RPC timeouts are retried (unbounded by default, or up to
++ * yb_replication_slot_wait_max_retries if set) so that the caller blocks
++ * until the lock is granted, the backend is cancelled, or the retry cap is
++ * reached.  This matches PostgreSQL's DROP_REPLICATION_SLOT ... WAIT behaviour.
++ * CHECK_FOR_INTERRUPTS is called before each attempt so that a client disconnect
++ * or SIGINT exits the loop promptly.
++ *
++ * After YB_SLOT_WAIT_WARN_RETRIES consecutive timeouts the retry message is
++ * escalated from DEBUG1 to WARNING so that an infrastructure failure (e.g.
++ * advisory-lock tablet has no leader) is visible in the server log at the
++ * default log_min_messages level rather than silently looping forever.
++ *
++ * When yb_replication_slot_wait_max_retries > 0 and that many RPC timeouts
++ * have occurred, the function raises ERROR with ERRCODE_LOCK_NOT_AVAILABLE
++ * instead of retrying further.
+  */
+ static bool
+ YbTryAcquireReplicationSlotLock(const char *slot_name, bool wait)
+ {
+ 	LOCKTAG		tag;
+ 	YbcStatus	status;
++	int			retry_count = 0;
+ 
+ 	YbBuildReplicationSlotLockTag(slot_name, &tag);
+ 
+-	status = YBCAcquireAdvisoryLock(GetYBAdvisoryLockId(tag),
+-									YB_ADVISORY_LOCK_EXCLUSIVE,
+-									wait,
+-									/* session= */ true);
++	for (;;)
++	{
++		CHECK_FOR_INTERRUPTS();
++
++		status = YBCAcquireAdvisoryLock(GetYBAdvisoryLockId(tag),
++										YB_ADVISORY_LOCK_EXCLUSIVE,
++										wait,
++										/* session= */ true);
++
++		/*
++		 * On a plain try (wait=false) any timeout is a real failure; on a
++		 * wait acquire a timeout just means the RPC deadline was reached
++		 * before the lock was released -- retry to match PG's no-deadline
++		 * WAIT behaviour.
++		 *
++		 * YBCStatusIsTimedOut covers both "lock still held" and infrastructure
++		 * failures (tablet leader election, unreachable tserver).  Escalate to
++		 * WARNING after YB_SLOT_WAIT_WARN_RETRIES attempts so that the latter
++		 * case is diagnosable from the server log at default log_min_messages.
++		 */
++		if (wait && status && YBCStatusIsTimedOut(status))
++		{
++			int			loglevel;
++
++			YBCFreeStatus(status);
++			retry_count++;
++			loglevel = (retry_count > YB_SLOT_WAIT_WARN_RETRIES) ? WARNING : DEBUG1;
++			ereport(loglevel,
++					(errmsg("replication slot \"%s\": advisory-lock RPC timed out"
++							" (attempt %d); the slot may still be held by another"
++							" session",
++							slot_name, retry_count)));
++
++			/*
++			 * YB: If the retries are capped, bail out
++			 * rather than looping forever -- useful when the hang is caused by
++			 * an advisory-lock tablet outage rather than normal lock contention.
++			 */
++			if (yb_replication_slot_wait_max_retries > 0 &&
++				retry_count >= yb_replication_slot_wait_max_retries)
++				ereport(ERROR,
++						(errcode(ERRCODE_LOCK_NOT_AVAILABLE),
++						 errmsg("timed out waiting for replication slot \"%s\""
++								" after %d RPC attempt(s)",
++								slot_name, retry_count)));
++
++			continue;
++		}
++
++		break;
++	}
++
+ 	if (!HandleStatusIgnoreSkipLocking(status))
+ 		return false;
+ 
+```
+
+**File**: `src/postgres/src/backend/utils/misc/guc.c` (modified, +13/-0)
+```diff
+@@ -4602,6 +4602,19 @@ static struct config_int ConfigureNamesInt[] =
+ 		NULL, NULL, NULL
+ 	},
+ 
++	{
++		{"yb_replication_slot_wait_max_retries", PGC_SUSET, DEVELOPER_OPTIONS,
++			gettext_noop("Maximum advisory-lock RPC timeout retries for "
++						 "DROP_REPLICATION_SLOT ... WAIT before giving up with "
++						 "an error. 0 retries indefinitely."),
++			NULL,
++			GUC_NOT_IN_SAMPLE
++		},
++		&yb_replication_slot_wait_max_retries,
++		0, 0, INT_MAX,
++		NULL, NULL, NULL
++	},
++
+ 	{
+ 		{"yb_notifications_poll_sleep_duration_nonempty_ms", PGC_SIGHUP, DEVELOPER_OPTIONS,
+ 			gettext_noop("Time in milliseconds for which the notifications poller"
+```
+
+**File**: `src/yb/common/common_flags.cc` (modified, +5/-0)
+```diff
+@@ -122,6 +122,11 @@ DEFINE_RUNTIME_PG_PREVIEW_FLAG(bool, yb_enable_replication_slot_exclusive_lock,
+     "Acquire a cluster-wide exclusive advisory lock while a replication slot is "
+     "in use so that only one consumer can use it at a time across the universe.");
+ 
++DEFINE_RUNTIME_PG_FLAG(int32, yb_replication_slot_wait_max_retries, 0,
++    "Maximum number of advisory-lock RPC timeout retries for "
++    "DROP_REPLICATION_SLOT ... WAIT before giving up with an error. "
++    "0 (default) retries indefinitely.");
++
+ DEFINE_NON_RUNTIME_bool(ysql_yb_enable_implicit_dynamic_tables_logical_replication, true,
+     "When set to true, modifications to publication will be reflected implicitly. "
+     "This replaces the previous mechanism of periodic publication refresh with PG "
+```
+
+**File**: `src/yb/yql/pggate/util/ybc_guc.cc` (modified, +2/-0)
+```diff
+@@ -65,6 +65,8 @@ bool yb_enable_consistent_replication_from_hash_range = false;
+ 
+ bool yb_enable_replication_slot_exclusive_lock = false;
+ 
++int yb_replication_slot_wait_max_retries = 0;
++
+ bool yb_cdcsdk_stream_tables_without_primary_key = true;
+ 
+ bool yb_cdcsdk_allow_dml_without_pk = false;
+```
+
+**File**: `src/yb/yql/pggate/util/ybc_guc.h` (modified, +6/-0)
+```diff
+@@ -186,6 +186,12 @@ extern bool yb_enable_consistent_replication_from_hash_range;
+  */
+ extern bool yb_enable_replication_slot_exclusive_lock;
+ 
++/*
++ * GUC variable bounding the number of advisory-lock RPC retries for
++ * DROP_REPLICATION_SLOT ... WAIT. 0 means retry indefinitely.
++ */
++extern int yb_replication_slot_wait_max_retries;
++
+ /*
+  * GUC variable that enables streaming tables without primary key to CDCSDK logical replication
+  * streams.
+```
+
+---
+
+### Incident Patch 2: `de4218d3` (2026-10-27)
+**Commit Message**: [#16670] DocDB: dist-trace: detach the deadline object-lock release from the DDL's trace (#34194)
 
 ## Summary
 
-Aeon's BYOC bootstrap needs the cloud and region of the YBA it
-registers. v1 `GET /api/v1/customers/{c}/host_info` has neither as a
-field, and it is slow and sticky on failure:
+Every global object-lock release is followed by a second one sent at the
+acquire deadline, in case a retried acquire landed after the first
+release. The scheduler task that sends it captures the caller's trace
+context, so on a `CREATE INDEX` trace that second release showed up as a
+ten-minute `ReleaseObjectLocksGlobal` span (the default acquire
+deadline) hanging off the DDL and stretching the whole trace to that
+point.
 
-- It runs ybops `current-host` for AWS, GCP and Azure one after another.
-On the wrong clouds each run waits out a metadata timeout.
-- It caches every result until restart. ybops reports an unreachable
-metadata service as a JSON string with exit code 0, so one transient
-failure stays cached.
-- GCP returns no zone or region.
+`ReleaseObjectLocksForLostMessages` now detaches the trace context
+before it runs, so the deadline release goes out untraced. The release
+itself is unchanged; cancelling it is not an option since it exists to
+cover out-of-order acquires.
 
-This adds `GET /api/v2/customers/{cUUID}/host-cloud-info` (Customer tag,
-read permission on the customer, same as v1):
+Adds `DistTraceTest.TestLostMessageLockReleaseNotTraced`. The fixture
+pins `pg_client_extra_timeout_ms` so the test can compute the acquire
+deadline (`lock_timeout` of 3 s times `kTimeMultiplier`, plus the pinned
+2 s). The test asserts that the master's `ReleaseObjectLocksGlobal`
+handler count grows after the deadline, so the release did run, while
+the release span count in the DDL's trace does not. A guard checks the
+base
 
-```json
-{"cloud": "gcp", "region": "us-central1",
- "gcp": {"project": "...", "network": "...", "shared_vpc_project": "...", "zone": "us-central1-a", "region": "us-central1"}}
-```
-
-Only the host cloud's object is set (`aws`, `gcp` or `azu`). `cloud` is
-absent when YBA isn't on one of the three. `region` and the cloud's
-object are absent when the cloud is known but its metadata service is
-unreachable.
-
-Changes:
-
-- `HostCloudDetector` reads DMI (`/sys/devices/virtual/dmi/id`) with the
-same rules a
-
-**File**: `managed/build.sbt` (modified, +2/-2)
+**File**: `src/yb/tserver/ts_local_lock_manager.cc` (modified, +3/-0)
 ```diff
-@@ -317,7 +317,7 @@ libraryDependencies ++= Seq(
-   // aarch64 binaries (same PG 14.5) so the embedded server starts natively there.
-   "io.zonky.test.postgres" % "embedded-postgres-binaries-darwin-arm64v8" % "14.5.0" % Test,
-   "org.springframework" % "spring-test" % "5.3.9" % Test,
--  "com.yugabyte" % "yba-client-v2" % "1.8.10" % Test,
-+  "com.yugabyte" % "yba-client-v2" % "1.8.11" % Test,
-   "io.fabric8" % "kubernetes-server-mock" % "6.14.0" % Test
- )
+@@ -33,6 +33,7 @@
+ #include "yb/tserver/tserver_service.pb.h"
  
-@@ -767,7 +767,7 @@ lazy val javaGenV2Client = project.in(file("client/java"))
-     openApiConfigFile := "client/java/openapi-java-config-v2.json",
-     openApiGlobalProperties += ("skipFormModel" -> "false"),
-     openApiTemplateDir := (baseDirectory.value / resDir / "openapi_templates/clients/v2").absolutePath,
--    version := "1.8.10",
-+    version := "1.8.11",
-     openApiHttpUserAgent := s"yba-java-client/${version.value}",
-     target := file("client/java/target/v2"),
-   )
+ #include "yb/util/backoff_waiter.h"
++#include "yb/util/dist_trace.h"
+ #include "yb/util/monotime.h"
+ #include "yb/util/scope_exit.h"
+ #include "yb/util/status_format.h"
+@@ -127,6 +128,8 @@ void ReleaseObjectLocksForLostMessages(
+     std::weak_ptr<TSLocalLockManager> lock_manager_weak,
+     const std::shared_ptr<master::ReleaseObjectLocksGlobalRequestPB>& release_req,
+     const Status& status) {
++  // Fires at the acquire deadline, long after the DDL finished; must not extend the DDL's trace.
++  auto detach_token = dist_trace::DetachTraceContext();
+   if (!status.ok()) {
+     LOG_WITH_FUNC(ERROR) << "Aborting Release request"
+                          << (VLOG_IS_ON(1) ? release_req->ShortDebugString() : "") << " due to "
 ```
 
-**File**: `managed/client/java/v2/pom.xml` (modified, +1/-1)
+**File**: `src/yb/yql/pgwrapper/dist_trace-test.cc` (modified, +51/-0)
 ```diff
-@@ -5,7 +5,7 @@
-     <artifactId>yba-client-v2</artifactId>
-     <packaging>jar</packaging>
-     <name>yba-client-v2</name>
--    <version>1.8.10</version>
-+    <version>1.8.11</version>
-     <url>https://github.com/openapitools/openapi-generator</url>
-     <description>Java V2 client for Yugabyte Anywhere</description>
-     <scm>
-```
-
-**File**: `managed/devops/opscli/ybops/cloud/gcp/utils.py` (modified, +11/-1)
-```diff
-@@ -151,6 +151,12 @@ def shared_vpc_project():
-     def network():
-         return GcpMetadata._query_endpoint("instance/network-interfaces/0/network")
+@@ -11,6 +11,7 @@
+ // under the License.
  
-+    @staticmethod
-+    def zone():
-+        # Of the form projects/PROJECT_NUMBER/zones/ZONE.
-+        zone = GcpMetadata._query_endpoint("instance/zone")
-+        return zone.split("/")[-1] if zone else None
-+
-     @staticmethod
-     def service_accounts():
-         return GcpMetadata._query_endpoint("instance/service-accounts/")
-@@ -589,12 +595,16 @@ def get_current_host_info():
-         network = GcpMetadata.network()
-         shared_vpc_project = GcpMetadata.shared_vpc_project()
-         project = GcpMetadata.project()
-+        zone = GcpMetadata.zone()
-         if network is None or project is None:
-             raise YBOpsRuntimeError("Unable to auto-discover GCP provider information")
-         return {
-             "network": network.split("/")[-1],
-             "shared_vpc_project": shared_vpc_project,
--            "project": project
-+            "project": project,
-+            "zone": zone,
-+            # A zone is its region plus a one-letter suffix, e.g. us-central1-a.
-+            "region": zone.rsplit("-", 1)[0] if zone else None
-         }
+ #include <algorithm>
++#include <chrono>
+ #include <memory>
+ #include <mutex>
+ #include <optional>
+@@ -62,6 +63,7 @@ DECLARE_string(otel_internal_log_level);
+ DECLARE_uint32(otel_batch_max_queue_size);
+ DECLARE_uint32(otel_batch_schedule_delay_ms);
+ DECLARE_uint32(otel_batch_max_export_batch_size);
++METRIC_DECLARE_counter(handler_latency_yb_master_MasterDdl_ReleaseObjectLocksGlobal);
  
-     def get_image(self, image, project=None):
-```
-
-**File**: `managed/src/main/java/api/v2/controllers/CustomerApiControllerImp.java` (modified, +6/-0)
-```diff
-@@ -6,6 +6,7 @@
- import api.v2.models.ApiTokenSpec;
- import api.v2.models.CustomerRegistration;
- import api.v2.models.CustomerRegistrationSpec;
-+import api.v2.models.HostCloudInfo;
- import api.v2.models.UserApiToken;
- import com.google.inject.Inject;
- import com.typesafe.config.Config;
-@@ -38,4 +39,9 @@ public UserApiToken generateApiToken(
-       Http.Request request, UUID cUUID, ApiTokenSpec apiTokenSpec) {
-     return customerHandler.generateApiToken(request, cUUID, apiTokenSpec);
-   }
-+
-+  @Override
-+  public HostCloudInfo getHostCloudInfo(Http.Request request, UUID cUUID) {
-+    return customerHandler.getHostCloudInfo();
-+  }
+ namespace yb::pgwrapper {
+ 
+@@ -75,6 +77,8 @@ namespace otlp_trace = opentelemetry::proto::trace::v1;
+ static constexpr auto kOtelBatchMaxQueueSize = 4096;
+ static constexpr auto kOtelBatchMaxExportBatchSize = 512;
+ static constexpr auto kOtelBatchScheduleDelayMs = 100;
++// Pinned at cluster start so TestLostMessageLockReleaseNotTraced can compute the acquire deadline.
++static constexpr auto kPgClientExtraTimeoutMs = 2000;
+ static const auto kSharedMemoryPerformSpanName =
+     tserver::GetSharedMemSpanName(tserver::PgSharedExchangeReqType::PERFORM);
+ static const auto kSharedMemoryObjectLockSpanName =
+@@ -970,6 +974,8 @@ class DistTraceTest : public LibPqTestBase {
+     options->replication_factor = 1;
+     // Force object locks over the exchange (fastpath produces no request, hence no span).
+     options->extra_tserver_flags.push_back("--enable_object_lock_fastpath=false");
++    options->extra_tserver_flags.push_back(
++        Format("--pg_client_extra_timeout_ms=$0", kPgClientExtraTimeoutMs));
+     options->extra_tserver_flags.push_back(
+         Format("--pg_client_use_shared_memory=$0", UsePgClientSharedMemory()));
+     if (UsePgClientSharedMemory()) {
+@@ -2864,6 +2870,51 @@ TEST_F(DistTraceRpcTest, TestSpanUnderUnsampledParentIsDropped) {
+   ASSERT_TRUE(root->GetContext().IsSampled());
  }
-```
-
-**File**: `managed/src/main/java/api/v2/handlers/CustomerManagementHandler.java` (modified, +76/-1)
-```diff
-@@ -9,12 +9,21 @@
- import static play.mvc.Http.Status.UNAUTHORIZED;
  
- import api.v2.models.ApiTokenSpec;
-+import api.v2.models.AwsHostInfo;
-+import api.v2.models.AzuHostInfo;
- import api.v2.models.CustomerRegistration;
- import api.v2.models.CustomerRegistrationSpec;
-+import api.v2.models.GcpHostInfo;
-+import api.v2.models.HostCloud;
-+import api.v2.models.HostCloudInfo;
- import api.v2.models.UserApiToken;
-+import com.fasterxml.jackson.databind.JsonNode;
- import com.google.inject.Inject;
- import com.google.inject.Provider;
- import com.google.inject.Singleton;
-+import com.yugabyte.yw.commissioner.Common.CloudType;
-+import com.yugabyte.yw.common.CloudQueryHelper;
-+import com.yugabyte.yw.common.HostCloudDetector;
- import com.yugabyte.yw.common.PlatformServiceException;
- import com.yugabyte.yw.common.user.UserService;
- import com.yugabyte.yw.controllers.RequestContext;
-@@ -24,6 +33,7 @@
- import com.yugabyte.yw.models.Users;
- import io.ebean.DB;
- import io.ebean.Transaction;
-+import java.util.Optional;
- import java.util.UUID;
- import org.apache.commons.validator.routines.EmailValidator;
- import play.mvc.Http;
-@@ -36,15 +46,21 @@ public class CustomerManagementHandler {
-   private final Provider<TokenAuthenticator> tokenAuthenticatorProvider;
-   private final CustomerRegistrationHandler customerRegistrationHandler;
-   private final UserService userService;
-+  private final HostCloudDetector hostCloudDetector;
-+  private final CloudQueryHelper cloudQueryHelper;
- 
-   @Inject
-   public CustomerManagementHandler(
-       Provider<TokenAuthenticator> tokenAuthenticatorProvider,
-       CustomerRegistrationHandler customerRegistrationHandler,
--      UserService userService) {
-+      UserService userService,
-+      HostCloudDetector hostCloudDetector,
-+      CloudQueryHelper cloudQueryHelper) {
-     this.tokenAuthenticatorProvider = tokenAuthenticatorProvider;
-     this.customerRegistrationHandler = customerRegistrationHandler;
-     this.userService = userService;
-+    this.hostCloudDetector = hostCloudDetector;
-+    this.cloudQueryHelper = cloudQueryHelper;
-   }
- 
-   public CustomerRegistration registerCustomer(
-@@ -134,4 +150,63 @@ public UserApiToken generateApiToken(Http.Request request, UUID cUUID, ApiTokenS
-         .apiToken(apiToken)
-         .apiTokenVersion(user.getApiTokenVersion());
-   }
++// Every global object-lock release is followed by a second one at the acquire deadline, in case an
++// acquire retry landed late. That deadline release must not join and stretch the DDL's trace.
++TEST_F(DistTraceTest, TestLostMessageLockReleaseNotTraced) {
++  static constexpr auto kReleaseSpan = "rpc yb.master.MasterService.ReleaseObjectLocksGlobal";
++  // The second release fires lock_timeout + pg_client_extra_timeout_ms after the acquire.
++  static constexpr auto kLockTimeout = 3s * kTimeMultiplier;
++  static constexpr auto kPgClientExtraTimeout = kPgClientExtraTimeoutMs * 1ms;
++  static constexpr auto kAcquireDeadline = kLockTimeout + kPgClientExtraTimeout;
 +
-+  public HostCloudInfo getHostCloudInfo() {
-+    HostCloudInfo info = new HostCloudInfo();
-+    Optional<CloudType> cloud = hostCloudDetector.getHostCloud();
-+    if (cloud.isEmpty()) {
-+      return info;
++  // First catalog access on a fresh connection preloads the relcache; keep that out of the timing.
++  ASSERT_OK(conn_->Fetch("SELECT 1 FROM pg_class LIMIT 1"));
++
++  auto tp = GenerateTraceparent();
++  ASSERT_OK(conn_->ExecuteFormat("SET lock_timeout = '$0s'", kLockTimeout.count()));
++  ASSERT_OK(conn_->ExecuteFormat("SET yb_dist_tracecontext = 'traceparent=''$0'''", tp.full));
++  const auto ddl_start = std::chrono::steady_clock::now();
++  ASSERT_OK(conn_->Execute("CREATE TABLE lost_release_test (id int PRIMARY KEY)"));
++
++  // The detached release leaves no span, so count its arrivals on the master instead.
++  auto master_releases = [this]() -> Result<int64_t> {
++    int64_t result = 0;
++    for (auto* master : cluster_->master_daemons()) {
++      result += VERIFY_RESULT(master->GetMetric<int64>(
++          &METRIC_ENTITY_server, "yb.master",
++          &METRIC_handler_latency_yb_master_MasterDdl_ReleaseObjectLocksGlobal, "total_count"));
 +    }
-+    info.cloud(HostCloud.fromValue(cloud.get().name()));
-+    JsonNode hostInfo = cloudQueryHelper.getCurrentHostInfo(cloud.get());
-+    // Without metadata, e.g. when the metadata service is unreachable from a pod, the cloud is
-+    // still known from DMI.
-+    if (!hostInfo.isObject() || hostInfo.has("error")) {
-+      return info;
-+    }
-+    switch (cloud.get()) {
-+      case aws:
-+        info.aws(
-+            new AwsHostInfo()
-+                .instanceId(text(hostInfo, "instance-id"))
-+                .vpcId(text(hostInfo, "vpc-id"))
-+                .privateIp(text(hostInfo, "privateIp"))
-+                .region(text(hostInfo, "region")));
-+        return info.region(info.getAws().getRegion());
-+      case gcp:
-+        info.gcp(
-+            new GcpHostInfo()
-+                .project(text(hostInfo, "project"))
-+                .network(text(hostInfo, "network"))
-+                .sharedVpcProject(text(hostInfo, "shared_vpc_project"))
-+                .zone(text(hostInfo, "zone"))
-+                .region(text(hostInfo, "region")));
-+        return info.region(info.getGcp().getRegion());
-+      default:
-+        // The Azure instance metadata document, as returned by IMDS.
-+        JsonNode compute = hostInfo.path("compute");
-+        info.azu(
-+            new AzuHostInfo()
-+                .subscriptionId(text(compute, "subscriptionId"))
-+                .resourceGroup(text(compute, "resourceGroupName"))
-+                .vmId(text(compute, "vmId"))
-+                .privateIp(
-+                    text(
-+                        hostInfo
-+                            .path("network")
-+                            .path("interface")
-+                            .path(0)
-+                            .path("ipv4")
-+                            .path("ipAddress")
-+                            .path(0),
-+                        "privateIpAddress"))
-+                .region(text(compute, "location")));
-+        return info.region(info.getAzu().getRegion());
-+    }
-+  }
++    return result;
++  };
 +
-+  private static String text(JsonNode node, String field) {
-+    JsonNode value = node.path(field);
-+    return value.isValueNode() && !value.isNull() ? value.asText() : null;
-+  }
- }
-```
-
-**File**: `managed/src/main/java/com/yugabyte/yw/common/CloudMetadataEndpoints.java` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+// Copyright (c) YugabyteDB, Inc.
++  ASSERT_OK(collector_.VerifySpanCountInTrace(tp.trace_id, kReleaseSpan, 1));
++  SleepFor(kOtelBatchScheduleDelayMs * kTimeMultiplier * 5ms);
++  const auto releases_after_ddl = collector_.FindSpansByName(tp.trace_id, kReleaseSpan).size();
++  const auto master_releases_after_ddl = ASSERT_RESULT(master_releases());
++  // The acquire happened after ddl_start, so a baseline taken before the deadline cannot already
++  // contain the deadline release.
++  ASSERT_LT(std::chrono::steady_clock::now() - ddl_start, kAcquireDeadline)
++      << "baseline taken after the acquire deadline, a leaked release would go unnoticed";
 +
-+package com.yugabyte.yw.common;
-+
-+/**
-+ * Cloud instance metadata service endpoints, as ybops also uses them (GcpMetadata in
-+ * devops/opscli/ybops/cloud/gcp/utils.py, get_and_append_imdsv2_token_header in
-+ * devops/opscli/ybops/cloud/aws/cloud.py). They are link-local, so must be reached without a proxy.
-+ */
-+public final class CloudMetadataEndpoints {
-+  // AWS, GCP and Azure all serve instance metadata on this address.
-+  public static final String METADATA_IP = "169.254.169.254";
-+  public static final String GCP_METADATA_HOST = "metadata.google.internal";
-+  public static final String GCP_METADATA_FLAVOR_HEADER = "Metadata-Flavor";
-+  public static final String GCP_METADATA_FLAVOR = "Google";
-+  public static final String GCP_INSTANCE_ID_PATH = "/computeMetadata/v1/instance/id";
-+  public static final String AWS_IMDSV2_TOKEN_PATH = "/latest/api/token";
-+  public static final String AWS_IMDSV2_TOKEN_TTL_HEADER = "X-aws-ec2-metadata-token-ttl-seconds";
-+  public static final String AWS_INSTANCE_ID_PATH = "/latest/meta-data/instance-id";
-+
-+  private CloudMetadataEndpoints() {}
++  SleepFor(kAcquireDeadline + kOtelBatchScheduleDelayMs * kTimeMultiplier * 10ms);
++  ASSERT_GT(ASSERT_RESULT(master_releases()), master_releases_after_ddl)
++      << "the deadline release never reached the master";
++  ASSERT_EQ(collector_.FindSpansByName(tp.trace_id, kReleaseSpan).size(), releases_after_ddl)
++      << "the deadline release joined the DDL trace";
 +}
++
+ TEST_F(DistTraceRpcTest, TestOtelInternalMessagesAreLogged) {
+   google::FlagSaver flag_saver;
+   dist_trace::ScopedTestDistTrace endpoint_setter(collector_.Url());
 ```
 
-**File**: `managed/src/main/java/com/yugabyte/yw/common/CloudQueryHelper.java` (modified, +59/-4)
+---
+
+### Incident Patch 3: `8be02acd` (2026-10-26)
+**Commit Message**: [#35083] YSQL: Fix a scan hint reported as failed on a pushed-down aggregate when enable_* disables the scan type (#35834)
+
+## Summary
+
+Under the YB cost model, the planner costs the scan under a pushed-down
+aggregate on a copy of the scan path, after pg_hint_plan has restored
+the
+`enable_*` settings that a scan-method hint overrides while the
+relation's
+paths are generated. The re-costing therefore charges `disable_cost` by
+the
+session's settings rather than by the hint's.
+16d783a6447a49ff5c3be18f2d84f0cebcb89848 restored a charge the
+re-costing
+dropped, but not the reverse. When a hint selected a scan type that the
+session
+disabled with `enable_seqscan`, `enable_indexscan` or
+`enable_bitmapscan`, the
+copy carried a charge the hinted path did not, so pg_hint_plan reported
+the
+followed hint as failed.
+
+Made `yb_cost_agg_pushdown_scan` remove a charge the re-costing added as
+well,
+so the copy keeps the original path's disabled state in both directions.
+For a
+merge-scan index path, `yb_cost_index` scales the charge by the
+merge-scan
+premium, so the copy's cost keeps or lacks that fraction of the charge;
+the
+copy's disabled state still matches the original's.
+
+Added a yb.orig.hints bl
+
+**File**: `src/postgres/src/backend/optimizer/util/pathnode.c` (modified, +13/-7)
 ```diff
-@@ -14,18 +14,22 @@
- 
- import com.fasterxml.jackson.databind.JsonNode;
- import com.fasterxml.jackson.databind.node.ArrayNode;
-+import com.google.common.annotations.VisibleForTesting;
- import com.google.common.collect.ImmutableList;
- import com.yugabyte.yw.commissioner.Common;
- import com.yugabyte.yw.models.Provider;
- import com.yugabyte.yw.models.Region;
- import com.yugabyte.yw.models.helpers.CloudInfoInterface;
- import com.yugabyte.yw.models.helpers.provider.GCPCloudInfo;
-+import java.time.Duration;
- import java.util.ArrayList;
- import java.util.List;
- import java.util.Map;
-+import java.util.Optional;
- import java.util.UUID;
- import java.util.concurrent.ConcurrentHashMap;
- import javax.annotation.Nullable;
-+import javax.inject.Inject;
- import javax.inject.Singleton;
- import org.apache.commons.lang3.StringUtils;
- import org.slf4j.Logger;
-@@ -42,17 +46,68 @@ public class CloudQueryHelper extends DevopsBase {
-   private static final String DEFAULT_IMAGE_KEY = "default_image";
-   public static final String ARCHITECTURE_KEY = "architecture";
- 
--  private Map<Common.CloudType, JsonNode> cachedHostInfos = new ConcurrentHashMap<>();
-+  // A failed lookup is retried after this long, e.g. once the metadata service is reachable again.
-+  // Failures are cached too: each attempt can take tens of seconds (ybops' IMDSv2 token timeout).
-+  @VisibleForTesting Duration hostInfoFailureTtl = Duration.ofMinutes(5);
-+
-+  private static class CachedHostInfo {
-+    private final JsonNode hostInfo;
-+    // System.nanoTime() after which the entry is stale; null for a successful lookup.
-+    private final Long expiresAtNanos;
-+
-+    private CachedHostInfo(JsonNode hostInfo, Long expiresAtNanos) {
-+      this.hostInfo = hostInfo;
-+      this.expiresAtNanos = expiresAtNanos;
-+    }
-+
-+    private boolean isFresh() {
-+      return expiresAtNanos == null || System.nanoTime() - expiresAtNanos < 0;
-+    }
-+  }
-+
-+  private final Map<Common.CloudType, CachedHostInfo> cachedHostInfos = new ConcurrentHashMap<>();
-+  private final Map<Common.CloudType, Object> hostInfoLocks = new ConcurrentHashMap<>();
-+
-+  @Inject HostCloudDetector hostCloudDetector;
- 
-   @Override
-   protected String getCommandType() {
-     return YB_CLOUD_COMMAND_TYPE;
-   }
- 
-+  /**
-+   * Returns the host's metadata from the cloud's metadata service. On failure, returns what ybops
-+   * does: a JSON string if YBA doesn't run on that cloud or its metadata service is unreachable,
-+   * or an {@code {"error": ...}} object if ybops itself failed.
-+   */
-   public JsonNode getCurrentHostInfo(Common.CloudType cloudType) {
--    return cachedHostInfos.computeIfAbsent(
--        cloudType,
--        ct -> currentHostInfo(ct, ct == Common.CloudType.aws ? AWS_METADATA_TYPES : null));
-+    if (!hostCloudDetector.getHostCloud().equals(Optional.of(cloudType))) {
-+      // Running ybops would only wait out the metadata service timeouts to fail the same way.
-+      return Json.toJson(
-+          String.format(
-+              "Unable to auto-discover %s provider information",
-+              cloudType.name().toUpperCase()));
-+    }
-+    CachedHostInfo cached = cachedHostInfos.get(cloudType);
-+    if (cached != null && cached.isFresh()) {
-+      return cached.hostInfo;
-+    }
-+    // Concurrent callers wait for one ybops run instead of each starting one.
-+    synchronized (hostInfoLocks.computeIfAbsent(cloudType, ct -> new Object())) {
-+      cached = cachedHostInfos.get(cloudType);
-+      if (cached != null && cached.isFresh()) {
-+        return cached.hostInfo;
-+      }
-+      JsonNode hostInfo =
-+          currentHostInfo(
-+              cloudType, cloudType == Common.CloudType.aws ? AWS_METADATA_TYPES : null);
-+      boolean success = hostInfo.isObject() && !hostInfo.has("error");
-+      cachedHostInfos.put(
-+          cloudType,
-+          new CachedHostInfo(
-+              hostInfo, success ? null : System.nanoTime() + hostInfoFailureTtl.toNanos()));
-+      return hostInfo;
-+    }
-   }
- 
-   private JsonNode currentHostInfo(
+@@ -6190,13 +6190,14 @@ yb_member_subqueryscan_is_trivial(RelOptInfo *sqrel, PathTarget *target)
+  * cost.  'root' is the scan's own PlannerInfo; what the costing takes from
+  * the Agg is on the copy.
+  *
+- * The costs pg_hint_plan sets outlive the re-costing: it makes the partial
+- * paths a Parallel hint names win by zeroing their costs, and it disables
+- * the scan types a scan-method hint excludes through the enable_* GUCs only
+- * while the relation's paths are generated (and the complete paths under a
+- * forced parallel inheritance scan by adding disable_cost itself), so a
+- * copy costed later would lose the penalty, win on its real cost, and hide
+- * the failed hint from pg_hint_plan's disabled-node check.
++ * The copy keeps the original's disabled state, and the zero cost
++ * pg_hint_plan gives the partial paths a Parallel hint names so that they
++ * win.  pg_hint_plan applies a scan-method hint through the enable_* GUCs
++ * only while the relation's paths are generated, so the re-costing charges
++ * disable_cost by the session's settings rather than by the hint's.  A copy
++ * that lost the charge would win on its real cost and hide a failed hint
++ * from pg_hint_plan's disabled-node check; a copy that gained the charge
++ * would make the check report a followed hint as failed.
+  */
+ static void
+ yb_cost_agg_pushdown_scan(PlannerInfo *root, Path *copy)
+@@ -6248,4 +6249,9 @@ yb_cost_agg_pushdown_scan(PlannerInfo *root, Path *copy)
+ 		copy->startup_cost += disable_cost;
+ 		copy->total_cost += disable_cost;
+ 	}
++	else if (!disabled && copy->startup_cost >= disable_cost)
++	{
++		copy->startup_cost -= disable_cost;
++		copy->total_cost -= disable_cost;
++	}
+ }
 ```
 
-**File**: `managed/src/main/java/com/yugabyte/yw/common/HostCloudDetector.java` (added, +157/-0)
+**File**: `src/postgres/src/test/regress/expected/yb.orig.hints.out` (modified, +54/-0)
 ```diff
-@@ -0,0 +1,157 @@
-+// Copyright (c) YugabyteDB, Inc.
+@@ -1764,6 +1764,60 @@ WARNING:  unused hints, and/or hints causing errors, exist
+  Generated hints: /*+ SeqScan(tab) Set(yb_enable_optimizer_statistics off) Set(yb_enable_base_scans_cost_model on) Set(enable_hashagg on) Set(enable_material on) Set(enable_memoize on) Set(enable_sort on) Set(enable_incremental_sort on) Set(max_parallel_workers_per_gather 2) Set(parallel_tuple_cost 0.22) Set(parallel_setup_cost 4080.00) Set(min_parallel_table_scan_size 1024) Set(yb_prefer_bnl on) Set(yb_bnl_batch_size 1024) Set(yb_fetch_row_limit 1024) Set(from_collapse_limit 8) Set(join_collapse_limit 8) Set(geqo false) */
+ (5 rows)
+ 
++reset yb_enable_cbo;
++-- The other direction: the hint selects a scan type the session disables.
++-- The hint lifts the session's setting only while the relation's paths are
++-- generated, but the scan copy costed for the pushed-down aggregate stays
++-- enabled like the hinted path, so the plan check reports nothing.  One case
++-- for each scan type the copy is costed for (#35083).
++set yb_enable_cbo = on;
++set enable_seqscan = off;
++/*+ SeqScan(tab) */ explain (hints on, costs off) select count(*) from t2 tab where b2<10;
++                                                                                                                                                                                                                                                                    QUERY PLAN                                                                                                                                                                                                                                                                    
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++ Finalize Aggregate
++   ->  Seq Scan on t2 tab
++         Storage Filter: (b2 < 10)
++         Partial Aggregate: true
++ Generated hints: /*+ SeqScan(tab) Set(yb_enable_optimizer_statistics off) Set(yb_enable_base_scans_cost_model on) Set(enable_hashagg on) Set(enable_material on) Set(enable_memoize on) Set(enable_sort on) Set(enable_incremental_sort on) Set(max_parallel_workers_per_gather 2) Set(parallel_tuple_cost 0.22) Set(parallel_setup_cost 4080.00) Set(min_parallel_table_scan_size 1024) Set(yb_prefer_bnl on) Set(yb_bnl_batch_size 1024) Set(yb_fetch_row_limit 1024) Set(from_collapse_limit 8) Set(join_collapse_limit 8) Set(geqo false) */
++(5 rows)
 +
-+package com.yugabyte.yw.common;
++reset enable_seqscan;
++set enable_indexscan = off;
++/*+ IndexScan(tab t2_a2_idx) */ explain (hints on, costs off) select count(*) from t2 tab where a2=1;
++                                                                                                                                                                                                                                                                          QUERY PLAN                                                                                                                                                                                                                                                                          
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++ Finalize Aggregate
++   ->  Index Scan using t2_a2_idx on t2 tab
++         Index Cond: (a2 = 1)
++         Partial Aggregate: true
++ Generated hints: /*+ IndexScan(tab t2_a2_idx) Set(yb_enable_optimizer_statistics off) Set(yb_enable_base_scans_cost_model on) Set(enable_hashagg on) Set(enable_material on) Set(enable_memoize on) Set(enable_sort on) Set(enable_incremental_sort on) Set(max_parallel_workers_per_gather 2) Set(parallel_tuple_cost 0.22) Set(parallel_setup_cost 4080.00) Set(min_parallel_table_scan_size 1024) Set(yb_prefer_bnl on) Set(yb_bnl_batch_size 1024) Set(yb_fetch_row_limit 1024) Set(from_collapse_limit 8) Set(join_collapse_limit 8) Set(geqo false) */
++(5 rows)
 +
-+import static com.yugabyte.yw.common.CloudMetadataEndpoints.AWS_IMDSV2_TOKEN_PATH;
-+import static com.yugabyte.yw.common.CloudMetadataEndpoints.AWS_IMDSV2_TOKEN_TTL_HEADER;
-+import static com.yugabyte.yw.common.CloudMetadataEndpoints.AWS_INSTANCE_ID_PATH;
-+import static com.yugabyte.yw.common.CloudMetadataEndpoints.GCP_INSTANCE_ID_PATH;
-+import static com.yugabyte.yw.common.CloudMetadataEndpoints.GCP_METADATA_FLAVOR;
-+import static com.yugabyte.yw.common.CloudMetadataEndpoints.GCP_METADATA_FLAVOR_HEADER;
-+import static com.yugabyte.yw.common.CloudMetadataEndpoints.METADATA_IP;
++/*+ IndexOnlyScan(tab t2_a2_idx) */ explain (hints on, costs off) select count(*) from t2 tab where a2=1;
++                                                                                   
+```
+
+**File**: `src/postgres/src/test/regress/sql/yb.orig.hints.sql` (modified, +18/-0)
+```diff
+@@ -401,6 +401,24 @@ set yb_enable_cbo = on;
+ /*+ noSeqScan(tab) */ explain (hints on, costs off) select count(*) from t2 tab where b2<10;
+ reset yb_enable_cbo;
+ 
++-- The other direction: the hint selects a scan type the session disables.
++-- The hint lifts the session's setting only while the relation's paths are
++-- generated, but the scan copy costed for the pushed-down aggregate stays
++-- enabled like the hinted path, so the plan check reports nothing.  One case
++-- for each scan type the copy is costed for (#35083).
++set yb_enable_cbo = on;
++set enable_seqscan = off;
++/*+ SeqScan(tab) */ explain (hints on, costs off) select count(*) from t2 tab where b2<10;
++reset enable_seqscan;
++set enable_indexscan = off;
++/*+ IndexScan(tab t2_a2_idx) */ explain (hints on, costs off) select count(*) from t2 tab where a2=1;
++/*+ IndexOnlyScan(tab t2_a2_idx) */ explain (hints on, costs off) select count(*) from t2 tab where a2=1;
++reset enable_indexscan;
++set enable_bitmapscan = off;
++/*+ BitmapScan(tab t2_a2_idx) */ explain (hints on, costs off) select count(*) from t2 tab where a2=1;
++reset enable_bitmapscan;
++reset yb_enable_cbo;
 +
-+import com.google.common.annotations.VisibleForTesting;
-+import com.google.inject.Singleton;
-+import com.yugabyte.yw.commissioner.Common.CloudType;
-+import java.io.IOException;
-+import java.net.URI;
-+import java.net.http.HttpClient;
-+import java.net.http.HttpRequest;
-+import java.net.http.HttpResponse;
-+import java.nio.charset.StandardCharsets;
-+import java.nio.file.Files;
-+import java.nio.file.Path;
-+import java.nio.file.Paths;
-+import java.time.Duration;
-+import java.util.Optional;
-+import java.util.concurrent.CompletableFuture;
-+import java.util.function.Predicate;
-+import lombok.extern.slf4j.Slf4j;
-+
-+/**
-+ * Detects the public cloud that YBA runs on, so that only that cloud's metadata service is queried.
-+ * Reads DMI first, as Aeon's boot scripts do; if DMI is missing or unrecognized, probes the three
-+ * metadata services in parallel.
-+ */
-+@Singleton
-+@Slf4j
-+public class HostCloudDetector {
-+  private static final Path DMI_DIR = Paths.get("/sys/devices/virtual/dmi/id");
-+  private static final String METADATA_URL = "http://" + METADATA_IP;
-+  private static final String AZURE_CHASSIS_ASSET_TAG = "7783-7084-3265-9085-8269-3286-77";
-+  private static final Duration PROBE_TIMEOUT = Duration.ofSeconds(1);
-+  // An undetected host is probed again after this long, in case the metadata service was only
-+  // briefly unreachable. A detected cloud doesn't change.
-+  private static final Duration UNDETECTED_TTL = Duration.ofMinutes(5);
-+
-+  private final Path dmiDir;
-+  private final String metadataUrl;
-+  private final HttpClient httpClient;
-+
-+  private CloudType detected;
-+  private long undetectedUntilNanos;
-+  private boolean checked;
-+
-+  public HostCloudDetector() {
-+    this(DMI_DIR, METADATA_URL);
-+  }
-+
-+  @VisibleForTesting
-+  HostCloudDetector(Path dmiDir, String metadataUrl) {
-+    this.dmiDir = dmiDir;
-+    this.metadataUrl = metadataUrl;
-+    this.httpClient =
-+        HttpClient.newBuilder()
-+            // YBA's default ProxySelector sends hosts not in no_proxy through http_proxy.
-+            .proxy(HttpClient.Builder.NO_PROXY)
-+            .connectTimeout(PROBE_TIMEOUT)
-+            .followRedirects(HttpClient.Redirect.NEVER)
-+            .build();
-+  }
-+
-+  public synchronized Optional<CloudType> getHostCloud() {
-+    if (detected == null && (!checked || System.nanoTime() - undetectedUntilNanos > 0)) {
-+      detected = fromDmi().or(this::fromMetadataServices).orElse(null);
-+      checked = true;
-+      undetectedUntilNanos = System.nanoTime() + UNDETECTED_TTL.toNanos();
-+      log.info("YBA host cloud: {}", detected == null ? "none detected" : detected);
-+    }
-+    return Optional.ofNullable(detected);
-+  }
-+
-+  private Optional<CloudType> fromDmi() {
-+    String chassisAssetTag = readDmi("chassis_asset_tag");
-+    if ("Amazon EC2".equals(chassisAssetTag)) {
-+      return Optional.of(CloudType.aws);
-+    }
-+    if (AZURE_CHASSIS_ASSET_TAG.equals(chassisAssetTag)) {
-+      return Optional.of(CloudType.azu);
-+    }
-+    if ("Google Compute Engine".equals(readDmi("product_name"))) {
-+      return Optional.of(CloudType.gcp);
-+    }
-+    return Optional.empty();
-+  }
-+
-+  private String readDmi(String name) {
-+    try {
-+      return Files.readString(dmiDir.resolve(name), StandardCharsets.UTF_8).trim();
-+    } catch (IOException | SecurityException e) {
-+      return null;
-+    }
-+  }
-+
-+  private Optional<CloudType> fromMetadataServices() {
-+    // GCP and Azure are recognized by their responses. AWS is checked last: the IMDSv1 paths are
-+    // also served by EC2-compatible clouds. The IMDSv1 path covers instances whose IMDSv2 token
-+    // response can't reach YBA, e.g. a container behind a hop limit of 1: it answers 200 if IMDSv1
-+    // is enabled, and 401 if IMDSv2 is required.
-+    CompletableFuture<Boolean> gcp =
-+        probe(
-+            get(GCP_INSTANCE_ID_PATH).header(GCP_METADATA_FLAVOR_HEADER, GCP_METADATA_FLAVOR),
-+            r ->
-+                r.statusCode() == 200
-+                    && r.headers()
-+                        .allValues(GCP_METADATA_FLAVOR_HEADER)
-+                        .contains(GCP_METADATA_FLAVOR));
-+    CompletableFuture<Boolean> azu =
-+        probe(
-+            get("/metadata/instance?api-version=2021-02-01").header("Metadata", "true"),
-+            r -> r.statusCode() == 200);
-+ 
+ -- Parallel zeros partial seqscans on a non-inh rel.  That must not hide
+ -- NoSeqScan: still no valid path.
+ /*+ NoSeqScan(tab) Parallel(tab 2) */ explain (hints on, costs off) select count(*) from t2 tab where b2<10;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #35766** (closed): [#35199] YSQL: Fix PgIndexBackfillMultiMaster.MasterFailoverAtEachIndexBuildPhase/0 by lengthening the YSQL lease (@csi-fix)
-- **PR #35751** (2026-10-24): [#32301] YSQL: Retry a YSQL migration that fails with a serialization failure (@myang2021)
-- **PR #35720** (2026-10-25): [PLAT-23030] YBA: Add v2 API for the host's cloud info (@artem-mindrov)
-- **PR #35711** (2026-10-23): [#35643] Docs: Document Connection Manager disconnecting sessions of a dropped role (@arpit-saxena)
-- **PR #35709** (2026-10-24): [PLAT-23213] YBA: Keep a failed task's rollback checkpoint when other tasks run on the broken universe (@vipul-yb)
-- **PR #35680** (2026-10-23): [BACKPORT 2026.1][#35550] DocDB: Count only the test table's peers in OrphanedTabletCleanupTest (#35558) (@hkimura)
+- **PR #35865** (closed): [#35734] YSQL: Take object locks before ysql_enable_object_locking_infra is promoted (@pao214)
+- **PR #35852** (2026-10-26): [BACKPORT 2025.2][#33919] DocDB: Fix flaky WriteStallCascadeTest.WriteStallCanBlockElection (#34492) (@rahulb-yb)
+- **PR #35850** (2026-10-26): [BACKPORT 2026.1][#33919] DocDB: Fix flaky WriteStallCascadeTest.WriteStallCanBlockElection (#34492) (@rahulb-yb)
+- **PR #35847** (2026-10-27): [BACKPORT 2025.2.8][#10492] DocDB: Support maximum replicas per placement block (#32828) (@khosrow)
+- **PR #35844** (closed): Pg19 master catchup db5f78f (@fizaaluthra)
+- **PR #35841** (2026-10-26): [BACKPORT 2026.1][#34167] DocDB: Fix long operation tracker sanitizer test (#34205) (@hkimura)
 
 ---
 
@@ -2797,30 +2878,50 @@ same rules a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [PLAT-23030] YBA: Add v2 API for the host's cloud info (#35720)
+## X. [DB-24956] CDCSDK: Retry DROP REPLICATION SLOT WAIT across RPC timeouts
 
 **RULE**:
-When implementing operations in `managed/build.sbt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `java/yb-pgsql/src/test/java/org/yb/pgsql/TestPgReplicationSlot.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `545b420b`: [PLAT-23030] YBA: Add v2 API for the host's cloud info (#35720). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6a8130b4`: [DB-24956] CDCSDK: Retry DROP REPLICATION SLOT WAIT across RPC timeouts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `managed/build.sbt`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `java/yb-pgsql/src/test/java/org/yb/pgsql/TestPgReplicationSlot.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-  "com.yugabyte" % "yba-client-v2" % "1.8.11" % Test,
-    version := "1.8.11",
+  @Test
+  public void testDropReplicationSlotWaitRetriesAcrossRpcTimeout() throws Exception {
+    // Verify that DROP_REPLICATION_SLOT ... WAIT keeps waiting even after the advisory-lock
+    // RPC deadline expires.  We force a short RPC deadline by setting
+    // ysql_client_read_write_timeout_ms to 5 seconds, then hold the slot alive for longer than
+    // that before releasing it.  The drop must succeed rather than failing with a timeout error.
+    Map<String, String> tserverFlags = getTServerFlagsWithExclusiveLock();
+    tserverFlags.put("ysql_client_read_write_timeout_ms", "5000");
+    restartClusterWithFlags(getMasterFlags(), tserverFlags);
+
+    String slotName = "drop_slot_wait_retry_test";
+
+    try (Statement stmt = connection.createStatement()) {
+      stmt.execute("DROP TABLE IF EXISTS t_drop_wait_retry");
+      stmt.execute("CREATE TABLE t_drop_wait_retry(k int primary key, v text)");
+      stmt.execute("INSERT INTO t_drop_wait_retry VALUES (1, 'a')");
+    }
+
+    Connection replConn0 = getConnectionBuilder().withTServer(0).replicationConnect();
+    PGReplicationConnection replApi0 =
+        replConn0.unwrap(PGConnection.class).getReplicationAPI();
+
+    createSlot(replApi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Anti-pattern to NEVER write (induced failure mode):
-  "com.yugabyte" % "yba-client-v2" % "1.8.10" % Test,
-    version := "1.8.10",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `545b420b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6a8130b4` are properly handled with clean fallback behavior.

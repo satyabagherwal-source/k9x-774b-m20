@@ -5265,3 +5265,6 @@ Every entry in this ledger must capture:
 | `learn-github-lobehub-lobe-ui` | `https://github.com/lobehub/lobe-ui` | `a5441425` | Multi-dimensional audit evidence | 2026-10-27T12:07:40.740Z |
 | `learn-github-lxml-lxml` | `https://github.com/lxml/lxml` | `ebaa7fc0` | Multi-dimensional audit evidence | 2026-10-27T12:07:44.993Z |
 | `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `1e5b0d26` | Multi-dimensional audit evidence | 2026-10-27T12:07:50.126Z |
+| `learn-github-transact-rs-sqlx` | `https://github.com/transact-rs/sqlx` | `242eb8ca` | Multi-dimensional audit evidence | 2026-10-27T12:10:43.265Z |
+| `learn-github-react-react-native` | `https://github.com/react/react-native` | `0941e953` | Multi-dimensional audit evidence | 2026-10-27T12:10:49.100Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `fb9ac9b9` | Multi-dimensional audit evidence | 2026-10-27T12:10:57.836Z |

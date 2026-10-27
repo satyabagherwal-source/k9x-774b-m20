@@ -5283,10 +5283,10 @@
     "repository": "transact-rs/sqlx",
     "platform": "github",
     "sourceUrl": "https://github.com/transact-rs/sqlx",
-    "sourceVersion": "f574e07d",
+    "sourceVersion": "242eb8ca",
     "license": "Apache-2.0",
-    "contentHash": "62148b7bff48adb4a1790d20ad1ebf3a4feed3717ec5f919548ba9ea9bbcb1ff",
-    "lastHarvestedAt": "2026-10-23T10:09:34.201Z",
+    "contentHash": "97953ba01cb4153bede6b805d8f22ad410c2358fa03c4c82c907edb947e63c8e",
+    "lastHarvestedAt": "2026-10-27T12:10:43.265Z",
     "learningId": "learn-github-transact-rs-sqlx"
   },
   "bergside-typeui": {
@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "545b420b",
+    "sourceVersion": "fb9ac9b9",
     "license": "NOASSERTION",
-    "contentHash": "c693eee1ee3afac7d13df97f92c96218c326ae1c24b7ff4e8928289526f130a4",
-    "lastHarvestedAt": "2026-10-25T20:23:52.606Z",
+    "contentHash": "3fbaf08dca470a2cbf90219bb41f0bb0aea31c81c640f434e960eef88c76b0d4",
+    "lastHarvestedAt": "2026-10-27T12:10:57.836Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {
@@ -10273,10 +10273,10 @@
     "repository": "react/react-native",
     "platform": "github",
     "sourceUrl": "https://github.com/react/react-native",
-    "sourceVersion": "bbee89c5",
+    "sourceVersion": "0941e953",
     "license": "MIT",
-    "contentHash": "a04b5269518276f86de4ade449f6a6a02184d73fc59d456e89725ac042827d4b",
-    "lastHarvestedAt": "2026-10-23T06:02:53.966Z",
+    "contentHash": "386ee13396ac5776997666740bcb0ac1d7577c393e81b94522472b64ce7bf9ba",
+    "lastHarvestedAt": "2026-10-27T12:10:49.100Z",
     "learningId": "learn-github-react-react-native"
   },
   "faker-js-faker": {

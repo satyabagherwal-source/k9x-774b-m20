@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T12:07:50.083Z",
+  "last_updated": "2026-10-27T12:10:57.793Z",
   "total_verified_learnings": 1103,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -43279,14 +43279,19 @@
       "slug": "react-react-native",
       "platform": "github",
       "source_url": "https://github.com/react/react-native",
-      "source_version": "bbee89c5",
-      "content_hash": "a04b5269518276f86de4ade449f6a6a02184d73fc59d456e89725ac042827d4b",
+      "source_version": "0941e953",
+      "content_hash": "386ee13396ac5776997666740bcb0ac1d7577c393e81b94522472b64ce7bf9ba",
       "dossier_path": "07_PROJECT_LEARNING/react-react-native-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-react-native-learnings.md",
       "promoted_rules": [
         {
           "number": 3035,
           "title": "race in UiThreadUtil main handler lazy initialization (#58963)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4734,
+          "title": "Require constant initialization for native static state (#59489)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -43295,7 +43300,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T06:02:53.900Z",
+      "verified_at": "2026-10-27T12:10:49.061Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50361,14 +50366,19 @@
       "slug": "transact-rs-sqlx",
       "platform": "github",
       "source_url": "https://github.com/transact-rs/sqlx",
-      "source_version": "f574e07d",
-      "content_hash": "62148b7bff48adb4a1790d20ad1ebf3a4feed3717ec5f919548ba9ea9bbcb1ff",
+      "source_version": "242eb8ca",
+      "content_hash": "97953ba01cb4153bede6b805d8f22ad410c2358fa03c4c82c907edb947e63c8e",
       "dossier_path": "07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md",
       "promoted_rules": [
         {
           "number": 3866,
           "title": "macros): tolerate unreadable dotenv with query source (#4371)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4733,
+          "title": "incorrect paths and typos in docs and comments (#4413)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -50377,7 +50387,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T10:09:34.135Z",
+      "verified_at": "2026-10-27T12:10:43.223Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53686,8 +53696,8 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "545b420b",
-      "content_hash": "c693eee1ee3afac7d13df97f92c96218c326ae1c24b7ff4e8928289526f130a4",
+      "source_version": "fb9ac9b9",
+      "content_hash": "3fbaf08dca470a2cbf90219bb41f0bb0aea31c81c640f434e960eef88c76b0d4",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
@@ -53725,6 +53735,11 @@
           "number": 4442,
           "title": "[PLAT-23030] YBA: Add v2 API for the host's cloud info (#35720)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4735,
+          "title": "[DB-24956] CDCSDK: Retry DROP REPLICATION SLOT WAIT across RPC timeouts",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53732,7 +53747,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T20:23:52.565Z",
+      "verified_at": "2026-10-27T12:10:57.786Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -131870,6 +131885,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T12:07:50.076Z"
+    },
+    "rule-4733": {
+      "learning_id": "rule-4733",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4733,
+      "title": "incorrect paths and typos in docs and comments (#4413)",
+      "source_url": "https://github.com/transact-rs/sqlx",
+      "source_version": "242eb8ca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:10:43.223Z"
+    },
+    "rule-4734": {
+      "learning_id": "rule-4734",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4734,
+      "title": "Require constant initialization for native static state (#59489)",
+      "source_url": "https://github.com/react/react-native",
+      "source_version": "0941e953",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:10:49.061Z"
+    },
+    "rule-4735": {
+      "learning_id": "rule-4735",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4735,
+      "title": "[DB-24956] CDCSDK: Retry DROP REPLICATION SLOT WAIT across RPC timeouts",
+      "source_url": "https://github.com/yugabyte/yugabyte-db",
+      "source_version": "fb9ac9b9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:10:57.786Z"
     }
   },
   "aliases": {
