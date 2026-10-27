@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T20:32:06.211Z",
-  "total_cycles_completed": 5506,
-  "total_learnings_persisted": 5506,
-  "total_rules_promoted": 4903,
+  "last_updated": "2026-10-27T20:38:36.319Z",
+  "total_cycles_completed": 5508,
+  "total_learnings_persisted": 5508,
+  "total_rules_promoted": 4907,
   "history": [
-    {
-      "timestamp": "2026-10-27T13:31:49.702Z",
-      "repository": "psf/requests",
-      "learningId": "learn-github-psf-requests",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:31:54.287Z",
-      "repository": "dragonflyoss/dragonfly",
-      "learningId": "learn-github-dragonflyoss-dragonfly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T13:35:08.426Z",
       "repository": "nezhahq/nezha",
@@ -1403,6 +1389,20 @@
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T20:38:35.335Z",
+      "repository": "KRAFTON/Raon-1-mini-preview",
+      "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T20:38:36.319Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

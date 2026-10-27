@@ -5538,3 +5538,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-comfy-org-fibo-2-0` | `https://huggingface.co/Comfy-Org/Fibo-2.0` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-27T20:31:58.925Z |
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `f45222fb` | Multi-dimensional audit evidence | 2026-10-27T20:31:59.852Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `25abe0aa` | Multi-dimensional audit evidence | 2026-10-27T20:32:06.203Z |
+| `learn-huggingface-krafton-raon-1-mini-preview` | `https://huggingface.co/KRAFTON/Raon-1-mini-preview` | `hf-krafton` | Multi-dimensional audit evidence | 2026-10-27T20:38:35.329Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `5c02d67f` | Multi-dimensional audit evidence | 2026-10-27T20:38:36.315Z |

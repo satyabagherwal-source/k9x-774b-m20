@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T20:32:06.121Z",
+  "last_updated": "2026-10-27T20:38:36.263Z",
   "total_verified_learnings": 1149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -54677,8 +54677,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "f872ced5",
-      "content_hash": "7fb1761d6c355ddac324af58292cb0a991d60d0c6835f1a9f98c3deae2cce6c8",
+      "source_version": "5c02d67f",
+      "content_hash": "8dc22b0143bfa5915c068407796fe984971597e31c1fd02cc7a9359d0ae282cf",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -54731,6 +54731,11 @@
           "number": 4910,
           "title": "gpu): add checks for compressed noise squashed ctxt (#4099)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4995,
+          "title": "gpu): use thread-local streams as much as possible (#4068)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54738,7 +54743,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T16:58:46.883Z",
+      "verified_at": "2026-10-27T20:38:36.252Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -120533,16 +120538,32 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
       "source_version": "hf-krafton-raon-1-mini-preview",
-      "content_hash": "6297a4e81503854fefa352f55818b98da1855559a834a5cffbd45a6ee0259ddd",
+      "content_hash": "59bb7a1d2ba1a35d82c4f86b4c0dee778bb00049fdde7d4bd59809d8e61cad73",
       "dossier_path": "07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 4992,
+          "title": "Hybrid Attention Layer Indexing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4993,
+          "title": "MoE Router Renormalization & Sigmoid Stability",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4994,
+          "title": "MXFP8 Quantization Ignored Layers Pattern",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T19:34:51.660Z",
+      "verified_at": "2026-10-27T20:38:35.264Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -138062,6 +138083,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T20:31:59.773Z"
+    },
+    "rule-4992": {
+      "learning_id": "rule-4992",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4992,
+      "title": "Hybrid Attention Layer Indexing Invariant",
+      "source_url": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
+      "source_version": "hf-krafton-raon-1-mini-preview",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:38:35.264Z"
+    },
+    "rule-4993": {
+      "learning_id": "rule-4993",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4993,
+      "title": "MoE Router Renormalization & Sigmoid Stability",
+      "source_url": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
+      "source_version": "hf-krafton-raon-1-mini-preview",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:38:35.264Z"
+    },
+    "rule-4994": {
+      "learning_id": "rule-4994",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4994,
+      "title": "MXFP8 Quantization Ignored Layers Pattern",
+      "source_url": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
+      "source_version": "hf-krafton-raon-1-mini-preview",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:38:35.264Z"
+    },
+    "rule-4995": {
+      "learning_id": "rule-4995",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4995,
+      "title": "gpu): use thread-local streams as much as possible (#4068)",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "5c02d67f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:38:36.252Z"
     }
   },
   "aliases": {

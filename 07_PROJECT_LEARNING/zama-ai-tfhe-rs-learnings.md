@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `f872ced5`  
+> **Source Version**: `5c02d67f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T16:58:46.529Z  
+> **Timestamp**: 2026-10-27T20:38:35.967Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T16:58:46.071Z  
+> **Harvest Timestamp**: 2026-10-27T20:38:35.322Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1927,249 +1927,1230 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9412db3e` (2026-10-27)
-**Commit Message**: fix(gpu): add checks for compressed noise squashed ctxt (#4099)
+### Incident Patch 1: `5c02d67f` (2026-10-27)
+**Commit Message**: chore(gpu): use thread-local streams as much as possible (#4068)
 
-Fix a gpu noise test that triggers the new assertions
+* chore(gpu): fix ci check for gpu
 
-**File**: `tfhe/src/integer/gpu/list_compression/server_keys.rs` (modified, +134/-111)
+* chore(gpu): use with_thread_local_cuda_streams consistently
+
+- it should be used only to move data to the CPU, when we might not have
+  a cuda server key set
+- since we do not ensure a user doesn't set a server key on a GPU, then
+  unsets it and sets another one on GPU1, this PR also makes sure data
+  is copied on the fly whenever an operation is called, to ensure
+  ciphertext data reides on the current key's first GPU
+- tests are added to cover this case
+
+**File**: `scripts/check_scratch_cleanup.py` (modified, +8/-8)
 ```diff
-@@ -364,6 +364,56 @@ impl<T: UnsignedInteger> CudaPackedGlweCiphertextList<T> {
+@@ -54,29 +54,29 @@
+ # Bindings parsed from bindings.rs
+ # Scratch functions: Two more than cleanup functions because of
+ #  'scratch_cuda_programmable_bootstrap_32_async' and
+-EXPECTED_SCRATCH_COUNT = 83
++EXPECTED_SCRATCH_COUNT = 84
+ 
+ # Cuda operation functions
+-EXPECTED_CUDA_COUNT = 121
++EXPECTED_CUDA_COUNT = 122
+ 
+ # Cleanup functions
+-EXPECTED_CLEANUP_COUNT = 83
++EXPECTED_CLEANUP_COUNT = 84
+ 
+ # Check 3: Rust call-site scanning
+ # Number of functions in ffi.rs files
+-EXPECTED_CHECK3_RUST_FNS = 143
++EXPECTED_CHECK3_RUST_FNS = 144
+ # Number of functions in ffi.rs files that
+-EXPECTED_CHECK3_ASYNC_CUDA_CALLS = 107
++EXPECTED_CHECK3_ASYNC_CUDA_CALLS = 108
+ 
+ # Number of instances of Rust calls to the scratch/cuda/cleanup in a
+ # triplet sequence.
+-EXPECTED_CHECK3_SCRATCH_CUDA_CLEANUP_TRIPLET_CALLS = 125
++EXPECTED_CHECK3_SCRATCH_CUDA_CLEANUP_TRIPLET_CALLS = 126
+ 
+ # Check 5: Rust async-caller scanning
+-EXPECTED_CHECK5_ASYNC_CALLERS = 136
++EXPECTED_CHECK5_ASYNC_CALLERS = 137
+ 
+ # Check 6: Rust cleanup-caller scanning
+-EXPECTED_CHECK6_CLEANUP_CALLERS = 123
++EXPECTED_CHECK6_CLEANUP_CALLERS = 124
+ 
+ 
+ def check_paths_exist():
+```
+
+**File**: `tfhe/src/core_crypto/gpu/mod.rs` (modified, +17/-0)
+```diff
+@@ -127,6 +127,23 @@ impl CudaStreams {
+         &self.gpu_indexes
+     }
+ 
++    /// Returns `true` if `data_gpu_indexes` contains only the first GPU index of these streams.
++    ///
++    /// Ciphertexts live on a single GPU, so comparing their indexes with all the indexes of
++    /// multi-GPU streams would never match
++    ///
++    /// # Panics
++    ///
++    /// Panics if `data_gpu_indexes` does not contain exactly one index
++    pub(crate) fn is_on_first_gpu(&self, data_gpu_indexes: &[GpuIndex]) -> bool {
++        assert_eq!(
++            data_gpu_indexes.len(),
++            1,
++            "Data is expected to live on a single GPU"
++        );
++        self.gpu_indexes.get(..1) == Some(data_gpu_indexes)
++    }
++
+     /// Returns a pointer the array of GpuIndex as u32
+     pub(crate) fn gpu_indexes_ptr(&self) -> *const u32 {
+         // The cast here is safe as GpuIndex is repr(transparent)
+```
+
+**File**: `tfhe/src/high_level_api/array/gpu/booleans.rs` (modified, +47/-25)
+```diff
+@@ -3,10 +3,12 @@
+ 
+ use super::super::helpers::{create_sub_mut_slice_with_bound, create_sub_slice_with_bound};
+ use super::super::traits::{BitwiseArrayBackend, ClearBitwiseArrayBackend};
++use super::on_gpu;
+ use crate::array::stride::{ParStridedIter, ParStridedIterMut, StridedIter};
+ use crate::array::traits::TensorSlice;
+ use crate::high_level_api::array::{ArrayBackend, BackendDataContainer, BackendDataContainerMut};
+ use crate::high_level_api::global_state;
++use crate::high_level_api::global_state::cuda_clone;
+ use crate::integer::gpu::ciphertext::boolean_value::CudaBooleanBlock;
+ use crate::prelude::{FheDecrypt, FheTryEncrypt};
+ use crate::{ClientKey, FheBoolId};
+@@ -28,13 +30,9 @@ use crate::high_level_api::global_state::with_cuda_internal_keys;
+ 
+ impl Clone for GpuBooleanOwned {
+     fn clone(&self) -> Self {
+-        // When cloning, we assume that the intention is to return a ciphertext that lies in the GPU
+-        // 0 defined in the set server key. Hence, we use the server key to get the streams instead
+-        // of those inside the ciphertext itself
+-        with_cuda_internal_keys(|key| {
+-            let streams = &key.streams;
+-            Self(self.0.iter().map(|elem| elem.duplicate(streams)).collect())
+-        })
++        // When a Cuda server key is set, the clone lies on its GPU 0, otherwise
++        // it stays on the GPU of the ciphertext
++        Self(self.0.iter().map(cuda_clone).collect())
      }
  }
  
-+/// Concatenates the given LWE lists into a single contiguous list on GPU 0.
-+///
-+/// All lists must have `lwe_dimension` as their LWE dimension, callers are
-+/// responsible for checking this. The iterator must not be empty.
-+fn flatten_lwe_lists<'a, T, I>(
-+    lwe_lists: I,
-+    lwe_dimension: LweDimension,
-+    streams: &CudaStreams,
-+) -> CudaLweCiphertextList<T>
+@@ -166,7 +164,11 @@ impl BitwiseArrayBackend for GpuFheBoolArrayBackend {
+             lhs.par_iter()
+                 .zip(rhs.par_iter())
+                 .map(|(lhs, rhs)| {
+-                    CudaBooleanBlock(cuda_key.pbs_key().bitand(&lhs.0, &rhs.0, streams))
++                    CudaBooleanBlock(cuda_key.pbs_key().bitand(
++                        &*on_gpu(&lhs.0, streams),
++                        &*on_gpu(&rhs.0, streams),
++                        streams,
++                    ))
+                 })
+                 .collect::<Vec<_>>()
+         }))
+@@ -181,7 +183,11 @@ impl BitwiseArrayBackend for GpuFheBoolArrayBackend {
+             lhs.par_iter()
+                 .zip(rhs.par_iter())
+                 .map(|(lhs, rhs)| {
+-                    CudaBooleanBlock(cuda_key.pbs_key().bitor(&lhs.0, &rhs.0, streams))
++                    CudaBooleanBlock(cuda_key.pbs_key().bitor(
++                        &*on_gpu(&lhs.0, streams),
++                        &*on_gpu(&rhs.0, streams),
++                        streams,
++                    ))
+                 })
+                 .collect::<Vec<_>>()
+         }))
+@@ -196,7 +202,11 @@ impl BitwiseArrayBackend for GpuFheBoolArrayBackend {
+             lhs.par_iter()
+                 .zip(rhs.par_iter())
+                 .map(|(lhs, rhs)| {
+-                    CudaBooleanBlock(cuda_key.pbs_key().bitxor(&lhs.0, &rhs.0, streams))
++                    CudaBooleanBlock(cuda_key.pbs_key().bitxor(
++                        &*on_gpu(&lhs.0, streams),
++                        &*on_gpu(&rhs.0, streams),
++                        streams,
++                    ))
+                 })
+                 .collect::<Vec<_>>()
+         }))
+@@ -206,6 +216,7 @@ impl BitwiseArrayBackend for GpuFheBoolArrayBackend {
+         GpuBooleanOwned(global_state::with_cuda_internal_keys(|cuda_key| {
+             let streams = &cuda_key.streams;
+             lhs.par_iter()
++                // boolean_bitnot copies lhs on the GPU of the streams
+                 .map(|lhs| cuda_key.pbs_key().boolean_bitnot(lhs, streams))
+                 .collect::<Vec<_>>()
+         }))
+@@ -222,7 +233,11 @@ impl ClearBitwiseArrayBackend<bool> for GpuFheBoolArrayBackend {
+             lhs.par_iter()
+                 .zip(rhs.par_iter().copied())
+                 .map(|(lhs, rhs)| {
+-                    CudaBooleanBlock(cuda_key.pbs_key().scalar_bitand(&lhs.0, rhs as u8, streams))
++                    CudaBooleanBlock(cuda_key.pbs_key().scalar_bitand(
++                        &*on_gpu(&lhs.0, streams),
++                        rhs as u8,
++                        streams,
++                    ))
+                 })
+                 .collect::<Vec<_>>()
+         }))
+@@ -237,7 +252,11 @@ impl ClearBitwiseArrayBackend<bool> for GpuFheBoolArrayBackend {
+             lhs.par_iter()
+                 .zip(rhs.par_iter().copied())
+                 .map(|(lhs, rhs)| {
+-                    CudaBooleanBlock(cuda_key.pbs_key().scalar_bitor(&lhs.0, rhs as u8, streams))
++                    CudaBooleanBlock(cuda_key.pbs_key().scalar_bitor(
++                        &*on_gpu(&lhs.0, streams),
++                        rhs as u8,
++                        streams,
++                    ))
+                 })
+                 .collect::<Vec<_>>()
+         }))
+@@ -252,7 +271,11 @@ impl ClearBitwiseArrayBackend<bool> for GpuFheBoolArrayBackend {
+             lhs.par_iter()
+                 .zip(rhs.par_iter().copied())
+                 .map(|(lhs, rhs)| {
+-                    CudaBooleanBlock(cuda_key.pbs_key().
+```
+
+**File**: `tfhe/src/high_level_api/array/gpu/integers.rs` (modified, +34/-28)
+```diff
+@@ -2,10 +2,12 @@
+ //! where the values and computations are always done on GPU
+ use super::super::helpers::{create_sub_mut_slice_with_bound, create_sub_slice_with_bound};
+ use super::super::traits::{ArithmeticArrayBackend, BitwiseArrayBackend, ClearBitwiseArrayBackend};
++use super::on_gpu;
+ use crate::core_crypto::prelude::{SignedNumeric, UnsignedNumeric};
+ use crate::high_level_api::array::{
+     ArrayBackend, FheArrayBase, FheBackendArray, FheBackendArraySlice, FheBackendArraySliceMut,
+ };
++use crate::high_level_api::global_state::cuda_clone;
+ 
+ use crate::array::stride::{ParStridedIter, ParStridedIterMut, StridedIter};
+ use crate::array::traits::{
+@@ -53,10 +55,7 @@ where
+     T: CudaIntegerRadixCiphertext,
+ {
+     fn clone(&self) -> Self {
+-        with_cuda_internal_keys(|key| {
+-            let streams = &key.streams;
+-            Self(self.0.iter().map(|elem| elem.duplicate(streams)).collect())
+-        })
++        Self(self.0.iter().map(cuda_clone).collect())
+     }
+ }
+ 
+@@ -112,7 +111,14 @@ where
+         let streams = &cuda_key.streams;
+         lhs.par_iter()
+             .zip(rhs.par_iter())
+-            .map(|(lhs, rhs)| op(cuda_key.pbs_key(), lhs, rhs, streams))
++            .map(|(lhs, rhs)| {
++                op(
++                    cuda_key.pbs_key(),
++                    &*on_gpu(lhs, streams),
++                    &*on_gpu(rhs, streams),
++                    streams,
++                )
++            })
+             .collect::<Vec<_>>()
+     }))
+ }
+@@ -173,7 +179,7 @@ where
+         let streams = &cuda_key.streams;
+         lhs.par_iter()
+             .zip(rhs.par_iter())
+-            .map(|(lhs, rhs)| op(cuda_key.pbs_key(), lhs, *rhs, streams))
++            .map(|(lhs, rhs)| op(cuda_key.pbs_key(), &*on_gpu(lhs, streams), *rhs, streams))
+             .collect::<Vec<_>>()
+     }))
+ }
+@@ -337,7 +343,7 @@ where
+         GpuOwned(global_state::with_cuda_internal_keys(|cuda_key| {
+             let streams = &cuda_key.streams;
+             lhs.par_iter()
+-                .map(|lhs| cuda_key.pbs_key().bitnot(lhs, streams))
++                .map(|lhs| cuda_key.pbs_key().bitnot(&*on_gpu(lhs, streams), streams))
+                 .collect::<Vec<_>>()
+         }))
+     }
+@@ -572,15 +578,16 @@ where
+     Clear: RecomposableFrom<u64> + UnsignedNumeric,
+ {
+     fn decrypt(&self, key: &ClientKey) -> Vec<Clear> {
+-        with_cuda_internal_keys(|cuda_key| {
+-            let streams = &cuda_key.streams;
+-            self.as_tensor_slice()
+-                .iter()
+-                .map(|ct: &CudaUnsignedRadixCiphertext| {
+-                    key.key.key.decrypt_radix(&ct.to_radix_ciphertext(streams))
+-                })
+-                .collect()
+-        })
++        self.as_tensor_slice()
++            .iter()
++            .map(|ct: &CudaUnsignedRadixCiphertext| {
++                let cpu_ct = global_state::with_thread_local_cuda_streams_for_gpu_indexes(
++                    ct.gpu_indexes(),
++                    |streams| ct.to_radix_ciphertext(streams),
++                );
++                key.key.key.decrypt_radix(&cpu_ct)
++            })
++            .collect()
+     }
+ }
+ 
+@@ -638,17 +645,16 @@ where
+     Clear: RecomposableSignedInteger,
+ {
+     fn decrypt(&self, key: &ClientKey) -> Vec<Clear> {
+-        with_cuda_internal_keys(|cuda_key| {
+-            let streams = &cuda_key.streams;
+-            self.elems
+-                .0
+-                .iter()
+-                .map(|ct| {
+-                    key.key
+-                        .key
+-                        .decrypt_signed_radix(&ct.to_signed_radix_ciphertext(streams))
+-                })
+-                .collect()
+-        })
++        self.elems
++            .0
++            .iter()
++            .map(|ct| {
++                let cpu_ct = global_state::with_thread_local_cuda_streams_for_gpu_indexes(
++                    ct.gpu_indexes(),
++                    |streams| ct.to_signed_radix_ciphertext(streams),
++                );
++                key.key.key.decrypt_signed_radix(&cpu_ct)
++            })
++            .collect()
+     }
+ }
+```
+
+**File**: `tfhe/src/high_level_api/array/gpu/mod.rs` (modified, +18/-0)
+```diff
+@@ -1,9 +1,27 @@
+ pub(crate) mod booleans;
+ pub(crate) mod integers;
++
++use crate::core_crypto::gpu::CudaStreams;
++use crate::high_level_api::details::MaybeCloned;
++use crate::integer::gpu::ciphertext::CudaIntegerRadixCiphertext;
+ #[cfg(test)]
+ pub use booleans::GpuFheBoolArrayBackend;
+ pub use booleans::{GpuFheBoolArray, GpuFheBoolSlice, GpuFheBoolSliceMut};
+ pub use integers::{
+     GpuFheIntArray, GpuFheIntSlice, GpuFheIntSliceMut, GpuFheUintArray, GpuFheUintSlice,
+     GpuFheUintSliceMut,
+ };
++
++/// Returns the element if it is on the GPU where `streams` allocate ciphertexts,
++/// otherwise (e.g. the server key was changed for one on another GPU) returns a copy of it
++/// on that GPU
++fn on_gpu<'a, T>(elem: &'a T, streams: &CudaStreams) -> MaybeCloned<'a, T>
 +where
-+    T: UnsignedInteger,
-+    I: IntoIterator<Item = &'a CudaLweCiphertextList<T>>,
-+    I::IntoIter: Clone,
++    T: CudaIntegerRadixCiphertext,
 +{
-+    let lwe_lists = lwe_lists.into_iter();
-+    let ciphertext_modulus = lwe_lists.clone().next().unwrap().ciphertext_modulus();
-+
-+    // Compute total number of lwe ciphertexts we will be handling
-+    let total_num_blocks: usize = lwe_lists.clone().map(|x| x.lwe_ciphertext_count().0).sum();
-+
-+    let lwe_ciphertext_count = LweCiphertextCount(total_num_blocks);
-+
-+    let mut d_vec = unsafe {
-+        CudaVec::new_async(
-+            lwe_dimension.to_lwe_size().0 * lwe_ciphertext_count.0,
-+            streams,
-+            0,
-+        )
-+    };
-+    let mut offset: usize = 0;
-+    for lwe_list in lwe_lists {
-+        let dest_ptr = unsafe { d_vec.as_mut_c_ptr(0).add(offset * std::mem::size_of::<T>()) };
-+        let size = lwe_list.0.d_vec.len * std::mem::size_of::<T>();
-+        unsafe {
-+            cuda_memcpy_async_gpu_to_gpu(
-+                dest_ptr,
-+                lwe_list.0.d_vec.as_c_ptr(0),
-+                size as u64,
-+                streams.ptr[0],
-+                streams.gpu_indexes[0].get(),
-+            );
-+        }
-+        streams.synchronize();
-+
-+        offset += lwe_list.0.d_vec.len;
++    if streams.is_on_first_gpu(elem.gpu_indexes()) {
++        MaybeCloned::Borrowed(elem)
++    } else {
++        MaybeCloned::Cloned(elem.duplicate(streams))
 +    }
++}
+```
+
+**File**: `tfhe/src/high_level_api/booleans/inner.rs` (modified, +6/-8)
+```diff
+@@ -4,6 +4,8 @@ use crate::high_level_api::backward_compatibility::booleans::SerializableInnerBo
+ use crate::high_level_api::details::MaybeCloned;
+ use crate::high_level_api::global_state;
+ #[cfg(feature = "gpu")]
++use crate::high_level_api::global_state::cuda_clone;
++#[cfg(feature = "gpu")]
+ use crate::high_level_api::global_state::with_cuda_internal_keys;
+ #[cfg(feature = "gpu")]
+ use crate::high_level_api::global_state::with_thread_local_cuda_streams_for_gpu_indexes;
+@@ -38,11 +40,7 @@ impl Clone for InnerBoolean {
+         match self {
+             Self::Cpu(inner) => Self::Cpu(inner.clone()),
+             #[cfg(feature = "gpu")]
+-            Self::Cuda(inner) => {
+-                with_thread_local_cuda_streams_for_gpu_indexes(inner.gpu_indexes(), |streams| {
+-                    Self::Cuda(inner.duplicate(streams))
+-                })
+-            }
++            Self::Cuda(inner) => Self::Cuda(cuda_clone(inner)),
+             #[cfg(feature = "hpu")]
+             Self::Hpu(inner) => Self::Hpu(inner.clone()),
+         }
+@@ -130,7 +128,7 @@ impl InnerBoolean {
+         streams: &CudaStreams,
+     ) -> MaybeCloned<'_, CudaUnsignedRadixCiphertext> {
+         let cpu_radix = if let Self::Cuda(gpu_radix) = self {
+-            if gpu_radix.gpu_indexes() == streams.gpu_indexes() {
++            if streams.is_on_first_gpu(gpu_radix.gpu_indexes()) {
+                 return MaybeCloned::Borrowed(&gpu_radix.0);
+             }
+             return MaybeCloned::Cloned(gpu_radix.duplicate(streams).0);
+@@ -171,7 +169,7 @@ impl InnerBoolean {
+         use crate::integer::gpu::ciphertext::boolean_value::CudaBooleanBlock;
+ 
+         let cpu_radix = if let Self::Cuda(cuda_ct) = self {
+-            if cuda_ct.gpu_indexes() != streams.gpu_indexes() {
++            if !streams.is_on_first_gpu(cuda_ct.gpu_indexes()) {
+                 *cuda_ct = cuda_ct.duplicate(streams);
+             }
+             return &mut cuda_ct.0;
+@@ -221,7 +219,7 @@ impl InnerBoolean {
+             if let Self::Cuda(cuda_ct) = self {
+                 with_cuda_internal_keys(|key| {
+                     let streams = &key.streams;
+-                    if cuda_ct.gpu_indexes() != streams.gpu_indexes() {
++                    if !streams.is_on_first_gpu(cuda_ct.gpu_indexes()) {
+                         *cuda_ct = cuda_ct.duplicate(streams);
+                     }
+                 })
+```
+
+**File**: `tfhe/src/high_level_api/booleans/squashed_noise.rs` (modified, +4/-6)
+```diff
+@@ -3,6 +3,8 @@ use crate::backward_compatibility::booleans::SquashedNoiseFheBoolVersions;
+ use crate::high_level_api::backward_compatibility::booleans::SerializableInnerSquashedNoiseBooleanVersions;
+ use crate::high_level_api::details::MaybeCloned;
+ use crate::high_level_api::errors::UninitializedNoiseSquashing;
++#[cfg(feature = "gpu")]
++use crate::high_level_api::global_state::cuda_clone;
+ use crate::high_level_api::global_state::{self, with_internal_keys};
+ #[cfg(feature = "gpu")]
+ use crate::high_level_api::global_state::{
+@@ -64,11 +66,7 @@ impl Clone for InnerSquashedNoiseBoolean {
+         match self {
+             Self::Cpu(inner) => Self::Cpu(inner.clone()),
+             #[cfg(feature = "gpu")]
+-            Self::Cuda(inner) => {
+-                with_thread_local_cuda_streams_for_gpu_indexes(inner.gpu_indexes(), |streams| {
+-                    Self::Cuda(inner.duplicate(streams))
+-                })
+-            }
++            Self::Cuda(inner) => Self::Cuda(cuda_clone(inner)),
+         }
+     }
+ }
+@@ -118,7 +116,7 @@ impl InnerSquashedNoiseBoolean {
+             if let Self::Cuda(cuda_ct) = self {
+                 with_cuda_internal_keys(|keys| {
+                     let streams = &keys.streams;
+-                    if cuda_ct.gpu_indexes() != streams.gpu_indexes() {
++                    if !streams.is_on_first_gpu(cuda_ct.gpu_indexes()) {
+                         *cuda_ct = cuda_ct.duplicate(streams);
+                     }
+                 })
+```
+
+**File**: `tfhe/src/high_level_api/compact_list.rs` (modified, +26/-16)
+```diff
+@@ -2,6 +2,8 @@ use crate::backward_compatibility::compact_list::CompactCiphertextListVersions;
+ use crate::conformance::ParameterSetConformant;
+ use crate::core_crypto::prelude::Numeric;
+ use crate::high_level_api::global_state;
++#[cfg(feature = "gpu")]
++use crate::high_level_api::global_state::cuda_clone;
+ use crate::high_level_api::keys::InternalServerKeyRef;
+ use crate::high_level_api::traits::Tagged;
+ use crate::integer::block_decomposition::DecomposableInto;
+@@ -29,6 +31,8 @@ use crate::{CompactPublicKey, Tag};
+ #[cfg(feature = "strings")]
+ use super::ClearString;
+ 
++#[cfg(feature = "gpu")]
++use crate::high_level_api::details::MaybeCloned;
+ #[cfg(feature = "gpu")]
+ use crate::integer::gpu::ciphertext::compact_list::CudaFlattenedVecCompactCiphertextList;
+ 
+@@ -173,11 +177,7 @@ impl Clone for InnerCompactCiphertextList {
+         match self {
+             Self::Cpu(inner) => Self::Cpu(inner.clone()),
+             #[cfg(feature = "gpu")]
+-            Self::Cuda(inner) => {
+-                with_thread_local_cuda_streams_for_gpu_indexes(inner.gpu_indexes(), |streams| {
+-                    Self::Cuda(inner.duplicate(streams))
+-                })
+-            }
++            Self::Cuda(inner) => Self::Cuda(cuda_clone(inner)),
+         }
+     }
+ }
+@@ -235,7 +235,7 @@ impl InnerCompactCiphertextList {
+             #[cfg(feature = "gpu")]
+             (Self::Cuda(cuda_ct), crate::Device::CudaGpu) => with_cuda_internal_keys(|keys| {
+                 let streams = &keys.streams;
+-                if cuda_ct.gpu_indexes() == streams.gpu_indexes() {
++                if streams.is_on_first_gpu(cuda_ct.gpu_indexes()) {
+                     None
+                 } else {
+                     Some(Self::Cuda(cuda_ct.duplicate(streams)))
+@@ -415,6 +415,12 @@ impl CompactCiphertextList {
+ 
+                 let ksk = cuda_key.cpk_key_switching_key();
+                 let streams = &cuda_key.streams;
++                // The list may be on another GPU than the key, e.g. if the key changed
++                let gpu_inner = if streams.is_on_first_gpu(gpu_inner.gpu_indexes()) {
++                    MaybeCloned::Borrowed(gpu_inner)
++                } else {
++                    MaybeCloned::Cloned(gpu_inner.duplicate(streams))
++                };
+                 let expander =
+                     gpu_inner.expand(&ksk, crate::integer::gpu::ZKType::Casting, streams)?;
+ 
+@@ -519,11 +525,7 @@ pub(crate) mod zk {
+             match self {
+                 Self::Cpu(inner) => Self::Cpu(inner.clone()),
+                 #[cfg(feature = "gpu")]
+-                Self::Cuda(inner) => {
+-                    with_thread_local_cuda_streams_for_gpu_indexes(inner.gpu_indexes(), |streams| {
+-                        Self::Cuda(inner.duplicate(streams))
+-                    })
+-                }
++                Self::Cuda(inner) => Self::Cuda(cuda_clone(inner)),
+             }
+         }
+     }
+@@ -571,7 +573,7 @@ pub(crate) mod zk {
+                 #[cfg(feature = "gpu")]
+                 (Self::Cuda(cuda_ct), crate::Device::CudaGpu) => with_cuda_internal_keys(|keys| {
+                     let streams = &keys.streams;
+-                    if cuda_ct.gpu_indexes() == streams.gpu_indexes() {
++                    if streams.is_on_first_gpu(cuda_ct.gpu_indexes()) {
+                         None
+                     } else {
+                         Some(Self::Cuda(cuda_ct.duplicate(streams)))
+@@ -825,12 +827,20 @@ pub(crate) mod zk {
+ 
+                     let streams = &gpu_key.streams;
+                     let proven_ct = match &self.inner {
+-                        InnerProvenCompactCiphertextList::Cpu(inner) => {
+-                            &CudaProvenCompactCiphertextList::from_proven_compact_ciphertext_list(
++                        InnerProvenCompactCiphertextList::Cpu(inner) => MaybeCloned::Cloned(
++                            CudaProvenCompactCiphertextList::from_proven_compact_ciphertext_list(
+                                 inner, streams,
+-                            )?
++                            )?,
++                        ),
++                        InnerProvenCompactCiphertextList::Cuda(inner)
++                            if streams.is_on_first_gpu(inner.gpu_indexes()) =>
++                        {
++                            MaybeCloned::Borrowed(inner)
++                        }
++                        // The list may be on another GPU than the key, e.g. if the key changed
++                        InnerProvenCompactCiphertextList::Cuda(inner) => {
++                            MaybeCloned::Cloned(inner.duplicate(streams))
+                         }
+-                        InnerProvenCompactCiphertextList::Cuda(inner) => inner,
+                     };
+ 
+                     let ksk = gpu_key.cpk_key_switching_key();
+```
+
+---
+
+### Incident Patch 2: `8e6c574f` (2026-10-27)
+**Commit Message**: refactor(integer): move ge,le,gt,lt,eq,ne tests to new harness (#4092)
+
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_signed/legacy_default_tests.rs` (modified, +189/-8)
+```diff
+@@ -2,13 +2,15 @@
+ //!
+ //! FIXME(gpu): the CPU tests for these operations moved to `radix_parallel::test_harness`
+ //! (see `radix_parallel::tests_signed::test_scalar_shift`, `test_scalar_rotate`,
+-//! `test_scalar_add`, `test_scalar_sub` and `test_neg`), which also exercises inputs at the maximum
+-//! degree and noise level. The GPU full propagation cannot take blocks at the maximum degree
+-//! yet. The overflowing scalar tests also cover scalars that fit the radix blocks but not
+-//! the signed range, for which the GPU implementations return the opposite overflow flag:
+-//! the CPU fix is `ScalarOverflowFlagSource` in `radix_parallel::scalar_add`, which the GPU
+-//! can reuse. Once both are addressed point the GPU wrappers at the harness tests and delete
+-//! this file.
++//! `test_scalar_add`, `test_scalar_sub`, `test_neg` and `test_comparison`), which also
++//! exercises inputs at the maximum degree and noise level. The GPU full propagation cannot
++//! take blocks at the maximum degree yet. The overflowing scalar tests also cover scalars
++//! that fit the radix blocks but not the signed range, for which the GPU implementations
++//! return the opposite overflow flag: the CPU fix is `ScalarOverflowFlagSource` in
++//! `radix_parallel::scalar_add`, which the GPU can reuse. Once both are addressed point the
++//! GPU wrappers at the harness tests and delete this file.
++use crate::core_crypto::prelude::SignedNumeric;
++use crate::integer::block_decomposition::{DecomposableInto, RecomposableSignedInteger};
+ use crate::integer::keycache::KEY_CACHE;
+ use crate::integer::server_key::radix_parallel::tests_cases_unsigned::FunctionExecutor;
+ use crate::integer::server_key::radix_parallel::tests_signed::{
+@@ -22,7 +24,9 @@ use crate::integer::server_key::radix_parallel::tests_unsigned::{
+ };
+ use crate::integer::{BooleanBlock, IntegerKeyKind, RadixClientKey, SignedRadixCiphertext};
+ use crate::shortint::parameters::*;
+-use rand::Rng;
++use rand::distributions::Standard;
++use rand::prelude::*;
++use rand_distr::num_traits::WrappingAdd;
+ use std::sync::Arc;
+ 
+ pub(crate) fn legacy_signed_default_scalar_left_shift_test<P, T>(param: P, mut executor: T)
+@@ -803,3 +807,180 @@ where
+         );
+     }
+ }
 +
-+    CudaLweCiphertextList::from_cuda_vec(d_vec, lwe_ciphertext_count, ciphertext_modulus)
++/// Function to test a "default" comparison server_key function for signed inputs.
++///
++/// This calls the `server_key_method` with non-fresh ciphertexts,
++/// that is ciphertexts that have non-zero carries, and compares that the result is
++/// the same as the one of`clear_fn`.
++pub(crate) fn legacy_signed_default_comparison_test<P, T, ClearF, Scalar>(
++    param: P,
++    num_test: usize,
++    mut executor: T,
++    clear_fn: ClearF,
++) where
++    P: Into<TestParameters>,
++    Scalar: SignedNumeric
++        + RecomposableSignedInteger
++        + DecomposableInto<u64>
++        + WrappingAdd
++        + From<bool>,
++    T: for<'a> FunctionExecutor<
++        (&'a SignedRadixCiphertext, &'a SignedRadixCiphertext),
++        BooleanBlock,
++    >,
++    ClearF: Fn(Scalar, Scalar) -> Scalar,
++    Standard: Distribution<Scalar>,
++{
++    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++    let num_block = Scalar::BITS.div_ceil(cks.parameters().message_modulus().0.ilog2() as usize);
++    assert_eq!(
++        Scalar::BITS as u32 % cks.parameters().message_modulus().0.ilog2(),
++        0,
++        "bit width must be a multiple of number of bit in a block"
++    );
++    let sks = Arc::new(sks);
++    let cks = RadixClientKey::from((cks, num_block));
++
++    let mut rng = rand::thread_rng();
++
++    executor.setup(&cks, sks.clone());
++
++    for _ in 0..num_test {
++        let mut clear_0 = rng.gen::<Scalar>();
++        let mut clear_1 = rng.gen::<Scalar>();
++        let mut ct_0 = cks.encrypt_signed(clear_0);
++        let mut ct_1 = cks.encrypt_signed(clear_1);
++
++        // Raise the degree, so as to ensure worst case path in operations
++        while ct_0.block_carries_are_empty() {
++            let clear_2 = rng.gen::<Scalar>();
++            let ct_2 = cks.encrypt_signed(clear_2);
++            sks.unchecked_add_assign(&mut ct_0, &ct_2);
++            clear_0 = clear_0.wrapping_add(&clear_2);
++        }
++
++        while ct_1.block_carries_are_empty() {
++            let clear_2 = rng.gen::<Scalar>();
++            let ct_2 = cks.encrypt_signed(clear_2);
++            sks.unchecked_add_assign(&mut ct_1, &ct_2);
++            clear_1 = clear_1.wrapping_add(&clear_2);
++        }
++
++        // Sanity decryption checks
++        {
++            let a: Scalar = cks.decrypt_signed(&ct_0);
++            assert_eq!(a, clear_0);
++
++            let b: Scalar = cks.decrypt_signed(&ct_1);
++            assert_eq!(b, clear_1);
++        }
++
++        assert!(!ct_0.block_carries_are_empty());
++        assert!(!ct_1.block_carries_are_empty());
++        let encrypted_result = executor.execute((&ct_0, &ct_1));
++
++        // Sanity decryption checks
++        {
++            let a: Scalar = cks.decrypt_signed(&ct_0);
++            assert_eq!(a, clear
+```
+
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_signed/test_comparison.rs` (modified, +7/-5)
+```diff
+@@ -1,10 +1,12 @@
++use super::legacy_default_tests::{
++    legacy_signed_default_comparison_test, legacy_signed_default_minmax_test,
++};
+ use crate::integer::gpu::server_key::radix::tests_unsigned::{
+     create_gpu_parameterized_test, GpuFunctionExecutor,
+ };
+ use crate::integer::gpu::CudaServerKey;
+ use crate::integer::server_key::radix_parallel::tests_signed::test_comparison::{
+-    test_signed_default_function, test_signed_default_minmax, test_signed_unchecked_function,
+-    test_signed_unchecked_minmax,
++    test_signed_unchecked_function, test_signed_unchecked_minmax,
+ };
+ use crate::shortint::parameters::test_params::*;
+ use crate::shortint::parameters::*;
+@@ -34,7 +36,7 @@ macro_rules! define_gpu_signed_comparison_test_functions {
+             fn [<integer_signed_default_ $comparison_name _ $clear_type>]<P>(param: P) where P: Into<TestParameters> {
+                 let num_tests = 1;
+                 let executor = GpuFunctionExecutor::new(&CudaServerKey::[<$comparison_name>]);
+-                test_signed_default_function(
++                legacy_signed_default_comparison_test(
+                     param,
+                     num_tests,
+                     executor,
+@@ -77,15 +79,15 @@ where
+     P: Into<TestParameters>,
+ {
+     let executor = GpuFunctionExecutor::new(&CudaServerKey::min);
+-    test_signed_default_minmax(params, 2, executor, std::cmp::min::<i128>);
++    legacy_signed_default_minmax_test(params, 2, executor, std::cmp::min::<i128>);
+ }
+ 
+ fn integer_signed_max_128_bits<P>(params: P)
+ where
+     P: Into<TestParameters>,
+ {
+     let executor = GpuFunctionExecutor::new(&CudaServerKey::max);
+-    test_signed_default_minmax(params, 2, executor, std::cmp::max::<i128>);
++    legacy_signed_default_minmax_test(params, 2, executor, std::cmp::max::<i128>);
+ }
+ 
+ create_gpu_parameterized_test!(integer_signed_unchecked_max_128_bits {
+```
+
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_unsigned/legacy_default_tests.rs` (modified, +180/-4)
+```diff
+@@ -2,12 +2,13 @@
+ //!
+ //! FIXME(gpu): the CPU tests for these operations moved to
+ //! `radix_parallel::test_harness` (see `radix_parallel::tests_unsigned::test_add`,
+-//! `test_scalar_add`, `test_scalar_shift`, `test_scalar_rotate`, `test_sum` and `test_neg`),
+-//! which also
+-//! exercises inputs at the maximum degree and noise level.
++//! `test_scalar_add`, `test_scalar_shift`, `test_scalar_rotate`, `test_sum`, `test_neg` and
++//! `test_comparison`), which also exercises inputs at the maximum degree and noise level.
+ //! The GPU full propagation cannot take blocks at the maximum degree yet.
+ //! Once it is aligned with the CPU one point the GPU wrappers at the harness
+ //! tests and delete this file.
++use crate::core_crypto::prelude::UnsignedNumeric;
++use crate::integer::block_decomposition::{DecomposableInto, RecomposableFrom};
+ use crate::integer::ciphertext::{IntegerCiphertext, IntegerRadixCiphertext};
+ use crate::integer::keycache::KEY_CACHE;
+ use crate::integer::server_key::radix_parallel::tests_cases_unsigned::FunctionExecutor;
+@@ -18,7 +19,9 @@ use crate::integer::server_key::radix_parallel::tests_unsigned::{
+ };
+ use crate::integer::{BooleanBlock, IntegerKeyKind, RadixCiphertext, RadixClientKey};
+ use crate::shortint::parameters::*;
+-use rand::Rng;
++use rand::distributions::Standard;
++use rand::prelude::*;
++use std::ops::AddAssign;
+ use std::sync::Arc;
+ 
+ pub(crate) fn legacy_default_add_test<P, T>(param: P, mut executor: T)
+@@ -744,3 +747,176 @@ where
+         );
+     }
+ }
++
++/// Function to test a "default" comparison server_key function.
++///
++/// This calls the `server_key_method` with non-fresh ciphertexts,
++/// that is ciphertexts that have non-zero carries, and compares that the result is
++/// the same as the one of`clear_fn`.
++pub(crate) fn legacy_default_comparison_test<P, T, ClearF, Scalar>(
++    param: P,
++    num_test: usize,
++    mut executor: T,
++    clear_fn: ClearF,
++) where
++    P: Into<TestParameters>,
++    Scalar: UnsignedNumeric
++        + AddAssign<Scalar>
++        + DecomposableInto<u64>
++        + RecomposableFrom<u64>
++        + From<bool>,
++    T: for<'a> FunctionExecutor<(&'a RadixCiphertext, &'a RadixCiphertext), BooleanBlock>,
++    ClearF: Fn(Scalar, Scalar) -> Scalar,
++    Standard: Distribution<Scalar>,
++{
++    let mut rng = rand::thread_rng();
++
++    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++    let sks = Arc::new(sks);
++    let num_block = Scalar::BITS.div_ceil(cks.parameters().message_modulus().0.ilog2() as usize);
++    let cks = RadixClientKey::from((cks, num_block));
++
++    executor.setup(&cks, sks.clone());
++
++    assert_eq!(
++        Scalar::BITS as u32 % cks.parameters().message_modulus().0.ilog2(),
++        0,
++        "bit width must be a multiple of number of bit in a block"
++    );
++
++    for _ in 0..num_test {
++        let mut clear_0 = rng.gen::<Scalar>();
++        let mut clear_1 = rng.gen::<Scalar>();
++        let mut ct_0 = cks.encrypt(clear_0);
++        let mut ct_1 = cks.encrypt(clear_1);
++
++        // Raise the degree, so as to ensure worst case path in operations
++        while ct_0.block_carries_are_empty() {
++            let clear_2 = rng.gen::<Scalar>();
++            let ct_2 = cks.encrypt(clear_2);
++            sks.unchecked_add_assign(&mut ct_0, &ct_2);
++            clear_0 += clear_2;
++        }
++
++        while ct_1.block_carries_are_empty() {
++            let clear_2 = rng.gen::<Scalar>();
++            let ct_2 = cks.encrypt(clear_2);
++            sks.unchecked_add_assign(&mut ct_1, &ct_2);
++            clear_1 += clear_2;
++        }
++
++        // Sanity decryption checks
++        {
++            let a: Scalar = cks.decrypt(&ct_0);
++            assert_eq!(a, clear_0);
++
++            let b: Scalar = cks.decrypt(&ct_1);
++            assert_eq!(b, clear_1);
++        }
++
++        assert!(!ct_0.block_carries_are_empty());
++        assert!(!ct_1.block_carries_are_empty());
++        let encrypted_result = executor.execute((&ct_0, &ct_1));
++
++        // Sanity decryption checks
++        {
++            let a: Scalar = cks.decrypt(&ct_0);
++            assert_eq!(a, clear_0);
++
++            let b: Scalar = cks.decrypt(&ct_1);
++            assert_eq!(b, clear_1);
++        }
++
++        let decrypted_result: Scalar = cks.decrypt_bool(&encrypted_result).into();
++
++        let expected_result = clear_fn(clear_0, clear_1);
++        assert_eq!(decrypted_result, expected_result);
++    }
 +}
 +
- impl CudaCompressionKey {
-     pub fn from_compression_key(compression_key: &CompressionKey, streams: &CudaStreams) -> Self {
-         Self {
-@@ -376,56 +426,6 @@ impl CudaCompressionKey {
++/// Function to test a "default" `min`/`max` server_key function.
++///
++/// This calls the `server_key_method` with non-fresh ciphertexts,
++/// that is ciphertexts that have non-zero carries, and compares that the result is
++/// the same as the one of`clear_fn`.
++pub(crate) fn legacy_default_minmax_test<P, T, ClearF, Scalar>(
++    param: P,
++    num_test: usize,
++    mut executor: T,
++    clear_fn: ClearF,
++) where
++    P: Into<TestParameters>,
++    Scalar: UnsignedNumeric
++        + AddAssign<Scalar>
++        + DecomposableInto<u64>
++
+```
+
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_unsigned/test_comparison.rs` (modified, +6/-5)
+```diff
+@@ -1,11 +1,12 @@
++use super::legacy_default_tests::{legacy_default_comparison_test, legacy_default_minmax_test};
+ use crate::core_crypto::gpu::get_number_of_gpus;
+ use crate::integer::gpu::server_key::radix::tests_signed::GpuMultiDeviceFunctionExecutor;
+ use crate::integer::gpu::server_key::radix::tests_unsigned::{
+     create_gpu_parameterized_test, GpuFunctionExecutor,
+ };
+ use crate::integer::gpu::CudaServerKey;
+ use crate::integer::server_key::radix_parallel::tests_unsigned::test_comparison::{
+-    test_default_function, test_default_minmax, test_unchecked_function, test_unchecked_minmax,
++    test_unchecked_function, test_unchecked_minmax,
+ };
+ use crate::integer::U256;
+ use crate::shortint::parameters::test_params::*;
+@@ -35,7 +36,7 @@ macro_rules! define_gpu_comparison_test_functions {
+             fn [<integer_default_ $comparison_name _ $clear_type:lower>]<P>(param: P) where P: Into<TestParameters> {
+                 let num_tests = 1;
+                 let executor = GpuFunctionExecutor::new(&CudaServerKey::[<$comparison_name>]);
+-                test_default_function(
++                legacy_default_comparison_test(
+                     param,
+                     num_tests,
+                     executor,
+@@ -48,7 +49,7 @@ macro_rules! define_gpu_comparison_test_functions {
+                 let executor = GpuMultiDeviceFunctionExecutor::new(&CudaServerKey::[<$comparison_name>]);
+                 let num_gpus = get_number_of_gpus();
+                 if num_gpus > 1 {
+-                    test_default_function(
++                    legacy_default_comparison_test(
+                         param,
+                         num_tests,
+                         executor,
+@@ -94,15 +95,15 @@ where
+     P: Into<TestParameters>,
+ {
+     let executor = GpuFunctionExecutor::new(CudaServerKey::min);
+-    test_default_minmax(params, 2, executor, std::cmp::min::<U256>);
++    legacy_default_minmax_test(params, 2, executor, std::cmp::min::<U256>);
+ }
+ 
+ fn integer_max_u256<P>(params: P)
+ where
+     P: Into<TestParameters>,
+ {
+     let executor = GpuFunctionExecutor::new(CudaServerKey::max);
+-    test_default_minmax(params, 2, executor, std::cmp::max::<U256>);
++    legacy_default_minmax_test(params, 2, executor, std::cmp::max::<U256>);
+ }
+ 
+ create_gpu_parameterized_test!(integer_unchecked_min_u256 {
+```
+
+**File**: `tfhe/src/integer/server_key/radix_parallel/comparison.rs` (modified, +16/-210)
+```diff
+@@ -692,257 +692,63 @@ impl ServerKey {
+     where
+         T: IntegerRadixCiphertext,
+     {
+-        let mut tmp_lhs;
+-        let mut tmp_rhs;
+-        let (lhs, rhs) = match (lhs.block_carries_are_empty(), rhs.block_carries_are_empty()) {
+-            (true, true) => (lhs, rhs),
+-            (true, false) => {
+-                tmp_rhs = rhs.clone();
+-                self.full_propagate_parallelized(&mut tmp_rhs);
+-                (lhs, &tmp_rhs)
+-            }
+-            (false, true) => {
+-                tmp_lhs = lhs.clone();
+-                self.full_propagate_parallelized(&mut tmp_lhs);
+-                (&tmp_lhs, rhs)
+-            }
+-            (false, false) => {
+-                tmp_lhs = lhs.clone();
+-                tmp_rhs = rhs.clone();
+-                rayon::join(
+-                    || self.full_propagate_parallelized(&mut tmp_lhs),
+-                    || self.full_propagate_parallelized(&mut tmp_rhs),
+-                );
+-                (&tmp_lhs, &tmp_rhs)
+-            }
+-        };
+-
+-        self.unchecked_eq_parallelized(lhs, rhs)
++        let (lhs, rhs) = self.clean_for_default_binary_op(lhs, rhs);
++        self.unchecked_eq_parallelized(&*lhs, &*rhs)
+     }
+ 
+     pub fn ne_parallelized<T>(&self, lhs: &T, rhs: &T) -> BooleanBlock
+     where
+         T: IntegerRadixCiphertext,
+     {
+-        let mut tmp_lhs;
+-        let mut tmp_rhs;
+-        let (lhs, rhs) = match (lhs.block_carries_are_empty(), rhs.block_carries_are_empty()) {
+-            (true, true) => (lhs, rhs),
+-            (true, false) => {
+-                tmp_rhs = rhs.clone();
+-                self.full_propagate_parallelized(&mut tmp_rhs);
+-                (lhs, &tmp_rhs)
+-            }
+-            (false, true) => {
+-                tmp_lhs = lhs.clone();
+-                self.full_propagate_parallelized(&mut tmp_lhs);
+-                (&tmp_lhs, rhs)
+-            }
+-            (false, false) => {
+-                tmp_lhs = lhs.clone();
+-                tmp_rhs = rhs.clone();
+-                rayon::join(
+-                    || self.full_propagate_parallelized(&mut tmp_lhs),
+-                    || self.full_propagate_parallelized(&mut tmp_rhs),
+-                );
+-                (&tmp_lhs, &tmp_rhs)
+-            }
+-        };
+-
+-        self.unchecked_ne_parallelized(lhs, rhs)
++        let (lhs, rhs) = self.clean_for_default_binary_op(lhs, rhs);
++        self.unchecked_ne_parallelized(&*lhs, &*rhs)
+     }
+ 
+     pub fn gt_parallelized<T>(&self, lhs: &T, rhs: &T) -> BooleanBlock
+     where
+         T: IntegerRadixCiphertext,
+     {
+-        let mut tmp_lhs;
+-        let mut tmp_rhs;
+-        let (lhs, rhs) = match (lhs.block_carries_are_empty(), rhs.block_carries_are_empty()) {
+-            (true, true) => (lhs, rhs),
+-            (true, false) => {
+-                tmp_rhs = rhs.clone();
+-                self.full_propagate_parallelized(&mut tmp_rhs);
+-                (lhs, &tmp_rhs)
+-            }
+-            (false, true) => {
+-                tmp_lhs = lhs.clone();
+-                self.full_propagate_parallelized(&mut tmp_lhs);
+-                (&tmp_lhs, rhs)
+-            }
+-            (false, false) => {
+-                tmp_lhs = lhs.clone();
+-                tmp_rhs = rhs.clone();
+-                rayon::join(
+-                    || self.full_propagate_parallelized(&mut tmp_lhs),
+-                    || self.full_propagate_parallelized(&mut tmp_rhs),
+-                );
+-                (&tmp_lhs, &tmp_rhs)
+-            }
+-        };
+-
+-        self.unchecked_gt_parallelized(lhs, rhs)
++        let (lhs, rhs) = self.clean_for_default_binary_op(lhs, rhs);
++        self.unchecked_gt_parallelized(&*lhs, &*rhs)
+     }
+ 
+     pub fn ge_parallelized<T>(&self, lhs: &T, rhs: &T) -> BooleanBlock
+     where
+         T: IntegerRadixCiphertext,
+     {
+-        let mut tmp_lhs;
+-        let mut tmp_rhs;
+-        let (lhs, rhs) = match (lhs.block_carries_are_empty(), rhs.block_carries_are_empty()) {
+-            (true, true) => (lhs, rhs),
+-            (true, false) => {
+-                tmp_rhs = rhs.clone();
+-                self.full_propagate_parallelized(&mut tmp_rhs);
+-                (lhs, &tmp_rhs)
+-            }
+-            (false, true) => {
+-                tmp_lhs = lhs.clone();
+-                self.full_propagate_parallelized(&mut tmp_lhs);
+-                (&tmp_lhs, rhs)
+-            }
+-            (false, false) => {
+-                tmp_lhs = lhs.clone();
+-                tmp_rhs = rhs.clone();
+-                rayon::join(
+-                    || self.full_propagate_parallelized(&mut tmp_lhs),
+-                    || self.full_propagate_parallelized(&mut tmp_rhs),
+-                );
+-                (&tmp_lhs, &tmp_rhs)
+-            }
+-        };
+-
+-        self.unchecked_ge_parallelized(lhs, rhs)
++        let (lhs, rhs) = self.clean_for_default_binary_op(lhs, rhs);
++        self.unchecked_ge_parallelized(&*lhs, &*rhs)
+     }
+ 
+     pub fn lt_parallelized<T>(&self, lhs: &T, rhs: &T) -> B
+```
+
+**File**: `tfhe/src/integer/server_key/radix_parallel/mod.rs` (modified, +18/-0)
+```diff
+@@ -345,6 +345,24 @@ impl ServerKey {
          }
      }
  
--    fn flatten(
--        ciphertexts_slice: &[CudaRadixCiphertext],
--        streams: &CudaStreams,
--    ) -> CudaLweCiphertextList<u64> {
--        let first_ct = &ciphertexts_slice.first().unwrap().d_blocks;
--
--        // We assume all ciphertexts will have the same lwe dimension
--        let lwe_dimension = first_ct.lwe_dimension();
--        let ciphertext_modulus = first_ct.ciphertext_modulus();
--
--        // Compute total number of lwe ciphertexts we will be handling
--        let total_num_blocks: usize = ciphertexts_slice
--            .iter()
--            .map(|x| x.d_blocks.lwe_ciphertext_count().0)
--            .sum();
--
--        let lwe_ciphertext_count = LweCiphertextCount(total_num_blocks);
--
--        let mut d_vec = unsafe {
--            CudaVec::new_async(
--                lwe_dimension.to_lwe_size().0 * lwe_ciphertext_count.0,
--                streams,
--                0,
--            )
--        };
--        let mut offset: usize = 0;
--        for ciphertext in ciphertexts_slice {
--            let dest_ptr = unsafe {
--                d_vec
--                    .as_mut_c_ptr(0)
--                    .add(offset * std::mem::size_of::<u64>())
--            };
--            let size = ciphertext.d_blocks.0.d_vec.len * std::mem::size_of::<u64>();
--            unsafe {
--                cuda_memcpy_async_gpu_to_gpu(
--                    dest_ptr,
--                    ciphertext.d_blocks.0.d_vec.as_c_ptr(0),
--                    size as u64,
--                    streams.ptr[0],
--                    streams.gpu_indexes[0].get(),
--                );
--            }
--            streams.synchronize();
--
--            offset += ciphertext.d_blocks.0.d_vec.len;
--        }
--
--        CudaLweCiphertextList::from_cuda_vec(d_vec, lwe_ciphertext_count, ciphertext_modulus)
--    }
--
-     pub fn compress_ciphertexts_into_list(
-         &self,
-         ciphertexts: &[CudaRadixCiphertext],
-@@ -469,7 +469,38 @@ impl CudaCompressionKey {
-         let first_ct_info = first_ct.info.blocks.first().unwrap();
-         let message_modulus = first_ct_info.message_modulus;
-         let carry_modulus = first_ct_info.carry_modulus;
--        let lwe_dimension = first_ct.d_blocks.lwe_dimension();
-+        let input_ciphertext_modulus = first_ct.d_blocks.ciphertext_modulus();
++    /// Cleans both inputs of a default binary op so that they are ready to be used, each into
++    /// a `Cow` (owned only if it had to be cleaned).
++    ///
++    /// Both cleanings run in parallel.
++    pub(crate) fn clean_for_default_binary_op<'a, T>(
++        &self,
++        lhs: &'a T,
++        rhs: &'a T,
++    ) -> (Cow<'a, T>, Cow<'a, T>)
++    where
++        T: IntegerRadixCiphertext,
++    {
++        rayon::join(
++            || self.clean_for_default_op(lhs),
++            || self.clean_for_default_op(rhs),
++        )
++    }
 +
-+        assert!(
-+            self.lwe_per_glwe.0 <= compressed_polynomial_size.0,
-+            "Cannot pack more than polynomial_size(={}) elements per glwe, {} requested",
-+            compressed_polynomial_size.0,
-+            self.lwe_per_glwe.0,
-+        );
-+
-+        let lwe_dimension = lwe_pksk.input_key_lwe_dimension();
-+        for ct in ciphertexts {
-+            assert_eq!(
-+                lwe_dimension,
-+                ct.d_blocks.lwe_dimension(),
-+                "All ciphertexts do not have the same lwe dimension as the packing keyswitch key"
-+            );
-+            assert_eq!(
-+                input_ciphertext_modulus,
-+                ct.d_blocks.
+     /// Cleans both inputs of a default binary assign op so that they are ready to be used:
+     /// `lhs` inplace, `rhs` into a `Cow` (owned only if it had to be cleaned).
+     ///
 ```
 
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_noise_distribution/br_rerand_dp_ks_ms.rs` (modified, +52/-53)
+**File**: `tfhe/src/integer/server_key/radix_parallel/test_harness.rs` (modified, +13/-0)
 ```diff
-@@ -1,6 +1,5 @@
-+use crate::core_crypto::entities::compressed_modulus_switched_glwe_ciphertext::CompressedModulusSwitchedGlweCiphertext;
- use crate::core_crypto::gpu::lwe_ciphertext_list::CudaLweCiphertextList;
--use crate::core_crypto::prelude::{GlweCiphertext, LweCiphertextList};
--use crate::integer::gpu::ciphertext::CudaUnsignedRadixCiphertext;
+@@ -1213,6 +1213,19 @@ pub(crate) fn radix_edges_fixed_cases<C: ClearInteger>(
+         .collect()
+ }
  
- use crate::shortint::server_key::tests::noise_distribution::utils::noise_simulation::{
-     DynLwe, NoiseSimulationLwe, NoiseSimulationLweKeyswitchKey, NoiseSimulationModulusSwitchConfig,
-@@ -46,7 +45,6 @@ use crate::shortint::PaddingBit;
- use rayon::prelude::*;
- 
- use crate::core_crypto::gpu::CudaStreams;
--use crate::integer::gpu::ciphertext::compressed_ciphertext_list::CudaCompressedCiphertextListBuilder;
- use crate::integer::gpu::key_switching_key::{CudaKeySwitchingKey, CudaKeySwitchingKeyMaterial};
- use crate::integer::gpu::server_key::radix::tests_noise_distribution::utils::noise_simulation::CudaSideResources;
- use crate::integer::gpu::CudaServerKey;
-@@ -55,7 +53,11 @@ use crate::integer::{CompactPrivateKey, CompactPublicKey, CompressedServerKey, R
- use crate::shortint::ShortintParameterSet;
- use crate::GpuIndex;
- 
--use crate::integer::ciphertext::DataKind;
-+use crate::integer::ciphertext::{CompressedCiphertextList, DataKind};
-+use crate::shortint::atomic_pattern::AtomicPattern;
-+use crate::shortint::ciphertext::{
-+    CompressedCiphertextList as ShortintCompressedCiphertextList, CompressedCiphertextListMeta,
++/// Fixed cases for an operation between two radixes of `radix_bits` bits: every edge value
++/// against every other (see [`ClearInteger`]).
++///
++/// The product includes the pairs of equal values, which comparison-like operations treat
++/// specially and random cases practically never draw.
++pub(crate) fn radix_pair_fixed_cases<C: ClearInteger>(
++    size_requirements: SizeRequirements,
++    ctx: &TestContext,
++) -> Vec<(C, C)> {
++    let radix_bits = ctx.radix_bits(size_requirements.n_blocks);
++    iproduct!(C::radix_edges(radix_bits), C::radix_edges(radix_bits)).collect()
++}
++
+ /// Fixed cases for an operation between a radix of `radix_bits` bits and a scalar of type
+ /// `T`: the radix edges against the scalar edge values (see [`ClearInteger`]).
+ pub(crate) fn default_scalar_fixed_cases<T: ScalarType>(
+```
+
+**File**: `tfhe/src/integer/server_key/radix_parallel/tests_signed/test_comparison.rs` (modified, +114/-266)
+```diff
+@@ -2,9 +2,13 @@ use crate::core_crypto::prelude::SignedNumeric;
+ use crate::integer::block_decomposition::{DecomposableInto, RecomposableSignedInteger};
+ use crate::integer::ciphertext::SignedRadixCiphertext;
+ use crate::integer::keycache::KEY_CACHE;
++use crate::integer::server_key::radix_parallel::test_harness::{
++    radix_pair_fixed_cases, ExecuteOn, TestBuilder, TestContext,
 +};
- use crate::integer::gpu::server_key::radix::tests_noise_distribution::utils::noise_simulation::CudaDynLwe;
- use crate::integer::gpu::unchecked_small_scalar_mul_integer;
- use std::num::NonZeroUsize;
-@@ -67,7 +69,6 @@ use crate::integer::gpu::{cuda_backend_rerand_assign, cuda_backend_rerand_withou
+ use crate::integer::server_key::radix_parallel::tests_cases_unsigned::FunctionExecutor;
+ use crate::integer::server_key::radix_parallel::tests_unsigned::{CpuFunctionExecutor, NB_CTXT};
+ use crate::integer::tests::create_parameterized_test;
++use crate::integer::tests::int::Int;
+ use crate::integer::{BooleanBlock, IntegerKeyKind, RadixClientKey, ServerKey};
+ #[cfg(tarpaulin)]
+ use crate::shortint::parameters::coverage_parameters::*;
+@@ -94,104 +98,13 @@ pub(crate) fn test_signed_unchecked_function<P, T, ClearF, Scalar>(
+     }
+ }
  
- use crate::core_crypto::gpu::lwe_compact_ciphertext_list::CudaLweCompactCiphertextList;
- use crate::core_crypto::prelude::LweCiphertext;
--use crate::integer::gpu::server_key::radix::{CudaRadixCiphertext, CudaRadixCiphertextInfo};
- use crate::integer::ClientKey;
- use crate::shortint::server_key::tests::noise_distribution::utils::to_json::{
-     TestJsonGuard, TestResult,
-@@ -982,8 +983,9 @@ fn sanity_check_encrypt_br_rerand_dp_ks_ms_pbs_gpu(
-         .map(|mat| CudaKeySwitchingKey::from_cuda_key_switching_key_material(mat, &cuda_sks));
- 
-     let comp_private_key = cks.new_compression_private_key(compression_params);
--    let (cuda_compression_key, cuda_decompression_key) =
-+    let (_cuda_compression_key, cuda_decompression_key) =
-         radix_cks.new_cuda_compression_decompression_keys(&comp_private_key, &streams);
-+    let storage_modulus = comp_private_key.key.params.storage_log_modulus();
- 
-     let modulus_switch_config = cuda_sks.noise_simulation_modulus_switch_config();
-     let compute_br_input_modulus_log = sks.key.br_input_modulus_log();
-@@ -1022,63 +1024,60 @@ fn sanity_check_encrypt_br_rerand_dp_ks_ms_pbs_gpu(
-         // Manually build as the seed is made non Clone to protect user normally
-         let noise_simulation_rerand_seed = ReRandomizationSeed(rerand_xof_seed);
- 
--        let sample_input = ShortintEngine::with_thread_local_mut(|engine| {
-+        // Easier to start with a GLWE and get the LWE for noise simulation + shortint
-+        // rather than trying to have an LWE be inserted back in a GLWE
-+        let sample_input_as_glwe = ShortintEngine::with_thread_local_mut(|engine| {
-             comp_private_key
-                 .key
--                .encrypt_noiseless_decompression_input_dyn_lwe(&cks.key, 0, engine)
-+                .encrypt_noiseless_glwe(&cks.key, 0, engine)
-         });
--        let sample_lwe_dimension = sample_input.lwe_dimension();
- 
--        let sample_input_lwe_ciphertext = sample_input.as_lwe_64();
--        let h_ct_list = LweCiphertextList::from_container(
--            sample_input_lwe_ciphertext.into_container(),
--            sample_input_lwe_ciphertext.lwe_size(),
--            sample_input_lwe_ciphertext.ciphertext_modulus(),
--        );
--        let d_blocks = CudaLweCiphertextList::from_lwe_ciphertext_list(
--            &h_ct_list,
--            &cuda_side_resources.streams,
-+        let glwe_for_shortint_list = CompressedModulusSwitchedGlweCiphertext::compress(
-+            &sample_input_as_glwe,
-+            storage_modulus,
-+            LweCiphertextCount(1),
-         );
- 
--        let gpu_sample_ct = CudaUnsignedRadixCiphertext {
--            ciphertext: CudaRadixCiphertext {
--                d_blocks,
--                info: CudaRadixCiphertextInfo {
--                    blocks: [cuda_side_resources.block_info].to_vec(),
--                },
--            },
--        };
-+        let sample_input = {
-+            let mut tmp = LweCiphertextOwned::new(
-+                0u64,
-+                sample_input_as_glwe
-+                    .glwe_size()
-+                    .to_glwe_dimension()
-+                    .to_equivalent_lwe_dimension(sample_input_as_glwe.polynomial_size())
-+                    .to_lw
+-/// Function to test a "default" server_key function for signed inputs.
++/// This macro generates the `unchecked` tests for a given comparison fn
+ ///
+-/// This calls the `server_key_method` with non-fresh ciphertexts,
+-/// that is ciphertexts that have non-zero carries, and compares that the result is
+-/// the same as the one of`clear_fn`.
+-pub(crate) fn test_signed_default_function<P, T, ClearF, Scalar>(
+-    param: P,
+-    num_test: usize,
+-    mut executor: T,
+-    clear_fn: ClearF,
+-) where
+-    P: Into<TestParameters>,
+-    Scalar: SignedNumeric
+-        + RecomposableSignedInteger
+-        + DecomposableInto<u64>
+-        + WrappingAdd
+-        + From<bool>,
+-    T: for<'a> FunctionExecutor<
+-        (&'a SignedRadixCiphertext, &'a SignedRadixCiphertext),
+-        BooleanBlock,
+-    >,
+-    ClearF: Fn(Scalar, Scalar) -> Scalar,
+-    Standard: Distribution<Scalar>,
+-{
+-    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
+-    let num_block = Scalar::BITS.div_ceil(cks.parameters().message_modulus().0.ilog2() as usize);
+-    assert_eq!(
+-        Scalar::BITS as u32 % cks.parameters().message_modulus().0.ilog2(),
+-        0,
+-        "bit width must be a multiple of number of bit in a block"
+-    );
+-    let sks = Arc::new(sks);
+-    let cks = RadixClientKey::from((cks, num_block));
+-
+-    let mut rng = rand::thread_rng();
+-
+-    executor.setup(&cks, sks.clone());
+-
+-    for _ in 0..num_test {
+-        let mut clear_0 = rng.gen::<Scalar>();
+-        let mut clear_1 = rng.gen::<Scalar>();
+-        let mut ct_0 = cks.encrypt_signed(clear_0);
+-        let mut ct_1 = cks.encrypt_signed(clear_1);
+-
+-        // Raise the degree, so as to ensure worst case path in operations
+-        while ct_0.block_carries_are_empty() {
+-            let clear_2 = rng.gen::<Scalar>();
+-            let ct_2 = cks.encrypt_signed(clear_2);
+-            sks.unchecked_add_assign(&mut ct_0, &ct_2);
+-            clear_0 = clear_0.wrapping_add(&clear_2);
+-        }
+-
+-        while ct_1.block_carries_are_empty() {
+-            let clear_2 = rng.gen::<Scalar>();
+-            let ct_2 = cks.encrypt_signed(clear_2);
+-            sks.unchecked_add_assign(&mut ct_1, &ct_2);
+-            clear_1 = clear_1.wrapping_add(&clear_2);
+-        }
+-
+-        // Sanity decryption checks
+-        {
+-            let a: Scalar = cks.decrypt_signed(&ct_0);
+-            assert_eq!(a, clear_0);
+-
+-            let b: Scalar = cks.decrypt_signed(&ct_1);
+-            assert_eq!(b, clear_1);
+-        }
+-
+-        assert!(!ct_0.block_carries_are_empty());
+-        assert!(!ct_1.block_carries_are_empty());
+-        let encrypted_result = executor.execute((&ct_0, &ct_1));
+-
+-        // Sanity decryption checks
+-        {
+-            let a: Scalar = cks.decrypt_signed(&ct_0);
+-            assert_eq!(a, clear_0);
+-
+-            let b: Scalar = cks.decrypt_signed(&ct_1);
+-            assert_eq!(b, clear_1);
+-        }
+-
+-        let decrypted_result: Scalar = cks.decrypt_bool(&encrypted_result).into();
+-
+-        let expected_result = clear_fn(clear_0, clear_1);
+-        assert_eq!(decrypted_result, expected_result);
+-    }
+-}
+-
+-/// This macro generates the tests for a given comparison fn
+-///
+-/// All our comparison function have 3 variants:
+-/// - unchecked_$comparison_name
+-/// - unchecked_$comparison_name_parallelized
+-/// - $comparison_name_parallelized
+-///
+-/// So, for example, for the `gt` comparison fn, this macro will generate the tests for
+-/// the 3 variants described above
+-macro_rules! define_signed_comparison_test_functions {
++/// Comparisons only keep one unchecked variant, `unchecked_$comparison_name_parallelized`,
++/// so this macro generates a single test per comparison.
++/// The `default` variant is tested through the harness, see
++/// [`define_signed_default_comparison_tests`].
++macro_rules! define_signed_unchecked_comparison_test_functions {
+     ($comparison_name:ident, $clear_type:ty) => {
+         ::paste::paste!{
+             // Fist we "specialialize" the test_signed fns
+@@ -207,17 +120,6 @@ macro_rules! 
 ```
 
 #### Recent Merged Pull Requests:
@@ -2198,92 +3179,42 @@ Fix a gpu noise test that triggers the new assertions
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gpu): add checks for compressed noise squashed ctxt (#4099)
+## X. gpu): use thread-local streams as much as possible (#4068)
 
 **RULE**:
-When implementing operations in `tfhe/src/integer/gpu/list_compression/server_keys.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/check_scratch_cleanup.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9412db3e`: gpu): add checks for compressed noise squashed ctxt (#4099). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5c02d67f`: gpu): use thread-local streams as much as possible (#4068). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/integer/gpu/list_compression/server_keys.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/check_scratch_cleanup.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Concatenates the given LWE lists into a single contiguous list on GPU 0.
-///
-/// All lists must have `lwe_dimension` as their LWE dimension, callers are
-/// responsible for checking this. The iterator must not be empty.
-fn flatten_lwe_lists<'a, T, I>(
-    lwe_lists: I,
-    lwe_dimension: LweDimension,
-    streams: &CudaStreams,
-) -> CudaLweCiphertextList<T>
-where
-    T: UnsignedInteger,
-    I: IntoIterator<Item = &'a CudaLweCiphertextList<T>>,
-    I::IntoIter: Clone,
-{
-    let lwe_lists = lwe_lists.into_iter();
-    let ciphertext_modulus = lwe_lists.clone().next().unwrap().ciphertext_modulus();
-
-    // Compute total number of lwe ciphertexts we will be handling
-    let total_num_blocks: usize = lwe_lists.clone().map(|x| x.lwe_ciphertext_count().0).sum();
-
-    let lwe_ciphertext_count = LweCiphertextCount(total_num_blocks);
-
-    let mut d_vec = unsafe {
-        CudaVec::new_async(
-            lwe_dimension.to_lwe_size().0 * lwe_ciphertext_count.0,
-            streams,
-            0,
-        )
-    };
-    let mut offset: usize = 0;
-    for lwe_list in lwe_lists {
-        let dest_ptr = unsafe { d_vec.as_mut_c_ptr(0).add(offset * std::mem::size_of::<T>()) };
-        let size = lwe_
+EXPECTED_SCRATCH_COUNT = 84
+EXPECTED_CUDA_COUNT = 122
+EXPECTED_CLEANUP_COUNT = 84
+EXPECTED_CHECK3_RUST_FNS = 144
+EXPECTED_CHECK3_ASYNC_CUDA_CALLS = 108
+EXPECTED_CHECK3_SCRATCH_CUDA_CLEANUP_TRIPLET_CALLS = 126
+EXPECTED_CHECK5_ASYNC_CALLERS = 137
+EXPECTED_CHECK6_CLEANUP_CALLERS = 124
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    fn flatten(
-        ciphertexts_slice: &[CudaRadixCiphertext],
-        streams: &CudaStreams,
-    ) -> CudaLweCiphertextList<u64> {
-        let first_ct = &ciphertexts_slice.first().unwrap().d_blocks;
-
-        // We assume all ciphertexts will have the same lwe dimension
-        let lwe_dimension = first_ct.lwe_dimension();
-        let ciphertext_modulus = first_ct.ciphertext_modulus();
-
-        // Compute total number of lwe ciphertexts we will be handling
-        let total_num_blocks: usize = ciphertexts_slice
-            .iter()
-            .map(|x| x.d_blocks.lwe_ciphertext_count().0)
-            .sum();
-
-        let lwe_ciphertext_count = LweCiphertextCount(total_num_blocks);
-
-        let mut d_vec = unsafe {
-            CudaVec::new_async(
-                lwe_dimension.to_lwe_size().0 * lwe_ciphertext_count.0,
-                streams,
-                0,
-            )
-        };
-        let mut offset: usize = 0;
-        for ciphertext in ciphertexts_slice {
-            let dest_ptr = unsafe {
-                d_vec
-                    .as_mut_c_ptr(0)
-                    .add(offset * std::mem::size_of::<u64>())
-            };
-            let size = ciphertext.d_blocks.0.d
+EXPECTED_SCRATCH_COUNT = 83
+EXPECTED_CUDA_COUNT = 121
+EXPECTED_CLEANUP_COUNT = 83
+EXPECTED_CHECK3_RUST_FNS = 143
+EXPECTED_CHECK3_ASYNC_CUDA_CALLS = 107
+EXPECTED_CHECK3_SCRATCH_CUDA_CLEANUP_TRIPLET_CALLS = 125
+EXPECTED_CHECK5_ASYNC_CALLERS = 136
+EXPECTED_CHECK6_CLEANUP_CALLERS = 123
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9412db3e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5c02d67f` are properly handled with clean fallback behavior.

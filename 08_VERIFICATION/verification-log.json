@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-G9NM",
-    "timestamp": "2026-10-25T22:56:44.002Z",
-    "repository": "pyannote/speaker-diarization-community-1",
-    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
-    "contentHash": "9dd4b5295ae2a22f3901fbd519b68943bce8ef30e912afd437983732fb60f642",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-QMWO",
-    "timestamp": "2026-10-25T23:04:47.736Z",
-    "repository": "BAAI/bge-reranker-v2-m3",
-    "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
-    "contentHash": "bedd2d2e7eb264e31beefc628026ab6be9715c2d5b3d0aa2ba6f9c711485ec10",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-YH2P",
     "timestamp": "2026-10-25T23:10:53.425Z",
     "repository": "LiquidAI/LFM2.5-24B-A2B",
@@ -7492,6 +7462,36 @@
     "contentHash": "7c101d96d3d7b2952683a0f6043f131d3b836859b75def0e67c08389f76294f8",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-EBEM",
+    "timestamp": "2026-10-27T20:38:35.326Z",
+    "repository": "KRAFTON/Raon-1-mini-preview",
+    "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
+    "contentHash": "59bb7a1d2ba1a35d82c4f86b4c0dee778bb00049fdde7d4bd59809d8e61cad73",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-EC60",
+    "timestamp": "2026-10-27T20:38:36.312Z",
+    "repository": "zama-ai/tfhe-rs",
+    "learningId": "learn-github-zama-ai-tfhe-rs",
+    "contentHash": "8dc22b0143bfa5915c068407796fe984971597e31c1fd02cc7a9359d0ae282cf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

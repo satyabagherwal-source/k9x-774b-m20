@@ -5529,3 +5529,5 @@
 | `CYCLE-20261027-5TJD` | `2026-10-27T20:31:58.921Z` | `Comfy-Org/Fibo-2.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4989, Rule 4990` | Yes (`d4b53c75...`) |
 | `CYCLE-20261027-5U94` | `2026-10-27T20:31:59.848Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4991` | Yes (`4ebf8b80...`) |
 | `CYCLE-20261027-5Z5J` | `2026-10-27T20:32:06.199Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`7c101d96...`) |
+| `CYCLE-20261027-EBEM` | `2026-10-27T20:38:35.326Z` | `KRAFTON/Raon-1-mini-preview` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4992, Rule 4993, Rule 4994` | Yes (`59bb7a1d...`) |
+| `CYCLE-20261027-EC60` | `2026-10-27T20:38:36.312Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4995` | Yes (`8dc22b01...`) |

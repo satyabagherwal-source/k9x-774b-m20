@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T20:32:06.215Z",
+  "last_updated": "2026-10-27T20:38:36.322Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "7fb1761d6c355ddac324af58292cb0a991d60d0c6835f1a9f98c3deae2cce6c8",
-      "verified_at": "2026-10-27T16:58:46.976Z",
+      "content_hash": "8dc22b0143bfa5915c068407796fe984971597e31c1fd02cc7a9359d0ae282cf",
+      "verified_at": "2026-10-27T20:38:36.322Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T16:58:46.976Z"
+      "last_updated": "2026-10-27T20:38:36.322Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -15921,14 +15921,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-krafton-raon-1-mini-preview",
-      "content_hash": "6297a4e81503854fefa352f55818b98da1855559a834a5cffbd45a6ee0259ddd",
-      "verified_at": "2026-10-24T19:34:51.737Z",
+      "content_hash": "59bb7a1d2ba1a35d82c4f86b4c0dee778bb00049fdde7d4bd59809d8e61cad73",
+      "verified_at": "2026-10-27T20:38:35.339Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-24T19:34:51.737Z"
+      "last_updated": "2026-10-27T20:38:35.339Z"
     },
     "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF": {
       "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",

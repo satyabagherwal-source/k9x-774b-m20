@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "f872ced5",
+    "sourceVersion": "5c02d67f",
     "license": "NOASSERTION",
-    "contentHash": "7fb1761d6c355ddac324af58292cb0a991d60d0c6835f1a9f98c3deae2cce6c8",
-    "lastHarvestedAt": "2026-10-27T16:58:46.966Z",
+    "contentHash": "8dc22b0143bfa5915c068407796fe984971597e31c1fd02cc7a9359d0ae282cf",
+    "lastHarvestedAt": "2026-10-27T20:38:36.315Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -10595,8 +10595,8 @@
     "sourceUrl": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
     "sourceVersion": "hf-krafton-raon-1-mini-preview",
     "license": "Open-Source",
-    "contentHash": "6297a4e81503854fefa352f55818b98da1855559a834a5cffbd45a6ee0259ddd",
-    "lastHarvestedAt": "2026-10-24T19:34:51.729Z",
+    "contentHash": "59bb7a1d2ba1a35d82c4f86b4c0dee778bb00049fdde7d4bd59809d8e61cad73",
+    "lastHarvestedAt": "2026-10-27T20:38:35.329Z",
     "learningId": "learn-huggingface-krafton-raon-1-mini-preview"
   },
   "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf": {
