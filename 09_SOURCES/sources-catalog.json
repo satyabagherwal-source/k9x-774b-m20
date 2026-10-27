@@ -6233,10 +6233,10 @@
     "repository": "yvgude/lean-ctx",
     "platform": "github",
     "sourceUrl": "https://github.com/yvgude/lean-ctx",
-    "sourceVersion": "4310d162",
+    "sourceVersion": "10a74ea6",
     "license": "Apache-2.0",
-    "contentHash": "aa1d0efc6677451713b0d59a596c76c15ac59e73981c8a5d56dce7f0ade9408b",
-    "lastHarvestedAt": "2026-10-24T20:31:21.123Z",
+    "contentHash": "6223032506bfbef71ec0063cb00a8ae6668a4b08fab370fa61f4c66a6ee1dadc",
+    "lastHarvestedAt": "2026-10-27T14:07:18.037Z",
     "learningId": "learn-github-yvgude-lean-ctx"
   },
   "gkd-kit-gkd": {
@@ -6613,10 +6613,10 @@
     "repository": "VectifyAI/PageIndex",
     "platform": "github",
     "sourceUrl": "https://github.com/VectifyAI/PageIndex",
-    "sourceVersion": "c11c2342",
+    "sourceVersion": "b81465d9",
     "license": "MIT",
-    "contentHash": "bb207bfd0bd877b0ce40d003e5fbaedf9b40b2cb5fbf4066d9373aab3b7c5031",
-    "lastHarvestedAt": "2026-10-25T08:08:40.302Z",
+    "contentHash": "db27976a2ab3cafaca897e43cdc4fe005f27caf83ae81c4de0d4853ccb5689b1",
+    "lastHarvestedAt": "2026-10-27T14:07:29.544Z",
     "learningId": "learn-github-vectifyai-pageindex"
   },
   "epicweb-dev-advanced-react-patterns": {
@@ -9733,10 +9733,10 @@
     "repository": "RDFLib/rdflib",
     "platform": "github",
     "sourceUrl": "https://github.com/RDFLib/rdflib",
-    "sourceVersion": "764c2fa8",
+    "sourceVersion": "8571e879",
     "license": "BSD-3-Clause",
-    "contentHash": "869fd9c1ca1921e296b867e82790ef89c46e237b7ac3fa1a117fe071defbc884",
-    "lastHarvestedAt": "2026-10-22T21:28:50.103Z",
+    "contentHash": "6718fc12268c615a2a34b627c10192758af168a70bdc932cf69963e153f03299",
+    "lastHarvestedAt": "2026-10-27T14:07:20.021Z",
     "learningId": "learn-github-rdflib-rdflib"
   },
   "kartiklabhshetwar-better-shot": {

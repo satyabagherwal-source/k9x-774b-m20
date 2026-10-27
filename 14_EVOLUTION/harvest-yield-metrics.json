@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T14:04:08.459Z",
-  "total_cycles_completed": 5331,
-  "total_learnings_persisted": 5331,
-  "total_rules_promoted": 4734,
+  "last_updated": "2026-10-27T14:07:29.549Z",
+  "total_cycles_completed": 5334,
+  "total_learnings_persisted": 5334,
+  "total_rules_promoted": 4737,
   "history": [
-    {
-      "timestamp": "2026-10-26T13:51:47.228Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:51:48.934Z",
-      "repository": "XHToken/Spark-X2.6-4B",
-      "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:51:49.866Z",
-      "repository": "LLPhant/LLPhant",
-      "learningId": "learn-github-llphant-llphant",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-26T13:58:18.255Z",
       "repository": "Orange-OpenSource/hurl",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-27T14:04:08.459Z",
       "repository": "rdfjs/N3.js",
       "learningId": "learn-github-rdfjs-n3-js",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:07:18.043Z",
+      "repository": "yvgude/lean-ctx",
+      "learningId": "learn-github-yvgude-lean-ctx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:07:20.025Z",
+      "repository": "RDFLib/rdflib",
+      "learningId": "learn-github-rdflib-rdflib",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:07:29.549Z",
+      "repository": "VectifyAI/PageIndex",
+      "learningId": "learn-github-vectifyai-pageindex",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

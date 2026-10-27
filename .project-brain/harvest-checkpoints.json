@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T14:04:08.461Z",
+  "last_updated": "2026-10-27T14:07:29.552Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9471,14 +9471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yvgude-lean-ctx",
-      "content_hash": "aa1d0efc6677451713b0d59a596c76c15ac59e73981c8a5d56dce7f0ade9408b",
-      "verified_at": "2026-10-24T20:31:21.137Z",
+      "content_hash": "6223032506bfbef71ec0063cb00a8ae6668a4b08fab370fa61f4c66a6ee1dadc",
+      "verified_at": "2026-10-27T14:07:18.046Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-24T20:31:21.137Z"
+      "last_updated": "2026-10-27T14:07:18.046Z"
     },
     "gkd-kit/gkd": {
       "repository": "gkd-kit/gkd",
@@ -9996,14 +9996,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vectifyai-pageindex",
-      "content_hash": "bb207bfd0bd877b0ce40d003e5fbaedf9b40b2cb5fbf4066d9373aab3b7c5031",
-      "verified_at": "2026-10-25T08:08:40.313Z",
+      "content_hash": "db27976a2ab3cafaca897e43cdc4fe005f27caf83ae81c4de0d4853ccb5689b1",
+      "verified_at": "2026-10-27T14:07:29.552Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T08:08:40.313Z"
+      "last_updated": "2026-10-27T14:07:29.552Z"
     },
     "dalance/procs": {
       "repository": "dalance/procs",
@@ -14646,14 +14646,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rdflib-rdflib",
-      "content_hash": "869fd9c1ca1921e296b867e82790ef89c46e237b7ac3fa1a117fe071defbc884",
-      "verified_at": "2026-10-22T21:28:50.115Z",
+      "content_hash": "6718fc12268c615a2a34b627c10192758af168a70bdc932cf69963e153f03299",
+      "verified_at": "2026-10-27T14:07:20.028Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T21:28:50.115Z"
+      "last_updated": "2026-10-27T14:07:20.028Z"
     },
     "KartikLabhshetwar/better-shot": {
       "repository": "KartikLabhshetwar/better-shot",

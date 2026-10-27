@@ -5363,3 +5363,6 @@ Every entry in this ledger must capture:
 | `learn-github-blockrunai-clawrouter` | `https://github.com/BlockRunAI/ClawRouter` | `d14d145d` | Multi-dimensional audit evidence | 2026-10-27T14:01:03.035Z |
 | `learn-github-czlonkowski-n8n-skills` | `https://github.com/czlonkowski/n8n-skills` | `e037563e` | Multi-dimensional audit evidence | 2026-10-27T14:01:04.694Z |
 | `learn-github-rdfjs-n3-js` | `https://github.com/rdfjs/N3.js` | `ce8f71be` | Multi-dimensional audit evidence | 2026-10-27T14:04:08.456Z |
+| `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `10a74ea6` | Multi-dimensional audit evidence | 2026-10-27T14:07:18.037Z |
+| `learn-github-rdflib-rdflib` | `https://github.com/RDFLib/rdflib` | `8571e879` | Multi-dimensional audit evidence | 2026-10-27T14:07:20.021Z |
+| `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `b81465d9` | Multi-dimensional audit evidence | 2026-10-27T14:07:29.544Z |

@@ -5354,3 +5354,6 @@
 | `CYCLE-20261027-72UW` | `2026-10-27T14:01:03.032Z` | `BlockRunAI/ClawRouter` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/blockrunai-clawrouter-learnings.md` | Yes (`9bea8861...`) |
 | `CYCLE-20261027-7450` | `2026-10-27T14:01:04.692Z` | `czlonkowski/n8n-skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4826` | Yes (`92574629...`) |
 | `CYCLE-20261027-B1XI` | `2026-10-27T14:04:08.454Z` | `rdfjs/N3.js` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4827` | Yes (`f0164119...`) |
+| `CYCLE-20261027-F47M` | `2026-10-27T14:07:18.034Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4828` | Yes (`62230325...`) |
+| `CYCLE-20261027-F5QQ` | `2026-10-27T14:07:20.018Z` | `RDFLib/rdflib` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4829` | Yes (`6718fc12...`) |
+| `CYCLE-20261027-FD39` | `2026-10-27T14:07:29.541Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4830` | Yes (`db27976a...`) |
