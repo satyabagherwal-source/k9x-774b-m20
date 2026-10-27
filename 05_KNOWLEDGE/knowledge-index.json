@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T21:10:29.674Z",
-  "total_verified_learnings": 1094,
+  "last_updated": "2026-10-27T07:20:59.372Z",
+  "total_verified_learnings": 1097,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -130017,6 +130017,223 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T21:10:29.655Z"
+    },
+    "learn-github-ollaya-dev-ollaya": {
+      "learning_id": "learn-github-ollaya-dev-ollaya",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ollaya-dev/ollaya",
+      "repository": "ollaya-dev/ollaya",
+      "slug": "ollaya-dev-ollaya",
+      "platform": "github",
+      "source_url": "https://github.com/ollaya-dev/ollaya",
+      "source_version": "9b8698e3",
+      "content_hash": "5196da7004e8d7b685953b82ee85d420bc94668a94f2f94ae1520b5600f4dd4b",
+      "dossier_path": "07_PROJECT_LEARNING/ollaya-dev-ollaya-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/ollaya-dev-ollaya-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4649,
+          "title": "CUDA Dynamic Memory Arena Shrinkage Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4650,
+          "title": "Isolation of Thread-Affined Graph Builders via Dedicated Single-Thread Workers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4651,
+          "title": "Safe Delimiter Invariant: Homoglyph Escaping for Tokenizer Markers",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T07:13:44.720Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4649": {
+      "learning_id": "rule-4649",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4649,
+      "title": "CUDA Dynamic Memory Arena Shrinkage Guard",
+      "source_url": "https://github.com/ollaya-dev/ollaya",
+      "source_version": "9b8698e3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T07:13:44.720Z"
+    },
+    "rule-4650": {
+      "learning_id": "rule-4650",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4650,
+      "title": "Isolation of Thread-Affined Graph Builders via Dedicated Single-Thread Workers",
+      "source_url": "https://github.com/ollaya-dev/ollaya",
+      "source_version": "9b8698e3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T07:13:44.720Z"
+    },
+    "rule-4651": {
+      "learning_id": "rule-4651",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4651,
+      "title": "Safe Delimiter Invariant: Homoglyph Escaping for Tokenizer Markers",
+      "source_url": "https://github.com/ollaya-dev/ollaya",
+      "source_version": "9b8698e3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T07:13:44.720Z"
+    },
+    "learn-github-thetahealth-mirobody": {
+      "learning_id": "learn-github-thetahealth-mirobody",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "thetahealth/mirobody",
+      "repository": "thetahealth/mirobody",
+      "slug": "thetahealth-mirobody",
+      "platform": "github",
+      "source_url": "https://github.com/thetahealth/mirobody",
+      "source_version": "18bbe471",
+      "content_hash": "7ac0cc7e87963dd0fd706252babc14592bba3013142b7b7dc68b2b62021c026c",
+      "dossier_path": "07_PROJECT_LEARNING/thetahealth-mirobody-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/thetahealth-mirobody-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4652,
+          "title": "Dynamic Scale-Relative Numeric Tolerance Verification",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4653,
+          "title": "Context-Budget Compression via Constant Column Hoisting",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4654,
+          "title": "Preserving True Denominators in Multi-Stage Execution Harnesses",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T07:15:13.365Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4652": {
+      "learning_id": "rule-4652",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4652,
+      "title": "Dynamic Scale-Relative Numeric Tolerance Verification",
+      "source_url": "https://github.com/thetahealth/mirobody",
+      "source_version": "18bbe471",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T07:15:13.365Z"
+    },
+    "rule-4653": {
+      "learning_id": "rule-4653",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4653,
+      "title": "Context-Budget Compression via Constant Column Hoisting",
+      "source_url": "https://github.com/thetahealth/mirobody",
+      "source_version": "18bbe471",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T07:15:13.365Z"
+    },
+    "rule-4654": {
+      "learning_id": "rule-4654",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4654,
+      "title": "Preserving True Denominators in Multi-Stage Execution Harnesses",
+      "source_url": "https://github.com/thetahealth/mirobody",
+      "source_version": "18bbe471",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T07:15:13.365Z"
+    },
+    "learn-github-sourcey-sourcey": {
+      "learning_id": "learn-github-sourcey-sourcey",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "sourcey/sourcey",
+      "repository": "sourcey/sourcey",
+      "slug": "sourcey-sourcey",
+      "platform": "github",
+      "source_url": "https://github.com/sourcey/sourcey",
+      "source_version": "9c4ee18d",
+      "content_hash": "d0a4336e9784e076ac57e9e44ef6e97e6106e61cbcc5c7f00b9a2422e5a62c4e",
+      "dossier_path": "07_PROJECT_LEARNING/sourcey-sourcey-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/sourcey-sourcey-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4655,
+          "title": "nix): read the flake's dependencies from the lockfile",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T07:20:59.360Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4655": {
+      "learning_id": "rule-4655",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4655,
+      "title": "nix): read the flake's dependencies from the lockfile",
+      "source_url": "https://github.com/sourcey/sourcey",
+      "source_version": "9c4ee18d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T07:20:59.360Z"
     }
   },
   "aliases": {

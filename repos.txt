@@ -4478,3 +4478,11 @@ https://huggingface.co/briaai/Fibo-2.0-dev
 # --- Automatically Discovered by AI Scout Engine [2026-10-26T13:11:15.497Z] ---
 # [AI-AGENTS] Vincentwei1021/video-shotcraft (7518 score) - AI video skill for Claude Code & Codex — cinematic product videos with Remotion:
 https://github.com/Vincentwei1021/video-shotcraft
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T07:10:17.883Z] ---
+# [AI-AGENTS] ollaya-dev/ollaya (982 score) - Jev-compatible API server for open decision models. Ollama for decision models: 
+https://github.com/ollaya-dev/ollaya
+# [AI-AGENTS] thetahealth/mirobody (934 score) - Turn scattered health data into answers you can trace. Self-hosted AI health dat
+https://github.com/thetahealth/mirobody
+# [AI-AGENTS] sourcey/sourcey (1060 score) - Precision documentation from OpenAPI, MCP, Doxygen, and Markdown guides. Static 
+https://github.com/sourcey/sourcey

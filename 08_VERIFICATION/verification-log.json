@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-7HMN",
-    "timestamp": "2026-10-25T05:34:08.639Z",
-    "repository": "chaos-mesh/chaos-mesh",
-    "learningId": "learn-github-chaos-mesh-chaos-mesh",
-    "contentHash": "0214aaac60f0eba23c53b26c081c50ae6946a151da78d3d9ba64355d09fc6ec7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-7J78",
-    "timestamp": "2026-10-25T05:34:10.676Z",
-    "repository": "convaiinnovations/laya",
-    "learningId": "learn-huggingface-convaiinnovations-laya",
-    "contentHash": "b68ca8e05d304d6c52f4094494584021c6982a735cec0e7b8ab89609cbd71cb3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-MSUJ",
-    "timestamp": "2026-10-25T05:46:03.019Z",
-    "repository": "Edge0/Audio8-ASR-Infinite",
-    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-    "contentHash": "8fc16d44e404b5948280e1c286c9fd1736fcde500f0a69c7fc5d9426b19e7e67",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-MTY4",
     "timestamp": "2026-10-25T05:46:04.444Z",
     "repository": "astral-sh/ruff",
@@ -7490,6 +7445,51 @@
     "repository": "trufflesecurity/trufflehog",
     "learningId": "learn-github-trufflesecurity-trufflehog",
     "contentHash": "d66b972baa59eb46c76d59d4c13e4635b3c51918cc28fc8b12cd23a095ee8d9b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-NA6U",
+    "timestamp": "2026-10-27T07:13:44.790Z",
+    "repository": "ollaya-dev/ollaya",
+    "learningId": "learn-github-ollaya-dev-ollaya",
+    "contentHash": "5196da7004e8d7b685953b82ee85d420bc94668a94f2f94ae1520b5600f4dd4b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-P6L9",
+    "timestamp": "2026-10-27T07:15:13.437Z",
+    "repository": "thetahealth/mirobody",
+    "learningId": "learn-github-thetahealth-mirobody",
+    "contentHash": "7ac0cc7e87963dd0fd706252babc14592bba3013142b7b7dc68b2b62021c026c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-WLK5",
+    "timestamp": "2026-10-27T07:20:59.429Z",
+    "repository": "sourcey/sourcey",
+    "learningId": "learn-github-sourcey-sourcey",
+    "contentHash": "d0a4336e9784e076ac57e9e44ef6e97e6106e61cbcc5c7f00b9a2422e5a62c4e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

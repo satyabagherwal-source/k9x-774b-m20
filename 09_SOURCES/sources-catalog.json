@@ -10778,5 +10778,35 @@
     "contentHash": "95f8d23d4a02cc13674dd1cad42eb58af2ea2bddd3073bbcc1b00776f35e5eb6",
     "lastHarvestedAt": "2026-10-26T13:11:23.807Z",
     "learningId": "learn-github-vincentwei1021-video-shotcraft"
+  },
+  "ollaya-dev-ollaya": {
+    "repository": "ollaya-dev/ollaya",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ollaya-dev/ollaya",
+    "sourceVersion": "9b8698e3",
+    "license": "Apache-2.0",
+    "contentHash": "5196da7004e8d7b685953b82ee85d420bc94668a94f2f94ae1520b5600f4dd4b",
+    "lastHarvestedAt": "2026-10-27T07:13:44.794Z",
+    "learningId": "learn-github-ollaya-dev-ollaya"
+  },
+  "thetahealth-mirobody": {
+    "repository": "thetahealth/mirobody",
+    "platform": "github",
+    "sourceUrl": "https://github.com/thetahealth/mirobody",
+    "sourceVersion": "18bbe471",
+    "license": "Apache-2.0",
+    "contentHash": "7ac0cc7e87963dd0fd706252babc14592bba3013142b7b7dc68b2b62021c026c",
+    "lastHarvestedAt": "2026-10-27T07:15:13.440Z",
+    "learningId": "learn-github-thetahealth-mirobody"
+  },
+  "sourcey-sourcey": {
+    "repository": "sourcey/sourcey",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sourcey/sourcey",
+    "sourceVersion": "9c4ee18d",
+    "license": "AGPL-3.0",
+    "contentHash": "d0a4336e9784e076ac57e9e44ef6e97e6106e61cbcc5c7f00b9a2422e5a62c4e",
+    "lastHarvestedAt": "2026-10-27T07:20:59.433Z",
+    "learningId": "learn-github-sourcey-sourcey"
   }
 }

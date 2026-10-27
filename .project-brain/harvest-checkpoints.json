@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T21:10:29.754Z",
+  "last_updated": "2026-10-27T07:20:59.442Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -16199,6 +16199,51 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-26T13:11:23.814Z"
+    },
+    "ollaya-dev/ollaya": {
+      "repository": "ollaya-dev/ollaya",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ollaya-dev-ollaya",
+      "content_hash": "5196da7004e8d7b685953b82ee85d420bc94668a94f2f94ae1520b5600f4dd4b",
+      "verified_at": "2026-10-27T07:13:44.802Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T07:13:44.802Z"
+    },
+    "thetahealth/mirobody": {
+      "repository": "thetahealth/mirobody",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-thetahealth-mirobody",
+      "content_hash": "7ac0cc7e87963dd0fd706252babc14592bba3013142b7b7dc68b2b62021c026c",
+      "verified_at": "2026-10-27T07:15:13.448Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T07:15:13.448Z"
+    },
+    "sourcey/sourcey": {
+      "repository": "sourcey/sourcey",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-sourcey-sourcey",
+      "content_hash": "d0a4336e9784e076ac57e9e44ef6e97e6106e61cbcc5c7f00b9a2422e5a62c4e",
+      "verified_at": "2026-10-27T07:20:59.441Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T07:20:59.441Z"
     }
   },
   "repos": {

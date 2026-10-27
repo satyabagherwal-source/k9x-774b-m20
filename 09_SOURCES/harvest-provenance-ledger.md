@@ -5196,3 +5196,6 @@ Every entry in this ledger must capture:
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `2caa45cf` | Multi-dimensional audit evidence | 2026-10-26T21:10:29.745Z |
 | `learn-project-onlinefreeprotractor-seo-phase4-8` | `https://github.com/satyabagherwal-source/onlinefreeprotractor` | `2e181cc` | `docs/seo/` (Phases 4-8 reconciled audit dataset) | 2026-10-27T04:30:00.000Z |
 
+| `learn-github-ollaya-dev-ollaya` | `https://github.com/ollaya-dev/ollaya` | `9b8698e3` | Multi-dimensional audit evidence | 2026-10-27T07:13:44.794Z |
+| `learn-github-thetahealth-mirobody` | `https://github.com/thetahealth/mirobody` | `18bbe471` | Multi-dimensional audit evidence | 2026-10-27T07:15:13.440Z |
+| `learn-github-sourcey-sourcey` | `https://github.com/sourcey/sourcey` | `9c4ee18d` | Multi-dimensional audit evidence | 2026-10-27T07:20:59.433Z |

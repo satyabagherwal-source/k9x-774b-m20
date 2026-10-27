@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T21:10:29.750Z",
-  "total_cycles_completed": 5164,
-  "total_learnings_persisted": 5164,
-  "total_rules_promoted": 4549,
+  "last_updated": "2026-10-27T07:20:59.438Z",
+  "total_cycles_completed": 5167,
+  "total_learnings_persisted": 5167,
+  "total_rules_promoted": 4556,
   "history": [
-    {
-      "timestamp": "2026-10-25T20:49:13.796Z",
-      "repository": "meta-llama/Llama-2-7b",
-      "learningId": "learn-huggingface-meta-llama-llama-2-7b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T20:49:20.129Z",
-      "repository": "jellyfin/Swiftfin",
-      "learningId": "learn-github-jellyfin-swiftfin",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T20:49:24.509Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T20:55:45.203Z",
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-26T21:10:29.750Z",
       "repository": "trufflesecurity/trufflehog",
       "learningId": "learn-github-trufflesecurity-trufflehog",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T07:13:44.799Z",
+      "repository": "ollaya-dev/ollaya",
+      "learningId": "learn-github-ollaya-dev-ollaya",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T07:15:13.445Z",
+      "repository": "thetahealth/mirobody",
+      "learningId": "learn-github-thetahealth-mirobody",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T07:20:59.438Z",
+      "repository": "sourcey/sourcey",
+      "learningId": "learn-github-sourcey-sourcey",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

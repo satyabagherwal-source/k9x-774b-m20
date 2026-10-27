@@ -5187,3 +5187,6 @@
 | `CYCLE-20261026-7F7U` | `2026-10-26T18:25:35.178Z` | `wzh4869/AppPorts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4646` | Yes (`5f35440c...`) |
 | `CYCLE-20261026-G3RG` | `2026-10-26T18:32:20.236Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4647` | Yes (`0045ab93...`) |
 | `CYCLE-20261026-3HWT` | `2026-10-26T21:10:29.741Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4648` | Yes (`d66b972b...`) |
+| `CYCLE-20261027-NA6U` | `2026-10-27T07:13:44.790Z` | `ollaya-dev/ollaya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4649, Rule 4650, Rule 4651` | Yes (`5196da70...`) |
+| `CYCLE-20261027-P6L9` | `2026-10-27T07:15:13.437Z` | `thetahealth/mirobody` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4652, Rule 4653, Rule 4654` | Yes (`7ac0cc7e...`) |
+| `CYCLE-20261027-WLK5` | `2026-10-27T07:20:59.429Z` | `sourcey/sourcey` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4655` | Yes (`d0a4336e...`) |

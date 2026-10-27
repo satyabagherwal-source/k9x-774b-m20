@@ -18745,5 +18745,50 @@
     "qualityScore": 7518,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-26T13:07:50.675Z"
+  },
+  {
+    "name": "ollaya",
+    "fullName": "ollaya-dev/ollaya",
+    "url": "https://github.com/ollaya-dev/ollaya",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Jev-compatible API server for open decision models. Ollama for decision models: pull and serve 29 model families (Laya, pplx-decider, Clef, Winnow, coba...) locally or self-hosted behind /v1/systemone. The TypeSafe SDK works unchanged: set its base URL and pick an open model. CLI, desktop app, Docker, MCP server, public bench.",
+    "stars": 1404,
+    "forks": 86,
+    "openIssues": 2,
+    "language": "Rust",
+    "qualityScore": 982,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T07:07:01.841Z"
+  },
+  {
+    "name": "mirobody",
+    "fullName": "thetahealth/mirobody",
+    "url": "https://github.com/thetahealth/mirobody",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Turn scattered health data into answers you can trace. Self-hosted AI health data engine for lab reports, wearables and genetics, with a built-in MCP server. Run it with Docker and one LLM key, or keep every model local on llama.cpp.",
+    "stars": 1393,
+    "forks": 250,
+    "openIssues": 6,
+    "language": "Python",
+    "qualityScore": 934,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T07:07:01.841Z"
+  },
+  {
+    "name": "sourcey",
+    "fullName": "sourcey/sourcey",
+    "url": "https://github.com/sourcey/sourcey",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Precision documentation from OpenAPI, MCP, Doxygen, and Markdown guides. Static HTML you own.",
+    "stars": 1376,
+    "forks": 333,
+    "openIssues": 11,
+    "language": "TypeScript",
+    "qualityScore": 1060,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T07:07:01.841Z"
   }
 ]
