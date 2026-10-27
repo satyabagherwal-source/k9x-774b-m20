@@ -1953,10 +1953,10 @@
     "repository": "webdriverio/webdriverio",
     "platform": "github",
     "sourceUrl": "https://github.com/webdriverio/webdriverio",
-    "sourceVersion": "9b55483e",
+    "sourceVersion": "ba88f76d",
     "license": "MIT",
-    "contentHash": "0c5aba4a5353f2baeefbd264e46fb2f6ec82f3dfc9ddb5413c04277b9461ddea",
-    "lastHarvestedAt": "2026-10-23T11:11:48.166Z",
+    "contentHash": "60ef70381a2a41fbec4b4ae3eb09efc6d6baddf18fc9d42acc3d0ebfe74cb2c0",
+    "lastHarvestedAt": "2026-10-27T19:13:39.790Z",
     "learningId": "learn-github-webdriverio-webdriverio"
   },
   "rubenverborgh-sparql.js": {
@@ -7703,10 +7703,10 @@
     "repository": "oven-sh/bun",
     "platform": "github",
     "sourceUrl": "https://github.com/oven-sh/bun",
-    "sourceVersion": "449877f3",
+    "sourceVersion": "9b8347a2",
     "license": "NOASSERTION",
-    "contentHash": "02a217bcc7e254429dbcfa9f229eb6b436ffc5f08d82f936434993591521c862",
-    "lastHarvestedAt": "2026-10-26T00:54:36.820Z",
+    "contentHash": "3b819d968eb012cf3e0d7c6bd12fb99e926c3e40ed239c05648096e982446d77",
+    "lastHarvestedAt": "2026-10-27T19:13:38.113Z",
     "learningId": "learn-github-oven-sh-bun"
   },
   "codeeditapp-codeedit": {

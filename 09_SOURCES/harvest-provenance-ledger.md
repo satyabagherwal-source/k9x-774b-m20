@@ -5500,3 +5500,5 @@ Every entry in this ledger must capture:
 | `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `87ce233e` | Multi-dimensional audit evidence | 2026-10-27T19:06:44.322Z |
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `21c9f6de` | Multi-dimensional audit evidence | 2026-10-27T19:06:50.303Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `935811ca` | Multi-dimensional audit evidence | 2026-10-27T19:06:55.874Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `9b8347a2` | Multi-dimensional audit evidence | 2026-10-27T19:13:38.113Z |
+| `learn-github-webdriverio-webdriverio` | `https://github.com/webdriverio/webdriverio` | `ba88f76d` | Multi-dimensional audit evidence | 2026-10-27T19:13:39.790Z |

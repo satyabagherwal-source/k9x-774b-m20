@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source**: github ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
-> **Source Version**: `449877f3`  
+> **Source Version**: `9b8347a2`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T00:54:36.584Z  
+> **Timestamp**: 2026-10-27T19:13:37.906Z  
 > **Learning ID**: `learn-github-oven-sh-bun`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T00:54:36.579Z  
+> **Harvest Timestamp**: 2026-10-27T19:13:36.857Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 96408 stars
+- **Stars / Engagement**: 96438 stars
 
 ---
 
@@ -978,13 +978,11 @@ struct us_poll_t {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #46776** (2026-10-24): **c-bindings: bun_close_range fails on Android devices running kernels < 5.9**
-  *Symptoms*: ### Problem In src/jsc/bindings/c-bindings.cpp, bun_close_range directly calls syscall(__NR_close_range, ...). The close_range syscall was added in Linux 5.9. Millions of Android 9-12 devices run vendor 4.14 or 4.19 kernels where this syscall returns ENOSYS or is killed by seccomp.  ### Solution Return -1 directly on defined(__ANDROID__) to let Bun cleanly use its userspace fallback loop.
-  **Post-Mortem & Fix Analysis**:
-  > **Bun version:** `1.4.4-debug` built from main at `179664ea89` on `linux x64`, kernel 6.1  Main already handles both failure modes of `close_range(2)`:  - A kernel older than 5.9 returns `ENOSYS`. `closeRangeOrLoop` in `src/jsc/bindings/bun-spawn.cpp:69` checks the return value of `bun_close_range` and falls back to the `fcntl`/`close` loop. The two startup and reload callers in `src/jsc/bindings/c-bindings.cpp` (`bun_initialize_process`, `on_before_reload_process_posix`) treat a failure as best effort. - Android's seccomp policy traps the syscall with `SECCOMP_RET_TRAP` (SIGSYS) instead of an errno. `bun_initialize_process` installs a SIGSYS handler (`onSIGSYS`, `src/jsc/bindings/c-bindings.cpp:310`) that turns a `SYS_SECCOMP` trap into a `-ENOSYS` return, so the same fallback runs. This landed in #46021 (commit 9b4284f788, after the 1.4.3 release). Issue #30766 tracked the Android crash.  An `#if defined(__ANDROID__)` early return would not change the old-kernel case. It would also o
+- **Issue #47006** (2026-10-26): **bun install prints a [0.02ms] ".env" trace line whenever a .env exists, and no flag or env var silences it**
+  *Symptoms*: ### What version of Bun is running?  1.4.4+38afee6c8  ### What platform is your computer?  Linux 7.2.11-arch1-1 x86_64  ### What steps can reproduce the bug?  ``` // package.json { "name": "repro", "version": "1.0.0" }  // .env FOO=bar ```  ```sh bun install ```  ### What is the expected behavior?  `bun install` prints its usual output only, and nothing for a `.env` file it loads. At least one of `--silent` or `--quiet` should remove such a line.  ### What do you see instead?  ``` [0.03ms] ".env" bun install v1.4.4 (38afee6c8) No packages! Deleted empty lockfile  [0.00ms] done ```  With a real dependency (`bun add is-odd`) the first line is still there: `[0.02ms] ".env"`.  Variants tried:  - Without a `.env` file: the `[0.03ms] ".env"` line is gone. - `bun install --silent`: still prints `[0.02ms] ".env"`. - `bun install --quiet` with `NO_COLOR=1 CI=1 BUN_DEBUG_QUIET_LOGS=1`: still prints it. - `BUN_QUIET`, `BUN_DEBUG_ALL=0`, `BUN_DEBUG=0` and `BUN_CONFIG_VERBOSE_FETCH=0`: still print it. - `bun install --no-env-file`: no line, but see below. - Canary 1.4.4-canary.1+a8fcd319b (npm `bun@1.4.4-canary.20261026.1`): same output. - `bun run a.ts` in the same folder does not print the line.  ### Additional information  A CLI that runs `bun install` with inherited stdio as one step of a larger command shows these lines among its own output, so the user sees a trace line that means nothing to them and `--quiet` modes of that CLI cannot keep their output clean.  `--no-env-file` is not
 
-- **Issue #46772** (2026-10-24): **Android: statx triggers SIGSYS under seccomp filter on older / vendor kernels**
-  *Symptoms*: ### Problem In `src/sys/lib.rs`, `statx_impl` is gated under `#[cfg(any(target_os = "linux", target_os = "android"))]`, invoking `lx::statx` directly.  On Android (particularly devices on kernels < 5.4, Android 9–11, or vendor-customized kernels), `statx` is blocked by the default unprivileged seccomp filter. When invoked: - The kernel does not return `ENOSYS` or `EPERM`. - Instead, the kernel delivers an uncatchable `SIGSYS` (Bad system call) signal, crashing the process immediately.  Because the signal terminates execution immediately, Bun's errno-based fallback logic never gets a chance to run.  ### Proposed Solution For `target_os = "android"`, skip the raw `statx` syscall entirely and route directly to `statx_fallback` (POSIX `stat` / `lstat` / `fstatat`).
+- **Issue #46971** (2026-10-26): **bun lint: JS plugin nodes have no start/end in TypeScript files**
+  *Symptoms*: ### What version of Bun is running?  1.4.4-canary.1+a8fcd319b  ### What platform is your computer?  Darwin 27.2.0 arm64  ### What steps can reproduce the bug?  `bun lint` gives JS plugin rules `node.start` and `node.end` when linting `.js`/`.mjs` files, but not when linting `.ts` files. There, nodes only have `node.range`.  `plugin.mjs`:  ```js export default {   meta: { name: "probe" },   rules: {     positions: {       create(context) {         return {           Identifier(node) {             context.report({               node,               message: JSON.stringify({ start: node.start, end: node.end, range: node.range }),             });           },         };       },     },   }, }; ```  `index.ts`:  ```ts const answer = 42; ```  `bunfig.toml`:  ```toml [lint] plugins = ["./plugin.mjs"]  [lint.rules] "probe/positions" = "error" ```  Then:  ```sh bun lint -f unix ```  ### What is the expected behavior?  Every node has `start` and `end`, whatever the file type, the same as Oxlint's JS plugins:  ``` index.ts:1:7: {"start":6,"end":12,"range":[6,12]} [Error/probe/positions] ```  ### What do you see instead?  ``` index.ts:1:7: {"range":[6,12]} [Error/probe/positions] plugin.mjs:2:3: {"start":19,"end":23,"range":[19,23]} [Error/probe/positions] ```  The `.mjs` file has `start`/`end`. The `.ts` file doesn't.  ### Additional information  Oxlint plugins written against `@oxlint/plugins` use `node.start`/`node.end` a lot. For example, [dmmulroy/anti-slop](https://github.com/dmmulr
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1001,229 +999,1076 @@ struct us_poll_t {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `449877f3` (2026-10-25)
-**Commit Message**: console.groupCollapsed: start a group, as console.group does (#46505)
+### Incident Patch 1: `99ee03e0` (2026-10-27)
+**Commit Message**: Replace HdrHistogram with safe Rust and fix `node:perf_hooks` histograms (#46650)
 
-### Problem
-- `console.groupCollapsed()` does not start a group. Later lines are not
-indented, and its `console.groupEnd()` removes the indent of an
-enclosing `console.group()`. A call with no label writes `undefined`.
-- Cause: `message_with_type_and_level_` (`src/jsc/ConsoleObject.rs:383`,
-`:394`) tests `MessageType::StartGroup` only. JSC sends
-`StartGroupCollapsed`.
+### What does this PR do?
 
-### Fix
-- One `is_start_group` flag covers both types. The `undefined` fallback
-is removed: a collapsed group with no label was its only caller. The
-`bun-types` JSDoc is updated.
-- Correct: Node documents `groupCollapsed` as [an alias of
-`group`](https://nodejs.org/docs/latest-v26.x/api/console.html#consolegroupcollapsed),
-and the [WHATWG spec](https://console.spec.whatwg.org/#groupcollapsed)
-pushes both onto one group stack.
-- Verified: `test/js/web/console/console-log.test.ts`,
-`test/js/bun/test/dots.test.ts` (new tests fail on bun 1.4.3-canary).
-Also ran: console test directories, bun-types test.
-- Self-reviewed: 15 concerns raised, 15 addressed. Notes names two
-follow-ups that are not in this PR.
+Removes the HdrHistogram_c dependency. `createHistogram()` and
+`monitorEventLoopDelay()` now count in `bun_histogram`, a new crate with
+`#[forbid(unsafe_code)]` and no dependencies. It holds the 13 of the
+library's 39 functions that Bun needs. The six hand-written C++ files
+are replaced by three bindgen classes, so the classes stay native: every
+method and getter is a method of one Rust struct.
 
-### Background
-- JSC passes each console call,
+**Now as in Node.js v26.3.0**
 
-**File**: `packages/bun-types/globals.d.ts` (modified, +7/-3)
+- `min` and `max` are bucket edges, so `max === percentile(100)`.
+`add()` no longer takes a dropped value as the new `min`/`max`, and
+returns `undefined`.
+- `percentiles` holds numbers, not BigInts.
+- Validation and error text of `record`, `percentile*`, `add`,
+`createHistogram`: `record(1.5)` throws.
+- `Histogram`, `RecordableHistogram` and `ELDHistogram` classes, none
+constructible. `toJSON()` and `util.inspect()` output.
+- `monitorEventLoopDelay()`: a new histogram per call, without
+`record()`. It records the time between samples, not the lateness.
+`enable()` keeps earlier data.
+- `structuredClone()` and `postMessage()` share the counts across
+threa
+
+**File**: `.github/workflows/update-hdrhistogram.yml` (removed, +0/-109)
 ```diff
-@@ -1240,11 +1240,15 @@ interface Console {
-    * @param data something to display
-    */
-   error(...data: any[]): void;
--  /** Does nothing currently */
-+  /**
-+   * Start a group. Logs `data` as the label of the group, if there is any,
-+   * then indents later `log`, `info`, `debug`, `warn`, `error`, `dir` and
-+   * `trace` output by two more spaces.
-+   */
-   group(...data: any[]): void;
--  /** Does nothing currently */
-+  /** An alias for {@link group}. */
-   groupCollapsed(...data: any[]): void;
--  /** Does nothing currently */
-+  /** End the most recent group that is still open, and remove its indent. */
-   groupEnd(): void;
-   info(...data: any[]): void;
-   log(...data: any[]): void;
+@@ -1,109 +0,0 @@
+-name: Update hdrhistogram
+-
+-permissions:
+-  contents: read
+-
+-on:
+-  schedule:
+-    - cron: "0 4 * * 0"
+-  workflow_dispatch:
+-
+-jobs:
+-  check-update:
+-    if: github.repository == 'oven-sh/bun'
+-    runs-on: ubuntu-latest
+-    permissions:
+-      contents: write
+-      pull-requests: write
+-
+-    steps:
+-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+-        with:
+-          persist-credentials: false
+-
+-      - name: Check hdrhistogram version
+-        id: check-version
+-        run: |
+-          set -euo pipefail
+-
+-          DEP_FILE=scripts/build/deps/hdrhistogram.ts
+-          CURRENT_VERSION=$(sed -nE 's/^const HDRHISTOGRAM_COMMIT = "([0-9a-f]{40})";$/\1/p' "$DEP_FILE")
+-
+-          if [ -z "$CURRENT_VERSION" ]; then
+-            echo "Error: Could not find HDRHISTOGRAM_COMMIT in $DEP_FILE"
+-            exit 1
+-          fi
+-
+-          # Validate that it looks like a git hash
+-          if ! [[ $CURRENT_VERSION =~ ^[0-9a-f]{40}$ ]]; then
+-            echo "Error: Invalid git hash format in $DEP_FILE"
+-            echo "Found: $CURRENT_VERSION"
+-            echo "Expected: 40 character hexadecimal string"
+-            exit 1
+-          fi
+-
+-          echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+-
+-          LATEST_RELEASE=$(curl -sL https://api.github.com/repos/HdrHistogram/HdrHistogram_c/releases/latest)
+-          if [ -z "$LATEST_RELEASE" ]; then
+-            echo "Error: Failed to fetch latest release from GitHub API"
+-            exit 1
+-          fi
+-
+-          LATEST_TAG=$(echo "$LATEST_RELEASE" | jq -r '.tag_name')
+-          if [ -z "$LATEST_TAG" ] || [ "$LATEST_TAG" = "null" ]; then
+-            echo "Error: Could not extract tag name from GitHub API response"
+-            exit 1
+-          fi
+-
+-          LATEST_TAG_SHA=$(curl -sL "https://api.github.com/repos/HdrHistogram/HdrHistogram_c/git/refs/tags/$LATEST_TAG" | jq -r '.object.sha')
+-          if [ -z "$LATEST_TAG_SHA" ] || [ "$LATEST_TAG_SHA" = "null" ]; then
+-            echo "Error: Could not fetch SHA for tag $LATEST_TAG"
+-            exit 1
+-          fi
+-
+-          # Try to get commit SHA from tag object (for annotated tags)
+-          # If it fails, assume it's a lightweight tag pointing directly to commit
+-          LATEST_SHA=$(curl -sL "https://api.github.com/repos/HdrHistogram/HdrHistogram_c/git/tags/$LATEST_TAG_SHA" 2>/dev/null | jq -r '.object.sha // empty')
+-          if [ -z "$LATEST_SHA" ]; then
+-            # Lightweight tag - SHA points directly to commit
+-            LATEST_SHA="$LATEST_TAG_SHA"
+-          fi
+-
+-          if ! [[ $LATEST_SHA =~ ^[0-9a-f]{40}$ ]]; then
+-            echo "Error: Invalid SHA format received from GitHub"
+-            echo "Found: $LATEST_SHA"
+-            echo "Expected: 40 character hexadecimal string"
+-            exit 1
+-          fi
+-
+-          echo "latest=$LATEST_SHA" >> $GITHUB_OUTPUT
+-          echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+-
+-      - name: Update version if needed
+-        if: success() && steps.check-version.outputs.current != steps.check-version.outputs.latest
+-        env:
+-          LATEST: ${{ steps.check-version.outputs.latest }}
+-        run: |
+-          set -euo pipefail
+-          sed -i -E 's/^(const HDRHISTOGRAM_COMMIT = ")[0-9a-f]{40}(";)$/\1'"$LATEST"'\2/' scripts/build/deps/hdrhistogram.ts
+-
+-      - name: Create Pull Request
+-        if: success() && steps.check-version.outputs.current != steps.check-version.outputs.latest
+-        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+-        with:
+-          token: ${{ secrets.GITHUB_TOKEN }}
+-          add-paths: |
+-            scripts/build/deps/hdrhistogram.ts
+-          commit-message: "deps: update hdrhistogram to ${{ steps.check-version.outputs.tag }} (${{ steps.check-version.outputs.latest }})"
+-          title: "deps: update hdrhistogram to ${{ steps.check-version.outputs.tag }}"
+-          delete-branch: true
+-          branch: deps/update-hdrhistogram
+-          body: |
+-            ## What does this PR do?
+-
+-            Updates hdrhistogram to version ${{ steps.check-version.outputs.tag }}
+-
+-            Compare: https://github.com/HdrHistogram/HdrHistogram_c/compare/${{ steps.check-version.outputs.current }}...${{ steps.check-version.outputs.latest }}
+-
+-            Auto-updated by [this workflow](https://github.com/oven-sh/bun/actions/workflows/update-hdrhistogram.yml)
 ```
 
-**File**: `src/jsc/ConsoleObject.rs` (modified, +8/-6)
+**File**: `CLAUDE.md` (modified, +1/-1)
 ```diff
-@@ -377,10 +377,13 @@ fn message_with_type_and_level_(
-     len: usize,
- ) -> JsResult<()> {
-     let console: *mut ConsoleObject = vm_console(global);
--    // `defer console.default_indent +|= (message_type == StartGroup) as u16;`
-+    // `defer console.default_indent +|= is_start_group as u16;`
-     // Capture the raw pointer (Copy) by `move` so no borrow of the local is
-     // held across the body; dereference only at scope-exit.
--    let is_start_group = message_type == MessageType::StartGroup;
-+    let is_start_group = matches!(
-+        message_type,
-+        MessageType::StartGroup | MessageType::StartGroupCollapsed
-+    );
-     let _indent_guard = scopeguard::guard(console, move |console| {
-         // SAFETY: see `vm_console` — points at the live boxed
-         // `ConsoleObject` for this VM; JS-thread-only.
-@@ -391,8 +394,9 @@ fn message_with_type_and_level_(
-         }
-     });
+@@ -147,7 +147,7 @@ The Rust side is a Cargo workspace of ~200 crates rooted at `Cargo.toml`. The ke
  
--    if message_type == MessageType::StartGroup && len == 0 {
--        // undefined is printed if passed explicitly.
-+    if is_start_group && len == 0 {
-+        // No label prints nothing, so return before the before-print hook of
-+        // `bun test` runs. An explicit `undefined` is a label and is printed.
-         return Ok(());
-     }
+ #### Vendored Dependencies (`vendor/`)
  
-@@ -550,8 +554,6 @@ fn message_with_type_and_level_(
-         let w = unsafe { (*console).writer() };
-         let _ = w.write_all(b"\n");
-         let _ = w.flush();
--    } else if message_type != MessageType::Trace {
--        let _ = writer.write_all(b"undefined\n");
-     }
+-Third-party native libraries are vendored locally and can be read from disk (not git submodules): boringssl (TLS/crypto), brotli, cares (async DNS), hdrhistogram, highway (SIMD), libarchive (tar/zip), libdeflate, libuv (Windows event loop), lolhtml (HTML rewriter), lshpack (HTTP/2 HPACK), lsqpack + lsquic (HTTP/3), mimalloc (allocator), nodejs (headers), picohttpparser, rust-argon2 (argon2 for `Bun.password`, Rust), tinycc (FFI JIT, fork: oven-sh/tinycc), WebKit (JavaScriptCore), zlib (zlib-ng), zstd. Build configuration for these is in `scripts/build/deps/*.ts`.
++Third-party native libraries are vendored locally and can be read from disk (not git submodules): boringssl (TLS/crypto), brotli, cares (async DNS), highway (SIMD), libarchive (tar/zip), libdeflate, libuv (Windows event loop), lolhtml (HTML rewriter), lshpack (HTTP/2 HPACK), lsqpack + lsquic (HTTP/3), mimalloc (allocator), nodejs (headers), picohttpparser, rust-argon2 (argon2 for `Bun.password`, Rust), tinycc (FFI JIT, fork: oven-sh/tinycc), WebKit (JavaScriptCore), zlib (zlib-ng), zstd. Build configuration for these is in `scripts/build/deps/*.ts`.
  
-     if message_type == MessageType::Trace {
+ ### JavaScript Class Implementation (C++)
+ 
 ```
 
-**File**: `test/js/bun/test/dots.test.ts` (modified, +37/-1)
+**File**: `Cargo.lock` (modified, +5/-0)
+```diff
+@@ -615,6 +615,10 @@ dependencies = [
+  "bstr",
+ ]
+ 
++[[package]]
++name = "bun_histogram"
++version = "0.0.0"
++
+ [[package]]
+ name = "bun_http"
+ version = "0.0.0"
+@@ -1492,6 +1496,7 @@ dependencies = [
+  "bun_glob",
+  "bun_hash",
+  "bun_highway",
++ "bun_histogram",
+  "bun_http",
+  "bun_http_jsc",
+  "bun_http_types",
+```
+
+**File**: `Cargo.toml` (modified, +2/-0)
+```diff
+@@ -58,6 +58,7 @@ members = [
+   "src/event_loop",
+   "src/exe_format",
+   "src/highway",
++  "src/histogram",
+   "src/http_jsc",
+   "src/http_types",
+   "src/ini",
+@@ -425,6 +426,7 @@ bun_dotenv = { path = "src/dotenv" }
+ bun_event_loop = { path = "src/event_loop" }
+ bun_exe_format = { path = "src/exe_format" }
+ bun_highway = { path = "src/highway" }
++bun_histogram = { path = "src/histogram" }
+ bun_http_jsc = { path = "src/http_jsc" }
+ bun_http_types = { path = "src/http_types" }
+ bun_ini = { path = "src/ini" }
+```
+
+**File**: `docs/project/bindgen.mdx` (modified, +44/-3)
+```diff
+@@ -598,9 +598,10 @@ is collected, make the class [`refCounted`](#refcounted).
+ | Key              | What it declares                                                                               |
+ | ---------------- | ---------------------------------------------------------------------------------------------- |
+ | `rustPath`       | the struct                                                                                     |
++| `extends`        | the class [inherits from another](#extends), whose struct it has instead of a `rustPath`       |
+ | `refCounted`     | the struct is a separate allocation that [can outlive the object](#refcounted)                 |
+ | `finalize`       | with `refCounted`: call `fn finalize(&self)` when the object is collected                      |
+-| `final`          | with `refCounted`: `false` lets hand-written C++ subclass `JSName`                             |
++| `final`          | `false` lets a class with `extends`, or hand-written C++, subclass `JSName`                    |
+ | `overridesToJS`  | with `refCounted`: `impl JsClass` is not generated; write it by hand with `js_Name::to_js`     |
+ | `forBind`        | the receiver of every member is [a function bound to an instance](#forbind)                    |
+ | `rustTraits`     | traits to bring into scope, for members that are trait methods                                 |
+@@ -648,7 +649,7 @@ A property of `proto` is one of these.
+ | `{ getter: T, capability, throws, passThis }` | an accessor; with `setter` it can be assigned                                              |
+ | `{ getter: T, cache: true \| "field", .. }`   | an accessor that returns an [internal field](#internalfields)                              |
+ | `{ internalField: "field", setter }`          | an accessor that reads the field, and with `setter` stores any value, without calling Rust |
+-| `{ builtin: true, length }`                   | the export of that name in `src/js/builtins/<class name>.ts`                               |
++| `{ builtin: true, length }`                   | the export of that name in `src/js/builtins/<class name>.ts`, without the `@@` of a symbol |
+ | `{ constant: 3 }`                             | a read-only integer, like a WebIDL `const`                                                 |
+ | `[{ rustName, args, .. }, ..]`                | a native function with [overloads](#overloads)                                             |
+ 
+@@ -665,7 +666,8 @@ or a constant override the class's.
+ A key that starts with `@@` is a well-known symbol: `"@@dispose"` defines `prototype[Symbol.dispose]`. The function is
+ writable, configurable and not enumerable, like the built-in ones, whatever the class says. Its `name` is
+ `[Symbol.dispose]` and its Rust function is `dispose`. `name` overrides the function's `name`: Node's
+-`Timeout.prototype[Symbol.dispose].name` is `""`. Only a function can have an `@@` key.
++`Timeout.prototype[Symbol.dispose].name` is `""`. Only a function can have an `@@` key: a native one or a builtin, which
++names itself with `$overriddenName`. `"@@inspectCustom"` is `Symbol.for("nodejs.util.inspect.custom")`.
+ 
+ A native function throws `ERR_INVALID_THIS` when `this` is not an instance. With `invalidThis: "undefined"` it returns
+ `undefined` instead, as some of Node's methods do.
+@@ -684,6 +686,42 @@ Rust gets it with `js_Glob::get_constructor(global)`. In C++, the generated head
+ prototype and constructor: `Bun::Bindgen::structureForClass<JSGlob>(globalObject)`, `prototypeForClass<JSGlob>` and
+ `constructorForClass<JSGlob>`. `createWrapper<JSBlob>(globalObject, wrapped)` is a new instance of a `refCounted` class.
+ 
++### `extends`
++
++```ts
++export const Histogram = b.class({
++  rustPath: "crate::node::histogram::Histogram",
++  final: false,
++  construct: "illegal",
++  proto: { count: { getter: b.u64 } },
++});
++export const RecordableHistogram = b.class({
++  extends: Histogram,
++  construct: "illegal",
++  proto: { record: { args: { val: b.u64 } } },
++});
++```
++
++One class inherits from another as one WebIDL interface does:
++
++- `JSRecordableHistogram` is a C++ subclass of `JSHistogram`. A `RecordableHistogram` is therefore a `Histogram` wherever
++  one is taken: as `this`, as an argument, for `from_js` and for `dynamicDowncast`. A `Histogram` is not a
++  `RecordableHistogram`, and `record` throws `ERR_INVALID_THIS` for one.
++- `RecordableHistogram.prototype` inherits from `Histogram.prototype`, and `RecordableHistogram` from `Histogram`.
++- The subclass adds no fields. Its struct is the base's, so `record` is a method of `Histogram` in Rust, and no two
++  members of a class and its subclasses have the same Rust function unless a `rustName` says so.
++  `js_RecordableHistogram::from_js(value)` is the struct if `value` is an instance of the subclass.
++
++`js_RecordableHistogram::create(heap, payload)` makes an instance, and `create_wrapper(global, payload)` does for code
++that has no capability. `payload.into_js(heap)` 
+```
+
+**File**: `docs/project/license.mdx` (modified, +1/-1)
+```diff
+@@ -48,7 +48,7 @@ Bun statically links these libraries:
+ | [`libspng`](https://github.com/randy408/libspng)                                                                                                 | BSD 2-Clause (portions derived from libpng, PNG Reference Library License v2)                |
+ | [`libwebp`](https://github.com/webmproject/libwebp)                                                                                              | BSD 3-Clause                                                                                 |
+ | [`highway`](https://github.com/google/highway)                                                                                                   | Apache 2.0                                                                                   |
+-| [`HdrHistogram_c`](https://github.com/HdrHistogram/HdrHistogram_c)                                                                               | dual-licensed under CC0 1.0 or the BSD 2-Clause License                                      |
++| Parts of [`HdrHistogram_c`](https://github.com/HdrHistogram/HdrHistogram_c), rewritten in Rust                                                   | dual-licensed under CC0 1.0 or the BSD 2-Clause License                                      |
+ | [`sqlite`](https://sqlite.org) (on Linux and Windows)                                                                                            | [public domain](https://sqlite.org/copyright.html)                                           |
+ | A fork of [`uWebsockets`](https://github.com/jarred-sumner/uwebsockets)                                                                          | Apache 2.0 licensed                                                                          |
+ | Parts of [Tigerbeetle's IO code](https://github.com/tigerbeetle/tigerbeetle/blob/532c8b70b9142c17e07737ab6d3da68d7500cbca/src/io/windows.zig#L1) | Apache 2.0 licensed                                                                          |
+```
+
+**File**: `packages/h3blast/Makefile` (modified, +2/-3)
 ```diff
 @@ -1,5 +1,5 @@
- import { expect, test } from "bun:test";
--import { bunEnv, bunExe, normalizeBunSnapshot } from "harness";
-+import { bunEnv, bunExe, normalizeBunSnapshot, tempDir } from "harness";
+ # h3blast — links against Bun's already-built vendored deps so we don't
+-# rebuild lsquic/BoringSSL/HdrHistogram. Run `bun run build:release` once
++# rebuild lsquic/BoringSSL. Run `bun run build:release` once
+ # in the repo root first so the .o files exist.
  
- test("dots 1", async () => {
-   const result = await Bun.spawn({
-@@ -101,3 +101,39 @@ test("dots 2", async () => {
-     }
-   `);
- });
-+
-+test("a console group with no label does not break the line of dots", async () => {
-+  using dir = tempDir("dots-empty-group", {
-+    "empty-group.test.ts": `
-+      import { test } from "bun:test";
-+      test("before", () => {});
-+      test("group", () => {
-+        console.group();
-+        console.groupEnd();
-+      });
-+      test("between", () => {});
-+      test("groupCollapsed", () => {
-+        console.groupCollapsed();
-+        console.groupEnd();
-+      });
-+      test("after", () => {});
-+    `,
-+  });
-+  await using proc = Bun.spawn({
-+    cmd: [bunExe(), "test", "--dots", "./empty-group.test.ts"],
-+    cwd: String(dir),
-+    env: bunEnv,
-+    stdout: "pipe",
-+    stderr: "pipe",
-+  });
-+  const [stdout, stderr, exitCode] = await Promise.all([proc.stdout.text(), proc.stderr.text(), proc.exited]);
-+  expect({
-+    stdout: normalizeBunSnapshot(stdout, String(dir)),
-+    stderr: normalizeBunSnapshot(stderr, String(dir)),
-+    exitCode,
-+  }).toEqual({
-+    stdout: "bun test <version> (<revision>)",
-+    stderr: ".....\n\n5 pass\n0 fail\nRan 5 tests across 1 file.",
-+    exitCode: 0,
-+  });
-+});
+ ROOT      := ../..
+@@ -12,11 +12,10 @@ CC        ?= clang
+ CFLAGS    := -std=c11 -O3 -g -Wall -Wextra -Wno-unused-parameter \
+              -DLSXPACK_MAX_STRLEN=UINT32_MAX \
+              -I$(VENDOR)/lsquic/include \
+-             -I$(VENDOR)/hdrhistogram/include \
+              -I$(VENDOR)/boringssl/include
+ LDFLAGS   := -lstdc++ -lm -lpthread
+ 
+-DEPS      := lsquic lsqpack lshpack boringssl hdrhistogram zlib
++DEPS      := lsquic lsqpack lshpack boringssl zlib
+ DEP_DIRS  := $(addprefix $(OBJ)/,$(DEPS))
+ LIBDEPS   := build/libdeps.a
+ 
 ```
 
-**File**: `test/js/web/console/console-log.test.ts` (modified, +62/-0)
+**File**: `packages/h3blast/README.md` (modified, +2/-2)
 ```diff
-@@ -180,6 +180,68 @@ NamedError: console.error a named error
- `);
- });
+@@ -30,13 +30,13 @@ Each connection keeps `--streams` HTTP/3 request streams in flight at all
+ times. UDP I/O is batched with `sendmmsg`/`recvmmsg`; the lsquic timer wheel
+ is driven via `epoll` + `timerfd`. The main thread samples per-worker atomic
+ counters at ~10 Hz to render the live TUI, then aggregates per-worker
+-HdrHistograms for the final percentile report.
++latency histograms for the final percentile report.
  
-+it("console.groupCollapsed starts a group, as console.group does", async () => {
-+  await using proc = Bun.spawn({
-+    cmd: [
-+      bunExe(),
-+      "-e",
-+      `console.groupCollapsed("Collapsed");
-+       console.log("in collapsed");
-+       console.warn("warn in collapsed");
-+       console.groupCollapsed();
-+       console.log("in collapsed with no label");
-+       console.groupEnd();
-+       console.group("Group in collapsed");
-+       console.log("in group in collapsed");
-+       console.groupEnd();
-+       console.groupEnd();
-+       console.group("Group");
-+       console.groupCollapsed("Collapsed in group");
-+       console.log("in collapsed in group");
-+       console.error("error in collapsed in group");
-+       console.groupEnd();
-+       console.groupCollapsed(undefined);
-+       console.log("in collapsed with an undefined label");
-+       console.groupEnd();
-+       console.log("back in group");
-+       console.groupEnd();
-+       console.groupCollapsed("%s has %d args", "label", 3);
-+       console.groupEnd();
-+       console.groupCollapsed();
-+       console.groupEnd();
-+       console.log("after");`,
-+    ],
-+    env: bunEnv,
-+    stdout: "pipe",
-+    stderr: "pipe",
-+  });
-+  const [stdout, stderr, exitCode] = await Promise.all([proc.stdout.text(), proc.stderr.text(), proc.exited]);
-+  expect({
-+    stdout: stdout.replaceAll("\r\n", "\n"),
-+    stderr: stderr.replaceAll("\r\n", "\n"),
-+    exitCode,
-+  }).toEqual({
-+    stdout: [
-+      "Collapsed",
-+      "  in collapsed",
-+      "    in collapsed with no label",
-+      "  Group in collapsed",
-+      "    in group in collapsed",
-+      "Group",
-+      "  Collapsed in group",
-+      "    in collapsed in group",
-+      "  undefined",
-+      "    in collapsed with an undefined label",
-+      "  back in group",
-+      "label has 3 args",
-+      "after",
-+      "",
-+    ].join("\n"),
-+    stderr: ["  warn in collapsed", "    error in collapsed in group", ""].join("\n"),
-+    exitCode: 0,
-+  });
-+});
-+
- it("console.log with SharedArrayBuffer", () => {
-   // console.log(x) === Bun.inspect(x) + "\n" written to stdout.
-   expect(Bun.inspect(new ArrayBuffer(0))).toBe("ArrayBuffer(0) []");
+ No TLS verification by default (it's a load tester).
+ 
+ ## Build
+ 
+-h3blast links the **already-compiled** lsquic / BoringSSL / HdrHistogram / zlib
++h3blast links the **already-compiled** lsquic / BoringSSL / zlib
+ object files from Bun's build tree, so you need a Bun release build first:
+ 
+ ```sh
+```
+
+---
+
+### Incident Patch 2: `8a0e49ee` (2026-10-27)
+**Commit Message**: bun_core::String can no longer borrow (fixes a source-map name use-after-free) (#46825)
+
+### What does this PR do?
+
+Printing an Error could read a source-map file name that had just been
+freed, and put the stale bytes in the printed stack. This fixes that bug
+and makes the mistake behind it a compile error.
+
+**The bug.** For a stack frame whose URL is not an absolute path,
+`Lookup::display_source_url_if_needed` returned a string that borrowed
+the map's own `sources` entry. The printer reads the Error's own `cause`
+between remapping the frames and printing them. A `cause` getter that
+loads the same file again replaces the map, which frees its names.
+`require(URL.createObjectURL(Bun.file("rel.js")))` gives such a URL.
+
+- AddressSanitizer build: `heap-use-after-free` under
+`print_stack_trace`.
+- Release 1.4.4: the frame prints as `(\^@\^VnO�\^B\^@:1:1)` instead of
+`(orig.ts:1:1)`.
+- `Bun.inspect`, `console.log`, `console.error` and an uncaught throw
+are affected.
+
+**The root cause.** `bun_core::String` is the owned type, but
+`String::borrow_utf8`, `from_bytes` and `ascii` were safe functions that
+took a `&[u8]` and dropped its lifetime. `StringView<'a>` already
+existed for borrowing.
+
+
+**File**: `Cargo.lock` (modified, +1/-0)
+```diff
+@@ -1313,6 +1313,7 @@ name = "bun_patch_jsc"
+ version = "0.0.0"
+ dependencies = [
+  "bstr",
++ "bun_core",
+  "bun_jsc",
+  "bun_patch",
+  "bun_sys",
+```
+
+**File**: `src/CLAUDE.md` (modified, +14/-5)
+```diff
+@@ -36,7 +36,7 @@ or don't match the cross-platform behavior the runtime needs.
+ | `std::path::Path::join`                 | `bun_paths::resolve_path::join` / `join_string_buf`                                  |
+ | `std::path::Path::parent`/`file_name`   | `bun_paths::dirname` / `bun_paths::basename`                                         |
+ | `std::env::var`                         | `bun_core::env_var::*::get()` (typed + cached)                                       |
+-| `String::from_utf8` for JS-visible strs | `bun_core::String::clone_utf8` / `borrow_utf8`                                       |
++| `String::from_utf8` for JS-visible strs | `bun_core::String::clone_utf8` / `StringView::borrow_utf8`                           |
+ | `&str` operations on byte slices        | `bun_core::strings::*` (SIMD-backed `&[u8]` ops)                                     |
+ | `eprintln!` for debug logging           | `bun_core::declare_scope!` + `scoped_log!`                                           |
+ | `std::process::Command`                 | `bun_core::util::spawn_sync_inherit` (CLI helpers) or `bun_spawn_sys` (full control) |
+@@ -85,17 +85,26 @@ requires a real encoder, not a cast.
+ 
+ `String` owns one ref when WTF-backed: `Drop` derefs, `Clone` refs, it is
+ not `Copy`. Borrow with `&String` (or `StringView<'_>` when a by-value borrow
+-is needed). In an `extern "C"` signature a by-value `String` means ownership
++is needed). Rust cannot build a `String` that borrows: `StringView<'a>`
++wraps a `&'a [u8]` without copying. It derefs to `&String`,
++`StringView::as_strings` lends a slice of them as `&[String]`, and
++`String::clone(&view)` copies the bytes into an owned `String`. A field that
++holds either an owned `String` or borrowed bytes is a `StringOrView<'a>` (the
++`ZigException<'a>` / `ZigStackFrame<'a>` strings: C++ fills them with refs, the
++dev server with slices of a request body); it drops the ref if it has one and
++also derefs to `&String`. In an `extern "C"` signature a by-value `String` means ownership
+ crosses the boundary (C++ `Bun::toStringRef` return / `transferToWTFString()`
+ consumer); `&String` ⇔ `const BunString*`.
+ 
+ ```rust
+-use bun_core::{EncodedSlice, String, Utf8Bytes};   // the only import path for all three
++use bun_core::{EncodedSlice, String, StringOrView, StringView, Utf8Bytes};   // the only import path for all five
+ 
+ let s = String::clone_utf8(utf8_bytes);    // copies into a WTFStringImpl
+-let s = String::borrow_utf8(utf8_bytes);   // no copy; caller keeps slice alive
+ let s = String::static_("literal");        // 'static ASCII slice, never freed
+-let s = String::from_bytes(bytes);         // borrow arbitrary bytes; tags UTF-8 if non-ASCII
++let s = String::from_static_bytes(bytes);  // 'static UTF-8: ASCII is not copied, anything else is clone_utf8
++let v = StringView::borrow_utf8(utf8_bytes); // no copy; `v` cannot outlive the slice
++let v = StringView::from_bytes(bytes);       // borrow arbitrary bytes; tags UTF-8 if non-ASCII
++let f: StringOrView<'_> = StringOrView::from_bytes(bytes); // same borrow, for a field that `owned.into()` also fits
+ s.eq_ascii(b"lit") / s.starts_with_ascii(b"lit")  // encoding-aware ASCII compare without transcoding
+ 
+ let utf8: Utf8Bytes<'_>      = s.to_utf8();             // borrows `s` (ASCII/UTF-8) or transcodes; for locals
+```
+
+**File**: `src/ast_jsc/lib.rs` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@ pub fn msg_from_js(global_object: &JSGlobalObject, file: Vec<u8>, err: JSValue)
+     if let Some(value) = err.to_error() {
+         value.to_zig_exception(global_object, zig_exception_holder.zig_exception());
+     } else {
+-        zig_exception_holder.zig_exception().message = err.to_bun_string(global_object)?;
++        zig_exception_holder.zig_exception().message = err.to_bun_string(global_object)?.into();
+     }
+ 
+     Ok(Msg {
+```
+
+**File**: `src/boringssl/lib.rs` (modified, +1/-1)
+```diff
+@@ -435,7 +435,7 @@ pub fn check_x509_server_identity(x509: &mut boring::X509, hostname: &[u8]) -> b
+     let ascii_hostname;
+     // CVE-2026-48618: IDNA maps "。" to ".", so a non-ASCII host is matched on its UTS #46 form, as in `tls.checkServerIdentity`.
+     let hostname = if strings::first_non_ascii(hostname).is_some() {
+-        let ascii = Bun__idnaToASCII(&bun_core::String::borrow_utf8(hostname));
++        let ascii = Bun__idnaToASCII(&bun_core::StringView::borrow_utf8(hostname));
+         if ascii.is_dead() {
+             return false;
+         }
+```
+
+**File**: `src/bun_core/lib.rs` (modified, +2/-1)
+```diff
+@@ -56,7 +56,8 @@ pub use ::bstr::{BStr, BString, ByteSlice};
+ pub use string::string_joiner::StringJoiner;
+ pub use string::{
+     EncodedSlice, HashedString, MutableString, NodeEncoding, SmolStr, String, StringBuilder,
+-    StringView, Utf8Bytes, Utf8WithString, WTFStringImpl, WTFStringImplExt, WTFStringImplStruct,
++    StringOrView, StringView, Utf8Bytes, Utf8WithString, WTFStringImpl, WTFStringImplExt,
++    WTFStringImplStruct,
+ };
+ pub use string::{
+     STRING_ALLOCATION_LIMIT, cheap_prefix_normalizer, escape_reg_exp, identifier, lexer,
+```
+
+**File**: `src/bun_core/string/mod.rs` (modified, +85/-42)
+```diff
+@@ -47,8 +47,8 @@ pub use wtf::{WTFStringImpl, WTFStringImplExt, WTFStringImplStruct};
+ // `String` — 6-variant tagged WTFString-or-EncodedSlice, 24 bytes on 64-bit.
+ //
+ // - `String`: OWNS one ref when WTF-backed. Not `Copy`. `Drop` = `deref()`,
+-//   `Clone` = `ref()`; for the `EncodedSlice`/`Static`/`Empty`/`Dead`/
+-//   `OutOfMemory` tags both are a tag compare and nothing else. Every +1
++//   `Clone` = `ref()`; for the `Static`/`Empty`/`Dead`/`OutOfMemory` tags
++//   both are a tag compare and nothing else. Every +1
+ //   producer returns this —
+ //   including `extern "C"` declarations: a by-value `String` in an FFI
+ //   signature means ownership crosses (C++ `Bun::toStringRef` return, or a
+@@ -170,8 +170,7 @@ impl String {
+         self.tag
+     }
+ 
+-    /// Wrap `slice` under `tag`, erasing its lifetime: the caller keeps the
+-    /// bytes alive for the `String`'s lifetime.
++    /// Wrap `slice` under `tag`, erasing its lifetime. Only for [`Self::static_`] and for [`StringView`] and [`StringOrView`], which keep the lifetime.
+     #[inline(always)]
+     fn wrap(tag: Tag, slice: EncodedSlice<'_>) -> Self {
+         Self {
+@@ -206,17 +205,6 @@ impl String {
+         unsafe { &*self.value.wtf_string_impl }
+     }
+ 
+-    /// Borrow `s` (no copy, no refcount). Caller must keep `s` alive for the
+-    /// String's lifetime.
+-    #[inline]
+-    pub fn borrow_utf8(s: &[u8]) -> Self {
+-        Self::wrap(Tag::EncodedSlice, EncodedSlice::utf8(s))
+-    }
+-    #[inline]
+-    pub fn ascii(s: &[u8]) -> Self {
+-        Self::wrap(Tag::EncodedSlice, EncodedSlice::latin1(s))
+-    }
+-
+     /// `'static` ASCII slice (no encoding tag, no scan); `to_utf8`/`into_utf8`
+     /// borrow the bytes directly. Generic over `str`/`[u8]` so call sites may
+     /// pass either `"lit"` or `b"lit"`.
+@@ -225,6 +213,13 @@ impl String {
+         debug_assert!(s.as_ref().is_ascii());
+         Self::wrap(Tag::StaticEncodedSlice, EncodedSlice::latin1(s.as_ref()))
+     }
++    /// `'static` UTF-8 of any content: ASCII is wrapped without copying, anything else is [`Self::clone_utf8`].
++    pub fn from_static_bytes(bytes: &'static [u8]) -> Self {
++        if !bytes.is_empty() && strings::is_all_ascii(bytes) {
++            return Self::create_static_external(bytes);
++        }
++        Self::clone_utf8(bytes)
++    }
+     /// `clone_utf8(other)`, unless `other` is byte-equal to `self`, in which
+     /// case another ref to `self`.
+     #[inline]
+@@ -292,7 +287,7 @@ impl String {
+         }
+         Self::clone_utf8(bytes)
+     }
+-    /// Wraps `bytes` in a `WTF::ExternalStringImpl` that calls
++    /// Wraps Latin-1 `bytes` in a `WTF::ExternalStringImpl` that calls
+     /// `callback(ctx, buffer, len)` when the impl is destroyed.
+     ///
+     /// External strings are WTF strings whose bytes live elsewhere; `bytes` is
+@@ -301,9 +296,10 @@ impl String {
+     ///
+     /// `Ctx` must be a pointer-sized type (raw pointer or `&T`); enforced by
+     /// the const-assert below to keep the C-ABI cast sound.
+-    pub fn create_external<Ctx>(
++    ///
++    /// SAFETY: the caller keeps `bytes` valid and unchanged until `callback` runs.
++    pub unsafe fn create_external<Ctx>(
+         bytes: &[u8],
+-        is_latin1: bool,
+         ctx: Ctx,
+         callback: ExternalStringImplFreeFunction<Ctx>,
+     ) -> Self {
+@@ -346,13 +342,7 @@ impl String {
+             >(callback) });
+         // SAFETY: bytes describes a valid slice; len <= max_length checked.
+         let s = unsafe {
+-            BunString__createExternal(
+-                bytes.as_ptr(),
+-                bytes.len(),
+-                is_latin1,
+-                ctx_erased,
+-                cb_erased,
+-            )
++            BunString__createExternal(bytes.as_ptr(), bytes.len(), true, ctx_erased, cb_erased)
+         };
+         debug_assert!(s.tag != Tag::WTFStringImpl || s.as_wtf().ref_count() == 1);
+         s
+@@ -367,31 +357,30 @@ impl String {
+             .min(WTF_STRING_MAX_LENGTH)
+     }
+ 
+-    /// Wraps `bytes` in a `WTF::ExternalStringImpl` that will **never** be
+-    /// freed. Only use for dynamically-allocated data with process lifetime.
+-    pub fn create_static_external(bytes: &[u8], is_latin1: bool) -> Self {
++    /// Wraps Latin-1 `bytes` in a `WTF::ExternalStringImpl` that will **never** be
++    /// freed.
++    pub fn create_static_external(bytes: &'static [u8]) -> Self {
+         debug_assert!(!bytes.is_empty());
+         // SAFETY: bytes describes a valid slice; C++ side stores ptr/len
+         // without copying and never frees it.
+-        unsafe { BunString__createStaticExternal(bytes.as_ptr(), bytes.len(), is_latin1) }
++        unsafe { BunString__createStaticExternal(bytes.as_ptr(), bytes.len(), true) }
+     }
+     /// [`Self::create_static_external`] for Latin-1 bytes whose `WTF::StringImpl::hash()` is already known, so the
+     /// result is thread-shareable without reading the bytes.
+-    pub fn create_static_external_latin1_with_hash(bytes: &[u8], hash: u32) -> S
+```
+
+**File**: `src/bundler/OutputFile.rs` (modified, +0/-33)
+```diff
+@@ -1,11 +1,8 @@
+-use core::ffi::c_void;
+-
+ use crate::options::Loader;
+ // `bake::Side` / `jsc.api.BuildArtifact.OutputKind` are TYPE_ONLY move-ins;
+ // the `options` module already defines them locally.
+ use crate::Error;
+ use crate::options::{OutputKind, Side};
+-use bun_core::String as BunString;
+ use bun_paths::fs;
+ use bun_paths::resolve_path::{self, platform};
+ use bun_sys::Fd;
+@@ -124,36 +121,6 @@ impl Value {
+             _ => b"",
+         }
+     }
+-
+-    /// Borrowing variant of [`Self::to_bun_string`]: wraps the buffer in a
+-    /// `WTF::ExternalStringImpl` that aliases `bytes` with a **no-op** free
+-    /// callback (zero-copy). Caller guarantees `self` outlives every use of the
+-    /// returned string.
+-    ///
+-    /// `PerThread.bundled_outputs` owns the bytes for the entire prerender
+-    /// phase. The consuming [`Self::to_bun_string`] cannot be used there
+-    /// because the `Vec<OutputFile>` is only borrowed.
+-    pub fn to_bun_string_ref(&self) -> BunString {
+-        match self {
+-            Value::Noop => BunString::EMPTY,
+-            Value::Buffer { bytes } => {
+-                if bytes.is_empty() {
+-                    return BunString::EMPTY;
+-                }
+-                extern "C" fn noop(_: *mut c_void, _: *mut c_void, _: usize) {}
+-                // latin1 = true.
+-                BunString::create_external::<*mut c_void>(
+-                    bytes,
+-                    true,
+-                    core::ptr::null_mut::<c_void>(),
+-                    noop,
+-                )
+-            }
+-            Value::Copy(_) | Value::Saved(_) => {
+-                bun_core::todo_panic!("to_bun_string_ref: Copy/Saved")
+-            }
+-        }
+-    }
+ }
+ 
+ #[derive(Default, Clone, Copy)]
+```
+
+**File**: `src/bundler/ParseTask.rs` (modified, +2/-2)
+```diff
+@@ -2121,10 +2121,10 @@ pub mod parse_worker {
+             let namespace = if self.file_path.namespace == b"file" {
+                 &bun_core::String::EMPTY
+             } else {
+-                namespace_str = bun_core::String::from_bytes(self.file_path.namespace);
++                namespace_str = bun_core::StringView::from_bytes(self.file_path.namespace);
+                 &namespace_str
+             };
+-            let path_str = bun_core::String::from_bytes(self.file_path.text);
++            let path_str = bun_core::StringView::from_bytes(self.file_path.text);
+             // Copy the `&Cell<i32>` out so passing it to FFI doesn't go through
+             // `&mut self` after `self_ptr` is derived.
+             let should_continue_running = self.should_continue_running;
+```
+
+---
+
+### Incident Patch 3: `98a43659` (2026-10-27)
+**Commit Message**: Fix use-after-free of `BuildMessage.position.file`: real lifetimes for `Source`, `Path`, `ImportRecord` and resolve results (#46834)
+
+### What does this PR do?
+
+Fixes a heap-use-after-free in `BuildMessage.position.file`, by removing
+the false `'static` lifetimes that let it compile. `Source`, `Path`,
+`ImportRecord`, the bundler's graph types and the resolver's results now
+carry the lifetime of what they borrow, so the compiler checks this
+whole area instead of comments.
+
+#### The bug
+
+```js
+const url = URL.createObjectURL(new File(["["], "bad.yaml"));
+const wide = ("Ā" + url).slice(1); // any specifier that is not 8-bit ASCII
+await import(wide).catch(e => console.log(e.position.file)); // reads freed memory
+```
+
+`Location::init_or_null_impl` stored `Cow::Borrowed(source.path.text)`
+in a `Cow<'static, [u8]>`. That compiled because `Source.path` was a
+`Path<'static>`. For a virtual source the path is really a view of
+`specifier.to_utf8()`, which `Bun__transpileFile` /
+`Bun__transpileVirtualModule` free when they return, while
+`process_fetch_log` moves the message into a `BuildMessage` that JS
+keeps.
+
+There are three ways in: a `blob:` URL of an in-memory `File`,
+`/bun-vfs$$/node_mod
+
+**File**: `src/ast/import_record.rs` (modified, +4/-8)
+```diff
+@@ -10,11 +10,9 @@ use bun_paths::fs::Path;
+ // `bun_ast::import_record::{ImportKind, Index, Loader}` keep resolving.
+ pub use crate::{ImportKind, Index, Loader};
+ 
+-pub struct ImportRecord {
++pub struct ImportRecord<'a> {
+     pub range: Range,
+-    // TODO: lifetime — `bun_paths::fs::Path<'a>` borrows resolver-owned
+-    // strings. Uses 'static (PORTING.md: no struct lifetime params).
+-    pub path: Path<'static>,
++    pub path: Path<'a>,
+     pub kind: ImportKind,
+     pub tag: Tag,
+     pub loader: Option<Loader>,
+@@ -24,9 +22,7 @@ pub struct ImportRecord {
+     /// The original import specifier as written in source code (e.g., "./foo.js").
+     /// This is preserved before resolution overwrites `path` with the resolved path.
+     /// Used for metafile generation.
+-    // TODO: lifetime — likely a borrow into parser-owned source text; using
+-    // &'static [u8] as a placeholder.
+-    pub original_path: &'static [u8],
++    pub original_path: &'a [u8],
+ 
+     /// Pack all boolean flags into 4 bytes to reduce padding overhead.
+     /// Previously 15 separate bool fields caused ~14-16 bytes of padding waste.
+@@ -110,7 +106,7 @@ bitflags::bitflags! {
+     }
+ }
+ 
+-pub type List<'a> = bun_alloc::ArenaVec<'a, ImportRecord>;
++pub type List<'a> = bun_alloc::ArenaVec<'a, ImportRecord<'a>>;
+ 
+ #[repr(u8)]
+ #[derive(Copy, Clone, Eq, PartialEq, Debug, Default)]
+```
+
+**File**: `src/ast/lexer_log.rs` (modified, +3/-3)
+```diff
+@@ -7,7 +7,7 @@
+ //! collapses both.
+ //!
+ //! The trait carries a `'s` lifetime so `source()` can hand back the lexer's
+-//! stored `&'s Source` *without* borrowing `self` — that is what lets the
++//! stored `&'s Source<'s>` *without* borrowing `self` — that is what lets the
+ //! provided bodies call `self.log_mut()` afterwards without a split-borrow
+ //! conflict.
+ 
+@@ -23,8 +23,8 @@ pub trait LexerLog<'s> {
+ 
+     // ── required state accessors ────────────────────────────────────────
+     fn log_mut(&mut self) -> &mut Log;
+-    /// NB: returns the lexer-stored `&'s Source`, *not* a `&self`-tied borrow.
+-    fn source(&self) -> &'s Source;
++    /// NB: returns the lexer-stored `&'s Source<'s>`, *not* a `&self`-tied borrow.
++    fn source(&self) -> &'s Source<'s>;
+     fn prev_error_loc_mut(&mut self) -> &mut Loc;
+     fn start(&self) -> usize;
+     fn syntax_err() -> Self::Err;
+```
+
+**File**: `src/ast/lib.rs` (modified, +118/-435)
+```diff
+@@ -6,12 +6,7 @@
+ // macro's `LocalKey` wrapper. All are `Cell<*mut _>` / `Cell<bool>` (no
+ // destructor, const init).
+ #![feature(thread_local)]
+-//! TODO: OWNERSHIP — almost every byte-slice field in this module has
+-//! mixed/ambiguous ownership. Strings are sometimes literals, sometimes heap
+-//! copies, sometimes slices into `Source.contents` or a `StringBuilder` arena.
+-//! They are kept as `&'static [u8]` to avoid lifetime params; a real ownership
+-//! story (likely `bun_core::String` or a `'source` lifetime threaded through
+-//! `Location`/`Data`/`Msg`) is still needed.
++//! A [`Source`] borrows for `'a`. A diagnostic owns its bytes, so a [`Log`] may outlive the `Source`.
+ 
+ use core::fmt;
+ use std::borrow::Cow;
+@@ -20,18 +15,6 @@ use std::borrow::Cow;
+ // infallible (`Vec::push` / `io::Write` on `Vec<u8>` cannot fail in Rust).
+ use bun_core::Output;
+ 
+-// TODO: swap to `bun_core::StringBuilder` once `clone_with_builder` is
+-// reshaped to use `append_raw` (canonical's `append` borrows `&mut self`, which
+-// breaks the `'static` slice pass-through this stub fakes).
+-#[derive(Default)]
+-pub struct StringBuilder;
+-impl StringBuilder {
+-    pub fn count(&mut self, s: &[u8]) {
+-        let _ = s;
+-    }
+-    pub fn allocate(&mut self) {}
+-}
+-
+ // Discriminants are wire-stable for serialization.
+ #[repr(u8)]
+ #[derive(
+@@ -414,41 +397,9 @@ impl fmt::Debug for Ref {
+ /// A [`Source`]'s path paired with its raw bytes (used by virtual-module
+ /// injection: `BundleV2`'s `additional_files`, `Bun.build` inputs).
+ #[derive(Clone, Copy)]
+-pub struct PathContentsPair {
+-    pub path: bun_paths::fs::Path<'static>,
+-    pub contents: &'static [u8],
+-}
+-
+-type Str = &'static [u8];
+-// `Str` is a lifetime-erased byte-slice alias; see the module-level OWNERSHIP
+-// note for the real ownership story.
+-
+-/// `[]const u8` parameter shim — accepts `&str` / `&[u8]` (any lifetime)
+-/// and erases to the crate-wide `Str` (`&'static [u8]`) lie so callers in either
+-/// string flavour compile against the same signatures.
+-/// Removable together with `Str` once a `'source` lifetime is threaded through
+-/// (see the module-level OWNERSHIP note).
+-pub trait IntoStr {
+-    fn into_str(self) -> Str;
+-}
+-impl IntoStr for &[u8] {
+-    #[inline]
+-    fn into_str(self) -> Str {
+-        // SAFETY: lifetime erasure; see module-level OWNERSHIP note.
+-        unsafe { bun_collections::detach_lifetime(self) }
+-    }
+-}
+-impl IntoStr for &str {
+-    #[inline]
+-    fn into_str(self) -> Str {
+-        self.as_bytes().into_str()
+-    }
+-}
+-impl<const N: usize> IntoStr for &[u8; N] {
+-    #[inline]
+-    fn into_str(self) -> Str {
+-        self[..].into_str()
+-    }
++pub struct PathContentsPair<'a> {
++    pub path: bun_paths::fs::Path<'a>,
++    pub contents: &'a [u8],
+ }
+ 
+ /// Owned/borrowed → `Cow<'static, [u8]>` for `Data.text`. Superset of the old
+@@ -624,24 +575,14 @@ impl Loc {
+ // Location
+ // ───────────────────────────────────────────────────────────────────────────
+ 
++/// Owns its bytes: a diagnostic outlives the [`Source`] it describes.
++#[derive(Clone)]
+ pub struct Location {
+-    // Field ordering optimized to reduce padding:
+-    // - 16-byte fields first: string (ptr+len), ?string (ptr+len+null flag)
+-    // - 8-byte fields next: usize
+-    // - 4-byte fields last: i32
+-    // This eliminates padding between differently-sized fields.
+-    //
+-    // `file` / `namespace` / `line_text` are `Cow` (not `Str`) because
+-    // `Location::clone()` must deep-dupe them so a
+-    // `BuildMessage`/`ResolveMessage` that outlives the
+-    // `Source` it borrowed from doesn't read poisoned memory. The
+-    // borrowed arm covers the common case where the slice points into
+-    // the bundle's arena.
+-    pub file: Cow<'static, [u8]>,
+-    pub namespace: Cow<'static, [u8]>,
++    pub file: Box<[u8]>,
++    pub namespace: Box<[u8]>,
+     /// Text on the line, avoiding the need to refetch the source code. It may be prefixed by the
+     /// preceding lines, which are printed too.
+-    pub line_text: Option<Cow<'static, [u8]>>,
++    pub line_text: Option<Box<[u8]>>,
+     /// Number of bytes this location should highlight.
+     /// 0 to just point at a single character
+     pub length: usize,
+@@ -658,32 +599,11 @@ pub struct Location {
+     pub column: i32,
+ }
+ 
+-// NOT `#[derive(Clone)]`. `file` / `namespace` / `line_text` are
+-// `Cow<'static, [u8]>` whose `Borrowed` arm may carry a lifetime-erased view
+-// into a `Source` (see `init_or_null`, `css_parser.rs`, `error.rs`,
+-// `JSBundler.rs`). The derived `Cow::clone` would re-borrow that pointer, so a
+-// `BuildMessage` cloned via `Option<Location>::clone()` / `Vec<Data>::clone()`
+-// could outlive the source buffer and read poisoned memory. Instead,
+-// every `Clone` of a `Location` deep-dupes its borrowed bytes.
+-impl Clone for Location {
+-    fn clone(&self) -> Self {
+-        Location {
+-            file: Cow::Owned(self.file.to_vec()),
+-            namespace: Cow::Owned(self.namespace.to_vec(
+```
+
+**File**: `src/ast/transpiler_cache.rs` (modified, +1/-1)
+```diff
+@@ -51,7 +51,7 @@ impl Default for RuntimeTranspilerCache {
+ // edge here; the jsc impl casts it back.
+ bun_dispatch::link_interface! {
+     pub TranspilerCacheImpl[Jsc] {
+-        fn get(source: &Source, parser_options: NonNull<()>, used_jsx: bool) -> bool;
++        fn get(source: &Source<'_>, parser_options: NonNull<()>, used_jsx: bool) -> bool;
+         fn put(output_code: &[u8], sourcemap: &[u8], esm_record: &[u8]);
+         fn is_disabled() -> bool;
+     }
+```
+
+**File**: `src/ast_jsc/lib.rs` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ pub fn msg_from_js(global_object: &JSGlobalObject, file: Vec<u8>, err: JSValue)
+                     .to_owned_slice(),
+             ),
+             location: Some(Location {
+-                file: Cow::Owned(file),
++                file: file.into(),
+                 line: 0,
+                 column: 0,
+                 ..Default::default()
+```
+
+**File**: `src/bundler/AstBuilder.rs` (modified, +3/-3)
+```diff
+@@ -35,12 +35,12 @@ use bun_paths::fs::{Path as FsPath, PathName};
+ 
+ pub(crate) struct AstBuilder<'a, 'bump> {
+     pub(crate) bump: &'bump Bump,
+-    pub(crate) source: &'a Source,
++    pub(crate) source: &'a Source<'a>,
+     pub(crate) source_index: u32,
+     pub(crate) stmts: Vec<Stmt>,
+     pub(crate) scopes: Vec<*mut Scope>,
+     pub(crate) symbols: Vec<Symbol>,
+-    pub(crate) import_records: Vec<ImportRecord>,
++    pub(crate) import_records: Vec<ImportRecord<'bump>>,
+     pub(crate) named_imports: NamedImports,
+     pub(crate) named_exports: NamedExports,
+     pub(crate) import_records_for_current_part: Vec<u32>,
+@@ -60,7 +60,7 @@ pub(crate) struct AstBuilder<'a, 'bump> {
+ impl<'a, 'bump> AstBuilder<'a, 'bump> {
+     pub(crate) fn init(
+         bump: &'bump Bump,
+-        source: &'a Source,
++        source: &'a Source<'a>,
+         hot_reloading: bool,
+     ) -> Result<Self, OOM> {
+         let scope: *mut Scope = bump.alloc(Scope {
+```
+
+**File**: `src/bundler/BundleThread.rs` (modified, +1/-1)
+```diff
+@@ -328,7 +328,7 @@ impl<C: CompletionStruct> BundleThread<C> {
+         // SAFETY: `transpiler.log` is the arena-allocated `*mut Log` set up by
+         // `configure_bundler`; valid for the lifetime of `heap`. Raw deref so the
+         // `&'a mut Transpiler` consumed by `init_and_run` above is not reborrowed.
+-        let _ = unsafe { (*(*transpiler_ptr).log).append_to_with_recycled(&mut out_log, true) }; // logger OOM-only
++        unsafe { (*(*transpiler_ptr).log).append_to(&mut out_log) };
+         completion.set_log(out_log);
+ 
+         if run.is_ok() {
+```
+
+**File**: `src/bundler/Chunk.rs` (modified, +31/-30)
+```diff
+@@ -37,13 +37,8 @@ pub struct ChunkImport {
+     pub(crate) import_kind: ImportKind,
+ }
+ 
+-// Lifetime note: string/slice fields below conceptually borrow from the
+-// bundler arena. The borrow is erased to
+-// `&'static [u8]` (the arena is owned by `BundleV2` and outlives every
+-// `Chunk`; see the lifetime-erasure note on `LinkerGraph::bump`) or owns a
+-// `Box<[T]>` instead of threading a `'bump` lifetime through the chunk
+-// pipeline.
+-pub struct Chunk {
++// `'a` is the bundler arena. The keys' borrow of it is still erased (see `LinkerGraph::bump`).
++pub struct Chunk<'a> {
+     /// This is a random string and is used to represent the output path of this
+     /// chunk before the final output path has been computed. See OutputPiece
+     /// for more info on this technique.
+@@ -70,7 +65,7 @@ pub struct Chunk {
+     /// For code splitting
+     pub(crate) cross_chunk_imports: Vec<ChunkImport>,
+ 
+-    pub content: Content,
++    pub content: Content<'a>,
+ 
+     pub entry_point: EntryPoint,
+ 
+@@ -109,7 +104,7 @@ bitflags::bitflags! {
+     }
+ }
+ 
+-impl Default for Content {
++impl Default for Content<'_> {
+     fn default() -> Self {
+         Content::Javascript(JavaScriptChunk::default())
+     }
+@@ -134,7 +129,7 @@ impl Default for Content {
+ // Caveat: `Renamer<'r>` still borrows `&'r mut {Number,Minify}Renamer`,
+ // so the per-chunk renamer is reborrowed mutably from each part-range task;
+ // the printer never writes through it, but the borrow should become `&'r`.
+-unsafe impl Send for Chunk {}
++unsafe impl Send for Chunk<'_> {}
+ // SAFETY: shared `&Chunk` access during the worker fan-out touches only
+ // `compile_results_for_chunk` (UnsafeCell-per-slot, disjoint indices) and
+ // `files_with_parts_in_chunk` atomic counters; the remaining fields are
+@@ -145,7 +140,7 @@ unsafe impl Send for Chunk {}
+ // the matching split-borrow in `generate_compile_result_for_js_chunk`) goes
+ // away. Pre-existing; this impl mirrors `unsafe impl Send for Chunk` and
+ // the single-pointer fan-out the workers use.
+-unsafe impl Sync for Chunk {}
++unsafe impl Sync for Chunk<'_> {}
+ 
+ /// Disjoint-slot output buffer for [`Chunk::compile_results_for_chunk`].
+ ///
+@@ -193,7 +188,7 @@ impl CompileResultSlots {
+     }
+ }
+ 
+-impl Default for Chunk {
++impl Default for Chunk<'_> {
+     fn default() -> Self {
+         Chunk {
+             unique_key: b"",
+@@ -217,7 +212,7 @@ impl Default for Chunk {
+     }
+ }
+ 
+-impl Chunk {
++impl<'a> Chunk<'a> {
+     /// Write `result` into `compile_results_for_chunk[i]` through a raw
+     /// `*mut Chunk`, for the `generate_compile_result_for_*_chunk` worker
+     /// callbacks.
+@@ -320,7 +315,10 @@ impl Chunk {
+         }
+     }
+ 
+-    pub(crate) fn get_js_chunk_for_html<'a>(&self, chunks: &'a [Chunk]) -> Option<&'a Chunk> {
++    pub(crate) fn get_js_chunk_for_html<'c>(
++        &self,
++        chunks: &'c [Chunk<'a>],
++    ) -> Option<&'c Chunk<'a>> {
+         self.get_js_chunk_index_for_html(chunks).map(|i| &chunks[i])
+     }
+ 
+@@ -336,7 +334,10 @@ impl Chunk {
+         })
+     }
+ 
+-    pub(crate) fn get_css_chunk_for_html<'a>(&self, chunks: &'a [Chunk]) -> Option<&'a Chunk> {
++    pub(crate) fn get_css_chunk_for_html<'c>(
++        &self,
++        chunks: &'c [Chunk<'a>],
++    ) -> Option<&'c Chunk<'a>> {
+         // Look up the CSS chunk via the JS chunk's css_chunks indices.
+         // This correctly handles deduplicated CSS chunks that are shared
+         // across multiple HTML entry points (see issue #23668).
+@@ -1344,8 +1345,8 @@ pub struct JavaScriptChunk {
+     pub(crate) module_info: Option<Box<analyze_transpiled_module::ModuleInfo>>,
+ }
+ 
+-pub struct CssChunk {
+-    pub(crate) imports_in_chunk_in_order: Vec<CssImportOrder>,
++pub struct CssChunk<'a> {
++    pub(crate) imports_in_chunk_in_order: Vec<CssImportOrder<'a>>,
+     /// When creating a chunk, this is to be an uninitialized slice with
+     /// length of `imports_in_chunk_in_order`
+     ///
+@@ -1357,7 +1358,7 @@ pub struct CssChunk {
+     pub(crate) asts: Box<[bun_css::BundlerStyleSheet]>,
+ }
+ 
+-impl Drop for CssChunk {
++impl Drop for CssChunk<'_> {
+     fn drop(&mut self) {
+         // `asts` is a slice of bitwise shallow
+         // copies (see `prepareCssAstsForChunk` `ptr::read`). Multiple slots may
+@@ -1369,14 +1370,14 @@ impl Drop for CssChunk {
+     }
+ }
+ 
+-pub struct CssImportOrder {
++pub struct CssImportOrder<'a> {
+     pub(crate) conditions: Vec<bun_css::ImportConditions>,
+-    pub(crate) condition_import_records: Vec<ImportRecord>,
++    pub(crate) condition_import_records: Vec<ImportRecord<'a>>,
+ 
+-    pub(crate) kind: CssImportOrderKind,
++    pub(crate) kind: CssImportOrderKind<'a>,
+ }
+ 
+-impl Drop for CssImportOrder {
++impl Drop for CssImportOrder<'_> {
+     fn drop(&mut self) {
+         // `conditions`: bitwise-shared across multiple order entries by
+         // `findImportedFilesInCSSOrder` (`bitwise_copy(wrapping_conditions)`);
+@@ -1391,15 +1392,15 @@ impl Drop for CssImportOrder {
+ }
+ 
+ #[derive(strum::IntoStaticStr)]
+-
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #46853** (closed): fuzzilli: make process.abort, execve and _kill no-ops in the REPRL child (@robobun)
-- **PR #46841** (closed): node:quic: keep a stream's headers and pendingTrailers after it closes (@robobun)
-- **PR #46831** (closed): http3: scope malformed-message failures to one stream instead of CONNECTION_CLOSE (@robobun)
-- **PR #46798** (closed): node:quic: derive header interest from onheaders, ontrailers and oninfo (@robobun)
-- **PR #46785** (closed): fix(jsc): bypass close_range syscall on Android (@SjnExe)
-- **PR #46784** (closed): fix(sys): avoid pidfd_open on Android to prevent SIGSYS seccomp crash (@SjnExe)
+- **PR #47057** (2026-10-27): Upgrade WebKit to 191c6a41380b (@dylan-conway)
+- **PR #47037** (2026-10-27): Replace bytemuck with an in-tree crate, bun_pod (@dylan-conway)
+- **PR #47035** (2026-10-27): Upgrade WebKit to 982277c9dd3e (@dylan-conway)
+- **PR #47008** (2026-10-26): install: print the loaded .env files only with --verbose (@robobun)
+- **PR #46980** (2026-10-26): bun lint: give JS plugin nodes and tokens start and end in TypeScript files without an ESLint or oxlint config (@robobun)
+- **PR #46960** (closed): resolver: park the cached directories below a busted directory until it is read again (@robobun)
 
 ---
 
@@ -1237,42 +2082,3 @@ follow-ups that are not in this PR.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. console.groupCollapsed: start a group, as console.group does (#46505)
-
-**RULE**:
-When implementing operations in `packages/bun-types/globals.d.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `449877f3`: console.groupCollapsed: start a group, as console.group does (#46505). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/bun-types/globals.d.ts`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-  /**
-   * Start a group. Logs `data` as the label of the group, if there is any,
-   * then indents later `log`, `info`, `debug`, `warn`, `error`, `dir` and
-   * `trace` output by two more spaces.
-   */
-  /** An alias for {@link group}. */
-  /** End the most recent group that is still open, and remove its indent. */
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-  /** Does nothing currently */
-  /** Does nothing currently */
-  /** Does nothing currently */
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `449877f3` are properly handled with clean fallback behavior.

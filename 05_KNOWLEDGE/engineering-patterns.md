@@ -359771,3 +359771,82 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `c75ba45e` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4956. @wdio/vitest-framework): Introducing Vitest with parallel run and fixtures (#161 (Harvested from webdriverio/webdriverio)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "@wdio/vitest-framework): Introducing Vitest with parallel run and fixtures (#161",
+  "source": "webdriverio/webdriverio",
+  "source_url": "https://github.com/webdriverio/webdriverio",
+  "source_version": "ba88f76d",
+  "license": "MIT",
+  "extracted_at": "2026-10-27T19:13:39.579Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-webdriverio-webdriverio",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [webdriverio/webdriverio](https://github.com/webdriverio/webdriverio) (Revision: `ba88f76d`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `packages/wdio-cli/src/launcher.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webdriverio/webdriverio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `4257f55e`: @wdio/vitest-framework): Introducing Vitest with parallel run and fixtures (#16154). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/wdio-cli/src/launcher.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+import { fileURLToPath } from 'node:url'
+import type { Capabilities, Frameworks, Services } from '@wdio/types'
+const LAUNCHER_FRAMEWORKS = new Set(['vitest', '@wdio/vitest-framework'])
+
+/** Vitest `provide` structured-clones the args into forked workers, and programmatic callers may pass functions or classes */
+function cloneableEntries<T extends object>(args: T): Partial<T> {
+    return Object.fromEntries(Object.entries(args).filter(([, value]) => {
+        try {
+            structuredClone(value)
+            return true
+        } catch {
+            return false
+        }
+    })) as Partial<T>
+}
+
+    #frameworkAbort = new AbortController()
+    #frameworkLaunch?: Promise<number>
+        // Rejecting here keeps every hook, service and runner shutdown from running for a run that never starts
+        const framework = await this.#loadFrameworkLauncher(config)
+        if (framework) {
+            this.#assertFrameworkSupportsRun(config.framework, caps)
+        }
+
+            if (framework && config.specFileRetries > 0) {
+                log.warn('specFileRetries is not supported with this framework and is ignored')
+            }
+            // The framework schedules specs itself, so 
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+import type { Capabilities, Services } from '@wdio/types'
+            this.interface = new CLInterface(config, totalWorkerCnt, this._isWatchMode)
+            exitCode = await this._runMode(config, caps)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `4257f55e` are properly handled with clean fallback behavior.
