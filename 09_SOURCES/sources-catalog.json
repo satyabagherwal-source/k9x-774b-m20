@@ -4573,10 +4573,10 @@
     "repository": "slatedb/slatedb",
     "platform": "github",
     "sourceUrl": "https://github.com/slatedb/slatedb",
-    "sourceVersion": "fab43236",
+    "sourceVersion": "d1dc56f1",
     "license": "Apache-2.0",
-    "contentHash": "b7beb4a2b5d4982ae350937e0bc6fb01d91b3dcc87e8a247300a5cea6ac1526d",
-    "lastHarvestedAt": "2026-10-27T10:21:50.664Z",
+    "contentHash": "2915d00f220b37724de1a9943ac21faf64e1abe939b060a708fda6298b670c30",
+    "lastHarvestedAt": "2026-10-27T22:42:44.477Z",
     "learningId": "learn-github-slatedb-slatedb"
   },
   "react-component-slider": {

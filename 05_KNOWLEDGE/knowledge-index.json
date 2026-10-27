@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T22:36:27.583Z",
+  "last_updated": "2026-10-27T22:42:44.440Z",
   "total_verified_learnings": 1152,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -47400,8 +47400,8 @@
       "slug": "slatedb-slatedb",
       "platform": "github",
       "source_url": "https://github.com/slatedb/slatedb",
-      "source_version": "fab43236",
-      "content_hash": "b7beb4a2b5d4982ae350937e0bc6fb01d91b3dcc87e8a247300a5cea6ac1526d",
+      "source_version": "d1dc56f1",
+      "content_hash": "2915d00f220b37724de1a9943ac21faf64e1abe939b060a708fda6298b670c30",
       "dossier_path": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "promoted_rules": [
@@ -47419,6 +47419,11 @@
           "number": 4676,
           "title": "Add slatedb-mirror crate with ObjectStoreMirror (RFC 0034) (#2136)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5039,
+          "title": "compactor): take the L0 watermark from the newest absorbed L0 (#2194)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47426,7 +47431,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T10:21:50.595Z",
+      "verified_at": "2026-10-27T22:42:44.432Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -139041,6 +139046,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T22:36:27.570Z"
+    },
+    "rule-5039": {
+      "learning_id": "rule-5039",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5039,
+      "title": "compactor): take the L0 watermark from the newest absorbed L0 (#2194)",
+      "source_url": "https://github.com/slatedb/slatedb",
+      "source_version": "d1dc56f1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T22:42:44.432Z"
     }
   },
   "aliases": {

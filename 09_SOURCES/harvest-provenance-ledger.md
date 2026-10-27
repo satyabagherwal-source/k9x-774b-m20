@@ -5577,3 +5577,4 @@ Every entry in this ledger must capture:
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `3a72047c` | Multi-dimensional audit evidence | 2026-10-27T22:06:21.601Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `46349d39` | Multi-dimensional audit evidence | 2026-10-27T22:06:30.641Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `6b124303` | Multi-dimensional audit evidence | 2026-10-27T22:36:27.647Z |
+| `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `d1dc56f1` | Multi-dimensional audit evidence | 2026-10-27T22:42:44.477Z |
