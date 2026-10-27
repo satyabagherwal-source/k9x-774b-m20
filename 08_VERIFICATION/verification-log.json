@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-50C0",
-    "timestamp": "2026-10-25T12:32:07.152Z",
-    "repository": "databendlabs/databend",
-    "learningId": "learn-github-databendlabs-databend",
-    "contentHash": "ddd10d71b7df8a505d68bfbb07d67f5853fc03965df940a20bb8889796a9d0cf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-DTCE",
-    "timestamp": "2026-10-25T12:38:57.998Z",
-    "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
-    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-    "contentHash": "aa7294eec6d07e53a111e3c852964c329ea17a6d692286afa34eb1ebe576272e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-DVC5",
-    "timestamp": "2026-10-25T12:39:00.581Z",
-    "repository": "sayanarijit/xplr",
-    "learningId": "learn-github-sayanarijit-xplr",
-    "contentHash": "8cb447827e7c562f39cb9ee0cf253dcc48c86d134a1602f12a9df7b883d067fd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-M819",
     "timestamp": "2026-10-25T12:45:30.285Z",
     "repository": "fallow-rs/fallow",
@@ -7490,6 +7445,51 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "951f466be567510b8454e11c00a55a6215e0553c776975f7a92d1eba92fe4a28",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-NLI6",
+    "timestamp": "2026-10-27T13:17:54.462Z",
+    "repository": "vikejs/vike",
+    "learningId": "learn-github-vikejs-vike",
+    "contentHash": "653d01f586d24a74fb99c74c2b7df565789421b99038c2ad553f6dd3dd43c100",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-NLYC",
+    "timestamp": "2026-10-27T13:17:55.044Z",
+    "repository": "ntex-rs/ntex",
+    "learningId": "learn-github-ntex-rs-ntex",
+    "contentHash": "eab86212b914cca0f060f2882aa345060cf14533d1a27a29f2b5b0654dfbb359",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-NW0E",
+    "timestamp": "2026-10-27T13:18:08.078Z",
+    "repository": "RediSearch/RediSearch",
+    "learningId": "learn-github-redisearch-redisearch",
+    "contentHash": "64452c16848f3429616aff24659c95b2e928492a4d3efc813d40906377952d4a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

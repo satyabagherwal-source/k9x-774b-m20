@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T13:14:27.394Z",
+  "last_updated": "2026-10-27T13:18:08.008Z",
   "total_verified_learnings": 1114,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -38820,8 +38820,8 @@
       "slug": "ntex-rs-ntex",
       "platform": "github",
       "source_url": "https://github.com/ntex-rs/ntex",
-      "source_version": "2668d2ef",
-      "content_hash": "7abb2f2f75dede8c1f5d64dc649d08dc9a68f7808865d6e3f13b9459ef984495",
+      "source_version": "4a2899d9",
+      "content_hash": "eab86212b914cca0f060f2882aa345060cf14533d1a27a29f2b5b0654dfbb359",
       "dossier_path": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "promoted_rules": [
@@ -38854,6 +38854,11 @@
           "number": 4421,
           "title": "Abort the process on a panic during shutdown while an earlier panic is unwinding",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4794,
+          "title": "builds with the ws feature disabled",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38861,7 +38866,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T19:19:06.075Z",
+      "verified_at": "2026-10-27T13:17:54.955Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43673,8 +43678,8 @@
       "slug": "redisearch-redisearch",
       "platform": "github",
       "source_url": "https://github.com/RediSearch/RediSearch",
-      "source_version": "f25c7ebb",
-      "content_hash": "99da3ba61b65ca83a399c1a062fb6cc4dce4c121e59300842ed1113dd2581764",
+      "source_version": "f787c19f",
+      "content_hash": "64452c16848f3429616aff24659c95b2e928492a4d3efc813d40906377952d4a",
       "dossier_path": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "promoted_rules": [
@@ -43702,6 +43707,11 @@
           "number": 4466,
           "title": "[MOD-20157] Inline the field-expiration bit lookup in the inverted-index reader",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4795,
+          "title": "[MOD-16899] Use FAIL timeout policy in COLLECT benchmarks (#12001)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43709,7 +43719,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T22:00:48.408Z",
+      "verified_at": "2026-10-27T13:18:07.990Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52066,8 +52076,8 @@
       "slug": "vikejs-vike",
       "platform": "github",
       "source_url": "https://github.com/vikejs/vike",
-      "source_version": "7a16befc",
-      "content_hash": "c52ec98273bb3c08a46c8aca6e32f912fdc46b1d15bb4982986fd51f654f37f9",
+      "source_version": "2c972989",
+      "content_hash": "653d01f586d24a74fb99c74c2b7df565789421b99038c2ad553f6dd3dd43c100",
       "dossier_path": "07_PROJECT_LEARNING/vikejs-vike-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vikejs-vike-learnings.md",
       "promoted_rules": [
@@ -52105,6 +52115,11 @@
           "number": 3757,
           "title": "docs: Add subpoints to Axxxx0n's user feedback section for clarity + Fix links (",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4793,
+          "title": "an asset without file extension, e.g. `import url from './LICENSE?url'` (#3672)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52112,7 +52127,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T10:16:52.820Z",
+      "verified_at": "2026-10-27T13:17:54.371Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -133318,6 +133333,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T13:14:27.382Z"
+    },
+    "rule-4793": {
+      "learning_id": "rule-4793",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4793,
+      "title": "an asset without file extension, e.g. `import url from './LICENSE?url'` (#3672)",
+      "source_url": "https://github.com/vikejs/vike",
+      "source_version": "2c972989",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:17:54.371Z"
+    },
+    "rule-4794": {
+      "learning_id": "rule-4794",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4794,
+      "title": "builds with the ws feature disabled",
+      "source_url": "https://github.com/ntex-rs/ntex",
+      "source_version": "4a2899d9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:17:54.955Z"
+    },
+    "rule-4795": {
+      "learning_id": "rule-4795",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4795,
+      "title": "[MOD-16899] Use FAIL timeout policy in COLLECT benchmarks (#12001)",
+      "source_url": "https://github.com/RediSearch/RediSearch",
+      "source_version": "f787c19f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:18:07.990Z"
     }
   },
   "aliases": {

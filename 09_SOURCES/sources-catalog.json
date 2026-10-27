@@ -5763,10 +5763,10 @@
     "repository": "vikejs/vike",
     "platform": "github",
     "sourceUrl": "https://github.com/vikejs/vike",
-    "sourceVersion": "7a16befc",
+    "sourceVersion": "2c972989",
     "license": "MIT",
-    "contentHash": "c52ec98273bb3c08a46c8aca6e32f912fdc46b1d15bb4982986fd51f654f37f9",
-    "lastHarvestedAt": "2026-10-25T10:16:52.877Z",
+    "contentHash": "653d01f586d24a74fb99c74c2b7df565789421b99038c2ad553f6dd3dd43c100",
+    "lastHarvestedAt": "2026-10-27T13:17:54.467Z",
     "learningId": "learn-github-vikejs-vike"
   },
   "nvidia-cuda-rust": {
@@ -5793,10 +5793,10 @@
     "repository": "ntex-rs/ntex",
     "platform": "github",
     "sourceUrl": "https://github.com/ntex-rs/ntex",
-    "sourceVersion": "2668d2ef",
+    "sourceVersion": "4a2899d9",
     "license": "Apache-2.0",
-    "contentHash": "7abb2f2f75dede8c1f5d64dc649d08dc9a68f7808865d6e3f13b9459ef984495",
-    "lastHarvestedAt": "2026-10-25T19:19:06.122Z",
+    "contentHash": "eab86212b914cca0f060f2882aa345060cf14533d1a27a29f2b5b0654dfbb359",
+    "lastHarvestedAt": "2026-10-27T13:17:55.048Z",
     "learningId": "learn-github-ntex-rs-ntex"
   },
   "learnapollo-learnapollo": {
@@ -6023,10 +6023,10 @@
     "repository": "RediSearch/RediSearch",
     "platform": "github",
     "sourceUrl": "https://github.com/RediSearch/RediSearch",
-    "sourceVersion": "f25c7ebb",
+    "sourceVersion": "f787c19f",
     "license": "NOASSERTION",
-    "contentHash": "99da3ba61b65ca83a399c1a062fb6cc4dce4c121e59300842ed1113dd2581764",
-    "lastHarvestedAt": "2026-10-25T22:00:48.469Z",
+    "contentHash": "64452c16848f3429616aff24659c95b2e928492a4d3efc813d40906377952d4a",
+    "lastHarvestedAt": "2026-10-27T13:18:08.082Z",
     "learningId": "learn-github-redisearch-redisearch"
   },
   "taiga-family-taiga-ui": {

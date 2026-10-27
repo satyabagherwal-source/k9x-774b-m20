@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source**: github ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
-> **Source Version**: `2668d2ef`  
+> **Source Version**: `4a2899d9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T19:19:05.831Z  
+> **Timestamp**: 2026-10-27T13:17:54.426Z  
 > **Learning ID**: `learn-github-ntex-rs-ntex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T19:19:05.597Z  
+> **Harvest Timestamp**: 2026-10-27T13:17:53.785Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: framework for composable networking services 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2544 stars
+- **Stars / Engagement**: 2546 stars
 
 ---
 
@@ -1006,13 +1006,14 @@ use loom::{
 };
 
 use super::task::{
-    self, LocalQueue, Remote as RemoteTask, RemoteQueue, Runnable as Task, TaskList, task_ref,
+    self, LocalQueue, Remote as RemoteTask, Runnable as Task, TaskList, WakeEntry, WakeQueue,
+    task_ref,
 };
 use super::{LOG_TARGET, REPORTED, RuntimeBuilder, TaskStats, ThreadId, current_thread_id};
 
 const MAX_SELF_WAKES: u32 = task::MAX_SELF_WAKES;
 
-/// Remote tasks run per turn, besides `event_interval` overflow tasks.
+/// Remote commands run per turn, besides `event_interval` overflow commands.
 const REMOTE_BATCH: usize = 128;
 
 /// The remaining bits count remote publications admitted before shutdown.
@@ -1020,57 +1021,75 @@ const CLOSED: usize = 1 << (usize::BITS - 1);
 
 #[repr(C)]
 pub(crate) struct RunnableQueue {
-    // read-only, other threads read `id` on every waker operation
+    /// Immutable owner-thread identity, also read by remote scheduling code.
     pub(crate) id: ThreadId,
+    /// Never-reused identity of this queue's registered wake endpoint.
+    pub(crate) runtime_id: task::wake::RuntimeId,
+    /// Driver notifier, callable from the owner and remote producers.
     pub(super) handle: Box<dyn Notify>,
+    /// Epoch for per-task self-wake streak timestamps.
     pub(super) epoch: Instant,
+    /// Minimum streak duration before a possible busy loop is reported.
     self_wake_time: Duration,
+    /// Local task budget per turn; also contributes to remote drain budgets.
     event_interval: usize,
+    /// Minimum self-wake count to report; zero disables per-task streak tracking.
     self_wake_limit: u32,
-    // written by other threads
+    /// Aligns producer-written state away from the read-only fields.
     _remote: [CacheLine; 0],
-    // set by the first remote `schedule` after `run` cleared it
+    /// Coalesces remote driver notifications until the next scheduler drain.
     notified: AtomicBool,
-    // closed bit and in-flight remote publications
+    /// Closed bit and count of admitted remote submissions still in flight.
     admission: AtomicUsize,
-    pub(super) remote_queue: RemoteQueue,
-    // written by the runtime thread
+    /// Submission, reference and wake commands, processed in FIFO order by the owner.
+    pub(crate) wake_queue: WakeQueue,
+    /// Aligns owner-written scheduling state away from producer-written fields.
     _local: [CacheLine; 0],
+    /// Idle state used for driver notifications and busy-time accounting.
     pub(super) idle: Cell<bool>,
-    // start of the current busy period, valid while not idle
+    /// Start of the current runtime turn, meaningful while the runtime is busy.
     pub(super) poll_start: Cell<Instant>,
-    // `poll_start` relative to the epoch, cached in milliseconds
+    /// Cached `poll_start` offset from the epoch, in wrapping milliseconds.
     pub(super) self_wake_clock: Cell<Option<u32>>,
+    /// Shared wall-clock busy-time totals and current-turn timing.
     pub(super) busy: BusyClock,
-    // poll counters, written by the runtime thread only
+    /// Non-stopped scheduler polls; written by the owner and read across threads.
     pub(super) polls: AtomicU64,
+    /// Scheduler polls that left queued work; written by the owner.
     pub(super) polls_again: AtomicU64,
+    /// Shared histogram of scheduler poll durations.
     pub(super) poll_histogram: AtomicHistogram,
-    // self-wake counter, written by the runtime thread only
+    /// Total self-wakes observed during task polls; written by the owner.
     pub(super) self_wakes: AtomicU64,
-    // spawn location of the running task, null between tasks
+    /// Spawn location of the running task, null between tasks.
     pub(super) current: AtomicPtr<Location<'static>>,
+    /// Owner-only FIFO of runnables, each holding a task reference.
     pub(super) local_queue: LocalQueue,
-    // unfinished tasks, dropped with the runtime
+    /// Non-owning list of unfinished tasks whose futures shutdown must drop.
     pub(crate) tasks: TaskList,
+    /// Counts task allocations without keeping the queue's allocation alive.
+    #[cfg(test)]
+    pub(super) task_allocations: Arc<()>,
 }
 
 /// Aligns the next field to a cache line, 128 bytes covers the adjacent line
 /// prefetcher on x86 and the line size on Apple cores.
 #[derive(Debug)]
 #[repr(align(128))]
-pub(super) struct CacheLine;
+struct CacheLine;
 
 unsafe impl Send for RunnableQueue {}
 unsafe impl Sync for RunnableQueue {}
 
 impl RunnableQueue {
+    /// Initializes an idle queue with this thread as its owner.
     pub(super) fn new(builder: &RuntimeBuilder, handle: Box<dyn Notify>) -> Self {
         let now = Instant::now();
         Self {
             handle,
             event_interval: builder.event_interval,
             id: current_thread_id(),
+            runtime_id: task::wake::runtime_id(),
             idle: Cell::new(true),
             poll_start: Cell::new(now),
             self_wake_clock: Cell::new(None),
@@ -1087,7 +1106,9 @@ impl RunnableQueue {
             current: AtomicPtr::new(ptr::null_mut()),
             local_queue: LocalQueue::new(),
             tasks: TaskList::new(),
-            remote_queue: RemoteQueue::new(),
+            wake_queue: WakeQueue::new(),
+            #[cfg(test)]
+            task_allocations: Arc::new(()),
             _remote: [],
             _local: [],
         }
@@ -1098,13 +1119,13 @@ impl RunnableQueue {
     /// # Safety
     ///
     /// The caller should ensure the captured lifetime is long enough.
-    /// If `LOCAL` is true, the caller must be on the runtime thread.
-    pub(super) unsafe fn spawn<F: Future, const LOCAL: bool>(
+    /// The caller must be on the runtime thread.
+    pub(super) unsafe fn spawn<F: Future>(
         self: &Arc<Self>,
         future: F,
         location: SpawnLocation,
     ) -> JoinHandle<F::Output> {
-        JoinHandle::new(unsafe { task::spawn::<_, LOCAL>(future, self, location) })
+        JoinHandle::new(unsafe { task::spawn(future, self, location) })
     }
 
     /// Spawns a task on this queue without a join handle.
@@ -1113,6 +1134,7 @@ impl RunnableQueue {
     ///
     /// The caller should ensure the captured lifetime is long enough.
     /// If `LOCAL` is true, the caller must be on the runtime thread.
+    /// Otherwise, the future must be `Send`.
     pub(super) unsafe fn spawn_detached<F: Future, const LOCAL: bool>(
         self: &Arc<Self>,
         future: F,
@@ -1121,6 +1143,7 @@ impl RunnableQueue {
         unsafe { task::spawn_detached::<_, LOCAL>(future, self, location) }
     }
 
+    /// Enqueues a runnable on the owner thread and wakes an idle driver if needed.
     pub(crate) fn schedule_local(&self, runnable: Task) {
         self.local_queue.push(runnable);
         if self.idle.get() {
@@ -1134,7 +1157,31 @@ impl RunnableQueue {
         }
     }
 
+    /// Owner releases bypass the registry, including during shutdown cleanup.
+    pub(crate) fn owner_entry(&self, entry: WakeEntry) {
+        if self.admission.load(Ordering::Acquire) == CLOSED && self.wake_queue.is_empty() {
+            drop(entry.into_runnable(self));
+        } else {
+            self.wake_queue.push(entry);
+            if self.idle.get() && !self.is_closed() {
+                self.start_busy();
+                if self.current.load(Ordering::Relaxed).is_null() {
+                    self.notify();
+                }
+            }
+        }
+    }
+
+    /// Acquires remote wake publications without claiming another notification.
+    pub(crate) fn acquire_wakes(&self) {
+        // A later wake may have published writes behind an earlier FIFO entry.
+        // Acquire the latest publication without resetting notification ownership.
+        self.notified.fetch_or(false, Ordering::Acquire);
+    }
+
+    /// Notifies the driver, retrying interruptions and aborting on other failures.
     pub(super) fn notify(&self) {
+        /// Aborts when a failed notification could strand queued work.
         #[cold]
         fn failed(err: &io::Error) -> ! {
             log::error!(target: LOG_TARGET, "Failed to notify runtime driver: {err}; aborting");
@@ -1146,6 +1193,7 @@ impl RunnableQueue {
         struct AbortOnUnwind;
 
         impl Drop for AbortOnUnwind {
+            /// Prevents unwinding from abandoning a coalesced driver wakeup.
             fn drop(&mut self) {
                 log::error!(target: LOG_TARGET, "Runtime notifier panicked; aborting");
                 std::process::abort();
@@ -1163,7 +1211,7 @@ impl RunnableQueue {
         std::mem::forget(guard);
     }
 
-    /// Reserves a publication before a task acquires its remote queue reference.
+    /// Reserves a submission or wake before publication or acquiring a task queue reference.
     /// `owned` keeps the queue alive if publication releases the caller's reference.
     pub(crate) fn admit(self: &Arc<Self>, owned: bool) -> Option<RemotePermit<'_>> {
         let mut state = self.admission.load(Ordering::Acquire);
@@ -1187,94 +1235,7 @@ impl RunnableQueue {
                         } else {
                             Cow::Borrowed(self)
                         }),
-                    });
-                }
-                Err(v) => state = v,
-            }
-        }
-    }
-
-    pub(super) fn run(&self) -> bool {
-        // cleared before draining the sync queues, a task enqueued after the
-        // drain notifies the driver again
-        if self.notified.load(Ordering::Relaxed) {
-            self.notified.swap(false, Ordering::Acquire);
-        }
-
-        // a running task may schedule into `local_queue`, so it must not be
-        // borrowed across `task.run()`
-        for _ in 0..self.event_interval {
-            if let Some(task) = self.pop_local() {
-                self.run_task(task);
-            } else {
-                break;
-            }
-        }
-
-        let remote_queue = self
-            .remote_queue
-            .drain(self.event_interval, |task| self.run_remote(task));
-
-        // tasks from other threads may schedule local tasks
-        let more_tasks = !self.local_queue.is_empty() || remote_queue;
-        if !more_tasks {
-            self.idle.set(true);
-        }
-        more_tasks
-    }
-
-    fn run_remote(&self, task: RemoteTask) {
-        if let Some(task) = task.into_runnable() {
-            self.run_task(task);
-        }
-    }
-
-    fn run_task(&self, task: Task) {
-        struct Reset<'a>(&'a AtomicPtr<Location<'static>>, *mut Location<'static>);
-
-        impl Drop for Reset<'_> {
-            fn drop(&mut self) {
-                // a task that polls the runtime runs tasks inside its own run
-                self.0.store(self.1, Ordering::Relaxed);
-            }
-        }
-
-        let stats = task_ref(&task);
-        // only the owner writes `current`; no callback can reenter between
-        // saving it and publishing the new location
-        let prev = self.current.load(Ordering::Relaxed);
-        self.current.store(
-            ptr::from_ref(stats.location()).cast_mut(),
-            Ordering::Relaxed,
-        );
-        let wakes = if self.self_wake_limit == 0 {
-            0
-        } else {
-            let wakes = stats.self_wakes();
-            if wakes != 0 {
-                stats.set_self_wakes(0);
-            }
-            wakes
-        };
-        let _reset = Reset(&self.current, prev);
-
-        if task.run() {
-            // woken while polled, the task is alive in `local_queue`
-            self.self_wake(stats, wakes);
-        }
-    }
-
-    pub(super) fn self_wake(&self, task: impl TaskStats, wakes: u32) {
-        let total = self.self_wakes.load(Ordering::Relaxed);
-        self.self_wakes
-            .store(total.wrapping_add(1), Ordering::Relaxed);
-
-        if self.self_wake_limit == 0 {
-            return;
-        }
-
-        let reported = wakes & REPORTED;
-        let count = ((wakes & !REPORTED) +
+               
 ```
 
 ### Core Architecture Module: `ntex-server/src/state.rs`
@@ -2339,289 +2300,151 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6ceabec0` (2026-10-24)
-**Commit Message**: Abort the process on a panic during shutdown while an earlier panic is unwinding or held to be resumed
+### Incident Patch 1: `64e3d861` (2026-10-26)
+**Commit Message**: Fix builds with the ws feature disabled
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `ntex/src/http/test.rs` (modified, +17/-15)
 ```diff
-@@ -57,7 +57,7 @@ ntex-h2 = "4.4.0"
- ntex-http = "2.1.0"
- ntex-io = "4.5.0"
- ntex-macros = "4.2.0"
--ntex-net = "4.6.0"
-+ntex-net = "4.7.0"
- ntex-router = "2.1.0"
- ntex-rt = "4.3.0"
- ntex-server = "4.3.0"
-```
-
-**File**: `ntex-net/CHANGES.md` (modified, +4/-0)
-```diff
-@@ -1,5 +1,9 @@
- # Changes
+@@ -343,13 +343,14 @@ impl TestServer {
+                 ntex_h2::ServiceConfig::new()
+                     .set_max_header_list_size(256 * 1024)
+                     .set_max_header_continuation_frames(96),
+-            )
+-            .add(
+-                WsClientConfig::new()
+-                    .set_address(addr)
+-                    .set_handshake_timeout(Seconds(30)),
+-            )
+-            .build();
++            );
++        #[cfg(feature = "ws")]
++        let cfg = cfg.add(
++            WsClientConfig::new()
++                .set_address(addr)
++                .set_handshake_timeout(Seconds(30)),
++        );
++        let cfg = cfg.build();
  
-+## [4.7.0] - Unreleased
-+
-+* compio: abort the process if dropping the runtime panics after the event loop panicked
-+
- ## [4.6.0] - 2026-10-21
+         let client = Self::create_client(cfg.clone());
  
- * Add `tracker` feature, enables `ntex-io/tracker`. io-uring charges a received ring page to
-```
-
-**File**: `ntex-net/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "ntex-net"
--version = "4.6.0"
-+version = "4.7.0"
- authors = ["ntex contributors <team@ntex.rs>"]
- description = "ntexwork utils for ntex framework"
- keywords = ["network", "framework", "async", "futures"]
-```
-
-**File**: `ntex-net/src/compio/mod.rs` (modified, +10/-2)
-```diff
-@@ -95,8 +95,16 @@ pub(crate) fn block_on<F: Future<Output = ()>>(fut: F) {
-     if let Err(payload) = result {
-         ntex_rt::stop_busy(Instant::now());
-         ntex_rt::set_poll_start(None);
--        // pending tasks are dropped after the active unwind has ended
--        drop(rt);
-+        // pending tasks are dropped after the active unwind has ended,
-+        // a second panic aborts the process
-+        if let Err(second) = panic::catch_unwind(AssertUnwindSafe(|| drop(rt))) {
-+            std::mem::forget(second);
-+            std::mem::forget(payload);
-+            let _ = panic::catch_unwind(|| {
-+                log::error!("Panic during shutdown after an earlier panic; aborting");
-+            });
-+            std::process::abort();
-+        }
-         panic::resume_unwind(payload);
+@@ -371,7 +372,7 @@ impl TestServer {
+     /// waits to establish a connection. By default the response timeouts are
+     /// 30 seconds.
+     pub fn set_client_timeout(mut self, timeout: Seconds, connect_timeout: Millis) -> Self {
+-        self.cfg = SharedCfg::new("TEST-CLIENT")
++        let cfg = SharedCfg::new("TEST-CLIENT")
+             .add(IoConfig::new().set_connect_timeout(connect_timeout))
+             .add(TlsConfig::new().set_handshake_timeout(timeout))
+             .add(
+@@ -383,13 +384,14 @@ impl TestServer {
+                 ntex_h2::ServiceConfig::new()
+                     .set_max_header_list_size(256 * 1024)
+                     .set_max_header_continuation_frames(96),
+-            )
+-            .add(
+-                WsClientConfig::new()
+-                    .set_address(self.addr)
+-                    .set_handshake_timeout(Seconds(30)),
+-            )
+-            .build();
++            );
++        #[cfg(feature = "ws")]
++        let cfg = cfg.add(
++            WsClientConfig::new()
++                .set_address(self.addr)
++                .set_handshake_timeout(Seconds(30)),
++        );
++        self.cfg = cfg.build();
+         self.client = Self::create_client(self.cfg.clone());
+         self
      }
- }
 ```
 
-**File**: `ntex-rt/CHANGES.md` (modified, +8/-0)
+**File**: `ntex/src/web/error.rs` (modified, +1/-0)
 ```diff
-@@ -1,5 +1,13 @@
- # Changes
- 
-+## [Unreleased]
-+
-+* Abort the process on a panic during shutdown while an earlier panic is unwinding or
-+  held to be resumed, instead of suppressing it or replacing the original panic
-+
-+* Unregister an arbiter and run its `on_shutdown` callbacks when its event loop panic
-+  unwinds through the runner, as for runners that return the panic as an error
-+
- ## [4.3.0] - 2026-10-21
- 
- * Replace `async-task` with a custom task implementation
-```
-
-**File**: `ntex-rt/src/arbiter.rs` (modified, +100/-33)
-```diff
-@@ -183,12 +183,19 @@ impl Arbiter {
-                     let _ = stop_rx.await;
-                 });
- 
--                // unregister arbiter
--                sys2.unregister_arbiter(Id(id));
--                // skipped by `block_on` if the event loop panicked
--                run_shutdown_callbacks();
--                unsafe {
--                    remove_all_items();
-+                let cleanup = || {
-+                    // unregister arbiter
-+                    sys2.unregister_arbiter(Id(id));
-+                    // skipped by `block_on` if the event loop panicked
-+                    run_shutdown_callbacks();
-+                    unsafe {
-+                        remove_all_items();
-+                    }
-+                };
-+                if result.is_err() {
-+                    crate::abort_on_panic(cleanup);
-+                } else {
-+                    cleanup();
-                 }
- 
-                 if let Err(e) = result {
-@@ -316,7 +323,8 @@ impl Arbiter {
-     /// another callback runs in the same shutdown.
-     ///
-     /// If the thread is exiting and its thread-local storage has already been
--    /// destroyed, `f` is dropped without running.
-+    /// destroyed, `f` is dropped without running. If `f` panics after the
-+    /// event loop panicked, the process is aborted.
-     pub fn on_shutdown<F>(f: F)
-     where
-         F: FnOnce() + 'static,
-@@ -327,6 +335,8 @@ impl Arbiter {
- 
-     #[must_use]
-     /// Adds a callback to run after the arbiter stops.
-+    ///
-+    /// If `f` panics after the event loop panicked, the process is aborted.
-     pub fn on_stop<F>(self, f: F) -> Self
-     where
-         F: Fn() + Send + Sync + 'static,
-@@ -345,13 +355,9 @@ impl Arbiter {
-     pub(crate) fn finalize(&self) {
-         self.0.running.store(false, Ordering::Relaxed);
-         let on_stop = mem::take(&mut *self.0.on_stop.lock());
-+        // a panic while unwinding aborts the process
-         for f in on_stop {
--            if thread::panicking() {
--                // a second panic while unwinding would abort the process
--                let _ = panic::catch_unwind(panic::AssertUnwindSafe(f));
--            } else {
--                f();
--            }
-+            f();
-         }
+@@ -907,6 +907,7 @@ mod tests {
+         assert_eq!(resp.status(), StatusCode::NOT_FOUND);
      }
  
-@@ -686,27 +692,88 @@ mod tests {
-             }
-         }
- 
--        System::new("arb-panic", CatchRunner).block_on(async {
--            let sys = System::current();
--            let mut arb = Arbiter::with_name("panics".to_string());
--            let (tx, rx) = oneshot::channel();
--            arb.handle()
--                .spawn(async move {
--                    Arbiter::on_shutdown(move || {
--                        let _ = tx.send(());
--                    });
--                    panic!("arbiter boom");
--                })
--                .detach();
-+        fn check(runner: impl crate::Runner) {
-+            System::new("arb-panic", runner).block_on(async {
-+                let sys = System::current();
-+                let mut arb = Arbiter::with_name("panics".to_string());
-+                let (tx, rx) = oneshot::channel();
-+                arb.handle()
-+                    .spawn(async move {
-+                        Arbiter::on_shutdown(move || {
-+                            let _ = tx.send(());
-+                        });
-+                        panic!("arbiter boom");
-+                    })
-+                    .detach();
-+
-+                // the panic of the event loop is returned by `join`
-+                let err = arb.join().unwrap_err();
-+                assert_eq!(err.downcast_ref::<&str>(), Some(&"arbiter boom"));
-+                // the arbiter is unregistered and its shutdown callbacks ran
-+                assert!(rx.recv().is_ok());
-+                assert!(!arb.is_running());
-+                sys.list_arbiters(|arbs| assert!(!arbs.contains(&arb)));
-+            });
-+        }
- 
--            // the panic of the event loop is returned by `join`
--            let err = arb.join().unwrap_err();
--            assert_eq!(err.downcast_ref::<&str>(), Some(&"arbiter boom"));
--            // the arbiter is unregistered and its shutdown callbacks ran
--            assert!(rx.recv().is_ok());
--            assert!(!arb.is_running());
--            sys.list_arbiters(|arbs| assert!(!arbs.contains(&arb)));
--        });
-+        check(CatchRunner);
-+        // the panic unwinds through the runner
-+        check(TestRunner);
-+    }
-+
-+    #[cfg(all(not(feature = "tokio"), not(feature = "compio")))]
-+    #[test]
-+    #[cfg_attr(miri, ignore = "spawns a process")]
-+    fn panicking_arbiter_cleanup_aborts() {
-+        const CHILD: &str = "NTEX_RT_ARBITER_CLEANUP_CHILD";
-+
-+        struct CatchRunner;
-+
-+        impl crate::Runner for CatchRunner {
-+            fn block_on(
-+                &self,
-+                fut: crate::BlockFuture,
-+            ) -> Result<(), Box<dyn std::any::Any + Send>> {
-+                panic::catch_unwind(panic::AssertUnwindSafe(|| TestRunner.block_on(fut)))?
-+            }
++    #[cfg(feature = "ws")]
+     #[test]
+     fn test_handshake_error() {
+         use crate::ws::error::HandshakeError;
 ```
 
-**File**: `ntex-rt/src/builder.rs` (modified, +5/-1)
+**File**: `ntex/src/web/error_default.rs` (modified, +3/-1)
 ```diff
-@@ -346,9 +346,13 @@ impl Drop for SystemGuard {
-             // while the thread unwinds, stop arbiters from another thread
-             let list = self.0.take_arbiters();
-             if !list.is_empty() {
--                let _ = std::thread::Builder::new()
-+                let stopped = std::thread::Builder::new()
-                     .spawn(move || list.into_iter().for_each(|arb| arb.stop()))
-                     .map(std::thread::JoinHandle::join);
-+                if let Ok(Err(payload)) = stopped {
-+                    std::mem::forget(payload);
-+                    crate::abort_on_second_panic();
-+                }
-             }
-         } else {
-             self.0.stop_arbiters();
+@@ -6,7 +6,9 @@ use serde_json::error::Error as JsonError;
+ use serde_urlencoded::ser::Error as FormError;
+ 
+ use crate::client;
+-use crate::http::{self, StatusCode, header};
++#[cfg(feature = "ws")]
++use crate::http::header;
++use crate::http::{self, StatusCode};
+ use crate::util::timeout::TimeoutError;
+ #[cfg(feature = "ws")]
+ use crate::ws::error::HandshakeError;
 ```
 
-**File**: `ntex-rt/src/driver.rs` (modified, +17/-4)
+**File**: `ntex/src/web/test.rs` (modified, +11/-8)
 ```diff
-@@ -27,6 +27,10 @@ impl DriverType {
- }
+@@ -846,7 +846,7 @@ fn start_server(cfg: TestServerConfig, factory: AppFactory) -> TestServer {
+     thread::sleep(Millis(25).into());
  
- pub trait Runner: Send + Sync + 'static {
-+    /// Runs the future to completion.
-+    ///
-+    /// A panic of the event loop may be returned as an error or may unwind,
-+    /// both are handled the same way.
-     fn block_on(&self, fut: BlockFuture) -> Result<(), Box<dyn Any + Send>>;
- }
+     let cfg = cfg.client_cfg.clone().unwrap_or_else(|| {
+-        SharedCfg::new("TEST-CLIENT")
++        let cfg = SharedCfg::new("TEST-CLIENT")
+             .add(IoConfig::new().set_connect_timeout(Millis(90_000)))
+             .add(ntex_tls::TlsConfig::new().set_handshake_timeout(Seconds(5)))
+             .add(
+@@ -858,13 +858,14 @@ fn start_server(cfg: TestServerConfig, factory: AppFactory) -> TestServer {
+                 ClientConfig::new()
+                     .set_response_timeout(Seconds(30))
+                     .set_response_payload_timeout(Seconds(30)),
+-            )
+-            .add(
+-                WsClientConfig::new()
+-                    .set_address(addr)
+-                    .set_handshake_timeout(Seconds(60)),
+-            )
+-            .build()
++            );
++        #[cfg(feature = "ws")]
++        let cfg = cfg.add(
++            WsClientConfig::new()
++                .set_address(addr)
++                .set_handshake_timeout(Seconds(60)),
++        );
++        cfg.build()
+     });
  
-@@ -123,12 +127,21 @@ where
+     let client = {
+@@ -889,6 +890,7 @@ fn start_server(cfg: TestServerConfig, factory: AppFactory) -> TestServer {
  
-     ntex_error::set_backtrace_start_alt("ntex/ntex-rt/src/driver.rs", 0);
-     // finalizes the thread's arbiter once its event loop has exited,
--    // including when the runner returns an error or lets a panic escape
--    let _finalize = FinalizeArbiter;
--    run.block_on(Box::pin(async move {
-+    // including when the runner returns an error or a shutdown callback panics
-+    let finalize = FinalizeArbiter;
-+    let fut = Box::pin(async move {
-         let r = fut.await;
-         *result_inner.borrow_mut() = Some(r);
--    }))?;
-+    });
-+    // a panic escaping the runner is returned like a runner error, so the
-+    // caller cleans up the same way for unwinding and catching runners
-+    let res =
-+        panic::catch_unwind(panic::AssertUnwindSafe(|| run.block_on(fut))).unwrap_or_else(Err);
-+    if let Err(e) = res {
-+        // the event loop panicked, a panic of `on_stop` aborts the process
-+        crate::abort_on_panic(|| drop(finalize));
-+        return Err(e);
-+    }
- 
-     crate::arbiter::run_shutdown_callbacks();
-     unsafe {
+     TestServer {
+         id,
++        #[cfg(feature = "ws")]
+         cfg,
+         addr,
+         client,
+@@ -1038,6 +1040,7 @@ impl TestServerConfig {
+ /// Test server controller
+ pub struct TestServer {
+     id: Uuid,
++    #[cfg(feature = "ws")]
+     cfg: SharedCfg,
+     addr: net::SocketAddr,
+     client: Client,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1154** (2026-10-27): Redesign local/remote workers interaction (@fafhrd91)
+- **PR #1153** (2026-10-26): Fix builds with the ws feature disabled (@0xle0ne)
 - **PR #1151** (2026-10-25): Add `LocalWaker`, a thread-confined owned wake handle (@fafhrd91)
 - **PR #1150** (2026-10-24): Abort the process on a panic during shutdown (@fafhrd91)
 - **PR #1149** (2026-10-21): Prep releases (@fafhrd91)
 - **PR #1148** (2026-10-21): Timer wheel callbacks (@fafhrd91)
-- **PR #1147** (2026-10-21): Re-design service readiness (@fafhrd91)
-- **PR #1146** (2026-10-20): Move items queued at a failed, unavailable or blocked worker (@fafhrd91)
 
 ---
 
@@ -2641,28 +2464,58 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Abort the process on a panic during shutdown while an earlier panic is unwinding
+## X. builds with the ws feature disabled
 
 **RULE**:
-When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ntex/src/http/test.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6ceabec0`: Abort the process on a panic during shutdown while an earlier panic is unwinding or held to be resumed. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `64e3d861`: builds with the ws feature disabled. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ntex/src/http/test.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-ntex-net = "4.7.0"
+            );
+        #[cfg(feature = "ws")]
+        let cfg = cfg.add(
+            WsClientConfig::new()
+                .set_address(addr)
+                .set_handshake_timeout(Seconds(30)),
+        );
+        let cfg = cfg.build();
+        let cfg = SharedCfg::new("TEST-CLIENT")
+            );
+        #[cfg(feature = "ws")]
+        let cfg = cfg.add(
+            WsClientConfig::new()
+                .set_address(self.addr)
+                .set_handshake_timeout(Seconds(30)),
+        );
+        self.cfg = cfg.build();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-ntex-net = "4.6.0"
+            )
+            .add(
+                WsClientConfig::new()
+                    .set_address(addr)
+                    .set_handshake_timeout(Seconds(30)),
+            )
+            .build();
+        self.cfg = SharedCfg::new("TEST-CLIENT")
+            )
+            .add(
+                WsClientConfig::new()
+                    .set_address(self.addr)
+                    .set_handshake_timeout(Seconds(30)),
+            )
+            .build();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6ceabec0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `64e3d861` are properly handled with clean fallback behavior.

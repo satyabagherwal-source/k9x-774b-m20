@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T13:14:27.464Z",
+  "last_updated": "2026-10-27T13:18:08.092Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8766,14 +8766,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vikejs-vike",
-      "content_hash": "c52ec98273bb3c08a46c8aca6e32f912fdc46b1d15bb4982986fd51f654f37f9",
-      "verified_at": "2026-10-25T10:16:52.885Z",
+      "content_hash": "653d01f586d24a74fb99c74c2b7df565789421b99038c2ad553f6dd3dd43c100",
+      "verified_at": "2026-10-27T13:17:54.480Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T10:16:52.885Z"
+      "last_updated": "2026-10-27T13:17:54.480Z"
     },
     "NVIDIA/cuda-rust": {
       "repository": "NVIDIA/cuda-rust",
@@ -8811,14 +8811,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ntex-rs-ntex",
-      "content_hash": "7abb2f2f75dede8c1f5d64dc649d08dc9a68f7808865d6e3f13b9459ef984495",
-      "verified_at": "2026-10-25T19:19:06.129Z",
+      "content_hash": "eab86212b914cca0f060f2882aa345060cf14533d1a27a29f2b5b0654dfbb359",
+      "verified_at": "2026-10-27T13:17:55.056Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T19:19:06.129Z"
+      "last_updated": "2026-10-27T13:17:55.056Z"
     },
     "learnapollo/learnapollo": {
       "repository": "learnapollo/learnapollo",
@@ -9156,14 +9156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-redisearch-redisearch",
-      "content_hash": "99da3ba61b65ca83a399c1a062fb6cc4dce4c121e59300842ed1113dd2581764",
-      "verified_at": "2026-10-25T22:00:48.476Z",
+      "content_hash": "64452c16848f3429616aff24659c95b2e928492a4d3efc813d40906377952d4a",
+      "verified_at": "2026-10-27T13:18:08.091Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T22:00:48.476Z"
+      "last_updated": "2026-10-27T13:18:08.091Z"
     },
     "taiga-family/taiga-ui": {
       "repository": "taiga-family/taiga-ui",

@@ -5311,3 +5311,6 @@
 | `CYCLE-20261027-IY4E` | `2026-10-27T13:14:17.534Z` | `NervJS/taro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4790` | Yes (`f8f19bea...`) |
 | `CYCLE-20261027-J32E` | `2026-10-27T13:14:23.942Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4791` | Yes (`9bf1edde...`) |
 | `CYCLE-20261027-J5RW` | `2026-10-27T13:14:27.452Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4792` | Yes (`951f466b...`) |
+| `CYCLE-20261027-NLI6` | `2026-10-27T13:17:54.462Z` | `vikejs/vike` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4793` | Yes (`653d01f5...`) |
+| `CYCLE-20261027-NLYC` | `2026-10-27T13:17:55.044Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4794` | Yes (`eab86212...`) |
+| `CYCLE-20261027-NW0E` | `2026-10-27T13:18:08.078Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4795` | Yes (`64452c16...`) |

@@ -5320,3 +5320,6 @@ Every entry in this ledger must capture:
 | `learn-github-nervjs-taro` | `https://github.com/NervJS/taro` | `c4e9c548` | Multi-dimensional audit evidence | 2026-10-27T13:14:17.538Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `ec961caa` | Multi-dimensional audit evidence | 2026-10-27T13:14:23.945Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `b2ca6a62` | Multi-dimensional audit evidence | 2026-10-27T13:14:27.455Z |
+| `learn-github-vikejs-vike` | `https://github.com/vikejs/vike` | `2c972989` | Multi-dimensional audit evidence | 2026-10-27T13:17:54.467Z |
+| `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `4a2899d9` | Multi-dimensional audit evidence | 2026-10-27T13:17:55.048Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `f787c19f` | Multi-dimensional audit evidence | 2026-10-27T13:18:08.082Z |

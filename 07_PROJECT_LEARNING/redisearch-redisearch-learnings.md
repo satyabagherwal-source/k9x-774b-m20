@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source**: github ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
-> **Source Version**: `f25c7ebb`  
+> **Source Version**: `f787c19f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T22:00:48.141Z  
+> **Timestamp**: 2026-10-27T13:18:07.503Z  
 > **Learning ID**: `learn-github-redisearch-redisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T22:00:48.135Z  
+> **Harvest Timestamp**: 2026-10-27T13:18:06.327Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A query and indexing engine for Redis, providing secondary indexing, full-text search, vector similarity search and aggregations.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6243 stars
+- **Stars / Engagement**: 6244 stars
 
 ---
 
@@ -1605,11 +1605,11 @@ void Priority_Queue_Free(PriorityQueue *pq) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #11970** (2026-10-26): **[BUG] Duplicate FT.AGGREGATE cursor rows after deletes while index backfill is active**
+  *Symptoms*: ## Describe the bug  A raw redis-py diagnostic observed duplicate physical row IDs across FT.AGGREGATE / FT.CURSOR READ pages immediately after bulk deletes while FT.INFO still reported indexing=1. This reproducer does not use Go, ADBC or Arrow. Please investigate whether this is a defect or an expected limitation during initial backfill, and document a supported readiness/mitigation contract.  ## Environment  - Redis OSS 8.6.2; Search module version 80600 (8.6.0), local Docker standalone. - Client: macOS 26.7.1 arm64, redis-py; diagnostic runs RESP2 and RESP3 separately. - search-max-aggregate-results: 2147483648. - Observations were captured on October 21, 2026. This report uses preserved evidence; it is not a new reproduction against latest master. CPU model was not recorded.  ## To reproduce  1. On a disposable Redis with Search, create a HASH index with sortable NUMERIC __rowid, adv and width fields. 2. Insert row IDs 1..100000, then delete every ID not divisible by 10. No further application writes are made during reads. 3. Query `@__rowid:[1 100000]` with `LOAD 4 @__key @__rowid @width @adv`, `TIMEOUT 0`, `WITHCURSOR COUNT 10000`, `DIALECT 2`. Finish every cursor with `FT.CURSOR READ ... COUNT 10000`. 4. Compare the complete row multiset with IDs 10,20,...,100000. Repeat, and compare with a separate run that first waits for num_docs=10000 and indexing=0.  Preserved executable reproducer (creates/drops only a generated test prefix/index): https://github.com/alberttwong/
+
 - **Issue #11881** (2026-10-14): **[BUG] Documents are silently not indexed when they have no indexable field value but do have a `SORTABLE` value**
   *Symptoms*: **Describe the bug** A document is silently skipped by the indexer when both of the following hold:  1. it has no value for any indexable field, and 2. it has a value for at least one `SORTABLE` field.  **To Reproduce** One schema with three fields — an indexable one, a sortable `NOINDEX` one, and a plain `NOINDEX` one — and one document exercising each:  FT.CREATE idx ON HASH PREFIX 1 doc: SCHEMA     indexed          TAG INDEXMISSING     sortable_noindex TAG SORTABLE UNF NOINDEX     plain_noindex    TAG NOINDEX  HSET doc:1 indexed          red HSET doc:2 sortable_noindex x HSET doc:3 plain_noindex    p  **Expected behavior** FT.INFO idx num_docs               => 2      <-- expected 3 hash_indexing_failures => 0      <-- nothing reported  FT.SEARCH idx "*" NOCONTENT 1) 2 2) doc:1 3) doc:3                         <-- doc:2 is missing  FT.SEARCH idx "ismissing(@ indexed)" NOCONTENT DIALECT 2 1) 1 2) doc:3                         <-- doc:2 also has no `indexed` value   **Environment (please complete the following information):** on `master` @ `3635ada5fed6aec58eba05c606ff3bc641b41c08` or earlier version like 8.9.90 8.11.80   **Additional context** Root cause   both `doc:2` and `doc:3`,  flag `ACTX_F_OTHERINDEXED` and  `ACTX_F_TEXTINDEXED`  is true     int empty = (RSSortingVector_Length(&aCtx->sv) == 0) && !hasTextFields && !hasOtherFields;   if (empty) {     aCtx->stateFlags |= ACTX_F_EMPTY;   } but `doc:2` with ACTX_F_EMPTY false while `doc:3` true.   if (ACTX_IS_INDEXED(aCtx)
-
-- **Issue #11274** (2026-09-01): **[BUG] FT.SEARCH intermittently does not fail with given timeout when `search-on-timeout` set to `fail`**
-  *Symptoms*: ❗**IMPORTANT**  ❗ The issue caught by the **Jedis** nightly tests CI against **Redis** `unstable` image, please see the additional context below.  **Describe the bug**  With `search-on-timeout fail` and `search-workers > 0`, a query that exceeds its `TIMEOUT` usually returns a **successful, complete result set** instead of `SEARCH_TIMEOUT Timeout limit was reached`. The timeout is exceeded on every execution — the identical query under `search-on-timeout return` reports the timeout warning on every run — yet under `fail` the error is only returned sporadically. The outcome looks like a race between the background worker completing the query and the blocked-client timeout callback; when the worker wins, the deadline is ignored.  Regression on `master`, introduced between the 2026-08-26 and 2026-08-27 nightly builds. #10961 (merged 2026-08-27 11:11 UTC) is the only commit in that window touching timeout handling and rewrote exactly this path (`QueryRequestTimeout`, FAIL enforcement for background execution).  **To Reproduce**  Pure `redis-cli`, no client library:  1. `docker run -d --rm --name repro -e TLS_ENABLED=false redislabs/client-libs-test:unstable-33278213642-debian` (Redis unstable + RediSearch `master` as of 2026-08-29, `search-workers 16` preconfigured; server on port 3000) 2. ```sh    docker exec repro sh -c '      redis-cli -p 3000 ft.create idx SCHEMA title TEXT n NUMERIC SORTABLE      for i in $(seq 0 9999); do echo "hset doc:$i title \"hello world $i\" n $i"; do
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1626,137 +1626,374 @@ void Priority_Queue_Free(PriorityQueue *pq) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f25c7ebb` (2026-10-25)
-**Commit Message**: [MOD-20157] Inline the field-expiration bit lookup in the inverted-index reader (#11990)
+### Incident Patch 1: `d7ce5386` (2026-10-26)
+**Commit Message**: [MOD-16899] Use FAIL timeout policy in COLLECT benchmarks (#12001)
 
-* [MOD-20157] Skip the field-expiration bit lookup for blocks without a bitset
+* [MOD-16899] Use RETURN-STRICT in COLLECT benchmarks
 
-#10169 made every inverted-index record read look up its entry's bit in the
-block's expiration bitset. The lookup was an out-of-line call that read the
-bitset's ThinVec header even for blocks that never had a field-level TTL,
-which is every block of an index without HEXPIRE. Numeric range queries pay
-it on every decoded and seeked record.
+* [MOD-16899] Remove redundant benchmark comments
 
-Gate the lookup on a pointer-only check that the bitset has an allocation,
-and force-inline it into the reader.
+* [MOD-16899] Fail COLLECT benchmark queries on timeout
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* [MOD-20157] Track entry ordinals only in blocks with an expiration bitset
-
-The reader kept a per-entry ordinal for every decoded and seeked record so it
-could look up the entry's field-expiration bit. In blocks without a bitset that
-bookkeeping is pure overhead.
-
-Enter such blocks with the ordinal marked unknown and skip the bookkeeping
-there. A block gains its first bit only through an append, past every existing
-entry, while the reader is suspended; the first read that finds a bitset with an
-unknown ordinal recoun
-
-**File**: `src/redisearch_rs/inverted_index/src/index/core.rs` (modified, +1/-0)
+**File**: `tests/benchmarks/search-groupby-collect-10K-entity-events-hash-cached-sortby-fields-explicit-k50.yml` (modified, +2/-0)
 ```diff
-@@ -126,6 +126,7 @@ impl IndexBlock {
-     }
- 
-     /// Whether the entry at `ordinal` belongs to a document with a field-level expiration.
-+    #[inline(always)]
-     pub(crate) fn expiration_bit(&self, ordinal: u16) -> bool {
-         self.expiration_bits.contains(ordinal)
-     }
+@@ -18,6 +18,8 @@ setups:
+ dbconfig:
+   - dataset_name: "groupby-collect-entity-events-10K-heavy-hash"
+   - dataset_load_timeout_secs: 1800
++  - configuration-parameters:
++    - search-on-timeout: "FAIL"
+   - init_commands:
+     - '"CONFIG" "SET" "search-enable-unstable-features" "yes"'
+     - '"FT.CREATE" "idx:entity_events" "ON" "HASH" "PREFIX" "1" "entity:" "SCHEMA" "recordId" "NUMERIC" "SORTABLE" "entityName" "TEXT" "SORTABLE" "event_id" "AS" "eventId" "NUMERIC" "SORTABLE" "event_type" "AS" "type" "TAG" "event_target" "AS" "target" "TAG" "SORTABLE" "event_hasNotes" "AS" "hasNotes" "TAG" "event_processed" "AS" "processed" "TAG" "event_dueDate" "AS" "dueDate" "TEXT" "SORTABLE" "event_payload" "AS" "payload" "TEXT" "NOINDEX"'
 ```
 
-**File**: `src/redisearch_rs/inverted_index/src/index/expiration_bits.rs` (modified, +1/-0)
+**File**: `tests/benchmarks/search-groupby-collect-10K-entity-events-hash-cached-sortby-fields-star-offset500-k50.yml` (modified, +2/-0)
 ```diff
-@@ -41,6 +41,7 @@ impl ExpirationBits {
-     }
- 
-     /// Whether `ordinal` is in the set.
-+    #[inline(always)]
-     pub(crate) fn contains(&self, ordinal: u16) -> bool {
-         self.0
-             .as_slice()
+@@ -18,6 +18,8 @@ setups:
+ dbconfig:
+   - dataset_name: "groupby-collect-entity-events-10K-heavy-hash"
+   - dataset_load_timeout_secs: 1800
++  - configuration-parameters:
++    - search-on-timeout: "FAIL"
+   - init_commands:
+     - '"CONFIG" "SET" "search-enable-unstable-features" "yes"'
+     - '"FT.CREATE" "idx:entity_events" "ON" "HASH" "PREFIX" "1" "entity:" "SCHEMA" "recordId" "NUMERIC" "SORTABLE" "entityName" "TEXT" "SORTABLE" "event_id" "AS" "eventId" "NUMERIC" "SORTABLE" "event_type" "AS" "type" "TAG" "event_target" "AS" "target" "TAG" "SORTABLE" "event_hasNotes" "AS" "hasNotes" "TAG" "event_processed" "AS" "processed" "TAG" "event_dueDate" "AS" "dueDate" "TEXT" "SORTABLE" "event_payload" "AS" "payload" "TEXT" "NOINDEX"'
 ```
 
-**File**: `src/redisearch_rs/inverted_index/src/tests/expiration_bit.rs` (modified, +65/-0)
+**File**: `tests/benchmarks/search-groupby-collect-10K-entity-events-json-cached-sortby-fields-explicit-k50.yml` (modified, +2/-0)
 ```diff
-@@ -239,3 +239,68 @@ fn expiration_bit_survives_gc() {
+@@ -18,6 +18,8 @@ setups:
+ dbconfig:
+   - dataset_name: "groupby-collect-entity-events-10K-heavy-json"
+   - dataset_load_timeout_secs: 1800
++  - configuration-parameters:
++    - search-on-timeout: "FAIL"
+   - init_commands:
+     - '"CONFIG" "SET" "search-enable-unstable-features" "yes"'
+     - '"FT.CREATE" "idx:entity_events" "ON" "JSON" "PREFIX" "1" "entity:" "SCHEMA" "$.recordId" "AS" "recordId" "NUMERIC" "SORTABLE" "$.entityName" "AS" "entityName" "TEXT" "SORTABLE" "$.event.id" "AS" "eventId" "NUMERIC" "SORTABLE" "$.event.type" "AS" "type" "TAG" "$.event.target" "AS" "target" "TAG" "SORTABLE" "$.event.hasNotes" "AS" "hasNotes" "TAG" "$.event.processed" "AS" "processed" "TAG" "$.event.dueDate" "AS" "dueDate" "TEXT" "SORTABLE" "$.event.payload" "AS" "payload" "TEXT" "NOINDEX"'
+```
+
+**File**: `tests/benchmarks/search-groupby-collect-10K-entity-events-json-cached-sortby-fields-star-offset500-k50.yml` (modified, +2/-0)
+```diff
+@@ -18,6 +18,8 @@ setups:
+ dbconfig:
+   - dataset_name: "groupby-collect-entity-events-10K-heavy-json"
+   - dataset_load_timeout_secs: 1800
++  - configuration-parameters:
++    - search-on-timeout: "FAIL"
+   - init_commands:
+     - '"CONFIG" "SET" "search-enable-unstable-features" "yes"'
+     - '"FT.CREATE" "idx:entity_events" "ON" "JSON" "PREFIX" "1" "entity:" "SCHEMA" "$.recordId" "AS" "recordId" "NUMERIC" "SORTABLE" "$.entityName" "AS" "entityName" "TEXT" "SORTABLE" "$.event.id" "AS" "eventId" "NUMERIC" "SORTABLE" "$.event.type" "AS" "type" "TAG" "$.event.target" "AS" "target" "TAG" "SORTABLE" "$.event.hasNotes" "AS" "hasNotes" "TAG" "$.event.processed" "AS" "processed" "TAG" "$.event.dueDate" "AS" "dueDate" "TEXT" "SORTABLE" "$.event.payload" "AS" "payload" "TEXT" "NOINDEX"'
+```
+
+---
+
+### Incident Patch 2: `b9cf3364` (2026-10-26)
+**Commit Message**: [MOD-20194] Fix out-of-bounds read when a JSON document's language field is empty (#11973)
+
+* Add tests for RSLanguage_Find length handling and empty JSON language
+
+RSLanguage_Find treats a zero length as "read up to the NUL", so an empty
+JSON LANGUAGE_FIELD value, whose RedisJSON buffer is not NUL-terminated,
+is looked up past its end.
+
+The JSON path-cache mock can now report a length other than strlen, which
+lets JSONPathIndexingTest.emptyLanguageFallsBackToDefault model that
+buffer. It and LanguageTest.testFindZeroLengthIsUnsupported fail until
+the fix lands. The other new cases pass today and pin what the fix must
+keep: length-bounded and NULL lookups, the fallback for an empty JSON
+language on the real RedisJSON path, and LANGUAGE arguments with an
+embedded NUL being read up to that NUL.
+
+* Make RSLanguage_Find length-bounded
+
+RSLanguage_Find treated len == 0 as "the string is NUL-terminated" and
+then scanned the table with strcasecmp. An empty JSON LANGUAGE_FIELD
+value reaches it as (ptr, 0), where ptr comes from RedisJSON's getString
+and points into a buffer that is not NUL-terminated, so strcasecmp read
+past the value.
+
+RSLanguage_Find now always reads exactly len bytes: le
+
+**File**: `src/aggregate/aggregate_request.c` (modified, +1/-1)
+```diff
+@@ -784,7 +784,7 @@ static int parseQueryArgs(ArgsCursor *ac, AREQ *req, RSSearchOptions *searchOpts
+   if(languageStr == NULL) {
+     searchOpts->language = RS_LANG_UNSET;
+   } else {
+-    searchOpts->language = RSLanguage_Find(languageStr, 0);
++    searchOpts->language = RSLanguage_Find(languageStr, strlen(languageStr));
+   }
+ 
+   if (AC_IsInitialized(&returnFields)) {
+```
+
+**File**: `src/language.c` (modified, +7/-11)
+```diff
+@@ -106,17 +106,13 @@ RSLanguage RSLanguage_Find(const char *language, size_t len) {
+   if (language == NULL)
+     return DEFAULT_LANGUAGE;
+ 
+-  if (!len) {
+-    for (size_t i = 0; __langPairs[i].str != NULL; i++) {
+-      if (!strcasecmp(language, __langPairs[i].str)) {
+-        return __langPairs[i].lang;
+-      }
+-    }
+-  } else {
+-    for (size_t i = 0; __langPairs[i].str != NULL; i++) {
+-      if (STR_EQCASE(language, len, __langPairs[i].str)) {
+-        return __langPairs[i].lang;
+-      }
++  if (len == 0) {
++    return RS_LANG_UNSUPPORTED;
++  }
++
++  for (size_t i = 0; __langPairs[i].str != NULL; i++) {
++    if (STR_EQCASE(language, len, __langPairs[i].str)) {
++      return __langPairs[i].lang;
      }
-     assert!(!reader.next_record(&mut result).unwrap());
+   }
+   return RS_LANG_UNSUPPORTED;
+```
+
+**File**: `src/language.h` (modified, +6/-1)
+```diff
+@@ -51,7 +51,12 @@ typedef enum {
+ 
+ #define DEFAULT_LANGUAGE RS_LANG_ENGLISH
+ 
+-/* check if a language is supported by our stemmers */
++/* Look up a supported language by name.
++ * - Reads exactly `len` bytes of `language`; it need not be NUL-terminated.
++ * - `len == 0` is the empty string and returns RS_LANG_UNSUPPORTED; pass strlen(s) for a C string.
++ * - `language == NULL` returns DEFAULT_LANGUAGE.
++ * - Matches case-insensitively (strncasecmp; ASCII in the C locale) on all `len` bytes;
++ *   anything else returns RS_LANG_UNSUPPORTED. */
+ RSLanguage RSLanguage_Find(const char *language, size_t len);
+ const char *RSLanguage_ToString(RSLanguage language);
+ 
+```
+
+**File**: `src/rules.c` (modified, +1/-1)
+```diff
+@@ -138,7 +138,7 @@ static SchemaRule *SchemaRule_CreateInternal(SchemaRuleArgs *args, ArgsCursor *p
+   }
+ 
+   if (args->lang_default) {
+-    RSLanguage lang = RSLanguage_Find(args->lang_default, 0);
++    RSLanguage lang = RSLanguage_Find(args->lang_default, strlen(args->lang_default));
+     if (lang == RS_LANG_UNSUPPORTED) {
+       QueryError_SetError(status, QUERY_ERROR_CODE_ADD_ARGS, "Invalid language");
+       goto error;
+```
+
+**File**: `tests/cpptests/test_cpp_json_path_cache_indexing.cpp` (modified, +19/-1)
+```diff
+@@ -8,6 +8,7 @@
+  */
+ 
+ #include "gtest/gtest.h"
++#include "gtest/internal/gtest-port.h"  // For CaptureStderr/GetCapturedStderr
+ #include "document.h"
+ #include "indexes.h"
+ #include "json.h"
+@@ -16,6 +17,7 @@
+ 
+ #include <cstring>
+ #include <map>
++#include <optional>
+ #include <set>
+ #include <string>
+ #include <vector>
+@@ -28,6 +30,9 @@ class JSONPathIndexingTest : public ::testing::Test {
+   struct Value {
+     double number = 0;
+     const char *string = nullptr;
++    // Reported by getString instead of strlen, to model RedisJSON strings, which are not
++    // NUL-terminated.
++    std::optional<size_t> length;
+   };
+   using Root = std::map<std::string, Value>;
+   struct Iterator {
+@@ -107,7 +112,7 @@ class JSONPathIndexingTest : public ::testing::Test {
+     auto *value = static_cast<const Value *>(json);
+     if (!value->string) return REDISMODULE_ERR;
+     *out = value->string;
+-    *len = strlen(*out);
++    *len = value->length.value_or(strlen(*out));
+     return REDISMODULE_OK;
+   }
+ 
+@@ -235,4 +240,17 @@ TEST_F(JSONPathIndexingTest, languageAndScorePathsAreCompiledAndReused) {
+   EXPECT_EQ(stringGets, 0);
  }
-+
-+/// Numeric record for `doc_id` with the given field-expiration bit.
-+fn numeric(doc_id: DocId, has_exp: bool) -> RSIndexResult<'static> {
-+    RSIndexResult::build_numeric(1.5)
-+        .doc_id(doc_id)
-+        .has_field_expiration(has_exp)
-+        .build()
+ 
++TEST_F(JSONPathIndexingTest, emptyLanguageFallsBackToDefault) {
++  auto *spec = createSpec({"ON", "JSON", "LANGUAGE", "italian", "LANGUAGE_FIELD", "$.lang",
++                           "SCHEMA", "$.price", "NUMERIC"});
++  ASSERT_NE(spec, nullptr);
++  // An empty value whose pointer is followed by a valid language name: a lookup that reads past
++  // the reported length finds English instead of falling back to the index default.
++  Root doc = {{"$.lang", {0, "english", 0}}};
++  testing::internal::CaptureStderr();
++  EXPECT_EQ(SchemaRule_JsonLang(ctx, spec->rule, &doc, "doc"), RS_LANG_ITALIAN);
++  std::string log = testing::internal::GetCapturedStderr();
++  EXPECT_NE(log.find("invalid language for key doc"), std::string::npos) << log;
 +}
 +
-+/// Seeking within and across blocks reports each entry's bit whether or not its block has a
-+/// bitset, including blocks entered without one.
-+#[test]
-+fn numeric_seek_reports_expiration_bit_across_blocks() {
-+    let mut ii = InvertedIndex::<Numeric>::new(IndexFlags_Index_StoreNumeric);
-+    // Six blocks' worth of docs, small enough for miri. Every third doc in the upper half has a
-+    // TTL, so the lower three blocks have no bitset and the upper three do.
-+    let per_block = DocId::from(<Numeric as crate::Encoder>::RECOMMENDED_BLOCK_ENTRIES);
-+    let last = 6 * per_block;
-+    let has_exp = |doc_id: DocId| doc_id > last / 2 && doc_id.is_multiple_of(3);
-+    for doc_id in 1..=last {
-+        ii.add_record(&numeric(doc_id, has_exp(doc_id))).unwrap();
-+    }
-+    assert_eq!(ii.number_of_blocks(), 6);
-+    for (i, block) in ii.blocks.iter().enumerate() {
-+        assert_eq!(
-+            block.expiration_bits.mem_usage() > 0,
-+            i >= 3,
-+            "bitset presence of block {i}"
-+        );
-+    }
+ }  // namespace
+```
+
+**File**: `tests/cpptests/test_cpp_language.cpp` (added, +26/-0)
+```diff
+@@ -0,0 +1,26 @@
++/*
++ * Copyright (c) 2006-Present, Redis Ltd.
++ * All rights reserved.
++ *
++ * Licensed under your choice of the Redis Source Available License 2.0
++ * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
++ * GNU Affero General Public License v3 (AGPLv3).
++ */
 +
-+    // Seeks within a block and into the next one, then the entry after each. The last doc is
-+    // included so the end of the index is checked too.
-+    let mut reader = ii.reader();
-+    let mut result = numeric(0, false);
-+    for target in (1..=last).step_by(7).chain([last]) {
-+        assert!(reader.seek_record(target, &mut result).unwrap());
-+        assert_eq!(
-+            (result.doc_id, result.has_field_expiration),
-+            (target, has_exp(target)),
-+            "seek({target})"
-+        );
-+        if target < last {
-+            assert!(reader.next_record(&mut result).unwrap());
-+            assert_eq!(
-+                (result.doc_id, result.has_field_expiration),
-+                (target + 1, has_exp(target + 1)),
-+                "next after {target}"
-+            );
-+        } else {
-+            assert!(!reader.next_record(&mut result).unwrap(), "end of index");
-+        }
-+    }
++#include "gtest/gtest.h"
++#include "language.h"
 +
-+    // Seeks that skip several blocks at once, through the binary search over block bounds.
-+    let mut reader = ii.reader();
-+    for target in [1, 4 * per_block + per_block / 2, last - 1] {
-+        assert!(reader.seek_record(target, &mut result).unwrap());
-+        assert_eq!(
-+            (result.doc_id, result.has_field_expiration),
-+            (target, has_exp(target)),
-+            "multi-block seek({target})"
-+        );
-+    }
++class LanguageTest : public ::testing::Test {};
++
++TEST_F(LanguageTest, testFindZeroLengthIsUnsupported) {
++  // Zero length is the empty string, even when a valid name follows the pointer.
++  EXPECT_EQ(RSLanguage_Find("english", 0), RS_LANG_UNSUPPORTED);
 +}
++
++TEST_F(LanguageTest, testFindReadsOnlyLenBytes) {
++  EXPECT_EQ(RSLanguage_Find("englishXXX", 7), RS_LANG_ENGLISH);
++}
++
++TEST_F(LanguageTest, testFindNullReturnsDefault) {
++  EXPECT_EQ(RSLanguage_Find(NULL, 0), DEFAULT_LANGUAGE);
++}
+```
+
+**File**: `tests/pytests/test_language.py` (modified, +51/-0)
+```diff
+@@ -549,6 +549,57 @@ def testJsonIndexLanguageField(env):
+                       'SORTBY', 'word', 'DESC')
+         env.assertEqual(res2, res1)
+ 
++@skip(no_json=True)
++def testJsonIndexEmptyLanguageField(env):
++    """An empty JSON language value falls back to the index default language.
++
++    A regression guard over the real RedisJSON path, whose strings are not
++    NUL-terminated: reading the empty value up to a terminator over-reads. A
++    normal build cannot see that over-read, so this passes with or without it;
++    only a sanitizer run can report it.
++    """
++    conn = getConnectionByEnv(env)
++    env.expect('FT.CREATE', 'idx', 'ON', 'JSON',
++               'LANGUAGE', 'italian', 'LANGUAGE_FIELD', '$.lang',
++               'SCHEMA', '$.word', 'AS', 'word', 'TEXT').ok()
++
++    conn.execute_command('JSON.SET', '{word}:1', '$',
++                         r'{"word":"ciliegia", "lang": ""}') # cherry
++    conn.execute_command('JSON.SET', '{word}:2', '$',
++                         r'{"word":"ciliegie", "lang": ""}') # cherries
++
++    info = index_info(env, 'idx')
++    env.assertEqual(int(info['num_docs']), 2, message=info)
++    env.assertEqual(int(info['hash_indexing_failures']), 0, message=info)
++
++    # Each word finding both documents shows they were stemmed in Italian.
++    expected = [2, '{word}:1', '{word}:2']
++    for word in ['ciliegia', 'ciliegie']:
++        res = env.cmd('FT.SEARCH', 'idx', word, 'SORTBY', 'word', 'ASC',
++                      'NOCONTENT')
++        env.assertEqual(res, expected)
++
++    for shardId in range(1, env.shardsCount + 1):
++        env.assertEqual(env.getConnection(shardId).execute_command('PING'), True)
++
++def testLanguageArgEmbeddedNul(env):
++    """FT.CREATE and FT.SEARCH read a LANGUAGE argument only up to its first
++    NUL byte, so Italian followed by a NUL and junk is accepted as Italian.
++
++    Pinned so that bounding the language lookup by length keeps accepting what
++    these two commands accept today. FT.ADD is not covered: it already uses the
++    argument's full length and rejects the same bytes.
++    """
++    env.expect('FT.CREATE', 'idx', 'LANGUAGE', 'italian\x00x',
++               'SCHEMA', 't', 'TEXT').ok()
++
++    info = index_info(env, 'idx')
++    index_definition = info['index_definition']
++    idx = {index_definition[i]: index_definition[i + 1] for i in range(0, len(index_definition), 2)}
++    env.assertEqual(idx['default_language'], 'italian')
++
++    env.expect('FT.SEARCH', 'idx', '*', 'LANGUAGE', 'italian\x00x').equal([0])
++
+ def testTagalogLanguage(env):
+     conn = getConnectionByEnv(env)
+ 
+```
+
+---
+
+### Incident Patch 3: `6c941c74` (2026-10-26)
+**Commit Message**: query_eval: fix valgrind uninitialised-read in the vector test fixture (#11684)
+
+`VectorFixture::new` built its query vector from
+`opts.indexed_vectors.unwrap_or(0)`. In optimised builds the code reads
+the uninitialised payload of `None`, which valgrind reports as a
+conditional jump on uninitialised memory for every fixture without an
+index.
+
+Build the index and the query vector in one `match` so the count is
+only read when it is present.
+
+**File**: `src/redisearch_rs/query_eval/tests/integration/vector.rs` (modified, +8/-8)
+```diff
+@@ -374,9 +374,14 @@ impl VectorFixture {
+         // Opening the index asserts the field is a vector field before reading
+         // the index off it, so the type has to be set even when there is none.
+         field_spec_mut.set_types(ffi::FieldType_INDEXFLD_T_VECTOR);
+-        let index = opts
+-            .indexed_vectors
+-            .map_or(std::ptr::null_mut(), flat_index);
++        // Querying at the last indexed vector makes distance fall as the document
++        // id rises, so the nearest neighbours are the highest ids; see `flat_index`.
++        // Without an index the query is never wired into `vq`, so the zeroed
++        // placeholder is never read.
++        let (index, mut query_vector): (_, Box<[f32]>) = match opts.indexed_vectors {
++            Some(count) => (flat_index(count), vec![count as f32; DIM].into()),
++            None => (std::ptr::null_mut(), vec![0.0; DIM].into()),
++        };
+         field_spec_mut.__bindgen_anon_1.vectorOpts.vecSimIndex = index;
+ 
+         let (mut child, filter) = match opts.child {
+@@ -407,11 +412,6 @@ impl VectorFixture {
+         vq.fieldIndex = unsafe { (*field_spec.as_ptr()).index };
+         vq.scoreField = opts.score_field.map_or(std::ptr::null_mut(), module_string);
+ 
+-        // The corner the index's contents are arranged around; see `flat_index`.
+-        // Without an index the search stops before it ever reads the query, so
+-        // the zeroed value the fallback produces is never looked at.
+-        let mut query_vector: Box<[f32]> =
+-            vec![opts.indexed_vectors.unwrap_or(0) as f32; DIM].into_boxed_slice();
+         if !index.is_null() {
+             let vector = query_vector.as_mut_ptr().cast();
+             let vec_len = std::mem::size_of_val(&*query_vector);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11994** (2026-10-25): [8.12] [MOD-20157] Inline the field-expiration bit lookup in the inverted-index reader (@oshadmi)
-- **PR #11991** (closed): [MOD-19658] Add slot membership enumeration to the disk API (@kei-nan)
-- **PR #11990** (2026-10-25): [MOD-20157] Inline the field-expiration bit lookup in the inverted-index reader (@oshadmi)
-- **PR #11976** (closed): Bound the fork GC child wait by wall clock instead of attempt count (@evazca)
-- **PR #11975** (2026-10-22): [8.6-rse] [MOD-20014] clear docIDmetadata on restore commands on disk (@redisearch-backport-pull-request[bot])
-- **PR #11974** (2026-10-22): [8.8-rse] [MOD-20014] clear docIDmetadata on restore commands on disk (@redisearch-backport-pull-request[bot])
+- **PR #12014** (closed): [MOD-19327] Use a cheaper vector generator in the vector-update benchmark (@nonirosenfeldredis)
+- **PR #12012** (2026-10-27): sorting_vector: avoid a valgrind false positive in legacy_rdb test (@gdesmott)
+- **PR #12011** (2026-10-27): Bump cargo-nextest to 0.9.150 for GHSA-vc25-qg58-w57c (@gdesmott)
+- **PR #12007** (2026-10-26): [8.12] Upgrade boto3 in the release set-artifacts job (@oshadmi)
+- **PR #12006** (closed): Bump version from 8.11.90 to 8.11.91 (@github-actions[bot])
+- **PR #12003** (2026-10-26): [8.12] Bump version from 8.11.80 to 8.11.90 (@oshadmi)
 
 ---
 
@@ -1776,21 +2013,22 @@ unknown ordinal recoun
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [MOD-20157] Inline the field-expiration bit lookup in the inverted-index reader 
+## X. [MOD-16899] Use FAIL timeout policy in COLLECT benchmarks (#12001)
 
 **RULE**:
-When implementing operations in `src/redisearch_rs/inverted_index/src/index/core.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/benchmarks/search-groupby-collect-10K-entity-events-hash-cached-sortby-fields-explicit-k50.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f25c7ebb`: [MOD-20157] Inline the field-expiration bit lookup in the inverted-index reader (#11990). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d7ce5386`: [MOD-16899] Use FAIL timeout policy in COLLECT benchmarks (#12001). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/redisearch_rs/inverted_index/src/index/core.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/benchmarks/search-groupby-collect-10K-entity-events-hash-cached-sortby-fields-explicit-k50.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    #[inline(always)]
+  - configuration-parameters:
+    - search-on-timeout: "FAIL"
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1800,4 +2038,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f25c7ebb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d7ce5386` are properly handled with clean fallback behavior.
