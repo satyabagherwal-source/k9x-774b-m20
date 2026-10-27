@@ -4773,10 +4773,10 @@
     "repository": "etcd-io/etcd",
     "platform": "github",
     "sourceUrl": "https://github.com/etcd-io/etcd",
-    "sourceVersion": "f3221acd",
+    "sourceVersion": "e1a7365f",
     "license": "Apache-2.0",
-    "contentHash": "b7a43655c36fe751bbb007626fdf8ff2bb20920f98cbfd96a334eb0a5cd914ed",
-    "lastHarvestedAt": "2026-10-25T02:42:42.655Z",
+    "contentHash": "c391847ec83851f71763aec91eba13c317522a1574fd6e04b9b1731e2ec01244",
+    "lastHarvestedAt": "2026-10-27T10:54:28.577Z",
     "learningId": "learn-github-etcd-io-etcd"
   },
   "wasm-bindgen-wasm-pack": {
@@ -7183,10 +7183,10 @@
     "repository": "goharbor/harbor",
     "platform": "github",
     "sourceUrl": "https://github.com/goharbor/harbor",
-    "sourceVersion": "716de991",
+    "sourceVersion": "d822d80c",
     "license": "Apache-2.0",
-    "contentHash": "1b5aa31aeea2c080af387c6f63faec9f3f0d0d22e16a55659521c7ad0db5f166",
-    "lastHarvestedAt": "2026-10-25T19:58:22.453Z",
+    "contentHash": "fa5c40bc66d8251cb59a7b2cfdf9c5cf6d71b951f73d80fa76819c7ffbb6def6",
+    "lastHarvestedAt": "2026-10-27T10:54:23.333Z",
     "learningId": "learn-github-goharbor-harbor"
   },
   "joreilly-peopleinspace": {
@@ -10828,5 +10828,35 @@
     "contentHash": "48da1837bef0e5b1b38df6e7150814b86dcfe7b59cf5c2886f8d80dcad727eb9",
     "lastHarvestedAt": "2026-10-27T08:13:24.323Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb"
+  },
+  "gaurav-gosain-tuios": {
+    "repository": "Gaurav-Gosain/tuios",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Gaurav-Gosain/tuios",
+    "sourceVersion": "c725ff16",
+    "license": "MIT",
+    "contentHash": "27d064fdeeafee467712cc74b4c64ca8d6e9a18bcd88e383941b02d78b56570c",
+    "lastHarvestedAt": "2026-10-27T10:54:11.431Z",
+    "learningId": "learn-github-gaurav-gosain-tuios"
+  },
+  "liyupi-mianshiya": {
+    "repository": "liyupi/mianshiya",
+    "platform": "github",
+    "sourceUrl": "https://github.com/liyupi/mianshiya",
+    "sourceVersion": "7354f485",
+    "license": "MIT",
+    "contentHash": "aade2425f1cc59221c787cfde97a4294c633949cb33817adbe5bee8823681a89",
+    "lastHarvestedAt": "2026-10-27T10:54:16.243Z",
+    "learningId": "learn-github-liyupi-mianshiya"
+  },
+  "scrapecreators-social-media-research-skills": {
+    "repository": "ScrapeCreators/social-media-research-skills",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ScrapeCreators/social-media-research-skills",
+    "sourceVersion": "64ba7b4d",
+    "license": "MIT",
+    "contentHash": "8e72ecb89c151fcff984a1101e11f938be6d6e3cb74d315d5cf90b2d4667d160",
+    "lastHarvestedAt": "2026-10-27T10:54:24.962Z",
+    "learningId": "learn-github-scrapecreators-social-media-research-skills"
   }
 }

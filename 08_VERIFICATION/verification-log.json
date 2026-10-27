@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-I9SE",
-    "timestamp": "2026-10-25T06:38:30.926Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "4fd4954a0c9110eddea3c58590ef1b239481dd4409f42eac2c0143224daa9572",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-QD6B",
-    "timestamp": "2026-10-25T06:44:48.563Z",
-    "repository": "pola-rs/polars",
-    "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "633b583c7961d0eef188a2c2d7ba9d1eae038a14d8e0b1a1f322b7b8de327240",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-QJCM",
-    "timestamp": "2026-10-25T06:44:56.566Z",
-    "repository": "karmada-io/karmada",
-    "learningId": "learn-github-karmada-io-karmada",
-    "contentHash": "7eb9bd7aa5503bd9f4ace65e9f968c77906907f45c84980684b1f3771620ae68",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-QL9J",
-    "timestamp": "2026-10-25T06:44:59.047Z",
-    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-    "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
-    "contentHash": "5cb4356860441b2d273ea8b5a6d8c3294865c272afcb45803469cc38f7ca1f81",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-4KA4",
-    "timestamp": "2026-10-25T06:55:50.956Z",
-    "repository": "tokio-rs/tokio",
-    "learningId": "learn-github-tokio-rs-tokio",
-    "contentHash": "70e6c4877ce16a30c8ca9a5d79cfa3617beb9bc10eb1dc0edcf56717bd1d9fa6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-4PE7",
     "timestamp": "2026-10-25T06:55:57.583Z",
     "repository": "LiquidAI/d1-3B",
@@ -7490,6 +7415,81 @@
     "repository": "sqlpage/SQLPage",
     "learningId": "learn-github-sqlpage-sqlpage",
     "contentHash": "8c86aa6c0e597ca98b1827ad69a9e495ed897fc6fd692dc695facf8cca61863d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-IRXF",
+    "timestamp": "2026-10-27T10:54:11.427Z",
+    "repository": "Gaurav-Gosain/tuios",
+    "learningId": "learn-github-gaurav-gosain-tuios",
+    "contentHash": "27d064fdeeafee467712cc74b4c64ca8d6e9a18bcd88e383941b02d78b56570c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-IVN4",
+    "timestamp": "2026-10-27T10:54:16.240Z",
+    "repository": "liyupi/mianshiya",
+    "learningId": "learn-github-liyupi-mianshiya",
+    "contentHash": "aade2425f1cc59221c787cfde97a4294c633949cb33817adbe5bee8823681a89",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-J142",
+    "timestamp": "2026-10-27T10:54:23.330Z",
+    "repository": "goharbor/harbor",
+    "learningId": "learn-github-goharbor-harbor",
+    "contentHash": "fa5c40bc66d8251cb59a7b2cfdf9c5cf6d71b951f73d80fa76819c7ffbb6def6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-J2DB",
+    "timestamp": "2026-10-27T10:54:24.959Z",
+    "repository": "ScrapeCreators/social-media-research-skills",
+    "learningId": "learn-github-scrapecreators-social-media-research-skills",
+    "contentHash": "8e72ecb89c151fcff984a1101e11f938be6d6e3cb74d315d5cf90b2d4667d160",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-J55Q",
+    "timestamp": "2026-10-27T10:54:28.574Z",
+    "repository": "etcd-io/etcd",
+    "learningId": "learn-github-etcd-io-etcd",
+    "contentHash": "c391847ec83851f71763aec91eba13c317522a1574fd6e04b9b1731e2ec01244",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

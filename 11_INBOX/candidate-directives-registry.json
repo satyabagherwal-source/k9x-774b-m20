@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T13:58:25.494Z",
+  "last_updated": "2026-10-27T10:54:23.338Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2862,6 +2862,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-open-policy-agent-opa"
+    },
+    {
+      "id": "CD-J14A",
+      "directive_title": "project): reject registry_id changes in UpdateProject (#24162)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "goharbor/harbor",
+      "source_commit": "d822d80c",
+      "date_staged": "2026-10-27",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-goharbor-harbor"
     }
   ]
 }

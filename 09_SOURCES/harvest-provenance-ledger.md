@@ -5221,3 +5221,8 @@ Every entry in this ledger must capture:
 | `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `0f5ee234` | Multi-dimensional audit evidence | 2026-10-27T10:47:41.235Z |
 | `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `4fce4e76` | Multi-dimensional audit evidence | 2026-10-27T10:50:49.335Z |
 | `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `1c76855d` | Multi-dimensional audit evidence | 2026-10-27T10:50:51.878Z |
+| `learn-github-gaurav-gosain-tuios` | `https://github.com/Gaurav-Gosain/tuios` | `c725ff16` | Multi-dimensional audit evidence | 2026-10-27T10:54:11.431Z |
+| `learn-github-liyupi-mianshiya` | `https://github.com/liyupi/mianshiya` | `7354f485` | Multi-dimensional audit evidence | 2026-10-27T10:54:16.243Z |
+| `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `d822d80c` | Multi-dimensional audit evidence | 2026-10-27T10:54:23.333Z |
+| `learn-github-scrapecreators-social-media-research-skills` | `https://github.com/ScrapeCreators/social-media-research-skills` | `64ba7b4d` | Multi-dimensional audit evidence | 2026-10-27T10:54:24.962Z |
+| `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `e1a7365f` | Multi-dimensional audit evidence | 2026-10-27T10:54:28.577Z |

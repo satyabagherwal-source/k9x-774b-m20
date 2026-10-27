@@ -4492,3 +4492,11 @@ https://github.com/sourcey/sourcey
 https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF
 # [HUGGINGFACE-AI-MODELS] nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB (3600 score) - Verified Hugging Face Model: nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB (160 likes,
 https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T10:54:04.415Z] ---
+# [AI-AGENTS] Gaurav-Gosain/tuios (3509 score) - A terminal window manager that knows what your agents are doing. Tiling panes, w
+https://github.com/Gaurav-Gosain/tuios
+# [AI-AGENTS] liyupi/mianshiya (3688 score) - 持续维护的企业面试题库网站，帮你拿到满意 offer！⭐️ 2026年最新Java面试题、前端面试题、AI大模型面试题、AI Agent面试题、RAG面试题、C
+https://github.com/liyupi/mianshiya
+# [AI-AGENTS] ScrapeCreators/social-media-research-skills (2745 score) - AI agent skills for social media research. Outlier posts, comment mining, compet
+https://github.com/ScrapeCreators/social-media-research-skills

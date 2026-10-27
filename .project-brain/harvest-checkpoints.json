@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T10:50:51.884Z",
+  "last_updated": "2026-10-27T10:54:28.585Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7281,14 +7281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-etcd-io-etcd",
-      "content_hash": "b7a43655c36fe751bbb007626fdf8ff2bb20920f98cbfd96a334eb0a5cd914ed",
-      "verified_at": "2026-10-25T02:42:42.668Z",
+      "content_hash": "c391847ec83851f71763aec91eba13c317522a1574fd6e04b9b1731e2ec01244",
+      "verified_at": "2026-10-27T10:54:28.585Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T02:42:42.668Z"
+      "last_updated": "2026-10-27T10:54:28.585Z"
     },
     "wasm-bindgen/wasm-pack": {
       "repository": "wasm-bindgen/wasm-pack",
@@ -10821,14 +10821,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-goharbor-harbor",
-      "content_hash": "1b5aa31aeea2c080af387c6f63faec9f3f0d0d22e16a55659521c7ad0db5f166",
-      "verified_at": "2026-10-25T19:58:22.460Z",
+      "content_hash": "fa5c40bc66d8251cb59a7b2cfdf9c5cf6d71b951f73d80fa76819c7ffbb6def6",
+      "verified_at": "2026-10-27T10:54:23.346Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T19:58:22.460Z"
+      "last_updated": "2026-10-27T10:54:23.346Z"
     },
     "joreilly/PeopleInSpace": {
       "repository": "joreilly/PeopleInSpace",
@@ -16274,6 +16274,51 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-27T08:13:24.329Z"
+    },
+    "Gaurav-Gosain/tuios": {
+      "repository": "Gaurav-Gosain/tuios",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-gaurav-gosain-tuios",
+      "content_hash": "27d064fdeeafee467712cc74b4c64ca8d6e9a18bcd88e383941b02d78b56570c",
+      "verified_at": "2026-10-27T10:54:11.439Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T10:54:11.439Z"
+    },
+    "liyupi/mianshiya": {
+      "repository": "liyupi/mianshiya",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-liyupi-mianshiya",
+      "content_hash": "aade2425f1cc59221c787cfde97a4294c633949cb33817adbe5bee8823681a89",
+      "verified_at": "2026-10-27T10:54:16.252Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T10:54:16.252Z"
+    },
+    "ScrapeCreators/social-media-research-skills": {
+      "repository": "ScrapeCreators/social-media-research-skills",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-scrapecreators-social-media-research-skills",
+      "content_hash": "8e72ecb89c151fcff984a1101e11f938be6d6e3cb74d315d5cf90b2d4667d160",
+      "verified_at": "2026-10-27T10:54:24.970Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T10:54:24.970Z"
     }
   },
   "repos": {

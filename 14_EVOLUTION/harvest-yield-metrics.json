@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T10:50:51.881Z",
-  "total_cycles_completed": 5189,
-  "total_learnings_persisted": 5189,
-  "total_rules_promoted": 4590,
+  "last_updated": "2026-10-27T10:54:28.581Z",
+  "total_cycles_completed": 5194,
+  "total_learnings_persisted": 5194,
+  "total_rules_promoted": 4595,
   "history": [
-    {
-      "timestamp": "2026-10-25T22:00:48.474Z",
-      "repository": "RediSearch/RediSearch",
-      "learningId": "learn-github-redisearch-redisearch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:00:50.456Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:07:10.343Z",
-      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-      "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:07:15.959Z",
-      "repository": "software-mansion/react-native-screens",
-      "learningId": "learn-github-software-mansion-react-native-screens",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:07:24.383Z",
-      "repository": "ClickHouse/ClickHouse",
-      "learningId": "learn-github-clickhouse-clickhouse",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T22:13:56.930Z",
       "repository": "tauri-apps/tauri",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-27T10:50:51.881Z",
       "repository": "sqlpage/SQLPage",
       "learningId": "learn-github-sqlpage-sqlpage",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T10:54:11.436Z",
+      "repository": "Gaurav-Gosain/tuios",
+      "learningId": "learn-github-gaurav-gosain-tuios",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T10:54:16.248Z",
+      "repository": "liyupi/mianshiya",
+      "learningId": "learn-github-liyupi-mianshiya",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T10:54:23.343Z",
+      "repository": "goharbor/harbor",
+      "learningId": "learn-github-goharbor-harbor",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T10:54:24.967Z",
+      "repository": "ScrapeCreators/social-media-research-skills",
+      "learningId": "learn-github-scrapecreators-social-media-research-skills",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T10:54:28.581Z",
+      "repository": "etcd-io/etcd",
+      "learningId": "learn-github-etcd-io-etcd",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

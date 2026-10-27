@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T10:50:51.835Z",
-  "total_verified_learnings": 1099,
+  "last_updated": "2026-10-27T10:54:28.518Z",
+  "total_verified_learnings": 1102,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -10882,8 +10882,8 @@
       "slug": "etcd-io-etcd",
       "platform": "github",
       "source_url": "https://github.com/etcd-io/etcd",
-      "source_version": "f3221acd",
-      "content_hash": "b7a43655c36fe751bbb007626fdf8ff2bb20920f98cbfd96a334eb0a5cd914ed",
+      "source_version": "e1a7365f",
+      "content_hash": "c391847ec83851f71763aec91eba13c317522a1574fd6e04b9b1731e2ec01244",
       "dossier_path": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "promoted_rules": [
@@ -10906,6 +10906,11 @@
           "number": 3993,
           "title": "CHANGELOG(3.5): add mvcc hash/restore race fix",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4693,
+          "title": "build(deps): bump docker/login-action from 4.6.0 to 4.7.0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10913,7 +10918,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T02:42:42.528Z",
+      "verified_at": "2026-10-27T10:54:28.506Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13326,8 +13331,8 @@
       "slug": "goharbor-harbor",
       "platform": "github",
       "source_url": "https://github.com/goharbor/harbor",
-      "source_version": "716de991",
-      "content_hash": "1b5aa31aeea2c080af387c6f63faec9f3f0d0d22e16a55659521c7ad0db5f166",
+      "source_version": "d822d80c",
+      "content_hash": "fa5c40bc66d8251cb59a7b2cfdf9c5cf6d71b951f73d80fa76819c7ffbb6def6",
       "dossier_path": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "promoted_rules": [
@@ -13377,7 +13382,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T19:58:22.368Z",
+      "verified_at": "2026-10-27T10:54:23.251Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -130936,6 +130941,166 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T10:50:51.826Z"
+    },
+    "learn-github-gaurav-gosain-tuios": {
+      "learning_id": "learn-github-gaurav-gosain-tuios",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Gaurav-Gosain/tuios",
+      "repository": "Gaurav-Gosain/tuios",
+      "slug": "gaurav-gosain-tuios",
+      "platform": "github",
+      "source_url": "https://github.com/Gaurav-Gosain/tuios",
+      "source_version": "c725ff16",
+      "content_hash": "27d064fdeeafee467712cc74b4c64ca8d6e9a18bcd88e383941b02d78b56570c",
+      "dossier_path": "07_PROJECT_LEARNING/gaurav-gosain-tuios-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/gaurav-gosain-tuios-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4690,
+          "title": "session): carry each pane's state and the daemon's memory in the handoff",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T10:54:11.357Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4690": {
+      "learning_id": "rule-4690",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4690,
+      "title": "session): carry each pane's state and the daemon's memory in the handoff",
+      "source_url": "https://github.com/Gaurav-Gosain/tuios",
+      "source_version": "c725ff16",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T10:54:11.357Z"
+    },
+    "learn-github-liyupi-mianshiya": {
+      "learning_id": "learn-github-liyupi-mianshiya",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "liyupi/mianshiya",
+      "repository": "liyupi/mianshiya",
+      "slug": "liyupi-mianshiya",
+      "platform": "github",
+      "source_url": "https://github.com/liyupi/mianshiya",
+      "source_version": "7354f485",
+      "content_hash": "aade2425f1cc59221c787cfde97a4294c633949cb33817adbe5bee8823681a89",
+      "dossier_path": "07_PROJECT_LEARNING/liyupi-mianshiya-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/liyupi-mianshiya-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4691,
+          "title": "formatting issues in README.md",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T10:54:16.172Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4691": {
+      "learning_id": "rule-4691",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4691,
+      "title": "formatting issues in README.md",
+      "source_url": "https://github.com/liyupi/mianshiya",
+      "source_version": "7354f485",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T10:54:16.172Z"
+    },
+    "learn-github-scrapecreators-social-media-research-skills": {
+      "learning_id": "learn-github-scrapecreators-social-media-research-skills",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ScrapeCreators/social-media-research-skills",
+      "repository": "ScrapeCreators/social-media-research-skills",
+      "slug": "scrapecreators-social-media-research-skills",
+      "platform": "github",
+      "source_url": "https://github.com/ScrapeCreators/social-media-research-skills",
+      "source_version": "64ba7b4d",
+      "content_hash": "8e72ecb89c151fcff984a1101e11f938be6d6e3cb74d315d5cf90b2d4667d160",
+      "dossier_path": "07_PROJECT_LEARNING/scrapecreators-social-media-research-skills-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/scrapecreators-social-media-research-skills-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4692,
+          "title": "Declarative Skill Contract Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "Repository Metadata Consistency",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T10:54:24.890Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4692": {
+      "learning_id": "rule-4692",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4692,
+      "title": "Declarative Skill Contract Integrity",
+      "source_url": "https://github.com/ScrapeCreators/social-media-research-skills",
+      "source_version": "64ba7b4d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T10:54:24.890Z"
+    },
+    "rule-4693": {
+      "learning_id": "rule-4693",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4693,
+      "title": "build(deps): bump docker/login-action from 4.6.0 to 4.7.0",
+      "source_url": "https://github.com/etcd-io/etcd",
+      "source_version": "e1a7365f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T10:54:28.506Z"
     }
   },
   "aliases": {

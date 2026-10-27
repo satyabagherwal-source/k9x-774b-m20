@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source**: github ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
-> **Source Version**: `716de991`  
+> **Source Version**: `d822d80c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T19:58:21.942Z  
+> **Timestamp**: 2026-10-27T10:54:23.144Z  
 > **Learning ID**: `learn-github-goharbor-harbor`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T19:58:21.935Z  
+> **Harvest Timestamp**: 2026-10-27T10:54:22.936Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open source trusted cloud native registry project that stores, signs, and scans content.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 29610 stars
+- **Stars / Engagement**: 29619 stars
 
 ---
 
@@ -656,11 +656,13 @@ def prepare_job_service(config_dict):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #24220** (2026-10-25): **proxy-cache: manifest PUT races blob upload completion and failures are never retried, leaving digests permanently uncached (MANIFEST_BLOB_UNKNOWN)**
-  *Symptoms*: ### Environment  - Harbor version: `v2.15.1` (image build `v2.15.1-335c05f2`), deployed on Kubernetes with multiple `harbor-core` and `registry` replicas behind a shared ingress - One proxy-cache project backed by a `docker-hub` type registry endpoint (upstream = docker.io) - Clients: containerd/docker pulls from a CI build fleet — every job pulls the `golang` base image through the proxy cache  ### What happened (timeline, all timestamps UTC)  One concrete failure, reconstructed from harbor-core and registry logs for `library/golang` image manifest `sha256:ff6adf7c7ec50bebe6d3f4f4c679c9edb47e1113664eaa98172a48e8185b8a30` (OCI image manifest, 7 layers + config):  | Time (UTC) | Component | Event | |---|---|---| | 2026-10-24 19:19:34 | harbor-core | Cache miss: `Artifact ... is not found in proxy cache, fetch it from remote repo` (`proxy.go`) | | 19:20:46 → 19:23:29 | registry | 8 consecutive `HEAD` requests for referenced blob `sha256:72af6e2c...` all return `404` — this is the `CheckDependencies` polling inside `CacheContent` (fixed budget: `maxManifestWait=10` × `sleepIntervalSec=20s` = 200 s) | | 19:22:54 | registry | Fallback blob upload session starts (`PUT .../blobs/uploads/...` for `sha256:72af6e2c...`, i.e. the `putBlobToLocal` path) | | 19:23:38.36 | registry | `PUT .../manifests/sha256:ff6adf7c...` rejected with `400` `MANIFEST_BLOB_UNKNOWN` for blob `sha256:72af6e2c...` — **~4.4 s before the blob upload completes** (the two log lines come from different registry no
+- **Issue #24244** (2026-10-27): **fix(release): use runner Docker to avoid Buildx permission failure**
+  *Symptoms*: The publish-release workflow fails on CNCF runners because docker-practice/actions-setup-docker hard-codes DOCKER_CONFIG to /home/runner/.docker. Its embedded Buildx setup then tries to create configuration under /home/runner, which is not writable by the runner user, and exits with 'mkdir /home/runner: permission denied'.  CNCF runners already provide Docker, and the package-build workflow uses that engine directly. Replace the third-party Docker installer with 'docker version' and 'docker info' checks to verify that the client can reach the daemon before publishing images. This preserves the runner's Docker installation and user configuration, removes the obsolete Docker 20.10 request and its latest-version fallback, and avoids reinstalling Docker and restarting its daemon during release publication.  Thank you for contributing to Harbor!  # Comprehensive Summary of your change  # Issue being fixed Fixes #(issue)  Please indicate you've done the following: - [ ] Well Written Title and Summary of the PR - [ ] Label the PR as needed. "release-note/ignore-for-release, release-note/new-feature, release-note/update, release-note/enhancement, release-note/community, release-note/breaking-change, release-note/docs, release-note/infra, release-note/deprecation" - [ ] Accepted the DCO. Commits without the DCO will delay acceptance. - [ ] Made sure tests are passing and test coverage is added if needed. - [ ] Considered the docs impact and opened a new docs issue or PR with docs chan
 
-- **Issue #24203** (2026-10-22): **(cherry-pick): preserve artifact type for multi-tier accessories in replication**
-  *Symptoms*: In getAccessoryArts, reassigning art when fetching accessory details shadowed the parent artifact and caused sub-accessories (such as signatures of an SBOM) to inherit Type "UNKNOWN" from the accessory artifact rather than the subject artifact's type (e.g. "IMAGE"). Consequently, when a replication policy configured a resource filter (e.g. "image"), the sub-accessories were dropped by the artifact type filter.  Fix this by using a separate variable subArt to avoid shadowing art, and propagate art.Type to subArt so nested accessories inherit the root subject artifact's type.  Thank you for contributing to Harbor!  # Comprehensive Summary of your change  # Issue being fixed Fixes #(issue)  Please indicate you've done the following: - [ ] Well Written Title and Summary of the PR - [ ] Label the PR as needed. "release-note/ignore-for-release, release-note/new-feature, release-note/update, release-note/enhancement, release-note/community, release-note/breaking-change, release-note/docs, release-note/infra, release-note/deprecation" - [ ] Accepted the DCO. Commits without the DCO will delay acceptance. - [ ] Made sure tests are passing and test coverage is added if needed. - [ ] Considered the docs impact and opened a new docs issue or PR with docs changes if needed in [website repository](https://github.com/goharbor/website). 
+- **Issue #24243** (2026-10-27): **(cherry-pick): use runner Docker to avoid Buildx permission failure**
+  *Symptoms*: Cherry-pick 2c94659028a6f27c51e800f37b24e6d6806f898a into release-2.16.0.  Use the CNCF runner's existing Docker engine to avoid the Buildx permission failure.   
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/goharbor/harbor/pull/24243?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=goharbor) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 74.09%. Comparing base ([`4b9c6f2`](https://app.codecov.io/gh/goharbor/harbor/commit/4b9c6f2523934aa8fa0e9d469932186779578a9d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=goharbor)) to head ([`51c79a9`](https://app.codecov.io/gh/goharbor/harbor/commit/51c79a9f10be0b9d02a6d7978ef7cbed63b31db2?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=goharbor)).  <details><summary>Additional details and impacted files</summary>    [![Impacted file tree graph](https://app.codecov.io/gh/goharbor/harbor/pull/24243/graphs/tree.svg?width=650&height=
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -677,68 +679,176 @@ def prepare_job_service(config_dict):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e74c8d0c` (2026-10-25)
-**Commit Message**: chore(deps): bump docker/setup-buildx-action from 4.3.0 to 4.4.1 (#23976)
+### Incident Patch 1: `57d50ce8` (2026-10-27)
+**Commit Message**: fix(project): reject registry_id changes in UpdateProject (#24162)
 
-Bumps [docker/setup-buildx-action](https://github.com/docker/setup-buildx-action) from 4.3.0 to 4.4.1.
-- [Release notes](https://github.com/docker/setup-buildx-action/releases)
-- [Commits](https://github.com/docker/setup-buildx-action/compare/37fe631027851001ddb9b187196cc803df7f5f0e...f87e5991a6d7451dcb8d9637bfbc97413f497069)
+registry_id is documented as create-only, but UpdateProject silently
+ignored it and returned 200, so callers believed the proxy cache
+project had been re-pointed when nothing changed.
+
+Return 400 when registry_id differs from the project's current value,
+matching the existing handling of the create-only retention_days field.
+Sending the current value back unchanged is still accepted, since the
+portal includes registry_id in its project config update request.
+
+Signed-off-by: Nikita Kodkany <[REDACTED_EMAIL]>
+Co-authored-by: Nikita Kodkany <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `src/server/v2.0/handler/project.go` (modified, +5/-0)
+```diff
+@@ -568,6 +568,11 @@ func (a *projectAPI) UpdateProject(ctx context.Context, params operation.UpdateP
+ 		return a.SendError(ctx, errors.BadRequestError(nil).WithMessage("retention_days is only supported when creating a proxy cache project"))
+ 	}
+ 
++	// registry_id can only be set when creating a project, allow the current value to be sent back unchanged
++	if params.Project.RegistryID != nil && *params.Project.RegistryID != p.RegistryID {
++		return a.SendError(ctx, errors.BadRequestError(nil).WithMessage("registry_id can not be changed after the project is created"))
++	}
++
+ 	if params.Project.CVEAllowlist != nil {
+ 		if params.Project.CVEAllowlist.ProjectID == 0 {
+ 			// project_id in cve_allowlist not provided or provided as 0, let it to be the id of the project which will be updating
+```
+
+**File**: `src/server/v2.0/handler/project_test.go` (modified, +49/-0)
+```diff
+@@ -303,6 +303,55 @@ func (suite *ProjectTestSuite) TestSetScannerOfProject() {
+ 	}
+ }
+ 
++func (suite *ProjectTestSuite) TestUpdateProjectRegistryID() {
++	suite.Security.On("IsAuthenticated").Return(true)
++	suite.Security.On("Can", mock.Anything, mock.Anything, mock.Anything).Return(true)
++
++	proxyProject := &models.Project{
++		ProjectID:  2,
++		Name:       "proxy",
++		RegistryID: 1,
++	}
++
++	{
++		// changing registry_id of a proxy cache project is rejected
++		mock.OnAnything(suite.projectCtl, "Get").Return(proxyProject, nil).Once()
++
++		res, err := suite.PutJSON("/projects/2", map[string]any{"registry_id": 3})
++		suite.NoError(err)
++		suite.Equal(400, res.StatusCode)
++	}
++
++	{
++		// setting registry_id on a normal project is rejected
++		mock.OnAnything(suite.projectCtl, "Get").Return(suite.project, nil).Once()
++
++		res, err := suite.PutJSON("/projects/1", map[string]any{"registry_id": 3})
++		suite.NoError(err)
++		suite.Equal(400, res.StatusCode)
++	}
++
++	{
++		// sending the current registry_id back unchanged is allowed
++		mock.OnAnything(suite.projectCtl, "Get").Return(proxyProject, nil).Once()
++		mock.OnAnything(suite.projectCtl, "Update").Return(nil).Once()
++
++		res, err := suite.PutJSON("/projects/2", map[string]any{"registry_id": 1})
++		suite.NoError(err)
++		suite.Equal(200, res.StatusCode)
++	}
++
++	{
++		// registry_id 0 on a normal project is allowed
++		mock.OnAnything(suite.projectCtl, "Get").Return(suite.project, nil).Once()
++		mock.OnAnything(suite.projectCtl, "Update").Return(nil).Once()
++
++		res, err := suite.PutJSON("/projects/1", map[string]any{"registry_id": 0})
++		suite.NoError(err)
++		suite.Equal(200, res.StatusCode)
++	}
++}
++
+ func TestProjectTestSuite(t *testing.T) {
+ 	suite.Run(t, &ProjectTestSuite{})
+ }
+```
 
 ---
-updated-dependencies:
-- dependency-name: docker/setup-buildx-action
-  dependency-version: 4.4.1
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Co-authored-by: Prasanth Baskar <[REDACTED_EMAIL]>
-Co-authored-by: Orlix <[REDACTED_EMAIL]>
+### Incident Patch 2: `d822d80c` (2026-10-27)
+**Commit Message**: fix(release): use runner Docker to avoid Buildx permission failure (#24244)
 
-**File**: `.github/workflows/build-package.yml` (modified, +2/-2)
+The publish-release workflow fails on CNCF runners because
+docker-practice/actions-setup-docker hard-codes DOCKER_CONFIG to
+/home/runner/.docker. Its embedded Buildx setup then tries to create
+configuration under /home/runner, which is not writable by the runner
+user, and exits with 'mkdir /home/runner: permission denied'.
+
+CNCF runners already provide Docker, and the package-build workflow uses
+that engine directly. Replace the third-party Docker installer with
+'docker version' and 'docker info' checks to verify that the client can
+reach the daemon before publishing images. This preserves the runner's
+Docker installation and user configuration, removes the obsolete Docker
+20.10 request and its latest-version fallback, and avoids reinstalling
+Docker and restarting its daemon during release publication.
+
+Signed-off-by: stonezdj <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/publish_release.yml` (modified, +5/-5)
 ```diff
-@@ -51,7 +51,7 @@ jobs:
-           platforms: linux/amd64,linux/arm64
+@@ -78,11 +78,11 @@ jobs:
+                 ${{ env.ASSETS_DIR }}/harbor-online-installer-${cur}-${arch}.tgz
+             fi
+           done
+-      - name: Setup Docker
+-        uses: docker-practice/actions-setup-docker@509de4a162d8fd24b2721a9fb3721131a6a4776b # master (no tagged release newer than v1/2023 covers this fix; commit dated 2025-08-24)
+-        with:
+-          docker_version: 20.10
+-          docker_channel: stable
++      # CNCF runners provide Docker; use the runner's engine and user configuration.
++      - name: Verify Docker
++        run: |
++          docker version
++          docker info
        - name: Set up Docker Buildx
-         if: steps.decide.outputs.build_base == 'true'
--        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
-+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
-       - name: Build and push goharbor/photon:5.0 multi-arch manifest
-         if: steps.decide.outputs.build_base == 'true'
-         run: |
-@@ -209,7 +209,7 @@ jobs:
-           pattern: repos-*
-           merge-multiple: true
-       - name: Set up Docker Buildx
--        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
-+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
-       - name: Determine image tag
-         id: tag
-         run: |
+         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+       - name: Publish Images (amd64 + arm64)
 ```
+
+---
+
+### Incident Patch 3: `17182a57` (2026-10-27)
+**Commit Message**: fix(release): preserve empty installer argument (#24241)
+
+fix(release): handle empty parameter introduced by #22311
+
+PR #22311 (https://github.com/goharbor/harbor/pull/22311) introduced an
+empty online installer argument for RC releases. The unquoted argument
+was omitted, shifting the remaining arguments and leaving getAssets
+without its final assetsPath parameter.
+
+Quote all getAssets arguments to preserve the empty argument.
+
+Signed-off-by: stonezdj <[REDACTED_EMAIL]>
 
 **File**: `.github/workflows/publish_release.yml` (modified, +1/-1)
 ```diff
-@@ -84,7 +84,7 @@ jobs:
-           docker_version: 20.10
-           docker_channel: stable
-       - name: Set up Docker Buildx
--        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
-+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
-       - name: Publish Images (amd64 + arm64)
-         run: |
-           set -euo pipefail
+@@ -57,7 +57,7 @@ jobs:
+               dst_online=harbor-online-installer-${cur}-${arch}.tgz
+               aws s3 cp s3://${bucket}/${branch}/${src_online} s3://${bucket}/${branch}/${dst_online}
+             fi
+-            source tools/release/release_utils.sh && getAssets ${bucket} ${branch} ${dst_offline} ${dst_online} ${{ env.PRERELEASE }} ${assets_path}
++            source tools/release/release_utils.sh && getAssets "$bucket" "$branch" "$dst_offline" "$dst_online" "${{ env.PRERELEASE }}" "$assets_path"
+           done
+ 
+           echo "ASSETS_DIR=$assets_path" >> $GITHUB_ENV
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #24203** (2026-10-22): (cherry-pick): preserve artifact type for multi-tier accessories in replication (@stonezdj)
-- **PR #24200** (2026-10-23): fix(replication): preserve artifact type for multi-tier accessories (@stonezdj)
-- **PR #24199** (2026-10-22): bump: bump Go to 1.26.10 for release-2.14.0 (@stonezdj)
-- **PR #24194** (2026-10-22): chore(deps): bump hono from 4.13.8 to 4.13.13 in /src/portal (@dependabot[bot])
-- **PR #24192** (2026-10-21): [release-2.16] chore(deps): bump up Go version to v1.27.3 (#24188) (@bupd)
-- **PR #24190** (2026-10-21): chore(deps): upgrade Go dependencies to fix High and Critical CVEs (@stonezdj)
+- **PR #24244** (2026-10-27): fix(release): use runner Docker to avoid Buildx permission failure (@stonezdj)
+- **PR #24243** (2026-10-27): (cherry-pick): use runner Docker to avoid Buildx permission failure (@stonezdj)
+- **PR #24242** (2026-10-27): (cherry-pick): handle empty parameter introduced by #22311 (@stonezdj)
+- **PR #24241** (2026-10-27): fix(release): preserve empty installer argument (@stonezdj)
+- **PR #24221** (2026-10-26): Archive ADDOPTERS and point to the community page only (@OrlinVasilev)
+- **PR #24212** (2026-10-26): [release-2.13] bump: bump Go to 1.26.10 for release-2.13.0 (@Vad1mo)
 
 ---
 
@@ -758,30 +868,32 @@ Co-authored-by: Orlix <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump docker/setup-buildx-action from 4.3.0 to 4.4.1 (#23976)
+## X. project): reject registry_id changes in UpdateProject (#24162)
 
 **RULE**:
-When implementing operations in `.github/workflows/build-package.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/server/v2.0/handler/project.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e74c8d0c`: deps): bump docker/setup-buildx-action from 4.3.0 to 4.4.1 (#23976). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `57d50ce8`: project): reject registry_id changes in UpdateProject (#24162). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-package.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/v2.0/handler/project.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
-        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+	// registry_id can only be set when creating a project, allow the current value to be sent back unchanged
+	if params.Project.RegistryID != nil && *params.Project.RegistryID != p.RegistryID {
+		return a.SendError(ctx, errors.BadRequestError(nil).WithMessage("registry_id can not be changed after the project is created"))
+	}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
-        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e74c8d0c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `57d50ce8` are properly handled with clean fallback behavior.
