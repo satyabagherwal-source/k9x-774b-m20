@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/faker-js-faker-learnings.md`  
 > **Source**: github ([https://github.com/faker-js/faker](https://github.com/faker-js/faker))  
-> **Source Version**: `0e058dc0`  
+> **Source Version**: `d9d77552`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T10:09:36.252Z  
+> **Timestamp**: 2026-10-27T18:17:23.395Z  
 > **Learning ID**: `learn-github-faker-js-faker`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/faker-js-faker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/faker-js/faker](https://github.com/faker-js/faker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T10:09:36.055Z  
+> **Harvest Timestamp**: 2026-10-27T18:17:22.563Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Generate massive amounts of fake data in the browser and node.js
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 15528 stars
+- **Stars / Engagement**: 15533 stars
 
 ---
 
@@ -364,11 +364,17 @@ export default [
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4179** (2026-10-22): **chore(deps): update devdependencies (major)**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [@vueuse/core](https://redirect.github.com/vueuse/vueuse) ([source](https://redirect.github.com/vueuse/vueuse/tree/HEAD/packages/core)) | [`14.4.0` → `15.0.0`](https://renovatebot.com/diffs/npm/@vueuse%2fcore/14.4.0/15.0.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/@vueuse%2fcore/15.0.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@vueuse%2fcore/14.4.0/15.0.0?slim=true) | | [cypress](https://cypress.io) ([source](https://redirect.github.com/cypress-io/cypress)) | [`15.21.1` → `16.2.0`](https://renovatebot.com/diffs/npm/cypress/15.21.1/16.2.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/cypress/16.2.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/cypress/15.21.1/16.2.0?slim=true) |  ---  ### Release Notes  <details> <summary>vueuse/vueuse (@&#8203;vueuse/core)</summary>  ### [`v15.0.0`](https://redirect.github.com/vueuse/vueuse/releases/tag/v15.0.0)  [Compare Source](https://redirect.github.com/vueuse/vueuse/compare/v14.4.0...v15.0.0)  #####    🚨 Breaking Changes  - Drop templateRef  -  by [@&#8203;43081j](https://redirect.github.com/43081j) and [@&#8203;ilyaliao](https://redirect.github.com/ilyaliao) in [#&#8203;4883](https://redirect.github.com/vueuse/vueuse/issues/4883) [<samp
+- **Issue #4214** (2026-10-27): **feat(locale): add person lastnames in Romanian (ro)**
+  *Symptoms*: <!-- Please run `pnpm run preflight` before opening a Pull Request to ensure that your code fulfills the minimal requirements for our project. -->  <!-- Please first read https://github.com/faker-js/faker/blob/next/CONTRIBUTING.md -->  <!-- Help us by writing a correct PR title following this guide: https://fakerjs.dev/contributing/submit-a-pull-request#the-pull-request-title -->  Enriched list of Romanian (ro) last names, with common names. Also fixed 3 missing diacritics.   Source: own knowledge.    Preflight: ran successfully.
+  **Post-Mortem & Fix Analysis**:
+  > ### <span aria-hidden="true">✅</span> Deploy Preview for *fakerjs* ready! Built [without sensitive environment variables](https://docs.netlify.com/configure-builds/environment-variables/#sensitive-variable-policy)  |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 4e69e2bf595d93819bba5303dc49319733a8a603 | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/fakerjs/deploys/6ae098a613920add6a787f99 | |<span aria-hidden="true">😎</span> Deploy Preview | [https://deploy-preview-4214.fakerjs.dev](https://deploy-preview-4214.fakerjs.dev) | |<span aria-hidden="true">📱</span> Preview on mobile | <details><summary> Toggle QR Code... </summary><br /><br />![QR Code](https://app.netlify.com/qr-code/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJodHRwczovL2RlcGxveS1wcmV2aWV3LTQyMTQuZmFrZXJqcy5kZXYifQ._BhYDlBmbfvNOvhzQSs3ivwHc2GcCTvWb1LAa-jprDc)<br /><br />_Use your smartphone camera to open QR code link._</de
+  > ## [Codecov](https://app.codecov.io/gh/faker-js/faker/pull/4214?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=faker-js) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 99.18%. Comparing base ([`b13a487`](https://app.codecov.io/gh/faker-js/faker/commit/b13a48778281431bbff3d95d40ea76e0a4b52cca?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=faker-js)) to head ([`4e69e2b`](https://app.codecov.io/gh/faker-js/faker/commit/4e69e2bf595d93819bba5303dc49319733a8a603?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=faker-js)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             next    #4214   +/-   ## ===============================
 
-- **Issue #4178** (2026-10-22): **chore(deps): update dependency eslint-plugin-jsdoc to v65**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [eslint-plugin-jsdoc](https://redirect.github.com/gajus/eslint-plugin-jsdoc) | [`64.3.2` → `65.3.12`](https://renovatebot.com/diffs/npm/eslint-plugin-jsdoc/64.3.2/65.3.12) | ![age](https://developer.mend.io/api/mc/badges/age/npm/eslint-plugin-jsdoc/65.3.12?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/eslint-plugin-jsdoc/64.3.2/65.3.12?slim=true) |  ---  ### Release Notes  <details> <summary>gajus/eslint-plugin-jsdoc (eslint-plugin-jsdoc)</summary>  ### [`v65.3.12`](https://redirect.github.com/gajus/eslint-plugin-jsdoc/releases/tag/v65.3.12)  [Compare Source](https://redirect.github.com/gajus/eslint-plugin-jsdoc/compare/v65.3.11...v65.3.12)  ##### Bug Fixes  - **`no-undefined-types`:** treat type parameters of function types as defined anywhere within the function type ([dce0d89](https://redirect.github.com/gajus/eslint-plugin-jsdoc/commit/dce0d8953b81391b4d08089cb3af3c84eb7f9cb2))  ### [`v65.3.11`](https://redirect.github.com/gajus/eslint-plugin-jsdoc/releases/tag/v65.3.11)  [Compare Source](https://redirect.github.com/gajus/eslint-plugin-jsdoc/compare/v65.3.10...v65.3.11)  ##### Bug Fixes  - **`no-unnecessary-type-assertion`:** no exit early when typescript is found; fixes [#&#8203;1816](https://redirect.github.com/gajus/eslint-plugin-jsdoc/
+- **Issue #4206** (2026-10-25): **feat(locale): add hacker data for az**
+  *Symptoms*: This PR adds an Azerbaijani (az) translation.  New files src/locales/az/hacker: 5 data files, 63 entries. src/locales/az/index.ts: added hacker.  Hacker phrases combine Azerbaijani computing terms and action forms. Index files generated with pnpm run generate:locales. 
+  **Post-Mortem & Fix Analysis**:
+  > ### <span aria-hidden="true">✅</span> Deploy Preview for *fakerjs* ready! Built [without sensitive environment variables](https://docs.netlify.com/configure-builds/environment-variables/#sensitive-variable-policy)  |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | de4e6c7f2af54e69b3ecf4ec54041361a9b1247b | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/fakerjs/deploys/6addce9aa686821f7071e67f | |<span aria-hidden="true">😎</span> Deploy Preview | [https://deploy-preview-4206.fakerjs.dev](https://deploy-preview-4206.fakerjs.dev) | |<span aria-hidden="true">📱</span> Preview on mobile | <details><summary> Toggle QR Code... </summary><br /><br />![QR Code](https://app.netlify.com/qr-code/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJodHRwczovL2RlcGxveS1wcmV2aWV3LTQyMDYuZmFrZXJqcy5kZXYifQ.RFQ_xfV4QHorYXYwrlOIMWG9GQSMWpyMc7vvl70OBlk)<br /><br />_Use your smartphone camera to open QR code link._</de
+  > ## [Codecov](https://app.codecov.io/gh/faker-js/faker/pull/4206?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=faker-js) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 99.18%. Comparing base ([`73d4104`](https://app.codecov.io/gh/faker-js/faker/commit/73d41043e561cd3b775b274dacb8c0267ffaf5f8?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=faker-js)) to head ([`de4e6c7`](https://app.codecov.io/gh/faker-js/faker/commit/de4e6c7f2af54e69b3ecf4ec54041361a9b1247b?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=faker-js)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             next    #4206   +/-   ## ===============================
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -385,245 +391,32 @@ export default [
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e31ec51d` (2026-10-22)
-**Commit Message**: chore(deps): update dependency sanitize-html to v2.18.0 [security] (#4164)
+### Incident Patch 1: `a931c3a4` (2026-10-25)
+**Commit Message**: docs: mention engine level errors in contributing guide (#4160)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: DivisionByZero <[REDACTED_EMAIL]>
 
-**File**: `package.json` (modified, +1/-1)
+**File**: `CONTRIBUTING.md` (modified, +2/-1)
 ```diff
-@@ -111,7 +111,7 @@
-     "oxlint": "1.80.0",
-     "oxlint-tsgolint": "7.0.2001",
-     "publint": "0.3.24",
--    "sanitize-html": "2.17.7",
-+    "sanitize-html": "2.18.0",
-     "semver": "7.8.5",
-     "ts-morph": "28.0.0",
-     "tsdown": "0.22.14",
-```
-
-**File**: `pnpm-lock.yaml` (modified, +5/-5)
-```diff
-@@ -215,8 +215,8 @@ importers:
-         specifier: 0.3.24
-         version: 0.3.24
-       sanitize-html:
--        specifier: 2.17.7
--        version: 2.17.7
-+        specifier: 2.18.0
-+        version: 2.18.0
-       semver:
-         specifier: 7.8.5
-         version: 7.8.5
-@@ -2692,8 +2692,8 @@ packages:
-   safer-buffer@2.1.2:
-     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
+@@ -362,7 +362,8 @@ function foo(bar: number = 0) {
+ }
+ ```
  
--  sanitize-html@2.17.7:
--    resolution: {integrity: sha512-PGtEkc9cbnedU3s9TmzDbpsZ8w086g/0Q8k8/oIO1NLNU3i5k9yn835CrjJSajp1KMmkisbO1qPXxNKO3welAg==}
-+  sanitize-html@2.18.0:
-+    resolution: {integrity: sha512-CvY+PV+NBhxe3BnjFI5f//vEDKLULm9OlZArso7gdgVsWvanBuq9PNDx+/2llfL+8XFYa/UNBxvqRBg3TWU2Ug==}
-     engines: {node: '>=22.12.0'}
+-> If a function can throw an error (FakerError) you have to include the `@throws` tag with an explanation when an error could be thrown
++> If a function can throw an error (FakerError) you have to include the `@throws` tag with an explanation when an error could be thrown.
++> Errors caused by engine limitations (`RangeError: max array length exceeded` or `OutOfMemoryError`) are not considered by Faker and thus do not need a specific `@throw` tag.
  
-   semver@7.8.5:
-@@ -5384,7 +5384,7 @@ snapshots:
- 
-   safer-buffer@2.1.2: {}
- 
--  sanitize-html@2.17.7:
-+  sanitize-html@2.18.0:
-     dependencies:
-       deepmerge: 4.3.1
-       escape-string-regexp: 4.0.0
-```
-
----
-
-### Incident Patch 2: `51c5f100` (2026-10-22)
-**Commit Message**: chore(deps): update dependency @vitest/ui to v5.0.5 [security] (#4169)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -100,7 +100,7 @@
-     "@types/semver": "7.8.0",
-     "@types/validator": "13.15.10",
-     "@vitest/coverage-v8": "5.0.1",
--    "@vitest/ui": "5.0.1",
-+    "@vitest/ui": "5.0.5",
-     "@vueuse/core": "14.4.0",
-     "commit-and-tag-version": "13.1.2",
-     "cypress": "15.21.1",
-```
-
-**File**: `pnpm-lock.yaml` (modified, +19/-19)
-```diff
-@@ -182,8 +182,8 @@ importers:
-         specifier: 5.0.1
-         version: 5.0.1(vitest@5.0.1)
-       '@vitest/ui':
--        specifier: 5.0.1
--        version: 5.0.1(vitest@5.0.1)
-+        specifier: 5.0.5
-+        version: 5.0.5(vitest@5.0.1)
-       '@vueuse/core':
-         specifier: 14.4.0
-         version: 14.4.0(vue@3.5.42(typescript@6.0.3))
-@@ -240,7 +240,7 @@ importers:
-         version: 2.0.0-alpha.19(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(postcss@8.5.28)(tsx@4.23.13)(typescript@6.0.3)(yaml@2.9.1)
-       vitest:
-         specifier: 5.0.1
--        version: 5.0.1(@types/node@24.13.3)(@vitest/coverage-v8@5.0.1)(@vitest/ui@5.0.1)(vite@8.3.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.1))
-+        version: 5.0.1(@types/node@24.13.3)(@vitest/coverage-v8@5.0.1)(@vitest/ui@5.0.5)(vite@8.3.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.1))
-       vue:
-         specifier: 3.5.42
-         version: 3.5.42(typescript@6.0.3)
-@@ -1127,19 +1127,19 @@ packages:
-       vite:
-         optional: true
- 
--  '@vitest/pretty-format@5.0.1':
--    resolution: {integrity: sha512-6guWwj5d9bguuefTOvJoq387tfpkzSv554YdUEGzjJH2PnnmvzTLQ1UQSuAk5wBFVhf2CUmy/S/palOcb6dmpA==}
-+  '@vitest/pretty-format@5.0.5':
-+    resolution: {integrity: sha512-24sSdIlMA9DVPXnYiB9siwU0bTd887Y9jX3+vabztCSsvHwo7ipvJ/a2L3Rljw8+2rK1f5fCj3h5U9I/Jsqgbw==}
- 
-   '@vitest/spy@5.0.1':
-     resolution: {integrity: sha512-rbto/mF/SGERxEgYOek7Xm6B9b+y+mVoo+f4b2LymYO8zM1b7uB5nHuhVMTP2hxdzgxvGiZYGxGIaMvL5y180Q==}
- 
--  '@vitest/ui@5.0.1':
--    resolution: {integrity: sha512-7PvQu/X9/pQoHYfNLAYL22qsD4/+sx2k7zpUA7XvjW0sc40r3/r0lGZ2fsEyOHMuO8Q1KjiO1QQVjJdnWUy/WQ==}
-+  '@vitest/ui@5.0.5':
-+    resolution: {integrity: sha512-dCoGUOdgmCaSB2g+WQ/spPCBkytAWdNUkFSXY4z+eYp2d8JEOY8v0uDRaJTG9qf/kTlTVZ4CuYMYMz/f1HS/qQ==}
-     peerDependencies:
--      vitest: 5.0.1
-+      vitest: 5.0.5
- 
--  '@vitest/utils@5.0.1':
--    resolution: {integrity: sha512-E9+yEA+jsfaoxZcUHFzEqUrQcoNh2EwrPT5efIqkUPUwD5Ua2Li9BRWaYeRwvzvdLgTSVrre8oKNeyrfg7KkdQ==}
-+  '@vitest/utils@5.0.5':
-+    resolution: {integrity: sha512-/rBu7gzLDQI/SC79Tn98b5DwOgaHU/Gt4I9OVeP3YofzNaYtbImRCOJQmT1S6vOJg9gEIlWC+r3QxKkjuSa1nQ==}
- 
-   '@volar/language-core@2.4.28':
-     resolution: {integrity: sha512-w4qhIJ8ZSitgLAkVay6AbcnC7gP3glYM3fYwKV3srj8m494E3xtrCv6E+bWviiK/8hs6e6t1ij1s2Endql7vzQ==}
-@@ -3808,7 +3808,7 @@ snapshots:
-       obug: 2.2.1
-       std-env: 4.3.0
-       tinyrainbow: 3.2.0
--      vitest: 5.0.1(@types/node@24.13.3)(@vitest/coverage-v8@5.0.1)(@vitest/ui@5.0.1)(vite@8.3.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.1))
-+      vitest: 5.0.1(@types/node@24.13.3)(@vitest/coverage-v8@5.0.1)(@vitest/ui@5.0.5)(vite@8.3.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.1))
- 
-   '@vitest/istanbul-lib-coverage@1.0.2': {}
- 
-@@ -3825,25 +3825,25 @@ snapshots:
-     optionalDependencies:
-       vite: 8.3.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.1)
- 
--  '@vitest/pretty-format@5.0.1':
-+  '@vitest/pretty-format@5.0.5':
-     dependencies:
-       tinyrainbow: 3.2.0
- 
-   '@vitest/spy@5.0.1': {}
- 
--  '@vitest/ui@5.0.1(vitest@5.0.1)':
-+  '@vitest/ui@5.0.5(vitest@5.0.1)':
-     dependencies:
--      '@vitest/utils': 5.0.1
-+      '@vitest/utils': 5.0.5
-       fflate: 0.8.3
-       flatted: 3.4.4
-       pathe: 2.0.3
-       sirv: 3.0.2
-       tinyrainbow: 3.2.0
--      vitest: 5.0.1(@types/node@24.13.3)(@vitest/coverage-v8@5.0.1)(@vitest/ui@5.0.1)(vite@8.3.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.1))
-+      vitest: 5.0.1(@types/node@24.13.3)(@vitest/coverage-v8@5.0.1)(@vitest/ui@5.0.5)(vite@8.3.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.1))
- 
--  '@vitest/utils@5.0.1':
-+  '@vitest/utils@5.0.5':
-     dependencies:
--      '@vitest/pretty-format': 5.0.1
-+      '@vitest/pretty-format': 5.0.5
-       convert-source-map: 2.0.0
-       tinyrainbow: 3.2.0
- 
-@@ -5764,7 +5764,7 @@ snapshots:
-       - universal-cookie
-       - yaml
- 
--  vitest@5.0.1(@types/node@24.13.3)(@vitest/coverage-v8@5.0.1)(@vitest/ui@5.0.1)(vite@8.3.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.1)):
-+  vitest@5.0.1(@types/node@24.13.3)(@vitest/coverage-v8@5.0.1)(@vitest/ui@5.0.5)(vite@8.3.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.1)):
-     dependencies:
-       '@types/chai': 5.2.3
-       '@vitest/mocker': 5.0.1(vite@8.3.1(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.1))
-@@ -5783,7 +5783,7 @@ snapshots:
-     optionalDependencies:
-       '@types/node': 24.13.3
-       '@vitest/coverage-v8': 5.0.1(vitest@5.0.1)
--      '@vitest/ui': 5.0.1(vitest@5.0.1)
-+      '@vitest/ui': 5.0.5(vitest@5.0.1)
-     transitivePeerDependencies:
-       - msw
- 
-```
-
----
-
-### Incident Patch 3: `7422b5c8` (2026-10-22)
-**Commit Message**: docs: explain quick local verification of Faker changes (#4161)
-
-**File**: `docs/contributing/set-up-a-development-environment.md` (modified, +32/-1)
-```diff
-@@ -57,7 +57,38 @@ For a streamlined development experience, Faker supports VSCode Devcontainers.
- 1. Open the command palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS) and select "**Dev Containers: Reopen in Container**".
- 1. Wait for the container to build and start.
- 
--## Step 3: Submit a Pull Request
-+## Step 3: Verify Your Changes Locally
-+
-+You can check a single Faker method without running the full test suite or building the package first.
-+
-+Create a temporary TypeScript file at `.local/try-faker.ts`:
-+
-+```ts
-+import { faker } from '../src/index.ts';
-+
-+faker.seed(123);
-+console.log(faker.person.fullName());
-+```
-+
-+Run it directly against the source:
-+
-+```sh
-+pnpm tsx .local/try-faker.ts
-+```
-+
-+The `.local/` directory is gitignored and preserved by `pnpm run clean`, so you can keep experiments there without adding them to your pull request.
-+
-+To run just the tests for the module you're changing, use Vitest with the relevant test file:
-+
-+```sh
-+pnpm vitest run test/modules/person.spec.ts
-+```
-+
-+For browser-based checks, `pnpm run docs:dev` builds and starts the documentation site, where you can try Faker in the browser console.
-+
-+Before submitting your changes, run `pnpm run preflight` to run the full verification workflow.
-+
-+## Step 4: Submit a Pull Request
- 
- Your development environment has successfully been set up.
- You are now ready to [Submit a Pull Request](./submit-a-pull-request.md).
+ ```ts
+ /**
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4179** (2026-10-22): chore(deps): update devdependencies (major) (@renovate[bot])
-- **PR #4178** (2026-10-22): chore(deps): update dependency eslint-plugin-jsdoc to v65 (@renovate[bot])
-- **PR #4177** (2026-10-22): chore(deps): update oxlint (@renovate[bot])
-- **PR #4176** (2026-10-22): chore(deps): update dependency pnpm to v12.14.0 (@renovate[bot])
-- **PR #4175** (2026-10-22): chore(deps): update dependency oxfmt to v0.73.0 (@renovate[bot])
-- **PR #4173** (2026-10-22): chore(deps): update dependency vitepress to v2.0.0-alpha.20 (@renovate[bot])
+- **PR #4214** (2026-10-27): feat(locale): add person lastnames in Romanian (ro) (@WoophRadu)
+- **PR #4206** (2026-10-25): feat(locale): add hacker data for az (@jamalkamaladdin)
+- **PR #4205** (2026-10-26): feat(word): add SMF to public api (@ST-DDT)
+- **PR #4204** (2026-10-26): feat(vehicle): add SMF to public api (@ST-DDT)
+- **PR #4203** (2026-10-26): feat(system): add SMF to public api (@ST-DDT)
+- **PR #4202** (2026-10-26): feat(string): add SMF to public api (@ST-DDT)
 
 ---
 
@@ -643,28 +436,29 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update dependency sanitize-html to v2.18.0 [security] (#4164)
+## X. docs: mention engine level errors in contributing guide (#4160)
 
 **RULE**:
-When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in faker-js/faker. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CONTRIBUTING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in faker-js/faker. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e31ec51d`: deps): update dependency sanitize-html to v2.18.0 [security] (#4164). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a931c3a4`: docs: mention engine level errors in contributing guide (#4160). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CONTRIBUTING.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "sanitize-html": "2.18.0",
+> If a function can throw an error (FakerError) you have to include the `@throws` tag with an explanation when an error could be thrown.
+> Errors caused by engine limitations (`RangeError: max array length exceeded` or `OutOfMemoryError`) are not considered by Faker and thus do not need a specific `@throw` tag.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "sanitize-html": "2.17.7",
+> If a function can throw an error (FakerError) you have to include the `@throws` tag with an explanation when an error could be thrown
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e31ec51d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a931c3a4` are properly handled with clean fallback behavior.

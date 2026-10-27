@@ -5470,3 +5470,5 @@
 | `CYCLE-20261027-V17A` | `2026-10-27T18:03:37.558Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4935` | Yes (`63b27a4d...`) |
 | `CYCLE-20261027-3GSK` | `2026-10-27T18:10:11.012Z` | `dubzzz/fast-check` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4936` | Yes (`3bc1e382...`) |
 | `CYCLE-20261027-3NLO` | `2026-10-27T18:10:19.836Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4937` | Yes (`7e788bdf...`) |
+| `CYCLE-20261027-CQRW` | `2026-10-27T18:17:23.852Z` | `faker-js/faker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4938` | Yes (`5d96986e...`) |
+| `CYCLE-20261027-J3CQ` | `2026-10-27T18:22:20.090Z` | `Megabit/Blazorise` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4939` | Yes (`3b5bee27...`) |

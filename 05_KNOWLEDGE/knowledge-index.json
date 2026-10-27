@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T18:10:19.777Z",
+  "last_updated": "2026-10-27T18:22:20.032Z",
   "total_verified_learnings": 1145,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -35224,8 +35224,8 @@
       "slug": "megabit-blazorise",
       "platform": "github",
       "source_url": "https://github.com/Megabit/Blazorise",
-      "source_version": "8bb1677b",
-      "content_hash": "0dce72eb90231aedc005cf0c8c35ff0d68e4102ff3829a1da2c88bbdcb758830",
+      "source_version": "865d5e09",
+      "content_hash": "3b5bee275ce08ddf800951cad22918b191ed23e2eae6978766807dcd3661a060",
       "dossier_path": "07_PROJECT_LEARNING/megabit-blazorise-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/megabit-blazorise-learnings.md",
       "promoted_rules": [
@@ -35263,6 +35263,11 @@
           "number": 4594,
           "title": "Virtualized Placeholder Sizing Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4939,
+          "title": "Tailwind: Fix ColorPicker swatch and input height (#6885)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35270,7 +35275,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T11:20:25.720Z",
+      "verified_at": "2026-10-27T18:22:20.017Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68854,8 +68859,8 @@
       "slug": "faker-js-faker",
       "platform": "github",
       "source_url": "https://github.com/faker-js/faker",
-      "source_version": "0e058dc0",
-      "content_hash": "589dfdd78050dd5ee2a30796ac4c58fa6ab2eeec8c8661e989a54cbf662439f5",
+      "source_version": "d9d77552",
+      "content_hash": "5d96986e7945be8df24e1087a9308318533bf88ace8fca3b13e5df1a2dab3255",
       "dossier_path": "07_PROJECT_LEARNING/faker-js-faker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/faker-js-faker-learnings.md",
       "promoted_rules": [
@@ -68873,6 +68878,11 @@
           "number": 3867,
           "title": "deps): update dependency sanitize-html to v2.18.0 [security] (#4164)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4938,
+          "title": "docs: mention engine level errors in contributing guide (#4160)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -68880,7 +68890,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T10:09:36.542Z",
+      "verified_at": "2026-10-27T18:17:23.781Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -136924,6 +136934,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T18:10:19.764Z"
+    },
+    "rule-4938": {
+      "learning_id": "rule-4938",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4938,
+      "title": "docs: mention engine level errors in contributing guide (#4160)",
+      "source_url": "https://github.com/faker-js/faker",
+      "source_version": "d9d77552",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T18:17:23.781Z"
+    },
+    "rule-4939": {
+      "learning_id": "rule-4939",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4939,
+      "title": "Tailwind: Fix ColorPicker swatch and input height (#6885)",
+      "source_url": "https://github.com/Megabit/Blazorise",
+      "source_version": "865d5e09",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T18:22:20.017Z"
     }
   },
   "aliases": {

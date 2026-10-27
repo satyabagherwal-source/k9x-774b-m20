@@ -3003,10 +3003,10 @@
     "repository": "Megabit/Blazorise",
     "platform": "github",
     "sourceUrl": "https://github.com/Megabit/Blazorise",
-    "sourceVersion": "8bb1677b",
+    "sourceVersion": "865d5e09",
     "license": "NOASSERTION",
-    "contentHash": "0dce72eb90231aedc005cf0c8c35ff0d68e4102ff3829a1da2c88bbdcb758830",
-    "lastHarvestedAt": "2026-10-26T11:20:25.794Z",
+    "contentHash": "3b5bee275ce08ddf800951cad22918b191ed23e2eae6978766807dcd3661a060",
+    "lastHarvestedAt": "2026-10-27T18:22:20.093Z",
     "learningId": "learn-github-megabit-blazorise"
   },
   "metalbear-co-mirrord": {
@@ -10283,10 +10283,10 @@
     "repository": "faker-js/faker",
     "platform": "github",
     "sourceUrl": "https://github.com/faker-js/faker",
-    "sourceVersion": "0e058dc0",
+    "sourceVersion": "d9d77552",
     "license": "NOASSERTION",
-    "contentHash": "589dfdd78050dd5ee2a30796ac4c58fa6ab2eeec8c8661e989a54cbf662439f5",
-    "lastHarvestedAt": "2026-10-23T10:09:36.610Z",
+    "contentHash": "5d96986e7945be8df24e1087a9308318533bf88ace8fca3b13e5df1a2dab3255",
+    "lastHarvestedAt": "2026-10-27T18:17:23.855Z",
     "learningId": "learn-github-faker-js-faker"
   },
   "storybookjs-storybook": {

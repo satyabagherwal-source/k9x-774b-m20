@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T18:10:19.849Z",
+  "last_updated": "2026-10-27T18:22:20.102Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4626,14 +4626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-megabit-blazorise",
-      "content_hash": "0dce72eb90231aedc005cf0c8c35ff0d68e4102ff3829a1da2c88bbdcb758830",
-      "verified_at": "2026-10-26T11:20:25.802Z",
+      "content_hash": "3b5bee275ce08ddf800951cad22918b191ed23e2eae6978766807dcd3661a060",
+      "verified_at": "2026-10-27T18:22:20.101Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T11:20:25.802Z"
+      "last_updated": "2026-10-27T18:22:20.101Z"
     },
     "metalbear-co/mirrord": {
       "repository": "metalbear-co/mirrord",
@@ -15441,14 +15441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-faker-js-faker",
-      "content_hash": "589dfdd78050dd5ee2a30796ac4c58fa6ab2eeec8c8661e989a54cbf662439f5",
-      "verified_at": "2026-10-23T10:09:36.623Z",
+      "content_hash": "5d96986e7945be8df24e1087a9308318533bf88ace8fca3b13e5df1a2dab3255",
+      "verified_at": "2026-10-27T18:17:23.863Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T10:09:36.623Z"
+      "last_updated": "2026-10-27T18:17:23.863Z"
     },
     "storybookjs/storybook": {
       "repository": "storybookjs/storybook",

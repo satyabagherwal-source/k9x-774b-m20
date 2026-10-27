@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-UGJR",
-    "timestamp": "2026-10-25T19:51:48.807Z",
-    "repository": "Tongyi-MAI/Z-Image-Turbo",
-    "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-    "contentHash": "fdedf69475127885e1267152f5daed2fff736d899f0a1f2db2fc1dfb12fca68d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-UHGY",
-    "timestamp": "2026-10-25T19:51:50.002Z",
-    "repository": "trinodb/trino",
-    "learningId": "learn-github-trinodb-trino",
-    "contentHash": "4527f5955bf7d300fb6a72c2cc5b41e4aab95536994b9274ad8f2d0e122ec550",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-2ORQ",
     "timestamp": "2026-10-25T19:58:12.710Z",
     "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -7490,6 +7460,36 @@
     "repository": "microsoft/agent-governance-toolkit",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
     "contentHash": "7e788bdfd4188516d7465d77d75dcd46c48aba3d5608f0df0054088fe72d65fb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-CQRW",
+    "timestamp": "2026-10-27T18:17:23.852Z",
+    "repository": "faker-js/faker",
+    "learningId": "learn-github-faker-js-faker",
+    "contentHash": "5d96986e7945be8df24e1087a9308318533bf88ace8fca3b13e5df1a2dab3255",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-J3CQ",
+    "timestamp": "2026-10-27T18:22:20.090Z",
+    "repository": "Megabit/Blazorise",
+    "learningId": "learn-github-megabit-blazorise",
+    "contentHash": "3b5bee275ce08ddf800951cad22918b191ed23e2eae6978766807dcd3661a060",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

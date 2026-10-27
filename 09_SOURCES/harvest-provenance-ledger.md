@@ -5479,3 +5479,5 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `10786a52` | Multi-dimensional audit evidence | 2026-10-27T18:03:37.561Z |
 | `learn-github-dubzzz-fast-check` | `https://github.com/dubzzz/fast-check` | `0207dd29` | Multi-dimensional audit evidence | 2026-10-27T18:10:11.015Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `9bfdd5f4` | Multi-dimensional audit evidence | 2026-10-27T18:10:19.839Z |
+| `learn-github-faker-js-faker` | `https://github.com/faker-js/faker` | `d9d77552` | Multi-dimensional audit evidence | 2026-10-27T18:17:23.855Z |
+| `learn-github-megabit-blazorise` | `https://github.com/Megabit/Blazorise` | `865d5e09` | Multi-dimensional audit evidence | 2026-10-27T18:22:20.093Z |
