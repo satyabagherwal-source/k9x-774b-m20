@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T18:03:37.511Z",
+  "last_updated": "2026-10-27T18:10:19.777Z",
   "total_verified_learnings": 1145,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -35897,8 +35897,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "20452bdc",
-      "content_hash": "057b7852c28dd99ea8726a25d82b206f97046ffcffe89923e84c19854ba030a1",
+      "source_version": "9bfdd5f4",
+      "content_hash": "7e788bdfd4188516d7465d77d75dcd46c48aba3d5608f0df0054088fe72d65fb",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -35976,6 +35976,11 @@
           "number": 4861,
           "title": "agent-sre): split experiment traffic by relative variant weights (#4460)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4937,
+          "title": "agent-lightning): include the success bonus in GovernedEnvironment total_reward",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35983,7 +35988,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T14:50:28.835Z",
+      "verified_at": "2026-10-27T18:10:19.764Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68805,8 +68810,8 @@
       "slug": "dubzzz-fast-check",
       "platform": "github",
       "source_url": "https://github.com/dubzzz/fast-check",
-      "source_version": "0118841e",
-      "content_hash": "9577e368257b9785e3b59b6e15bf0b681b1b562f1c8f606c54fedc5e1098370a",
+      "source_version": "0207dd29",
+      "content_hash": "3bc1e3826c12ea2299a45493a1540d55ac0f12d20ace051363c2c754277b4771",
       "dossier_path": "07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
       "promoted_rules": [
@@ -68820,6 +68825,11 @@
           "number": 3863,
           "title": "✅ Refine scheduler cloning and replay regression tests (#7474)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4936,
+          "title": "🐛 Fix equal-values caching for lazy and asynchronous values (#7477)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -68827,7 +68837,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T09:58:01.599Z",
+      "verified_at": "2026-10-27T18:10:10.944Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -136886,6 +136896,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T18:03:37.500Z"
+    },
+    "rule-4936": {
+      "learning_id": "rule-4936",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4936,
+      "title": "🐛 Fix equal-values caching for lazy and asynchronous values (#7477)",
+      "source_url": "https://github.com/dubzzz/fast-check",
+      "source_version": "0207dd29",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T18:10:10.944Z"
+    },
+    "rule-4937": {
+      "learning_id": "rule-4937",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4937,
+      "title": "agent-lightning): include the success bonus in GovernedEnvironment total_reward",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "9bfdd5f4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T18:10:19.764Z"
     }
   },
   "aliases": {

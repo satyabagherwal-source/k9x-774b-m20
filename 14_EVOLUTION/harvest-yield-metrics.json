@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T18:03:37.565Z",
-  "total_cycles_completed": 5445,
-  "total_learnings_persisted": 5445,
-  "total_rules_promoted": 4845,
+  "last_updated": "2026-10-27T18:10:19.844Z",
+  "total_cycles_completed": 5447,
+  "total_learnings_persisted": 5447,
+  "total_rules_promoted": 4847,
   "history": [
-    {
-      "timestamp": "2026-10-27T12:21:58.127Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T12:21:58.804Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T12:30:08.758Z",
       "repository": "YoanWai/agent-manager",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-27T18:03:37.565Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T18:10:11.020Z",
+      "repository": "dubzzz/fast-check",
+      "learningId": "learn-github-dubzzz-fast-check",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T18:10:19.844Z",
+      "repository": "microsoft/agent-governance-toolkit",
+      "learningId": "learn-github-microsoft-agent-governance-toolkit",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

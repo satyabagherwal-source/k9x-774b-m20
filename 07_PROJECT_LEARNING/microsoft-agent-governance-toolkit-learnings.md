@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Source Version**: `20452bdc`  
+> **Source Version**: `9bfdd5f4`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T14:50:28.342Z  
+> **Timestamp**: 2026-10-27T18:10:19.432Z  
 > **Learning ID**: `learn-github-microsoft-agent-governance-toolkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T14:50:27.849Z  
+> **Harvest Timestamp**: 2026-10-27T18:10:19.072Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -405,98 +405,127 @@ export function writeHookOutput(payload) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e490800d` (2026-10-27)
-**Commit Message**: fix(agent-sre): split experiment traffic by relative variant weights (#4460)
+### Incident Patch 1: `9bfdd5f4` (2026-10-27)
+**Commit Message**: fix(agent-lightning): include the success bonus in GovernedEnvironment total_reward (#4419)
 
-Experiment.assign compared one random.random() draw against the running
-sum of the variant weights, so the split was only right when the weights
-summed to 1. Three variants with the default weight 0.5 never sent
-traffic to the third, 70/30 sent everything to the first, and 0.1/0.1
-split 10/90. Scale the draw by the total weight so each variant gets
-weight / total; a variant with weight <= 0 gets no traffic.
+* fix(agent-lightning): include the success bonus in GovernedEnvironment total_reward
+
+step() added the reward to EnvironmentState.total_reward before adding
+success_bonus for a clean step, so total_reward left out every bonus
+that step() returned and was not the sum of the episode's step rewards.
+Accumulate after the bonus and update the step order in the spec.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
+
+* docs(changelog): add PR number to the agent-lightning entry
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
+
+---------
 
 Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -44,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`agent-lightning` `PolicyReward` reports the penalty it applied in multiplicative mode.** With `RewardConfig(multiplicative=True)` a violation scales the base reward by `multiplicative_factor`, but `get_stats()` (`total_penalties`, `avg_penalty`) and the `policy_penalty` value emitted to Agent-Lightning were still taken from the additive severity table, so a critical violation that turned a base reward of 1.0 into 0.5 was recorded as a penalty of -100 instead of -0.5. In multiplicative mode the penalty is now the amount the scaling took off the base reward; additive mode is unchanged (#4418).
+@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - **`agent-runtime` `DockerDeployer.deploy` no longer lets `env` override the governance settings.** The `AGT_*` variables built from `GovernanceConfig` went on the `docker run` command line first and the `env` entries after them, and Docker keeps the last `-e` for a name, so `env={"AGT_KILL_SWITCH": "false"}` started the container with the kill switch off although `config.kill_switch_enabled` was `True` (likewise for the policy path, trust level, audit flag and limits). `deploy` now raises `ValueError` before running Docker when `env` names one of those variables or has an `=` in a name; other variables, including other `AGT_` names, are passed as before.
  - **`agent-lightning` `policy_penalty` charges dict violations by their severity.** It read each violation's severity with `getattr`, so a violation given as a dict, the form a kernel's `get_recent_violations()` may return and that `GovernedEnvironment` already accepts, always got the default medium penalty: `{"severity": "critical"}` cost -10 instead of -100 and `{"severity": "low"}` -10 instead of -1. `PolicyReward` uses `policy_penalty`, so a rollout without `violations` whose kernel returned dicts was rewarded the same way. Dict violations are now charged by their `"severity"` key; object violations, unknown severities and the medium default when the severity is missing are unchanged (#4422).
-+- **`agent-sre` A/B experiments split traffic by relative variant weights.** `Experiment.assign` compared one `random.random()` draw against the running sum of the weights, so it only worked when the weights summed to 1: three variants with the default weight 0.5 never sent traffic to the third, percentage weights such as 70/30 sent everything to the first, and two variants weighted 0.1 split 10/90. Each variant now gets its weight divided by the total of all weights, and a variant with a weight of 0 or less gets no traffic.
+ - **`agent-sre` A/B experiments split traffic by relative variant weights.** `Experiment.assign` compared one `random.random()` draw against the running sum of the weights, so it only worked when the weights summed to 1: three variants with the default weight 0.5 never sent traffic to the third, percentage weights such as 70/30 sent everything to the first, and two variants weighted 0.1 split 10/90. Each variant now gets its weight divided by the total of all weights, and a variant with a weight of 0 or less gets no traffic.
++- **`agent-lightning` `GovernedEnvironment` includes the success bonus in the episode's `total_reward`.** `step` added the reward to `EnvironmentState.total_reward` before adding `success_bonus` for a clean step, so `total_reward` (and `info["total_reward"]`) left out every bonus that `step` returned: with the default config, a clean step returned 10.9 but raised `total_reward` by 0.9, and an episode's `total_reward` was not the sum of its step rewards. The reward is now accumulated after the bonus, and the step order in the Agent Lightning spec is updated to match (#4419).
  
  ### Added
  - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
 ```
 
-**File**: `agent-governance-python/agent-sre/src/agent_sre/experiments/__init__.py` (modified, +5/-2)
+**File**: `agent-governance-python/agent-lightning/src/agent_lightning_gov/environment.py` (modified, +4/-2)
 ```diff
-@@ -140,10 +140,13 @@ def assign(self) -> str:
-         if self.status != ExperimentStatus.RUNNING:
-             return self.variants[0].name
+@@ -303,8 +303,6 @@ def step(
+                 penalty *= 5
+             reward += penalty
  
--        r = random.random()  # noqa: S311 — non-cryptographic use for experiment randomization
-+        # Weights are relative: each variant gets weight / total of the traffic,
-+        # so they need not sum to 1. A variant with weight <= 0 gets none.
-+        total = sum(max(v.weight, 0.0) for v in self.variants)
-+        r = random.random() * total  # noqa: S311 — non-cryptographic use for experiment randomization
-         cumulative = 0.0
-         for v in self.variants:
--            cumulative += v.weight
-+            cumulative += max(v.weight, 0.0)
-             if r < cumulative:
-                 self._assignments[v.name] = self._assignments.get(v.name, 0) + 1
-                 return v.name
+-        self._state.total_reward += reward
+-
+         # Check termination conditions
+         terminated = False
+         truncated = False
+@@ -325,6 +323,10 @@ def step(
+             reward += self.config.success_bonus
+         self._episode_clean = step_clean and (first_step or self._episode_clean)
+ 
++        # Accumulate the reward this step returns, success bonus included,
++        # so total_reward is the episode's return.
++        self._state.total_reward += reward
++
+         self._state.terminated = terminated
+         self._state.truncated = truncated
+ 
 ```
 
-**File**: `agent-governance-python/agent-sre/tests/test_experiments.py` (modified, +29/-0)
+**File**: `agent-governance-python/agent-lightning/tests/test_lightning_comprehensive.py` (modified, +21/-0)
 ```diff
-@@ -147,6 +147,35 @@ def test_traffic_split(self):
-         assert counts["a"] > 600
-         assert counts["b"] > 100
+@@ -854,6 +854,27 @@ def get_recent_violations(self):
+         # No hook fire => no violations recorded.
+         assert info["violations"] == []
  
-+    def _split(self, variants: list[Variant], n: int = 3000) -> dict[str, int]:
-+        random.seed(7)
-+        exp = Experiment(name="test", variants=variants)
-+        exp.start()
-+        counts = {v.name: 0 for v in variants}
-+        for _ in range(n):
-+            counts[exp.assign()] += 1
-+        return counts
++    def test_total_reward_is_sum_of_step_rewards(self):
++        """The episode's total_reward includes each step's success bonus."""
++        kernel = _make_mock_kernel()
 +
-+    def test_traffic_split_three_default_weights(self):
-+        # Three variants with the default weight 0.5 each get a third of the traffic.
-+        counts = self._split([Variant("a"), Variant("b"), Variant("c")])
-+        for name in ("a", "b", "c"):
-+            assert 850 < counts[name] < 1150
++        def execute(action):
++            if action == "bad":
++                env._handle_violation("P", "blocked", "high", True)
++            return "result"
 +
-+    def test_traffic_split_percentage_weights(self):
-+        counts = self._split([Variant("a", weight=70), Variant("b", weight=30)])
-+        assert 1950 < counts["a"] < 2250
-+        assert 750 < counts["b"] < 1050
-+
-+    def test_traffic_split_weights_below_one(self):
-+        counts = self._split([Variant("a", weight=0.1), Variant("b", weight=0.1)])
-+        assert 1350 < counts["a"] < 1650
-+        assert 1350 < counts["b"] < 1650
-+
-+    def test_traffic_split_zero_weight_gets_no_traffic(self):
-+        counts = self._split([Variant("a", weight=0.0), Variant("b", weight=1.0)])
-+        assert counts == {"a": 0, "b": 3000}
++        kernel.execute = MagicMock(side_effect=execute)
++        env = GovernedEnvironment(kernel)
++        env.reset()
++        rewards = []
++        for action in ("good", "bad", "good"):
++            _, reward, _, _, info = env.step(action)
++            rewards.append(reward)
++            assert info["total_reward"] == pytest.approx(sum(rewards))
++        # 1.0 - 0.1 + 10.0 (clean), 1.0 - 0.1 - 50.0 (high), clean again
++        assert rewards == pytest.approx([10.9, -49.1, 10.9])
++        assert env._state.total_reward == pytest.approx(sum(rewards))
 +
  
- class TestMetricSummary:
-     def test_to_dict(self):
+ class TestGovernedEnvironmentGymInterface:
+     def test_terminated_property(self):
+```
+
+**File**: `docs/specs/AGENT-LIGHTNING-FAST-PATH-1.0.md` (modified, +6/-5)
+```diff
+@@ -669,12 +669,13 @@ The constructor MUST be generic over state and action types:
+    - Critical: `violation_penalty * 10`
+    - High: `violation_penalty * 5`
+    - All others: `violation_penalty * 1`
+-8. Accumulate the reward into `EnvironmentState.total_reward`.
+-9. Check termination: if `terminate_on_critical` and any violation has
++8. Check termination: if `terminate_on_critical` and any violation has
+    severity `"critical"`, set `terminated = True`.
+-10. Check truncation: if `step_count >= max_steps`, set
+-    `truncated = True`.
+-11. If the step succeeded with zero violations, add `success_bonus`.
++9. Check truncation: if `step_count >= max_steps`, set
++   `truncated = True`.
++10. If the step succeeded with zero violations, add `success_bonus`.
++11. Accumulate the reward, including any `success_bonus`, into
++    `EnvironmentState.total_reward`.
+ 12. Return `(next_state, reward, terminated, truncated, info)`.
+ 
+ **[Pure Specification]**
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4466** (2026-10-27): chore(deps-dev): Bump setuptools from 83.0.0 to 84.1.0 in /agent-governance-python/agent-learning (@dependabot[bot])
+- **PR #4465** (2026-10-27): chore(deps): Bump certifi from 2026.5.20 to 2026.10.18 in /agent-governance-python/agent-marketplace (@dependabot[bot])
 - **PR #4464** (closed): fix(python): add AgentControl close support (@MaryamIjazMaryam)
 - **PR #4463** (2026-10-27): chore(deps): Bump zod from 4.4.3 to 4.6.7 in /agent-governance-python/agent-mesh/packages/mcp-proxy (@dependabot[bot])
 - **PR #4462** (2026-10-27): chore(deps): Bump body-parser from 2.2.2 to 2.4.0 in /agent-governance-python/agent-mesh/packages/mcp-proxy (@dependabot[bot])
 - **PR #4460** (2026-10-27): fix(agent-sre): split experiment traffic by relative variant weights (@ShivamSharma43)
-- **PR #4459** (2026-10-27): chore(deps): Bump fast-uri from 3.1.8 to 3.1.9 in /agent-governance-python/agent-mesh/packages/mcp-proxy (@dependabot[bot])
-- **PR #4458** (2026-10-27): chore(deps): Bump body-parser from 1.20.6 to 1.20.9 in /agent-governance-python/agent-mesh/services/api (@dependabot[bot])
 
 ---
 
@@ -516,13 +545,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agent-sre): split experiment traffic by relative variant weights (#4460)
+## X. agent-lightning): include the success bonus in GovernedEnvironment total_reward 
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e490800d`: agent-sre): split experiment traffic by relative variant weights (#4460). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9bfdd5f4`: agent-lightning): include the success bonus in GovernedEnvironment total_reward (#4419). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -530,7 +559,7 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **`agent-sre` A/B experiments split traffic by relative variant weights.** `Experiment.assign` compared one `random.random()` draw against the running sum of the weights, so it only worked when the weights summed to 1: three variants with the default weight 0.5 never sent traffic to the third, percentage weights such as 70/30 sent everything to the first, and two variants weighted 0.1 split 10/90. Each variant now gets its weight divided by the total of all weights, and a variant with a weight of 0 or less gets no traffic.
+- **`agent-lightning` `GovernedEnvironment` includes the success bonus in the episode's `total_reward`.** `step` added the reward to `EnvironmentState.total_reward` before adding `success_bonus` for a clean step, so `total_reward` (and `info["total_reward"]`) left out every bonus that `step` returned: with the default config, a clean step returned 10.9 but raised `total_reward` by 0.9, and an episode's `total_reward` was not the sum of its step rewards. The reward is now accumulated after the bonus, and the step order in the Agent Lightning spec is updated to match (#4419).
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -540,4 +569,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e490800d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9bfdd5f4` are properly handled with clean fallback behavior.

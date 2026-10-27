@@ -5477,3 +5477,5 @@ Every entry in this ledger must capture:
 | `learn-github-mochajs-mocha` | `https://github.com/mochajs/mocha` | `2a386426` | Multi-dimensional audit evidence | 2026-10-27T18:03:26.257Z |
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `cb990c63` | Multi-dimensional audit evidence | 2026-10-27T18:03:34.600Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `10786a52` | Multi-dimensional audit evidence | 2026-10-27T18:03:37.561Z |
+| `learn-github-dubzzz-fast-check` | `https://github.com/dubzzz/fast-check` | `0207dd29` | Multi-dimensional audit evidence | 2026-10-27T18:10:11.015Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `9bfdd5f4` | Multi-dimensional audit evidence | 2026-10-27T18:10:19.839Z |

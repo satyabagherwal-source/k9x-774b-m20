@@ -5468,3 +5468,5 @@
 | `CYCLE-20261027-USHA` | `2026-10-27T18:03:26.254Z` | `mochajs/mocha` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4933` | Yes (`b6358dac...`) |
 | `CYCLE-20261027-UYX1` | `2026-10-27T18:03:34.597Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4934` | Yes (`4dadc4f0...`) |
 | `CYCLE-20261027-V17A` | `2026-10-27T18:03:37.558Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4935` | Yes (`63b27a4d...`) |
+| `CYCLE-20261027-3GSK` | `2026-10-27T18:10:11.012Z` | `dubzzz/fast-check` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4936` | Yes (`3bc1e382...`) |
+| `CYCLE-20261027-3NLO` | `2026-10-27T18:10:19.836Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4937` | Yes (`7e788bdf...`) |

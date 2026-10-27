@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-UB5W",
-    "timestamp": "2026-10-25T19:51:41.828Z",
-    "repository": "maziyarpanahi/openmed",
-    "learningId": "learn-github-maziyarpanahi-openmed",
-    "contentHash": "bfdba2040e2143715974e4f23339333f9a6a03ecda05582be44526b1709e84c6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-UDBZ",
-    "timestamp": "2026-10-25T19:51:44.639Z",
-    "repository": "zeromicro/go-zero",
-    "learningId": "learn-github-zeromicro-go-zero",
-    "contentHash": "5cfd378456458d57b39d94cfcf69b61aaab8bd2462bfbe7397a9e4d6fe5d8ba5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-UGJR",
     "timestamp": "2026-10-25T19:51:48.807Z",
     "repository": "Tongyi-MAI/Z-Image-Turbo",
@@ -7490,6 +7460,36 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "63b27a4dbe91fc5e0361f0f109b92344fea8816f7c191d31ed423281491cd4d7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-3GSK",
+    "timestamp": "2026-10-27T18:10:11.012Z",
+    "repository": "dubzzz/fast-check",
+    "learningId": "learn-github-dubzzz-fast-check",
+    "contentHash": "3bc1e3826c12ea2299a45493a1540d55ac0f12d20ace051363c2c754277b4771",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-3NLO",
+    "timestamp": "2026-10-27T18:10:19.836Z",
+    "repository": "microsoft/agent-governance-toolkit",
+    "learningId": "learn-github-microsoft-agent-governance-toolkit",
+    "contentHash": "7e788bdfd4188516d7465d77d75dcd46c48aba3d5608f0df0054088fe72d65fb",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
