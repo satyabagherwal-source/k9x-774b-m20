@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md`  
 > **Source**: github ([https://github.com/jhspetersson/fselect](https://github.com/jhspetersson/fselect))  
-> **Source Version**: `4cc5c89a`  
+> **Source Version**: `f85f1b54`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T03:38:28.310Z  
+> **Timestamp**: 2026-10-27T15:39:33.763Z  
 > **Learning ID**: `learn-github-jhspetersson-fselect`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jhspetersson/fselect](https://github.com/jhspetersson/fselect))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T03:38:27.658Z  
+> **Harvest Timestamp**: 2026-10-27T15:39:33.536Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find files with SQL-like queries
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 4474 stars
+- **Stars / Engagement**: 4473 stars
 
 ---
 
@@ -1460,485 +1460,330 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9a867909` (2026-10-22)
-**Commit Message**: fix found regressions
-
-**File**: `src/function.rs` (modified, +26/-13)
-```diff
-@@ -1977,12 +1977,12 @@ impl FieldAccumulator {
-                     self.count = 1;
-                     self.sum = v;
-                 } else {
--                    if v < self.min {
-+                    if v < self.min || (v == self.min && self.min_raw.as_deref().is_some_and(|current| value < current)) {
-                         self.min = v;
-                         self.min_raw = Some(value.to_string());
-                         self.min_raw_type = value_type.clone();
-                     }
--                    if v > self.max {
-+                    if v > self.max || (v == self.max && self.max_raw.as_deref().is_some_and(|current| value > current)) {
-                         self.max = v;
-                         self.max_raw = Some(value.to_string());
-                         self.max_raw_type = value_type;
-@@ -3640,6 +3640,20 @@ mod tests {
-         assert_eq!(get_aggregate_value(&Function::Max, &numeric, "val".to_string(), &None), "100");
-     }
- 
-+    #[test]
-+    fn numeric_ties_between_extremes_are_broken_by_text_regardless_of_order() {
-+        for order in [["000", "-000", "002"], ["-000", "000", "002"], ["002", "000", "-000"]] {
-+            let names = make_accumulator("val", &order);
-+            assert_eq!(get_aggregate_value(&Function::Min, &names, "val".to_string(), &None), "-000", "{order:?}");
-+            assert_eq!(get_aggregate_value(&Function::Max, &names, "val".to_string(), &None), "002", "{order:?}");
-+        }
-+        for order in [["2", "2.0", "002"], ["002", "2.0", "2"]] {
-+            let twos = make_accumulator("val", &order);
-+            assert_eq!(get_aggregate_value(&Function::Min, &twos, "val".to_string(), &None), "002", "{order:?}");
-+            assert_eq!(get_aggregate_value(&Function::Max, &twos, "val".to_string(), &None), "2.0", "{order:?}");
-+        }
-+    }
-+
-     #[test]
-     fn min_and_max_keep_the_spelling_of_numeric_looking_text() {
-         let padded = make_accumulator("val", &["002", "010", "1e3"]);
-@@ -4518,20 +4532,19 @@ mod tests {
-     }
- 
-     #[test]
--    fn min_negative_zero_keeps_the_first_spelling() {
--        let acc = make_accumulator("val", &["-0", "0"]);
--        let result = get_aggregate_value(&Function::Min, &acc, "val".to_string(), &None);
--        assert_eq!(result, "-0");
--        let acc = make_accumulator("val", &["0", "-0"]);
--        let result = get_aggregate_value(&Function::Min, &acc, "val".to_string(), &None);
--        assert_eq!(result, "0");
-+    fn min_negative_zero_is_the_textually_smaller_spelling() {
-+        for order in [["-0", "0"], ["0", "-0"]] {
-+            let acc = make_accumulator("val", &order);
-+            assert_eq!(get_aggregate_value(&Function::Min, &acc, "val".to_string(), &None), "-0", "{order:?}");
-+        }
-     }
- 
-     #[test]
--    fn max_negative_zero_keeps_the_first_spelling() {
--        let acc = make_accumulator("val", &["-0", "0"]);
--        let result = get_aggregate_value(&Function::Max, &acc, "val".to_string(), &None);
--        assert_eq!(result, "-0");
-+    fn max_negative_zero_is_the_textually_larger_spelling() {
-+        for order in [["-0", "0"], ["0", "-0"]] {
-+            let acc = make_accumulator("val", &order);
-+            assert_eq!(get_aggregate_value(&Function::Max, &acc, "val".to_string(), &None), "0", "{order:?}");
-+        }
-     }
- 
-     #[test]
-```
-
-**File**: `src/searcher.rs` (modified, +1/-1)
-```diff
-@@ -6070,7 +6070,7 @@ mod tests {
-             &tmp,
-         );
-         let where_size_twice = run_query_against_dir(
--            "select name from __DIR__ where size > 1 and size * 2 > 5 order by name",
-+            "select name from __DIR__ where is_file and size > 1 and size * 2 > 5 order by name",
-             &tmp,
-         );
-         let _ = fs::remove_dir_all(&tmp);
-```
-
----
-
-### Incident Patch 2: `0d2483e9` (2026-10-22)
-**Commit Message**: fix found regressions
-
-**File**: `docs/usage.md` (modified, +7/-1)
-```diff
-@@ -96,7 +96,13 @@ And yes, you should use quotes for glob-patterns or regular expressions in the q
- on Linux or macOS to prevent parameter expansion from the shell. 
- If you are on Windows, feel free to omit most of the quotes.
- 
--Commas for column separation aren't needed as well. Column aliasing (with or without `as` keyword) is not supported.
-+Commas for column separation aren't needed as well. A column can be given an alias with the `as` keyword;
-+the alias can then be reused in later columns, in `where`, `group by`, `having` and `order by`:
-+
-+    fselect "size + 1 as next, next * 2 from /home/user where next > 1000 order by next"
-+
-+A real field name is never shadowed by an alias, and an unknown name followed by parentheses is
-+reported as an unknown function instead of being read as text.
- 
- `where` section can contain short syntax conditions for boolean columns (like `is_audio` or `other_write`).
- 
-```
-
-**File**: `src/parser.rs` (modified, +63/-7)
-```diff
-@@ -42,6 +42,7 @@ pub struct Parser<'a> {
-     /// How many NOTs enclose the condition being parsed.
-     negation_depth: usize,
-     select_aliases: Vec<Expr>,
-+    declared_aliases: Vec<Expr>,
-     nested: bool,
- }
- 
-@@ -59,6 +60,7 @@ impl <'a> Parser<'a> {
-             root_aliases: vec![],
-             negation_depth: 0,
-             select_aliases: vec![],
-+            declared_aliases: vec![],
-             nested: false,
-         }
-     }
-@@ -294,6 +296,25 @@ impl <'a> Parser<'a> {
-         }
-     }
- 
-+    fn push_field(&mut self, fields: &mut Vec<Expr>, field: Expr) {
-+        if field.alias.is_some() {
-+            self.declared_aliases.push(field.clone());
-+        }
-+        fields.push(field);
-+    }
-+
-+    fn find_alias(aliases: &[Expr], name: &str) -> Option<Expr> {
-+        aliases
-+            .iter()
-+            .find(|f| f.alias.as_deref().is_some_and(|a| a.eq_ignore_ascii_case(name)))
-+            .cloned()
-+    }
-+
-+    fn is_plain_identifier(s: &str) -> bool {
-+        s.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
-+            && s.chars().next().is_some_and(|c| c.is_ascii_alphabetic() || c == '_')
-+    }
-+
-     fn parse_fields(&mut self) -> Result<Vec<Expr>, String> {
-         let mut fields = vec![];
- 
-@@ -334,7 +355,7 @@ impl <'a> Parser<'a> {
-                         }
- 
-                         match self.parse_expr() {
--                            Ok(Some(field)) => fields.push(field),
-+                            Ok(Some(field)) => self.push_field(&mut fields, field),
-                             Err(e) => return Err(e),
-                             _ => {}
-                         }
-@@ -343,7 +364,7 @@ impl <'a> Parser<'a> {
-                 Some(Lexeme::Open) | Some(Lexeme::CurlyOpen) | Some(Lexeme::Not) => {
-                     self.drop_lexeme();
-                     match self.parse_expr() {
--                        Ok(Some(field)) => fields.push(field),
-+                        Ok(Some(field)) => self.push_field(&mut fields, field),
-                         Err(e) => return Err(e),
-                         _ => {}
-                     }
-@@ -1327,11 +1348,7 @@ impl <'a> Parser<'a> {
-                 Ok(Some(expr))
-             }
-             Some(Lexeme::RawString(ref s)) => {
--                if let Some(aliased) = self
--                    .select_aliases
--                    .iter()
--                    .find(|f| f.alias.as_deref().is_some_and(|a| a.eq_ignore_ascii_case(s)))
--                    .cloned()
-+                if let Some(aliased) = Self::find_alias(&self.select_aliases, s)
-                     && !self.call_follows()
-                 {
-                     let mut expr = aliased;
-@@ -1350,6 +1367,16 @@ impl <'a> Parser<'a> {
-                     return Ok(Some(expr));
-                 }
- 
-+                if let Some(aliased) = Self::find_alias(&self.declared_aliases, s)
-+                    && !self.call_follows()
-+                {
-+                    let mut expr = aliased;
-+                    if minus {
-+                        expr.minus = !expr.minus;
-+                    }
-+                    return Ok(Some(expr));
-+                }
-+
-                 // Once a function name is recognised, argument errors must
-                 // propagate: silently falling back to the literal "upper"
-                 // would leave the already-consumed lexemes unrewound and
-@@ -1362,6 +1389,10 @@ impl <'a> Parser<'a> {
-                     return Ok(Some(expr));
-                 }
- 
-+                if Self::is_plain_identifier(s) && !s.eq_ignore_ascii_case("not") && self.call_follows() {
-+                    return Err(format!("Unknown function: {}", s));
-+                }
-+
-                 // After a comparison operator the lexer emits a bare "-" as a
-                 // RawString (start of a negative literal), so `size gt -(1+2)`
-                 // arrives here rather than as an arithmetic operator.
-@@ -2686,6 +2717,31 @@ mod tests {
-         assert_eq!(grouped.grouping_fields[1].left.as_ref().unwrap().function, Some(Function::Length), "alias inside arithmetic is the aliased expression");
-     }
- 
-+    #[test]
-+    fn declared_select_aliases_resolve_in_later_columns_and_in_where() {
-+        let query = parse_query("select size + 1 as nxt, nxt * 2 from /d where nxt = 12").unwrap();
-+        let second = &query.fields[1];
-+        assert_eq!(second.arithmetic_op, Some(ArithmeticOp::Multiply));
-+        assert_eq!(second.left.as_ref().unwrap().left.as_ref().unwrap().field, Some(Field::Size), "nxt is the aliased size + 1");
-+        let condition = query.expr.unwrap();
-+        assert_eq!(condition.left.as_ref().unwrap().left.as_ref().unwrap().field, Some(Field::Size));
-+
-+        let shadowed = parse_query("select upper(name) as name, name from /d where name = 'x'").unwrap();
-+        assert_eq!(shadowed.fields[1].field, Some(Field::Name), "a real field is never shadowed by an alias");
-+        assert_eq!(shadowed.expr.unwrap().left.unwrap().field,
-```
-
-**File**: `src/searcher.rs` (modified, +49/-4)
-```diff
-@@ -2048,6 +2048,45 @@ impl<'a> Searcher<'a> {
-         Ok(if self.null_comparisons.contains(&key) { None } else { Some(holds) })
-     }
- 
-+    fn conforms_caching_leaves(
-+        &mut self,
-+        entry: &DirEntry,
-+        file_info: &Option<FileInfo>,
-+        root_path: &Path,
-+        file_map: &mut HashMap<String, String>,
-+        expr: &Expr,
-+    ) -> Result<bool, SearchError> {
-+        if let Some(ref logical_op) = expr.logical_op {
-+            let left = match expr.left {
-+                Some(ref left) => self.conforms_caching_leaves(entry, file_info, root_path, file_map, left)?,
-+                None => false,
-+            };
-+            match (logical_op, left) {
-+                (LogicalOp::And, false) => return Ok(false),
-+                (LogicalOp::Or, true) => return Ok(true),
-+                _ => {}
-+            }
-+            return match expr.right {
-+                Some(ref right) => self.conforms_caching_leaves(entry, file_info, root_path, file_map, right),
-+                None => Ok(false),
-+            };
-+        }
-+        let key = expr.cache_key();
-+        let cached = file_map.get(&key).and_then(|cached| match cached.as_str() {
-+            "-1" if expr.minus => Some(true),
-+            "0" if expr.minus => Some(false),
-+            text => str_to_bool(text),
-+        });
-+        if let Some(holds) = cached {
-+            return Ok(holds);
-+        }
-+        let holds = self.conforms(entry, file_info, root_path, expr)?;
-+        let value = apply_minus(expr, Variant::from_bool(holds));
-+        self.remember_type(&key, &value);
-+        file_map.insert(key, value.to_string());
-+        Ok(holds)
-+    }
-+
-     fn grouped_condition_value(&self, file_map: &HashMap<String, String>, condition: &Expr) -> Option<bool> {
-         let key = Self::condition_key(condition);
-         let conditions = || {
-@@ -2516,7 +2555,7 @@ impl<'a> Searcher<'a> {
-         // it evaluates to a boolean, per row or per group.
-         if column_expr.op.is_some() || column_expr.logical_op.is_some() {
-             let holds = match (entry, accumulator) {
--                (Some(entry), _) => Some(self.conforms(entry, file_info, root_path, column_expr)?),
-+                (Some(entry), _) => Some(self.conforms_caching_leaves(entry, file_info, root_path, file_map, column_expr)?),
-                 (None, Some(accumulator)) => Some(self.group_conforms(file_map, accumulator, column_expr)?),
-                 (None, None) => None,
-             };
-@@ -2741,6 +2780,7 @@ impl<'a> Searcher<'a> {
-             .map(|(_, column)| column.get_alias_references_in_subqueries(current_alias, true).is_empty())
-             .collect();
-         let mut bound: Vec<Option<Variant>> = vec![None; required_columns.len()];
-+        let mut scratches: Vec<HashMap<String, String>> = vec![HashMap::new(); required_columns.len()];
-         let mut failed: Vec<(usize, SearchError)> = Vec::new();
-         for round in 0..rounds {
-             let mut changed = false;
-@@ -2758,6 +2798,7 @@ impl<'a> Searcher<'a> {
-                     Some(value) => Ok(value),
-                     None => self.get_column_expr_value(Some(entry), file_info, root_path, &mut scratch, None, column),
-                 };
-+                scratches[index] = scratch;
-                 let value = match evaluated {
-                     Ok(value) => {
-                         bound[index] = Some(value.clone());
-@@ -2783,7 +2824,7 @@ impl<'a> Searcher<'a> {
-             }
-         }
-         if failed.is_empty() {
--            self.seed_bound_aliases(current_alias, required_columns, &bound, file_map);
-+            self.seed_bound_aliases(current_alias, required_columns, &bound, &scratches, file_map);
-             return Ok(());
-         }
-         for (index, err) in failed {
-@@ -2811,7 +2852,7 @@ impl<'a> Searcher<'a> {
-                 break;
-             }
-         }
--        self.seed_bound_aliases(current_alias, required_columns, &bound, file_map);
-+        self.seed_bound_aliases(current_alias, required_columns, &bound, &scratches, file_map);
-         Ok(())
-     }
- 
-@@ -2820,9 +2861,10 @@ impl<'a> Searcher<'a> {
-         current_alias: &str,
-         required_columns: &[(String, Expr)],
-         bound: &[Option<Variant>],
-+        scratches: &[HashMap<String, String>],
-         file_map: &mut HashMap<String, String>,
-     ) {
--        for ((name, column), value) in required_columns.iter().zip(bound) {
-+        for (((name, column), value), scratch) in required_columns.iter().zip(bound).zip(scratches) {
-             let failed = self
-                 .alias_failures
-                 .borrow()
-@@ -2833,6 +2875,9 @@ impl<'a> Searcher<'a> {
-                 continue;
-             }
-             if let Some(value) = value {
-+                for (key, text) in scratch {
-+                    file_map.entry(key.clone()).or_insert_with(|| text.clone());
-+                }
-                 let key = column.cache_key();
-                 self.remember_type(&key, val
-```
-
-**File**: `tests/fatal_errors.rs` (modified, +15/-0)
-```diff
-@@ -275,3 +275,18 @@ fn having_fields_hidden_by_expression_grouping_are_rejected() {
-     assert_eq!(grouped_expression.code, Some(0), "{}", grouped_expression.stderr);
-     assert_eq!(grouped_expression.stdout, "1\t2\n");
- }
-+
-+#[test]
-+fn an_unknown_function_name_is_rejected_before_the_header() {
-+    let dir = make_dir("fselect_it_fatal_unknown_function");
-+    let root = dir.display().to_string();
-+
-+    assert_rejected_without_output(&format!("select reverse('abc') from {root} into json"), "Unknown function: reverse");
-+    assert_rejected_without_output(&format!("select name from {root} where lpad(name, 3) = 'x' into html"), "Unknown function: lpad");
-+    assert_rejected_without_output(&format!("select name, median(size) from {root} order by name"), "Unknown function: median");
-+
-+    let still_fine = fselect(&format!("select name from {root} where not (size > 100) and ext in (txt, md) order by name"));
-+    let _ = fs::remove_dir_all(&dir);
-+    assert_eq!(still_fine.code, Some(0), "{}", still_fine.stderr);
-+    assert_eq!(still_fine.stdout, "a.txt\nb.md\n");
-+}
-```
-
-**File**: `tests/grouping.rs` (modified, +24/-0)
-```diff
-@@ -502,3 +502,27 @@ fn negated_unknown_keys_keep_their_numeric_type_in_ordering() {
-     assert_eq!(ascending.1, "9\t1\n10\t3\n", "9 before 10 only when the key is numeric");
-     assert_eq!(descending.1, "10\t3\n9\t1\n");
- }
-+
-+#[test]
-+fn grouping_reuses_compound_alias_values_where_already_evaluated() {
-+    let dir = std::env::temp_dir().join("fselect_it_grouping_cached_compound_alias");
-+    let _ = fs::remove_dir_all(&dir);
-+    fs::create_dir_all(&dir).unwrap();
-+    for i in 0..60 {
-+        fs::write(dir.join(format!("f{i}.txt")), "x").unwrap();
-+    }
-+    let root = dir.display();
-+
-+    let disjunction = fselect(&format!("select random(0, 1) = 1 or size < 0 as flag, count(*) from {root} as t where t.flag = true group by flag"));
-+    let conjunction = fselect(&format!("select random(0, 1) = 1 and size >= 0 as flag, count(*) from {root} as t where t.flag = true group by flag"));
-+    let nested = fselect(&format!(
-+        "select (random(0, 1) = 1 or size < 0) and size >= 0 as flag, count(*) from {root} as t where t.flag = true group by flag"
-+    ));
-+    let _ = fs::remove_dir_all(&dir);
-+
-+    for result in [&disjunction, &conjunction, &nested] {
-+        assert_eq!(result.0, Some(0), "{}", result.2);
-+        assert_eq!(result.1.lines().count(), 1, "rows that passed WHERE must not regroup as false: {}", result.1);
-+        assert!(result.1.starts_with("true\t"), "{}", result.1);
-+    }
-+}
-```
-
-**File**: `tests/queries.rs` (modified, +17/-0)
-```diff
-@@ -393,3 +393,20 @@ fn arithmetic_follows_precedence_and_mixes_with_fields() {
-     assert_eq!(division.stdout, "beta.md\t\n", "the row is still printed with an empty cell");
-     assert!(division.stderr.contains("Division by zero"), "{}", division.stderr);
- }
-+
-+#[test]
-+fn select_aliases_can_be_reused_in_later_columns_and_in_where() {
-+    let dir = query_dir("fselect_it_query_alias_reuse");
-+    let root = dir.display();
-+
-+    let arithmetic = fselect(&format!("select size + 1 as nxt, nxt * 2 from {root} where nxt = 12"));
-+    let condition = fselect(&format!("select size > 5 as big, name from {root} where big and is_file order by name"));
-+    let function_name = fselect(&format!("select length(name) as len, len - 1 from {root} where name = beta.md"));
-+    let chained = fselect(&format!("select size as sz, sz + 1 as nxt, nxt * 2 from {root} where is_file and sz < 2 order by path"));
-+    let _ = fs::remove_dir_all(&dir);
-+
-+    assert_eq!(ok(&arithmetic), "12\t24\n");
-+    assert_eq!(ok(&condition), "true\talpha.txt\n");
-+    assert_eq!(ok(&function_name), "7\t6\n", "a declared alias wins over a function of the same name");
-+    assert_eq!(ok(&chained), "1\t2\t4\n0\t1\t2\n1\t2\t4\n");
-+}
-```
-
----
-
-### Incident Patch 3: `4cc5c89a` (2026-10-23)
-**Commit Message**: leave update notifications out of the default build
+### Incident Patch 1: `f85f1b54` (2026-10-27)
+**Commit Message**: fix `fsize` support
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -5,6 +5,7 @@
- ### Changed
+@@ -10,6 +10,7 @@
+ ### Fixed
  
- - Matroska and WebM metadata is behind the `mkv` build feature, enabled by default.
-+- The `update-notifications` build feature is no longer enabled by default.
+ - `NOT IN` no longer accepts a row when the list or subquery contains a NULL member and nothing matches
++- Numeric functions such as `ABS`, `GREATEST` and `HEX` read the byte count of `fsize` instead of its formatted text
  
  ## [0.10.4] - 2026-10-23
  
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `src/function.rs` (modified, +58/-41)
 ```diff
-@@ -13,7 +13,7 @@ license = "MIT OR Apache-2.0"
- edition = "2024"
+@@ -361,13 +361,13 @@ fn file_contains<R: Read>(mut reader: R, needle_text: &str) -> bool {
+ /// values skipped too; otherwise all arguments are compared as strings, as in
+ /// MySQL. `pick` is the ordering a candidate must have against the current
+ /// best to replace it.
+-fn least_or_greatest(first: &str, rest: &[String], pick: Ordering) -> Variant {
+-    let values: Vec<&str> = std::iter::once(first)
+-        .chain(rest.iter().map(String::as_str))
+-        .filter(|value| !value.is_empty())
++fn least_or_greatest(first: &Variant, rest: &[Variant], pick: Ordering) -> Variant {
++    let values: Vec<&Variant> = std::iter::once(first)
++        .chain(rest.iter())
++        .filter(|value| !value.as_str().is_empty())
+         .collect();
  
- [features]
--default = ["git", "users", "update-notifications", "interactive", "mkv"]
-+default = ["git", "users", "interactive", "mkv"]
- git = ["dep:git2"]
- update-notifications = ["dep:update-informer"]
- users = ["dep:uzers"]
+-    let numbers: Option<Vec<f64>> = values.iter().map(|value| value.parse::<f64>().ok()).collect();
++    let numbers: Option<Vec<f64>> = values.iter().map(|value| float_of(value)).collect();
+     match numbers {
+         Some(numbers) => numbers
+             .into_iter()
+@@ -376,11 +376,16 @@ fn least_or_greatest(first: &str, rest: &[String], pick: Ordering) -> Variant {
+             .map_or_else(|| Variant::empty(VariantType::String), Variant::from_float),
+         None => values
+             .into_iter()
+-            .reduce(|best, value| if value.cmp(best) == pick { value } else { best })
+-            .map_or_else(|| Variant::empty(VariantType::String), |value| Variant::from_string(&value.to_string())),
++            .map(Variant::to_string)
++            .reduce(|best, value| if value.cmp(&best) == pick { value } else { best })
++            .map_or_else(|| Variant::empty(VariantType::String), |value| Variant::from_string(&value)),
+     }
+ }
+ 
++fn float_of(value: &Variant) -> Option<f64> {
++    value.to_float_opt().or_else(|| value.as_str().parse::<f64>().ok())
++}
++
+ /// 1-based character position of `needle` in `haystack`, searching from the
+ /// 1-based `start` when given; 0 when absent. Shared by LOCATE (needle first,
+ /// as in MySQL) and STRPOS (haystack first, as in PostgreSQL).
+@@ -495,10 +500,10 @@ fn date_variant(date: NaiveDate) -> Variant {
+     Variant::from_datetime_range(start, end).with_text(&format_date(&date))
+ }
+ 
+-fn unary_float(arg: &str, f: impl FnOnce(f64) -> Result<Variant, String>) -> Result<Variant, String> {
+-    match arg.parse::<f64>() {
+-        Ok(val) => f(val),
+-        Err(_) => Ok(Variant::empty(VariantType::String)),
++fn unary_float(arg: &Variant, f: impl FnOnce(f64) -> Result<Variant, String>) -> Result<Variant, String> {
++    match float_of(arg) {
++        Some(val) => f(val),
++        None => Ok(Variant::empty(VariantType::String)),
+     }
+ }
+ 
+@@ -520,6 +525,24 @@ pub fn get_value(
+     entry: Option<&DirEntry>,
+     file_info: &Option<FileInfo>,
+ ) -> Result<Variant, String> {
++    evaluate(
++        function,
++        Variant::from_string(&function_arg),
++        function_args.iter().map(|arg| Variant::from_string(arg)).collect(),
++        entry,
++        file_info,
++    )
++}
++
++pub fn evaluate(
++    function: &Function,
++    arg: Variant,
++    args: Vec<Variant>,
++    entry: Option<&DirEntry>,
++    file_info: &Option<FileInfo>,
++) -> Result<Variant, String> {
++    let function_arg = arg.to_string();
++    let function_args: Vec<String> = args.iter().map(Variant::to_string).collect();
+     match function {
+         // ===== String functions =====
+         Function::Lower => Ok(Variant::from_string(&function_arg.to_lowercase())),
+@@ -617,20 +640,20 @@ pub fn get_value(
+         }
+ 
+         // ===== Numeric functions =====
+-        Function::Bin => match function_arg.parse::<i64>() {
+-            Ok(val) => Ok(Variant::from_string(&format!("{:b}", val))),
++        Function::Bin => match arg.to_exact_int() {
++            Some(val) => Ok(Variant::from_string(&format!("{:b}", val))),
+             _ => Ok(Variant::empty(VariantType::String)),
+         },
+-        Function::Hex => match function_arg.parse::<i64>() {
+-            Ok(val) => Ok(Variant::from_string(&format!("{:x}", val))),
++        Function::Hex => match arg.to_exact_int() {
++            Some(val) => Ok(Variant::from_string(&format!("{:x}", val))),
+             _ => Ok(Variant::empty(VariantType::String)),
+         },
+-        Function::Oct => match function_arg.parse::<i64>() {
+-            Ok(val) => Ok(Variant::from_string(&format!("{:o}", val))),
++        Function::Oct => match arg.to_exact_int() {
++            Some(val) => Ok(Variant::from_string(&format!("{:o}", val))),
+             _ => Ok(Variant::empty(VariantType::String)),
+         },
+-        Function::Abs => unary_float(&function_arg, |val| Ok(Variant::from_float(val.abs()))),
+-        Function::Power => unary_float(&function_arg, |val| {
++        Function::Abs => unary_float(&arg, |val| Ok(Variant::from_float(val.abs()))),
++        Function::Power => unary_float(&arg, |val| {
+             let power = match function_args.first() {
+                 Some(power) => match power.parse::<f64>() {
+                     
 ```
 
-**File**: `docs/usage.md` (modified, +4/-3)
+**File**: `src/searcher.rs` (modified, +34/-5)
 ```diff
-@@ -971,8 +971,9 @@ You can also specify a config location with a runtime option, e.g.:
+@@ -2519,14 +2519,12 @@ impl<'a> Searcher<'a> {
+             let mut function_args = vec![];
+             if let Some(args) = &column_expr.args {
+                 for arg in args {
+-                    let arg_value =
+-                        self.get_column_expr_value(row, arg)?;
+-                    function_args.push(arg_value.to_string());
++                    function_args.push(self.get_column_expr_value(row, arg)?);
+                 }
+             }
+-            let result = function::get_value(
++            let result = function::evaluate(
+                 function,
+-                function_arg?.to_string(),
++                function_arg?,
+                 function_args,
+                 row.entry,
+                 row.file_info,
+@@ -8971,6 +8969,37 @@ f
+         assert_eq!(aggregated, vec![format!("{}	{}", smallest[0], largest[0])]);
+     }
  
- #### Check for updates
++    #[test]
++    fn numeric_functions_read_the_byte_count_of_fsize() {
++        let tmp = std::env::temp_dir().join("fselect_test_fsize_functions");
++        let _ = fs::remove_dir_all(&tmp);
++        fs::create_dir_all(&tmp).unwrap();
++        for bytes in [2usize, 10, 900, 10241] {
++            fs::write(tmp.join(format!("f{bytes}.bin")), vec![0u8; bytes]).unwrap();
++        }
++
++        let run = |query: &str| run_query_against_dir(query, &tmp);
++        let numeric = run("select name, abs(fsize), greatest(fsize, 1000), least(fsize, 1000), hex(fsize), fsize + 0 from __DIR__ order by size");
++        let text = run("select fsize, length(fsize) from __DIR__ order by size");
++        let capped = run("select name from __DIR__ where greatest(fsize, 1000) = 1000 order by size");
++        let _ = fs::remove_dir_all(&tmp);
++
++        assert_eq!(
++            numeric,
++            vec![
++                "f2.bin\t2\t1000\t2\t2\t2",
++                "f10.bin\t10\t1000\t10\ta\t10",
++                "f900.bin\t900\t1000\t900\t384\t900",
++                "f10241.bin\t10241\t10241\t1000\t2801\t10241",
++            ]
++        );
++        for row in &text {
++            let (formatted, length) = row.split_once('\t').unwrap();
++            assert_eq!(length, formatted.chars().count().to_string(), "string functions keep the formatted text: {row}");
++        }
++        assert_eq!(capped, vec!["f2.bin", "f10.bin", "f900.bin"]);
++    }
++
+     #[test]
+     fn archive_entries_produce_rectangular_rows() {
+         use std::io::Write;
+```
+
+---
+
+### Incident Patch 2: `5f6543b3` (2026-10-27)
+**Commit Message**: make `NOT IN` no longer accept a row when the list or subquery contains a NULL member and nothing matches
+
+**File**: `CHANGELOG.md` (modified, +4/-0)
+```diff
+@@ -7,6 +7,10 @@
+ - Matroska and WebM metadata is behind the `mkv` build feature, enabled by default.
+ - The `update-notifications` build feature is no longer enabled by default.
  
--**fselect** can be built with `update-notifications` feature, that enables automatic check for updates.
--This check is disabled by default. To enable it, put
-+**fselect** can be built with the `update-notifications` feature (`cargo build --features update-notifications`,
-+it is not part of the default build), which enables an automatic check for updates.
-+The check is also disabled at run time by default. To enable it, put
++### Fixed
++
++- `NOT IN` no longer accepts a row when the list or subquery contains a NULL member and nothing matches
++
+ ## [0.10.4] - 2026-10-23
  
-     check_for_updates = true
+ ### Added
+```
+
+**File**: `docs/usage.md` (modified, +3/-1)
+```diff
+@@ -723,7 +723,9 @@ where name not in (
+ )
+ ```
  
-@@ -1082,7 +1083,7 @@ Some functionality is behind Cargo features so that packagers can leave out depe
- | `git`                  | on      | `is_git_*` and `git_*` fields via libgit2                     |
- | `users`                | on      | `user` and `group` names on Unix                              |
- | `interactive`          | on      | the `-i` REPL                                                 |
--| `update-notifications` | on      | the check for a newer release                                 |
-+| `update-notifications` | off     | the check for a newer release                                 |
- | `mkv`                  | on      | `width`, `height` and `duration` of Matroska and WebM files   |
- | `everything`           | off     | the *Everything* index on Windows                             |
- | `plocate`              | off     | the *plocate* index on Linux                                  |
+-**Important Note:** `NOT IN` can produce unexpected results if the subquery returns any NULL/empty values. 
++**Important Note:** `NOT IN` follows SQL three-valued logic. If the subquery returns any NULL/empty values
++(for example `max(size)` over an empty directory, or `width` of a non-image file) and no member matches,
++the condition is unknown and the row is not selected. An empty result set still makes `NOT IN` true.
+ When in doubt, use `NOT EXISTS` instead (see below).
+ 
+ #### `EXISTS` Operator
+```
+
+**File**: `src/searcher.rs` (modified, +75/-27)
+```diff
+@@ -203,7 +203,12 @@ fn cached_condition(value: &Variant) -> Option<bool> {
+     }
+ }
+ 
+-enum Membership {
++struct Membership {
++    values: MembershipValues,
++    has_null: bool,
++}
++
++enum MembershipValues {
+     Strings(HashSet<String>),
+     Ints(HashSet<i64>),
+     Floats(Vec<f64>),
+@@ -216,36 +221,37 @@ fn datetime_seconds((from, to): (NaiveDateTime, NaiveDateTime)) -> (i64, i64) {
+ }
+ 
+ impl Membership {
+-    fn new(values: &[Variant], field_type: &VariantType) -> Membership {
+-        let variants = values.iter();
+-        match field_type {
+-            VariantType::String => Membership::Strings(values.iter().map(Variant::to_string).collect()),
+-            VariantType::Int => Membership::Ints(variants.filter_map(|v| v.to_exact_int()).collect()),
+-            VariantType::Float => Membership::Floats(variants.filter_map(|v| v.to_float_opt()).collect()),
++    fn new(values: &[Variant], field_type: &VariantType, has_null: bool) -> Membership {
++        let variants = values.iter().filter(|v| !v.is_null());
++        let values = match field_type {
++            VariantType::String => MembershipValues::Strings(variants.map(Variant::to_string).collect()),
++            VariantType::Int => MembershipValues::Ints(variants.filter_map(|v| v.to_exact_int()).collect()),
++            VariantType::Float => MembershipValues::Floats(variants.filter_map(|v| v.to_float_opt()).collect()),
+             VariantType::Bool => {
+                 let mut bools = (false, false);
+-                for value in values {
++                for value in variants {
+                     match str_to_bool(&value.to_string()) {
+                         Some(true) => bools.0 = true,
+                         Some(false) => bools.1 = true,
+                         None => {}
+                     }
+                 }
+-                Membership::Bools { has_true: bools.0, has_false: bools.1 }
++                MembershipValues::Bools { has_true: bools.0, has_false: bools.1 }
+             }
+             VariantType::DateTime => {
+-                Membership::DateTimes(variants.filter_map(|v| v.to_datetime().ok().map(datetime_seconds)).collect())
++                MembershipValues::DateTimes(variants.filter_map(|v| v.to_datetime().ok().map(datetime_seconds)).collect())
+             }
+-        }
++        };
++        Membership { values, has_null }
+     }
+ 
+     fn contains(&self, field_value: &Variant) -> bool {
+-        match self {
+-            Membership::Strings(set) => set.contains(field_value.to_string().as_str()),
+-            Membership::Ints(set) => set.contains(&field_value.to_int()),
+-            Membership::Floats(list) => list.contains(&field_value.to_float()),
+-            Membership::Bools { has_true, has_false } => if field_value.to_bool() { *has_true } else { *has_false },
+-            Membership::DateTimes(intervals) => match field_value.to_datetime().map(datetime_seconds) {
++        match &self.values {
++            MembershipValues::Strings(set) => set.contains(field_value.to_string().as_str()),
++            MembershipValues::Ints(set) => set.contains(&field_value.to_int()),
++            MembershipValues::Floats(list) => list.contains(&field_value.to_float()),
++            MembershipValues::Bools { has_true, has_false } => if field_value.to_bool() { *has_true } else { *has_false },
++            MembershipValues::DateTimes(intervals) => match field_value.to_datetime().map(datetime_seconds) {
+                 Ok((from, to)) => intervals.iter().any(|(start, finish)| from <= *finish && *start <= to),
+                 Err(_) => false,
+             },
+@@ -2965,15 +2971,23 @@ impl<'a> Searcher<'a> {
+         let args: &[Expr] = match &right.args {
+             Some(args) => args,
+             None => {
+-                let found = match &right.subquery {
+-                    Some(subquery) => self.subquery_membership(subquery, field_value.get_type())?.contains(field_value),
+-                    None => false,
++                let (found, has_null) = match &right.subquery {
++                    Some(subquery) => {
++                        let membership = self.subquery_membership(subquery, field_value.get_type())?;
++                        (membership.contains(field_value), membership.has_null)
++                    }
++                    None => (false, false),
+                 };
++                if !found && has_null {
++                    self.null_comparisons.insert(expr.cache_key());
++                    return Ok(false);
++                }
+                 return Ok(if negate { !found } else { found });
+             }
+         };
+         let field_type = field_value.get_type();
+         let mut found = false;
++        let mut has_null = false;
+         for arg in args {
+             #[cfg(test)]
+             {
+@@ -2983,7 +2997,8 @@ impl<'a> Searcher<'a> {
+                 row.values.clear();
+             }
+             let arg_val = self.get_column_expr_value(row, arg)?;
+-            if arg_val.is_null() {
++            if Self
 ```
 
 #### Recent Merged Pull Requests:
@@ -1967,57 +1812,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. found regressions
+## X. `fsize` support
 
 **RULE**:
-When implementing operations in `src/function.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jhspetersson/fselect. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jhspetersson/fselect. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9a867909`: found regressions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f85f1b54`: `fsize` support. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/function.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                    if v < self.min || (v == self.min && self.min_raw.as_deref().is_some_and(|current| value < current)) {
-                    if v > self.max || (v == self.max && self.max_raw.as_deref().is_some_and(|current| value > current)) {
-    #[test]
-    fn numeric_ties_between_extremes_are_broken_by_text_regardless_of_order() {
-        for order in [["000", "-000", "002"], ["-000", "000", "002"], ["002", "000", "-000"]] {
-            let names = make_accumulator("val", &order);
-            assert_eq!(get_aggregate_value(&Function::Min, &names, "val".to_string(), &None), "-000", "{order:?}");
-            assert_eq!(get_aggregate_value(&Function::Max, &names, "val".to_string(), &None), "002", "{order:?}");
-        }
-        for order in [["2", "2.0", "002"], ["002", "2.0", "2"]] {
-            let twos = make_accumulator("val", &order);
-            assert_eq!(get_aggregate_value(&Function::Min, &twos, "val".to_string(), &None), "002", "{order:?}");
-            assert_eq!(get_aggregate_value(&Function::Max, &twos, "val".to_string(), &None), "2.0", "{order:?}");
-        }
-    }
-
-    fn min_negative_zero_is_the_textually_smaller_spelling() {
-        for order in [["-0", "0"], ["0
+- Numeric functions such as `ABS`, `GREATEST` and `HEX` read the byte count of `fsize` instead of its formatted text
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                    if v < self.min {
-                    if v > self.max {
-    fn min_negative_zero_keeps_the_first_spelling() {
-        let acc = make_accumulator("val", &["-0", "0"]);
-        let result = get_aggregate_value(&Function::Min, &acc, "val".to_string(), &None);
-        assert_eq!(result, "-0");
-        let acc = make_accumulator("val", &["0", "-0"]);
-        let result = get_aggregate_value(&Function::Min, &acc, "val".to_string(), &None);
-        assert_eq!(result, "0");
-    fn max_negative_zero_keeps_the_first_spelling() {
-        let acc = make_accumulator("val", &["-0", "0"]);
-        let result = get_aggregate_value(&Function::Max, &acc, "val".to_string(), &None);
-        assert_eq!(result, "-0");
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9a867909` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f85f1b54` are properly handled with clean fallback behavior.

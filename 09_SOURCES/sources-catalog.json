@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "a5ee540b",
+    "sourceVersion": "bc843c52",
     "license": "Apache-2.0",
-    "contentHash": "09afca69d4c02cdbd699ab4a17b196f5a50a30b2b2b52e0eaad4d0e318bc4cc0",
-    "lastHarvestedAt": "2026-10-26T05:18:00.958Z",
+    "contentHash": "fec04798d122c275ec7c935a0ab29c3292c73d467e8fad2093c73e8c6b742e9e",
+    "lastHarvestedAt": "2026-10-27T15:39:42.320Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {
@@ -6943,10 +6943,10 @@
     "repository": "angular/angular",
     "platform": "github",
     "sourceUrl": "https://github.com/angular/angular",
-    "sourceVersion": "5244ea78",
+    "sourceVersion": "e36a63e2",
     "license": "MIT",
-    "contentHash": "242156bdc03c77f9efe088229bbbcb166718aa9fed543178845a1b37e4a0dffe",
-    "lastHarvestedAt": "2026-10-26T02:02:12.031Z",
+    "contentHash": "fbdb9724f0620530c96966db889ba4312fd5f1f6cfed4d40e8b598a652c6393e",
+    "lastHarvestedAt": "2026-10-27T15:39:33.653Z",
     "learningId": "learn-github-angular-angular"
   },
   "devspace-sh-devspace": {
@@ -7013,10 +7013,10 @@
     "repository": "jhspetersson/fselect",
     "platform": "github",
     "sourceUrl": "https://github.com/jhspetersson/fselect",
-    "sourceVersion": "46c72f21",
+    "sourceVersion": "f85f1b54",
     "license": "Apache-2.0",
-    "contentHash": "d585bca60281756ae2cd09fbc7d28a18be58290a51194e575630cfe0c375d94a",
-    "lastHarvestedAt": "2026-10-21T16:51:35.096Z",
+    "contentHash": "2d5bd257ec1818ae70357a37924689926e724a57235e048ffa7f4781abda7a20",
+    "lastHarvestedAt": "2026-10-27T15:39:34.231Z",
     "learningId": "learn-github-jhspetersson-fselect"
   },
   "mikepenz-aboutlibraries": {
@@ -7493,10 +7493,10 @@
     "repository": "databendlabs/databend",
     "platform": "github",
     "sourceUrl": "https://github.com/databendlabs/databend",
-    "sourceVersion": "058a1e8f",
+    "sourceVersion": "ad9996eb",
     "license": "Apache-2.0",
-    "contentHash": "ddd10d71b7df8a505d68bfbb07d67f5853fc03965df940a20bb8889796a9d0cf",
-    "lastHarvestedAt": "2026-10-25T12:32:07.155Z",
+    "contentHash": "14d63982ab38a716915864dc2e61341a2d3b1edb6648f917c501f4390a8f218c",
+    "lastHarvestedAt": "2026-10-27T15:39:46.810Z",
     "learningId": "learn-github-databendlabs-databend"
   },
   "atanunq-viu": {

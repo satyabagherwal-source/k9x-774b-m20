@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T15:32:58.474Z",
+  "last_updated": "2026-10-27T15:39:46.819Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7626,14 +7626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshery-meshery",
-      "content_hash": "09afca69d4c02cdbd699ab4a17b196f5a50a30b2b2b52e0eaad4d0e318bc4cc0",
-      "verified_at": "2026-10-26T05:18:00.966Z",
+      "content_hash": "fec04798d122c275ec7c935a0ab29c3292c73d467e8fad2093c73e8c6b742e9e",
+      "verified_at": "2026-10-27T15:39:42.329Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T05:18:00.966Z"
+      "last_updated": "2026-10-27T15:39:42.329Z"
     },
     "arangodb/arangodb": {
       "repository": "arangodb/arangodb",
@@ -10476,14 +10476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-angular-angular",
-      "content_hash": "242156bdc03c77f9efe088229bbbcb166718aa9fed543178845a1b37e4a0dffe",
-      "verified_at": "2026-10-26T02:02:12.038Z",
+      "content_hash": "fbdb9724f0620530c96966db889ba4312fd5f1f6cfed4d40e8b598a652c6393e",
+      "verified_at": "2026-10-27T15:39:33.662Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T02:02:12.038Z"
+      "last_updated": "2026-10-27T15:39:33.662Z"
     },
     "devspace-sh/devspace": {
       "repository": "devspace-sh/devspace",
@@ -10581,14 +10581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jhspetersson-fselect",
-      "content_hash": "d585bca60281756ae2cd09fbc7d28a18be58290a51194e575630cfe0c375d94a",
-      "verified_at": "2026-10-21T16:51:35.112Z",
+      "content_hash": "2d5bd257ec1818ae70357a37924689926e724a57235e048ffa7f4781abda7a20",
+      "verified_at": "2026-10-27T15:39:34.240Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T16:51:35.112Z"
+      "last_updated": "2026-10-27T15:39:34.240Z"
     },
     "mikepenz/AboutLibraries": {
       "repository": "mikepenz/AboutLibraries",
@@ -11286,14 +11286,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-databendlabs-databend",
-      "content_hash": "ddd10d71b7df8a505d68bfbb07d67f5853fc03965df940a20bb8889796a9d0cf",
-      "verified_at": "2026-10-25T12:32:07.163Z",
+      "content_hash": "14d63982ab38a716915864dc2e61341a2d3b1edb6648f917c501f4390a8f218c",
+      "verified_at": "2026-10-27T15:39:46.818Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T12:32:07.163Z"
+      "last_updated": "2026-10-27T15:39:46.818Z"
     },
     "atanunq/viu": {
       "repository": "atanunq/viu",

@@ -5426,3 +5426,7 @@ Every entry in this ledger must capture:
 | `learn-github-lucide-icons-lucide` | `https://github.com/lucide-icons/lucide` | `2ca268e7` | Multi-dimensional audit evidence | 2026-10-27T15:32:53.879Z |
 | `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `d188f08a` | Multi-dimensional audit evidence | 2026-10-27T15:32:56.237Z |
 | `learn-github-vitejs-vite` | `https://github.com/vitejs/vite` | `cce559ab` | Multi-dimensional audit evidence | 2026-10-27T15:32:58.468Z |
+| `learn-github-angular-angular` | `https://github.com/angular/angular` | `e36a63e2` | Multi-dimensional audit evidence | 2026-10-27T15:39:33.653Z |
+| `learn-github-jhspetersson-fselect` | `https://github.com/jhspetersson/fselect` | `f85f1b54` | Multi-dimensional audit evidence | 2026-10-27T15:39:34.231Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `bc843c52` | Multi-dimensional audit evidence | 2026-10-27T15:39:42.320Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `ad9996eb` | Multi-dimensional audit evidence | 2026-10-27T15:39:46.810Z |

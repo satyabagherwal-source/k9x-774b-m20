@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `a5ee540b`  
+> **Source Version**: `bc843c52`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T05:18:00.586Z  
+> **Timestamp**: 2026-10-27T15:39:41.895Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T05:18:00.360Z  
+> **Harvest Timestamp**: 2026-10-27T15:39:41.567Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12053 stars
+- **Stars / Engagement**: 12062 stars
 
 ---
 
@@ -804,17 +804,13 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #22579** (2026-10-26): **Introduction - Muskan Kumari**
-  *Symptoms*: ### Description This pull request adds my newcomer introduction file for the Newcomers Meeting (week of 10-22-2026).  ### Changes - Added `docs/meetings/2026/week-of-10-22-2026/MuskanKumari.md`  ### Checklist - [x] Signed off commits (`git commit -s`) - [x] Followed repository naming conventions and guidelines  <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Added a contributor profile for Muskan Kumari, including her role, GitHub link, interests, Meshery contributions, and community goals. This provides readers with information about her background and involvement in the project.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
-  **Post-Mortem & Fix Analysis**:
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/meshery/meshery/pull/22579?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review.  <details> <summary><strong><picture><img src="https://storage.googleapis.com/coderabbit_public_asset
-  > 📖 Docs preview: https://docs.meshery.io/pr-preview/pr-22579/ <!-- Sticky Pull Request Commentpr-preview -->
+- **Issue #22619** (2026-10-27): **[UI] Replace waitForTimeout in user preference e2e spec with a web-first assertion**
+  *Symptoms*: **Notes for Reviewers**  - This PR fixes # (no issue; small e2e reliability cleanup)  `ui/tests/e2e/userpreference.spec.ts` was the only spec still using `page.waitForTimeout(2000)`: after clicking a preference switch it slept 2 s and then branched on the switch state. The switch updates on click and the test already awaits the matching POST and its 200 response, so this replaces the sleep and the if/else with a web-first assertion:  ```ts await expect(prefSwitch).toBeChecked({ checked: !wasChecked }); ```  Note: the old sleep implicitly also checked that the switch did not flip back within 2 s. I found no code that flips it back; happy to add an explicit check if you want that covered.  **Before / after** (Local provider, server built from source, static UI build, `--repeat-each=5`):  ``` before: 10 passed (+ setup), ~8.0 s per test after:  10 passed (+ setup), ~6.3 s per test ```  Changing the expectation to `checked: wasChecked` makes the test fail, so the assertion is not vacuous. `prettier --check` and `eslint` pass on the touched file. Not run: the `chromium-meshery-provider` project (needs a remote token) and the full suite.  AI assistance: I used Claude (an AI coding assistant) to help find and draft this change. I reviewed the change; the runs above were made in a sandbox with the assistant's help. The commit carries an `Assisted-by` trailer.  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificat
 
-- **Issue #22576** (2026-10-25): **Introduction - Shatrughan Mishra**
-  *Symptoms*: **Notes for Reviewers**  Introduction  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [ ] Yes, I signed my commits.  <!-- Thank you for contributing to Meshery!   Contributing Conventions:  1. Include descriptive PR titles with [<component-name>] prepended. 2. Build and test your changes before submitting a PR.  3. Sign your commits. 4. Include before and after screenshots/terminal output.  By following the community's contribution conventions upfront, the review process will  be accelerated and your PR merged more quickly. -->  ## Summary by CodeRabbit  * **Documentation**   * Added a meeting-participant profile for Shatrughan Mishra, including information about his open-source interests, role, and social profiles. The meeting materials now provide readers with a brief introduction to the participant and links to his public profiles.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
+- **Issue #22606** (2026-10-26): **chore: make CLAUDE.md a symlink to AGENTS.md**
+  *Symptoms*: ## Intent  Make CLAUDE.md a symlink to AGENTS.md  ## What Changed - Replaced the regular file `CLAUDE.md` with a symlink to `AGENTS.md` (git type change `T`), so Claude Code and other agent tools read a single shared instruction file. - No other files changed.  ## Risk Assessment  ✅ Low: The change only converts CLAUDE.md into a git symlink (mode 120000) to the existing, tracked AGENTS.md, which matches the stated intent.  ## Testing  I checked the symlink in the worktree and in a fresh extraction of HEAD. Git records CLAUDE.md as a symlink (mode 120000) targeting AGENTS.md, and reading CLAUDE.md returns the same bytes as AGENTS.md. The change has no runtime product surface and no UI, so there is no screenshot or other visual artifact.  - Live validation: ✅ go - 1 of 1 scenarios driven live against the product  | Scenario | Result | Live | Evidence | | --- | --- | --- | --- | | Read CLAUDE.md in a fresh checkout of HEAD: it is a symlink to AGENTS.md and returns identical content | ✅ pass | live | `git ls-files -s` shows mode 120000 for CLAUDE.md. `readlink` returns AGENTS.md. `cmp` of the two files in a temp extraction of HEAD reports identical. |  ## Pipeline  Updates from [git push no-mistakes](https://github.com/kunchenguid/no-mistakes)  <!-- no-mistakes-pipeline-attestation:v1 {"head_sha":"824c295b8a8a7c6336480582e37c08dc2af89800","steps":[{"step":"intent","status":"completed"},{"step":"rebase","status":"completed"},{"step":"review","status":"completed"},{"step":"test","s
   **Post-Mortem & Fix Analysis**:
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/meshery/meshery/pull/22576?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review.  <details> <summary><strong><picture><img src="https://storage.googleapis.com/coderabbit_public_asset
-  > 📖 Docs preview: https://docs.meshery.io/pr-preview/pr-22576/ <!-- Sticky Pull Request Commentpr-preview -->
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/meshery/meshery/pull/22606?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- This is an auto-generated comment: failure by coderabbit.ai -->  > [!CAUTION] > ## Review failed >  > The pull request is closed.  <!-- end of auto-generated comment: failure by coderabb
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -831,372 +827,551 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `488285b7` (2026-10-25)
-**Commit Message**: Merge pull request #22248 from Raghavcommercialwinner/fix/mesheryctl-perf-page-validation
+### Incident Patch 1: `adf88a0c` (2026-10-27)
+**Commit Message**: Merge pull request #22550 from SajanBisht/fix/nextjs-security-update
 
-[mesheryctl] Reject --page values below 1 in perf profile and perf result
+fix(ui): upgrade Next.js to address security vulnerabilities
 
-**File**: `mesheryctl/internal/cli/root/perf/profile.go` (modified, +3/-0)
+**File**: `provider-ui/package-lock.json` (modified, +41/-41)
 ```diff
-@@ -56,6 +56,9 @@ mesheryctl perf profile test 2
- mesheryctl perf profile test --view
- `,
- 	PreRunE: func(cmd *cobra.Command, args []string) error {
-+		if pageNumber < 1 {
-+			return utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '%d'", pageNumber))
-+		}
- 		// Check for valid output Format
- 		if outputFormatFlag != "" {
- 			return display.ValidateOutputFormat(outputFormatFlag)
+@@ -26,7 +26,7 @@
+         "@xstate/react": "^6.1.0",
+         "date-fns": "^4.4.0",
+         "http-proxy": "^1.18.1",
+-        "next": "^16.3.8",
++        "next": "^16.4.3",
+         "prop-types": "^15.8.1",
+         "react": "^19.2.7",
+         "react-dom": "^19.2.7",
+@@ -1786,9 +1786,9 @@
+       }
+     },
+     "node_modules/@next/env": {
+-      "version": "16.3.8",
+-      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.3.8.tgz",
+-      "integrity": "sha512-Al9zqHVV7TJv0eFuOU4U7Lvv74PTih4Ch63sk2xCIpSTkE3udFnaOcnzP2lQVymiL7yS9Cj2iClUXlR3EQ5sEw==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.4.3.tgz",
++      "integrity": "sha512-a7tz1QCcWWkwC/rPJcPMJk/UNRu9CFhDd3OHYE5hddbJrs8BqRTalxI6GlKCWEGzRLHN+S/B7a4PAHCtm25aBQ==",
+       "license": "MIT"
+     },
+     "node_modules/@next/eslint-plugin-next": {
+@@ -1802,9 +1802,9 @@
+       }
+     },
+     "node_modules/@next/swc-darwin-arm64": {
+-      "version": "16.3.8",
+-      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.3.8.tgz",
+-      "integrity": "sha512-2JPRMh2nmQG5CiL7cXGL9AGwnPWJQ//cTtAUCT+w511QHk79SYz3LGv/pc5X643B/WEO0rvu3Yww0hqwt3kgeA==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.3.tgz",
++      "integrity": "sha512-4yq5EXBt+VDtAZwTyfijaFp5D2C5oz3Ikw5a2kiX2K9nw72vrZX2q5UuAlkPtUMO1tQz6JTKpaKWjS7OOefTDQ==",
+       "cpu": [
+         "arm64"
+       ],
+@@ -1818,9 +1818,9 @@
+       }
+     },
+     "node_modules/@next/swc-darwin-x64": {
+-      "version": "16.3.8",
+-      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.3.8.tgz",
+-      "integrity": "sha512-GZtCCOBKJ4leVIT/Th0llWKhD1ca92lzbQiS5R5ON9QkoiFnilFsebDae1JU2a3HWoKMEmEZWGs1AGLavVM72Q==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.3.tgz",
++      "integrity": "sha512-1Rvkn/LUhnEF8WxnRkOrqGhbwXui1bkWFxONKIbN+r7C+9KHDSZ+iUoj4CzymVMWUyZIyx9szcb9+kbKhD500A==",
+       "cpu": [
+         "x64"
+       ],
+@@ -1834,9 +1834,9 @@
+       }
+     },
+     "node_modules/@next/swc-linux-arm64-gnu": {
+-      "version": "16.3.8",
+-      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.3.8.tgz",
+-      "integrity": "sha512-O659ygeQYqneJ1fBKMpFxIFqYkYswu8IAS1OCKK/4f3ZgJJm1dRz4fVJZRi/kLLWjnBKnebOePA4WNv+sV1pVA==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.3.tgz",
++      "integrity": "sha512-dCKpXErGg3abUM6t5JTJV/ottVBTStJB5lRJTbgdUdQaQ+jNHiK56Hsc0YAEg/rinSh42hYG3HWiYmEMdilnxg==",
+       "cpu": [
+         "arm64"
+       ],
+@@ -1853,9 +1853,9 @@
+       }
+     },
+     "node_modules/@next/swc-linux-arm64-musl": {
+-      "version": "16.3.8",
+-      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.3.8.tgz",
+-      "integrity": "sha512-dSjKSyWpzxoO1d3DIZZcP4XJcNaKeLmxQMFOiYl5vuBRMmweIqnAhty8tAmRsvTss779cK1FtYnDMj40e4TQlg==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.3.tgz",
++      "integrity": "sha512-WwYbhWkhYBvBtib1K4W0kL8MW2snBD2A5b3SN4vPpqalZbZs5+bQ1yzAdepVoOqrFfEW3dmREy4Zs1MrWcrFbw==",
+       "cpu": [
+         "arm64"
+       ],
+@@ -1872,9 +1872,9 @@
+       }
+     },
+     "node_modules/@next/swc-linux-x64-gnu": {
+-      "version": "16.3.8",
+-      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-16.3.8.tgz",
+-      "integrity": "sha512-lbqOuz3RPRcv+o9msNsJw5x4+Y1ZwPTs6vmL6DCf7i0fZfvng/F59wyeDwqHIvV0mK//RBy/jJkZ+nCKsSMXjQ==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-16.4.3.tgz",
++      "integrity": "sha512-QymWvfUwDEC5/lpJOsxX5VAbyoR2D13+2Jsjz4be7gT4LPqEgdpkeLIR/HFfCLgKzoMhpJbp6I/JnogyNZHcaA==",
+       "cpu": [
+         "x64"
+       ],
+@@ -1891,9 +1891,9 @@
+       }
+     },
+     "node_modules/@next/swc-linux-x64-musl": {
+-      "version": "16.3.8",
+-      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-16.3.8.tgz",
+-      "integrity": "sha512-+316WswI8ScVgZeUd+1KGaXkHhaYQzCjvH/05TZSpJ8zBizb1a4G7DtO7F12jcBIqMOtsz9ji1t48fmKtzqsGA==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-16.4.3.tgz",
++      "integrity": "sha512-Vmjd9D7DpA4Vv3cUlr82QWgJD/BQZmns801vtC5VWHg6jCIA4a5vMKpQnfrM2pyCrp2eV0ENdUg4PlN3bAc2Yw==",
+       "cpu": [
+         "x64"
+       ],
+@@ -1910,9 +1910,9 @@
+       }
+     },
+     "node_modules/@next/swc-win32-arm64-msvc": {
+-      "version": "16.3.8",
+-      "resolved": "https://registry.npmjs.org/@next/swc-win32-arm64-msvc/-/swc-win32-arm64-msvc-16.3.8.tgz",
+-      "integrity": "sha512-ji0gd4kMYUxO+1fJBIbiBVRCjzG/lloiyCccnlebvb1ZJ5qXCPZqYg4Jl1DrrixnWNMKylzgpmMWx0yNDYXlzw
 ```
 
-**File**: `mesheryctl/internal/cli/root/perf/profile_test.go` (modified, +9/-0)
+**File**: `provider-ui/package.json` (modified, +1/-1)
 ```diff
-@@ -85,6 +85,15 @@ func TestProfileCmd(t *testing.T) {
- 			ExpectedResponse: "profile.noProfiles.output.golden",
- 			ExpectError:      false,
- 		},
-+		{
-+			Name:             "given page 0 when profile then throw invalid flag error",
-+			Args:             []string{"profile", "--page", "0"},
-+			URLs:             []utils.MockURL{},
-+			ExpectedResponse: "",
-+			ExpectError:      true,
-+			IsOutputGolden:   false,
-+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '0'")),
-+		},
- 		{
- 			Name: "given invalid output format when profile then throw error",
- 			Args: []string{"profile", "-o", "invalid"},
+@@ -33,7 +33,7 @@
+     "@xstate/react": "^6.1.0",
+     "date-fns": "^4.4.0",
+     "http-proxy": "^1.18.1",
+-    "next": "^16.3.8",
++    "next": "^16.4.3",
+     "prop-types": "^15.8.1",
+     "react": "^19.2.7",
+     "react-dom": "^19.2.7",
 ```
 
-**File**: `mesheryctl/internal/cli/root/perf/result.go` (modified, +3/-0)
+**File**: `ui/package-lock.json` (modified, +41/-41)
 ```diff
-@@ -73,6 +73,9 @@ mesheryctl perf result saturday-profile --view
- `,
- 	Annotations: linkDocPerfResult,
- 	PreRunE: func(cmd *cobra.Command, args []string) error {
-+		if pageNumber < 1 {
-+			return utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '%d'", pageNumber))
-+		}
- 		// Check for valid output Format
- 		if outputFormatFlag != "" {
- 			return display.ValidateOutputFormat(outputFormatFlag)
+@@ -73,7 +73,7 @@
+         "js-yaml": "^5.2.2",
+         "lodash": "^4.18.1",
+         "moment": "^2.30.1",
+-        "next": "^16.4.0",
++        "next": "^16.4.3",
+         "notistack": "^3.0.2",
+         "patch-package": "^8.0.1",
+         "pluralize": "^8.0.0",
+@@ -2579,9 +2579,9 @@
+       }
+     },
+     "node_modules/@next/env": {
+-      "version": "16.4.0",
+-      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.4.0.tgz",
+-      "integrity": "sha512-pyLlT5oafGlX8X7xjgGNXz5dNIDSxREm+qD6i9VLSZiZFopA/XWl8NM/KPmLx/8EG/++c49iid3gNWSQW1+2dQ==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.4.3.tgz",
++      "integrity": "sha512-a7tz1QCcWWkwC/rPJcPMJk/UNRu9CFhDd3OHYE5hddbJrs8BqRTalxI6GlKCWEGzRLHN+S/B7a4PAHCtm25aBQ==",
+       "license": "MIT"
+     },
+     "node_modules/@next/eslint-plugin-next": {
+@@ -2595,9 +2595,9 @@
+       }
+     },
+     "node_modules/@next/swc-darwin-arm64": {
+-      "version": "16.4.0",
+-      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.0.tgz",
+-      "integrity": "sha512-yyZ+9MgViAKLLb5l1gPBGjRwnq3teNLb5Zx6JEw8LzNSTjlsnp+baUHFxTgl7PpjCmKf48VQfyipG1eBflb48Q==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.3.tgz",
++      "integrity": "sha512-4yq5EXBt+VDtAZwTyfijaFp5D2C5oz3Ikw5a2kiX2K9nw72vrZX2q5UuAlkPtUMO1tQz6JTKpaKWjS7OOefTDQ==",
+       "cpu": [
+         "arm64"
+       ],
+@@ -2611,9 +2611,9 @@
+       }
+     },
+     "node_modules/@next/swc-darwin-x64": {
+-      "version": "16.4.0",
+-      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.0.tgz",
+-      "integrity": "sha512-RePEEejEj1Auf5s9qEcG0JbcDP3ceNUS/ofNX8AhxzgIjTVlZIHMatlp16YplcSMpsVo/ZMQHJTjbMYJznjGUg==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.3.tgz",
++      "integrity": "sha512-1Rvkn/LUhnEF8WxnRkOrqGhbwXui1bkWFxONKIbN+r7C+9KHDSZ+iUoj4CzymVMWUyZIyx9szcb9+kbKhD500A==",
+       "cpu": [
+         "x64"
+       ],
+@@ -2627,9 +2627,9 @@
+       }
+     },
+     "node_modules/@next/swc-linux-arm64-gnu": {
+-      "version": "16.4.0",
+-      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.0.tgz",
+-      "integrity": "sha512-HhsyCqd+NpmvDDVY/LqkAN24f+QVvXh3ie+PfcwKinWL2Mu826JymQxJXGjAIfmJ4VlHjp4Pe/nZtXtUoEMAqw==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.3.tgz",
++      "integrity": "sha512-dCKpXErGg3abUM6t5JTJV/ottVBTStJB5lRJTbgdUdQaQ+jNHiK56Hsc0YAEg/rinSh42hYG3HWiYmEMdilnxg==",
+       "cpu": [
+         "arm64"
+       ],
+@@ -2646,9 +2646,9 @@
+       }
+     },
+     "node_modules/@next/swc-linux-arm64-musl": {
+-      "version": "16.4.0",
+-      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.0.tgz",
+-      "integrity": "sha512-sN9Pf+Zh+RpZAOmbR7d8KAA8T61CVhawtbEJ2Bk6QrRzx6Z/6haaF4UiwBzytM96GRRRWZh9/WALIEO3npMamA==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.3.tgz",
++      "integrity": "sha512-WwYbhWkhYBvBtib1K4W0kL8MW2snBD2A5b3SN4vPpqalZbZs5+bQ1yzAdepVoOqrFfEW3dmREy4Zs1MrWcrFbw==",
+       "cpu": [
+         "arm64"
+       ],
+@@ -2665,9 +2665,9 @@
+       }
+     },
+     "node_modules/@next/swc-linux-x64-gnu": {
+-      "version": "16.4.0",
+-      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-16.4.0.tgz",
+-      "integrity": "sha512-D5M5xLWQVd1CvR+L7BickM1weRfmM41x3L1NWcnKY/oyJJqr1qwaCgmu3dMAhLBOMdZwSuDCRV6DJRRpiUkbDQ==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-16.4.3.tgz",
++      "integrity": "sha512-QymWvfUwDEC5/lpJOsxX5VAbyoR2D13+2Jsjz4be7gT4LPqEgdpkeLIR/HFfCLgKzoMhpJbp6I/JnogyNZHcaA==",
+       "cpu": [
+         "x64"
+       ],
+@@ -2684,9 +2684,9 @@
+       }
+     },
+     "node_modules/@next/swc-linux-x64-musl": {
+-      "version": "16.4.0",
+-      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-16.4.0.tgz",
+-      "integrity": "sha512-8d5WLS6a9YalqpOgXdlbvonFu+sIgjA+CO6tGzetrpPVcUL56foa7B7664h41rAlbLi5fJwK4vWji3zf4QDy+w==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-16.4.3.tgz",
++      "integrity": "sha512-Vmjd9D7DpA4Vv3cUlr82QWgJD/BQZmns801vtC5VWHg6jCIA4a5vMKpQnfrM2pyCrp2eV0ENdUg4PlN3bAc2Yw==",
+       "cpu": [
+         "x64"
+       ],
+@@ -2703,9 +2703,9 @@
+       }
+     },
+     "node_modules/@next/swc-win32-arm64-msvc": {
+-      "version": "16.4.0",
+-      "resolved": "https://registry.npmjs.org/@next/swc-win32-arm64-msvc/-/swc-win32-arm64-msvc-16.4.0.tgz",
+-      "integrity": "sha512-sQuOIiW3snb48UwrBcDMvFA/u03qtw2LeuSIxFIQ9AJuW9UG/4Ddsfo+eV73PnZwBhyncMtsKVh7PrzMol2/fA==",
++ 
 ```
 
-**File**: `mesheryctl/internal/cli/root/perf/result_test.go` (modified, +9/-0)
+**File**: `ui/package.json` (modified, +1/-1)
 ```diff
-@@ -83,6 +83,15 @@ func TestResultCmd(t *testing.T) {
- 	}
- 
- 	loggerTests := []utils.MesheryMultiURLCommamdTest{
-+		{
-+			Name:             "negative page",
-+			Args:             []string{"result", "abhishek", "--page", "-1"},
-+			URLs:             []utils.MockURL{},
-+			ExpectedResponse: "",
-+			ExpectError:      true,
-+			IsOutputGolden:   false,
-+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '-1'")),
-+		},
- 		{
- 			Name:             "invalid output format",
- 			Args:             []string{"result", "abhishek", "-o", "invalid"},
+@@ -101,7 +101,7 @@
+     "js-yaml": "^5.2.2",
+     "lodash": "^4.18.1",
+     "moment": "^2.30.1",
+-    "next": "^16.4.0",
++    "next": "^16.4.3",
+     "notistack": "^3.0.2",
+     "patch-package": "^8.0.1",
+     "pluralize": "^8.0.0",
 ```
 
 ---
 
-### Incident Patch 2: `d10e1776` (2026-10-25)
-**Commit Message**: Merge branch 'master' into fix/mesheryctl-perf-page-validation
+### Incident Patch 2: `8df6d3ac` (2026-10-27)
+**Commit Message**: fix(ui): upgrade Next.js to address security vulnerabilities
 
-**File**: `.github/SECURITY-INSIGHTS.yml` (removed, +0/-101)
+Signed-off-by: SajanBisht <[REDACTED_EMAIL]>
+
+**File**: `provider-ui/package-lock.json` (modified, +41/-41)
 ```diff
-@@ -1,101 +0,0 @@
--header:
--  schema-version: 2.0.0
--  last-updated: '2026-03-03'
--  last-reviewed: '2026-03-03'
--  url: https://github.com/meshery/meshery/blob/master/SECURITY-INSIGHTS.yml
--  comment: |
--    This file contains the security information for the Meshery project.
--
--project:
--  name: Meshery
--  homepage: https://meshery.io
--  roadmap: https://github.com/meshery/meshery/blob/master/ROADMAP.md
--  administrators:
--    - name: Lee Calcote
--      affiliation: Layer5
--      social: https://layer5.io/community/members/lee-calcote/
--      primary: true
--  documentation:
--    quickstart-guide: https://docs.meshery.io/installation/quick-start
--    detailed-guide: https://docs.meshery.io/guides
--    code-of-conduct: https://github.com/meshery/meshery/blob/master/CODE_OF_CONDUCT.md
--    release-process: https://docs.meshery.io/project/contributing/build-and-release#release-channels
--    support-policy: https://docs.meshery.io/project/contributing/build-and-release#release-support
--    design: https://docs.meshery.io/concepts/architecture
--  repositories:
--    - name: Meshery
--      url: https://github.com/meshery/meshery
--      comment: |
--        Meshery is the core repository for the Meshery CNCF project.
--    - name: meshery.io
--      url: https://github.com/meshery/meshery.io
--      comment: |
--        The source code and content for the official Meshery website (meshery.io).
--    - name: meshkit
--      url: https://github.com/meshery/meshkit
--      comment: |
--        A common microservices framework used across various Meshery components for consistent toolkit functionality.
--    - name: meshery-operator
--      url: https://github.com/meshery/meshery-operator
--      comment: |
--        The Kubernetes operator for Meshery, managing the lifecycle of Meshery components within a cluster.
--    - name: meshsync
--      url: https://github.com/meshery/meshsync
--      comment: |
--        A custom controller that performs multi-cluster resource discovery and keeps Meshery in sync with infrastructure changes.
--    - name: schemas
--      url: https://github.com/meshery/schemas
--      comment: |
--        Contains the logical object models and JSON schemas that define Meshery's cloud native resources.
--    - name: play
--      url: https://github.com/meshery/play
--      comment: |
--        The Cloud Native Playground, a hosted environment for exploring Kubernetes and CNCF projects using Meshery.
--    - name: qa
--      url: https://github.com/meshery/qa
--      comment: |
--        The project quality dashboard and testing infrastructure for ensuring Meshery's compatibility and performance.
--    - name: meshery-adapter-library
--      url: https://github.com/meshery/meshery-adapter-library
--      comment: |
--        A Go library providing common functionality for building and maintaining Meshery adapters.
--  vulnerability-reporting:
--    reports-accepted: true
--    bug-bounty-available: false
--    contact:
--      name: Meshery Security
--      email: security@meshery.io
--      primary: true
--
--repository:
--  url: https://github.com/meshery/meshery
--  status: active
--  accepts-change-request: true
--  accepts-automated-change-request: false
--  core-team:
--    - name: Lee Calcote
--      affiliation: Layer5
--      social: https://layer5.io/community/members/lee-calcote/
--      primary: false
--    - name: Sangram Rath
--      affiliation: OD10
--      social: https://layer5.io/community/members/sangram-rath/
--      primary: true
--  license:
--    url: https://github.com/meshery/meshery/blob/master/LICENSE
--    expression: Apache-2.0
--  security:
--    assessments:
--      self:
--        evidence: https://github.com/meshery/meshery/blob/master/.github/security-self-assessment.md
--        comment: |
--          CNCF TAG Security based self-assessment.
--  documentation:
--    contributing-guide: https://docs.meshery.io/project/contributing
--    governance: https://github.com/meshery/meshery/blob/master/GOVERNANCE.md
--    security-policy: https://github.com/meshery/meshery/blob/master/SECURITY.md
--  release:
--    automated-pipeline: true
--    distribution-points:
--      - uri: https://github.com/meshery/meshery/releases
--        comment: Meshery Releases page in GitHub
+@@ -26,7 +26,7 @@
+         "@xstate/react": "^6.1.0",
+         "date-fns": "^4.4.0",
+         "http-proxy": "^1.18.1",
+-        "next": "^16.3.8",
++        "next": "^16.4.3",
+         "prop-types": "^15.8.1",
+         "react": "^19.2.7",
+         "react-dom": "^19.2.7",
+@@ -1786,9 +1786,9 @@
+       }
+     },
+     "node_modules/@next/env": {
+-      "version": "16.3.8",
+-      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.3.8.tgz",
+-      "integrity": "sha512-Al9zqHVV7TJv0eFuOU4U7Lvv74PTih4Ch63sk2xCIpSTkE3udFnaOcnzP2lQVymiL7yS9Cj2iClUXlR3EQ5sEw==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.4.3.tgz",
++      "integrity": "sha512-a7tz1QCcWWkwC/rPJcPMJk/UNRu9CFhDd3OHYE5hddbJrs8BqRTalxI6GlKCWEGzRLHN+S/B7a4PAHCtm25aBQ==",
+       "license": "MIT"
+     },
+     "node_modules/@next/eslint-plugin-next": {
+@@ -1802,9 +1802,9 @@
+       }
+     },
+     "node_modules/@next/swc-darwin-arm64": {
+-      "version": "16.3.8",
+-      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.3.8.tgz",
+-      "integrity": "sha512-2JPRMh2nmQG5CiL7cXGL9AGwnPWJQ//cTtAUCT+w511QHk79SYz3LGv/pc5X643B/WEO0rvu3Yww0hqwt3kgeA==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.3.tgz",
++      "integrity": "sha512-4yq5EXBt+VDtAZwTyfijaFp5D2C5oz3Ikw5a2kiX2K9nw72vrZX2q5UuAlkPtUMO1tQz6JTKpaKWjS7OOefTDQ==",
+       "cpu": [
+         "arm64"
+       ],
+@@ -1818,9 +1818,9 @@
+       }
+     },
+     "node_modules/@next/swc-darwin-x64": {
+-      "version": "16.3.8",
+-      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.3.8.tgz",
+-      "integrity": "sha512-GZtCCOBKJ4leVIT/Th0llWKhD1ca92lzbQiS5R5ON9QkoiFnilFsebDae1JU2a3HWoKMEmEZWGs1AGLavVM72Q==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.3.tgz",
++      "integrity": "sha512-1Rvkn/LUhnEF8WxnRkOrqGhbwXui1bkWFxONKIbN+r7C+9KHDSZ+iUoj4CzymVMWUyZIyx9szcb9+kbKhD500A==",
+       "cpu": [
+         "x64"
+       ],
+@@ -1834,9 +1834,9 @@
+       }
+     },
+     "node_modules/@next/swc-linux-arm64-gnu": {
+-      "version": "16.3.8",
+-      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.3.8.tgz",
+-      "integrity": "sha512-O659ygeQYqneJ1fBKMpFxIFqYkYswu8IAS1OCKK/4f3ZgJJm1dRz4fVJZRi/kLLWjnBKnebOePA4WNv+sV1pVA==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.3.tgz",
++      "integrity": "sha512-dCKpXErGg3abUM6t5JTJV/ottVBTStJB5lRJTbgdUdQaQ+jNHiK56Hsc0YAEg/rinSh42hYG3HWiYmEMdilnxg==",
+       "cpu": [
+         "arm64"
+       ],
+@@ -1853,9 +1853,9 @@
+       }
+     },
+     "node_modules/@next/swc-linux-arm64-musl": {
+-      "version": "16.3.8",
+-      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.3.8.tgz",
+-      "integrity": "sha512-dSjKSyWpzxoO1d3DIZZcP4XJcNaKeLmxQMFOiYl5vuBRMmweIqnAhty8tAmRsvTss779cK1FtYnDMj40e4TQlg==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.3.tgz",
++      "integrity": "sha512-WwYbhWkhYBvBtib1K4W0kL8MW2snBD2A5b3SN4vPpqalZbZs5+bQ1yzAdepVoOqrFfEW3dmREy4Zs1MrWcrFbw==",
+       "cpu": [
+         "arm64"
+       ],
+@@ -1872,9 +1872,9 @@
+       }
+     },
+     "node_modules/@next/swc-linux-x64-gnu": {
+-      "version": "16.3.8",
+-      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-16.3.8.tgz",
+-      "integrity": "sha512-lbqOuz3RPRcv+o9msNsJw5x4+Y1ZwPTs6vmL6DCf7i0fZfvng/F59wyeDwqHIvV0mK//RBy/jJkZ+nCKsSMXjQ==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-16.4.3.tgz",
++      "integrity": "sha512-QymWvfUwDEC5/lpJOsxX5VAbyoR2D13+2Jsjz4be7gT4LPqEgdpkeLIR/HFfCLgKzoMhpJbp6I/JnogyNZHcaA==",
+       "cpu": [
+         "x64"
+       ],
+@@ -1891,9 +1891,9 @@
+       }
+     },
+     "node_modules/@next/swc-linux-x64-musl": {
+-      "version": "16.3.8",
+-      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-16.3.8.tgz",
+-      "integrity": "sha512-+316WswI8ScVgZeUd+1KGaXkHhaYQzCjvH/05TZSpJ8zBizb1a4G7DtO7F12jcBIqMOtsz9ji1t48fmKtzqsGA==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-16.4.3.tgz",
++      "integrity": "sha512-Vmjd9D7DpA4Vv3cUlr82QWgJD/BQZmns801vtC5VWHg6jCIA4a5vMKpQnfrM2pyCrp2eV0ENdUg4PlN3bAc2Yw==",
+       "cpu": [
+         "x64"
+       ],
+@@ -1910,9 +1910,9 @@
+       }
+     },
+     "node_modules/@next/swc-win32-arm64-msvc": {
+-      "version": "16.3.8",
+-      "resolved": "https://registry.npmjs.org/@next/swc-win32-arm64-msvc/-/swc-win32-arm64-msvc-16.3.8.tgz",
+-      "integrity": "sha512-ji0gd4kMYUxO+1fJBIbiBVRCjzG/lloiyCccnlebvb1ZJ5qXCPZqYg4Jl1DrrixnWNMKylzgpmMWx0yNDYXlzw
 ```
 
-**File**: `.github/agents/meshery-docs-contributor.md` (modified, +1/-1)
+**File**: `provider-ui/package.json` (modified, +1/-1)
 ```diff
-@@ -544,7 +544,7 @@ make docs
- - **Prevention**: Check the shortcode file in `docs/layouts/shortcodes/` — if it calls `.Inner`, use `{{% %}}` when wrapping Markdown body content
+@@ -33,7 +33,7 @@
+     "@xstate/react": "^6.1.0",
+     "date-fns": "^4.4.0",
+     "http-proxy": "^1.18.1",
+-    "next": "^16.3.8",
++    "next": "^16.4.3",
+     "prop-types": "^15.8.1",
+     "react": "^19.2.7",
+     "react-dom": "^19.2.7",
+```
+
+**File**: `ui/package-lock.json` (modified, +41/-41)
+```diff
+@@ -73,7 +73,7 @@
+         "js-yaml": "^5.2.2",
+         "lodash": "^4.18.1",
+         "moment": "^2.30.1",
+-        "next": "^16.4.0",
++        "next": "^16.4.3",
+         "notistack": "^3.0.2",
+         "patch-package": "^8.0.1",
+         "pluralize": "^8.0.0",
+@@ -2579,9 +2579,9 @@
+       }
+     },
+     "node_modules/@next/env": {
+-      "version": "16.4.0",
+-      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.4.0.tgz",
+-      "integrity": "sha512-pyLlT5oafGlX8X7xjgGNXz5dNIDSxREm+qD6i9VLSZiZFopA/XWl8NM/KPmLx/8EG/++c49iid3gNWSQW1+2dQ==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.4.3.tgz",
++      "integrity": "sha512-a7tz1QCcWWkwC/rPJcPMJk/UNRu9CFhDd3OHYE5hddbJrs8BqRTalxI6GlKCWEGzRLHN+S/B7a4PAHCtm25aBQ==",
+       "license": "MIT"
+     },
+     "node_modules/@next/eslint-plugin-next": {
+@@ -2595,9 +2595,9 @@
+       }
+     },
+     "node_modules/@next/swc-darwin-arm64": {
+-      "version": "16.4.0",
+-      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.0.tgz",
+-      "integrity": "sha512-yyZ+9MgViAKLLb5l1gPBGjRwnq3teNLb5Zx6JEw8LzNSTjlsnp+baUHFxTgl7PpjCmKf48VQfyipG1eBflb48Q==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.3.tgz",
++      "integrity": "sha512-4yq5EXBt+VDtAZwTyfijaFp5D2C5oz3Ikw5a2kiX2K9nw72vrZX2q5UuAlkPtUMO1tQz6JTKpaKWjS7OOefTDQ==",
+       "cpu": [
+         "arm64"
+       ],
+@@ -2611,9 +2611,9 @@
+       }
+     },
+     "node_modules/@next/swc-darwin-x64": {
+-      "version": "16.4.0",
+-      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.0.tgz",
+-      "integrity": "sha512-RePEEejEj1Auf5s9qEcG0JbcDP3ceNUS/ofNX8AhxzgIjTVlZIHMatlp16YplcSMpsVo/ZMQHJTjbMYJznjGUg==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.3.tgz",
++      "integrity": "sha512-1Rvkn/LUhnEF8WxnRkOrqGhbwXui1bkWFxONKIbN+r7C+9KHDSZ+iUoj4CzymVMWUyZIyx9szcb9+kbKhD500A==",
+       "cpu": [
+         "x64"
+       ],
+@@ -2627,9 +2627,9 @@
+       }
+     },
+     "node_modules/@next/swc-linux-arm64-gnu": {
+-      "version": "16.4.0",
+-      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.0.tgz",
+-      "integrity": "sha512-HhsyCqd+NpmvDDVY/LqkAN24f+QVvXh3ie+PfcwKinWL2Mu826JymQxJXGjAIfmJ4VlHjp4Pe/nZtXtUoEMAqw==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.3.tgz",
++      "integrity": "sha512-dCKpXErGg3abUM6t5JTJV/ottVBTStJB5lRJTbgdUdQaQ+jNHiK56Hsc0YAEg/rinSh42hYG3HWiYmEMdilnxg==",
+       "cpu": [
+         "arm64"
+       ],
+@@ -2646,9 +2646,9 @@
+       }
+     },
+     "node_modules/@next/swc-linux-arm64-musl": {
+-      "version": "16.4.0",
+-      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.0.tgz",
+-      "integrity": "sha512-sN9Pf+Zh+RpZAOmbR7d8KAA8T61CVhawtbEJ2Bk6QrRzx6Z/6haaF4UiwBzytM96GRRRWZh9/WALIEO3npMamA==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.3.tgz",
++      "integrity": "sha512-WwYbhWkhYBvBtib1K4W0kL8MW2snBD2A5b3SN4vPpqalZbZs5+bQ1yzAdepVoOqrFfEW3dmREy4Zs1MrWcrFbw==",
+       "cpu": [
+         "arm64"
+       ],
+@@ -2665,9 +2665,9 @@
+       }
+     },
+     "node_modules/@next/swc-linux-x64-gnu": {
+-      "version": "16.4.0",
+-      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-16.4.0.tgz",
+-      "integrity": "sha512-D5M5xLWQVd1CvR+L7BickM1weRfmM41x3L1NWcnKY/oyJJqr1qwaCgmu3dMAhLBOMdZwSuDCRV6DJRRpiUkbDQ==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-16.4.3.tgz",
++      "integrity": "sha512-QymWvfUwDEC5/lpJOsxX5VAbyoR2D13+2Jsjz4be7gT4LPqEgdpkeLIR/HFfCLgKzoMhpJbp6I/JnogyNZHcaA==",
+       "cpu": [
+         "x64"
+       ],
+@@ -2684,9 +2684,9 @@
+       }
+     },
+     "node_modules/@next/swc-linux-x64-musl": {
+-      "version": "16.4.0",
+-      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-16.4.0.tgz",
+-      "integrity": "sha512-8d5WLS6a9YalqpOgXdlbvonFu+sIgjA+CO6tGzetrpPVcUL56foa7B7664h41rAlbLi5fJwK4vWji3zf4QDy+w==",
++      "version": "16.4.3",
++      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-16.4.3.tgz",
++      "integrity": "sha512-Vmjd9D7DpA4Vv3cUlr82QWgJD/BQZmns801vtC5VWHg6jCIA4a5vMKpQnfrM2pyCrp2eV0ENdUg4PlN3bAc2Yw==",
+       "cpu": [
+         "x64"
+       ],
+@@ -2703,9 +2703,9 @@
+       }
+     },
+     "node_modules/@next/swc-win32-arm64-msvc": {
+-      "version": "16.4.0",
+-      "resolved": "https://registry.npmjs.org/@next/swc-win32-arm64-msvc/-/swc-win32-arm64-msvc-16.4.0.tgz",
+-      "integrity": "sha512-sQuOIiW3snb48UwrBcDMvFA/u03qtw2LeuSIxFIQ9AJuW9UG/4Ddsfo+eV73PnZwBhyncMtsKVh7PrzMol2/fA==",
++ 
+```
+
+**File**: `ui/package.json` (modified, +1/-1)
+```diff
+@@ -101,7 +101,7 @@
+     "js-yaml": "^5.2.2",
+     "lodash": "^4.18.1",
+     "moment": "^2.30.1",
+-    "next": "^16.4.0",
++    "next": "^16.4.3",
+     "notistack": "^3.0.2",
+     "patch-package": "^8.0.1",
+     "pluralize": "^8.0.0",
+```
+
+---
+
+### Incident Patch 3: `bc843c52` (2026-10-27)
+**Commit Message**: Merge pull request #22619 from nguyenvanlinh14/test/userpref-no-wait-for-timeout
+
+[UI] Replace waitForTimeout in user preference e2e spec with a web-first assertion
+
+**File**: `ui/tests/e2e/userpreference.spec.ts` (modified, +3/-7)
+```diff
+@@ -81,13 +81,9 @@ test.describe('User Preferences Page Tests', () => {
+       await userPrefReq;
+       await userPrefRes;
  
- #### Problem: Generated CLI reference docs drift
--- **Solution**: Do not edit files under `docs/content/en/references/reference/mesheryctl/` directly; they are auto-generated from `mesheryctl` Cobra command definitions. Edit the `Short`, `Long`, or `Example` fields in the relevant Go source file instead
-+- **Solution**: Do not edit files under `docs/content/en/reference/mesheryctl/` directly; they are auto-generated from `mesheryctl` Cobra command definitions. Edit the `Short`, `Long`, or `Example` fields in the relevant Go source file instead
- - **Prevention**: Note `# This file is auto-generated` comments at the top of generated files; treat them as read-only
- 
- ## Documentation Patterns
-```
-
-**File**: `.github/label-commenter-config.yml` (modified, +2/-2)
-```diff
-@@ -14,10 +14,10 @@ labels:
-   - name: issue/remind
-     labeled:
-       issue:
--        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://meshery.io/community#meshmates/) or any other [community member](https://meshery.io/community/members) for assistance.
-+        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://meshery.io/community/meshmates/) or any other [community member](https://meshery.io/community) for assistance.
-         action: open
-       pr:
--        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://meshery.io/community#meshmates/) or any other [community member](https://meshery.io/community/members) for assistance.
-+        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://meshery.io/community/meshmates/) or any other [community member](https://meshery.io/community) for assistance.
-         action: open
-   - name: issue/dco
-     labeled:
-```
-
-**File**: `.github/meetings/archive/2026-10-08-8089.md` (added, +133/-0)
-```diff
-@@ -0,0 +1,133 @@
-+# Discussion about Redesigning Community Recognition: Graduated Badges, Multi-Repo Impact & Beyond GitHub
-+
-+**Date:** 2026-10-08
-+**Source:** http://discuss.meshery.io//t/discussion-about-redesigning-community-recognition-graduated-badges-multi-repo-impact-beyond-github/8089
-+
-+---
-+
-+<p>Hi everyone ,</p>
-+<p>We are actively revamping our community recognition and badge automation pipeline across Layer5, Meshery, and our broader ecosystem.</p>
-+<p>During our Dev meet on 7th Oct 2026, <strong>Lee Calcote</strong> and community members highlighted a core philosophy: <strong>psychology and meaningful recognition &gt; raw automation</strong>. Badges shouldn’t just be an automated counter, they should provide a clear journey of progression, reward high-impact work, and celebrate contributions both inside and outside of GitHub.</p>
-+<p>We want to open this discussion to get everyone’s thoughts, ideas, and preferences. Here are the key proposals :-</p>
-+<h3><a name="p-12602-h-1-graduated-tiered-recognition-order-1" class="anchor" href="#p-12602-h-1-graduated-tiered-recognition-order-1" aria-label="Heading link"></a><strong>1. Graduated / Tiered Recognition Order</strong></h3>
-+<p>Rather than isolated, one-off badges, we want to lay out recognitions in a <strong>graduated order</strong> (e.g., <em>Novice → Contributor → Specialist → Maintainer/Champion</em> or <em>Bronze → Silver → Gold</em>).</p>
-+<ul>
-+<li>
-+<p><strong>The Goal:</strong> Gives contributors a clear sense of milestone achievement and a visible path to grow within the community.</p>
-+</li>
-+<li>
-+<p><strong>Question for you:</strong> How do you prefer badge tiers to be named and structured? (e.g., Tier numbers, metals, or role-based titles?)</p>
-+</li>
-+<li>
-+<p><strong>Which badges should be tiered ?</strong></p>
-+<p>Should every contribution area follow this graduated structure (e.g., repo tracks like Meshery, Sistent, Docs, Community Support)?</p>
-+<p>Or should tiering apply only to core tracks while keeping certain special achievements as standalone badges?</p>
-+</li>
-+</ul>
-+<hr>
-+<h3><a name="p-12602-h-2-multi-repo-breadth-vs-first-timer-milestones-2" class="anchor" href="#p-12602-h-2-multi-repo-breadth-vs-first-timer-milestones-2" aria-label="Heading link"></a><strong>2. Multi-Repo Breadth vs. First-Timer Milestones</strong></h3>
-+<p>Our ecosystem spans dozens of repositories (<code>meshery</code>, <code>meshery-operator</code>, <code>meshsync</code>, <code>sistent</code>, <code>docs</code>, etc.).</p>
-+<ul>
-+<li><strong>First-Timer vs. Repo Badges:</strong> Currently, a badge is awarded at <code>&gt;= 1 PR</code> per repo. We are evaluating whether to have a universal <strong>“First-Time Contributor”</strong> badge, or rename repo badges so they explicitly celebrate this first milestone.</li>
-+<li><strong>Cross-Repo (“Ecosystem”) Recognition:</strong> Introducing a badge track for contributors who contribute across multiple different repositories, showing broad architectural and cross-project versatility.</li>
-+</ul>
-+<p><strong>Poll on First-Time Recognition:</strong></p>
-+<div class="poll" data-poll-charttype="bar" data-poll-name="poll" data-poll-public="true" data-poll-results="always" data-poll-status="open" data-poll-type="regular">
-+<div class="poll-container">
-+<ul>
-+<li data-poll-option-id="661f011bd83691824cb7038331ca0800">Dedicated Universal First-Timer Badge</li>
-+<li data-poll-option-id="3b1d280d0c22d6195413641d89fcdc4b">Keep repo-specific badges with updated milestone naming</li>
-+<li data-poll-option-id="831378eb4726d3adf089cb6675eae761">Both (Universal first-timer badge + graduated repo badges)</li>
-+</ul>
-+</div>
-+<div class="poll-info">
-+<div class="poll-info_counts">
-+<div class="poll-info_counts-count">
-+<span class="info-number">0</span>
-+<span class="info-label">voters</span>
-+</div>
-+</div>
-+</div>
-+</div>
-+<h3><a name="p-12602-h-3-pr-quality-high-impact-contributions-3" class="anchor" href="#p-12602-h-3-pr-quality-high-impact-contributions-3" aria-label="Heading link"></a><strong>3. PR Quality &amp; High-Impact Contributions</strong></h3>
-+<p>As raised in the meet, PR count alone doesn’t reflect true effort:</p>
-+<ul>
-+<li>Should we introduce recognition specifically for <strong>PR / Contribution Quality</strong> (e.g., major architectural enhancements, complex bug fixes, significant test coverage additions, or complex refactors)?</li>
-+<li>How should we determine this? (e.g., maintainer nomination / label-based triggers like <code>major-feature</code> or <code>high-impact</code>?)</li>
-+</ul>
-+<hr>
-+<h3><a name="p-12602-h-4-beyond-git-slack-activity-community-help-advocacy-4" class="anchor" href="#p-12602-h-4-beyond-git-slack-activity-community-help-advocacy-4" aria-label="Heading link"></a><strong>4. Beyond Git: Slack Activity, Community Help &amp; Advocacy</strong></h3>
-+<p>Not all vital contributions happen on GitHub PRs:</p>
-+<p><strong>Poll on Recognizing Community &amp; Slack Help</strong></p
-```
-
-**File**: `.github/workflows/auto-merge-meeting-minutes.yml` (modified, +1/-1)
-```diff
-@@ -57,7 +57,7 @@ jobs:
-           echo "Actor: ${{ github.actor }}"
-           echo "Event Name: ${{ github.event_name }}"
-           echo "Repository: ${{ github.repository }}"
--          echo "Ref: ${{ github.ref }}"
-+          echo "Ref: $GITHUB_REF"
-           echo "::endgroup::"
-           
-           echo "::group::Pull Request Context"
-```
-
-**File**: `.github/workflows/build-and-release-stable.yml` (modified, +12/-0)
-```diff
-@@ -4,6 +4,14 @@ on:
-     tags:
-       - "v*"
- 
-+# Repository GITHUB_TOKEN default is read. A called workflow cannot request
-+# more than the calling job grants. Only helm-chart-releaser.yml declares
-+# more than contents: read; that grant is on call-helm-chart-releaser.
-+# Goreleaser and Homebrew publish with PATs (RELEASE_NOTES_PAT, GH_ACCESS_TOKEN),
-+# not this token. No job uses OIDC.
-+permissions:
-+  contents: read
-+
- jobs:
-   build:
-     name: Docker build and push
-@@ -92,6 +100,10 @@ jobs:
-     needs:
-       - build
-     name: Release Helm Charts
-+    # Same set helm-chart-releaser.yml declares at workflow scope.
-+    permissions:
-+      contents: write
-+      packages: write
-     uses: meshery/meshery/.github/workflows/helm-chart-releaser.yml@master
-     secrets: inherit
-   # call-aks-playground-deploy-workflow:
-```
-
-**File**: `.github/workflows/build-and-test.yml` (modified, +4/-1)
-```diff
-@@ -57,7 +57,10 @@ jobs:
-     secrets:
-       REMOTE_PROVIDER_TEST_USER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
-   publish-allure-report:
--    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}    
-+    # The E2E workflow uploads its report before enforcing the Playwright
-+    # verdict. Run this publisher after a failed suite so the failure remains
-+    # visible in Allure; never publish after cancellation or when E2E did not run.
-+    if: ${{ !cancelled() && github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.build-meshery.result == 'success' && needs.tests-e2e.result != 'cancelled' && needs.tests-e2e.result != 'skipped' }}
-     needs: [build-meshery, tests-e2e]
-     uses: ./.github/workflows/publish-allure-report.yml
-     with:
-```
-
-**File**: `.github/workflows/build-docs-preview.yml` (modified, +2/-2)
-```diff
-@@ -80,7 +80,7 @@ jobs:
-       - name: Install dependencies
-         run: |
-           cd docs
--          [[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true
-+          npm ci
- 
-       - name: Build PR preview
-         env:
-@@ -111,4 +111,4 @@ jobs:
-           path: |
-             ${{ github.event.action != 'closed' && 'docs/public' || '' }}
-             pr/
--          if-no-files-found: error
-\ No newline at end of file
-+          if-no-files-found: error
+-      // Verify that state of switch changed
+-      await page.waitForTimeout(2000);
+-      if (wasChecked) {
+-        await expect(prefSwitch).not.toBeChecked();
+-      } else {
+-        await expect(prefSwitch).toBeChecked();
+-      }
++      // Verify that state of switch changed. toBeChecked() retries until the switch settles
++      // on the expected state, so no fixed sleep is needed.
++      await expect(prefSwitch).toBeChecked({ checked: !wasChecked });
+     });
+   }
+ });
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #22579** (2026-10-26): Introduction - Muskan Kumari (@muskan-creates352)
-- **PR #22576** (2026-10-25): Introduction - Shatrughan Mishra (@shatrughantwt)
-- **PR #22560** (2026-10-24): docs: add Tristan Brian introduction (@TristanBrian)
-- **PR #22558** (2026-10-24): [Docs] Introduction - AryaBhatt (@AryaBhatt45)
-- **PR #22557** (2026-10-24): introduction- Pranav Gupta (@sabertooth-123)
-- **PR #22554** (closed): docs: add Paul Anyebe introduction (@cutewizzy11)
+- **PR #22619** (2026-10-27): [UI] Replace waitForTimeout in user preference e2e spec with a web-first assertion (@nguyenvanlinh14)
+- **PR #22606** (2026-10-26): chore: make CLAUDE.md a symlink to AGENTS.md (@ritzorama)
+- **PR #22605** (2026-10-26): docs(agents): require treehouse worktrees and no-mistakes landing (@CodeAhmedJamil)
+- **PR #22600** (closed): Bump undici in /ui (@dependabot[bot])
+- **PR #22594** (2026-10-26): docs: add Paul Anyebe introduction (@cutewizzy11)
+- **PR #22589** (2026-10-26): [mesheryctl] Re-enable unit tests and fix query URL in environment list_test.go (@AliRana30)
 
 ---
 
@@ -1216,30 +1391,58 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #22248 from Raghavcommercialwinner/fix/mesheryctl-perf-page-v
+## X. Merge pull request #22550 from SajanBisht/fix/nextjs-security-update
 
 **RULE**:
-When implementing operations in `mesheryctl/internal/cli/root/perf/profile.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `provider-ui/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `488285b7`: Merge pull request #22248 from Raghavcommercialwinner/fix/mesheryctl-perf-page-validation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `adf88a0c`: Merge pull request #22550 from SajanBisht/fix/nextjs-security-update. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `mesheryctl/internal/cli/root/perf/profile.go`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `provider-ui/package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-		if pageNumber < 1 {
-			return utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '%d'", pageNumber))
-		}
+        "next": "^16.4.3",
+      "version": "16.4.3",
+      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.4.3.tgz",
+      "integrity": "sha512-a7tz1QCcWWkwC/rPJcPMJk/UNRu9CFhDd3OHYE5hddbJrs8BqRTalxI6GlKCWEGzRLHN+S/B7a4PAHCtm25aBQ==",
+      "version": "16.4.3",
+      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.4.3.tgz",
+      "integrity": "sha512-4yq5EXBt+VDtAZwTyfijaFp5D2C5oz3Ikw5a2kiX2K9nw72vrZX2q5UuAlkPtUMO1tQz6JTKpaKWjS7OOefTDQ==",
+      "version": "16.4.3",
+      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.4.3.tgz",
+      "integrity": "sha512-1Rvkn/LUhnEF8WxnRkOrqGhbwXui1bkWFxONKIbN+r7C+9KHDSZ+iUoj4CzymVMWUyZIyx9szcb9+kbKhD500A==",
+      "version": "16.4.3",
+      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.4.3.tgz",
+      "integrity": "sha512-dCKpXErGg3abUM6t5JTJV/ottVBTStJB5lRJTbgdUdQaQ+jNHiK56Hsc0YAEg/rinSh42hYG3HWiYmEMdilnxg==",
+      "version": "16.4.3",
+      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.4.3.tgz",
+      "integrity": "sha512-WwYbhWkhYBvBtib1K4W0kL8MW2snBD2A5b3SN4vPpqalZbZs5+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        "next": "^16.3.8",
+      "version": "16.3.8",
+      "resolved": "https://registry.npmjs.org/@next/env/-/env-16.3.8.tgz",
+      "integrity": "sha512-Al9zqHVV7TJv0eFuOU4U7Lvv74PTih4Ch63sk2xCIpSTkE3udFnaOcnzP2lQVymiL7yS9Cj2iClUXlR3EQ5sEw==",
+      "version": "16.3.8",
+      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-16.3.8.tgz",
+      "integrity": "sha512-2JPRMh2nmQG5CiL7cXGL9AGwnPWJQ//cTtAUCT+w511QHk79SYz3LGv/pc5X643B/WEO0rvu3Yww0hqwt3kgeA==",
+      "version": "16.3.8",
+      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-16.3.8.tgz",
+      "integrity": "sha512-GZtCCOBKJ4leVIT/Th0llWKhD1ca92lzbQiS5R5ON9QkoiFnilFsebDae1JU2a3HWoKMEmEZWGs1AGLavVM72Q==",
+      "version": "16.3.8",
+      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-16.3.8.tgz",
+      "integrity": "sha512-O659ygeQYqneJ1fBKMpFxIFqYkYswu8IAS1OCKK/4f3ZgJJm1dRz4fVJZRi/kLLWjnBKnebOePA4WNv+sV1pVA==",
+      "version": "16.3.8",
+      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-16.3.8.tgz",
+      "integrity": "sha512-dSjKSyWpzxoO1d3DIZZcP4XJcNaKeLmxQMFOiYl5vuBRMmweIq
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `488285b7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `adf88a0c` are properly handled with clean fallback behavior.

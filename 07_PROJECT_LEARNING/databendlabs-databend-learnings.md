@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `058a1e8f`  
+> **Source Version**: `ad9996eb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T12:32:06.782Z  
+> **Timestamp**: 2026-10-27T15:39:46.375Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T12:32:06.239Z  
+> **Harvest Timestamp**: 2026-10-27T15:39:46.068Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9479 stars
+- **Stars / Engagement**: 9484 stars
 
 ---
 
@@ -1196,11 +1196,11 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20822** (2026-10-23): **chore(meta): reuse source-option read when validating MV source**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Address the duplicate source-metadata read in item 2 of #20286.  When `CREATE MATERIALIZED VIEW` includes a source-options update, `create_table()` already reads the source metadata, checks its sequence, and adds an exact source CAS condition. Reuse that read's source ID and dropped status for MV validation when both requests refer to the same source, avoiding the redundant lookup within that transaction attempt.  - Keep the existing lookup when there is no source-options update or the source IDs differ. - Recompute the local status on every retry. Do not clone or cache the full `TableMeta`. - Preserve the source CAS, atomic metadata publication, privilege model, and persistent formats. - Extend the existing `materialized_view_lifecycle` cases to reject missing/dropped MV sources without publishing the source-options update.  The documentation and old-binary compatibility follow-ups are covered by databendlabs/databend-docs#3532, which is still open. This PR addresses the code follow-up only and intentionally does not auto-close #20286.  ## Tests  - [x] Unit Test — existing schema API integration suite - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  Passed locally:  ```sh CARGO_BUILD_JOBS=4 RUST_MIN_STACK=16777216 cargo nextest run --offline \   -p databend-common-meta-schema-api-tests --test it \   -E 'test(test_schema_api_single_node) | test(tes
+- **Issue #20852** (2026-10-27): **docs: meta: update compatibility tables through 1.2.956**
+  *Symptoms*:   I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  ##### docs: meta: update compatibility tables through 1.2.956 # Summary  Add the 27 missing releases to query, meta-service, and Raft compatibility lookups.  # Details  Keep the existing CalVer major-release grouping because the bundled client and server patch releases share compatibility limits.  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test  - _Explain why_  ## Type of change  - [x] Documentation Update  ## AI assistance  - AI usage: An AI coding agent generated code and wrote tests; I reviewed and confirmed every line before committing it. - Responsible human: @drmingdrmer - [x] The responsible human has read every line of this diff and can explain each change  ## Related Issues  <!-- Reviewable:start --> - - - This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/databendlabs/databend/20852) <!-- Reviewable:end --> 
 
-- **Issue #20821** (2026-10-23): **fix(query): cap window top-n cardinality estimate by partition count**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Cardinality estimation for the common "top-N per key" pattern  ```sql SELECT ... FROM (   SELECT ..., row_number() OVER (PARTITION BY k1, k2, k3 ORDER BY d DESC) AS rn FROM t ) WHERE rn = 1 ```  passed the whole input cardinality through the `Window` / `WindowPartition` nodes, and in some shapes through the `Filter` as well, although the output is bounded by `distinct partition keys × N`. The bad estimate is harmless for the standalone subquery but misleads join ordering and join type selection when such a subquery is joined to other tables.  ### Root cause  `RulePushDownFilterWindowTopN` records the per-partition `top`, but statistics derivation only used it to bound the ranking column's value range and ndv:  - Single window function (`Window` over `Sort { window_partition }`): `top` lives on `Sort.window_partition.top`, which `Sort::derive_stats` ignored. `WindowPartition` and `Window` kept the input cardinality; the `Filter` estimate was only right by accident for a single partition column with `rn = 1`, and wrong for multi-column keys or `rank() <= N` (full input). - Several window functions (`WindowGroup`): `top` is set on the window, so the ranking column got ndv 1 in range `[1, 1]` while the group cardinality stayed at the input, which made `rn = 1` estimated as keeping every row.  ### Fix  - `plans/window.rs`: add `estimate_partition_count` (returns `None` whe
+- **Issue #20846** (2026-10-27): **fix(query): count lazy pruning partitions total in blocks**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - fixes: #20713  On a table with more than one segment, `FuseTable::do_read_partitions` takes the lazy pruning path. On this path `partitions_total` was the segment count, but `partitions_scanned` was the block count. `EXPLAIN` could show `partitions total: 3` and `partitions scanned: 48`.  Changes:  - `SegmentPruner` adds the block count of each segment that it reads to a new counter, `FusePruningStatistics::segments_blocks_total`. The counter is set before segment and block pruning, so blocks of pruned segments are in the total. - `SendPartState` takes `partitions_total` from this counter. This value goes to `EXPLAIN`, to `set_pruned_partitions_stats`, and to the prune cache. In cluster mode, each node counts only the segments that it reads, so the sum of the per-node values is correct. The fixed `partitions_total` parameter is removed. - The lazy plan estimates in `read_partitions.rs` (SELECT) and `mutation_source.rs` (lazy DELETE) now use the snapshot block count, not the segment count. - Each `SendPartInfoSink` added the shared running totals to `data_metrics` when it detached, so a pipeline with N sinks counted the partitions N times. The pipeline now reports them one time, in `on_finished`.  Known limits:  - On the lazy path, the total counts only the segments that the pipeline reads. Segments that are not read (`_segment_name` filter, early stop because of LIM
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1217,637 +1217,827 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `45a88e44` (2026-10-23)
-**Commit Message**: fix(query): release queued acquire entry when future is dropped (#20629)
+### Incident Patch 1: `520a63e0` (2026-10-26)
+**Commit Message**: feat(query): keep fuse scan columns encoded in memory (#20819)
 
-* fix(query): release queued acquire entry when future is dropped
+* feat(query): add encoded in-memory columns for fuse scans
 
-A queued `AcquireQueueFuture` registers its entry in the queue on the
-first pending poll and only unregisters it when it completes. If the
-caller cancels the acquisition by dropping the future, the entry (and
-the query context and session it keeps alive) stays in the queue
-indefinitely, so the queue length keeps growing and the session slot
-is never released.
+Add `Column::Encoded` with two encodings that keep the logical type:
+- frame of reference (`base + narrow deltas`) for integers, Date,
+  Timestamp and Decimal;
+- dictionary (`narrow keys + values`) for hashable types; String columns
+  reuse the Parquet dictionary page.
 
-Implement `PinnedDrop` for `AcquireQueueFuture` to remove any entry
-still owned by the future. Completed acquisitions have already
-released the key, so this is a no-op for them.
+Behind the experimental setting `enable_encoded_columns` (default off),
+fuse scans pick the smallest representation per block and keep it in the
+column array cache. Filter/take keep the encoding, `<column> <op>
+<constant>` is evaluated on the deltas, and decimal +/-/* computes in
+i64 and outputs FOR when the operand bounds prove it fits. Other
+consumers decode encoded columns before use.
 
-Add regression tests covering dropped acquisitions, repeated abort
-notifications, a real queued query with `max_active_sessions = 1`, and
-exactly-once cleanup on success or explicit removal.
+Also take `Vec<Column>` in `Column::concat_columns` instead of a cloned
+iterator.
 
-Refs #20606
+* feat(query): read encoded columns in aggregation without decoding
 
-* fix(query): only drop queue entries owned by the cancelled acquire
+Add `ColumnView::Encoded` so kernels that downcast a column can read a
+frame of reference / dictionary encoded column directly
+(`AccessType::try_downcast_encoded`, enabled for integers, Date,
+Timestamp, Decimal and dictionary String). Aggregate functions such 
 
-Queue keys are not unique. `add_entity` replaces an existing entry with
-the same key, so when a replaced acquisition is cancelled, an
-unconditional `remove_entity(&key)` would delete the entry now owned by
-the other acquisition. That acquisit
-
-**File**: `src/query/service/src/sessions/queue_mgr.rs` (modified, +13/-0)
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -491,6 +491,19 @@ where T: Future<Output =  std::result::Result<std::result::Result<Permit, E>, El
-     key: Option<Data::Key>,
-     manager: Arc<QueueManager<Data>>,
- }
-+
-+impl<Data: QueueData, T, Permit, E> PinnedDrop for AcquireQueueFuture<Data, T, Permit, E>
-+where T: Future<Output = std::result::Result<std::result::Result<Permit, E>, Elapsed>>
-+{
-+    fn drop(this: Pin<&mut Self>) {
-+        let this = this.project();
-+        // Cancellation can drop the future without polling it to completion.
-+        // Release the registered entry and the query context it owns in that case.
-+        if let Some(key) = this.key.take() {
-+            this.manager.remove_entity(&key);
-+        }
-+    }
-+}
- }
- 
- impl<Data: QueueData, T, Permit, E> AcquireQueueFuture<Data, T, Permit, E>
+@@ -3247,6 +3247,7 @@ dependencies = [
+ name = "databend-common-expression"
+ version = "0.1.0"
+ dependencies = [
++ "ahash 0.8.12",
+  "anyhow",
+  "arrow-array",
+  "arrow-buffer",
 ```
 
-**File**: `src/query/service/tests/it/sessions/queue_mgr.rs` (modified, +157/-0)
+**File**: `src/query/expression/Cargo.toml` (modified, +1/-0)
 ```diff
-@@ -14,6 +14,8 @@
+@@ -7,6 +7,7 @@ publish = { workspace = true }
+ edition = { workspace = true }
  
- use std::collections::HashMap;
- use std::sync::Arc;
-+use std::sync::atomic::AtomicUsize;
-+use std::sync::atomic::Ordering;
- use std::time::Duration;
- use std::time::Instant;
- use std::time::SystemTime;
-@@ -26,18 +28,22 @@ use databend_common_base::runtime::workload_group::MAX_CONCURRENCY_QUOTA_KEY;
- use databend_common_base::runtime::workload_group::QuotaValue;
- use databend_common_base::runtime::workload_group::WorkloadGroup;
- use databend_common_base::runtime::workload_group::WorkloadGroupResource;
-+use databend_common_catalog::session_type::SessionType;
- use databend_common_exception::ErrorCode;
- use databend_common_exception::Result;
- use databend_common_meta_store::MetaStore;
- use databend_common_meta_store::MetaStoreProvider;
- use databend_common_sql::Planner;
-+use databend_common_version::BUILD_INFO;
- use databend_meta_client::RpcClientConf;
- use databend_meta_runtime::DatabendRuntime;
- use databend_query::interpreters::InterpreterFactory;
- use databend_query::sessions::QueryEntry;
- use databend_query::sessions::QueueData;
- use databend_query::sessions::QueueManager;
-+use databend_query::sessions::SessionManager;
- use databend_query::sessions::TableContextSettings;
-+use databend_query::test_kits::ConfigBuilder;
- use databend_query::test_kits::TestFixture;
- use log::error;
- use tokio::sync::Mutex;
-@@ -48,6 +54,7 @@ struct TestData<const PASSED: bool = false> {
-     acquire_id: String,
-     abort_notify: Arc<WatchNotify>,
-     test_timeout: Duration,
-+    wait_exits: Arc<AtomicUsize>,
- }
+ [dependencies]
++ahash = { workspace = true }
+ arrow-array = { workspace = true }
+ arrow-buffer = { workspace = true }
+ arrow-cast = { workspace = true }
+```
+
+**File**: `src/query/expression/benches/bench.rs` (modified, +6/-2)
+```diff
+@@ -293,7 +293,9 @@ mod escaped_like {
+ fn concat_string_offset(bencher: divan::Bencher, length: usize) {
+     let mut rng = StdRng::seed_from_u64(0);
+     let (_s, b) = generate_random_string_data(&mut rng, length);
+-    let bin_col = (0..5).map(|_| BinaryType::from_data(b.clone()));
++    let bin_col = (0..5)
++        .map(|_| BinaryType::from_data(b.clone()))
++        .collect::<Vec<_>>();
  
- impl<const PASSED: bool> std::fmt::Debug for TestData<PASSED> {
-@@ -67,6 +74,7 @@ impl<const PASSED: bool> TestData<PASSED> {
-             acquire_id,
-             abort_notify: Arc::new(WatchNotify::new()),
-             test_timeout: Duration::from_secs(1000),
-+            wait_exits: Arc::new(AtomicUsize::new(0)),
+     bencher.bench(|| {
+         Column::concat_columns(bin_col.clone()).unwrap();
+@@ -304,7 +306,9 @@ fn concat_string_offset(bencher: divan::Bencher, length: usize) {
+ fn concat_string_view(bencher: divan::Bencher, length: usize) {
+     let mut rng = StdRng::seed_from_u64(0);
+     let (s, _b) = generate_random_string_data(&mut rng, length);
+-    let str_col = (0..5).map(|_| StringType::from_data(s.clone()));
++    let str_col = (0..5)
++        .map(|_| StringType::from_data(s.clone()))
++        .collect::<Vec<_>>();
+     bencher.bench(|| {
+         Column::concat_columns(str_col.clone()).unwrap();
+     });
+```
+
+**File**: `src/query/expression/src/aggregate/aggregate_hashtable.rs` (modified, +102/-3)
+```diff
+@@ -32,6 +32,7 @@ use super::partitioned_payload::PartitionedPayload;
+ use super::payload_flush::PayloadFlushState;
+ use super::probe_state::ProbeState;
+ use crate::BlockEntry;
++use crate::Column;
+ use crate::ColumnBuilder;
+ use crate::ProjectedBlock;
+ use crate::aggregate::AggrState;
+@@ -233,16 +234,21 @@ impl AggregateHashTable {
+             }
          }
+ 
+-        state.row_count = row_count;
+-        group_hash_entries(group_columns, &mut state.group_hashes[..row_count]);
+-
+         let new_group_count = if self.direct_append {
++            state.row_count = row_count;
++            group_hash_entries(group_columns, &mut state.group_hashes[..row_count]);
+             for (i, entry) in state.empty_vector[..row_count].iter_mut().enumerate() {
+                 *entry = i.into();
+             }
+             self.payload.append_rows(state, row_count, group_columns);
+             row_count
++        } else if let Some(new_group_count) =
++            self.probe_and_create_by_codes(state, group_columns, row_count)
++        {
++            new_group_count
+         } else {
++            state.row_count = row_count;
++            group_hash_entries(group_columns, &mut state.group_hashes[..row_count]);
+             self.probe_and_create(state, group_columns, row_count)
+         };
+ 
+@@ -293,6 +299,99 @@ impl AggregateHashTable {
+         Ok(new_group_count)
      }
  
-@@ -76,6 +84,7 @@ impl<const PASSED: bool> TestData<PASSED> {
-             acquire_id,
-             abort_notify: Arc::new(WatchNotify::new()),
-             test_timeout: timeout,
-+            wait_exits: Arc::new(AtomicUsize::new(0)),
-         }
-     }
- }
-@@ -107,6 +116,10 @@ impl<const PASSED: bool> QueueData for TestData<PASSED> {
-         !PASSED
-     }
- 
-+    fn exit_wait_pending(&self, _wait_time: Duration) {
-+        self.wait_exits.fetch_add(1, Ordering::SeqCst);
-+    }
-+
-     fn get_abort_notify(&self) -> Arc<WatchNotify> {
-         self.abort_notify.clone()
-     }
-@@ -523,6 +536,110 @@ async fn test_watch_abort_notify_immediate_abort() -> anyhow::Result<()> {
-     Ok(())
- }
- 
-+#[tokio::test(flavor = "multi_thread")]
-+async fn test_dropped_acquire_releases_queue_entry() -> anyhow::Result<()> {
-+    let queue = QueueManager::<TestData>::create(1, create_meta_store().await?, false);
-+    let holder = queue
-+        .acquire(TestData::new("drop_wait".into(), "holder".into()))
-+        .await?;
-+
-+    let data = TestData::new("drop_wait".into(), "waiter".into());
-+    let wait_exits = data.wait_exits.clone();
-+    let mut acquire = Box::pin(queue.acquire(data));
-+    assert!(futures::poll!(acquire.as_mut()).is_pending());
-+    assert_eq!(queue.length(), 1);
-+    let weak_data = Arc::downgrade(&queue.list()[0]);
-+
-+    // Dropping the caller's future must clean up even without an abort notification.
-+    drop(acquire);
-+    assert_eq!(queue.length(), 0);
-+    assert!(weak_data.upgrade().is_none());
-+    assert_eq!(wait_exits.load(Ordering::SeqCst), 1);
-+
-+    drop(holder);
-+    let _guard = queue
-+        .acquire(TestData::new("drop_wait".into(), "next".into()))
-+        .await?;
-+    Ok(())
-+}
-+
-+#[tokio::test(flavor = "multi_thread")]
-+async fn test_aborted_queued_query_releases_session() -> anyhow::Result<()> {
-+    let mut config = ConfigBuilder::create().config();
-+    config.query.common.max_active_sessions = 1;
-+    let fixture = TestFixture::setup_with_config(&config).await?;
-+    let queue = QueueManager::<QueryEntry>::create(1, create_meta_store().await?, false);
-+
-+    let holder_ctx = fixture.new_query_ctx().await?;
-+    let extras = Planner::new(holder_ctx.clone()).parse_sql("SELECT 1")?;
-+    let _holder = queue
-+        .acquire(QueryEntry::create_entry(&holder_ctx, &extras, true)?)
-+        .await?;
-+
-+    let session = fixture.new_session_with_type(SessionType::MySQL).await?;
-+    let session_id = session.get_id();
-+    let weak_session = Arc::downgrade(&session);
-+    let ctx = session.create_query_context(&BUILD_INFO).await?;
-+    let weak_ctx = Arc::downgrade(&ctx);
-+    let entry = QueryEntry::create_entry(&ctx, &extras, true)?;
-+    let abort_notify = entry.get_abort_notify();
-+    drop(ctx);
-+    drop(session);
-+
-+    let mut acquire = Box::pin(queue.acquire(entry));
-+    assert!(futures::poll!(acquire.as_mut()).is_pending());
-+    assert_eq!(queue.length(), 1);
-+    assert!(weak_session.upgrade().is_some());
-+    assert!(
-+        SessionManager::instance()
-+            .create_session(SessionType::MySQL)
-+            .await
-+         
-```
-
----
-
-### Incident Patch 2: `058a1e8f` (2026-10-23)
-**Commit Message**: chore(build): generate the embedded meta-service code once (#20814)
-
-* chore(build): generate the embedded meta-service code once
-
-`create_meta_store::<DatabendRuntime>()` is an async fn, so its state
-machine, down to the embedded openraft node and the tasks it spawns, was
-code-generated in every crate that awaited it, including databend-query,
-the last crate before linking. meta-store itself had none of that code.
-
-Add a non-generic `create_default_meta_store()` returning a boxed
-`dyn Future`, so the code is generated once in meta-store and callers
-only go through the vtable. Switch all callers to it and drop the now
-unused databend-meta-runtime dependency from catalog, users and sql
-test-support.
-
-databend-query: LLVM IR 12.39M -> 10.71M lines; its lib build drops by
-about 4s without incremental and 6s with it. No behavior change; one
-extra allocation per meta-store creation at startup.
-
-* fix(test): import DatabendRuntime in users external access tests
-
-The tests merged from main relied on user_api.rs importing
-DatabendRuntime, which this branch removed together with the
-databend-meta-runtime dependency. Import it in the test module and
-keep the crate as a dev-dependency only.
-
-**File**: `Cargo.lock` (modified, +0/-2)
-```diff
-@@ -3075,7 +3075,6 @@ dependencies = [
-  "databend-common-storage",
-  "databend-common-users",
-  "databend-meta-client 260205.13.5",
-- "databend-meta-runtime",
-  "databend-storages-common-session",
-  "databend-storages-common-table-meta",
-  "dyn-clone",
-@@ -4008,7 +4007,6 @@ dependencies = [
-  "databend-common-storage",
-  "databend-common-users",
-  "databend-meta-client 260205.13.5",
-- "databend-meta-runtime",
-  "databend-storages-common-session",
-  "databend-storages-common-table-meta",
-  "goldenfile",
-```
-
-**File**: `src/meta/store/src/lib.rs` (modified, +13/-0)
-```diff
-@@ -16,6 +16,7 @@ databend_common_tracing::register_module_tag!("[META_CLIENT]", "databend_meta_cl
- 
- pub(crate) mod local;
- 
-+use std::future::Future;
- use std::ops::Deref;
- use std::pin::Pin;
- use std::sync::Arc;
-@@ -213,6 +214,18 @@ impl MetaStoreProvider {
-         MetaStoreProvider { rpc_conf }
-     }
- 
-+    /// [`Self::create_meta_store`] for the production runtime.
++    /// Probes once per distinct combination of codes when every group key is an encoded column
++    /// with few codes (see [`EncodedColumn::codes`]): rows with the same codes have the same
++    /// keys, so a representative row per combination goes through the regular hash and probe,
++    /// and every row takes the address of its combination.
 +    ///
-+    /// The embedded meta-service behind it is a whole openraft node. An `async fn`'s state
-+    /// machine is code-generated in every crate that polls it, so returning it as a boxed
-+    /// `dyn Future` makes this crate the only one that generates the raft code; callers only go
-+    /// through the vtable.
-+    pub fn create_default_meta_store(
-+        &self,
-+    ) -> Pin<Box<dyn Future<Output = Result<MetaStore, CreationError>> + Send + '_>> {
-+        Box::pin(self.create_meta_store::<DatabendRuntime>())
++    /// The code of a combination is a mixed radix number (each key a digit whose radix is its
++    /// number of codes, like a row-major array index), used to index a direct-address table of
++    /// ranks. It is the idea of perfect hash aggregation, applied only to deduplicate the rows of
++    /// a batch, so the hash table is still used for the representatives.
++    ///
++    /// For example, grouping by `(flag, status)` with codes `N=0, R=1` and `F=0, O=1`:
++    ///
++    /// ```text
++    /// row:                0     1     2     3     4     5
++    /// keys:             (N,F) (R,O) (N,F) (N,F) (R,O) (N,F)
++    /// flag + status * 2:  0     3     0     0     3     0     1. code of each row
++    /// representatives:   [0, 1]                               2. first row of each code
++    /// probe rows 0 and 1:  (N,F) -> a0, (R,O) -> a1           3. regular hash and probe
++    /// addresses:          a0    a1    a0    a0    a1    a0    4. by code
++    /// ```
++    ///
++    /// `None` if the keys do not qualify (a key is not encoded, or there are not several rows
++    /// per combination); nothing is changed then.
++    fn probe_and_create_by_codes(
++        &mut self,
++        state: &mut ProbeState,
++        group_columns: ProjectedBlock,
++        row_count: usize,
++    ) -> Option<usize> {
++        // Check every key before allocating the row codes, so regular group columns cost
++        // nothing here.
++        let mut code_space = 1usize;
++        for entry in group_columns.iter() {
++            let BlockEntry::Column(Column::Encoded(encoded)) = entry else {
++                return None;
++            };
++            let (_, count) = encoded.codes();
++            code_space = code_space.checked_mul(usize::try_from(count).ok()?)?;
++            // Only worth it with several rows per combination.
++            if code_space.saturating_mul(4) > row_count {
++                return None;
++            }
++        }
++
++        // Code of a row = mixed radix number of the codes of its keys.
++        let mut row_codes = vec![0u32; row_count];
++        let mut stride = 1usize;
++        for entry in group_columns.iter() {
++            let BlockEntry::Column(Column::Encoded(encoded)) = entry else {
++                return None;
++            };
++            let (codes, count) = encoded.codes();
++            // `code < count`, so the result is below `code_space <= row_count`.
++            for (row_code, code) in row_codes.iter_mut().zip(codes.iter()) {
++                *row_code += (code as usize * stride) as u32;
++            }
++            stride *= count as usize;
++        }
++
++        // Rank of each combination in first-seen order, and its first row.
++        let mut rank_of_code = vec![u32::MAX; code_space];
++        let mut representatives = Vec::new();
++        for (row, row_code) in row_codes.iter_mut().enumerate() {
++            let rank = &mut rank_of_code[*row_code as usize];
++            if *rank == u32::MAX {
++                *rank = representatives.len() as u32;
++                representatives.push(row as u32);
++            }
++            *row_code = *rank;
++        }
++
++        // The representative rows stay encoded.
++        let keys = group_columns
++            .iter()
++            .map(|entry| entry.
+```
+
+**File**: `src/query/expression/src/aggregate/group_hash.rs` (modified, +25/-0)
+```diff
+@@ -278,6 +278,31 @@ impl<const IS_FIRST: bool> ValueVisitor for HashVisitor<'_, IS_FIRST> {
+         Ok(())
+     }
+ 
++    fn visit_encoded(&mut self, column: Box<EncodedColumn>) -> Result<()> {
++        // Hashing once per dictionary value only pays when there are fewer values than rows:
++        // aggregation hashes batches of a block, and each batch carries the whole dictionary.
++        let EncodedColumn::Dict(dict) = column.as_ref() else {
++            return self.visit_column(column.decode());
++        };
++        if dict.values.len() > dict.len() {
++            return self.visit_column(column.decode());
++        }
++        let mut hashes = vec![0; dict.values.len()];
++        HashVisitor::<true> {
++            values: &mut hashes,
++        }
++        .visit_column(dict.values.clone())?;
++        for (val, key) in self.values.iter_mut().zip(dict.keys.iter()) {
++            let hash = hashes[key as usize];
++            *val = if IS_FIRST {
++                hash
++            } else {
++                (*val).wrapping_mul(NULL_HASH_VAL) ^ hash
++            };
++        }
++        Ok(())
 +    }
 +
-     pub async fn create_meta_store<RT: RuntimeApi>(&self) -> Result<MetaStore, CreationError> {
-         if self.rpc_conf.local_mode() {
-             let local = match &self.rpc_conf.embedded_dir {
+     fn visit_column(&mut self, column: Column) -> Result<()> {
+         match column {
+             Column::Null { .. } | Column::EmptyArray { .. } | Column::EmptyMap { .. } => {
 ```
 
-**File**: `src/query/catalog/Cargo.toml` (modified, +0/-1)
+**File**: `src/query/expression/src/aggregate/payload_row.rs` (modified, +118/-0)
 ```diff
-@@ -27,7 +27,6 @@ databend-common-statistics = { workspace = true }
- databend-common-storage = { workspace = true }
- databend-common-users = { workspace = true }
- databend-meta-client = { workspace = true }
--databend-meta-runtime = { workspace = true }
- databend-storages-common-session = { workspace = true }
- databend-storages-common-table-meta = { workspace = true }
- dyn-clone = { workspace = true }
-```
-
-**File**: `src/query/catalog/src/catalog/manager.rs` (modified, +3/-7)
-```diff
-@@ -39,7 +39,6 @@ use databend_common_meta_app::tenant::Tenant;
- use databend_common_meta_store::MetaStore;
- use databend_common_meta_store::MetaStoreProvider;
- use databend_meta_client::types::anyerror::func_name;
--use databend_meta_runtime::DatabendRuntime;
- use databend_storages_common_session::SessionState;
- use parking_lot::RwLock;
- 
-@@ -94,12 +93,9 @@ impl CatalogManager {
-         let meta = {
-             let provider = Arc::new(MetaStoreProvider::new(conf.meta.to_meta_grpc_client_conf()));
- 
--            provider
--                .create_meta_store::<DatabendRuntime>()
--                .await
--                .map_err(|e| {
--                    ErrorCode::MetaServiceError(format!("Failed to create meta store: {}", e))
--                })?
-+            provider.create_default_meta_store().await.map_err(|e| {
-+                ErrorCode::MetaServiceError(format!("Failed to create meta store: {}", e))
-+            })?
-         };
- 
-         let tenant = conf.query.tenant_id.clone();
-```
-
-**File**: `src/query/ee/src/resource_management/mod.rs` (modified, +1/-5)
-```diff
-@@ -26,7 +26,6 @@ use databend_common_exception::Result;
- use databend_common_management::WarehouseMgr;
- use databend_common_meta_store::MetaStoreProvider;
- use databend_enterprise_resources_management::ResourcesManagement;
--use databend_meta_runtime::DatabendRuntime;
- use databend_query::sessions::BuildInfoRef;
- pub use resources_management_kubernetes::KubernetesResourcesManagement;
- pub use resources_management_self_managed::SelfManagedResourcesManagement;
-@@ -52,10 +51,7 @@ pub async fn init_resources_management(cfg: &InnerConfig, version: BuildInfoRef)
-                 "system_managed" => {
-                     let meta_api_provider =
-                         MetaStoreProvider::new(cfg.meta.to_meta_grpc_client_conf());
--                    match meta_api_provider
--                        .create_meta_store::<DatabendRuntime>()
--                        .await
--                    {
-+                    match meta_api_provider.create_default_meta_store().await {
-                         Err(cause) => {
-                             let err = ErrorCode::MetaServiceError(format!(
-                                 "Failed to create meta store: {}",
-```
-
-**File**: `src/query/ee/tests/it/storages/fuse/operations/clone.rs` (modified, +1/-2)
-```diff
-@@ -20,7 +20,6 @@ use databend_common_meta_app::principal::UserPrivilegeType;
- use databend_common_meta_store::MetaStoreProvider;
- use databend_common_storages_fuse::FuseTable;
- use databend_enterprise_query::test_kits::context::EESetup;
--use databend_meta_runtime::DatabendRuntime;
- use databend_query::sessions::TableContextTableAccess;
- use databend_query::test_kits::TestFixture;
- use databend_query::test_kits::query_count;
-@@ -48,7 +47,7 @@ async fn assert_secured_rows(
- async fn test_clone_inherited_policies_for_restricted_owner() -> anyhow::Result<()> {
-     // Catalog metadata and policy APIs must share one Meta service, as they do in production.
-     let meta = MetaStoreProvider::new(MetaConfig::default().to_meta_grpc_client_conf())
--        .create_meta_store::<DatabendRuntime>()
-+        .create_default_meta_store()
-         .await?;
-     let mut setup = EESetup::new();
-     setup.config_mut().meta.endpoints = meta.inner().endpoints.clone();
-```
-
-**File**: `src/query/ee/tests/it/storages/fuse/operations/vacuum.rs` (modified, +1/-5)
-```diff
-@@ -57,7 +57,6 @@ use databend_enterprise_vacuum_handler::vacuum_handler::VacuumTempOptions;
- use databend_meta_client::kvapi::KvApiExt;
- use databend_meta_client::kvapi::ListOptions;
- use databend_meta_client::types::TxnRequest;
--use databend_meta_runtime::DatabendRuntime;
- use databend_query::sessions::TableContextSettings;
- use databend_query::sessions::TableContextTableAccess;
- use databend_query::test_kits::*;
-@@ -1585,10 +1584,7 @@ async fn new_local_meta() -> MetaStore {
-     let meta_config = MetaConfig::default();
-     let config = meta_config.to_meta_grpc_client_conf();
-     let provider = MetaStoreProvider::new(config);
--    provider
--        .create_meta_store::<DatabendRuntime>()
--        .await
--        .unwrap()
-+    provider.create_default_meta_store().await.unwrap()
+@@ -36,11 +36,15 @@ use crate::types::DataType;
+ use crate::types::DateType;
+ use crate::types::DecimalDataKind;
+ use crate::types::DecimalScalar;
++use crate::types::DecimalType;
+ use crate::types::DecimalView;
++use crate::types::EncodedColumn;
+ use crate::types::IntervalType;
+ use crate::types::NumberColumn;
++use crate::types::NumberDataType;
+ use crate::types::NumberScalar;
+ use crate::types::NumberType;
++use crate::types::StringType;
+ use crate::types::TimestampType;
+ use crate::types::decimal::Decimal;
+ use crate::types::decimal::DecimalColumn;
+@@ -83,6 +87,72 @@ pub(super) fn rowformat_size(data_type: &DataType) -> usize {
  }
  
- #[tokio::test(flavor = "multi_thread")]
+ /// This serialize column into row format by fixed size
++/// Runs `$body` with `$T` the value type of a frame of reference / dictionary encodable
++/// fixed size type, `$other` for other types.
++macro_rules! with_encoded_fixed_size_type {
++    ($data_type:expr, | $T:ident | $body:expr, $other:expr) => {
++        match $data_type {
++            DataType::Number(ty) => with_number_mapped_type!(|NUM| match ty {
++                NumberDataType::NUM => {
++                    type $T = NumberType<NUM>;
++                    $body
++                }
++            }),
++            DataType::Decimal(size) => with_decimal_mapped_type!(|D| match size.data_kind() {
++                DecimalDataKind::D => {
++                    type $T = DecimalType<D>;
++                    $body
++                }
++            }),
++            DataType::Date => {
++                type $T = DateType;
++                $body
++            }
++            DataType::Timestamp => {
++                type $T = TimestampType;
++                $body
++            }
++            _ => $other,
++        }
++    };
++}
++
++/// Writes the selected rows of an encoded column, reading each value from the encoding.
++/// `false` if the column cannot be read encoded, so it must be decoded.
++unsafe fn serialize_encoded_to_rowformat(
++    arena: &Bump,
++    column: &EncodedColumn,
++    select_vector: &[RowID],
++    address: &mut [RowMut; BATCH_SIZE],
++    offset: usize,
++) -> bool {
++    with_encoded_fixed_size_type!(
++        &column.data_type(),
++        |T| {
++            let Some(view) = T::try_downcast_encoded(column) else {
++                return false;
++            };
++            for row in select_vector {
++                unsafe { address[*row].write(offset, &view.index_unchecked(row.to_usize())) };
++            }
++        },
++        {
++            let view = match column.data_type() {
++                DataType::String => StringType::try_downcast_encoded(column),
++                _ => None,
++            };
++            let Some(view) = view else {
++                return false;
++            };
++            for row in select_vector {
++                let data = arena.alloc_str(unsafe { view.index_unchecked(row.to_usize()) });
++                unsafe { address[*row].write_bytes(offset, data.as_bytes()) };
++            }
++        }
++    );
++    true
++}
++
+ pub(super) unsafe fn serialize_column_to_rowformat(
+     arena: &Bump,
+     column: &Column,
+@@ -92,6 +162,18 @@ pub(super) unsafe fn serialize_column_to_rowformat(
+     scratch: &mut Vec<u8>,
+ ) {
+     match column {
++        Column::Encoded(c) => unsafe {
++            if !serialize_encoded_to_rowformat(arena, c, select_vector, address, offset) {
++                serialize_column_to_rowformat(
++                    arena,
++                    &c.decode(),
++                    select_vector,
++                    address,
++                    offset,
++                    scratch,
++                )
++            }
++        },
+         Column::Null { .. } | Column::EmptyArray { .. } | Column::EmptyMap { .. } => {}
+         Column::Number(v) => with_number_mapped_type!(|NUM_TYPE| match v {
+             NumberColumn::NUM_TYPE(buffer) => {
+@@ -416,6 +498,10 @@ impl<'s> CompareState<'s> {
+         counts: (usize, usize),
+     ) -> (usize, usize) {
+         match col {
++            Column::Encoded(c) => match self.match_encoded(c, col_offset, validity, counts) {
++                Some(counts) => counts,
++                None => self.match_column(&c.decode(), col_offset, validity, counts),
++            },
+             Column::EmptyArray { .. } | Column::EmptyMap { .. } => {
+                 self.match_validity_with(counts, validity, |_, _| true)
+             }
+@@ -473,6 +559,38 @@ impl<'s> CompareState<'s> {
+         }
+     }
+ 
++    /// Compares the rows of an encoded column, reading each value from the encoding. `None` if
++    /// the column cannot be read encoded, so it must be decoded.
++    fn match_encoded(
++        &mut self,
++        col: &EncodedColumn,
++        col_offset: usize,
++        validity: Option<(&Bitmap, usize)>,
++        counts: (usize, usize),
++    ) -> Option<(usize, usize)> {
++        Some(with_encoded_fixed_size_type!(
++            &col.data_type(),
++            |T| {
++                let view = T::try_downcast_encoded(col)?;
++                self.match_validity_with
 ```
 
-**File**: `src/query/service/src/catalogs/default/mutable_catalog.rs` (modified, +3/-7)
+**File**: `src/query/expression/src/block.rs` (modified, +49/-0)
 ```diff
-@@ -139,7 +139,6 @@ use databend_common_users::GrantObjectVisibilityChecker;
- use databend_meta_client::types::Change;
- use databend_meta_client::types::MetaId;
- use databend_meta_client::types::SeqV;
--use databend_meta_runtime::DatabendRuntime;
- use fastrace::func_name;
- use log::info;
- use log::warn;
-@@ -193,12 +192,9 @@ impl MutableCatalog {
-         let meta = {
-             let provider = Arc::new(MetaStoreProvider::new(conf.meta.to_meta_grpc_client_conf()));
+@@ -38,7 +38,9 @@ use crate::types::AnyType;
+ use crate::types::ArgType;
+ use crate::types::BooleanType;
+ use crate::types::DataType;
++use crate::types::EncodedView;
+ use crate::types::ValueType;
++use crate::types::encoded::EncodedViewIter;
  
--            provider
--                .create_meta_store::<DatabendRuntime>()
--                .await
--                .map_err(|e| {
--                    ErrorCode::MetaServiceError(format!("Failed to create meta store: {}", e))
--                })?
-+            provider.create_default_meta_store().await.map_err(|e| {
-+                ErrorCode::MetaServiceError(format!("Failed to create meta store: {}", e))
-+            })?
-         };
+ pub type SendableDataBlockStream =
+     std::pin::Pin<Box<dyn futures::stream::Stream<Item = Result<DataBlock>> + Send>>;
+@@ -234,6 +236,14 @@ impl BlockEntry {
+                 T::to_owned_scalar(T::try_downcast_scalar(&scalar.as_ref())?),
+                 *num_rows,
+             )),
++            BlockEntry::Column(Column::Encoded(encoded)) => {
++                match T::try_downcast_encoded(encoded) {
++                    Some(view) => Ok(ColumnView::Encoded(view)),
++                    None => Ok(ColumnView::Column(T::try_downcast_column(
++                        self.as_column().unwrap(),
++                    )?)),
++                }
++            }
+             BlockEntry::Column(column) => Ok(ColumnView::Column(T::try_downcast_column(column)?)),
+         }
+     }
+@@ -274,13 +284,15 @@ impl TryFrom<Value<AnyType>> for BlockEntry {
+ pub enum ColumnView<T: AccessType> {
+     Const(T::Scalar, usize),
+     Column(T::Column),
++    Encoded(EncodedView<T>),
+ }
  
-         let tenant = conf.query.tenant_id.clone();
+ impl<T: AccessType> ColumnView<T> {
+     pub fn len(&self) -> usize {
+         match self {
+             ColumnView::Const(_, num_rows) => *num_rows,
+             ColumnView::Column(column) => T::column_len(column),
++            ColumnView::Encoded(view) => view.len(),
+         }
+     }
+ 
+@@ -294,6 +306,7 @@ impl<T: AccessType> ColumnView<T> {
+                 ColumnViewIter::Const(T::to_scalar_ref(scalar), *num_rows)
+             }
+             ColumnView::Column(column) => ColumnViewIter::Column(T::iter_column(column)),
++            ColumnView::Encoded(view) => ColumnViewIter::Encoded(view.iter()),
+         }
+     }
+ 
+@@ -307,6 +320,7 @@ impl<T: AccessType> ColumnView<T> {
+                 }
+             }
+             ColumnView::Column(column) => T::index_column(column, i),
++            ColumnView::Encoded(view) => view.index(i),
+         }
+     }
+ 
+@@ -319,6 +333,7 @@ impl<T: AccessType> ColumnView<T> {
+             match self {
+                 ColumnView::Const(scalar, _) => T::to_scalar_ref(scalar),
+                 ColumnView::Column(column) => T::index_column_unchecked(column, i),
++                ColumnView::Encoded(view) => view.index_unchecked(i),
+             }
+         }
+     }
+@@ -332,13 +347,45 @@ impl<T: ValueType> ColumnView<T> {
+                 BlockEntry::new_const_column(data_type, scalar, num_rows)
+             }
+             ColumnView::Column(column) => T::upcast_column_with_type(column, &data_type).into(),
++            ColumnView::Encoded(view) => view.upcast(&data_type).into(),
+         }
+     }
+ }
+ 
++/// Runs `body` with `iter` bound to an iterator over the values of `view` (a
++/// `&ColumnView<T>`), with a concrete iterator type per layout instead of [`ColumnViewIter`],
++/// which matches the layout on every row. Plain columns and each delta width of frame of
++/// reference columns get their own copy of `body`.
++#[macro_export]
++macro_rules! with_column_view_iter {
++    ($T:ty, $view:expr, | $iter:ident | $body:expr) => {{
++        let view: &$crate::ColumnView<$T> = $view;
++        match view {
++            $crate::ColumnView::Column(column) => {
++                let $iter = <$T as $crate::types::AccessType>::iter_column(column);
++                $body
++            }
++            $crate::ColumnView::Encoded($crate::types::EncodedView::For(column)) => {
++                let base = column.base();
++                $crate::with_narrow_buffer!(column.deltas(), |deltas| {
++                    let $iter = deltas.iter().map(move |delta| {
++                        <$T as $crate::types::AccessType>::for_scalar_ref(base + *delta as i128)
++                    });
++                    $body
++                })
++            }
++            view => {
++                let $iter = view.iter();
++                $body
++            }
++        }
++    }};
++}
++
+ pub enum ColumnViewIter<'a, T: AccessType> {
+     Column(T::ColumnIterator<'a>),
+     Const(T::ScalarRef<'a>, usize),
++    Encoded(EncodedViewIter<'a, T>),
+ }
+ 
+ impl<'a, T: AccessType> Iterator for ColumnViewIter<'a, T> {
+@@ -347,6 +394,7 @@ impl<'a, T: AccessType> Iterator for ColumnViewIter<'a, T> {
+     fn next(&mut self) -> Option<Self::Item> {
+         match self {
+             ColumnViewIter::Column(iter) => iter.next(),
++            ColumnViewIter::Encoded(iter) => iter.next(),
+             ColumnViewIter::Const(scalar, n) => {
+                 if *n == 0 {
+                     None
+@@ -361,6 +409,7 @@ impl<'a, T: AccessType> Iterator for ColumnViewIter<'a, T> {
+     fn size_hint(&self) -> (usize, Option<usize>) {
+         match self {
+             ColumnViewIter::Column(iter) => iter.size_hint(),
++            ColumnViewIter::Encoded(iter) => iter.size_hint(),
+             ColumnViewIter::Const(_, n) => (*n, Some(*n)),
+         }
+     }
+```
+
+**File**: `src/query/expression/src/block_vec.rs` (modified, +6/-0)
+```diff
+@@ -741,6 +741,7 @@ impl DataBlockVec {
+         let has_null = views.iter().any(|view| match view {
+             ColumnView::Const(value, num_rows) => value.is_none() && *num_rows > 0,
+             ColumnView::Column(column) => column.validity().null_count() > 0,
++            ColumnView::Encoded(view) => view.iter().any(|value| value.is_none()),
+         });
+ 
+         if !has_null {
+@@ -754,6 +755,9 @@ impl DataBlockVec {
+                     bitmap.extend_constant(*num_rows, value.is_some());
+                 }
+                 ColumnView::Column(column) => bitmap.extend_from_bitmap(column.validity()),
++                ColumnView::Encoded(view) => {
++                    view.iter().for_each(|value| bitmap.push(value.is_some()))
++                }
+             }
+         }
+         Some(bitmap.into())
+@@ -771,6 +775,8 @@ impl DataBlockVec {
+             ColumnView::Column(nullable) => unsafe {
+                 T::index_column_unchecked(nullable.column(), row)
+             },
++            ColumnView::Encoded(view) => unsafe { view.index_unchecked(row) }
++                .expect("validity bitmap mismatch for nullable sort encoded value"),
+         }
+     }
+ }
 ```
 
 ---
 
-### Incident Patch 3: `b6fada3a` (2026-10-23)
-**Commit Message**: fix(optimizer): avoid incorrect anti joins for expression keys (#20804)
+### Incident Patch 2: `bd51ba08` (2026-10-27)
+**Commit Message**: docs(agents): require Rust unit tests in a trailing mod tests block
 
-* fix(optimizer): require a column witness for outer-to-anti rewrites
-
-* test(optimizer): focus expression-key anti-join regression in SQL
-
-* test(optimizer): record expression-key anti-join plans
-
----------
-
-Co-authored-by: dantengsky <[REDACTED_EMAIL]>
-
-**File**: `src/query/sql/src/planner/optimizer/optimizers/rule/join_rules/push_down_filter_join/outer_join_to_anti_join.rs` (modified, +6/-2)
+**File**: `AGENTS.md` (modified, +1/-0)
 ```diff
-@@ -25,7 +25,8 @@ use crate::plans::ScalarExpr;
- use crate::plans::ScalarItem;
+@@ -9,6 +9,7 @@ This file is the top-level guide for repository-specific working rules. Start by
+ - When guidance, lower-level docs, and repository practice conflict or are ambiguous, identify the specific conflict that affects the current decision instead of assuming one source is automatically correct.
+ - Validate incrementally. Run the smallest relevant checks early, and scale verification to the parts that will remain in the branch and enter review.
+ - Treat tests as part of the change. Planner, executor, storage, and behavior changes should come with regression coverage.
++- Rust unit tests live in one `#[cfg(test)] mod tests` block at the end of the file, never interleaved with the implementation. Prefer the crate's existing `tests/it/` directory when it has one. See [`agents/coding-style.md`](agents/coding-style.md).
+ - Keep contributions reviewable. Commits should stay scoped, and pull requests should follow the repository's expected collaboration workflow.
  
- /// Convert an outer-join exclusion pattern to the corresponding anti join when
--/// the null-tested expression is a regular equi-key on the null-extended side:
-+/// the null-tested expression is a direct column and a regular equi-key on the
-+/// null-extended side:
- ///
- /// ```text
- /// Filter(right_key IS NULL)
-@@ -38,6 +39,8 @@ use crate::plans::ScalarItem;
- /// A matched row cannot have a NULL regular equi-join key, even when the source
- /// column itself is nullable. Therefore the filter keeps exactly the preserved
- /// side's unmatched rows. Null-equal join conditions are deliberately excluded.
-+/// An arbitrary equi-key expression may map null-extended inputs to a non-NULL
-+/// value, so its NULL test does not necessarily select unmatched rows.
- pub fn outer_join_to_anti_join(s_expr: &SExpr, metadata: MetadataRef) -> Result<Option<SExpr>> {
-     let filter = s_expr.plan().as_filter().unwrap();
-     let join_expr = s_expr.unary_child();
-@@ -49,7 +52,8 @@ pub fn outer_join_to_anti_join(s_expr: &SExpr, metadata: MetadataRef) -> Result<
-     };
- 
-     let Some(predicate_index) = filter.predicates.iter().position(|predicate| {
--        let Some(null_tested_expr) = null_tested_expr(predicate) else {
-+        let Some(null_tested_expr @ ScalarExpr::BoundColumnRef(_)) = null_tested_expr(predicate)
-+        else {
-             return false;
-         };
- 
+ ## Submission Intent
 ```
 
-**File**: `src/query/sql/tests/it/optimizer/outer_join_to_anti.rs` (modified, +18/-0)
+**File**: `agents/coding-style.md` (modified, +13/-0)
 ```diff
-@@ -120,6 +120,24 @@ LIMIT 10",
- FROM outer_to_anti_left AS l
- RIGHT JOIN outer_to_anti_right AS r ON l.k = r.k
- WHERE l.keep IS NULL",
-+        },
-+        SqlTestCase {
-+            name: "left_expression_key_is_not_anti_join",
-+            description: "IF returns 0 on an unmatched right side, so its NULL test must not become a left anti join.",
-+            setup_sqls: &[LEFT_TABLE, RIGHT_TABLE],
-+            sql: "SELECT l.k
-+FROM outer_to_anti_left AS l
-+LEFT JOIN outer_to_anti_right AS r ON l.k = IF(r.k IS NULL, 0, r.payload)
-+WHERE IF(r.k IS NULL, 0, r.payload) IS NULL",
-+        },
-+        SqlTestCase {
-+            name: "right_expression_key_is_not_anti_join",
-+            description: "The RIGHT JOIN mirror must also avoid the expression-key anti rewrite; later valid simplifications are allowed.",
-+            setup_sqls: &[LEFT_TABLE, RIGHT_TABLE],
-+            sql: "SELECT l.k
-+FROM outer_to_anti_right AS r
-+RIGHT JOIN outer_to_anti_left AS l ON IF(r.k IS NULL, 0, r.payload) = l.k
-+WHERE IF(r.k IS NULL, 0, r.payload) IS NULL",
-         },
-         SqlTestCase {
-             name: "null_safe_condition_keeps_left_outer",
+@@ -30,6 +30,19 @@
+   `create_index_schema`).
+ 
+ ## Tests and Fixtures
++- Rust unit tests go in a single `#[cfg(test)] mod tests { ... }` block at the
++  very end of the source file, after all production code. Never place a test
++  module, `#[test]` function, or test-only helper between `impl` blocks or in
++  the middle of the implementation. If a file needs more than one test module,
++  nest them inside the trailing `mod tests`.
++- Name the module `tests`, not `foo_tests` or `request_debug_tests`. Group by
++  nested module or by test function name if you need to distinguish topics.
++- Before adding a unit test, check whether the crate already has a
++  `tests/it/` directory. Most Databend crates keep their tests there; follow
++  the existing location and style for that crate instead of introducing an
++  inline module where none exists.
++- Check whether the behavior is already covered by an existing test before
++  adding a new one, and match the assertion and fixture style of nearby tests.
+ - Keep SQL suite file prefixes consistent with the existing numeric ordering in `tests/suites/`.
+ 
+ ## Python
 ```
 
-**File**: `src/query/sql/tests/it/optimizer/outer_join_to_anti.txt` (modified, +90/-0)
+**File**: `agents/debug-and-validation.md` (modified, +1/-1)
 ```diff
-@@ -372,6 +372,96 @@ Filter
-         └── limit: NONE
+@@ -9,7 +9,7 @@
  
+ ## Changes Intended to Remain in the Branch
  
-+=== left_expression_key_is_not_anti_join ===
-+description: IF returns 0 on an unmatched right side, so its NULL test must not become a left anti join.
-+sql: SELECT l.k
-+FROM outer_to_anti_left AS l
-+LEFT JOIN outer_to_anti_right AS r ON l.k = IF(r.k IS NULL, 0, r.payload)
-+WHERE IF(r.k IS NULL, 0, r.payload) IS NULL
-+raw_plan:
-+EvalScalar
-+├── scalars: [outer_to_anti_left.k (#0) AS (#0)]
-+└── Filter
-+    ├── filters: [not(is_not_null(if(not(is_not_null(outer_to_anti_right.k (#3))), 0, outer_to_anti_right.payload (#5))))]
-+    └── Join(Left)
-+        ├── build keys: [if(not(is_not_null(outer_to_anti_right.k (#3))), 0, outer_to_anti_right.payload (#5))]
-+        ├── probe keys: [outer_to_anti_left.k (#0)]
-+        ├── other filters: []
-+        ├── Scan
-+        │   ├── table: default.outer_to_anti_right (#1)
-+        │   ├── filters: []
-+        │   ├── order by: []
-+        │   └── limit: NONE
-+        └── Scan
-+            ├── table: default.outer_to_anti_left (#0)
-+            ├── filters: []
-+            ├── order by: []
-+            └── limit: NONE
-+
-+optimized_plan:
-+EvalScalar
-+├── scalars: [outer_to_anti_left.k (#0) AS (#0), outer_to_anti_right.k (#3) AS (#6), outer_to_anti_right.payload (#5) AS (#7)]
-+└── Join(Inner)
-+    ├── build keys: [if(not(is_not_null(outer_to_anti_right.k (#3))), 0, outer_to_anti_right.payload (#5))]
-+    ├── probe keys: [outer_to_anti_left.k (#0)]
-+    ├── other filters: []
-+    ├── Scan
-+    │   ├── table: default.outer_to_anti_right (#1)
-+    │   ├── filters: [not(is_not_null(if(not(is_not_null(outer_to_anti_right.k (#3))), 0, outer_to_anti_right.payload (#5))))]
-+    │   ├── order by: []
-+    │   └── limit: NONE
-+    └── Scan
-+        ├── table: default.outer_to_anti_left (#0)
-+        ├── filters: []
-+        ├── order by: []
-+        └── limit: NONE
-+
-+
-+=== right_expression_key_is_not_anti_join ===
-+description: The RIGHT JOIN mirror must also avoid the expression-key anti rewrite; later valid simplifications are allowed.
-+sql: SELECT l.k
-+FROM outer_to_anti_right AS r
-+RIGHT JOIN outer_to_anti_left AS l ON IF(r.k IS NULL, 0, r.payload) = l.k
-+WHERE IF(r.k IS NULL, 0, r.payload) IS NULL
-+raw_plan:
-+EvalScalar
-+├── scalars: [outer_to_anti_left.k (#3) AS (#3)]
-+└── Filter
-+    ├── filters: [not(is_not_null(if(not(is_not_null(outer_to_anti_right.k (#0))), 0, outer_to_anti_right.payload (#2))))]
-+    └── Join(Right)
-+        ├── build keys: [outer_to_anti_left.k (#3)]
-+        ├── probe keys: [if(not(is_not_null(outer_to_anti_right.k (#0))), 0, outer_to_anti_right.payload (#2))]
-+        ├── other filters: []
-+        ├── Scan
-+        │   ├── table: default.outer_to_anti_left (#1)
-+        │   ├── filters: []
-+        │   ├── order by: []
-+        │   └── limit: NONE
-+        └── Scan
-+            ├── table: default.outer_to_anti_right (#0)
-+            ├── filters: []
-+            ├── order by: []
-+            └── limit: NONE
-+
-+optimized_plan:
-+EvalScalar
-+├── scalars: [outer_to_anti_left.k (#3) AS (#3), outer_to_anti_right.k (#0) AS (#6), outer_to_anti_right.payload (#2) AS (#7)]
-+└── Join(Inner)
-+    ├── build keys: [outer_to_anti_left.k (#3)]
-+    ├── probe keys: [if(not(is_not_null(outer_to_anti_right.k (#0))), 0, outer_to_anti_right.payload (#2))]
-+    ├── other filters: []
-+    ├── Scan
-+    │   ├── table: default.outer_to_anti_left (#1)
-+    │   ├── filters: []
-+    │   ├── order by: []
-+    │   └── limit: NONE
-+    └── Scan
-+        ├── table: default.outer_to_anti_right (#0)
-+        ├── filters: [not(is_not_null(if(not(is_not_null(outer_to_anti_right.k (#0))), 0, outer_to_anti_right.payload (#2))))]
-+        ├── order by: []
-+        └── limit: NONE
-+
-+
- === null_safe_condition_keeps_left_outer ===
- description: A null-safe condition is not a regular equi-key in the raw plan and must remain a left outer join.
- sql: SELECT l.k, r.k
+-- Keep unit tests close to the affected crate with `#[cfg(test)]` modules.
++- Keep unit tests close to the affected crate with `#[cfg(test)]` modules, placed at the end of the file per [`coding-style.md`](coding-style.md#tests-and-fixtures).
+ - Put integration behavior in the relevant SQL suites or meta harnesses such as `tests/metactl` and `tests/meta-kvapi`.
+ - Every planner, executor, or storage change should add at least one regression SQL file plus expected output when deterministic.
+ - Use cluster variants such as `make stateless-cluster-test` and TLS mode when coordination, transactions, or auth are involved.
 ```
 
-**File**: `tests/sqllogictests/suites/query/join/outer_join_to_anti.test` (modified, +31/-0)
+---
+
+### Incident Patch 3: `2558f77f` (2026-10-27)
+**Commit Message**: fix(query): resolve qualified names as tables, not CTEs (#20695)
+
+* fix(query): resolve qualified names as tables, not CTEs
+
+Only unqualified table references may resolve to CTEs. Apply the same rule to CTE reference counting and materialized CTE rewriting, and remove the misleading-name check.
+
+Keep possible CTE references unqualified in new stored definitions and bind them in a captured namespace. Save the view query version and namespace as internal options, without changing SHOW CREATE syntax.
+
+Add regressions for qualified names, cross-database view binding, materialization, nested CTEs, identifier settings, and dynamic table refresh. Legacy definitions are not automatically migrated.
+
+Fixes #20686
+
+* test(query): update statistics trace view namespace fixture
+
+Include the captured view namespace in the expected statistics trace JSON. This matches the full CI actual output without changing assertions or executable code.
+
+Validated the service statistics trace collection test and the optimizer materialized CTE replay golden test locally.
+
+* refactor(query): remove view query version discriminator
+
+Read the stored definition namespace directly, without a version option or versio
+
+**File**: `src/query/service/src/interpreters/access/privilege_access.rs` (modified, +5/-1)
 ```diff
-@@ -74,6 +74,37 @@ where l.k is null;
- ----
- NULL 90 NULL
+@@ -45,6 +45,7 @@ use databend_common_meta_app::principal::UserPrivilegeType;
+ use databend_common_meta_app::row_access_policy::RowAccessPolicyNameIdent;
+ use databend_common_meta_app::schema::is_materialized_view_engine;
+ use databend_common_meta_app::tenant::Tenant;
++use databend_common_sql::DefinitionScope;
+ use databend_common_sql::Planner;
+ use databend_common_sql::binder::MutationType;
+ use databend_common_sql::plans::AlterSharePlanAction;
+@@ -2469,7 +2470,10 @@ impl AccessChecker for PrivilegeAccess {
+                 }
+             }
+             Plan::CreateView(plan) => {
+-                let mut planner = Planner::new(self.ctx.clone());
++                let mut planner = Planner::new(self.ctx.clone()).with_definition_scope(DefinitionScope::in_namespace(
++                    plan.catalog.clone(),
++                    plan.database.clone(),
++                ));
+                 let (plan, _) = planner.plan_sql(&plan.subquery).await?;
+                 self.check(ctx, &plan).await?
+             }
+```
+
+**File**: `src/query/service/src/interpreters/common/table_option_validation.rs` (modified, +4/-0)
+```diff
+@@ -74,6 +74,8 @@ use databend_storages_common_table_meta::table::OPT_KEY_LOCATION;
+ use databend_storages_common_table_meta::table::OPT_KEY_MATERIALIZED_VIEW_SOURCE_DATABASE_NAME;
+ use databend_storages_common_table_meta::table::OPT_KEY_MATERIALIZED_VIEW_SOURCE_TABLE_ID;
+ use databend_storages_common_table_meta::table::OPT_KEY_MATERIALIZED_VIEW_SOURCE_TABLE_NAME;
++use databend_storages_common_table_meta::table::OPT_KEY_QUERY_CATALOG;
++use databend_storages_common_table_meta::table::OPT_KEY_QUERY_DATABASE;
+ use databend_storages_common_table_meta::table::OPT_KEY_RANDOM_MAX_ARRAY_LEN;
+ use databend_storages_common_table_meta::table::OPT_KEY_RANDOM_MAX_STRING_LEN;
+ use databend_storages_common_table_meta::table::OPT_KEY_RANDOM_MIN_STRING_LEN;
+@@ -279,6 +281,8 @@ pub fn is_valid_create_opt<S: AsRef<str>>(opt_key: S, engine: &Engine) -> bool {
+             CREATE_FUSE_OPTIONS.contains(opt_key)
+                 || opt_key == OPT_KEY_AS_QUERY
+                 || opt_key == OPT_KEY_SOURCE_TABLE_IDS
++                || opt_key == OPT_KEY_QUERY_CATALOG
++                || opt_key == OPT_KEY_QUERY_DATABASE
+         }
+     }
+ }
+```
+
+**File**: `src/query/service/src/interpreters/interpreter_dynamic_table_refresh.rs` (modified, +2/-1)
+```diff
+@@ -106,7 +106,8 @@ impl Interpreter for RefreshDynamicTableInterpreter {
+             // interpolating the catalog/database/table names into SQL and re-parsing would let a
+             // crafted name break out of its quoting -- in a write path. Only the stored definition,
+             // which the system itself serialized, is parsed here.
+-            let mut planner = Planner::new(self.ctx.clone());
++            let mut planner = Planner::new(self.ctx.clone())
++                .with_stored_definition(table.get_table_info().options());
+             let (select_plan, _) = planner.plan_sql(&query).await?;
+             // Check the exact source plan executed below, including source SELECT and UDF access.
+             Accessor::create(self.ctx.clone())
+```
+
+**File**: `src/query/service/src/interpreters/interpreter_refresh_lineage.rs` (modified, +5/-1)
+```diff
+@@ -32,6 +32,7 @@ use databend_common_expression::types::UInt64Type;
+ use databend_common_meta_app::schema::CatalogType;
+ use databend_common_meta_app::schema::DatabaseType;
+ use databend_common_meta_app::schema::is_materialized_view_engine;
++use databend_common_sql::DefinitionScope;
+ use databend_common_sql::Planner;
+ use databend_common_sql::QueryLineage;
+ use databend_common_sql::QueryLineageRelation;
+@@ -112,6 +113,7 @@ struct ViewEntry {
+     /// The stored definition: the View query, or the original (logical) query of a
+     /// materialized view.
+     query: Option<String>,
++    definition_scope: DefinitionScope,
+     /// Persisted logical output schema; only materialized views have one.
+     logical_schema: Option<TableSchema>,
+     /// The source table id a materialized view is bound to. The stored query names the source,
+@@ -253,6 +255,7 @@ impl RefreshLineageInterpreter {
+                     name: table.name().to_string(),
+                     table_id: table_info.ident.table_id,
+                     created_on: table_info.meta.created_on.timestamp_micros(),
++                    definition_scope: DefinitionScope::from_stored_options(table_info.options()),
+                     query,
+                     logical_schema,
+                     source_table_id,
+@@ -280,7 +283,8 @@ impl RefreshLineageInterpreter {
+         })?;
+         // Bind only: lineage must describe the stored definition, not an optimized plan
+         // that may have been folded or routed through a materialized view.
+-        let mut planner = Planner::new(self.ctx.clone());
++        let mut planner =
++            Planner::new(self.ctx.clone()).with_definition_scope(view.definition_scope.clone());
+         let query_plan = planner.bind_sql(query).await?;
+         let target = QueryLineageRelation {
+             catalog: DEFAULT_CATALOG.to_string(),
+```
+
+**File**: `src/query/service/src/interpreters/interpreter_table_describe.rs` (modified, +2/-1)
+```diff
+@@ -71,7 +71,8 @@ impl Interpreter for DescribeTableInterpreter {
  
-+# Use NULL keys and payloads so IF can return NULL on source rows, but 0
-+# for an unmatched row. That makes IS NULL different from an anti-join test.
-+statement ok
-+create or replace table outer_to_anti_left(k int);
-+
-+statement ok
-+create or replace table outer_to_anti_right(k int, payload int);
-+
-+statement ok
-+insert into outer_to_anti_left values (0), (1), (2);
-+
-+statement ok
-+insert into outer_to_anti_right values (null, null), (1, null), (1, 1);
-+
-+# No row passes. In particular, unmatched key 2 gets IF(NULL IS NULL,0,NULL)
-+# = 0, which is not NULL. The old anti rewrite incorrectly returns 2.
-+query I
-+select l.k
-+from outer_to_anti_left l
-+left join outer_to_anti_right r on l.k = if(r.k is null, 0, r.payload)
-+where if(r.k is null, 0, r.payload) is null;
-+----
-+
-+# The same data/query with RIGHT JOIN must also return no rows.
-+query I
-+select l.k
-+from outer_to_anti_right r
-+right join outer_to_anti_left l on if(r.k is null, 0, r.payload) = l.k
-+where if(r.k is null, 0, r.payload) is null;
-+----
-+
- statement ok
- drop table outer_to_anti_left;
+             let schema = if tbl_info.engine() == VIEW_ENGINE {
+                 if let Some(query) = tbl_info.options().get(QUERY) {
+-                    let mut planner = Planner::new(self.ctx.clone());
++                    let mut planner =
++                        Planner::new(self.ctx.clone()).with_stored_definition(tbl_info.options());
+                     let (plan, _) = planner.plan_sql(query).await?;
+                     infer_table_schema(&plan.schema())
+                 } else {
+```
+
+**File**: `src/query/service/src/interpreters/interpreter_view_create.rs` (modified, +14/-1)
+```diff
+@@ -20,11 +20,14 @@ use databend_common_exception::Result;
+ use databend_common_meta_app::schema::CreateTableReq;
+ use databend_common_meta_app::schema::TableMeta;
+ use databend_common_meta_app::schema::TableNameIdent;
++use databend_common_sql::DefinitionScope;
+ use databend_common_sql::Planner;
+ use databend_common_sql::plans::CreateViewPlan;
+ use databend_common_sql::plans::Plan;
+ use databend_common_storages_basic::view_table::QUERY;
+ use databend_common_storages_basic::view_table::VIEW_ENGINE;
++use databend_storages_common_table_meta::table::OPT_KEY_QUERY_CATALOG;
++use databend_storages_common_table_meta::table::OPT_KEY_QUERY_DATABASE;
  
+ use crate::interpreters::Interpreter;
+ use crate::interpreters::util::check_view_circular_dependency;
+@@ -60,7 +63,12 @@ impl Interpreter for CreateViewInterpreter {
+             let tenant = self.ctx.get_tenant();
+             let table_function = catalog.list_table_functions();
+             let mut options = BTreeMap::new();
+-            let mut planner = Planner::new(self.ctx.clone());
++            let mut planner = Planner::new(self.ctx.clone()).with_definition_scope(
++                DefinitionScope::in_namespace(
++                    self.plan.catalog.clone(),
++                    self.plan.database.clone(),
++                ),
++            );
+             let (plan, _) = planner.plan_sql(&self.plan.subquery.clone()).await?;
+             match plan.clone() {
+                 Plan::Query { metadata, .. } => {
+@@ -117,6 +125,11 @@ impl Interpreter for CreateViewInterpreter {
+                 )
+             };
+             options.insert(QUERY.to_string(), subquery);
++            options.insert(OPT_KEY_QUERY_CATALOG.to_string(), self.plan.catalog.clone());
++            options.insert(
++                OPT_KEY_QUERY_DATABASE.to_string(),
++                self.plan.database.clone(),
++            );
+ 
+             let plan = CreateTableReq {
+                 create_option: self.plan.create_option,
+```
+
+**File**: `src/query/service/src/interpreters/interpreter_view_describe.rs` (modified, +2/-1)
+```diff
+@@ -64,7 +64,8 @@ impl Interpreter for DescribeViewInterpreter {
+             let engine = table.get_table_info().engine();
+             let schema = if engine == VIEW_ENGINE {
+                 if let Some(query) = tbl_info.options().get(QUERY) {
+-                    let mut planner = Planner::new(self.ctx.clone());
++                    let mut planner =
++                        Planner::new(self.ctx.clone()).with_stored_definition(tbl_info.options());
+                     let (plan, _) = planner.plan_sql(query).await?;
+                     infer_table_schema(&plan.schema())
+                 } else {
+```
+
+**File**: `src/query/service/src/schedulers/scheduler.rs` (modified, +11/-1)
+```diff
+@@ -17,6 +17,7 @@ use std::sync::Arc;
+ use async_trait::async_trait;
+ use databend_common_exception::Result;
+ use databend_common_expression::DataBlock;
++use databend_common_sql::DefinitionScope;
+ use databend_common_sql::Planner;
+ use databend_common_sql::planner::QueryExecutor;
+ use futures_util::TryStreamExt;
+@@ -167,8 +168,17 @@ impl ServiceQueryExecutor {
+ #[async_trait]
+ impl QueryExecutor for ServiceQueryExecutor {
+     async fn execute_query_with_sql_string(&self, query_sql: &str) -> Result<Vec<DataBlock>> {
++        self.execute_query_in_scope(query_sql, DefinitionScope::session())
++            .await
++    }
++
++    async fn execute_query_in_scope(
++        &self,
++        query_sql: &str,
++        scope: DefinitionScope,
++    ) -> Result<Vec<DataBlock>> {
+         let result = async {
+-            let mut planner = Planner::new(self.ctx.clone());
++            let mut planner = Planner::new(self.ctx.clone()).with_definition_scope(scope);
+             let (plan, _) = planner.plan_sql(query_sql).await?;
+             let interpreter = InterpreterFactory::get(self.ctx.clone(), &plan).await?;
+             let stream = interpreter
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20822** (2026-10-23): chore(meta): reuse source-option read when validating MV source (@zhyass)
-- **PR #20821** (closed): fix(query): cap window top-n cardinality estimate by partition count (@dqhl76)
-- **PR #20816** (2026-10-22): ci(query): cover numeric ranges with string bounds (@KKould)
-- **PR #20815** (2026-10-23): feat(storage): detect S3 region via AWS_REGION regional endpoint (@dantengsky)
-- **PR #20814** (2026-10-23): chore(build): generate the embedded meta-service code once (@sundy-li)
-- **PR #20812** (2026-10-23): fix(query): accelerate single-key hash shuffle (@dqhl76)
+- **PR #20852** (2026-10-27): docs: meta: update compatibility tables through 1.2.956 (@drmingdrmer)
+- **PR #20846** (closed): fix(query): count lazy pruning partitions total in blocks (@SkyFan2002)
+- **PR #20845** (2026-10-27): fix(query): make prune cache key exact for floats and session settings (@SkyFan2002)
+- **PR #20844** (2026-10-27): fix(storage): decode escaped custom TEXT delimiters (@youngsofun)
+- **PR #20842** (2026-10-26): feat(query): check SELECT grants before ownership on table access (@bohutang)
+- **PR #20841** (2026-10-26): fix(config): load OSS credentials from ALIBABA_CLOUD_* env aliases (@zhang2014)
 
 ---
 
@@ -1867,33 +2057,21 @@ Co-authored-by: dantengsky <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query): release queued acquire entry when future is dropped (#20629)
+## X. query): keep fuse scan columns encoded in memory (#20819)
 
 **RULE**:
-When implementing operations in `src/query/service/src/sessions/queue_mgr.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `45a88e44`: query): release queued acquire entry when future is dropped (#20629). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `520a63e0`: query): keep fuse scan columns encoded in memory (#20819). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/service/src/sessions/queue_mgr.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-
-impl<Data: QueueData, T, Permit, E> PinnedDrop for AcquireQueueFuture<Data, T, Permit, E>
-where T: Future<Output = std::result::Result<std::result::Result<Permit, E>, Elapsed>>
-{
-    fn drop(this: Pin<&mut Self>) {
-        let this = this.project();
-        // Cancellation can drop the future without polling it to completion.
-        // Release the registered entry and the query context it owns in that case.
-        if let Some(key) = this.key.take() {
-            this.manager.remove_entity(&key);
-        }
-    }
-}
+ "ahash 0.8.12",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1903,4 +2081,4 @@ where T: Future<Output = std::result::Result<std::result::Result<Permit, E>, Ela
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `45a88e44` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `520a63e0` are properly handled with clean fallback behavior.

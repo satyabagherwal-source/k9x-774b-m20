@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T15:32:58.425Z",
+  "last_updated": "2026-10-27T15:39:46.746Z",
   "total_verified_learnings": 1139,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1840,8 +1840,8 @@
       "slug": "angular-angular",
       "platform": "github",
       "source_url": "https://github.com/angular/angular",
-      "source_version": "5244ea78",
-      "content_hash": "242156bdc03c77f9efe088229bbbcb166718aa9fed543178845a1b37e4a0dffe",
+      "source_version": "e36a63e2",
+      "content_hash": "fbdb9724f0620530c96966db889ba4312fd5f1f6cfed4d40e8b598a652c6393e",
       "dossier_path": "07_PROJECT_LEARNING/angular-angular-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/angular-angular-learnings.md",
       "promoted_rules": [
@@ -1914,6 +1914,11 @@
           "number": 4537,
           "title": "compiler): skip escaped characters when looking for comments in expressions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4889,
+          "title": "core): improve the warning for bindings on elements inside ICU expressions",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -1921,7 +1926,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T02:02:11.971Z",
+      "verified_at": "2026-10-27T15:39:33.575Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7894,8 +7899,8 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "058a1e8f",
-      "content_hash": "ddd10d71b7df8a505d68bfbb07d67f5853fc03965df940a20bb8889796a9d0cf",
+      "source_version": "ad9996eb",
+      "content_hash": "14d63982ab38a716915864dc2e61341a2d3b1edb6648f917c501f4390a8f218c",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
@@ -7923,6 +7928,11 @@
           "number": 4293,
           "title": "query): release queued acquire entry when future is dropped (#20629)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4892,
+          "title": "query): keep fuse scan columns encoded in memory (#20819)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7930,7 +7940,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T12:32:07.086Z",
+      "verified_at": "2026-10-27T15:39:46.732Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30456,8 +30466,8 @@
       "slug": "jhspetersson-fselect",
       "platform": "github",
       "source_url": "https://github.com/jhspetersson/fselect",
-      "source_version": "46c72f21",
-      "content_hash": "d585bca60281756ae2cd09fbc7d28a18be58290a51194e575630cfe0c375d94a",
+      "source_version": "f85f1b54",
+      "content_hash": "2d5bd257ec1818ae70357a37924689926e724a57235e048ffa7f4781abda7a20",
       "dossier_path": "07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md",
       "promoted_rules": [
@@ -30485,6 +30495,11 @@
           "number": 3567,
           "title": "found regressions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4890,
+          "title": "`fsize` support",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -30492,7 +30507,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T16:51:35.011Z",
+      "verified_at": "2026-10-27T15:39:34.137Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35459,8 +35474,8 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "a5ee540b",
-      "content_hash": "09afca69d4c02cdbd699ab4a17b196f5a50a30b2b2b52e0eaad4d0e318bc4cc0",
+      "source_version": "bc843c52",
+      "content_hash": "fec04798d122c275ec7c935a0ab29c3292c73d467e8fad2093c73e8c6b742e9e",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
@@ -35498,6 +35513,11 @@
           "number": 4564,
           "title": "Merge pull request #22248 from Raghavcommercialwinner/fix/mesheryctl-perf-page-v",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4891,
+          "title": "Merge pull request #22550 from SajanBisht/fix/nextjs-security-update",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35505,7 +35525,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T05:18:00.890Z",
+      "verified_at": "2026-10-27T15:39:42.245Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -135821,6 +135841,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T15:32:58.414Z"
+    },
+    "rule-4889": {
+      "learning_id": "rule-4889",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4889,
+      "title": "core): improve the warning for bindings on elements inside ICU expressions",
+      "source_url": "https://github.com/angular/angular",
+      "source_version": "e36a63e2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T15:39:33.575Z"
+    },
+    "rule-4890": {
+      "learning_id": "rule-4890",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4890,
+      "title": "`fsize` support",
+      "source_url": "https://github.com/jhspetersson/fselect",
+      "source_version": "f85f1b54",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T15:39:34.137Z"
+    },
+    "rule-4891": {
+      "learning_id": "rule-4891",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4891,
+      "title": "Merge pull request #22550 from SajanBisht/fix/nextjs-security-update",
+      "source_url": "https://github.com/meshery/meshery",
+      "source_version": "bc843c52",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T15:39:42.245Z"
+    },
+    "rule-4892": {
+      "learning_id": "rule-4892",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4892,
+      "title": "query): keep fuse scan columns encoded in memory (#20819)",
+      "source_url": "https://github.com/databendlabs/databend",
+      "source_version": "ad9996eb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T15:39:46.732Z"
     }
   },
   "aliases": {

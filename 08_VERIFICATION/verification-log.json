@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-SATR",
-    "timestamp": "2026-10-25T17:30:09.999Z",
-    "repository": "BAAI/bge-m3",
-    "learningId": "learn-huggingface-baai-bge-m3",
-    "contentHash": "42cb46071e1ff76667070102af462e7ecf99b37efa82319756fa34bab67bbfeb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-SE8Z",
-    "timestamp": "2026-10-25T17:30:14.435Z",
-    "repository": "webrtc-rs/webrtc",
-    "learningId": "learn-github-webrtc-rs-webrtc",
-    "contentHash": "30feeed0e1ca5e98881e64e674507e3990041fd59872165415101775d127d58b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-0HG3",
-    "timestamp": "2026-10-25T17:36:31.827Z",
-    "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-    "contentHash": "a59b993dd2a9dcfef612e1bba0cda6f39edbb066a8b28be066472ed88d42bc6e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-8FWL",
-    "timestamp": "2026-10-25T17:42:43.077Z",
-    "repository": "TableProApp/TablePro",
-    "learningId": "learn-github-tableproapp-tablepro",
-    "contentHash": "2c205e048914e5d7df869a20befef19f87191fcaaa9ae76a1a1a1643285386f8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-8HF4",
     "timestamp": "2026-10-25T17:42:45.040Z",
     "repository": "envoyproxy/envoy",
@@ -7490,6 +7430,66 @@
     "repository": "vitejs/vite",
     "learningId": "learn-github-vitejs-vite",
     "contentHash": "5e135c328a2727106063e8b6e009c05048f349bdb81ec3b918cac8f4bfa7390e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-PRIQ",
+    "timestamp": "2026-10-27T15:39:33.650Z",
+    "repository": "angular/angular",
+    "learningId": "learn-github-angular-angular",
+    "contentHash": "fbdb9724f0620530c96966db889ba4312fd5f1f6cfed4d40e8b598a652c6393e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-PRYS",
+    "timestamp": "2026-10-27T15:39:34.228Z",
+    "repository": "jhspetersson/fselect",
+    "learningId": "learn-github-jhspetersson-fselect",
+    "contentHash": "2d5bd257ec1818ae70357a37924689926e724a57235e048ffa7f4781abda7a20",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-PY7H",
+    "timestamp": "2026-10-27T15:39:42.317Z",
+    "repository": "meshery/meshery",
+    "learningId": "learn-github-meshery-meshery",
+    "contentHash": "fec04798d122c275ec7c935a0ab29c3292c73d467e8fad2093c73e8c6b742e9e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-Q1O6",
+    "timestamp": "2026-10-27T15:39:46.806Z",
+    "repository": "databendlabs/databend",
+    "learningId": "learn-github-databendlabs-databend",
+    "contentHash": "14d63982ab38a716915864dc2e61341a2d3b1edb6648f917c501f4390a8f218c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
