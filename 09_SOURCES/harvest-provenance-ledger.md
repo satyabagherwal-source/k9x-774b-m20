@@ -5511,3 +5511,6 @@ Every entry in this ledger must capture:
 | `learn-github-react-metro` | `https://github.com/react/metro` | `43cc1e3c` | Multi-dimensional audit evidence | 2026-10-27T19:32:01.471Z |
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `b9f63105` | Multi-dimensional audit evidence | 2026-10-27T19:32:04.815Z |
 | `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `ab61bc73` | Multi-dimensional audit evidence | 2026-10-27T19:32:08.198Z |
+| `learn-github-chakra-ui-zag` | `https://github.com/chakra-ui/zag` | `b03b597a` | Multi-dimensional audit evidence | 2026-10-27T19:38:45.053Z |
+| `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `0d38f834` | Multi-dimensional audit evidence | 2026-10-27T19:38:45.409Z |
+| `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `a443fd39` | Multi-dimensional audit evidence | 2026-10-27T19:38:52.377Z |

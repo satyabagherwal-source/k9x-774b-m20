@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source**: github ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
-> **Source Version**: `6e3d753f`  
+> **Source Version**: `0d38f834`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T01:22:51.448Z  
+> **Timestamp**: 2026-10-27T19:38:44.964Z  
 > **Learning ID**: `learn-github-tokio-rs-tokio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T01:22:50.159Z  
+> **Harvest Timestamp**: 2026-10-27T19:38:44.954Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A runtime for writing reliable asynchronous applications with Rust. Provides I/O, networking, scheduling, timers, ...
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 33516 stars
+- **Stars / Engagement**: 33531 stars
 
 ---
 
@@ -1934,11 +1934,11 @@ where
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8725** (2026-10-25): **Merge 'tokio-1.54.x' into 'master'**
-  *Symptoms*: 
+- **Issue #8729** (2026-10-27): **time: wake the driver when the paused clock advances**
+  *Symptoms*: Fixes #8696.  `time::advance` moves the paused clock and wakes nothing. While `spawn_blocking` work runs, auto-advance is inhibited, so the time driver parks on a real timeout instead of advancing the clock itself. A sleep whose deadline the advance covers therefore waits out that timeout in real time; the report measures 8.19 s for a 10 s sleep advanced at 100 ms.  Unpark the driver after the clock moves, so it re-checks its deadlines against the new time. The change sits in the shared `time::advance` path, so it applies whichever time driver is in use.  `advance_wakes_a_parked_driver` in `tests/time_pause.rs` reproduces the report: without the change it fails after 8.20 s, with it the full `time_pause` suite passes in 0.40 s. `rustfmt --check --edition 2021` is clean on both files. 
 
-- **Issue #8724** (2026-10-25): **Merge 'tokio-1.51.x' into 'tokio-1.53.x'**
-  *Symptoms*: 
+- **Issue #8728** (2026-10-27): **taskdump: release the core borrow before tracing a dump**
+  *Symptoms*: Fixes #8391.  `Handle::dump()` on a current-thread runtime holds the scheduler's core borrow while it polls every task, so a task that wakes itself during the dump re-enters `Schedule::schedule` and panics with `RefCell already borrowed`.  Drain the task queue into an owned queue, release the borrow, then trace. Wakes raised during tracing land back in the queue through the normal path and are picked up after the dump. The `inject.is_closed()` early return moves above the drain so a closed runtime cannot drop tasks that were queued when the dump began.  `self_wake_during_tracing_current_thread` in `tests/dump.rs` covers it: without the change it panics at `current_thread/mod.rs:722`, with it the full dump suite passes. `rustfmt --check --edition 2021` is clean on both touched files.  An alternative was to use `try_borrow_mut` and skip a task that is mid-schedule, but that can drop a wake, which is the same bug in a quieter form. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1955,227 +1955,147 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d81db549` (2026-09-10)
-**Commit Message**: ci: require a completion marker from the io_uring kernel test guest (#8440)
+### Incident Patch 1: `0d38f834` (2026-10-27)
+**Commit Message**: taskdump: release the core borrow before tracing a dump (#8728)
 
-The `Test io_uring on Linux <version>` job greps the QEMU log for
-`test result: FAILED`, so a test binary that is killed before it prints
-a summary leaves the job green. On the latest-kernel leg `fs_uring` is
-OOM-killed inside the 1 GiB guest during `open_many_files`, init dies
-with it, and the ten binaries that sort after it never run.
+Handle::dump() holds the current-thread scheduler's core borrow while it
+polls every task, so a task that wakes itself during the dump re-enters the
+scheduler and panics with "RefCell already borrowed". Thus, drain the task
+queue, release the borrow, and trace the drained tasks.
 
-- init now echoes `ALL_TESTS_COMPLETED` after the last binary and the
-  step fails when the marker is missing from the log.
-- The guest gets 3 GiB: the initramfs holds ~760 MB of unstripped test
-  binaries and `open_many_files` had 200-340 MB of anon RSS when the
-  1 GiB guest OOM-killed it.
-- `stat_permission_denied` returns early when running as root, which
-  is how the guest runs the binaries; a 0o244 directory does not stop
-  root, so the EACCES the test expects never happens there.
-- `fs_uring_statx_fd_leak_test` gets the same target cfg as the
-  io_uring branch of `tokio::fs::read`; the guest binaries are built
-  for musl, where `read` falls back to `spawn_blocking` and the test's
-  poll-count assumptions cannot hold.
+Fixes: #8391
 
-Fixes: #8433
-(cherry picked from commit 18f74481
-
-**File**: `.github/workflows/uring-kernel-version-test.yml` (modified, +15/-3)
+**File**: `tokio/src/runtime/scheduler/current_thread/mod.rs` (modified, +17/-12)
 ```diff
-@@ -79,6 +79,7 @@ jobs:
-           mount -t sysfs sysfs /sys
-           mkdir -p /tmp && mount -t tmpfs -o mode=1777 tmpfs /tmp
-           for f in /bin/tests/*; do RUST_BACKTRACE=1 "$f" ; done
-+          echo "ALL_TESTS_COMPLETED"
-           EOF
-           chmod +x initramfs/init
- 
-@@ -92,11 +93,14 @@ jobs:
-           set -euo pipefail
- 
-           set +e
-+          # 3 GiB guest (the runner has 16 GB): the initramfs holds ~760 MB of
-+          # unstripped test binaries, and `open_many_files` in `fs_uring` had
-+          # 200-340 MB of anon RSS when the 1 GiB guest OOM-killed it.
-           qemu-system-x86_64 \
-             -kernel linux-${{ env.KERNEL_VERSION }}/arch/x86/boot/bzImage \
-             -initrd initramfs.cpio.gz \
-             -append "console=ttyS0 rootfstype=ramfs panic=1" \
--            -nographic -no-reboot -m 1024 -action panic=exit-failure 2>&1 | tee qemu-output.log
-+            -nographic -no-reboot -m 3072 -action panic=exit-failure 2>&1 | tee qemu-output.log
-           qemu_status=${PIPESTATUS[0]} tee_status=${PIPESTATUS[1]}
-           set -e
- 
-@@ -113,6 +117,14 @@ jobs:
-           if grep -q "test result: FAILED" qemu-output.log; then
-             echo "tests reported failures"
-             exit 1
--          else
--            echo "all tests passed"
-           fi
-+
-+          # A binary killed before it prints its summary (OOM, panic in init)
-+          # never writes `test result: FAILED`, so also require the marker that
-+          # init prints after the last binary.
-+          if ! grep -q "ALL_TESTS_COMPLETED" qemu-output.log; then
-+            echo "tests did not run to completion"
-+            exit 1
-+          fi
-+
-+          echo "all tests passed"
-```
-
----
-
-### Incident Patch 2: `e3cb70f2` (2026-10-25)
-**Commit Message**: stream: reset the timer in `timeout` and `throttle` (#8718)
-
-**File**: `tokio-stream/src/stream_ext.rs` (modified, +4/-0)
-```diff
-@@ -68,6 +68,10 @@ cfg_time! {
-     use throttle::{throttle, Throttle};
-     mod chunks_timeout;
-     pub use chunks_timeout::ChunksTimeout;
-+
-+    fn safe_delay(duration: Duration) -> Duration {
-+        duration.min(Duration::from_secs(86400 * 365 * 30))
-+    }
- }
- 
- /// An extension trait for the [`Stream`] trait that provides a variety of
-```
-
-**File**: `tokio-stream/src/stream_ext/throttle.rs` (modified, +7/-3)
-```diff
-@@ -1,8 +1,9 @@
- //! Slow down a stream by enforcing a delay between items.
- 
-+use crate::stream_ext::safe_delay;
- use crate::Stream;
- use futures_core::FusedStream;
--use tokio::time::{sleep, Duration, Sleep};
-+use tokio::time::{sleep, Duration, Instant, Sleep};
- 
- use std::future::Future;
- use std::pin::Pin;
-@@ -16,7 +17,7 @@ where
- {
-     Throttle {
-         delay: None,
--        duration,
-+        duration: safe_delay(duration),
-         has_delayed: true,
-         stream,
-     }
-@@ -84,7 +85,10 @@ impl<T: Stream> Stream for Throttle<T> {
- 
-         if value.is_some() {
-             if !is_zero(dur) {
--                me.delay.set(Some(sleep(dur)));
-+                match me.delay.as_mut().as_pin_mut() {
-+                    Some(delay) => delay.reset(Instant::now() + dur),
-+                    None => me.delay.set(Some(sleep(dur))),
-+                }
+@@ -593,26 +593,31 @@ impl Handle {
+                 Some(CurrentThread(context)) if Arc::ptr_eq(self, &context.handle) => context,
+                 _ => return,
+             };
+-            let mut maybe_core = context.core.borrow_mut();
+-            let core = if let Some(core) = maybe_core.as_mut() {
+-                core
+-            } else {
+-                return;
+-            };
+-            let local = &mut core.tasks;
+-
+             if self.shared.inject.is_closed() {
+                 return;
              }
  
-             *me.has_delayed = false;
+-            traces = trace_current_thread(&self.shared.owned, local, &self.shared.inject)
++            // Move the local queue out of the scheduler core and drop the borrow
++            // before polling anything. Tracing polls tasks, and a task that wakes
++            // itself while being polled calls `schedule`, which borrows the core
++            // again. Holding this borrow across the poll panics with
++            // "RefCell already borrowed".
++            let mut local = VecDeque::new();
++            {
++                let mut maybe_core = context.core.borrow_mut();
++                let core = if let Some(core) = maybe_core.as_mut() {
++                    core
++                } else {
++                    return;
++                };
++                local.append(&mut core.tasks);
++            }
++
++            traces = trace_current_thread(&self.shared.owned, &mut local, &self.shared.inject)
+                 .into_iter()
+                 .map(|(id, trace)| dump::Task::new(id, trace))
+                 .collect();
+ 
+-            // Avoid double borrow panic
+-            drop(maybe_core);
+-
+             // Taking a taskdump could wakes every task, but we probably don't want
+             // the `yield_now` vector to be that large under normal circumstances.
+             // Therefore, we free its allocation.
 ```
 
-**File**: `tokio-stream/src/stream_ext/timeout.rs` (modified, +5/-5)
+**File**: `tokio/tests/dump.rs` (modified, +28/-0)
 ```diff
-@@ -1,6 +1,6 @@
--use crate::stream_ext::Fuse;
-+use crate::stream_ext::{safe_delay, Fuse};
- use crate::Stream;
--use tokio::time::{sleep, Sleep};
-+use tokio::time::{sleep, Instant, Sleep};
- 
- use core::future::Future;
- use core::pin::Pin;
-@@ -35,7 +35,7 @@ impl<S: Stream> Timeout<S> {
-         Timeout {
-             stream: Fuse::new(stream),
-             deadline,
--            duration,
-+            duration: safe_delay(duration),
-             poll_deadline: true,
-         }
-     }
-@@ -45,12 +45,12 @@ impl<S: Stream> Stream for Timeout<S> {
-     type Item = Result<S::Item, Elapsed>;
- 
-     fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
--        let mut me = self.project();
-+        let me = self.project();
- 
-         match me.stream.poll_next(cx) {
-             Poll::Ready(v) => {
-                 if v.is_some() {
--                    me.deadline.set(sleep(*me.duration));
-+                    me.deadline.reset(Instant::now() + *me.duration);
-                     *me.poll_deadline = true;
-                 }
-                 return Poll::Ready(v.map(Ok));
-```
-
-**File**: `tokio-stream/tests/time_throttle.rs` (modified, +16/-0)
-```diff
-@@ -56,6 +56,22 @@ async fn duration_max_does_not_overflow() {
-     assert_ready_eq!(stream.poll_next(), Some(1));
+@@ -203,6 +203,34 @@ fn notified_during_tracing() {
+     });
  }
  
-+#[tokio::test]
-+async fn duration_max_does_not_overflow_between_items() {
-+    time::pause();
++/// A task that wakes itself while the dumper is polling it must not panic.
++///
++/// Taking a dump polls each task. Waking from inside that poll is legal, and
++/// the wake goes through `Schedule::schedule`, which borrows the scheduler
++/// core. If the dump holds that borrow across the poll it panics with
++/// "RefCell already borrowed" and takes the runtime down with it.
++#[test]
++fn self_wake_during_tracing_current_thread() {
++    let rt = runtime::Builder::new_current_thread()
++        .enable_all()
++        .build()
++        .unwrap();
 +
-+    let mut stream = task::spawn(futures::stream::iter([1, 2, 3]).throttle(Duration::MAX));
++    rt.block_on(async {
++        let task = tokio::spawn(std::future::poll_fn(|cx| {
++            if Handle::is_tracing() {
++                cx.waker().wake_by_ref();
++            }
++            std::task::Poll::<()>::Pending
++        }));
 +
-+    assert_ready_eq!(stream.poll_next(), Some(1));
-+    assert_pending!(stream.poll_next());
++        tokio::task::yield_now().await;
++        let _dump = Handle::current().dump().await;
 +
-+    // Like `sleep`, the delay is clamped to roughly 30 years.
-+    time::advance(Duration::from_secs(86400 * 365 * 31)).await;
-+
-+    assert_ready_eq!(stream.poll_next(), Some(2));
-+    assert_pending!(stream.poll_next());
++        task.abort();
++    });
 +}
 +
- #[tokio::test]
- async fn size_hint() {
-     let stream = futures::stream::iter([1, 2, 3]).throttle(Duration::from_secs(1));
+ /// Regression tests for the scheduler's idle bookkeeping across a dump.
+ ///
+ /// Requesting a dump wakes every worker thread directly, without going through
 ```
 
 ---
 
-### Incident Patch 3: `cc7f3e4f` (2026-10-24)
-**Commit Message**: ci: pass -std=gnu11 when building Linux kernel for io_uring tests (#8708)
+### Incident Patch 2: `b980c95d` (2026-10-26)
+**Commit Message**: macros: suppress `clippy::redundant_pub_crate` in `select!` (#8712)
 
-GitHub Actions recently upgraded `ubuntu-latest` to Ubuntu 26.04, which
-uses GCC 15 and defaults to `-std=gnu23`. Linux 4.19's `REALMODE_CFLAGS`
-does not specify a C standard version, causing the kernel build to fail
-under C23 where `bool` and `false` are keywords. Thus, pass
-`CC="gcc -std=gnu11"` when building the kernel.
-
-**File**: `.github/workflows/uring-kernel-version-test.yml` (modified, +1/-1)
+**File**: `tokio/src/macros/select.rs` (modified, +1/-0)
 ```diff
-@@ -38,7 +38,7 @@ jobs:
-           tar xf linux-${KERNEL_VERSION}.tar.xz
-           cd linux-${KERNEL_VERSION}
-           make defconfig
--          make -j$(nproc)
-+          make -j$(nproc) CC="gcc -std=gnu11"
- 
-       - name: Generate test binaries with io_uring enabled
-         run: |
+@@ -644,6 +644,7 @@ doc! {macro_rules! select {
+         // This module is defined within a scope and should not leak out of this
+         // macro.
+         #[doc(hidden)]
++        #[allow(clippy::redundant_pub_crate)]
+         mod __tokio_select_util {
+             // Generate an enum with one variant per select branch
+             $crate::select_priv_declare_output_enum!( ( $($count)* ) );
+```
+
+**File**: `tokio/tests/macros_select.rs` (modified, +12/-0)
+```diff
+@@ -1159,3 +1159,15 @@ async fn select_is_budget_aware() {
+     let poll = futures::poll!(&mut task());
+     assert!(poll.is_pending());
+ }
++
++#[maybe_tokio_test]
++#[deny(clippy::redundant_pub_crate)]
++async fn clippy_redundant_pub_crate() {
++    let (tx, mut rx) = tokio::sync::mpsc::channel::<()>(1);
++    drop(tx);
++
++    tokio::select! {
++        Some(()) = rx.recv() => {}
++        else => {}
++    }
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8729** (closed): time: wake the driver when the paused clock advances (@scrieve)
+- **PR #8728** (2026-10-27): taskdump: release the core borrow before tracing a dump (@scrieve)
+- **PR #8727** (2026-10-26): docs: state UnboundedReceiver::recv_many returns before limit is full (@stepancheg)
 - **PR #8725** (2026-10-25): Merge 'tokio-1.54.x' into 'master' (@Darksonn)
 - **PR #8724** (2026-10-25): Merge 'tokio-1.51.x' into 'tokio-1.53.x' (@Darksonn)
 - **PR #8722** (2026-10-25): sync: remove obsolete TODO in mpsc block reclaim (@darkraider01)
-- **PR #8720** (2026-10-25): sync: clarify async waiting in SetOnce example (@fallintoplace)
-- **PR #8718** (2026-10-25): stream: reset the timer in `timeout` and `throttle` (@patrick-immometrica)
-- **PR #8716** (2026-10-25): ci: fix QEMU CPU model and completion check for io_uring tests (@Darksonn)
 
 ---
 
@@ -2195,44 +2115,55 @@ under C23 where `bool` and `false` are keywords. Thus, pass
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: require a completion marker from the io_uring kernel test guest (#8440)
+## X. taskdump: release the core borrow before tracing a dump (#8728)
 
 **RULE**:
-When implementing operations in `.github/workflows/uring-kernel-version-test.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tokio/src/runtime/scheduler/current_thread/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d81db549`: ci: require a completion marker from the io_uring kernel test guest (#8440). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0d38f834`: taskdump: release the core borrow before tracing a dump (#8728). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/uring-kernel-version-test.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tokio/src/runtime/scheduler/current_thread/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-          echo "ALL_TESTS_COMPLETED"
-          # 3 GiB guest (the runner has 16 GB): the initramfs holds ~760 MB of
-          # unstripped test binaries, and `open_many_files` in `fs_uring` had
-          # 200-340 MB of anon RSS when the 1 GiB guest OOM-killed it.
-            -nographic -no-reboot -m 3072 -action panic=exit-failure 2>&1 | tee qemu-output.log
+            // Move the local queue out of the scheduler core and drop the borrow
+            // before polling anything. Tracing polls tasks, and a task that wakes
+            // itself while being polled calls `schedule`, which borrows the core
+            // again. Holding this borrow across the poll panics with
+            // "RefCell already borrowed".
+            let mut local = VecDeque::new();
+            {
+                let mut maybe_core = context.core.borrow_mut();
+                let core = if let Some(core) = maybe_core.as_mut() {
+                    core
+                } else {
+                    return;
+                };
+                local.append(&mut core.tasks);
+            }
 
-          # A binary killed before it prints its summary (OOM, panic in init)
-          # never writes `test result: FAILED`, so also require the marker that
-          # init prints after the last binary.
-          if ! grep -q "ALL_TESTS_COMPLETED" qemu-output.log; then
-            echo "tests did not run to completion"
-            exit 1
-          fi
-
-          echo "all tests passed"
+            traces = trace_current_thread(&self.shared.owned, &mut local, &self.shared.inject)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            -nographic -no-reboot -m 1024 -action panic=exit-failure 2>&1 | tee qemu-output.log
-          else
-            echo "all tests passed"
+            let mut maybe_core = context.core.borrow_mut();
+            let core = if let Some(core) = maybe_core.as_mut() {
+                core
+            } else {
+                return;
+            };
+            let local = &mut core.tasks;
+
+            traces = trace_current_thread(&self.shared.owned, local, &self.shared.inject)
+            // Avoid double borrow panic
+            drop(maybe_core);
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d81db549` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0d38f834` are properly handled with clean fallback behavior.

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T19:32:08.220Z",
-  "total_cycles_completed": 5479,
-  "total_learnings_persisted": 5479,
-  "total_rules_promoted": 4877,
+  "last_updated": "2026-10-27T19:38:52.383Z",
+  "total_cycles_completed": 5482,
+  "total_learnings_persisted": 5482,
+  "total_rules_promoted": 4880,
   "history": [
-    {
-      "timestamp": "2026-10-27T13:07:07.418Z",
-      "repository": "cloudscape-design/components",
-      "learningId": "learn-github-cloudscape-design-components",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:07:21.849Z",
-      "repository": "vespa-engine/vespa",
-      "learningId": "learn-github-vespa-engine-vespa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:10:34.754Z",
-      "repository": "franken-ui/ui",
-      "learningId": "learn-github-franken-ui-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T13:10:42.363Z",
       "repository": "mattermost/mattermost",
@@ -1403,6 +1382,27 @@
       "repository": "SeekStorm/SeekStorm",
       "learningId": "learn-github-seekstorm-seekstorm",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T19:38:45.058Z",
+      "repository": "chakra-ui/zag",
+      "learningId": "learn-github-chakra-ui-zag",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T19:38:45.415Z",
+      "repository": "tokio-rs/tokio",
+      "learningId": "learn-github-tokio-rs-tokio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T19:38:52.383Z",
+      "repository": "k3s-io/k3s",
+      "learningId": "learn-github-k3s-io-k3s",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

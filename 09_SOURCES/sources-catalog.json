@@ -3483,10 +3483,10 @@
     "repository": "chakra-ui/zag",
     "platform": "github",
     "sourceUrl": "https://github.com/chakra-ui/zag",
-    "sourceVersion": "50bdafda",
+    "sourceVersion": "b03b597a",
     "license": "MIT",
-    "contentHash": "2d8810755bca27fb9fa9ccf5c6e77d8cc30a4e6133f8f1a3df2cc4450f311b41",
-    "lastHarvestedAt": "2026-10-26T13:15:06.901Z",
+    "contentHash": "60e5f3862ade5c9b1d615d10aad2510e42815769f2e1ba13e6e5b0d2f9d11769",
+    "lastHarvestedAt": "2026-10-27T19:38:45.053Z",
     "learningId": "learn-github-chakra-ui-zag"
   },
   "sharkdp-hyperfine": {
@@ -6313,10 +6313,10 @@
     "repository": "k3s-io/k3s",
     "platform": "github",
     "sourceUrl": "https://github.com/k3s-io/k3s",
-    "sourceVersion": "65d71277",
+    "sourceVersion": "a443fd39",
     "license": "Apache-2.0",
-    "contentHash": "9691403d108d27975334e207df72dd5da5c5c8a92cf19bd526ce3a694d9ddd31",
-    "lastHarvestedAt": "2026-10-22T15:35:30.322Z",
+    "contentHash": "f0692c5d51e8e89708371c42a6caa6e4f42181e1a422b0efe8d18f9826248ac8",
+    "lastHarvestedAt": "2026-10-27T19:38:52.377Z",
     "learningId": "learn-github-k3s-io-k3s"
   },
   "open-source-legal-opencontracts": {
@@ -7763,10 +7763,10 @@
     "repository": "tokio-rs/tokio",
     "platform": "github",
     "sourceUrl": "https://github.com/tokio-rs/tokio",
-    "sourceVersion": "6e3d753f",
+    "sourceVersion": "0d38f834",
     "license": "MIT",
-    "contentHash": "8c6f15c90c8600e847a98f51569a070ff5b735c7162379a5f24cfaee3e3c047a",
-    "lastHarvestedAt": "2026-10-26T01:22:51.829Z",
+    "contentHash": "59c37bcc859b5d72e956ae15e3c4371ac8a31531832abab7a5a8bbf328e8efae",
+    "lastHarvestedAt": "2026-10-27T19:38:45.409Z",
     "learningId": "learn-github-tokio-rs-tokio"
   },
   "simonschubert-linuxcommandlibrary": {

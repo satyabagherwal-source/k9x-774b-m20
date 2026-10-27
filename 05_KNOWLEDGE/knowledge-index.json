@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T19:32:08.135Z",
+  "last_updated": "2026-10-27T19:38:52.300Z",
   "total_verified_learnings": 1146,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5780,8 +5780,8 @@
       "slug": "chakra-ui-zag",
       "platform": "github",
       "source_url": "https://github.com/chakra-ui/zag",
-      "source_version": "50bdafda",
-      "content_hash": "2d8810755bca27fb9fa9ccf5c6e77d8cc30a4e6133f8f1a3df2cc4450f311b41",
+      "source_version": "b03b597a",
+      "content_hash": "60e5f3862ade5c9b1d615d10aad2510e42815769f2e1ba13e6e5b0d2f9d11769",
       "dossier_path": "07_PROJECT_LEARNING/chakra-ui-zag-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chakra-ui-zag-learnings.md",
       "promoted_rules": [
@@ -5814,6 +5814,11 @@
           "number": 4604,
           "title": "toc): only auto-scroll the toc's own scroll container (#3542)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4967,
+          "title": "deps): update next to 16.4.1 and @sveltejs/kit to 3.0.0 [security]",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5821,7 +5826,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T13:15:06.822Z",
+      "verified_at": "2026-10-27T19:38:44.957Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31174,8 +31179,8 @@
       "slug": "k3s-io-k3s",
       "platform": "github",
       "source_url": "https://github.com/k3s-io/k3s",
-      "source_version": "65d71277",
-      "content_hash": "9691403d108d27975334e207df72dd5da5c5c8a92cf19bd526ce3a694d9ddd31",
+      "source_version": "a443fd39",
+      "content_hash": "f0692c5d51e8e89708371c42a6caa6e4f42181e1a422b0efe8d18f9826248ac8",
       "dossier_path": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "promoted_rules": [
@@ -31203,6 +31208,11 @@
           "number": 3605,
           "title": "Bump to latest klipper-helm version in scripts/version.sh",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4969,
+          "title": "Add containerd server/metrics plugin",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31210,7 +31220,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:35:30.262Z",
+      "verified_at": "2026-10-27T19:38:52.287Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50585,8 +50595,8 @@
       "slug": "tokio-rs-tokio",
       "platform": "github",
       "source_url": "https://github.com/tokio-rs/tokio",
-      "source_version": "6e3d753f",
-      "content_hash": "8c6f15c90c8600e847a98f51569a070ff5b735c7162379a5f24cfaee3e3c047a",
+      "source_version": "0d38f834",
+      "content_hash": "59c37bcc859b5d72e956ae15e3c4371ac8a31531832abab7a5a8bbf328e8efae",
       "dossier_path": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "promoted_rules": [
@@ -50619,6 +50629,11 @@
           "number": 4520,
           "title": "ci: require a completion marker from the io_uring kernel test guest (#8440)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4968,
+          "title": "taskdump: release the core borrow before tracing a dump (#8728)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50626,7 +50641,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T01:22:51.759Z",
+      "verified_at": "2026-10-27T19:38:45.328Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -137503,6 +137518,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T19:32:04.741Z"
+    },
+    "rule-4967": {
+      "learning_id": "rule-4967",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4967,
+      "title": "deps): update next to 16.4.1 and @sveltejs/kit to 3.0.0 [security]",
+      "source_url": "https://github.com/chakra-ui/zag",
+      "source_version": "b03b597a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T19:38:44.957Z"
+    },
+    "rule-4968": {
+      "learning_id": "rule-4968",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4968,
+      "title": "taskdump: release the core borrow before tracing a dump (#8728)",
+      "source_url": "https://github.com/tokio-rs/tokio",
+      "source_version": "0d38f834",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T19:38:45.328Z"
+    },
+    "rule-4969": {
+      "learning_id": "rule-4969",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4969,
+      "title": "Add containerd server/metrics plugin",
+      "source_url": "https://github.com/k3s-io/k3s",
+      "source_version": "a443fd39",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T19:38:52.287Z"
     }
   },
   "aliases": {

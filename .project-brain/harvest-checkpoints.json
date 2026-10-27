@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T19:32:08.224Z",
+  "last_updated": "2026-10-27T19:38:52.388Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5346,14 +5346,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chakra-ui-zag",
-      "content_hash": "2d8810755bca27fb9fa9ccf5c6e77d8cc30a4e6133f8f1a3df2cc4450f311b41",
-      "verified_at": "2026-10-26T13:15:06.910Z",
+      "content_hash": "60e5f3862ade5c9b1d615d10aad2510e42815769f2e1ba13e6e5b0d2f9d11769",
+      "verified_at": "2026-10-27T19:38:45.062Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T13:15:06.910Z"
+      "last_updated": "2026-10-27T19:38:45.062Z"
     },
     "sharkdp/hyperfine": {
       "repository": "sharkdp/hyperfine",
@@ -9591,14 +9591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-k3s-io-k3s",
-      "content_hash": "9691403d108d27975334e207df72dd5da5c5c8a92cf19bd526ce3a694d9ddd31",
-      "verified_at": "2026-10-22T15:35:30.329Z",
+      "content_hash": "f0692c5d51e8e89708371c42a6caa6e4f42181e1a422b0efe8d18f9826248ac8",
+      "verified_at": "2026-10-27T19:38:52.387Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T15:35:30.329Z"
+      "last_updated": "2026-10-27T19:38:52.387Z"
     },
     "Ataraxy-Labs/sem": {
       "repository": "Ataraxy-Labs/sem",
@@ -11691,14 +11691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tokio-rs-tokio",
-      "content_hash": "8c6f15c90c8600e847a98f51569a070ff5b735c7162379a5f24cfaee3e3c047a",
-      "verified_at": "2026-10-26T01:22:51.837Z",
+      "content_hash": "59c37bcc859b5d72e956ae15e3c4371ac8a31531832abab7a5a8bbf328e8efae",
+      "verified_at": "2026-10-27T19:38:45.418Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T01:22:51.837Z"
+      "last_updated": "2026-10-27T19:38:45.418Z"
     },
     "SimonSchubert/LinuxCommandLibrary": {
       "repository": "SimonSchubert/LinuxCommandLibrary",
