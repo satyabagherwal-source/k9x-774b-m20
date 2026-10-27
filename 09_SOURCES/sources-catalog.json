@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "51b8067b",
+    "sourceVersion": "43b82f58",
     "license": "Apache-2.0",
-    "contentHash": "932ac2442c2977fba6194c1a76605af343e987561909ab907438e99df1a96fd8",
-    "lastHarvestedAt": "2026-10-25T23:10:53.557Z",
+    "contentHash": "7dcaa10aaebeb190b0b8bd9d8df93d2e482a0df9aa2d02092cf304b53e116b5f",
+    "lastHarvestedAt": "2026-10-27T13:25:23.866Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -5893,10 +5893,10 @@
     "repository": "Xudong-Huang/may",
     "platform": "github",
     "sourceUrl": "https://github.com/Xudong-Huang/may",
-    "sourceVersion": "9df483f2",
+    "sourceVersion": "8dceb4ab",
     "license": "Apache-2.0",
-    "contentHash": "9d7f6d7720da94751be173b10db60281f60a644fd29c3a4cdc02dcdec2e13df3",
-    "lastHarvestedAt": "2026-10-19T04:46:58.277Z",
+    "contentHash": "f1678e05a32e6b1b9fc5a127aa3666e0769d95ca2862570951920ceeed58a061",
+    "lastHarvestedAt": "2026-10-27T13:25:16.258Z",
     "learningId": "learn-github-xudong-huang-may"
   },
   "rcbyr-keen-slider": {
@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "68f60e27",
+    "sourceVersion": "1042051b",
     "license": "NOASSERTION",
-    "contentHash": "0121de5004a5c6dc2f80afcb8a215a8c0207e7b2c680abd636a374a41faac495",
-    "lastHarvestedAt": "2026-10-25T22:13:57.098Z",
+    "contentHash": "8cacac3431d19d42451ff060fd2f13ee473633b371fbed95b2505efbbdae813b",
+    "lastHarvestedAt": "2026-10-27T13:25:28.209Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {
@@ -9593,10 +9593,10 @@
     "repository": "axios/axios",
     "platform": "github",
     "sourceUrl": "https://github.com/axios/axios",
-    "sourceVersion": "e6b79d9c",
+    "sourceVersion": "0a9b58d5",
     "license": "MIT",
-    "contentHash": "8f3333b0a93c613bead632f48fa84a0f4532a3ba3b47d499779d62600b8a8d9e",
-    "lastHarvestedAt": "2026-10-22T20:38:54.956Z",
+    "contentHash": "8d3e5104f396ddedddba651c933c5b990e1afdabd14a023e06d22f060c77489c",
+    "lastHarvestedAt": "2026-10-27T13:25:18.688Z",
     "learningId": "learn-github-axios-axios"
   },
   "jasonjmcghee-rem": {

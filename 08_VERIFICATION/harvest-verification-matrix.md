@@ -5319,3 +5319,7 @@
 | `CYCLE-20261027-T8A1` | `2026-10-27T13:22:17.257Z` | `karakeep-app/karakeep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3849` | Yes (`cc18b1c2...`) |
 | `CYCLE-20261027-T98I` | `2026-10-27T13:22:18.498Z` | `kumahq/kuma` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kumahq-kuma-learnings.md` | Yes (`d9dee7b6...`) |
 | `CYCLE-20261027-TDVY` | `2026-10-27T13:22:24.526Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4798` | Yes (`4a442519...`) |
+| `CYCLE-20261027-X2E7` | `2026-10-27T13:25:16.255Z` | `Xudong-Huang/may` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4799` | Yes (`f1678e05...`) |
+| `CYCLE-20261027-X49P` | `2026-10-27T13:25:18.685Z` | `axios/axios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4800` | Yes (`8d3e5104...`) |
+| `CYCLE-20261027-X89J` | `2026-10-27T13:25:23.863Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4801` | Yes (`7dcaa10a...`) |
+| `CYCLE-20261027-XBM6` | `2026-10-27T13:25:28.206Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4802` | Yes (`8cacac34...`) |

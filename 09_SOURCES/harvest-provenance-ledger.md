@@ -5328,3 +5328,7 @@ Every entry in this ledger must capture:
 | `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `fb25e427` | Multi-dimensional audit evidence | 2026-10-27T13:22:17.260Z |
 | `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `7339e5a9` | Multi-dimensional audit evidence | 2026-10-27T13:22:18.502Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `d491ad88` | Multi-dimensional audit evidence | 2026-10-27T13:22:24.529Z |
+| `learn-github-xudong-huang-may` | `https://github.com/Xudong-Huang/may` | `8dceb4ab` | Multi-dimensional audit evidence | 2026-10-27T13:25:16.258Z |
+| `learn-github-axios-axios` | `https://github.com/axios/axios` | `0a9b58d5` | Multi-dimensional audit evidence | 2026-10-27T13:25:18.688Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `43b82f58` | Multi-dimensional audit evidence | 2026-10-27T13:25:23.866Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `1042051b` | Multi-dimensional audit evidence | 2026-10-27T13:25:28.209Z |

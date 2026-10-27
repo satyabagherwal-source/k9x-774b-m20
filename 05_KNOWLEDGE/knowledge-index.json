@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T13:22:24.461Z",
+  "last_updated": "2026-10-27T13:25:28.159Z",
   "total_verified_learnings": 1114,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9434,8 +9434,8 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "68f60e27",
-      "content_hash": "0121de5004a5c6dc2f80afcb8a215a8c0207e7b2c680abd636a374a41faac495",
+      "source_version": "1042051b",
+      "content_hash": "8cacac3431d19d42451ff060fd2f13ee473633b371fbed95b2505efbbdae813b",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
@@ -9483,6 +9483,11 @@
           "number": 4471,
           "title": "deps): bump setuptools from 84.0.0 to 84.1.0 (#8676)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4802,
+          "title": "server): don't exit on cloud snapshot storage init failure at runtime (#8689)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9490,7 +9495,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T22:13:57.028Z",
+      "verified_at": "2026-10-27T13:25:28.148Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46671,8 +46676,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "51b8067b",
-      "content_hash": "932ac2442c2977fba6194c1a76605af343e987561909ab907438e99df1a96fd8",
+      "source_version": "43b82f58",
+      "content_hash": "7dcaa10aaebeb190b0b8bd9d8df93d2e482a0df9aa2d02092cf304b53e116b5f",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -46710,6 +46715,11 @@
           "number": 4485,
           "title": "memory quantity suffixes in Prometheus chart overlays (#2301)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4801,
+          "title": "Require an impact preview for MCP deletion and report accepted cleanup as progre",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46717,7 +46727,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T23:10:53.511Z",
+      "verified_at": "2026-10-27T13:25:23.802Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53502,17 +53512,23 @@
       "slug": "xudong-huang-may",
       "platform": "github",
       "source_url": "https://github.com/Xudong-Huang/may",
-      "source_version": "9df483f2",
-      "content_hash": "9d7f6d7720da94751be173b10db60281f60a644fd29c3a4cdc02dcdec2e13df3",
+      "source_version": "8dceb4ab",
+      "content_hash": "f1678e05a32e6b1b9fc5a127aa3666e0769d95ca2862570951920ceeed58a061",
       "dossier_path": "07_PROJECT_LEARNING/xudong-huang-may-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xudong-huang-may-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 4799,
+          "title": "may_queue: keep block allocation and queue teardown off the calling stack",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T04:46:58.222Z",
+      "verified_at": "2026-10-27T13:25:16.195Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66781,8 +66797,8 @@
       "slug": "axios-axios",
       "platform": "github",
       "source_url": "https://github.com/axios/axios",
-      "source_version": "e6b79d9c",
-      "content_hash": "8f3333b0a93c613bead632f48fa84a0f4532a3ba3b47d499779d62600b8a8d9e",
+      "source_version": "0a9b58d5",
+      "content_hash": "8d3e5104f396ddedddba651c933c5b990e1afdabd14a023e06d22f060c77489c",
       "dossier_path": "07_PROJECT_LEARNING/axios-axios-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/axios-axios-learnings.md",
       "promoted_rules": [
@@ -66805,6 +66821,11 @@
           "number": 3729,
           "title": "Asynchronous Safe Interceptor Lifecycle with Re-Entrancy and Compaction Guarding",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4800,
+          "title": "docs: identify Axios errors independently of their name (#11374)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -66812,7 +66833,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T20:38:54.885Z",
+      "verified_at": "2026-10-27T13:25:18.627Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -133414,6 +133435,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T13:22:24.440Z"
+    },
+    "rule-4799": {
+      "learning_id": "rule-4799",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4799,
+      "title": "may_queue: keep block allocation and queue teardown off the calling stack",
+      "source_url": "https://github.com/Xudong-Huang/may",
+      "source_version": "8dceb4ab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:25:16.195Z"
+    },
+    "rule-4800": {
+      "learning_id": "rule-4800",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4800,
+      "title": "docs: identify Axios errors independently of their name (#11374)",
+      "source_url": "https://github.com/axios/axios",
+      "source_version": "0a9b58d5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:25:18.627Z"
+    },
+    "rule-4801": {
+      "learning_id": "rule-4801",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4801,
+      "title": "Require an impact preview for MCP deletion and report accepted cleanup as progre",
+      "source_url": "https://github.com/skyhook-io/radar",
+      "source_version": "43b82f58",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:25:23.802Z"
+    },
+    "rule-4802": {
+      "learning_id": "rule-4802",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4802,
+      "title": "server): don't exit on cloud snapshot storage init failure at runtime (#8689)",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "1042051b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:25:28.148Z"
     }
   },
   "aliases": {

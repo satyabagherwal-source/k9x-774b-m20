@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T13:22:24.534Z",
-  "total_cycles_completed": 5296,
-  "total_learnings_persisted": 5296,
-  "total_rules_promoted": 4705,
+  "last_updated": "2026-10-27T13:25:28.214Z",
+  "total_cycles_completed": 5300,
+  "total_learnings_persisted": 5300,
+  "total_rules_promoted": 4709,
   "history": [
-    {
-      "timestamp": "2026-10-26T10:21:30.904Z",
-      "repository": "markmead/hyperui",
-      "learningId": "learn-github-markmead-hyperui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T10:21:37.731Z",
-      "repository": "0xCUB3/wBlock",
-      "learningId": "learn-github-0xcub3-wblock",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T10:21:41.682Z",
-      "repository": "sigstore/cosign",
-      "learningId": "learn-github-sigstore-cosign",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T10:33:19.980Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-26T10:33:20.692Z",
       "repository": "Louis-CFM/coucou",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-27T13:22:24.534Z",
       "repository": "ClickHouse/ClickHouse",
       "learningId": "learn-github-clickhouse-clickhouse",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:25:16.262Z",
+      "repository": "Xudong-Huang/may",
+      "learningId": "learn-github-xudong-huang-may",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:25:18.693Z",
+      "repository": "axios/axios",
+      "learningId": "learn-github-axios-axios",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:25:23.870Z",
+      "repository": "skyhook-io/radar",
+      "learningId": "learn-github-skyhook-io-radar",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:25:28.214Z",
+      "repository": "dragonflydb/dragonfly",
+      "learningId": "learn-github-dragonflydb-dragonfly",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

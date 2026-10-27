@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T13:22:24.538Z",
+  "last_updated": "2026-10-27T13:25:28.217Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5211,14 +5211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyhook-io-radar",
-      "content_hash": "932ac2442c2977fba6194c1a76605af343e987561909ab907438e99df1a96fd8",
-      "verified_at": "2026-10-25T23:10:53.564Z",
+      "content_hash": "7dcaa10aaebeb190b0b8bd9d8df93d2e482a0df9aa2d02092cf304b53e116b5f",
+      "verified_at": "2026-10-27T13:25:23.873Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T23:10:53.564Z"
+      "last_updated": "2026-10-27T13:25:23.873Z"
     },
     "mitmproxy/mitmproxy": {
       "repository": "mitmproxy/mitmproxy",
@@ -8961,14 +8961,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xudong-huang-may",
-      "content_hash": "9d7f6d7720da94751be173b10db60281f60a644fd29c3a4cdc02dcdec2e13df3",
-      "verified_at": "2026-10-19T04:46:58.282Z",
+      "content_hash": "f1678e05a32e6b1b9fc5a127aa3666e0769d95ca2862570951920ceeed58a061",
+      "verified_at": "2026-10-27T13:25:16.265Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:46:58.282Z"
+      "last_updated": "2026-10-27T13:25:16.265Z"
     },
     "rcbyr/keen-slider": {
       "repository": "rcbyr/keen-slider",
@@ -9306,14 +9306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflydb-dragonfly",
-      "content_hash": "0121de5004a5c6dc2f80afcb8a215a8c0207e7b2c680abd636a374a41faac495",
-      "verified_at": "2026-10-25T22:13:57.106Z",
+      "content_hash": "8cacac3431d19d42451ff060fd2f13ee473633b371fbed95b2505efbbdae813b",
+      "verified_at": "2026-10-27T13:25:28.217Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T22:13:57.106Z"
+      "last_updated": "2026-10-27T13:25:28.217Z"
     },
     "danielpetho/fancy": {
       "repository": "danielpetho/fancy",
@@ -14436,14 +14436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-axios-axios",
-      "content_hash": "8f3333b0a93c613bead632f48fa84a0f4532a3ba3b47d499779d62600b8a8d9e",
-      "verified_at": "2026-10-22T20:38:54.971Z",
+      "content_hash": "8d3e5104f396ddedddba651c933c5b990e1afdabd14a023e06d22f060c77489c",
+      "verified_at": "2026-10-27T13:25:18.696Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T20:38:54.971Z"
+      "last_updated": "2026-10-27T13:25:18.696Z"
     },
     "jasonjmcghee/rem": {
       "repository": "jasonjmcghee/rem",

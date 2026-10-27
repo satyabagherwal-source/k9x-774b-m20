@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `51b8067b`  
+> **Source Version**: `43b82f58`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T23:10:53.281Z  
+> **Timestamp**: 2026-10-27T13:25:23.515Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T23:10:53.100Z  
+> **Harvest Timestamp**: 2026-10-27T13:25:23.037Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3908 stars
+- **Stars / Engagement**: 3924 stars
 
 ---
 
@@ -2228,313 +2228,736 @@ export function AWSMachineRenderer({ data }: Props) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7cacbbcc` (2026-10-25)
-**Commit Message**: Fix memory quantity suffixes in Prometheus chart overlays (#2301)
+### Incident Patch 1: `78ed5a4f` (2026-10-26)
+**Commit Message**: Require an impact preview for MCP deletion and report accepted cleanup as progress (#2041)
 
-Prometheus memory charts read a request such as `1181116006400m` (the
-canonical serialization of `1.1Gi`) as 1000× too large, placing request
-and limit reference lines incorrectly. This path has its own parser and
-was not covered by #2283.
+Requires preview before MCP deletion and reports accepted Kubernetes
+deletion separately from completed cleanup. Uses the caller-scoped
+ownership preview from #2050. No new configuration.
 
-Recognize `m`, `u`, `n`, and the also-missing lowercase `k` suffix in
-that parser, preserving its handling of unreadable values and zero.
-Regression tests cover request and limit values, mixed binary/millibyte
-sums across native sidecars, and invalid/zero inputs.
+### Fresh live validation — final commit
 
-Validation: `make tsc`; 24 overlay and chart-grid tests passed, with the
-new regressions confirmed failing before the fix; full frontend, embed,
-and Go binary build. Visual-test skipped for this parser-only change.
+**Live-tested `63a51deead2772001f986ce205f662b6ed57946f` on EKS
+`radar-test-nonprod` (Kubernetes v1.34.11-eks-cfb47f5).** Built the
+complete application with `make build`; ran normal local and
+auth-enabled proxy instances against an isolated namespace. These
+results cover the current PR head, replacing the earlier-revision
+evidence.
 
-**File**: `web/src/components/resource/PrometheusCharts.overlays.test.ts` (modified, +45/-0)
+| Live scenario | Observed result |
+| --- | --- |
+| Missing confirmation / default preview | Unconfirmed persisted delete
+refused; preview returned a token without persisting deletion. |
+| Same-name replacement / changed root | Old token refused; replacement
+survived. Changing generation-less root data also required another
+preview. |
+| Real caller RBAC and token identity | Apiserver denied a read-only
+user's DELETE dry-run. Authorized writer obtained a usable preview; a
+second equally authorized writer could not reuse it. Original wri
+
+**File**: `docs/mcp.md` (modified, +42/-0)
 ```diff
-@@ -19,4 +19,49 @@ describe('Pod request and limit overlays', () => {
-     } } } }
-     expect(computeRequestLimitLines(resource, 'Deployment', 'cpu')![0].value).toBeCloseTo(1.2)
-   })
+@@ -1368,3 +1368,45 @@ storage/data removal also depends on reclaim policy and controllers.
+ The REST preview is advisory: it does not bind a later DELETE to the object
+ shown in the dialog. Finalizers, admission and reconciliation can change or delay
+ the result, so the preview does not guarantee completion.
 +
-+  it.each([
-+    ['1024000m', '2048000m'],
-+    ['1024000000u', '2048000000u'],
-+    ['1024000000000n', '2048000000000n'],
-+    ['1.024k', '2.048k'],
-+    ['1.024K', '2.048K'],
-+  ])('reads memory request %s and limit %s as bytes', (request, limit) => {
-+    const resource = { spec: { containers: [
-+      { resources: { requests: { memory: request }, limits: { memory: limit } } },
-+    ] } }
-+    expect(computeRequestLimitLines(resource, 'Pod', 'memory')).toEqual([
-+      { value: 1024, label: 'request 1KiB', kind: 'request' },
-+      { value: 2048, label: 'limit 2KiB', kind: 'limit' },
-+    ])
-+  })
++### MCP deletion preview and confirmation
 +
-+  it('sums binary and millibyte quantities across containers and native sidecars', () => {
-+    const resource = { spec: { template: { spec: {
-+      containers: [{ resources: { requests: { memory: '16Gi' }, limits: { memory: '16Gi' } } }],
-+      initContainers: [{ restartPolicy: 'Always', resources: {
-+        requests: { memory: '1181116006400m' }, limits: { memory: '1073741824000m' },
-+      } }],
-+    } } } }
-+    const lines = computeRequestLimitLines(resource, 'Deployment', 'memory')!
-+    expect(lines[0].value).toBeCloseTo(18360985190.4)
-+    expect(lines[0].label).toBe('request 17.1GiB')
-+    expect(lines[1]).toEqual({ value: 17 * 1024 ** 3, label: 'limit 17.0GiB', kind: 'limit' })
-+  })
++External writable MCP exposes `delete_resource`. It is absent from read-only
++mounts and from the built-in `/mcp-apply` transport used by Radar OSS's built-in CLI agents. Hub's sidecar independently enforces its read-only gate; it does not use this new mount.
++Built-in deletion stays deferred until the approval flow presents this preview.
++There is no new configuration switch.
 +
-+  it.each(['abcMi', 'abcm', 'abcu', 'abcn', '', undefined])('omits unreadable memory quantities: %s', (memory) => {
-+    const resource = { spec: { containers: [
-+      { resources: { requests: { memory }, limits: { memory } } },
-+    ] } }
-+    expect(computeRequestLimitLines(resource, 'Pod', 'memory')).toBeUndefined()
-+  })
++The default call performs a caller-authenticated server dry-run and returns a
++summary, finalizers, propagation, the shared observed-impact preview, and a
++five-minute signed confirmation. `dry_run: false` requires that confirmation.
++It binds the caller and groups, captured cluster context, root UID,
++generation/finalizers (resourceVersion for kinds without generation), and propagation policy.
++Root spec/finalizer/incarnation or policy changes require another preview. For roots
++with generation, status-only changes before confirmation can proceed with fresh
++resourceVersion preconditions. Kinds without generation require another preview
++after any update. An API-server conflict returns an error requiring another preview;
++the tool does not retry DELETE automatically.
 +
-+  it('retains a genuine zero request while omitting a zero limit', () => {
-+    const resource = { spec: { containers: [
-+      { resources: { requests: { memory: '0m' }, limits: { memory: '0m' } } },
-+    ] } }
-+    expect(computeRequestLimitLines(resource, 'Pod', 'memory')).toEqual([
-+      { value: 0, label: 'request 0KiB', kind: 'request' },
-+    ])
-+  })
- })
++Dependent lists are advisory observations. Confirmation does not compare a child
++fingerprint or freeze the cascade: dependents and controller inventory can change
++independently of the root, including after preview or confirmation.
++
++GC dependents, possible dependents and controller teardown stay separate.
++Counts cover the observed traversal before each 100-reference MCP list cap;
++`ownershipCoverage` carries source gaps, caller narrowing and traversal limits.
++Namespace contents and CRD instances are never interpreted as an empty list.
++A completely unavailable or timed-out impact calculation returns no usable confirmation token. Inspect `cascade.unavailableReason` and `recoveryAction`: connection/cache loading can recover, but access or collection limits require a change. Use the UI or kubectl if Radar cannot provide caller-readable impact. Partial observed projections retain explicit coverage limits. One 40s
++budget covers the call, with at most 5s each for enumeration and post-delete
++observation. A stuck kubeconfig exec credential refresh can outlive the request
++budget, as with other client-go operations.
++
++Accepted deletion is progress even while finalizers hold it. Failed post-delete
++observation cannot turn acceptance into failure. An interrupted DELETE with an
++uncertain result says to inspect the resource before retrying. The tool never
++patches finalizers. Explicit finalizer intervention remains a separate
++`patch_resource` action after inspecting cleanup. A webhook whose side-effects declaration prohibits server dry-run prevents this tool from issuing confirmation; the API error identifies the rejecting webhook. The token checks reviewed state, not proof of a human decision: the external MCP host owns per-call approval. Audit records identify caller,
++kind/group/target and preview/accepted/failed/unknown outcomes; confirmation
++values are omitted from ordinary tool-argument logs.
++
++
++Confirmation tokens are process-local. Use a single Radar replica or session affinity so preview and confirmation reach the same process; a restart invalidates outstanding tokens. `/mcp-apply` is an authenticated subset of writable `/mcp`, intended for built-in agents, not a private network endpoint.
 ```
 
-**File**: `web/src/components/resource/PrometheusCharts.tsx` (modified, +2/-2)
+**File**: `internal/ai/diagnoser.go` (modified, +3/-3)
 ```diff
-@@ -209,7 +209,7 @@ function collectRuntimeContainers(podSpec: any): any[] {
- const CPU_SUFFIXES: Record<string, number> = { n: 1e-9, u: 1e-6, m: 1e-3 }
- const MEMORY_SUFFIXES: Record<string, number> = {
-   Ki: 1024, Mi: 1024 ** 2, Gi: 1024 ** 3, Ti: 1024 ** 4, Pi: 1024 ** 5, Ei: 1024 ** 6,
--  K: 1e3, M: 1e6, G: 1e9, T: 1e12, P: 1e15, E: 1e18,
-+  n: 1e-9, u: 1e-6, m: 1e-3, k: 1e3, K: 1e3, M: 1e6, G: 1e9, T: 1e12, P: 1e15, E: 1e18,
+@@ -453,9 +453,9 @@ func (d *Diagnoser) DiagnoseStream(ctx context.Context, req Request, onEvent fun
+ 	}
+ 
+ 	// Read-only investigation turns get the private read-only MCP mount with
+-	// evidence correlation; an apply turn (user-confirmed) gets the ordinary full
+-	// mount with write tools and no investigation-only result markers.
+-	path := "/mcp"
++	// evidence correlation; an apply turn gets a private remediation mount
++	// whose server excludes tools that require a richer approval flow.
++	path := "/mcp-apply"
+ 	evidenceScope := ""
+ 	var evidenceLease *investigationrefs.Scope
+ 	if !req.Apply {
+```
+
+**File**: `internal/ai/diagnoser_test.go` (modified, +2/-0)
+```diff
+@@ -171,6 +171,8 @@ func TestDiagnoseStreamUsesListenerAddress(t *testing.T) {
+ 				want := "http://" + address + "/radar/mcp"
+ 				if !apply {
+ 					want += "-investigation?scope=" + scope
++				} else {
++					want += "-apply"
+ 				}
+ 				if agent.spec.mcpURL != want {
+ 					t.Fatalf("agent MCP URL = %q, want %q", agent.spec.mcpURL, want)
+```
+
+**File**: `internal/app/bootstrap.go` (modified, +1/-0)
+```diff
+@@ -565,6 +565,7 @@ func CreateServer(cfg AppConfig) *server.Server {
+ 		serverCfg.InvestigationRefs = evidenceRefs
+ 		if !cfg.MCPReadOnly {
+ 			serverCfg.MCPHandler = mcppkg.NewHandler()
++			serverCfg.MCPApplyHandler = mcppkg.NewApplyHandler()
+ 		}
+ 		serverCfg.MCPReadOnlyHandler = mcppkg.NewReadOnlyHandler()
+ 		serverCfg.MCPInvestigationHandler = mcppkg.NewInvestigationHandler(evidenceRefs)
+```
+
+**File**: `internal/app/mcp_mode_test.go` (modified, +10/-4)
+```diff
+@@ -38,8 +38,8 @@ func TestServerMCPModes(t *testing.T) {
+ 				defer host.Close()
+ 				ctx, cancel := context.WithTimeout(t.Context(), 10*time.Second)
+ 				defer cancel()
+-				for _, path := range []string{"/mcp", "/mcp-readonly", "/mcp-investigation"} {
+-					available := mode.enabled && (path != "/mcp" || !mode.readOnly)
++				for _, path := range []string{"/mcp", "/mcp-readonly", "/mcp-investigation", "/mcp-apply"} {
++					available := mode.enabled && ((path != "/mcp" && path != "/mcp-apply") || !mode.readOnly)
+ 					if !available {
+ 						for _, suffix := range []string{"", "/", "/tools/call"} {
+ 							for _, method := range []string{http.MethodGet, http.MethodPost} {
+@@ -78,15 +78,21 @@ func TestServerMCPModes(t *testing.T) {
+ 					if err != nil {
+ 						t.Fatal(err)
+ 					}
+-					hasWrite := false
++					hasWrite, hasDelete := false, false
+ 					for _, tool := range tools.Tools {
++						if tool.Name == "delete_resource" {
++							hasDelete = true
++						}
+ 						if tool.Name == "apply_resource" {
+ 							hasWrite = true
+ 						}
+ 					}
+-					if hasWrite != (path == "/mcp") {
++					if hasWrite != (path == "/mcp" || path == "/mcp-apply") {
+ 						t.Fatalf("%s write tool present = %v", path, hasWrite)
+ 					}
++					if hasDelete != (path == "/mcp") {
++						t.Fatalf("%s delete tool present = %v", path, hasDelete)
++					}
+ 					result, err := session.CallTool(ctx, &mcpsdk.CallToolParams{Name: "list_namespaces", Arguments: struct{}{}})
+ 					if err != nil || result.IsError {
+ 						t.Fatalf("read tool: %v, %v", result, err)
+```
+
+**File**: `internal/auth/middleware.go` (modified, +4/-2)
+```diff
+@@ -237,6 +237,8 @@ func AuditLog(r *http.Request, namespace, name string) {
  }
  
- // NOT a duplicate of @skyhook-io/k8s-ui/utils/format's parseCPUToNanocores /
-@@ -232,7 +232,7 @@ function readQuantity(raw: unknown, category: 'cpu' | 'memory'): number | null {
-   for (const suffix of ['Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei']) {
-     if (s.endsWith(suffix)) return scaleOrNull(s, MEMORY_SUFFIXES[suffix])
-   }
--  for (const suffix of ['K', 'M', 'G', 'T', 'P', 'E']) {
-+  for (const suffix of ['n', 'u', 'm', 'k', 'K', 'M', 'G', 'T', 'P', 'E']) {
-     if (s.endsWith(suffix)) return scaleOrNull(s, MEMORY_SUFFIXES[suffix])
-   }
-   const v = parseFloat(s)
+ type AuditActionDetails struct {
++	Kind      string
++	Group     string
+ 	Action    string
+ 	Namespace string
+ 	Name      string
+@@ -253,7 +255,7 @@ func AuditLogAction(r *http.Request, details AuditActionDetails) {
+ 		username = user.Username
+ 		groups = user.Groups
+ 	}
+-	log.Printf("[audit] user=%q groups=%q action=%q path=%q ns=%q name=%q container=%q variable=%q source=%q outcome=%q",
+-		username, groups, details.Action, r.URL.Path, details.Namespace, details.Name,
++	log.Printf("[audit] user=%q groups=%q action=%q path=%q kind=%q api_group=%q ns=%q name=%q container=%q variable=%q source=%q outcome=%q",
++		username, groups, details.Action, r.URL.Path, details.Kind, details.Group, details.Namespace, details.Name,
+ 		details.Container, details.Variable, details.Source, details.Outcome)
+ }
+```
+
+**File**: `internal/k8s/update.go` (modified, +2/-2)
+```diff
+@@ -68,8 +68,8 @@ func DeleteResource(ctx context.Context, opts DeleteResourceOptions) error {
+ 
+ // DeleteResourceWithClient deletes a Kubernetes resource using the provided client.
+ // If client is nil, uses the shared dynamic client.
+-func DeleteResourceWithClient(ctx context.Context, opts DeleteResourceOptions, client dynamic.Interface) error {
+-	return getWorkloadManagerWithClient(client).DeleteResource(ctx, opts)
++func DeleteResourceWithClient(ctx context.Context, opts DeleteResourceOptions, client dynamic.Interface) (*k8score.DeleteResourceResult, error) {
++	return getWorkloadManagerWithClient(client).DeleteResourceWithResult(ctx, opts)
+ }
+ 
+ // ApplyResource creates or updates a Kubernetes resource from YAML.
+```
+
+**File**: `internal/mcp/agentlog.go` (modified, +6/-1)
+```diff
+@@ -126,7 +126,12 @@ func logToolCall[In any](
+ 	handler func(context.Context, *mcp.CallToolRequest, In) (*mcp.CallToolResult, any, error),
+ ) func(context.Context, *mcp.CallToolRequest, In) (*mcp.CallToolResult, any, error) {
+ 	return func(ctx context.Context, req *mcp.CallToolRequest, input In) (*mcp.CallToolResult, any, error) {
+-		args, _ := json.Marshal(input)
++		loggedInput := any(input)
++		if deletion, ok := loggedInput.(deleteResourceInput); ok {
++			deletion.Confirm = ""
++			loggedInput = deletion
++		}
++		args, _ := json.Marshal(loggedInput)
+ 		log.Printf("\033[1;35m[MCP]\033[0m \033[1m%s\033[0m %s", name, string(args))
+ 
+ 		start := time.Now()
 ```
 
 ---
 
-### Incident Patch 2: `3ffa2c2d` (2026-10-25)
-**Commit Message**: fix(capacity): read milli-suffixed memory quantities as fractions of a byte (#2283)
+### Incident Patch 2: `aeab31a1` (2026-10-26)
+**Commit Message**: fix: explain Crossplane pause in delete and apply flows (#2338)
 
-## Description
+Kubernetes can accept edits or a deletion request while a Crossplane
+resource's controller defers reconciliation. The generic confirmations
+do not explain that distinction, making a deletion that remains
+Terminating easy to mistake for a failed request and encouraging force
+deletion that can bypass cleanup.
 
-The Capacity page can report cluster memory requests about 1000× too
-high. On one production cluster it showed 1,770,775 GiB requested
-against 3,232 GiB allocatable, while the real sum is about 1,754 GiB.
+This adds context inside the relevant operation:
 
-A memory request may be written with a milli suffix (`1181116006400m` is
-a valid request, and some generators emit it). When the backend sums
-requests, `resource.Quantity.Add` keeps the finest scale, so a single
-milli-suffixed pod makes the whole total serialize in milli-bytes:
-`16Gi` + `1181116006400m` becomes `18360985190400m`.
-`parseMemoryToBytes` had no entry for `m`, `u` or `n`, so it fell
-through to "no suffix = bytes" and read the total as 1000× its value.
+- Single and bulk delete confirmations identify selected paused
+resources holding known Crossplane finalizers. Force confirmation
+explains the cleanup it can bypass; annotation alone, or an object
+without finalizers, does not get a definite deletion-blocking claim.
+- YAML review states whether the server preview keeps or clears the
+pause request and covers every submitted document, including unselected
+ones. Baselines remain paired with their own server document. Direct
+saves explain that omitting an annotation from server-side apply YAML
+does not guarantee removal; unavailable previews label unverified state.
+Strict Create does not imply unknown existing state.
+- Acknowledged resources without spec references use the shared
+pause-evidence helper. Single-target edi
 
-The parser now accepts the sub-unit decimal suffixes, so every caller of
-`parseMemoryToBytes` and `formatMemoryString` (Capacity, resource views,
-renderers) reads them correctly.
-
-## Type of change
-
-- [x] Bug fix (non-breaking change that fixes an issue)
-- [ ] New feature (non-breaking change that adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing
-functionality to change)
-- [ ] Documentat
-
-**File**: `packages/k8s-ui/src/utils/format.test.ts` (modified, +7/-0)
+**File**: `docs/integrations.md` (modified, +5/-0)
 ```diff
-@@ -50,6 +50,13 @@ describe('parseMemoryToBytes', () => {
-     expect(parseMemoryToBytes('1E3')).toBe(1000)
-     expect(formatMemoryString('1e9')).toBe('954 MiB')
-   })
+@@ -1065,6 +1065,11 @@ The topology graph retains its recorded readiness color and does not add this pa
+ 
+ **Agent context:** AI resource summaries, per-row `summaryContext` (REST/MCP list and search), resource detail `resourceContext`, and the Diagnose kickoff health frame expose optional `crossplanePause`. `requested` means `crossplane.io/paused` is exactly `"true"`; `acknowledged` additionally has a recorded `Synced=False/ReconcilePaused` condition. This is annotation intent and stored controller evidence, independent of readiness and Issues. It does not establish freshness, matching generation, a pause start time, or the state of any child/provider controller. Omission makes no claim about management-policy pause or a prior resume. Summary rows retain the fact with `context=none`; generic CRD rows carrying `crossplanePause` retain an independent Synced failure in `issue` even when Ready is True. Compact retains the exact pause annotation and raw conditions; other Crossplane annotation keys are not broadly allowed through.
+ 
++**Operation context:** Delete confirmations identify annotated paused MR/XR/Claim resources holding a known Crossplane finalizer, whose controller cleanup is deferred; force delete can bypass that cleanup and leave external or related resources behind. YAML apply review and direct-save confirmations distinguish Kubernetes accepting edits from the resource controller acting on them. Review states whether the server preview keeps or clears a pause request; unavailable previews label unverified pause state. Direct editor saves also explain that omitting the annotation from server-side apply YAML does not guarantee removal. Removing `crossplane.io/paused` requests resumption; it does not prove the controller resumed or that related controllers paused. Generic Apply without a live preview labels existing pause state as unknown and explains that omitting the annotation from server-side apply YAML does not guarantee removal. A known pause uses the exact annotation value `"true"`; empty `managementPolicies` alone is outside this annotation-only context.
 +
-+  it('reads sub-unit suffixes as fractions of a byte', () => {
-+    expect(parseMemoryToBytes('1181116006400m')).toBeCloseTo(1181116006.4)
-+    expect(parseMemoryToBytes('1000000u')).toBeCloseTo(1)
-+    expect(parseMemoryToBytes('1000000000n')).toBeCloseTo(1)
-+    expect(formatMemoryString('18360985190400m')).toBe('17.1 GiB')
-+  })
++Resources without a known Crossplane spec shape qualify for operation context only when the exact pause annotation is corroborated by `Synced=False/ReconcilePaused`. A single-target editor retains that raw evidence when review YAML omits status; generic Apply with no such evidence does not infer controller identity from the annotation alone.
++
++
+ **Cluster Audit:** New `crossplaneStuck` check flags MRs/XRs/Claims reporting `Ready=False` or `Synced=False` for more than 5 minutes (Medium) or 30 minutes (High). Synced=False takes priority over Ready=False because it usually indicates the actionable problem (bad ProviderConfig, malformed spec, missing IAM). Same severity ramp as `stuckTerminating` for cross-surface consistency. Paused resources are deliberately suppressed.
+ 
+ ### v1 vs v2 Path Handling
+```
+
+**File**: `packages/k8s-ui/README.md` (modified, +6/-1)
+```diff
+@@ -84,5 +84,10 @@ tooltip. `certaintyGlyph` and `certaintyValueLabel` expose the same vocabulary.
+ 
+ Existing CNPG primitive exports remain available and delegate to these shared implementations.
+ 
+-
+ `PrinterColumnDef.jsonPath` optionally carries source provenance from newer Radar servers. The UI does not evaluate it: values still come from the server's table converter. Without it, printer-cell tones stay generic. Crossplane pause qualification only recognizes exact Ready/Synced condition paths and corroborated annotation/condition evidence; same-named unrelated columns retain their normal tones. `ConditionTone` also supports opt-in `neutral`; `defaultConditionTone` retains its original return vocabulary. `ComposedRefStatus.pauseState` optionally supplies recorded Crossplane pause context for a composed-resource row.
++
++`ForceDeleteConfirmDialog.resourceData` optionally supplies the current object for Crossplane pause context. Paused MR/XR/Claim shapes holding a known Crossplane finalizer receive a cleanup warning; the prop does not change confirmation or force-delete behavior. YAML operation context uses the existing baseline and predicted manifests; removing a pause annotation requests resumption rather than proving it.
++
++`YamlReview.mode` distinguishes Apply, strict Create and Update (default: `apply`). Hosts using strict creation should pass `create` so an unpreviewable new document does not imply unknown live pause state. Crossplane operation context reports what the server preview actually keeps or clears; unsupported dry-run documents retain conditional uncertainty rather than treating submitted YAML as a live baseline.
++
++For a single editor target, `YamlReview.resourceData` may retain its raw condition evidence when the review YAML intentionally omits status. `EditableYamlView` binds that snapshot to its preview. It is not used to classify unrelated documents in a batch. Generic Apply with neither a known Crossplane shape nor raw acknowledged pause does not infer a resource’s controller from the annotation alone.
+```
+
+**File**: `packages/k8s-ui/src/components/resources/ResourcesView.tsx` (modified, +2/-0)
+```diff
+@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect, useCallback, useDeferredValue, use
+ import { TableVirtuoso, type TableVirtuosoHandle } from 'react-virtuoso'
+ import { useDebouncedValue } from '../../hooks/useDebouncedValue'
+ import { usePhoneLayout } from '../../hooks/usePhoneLayout'
++import { CrossplaneDeleteNotice } from '../ui/CrossplaneOperationNotice'
+ import { Badge } from '../ui/Badge'
+ import { PaneLoader } from '../ui/PaneLoader'
+ import { DialogPortal } from '../ui/DialogPortal'
+@@ -7149,6 +7150,7 @@ export function ResourcesView({
+       isLoading={isBulkDeleting}
+       isClosable
+     >
++      <CrossplaneDeleteNotice resources={checkedItems} force={bulkForceDelete} />
+       <label className="flex items-center gap-2 text-sm text-theme-text-secondary">
+         <input
+           type="checkbox"
+```
+
+**File**: `packages/k8s-ui/src/components/shared/CreateResourceDialog.test.tsx` (modified, +14/-0)
+```diff
+@@ -328,3 +328,17 @@ it('keeps created-object facts and the edited draft when canceling a file replac
+     expect(onClose).not.toHaveBeenCalled()
+   } finally { await act(async () => root.unmount()); host.remove() }
  })
- 
- describe('parseQuantityToNumber', () => {
++
++it.each(['apply', 'create'] as const)('explains unknown live pause only in direct %s mode without changing submission', async (mode) => {
++  const onApply = vi.fn(async () => [])
++  const host = document.createElement('div'); document.body.appendChild(host); const root = createRoot(host)
++  const yaml = 'apiVersion: example.test/v1\nkind: Bucket\nmetadata:\n  name: archive\nspec:\n  providerConfigRef:\n    name: default\n'
++  try {
++    await act(async () => root.render(<CreateResourceDialog open onClose={() => {}} initialYaml={yaml} initialMode={mode} lockMode={mode === 'create'} onApply={onApply} isApplying={false} />))
++    expect(document.body.textContent?.includes('Existing pause state is unknown')).toBe(mode === 'apply')
++    const submit = button(mode === 'apply' ? 'Apply' : 'Create')!
++    expect(submit.disabled).toBe(false)
++    await act(async () => submit.click())
++    expect(onApply).toHaveBeenCalledWith(expect.objectContaining({ yaml, mode }))
++  } finally { await act(async () => root.unmount()); host.remove() }
++})
 ```
 
-**File**: `packages/k8s-ui/src/utils/format.ts` (modified, +6/-1)
+**File**: `packages/k8s-ui/src/components/shared/CreateResourceDialog.tsx` (modified, +5/-0)
 ```diff
-@@ -141,8 +141,13 @@ export function parseMemoryToBytes(memString: string): number {
-     'Ei': 1024 ** 6,
-   }
+@@ -9,6 +9,8 @@ import {
+   YamlReview,
+   type YamlPreviewResult,
+ } from '../ui/YamlReview'
++import { useDebouncedValue } from '../../hooks/useDebouncedValue'
++import { CrossplaneYamlApplyNotice } from '../ui/CrossplaneOperationNotice'
+ import { Tooltip } from '../ui/Tooltip'
+ import { formatApplyError } from '../../utils/k8s-errors'
+ import {
+@@ -84,6 +86,7 @@ export function CreateResourceDialog({
+ }: CreateResourceDialogProps) {
+   const titleId = useId()
+   const [yaml, setYaml] = useState(initialYaml)
++  const pauseContextYaml = useDebouncedValue(onPreview ? '' : yaml, 200)
+   const [mode, setMode] = useState<'apply' | 'create'>(initialMode)
+   const [dryRun, setDryRun] = useState(false)
+   const [force, setForce] = useState(false)
+@@ -401,6 +404,7 @@ export function CreateResourceDialog({
+         <YamlReview
+           titleId={titleId}
+           submittedYaml={preview.yaml}
++          mode={preview.mode}
+           documents={preview.documents}
+           nonAtomic={preview.nonAtomic}
+           force={preview.force}
+@@ -493,6 +497,7 @@ export function CreateResourceDialog({
+             </div>
+           </div>
  
--  // Decimal suffixes (powers of 1000)
-+  // Decimal suffixes (powers of 1000). The sub-unit ones are real inputs too:
-+  // a request written as "1288490188800m" is valid, and a sum that includes one
-+  // keeps the milli scale, so a whole cluster's total serializes with "m".
-   const decimalSuffixes: Record<string, number> = {
-+    'n': 1000 ** -3,
-+    'u': 1000 ** -2,
-+    'm': 1000 ** -1,
-     'k': 1000,
-     'K': 1000,
-     'M': 1000 ** 2,
++          {!onPreview && <div className="px-4"><CrossplaneYamlApplyNotice yaml={pauseContextYaml} baselineUnavailable={mode === 'apply'} /></div>}
+           {(error || previewError || partialCreates.length > 0) && (
+             <ApplyErrorBanner error={error || previewError || 'Resources were created before the previous attempt stopped.'} partialCreates={partialCreates} strictCreate={lockMode && mode === 'create'} hasPreview={Boolean(onPreview)} />
+           )}
+```
+
+**File**: `packages/k8s-ui/src/components/shared/EditableYamlView.test.tsx` (modified, +58/-0)
+```diff
+@@ -7,6 +7,7 @@
+ import { act } from "react";
+ import { createRoot, type Root } from "react-dom/client";
+ import { afterEach, beforeEach, expect, it, vi } from "vitest";
++import { resourceToYaml } from "../../utils/yaml";
+ 
+ vi.mock("../ui/YamlEditor", async () => {
+   const { useEffect } = await import("react");
+@@ -273,3 +274,60 @@ it("uses the accent token for a generic ConfigMap Edit control", () => {
+   expect(edit.classList.contains("text-accent-text")).toBe(true);
+   expect(edit.className).not.toContain("text-blue-");
+ });
++
++
++it("keeps the SSA omission caveat in a direct editor save with a known paused baseline", () => {
++  const target = { kind: "TaskBucket", namespace: "shop", name: "archive" };
++  const baseline = { apiVersion: "example.test/v1", kind: "TaskBucket", metadata: { name: "archive", namespace: "shop", annotations: { "crossplane.io/paused": "true" } }, spec: { providerConfigRef: { name: "default" } } };
++  sessionStorage.setItem("radar_yaml_draft:TaskBucket/shop/archive", "apiVersion: example.test/v1\nkind: TaskBucket\nmetadata:\n  name: archive\n  namespace: shop\nspec:\n  providerConfigRef:\n    name: default\n");
++  act(() => root.render(<EditableYamlView resource={target as never} data={baseline} onCopy={() => {}} copied={false} onSave={async () => {}} />));
++  expect(text()).toContain("Pause affects reconciliation");
++  expect(text()).toContain("Omitting the annotation from server-side apply YAML does not guarantee its removal");
++});
++
++it("does not carry a paused baseline to a different API group in a direct editor save", async () => {
++  const target = { kind: "TaskBucket", namespace: "shop", name: "archive" };
++  const baseline = { apiVersion: "example.test/v1", kind: "TaskBucket", metadata: { name: "archive", namespace: "shop", annotations: { "crossplane.io/paused": "true" } }, spec: { providerConfigRef: { name: "default" } } };
++  const yaml = "apiVersion: another.example.test/v1\nkind: TaskBucket\nmetadata:\n  name: archive\n  namespace: shop\nspec: {}\n";
++  const onSave = vi.fn(async () => {});
++  sessionStorage.setItem("radar_yaml_draft:TaskBucket/shop/archive", yaml);
++  act(() => root.render(<EditableYamlView resource={target as never} data={baseline} onCopy={() => {}} copied={false} onSave={onSave} />));
++  expect(text()).not.toContain("Pause affects reconciliation");
++  expect(text()).not.toContain("Existing pause state is unknown");
++  await click(/^Save$/);
++  expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ kind: "TaskBucket", namespace: "shop", name: "archive", yaml }));
++});
++
++it("does not infer annotation omission before the first direct-edit debounce settles", () => {
++  vi.useFakeTimers();
++  try {
++    const target = { kind: "TaskBucket", namespace: "shop", name: "archive" };
++    const baseline = { apiVersion: "example.test/v1", kind: "TaskBucket", metadata: { name: "archive", namespace: "shop", annotations: { "crossplane.io/paused": "true" } }, spec: { providerConfigRef: { name: "default" } } };
++    act(() => root.render(<EditableYamlView resource={target as never} data={baseline} onCopy={() => {}} copied={false} onSave={async () => {}} />));
++    const edit = [...host.querySelectorAll("button")].find(button => button.textContent?.trim() === "Edit")!;
++    act(() => edit.click());
++    expect(text()).not.toContain("Omitting the annotation");
++    act(() => vi.advanceTimersByTime(200));
++    expect(text()).toContain("Pause affects reconciliation");
++    expect(text()).not.toContain("Omitting the annotation");
++  } finally {
++    vi.useRealTimers();
++  }
++});
++
++
++it("retains raw acknowledged ref-less pause evidence through editor and status-free review", async () => {
++  const target = { kind: "TaskClaim", namespace: "shop", name: "ref-less" };
++  const raw = { apiVersion: "example.test/v1", kind: "TaskClaim", metadata: { name: "ref-less", namespace: "shop", annotations: { "crossplane.io/paused": "true" } }, spec: {}, status: { conditions: [{ type: "Synced", status: "False", reason: "ReconcilePaused" }] } };
++  const clean = resourceToYaml(raw);
++  expect(clean).not.toContain("status:");
++  expect(clean).not.toContain("ReconcilePaused");
++  const onPreview = vi.fn(async () => ({ documents: [{ index: 0, status: "accepted" as const, action: "update" as const, baselineYaml: clean, predictedYaml: clean, reviewedResourceVersion: "1" }], nonAtomic: false }));
++  act(() => root.render(<EditableYamlView resource={target as never} data={raw} onCopy={() => {}} copied={false} onSave={async () => {}} onPreview={onPreview} />));
++  await click(/^Edit$/);
++  await click(/Review changes/);
++  expect(text()).toContain("Pause affects reconciliation");
++  expect(text()).toContain("Server preview keeps the pause request on TaskClaim shop/ref-less");
++  expect(onPreview).toHaveBeenCalledWith(expect.objectContaining({ yaml: clean }));
++  expect(raw.status.conditions[0].reason).toBe("ReconcilePaused");
++});
+```
+
+**File**: `packages/k8s-ui/src/components/shared/EditableYamlView.tsx` (modified, +11/-1)
+```diff
+@@ -1,4 +1,4 @@
+-import { useState, useCallback, useEffect, useRef } from 'react'
++import { useState, useCallback, useEffect, useRef, useMemo } from 'react'
+ import {
+   Copy,
+   CopyPlus,
+@@ -12,6 +12,8 @@ import {
+ } from 'lucide-react'
+ import { Download } from 'lucide-react'
+ import { stringify as yamlStringify } from 'yaml'
++import { useDebouncedValue } from '../../hooks/useDebouncedValue'
++import { CrossplaneYamlApplyNotice } from '../ui/CrossplaneOperationNotice'
+ import { CodeViewer } from '../ui/CodeViewer'
+ import { YamlEditor } from '../ui/YamlEditor'
+ import type { YamlSchemaLoader } from '../ui/YamlEditor'
+@@ -207,6 +209,8 @@ export function EditableYamlView({
+   const reviewGeneration = useRef(0)
+   const [isEditing, setIsEditing] = useState(savedDraft.current !== null)
+   const [editedYaml, setEditedYaml] = useState(savedDraft.current ?? '')
++  const pauseContextYaml = useDebouncedValue(!onPreview && isEditing ? editedYaml : '', 200)
++  const pauseBaselineYaml = useMemo(() => !onPreview && isEditing ? resourceToYaml(data) : '', [data, onPreview, isEditing])
+   const [yamlErrors, setYamlErrors] = useState<string[]>([])
+   const [showErrorDetails, setShowErrorDetails] = useState(false)
+   // Default on: the editor resubmits the full live manifest, so an unforced
+@@ -216,6 +220,7 @@ export function EditableYamlView({
+     yaml: string
+     force: boolean
+     originalYaml: string
++    resourceData: unknown
+     documents: YamlPreviewResult[]
+     nonAtomic: boolean
+     context?: string
+@@ -293,6 +298,7 @@ export function EditableYamlView({
+           yaml: editedYaml,
+           force,
+           originalYaml: resourceToYaml(data),
++          resourceData: data,
+           documents: result.documents,
+           nonAtomic: result.nonAtomic,
+           context: result.context,
+@@ -382,7 +388,9 @@ export function EditableYamlView({
+       return (
+         <YamlReview
+           submittedYaml={preview.yaml}
++          mode="update"
+           originalYaml={preview.originalYaml}
++          resourceData={preview.resourceData}
+           documents={preview.documents}
+           nonAtomic={preview.nonAtomic}
+           force={preview.force}
+@@ -465,6 +473,8 @@ export function EditableYamlView({
+           </div>
+         </div>
+ 
++        {!onPreview && <div className="px-4 pt-2"><CrossplaneYamlApplyNotice yaml={pauseContextYaml} baselineYaml={pauseBaselineYaml} resourceData={data} /></div>}
++
+         {editWarning && (
+           <div className="px-4 py-2.5 bg-amber-500/10 dark:bg-yellow-500/10 border-b border-amber-300 dark:border-yellow-500/30">
+             <div className="flex items-start gap-2">
+```
+
+**File**: `packages/k8s-ui/src/components/shared/ResourceActionsBar.tsx` (modified, +1/-0)
+```diff
+@@ -693,6 +693,7 @@ export function ResourceActionsBar({
+         onClose={() => setShowDeleteConfirm(false)}
+         onConfirm={handleDeleteConfirm}
+         resourceName={resource.name}
++        resourceData={data}
+         resourceKind={displayKindName(resource.kind, data?.kind)}
+         namespaceName={resource.namespace}
+         isLoading={isDeleting ?? false}
 ```
 
 ---
 
-### Incident Patch 3: `ba8a17a6` (2026-10-25)
-**Commit Message**: Fix touch visibility and failed namespace selection retries
+### Incident Patch 3: `39f7ed4c` (2026-10-26)
+**Commit Message**: Keep normal deletion quiet without hiding real errors (#2307)
 
-**File**: `packages/k8s-ui/src/components/namespace-switcher/NamespacePicker.test.tsx` (modified, +49/-2)
+Normal Crossplane-style deletion reports `Ready=False/Deleting` while
+external cleanup proceeds. Radar currently raises a warning immediately
+and can choose that summary instead of a specific reconciliation error
+later in the conditions.
+
+Treat only this condition as expected during Radar’s existing ten-minute
+termination window, including bounded API-server clock skew. Continue
+selecting independent errors: current or undated evidence first,
+qualified older-generation evidence next, and overdue or uncertain
+`Deleting` only as a fallback. Existing stuck-deletion folding keeps one
+canonical termination finding while preserving a separate reconciliation
+error. Failure onset remains the selected condition’s timestamp.
+
+This adds only deletion interpretation, tests and contract
+documentation. It changes no endpoint, wire shape, informer routing or
+authorization.
+
+Validation:
+- Complete `internal/issues` suite and full frontend/embed/Go `make
+build` passed on `d5af3a670d27b940c53881862e3bf766fd2bfaaa`.
+- Actual EKS API requests on 18 owned synthetic CRD fixtures: reviewed
+parent and feature build with identical detector sour
+
+**File**: `docs/mcp.md` (modified, +14/-0)
 ```diff
-@@ -1,8 +1,8 @@
- // @vitest-environment jsdom
--import { act, useState, type ReactNode } from 'react'
-+import { act, createRef, useState, type ReactNode } from 'react'
- import { createRoot, type Root } from 'react-dom/client'
- import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
--import { NamespacePicker, type NamespacePickerProps, type NamespaceScopeView } from './NamespacePicker'
-+import { NamespacePicker, type NamespacePickerHandle, type NamespacePickerProps, type NamespaceScopeView } from './NamespacePicker'
+@@ -815,6 +815,20 @@ watches for this scan; an empty result does not establish that unwatched kinds
+ are healthy. These findings also feed Active Issues and AI resource/search
+ summaries, but not dashboard health summaries or `cluster://health`.
  
- vi.mock('../ui/Tooltip', () => ({
-   Tooltip: ({ children, content }: { children: ReactNode; content: ReactNode }) => (
-@@ -224,6 +224,53 @@ describe('NamespacePicker Only button', () => {
-     expect(document.activeElement).toBe(only)
-   })
- 
-+  it.each(['Only', 'Done', 'Clear all'])('reopens from active namespaces after an unacknowledged %s apply', async (action) => {
-+    const onApply = await open()
-+    if (action === 'Only') {
-+      await act(async () => { onlyButton('team-c').click() })
-+    } else if (action === 'Done') {
-+      await act(async () => { checkbox('team-b').click() })
-+      await act(async () => { doneButton().click() })
-+    } else {
-+      const clear = document.querySelector<HTMLButtonElement>('button[aria-label="Clear namespace selection"]')!
-+      await act(async () => { clear.click() })
-+    }
-+    expect(onApply).toHaveBeenCalledTimes(1)
-+    expect(isOpen()).toBe(false)
++A `Ready=False/Deleting` condition is expected during the first 10 minutes of
++an actual deletion. This follows Radar's termination warning window, not a
++Kubernetes deadline. Other failure conditions remain eligible under the existing
++condition selector, including its suspension and whole-object generation gates.
++The same window tolerates an API-server deletion timestamp slightly ahead of
++Radar's clock; a farther-future timestamp does not establish expected progress.
++After that window, or when deletion timing is unavailable, the condition remains
++a fallback when no stuck-deletion finding is available. It never takes priority
++over an independent error, including a qualified older-generation observation.
++Deletion itself advances a custom resource's generation. If its top-level
++`status.observedGeneration` then lags, the existing generation gate can withhold
++even a pre-deletion error; only a readable stuck-deletion finding covers the
++prolonged deletion until that gate clears.
 +
-+    await act(async () => { triggerButton().click() })
-+    expect(checkbox('team-a').checked).toBe(true)
-+    expect(checkbox('team-b').checked).toBe(false)
-+    expect(checkbox('team-c').checked).toBe(false)
-+    await act(async () => { document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })) })
-+    expect(onApply).toHaveBeenCalledTimes(1)
-+  })
-+
-+  it('also refreshes the draft when the keyboard shortcut opens the picker', async () => {
-+    const ref = createRef<NamespacePickerHandle>()
-+    const onApply = vi.fn()
-+    await act(async () => { root.render(<NamespacePicker ref={ref} scope={scope} onApply={onApply} />) })
-+    await act(async () => { ref.current?.open() })
-+    await act(async () => { onlyButton('team-c').click() })
-+    await act(async () => { ref.current?.open() })
-+    expect(checkbox('team-a').checked).toBe(true)
-+    expect(checkbox('team-c').checked).toBe(false)
-+    await act(async () => { doneButton().click() })
-+    expect(onApply).toHaveBeenCalledTimes(1)
-+  })
-+
-+  it('keeps current edits if the open shortcut is used while the menu is already open', async () => {
-+    const ref = createRef<NamespacePickerHandle>()
-+    const onApply = vi.fn()
-+    await act(async () => { root.render(<NamespacePicker ref={ref} scope={scope} onApply={onApply} />) })
-+    await act(async () => { ref.current?.open() })
-+    await act(async () => { checkbox('team-b').click() })
-+    await act(async () => { ref.current?.open() })
-+    expect(checkbox('team-a').checked).toBe(true)
-+    expect(checkbox('team-b').checked).toBe(true)
-+    expect(onApply).not.toHaveBeenCalled()
-+  })
-+
-   describe('returning focus after the switch', () => {
-     let setPending: (pending: boolean) => void
+ Findings start at warning after 10 minutes. At 30 minutes, controller-owned
+ finalizers follow this policy:
  
 ```
 
-**File**: `packages/k8s-ui/src/components/namespace-switcher/NamespacePicker.tsx` (modified, +8/-7)
+**File**: `internal/issues/source_conditions.go` (modified, +28/-8)
 ```diff
-@@ -151,12 +151,13 @@ export const NamespacePicker = forwardRef<NamespacePickerHandle, NamespacePicker
-     applySelection(draft)
-   }, [applySelection, draft])
+@@ -12,6 +12,7 @@ import (
+ 	"github.com/skyhook-io/radar/internal/k8s"
+ 	"github.com/skyhook-io/radar/internal/logsafe"
+ 	"github.com/skyhook-io/radar/pkg/conditions"
++	"github.com/skyhook-io/radar/pkg/health"
+ 	"github.com/skyhook-io/radar/pkg/issuesapi"
+ 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+ 	"k8s.io/apimachinery/pkg/runtime/schema"
+@@ -272,9 +273,10 @@ func findActionableCondition(u *unstructured.Unstructured, condTypes ...string)
+ 	if len(condTypes) == 0 {
+ 		condTypes = conditions.DefaultFalseConditionTypes
+ 	}
++	now := time.Now()
+ 	// Spec edits do not prove recovery. Keep older failures as a qualified fallback.
+-	var stale conditions.FalseCondition
+-	hasStale := false
++	var stale, deleting conditions.FalseCondition
++	hasStale, hasDeletingFallback := false, false
+ 	for len(condTypes) > 0 {
+ 		condition, found := conditions.FindFalseConditionWithTime(u, condTypes...)
+ 		if !found {
+@@ -283,18 +285,36 @@ func findActionableCondition(u *unstructured.Unstructured, condTypes ...string)
+ 		current, _ := conditions.Find(u, condition.Type)
+ 		paused := condition.Type == "Synced" && condition.Reason == "ReconcilePaused" && u.GetAnnotations()["crossplane.io/paused"] == "true"
+ 		if current.Status == "False" && !paused && !isTransientCRDCondition(u, condition.Reason) {
+-			if u.GetGeneration() <= 0 || condition.ObservedGeneration <= 0 || condition.ObservedGeneration >= u.GetGeneration() {
+-				return condition, true
++			isDeleting := condition.Type == "Ready" && condition.Reason == "Deleting"
++			deletion := u.GetDeletionTimestamp()
++			expectedDeletion := false
++			if isDeleting && deletion != nil && !deletion.IsZero() {
++				age := now.Sub(deletion.Time)
++				expectedDeletion = age >= -health.NodeRemovalWarningAfter && age < health.NodeRemovalWarningAfter
+ 			}
+-			if !hasStale {
+-				condition.Message = strings.TrimSpace(fmt.Sprintf("Condition was last reported for generation %d; current resource generation is %d. %s", condition.ObservedGeneration, u.GetGeneration(), condition.Message))
+-				stale, hasStale = condition, true
++			if !expectedDeletion {
++				isStale := u.GetGeneration() > 0 && condition.ObservedGeneration > 0 && condition.ObservedGeneration < u.GetGeneration()
++				if isStale {
++					condition.Message = strings.TrimSpace(fmt.Sprintf("Condition was last reported for generation %d; current resource generation is %d. %s", condition.ObservedGeneration, u.GetGeneration(), condition.Message))
++				}
++				switch {
++				case isDeleting:
++					// A specific failure is more actionable than the deletion summary.
++					deleting, hasDeletingFallback = condition, true
++				case !isStale:
++					return condition, true
++				case !hasStale:
++					stale, hasStale = condition, true
++				}
+ 			}
+ 		}
+ 		// Skip the whole type so an older representation cannot revive an expected condition.
+ 		condTypes = slices.DeleteFunc(slices.Clone(condTypes), func(candidateType string) bool { return candidateType == condition.Type })
+ 	}
+-	return stale, hasStale
++	if hasStale {
++		return stale, true
++	}
++	return deleting, hasDeletingFallback
+ }
  
--  useImperativeHandle(ref, () => ({
--    open: () => {
--      if (disabled || loading || pending) return
--      setIsOpen(true)
--    },
--  }), [disabled, loading, pending])
-+  const openPicker = useCallback(() => {
-+    if (isOpen || disabled || loading || pending) return
-+    setDraft(new Set(scopeActives))
-+    setIsOpen(true)
-+  }, [isOpen, disabled, loading, pending, scopeActives])
+ // gwListenerCond is one listener's failing condition within a gateway group.
+```
+
+**File**: `internal/issues/source_conditions_test.go` (modified, +221/-0)
+```diff
+@@ -5,7 +5,9 @@ import (
+ 	"testing"
+ 	"time"
+ 
++	"github.com/skyhook-io/radar/internal/k8s"
+ 	"github.com/skyhook-io/radar/pkg/issuesapi"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+ 	"k8s.io/apimachinery/pkg/runtime/schema"
+ 	"k8s.io/utils/ptr"
+@@ -776,3 +778,222 @@ func TestCurrentConditionGenerationDoesNotReviveOlderRepresentation(t *testing.T
+ 		t.Fatalf("current representation must stay authoritative and qualified: %+v found=%v", c, found)
+ 	}
+ }
 +
-+  useImperativeHandle(ref, () => ({ open: openPicker }), [openPicker])
- 
-   // Disabling the trigger while a switch is pending drops its focus, so this stays armed through that cycle.
-   useEffect(() => {
-@@ -287,7 +288,7 @@ export const NamespacePicker = forwardRef<NamespacePickerHandle, NamespacePicker
-       >
-         <button
-           ref={triggerRef}
--          onClick={() => !isDisabled && (isOpen ? closeAndApply() : setIsOpen(true))}
-+          onClick={() => !isDisabled && (isOpen ? closeAndApply() : openPicker())}
-           disabled={isDisabled}
-           className={
-             variant === 'segment'
-```
-
-**File**: `packages/k8s-ui/src/components/ui/MultiSelectPicker.test.tsx` (modified, +1/-1)
-```diff
-@@ -53,7 +53,7 @@ describe('MultiSelectPicker', () => {
-     expect(only).toContain('group-hover/row:opacity-100')
-     expect(only).toContain('group-has-[:focus-visible]/row:opacity-100')
-     expect(only).toContain('focus-visible:opacity-100')
--    expect(only).toContain('[@media(hover:none)]:opacity-100')
-+    expect(only).toContain('any-pointer-coarse:opacity-100')
-   })
- 
-   it('shows the filter input above the threshold and hides it below', () => {
-```
-
-**File**: `packages/k8s-ui/src/components/ui/MultiSelectPicker.tsx` (modified, +2/-2)
-```diff
-@@ -157,12 +157,12 @@ export function MultiSelectPicker({
-               </span>
-             </label>
-             {onSelectOnly && (
--              // Tailwind's hover: only matches devices that can hover, so touch needs its own rule.
-+              // Touchscreens can coexist with a hover-capable mouse.
-               <button
-                 type="button"
-                 onClick={() => onSelectOnly(item)}
-                 aria-label={`Show only ${item}`}
--                className="shrink-0 mr-2 px-1.5 py-0.5 rounded border border-theme-border bg-theme-surface text-[11px] text-theme-text-secondary hover:bg-theme-elevated hover:text-theme-text-primary opacity-0 transition-opacity group-hover/row:opacity-100 group-has-[:focus-visible]/row:opacity-100 focus-visible:opacity-100 [@media(hover:none)]:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-+                className="shrink-0 mr-2 px-1.5 py-0.5 rounded border border-theme-border bg-theme-surface text-[11px] text-theme-text-secondary hover:bg-theme-elevated hover:text-theme-text-primary opacity-0 transition-opacity group-hover/row:opacity-100 group-has-[:focus-visible]/row:opacity-100 focus-visible:opacity-100 any-pointer-coarse:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-               >
-                 Only
-               </button>
++func TestDeletionConditionSelectionRetainsSpecificEvidence(t *testing.T) {
++	failedAt := time.Now().Add(-20 * time.Minute).UTC().Truncate(time.Second)
++	for _, tc := range []struct {
++		name                                       string
++		deletionAge                                time.Duration
++		missingDeletion, staleDeleting, staleError bool
++		error, errorFirst, unknownOnset            bool
++		currentReady                               string
++		want                                       string
++	}{
++		{name: "recent deletion keeps older error", deletionAge: time.Minute, staleError: true, error: true, want: "Synced: ReconcileError"},
++		{name: "overdue deletion keeps older error", deletionAge: 11 * time.Minute, staleError: true, error: true, want: "Synced: ReconcileError"},
++		{name: "older error before overdue deletion", deletionAge: 11 * time.Minute, staleError: true, error: true, errorFirst: true, want: "Synced: ReconcileError"},
++		{name: "uncertain deletion keeps older error", missingDeletion: true, staleError: true, error: true, want: "Synced: ReconcileError"},
++		{name: "older deletion yields to current error", deletionAge: 11 * time.Minute, staleDeleting: true, error: true, want: "Synced: ReconcileError"},
++		{name: "older deletion keeps qualification", deletionAge: 11 * time.Minute, staleDeleting: true, want: "Ready: Deleting"},
++		{name: "older deletion cannot revive expected progress", deletionAge: time.Minute, staleDeleting: true},
++		{name: "unknown time does not inherit deletion onset", deletionAge: 11 * time.Minute, error: true, unknownOnset: true, want: "Synced: ReconcileError"},
++		{name: "modern unknown supersedes older deletion", deletionAge: 11 * time.Minute, currentReady: "Unknown"},
++		{name: "modern true supersedes older deletion", deletionAge: 11 * time.Minute, currentReady: "True"},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			deleting := map[string]any{"type": "Ready", "status": "False", "reason": "Deleting", "message": "cleanup requested", "lastTransitionTime": failedAt.Add(-time.Hour).Format(time.RFC3339)}
++			if tc.staleDeleting {
++				deleting["observedGeneration"] = int64(1)
++			}
++			conds := []map[string]any{deleting}
++			if tc.error {
++				failure := map[string]any{"type": "Synced", "status": "False", "reason": "ReconcileError", "message": "delete failed: denied"}
++				if tc.staleError {
++					failure["observedGeneration"] = int64(1)
++				}
++				if !tc.unknownOnset {
++					failure["lastTransitionTime"] = failedAt.Format(time.RFC3339)
++				}
++				if tc.errorFirst {
++					conds = append([]map[string]any{failure}, conds...)
++				} else {
++					conds = append(conds, failure)
++				}
++			}
++			u := rolloutWithConditions(conds)
++			u.SetName("example")
++			u.SetNamespace("test")
++			u.SetGeneration(2)
++			if !tc.missingDeletion {
++				ts := metav1.NewTime(time.Now().Add(-tc.deletionAge))
++				u.SetDeletionTimestamp(&ts)
++			}
++			if tc.currentReady != "" {
++				u.Object["status"].(map[string]any)["v1beta2"] = rolloutWithConditions([]map[string]any{{"type": "Ready", "status": tc.currentReady}}).Object["status"]
++			}
++			gvr := schema.GroupVersionResource{Group: "example.com", Version: "v1", Resource: "widgets"}
++			p := &fakeProvider{dynamic: map[schema.GroupVersionResource][]*unstructured.Unstructured{gvr: {u}}, kinds: map[schema.GroupVersionResource]string{gvr: "Widget"}, namespaced: map[schema.GroupVersionResource]bool{gvr: true}}
++			for _, grouped := range []bool{false, true} {
++				got := Compose(p, Filters{Namespaces: []string{"test"}, Grouped: grouped})
++				if tc.want == "" {
++					if len(got) != 0 {
++						t.Fatalf("expected quiet condition, got %+v", got)
++					}
++					continue
++				}
++				if len(got) != 1 || got[0].Reason != tc.want {
++					t.Fatalf("want %s, got %+v", tc.want, got)
++				}
++				wantMessage, wantAt, stale := "cleanup requested", failedAt.Add(-time.Hour), tc.staleDeleting
++				if tc.error {
++					wantMessage, wantAt, stale = "delete failed: denied", failedAt, tc.staleError
++				}
++				if stale {
++					wantMessage = "Condition was last reported for generation 1; current resource generation is 2. " + wantMessage
++				}
++				if got[0].Message != wantMessage || got[0].OnsetUnknown != tc.unknownOnset {
++					t.Fatalf("selected observation changed: %+v", got[0])
++				}
++				if !tc.unknownOnset && !got[0].FirstSeen.Equal(wantAt) {
++					t.Fatalf("wrong onset %v, want %v", got[0].FirstSeen, wantAt)
++				}
++			}
++		})
++	}
++}
++
++func TestDeletingFa
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2303** (2026-10-25): Keep successfully completed Pods out of condition-based Issues (@nadaverell)
-- **PR #2301** (2026-10-25): Fix memory quantity suffixes in Prometheus chart overlays (@nadaverell)
-- **PR #2300** (2026-10-25): deps: batch soaked Wails, D-Bus, and undici updates (@nadaverell)
-- **PR #2299** (closed): deps(npm): bump undici from 7.29.1 to 7.30.1 (@dependabot[bot])
-- **PR #2296** (2026-10-24): Document audit resource budgets, drain completion and Trivy search (@nadaverell)
-- **PR #2295** (2026-10-24): Add a discoverable What's New skill with companion-repo workflows (@nadaverell)
+- **PR #2357** (2026-10-27): Watch custom resources of CRDs installed after Radar starts (@nadaverell)
+- **PR #2354** (2026-10-27): Refuse rebinding Host values on unauthenticated shared listeners (@nadaverell)
+- **PR #2353** (2026-10-27): Phones: no YAML authoring or bulk select; one-column compare (@nadaverell)
+- **PR #2351** (2026-10-27): Link each manager a GitOps write warning names, and explain manager gaps in plain words (@nadaverell)
+- **PR #2350** (2026-10-27): Logs on phones: compact header, full-width lines (@nadaverell)
+- **PR #2349** (2026-10-27): Offer no update to development builds (@nadaverell)
 
 ---
 
@@ -2554,48 +2977,40 @@ functionality to change)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. memory quantity suffixes in Prometheus chart overlays (#2301)
+## X. Require an impact preview for MCP deletion and report accepted cleanup as progre
 
 **RULE**:
-When implementing operations in `web/src/components/resource/PrometheusCharts.overlays.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/mcp.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7cacbbcc`: memory quantity suffixes in Prometheus chart overlays (#2301). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `78ed5a4f`: Require an impact preview for MCP deletion and report accepted cleanup as progress (#2041). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/src/components/resource/PrometheusCharts.overlays.test.ts`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/mcp.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
 
-  it.each([
-    ['1024000m', '2048000m'],
-    ['1024000000u', '2048000000u'],
-    ['1024000000000n', '2048000000000n'],
-    ['1.024k', '2.048k'],
-    ['1.024K', '2.048K'],
-  ])('reads memory request %s and limit %s as bytes', (request, limit) => {
-    const resource = { spec: { containers: [
-      { resources: { requests: { memory: request }, limits: { memory: limit } } },
-    ] } }
-    expect(computeRequestLimitLines(resource, 'Pod', 'memory')).toEqual([
-      { value: 1024, label: 'request 1KiB', kind: 'request' },
-      { value: 2048, label: 'limit 2KiB', kind: 'limit' },
-    ])
-  })
+### MCP deletion preview and confirmation
 
-  it('sums binary and millibyte quantities across containers and native sidecars', () => {
-    const resource = { spec: { template: { spec: {
-      containers: [{ resources: { requests: { memory: '16Gi' }, limits: { memory: '16Gi' } } }],
-      initContainers: [{ restartPolicy: 'Always', resources: {
-        requests: { memory: '1181116006400m' }, limits: { memory: '1073741824000m' },
-      } }],
-    } } } }
-    const lines = computeRequestLimitLines(resource, 'Deployment', 'memory')!
-    expect(lines[0].value).toBeCloseTo(18360985190.4)
-    expect(lines[0].label).toBe('request 17.1GiB')
-    expec
+External writable MCP exposes `delete_resource`. It is absent from read-only
+mounts and from the built-in `/mcp-apply` transport used by Radar OSS's built-in CLI agents. Hub's sidecar independently enforces its read-only gate; it does not use this new mount.
+Built-in deletion stays deferred until the approval flow presents this preview.
+There is no new configuration switch.
+
+The default call performs a caller-authenticated server dry-run and returns a
+summary, finalizers, propagation, the shared observed-impact preview, and a
+five-minute signed confirmation. `dry_run: false` requires that confirmation.
+It binds the caller and groups, captured cluster context, root UID,
+generation/finalizers (resourceVersion for kinds without generation), and propagation policy.
+Root spec/finalizer/incarnation or policy changes require another preview. For roots
+with generation, status-only changes before confirmation can proceed with fresh
+resourceVersion preconditions. Kinds without generation require another preview
+after any update. An API-server conflict returns an error requiring another preview;
+the tool does not retry DELETE automatically.
+
+Depende
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2605,4 +3020,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7cacbbcc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `78ed5a4f` are properly handled with clean fallback behavior.

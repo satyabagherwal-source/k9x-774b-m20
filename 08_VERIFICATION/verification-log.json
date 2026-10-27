@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-0UB6",
-    "timestamp": "2026-10-25T12:56:52.338Z",
-    "repository": "zarf-dev/zarf",
-    "learningId": "learn-github-zarf-dev-zarf",
-    "contentHash": "e0b4c9cc5161acb8f20b9ca1d9a61117ba53961b07c7fb497ea94ef5d7f3d428",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-FGX4",
-    "timestamp": "2026-10-25T13:08:14.824Z",
-    "repository": "tw93/Mole",
-    "learningId": "learn-github-tw93-mole",
-    "contentHash": "79e6be67e0a6ab94434cba3da78c87864462df44413162bf91eb6c976c781f76",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-FHQ6",
-    "timestamp": "2026-10-25T13:08:15.870Z",
-    "repository": "HemmingwayAI/Hemmingway-1",
-    "learningId": "learn-huggingface-altworld-hemmingway-1",
-    "contentHash": "a5bfb8db551a006ba6ef5cadfe5ad6dfadc6035d3c1083e441d587b93b410db6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-FM1C",
-    "timestamp": "2026-10-25T13:08:21.456Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "3d99c9eb02761202d2baf5dd014e1f7eaf4aaf3dc1f94e192faa48a1bfa336e6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-ZWCJ",
     "timestamp": "2026-10-25T13:24:07.939Z",
     "repository": "ionic-team/ionic-framework",
@@ -7490,6 +7430,66 @@
     "repository": "ClickHouse/ClickHouse",
     "learningId": "learn-github-clickhouse-clickhouse",
     "contentHash": "4a442519d897f584d35ad8356f6b3e2b01e37acceef65683607327e15c208509",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-X2E7",
+    "timestamp": "2026-10-27T13:25:16.255Z",
+    "repository": "Xudong-Huang/may",
+    "learningId": "learn-github-xudong-huang-may",
+    "contentHash": "f1678e05a32e6b1b9fc5a127aa3666e0769d95ca2862570951920ceeed58a061",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-X49P",
+    "timestamp": "2026-10-27T13:25:18.685Z",
+    "repository": "axios/axios",
+    "learningId": "learn-github-axios-axios",
+    "contentHash": "8d3e5104f396ddedddba651c933c5b990e1afdabd14a023e06d22f060c77489c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-X89J",
+    "timestamp": "2026-10-27T13:25:23.863Z",
+    "repository": "skyhook-io/radar",
+    "learningId": "learn-github-skyhook-io-radar",
+    "contentHash": "7dcaa10aaebeb190b0b8bd9d8df93d2e482a0df9aa2d02092cf304b53e116b5f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-XBM6",
+    "timestamp": "2026-10-27T13:25:28.206Z",
+    "repository": "dragonflydb/dragonfly",
+    "learningId": "learn-github-dragonflydb-dragonfly",
+    "contentHash": "8cacac3431d19d42451ff060fd2f13ee473633b371fbed95b2505efbbdae813b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

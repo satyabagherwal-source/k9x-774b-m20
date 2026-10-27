@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
-> **Source Version**: `68f60e27`  
+> **Source Version**: `1042051b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T22:13:56.700Z  
+> **Timestamp**: 2026-10-27T13:25:27.852Z  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T22:13:55.798Z  
+> **Harvest Timestamp**: 2026-10-27T13:25:27.492Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern replacement for Redis and Memcached
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 31818 stars
+- **Stars / Engagement**: 31824 stars
 
 ---
 
@@ -2321,65 +2321,359 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `68f60e27` (2026-10-25)
-**Commit Message**: chore(deps): bump setuptools from 84.0.0 to 84.1.0 (#8676)
+### Incident Patch 1: `1042051b` (2026-10-27)
+**Commit Message**: fix(server): don't exit on cloud snapshot storage init failure at runtime (#8689)
 
-Bumps [setuptools](https://github.com/pypa/setuptools) from 84.0.0 to 84.1.0.
-- [Release notes](https://github.com/pypa/setuptools/releases)
-- [Changelog](https://github.com/pypa/setuptools/blob/main/NEWS.rst)
-- [Commits](https://github.com/pypa/setuptools/compare/v84.0.0...v84.1.0)
+CreateCloudSnapshotStorage called exit(1) when S3/GCS/Azure storage initialization
+failed. It is also used by runtime SAVE/BGSAVE/DFLY LOAD with a cloud URI, so a
+transient issue such as a missing AWS credential provider killed a serving instance.
+
+Return an error instead and propagate it to the command caller. Startup with a cloud
+--dir still exits on failure.
+
+**File**: `src/server/server_family.cc` (modified, +52/-25)
+```diff
+@@ -308,44 +308,53 @@ string UnknownCmd(string cmd, facade::ParsedArgs args, size_t num_args) {
+                       absl::StrJoin(args.begin(), end, ", ", CmdArgListFormatter()));
+ }
+ 
+-std::shared_ptr<detail::SnapshotStorage> CreateCloudSnapshotStorage(std::string_view uri) {
++// Returns an error instead of terminating the process: this is called at runtime by
++// SAVE/LOAD commands, where a transient failure (e.g. missing credentials) must not kill
++// an already serving instance.
++io::Result<std::shared_ptr<detail::SnapshotStorage>, GenericError> CreateCloudSnapshotStorage(
++    std::string_view uri) {
++  auto make_err = [](std::error_code ec, std::string_view what) {
++    return nonstd::make_unexpected(GenericError{ec, absl::StrCat("Failed to initialize ", what)});
++  };
++
+   if (detail::IsS3Path(uri)) {
+     auto aws = std::make_shared<detail::AwsS3SnapshotStorage>(absl::GetFlag(FLAGS_s3_endpoint),
+                                                               absl::GetFlag(FLAGS_s3_use_https),
+                                                               absl::GetFlag(FLAGS_s3_ec2_metadata));
+     auto ec = shard_set->pool()->GetNextProactor()->Await(
+         [&] { return aws->Init(detail::kBucketConnectMs); });
+-    if (ec) {
+-      LOG(ERROR) << "Failed to initialize AWS S3 snapshot storage: " << ec.message();
+-      exit(1);
+-    }
++    if (ec)
++      return make_err(ec, "AWS S3 snapshot storage");
+     return aws;
+   } else if (detail::IsGCSPath(uri)) {
+ #ifdef WITH_GCP
+     auto gcs = std::make_shared<detail::GcsSnapshotStorage>();
+     auto ec = shard_set->pool()->GetNextProactor()->Await([&] { return gcs->Init(3000); });
+-    if (ec) {
+-      LOG(ERROR) << "Failed to initialize GCS snapshot storage: " << ec.message();
+-      exit(1);
+-    }
++    if (ec)
++      return make_err(ec, "GCS snapshot storage");
+     return gcs;
+ #else
+-    LOG(ERROR) << "Compiled without GCP support";
+-    exit(1);
++    return nonstd::make_unexpected(
++        GenericError{make_error_code(errc::not_supported), "Compiled without GCP support"});
+ #endif
+   } else if (detail::IsAzurePath(uri)) {
+     auto azure = std::make_shared<detail::AzureSnapshotStorage>();
+     auto ec = shard_set->pool()->GetNextProactor()->Await(
+         [&] { return azure->Init(uri, detail::kBucketConnectMs); });
+-    if (ec) {
+-      LOG(ERROR) << "Failed to initialize Azure snapshot storage: " << ec.message();
+-      exit(1);
+-    }
++    if (ec)
++      return make_err(ec, "Azure snapshot storage");
+     return azure;
+-  } else {
+-    LOG(ERROR) << "Unknown cloud storage " << uri;
+-    exit(1);
+   }
++  return nonstd::make_unexpected(GenericError{make_error_code(errc::invalid_argument),
++                                              absl::StrCat("Unknown cloud storage ", uri)});
++}
++
++// Cloud paths need their own storage, other paths use the server's default storage.
++io::Result<std::shared_ptr<detail::SnapshotStorage>, GenericError> SelectSnapshotStorage(
++    std::string_view path, std::shared_ptr<detail::SnapshotStorage> default_storage) {
++  if (detail::IsCloudPath(path))
++    return CreateCloudSnapshotStorage(path);
++  return default_storage;
+ }
+ 
+ template <typename T> void UpdateMax(T* maxv, T current) {
+@@ -1428,7 +1437,12 @@ void ServerFamily::Init(util::AcceptServer* acceptor, std::vector<facade::Listen
+   string flag_dir = GetFlag(FLAGS_dir);
+ 
+   if (detail::IsCloudPath(flag_dir)) {
+-    snapshot_storage_ = CreateCloudSnapshotStorage(flag_dir);
++    auto res = CreateCloudSnapshotStorage(flag_dir);
++    if (!res) {
++      LOG(ERROR) << res.error().Format();
++      exit(1);
++    }
++    snapshot_storage_ = std::move(*res);
+   } else if (fq_threadpool_) {
+     snapshot_storage_ = std::make_shared<detail::FileSnapshotStorage>(fq_threadpool_.get());
+   } else {
+@@ -1599,8 +1613,10 @@ GenericError ServerFamily::CheckSnapshotLoadable(const std::string& path) {
+     return {std::make_error_code(std::errc::operation_not_permitted), "replica cannot load data"};
+   if (path.empty())
+     return {std::make_error_code(std::errc::invalid_argument), "no snapshot found to load"};
+-  auto storage = detail::IsCloudPath(path) ? CreateCloudSnapshotStorage(path) : snapshot_storage_;
+-  if (auto res = storage->ExpandSnapshot(path); !res)
++  auto storage = SelectSnapshotStorage(path, snapshot_storage_);
++  if (!storage)
++    return storage.error();
++  if (auto res = (*storage)->ExpandSnapshot(path); !res)
+     return res.error();
+   return {};
+ }
+@@ -1626,7 +1642,12 @@ std::optional<fb2::Future<GenericError>> ServerFamily::Load(const std::string& p
+ 
+   // Select the right storage based on the path: cloud paths need their own storage,
+   // mirroring what DoSaveCheckAndStart does for saves.
+-  auto storage = detail::IsCloudPath(path) ? CreateCloudSnapshotStorage(path) : snapshot_storage_;
++  auto storage_res = SelectSnapshotStorage(path, snapshot_storage_);
++  if (!storage_res) {
++    LOG(ERROR) << "Failed to load snapshot: " << storage_res.error().F
+```
+
+**File**: `tests/dragonfly/snapshot_test.py` (modified, +27/-0)
+```diff
+@@ -452,6 +452,33 @@ async def test_s3_snapshot(async_client, tmp_dir):
+         )
+ 
+ 
++async def test_s3_init_failure_at_runtime_does_not_exit(df_factory, tmp_path, monkeypatch):
++    """A cloud storage init failure during SAVE/LOAD must return an error, not kill the server."""
++    for var in list(os.environ):
++        if var.startswith("AWS_"):
++            monkeypatch.delenv(var)
++    monkeypatch.setenv("HOME", str(tmp_path))
++    monkeypatch.delenv("MINIO_S3_ENDPOINT", raising=False)
++
++    df_server = df_factory.create(dir=str(tmp_path))
++    df_server.start()
++    client = df_server.client()
++    await client.set("k", "v")
++
++    s3_path = "s3://nonexistent-dfly-test-bucket/dir"
++    for cmd in [
++        ("SAVE", "DF", s3_path, "snap"),
++        ("BGSAVE", "DF", s3_path, "snap"),
++        ("DFLY", "LOAD", s3_path + "/snap-summary.dfs", "APPEND"),
++    ]:
++        with pytest.raises(redis.exceptions.ResponseError, match="Failed to initialize AWS S3"):
++            await client.execute_command(*cmd)
++        assert await client.get("k") == "v"
++
++    await client.aclose()
++    df_server.stop()
++
++
+ # If DRAGONFLY_S3_BUCKET is configured, AWS credentials must also be
+ # configured.
+ @pytest.mark.skipif(
+```
 
 ---
-updated-dependencies:
-- dependency-name: setuptools
-  dependency-version: 84.1.0
-  dependency-type: indirect
-...
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+### Incident Patch 2: `a495967c` (2026-10-27)
+**Commit Message**: Cover JSON, streams and sketches in DEBUG OBJHIST (#8656)
 
-**File**: `uv.lock` (modified, +5/-4)
+feat(server): cover json, streams and sketches in DEBUG OBJHIST
+
+Report JSON's cached malloc size without traversing its contents.
+Collect stream data and field/value length histograms using inline iterator buffers.
+Use tracked memory sizes instead of slow memory scans.
+
+**File**: `src/server/debugcmd.cc` (modified, +43/-10)
 ```diff
-@@ -1,5 +1,5 @@
- version = 1
--revision = 3
-+revision = 5
- requires-python = ">=3.10"
- resolution-markers = [
-     "python_full_version >= '3.14'",
-@@ -754,6 +754,7 @@ wheels = [
- name = "dragonfly-tests"
- version = "0.0.0"
- source = { virtual = "." }
-+default-groups = ["test"]
+@@ -7,6 +7,7 @@
  
- [package.dev-dependencies]
- test = [
-@@ -2372,11 +2373,11 @@ wheels = [
+ extern "C" {
+ #include "redis/redis_aux.h"
++#include "redis/stream.h"
+ }
  
- [[package]]
- name = "setuptools"
--version = "84.0.0"
-+version = "84.1.0"
- source = { registry = "https://pypi.org/simple" }
--sdist = { url = "https://files.pythonhosted.org/packages/6d/44/f5da03a8ef95d369145c5bb53050e7877c9f3d312e128605fd9504829143/setuptools-84.0.0.tar.gz", hash = "sha256:f4695c21257f0d9b537ec2692c941d02ee143b7cc1276941349a546573b2ef73", size = 1168449, upload-time = "2026-08-08T18:27:58.365Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/73/eb/7e5f628ee2eb168fecbf8026de7856b2543d6d609cc85f086b9a91ac93d6/setuptools-84.1.0.tar.gz", hash = "sha256:23657205b63d4d31395ab917815247f694aafad28cd21316bf5fd45a51048ea0", size = 1171783, upload-time = "2026-10-19T20:11:43.489Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/95/9c/c510029fc6ef33a6275cd2c5d3cecd6613dfd6aa401d57c54f1c18852ccf/setuptools-84.0.0-py3-none-any.whl", hash = "sha256:51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670", size = 818216, upload-time = "2026-08-08T18:27:56.719Z" },
-+    { url = "https://files.pythonhosted.org/packages/18/02/b4bbb90f8f29e334898ff45c6d9b1fffaa6f378017052b3023a06262b5f7/setuptools-84.1.0-py3-none-any.whl", hash = "sha256:5231689c6ac8156cd155cfb98c3fd6fb252c3e7e9bd3d78b64d3c55f132624c9", size = 819380, upload-time = "2026-10-19T20:11:41.684Z" },
- ]
+ #include <absl/cleanup/cleanup.h>
+@@ -161,6 +162,29 @@ struct ObjHist {
+   base::Histogram listpack;     // for listpack encodings - the malloc used of the listpack.
+ };
  
- [[package]]
++size_t StreamDataLen(stream* s, ObjHist* hist) {
++  // Stream IDs fit the rax iterator's inline key/path buffers; fields are read in place.
++  static_assert(sizeof(streamID) <= RAX_ITER_STATIC_LEN);
++  static_assert(sizeof(streamID) + 1 <= RAX_STACK_STATIC_ITEMS);
++  streamIterator si;
++  streamID id;
++  int64_t numfields;
++  size_t len = 0;
++  streamIteratorStart(&si, s, nullptr, nullptr, 0);
++  while (streamIteratorGetID(&si, &id, &numfields)) {
++    while (numfields--) {
++      unsigned char *field, *value;
++      int64_t field_len, value_len;
++      streamIteratorGetField(&si, &field, &value, &field_len, &value_len);
++      size_t entry_len = field_len + value_len;
++      hist->entry_len.Add(entry_len);
++      len += entry_len;
++    }
++  }
++  streamIteratorStop(&si);
++  return len;
++}
++
+ // No yield: runs inside Traverse, which holds a raw segment pointer a yield could free.
+ void AddObjHist(PrimeIterator it, ObjHist* hist) {
+   using namespace container_utils;
+@@ -194,7 +218,7 @@ void AddObjHist(PrimeIterator it, ObjHist* hist) {
+     IterateList(pv, per_entry_cb, 0, SIZE_MAX, /*allow_yield=*/false);
+     if (pv.Encoding() == kEncodingQL2) {
+       const QList* ql = static_cast<QList*>(pv.RObjPtr());
+-      malloc_used = ql->MallocUsed(true);
++      malloc_used = ql->MallocUsed(false);
+     } else if (pv.Encoding() == kEncodingListPack) {
+       malloc_used = pv.MallocUsed();
+       hist->listpack.Add(malloc_used);
+@@ -223,21 +247,28 @@ void AddObjHist(PrimeIterator it, ObjHist* hist) {
+     if (pv.Encoding() == kEncodingListPack) {
+       hist->listpack.Add(pv.MallocUsed());
+     }
++  } else if (pv.ObjType() == OBJ_STREAM) {
++    stream* s = static_cast<stream*>(pv.RObjPtr());
++    data_len = StreamDataLen(s, hist);
++    hist->card.Add(s->length);
++  } else if (pv.ObjType() != OBJ_JSON) {
++    // Probabilistic types (bloom, cuckoo, count-min sketch, topk) are fixed-size sketches.
++    data_len = pv.MallocUsed();
+   }
+-  // TODO: streams
+ 
+   if (malloc_used == 0) {
+     // Fallback
+-    malloc_used = pv.MallocUsed(true);
++    malloc_used = pv.MallocUsed();
+   }
+ 
+   hist->malloc_used.Add(malloc_used);
+ 
+-  // TODO: data size for json and streams.
+-  if (pv.ObjType() != OBJ_JSON && pv.ObjType() != OBJ_STREAM)
++  // JSON reports only its cached malloc size.
++  if (pv.ObjType() != OBJ_JSON)
+     hist->data_len.Add(data_len);
+ 
+-  if (pv.ObjType() != OBJ_STRING && pv.ObjType() != OBJ_JSON)
++  // Stream cardinality is added above since its Size() returns the memory usage.
++  if (pv.ObjType() != OBJ_STRING && pv.ObjType() != OBJ_JSON && pv.ObjType() != OBJ_STREAM)
+     hist->card.Add(pv.Size());
+ }
+ 
+@@ -1215,13 +1246,13 @@ void DebugCmd::ObjHist(CommandContext* cmd_cntx) {
+ 
+     // IterateMap/IterateSet may trigger lazy expiry.  Clean up empty containers
+     // in the currently traversed DB (not the connection-selected one).
+-    if (it->second.Size() == 0 && it->second.Encoding() == kEncodingStrMap2) {
++    if ((obj_type == OBJ_SET || obj_type == OBJ_HASH) &&
++        it->second.Encoding() == kEncodingStrMap2 && it->second.Size() == 0) {
+       auto& db_slice = cntx->ns->GetDbSlice(EngineShard::tlocal()->shard_id());
+       DbContext db_cntx{cntx->ns, dbid, GetCurrentTimeMs()};
+       string key;
+       it->first.GetString(&key);
+-      if (obj_type == OBJ_SET || obj_type == OBJ_HASH)
+-        DeleteCollectionIfEmpty(db_slice, db_cntx, key, it->second);
++      DeleteCollectionIfEmpty(db_slice, db_cntx, key, it->second);
+     }
+   };
+   TraverseAllEntries(absl::GetFlag(FLAGS_background_debug_jobs), cntx_, cb);
+@@ -1250,7 +1281,9 @@ void DebugCmd::ObjHist(CommandContext* cmd_cntx) {
+       StrAppend(&result, "Cardinality histogram (number of elements in sets):\n",
+                 hist_ptr->card.ToString(), "\n");
+     }
+-    StrAppend(&result, "Items length histogram:\n", hist_ptr->entry_len.ToString(), "\n");
++    if (hist_ptr->entry_len.count() > 0) {
++      StrAppend(&result, "Items length histogram:\n", hist_ptr->entry_len.ToString(), "\n");
++    }
+     if (hist_ptr->listpack.count() > 0) {
+       StrAppend(&result, "Listpack histogram:\n", hist_ptr->listpack.ToString(), "\n");
+     }
+```
+
+**File**: `src/server/generic_family_test.cc` (modified, +52/-0)
+```diff
+@@ -1987,6 +1987,58 @@ TEST_F(GenericFamilyTest, DebugObjHistMultiDbCorrectDb) {
+   EXPECT_EQ("value", Run({"HGET", "shared", "alive"}));
+ }
+ 
++TEST_F(GenericFamilyTest, DebugObjHistDataSize) {
++  Run({"JSON.SET", "json", "$", R"({"ab":"cde","f":[1,"gh"]})"});
++  Run({"XADD", "stream", "*", "f1", "v1", "f2", "value2"});
++  Run({"XADD", "stream", "*", "f1", "v1"});
++  Run({"BF.ADD", "bloom", "item"});
++
++  string hist = Run({"DEBUG", "OBJHIST"}).GetString();
++  auto section = [&](string_view type) {
++    size_t start = hist.find(absl::StrCat("OBJECT:", type, "\n"));
++    EXPECT_NE(start, string::npos) << type;
++    if (start == string::npos)
++      return string{};
++    size_t end = hist.find("OBJECT:", start + 1);
++    return hist.substr(start, end == string::npos ? string::npos : end - start);
++  };
++  constexpr string_view kDataSize = "Values - Data size (in-memory and tiered):\n";
++  constexpr string_view kMemoryUsed = "Values - Total Memory used:\n";
++
++  string json_hist = section("ReJSON-RL");
++  EXPECT_THAT(json_hist, HasSubstr(absl::StrCat(kMemoryUsed, "Count: 1 ")));
++  EXPECT_THAT(json_hist, Not(HasSubstr(absl::StrCat(kMemoryUsed, "Count: 1 Average: 0.0000"))));
++  EXPECT_THAT(json_hist, Not(HasSubstr(kDataSize)));
++  EXPECT_THAT(json_hist, Not(HasSubstr("Cardinality histogram")));
++  EXPECT_THAT(json_hist, Not(HasSubstr("Items length histogram")));
++
++  string stream_hist = section("stream");
++  EXPECT_THAT(stream_hist, HasSubstr(absl::StrCat(kMemoryUsed, "Count: 1 ")));
++  EXPECT_THAT(stream_hist, HasSubstr(absl::StrCat(kDataSize, "Count: 1 Average: 16.0")));
++  EXPECT_THAT(stream_hist, HasSubstr("Cardinality histogram (number of elements in sets):\n"
++                                     "Count: 1 Average: 2.0"));
++  EXPECT_THAT(stream_hist, HasSubstr("Items length histogram:\nCount: 3 "));
++
++  string bloom_hist = section("MBbloom--");
++  EXPECT_THAT(bloom_hist, HasSubstr(absl::StrCat(kDataSize, "Count: 1 ")));
++  EXPECT_THAT(bloom_hist, Not(HasSubstr(absl::StrCat(kDataSize, "Count: 1 Average: 0.0000"))));
++}
++
++TEST_F(GenericFamilyTest, DebugObjHistStreamTombstonesAndNodes) {
++  for (unsigned i = 1; i <= 256; ++i) {
++    EXPECT_EQ(Run({"XADD", "stream", StrCat(i, "-0"), "123", "456"}), StrCat(i, "-0"));
++  }
++  EXPECT_EQ(Run({"XADD", "stream", "257-0", "field", "value"}), "257-0");
++  EXPECT_THAT(Run({"XDEL", "stream", "2-0"}), IntArg(1));
++
++  string hist = Run({"DEBUG", "OBJHIST"}).GetString();
++  EXPECT_THAT(hist, HasSubstr("Values - Data size (in-memory and tiered):\n"
++                              "Count: 1 Average: 1540.0"));
++  EXPECT_THAT(hist, HasSubstr("Cardinality histogram (number of elements in sets):\n"
++                              "Count: 1 Average: 256.0"));
++  EXPECT_THAT(hist, HasSubstr("Items length histogram:\nCount: 256 "));
++}
++
+ TEST_F(GenericFamilyTest, ZInterStoreDeletesEmptySet) {
+   for (int i = 0; i < 20; ++i) {
+     Run({"SADDEX", "skey", "1", absl::StrCat("m", i)});
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8689** (2026-10-27): fix(server): don't exit on cloud snapshot storage init failure at runtime (@dranikpg)
+- **PR #8684** (2026-10-27): refactor(acl): expose a pure CheckCommand over an AclRulesView (@romange)
 - **PR #8676** (2026-10-25): chore(deps): bump setuptools from 84.0.0 to 84.1.0 (@dependabot[bot])
 - **PR #8675** (2026-10-24): fix(search): build sort_indices.cc against libc++. (macOS fix) (@vyavdoshenko)
-- **PR #8665** (2026-10-23): fix: wait command preempts in atomic section (@kostasrim)
-- **PR #8664** (2026-10-23): fix(search): order SORTBY ties by key and rank missing values last (@vyavdoshenko)
-- **PR #8662** (closed): refactor(engine_shard): replay deferred polls without the continuation filter (@romange)
-- **PR #8659** (2026-10-23): fix(server): hide CONFIG SET values and ACL SETUSER tokens in logs and errors (@vyavdoshenko)
+- **PR #8668** (2026-10-26): refactor(server): simplify WAIT acknowledgement tracking (@romange)
+- **PR #8667** (closed): [WIP] feat(search): alias to remaining cmds (@abhijat)
 
 ---
 
@@ -2399,35 +2693,72 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump setuptools from 84.0.0 to 84.1.0 (#8676)
+## X. server): don't exit on cloud snapshot storage init failure at runtime (#8689)
 
 **RULE**:
-When implementing operations in `uv.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/server/server_family.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `68f60e27`: deps): bump setuptools from 84.0.0 to 84.1.0 (#8676). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1042051b`: server): don't exit on cloud snapshot storage init failure at runtime (#8689). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `uv.lock`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/server_family.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-revision = 5
-default-groups = ["test"]
-version = "84.1.0"
-sdist = { url = "https://files.pythonhosted.org/packages/73/eb/7e5f628ee2eb168fecbf8026de7856b2543d6d609cc85f086b9a91ac93d6/setuptools-84.1.0.tar.gz", hash = "sha256:23657205b63d4d31395ab917815247f694aafad28cd21316bf5fd45a51048ea0", size = 1171783, upload-time = "2026-10-19T20:11:43.489Z" }
-    { url = "https://files.pythonhosted.org/packages/18/02/b4bbb90f8f29e334898ff45c6d9b1fffaa6f378017052b3023a06262b5f7/setuptools-84.1.0-py3-none-any.whl", hash = "sha256:5231689c6ac8156cd155cfb98c3fd6fb252c3e7e9bd3d78b64d3c55f132624c9", size = 819380, upload-time = "2026-10-19T20:11:41.684Z" },
+// Returns an error instead of terminating the process: this is called at runtime by
+// SAVE/LOAD commands, where a transient failure (e.g. missing credentials) must not kill
+// an already serving instance.
+io::Result<std::shared_ptr<detail::SnapshotStorage>, GenericError> CreateCloudSnapshotStorage(
+    std::string_view uri) {
+  auto make_err = [](std::error_code ec, std::string_view what) {
+    return nonstd::make_unexpected(GenericError{ec, absl::StrCat("Failed to initialize ", what)});
+  };
+
+    if (ec)
+      return make_err(ec, "AWS S3 snapshot storage");
+    if (ec)
+      return make_err(ec, "GCS snapshot storage");
+    return nonstd::make_unexpected(
+        GenericError{make_error_code(errc::not_supported), "Compiled without GCP support"});
+    if (ec)
+      return make_err(ec, "Azure snapshot storage");
+  return nonstd::make_unexpected(GenericError{make_error_code(errc::invalid_argument),
+                                              absl::StrCat("Unknown cloud storage ", uri)});
+}
+
+// Cloud paths need their own storage, other paths use the server's default storage.
+io::Result<std::shared_ptr<detail::SnapshotStorage>, GenericError> SelectSnapshotStorage(
+    std::string_vi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-revision = 3
-version = "84.0.0"
-sdist = { url = "https://files.pythonhosted.org/packages/6d/44/f5da03a8ef95d369145c5bb53050e7877c9f3d312e128605fd9504829143/setuptools-84.0.0.tar.gz", hash = "sha256:f4695c21257f0d9b537ec2692c941d02ee143b7cc1276941349a546573b2ef73", size = 1168449, upload-time = "2026-08-08T18:27:58.365Z" }
-    { url = "https://files.pythonhosted.org/packages/95/9c/c510029fc6ef33a6275cd2c5d3cecd6613dfd6aa401d57c54f1c18852ccf/setuptools-84.0.0-py3-none-any.whl", hash = "sha256:51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670", size = 818216, upload-time = "2026-08-08T18:27:56.719Z" },
+std::shared_ptr<detail::SnapshotStorage> CreateCloudSnapshotStorage(std::string_view uri) {
+    if (ec) {
+      LOG(ERROR) << "Failed to initialize AWS S3 snapshot storage: " << ec.message();
+      exit(1);
+    }
+    if (ec) {
+      LOG(ERROR) << "Failed to initialize GCS snapshot storage: " << ec.message();
+      exit(1);
+    }
+    LOG(ERROR) << "Compiled without GCP support";
+    exit(1);
+    if (ec) {
+      LOG(ERROR) << "Failed to initialize Azure snapshot storage: " << ec.message();
+      exit(1);
+    }
+  } else {
+    LOG(ERROR) << "Unknown cloud storage " << uri;
+    exit(1);
+    snapshot_storage_ = CreateCloudSnapshotStorage(flag_dir);
+  auto storage = detail::IsCloudPath(path) ? CreateCloudSnapshotStorage(path) : snapshot_storage_;
+  if (auto res = storage->ExpandSnapshot(path); !res)
+  auto storage = detail::IsCloudPath(path) ? CreateCloudSnapshotStorage(path) : snapshot_storage_;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `68f60e27` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1042051b` are properly handled with clean fallback behavior.
