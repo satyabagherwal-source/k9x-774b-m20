@@ -5699,3 +5699,6 @@ Every entry in this ledger must capture:
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `5a269c3c` | Multi-dimensional audit evidence | 2026-10-28T04:28:32.784Z |
 | `learn-huggingface-contrastive-lm-clm-v0-1-8b` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-10-28T04:35:27.277Z |
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `07ea16b4` | Multi-dimensional audit evidence | 2026-10-28T04:35:28.732Z |
+| `learn-huggingface-nvidia-nemotron-3-diarization` | `https://huggingface.co/nvidia/Nemotron-3-Diarization` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-28T04:41:52.669Z |
+| `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `00635bc3` | Multi-dimensional audit evidence | 2026-10-28T04:41:58.787Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `1766aca2` | Multi-dimensional audit evidence | 2026-10-28T04:42:05.914Z |

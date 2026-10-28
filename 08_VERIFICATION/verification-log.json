@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-ROCO",
-    "timestamp": "2026-10-27T07:45:09.384Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "fac4e39c956b6153a70f021a03663963168cb38106b4009c33c7685acc466220",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-YU60",
-    "timestamp": "2026-10-27T07:50:43.512Z",
-    "repository": "projectcontour/contour",
-    "learningId": "learn-github-projectcontour-contour",
-    "contentHash": "6964b2cbf6858c564595d404042e380fd36ab2129f8e91f543de83d9da68ef38",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-QH4A",
-    "timestamp": "2026-10-27T08:12:12.970Z",
-    "repository": "microsoft/agent-governance-toolkit",
-    "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "e3b43b91d1de4090c75517df924818a66a534b0611ae74fd63ce0414c7c46c8e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-REBF",
     "timestamp": "2026-10-27T08:12:55.995Z",
     "repository": "XHToken/Spark-X2.6-4B-GGUF",
@@ -7490,6 +7445,51 @@
     "repository": "codewhale-hq/Codewhale",
     "learningId": "learn-github-codewhale-hq-codewhale",
     "contentHash": "85734e854871c5a85ffc83db5006f35738dbd196621e06cc36432fb923f7f913",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-NTWA",
+    "timestamp": "2026-10-28T04:41:52.666Z",
+    "repository": "nvidia/Nemotron-3-Diarization",
+    "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
+    "contentHash": "fe18e837765a2590c7f555a479ba502224cbbd44d8d2668849ff8085752c9e53",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-NYM8",
+    "timestamp": "2026-10-28T04:41:58.784Z",
+    "repository": "zulip/zulip",
+    "learningId": "learn-github-zulip-zulip",
+    "contentHash": "50c638e5048a39d9c0b7466c4761599a68c1a6f2f19af971f347beb153c1ba9b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-O447",
+    "timestamp": "2026-10-28T04:42:05.911Z",
+    "repository": "t8y2/dbx",
+    "learningId": "learn-github-t8y2-dbx",
+    "contentHash": "4ce550ba608d1fb57eafd1744ea30d8e8e87b8830acc427d298e53173fc1b0ac",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

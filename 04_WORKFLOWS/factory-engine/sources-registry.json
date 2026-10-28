@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T04:35:38.251Z",
-    "lastVerified": "2026-10-28T04:35:38.251Z",
+    "lastChecked": "2026-10-28T04:42:08.457Z",
+    "lastVerified": "2026-10-28T04:42:08.457Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -297,9 +297,9 @@
   "nucleoidai-nucleoid": {
     "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "lastChecked": "2026-10-28T04:10:13.094Z",
+    "lastChecked": "2026-10-28T04:42:04.114Z",
     "revisionIdentifier": "73085699",
-    "lastVerified": "2026-10-28T04:10:13.094Z"
+    "lastVerified": "2026-10-28T04:42:04.114Z"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1022,5 +1022,77 @@
     "lastChecked": "2026-10-28T04:35:35.751Z",
     "revisionIdentifier": "fa504217",
     "lastVerified": "2026-10-28T04:35:35.751Z"
+  },
+  "ajeetdsouza-zoxide": {
+    "name": "zoxide",
+    "officialUrl": "https://github.com/ajeetdsouza/zoxide",
+    "lastChecked": "2026-10-28T04:41:49.103Z",
+    "revisionIdentifier": "f0b31631",
+    "lastVerified": "2026-10-28T04:41:49.103Z"
+  },
+  "hf-nvidia-nemotron-3-diarization": {
+    "name": "nvidia/Nemotron-3-Diarization",
+    "officialUrl": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T04:41:51.653Z",
+    "lastVerified": "2026-10-28T04:41:51.653Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
+    "contentHash": "fe18e837765a2590c7f555a479ba502224cbbd44d8d2668849ff8085752c9e53",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "zulip-zulip": {
+    "name": "zulip/zulip",
+    "officialUrl": "https://github.com/zulip/zulip",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-28T04:41:58.306Z",
+    "lastVerified": "2026-10-28T04:41:58.306Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-zulip-zulip",
+    "contentHash": "50c638e5048a39d9c0b7466c4761599a68c1a6f2f19af971f347beb153c1ba9b",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 11,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "goharbor-harbor": {
+    "name": "harbor",
+    "officialUrl": "https://github.com/goharbor/harbor",
+    "lastChecked": "2026-10-28T04:41:56.647Z",
+    "revisionIdentifier": "d822d80c",
+    "lastVerified": "2026-10-28T04:41:56.647Z"
+  },
+  "build-trust-ockam": {
+    "name": "ockam",
+    "officialUrl": "https://github.com/build-trust/ockam",
+    "lastChecked": "2026-10-28T04:41:59.187Z",
+    "revisionIdentifier": "0435d8d7",
+    "lastVerified": "2026-10-28T04:41:59.187Z"
+  },
+  "t8y2-dbx": {
+    "name": "t8y2/dbx",
+    "officialUrl": "https://github.com/t8y2/dbx",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T04:42:05.430Z",
+    "lastVerified": "2026-10-28T04:42:05.430Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-t8y2-dbx",
+    "contentHash": "4ce550ba608d1fb57eafd1744ea30d8e8e87b8830acc427d298e53173fc1b0ac",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 8,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

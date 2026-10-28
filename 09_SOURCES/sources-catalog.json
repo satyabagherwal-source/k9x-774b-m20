@@ -335,8 +335,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
     "sourceVersion": "hf-nvidia-nemotron-3-diarization",
     "license": "Open-Source",
-    "contentHash": "f3a59d387e7a8d8fab60d1acdd9a5bdd0e86df5b79ba769dce989c1da41f1f17",
-    "lastHarvestedAt": "2026-10-25T11:43:48.337Z",
+    "contentHash": "fe18e837765a2590c7f555a479ba502224cbbd44d8d2668849ff8085752c9e53",
+    "lastHarvestedAt": "2026-10-28T04:41:52.669Z",
     "learningId": "learn-huggingface-nvidia-nemotron-3-diarization"
   },
   "hf-lightricks-ltx-2.5": {
@@ -2613,10 +2613,10 @@
     "repository": "zulip/zulip",
     "platform": "github",
     "sourceUrl": "https://github.com/zulip/zulip",
-    "sourceVersion": "3e9bc1e1",
+    "sourceVersion": "00635bc3",
     "license": "Apache-2.0",
-    "contentHash": "459bcd659afa4425bee2c9b8dabdad4dc0f709dfe091f86ce65e403484557a88",
-    "lastHarvestedAt": "2026-10-27T13:28:29.621Z",
+    "contentHash": "50c638e5048a39d9c0b7466c4761599a68c1a6f2f19af971f347beb153c1ba9b",
+    "lastHarvestedAt": "2026-10-28T04:41:58.787Z",
     "learningId": "learn-github-zulip-zulip"
   },
   "goodrain-rainbond": {
@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "fbb588ee",
+    "sourceVersion": "1766aca2",
     "license": "Apache-2.0",
-    "contentHash": "ab74851ab13e7647607a05aebfc52f144a4ef67af2caad0ea7739e476bfdec5c",
-    "lastHarvestedAt": "2026-10-27T14:57:47.652Z",
+    "contentHash": "4ce550ba608d1fb57eafd1744ea30d8e8e87b8830acc427d298e53173fc1b0ac",
+    "lastHarvestedAt": "2026-10-28T04:42:05.914Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {

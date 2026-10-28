@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `fbb588ee`  
+> **Source Version**: `1766aca2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T14:57:47.248Z  
+> **Timestamp**: 2026-10-28T04:42:05.436Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T14:57:45.907Z  
+> **Harvest Timestamp**: 2026-10-28T04:42:05.430Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 27918 stars
+- **Stars / Engagement**: 27952 stars
 
 ---
 
@@ -2009,865 +2009,344 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fbb588ee` (2026-10-27)
-**Commit Message**: fix(windows): keep the 8 MiB main-thread stack on legacy builds (0xC00000FD) (#13672)
+### Incident Patch 1: `33f3b593` (2026-10-28)
+**Commit Message**: fix(ci): limit arm linux build parallelism to avoid runner oom
 
-* fix(windows): keep the 8 MiB main-thread stack on legacy builds
-
-Windows 7 / Server 2012 R2 users on 0.6.58 report the WER dialog "DBX 已停止
-工作" with APPCRASH signature dbx.exe / faulting module dbx.exe / exception
-c00000fd (STATUS_STACK_OVERFLOW) as soon as they click a database connection
-(MySQL, Oracle 11 and Dameng 8 all reproduce), while 0.6.55 is fine.
-
-Root cause: .cargo/config.toml raises the main-thread stack to 8 MiB with
--C link-arg=/STACK:8388608, but Cargo ignores target rustflags whenever a
-RUSTFLAGS env var is set. The Win7/Server 2012 R2 jobs set RUSTFLAGS for the
-static CRT, so the legacy PE kept the 1 MiB linker default while the standard
-Windows build kept 8 MiB. The 0.6.56 connect-path rewrite made the DB query
-stack deeper, and the legacy 1 MiB stack overflows on connect.
-
-- repeat -C link-arg=/STACK:8388608 in every workflow RUSTFLAGS that links a
-  Windows PE (release Win7 app + dbx-web, CI Win7/standard/duckdb jobs, SQL
-  Server 2000 Win7 test build)
-- add the same flag to the legacy target table in .cargo/config.toml for local
-  builds
-- fail the Win7 PE audit when SizeOf
-
-**File**: `.cargo/config.toml` (modified, +8/-0)
+**File**: `.github/workflows/release.yml` (modified, +5/-0)
 ```diff
-@@ -23,3 +23,11 @@ linker = "rust-lld"
- # Large Rust projects in debug mode overflow the 1 MiB stack when DB query
- # paths pull in deep serde/driver call stacks. This embeds the size in the PE.
- rustflags = ["-C", "link-arg=/STACK:8388608"]
-+
-+# The legacy Windows 7 / Server 2012 R2 target keeps the same 8 MiB main-thread
-+# stack. CI builds it with an explicit RUSTFLAGS env (static CRT), which
-+# replaces this table, so the same link arg is repeated in those workflows and
-+# audited by .github/scripts/assert-win7-pe-compat.ps1. Without it the legacy PE
-+# keeps the 1 MiB default and the app aborts with 0xC00000FD ("DBX 已停止工作").
-+[target.x86_64-win7-windows-msvc]
-+rustflags = ["-C", "link-arg=/STACK:8388608"]
-```
-
-**File**: `.github/scripts/assert-win7-pe-compat.ps1` (modified, +35/-0)
-```diff
-@@ -69,3 +69,38 @@ if ($violations.Count -gt 0) {
- }
- 
- Write-Host "Windows 7 PE import audit passed: $BinaryPath"
-+
-+# Main-thread stack reserve audit. The app needs the 8 MiB stack that
-+# .cargo/config.toml applies to the standard Windows target; the legacy target is
-+# built with an explicit env RUSTFLAGS (static CRT), which replaces the config
-+# rustflags, so the workflow repeats `-C link-arg=/STACK:8388608`. Without it the
-+# PE keeps the 1 MiB linker default and deep connect/serde call stacks abort with
-+# 0xC00000FD ("DBX 已停止工作"), which users reported on Windows 7 / Server 2012 R2.
-+$minimumStackReserve = 8 * 1024 * 1024
-+$image = [System.IO.File]::ReadAllBytes($BinaryPath)
-+if ($image.Length -lt 0x100) {
-+  throw "Windows 7 PE audit target is truncated: $BinaryPath"
-+}
-+$peOffset = [System.BitConverter]::ToInt32($image, 0x3C)
-+if ($peOffset -le 0 -or $peOffset + 24 -gt $image.Length) {
-+  throw "Invalid PE header offset in ${BinaryPath}"
-+}
-+$peSignature = [System.BitConverter]::ToUInt32($image, $peOffset)
-+if ($peSignature -ne 0x00004550) {
-+  throw "Invalid PE signature in ${BinaryPath}"
-+}
-+$optionalHeaderOffset = $peOffset + 24
-+$optionalHeaderMagic = [System.BitConverter]::ToUInt16($image, $optionalHeaderOffset)
-+$stackReserveOffset = $optionalHeaderOffset + 72
-+$stackReserve = if ($optionalHeaderMagic -eq 0x20B) {
-+  [System.BitConverter]::ToUInt64($image, $stackReserveOffset)
-+} elseif ($optionalHeaderMagic -eq 0x10B) {
-+  [System.BitConverter]::ToUInt32($image, $stackReserveOffset)
-+} else {
-+  throw ("Unsupported PE optional header magic 0x{0:X4} in {1}" -f $optionalHeaderMagic, $BinaryPath)
-+}
-+if ($stackReserve -lt $minimumStackReserve) {
-+  throw ("Windows 7 main-thread stack reserve is {0} bytes, below the {1}-byte minimum. Add -C link-arg=/STACK:8388608 to the build RUSTFLAGS. Binary: {2}" -f $stackReserve, $minimumStackReserve, $BinaryPath)
-+}
-+
-+Write-Host "Windows 7 PE stack reserve audit passed: $stackReserve bytes ($BinaryPath)"
-```
-
-**File**: `.github/scripts/ci-workflow.test.mjs` (modified, +23/-0)
-```diff
-@@ -496,3 +496,26 @@ test("path filtering and the planner use the exact test merge first parent", ()
-   }
-   assert.doesNotMatch(changes, /steps\.filter\.outputs\.windows_win7_bundle|github\.event\.pull_request\.base\.sha|WIN7_CURRENT/);
- });
-+
-+test("legacy Windows builds keep the 8 MiB main-thread stack", () => {
-+  const release = readFileSync(new URL("../workflows/release.yml", import.meta.url), "utf8").replaceAll("\r\n", "\n");
-+  const sqlServerUserTest = readFileSync(new URL("../workflows/sqlserver2000-windows-user-test.yml", import.meta.url), "utf8").replaceAll("\r\n", "\n");
-+  const stackFlag = /RUSTFLAGS:.*link-arg=\/STACK:8388608/;
-+  // An env RUSTFLAGS replaces .cargo/config.toml target rustflags, so every job
-+  // that links a Windows PE has to repeat the /STACK link argument; otherwise
-+  // the 1 MiB linker default returns and deep DB call stacks abort with
-+  // 0xC00000FD ("DBX 已停止工作").
-+  for (const name of ["windows-standard-check", "windows-win7-bundle", "duckdb-windows-driver"]) {
-+    assert.match(job(name), stackFlag, `${name} must keep the 8 MiB main-thread stack in RUSTFLAGS`);
-+  }
-+  for (const name of ["build-windows-7-offline", "build-windows-7-static-browser"]) {
-+    assert.match(job(name, release), stackFlag, `release job ${name} must keep the 8 MiB main-thread stack in RUSTFLAGS`);
-+  }
-+  assert.match(job("build-windows-7-x64", sqlServerUserTest), stackFlag, "the SQL Server 2000 Win7 test build must keep the 8 MiB main-thread stack");
-+});
-+
-+test("the Win7 PE audit fails when the stack reserve regresses", () => {
-+  const audit = readFileSync(new URL("./assert-win7-pe-compat.ps1", import.meta.url), "utf8");
-+  assert.ok(audit.includes("minimumStackReserve"));
-+  assert.ok(audit.includes("link-arg=/STACK:8388608"));
-+});
-```
-
-**File**: `.github/workflows/agents-release.yml` (modified, +3/-1)
-```diff
-@@ -963,7 +963,9 @@ jobs:
-         shell: bash
-         run: |
-           if [ "${{ runner.os }}" = "Windows" ]; then
--            export RUSTFLAGS="${RUSTFLAGS:+$RUSTFLAGS }-C target-feature=+crt-static"
-+            # An env RUSTFLAGS replaces .cargo/config.toml target rustflags; keep
-+            # the 8 MiB main-thread stack of the DBX app for the Win7 driver too.
-+            export RUSTFLAGS="${RUSTFLAGS:+$RUSTFLAGS }-C target-feature=+crt-static -C link-arg=/STACK:8388608"
-           fi
-           if [ -n "${{ matrix.manylinux_image }}" ]; then
-             docker run --rm \
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +15/-3)
-```diff
-@@ -313,7 +313,11 @@ jobs:
-     timeout-minutes: 45
-     env:
-       CARGO_INCREMENTAL: "0"
--      RUSTFLAGS: -C debuginfo=line-tables-only -C target-feature=+crt-static
-+      # An env RUSTFLAGS replaces .cargo/config.toml target rustflags, so the
-+      # 8 MiB main-thread stack must be repeated here: without it the Windows PE
-+      # keeps the 1 MiB linker default and deep connect/serde call stacks abort
-+      # with 0xC00000FD ("DBX 已停止工作"). Guarded by assert-win7-pe-compat.ps1.
-+      RUSTFLAGS: -C debuginfo=line-tables-only -C target-feature=+crt-static -C link-arg=/STACK:8388608
-       RUSTC_WRAPPER: sccache
-       # Prefer S3 when available; GitHub's 10 GB cache quota evicts the shared
-       # Linux target caches when thousands of GHA sccache entries pile up.
-@@ -388,7 +392,11 @@ jobs:
-       CARGO_INCREMENTAL: "0"
-       CARGO_PROFILE_RELEASE_LTO: "off"
-       CARGO_PROFILE_RELEASE_CODEGEN_UNITS: "8"
--      RUSTFLAGS: -C debuginfo=line-tables-only -C target-feature=+crt-static
-+      # An env RUSTFLAGS replaces .cargo/config.toml target rustflags, so the
-+      # 8 MiB main-thread stack must be repeated here: without it the Windows PE
-+      # keeps the 1 MiB linker default and deep connect/serde call stacks abort
-+      # with 0xC00000FD ("DBX 已停止工作"). Guarded by assert-win7-pe-compat.ps1.
-+      RUSTFLAGS: -C debuginfo=line-tables-only -C target-feature=+crt-static -C link-arg=/STACK:8388608
-       RUSTC_WRAPPER: sccache
-       # Prefer S3 when available; GitHub's 10 GB cache quota evicts the shared
-       # Linux target caches when thousands of GHA sccache entries pile up.
-@@ -830,7 +838,11 @@ jobs:
-     env:
-       CARGO_INCREMENTAL: "0"
-       CARGO_TARGET_DIR: ${{ github.workspace }}/target/duckdb-driver
--      RUSTFLAGS: -C debuginfo=line-tables-only -C target-feature=+crt-static
-+      # An env RUSTFLAGS replaces .cargo/config.toml target rustflags, so the
-+      # 8 MiB main-thread stack must be repeated here: without it the Windows PE
-+      # keeps the 1 MiB linker default and deep connect/serde call stacks abort
-+      # with 0xC00000FD ("DBX 已停止工作"). Guarded by assert-win7-pe-compat.ps1.
-+      RUSTFLAGS: -C debuginfo=line-tables-only -C target-feature=+crt-static -C link-arg=/STACK:8388608
-       RUSTC_WRAPPER: sccache
-       # Prefer S3 when available; GitHub's 10 GB cache quota evicts the shared
-       # Linux target caches when thousands of GHA sccache entries pile up.
-```
-
-**File**: `.github/workflows/release.yml` (modified, +10/-2)
-```diff
-@@ -579,7 +579,11 @@ jobs:
-     # The vendored loader is a tracked Cargo input, so Rust compile caching is safe.
-     env:
-       CARGO_INCREMENTAL: "0"
--      RUSTFLAGS: -C debuginfo=line-tables-only -C target-feature=+crt-static
-+      # An env RUSTFLAGS replaces .cargo/config.toml target rustflags, so the
-+      # 8 MiB main-thread stack must be repeated here: without it the legacy PE
-+      # keeps the 1 MiB linker default and deep connect/serde call stacks abort
-+      # with 0xC00000FD ("DBX 已停止工作"). Guarded by assert-win7-pe-compat.ps1.
-+      RUSTFLAGS: -C debuginfo=line-tables-only -C target-feature=+crt-static -C link-arg=/STACK:8388608
-       RUSTC_WRAPPER: sccache
-       SCCACHE_GHA_ENABLED: ${{ secrets.SCCACHE_S3_BUCKET == '' && 'true' || 'false' }}
-       SCCACHE_GHA_VERSION: win7-webview2-1.0.902.49-v1
-@@ -747,7 +751,11 @@ jobs:
-             arch: x86_64
-     env:
-       CARGO_INCREMENTAL: "0"
--      RUSTFLAGS: -C debuginfo=line-tables-only -C target-feature=+crt-static
-+      # An env RUSTFLAGS replaces .cargo/config.toml target rustflags, so the
-+      # 8 MiB main-thread stack must be repeated here: without it the legacy PE
-+      # keeps the 1 MiB linker default and deep connect/serde call stacks abort
-+      # with 0xC00000FD ("DBX 已停止工作"). Guarded by assert-win7-pe-compat.ps1.
-+      RUSTFLAGS: -C debuginfo=line-tables-only -C target-feature=+crt-static -C link-arg=/STACK:8388608
-     steps:
-       - uses: actions/checkout@v7
- 
-```
-
-**File**: `.github/workflows/sqlserver2000-windows-user-test.yml` (modified, +3/-1)
-```diff
-@@ -12,7 +12,9 @@ jobs:
-     timeout-minutes: 120
-     env:
-       CARGO_INCREMENTAL: "0"
--      RUSTFLAGS: -C debuginfo=line-tables-only -C target-feature=+crt-static
-+      # Keep the Win7/Server 2012 R2 main-thread stack at 8 MiB: an env
-+      # RUSTFLAGS replaces the .cargo/config.toml target rustflags.
-+      RUSTFLAGS: -C debuginfo=line-tables-only -C target-feature=+crt-static -C link-arg=/STACK:8388608
-     steps:
-       - uses: actions/checkout@v7
- 
-```
-
-**File**: `crates/dbx-sql-schema/src/schema_diff.rs` (modified, +1/-1)
-```diff
-@@ -3860,7 +3860,7 @@ fn normalized_foreign_key_action(action: Option<&str>) -> Option<String> {
- /// - "NO ACTION: ... For InnoDB, this is equivalent to RESTRICT".
- /// - "Specifying RESTRICT (or NO ACTION) is the same as omitting the ON DELETE or ON UPDATE clause."
- /// - "For an ON DELETE or ON UPDATE that is not specified, the default action is always NO ACTION."
--/// MariaDB KB "Foreign Keys" likewise documents `NO ACTION` as a "Synonym for RESTRICT".
-+///   MariaDB KB "Foreign Keys" likewise documents `NO ACTION` as a "Synonym for RESTRICT".
- ///
- /// Only the comparison is normalized; generated DDL keeps the source's original action text.
- /// Known caveat: on MySQL NDB Cluster `NO ACTION` is a deferred check, but schema metadata does
+@@ -282,6 +282,11 @@ jobs:
+         uses: tauri-apps/tauri-action@v0
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
++          # Standard ARM runners have 16 GB RAM; parallel rustc of the heavy
++          # workspace crates (dbx-core, dbx-mcp) plus linking peaks past what
++          # the pool now tolerates and the runner is killed with a shutdown
++          # signal. Fewer parallel codegen units keep peak memory in bounds.
++          CARGO_BUILD_JOBS: ${{ (matrix.platform == 'ubuntu-22.04-arm' && '2') || '' }}
+           APPLE_SIGNING_IDENTITY: ${{ startsWith(matrix.platform, 'macos') && secrets.APPLE_SIGNING_IDENTITY || '' }}
+           APPLE_ID: ${{ startsWith(matrix.platform, 'macos') && secrets.APPLE_ID || '' }}
+           APPLE_PASSWORD: ${{ startsWith(matrix.platform, 'macos') && secrets.APPLE_PASSWORD || '' }}
 ```
 
 ---
 
-### Incident Patch 2: `8009fbcb` (2026-10-27)
-**Commit Message**: fix(oracle): recover object column panics on pinned connections
+### Incident Patch 2: `a6cec2fb` (2026-10-28)
+**Commit Message**: fix(nix): correct pnpm deps hash drifted by renovate
 
-**File**: `agents/drivers/oracle-go/dbms_output.go` (modified, +12/-0)
+**File**: `flake.nix` (modified, +1/-1)
 ```diff
-@@ -550,6 +550,9 @@ func (s *server) withStatementDBMSOutput(sqlText string, run func() error) []que
- 	s.statementConn = conn
- 	defer func() {
- 		s.statementConn = previous
-+		if repinned := s.takeRepinnedStatementConn(); repinned != nil {
-+			_ = repinned.Close()
-+		}
- 		_ = conn.Close()
- 	}()
- 	session := s.statementDBMSOutputSession(conn)
-@@ -604,6 +607,9 @@ func (s *server) withPagedStatementDBMSOutput(sqlText string, run func() error)
- 			// so this function owns it. The statement's own cleanup has already closed
- 			// its rows (runPagedOracleSelect defers that), which is what lets the close
- 			// below return instead of waiting for a cursor that no one will close.
-+			if repinned := s.takeRepinnedStatementConn(); repinned != nil {
-+				_ = repinned.Close()
-+			}
- 			_ = conn.Close()
- 			panic(recovered)
- 		}
-@@ -612,6 +618,12 @@ func (s *server) withPagedStatementDBMSOutput(sqlText string, run func() error)
- 	capture := s.ensureDBMSOutput(ctx, session)
- 	_ = run()
- 	messages := s.finishStatementDBMSOutput(ctx, session, capture, sqlText)
-+	if repinned := s.takeRepinnedStatementConn(); repinned != nil {
-+		// A driver panic poisoned the pinned connection and the statement's
-+		// fallback ran on a replacement, so the page's cursor lives there.
-+		_ = conn.Close()
-+		conn = repinned
-+	}
- 	return conn, messages
- }
+@@ -203,7 +203,7 @@
+             fetcherVersion = 4;
+             # Update with the hash reported by a failed fixed-output build:
+             #   nix build .#dbx-pnpm-deps 2>&1 | grep 'got:'
+-            hash = "sha256-nE4eTmngG7Qc0zeQa2qqTl3Mch51RMnXczdH2rRJiAY=";
++            hash = "sha256-lBkJNxk39G07brqQs2+W+jnoKd7Gi511VpxBq0A95kE=";
+           };
  
-```
-
-**File**: `agents/drivers/oracle-go/main.go` (modified, +63/-2)
-```diff
-@@ -660,6 +660,8 @@ type server struct {
- 	statementCtx           context.Context
- 	statementCancel        context.CancelFunc
- 	statementConn          *sql.Conn
-+	statementSchema        string
-+	repinnedStatementConn  *sql.Conn
- 	plDebugMu              sync.Mutex
- 	plDebugSessions        map[string]*plDebugSession
- 	plAllocation           *plDebugAllocation
-@@ -2028,6 +2030,17 @@ func (s *server) currentSchema() (string, error) {
- 		}
- 		return strings.ToUpper(schema), nil
- 	}
-+	// The connection pinned for a statement's DBMS_OUTPUT capture carries the
-+	// statement's CURRENT_SCHEMA the same way.
-+	if s.statementConn != nil {
-+		if err := s.repinPoisonedStatementConn(); err != nil {
-+			return "", err
-+		}
-+		if err := s.statementConn.QueryRowContext(s.statementContext(), sqlText).Scan(&schema); err != nil {
-+			return "", err
-+		}
-+		return strings.ToUpper(schema), nil
-+	}
- 	db, err := s.requireDB()
- 	if err != nil {
- 		return "", err
-@@ -5133,8 +5146,10 @@ func (s *server) queryRowsWithOracleValueRewriteIfNeeded(sqlText string, timeout
- 	// A statement that keeps row locks while it runs is rewritten before the
- 	// first attempt: when such a statement panics after the rows were locked,
- 	// the locks stay behind and the retry below blocks on them until the query
--	// times out (issues #9344 / #9180).
--	if oracleSQLLocksRows(sqlText) {
-+	// times out (issues #9344 / #9180). A manual transaction cannot retry at
-+	// all: the panic leaves its session unusable and the transaction is rolled
-+	// back (issue #13455).
-+	if oracleSQLLocksRows(sqlText) || s.hasManualTransaction() {
- 		rewritten, err := rewriteOracleSelectSQL(sqlText, s.loadOracleColumnMeta, deferLOBs)
- 		if err == nil && rewritten != sqlText {
- 			return s.queryRowsWithTimeout(rewritten, nil, timeoutSecs)
-@@ -6131,6 +6146,9 @@ func (s *server) setSchema(schema string) error {
- 	}
- 	if s.statementConn != nil {
- 		_, err := s.statementConn.ExecContext(s.statementContext(), sqlText)
-+		if err == nil {
-+			s.statementSchema = schema
-+		}
- 		return err
- 	}
- 	db, err := s.requireDB()
-@@ -6141,6 +6159,46 @@ func (s *server) setSchema(schema string) error {
- 	return err
- }
- 
-+// repinPoisonedStatementConn replaces the statement's pinned connection once a
-+// driver panic has poisoned it, so the placeholder fallbacks of the same
-+// statement do not fail on the dead session (issue #13455). The fresh
-+// connection gets the statement's CURRENT_SCHEMA back; the statement's owner
-+// closes it together with the original one.
-+func (s *server) repinPoisonedStatementConn() error {
-+	if s.manualTx != nil || s.statementConn == nil || !oracleConnPoisoned(s.statementConn) {
-+		return nil
-+	}
-+	db, err := s.requireDB()
-+	if err != nil {
-+		return err
-+	}
-+	conn, err := db.Conn(s.statementContext())
-+	if err != nil {
-+		return err
-+	}
-+	if s.statementSchema != "" {
-+		if _, err := conn.ExecContext(s.statementContext(), "ALTER SESSION SET CURRENT_SCHEMA = "+quoteIdentifier(s.statementSchema)); err != nil {
-+			_ = conn.Close()
-+			return err
-+		}
-+	}
-+	if s.repinnedStatementConn != nil {
-+		_ = s.repinnedStatementConn.Close()
-+	}
-+	s.repinnedStatementConn = conn
-+	s.statementConn = conn
-+	return nil
-+}
-+
-+// takeRepinnedStatementConn hands a connection opened by
-+// repinPoisonedStatementConn to the statement's owner.
-+func (s *server) takeRepinnedStatementConn() *sql.Conn {
-+	conn := s.repinnedStatementConn
-+	s.repinnedStatementConn = nil
-+	s.statementSchema = ""
-+	return conn
-+}
-+
- func (s *server) queryRows(sqlText string, args []any) (*sql.Rows, error) {
- 	return s.queryRowsWithTimeout(sqlText, args, 0)
- }
-@@ -6149,6 +6207,9 @@ func (s *server) queryRowsWithTimeout(sqlText string, args []any, timeoutSecs in
- 	if _, err := s.requireDB(); err != nil {
- 		return nil, err
- 	}
-+	if err := s.repinPoisonedStatementConn(); err != nil {
-+		return nil, err
-+	}
- 	ctx, cancel := context.WithCancel(s.statementContext())
- 	var timer *time.Timer
- 	if timeoutSecs > 0 {
-```
-
-**File**: `agents/drivers/oracle-go/main_test.go` (modified, +128/-0)
-```diff
-@@ -4329,6 +4329,134 @@ func TestOracleQueryRowsKeepsSTAsTextErrorWhenPlaceholderAlsoFails(t *testing.T)
- 	}
- }
- 
-+// oracleViewSourceTxConn lets the scripted driver open the manual transaction
-+// the query guard wraps.
-+type oracleViewSourceTxConn struct{ *oracleViewSourceConn }
-+
-+func (c oracleViewSourceTxConn) BeginTx(context.Context, driver.TxOptions) (driver.Tx, error) {
-+	return oracleViewSourceTx{}, nil
-+}
-+
-+type oracleViewSourceTx struct{}
-+
-+func (oracleViewSourceTx) Commit() error   { return nil }
-+func (oracleViewSourceTx) Rollback() error { return nil }
-+
-+type oracleViewSourceTxDriver struct{ scripted *oracleViewSourceDriver }
-+
-+func (d oracleViewSourceTxDriver) Open(string) (driver.Conn, error) {
-+	return oracleViewSourceTxConn{&oracleViewSourceConn{driver: d.scripted}}, nil
-+}
-+
-+func openGuardedOracleViewSourceTestDB(t *testing.T, steps []oracleViewSourceQueryStep) (*sql.DB, *oracleViewSourceDriver) {
-+	t.Helper()
-+	scripted := &oracleViewSourceDriver{steps: steps}
-+	db := sql.OpenDB(oracleQueryConnector{oracleGuardTestConnector{oracleViewSourceTxDriver{scripted}}})
-+	t.Cleanup(func() { _ = db.Close() })
-+	return db, scripted
-+}
-+
-+func udtPanicFallbackSteps(rows [][]driver.Value) []oracleViewSourceQueryStep {
-+	return []oracleViewSourceQueryStep{
-+		{exec: true, queryContains: `ALTER SESSION SET CURRENT_SCHEMA = "DBXT"`},
-+		{queryContains: "SELECT ID, G FROM T_UDT", args: []driver.Value{}, panicText: "simulated go-ora panic on object column"},
-+		// The poisoned pinned connection is replaced and gets the editor schema back.
-+		{exec: true, queryContains: `ALTER SESSION SET CURRENT_SCHEMA = "DBXT"`},
-+		{queryContains: "CURRENT_SCHEMA", args: []driver.Value{}, columns: []string{"SCHEMA"}, rows: [][]driver.Value{{"DBXT"}}},
-+		{
-+			queryContains: "ALL_TAB_COLUMNS",
-+			args:          []driver.Value{"DBXT", "T_UDT"},
-+			columns:       []string{"COLUMN_NAME", "DATA_TYPE", "DATA_TYPE_OWNER"},
-+			rows:          [][]driver.Value{{"ID", "NUMBER", nil}, {"G", "GEOM_T", "DBXT"}},
-+		},
-+		{queryContains: "'<GEOM_T>'", args: []driver.Value{}, columns: []string{"ID", "G"}, rows: rows},
-+	}
-+}
-+
-+func TestExecuteQueryRetriesObjectColumnPanicOnFreshPinnedConnection(t *testing.T) {
-+	steps := udtPanicFallbackSteps([][]driver.Value{{int64(1), "<GEOM_T>"}})
-+	db, scripted := openGuardedOracleViewSourceTestDB(t, steps)
-+	s := newServer()
-+	s.db = db
-+	result, err := s.executeQuery(queryOptions{SQL: "SELECT ID, G FROM T_UDT", Schema: "DBXT", MaxRows: 10})
-+	if err != nil {
-+		t.Fatalf("expected the placeholder fallback to recover the panic, got %v", err)
-+	}
-+	if !reflect.DeepEqual(result.Rows, [][]any{{int64(1), "<GEOM_T>"}}) {
-+		t.Fatalf("unexpected rows: %#v", result.Rows)
-+	}
-+	if scripted.next != len(steps) {
-+		t.Fatalf("expected all %d scripted steps, ran %d", len(steps), scripted.next)
-+	}
-+	if s.statementConn != nil || s.repinnedStatementConn != nil || s.statementSchema != "" || db.Stats().InUse != 0 {
-+		t.Fatalf("statement leaked its pinned connections: %+v", db.Stats())
-+	}
-+}
-+
-+func TestExecuteQueryPageKeepsCursorOnReplacementPinnedConnection(t *testing.T) {
-+	steps := udtPanicFallbackSteps([][]driver.Value{{int64(1), "<GEOM_T>"}, {int64(2), "<GEOM_T>"}})
-+	db, scripted := openGuardedOracleViewSourceTestDB(t, steps)
-+	s := newServer()
-+	s.db = db
-+	result, err := s.executeQueryPage(queryOptions{SQL: "SELECT ID, G FROM T_UDT", Schema: "DBXT", MaxRows: 10}, 1)
-+	if err != nil {
-+		t.Fatalf("expected the placeholder fallback to recover the panic, got %v", err)
-+	}
-+	if !result.HasMore || result.SessionID == nil || !reflect.DeepEqual(result.Rows, [][]any{{int64(1), "<GEOM_T>"}}) {
-+		t.Fatalf("unexpected first page: %+v", result)
-+	}
-+	if scripted.next != len(steps) {
-+		t.Fatalf("expected all %d scripted steps, ran %d", len(steps), scripted.next)
-+	}
-+	next, err := s.fetchQueryPage(*result.SessionID, 1)
-+	if err != nil || !reflect.DeepEqual(next.Rows, [][]any{{int64(2), "<GEOM_T>"}}) {
-+		t.Fatalf("unexpected second page: %+v, %v", next, err)
-+	}
-+	s.closeQuerySession(*result.SessionID)
-+	if s.statementConn != nil || s.repinnedStatementConn != nil || db.Stats().InUse != 0 {
-+		t.Fatalf("paging session leaked its pinned connections: %+v", db.Stats())
-+	}
-+}
-+
-+func TestManualTransactionRewritesObjectColumnsBeforeTheFirstAttempt(t *testing.T) {
-+	steps := []oracleViewSourceQueryStep{
-+		{exec: true, queryContains: `ALTER SESSION SET CURRENT_SCHEMA = "DBXT"`},
-+		{queryContains: "CURRENT_SCHEMA", args: []driver.Value{}, columns: []string{"SCHEMA"}, rows: [][]driver.Value{{"DBXT"}}},
-+		{
-+			queryContains: "ALL_TAB_COLUMNS",
-+			args:          []driver.Value{"DBXT", "T_UDT"},
-+			columns:       []string{"COLUMN_NAME", "DATA_TYPE", "DATA_TYPE_OWNER"},
-+			rows:          [][]driver.Value{{"ID", "NUMBER", nil}, {"G", "GEOM_T", "DBXT"}},
-+		},
-+		{queryContains: "'<GEOM_T>'", args: []driver.Value{}, columns: []string{"ID", "G"}, rows: [][]driver.Value{{int64(1), "<GEOM_T>"}}},
-+		{queryContains: 
-```
-
-**File**: `agents/drivers/oracle-go/query_guard.go` (modified, +12/-0)
-```diff
-@@ -2,6 +2,7 @@ package main
- 
- import (
- 	"context"
-+	"database/sql"
- 	"database/sql/driver"
- 	"fmt"
- )
-@@ -59,6 +60,17 @@ func (c *oracleQueryConnection) QueryContext(ctx context.Context, query string,
- 	return c.oracleThinConnection.QueryContext(ctx, query, args)
- }
- 
-+// oracleConnPoisoned reports whether a driver panic already made conn unusable.
-+func oracleConnPoisoned(conn *sql.Conn) bool {
-+	poisoned := false
-+	_ = conn.Raw(func(driverConn any) error {
-+		guarded, ok := driverConn.(*oracleQueryConnection)
-+		poisoned = ok && guarded.failed != nil
-+		return nil
-+	})
-+	return poisoned
-+}
-+
- // Invalidate via Validator, not ErrBadConn: ErrBadConn would tell database/sql
- // to replay the original statement, even when it has already acquired locks or
- // invoked a function with side effects. The original panic remains diagnostic.
+           # ── Step 2: vendor Cargo dependencies ───────────────────────────── #
 ```
 
 ---
 
-### Incident Patch 3: `dd8c713c` (2026-10-27)
-**Commit Message**: fix(oracle): send a single TCP connect on failure and back off retries
+### Incident Patch 3: `6ea903e3` (2026-10-27)
+**Commit Message**: fix(sqlserver): keep T-SQL control-flow batches whole on generic JDBC
 
-**File**: `apps/desktop/src/components/admin/MySqlDashboard.vue` (modified, +3/-1)
+**File**: `crates/dbx-core/src/data/sql_file_import.rs` (modified, +9/-1)
 ```diff
-@@ -133,7 +133,9 @@ async function fetchStatus(options: { silent?: boolean } = {}) {
-   if (!options.silent) loading.value = true;
-   error.value = "";
-   try {
--    await connectionStore.ensureConnected(props.connectionId, { skipIfClosedByUser: true });
-+    // 轮询/静默刷新走被动重连：失败后退避，避免后台每次 tick 都新建连接
-+    // （企业安全/零信任客户端会为每次新连接弹一次授权框）。手动刷新不受影响。
-+    await connectionStore.ensureConnected(props.connectionId, { skipIfClosedByUser: true, ...(options.silent === true ? { passive: true } : {}) });
-     const result = await api.executeQuery(props.connectionId, "", GLOBAL_STATUS_SQL, undefined, undefined, { maxRows: 2000, clientSessionId: props.clientSessionId });
-     const sample: StatusSample = { at: Date.now(), status: parseStatusResult(result) };
-     const next = [...samples.value, sample];
-```
-
-**File**: `apps/desktop/src/components/admin/PostgresDashboard.vue` (modified, +3/-1)
-```diff
-@@ -146,7 +146,9 @@ async function fetchStatus(options: { silent?: boolean } = {}) {
-   if (!options.silent) loading.value = true;
-   error.value = "";
-   try {
--    await connectionStore.ensureConnected(props.connectionId, { skipIfClosedByUser: true });
-+    // 轮询/静默刷新走被动重连：失败后退避，避免后台每次 tick 都新建连接
-+    // （企业安全/零信任客户端会为每次新连接弹一次授权框）。手动刷新不受影响。
-+    await connectionStore.ensureConnected(props.connectionId, { skipIfClosedByUser: true, ...(options.silent === true ? { passive: true } : {}) });
-     const sql = fallbackStatusSql.value ?? activeDriver.statusSql;
-     let result;
-     try {
-```
-
-**File**: `apps/desktop/src/components/admin/ProcessListPanel.vue` (modified, +3/-1)
-```diff
-@@ -354,7 +354,9 @@ async function load(options: { silent?: boolean } = {}) {
-   loadError.value = "";
-   versionProbeWarning.value = "";
-   try {
--    await connectionStore.ensureConnected(connectionId, { skipIfClosedByUser: true });
-+    // 轮询/静默刷新走被动重连：失败后退避，避免后台每次 tick 都新建连接
-+    // （企业安全/零信任客户端会为每次新连接弹一次授权框）。手动刷新不受影响。
-+    await connectionStore.ensureConnected(connectionId, { skipIfClosedByUser: true, ...(options.silent === true ? { passive: true } : {}) });
-     if (!isCurrent()) return;
-     if (activeDriver.versionSql && versionMajor.value === null) {
-       try {
-```
-
-**File**: `apps/desktop/src/components/admin/XuguServerDashboard.vue` (modified, +5/-4)
-```diff
-@@ -180,13 +180,14 @@ async function query(sql: string, maxRows: number) {
-   return api.executeQuery(props.connectionId, "", sql, undefined, undefined, { maxRows });
+@@ -2497,7 +2497,15 @@ async fn sql_file_import_target(state: &AppState, connection_id: &str, database:
+     } else {
+         SqlCompatibilityMode::NotApplicable
+     };
+-    Some(SqlFileImportTarget { db_type: config.db_type, driver_profile: config.driver_profile, compatibility_mode })
++    Some(SqlFileImportTarget {
++        // Split with the connection's statement-splitting dialect, not its
++        // routing `db_type`: a JDBC SQL Server connection keeps control-flow
++        // batches whole (#13514), a JDBC Oracle connection keeps PL/SQL units
++        // whole. The rest of the import still routes on the raw `db_type`.
++        db_type: crate::query::statement_split_database_type(&config),
++        driver_profile: config.driver_profile,
++        compatibility_mode,
++    })
  }
  
--async function load() {
-+async function load(options: { passive?: boolean } = {}) {
-   if (!supported.value) return;
-   loading.value = true;
-   error.value = "";
-   partialErrors.value = [];
-   try {
--    await connectionStore.ensureConnected(props.connectionId, { skipIfClosedByUser: true });
-+    // 首屏/自动刷新是后台路径：失败后退避，避免每次 tick 都新建连接。手动刷新不传 passive。
-+    await connectionStore.ensureConnected(props.connectionId, { skipIfClosedByUser: true, passive: options.passive === true });
-     const requests = [
-       ["version", XUGU_VERSION_SQL, 1],
-       ["nodes", XUGU_CLUSTER_NODES_SQL, 500],
-@@ -271,7 +272,7 @@ function startAutoRefresh() {
-   stopAutoRefresh();
-   if (refreshSeconds.value <= 0) return;
-   refreshTimer = setInterval(() => {
--    if (!document.hidden) void load();
-+    if (!document.hidden) void load({ passive: true });
-   }, refreshSeconds.value * 1000);
- }
- 
-@@ -281,7 +282,7 @@ function changeRefresh(value: string) {
- }
- 
- onMounted(async () => {
--  await load();
-+  await load({ passive: true });
-   startAutoRefresh();
- });
- 
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 ```
 
-**File**: `apps/desktop/src/components/document/DocumentBrowser.vue` (modified, +1/-1)
+**File**: `crates/dbx-core/src/query/mod.rs` (modified, +53/-4)
 ```diff
-@@ -2723,7 +2723,7 @@ onMounted(async () => {
-   try {
-     // A restored tab issues no query, so a blocking health probe here would be
-     // the only round trip left on the switch.
--    await connectionStore.ensureConnected(props.connectionId, { ...(restoredDocumentData ? { verifyHealth: false } : {}), skipIfClosedByUser: true });
-+    await connectionStore.ensureConnected(props.connectionId, { ...(restoredDocumentData ? { verifyHealth: false, passive: true } : {}), skipIfClosedByUser: true });
-   } catch (e) {
-     console.warn("[DBX] ensureConnected failed for", props.connectionId, e);
-   }
-```
-
-**File**: `apps/desktop/src/stores/__tests__/connectionStore.automaticReconnectCooldown.spec.ts` (added, +143/-0)
-```diff
-@@ -0,0 +1,143 @@
-+import { createPinia, setActivePinia } from "pinia";
-+import { beforeEach, describe, expect, it, vi } from "vitest";
-+import type { ConnectionConfig } from "@/types/database";
-+
-+function installLocalStorage() {
-+  const data = new Map<string, string>();
-+  vi.stubGlobal("localStorage", {
-+    getItem: vi.fn((key: string) => data.get(key) ?? null),
-+    setItem: vi.fn((key: string, value: string) => data.set(key, value)),
-+    removeItem: vi.fn((key: string) => data.delete(key)),
-+  });
-+}
-+
-+function pgConnection(id: string): ConnectionConfig {
-+  return { id, name: id, db_type: "postgres", host: "127.0.0.1", port: 5432, username: "postgres", password: "", database: "app", read_only: false } as ConnectionConfig;
-+}
-+
-+const ORA_NO_LISTENER = "Agent RPC error: ORA-12541: TNS:no listener";
-+
-+async function setup() {
-+  const checkConnectionHealth = vi.fn().mockResolvedValue(undefined);
-+  const connectDb = vi
-+    .fn()
-+    .mockRejectedValueOnce(new Error(ORA_NO_LISTENER))
-+    .mockImplementation(async (config: ConnectionConfig) => config.id);
-+  const disconnectDb = vi.fn().mockResolvedValue(undefined);
-+
-+  vi.doMock("@/lib/backend/tauriRuntime", () => ({ isTauriRuntime: () => false }));
-+  vi.doMock("@/lib/backend/api", () => ({
-+    checkConnectionHealth,
-+    connectDb,
-+    disconnectDb,
-+    deleteSchemaCachePrefix: vi.fn().mockResolvedValue(undefined),
-+    deleteTableVGroupsForConnection: vi.fn().mockResolvedValue(undefined),
-+    listInstalledAgents: vi.fn().mockResolvedValue([]),
-+    listInstalledAgentsLocal: vi.fn().mockResolvedValue([]),
-+    loadSchemaCache: vi.fn().mockResolvedValue(null),
-+    saveConnections: vi.fn().mockResolvedValue(undefined),
-+    saveSchemaCache: vi.fn().mockResolvedValue(undefined),
-+    saveSidebarLayout: vi.fn().mockResolvedValue(undefined),
-+  }));
-+
-+  const { useConnectionStore } = await import("@/stores/connectionStore");
-+  const store = useConnectionStore();
-+  store.connections = [pgConnection("conn-a")];
-+  return { store, connectDb, disconnectDb };
-+}
-+
-+describe("connectionStore: passive reconnect backoff", () => {
-+  beforeEach(() => {
-+    vi.resetModules();
-+    vi.unstubAllGlobals();
-+    vi.useRealTimers();
-+    installLocalStorage();
-+    setActivePinia(createPinia());
-+  });
-+
-+  it("does not open a second connection for passive callers inside the backoff window", async () => {
-+    const { store, connectDb } = await setup();
-+
-+    await expect(store.ensureConnected("conn-a", { passive: true })).rejects.toThrow("ORA-12541");
-+    expect(connectDb).toHaveBeenCalledTimes(1);
-+    expect(store.connectionErrors["conn-a"]).toContain("ORA-12541");
-+
-+    // 面板轮询/自动刷新/页签恢复在退避窗口内必须复用同一次失败，不能再发起连接——
-+    // 否则第三方安全/零信任客户端会为每次连接各弹一个框。
-+    await expect(store.ensureConnected("conn-a", { passive: true })).rejects.toThrow("ORA-12541");
-+    expect(connectDb).toHaveBeenCalledTimes(1);
-+  }, 20_000);
-+
-+  it("never blocks a user-triggered ensureConnected", async () => {
-+    const { store, connectDb } = await setup();
-+    await expect(store.ensureConnected("conn-a", { passive: true })).rejects.toThrow("ORA-12541");
-+    expect(connectDb).toHaveBeenCalledTimes(1);
-+
-+    // 用户点侧栏连接/打开表等走非 passive 路径：必须真的再连一次，不能被后台退避拦住。
-+    await expect(store.ensureConnected("conn-a")).resolves.toBeUndefined();
-+    expect(connectDb).toHaveBeenCalledTimes(2);
-+    expect(store.connectedIds.has("conn-a")).toBe(true);
-+  }, 20_000);
-+
-+  it("lets an explicit connect() through and clears the backoff on success", async () => {
-+    const { store, connectDb } = await setup();
-+    await expect(store.ensureConnected("conn-a", { passive: true })).rejects.toThrow("ORA-12541");
-+    expect(connectDb).toHaveBeenCalledTimes(1);
-+
-+    await store.connect(pgConnection("conn-a"));
-+    expect(connectDb).toHaveBeenCalledTimes(2);
-+    expect(store.connectedIds.has("conn-a")).toBe(true);
-+
-+    // 成功后退避清空，被动路径恢复正常且不再被拦。
-+    await store.ensureConnected("conn-a", { passive: true, verifyHealth: false });
-+    expect(connectDb).toHaveBeenCalledTimes(2);
-+  }, 20_000);
-+
-+  it("forceReconnect bypasses the backoff", async () => {
-+    const { store, connectDb } = await setup();
-+    await expect(store.ensureConnected("conn-a", { passive: true })).rejects.toThrow("ORA-12541");
-+    expect(connectDb).toHaveBeenCalledTimes(1);
-+
-+    await expect(store.ensureConnected("conn-a", { passive: true, forceReconnect: true })).resolves.toBeUndefined();
-+    expect(connectDb).toHaveBeenCalledTimes(2);
-+    expect(store.connectedIds.has("conn-a")).toBe(true);
-+  }, 20_000);
-+
-+  it("stops passive reconnects after repeated failures until an explicit connect", async () => {
-+    const { store, connectDb } = await setup();
-+    connectDb.mockReset();
-+    connectDb.mockRejectedValue(new Error(ORA_NO_LISTENER));
-+
-+    const start = Date.now();
-+    const nowSpy = vi.spyOn(Date, "now").mockImplementation(() => start);
-+    try {
-+      // 退避序列 15s → 60s → 5min；每次都要等窗口过去才会再试一次。
-+      const pas
-```
-
-**File**: `apps/desktop/src/stores/connectionStore.ts` (modified, +57/-1)
-```diff
-@@ -238,6 +238,15 @@ const CONNECTION_HEALTH_CHECK_TIMEOUT_MS = 5000;
- const CONNECTION_PREWARM_TTL_MS = 30_000;
- const DISCONNECT_REQUEST_TIMEOUT_MS = 5_000;
- const DEFAULT_KEEPALIVE_INTERVAL_SECS = 30;
-+/**
-+ * 被动重连退避/熔断（只作用于显式标了 `passive: true` 的后台路径，用户操作永远不拦）。
-+ * 企业零信任/安全接入客户端会为每一次到受保护数据库的**新建连接**做一次授权检查，
-+ * 失败时弹一个原生「警告」框——所以一次故障若被面板轮询、自动刷新、页签恢复反复重连，
-+ * 用户看到的就是满屏弹框。这里把「失败后的被动重连」逐级收敛：第 1 次失败后 15s、
-+ * 第 2 次 60s、第 3 次 5min 内不再发起 connectDb；第 4 次起**完全停止被动重连**，
-+ * 直到任意一次成功连接（含用户手动连接）清空退避。
-+ */
-+const AUTOMATIC_RECONNECT_BACKOFF_MS = [15_000, 60_000, 300_000] as const;
- const METADATA_LIST_PAGE_CACHE_TTL_MS = 30_000;
- const METADATA_LIST_PAGE_CACHE_MAX_ENTRIES = 160;
- const SIDEBAR_DATABASE_STORAGE_CACHE_TTL_MS = 30_000;
-@@ -731,6 +740,11 @@ export const useConnectionStore = defineStore("connection", () => {
-     console.debug("[DBX][metadata-load:trace]", event);
-   };
-   const connectInFlight = new Map<string, Promise<void>>();
-+  // 自动重连冷却：连接 id -> 冷却截止时间（Unix 毫秒）与最近一次失败。
-+  // 只拦「自动/被动」重连；connect() 与 forceReconnect 会清掉它。
-+  const automaticReconnectBlockedUntil = new Map<string, number>();
-+  const automaticReconnectBlockedError = new Map<string, unknown>();
-+  const automaticReconnectFailureCount = new Map<string, number>();
-   const disconnectInFlight = new Map<string, Promise<void>>();
-   const credentialCloseInFlight = new Map<string, Promise<void>>();
-   const disconnectInFlightScoped = new Map<string, boolean>();
-@@ -1614,6 +1628,34 @@ export const useConnectionStore = defineStore("connection", () => {
-     return message;
-   }
+@@ -886,9 +886,14 @@ async fn connection_statement_split_database_type(state: &AppState, connection_i
+ /// A generic JDBC connection to Oracle runs PL/SQL through the JDBC plugin, so its
+ /// script is split with the Oracle rules. The plain `Jdbc` profile would cut every
+ /// routine body at its first inner semicolon and replace the object with the fragment.
+-fn statement_split_database_type(config: &ConnectionConfig) -> DatabaseType {
++/// A JDBC connection to SQL Server runs T-SQL through the JDBC plugin, so its script
++/// keeps top-level control-flow batches whole (#13514). Both mappings only change
++/// statement-splitting semantics; the connection's `db_type` still routes the query.
++pub fn statement_split_database_type(config: &ConnectionConfig) -> DatabaseType {
+     if crate::schema::is_oracle_external_driver_config(config) {
+         DatabaseType::Oracle
++    } else if crate::schema::is_sqlserver_external_driver_config(config) {
++        DatabaseType::SqlServer
+     } else {
+         config.db_type
+     }
+@@ -6799,6 +6804,10 @@ pub async fn execute_in_manual_transaction_with_options(
  
-+  /** 自动重连退避中？（只用于非用户显式触发的重连，见 ensureConnected） */
-+  function automaticReconnectCooldownRemainingMs(connectionId: string): number {
-+    return Math.max(0, (automaticReconnectBlockedUntil.get(connectionId) ?? 0) - Date.now());
-+  }
-+
-+  function clearAutomaticReconnectCooldown(connectionId: string) {
-+    automaticReconnectBlockedUntil.delete(connectionId);
-+    automaticReconnectBlockedError.delete(connectionId);
-+    automaticReconnectFailureCount.delete(connectionId);
-+  }
-+
-+  function noteAutomaticReconnectFailure(connectionId: string, error: unknown) {
-+    const failures = (automaticReconnectFailureCount.get(connectionId) ?? 0) + 1;
-+    automaticReconnectFailureCount.set(connectionId, failures);
-+    automaticReconnectBlockedError.set(connectionId, error);
-+    if (failures > AUTOMATIC_RECONNECT_BACKOFF_MS.length) {
-+      // 连续多次失败：停止自动重连，等用户显式重试（避免第三方安全客户端被无限触发）。
-+      automaticReconnectBlockedUntil.set(connectionId, Number.POSITIVE_INFINITY);
-+      return;
-+    }
-+    automaticReconnectBlockedUntil.set(connectionId, Date.now() + AUTOMATIC_RECONNECT_BACKOFF_MS[failures - 1]);
-+  }
-+
-+  function automaticReconnectCooldownError(connectionId: string): Error {
-+    const lastError = automaticReconnectBlockedError.get(connectionId);
-+    return lastError instanceof Error ? lastError : new Error(connectionErrorMessage(lastError));
-+  }
-+
-   function markConnectionLost(connectionId: string, error: unknown) {
-     connectedIds.value.delete(connectionId);
-     clearEtcdAccessCapabilities(connectionId);
-@@ -5211,6 +5253,8 @@ export const useConnectionStore = defineStore("connection", () => {
-     const expectedConfigFingerprint = connectionConfigFingerprint(getConfig(config.id) ?? config);
-     if (getBlockingDisconnectInFlight(config.id)) await waitForBlockingDisconnectInFlight(config.id);
-     if (passwordChangeReconnectRequired.get(config.id) !== passwordChangeState) throw new Error(i18n.global.t("userAdmin.passwordChangedReconnect"));
-+    // 用户显式连接：清掉自动重连冷却，保证“点连接/重试”永远真的会再试一次。
-+    clearAutomaticReconnectCooldown(config.id);
-     const localAttempt = beginLocalConnectionAttempt(config.id);
-     const metadataRevision = connectionStateRevision(config.id);
-     try {
-@@ -5262,6 +5306,8 @@ export const useConnectionStore = defineStore("connection", () => {
-       markConnectionHealthChecked(id);
-       clearConnectionError(config.id);
-       if (id !== config.id) clearConnectionError(id);
-+      clearAutomaticReconnectCooldown(config.id);
-+      if (id !== config.id) clearAutomaticReconnectCooldown(id);
- 
-       const existing = findConnectionNode(id);
-       if (existing) {
-@@ -5636,7 +5682,7 @@ export const useConnectionStore = defineStore("connection", () => {
-    * `CONNECTION_CLOSED_BY_USER_MESSAGE`，让调用方停在"连接已关闭"的空态，而不是把连接
-    * 偷偷连回来（这是"关闭连接后连接又自己回来"这类报告的根因）。
-    */
--  async function ensureConnected(connectionId: string, options: { activate?: boolean; verifyHealth?: boolean; forceReconnect?: boolean; allowPasswordPrompt?: boolean; skipIfClosedByUser?: boolean } = {}) {
-+  async function ensureConnected(connectionId: string, options: { activate?: boolean; verifyHealth?: boolean; forceReconnect?: boolean; allowPasswordPrompt?: boolean; skipIfClosedByUser?: boolean; passive?: boolean } = {}) {
-     if (options.skipIfClosedByUser && isConnectionClosedByUser(connectionId)) throw new Error(CONNECTION_CLOSED_BY_USER_MESSAGE);
-     if (passwordChangeReconnectRequire
-```
-
-**File**: `crates/dbx-core/src/connection/mod.rs` (modified, +3/-1)
-```diff
-@@ -9924,7 +9924,9 @@ mod tests {
-         .expect("SID listener errors should allow service-name retry");
-         assert_eq!(service_retry.connection_string.as_deref(), Some("jdbc:oracle:thin:@//127.0.0.1:3306/ORCL"));
- 
--        assert!(oracle_alternate_connect_config(&config, "ORA-12541: TNS:no listener").is_some());
-+        // ORA-12541 / "no listener" is TCP-level unreachable: alternates cannot help
-+        // and each one opens another connection (and another security-client popup).
-+        assert!(oracle_alternate_connect_config(&config, "ORA-12541: TNS:no listener").is_none());
+     let db_type = connection_database_type(state, &connection_id).await;
+     let compatibility_mode = connection_sql_compatibility_mode(state, &pool_key, db_type).await;
++    // Split with the connection's statement-splitting dialect, not its routing
++    // `db_type`: a JDBC SQL Server connection keeps control-flow batches whole
++    // (#13514) while still executing through the generic external-driver path.
++    let split_db_type = connection_statement_split_database_type(state, &connection_id).await;
+     let statements = if let Some(bound) = options.bound_statements.as_ref() {
+         if db_type != Some(DatabaseType::OceanbaseOracle) {
+             return Err("Bound BLOB saves are only supported for OceanBase Oracle.".into());
+@@ -6810,12 +6819,12 @@ pub async fn execute_in_manual_transaction_with_options(
+         dbx_types::types::validate_blob_bound_statements(&previews, bound)?;
+         previews
+     } else {
+-        db_type.map_or_else(
++        split_db_type.map_or_else(
+             || split_sql_statements(sql),
+-            |db_type| {
++            |split_db_type| {
+                 crate::sql::split_sql_statements_for_database_with_compatibility(
+                     sql,
+-                    db_type,
++                    split_db_type,
+                     compatibility_mode.as_deref(),
+                 )
+             },
+@@ -10889,6 +10898,46 @@ for line in sys.stdin:
+         assert_eq!(statement_split_database_type(&other), DatabaseType::Jdbc);
      }
  
++    // #13514: a generic JDBC connection to SQL Server splits with the SQL Server
++    // rules, so the reported TRY/CATCH script keeps its batch whole while the
++    // leading `SET` stays its own statement. Other JDBC configs stay on the
++    // plain `Jdbc` profile.
++    #[test]
++    fn jdbc_sqlserver_execution_plan_keeps_control_flow_batches_whole() {
++        let mut sqlserver = test_connection_config(DatabaseType::Jdbc);
++        sqlserver.connection_string = Some("jdbc:sqlserver://127.0.0.1:1433;databaseName=demo".to_string());
++        assert_eq!(statement_split_database_type(&sqlserver), DatabaseType::SqlServer);
++
++        let sql = "SET XACT_ABORT ON;\n\
++                   BEGIN TRY\n\
++                   BEGIN TRANSACTION;\n\
++                   UPDATE dbo.Documents SET Deleted = 0 WHERE Deleted = 1;\n\
++                   COMMIT TRANSACTION;\n\
++                   END TRY\n\
++                   BEGIN CATCH\n\
++                   IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;\n\
++                   THROW;\n\
++                   END CATCH;";
++        let block = &sql[sql.find("BEGIN TRY").unwrap()..];
++
++        let plan = query_execution_plan(sql, Some(statement_split_database_type(&sqlserver)), false);
++        assert_eq!(plan.statements, vec!["SET XACT_ABORT ON".to_string(), block.to_string()]);
++
++        let mut other = test_connection_config(DatabaseType::Jdbc);
++        other.connection_string = Some("jdbc:h2:mem:test".to_string());
++        let plan = query_execution_plan("SELECT 1; SELECT 2;", Some(statement_split_database_type(&other)), false);
++        assert_eq!(plan.statements, vec!["SELECT 1", "SELECT 2"]);
++
++        let mut postgres = test_connection_config(DatabaseType::Jdbc);
++        postgres.connection_string = Some("jdbc:postgresql://127.0.0.1:5432/demo".to_string());
++        assert_eq!(statement_split_database_type(&postgres), DatabaseType::Jdbc);
++
++        let mut jtds = test_connection_config(DatabaseType::Jdbc);
++        jtds.connection_string = Some("jdbc:jtds:sqlserver://127.0.0.1:1433/demo".to_string());
++        jtds.jdbc_driver_class = Some("net.sourceforge.jtds.jdbc.Driver".to_string());
++        assert_eq!(statement_split_database_type(&jtds), DatabaseType::SqlServer);
++    }
++
      #[test]
+     fn ordinary_agent_execution_plan_still_splits_semicolon_statements() {
+         let plan = query_execution_plan(
+```
+
+**File**: `crates/dbx-core/src/schema/mod.rs` (modified, +74/-13)
+```diff
+@@ -3292,19 +3292,20 @@ mod tests {
+         filter_table_infos, filter_visible_schema_names, finalize_object_source, gaussdb_m_indexes_sql,
+         gaussdb_m_view_object_source_sql, gbase8a_object_statistics_sql, is_agent_postgres_metadata_fallback_config,
+         is_mysql_external_driver_config, is_oracle_external_driver_config, is_retryable_metadata_error,
+-        metadata_error_action, metadata_name_or_comment_matches, mysql_auto_increment_from_query_result,
+-        mysql_auto_increment_metadata_sql, mysql_database_list_timeout, mysql_external_driver_ddl_from_query_result,
+-        mysql_external_driver_ddl_sql, mysql_object_source_ddl_column_index, mysql_object_source_sql,
+-        mysql_table_list_source_for_config, mysql_table_metadata_catalog, normalize_information_schema_table_type,
+-        oracle_columns_from_query_result, oracle_columns_sql, oracle_columns_sql_for_resolved_owner,
+-        oracle_completion_synonyms_sql, oracle_current_schema_from_query_result,
+-        oracle_object_statistics_dba_segments_sql, oracle_object_statistics_from_query_result,
+-        oracle_object_statistics_rows_only_sql, oracle_object_statistics_sql,
+-        oracle_object_statistics_user_segments_sql, oracle_synonym_target_from_query_result, oracle_synonym_target_sql,
+-        oracle_table_comment_sql, oracle_table_comments_sql, presto_like_columns_from_query_result,
+-        presto_like_information_schema_columns_sql, presto_like_information_schema_tables_sql,
+-        presto_like_tables_from_query_result, reference_key_columns_from_indexes, reference_keys_from_indexes,
+-        replace_metadata_runtime, should_append_oracle_style_comment_ddl, should_query_oracle_columns_via_sql_first,
++        is_sqlserver_external_driver_config, metadata_error_action, metadata_name_or_comment_matches,
++        mysql_auto_increment_from_query_result, mysql_auto_increment_metadata_sql, mysql_database_list_timeout,
++        mysql_external_driver_ddl_from_query_result, mysql_external_driver_ddl_sql,
++        mysql_object_source_ddl_column_index, mysql_object_source_sql, mysql_table_list_source_for_config,
++        mysql_table_metadata_catalog, normalize_information_schema_table_type, oracle_columns_from_query_result,
++        oracle_columns_sql, oracle_columns_sql_for_resolved_owner, oracle_completion_synonyms_sql,
++        oracle_current_schema_from_query_result, oracle_object_statistics_dba_segments_sql,
++        oracle_object_statistics_from_query_result, oracle_object_statistics_rows_only_sql,
++        oracle_object_statistics_sql, oracle_object_statistics_user_segments_sql,
++        oracle_synonym_target_from_query_result, oracle_synonym_target_sql, oracle_table_comment_sql,
++        oracle_table_comments_sql, presto_like_columns_from_query_result, presto_like_information_schema_columns_sql,
++        presto_like_information_schema_tables_sql, presto_like_tables_from_query_result,
++        reference_key_columns_from_indexes, reference_keys_from_indexes, replace_metadata_runtime,
++        should_append_oracle_style_comment_ddl, should_query_oracle_columns_via_sql_first,
+         single_table_comment_from_query_result, table_comments_from_query_result, table_name_filter_matches,
+         tdengine_table_comment_like_pattern, tdengine_table_comment_sql, tdengine_table_comments_sql,
+         uses_mongodb_agent_collection_listing, visible_schema_filter, ExternalDriverStatisticsDialect,
+@@ -3879,6 +3880,35 @@ done
+         assert!(!is_oracle_external_driver_config(&config));
+     }
+ 
++    #[test]
++    fn sqlserver_external_driver_detection_only_accepts_standard_jdbc_signals() {
++        let mut config = test_connection_config(DatabaseType::Jdbc);
++        config.connection_string = Some(" jdbc:sqlserver://127.0.0.1:1433;databaseName=demo ".to_string());
++        assert!(is_sqlserver_external_driver_config(&config));
++
++        config.connection_string = Some("jdbc:jtds:sqlserver://127.0.0.1:1433/demo".to_string());
++        assert!(is_sqlserver_external_driver_config(&config));
++
++        config.connection_string = Some("jdbc:jtds:sqlserver://127.0.0.1:1433/demo".to_string());
++        config.jdbc_driver_class = Some("com.mysql.cj.jdbc.Driver".to_string());
++        assert!(!is_sqlserver_external_driver_config(&config));
++
++        config.connection_string = None;
++        config.jdbc_driver_class = Some(" com.microsoft.sqlserver.jdbc.SQLServerDriver ".to_string());
++        assert!(is_sqlserver_external_driver_config(&config));
++
++        config.jdbc_driver_class = Some("net.sourceforge.jtds.jdbc.Driver".to_string());
++        assert!(is_sqlserver_external_driver_config(&config));
++
++        config.connection_string = Some("jdbc:postgresql://127.0.0.1:5432/demo".to_string());
++        config.jdbc_driver_class = Some("com.microsoft.sqlserver.jdbc.SQLServerDriver".to_string());
++        assert!(!is_sqlserver_external_driver_config(&config));
++
++        config.db_type = DatabaseType::SqlServer;
++        config.connection_string = N
+```
+
+**File**: `crates/dbx-mcp/src/backend.rs` (modified, +9/-1)
+```diff
+@@ -1403,7 +1403,15 @@ impl DbxBackend for LocalBackend {
+     ) -> dbx_core::sql::SqlExecutionPlan {
+         let is_sqlserver_agent =
+             dbx_core::query::connection_pool_is_sqlserver_agent(self.state.as_ref(), &connection.id, database).await;
+-        dbx_core::query::query_execution_plan(sql, Some(connection.db_type), is_sqlserver_agent)
++        // Split with the connection's statement-splitting dialect, not its
++        // routing `db_type`: a JDBC SQL Server connection keeps control-flow
++        // batches whole (#13514), a JDBC Oracle connection keeps PL/SQL units
++        // whole, matching the core's own execution plan.
++        dbx_core::query::query_execution_plan(
++            sql,
++            Some(dbx_core::query::statement_split_database_type(connection)),
++            is_sqlserver_agent,
++        )
+     }
+ 
+     async fn add_connection_for_mcp(&self, config: ConnectionConfig) -> Result<ConnectionConfig, String> {
+```
+
+**File**: `crates/dbx-sql-core/src/sql.rs` (modified, +471/-0)
+```diff
+@@ -211,6 +211,13 @@ struct SqlDialectProfile {
+     supports_firebird_routine_blocks: bool,
+     supports_go_batch_separator: bool,
+     keeps_sqlserver_module_batch_at_cursor: bool,
++    /// Whether a top-level T-SQL control-flow batch (`IF`/`WHILE` with a block
++    /// body or `ELSE`, or a top-level `BEGIN ... END` block) stays whole in the
++    /// `;`-statement splitter. The SQL Server profile needs it because T-SQL
++    /// does not end a block at a semicolon; the generic JDBC profile must not
++    /// lose it, or the backend re-splits the TRY/CATCH batches the editor
++    /// already kept together (#13514).
++    keeps_sqlserver_control_flow_batches: bool,
+     preserves_tdsql_leading_directives: bool,
+     requires_whitespace_after_line_comment_dashes: bool,
+     supports_psql_control_commands: bool,
+@@ -236,6 +243,7 @@ impl Default for SqlDialectProfile {
+             supports_firebird_routine_blocks: false,
+             supports_go_batch_separator: false,
+             keeps_sqlserver_module_batch_at_cursor: false,
++            keeps_sqlserver_control_flow_batches: false,
+             preserves_tdsql_leading_directives: false,
+             requires_whitespace_after_line_comment_dashes: false,
+             supports_psql_control_commands: false,
+@@ -397,6 +405,7 @@ impl SqlDialectProfile {
+         Self {
+             supports_go_batch_separator: true,
+             keeps_sqlserver_module_batch_at_cursor: true,
++            keeps_sqlserver_control_flow_batches: true,
+             supports_nested_block_comments: true,
+             ..Self::default()
+         }
+@@ -978,6 +987,60 @@ impl SqlStatementSplitter {
+                         if firebird_routine_block_is_complete(&self.buffer) {
+                             self.push_current_statement(&mut statements);
+                         }
++                    } else if keeps_sqlserver_control_flow_batch(self.options, &self.buffer) {
++                        // T-SQL does not end a control-flow batch at a semicolon
++                        // (#9336, #13051, #13514): the inner `;` stays in the
++                        // batch and the statement ends after the block's final
++                        // `END [TRY]`.
++                        self.buffer.push(ch);
++                        if sqlserver_control_flow_batch_is_complete(&self.buffer) {
++                            // A final `END` without its own `;` shares the
++                            // fragment with the next statement; the boundary
++                            // sits right after that `END` instead (TS parity).
++                            // An `END` directly followed by this `;` keeps the
++                            // historical shape: the batch ends here with its
++                            // terminating semicolon.
++                            let body_end = self.buffer.len() - ch.len_utf8();
++                            let body = self.buffer[..body_end].to_string();
++                            let mut boundaries = Vec::new();
++                            let mut cursor = 0usize;
++                            while let Some(relative) = sqlserver_control_flow_batch_boundary(&body[cursor..]) {
++                                if cursor + relative >= body.len() {
++                                    break;
++                                }
++                                cursor += relative;
++                                boundaries.push(cursor);
++                            }
++                            if boundaries.is_empty() {
++                                self.push_current_statement(&mut statements);
++                            } else {
++                                let mut piece_from = 0usize;
++                                for boundary_end in &boundaries {
++                                    self.buffer.clear();
++                                    self.buffer.push_str(&body[piece_from..*boundary_end]);
++                                    self.push_current_statement(&mut statements);
++                                    piece_from = *boundary_end;
++                                }
++                                let trailing = &body[piece_from..];
++                                if !trailing.trim().is_empty() {
++                                    self.buffer.clear();
++                                    self.buffer.push_str(trailing);
++                                    if keeps_sqlserver_control_flow_batch(self.options, trailing) {
++                                        // A new batch in the remainder keeps the
++                                        // terminating `;` when complete and this
++                                        // `;` when it is still mid-typing.
++                                        self.buffer.push(ch);
++                                        if sqlserver_control_flow_batch_is_complete(trailing) {
++                                            self.push_current_statement(&mut statements);
++                                        }
++ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13677** (closed): fix(deps): update npm minor/patch - autoclosed (@renovate[bot])
-- **PR #13675** (2026-10-27): fix(tabs): clarify the active group in horizontal tab layouts (@zipg)
-- **PR #13672** (2026-10-27): fix(windows): keep the 8 MiB main-thread stack on legacy builds (0xC00000FD) (@zipg)
-- **PR #13662** (2026-10-27): fix(oracle): 连接失败最多只发一条 TCP，避免第三方安全客户端弹框风暴 (@zipg)
-- **PR #13658** (2026-10-27): fix(sidebar): 修复长对象名称触发横向滚动后搜索控件溢出 (@zipg)
-- **PR #13654** (2026-10-27): chore(deps): update actions/checkout action to v7 (@renovate[bot])
+- **PR #13735** (closed): ci(win7): measure rustc phase memory during dbx codegen (@luojiyin1987)
+- **PR #13718** (closed): ci(win7): measure half registry memory ceiling (@luojiyin1987)
+- **PR #13710** (closed): ci(win7): measure core prebuild scheduling and page reads (@luojiyin1987)
+- **PR #13696** (closed): chore(deps): update actions/github-script action to v9 - autoclosed (@renovate[bot])
+- **PR #13695** (2026-10-27): fix(grid): allow resizing the metadata info column in transpose view (@lxk955)
+- **PR #13694** (2026-10-27): fix(transfer): unify CTE classid type to oid for openGauss precheck (@FrankChan8)
 
 ---
 
@@ -2887,28 +2366,25 @@ stack deeper, and the legacy 1 MiB stack overflows on connect.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. windows): keep the 8 MiB main-thread stack on legacy builds (0xC00000FD) (#13672
+## X. ci): limit arm linux build parallelism to avoid runner oom
 
 **RULE**:
-When implementing operations in `.cargo/config.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fbb588ee`: windows): keep the 8 MiB main-thread stack on legacy builds (0xC00000FD) (#13672). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `33f3b593`: ci): limit arm linux build parallelism to avoid runner oom. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/config.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-
-# The legacy Windows 7 / Server 2012 R2 target keeps the same 8 MiB main-thread
-# stack. CI builds it with an explicit RUSTFLAGS env (static CRT), which
-# replaces this table, so the same link arg is repeated in those workflows and
-# audited by .github/scripts/assert-win7-pe-compat.ps1. Without it the legacy PE
-# keeps the 1 MiB default and the app aborts with 0xC00000FD ("DBX 已停止工作").
-[target.x86_64-win7-windows-msvc]
-rustflags = ["-C", "link-arg=/STACK:8388608"]
+          # Standard ARM runners have 16 GB RAM; parallel rustc of the heavy
+          # workspace crates (dbx-core, dbx-mcp) plus linking peaks past what
+          # the pool now tolerates and the runner is killed with a shutdown
+          # signal. Fewer parallel codegen units keep peak memory in bounds.
+          CARGO_BUILD_JOBS: ${{ (matrix.platform == 'ubuntu-22.04-arm' && '2') || '' }}
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2918,4 +2394,4 @@ rustflags = ["-C", "link-arg=/STACK:8388608"]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fbb588ee` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `33f3b593` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T04:35:28.742Z",
+  "last_updated": "2026-10-28T04:42:05.923Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -395,14 +395,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nemotron-3-diarization",
-      "content_hash": "f3a59d387e7a8d8fab60d1acdd9a5bdd0e86df5b79ba769dce989c1da41f1f17",
-      "verified_at": "2026-10-25T11:43:48.345Z",
+      "content_hash": "fe18e837765a2590c7f555a479ba502224cbbd44d8d2668849ff8085752c9e53",
+      "verified_at": "2026-10-28T04:41:52.681Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T11:43:48.345Z"
+      "last_updated": "2026-10-28T04:41:52.681Z"
     },
     "Lightricks/LTX-2.5": {
       "repository": "Lightricks/LTX-2.5",
@@ -4056,14 +4056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zulip-zulip",
-      "content_hash": "459bcd659afa4425bee2c9b8dabdad4dc0f709dfe091f86ce65e403484557a88",
-      "verified_at": "2026-10-27T13:28:29.627Z",
+      "content_hash": "50c638e5048a39d9c0b7466c4761599a68c1a6f2f19af971f347beb153c1ba9b",
+      "verified_at": "2026-10-28T04:41:58.795Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:28:29.627Z"
+      "last_updated": "2026-10-28T04:41:58.795Z"
     },
     "goodrain/rainbond": {
       "repository": "goodrain/rainbond",
@@ -10791,14 +10791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-t8y2-dbx",
-      "content_hash": "ab74851ab13e7647607a05aebfc52f144a4ef67af2caad0ea7739e476bfdec5c",
-      "verified_at": "2026-10-27T14:57:47.661Z",
+      "content_hash": "4ce550ba608d1fb57eafd1744ea30d8e8e87b8830acc427d298e53173fc1b0ac",
+      "verified_at": "2026-10-28T04:42:05.922Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T14:57:47.661Z"
+      "last_updated": "2026-10-28T04:42:05.922Z"
     },
     "ouch-org/ouch": {
       "repository": "ouch-org/ouch",

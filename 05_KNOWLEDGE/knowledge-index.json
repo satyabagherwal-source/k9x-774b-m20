@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T04:35:28.655Z",
+  "last_updated": "2026-10-28T04:42:05.851Z",
   "total_verified_learnings": 1156,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -24862,7 +24862,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
       "source_version": "hf-nvidia-nemotron-3-diarization",
-      "content_hash": "f3a59d387e7a8d8fab60d1acdd9a5bdd0e86df5b79ba769dce989c1da41f1f17",
+      "content_hash": "fe18e837765a2590c7f555a479ba502224cbbd44d8d2668849ff8085752c9e53",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
       "promoted_rules": [
@@ -24895,7 +24895,7 @@
         "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv44qfqt",
         "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv4hzpqi"
       ],
-      "verified_at": "2026-10-25T11:43:48.270Z",
+      "verified_at": "2026-10-28T04:41:52.576Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49734,8 +49734,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "fbb588ee",
-      "content_hash": "ab74851ab13e7647607a05aebfc52f144a4ef67af2caad0ea7739e476bfdec5c",
+      "source_version": "1766aca2",
+      "content_hash": "4ce550ba608d1fb57eafd1744ea30d8e8e87b8830acc427d298e53173fc1b0ac",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -49788,6 +49788,11 @@
           "number": 4868,
           "title": "windows): keep the 8 MiB main-thread stack on legacy builds (0xC00000FD) (#13672",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5176,
+          "title": "ci): limit arm linux build parallelism to avoid runner oom",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49795,7 +49800,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T14:57:47.580Z",
+      "verified_at": "2026-10-28T04:42:05.836Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56162,8 +56167,8 @@
       "slug": "zulip-zulip",
       "platform": "github",
       "source_url": "https://github.com/zulip/zulip",
-      "source_version": "3e9bc1e1",
-      "content_hash": "459bcd659afa4425bee2c9b8dabdad4dc0f709dfe091f86ce65e403484557a88",
+      "source_version": "00635bc3",
+      "content_hash": "50c638e5048a39d9c0b7466c4761599a68c1a6f2f19af971f347beb153c1ba9b",
       "dossier_path": "07_PROJECT_LEARNING/zulip-zulip-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zulip-zulip-learnings.md",
       "promoted_rules": [
@@ -56191,6 +56196,11 @@
           "number": 4805,
           "title": "auth: Fix 500 on signup with a long external auth method name.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5175,
+          "title": "slack_import: Fix unexplained failure on invalid Slack user emails.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56198,7 +56208,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:28:29.566Z",
+      "verified_at": "2026-10-28T04:41:58.710Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -141762,6 +141772,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T04:35:28.637Z"
+    },
+    "rule-5175": {
+      "learning_id": "rule-5175",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5175,
+      "title": "slack_import: Fix unexplained failure on invalid Slack user emails.",
+      "source_url": "https://github.com/zulip/zulip",
+      "source_version": "00635bc3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T04:41:58.711Z"
+    },
+    "rule-5176": {
+      "learning_id": "rule-5176",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5176,
+      "title": "ci): limit arm linux build parallelism to avoid runner oom",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "1766aca2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T04:42:05.836Z"
     }
   },
   "aliases": {
