@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T09:40:46.964Z",
-    "lastVerified": "2026-10-28T09:40:46.964Z",
+    "lastChecked": "2026-10-28T10:06:40.109Z",
+    "lastVerified": "2026-10-28T10:06:40.109Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -169,9 +169,9 @@
   "dathere-qsv": {
     "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
-    "lastChecked": "2026-10-28T08:06:03.716Z",
+    "lastChecked": "2026-10-28T09:58:08.859Z",
     "revisionIdentifier": "acf15714",
-    "lastVerified": "2026-10-28T08:06:03.716Z"
+    "lastVerified": "2026-10-28T09:58:08.859Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -765,9 +765,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-10-28T04:03:44.340Z",
+    "lastChecked": "2026-10-28T09:58:03.902Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-10-28T04:03:44.340Z"
+    "lastVerified": "2026-10-28T09:58:03.902Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -2330,5 +2330,60 @@
     "lastChecked": "2026-10-28T09:25:20.391Z",
     "revisionIdentifier": "6d4608c5",
     "lastVerified": "2026-10-28T09:25:20.391Z"
+  },
+  "clementtsang-bottom": {
+    "name": "bottom",
+    "officialUrl": "https://github.com/ClementTsang/bottom",
+    "lastChecked": "2026-10-28T09:57:53.852Z",
+    "revisionIdentifier": "fdc61caf",
+    "lastVerified": "2026-10-28T09:57:53.852Z"
+  },
+  "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf": {
+    "name": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+    "officialUrl": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T09:57:56.442Z",
+    "lastVerified": "2026-10-28T09:57:56.442Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+    "contentHash": "6e1a1a1b546d1d9454ac4b20609bc0451215b2f71c8b99d48a9c2e5963e51a04",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "leecade-react-native-swiper": {
+    "name": "react-native-swiper",
+    "officialUrl": "https://github.com/leecade/react-native-swiper",
+    "lastChecked": "2026-10-28T09:57:58.868Z",
+    "revisionIdentifier": "98cc9060",
+    "lastVerified": "2026-10-28T09:57:58.868Z"
+  },
+  "taubyte-tau": {
+    "name": "tau",
+    "officialUrl": "https://github.com/taubyte/tau",
+    "lastChecked": "2026-10-28T09:58:01.373Z",
+    "revisionIdentifier": "d9841668",
+    "lastVerified": "2026-10-28T09:58:01.373Z"
+  },
+  "xerj-org-xerj": {
+    "name": "xerj-org/xerj",
+    "officialUrl": "https://github.com/xerj-org/xerj",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T09:58:09.374Z",
+    "lastVerified": "2026-10-28T09:58:09.374Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-xerj-org-xerj",
+    "contentHash": "d7c4faa87db4867788c77a391bb09022f2a842fc5d8ec120c8ec9ab41020ff38",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

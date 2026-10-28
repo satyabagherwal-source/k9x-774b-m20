@@ -5745,3 +5745,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf` | `https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-28T09:10:48.528Z |
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `8a2f5940` | Multi-dimensional audit evidence | 2026-10-28T09:30:41.308Z |
 | `learn-huggingface-alissonerdx-bfs-best-face-swap` | `https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap` | `hf-alisson` | Multi-dimensional audit evidence | 2026-10-28T09:40:44.413Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `5b46a142` | Multi-dimensional audit evidence | 2026-10-28T10:03:16.797Z |
+| `learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ukisai-` | Multi-dimensional audit evidence | 2026-10-28T10:06:37.575Z |

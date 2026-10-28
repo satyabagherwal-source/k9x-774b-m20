@@ -575,8 +575,8 @@
     "sourceUrl": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "d0edded8b428627f156a711da1a2f3958082f8341b1859c7c076631cc71a1aeb",
-    "lastHarvestedAt": "2026-10-25T15:26:52.764Z",
+    "contentHash": "6e1a1a1b546d1d9454ac4b20609bc0451215b2f71c8b99d48a9c2e5963e51a04",
+    "lastHarvestedAt": "2026-10-28T10:06:37.575Z",
     "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf"
   },
   "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2": {
@@ -2763,10 +2763,10 @@
     "repository": "xerj-org/xerj",
     "platform": "github",
     "sourceUrl": "https://github.com/xerj-org/xerj",
-    "sourceVersion": "cb990c63",
+    "sourceVersion": "5b46a142",
     "license": "Apache-2.0",
-    "contentHash": "4dadc4f0f1520cc9dca4234788e3c00239b0d3be566a9e165cddbb1a900c8d2f",
-    "lastHarvestedAt": "2026-10-27T18:03:34.600Z",
+    "contentHash": "d7c4faa87db4867788c77a391bb09022f2a842fc5d8ec120c8ec9ab41020ff38",
+    "lastHarvestedAt": "2026-10-28T10:03:16.797Z",
     "learningId": "learn-github-xerj-org-xerj"
   },
   "markmead-hyperui": {

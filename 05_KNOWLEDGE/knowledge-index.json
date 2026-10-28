@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T09:40:44.345Z",
+  "last_updated": "2026-10-28T10:06:37.510Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -28247,7 +28247,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "d0edded8b428627f156a711da1a2f3958082f8341b1859c7c076631cc71a1aeb",
+      "content_hash": "6e1a1a1b546d1d9454ac4b20609bc0451215b2f71c8b99d48a9c2e5963e51a04",
       "dossier_path": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -28320,6 +28320,16 @@
           "number": 3359,
           "title": "Bounded Kullback-Leibler Divergence (KLD) Calibration Gate for Quantized Checkpoints",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5246,
+          "title": "Invariant Calibration Context Budgeting for Quantization Validation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5247,
+          "title": "Strict Decoupling of Speculative Prediction Heads in GGUF Binaries",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -28340,7 +28350,7 @@
         "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv47apdo",
         "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv4kkyvs"
       ],
-      "verified_at": "2026-10-25T15:26:52.696Z",
+      "verified_at": "2026-10-28T10:06:37.496Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54804,8 +54814,8 @@
       "slug": "xerj-org-xerj",
       "platform": "github",
       "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "cb990c63",
-      "content_hash": "4dadc4f0f1520cc9dca4234788e3c00239b0d3be566a9e165cddbb1a900c8d2f",
+      "source_version": "5b46a142",
+      "content_hash": "d7c4faa87db4867788c77a391bb09022f2a842fc5d8ec120c8ec9ab41020ff38",
       "dossier_path": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "promoted_rules": [
@@ -54870,7 +54880,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T18:03:34.541Z",
+      "verified_at": "2026-10-28T10:03:16.700Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -143164,6 +143174,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T09:40:44.331Z"
+    },
+    "rule-5246": {
+      "learning_id": "rule-5246",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5246,
+      "title": "Invariant Calibration Context Budgeting for Quantization Validation",
+      "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T10:06:37.496Z"
+    },
+    "rule-5247": {
+      "learning_id": "rule-5247",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5247,
+      "title": "Strict Decoupling of Speculative Prediction Heads in GGUF Binaries",
+      "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T10:06:37.496Z"
     }
   },
   "aliases": {

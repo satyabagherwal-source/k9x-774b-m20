@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source**: github ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
-> **Source Version**: `cb990c63`  
+> **Source Version**: `5b46a142`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T18:03:34.242Z  
+> **Timestamp**: 2026-10-28T10:03:16.564Z  
 > **Learning ID**: `learn-github-xerj-org-xerj`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,17 +17,17 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T18:03:34.086Z  
+> **Harvest Timestamp**: 2026-10-28T09:58:09.374Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `xerj-org/xerj`
-- **Description**: Local-first search engine and MCP server for AI agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM25 full-text, vector and hybrid search, code search without grep, agent memory and RAG. Elasticsearch-compatible API; Corpus Hub serves hundreds of reference memory corpora.
+- **Description**: AI search engine and MCP server for bots and agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM25 full-text, vector and hybrid search, code search without grep, agent memory and RAG. Elasticsearch-compatible API; Corpus Hub serves hundreds of reference memory corpora.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17043 stars
+- **Stars / Engagement**: 17225 stars
 
 ---
 
@@ -1906,334 +1906,20 @@ pub use xerj_common::Result;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b127e7db` (2026-10-27)
-**Commit Message**: fix(code): show the matching window of a long definition, not its head (#2464) (#2474)
+### Incident Patch 1: `5b46a142` (2026-10-28)
+**Commit Message**: chore(metrics): release downloads 2026-10-28 — 39345 assets, 32238 binaries [skip ci]
 
-* fix(code): show the matching window of a long definition, not its head (#2464)
+Automated daily snapshot (.github/workflows/release-metrics.yml). GitHub keeps no history for download_count; this line is the history.
 
-symbol_passage picked the right definition, then kept only its first
-width chars, so a long definition showed its signature even when the
-text that matched sat far below. In the #2464 repro, --full 300 printed
-none of the four query terms; on pandas v3.1.0, the 19,825-char
-to_datetime definition was cut at its first 800. The no-symbol path
-already uses best_window; the symbol path never did.
 
-When the definition is longer than width, run best_window over it. A
-window at offset 0 keeps the old truncation byte-for-byte; otherwise the
-window follows "... [kind name: showing N of M chars from offset O,
-window centred on the match]", with O measured within the definition.
-The label and citations are unchanged. /_ask and the hub search API use
-the same function. Two new unit tests; the window test fails on the
-unfixed code. CHANGELOG and the xerj-code README are updated.
-
-* fix(code): put the window marker after the window (#2464)
-
-Review of #2474 found that the window marker led the passage. The hub
-search API caps hits
-
-**File**: `CHANGELOG.md` (modified, +9/-0)
-```diff
-@@ -112,6 +112,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Fixed
- 
-+- `xerj code` shows the part of a long definition that matched the query,
-+  not its first `--full` characters (#2464). The matching text could sit
-+  thousands of characters below the signature, so a hit named the right
-+  function but showed none of the query terms. Such passages now end with
-+  `... [function name: showing N of M chars from offset O, window centred on the match]`;
-+  the `@ line N` label and citations are unchanged, and a definition whose
-+  head is already the best window still ends `truncated at N chars`. Hub ask
-+  passages (`xerj ask`) and hub search API hits change the same way.
-+
- - A segment merge's output-write step (doc-values build, stored encode, FTS
-   side-car build) is now charged to the merge budget before it starts, and a
-   background batch yields instead of starting it when it would take RSS to
-```
-
-**File**: `engine/crates/xerj-common/src/xccode/passage.rs` (modified, +107/-5)
-```diff
-@@ -106,7 +106,10 @@ fn symbol_spans(src: &Value) -> Vec<(String, String, i64, Option<i64>)> {
- /// name contains every query term — `addReplyNull` still returns
- /// addReplyNull. A multi-term question must not let a generic one-word name
- /// (`type Token`) outrank the span that covers the rest of the question
--/// (#2327). Truncation keeps the label so the truncation is visible.
-+/// (#2327). Truncation keeps the label so the truncation is visible. A
-+/// definition longer than `width` shows its densest [`best_window`], not its
-+/// head: the match can sit far below the signature (#2464). When that window
-+/// is the head, the output is the plain truncation it always was.
- pub fn symbol_passage(
-     body: &str,
-     src: &Value,
-@@ -157,10 +160,25 @@ pub fn symbol_passage(
-     }
-     let (_, _, name, kind, start, mut text) = best?;
-     if py_len(&text) > width {
--        text = format!(
--            "{}\n    ... [{kind} {name} truncated at {width} chars]",
--            take_chars(&text, width)
--        );
-+        let (window, offset, total) = best_window(&text, query, width);
-+        text = if offset == 0 {
-+            format!(
-+                "{}\n    ... [{kind} {name} truncated at {width} chars]",
-+                take_chars(&text, width)
-+            )
-+        } else {
-+            // The offset is into the definition, so the label's start line
-+            // (and every citation built from it) is unchanged. The marker
-+            // trails the window, as the truncation marker does, so a budget
-+            // that cuts from the end drops the marker before any code.
-+            format!(
-+                "{window}\n    ... [{kind} {name}: showing {} of {} chars from offset {}, \
-+                 window centred on the match]",
-+                commaus(py_len(&window)),
-+                commaus(total),
-+                commaus(offset)
-+            )
-+        };
-     }
-     Some((text, format!("{kind} {name} @ line {start}")))
- }
-@@ -818,6 +836,90 @@ mod tests {
-         assert!(symbol_passage(body, &src, "zzzzz", 800).is_none());
-     }
- 
-+    /// #2464: a definition longer than `width` whose match sits below its
-+    /// signature shows the matching window of THAT definition, with the
-+    /// offset into the definition; the label (and so the citation) keeps the
-+    /// definition's start line.
-+    #[test]
-+    fn long_definition_shows_the_matching_window_not_its_head() {
-+        let filler: Vec<String> = (0..30)
-+            .map(|i| format!("    Filler line {i}: unrelated parameters and options."))
-+            .collect();
-+        let def = format!(
-+            "def long_function(arg):\n    \"\"\"\n    Do many things.\n\n{}\n\n    \
-+             Localize a naive timestamp to a timezone first, then convert it.\n    \
-+             \"\"\"\n    return arg",
-+            filler.join("\n")
-+        );
-+        let body = format!("def short_helper(x):\n    return x\n{def}");
-+        let src = json!({
-+            "symbols": [
-+                { "name": "short_helper", "kind": "function", "line": 1, "end_line": 2 },
-+                { "name": "long_function", "kind": "function", "line": 3 }
-+            ]
-+        });
-+        let (text, label) =
-+            symbol_passage(&body, &src, "localize naive timestamp timezone", 300).unwrap();
-+        assert_eq!(label, "function long_function @ line 3");
-+        assert!(text.contains("Localize a naive timestamp"), "{text}");
-+        assert!(!text.contains("def long_function"), "not the head: {text}");
-+        let (window, marker) = text.rsplit_once('\n').unwrap();
-+        // The window comes first, so a cut from the end loses the marker
-+        // before the match.
-+        assert!(
-+            take_chars(&text, 300).contains("Localize a naive timestamp"),
-+            "{text}"
-+        );
-+        let prefix = "    ... [function long_function: showing ";
-+        assert!(marker.starts_with(prefix), "{marker}");
-+        assert!(
-+            marker.ends_with(", window centred on the match]"),
-+            "{marker}"
-+        );
-+        // The offset is into the definition, not into the file body.
-+        let offset: usize = marker
-+            .split_once(" from offset ")
-+            .and_then(|(_, r)| r.split_once(", window"))
-+            .map(|(n, _)| n.replace(',', ""))
-+            .and_then(|n| n.parse().ok())
-+            .unwrap();
-+        assert!(offset > 0);
-+        let from_offset: String = def.chars().skip(offset).collect();
-+        assert!(from_offset.starts_with(window), "offset {offset}: {window}");
-+        assert!(window.chars().count() <= 300);
-+        assert!(marker.contains(&format!(" of {} chars", commaus(def.chars().count()))));
-+    }
-+
-+    /// When the densest window is the head, the output is byte-for-byte the
-+    /// plain truncation it was before #2464; a short definition is untouched.
-+    #[test]
-+    fn head_window_and_short_definition_are_unchanged() {
-+        let def = format!(
-+            "fn n
-```
-
-**File**: `tools/xerj-code/README.md` (modified, +7/-0)
-```diff
-@@ -149,6 +149,13 @@ match. Window offsets refer to the original source, including when Unicode
- lowercasing changes its length. `--full N` changes the character limit, and
- `--full 0` keeps the explicit file-head mode.
- 
-+A matching definition longer than the limit is windowed the same way: the
-+passage shows the part of that definition around the query terms, with a
-+marker giving the window's offset from the definition's start, and the
-+`kind name @ line N` label still names the definition's first line. When the
-+head of the definition is already the best window, it is shown with a
-+`truncated at N chars` marker.
-+
- ## Hybrid retrieval, fused server-side
- 
- With `--mode hybrid`, `xerj code` sends **one native top-level `hybrid` query**
-```
-
----
-
-### Incident Patch 2: `527cc307` (2026-10-26)
-**Commit Message**: fix(ci): load installer function fixtures through file URLs (#2332)
-
-On Windows, importing the temporary fixture as a raw absolute path makes Node treat the drive letter as a URL scheme. The existing installer route test exits with ERR_UNSUPPORTED_ESM_URL_SCHEME before any assertion.
-
-Convert the path with node:url pathToFileURL before dynamic import. No handler bytes or assertions change. The original harness failed on Windows / Node 22.18.0 before the fix; all 64 assertions passed afterwards, both with the usual temporary path and one containing spaces, # and %. Linux/macOS and Node 20 were not executed locally. Prepared with Codex.
-
-Co-authored-by: Jun516 <[REDACTED_EMAIL]>
-
-**File**: `.github/scripts/functions-get-test.mjs` (modified, +2/-2)
-```diff
-@@ -14,7 +14,7 @@
- import { readFileSync, writeFileSync, mkdtempSync } from 'node:fs';
- import { tmpdir } from 'node:os';
- import { join, dirname, resolve } from 'node:path';
--import { fileURLToPath } from 'node:url';
-+import { fileURLToPath, pathToFileURL } from 'node:url';
- 
- const REPO = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
- const SRC = join(REPO, 'functions', 'get.js');
-@@ -28,7 +28,7 @@ const PS1_BODY = readFileSync(join(REPO, 'landing', 'get.ps1'), 'utf8');
- const src = readFileSync(SRC, 'utf8');
- const tmp = join(mkdtempSync(join(tmpdir(), 'xerj-fn-')), 'get.mjs');
- writeFileSync(tmp, src);
--const fn = await import(tmp);
-+const fn = await import(pathToFileURL(tmp).href);
- 
- let failures = 0;
- const ok = (cond, name, extra = '') => {
-```
-
----
-
-### Incident Patch 3: `159b9405` (2026-10-27)
-**Commit Message**: fix(corpus): accept a Windows path in corpus add (#2472) (#2501)
-
-`xerj corpus add <name> F:\Projects\Foo` named the repo by the text after
-the last '/', so a backslash-separated Windows path stayed one token
-("F:\Projects\Foo") and the repo-name gate refused it as unsafe, while
-`xerj autoindex` took the same path. The name now comes from the last
-segment split on either separator (repo_name_from_source), so the repo is
-"Foo", as `F:/Projects/Foo` already gave. The name gate is unchanged.
-
-Test: repo_name_from_source_splits_windows_paths covers drive, trailing
-separator, .git suffix, UNC, forward-slash drive, Unix, https and scp-form
-sources, and checks each name passes valid_repo_name.
-
-Co-authored-by: Term56 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +5/-0)
-```diff
-@@ -147,6 +147,11 @@ continues in #2427 and #1122, which stay open.
- 
- ### Fixed
- 
-+- `xerj corpus add` accepts a local Windows path such as
-+  `F:\Projects\Foo` (#2472). The repo name was the text after the last `/`,
-+  so a `\`-separated path stayed whole and was refused as an unsafe repo
-+  name; it now names the repo `Foo`, as `F:/Projects/Foo` already did.
-+
- - `xerj code` shows the part of a long definition that matched the query,
-   not its first `--full` characters (#2464). The matching text could sit
-   thousands of characters below the signature, so a hit named the right
-```
-
-**File**: `engine/crates/xerj-autoindex/src/xc.rs` (modified, +41/-15)
-```diff
-@@ -762,6 +762,18 @@ enum XerjignoreCarry {
- /// symlink-to-a-dataset into the clone.
- const XERJIGNORE_CARRY_MAX_BYTES: u64 = 1024 * 1024;
- 
-+/// Repo directory name for a plain-URL or local-path source: its last path
-+/// segment without `.git`. #2472: a Windows path (`F:\Projects\Foo`) has
-+/// `\`-separated segments, so both separators split.
-+fn repo_name_from_source(url: &str) -> String {
-+    url.trim_end_matches(['/', '\\'])
-+        .rsplit(['/', '\\'])
-+        .next()
-+        .unwrap_or("")
-+        .trim_end_matches(".git")
-+        .to_string()
-+}
-+
- /// Filesystem root of a local checkout named by `url`, if `url` is one.
- ///
- /// `git clone` of a filesystem path or a `file://` URL checks out committed
-@@ -1105,21 +1117,12 @@ fn run_corpus_add(args: &[String]) -> i32 {
-         (
-             resolved,
-             urls.iter()
--                .map(|u| {
--                    let repo = u
--                        .trim_end_matches('/')
--                        .rsplit('/')
--                        .next()
--                        .unwrap_or("")
--                        .trim_end_matches(".git")
--                        .to_string();
--                    CorpusSource {
--                        repo,
--                        url: u.clone(),
--                        sha: String::new(),
--                        declared: String::new(),
--                        paths: Vec::new(),
--                    }
-+                .map(|u| CorpusSource {
-+                    repo: repo_name_from_source(u),
-+                    url: u.clone(),
-+                    sha: String::new(),
-+                    declared: String::new(),
-+                    paths: Vec::new(),
-                 })
-                 .collect(),
-         )
-@@ -5413,6 +5416,29 @@ precedence = ["a", "b"]
-         assert!(local_checkout_root("file://localhost/no/such/xerj-path-2199").is_none());
-     }
- 
-+    /// #2472: a Windows drive or UNC path names its repo by the last
-+    /// `\`-separated segment, as a URL or a Unix path does by its last `/` one.
-+    #[test]
-+    fn repo_name_from_source_splits_windows_paths() {
-+        for (source, repo) in [
-+            (r"F:\Projects\Roblox\LunarGame", "LunarGame"),
-+            (r"F:\Projects\Roblox\LunarGame\", "LunarGame"),
-+            (r"F:\src\widget.git", "widget"),
-+            (r"\\server\share\widget", "widget"),
-+            ("C:/src/widget/", "widget"),
-+            ("/home/me/widget", "widget"),
-+            ("https://github.com/xerj-org/xerj.git", "xerj"),
-+            ("git@github.com:xerj-org/xerj.git", "xerj"),
-+        ] {
-+            let name = repo_name_from_source(source);
-+            assert_eq!(name, repo, "{source}");
-+            assert!(
-+                xccode::pathgate::valid_repo_name(&name).is_ok(),
-+                "{source} -> {name}"
-+            );
-+        }
-+    }
-+
-     /// #2339: `--own` is explicit. A local path with no LICENSE is not marked
-     /// own by itself. The marker persists across a re-add, a `--from` file
-     /// cannot set it, and `xerj corpus own` sets and clears it.
-```
 
 #### Recent Merged Pull Requests:
-- **PR #2522** (2026-10-27): hub: author-approved contribution candidates (6406 repos) (@xerj-org)
-- **PR #2521** (2026-10-27): hub: author-approved contribution candidates (6392 repos) (@xerj-org)
-- **PR #2517** (2026-10-27): hub: one shared contributor badge file (deploys fail: over 20,000 Pages files) (@xerj-org)
-- **PR #2511** (2026-10-27): hub: author-approved contribution candidates (6377 repos) (@xerj-org)
-- **PR #2510** (2026-10-27): hub: author-approved contribution candidates (6363 repos) (@xerj-org)
-- **PR #2507** (2026-10-27): hub: author-approved contribution candidates (6343 repos) (@xerj-org)
+- **PR #2538** (2026-10-28): hub: author-approved contribution candidates (6738 repos) (@xerj-org)
+- **PR #2537** (2026-10-28): hub: author-approved contribution candidates (6708 repos) (@xerj-org)
+- **PR #2536** (2026-10-28): hub: author-approved contribution candidates (6682 repos) (@xerj-org)
+- **PR #2535** (closed): user-feedback: field report — private monorepo code search via MCP (@tiendat-work)
+- **PR #2534** (2026-10-28): hub: author-approved contribution candidates (6653 repos) (@xerj-org)
+- **PR #2533** (2026-10-28): hub: author-approved contribution candidates (6621 repos) (@xerj-org)
 
 ---
 
@@ -2247,42 +1933,3 @@ Co-authored-by: Term56 <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. code): show the matching window of a long definition, not its head (#2464) (#247
-
-**RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `b127e7db`: code): show the matching window of a long definition, not its head (#2464) (#2474). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-- `xerj code` shows the part of a long definition that matched the query,
-  not its first `--full` characters (#2464). The matching text could sit
-  thousands of characters below the signature, so a hit named the right
-  function but showed none of the query terms. Such passages now end with
-  `... [function name: showing N of M chars from offset O, window centred on the match]`;
-  the `@ line N` label and citations are unchanged, and a definition whose
-  head is already the best window still ends `truncated at N chars`. Hub ask
-  passages (`xerj ask`) and hub search API hits change the same way.
-
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b127e7db` are properly handled with clean fallback behavior.
