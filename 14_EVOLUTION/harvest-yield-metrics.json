@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T02:05:16.076Z",
-  "total_cycles_completed": 5622,
-  "total_learnings_persisted": 5622,
-  "total_rules_promoted": 5049,
+  "last_updated": "2026-10-28T02:13:18.415Z",
+  "total_cycles_completed": 5624,
+  "total_learnings_persisted": 5624,
+  "total_rules_promoted": 5053,
   "history": [
-    {
-      "timestamp": "2026-10-27T17:10:00.944Z",
-      "repository": "cosscom/coss",
-      "learningId": "learn-github-cosscom-coss",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T17:16:42.735Z",
-      "repository": "MCPJam/inspector",
-      "learningId": "learn-github-mcpjam-inspector",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T17:16:47.171Z",
       "repository": "cjo4m06/mcp-shrimp-task-manager",
@@ -1403,6 +1389,20 @@
       "repository": "vespa-engine/vespa",
       "learningId": "learn-github-vespa-engine-vespa",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T02:13:16.752Z",
+      "repository": "msasikanth/twine",
+      "learningId": "learn-github-msasikanth-twine",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T02:13:18.415Z",
+      "repository": "convaiinnovations/laya",
+      "learningId": "learn-huggingface-convaiinnovations-laya",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

@@ -5645,3 +5645,5 @@
 | `CYCLE-20261028-21GL` | `2026-10-28T02:04:57.957Z` | `vikejs/vike` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5116` | Yes (`ba457740...`) |
 | `CYCLE-20261028-28XG` | `2026-10-28T02:05:07.636Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5117, Rule 5118, Rule 5119` | Yes (`b7c3e0f3...`) |
 | `CYCLE-20261028-2FFP` | `2026-10-28T02:05:16.069Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5120` | Yes (`ce46c98f...`) |
+| `CYCLE-20261028-CQBR` | `2026-10-28T02:13:16.743Z` | `msasikanth/twine` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5121` | Yes (`a5866c2b...`) |
+| `CYCLE-20261028-CRLX` | `2026-10-28T02:13:18.405Z` | `convaiinnovations/laya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5122, Rule 5123, Rule 5124` | Yes (`7ffbefa8...`) |

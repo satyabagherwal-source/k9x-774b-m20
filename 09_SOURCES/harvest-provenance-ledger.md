@@ -5654,3 +5654,5 @@ Every entry in this ledger must capture:
 | `learn-github-vikejs-vike` | `https://github.com/vikejs/vike` | `94b12bd6` | Multi-dimensional audit evidence | 2026-10-28T02:04:57.998Z |
 | `learn-huggingface-autotrust-gev-26b-decide` | `https://huggingface.co/autotrust/GEV-26B-Decide` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-28T02:05:07.639Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `bc4e2fc4` | Multi-dimensional audit evidence | 2026-10-28T02:05:16.072Z |
+| `learn-github-msasikanth-twine` | `https://github.com/msasikanth/twine` | `4b3aa942` | Multi-dimensional audit evidence | 2026-10-28T02:13:16.747Z |
+| `learn-huggingface-convaiinnovations-laya` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-10-28T02:13:18.409Z |

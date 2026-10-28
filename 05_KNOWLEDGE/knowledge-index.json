@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T02:05:16.019Z",
+  "last_updated": "2026-10-28T02:13:18.333Z",
   "total_verified_learnings": 1154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -19640,7 +19640,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/convaiinnovations/laya",
       "source_version": "hf-convaiinnovations-laya",
-      "content_hash": "b68ca8e05d304d6c52f4094494584021c6982a735cec0e7b8ab89609cbd71cb3",
+      "content_hash": "7ffbefa863f0fe765cf7903e1999e25f72946360afeee1f8c6f2b177f8df4270",
       "dossier_path": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "promoted_rules": [
@@ -19718,6 +19718,21 @@
         {
           "number": 4083,
           "title": "Typed Question Schema Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5122,
+          "title": "Non-Autoregressive Decisioning for Structured Extraction",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5123,
+          "title": "Calibrated Probability Reporting via Proper Scoring Rules",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5124,
+          "title": "Dynamic Checkpoint Routing for Multilingual Efficiency",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -20063,7 +20078,7 @@
         "learn-huggingface-hf-convaiinnovations-laya-mv41qpya",
         "learn-huggingface-hf-convaiinnovations-laya-mv4flqk7"
       ],
-      "verified_at": "2026-10-25T05:34:10.623Z",
+      "verified_at": "2026-10-28T02:13:18.309Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37988,8 +38003,8 @@
       "slug": "msasikanth-twine",
       "platform": "github",
       "source_url": "https://github.com/msasikanth/twine",
-      "source_version": "6082ae0f",
-      "content_hash": "a7b92528322be9c7c494fa8d493cf21068b789b699e2c6ec6d0392b2a5e79f52",
+      "source_version": "4b3aa942",
+      "content_hash": "a5866c2bc88b125fccfa795d4b7131cbc30ca782a10220746d61c6f66a57ba6c",
       "dossier_path": "07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
       "promoted_rules": [
@@ -38002,6 +38017,11 @@
           "number": 4345,
           "title": "Improve UI performance and layout efficiency",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5121,
+          "title": "Improve rendering of Vox Media review scorecards in the reader",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38009,7 +38029,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T14:38:04.617Z",
+      "verified_at": "2026-10-28T02:13:16.648Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -140690,6 +140710,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T02:05:16.008Z"
+    },
+    "rule-5121": {
+      "learning_id": "rule-5121",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5121,
+      "title": "Improve rendering of Vox Media review scorecards in the reader",
+      "source_url": "https://github.com/msasikanth/twine",
+      "source_version": "4b3aa942",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:13:16.648Z"
+    },
+    "rule-5122": {
+      "learning_id": "rule-5122",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5122,
+      "title": "Non-Autoregressive Decisioning for Structured Extraction",
+      "source_url": "https://huggingface.co/convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:13:18.309Z"
+    },
+    "rule-5123": {
+      "learning_id": "rule-5123",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5123,
+      "title": "Calibrated Probability Reporting via Proper Scoring Rules",
+      "source_url": "https://huggingface.co/convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:13:18.309Z"
+    },
+    "rule-5124": {
+      "learning_id": "rule-5124",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5124,
+      "title": "Dynamic Checkpoint Routing for Multilingual Efficiency",
+      "source_url": "https://huggingface.co/convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T02:13:18.309Z"
     }
   },
   "aliases": {
