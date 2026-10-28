@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T09:10:48.535Z",
+  "last_updated": "2026-10-28T09:40:44.425Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -710,14 +710,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-      "content_hash": "0e8b9f1d03ecd575010a9ed94d0bf2543cb75276d30a789f2040bfe3870de84c",
-      "verified_at": "2026-10-25T15:15:56.942Z",
+      "content_hash": "798c3315bb5cc109077cc88fea7151f30bd1429729f83859cbb508853ace5f1c",
+      "verified_at": "2026-10-28T09:40:44.424Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T15:15:56.942Z"
+      "last_updated": "2026-10-28T09:40:44.424Z"
     },
     "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF": {
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -4581,14 +4581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-beclab-olares",
-      "content_hash": "122e6028301320e66f686620b62342439d0cfbb7164c06b71f21fd8402c5b997",
-      "verified_at": "2026-10-28T01:07:03.855Z",
+      "content_hash": "2f455bb066fa1d37a27c4589c3e79fa89e0e18f40faaa541e07d9b38feecd0c4",
+      "verified_at": "2026-10-28T09:30:41.317Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T01:07:03.855Z"
+      "last_updated": "2026-10-28T09:30:41.317Z"
     },
     "cryfs/cryfs": {
       "repository": "cryfs/cryfs",

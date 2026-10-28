@@ -565,8 +565,8 @@
     "sourceUrl": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
     "sourceVersion": "hf-alissonerdx-bfs-best-face-swap",
     "license": "Open-Source",
-    "contentHash": "0e8b9f1d03ecd575010a9ed94d0bf2543cb75276d30a789f2040bfe3870de84c",
-    "lastHarvestedAt": "2026-10-25T15:15:56.936Z",
+    "contentHash": "798c3315bb5cc109077cc88fea7151f30bd1429729f83859cbb508853ace5f1c",
+    "lastHarvestedAt": "2026-10-28T09:40:44.413Z",
     "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap"
   },
   "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf": {
@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "562e9e32",
+    "sourceVersion": "8a2f5940",
     "license": "AGPL-3.0",
-    "contentHash": "122e6028301320e66f686620b62342439d0cfbb7164c06b71f21fd8402c5b997",
-    "lastHarvestedAt": "2026-10-28T01:07:03.846Z",
+    "contentHash": "2f455bb066fa1d37a27c4589c3e79fa89e0e18f40faaa541e07d9b38feecd0c4",
+    "lastHarvestedAt": "2026-10-28T09:30:41.308Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {

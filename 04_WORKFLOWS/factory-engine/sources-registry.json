@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T09:10:51.070Z",
-    "lastVerified": "2026-10-28T09:10:51.070Z",
+    "lastChecked": "2026-10-28T09:40:46.964Z",
+    "lastVerified": "2026-10-28T09:40:46.964Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -110,9 +110,9 @@
   "bitterbot-ai-bitterbot-desktop": {
     "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "lastChecked": "2026-10-28T07:31:41.027Z",
+    "lastChecked": "2026-10-28T09:25:22.915Z",
     "revisionIdentifier": "fce458c1",
-    "lastVerified": "2026-10-28T07:31:41.027Z"
+    "lastVerified": "2026-10-28T09:25:22.915Z"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -703,9 +703,9 @@
   "bee-san-ciphey": {
     "name": "Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
-    "lastChecked": "2026-10-28T03:56:22.375Z",
+    "lastChecked": "2026-10-28T09:25:17.938Z",
     "revisionIdentifier": "c806543f",
-    "lastVerified": "2026-10-28T03:56:22.375Z"
+    "lastVerified": "2026-10-28T09:25:17.938Z"
   },
   "weaviate-weaviate": {
     "name": "weaviate",
@@ -2275,5 +2275,60 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "xampprocky-tokei": {
+    "name": "tokei",
+    "officialUrl": "https://github.com/XAMPPRocky/tokei",
+    "lastChecked": "2026-10-28T09:25:07.951Z",
+    "revisionIdentifier": "c14f7447",
+    "lastVerified": "2026-10-28T09:25:07.951Z"
+  },
+  "hf-alissonerdx-bfs-best-face-swap": {
+    "name": "Alissonerdx/BFS-Best-Face-Swap",
+    "officialUrl": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T09:25:10.466Z",
+    "lastVerified": "2026-10-28T09:25:10.466Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
+    "contentHash": "798c3315bb5cc109077cc88fea7151f30bd1429729f83859cbb508853ace5f1c",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "akveo-react-native-ui-kitten": {
+    "name": "react-native-ui-kitten",
+    "officialUrl": "https://github.com/akveo/react-native-ui-kitten",
+    "lastChecked": "2026-10-28T09:25:12.949Z",
+    "revisionIdentifier": "e73dce62",
+    "lastVerified": "2026-10-28T09:25:12.949Z"
+  },
+  "beclab-olares": {
+    "name": "beclab/Olares",
+    "officialUrl": "https://github.com/beclab/Olares",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T09:25:20.814Z",
+    "lastVerified": "2026-10-28T09:25:20.814Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-beclab-olares",
+    "contentHash": "2f455bb066fa1d37a27c4589c3e79fa89e0e18f40faaa541e07d9b38feecd0c4",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "liyupi-yu-ai-agent": {
+    "name": "yu-ai-agent",
+    "officialUrl": "https://github.com/liyupi/yu-ai-agent",
+    "lastChecked": "2026-10-28T09:25:20.391Z",
+    "revisionIdentifier": "6d4608c5",
+    "lastVerified": "2026-10-28T09:25:20.391Z"
   }
 }

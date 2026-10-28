@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-PPR4",
-    "timestamp": "2026-10-27T11:27:34.816Z",
-    "repository": "arangodb/arangodb",
-    "learningId": "learn-github-arangodb-arangodb",
-    "contentHash": "99bf7b8f80b676790bf8c3bfb4bed99918dded7a33ad7cdc168e91b65fa6faaf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-Y6EB",
-    "timestamp": "2026-10-27T11:34:09.635Z",
-    "repository": "sweetpad-dev/sweetpad",
-    "learningId": "learn-github-sweetpad-dev-sweetpad",
-    "contentHash": "45d954c99dd240b85016009b7f395a07bb14d6fdc79c8348d09723ee6001ebca",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-Y89I",
     "timestamp": "2026-10-27T11:34:12.054Z",
     "repository": "moby/buildkit",
@@ -7492,6 +7462,36 @@
     "contentHash": "2941bb42fa4a2612f7cb020b555692ca80a83682e90726165f6adc7d41c943b7",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-Z8RC",
+    "timestamp": "2026-10-28T09:30:41.304Z",
+    "repository": "beclab/Olares",
+    "learningId": "learn-github-beclab-olares",
+    "contentHash": "2f455bb066fa1d37a27c4589c3e79fa89e0e18f40faaa541e07d9b38feecd0c4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-C649",
+    "timestamp": "2026-10-28T09:40:44.409Z",
+    "repository": "Alissonerdx/BFS-Best-Face-Swap",
+    "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
+    "contentHash": "798c3315bb5cc109077cc88fea7151f30bd1429729f83859cbb508853ace5f1c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -5743,3 +5743,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-28T08:26:45.754Z |
 | `learn-huggingface-prithivmlmods-gender-classifier-mini` | `https://huggingface.co/prithivMLmods/Gender-Classifier-Mini` | `hf-prithiv` | Multi-dimensional audit evidence | 2026-10-28T08:45:46.949Z |
 | `learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf` | `https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-28T09:10:48.528Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `8a2f5940` | Multi-dimensional audit evidence | 2026-10-28T09:30:41.308Z |
+| `learn-huggingface-alissonerdx-bfs-best-face-swap` | `https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap` | `hf-alisson` | Multi-dimensional audit evidence | 2026-10-28T09:40:44.413Z |

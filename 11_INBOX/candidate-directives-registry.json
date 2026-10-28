@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T06:52:40.407Z",
+  "last_updated": "2026-10-28T09:40:44.419Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3159,6 +3159,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-ratatui-ratatui"
+    },
+    {
+      "id": "CD-C64J",
+      "directive_title": "Documentation-Driven API Contract Enforcement",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Alissonerdx/BFS-Best-Face-Swap",
+      "source_commit": "hf-alissoner",
+      "date_staged": "2026-10-28",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-alissonerdx-bfs-best-face-swap"
     }
   ]
 }

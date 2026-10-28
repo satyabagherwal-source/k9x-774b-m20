@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source**: github ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
-> **Source Version**: `562e9e32`  
+> **Source Version**: `8a2f5940`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T01:07:03.289Z  
+> **Timestamp**: 2026-10-28T09:30:40.825Z  
 > **Learning ID**: `learn-github-beclab-olares`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T01:07:03.283Z  
+> **Harvest Timestamp**: 2026-10-28T09:25:20.814Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-Source Personal Cloud OS for Always-On Agents
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5328 stars
+- **Stars / Engagement**: 5329 stars
 
 ---
 
@@ -1137,51 +1137,389 @@ export const formatPathtoUrl = (path: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `562e9e32` (2026-10-27)
-**Commit Message**: feat(download-server): improve download URL routing and task lifecycle reliability (#4315)
+### Incident Patch 1: `8a2f5940` (2026-10-28)
+**Commit Message**: feat(daemon): coordinate staged cluster upgrades (#3987)
 
-download v1.0.24
+Let olares-cli define a versioned stage plan and let olaresd schedule it
+across workers and the control node with persistent operation and node
+records, bounded concurrency, cancellation, and restart recovery.
 
-**File**: `framework/download-server/.olares/config/cluster/deploy/download_deploy.yaml` (modified, +1/-1)
+Bootstrap legacy workers, verify target binaries before adoption, and place
+host-local runtime, kubelet, GPU and service work on every affected node.
+Select shared GPU stacks from cluster hardware and verify each GPU node.
+
+Return bounded, redacted CLI failure details with the failed stage and node.
+Bound command execution and its child processes, reclaim operation tokens,
+keep progress tied to the complete plan, and prevent old attempts from
+marking or removing a replacement upgrade request.
+
+Rebased on main 2662cc4b17b392f6888cb798573cf98bc5b99a80, preserving
+Overlay recovery and the latest daily kubelet upgrade behavior.
+
+**File**: `cli/cmd/ctl/os/upgrade.go` (modified, +51/-1)
 ```diff
-@@ -162,7 +162,7 @@ spec:
-             memory: 300Mi
-             
-       - name: download-server
--        image: "beclab/download-server:v1.0.22"
-+        image: "beclab/download-server:v1.0.24"
-         imagePullPolicy: IfNotPresent
-         securityContext:
-           runAsUser: 1000
+@@ -11,11 +11,14 @@ import (
+ 	"github.com/beclab/Olares/cli/pkg/phase"
+ 	"github.com/beclab/Olares/cli/pkg/pipelines"
+ 	"github.com/beclab/Olares/cli/pkg/upgrade"
++	"github.com/beclab/Olares/cli/pkg/utils"
+ 	"github.com/beclab/Olares/cli/version"
+ 	"github.com/spf13/cobra"
+ )
+ 
+ func NewCmdUpgradeOs() *cobra.Command {
++	var stage string
++
+ 	cmd := &cobra.Command{
+ 		Use:   "upgrade",
+ 		Short: "Upgrade Olares OS to a newer version (for olares-cli itself, see `olares-cli update`)",
+@@ -31,8 +34,20 @@ This is the operating system, not the CLI. To update olares-cli itself, run
+ The olares-cli bundled with Olares OS moves with the OS, so this does replace
+ /usr/local/bin/olares-cli as a side effect — but it does not touch the agent
+ skills on disk. Run ` + "`olares-cli skills install`" + ` afterwards.`,
++		// Without this, a word this command does not recognise is silently
++		// ignored and the whole upgrade runs. That turns a subcommand this
++		// binary is too old to have — `upgrade plan`, which the orchestrator
++		// asks every node for — from a clean failure into an unrequested
++		// upgrade of the machine that was only being asked a question.
++		Args: cobra.NoArgs,
+ 		Run: func(cmd *cobra.Command, args []string) {
+-			if err := pipelines.UpgradeOlaresPipeline(cmd.Context()); err != nil {
++			var err error
++			if stage == "" {
++				err = pipelines.UpgradeOlaresPipeline(cmd.Context())
++			} else {
++				err = pipelines.UpgradeOlaresStagePipeline(cmd.Context(), stage)
++			}
++			if err != nil {
+ 				log.Fatalf("error: %v", err)
+ 			}
+ 		},
+@@ -42,9 +57,44 @@ skills on disk. Run ` + "`olares-cli skills install`" + ` afterwards.`,
+ 	config.AddBaseDirFlagBy(flagSetter)
+ 	config.AddVersionFlagBy(flagSetter)
+ 
++	// This is how a cluster orchestrator drives one node. Left unset, the
++	// command upgrades everything on this machine, which is both the
++	// single-node path and what it did before clusters were scheduled.
++	cmd.Flags().StringVar(&stage, "stage", "",
++		"run only this stage of the upgrade flow on this node (see 'olares-cli upgrade plan')")
++
+ 	cmd.AddCommand(NewCmdCurrentVersionUpgradeSpec())
+ 	cmd.AddCommand(NewCmdUpgradeViable())
+ 	cmd.AddCommand(NewCmdUpgradePrecheck())
++	cmd.AddCommand(NewCmdUpgradePlan())
++	return cmd
++}
++
++// NewCmdUpgradePlan prints the upgrade flow and what this version puts in
++// each stage. The orchestrator reads it rather than holding a plan of its own:
++// which tasks exist, and which stage each belongs to, is decided by the code
++// that implements them, and that code ships in this binary.
++func NewCmdUpgradePlan() *cobra.Command {
++	cmd := &cobra.Command{
++		Use:   "plan",
++		Short: fmt.Sprintf("Print the upgrade flow and its tasks for this olares-cli version (%s)", version.VERSION),
++		RunE: func(cmd *cobra.Command, args []string) error {
++			target, err := utils.ParseOlaresVersionString(version.VERSION)
++			if err != nil {
++				return fmt.Errorf("invalid olares-cli version '%s': %v", version.VERSION, err)
++			}
++			plan, err := upgrade.BuildPlan(target)
++			if err != nil {
++				return err
++			}
++			out, err := json.MarshalIndent(plan, "", "  ")
++			if err != nil {
++				return err
++			}
++			fmt.Println(string(out))
++			return nil
++		},
++	}
+ 	return cmd
+ }
+ 
 ```
 
----
-
-### Incident Patch 2: `41c11f4f` (2026-10-27)
-**Commit Message**: system-frontend: update image to v1.12.14 (#4314)
-
-chore(helm): bump system-frontend image to v1.12.14
-
-**File**: `apps/.olares/config/user/helm-charts/system-apps/templates/olares-app.yaml` (modified, +1/-1)
+**File**: `cli/pkg/daemon/state/types.go` (modified, +17/-1)
 ```diff
-@@ -269,7 +269,7 @@ spec:
-           imagePullPolicy: IfNotPresent
-           name: check-auth
-         - name: olares-app-init
--          image: beclab/system-frontend:v1.12.13
-+          image: beclab/system-frontend:v1.12.14
-           imagePullPolicy: IfNotPresent
-           command:
-             - /bin/sh
+@@ -170,6 +170,22 @@ type State struct {
+ 	// UpgradingStep is the name of the current upgrade step.
+ 	UpgradingStep string `json:"upgradingStep"`
+ 
++	// UpgradingOperationID names the cluster operation carrying this
++	// upgrade, when there is one. It is empty on a single-node Olares,
++	// where the upgrade is not orchestrated and there is no record
++	// beyond the fields here.
++	//
++	// It is the handle for everything these fields cannot say. They
++	// describe one upgrade as one number, because that is all a
++	// single-node upgrade ever was; on a cluster the interesting part
++	// is which stage is running and how each node is getting on with
++	// it, and that lives in the operation record. Reading it needs an
++	// id, and guessing one from the version would tie a client to how
++	// the daemon happens to name them today.
++	//
++	//	GET /cluster/operations/{upgradingOperationId}
++	UpgradingOperationID string `json:"upgradingOperationId,omitempty"`
++
+ 	// UpgradingProgress is the free-form progress message for the
+ 	// current upgrade step.
+ 	UpgradingProgress string `json:"upgradingProgress"`
+@@ -240,4 +256,4 @@ type NodePressure struct {
+ 
+ 	// Message is the human-readable explanation provided by kubelet.
+ 	Message string `json:"message"`
+-}
+\ No newline at end of file
++}
+```
+
+**File**: `cli/pkg/pipelines/upgrade.go` (modified, +59/-15)
+```diff
+@@ -39,26 +39,14 @@ func UpgradeOlaresPipeline(ctx context.Context) error {
+ 		return err
+ 	}
+ 
+-	arg := common.NewArgument()
+-	arg.SetOlaresVersion(version.VERSION)
+-	arg.SetConsoleLog("upgrade.log", true)
+-	arg.SetKubeVersion(phase.GetKubeType())
+-
+-	runtime, err := common.NewKubeRuntime(*arg)
++	runtime, err := upgradeRuntime()
+ 	if err != nil {
+-		return fmt.Errorf("error creating runtime: %v", err)
+-	}
+-
+-	manifest := path.Join(runtime.GetInstallerDir(), "installation.manifest")
+-	runtime.Arg.SetManifest(manifest)
+-
+-	upgradeModule := &upgrade.Module{
+-		TargetVersion: targetVersion,
++		return err
+ 	}
+ 
+ 	p := &pipeline.Pipeline{
+ 		Name:    "UpgradeOlares",
+-		Modules: []module.Module{upgradeModule},
++		Modules: []module.Module{&upgrade.Module{TargetVersion: targetVersion}},
+ 		Runtime: runtime,
+ 	}
+ 
+@@ -71,6 +59,62 @@ func UpgradeOlaresPipeline(ctx context.Context) error {
+ 	return nil
+ }
+ 
++// UpgradeOlaresStagePipeline runs one stage of the upgrade flow on this node.
++//
++// It deliberately does not repeat upgrade.Check. Viability is a property of
++// the upgrade as a whole, decided once by the orchestrator before any node was
++// touched; asking again here would fail every stage that runs after the
++// control node flipped the version, because by then this node is already
++// "current" and Check reports there is nothing to upgrade.
++func UpgradeOlaresStagePipeline(ctx context.Context, stage string) error {
++	if stage == "" {
++		return errors.New("no upgrade stage to run")
++	}
++	targetVersion, err := utils.ParseOlaresVersionString(version.VERSION)
++	if err != nil {
++		return fmt.Errorf("error parsing target Olares version: %v", err)
++	}
++
++	runtime, err := upgradeRuntime()
++	if err != nil {
++		return err
++	}
++
++	p := &pipeline.Pipeline{
++		Name: "UpgradeOlares/" + stage,
++		Modules: []module.Module{&upgrade.Module{
++			TargetVersion: targetVersion,
++			Stage:         stage,
++		}},
++		Runtime: runtime,
++	}
++
++	logger.Infof("Starting upgrade stage %s (target %s) on this node...", stage, targetVersion)
++	if err := p.Start(ctx); err != nil {
++		return errors.Wrapf(err, "upgrade stage %s failed", stage)
++	}
++
++	logger.Infof("Upgrade stage %s completed on this node", stage)
++	return nil
++}
++
++// upgradeRuntime is the environment every upgrade run needs, whole or by
++// stage. Per-stage runs share one upgrade.log so that whatever tails it sees the
++// upgrade rather than one stage of it.
++func upgradeRuntime() (*common.KubeRuntime, error) {
++	arg := common.NewArgument()
++	arg.SetOlaresVersion(version.VERSION)
++	arg.SetConsoleLog("upgrade.log", true)
++	arg.SetKubeVersion(phase.GetKubeType())
++
++	runtime, err := common.NewKubeRuntime(*arg)
++	if err != nil {
++		return nil, fmt.Errorf("error creating runtime: %v", err)
++	}
++	runtime.Arg.SetManifest(path.Join(runtime.GetInstallerDir(), "installation.manifest"))
++	return runtime, nil
++}
++
+ func UpgradePreCheckPipeline(ctx context.Context) error {
+ 	var arg = common.NewArgument()
+ 	arg.SetConsoleLog("upgrade-precheck.log", true)
+```
+
+**File**: `cli/pkg/upgrade/1_12_0_20250723.go` (modified, +3/-4)
+```diff
+@@ -13,10 +13,9 @@ func (u upgrader_1_12_0_20250723) Version() *semver.Version {
+ 	return semver.MustParse("1.12.0-20250723")
+ }
+ 
+-func (u upgrader_1_12_0_20250723) PrepareForUpgrade() []task.Interface {
+-	var preTasks []task.Interface
+-	preTasks = append(preTasks, upgradeContainerd()...)
+-	return append(preTasks, u.upgraderBase.PrepareForUpgrade()...)
++// PreUpgradeNode replaces the container runtime binary on the machine.
++func (u upgrader_1_12_0_20250723) PreUpgradeNode() []task.Interface {
++	return append(upgradeContainerd(), u.upgraderBase.PreUpgradeNode()...)
+ }
+ 
+ func init() {
+```
+
+**File**: `cli/pkg/upgrade/1_12_3_20251112.go` (modified, +6/-1)
+```diff
+@@ -14,7 +14,12 @@ func (u upgrader_1_12_3_20251112) Version() *semver.Version {
+ }
+ 
+ func (u upgrader_1_12_3_20251112) PrepareForUpgrade() []task.Interface {
+-	return append(regenerateKubeFiles(), u.upgraderBase.PrepareForUpgrade()...)
++	tasks := regenerateKubeFilesOnControlNode()
++	return append(tasks, u.upgraderBase.PrepareForUpgrade()...)
++}
++
++func (u upgrader_1_12_3_20251112) PreUpgradeNode() []task.Interface {
++	return append(regenerateKubeFilesOnNode(), u.upgraderBase.PreUpgradeNode()...)
+ }
+ 
+ func init() {
+```
+
+**File**: `cli/pkg/upgrade/1_12_3_20251126.go` (modified, +5/-1)
+```diff
+@@ -18,12 +18,16 @@ func (u upgrader_1_12_3_20251126) PrepareForUpgrade() []task.Interface {
+ 	tasks = append(tasks, upgradeKsConfig()...)
+ 	tasks = append(tasks, upgradePrometheusServiceMonitorKubelet()...)
+ 	tasks = append(tasks, upgradeKSCore()...)
+-	tasks = append(tasks, regenerateKubeFiles()...)
++	tasks = append(tasks, regenerateKubeFilesOnControlNode()...)
+ 
+ 	tasks = append(tasks, u.upgraderBase.PrepareForUpgrade()...)
+ 	return tasks
+ }
+ 
++func (u upgrader_1_12_3_20251126) PreUpgradeNode() []task.Interface {
++	return append(regenerateKubeFilesOnNode(), u.upgraderBase.PreUpgradeNode()...)
++}
++
+ func init() {
+ 	registerDailyUpgrader(upgrader_1_12_3_20251126{})
+ }
+```
+
+**File**: `cli/pkg/upgrade/1_12_3_20251127.go` (modified, +15/-15)
+```diff
+@@ -19,21 +19,21 @@ func (u upgrader_1_12_3_20251127) NeedRestart() bool {
+ 
+ // put GPU driver upgrade step at the very end right before updating the version
+ func (u upgrader_1_12_3_20251127) UpdateOlaresVersion() []task.Interface {
+-	var tasks []task.Interface
+-	tasks = append(tasks,
+-		&task.LocalTask{
+-			Name:   "UpgradeGPUDriver",
+-			Action: new(upgradeGPUDriverIfNeeded),
+-		},
+-	)
+-	tasks = append(tasks, u.upgraderBase.UpdateOlaresVersion()...)
+-	tasks = append(tasks,
+-		&task.LocalTask{
+-			Name:   "RebootIfNeeded",
+-			Action: new(rebootIfNeeded),
+-		},
+-	)
+-	return tasks
++	return u.upgraderBase.UpdateOlaresVersion()
++}
++
++// PostUpgradeNode installs the target NVIDIA driver on the machine it runs
++// on: every node has its own GPU and its own kernel to build against.
++func (u upgrader_1_12_3_20251127) PostUpgradeNode() []task.Interface {
++	return append(upgradeGPUDriver(), u.upgraderBase.PostUpgradeNode()...)
++}
++
++// RebootNodes restarts the machines whose driver changed. It runs after the
++// version has been flipped, which is what the marker the driver upgrade
++// writes depends on: while that marker exists olaresd reports the system as
++// upgrading-and-rebooting rather than briefly reporting it as complete.
++func (u upgrader_1_12_3_20251127) RebootNodes() []task.Interface {
++	return append(rebootAfterGPUDriver(), u.upgraderBase.RebootNodes()...)
+ }
+ 
+ func init() {
+```
+
+**File**: `cli/pkg/upgrade/1_12_3_20251217.go` (modified, +15/-15)
+```diff
+@@ -43,21 +43,21 @@ func (u upgrader_1_12_3_20251217) NeedRestart() bool {
+ }
+ 
+ func (u upgrader_1_12_3_20251217) UpdateOlaresVersion() []task.Interface {
+-	var tasks []task.Interface
+-	tasks = append(tasks,
+-		&task.LocalTask{
+-			Name:   "UpgradeGPUDriver",
+-			Action: new(upgradeGPUDriverIfNeeded),
+-		},
+-	)
+-	tasks = append(tasks, u.upgraderBase.UpdateOlaresVersion()...)
+-	tasks = append(tasks,
+-		&task.LocalTask{
+-			Name:   "RebootIfNeeded",
+-			Action: new(rebootIfNeeded),
+-		},
+-	)
+-	return tasks
++	return u.upgraderBase.UpdateOlaresVersion()
++}
++
++// PostUpgradeNode installs the target NVIDIA driver on the machine it runs
++// on: every node has its own GPU and its own kernel to build against.
++func (u upgrader_1_12_3_20251217) PostUpgradeNode() []task.Interface {
++	return append(upgradeGPUDriver(), u.upgraderBase.PostUpgradeNode()...)
++}
++
++// RebootNodes restarts the machines whose driver changed. It runs after the
++// version has been flipped, which is what the marker the driver upgrade
++// writes depends on: while that marker exists olaresd reports the system as
++// upgrading-and-rebooting rather than briefly reporting it as complete.
++func (u upgrader_1_12_3_20251217) RebootNodes() []task.Interface {
++	return append(rebootAfterGPUDriver(), u.upgraderBase.RebootNodes()...)
+ }
+ 
+ func init() {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4316** (closed): docs: hide unreleased yt-dlp instructions (@Meow33)
 - **PR #4315** (2026-10-27): feat(download-server): improve download URL routing and task lifecycle reliability (@kaki-admin)
 - **PR #4314** (2026-10-27): system-frontend: update image to v1.12.14 (@qq815776412)
 - **PR #4313** (2026-10-27): files(refactor): one enforced authorization layer for the files backend (@aby913)
 - **PR #4311** (2026-10-27): market(refactor): reduce background polling with event-driven scheduling (@aby913)
 - **PR #4310** (2026-10-27): feat(timeslice): hand the GPU over in tens of milliseconds (@dkeven)
-- **PR #4307** (2026-10-27): chore(files): tidy up deployment manifest (@pengpeng)
 
 ---
 
@@ -1201,28 +1539,56 @@ chore(helm): bump system-frontend image to v1.12.14
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. download-server): improve download URL routing and task lifecycle reliability (#
+## X. daemon): coordinate staged cluster upgrades (#3987)
 
 **RULE**:
-When implementing operations in `framework/download-server/.olares/config/cluster/deploy/download_deploy.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cli/cmd/ctl/os/upgrade.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `562e9e32`: download-server): improve download URL routing and task lifecycle reliability (#4315). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8a2f5940`: daemon): coordinate staged cluster upgrades (#3987). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `framework/download-server/.olares/config/cluster/deploy/download_deploy.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/cmd/ctl/os/upgrade.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        image: "beclab/download-server:v1.0.24"
+	"github.com/beclab/Olares/cli/pkg/utils"
+	var stage string
+
+		// Without this, a word this command does not recognise is silently
+		// ignored and the whole upgrade runs. That turns a subcommand this
+		// binary is too old to have — `upgrade plan`, which the orchestrator
+		// asks every node for — from a clean failure into an unrequested
+		// upgrade of the machine that was only being asked a question.
+		Args: cobra.NoArgs,
+			var err error
+			if stage == "" {
+				err = pipelines.UpgradeOlaresPipeline(cmd.Context())
+			} else {
+				err = pipelines.UpgradeOlaresStagePipeline(cmd.Context(), stage)
+			}
+			if err != nil {
+	// This is how a cluster orchestrator drives one node. Left unset, the
+	// command upgrades everything on this machine, which is both the
+	// single-node path and what it did before clusters were scheduled.
+	cmd.Flags().StringVar(&stage, "stage", "",
+		"run only this stage of the upgrade flow on this node (see 'olares-cli upgrade plan')")
+
+	cmd.AddCommand(NewCmdUpgradePlan())
+	return cmd
+}
+
+// NewCmdUpgradePlan prints the upgrade flow and what this version puts in
+// each stage. The orchestrator reads it rather than holding a plan of its own:
+// which tasks exist, 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        image: "beclab/download-server:v1.0.22"
+			if err := pipelines.UpgradeOlaresPipeline(cmd.Context()); err != nil {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `562e9e32` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8a2f5940` are properly handled with clean fallback behavior.

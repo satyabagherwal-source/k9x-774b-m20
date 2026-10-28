@@ -5734,3 +5734,5 @@
 | `CYCLE-20261028-P187` | `2026-10-28T08:26:45.751Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5236, Rule 5237, Rule 5238` | Yes (`8506fdd0...`) |
 | `CYCLE-20261028-DHS2` | `2026-10-28T08:45:46.946Z` | `prithivMLmods/Gender-Classifier-Mini` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5239, Rule 5240` | Yes (`9c9dadd3...`) |
 | `CYCLE-20261028-9OEK` | `2026-10-28T09:10:48.524Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5241, Rule 5242, Rule 5243` | Yes (`2941bb42...`) |
+| `CYCLE-20261028-Z8RC` | `2026-10-28T09:30:41.304Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5244` | Yes (`2f455bb0...`) |
+| `CYCLE-20261028-C649` | `2026-10-28T09:40:44.409Z` | `Alissonerdx/BFS-Best-Face-Swap` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5245` | Yes (`798c3315...`) |

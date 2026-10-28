@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T09:10:48.439Z",
+  "last_updated": "2026-10-28T09:40:44.345Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4149,8 +4149,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "562e9e32",
-      "content_hash": "122e6028301320e66f686620b62342439d0cfbb7164c06b71f21fd8402c5b997",
+      "source_version": "8a2f5940",
+      "content_hash": "2f455bb066fa1d37a27c4589c3e79fa89e0e18f40faaa541e07d9b38feecd0c4",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -4218,6 +4218,11 @@
           "number": 5090,
           "title": "download-server): improve download URL routing and task lifecycle reliability (#",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5244,
+          "title": "daemon): coordinate staged cluster upgrades (#3987)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4225,7 +4230,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T01:07:03.750Z",
+      "verified_at": "2026-10-28T09:30:41.226Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -16327,7 +16332,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
       "source_version": "hf-alissonerdx-bfs-best-face-swap",
-      "content_hash": "0e8b9f1d03ecd575010a9ed94d0bf2543cb75276d30a789f2040bfe3870de84c",
+      "content_hash": "798c3315bb5cc109077cc88fea7151f30bd1429729f83859cbb508853ace5f1c",
       "dossier_path": "07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md",
       "promoted_rules": [
@@ -16346,6 +16351,11 @@
         {
           "number": 1367,
           "title": "Multi-Conditioning Reference Positional Slot Determinism",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5245,
+          "title": "Model Artifact Portability Isolation",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -16367,7 +16377,7 @@
         "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv476k43",
         "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv4kgwuz"
       ],
-      "verified_at": "2026-10-25T15:15:56.896Z",
+      "verified_at": "2026-10-28T09:40:44.331Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -143126,6 +143136,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T09:10:48.425Z"
+    },
+    "rule-5244": {
+      "learning_id": "rule-5244",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5244,
+      "title": "daemon): coordinate staged cluster upgrades (#3987)",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "8a2f5940",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T09:30:41.226Z"
+    },
+    "rule-5245": {
+      "learning_id": "rule-5245",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5245,
+      "title": "Model Artifact Portability Isolation",
+      "source_url": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
+      "source_version": "hf-alissonerdx-bfs-best-face-swap",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T09:40:44.331Z"
     }
   },
   "aliases": {
