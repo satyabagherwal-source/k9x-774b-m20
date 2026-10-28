@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T10:20:03.453Z",
-    "lastVerified": "2026-10-28T10:20:03.453Z",
+    "lastChecked": "2026-10-28T10:52:36.892Z",
+    "lastVerified": "2026-10-28T10:52:36.892Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -299,8 +299,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T08:44:12.991Z",
-    "lastVerified": "2026-10-28T08:44:12.991Z",
+    "lastChecked": "2026-10-28T10:43:43.742Z",
+    "lastVerified": "2026-10-28T10:43:43.742Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -869,9 +869,9 @@
   "freenet-freenet-core": {
     "name": "freenet-core",
     "officialUrl": "https://github.com/freenet/freenet-core",
-    "lastChecked": "2026-10-28T04:21:46.151Z",
+    "lastChecked": "2026-10-28T10:43:38.995Z",
     "revisionIdentifier": "b11d06c6",
-    "lastVerified": "2026-10-28T04:21:46.151Z"
+    "lastVerified": "2026-10-28T10:43:38.995Z"
   },
   "clockworklabs-spacetimedb": {
     "name": "clockworklabs/SpacetimeDB",
@@ -2430,5 +2430,60 @@
     "lastChecked": "2026-10-28T10:17:56.080Z",
     "revisionIdentifier": "b2be8cc8",
     "lastVerified": "2026-10-28T10:17:56.080Z"
+  },
+  "o2sh-onefetch": {
+    "name": "onefetch",
+    "officialUrl": "https://github.com/o2sh/onefetch",
+    "lastChecked": "2026-10-28T10:43:28.840Z",
+    "revisionIdentifier": "892934ca",
+    "lastVerified": "2026-10-28T10:43:28.840Z"
+  },
+  "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf": {
+    "name": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+    "officialUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T10:43:31.395Z",
+    "lastVerified": "2026-10-28T10:43:31.395Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
+    "contentHash": "0ab3c0b63551c4c902b2d01ae13aac6c7bb8e0f9ec21b1e3bacc0843cd045007",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "runanywhereai-runanywhere-sdks": {
+    "name": "runanywhere-sdks",
+    "officialUrl": "https://github.com/RunanywhereAI/runanywhere-sdks",
+    "lastChecked": "2026-10-28T10:43:33.819Z",
+    "revisionIdentifier": "259521e2",
+    "lastVerified": "2026-10-28T10:43:33.819Z"
+  },
+  "cdk-team-cdk": {
+    "name": "CDK",
+    "officialUrl": "https://github.com/cdk-team/CDK",
+    "lastChecked": "2026-10-28T10:43:36.226Z",
+    "revisionIdentifier": "69da22ad",
+    "lastVerified": "2026-10-28T10:43:36.226Z"
+  },
+  "lioensky-vcptoolbox": {
+    "name": "lioensky/VCPToolBox",
+    "officialUrl": "https://github.com/lioensky/VCPToolBox",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-10-28T10:43:48.492Z",
+    "lastVerified": "2026-10-28T10:43:48.492Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-lioensky-vcptoolbox",
+    "contentHash": "6693cca0ba7e82ce2a553b8d18f5babc40160e5bd9828ccf67c53fe048d4caba",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 7,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

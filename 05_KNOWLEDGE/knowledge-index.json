@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T10:20:00.844Z",
+  "last_updated": "2026-10-28T10:52:34.293Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -22950,7 +22950,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
-      "content_hash": "66acb53c72abd3f76659b8a972d9ad13a653c81dc6b4501c15d4391535d0936c",
+      "content_hash": "0ab3c0b63551c4c902b2d01ae13aac6c7bb8e0f9ec21b1e3bacc0843cd045007",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md",
       "promoted_rules": [
@@ -22962,6 +22962,16 @@
         {
           "number": 1375,
           "title": "Physical Memory Budget Invariant for Mmap-Assisted Mixed-Precision Serving",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5251,
+          "title": "Router Distribution Recalibration Under Structural MoE Pruning",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5252,
+          "title": "Multi-Shard Model Memory-Mapping Separation for High-Latency Lookups",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -22983,7 +22993,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv47md9a",
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv4kw31t"
       ],
-      "verified_at": "2026-10-25T15:55:52.805Z",
+      "verified_at": "2026-10-28T10:52:34.282Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34630,8 +34640,8 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "9e08585d",
-      "content_hash": "12f417f74d74b39567d78617a041e24869fd9b3315a806b782604df790014920",
+      "source_version": "e6d9739b",
+      "content_hash": "6693cca0ba7e82ce2a553b8d18f5babc40160e5bd9828ccf67c53fe048d4caba",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
@@ -34649,6 +34659,11 @@
           "number": 4365,
           "title": "archery 审核反馈优先回传改造",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5250,
+          "title": "Merge pull request #559 from joker74581/fix/linux-shell-fallback-security-level",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34656,7 +34671,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T18:36:27.546Z",
+      "verified_at": "2026-10-28T10:43:49.243Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -143240,6 +143255,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T10:20:00.827Z"
+    },
+    "rule-5250": {
+      "learning_id": "rule-5250",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5250,
+      "title": "Merge pull request #559 from joker74581/fix/linux-shell-fallback-security-level",
+      "source_url": "https://github.com/lioensky/VCPToolBox",
+      "source_version": "e6d9739b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T10:43:49.243Z"
+    },
+    "rule-5251": {
+      "learning_id": "rule-5251",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5251,
+      "title": "Router Distribution Recalibration Under Structural MoE Pruning",
+      "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T10:52:34.282Z"
+    },
+    "rule-5252": {
+      "learning_id": "rule-5252",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5252,
+      "title": "Multi-Shard Model Memory-Mapping Separation for High-Latency Lookups",
+      "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T10:52:34.282Z"
     }
   },
   "aliases": {

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T10:20:00.921Z",
-  "total_cycles_completed": 5716,
-  "total_learnings_persisted": 5716,
-  "total_rules_promoted": 5193,
+  "last_updated": "2026-10-28T10:52:34.368Z",
+  "total_cycles_completed": 5718,
+  "total_learnings_persisted": 5718,
+  "total_rules_promoted": 5196,
   "history": [
-    {
-      "timestamp": "2026-10-27T21:01:37.517Z",
-      "repository": "ornith-ai/Ornith-1.5-122B",
-      "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T21:01:37.921Z",
-      "repository": "kube-rs/kube",
-      "learningId": "learn-github-kube-rs-kube",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T21:01:37.979Z",
       "repository": "callstack/agent-device",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-28T10:20:00.921Z",
       "repository": "PSRben/VisionHOPE",
       "learningId": "learn-huggingface-psrben-visionhope",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T10:43:49.327Z",
+      "repository": "lioensky/VCPToolBox",
+      "learningId": "learn-github-lioensky-vcptoolbox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T10:52:34.368Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     }

@@ -605,8 +605,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
     "license": "Open-Source",
-    "contentHash": "66acb53c72abd3f76659b8a972d9ad13a653c81dc6b4501c15d4391535d0936c",
-    "lastHarvestedAt": "2026-10-25T15:55:52.866Z",
+    "contentHash": "0ab3c0b63551c4c902b2d01ae13aac6c7bb8e0f9ec21b1e3bacc0843cd045007",
+    "lastHarvestedAt": "2026-10-28T10:52:34.363Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf"
   },
   "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf": {
@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "9e08585d",
+    "sourceVersion": "e6d9739b",
     "license": "NOASSERTION",
-    "contentHash": "12f417f74d74b39567d78617a041e24869fd9b3315a806b782604df790014920",
-    "lastHarvestedAt": "2026-10-27T18:36:27.635Z",
+    "contentHash": "6693cca0ba7e82ce2a553b8d18f5babc40160e5bd9828ccf67c53fe048d4caba",
+    "lastHarvestedAt": "2026-10-28T10:43:49.323Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {
