@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T08:07:41.855Z",
+  "last_updated": "2026-10-28T08:26:45.676Z",
   "total_verified_learnings": 1156,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -28925,7 +28925,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
-      "content_hash": "1546adfafea2c6a1b5c844bc3d9c45f01163374c5465dc334ddaa914b5ee0854",
+      "content_hash": "8506fdd0db8733908485b14c3aec4127f0fe6db5c3360a377897596a23e5af02",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "promoted_rules": [
@@ -28987,6 +28987,21 @@
           "number": 2210,
           "title": "Modality Delimiter State-Machine Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5236,
+          "title": "Hybrid SWA-Attention Sink Gating Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5237,
+          "title": "Multi-EOS Set Autoregressive Halting Protocol",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5238,
+          "title": "Asymmetric Group Advantage Redistribution (GAR) Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -29007,7 +29022,7 @@
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv46ytbg",
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv4k8xf7"
       ],
-      "verified_at": "2026-10-25T15:03:18.363Z",
+      "verified_at": "2026-10-28T08:26:45.658Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -142946,6 +142961,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T08:07:41.843Z"
+    },
+    "rule-5236": {
+      "learning_id": "rule-5236",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5236,
+      "title": "Hybrid SWA-Attention Sink Gating Invariant",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T08:26:45.658Z"
+    },
+    "rule-5237": {
+      "learning_id": "rule-5237",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5237,
+      "title": "Multi-EOS Set Autoregressive Halting Protocol",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T08:26:45.658Z"
+    },
+    "rule-5238": {
+      "learning_id": "rule-5238",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5238,
+      "title": "Asymmetric Group Advantage Redistribution (GAR) Invariant",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T08:26:45.658Z"
     }
   },
   "aliases": {

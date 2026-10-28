@@ -5731,3 +5731,4 @@
 | `CYCLE-20261028-WCL2` | `2026-10-28T07:36:27.830Z` | `wix/Detox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5229, Rule 5230, Rule 5231` | Yes (`1e5daa8d...`) |
 | `CYCLE-20261028-72G3` | `2026-10-28T07:44:47.907Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5232, Rule 5233` | Yes (`a9b43c55...`) |
 | `CYCLE-20261028-0IMW` | `2026-10-28T08:07:41.912Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5234, Rule 5235` | Yes (`7f45ec5a...`) |
+| `CYCLE-20261028-P187` | `2026-10-28T08:26:45.751Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5236, Rule 5237, Rule 5238` | Yes (`8506fdd0...`) |

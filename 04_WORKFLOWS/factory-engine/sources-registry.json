@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T08:07:44.448Z",
-    "lastVerified": "2026-10-28T08:07:44.448Z",
+    "lastChecked": "2026-10-28T08:26:48.308Z",
+    "lastVerified": "2026-10-28T08:26:48.308Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -238,9 +238,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T06:52:49.971Z",
+    "lastChecked": "2026-10-28T08:25:33.413Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T06:52:49.971Z"
+    "lastVerified": "2026-10-28T08:25:33.413Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -551,9 +551,9 @@
   "defguard-defguard": {
     "name": "defguard",
     "officialUrl": "https://github.com/DefGuard/defguard",
-    "lastChecked": "2026-10-28T03:38:04.407Z",
+    "lastChecked": "2026-10-28T08:25:28.452Z",
     "revisionIdentifier": "8efdae0f",
-    "lastVerified": "2026-10-28T03:38:04.407Z"
+    "lastVerified": "2026-10-28T08:25:28.452Z"
   },
   "topoteretes-cognee": {
     "name": "cognee",
@@ -2174,5 +2174,50 @@
     "lastChecked": "2026-10-28T08:06:01.196Z",
     "revisionIdentifier": "d51e1c78",
     "lastVerified": "2026-10-28T08:06:01.196Z"
+  },
+  "asciinema-asciinema": {
+    "name": "asciinema",
+    "officialUrl": "https://github.com/asciinema/asciinema",
+    "lastChecked": "2026-10-28T08:25:18.428Z",
+    "revisionIdentifier": "cf66ef4c",
+    "lastVerified": "2026-10-28T08:25:18.428Z"
+  },
+  "hf-xiaomimimo-mimo-v2.6-pro-rl": {
+    "name": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+    "officialUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T08:25:21.121Z",
+    "lastVerified": "2026-10-28T08:25:21.121Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
+    "contentHash": "8506fdd0db8733908485b14c3aec4127f0fe6db5c3360a377897596a23e5af02",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "gregberge-svgr": {
+    "name": "svgr",
+    "officialUrl": "https://github.com/gregberge/svgr",
+    "lastChecked": "2026-10-28T08:25:23.439Z",
+    "revisionIdentifier": "975215ef",
+    "lastVerified": "2026-10-28T08:25:23.439Z"
+  },
+  "litmuschaos-litmus": {
+    "name": "litmus",
+    "officialUrl": "https://github.com/litmuschaos/litmus",
+    "lastChecked": "2026-10-28T08:25:25.992Z",
+    "revisionIdentifier": "97a397fb",
+    "lastVerified": "2026-10-28T08:25:25.992Z"
+  },
+  "pinecone-io-examples": {
+    "name": "examples",
+    "officialUrl": "https://github.com/pinecone-io/examples",
+    "lastChecked": "2026-10-28T08:25:30.937Z",
+    "revisionIdentifier": "db002421",
+    "lastVerified": "2026-10-28T08:25:30.937Z"
   }
 }
