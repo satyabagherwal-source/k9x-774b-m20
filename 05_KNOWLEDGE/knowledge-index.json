@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T20:22:20.115Z",
+  "last_updated": "2026-10-28T20:37:57.964Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -799,8 +799,8 @@
       "slug": "agent-of-empires-agent-of-empires",
       "platform": "github",
       "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-      "source_version": "691b8d2c",
-      "content_hash": "a3518adde1606d91ba2841ce230e96f4876443098df2758b6feb8a030df94499",
+      "source_version": "e83da884",
+      "content_hash": "a5d499818071d500711c91125fe6c32a1b580ab1ccb640e4d4efafddd370abdf",
       "dossier_path": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "promoted_rules": [
@@ -848,6 +848,11 @@
           "number": 4931,
           "title": "session): report Busy consistently across CLI, TUI and HTTP delete paths (#4925)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5397,
+          "title": "deps): bump pulldown-cmark to 0.13.5 for RUSTSEC-2026-0414 (#5033)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -855,7 +860,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T17:49:42.088Z",
+      "verified_at": "2026-10-28T20:37:48.979Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -4650,8 +4655,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "5ce45773",
-      "content_hash": "7137d1df4f3b34af46f0449424489dd1226e9f398dd0afdeb79e013dffbea64e",
+      "source_version": "098582e4",
+      "content_hash": "981acf093888bf86ed8fffaebf578eba6636fab8ac8d24d75f6e1febee19b4d4",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -4734,6 +4739,11 @@
           "number": 5387,
           "title": "p2p): fail-closed skill ingest and publish gates (#320)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5400,
+          "title": "memory): GCCRF and curiosity-target defects (#321)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4741,7 +4751,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T20:01:43.140Z",
+      "verified_at": "2026-10-28T20:37:57.945Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27119,7 +27129,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
       "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
-      "content_hash": "f07af78d3b11f21fc062ab95f283d1bf74829336c76a3ef425df48c217aa807a",
+      "content_hash": "e121d93db0747f24e2f1a65c66e0fcfc6e7c9bd829c9e9f964611118b21c1717",
       "dossier_path": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
       "promoted_rules": [
@@ -27149,6 +27159,16 @@
           "number": 4192,
           "title": "Quantization Type Assignment and Scale Matrix Preservation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5398,
+          "title": "Binary Format Surgical Modification Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5399,
+          "title": "Quantized Model Abliteration Consistency Rule",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -27169,7 +27189,7 @@
         "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv43ve6m",
         "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv4h47ur"
       ],
-      "verified_at": "2026-10-25T08:39:34.081Z",
+      "verified_at": "2026-10-28T20:37:51.267Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -146124,6 +146144,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T20:22:20.104Z"
+    },
+    "rule-5397": {
+      "learning_id": "rule-5397",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5397,
+      "title": "deps): bump pulldown-cmark to 0.13.5 for RUSTSEC-2026-0414 (#5033)",
+      "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+      "source_version": "e83da884",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T20:37:48.979Z"
+    },
+    "rule-5398": {
+      "learning_id": "rule-5398",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5398,
+      "title": "Binary Format Surgical Modification Invariant",
+      "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T20:37:51.267Z"
+    },
+    "rule-5399": {
+      "learning_id": "rule-5399",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5399,
+      "title": "Quantized Model Abliteration Consistency Rule",
+      "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T20:37:51.267Z"
+    },
+    "rule-5400": {
+      "learning_id": "rule-5400",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5400,
+      "title": "memory): GCCRF and curiosity-target defects (#321)",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "098582e4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T20:37:57.945Z"
     }
   },
   "aliases": {

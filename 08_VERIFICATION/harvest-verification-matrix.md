@@ -5923,3 +5923,6 @@
 | `CYCLE-20261028-928V` | `2026-10-28T20:22:10.591Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md` | Yes (`b866f2ec...`) |
 | `CYCLE-20261028-96Y6` | `2026-10-28T20:22:16.686Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5395` | Yes (`d5550a88...`) |
 | `CYCLE-20261028-99MN` | `2026-10-28T20:22:20.159Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5396` | Yes (`1d05f95a...`) |
+| `CYCLE-20261028-T6DT` | `2026-10-28T20:37:49.073Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5397` | Yes (`a5d49981...`) |
+| `CYCLE-20261028-T85B` | `2026-10-28T20:37:51.359Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5398, Rule 5399` | Yes (`e121d93d...`) |
+| `CYCLE-20261028-TDAV` | `2026-10-28T20:37:58.039Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5400` | Yes (`981acf09...`) |

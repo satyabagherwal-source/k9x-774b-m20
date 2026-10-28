@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T20:22:22.703Z",
-    "lastVerified": "2026-10-28T20:22:22.703Z",
+    "lastChecked": "2026-10-28T20:38:00.594Z",
+    "lastVerified": "2026-10-28T20:38:00.594Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -124,12 +124,12 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-28T20:01:42.584Z",
-    "lastVerified": "2026-10-28T20:01:42.584Z",
+    "lastChecked": "2026-10-28T20:37:56.866Z",
+    "lastVerified": "2026-10-28T20:37:56.866Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "7137d1df4f3b34af46f0449424489dd1226e9f398dd0afdeb79e013dffbea64e",
+    "contentHash": "981acf093888bf86ed8fffaebf578eba6636fab8ac8d24d75f6e1febee19b4d4",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -353,9 +353,9 @@
   "run-llama-llama_index": {
     "name": "llama_index",
     "officialUrl": "https://github.com/run-llama/llama_index",
-    "lastChecked": "2026-10-28T03:11:25.935Z",
+    "lastChecked": "2026-10-28T20:37:50.893Z",
     "revisionIdentifier": "619d7466",
-    "lastVerified": "2026-10-28T03:11:25.935Z"
+    "lastVerified": "2026-10-28T20:37:50.893Z"
   },
   "nucleoidai-nucleoid": {
     "name": "Nucleoid",
@@ -426,9 +426,9 @@
   "smallstep-cli": {
     "name": "cli",
     "officialUrl": "https://github.com/smallstep/cli",
-    "lastChecked": "2026-10-28T16:51:55.703Z",
+    "lastChecked": "2026-10-28T20:37:48.289Z",
     "revisionIdentifier": "824bfd6b",
-    "lastVerified": "2026-10-28T16:51:55.703Z"
+    "lastVerified": "2026-10-28T20:37:48.289Z"
   },
   "milvus-io-milvus": {
     "name": "milvus-io/milvus",
@@ -781,9 +781,9 @@
   "devspace-sh-devspace": {
     "name": "devspace",
     "officialUrl": "https://github.com/devspace-sh/devspace",
-    "lastChecked": "2026-10-28T03:56:19.953Z",
+    "lastChecked": "2026-10-28T20:37:45.811Z",
     "revisionIdentifier": "8ff62607",
-    "lastVerified": "2026-10-28T03:56:19.953Z"
+    "lastVerified": "2026-10-28T20:37:45.811Z"
   },
   "bee-san-ciphey": {
     "name": "bee-san/Ciphey",
@@ -6584,6 +6584,47 @@
     "contentHash": "d5550a887ce68f11fc2b7ee732f382304e15a37752cea2547ce9bf19250fa633",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf": {
+    "name": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+    "officialUrl": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T20:37:40.664Z",
+    "lastVerified": "2026-10-28T20:37:40.664Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
+    "contentHash": "e121d93db0747f24e2f1a65c66e0fcfc6e7c9bd829c9e9f964611118b21c1717",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jordanbaird-ice": {
+    "name": "Ice",
+    "officialUrl": "https://github.com/jordanbaird/Ice",
+    "lastChecked": "2026-10-28T20:37:43.124Z",
+    "revisionIdentifier": "11edd391",
+    "lastVerified": "2026-10-28T20:37:43.124Z"
+  },
+  "agent-of-empires-agent-of-empires": {
+    "name": "agent-of-empires/agent-of-empires",
+    "officialUrl": "https://github.com/agent-of-empires/agent-of-empires",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T20:37:48.124Z",
+    "lastVerified": "2026-10-28T20:37:48.124Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-agent-of-empires-agent-of-empires",
+    "contentHash": "a5d499818071d500711c91125fe6c32a1b580ab1ccb640e4d4efafddd370abdf",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 19,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

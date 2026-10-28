@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `5ce45773`  
+> **Source Version**: `098582e4`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T20:01:42.592Z  
+> **Timestamp**: 2026-10-28T20:37:57.428Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T20:01:42.584Z  
+> **Harvest Timestamp**: 2026-10-28T20:37:56.866Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,401 +1799,477 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5ce45773` (2026-10-28)
-**Commit Message**: fix(p2p): fail-closed skill ingest and publish gates (#320)
+### Incident Patch 1: `098582e4` (2026-10-28)
+**Commit Message**: fix(memory): GCCRF and curiosity-target defects (#321)
 
-Port the always-on hardening from Astra's review onto main's current layout.
+* fix(memory): GCCRF and curiosity-target defects
 
-Inbound: SkillNetworkBridge.ingestNetworkSkill now verifies the envelope's
-Ed25519 signature and SHA-256 content hash before dedup, version resolution
-or any chunk write. The check lives in the new shared
-src/agents/skills/envelope-validation.ts (extracted from ingest.ts, debug
-log kept) so the filesystem ingest and the crystal ingest run the same code.
-The bridge previously trusted its caller; it is also a public entry point
-(promotion re-import, embedders), so it no longer does.
+Port the curiosity/GCCRF defect fixes from Astra's audit onto main, each
+verified to still exist on main first.
 
-Outbound, single gate: publishCrystalSkill only publishes chunks that are
-semantic_type='skill', lifecycle_state active and not archived/expired;
-checkBountyClaimQuality fails closed when the verifier or execution tracker
-is not wired or when metrics are non-finite or above 1; Forage query
-responses route through publishCrystalSkill (keeping the response-<id>-
-wire name) instead of calling the orchestrator directly; the skills.publish
-RPC no longer broadcasts arbitrary operator bytes but requires content that
-byte-matches an active skill crystal (publishSkillContent) 
+GCCRF (gccrf-reward.ts):
+- density: one shared RBF bandwidth over raw cosine distance
+  (gccrf.densityBandwidth, default 0.3) replaces the per-query min/max
+  stretch that made every neighbourhood look the same
+- novelty: restore the 4/(1-alpha^2) prefactor of Nedergaard & Morales
+  eq. 23 (I_-1 = -log p as the limit, with a guard window around -1);
+  without it the ordering reversed for alpha < -1 and the young-agent end
+  of the schedule rewarded the most familiar material
+- KNN: exclude the assessed chunk and stale/archived index rows by
+  overfetching the index-wide vec0 MATCH and post-filtering with one PK IN
+  lookup; no recency window, no per-call embedding parse; the brute-force
+  fallback ranks the same corpus
+- progress preserves zero (raw delta-eta clamped, not EMA-normalized to
+  0.5); region EMAs seeded at the first observed eta
+- maturity from completed dream cycles only (chunks/500 and age/30 dropped)
+- FSHO alpha coupling consumed only behind memory.
 
-**File**: `docs/memory/skills-pipeline.md` (modified, +33/-5)
+**File**: `docs/memory/curiosity-and-search.md` (modified, +2/-2)
 ```diff
-@@ -1011,13 +1011,32 @@ the 2026-09-03 code-first audit in `docs/reviews/`).
+@@ -43,7 +43,7 @@ When a new chunk is indexed, `assessChunk()` uses the internal GCCRF reward func
+ | E·μ (Empowerment)           | Knowledge agency gated by uncertainty              | 0.20   |
+ | S (Strategic Alignment)     | Alignment with active exploration targets          | 0.10   |
  
- The `SkillNetworkBridge` (`skill-network-bridge.ts`) mediates between the local crystal store and the P2P network.
+-Additionally, **contradiction detection** runs separately — it identifies chunks with high cosine similarity but different content hashes (conflicting information). Contradictions are stored for target generation but do not influence the reward score.
++Additionally, **contradiction detection** runs separately: it flags chunks with high cosine similarity (0.85 to 0.98) but different content hashes as _candidate_ conflicts. Near-identical embeddings (cosine >= 0.98) with different bytes are duplicates or paraphrases and score 0. This is a candidate signal for target generation, not an adjudication that the two chunks contradict each other; contradictions do not influence the reward score.
  
--**Publishing** (`publishCrystalSkill()`):
--
--1. Loads the crystal from the database
-+**Publishing** (`publishCrystalSkill()`), the single outbound gate. Every
-+selector that can put a skill on the wire goes through it: auto-publish on
-+crystallize, the maturity re-attempt after an execution, Forage query
-+responses (same gate, wire name `response-<query>-<skill>`), and the manual
-+`skills.publish` RPC. The gate fails closed:
-+
-+1. Loads the crystal from the database; only a chunk with
-+   `semantic_type = 'skill'` and `lifecycle_state = 'active'` whose `lifecycle`
-+   is not `archived`/`expired` qualifies. A non-skill chunk or an archived
-+   crystal never leaves the node, whatever its governance says.
- 2. Enforces governance: only `shared` or `public` scope, never `confidential` sensitivity
- 3. Checks provenance chain for confidential ancestors (blocks publish if found)
--4. Generates a SKILL.md format with frontmatter
--5. Sends to the Rust orchestrator via `orchestratorBridge.publishSkill()`
-+4. Maturity bar (the same one the marketplace lists with): `SkillVerifier`
-+   passes AND the `SkillExecutionTracker` reports at least 3 executions with
-+   a success rate in `(0.7, 1]`. If either dependency is not wired on the
-+   bridge, or a metric is non-finite or above 1, the answer is "no": missing
-+   evidence is never permission to publish.
-+5. Generates a SKILL.md format with frontmatter
-+6. Sends to the Rust orchestrator via `orchestratorBridge.publishSkill()`
-+
-+The `skills.publish` RPC does not publish arbitrary operator-supplied bytes.
-+Its `content` must byte-match the text of an active skill crystal; the bridge
-+resolves that crystal and runs it through the gate above. Hand-written
-+SKILL.md that was never crystallized (or has not matured) is refused with
-+`INVALID_REQUEST`. This closes the one path that let a node broadcast content
-+with no execution evidence behind it.
+ ```typescript
+ type SurpriseAssessment = {
+@@ -203,7 +203,7 @@ flowchart LR
+ `assessDreamInsight()` checks each new dream insight against existing curiosity state:
  
- **Receiving — the file half first** (`src/agents/skills/ingest.ts`,
- PLAN-13/PLAN-44): the gateway hands every `skill_received` envelope to
-@@ -1041,6 +1060,15 @@ the mesh-content trust notice, subject to the load-time capability gate.
+ - **Gap filling** — If the insight's embedding is close to a knowledge gap target, the target is resolved
+-- **Contradiction detection** — If the insight contradicts existing knowledge regions
++- **Contradiction closure**: a `simulation` insight with confidence >= 0.7 resolves a contradiction target only when it is scoped to that target: it was dreamed from one of the chunks the contradiction was detected on, or it lands in the target's region (cosine >= 0.6 to the centroid) and its text names a term of the region label. An unrelated simulation leaves every contradiction target open. The normal closure path for targets remains the PLAN-54 research loop above.
+ - **Frontier opening** — If the insight represents genuinely novel territory, a new `frontier` target is created
  
- **Ingesting — the memory-chunk half** (`ingestNetworkSkill()`):
- 
-+0. **Authenticity, before anything else.** The envelope's Ed25519 signature
-+   over the decoded `skill_md` bytes is verified against the raw 32-byte
-+   `author_pubkey`, then the SHA-256 of those bytes must equal
-+   `content_hash` (`src/agents/skills/envelope-validation.ts`, shared with
-+   the filesystem ingest). A failing envelope is rejected before
-+   deduplication, version resolution or any write; the bridge does not
-+   assume its caller already checked. Only an envelope the filesystem
-+   ingest `accepted` is handed here at all; a quarantined (`review`) skill
-+   is not crystallized until the operator accepts it.
- 1. Checks if the sender peer is banned via `PeerReputationManager`
- 2. **Cortisol gate** — if a network cortisol spike is active (`haltUntrustedIngestion`), rejects skills from peers with trust level below `"trusted"` (i.e., `untrusted` and `provisional` peers are blocked)
- 3. Deduplicates by content hash
+ ---
 ```
 
-**File**: `src/agents/skills/crystallize.test.ts` (modified, +14/-0)
+**File**: `docs/memory/curiosity-reward.md` (modified, +16/-12)
 ```diff
-@@ -104,4 +104,18 @@ describe("crystallizeSkill (PLAN-42 Phase 0: staged + gated, no direct live writ
-     expect(result.error).toContain("below threshold");
-     expect(await readProvenance({ configDir: tmpDir })).toHaveLength(0);
-   });
-+
-+  it.each([NaN, Number.POSITIVE_INFINITY, 1.5, -Infinity])(
-+    "refuses a malformed self-reported reward score (%s) before staging",
-+    async (rewardScore) => {
-+      const result = await crystallizeSkill({
-+        candidate: candidate({ rewardScore }),
-+        config,
-+        configDir: tmpDir,
-+      });
-+      expect(result.ok).toBe(false);
-+      expect(result.error).toMatch(/not a finite value|below threshold/);
-+      expect(await readProvenance({ configDir: tmpDir })).toHaveLength(0);
-+    },
-+  );
- });
-```
-
-**File**: `src/agents/skills/crystallize.ts` (modified, +8/-1)
-```diff
-@@ -41,7 +41,14 @@ export async function crystallizeSkill(params: {
- }): Promise<CrystallizationResult> {
-   const { candidate, config, bridge, workspaceDir, configDir } = params;
+@@ -16,13 +16,19 @@ When new information arrives, GCCRF measures how far it is from what the agent a
  
--  // 1. Evaluate reward threshold
-+  // 1. Evaluate reward threshold. The score is self-reported by the caller, so
-+  //    a NaN/Infinity or a value above 1 is a malformed candidate, not a pass.
-+  if (!Number.isFinite(candidate.rewardScore) || candidate.rewardScore > 1) {
-+    return {
-+      ok: false,
-+      error: `reward score ${candidate.rewardScore} is not a finite value in [0, 1]`,
-+    };
-+  }
-   if (candidate.rewardScore < SUCCESS_THRESHOLD) {
-     return {
-       ok: false,
+ For each knowledge region, the agent tracks whether it's getting less surprised over time. If prediction errors are decreasing in a region, the agent is learning. This component rewards active learning zones and deprioritizes areas where the agent is stuck or already understands.
+ 
++Progress **preserves zero**: a region whose error is not moving contributes 0, not the normalizer's resting value of 0.5. The raw Δη (a bounded difference of two per-region η EMAs, both seeded at the first observed η rather than at a constant) is clamped to `[0, 1]` directly; the running normalizer still records it for telemetry.
++
+ ### 3. Information-Theoretic Novelty ("How rare is this part of my knowledge space?")
+ 
+ This is GCCRF's most distinctive feature. It uses density estimation to determine how crowded or sparse a region of knowledge space is.
+ 
+-**The developmental twist**: A young agent (few dream cycles completed) is rewarded for exploring _common_ things -- building foundational understanding, like a baby fixating on faces. As the agent matures, it shifts to being rewarded for exploring _rare_ things -- frontier territory, like a researcher seeking the unknown.
++Density is an RBF kernel over the raw cosine distances to the K nearest neighbours with one **shared bandwidth** (`gccrf.densityBandwidth`, default 0.3). The bandwidth is deliberately not fitted per query: a per-query min/max stretch (the previous behaviour) made every neighbourhood look identical, so a chunk sitting on top of fifty near-duplicates scored the same density as one far from everything. The assessed chunk is excluded from its own neighbourhood, and archived chunks still present in the vector index are filtered out.
++
++The shaped term is the alpha-family novelty of Nedergaard & Morales (eq. 23) **with its prefactor**: `I_α(p) = 4 / (1 - α²) · (p^(-(α+1)/2) - 1)`, with `I_-1(p) = -log p` as the limit (a small window around α = -1 uses the log form because the prefactor is numerically unstable there). The prefactor matters: without it the ordering flips for α < -1, and the "young agent" end of the schedule rewarded the most familiar material (the bare power term at α = -3 is `p - 1`). With it, `I_α` is decreasing in density for every α.
+ 
+-This transition happens automatically through **alpha annealing**: a parameter that smoothly shifts the density reward from "common is interesting" to "rare is interesting" over the agent's lifetime.
++**The developmental twist**: a young agent (few dream cycles completed) gets a _bounded, forgiving_ novelty bonus: at α = -3 the term is `(1 - p) / 2`, between 0 and 0.5, so common and rare material differ only mildly. As the agent matures the bonus becomes _sharply frontier-seeking_: at α = 0 it is `4 (1/√p - 1)`, unbounded as density falls. The per-component normalizer absorbs the scale change; what anneals is how strongly rarity is preferred, never the direction.
++
++This transition happens automatically through **alpha annealing**, a parameter that moves from -3 to 0 over the agent's completed dream cycles.
+ 
+ ### 4. Empowerment ("Does knowing this give me more agency?")
+ 
+@@ -66,7 +72,7 @@ The alpha parameter controls the agent's developmental stage:
+ | -1.5 to -0.5 | Adolescent | Transitioning from common to novel        |
+ | -0.5 to 0.0  | Mature     | Curious about rare, frontier things       |
+ 
+-Maturity is tied to **dream cycles completed**, not raw data volume. This prevents bulk file imports from "speedrunning" the agent's childhood -- maturity tracks actual consolidation and reflection.
++Maturity is tied to **dream cycles completed** and nothing else: `maturity = min(1, completed_cycles / expectedMatureCycles)`. Chunk count and calendar age used to count too (500 chunks or 30 days meant "mature"), which let a node with a large import and almost no completed cycles jump straight to the frontier-seeking regime. Removing those shortcuts means an upgraded node with many chunks but few completed cycles moves back toward the young regime until its dreams catch up.
+ 
+ ## Configuration
+ 
+@@ -82,6 +88,11 @@ GCCRF configuration is set in the `memory.gccrf` section of the Bitterbot config
+ | `empowermentK`         | `30`                             | Neighbors for empowerment computation                             |
+ | `muGain`               | `5.0`                            | Interoceptive modulator sensitivity                               |
+ | `muThreshold`          | `0.3`                            | Interoceptive modulator threshold                                 |
++| `densityBandwidth`     | `0.3`                            | Shared RBF bandwidth over cosine distance for KDE density         |
++
++FSHO alpha coupling is switched on with `memory.curiosity.fshoCoupling: true` (default `false`, see below).
++
++Normalizer statistics and per-region η EMAs are stamped with a scoring version (`gccrf_state.scori
 ```
 
-**File**: `src/agents/skills/envelope-validation.test.ts` (added, +61/-0)
+**File**: `src/config/zod-schema.ts` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,61 @@
-+import { createHash, generateKeyPairSync, sign } from "node:crypto";
-+import { describe, expect, it } from "vitest";
-+import {
-+  computeSkillContentHash,
-+  validateSkillEnvelope,
-+  verifySkillSignature,
-+} from "./envelope-validation.js";
-+import type { SkillEnvelope } from "./ingest.js";
+@@ -52,6 +52,7 @@ const MemorySchema = z
+         z
+           .object({
+             enabled: z.boolean().optional(),
++            fshoCoupling: z.boolean().optional(),
+             research: z
+               .union([
+                 z
+```
+
+**File**: `src/memory/curiosity-correctness.test.ts` (added, +391/-0)
+```diff
+@@ -0,0 +1,391 @@
++/**
++ * Regression tests for the GCCRF / curiosity-target defects found in the
++ * 2026-10 audit (one `it` per defect, in audit order where possible):
++ *
++ *  1. an unrelated simulation insight closed every open contradiction target
++ *  2. paraphrases (identical embeddings, different hash) scored as contradictions
++ *  3. per-query min/max stretch erased absolute distance from the density term
++ *  4. KNN returned the assessed chunk as its own nearest neighbour
++ *  5. no-progress normalized to 0.5 instead of 0
++ *  6. the progress history read the OLDEST 50 samples
++ *  7. rebuild clamped progress non-negative before the stale (< -0.3) detector ran
++ *  8. FSHO alpha coupling was computed but never consumed
++ *  9. maturity came from chunk count / calendar age, not completed dream cycles
++ * 10. GCCRF target generation re-inserted the same (type, region) target every run
++ * 11. `curiosity_stagnant` fired on every single sub-0.2 score
++ * 12. the novelty term dropped the 4/(1-α²) prefactor, which reverses the
++ *     ordering for α < -1 (young agents rewarded the most familiar material)
++ */
++import { DatabaseSync } from "node:sqlite";
++import { afterEach, describe, expect, it } from "vitest";
++import { CuriosityEngine, deriveStableRegionId } from "./curiosity-engine.js";
++import type { DreamInsight } from "./dream-types.js";
++import { GCCRFRewardFunction, informationGeometricNovelty } from "./gccrf-reward.js";
++import { HormonalStateManager } from "./hormonal.js";
 +
-+function signed(body = "---\nname: x\ndescription: y\n---\nbody\n"): SkillEnvelope {
-+  const keys = generateKeyPairSync("ed25519");
-+  const bytes = Buffer.from(body, "utf-8");
++const databases: DatabaseSync[] = [];
++
++function fixture(): DatabaseSync {
++  const db = new DatabaseSync(":memory:");
++  databases.push(db);
++  db.exec(`CREATE TABLE chunks (
++    id TEXT PRIMARY KEY, hash TEXT, embedding TEXT, model TEXT DEFAULT 'test',
++    lifecycle_state TEXT DEFAULT 'active', updated_at INTEGER, created_at INTEGER,
++    semantic_type TEXT DEFAULT 'fact', importance_score REAL DEFAULT 0.5,
++    access_count INTEGER DEFAULT 0, text TEXT DEFAULT '')`);
++  return db;
++}
++
++function insert(
++  db: DatabaseSync,
++  id: string,
++  embedding: number[],
++  text = "memory systems knowledge",
++) {
++  db.prepare(
++    "INSERT INTO chunks(id, hash, embedding, updated_at, created_at, text) VALUES (?, ?, ?, ?, ?, ?)",
++  ).run(id, id, JSON.stringify(embedding), Date.now(), Date.now(), text);
++}
++
++function insight(overrides: Partial<DreamInsight>): DreamInsight {
 +  return {
-+    version: 1,
-+    name: "x",
-+    author_peer_id: "peer",
-+    timestamp: 1,
-+    skill_md: bytes.toString("base64"),
-+    content_hash: createHash("sha256").update(bytes).digest("hex"),
-+    author_pubkey: keys.publicKey
-+      .export({ format: "der", type: "spki" })
-+      .subarray(-32)
-+      .toString("base64"),
-+    signature: sign(null, bytes, keys.privateKey).toString("base64"),
++    id: "dream",
++    content: "unrelated hypothesis",
++    embedding: [0, 1],
++    confidence: 0.99,
++    mode: "simulation",
++    sourceChunkIds: [],
++    sourceClusterIds: [],
++    dreamCycleId: "cycle",
++    importanceScore: 0.5,
++    accessCount: 0,
++    lastAccessedAt: null,
++    createdAt: Date.now(),
++    updatedAt: Date.now(),
++    ...overrides,
 +  };
 +}
 +
-+describe("envelope-validation", () => {
-+  it("accepts an authentic envelope", () => {
-+    const e = signed();
-+    expect(verifySkillSignature(e)).toBe(true);
-+    expect(validateSkillEnvelope(e)).toBeNull();
-+    expect(computeSkillContentHash(e.skill_md)).toBe(e.content_hash);
-+  });
-+
-+  it("rejects a signature over different bytes", () => {
-+    const e = signed();
-+    const other = Buffer.from("other", "utf-8");
-+    e.skill_md = other.toString("base64");
-+    e.content_hash = createHash("sha256").update(other).digest("hex");
-+    expect(validateSkillEnvelope(e)).toBe("invalid Ed25519 signature");
-+  });
-+
-+  it("reports a hash mismatch only once the signature holds", () => {
-+    const e = signed();
-+    e.content_hash = "0".repeat(64);
-+    expect(validateSkillEnvelope(e)).toBe("content hash mismatch");
-+  });
-+
-+  it.each([
-+    ["short key", (e: SkillEnvelope) => (e.author_pubkey = Buffer.alloc(16).toString("base64"))],
-+    ["short signature", (e: SkillEnvelope) => (e.signature = Buffer.alloc(63).toString("base64"))],
-+    ["garbage key", (e: SkillEnvelope) => (e.author_pubkey = "not base64 at all!!")],
-+    ["empty signature", (e: SkillEnvelope) => (e.signature = "")],
-+  ])("fails closed on %s without throwing", (_label, mutate) => {
-+    const e = signed();
-+    mutate(e);
-+    expect(verifySkillSignature(e)).toBe(false);
-+    expect(validateSkillEnvelope(e)).toBe("invalid Ed25519 signature");
-+  });
++afterEach(() => {
++  for (const db of databases.splice(0)) {
++    db.close();
++  }
 +});
++
++describe("GCCRF reward defects", () => {
++  it("3. distinguishes nearby and distant neighbourhoods with identical relative spacing", () => {
++    const density = (offset: number) => {
++      const db = fixture();
++      for (let i = 0; i < 50; i++) {
++        const d = offset + i * 0.002;
++        insert(db, `n${i}`, [1 - d, Math.sqrt(1 - (1 - d) ** 2)]);
++      }
++      return new GCCRFRewardFunction(db).compute([1, 0], new Map(), []).density;
++    };
++    // Same internal spacing; the old per-query stretch gave both the same density.
++    expect(density(0.01)).toBeGreaterThan(0.9);
++    expect(density(0.7)).toBeLessThan(0.1);
++  });
++
++  it("3b. falls back to the default bandwidth on an invalid config value", () => {
++    const db = fixture();
++    expect(
++      new GCCRFRewardFunction(db, { densityBandwidth: NaN }).getConfig().densityBandwidth,
++    ).toBe(0.3);
++    expect(new GCCRFRewardFunction(db, { densityBandwidth: -1 }).getConfig().densityBandwidth).toBe(
++      0.3,
++    );
++  });
++
++  it("5 + 9. preserves zero progress and does not infer maturity from 500 imported memories", () => {
++    const db = fixture();
++    for (let i = 0; i < 500; i++) {
++      insert(db, String(i), []);
++    }
++    const reward = new GCCRFRewardFunction(db);
++    for (let i = 0; i < 100; i++) {
++      expect(reward.compute([1, 0], new Map([["r", [1, 0]]]), []).components.deltaEta).toBe(0);
++    }
++    expect(reward.getMaturity()).toBe(0);
++    expect(reward.getCurrentAlpha()).toBe(-3);
++  });
++
++  it("9b. maturity follows completed dream cycles only", () => {
++    const db = fixture();
++    db.exec("CREATE TABLE dream_cycles (id TEXT, completed_at INTEGER)");
++    for (let i = 0; i < 50; i++) {
++      db.prepare("INSERT INTO dream_cycles VALUES (?, ?)").run(String(i), i < 40 ? 1 : null);
++    }
++    const reward = new GCCRFRewardFunction(db, { expectedMatureCycles: 100 });
++    expect(reward.getMaturity()).toBeCloseTo(0.4);
++    expect(reward.getCurrentAlpha()).toBeCloseTo(-3 + 3 * 0.4);
++  });
++
++  it("8. consumes FSHO coupling only when enabled, and the EMA survives a restart", () => {
++    const db 
 ```
 
-**File**: `src/agents/skills/envelope-validation.ts` (added, +60/-0)
+**File**: `src/memory/curiosity-engine.region-identity.test.ts` (modified, +8/-7)
 ```diff
-@@ -0,0 +1,60 @@
+@@ -35,13 +35,14 @@ describe("deriveStableRegionId (F8)", () => {
+   });
+ });
+ 
+-// The learning-progress formula that rebuildRegions now applies: for a region
+-// that persisted (same stable id), learning_progress = max(0, priorError -
+-// newError) — the reduction in prediction error, i.e. the GCCRF learning
+-// signal, which was previously hardcoded to 0.
++// The learning-progress formula that rebuildRegions applies: for a region that
++// persisted (same stable id), learning_progress = clamp(priorError - newError,
++// -1, 1) — the SIGNED change in prediction error. It used to be clamped at 0,
++// which meant the stale-region detector (learning_progress < -0.3) could never
++// fire off the rebuild value.
+ describe("learning-progress formula (F8)", () => {
+   const lp = (priorError: number | undefined, newError: number): number =>
+-    priorError == null ? 0 : Math.max(0, priorError - newError);
++    priorError == null ? 0 : Math.max(-1, Math.min(1, priorError - newError));
+ 
+   it("is 0 for a brand-new region (no prior)", () => {
+     expect(lp(undefined, 0.4)).toBe(0);
+@@ -51,7 +52,7 @@ describe("learning-progress formula (F8)", () => {
+     expect(lp(0.6, 0.4)).toBeCloseTo(0.2);
+   });
+ 
+-  it("clamps to 0 when error rises (no negative learning)", () => {
+-    expect(lp(0.3, 0.5)).toBe(0);
++  it("goes negative when error rises (region is drifting / going stale)", () => {
++    expect(lp(0.3, 0.5)).toBeCloseTo(-0.2);
+   });
+ });
+```
+
+**File**: `src/memory/curiosity-engine.ts` (modified, +133/-24)
+```diff
+@@ -44,6 +44,11 @@ const log = createSubsystemLogger("memory/curiosity");
+ // seconds of synchronous work. Cap the batch (the backlog drains across cycles)
+ // and yield to the event loop every few chunks so it never freezes the gateway
+ // (which would stall WS requests and bounce the Control UI's connection).
 +/**
-+ * Skill envelope authenticity checks shared by every storage boundary.
-+ *
-+ * The filesystem ingest (`ingest.ts`) and the crystal-level ingest
-+ * (`SkillNetworkBridge.ingestNetworkSkill`) both have to run these before
-+ * anything is written: a peer envelope whose bytes do not match its signature
-+ * or its content hash must never reach the skills directory or the chunk store.
++ * Cosine similarity at or above which two differently-hashed chunks are treated
++ * as duplicates/paraphrases rather than contradiction candidates.
 + */
-+
-+import { createHash, createPublicKey, verify } from "node:crypto";
-+import { createSubsystemLogger } from "../../logging/subsystem.js";
-+import type { SkillEnvelope } from "./ingest.js";
-+
-+const log = createSubsystemLogger("skills/envelope-validation");
-+
-+/** SPKI DER prefix for a raw 32-byte Ed25519 public key. */
-+const ED25519_SPKI_PREFIX = Buffer.from("302a300506032b6570032100", "hex");
-+
-+/**
-+ * Ed25519 verification of `skill_md` (decoded bytes) against the envelope's
-+ * raw 32-byte `author_pubkey` and 64-byte `signature`, both base64.
-+ */
-+export function verifySkillSignature(envelope: SkillEnvelope): boolean {
-+  try {
-+    const pubkeyBytes = Buffer.from(envelope.author_pubkey, "base64");
-+    const signatureBytes = Buffer.from(envelope.signature, "base64");
-+    if (pubkeyBytes.length !== 32 || signatureBytes.length !== 64) {
-+      return false;
-+    }
-+    const skillBytes = Buffer.from(envelope.skill_md, "base64");
-+    const publicKey = createPublicKey({
-+      key: Buffer.concat([ED25519_SPKI_PREFIX, pubkeyBytes]),
-+      format: "der",
-+      type: "spki",
++const PARAPHRASE_SIMILARITY = 0.98;
+ const PENDING_SCORE_BATCH = 50;
+ const PENDING_SCORE_YIELD_EVERY = 8;
+ // Greedy region clustering is O(n^2) over every active chunk and is unbounded,
+@@ -123,11 +128,14 @@ export class CuriosityEngine {
+     };
+     ensureCuriositySchema(db);
+ 
+-    // Initialize GCCRF reward function as the single scoring engine
+-    this.gccrfReward = new GCCRFRewardFunction(
+-      db,
+-      config?.gccrf as Partial<GCCRFConfig> | undefined,
+-    );
++    // Initialize GCCRF reward function as the single scoring engine.
++    // memory.curiosity.fshoCoupling is the documented switch for FSHO alpha
++    // coupling; it wins over a stray gccrf.fshoCoupling key.
++    const gccrfConfig = (config?.gccrf ?? {}) as Partial<GCCRFConfig>;
++    this.gccrfReward = new GCCRFRewardFunction(db, {
++      ...gccrfConfig,
++      ...(config?.fshoCoupling != null ? { fshoCoupling: config.fshoCoupling } : {}),
 +    });
-+    return verify(null, skillBytes, publicKey, signatureBytes);
-+  } catch (err) {
-+    log.debug(`Signature verification error: ${String(err)}`);
-+    return false;
-+  }
-+}
-+
-+/** SHA-256 hex of the decoded `skill_md` bytes, the value `content_hash` must carry. */
-+export function computeSkillContentHash(skillMdBase64: string): string {
-+  return createHash("sha256").update(Buffer.from(skillMdBase64, "base64")).digest("hex");
-+}
-+
-+/**
-+ * Full authenticity check: signature, then content hash. Returns `null` when
-+ * the envelope is authentic, otherwise the rejection reason.
-+ */
-+export function validateSkillEnvelope(envelope: SkillEnvelope): string | null {
-+  if (!verifySkillSignature(envelope)) {
-+    return "invalid Ed25519 signature";
-+  }
-+  if (computeSkillContentHash(envelope.skill_md) !== envelope.content_hash) {
-+    return "content hash mismatch";
-+  }
-+  return null;
-+}
-```
-
-**File**: `src/agents/skills/ingest.ts` (modified, +2/-21)
-```diff
-@@ -5,7 +5,7 @@
-  * Policies: "auto" (accept if valid), "review" (quarantine), "deny" (reject all).
-  */
- 
--import { createHash, createPublicKey, verify } from "node:crypto";
-+import { createHash } from "node:crypto";
- import fs from "node:fs/promises";
- import path from "node:path";
- import type { BitterbotConfig } from "../../config/config.js";
-@@ -42,6 +42,7 @@ import {
-   type LiveSkillIndexEntry,
-   listLiveSkillIndex,
- } from "./description-overlap.js";
-+import { verifySkillSignature as verifySignature } from "./envelope-validation.js";
- import { appendImpactEntry, resolveWikiDir } from "./impact-trail.js";
- import { SELF_LOOPBACK_REASON } from "./ingest-stats.js";
- import { peerStageCollision, stagePeerSkill } from "./peer-staging.js";
-@@ -1129,26 +1130,6 @@ export async function listIncomingSkills(config: BitterbotConfig): Promise<Incom
    }
- }
  
--function verifySignature(envelope: SkillEnvelope): boolean {
--  try {
--    const pubkeyBytes = Buffer.from(envelope.author_pubkey, "base64");
--    const signatureBytes = Buffer.from(envelope.signature, "base64");
--    const skillBytes = Buffer.from(envelope.skill_md, "base64");
--
--    // Ed25519 verification: construct SPKI DER from raw 32-byte pubkey
--    const spkiDer = Buffer.concat([Buffer.from("302a300506032b6570032100", "hex"), pubkeyBytes]);
--    const publicKey = createPublicKey({
--      key: spkiDer,
--      format: "der",
--      type: "spki",
--    });
--    return verify(null, skillBytes, publicKey, signatureBytes);
--  } catch (err) {
--    log.debug(`Signature verification error: ${String(err)}`);
--    return false;
--  }
--}
--
- function validateSkillContent(content: string): boolean {
-   if (!content.startsWith("---")) return false;
-   const endIdx = content.indexOf("---", 3);
-```
-
-**File**: `src/gateway/p2p-skill-receive.test.ts` (modified, +6/-1)
-```diff
-@@ -57,6 +57,8 @@ describe("P2P skill receive path", () => {
-     await fs.rm(tmp, { recursive: true, force: true });
-   });
- 
-+  const bridgeIngest = vi.fn();
-+
-   function handler(getIdentity: () => Promise<{ pubkey: string }>) {
-     const config = {
-       skills: { p2p: { ingestPolicy: "review", quarantineDir: quarantine } },
-@@ -66,7 +68,7 @@ describe("P2P skill receive path", () => {
-       loadConfig: () => config,
-       getSkillNetworkBridge: () => ({
-         getPeerReputation: () => reputation as never,
--        ingestNetworkSkill: vi.fn(),
-+        ingestNetworkSkill: bridgeIngest,
-       }),
-       log: { warn: vi.fn() },
-     });
-@@ -114,6 +116,9 @@ describe("P2P skill receive path", () => {
-       heldForReview: 1,
-       ownEchoesIgnored: 0,
-     });
-+    // A quarantined (review) skill must NOT be crystallised: only an accepted
-+    // envelope reaches the crystal store (PLAN-44 Phase 3).
-+    expect(bridgeIngest).not.toHaveBeenCalled();
-   });
- 
-   it("an unavailable orchestrator identity does not break receiving", async () => {
-```
-
-**File**: `src/gateway/server-methods/skills.ts` (modified, +21/-14)
-```diff
-@@ -902,28 +902,35 @@ export const skillsHandlers: GatewayRequestHandlers = {
-       );
-       return;
+   /** Update the database handle after a reindex swaps the underlying file. */
+@@ -189,8 +197,16 @@ export class CuriosityEngine {
+       /* targets table may not exist yet */
      }
--    const skillMdBase64 = Buffer.from(p.content, "utf8").toString("base64");
-+    // The RPC selects existing content; it does not manufacture evidence. The
-+    // bytes must match an active skill crystal, and the publish runs through the
-+    // bridge's single outbound gate (governance, confidential ancestors,
-+    // archived lifecycle, verifier + execution maturity). Hand-written
-+    // SKILL.md that was never crystallized is not publishable from here.
-+    if (!context.skillNetworkBridge) {
-+      respond(
-+        false,
-+        undefined,
-+        errorShape(ErrorCodes.UNAVAILABLE, "skill network bridge is not available"),
-+      );
-+      return;
+ 
+-    // Compute GCCRF reward (the single scoring path)
+-    const gccrfResult = this.gccrfReward.compute(chunkEmbedding, regionCentroids, strategicTargets);
++    // Compute GCCRF reward (the single scoring path). The chunk id lets KNN
++    // leave the chunk out of its own neighbourhood.
++    const gccrfResult = this.gccrfReward.compute(
++      chunkEmbedding,
++      regionCentroids,
++      strategicTargets,
++      {
++        chunkId,
++      },
++    );
+ 
+     // Contradiction detection (unique signal not in GCCRF)
+     const neighbors = this.getNeighborChunks(chunkEmbedding, chunkId, 10);
+@@ -300,8 +316,11 @@ export class CuriosityEngine {
+ 
+     const regionsBuilt = await this.rebuildRegions();
+     const expired = this.expireTargets();
+-    const targetsGenerated = this.detectGapsAndGenerateTargets();
++    // Learning progress is computed BEFORE gap detection so the stale-region
++    // detector (learning_progress < -0.3) sees this cycle's signed drift
++    // instead of last cycle's value (or the rebuild's placeholder).
+     this.computeRegionLearningProgress();
++    const targetsGenerated = this.detectGapsAndGenerateTargets();
+ 
+     // GCCRF-enhanced: retire satisfied targets and generate new ones from GCCRF signals
+     const gccrfRetired = this.retireGCCRFTargets();
+@@ -626,7 +645,7 @@ export class CuriosityEngine {
+     if (insight.embedding.length > 0) {
+       const targets = this.db
+         .prepare(
+-          `SELECT id, type, description, region_id FROM curiosity_targets
++          `SELECT id, type, description, region_id, metadata FROM curiosity_targets
+            WHERE resolved_at IS NULL AND expires_at > ?
+            ORDER BY priority DESC LIMIT 20`,
+         )
+@@ -635,6 +654,7 @@ export class CuriosityEngine {
+         type: string;
+         description: string;
+         region_id: string | null;
++        metadata: string | null;
+       }>;
+ 
+       // If the insight is highly relevant to a gap target's region, mark it resolved
+@@ -656,9 +676,13 @@ export class CuriosityEngine {
+           }
+         }
+ 
+-        // High-confidence contradictions from simulation mode
++        // High-confidence contradictions from simulation mode. Only a
++        // simulation that is actually about this target may close it: one that
++        // re-processed the chunks the contradiction was detected on, or one
++        // that lands in the target's region and names it. An unrelated
++        // simulation used to close every open contradiction target at once.
+         if (target.type === "contradiction" && insight.mode === "simulation") {
+-          if (insight.confidence >= 0.7) {
++          if (insight.confidence >= 0.7 && this.simulationAddressesTarget(insight, target)) {
+             this.resolveTarget(target.id);
+             result.contradictions++;
+           }
+@@ -907,6 +931,49 @@ export class CuriosityEngine {
+     }
+   }
+ 
++  /**
++   * Whether a simulation insight is scoped to a contradiction target: it was
++   * dreamed from one of the chunks the contradiction was detected on, or it
++   * sits in the target's region (cosine >= 0.6 to the centroid) and its text
++   * references a term of that region's label.
++   */
++  private simulationAddressesTarget(
++    insight: DreamInsight,
++    target: { region_id: string | null; metadata: string | null },
++  ): boolean {
++    let meta: { chunkIds?: unknown } = {};
++    try {
++     
+```
+
+**File**: `src/memory/curiosity-types.ts` (modified, +7/-0)
+```diff
+@@ -127,6 +127,13 @@ export type CuriosityConfig = {
+   maxQueryHistory?: number;
+   /** Score threshold below which a query indicates a gap. Default: 0.5. */
+   gapScoreThreshold?: number;
++  /**
++   * Let the dream engine's FSHO order parameter modulate GCCRF's alpha
++   * schedule (`effective_alpha = base_alpha + 0.5 * (R_avg - 0.5)`). Default:
++   * false. Off, FSHO R is tracked for telemetry only and novelty uses the pure
++   * dream-cycle maturity schedule.
++   */
++  fshoCoupling?: boolean;
+   /** GCCRF reward function configuration. When provided, GCCRF replaces heuristic scoring. */
+   gccrf?:
+     | import("./gccrf-reward.js").GCCRFConfig
+```
+
+**File**: `src/memory/gccrf-knn.test.ts` (modified, +36/-1)
+```diff
+@@ -33,13 +33,21 @@ describe("GCCRF knnSearch (vec0 MATCH)", () => {
+     db.enableLoadExtension(true);
+     sqliteVec.load(db);
+     // The GCCRF constructor adds a curiosity_reward column to chunks.
+-    db.exec("CREATE TABLE chunks (id TEXT PRIMARY KEY, embedding TEXT, lifecycle_state TEXT)");
++    db.exec(
++      "CREATE TABLE chunks (id TEXT PRIMARY KEY, embedding TEXT, lifecycle_state TEXT, updated_at INTEGER)",
++    );
+     // Same shape as production chunks_vec: vec0 default (L2) metric.
+     db.exec("CREATE VIRTUAL TABLE chunks_vec USING vec0(id TEXT PRIMARY KEY, embedding FLOAT[4])");
+     const ins = db.prepare("INSERT INTO chunks_vec(id, embedding) VALUES (?, ?)");
+     ins.run("a", blob(a));
+     ins.run("b", blob(b));
+     ins.run("c", blob(c));
++    // Every index row has a live chunk: the MATCH results are post-filtered
++    // against active chunks so stale index rows cannot count as neighbours.
++    const chunk = db.prepare("INSERT INTO chunks VALUES (?, ?, 'active', 1)");
++    chunk.run("a", JSON.stringify(a));
++    chunk.run("b", JSON.stringify(b));
++    chunk.run("c", JSON.stringify(c));
+     reward = new GCCRFRewardFunction(db);
+   });
+ 
+@@ -60,6 +68,33 @@ describe("GCCRF knnSearch (vec0 MATCH)", () => {
+     expect(knn[2]!.similarity).toBeCloseTo(0, 3); // orthogonal
+   });
+ 
++  it("excludes the assessed chunk and stale index rows, and agrees with the fallback", () => {
++    // An index row with no chunk behind it (deleted since) must not be a neighbour.
++    db.prepare("INSERT INTO chunks_vec(id, embedding) VALUES (?, ?)").run("orphan", blob(a));
++    type Search = {
++      knnSearch: (
++        e: number[],
++        k: number,
++        c: { chunkId: string },
++      ) => Array<{ id: string; similarity: number }>;
++    };
++    const native = (reward as unknown as Search).knnSearch(a, 2, { chunkId: "a" });
++    expect(native.map((n) => n.id)).toEqual(["c", "b"]);
++
++    // Same corpus, same ranking without the extension (brute-force fallback).
++    db.exec("ALTER TABLE chunks_vec RENAME TO hidden_vectors");
++    try {
++      const fallback = (reward as unknown as Search).knnSearch(a, 2, { chunkId: "a" });
++      expect(fallback.map((n) => n.id)).toEqual(native.map((n) => n.id));
++      for (let i = 0; i < native.length; i++) {
++        expect(fallback[i]!.similarity).toBeCloseTo(native[i]!.similarity, 5);
++      }
++    } finally {
++      db.exec("ALTER TABLE hidden_vectors RENAME TO chunks_vec");
++      db.prepare("DELETE FROM chunks_vec WHERE id = 'orphan'").run();
 +    }
-     try {
--      const raw = (await context.orchestratorBridge.publishSkill(skillMdBase64, p.name)) as
--        | {
--            ok?: boolean;
--            content_hash?: string;
--            delivered_to?: number;
--            error?: string;
--          }
--        | undefined;
-+      const raw = await context.skillNetworkBridge.publishSkillContent(p.content);
-       const result = {
--        ok: raw?.ok === true,
--        contentHash: raw?.content_hash,
--        deliveredTo: raw?.delivered_to,
--        error: raw?.error,
-+        ok: raw != null,
-+        contentHash: raw?.contentHash,
-+        deliveredTo: raw?.deliveredTo,
-+        error: raw
-+          ? undefined
-+          : "content must byte-match an active, shareable skill crystal that has matured (verifier + executions)",
-       };
-       respond(
-         result.ok,
-         result,
-         result.ok
-           ? undefined
--          : errorShape(ErrorCodes.UNAVAILABLE, result.error ?? "publish failed"),
-+          : errorShape(ErrorCodes.INVALID_REQUEST, result.error ?? "publish failed"),
-       );
-     } catch (err) {
-       respond(
++  });
++
+   it("falls back without throwing when the vec table is missing", () => {
+     const bare = new DatabaseSync(":memory:");
+     bare.exec(
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #321** (2026-10-28): fix(memory): GCCRF and curiosity-target defects (@VGIL77)
 - **PR #320** (2026-10-28): fix(p2p): fail-closed skill ingest and publish gates (@VGIL77)
 - **PR #318** (2026-10-28): feat(benchmarks): LongMemEval runner on the official protocol (@VGIL77)
 - **PR #317** (2026-10-27): bench(live-recall): replay the agent's real memory_search queries under each boost scale (@VGIL77)
 - **PR #316** (2026-10-27): fix(gateway): restarted gateway outlives its parent's lock instead of dying at the 5 s timeout (@VGIL77)
 - **PR #315** (2026-10-27): fix(memory): bound post-fusion boosts to the RRF scale; held-out live-memory benchmark; evidence-level LongMemEval metrics (@VGIL77)
-- **PR #313** (closed): bench(longmemeval): stratified per-type sampling and the stratified before/after of the keyword-channel change (@VGIL77)
 
 ---
 
@@ -2213,51 +2289,30 @@ byte-matches an active skill crystal (publishSkillContent)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. p2p): fail-closed skill ingest and publish gates (#320)
+## X. memory): GCCRF and curiosity-target defects (#321)
 
 **RULE**:
-When implementing operations in `docs/memory/skills-pipeline.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/memory/curiosity-and-search.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5ce45773`: p2p): fail-closed skill ingest and publish gates (#320). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `098582e4`: memory): GCCRF and curiosity-target defects (#321). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/memory/skills-pipeline.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/memory/curiosity-and-search.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-**Publishing** (`publishCrystalSkill()`), the single outbound gate. Every
-selector that can put a skill on the wire goes through it: auto-publish on
-crystallize, the maturity re-attempt after an execution, Forage query
-responses (same gate, wire name `response-<query>-<skill>`), and the manual
-`skills.publish` RPC. The gate fails closed:
-
-1. Loads the crystal from the database; only a chunk with
-   `semantic_type = 'skill'` and `lifecycle_state = 'active'` whose `lifecycle`
-   is not `archived`/`expired` qualifies. A non-skill chunk or an archived
-   crystal never leaves the node, whatever its governance says.
-4. Maturity bar (the same one the marketplace lists with): `SkillVerifier`
-   passes AND the `SkillExecutionTracker` reports at least 3 executions with
-   a success rate in `(0.7, 1]`. If either dependency is not wired on the
-   bridge, or a metric is non-finite or above 1, the answer is "no": missing
-   evidence is never permission to publish.
-5. Generates a SKILL.md format with frontmatter
-6. Sends to the Rust orchestrator via `orchestratorBridge.publishSkill()`
-
-The `skills.publish` RPC does not publish arbitrary operator-supplied bytes.
-Its `content` must byte-match the t
+Additionally, **contradiction detection** runs separately: it flags chunks with high cosine similarity (0.85 to 0.98) but different content hashes as _candidate_ conflicts. Near-identical embeddings (cosine >= 0.98) with different bytes are duplicates or paraphrases and score 0. This is a candidate signal for target generation, not an adjudication that the two chunks contradict each other; contradictions do not influence the reward score.
+- **Contradiction closure**: a `simulation` insight with confidence >= 0.7 resolves a contradiction target only when it is scoped to that target: it was dreamed from one of the chunks the contradiction was detected on, or it lands in the target's region (cosine >= 0.6 to the centroid) and its text names a term of the region label. An unrelated simulation leaves every contradiction target open. The normal closure path for targets remains the PLAN-54 research loop above.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-**Publishing** (`publishCrystalSkill()`):
-
-1. Loads the crystal from the database
-4. Generates a SKILL.md format with frontmatter
-5. Sends to the Rust orchestrator via `orchestratorBridge.publishSkill()`
+Additionally, **contradiction detection** runs separately — it identifies chunks with high cosine similarity but different content hashes (conflicting information). Contradictions are stored for target generation but do not influence the reward score.
+- **Contradiction detection** — If the insight contradicts existing knowledge regions
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5ce45773` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `098582e4` are properly handled with clean fallback behavior.

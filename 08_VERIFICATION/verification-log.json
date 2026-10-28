@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-3MBD",
-    "timestamp": "2026-10-27T16:18:19.705Z",
-    "repository": "PaperDebugger/paperdebugger",
-    "learningId": "learn-github-paperdebugger-paperdebugger",
-    "contentHash": "dbdabc46b20d6e485afbb7bea0f3ff9414554609565da3da3eff413366e43978",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-C4VA",
-    "timestamp": "2026-10-27T16:24:56.998Z",
-    "repository": "paradedb/paradedb",
-    "learningId": "learn-github-paradedb-paradedb",
-    "contentHash": "822b62064d08fce75bd6e484371d2f8dff66c676c5fae114732b0fba9182309f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-KN13",
-    "timestamp": "2026-10-27T16:31:33.783Z",
-    "repository": "TanStack/query",
-    "learningId": "learn-github-tanstack-query",
-    "contentHash": "1e792e2edc8ec1d94718f62820dd82545e151b79b62f6c4d5f44f6ee6bf99190",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-KQOU",
     "timestamp": "2026-10-27T16:31:38.526Z",
     "repository": "gocd/gocd",
@@ -7490,6 +7445,51 @@
     "repository": "gardener/gardener",
     "learningId": "learn-github-gardener-gardener",
     "contentHash": "1d05f95a0ada2fc4690673b25f8dda9cf82bd4787c56881c626d66c46e6cf8cd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-T6DT",
+    "timestamp": "2026-10-28T20:37:49.073Z",
+    "repository": "agent-of-empires/agent-of-empires",
+    "learningId": "learn-github-agent-of-empires-agent-of-empires",
+    "contentHash": "a5d499818071d500711c91125fe6c32a1b580ab1ccb640e4d4efafddd370abdf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-T85B",
+    "timestamp": "2026-10-28T20:37:51.359Z",
+    "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+    "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
+    "contentHash": "e121d93db0747f24e2f1a65c66e0fcfc6e7c9bd829c9e9f964611118b21c1717",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-TDAV",
+    "timestamp": "2026-10-28T20:37:58.039Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "981acf093888bf86ed8fffaebf578eba6636fab8ac8d24d75f6e1febee19b4d4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T20:22:20.167Z",
+  "last_updated": "2026-10-28T20:37:58.052Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -275,14 +275,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-      "content_hash": "f07af78d3b11f21fc062ab95f283d1bf74829336c76a3ef425df48c217aa807a",
-      "verified_at": "2026-10-25T08:39:34.177Z",
+      "content_hash": "e121d93db0747f24e2f1a65c66e0fcfc6e7c9bd829c9e9f964611118b21c1717",
+      "verified_at": "2026-10-28T20:37:51.372Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T08:39:34.177Z"
+      "last_updated": "2026-10-28T20:37:51.372Z"
     },
     "deepseek-ai/DeepSeek-R1": {
       "repository": "deepseek-ai/DeepSeek-R1",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "7137d1df4f3b34af46f0449424489dd1226e9f398dd0afdeb79e013dffbea64e",
-      "verified_at": "2026-10-28T20:01:43.248Z",
+      "content_hash": "981acf093888bf86ed8fffaebf578eba6636fab8ac8d24d75f6e1febee19b4d4",
+      "verified_at": "2026-10-28T20:37:58.051Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T20:01:43.248Z"
+      "last_updated": "2026-10-28T20:37:58.051Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -11211,14 +11211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-of-empires-agent-of-empires",
-      "content_hash": "a3518adde1606d91ba2841ce230e96f4876443098df2758b6feb8a030df94499",
-      "verified_at": "2026-10-27T17:49:42.173Z",
+      "content_hash": "a5d499818071d500711c91125fe6c32a1b580ab1ccb640e4d4efafddd370abdf",
+      "verified_at": "2026-10-28T20:37:49.086Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T17:49:42.173Z"
+      "last_updated": "2026-10-28T20:37:49.086Z"
     },
     "NativeScript/NativeScript": {
       "repository": "NativeScript/NativeScript",

@@ -5932,3 +5932,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autotrust-gev-26b-decide-nvfp4` | `https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-28T20:22:10.593Z |
 | `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `45ee88cb` | Multi-dimensional audit evidence | 2026-10-28T20:22:16.689Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `753bf1fd` | Multi-dimensional audit evidence | 2026-10-28T20:22:20.161Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `e83da884` | Multi-dimensional audit evidence | 2026-10-28T20:37:49.077Z |
+| `learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf` | `https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | `hf-sc117-q` | Multi-dimensional audit evidence | 2026-10-28T20:37:51.363Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `098582e4` | Multi-dimensional audit evidence | 2026-10-28T20:37:58.042Z |

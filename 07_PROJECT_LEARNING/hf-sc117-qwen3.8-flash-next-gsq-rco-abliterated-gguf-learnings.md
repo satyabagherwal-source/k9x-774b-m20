@@ -3,7 +3,7 @@
 > **Source Version**: `hf-sc117-qwe`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-25T08:39:33.582Z  
+> **Timestamp**: 2026-10-28T20:37:50.323Z  
 > **Learning ID**: `learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -14,463 +14,274 @@
 
 # Project Learning Record (Full-Spectrum Forensic Harvest): SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF
 
----
-
 ## 1. Executive Forensic Architecture & System Mechanics
 
-### 1.1 Core Engineering Problem
-Safety alignment via representation engineering (e.g., abliteration or orthogonal projection of refusal directions) is conventionally applied to full-precision unquantized floating-point weights ($\text{BF16}/\text{FP16}$) prior to quantization. However, re-quantizing an abliterated model via standard quantization pipelines degrades calibration matrices obtained through advanced techniques such as:
-1. **GSQ (Group-Sparse Quantization / Grouped Scale Quantization)**: Preserves domain-critical outlier channels via non-uniform scale allocation.
-2. **RCO (Rotation-Compensated Optimization / Representation-Calibrated Optimization)**: Applies orthogonal matrix rotations (e.g., randomized Hadamard transformations) to smooth cross-channel variance prior to low-bit vector quantization.
+**Technical Problem Solved:**
+This repository addresses the specific challenge of **post-quantization behavioral modification** (specifically "abliteration" or refusal removal) in Large Language Models (LLMs) stored in the GGUF format. Standard abliteration techniques typically operate on full-precision (FP16/BF16) weights. Applying them to quantized models (like GSQ - Grouped Square Quantization) is non-trivial because the weights are packed into lower-bit representations (IQ3_S, Q2_0, etc.) with associated scales and zero-points.
 
-When an upstream model has already undergone GSQ-RCO optimization, re-quantizing an abliterated float checkpoint induces catastrophic quantization noise, breaking RCO rotational invariants and wiping out GSQ scale tables. Conversely, performing weight surgery directly on the already-quantized GGUF container without re-quantization risks corrupted tensor offsets, corrupted dequantization scales, and broken tensor metadata alignment.
+**Architectural Boundaries:**
+1.  **Input Boundary:** An already-quantized GGUF file (`ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF`).
+2.  **Processing Core:** A tensor-level surgical tool that identifies specific "refusal" directions in the model's latent space.
+3.  **Output Boundary:** A new GGUF file where exactly 144 tensors (across 48 layers) have been swapped with pre-computed "abliterated" weights, while preserving the original quantization type, scale, and zero-point metadata for all other tensors.
 
-```
-                      SURGICAL TENSOR TRANSPLANTATION PIPELINE
-                      
- Upstream GSQ-RCO GGUF                           Abliterated Donor GGUF
-┌─────────────────────────┐                     ┌─────────────────────────┐
-│ Metadata & Tensor Table │                     │ Metadata & Tensor Table │
-├─────────────────────────┤                     ├─────────────────────────┤
-│ Untouched Tensors (N-144│                     │ Candidate Abliterated   │
-│ [Blake2b Hash Invariant]│                     │ Tensors (144 Tensors)   │
-├─────────────────────────┤                     ├─────────────────────────┤
-│ 144 Refusal Tensors     │◄───[Surgical Swap]──┤ 144 Abliterated Tensors │
-│ (Across 48 Layers)      │     Preserve GSQ    │ (Pre-aligned bit-widths)│
-└─────────────────────────┘     Scales & Types  └─────────────────────────┘
-             │                                               │
-             ▼                                               ▼
-┌─────────────────────────────────────────────────────────────────────────┐
-│                    GGUF Transmutation Engine                            │
-│  - Blake2b Checksum Verification across (N - 144) Untouched Tensors     │
-│  - Byte-Exact 32-Byte Alignment Boundary Enforcement                    │
-│  - Strict Type-Assignment Preservation (IQ3_S, IQ3_XXS, IQ2_XS, Q2_0)  │
-└─────────────────────────────────────────────────────────────────────────┘
-                                     │
-                                     ▼
-                   Target Abliterated GSQ-RCO GGUF
-```
-
-### 1.2 System Mechanics & Architectural Boundaries
-The repository implements a **Surgical Tensor Transplant Engine** inside the binary GGUF container format:
-- **Transplantation Boundary**: Exactly $144$ targeted weight tensors across all $48$ transformer layers (corresponding to the orthogonalized projection tensors: 3 tensors per layer, specifically the self-attention output projection `attn_output.weight`, and MLP down-projections `ffn_down.weight` or MoE routed expert down-projections).
-- **Scale Preservation Contract**: Every learned scale vector, codebook centroid, and zero-point offset established during GSQ-RCO calibration is locked. The abliteration vector is transplanted without recalculating surrounding layer parameters.
-- **Binary Integrity Barrier**: Employs cryptographic Blake2b digest validation on every individual tensor payload. All $(N - 144)$ non-target tensors are verified byte-for-byte against upstream GSQ-RCO artifacts.
-- **Layout Conformance**: Target tensor types are strictly restored to upstream quantization types (`IQ3_S`, `IQ3_XXS`, `IQ2_XS`, `Q2_0`), eliminating dequantization kernel mismatches during execution in `llama.cpp`.
-
----
+**Critical Subsystem Abstractions:**
+*   **Tensor Identity Mapping:** The system must map logical tensor names (e.g., `blk.0.attn_qkv.weight`) to physical offsets in the GGUF binary stream.
+*   **Quantization Context Preservation:** Unlike a simple weight swap, this process must ensure that the *quantization parameters* (scales, mins, types) of the swapped tensors match the target "abliterated" weights, or that the new weights are re-quantized to match the existing container structure. The README states "every value and scale GSQ learned left untouched," implying the swap is a direct binary replacement of the quantized payload, not a re-quantization of the new weights.
+*   **Integrity Verification:** A per-tensor `blake2b` hash verification mechanism to ensure that only the intended 144 tensors were modified and no other data (metadata, other layers) was corrupted.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Cryptographic Isolation Invariant for Binary Tensor Transplantation
+### 1. Binary Format Surgical Modification Invariant
 **RULE**:
-When performing surgical tensor mutation or transplantation on packed binary model containers (GGUF, Safetensors, or ONNX), the compiler or mutation script MUST compute and verify cryptographic digests (minimum Blake2b-256 or SHA-256) for every non-targeted tensor before and after the binary mutation. If any non-targeted tensor hash diverges by even 1 bit, or if tensor alignment boundaries shift off their hardware allocation boundary ($32$ bytes for CPU SIMD / $256$ bytes for CUDA), the operation MUST immediately abort and trigger an un-aliased rollback.
+When modifying specific data segments within a complex binary container format (like GGUF, ELF, or PE), you MUST NOT perform blind byte-offset replacements. You MUST parse the container's header/index structure to identify the exact logical boundaries of the target segments, verify the segment's type/length matches expectations, and replace only the payload while preserving the surrounding metadata (headers, checksums, alignment padding).
 
 **WHY**:
-In-place binary manipulation of GGUF files without complete digest isolation leads to silent metadata off-by-one errors. A slight misalignment in GGUF tensor headers cascades into downstream byte offset shifts. Because quantized formats (`IQ3_S`, `IQ2_XXS`) rely on 32-element block layouts with sub-byte packing, an offset shift of just 1 to 4 bytes will misalign the dequantization scales with the nibble streams, producing catastrophic model degradation (gibberish/NaN activations) while passing superficial file-loading checks.
+Blind offset replacement causes "bit-rot" where adjacent metadata (e.g., tensor scales, zero-points, or the next tensor's header) is overwritten. In quantized models, corrupting the scale/zero-point by even 1 byte renders the entire tensor's data meaningless, leading to silent inference failures or garbage output, rather than a hard crash.
 
 **WHEN TO APPLY**:
-Apply when executing binary weight surgery, quantization patching, layer abliteration, LoRA baking, or tensor swapping directly on serialized GGUF, GGML, or Safetensors files without running full model exports from PyTorch.
+Any operation involving in-place modification of binary files with structured headers (GGUF, ONNX, Protobuf, Image files).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-import struct
-import hashlib
-from typing import Dict, BinaryIO, Set
-
-GGUF_DEFAULT_ALIGNMENT = 32
-
-class GGUFTensorTransplantValidator:
-    def __init__(self, original_stream: BinaryIO, target_tensors: Set[str]):
-        self.stream = original_stream
-        self.target_tensors = target_tensors
-        self.original_digests: Dict[str, bytes] = {}
-
-    def compute_tensor_digest(self, offset: int, size: int) -> bytes:
-        self.stream.seek(offset)
-        hasher = hashlib.blake2b(digest_size=32)
-        bytes_left = size
-        chunk_size = 64 * 1024  # 64KB chunks
-        while bytes_left > 0:
-            read_size = min(bytes_left, chunk_size)
-            chunk = self.stream.read(read_size)
-            if not chunk:
-                raise EOFError(f"Unexpected EOF at offset {self.stream.tell()}")
-            hasher.update(chunk)
-            bytes_left -= read_size
-        return hasher.digest()
-
-    def snapshot_pre_transplant(self, tensor_index: Dict[str, Dict[str, int]]) -> None:
-        """Computes and freezes baseline hashes of all non-targeted tensors."""
-        for name, meta in tensor_index.items():
-            if name not in self.target_tensors:
-                self.original_digests[name] = self.compute_tensor_digest(
-                    offset=meta["offset"], 
-                    size=meta["size"]
-                )
-
-    def verify_post_transplant(
-        self, 
-        mutated_stream: BinaryIO, 
-        tensor_index: Dict[str, Dict[str, int]]
-    ) -> None:
-        """Enforces that non-transplanted tensors are 100% byte-invariant and aligned."""
-        for name, meta in tensor_index.items():
-            # Invariant 1: Hardware alignment validation
-            if meta["offset"] % GGUF_DEFAULT_ALIGNMENT != 0:
-                raise ValueError(
-                    f"Alignment violation: Tensor '{name}' offset {meta['offset']} "
-                    f"is not a multiple of {GGUF_DEFAULT_ALIGNMENT}"
-                )
-            # Invariant 2: Cryptographic untouched verification
-            if name not in self.target_tensors:
-                mutated_stream.seek(meta["offset"])
-                hasher = hashlib.blake2b(digest_size=32)
-                bytes_left = meta["size"]
-                chunk_size = 64 * 1024
-                while bytes_left > 0:
-                    read_size = min(bytes_left, chunk_size)
-                    chunk = mutated_stream.read(read_size)
-                    if not chunk:
-                        raise EOFError(f"Premature EOF verifying mutated tensor '{name}'")
-                    hasher.update(chunk)
-                    bytes_left -= read_size
-                
-                computed = hasher.digest()
-                expected = self.original_digests[name]
-                if computed != expected:
-                    raise AssertionError(
-                        f"CRITICAL: Untouched tensor '{name}' corrupted during transplant! "
-                        f"Expected {expected.hex()}, got {computed.hex()}"
-                    )
+# Pseudocode for safe GGUF tensor swap
+def swap_tensor_safely(gguf_file, tensor_name, new_quantized_data):
+    # 1. Parse Header to get Tensor Index
+    tensor_meta = gguf_file.get_tensor_metadata(tensor_name)
+    
+    # 2. Verify Type and Length
+    if tensor_meta['type'] != new_quantized_data['type']:
+        raise TypeError("Quantization type mismatch")
+    if tensor_meta['length'] != len(new_quantized_data['payload']):
+        raise ValueError("Payload length mismatch")
+    
+    # 3. Seek to Exact Offset
+    offset = tensor_meta['offset']
+    gguf_file.seek(offset)
+    
+    # 4. Write ONLY the payload, not the header
+    gguf_file.write(new_quantized_data['payload'])
+    
+    # 5. Update Checksum if applicable
+    gguf_file.update_checksum(tensor_name, new_quantized_data['hash'])
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Blind binary string/slice replacement
-def unsafe_tensor_transplant(gguf_path: str, tensor_name: str, new_data: bytes):
-    with open(gguf_path, "r+b") as f:
-        content = f.read()
-        # NEVER search and replace raw binary strings inside quantized containers!
-        # This causes silent offset corruptions, destroys header-to-payload offsets,
-        # ignores alignment padding, and invalidates non-target tensor blocks.
-        idx = content.find(tensor_name.encode('utf-8'))
-        f.seek(idx + 1024)
-        f.write(new_data) # Silent corruption of subsequent tensor offsets!
+# ANTI-PATTERN: Blind offset write
+# This assumes the tensor is at a fixed offset and ignores headers/scales
+with open('model.gguf', 'r+b') as f:
+    f.seek(1024) # Hardcoded guess
+    f.write(new_weights) # Corrupts adjacent metadata
 ```
 
 **VERIFICATION METHOD**:
-Run an automated CI gate executing `verify_post_transplant()` against the mutated binary artifact. The test must extract Blake2b checksums for all $(N - 144)$ tensors, asserting exact match against the original upstream manifest:
-```bash
-python -m pytest tests/test_transplant_integrity.py -k "test_blake2b_untouched_invariance"
-```
+1.  **Pre-Write Assertion:** Assert `len(new_data) == original_tensor_size`.
+2.  **Post-Write Hash Check:** Compute `blake2b` of the modified region and compare against the expected hash of the new weights.
+3.  **Metadata Integrity Check:** Re-parse the GGUF header after writing and assert that all non-target tensor offsets and types remain identical to the original file.
 
----
-
-### 2. Quantization Type Assignment and Scale Matrix Preservation Invariant
+### 2. Quantized Model Abliteration Consistency Rule
 **RULE**:
-When swapping or transplanting abliterated weights into an already-quantized model with non-uniform mixed-precision quantization (e.g., `IQ3_S`, `IQ3_XXS`, `IQ2_XS`, `Q2_0`), the replacing tensor MUST match the exact underlying quantization type `ggml_type`, the exact block-quantization stride ($QK$), and the exact binary block footprint size ($sizeof(\text{block\_type})$). An engine MUST NOT substitute a uniform quant (e.g., standard `Q4_K` or `Q8_0`) into an optimized mixed-precision slot without explicitly rewriting the GGUF header type descriptors and recalculating global memory buffers.
+When abliterating (removing refusal directions from) a quantized model, you MUST ensure that the replacement weights are compatible with the existing quantization scheme (e.g., IQ3_S, Q2_0). You MUST NOT replace quantized weights with full-precision weights or weights quantized with a different scheme without re-quantizing the entire tensor block to maintain the container's structural integrity.
 
 **WHY**:
-Modern mixed-precision architectures like Qwen MoE allocate different `ggml_type` layouts across routing gates and experts (e.g., `IQ3_S` for shared weights vs. `IQ2_XS` for sparse experts). Quantized runtimes (`llama.cpp`) allocate compute graph memory based on the header metadata and compile specific SIMD/AVX/NEON kernels for each block type. Injecting mismatched blocks into the weight space causes invalid pointer arithmetic, buffer overruns in the dequantize compute kernel, or silent garbage outputs from broken scale lookups.
+GGUF stores tensors in specific packed formats. If you swap an `IQ3_S` tensor with an `FP16` tensor, the inference engine (llama.cpp) will misinterpret the bytes, leading to catastrophic numerical errors. The "abliterated" weights must be pre-processed to match the target quantization type and block size.
 
 **WHEN TO APPLY**:
-Whenever replacing, transplanting, or fine-tuning individual weight tensors in GGUF/GGML models that use heterogeneous quantization schemes (`k-quants` and `iq-quants`).
+Any modification of LLM weights where the model is stored in a quantized format (GGUF, GPTQ, AWQ).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-from enum import IntEnum
-
-class GGMLType(IntEnum):
-    Q2_0 = 18
-    Q4_K = 12
-    IQ2_XXS = 19
-    IQ2_XS = 20
-    IQ3_XXS = 21
-    IQ3_S = 22
-
-# Explicit mapping of block element counts and byte sizes
-GGML_BLOCK_METRICS = {
-    GGMLType.Q2_0:    {"block_size": 32, "type_size": 2 + 16},     # scale + 4-bit quants
-    GGMLType.IQ2_XS:  {"block_size": 32, "type_size": 2 + 2 + 8}, # scale + signs + grid
-    GGMLType.IQ3_XXS: {"block_size": 32, "type_size": 2 + 10},     # 8-bit scale + 3-bit quants
-    GGMLType.IQ3_S:   {"block_size": 32, "type_size": 2 + 8 + 3},  # fp16 scale + grid indices
-}
-
-def validate_tensor_transplant_compatibility(
-    tensor_name: str,
-    source_type: GGMLType,
-    donor_type: GGMLType,
-    element_count: int,
-    donor_byte_size: int
-) -> None:
-    # Rule 1: Type assignment identity
-    if source_type != donor_type:
-        raise TypeError(
-            f"Type mismatch on tensor '{tensor_name}': Upstream requires "
-            f"{source_type.name} ({int(source_type)}), donor provided "
-            f"{donor_type.name} ({int(donor_type)})"
-        )
+# Ensure the new weights are in the correct quantized format
+def prepare_abliterated_weights(original_tensor, new_fp16_weights):
+    # 1. Identify original quantization type
+    q_type = original_tensor.get_quantization_type() # e.g., 'IQ3_S'
     
-    # Rule 2: Metric calculations
-    metrics = GGML_BLOCK_METRICS.get(source_type)
-    if not metrics:
-        raise NotImplementedError(f"Unsupported validation for {source_type.name}")
-
-    if element_count % metrics["block_size"] != 0:
-        raise ValueError(
-            f"Element count {element_count} for '{tensor_name}' not aligned "
-            f"to block size {metrics['block_size']}"
-        )
-
-    num_blocks = element_count // metrics["block_size"]
-    expected_bytes = num_blocks * metrics["type_size"]
-
-    if donor_byte_size != expected_bytes:
-        raise ValueError(
-            f"Payload size mismatch for '{tensor_name}': Expected {expected_bytes} "
-            f"bytes ({num_blocks} blocks of {metrics['type_size']} bytes), "
-            f"got {donor_byte_size} bytes."
-        )
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Forcing arbitrary float-derived tensors into quantized slots
-def unsafe_quant_injection(target_file, tensor_meta, raw_numpy_array):
-    # NEVER write raw unquantized floats or mismatched quant blocks 
-    # directly into an existing GGUF quant slot!
-    if raw_numpy_array.dtype != np.float16:
-        raw_numpy_array = raw_numpy_array.astype(np.float16)
-    target_file.seek(tensor_meta["offset"])
-    # If the target tensor was IQ3_S, writing FP16 bytes destroys neighboring 
-    # memory and misaligns the entire downstream block structure!
-    target_file.write(raw_numpy_array.tobytes())
-```
-
-**VERIFICATION METHOD**:
-Inspect the generated GGUF using an automated assertion that scans the tensor directory header:
-```bash
-python -c "
-import sys
-from gguf import GGUFReader
-reader = GGUFReader('Qwen3.8-Flash-Next-GSQ-RCO-abliterated.gguf')
-for tensor in reader.tensors:
-    assert tensor.tensor_type in [22, 21, 20, 18], f'Invalid tensor type {tensor.tensor_type} in {tensor.name}'
-"
-```
-
----
-
-## 3. Forensic Real Incidents & Production Patches
-
-### Incident 1: Tensor Padding Desynchronization in 32-Byte Alignment Boundary (BUG-GGUF-ALIGN-01)
-- **Context**: Low-level GGUF multiplexer/splicer during transplantation of the $144$ abliterated tensors.
-- **What Was Expected**: Each transplanted tensor payload must begin at a byte offset that satisfies $\text{offset} \equiv 0 \pmod{32}$. The subsequent tensor's header metadata must point to the aligned offset.
-- **What Actually Happened**: The donor abliterated tensor payloads were spliced without accounting for the intra-tensor zero-padding bytes of the original file. This caused downstream tensors to shift by $8$ to $24$ bytes, invalidating all pre-computed byte offsets in the GGUF header and causing `llama.cpp` to abort with `SIGBUS` / unaligned SIMD load errors.
-- **Evidence in Repo**: Noted in README: *"144 tensors across all 48 layers swapped for ready-made abliterated weights, with every value and scale GSQ learned left untouched and the upstream per-tensor type assignment restored exactly. The IQ3_S build is verified tensor by tensor: everything that changed was supposed to, nothing else moved."*
-- **Root Cause**: The splicing engine treated tensor size as `element_count * bytes_per_element` instead of `pad_to_alignment(payload_size, 32)`.
-- **Remediation Code Diff**:
-```python
-// - Splicing without padding calculation
-// target_stream.seek(target_offset)
-// target_stream.write(donor_tensor_bytes)
-// current_offset += len(donor_tensor_bytes)
-
-// + Fixed pattern with explicit 32-byte boundary padding preservation
-target_stream.seek(target_offset)
-target_stream.write(donor_tensor_bytes)
-padding_needed = (32 - (len(donor_tensor_bytes) % 32)) % 32
-if padding_needed > 0:
-    target_stream.write(b'\x00' * padding_needed)
-current_offset += len(donor_tensor_bytes) + padding_needed
-assert target_stream.tell() % 32 == 0, "Alignment invariant broken"
-```
-- **Lesson**: Binary containers with SIMD-aligned payloads must treat inter-tensor padding as an integral component of the tensor allocation boundary.
-
----
-
-### Incident 2: Scale Table Erasure via Naive Re-Quantization (BUG-GSQ-SCALE-02)
-- **Context**: Quantization pipeline attempting to abliterate a model by dequantizing to FP16, subtracting the refusal direction, and then running standard `llama-quantize` back to `IQ3_S`.
-- **What Was Expected**: Abliterated weights should retain the high perplexity retention of the upstream GSQ-RCO model.
-- **What Actually Happened**: The resulting model exhibited massive perplexity degradation and hallucination loops. Standard `llama-quantize` does not possess the proprietary GSQ-RCO optimization algorithms; re-quantizing wiped out the carefully calculated scale-weight distribution across the MoE experts.
-- **Evidence in Repo**: System architecture decision: The authors specifically performed a *tensor transplant* of ready-made abliterated weights instead of re-quantizing: *"with every value and scale GSQ learned left untouched"*.
-- **Root Cause**: Re-quantization with standard Lloyd-Max or generic importance matrix quantization destroys the RCO (Rotation-Compensated Optimization) matrices that were pre-baked into the upstream weight distributions.
-- **Remediation Code Diff**:
-```python
-// - Anti-pattern: Dequantize -> Abliterate -> Standard Re-Quantize
-// float_weights = dequantize_gguf(upstream_iq3)
-// abliterated_weights = remove_refusal_direction(float_weights)
-// re_quantized = run_llama_quantize(abliterated_weights, type="IQ3_S") # DESTROYS GSQ-RCO CALIBRATION!
-
-// + Production Invariant: Direct Surgical Tensor Splicing
-upstream_gguf = open_gguf(upstream_gsq_rco_path)
-donor_gguf = open_gguf(abliterated_donor_path)
-for tensor_name in TARGET_144_TENSORS:
-    donor_tensor = donor_gguf.get_tensor(tensor_name)
-    upstream_gguf.replace_tensor_payload_exact(
-        name=tensor_name,
-        new_data=donor_tensor.data,
-        verify_type=True
-    )
-upstream_gguf.flush_with_blake2b_verification()
-```
-- **Lesson**: Never re-quantize calibrated and rotation-compensated weights with standard heuristic quantizers; surgically transplant the modified weights while maintaining existing scale mappings.
-
----
-
-### Incident 3: GGUF Header String Offset Drift during In-Place Splicing (BUG-HDR-DRIFT-03)
-- **Context**: Mutation of GGUF metadata headers when updating descriptions or tensor names during transplanting.
-- **What Was Expected**: Header modifications should not shift the global `data_offset` pointer that demarcates the boundary between metadata and raw tensor binary payloads.
-- **What Actually Happened**: Appending metadata fields or altering string lengths changed the total byte length of the GGUF header without updating the global 64-bit `general.data_offset` field, causing the host parser to read metadata bytes as raw tensor weights and crash on startup.
-- **Evidence in Repo**: The repo commits demonstrate exact preservation of upstream layout: *"GSQ-RCO upstream · layout preserved"*.
-- **Root Cause**: GGUF uses a split structure where the header contains an arbitrary number of key-value pairs followed by tensor info structs, terminated by alignment padding to `general.alignment`. Modifying header elements without recalculating padding pushes the data segment start.
-- **Remediation Code Diff**:
-```python
-// - Unsafe header update that shifts data segment start
-// header["general.description"] = "Abliterated Qwen 3.8 GSQ"
-// serialize_header(target_stream)
-// target_stream.write(tensor_payloads) # Offsets now invalid!
-
-// + Invariant: Recalculate and re-align header boundary
-def update_header_safe(gguf_writer, alignment=32):
-    header_bytes = gguf_writer.build_header()
-    header_len = len(header_bytes)
-    padding_len = (alignment - (header_len % alignment)) % alignment
-    gguf_writer.set_data_offset(header_len + padding_len)
-    gguf_writer.write_header_and_padding(padding_len)
-```
-- **Lesson**: Any mutation to binary headers requires immediate recomputation of the alignment delta before committing payload byte offsets.
-
----
-
-### Incident 4: MoE Expert Layer Indexing Mismatch (BUG-MOE-IDX-04)
-- **Context**: 48-layer transformer model with Mixture of Experts (MoE) containing hundreds of sparse expert tensors.
-- **What Was Expected**: Surgical abliteration must only target the specific attention and shared/routed down-projection matrices responsible for the refusal subspace across all 48 layers ($48 \times 3 = 144$ tensors).
-- **What Actually Happened**: Early automated transplantation scripts attempted to match tensor names using naive regex `.*down_proj.*`, inadvertently splicing routing gate weights (`ffn_gate_inp.weight`), destroying the token-to-expert router and resulting in severe perplexity explosion.
-- **Evidence in Repo**: Exact count isolation: *"144 tensors across all 48 layers swapped"*. Exactly 3 tensors per layer in a 48-layer architecture:
-  $$\frac{144 \text{ tensors}}{48 \text{ layers}} = 3 \text{ tensors/layer}$$
-- **Root Cause**: Overly broad wildcard matching in the tensor selector selected routing matrices alongside projection matrices.
-- **Remediation Code Diff**:
-```python
-// - Naive wildcard matching
-// if "down_proj" in tensor.name or "out_proj" in tensor.name:
-//     transplant(tensor)
-
-// + Strict contract: Exact canonical naming per layer
-EXPECTED_TENSORS_PER_LAYER = 3
-TARGET_SUBSTRINGS = (
-    "self_attn.o_proj.weight",
-    "mlp.down_proj.weight",
-    "mlp.shared_expert.down_proj.weight"
-)
-
-def get_transplant_targets(model_layers: int = 48) -> Set[str]:
-    targets = set()
-    for layer_idx in range(model_layers):
-        for pattern in TARGET_SUBSTRINGS:
-            targets.add(f"blk.{layer_idx}.{pattern}")
-    assert len(targets) == 144, f"Target count mismatch: expected 144, got {len(targets)}"
-    return targets
-```
-- **Lesson**: Surgical model weight modification must be bounded by strict combinatorial invariant assertions ($\text{Count} = \text{Layers} \times \text{ExpectedPerLayer}$).
-
----
-
-### Incident 5: Dequantization Kernel Crash via IQ3_S Grid Index Mismatch (BUG-KRNL-IQ3S-05)
-- **Context**: Inference execution in `llama.cpp` using AVX-512 / CUDA kernels on the transplanted `IQ3_S` tensors.
-- **What Was Expected**: Transplanted tensors must conform strictly to the `IQ3_S` bit-grid encoding specification (3-bit index tables mapped to non-linear quantization grids).
-- **What Actually Happened**: The donor abliteration process generated quantization grid indices that exceeded the valid codebook range for `IQ3_S`, resulting in out-of-bounds reads in the CUDA dequantization lookup table (`ggml_iq3_s_grid`) and producing segmentation faults during inference.
-- **Evidence in Repo**: Explicit type verification noted: *"upstream per-tensor type assignment restored exactly. The IQ3_S build is verified tensor by tensor: everything that changed was supposed to, nothing else moved."*
-- **Root Cause**: Abliterated weights had not been clamped to the supported numerical range before codebook index assignment, producing index overflows in the 3-bit packed integers.
-- **Remediation Code Diff**:
-```cpp
-// - Unchecked codebook index assignment in IQ3_S packing
-// uint8_t grid_idx = (uint8_t)round(scaled_val);
-// pack_iq3_s_block(block, grid_idx);
-
-// + Range-checked and clamped codebook mapping
-uint8_t grid_idx = (uint8_t)round(fminf(fmaxf(scaled_val, 0.0f), 7.0f));
-GGML_ASSERT(grid_idx < 8 && "IQ3_S codebook index exceeds 3-bit ceiling");
-pack_iq3_s_block(block, grid_idx);
-```
-- **Lesson**: Vector-quantized codebooks require hard boundary clamping before bit-packing to prevent out-of-bounds lookups in dequantization kernels.
-
----
-
-## 4. Microscopic Code-Level Invariants
-
-### 4.1 Micro-Syntax & Token-Level Precision
-1. **Unsigned Integer Division Truncation in Stride Calculations**:
-   When calculating block counts for low-bit quantization, integer division truncation causes off-by-one errors if the tensor element count is not a strict multiple of the quantization block size ($QK$).
-   ```python
-   # HAZARD: Implicit truncation or float coercion
-   num_blocks = int(tensor_size / 32) # May silently discard elements if not clean!
-
-   # INVARIANT: Strict assertion and zero-remainder validation
-   assert tensor_size % 32 == 0, f"Tensor size {tensor_size} not divisible by QK=32"
-   num_blocks = tensor_size // 32
-   ```
-2. **Explicit Type Coercion in Endianness and Binary Slices**:
-   GGUF strings are prefixed by a 64-bit uint `len`. Decoding without strictly specifying little-endian `uint64` causes cross-architecture failures:
-   ```python
-   # INVARIANT: Enforce '<Q' format string explicitly
-   name_length = struct.unpack("<Q", stream.read(8))[0]
-   raw_name = stream.read(name_length).decode("utf-8", errors="strict")
-   ```
-
-### 4.2 Infinite Loop & Recursion Guards
-Binary GGUF parsing involves looping over metadata arrays and tensor descriptors:
-```python
-MAX_GGUF_METADATA_PAIRS = 10_000
-MAX_TENSOR_COUNT = 5_000
-
-def parse_gguf_header(stream: BinaryIO) -> Dict[str, Any]:
-    magic = stream.read(4)
-    if magic != b"GGUF":
-        raise ValueError(f"Invalid magic: {magic}")
+    # 2. Quantize the new FP16 weights to the SAME type
+    # This ensures the byte layout matches the original container
+    new_quantized = quantize_weights(new_fp16_weights, q_type)
     
-    version = struct.unpack("<I", stream.read(4))[0]
-    tensor_count = struct.unpack("<Q", stream.read(8))[0]
-    metadata_kv_count = struct.unpack("<Q", stream.read(8))[0]
-
-    # LOOP TERMINATION GUARD 1: Metadata limit
-    if metadata_kv_count > MAX_GGUF_METADATA_PAIRS:
-        raise OverflowError(f"Metadata pair count {metadata_kv_count} exceeds safe ceiling")
-
-    # LOOP TERMINATION GUARD 2: Tensor count limit
-    if tensor_count > MAX_TENSOR_COUNT:
-        raise OverflowError(f"Tensor count {tensor_count} exceeds safe architecture ceiling")
-
-    metadata = {}
-    for i in range(metadata_kv_count):
-        # Bound iterations; ensure stream cannot infinitely loop on corrupted EOF
-        key, val = read_kv_pair(stream)
-        metadata[key] = val
+    # 3. Verify scale/zero-point compatibility
+    if not scales_match(original_tensor.scales, new_quantized.scales):
+        # If scales differ, you must also swap the scales, 
+        # or re-quantize with the original scales (if supported)
+        raise IncompatibleQuantizationError("Scales mismatch")
         
-    return metadata
+    return new_quantized
 ```
 
-### 4.3 UI & UX Micro-Mechanics (Model Download & Verification TUI)
-When reporting tensor-by-tensor Blake2b verification in terminal CLI/TUI tools:
-- Layout reflow and terminal thrashing must be prevented by suppressing arbitrary stdout writes and utilizing fixed-height progress regions.
-- Ensure terminal cursor visibility is restored via `try...finally` signal traps:
+**NEGATIVE CONSTRAINT**:
 ```python
-import sys
-
-def restore_cursor():
-    sys.stdout.write("\033[?25h") # Re-enable cursor
-    sys.stdout.flush()
-
-try:
-    sys.stdout.write("\033[?25l") # Hide cursor during fast hash verification
-    for idx, tensor_name in enumerate(tensors):
-        sys.stdout.write(f"\r\033[KVerifying [{idx+1}/{len(tensors)}]: {tensor_name[:40]}...")
-        sys.stdout.flush()
-        # Verify hash...
-finally:
-    restore_cursor()
+# ANTI-PATTERN: Swapping FP16 into a Quantized Slot
+# This will cause the inference engine to read FP16 bytes as IQ3_S blocks
+tensor_data = load_fp16_weights('abliterated_weights.bin')
+gguf_file.write_tensor('blk.0.attn_qkv.weight', tensor_data) # CRASH/GARBAGE
 ```
 
-### 4.4 Backend Concurrency & Memory Safety
-1. **TOCTOU Hazard in Direct-
+**VERIFICATION METHOD**:
+1.  **Type Check:** Assert `new_weights.dtype == original_weights.dtype`.
+2.  **Shape Check:** Assert `new_weights.shape == original_weights.shape`.
+3.  **Inference Smoke Test:** Run a single forward pass on the modified model and check for `NaN` or `Inf` values in the output logits.
+
+## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
+
+*Note: Since no commit history or issue tracker data was provided, the following incidents are reconstructed based on the technical constraints of the described operation (abliterating a quantized GGUF model) and common failure modes in such operations.*
+
+### Incident 1: Silent Corruption of Tensor Scales (BUG-SCALE-01)
+- **Context:** Tensor swap operation in `gguf_modifier.py`
+- **What Was Expected:** Only the weight payload of the 144 target tensors would be replaced.
+- **What Actually Happened:** The replacement code wrote the new weight payload but did not account for the fact that some quantization types (like `Q4_K` or `IQ3_S`) store scales and zero-points *interleaved* or in a separate block within the same tensor region. The write operation overwrote the scale block with weight data.
+- **Evidence in Repo:** N/A (Reconstructed)
+- **Root Cause:** The tool treated the tensor as a monolithic byte blob, ignoring the internal structure of the quantization format.
+- **Remediation Code Diff**:
+```python
+# - Buggy: Write entire tensor region
+# f.write(new_tensor_bytes)
+
+# + Fixed: Parse tensor structure, write only weight payload, preserve scales
+tensor_struct = parse_tensor_structure(original_tensor)
+f.seek(tensor_struct.weight_offset)
+f.write(new_weight_payload)
+# Scales are left untouched, assuming they are compatible
+```
+- **Lesson:** Always parse the internal structure of complex data formats before performing partial writes.
+
+### Incident 2: Quantization Type Mismatch (BUG-TYPE-02)
+- **Context:** Abliteration script loading pre-computed weights
+- **What Was Expected:** The pre-computed abliterated weights would be in the same quantization format as the target tensor.
+- **What Actually Happened:** The pre-computed weights were in `FP16`, but the target tensor was `IQ3_S`. The inference engine crashed with a "Invalid tensor type" error.
+- **Evidence in Repo:** N/A (Reconstructed)
+- **Root Cause:** The abliteration pipeline did not include a re-quantization step.
+- **Remediation Code Diff**:
+```python
+# - Buggy: Direct swap
+# new_weights = load_fp16('abliterated.bin')
+# swap_tensor(tensor, new_weights)
+
+# + Fixed: Re-quantize to match target
+# new_weights = load_fp16('abliterated.bin')
+# target_type = get_tensor_type(tensor)
+# new_weights_quantized = quantize(new_weights, target_type)
+# swap_tensor(tensor, new_weights_quantized)
+```
+- **Lesson:** Always verify and enforce data type compatibility before binary swaps.
+
+### Incident 3: Checksum Mismatch After Modification (BUG-HASH-03)
+- **Context:** Post-modification verification
+- **What Was Expected:** The modified GGUF file would pass integrity checks.
+- **What Actually Happened:** The `blake2b` hash of the modified tensors did not match the expected hash, causing the file to be rejected by some inference engines.
+- **Evidence in Repo:** N/A (Reconstructed)
+- **Root Cause:** The tool did not update the checksums in the GGUF header after modifying the tensor data.
+- **Remediation Code Diff**:
+```python
+# - Buggy: No checksum update
+# swap_tensor(...)
+
+# + Fixed: Update checksum
+# swap_tensor(...)
+# update_tensor_checksum(tensor_name, new_hash)
+```
+- **Lesson:** Always update integrity metadata after modifying data.
+
+### Incident 4: Off-by-One Error in Tensor Offset Calculation (BUG-OFFSET-04)
+- **Context:** Tensor offset calculation
+- **What Was Expected:** The tool would correctly identify the start and end offsets of each tensor.
+- **What Actually Happened:** The tool calculated the offset incorrectly, leading to the modification of the wrong tensor.
+- **Evidence in Repo:** N/A (Reconstructed)
+- **Root Cause:** The tool did not account for alignment padding between tensors.
+- **Remediation Code Diff**:
+```python
+# - Buggy: offset = header_offset + tensor_size
+# + Fixed: offset = align(header_offset + tensor_size, alignment)
+```
+- **Lesson:** Always account for alignment padding in binary formats.
+
+### Incident 5: Memory Leak in Large File Processing (BUG-MEM-05)
+- **Context:** Loading large GGUF files into memory
+- **What Was Expected:** The tool would process the file efficiently without excessive memory usage.
+- **What Actually Happened:** The tool loaded the entire GGUF file into memory, causing an `OutOfMemoryError` on large models.
+- **Evidence in Repo:** N/A (Reconstructed)
+- **Root Cause:** The tool did not use memory-mapped files or streaming reads.
+- **Remediation Code Diff**:
+```python
+# - Buggy: data = open('model.gguf', 'rb').read()
+# + Fixed: with mmap.mmap(open('model.gguf', 'r+b'), 0) as mm:
+#            mm.seek(offset)
+#            mm.write(new_data)
+```
+- **Lesson:** Use memory-mapped files for large binary data processing.
+
+## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
+
+1.  **Micro-Syntax & Token-Level Precision**:
+    *   **Invariant:** When parsing GGUF headers, always use `struct.unpack` with the correct byte order (`<` for little-endian) and alignment.
+    *   **Trap:** Using `>` (big-endian) on a little-endian file will corrupt all offsets and sizes.
+    *   **Code:** `struct.unpack('<I', data[offset:offset+4])`
+
+2.  **Infinite Loop & Recursion Guards**:
+    *   **Invariant:** When iterating over tensors, always ensure the loop terminates by checking the end-of-file offset.
+    *   **Trap:** If the tensor size is corrupted (e.g., 0 or negative), the loop may never terminate or read out of bounds.
+    *   **Code:** `while offset < file_size: ... offset += tensor_size`
+
+3.  **UI & UX Micro-Mechanics**:
+    *   **Invariant:** N/A (Backend operation)
+
+4.  **Backend Concurrency & Memory Safety**:
+    *   **Invariant:** When modifying a file, always use a temporary file and rename it atomically to prevent corruption if the process crashes.
+    *   **Trap:** Writing directly to the original file can leave it in a corrupted state if the process is interrupted.
+    *   **Code:** `shutil.copy('model.gguf', 'model_temp.gguf'); modify('model_temp.gguf'); os.rename('model_temp.gguf', 'model.gguf')`
+
+5.  **Defect & Error Prevention ("Galti Pakadna")**:
+    *   **Invariant:** Always validate the tensor name against a whitelist of known tensor names before modifying.
+    *   **Trap:** Modifying a non-existent tensor can cause the tool to write to an incorrect offset.
+    *   **Code:** `if tensor_name not in known_tensors: raise ValueError(f"Unknown tensor: {tensor_name}")`
+
+## 5. The 9 Deep Learning Dimensions
+
+1.  **Architecture**: The system is a **stateless transformation pipeline**. It reads a binary file, applies a set of surgical modifications, and writes a new binary file. There is no persistent state.
+2.  **Core Abstractions**: The core abstraction is the **Tensor**, which is a named binary blob with a specific quantization type and size. The system operates on a **Tensor Map** (name -> offset, size, type).
+3.  **Error Handling**: The system must handle **file I/O errors**, **parsing errors** (malformed GGUF), and **type mismatches**. It should fail fast and provide clear error messages.
+4.  **Testing**: The system should be tested with **known good GGUF files** and **known bad GGUF files** (corrupted headers, wrong types). It should also be tested with **different quantization types** (Q4_0, Q8_0, IQ3_S, etc.).
+5.  **Security**: The system should **validate the input file** to ensure it is a valid GGUF file. It should **sanitize tensor names** to prevent path traversal attacks (if tensor names are used in file paths).
+6.  **Performance**: The system should use **memory-mapped files** to avoid loading the entire file into memory. It should **batch tensor modifications** to reduce I/O overhead.
+7.  **Deployment**: The system should be packaged as a **CLI tool** with clear documentation. It should support **dry-run mode** to preview changes without modifying the file.
+8.  **Agent Patterns**: The system can be used by an **AI agent** to modify LLMs. The agent should **verify the output** by running a smoke test on the modified model.
+9.  **Data Flow**: The data flow is **linear**: Input GGUF -> Parse Header -> Identify Tensors -> Modify Tensors -> Write Output GGUF. There is no feedback loop.
+
+## 6. The 8 Learning Extraction Artifacts
+
+1.  **Pattern**: **Surgical Binary Modification**. Parse the container, identify the target segments, modify only the payload, preserve metadata, update checksums.
+2.  **Rule**: **Always verify data type compatibility** before swapping binary data.
+3.  **Architecture Principle**: **Stateless Transformation**. The system should not maintain any state between runs.
+4.  **Failure Mode**: **Silent Corruption**. Modifying the wrong bytes can lead to silent corruption, which is harder to detect than a hard crash.
+5.  **Reusable Skill**: **Binary Format Parsing**. Learn to parse complex binary formats by reading the specification and using `struct` or similar libraries.
+6.  **Decision**: **Use memory-mapped files** for large file processing to avoid memory leaks.
+7.  **Anti-pattern**: **Blind Offset Replacement**. Never write to a binary file without parsing its structure.
+8.  **Verification Method**: **Checksum Verification**. Always verify the checksum of the modified data.
+
+## 7. Actionable Agent Skill & Implementation Checklist
+
+1.  **Parse the GGUF Header**:
+    *   Read the magic number (`GGUF`).
+    *   Parse the tensor count and metadata.
+    *   Build a tensor map (name -> offset, size, type).
+
+2.  **Identify Target Tensors**:
+    *   Filter the tensor map for the 144 target tensors.
+    *   Verify that the target tensors exist in the file.
+
+3.  **Load Abliterated Weights**:
+    *   Load the pre-computed abliterated weights.
+    *   Verify that the weights are in the correct quantization format.
+
+4.  **Modify the Tensors**:
+    *   For each target tensor, seek to the offset and write the new weight payload.
+    *   Preserve the scales and zero-points.
+
+5.  **Update Checksums**:
+    *   Compute the `blake2b` hash of the modified tensors.
+    *   Update the checksums in the GGUF header.
+
+6.  **Verify the Output**:
+    *   Re-parse the modified GGUF file.
+    *   Verify that the tensor map is intact.
+    *   Run a smoke test on the modified model.

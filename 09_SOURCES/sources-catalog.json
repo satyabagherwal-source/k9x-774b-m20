@@ -255,8 +255,8 @@
     "sourceUrl": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
     "sourceVersion": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
     "license": "Open-Source",
-    "contentHash": "f07af78d3b11f21fc062ab95f283d1bf74829336c76a3ef425df48c217aa807a",
-    "lastHarvestedAt": "2026-10-25T08:39:34.168Z",
+    "contentHash": "e121d93db0747f24e2f1a65c66e0fcfc6e7c9bd829c9e9f964611118b21c1717",
+    "lastHarvestedAt": "2026-10-28T20:37:51.363Z",
     "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf"
   },
   "hf-deepseek-ai-deepseek-r1": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "5ce45773",
+    "sourceVersion": "098582e4",
     "license": "MIT",
-    "contentHash": "7137d1df4f3b34af46f0449424489dd1226e9f398dd0afdeb79e013dffbea64e",
-    "lastHarvestedAt": "2026-10-28T20:01:43.238Z",
+    "contentHash": "981acf093888bf86ed8fffaebf578eba6636fab8ac8d24d75f6e1febee19b4d4",
+    "lastHarvestedAt": "2026-10-28T20:37:58.042Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -7443,10 +7443,10 @@
     "repository": "agent-of-empires/agent-of-empires",
     "platform": "github",
     "sourceUrl": "https://github.com/agent-of-empires/agent-of-empires",
-    "sourceVersion": "691b8d2c",
+    "sourceVersion": "e83da884",
     "license": "MIT",
-    "contentHash": "a3518adde1606d91ba2841ce230e96f4876443098df2758b6feb8a030df94499",
-    "lastHarvestedAt": "2026-10-27T17:49:42.164Z",
+    "contentHash": "a5d499818071d500711c91125fe6c32a1b580ab1ccb640e4d4efafddd370abdf",
+    "lastHarvestedAt": "2026-10-28T20:37:49.077Z",
     "learningId": "learn-github-agent-of-empires-agent-of-empires"
   },
   "nativescript-nativescript": {
