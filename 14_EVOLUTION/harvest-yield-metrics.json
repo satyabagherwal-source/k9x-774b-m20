@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T21:50:15.363Z",
-  "total_cycles_completed": 5927,
-  "total_learnings_persisted": 5927,
-  "total_rules_promoted": 5377,
+  "last_updated": "2026-10-28T22:01:34.828Z",
+  "total_cycles_completed": 5931,
+  "total_learnings_persisted": 5931,
+  "total_rules_promoted": 5381,
   "history": [
-    {
-      "timestamp": "2026-10-28T11:46:31.259Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T11:52:40.577Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T11:52:44.289Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T12:01:57.419Z",
-      "repository": "mfontanini/presenterm",
-      "learningId": "learn-github-mfontanini-presenterm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T12:02:04.228Z",
       "repository": "koderover/zadig",
@@ -1403,6 +1375,34 @@
       "repository": "zed-industries/zed",
       "learningId": "learn-github-zed-industries-zed",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T21:56:40.216Z",
+      "repository": "loft-sh/vcluster",
+      "learningId": "learn-github-loft-sh-vcluster",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T21:56:44.973Z",
+      "repository": "clockworklabs/SpacetimeDB",
+      "learningId": "learn-github-clockworklabs-spacetimedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T21:57:57.800Z",
+      "repository": "speridlabs/iris-3b",
+      "learningId": "learn-huggingface-speridlabs-iris-3b",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T22:01:34.828Z",
+      "repository": "astral-sh/ruff",
+      "learningId": "learn-github-astral-sh-ruff",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

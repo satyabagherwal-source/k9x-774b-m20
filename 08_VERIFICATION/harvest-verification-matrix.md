@@ -5950,3 +5950,7 @@
 | `CYCLE-20261028-5UK3` | `2026-10-28T21:43:39.507Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5414` | Yes (`222bdfd8...`) |
 | `CYCLE-20261028-E9QW` | `2026-10-28T21:50:12.440Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md` | Yes (`52b538d4...`) |
 | `CYCLE-20261028-EBZU` | `2026-10-28T21:50:15.354Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5415` | Yes (`7568108d...`) |
+| `CYCLE-20261028-MKY9` | `2026-10-28T21:56:40.209Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5416` | Yes (`c845654d...`) |
+| `CYCLE-20261028-MOME` | `2026-10-28T21:56:44.966Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5417` | Yes (`6e3aff28...`) |
+| `CYCLE-20261028-O8TD` | `2026-10-28T21:57:57.793Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5418, Rule 5419` | Yes (`b743ae20...`) |
+| `CYCLE-20261028-SW9O` | `2026-10-28T22:01:34.812Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md` | Yes (`3f671b04...`) |

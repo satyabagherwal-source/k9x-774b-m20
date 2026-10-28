@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T20:44:29.295Z",
+  "last_updated": "2026-10-28T22:01:34.826Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3247,6 +3247,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-kong-kubernetes-ingress-controller"
+    },
+    {
+      "id": "CD-SWA2",
+      "directive_title": "[ty] Fix a panic when a comprehension filter depends on a later binding (#29786)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "astral-sh/ruff",
+      "source_commit": "c9d4e2e1",
+      "date_staged": "2026-10-28",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-astral-sh-ruff"
     }
   ]
 }

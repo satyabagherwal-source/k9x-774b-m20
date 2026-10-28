@@ -1025,8 +1025,8 @@
     "sourceUrl": "https://huggingface.co/speridlabs/iris-3b",
     "sourceVersion": "hf-speridlabs-iris-3b",
     "license": "Open-Source",
-    "contentHash": "9ee8f29ea13fd25f550ffd87c3706e23d13cfd5da7ae8c587f80a0357cc6cd0c",
-    "lastHarvestedAt": "2026-10-25T21:33:47.212Z",
+    "contentHash": "b743ae20f915fe46a63c37c91c91be10c368e570428d16f4d9967ed9ff4cea35",
+    "lastHarvestedAt": "2026-10-28T21:57:57.796Z",
     "learningId": "learn-huggingface-speridlabs-iris-3b"
   },
   "hf-qwen-qwen3-4b": {
@@ -7053,10 +7053,10 @@
     "repository": "clockworklabs/SpacetimeDB",
     "platform": "github",
     "sourceUrl": "https://github.com/clockworklabs/SpacetimeDB",
-    "sourceVersion": "5ce9e901",
+    "sourceVersion": "c48f5120",
     "license": "NOASSERTION",
-    "contentHash": "8b716857b0c7a91e71590a99cff0d68b17935830aedcbdeb9d54a384ffaf5ebb",
-    "lastHarvestedAt": "2026-10-28T04:21:52.541Z",
+    "contentHash": "6e3aff28460fecb2f860688a5733a5d6b4afea23bcb9e7e85061b6e8dc632128",
+    "lastHarvestedAt": "2026-10-28T21:56:44.969Z",
     "learningId": "learn-github-clockworklabs-spacetimedb"
   },
   "apollographql-apollo-kotlin": {
@@ -7333,10 +7333,10 @@
     "repository": "loft-sh/vcluster",
     "platform": "github",
     "sourceUrl": "https://github.com/loft-sh/vcluster",
-    "sourceVersion": "2dd27678",
+    "sourceVersion": "6997470d",
     "license": "Apache-2.0",
-    "contentHash": "890cdfd1b9b73e92ee7264da32eb3e44b062c50a7b9321a7a1ace65cfe8e9b26",
-    "lastHarvestedAt": "2026-10-27T22:49:54.138Z",
+    "contentHash": "c845654da018150dd41f26d6746d25b315be9f9134acc0a9d4cc1020e0dfd91d",
+    "lastHarvestedAt": "2026-10-28T21:56:40.212Z",
     "learningId": "learn-github-loft-sh-vcluster"
   },
   "arkivanov-decompose": {
@@ -7623,10 +7623,10 @@
     "repository": "astral-sh/ruff",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/ruff",
-    "sourceVersion": "731a26b8",
+    "sourceVersion": "c9d4e2e1",
     "license": "MIT",
-    "contentHash": "889704d5f4e9495be5e3118a475b14b6eeb6b5b0bdbee2ecdcfad9fa323b5741",
-    "lastHarvestedAt": "2026-10-27T18:36:19.499Z",
+    "contentHash": "3f671b045b69beeb9f9f20f16db955f61a12f9a9f36efd93b0729976a40270c1",
+    "lastHarvestedAt": "2026-10-28T22:01:34.815Z",
     "learningId": "learn-github-astral-sh-ruff"
   },
   "touchlab-kampkit": {

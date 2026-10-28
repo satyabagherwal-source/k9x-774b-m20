@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
-> **Source Version**: `731a26b8`  
+> **Source Version**: `c9d4e2e1`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T18:36:19.065Z  
+> **Timestamp**: 2026-10-28T22:01:34.627Z  
 > **Learning ID**: `learn-github-astral-sh-ruff`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T18:36:16.693Z  
+> **Harvest Timestamp**: 2026-10-28T21:56:33.093Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python linter and code formatter, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 50316 stars
+- **Stars / Engagement**: 50346 stars
 
 ---
 
@@ -2103,17 +2103,14 @@ impl<'a> Diff<'a> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29761** (2026-10-27): **Accept a bare raise before a semicolon**
-  *Symptoms*: ## Summary  A bare `raise` can end at a semicolon. For example, Python accepts this handler and re-raises the current exception.  ```python try:     work() except ValueError:     raise; report() ```  The parser tried to read the semicolon as the start of an exception expression and reported a syntax error. We now recognize both a newline and a semicolon as terminators for a bare `raise`. 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- generated-comment memory --> <!-- report-run:40461250353:1 -->  ## Memory usage report  Memory usage unchanged ✅  ---  Results for [8d206dc](https://github.com/astral-sh/ruff/commit/8d206dcaeff4a7cfd7fe6224dc07c8be68fbbc13) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/40461250353/attempts/1) 
-  > <!-- generated-comment ty-ecosystem --> <!-- report-run:40461250280:1 -->  ## `ecosystem-analyzer` results  No diagnostic changes detected ✅  [Full report with detailed diff](https://dqhfo45wdv0ek.cloudfront.net/ruff/pull-requests/29761/ty-ecosystem/40461250280/1/diff.html) · [Timing results](https://dqhfo45wdv0ek.cloudfront.net/ruff/pull-requests/29761/ty-ecosystem/40461250280/1/timing.html)  ---  Results for [8d206dc](https://github.com/astral-sh/ruff/commit/8d206dcaeff4a7cfd7fe6224dc07c8be68fbbc13) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/40461250280/attempts/1) 
+- **Issue #29787** (2026-10-28): **[ty] Fix panic on a chained assignment with a missing value**
+  *Symptoms*: ## Summary  Debug builds of ty panic when an annotation refers to a target of an incomplete chained assignment.  ```python X = Y = x: X ```  The parser uses an invalid name for the missing right-hand side. When checking whether `X` was an implicit type alias, we tried to resolve that name as a reference. This triggered a debug assertion because both targets share a standalone expression.  We now rule out an implicit type alias when the right-hand side is an invalid name. ty reports the syntax error, treats the annotation as `Unknown`, and continues checking the file.  Closes https://github.com/astral-sh/ty/issues/4837. 
 
-- **Issue #29759** (2026-10-27): **[ty] Fix a panic when checking truthiness in a loop**
-  *Symptoms*: ## Summary  Ty could panic on `assert predicate` inside a loop where `predicate` starts as a lambda and a later iteration rebinds it to a class. When cycle recovery added the class to the operand type, ty looked up its metaclass to determine its truthiness. That lookup could introduce a new inference cycle while Salsa was recovering the first one.  Reachability now evaluates the predicate from the operand types that expression inference has already normalized. Outside loops, it caches the result so repeated walks of the same condition can reuse it. Inside a loop, a condition can depend on an assignment it guards, so the caller reads the inferred operands directly. Expression inference no longer stores predicate truthiness or recomputes it during recovery.  The 163-project ecosystem run produced identical diagnostics. Checking isort took 291 ms, up from 248 ms on the base revision, which gives back some of the speedup from #29706. The average timing factor across projects was 1.02×. CodSpeed found no significant changes among the 214 benchmarks it compared. [Ecosystem diff](https://dqhfo45wdv0ek.cloudfront.net/ruff/pull-requests/29759/ty-ecosystem/40467940782/1/diff.html) · [Timings](https://dqhfo45wdv0ek.cloudfront.net/ruff/pull-requests/29759/ty-ecosystem/40467940782/1/timing.html) · [CodSpeed](https://github.com/astral-sh/ruff/pull/29759#issuecomment-6435864937)  Closes https://github.com/astral-sh/ty/issues/4834. 
+- **Issue #29786** (2026-10-28): **[ty] Fix a panic when a comprehension filter depends on a later binding**
+  *Symptoms*: ## Summary  Checking this comprehension makes ty panic with `too many cycle iterations` on the base branch. With this change, it passes.  ```python def readers(limits: list[int], enabled: bool):     return [         read         for limit in limits         for read, end in [((lambda: i) if enabled else None, limit)]         if read is not None and 0 < end < 10         for i in range(end)     ] ```  The filter tests `read`, whose lambda closes over `i`. To infer the lambda’s return type, ty needs to know whether the final `for` clause can bind `i`. That depends on the same filter. In the original fuzz case, ty alternated between treating the filter as always false and allowing either outcome.  We now give the predicate a few iterations to refine its initial ambiguous result. After that, we take the union of its previous and current truthiness. If they disagree, the query keeps both possible outcomes and the cycle settles. Recovery combines values the query has already computed, so it can’t introduce a new dependency by looking up `__bool__`.  The full Linux fuzz run checked all 20,001 seeds against the PR’s parent and found no new panics or timeouts. [Fuzz run](https://github.com/astral-sh/ty/actions/runs/40721883643)  Closes https://github.com/astral-sh/ty/issues/4846. 
   **Post-Mortem & Fix Analysis**:
-  > <!-- generated-comment typing-conformance --> <!-- report-run:40467940795:1 -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.25%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.77%</b>. The number of fully passing files held steady at <b>136/146</b>.  </details>  ---  Results for [cdf3608](https://github.com/astral-sh/ruff/commit/cdf3608e0e8dd8db8d787dd8b2c5bfc13089da12) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/40467940795/attempts/1) 
-  > <!-- generated-comment memory --> <!-- report-run:40467940774:1 -->  ## Memory usage report  ### Summary  | Project | Old | New | Diff | Outcome | |---------|-----|-----|------|---------| | sphinx | 194.08MB | 194.15MB | +0.04% (72.29kB) | ⏫ | | flake8 | 38.10MB | 38.09MB | -0.02% (7.71kB) | ⬇️ | | trio | 93.04MB | 92.99MB | -0.05% (44.67kB) | ⬇️ | | prefect | 476.57MB | 476.41MB | -0.03% (160.07kB) | ⬇️ |  ### Significant changes  <details> <summary>Click to expand detailed breakdown</summary>  ### sphinx  | Name | Old | New | Diff | Outcome | |------|-----|-----|------|---------| | `infer_expression_types_impl` | 12.82MB | 12.69MB | -1.01% (132.09kB) |⬇️ | | `cached_predicate_truthiness` | 916.12kB | 1.00MB | +11.84% (108.45kB) |⏫ | | `infer_definition_types` | 12.36MB | 12.41MB | +0.40% (51.01kB) |⏫ | | `evaluate_projected_narrowing_checkpoint` | 225.74kB | 233.29kB | +3.34% (7.55kB) |⏫ | | `infer_expression_type_impl` | 289.12kB | 296.19kB | +2.44% (7.06kB) |⏫ | | `loop_header_reac
+  > <!-- generated-comment typing-conformance --> <!-- report-run:40712817449:1 -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.25%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.86%</b>. The number of fully passing files held steady at <b>136/146</b>.  </details>  ---  Results for [9759c4b](https://github.com/astral-sh/ruff/commit/9759c4b0933b02818cd7ff9cb0a9a875ccb05476) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/40712817449/attempts/1) 
+  > <!-- generated-comment memory --> <!-- report-run:40712817413:1 -->  ## Memory usage report  Memory usage unchanged ✅  ---  Results for [9759c4b](https://github.com/astral-sh/ruff/commit/9759c4b0933b02818cd7ff9cb0a9a875ccb05476) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/40712817413/attempts/1) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2130,632 +2127,274 @@ impl<'a> Diff<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `691b60a3` (2026-10-27)
-**Commit Message**: [ty] Fix a panic when checking truthiness in a loop (#29759)
+### Incident Patch 1: `3937a41c` (2026-10-28)
+**Commit Message**: [ty] Fix a panic when a comprehension filter depends on a later binding (#29786)
 
 ## Summary
 
-Ty could panic on `assert predicate` inside a loop where `predicate`
-starts as a lambda and a later iteration rebinds it to a class. When
-cycle recovery added the class to the operand type, ty looked up its
-metaclass to determine its truthiness. That lookup could introduce a new
-inference cycle while Salsa was recovering the first one.
+Checking this comprehension makes ty panic with `too many cycle
+iterations` on the base branch. With this change, it passes.
 
-Reachability now evaluates the predicate from the operand types that
-expression inference has already normalized. Outside loops, it caches
-the result so repeated walks of the same condition can reuse it. Inside
-a loop, a condition can depend on an assignment it guards, so the caller
-reads the inferred operands directly. Expression inference no longer
-stores predicate truthiness or recomputes it during recovery.
-
-The 163-project ecosystem run produced identical diagnostics. Checking
-isort took 291 ms, up from 248 ms on the base revision, which gives back
-some of the speedup from #29706. The average timing factor across
-projects was 1.02×. CodSpeed found no significant changes among the 214
-benchmarks it compared. [Ecosystem
-diff](https://dqhfo45wdv0ek.cloudfront.net/ruff/pull-r
-
-**File**: `crates/ty_python_core/src/expression.rs` (modified, +1/-1)
-```diff
-@@ -91,7 +91,7 @@ pub enum ExpressionContext {
- pub enum ExpressionKind {
-     /// An ordinary value expression, such as `1` in `self.x: int = 1`.
-     Normal,
--    /// A predicate whose truthiness is recorded in its evaluation context.
-+    /// A predicate evaluated in value or condition context.
-     Predicate {
-         context: ExpressionContext,
-         in_loop: bool,
+```python
+def readers(limits: list[int], enabled: bool):
+    return [
+        read
+        for limit in limits
+        for read, end in [((lambda: i) if enabled else None, limit)]
+        if read is not None and 0 < end < 10
+        for i in range(end)
+    ]
 ```
 
-**File**: `crates/ty_python_semantic/resources/corpus/ty_4834_predicate_truthiness_cycle.py` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+# Regression test for https://github.com/astral-sh/ty/issues/4834
-+
-+class C("", (lambda: value, (predicate := lambda: value))):
-+    pass
-+
-+# Read the lambda before the loop adds the class as another possible value of predicate.
-+predicate
-+while True:
-+    assert predicate
-+    value = 0
-+    predicate = C
-```
+The filter tests `read`, whose lambda closes over `i`. To infer the
+lambda’s return type, ty needs to know whether the final `for` clause
+can bind `i`. That depends on the same filter. In the original fuzz
+case, ty alternated between treating the filter as always false and
+allowing either outcome.
 
-**File**: `crates/ty_python_semantic/resources/mdtest/loops/for.md` (modified, +15/-0)
+We now give the predicate a few iterations to refine its initial
+ambiguous result. After that, we take the union of its previous and
+current truthiness. If they disagree, the query keeps both possible
+outcomes and the cycle settles. Recovery combines values the query has
+already computed, so it can’t introduce a new dependency by looking up
+`__bool__`.
+
+The full Linux fuzz run checked all 20,001 seeds against the
+
+**File**: `crates/ty_python_semantic/resources/mdtest/comprehensions/basic.md` (modified, +18/-0)
 ```diff
-@@ -1943,6 +1943,21 @@ for _ in range(1_000_000):
-         x = 2
+@@ -320,6 +320,24 @@ class Table:
+ [[reveal_type((cell, row)) for cell in row] for row in Table()]
  ```
  
-+The condition can depend on an earlier iteration. Here `y` starts at `2` and only ever receives `1`
-+or `2` from `x`, so the loop never decrements `x`.
++## Filter that depends on a later loop variable
++
++The filter tests a callable that closes over `i`. Inferring its return type requires checking the
++final `for` clause, which is reachable only when the filter passes.
 +
 +```py
-+def f(n: int):
-+    x = 1
-+    y = 2
-+    for _ in range(n):
-+        if not y:
-+            x, y = x - 1, x
-+        else:
-+            x, y = 2, x
-+    reveal_type(x)  # revealed: Literal[1, 2]
++from collections.abc import Callable
++
++def readers(limits: list[int], enabled: bool) -> list[Callable[[], int]]:
++    return [
++        read
++        for limit in limits
++        for read, end in [((lambda: i) if enabled else None, limit)]
++        if read is not None and 0 < end < 10
++        for i in range(end)
++    ]
 +```
 +
- ### Large reachability constraint graphs fall back to `Unknown`
+ ## Comprehension with unbound iterable
  
- ```py
+ Iterating over an unbound iterable yields `Unknown`:
 ```
 
-**File**: `crates/ty_python_semantic/src/types/infer.rs` (modified, +24/-51)
+**File**: `crates/ty_python_semantic/src/types/infer.rs` (modified, +9/-0)
 ```diff
-@@ -45,7 +45,7 @@
- 
- use crate::ProgramEnvironment;
- use itertools::Either;
--use ruff_db::parsed::{ParsedModuleRef, parsed_module};
-+use ruff_db::parsed::parsed_module;
- use ruff_python_ast as ast;
- use ruff_text_size::{Ranged, TextRange};
- use rustc_hash::FxHashMap;
-@@ -579,7 +579,7 @@ pub(crate) fn infer_expression_types<'db>(
- }
- 
- /// A loop predicate can depend on bindings it guards in the previous iteration.
--/// Reading inference directly keeps the extra truthiness query out of that cycle.
-+/// Evaluate it in the caller's query to keep an extra query out of that cycle.
- pub(crate) fn infer_predicate_truthiness<'db>(
-     db: &'db dyn Db,
-     expression: Expression<'db>,
-@@ -588,24 +588,38 @@ pub(crate) fn infer_predicate_truthiness<'db>(
-         expression.kind(db),
-         ExpressionKind::Predicate { in_loop: true, .. }
-     ) {
--        recorded_predicate_truthiness(db, expression)
-+        evaluate_predicate_truthiness(db, expression)
-     } else {
-         cached_predicate_truthiness(db, expression)
-     }
- }
- 
--/// Keep reachability queries cached when an operand's type changes but its truthiness stays the same.
-+/// Reachability walks can revisit the same predicate for many different bindings.
+@@ -598,6 +598,15 @@ pub(crate) fn infer_predicate_truthiness<'db>(
  #[salsa::tracked(
      returns(copy),
      cycle_initial = |_, _, _| Truthiness::Ambiguous,
++    cycle_fn = |_, cycle: &salsa::Cycle, previous: &Truthiness, current: Truthiness, _| {
++        // A predicate can guard one of its own inputs. Keep both outcomes when iterations
++        // disagree, but give the initial ambiguous result a chance to resolve first.
++        if cycle.iteration() > crate::TAINTED_CYCLES {
++            previous.union(current)
++        } else {
++            current
++        }
++    },
      heap_size = get_size2::GetSize::get_heap_size
  )]
  fn cached_predicate_truthiness<'db>(db: &'db dyn Db, expression: Expression<'db>) -> Truthiness {
--    recorded_predicate_truthiness(db, expression)
-+    evaluate_predicate_truthiness(db, expression)
- }
- 
--fn recorded_predicate_truthiness<'db>(db: &'db dyn Db, expression: Expression<'db>) -> Truthiness {
--    infer_expression_types_impl(db, InferExpression::Bare(expression)).predicate_truthiness
-+/// A widened operand can require a new metaclass lookup, so evaluate truthiness after
-+/// expression inference has normalized the operand types.
-+fn evaluate_predicate_truthiness<'db>(db: &'db dyn Db, expression: Expression<'db>) -> Truthiness {
-+    let ExpressionKind::Predicate { context, .. } = expression.kind(db) else {
-+        return Truthiness::Ambiguous;
-+    };
-+    let inference = infer_expression_types(db, expression, TypeContext::default());
-+    let env = ProgramEnvironment::from_scope(expression.scope(db));
-+    let module = parsed_module(db, expression.python_file(db)).load(db);
-+    TruthinessAnalyzer::new(
-+        db,
-+        &env,
-+        |node| inference.expression_type(node),
-+        |node| inference.comparison_truthiness(node),
-+    )
-+    .truthiness(expression.node_ref(db).node(&module), context)
- }
- 
- #[salsa::tracked(
-@@ -614,7 +628,7 @@ fn recorded_predicate_truthiness<'db>(db: &'db dyn Db, expression: Expression<'d
-     cycle_fn=|db, cycle, previous: &ExpressionInference<'db>, inference: ExpressionInference<'db>, input: InferExpression<'db>| {
-         let (expression, _) = input.into_inner(db);
-         let env = ProgramEnvironment::from_scope(expression.scope(db));
--        inference.cycle_normalized(db, &env, previous, cycle, input)
-+        inference.cycle_normalized(db, &env, previous, cycle)
-     },
-     heap_size=ruff_memory_usage::heap_size
- )]
-@@ -639,7 +653,7 @@ pub(super) fn infer_expression_types_impl<'db>(
- 
-     let env = ProgramEnvironment::from_file(program_file);
- 
--    let mut inference = TypeInferenceBuilder::new(
-+    TypeInferenceBuilder::new(
-         db,
-         &env,
-         InferenceRegion::Expression(expression, tcx),
-@@ -648,9 +662,7 @@ pub(super) fn infer_expression_types_impl<'db>(
-         index,
-         &module,
-     )
--    .finish_expression();
--    inference.record_predicate_truthiness(db, &env, input, Some(module));
--    inference
-+    .finish_expression()
- }
- 
- fn expression_cycle_initial<'db>(
-@@ -2027,9 +2039,6 @@ pub(crate) struct ExpressionInference<'db> {
-     /// The types of every expression in this region.
-     expressions: FrozenMap<ExpressionNodeKey, Type<'db>>,
- 
--    /// The predicate's possible outcomes in its evaluation context.
--    predicate_truthiness: Truthiness,
--
-     extra: Option<Box<ExpressionInferenceExtra<'db>>>,
- 
-     /// The scope this region is part of.
-@@ -2098,39 +2107,13 @@ struct ExpressionInferenceExtra<'db> {
- }
- 
- impl<'db> ExpressionInference<'db> {
--    /// Reachability always asks for a predicate's truthiness without an expected type.
--    fn record_predicate_truthiness(
--        &mut self,
--        db: &'db dyn Db,
--        env: &ProgramEnvironment<'db>,
--        input: InferExpression<'db>,
--        module: Option<ParsedModuleRef>,
--    ) {
--        let InferExpression::Bare(expression) = input else {
--            return;
--        };
--        let ExpressionKind::Predicate { context, .. } = expression.kind(db) else {
--            return;
--        };
--        let module =
--            module.unwrap_or_else(|| parsed_module(db, expression.python_file(db)).load(db));
--        self.predicate_truthiness = TruthinessAnalyzer::new(
--            db,
--            
-```
-
-**File**: `crates/ty_python_semantic/src/types/infer/builder.rs` (modified, +0/-1)
-```diff
-@@ -12949,7 +12949,6 @@ impl<'db> FullExpressionCacheEntry<'db> {
-         });
- 
-         ExpressionInference {
--            predicate_truthiness: Truthiness::Ambiguous,
-             expressions: FrozenMap::from(self.expressions),
-             extra,
-             #[cfg(debug_assertions)]
-```
-
-**File**: `crates/ty_python_semantic/src/types/infer/tests.rs` (modified, +0/-1)
-```diff
-@@ -574,7 +574,6 @@ fn comparison_truthiness_widens_across_sparse_cycle_results() -> anyhow::Result<
-     let inference = |ty, truthiness: Option<Truthiness>| {
-         (
-             ExpressionInference {
--                predicate_truthiness: Truthiness::Ambiguous,
-                 expressions: [(expression, ty)].into_iter().collect(),
-                 extra: truthiness.map(|truthiness| {
-                     Box::new(ExpressionInferenceExtra {
 ```
 
 ---
 
-### Incident Patch 2: `fb2f9218` (2026-10-26)
-**Commit Message**: [ty] Fix narrowing of strings and integers compared with enum members (#29743)
+### Incident Patch 2: `07bd1f1a` (2026-10-28)
+**Commit Message**: [ty] Fix panic on a chained assignment with a missing value (#29787)
 
-A plain string can compare equal to a `StrEnum` member. Previously, `if
-value == Color.RED` narrowed a `str` to the enum and allowed
-`value.name`, even when `value` was the string `"red"`. The same problem
-affected integers compared with `IntEnum` members.
+## Summary
 
-Keep the matching `str` or `int` type in equality checks, tuple
-membership tests, and `match` value patterns. A value already known to
-belong to the enum can still narrow to a specific member.
+Debug builds of ty panic when an annotation refers to a target of an
+incomplete chained assignment.
 
-Closes astral-sh/ty#4827
+```python
+X = Y =
+x: X
+```
 
-## Test plan
+The parser uses an invalid name for the missing right-hand side. When
+checking whether `X` was an implicit type alias, we tried to resolve
+that name as a reference. This triggered a debug assertion because both
+targets share a standalone expression.
 
-Ran the reproducer with Python 3.13. The plain values `"a"` and `1`
-entered all three kinds of branches, and `.name` on the string raised
-`AttributeError`. With both default and strict equality settings, ty now
-reveals `str` and `int` in those branches and reports the invalid
-`.name` access.
+We now rule out an implicit type alias when the right-hand side is an
+invalid name. ty reports the syntax error, treats the annotation as
+`Unknown`, and continues checking the file.
 
-## Ecosystem report
+Closes https://github.com/astral-sh/ty/issues/4837.
 
-Apprise loses a false warning about converting a plain string to an enum
-member. pip gains an assignment error where typeshed requires
-`VerifyMode` and CPython also accepts the plain integer `2`. Both
-changes are expected. [Analyzed head
-`e0388646c9f0d4ac09dfea732b05ca2d84839950`](https://github.com/astral-sh/ru
-
-**File**: `crates/ty_python_semantic/resources/mdtest/narrow/conditionals/eq.md` (modified, +23/-0)
+**File**: `crates/ty_python_semantic/resources/mdtest/invalid_syntax.md` (modified, +13/-0)
 ```diff
-@@ -864,6 +864,29 @@ def loop_back():
-             value = Integer.Y
+@@ -116,6 +116,19 @@ first, *left, *right = [1, 2, 3]  # error: [invalid-syntax] "Two starred express
+ first, *left, *right = (1, 2, 3)  # error: [invalid-syntax] "Two starred expressions in assignment"
  ```
  
-+The comparison narrows a `str | int` to the matching builtin type. A plain string can equal
-+`String.X` and reach the `.name` access.
++## Chained assignment with a missing value
++
++When a chained assignment has no right-hand side, an annotation that uses one of its targets
++resolves to `Unknown`.
 +
 +```py
-+def compare_with_enum_member(value: str | int):
-+    if value == String.X:
-+        reveal_type(value)  # revealed: str
-+        value.name  # error: [unresolved-attribute]
++# error: [invalid-syntax] "Expected an expression"
++X = Y =
 +
-+    if Integer.X == value:
-+        reveal_type(value)  # revealed: int
++def f(x: X):
++    reveal_type(x)  # revealed: Unknown
 +```
 +
-+Members of other `IntEnum` classes can also compare equal to `Integer.X`.
-+
-+```py
-+def compare_int_enums(value: IntEnum):
-+    if value != Integer.X:
-+        reveal_type(value)  # revealed: IntEnum & ~Literal[Integer.X]
-+    else:
-+        reveal_type(value)  # revealed: IntEnum
-+```
-+
- A custom `__new__` can replace the value declared in an `IntEnum` class body. We can still narrow
- the members of `Foo`, whose runtime values are known, but must preserve all of `Shifted` because its
- members' runtime values cannot be determined statically:
+ ## Match-pattern alternatives binding different names
+ 
+ A capture present in only one invalid `or` alternative is possibly undefined.
 ```
 
-**File**: `crates/ty_python_semantic/resources/mdtest/narrow/conditionals/in.md` (modified, +13/-0)
+**File**: `crates/ty_python_semantic/src/types/infer/legacy_type_alias.rs` (modified, +4/-1)
 ```diff
-@@ -1442,6 +1442,19 @@ def _(colors: list[Color]):
-     reveal_type(inline)  # revealed: list[Color]
- ```
- 
-+Membership succeeds for the plain integer `1` as well as for the enum member `Code.OK`.
-+
-+```py
-+from enum import IntEnum
-+
-+class Code(IntEnum):
-+    OK = 1
-+
-+def check_membership(value: int):
-+    if value in (Code.OK,):
-+        reveal_type(value)  # revealed: int
-+```
-+
- An enum that can have additional runtime members can still be narrowed by a membership test against
- an explicit member. The other branch excludes that member without assuming that the declared members
- are exhaustive.
+@@ -72,7 +72,10 @@ pub(super) fn legacy_type_alias_definition<'db>(
+         DefinitionKind::Assignment(assignment) if assignment.unpack().is_none() => {
+             module = parsed_module(db, definition.python_file(db)).load(db);
+             let value = assignment.value(&module);
+-            if value.is_string_literal_expr() {
++            // The parser represents a missing right-hand side as an invalid name.
++            if value.is_string_literal_expr()
++                || value.as_name_expr().is_some_and(ast::ExprName::is_invalid)
++            {
+                 return None;
+             }
+             (value, None)
 ```
 
-**File**: `crates/ty_python_semantic/resources/mdtest/narrow/match.md` (modified, +6/-0)
-```diff
-@@ -4032,6 +4032,12 @@ class Color(StrEnum):
-     GREEN = "g"
-     BLUE = "b"
- 
-+def match_string(value: str):
-+    match value:
-+        case Color.GREEN as captured:
-+            reveal_type(value)  # revealed: str
-+            reveal_type(captured)  # revealed: str
-+
- def test_literal_as_enum(x: Literal["g"]) -> None:
-     match x:
-         case Color.RED:
-```
+---
 
-**File**: `crates/ty_python_semantic/src/types/equality.rs` (modified, +18/-10)
+### Incident Patch 3: `2ffdaee2` (2026-10-28)
+**Commit Message**: [ty] Fix a panic when sorting diagnostics without a source location (#29780)
+
+**File**: `crates/ruff_db/src/diagnostic/mod.rs` (modified, +25/-25)
 ```diff
-@@ -1530,7 +1530,20 @@ fn compare_literal_to_other<'db>(
-     };
-     let condition_expects_equality = operator.condition_expects_equality(branch);
+@@ -573,49 +573,49 @@ struct RenderingSortKey<'a> {
+ }
  
--    // Treat broad builtin types as if only the literal itself can compare equal. This is
-+    let literal_constraint = || {
-+        if !condition_expects_equality {
-+            ComparisonResult::CanNarrow(literal_type.negate(db, env))
-+        } else if matches!(literal, LiteralValueTypeKind::Enum(_))
-+            && literal_semantics != KnownComparisonSemantics::Object
-+        {
-+            // A plain string can compare equal to a `StrEnum` member.
-+            ComparisonResult::Ambiguous
+ impl Ord for RenderingSortKey<'_> {
+-    // We sort diagnostics in a way that keeps them in source order
+-    // and grouped by file. After that, we fall back to severity
++    // Group diagnostics by file and sort them in source order.
++    // For diagnostics at the same location, fall back to severity
+     // (with fatal messages sorting before info messages) and then
+     // finally the diagnostic ID and concise message.
++    // Diagnostics without a file come first. Whole-file diagnostics sort at offset zero.
+     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+-        if let (Some(span1), Some(span2)) = (
+-            self.diagnostic.primary_span(),
+-            other.diagnostic.primary_span(),
+-        ) {
+-            let file1 = span1.file();
+-            let file2 = span2.file();
+-            if file1 != file2 {
+-                let order = file1.path(&self.db).cmp(file2.path(&self.db));
++        let left = self.diagnostic;
++        let right = other.diagnostic;
++        let left_span = left.primary_span_ref();
++        let right_span = right.primary_span_ref();
++        let location = if let (Some(left_span), Some(right_span)) = (left_span, right_span) {
++            let left_file = left_span.file();
++            let right_file = right_span.file();
++            if left_file != right_file {
++                let order = left_file.path(&self.db).cmp(right_file.path(&self.db));
+                 if order.is_ne() {
+                     return order;
+                 }
+             }
+ 
+-            if let (Some(range1), Some(range2)) = (span1.range(), span2.range()) {
+-                let order = range1.start().cmp(&range2.start());
+-                if order.is_ne() {
+-                    return order;
+-                }
+-            }
++            let left_start = left_span.range().unwrap_or_default().start();
++            let right_start = right_span.range().unwrap_or_default().start();
++            left_start.cmp(&right_start)
 +        } else {
-+            ComparisonResult::CanNarrow(literal_type)
-+        }
-+    };
++            left_span.is_some().cmp(&right_span.is_some())
++        };
++        if location.is_ne() {
++            return location;
+         }
 +
-+    // Treat broad builtin types as if only the builtin literal itself can compare equal. This is
-     // intentionally unsafe: subclasses, including `bool` for `int`, can compare equal without
-     // inhabiting the literal type. Explicitly typed subclasses do not take this path.
-     if evaluator.soundness_policy.allow_unsafe_equality
-@@ -1539,7 +1552,7 @@ fn compare_literal_to_other<'db>(
-         && let Some(other_semantics) = unsafe_narrowable_builtin_semantics(db, other)
-     {
-         return if literal_semantics == other_semantics {
--            ComparisonResult::CanNarrow(literal_type)
-+            literal_constraint()
-         } else {
-             operator.result_from_equality(false)
-         };
-@@ -1564,17 +1577,12 @@ fn compare_literal_to_other<'db>(
-             if literal_operand == LiteralOperand::Other
-                 && !other.is_disjoint_from(db, env, literal_type) =>
-         {
--            ComparisonResult::CanNarrow(literal_type.negate_if(
--                db,
--                env,
--                !condition_expects_equality,
--            ))
-+            literal_constraint()
+         // Reverse so that, e.g., Fatal sorts before Info.
+-        let order = self
+-            .diagnostic
+-            .severity()
+-            .cmp(&other.diagnostic.severity())
+-            .reverse();
++        let order = left.severity().cmp(&right.severity()).reverse();
+         if order.is_ne() {
+             return order;
          }
--        Some(_) => ComparisonResult::Ambiguous,
-         None if literal_operand == LiteralOperand::Other && !condition_expects_equality => {
--            ComparisonResult::CanNarrow(literal_type.negate(db, env))
-+            literal_constraint()
+-        let order = self.diagnostic.id().cmp(&other.diagnostic.id());
++        let order = left.id().cmp(&right.id());
+         if order.is_ne() {
+             return order;
          }
--        None => ComparisonResult::Ambiguous,
-+        _ => ComparisonResult::Ambiguous,
+ 
+-        self.diagnostic
+-            .concise_message()
++        left.concise_message()
+             .to_str()
+-            .cmp(&other.diagnostic.concise_message().to_str())
++            .cmp(&right.concise_message().to_str())
      }
  }
  
 ```
 
----
-
-### Incident Patch 3: `3c8166b6` (2026-10-26)
-**Commit Message**: [ty] Fix hang when negating recursive unions of instance types (#29652)
-
-Fixes a hang when a recursive alias combines positive and negative
-references, such as `type A = list[A | ~A] | list[~A]`.
-
-Retain negated recursive aliases whose union members resolve to nominal
-instance types, so mapping does not repeatedly unfold the alias into
-itself. Other union members still undergo normalization to preserve
-literal exclusions and positive constraints.
-
-Fixes https://github.com/astral-sh/ty/issues/4799.
-
-## Test plan
-
-Checked the original reproducer and equivalent spellings using `Not[A]`
-and `Intersection[object, Not[A]]` with timeout-bounded debug binaries.
-The patched checker completes on all three; the original reproducer
-hangs on the baseline.
-
-**File**: `crates/ty_python_semantic/resources/mdtest/annotations/intersection_types.md` (modified, +40/-0)
+**File**: `crates/ruff_db/src/diagnostic/render.rs` (modified, +17/-0)
 ```diff
-@@ -242,6 +242,46 @@ def _(c: C, d: D):
-     reveal_type(d)  # revealed: D
- ```
+@@ -2433,6 +2433,23 @@ watermelon
+         );
+     }
  
-+## Negated recursive aliases in unions of containers
++    #[test]
++    fn diagnostic_order_with_missing_locations() {
++        let mut env = TestEnvironment::new();
++        env.add("fruits", FRUITS);
 +
-+A recursive alias can appear positively and negatively in one container's element type and
-+negatively in another union member.
++        let fileless = Diagnostic::new(DiagnosticId::Io, Severity::Hint, "Missing directory");
++        let mut whole_file =
++            Diagnostic::new(DiagnosticId::Io, Severity::Warning, "Check this file");
++        whole_file.annotate(Annotation::primary(env.path("fruits")));
++        let at_zero = env.err().primary("fruits", "1:0", "1:0", "").build();
++        let at_one = env.err().primary("fruits", "1:1", "1:1", "").build();
 +
-+Regression test for <https://github.com/astral-sh/ty/issues/4799>.
++        let mut diagnostics = [&at_one, &whole_file, &at_zero, &fileless];
++        diagnostics.sort_by_key(|diagnostic| diagnostic.rendering_sort_key(&env.db));
++        assert_eq!(diagnostics, [&fileless, &at_zero, &whole_file, &at_one]);
++    }
 +
-+```toml
-+[environment]
-+python-version = "3.12"
-+```
-+
-+```py
-+from typing import TypeAlias
-+
-+type A = list[A | ~A] | list[~A]
-+B: TypeAlias = "list[B | ~B] | list[~B]"
-+
-+def _(a: A, b: B):
-+    reveal_type(a)  # revealed: list[A | ~A] | list[~A]
-+    reveal_type(b)  # revealed: B
-+```
-+
-+## Negated recursive aliases through an aliased container
-+
-+The recursion can pass through another alias for a container in the union.
-+
-+```toml
-+[environment]
-+python-version = "3.12"
-+```
-+
-+```py
-+type Container = list[A | ~A]
-+type A = Container | list[~A]
-+
-+def _(value: A):
-+    reveal_type(value)  # revealed: list[Divergent]
-+```
-+
- ## Intersections inside `type[...]`
- 
- ```toml
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/narrow/type_guards.md` (modified, +44/-0)
-```diff
-@@ -1298,6 +1298,50 @@ def overwritten_target(value: object):
-         reveal_type(value)  # revealed: TypeGuard[list[int] @ value] & ~AlwaysTruthy
- ```
- 
-+## Negative TypeIs narrowing with recursive unions
-+
-+Excluding a recursive union still exposes its literal exclusions. Removing `True` from `bool` leaves
-+a value whose truthiness is known.
-+
-+```toml
-+[environment]
-+python-version = "3.12"
-+```
-+
-+```py
-+from typing import Literal, assert_type
-+from typing_extensions import TypeIs
-+
-+type RecursiveBool = Literal[True] | list[RecursiveBool]
-+
-+def is_recursive_bool(value: object) -> TypeIs[RecursiveBool]:
-+    raise NotImplementedError
-+
-+def f(value: bool):
-+    if not is_recursive_bool(value):
-+        assert_type(bool(value), Literal[False])
-+```
-+
-+Excluding an enum member also narrows the remaining members' `name` and `value` attributes.
-+
-+```py
-+from enum import Enum
-+
-+class Color(Enum):
-+    RED = 1
-+    BLUE = 2
-+
-+type RecursiveColor = Literal[Color.RED] | list[RecursiveColor]
-+
-+def is_recursive_color(value: object) -> TypeIs[RecursiveColor]:
-+    raise NotImplementedError
-+
-+def f(value: Color):
-+    if not is_recursive_color(value):
-+        assert_type(value.name, Literal["BLUE"])
-+        assert_type(value.value, Literal[2])
-+```
-+
- ## Recursive TypeIs targets
- 
- An unresolved recursive `TypeIs` target does not make the negative branch unreachable. We retain the
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/pep613_type_aliases.md` (modified, +20/-0)
-```diff
-@@ -680,6 +680,26 @@ def f(x: B | Not[B]):
-     reveal_type(x)  # revealed: B | ~B
- ```
- 
-+## Negated recursive unions
-+
-+Negating a recursive union is equivalent to intersecting the negations of its members, including
-+when the alias contains gradual types.
-+
-+```py
-+from typing import Any, TypeAlias, TypeVar, assert_type
-+from ty_extensions import Intersection, Not
-+
-+A: TypeAlias = "int | list[tuple[Any, A]]"
-+T = TypeVar("T")
-+
-+def identity(x: T) -> T:
-+    return x
-+
-+def f(x: Not[A], y: Intersection[Not[int], Not[list[tuple[Any, A]]]]):
-+    assert_type(identity(x), Intersection[Not[int], Not[list[tuple[Any, A]]]])
-+    assert_type(identity(y), Not[A])
-+```
-+
- ## Specializing non-generic recursive aliases
- 
- A recursive alias without type variables cannot be specialized. Quoting the entire definition does
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/pep695_type_aliases.md` (modified, +19/-0)
-```diff
-@@ -1868,6 +1868,25 @@ def f(x: Not[A], y: Not[list[tuple[Any, A]]]):
-     assert_type(identity(y), Not[A])
- ```
- 
-+### Negated recursive unions
-+
-+Negating a recursive union is equivalent to intersecting the negations of its members, including
-+when the alias contains gradual types.
-+
-+```py
-+from typing import Any, assert_type
-+from ty_extensions import Intersection, Not
-+
-+type A = int | list[tuple[Any, A]]
-+
-+def identity[T](x: T) -> T:
-+    return x
-+
-+def f(x: Not[A], y: Intersection[Not[int], Not[list[tuple[Any, A]]]]):
-+    assert_type(identity(x), Intersection[Not[int], Not[list[tuple[Any, A]]]])
-+    assert_type(identity(y), Not[A])
-+```
-+
- ### Recursive invariant
- 
- ```py
-```
-
-**File**: `crates/ty_python_semantic/src/types/set_theoretic/builder.rs` (modified, +13/-4)
-```diff
-@@ -1361,9 +1361,9 @@ impl<'db> IntersectionBuilder<'db> {
-     /// by default to preserve existing intersection normalization.
-     ///
-     /// Unfolding aliases after their mapping has completed can repeatedly insert a recursive
--    /// type into itself, so mapped intersections retain positive aliases as well. The builder still
--    /// expands set operations to distribute and flatten them, and simplifies elements using their
--    /// alias values.
-+    /// type into itself, so mapped intersections retain positive aliases as well. Direct unions and
-+    /// intersections still distribute and flatten, and elements are simplified using their alias
-+    /// values.
-     pub(crate) fn preserve_positive_aliases(mut self, preserve: bool) -> Self {
-         self.preserve_positive_aliases = preserve;
-         self
-@@ -1605,7 +1605,16 @@ impl<'db> IntersectionBuilder<'db> {
-             Type::TypeAlias(_) | Type::Recursive(_) => {
-                 self.add_negative_impl::<L>(ty, seen_aliases)?;
-             }
--            Type::Union(union) => {
-+            // Retain recursive unions of instance types: their negations expose no positive
-+            // constraints or literal exclusions, and unfolding during mapping can repeatedly
-+            // insert the alias's body. Other members still need normalization, for example
-+            // `bool & ~(Literal[True] | list[A])` simplifies to `Literal[False]`.
-+            Type::Union(union)
-+                if !union.elements(db).iter().all(|element| {
-+                    matches!(element.resolve_type_alias(db), Type::NominalInstance(_))
-+                }) || (!matches!(original, Type::Recursive(_))
-+                    && !matches!(original, Type::TypeAlias(alias) if alias.is_recursive(db))) =>
-+            {
-                 for elem in union.elements(db) {
-                     self.add_negative_impl::<L>(*elem, seen_aliases)?;
-                 }
+     #[test]
+     fn diagnostics_with_equal_locations_sort_by_concise_message() {
+         let mut env = TestEnvironment::new();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29763** (closed): [ty] Evaluate single-predicate narrowing directly (@charliermarsh)
-- **PR #29762** (closed): Treat relative `__future__` imports as ordinary imports (F407, F404) (@DipanshuAmbilkar03)
-- **PR #29761** (2026-10-27): Accept a bare raise before a semicolon (@charliermarsh)
-- **PR #29759** (2026-10-27): [ty] Fix a panic when checking truthiness in a loop (@charliermarsh)
-- **PR #29757** (closed): [ty] Defer branch constraints for unchanged places (@charliermarsh)
-- **PR #29756** (closed): [`ruff`] Skip `with` blocks before `yield` in `unnecessary-assign-bef… (@frogscooper)
+- **PR #29795** (2026-10-28): [ty] Place variable type inlay hints after grouping parentheses (@AlexWaygood)
+- **PR #29794** (2026-10-28): [ty] Place argument name inlay hints before grouping parentheses (@AlexWaygood)
+- **PR #29787** (2026-10-28): [ty] Fix panic on a chained assignment with a missing value (@charliermarsh)
+- **PR #29786** (2026-10-28): [ty] Fix a panic when a comprehension filter depends on a later binding (@charliermarsh)
+- **PR #29783** (closed): [`ruff`] Add `match-capture-shadows-variable` (`RUF078`) (@shan3520)
+- **PR #29781** (2026-10-28): [ty] Correctly handle line continuation when fixing unused ignore comments (@MichaReiser)
 
 ---
 
@@ -2775,28 +2414,45 @@ hangs on the baseline.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [ty] Fix a panic when checking truthiness in a loop (#29759)
+## X. [ty] Fix a panic when a comprehension filter depends on a later binding (#29786)
 
 **RULE**:
-When implementing operations in `crates/ty_python_core/src/expression.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/ty_python_semantic/resources/mdtest/comprehensions/basic.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `691b60a3`: [ty] Fix a panic when checking truthiness in a loop (#29759). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3937a41c`: [ty] Fix a panic when a comprehension filter depends on a later binding (#29786). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty_python_core/src/expression.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty_python_semantic/resources/mdtest/comprehensions/basic.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// A predicate evaluated in value or condition context.
+## Filter that depends on a later loop variable
+
+The filter tests a callable that closes over `i`. Inferring its return type requires checking the
+final `for` clause, which is reachable only when the filter passes.
+
+```py
+from collections.abc import Callable
+
+def readers(limits: list[int], enabled: bool) -> list[Callable[[], int]]:
+    return [
+        read
+        for limit in limits
+        for read, end in [((lambda: i) if enabled else None, limit)]
+        if read is not None and 0 < end < 10
+        for i in range(end)
+    ]
+```
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    /// A predicate whose truthiness is recorded in its evaluation context.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `691b60a3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3937a41c` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T21:50:15.283Z",
+  "last_updated": "2026-10-28T22:01:34.756Z",
   "total_verified_learnings": 1159,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3489,8 +3489,8 @@
       "slug": "astral-sh-ruff",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/ruff",
-      "source_version": "731a26b8",
-      "content_hash": "889704d5f4e9495be5e3118a475b14b6eeb6b5b0bdbee2ecdcfad9fa323b5741",
+      "source_version": "c9d4e2e1",
+      "content_hash": "3f671b045b69beeb9f9f20f16db955f61a12f9a9f36efd93b0729976a40270c1",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "promoted_rules": [
@@ -3535,7 +3535,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T18:36:19.419Z",
+      "verified_at": "2026-10-28T22:01:34.744Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -6909,8 +6909,8 @@
       "slug": "clockworklabs-spacetimedb",
       "platform": "github",
       "source_url": "https://github.com/clockworklabs/SpacetimeDB",
-      "source_version": "5ce9e901",
-      "content_hash": "8b716857b0c7a91e71590a99cff0d68b17935830aedcbdeb9d54a384ffaf5ebb",
+      "source_version": "c48f5120",
+      "content_hash": "6e3aff28460fecb2f860688a5733a5d6b4afea23bcb9e7e85061b6e8dc632128",
       "dossier_path": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "promoted_rules": [
@@ -6963,6 +6963,11 @@
           "number": 5170,
           "title": "Add a SpacetimeDB Standalone architecture diagram to docs/DEVELOP.md (#6400)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5417,
+          "title": "Async IDC: rust outbox macro (#6376)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6970,7 +6975,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T04:21:52.464Z",
+      "verified_at": "2026-10-28T21:56:44.909Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27906,7 +27911,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/speridlabs/iris-3b",
       "source_version": "hf-speridlabs-iris-3b",
-      "content_hash": "9ee8f29ea13fd25f550ffd87c3706e23d13cfd5da7ae8c587f80a0357cc6cd0c",
+      "content_hash": "b743ae20f915fe46a63c37c91c91be10c368e570428d16f4d9967ed9ff4cea35",
       "dossier_path": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
       "promoted_rules": [
@@ -27964,6 +27969,16 @@
           "number": 4457,
           "title": "Unified Prior for Generation and Dense Perception",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5418,
+          "title": "Numerical Clamping & Boundary Contract in Pixel-Space Flow Matching Solvers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5419,
+          "title": "Multi-Task Conditioning Weight Decoupling for Dense Vision Fine-Tuning",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -27974,7 +27989,7 @@
         "learn-huggingface-hf-speridlabs-iris-3b-mv3xf4f7",
         "learn-huggingface-hf-speridlabs-iris-3b-mv4c50o3"
       ],
-      "verified_at": "2026-10-25T21:33:47.143Z",
+      "verified_at": "2026-10-28T21:57:57.712Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35443,8 +35458,8 @@
       "slug": "loft-sh-vcluster",
       "platform": "github",
       "source_url": "https://github.com/loft-sh/vcluster",
-      "source_version": "2dd27678",
-      "content_hash": "890cdfd1b9b73e92ee7264da32eb3e44b062c50a7b9321a7a1ace65cfe8e9b26",
+      "source_version": "6997470d",
+      "content_hash": "c845654da018150dd41f26d6746d25b315be9f9134acc0a9d4cc1020e0dfd91d",
       "dossier_path": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "promoted_rules": [
@@ -35482,6 +35497,11 @@
           "number": 5041,
           "title": "vclusterctl): prevent panic when listing on no secrets (#2636)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5416,
+          "title": "deps): bump the default kubernetes and etcd images to patched releases",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35489,7 +35509,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T22:49:54.075Z",
+      "verified_at": "2026-10-28T21:56:40.144Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -146512,6 +146532,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T21:50:15.266Z"
+    },
+    "rule-5416": {
+      "learning_id": "rule-5416",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5416,
+      "title": "deps): bump the default kubernetes and etcd images to patched releases",
+      "source_url": "https://github.com/loft-sh/vcluster",
+      "source_version": "6997470d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T21:56:40.144Z"
+    },
+    "rule-5417": {
+      "learning_id": "rule-5417",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5417,
+      "title": "Async IDC: rust outbox macro (#6376)",
+      "source_url": "https://github.com/clockworklabs/SpacetimeDB",
+      "source_version": "c48f5120",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T21:56:44.909Z"
+    },
+    "rule-5418": {
+      "learning_id": "rule-5418",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5418,
+      "title": "Numerical Clamping & Boundary Contract in Pixel-Space Flow Matching Solvers",
+      "source_url": "https://huggingface.co/speridlabs/iris-3b",
+      "source_version": "hf-speridlabs-iris-3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T21:57:57.712Z"
+    },
+    "rule-5419": {
+      "learning_id": "rule-5419",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5419,
+      "title": "Multi-Task Conditioning Weight Decoupling for Dense Vision Fine-Tuning",
+      "source_url": "https://huggingface.co/speridlabs/iris-3b",
+      "source_version": "hf-speridlabs-iris-3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T21:57:57.712Z"
     }
   },
   "aliases": {

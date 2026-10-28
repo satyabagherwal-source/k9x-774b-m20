@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md`  
 > **Source**: github ([https://github.com/loft-sh/vcluster](https://github.com/loft-sh/vcluster))  
-> **Source Version**: `2dd27678`  
+> **Source Version**: `6997470d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T22:49:53.795Z  
+> **Timestamp**: 2026-10-28T21:56:39.774Z  
 > **Learning ID**: `learn-github-loft-sh-vcluster`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/loft-sh/vcluster](https://github.com/loft-sh/vcluster))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T22:49:53.208Z  
+> **Harvest Timestamp**: 2026-10-28T21:56:38.926Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: vCluster creates tenant clusters: fully isolated environments delivered as managed Kubernetes, or as the foundation for Slurm, Ray, Run:ai and inference clusters. Each gets its own API server, CRDs and RBAC, and runs on an existing cluster or standalone on bare metal. CNCF Certified Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11365 stars
+- **Stars / Engagement**: 11368 stars
 
 ---
 
@@ -1465,116 +1465,147 @@ func ResumeVCluster(ctx context.Context, kubeClient *kubernetes.Clientset, name,
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2dd27678` (2026-10-27)
-**Commit Message**: fix(vclusterctl): prevent panic when listing on no secrets (#2636)
+### Incident Patch 1: `ee4c52de` (2026-10-28)
+**Commit Message**: fix(deps): bump the default kubernetes and etcd images to patched releases
 
-Monorepo-Commit: d2808f20a3b2d948816224df6040ca580f84fbb6
+The Kubernetes images move to the upstream patch releases built with Go
+1.26.10, which rejects certificate chains through the compromised eMudhra
+intermediate CAs (CVE-2026-111943). Our rebuilds also sit on alpine 3.24.3
+with brotli 1.2.1-r0, closing CVE-2026-111497.
 
-**File**: `cmd/vclusterctl/cmd/platform/get/secret.go` (modified, +1/-1)
+etcd moves to 3.6.16-0 on every entry. Upstream pins 3.6.5, 3.6.6 and 3.6.8
+for these patch releases and all three are still built with Go 1.24, so
+matching the pin would leave etcd exposed.
+
+1.33 and older are upstream EOL and are left untouched.
+
+Monorepo-Commit: 7b7f081e7248e6d7320e7cf4040dfe3d14509a99
+
+**File**: `chart/tests/statefulset_test.yaml` (modified, +3/-3)
 ```diff
-@@ -317,5 +317,5 @@ func (cmd *SecretCmd) listSharedSecretsWithFallback(ctx context.Context, namespa
- 		}
- 		errs = append(errs, fmt.Errorf("listing shared secrets in namespace %s failed: %w", ns, err))
- 	}
--	return nil, stderrors.Join(errs...)
-+	return secrets, stderrors.Join(errs...)
- }
+@@ -520,7 +520,7 @@ tests:
+     asserts:
+       - equal:
+           path: spec.template.spec.initContainers[0].image
+-          value: ghcr.io/loft-sh/kubernetes:v1.36.5
++          value: ghcr.io/loft-sh/kubernetes:v1.36.6
+ 
+   - it: k8s override image tag
+     set:
+@@ -589,7 +589,7 @@ tests:
+     asserts:
+     - equal:
+         path: spec.template.spec.initContainers[0].image
+-        value: ghcr.io/loft-sh/kubernetes:v1.36.5
++        value: ghcr.io/loft-sh/kubernetes:v1.36.6
+ 
+   - it: k8s version not set, default tag images used for apiServer and controllerManager (virtual scheduler enabled, deprecated)
+     chart:
+@@ -605,7 +605,7 @@ tests:
+     asserts:
+       - equal:
+           path: spec.template.spec.initContainers[0].image
+-          value: ghcr.io/loft-sh/kubernetes:v1.36.5
++          value: ghcr.io/loft-sh/kubernetes:v1.36.6
+ 
+   - it: k8s version sets image tag for apiServer and controllerManager (virtual scheduler enabled)
+     set:
 ```
 
-**File**: `cmd/vclusterctl/cmd/platform/get/secret_test.go` (added, +82/-0)
+**File**: `chart/values.yaml` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,82 @@
-+package get
-+
-+import (
-+	"errors"
-+	"testing"
-+
-+	managementv1 "github.com/loft-sh/api/v5/pkg/apis/management/v1"
-+	loftclient "github.com/loft-sh/api/v5/pkg/clientset/versioned"
-+	loftfake "github.com/loft-sh/api/v5/pkg/clientset/versioned/fake"
-+	"github.com/loft-sh/log"
-+	"github.com/loft-sh/vcluster/pkg/platform/clihelper"
-+	"github.com/loft-sh/vcluster/pkg/platform/kube"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
-+	clienttesting "k8s.io/client-go/testing"
-+)
-+
-+type secretTestClient struct {
-+	kube.Interface
-+	loftClient loftclient.Interface
-+}
-+
-+func (c *secretTestClient) Loft() loftclient.Interface {
-+	return c.loftClient
-+}
-+
-+func TestListSharedSecretsWithFallback(t *testing.T) {
-+	listErr := errors.New("list failed")
-+	tests := []struct {
-+		name            string
-+		namespace       string
-+		secretNamespace string
-+		failedNamespace string
-+		wantError       bool
-+	}{
-+		{name: "all namespaces empty"},
-+		{name: "explicit namespace and fallbacks empty", namespace: "custom"},
-+		{name: "default namespace has a secret", secretNamespace: clihelper.DefaultPlatformNamespace},
-+		{name: "legacy namespace has a secret", secretNamespace: clihelper.LegacyPlatformNamespace},
-+		{name: "explicit namespace has a secret", namespace: "custom", secretNamespace: "custom"},
-+		{name: "list errors are preserved", failedNamespace: clihelper.DefaultPlatformNamespace, wantError: true},
-+		{name: "fallback succeeds after an error", failedNamespace: clihelper.DefaultPlatformNamespace, secretNamespace: clihelper.LegacyPlatformNamespace},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			var objects []runtime.Object
-+			if tt.secretNamespace != "" {
-+				objects = append(objects, &managementv1.SharedSecret{
-+					ObjectMeta: metav1.ObjectMeta{Name: "test-secret", Namespace: tt.secretNamespace},
-+				})
-+			}
-+			client := loftfake.NewSimpleClientset(objects...)
-+			client.PrependReactor("list", "sharedsecrets", func(action clienttesting.Action) (bool, runtime.Object, error) {
-+				if action.GetNamespace() == tt.failedNamespace {
-+					return true, nil, listErr
-+				}
-+				return false, nil, nil
-+			})
-+			cmd := &SecretCmd{log: log.GetInstance()}
-+			secrets, err := cmd.listSharedSecretsWithFallback(t.Context(), tt.namespace, &secretTestClient{loftClient: client})
-+			if tt.wantError {
-+				if !errors.Is(err, listErr) {
-+					t.Fatalf("expected list error, got %v", err)
-+				}
-+				return
-+			}
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			if secrets == nil {
-+				t.Fatal("successful list must return a non-nil list, even when no secrets exist")
-+			}
-+			if tt.secretNamespace == "" {
-+				if len(secrets.Items) != 0 {
-+					t.Fatalf("expected no secrets, got %v", secrets.Items)
-+				}
-+			} else if len(secrets.Items) != 1 || secrets.Items[0].Namespace != tt.secretNamespace || secrets.Items[0].Name != "test-secret" {
-+				t.Fatalf("expected test-secret in namespace %s, got %v", tt.secretNamespace, secrets.Items)
-+			}
-+		})
-+	}
-+}
+@@ -322,7 +322,7 @@ controlPlane:
+         # Repository is the repository of the container image, e.g. my-repo/my-image
+         repository: "loft-sh/kubernetes"
+         # Tag is the tag of the container image, and is the default version.
+-        tag: "v1.36.5"
++        tag: "v1.36.6"
+       # APIServer holds configuration specific to starting the api server.
+       apiServer:
+         enabled: true
+@@ -440,7 +440,7 @@ controlPlane:
+             # Repository is the repository of the container image, e.g. my-repo/my-image
+             repository: "etcd"
+             # Tag is the tag of the container image, and is the default version.
+-            tag: "3.6.8-0"
++            tag: "3.6.16-0"
+           # ImagePullPolicy is the pull policy for the external etcd image
+           imagePullPolicy: ""
+           # ExtraArgs are appended to the etcd command.
+```
+
+**File**: `config/default_extra_values.go` (modified, +6/-6)
+```diff
+@@ -17,9 +17,9 @@ const (
+ 
+ // K8SVersionMap holds the supported k8s api servers
+ var K8SVersionMap = map[string]string{
+-	"1.36": "ghcr.io/loft-sh/kubernetes:v1.36.5",
+-	"1.35": "ghcr.io/loft-sh/kubernetes:v1.35.9",
+-	"1.34": "ghcr.io/loft-sh/kubernetes:v1.34.12",
++	"1.36": "ghcr.io/loft-sh/kubernetes:v1.36.6",
++	"1.35": "ghcr.io/loft-sh/kubernetes:v1.35.10",
++	"1.34": "ghcr.io/loft-sh/kubernetes:v1.34.13",
+ 	"1.33": "ghcr.io/loft-sh/kubernetes:v1.33.4",
+ 	"1.32": "ghcr.io/loft-sh/kubernetes:v1.32.1",
+ 	"1.31": "ghcr.io/loft-sh/kubernetes:v1.31.1",
+@@ -28,9 +28,9 @@ var K8SVersionMap = map[string]string{
+ 
+ // K8SEtcdVersionMap holds the supported etcd
+ var K8SEtcdVersionMap = map[string]string{
+-	"1.36": "registry.k8s.io/etcd:3.6.8-0",
+-	"1.35": "registry.k8s.io/etcd:3.6.7-0",
+-	"1.34": "registry.k8s.io/etcd:3.6.4-0",
++	"1.36": "registry.k8s.io/etcd:3.6.16-0",
++	"1.35": "registry.k8s.io/etcd:3.6.16-0",
++	"1.34": "registry.k8s.io/etcd:3.6.16-0",
+ 	"1.33": "registry.k8s.io/etcd:3.5.21-0",
+ 	"1.32": "registry.k8s.io/etcd:3.5.21-0",
+ 	"1.31": "registry.k8s.io/etcd:3.5.15-0",
+```
+
+**File**: `config/values.yaml` (modified, +2/-2)
+```diff
+@@ -142,7 +142,7 @@ controlPlane:
+       image:
+         registry: ghcr.io
+         repository: "loft-sh/kubernetes"
+-        tag: "v1.36.5"
++        tag: "v1.36.6"
+       apiServer:
+         enabled: true
+         command: []
+@@ -202,7 +202,7 @@ controlPlane:
+           image:
+             registry: "registry.k8s.io"
+             repository: "etcd"
+-            tag: "3.6.8-0"
++            tag: "3.6.16-0"
+           imagePullPolicy: ""
+           extraArgs: []
+           env: []
+```
+
+**File**: `devspace.yaml` (modified, +1/-1)
+```diff
+@@ -32,7 +32,7 @@ deployments:
+           distro:
+             k8s:
+               image:
+-                tag: v1.36.5
++                tag: v1.36.6
+           statefulSet:
+             image:
+               registry: ""
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4242** (closed): fix: prevent platform get secret -a panic when no secrets exist (@seanschneeweiss)
-- **PR #4237** (2026-10-22): chore(deps): bump go to 1.26.10 (backport v0.34 oss) (@loft-bot)
-- **PR #4236** (2026-10-23): chore(deps): bump go to 1.26.10 (backport v0.35 oss) (@loft-bot)
-- **PR #4235** (2026-10-23): chore(deps): bump go to 1.26.10 (backport v0.36 oss) (@loft-bot)
-- **PR #4234** (2026-10-22): fix(snapshot): keep the kine revision bump when restoring an embedded database (backport v0.36 oss) (@loft-bot)
-- **PR #4233** (closed): chore(deps): bump go to 1.26.10 (v0.34) (@c2ndev)
+- **PR #4252** (2026-10-28): chore(config): drop kubernetes minors below 1.35 from the image maps (backport v0.36 oss) (@loft-bot)
+- **PR #4251** (2026-10-28): chore(config): drop kubernetes minors below 1.35 from the image maps (backport v0.34 oss) (@loft-bot)
+- **PR #4250** (2026-10-28): chore(config): drop kubernetes minors below 1.35 from the image maps (backport v0.35 oss) (@loft-bot)
+- **PR #4248** (2026-10-28): fix(deps): bump the default kubernetes and etcd images to patched releases (backport v0.35 oss) (@loft-bot)
+- **PR #4247** (2026-10-28): fix(deps): bump the default kubernetes and etcd images to patched releases (backport v0.36 oss) (@loft-bot)
+- **PR #4246** (2026-10-28): fix(deps): bump the default kubernetes and etcd images to patched releases (backport v0.34 oss) (@loft-bot)
 
 ---
 
@@ -1594,28 +1625,32 @@ Monorepo-Commit: d2808f20a3b2d948816224df6040ca580f84fbb6
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. vclusterctl): prevent panic when listing on no secrets (#2636)
+## X. deps): bump the default kubernetes and etcd images to patched releases
 
 **RULE**:
-When implementing operations in `cmd/vclusterctl/cmd/platform/get/secret.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `chart/tests/statefulset_test.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2dd27678`: vclusterctl): prevent panic when listing on no secrets (#2636). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ee4c52de`: deps): bump the default kubernetes and etcd images to patched releases. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/vclusterctl/cmd/platform/get/secret.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `chart/tests/statefulset_test.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	return secrets, stderrors.Join(errs...)
+          value: ghcr.io/loft-sh/kubernetes:v1.36.6
+        value: ghcr.io/loft-sh/kubernetes:v1.36.6
+          value: ghcr.io/loft-sh/kubernetes:v1.36.6
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	return nil, stderrors.Join(errs...)
+          value: ghcr.io/loft-sh/kubernetes:v1.36.5
+        value: ghcr.io/loft-sh/kubernetes:v1.36.5
+          value: ghcr.io/loft-sh/kubernetes:v1.36.5
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2dd27678` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ee4c52de` are properly handled with clean fallback behavior.

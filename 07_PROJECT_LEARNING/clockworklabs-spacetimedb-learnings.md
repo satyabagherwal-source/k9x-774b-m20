@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source**: github ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
-> **Source Version**: `5ce9e901`  
+> **Source Version**: `c48f5120`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T04:21:52.122Z  
+> **Timestamp**: 2026-10-28T21:56:44.569Z  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T04:21:52.114Z  
+> **Harvest Timestamp**: 2026-10-28T21:56:44.564Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -810,412 +810,1684 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5ce9e901` (2026-10-27)
-**Commit Message**: Add a SpacetimeDB Standalone architecture diagram to docs/DEVELOP.md (#6400)
+### Incident Patch 1: `c48f5120` (2026-10-28)
+**Commit Message**: Async IDC: rust outbox macro (#6376)
 
 # Description of Changes
 
-This PR adds an Architecture section to `docs/DEVELOP.md` with a diagram
-of what runs inside SpacetimeDB Standalone and a short paragraph
-explaining it. Previously, the only diagram in the repo was the
-user-facing one in the README, so contributors had to read the code to
-learn how the HTTP and Postgres servers, the per-database ModuleHost
-queue, views, subscriptions, durability, and snapshots fit together. The
-text is kept to one paragraph so it doesn't drift from the code, and the
-README gets a one-line pointer to it under Building from Source.
+Macro side changes taken out from:
+https://github.com/clockworklabs/SpacetimeDB/pull/6001.
+Based on https://github.com/clockworklabs/SpacetimeDB/pull/6375
 
-# API and ABI breaking changes
+Adds Rust outbox declarations for intermodule reducer calls using
+generated receiver bindings.
 
-This does not break anything. It only adds a section to
-`docs/DEVELOP.md` and an SVG and changes one line of the README, so no
-code or behavior changes.
+It can be reviewed through commits:
 
-# Rollback safety impact
+- Add outbox macros and runtime registration as described in the
+proposal.
+- Map outbox columns to receiver parameters using `#[param(name =
+...)]`, with compile-time type checking.
+- Make outbox tables insert-only by removing update and delete APIs.
+- Accept receiver dependencies in publish configuration.
+- Add end-to-end smoke tests covering generation, publishing, delivery,
+callbacks, receiver updates, and two dependencies with identical type
+names.
 
-n/a
+## API and ABI breaking changes
 
-# Expected complexity level and risk
+Additive module API. Update and delete APIs are unavailable on outbox
+tables.
 
-1
+No host ABI changes.
 
-# Testing
+## Rollback safety impact
 
-- [x] Checked each box and arrow in the diagram against the code
-(routes, ModuleHost queue, view refresh, commit and broadcast,
-durability, snapshots, scheduler, IDC actor)
-- [x] Rendered the SVG in headless Chrome and checked layout and
-legibility
-- [x] Validated the SVG 
+N/A.
 
-**File**: `README.md` (modified, +2/-0)
+## Expected complexity level and risk
+
+3.
+
+## Proposal drift
+
+The `outbox!` convenience macro is not implemented yet.
+
+Source-based local reducer references and self-referential outboxes are
+handled in a separate PR.
+
+## T
+
+**File**: `crates/bindings-macro/src/lib.rs` (modified, +8/-1)
 ```diff
-@@ -245,6 +245,8 @@ spacetime version use $stdbVersion
- 
- Verify with `spacetime --version`.
- 
-+To find your way around the code, see the [architecture diagram](docs/DEVELOP.md#architecture) of what runs inside SpacetimeDB Standalone.
-+
- ## Documentation
- 
- To prepare your AI coding environment, follow the [agent setup guide](docs/static/agent-setup.md).
+@@ -159,6 +159,10 @@ mod sym {
+     symbol!(repr);
+     symbol!(sats);
+     symbol!(scheduled);
++    symbol!(outbox);
++    symbol!(on_result);
++    symbol!(param);
++    symbol!(target);
+     symbol!(unique);
+     symbol!(update);
+     symbol!(default);
+@@ -229,7 +233,10 @@ fn derive_table_helper_attr() -> Attribute {
+ ///
+ /// Provides helper attributes for `#[spacetimedb::table]`, so that we don't get unknown attribute errors.
+ #[doc(hidden)]
+-#[proc_macro_derive(__TableHelper, attributes(sats, unique, auto_inc, primary_key, index, default))]
++#[proc_macro_derive(
++    __TableHelper,
++    attributes(sats, unique, auto_inc, primary_key, target, index, default, param)
++)]
+ pub fn table_helper(input: StdTokenStream) -> StdTokenStream {
+     schema_type(input)
+ }
 ```
 
-**File**: `docs/DEVELOP.md` (modified, +12/-1)
+**File**: `crates/bindings-macro/src/reducer.rs` (modified, +22/-0)
 ```diff
-@@ -1,6 +1,6 @@
- # DEVELOP.md
+@@ -10,6 +10,7 @@ use syn::{FnArg, Ident, ItemFn, LitStr, PatType};
+ pub(crate) struct ReducerArgs {
+     name: Option<LitStr>,
+     lifecycle: Option<LifecycleReducer>,
++    on_result: Option<syn::Path>,
+ }
  
--This document explains how to configure the environment, run the LLM benchmark tool, and work with the benchmark suite.
-+This document explains how to configure the environment, run the LLM benchmark tool, and work with the benchmark suite. It ends with a diagram of the SpacetimeDB Standalone architecture.
+ enum LifecycleReducer {
+@@ -51,6 +52,12 @@ impl ReducerArgs {
+                     check_duplicate(&args.name, &meta)?;
+                     args.name = Some(meta.value()?.parse()?);
+                 }
++                sym::on_result => {
++                    check_duplicate(&args.on_result, &meta)?;
++                    let content;
++                    syn::parenthesized!(content in meta.input);
++                    args.on_result = Some(content.parse()?);
++                }
+             });
+             Ok(())
+         })
+@@ -101,6 +108,19 @@ pub(crate) fn reducer_impl(args: ReducerArgs, original_function: &ItemFn) -> syn
+     assert_only_lifetime_generics(original_function, "reducers")?;
  
- ---
+     let lifecycle = args.lifecycle.iter().filter_map(|lc| lc.to_lifecycle_value());
++    let on_result_outbox = args.on_result.as_ref().map(|path| {
++        let accessor = &path.segments.last().unwrap().ident;
++        quote!(
++            const ON_RESULT_OUTBOX: Option<&'static str> =
++                Some(spacetimedb::rt::on_result_outbox(#path::#accessor));
++        )
++    });
++    let on_result_typecheck = args.on_result.as_ref().map(|path| {
++        let accessor = &path.segments.last().unwrap().ident;
++        quote! {
++            spacetimedb::rt::on_result_typecheck(#func_name, #path::#accessor);
++        }
++    });
  
-@@ -12,6 +12,7 @@ This document explains how to configure the environment, run the LLM benchmark t
- 4. [Benchmark Suite](#benchmark-suite)
- 5. [Context Construction](#context-construction)
- 6. [Troubleshooting](#troubleshooting)
-+7. [Architecture](#architecture)
- ---
+     let typed_args = extract_typed_args(original_function)?;
  
- ## Prerequisites
-@@ -308,3 +309,13 @@ When writing documentation that will be used by the benchmark:
- **Timeouts / Rate-limits**
- - Lower `LLM_BENCH_CONCURRENCY` or `LLM_BENCH_ROUTE_CONCURRENCY`.
- - Some providers aggressively throttle bursts; use backoff/retry when supported.
-+
-+---
-+
-+## Architecture
-+
-+<p align="center">
-+    <img src="../images/server-architecture.svg" alt="SpacetimeDB server architecture" width="100%">
-+</p>
-+
-+This diagram shows what runs inside SpacetimeDB Standalone. The yellow areas run on the shared Tokio runtime: the HTTP, WebSocket, and Postgres servers, ControlDB, and each database's background workers. The purple area is each database's own thread, pinned to a core, where the ModuleHost runs reducers, SQL, and view updates one at a time against the in-memory datastore. The green arrows follow a reducer call through commit, after which the changes go to the commitlog on disk and to subscriptions, which push updates back to clients. The diagram is a plain SVG at `images/server-architecture.svg`, so you can edit it directly.
+@@ -156,6 +176,7 @@ pub(crate) fn reducer_impl(args: ReducerArgs, original_function: &ItemFn) -> syn
+                 #(let _ = <#first_arg_ty as spacetimedb::rt::ReducerContextArg>::_ITEM;)*
+                 #(let _ = <#rest_arg_tys as spacetimedb::rt::ReducerArg>::_ITEM;)*
+                 #(let _ = <#ret_ty as spacetimedb::rt::IntoReducerResult>::into_result;)*
++                #on_result_typecheck
+             }
+         };
+         impl #func_name {
+@@ -170,6 +191,7 @@ pub(crate) fn reducer_impl(args: ReducerArgs, original_function: &ItemFn) -> syn
+             type FnKind = spacetimedb::rt::FnKindReducer;
+             const NAME: &'static str = #reducer_name;
+             #(const LIFECYCLE: Option<spacetimedb::rt::LifecycleReducer> = Some(#lifecycle);)*
++            #on_result_outbox
+             const ARG_NAMES: &'static [Option<&'static str>] = &[#(#opt_arg_names),*];
+             const INVOKE: Self::Invoke = #func_name::invoke;
+         }
 ```
 
-**File**: `images/server-architecture.svg` (added, +224/-0)
+**File**: `crates/bindings-macro/src/table.rs` (modified, +262/-18)
 ```diff
-@@ -0,0 +1,224 @@
-+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1400" viewBox="0 0 1600 1400" role="img" aria-labelledby="title desc">
-+  <title id="title">SpacetimeDB server architecture</title>
-+  <desc id="desc">Clients reach SpacetimeDB Standalone over HTTP, WebSocket, or the Postgres wire protocol. Network handling, the control database, and background workers run on a shared Tokio runtime. Each database runs its module, datastore, and query engine on one thread pinned to a core. Committed transactions go to the commitlog on disk and to subscription evaluation, which pushes updates back to clients.</desc>
-+  <style>
-+    text { font-family: Inter, 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-+    .title { font-size: 30px; font-weight: 700; fill: #e6e9f0; }
-+    .subtitle { font-size: 16px; fill: #b6c0cf; }
-+    .h { font-size: 17px; font-weight: 600; fill: #e6e9f0; }
-+    .h2 { font-size: 15px; font-weight: 600; fill: #e6e9f0; }
-+    .b { font-size: 13.5px; fill: #b6c0cf; }
-+    .tag { font-family: 'Source Code Pro', 'Source Code Pro Variable', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; fill: #6f7987; }
-+    .pill { font-family: 'Source Code Pro', 'Source Code Pro Variable', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; fill: #e6e9f0; }
-+    .band { font-size: 12.5px; font-weight: 700; letter-spacing: 1.6px; }
-+    .bandsub { font-weight: 400; letter-spacing: 0; fill: #b6c0cf; }
-+    .node { font-size: 12.5px; font-weight: 700; letter-spacing: 1.6px; fill: #b6c0cf; }
-+    .al { font-size: 13px; fill: #b6c0cf; }
-+    .alg { font-size: 13px; font-weight: 600; fill: #4cf490; }
-+    .num { font-size: 13px; font-weight: 700; fill: #0b0e12; }
-+    .or { font-size: 13px; font-style: italic; fill: #6f7987; }
-+    .hot { fill: none; stroke: #4cf490; stroke-width: 2.25; stroke-linejoin: round; }
-+    .cold { fill: none; stroke: #6f7987; stroke-width: 1.75; stroke-linejoin: round; }
-+  </style>
-+  <defs>
-+    <marker id="ge" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#4cf490"/></marker>
-+    <marker id="gs" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M10 0 L0 5 L10 10 z" fill="#4cf490"/></marker>
-+    <marker id="ne" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#6f7987"/></marker>
-+    <marker id="ns" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M10 0 L0 5 L10 10 z" fill="#6f7987"/></marker>
-+  </defs>
+@@ -19,6 +19,7 @@ pub(crate) struct TableArgs {
+     access: Option<TableAccess>,
+     name: Option<LitStr>,
+     scheduled: Option<ScheduledArg>,
++    outbox: Option<OutboxArg>,
+     accessor: Ident,
+     indices: Vec<IndexArg>,
+     event: Option<Span>,
+@@ -47,6 +48,10 @@ struct ScheduledArg {
+     at: Option<Ident>,
+ }
+ 
++struct OutboxArg {
++    receiver_reducer: Path,
++}
 +
-+  <!-- Card -->
-+  <rect x="0" y="0" width="1600" height="1400" rx="24" fill="#202126" stroke="#202126" stroke-width="0"/>
-+  <text x="60" y="66" class="title">SpacetimeDB Standalone architecture</text>
-+  <text x="60" y="96" class="subtitle">What runs inside the spacetimedb-standalone process. Green arrows follow a reducer call.</text>
+ struct IndexArg {
+     accessor: Ident,
+     canonical_name: Option<LitStr>,
+@@ -78,6 +83,7 @@ impl TableArgs {
+     pub(crate) fn parse(input: TokenStream, struct_ident: &Ident) -> syn::Result<Self> {
+         let mut access = None;
+         let mut scheduled = None;
++        let mut outbox = None;
+         let mut accessor = None;
+         let mut name: Option<LitStr> = None;
+         let mut indices = Vec::new();
+@@ -145,6 +151,10 @@ If you're migrating from SpacetimeDB 1.*, replace `name = {sym}` with `accessor
+                     check_duplicate(&scheduled, &meta)?;
+                     scheduled = Some(ScheduledArg::parse_meta(meta)?);
+                 }
++                sym::outbox => {
++                    check_duplicate(&outbox, &meta)?;
++                    outbox = Some(OutboxArg::parse_meta(meta)?);
++                }
+                 sym::event => {
+                     check_duplicate(&event, &meta)?;
+                     event = Some(meta.path.span());
+@@ -184,6 +194,7 @@ If you're migrating from SpacetimeDB 1.*, replace `name = {name_str_value:?}` wi
+         Ok(TableArgs {
+             access,
+             scheduled,
++            outbox,
+             accessor,
+             indices,
+             name,
+@@ -192,6 +203,22 @@ If you're migrating from SpacetimeDB 1.*, replace `name = {name_str_value:?}` wi
+     }
+ }
+ 
++impl OutboxArg {
++    fn parse_meta(meta: ParseNestedMeta) -> syn::Result<Self> {
++        let mut receiver_reducer = None;
 +
-+  <!-- Clients -->
-+  <rect x="560" y="124" width="164" height="64" rx="10" fill="none" stroke="#6f7987" stroke-width="1.5"/>
-+  <text x="642.0" y="152" class="h2" text-anchor="middle">spacetime CLI</text>
-+  <text x="642.0" y="173" class="tag" text-anchor="middle">HTTP</text>
-+  <rect x="836" y="124" width="164" height="64" rx="10" fill="none" stroke="#6f7987" stroke-width="1.5"/>
-+  <text x="918.0" y="152" class="h2" text-anchor="middle">Client SDKs</text>
-+  <text x="918.0" y="173" class="tag" text-anchor="middle">WebSocket, HTTP</text>
-+  <rect x="1160" y="124" width="232" height="64" rx="10" fill="none" stroke="#6f7987" stroke-width="1.5"/>
-+  <text x="1276.0" y="152" class="h2" text-anchor="middle">Postgres clients</text>
-+  <text x="1276.0" y="173" class="tag" text-anchor="middle">pgwire</text>
++        meta.parse_nested_meta(|meta| {
++            check_duplicate_msg(&receiver_reducer, &meta, "can only specify one outbox receiver reducer")?;
++            receiver_reducer = Some(meta.path);
++            Ok(())
++        })?;
 +
-+  <!-- Process -->
-+  <rect x="40" y="224" width="1520" height="1038" rx="20" fill="none" stroke="#363840" stroke-width="1.5"/>
-+  <text x="64" y="250" class="node">SPACETIMEDB STANDALONE</text>
-+  <text x="290" y="250" class="al">one process</text>
++        let receiver_reducer = receiver_reducer
++            .ok_or_else(|| meta.error("must specify outbox receiver reducer: outbox(receiver::reducer)"))?;
++        Ok(Self { receiver_reducer })
++    }
++}
 +
-+  <!-- Tokio runtime: network and control plane -->
-+  <rect x="64" y="268" width="1472" height="372" rx="16" fill="#fbdc8e" fill-opacity="0.06" stroke="#fbdc8e" stroke-opacity="0.45" stroke-width="1.5"/>
-+  <text x="88" y="296" class="band" fill="#fbdc8e">TOKIO RUNTIME<tspan class="bandsub" dx="12">async tasks on the shared worker cores</tspan></text>
-+  <rect x="88" y="312" width="312" height="140" rx="10" fill="#18191d" stroke="#363840" stroke-width="1.5"/>
-+  <text x="106" y="342" class="h">ControlDB</text>
-+  <text x="384" y="342" class="tag" text-anchor="end">sled</text>
-+  <text x="106" y="366" class="b">Databases, owners, and names</text>
-+  <text x="106" y="385" class="b">Replicas and energy budgets</text>
-+  <rect x="460" y="312" width="500" height="140" rx="10" fill="#18191d" stroke="#363840" stroke-width="1.5"/>
-+  <text x="478" y="34
+ impl ScheduledArg {
+     fn parse_meta(meta: ParseNestedMeta) -> syn::Result<Self> {
+         let span = meta.path.span();
+@@ -563,15 +590,22 @@ impl ValidatedIndex<'_> {
+         row_type_ident: &Ident,
+         tbl_type_ident: &Ident,
+         flavor: AccessorType,
++        backend: TokenStream,
+     ) -> TokenStream {
+         if self.is_unique {
+-            self.unique_accessor(row_type_ident, tbl_type_ident, flavor)
++            self.unique_accessor(row_type_ident, tbl_type_ident, flavor, backend)
+         } else {
+-            self.non_unique_accessor(vis, row_type_ident, tbl_type_ident, flavor)
++            self.non_unique_accessor(vis, row_type_ident, tbl_type_ident, flavor, backend)
+         }
+     }
+ 
+-    fn unique_accessor(&self, row_type_ident: &Ident, tbl_type_ident: &Ident, flavor: AccessorType) -> TokenStream {
++    fn unique_accessor(
++        &self,
++        row_type_ident: &Ident,
++        tbl_type_ident: &Ident,
++        flavor: AccessorType,
++        backend: TokenStream,
++    ) -> TokenStream {
+         let col = self.kind.one_col().unwrap();
+         let index_ident = self.accessor_name;
+         let vis = col.vis;
+@@ -589,7 +623,7 @@ impl ValidatedIndex<'_> {
+         quote! {
+             #[doc = #doc]
+             #vis fn #column_ident(&self) -> #unique_ty<#tbl_token, #col_ty, __indices::#index_ident> {
+-                #unique_ty::__new(self.__backend.clone())
++                #unique_ty::__new(#backend)
+             }
+         }
+     }
+@@ -600,6 +634,7 @@ impl ValidatedIndex<'_> {
+         row_type_ident: &Ident,
+         tbl_type_ident: &Ident,
+         flavor: AccessorType,
++        backend: TokenStream,
+     ) -> TokenStream {
+         let index_ident = self.accessor_name;
+         let cols = self.kind.columns();
+@@ -630,7 +665,7 @@ impl ValidatedIndex<'_> {
+         quote! {
+             #[doc = #doc]
+             #vis fn #index_ident(&self) -> #handle_ty<#tbl_token, (#(#col_tys,)*), __indices::#index_ident> {
+-                #handle_ty::__new(self.__backend.clone())
++                #handle_ty::__new(#backend)
+             }
+         }
+     }
+@@ -740,6 +775,7 @@ struct Column<'a> {
+     vis: &'a syn::Visibility,
+     ident: &'a syn::Ident,
+     ty: &'a syn::Type,
++    param_name: String,
+     default_value: Option<syn::Expr>,
+ }
+ 
+@@ -769,8 +805,10 @@ enum ColumnAttr {
+     Unique(Span),
+     AutoInc(Span),
+     PrimaryKey(Span),
++    Target(Span),
+     Index(IndexArg),
+     Default(syn::Expr, Span),
++    ParamName(Ident),
+ }
+ 
+ impl ColumnAttr {
+@@ -790,6 +828,11 @@ impl ColumnAttr {
+         } else if ident == sym::primary_key {
+             attr.meta.require_path_only()?;
+             Some(ColumnAttr::Primary
+```
+
+**File**: `crates/bindings/src/rt.rs` (modified, +59/-6)
+```diff
+@@ -170,6 +170,9 @@ pub trait FnInfo: ExplicitNames {
+     /// Currently only views use this metadata.
+     const VIEW_PRIMARY_KEY_COLUMNS: &'static [&'static str] = &[];
+ 
++    /// The source name of the outbox table whose results this reducer handles.
++    const ON_RESULT_OUTBOX: Option<&'static str> = None;
++
+     /// The function to invoke.
+     const INVOKE: Self::Invoke;
+ 
+@@ -518,6 +521,25 @@ where
+     core::mem::forget(_x);
+ }
+ 
++/// Resolve an outbox accessor to its registered table source name.
++pub const fn on_result_outbox<T, Tbl>(_table: fn(&crate::Local) -> T) -> &'static str
++where
++    T: core::ops::Deref<Target = crate::table::OutboxTable<Tbl>>,
++    Tbl: crate::Table,
++{
++    Tbl::TABLE_NAME
++}
++
++/// Assert that an `on_result` reducer accepts the outbox row and delivery result.
++pub fn on_result_typecheck<T, Tbl, F, Ret>(_f: F, _table: fn(&crate::Local) -> T)
++where
++    T: core::ops::Deref<Target = crate::table::OutboxTable<Tbl>>,
++    Tbl: crate::Table,
++    F: Fn(&ReducerContext, Tbl::Row, Result<(), String>) -> Ret,
++    Ret: IntoReducerResult,
++{
++}
++
+ /// Tacit marker argument to [`ExportFunctionForScheduledTable`] for reducers.
+ pub struct FnKindReducer {
+     _never: Infallible,
+@@ -596,6 +618,9 @@ impl<T: SpacetimeType> TableColumn for T {}
+ /// Assert that the primary_key column of a scheduled table is a u64.
+ pub const fn assert_scheduled_table_primary_key<T: ScheduledTablePrimaryKey>() {}
+ 
++/// Assert that the primary_key column of an outbox table is a u64.
++pub const fn assert_outbox_table_primary_key<T: OutboxTablePrimaryKey>() {}
++
+ mod sealed {
+     pub trait Sealed {}
+ }
+@@ -607,6 +632,13 @@ pub trait ScheduledTablePrimaryKey: sealed::Sealed {}
+ impl sealed::Sealed for u64 {}
+ impl ScheduledTablePrimaryKey for u64 {}
+ 
++#[diagnostic::on_unimplemented(
++    message = "outbox table primary key must be a `u64`",
++    label = "should be `u64`, not `{Self}`"
++)]
++pub trait OutboxTablePrimaryKey: sealed::Sealed {}
++impl OutboxTablePrimaryKey for u64 {}
++
+ /// Used in the last type parameter of `Reducer` to indicate that the
+ /// context argument *should* be passed to the reducer logic.
+ pub struct ContextArg;
+@@ -825,6 +857,18 @@ pub fn register_table<T: Table>() {
+ 
+         table.finish();
+ 
++        if let Some(outbox) = T::OUTBOX {
++            module.inner.add_outbox(
++                T::TABLE_NAME,
++                outbox.remote_reducer_name,
++                outbox.target_column,
++                outbox.arg_columns.iter().copied().map(Into::into),
++                None::<&str>,
++                spacetimedb_lib::Hash::from_hex(outbox.signature_hash)
++                    .expect("generated outbox signature hash must be valid hex"),
++            );
++        }
++
+         module.inner.add_explicit_names(T::explicit_names());
+     })
+ }
+@@ -852,6 +896,9 @@ pub fn register_reducer<'a, A: Args<'a>, I: FnInfo<Invoke = ReducerFn>>(_: impl
+         } else {
+             module.inner.add_reducer(I::NAME, params);
+         }
++        if let Some(outbox_table) = I::ON_RESULT_OUTBOX {
++            module.on_result_reducers.push((outbox_table, I::NAME));
++        }
+         module.reducers.push(I::INVOKE);
+ 
+         module.inner.add_explicit_names(I::explicit_names());
+@@ -1133,6 +1180,7 @@ pub struct ModuleBuilder {
+     views: Vec<ViewFn>,
+     /// The anonymous views of the module.
+     views_anon: Vec<AnonymousFn>,
++    on_result_reducers: Vec<(&'static str, &'static str)>,
+ }
+ 
+ // Not actually a mutex; because WASM is single-threaded this basically just turns into a refcell.
+@@ -1162,11 +1210,20 @@ static ANONYMOUS_VIEWS: OnceLock<Vec<AnonymousFn>> = OnceLock::new();
+ #[cfg(feature = "test-utils")]
+ #[doc(hidden)]
+ pub fn module_def_for_tests() -> RawModuleDef {
++    RawModuleDef::V10(describe_module().inner.finish())
++}
++
++fn describe_module() -> ModuleBuilder {
+     let mut module = ModuleBuilder::default();
+     for describer in &mut *DESCRIBERS.lock().unwrap() {
+         describer(&mut module)
+     }
+-    RawModuleDef::V10(module.inner.finish())
++
++    // Tables and reducers can register in either order, so link callbacks last.
++    for (outbox_table, reducer) in module.on_result_reducers.drain(..) {
++        module.inner.set_outbox_on_result(outbox_table, reducer);
++    }
++    module
+ }
+ 
+ /// Called by the host when the module is initialized
+@@ -1186,11 +1243,7 @@ pub fn module_def_for_tests() -> RawModuleDef {
+ /// After initialization, the module cannot alter the schema.
+ #[unsafe(no_mangle)]
+ extern "C" fn __describe_module__(description: BytesSink) {
+-    // Collect the `module`.
+-    let mut module = ModuleBuilder::default();
+-    for describer in &mut *DESCRIBERS.lock().unwrap() {
+-        describer(&mut module)
+-    }
++    let module = describe_module();
+ 
+     // Serialize the module to bsatn.
+     let module_def = module.inner.finish();
+```
+
+**File**: `crates/bindings/src/table.rs` (modified, +53/-2)
+```diff
+@@ -319,8 +319,8 @@ impl TableHandleBackend {
+ }
+ 
+ /// Implemented for every `TableHandle` struct generated by the [`table`](macro@crate::table) macro.
+-/// Contains methods that are present for every table, regardless of what unique constraints
+-/// and indexes are present.
++/// Provides common table operations, regardless of what unique constraints and indexes
++/// are present.
+ ///
+ /// To get a `TableHandle`
+ // TODO: should we rename this `TableHandle`? Documenting this, I think that's much clearer.
+@@ -463,6 +463,48 @@ pub trait Table: TableInternal + ExplicitNames {
+     fn integrate_generated_columns(row: &mut Self::Row, generated_cols: &[u8]);
+ }
+ 
++/// An insert-only table handle used by outboxes.
++///
++/// Shares ordinary table insertion and iteration without exposing deletion or updates.
++/// Outbox index accessors likewise return read-only index handles.
++pub struct OutboxTable<T: Table> {
++    table: T,
++}
++
++impl<T: Table> OutboxTable<T> {
++    #[doc(hidden)]
++    pub fn __new(table: T) -> Self {
++        Self { table }
++    }
++
++    #[doc(hidden)]
++    pub fn __backend(&self) -> &TableHandleBackend {
++        self.table.__backend()
++    }
++
++    /// Returns the number of pending rows.
++    pub fn count(&self) -> u64 {
++        self.table.count()
++    }
++
++    /// Iterates over pending rows.
++    pub fn iter(&self) -> impl Iterator<Item = T::Row> {
++        self.table.iter()
++    }
++
++    /// Inserts a row, returning it with generated column values.
++    #[track_caller]
++    pub fn insert(&self, row: T::Row) -> T::Row {
++        self.table.insert(row)
++    }
++
++    /// Inserts a row, returning any constraint violation.
++    #[track_caller]
++    pub fn try_insert(&self, row: T::Row) -> Result<T::Row, TryInsertError<T>> {
++        self.table.try_insert(row)
++    }
++}
++
+ #[doc(hidden)]
+ #[inline]
+ pub fn count<Tbl: Table>() -> u64 {
+@@ -478,6 +520,7 @@ pub trait TableInternal: Sized {
+     const PRIMARY_KEY: Option<u16> = None;
+     const SEQUENCES: &'static [u16];
+     const SCHEDULE: Option<ScheduleDesc<'static>> = None;
++    const OUTBOX: Option<OutboxDesc<'static>> = None;
+     const IS_EVENT: bool = false;
+ 
+     /// Returns the ID of this table.
+@@ -504,6 +547,14 @@ pub enum IndexAlgo<'a> {
+     Direct { column: u16 },
+ }
+ 
++pub struct OutboxDesc<'a> {
++    pub remote_reducer_name: &'a str,
++    /// Outbox column positions in remote reducer parameter order.
++    pub arg_columns: &'a [u16],
++    pub target_column: u16,
++    pub signature_hash: &'a str,
++}
++
+ pub struct ScheduleDesc<'a> {
+     pub reducer_or_procedure_name: &'a str,
+     pub scheduled_at_column: u16,
+```
+
+**File**: `crates/bindings/tests/fixtures/idc_receiver/lib.rs` (added, +127/-0)
+```diff
+@@ -0,0 +1,127 @@
++// THIS FILE IS AUTOMATICALLY GENERATED BY SPACETIMEDB. EDITS TO THIS FILE
++// WILL NOT BE SAVED. MODIFY TABLES IN YOUR MODULE SOURCE CODE INSTEAD.
++
++#![allow(unused, clippy::all)]
++
++use spacetimedb::spacetimedb_lib as __lib;
++
++#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
++pub struct Identity(pub spacetimedb::Identity);
++
++impl spacetimedb::SpacetimeType for Identity {
++    fn make_type<S: spacetimedb::spacetimedb_lib::sats::typespace::TypespaceBuilder>(
++        typespace: &mut S,
++    ) -> spacetimedb::spacetimedb_lib::AlgebraicType {
++        <spacetimedb::Identity as spacetimedb::SpacetimeType>::make_type(typespace)
++    }
++}
++
++impl spacetimedb::Serialize for Identity {
++    fn serialize<S: spacetimedb::spacetimedb_lib::ser::Serializer>(
++        &self,
++        serializer: S,
++    ) -> ::core::result::Result<S::Ok, S::Error> {
++        <spacetimedb::Identity as spacetimedb::Serialize>::serialize(&self.0, serializer)
++    }
++}
++
++impl<'de> spacetimedb::Deserialize<'de> for Identity {
++    fn deserialize<D: spacetimedb::spacetimedb_lib::de::Deserializer<'de>>(
++        deserializer: D,
++    ) -> ::core::result::Result<Self, D::Error> {
++        <spacetimedb::Identity as spacetimedb::Deserialize>::deserialize(deserializer).map(Self)
++    }
++}
++
++#[derive(__lib::ser::Serialize, __lib::de::Deserialize, Clone, PartialEq, Debug)]
++#[sats(crate = __lib)]
++pub struct ReceivePingArgs {
++    pub body: ::std::string::String,
++}
++
++#[doc(hidden)]
++macro_rules! __spacetimedb_typecheck_outbox_receive_ping_body_reject_duplicate {
++    ($module:ident;) => {};
++    ($module:ident; ($index:literal, $field:ident : $ty:ty as body), $($rest:tt)*) => {
++        compile_error!(concat!(
++            "outbox has multiple columns matching remote reducer parameter `",
++            stringify!(body),
++            "`"
++        ));
++    };
++    ($module:ident; ($index:literal, $field:ident : $ty:ty as $other:ident), $($rest:tt)*) => {
++        $module::__spacetimedb_typecheck_outbox_receive_ping_body_reject_duplicate!($module; $($rest)*);
++    };
++}
++
++#[doc(hidden)]
++pub(crate) use __spacetimedb_typecheck_outbox_receive_ping_body_reject_duplicate;
++
++#[doc(hidden)]
++macro_rules! __spacetimedb_typecheck_outbox_receive_ping_body {
++    ($module:ident;) => {{
++        compile_error!(concat!(
++            "outbox has no column matching remote reducer parameter `",
++            stringify!(body),
++            "`"
++        ));
++        0u16
++    }};
++    ($module:ident; ($index:literal, $field:ident : $ty:ty as body), $($rest:tt)*) => {{
++        let _ = |x: $ty| { let _: ::std::string::String = x; };
++        $module::__spacetimedb_typecheck_outbox_receive_ping_body_reject_duplicate!($module; $($rest)*);
++        $index
++    }};
++    ($module:ident; ($index:literal, $field:ident : $ty:ty as $other:ident), $($rest:tt)*) => {
++        $module::__spacetimedb_typecheck_outbox_receive_ping_body!($module; $($rest)*)
++    };
++}
++
++#[doc(hidden)]
++pub(crate) use __spacetimedb_typecheck_outbox_receive_ping_body;
++
++#[doc(hidden)]
++macro_rules! __spacetimedb_typecheck_outbox_receive_ping {
++    ($module:path, { $($columns:tt)* }) => {{
++        #[allow(unused_imports)]
++        use $module as __outbox_receiver;
++        &[__outbox_receiver::__spacetimedb_typecheck_outbox_receive_ping_body!(__outbox_receiver; $($columns)*)]
++    }};
++}
++
++#[doc(hidden)]
++pub(crate) use __spacetimedb_typecheck_outbox_receive_ping;
++
++#[allow(non_camel_case_types)]
++pub struct receive_ping;
++
++impl spacetimedb::rt::RemoteReducer for receive_ping {
++    const NAME: &'static str = "wire_ping";
++    const SIGNATURE_HASH: &'static str = "386957a94632958d5ae8343e258f3a6f9dce9d7dafc46831050894baa7a4e4e1";
++    type Args = ReceivePingArgs;
++}
++
++#[derive(__lib::ser::Serialize, __lib::de::Deserialize, Clone, PartialEq, Debug)]
++#[sats(crate = __lib)]
++pub struct NoopArgs {}
++
++#[doc(hidden)]
++macro_rules! __spacetimedb_typecheck_outbox_noop {
++    ($module:path, { $($columns:tt)* }) => {{
++        #[allow(unused_imports)]
++        use $module as __outbox_receiver;
++        &[]
++    }};
++}
++
++#[doc(hidden)]
++pub(crate) use __spacetimedb_typecheck_outbox_noop;
++
++#[allow(non_camel_case_types)]
++pub struct noop;
++
++impl spacetimedb::rt::RemoteReducer for noop {
++    const NAME: &'static str = "noop";
++    const SIGNATURE_HASH: &'static str = "bc436888fd947d2bfd49ed6bddad31f0245c34fd42c85f9360fa0b477aa957fc";
++    type Args = NoopArgs;
++}
+```
+
+**File**: `crates/bindings/tests/pass/outbox_arg_columns.rs` (added, +142/-0)
+```diff
+@@ -0,0 +1,142 @@
++#[path = "../fixtures/idc_receiver/lib.rs"]
++mod receiver;
++
++mod remote_bindings {
++    pub(crate) use crate::receiver;
++}
++
++#[spacetimedb::table(
++    accessor = outbound_ping,
++    name = "WireOutbox",
++    outbox(crate::remote_bindings::receiver::receive_ping),
++    index(accessor = by_audit, btree(columns = [audit])),
++    index(accessor = by_audit_hash, hash(columns = [audit])),
++)]
++pub struct OutboundPing {
++    #[primary_key]
++    #[auto_inc]
++    id: u64,
++    audit: String,
++    #[param(name = body)]
++    payload: String,
++    #[target]
++    destination: receiver::Identity,
++}
++
++mod outboxes {
++    use super::receiver;
++
++    #[spacetimedb::table(accessor = plain_ping, outbox(self::receiver::receive_ping))]
++    pub struct PlainPing {
++        #[primary_key]
++        #[auto_inc]
++        id: u64,
++        #[target]
++        target: receiver::Identity,
++        body: String,
++    }
++}
++
++#[spacetimedb::table(accessor = empty_ping, outbox(receiver::noop))]
++pub struct EmptyPing {
++    #[primary_key]
++    #[auto_inc]
++    id: u64,
++    #[target]
++    target: receiver::Identity,
++}
++
++#[spacetimedb::reducer(on_result(self::outbound_ping))]
++pub fn on_ping_result(_: &spacetimedb::ReducerContext, _: OutboundPing, _: Result<(), String>) {}
++
++mod callbacks {
++    #[spacetimedb::reducer(name = "WireCallback", on_result(super::outboxes::plain_ping))]
++    pub fn on_plain_result(_: &spacetimedb::ReducerContext, _: super::outboxes::PlainPing, _: Result<(), String>) {}
++}
++
++fn main() {
++    use spacetimedb::rt::FnInfo;
++    use spacetimedb::table::TableInternal;
++
++    assert_eq!(on_ping_result::ON_RESULT_OUTBOX, Some("outbound_ping"));
++    assert_eq!(callbacks::on_plain_result::ON_RESULT_OUTBOX, Some("plain_ping"));
++    assert_eq!(outbound_ping__TableHandle::OUTBOX.unwrap().arg_columns, &[2]);
++    assert_eq!(outbound_ping__TableHandle::OUTBOX.unwrap().target_column, 3);
++    assert_eq!(outboxes::plain_ping__TableHandle::OUTBOX.unwrap().arg_columns, &[2]);
++    assert!(empty_ping__TableHandle::OUTBOX.unwrap().arg_columns.is_empty());
++    assert_eq!(
++        outboxes::plain_ping__TableHandle::OUTBOX.unwrap().remote_reducer_name,
++        "wire_ping"
++    );
++}
++
++// Outbox tables retain inserts and reads, including primary-key lookups.
++fn read_and_insert(ctx: &spacetimedb::ReducerContext, row: OutboundPing) {
++    let table = ctx.db.outbound_ping();
++    let row = table.insert(row);
++    let _ = table.id().find(row.id);
++    let _ = table.by_audit().filter("audit");
++    let _ = table.by_audit_hash().filter("audit");
++    let _ = table.try_insert(row);
++    let _ = table.count();
++    let _ = table.iter();
++}
++
++// Existing Table bounds, associated-type paths, and UFCS calls remain sufficient.
++fn mutate_generic<T: spacetimedb::Table>(table: &T, row: <T as spacetimedb::Table>::Row) {
++    let row = spacetimedb::Table::insert(table, row);
++    table.delete(row);
++    table.clear();
++}
++
++fn mutate_generic_index<T, C>(column: &spacetimedb::UniqueColumn<T, C::ColType, C>, row: T::Row)
++where
++    T: spacetimedb::Table,
++    C: spacetimedb::table::Index + spacetimedb::table::Column<Table = T> + spacetimedb::table::PrimaryKey,
++{
++    let row = column.update(row);
++    #[cfg(feature = "unstable")]
++    let row = column.insert_or_update(row);
++    #[cfg(feature = "unstable")]
++    let row = column.try_insert_or_update(row).unwrap();
++    column.delete(C::get_field(&row));
++}
++
++fn mutate_generic_indexes<T, R, P>(
++    ranged: &spacetimedb::RangedIndex<T, (String,), R>,
++    pointed: &spacetimedb::PointIndex<T, (String,), P>,
++) where
++    T: spacetimedb::Table,
++    R: spacetimedb::table::IndexIsRanged,
++    P: spacetimedb::table::IndexIsPointed,
++{
++    ranged.delete("value");
++    pointed.delete("value");
++}
++
++#[spacetimedb::table(
++    accessor = ordinary,
++    index(accessor = by_value, btree(columns = [value])),
++    index(accessor = by_value_hash, hash(columns = [value])),
++)]
++pub struct Ordinary {
++    #[primary_key]
++    id: u64,
++    value: String,
++}
++
++// Ordinary tables retain all update and delete APIs.
++fn mutate_ordinary(ctx: &spacetimedb::ReducerContext, row: Ordinary) {
++    use spacetimedb::Table;
++    let table = ctx.db.ordinary();
++    let row = table.id().update(row);
++    #[cfg(feature = "unstable")]
++    let row = table.id().insert_or_update(row);
++    #[cfg(feature = "unstable")]
++    let row = table.id().try_insert_or_update(row).unwrap();
++    table.delete(row);
++    table.id().delete(1);
++    table.by_value().delete("value");
++    table.by_value_hash().delete("value");
++    table.clear();
++}
+```
+
+**File**: `crates/bindings/tests/test_utils.rs` (modified, +41/-0)
+```diff
+@@ -2,6 +2,9 @@ use spacetimedb::spacetimedb_lib::RawModuleDef;
+ use spacetimedb::test_utils::{TestAuth, TestQueryError};
+ use spacetimedb::{reducer, table, AnonymousViewContext, Query, ReducerContext, Table, Timestamp, ViewContext};
+ 
++#[path = "fixtures/idc_receiver/lib.rs"]
++mod receiver;
++
+ #[table(accessor = test_utils_user, public)]
+ #[derive(Debug, PartialEq, Eq)]
+ pub struct TestUtilsUser {
+@@ -24,6 +27,21 @@ pub fn add_test_utils_user(_ctx: &ReducerContext, id: u64, name: String) {
+     let _ = (id, name);
+ }
+ 
++#[table(accessor = test_utils_outbox, outbox(receiver::receive_ping))]
++pub struct TestUtilsOutbox {
++    #[primary_key]
++    #[auto_inc]
++    id: u64,
++    audit: String,
++    #[param(name = body)]
++    payload: String,
++    #[target]
++    destination: receiver::Identity,
++}
++
++#[reducer(on_result(test_utils_outbox))]
++pub fn on_test_utils_outbox_result(_ctx: &ReducerContext, _row: TestUtilsOutbox, _result: Result<(), String>) {}
++
+ fn query_test_utils_users_by_name(from: spacetimedb::QueryBuilder, name: &str) -> impl Query<TestUtilsUser> {
+     from.test_utils_user()
+         .r#where(|user| user.name.eq(name.to_owned()))
+@@ -45,6 +63,7 @@ fn module_def_includes_native_test_registrations() {
+     let mut table_names = spacetimedb::test_utils::all_table_names();
+     table_names.sort_unstable();
+     assert!(table_names.contains(&"test_utils_user"));
++    assert!(table_names.contains(&"test_utils_outbox"));
+ 
+     let RawModuleDef::V10(module) = spacetimedb::test_utils::module_def() else {
+         panic!("test utils should return a v10 raw module def");
+@@ -57,11 +76,33 @@ fn module_def_includes_native_test_registrations() {
+     assert!(tables
+         .iter()
+         .any(|table| table.source_name.as_ref() == "test_utils_event"));
++    assert!(tables
++        .iter()
++        .any(|table| table.source_name.as_ref() == "test_utils_outbox"));
+ 
+     let reducers = module.reducers().expect("reducers section should be present");
+     assert!(reducers
+         .iter()
+         .any(|reducer| reducer.source_name.as_ref() == "add_test_utils_user"));
++    assert!(reducers
++        .iter()
++        .any(|reducer| reducer.source_name.as_ref() == "on_test_utils_outbox_result"));
++
++    let outboxes = module.outboxes().expect("outboxes section should be present");
++    assert_eq!(outboxes.len(), 1);
++    let outbox = &outboxes[0];
++    assert_eq!(outbox.table_name.as_ref(), "test_utils_outbox");
++    assert_eq!(outbox.remote_reducer.as_ref(), "wire_ping");
++    assert_eq!(outbox.target_column, 3.into());
++    assert_eq!(outbox.arg_columns, vec![2.into()]);
++    assert_eq!(
++        outbox.signature_hash,
++        spacetimedb::spacetimedb_lib::Hash::from_hex(
++            <receiver::receive_ping as spacetimedb::rt::RemoteReducer>::SIGNATURE_HASH
++        )
++        .unwrap()
++    );
++    assert_eq!(outbox.on_result_reducer.as_deref(), Some("on_test_utils_outbox_result"));
+ }
+ 
+ #[test]
 ```
 
 ---
 
-### Incident Patch 2: `854ce637` (2026-10-27)
-**Commit Message**: Async IDC: Preserve V10 names and type IDC outbox signature hashes (#6364)
+### Incident Patch 2: `ef85c541` (2026-10-28)
+**Commit Message**: Async IDC: rust receiver bindings (#6375)
 
-## Summary
-Taken out from https://github.com/clockworklabs/SpacetimeDB/pull/6001.
+## Description of Changes
+Taken receiver side out from:
+https://github.com/clockworklabs/SpacetimeDB/pull/6001.
+Based on https://github.com/clockworklabs/SpacetimeDB/pull/6364
 
-1. **Fix `ModuleDef` → `RawModuleDefV10` round trip bug.**: `spacetime
-generate` does the round trip from `ModuleDef -> RawModuleDef ->
-ModuleDef` for it's implementation, conversion to `RawModuleDefV10` does
-not put any `CaseConversionPolicy` causing it to defaulting to
-`snake_case`, which applied `snake_case` casing on re `RawModuleDefV10`
-to `ModuleDef` conversion, resulting in different output. Fixes that by
-harding case conversion policy to None.
+Adds Rust receiver bindings for intermodule reducer calls.
 
-2. **Use typed `Hash` values for IDC outbox signatures.** Changes the
-outbox signature type to Hash as that's more appropriate than String, we
-can not fix it on system table, hence do the conversion at boundary
+It can be reviewed through commits:
 
+- Do callback validation
+- Generate Rust receiver types, reducer metadata, and parameter-checking
+helpers, reusing client codegen where possible.
+- Wire receiver-binding generation into the CLI.
+- Namespace registered receiver types by dependency name to avoid
+collisions.
+- Add CLI smoke tests that generate bindings for two dependencies and
+compile a sender using both.
 
-# API and ABI breaking changes
+## API and ABI breaking changes
 NA
 
-# Rollback safety impact
-n/a
+## Rollback safety impact
 
-# Expected complexity level and risk
-2
+N/A.
 
-# Testing
-NA
+## Expected complexity level and risk
 
-**File**: `Cargo.lock` (modified, +1/-0)
+3.
+
+## Testing
+
+- Added tests.
+
+---------
+
+Signed-off-by: Shubham Mishra <[REDACTED_EMAIL]>
+Co-authored-by: joshua-spacetime <[REDACTED_EMAIL]>
+
+**File**: `crates/bindings/src/rt.rs` (modified, +19/-0)
 ```diff
-@@ -8940,6 +8940,7 @@ dependencies = [
-  "lean_string",
-  "petgraph 0.6.5",
-  "proptest",
-+ "serde_json",
-  "serial_test",
-  "smallvec",
-  "spacetimedb-data-structures",
-```
-
-**File**: `crates/bindings-csharp/Runtime/Internal/Autogen/RawOutboxDefV10.g.cs` (modified, +2/-3)
-```diff
-@@ -24,15 +24,15 @@ public sealed partial class RawOutboxDefV10
-         [DataMember(Name = "on_result_reducer")]
-         public string? OnResultReducer;
-         [DataMember(Name = "signature_hash")]
--        public string SignatureHash;
-+        public U256 SignatureHash;
- 
-         public RawOutboxDefV10(
-             string TableName,
-             string RemoteReducer,
-             ushort TargetColumn,
-             System.Collections.Generic.List<ushort> ArgColumns,
-             string? OnResultReducer,
--            string SignatureHash
-+            U256 SignatureHash
-         )
-         {
-             this.TableName = TableName;
-@@ -48,7 +48,6 @@ public RawOutboxDefV10()
-             this.TableName = "";
-             this.RemoteReducer = "";
-             this.ArgColumns = new();
--            this.SignatureHash = "";
-         }
-     }
- }
-```
-
-**File**: `crates/core/src/host/idc_actor.rs` (modified, +6/-5)
-```diff
-@@ -512,7 +512,7 @@ fn load_pending_message(
-         target_identity: stream.target_identity.0,
-         ack_prefix: stream.ack_prefix,
-         target_reducer: outbox.remote_reducer.clone(),
--        signature_hash: Hash::from_hex(&outbox.signature_hash)?,
-+        signature_hash: outbox.signature_hash,
-         reducer_args,
-         outbox_row,
-         on_result_reducer: outbox.on_result_reducer.clone(),
-@@ -968,9 +968,7 @@ mod tests {
-                     &AlgebraicType::unit(),
-                     &AlgebraicType::String,
-                     &spacetimedb_sats::Typespace::default(),
--                )
--                .to_hex()
--                .to_string(),
-+                ),
-             }),
-         )
-     }
-@@ -1366,7 +1364,10 @@ mod tests {
-                         );
-                         assert_eq!(query["seq"], "1");
-                         assert_eq!(query["ack_prefix"], "0");
--                        assert_eq!(query["signature_hash"], outbox_schema().outbox.unwrap().signature_hash);
-+                        assert_eq!(
-+                            query["signature_hash"],
-+                            outbox_schema().outbox.unwrap().signature_hash.to_hex().as_str()
-+                        );
-                         assert_eq!(body.as_ref(), to_vec(&42u32).unwrap());
-                         (StatusCode::from_u16(status).unwrap(), "receiver detail")
-                     }
-```
-
-**File**: `crates/core/src/sql/execute.rs` (modified, +1/-1)
-```diff
-@@ -454,7 +454,7 @@ pub(crate) mod tests {
-                 target_column: ColId(1),
-                 arg_columns: vec![],
-                 on_result_reducer: None,
--                signature_hash: "test-signature".into(),
-+                signature_hash: spacetimedb_lib::Hash::ZERO,
-             });
-             stdb.create_table(tx, schema)
-         })?;
-```
-
-**File**: `crates/datastore/src/locking_tx_datastore/datastore.rs` (modified, +2/-2)
-```diff
-@@ -3133,7 +3133,7 @@ pub(crate) mod tests {
-             target_column: ColId(1),
-             arg_columns: vec![ColId(2)],
-             on_result_reducer: None,
--            signature_hash: "test-signature".into(),
-+            signature_hash: spacetimedb_lib::Hash::ZERO,
-         });
- 
-         let datastore = get_datastore()?;
-@@ -3396,7 +3396,7 @@ pub(crate) mod tests {
-             target_column: ColId(1),
-             arg_columns: vec![],
-             on_result_reducer: None,
--            signature_hash: "test-signature".into(),
-+            signature_hash: spacetimedb_lib::Hash::ZERO,
-         };
-         let row = to_vec(&product![1u64, IdentityViaU256(Identity::ONE)]).unwrap();
- 
-```
-
-**File**: `crates/datastore/src/locking_tx_datastore/state_view.rs` (modified, +7/-2)
-```diff
-@@ -18,7 +18,7 @@ use core::ops::RangeBounds;
- use spacetimedb_lib::ConnectionId;
- use spacetimedb_primitives::{col_list, ColList, TableId};
- use spacetimedb_sats::{product, AlgebraicValue};
--use spacetimedb_schema::schema::{ColumnSchema, IndexSchema, TableSchema, ViewDefInfo};
-+use spacetimedb_schema::schema::{ColumnSchema, IndexSchema, OutboxSchema, TableSchema, ViewDefInfo};
- use spacetimedb_table::table::IndexScanPointIter;
- use spacetimedb_table::{
-     blob_store::HashMapBlobStore,
-@@ -305,7 +305,12 @@ pub trait StateView {
-         // `st_outbox` is missing until `migrate_system_tables` runs.
-         // Treat that as "no outbox metadata" while reconstructing raw schemas.
-         let outbox = match self.iter_by_col_eq(ST_OUTBOX_ID, StOutboxFields::TableId, value_eq) {
--            Ok(mut iter) => iter.next().map(StOutboxRow::try_from).transpose()?.map(Into::into),
-+            Ok(mut iter) => iter
-+                .next()
-+                .map(StOutboxRow::try_from)
-+                .transpose()?
-+                .map(OutboxSchema::try_from)
-+                .transpose()?,
-             Err(DatastoreError::Table(TableError::IdNotFound(..))) => None,
-             Err(e) => return Err(e),
-         };
-```
-
-**File**: `crates/datastore/src/locking_tx_datastore/tx_state.rs` (modified, +0/-1)
-```diff
-@@ -188,7 +188,6 @@ impl MemoryUsage for PendingSchemaChange {
-                                     .as_ref()
-                                     .map(|name| name.as_ref().heap_usage())
-                                     .unwrap_or(0)
--                                + outbox.signature_hash.heap_usage()
-                         })
-                         .unwrap_or(0)
-             }
-```
-
-**File**: `crates/datastore/src/system_tables/idc.rs` (modified, +36/-6)
-```diff
-@@ -260,20 +260,22 @@ impl From<(TableId, OutboxSchema)> for StOutboxRow {
-             target_column: outbox.target_column,
-             arg_columns: outbox.arg_columns,
-             on_result_reducer: outbox.on_result_reducer.map(Into::into),
--            signature_hash: outbox.signature_hash,
-+            signature_hash: outbox.signature_hash.to_hex().to_string(),
-         }
+@@ -180,6 +180,25 @@ pub trait FnInfo: ExplicitNames {
      }
  }
  
--impl From<StOutboxRow> for OutboxSchema {
--    fn from(row: StOutboxRow) -> Self {
--        Self {
-+impl TryFrom<StOutboxRow> for OutboxSchema {
-+    type Error = DatastoreError;
++/// Metadata for a reducer handle generated from a remote module schema.
++///
++/// Unlike FnInfo, this does not describe a locally exported callable and
++/// therefore has no invocation function. It is used by module-side macros to
++/// typecheck calls into another database.
++pub trait RemoteReducer {
++    /// The reducer name in the remote module schema.
++    const NAME: &'static str;
 +
-+    fn try_from(row: StOutboxRow) -> Result<Self, Self::Error> {
-+        Ok(Self {
-             remote_reducer: ReducerName::new(row.remote_reducer),
-             target_column: row.target_column,
-             arg_columns: row.arg_columns,
-             on_result_reducer: row.on_result_reducer.map(ReducerName::new),
--            signature_hash: row.signature_hash,
--        }
-+            signature_hash: Hash::from_hex(row.signature_hash).map_err(anyhow::Error::from)?,
++    /// Hash of the reducer signature as seen by the generated receiver bindings.
++    const SIGNATURE_HASH: &'static str;
++
++    /// Reducer argument product, excluding the reducer context.
++    ///
++    /// Fields preserve the remote reducer's parameter product order, matching the
++    /// signature hash and positional BSATN arguments.
++    type Args;
++}
++
+ pub trait Procedure<'de, A: Args<'de>, Ret: IntoProcedureResult> {
+     fn invoke(&self, ctx: &mut ProcedureContext, args: A) -> Ret;
+ }
+```
+
+**File**: `crates/cli/src/subcommands/generate.rs` (modified, +104/-37)
+```diff
+@@ -6,8 +6,8 @@ use clap::Arg;
+ use clap::ArgAction::{Set, SetTrue};
+ use fs_err as fs;
+ use spacetimedb_codegen::{
+-    generate, private_table_names, CodegenOptions, CodegenVisibility, Csharp, ImportExtension, Lang, OutputFile, Rust,
+-    TypeScript, UnrealCpp, AUTO_GENERATED_PREFIX,
++    generate, generate_receiver_bindings, private_table_names, CodegenOptions, CodegenVisibility, Csharp,
++    ImportExtension, Lang, OutputFile, ReceiverLanguage, Rust, TypeScript, UnrealCpp, AUTO_GENERATED_PREFIX,
+ };
+ use spacetimedb_lib::de::serde::DeserializeWrapper;
+ use spacetimedb_lib::RawModuleDef;
+@@ -192,9 +192,18 @@ pub(super) fn dependency_generate_entries(
+         .and_then(|v| v.as_str())
+         .ok_or_else(|| anyhow::anyhow!("database dependencies require the sender to define `module-path`"))?;
+ 
++    let mut names = BTreeSet::new();
+     dependencies
+         .iter()
+-        .map(|dependency| dependency_generate_entry(dependency, sender_module_path, all_targets))
++        .map(|dependency| {
++            if let Some(name) = dependency.get("name").and_then(|name| name.as_str()) {
++                anyhow::ensure!(
++                    names.insert(name),
++                    "duplicate dependency name {name:?} in module {sender_module_path:?}"
++                );
++            }
++            dependency_generate_entry(dependency, sender_module_path, all_targets)
 +        })
+         .collect()
+ }
+ 
+@@ -210,6 +219,12 @@ fn get_module_source(fields: &HashMap<String, serde_json::Value>) -> Option<(&st
+         .find_map(|key| fields.get(key).cloned().map(|value| (key, value)))
+ }
+ 
++/// Reject paths and other invalid identifiers before resolving sources or writing files.
++fn validate_dependency_name(name: &str) -> anyhow::Result<()> {
++    spacetimedb_schema::identifier::validate_identifier(name)
++        .with_context(|| format!("invalid dependency name {name:?}"))
++}
++
+ fn dependency_generate_entry(
+     dependency: &serde_json::Value,
+     sender_module_path: &str,
+@@ -222,6 +237,7 @@ fn dependency_generate_entry(
+         .get("name")
+         .and_then(|v| v.as_str())
+         .ok_or_else(|| anyhow::anyhow!("dependency entries require `name`"))?;
++    validate_dependency_name(name)?;
+ 
+     let (source_key, source_value, build_options, dotnet_version) = if let Some(path) = dependency.get("module-path") {
+         (
+@@ -453,6 +469,9 @@ fn prepare_generate_run_configs<'a>(
+         let js_file = command_config.get_resolved_path("js_file", config_dir)?;
+         let sender_module_path = command_config.get_resolved_path("sender_module_path", config_dir)?;
+         let dependency_name = command_config.get_one::<String>("dependency_name")?;
++        if let Some(name) = &dependency_name {
++            validate_dependency_name(name)?;
++        }
+         let requested_lang = command_config.get_one::<Language>("language")?;
+         let namespace = command_config
+             .get_one::<String>("namespace")?
+@@ -647,28 +666,54 @@ pub fn build_generate_entry(
+     entry
+ }
+ 
+-fn generate_receiver_bindings(_module: &ModuleDef, run: &GenerateRunConfig) -> anyhow::Result<Vec<OutputFile>> {
+-    // Each implementation receives the receiver schema and resolved sender options,
+-    // including the dependency name and output directory, for its output layout.
+-    match run.lang {
+-        Language::Rust => {
+-            // TODO(idc-rust): Generate Rust receiver types and reducer handles, including dependency modules.
+-            anyhow::bail!("Rust receiver binding generation is not implemented yet")
+-        }
+-        Language::TypeScript => {
+-            // TODO(idc-typescript): Generate TypeScript receiver types, reducer handles, and dependency exports.
+-            anyhow::bail!("TypeScript receiver binding generation is not implemented yet")
+-        }
+-        Language::Csharp => {
+-            // TODO(idc-csharp): Generate C# receiver types and reducer handles in the configured namespace.
+-            anyhow::bail!("C# receiver binding generation is not implemented yet")
+-        }
+-        Language::Cpp => {
+-            // TODO(idc-cpp): Generate C++ receiver types and reducer handles with the required headers.
+-            anyhow::bail!("C++ receiver binding generation is not implemented yet")
+-        }
+-        Language::UnrealCpp => anyhow::bail!("Unreal C++ is a client binding target"),
++fn generate_dependency_module_files(files: Vec<OutputFile>, dependency_name: &str) -> Vec<OutputFile> {
++    files
++        .into_iter()
++        .map(|OutputFile { filename, code }| {
++            let filename = if filename == "lib.rs" {
++                format!("{dependency_name}/mod.rs")
++            } else {
++                format!("{dependency_name}/{filename}")
++            };
++            OutputFile { filename, code }
++        })
++        .collect()
++}
++
++fn write_remote_bindings_mod(out_dir: &Path, dependency_name: &str) -> anyhow::Result<()> {
++    fs::create_dir_all(out_dir)?;
++    let path = out_dir.join("mod
+```
+
+**File**: `crates/codegen/src/lib.rs` (modified, +33/-0)
+```diff
+@@ -30,6 +30,39 @@ impl Default for CodegenOptions {
      }
  }
  
-@@ -379,3 +381,31 @@ pub(crate) fn st_inbound_msg_schema() -> TableSchema {
- pub(crate) fn st_outbox_schema() -> TableSchema {
-     st_schema(ST_OUTBOX_NAME, ST_OUTBOX_ID)
- }
++/// Target language and language-specific options for receiver bindings.
++pub enum ReceiverLanguage<'a> {
++    Rust,
++    TypeScript,
++    Csharp { namespace: &'a str },
++    Cpp,
++}
 +
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use spacetimedb_lib::bsatn;
-+
-+    #[test]
-+    fn outbox_signature_hash_uses_legacy_string_encoding() {
-+        // Encode the existing persisted row format independently of StOutboxRow.
-+        let legacy_bytes = bsatn::to_vec(&(
-+            TableId(42),
-+            "receive_ping",
-+            ColId(1),
-+            vec![ColId(2)],
-+            None::<&str>,
-+            "ab".repeat(32),
-+        ))
-+        .unwrap();
-+        let mut row: StOutboxRow = bsatn::from_slice(&legacy_bytes).unwrap();
-+        let outbox = OutboxSchema::try_from(row.clone()).unwrap();
-+        assert_eq!(outbox.signature_hash, Hash::from_byte_array([0xab; 32]));
-+        let stored = StOutboxRow::from((row.table_id, outbox));
-+        assert_eq!(bsatn::to_vec(&stored).unwrap(), legacy_bytes);
-+
-+        row.signature_hash = "invalid".into();
-+        assert!(OutboxSchema::try_from(row).is_err());
++/// Generate receiver binding files without reading or writing the filesystem.
++/// `dependency_name` scopes generated type names across receiver dependencies.
++/// Use `None` for standalone bindings.
++pub fn generate_receiver_bindings(
++    module: &ModuleDef,
++    lang: ReceiverLanguage<'_>,
++    dependency_name: Option<&str>,
++) -> anyhow::Result<Vec<OutputFile>> {
++    match lang {
++        ReceiverLanguage::Rust => Ok(rust::generate_rust_module_bindings(module, dependency_name)),
++        ReceiverLanguage::TypeScript => {
++            // TODO(idc-typescript): Generate TypeScript receiver types, reducer handles, and dependency exports.
++            anyhow::bail!("TypeScript receiver binding generation is not implemented yet")
++        }
++        ReceiverLanguage::Csharp { .. } => {
++            // TODO(idc-csharp): Generate C# receiver types and reducer handles in the configured namespace.
++            anyhow::bail!("C# receiver binding generation is not implemented yet")
++        }
++        ReceiverLanguage::Cpp => {
++            // TODO(idc-cpp): Generate C++ receiver types and reducer handles with the required headers.
++            anyhow::bail!("C++ receiver binding generation is not implemented yet")
++        }
 +    }
 +}
++
+ pub fn generate(module: &ModuleDef, lang: &dyn Lang, options: &CodegenOptions) -> Vec<OutputFile> {
+     itertools::chain!(
+         util::iter_tables(module, options.visibility).map(|tbl| lang.generate_table_file(module, tbl)),
+```
+
+**File**: `crates/codegen/src/rust.rs` (modified, +488/-50)
+```diff
+@@ -27,6 +27,20 @@ const INDENT: &str = "    ";
+ 
+ pub struct Rust;
+ 
++pub(super) fn generate_rust_module_bindings(module: &ModuleDef, dependency_name: Option<&str>) -> Vec<OutputFile> {
++    // TODO: Generate IDC bindings for submodules. Only root types and reducers are emitted for now.
++    let type_refs = module_binding_reducer_type_refs(module);
++    itertools::chain!(
++        iter_module_binding_types(module, &type_refs).map(|typ| generate_module_binding_type_file(
++            module,
++            typ,
++            dependency_name
++        )),
++        [generate_module_bindings_root_file(module, &type_refs)],
++    )
++    .collect()
++}
++
+ impl Lang for Rust {
+     fn generate_type_files(&self, module: &ModuleDef, typ: &TypeDef) -> Vec<OutputFile> {
+         let type_name = collect_case(Case::Pascal, typ.accessor_name.name_segments());
+@@ -41,7 +55,7 @@ impl Lang for Rust {
+             AlgebraicTypeDef::Product(product) => {
+                 gen_and_print_imports(module, out, &product.elements, &[typ.ty]);
+                 out.newline();
+-                define_struct_for_product(module, out, &type_name, &product.elements, "pub");
++                define_struct_for_product(module, out, &type_name, &product.elements, "pub", TypeContext::Client);
+             }
+             AlgebraicTypeDef::Sum(sum) => {
+                 gen_and_print_imports(module, out, &sum.variants, &[typ.ty]);
+@@ -513,6 +527,7 @@ pub(super) fn parse_table_update(
+             &args_type,
+             &reducer.params_for_generate.elements,
+             "pub(super)",
++            TypeContext::Client,
+         );
+ 
+         out.newline();
+@@ -645,6 +660,7 @@ impl {func_name} for super::RemoteReducers {{
+             &procedure.params_for_generate.elements,
+             // non-pub visibility.
+             "",
++            TypeContext::Client,
+         );
+ 
+         out.newline();
+@@ -709,7 +725,7 @@ impl {func_name} for super::RemoteProcedures {{
+         out.newline();
+ 
+         // Declare `pub mod` for each of the files generated.
+-        print_module_decls(module, options.visibility, out);
++        print_module_decls(iter_module_names(module, options.visibility), out);
+ 
+         out.newline();
+ 
+@@ -981,53 +997,92 @@ fn implement_query_view_call_accessor(
+     )
+ }
+ 
++#[derive(Clone, Copy)]
++enum TypeContext {
++    Client,
++    Receiver,
++    OutboxMacro,
++}
++
+ pub fn write_type<W: Write>(module: &ModuleDef, out: &mut W, ty: &AlgebraicTypeUse) -> fmt::Result {
++    write_type_in_context(module, out, ty, TypeContext::Client)
++}
++
++fn write_type_in_context<W: Write>(
++    module: &ModuleDef,
++    out: &mut W,
++    ty: &AlgebraicTypeUse,
++    context: TypeContext,
++) -> fmt::Result {
++    let (sdk_path, sats_path, identity_type, type_prefix) = match context {
++        TypeContext::Client => ("__sdk", "__sats", "__sdk::Identity", ""),
++        TypeContext::Receiver => ("::spacetimedb", "::spacetimedb::sats", "Identity", ""),
++        TypeContext::OutboxMacro => ("::spacetimedb", "::spacetimedb::sats", "$module::Identity", "$module::"),
++    };
++    // Receiver-defined types can shadow builtins inside the bindings, and macros
++    // resolve types in the caller's scope. Preserve the established client spelling.
++    let qualify_builtins = match context {
++        TypeContext::Client => false,
++        TypeContext::Receiver | TypeContext::OutboxMacro => true,
++    };
++    let write_builtin = |out: &mut W, path: &str, name: &str| -> fmt::Result {
++        if qualify_builtins {
++            write!(out, "{path}::")?;
++        }
++        write!(out, "{name}")
++    };
+     match ty {
+         AlgebraicTypeUse::Unit => write!(out, "()")?,
+-        AlgebraicTypeUse::Never => write!(out, "std::convert::Infallible")?,
+-        AlgebraicTypeUse::Identity => write!(out, "__sdk::Identity")?,
+-        AlgebraicTypeUse::ConnectionId => write!(out, "__sdk::ConnectionId")?,
+-        AlgebraicTypeUse::Timestamp => write!(out, "__sdk::Timestamp")?,
+-        AlgebraicTypeUse::TimeDuration => write!(out, "__sdk::TimeDuration")?,
+-        AlgebraicTypeUse::Uuid => write!(out, "__sdk::Uuid")?,
+-        AlgebraicTypeUse::ScheduleAt => write!(out, "__sdk::ScheduleAt")?,
++        AlgebraicTypeUse::Never => {
++            let root = if qualify_builtins { "::core" } else { "std" };
++            write!(out, "{root}::convert::Infallible")?;
++        }
++        AlgebraicTypeUse::Identity => write!(out, "{identity_type}")?,
++        AlgebraicTypeUse::ConnectionId => write!(out, "{sdk_path}::ConnectionId")?,
++        AlgebraicTypeUse::Timestamp => write!(out, "{sdk_path}::Timestamp")?,
++        AlgebraicTypeUse::TimeDuration => write!(out, "{sdk_path}::TimeDuration")?,
++        AlgebraicTypeUse::Uuid => write!(out, "{sdk_path}::Uuid")?,
++        AlgebraicTypeUse::ScheduleAt => write!(out, "{sdk_path}::ScheduleAt")?,
+         AlgebraicTypeUse::Option(inner_ty) => {
+-            write!(out, "Option::<")?;
+-            write_type(module, out, inner_ty)?;
++            w
+```
+
+**File**: `crates/codegen/tests/codegen.rs` (modified, +115/-1)
+```diff
+@@ -1,4 +1,6 @@
+-use spacetimedb_codegen::{generate, CodegenOptions, Csharp, ImportExtension, Rust, TypeScript};
++use spacetimedb_codegen::{
++    generate, generate_receiver_bindings, CodegenOptions, Csharp, ImportExtension, ReceiverLanguage, Rust, TypeScript,
++};
+ use spacetimedb_data_structures::map::HashMap;
+ use spacetimedb_schema::def::ModuleDef;
+ use spacetimedb_testing::modules::{CompilationMode, CompiledModule};
+@@ -45,6 +47,118 @@ declare_tests! {
+     test_codegen_rust => Rust,
+ }
+ 
++#[test]
++fn test_codegen_rust_module_bindings() {
++    let module = compiled_module();
++    let outfiles = generate_receiver_bindings(module, ReceiverLanguage::Rust, None)
++        .unwrap()
++        .into_iter()
++        .map(|f| (f.filename, f.code))
++        .collect::<HashMap<_, _>>();
++
++    assert!(!outfiles.contains_key("repeating_test_arg_type.rs"));
++    assert!(!outfiles.contains_key("nonrepeating_test_arg_type.rs"));
++    assert!(outfiles.contains_key("test_a_type.rs"));
++    assert!(outfiles.contains_key("namespace_test_f_type.rs"));
++    assert!(!outfiles.contains_key("baz_type.rs"));
++    assert!(!outfiles.contains_key("foobar_type.rs"));
++    assert!(!outfiles.keys().any(|filename| filename.ends_with("_reducer.rs")));
++    assert!(!outfiles.keys().any(|filename| filename.ends_with("_procedure.rs")));
++
++    let root = outfiles
++        .get("lib.rs")
++        .expect("rust module bindings should emit a root lib.rs");
++
++    assert!(root.contains("pub use test_a_type::TestA;"));
++    assert!(!root.contains("pub mod baz_type;"));
++
++    assert!(root.contains("pub struct Identity(pub spacetimedb::Identity);"));
++    assert!(root.contains("pub struct add;"));
++    assert!(root.contains("impl spacetimedb::rt::RemoteReducer for add"));
++    assert!(root.contains("const NAME: &'static str = \"add\";"));
++    assert!(!root.contains("ARG_NAMES"));
++    assert!(root.contains("__spacetimedb_typecheck_outbox_add_name"));
++    let reducer = module
++        .reducers()
++        .find(|reducer| reducer.name.as_ref() == "add")
++        .unwrap();
++    let expected_hash = spacetimedb_schema::def::reducer_signature_hash(
++        &reducer.params(),
++        &reducer.ok_return_type,
++        &reducer.err_return_type,
++        module.typespace(),
++    );
++    assert!(root.contains(&format!(
++        "const SIGNATURE_HASH: &'static str = \"{}\";",
++        expected_hash.to_hex()
++    )));
++    assert!(!root.contains("pub struct init;"));
++    assert!(!root.contains("pub struct client_connected;"));
++    assert!(!root.contains("pub struct repeating_test;"));
++    assert!(!root.contains("pub struct nonrepeating_test;"));
++    assert!(!root.contains("sleep_one_second"));
++    assert!(!root.contains("RemoteProcedures"));
++    assert!(!root.contains("DbConnection"));
++
++    insta::assert_snapshot!(root);
++}
++
++#[test]
++fn rust_receiver_types_are_scoped_by_dependency_name() {
++    let module = compiled_module();
++    let generate = |name| {
++        generate_receiver_bindings(module, ReceiverLanguage::Rust, Some(name))
++            .unwrap()
++            .into_iter()
++            .map(|file| (file.filename, file.code))
++            .collect::<HashMap<_, _>>()
++    };
++    let game_world = generate("game_world");
++    let auth = generate("auth");
++    let type_file = "test_a_type.rs";
++    assert!(game_world[type_file].contains("#[sats(name = \"game_world.TestA\")]"));
++    assert!(auth[type_file].contains("#[sats(name = \"auth.TestA\")]"));
++}
++
++#[test]
++fn test_codegen_rust_module_bindings_include_nested_reducer_types() {
++    use spacetimedb_lib::db::raw_def::v10::RawModuleDefV10Builder;
++    use spacetimedb_lib::{AlgebraicType, ProductType};
++
++    let mut builder = RawModuleDefV10Builder::new();
++    let state_ref = builder
++        .build_table_with_new_type("EmpireState", ProductType::from([("id", AlgebraicType::U64)]), true)
++        .finish();
++    builder
++        .build_table_with_new_type("Unrelated", ProductType::from([("id", AlgebraicType::U64)]), true)
++        .finish();
++    let op_ref = builder.add_algebraic_type(
++        [],
++        "EmpireStateOp",
++        AlgebraicType::sum([("Update", AlgebraicType::option(AlgebraicType::Ref(state_ref)))]),
++        false,
++    );
++    builder.add_reducer(
++        "receive",
++        ProductType::from([("ops", AlgebraicType::array(AlgebraicType::Ref(op_ref)))]),
++    );
++    let module: ModuleDef = builder.finish().try_into().unwrap();
++    let files = generate_receiver_bindings(&module, ReceiverLanguage::Rust, None)
++        .unwrap()
++        .into_iter()
++        .map(|file| (file.filename, file.code))
++        .collect::<HashMap<_, _>>();
++
++    assert!(files.contains_key("empire_state_op_type.rs"));
++    assert!(files.contains_key("empire_state_type.rs"));
++    assert!(!files.contains_key("unrelated_type.rs"));
++    assert!(files["lib.rs"].contains("pub mod empire_state_op_type;"));
++    assert!(files["lib.rs"].contains("pub mod empire_state_type;"));
++    assert!(f
+```
+
+**File**: `crates/codegen/tests/outbox_builtin_shadowing.rs` (added, +170/-0)
+```diff
+@@ -0,0 +1,170 @@
++use spacetimedb_codegen::{generate_receiver_bindings, ReceiverLanguage};
++use spacetimedb_lib::db::raw_def::v10::RawModuleDefV10Builder;
++use spacetimedb_lib::{AlgebraicType, ProductType};
++use spacetimedb_schema::def::ModuleDef;
++use std::collections::BTreeMap;
++use std::process::Command;
++
++// Keep the snapshot focused on public types and reducer argument associations.
++// The generated macro bodies are exercised by compiling the complete bindings.
++fn type_declarations(code: &str) -> String {
++    let mut in_item = false;
++    code.lines()
++        .filter(|line| {
++            if line.starts_with("pub use ")
++                || line.starts_with("pub struct ")
++                || line.starts_with("impl spacetimedb::rt::RemoteReducer for ")
++            {
++                in_item = line.ends_with('{');
++                true
++            } else if in_item {
++                if line.trim() == "}" {
++                    in_item = false;
++                }
++                true
++            } else {
++                false
++            }
++        })
++        .collect::<Vec<_>>()
++        .join("\n")
++}
++
++#[test]
++fn receiver_bindings_and_outbox_macros_preserve_builtin_and_custom_types() {
++    let mut builder = RawModuleDefV10Builder::new();
++    // Receiver-defined names can collide with both builtins and the synthetic
++    // argument product generated for `receive`.
++    let custom_string = builder.add_algebraic_type(
++        [],
++        "String",
++        AlgebraicType::product([("value", AlgebraicType::U64)]),
++        false,
++    );
++    let custom_receive_args = builder.add_algebraic_type(
++        [],
++        "ReceiveArgs",
++        AlgebraicType::product([
++            ("builtin", AlgebraicType::String),
++            ("custom", AlgebraicType::Ref(custom_string)),
++        ]),
++        false,
++    );
++    builder.add_reducer(
++        "receive",
++        ProductType::from([
++            ("text", AlgebraicType::String),
++            ("values", AlgebraicType::array(AlgebraicType::U64)),
++            ("maybe", AlgebraicType::option(AlgebraicType::String)),
++            (
++                "outcome",
++                AlgebraicType::result(AlgebraicType::unit(), AlgebraicType::String),
++            ),
++            ("number", AlgebraicType::U64),
++            ("timestamp", AlgebraicType::timestamp()),
++            ("identity", AlgebraicType::identity()),
++            ("custom_string", AlgebraicType::Ref(custom_string)),
++            ("custom_args", AlgebraicType::Ref(custom_receive_args)),
++        ]),
++    );
++    builder.add_reducer("noop", ProductType::unit());
++    let module: ModuleDef = builder.finish().try_into().unwrap();
++    let files = generate_receiver_bindings(&module, ReceiverLanguage::Rust, None).unwrap();
++    let declarations = files
++        .iter()
++        .map(|file| (file.filename.as_str(), type_declarations(&file.code)))
++        .collect::<BTreeMap<_, _>>();
++    insta::assert_toml_snapshot!("receiver_type_declarations", declarations);
++    let project = tempfile::tempdir().unwrap();
++    let receiver_dir = project.path().join("src/receiver");
++    std::fs::create_dir_all(&receiver_dir).unwrap();
++    for file in files {
++        let name = if file.filename == "lib.rs" {
++            "mod.rs"
++        } else {
++            &file.filename
++        };
++        std::fs::write(receiver_dir.join(name), file.code).unwrap();
++    }
++    let repo = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
++        .join("../..")
++        .canonicalize()
++        .unwrap();
++    let bindings_path = serde_json::to_string(&repo.join("crates/bindings")).unwrap();
++    std::fs::write(
++        project.path().join("Cargo.toml"),
++        format!(
++            r#"[package]
++name = "outbox-builtin-shadowing"
++version = "0.0.0"
++edition = "2024"
++
++[workspace]
++
++[dependencies]
++spacetimedb = {{ path = {bindings_path} }}
++"#
++        ),
++    )
++    .unwrap();
++
++    let shadows = r#"
++    struct String;
++    struct Vec<T>(::core::marker::PhantomData<T>);
++    struct Option<T>(::core::marker::PhantomData<T>);
++    struct Result<T, E>(::core::marker::PhantomData<(T, E)>);
++    type u64 = ();
++    mod core {}
++    mod std {}
++    mod spacetimedb {}
++"#;
++    // First compile the complete generated bindings in an ordinary sender, then
++    // expand the same receiver macro with builtin names shadowed at its call site.
++    for (scope, shadowing) in [("unshadowed", ""), ("shadowed", shadows)] {
++        let source = format!(
++            r#"
++#![allow(dead_code, non_camel_case_types, unused_imports)]
++mod receiver;
++mod caller {{
++    {shadowing}
++    fn check() {{
++        let _ = crate::receiver::__spacetimedb_typecheck_outbox_receive!(crate::receiver, {{
++            (0, text: ::std::string::String as text),
++            (1, values: ::std::vec::Vec<::core::primitive::u64> as values),
++            (2, maybe: ::core::option::Option<::std::string::String> as maybe),
++            (3, outcome: :
+```
+
+**File**: `crates/codegen/tests/snapshots/codegen__codegen_rust_module_bindings.snap` (added, +990/-0)
+```diff
+@@ -0,0 +1,990 @@
++---
++source: crates/codegen/tests/codegen.rs
++expression: root
++---
++// THIS FILE IS AUTOMATICALLY GENERATED BY SPACETIMEDB. EDITS TO THIS FILE
++// WILL NOT BE SAVED. MODIFY TABLES IN YOUR MODULE SOURCE CODE INSTEAD.
++
++#![allow(unused, clippy::all)]
++
++use spacetimedb::spacetimedb_lib as __lib;
++
++pub mod test_a_type;
++pub mod test_b_type;
++pub mod namespace_test_c_type;
++pub mod namespace_test_f_type;
++
++pub use test_a_type::TestA;
++pub use test_b_type::TestB;
++pub use namespace_test_c_type::NamespaceTestC;
++pub use namespace_test_f_type::NamespaceTestF;
++
++
++#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
++pub struct Identity(pub spacetimedb::Identity);
++
++impl spacetimedb::SpacetimeType for Identity {
++    fn make_type<S: spacetimedb::spacetimedb_lib::sats::typespace::TypespaceBuilder>(
++        typespace: &mut S,
++    ) -> spacetimedb::spacetimedb_lib::AlgebraicType {
++        <spacetimedb::Identity as spacetimedb::SpacetimeType>::make_type(typespace)
++    }
++}
++
++impl spacetimedb::Serialize for Identity {
++    fn serialize<S: spacetimedb::spacetimedb_lib::ser::Serializer>(
++        &self,
++        serializer: S,
++    ) -> ::core::result::Result<S::Ok, S::Error> {
++        <spacetimedb::Identity as spacetimedb::Serialize>::serialize(&self.0, serializer)
++    }
++}
++
++impl<'de> spacetimedb::Deserialize<'de> for Identity {
++    fn deserialize<D: spacetimedb::spacetimedb_lib::de::Deserializer<'de>>(
++        deserializer: D,
++    ) -> ::core::result::Result<Self, D::Error> {
++        <spacetimedb::Identity as spacetimedb::Deserialize>::deserialize(deserializer).map(Self)
++    }
++}
++
++
++#[derive(__lib::ser::Serialize, __lib::de::Deserialize, Clone, PartialEq, Debug)]
++#[sats(crate = __lib)]
++pub struct AddArgs {
++    pub name: ::std::string::String,
++    pub age: ::core::primitive::u8,
++}
++
++
++#[doc(hidden)]
++macro_rules! __spacetimedb_typecheck_outbox_add_name_reject_duplicate {
++    ($module:ident;) => {};
++    ($module:ident; ($index:literal, $field:ident : $ty:ty as name), $($rest:tt)*) => {
++        compile_error!(concat!(
++            "outbox has multiple columns matching remote reducer parameter `",
++            stringify!(name),
++            "`"
++        ));
++    };
++    ($module:ident; ($index:literal, $field:ident : $ty:ty as $other:ident), $($rest:tt)*) => {
++        $module::__spacetimedb_typecheck_outbox_add_name_reject_duplicate!($module; $($rest)*);
++    };
++}
++
++#[doc(hidden)]
++pub(crate) use __spacetimedb_typecheck_outbox_add_name_reject_duplicate;
++
++#[doc(hidden)]
++macro_rules! __spacetimedb_typecheck_outbox_add_name {
++    ($module:ident;) => {{
++        compile_error!(concat!(
++            "outbox has no column matching remote reducer parameter `",
++            stringify!(name),
++            "`"
++        ));
++        0u16
++    }};
++    ($module:ident; ($index:literal, $field:ident : $ty:ty as name), $($rest:tt)*) => {{
++        let _ = |x: $ty| { let _: ::std::string::String = x; };
++        $module::__spacetimedb_typecheck_outbox_add_name_reject_duplicate!($module; $($rest)*);
++        $index
++    }};
++    ($module:ident; ($index:literal, $field:ident : $ty:ty as $other:ident), $($rest:tt)*) => {
++        $module::__spacetimedb_typecheck_outbox_add_name!($module; $($rest)*)
++    };
++}
++
++#[doc(hidden)]
++pub(crate) use __spacetimedb_typecheck_outbox_add_name;
++
++
++#[doc(hidden)]
++macro_rules! __spacetimedb_typecheck_outbox_add_age_reject_duplicate {
++    ($module:ident;) => {};
++    ($module:ident; ($index:literal, $field:ident : $ty:ty as age), $($rest:tt)*) => {
++        compile_error!(concat!(
++            "outbox has multiple columns matching remote reducer parameter `",
++            stringify!(age),
++            "`"
++        ));
++    };
++    ($module:ident; ($index:literal, $field:ident : $ty:ty as $other:ident), $($rest:tt)*) => {
++        $module::__spacetimedb_typecheck_outbox_add_age_reject_duplicate!($module; $($rest)*);
++    };
++}
++
++#[doc(hidden)]
++pub(crate) use __spacetimedb_typecheck_outbox_add_age_reject_duplicate;
++
++#[doc(hidden)]
++macro_rules! __spacetimedb_typecheck_outbox_add_age {
++    ($module:ident;) => {{
++        compile_error!(concat!(
++            "outbox has no column matching remote reducer parameter `",
++            stringify!(age),
++            "`"
++        ));
++        0u16
++    }};
++    ($module:ident; ($index:literal, $field:ident : $ty:ty as age), $($rest:tt)*) => {{
++        let _ = |x: $ty| { let _: ::core::primitive::u8 = x; };
++        $module::__spacetimedb_typecheck_outbox_add_age_reject_duplicate!($module; $($rest)*);
++        $index
++    }};
++    ($module:ident; ($index:literal, $field:ident : $ty:ty as $other:ident), $($rest:tt)*) => {
++        $module::__spacetimedb_typecheck_outbox_add_age!($module; $($rest)*)
++    };
++}
++
++#[doc(hidden)]
++pub(crate) use __spacetimedb_typecheck_outbox_add_age;
++
++
++#[doc(hidden)]
++macro_rules! __spacetimedb_typecheck_outbox_add {
++    ($module:path, { $($columns:tt)* }
+```
+
+**File**: `crates/codegen/tests/snapshots/outbox_builtin_shadowing__receiver_type_declarations.snap` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++---
++source: crates/codegen/tests/outbox_builtin_shadowing.rs
++expression: declarations
++---
++"lib.rs" = '''
++pub use receive_args_type::ReceiveArgs;
++pub use string_type::String;
++pub struct Identity(pub spacetimedb::Identity);
++pub struct ReceiveArgs_ {
++    pub text: ::std::string::String,
++    pub values: ::std::vec::Vec::<::core::primitive::u64>,
++    pub maybe: ::core::option::Option::<::std::string::String>,
++    pub outcome: ::core::result::Result::<(), ::std::string::String>,
++    pub number: ::core::primitive::u64,
++    pub timestamp: ::spacetimedb::Timestamp,
++    pub identity: Identity,
++    pub custom_string: String,
++    pub custom_args: ReceiveArgs,
++}
++pub struct receive;
++impl spacetimedb::rt::RemoteReducer for receive {
++    const NAME: &'static str = "receive";
++    const SIGNATURE_HASH: &'static str = "c0cb30752579ca4f11c7255a77df5f9294ed3ecdf3df710a4c41d086fb9b5ebc";
++    type Args = ReceiveArgs_;
++}
++pub struct NoopArgs {
++    }
++pub struct noop;
++impl spacetimedb::rt::RemoteReducer for noop {
++    const NAME: &'static str = "noop";
++    const SIGNATURE_HASH: &'static str = "bc436888fd947d2bfd49ed6bddad31f0245c34fd42c85f9360fa0b477aa957fc";
++    type Args = NoopArgs;
++}'''
++"receive_args_type.rs" = '''
++pub struct ReceiveArgs {
++    pub builtin: ::std::string::String,
++    pub custom: String,
++}'''
++"string_type.rs" = '''
++pub struct String {
++    pub value: ::core::primitive::u64,
++}'''
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #6400** (2026-10-27): Add a SpacetimeDB Standalone architecture diagram to docs/DEVELOP.md (@cloutiertyler)
 - **PR #6378** (2026-10-26): Version bump 2.14.0 (@rekhoff)
+- **PR #6376** (2026-10-28): Async IDC: rust outbox macro (@Shubham8287)
+- **PR #6375** (2026-10-28): Async IDC: rust receiver bindings (@Shubham8287)
 - **PR #6364** (2026-10-27): Async IDC: Preserve V10 names and type IDC outbox signature hashes (@Shubham8287)
 - **PR #6362** (2026-10-24): docs: document IDC receiver bindings and CLI configuration (@clockwork-labs-bot)
-- **PR #6354** (2026-10-22): Release - Work around crates.io ratelimiting (@bfops)
-- **PR #6353** (2026-10-22): View docs updated for the current args feature (@JasonAtClockwork)
 
 ---
 
@@ -1235,29 +2507,35 @@ NA
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add a SpacetimeDB Standalone architecture diagram to docs/DEVELOP.md (#6400)
+## X. Async IDC: rust outbox macro (#6376)
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/bindings-macro/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5ce9e901`: Add a SpacetimeDB Standalone architecture diagram to docs/DEVELOP.md (#6400). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c48f5120`: Async IDC: rust outbox macro (#6376). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/bindings-macro/src/lib.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-To find your way around the code, see the [architecture diagram](docs/DEVELOP.md#architecture) of what runs inside SpacetimeDB Standalone.
-
+    symbol!(outbox);
+    symbol!(on_result);
+    symbol!(param);
+    symbol!(target);
+#[proc_macro_derive(
+    __TableHelper,
+    attributes(sats, unique, auto_inc, primary_key, target, index, default, param)
+)]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+#[proc_macro_derive(__TableHelper, attributes(sats, unique, auto_inc, primary_key, index, default))]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5ce9e901` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c48f5120` are properly handled with clean fallback behavior.

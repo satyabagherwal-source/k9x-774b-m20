@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T21:50:15.367Z",
+  "last_updated": "2026-10-28T22:01:34.831Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1967,14 +1967,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-speridlabs-iris-3b",
-      "content_hash": "9ee8f29ea13fd25f550ffd87c3706e23d13cfd5da7ae8c587f80a0357cc6cd0c",
-      "verified_at": "2026-10-25T21:33:47.220Z",
+      "content_hash": "b743ae20f915fe46a63c37c91c91be10c368e570428d16f4d9967ed9ff4cea35",
+      "verified_at": "2026-10-28T21:57:57.803Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T21:33:47.220Z"
+      "last_updated": "2026-10-28T21:57:57.803Z"
     },
     "Infisical/infisical": {
       "repository": "Infisical/infisical",
@@ -10626,14 +10626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clockworklabs-spacetimedb",
-      "content_hash": "8b716857b0c7a91e71590a99cff0d68b17935830aedcbdeb9d54a384ffaf5ebb",
-      "verified_at": "2026-10-28T04:21:52.550Z",
+      "content_hash": "6e3aff28460fecb2f860688a5733a5d6b4afea23bcb9e7e85061b6e8dc632128",
+      "verified_at": "2026-10-28T21:56:44.975Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T04:21:52.550Z"
+      "last_updated": "2026-10-28T21:56:44.975Z"
     },
     "apollographql/apollo-kotlin": {
       "repository": "apollographql/apollo-kotlin",
@@ -11046,14 +11046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-loft-sh-vcluster",
-      "content_hash": "890cdfd1b9b73e92ee7264da32eb3e44b062c50a7b9321a7a1ace65cfe8e9b26",
-      "verified_at": "2026-10-27T22:49:54.145Z",
+      "content_hash": "c845654da018150dd41f26d6746d25b315be9f9134acc0a9d4cc1020e0dfd91d",
+      "verified_at": "2026-10-28T21:56:40.219Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T22:49:54.145Z"
+      "last_updated": "2026-10-28T21:56:40.219Z"
     },
     "arkivanov/Decompose": {
       "repository": "arkivanov/Decompose",
@@ -11481,14 +11481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-ruff",
-      "content_hash": "889704d5f4e9495be5e3118a475b14b6eeb6b5b0bdbee2ecdcfad9fa323b5741",
-      "verified_at": "2026-10-27T18:36:19.507Z",
+      "content_hash": "3f671b045b69beeb9f9f20f16db955f61a12f9a9f36efd93b0729976a40270c1",
+      "verified_at": "2026-10-28T22:01:34.830Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T18:36:19.507Z"
+      "last_updated": "2026-10-28T22:01:34.830Z"
     },
     "touchlab/KaMPKit": {
       "repository": "touchlab/KaMPKit",
