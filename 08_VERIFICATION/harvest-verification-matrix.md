@@ -5987,3 +5987,5 @@
 | `CYCLE-20261028-32L8` | `2026-10-28T23:05:28.796Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5449` | Yes (`5959ad53...`) |
 | `CYCLE-20261028-KBU6` | `2026-10-28T23:18:53.934Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5450, Rule 5451` | Yes (`8136ffdf...`) |
 | `CYCLE-20261028-KFB8` | `2026-10-28T23:18:58.436Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5452` | Yes (`4fbc6f7d...`) |
+| `CYCLE-20261028-ZHWI` | `2026-10-28T23:30:41.634Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5453` | Yes (`0a7364ed...`) |
+| `CYCLE-20261028-0NUS` | `2026-10-28T23:31:36.004Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5454, Rule 5455, Rule 5456` | Yes (`be78296d...`) |

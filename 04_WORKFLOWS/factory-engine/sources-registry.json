@@ -39,19 +39,29 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T23:19:00.977Z",
-    "lastVerified": "2026-10-28T23:19:00.977Z",
+    "lastChecked": "2026-10-28T23:31:38.566Z",
+    "lastVerified": "2026-10-28T23:31:38.566Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "rtk-ai-rtk": {
-    "name": "rtk",
+    "name": "rtk-ai/rtk",
     "officialUrl": "https://github.com/rtk-ai/rtk",
-    "lastChecked": "2026-10-28T02:47:57.028Z",
-    "revisionIdentifier": "e05c7bdf",
-    "lastVerified": "2026-10-28T02:47:57.028Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T23:30:40.005Z",
+    "lastVerified": "2026-10-28T23:30:40.005Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-rtk-ai-rtk",
+    "contentHash": "0a7364ed4fccb6138237720879aae72e28f824d3e6afd3d15e0d965a4d1ac9c4",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-convaiinnovations-laya": {
     "name": "convaiinnovations/laya",
@@ -204,8 +214,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T22:52:22.739Z",
-    "lastVerified": "2026-10-28T22:52:22.739Z",
+    "lastChecked": "2026-10-28T23:30:51.214Z",
+    "lastVerified": "2026-10-28T23:30:51.214Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1830,9 +1840,9 @@
   "oramasearch-orama": {
     "name": "orama",
     "officialUrl": "https://github.com/oramasearch/orama",
-    "lastChecked": "2026-10-28T05:48:35.312Z",
+    "lastChecked": "2026-10-28T23:30:48.724Z",
     "revisionIdentifier": "b030e1bd",
-    "lastVerified": "2026-10-28T05:48:35.312Z"
+    "lastVerified": "2026-10-28T23:30:48.724Z"
   },
   "sayanarijit-xplr": {
     "name": "xplr",
@@ -1935,12 +1945,12 @@
     "lastVerified": "2026-10-28T22:45:43.332Z"
   },
   "aleo-labs-protocol-snarkos": {
-    "name": "aleo-labs-protocol/snarkOS",
+    "name": "snarkOS",
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T19:46:52.639Z",
-    "lastVerified": "2026-10-28T19:46:52.639Z",
+    "lastChecked": "2026-10-28T23:30:46.322Z",
+    "lastVerified": "2026-10-28T23:30:46.322Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -1949,7 +1959,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1f4eee02"
   },
   "databendlabs-databend": {
     "name": "databendlabs/databend",
@@ -2232,9 +2243,9 @@
   "permify-permify": {
     "name": "permify",
     "officialUrl": "https://github.com/Permify/permify",
-    "lastChecked": "2026-10-28T06:52:42.480Z",
+    "lastChecked": "2026-10-28T23:30:43.761Z",
     "revisionIdentifier": "43ce9031",
-    "lastVerified": "2026-10-28T06:52:42.480Z"
+    "lastVerified": "2026-10-28T23:30:43.761Z"
   },
   "crate-crate": {
     "name": "crate/crate",
@@ -7544,5 +7555,29 @@
     "lastChecked": "2026-10-28T23:18:44.375Z",
     "revisionIdentifier": "58e588ab",
     "lastVerified": "2026-10-28T23:18:44.375Z"
+  },
+  "hf-black-forest-labs-flux-3-image-klein": {
+    "name": "black-forest-labs/flux-3-image-klein",
+    "officialUrl": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T23:30:38.721Z",
+    "lastVerified": "2026-10-28T23:30:38.721Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+    "contentHash": "be78296d0f68470fb6209cdad6cf025e0d5902515666f36571d6f65f67d03565",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "xcodesorg-xcodesapp": {
+    "name": "XcodesApp",
+    "officialUrl": "https://github.com/XcodesOrg/XcodesApp",
+    "lastChecked": "2026-10-28T23:30:41.198Z",
+    "revisionIdentifier": "45722c72",
+    "lastVerified": "2026-10-28T23:30:41.198Z"
   }
 }

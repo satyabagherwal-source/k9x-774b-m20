@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source**: github ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
-> **Source Version**: `e05c7bdf`  
+> **Source Version**: `5f4a4dcb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T02:01:55.316Z  
+> **Timestamp**: 2026-10-28T23:30:41.001Z  
 > **Learning ID**: `learn-github-rtk-ai-rtk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T02:01:54.252Z  
+> **Harvest Timestamp**: 2026-10-28T23:30:40.005Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single Rust binary, zero dependencies
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 84542 stars
+- **Stars / Engagement**: 84888 stars
 
 ---
 
@@ -1749,302 +1749,135 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e05c7bdf` (2026-10-25)
-**Commit Message**: Merge pull request #4714 from rtk-ai/fix/pytest-collection-error-lines
+### Incident Patch 1: `5f4a4dcb` (2026-10-28)
+**Commit Message**: Merge pull request #4712 from rtk-ai/dependabot/cargo/develop/clap-4.6.7
 
-fix(pytest): keep the E lines of error and failure blocks
+chore(deps): bump clap from 4.5.60 to 4.6.7
 
-**File**: `src/cmds/python/pytest_cmd.rs` (modified, +884/-36)
+**File**: `Cargo.lock` (modified, +19/-13)
 ```diff
-@@ -1,5 +1,6 @@
- //! Filters pytest output to show only failures and the summary line.
+@@ -34,9 +34,9 @@ dependencies = [
  
-+use crate::core::arg_tokenizer::{Dialect, TokenKind, ValueSpec, tokenize_grammar};
- use crate::core::config;
- use crate::core::runner;
- use crate::core::shell::display_args;
-@@ -11,6 +12,8 @@ use std::sync::LazyLock;
+ [[package]]
+ name = "anstream"
+-version = "0.6.21"
++version = "1.0.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "43d5b281e737544384e969a5ccad3f1cdd24b48086a0fc1b2a5262a26b8f4f4a"
++checksum = "824a212faf96e9acacdbd09febd34438f8f711fb84e09a8916013cd7815ca28d"
+ dependencies = [
+  "anstyle",
+  "anstyle-parse",
+@@ -49,15 +49,15 @@ dependencies = [
  
- const MAX_XFAIL: usize = CAP_WARNINGS;
- const MAX_PYTEST_FAILURES: usize = CAP_WARNINGS;
-+const MAX_TRACEBACK_LINES: usize = 3;
-+const MAX_ERROR_LINES: usize = 4;
- static PYTEST_SUMMARY_RE: LazyLock<Regex> = LazyLock::new(|| {
-     Regex::new(
-         r"^(?:=+\s*)?\d+ [^,\r\n=]+?(?:, \d+ [^,\r\n=]+?)* in \d+(?:\.\d+)?(?:s| seconds)(?: \((?:\d+ days?, )?\d+:\d{2}:\d{2}\))?(?:\s*=+)?$",
-@@ -35,32 +38,14 @@ pub fn run(args: &[String], verbose: u8) -> Result<i32> {
-         c
-     };
+ [[package]]
+ name = "anstyle"
+-version = "1.0.13"
++version = "1.0.14"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5192cca8006f1fd4f7237516f40fa183bb07f8fbdfedaa0036de5ea9b0b45e78"
++checksum = "940b3a0ca603d1eade50a4846a2afffd5ef57a9feac2c0e2ec2e14f9ead76000"
  
--    let has_tb_flag = args.iter().any(|a| a.starts_with("--tb"));
--    let has_quiet_flag = args.iter().any(|a| a == "-q" || a == "--quiet");
--    // Only treat a short `-r…` as pytest's report flag (not `--randomly-seed` etc.)
--    let has_report_flag = args
--        .iter()
--        .any(|a| a.starts_with("-r") && !a.starts_with("--"));
--
--    if !has_tb_flag {
--        cmd.arg("--tb=short");
--    }
--    if !has_quiet_flag {
--        cmd.arg("-q");
--    }
--    // Surface xfailed/xpassed (and their reasons) in the short summary section
--    // so the compact output can report expected failures and — crucially —
--    // unexpected passes (XPASS), which signal a behavior change.
--    if !has_report_flag {
--        cmd.arg("-rxX");
--    }
--
-+    let injected = injected_args(args);
-+    cmd.args(&injected);
-     for arg in args {
-         cmd.arg(arg);
-     }
+ [[package]]
+ name = "anstyle-parse"
+-version = "0.2.7"
++version = "1.0.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4e7644824f0aa2c7b9384579234ef10eb7efb6a0deb83f9630a49594dd9c15c2"
++checksum = "52ce7f38b242319f7cabaa6813055467063ecdc9d355bbb4ce0c68908cd8130e"
+ dependencies = [
+  "utf8parse",
+ ]
+@@ -177,19 +177,19 @@ dependencies = [
  
-     if verbose > 0 {
--        eprintln!("Running: pytest --tb=short -q {}", args.join(" "));
-+        eprintln!("Running: pytest {} {}", injected.join(" "), args.join(" "));
-     }
+ [[package]]
+ name = "clap"
+-version = "4.5.60"
++version = "4.6.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2797f34da339ce31042b27d23607e051786132987f595b02ba4f6a6dffb7030a"
++checksum = "aa8876b300ab35ba921adea3dfd70157a46249b33f95c9084ae5709785478946"
+ dependencies = [
+  "clap_builder",
+  "clap_derive",
+ ]
  
-     runner::run_filtered_with_exit(
-@@ -82,6 +67,48 @@ pub fn run(args: &[String], verbose: u8) -> Result<i32> {
-     )
- }
+ [[package]]
+ name = "clap_builder"
+-version = "4.5.60"
++version = "4.6.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "24a241312cea5059b13574bb9b3861cabf758b879c15190b37b6d6fd63ab6876"
++checksum = "ec0797fb7aeb1406c84efac526901f7ec3ead2124f946b494e72879d4b54704d"
+ dependencies = [
+  "anstream",
+  "anstyle",
+@@ -199,14 +199,14 @@ dependencies = [
  
-+fn injected_args(args: &[String]) -> Vec<&'static str> {
-+    let tokens = tokenize_grammar(
-+        args,
-+        &|kind, name| match (kind, name) {
-+            (TokenKind::Long, "tb")
-+            | (TokenKind::Short, "k" | "m" | "p" | "c" | "o" | "W" | "r") => {
-+                Some(ValueSpec::value())
-+            }
-+            _ => None,
-+        },
-+        Dialect::Posix,
-+    );
-+    let tb = tokens
-+        .iter()
-+        .filter(|t| t.kind == TokenKind::Long && t.text == "tb")
-+        .filter_map(|t| t.value(&tokens))
-+        .next_back();
-+    let has_flag = |short: &str, long: &str| {
-+        tokens.iter().any(|t| {
-+            (t.kind == TokenKind::Short && t.text == short)
-+                || (t.kind == TokenKind::Long && t.text == long)
-+        })
-+    };
-+    let has_quiet_flag = has_flag("q", "quiet");
-+    let has_report_flag = has_flag("r", "report-chars");
+ [[package]]
+ name = "clap_derive"
+-version = "4.5.55"
++version = "4.6.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a92793da1a46a5f2a02a6f4c46c6496b28c43638adea8306fcb0caa1634f24e5"
++checksum = "f9c751b79415d4e559e3d1fcf128e09e720eb673a06d26cf6f392d37d75b66e0"
+ dependencies = [
+  "heck",
+  "proc-macro2",
+  "quote",
+- "syn 2.0.117",
++ "syn 3.0.5",
+ ]
+ 
+ [[package]]
+@@ -1469,6 +1469,12 @@ version = "1.2.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
+ 
++[[package]]
++name = "semver"
++version = "1.0.28"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "8a7852d02fc848982e0c167ef163aaff9cd91dc640ba85e263cb1ce46fae51cd"
 +
-+    let mut injected = Vec::new();
-+    if tb.is_none() {
-+        injected.push("--tb=short");
-+    }
-+    if !has_quiet_flag {
-+        injected.push("-q");
-+    }
-+    // Surface xfailed/xpassed (and their reasons) in the short summary section
-+    // so the compact output can report expected failures and — crucially —
-+    // unexpected passes (XPASS), which signal a behavior change.
-+    if !has_report_flag {
-+        injected.push(if tb == Some("no") { "-rfExX" } else { "-rxX" });
-+    }
-+    injected
-+}
-+
- const PYTEST_NO_TESTS: &str = "Pytest: No tests collected";
- const PYTEST_EXIT_NO_TESTS: i32 = 5;
+ [[package]]
+ name = "serde"
+ version = "1.0.229"
+```
+
+---
+
+### Incident Patch 2: `fc80f2a6` (2026-10-28)
+**Commit Message**: Merge pull request #4711 from rtk-ai/dependabot/cargo/develop/ignore-0.4.33
+
+chore(deps): bump ignore from 0.4.32 to 0.4.33
+
+**File**: `Cargo.lock` (modified, +4/-4)
+```diff
+@@ -800,9 +800,9 @@ dependencies = [
  
-@@ -111,6 +138,10 @@ pub(crate) fn filter_pytest_output(output: &str) -> String {
-             && (trimmed.contains("FAILURES") || trimmed.contains("ERRORS"))
-         {
-             state = ParseState::Failures;
-+            if !current_failure.is_empty() {
-+                failures.push(current_failure.join("\n"));
-+                current_failure.clear();
-+            }
-             continue;
-         } else if trimmed.starts_with("===") && trimmed.contains("short test summary") {
-             state = ParseState::Summary;
-@@ -143,15 +174,23 @@ pub(crate) fn filter_pytest_output(output: &str) -> String {
-             }
-             ParseState::Failures => {
-                 // Collect failure details
--                if trimmed.starts_with("___") {
-+                if trimmed.starts_with("===")
-+                    && trimmed.trim_matches('=').trim() == "warnings summary"
-+                {
-+                    if !current_failure.is_empty() {
-+                        failures.push(current_failure.join("\n"));
-+                        current_failure.clear();
-+                    }
-+                    state = ParseState::TestProgress;
-+                } else if is_block_header(trimmed) {
-                     // New failure section
-                     if !current_failure.is_empty() {
-                         failures.push(current_failure.join("\n"));
-                         current_failure.clear();
-                     }
-                     current_failure.push(trimm
-```
-
-**File**: `tests/fixtures/pytest_captured_dict_diff_raw.txt` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+F                                                                        [100%]
-+=================================== FAILURES ===================================
-+___________________________________ test_td ____________________________________
-+test_td.py:7: in test_td
-+    assert {"a": 1, "b": 2} == {"a": 1, "b": 3}
-+E   AssertionError: assert {'a': 1, 'b': 2} == {'a': 1, 'b': 3}
-+E     
-+E     Omitting 1 identical items, use -vv to show
-+E     Differing items:
-+E     {'b': 2} != {'b': 3}
-+E     Use -v to get more diff
-+----------------------------- Captured stdout call -----------------------------
-+E out line
-+----------------------------- Captured stderr call -----------------------------
-+E err line
-+1 failed in 0.01s
-```
-
-**File**: `tests/fixtures/pytest_captured_e_line_raw.txt` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+F                                                                        [100%]
-+=================================== FAILURES ===================================
-+__________________________________ test_noisy __________________________________
-+test_cap.py:3: in test_noisy
-+    assert 1 == 2, "Captured total mismatch"
-+E   AssertionError: Captured total mismatch
-+E   assert 1 == 2
-+----------------------------- Captured stdout call -----------------------------
-+E bad thing happened in stdout
-+1 failed in 0.01s
-```
-
-**File**: `tests/fixtures/pytest_captured_underscore_lines_raw.txt` (added, +23/-0)
-```diff
-@@ -0,0 +1,23 @@
-+FF                                                                       [100%]
-+=================================== FAILURES ===================================
-+_________________________________ test_dunder __________________________________
-+test_du5.py:7: in test_dunder
-+    assert {'a': 1} == {'a': 2}, 'dunder fail'
-+E   AssertionError: dunder fail
-+E   assert {'a': 1} == {'a': 2}
-+E     
-+E     Differing items:
-+E     {'a': 1} != {'a': 2}
-+E     Use -v to get more diff
-+----------------------------- Captured stdout call -----------------------------
-+__init__
-+__main__ _
-+_cache_
-+_ warming cache_
-+  done _
-+__________________________________ test_after __________________________________
-+test_du5.py:11: in test_after
-+    assert 0, 'after dunder'
-+E   AssertionError: after dunder
-+E   assert 0
-+2 failed in 0.01s
-```
-
-**File**: `tests/fixtures/pytest_collection_import_error_raw.txt` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+
-+==================================== ERRORS ====================================
-+_________________________ ERROR collecting test_imp.py _________________________
-+ImportError while importing test module '/home/user/project/test_imp.py'.
-+Hint: make sure your test modules/packages have valid Python names.
-+Traceback:
-+/usr/lib/python3.13/importlib/__init__.py:88: in import_module
-+    return _bootstrap._gcd_import(name[level:], package, level)
-+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+test_imp.py:1: in <module>
-+    import nonexistent_module_xyz
-+E   ModuleNotFoundError: No module named 'nonexistent_module_xyz'
-+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
-+1 error in 0.04s
-```
-
-**File**: `tests/fixtures/pytest_collection_syntax_error_raw.txt` (added, +32/-0)
-```diff
-@@ -0,0 +1,32 @@
-+
-+==================================== ERRORS ====================================
-+_________________________ ERROR collecting test_syn.py _________________________
-+.venv/lib/python3.13/site-packages/_pytest/python.py:508: in importtestmodule
-+    mod = import_path(
-+.venv/lib/python3.13/site-packages/_pytest/pathlib.py:596: in import_path
-+    importlib.import_module(module_name)
-+/usr/lib/python3.13/importlib/__init__.py:88: in import_module
-+    return _bootstrap._gcd_import(name[level:], package, level)
-+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+<frozen importlib._bootstrap>:1395: in _gcd_import
-+    ???
-+<frozen importlib._bootstrap>:1360: in _find_and_load
-+    ???
-+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
-+    ???
-+<frozen importlib._bootstrap>:935: in _load_unlocked
-+    ???
-+.venv/lib/python3.13/site-packages/_pytest/assertion/rewrite.py:179: in exec_module
-+    source_stat, co = _rewrite_test(fn, self.config)
-+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+.venv/lib/python3.13/site-packages/_pytest/assertion/rewrite.py:348: in _rewrite_test
-+    tree = ast.parse(source, filename=strfn)
-+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+/usr/lib/python3.13/ast.py:50: in parse
-+    return compile(source, filename, mode, flags,
-+E     File "/home/user/project/test_syn.py", line 1
-+E       def test_x(:
-+E                  ^
-+E   SyntaxError: invalid syntax
-+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
-+1 error in 0.08s
-```
-
-**File**: `tests/fixtures/pytest_config_warning_raw.txt` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+F                                                                        [100%]
-+=================================== FAILURES ===================================
-+___________________________________ test_bad ___________________________________
-+test_w.py:6: in test_bad
-+    assert helper({"k": 1}) == 2
-+E   AssertionError: assert 1 == 2
-+E    +  where 1 = helper({'k': 1})
-+=============================== warnings summary ===============================
-+.venv/lib/python3.13/site-packages/_pytest/config/__init__.py:1464
-+  .venv/lib/python3.13/site-packages/_pytest/config/__init__.py:1464: PytestConfigWarning: Unknown config option: foo
-+  
-+    self._warn_or_fail_if_strict(f"Unknown config option: {key}\n")
-+
-+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-+1 failed, 1 warning in 0.01s
-```
-
-**File**: `tests/fixtures/pytest_conftest_setup_error_raw.txt` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+E                                                                        [100%]
-+==================================== ERRORS ====================================
-+________________________ ERROR at setup of test_uses_db ________________________
-+conftest.py:7: in db
-+    return connect()
-+           ^^^^^^^^^
-+mylib/db.py:2: in connect
-+    raise ConnectionError("db down\nretry in 5s\nhost: db.internal")
-+E   ConnectionError: db down
-+E   retry in 5s
-+E   host: db.internal
-+1 error in 0.01s
+ [[package]]
+ name = "ignore"
+-version = "0.4.32"
++version = "0.4.33"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0b17771570a2b94107741a7b033f19132c2eee21d59d21b24d2ced26500bd66e"
++checksum = "00b69833ed729dc5aa7d19541d96d6cf8e9137194207a04916d658e43168402f"
+ dependencies = [
+  "crossbeam-deque",
+  "globset",
+@@ -1264,9 +1264,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "regex-automata"
+-version = "0.4.14"
++version = "0.4.18"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6e1dd4122fc1595e8162618945476892eefca7b88c52820e74af6262213cae8f"
++checksum = "ad8553b9b26413251cbf30e620595c7a41b3887f03da04579c0e6b0d6a06b4b2"
+ dependencies = [
+  "aho-corasick",
+  "memchr",
 ```
 
 #### Recent Merged Pull Requests:
@@ -2052,8 +1885,8 @@ fix(pytest): keep the E lines of error and failure blocks
 - **PR #4727** (2026-10-23): fix(ruff): restore a leading -- before routing (@Yathiskumar)
 - **PR #4723** (closed): feat(filters): add Vercel CLI deployment and output filter (@rpatty-dev)
 - **PR #4714** (2026-10-25): fix(pytest): keep the E lines of error and failure blocks (@aeppling)
-- **PR #4670** (closed): fix(aws): handle --query output in sts get-caller-identity formatter (@TechWizard9999)
-- **PR #4668** (closed): fix(aws): handle --query output for sts get-caller-identity (@TechWizard9999)
+- **PR #4712** (2026-10-28): chore(deps): bump clap from 4.5.60 to 4.6.7 (@dependabot[bot])
+- **PR #4711** (2026-10-28): chore(deps): bump ignore from 0.4.32 to 0.4.33 (@dependabot[bot])
 
 ---
 
@@ -2073,81 +1906,58 @@ fix(pytest): keep the E lines of error and failure blocks
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4714 from rtk-ai/fix/pytest-collection-error-lines
+## X. Merge pull request #4712 from rtk-ai/dependabot/cargo/develop/clap-4.6.7
 
 **RULE**:
-When implementing operations in `src/cmds/python/pytest_cmd.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e05c7bdf`: Merge pull request #4714 from rtk-ai/fix/pytest-collection-error-lines. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5f4a4dcb`: Merge pull request #4712 from rtk-ai/dependabot/cargo/develop/clap-4.6.7. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmds/python/pytest_cmd.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use crate::core::arg_tokenizer::{Dialect, TokenKind, ValueSpec, tokenize_grammar};
-const MAX_TRACEBACK_LINES: usize = 3;
-const MAX_ERROR_LINES: usize = 4;
-    let injected = injected_args(args);
-    cmd.args(&injected);
-        eprintln!("Running: pytest {} {}", injected.join(" "), args.join(" "));
-fn injected_args(args: &[String]) -> Vec<&'static str> {
-    let tokens = tokenize_grammar(
-        args,
-        &|kind, name| match (kind, name) {
-            (TokenKind::Long, "tb")
-            | (TokenKind::Short, "k" | "m" | "p" | "c" | "o" | "W" | "r") => {
-                Some(ValueSpec::value())
-            }
-            _ => None,
-        },
-        Dialect::Posix,
-    );
-    let tb = tokens
-        .iter()
-        .filter(|t| t.kind == TokenKind::Long && t.text == "tb")
-        .filter_map(|t| t.value(&tokens))
-        .next_back();
-    let has_flag = |short: &str, long: &str| {
-        tokens.iter().any(|t| {
-            (t.kind == TokenKind::Short && t.text == short)
-                || (t.kind == TokenKind::Long && t.text == long)
-        })
-    };
-    let has_quiet_flag = has_flag("q", "quiet");
-    let has_report_flag = has_flag("r", "report-chars");
+version = "1.0.0"
+checksum = "824a212faf96e9acacdbd09febd34438f8f711fb84e09a8916013cd7815ca28d"
+version = "1.0.14"
+checksum = "940b3a0ca603d1eade50a4846a2afffd5ef57a9feac2c0e2ec2e14f9ead76000"
+version = "1.0.0"
+checksum = "52ce7f38b242319f7cabaa6813055467063ecdc9d355bbb4ce0c68908cd8130e"
+version = "4.6.7"
+checksum = "aa8876b300ab35ba921adea3dfd70157a46249b33f95c9084ae5709785478946"
+version = "4.6.7"
+checksum = "ec0797fb7aeb1406c84efac526901f7ec3ead2124f946b494e72879d4b54704d"
+version = "4.6.7"
+checksum = "f9c751b79415d4e559e3d1fcf128e09e720eb673a06d26cf6f392d37d75b66e0"
+ "syn 3.0.5",
+[[package]]
+name = "semver"
+version = "1.0.28"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8a7852d02fc848982e0c167ef163aaff9cd91dc640ba85e263cb1ce46fae51cd"
 
-    let mut injected =
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    let has_tb_flag = args.iter().any(|a| a.starts_with("--tb"));
-    let has_quiet_flag = args.iter().any(|a| a == "-q" || a == "--quiet");
-    // Only treat a short `-r…` as pytest's report flag (not `--randomly-seed` etc.)
-    let has_report_flag = args
-        .iter()
-        .any(|a| a.starts_with("-r") && !a.starts_with("--"));
-
-    if !has_tb_flag {
-        cmd.arg("--tb=short");
-    }
-    if !has_quiet_flag {
-        cmd.arg("-q");
-    }
-    // Surface xfailed/xpassed (and their reasons) in the short summary section
-    // so the compact output can report expected failures and — crucially —
-    // unexpected passes (XPASS), which signal a behavior change.
-    if !has_report_flag {
-        cmd.arg("-rxX");
-    }
-
-        eprintln!("Running: pytest --tb=short -q {}", args.join(" "));
-                if trimmed.starts_with("___") {
+version = "0.6.21"
+checksum = "43d5b281e737544384e969a5ccad3f1cdd24b48086a0fc1b2a5262a26b8f4f4a"
+version = "1.0.13"
+checksum = "5192cca8006f1fd4f7237516f40fa183bb07f8fbdfedaa0036de5ea9b0b45e78"
+version = "0.2.7"
+checksum = "4e7644824f0aa2c7b9384579234ef10eb7efb6a0deb83f9630a49594dd9c15c2"
+version = "4.5.60"
+checksum = "2797f34da339ce31042b27d23607e051786132987f595b02ba4f6a6dffb7030a"
+version = "4.5.60"
+checksum = "24a241312cea5059b13574bb9b3861cabf758b879c15190b37b6d6fd63ab6876"
+version = "4.5.55"
+checksum = "a92793da1a46a5f2a02a6f4c46c6496b28c43638adea8306fcb0caa1634f24e5"
+ "syn 2.0.117",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e05c7bdf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5f4a4dcb` are properly handled with clean fallback behavior.

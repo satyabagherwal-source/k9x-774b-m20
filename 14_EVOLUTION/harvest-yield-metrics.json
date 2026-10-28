@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T23:18:58.444Z",
-  "total_cycles_completed": 5964,
-  "total_learnings_persisted": 5964,
-  "total_rules_promoted": 5416,
+  "last_updated": "2026-10-28T23:31:36.016Z",
+  "total_cycles_completed": 5966,
+  "total_learnings_persisted": 5966,
+  "total_rules_promoted": 5420,
   "history": [
-    {
-      "timestamp": "2026-10-28T13:56:58.698Z",
-      "repository": "DefGuard/defguard",
-      "learningId": "learn-github-defguard-defguard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T14:08:37.327Z",
-      "repository": "transact-rs/sqlx",
-      "learningId": "learn-github-transact-rs-sqlx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T14:08:37.658Z",
       "repository": "Tongyi-MAI/Z-Image-Turbo",
@@ -1403,6 +1389,20 @@
       "repository": "lancedb/lancedb",
       "learningId": "learn-github-lancedb-lancedb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T23:30:41.643Z",
+      "repository": "rtk-ai/rtk",
+      "learningId": "learn-github-rtk-ai-rtk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T23:31:36.016Z",
+      "repository": "black-forest-labs/flux-3-image-klein",
+      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
