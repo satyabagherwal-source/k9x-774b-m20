@@ -315,8 +315,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1",
     "sourceVersion": "hf-qwen-qwen-image-2.1",
     "license": "Open-Source",
-    "contentHash": "4577f352edaf8085d3508476f4abbdb4bd2ec4e540c7800ce6c85748a95ef61c",
-    "lastHarvestedAt": "2026-10-25T11:20:55.261Z",
+    "contentHash": "18cc3b41376ba5271fbe69b7a360dc227215ac2188d1fa3380b78cb61eddc165",
+    "lastHarvestedAt": "2026-10-28T04:28:17.813Z",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1"
   },
   "hf-contrastive-lm-clm-v0.1-8b": {
@@ -2543,10 +2543,10 @@
     "repository": "sharkdp/fd",
     "platform": "github",
     "sourceUrl": "https://github.com/sharkdp/fd",
-    "sourceVersion": "c44735ec",
+    "sourceVersion": "afcefdd4",
     "license": "Apache-2.0",
-    "contentHash": "ac671da348afaab40eb960e0540018643b7dd08d4f7e8b5436d5ef93085e6924",
-    "lastHarvestedAt": "2026-10-25T11:14:37.952Z",
+    "contentHash": "4e6e5c4ea814b063cb79937a421fc70e95c307db0d5e1561c174d59b2e10d863",
+    "lastHarvestedAt": "2026-10-28T04:28:19.322Z",
     "learningId": "learn-github-sharkdp-fd"
   },
   "maotoumao-musicfree": {
@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "222c3929",
+    "sourceVersion": "5a269c3c",
     "license": "MIT",
-    "contentHash": "266ddef2004b1aa89013f065ba4b08a5fe6c13d347d9750f5031031746786203",
-    "lastHarvestedAt": "2026-10-27T14:46:57.153Z",
+    "contentHash": "df728f2fcfabe5db630d388a04114c4b88aaaec73267129b83f6bb4e75911ad6",
+    "lastHarvestedAt": "2026-10-28T04:28:32.784Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "42abf54e",
+    "sourceVersion": "bb23c552",
     "license": "Apache-2.0",
-    "contentHash": "861c7247da7b76e877bfc51c8c892f647bbb36f3eb75e732709fa7d8e34f74e1",
-    "lastHarvestedAt": "2026-10-27T21:45:10.279Z",
+    "contentHash": "45e3ff5efd35c156caa4c18f0ce4565cb0627ecd20ef047d81c7a3b1869d928e",
+    "lastHarvestedAt": "2026-10-28T04:28:27.518Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {

@@ -5693,3 +5693,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-llama-llama-3-1-8b-instruct` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-28T04:10:11.077Z |
 | `learn-huggingface-xingchen-agi-teleocr` | `https://huggingface.co/XingChen-AGI/TeleOCR` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-28T04:21:40.020Z |
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `5ce9e901` | Multi-dimensional audit evidence | 2026-10-28T04:21:52.541Z |
+| `learn-huggingface-qwen-qwen-image-2-1` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-28T04:28:17.813Z |
+| `learn-github-sharkdp-fd` | `https://github.com/sharkdp/fd` | `afcefdd4` | Multi-dimensional audit evidence | 2026-10-28T04:28:19.322Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `bb23c552` | Multi-dimensional audit evidence | 2026-10-28T04:28:27.518Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `5a269c3c` | Multi-dimensional audit evidence | 2026-10-28T04:28:32.784Z |

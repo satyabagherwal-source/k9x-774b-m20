@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T04:21:52.550Z",
+  "last_updated": "2026-10-28T04:28:32.792Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -365,14 +365,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen-image-2-1",
-      "content_hash": "4577f352edaf8085d3508476f4abbdb4bd2ec4e540c7800ce6c85748a95ef61c",
-      "verified_at": "2026-10-25T11:20:55.268Z",
+      "content_hash": "18cc3b41376ba5271fbe69b7a360dc227215ac2188d1fa3380b78cb61eddc165",
+      "verified_at": "2026-10-28T04:28:17.823Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T11:20:55.268Z"
+      "last_updated": "2026-10-28T04:28:17.823Z"
     },
     "Contrastive-LM/CLM-v0.1-8B": {
       "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -3951,14 +3951,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sharkdp-fd",
-      "content_hash": "ac671da348afaab40eb960e0540018643b7dd08d4f7e8b5436d5ef93085e6924",
-      "verified_at": "2026-10-25T11:14:37.959Z",
+      "content_hash": "4e6e5c4ea814b063cb79937a421fc70e95c307db0d5e1561c174d59b2e10d863",
+      "verified_at": "2026-10-28T04:28:19.329Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T11:14:37.959Z"
+      "last_updated": "2026-10-28T04:28:19.329Z"
     },
     "maotoumao/MusicFree": {
       "repository": "maotoumao/MusicFree",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "266ddef2004b1aa89013f065ba4b08a5fe6c13d347d9750f5031031746786203",
-      "verified_at": "2026-10-27T14:46:57.162Z",
+      "content_hash": "df728f2fcfabe5db630d388a04114c4b88aaaec73267129b83f6bb4e75911ad6",
+      "verified_at": "2026-10-28T04:28:32.792Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T14:46:57.162Z"
+      "last_updated": "2026-10-28T04:28:32.792Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -10701,14 +10701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-tidb",
-      "content_hash": "861c7247da7b76e877bfc51c8c892f647bbb36f3eb75e732709fa7d8e34f74e1",
-      "verified_at": "2026-10-27T21:45:10.289Z",
+      "content_hash": "45e3ff5efd35c156caa4c18f0ce4565cb0627ecd20ef047d81c7a3b1869d928e",
+      "verified_at": "2026-10-28T04:28:27.526Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T21:45:10.289Z"
+      "last_updated": "2026-10-28T04:28:27.526Z"
     },
     "neondatabase/neon": {
       "repository": "neondatabase/neon",

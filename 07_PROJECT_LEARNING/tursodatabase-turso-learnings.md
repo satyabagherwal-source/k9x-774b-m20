@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
-> **Source Version**: `222c3929`  
+> **Source Version**: `5a269c3c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T14:46:56.766Z  
+> **Timestamp**: 2026-10-28T04:28:32.275Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T14:46:55.149Z  
+> **Harvest Timestamp**: 2026-10-28T04:28:32.269Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25068 stars
+- **Stars / Engagement**: 25071 stars
 
 ---
 
@@ -1376,17 +1376,11 @@ async fn main() -> Result<(), Error> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10892** (2026-10-27): **core: map namespace name to a Namespace value**
-  *Symptoms*: ## Description  The connection's table of namespace names mapped each name to a database id, so a name could only ever mean the whole of a database. That cannot express a namespace that is one of several in a database.  `Namespaces` now maps a name to a `Namespace`: the name together with the `NamespaceRef` it refers to. `search_order` returns the namespaces of the search path rather than their database ids, resolving a qualifier goes through the `Namespace`, and the trigger and sequence code that prints a namespace's name asks for the name of a `NamespaceRef` instead of the name of a database. `Connection::find_sequence` returns the `NamespaceRef` the sequence was found in. The PostgreSQL session adapts to the new return types without changing what it does.  Every `Namespace` a connection has is still the root of a database, so the search order and every lookup resolve as before. The qualifier of a sequence named in `nextval`, `currval` or `setval` is looked up without the scope a trigger or view body is compiled in, as before, so a trigger of main may still use a sequence of an attached database. `Namespaces::others` is gone, since `attached_databases` was its only caller.  ## Motivation and context  Second preparatory commit carved out of #10585, stacked on #10890. That PR made every table and opcode carry a namespace; this one lets the connection name one, which is what a stored namespace will need to be reachable from SQL. Still no stored names and no `CREATE SCHEMA`.  #
-  **Post-Mortem & Fix Analysis**:
-  > ### Autofixer review <sub>🔄 Live status: Autofixer edits this comment as the review runs. Each finished review is also posted as its own GitHub review.</sub>  A maintainer asked Autofixer to review this pull request. Its review of `384b3ae1cd49` is [here](https://github.com/tursodatabase/turso/pull/10892#pullrequestreview-5668875176); each reviewed commit gets its own review, so the earlier ones stay in this pull request's timeline.  ✅ **Verdict: looks good to merge** Autofixer adds the `autofixer: merge-recommended` label while CI is green, the branch merges cleanly, and no maintainer has requested changes.  <sub>An automated review by Autofixer's agents; maintainers decide what to merge. Autofixer reviews each new head while the `autofixer: review-requested` label stays.</sub>  <!-- autofixer:contributor-review:384b3ae1cd49f62c59493d23a9a6fe08afd5cc40 --> <!-- autofixer:contributor-review-recommends:384b3ae1cd49f62c59493d23a9a6fe08afd5cc40 --> <!-- autofixer:contributor-review-state
-  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**  <details> <summary><b>2 warnings, 1 note</b></summary>  > :warning: **Unable to measure the execution of 1 benchmark** > > This benchmark measured no execution time, so its result is not comparable and counts as unchanged. This usually happens when the compiler removes the code under test. > > [Prevent compiler optimizations](https://codspeed.io/docs/troubleshooting?utm_source=github&utm_medium=comment-v2&utm_content=optimized_out#optimized-out-benchmarks) > > [See affected benchmarks](https://app.codspeed.io/tursodatabase/turso/branches/namespace-type?q=has%3Aoptimized_out&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  > :warning: **104 benchmarks are dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime instrument to measure them. > > 
+- **Issue #10943** (2026-10-28): **core/translate: qualify the child table of a foreign-key action in main**
+  *Symptoms*: ## Description  Foreign-key actions on a child table in `main` now name the child table with its database (`main.child`), the same way they already did for attached databases. Before, the generated `UPDATE`/`DELETE` for `ON DELETE`/`ON UPDATE` `CASCADE`, `SET NULL` and `SET DEFAULT` used the bare table name. Unqualified names find TEMP objects first, so a TEMP table with the child's name received the action and `main.child` kept a row pointing at a deleted parent. A TEMP view with that name made the parent write fail with `no such table`.  The change is in the four `fire_fk_*` functions in `core/translate/fkeys.rs`, plus a regression `.sqltest`.  ## Motivation and context  Fixes #10938. The issue has the reproducer and an `EXPLAIN` comparison: SQLite's action subprogram opens `main.child` (`root=4 iDb=0`), while turso's opens `temp.child` (`root=2; iDb=1`).  SQLite compiles each action as a trigger in the child table's own database (`fkActionTrigger` in `fkey.c`), so a TEMP object never takes part. This change gets the same result with a smaller change. Compiling the action under the child's `database_scope` would follow SQLite's design more closely; happy to switch to that if you prefer.  #10585 and #10008 change the same four lines (`child_namespace_name`, which returns `None` for `main`). Whichever lands first, `main` needs a name in the action SQL for as long as unqualified lookup checks TEMP first.  ## Description of AI Usage  I used claude code extensively. The root cau
 
-- **Issue #10890** (2026-10-27): **core: replace database id with namespace in plans and schema opcodes**
-  *Symptoms*: ## Description  The planner knew a table by the database it is in, and the opcodes that change the schema in memory looked every object up in the root namespace of their database. Neither can tell two tables of the same name apart once a database stores more than one namespace.  This change replaces the database id with a `NamespaceRef` in `JoinedTable` and `OuterQueryReference`, in the trigger, foreign key, sequence and index helpers, and in the opcodes that drop, rename or alter an object (`DropTable`, `DropView`, `DropIndex`, `DropTrigger`, `DropSequence`, `RenameTable`, `DropColumn`, `AddColumn`, `AlterColumn`, `AddSequence`, `SequenceComputeNext`, `SequenceTrackAllocation`), which now look the object up in its namespace instead of the root.  Every namespace is still the root of its database, so this changes nothing for SQLite. The one place that behaves differently is `REPLACE` on a table of an attached database: it consulted main's schema for the table's child foreign keys and now consults the schema of the table's database.  Two small cleanups come along: `InsertEmitCtx` loses its `database_id` field, which repeated the one in its namespace, and `set_delete_stmt_journal_flags` no longer takes a database id it did not use.  ## Motivation and context  This is the first of the preparatory commits carved out of #10585 (storing PostgreSQL schemas as namespaces of the main database), so that the on-disk format change can be reviewed on its own. It is the mechanical part of t
-  **Post-Mortem & Fix Analysis**:
-  > ### Autofixer review <sub>🔄 Live status: Autofixer edits this comment as the review runs. Each finished review is also posted as its own GitHub review.</sub>  A maintainer asked Autofixer to review this pull request. Its review of `ee30adb92b3a` is [here](https://github.com/tursodatabase/turso/pull/10890#pullrequestreview-5667967013); each reviewed commit gets its own review, so the earlier ones stay in this pull request's timeline.  ✅ **Verdict: looks good to merge** Autofixer adds the `autofixer: merge-recommended` label while CI is green, the branch merges cleanly, and no maintainer has requested changes.  <sub>An automated review by Autofixer's agents; maintainers decide what to merge. Autofixer reviews each new head while the `autofixer: review-requested` label stays.</sub>  <!-- autofixer:contributor-review:ee30adb92b3a00b3168cd86390f10158cd433e3c --> <!-- autofixer:contributor-review-recommends:ee30adb92b3a00b3168cd86390f10158cd433e3c --> <!-- autofixer:contributor-review-state
-  > ### Autofixer follow-ups  - Not filed: ALTER TABLE RENAME does not rewrite schema-qualified table references in views. Duplicate of #10799: Reproduces, but on main ALTER TABLE RENAME does not rewrite any view reference, qualified or not, which open issue #10799 already covers.  <!-- autofixer:follow-ups-done -->
+- **Issue #10941** (2026-10-27): **postgres: report default public schema ownership and permissions**
+  *Symptoms*: ## Description  Report `pg_database_owner` as the owner of the public schema, with CREATE and USAGE for the owner and USAGE for PUBLIC. Expose the built-in role in `pg_roles` with its PostgreSQL attributes, and recognize its OID in `pg_get_userbyid` and `acldefault`.  ## Motivation and context  The catalog previously reported `turso` as the public schema owner and a NULL ACL. This caused pg_dump to emit `ALTER SCHEMA public OWNER TO turso` and `REVOKE USAGE ON SCHEMA public FROM PUBLIC`. Matching PostgreSQL's defaults removes both unnecessary statements.  This changes catalog metadata only; it does not implement role management or permission enforcement. Table-owner names and the server-version header still differ in the dump comparison.  ## Description of AI Usage  Codex investigated the catalog defaults, implemented the fix, added regression coverage and documentation, and validated the changes under the author's direction. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1403,512 +1397,684 @@ async fn main() -> Result<(), Error> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8c29f3e6` (2026-10-27)
-**Commit Message**: Merge 'core/json: match SQLite's null document and null path handling' from 
+### Incident Patch 1: `73cf506b` (2026-10-27)
+**Commit Message**: Merge 'postgres: preserve not-null constraints in pg_dump' from Pedro Muniz
 
-## Update: rebased onto `main` (2026-10-15)
+Pedro: I personally don't like too much this approach because its very
+fragile, but we don't have a good binding and resolved expr/type
+support, so its kinda impossible to properly know the output logical
+type.
 
-`main` now has `json_edit_path()`, which already drops a
-`json_set()`/`json_insert()`/`json_replace()` pair whose path is SQL
-NULL without reading its value, and only checks for a BLOB value once
-the path is known to start with `$`. I took `main`'s version of those
-loops, so the `json_set()` ordering caveat below no longer applies. What
-this PR still adds:
+Preserve NOT NULL constraints in PostgreSQL dumps. Report rowid-alias
+primary keys as non-nullable in `pg_attribute`, and preserve boolean
+literal and CASE result types so PostgreSQL clients receive `t`/`f`
+instead of integer `1`/`0`.
 
-* the JSON `null` document result (first commit, unchanged);
-* a SQL NULL document returns SQL NULL before any path or value is read,
-in all the mutators;
-* `json_remove()`/`jsonb_remove()` return SQL NULL when one of their
-paths is SQL NULL.
+Boolean literals translate to typed boolean expressions. The PostgreSQL
+statement wrapper reports boolean result metadata from the compiled
+expressions; no new dialect hook is needed. Make `Column::notnull()`
+include rowid aliases, while preserving SQLite declaration metadata and
+schema rewriting. Update the SQL documentation to describe this
+behavior.
 
-The second commit message is updated to match. Re-run after the rebase:
-`cargo test -p turso_core --lib -- json` (180 passed, including
-`test_null_path_drops_pair_without_reading_value`) and `cargo fmt -p
-turso_core --check` (clean). The conformance suite and clippy were not
-re-run for this rebase.
+`pg_dump` omitted NOT NULL from integer primary keys because their
+catalog flag was false. It also missed explicitly declared NOT NULL
+columns because its `notnull_islocal` CASE expression was reported as an
+integer; pg_dump checks for PostgreSQL's textual boolean `t`.
 
----
+The dump fixtures now preserve these declaration
 
-The JSON mutators (`json_set`, `json_insert`, `json_replace`,
-`json_remove` and the `jsonb_` variants) did not follow SQLite's
-handling of a JSON `null` document or of
-
-**File**: `core/json/mod.rs` (modified, +23/-2)
+**File**: `core/schema.rs` (modified, +24/-3)
 ```diff
-@@ -394,6 +394,9 @@ where
-     let first_arg = args.next().ok_or_else(|| {
-         crate::LimboError::InternalError("args should not be empty after length check".to_string())
-     })?;
-+    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
-+        return Ok(Value::Null);
-+    }
-     let mut json = json_cache.get_or_insert_with(first_arg, make_jsonb_fn)?;
+@@ -4886,7 +4886,9 @@ impl BTreeTable {
  
-     // TODO: when `array_chunks` is stabilized we can chunk by 2 here
-@@ -417,7 +420,7 @@ where
- 
-     let el_type = json.element_type()?;
- 
--    json_string_to_db_type(json, el_type, OutputVariant::String)
-+    json_document_to_db_type(json, el_type, OutputVariant::String)
- }
- 
- pub fn jsonb_set<I, E, V>(args: I, json_cache: &JsonCacheCell) -> crate::Result<Value>
-@@ -435,6 +438,9 @@ where
-     let first_arg = args.next().ok_or_else(|| {
-         crate::LimboError::InternalError("args should not be empty after length check".to_string())
-     })?;
-+    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
-+        return Ok(Value::Null);
-+    }
-     let mut json = json_cache.get_or_insert_with(first_arg, make_jsonb_fn)?;
- 
-     // TODO: when `array_chunks` is stabilized we can chunk by 2 here
-@@ -456,7 +462,7 @@ where
- 
-     let el_type = json.element_type()?;
- 
--    json_string_to_db_type(json, el_type, OutputVariant::Binary)
-+    json_document_to_db_type(json, el_type, OutputVariant::Binary)
- }
- 
- /// Implements the -> operator. Always returns a proper JSON value.
-@@ -850,6 +856,21 @@ fn json_edit_path<'a>(
-     json_path_from_db_value(path, true)
- }
- 
-+pub fn json_document_to_db_type(
-+    json: Jsonb,
-+    element_type: ElementType,
-+    output: OutputVariant,
-+) -> crate::Result<Value> {
-+    if element_type == ElementType::NULL {
-+        return if matches!(output, OutputVariant::Binary) {
-+            Ok(Value::Blob(json.data()))
-+        } else {
-+            Ok(Value::Text(Text::json("null".to_string())))
-+        };
-+    }
-+    json_string_to_db_type(json, element_type, output)
-+}
-+
- pub fn json_error_position(json: impl AsValueRef) -> crate::Result<Value> {
-     match json.as_value_ref() {
-         ValueRef::Text(t) => {
-```
-
-**File**: `core/json/ops.rs` (modified, +294/-40)
-```diff
-@@ -1,11 +1,11 @@
- use super::{
--    convert_dbtype_to_jsonb, curry_convert_dbtype_to_jsonb, json_edit_path,
--    json_path_from_db_value, json_string_to_db_type,
-+    convert_dbtype_to_jsonb, curry_convert_dbtype_to_jsonb, json_document_to_db_type,
-+    json_edit_path, json_path_from_db_value, json_path_text,
-     jsonb::{DeleteOperation, InsertOperation, ReplaceOperation},
-     Conv, JsonCacheCell, OutputVariant,
- };
- use crate::{
--    types::{AsValueRef, Text, Value},
-+    types::{AsValueRef, Value},
-     ValueRef,
- };
- 
-@@ -39,14 +39,7 @@ pub fn json_patch(
- 
-     let element_type = target.element_type()?;
- 
--    // A JSON null patch result stays JSON here: SQLite returns the
--    // text 'null', while json_string_to_db_type would map it to SQL
--    // NULL the way extraction does.
--    if element_type == super::jsonb::ElementType::NULL {
--        return Ok(Value::Text(Text::json("null".to_string())));
--    }
--
--    json_string_to_db_type(target, element_type, OutputVariant::String)
-+    json_document_to_db_type(target, element_type, OutputVariant::String)
- }
- 
- pub fn jsonb_patch(
-@@ -74,14 +67,7 @@ pub fn jsonb_patch(
- 
-     let element_type = target.element_type()?;
- 
--    // A JSON null patch result stays JSON here: SQLite returns the
--    // JSONB null blob, while json_string_to_db_type would map it to
--    // SQL NULL the way extraction does.
--    if element_type == super::jsonb::ElementType::NULL {
--        return Ok(Value::Blob(target.data()));
--    }
--
--    json_string_to_db_type(target, element_type, OutputVariant::Binary)
-+    json_document_to_db_type(target, element_type, OutputVariant::Binary)
- }
- 
- pub fn json_remove<I, E, V>(args: I, json_cache: &JsonCacheCell) -> crate::Result<Value>
-@@ -99,22 +85,24 @@ where
-     let first_arg = args.next().ok_or_else(|| {
-         crate::LimboError::InternalError("args should not be empty after length check".to_string())
-     })?;
-+    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
-+        return Ok(Value::Null);
-+    }
-     let mut json = json_cache.get_or_insert_with(first_arg, make_jsonb_fn)?;
-     for arg in args {
--        if let ValueRef::Text(s) = arg.as_value_ref() {
--            if s.as_str() == "$" {
--                return Ok(Value::Null);
--            }
--        }
--        if let Some(path) = json_path_from_db_value(&arg, true)? {
--            let mut op = DeleteOperation::new();
--            let _ = json.operate_on_path(&path, &mut op);
-+        if json_path_text(arg.as_value_ref()).as_deref() == Some("$") {
-+            return Ok(Value::Null);
-         }
-+        let Some(path) = json_path_from_db_value(&arg, true)? else {
-+            return Ok(Value::Null);
-+        };
-+        let mut op = DeleteOperation::new();
-+        let _ = json.operate_on_path(&path, &mut op);
+     fn primary_key_implies_not_null(&self, column: &Column) -> bool {
+         column.primary_key()
+-            && (self.is_strict || (!self.has_rowid && self.primary_key_columns.len() == 1))
++            && (column.is_rowid_alias()
++                || self.is_strict
++                || (!self.has_rowid && self.primary_key_columns.len() == 1))
      }
  
-     let el_type = json.element_type()?;
- 
--    json_string_to_db_type(json, el_type, OutputVariant::String)
-+    json_document_to_db_type(json, el_type, OutputVariant::String)
- }
- 
- pub fn jsonb_remove<I, E, V>(args: I, json_cache: &JsonCacheCell) -> crate::Result<Value>
-@@ -132,17 +120,19 @@ where
-     let first_arg = args.next().ok_or_else(|| {
-         crate::LimboError::InternalError("args should not be empty after length check".to_string())
-     })?;
-+    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
-+        return Ok(Value::Null);
-+    }
-     let mut json = json_cache.get_or_insert_with(first_arg, make_jsonb_fn)?;
-     for arg in args {
--        if let ValueRef::Text(s) = arg.as_value_ref() {
--            if s.as_str() == "$" {
--                return Ok(Value::Null);
--            }
--        }
--        if let Some(path) = json_path_from_db_value(&arg, true)? {
--            let mut op = DeleteOperation::new();
--            let _ = json.operate_on_path(&path, &mut op);
-+        if json_path_text(arg.as_value_ref()).as_deref() == Some("$") {
-+            return Ok(Value::Null);
-         }
-+        let Some(path) = json_path_from_db_value(&arg, true)? else {
-+            return Ok(Value::Null);
-+        };
-+        let mut op = DeleteOperation::new();
-+        let _ = json.operate_on_path(&path, &mut op);
+     pub fn column_collations(&self) -> Result<Vec<CollationSeq>> {
+@@ -6872,7 +6874,7 @@ impl Column {
+     }
+     #[inline]
+     pub fn notnull(&self) -> bool {
+-        self.info.notnull()
++        self.info.notnull() || self.is_rowid_alias()
+     }
+     #[inline]
+     pub fn set_notnull(&mut self, v: bool) {
+@@ -7834,13 +7836,17 @@ mod tests {
+             for (actual, flag) in [
+                 (column.primary_key(), ColDefFlags::PrimaryKey),
+                 (column.is_rowid_alias(), ColDefFlags::RowIdAlias),
+-                (column.notnull(), ColDefFlags::NotNull),
+                 (column.explicit_notnull(), ColDefFlags::ExplicitNotNull),
+                 (column.unique(), ColDefFlags::Unique),
+                 (column.hidden(), ColDefFlags::Hidden),
+             ] {
+                 assert_eq!(actual, flags.contains(flag), "{flags:?}: {flag:?}");
+             }
++            assert_eq!(
++                column.notnull(),
++                flags.intersects(ColDefFlags::NotNull | ColDefFlags::RowIdAlias),
++                "{flags:?}"
++            );
+             assert_eq!(column.ty(), Type::Numeric, "{flags:?}");
+             assert_eq!(
+                 column.collation_opt(),
+@@ -8233,6 +8239,21 @@ mod tests {
+         Ok(())
      }
  
-     Ok(Value::Blob(json.data()))
-@@ -163,6 +153,9 @@ where
-     let first_arg = args.next().ok_or_else(|| {
-         crate::LimboError::InternalError("args should not be empty after length check".to_string())
-     })?;
-+    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
-+        return Ok(Value::Null);
++    #[test]
++    fn rowid_alias_is_not_nullable() {
++        for sql in [
++            "CREATE TABLE t(id INTEGER PRIMARY KEY)",
++            "CREATE TABLE t(id INTEGER, PRIMARY KEY(id))",
++        ] {
++            let table = BTreeTable::from_sql(sql, 2).unwrap();
++            let column = table.get_column("id").unwrap().1;
++            assert!(column.notnull(), "{sql}");
++            assert!(!column.explicit_notnull(), "{sql}");
++        }
++        let table = BTreeTable::from_sql("CREATE TABLE t(id INTEGER PRIMARY KEY DESC)", 2).unwrap();
++        assert!(!table.get_column("id").unwrap().1.notnull());
 +    }
-     let mut json = json_cache.get_or_insert_with(first_arg, make_jsonb_fn)?;
-     // TODO: when `array_chunks` is stabilized we can chunk by 2 here
-     while args.len() > 1 {
-@@ -184,7 +177,7 @@ where
- 
-     let el_type = json.element_type()?;
- 
--    json_string_to_db_type(json, el_type, super::OutputVariant::String)
-+    json_document_to_db_type(json, el_type, OutputVariant::String)
- }
- 
- pub fn jsonb_replace<I, E, V>(args: I, json_cache: &JsonCacheCell) -> crate::Result<Value>
-@@ -202,6 +195,9 @@ where
-     let 
-```
-
----
-
-### Incident Patch 2: `212ebc87` (2026-10-27)
-**Commit Message**: Merge 'core/translate: report expression index columns as cid -2 with NULL name in index_info pragmas' from app/turso-github-handyman
-
-## Problem
-
-```sql
-CREATE TABLE t(a, b, c, d);
-CREATE INDEX i_expr ON t(substr(b,1,1));
-SELECT seqno, cid, quote(name), key FROM pragma_index_xinfo('i_expr');
--- Turso:
--- 0|-1|'substr (b, 1, 1)'|1
--- 1|-1|''|0
--- SQLite:
--- 0|-2|NULL|1
--- 1|-1|NULL|0
-```
-
-`PRAGMA index_info` has the same bug for the expression column.
-
-Both pragmas printed `IndexColumn::pos_in_table` and `name` directly.
-For an expression column, `pos_in_table` is `EXPR_INDEX_SENTINEL`
-(`usize::MAX`), which prints as `-1`. The name is the expression text.
-The rowid row of `index_xinfo` also had `''` as its name instead of
-NULL.
-
-The issue also says the output changed after an unrelated `ALTER TABLE
-... DROP COLUMN`. That no longer happens on main, but the values were
-wrong before and after the `ALTER`.
-
-## Fix
-
-Like SQLite, an expression column gets cid `-2` and a NULL name. The
-rowid row of `index_xinfo` gets a NULL name.
-
-`emit_index_column_cid_and_name` writes the cid and name for both
-pragmas. If `pos_in_table == EXPR_INDEX_SENTINEL`, it writes `-2` and
-NULL. Otherwise it write
-
-**File**: `core/translate/pragma.rs` (modified, +16/-6)
-```diff
-@@ -15,7 +15,7 @@ use super::integrity_check::{
- use crate::function::Func;
- use crate::namespace::{NamespaceId, NamespaceRef};
- use crate::pragma::pragma_for;
--use crate::schema::{BTreeTable, Index, Schema, Table};
-+use crate::schema::{BTreeTable, Index, IndexColumn, Schema, Table, EXPR_INDEX_SENTINEL};
- use crate::storage::encryption::{CipherMode, EncryptionKey};
- use crate::storage::pager::AutoVacuumMode;
- use crate::storage::pager::Pager;
-@@ -1136,8 +1136,7 @@ fn query_pragma(
-                     )? {
-                         for (seqno, col) in index.columns.iter().enumerate() {
-                             program.emit_int(seqno as i64, base_reg);
--                            program.emit_int(col.pos_in_table as i64, base_reg + 1);
--                            program.emit_string8(col.name.clone(), base_reg + 2);
-+                            emit_index_column_cid_and_name(program, col, base_reg + 1);
-                             program.emit_result_row(base_reg, 3);
-                         }
-                     }
-@@ -1182,8 +1181,7 @@ fn query_pragma(
-                                 .unwrap_or_else(|| "BINARY".to_string());
- 
-                             program.emit_int(seqno as i64, base_reg);
--                            program.emit_int(col.pos_in_table as i64, base_reg + 1);
--                            program.emit_string8(col.name.clone(), base_reg + 2);
-+                            emit_index_column_cid_and_name(program, col, base_reg + 1);
-                             program.emit_int(desc as i64, base_reg + 3);
-                             program.emit_string8(coll, base_reg + 4);
-                             program.emit_int(1, base_reg + 5); // key column
-@@ -1195,7 +1193,7 @@ fn query_pragma(
-                             let seqno = index.columns.len();
-                             program.emit_int(seqno as i64, base_reg);
-                             program.emit_int(-1, base_reg + 1);
--                            program.emit_string8(String::new(), base_reg + 2);
-+                            program.emit_null(base_reg + 2, None);
-                             program.emit_int(0, base_reg + 3);
-                             program.emit_string8("BINARY".to_string(), base_reg + 4);
-                             program.emit_int(0, base_reg + 5); // not a key column
-@@ -1957,6 +1955,18 @@ fn without_rowid_primary_key_index(table: &BTreeTable) -> Result<Option<Index>>
-     Ok(Some(index))
- }
- 
-+/// Emits the `cid` and `name` of PRAGMA index_info / index_xinfo. Like SQLite,
-+/// an expression column has cid -2 and a NULL name.
-+fn emit_index_column_cid_and_name(program: &mut ProgramBuilder, col: &IndexColumn, dest: usize) {
-+    if col.pos_in_table == EXPR_INDEX_SENTINEL {
-+        program.emit_int(-2, dest);
-+        program.emit_null(dest + 1, None);
-+    } else {
-+        program.emit_int(col.pos_in_table as i64, dest);
-+        program.emit_string8(col.name.clone(), dest + 1);
-+    }
-+}
 +
- /// 0-based index of `column` within `primary_key_columns`, if present.
- fn column_pk_index(
-     column: &crate::schema::Column,
+     #[test]
+     pub fn test_col_notnull_negative() -> Result<()> {
+         let sql = r#"CREATE TABLE t1 (a INTEGER);"#;
 ```
 
-**File**: `docs/sql-reference/pragmas.mdx` (modified, +2/-0)
+**File**: `core/translate/emitter/update.rs` (modified, +1/-1)
 ```diff
-@@ -178,6 +178,8 @@ PRAGMA index_info(index-name);
- -- 0     | 2   | email
+@@ -1064,7 +1064,7 @@ fn emit_deferred_notnull_checks<'a>(
+ ) -> crate::Result<()> {
+     let or_conflict = program.resolve_type;
+     for (idx, table_column) in target_table.table.columns().iter().enumerate() {
+-        if !table_column.notnull() {
++        if !table_column.notnull() || table_column.is_rowid_alias() {
+             continue;
+         }
+         // Only check columns that are in SET clauses
+```
+
+**File**: `core/translate/pragma.rs` (modified, +4/-1)
+```diff
+@@ -2026,7 +2026,10 @@ fn emit_columns_for_table_info(
+         program.emit_string8(column.ty_str.clone(), base_reg + 2);
+ 
+         // notnull
+-        program.emit_bool(column.notnull(), base_reg + 3);
++        program.emit_bool(
++            column.notnull() && (!column.is_rowid_alias() || column.explicit_notnull()),
++            base_reg + 3,
++        );
+ 
+         // dflt_value
+         match &column.default {
+```
+
+**File**: `docs/sql-reference/expressions.mdx` (modified, +2/-0)
+```diff
+@@ -54,6 +54,8 @@ SELECT 1;    -- true
+ SELECT 0;    -- false
  ```
  
-+An expression column (for example `CREATE INDEX i ON t(lower(name))`) has `cid` -2 and a NULL `name`.
++The PostgreSQL frontend supports `TRUE` and `FALSE` literals. Boolean literals and boolean-valued `CASE` expressions are sent to PostgreSQL clients as booleans (`t` or `f` in text format).
 +
- The PRIMARY KEY of a `WITHOUT ROWID` table is reported as an index named `sqlite_autoindex_<table>_1`. Passing the table's name to `index_info` or `index_xinfo` also describes that index.
+ ## Operators
  
- ### index_xinfo
+ ### Arithmetic Operators
 ```
 
-**File**: `sqlite/conformance/sqlite-sqltests/pragma/index_info.sqltest` (modified, +26/-0)
+**File**: `docs/sql-reference/statements/create-table.mdx` (modified, +2/-0)
 ```diff
-@@ -112,3 +112,29 @@ expect {
-     pk|0|0|z
-     0|0|z
+@@ -120,6 +120,8 @@ Note also that MVCC autoincrement does **not** un-burn rolled-back rowids — a
+ 
+ ### NOT NULL
+ 
++The PostgreSQL catalogs report `INTEGER PRIMARY KEY` columns as non-nullable, along with explicitly declared `NOT NULL` columns, so `pg_dump` preserves those constraints.
++
+ Prevents the column from containing NULL values. Any INSERT or UPDATE that would set the column to NULL raises a constraint error.
+ 
+ ```sql
+```
+
+**File**: `postgres/conformance/pg-sqltests/catalog.sqltest` (modified, +34/-0)
+```diff
+@@ -1280,3 +1280,37 @@ expect @tursopg {
+     1
+     t_pkey|__turso_internal_pk_index_t
  }
 +
-+@cross-check-integrity
-+test pragma-index-info-expression-column {
-+    CREATE TABLE t(a, b, c, d);
-+    CREATE INDEX i_expr ON t(substr(b,1,1), a);
-+    SELECT seqno, cid, quote(name) FROM pragma_index_info('i_expr');
-+    ALTER TABLE t DROP COLUMN d;
-+    ALTER TABLE t RENAME COLUMN a TO z;
-+    PRAGMA index_info('i_expr');
++test pg-attribute-not-null-dump {
++    CREATE TABLE dump_nulls (id INTEGER PRIMARY KEY, required TEXT NOT NULL, optional TEXT);
++    SELECT a.attname, a.attnotnull,
++           CASE WHEN a.attislocal THEN true
++                WHEN a.attnotnull AND NOT a.attislocal THEN true
++                ELSE false END AS notnull_islocal
++    FROM pg_attribute a JOIN pg_class c ON c.oid = a.attrelid
++    WHERE c.relname = 'dump_nulls' AND a.attnum > 0 ORDER BY a.attnum;
 +}
 +expect {
-+    0|-2|NULL
-+    1|0|'a'
-+    0|-2|
-+    1|0|z
++    id|t|t
++    required|t|t
++    optional|f|t
 +}
 +
-+@cross-check-integrity
-+test pragma-index-info-virtual-generated-column {
-+    CREATE TABLE t(a, b, g AS (a*2));
-+    CREATE INDEX i ON t(g);
-+    PRAGMA index_info('i');
++test pg-boolean-case-results {
++    SELECT true, false, CASE WHEN true THEN true ELSE false END,
++           CASE WHEN false THEN true ELSE false END,
++           CASE WHEN false THEN true END,
++           CASE WHEN true THEN 1 ELSE 0 END;
++    CREATE TABLE bools (value BOOLEAN);
++    INSERT INTO bools VALUES (true), (false);
++    SELECT CASE WHEN true THEN value ELSE false END FROM bools ORDER BY value;
++    SELECT CASE WHEN true THEN (CASE WHEN false THEN false ELSE true END) ELSE NULL END,
++           CASE WHEN true THEN NULL ELSE NULL END,
++           CASE WHEN true THEN 1 ELSE NULL END;
 +}
 +expect {
-+    0|2|g
++    t|f|t|f||1
++    f
++    t
++    t||1
 +}
 ```
 
-**File**: `sqlite/conformance/sqlite-sqltests/pragma/index_xinfo.sqltest` (modified, +34/-0)
+**File**: `postgres/frontend/catalog.rs` (modified, +1/-1)
 ```diff
-@@ -115,3 +115,37 @@ expect {
-     0|0|id|0|BINARY|1
-     1|1|v|0|BINARY|0
+@@ -653,7 +653,7 @@ impl SnapshotRows for PgAttributeTable {
+                     _ => sqlite_type_to_pg_oid(&col.ty_str),
+                 };
+                 let attnum = (i + 1) as i64; // 1-based
+-                let notnull = if col.notnull() { 1i64 } else { 0i64 };
++                let notnull = i64::from(col.notnull());
+                 let has_def = if col.default.is_some() { 1i64 } else { 0i64 };
+ 
+                 rows.push(vec![
+```
+
+**File**: `postgres/frontend/statement.rs` (modified, +78/-1)
+```diff
+@@ -78,7 +78,20 @@ impl Statement {
+     }
+ 
+     pub fn get_column_type_info(&self, index: usize) -> Result<Option<ColumnTypeInfo>> {
+-        self.inner.get_column_type_info(index).map_err(Into::into)
++        let mut info = self.inner.get_column_type_info(index)?;
++        if self.inner.get_query_mode() == turso_core::QueryMode::Normal {
++            let program = self.inner.get_program();
++            if let (Some(info), Some(column)) = (&mut info, program.result_columns.get(index)) {
++                if matches!(
++                    boolean_result_type(&column.expr, program),
++                    BooleanResultType::Boolean
++                ) {
++                    info.declared_name = "BOOLEAN".to_string();
++                    info.base_type = None;
++                }
++            }
++        }
++        Ok(info)
+     }
+ 
+     pub fn run_ignore_rows(&mut self) -> Result<()> {
+@@ -195,6 +208,70 @@ impl Statement {
+     }
  }
-+
-+@cross-check-integrity
-+test pragma-index-xinfo-expression-column {
-+    CREATE TABLE t(a, b, c, d);
-+    CREATE INDEX i_expr ON t(substr(b,1,1), a);
-+    SELECT seqno, cid, quote(name), key FROM pragma_index_xinfo('i_expr');
-+    ALTER TABLE t DROP COLUMN d;
-+    SELECT seqno, cid, quote(name), key FROM pragma_index_xinfo('i_expr');
-+    ALTER TABLE t RENAME COLUMN a TO z;
-+    PRAGMA index_xinfo('i_expr');
-+}
-+expect {
-+    0|-2|NULL|1
-+    1|0|'a'|1
-+    2|-1|NULL|0
-+    0|-2|NULL|1
-+    1|0|'a'|1
-+    2|-1|NULL|0
-+    0|-2||0|BINARY|1
-+    1|0|z|0|BINARY|1
-+    2|-1||0|BINARY|0
+ 
++enum BooleanResultType {
++    Boolean,
++    Null,
++    Other,
 +}
 +
-+@cross-check-integrity
-+test pragma-index-xinfo-virtual-generated-column {
-+    CREATE TABLE t(a, b, g AS (a*2));
-+    CREATE INDEX i ON t(g COLLATE NOCASE DESC, g*2);
-+    SELECT seqno, cid, quote(name), desc, coll, key FROM pragma_index_xinfo('i');
++// TODO: With better binding and resolved expression support, read the result type
++// from the resolved expression instead. Inferring it from expression shapes here
++// is fragile: new expressions and rewrites can lose the boolean type.
++fn boolean_result_type(
++    expr: &turso_parser::ast::Expr,
++    program: &turso_core::Program,
++) -> BooleanResultType {
++    use turso_parser::ast::{Expr, Literal};
++
++    match expr {
++        Expr::Literal(Literal::Null) => BooleanResultType::Null,
++        Expr::Cast {
++            type_name: Some(ty),
++            ..
++        } if ty.array_dimensions == 0 && is_boolean_type(&ty.name) => BooleanResultType::Boolean,
++        Expr::Column { table, column, .. } => {
++            let column = program
++                .table_references
++                .find_table_by_internal_id(*table)
++                .and_then(|(_, table)| table.get_column_at(*column));
++            match column {
++                Some(column)
++                    if column.array_dimensions() == 0 && is_boolean_type(&column.ty_str) =>
++                {
++                    BooleanResultType::Boolean
++                }
++                _ => BooleanResultType::Other,
++            }
++        }
++        Expr::Parenthesized(exprs) if exprs.len() == 1 => boolean_result_type(&exprs[0], program),
++        Expr::Collate(expr, _) => boolean_result_type(expr, program),
++        Expr::Case {
++            when_then_pairs,
++            else_expr,
++            ..
++        } => {
++            let mut result = BooleanResultType::Null;
++            for expr in when_then_pairs
++                .iter()
++                .map(|(_, then)| then.as_ref())
++                .chain(else_expr.as_deref())
++            {
++                match boolean_result_type(expr, program) {
++                    BooleanResultType::Boolean => result = BooleanResultType::Boolean,
++                    BooleanResultType::Null => {}
++                    BooleanResultType::Other => return BooleanResultType::Other,
++                }
++            }
++            result
++        }
++        _ => BooleanResultType::Other,
++    }
 +}
-+expect {
-+    0|2|'g'|1|NOCASE|1
-+    1|-2|NULL|0|BINARY|1
-+    2|-1|NULL|0|BINARY|0
++
++fn is_boolean_type(name: &str) -> bool {
++    name.eq_ignore_ascii_case("boolean") || name.eq_ignore_ascii_case("bool")
 +}
++
+ impl std::ops::Deref for Statement {
+     type Target = turso_core::Statement;
+ 
 ```
 
 ---
 
-### Incident Patch 3: `89e24b3d` (2026-10-27)
-**Commit Message**: Merge 'core/json: return no rows from json_each/json_tree with a NULL path' from Yunus Ozen
+### Incident Patch 2: `2b018b85` (2026-10-27)
+**Commit Message**: Merge 'vdbe/explain: fix O(N²) quadratic in EXPLAIN by caching ephemeral cursors' from Glauber Costa
 
-`json_each(json, NULL)` and `json_tree(json, NULL)` failed with `root
-path should be text`. SQLite parses the JSON first and then returns an
-empty result when the path is NULL, the same as for a NULL JSON
-argument.
+## Summary
 
-`JsonEachCursor::filter` now returns no rows for a NULL path right after
-the JSON is converted, so malformed JSON with a NULL path is still a
-`malformed JSON` error, like in SQLite. A non-text, non-NULL path keeps
-erroring as before.
+- `insn_to_row()` in `core/vdbe/explain.rs` was scanning **all
+instructions** on every call to determine which cursor IDs are
+ephemeral. EXPLAIN calls it once per instruction, so N instructions × N
+scan = **O(N²) total work**.
+- For a query with a 100k-row VALUES subquery this made EXPLAIN take
+~80s instead of ~2s.
+- Fix: add `ExplainInfo::ephemeral_cursors` (a `HashSet<usize>` built
+once in `build_prepared_program`) and look it up in O(1) from
+`insn_to_row`.
 
-New `json-each-null-path.sqltest` covers json_each, json_tree, a NULL
-path coming from a join, and malformed JSON with a NULL path. The
-existing `json_tree` and `json_tree_columns` tests still pass.
+## Performance
 
-Fixes #9838
+| VALUES rows | Before | After |
+|---|---|---|
+| 10k | 1.8s | 0.6s |
+| 50k | 42.7s | 1.1s |
+| 100k | ~80s | 1.9s |
 
-I used Claude Code to make the change and write the tests, following the
-code pointer in the issue. I reviewed the diff and ran the tests myself,
-and compared the results with sqlite3.
+## CI impact
 
-Closes #9877
+This should improve CI significantly — EXPLAIN is exercised in many
+conformance tests (including `selectG.test` which runs EXPLAIN on a
+100k-entry VALUES list). The quadratic was keeping CI margins thin and
+causing flakes on slower runners.
 
-**File**: `core/json/vtab.rs` (modified, +5/-0)
+## Test plan
+
+- New integration test
+`explain_scaling::explain_values_instruction_count_scales_linearly`
+counts EXPLAIN instruction rows for N=100 and N=1000 VALUES entries and
+asserts the ratio stays under 30× (ruling out super-line
+
+**File**: `core/vdbe/builder.rs` (modified, +2/-0)
 ```diff
-@@ -252,6 +252,11 @@ impl InternalVirtualTableCursor for JsonEachCursor {
-         }
-         let root_path = match args.get(1) {
-             None => Cow::Borrowed("$"),
-+            // Like SQLite, a NULL path is an empty result once the JSON has parsed.
-+            Some(Value::Null) => {
-+                convert_dbtype_to_jsonb(&args[0], Conv::Strict)?;
-+                return Ok(false);
-+            }
-             Some(path) => json_path_text(path.as_value_ref()).ok_or_else(|| {
-                 LimboError::InvalidArgument("root path should be text".to_owned())
-             })?,
+@@ -2480,6 +2480,8 @@ impl ProgramBuilder {
+ 
+         self.parameters.list.dedup();
+ 
++        self.explain.build_ephemeral_cursors(&self.insns);
++
+         // Mirrors SQLite's: usesStmtJournal = isMultiWrite && mayAbort
+         // Statement journals are only needed when a statement writes multiple rows AND could
+         // abort midway (e.g. constraint violation). Single-row writes are atomic and don't
 ```
 
-**File**: `sqlite/conformance/sqlite-sqltests/json/json-each-null-path.sqltest` (added, +33/-0)
+**File**: `core/vdbe/explain.rs` (modified, +21/-16)
 ```diff
-@@ -0,0 +1,33 @@
-+@database :memory:
+@@ -27,6 +27,8 @@ pub struct ExplainInfo {
+     /// Shared CTEs materialized before the main query, for `EXPLAIN QUERY PLAN`
+     /// consumers. Empty outside `EXPLAIN QUERY PLAN` mode.
+     pub cte_materializations: Vec<EqpCteMaterialization>,
++    /// Cursor IDs opened as ephemeral (OpenEphemeral / OpenAutoindex / OpenDup).
++    pub ephemeral_cursors: HashSet<usize>,
+ }
+ 
+ impl ExplainInfo {
+@@ -37,6 +39,24 @@ impl ExplainInfo {
+             .map(|(_, comment)| *comment)
+     }
+ 
++    pub(crate) fn build_ephemeral_cursors(&mut self, insns: &[(Insn, usize)]) {
++        self.ephemeral_cursors.clear();
++        for (insn, _) in insns {
++            match insn {
++                Insn::OpenEphemeral { cursor_id, .. } => {
++                    self.ephemeral_cursors.insert(*cursor_id);
++                }
++                Insn::OpenAutoindex { cursor_id } => {
++                    self.ephemeral_cursors.insert(*cursor_id);
++                }
++                Insn::OpenDup { new_cursor_id, .. } => {
++                    self.ephemeral_cursors.insert(*new_cursor_id);
++                }
++                _ => {}
++            }
++        }
++    }
 +
-+# A NULL PATH makes json_each and json_tree return no rows, the same as a
-+# NULL JSON argument. The JSON is still parsed first, so malformed JSON is
-+# an error even with a NULL path.
+     pub(crate) fn remap_insn_indices(&mut self, old_to_new: &[usize]) {
+         for (offset, _) in self.comments.iter_mut() {
+             *offset = old_to_new[*offset as usize] as InsnReference;
+@@ -53,22 +73,7 @@ pub fn insn_to_row(
+     program: &PreparedProgram,
+     insn: &Insn,
+ ) -> (&'static str, i64, i64, i64, Value, i64, String) {
+-    let mut ephemeral_cursors = HashSet::default();
+-    for (insn, _) in &program.insns {
+-        match insn {
+-            Insn::OpenEphemeral { cursor_id, .. } => {
+-                ephemeral_cursors.insert(*cursor_id);
+-            }
+-            Insn::OpenAutoindex { cursor_id } => {
+-                ephemeral_cursors.insert(*cursor_id);
+-            }
+-            Insn::OpenDup { new_cursor_id, .. } => {
+-                // Note: relies on invariant that OpenDup is only for ephemeral cursors
+-                ephemeral_cursors.insert(*new_cursor_id);
+-            }
+-            _ => {}
+-        }
+-    }
++    let ephemeral_cursors = &program.explain.ephemeral_cursors;
+ 
+     let get_table_or_index_name = |cursor_id: usize| -> String {
+         let cursor_type = &program.cursor_ref[cursor_id].1;
+```
+
+---
+
+### Incident Patch 3: `40a72824` (2026-10-28)
+**Commit Message**: Merge 'perf/memory: add a tool that measures MVCC heap per row' from Mikaël Francoeur
+
+This PR adds `mvcc-row-memory` to `perf/memory`. The tool measures the
+heap that MVCC keeps for each row that a transaction writes. It changes
+no engine code.
+
+The tool runs one `INSERT`, `UPDATE` or `DELETE` over all rows of `t(id
+INTEGER PRIMARY KEY, v BLOB)` in one transaction. `update` and `delete`
+change rows that a checkpoint already wrote to the B-tree. The JSON
+report gives the bytes per row at four points:
+
+- The live heap before `COMMIT`.
+- The peak heap during the statement.
+- The peak heap during `COMMIT`.
+- The live heap after `COMMIT`, with automatic checkpoints and GC turned
+off.
+
+dhat counts the bytes that the code requests, so the values do not
+change with the load of the machine.
+
+On `main`, with 100k rows and a 100-byte blob per row (bytes per row):
+
+| Statement | Before `COMMIT` | Statement peak | `COMMIT` peak | After
+`COMMIT` | Allocations per row |
+|---|---|---|---|---|---|
+| insert | 661.8 | 745.8 | 843.7 | 664.3 | 6.00 |
+| update | 781.8 | 949.7 | 1047.6 | 784.3 | 7.05 |
+| delete | 661.8 | 661.9 | 731.0 | 664.3 | 5.05 |
+
+The other PRs of this stack use this tool to measur
+
+**File**: `.claude/skills/memory-benchmark/SKILL.md` (modified, +23/-0)
+```diff
+@@ -26,6 +26,29 @@ The crate is split into a library and binaries. The workload engine lives in
+ dhat/RSS measurement. Randomized profiles (`read-heavy`, `mixed`) use a fixed
+ RNG seed (`profile::WORKLOAD_RNG_SEED`) so workloads are identical across runs.
+ 
++## MVCC Memory Per Row
 +
-+test json-each-null-path-is-empty {
-+    SELECT count(*) FROM json_each('[1,2]', NULL);
-+}
-+expect {
-+    0
++The `mvcc-row-memory` binary measures the heap that one MVCC transaction keeps
++for each row it writes: one `INSERT`, `UPDATE` or `DELETE` over every row of
++`t(id INTEGER PRIMARY KEY, v BLOB)`. `update` and `delete` change rows that a
++checkpoint already wrote to the B-tree. Use it to measure changes to MvStore
++data structures (version chains, write sets, tombstones).
++
++```bash
++cargo run -p memory-benchmark --bin mvcc-row-memory -- \
++  --statement insert|update|delete --rows 100000 --payload-bytes 100 \
++  --mode mvcc|wal --dhat-file /tmp/rows.json
++python3 perf/memory/analyze-dhat.py /tmp/rows.json --sort-by eb --top 10
++```
++
++The JSON report has `uncommitted_bytes_per_row` (before `COMMIT`),
++`statement_peak_bytes_per_row`, `commit_peak_bytes_per_row`,
++`committed_bytes_per_row` (after `COMMIT`, with automatic checkpoints and GC
++off) and `statement_allocations_per_row`. The byte values are requested bytes,
++so a debug build gives the same numbers as an optimized build. The dhat file's
++"At exit" values are the live allocations at the committed measurement. See
++`perf/memory/README.md` for details.
++
+ ## FTS Query Allocations
+ 
+ The `fts-memory` binary and `perf/memory/codspeed/benches/fts_queries.rs` share
+```
+
+**File**: `perf/memory/Cargo.toml` (modified, +4/-0)
+```diff
+@@ -13,6 +13,10 @@ path = "src/main.rs"
+ name = "stack-report"
+ path = "src/stack_report.rs"
+ 
++[[bin]]
++name = "mvcc-row-memory"
++path = "src/mvcc_row_memory.rs"
++
+ [[bin]]
+ name = "fts-memory"
+ path = "src/fts_memory.rs"
+```
+
+**File**: `perf/memory/README.md` (modified, +32/-0)
+```diff
+@@ -242,3 +242,35 @@ warm-up outside the measured closure. Each input is used for one measured query
+ or transaction sequence and dropped after measurement. The same boundaries apply
+ under CodSpeed instrumentation.
+ Existing Criterion profiles retain their separate harness and measurement rules.
++
++# MVCC memory per row
++
++`mvcc-row-memory` measures how much heap one MVCC transaction keeps for each
++row that it writes. The transaction runs one statement over every row of table
++`t(id INTEGER PRIMARY KEY, v BLOB)`. `update` and `delete` change rows that a
++checkpoint already wrote to the B-tree.
++
++```bash
++cargo run -p memory-benchmark --bin mvcc-row-memory -- --statement insert --rows 100000
++cargo run -p memory-benchmark --bin mvcc-row-memory -- --statement update --rows 100000
++cargo run -p memory-benchmark --bin mvcc-row-memory -- --statement delete --rows 100000
++python3 perf/memory/analyze-dhat.py dhat-heap.json --sort-by eb --top 10
++```
++
++The JSON report gives bytes per row at four points:
++
++| Field | Live heap |
++|-------|-----------|
++| `uncommitted_bytes_per_row` | After the statement, before `COMMIT` |
++| `statement_peak_bytes_per_row` | Highest value during the statement |
++| `commit_peak_bytes_per_row` | Highest value from the statement to the end of `COMMIT` |
++| `committed_bytes_per_row` | After `COMMIT`, with automatic checkpoints and GC turned off |
++
++Setup, which writes and checkpoints the rows for `update` and `delete`, is not
++measured. Before the committed measurement, the tool runs 1000 small read transactions.
++The MVCC skip maps free removed entries only after later transactions, so without
++these reads the measurement also counts the write set of the finished transaction.
++The dhat file shows the live allocations at the committed measurement as "At exit".
++The values count the bytes that the code requests, so they are the same for debug
++and optimized builds. The process RSS is higher because the allocator rounds sizes.
++`--mode wal` runs the same statements in WAL mode for comparison.
+```
+
+**File**: `perf/memory/src/mvcc_row_memory.rs` (added, +146/-0)
+```diff
+@@ -0,0 +1,146 @@
++use anyhow::Result;
++use clap::{Parser, ValueEnum};
++use memory_benchmark::workload::JournalMode;
++use serde::Serialize;
++use std::path::PathBuf;
++use turso::{Builder, Connection, Database};
++
++#[cfg(not(clippy))]
++#[global_allocator]
++static ALLOC: dhat::Alloc = dhat::Alloc;
++
++#[derive(Parser)]
++#[command(about = "Measure the heap that one transaction keeps for each row it writes")]
++struct Args {
++    #[arg(long, default_value = "insert")]
++    statement: Statement,
++    #[arg(long, default_value = "100000")]
++    rows: usize,
++    #[arg(long, default_value = "100")]
++    payload_bytes: usize,
++    #[arg(long, default_value = "mvcc")]
++    mode: JournalMode,
++    #[arg(long, default_value = "dhat-heap.json")]
++    dhat_file: PathBuf,
 +}
 +
-+test json-tree-null-path-is-empty {
-+    SELECT count(*) FROM json_tree('[1,2]', NULL);
-+}
-+expect {
-+    0
-+}
-+
-+test json-each-null-path-from-join {
-+    SELECT count(*) FROM (SELECT NULL AS p) JOIN json_each('[1,2]', p);
-+}
-+expect {
-+    0
++/// The statement that the measured transaction runs. `update` and `delete`
++/// change rows that a checkpoint already wrote to the B-tree.
++#[derive(Debug, Clone, Copy, ValueEnum, Serialize)]
++#[serde(rename_all = "kebab-case")]
++enum Statement {
++    Insert,
++    Update,
++    Delete,
 +}
 +
-+test json-each-null-path-still-parses-json {
-+    SELECT count(*) FROM json_each('not json', NULL);
++#[derive(Serialize)]
++struct Report {
++    statement: Statement,
++    mode: JournalMode,
++    rows: usize,
++    payload_bytes: usize,
++    /// Live heap after the statement, before COMMIT.
++    uncommitted_bytes_per_row: f64,
++    /// Highest live heap during the statement.
++    statement_peak_bytes_per_row: f64,
++    /// Highest live heap from the start of the statement to the end of COMMIT.
++    commit_peak_bytes_per_row: f64,
++    /// Live heap after COMMIT, with automatic checkpoints and GC turned off.
++    committed_bytes_per_row: f64,
++    /// Heap allocations that the statement made.
++    statement_allocations_per_row: f64,
 +}
-+expect error {
-+    .*malformed JSON.*
++
++#[tokio::main(flavor = "current_thread")]
++async fn main() -> Result<()> {
++    let args = Args::parse();
++    let dir = std::env::temp_dir().join(format!("turso-mvcc-row-memory-{}", std::process::id()));
++    std::fs::create_dir_all(&dir)?;
++    let db_path = dir.join("rows.db").to_string_lossy().into_owned();
++    prepare_table(&db_path, &args).await?;
++    let report = measure(&db_path, &args).await?;
++    std::fs::remove_dir_all(&dir)?;
++    println!("{}", serde_json::to_string_pretty(&report)?);
++    Ok(())
 +}
++
++async fn prepare_table(db_path: &str, args: &Args) -> Result<()> {
++    let (_db, conn) = open(db_path, args.mode).await?;
++    conn.execute("CREATE TABLE t(id INTEGER PRIMARY KEY, v BLOB)", ())
++        .await?;
++    if !matches!(args.statement, Statement::Insert) {
++        conn.execute(&insert_sql(args), ()).await?;
++    }
++    drain(&conn, "PRAGMA wal_checkpoint(TRUNCATE)").await?;
++    Ok(())
++}
++
++async fn measure(db_path: &str, args: &Args) -> Result<Report> {
++    let (_db, conn) = open(db_path, args.mode).await?;
++    drain(&conn, "SELECT count(*) FROM t").await?;
++    if matches!(args.mode, JournalMode::Mvcc) {
++        drain(&conn, "PRAGMA mvcc_checkpoint_threshold = -1").await?;
++        drain(&conn, "PRAGMA mvcc_gc_threshold = -1").await?;
++    }
++    let sql = match args.statement {
++        Statement::Insert => insert_sql(args),
++        Statement::Update => format!("UPDATE t SET v = randomblob({})", args.payload_bytes),
++        Statement::Delete => "DELETE FROM t".to_string(),
++    };
++
++    #[cfg(not(clippy))]
++    let _profiler = dhat::Profiler::builder().file_name(&args.dhat_file).build();
++    conn.execute("BEGIN", ()).await?;
++    let start = dhat::HeapStats::get();
++    conn.execute(&sql, ()).await?;
++    let after_statement = dhat::HeapStats::get();
++    conn.execute("COMMIT", ()).await?;
++    let after_commit = dhat::HeapStats::get();
++    release_deferred_frees(&conn).await?;
++    let committed = dhat::HeapStats::get();
++
++    let per_row = |bytes: usize| bytes as f64 / args.rows as f64;
++    Ok(Report {
++        statement: args.statement,
++        mode: args.mode,
++        rows: args.rows,
++        payload_bytes: args.payload_bytes,
++        uncommitted_bytes_per_row: per_row(after_statement.curr_bytes - start.curr_bytes),
++        statement_peak_bytes_per_row: per_row(after_statement.max_bytes - start.curr_bytes),
++        commit_peak_bytes_per_row: per_row(after_commit.max_bytes - start.curr_bytes),
++        committed_bytes_per_row: per_row(committed.curr_bytes.saturating_sub(start.curr_bytes)),
++        statement_allocations_per_row: (after_statement.total_blocks - start.total_blocks) as f64
++            / args.rows as f64,
++    })
++}
++
++/// The MVCC skip maps free removed entries only after later transactions move
++/// their epoch forward, so the committed measurement runs small transactions
++/// first. Without them, it also counts the write set of the finished transaction.
++async fn release_deferred_frees(conn: &Connection) -> Result<()> {
++    for _ in 0..1000 {
++        drain(conn, "SELECT count(*) FROM sqlite_schema").await?;
++    }
++    Ok(())
++}
++
++fn insert_sql(args: &Args) -> String {
++    format!(
++        "INSERT INTO t SELECT value, randomblob({}) FROM generate_series(1, {})"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10892** (2026-10-27): core: map namespace name to a Namespace value (@penberg)
-- **PR #10890** (2026-10-27): core: replace database id with namespace in plans and schema opcodes (@penberg)
-- **PR #10884** (2026-10-27): postgres/parser: merge the two function_name functions (@jussisaurio)
-- **PR #10875** (2026-10-27): postgres: implement current_schemas from the session search path (@pedrocarlo)
-- **PR #10874** (2026-10-27): core/translate: fill existing rows for ADD COLUMN with a non-constant default in tursopg (@turso-github-handyman[bot])
-- **PR #10869** (closed): core: rewrite views when renaming their table (@abrahamperz)
+- **PR #10943** (2026-10-28): core/translate: qualify the child table of a foreign-key action in main (@Rehket)
+- **PR #10941** (2026-10-27): postgres: report default public schema ownership and permissions (@pedrocarlo)
+- **PR #10940** (2026-10-27): postgres: report the default public schema comment (@pedrocarlo)
+- **PR #10937** (2026-10-28): translate: extract shared catalog lookup context (@pedrocarlo)
+- **PR #10936** (2026-10-27): postgres: report default column storage in dump catalogs (@pedrocarlo)
+- **PR #10929** (2026-10-27): postgres: preserve not-null constraints in pg_dump (@pedrocarlo)
 
 ---
 
@@ -1928,51 +2094,53 @@ Closes #9877
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'core/json: match SQLite's null document and null path handling' from
+## X. Merge 'postgres: preserve not-null constraints in pg_dump' from Pedro Muniz
 
 **RULE**:
-When implementing operations in `core/json/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/schema.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8c29f3e6`: Merge 'core/json: match SQLite's null document and null path handling' from. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `73cf506b`: Merge 'postgres: preserve not-null constraints in pg_dump' from Pedro Muniz. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/json/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/schema.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
-        return Ok(Value::Null);
+            && (column.is_rowid_alias()
+                || self.is_strict
+                || (!self.has_rowid && self.primary_key_columns.len() == 1))
+        self.info.notnull() || self.is_rowid_alias()
+            assert_eq!(
+                column.notnull(),
+                flags.intersects(ColDefFlags::NotNull | ColDefFlags::RowIdAlias),
+                "{flags:?}"
+            );
+    #[test]
+    fn rowid_alias_is_not_nullable() {
+        for sql in [
+            "CREATE TABLE t(id INTEGER PRIMARY KEY)",
+            "CREATE TABLE t(id INTEGER, PRIMARY KEY(id))",
+        ] {
+            let table = BTreeTable::from_sql(sql, 2).unwrap();
+            let column = table.get_column("id").unwrap().1;
+            assert!(column.notnull(), "{sql}");
+            assert!(!column.explicit_notnull(), "{sql}");
+        }
+        let table = BTreeTable::from_sql("CREATE TABLE t(id INTEGER PRIMARY KEY DESC)", 2).unwrap();
+        assert!(!table.get_column("id").unwrap().1.notnull());
     }
-    json_document_to_db_type(json, el_type, OutputVariant::String)
-    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
-        return Ok(Value::Null);
-    }
-    json_document_to_db_type(json, el_type, OutputVariant::Binary)
-pub fn json_document_to_db_type(
-    json: Jsonb,
-    element_type: ElementType,
-    output: OutputVariant,
-) -> crate::Result<Value> {
-    if element_type == ElementType::NULL {
-        return if matches!(output, OutputVariant::Binary) {
-            Ok(Value::Blob(json.data()))
-        } else {
-            Ok(Value::Text(Text::json("null".to_string())))
-        };
-    }
-    json_string_to_db_type(json, element_type, output)
-}
 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    json_string_to_db_type(json, el_type, OutputVariant::String)
-    json_string_to_db_type(json, el_type, OutputVariant::Binary)
+            && (self.is_strict || (!self.has_rowid && self.primary_key_columns.len() == 1))
+        self.info.notnull()
+                (column.notnull(), ColDefFlags::NotNull),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8c29f3e6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `73cf506b` are properly handled with clean fallback behavior.

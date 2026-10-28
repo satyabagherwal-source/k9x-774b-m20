@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `42abf54e`  
+> **Source Version**: `bb23c552`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T21:45:09.706Z  
+> **Timestamp**: 2026-10-28T04:28:26.998Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T21:45:09.242Z  
+> **Harvest Timestamp**: 2026-10-28T04:28:26.991Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1922,8 +1922,8 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 - **Issue #72453** (2026-10-27): **sessionctx: lower the new-cluster sampled NDV threshold to 100 million**
   *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #67449  Problem Summary: Tests at 100 million rows showed few plan regressions, so new clusters can sample NDV from a lower threshold.  ### What changed and how does it work?  - New clusters start `tidb_analyze_sampled_ndv_threshold` at 100,000,000 (was 500,000,000). Upgraded clusters still start at 0. - The design doc uses the new value.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit test - [ ] Integration test - [ ] Manual test (add detailed scripts or steps below) - [ ] No need to test   > - [ ] I checked and no code files have been changed.   > <!-- Or your custom  "No need to test" reasons -->  Side effects  - [ ] Performance regression: Consumes more CPU - [ ] Performance regression: Consumes more Memory - [ ] Breaking backward compatibility  Documentation  - [x] Affects user behaviors - [ ] Contains syntax changes - [x] Contains variable changes - [ ] Contains experimental features - [ ] Changes MySQL compatibility  ### Release note  <!-- compatibility chan
 
-- **Issue #72441** (2026-10-27): **dumpling: retain TLS compatibility with legacy MySQL servers**
-  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: close #72440, ref #70069  Problem Summary:  When Dumpling is embedded in a Go 1.27 application, connections to legacy MySQL TLS servers can fail with `SELECT version();: remote error: tls: handshake failure`. Go 1.27 removed the `tlsrsakex` GODEBUG switch previously used by TiFlow. Both Dumpling TLS paths leave cipher selection to Go defaults, which exclude RSA key exchange. This blocks the MySQL 5.7 source in pingcap/tiflow#12904, even without source CA/cert/key configuration because Dumpling attempts TLS by default.  ### What changed and how does it work?  - When the MySQL TLS configuration has no explicit cipher policy (`CipherSuites == nil`), clone it and retain the non-insecure TLS 1.2 suites exposed by `crypto/tls`, plus the four RSA/AES suites required for legacy MySQL compatibility. - Apply the same policy to the default opportunistic TLS path and the explicitly configured TLS path. - Preserve explicit cipher restrictions, including an empty cipher list, without widening them. Do not mutate the 
+- **Issue #72445** (2026-10-28): **br: enable log redact by default (#72429)**
+  *Symptoms*: This is an automated cherry-pick of #72429  <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: close #72428  Problem Summary:  ### What changed and how does it work?  Now, `--redact-info-log` was enabled by default.  ### Check List  Tests <!-- At least one of them must be included. -->  - [ ] Unit test - [ ] Integration test - [x] Manual test (add detailed scripts or steps below)  Source: current uncommitted change in br/cmd/br/cmd.go, based on 7fa5afdeb8412ec26fd848054a9bc1f703a2eb90. All builds and runtime verification were executed outside the sandbox.  #### Commands  ```sh make build_br BR_BIN=/private/tmp/br-redact-tiup.F1JjR8/br tiup playground:v1.16.1 v9.0.0-beta.2.pre-nightly --mode tikv-slim --pd 1 --kv 1 --without-monitor --port-offset 20000 --tag br-redact-F1JjR8 tiup --binpath /private/tmp/br-redact-tiup.F1JjR8/br br backup raw --pd 127.0.0.1:22379 --storage local:///private/tmp/br-redact-tiup.F1JjR8/default-backup --format raw --start br_redact_probe_a --end br_redact_probe_z --log-file /private/tmp/br-redact-tiup.F1JjR8/default.log --log-f
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1940,652 +1940,705 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `42abf54e` (2026-10-27)
-**Commit Message**: sessionctx: lower the new-cluster sampled NDV threshold to 100 million (#72453)
+### Incident Patch 1: `bb23c552` (2026-10-28)
+**Commit Message**: infoschema, executor, planner: expose materialized view metadata tables (#72442)
 
-ref pingcap/tidb#67449
+ref pingcap/tidb#18023
 
-**File**: `docs/design/2026-09-09-sampling-based-ndv-for-large-tables.md` (modified, +3/-3)
+**File**: `pkg/executor/builder.go` (modified, +3/-0)
 ```diff
-@@ -291,7 +291,7 @@ r = \min\left(1,\ \max\left(0.05,\ \frac{T}{M}\right)\right)
- - Between $T$ and $20T$ rows, the NDV sample holds $T$ rows, so processing values costs about as much as a full-input `ANALYZE` of $T$ rows. TiKV still scans every row.
- - Above $20T$ rows, the rate stays at 0.05. Below that rate, scanning every row dominates the duration, so a lower rate saves little more time, while the error for nearly unique columns keeps growing as $\sqrt{1/r}$.
- 
--TiDB takes $M$ from the table statistics or, as it already does to choose `SAMPLERATE`, from the approximate count in PD when the statistics count is far smaller, for example right after a physical import. The rate changes continuously with the row count, so the rule adds no jumps to a table's NDV as the table grows. The initial $T$, 500,000,000 rows, keeps tables up to that size on full input and halves the values processed at 1,000,000,000 rows, about where a full-input `ANALYZE` of one table or partition becomes slow in practice. Partitions choose their rates independently, because the global merge accepts any mix of rates, as described in [Partitioned Tables](#partitioned-tables).
-+TiDB takes $M$ from the table statistics or, as it already does to choose `SAMPLERATE`, from the approximate count in PD when the statistics count is far smaller, for example right after a physical import. The rate changes continuously with the row count, so the rule adds no jumps to a table's NDV as the table grows. The initial $T$, 100,000,000 rows, keeps tables up to that size on full input and processes one tenth of the values at 1,000,000,000 rows, about where a full-input `ANALYZE` of one table or partition becomes slow in practice. Partitions choose their rates independently, because the global merge accepts any mix of rates, as described in [Partitioned Tables](#partitioned-tables).
- 
- An `ANALYZE` with no given or saved `NDVRATE`, manual or automatic, applies this rule and does not save the rate it chooses, so a table always follows its size and the current $T$.
- 
-@@ -317,7 +317,7 @@ Sampled NDV changes both the TiKV response and the sketches TiDB saves. `ANALYZE
- 
- - Old TiDB never requests sampling, so new TiKV returns legacy results.
- - Old TiDB cannot read sampled sketches, so set `tidb_analyze_sampled_ndv_threshold` only after the whole cluster is upgraded.
--- The threshold starts at 500,000,000 in new clusters but at 0 in upgraded clusters, so an upgrade never turns sampling on. Even if TiDB is upgraded before TiKV, it therefore gets no mix of sampled and legacy responses.
-+- The threshold starts at 100,000,000 in new clusters but at 0 in upgraded clusters, so an upgrade never turns sampling on. Even if TiDB is upgraded before TiKV, it therefore gets no mix of sampled and legacy responses.
- 
- #### Response Format
- 
-@@ -442,7 +442,7 @@ Compare TiKV CPU, `ANALYZE` duration, NDV error, and query plans with full input
- ## Unresolved Questions
- 
- - Should the threshold also account for the number or width of analyzed columns? Counting rows alone samples narrow tables, whose `ANALYZE` time is mostly scanning.
--- Is the default threshold right? With $T$ at 500,000,000, a nearly unique column that the schema does not keep unique comes out at about $\sqrt{T/M}$ of its NDV: 0.71 at 1,000,000,000 rows and 0.22 from 10,000,000,000 rows.
-+- Is the default threshold right? With $T$ at 100,000,000, a nearly unique column that the schema does not keep unique comes out at about $\sqrt{T/M}$ of its NDV: 0.32 at 1,000,000,000 rows and 0.22 from 2,000,000,000 rows.
- - What NDV accuracy and query-plan regression limits should gate wider adoption?
- 
- ## Future Possibility
+@@ -2843,6 +2843,9 @@ func (b *executorBuilder) buildMemTable(v *physicalop.PhysicalMemTable) exec.Exe
+ 			strings.ToLower(infoschema.TableTiDBCheckConstraints),
+ 			strings.ToLower(infoschema.TableKeywords),
+ 			strings.ToLower(infoschema.TableTiDBIndexUsage),
++			strings.ToLower(infoschema.TableTiDBMViews),
++			strings.ToLower(infoschema.TableTiDBMLogs),
++			strings.ToLower(infoschema.TableTiDBTableMViewDependencies),
+ 			strings.ToLower(infoschema.TableTiDBPlanCache),
+ 			strings.ToLower(infoschema.ClusterTableTiDBPlanCache),
+ 			strings.ToLower(infoschema.ClusterTableTiDBIndexUsage),
 ```
 
-**File**: `pkg/session/upgrade_backfill_test.go` (modified, +2/-2)
+**File**: `pkg/executor/infoschema_reader.go` (modified, +452/-0)
 ```diff
-@@ -198,11 +198,11 @@ func TestAdaptiveLimitScanClusterDefaults(t *testing.T) {
- 		require.Equal(t, sampledNDVThreshold, chk.GetRow(0).GetString(3))
+@@ -167,6 +167,12 @@ func (e *memtableRetriever) retrieve(ctx context.Context, sctx sessionctx.Contex
+ 			err = e.setDataForAnalyzeStatus(ctx, sctx)
+ 		case infoschema.TableTiDBIndexes:
+ 			err = e.setDataFromIndexes(ctx, sctx)
++		case infoschema.TableTiDBMViews:
++			err = e.setDataFromTiDBMViews(ctx, sctx)
++		case infoschema.TableTiDBMLogs:
++			err = e.setDataFromTiDBMLogs(ctx, sctx)
++		case infoschema.TableTiDBTableMViewDependencies:
++			err = e.setDataFromTiDBTableMViewDependencies(ctx, sctx)
+ 		case infoschema.TableViews:
+ 			err = e.setDataFromViews(ctx, sctx)
+ 		case infoschema.TableEngines:
+@@ -4315,3 +4321,449 @@ func tableOrPartitionNotExist(ctx context.Context, dbName string, tableName stri
  	}
- 	// Initial bootstrap uses the new-cluster policy.
--	assertValue(vardef.On, "500000000")
-+	assertValue(vardef.On, "100000000")
- 	// The upgrade backfill must preserve an existing value.
- 	upgradeToVer317(se, version316)
- 	upgradeToVer319(se, version318)
--	assertValue(vardef.On, "500000000")
-+	assertValue(vardef.On, "100000000")
+ 	return false
+ }
++
++func (e *memtableRetriever) setDataFromTiDBMViews(ctx context.Context, sctx sessionctx.Context) error {
++	checker := privilege.GetPrivilegeManager(sctx)
++	ex, ok := e.extractor.(*plannercore.InfoSchemaTiDBMViewsExtractor)
++	if !ok {
++		return errors.Errorf("wrong extractor type: %T, expected InfoSchemaTiDBMViewsExtractor", e.extractor)
++	}
++
++	if ex.SkipRequest {
++		return nil
++	}
++
++	schemas, tables, err := ex.ListSchemasAndTables(ctx, e.is)
++	if err != nil {
++		return errors.Trace(err)
++	}
++
++	loc := sctx.GetSessionVars().TimeZone
++	if loc == nil {
++		loc = time.Local
++	}
++
++	rows := make([][]types.Datum, 0)
++	for i, tbl := range tables {
++		schema := schemas[i]
++		if tbl.MaterializedView == nil {
++			continue
++		}
++		if checker != nil && !checker.RequestVerification(sctx.GetSessionVars().ActiveRoles, schema.L, tbl.Name.L, "", mysql.AllPrivMask) {
++			continue
++		}
++		modifyTime := types.NewTime(types.FromGoTime(tbl.GetUpdateTime().In(loc)), mysql.TypeDatetime, types.DefaultFsp)
++		record := types.MakeDatums(
++			infoschema.CatalogVal,                 // TABLE_CATALOG
++			schema.O,                              // TABLE_SCHEMA
++			tbl.ID,                                // MVIEW_ID
++			tbl.Name.O,                            // MVIEW_NAME
++			tbl.MaterializedView.SQLContent,       // MVIEW_SQL_CONTENT
++			tbl.Comment,                           // MVIEW_COMMENT
++			modifyTime,                            // MVIEW_MODIFY_TIME
++			tbl.MaterializedView.RefreshMethod,    // REFRESH_METHOD
++			tbl.MaterializedView.RefreshStartWith, // REFRESH_START
++			tbl.MaterializedView.RefreshNext,      // REFRESH_NEXT
++		)
++		rows = append(rows, record)
++	}
++	e.rows = rows
++	return nil
++}
++
++type mlogBaseTableInfo struct {
++	catalog string
++	schema  string
++	id      int64
++	idStr   string
++	name    string
++}
++
++func newMLogBaseTableInfoFromBaseTable(
++	baseSchema ast.CIStr,
++	baseTbl *model.TableInfo,
++) mlogBaseTableInfo {
++	baseInfo := mlogBaseTableInfo{
++		catalog: infoschema.CatalogVal,
++	}
++
++	baseInfo.id = baseTbl.ID
++	baseInfo.idStr = strconv.FormatInt(baseInfo.id, 10)
++	baseInfo.name = baseTbl.Name.O
++	if baseSchema.O != "" {
++		baseInfo.schema = baseSchema.O
++	}
++	return baseInfo
++}
++
++func newMLogBaseTableInfos(
++	baseSchemas []ast.CIStr,
++	baseTables []*model.TableInfo,
++) []mlogBaseTableInfo {
++	baseInfos := make([]mlogBaseTableInfo, 0, len(baseTables))
++	for i, baseTbl := range baseTables {
++		baseInfos = append(baseInfos, newMLogBaseTableInfoFromBaseTable(baseSchemas[i], baseTbl))
++	}
++	return baseInfos
++}
++
++func (e *memtableRetriever) getMLogBaseTableInfos(
++	ctx context.Context,
++	schemas []ast.CIStr,
++	tables []*model.TableInfo,
++) []mlogBaseTableInfo {
++	baseInfos := make([]mlogBaseTableInfo, 0, len(tables))
++	for i, tbl := range tables {
++		baseInfos = append(baseInfos, e.getMLogBaseTableInfo(ctx, schemas[i], tbl))
++	}
++	return baseInfos
++}
++
++func (e *memtableRetriever) getMLogBaseTableInfo(
++	ctx context.Context,
++	mlogSchema ast.CIStr,
++	tbl *model.TableInfo,
++) mlogBaseTableInfo {
++	baseInfo := mlogBaseTableInfo{
++		catalog: infoschema.CatalogVal,
++		schema:  mlogSchema.O,
++	}
++	if tbl.MaterializedViewLog == nil {
++		return baseInfo
++	}
++
++	baseInfo.id = tbl.MaterializedViewLog.BaseTableID
++	baseInfo.idStr = strconv.FormatInt(baseInfo.id, 10)
++	if baseInfo.id == 0 {
++		return baseInfo
++	}
++
++	baseTbl, ok := e.is.TableByID(ctx, baseInfo.id)
++	if !ok {
++		return baseInfo
++	}
++	baseInfo.name = baseTbl.Meta().Name.O
++	if baseSchema, ok := infoschema.SchemaByTable(e.is, baseTbl.Meta()); ok {
++		baseInfo.schema = baseSchema.Name.O
++	}
++	return baseInfo
++}
++
++func (e *memtableRetriever) filterMLogCandidatesByBasePredicates(
++	ctx context.Context,
++	ex *plannercore.InfoSchemaTiDBMLogsExtractor,
++	schemas []ast.CIStr,
++	tables []*model.TableInfo,
++) ([]ast.CIStr, []*model.TableInfo, []mlogBaseTableInfo) {
++	filteredSchemas := schemas[:0]
++	filteredTables := tables[:0]
++	baseInfos := make([]mlogBaseTableInfo, 0, len(tables))
++	for i, tbl := range tables {
++		if tbl.MaterializedViewLog == nil {
++			continue
++		}
++		baseInfo := e.getMLogBaseTableInfo(ctx, schemas[i], tbl)
++		if ex.Filter(plannercore.BaseTableSchema, baseInfo.schema) ||
++			ex.Filter(plannercore.BaseTableName, baseInfo.name) ||
+
+```
+
+**File**: `pkg/executor/infoschema_reader_internal_test.go` (modified, +878/-0)
+```diff
+@@ -16,14 +16,23 @@ package executor
  
- 	// Simulate an existing cluster before the version317 backfill. It has no
- 	// ndv_rate column yet, and its saved options must not gain a rate.
+ import (
+ 	"context"
++	"errors"
++	"reflect"
++	"regexp"
+ 	"testing"
++	"time"
++	"unsafe"
+ 
+ 	"github.com/pingcap/tidb/pkg/infoschema"
+ 	"github.com/pingcap/tidb/pkg/meta/model"
+ 	"github.com/pingcap/tidb/pkg/parser/ast"
++	"github.com/pingcap/tidb/pkg/parser/auth"
+ 	"github.com/pingcap/tidb/pkg/parser/mysql"
+ 	plannercore "github.com/pingcap/tidb/pkg/planner/core"
++	"github.com/pingcap/tidb/pkg/privilege"
++	"github.com/pingcap/tidb/pkg/table"
+ 	"github.com/pingcap/tidb/pkg/types"
++	"github.com/pingcap/tidb/pkg/util/set"
+ 	"github.com/stretchr/testify/require"
+ )
+ 
+@@ -162,3 +171,872 @@ func TestSetDataFromKeywords(t *testing.T) {
+ 	require.Equal(t, types.NewStringDatum("ADD"), mt.rows[0][0]) // Keyword: ADD
+ 	require.Equal(t, types.NewIntDatum(1), mt.rows[0][1])        // Reserved: true(1)
+ }
++
++type mockInfoSchemaWithItems struct {
++	infoschema.InfoSchema
++	items []infoschema.TableItem
++}
++
++func (m *mockInfoSchemaWithItems) IterateAllTableItems(visit func(infoschema.TableItem) bool) {
++	for _, item := range m.items {
++		if !visit(item) {
++			return
++		}
++	}
++}
++
++type tableByNameErrorInfoSchema struct {
++	infoschema.InfoSchema
++	err error
++}
++
++func (m *tableByNameErrorInfoSchema) TableByName(
++	_ context.Context,
++	_, _ ast.CIStr,
++) (table.Table, error) {
++	return nil, m.err
++}
++
++type tableByIDCountInfoSchema struct {
++	infoschema.InfoSchema
++	calls map[int64]int
++}
++
++func (m *tableByIDCountInfoSchema) TableByID(ctx context.Context, id int64) (table.Table, bool) {
++	if m.calls == nil {
++		m.calls = make(map[int64]int)
++	}
++	m.calls[id]++
++	return m.InfoSchema.TableByID(ctx, id)
++}
++
++type stubPrivilegeManager struct {
++	privilege.Manager
++	allow func(db, table string) bool
++	calls []string
++}
++
++func (m *stubPrivilegeManager) RequestVerification(
++	_ []*auth.RoleIdentity,
++	db, table, _ string,
++	_ mysql.PrivilegeType,
++) bool {
++	m.calls = append(m.calls, db+"."+table)
++	if m.allow == nil {
++		return true
++	}
++	return m.allow(db, table)
++}
++
++func setExtractorRegexp(
++	t *testing.T,
++	ex *plannercore.InfoSchemaTiDBMViewsExtractor,
++	col string,
++	patterns ...string,
++) {
++	t.Helper()
++
++	regs := make([]*regexp.Regexp, 0, len(patterns))
++	for _, pattern := range patterns {
++		regs = append(regs, regexp.MustCompile(pattern))
++	}
++
++	field := reflect.ValueOf(&ex.InfoSchemaBaseExtractor).Elem().FieldByName("colsRegexp")
++	require.True(t, field.IsValid())
++	field = reflect.NewAt(field.Type(), unsafe.Pointer(field.UnsafeAddr())).Elem()
++	field.Set(reflect.ValueOf(map[string][]*regexp.Regexp{col: regs}))
++}
++
++func newColumnInfo(name string) *model.ColumnInfo {
++	return &model.ColumnInfo{Name: ast.NewCIStr(name)}
++}
++
++func requireNoNullDatums(t *testing.T, row []types.Datum, indexes ...int) {
++	t.Helper()
++	for _, index := range indexes {
++		require.False(t, row[index].IsNull(), "column index %d", index)
++	}
++}
++
++func newMViewTableInfo(id int64, name string, updateTS uint64) *model.TableInfo {
++	return &model.TableInfo{
++		ID:       id,
++		Name:     ast.NewCIStr(name),
++		Comment:  name + "-comment",
++		UpdateTS: updateTS,
++		State:    model.StatePublic,
++		MaterializedView: &model.MaterializedViewInfo{
++			SQLContent:       "select 1",
++			RefreshMethod:    "FAST",
++			RefreshStartWith: "CURRENT_TIMESTAMP",
++			RefreshNext:      "CURRENT_TIMESTAMP + INTERVAL 1 HOUR",
++		},
++	}
++}
++
++func newBaseTableInfo(id int64, name string, mlogID int64) *model.TableInfo {
++	tbl := &model.TableInfo{
++		ID:    id,
++		Name:  ast.NewCIStr(name),
++		State: model.StatePublic,
++	}
++	if mlogID != 0 {
++		tbl.MaterializedViewBase = &model.MaterializedViewBaseInfo{MLogID: mlogID}
++	}
++	return tbl
++}
++
++func newBaseTableInfoWithMViews(id int64, name string, mlogID int64, mviewIDs ...int64) *model.TableInfo {
++	tbl := newBaseTableInfo(id, name, mlogID)
++	if tbl.MaterializedViewBase == nil {
++		tbl.MaterializedViewBase = &model.MaterializedViewBaseInfo{}
++	}
++	tbl.MaterializedViewBase.MViewIDs = append([]int64(nil), mviewIDs...)
++	return tbl
++}
++
++func newMViewTableInfoWithBase(id int64, name string, baseIDs ...int64) *model.TableInfo {
++	tbl := newMViewTableInfo(id, name, 0)
++	tbl.MaterializedView.BaseTableIDs = append([]int64(nil), baseIDs...)
++	return tbl
++}
++
++func newMLogTableInfo(id int64, name string, baseTableID int64) *model.TableInfo {
++	return &model.TableInfo{
++		ID:    id,
++		Name:  ast.NewCIStr(name),
++		State: model.StatePublic,
++		MaterializedViewLog: &model.MaterializedViewLogInfo{
++			BaseTableID:    baseTableID,
++			Columns:        []ast.CIStr{ast.NewCIStr("a"), ast.NewCIStr("b")},
++			PurgeMethod:    "DEFERRED",
++			PurgeStartWith: "CURRENT_TIMESTAMP",
++			PurgeNext:      "CURRENT_TIMESTAMP + INTERVAL 1 HOUR",
++		},
++	}
++}
++
++func TestSetDataFromTiDBMViews(t *testing.T) {
++	t.Run("wrong extractor type", func(t *testing.T) {
++		mt := memtableRetriever{
++			extractor: &plannercore.InfoSchemaTablesExtractor{},
++		}
++
++		err := mt.setDataFromTiDBMViews(context.Background(), defa
 ```
 
-**File**: `pkg/sessionctx/variable/sysvar.go` (modified, +2/-2)
+**File**: `pkg/executor/test/materializedview/BUILD.bazel` (modified, +2/-1)
 ```diff
-@@ -4376,8 +4376,8 @@ func GlobalSystemVariableInitialValue(varName, varVal string) string {
- 	case vardef.TiDBEnableAdaptiveLimitScan:
- 		varVal = vardef.On
- 	case vardef.TiDBAnalyzeSampledNDVThreshold:
--		// New clusters sample NDV for tables and partitions above 500 million rows.
--		varVal = "500000000"
-+		// New clusters sample NDV for tables and partitions above 100 million rows.
-+		varVal = "100000000"
- 	case vardef.TiDBPessimisticTransactionFairLocking:
- 		if kerneltype.IsNextGen() {
- 			varVal = vardef.Off
+@@ -5,14 +5,15 @@ go_test(
+     timeout = "short",
+     srcs = [
+         "main_test.go",
++        "materialized_view_infoschema_test.go",
+         "materialized_view_refresh_entry_test.go",
+         "materialized_view_refresh_operator_test.go",
+         "materialized_view_refresh_test.go",
+         "materialized_view_show_test.go",
+         "testutil_test.go",
+     ],
+     flaky = True,
+-    shard_count = 46,
++    shard_count = 47,
+     deps = [
+         "//pkg/config",
+         "//pkg/ddl",
 ```
 
-**File**: `pkg/sessionctx/variable/sysvar_test.go` (modified, +1/-1)
+**File**: `pkg/executor/test/materializedview/materialized_view_infoschema_test.go` (added, +68/-0)
 ```diff
-@@ -1732,7 +1732,7 @@ func TestGlobalSystemVariableInitialValue(t *testing.T) {
- 			BoolToOnOff(vardef.DefTiDBEnableAdaptiveLimitScan),
- 			vardef.On,
- 		},
--		{vardef.TiDBAnalyzeSampledNDVThreshold, "0", "500000000"},
-+		{vardef.TiDBAnalyzeSampledNDVThreshold, "0", "100000000"},
- 		{
- 			vardef.TiDBRowFormatVersion,
- 			strconv.Itoa(vardef.DefTiDBRowFormatV1),
+@@ -0,0 +1,68 @@
++// Copyright 2026 PingCAP, Inc.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package materializedview
++
++import (
++	"context"
++	"fmt"
++	"testing"
++
++	"github.com/pingcap/tidb/pkg/parser/ast"
++	"github.com/pingcap/tidb/pkg/testkit"
++	"github.com/stretchr/testify/require"
++)
++
++func TestInformationSchemaMaterializedView(t *testing.T) {
++	t.Run("TiDBMViews", testInformationSchemaTiDBMViews)
++	t.Run("TiDBMLogs", testInformationSchemaTiDBMLogs)
++}
++
++func testInformationSchemaTiDBMViews(t *testing.T) {
++	store, dom := testkit.CreateMockStoreAndDomain(t)
++	tk := newMViewTestKit(t, store)
++	tk.MustExec("use test")
++	tk.MustExec("create table t (a int not null, b int not null)")
++	tk.MustExec("create materialized view log on t (a, b) purge next date_add(now(), interval 1 hour)")
++	tk.MustExec("create materialized view mv_meta (a, s, cnt) comment='mv-meta' refresh fast next date_add(now(), interval 1 hour) as select a, sum(b), count(1) from t group by a")
++
++	is := dom.InfoSchema()
++	mvTable, err := is.TableByName(context.Background(), ast.NewCIStr("test"), ast.NewCIStr("mv_meta"))
++	require.NoError(t, err)
++	mvID := mvTable.Meta().ID
++
++	tk.MustQuery("select table_catalog, table_schema, mview_id, mview_name, mview_comment, refresh_method, refresh_start, refresh_next from information_schema.tidb_mviews where table_schema = 'test' and mview_name = 'mv_meta'").
++		Check(testkit.Rows(fmt.Sprintf("def test %d mv_meta mv-meta FAST  DATE_ADD(NOW(), INTERVAL 1 HOUR)", mvID)))
++	tk.MustQuery("select mview_modify_time is not null from information_schema.tidb_mviews where table_schema = 'test' and mview_name = 'mv_meta'").
++		Check(testkit.Rows("1"))
++	tk.MustQuery("select mview_sql_content like 'SELECT%' from information_schema.tidb_mviews where table_schema = 'test' and mview_name = 'mv_meta'").
++		Check(testkit.Rows("1"))
++}
++
++func testInformationSchemaTiDBMLogs(t *testing.T) {
++	store, dom := testkit.CreateMockStoreAndDomain(t)
++	tk := newMViewTestKit(t, store)
++	tk.MustExec("use test")
++	tk.MustExec("create table t (a int not null, b int not null)")
++	tk.MustExec("create materialized view log on t (a, b) purge start with now() next date_add(now(), interval 1 hour)")
++
++	is := dom.InfoSchema()
++	baseTable, err := is.TableByName(context.Background(), ast.NewCIStr("test"), ast.NewCIStr("t"))
++	require.NoError(t, err)
++	mlogID := baseTable.Meta().MaterializedViewBase.MLogID
++	baseID := baseTable.Meta().ID
++
++	tk.MustQuery("select table_catalog, table_schema, mlog_id, mlog_name, mlog_columns, base_table_catalog, base_table_schema, base_table_id, base_table_name, purge_method, purge_start, purge_next from information_schema.tidb_mlogs where table_schema = 'test' and mlog_name = '$mlog$t'").
++		Check(testkit.Rows(fmt.Sprintf("def test %d $mlog$t a,b def test %d t DEFERRED NOW() DATE_ADD(NOW(), INTERVAL 1 HOUR)", mlogID, baseID)))
++}
+```
+
+**File**: `pkg/infoschema/infoschema_test.go` (modified, +33/-0)
+```diff
+@@ -237,6 +237,39 @@ func TestBasic(t *testing.T) {
+ 	require.NoError(t, err)
+ 	require.NotNil(t, tb)
+ 
++	tb, err = is.TableByName(context.Background(), ast.NewCIStr("information_schema"), ast.NewCIStr(infoschema.TableTiDBMLogs))
++	require.NoError(t, err)
++	col := tb.Meta().FindPublicColumnByName("base_table_id")
++	require.NotNil(t, col)
++	require.Equal(t, mysql.TypeLonglong, col.GetType())
++	for _, colName := range []string{
++		"table_catalog", "table_schema", "mlog_id", "mlog_name", "mlog_columns",
++		"base_table_catalog", "base_table_schema", "base_table_id", "base_table_name",
++	} {
++		col = tb.Meta().FindPublicColumnByName(colName)
++		require.NotNil(t, col)
++		require.True(t, mysql.HasNotNullFlag(col.GetFlag()), colName)
++	}
++	for _, colName := range []string{"purge_method", "purge_start", "purge_next"} {
++		col = tb.Meta().FindPublicColumnByName(colName)
++		require.NotNil(t, col)
++		require.False(t, mysql.HasNotNullFlag(col.GetFlag()), colName)
++	}
++	tb, err = is.TableByName(context.Background(), ast.NewCIStr("information_schema"), ast.NewCIStr(infoschema.TableTiDBTableMViewDependencies))
++	require.NoError(t, err)
++	col = tb.Meta().FindPublicColumnByName("mview_id")
++	require.NotNil(t, col)
++	require.Equal(t, mysql.TypeLonglong, col.GetType())
++	for _, colName := range []string{
++		"table_catalog", "table_schema", "table_id", "table_name",
++		"mlog_id", "mlog_name",
++		"mview_catalog", "mview_schema", "mview_id", "mview_name",
++	} {
++		col = tb.Meta().FindPublicColumnByName(colName)
++		require.NotNil(t, col)
++		require.True(t, mysql.HasNotNullFlag(col.GetFlag()), colName)
++	}
++
+ 	require.NoError(t, err)
+ 	txn, err = re.Store().Begin()
+ 	require.NoError(t, err)
+```
+
+**File**: `pkg/infoschema/tables.go` (modified, +53/-0)
+```diff
+@@ -219,6 +219,12 @@ const (
+ 	TableTiDBCheckConstraints = "TIDB_CHECK_CONSTRAINTS"
+ 	// TableKeywords is the list of keywords.
+ 	TableKeywords = "KEYWORDS"
++	// TableTiDBMViews is a table to show the metadata of materialized views in the current instance.
++	TableTiDBMViews = "TIDB_MVIEWS"
++	// TableTiDBMLogs is a table to show the metadata of materialized view logs in the current instance.
++	TableTiDBMLogs = "TIDB_MLOGS"
++	// TableTiDBTableMViewDependencies is a table to show dependencies between base tables, mlog and materialized views.
++	TableTiDBTableMViewDependencies = "TIDB_TABLE_MVIEW_DEPENDENCIES"
+ 	// TableTiDBIndexUsage is a table to show the usage stats of indexes in the current instance.
+ 	TableTiDBIndexUsage = "TIDB_INDEX_USAGE"
+ 	// TableTiDBPlanCache is the plan cache table.
+@@ -358,6 +364,9 @@ var tableIDMap = map[string]int64{
+ 	TableKeyspaceMeta:                    autoid.InformationSchemaDBID + 100,
+ 	TableSchemataExtensions:              autoid.InformationSchemaDBID + 101,
+ 	TableStorageClassTransitions:         autoid.InformationSchemaDBID + 102,
++	TableTiDBMViews:                      autoid.InformationSchemaDBID + 103,
++	TableTiDBMLogs:                       autoid.InformationSchemaDBID + 104,
++	TableTiDBTableMViewDependencies:      autoid.InformationSchemaDBID + 105,
+ }
+ 
+ // columnInfo represents the basic column information of all kinds of INFORMATION_SCHEMA tables
+@@ -753,6 +762,47 @@ var tableViewsCols = []columnInfo{
+ 	{name: "COLLATION_CONNECTION", tp: mysql.TypeVarchar, size: 32, flag: mysql.NotNullFlag},
+ }
+ 
++var tableTiDBMViewsCols = []columnInfo{
++	{name: "TABLE_CATALOG", tp: mysql.TypeVarchar, size: 512, flag: mysql.NotNullFlag},
++	{name: "TABLE_SCHEMA", tp: mysql.TypeVarchar, size: 64, flag: mysql.NotNullFlag},
++	{name: "MVIEW_ID", tp: mysql.TypeLonglong, size: 21, flag: mysql.NotNullFlag},
++	{name: "MVIEW_NAME", tp: mysql.TypeVarchar, size: 64, flag: mysql.NotNullFlag},
++	{name: "MVIEW_SQL_CONTENT", tp: mysql.TypeLongBlob, size: types.UnspecifiedLength, flag: mysql.NotNullFlag},
++	{name: "MVIEW_COMMENT", tp: mysql.TypeVarchar, size: 128},
++	{name: "MVIEW_MODIFY_TIME", tp: mysql.TypeDatetime, flag: mysql.NotNullFlag},
++	{name: "REFRESH_METHOD", tp: mysql.TypeVarchar, size: 32},
++	{name: "REFRESH_START", tp: mysql.TypeVarchar, size: 128},
++	{name: "REFRESH_NEXT", tp: mysql.TypeVarchar, size: 128},
++}
++
++var tableTiDBMLogsCols = []columnInfo{
++	{name: "TABLE_CATALOG", tp: mysql.TypeVarchar, size: 512, flag: mysql.NotNullFlag},
++	{name: "TABLE_SCHEMA", tp: mysql.TypeVarchar, size: 64, flag: mysql.NotNullFlag},
++	{name: "MLOG_ID", tp: mysql.TypeLonglong, size: 21, flag: mysql.NotNullFlag},
++	{name: "MLOG_NAME", tp: mysql.TypeVarchar, size: 64, flag: mysql.NotNullFlag},
++	{name: "MLOG_COLUMNS", tp: mysql.TypeLongBlob, size: types.UnspecifiedLength, flag: mysql.NotNullFlag},
++	{name: "BASE_TABLE_CATALOG", tp: mysql.TypeVarchar, size: 512, flag: mysql.NotNullFlag},
++	{name: "BASE_TABLE_SCHEMA", tp: mysql.TypeVarchar, size: 64, flag: mysql.NotNullFlag},
++	{name: "BASE_TABLE_ID", tp: mysql.TypeLonglong, size: 21, flag: mysql.NotNullFlag},
++	{name: "BASE_TABLE_NAME", tp: mysql.TypeVarchar, size: 64, flag: mysql.NotNullFlag},
++	{name: "PURGE_METHOD", tp: mysql.TypeVarchar, size: 32},
++	{name: "PURGE_START", tp: mysql.TypeVarchar, size: 128},
++	{name: "PURGE_NEXT", tp: mysql.TypeVarchar, size: 128},
++}
++
++var tableTiDBTableMViewDependenciesCols = []columnInfo{
++	{name: "TABLE_CATALOG", tp: mysql.TypeVarchar, size: 512, flag: mysql.NotNullFlag},
++	{name: "TABLE_SCHEMA", tp: mysql.TypeVarchar, size: 64, flag: mysql.NotNullFlag},
++	{name: "TABLE_ID", tp: mysql.TypeLonglong, size: 21, flag: mysql.NotNullFlag},
++	{name: "TABLE_NAME", tp: mysql.TypeVarchar, size: 64, flag: mysql.NotNullFlag},
++	{name: "MLOG_ID", tp: mysql.TypeLonglong, size: 21, flag: mysql.NotNullFlag},
++	{name: "MLOG_NAME", tp: mysql.TypeVarchar, size: 64, flag: mysql.NotNullFlag},
++	{name: "MVIEW_CATALOG", tp: mysql.TypeVarchar, size: 512, flag: mysql.NotNullFlag},
++	{name: "MVIEW_SCHEMA", tp: mysql.TypeVarchar, size: 64, flag: mysql.NotNullFlag},
++	{name: "MVIEW_ID", tp: mysql.TypeLonglong, size: 21, flag: mysql.NotNullFlag},
++	{name: "MVIEW_NAME", tp: mysql.TypeVarchar, size: 64, flag: mysql.NotNullFlag},
++}
++
+ var tableRoutinesCols = []columnInfo{
+ 	{name: "SPECIFIC_NAME", tp: mysql.TypeVarchar, size: 64, flag: mysql.NotNullFlag},
+ 	{name: "ROUTINE_CATALOG", tp: mysql.TypeVarchar, size: 512, flag: mysql.NotNullFlag},
+@@ -2578,6 +2628,9 @@ var tableNameToColumns = map[string][]columnInfo{
+ 	TableRunawayWatches:                     tableRunawayWatchListCols,
+ 	TableCheckConstraints:                   tableCheckConstraintsCols,
+ 	TableTiDBCheckConstraints:               tableTiDBCheckConstraintsCols,
++	TableTiDBMViews:                         tableTiDBMViewsCols,
++	TableTiDBMLogs:                          tableTiDBMLogsCols,
++	TableTiDBTableMViewDependencies:         tableTiDBTableMViewDependenciesCols,
+ 	TableKeywords
+```
+
+**File**: `pkg/planner/core/logical_plan_builder.go` (modified, +6/-0)
+```diff
+@@ -5580,6 +5580,12 @@ func (b *PlanBuilder) buildMemTable(_ context.Context, dbName ast.CIStr, tableIn
+ 			p.Extractor = NewInfoSchemaReferConstExtractor()
+ 		case infoschema.TableTiDBIndexes:
+ 			p.Extractor = NewInfoSchemaIndexesExtractor()
++		case infoschema.TableTiDBMViews:
++			p.Extractor = NewInfoSchemaTiDBMViewsExtractor()
++		case infoschema.TableTiDBMLogs:
++			p.Extractor = NewInfoSchemaTiDBMLogsExtractor()
++		case infoschema.TableTiDBTableMViewDependencies:
++			p.Extractor = NewInfoSchemaTiDBTableMViewDependenciesExtractor()
+ 		case infoschema.TableViews:
+ 			p.Extractor = NewInfoSchemaViewsExtractor()
+ 		case infoschema.TableKeyColumn:
 ```
 
 ---
 
-### Incident Patch 2: `a35c499c` (2026-10-27)
-**Commit Message**: dxf: clean orphan global-sort data (#72420)
+### Incident Patch 2: `96f2b0da` (2026-10-28)
+**Commit Message**: executor: preserve transaction scan ranges for unsigned clustered primary keys (#72433)
 
-close pingcap/tidb#72404
+close pingcap/tidb#72432
 
-**File**: `pkg/dxf/framework/scheduler/scheduler_manager.go` (modified, +20/-21)
+**File**: `pkg/executor/table_reader.go` (modified, +10/-0)
 ```diff
-@@ -104,23 +104,22 @@ func (sm *Manager) getSchedulers() []Scheduler {
- 	return slices.Clone(sm.mu.schedulers)
- }
- 
--type orphanDataMonitor interface {
--	// Trigger scans and publishes the orphan data size. It runs synchronously
--	// on the caller's goroutine and can block for the duration of a storage
--	// scan, so callers must not expect to react to context cancellation until
--	// the scan returns.
-+type orphanDataCleaner interface {
-+	// Trigger measures orphan data and deletes a bounded batch of scanned
-+	// objects. It runs synchronously on the caller's goroutine and can block
-+	// while storage operations finish, including after context cancellation.
- 	Trigger(context.Context)
- 	// Reset clears the published orphan data size, so an instance that no
- 	// longer owns the scheduler stops exporting a stale value.
- 	Reset()
- }
- 
--// noopOrphanDataMonitor is used when orphan data monitoring is not enabled.
--type noopOrphanDataMonitor struct{}
-+// noopOrphanDataCleaner is used when orphan data cleanup is not enabled.
-+type noopOrphanDataCleaner struct{}
- 
--func (noopOrphanDataMonitor) Trigger(context.Context) {}
-+func (noopOrphanDataCleaner) Trigger(context.Context) {}
- 
--func (noopOrphanDataMonitor) Reset() {}
-+func (noopOrphanDataCleaner) Reset() {}
- 
- type orphanDataActiveProducerChecker struct {
- 	taskMgr TaskManager
-@@ -163,9 +162,9 @@ type Manager struct {
- 	nodeRes *proto.NodeResource
- 	// initialized on demand
- 	metricCollector *dxfmetric.Collector
--	// orphanMonitor publishes global-sort orphan data size while this node owns
--	// the scheduler. It is a no-op when orphan data monitoring is not enabled.
--	orphanMonitor orphanDataMonitor
-+	// orphanCleaner measures and cleans global-sort orphan data while this
-+	// node owns the scheduler. It is a no-op when cleanup is not enabled.
-+	orphanCleaner orphanDataCleaner
- }
- 
- // NewManager creates a scheduler struct.
-@@ -199,19 +198,19 @@ func NewManager(ctx context.Context, store kv.Storage, taskMgr TaskManager, serv
- 		nodeRes:  nodeRes,
+@@ -342,11 +342,21 @@ func (e *TableReaderExecutor) Open(ctx context.Context) error {
+ 		e.resultHandler.open(nil, firstResult)
+ 		return nil
  	}
- 	schedulerManager.mu.schedulerMap = make(map[int64]Scheduler)
--	schedulerManager.orphanMonitor = newOrphanDataMonitor(schedulerManager)
-+	schedulerManager.orphanCleaner = newOrphanDataCleaner(schedulerManager)
- 
- 	return schedulerManager
- }
- 
--// newOrphanDataMonitor builds the orphan data monitor for this manager. Orphan
-+// newOrphanDataCleaner builds the orphan data cleaner for this manager. Orphan
- // global-sort data only exists in the NextGen kernel, where cloud storage is
--// the shared spill area; elsewhere monitoring is a no-op.
--func newOrphanDataMonitor(sm *Manager) orphanDataMonitor {
-+// the shared spill area; elsewhere cleanup is a no-op.
-+func newOrphanDataCleaner(sm *Manager) orphanDataCleaner {
- 	if !kerneltype.IsNextGen() {
--		return noopOrphanDataMonitor{}
-+		return noopOrphanDataCleaner{}
- 	}
--	return orphandata.NewMonitor(orphandata.Config{
-+	return orphandata.NewCleaner(orphandata.Config{
- 		ActiveProducerChecker: orphanDataActiveProducerChecker{taskMgr: sm.taskMgr},
- 		GetStorageURI:         func() string { return handle.GetCloudStorageURI(sm.ctx, sm.store) },
- 		Logger:                sm.logger,
-@@ -264,7 +263,7 @@ func (sm *Manager) Stop() {
- 	// The orphan data size is only meaningful while this node owns the
- 	// scheduler. Reset it on owner change, otherwise a former owner keeps
- 	// exporting the last value it observed.
--	sm.orphanMonitor.Reset()
-+	sm.orphanCleaner.Reset()
- }
- 
- // Initialized check the manager initialized.
-@@ -466,7 +465,7 @@ func (sm *Manager) startScheduler(basicTask *proto.TaskBase, allocateSlots bool,
- func (sm *Manager) cleanTaskLoop() {
- 	sm.logger.Info("cleanup loop start")
- 	sm.drainCleanTaskBatches()
--	sm.orphanMonitor.Trigger(sm.ctx)
-+	sm.orphanCleaner.Trigger(sm.ctx)
- 	ticker := time.NewTicker(DefaultCleanUpInterval)
- 	defer ticker.Stop()
- 	for {
-@@ -478,7 +477,7 @@ func (sm *Manager) cleanTaskLoop() {
- 			sm.drainCleanTaskBatches()
- 		case <-ticker.C:
- 			sm.drainCleanTaskBatches()
--			sm.orphanMonitor.Trigger(sm.ctx)
-+			sm.orphanCleaner.Trigger(sm.ctx)
- 		}
- 	}
- }
-```
-
-**File**: `pkg/dxf/framework/scheduler/scheduler_manager_nokit_test.go` (modified, +8/-8)
-```diff
-@@ -287,8 +287,8 @@ func TestExpiredFileCleanLoopEnabled(t *testing.T) {
- 	taskMgr.EXPECT().GetAllNodes(gomock.Any()).Return(nil, nil).AnyTimes()
- 	taskMgr.EXPECT().GetCleanupTasks(gomock.Any()).Return(nil, nil).AnyTimes()
- 	taskMgr.EXPECT().GetTopUnfinishedTasks(gomock.Any()).Return(nil, nil).AnyTimes()
--	// The NextGen cleanup loop triggers the orphan data monitor on startup.
--	// Reporting an active task keeps the monitor from reaching the real object
-+	// The NextGen cleanup loop triggers the orphan data cleaner on startup.
-+	// Reporting an active task keeps the cleaner from reaching the real object
- 	// store.
- 	taskMgr.EXPECT().GetActiveTaskCountsByKeyspace(gomock.Any()).Return(
- 		&storage.ActiveTaskSummary{Total: 1}, nil).AnyTimes()
-@@ -331,9 +331,9 @@ func TestStopResetsOrphanDataGauge(t *testing.T) {
- 	ctrl := gomock.NewController(t)
- 	defer ctrl.Finish()
- 	mgr := NewManager(context.Background(), nil, mock.NewMockTaskManager(ctrl), "1", proto.NodeResourceForTest)
--	// Install a real monitor regardless of the kernel type so the reset path is
-+	// Install a real cleaner regardless of the kernel type so the reset path is
- 	// exercised deterministically.
--	mgr.orphanMonitor = orphandata.NewMonitor(orphandata.Config{})
-+	mgr.orphanCleaner = orphandata.NewCleaner(orphandata.Config{})
- 	t.Cleanup(func() { metrics.GlobalSortOrphanDataSize.Reset() })
- 
- 	metrics.GlobalSortOrphanDataSize.WithLabelValues().Set(42)
-@@ -552,15 +552,15 @@ func TestSchedulerCleanTask(t *testing.T) {
- 		loopCtx, cancel := context.WithCancel(context.Background())
- 		mgr := NewManager(loopCtx, nil, taskMgr, "1", proto.NodeResourceForTest)
- 		cleanupStarted := make(chan struct{})
--		monitorStarted := make(chan struct{})
-+		orphanCleanerStarted := make(chan struct{})
- 		loopDone := make(chan struct{})
- 		taskMgr.EXPECT().GetCleanupTasks(mgr.ctx).DoAndReturn(func(context.Context) ([]*proto.Task, error) {
- 			close(cleanupStarted)
- 			return nil, nil
- 		})
- 		if kerneltype.IsNextGen() {
- 			taskMgr.EXPECT().GetActiveTaskCountsByKeyspace(mgr.ctx).DoAndReturn(func(context.Context) (*storage.ActiveTaskSummary, error) {
--				close(monitorStarted)
-+				close(orphanCleanerStarted)
- 				return &storage.ActiveTaskSummary{Total: 1}, nil
- 			})
- 		}
-@@ -576,9 +576,9 @@ func TestSchedulerCleanTask(t *testing.T) {
- 		}
- 		if kerneltype.IsNextGen() {
- 			select {
--			case <-monitorStarted:
-+			case <-orphanCleanerStarted:
- 			case <-time.After(3 * time.Second):
--				t.Fatal("cleanup task loop did not request the orphan data monitor")
-+				t.Fatal("cleanup task loop did not request the orphan data cleaner")
- 			}
- 		}
- 		cancel()
-```
-
-**File**: `pkg/ingestor/globalsort/orphandata/BUILD.bazel` (modified, +2/-2)
-```diff
-@@ -2,7 +2,7 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
- 
- go_library(
-     name = "orphandata",
--    srcs = ["monitor.go"],
-+    srcs = ["cleaner.go"],
-     importpath = "github.com/pingcap/tidb/pkg/ingestor/globalsort/orphandata",
-     visibility = ["//visibility:public"],
-     deps = [
-@@ -18,7 +18,7 @@ go_test(
-     name = "orphandata_test",
-     timeout = "short",
-     srcs = [
--        "monitor_test.go",
-+        "cleaner_test.go",
-         "scan_test.go",
-     ],
-     embed = [":orphandata"],
-```
-
-**File**: `pkg/ingestor/globalsort/orphandata/cleaner.go` (renamed, +61/-39)
-```diff
-@@ -33,10 +33,10 @@ type ActiveProducerChecker interface {
- 	HasActiveProducers(context.Context) (bool, error)
- }
- 
--// Config configures an orphan data Monitor.
-+// Config configures an orphan data Cleaner.
- type Config struct {
- 	ActiveProducerChecker ActiveProducerChecker
--	// GetStorageURI returns the cloud storage URI to scan. The monitor calls it
-+	// GetStorageURI returns the cloud storage URI to scan. The cleaner calls it
- 	// on every run, so it reads the latest value of the system variable.
- 	GetStorageURI func() string
- 	Logger        *zap.Logger
-@@ -46,34 +46,34 @@ type Config struct {
- 	RetainedPrefixes []string
- }
- 
--type noopActiveProducerChecker struct{}
-+type missingActiveProducerChecker struct{}
- 
--func (noopActiveProducerChecker) HasActiveProducers(context.Context) (bool, error) {
--	return false, nil
-+func (missingActiveProducerChecker) HasActiveProducers(context.Context) (bool, error) {
-+	return true, nil
- }
- 
- type storeFactory func(context.Context, string) (storeapi.Storage, error)
- 
--// Monitor scans orphan global-sort objects and publishes their size, but only
--// when no producer is active, so the reported size is orphan data.
--type Monitor struct {
-+// Cleaner measures and deletes orphan global-sort objects when no producer is
-+// active. Its gauge records the size observed before cleanup.
-+type Cleaner struct {
- 	cfg Config
- 	// storeFactory builds the object store for a scan; tests substitute it.
- 	storeFactory storeFactory
- }
- 
--// NewMonitor creates an orphan data Monitor.
--func NewMonitor(cfg Config) *Monitor {
-+// NewCleaner creates an orphan data Cleaner.
-+func NewCleaner(cfg Config) *Cleaner {
- 	if cfg.Logger == nil {
- 		cfg.Logger = zap.NewNop()
- 	}
- 	if cfg.ActiveProducerChecker == nil {
--		cfg.ActiveProducerChecker = noopActiveProducerChecker{}
-+		cfg.ActiveProducerChecker = missingActiveProducerChecker{}
- 	}
- 	if cfg.GetStorageURI == nil {
- 		cfg.GetStorageURI = func() string { return "" }
- 	}
--	return &Monitor{
-+	return &Cleaner{
- 		cfg:          cfg,
- 		storeFactory: newStore,
- 	}
-@@ -87,64 +87,78 @@ func newStore(ctx context.Context, uri string) (storeapi.Storage, error) {
- 	return objstore.NewWithDefaultOpt(ctx, backend)
- }
- 
--// Trigger scans orphan global-sort objects and publishes their size. It runs
-+// Trigger measures orphan global-sort objects and deletes a bounded batch of
-+// scanned keys after confirming that no producer is active. It runs
- // synchronously and is not safe for concurrent use: the scheduler cleanup loop
- // calls it serially from its own goroutine, which also owns cancellation.
--func (m *Monitor) Trigger(ctx context.Context) {
--	storageURI := m.cfg.GetStorageURI()
-+func (c *Cleaner) Trigger(ctx context.Context) {
-+	storageURI := c.cfg.GetStorageURI()
- 	if storageURI == "" {
- 		return
- 	}
- 
--	hasActiveProducers, err := m.cfg.ActiveProducerChecker.HasActiveProducers(ctx)
-+	hasActiveProducers, err := c.cfg.ActiveProducerChecker.HasActiveProducers(ctx)
++	// Each call to buildRespForGroupedRanges replaces e.kvRanges. Preserve the first part so
++	// UnionScan can read transaction-local rows from both sides of the unsigned handle boundary.
++	firstKVRanges := e.kvRanges
+ 	var secondResult distsql.SelectResult
+ 	secondResult, err = e.buildRespForGroupedRanges(ctx, secondPartGroupedRanges)
  	if err != nil {
- 		if ctx.Err() == nil {
--			m.cfg.Logger.Warn("global sort orphan data monitor failed to check active producers", zap.Error(err))
-+			c.cfg.Logger.Warn("global sort orphan data cleaner failed to check active producers", zap.Error(err))
- 		}
- 		return
+ 		return err
  	}
- 	if hasActiveProducers {
- 		return
- 	}
- 
--	storage, err := m.storeFactory(ctx, storageURI)
-+	storage, err := c.storeFactory(ctx, storageURI)
- 	if err != nil {
- 		if ctx.Err() == nil {
--			m.cfg.Logger.Warn("global sort orphan data monitor failed to create storage", zap.Error(err))
-+			c.cfg.Logger.Warn("global sort orphan data cleaner failed to create storage", zap.Error(err))
- 		}
- 		return
- 	}
- 	defer storage.Close()
- 
--	stats, err := scanOrphanData(ctx, storage, m.cfg.RetainedPrefixes)
-+	stats, err := scanOrphanData(ctx, storage, c.cfg.RetainedPrefixes)
- 	if err != nil {
- 		if ctx.Err() == nil {
--			m.cfg.Logger.Warn("global sort orphan data monitor failed to scan storage", zap.Error(err))
-+			c.cfg.Logger.Warn("global sort orphan data cleaner failed to scan storage", zap.Error(err))
- 		}
- 		return
- 	}
- 
--	// Re-check after the scan. A producer that appears and disappears entirely
--	// between the two checks (empty -> active -> empty) is not detected. We
--	// accept that ABA window for now: a task removes its own objects before its
--	// row leaves the task table, so any value published from a scan that raced a
--	// cleanup is corrected by the next scan.
--	hasActiveProducers, err = m.cfg.ActiveProducerChecker.HasActiveProducers(ctx)
-+	// Re-check after the scan, then delete only the exact captured keys: never
-+	// expand a scanned namespace with another listing. Normal task IDs are not
-+	// reused, so a new task cannot own these keys. A task's row remains until
-+	// its normal cleanup finishes, making a task that starts and finishes
-+	// between the two checks harmless. Late writers can recreate orphan keys;
-+	// a future sweep will find them.
-+	hasActiveProducers, err = c.cfg.ActiveProducerChecker.HasActiveProducers(ctx)
- 	
-```
-
-**File**: `pkg/ingestor/globalsort/orphandata/cleaner_test.go` (renamed, +277/-76)
-```diff
-@@ -30,20 +30,22 @@ import (
- 	"go.uber.org/zap/zaptest/observer"
- )
- 
--type monitorWalkEntry struct {
-+type cleanerWalkEntry struct {
- 	path string
- 	size int64
- }
- 
--type monitorStorage struct {
-+type cleanerStorage struct {
- 	storeapi.Storage
--	entries    []monitorWalkEntry
--	walkErr    error
--	walkFn     func(context.Context) error
--	closeCount int
-+	entries     []cleanerWalkEntry
-+	walkErr     error
-+	walkFn      func(context.Context) error
-+	closeCount  int
-+	deleteCalls int
-+	deleteFn    func(context.Context, []string) error
- }
- 
--func (s *monitorStorage) WalkDir(
-+func (s *cleanerStorage) WalkDir(
- 	ctx context.Context,
- 	_ *storeapi.WalkOption,
- 	fn func(path string, size int64) error,
-@@ -53,23 +55,38 @@ func (s *monitorStorage) WalkDir(
- 			return err
- 		}
- 	}
--	if s.walkErr != nil {
-+	if s.entries == nil {
-+		if err := s.Storage.WalkDir(ctx, &storeapi.WalkOption{}, fn); err != nil {
-+			return err
-+		}
- 		return s.walkErr
- 	}
- 	for _, entry := range s.entries {
- 		if err := fn(entry.path, entry.size); err != nil {
- 			return err
- 		}
- 	}
--	return nil
-+	return s.walkErr
- }
- 
--func (s *monitorStorage) Close() {
-+func (s *cleanerStorage) DeleteFiles(ctx context.Context, keys []string) error {
-+	s.deleteCalls++
-+	if s.deleteFn != nil {
-+		return s.deleteFn(ctx, keys)
++	// The split follows scan order, but UnionScan reverses the ranges for descending scans.
++	// Keep the two parts in ascending handle order before passing them to UnionScan.
++	if e.desc {
++		e.kvRanges = append(e.kvRanges, firstKVRanges...)
++	} else {
++		e.kvRanges = append(firstKVRanges, e.kvRanges...)
 +	}
-+	// Synthetic listing entries are used by the existing statistics tests.
-+	if s.entries != nil {
-+		return nil
-+	}
-+	return s.Storage.DeleteFiles(ctx, keys)
-+}
-+
-+func (s *cleanerStorage) Close() {
- 	s.closeCount++
+ 	e.resultHandler.open(firstResult, secondResult)
+ 	return nil
  }
- 
--type testMonitor struct {
--	*Monitor
-+type testCleaner struct {
-+	*Cleaner
- 	logs *observer.ObservedLogs
- }
- 
-@@ -83,22 +100,22 @@ func staticURI(uri string) func() string {
- 	return func() string { return uri }
- }
- 
--func newTestMonitor(t *testing.T, cfg Config) *testMonitor {
-+func newTestCleaner(t *testing.T, cfg Config) *testCleaner {
- 	t.Helper()
- 	if cfg.Logger == nil {
- 		core, logs := observer.New(zap.DebugLevel)
- 		cfg.Logger = zap.New(core)
--		return &testMonitor{
--			Monitor: NewMonitor(cfg),
-+		return &testCleaner{
-+			Cleaner: NewCleaner(cfg),
- 			logs:    logs,
- 		}
- 	}
--	return &testMonitor{
--		Monitor: NewMonitor(cfg),
-+	return &testCleaner{
-+		Cleaner: NewCleaner(cfg),
- 	}
- }
- 
--// orphanDataMetricName is the name of the metric the monitor publishes to.
-+// orphanDataMetricName is the name of the metric the cleaner publishes to.
- const orphanDataMetricName = "tidb_global_sort_orphan_data_size_bytes"
- 
- // requireGauge asserts the orphan data size is the expected value.
-@@ -132,14 +149,196 @@ func requireNoCandidate(t *testing.T, logs *observer.ObservedLogs, candidate str
- 	}
- }
- 
--func TestMonitor(t *testing.T) {
-+func TestCleaner(t *testing.T) {
- 	t.Cleanup(func() {
- 		metrics.GlobalSortOrphanDataSize.Reset()
- 	})
- 
-+	t.Run("cleanup deletes only scanned keys and retains conflict data", func(t *testing.T) {
-+		ctx := context.Background()
-+		store := &cleanerStorage{Storage: objstore.NewMemStorage()}
-+		const oldKey = "123/old-file"
-+		const newKey = "123/new-file"
-+		retainedKey := conflictpath.StoragePrefix + "9/3-uuid/0_1"
-+		require.NoError(t, store.WriteFile(ctx, oldKey, []byte("old")))
-+		require.NoError(t, store.WriteFile(ctx, retainedKey, []byte("retained")))
-+		checks := 0
-+		m := newTestCleaner(t, Config{
-+			ActiveProducerChecker: activeProducerCheckerFunc(func(context.Context) (bool, error) {
-+				checks++
-+				if checks == 2 {
-+					require.NoError(t, store.WriteFile(ctx, newKey, []byte("new")))
-+				}
-+				return false, nil
-+			}),
-+			GetStorageURI:    staticURI("memstore:///orphandata"),
-+			RetainedPrefixes: []string{conflictpath.StoragePrefix},
-+		})
-+		m.storeFactory = func(context.Context, string) (storeapi.Storage, error) { return store, nil }
-+
-+		m.Trigger(ctx)
-+
-+		exists, err := store.FileExists(ctx, oldKey)
-+		require.NoError(t, err)
-+		require.False(t, exists)
-+		for _, key := range []string{newKey, retainedKey} {
-+			data, err := store.ReadFile(ctx, key)
-+			require.NoError(t, err)
-+			require.NotEmpty(t, data)
-+		}
-+		require.Equal(t, 1, store.deleteCalls)
-+		requireGauge(t, 3)
-+		m.Trigger(ctx)
-+		require.Equal(t, 2, store.deleteCalls)
-+		m.Trigger(ctx)
-+		require.Equal(t, 2, store.deleteCalls)
-+		requireGauge(t, 0)
-+		data, err := store.ReadFile(ctx, retainedKey)
-+		require.NoError(t, err)
-+		require.Equal(t, []byte("retained"), data)
-+	})
-+
-+	t.Run("cleanup fails closed without a producer checker", func(t *testing.T) {
-+		metrics.GlobalSortOrphanDataSize.WithLabelValues().Set(37)
-+		factoryCalls := 0
-+		m := newTestCleaner(t, Config{GetStorageURI: staticURI("memstore:///orphandata")})
-+		m.storeFactory = func(context.Context, string) (storeapi.Storage, error) {
-+			factoryCalls++
-+			return &cleanerStorage{Storage: objstore.NewMemStorage()}, nil
-+		}
-+
-+		m.Trigger(context.Background())
-+
-+		require.Zero(t, factoryCalls)
-+		requireGauge(t, 37)
-+	})
-+
-+	t.Run("cleanup bounds each sweep and measures the full scan", func(t *testing.T) {
-+		ctx := context.Background()
-+		
 ```
 
-**File**: `pkg/ingestor/globalsort/orphandata/scan_test.go` (modified, +17/-11)
+**File**: `tests/integrationtest/r/executor/union_scan.result` (modified, +24/-0)
 ```diff
-@@ -64,9 +64,10 @@ func TestScan(t *testing.T) {
- 		stats, err := scanOrphanData(ctx, store, nil)
- 		require.NoError(t, err)
- 		require.Equal(t, scanStats{
--			sizeBytes:     8,
--			objectCount:   3,
--			sampleObjects: []string{"123/meta.json", "p00000001/456/data", "unknown/file"},
-+			sizeBytes:          8,
-+			objectCount:        3,
-+			sampleObjects:      []string{"123/meta.json", "p00000001/456/data", "unknown/file"},
-+			deletionCandidates: []string{"123/meta.json", "p00000001/456/data", "unknown/file"},
- 		}, stats)
- 	})
+@@ -562,3 +562,27 @@ insert into t values (1, 1), (2, 2), (1, 3) on duplicate key update a = a + 1;
+ Error 1062 (23000): Duplicate entry '2' for key 't.a'
+ commit;
+ admin check table t;
++CREATE TABLE repro_union_scan_hint (id BIGINT UNSIGNED NOT NULL, tenant VARCHAR(128) NOT NULL, payload VARCHAR(128) DEFAULT NULL, PRIMARY KEY (id) /*T![clustered_index] CLUSTERED */, KEY idx_tenant (tenant));
++BEGIN;
++INSERT INTO repro_union_scan_hint (id, tenant, payload) VALUES (9, 'csong', 'uncommitted');
++SELECT * FROM repro_union_scan_hint WHERE tenant = 'csong' ORDER BY id;
++id	tenant	payload
++9	csong	uncommitted
++SELECT /*+ USE_INDEX(repro_union_scan_hint) */ * FROM repro_union_scan_hint WHERE tenant = 'csong' ORDER BY id;
++id	tenant	payload
++9	csong	uncommitted
++INSERT INTO repro_union_scan_hint (id, tenant, payload) VALUES (9223372036854775807, 'csong', 'uncommitted'), (9223372036854775808, 'csong', 'uncommitted'), (18446744073709551615, 'csong', 'uncommitted');
++SELECT /*+ USE_INDEX(repro_union_scan_hint) */ * FROM repro_union_scan_hint WHERE tenant = 'csong' ORDER BY id ASC;
++id	tenant	payload
++9	csong	uncommitted
++9223372036854775807	csong	uncommitted
++9223372036854775808	csong	uncommitted
++18446744073709551615	csong	uncommitted
++SELECT /*+ USE_INDEX(repro_union_scan_hint) */ * FROM repro_union_scan_hint WHERE tenant = 'csong' ORDER BY id DESC;
++id	tenant	payload
++18446744073709551615	csong	uncommitted
++9223372036854775808	csong	uncommitted
++9223372036854775807	csong	uncommitted
++9	csong	uncommitted
++ROLLBACK;
++DROP TABLE repro_union_scan_hint;
+```
+
+**File**: `tests/integrationtest/t/executor/union_scan.test` (modified, +12/-0)
+```diff
+@@ -286,3 +286,15 @@ insert into t values (1, 1), (2, 2), (1, 3) on duplicate key update a = a + 1;
+ commit;
+ admin check table t;
  
-@@ -79,8 +80,9 @@ func TestScan(t *testing.T) {
- 		stats, err := scanOrphanData(context.Background(), store, nil)
- 		require.NoError(t, err)
- 		require.Equal(t, scanStats{
--			objectCount:   1,
--			sampleObjects: []string{"unknown/file"},
-+			objectCount:        1,
-+			sampleObjects:      []string{"unknown/file"},
-+			deletionCandidates: []string{"unknown/file"},
- 		}, stats)
- 		require.Equal(t, 1, store.walkCount)
- 	})
-@@ -94,15 +96,16 @@ func TestScan(t *testing.T) {
- 		stats, err := scanOrphanData(ctx, store, []string{conflictpath.StoragePrefix})
- 		require.NoError(t, err)
- 		require.Equal(t, scanStats{
--			sizeBytes:     3,
--			objectCount:   1,
--			sampleObjects: []string{"123/meta.json"},
-+			sizeBytes:          3,
-+			objectCount:        1,
-+			sampleObjects:      []string{"123/meta.json"},
-+			deletionCandidates: []string{"123/meta.json"},
- 		}, stats)
- 	})
- 
--	t.Run("sample is bounded", func(t *testing.T) {
--		entries := make([]walkEntry, 0, sampleObjectLimit+1)
--		for i := 0; i <= sampleObjectLimit; i++ {
-+	t.Run("sampling and cleanup candidates are independently bounded", func(t *testing.T) {
-+		entries := make([]walkEntry, 0, cleanupObjectLimit+1)
-+		for i := 0; i <= cleanupObjectLimit; i++ {
- 			entries = append(entries, walkEntry{path: fmt.Sprintf("object-%02d/file", i), size: 1})
- 		}
- 		store := &walkStorage{
-@@ -114,6 +117,9 @@ func TestScan(t *testing.T) {
- 		require.NoError(t, err)
- 		require.Equal(t, int64(len(entries)), stats.objectCount)
- 		require.Len(t, stats.sampleObjects, sampleObjectLimit)
-+		require.Len(t, stats.deletionCandidates, cleanupObjectLimit)
-+		require.Equal(t, entries[0].path, stats.deletionCandidates[0])
-+		require.Equal(t, entries[cleanupObjectLimit-1].path, stats.deletionCandidates[cleanupObjectLimit-1])
- 		require.True(t, stats.truncated)
- 		require.Equal(t, entries[0].path, stats.sampleObjects[0])
- 	})
++# https://github.com/pingcap/tidb/issues/72432
++CREATE TABLE repro_union_scan_hint (id BIGINT UNSIGNED NOT NULL, tenant VARCHAR(128) NOT NULL, payload VARCHAR(128) DEFAULT NULL, PRIMARY KEY (id) /*T![clustered_index] CLUSTERED */, KEY idx_tenant (tenant));
++BEGIN;
++INSERT INTO repro_union_scan_hint (id, tenant, payload) VALUES (9, 'csong', 'uncommitted');
++SELECT * FROM repro_union_scan_hint WHERE tenant = 'csong' ORDER BY id;
++SELECT /*+ USE_INDEX(repro_union_scan_hint) */ * FROM repro_union_scan_hint WHERE tenant = 'csong' ORDER BY id;
++INSERT INTO repro_union_scan_hint (id, tenant, payload) VALUES (9223372036854775807, 'csong', 'uncommitted'), (9223372036854775808, 'csong', 'uncommitted'), (18446744073709551615, 'csong', 'uncommitted');
++SELECT /*+ USE_INDEX(repro_union_scan_hint) */ * FROM repro_union_scan_hint WHERE tenant = 'csong' ORDER BY id ASC;
++SELECT /*+ USE_INDEX(repro_union_scan_hint) */ * FROM repro_union_scan_hint WHERE tenant = 'csong' ORDER BY id DESC;
++ROLLBACK;
++DROP TABLE repro_union_scan_hint;
++
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #72453** (2026-10-27): sessionctx: lower the new-cluster sampled NDV threshold to 100 million (@0xPoe)
+- **PR #72445** (2026-10-28): br: enable log redact by default (#72429) (@ti-chi-bot)
+- **PR #72442** (2026-10-28): infoschema, executor, planner: expose materialized view metadata tables (@windtalker)
 - **PR #72441** (2026-10-27): dumpling: retain TLS compatibility with legacy MySQL servers (@GMHDBJD)
+- **PR #72433** (2026-10-28): executor: preserve transaction scan ranges for unsigned clustered primary keys (@qw4990)
 - **PR #72430** (2026-10-27): executor, planner: support materialized view SHOW statements (@windtalker)
-- **PR #72429** (2026-10-27): br: enable log redact by default (@YuJuncen)
-- **PR #72422** (2026-10-27): ddl: refactor partition metadata helpers with explicit ownership (@D3Hunter)
-- **PR #72420** (2026-10-27): dxf: clean orphan global-sort data (@D3Hunter)
 
 ---
 
@@ -2605,32 +2658,30 @@ close pingcap/tidb#72404
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sessionctx: lower the new-cluster sampled NDV threshold to 100 million (#72453)
+## X. infoschema, executor, planner: expose materialized view metadata tables (#72442)
 
 **RULE**:
-When implementing operations in `docs/design/2026-09-09-sampling-based-ndv-for-large-tables.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/executor/builder.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `42abf54e`: sessionctx: lower the new-cluster sampled NDV threshold to 100 million (#72453). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bb23c552`: infoschema, executor, planner: expose materialized view metadata tables (#72442). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design/2026-09-09-sampling-based-ndv-for-large-tables.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/executor/builder.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-TiDB takes $M$ from the table statistics or, as it already does to choose `SAMPLERATE`, from the approximate count in PD when the statistics count is far smaller, for example right after a physical import. The rate changes continuously with the row count, so the rule adds no jumps to a table's NDV as the table grows. The initial $T$, 100,000,000 rows, keeps tables up to that size on full input and processes one tenth of the values at 1,000,000,000 rows, about where a full-input `ANALYZE` of one table or partition becomes slow in practice. Partitions choose their rates independently, because the global merge accepts any mix of rates, as described in [Partitioned Tables](#partitioned-tables).
-- The threshold starts at 100,000,000 in new clusters but at 0 in upgraded clusters, so an upgrade never turns sampling on. Even if TiDB is upgraded before TiKV, it therefore gets no mix of sampled and legacy responses.
-- Is the default threshold right? With $T$ at 100,000,000, a nearly unique column that the schema does not keep unique comes out at about $\sqrt{T/M}$ of its NDV: 0.32 at 1,000,000,000 rows and 0.22 from 2,000,000,000 rows.
+			strings.ToLower(infoschema.TableTiDBMViews),
+			strings.ToLower(infoschema.TableTiDBMLogs),
+			strings.ToLower(infoschema.TableTiDBTableMViewDependencies),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-TiDB takes $M$ from the table statistics or, as it already does to choose `SAMPLERATE`, from the approximate count in PD when the statistics count is far smaller, for example right after a physical import. The rate changes continuously with the row count, so the rule adds no jumps to a table's NDV as the table grows. The initial $T$, 500,000,000 rows, keeps tables up to that size on full input and halves the values processed at 1,000,000,000 rows, about where a full-input `ANALYZE` of one table or partition becomes slow in practice. Partitions choose their rates independently, because the global merge accepts any mix of rates, as described in [Partitioned Tables](#partitioned-tables).
-- The threshold starts at 500,000,000 in new clusters but at 0 in upgraded clusters, so an upgrade never turns sampling on. Even if TiDB is upgraded before TiKV, it therefore gets no mix of sampled and legacy responses.
-- Is the default threshold right? With $T$ at 500,000,000, a nearly unique column that the schema does not keep unique comes out at about $\sqrt{T/M}$ of its NDV: 0.71 at 1,000,000,000 rows and 0.22 from 10,000,000,000 rows.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `42abf54e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bb23c552` are properly handled with clean fallback behavior.
