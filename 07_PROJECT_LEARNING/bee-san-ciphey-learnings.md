@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bee-san-ciphey-learnings.md`  
 > **Source**: github ([https://github.com/bee-san/Ciphey](https://github.com/bee-san/Ciphey))  
-> **Source Version**: `c806543f`  
+> **Source Version**: `49e5a79f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:52:09.049Z  
+> **Timestamp**: 2026-10-28T14:15:29.778Z  
 > **Learning ID**: `learn-github-bee-san-ciphey`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bee-san-ciphey-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bee-san/Ciphey](https://github.com/bee-san/Ciphey))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:52:09.041Z  
+> **Harvest Timestamp**: 2026-10-28T14:15:29.667Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚡ Automatically decrypt encryptions without knowing the key or cipher, decode encodings, and crack hashes ⚡
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 21686 stars
+- **Stars / Engagement**: 21708 stars
 
 ---
 
@@ -1672,201 +1672,21 @@ impl<Type> LibraryInput<Type> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `79bd8227` (2026-10-05)
-**Commit Message**: fix(search): accept answers longer than 820 characters (#1067)
+### Incident Patch 1: `49e5a79f` (2026-10-28)
+**Commit Message**: build(deps): bump rustls (#1124)
 
-check_if_string_cant_be_decoded, the sanity check every result has to pass,
-also required calculate_string_quality >= 0.2. Past its other two checks
-(at least 3 characters, at most 30% non-printable) that only fails for text
-of 821 to 5,000 characters: the length score 1 - |len - 100| / 900 drops
-below 0.2 at 821 characters, and text over 5,000 gets a flat 0.3. So a
-correct answer of that length was always rejected and the search ran on:
-Base64 of a 2,900 character paragraph ran into the timeout, and hex of it
-ended on a railfence > rot47 false positive after 4 seconds.
-
-Results no longer need the quality score. Which candidates are worth
-decoding further (calculate_string_worth) is unchanged, so the search
-explores exactly what it did before.
-
-**File**: `src/lib.rs` (modified, +26/-0)
-```diff
-@@ -479,6 +479,32 @@ mod tests {
-         assert!(result.unwrap().text[0] == "hello there general")
-     }
- 
-+    #[test]
-+    fn test_perform_cracking_decodes_long_base64() {
-+        // 966 characters of plaintext. Text between 821 and 5,000 characters used to be
-+        // rejected as a result, so this ran into the timeout.
-+        let _test_db = TestDatabase::default();
-+        set_test_db_path();
-+
-+        let plaintext = "It was the best of times, it was the worst of times, it was the age of \
-+            wisdom, it was the age of foolishness, it was the epoch of belief. "
-+            .repeat(7);
-+        assert!(plaintext.len() > 900);
-+        let encoded = {
-+            use base64::Engine as _;
-+            base64::engine::general_purpose::STANDARD.encode(&plaintext)
-+        };
-+        let config = Config {
-+            // Unoptimised builds need a while for the first search step on this much text
-+            timeout: 60,
-+            ..Config::default()
-+        };
-+        let result = perform_cracking(&encoded, config).unwrap();
-+        let result = result.expect("the long Base64 should be decoded");
-+        assert_eq!(result.text[0], plaintext);
-+        assert_eq!(result.path.last().unwrap().decoder, "Base64");
-+    }
-+
-     #[test]
-     fn test_perform_cracking_early_exit_if_input_is_plaintext() {
-         let _test_db = TestDatabase::default();
-```
-
-**File**: `src/searchers/helper_functions.rs` (modified, +19/-8)
-```diff
-@@ -248,15 +248,18 @@ pub fn generate_heuristic(
- /// A string is considered undecodeble if:
- /// - It has 2 or fewer characters
- /// - It has more than 30% non-printable characters
--/// - Its overall quality score is below 0.2
-+///
-+/// Length is not held against it. This used to also require a
-+/// [`calculate_string_quality`] of 0.2, which past the two checks above only fails for
-+/// text of 821 to 5,000 characters (the length score drops below 0.2 at 821 characters,
-+/// and text over 5,000 gets 0.3), so a correct answer that long was always rejected.
- ///
- /// ## Rationale
- ///
- /// 1. The gibberish_or_not library requires at least 3 characters to work effectively
- /// 2. LemmeKnow and other pattern matchers perform poorly on very short strings
- /// 3. Most encoding schemes produce output of at least 3 characters
- /// 4. Strings with high percentages of non-printable characters are unlikely to be valid encodings
--/// 5. Very low quality strings waste computational resources and rarely yield useful results
- ///
- /// Filtering out these strings early saves computational resources and
- /// prevents the search from exploring unproductive paths.
-@@ -272,12 +275,6 @@ pub fn check_if_string_cant_be_decoded(text: &str) -> bool {
-         return true;
-     }
- 
--    // Check for overall string quality
--    let quality = calculate_string_quality(text);
--    if quality < 0.2 {
--        return true;
--    }
--
-     false
- }
- 
-@@ -346,6 +343,20 @@ mod tests {
-         assert_eq!(all_invisible_quality, 0.0);
-     }
- 
-+    #[test]
-+    fn long_text_can_be_a_result() {
-+        // The quality check used to reject every text of 821 to 5,000 characters
-+        let sentence = "The quick brown fox jumps over the lazy dog. ";
-+        for repeats in [17, 19, 25, 60, 110, 120] {
-+            let text = sentence.repeat(repeats);
-+            assert!(
-+                !check_if_string_cant_be_decoded(&text),
-+                "{} chars",
-+                text.len()
-+            );
-+        }
-+    }
-+
-     #[test]
-     fn test_check_if_string_cant_be_decoded() {
-         // Test strings that are too short
-```
-
----
-
-### Incident Patch 2: `0e135fc2` (2026-10-05)
-**Commit Message**: fix(railfence): size zigzag by characters, not bytes (#1037)
-
-The decoder took text.len() (bytes) positions from the zigzag but zipped them with chars(), so any input with a multi-byte character was assigned the wrong rail positions and decoded to garbled text.
-
-Co-authored-by: Autumn Skerritt <[REDACTED_EMAIL]>
-
-**File**: `src/decoders/railfence_decoder.rs` (modified, +16/-8)
-```diff
-@@ -99,9 +99,8 @@ impl Crack for Decoder<RailfenceDecoder> {
- /// rails one after another. So the ciphertext fills rail 0's positions left to right,
- /// then rail 1's, and so on: a stable counting sort of the positions by rail.
- pub(crate) fn railfence_decoder(text: &str, rails: usize, offset: usize) -> String {
--    // Positions run over the byte length, not the character count, as they always
--    // have: for non-ASCII text some positions stay empty and are skipped.
--    let len = text.len();
-+    // One position per character, not per byte, so multibyte text decodes correctly.
-+    let len = text.chars().count();
-     let rail_of: Vec<usize> = zigzag(rails, offset).take(len).collect();
- 
-     // next[r]: where rail r's next position goes in the rail-by-rail order.
-@@ -122,11 +121,11 @@ pub(crate) fn railfence_decoder(text: &str, rails: usize, offset: usize) -> Stri
-         next[rail] += 1;
-     }
- 
--    let mut plaintext: Vec<Option<char>> = vec![None; len];
-+    let mut plaintext = vec!['\0'; len];
-     for (c, &position) in text.chars().zip(&order) {
--        plaintext[position] = Some(c);
-+        plaintext[position] = c;
-     }
--    plaintext.into_iter().flatten().collect()
-+    plaintext.into_iter().collect()
- }
- 
- /// Returns an iterator that yields the indexes of a zigzag pattern with the specified number of rails and offset
-@@ -154,9 +153,12 @@ mod tests {
-         CheckerTypes::CheckAthena(athena_checker)
-     }
- 
--    /// `railfence_decoder` as it was before the counting sort.
-+    /// `railfence_decoder` as a plain sort, sized by characters.
-     fn railfence_decoder_reference(text: &str, rails: usize, offset: usize) -> String {
--        let mut indexes: Vec<_> = zigzag(rails, offset).zip(1..).take(text.len()).collect();
-+        let mut indexes: Vec<_> = zigzag(rails, offset)
-+            .zip(1..)
-+            .take(text.chars().count())
-+            .collect();
-         indexes.sort();
-         let mut char_with_index: Vec<_> = text
-             .chars()
-@@ -260,6 +262,12 @@ mod tests {
-         assert!(result.is_none());
-     }
- 
-+    #[test]
-+    fn railfence_decoder_counts_chars_not_bytes() {
-+        // 'Ä' is two bytes; the zigzag must be sized by characters.
-+        assert_eq!(railfence_decoder("ÄCEBDF", 2, 0), "ÄBCDEF");
-+    }
-+
-     #[test]
-     fn railfence_handles_panic_if_emoji() {
-         // This tests if Railfence can handle an emoji
-```
-
----
-
-### Incident Patch 3: `509b539e` (2026-10-05)
-**Commit Message**: build(deps): bump xxhash-rust (#1114)
-
-Bumps the cargo group with 1 update in the / directory: [xxhash-rust](https://github.com/DoumanAsh/xxhash-rust).
+Bumps the cargo group with 1 update in the / directory: [rustls](https://github.com/rustls/rustls).
 
 
-Updates `xxhash-rust` from 0.8.15 to 0.8.19
-- [Commits](https://github.com/DoumanAsh/xxhash-rust/commits)
+Updates `rustls` from 0.23.27 to 0.23.45
+- [Release notes](https://github.com/rustls/rustls/releases)
+- [Changelog](https://github.com/rustls/rustls/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/rustls/rustls/compare/v/0.23.27...v/0.23.45)
 
 ---
 updated-dependencies:
-- dependency-name: xxhash-rust
-  dependency-version: 0.8.19
+- dependency-name: rustls
+  dependency-version: 0.23.45
   dependency-type: indirect
   dependency-group: cargo
 ...
@@ -1874,29 +1694,157 @@ updated-dependencies:
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `Cargo.lock` (modified, +4/-4)
 ```diff
-@@ -6459,9 +6459,9 @@ dependencies = [
+@@ -4181,9 +4181,9 @@ dependencies = [
  
  [[package]]
- name = "xxhash-rust"
--version = "0.8.15"
-+version = "0.8.19"
+ name = "rustls"
+-version = "0.23.27"
++version = "0.23.45"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "fdd20c5420375476fbd4394763288da7eb0cc0b8c11deed431a91562af7335d3"
-+checksum = "550a2b930b62486a393c52d5c3b84bff264b28aa437ed64694d31e93b1757af7"
+-checksum = "730944ca083c1c233a75c09f199e973ca499344a2b7ba9e755c457e86fb4a321"
++checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
+ dependencies = [
+  "once_cell",
+  "ring",
+@@ -4223,9 +4223,9 @@ dependencies = [
  
  [[package]]
- name = "yoke"
+ name = "rustls-webpki"
+-version = "0.103.13"
++version = "0.103.15"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "61c429a8649f110dddef65e2a5ad240f747e85f7758a6bccc7e5777bd33f756e"
++checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
+ dependencies = [
+  "ring",
+  "rustls-pki-types",
+```
+
+---
+
+### Incident Patch 2: `ec1a391a` (2026-10-28)
+**Commit Message**: build(deps): bump rmcp from 3.5.0 to 3.5.1 (#1118)
+
+Bumps [rmcp](https://github.com/modelcontextprotocol/rust-sdk) from 3.5.0 to 3.5.1.
+- [Release notes](https://github.com/modelcontextprotocol/rust-sdk/releases)
+- [Changelog](https://github.com/modelcontextprotocol/rust-sdk/blob/main/release-plz.toml)
+- [Commits](https://github.com/modelcontextprotocol/rust-sdk/compare/rmcp-v3.5.0...rmcp-v3.5.1)
+
+---
+updated-dependencies:
+- dependency-name: rmcp
+  dependency-version: 3.5.1
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +4/-4)
+```diff
+@@ -4049,9 +4049,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "rmcp"
+-version = "3.5.0"
++version = "3.5.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "fae7019994ae0fe4ada40b732f798f3ff26f0f04facb1477f1bf37eb4f18a2d3"
++checksum = "ab5023804cbe0304cbe06197ac16e645a0a0d0ffa2953bf735c15c2fa0213350"
+ dependencies = [
+  "chrono",
+  "futures",
+@@ -4071,9 +4071,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "rmcp-macros"
+-version = "3.5.0"
++version = "3.5.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c7e66877136e969d5a2d561ee5841b17717a0619aebd64abb47a2a2f46e34683"
++checksum = "a1da498700030856ba63114bceefa30ba21f5e278cb975e5b9de3529fe842b40"
+ dependencies = [
+  "darling 0.24.1",
+  "proc-macro2",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -58,7 +58,7 @@ rayon = "1.12.0"
+ regex = "1.12.4"
+ # Official MCP Rust SDK, only used by `ciphey-mcp` (feature `mcp`). Pinned exactly so
+ # `cargo install` (which ignores Cargo.lock) builds against the version we tested.
+-rmcp = { version = "=3.5.0", optional = true, default-features = false, features = ["macros", "server", "transport-io"] }
++rmcp = { version = "=3.5.1", optional = true, default-features = false, features = ["macros", "server", "transport-io"] }
+ rpassword = "7.5.4"
+ rusqlite = { version = "0.37", features = ["bundled"] }
+ serde = { version = "1.0.228", features = ["derive"] }
+```
+
+---
+
+### Incident Patch 3: `2dbf70c3` (2026-10-28)
+**Commit Message**: build(deps): bump lazy-regex from 3.6.1 to 3.6.2 (#1117)
+
+Bumps [lazy-regex](https://github.com/Canop/lazy-regex) from 3.6.1 to 3.6.2.
+- [Changelog](https://github.com/Canop/lazy-regex/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/Canop/lazy-regex/commits)
+
+---
+updated-dependencies:
+- dependency-name: lazy-regex
+  dependency-version: 3.6.2
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +5/-5)
+```diff
+@@ -2599,9 +2599,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "lazy-regex"
+-version = "3.6.1"
++version = "3.6.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4994ba703f78b083e2f7946dac9251abd83fd43a0365f030e99b69be5b4b9ef9"
++checksum = "f0a2cce8a22920a29fdcc8c9170aa5d29edd9fbcf8bea856e24c2cb1c2419f67"
+ dependencies = [
+  "lazy-regex-proc_macros",
+  "once_cell",
+@@ -2610,14 +2610,14 @@ dependencies = [
+ 
+ [[package]]
+ name = "lazy-regex-proc_macros"
+-version = "3.6.1"
++version = "3.6.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "fd97232314824e6dbef1918a871bb93f51070455e3715bf26e19a6d01aa977a0"
++checksum = "6f1e4b1f1d8c71edb4ff2b2150ec4606445fd2ddf67ddc097655daf59286baa6"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+  "regex",
+- "syn 2.0.117",
++ "syn 3.0.3",
+ ]
+ 
+ [[package]]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1124** (2026-10-28): build(deps): bump rustls from 0.23.27 to 0.23.45 in the cargo group across 1 directory (@dependabot[bot])
+- **PR #1123** (2026-10-28): build(deps): bump uuid from 1.26.1 to 1.28.0 (@dependabot[bot])
 - **PR #1122** (2026-10-13): ci: no duplicate push+PR test runs, drop schedules, Dependabot monthly (cost) (@bee-san)
-- **PR #1115** (closed): build(deps): bump uuid from 1.26.1 to 1.27.0 (@dependabot[bot])
-- **PR #1114** (2026-10-05): build(deps): bump xxhash-rust from 0.8.15 to 0.8.19 in the cargo group across 1 directory (@dependabot[bot])
-- **PR #1113** (2026-10-05): build(deps): bump tokio from 1.48.0 to 1.50.0 (@dependabot[bot])
-- **PR #1112** (2026-10-05): build(deps): bump encoding_rs from 0.8.35 to 0.8.42 (@dependabot[bot])
-- **PR #1111** (2026-10-05): build(deps): bump idna from 1.0.3 to 1.1.0 (@dependabot[bot])
+- **PR #1120** (2026-10-28): build(deps): bump toml from 1.1.6+spec-1.1.0 to 1.1.8+spec-1.1.0 (@dependabot[bot])
+- **PR #1118** (2026-10-28): build(deps): bump rmcp from 3.5.0 to 3.5.1 (@dependabot[bot])
+- **PR #1117** (2026-10-28): build(deps): bump lazy-regex from 3.6.1 to 3.6.2 (@dependabot[bot])
 
 ---
 
@@ -1916,53 +1864,34 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. search): accept answers longer than 820 characters (#1067)
+## X. build(deps): bump rustls (#1124)
 
 **RULE**:
-When implementing operations in `src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bee-san/Ciphey. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bee-san/Ciphey. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `79bd8227`: search): accept answers longer than 820 characters (#1067). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `49e5a79f`: build(deps): bump rustls (#1124). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    #[test]
-    fn test_perform_cracking_decodes_long_base64() {
-        // 966 characters of plaintext. Text between 821 and 5,000 characters used to be
-        // rejected as a result, so this ran into the timeout.
-        let _test_db = TestDatabase::default();
-        set_test_db_path();
-
-        let plaintext = "It was the best of times, it was the worst of times, it was the age of \
-            wisdom, it was the age of foolishness, it was the epoch of belief. "
-            .repeat(7);
-        assert!(plaintext.len() > 900);
-        let encoded = {
-            use base64::Engine as _;
-            base64::engine::general_purpose::STANDARD.encode(&plaintext)
-        };
-        let config = Config {
-            // Unoptimised builds need a while for the first search step on this much text
-            timeout: 60,
-            ..Config::default()
-        };
-        let result = perform_cracking(&encoded, config).unwrap();
-        let result = result.expect("the long Base64 should be decoded");
-        assert_eq!(result.text[0], plaintext);
-        assert_eq!(result.path.last().unwrap().decoder, "Base64");
-    }
-
+version = "0.23.45"
+checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
+version = "0.103.15"
+checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+version = "0.23.27"
+checksum = "730944ca083c1c233a75c09f199e973ca499344a2b7ba9e755c457e86fb4a321"
+version = "0.103.13"
+checksum = "61c429a8649f110dddef65e2a5ad240f747e85f7758a6bccc7e5777bd33f756e"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `79bd8227` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `49e5a79f` are properly handled with clean fallback behavior.

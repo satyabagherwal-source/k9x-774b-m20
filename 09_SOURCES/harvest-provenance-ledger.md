@@ -5799,3 +5799,6 @@ Every entry in this ledger must capture:
 | `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `12508b40` | Multi-dimensional audit evidence | 2026-10-28T13:56:58.693Z |
 | `learn-github-transact-rs-sqlx` | `https://github.com/transact-rs/sqlx` | `e5cbd61a` | Multi-dimensional audit evidence | 2026-10-28T14:08:37.322Z |
 | `learn-huggingface-tongyi-mai-z-image-turbo` | `https://huggingface.co/Tongyi-MAI/Z-Image-Turbo` | `hf-tongyi-` | Multi-dimensional audit evidence | 2026-10-28T14:08:37.648Z |
+| `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `54137995` | Multi-dimensional audit evidence | 2026-10-28T14:15:20.945Z |
+| `learn-huggingface-openai-gpt-oss-120b` | `https://huggingface.co/openai/gpt-oss-120b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-28T14:15:29.707Z |
+| `learn-github-bee-san-ciphey` | `https://github.com/bee-san/Ciphey` | `49e5a79f` | Multi-dimensional audit evidence | 2026-10-28T14:15:30.421Z |

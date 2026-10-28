@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T14:08:37.586Z",
+  "last_updated": "2026-10-28T14:15:30.318Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4252,14 +4252,19 @@
       "slug": "bee-san-ciphey",
       "platform": "github",
       "source_url": "https://github.com/bee-san/Ciphey",
-      "source_version": "c806543f",
-      "content_hash": "aa7de433ed9c5005f44d6a2faadb8374e5b52a2eb7be31510545ada9aea6afe2",
+      "source_version": "49e5a79f",
+      "content_hash": "d1b6ab04537f084a7a2e7ca9843ef54e3d3ab8d6231e21311d65050a0905694e",
       "dossier_path": "07_PROJECT_LEARNING/bee-san-ciphey-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bee-san-ciphey-learnings.md",
       "promoted_rules": [
         {
           "number": 1750,
           "title": "search): accept answers longer than 820 characters (#1067)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5306,
+          "title": "build(deps): bump rustls (#1124)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -4268,7 +4273,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:52:09.199Z",
+      "verified_at": "2026-10-28T14:15:30.300Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14758,8 +14763,8 @@
       "slug": "grpc-grpc-rust",
       "platform": "github",
       "source_url": "https://github.com/grpc/grpc-rust",
-      "source_version": "818532da",
-      "content_hash": "a1a6cc71ee5ba75a4d6fc68096ce4ba53c7da7fb986746143c16528619d9bd02",
+      "source_version": "54137995",
+      "content_hash": "d2f0ec21df5afb32ea25e5f3829860ac676e12fcb8bd42db6bf79775832ce8ef",
       "dossier_path": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "promoted_rules": [
@@ -14822,6 +14827,11 @@
           "number": 4758,
           "title": "Builder Public Re-Export Parity Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5302,
+          "title": "tonic-web): fix dropped trailers in combined streaming call. (#2474)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14829,7 +14839,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:43:19.828Z",
+      "verified_at": "2026-10-28T14:15:20.851Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25368,10 +25378,26 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/gpt-oss-120b",
       "source_version": "hf-openai-gpt-oss-120b",
-      "content_hash": "7d20cf47c2afe248be5c89b3797a0d0db0e48243535d7e3d323fcdab69bc6804",
+      "content_hash": "a07dcc6a624de71c7b73d9426e533f8b92c34840f8393d7519f9319700225a7e",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 5303,
+          "title": "Quantized MoE Precision Isolation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5304,
+          "title": "Hybrid Attention Window Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5305,
+          "title": "Harmony Format Token Boundary Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -25390,7 +25416,7 @@
         "learn-huggingface-hf-openai-gpt-oss-120b-mv4ayjzd",
         "learn-huggingface-hf-openai-gpt-oss-120b-mv4oc8h1"
       ],
-      "verified_at": "2026-10-25T20:04:41.103Z",
+      "verified_at": "2026-10-28T14:15:29.604Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -144254,6 +144280,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T14:08:37.241Z"
+    },
+    "rule-5302": {
+      "learning_id": "rule-5302",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5302,
+      "title": "tonic-web): fix dropped trailers in combined streaming call. (#2474)",
+      "source_url": "https://github.com/grpc/grpc-rust",
+      "source_version": "54137995",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T14:15:20.851Z"
+    },
+    "rule-5303": {
+      "learning_id": "rule-5303",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5303,
+      "title": "Quantized MoE Precision Isolation Invariant",
+      "source_url": "https://huggingface.co/openai/gpt-oss-120b",
+      "source_version": "hf-openai-gpt-oss-120b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T14:15:29.604Z"
+    },
+    "rule-5304": {
+      "learning_id": "rule-5304",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5304,
+      "title": "Hybrid Attention Window Alignment Invariant",
+      "source_url": "https://huggingface.co/openai/gpt-oss-120b",
+      "source_version": "hf-openai-gpt-oss-120b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T14:15:29.604Z"
+    },
+    "rule-5305": {
+      "learning_id": "rule-5305",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5305,
+      "title": "Harmony Format Token Boundary Invariant",
+      "source_url": "https://huggingface.co/openai/gpt-oss-120b",
+      "source_version": "hf-openai-gpt-oss-120b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T14:15:29.604Z"
+    },
+    "rule-5306": {
+      "learning_id": "rule-5306",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5306,
+      "title": "build(deps): bump rustls (#1124)",
+      "source_url": "https://github.com/bee-san/Ciphey",
+      "source_version": "49e5a79f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T14:15:30.300Z"
     }
   },
   "aliases": {

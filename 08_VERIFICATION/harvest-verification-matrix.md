@@ -5790,3 +5790,6 @@
 | `CYCLE-20261028-HOZL` | `2026-10-28T13:56:58.689Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5300` | Yes (`111cb24b...`) |
 | `CYCLE-20261028-WO1W` | `2026-10-28T14:08:37.316Z` | `transact-rs/sqlx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5301` | Yes (`cf7866b9...`) |
 | `CYCLE-20261028-WOB1` | `2026-10-28T14:08:37.645Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md` | Yes (`291ca9a5...`) |
+| `CYCLE-20261028-5BHQ` | `2026-10-28T14:15:20.942Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5302` | Yes (`d2f0ec21...`) |
+| `CYCLE-20261028-5I94` | `2026-10-28T14:15:29.704Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5303, Rule 5304, Rule 5305` | Yes (`a07dcc6a...`) |
+| `CYCLE-20261028-5ISX` | `2026-10-28T14:15:30.417Z` | `bee-san/Ciphey` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5306` | Yes (`d1b6ab04...`) |

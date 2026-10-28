@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-WIY4",
-    "timestamp": "2026-10-27T12:56:51.436Z",
-    "repository": "baidu/Unlimited-OCR-2",
-    "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
-    "contentHash": "d3bddca3d24d3c13e9cb71814a29757e9757d84a7f8f31c0c690d8e0a18d910c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-WM0I",
-    "timestamp": "2026-10-27T12:56:55.410Z",
-    "repository": "litmuschaos/litmus",
-    "learningId": "learn-github-litmuschaos-litmus",
-    "contentHash": "5b5b93ae6be4c6a11a043d849ed472689d4b8e5727dd0a4e7e90fe6c1399c7dc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-0V61",
-    "timestamp": "2026-10-27T13:00:13.897Z",
-    "repository": "Joooook/12306-mcp",
-    "learningId": "learn-github-joooook-12306-mcp",
-    "contentHash": "bf285928bf9b26bc79300e0b6e8c0013bd404251830bebce3f9469567dde4978",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-10AQ",
     "timestamp": "2026-10-27T13:00:20.546Z",
     "repository": "0xMassi/webclaw",
@@ -7492,6 +7447,51 @@
     "contentHash": "291ca9a5deb053fee48a8e2a9a2ae5a6a04b0adf4063d9aa2bc227f6eece351b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-5BHQ",
+    "timestamp": "2026-10-28T14:15:20.942Z",
+    "repository": "grpc/grpc-rust",
+    "learningId": "learn-github-grpc-grpc-rust",
+    "contentHash": "d2f0ec21df5afb32ea25e5f3829860ac676e12fcb8bd42db6bf79775832ce8ef",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-5I94",
+    "timestamp": "2026-10-28T14:15:29.704Z",
+    "repository": "openai/gpt-oss-120b",
+    "learningId": "learn-huggingface-openai-gpt-oss-120b",
+    "contentHash": "a07dcc6a624de71c7b73d9426e533f8b92c34840f8393d7519f9319700225a7e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-5ISX",
+    "timestamp": "2026-10-28T14:15:30.417Z",
+    "repository": "bee-san/Ciphey",
+    "learningId": "learn-github-bee-san-ciphey",
+    "contentHash": "d1b6ab04537f084a7a2e7ca9843ef54e3d3ab8d6231e21311d65050a0905694e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

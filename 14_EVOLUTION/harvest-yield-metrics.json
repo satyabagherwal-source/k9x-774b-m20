@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T14:08:37.658Z",
-  "total_cycles_completed": 5767,
-  "total_learnings_persisted": 5767,
-  "total_rules_promoted": 5251,
+  "last_updated": "2026-10-28T14:15:30.426Z",
+  "total_cycles_completed": 5770,
+  "total_learnings_persisted": 5770,
+  "total_rules_promoted": 5256,
   "history": [
-    {
-      "timestamp": "2026-10-28T00:05:58.081Z",
-      "repository": "authzed/spicedb",
-      "learningId": "learn-github-authzed-spicedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T00:06:00.480Z",
-      "repository": "RustCrypto/hashes",
-      "learningId": "learn-github-rustcrypto-hashes",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T00:06:05.120Z",
-      "repository": "arangodb/arangodb",
-      "learningId": "learn-github-arangodb-arangodb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T00:12:45.173Z",
       "repository": "nats-io/nats.go",
@@ -1403,6 +1382,27 @@
       "repository": "Tongyi-MAI/Z-Image-Turbo",
       "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T14:15:20.950Z",
+      "repository": "grpc/grpc-rust",
+      "learningId": "learn-github-grpc-grpc-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T14:15:29.716Z",
+      "repository": "openai/gpt-oss-120b",
+      "learningId": "learn-huggingface-openai-gpt-oss-120b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T14:15:30.426Z",
+      "repository": "bee-san/Ciphey",
+      "learningId": "learn-github-bee-san-ciphey",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
