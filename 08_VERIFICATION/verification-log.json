@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-3GSK",
-    "timestamp": "2026-10-27T18:10:11.012Z",
-    "repository": "dubzzz/fast-check",
-    "learningId": "learn-github-dubzzz-fast-check",
-    "contentHash": "3bc1e3826c12ea2299a45493a1540d55ac0f12d20ace051363c2c754277b4771",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-3NLO",
-    "timestamp": "2026-10-27T18:10:19.836Z",
-    "repository": "microsoft/agent-governance-toolkit",
-    "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "7e788bdfd4188516d7465d77d75dcd46c48aba3d5608f0df0054088fe72d65fb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-CQRW",
-    "timestamp": "2026-10-27T18:17:23.852Z",
-    "repository": "faker-js/faker",
-    "learningId": "learn-github-faker-js-faker",
-    "contentHash": "5d96986e7945be8df24e1087a9308318533bf88ace8fca3b13e5df1a2dab3255",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-J3CQ",
     "timestamp": "2026-10-27T18:22:20.090Z",
     "repository": "Megabit/Blazorise",
@@ -7490,6 +7445,51 @@
     "repository": "SimonSchubert/LinuxCommandLibrary",
     "learningId": "learn-github-simonschubert-linuxcommandlibrary",
     "contentHash": "6320212b70cd5fe3c3a2058eac4d745621f4a69d7f8e182d95ef5f4335f23069",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-5N1B",
+    "timestamp": "2026-10-28T22:39:28.991Z",
+    "repository": "autotrust/JEV-35B-NVFP4",
+    "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
+    "contentHash": "cde24f79f6d3ea673638c51a3c9380c2b812a680580b4deab345d6aea04ce65a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-5OBV",
+    "timestamp": "2026-10-28T22:39:30.667Z",
+    "repository": "apache/arrow",
+    "learningId": "learn-github-apache-arrow",
+    "contentHash": "1922c1b72749667a2b67e022d3d85a44c1f182dbf7aa1d65eb025a02be66f319",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-5UP6",
+    "timestamp": "2026-10-28T22:39:38.922Z",
+    "repository": "chaos-mesh/chaos-mesh",
+    "learningId": "learn-github-chaos-mesh-chaos-mesh",
+    "contentHash": "020f7c2eeae254a2b9e9c2ae592a1425cea775a1d03847d103f30699a4d799ea",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

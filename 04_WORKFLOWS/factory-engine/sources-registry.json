@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T22:33:05.206Z",
-    "lastVerified": "2026-10-28T22:33:05.206Z",
+    "lastChecked": "2026-10-28T22:39:41.451Z",
+    "lastVerified": "2026-10-28T22:39:41.451Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -363,8 +363,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T22:07:50.971Z",
-    "lastVerified": "2026-10-28T22:07:50.971Z",
+    "lastChecked": "2026-10-28T22:39:40.499Z",
+    "lastVerified": "2026-10-28T22:39:40.499Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1364,9 +1364,9 @@
   "seaql-sea-orm": {
     "name": "sea-orm",
     "officialUrl": "https://github.com/SeaQL/sea-orm",
-    "lastChecked": "2026-10-28T04:55:07.427Z",
+    "lastChecked": "2026-10-28T22:39:37.994Z",
     "revisionIdentifier": "ae19417d",
-    "lastVerified": "2026-10-28T04:55:07.427Z"
+    "lastVerified": "2026-10-28T22:39:37.994Z"
   },
   "watchexec-watchexec": {
     "name": "watchexec",
@@ -1492,9 +1492,9 @@
   "sigstore-cosign": {
     "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
-    "lastChecked": "2026-10-28T18:48:35.375Z",
+    "lastChecked": "2026-10-28T22:39:35.538Z",
     "revisionIdentifier": "ef56e699",
-    "lastVerified": "2026-10-28T18:48:35.375Z"
+    "lastVerified": "2026-10-28T22:39:35.538Z"
   },
   "alibaba-zvec": {
     "name": "alibaba/zvec",
@@ -1868,13 +1868,13 @@
     "officialUrl": "https://github.com/chaos-mesh/chaos-mesh",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T05:55:11.573Z",
-    "lastVerified": "2026-10-28T05:55:11.573Z",
+    "lastChecked": "2026-10-28T22:39:38.342Z",
+    "lastVerified": "2026-10-28T22:39:38.342Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-chaos-mesh-chaos-mesh",
-    "contentHash": "0cc37038a91d7f1f951d8ef29e58de33a8afd800ad2d11d88fcd016cc29a7e0e",
-    "promotedRulesCount": 3,
+    "contentHash": "020f7c2eeae254a2b9e9c2ae592a1425cea775a1d03847d103f30699a4d799ea",
+    "promotedRulesCount": 1,
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -7276,5 +7276,46 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "apache-arrow": {
+    "name": "apache/arrow",
+    "officialUrl": "https://github.com/apache/arrow",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-10-28T22:39:30.442Z",
+    "lastVerified": "2026-10-28T22:39:30.442Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-apache-arrow",
+    "contentHash": "1922c1b72749667a2b67e022d3d85a44c1f182dbf7aa1d65eb025a02be66f319",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-autotrust-jev-35b-nvfp4": {
+    "name": "autotrust/JEV-35B-NVFP4",
+    "officialUrl": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T22:39:28.190Z",
+    "lastVerified": "2026-10-28T22:39:28.190Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
+    "contentHash": "cde24f79f6d3ea673638c51a3c9380c2b812a680580b4deab345d6aea04ce65a",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mohamedrejeb-compose-rich-editor": {
+    "name": "compose-rich-editor",
+    "officialUrl": "https://github.com/MohamedRejeb/compose-rich-editor",
+    "lastChecked": "2026-10-28T22:39:30.514Z",
+    "revisionIdentifier": "b972d50f",
+    "lastVerified": "2026-10-28T22:39:30.514Z"
   }
 }

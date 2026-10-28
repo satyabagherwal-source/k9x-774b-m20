@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T22:33:00.165Z",
+  "last_updated": "2026-10-28T22:39:38.869Z",
   "total_verified_learnings": 1159,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2167,8 +2167,8 @@
       "slug": "apache-arrow",
       "platform": "github",
       "source_url": "https://github.com/apache/arrow",
-      "source_version": "e7b0e50d",
-      "content_hash": "a20a9122357e8dd1fd28fee16f880880290fe302b9c3354997fdae9387f8878b",
+      "source_version": "16ebf1a4",
+      "content_hash": "1922c1b72749667a2b67e022d3d85a44c1f182dbf7aa1d65eb025a02be66f319",
       "dossier_path": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "promoted_rules": [
@@ -2208,7 +2208,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T18:29:26.898Z",
+      "verified_at": "2026-10-28T22:39:30.562Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -6038,8 +6038,8 @@
       "slug": "chaos-mesh-chaos-mesh",
       "platform": "github",
       "source_url": "https://github.com/chaos-mesh/chaos-mesh",
-      "source_version": "54120b39",
-      "content_hash": "0cc37038a91d7f1f951d8ef29e58de33a8afd800ad2d11d88fcd016cc29a7e0e",
+      "source_version": "632225ea",
+      "content_hash": "020f7c2eeae254a2b9e9c2ae592a1425cea775a1d03847d103f30699a4d799ea",
       "dossier_path": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "promoted_rules": [
@@ -6082,6 +6082,11 @@
           "number": 5197,
           "title": "Strict RFC-Compliant Canonicalization and IP Unmapping in DNS Interception",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5436,
+          "title": "timechaos): restore ARM64 time injection (#5179)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6089,7 +6094,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T05:58:06.534Z",
+      "verified_at": "2026-10-28T22:39:38.850Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64823,7 +64828,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
       "source_version": "hf-autotrust-jev-35b-nvfp4",
-      "content_hash": "8791d6c23d1ea70a99696e49ee4bcf434e0b66c115b9998b81c9662fa88fa69d",
+      "content_hash": "cde24f79f6d3ea673638c51a3c9380c2b812a680580b4deab345d6aea04ce65a",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md",
       "promoted_rules": [
@@ -64883,7 +64888,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T06:32:02.550Z",
+      "verified_at": "2026-10-28T22:39:28.907Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -146897,6 +146902,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T22:33:00.155Z"
+    },
+    "rule-5436": {
+      "learning_id": "rule-5436",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5436,
+      "title": "timechaos): restore ARM64 time injection (#5179)",
+      "source_url": "https://github.com/chaos-mesh/chaos-mesh",
+      "source_version": "632225ea",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:39:38.850Z"
     }
   },
   "aliases": {

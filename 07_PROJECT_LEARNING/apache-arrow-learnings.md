@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source**: github ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
-> **Source Version**: `e7b0e50d`  
+> **Source Version**: `16ebf1a4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T18:29:26.619Z  
+> **Timestamp**: 2026-10-28T22:39:30.448Z  
 > **Learning ID**: `learn-github-apache-arrow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T18:29:25.609Z  
+> **Harvest Timestamp**: 2026-10-28T22:39:30.442Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17235 stars
+- **Stars / Engagement**: 17244 stars
 
 ---
 
@@ -1377,13 +1377,11 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55286** (2026-10-27): **GH-55285: [Python] Typo in Decimal32Array definition in array.pxi**
-  *Symptoms*: ### Rationale for this change  `python/pyarrow/array.pxi` defines the class as `Decima32Array` (missing `l`).  ### What changes are included in this PR?  Renaming of the class in `array.pxi` to `Decimal32Array`.  ### Are these changes tested?  I haven't added a special test for this.  ### Are there any user-facing changes?  No.  ### Was AI used for this PR?  **PR code and description written by:**  - [X] Human - [ ] AI  **Reviewed before submission by:**  - [X] Human - [ ] AI - [ ] Not reviewed  * GitHub Issue: #55285
+- **Issue #55290** (2026-10-27): **[C++][Compute] Fix pad kernel output sizing for negative or very large width**
+  *Symptoms*: ### Rationale for this change  The padding kernels (`ascii_lpad`/`ascii_rpad`/`ascii_center`, `utf8_lpad`/`utf8_rpad`/`utf8_center` and `utf8_zero_fill`) preallocate the output values buffer from `MaxCodeunits`, which returns `input_ncodeunits + k * ninputs * options_.width` with no handling of the width's range. `Transform` copies a string unchanged whenever it is already at least `width` characters wide, so the buffer must always hold the whole input.  A negative width breaks that. `ascii_rpad` with `width=-8` on 64 eight-byte strings sizes the buffer at 0 bytes and then copies 512 bytes into it (ASAN reports a global-buffer-overflow write into the zero-size allocation). Smaller inputs with a negative width fail with "Negative buffer resize" instead of returning the strings unchanged. A very large width has the same effect through signed overflow: `utf8_lpad` with `width=1<<62` wraps `4 * ninputs * width` to 0, and the kernel then writes padding far past the allocation (ASAN heap-buffer-overflow).  ### What changes are included in this PR?  A small `PadMaxCodeunits` helper in `scalar_string_internal.h` used by all three pad transforms. It treats a negative width as 0, which matches what `Transform` already does with it, and computes the bound with `MultiplyWithOverflow`/`AddWithOverflow`. If the bound doesn't fit in `int64_t` it saturates, so the existing output capacity check or the allocation fails with an error instead of producing an undersized buffer.  ### Are these ch
 
-- **Issue #55285** (2026-10-27): **[Python] Typo in Decimal32Array definition in array.pxi**
-  *Symptoms*: ### Describe the bug, including details regarding any error messages, version, and platform.  `python/pyarrow/array.pxi` defines the class as `Decima32Array` (missing `l`):  https://github.com/apache/arrow/blob/0b250b73d40d47643ce4df6031508a2a3b2ea186/python/pyarrow/array.pxi#L2772-L2775  while `lib.pxd` declares `Decimal32Array`:  https://github.com/apache/arrow/blob/0b250b73d40d47643ce4df6031508a2a3b2ea186/python/pyarrow/lib.pxd#L429-L430  The typo was introduced in https://github.com/apache/arrow/pull/44882 and was found when running mypy's `stubtest` against the type stubs in https://github.com/apache/arrow/pull/55264.  ### Component(s)  Python
-  **Post-Mortem & Fix Analysis**:
-  > Issue resolved by pull request 55286 https://github.com/apache/arrow/pull/55286
+- **Issue #55289** (2026-10-28): **MINOR: [CI] Bump docker/login-action from 4.6.0 to 4.7.0**
+  *Symptoms*: Bumps [docker/login-action](https://github.com/docker/login-action) from 4.6.0 to 4.7.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/docker/login-action/releases">docker/login-action's releases</a>.</em></p> <blockquote> <h2>v4.7.0</h2> <ul> <li>Preserve explicit ECR settings in <code>registry-auth</code> by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1089">docker/login-action#1089</a></li> <li>Use registry hosts for scoped credentials by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1088">docker/login-action#1088</a></li> <li>Raise Docker Hub OIDC max expiry to 6 hours by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1068">docker/login-action#1068</a></li> <li>Log Docker Hub OIDC token exchange progress by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1061">docker/login-action#1061</a></li> <li>Bump <code>@​aws-sdk/client-ecr</code> and <code>@​aws-sdk/client-ecr-public</code> to 3.1154.0 in <a href="https://redirect.github.com/docker/login-action/pull/1093">docker/login-action#1093</a></li> <li>Bump <code>@​docker/actions-toolkit</code> from 0.94.0 to 0.107.0 in <a href="https://redir
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1400,410 +1398,251 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2cadeab9` (2026-10-26)
-**Commit Message**: GH-47417: [C++] Fix JSON parser losing nulls in a null-typed list (#51108)
+### Incident Patch 1: `9eb748dd` (2026-10-27)
+**Commit Message**: GH-55275: [C++][FlightRPC][ODBC] Unset `CPACK_WIX_PRODUCT_GUID` to allow Windows installer upgrade (#55276)
 
 ### Rationale for this change
+GH-55275
 
-`{"a": [null, 1]}` silently parses to `[[1]]` in release builds, and aborts in debug.
+https://cmake.org/cmake/help/v4.5/cpack_gen/wix.html#variable:CPACK_WIX_PRODUCT_GUID
 
-This was introduced in `b7054c21aab` (0.14.0).
+> CPACK_WIX_PRODUCT_GUID
+> Product GUID (`Product/@ Id`)
+> 
+> Will be automatically generated unless explicitly provided.
+> 
+> If explicitly provided this will set the Product Id of your installer.
+> 
+> The installer **will abort** if it detects a pre-existing installation that uses the **same GUID**.
+
+Highlights my own. 
 
 ### What changes are included in this PR?
-
-`AppendNull` looks up its child from the parent and returns the updated `BuilderPtr`, instead of taking a copy from the caller. `Null()` writes it back to `builder_`, so `builder_` no longer drifts from the parent's copy.
+Removed hard-coded `CPACK_WIX_PRODUCT_GUID`. Then CPack will generate the UUID value for Product ID during each build, and it should unblock users from upgrading using ODBC installer. 
 
 ### Are these changes tested?
-
-Two new tests, `BlockParser.NullsInList` (inferred schema) and `BlockParserWithSchema.NullsInList` (explicit schema), parse lists of nulls, including `{"a": [{"b": null}, null]}`. Both fail in debug without the fix.
+Regression tested in CI.
+Tested installer on local Windows machine and was able to upgrade. 
 
 ### Are there any user-facing changes?
-
-`{"a": [null, 1]}` now parses to `[[null, 1]]`.
-
-**This PR contains a "Critical Fix".** Well-formed JSON silently loses list elements.
-
-* GitHub Issue: #47417
+no
 
 ### Was AI used for this PR?
 
 In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.
 
-**PR code and descriptio
+**PR code and description
 
-**File**: `cpp/src/arrow/json/parser.cc` (modified, +23/-18)
+**File**: `cpp/src/arrow/flight/sql/odbc/CMakeLists.txt` (modified, +0/-1)
 ```diff
-@@ -526,16 +526,15 @@ class RawBuilderSet {
+@@ -247,7 +247,6 @@ if(ARROW_FLIGHT_SQL_ODBC_INSTALLER)
  
-   /// Appending null is slightly tricky since null count is stored inline
-   /// for builders of Kind::kNull. Append nulls using this helper
--  Status AppendNull(BuilderPtr parent, int field_index, BuilderPtr builder) {
-+  Result<BuilderPtr> AppendNull(BuilderPtr parent, int field_index) {
-+    BuilderPtr builder = parent.kind == Kind::kArray
-+                             ? Cast<Kind::kArray>(parent)->value_builder()
-+                             : Cast<Kind::kObject>(parent)->field_builder(field_index);
-     if (ARROW_PREDICT_FALSE(!builder.nullable)) {
-       return ParseError("a required field was null");
-     }
-     switch (builder.kind) {
-       case Kind::kNull: {
--        DCHECK_EQ(builder, parent.kind == Kind::kArray
--                               ? Cast<Kind::kArray>(parent)->value_builder()
--                               : Cast<Kind::kObject>(parent)->field_builder(field_index));
--
-         // increment null count stored inline
-         builder.index += 1;
- 
-@@ -545,38 +544,43 @@ class RawBuilderSet {
-         } else {
-           Cast<Kind::kObject>(parent)->field_builder(field_index, builder);
-         }
--        return Status::OK();
-+        break;
-       }
-       case Kind::kBoolean:
--        return Cast<Kind::kBoolean>(builder)->AppendNull();
-+        RETURN_NOT_OK(Cast<Kind::kBoolean>(builder)->AppendNull());
-+        break;
- 
-       case Kind::kNumber:
--        return Cast<Kind::kNumber>(builder)->AppendNull();
-+        RETURN_NOT_OK(Cast<Kind::kNumber>(builder)->AppendNull());
-+        break;
- 
-       case Kind::kString:
--        return Cast<Kind::kString>(builder)->AppendNull();
-+        RETURN_NOT_OK(Cast<Kind::kString>(builder)->AppendNull());
-+        break;
- 
-       case Kind::kNumberOrString: {
--        return Cast<Kind::kNumberOrString>(builder)->AppendNull();
-+        RETURN_NOT_OK(Cast<Kind::kNumberOrString>(builder)->AppendNull());
-+        break;
-       }
- 
-       case Kind::kArray:
--        return Cast<Kind::kArray>(builder)->AppendNull();
-+        RETURN_NOT_OK(Cast<Kind::kArray>(builder)->AppendNull());
-+        break;
- 
-       case Kind::kObject: {
-         auto struct_builder = Cast<Kind::kObject>(builder);
-         RETURN_NOT_OK(struct_builder->AppendNull());
- 
-         for (int i = 0; i < struct_builder->num_fields(); ++i) {
--          auto field_builder = struct_builder->field_builder(i);
--          RETURN_NOT_OK(AppendNull(builder, i, field_builder));
-+          RETURN_NOT_OK(AppendNull(builder, i));
-         }
--        return Status::OK();
-+        break;
-       }
- 
-       default:
-         return Status::NotImplemented("invalid builder Kind");
-     }
-+    return builder;
-   }
- 
-   Status Finish(const std::shared_ptr<Array>& scalar_values, BuilderPtr builder,
-@@ -669,7 +673,9 @@ class ParseImpl : public BlockParser {
- 
-   Status Null() {
-     DCHECK(!builder_stack_.empty());
--    return builder_set_.AppendNull(builder_stack_.back(), field_index_, builder_);
-+    ARROW_ASSIGN_OR_RAISE(builder_,
-+                          builder_set_.AppendNull(builder_stack_.back(), field_index_));
-+    return Status::OK();
-   }
- 
-   Status HandleUnexpectedField(std::string_view key, sj::value& value) {
-@@ -962,11 +968,10 @@ class ParseImpl : public BlockParser {
-       if (!absent_fields_stack_[i]) {
-         continue;
-       }
--      auto field_builder = Cast<Kind::kObject>(parent)->field_builder(i);
--      if (ARROW_PREDICT_FALSE(!field_builder.nullable)) {
-+      if (ARROW_PREDICT_FALSE(!Cast<Kind::kObject>(parent)->field_builder(i).nullable)) {
-         return ParseError("a required field was absent");
-       }
--      RETURN_NOT_OK(builder_set_.AppendNull(parent, i, field_builder));
-+      RETURN_NOT_OK(builder_set_.AppendNull(parent, i));
-     }
-     absent_fields_stack_.Pop();
-     EndNested();
-```
-
-**File**: `cpp/src/arrow/json/parser_test.cc` (modified, +27/-0)
-```diff
-@@ -236,6 +236,22 @@ TEST(BlockParserWithSchema, FailOnIncompleteJson) {
-   ASSERT_RAISES(Invalid, ParseFromString(options, "{\"a\":0, \"b\"", &parsed));
- }
- 
-+TEST(BlockParserWithSchema, NullsInList) {
-+  auto options = ParseOptions::Defaults();
-+  options.explicit_schema = schema({field("a", list(null()))});
-+  for (auto behavior :
-+       {UnexpectedFieldBehavior::Error, UnexpectedFieldBehavior::Ignore}) {
-+    options.unexpected_field_behavior = behavior;
-+    AssertParseColumns(options, R"({"a": [null, null]})", {field("a", list(null()))},
-+                       {"[[null, null]]"});
-+  }
-+
-+  auto type = list(struct_({field("b", null())}));
-+  options.explicit_schema = schema({field("a", type)});
-+  AssertParseColumns(options, R"({"a": [{"b": null}, null]})", {field("a", type)},
-+                     {R"([[{"b": null}, null]])"});
-+}
-+
- TEST(BlockParserWithSchema, ValidateIgnoredFields) {
-   auto options = ParseOptions::Defaults();
-   options.explicit_schema = schema({field("known", int64())});
-@@ -286,6 +302,17 @@ TEST(BlockParser, Null) {
-        R"([{"plain": null}, {"plain": null}])"});
- }
- 
-+TEST(BlockParser, NullsInList) {
-+  auto options = ParseOptions::Defaults();
-+  options.unexpected_field_behavior = UnexpectedFieldBehavior::InferType;
-+  AssertParseColumns(options, R"({"a": [null, null], "b": [null, "hi", null]})",
-+                     {field("a", list(null())), field("b", list(utf8()))},
-+                     {"[[null, null]]", R"([[null, "hi", null]])"});
-+  AssertParseColumns(options, R"({"a": [{"b": null}, null]})",
-+                     {field("a", list(struct_({field("b", null())})))},
-+                     {R"([[{"b": null}, null]])"});
-+}
-+
- TEST(BlockParser, InferNewFields) {
-   std::string src = R"(
-     {}
+     # Upgrade GUID is required to be unchanged for ODBC installer to upgrade
+     set(CPACK_WIX_UPGRADE_GUID "DBF27A18-F8BF-423F-9E3A-957414D52C4B")
+-    set(CPACK_WIX_PRODUCT_GUID "279D087B-93B5-4DC3-BA69-BCF485022A26")
+   elseif(APPLE)
+     # macOS and Linux
+     set(CPACK_GENERATOR "productbuild")
 ```
 
 ---
 
-### Incident Patch 2: `2ecb29d9` (2026-10-27)
-**Commit Message**: GH-55267: [C++][R] Arrow 26.0.0 fails to build on CRAN macOS builders: bundled simdjson C++20 concepts don't compile with the macOS 11 SDK (#55273)
+### Incident Patch 2: `b8079cd2` (2026-10-28)
+**Commit Message**: GH-54637: [Python] add `MemoryPool` support to `pq.read_table` (#54919)
 
 ### Rationale for this change
-
-CRAN failures on 26.0.0 release due to regex not catching incompatible MacOSX11.sdk version
-
-### What changes are included in this PR?
-
-Make regex more permissive
-
-### Are these changes tested?
-
-No
-
-### Are there any user-facing changes?
-
-No
-
-**PR code and description written by:**
-
-- [x] Human
-- [x] AI
-
-**Reviewed before submission by:**
-
-- [x] Human
-- [x] AI
-- [ ] Not reviewed
-
-* GitHub Issue: #55267
-
-Authored-by: Nic Crane <[REDACTED_EMAIL]>
-Signed-off-by: Nic Crane <[REDACTED_EMAIL]>
-
-**File**: `cpp/cmake_modules/ThirdpartyToolchain.cmake` (modified, +13/-4)
-```diff
-@@ -2878,10 +2878,19 @@ function(build_simdjson)
- 
-   target_compile_definitions(simdjson PUBLIC SIMDJSON_EXCEPTIONS=0)
- 
--  # The macOS 11.3 SDK has incomplete C++20 concepts support, which prevents
--  # simdjson headers from compiling. Disable simdjson concepts for this SDK.
--  if(CMAKE_OSX_SYSROOT AND CMAKE_OSX_SYSROOT MATCHES "MacOSX11\\.3\\.sdk$")
--    message(STATUS "Disabling simdjson concepts for macOS SDK 11.3")
-+  # macOS SDKs before 13.3 ship a libc++ without <ranges> and with incomplete
-+  # <concepts>, but simdjson enables its C++20 concepts API from the compiler's
-+  # __cpp_concepts alone, so its headers fail to compile against those SDKs
-+  # (GH-55267). Disable simdjson concepts for them. Arrow doesn't use that part
-+  # of the simdjson API. simdjson considers these SDKs unsupported and won't fix
-+  # this upstream, see https://github.com/simdjson/simdjson/issues/2787.
-+  #
-+  # The SDK directory name may omit the minor version ("MacOSX11.sdk" on CRAN,
-+  # "MacOSX11.3.sdk" in our as-cran CI job), so match both forms. This treats
-+  # "MacOSX13.sdk" as too old, which is harmless.
-+  if(CMAKE_OSX_SYSROOT AND CMAKE_OSX_SYSROOT MATCHES
-+                           "MacOSX(1[0-2](\\.[0-9]+)?|13(\\.[0-2])?)\\.sdk$")
-+    message(STATUS "Disabling simdjson concepts for macOS SDK older than 13.3")
-     target_compile_definitions(simdjson PUBLIC SIMDJSON_CONCEPT_DISABLED=1)
-   endif()
- 
-```
-
----
-
-### Incident Patch 3: `5f75a12e` (2026-10-27)
-**Commit Message**: GH-55124: [C++][Parquet] Allow masked nulls in required fields when writing (#55136)
-
-### Rationale for this change
-
-The Parquet writer checks the leaf array's physical null count without accounting for the parent struct's validity bitmap. As a result, it rejects nulls in required child fields even when they are masked by null parent rows.
+`pq.read_table` has no way to pass a memory pool. `ParquetReader` and `Dataset.to_table` already accept one, it just wasn't added.
 
 ### What changes are included in this PR?
-
-Corrected the logic used by the column writer to validate the null values for required leaf fields.
+I added a `memory_pool` argument to `read_table`, `ParquetFile` and `ParquetDataset`. It is passed to `ParquetReader` and to `Dataset.to_table`, with docstrings updated.
 
 ### Are these changes tested?
-
-Yes.
+Yes. I added new tests in `test_basic.py` - It reads a Parquet file with a tracked memory pool and check that the pool was actually used. They cover `read_table`, `ParquetFile` and `ParquetDataset`.
 
 ### Are there any user-facing changes?
-
-No.
+New optional `memory_pool` keyword. No breaking changes.
 
 ### Was AI used for this PR?
 
-In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.
-
 **PR code and description written by:**
-
 - [x] Human
 - [x] AI
 
 **Reviewed before submission by:**
-
 - [x] Human
 - [ ] AI
-- [ ] Not reviewed
 
-* GitHub Issue: #55124
+Github Issue - https://github.com/apache/arrow/issues/54637
+* GitHub Issue: #54637
 
-Authored-by: Zehua Zou <[REDACTED_EMAIL]>
-Signed-off-by: Antoine Pitrou <[REDACTED_EMAIL]>
+Authored-by: Omkar Kabde <[REDACTED_EMAIL]>
+Signed-off-by: AlenkaF <[REDACTED_EMAIL]>
 
-**File**: `cpp/src/parquet/arrow/arrow_reader_writer_test.cc` (modified, +45/-0)
+**File**: `python/pyarrow/parquet/core.py` (modified, +22/-6)
 ```diff
-@@ -3262,6 +3262,47 @@ TEST(ArrowReadWrite, NestedRequiredField) {
-                        /*row_group_size=*/8);
- }
+@@ -272,6 +272,9 @@ class ParquetFile:
+         If True, read Parquet logical types as Arrow extension types where
+         possible (e.g., read JSON as the canonical `arrow.json` extension type
+         or UUID as the canonical `arrow.uuid` extension type).
++    memory_pool : pyarrow.MemoryPool, optional
++        Pool to allocate memory from. If not passed, the default memory pool
++        is used.
  
-+TEST(ArrowReadWrite, NestedRequiredFieldWithMaskedNulls) {
-+  // A required child null is valid when its parent is null.
-+  // Reuse the child's bitmap to construct this case explicitly.
-+  auto type =
-+      ::arrow::struct_({::arrow::field("inner", ::arrow::int32(), /*nullable=*/false)});
-+  auto inner = ::arrow::ArrayFromJSON(::arrow::int32(), "[42, 42, null, 42]");
-+  ASSERT_OK_AND_ASSIGN(auto array, ::arrow::StructArray::Make({inner}, type->fields(),
-+                                                              inner->null_bitmap()));
-+  ASSERT_EQ(array->null_count(), 1);
-+  ASSERT_EQ(array->field(0)->null_count(), 1);
-+
-+  auto table = ::arrow::Table::Make(
-+      ::arrow::schema({::arrow::field("outer", type, /*nullable=*/true)}), {array});
-+  ASSERT_OK(table->ValidateFull());
-+  CheckSimpleRoundtrip(table, /*row_group_size=*/4);
-+
-+  // Also test masked child nulls after null/empty lists in the same row group.
-+  // Null/empty lists add definition levels without corresponding child values.
-+  auto offsets = ::arrow::ArrayFromJSON(::arrow::int32(), "[null, 0, 0, 4]");
-+  ASSERT_OK_AND_ASSIGN(auto list_array, ::arrow::ListArray::FromArrays(*offsets, *array));
-+  auto list_type = list_array->type();
-+  auto list_table = ::arrow::Table::Make(
-+      ::arrow::schema({::arrow::field("outer", std::move(list_type))}),
-+      {std::move(list_array)});
-+  ASSERT_OK(list_table->ValidateFull());
-+  CheckSimpleRoundtrip(list_table, /*row_group_size=*/3);
-+
-+  // Exposing the same child null under a valid parent must fail.
-+  ASSERT_OK_AND_ASSIGN(auto unmasked,
-+                       ::arrow::StructArray::Make({std::move(inner)}, type->fields()));
-+  auto invalid_table = ::arrow::Table::Make(table->schema(), {std::move(unmasked)});
-+  // Test partially null and all-null child arrays.
-+  for (const auto& invalid_slice : {invalid_table, invalid_table->Slice(2, 1)}) {
-+    ARROW_SCOPED_TRACE("num_rows = ", invalid_slice->num_rows());
-+    auto sink = CreateOutputStream();
-+    EXPECT_RAISES_WITH_MESSAGE_THAT(
-+        Invalid, ::testing::HasSubstr("is declared non-nullable but contains nulls"),
-+        WriteTable(*invalid_slice, ::arrow::default_memory_pool(), sink));
-+  }
-+}
-+
- TEST(ArrowReadWrite, Decimal) {
-   using ::arrow::field;
+     Examples
+     --------
+@@ -322,7 +325,8 @@ def __init__(self, source, *, metadata=None, common_metadata=None,
+                  decryption_properties=None, thrift_string_size_limit=None,
+                  thrift_container_size_limit=None, schema_depth_limit=None,
+                  filesystem=None,
+-                 page_checksum_verification=False, arrow_extensions_enabled=True):
++                 page_checksum_verification=False, arrow_extensions_enabled=True,
++                 memory_pool=None):
  
-@@ -3843,6 +3884,10 @@ TEST(TestArrowWrite, InvalidSchema) {
-   CheckWritingNonNullableColumnWithNulls(
-       ::arrow::field("a", ::arrow::utf8(), /*nullable=*/false),
-       R"([{"a": "foo"}, {"a": null}])");
-+  CheckWritingNonNullableColumnWithNulls(
-+      ::arrow::field("a", ::arrow::list(::arrow::field("item", ::arrow::int32(),
-+                                                       /*nullable=*/false))),
-+      R"([{"a": null}, {"a": []}, {"a": [42, null]}])");
- }
+         self._close_source = getattr(source, 'closed', True)
  
- void DoNestedValidate(const std::shared_ptr<::arrow::DataType>& inner_type,
+@@ -332,7 +336,7 @@ def __init__(self, source, *, metadata=None, common_metadata=None,
+             source = filesystem.open_input_file(source)
+             self._close_source = True  # We opened it here, ensure we close it.
+ 
+-        self.reader = ParquetReader()
++        self.reader = ParquetReader(memory_pool=memory_pool)
+         self.reader.open(
+             source, use_memory_map=memory_map,
+             buffer_size=buffer_size, pre_buffer=pre_buffer,
+@@ -1537,7 +1541,8 @@ def schema(self):
+         """
+         return self._dataset.schema
+ 
+-    def read(self, columns=None, use_threads=True, use_pandas_metadata=False):
++    def read(self, columns=None, use_threads=True, use_pandas_metadata=False,
++             memory_pool=None):
+         """
+         Read (multiple) Parquet files as a single pyarrow.Table.
+ 
+@@ -1551,6 +1556,9 @@ def read(self, columns=None, use_threads=True, use_pandas_metadata=False):
+         use_pandas_metadata : bool, default False
+             If True and file has custom pandas schema metadata, ensure that
+             index columns are also loaded.
++        memory_pool : pyarrow.MemoryPool, optional
++            Pool to allocate memory from. If not passed, the default memory
++            pool is used.
+ 
+         Returns
+         -------
+@@ -1605,7 +1613,7 @@ def read(self, columns=None, use_threads=True, use_pandas_metadata=False):
+ 
+         table = self._dataset.to_table(
+             columns=columns, filter=self._filter_expression,
+-            use_threads=use_threads
++            use_threads=use_threads, memory_pool=memory_pool
+         )
+ 
+         # if the "pandas" metadata entry was retrieved from common_metadata,
+@@ -1813,6 +1821,9 @@ def partitioning(self):
+     If True, read Parquet logical types as Arrow extension types where possible,
+     (e.g., read JSON as the canonical `arrow.json` extension type or UUID as
+     the canonical `arrow.uuid` extension type).
++memory_pool : pyarrow.MemoryPool, optional
++    Pool to allocate memory from. If not passed, the default memory pool
++    is used.
+ 
+ Returns
+ -------
+@@ -1909,8 +1920,9 @@ def read_table(source, *, columns=None, use_threads=True,
+                decryption_properties=None, thrift_string_size_limit=None,
+                thrift_container_size_limit=None, schema_depth_limit=None,
+                page_checksum_verification=False,
+-               arrow_extensions_enabled=True):
++               arrow_extensions_enabled=True, memory_pool=None):
+ 
++    read_kwargs = {"memory_pool": memory_pool}
+     try:
+         dataset = ParquetDataset(
+             source,
+@@ -1980,10 +1992,14 @@ def read_table(source, *, columns=None, use_threads=True,
+             thrift_container_size_limit=thrift_container_size_limit,
+             schema_depth_limit=schema_depth_limit,
+             page_checksum_verification=page_checksum_verification,
++            memory_pool=memory_pool,
+         )
++        # ParquetFile takes the pool when it is opened, not when it is read
++        read_kwargs = {}
+ 
+     return dataset.read(columns=columns, use_threads=use_threads,
+-                        use_pandas_metadata=use_pandas_metadata)
++                        use_pandas_metadata=use_pandas_metadata,
++                        **read_kwargs)
+ 
+ 
+ read_table.__doc__ = _read_table_docstring.format(
 ```
 
-**File**: `cpp/src/parquet/arrow/path_internal.cc` (modified, +3/-1)
+**File**: `python/pyarrow/tests/parquet/test_basic.py` (modified, +51/-0)
 ```diff
-@@ -724,7 +724,9 @@ class PathBuilder {
-     // and the array does in fact contain nulls, we will end up
-     // traversing the null bitmap twice (once here and once when calculating
-     // rep/def levels).
--    if (LazyNoNulls(array)) {
-+    // Required leaf nulls must not lower definition levels: they may be masked by
-+    // an ancestor, but otherwise WriteArrow() must reject them as invalid.
-+    if (!nullable_in_parent_ || LazyNoNulls(array)) {
-       info_.path.emplace_back(AllPresentTerminalNode{info_.max_def_level});
-     } else if (LazyNullCount(array) == array.length()) {
-       info_.path.emplace_back(AllNullsTerminalNode(info_.max_def_level - 1));
-```
-
-**File**: `cpp/src/parquet/column_writer.cc` (modified, +21/-2)
-```diff
-@@ -1430,8 +1430,27 @@ class TypedColumnWriterImpl : public ColumnWriterImpl,
-         (level_info_.def_level == level_info_.repeated_ancestor_def_level + 1) &&
-         leaf_field_nullable;
-     if (!leaf_field_nullable && leaf_array.null_count() != 0) {
--      return Status::Invalid("Column '", descr_->name(),
--                             "' is declared non-nullable but contains nulls");
-+      bool has_unmasked_nulls = true;
-+      if (level_info_.HasNullableValues()) {
-+        has_unmasked_nulls = false;
-+        int64_t leaf_index = 0;
-+        for (int64_t i = 0; i < num_levels; ++i) {
-+          // Null or empty lists have no corresponding slot in the leaf array.
-+          if (def_levels[i] < level_info_.repeated_ancestor_def_level) {
-+            continue;
-+          }
-+          // A required leaf only needs to be valid when all ancestors are present.
-+          if (def_levels[i] == level_info_.def_level && leaf_array.IsNull(leaf_index)) {
-+            has_unmasked_nulls = true;
-+            break;
-+          }
-+          ++leaf_index;
-+        }
-+      }
-+      if (has_unmasked_nulls) {
-+        return Status::Invalid("Column '", descr_->name(),
-+                               "' is declared non-nullable but contains nulls");
-+      }
-     }
-     bool maybe_parent_nulls = level_info_.HasNullableValues() && !single_nullable_element;
-     if (maybe_parent_nulls) {
+@@ -1089,3 +1089,54 @@ def test_filters_to_expression_deprecated_alias():
+         result = pq._filters_to_expression(filters)
+     assert isinstance(result, ds.Expression)
+     assert result.equals(expected)
++
++
++@pytest.fixture
++def proxy_pool():
++    # Owned by the fixture so that it outlives every object created from it
++    # inside the test function (readers and tables keep a raw pool pointer).
++    return pa.proxy_memory_pool(pa.default_memory_pool())
++
++
++@pytest.mark.parametrize("use_dataset_path", [True, False])
++def test_read_table_memory_pool(tempdir, proxy_pool, use_dataset_path,
++                                monkeypatch):
++    table = pa.table({'a': list(range(1000)),
++                      'b': [str(i) for i in range(1000)]})
++    path = str(tempdir / 'data.parquet')
++    pq.write_table(table, path)
++
++    if not use_dataset_path:
++        # Exercise the ParquetFile fallback used without pyarrow.dataset
++        monkeypatch.setitem(sys.modules, "pyarrow.dataset", None)
++
++    result = pq.read_table(path, memory_pool=proxy_pool)
++    assert result.equals(table)
++    assert proxy_pool.bytes_allocated() >= table.nbytes
++    result = None
++    assert proxy_pool.bytes_allocated() == 0
++
++
++def test_parquet_file_memory_pool(tempdir, proxy_pool):
++    table = pa.table({'a': list(range(1000))})
++    path = str(tempdir / 'data.parquet')
++    pq.write_table(table, path)
++
++    result = pq.ParquetFile(path, memory_pool=proxy_pool).read()
++    assert result.equals(table)
++    assert proxy_pool.bytes_allocated() >= table.nbytes
++    result = None
++    assert proxy_pool.bytes_allocated() == 0
++
++
++def test_parquet_dataset_memory_pool(tempdir, proxy_pool):
++    table = pa.table({'a': list(range(1000)), 'part': ['x', 'y'] * 500})
++    root = str(tempdir / 'dataset')
++    pq.write_to_dataset(table, root, partition_cols=['part'])
++
++    result = pq.ParquetDataset(root).read(
++        use_threads=False, memory_pool=proxy_pool)
++    assert result.num_rows == table.num_rows
++    assert proxy_pool.bytes_allocated() > 0
++    result = None
++    assert proxy_pool.bytes_allocated() == 0
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #55290** (closed): [C++][Compute] Fix pad kernel output sizing for negative or very large width (@Arawoof06)
+- **PR #55289** (2026-10-28): MINOR: [CI] Bump docker/login-action from 4.6.0 to 4.7.0 (@dependabot[bot])
+- **PR #55288** (2026-10-28): MINOR: [CI] Bump the apache-infrastructure-actions-stash group with 2 updates (@dependabot[bot])
 - **PR #55286** (2026-10-27): GH-55285: [Python] Typo in Decimal32Array definition in array.pxi (@AlenkaF)
 - **PR #55283** (closed): [C++][Parquet] Check for empty index batch in dictionary DecodeArrow (@Nayana-Naik73)
-- **PR #55274** (closed): GH-55255: [C++][Compute] Support binary views in conditional kernels (@umtong)
-- **PR #55273** (2026-10-27): GH-55267: [C++][R] Arrow 26.0.0 fails to build on CRAN macOS builders: bundled simdjson C++20 concepts don't compile with the macOS 11 SDK (@thisisnic)
-- **PR #55271** (2026-10-27): GH-49760: [Doc][C++] Elaborate on what constitutes a vulnerability (@pitrou)
-- **PR #55268** (closed): [C++] Include array offset when validating fixed_size_list values length (@Nayana-Naik73)
+- **PR #55276** (2026-10-27): GH-55275: [C++][FlightRPC][ODBC] Unset `CPACK_WIX_PRODUCT_GUID` to allow Windows installer upgrade (@alinaliBQ)
 
 ---
 
@@ -1817,73 +1656,3 @@ Signed-off-by: Antoine Pitrou <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. GH-47417: [C++] Fix JSON parser losing nulls in a null-typed list (#51108)
-
-**RULE**:
-When implementing operations in `cpp/src/arrow/json/parser.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `2cadeab9`: GH-47417: [C++] Fix JSON parser losing nulls in a null-typed list (#51108). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `cpp/src/arrow/json/parser.cc`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```c++
-// Verified production-grade fix pattern:
-  Result<BuilderPtr> AppendNull(BuilderPtr parent, int field_index) {
-    BuilderPtr builder = parent.kind == Kind::kArray
-                             ? Cast<Kind::kArray>(parent)->value_builder()
-                             : Cast<Kind::kObject>(parent)->field_builder(field_index);
-        break;
-        RETURN_NOT_OK(Cast<Kind::kBoolean>(builder)->AppendNull());
-        break;
-        RETURN_NOT_OK(Cast<Kind::kNumber>(builder)->AppendNull());
-        break;
-        RETURN_NOT_OK(Cast<Kind::kString>(builder)->AppendNull());
-        break;
-        RETURN_NOT_OK(Cast<Kind::kNumberOrString>(builder)->AppendNull());
-        break;
-        RETURN_NOT_OK(Cast<Kind::kArray>(builder)->AppendNull());
-        break;
-          RETURN_NOT_OK(AppendNull(builder, i));
-        break;
-    return builder;
-    ARROW_ASSIGN_OR_RAISE(builder_,
-                          builder_set_.AppendNull(builder_stack_.back(), field_index_));
-    return Status::OK();
-      if (ARROW_PREDICT_FALSE(!Cast<Kind::kObject>(parent)->field_builder(i).nullable)) {
-      RETURN_NOT_OK(builder_set_.AppendNull(parent, i));
-```
-
-**NEGATIVE CONSTRAINT**:
-```c++
-// Anti-pattern to NEVER write (induced failure mode):
-  Status AppendNull(BuilderPtr parent, int field_index, BuilderPtr builder) {
-        DCHECK_EQ(builder, parent.kind == Kind::kArray
-                               ? Cast<Kind::kArray>(parent)->value_builder()
-                               : Cast<Kind::kObject>(parent)->field_builder(field_index));
-
-        return Status::OK();
-        return Cast<Kind::kBoolean>(builder)->AppendNull();
-        return Cast<Kind::kNumber>(builder)->AppendNull();
-        return Cast<Kind::kString>(builder)->AppendNull();
-        return Cast<Kind::kNumberOrString>(builder)->AppendNull();
-        return Cast<Kind::kArray>(builder)->AppendNull();
-          auto field_builder = struct_builder->field_builder(i);
-          RETURN_NOT_OK(AppendNull(builder, i, field_builder));
-        return Status::OK();
-    return builder_set_.AppendNull(builder_stack_.back(), field_index_, builder_);
-      auto field_builder = Cast<Kind::kObject>(parent)->field_builder(i);
-      if (ARROW_PREDICT_FALSE(!field_builder.nullable)) {
-      RETURN_NOT_OK(builder_set_.AppendNull(parent, i, field_builder));
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2cadeab9` are properly handled with clean fallback behavior.

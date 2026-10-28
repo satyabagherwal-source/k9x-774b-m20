@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T22:33:00.215Z",
+  "last_updated": "2026-10-28T22:39:38.932Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2213,14 +2213,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-jev-35b-nvfp4",
-      "content_hash": "8791d6c23d1ea70a99696e49ee4bcf434e0b66c115b9998b81c9662fa88fa69d",
-      "verified_at": "2026-10-25T06:32:02.600Z",
+      "content_hash": "cde24f79f6d3ea673638c51a3c9380c2b812a680580b4deab345d6aea04ce65a",
+      "verified_at": "2026-10-28T22:39:29.004Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T06:32:02.600Z"
+      "last_updated": "2026-10-28T22:39:29.004Z"
     },
     "Leonxlnx/taste-skill": {
       "repository": "Leonxlnx/taste-skill",
@@ -3651,14 +3651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chaos-mesh-chaos-mesh",
-      "content_hash": "0cc37038a91d7f1f951d8ef29e58de33a8afd800ad2d11d88fcd016cc29a7e0e",
-      "verified_at": "2026-10-28T05:58:06.619Z",
+      "content_hash": "020f7c2eeae254a2b9e9c2ae592a1425cea775a1d03847d103f30699a4d799ea",
+      "verified_at": "2026-10-28T22:39:38.931Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T05:58:06.619Z"
+      "last_updated": "2026-10-28T22:39:38.931Z"
     },
     "nolabs-ai/nono": {
       "repository": "nolabs-ai/nono",
@@ -11436,14 +11436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-arrow",
-      "content_hash": "a20a9122357e8dd1fd28fee16f880880290fe302b9c3354997fdae9387f8878b",
-      "verified_at": "2026-10-27T18:29:26.979Z",
+      "content_hash": "1922c1b72749667a2b67e022d3d85a44c1f182dbf7aa1d65eb025a02be66f319",
+      "verified_at": "2026-10-28T22:39:30.676Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T18:29:26.979Z"
+      "last_updated": "2026-10-28T22:39:30.676Z"
     },
     "CrossPaste/crosspaste-desktop": {
       "repository": "CrossPaste/crosspaste-desktop",

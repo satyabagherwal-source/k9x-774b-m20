@@ -5977,3 +5977,6 @@ Every entry in this ledger must capture:
 | `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `936c03be` | Multi-dimensional audit evidence | 2026-10-28T22:32:55.555Z |
 | `learn-huggingface-openbmb-minicpm-v-4-7-1b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-1B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-28T22:32:59.377Z |
 | `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `a4fd0f15` | Multi-dimensional audit evidence | 2026-10-28T22:33:00.209Z |
+| `learn-huggingface-autotrust-jev-35b-nvfp4` | `https://huggingface.co/autotrust/JEV-35B-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-28T22:39:28.994Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `16ebf1a4` | Multi-dimensional audit evidence | 2026-10-28T22:39:30.670Z |
+| `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `632225ea` | Multi-dimensional audit evidence | 2026-10-28T22:39:38.925Z |

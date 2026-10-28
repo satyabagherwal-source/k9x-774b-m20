@@ -5968,3 +5968,6 @@
 | `CYCLE-20261028-X7GH` | `2026-10-28T22:32:55.553Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5432` | Yes (`e2c3f193...`) |
 | `CYCLE-20261028-XAEN` | `2026-10-28T22:32:59.375Z` | `openbmb/MiniCPM-V-4.7-1B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1574, Rule 5433, Rule 5434` | Yes (`b49aa4d4...`) |
 | `CYCLE-20261028-XB1R` | `2026-10-28T22:33:00.207Z` | `SimonSchubert/LinuxCommandLibrary` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5435` | Yes (`6320212b...`) |
+| `CYCLE-20261028-5N1B` | `2026-10-28T22:39:28.991Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md` | Yes (`cde24f79...`) |
+| `CYCLE-20261028-5OBV` | `2026-10-28T22:39:30.667Z` | `apache/arrow` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/apache-arrow-learnings.md` | Yes (`1922c1b7...`) |
+| `CYCLE-20261028-5UP6` | `2026-10-28T22:39:38.922Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5436` | Yes (`020f7c2e...`) |
