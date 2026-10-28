@@ -5861,3 +5861,7 @@ Every entry in this ledger must capture:
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `c9f96027` | Multi-dimensional audit evidence | 2026-10-28T16:52:05.264Z |
 | `learn-huggingface-qwen-qwen3-vl-8b-instruct` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-28T16:58:44.066Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `8e167104` | Multi-dimensional audit evidence | 2026-10-28T16:58:59.326Z |
+| `learn-huggingface-nomic-ai-nomic-embed-text-v1-5` | `https://huggingface.co/nomic-ai/nomic-embed-text-v1.5` | `hf-nomic-a` | Multi-dimensional audit evidence | 2026-10-28T17:05:43.068Z |
+| `learn-github-ataraxy-labs-sem` | `https://github.com/Ataraxy-Labs/sem` | `f28b2311` | Multi-dimensional audit evidence | 2026-10-28T17:05:45.384Z |
+| `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `fcdc928b` | Multi-dimensional audit evidence | 2026-10-28T17:05:52.742Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `2db7fac9` | Multi-dimensional audit evidence | 2026-10-28T17:06:00.797Z |

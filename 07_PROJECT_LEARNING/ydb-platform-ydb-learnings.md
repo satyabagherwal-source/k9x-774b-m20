@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source**: github ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
-> **Source Version**: `e389d007`  
+> **Source Version**: `2db7fac9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T01:00:20.483Z  
+> **Timestamp**: 2026-10-28T17:06:00.183Z  
 > **Learning ID**: `learn-github-ydb-platform-ydb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T01:00:20.073Z  
+> **Harvest Timestamp**: 2026-10-28T17:06:00.174Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YDB is an open source Distributed SQL Database that combines high availability and scalability with strong consistency and ACID transactions
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4778 stars
+- **Stars / Engagement**: 4779 stars
 
 ---
 
@@ -37,1220 +37,2003 @@
 - Entry configurations inspected via direct stream: README.md.
 - Evaluated system abstractions and modular contracts.
 
-### Core Architecture Module: `contrib/deprecated/python/backports.shutil-get-terminal-size/backports/shutil_get_terminal_size/__init__.py`
+### Core Architecture Module: `contrib/crates/aho-corasick-1.1.5/src/util/alphabet.rs`
 ```
-"""A backport of the get_terminal_size function from Python 3.3's shutil."""
+use crate::util::int::Usize;
 
-__title__ = "backports.shutil_get_terminal_size"
-__version__ = "1.0.0"
-__license__ = "MIT"
-__author__ = "Christopher Rosell"
-__copyright__ = "Copyright 2014 Christopher Rosell"
+/// A representation of byte oriented equivalence classes.
+///
+/// This is used in finite state machines to reduce the size of the transition
+/// table. This can have a particularly large impact not only on the total size
+/// of an FSM, but also on FSM build times because it reduces the number of
+/// transitions that need to be visited/set.
+#[derive(Clone, Copy)]
+pub(crate) struct ByteClasses([u8; 256]);
 
-__all__ = ["get_terminal_size"]
-
-from .get_terminal_size import get_terminal_size
-
-```
-
-### Core Architecture Module: `contrib/deprecated/python/backports.shutil-get-terminal-size/backports/shutil_get_terminal_size/get_terminal_size.py`
-```
-"""This is a backport of shutil.get_terminal_size from Python 3.3.
-
-The original implementation is in C, but here we use the ctypes and
-fcntl modules to create a pure Python version of os.get_terminal_size.
-"""
-
-import os
-import struct
-import sys
-
-from collections import namedtuple
-
-__all__ = ["get_terminal_size"]
-
-
-terminal_size = namedtuple("terminal_size", "columns lines")
-
-try:
-    from ctypes import windll, create_string_buffer
-
-    _handles = {
-        0: windll.kernel32.GetStdHandle(-10),
-        1: windll.kernel32.GetStdHandle(-11),
-        2: windll.kernel32.GetStdHandle(-12),
+impl ByteClasses {
+    /// Creates a new set of equivalence classes where all bytes are mapped to
+    /// the same class.
+    pub(crate) fn empty() -> ByteClasses {
+        ByteClasses([0; 256])
     }
 
-    def _get_terminal_size(fd):
-        columns = lines = 0
+    /// Creates a new set of equivalence classes where each byte belongs to
+    /// its own equivalence class.
+    pub(crate) fn singletons() -> ByteClasses {
+        let mut classes = ByteClasses::empty();
+        for b in 0..=255 {
+            classes.set(b, b);
+        }
+        classes
+    }
 
-        try:
-            handle = _handles[fd]
-            csbi = create_string_buffer(22)
-            res = windll.kernel32.GetConsoleScreenBufferInfo(handle, csbi)
-            if res:
-                res = struct.unpack("hhhhHhhhhhh", csbi.raw)
-                left, top, right, bottom = res[5:9]
-                columns = right - left + 1
-                lines = bottom - top + 1
-        except Exception:
-            pass
+    /// Set the equivalence class for the given byte.
+    #[inline]
+    pub(crate) fn set(&mut self, byte: u8, class: u8) {
+        self.0[usize::from(byte)] = class;
+    }
 
-        return terminal_size(columns, lines)
+    /// Get the equivalence class for the given byte.
+    #[inline]
+    pub(crate) fn get(&self, byte: u8) -> u8 {
+        self.0[usize::from(byte)]
+    }
 
-except (ImportError, OSError):
-    import fcntl
-    import termios
+    /// Return the total number of elements in the alphabet represented by
+    /// these equivalence classes. Equivalently, this returns the total number
+    /// of equivalence classes.
+    #[inline]
+    pub(crate) fn alphabet_len(&self) -> usize {
+        // Add one since the number of equivalence classes is one bigger than
+        // the last one.
+        usize::from(self.0[255]) + 1
+    }
 
-    def _get_terminal_size(fd):
-        try:
-            res = fcntl.ioctl(fd, termios.TIOCGWINSZ, b"\x00" * 4)
-            lines, columns = struct.unpack("hh", res)
-        except Exception:
-            columns = lines = 0
+    /// Returns the stride, as a base-2 exponent, required for these
+    /// equivalence classes.
+    ///
+    /// The stride is always the smallest power of 2 that is greater than or
+    /// equal to the alphabet length. This is done so that converting between
+    /// state IDs and indices can be done with shifts alone, which is much
+    /// faster than integer division. The "stride2" is the exponent. i.e.,
+    /// `2^stride2 = stride`.
+    pub(crate) fn stride2(&self) -> usize {
+        let zeros = self.alphabet_len().next_power_of_two().trailing_zeros();
+        usize::try_from(zeros).unwrap()
+    }
 
-        return terminal_size(columns, lines)
+    /// Returns the stride for these equivalence classes, which corresponds
+    /// to the smallest power of 2 greater than or equal to the number of
+    /// equivalence classes.
+    pub(crate) fn stride(&self) -> usize {
+        1 << self.stride2()
+    }
 
+    /// Returns true if and only if every byte in this class maps to its own
+    /// equivalence class. Equivalently, there are 257 equivalence classes
+    /// and each class contains exactly one byte (plus the special EOI class).
+    #[inline]
+    pub(crate) fn is_singleton(&self) -> bool {
+        self.alphabet_len() == 256
+    }
 
-def get_terminal_size(fallback=(80, 24)):
-    """Get the size of the terminal window.
+    /// Returns an iterator over all equivalence classes in this set.
+    pub(crate) fn iter(&self) -> ByteClassIter {
+        ByteClassIter { it: 0..self.alphabet_len() }
+    }
 
-    For each of the two dimensions, the environment variable, COLUMNS
-    and LINES respectively, is checked. If the variable is defined and
-    the value is a positive integer, it is used.
+    /// Returns an iterator of the bytes in the given equivalence class.
+    pub(crate) fn elements(&self, class: u8) -> ByteClassElements {
+        ByteClassElements { classes: self, class, bytes: 0..=255 }
+    }
 
-    When COLUMNS or LINES is not defined, which is the common case,
-    the terminal connected to sys.__stdout__ is queried
-    by invoking os.get_terminal_size.
-
-    If the terminal size cannot be successfully queried, either because
-    the system doesn't support querying, or because we are not
-    connected to a terminal, the value given in fallback parameter
-    is used. Fallback defaults to (80, 24) which is the default
-    size used by many terminal emulators.
-
-    The value returned is a named tuple of type os.terminal_size.
-    """
-    # Try the environment first
-    try:
-        columns = int(os.environ["COLUMNS"])
-    except (KeyError, ValueError):
-        columns = 0
-
-    try:
-        lines = int(os.environ["LINES"])
-    except (KeyError, ValueError):
-        lines = 0
-
-    # Only query if necessary
-    if columns <= 0 or lines <= 0:
-        try:
-            size = _get_terminal_size(sys.__stdout__.fileno())
-        except (NameError, OSError):
-            size = terminal_size(*fallback)
-
-        if columns <= 0:
-            columns = size.columns
-        if lines <= 0:
-            lines = size.lines
-
-    return terminal_size(columns, lines)
-
-
-```
-
-### Core Architecture Module: `contrib/deprecated/python/futures/concurrent/__init__.py`
-```
-from pkgutil import extend_path
-
-__path__ = extend_path(__path__, __name__)
-
-```
-
-### Core Architecture Module: `contrib/deprecated/python/futures/concurrent/futures/__init__.py`
-```
-# Copyright 2009 Brian Quinlan. All Rights Reserved.
-# Licensed to PSF under a Contributor Agreement.
-
-"""Execute computations asynchronously using threads or processes."""
-
-__author__ = 'Brian Quinlan (brian@sweetapp.com)'
-
-from concurrent.futures._base import (FIRST_COMPLETED,
-                                      FIRST_EXCEPTION,
-                                      ALL_COMPLETED,
-                                      CancelledError,
-                                      TimeoutError,
-                                      Future,
-                                      Executor,
-                                      wait,
-                                      as_completed)
-from concurrent.futures.thread import ThreadPoolExecutor
-
-try:
-    from concurrent.futures.process import ProcessPoolExecutor
-except ImportError:
-    # some platforms don't have multiprocessing
-    pass
-
-```
-
-### Core Architecture Module: `contrib/deprecated/python/futures/concurrent/futures/_base.py`
-```
-# Copyright 2009 Brian Quinlan. All Rights Reserved.
-# Licensed to PSF under a Contributor Agreement.
-
-import collections
-import logging
-import threading
-import itertools
-import time
-import types
-
-__author__ = 'Brian Quinlan (brian@sweetapp.com)'
-
-FIRST_COMPLETED = 'FIRST_COMPLETED'
-FIRST_EXCEPTION = 'FIRST_EXCEPTION'
-ALL_COMPLETED = 'ALL_COMPLETED'
-_AS_COMPLETED = '_AS_COMPLETED'
-
-# Possible future states (for internal use by the futures package).
-PENDING = 'PENDING'
-RUNNING = 'RUNNING'
-# The future was cancelled by the user...
-CANCELLED = 'CANCELLED'
-# ...and _Waiter.add_cancelled() was called by a worker.
-CANCELLED_AND_NOTIFIED = 'CANCELLED_AND_NOTIFIED'
-FINISHED = 'FINISHED'
-
-_FUTURE_STATES = [
-    PENDING,
-    RUNNING,
-    CANCELLED,
-    CANCELLED_AND_NOTIFIED,
-    FINISHED
-]
-
-_STATE_TO_DESCRIPTION_MAP = {
-    PENDING: "pending",
-    RUNNING: "running",
-    CANCELLED: "cancelled",
-    CANCELLED_AND_NOTIFIED: "cancelled",
-    FINISHED: "finished"
+    /// Returns an iterator of byte ranges in the given equivalence class.
+    ///
+    /// That is, a sequence of contiguous ranges are returned. Typically, every
+    /// class maps to a single contiguous range.
+    fn element_ranges(&self, class: u8) -> ByteClassElementRanges {
+        ByteClassElementRanges { elements: self.elements(class), range: None }
+    }
 }
 
-# Logger for internal use by the futures package.
-LOGGER = logging.getLogger("concurrent.futures")
+impl core::fmt::Debug for ByteClasses {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        if self.is_singleton() {
+            write!(f, "ByteClasses(<one-class-per-byte>)")
+        } else {
+            write!(f, "ByteClasses(")?;
+            for (i, class) in self.iter().enumerate() {
+                if i > 0 {
+                    write!(f, ", ")?;
+                }
+                write!(f, "{:?} => [", class)?;
+                for (start, end) in self.element_ranges(class) {
+                    if start == end {
+                        write!(f, "{:?}", start)?;
+                    } else {
+                        write!(f, "{:?}-{:?}", start, end)?;
+                    }
+                }
+                write!(f, "]")?;
+            }
+            write!(f, ")")
+        }
+    }
+}
 
-class Error(Exception):
-    """Base class for all future-related exceptions."""
-    pass
+/// An iterator over each equivalence class.
+#[derive(Debug)]
+pub(crate) struct ByteClassIter {
+    it: core::ops::Range<usize>,
+}
 
-class CancelledError(Error):
-    """The Future was cancelled."""
-    pass
+impl Iterator for ByteClassIter {
+    type Item = u8;
 
-class TimeoutError(Error):
-    """The operation exceeded the given deadline."""
-    pass
+    fn next(&mut self) -> Option<u8> {
+        self.it.next().map(|class| class.as_u8())
+    }
+}
 
-class _Waiter(object):
-    """Provides the event that wait() and as_completed() block on."""
-    def __init__(self):
-        self.event = threading.Event()
-        self.finished_futures = []
+/// An iterator over all elements in a specific equivalence class.
+#[derive(Debug)]
+pub(crate) struct ByteClassElements<'a> {
+    classes: &'a ByteClasses,
+    class: u8,
+    bytes: core::ops::RangeInclusive<u8>,
+}
 
-    def add_result(self, future):
-        self.finished_futures.append(future)
+impl<'a> Iterator for ByteClassElements<'a> {
+    type Item = u8;
 
-    def add_exception(self, future):
-        self.finished_futures.append(future)
+    fn next(&mut self) -> Option<u8> {
+        while let Some(byte) = self.bytes.next() {
+            if self.class == self.classes.get(byte) {
+                return Some(byte);
+            }
+        }
+        None
+    }
+}
 
-    def add_cancelled(self, future):
-        self.finished_futures.append(future)
+/// An iterator over all elements in an equivalence class expressed as a
+/// sequence of contiguous ranges.
+#[derive(Debug)]
+pub(crate) struct ByteClassElementRanges<'a> {
+    elements: ByteClassElements<'a>,
+    range: Option<(u8, u8)>,
+}
 
-class _AsCompletedWaiter(_Waiter):
-    """Used by as_completed()."""
+impl<'a> Iterator for ByteClassElementRanges<'a> {
+    type Item = (u8, u8);
 
-    def __init__(self):
-        super(_AsCompletedWaiter, self).__init__()
-        self.lock = threading.Lock()
+    fn next(&mut self) -> Option<(u8, u8)> {
+        loop {
+            let element = match self.elements.next() {
+                None => return self.range.take(),
+                Some(element) => element,
+            };
+            match self.range.take() {
+                None => {
+                    self.range = Some((element, element));
+                }
+                Some((start, end)) => {
+                    if usize::from(end) + 1 != usize::from(element) {
+                        self.range = Some((element, element));
+                        return Some((start, end));
+                    }
+                    self.range = Some((start, element));
+                }
+            }
+        }
+    }
+}
 
-    def add_result(self, future):
-        with self.lock:
-            super(_AsCompletedWaiter, self).add_result(future)
-            self.event.set()
+/// A partitioning of bytes into equivalence classes.
+///
+/// A byte class set keeps track of an *approximation* of equivalence classes
+/// of bytes during NFA construction. That is, every byte in an equivalence
+/// class cannot discriminate between a match and a non-match.
+///
+/// Note that this may not compute the minimal set of equivalence classes.
+/// Basically, any byte in a pattern given to the noncontiguous NFA builder
+/// will automatically be treated as its own equivalence class. All other
+/// bytes---any byte not in any pattern---will be treated as their own
+/// equivalence classes. In theory, all bytes not in any pattern should
+/// be part of a single equivalence class, but in practice, we only treat
+/// contiguous ranges of bytes as an equivalence class. So the number of
+/// classes computed may be bigger than necessary. This usually doesn't make
+/// much of a difference, and keeps the implementation simple.
+#[derive(Clone, Debug)]
+pub(crate) struct ByteClassSet(ByteSet);
 
-    def add_exception(self, future):
-        with self.lock:
-            super(_AsCompletedWaiter, self).add_exception(future)
-            self.event.set()
+impl Default for ByteClassSet {
+    fn default() -> ByteClassSet {
+        ByteClassSet::empty()
+    }
+}
 
-    def add_cancelled(self, future):
-        with self.lock:
-            super(_AsCompletedWaiter, self).add_cancelled(future)
-            self.event.set()
+impl ByteClassSet {
+    /// Create a new set of byte classes where all bytes are part of the same
+    /// equivalence class.
+    pub(crate) fn empty() -> Self {
+        ByteClassSet(ByteSet::empty())
+    }
 
-class _FirstCompletedWaiter(_Waiter):
-    """Used by wait(return_when=FIRST_COMPLETED)."""
+    /// Indicate the the range of byte given (inclusive) can discriminate a
+    /// match between it and all other bytes outside of the range.
+    pub(crate) fn set_range(&mut self, start: u8, end: u8) {
+        debug_assert!(start <= end);
+        if start > 0 {
+            self.0.add(start - 1);
+        }
+        self.0.add(end);
+    }
 
-    def add_result(self, future):
-        super(_FirstCompletedWaiter, self).add_result(future)
-        self.event.set()
+    /// Convert this boolean set to a map that maps all byte values to their
+    /// corresponding equivalence class. The last mapping indicates the largest
+    /// equivalence class identifier (which is never bigger than 255).
+    pub(crate) fn byte_classes(&self) -> ByteClasses {
+        let mut classes = ByteClasses::empty();
+        let mut class = 0u8;
+        let mut b = 0u8;
+        loop {
+            classes.set(b, class);
+            if b == 255 {
+                break;
+            }
+            if self.0.contains(b) {
+                class = class.checked_add(1).unwrap();
+            }
+            b = b.checked_add(1).unwrap();
+        }
+        classes
+    }
+}
 
-    def add_exception(self, future):
-        super(_FirstCompletedWaiter, self).add_exception(future)
-        self.event.set()
+/// A simple set of bytes that is reasonably cheap to copy and allocation free.
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub(crate) struct ByteSet {
+    bits: BitSet,
+}
 
-    def add_cancelled(self, future):
-        super(_FirstCompletedWaiter, self).add_cancelled(future)
-        self.event.set()
+/// The representation of a byte set. Split out so that we can define a
+/// convenient Debug impl for it while keeping "ByteSet" in the output.
+#[derive(Clone, Copy, Default, Eq, PartialEq)]
+struct BitSet([u128; 2]);
 
-class _AllCompletedWaiter(_Waiter):
-    """Used by wait(return_when=FIRST_EXCEPTION and ALL_COMPLETED)."""
+impl ByteSet {
+    /// Create an empty set of bytes.
+    pub(crate) fn empty() -> ByteSet {
+        ByteSet { bits: BitSet([0; 2]) }
+    }
 
-    def __init__(self, num_pending_calls, stop_on_exception):
-        self.num_pending_calls = num_pending_calls
-        self.stop_on_exception = stop_on_exception
-        self.lock = threading.Lock()
-        super(_AllCompletedWaiter, self).__init__()
+    /// Add a byte to this set.
+    ///
+    /// If the given byte already belongs to this set, then this is a no-op.
+    pub(crate) fn add(&mut self, byte: u8) {
+        let bucket = byte / 128;
+        let bit = byte % 128;
+        self.bits.0[usize::from(bucket)] |= 1 << bit;
+    }
 
-    def _decrement_pending_calls(self):
-        with self.lock:
-            self.num_pending_calls -= 1
-            if not self.num_pending_calls:
-                self.event.set()
+    /// Return true if and only if the given byte is in this set.
+    pub(crate) fn contains(&self, byte: u8) -> bool {
+        let bucket = byte / 128;
+        let bit = byte % 128;
+        self.bits.0[usize::from(bucket)] & (1 << bit) > 0
+    }
+}
 
-    def add_result(self, future):
-        super(_AllCompletedWaiter, self).add_result(future)
-        self._decrement_pending_calls()
-
-    def add_exception(self, future):
-        super(_AllCompletedWaiter, self).add_exception(future)
-        if self.stop_on_exception:
-            self.event.set()
-        else:
-            self._decrement_pending_calls()
-
-    def add_cancelled(self, future):
-        super(_AllCompletedWaiter, self).add_cancelled(future)
-        self._decrement_pending_calls()
-
-class _AcquireFutures(object):
-    """A context manager that does an ordered acquire of Future conditions."""
-
-    def __init__(self, futures):
-        self.futures = sorted(futures, key=id)
-
-    def __enter__(self):
-        for future in self.futures:
-            future._condition.acquire()
-
-    def __exit__(self, *args):
-        for future in self.futures:
-            future._condition.release()
-
-def _create_and_install_waiters(fs, return_when):
-    if return_when == _AS_COMPLETED:
-        waiter = _AsCompletedWaiter()
-    elif return_when == FIRST_COMPLETED:
-        waiter = _FirstCompletedWaiter()
-    else:
-        pending_count = sum(
-                f._state not in [CANCELLED_AND_NOTIFIED, FINISHED] for f in fs)
-
-        if return_when == FIRST_EXCEPTION:
-            waiter = _AllCompletedWaiter(pending_count, stop_on_exception=True)
-        elif return_when == ALL_COMPLETED:
-            waiter = _AllCompletedWaiter(pending_count, stop_on_exception=False)
-        else:
-            raise ValueError("Invalid return condition: %r" % return_when)
-
-    for f in fs:
-        f._waiters.append(waiter)
-
-    return waiter
-
-
-def _yield_finished_futures(fs, waiter, ref_collect):
-    """
-    Iterate on the list *fs*, yielding finished futures one by one in
-    reverse order.
-    Before yielding a future, *waiter* is removed from its waiters
-    and the future is removed from each set in the collection of sets
-    *ref_collect*.
-
-    The aim of this function is to avoid keeping stale references after
-    the future is yielded and before the iterator resumes.
-    """
-    while fs:
-        f = fs[-1]
-        for futures_set in ref_collect:
-            futures_set.remove(f)
-        with f._condition:
-            f._waiters.remove(waiter)
-        del f
-        # Careful not to keep a reference to the popped value
-        yield fs.pop()
-
-
-def as_completed(fs, timeout=None):
-    """An iterator over the given futures that yields each as it completes.
-
-    Args:
-        fs: The sequence of Futures (possibly created by different Executors) to
-            iterate over.
-        timeout: The maximum number of seconds to wait. If None, then there
-            is no limit on the wait time.
-
-    Returns:
-        An iterator that yields the given Futures as they complete (finished or
-        cancelled). If any given Futures are duplicated, they will be returned
-        once.
-
-    Raises:
-        TimeoutError: If the entire result iterator could not be generated
-            before the given timeout.
-    """
-    if timeout is not None:
-        end_time = timeout + time.time()
-
-    fs = set(fs)
-    total_futures = len(fs)
-    with _AcquireFutures(fs):
-        finished = set(
-                f for f in fs
-                if f._state in [CANCELLED_AND_NOTIFIED, FINISHED])
-        pending = fs - finished
-        waiter = _create_and_install_waiters(fs, _AS_COMPLETED)
-    finished = list(finished)
-    try:
-        for f in _yield_finished_futures(finished, waiter,
-                                         ref_collect=(fs,)):
-            f = [f]
-            yield f.pop()
-
-        while pending:
-            if timeout is None:
-                wait_timeout = None
-            else:
-                wait_timeout = end_time - time.time()
-                if wait_timeout < 0:
-                    raise TimeoutError(
-                            '%d (of %d) futures unfinished' % (
-                            len(pending), total_futures))
-
-            waiter.event.wait(wait_timeout)
-
-            with waiter.lock:
-                finished = waiter.finished_futures
-                waiter.finished_futures = []
-                waiter.event.clear()
-
-            # reverse to keep finishing order
-            finished.reverse()
-            for f in _yield_finished_futures(finished, waiter,
-                                             ref_collect=(fs, pending)):
-                f = [f]
-                yield f.pop()
-
-    finally:
-        # Remove waiter from unfinished futures
-        for f in fs:
-            with f._condition:
-                f._waiters.remove(waiter)
-
-DoneAndNotDoneFutures = collections.namedtuple(
-        'DoneAndNotDoneFutures', 'done not_done')
-def wait(fs, timeout=None, return_when=ALL_COMPLETED):
-    """Wait for the futures in the given sequence to complete.
-
-    Args:
-        fs: The sequence of Futures (possibly created by different Executors) to
-            wait upon.
-        timeout: The maximum number of seconds to wait. If None, then there
-            is no limit on the wait time.
-        return_when: Indicates when this function should return. The options
-            are:
-
-            FIRST_COMPLETED - Return when any future finishes or is
-                              cancelled.
-            FIRST_EXCEPTION - Return when any future finishes by raising an
-                              exception. If no future raises an exception
-                              then it is equivalent to ALL_COMPLETED.
-            ALL_COMPLETED -   Return when all futures finish or are cancelled.
-
-    Returns:
-        A named 2-tuple of sets. The first set, named 'done', contains the
-        futures that completed (is finished or cancelled) before the wait
-        completed. The second set, named 'not_done', contains uncompleted
-        futures.
-    """
-    with _AcquireFutures(fs):
-        done = set(f for f in fs
-                   if f._state in [CANCELLED_AND_NOTIFIED, FINISHED])
-        not_done = set(fs) - done
-
-        if (return_when == FIRST_COMPLETED) and done:
-            return DoneAndNotDoneFutures(done, not_done)
-        elif (return_when == FIRST_EXCEPTION) and done:
-            if any(f for f in done
-                   if not f.cancelled() and f.exception() is not None):
-                return DoneAndNotDoneFutures(done, not_done)
-
-        if len(done) == len(fs):
-            return DoneAndNotDoneFutures(done, not_done)
-
-        waiter = _create_and_install_waiters(fs, return_when)
-
-    waiter.event.wait(timeout)
-    for f in fs:
-        with f._condition:
-            f._waiters.remove(waiter)
-
-  
+impl core::fmt::Debug for BitSet {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+        let mut fmtd = f.debug_set();
+        for b in 0u8..=255 {
+            if (ByteSet { bits: *self }).contains(b) {
+                fmtd.entry(&b);
+            }
+        }
+        fmtd.finis
 ```
 
-### Core Architecture Module: `contrib/deprecated/python/futures/concurrent/futures/process.py`
+### Core Architecture Module: `contrib/crates/aho-corasick-1.1.5/src/util/buffer.rs`
 ```
-# Copyright 2009 Brian Quinlan. All Rights Reserved.
-# Licensed to PSF under a Contributor Agreement.
+use alloc::{vec, vec::Vec};
 
-"""Implements ProcessPoolExecutor.
+/// The default buffer capacity that we use for the stream buffer.
+const DEFAULT_BUFFER_CAPACITY: usize = 64 * (1 << 10); // 64 KB
 
-The follow diagram and text describe the data-flow through the system:
+/// A fairly simple roll buffer for supporting stream searches.
+///
+/// This buffer acts as a temporary place to store a fixed amount of data when
+/// reading from a stream. Its central purpose is to allow "rolling" some
+/// suffix of the data to the beginning of the buffer before refilling it with
+/// more data from the stream. For example, let's say we are trying to match
+/// "foobar" on a stream. When we report the match, we'd like to not only
+/// report the correct offsets at which the match occurs, but also the matching
+/// bytes themselves. So let's say our stream is a file with the following
+/// contents: `test test foobar test test`. Now assume that we happen to read
+/// the aforementioned file in two chunks: `test test foo` and `bar test test`.
+/// Naively, it would not be possible to report a single contiguous `foobar`
+/// match, but this roll buffer allows us to do that. Namely, after the second
+/// read, the contents of the buffer should be `st foobar test test`, where the
+/// search should ultimately resume immediately after `foo`. (The prefix `st `
+/// is included because the roll buffer saves N bytes at the end of the buffer,
+/// where N is the maximum possible length of a match.)
+///
+/// A lot of the logic for dealing with this is unfortunately split out between
+/// this roll buffer and the `StreamChunkIter`.
+///
+/// Note also that this buffer is not actually required to just report matches.
+/// Because a `Match` is just some offsets. But it *is* required for supporting
+/// things like `try_stream_replace_all` because that needs some mechanism for
+/// knowing which bytes in the stream correspond to a match and which don't. So
+/// when a match occurs across two `read` calls, *something* needs to retain
+/// the bytes from the previous `read` call because you don't know before the
+/// second read call whether a match exists or not.
+#[derive(Debug)]
+pub(crate) struct Buffer {
+    /// The raw buffer contents. This has a fixed size and never increases.
+    buf: Vec<u8>,
+    /// The minimum size of the buffer, which is equivalent to the maximum
+    /// possible length of a match. This corresponds to the amount that we
+    /// roll
+    min: usize,
+    /// The end of the contents of this buffer.
+    end: usize,
+}
 
-|======================= In-process =====================|== Out-of-process ==|
+impl Buffer {
+    /// Create a new buffer for stream searching. The minimum buffer length
+    /// given should be the size of the maximum possible match length.
+    pub(crate) fn new(min_buffer_len: usize) -> Buffer {
+        let min = core::cmp::max(1, min_buffer_len);
+        // The minimum buffer amount is also the amount that we roll our
+        // buffer in order to support incremental searching. To this end,
+        // our actual capacity needs to be at least 1 byte bigger than our
+        // minimum amount, otherwise we won't have any overlap. In actuality,
+        // we want our buffer to be a bit bigger than that for performance
+        // reasons, so we set a lower bound of `8 * min`.
+        //
+        // TODO: It would be good to find a way to test the streaming
+        // implementation with the minimal buffer size. For now, we just
+        // uncomment out the next line and comment out the subsequent line.
+        // let capacity = 1 + min;
+        let capacity = core::cmp::max(min * 8, DEFAULT_BUFFER_CAPACITY);
+        Buffer { buf: vec![0; capacity], min, end: 0 }
+    }
 
-+----------+     +----------+       +--------+     +-----------+    +---------+
-|          |  => | Work Ids |    => |        |  => | Call Q    | => |         |
-|          |     +----------+       |        |     +-----------+    |         |
-|          |     | ...      |       |        |     | ...       |    |         |
-|          |     | 6        |       |        |     | 5, call() |    |         |
-|          |     | 7        |       |        |     | ...       |    |         |
-| Process  |     | ...      |       | Local  |     +-----------+    | Process |
-|  Pool    |     +----------+       | Worker |                      |  #1..n  |
-| Executor |                        | Thread |                      |         |
-|          |     +----------- +     |        |     +-----------+    |         |
-|          | <=> | Work Items | <=> |        | <=  | Result Q  | <= |         |
-|          |     +------------+     |        |     +-----------+    |         |
-|          |     | 6: call()  |     |        |     | ...       |    |         |
-|          |     |    future  |     |        |     | 4, result |    |         |
-|          |     | ...        |     |        |     | 3, except |    |         |
-+----------+     +------------+     +--------+     +-----------+    +---------+
+    /// Return the contents of this buffer.
+    #[inline]
+    pub(crate) fn buffer(&self) -> &[u8] {
+        &self.buf[..self.end]
+    }
 
-Executor.submit() called:
-- creates a uniquely numbered _WorkItem and adds it to the "Work Items" dict
-- adds the id of the _WorkItem to the "Work Ids" queue
+    /// Return the minimum size of the buffer. The only way a buffer may be
+    /// smaller than this is if the stream itself contains less than the
+    /// minimum buffer amount.
+    #[inline]
+    pub(crate) fn min_buffer_len(&self) -> usize {
+        self.min
+    }
 
-Local worker thread:
-- reads work ids from the "Work Ids" queue and looks up the corresponding
-  WorkItem from the "Work Items" dict: if the work item has been cancelled then
-  it is simply removed from the dict, otherwise it is repackaged as a
-  _CallItem and put in the "Call Q". New _CallItems are put in the "Call Q"
-  until "Call Q" is full. NOTE: the size of the "Call Q" is kept small because
-  calls placed in the "Call Q" can no longer be cancelled with Future.cancel().
-- reads _ResultItems from "Result Q", updates the future stored in the
-  "Work Items" dict and deletes the dict entry
+    /// Return all free capacity in this buffer.
+    fn free_buffer(&mut self) -> &mut [u8] {
+        &mut self.buf[self.end..]
+    }
 
-Process #1..n:
-- reads _CallItems from "Call Q", executes the calls, and puts the resulting
-  _ResultItems in "Request Q"
-"""
+    /// Refill the contents of this buffer by reading as much as possible into
+    /// this buffer's free capacity. If no more bytes could be read, then this
+    /// returns false. Otherwise, this reads until it has filled the buffer
+    /// past the minimum amount.
+    pub(crate) fn fill<R: std::io::Read>(
+        &mut self,
+        mut rdr: R,
+    ) -> std::io::Result<bool> {
+        let mut readany = false;
+        loop {
+            let readlen = rdr.read(self.free_buffer())?;
+            if readlen == 0 {
+                return Ok(readany);
+            }
+            readany = true;
+            self.end += readlen;
+            if self.buffer().len() >= self.min {
+                return Ok(true);
+            }
+        }
+    }
 
-import atexit
-from concurrent.futures import _base
-import Queue as queue
-import multiprocessing
-import threading
-import weakref
-import sys
+    /// Roll the contents of the buffer so that the suffix of this buffer is
+    /// moved to the front and all other contents are dropped. The size of the
+    /// suffix corresponds precisely to the minimum buffer length.
+    ///
+    /// This should only be called when the entire contents of this buffer have
+    /// been searched.
+    pub(crate) fn roll(&mut self) {
+        let roll_start = self
+            .end
+            .checked_sub(self.min)
+            .expect("buffer capacity should be bigger than minimum amount");
+        let roll_end = roll_start + self.min;
 
-__author__ = 'Brian Quinlan (brian@sweetapp.com)'
-
-# Workers are created as daemon threads and processes. This is done to allow the
-# interpreter to exit when there are still idle processes in a
-# ProcessPoolExecutor's process pool (i.e. shutdown() was not called). However,
-# allowing workers to die with the interpreter has two undesirable properties:
-#   - The workers would still be running during interpreter shutdown,
-#     meaning that they would fail in unpredictable ways.
-#   - The workers could be killed while evaluating a work item, which could
-#     be bad if the callable being evaluated has external side-effects e.g.
-#     writing to a file.
-#
-# To work around this problem, an exit handler is installed which tells the
-# workers to exit when their work queues are empty and then waits until the
-# threads/processes finish.
-
-_threads_queues = weakref.WeakKeyDictionary()
-_shutdown = False
-
-def _python_exit():
-    global _shutdown
-    _shutdown = True
-    items = list(_threads_queues.items()) if _threads_queues else ()
-    for t, q in items:
-        q.put(None)
-    for t, q in items:
-        t.join(sys.maxint)
-
-# Controls how many more calls than processes will be queued in the call queue.
-# A smaller number will mean that processes spend more time idle waiting for
-# work while a larger number will make Future.cancel() succeed less frequently
-# (Futures in the call queue cannot be cancelled).
-EXTRA_QUEUED_CALLS = 1
-
-class _WorkItem(object):
-    def __init__(self, future, fn, args, kwargs):
-        self.future = future
-        self.fn = fn
-        self.args = args
-        self.kwargs = kwargs
-
-class _ResultItem(object):
-    def __init__(self, work_id, exception=None, result=None):
-        self.work_id = work_id
-        self.exception = exception
-        self.result = result
-
-class _CallItem(object):
-    def __init__(self, work_id, fn, args, kwargs):
-        self.work_id = work_id
-        self.fn = fn
-        self.args = args
-        self.kwargs = kwargs
-
-def _process_worker(call_queue, result_queue):
-    """Evaluates calls from call_queue and places the results in result_queue.
-
-    This worker is run in a separate process.
-
-    Args:
-        call_queue: A multiprocessing.Queue of _CallItems that will be read and
-            evaluated by the worker.
-        result_queue: A multiprocessing.Queue of _ResultItems that will written
-            to by the worker.
-        shutdown: A multiprocessing.Event that will be set as a signal to the
-            worker that it should exit when call_queue is empty.
-    """
-    while True:
-        call_item = call_queue.get(block=True)
-        if call_item is None:
-            # Wake up queue management thread
-            result_queue.put(None)
-            return
-        try:
-            r = call_item.fn(*call_item.args, **call_item.kwargs)
-        except:
-            e = sys.exc_info()[1]
-            result_queue.put(_ResultItem(call_item.work_id,
-                                         exception=e))
-        else:
-            result_queue.put(_ResultItem(call_item.work_id,
-                                         result=r))
-
-def _add_call_item_to_queue(pending_work_items,
-                            work_ids,
-                            call_queue):
-    """Fills call_queue with _WorkItems from pending_work_items.
-
-    This function never blocks.
-
-    Args:
-        pending_work_items: A dict mapping work ids to _WorkItems e.g.
-            {5: <_WorkItem...>, 6: <_WorkItem...>, ...}
-        work_ids: A queue.Queue of work ids e.g. Queue([5, 6, ...]). Work ids
-            are consumed and the corresponding _WorkItems from
-            pending_work_items are transformed into _CallItems and put in
-            call_queue.
-        call_queue: A multiprocessing.Queue that will be filled with _CallItems
-            derived from _WorkItems.
-    """
-    while True:
-        if call_queue.full():
-            return
-        try:
-            work_id = work_ids.get(block=False)
-        except queue.Empty:
-            return
-        else:
-            work_item = pending_work_items[work_id]
-
-            if work_item.future.set_running_or_notify_cancel():
-                call_queue.put(_CallItem(work_id,
-                                         work_item.fn,
-                                         work_item.args,
-                                         work_item.kwargs),
-                               block=True)
-            else:
-                del pending_work_items[work_id]
-                continue
-
-def _queue_management_worker(executor_reference,
-                             processes,
-                             pending_work_items,
-                             work_ids_queue,
-                             call_queue,
-                             result_queue):
-    """Manages the communication between this process and the worker processes.
-
-    This function is run in a local thread.
-
-    Args:
-        executor_reference: A weakref.ref to the ProcessPoolExecutor that owns
-            this thread. Used to determine if the ProcessPoolExecutor has been
-            garbage collected and that this function can exit.
-        process: A list of the multiprocessing.Process instances used as
-            workers.
-        pending_work_items: A dict mapping work ids to _WorkItems e.g.
-            {5: <_WorkItem...>, 6: <_WorkItem...>, ...}
-        work_ids_queue: A queue.Queue of work ids e.g. Queue([5, 6, ...]).
-        call_queue: A multiprocessing.Queue that will be filled with _CallItems
-            derived from _WorkItems for processing by the process workers.
-        result_queue: A multiprocessing.Queue of _ResultItems generated by the
-            process workers.
-    """
-    nb_shutdown_processes = [0]
-    def shutdown_one_process():
-        """Tell a worker to terminate, which will in turn wake us again"""
-        call_queue.put(None)
-        nb_shutdown_processes[0] += 1
-    while True:
-        _add_call_item_to_queue(pending_work_items,
-                                work_ids_queue,
-                                call_queue)
-
-        result_item = result_queue.get(block=True)
-        if result_item is not None:
-            work_item = pending_work_items[result_item.work_id]
-            del pending_work_items[result_item.work_id]
-
-            if result_item.exception:
-                work_item.future.set_exception(result_item.exception)
-            else:
-                work_item.future.set_result(result_item.result)
-            # Delete references to object. See issue16284
-            del work_item
-        # Check whether we should start shutting down.
-        executor = executor_reference()
-        # No more work items can be added if:
-        #   - The interpreter is shutting down OR
-        #   - The executor that owns this worker has been collected OR
-        #   - The executor that owns this worker has been shutdown.
-        if _shutdown or executor is None or executor._shutdown_thread:
-            # Since no new work items can be added, it is safe to shutdown
-            # this thread if there are no pending work items.
-            if not pending_work_items:
-                while nb_shutdown_processes[0] < len(processes):
-                    shutdown_one_process()
-                # If .join() is not called on the created processes then
-                # some multiprocessing.Queue methods may deadlock on Mac OS
-                # X.
- 
-```
-
-### Core Architecture Module: `contrib/deprecated/python/futures/concurrent/futures/thread.py`
-```
-# Copyright 2009 Brian Quinlan. All Rights Reserved.
-# Licensed to PSF under a Contributor Agreement.
-
-"""Implements ThreadPoolExecutor."""
-
-import atexit
-from concurrent.futures import _base
-import itertools
-import Queue as queue
-import threading
-import weakref
-import sys
-
-try:
-    from multiprocessing import cpu_count
-except ImportError:
-    # some platforms don't have multiprocessing
-    def cpu_count():
-        return None
-
-__author__ = 'Brian Quinlan (brian@sweetapp.com)'
-
-# Workers are created as daemon threads. This is done to allow the interpreter
-# to exit when there are still idle threads in a ThreadPoolExecutor's thread
-# pool (i.e. shutdown() was not called). However, allowing workers to die with
-# the interpreter has two undesirable properties:
-#   - The workers would still be running during interpreter shutdown,
-#     meaning that they would fail in unpredictable ways.
-#   - The workers could be killed while evaluating a work item, which could
-#     be bad if the callable being evaluated has external side-effects e.g.
-#     writing to a file.
-#
-# To work around this problem, an exit handler is installed which tells the
-# workers to exit when their work queues are empty and then waits until the
-# threads finish.
-
-_threads_queues = weakref.WeakKeyDictionary()
-_shutdown = False
-
-def _python_exit():
-    global _shutdown
-    _shutdown = True
-    items = list(_threads_queues.items()) if _threads_queues else ()
-    for t, q in items:
-        q.put(None)
-    for t, q in items:
-        t.join(sys.maxint)
-
-atexit.register(_python_exit)
-
-class _WorkItem(object):
-    def __init__(self, future, fn, args, kwargs):
-        self.future = future
-        self.fn = fn
-        self.args = args
-        self.kwargs = kwargs
-
-    def run(self):
-        if not self.future.set_running_or_notify_cancel():
-            return
-
-        try:
-            result = self.fn(*self.args, **self.kwargs)
-        except:
-            e, tb = sys.exc_info()[1:]
-            self.future.set_exception_info(e, tb)
-        else:
-            self.future.set_result(result)
-
-def _worker(executor_reference, work_queue, initializer, initargs):
-    if initializer is not None:
-        try:
-            initializer(*initargs)
-        except BaseException:
-            _base.LOGGER.critical('Exception in initializer:', exc_info=True)
-            executor = executor_reference()
-            if executor is not None:
-                executor._initializer_failed()
-            return
-    try:
-        while True:
-            work_item = work_queue.get(block=True)
-            if work_item is not None:
-                work_item.run()
-                # Delete references to object. See issue16284
-                del work_item
-
-                # attempt to increment idle count
-                executor = executor_reference()
-                if executor is not None:
-                    executor._idle_semaphore.release()
-                del executor
-                continue
-            executor = executor_reference()
-            # Exit if:
-            #   - The interpreter is shutting down OR
-            #   - The executor that owns the worker has been collected OR
-            #   - The executor that owns the worker has been shutdown.
-            if _shutdown or executor is None or executor._shutdown:
-                # Notice other workers
-                work_queue.put(None)
-                return
-            del executor
-    except:
-        _base.LOGGER.critical('Exception in worker', exc_info=True)
-
-
-class BrokenThreadPool(_base.BrokenExecutor):
-    """
-    Raised when a worker thread in a ThreadPoolExecutor failed initializing.
-    """
-
-
-class ThreadPoolExecutor(_base.Executor):
-
-    # Used to assign unique thread names when thread_name_prefix is not supplied.
-    _counter = itertools.count().next
-
-    def __init__(self, max_workers=None, thread_name_prefix='', initializer=None, initargs=()):
-        """Initializes a new ThreadPoolExecutor instance.
-
-        Args:
-            max_workers: The maximum number of threads that can be used to
-                execute the given calls.
-            thread_name_prefix: An optional name prefix to give our threads.
-        """
-        if max_workers is None:
-            # Use this number because ThreadPoolExecutor is often
-            # used to overlap I/O instead of CPU work.
-            max_workers = (cpu_count() or 1) * 5
-        if max_workers <= 0:
-            raise ValueError("max_workers must be greater than 0")
-
-        self._max_workers = max_workers
-        self._initializer = initializer
-        self._initargs = initargs
-        self._work_queue = queue.Queue()
-        self._idle_semaphore = threading.Semaphore(0)
-        self._threads = set()
-        self._broken = False
-        self._shutdown = False
-        self._shutdown_lock = threading.Lock()
-        self._thread_name_prefix = (thread_name_prefix or
-                                    ("ThreadPoolExecutor-%d" % self._counter()))
-
-    def submit(self, fn, *args, **kwargs):
-        with self._shutdown_lock:
-            if self._broken:
-                raise BrokenThreadPool(self._broken)
-            if self._shutdown:
-                raise RuntimeError('cannot schedule new futures after shutdown')
-
-            f = _base.Future()
-            w = _WorkItem(f, fn, args, kwargs)
-
-            self._work_queue.put(w)
-            self._adjust_thread_count()
-            return f
-    submit.__doc__ = _base.Executor.submit.__doc__
-
-    def _adjust_thread_count(self):
-        # if idle threads are available, don't spin new threads
-        if self._idle_semaphore.acquire(False):
-            return
-
-        # When the executor gets lost, the weakref callback will wake up
-        # the worker threads.
-        def weakref_cb(_, q=self._work_queue):
-            q.put(None)
-
-        num_threads = len(self._threads)
-        if num_threads < self._max_workers:
-            thread_name = '%s_%d' % (self._thread_name_prefix or self,
-                                     num_threads)
-            t = threading.Thread(name=thread_name, target=_worker,
-                                 args=(weakref.ref(self, weakref_cb),
-                                       self._work_queue, self._initializer, self._initargs))
-            t.daemon = True
-            t.start()
-            self._threads.add(t)
-            _threads_queues[t] = self._work_queue
-
-    def _initializer_failed(self):
-        with self._shutdown_lock:
-            self._broken = ('A thread initializer failed, the thread pool '
-                            'is not usable anymore')
-            # Drain work queue and mark pending futures failed
-            while True:
-                try:
-                    work_item = self._work_queue.get_nowait()
-                except queue.Empty:
-                    break
-                if work_item is not None:
-                    work_item.future.set_exception(BrokenThreadPool(self._broken))
-
-    def shutdown(self, wait=True):
-        with self._shutdown_lock:
-            self._shutdown = True
-            self._work_queue.put(None)
-        if wait:
-            for t in self._threads:
-                t.join(sys.maxint)
-    shutdown.__doc__ = _base.Executor.shutdown.__doc__
+        assert!(roll_end <= self.end);
+        self.buf.copy_within(roll_start..roll_end, 0);
+        self.end = self.min;
+    }
+}
 
 ```
 
-### Core Architecture Module: `contrib/deprecated/python/win-unicode-console/win_unicode_console/readline_hook.py`
+### Core Architecture Module: `contrib/crates/aho-corasick-1.1.5/src/util/byte_frequencies.rs`
+```
+pub const BYTE_FREQUENCIES: [u8; 256] = [
+    55,  // '\x00'
+    52,  // '\x01'
+    51,  // '\x02'
+    50,  // '\x03'
+    49,  // '\x04'
+    48,  // '\x05'
+    47,  // '\x06'
+    46,  // '\x07'
+    45,  // '\x08'
+    103, // '\t'
+    242, // '\n'
+    66,  // '\x0b'
+    67,  // '\x0c'
+    229, // '\r'
+    44,  // '\x0e'
+    43,  // '\x0f'
+    42,  // '\x10'
+    41,  // '\x11'
+    40,  // '\x12'
+    39,  // '\x13'
+    38,  // '\x14'
+    37,  // '\x15'
+    36,  // '\x16'
+    35,  // '\x17'
+    34,  // '\x18'
+    33,  // '\x19'
+    56,  // '\x1a'
+    32,  // '\x1b'
+    31,  // '\x1c'
+    30,  // '\x1d'
+    29,  // '\x1e'
+    28,  // '\x1f'
+    255, // ' '
+    148, // '!'
+    164, // '"'
+    149, // '#'
+    136, // '$'
+    160, // '%'
+    155, // '&'
+    173, // "'"
+    221, // '('
+    222, // ')'
+    134, // '*'
+    122, // '+'
+    232, // ','
+    202, // '-'
+    215, // '.'
+    224, // '/'
+    208, // '0'
+    220, // '1'
+    204, // '2'
+    187, // '3'
+    183, // '4'
+    179, // '5'
+    177, // '6'
+    168, // '7'
+    178, // '8'
+    200, // '9'
+    226, // ':'
+    195, // ';'
+    154, // '<'
+    184, // '='
+    174, // '>'
+    126, // '?'
+    120, // '@'
+    191, // 'A'
+    157, // 'B'
+    194, // 'C'
+    170, // 'D'
+    189, // 'E'
+    162, // 'F'
+    161, // 'G'
+    150, // 'H'
+    193, // 'I'
+    142, // 'J'
+    137, // 'K'
+    171, // 'L'
+    176, // 'M'
+    185, // 'N'
+    167, // 'O'
+    186, // 'P'
+    112, // 'Q'
+    175, // 'R'
+    192, // 'S'
+    188, // 'T'
+    156, // 'U'
+    140, // 'V'
+    143, // 'W'
+    123, // 'X'
+    133, // 'Y'
+    128, // 'Z'
+    147, // '['
+    138, // '\\'
+    146, // ']'
+    114, // '^'
+    223, // '_'
+    151, // '`'
+    249, // 'a'
+    216, // 'b'
+    238, // 'c'
+    236, // 'd'
+    253, // 'e'
+    227, // 'f'
+    218, // 'g'
+    230, // 'h'
+    247, // 'i'
+    135, // 'j'
+    180, // 'k'
+    241, // 'l'
+    233, // 'm'
+    246, // 'n'
+    244, // 'o'
+    231, // 'p'
+    139, // 'q'
+    245, // 'r'
+    243, // 's'
+    251, // 't'
+    235, // 'u'
+    201, // 'v'
+    196, // 'w'
+    240, // 'x'
+    214, // 'y'
+    152, // 'z'
+    182, // '{'
+    205, // '|'
+    181, // '}'
+    127, // '~'
+    27,  // '\x7f'
+    212, // '\x80'
+    211, // '\x81'
+    210, // '\x82'
+    213, // '\x83'
+    228, // '\x84'
+    197, // '\x85'
+    169, // '\x86'
+    159, // '\x87'
+    131, // '\x88'
+    172, // '\x89'
+    105, // '\x8a'
+    80,  // '\x8b'
+    98,  // '\x8c'
+    96,  // '\x8d'
+    97,  // '\x8e'
+    81,  // '\x8f'
+    207, // '\x90'
+    145, // '\x91'
+    116, // '\x92'
+    115, // '\x93'
+    144, // '\x94'
+    130, // '\x95'
+    153, // '\x96'
+    121, // '\x97'
+    107, // '\x98'
+    132, // '\x99'
+    109, // '\x9a'
+    110, // '\x9b'
+    124, // '\x9c'
+    111, // '\x9d'
+    82,  // '\x9e'
+    108, // '\x9f'
+    118, // '\xa0'
+    141, // '¡'
+    113, // '¢'
+    129, // '£'
+    119, // '¤'
+    125, // '¥'
+    165, // '¦'
+    117, // '§'
+    92,  // '¨'
+    106, // '©'
+    83,  // 'ª'
+    72,  // '«'
+    99,  // '¬'
+    93,  // '\xad'
+    65,  // '®'
+    79,  // '¯'
+    166, // '°'
+    237, // '±'
+    163, // '²'
+    199, // '³'
+    190, // '´'
+    225, // 'µ'
+    209, // '¶'
+    203, // '·'
+    198, // '¸'
+    217, // '¹'
+    219, // 'º'
+    206, // '»'
+    234, // '¼'
+    248, // '½'
+    158, // '¾'
+    239, // '¿'
+    255, // 'À'
+    255, // 'Á'
+    255, // 'Â'
+    255, // 'Ã'
+    255, // 'Ä'
+    255, // 'Å'
+    255, // 'Æ'
+    255, // 'Ç'
+    255, // 'È'
+    255, // 'É'
+    255, // 'Ê'
+    255, // 'Ë'
+    255, // 'Ì'
+    255, // 'Í'
+    255, // 'Î'
+    255, // 'Ï'
+    255, // 'Ð'
+    255, // 'Ñ'
+    255, // 'Ò'
+    255, // 'Ó'
+    255, // 'Ô'
+    255, // 'Õ'
+    255, // 'Ö'
+    255, // '×'
+    255, // 'Ø'
+    255, // 'Ù'
+    255, // 'Ú'
+    255, // 'Û'
+    255, // 'Ü'
+    255, // 'Ý'
+    255, // 'Þ'
+    255, // 'ß'
+    255, // 'à'
+    255, // 'á'
+    255, // 'â'
+    255, // 'ã'
+    255, // 'ä'
+    255, // 'å'
+    255, // 'æ'
+    255, // 'ç'
+    255, // 'è'
+    255, // 'é'
+    255, // 'ê'
+    255, // 'ë'
+    255, // 'ì'
+    255, // 'í'
+    255, // 'î'
+    255, // 'ï'
+    255, // 'ð'
+    255, // 'ñ'
+    255, // 'ò'
+    255, // 'ó'
+    255, // 'ô'
+    255, // 'õ'
+    255, // 'ö'
+    255, // '÷'
+    255, // 'ø'
+    255, // 'ù'
+    255, // 'ú'
+    255, // 'û'
+    255, // 'ü'
+    255, // 'ý'
+    255, // 'þ'
+    255, // 'ÿ'
+];
+
 ```
 
-from __future__ import print_function # PY2
+### Core Architecture Module: `contrib/crates/aho-corasick-1.1.5/src/util/debug.rs`
+```
+/// A type that wraps a single byte with a convenient fmt::Debug impl that
+/// escapes the byte.
+pub(crate) struct DebugByte(pub(crate) u8);
 
-import sys
-import traceback
-import warnings
-import ctypes.util
-from ctypes import (pythonapi, cdll, cast, 
-	c_char_p, c_void_p, c_size_t, CFUNCTYPE)
-
-from .info import WINDOWS
-
-try:
-	import pyreadline
-except ImportError:
-	pyreadline = None
-
-
-def get_libc():
-	if WINDOWS:
-		path = "msvcrt"
-	else:
-		path = ctypes.util.find_library("c")
-		if path is None:
-			raise RuntimeError("cannot locate libc")
-	
-	return cdll[path]
-
-LIBC = get_libc()
-
-PyMem_Malloc = pythonapi.PyMem_Malloc
-PyMem_Malloc.restype = c_size_t
-PyMem_Malloc.argtypes = [c_size_t]
-
-strncpy = LIBC.strncpy
-strncpy.restype = c_char_p
-strncpy.argtypes = [c_char_p, c_char_p, c_size_t]
-
-HOOKFUNC = CFUNCTYPE(c_char_p, c_void_p, c_void_p, c_char_p)
-
-#PyOS_ReadlineFunctionPointer = c_void_p.in_dll(pythonapi, "PyOS_ReadlineFunctionPointer")
-
-
-def new_zero_terminated_string(b):
-	p = PyMem_Malloc(len(b) + 1)
-	strncpy(cast(p, c_char_p), b, len(b) + 1)
-	return p
-
-def check_encodings():
-	if sys.stdin.encoding != sys.stdout.encoding:
-		# raise RuntimeError("sys.stdin.encoding != sys.stdout.encoding, readline hook doesn't know, which one to use to decode prompt")
-		
-		warnings.warn("sys.stdin.encoding == {!r}, whereas sys.stdout.encoding == {!r}, readline hook consumer may assume they are the same".format(sys.stdin.encoding, sys.stdout.encoding), 
-			RuntimeWarning, stacklevel=3)
-
-def stdio_readline(prompt=""):
-	sys.stdout.write(prompt)
-	sys.stdout.flush()
-	return sys.stdin.readline()
-
-
-class ReadlineHookManager:
-	def __init__(self):
-		self.readline_wrapper_ref = HOOKFUNC(self.readline_wrapper)
-		self.address = cast(self.readline_wrapper_ref, c_void_p).value
-		#self.original_address = PyOS_ReadlineFunctionPointer.value
-		self.readline_hook = None
-	
-	def readline_wrapper(self, stdin, stdout, prompt):
-		try:
-			try:
-				check_encodings()
-			except RuntimeError:
-				traceback.print_exc(file=sys.stderr)
-				try:
-					prompt = prompt.decode("utf-8")
-				except UnicodeDecodeError:
-					prompt = ""
-				
-			else:
-				prompt = prompt.decode(sys.stdout.encoding)
-			
-			try:
-				line = self.readline_hook(prompt)
-			except KeyboardInterrupt:
-				return 0
-			else:
-				return new_zero_terminated_string(line.encode(sys.stdin.encoding))
-			
-		except:
-			self.restore_original()
-			print("Internal win_unicode_console error, disabling custom readline hook...", file=sys.stderr)
-			traceback.print_exc(file=sys.stderr)
-			return new_zero_terminated_string(b"\n")
-	
-	def install_hook(self, hook):
-		self.readline_hook = hook
-		PyOS_ReadlineFunctionPointer.value = self.address
-	
-	def restore_original(self):
-		self.readline_hook = None
-		PyOS_ReadlineFunctionPointer.value = self.original_address
-
-
-class PyReadlineManager:
-	def __init__(self):
-		self.original_codepage = pyreadline.unicode_helper.pyreadline_codepage
-	
-	def set_codepage(self, codepage):
-		pyreadline.unicode_helper.pyreadline_codepage = codepage
-	
-	def restore_original(self):
-		self.set_codepage(self.original_codepage)
-
-def pyreadline_is_active():
-	if not pyreadline:
-		return False
-	
-	ref = pyreadline.console.console.readline_ref
-	if ref is None:
-		return False
-	
-	return cast(ref, c_void_p).value == PyOS_ReadlineFunctionPointer.value
-
-
-manager = ReadlineHookManager()
-
-if pyreadline:
-	pyreadline_manager = PyReadlineManager()
-
-
-# PY3 # def enable(*, use_pyreadline=True):
-def enable(use_pyreadline=True):
-	check_encodings()
-	
-	if use_pyreadline and pyreadline:
-		pyreadline_manager.set_codepage(sys.stdin.encoding)
-			# pyreadline assumes that encoding of all sys.stdio objects is the same
-		if not pyreadline_is_active():
-			manager.install_hook(stdio_readline)
-		
-	else:
-		manager.install_hook(stdio_readline)
-
-def disable():
-	if pyreadline:
-		pyreadline_manager.restore_original()
-	else:
-		manager.restore_original()
+impl core::fmt::Debug for DebugByte {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+        // Special case ASCII space. It's too hard to read otherwise, so
+        // put quotes around it. I sometimes wonder whether just '\x20' would
+        // be better...
+        if self.0 == b' ' {
+            return write!(f, "' '");
+        }
+        // 10 bytes is enough to cover any output from ascii::escape_default.
+        let mut bytes = [0u8; 10];
+        let mut len = 0;
+        for (i, mut b) in core::ascii::escape_default(self.0).enumerate() {
+            // capitalize \xab to \xAB
+            if i >= 2 && b'a' <= b && b <= b'f' {
+                b -= 32;
+            }
+            bytes[len] = b;
+            len += 1;
+        }
+        write!(f, "{}", core::str::from_utf8(&bytes[..len]).unwrap())
+    }
+}
 
 ```
 
-### Core Architecture Module: `contrib/go/_std_1.27/src/crypto/internal/randutil/randutil.go`
+### Core Architecture Module: `contrib/crates/aho-corasick-1.1.5/src/util/error.rs`
 ```
-// Copyright 2018 The Go Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
+use crate::util::{
+    primitives::{PatternID, SmallIndex},
+    search::MatchKind,
+};
 
-// Package randutil contains internal randomness utilities for various
-// crypto packages.
-package randutil
+/// An error that occurred during the construction of an Aho-Corasick
+/// automaton.
+///
+/// Build errors occur when some kind of limit has been exceeded, either in the
+/// number of states, the number of patterns of the length of a pattern. These
+/// limits aren't part of the public API, but they should generally be large
+/// enough to handle most use cases.
+///
+/// When the `std` feature is enabled, this implements the `std::error::Error`
+/// trait.
+#[derive(Clone, Debug)]
+pub struct BuildError {
+    kind: ErrorKind,
+}
 
-import (
-	"io"
-	"math/rand/v2"
-)
+/// The kind of error that occurred.
+#[derive(Clone, Debug)]
+enum ErrorKind {
+    /// An error that occurs when allocating a new state would result in an
+    /// identifier that exceeds the capacity of a `StateID`.
+    StateIDOverflow {
+        /// The maximum possible id.
+        max: u64,
+        /// The maximum ID requested.
+        requested_max: u64,
+    },
+    /// An error that occurs when adding a pattern to an Aho-Corasick
+    /// automaton would result in an identifier that exceeds the capacity of a
+    /// `PatternID`.
+    PatternIDOverflow {
+        /// The maximum possible id.
+        max: u64,
+        /// The maximum ID requested.
+        requested_max: u64,
+    },
+    /// Occurs when a pattern string is given to the Aho-Corasick constructor
+    /// that is too long.
+    PatternTooLong {
+        /// The ID of the pattern that was too long.
+        pattern: PatternID,
+        /// The length that was too long.
+        len: usize,
+    },
+}
 
-// MaybeReadByte reads a single byte from r with 50% probability. This is used
-// to ensure that callers do not depend on non-guaranteed behaviour, e.g.
-// assuming that rsa.GenerateKey is deterministic w.r.t. a given random stream.
+impl BuildError {
+    pub(crate) fn state_id_overflow(
+        max: u64,
+        requested_max: u64,
+    ) -> BuildError {
+        BuildError { kind: ErrorKind::StateIDOverflow { max, requested_max } }
+    }
+
+    pub(crate) fn pattern_id_overflow(
+        max: u64,
+        requested_max: u64,
+    ) -> BuildError {
+        BuildError {
+            kind: ErrorKind::PatternIDOverflow { max, requested_max },
+        }
+    }
+
+    pub(crate) fn pattern_too_long(
+        pattern: PatternID,
+        len: usize,
+    ) -> BuildError {
+        BuildError { kind: ErrorKind::PatternTooLong { pattern, len } }
+    }
+}
+
+#[cfg(feature = "std")]
+impl std::error::Error for BuildError {}
+
+impl core::fmt::Display for BuildError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match self.kind {
+            ErrorKind::StateIDOverflow { max, requested_max } => {
+                write!(
+                    f,
+                    "state identifier overflow: failed to create state ID \
+                     from {}, which exceeds the max of {}",
+                    requested_max, max,
+                )
+            }
+            ErrorKind::PatternIDOverflow { max, requested_max } => {
+                write!(
+                    f,
+                    "pattern identifier overflow: failed to create pattern ID \
+                     from {}, which exceeds the max of {}",
+                    requested_max, max,
+                )
+            }
+            ErrorKind::PatternTooLong { pattern, len } => {
+                write!(
+                    f,
+                    "pattern {} with length {} exceeds \
+                     the maximum pattern length of {}",
+                    pattern.as_usize(),
+                    len,
+                    SmallIndex::MAX.as_usize(),
+                )
+            }
+        }
+    }
+}
+
+/// An error that occurred during an Aho-Corasick search.
+///
+/// An error that occurs during a search is limited to some kind of
+/// misconfiguration that resulted in an illegal call. Stated differently,
+/// whether an error occurs is not dependent on the specific bytes in the
+/// haystack.
+///
+/// Examples of misconfiguration:
+///
+/// * Executing a stream or overlapping search on a searcher that was built was
+/// something other than [`MatchKind::Standard`](crate::MatchKind::Standard)
+/// semantics.
+/// * Requested an anchored or an unanchored search on a searcher that doesn't
+/// support unanchored or anchored searches, respectively.
+///
+/// When the `std` feature is enabled, this implements the `std::error::Error`
+/// trait.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct MatchError(alloc::boxed::Box<MatchErrorKind>);
+
+impl MatchError {
+    /// Create a new error value with the given kind.
+    ///
+    /// This is a more verbose version of the kind-specific constructors, e.g.,
+    /// `MatchError::unsupported_stream`.
+    pub fn new(kind: MatchErrorKind) -> MatchError {
+        MatchError(alloc::boxed::Box::new(kind))
+    }
+
+    /// Returns a reference to the underlying error kind.
+    pub fn kind(&self) -> &MatchErrorKind {
+        &self.0
+    }
+
+    /// Create a new "invalid anchored search" error. This occurs when the
+    /// caller requests an anchored search but where anchored searches aren't
+    /// supported.
+    ///
+    /// This is the same as calling `MatchError::new` with a
+    /// [`MatchErrorKind::InvalidInputAnchored`] kind.
+    pub fn invalid_input_anchored() -> MatchError {
+        MatchError::new(MatchErrorKind::InvalidInputAnchored)
+    }
+
+    /// Create a new "invalid unanchored search" error. This occurs when the
+    /// caller requests an unanchored search but where unanchored searches
+    /// aren't supported.
+    ///
+    /// This is the same as calling `MatchError::new` with a
+    /// [`MatchErrorKind::InvalidInputUnanchored`] kind.
+    pub fn invalid_input_unanchored() -> MatchError {
+        MatchError::new(MatchErrorKind::InvalidInputUnanchored)
+    }
+
+    /// Create a new "unsupported stream search" error. This occurs when the
+    /// caller requests a stream search while using an Aho-Corasick automaton
+    /// with a match kind other than [`MatchKind::Standard`].
+    ///
+    /// The match kind given should be the match kind of the automaton. It
+    /// should never be `MatchKind::Standard`.
+    pub fn unsupported_stream(got: MatchKind) -> MatchError {
+        MatchError::new(MatchErrorKind::UnsupportedStream { got })
+    }
+
+    /// Create a new "unsupported overlapping search" error. This occurs when
+    /// the caller requests an overlapping search while using an Aho-Corasick
+    /// automaton with a match kind other than [`MatchKind::Standard`].
+    ///
+    /// The match kind given should be the match kind of the automaton. It
+    /// should never be `MatchKind::Standard`.
+    pub fn unsupported_overlapping(got: MatchKind) -> MatchError {
+        MatchError::new(MatchErrorKind::UnsupportedOverlapping { got })
+    }
+
+    /// Create a new "unsupported empty pattern" error. This occurs when the
+    /// caller requests a search for which matching an automaton that contains
+    /// an empty pattern string is not supported.
+    pub fn unsupported_empty() -> MatchError {
+        MatchError::new(MatchErrorKind::UnsupportedEmpty)
+    }
+}
+
+/// The underlying kind of a [`MatchError`].
+///
+/// This is a **non-exhaustive** enum. That means new variants may be added in
+/// a semver-compatible release.
+#[non_exhaustive]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum MatchErrorKind {
+    /// An error indicating that an anchored search was requested, but from a
+    /// searcher that was built without anchored support.
+    InvalidInputAnchored,
+    /// An error indicating that an unanchored search was requested, but from a
+    /// searcher that was built without unanchored support.
+    InvalidInputUnanchored,
+    /// An error indicating that a stream search was attempted on an
+    /// Aho-Corasick automaton with an unsupported `MatchKind`.
+    UnsupportedStream {
+        /// The match semantics for the automaton that was used.
+        got: MatchKind,
+    },
+    /// An error indicating that an overlapping search was attempted on an
+    /// Aho-Corasick automaton with an unsupported `MatchKind`.
+    UnsupportedOverlapping {
+        /// The match semantics for the automaton that was used.
+        got: MatchKind,
+    },
+    /// An error indicating that the operation requested doesn't support
+    /// automatons that contain an empty pattern string.
+    UnsupportedEmpty,
+}
+
+#[cfg(feature = "std")]
+impl std::error::Error for MatchError {}
+
+impl core::fmt::Display for MatchError {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+        match *self.kind() {
+            MatchErrorKind::InvalidInputAnchored => {
+                write!(f, "anchored searches are not supported or enabled")
+            }
+            MatchErrorKind::InvalidInputUnanchored => {
+                write!(f, "unanchored searches are not supported or enabled")
+            }
+            MatchErrorKind::UnsupportedStream { got } => {
+                write!(
+                    f,
+                    "match kind {:?} does not support stream searching",
+                    got,
+                )
+            }
+            MatchErrorKind::UnsupportedOverlapping { got } => {
+                write!(
+                    f,
+                    "match kind {:?} does not support overlapping searches",
+                    got,
+                )
+            }
+            MatchErrorKind::UnsupportedEmpty => {
+                write!(
+                    f,
+                    "matching with an empty pattern string is not \
+                     supported for this operation",
+                )
+            }
+        }
+    }
+}
+
+```
+
+### Core Architecture Module: `contrib/crates/aho-corasick-1.1.5/src/util/int.rs`
+```
+/*!
+This module provides several integer oriented traits for converting between
+both fixed size integers and integers whose size varies based on the target
+(like `usize`).
+
+The main design principle for this module is to centralize all uses of `as`.
+The thinking here is that `as` makes it very easy to perform accidental lossy
+conversions, and if we centralize all its uses here under more descriptive
+higher level operations, its use and correctness becomes easier to audit.
+
+This was copied mostly wholesale from `regex-automata`.
+
+NOTE: for simplicity, we don't take target pointer width into account here for
+`usize` conversions. Since we currently only panic in debug mode, skipping the
+check when it can be proven it isn't needed at compile time doesn't really
+matter. Now, if we wind up wanting to do as many checks as possible in release
+mode, then we would want to skip those when we know the conversions are always
+non-lossy.
+*/
+
+// We define a little more than what we need, but I'd rather just have
+// everything via a consistent and uniform API then have holes.
+#![allow(dead_code)]
+
+pub(crate) trait U8 {
+    fn as_usize(self) -> usize;
+}
+
+impl U8 for u8 {
+    fn as_usize(self) -> usize {
+        usize::from(self)
+    }
+}
+
+pub(crate) trait U16 {
+    fn as_usize(self) -> usize;
+    fn low_u8(self) -> u8;
+    fn high_u8(self) -> u8;
+}
+
+impl U16 for u16 {
+    fn as_usize(self) -> usize {
+        usize::from(self)
+    }
+
+    fn low_u8(self) -> u8 {
+        self as u8
+    }
+
+    fn high_u8(self) -> u8 {
+        (self >> 8) as u8
+    }
+}
+
+pub(crate) trait U32 {
+    fn as_usize(self) -> usize;
+    fn low_u8(self) -> u8;
+    fn low_u16(self) -> u16;
+    fn high_u16(self) -> u16;
+}
+
+impl U32 for u32 {
+    #[inline]
+    fn as_usize(self) -> usize {
+        #[cfg(debug_assertions)]
+        {
+            usize::try_from(self).expect("u32 overflowed usize")
+        }
+        #[cfg(not(debug_assertions))]
+        {
+            self as usize
+        }
+    }
+
+    fn low_u8(self) -> u8 {
+        self as u8
+    }
+
+    fn low_u16(self) -> u16 {
+        self as u16
+    }
+
+    fn high_u16(self) -> u16 {
+        (self >> 16) as u16
+    }
+}
+
+pub(crate) trait U64 {
+    fn as_usize(self) -> usize;
+    fn low_u8(self) -> u8;
+    fn low_u16(self) -> u16;
+    fn low_u32(self) -> u32;
+    fn high_u32(self) -> u32;
+}
+
+impl U64 for u64 {
+    fn as_usize(self) -> usize {
+        #[cfg(debug_assertions)]
+        {
+            usize::try_from(self).expect("u64 overflowed usize")
+        }
+        #[cfg(not(debug_assertions))]
+        {
+            self as usize
+        }
+    }
+
+    fn low_u8(self) -> u8 {
+        self as u8
+    }
+
+    fn low_u16(self) -> u16 {
+        self as u16
+    }
+
+    fn low_u32(self) -> u32 {
+        self as u32
+    }
+
+    fn high_u32(self) -> u32 {
+        (self >> 32) as u32
+    }
+}
+
+pub(crate) trait I8 {
+    fn as_usize(self) -> usize;
+    fn to_bits(self) -> u8;
+    fn from_bits(n: u8) -> i8;
+}
+
+impl I8 for i8 {
+    fn as_usize(self) -> usize {
+        #[cfg(debug_assertions)]
+        {
+            usize::try_from(self).expect("i8 overflowed usize")
+        }
+        #[cfg(not(debug_assertions))]
+        {
+            self as usize
+        }
+    }
+
+    fn to_bits(self) -> u8 {
+        self as u8
+    }
+
+    fn from_bits(n: u8) -> i8 {
+        n as i8
+    }
+}
+
+pub(crate) trait I32 {
+    fn as_usize(self) -> usize;
+    fn to_bits(self) -> u32;
+    fn from_bits(n: u32) -> i32;
+}
+
+impl I32 for i32 {
+    fn as_usize(self) -> usize {
+        #[cfg(debug_assertions)]
+        {
+            usize::try_from(self).expect("i32 overflowed usize")
+        }
+        #[cfg(not(debug_assertions))]
+        {
+            self as usize
+        }
+    }
+
+    fn to_bits(self) -> u32 {
+        self as u32
+    }
+
+    fn from_bits(n: u32) -> i32 {
+        n as i32
+    }
+}
+
+pub(crate) trait I64 {
+    fn as_usize(self) -> usize;
+    fn to_bits(self) -> u64;
+    fn from_bits(n: u64) -> i64;
+}
+
+impl I64 for i64 {
+    fn as_usize(self) -> usize {
+        #[cfg(debug_assertions)]
+        {
+            usize::try_from(self).expect("i64 overflowed usize")
+        }
+        #[cfg(not(debug_assertions))]
+        {
+            self as usize
+        }
+    }
+
+    fn to_bits(self) -> u64 {
+        self as u64
+    }
+
+    fn from_bits(n: u64) -> i64 {
+        n as i64
+    }
+}
+
+pub(crate) trait Usize {
+    fn as_u8(self) -> u8;
+    fn as_u16(self) -> u16;
+    fn as_u32(self) -> u32;
+    fn as_u64(self) -> u64;
+}
+
+impl Usize for usize {
+    fn as_u8(self) -> u8 {
+        #[cfg(debug_assertions)]
+        {
+            u8::try_from(self).expect("usize overflowed u8")
+        }
+        #[cfg(not(debug_assertions))]
+        {
+            self as u8
+        }
+    }
+
+    fn as_u16(self) -> u16 {
+        #[cfg(debug_assertions)]
+        {
+            u16::try_from(self).expect("usize overflowed u16")
+        }
+        #[cfg(not(debug_assertions))]
+        {
+            self as u16
+        }
+    }
+
+    fn as_u32(self) -> u32 {
+        #[cfg(debug_assertions)]
+        {
+            u32::try_from(self).expect("usize overflowed u32")
+        }
+        #[cfg(not(debug_assertions))]
+        {
+            self as u32
+        }
+    }
+
+    fn as_u64(self) -> u64 {
+        #[cfg(debug_assertions)]
+        {
+            u64::try_from(self).expect("usize overflowed u64")
+        }
+        #[cfg(not(debug_assertions))]
+        {
+            self as u64
+        }
+    }
+}
+
+// Pointers aren't integers, but we convert pointers to integers to perform
+// offset arithmetic in some places. (And no, we don't convert the integers
+// back to pointers.) So add 'as_usize' conversions here too for completeness.
 //
-// This does not affect tests that pass a stream of fixed bytes as the random
-// source (e.g. a zeroReader).
-func MaybeReadByte(r io.Reader) {
-	if rand.Uint64()&1 == 1 {
-		return
-	}
-	var buf [1]byte
-	r.Read(buf[:])
+// These 'as' casts are actually okay because they're always non-lossy. But the
+// idea here is to just try and remove as much 'as' as possible, particularly
+// in this crate where we are being really paranoid about offsets and making
+// sure we don't panic on inputs that might be untrusted. This way, the 'as'
+// casts become easier to audit if they're all in one place, even when some of
+// them are actually okay 100% of the time.
+
+pub(crate) trait Pointer {
+    fn as_usize(self) -> usize;
+}
+
+impl<T> Pointer for *const T {
+    fn as_usize(self) -> usize {
+        self as usize
+    }
 }
 
 ```
 
-### Core Architecture Module: `contrib/go/_std_1.27/src/crypto/rand/util.go`
+### Core Architecture Module: `contrib/crates/aho-corasick-1.1.5/src/util/mod.rs`
 ```
-// Copyright 2011 The Go Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
+pub(crate) mod alphabet;
+#[cfg(feature = "std")]
+pub(crate) mod buffer;
+pub(crate) mod byte_frequencies;
+pub(crate) mod debug;
+pub(crate) mod error;
+pub(crate) mod int;
+pub(crate) mod prefilter;
+pub(crate) mod primitives;
+pub(crate) mod remapper;
+pub(crate) mod search;
+pub(crate) mod special;
 
-package rand
+```
 
-import (
-	"crypto/internal/fips140only"
-	"crypto/internal/rand"
-	"errors"
-	"io"
-	"math/big"
-)
+### Core Architecture Module: `contrib/crates/aho-corasick-1.1.5/src/util/prefilter.rs`
+```
+use core::{
+    cmp,
+    fmt::Debug,
+    panic::{RefUnwindSafe, UnwindSafe},
+    u8,
+};
 
-// Prime returns a number of the given bit length that is prime with high probability.
-// Prime will return error for any error returned by rand.Read or if bits < 2.
-//
-// Since Go 1.26, a secure source of random bytes is always used, and the Reader is
-// ignored unless GODEBUG=cryptocustomrand=1 is set. This setting will be removed
-// in a future Go release. Instead, use [testing/cryptotest.SetGlobalRandom].
-func Prime(r io.Reader, bits int) (*big.Int, error) {
-	if fips140only.Enforced() {
-		return nil, errors.New("crypto/rand: use of Prime is not allowed in FIPS 140-only mode")
-	}
-	if bits < 2 {
-		return nil, errors.New("crypto/rand: prime size must be at least 2-bit")
-	}
+use alloc::{sync::Arc, vec, vec::Vec};
 
-	r = rand.CustomReader(r)
+use crate::{
+    packed,
+    util::{
+        alphabet::ByteSet,
+        search::{Match, MatchKind, Span},
+    },
+};
 
-	b := uint(bits % 8)
-	if b == 0 {
-		b = 8
-	}
-
-	bytes := make([]byte, (bits+7)/8)
-	p := new(big.Int)
-
-	for {
-		if _, err := io.ReadFull(r, bytes); err != nil {
-			return nil, err
-		}
-
-		// Clear bits in the first byte to make sure the candidate has a size <= bits.
-		bytes[0] &= uint8(int(1<<b) - 1)
-		// Don't let the value be too small, i.e, set the most significant two bits.
-		// Setting the top two bits, rather than just the top bit,
-		// means that when two of these values are multiplied together,
-		// the result isn't ever one bit short.
-		if b >= 2 {
-			bytes[0] |= 3 << (b - 2)
-		} else {
-			// Here b==1, because b cannot be zero.
-			bytes[0] |= 1
-			if len(bytes) > 1 {
-				bytes[1] |= 0x80
-			}
-		}
-		// Make the value odd since an even number this large certainly isn't prime.
-		bytes[len(bytes)-1] |= 1
-
-		p.SetBytes(bytes)
-		if p.ProbablyPrime(20) {
-			return p, nil
-		}
-	}
+/// A prefilter for accelerating a search.
+///
+/// This crate uses prefilters in the core search implementations to accelerate
+/// common cases. They typically only apply to cases where there are a small
+/// number of patterns (less than 100 or so), but when they do, thoughput can
+/// be boosted considerably, perhaps by an order of magnitude. When a prefilter
+/// is active, it is used whenever a search enters an automaton's start state.
+///
+/// Currently, prefilters cannot be constructed by
+/// callers. A `Prefilter` can only be accessed via the
+/// [`Automaton::prefilter`](crate::automaton::Automaton::prefilter)
+/// method and used to execute a search. In other words, a prefilter can be
+/// used to optimize your own search implementation if necessary, but cannot do
+/// much else. If you have a use case for more APIs, please submit an issue.
+#[derive(Clone, Debug)]
+pub struct Prefilter {
+    finder: Arc<dyn PrefilterI>,
+    memory_usage: usize,
 }
 
-// Int returns a uniform random value in [0, max). It panics if max <= 0, and
-// returns an error if rand.Read returns one.
-func Int(rand io.Reader, max *big.Int) (n *big.Int, err error) {
-	if max.Sign() <= 0 {
-		panic("crypto/rand: argument to Int is <= 0")
-	}
-	n = new(big.Int)
-	n.Sub(max, n.SetUint64(1))
-	// bitLen is the maximum bit length needed to encode a value < max.
-	bitLen := n.BitLen()
-	if bitLen == 0 {
-		// the only valid result is 0
-		return
-	}
-	// k is the maximum byte length needed to encode a value < max.
-	k := (bitLen + 7) / 8
-	// b is the number of bits in the most significant byte of max-1.
-	b := uint(bitLen % 8)
-	if b == 0 {
-		b = 8
-	}
+impl Prefilter {
+    /// Execute a search in the haystack within the span given. If a match or
+    /// a possible match is returned, then it is guaranteed to occur within
+    /// the bounds of the span.
+    ///
+    /// If the span provided is invalid for the given haystack, then behavior
+    /// is unspecified.
+    #[inline]
+    pub fn find_in(&self, haystack: &[u8], span: Span) -> Candidate {
+        self.finder.find_in(haystack, span)
+    }
 
-	bytes := make([]byte, k)
+    #[inline]
+    pub(crate) fn memory_usage(&self) -> usize {
+        self.memory_usage
+    }
+}
 
-	for {
-		_, err = io.ReadFull(rand, bytes)
-		if err != nil {
-			return nil, err
-		}
+/// A candidate is the result of running a prefilter on a haystack at a
+/// particular position.
+///
+/// The result is either no match, a confirmed match or a possible match.
+///
+/// When no match is returned, the prefilter is guaranteeing that no possible
+/// match can be found in the haystack, and the caller may trust this. That is,
+/// all correct prefilters must never report false negatives.
+///
+/// In some cases, a prefilter can confirm a match very quickly, in which case,
+/// the caller may use this to stop what it's doing and report the match. In
+/// this case, prefilter implementations must never report a false positive.
+/// In other cases, the prefilter can only report a potential match, in which
+/// case the callers must attempt to confirm the match. In this case, prefilter
+/// implementations are permitted to return false positives.
+#[derive(Clone, Debug)]
+pub enum Candidate {
+    /// No match was found. Since false negatives are not possible, this means
+    /// the search can quit as it is guaranteed not to find another match.
+    None,
+    /// A confirmed match was found. Callers do not need to confirm it.
+    Match(Match),
+    /// The start of a possible match was found. Callers must confirm it before
+    /// reporting it as a match.
+    PossibleStartOfMatch(usize),
+}
 
-		// Clear bits in the first byte to increase the probability
-		// that the candidate is < max.
-		bytes[0] &= uint8(int(1<<b) - 1)
+impl Candidate {
+    /// Convert this candidate into an option. This is useful when callers
+    /// do not distinguish between true positives and false positives (i.e.,
+    /// the caller must always confirm the match).
+    pub fn into_option(self) -> Option<usize> {
+        match self {
+            Candidate::None => None,
+            Candidate::Match(ref m) => Some(m.start()),
+            Candidate::PossibleStartOfMatch(start) => Some(start),
+        }
+    }
+}
 
-		n.SetBytes(bytes)
-		if n.Cmp(max) < 0 {
-			return
-		}
-	}
+/// A prefilter describes the behavior of fast literal scanners for quickly
+/// skipping past bytes in the haystack that we know cannot possibly
+/// participate in a match.
+trait PrefilterI:
+    Send + Sync + RefUnwindSafe + UnwindSafe + Debug + 'static
+{
+    /// Returns the next possible match candidate. This may yield false
+    /// positives, so callers must confirm a match starting at the position
+    /// returned. This, however, must never produce false negatives. That is,
+    /// this must, at minimum, return the starting position of the next match
+    /// in the given haystack after or at the given position.
+    fn find_in(&self, haystack: &[u8], span: Span) -> Candidate;
+}
+
+impl<P: PrefilterI + ?Sized> PrefilterI for Arc<P> {
+    #[inline(always)]
+    fn find_in(&self, haystack: &[u8], span: Span) -> Candidate {
+        (**self).find_in(haystack, span)
+    }
+}
+
+/// A builder for constructing the best possible prefilter. When constructed,
+/// this builder will heuristically select the best prefilter it can build,
+/// if any, and discard the rest.
+#[derive(Debug)]
+pub(crate) struct Builder {
+    count: usize,
+    ascii_case_insensitive: bool,
+    start_bytes: StartBytesBuilder,
+    rare_bytes: RareBytesBuilder,
+    memmem: MemmemBuilder,
+    packed: Option<packed::Builder>,
+    // If we run across a condition that suggests we shouldn't use a prefilter
+    // at all (like an empty pattern), then disable prefilters entirely.
+    enabled: bool,
+}
+
+impl Builder {
+    /// Create a new builder for constructing the best possible prefilter.
+    pub(crate) fn new(kind: MatchKind) -> Builder {
+        let pbuilder = kind
+            .as_packed()
+            .map(|kind| packed::Config::new().match_kind(kind).builder());
+        Builder {
+            count: 0,
+            ascii_case_insensitive: false,
+            start_bytes: StartBytesBuilder::new(),
+            rare_bytes: RareBytesBuilder::new(),
+            memmem: MemmemBuilder::default(),
+            packed: pbuilder,
+            enabled: true,
+        }
+    }
+
+    /// Enable ASCII case insensitivity. When set, byte strings added to this
+    /// builder will be interpreted without respect to ASCII case.
+    pub(crate) fn ascii_case_insensitive(mut self, yes: bool) -> Builder {
+        self.ascii_case_insensitive = yes;
+        self.start_bytes = self.start_bytes.ascii_case_insensitive(yes);
+        self.rare_bytes = self.rare_bytes.ascii_case_insensitive(yes);
+        self
+    }
+
+    /// Return a prefilter suitable for quickly finding potential matches.
+    ///
+    /// All patterns added to an Aho-Corasick automaton should be added to this
+    /// builder before attempting to construct the prefilter.
+    pub(crate) fn build(&self) -> Option<Prefilter> {
+        if !self.enabled {
+            debug!("prefilter not enabled, skipping");
+            return None;
+        }
+        // If we only have one pattern, then deferring to memmem is always
+        // the best choice. This is kind of a weird case, because, well, why
+        // use Aho-Corasick if you only have one pattern? But maybe you don't
+        // know exactly how many patterns you'll get up front, and you need to
+        // support the option of multiple patterns. So instead of relying on
+        // the caller to branch and use memmem explicitly, we just do it for
+        // them.
+        if !self.ascii_case_insensitive {
+            if let Some(pre) = self.memmem.build() {
+                debug!("using memmem prefilter");
+                return Some(pre);
+            }
+        }
+        let (packed, patlen, minlen) = if self.ascii_case_insensitive {
+            (None, usize::MAX, 0)
+        } else {
+            let patlen = self.packed.as_ref().map_or(usize::MAX, |p| p.len());
+            let minlen = self.packed.as_ref().map_or(0, |p| p.minimum_len());
+            let packed =
+                self.packed.as_ref().and_then(|b| b.build()).map(|s| {
+                    let memory_usage = s.memory_usage();
+                    debug!(
+                        "built packed prefilter (len: {}, \
+                         minimum pattern len: {}, memory usage: {}) \
+                         for consideration",
+                        patlen, minlen, memory_usage,
+                    );
+                    Prefilter { finder: Arc::new(Packed(s)), memory_usage }
+                });
+            (packed, patlen, minlen)
+        };
+        match (self.start_bytes.build(), self.rare_bytes.build()) {
+            // If we could build both start and rare prefilters, then there are
+            // a few cases in which we'd want to use the start-byte prefilter
+            // over the rare-byte prefilter, since the former has lower
+            // overhead.
+            (prestart @ Some(_), prerare @ Some(_)) => {
+                debug!(
+                    "both start (len={}, rank={}) and \
+                     rare (len={}, rank={}) byte prefilters \
+                     are available",
+                    self.start_bytes.count,
+                    self.start_bytes.rank_sum,
+                    self.rare_bytes.count,
+                    self.rare_bytes.rank_sum,
+                );
+                if patlen <= 16
+                    && minlen >= 2
+                    && self.start_bytes.count >= 3
+                    && self.rare_bytes.count >= 3
+                {
+                    debug!(
+                        "start and rare byte prefilters available, but \
+                             they're probably slower than packed so using \
+                             packed"
+                    );
+                    return packed;
+                }
+                // If the start-byte prefilter can scan for a smaller number
+                // of bytes than the rare-byte prefilter, then it's probably
+                // faster.
+                let has_fewer_bytes =
+                    self.start_bytes.count < self.rare_bytes.count;
+                // Otherwise, if the combined frequency rank of the detected
+                // bytes in the start-byte prefilter is "close" to the combined
+                // frequency rank of the rare-byte prefilter, then we pick
+                // the start-byte prefilter even if the rare-byte prefilter
+                // heuristically searches for rare bytes. This is because the
+                // rare-byte prefilter has higher constant costs, so we tend to
+                // prefer the start-byte prefilter when we can.
+             
+```
+
+### Core Architecture Module: `contrib/crates/aho-corasick-1.1.5/src/util/primitives.rs`
+```
+/*!
+Lower level primitive types that are useful in a variety of circumstances.
+
+# Overview
+
+This list represents the principle types in this module and briefly describes
+when you might want to use them.
+
+* [`PatternID`] - A type that represents the identifier of a regex pattern.
+This is probably the most widely used type in this module (which is why it's
+also re-exported in the crate root).
+* [`StateID`] - A type the represents the identifier of a finite automaton
+state. This is used for both NFAs and DFAs, with the notable exception of
+the hybrid NFA/DFA. (The hybrid NFA/DFA uses a special purpose "lazy" state
+identifier.)
+* [`SmallIndex`] - The internal representation of both a `PatternID` and a
+`StateID`. Its purpose is to serve as a type that can index memory without
+being as big as a `usize` on 64-bit targets. The main idea behind this type
+is that there are many things in regex engines that will, in practice, never
+overflow a 32-bit integer. (For example, like the number of patterns in a regex
+or the number of states in an NFA.) Thus, a `SmallIndex` can be used to index
+memory without peppering `as` casts everywhere. Moreover, it forces callers
+to handle errors in the case where, somehow, the value would otherwise overflow
+either a 32-bit integer or a `usize` (e.g., on 16-bit targets).
+*/
+
+// The macro we use to define some types below adds methods that we don't
+// use on some of the types. There isn't much, so we just squash the warning.
+#![allow(dead_code)]
+
+use alloc::vec::Vec;
+
+use crate::util::int::{Usize, U16, U32, U64};
+
+/// A type that represents a "small" index.
+///
+/// The main idea of this type is to provide something that can index memory,
+/// but uses less memory than `usize` on 64-bit systems. Specifically, its
+/// representation is always a `u32` and has `repr(transparent)` enabled. (So
+/// it is safe to transmute between a `u32` and a `SmallIndex`.)
+///
+/// A small index is typically useful in cases where there is no practical way
+/// that the index will overflow a 32-bit integer. A good example of this is
+/// an NFA state. If you could somehow build an NFA with `2^30` states, its
+/// memory usage would be exorbitant and its runtime execution would be so
+/// slow as to be completely worthless. Therefore, this crate generally deems
+/// it acceptable to return an error if it would otherwise build an NFA that
+/// requires a slice longer than what a 32-bit integer can index. In exchange,
+/// we can use 32-bit indices instead of 64-bit indices in various places.
+///
+/// This type ensures this by providing a constructor that will return an error
+/// if its argument cannot fit into the type. This makes it much easier to
+/// handle these sorts of boundary cases that are otherwise extremely subtle.
+///
+/// On all targets, this type guarantees that its value will fit in a `u32`,
+/// `i32`, `usize` and an `isize`. This means that on 16-bit targets, for
+/// example, this type's maximum value will never overflow an `isize`,
+/// which means it will never overflow a `i16` even though its internal
+/// representation is still a `u32`.
+///
+/// The purpose for making the type fit into even signed integer types like
+/// `isize` is to guarantee that the difference between any two small indices
+/// is itself also a small index. This is useful in certain contexts, e.g.,
+/// for delta encoding.
+///
+/// # Other types
+///
+/// The following types wrap `SmallIndex` to provide a more focused use case:
+///
+/// * [`PatternID`] is for representing the identifiers of patterns.
+/// * [`StateID`] is for representing the identifiers of states in finite
+/// automata. It is used for both NFAs and DFAs.
+///
+/// # Representation
+///
+/// This type is always represented internally by a `u32` and is marked as
+/// `repr(transparent)`. Thus, this type always has the same representation as
+/// a `u32`. It is thus safe to transmute between a `u32` and a `SmallIndex`.
+///
+/// # Indexing
+///
+/// For convenience, callers may use a `SmallIndex` to index slices.
+///
+/// # Safety
+///
+/// While a `SmallIndex` is meant to guarantee that its value fits into `usize`
+/// without using as much space as a `usize` on all targets, callers must
+/// not rely on this property for safety. Callers may choose to rely on this
+/// property for correctness however. For example, creating a `SmallIndex` with
+/// an invalid value can be done in entirely safe code. This may in turn result
+/// in panics or silent logical errors.
+#[derive(
+    Clone, Copy, Debug, Default, Eq, Hash, PartialEq, PartialOrd, Ord,
+)]
+#[repr(transparent)]
+pub(crate) struct SmallIndex(u32);
+
+impl SmallIndex {
+    /// The maximum index value.
+    #[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
+    pub const MAX: SmallIndex =
+        // FIXME: Use as_usize() once const functions in traits are stable.
+        SmallIndex::new_unchecked(core::i32::MAX as usize - 1);
+
+    /// The maximum index value.
+    #[cfg(target_pointer_width = "16")]
+    pub const MAX: SmallIndex =
+        SmallIndex::new_unchecked(core::isize::MAX - 1);
+
+    /// The total number of values that can be represented as a small index.
+    pub const LIMIT: usize = SmallIndex::MAX.as_usize() + 1;
+
+    /// The zero index value.
+    pub const ZERO: SmallIndex = SmallIndex::new_unchecked(0);
+
+    /// The number of bytes that a single small index uses in memory.
+    pub const SIZE: usize = core::mem::size_of::<SmallIndex>();
+
+    /// Create a new small index.
+    ///
+    /// If the given index exceeds [`SmallIndex::MAX`], then this returns
+    /// an error.
+    #[inline]
+    pub fn new(index: usize) -> Result<SmallIndex, SmallIndexError> {
+        SmallIndex::try_from(index)
+    }
+
+    /// Create a new small index without checking whether the given value
+    /// exceeds [`SmallIndex::MAX`].
+    ///
+    /// Using this routine with an invalid index value will result in
+    /// unspecified behavior, but *not* undefined behavior. In particular, an
+    /// invalid index value is likely to cause panics or possibly even silent
+    /// logical errors.
+    ///
+    /// Callers must never rely on a `SmallIndex` to be within a certain range
+    /// for memory safety.
+    #[inline]
+    pub const fn new_unchecked(index: usize) -> SmallIndex {
+        // FIXME: Use as_u32() once const functions in traits are stable.
+        SmallIndex::from_u32_unchecked(index as u32)
+    }
+
+    /// Create a new small index from a `u32` without checking whether the
+    /// given value exceeds [`SmallIndex::MAX`].
+    ///
+    /// Using this routine with an invalid index value will result in
+    /// unspecified behavior, but *not* undefined behavior. In particular, an
+    /// invalid index value is likely to cause panics or possibly even silent
+    /// logical errors.
+    ///
+    /// Callers must never rely on a `SmallIndex` to be within a certain range
+    /// for memory safety.
+    #[inline]
+    pub const fn from_u32_unchecked(index: u32) -> SmallIndex {
+        SmallIndex(index)
+    }
+
+    /// Like [`SmallIndex::new`], but panics if the given index is not valid.
+    #[inline]
+    pub fn must(index: usize) -> SmallIndex {
+        SmallIndex::new(index).expect("invalid small index")
+    }
+
+    /// Return this small index as a `usize`. This is guaranteed to never
+    /// overflow `usize`.
+    #[inline]
+    pub const fn as_usize(&self) -> usize {
+        // FIXME: Use as_usize() once const functions in traits are stable.
+        self.0 as usize
+    }
+
+    /// Return this small index as a `u64`. This is guaranteed to never
+    /// overflow.
+    #[inline]
+    pub const fn as_u64(&self) -> u64 {
+        // FIXME: Use u64::from() once const functions in traits are stable.
+        self.0 as u64
+    }
+
+    /// Return the internal `u32` of this small index. This is guaranteed to
+    /// never overflow `u32`.
+    #[inline]
+    pub const fn as_u32(&self) -> u32 {
+        self.0
+    }
+
+    /// Return the internal `u32` of this small index represented as an `i32`.
+    /// This is guaranteed to never overflow an `i32`.
+    #[inline]
+    pub const fn as_i32(&self) -> i32 {
+        // This is OK because we guarantee that our max value is <= i32::MAX.
+        self.0 as i32
+    }
+
+    /// Returns one more than this small index as a usize.
+    ///
+    /// Since a small index has constraints on its maximum value, adding `1` to
+    /// it will always fit in a `usize`, `isize`, `u32` and a `i32`.
+    #[inline]
+    pub fn one_more(&self) -> usize {
+        self.as_usize() + 1
+    }
+
+    /// Decode this small index from the bytes given using the native endian
+    /// byte order for the current target.
+    ///
+    /// If the decoded integer is not representable as a small index for the
+    /// current target, then this returns an error.
+    #[inline]
+    pub fn from_ne_bytes(
+        bytes: [u8; 4],
+    ) -> Result<SmallIndex, SmallIndexError> {
+        let id = u32::from_ne_bytes(bytes);
+        if id > SmallIndex::MAX.as_u32() {
+            return Err(SmallIndexError { attempted: u64::from(id) });
+        }
+        Ok(SmallIndex::new_unchecked(id.as_usize()))
+    }
+
+    /// Decode this small index from the bytes given using the native endian
+    /// byte order for the current target.
+    ///
+    /// This is analogous to [`SmallIndex::new_unchecked`] in that is does not
+    /// check whether the decoded integer is representable as a small index.
+    #[inline]
+    pub fn from_ne_bytes_unchecked(bytes: [u8; 4]) -> SmallIndex {
+        SmallIndex::new_unchecked(u32::from_ne_bytes(bytes).as_usize())
+    }
+
+    /// Return the underlying small index integer as raw bytes in native endian
+    /// format.
+    #[inline]
+    pub fn to_ne_bytes(&self) -> [u8; 4] {
+        self.0.to_ne_bytes()
+    }
+}
+
+impl<T> core::ops::Index<SmallIndex> for [T] {
+    type Output = T;
+
+    #[inline]
+    fn index(&self, index: SmallIndex) -> &T {
+        &self[index.as_usize()]
+    }
+}
+
+impl<T> core::ops::IndexMut<SmallIndex> for [T] {
+    #[inline]
+    fn index_mut(&mut self, index: SmallInde
+```
+
+### Core Architecture Module: `contrib/crates/aho-corasick-1.1.5/src/util/remapper.rs`
+```
+use alloc::vec::Vec;
+
+use crate::{nfa::noncontiguous, util::primitives::StateID};
+
+/// Remappable is a tightly coupled abstraction that facilitates remapping
+/// state identifiers in DFAs.
+///
+/// The main idea behind remapping state IDs is that DFAs often need to check
+/// if a certain state is a "special" state of some kind (like a match state)
+/// during a search. Since this is extremely perf critical code, we want this
+/// check to be as fast as possible. Partitioning state IDs into, for example,
+/// into "non-match" and "match" states means one can tell if a state is a
+/// match state via a simple comparison of the state ID.
+///
+/// The issue is that during the DFA construction process, it's not
+/// particularly easy to partition the states. Instead, the simplest thing is
+/// to often just do a pass over all of the states and shuffle them into their
+/// desired partitionings. To do that, we need a mechanism for swapping states.
+/// Hence, this abstraction.
+///
+/// Normally, for such little code, I would just duplicate it. But this is a
+/// key optimization and the implementation is a bit subtle. So the abstraction
+/// is basically a ham-fisted attempt at DRY. The only place we use this is in
+/// the dense and one-pass DFAs.
+///
+/// See also src/dfa/special.rs for a more detailed explanation of how dense
+/// DFAs are partitioned.
+pub(crate) trait Remappable: core::fmt::Debug {
+    /// Return the total number of states.
+    fn state_len(&self) -> usize;
+
+    /// Swap the states pointed to by the given IDs. The underlying finite
+    /// state machine should be mutated such that all of the transitions in
+    /// `id1` are now in the memory region where the transitions for `id2`
+    /// were, and all of the transitions in `id2` are now in the memory region
+    /// where the transitions for `id1` were.
+    ///
+    /// Essentially, this "moves" `id1` to `id2` and `id2` to `id1`.
+    ///
+    /// It is expected that, after calling this, the underlying state machine
+    /// will be left in an inconsistent state, since any other transitions
+    /// pointing to, e.g., `id1` need to be updated to point to `id2`, since
+    /// that's where `id1` moved to.
+    ///
+    /// In order to "fix" the underlying inconsistent state, a `Remapper`
+    /// should be used to guarantee that `remap` is called at the appropriate
+    /// time.
+    fn swap_states(&mut self, id1: StateID, id2: StateID);
+
+    /// This must remap every single state ID in the underlying value according
+    /// to the function given. For example, in a DFA, this should remap every
+    /// transition and every starting state ID.
+    fn remap(&mut self, map: impl Fn(StateID) -> StateID);
+}
+
+/// Remapper is an abstraction the manages the remapping of state IDs in a
+/// finite state machine. This is useful when one wants to shuffle states into
+/// different positions in the machine.
+///
+/// One of the key complexities this manages is the ability to correctly move
+/// one state multiple times.
+///
+/// Once shuffling is complete, `remap` must be called, which will rewrite
+/// all pertinent transitions to updated state IDs. Neglecting to call `remap`
+/// will almost certainly result in a corrupt machine.
+#[derive(Debug)]
+pub(crate) struct Remapper {
+    /// A map from the index of a state to its pre-multiplied identifier.
+    ///
+    /// When a state is swapped with another, then their corresponding
+    /// locations in this map are also swapped. Thus, its new position will
+    /// still point to its old pre-multiplied StateID.
+    ///
+    /// While there is a bit more to it, this then allows us to rewrite the
+    /// state IDs in a DFA's transition table in a single pass. This is done
+    /// by iterating over every ID in this map, then iterating over each
+    /// transition for the state at that ID and re-mapping the transition from
+    /// `old_id` to `map[dfa.to_index(old_id)]`. That is, we find the position
+    /// in this map where `old_id` *started*, and set it to where it ended up
+    /// after all swaps have been completed.
+    map: Vec<StateID>,
+    /// A way to map indices to state IDs (and back).
+    idx: IndexMapper,
+}
+
+impl Remapper {
+    /// Create a new remapper from the given remappable implementation. The
+    /// remapper can then be used to swap states. The remappable value given
+    /// here must the same one given to `swap` and `remap`.
+    ///
+    /// The given stride should be the stride of the transition table expressed
+    /// as a power of 2. This stride is used to map between state IDs and state
+    /// indices. If state IDs and state indices are equivalent, then provide
+    /// a `stride2` of `0`, which acts as an identity.
+    pub(crate) fn new(r: &impl Remappable, stride2: usize) -> Remapper {
+        let idx = IndexMapper { stride2 };
+        let map = (0..r.state_len()).map(|i| idx.to_state_id(i)).collect();
+        Remapper { map, idx }
+    }
+
+    /// Swap two states. Once this is called, callers must follow through to
+    /// call `remap`, or else it's possible for the underlying remappable
+    /// value to be in a corrupt state.
+    pub(crate) fn swap(
+        &mut self,
+        r: &mut impl Remappable,
+        id1: StateID,
+        id2: StateID,
+    ) {
+        if id1 == id2 {
+            return;
+        }
+        r.swap_states(id1, id2);
+        self.map.swap(self.idx.to_index(id1), self.idx.to_index(id2));
+    }
+
+    /// Complete the remapping process by rewriting all state IDs in the
+    /// remappable value according to the swaps performed.
+    pub(crate) fn remap(mut self, r: &mut impl Remappable) {
+        // Update the map to account for states that have been swapped
+        // multiple times. For example, if (A, C) and (C, G) are swapped, then
+        // transitions previously pointing to A should now point to G. But if
+        // we don't update our map, they will erroneously be set to C. All we
+        // do is follow the swaps in our map until we see our original state
+        // ID.
+        //
+        // The intuition here is to think about how changes are made to the
+        // map: only through pairwise swaps. That means that starting at any
+        // given state, it is always possible to find the loop back to that
+        // state by following the swaps represented in the map (which might be
+        // 0 swaps).
+        //
+        // We are also careful to clone the map before starting in order to
+        // freeze it. We use the frozen map to find our loops, since we need to
+        // update our map as well. Without freezing it, our updates could break
+        // the loops referenced above and produce incorrect results.
+        let oldmap = self.map.clone();
+        for i in 0..r.state_len() {
+            let cur_id = self.idx.to_state_id(i);
+            let mut new_id = oldmap[i];
+            if cur_id == new_id {
+                continue;
+            }
+            loop {
+                let id = oldmap[self.idx.to_index(new_id)];
+                if cur_id == id {
+                    self.map[i] = new_id;
+                    break;
+                }
+                new_id = id;
+            }
+        }
+        r.remap(|sid| self.map[self.idx.to_index(sid)]);
+    }
+}
+
+/// A simple type for mapping between state indices and state IDs.
+///
+/// The reason why this exists is because state IDs are "premultiplied" in a
+/// DFA. That is, in order to get to the transitions for a particular state,
+/// one need only use the state ID as-is, instead of having to multiply it by
+/// transition table's stride.
+///
+/// The downside of this is that it's inconvenient to map between state IDs
+/// using a dense map, e.g., Vec<StateID>. That's because state IDs look like
+/// `0`, `stride`, `2*stride`, `3*stride`, etc., instead of `0`, `1`, `2`, `3`,
+/// etc.
+///
+/// Since our state IDs are premultiplied, we can convert back-and-forth
+/// between IDs and indices by simply unmultiplying the IDs and multiplying the
+/// indices.
+///
+/// Note that for a sparse NFA, state IDs and indices are equivalent. In this
+/// case, we set the stride of the index mapped to be `0`, which acts as an
+/// identity.
+#[derive(Debug)]
+struct IndexMapper {
+    /// The power of 2 corresponding to the stride of the corresponding
+    /// transition table. 'id >> stride2' de-multiplies an ID while 'index <<
+    /// stride2' pre-multiplies an index to an ID.
+    stride2: usize,
+}
+
+impl IndexMapper {
+    /// Convert a state ID to a state index.
+    fn to_index(&self, id: StateID) -> usize {
+        id.as_usize() >> self.stride2
+    }
+
+    /// Convert a state index to a state ID.
+    fn to_state_id(&self, index: usize) -> StateID {
+        // CORRECTNESS: If the given index is not valid, then it is not
+        // required for this to panic or return a valid state ID. We'll "just"
+        // wind up with panics or silent logic errors at some other point. But
+        // this is OK because if Remappable::state_len is correct and so is
+        // 'to_index', then all inputs to 'to_state_id' should be valid indices
+        // and thus transform into valid state IDs.
+        StateID::new_unchecked(index << self.stride2)
+    }
+}
+
+impl Remappable for noncontiguous::NFA {
+    fn state_len(&self) -> usize {
+        noncontiguous::NFA::states(self).len()
+    }
+
+    fn swap_states(&mut self, id1: StateID, id2: StateID) {
+        noncontiguous::NFA::swap_states(self, id1, id2)
+    }
+
+    fn remap(&mut self, map: impl Fn(StateID) -> StateID) {
+        noncontiguous::NFA::remap(self, map)
+    }
 }
 
 ```
@@ -1284,527 +2067,347 @@ func Int(rand io.Reader, max *big.Int) (n *big.Int, err error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4e58af23` (2026-10-27)
-**Commit Message**: B2: Columnshard start: build the schema history from the diffs (#56671)
+### Incident Patch 1: `d59a8f02` (2026-10-28)
+**Commit Message**: Fixed test (#57256)
 
-**File**: `ydb/core/kqp/ut/olap/combinatory/compaction.cpp` (modified, +30/-0)
+**File**: `ydb/core/tx/columnshard/backup/import/ut/ut_import.cpp` (modified, +3/-0)
 ```diff
-@@ -57,6 +57,36 @@ TConclusionStatus TFastPortionsCleanupCommand::DoExecute(TKikimrRunner& /*kikimr
-     return TConclusionStatus::Success();
- }
- 
-+TConclusionStatus TStopPortionsCleanupCommand::DoExecute(TKikimrRunner& /*kikimr*/) {
-+    auto controller = NYDBTest::TControllers::GetControllerAs<NYDBTest::NColumnShard::TController>();
-+    AFL_VERIFY(controller);
-+    controller->DisableBackground(NKikimr::NYDBTest::ICSController::EBackground::Cleanup);
-+    return TConclusionStatus::Success();
-+}
-+
-+TConclusionStatus TOnePortionsCleanupCommand::DoExecute(TKikimrRunner& /*kikimr*/) {
-+    auto controller = NYDBTest::TControllers::GetControllerAs<NYDBTest::NColumnShard::TController>();
-+    AFL_VERIFY(controller);
-+    AFL_VERIFY(!controller->IsBackgroundEnable(NKikimr::NYDBTest::ICSController::EBackground::Cleanup));
-+    const i64 erased = controller->GetPortionsErasedCounter().Val();
-+    controller->EnableBackground(NKikimr::NYDBTest::ICSController::EBackground::Cleanup);
-+    const TInstant start = TInstant::Now();
-+    while (TInstant::Now() - start < TDuration::Seconds(60)) {
-+        if (erased < controller->GetPortionsErasedCounter().Val()) {
-+            Cerr << "PORTIONS_ERASED: " << erased << " -> " << controller->GetPortionsErasedCounter().Val() << Endl;
-+            break;
-+        }
-+
-+        Cerr << "WAIT_PORTIONS_CLEANUP: " << controller->GetPortionsErasedCounter().Val() << Endl;
-+        Sleep(TDuration::MilliSeconds(300));
-+    }
-+
-+    AFL_VERIFY(erased < controller->GetPortionsErasedCounter().Val());
-+
-+    controller->DisableBackground(NKikimr::NYDBTest::ICSController::EBackground::Cleanup);
-+    return TConclusionStatus::Success();
-+}
-+
- TConclusionStatus TStopCompactionCommand::DoExecute(TKikimrRunner& /*kikimr*/) {
-     auto controller = NYDBTest::TControllers::GetControllerAs<NYDBTest::NColumnShard::TController>();
-     AFL_VERIFY(controller);
-```
-
-**File**: `ydb/core/kqp/ut/olap/combinatory/compaction.h` (modified, +18/-0)
-```diff
-@@ -61,6 +61,24 @@ class TFastPortionsCleanupCommand: public ICommand {
-     }
- };
- 
-+class TStopPortionsCleanupCommand: public ICommand {
-+private:
-+    virtual TConclusionStatus DoExecute(TKikimrRunner& /*kikimr*/) override;
-+
-+public:
-+    TStopPortionsCleanupCommand() {
-+    }
-+};
-+
-+class TOnePortionsCleanupCommand: public ICommand {
-+private:
-+    virtual TConclusionStatus DoExecute(TKikimrRunner& /*kikimr*/) override;
-+
-+public:
-+    TOnePortionsCleanupCommand() {
-+    }
-+};
-+
- class TStopCompactionCommand: public ICommand {
- private:
-     virtual TConclusionStatus DoExecute(TKikimrRunner& /*kikimr*/) override;
-```
-
-**File**: `ydb/core/kqp/ut/olap/combinatory/variator.cpp` (modified, +2/-0)
-```diff
-@@ -21,6 +21,8 @@ namespace {
-         {"STOP_SCHEMAS_CLEANUP", []() { return std::make_shared<TStopSchemasCleanupCommand>(); }},
-         {"ONE_SCHEMAS_CLEANUP", []() { return std::make_shared<TOneSchemasCleanupCommand>(); }},
-         {"FAST_PORTIONS_CLEANUP", []() { return std::make_shared<TFastPortionsCleanupCommand>(); }},
-+        {"STOP_PORTIONS_CLEANUP", []() { return std::make_shared<TStopPortionsCleanupCommand>(); }},
-+        {"ONE_PORTIONS_CLEANUP", []() { return std::make_shared<TOnePortionsCleanupCommand>(); }},
-         {"ONE_COMPACTION", []() { return std::make_shared<TOneCompactionCommand>(); }},
-         {"ONE_ACTUALIZATION", []() { return std::make_shared<TOneActualizationCommand>(); }},
-         {"CHECK_COUNTER", []() { return std::make_shared<TCheckCounterCommand>(); }},
-```
-
-**File**: `ydb/core/kqp/ut/olap/operations/write_ut.cpp` (modified, +4/-0)
-```diff
-@@ -194,11 +194,15 @@ Y_UNIT_TEST_SUITE(KqpOlapWrite) {
-         READ: SELECT SchemaVersion FROM `/Root/ColumnTable/.sys/primary_index_schema_stats` WHERE PresetId = 0 ORDER BY SchemaVersion;
-         EXPECTED: [[[6u]];[[9u]];[[11u]]]
-         ------
-+        STOP_PORTIONS_CLEANUP
-+        ------
-         DATA:
-         DELETE FROM `/Root/ColumnTable`
-         ------
-         ONE_COMPACTION:
-         ------
-+        ONE_PORTIONS_CLEANUP
-+        ------
-         ONE_SCHEMAS_CLEANUP:
-         EXPECTED: true
-         ------
-```
-
-**File**: `ydb/core/tx/columnshard/engines/column_engine.h` (modified, +21/-12)
-```diff
-@@ -110,45 +110,54 @@ class IColumnEngine {
- public:
-     class TSchemaVersionView {
-     private:
--        const NKikimrTxColumnShard::TSchemaPresetVersionInfo& Info;
-+        const NKikimrSchemeOp::TColumnTableSchema* Schema = nullptr;
-+        const NKikimrSchemeOp::TColumnTableSchemaDiff* Diff = nullptr;
- 
-     public:
-         explicit TSchemaVersionView(const NKikimrTxColumnShard::TSchemaPresetVersionInfo& info)
--            : Info(info)
-+            : Schema(info.HasSchema() ? &info.GetSchema() : nullptr)
-+            , Diff(info.HasDiff() ? &info.GetDiff() : nullptr)
+@@ -596,6 +596,8 @@ Y_UNIT_TEST_SUITE(Restore) {
          {
-         }
- 
-         TSchemaVersionView(const NKikimrTxColumnShard::TSchemaPresetVersionInfo&&) = delete;
- 
-+        explicit TSchemaVersionView(const NKikimrSchemeOp::TColumnTableSchemaDiff& diff)
-+            : Diff(&diff)
-+        {
-+        }
-+
-+        TSchemaVersionView(const NKikimrSchemeOp::TColumnTableSchemaDiff&&) = delete;
-+
-         TSchemaVersionView(const TSchemaVersionView&) = delete;
-         TSchemaVersionView(TSchemaVersionView&&) = delete;
-         TSchemaVersionView& operator=(const TSchemaVersionView&) = delete;
-         TSchemaVersionView& operator=(TSchemaVersionView&&) = delete;
- 
-         bool HasSchema() const {
--            return Info.HasSchema();
-+            return Schema != nullptr;
-         }
- 
-         const NKikimrSchemeOp::TColumnTableSchema& GetSchemaVerified() const {
--            AFL_VERIFY(Info.HasSchema());
--            return Info.GetSchema();
-+            AFL_VERIFY(Schema);
-+            return *Schema;
-         }
- 
-         bool HasDiff() const {
--            return Info.HasDiff();
-+            return Diff != nullptr;
-         }
- 
-         const NKikimrSchemeOp::TColumnTableSchemaDiff& GetDiffVerified() const {
--            AFL_VERIFY(Info.HasDiff());
--            return Info.GetDiff();
-+            AFL_VERIFY(Diff);
-+            return *Diff;
-         }
- 
-         ui64 GetVersion() const {
--            if (Info.HasSchema()) {
--                return Info.GetSchema().GetVersion();
-+            if (Schema) {
-+                return Schema->GetVersion();
-             }
--            AFL_VERIFY(Info.HasDiff());
--            return Info.GetDiff().GetVersion();
-+            AFL_VERIFY(Diff);
-+            return Diff->GetVersion();
-         }
-     };
- 
+             TTestBasicRuntime runtime;
+             TTester::Setup(runtime);
++            // S3 uses real HTTP threads; allow replies to arrive before simulated timers exhaust the event limit.
++            runtime.SetFastSimulatedTime(false);
+             auto csControllerGuard = NKikimr::NYDBTest::TControllers::RegisterCSControllerGuard<NOlap::TWaitCompactionController>();
+             auto planStep = PrepareTablet(runtime, tableId, schema, 2);
+             ui64 txId = 111;
+@@ -616,6 +618,7 @@ Y_UNIT_TEST_SUITE(Restore) {
+         {
+             TTestBasicRuntime runtime;
+             TTester::Setup(runtime);
++            runtime.SetFastSimulatedTime(false);
+             auto csControllerGuard = NKikimr::NYDBTest::TControllers::RegisterCSControllerGuard<NOlap::TWaitCompactionController>();
+             Y_UNUSED(PrepareTablet(runtime, tableId, schema, 2));
+             ui64 txId = 111;
 ```
 
-**File**: `ydb/core/tx/columnshard/engines/scheme/column/info.cpp` (modified, +7/-0)
+---
+
+### Incident Patch 2: `3580c839` (2026-10-28)
+**Commit Message**: Row deletes statistics fix (#57062)
+
+**File**: `ydb/core/protos/counters_columnshard.proto` (modified, +1/-0)
 ```diff
-@@ -16,6 +16,7 @@ TConclusionStatus TSimpleColumnInfo::DeserializeFromProto(const NKikimrSchemeOp:
-     } else if (columnInfo.HasCompression()) {
-         Serializer.DeserializeFromProto(columnInfo.GetCompression()).Validate();
-     }
-+    OwnSerializer = HasOwnSerializer(columnInfo);
-     if (columnInfo.HasDefaultValue()) {
-         DefaultValue.DeserializeFromProto(columnInfo.GetDefaultValue()).Validate();
-     }
-@@ -28,6 +29,12 @@ TConclusionStatus TSimpleColumnInfo::DeserializeFromProto(const NKikimrSchemeOp:
-     return TConclusionStatus::Success();
+@@ -143,6 +143,7 @@ enum ECumulativeCounters {
+     COUNTER_OPERATIONS_ROWS_WRITTEN = 85                    [(CounterOpts) = {Name: "OperationsRowsWritten"}];
+     COUNTER_OPERATIONS_BULK_ROWS_WRITTEN = 86               [(CounterOpts) = {Name: "OperationsBulkRowsWritten"}];
+     COUNTER_OPERATIONS_BULK_BYTES_WRITTEN = 87              [(CounterOpts) = {Name: "OperationsBulkBytesWritten"}];
++    COUNTER_OPERATIONS_ROWS_DELETED = 88                    [(CounterOpts) = {Name: "OperationsRowsDeleted"}];
  }
  
-+void TSimpleColumnInfo::SetDefaultSerializer(const NArrow::NSerialization::TSerializerContainer& serializer) {
-+    AFL_VERIFY(!OwnSerializer)("column_id", ColumnId);
-+    Serializer = serializer;
-+    Loader = std::make_shared<TColumnLoader>(Serializer, DataAccessorConstructor, ArrowField, DefaultValue.GetValue(), ColumnId);
-+}
-+
- TSimpleColumnInfo::TSimpleColumnInfo(const ui32 columnId, const std::shared_ptr<arrow::Field>& arrowField,
-     const NArrow::NSerialization::TSerializerContainer& serializer, const bool needMinMax, const bool isSorted, const bool isNullable,
-     const std::shared_ptr<arrow::Scalar>& defaultValue, const std::optional<ui32>& pkColumnIndex, const NScheme::TTypeInfo& typeInfo)
+ enum EPercentileCounters {
 ```
 
-**File**: `ydb/core/tx/columnshard/engines/scheme/column/info.h` (modified, +12/-0)
+**File**: `ydb/core/tx/columnshard/columnshard__write.cpp` (modified, +3/-2)
 ```diff
-@@ -32,6 +32,7 @@ class TSimpleColumnInfo {
-     YDB_READONLY(bool, IsSorted, false);
-     YDB_READONLY(bool, IsNullable, false);
-     YDB_READONLY_DEF(TColumnDefaultScalarValue, DefaultValue);
-+    bool OwnSerializer = false;
-     std::shared_ptr<TColumnLoader> Loader;
- 
+@@ -100,10 +100,11 @@ void TColumnShard::Handle(NPrivateEvents::NWrite::TEvWritePortionResult::TPtr& e
+                 {"event", "data_write_finished"},
+                 {"writingId", i.GetWriteMeta().GetId()});
+             i.MutableWriteMeta().OnStage(NEvWrite::EWriteStage::SuccessWritingToLocalDB);
++            const bool isDelete = i.GetWriteMeta().GetModificationType() == NEvWrite::EModificationType::Delete;
+             if (i.GetWriteMeta().IsBulk()) {
+-                Counters.OnWritePutBulkBlobsSuccess(now - i.GetWriteMeta().GetWriteStartInstant(), i.GetRecordsCount());
++                Counters.OnWritePutBulkBlobsSuccess(now - i.GetWriteMeta().GetWriteStartInstant(), i.GetRecordsCount(), isDelete);
+             } else {
+-                Counters.OnWritePutBlobsSuccess(now - i.GetWriteMeta().GetWriteStartInstant(), i.GetRecordsCount());
++                Counters.OnWritePutBlobsSuccess(now - i.GetWriteMeta().GetWriteStartInstant(), i.GetRecordsCount(), isDelete);
+             }
+             Counters.GetWritesMonitor()->OnFinishWrite(i.GetDataSize(), 1);
+         }
+```
+
+**File**: `ydb/core/tx/columnshard/columnshard_impl.h` (modified, +4/-0)
+```diff
+@@ -401,6 +401,10 @@ class TColumnShard: public TActor<TColumnShard>, public NTabletFlatExecutor::TTa
  public:
-@@ -56,6 +57,17 @@ class TSimpleColumnInfo {
+     TAtomicCounter InitShardCounter;
  
-     TConclusionStatus DeserializeFromProto(const NKikimrSchemeOp::TOlapColumnDescription& columnInfo);
- 
-+    // false: the column follows the table's default serializer
-+    bool HasOwnSerializer() const {
-+        return OwnSerializer;
++    const TTabletCountersHandle& GetTabletCounters() const {
++        return *Counters.GetTabletCounters();
 +    }
 +
-+    static bool HasOwnSerializer(const NKikimrSchemeOp::TOlapColumnDescription& columnInfo) {
-+        return columnInfo.HasSerializer() || columnInfo.HasCompression();
-+    }
-+
-+    void SetDefaultSerializer(const NArrow::NSerialization::TSerializerContainer& serializer);
-+
-     const std::shared_ptr<TColumnLoader>& GetLoader() const {
-         AFL_VERIFY(Loader);
-         return Loader;
+     ui64 BuildEphemeralTxId() {
+         static TAtomicCounter Counter = 0;
+         static constexpr ui64 shift = (ui64)1 << 47;
 ```
 
-**File**: `ydb/core/tx/columnshard/engines/scheme/index_info.cpp` (modified, +113/-79)
+**File**: `ydb/core/tx/columnshard/counters/counters_manager.h` (modified, +4/-4)
 ```diff
-@@ -17,6 +17,8 @@
- 
- #include <util/string/join.h>
- 
-+#include <numeric>
-+
- #define YDB_LOG_THIS_FILE_COMPONENT NKikimrServices::TX_COLUMNSHARD
- 
- namespace NKikimr::NOlap {
-@@ -139,7 +141,8 @@ void TIndexInfo::SetAllKeys(const std::shared_ptr<IStoragesManager>& operators,
- 
-     if (!SchemaWithSpecials) {
-         InitializeCaches(operators, columns, nullptr);
--        Precalculate();
-+        BuildColumnIndexByName();
-+        BuildUsedStorageIds();
-     }
-     for (auto&& [id, column] : columns) {
-         Columns[id] = TNameTypeInfo(column.Name, column.PType);
-@@ -286,7 +289,7 @@ bool TIndexInfo::DeserializeDefaultCompressionFromProto(const NKikimrSchemeOp::T
- TConclusion<std::shared_ptr<TColumnFeatures>> TIndexInfo::CreateColumnFeatures(const NTable::TColumn& col,
-     const NKikimrSchemeOp::TOlapColumnDescription& colProto, const std::shared_ptr<IStoragesManager>& operators,
-     const std::shared_ptr<TSchemaObjectsCache>& cache) const {
--    const TString fingerprint = cache ? ("C:" + colProto.SerializeAsString()) : Default<TString>();
-+    const TString fingerprint = BuildColumnFeaturesFingerprint(colProto);
-     const auto createPred = [&]() -> TConclusion<std::shared_ptr<TColumnFeatures>> {
-         auto f = BuildDefaultColumnFeatures(col, operators);
-         auto parsed = f->DeserializeFromProto(colProto, operators);
-@@ -354,7 +357,7 @@ bool TIndexInfo::DeserializeFromProto(const NKikimrSchemeOp::TColumnTableSchema&
-             ColumnFeatures.emplace_back(fConclusion.DetachResult());
-         }
-         for (auto&& cId : GetSystemColumnIds()) {
--            const TString fingerprint = "SC:" + ::ToString(cId);
-+            const TString fingerprint = BuildSystemColumnFeaturesFingerprint(cId);
-             const auto createPred = [&]() -> TConclusion<std::shared_ptr<TColumnFeatures>> {
-                 return BuildDefaultColumnFeatures(cId, {}, operators);
-             };
-@@ -368,7 +371,8 @@ bool TIndexInfo::DeserializeFromProto(const NKikimrSchemeOp::TColumnTableSchema&
+@@ -102,13 +102,13 @@ class TCountersManager {
+         ScanCounters.FillStats(tableStats);
      }
  
-     Version = schema.GetVersion();
--    Precalculate();
-+    BuildColumnIndexByName();
-+    BuildUsedStorageIds();
-     Validate();
-     return true;
- }
-@@ -624,99 +628,129 @@ std::shared_ptr<arrow::Scalar> TIndexInfo::GetColumnExternalDefaultValueByIndexV
- 
- TIndexInfo::TIndexInfo(const TIndexInfo& original, const TSchemaDiffView& diff, const std::shared_ptr<IStoragesManager>& operators,
-     const std::shared_ptr<TSchemaObjectsCache>& cache)
--    : PresetId(original.PresetId)
-+    : ColumnIdxSortedByName(original.ColumnIdxSortedByName)
-+    , PKColumnIds(original.PKColumnIds)
-+    , PKColumns(original.PKColumns)
-+    , Columns(original.Columns)
-+    , ColumnFeatures(original.ColumnFeatures)
-+    , Indexes(original.Indexes)
-+    , PresetId(original.PresetId)
-+    , SchemaColumnIdsWithSpecials(original.SchemaColumnIdsWithSpecials)
-+    , SchemaWithSpecials(original.SchemaWithSpecials)
-+    , PrimaryKey(original.PrimaryKey)
-+    , DefaultSerializer(original.DefaultSerializer)
- {
--    {
--        std::vector<std::shared_ptr<arrow::Field>> fields;
--        const auto addFromOriginal = [&](const ui32 index) {
--            AFL_VERIFY(index < original.SchemaColumnIdsWithSpecials.size());
--            const ui32 originalColId = original.SchemaColumnIdsWithSpecials[index];
--            SchemaColumnIdsWithSpecials.emplace_back(originalColId);
--            if (!IIndexInfo::IsSpecialColumn(originalColId)) {
--                AFL_VERIFY(index < original.SchemaColumnIdsWithSpecials.size() - SpecialColumnsCount);
--                auto it = original.Columns.find(originalColId);
--                AFL_VERIFY(it != original.Columns.end())("column_id", originalColId);
--                Columns.emplace(originalColId, it->second);
--                fields.emplace_back(original.SchemaWithSpecials->field(index));
--            }
--        };
--
--        const auto addFromDiff = [&](const NKikimrSchemeOp::TOlapColumnDescription& col, const std::optional<ui32> /*originalIndex*/) {
--            const ui32 colId = col.GetId();
--            AFL_VERIFY(!IIndexInfo::IsSpecialColumn(colId));
--            SchemaColumnIdsWithSpecials.emplace_back(colId);
--            auto tableCol = BuildColumnFromProto(col, cache);
--            Columns.emplace(colId, TNameTypeInfo(tableCol.Name, tableCol.PType));
--            fields.emplace_back(BuildArrowField(tableCol, cache));
--        };
--        diff.ApplyForColumns(original.SchemaColumnIdsWithSpecials, addFromOriginal, addFromDiff);
--        IIndexInfo::AddSpecialFields(fields);
--        SchemaWithSpecials = std::make_shared<NArrow::TSchemaLite>(fields);
--        PKColumnIds = original.PKColumnIds;
--        PKColumns = original.PKColumns;
-+    // before the columns: a new column without a serializer of its own takes the default
-+    if (diff.GetCompressionOptions()) {
-+        DeserializeDefaultCompressionFromProto(*diff.GetCompressionOptions());
+-    void OnWritePutBlobsSuccess(const TDuration d, const ui64 rowsWritten) const {
+-        TabletCounters->OnWritePutBlobsSuccess(rowsWritten);
++    void OnWritePutBlobsSuccess(const TDuration d, const ui64 rowsWritten, const bool isDelete) const {
++        TabletCounters->OnWritePutBlobsSuccess(rowsWritten, isDelete);
+         CSCounters.OnWritePutBlobsSuccess(d);
      }
--    {
--        const auto addFromOriginal = [&](const ui32 index) 
+ 
+-    void OnWritePutBulkBlobsSuccess(const TDuration d, const ui64 rowsWritten) const {
+-        TabletCounters->OnWritePutBulkBlobsSuccess(rowsWritten);
++    void OnWritePutBulkBlobsSuccess(const TDuration d, const ui64 rowsWritten, const bool isDelete) const {
++        TabletCounters->OnWritePutBulkBlobsSuccess(rowsWritten, isDelete);
+         CSCounters.OnWritePutBlobsSuccess(d);
+     }
+ 
 ```
 
----
-
-### Incident Patch 2: `533b58f8` (2026-10-27)
-**Commit Message**: Distinguish SchemeBoard full-sync ACKs from incremental updates (#56167)
-
-Co-authored-by: Motoko <[REDACTED_EMAIL]>
-
-**File**: `ydb/core/tx/scheme_board/populator.cpp` (modified, +10/-3)
+**File**: `ydb/core/tx/columnshard/counters/tablet_counters.h` (modified, +6/-5)
 ```diff
-@@ -117,7 +117,7 @@ class TReplicaPopulator: public TMonitorableActor<TReplicaPopulator> {
-             BatchSize = 0;
-         }
- 
--        Send(Replica, std::move(update), IEventHandle::FlagTrackDelivery);
-+        Send(Replica, std::move(update), IEventHandle::FlagTrackDelivery, FullSyncCookie);
+@@ -99,12 +99,12 @@ class TTabletCountersHandle {
+         IncCounter(NColumnShard::COUNTER_SPLIT_COMPACTION_BYTES_WRITTEN, bytesWritten);
      }
  
-     void ResumeSync(const TPathId& fromPathId) {
-@@ -145,7 +145,9 @@ class TReplicaPopulator: public TMonitorableActor<TReplicaPopulator> {
+-    void OnWritePutBlobsSuccess(const ui64 rowsWritten) const {
+-        IncCounter(NColumnShard::COUNTER_OPERATIONS_ROWS_WRITTEN, rowsWritten);
++    void OnWritePutBlobsSuccess(const ui64 rowsWritten, const bool isDelete) const {
++        IncCounter(isDelete ? COUNTER_OPERATIONS_ROWS_DELETED : COUNTER_OPERATIONS_ROWS_WRITTEN, rowsWritten);
+     }
  
-             UpdatesInFlight[pathId].emplace(version, ev->Cookie);
-             if (needSend) {
--                Send(Replica, ev->Release().Release(), IEventHandle::FlagTrackDelivery, ev->Cookie);
-+                // Publication cookies are retained in UpdatesInFlight. The
-+                // replica only needs to echo the kind of update being ACKed.
-+                Send(Replica, ev->Release().Release(), IEventHandle::FlagTrackDelivery, IncrementalUpdateCookie);
-             }
-         } else {
-             auto it = UpdatesRequested.find(pathId);
-@@ -306,7 +308,7 @@ class TReplicaPopulator: public TMonitorableActor<TReplicaPopulator> {
-             return;
-         }
+-    void OnWritePutBulkBlobsSuccess(const ui64 rowsWritten) const {
+-        IncCounter(NColumnShard::COUNTER_OPERATIONS_BULK_ROWS_WRITTEN, rowsWritten);
++    void OnWritePutBulkBlobsSuccess(const ui64 rowsWritten, const bool isDelete) const {
++        IncCounter(isDelete ? COUNTER_OPERATIONS_ROWS_DELETED : COUNTER_OPERATIONS_BULK_ROWS_WRITTEN, rowsWritten);
+     }
  
--        if (!ev->Cookie && ev->Get()->GetPathId() == CurPathId) {
-+        if (ev->Cookie == FullSyncCookie && ev->Get()->GetPathId() == CurPathId) {
-             LastAckedPathId = CurPathId;
+     void OnDropPortionEvent(const ui64 rawBytes, const ui64 blobBytes, const ui64 rows) const {
+@@ -115,7 +115,8 @@ class TTabletCountersHandle {
  
-             CurPathId = CurPathId.NextId();
-@@ -492,6 +494,11 @@ class TReplicaPopulator: public TMonitorableActor<TReplicaPopulator> {
-     THashMap<TPathId, TSet<std::pair<ui64, ui64>>> UpdatesRequested;
-     THashMap<TPathId, TSet<std::pair<ui64, ui64>>> UpdatesInFlight;
+     void FillStats(::NKikimrTableStats::TTableStats& output) const {
+         output.SetRowUpdates(GetValue(COUNTER_OPERATIONS_ROWS_WRITTEN) + GetValue(COUNTER_OPERATIONS_BULK_ROWS_WRITTEN));
+-        output.SetRowDeletes(GetValue(COUNTER_ROWS_ERASED));
++        // Physical portion cleanup also erases rows rewritten by compaction.
++        output.SetRowDeletes(GetValue(COUNTER_OPERATIONS_ROWS_DELETED));
+         output.SetRowReads(0);   // all reads are range reads
+         output.SetRangeReadRows(GetValue(COUNTER_READ_INDEX_ROWS));
  
-+    // Transport cookies distinguish full-sync ACKs from live/catch-up ACKs.
-+    // They are independent of the original publication cookie (which may be zero).
-+    static constexpr ui64 FullSyncCookie = 0;
-+    static constexpr ui64 IncrementalUpdateCookie = 1;
-+
-     // used during sync
-     TPathId CurPathId;
-     TPathId LastAckedPathId;
 ```
 
-**File**: `ydb/core/tx/scheme_board/populator_ut.cpp` (modified, +80/-0)
+**File**: `ydb/core/tx/columnshard/ut_rw/ut_columnshard_read_write.cpp` (modified, +30/-0)
 ```diff
-@@ -1,6 +1,7 @@
- #include "events_schemeshard.h"
- #include "populator.h"
- #include "mon_events.h"
-+#include "two_part_description.h"
- #include "ut_helpers.h"
+@@ -2643,6 +2643,12 @@ Y_UNIT_TEST_SUITE(TColumnShardTestReadWrite) {
+         auto ydbSchema = table.Schema;
+         auto planStep = SetupSchema(runtime, sender, tableId);
  
- #include <ydb/core/base/statestorage_impl.h>
-@@ -289,6 +290,85 @@ Y_UNIT_TEST_SUITE(TPopulatorQuorumTest) {
-         UNIT_ASSERT_VALUES_EQUAL_C(mainAck->Get()->GetPathId(), pathId, mainAck->ToString());
-     }
- 
-+    void TestPublicationAckDoesNotAdvanceFullSync(ui64 cookie) {
-+        TTestBasicRuntime runtime;
-+        SetupMinimalRuntime(runtime, CreateCustomStateStorageSetupper({{}}, ReplicasInRingGroup));
-+        const auto edge = runtime.AllocateEdgeActor();
-+        constexpr ui64 owner = TTestTxConfig::SchemeShard;
-+        const auto info = GetStateStorageInfo(runtime);
-+        const auto replica = runtime.GetLocalServiceId(info->RingGroups.front().Rings.front().Replicas.front());
-+        const TPathId batchEnd(owner, 100);
-+        TActorId child;
-+        auto handshakes = runtime.AddObserver<NInternalEvents::TEvHandshakeResponse>([&](auto& ev) {
-+            if (ev->Sender == replica) {
-+                child = ev->Recipient;
-+            }
-+        });
-+        // Delay this child's description request while a publication from
-+        // another sender reaches the parent first. Hold its later messages
-+        // too, preserving the child-to-parent FIFO order.
-+        TBlockEvents<NInternalEvents::TEvRequestDescribe> descriptionsPending(runtime, [&](const auto& ev) {
-+            return ev->Sender == child && ev->Get()->PathId.OwnerId == owner && ev->Get()->PathId.LocalPathId >= batchEnd.LocalPathId;
-+        });
-+        TBlockEvents<TUpdateAck> childAcks(runtime, [&](const TUpdateAck::TPtr& ev) {
-+            return ev->Sender == child;
-+        });
-+        size_t nextBatchRequests = 0;
-+        auto requests = runtime.AddObserver<NInternalEvents::TEvRequestDescribe>([&](auto& ev) {
-+            if (ev->Sender == child && ev->Get()->PathId == batchEnd.NextId()) {
-+                ++nextBatchRequests;
-+            }
-+        });
-+        std::vector<std::pair<TPathId, TTwoPartDescription>> descriptions;
-+        for (ui64 id = 1; id <= 101; ++id) {
-+            const TPathId pathId(owner, id);
-+            auto desc = GenerateDescribe(TStringBuilder() << "/Root/Path" << id, pathId, 1);
-+            desc.SetStatus(NKikimrScheme::StatusSuccess);
-+            descriptions.emplace_back(pathId, TTwoPartDescription("", std::move(desc)));
++        const auto getTableStats = [&]() {
++            NKikimrTableStats::TTableStats stats;
++            csDefaultControllerGuard->GetTheOnlyShard()->GetTabletCounters().FillStats(stats);
++            return stats;
++        };
++
+         constexpr ui32 numRows = 10;
+         std::pair<ui64, ui64> portion = { 10, 10 + numRows };
+         auto testData = MakeTestBlob(portion, ydbSchema);
+@@ -2721,8 +2727,13 @@ Y_UNIT_TEST_SUITE(TColumnShardTestReadWrite) {
+         {
+             TSet<ui64> txIds;
+             std::vector<ui64> writeIds;
++            const auto statsBeforeDelete = getTableStats();
++            UNIT_ASSERT_VALUES_EQUAL(statsBeforeDelete.GetRowDeletes(), 0);
+             UNIT_ASSERT(
+                 WriteData(runtime, sender, ++writeId, tableId, testData, ydbSchema, true, &writeIds, NEvWrite::EModificationType::Delete));
++            // Count delete writes before commit, separately from updates.
++            UNIT_ASSERT_VALUES_EQUAL(getTableStats().GetRowDeletes(), numRows);
++            UNIT_ASSERT_VALUES_EQUAL(getTableStats().GetRowUpdates(), statsBeforeDelete.GetRowUpdates());
+             auto planStep = ProposeCommit(runtime, sender, ++txId, writeIds);
+             txIds.insert(txId);
+             PlanCommit(runtime, sender, planStep, txIds);
+@@ -2732,6 +2743,18 @@ Y_UNIT_TEST_SUITE(TColumnShardTestReadWrite) {
+             auto rb = reader.ReadAll();
+             UNIT_ASSERT(reader.IsCorrectlyFinished());
+             AFL_VERIFY(!rb || rb->num_rows() == 0)("count", rb->num_rows());
++            UNIT_ASSERT_VALUES_EQUAL(getTableStats().GetRowDeletes(), numRows);
 +        }
-+        const auto populator = runtime.Register(CreateSchemeBoardPopulator(owner, 1, std::move(descriptions), 102));
-+        runtime.WaitFor("description of the last path in the batch", [&] { return descriptionsPending.size() == 1; }, TDuration::Seconds(10));
-+        UNIT_ASSERT_VALUES_EQUAL(nextBatchRequests, 0);
-+        UNIT_ASSERT_VALUES_EQUAL(descriptionsPending.front()->Get()->PathId, batchEnd);
-+        const auto monEdge = runtime.AllocateEdgeActor();
-+        runtime.Send(new IEventHandle(child, monEdge, new TSchemeBoardMonEvents::TEvInfoRequest(100)));
-+        auto state = runtime.GrabEdgeEvent<TSchemeBoardMonEvents::TEvInfoResponse>(monEdge);
-+        const auto& cursor = state->Get()->Record.GetReplicaPopulatorResponse().GetCurPathId();
-+        UNIT_ASSERT_VALUES_EQUAL(cursor.GetOwnerId(), owner);
-+        UNIT_ASSERT_VALUES_EQUAL(cursor.GetLocalPathId(), batchEnd.LocalPathId);
-+        bool publicationAckSeen = false;
-+        auto publicationAcks = runtime.AddObserver<TUpdateAck>([&](TUpdateAck::TPtr& ev) {
-+            if (ev->Recipient == child && ev->Get()->GetPathId() == batchEnd && ev->Get()->Record.GetVersion() == 2) {
-+                publicationAckSeen = true;
-+            }
-+        });
-+        auto desc = MakeHolder<NSchemeShard::TEvSchemeShard::TEvDescribeSchemeResultBuilder>();
-+        desc->Record = GenerateDescribe("/Root/Path100", batchEnd, 2);
-+        desc->Record.SetStatus(NKikimrScheme::StatusSuccess);
-+        runtime.Send(new IEventHandle(populator, edge, desc.Release(), 0, cookie));
-+        auto ack = runtime.GrabEdgeEvent<TUpdateAck>(edge);
-+        UNIT_ASSERT_VALUES_EQUAL(ack->Cookie, cookie);
-+        runtime.WaitFor("live publication ACK at the synchronizing child", [&] { return publicationAckSeen; }, TDuration::Seconds(10));
-+        runtime.SimulateSleep(TDuration::Seconds(1));
-+        UNIT_ASSERT_VALUES_EQUAL_C(descriptionsPending.size(), 1,
-+            "a live update ACK must not request another description before the pending one returns");
-+        UNIT_ASSERT_VALUES_EQUAL_C(nextBatchRequests, 0,
-+            "a live update ACK must not advance full sync while that path is still being described");
-+        descriptionsPending.Stop().Unblock();
-+        childAcks.Stop().Unblock();
-+        runtime.WaitFor("next full-sync batch", [&] { return nextBatchRequests == 1; }, TDuration::Seconds(10));
-+        runtime.SimulateSleep(TDuration::Seconds(1));
-+        UNIT_ASSERT_VALUES_EQUAL(nextBatchRequests, 1);
-+    }
++        {
++            // Erasing missing keys is still delete work, even if the transaction is later aborted.
++            constexpr ui64 lockId = 2;
++            std::vector<ui64> writeIds;
++            UNIT_ASSERT(WriteData(
++                runtime, sender, ++writeId, tableId, testData, ydbSchema, true, &writeIds, NEvWrite::EModificationType::Delete, lockId));
++            UNIT_ASSERT_VALUES_EQUAL(getTableStats().GetRowDeletes(), 2 * numRows);
++            TShardWriter writer(runtime, TTestTxConfig::TxTablet0, tableId, lockId);
++            UNIT_ASSERT_VALUES_EQUAL(writer.Abort(), NKikimrDataEvents::TEvWriteResult::STATUS_COMPLETED);
++            UNIT_ASSERT_VALUES_EQUAL(getTableStats().GetRowDeletes(), 2 * numRows);
+         }
+     }
+ 
+@@ -3879,6 +3902,13 @@ Y_UNIT_TEST_SUITE(TColumnShardTestReadWrite) {
+         UNIT_ASSERT_GE(compactionsHappened, previousCompactionsHappened);
+         UNIT_ASSERT_GT(cleanupsHappened, previousCleanupsHappened);
+         UNIT_ASSERT_VALUES_EQUAL_C(oldPortions.size(), deletedPortions.size(), "All old portions must be deleted after read has finished");
 +
-+    Y_UNIT_TEST(ZeroCooki
++        // Compaction cleanup removes physical rows without deleting logical rows.
++        const auto& counters = csDefaultControllerGuard->GetTheOnlyShard()->GetTabletCounters();
++        UNIT_ASSERT_GT(counters.GetValue(COUNTER_ROWS_ERASED), 0);
++        NKikimrTableStats::TTableStats stats;
++        counters.FillStats(stats);
++        UNIT_ASSERT_VALUES_EQUAL(stats.GetRowDeletes(), 0);
+     }
+ 
+     void TestCleanupSnapshotPersistenceAfterReboot() {
 ```
 
 ---
 
-### Incident Patch 3: `8ea4037e` (2026-10-27)
-**Commit Message**: Fixed docs about PK in column tables (#55457)
+### Incident Patch 3: `50c6d82e` (2026-10-28)
+**Commit Message**: compression backup has been fixed for cs (#57186)
 
-Co-authored-by: Matveev Sergei <[REDACTED_EMAIL]>
-Co-authored-by: Matveev Sergei <[REDACTED_EMAIL]>
-
-**File**: `ydb/docs/en/core/concepts/datamodel/_includes/table.md` (modified, +0/-5)
+**File**: `ydb/core/ydb_convert/table_description.cpp` (modified, +21/-0)
 ```diff
-@@ -248,11 +248,6 @@ In most cases, working with columnar tables {{ ydb-short-name }} is similar to w
+@@ -1192,6 +1192,27 @@ void FillColumnDescriptionImpl(TYdbProto& out, const NKikimrSchemeOp::TColumnTab
+             newColumn->set_family(column.GetColumnFamilyName());
+         }
  
- * Only `NOT NULL` columns can be used as the primary key.
- * Data is partitioned not by the primary key, but by the hash of the partitioning columns.
--* Columnar tables support a limited set of data types:
--
--  + Available in both the primary key and other columns: `Date`, `Datetime`, `Timestamp`, `Int32`, `Int64`, `Uint8`, `Uint16`, `Uint32`, `Uint64`, `Utf8`, `String`;
--  + Available only in columns not included in the primary key: `Decimal`, `Double`, `Float`, `Int8`, `Int16`, `JsonDocument`, `Json`, `Yson`.
--
- * You can configure compression individually for each column when [creating](../../../yql/reference/syntax/create_table/index.md#compression) a column-oriented table or [change](../../../yql/reference/syntax/alter_table/columns.md#compression) it later.
- * You can also configure encoding for each column when [creating](../../../yql/reference/syntax/create_table/index.md#encoding) a column-oriented table or [change](../../../yql/reference/syntax/alter_table/columns.md#encoding) it later.
- 
++        const auto& compression = column.GetSerializer().GetArrowCompression();
++        if (compression.HasCodec()) {
++            auto* newCompression = newColumn->mutable_compression();
++            switch (compression.GetCodec()) {
++                case NKikimrSchemeOp::ColumnCodecPlain:
++                    newCompression->set_algorithm(Ydb::Table::ColumnCompression::ALGORITHM_OFF);
++                    break;
++                case NKikimrSchemeOp::ColumnCodecLZ4:
++                    newCompression->set_algorithm(Ydb::Table::ColumnCompression::ALGORITHM_LZ4);
++                    break;
++                case NKikimrSchemeOp::ColumnCodecZSTD:
++                    newCompression->set_algorithm(Ydb::Table::ColumnCompression::ALGORITHM_ZSTD);
++                    break;
++                default:
++                    ythrow yexception() << "Unsupported column compression codec: " << static_cast<int>(compression.GetCodec());
++            }
++            if (compression.HasLevel()) {
++                newCompression->set_compression_level(compression.GetLevel());
++            }
++        }
++
+         if (column.HasDataAccessorConstructor()) {
+             switch (column.GetDataAccessorConstructor().Implementation_case()) {
+                 case NKikimrArrowAccessorProto::TConstructor::ImplementationCase::kDictionary:
 ```
 
-**File**: `ydb/docs/ru/core/concepts/datamodel/_includes/table.md` (modified, +0/-5)
+**File**: `ydb/core/ydb_convert/table_description_ut.cpp` (modified, +45/-0)
 ```diff
-@@ -245,11 +245,6 @@ CREATE TABLE article (
+@@ -12,6 +12,8 @@
  
- * В качестве первичного ключа можно использовать только `NOT NULL` колонки.
- * Данные партицируются не по первичному ключу, а по Hash от колонок партицирования.
--* В колоночных таблицах поддерживается ограниченный набор типов данных:
--
--  + Доступно и в первичном ключе и в остальных колонках: `Date`, `Datetime`, `Timestamp`, `Int32`, `Int64`, `Uint8`, `Uint16`, `Uint32`, `Uint64`, `Utf8`, `String`;
--  + Доступно только в колонках, не входящих в первичный ключ: `Decimal`, `Double`, `Float`, `Int8`, `Int16`, `JsonDocument`, `Json`, `Yson`.
--
- * Поддерживается возможность задавать сжатие индивидуально для каждой колонки при [создании](../../../yql/reference/syntax/create_table/index.md#compression) колоночной таблицы или [изменить](../../../yql/reference/syntax/alter_table/columns.md#compression) её позднее.
- * Поддерживается возможность задавать кодирование данных индивидуально для каждой колонки при [создании](../../../yql/reference/syntax/create_table/index.md#encoding) колоночной таблицы или [изменить](../../../yql/reference/syntax/alter_table/columns.md#encoding) её позднее.
+ #include <util/string/strip.h>
  
++#include <optional>
++
+ namespace NKikimr {
+ 
+ Y_UNIT_TEST_SUITE(ConvertTableDescription) {
+@@ -193,6 +195,49 @@ Y_UNIT_TEST_SUITE(ConvertTableDescription) {
+         check(NKikimrKqp::TKqpAlterTableRequest{});
+     }
+ 
++    Y_UNIT_TEST(ColumnCompressionRoundTrip) {
++        using TCompression = Ydb::Table::ColumnCompression;
++        for (const auto algorithm : {TCompression::ALGORITHM_OFF, TCompression::ALGORITHM_LZ4, TCompression::ALGORITHM_ZSTD}) {
++            for (const auto level : {std::optional<int>{}, std::optional<int>{0}, std::optional<int>{-5}, std::optional<int>{5}}) {
++                if (level && algorithm != TCompression::ALGORITHM_ZSTD) {
++                    continue;
++                }
++                Ydb::Table::CreateTableRequest original;
++                auto* column = original.add_columns();
++                column->set_name("value");
++                column->mutable_type()->mutable_optional_type()->mutable_item()->set_type_id(Ydb::Type::UTF8);
++                column->mutable_compression()->set_algorithm(algorithm);
++                if (level) {
++                    column->mutable_compression()->set_compression_level(*level);
++                }
++                auto* defaultColumn = original.add_columns();
++                defaultColumn->set_name("default_compression");
++                *defaultColumn->mutable_type() = column->type();
++
++                NKikimrSchemeOp::TColumnTableDescription internal;
++                auto status = Ydb::StatusIds::SUCCESS;
++                TString error;
++                UNIT_ASSERT_C(FillColumnDescription(internal, original.columns(), status, error), error);
++
++                Ydb::Table::CreateTableRequest exported;
++                FillColumnDescription(exported, internal);
++                Ydb::Table::DescribeTableResult described;
++                FillColumnDescription(described, internal);
++                for (const auto* restored : {&exported.columns(), &described.columns()}) {
++                    UNIT_ASSERT_VALUES_EQUAL(restored->size(), 2);
++                    const auto& compression = restored->Get(0).compression();
++                    UNIT_ASSERT(compression.has_algorithm());
++                    UNIT_ASSERT_VALUES_EQUAL(static_cast<int>(compression.algorithm()), static_cast<int>(algorithm));
++                    UNIT_ASSERT_VALUES_EQUAL(compression.has_compression_level(), level.has_value());
++                    if (level) {
++                        UNIT_ASSERT_VALUES_EQUAL(compression.compression_level(), *level);
++                    }
++                    UNIT_ASSERT(!restored->Get(1).has_compression());
++                }
++            }
++        }
++    }
++
+     Y_UNIT_TEST(InternalColumnTableCompressionAndEncoding) {
+         TActorSystemStub actorSystem;
+         NKikimrKqp::TKqpAlterTableRequest request;
+```
+
+**File**: `ydb/services/ydb/backup_ut/ydb_backup_ut.cpp` (modified, +32/-0)
+```diff
+@@ -4686,6 +4686,38 @@ Y_UNIT_TEST_SUITE(BackupRestoreS3) {
+         );
+     }
+ 
++    Y_UNIT_TEST(OlapColumnCompressionPreservedThroughExportImport) {
++        TS3TestEnv testEnv;
++        auto& session = testEnv.GetQuerySession();
++        constexpr const char* table = "/Root/olap_column_compression_backup";
++
++        ExecuteQuery(session, std::format(R"(
++            CREATE TABLE `{}` (
++                pk Uint64 NOT NULL,
++                plain Utf8 COMPRESSION(algorithm=off),
++                lz4 Utf8 COMPRESSION(algorithm=lz4),
++                zstd Utf8 COMPRESSION(algorithm=zstd,level=5),
++                default_compression Utf8,
++                PRIMARY KEY (pk)
++            ) PARTITION BY HASH(pk) WITH (STORE = COLUMN, PARTITION_COUNT = 1);
++        )", table), true);
++        ExecuteQuery(session, std::format(R"(
++            UPSERT INTO `{}` (pk, plain, lz4, zstd, default_compression) VALUES
++                (1u, "first", "first", "first", "first"),
++                (2u, NULL, "second", "second", NULL);
++        )", table));
++        const auto originalDdl = FetchShowCreateTableDdl(session, table);
++        UNIT_ASSERT_STRING_CONTAINS(originalDdl, "COMPRESSION");
++        const auto originalContent = GetTableContent(session, table, "pk");
++
++        CreateBackupLambda(testEnv.GetDriver(), testEnv.GetS3Port())();
++        ExecuteQuery(session, std::format("DROP TABLE `{}`;", table), true);
++        CreateRestoreLambda(testEnv.GetDriver(), testEnv.GetS3Port(), {"olap_column_compression_backup"})();
++
++        UNIT_ASSERT_STRINGS_EQUAL(FetchShowCreateTableDdl(session, table), originalDdl);
++        CompareResults(GetTableContent(session, table, "pk"), originalContent);
++    }
++
+     Y_UNIT_TEST(OlapColumnEncodingsPreservedThroughS3BackupRestore) {
+         TS3TestEnv testEnv;
+         constexpr const char* table = "/Root/olap_col_encodings_backup";
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #57139** (2026-10-28): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
-- **PR #57138** (2026-10-28): Update muted_ya (release-asan) in main (@ydbot)
-- **PR #57137** (2026-10-28): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
-- **PR #57132** (2026-10-27): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #57131** (2026-10-27): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
-- **PR #57125** (2026-10-27): Update muted_ya (relwithdebinfo) in stable-26-3-1 (@ydbot)
+- **PR #57261** (2026-10-28): ci: add 27-1-1 to nightly (@PavelEfarinov)
+- **PR #57256** (2026-10-28): Fixed test (@xyliganSereja)
+- **PR #57252** (2026-10-28): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #57236** (2026-10-28): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #57235** (closed): [26-3][docs] Backport feature flag generator and documentation (#55307, #55293) (@sintjuri)
+- **PR #57234** (closed): [26-2][docs] Backport feature flag generator and documentation (#55307, #55293) (@sintjuri)
 
 ---
 
@@ -1824,41 +2427,23 @@ Co-authored-by: Matveev Sergei <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. B2: Columnshard start: build the schema history from the diffs (#56671)
+## X. Fixed test (#57256)
 
 **RULE**:
-When implementing operations in `ydb/core/kqp/ut/olap/combinatory/compaction.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/core/tx/columnshard/backup/import/ut/ut_import.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4e58af23`: B2: Columnshard start: build the schema history from the diffs (#56671). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d59a8f02`: Fixed test (#57256). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/kqp/ut/olap/combinatory/compaction.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/tx/columnshard/backup/import/ut/ut_import.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-TConclusionStatus TStopPortionsCleanupCommand::DoExecute(TKikimrRunner& /*kikimr*/) {
-    auto controller = NYDBTest::TControllers::GetControllerAs<NYDBTest::NColumnShard::TController>();
-    AFL_VERIFY(controller);
-    controller->DisableBackground(NKikimr::NYDBTest::ICSController::EBackground::Cleanup);
-    return TConclusionStatus::Success();
-}
-
-TConclusionStatus TOnePortionsCleanupCommand::DoExecute(TKikimrRunner& /*kikimr*/) {
-    auto controller = NYDBTest::TControllers::GetControllerAs<NYDBTest::NColumnShard::TController>();
-    AFL_VERIFY(controller);
-    AFL_VERIFY(!controller->IsBackgroundEnable(NKikimr::NYDBTest::ICSController::EBackground::Cleanup));
-    const i64 erased = controller->GetPortionsErasedCounter().Val();
-    controller->EnableBackground(NKikimr::NYDBTest::ICSController::EBackground::Cleanup);
-    const TInstant start = TInstant::Now();
-    while (TInstant::Now() - start < TDuration::Seconds(60)) {
-        if (erased < controller->GetPortionsErasedCounter().Val()) {
-            Cerr << "PORTIONS_ERASED: " << erased << " -> " << controller->GetPortionsErasedCounter().Val() << Endl;
-            break;
-        }
-
-        Cerr << "WAIT_PORTIONS_CLEANUP: " << co
+            // S3 uses real HTTP threads; allow replies to arrive before simulated timers exhaust the event limit.
+            runtime.SetFastSimulatedTime(false);
+            runtime.SetFastSimulatedTime(false);
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1868,4 +2453,4 @@ TConclusionStatus TOnePortionsCleanupCommand::DoExecute(TKikimrRunner& /*kikimr*
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4e58af23` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d59a8f02` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md`  
 > **Source**: github ([https://github.com/Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem))  
-> **Source Version**: `76f97a98`  
+> **Source Version**: `f28b2311`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T14:26:27.700Z  
+> **Timestamp**: 2026-10-28T17:05:44.724Z  
 > **Learning ID**: `learn-github-ataraxy-labs-sem`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T14:26:24.913Z  
+> **Harvest Timestamp**: 2026-10-28T17:05:44.717Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Semantic version control => entity-level diffs, blame, and impact analysis on top of git. 28 languages via tree-sitter. Built for coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 3427 stars
+- **Stars / Engagement**: 3429 stars
 
 ---
 
@@ -1820,15 +1820,15 @@ fn main() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #534** (2026-10-28): **perf(mcp): reuse repeated caller lookups within a batch**
+  *Symptoms*: Repeated names in a caller batch currently repeat the same lookup. Reuse results within that request while preserving original query labels, order, and individual error results; nothing is cached across requests. Extends the caller-batch regression test with a whitespace-equivalent duplicate. Ported onto current main while retaining the explicit repository-path fix. Rust compilation and MCP lifecycle validation run in CI.
+  **Post-Mortem & Fix Analysis**:
+  > [vc]: #kAbAQM7aexyGsDBUrCh49unULfL4ABXp91IzmotOcQg=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJzZW0tZG9jcyIsInByb2plY3RJZCI6InByal9MT1JiN29SSjBTbUZGUnlGUEw1eE1ha3FVcjRrIiwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3JzNTQ1ODM3cy1wcm9qZWN0cy9zZW0tZG9jcy9DUXhVODdialI3VzJoQnJDcFBxTHliMmNVS2JBIiwicHJldmlld1VybCI6InNlbS1kb2NzLWdpdC1wZXJmLXJldXNlLWNhbGxlci1iYXRjaC1yZXN1bHRzLXJzNTQ1ODM3cy1wcm9qZWN0cy52ZXJjZWwuYXBwIiwibmV4dENvbW1pdFN0YXR1cyI6IkRFUExPWUVEIiwibGl2ZUZlZWRiYWNrIjp7InJlc29sdmVkIjowLCJ1bnJlc29sdmVkIjowLCJ0b3RhbCI6MCwibGluayI6InNlbS1kb2NzLWdpdC1wZXJmLXJldXNlLWNhbGxlci1iYXRjaC1yZXN1bHRzLXJzNTQ1ODM3cy1wcm9qZWN0cy52ZXJjZWwuYXBwIn0sInJvb3REaXJlY3RvcnkiOiJkb2NzIn1dLCJyZXF1ZXN0UmV2aWV3VXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3ZlcmNlbC1hZ2VudC9yZXF1ZXN0LXJldmlldz9vd25lcj1BdGFyYXh5LUxhYnMmcmVwbz1zZW0mcHI9NTM0In0= The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updat
+
 - **Issue #533** (2026-10-26): **fix(release): resume accepted uploads after registry indexing stalls**
   *Symptoms*: Crates.io accepted the new versions and serves their archives, but Cargo cannot resolve them until its sparse index updates. Query upload acceptance separately, avoid re-uploading accepted versions, wait directly on the sparse index before publishing dependents, preserve upload errors, and pin retries to the release tag. Six publisher regression tests cover delayed indexing, authentication failure, response-loss recovery, timeout, API failure, and exact unyanked versions. Workflow YAML and tests pass locally; no Rust product code changed.
   **Post-Mortem & Fix Analysis**:
   > [vc]: #+jA9Wvqzz+yYsv0QNMpPN8rK0H/2dS4Gtwma9yZAVfs=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJzZW0tZG9jcyIsInByb2plY3RJZCI6InByal9MT1JiN29SSjBTbUZGUnlGUEw1eE1ha3FVcjRrIiwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3JzNTQ1ODM3cy1wcm9qZWN0cy9zZW0tZG9jcy8yS3FZRUY5S2FyckRRcWhEcEJ0NVdGNDFZaG80IiwicHJldmlld1VybCI6InNlbS1kb2NzLWdpdC1maXgtcmVnaXN0cnktcHVibGljYXRpb24tcnM1NDU4MzdzLXByb2plY3RzLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoiREVQTE9ZRUQiLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoic2VtLWRvY3MtZ2l0LWZpeC1yZWdpc3RyeS1wdWJsaWNhdGlvbi1yczU0NTgzN3MtcHJvamVjdHMudmVyY2VsLmFwcCJ9fV0sInJlcXVlc3RSZXZpZXdVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vdmVyY2VsLWFnZW50L3JlcXVlc3QtcmV2aWV3P293bmVyPUF0YXJheHktTGFicyZyZXBvPXNlbSZwcj01MzMifQ== The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a 
-
-- **Issue #532** (2026-10-26): **release: Sem 0.28.2**
-  *Symptoms*: Release the accumulated fixes and performance improvements as 0.28.2. Synchronizes workspace crates, lockfile, npm package, and MCP registry metadata. Includes the experimental validation adapters from #531; merge after that PR and release checks pass.
-  **Post-Mortem & Fix Analysis**:
-  > [vc]: #ji54PRsh8oHTHMj6t10l7TYHY4fvokESvVBhRUbxdic=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJzZW0tZG9jcyIsInByb2plY3RJZCI6InByal9MT1JiN29SSjBTbUZGUnlGUEw1eE1ha3FVcjRrIiwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3JzNTQ1ODM3cy1wcm9qZWN0cy9zZW0tZG9jcy8yUXFGZTFLS25lWVRDU0EybW40M3dpZDIzZFJVIiwicHJldmlld1VybCI6InNlbS1kb2NzLWdpdC1yZWxlYXNlLTAyODItcnM1NDU4MzdzLXByb2plY3RzLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoiREVQTE9ZRUQiLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoic2VtLWRvY3MtZ2l0LXJlbGVhc2UtMDI4Mi1yczU0NTgzN3MtcHJvamVjdHMudmVyY2VsLmFwcCJ9LCJyb290RGlyZWN0b3J5IjoiZG9jcyJ9XSwicmVxdWVzdFJldmlld1VybCI6Imh0dHBzOi8vdmVyY2VsLmNvbS92ZXJjZWwtYWdlbnQvcmVxdWVzdC1yZXZpZXc/b3duZXI9QXRhcmF4eS1MYWJzJnJlcG89c2VtJnByPTUzMiJ9 The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a href
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1845,306 +1845,89 @@ fn main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `76f97a98` (2026-10-26)
-**Commit Message**: fix(release): resume accepted uploads after registry indexing stalls (#533)
+### Incident Patch 1: `f28b2311` (2026-10-28)
+**Commit Message**: perf(mcp): reuse repeated caller lookups within a batch (#534)
 
-Crates.io accepted the new versions and serves their archives, but Cargo
-cannot resolve them until its sparse index updates. Query upload
-acceptance separately, avoid re-uploading accepted versions, wait
-directly on the sparse index before publishing dependents, preserve
-upload errors, and pin retries to the release tag. Six publisher
-regression tests cover delayed indexing, authentication failure,
-response-loss recovery, timeout, API failure, and exact unyanked
-versions. Workflow YAML and tests pass locally; no Rust product code
-changed.
+Repeated names in a caller batch currently repeat the same lookup. Reuse
+results within that request while preserving original query labels,
+order, and individual error results; nothing is cached across requests.
+Extends the caller-batch regression test with a whitespace-equivalent
+duplicate. Ported onto current main while retaining the explicit
+repository-path fix. Rust compilation and MCP lifecycle validation run
+in CI.
 
-**File**: `.github/workflows/release-publisher.yml` (added, +16/-0)
+**File**: `CHANGELOG.md` (modified, +4/-0)
 ```diff
-@@ -0,0 +1,16 @@
-+name: Release publisher tests
-+on:
-+  pull_request:
-+    paths: ['scripts/publish-crates.py', 'scripts/test-publish-crates.py', '.github/workflows/release.yml', '.github/workflows/release-publisher.yml']
-+  push:
-+    branches: [main]
-+    paths: ['scripts/publish-crates.py', 'scripts/test-publish-crates.py', '.github/workflows/release.yml', '.github/workflows/release-publisher.yml']
-+jobs:
-+  publisher:
-+    runs-on: ubuntu-latest
-+    steps:
-+      - uses: actions/checkout@v4
-+      - uses: actions/setup-python@v5
-+        with:
-+          python-version: '3.12'
-+      - run: python3 scripts/test-publish-crates.py
-```
-
-**File**: `.github/workflows/release.yml` (modified, +19/-37)
-```diff
-@@ -236,54 +236,36 @@ jobs:
-         run: ./mcp-publisher publish || (sleep 60 && ./mcp-publisher publish)
- 
-   publish-crates:
--    needs: [check-version, semver-check]
-+    needs: [check-version, create-tag]
-     if: >-
-       always() && needs.check-version.result == 'success' &&
--      ((needs.check-version.outputs.should_release == 'true' && needs.semver-check.result == 'success') ||
-+      ((needs.check-version.outputs.should_release == 'true' && needs.create-tag.result == 'success') ||
-       (inputs.publish_crates_only == true && needs.check-version.outputs.should_release == 'false'))
-     runs-on: ubuntu-latest
--    defaults:
--      run:
--        working-directory: crates
-+    timeout-minutes: 90
-+    concurrency:
-+      group: crates-publication
-+      cancel-in-progress: false
-     steps:
-       - uses: actions/checkout@v4
- 
--      - name: Install Rust
--        uses: dtolnay/rust-toolchain@stable
--
--      - name: Publish sem-core
--        run: |
--          VERSION=$(grep '^version' sem-core/Cargo.toml | head -1 | sed 's/.*"\(.*\)"/\1/')
--          cargo publish -p sem-core || cargo info --registry crates-io "sem-core@$VERSION" >/dev/null
--        env:
--          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
--
--      - name: Wait for crates.io index
--        run: sleep 30
-+      - uses: actions/setup-python@v5
-+        with:
-+          python-version: '3.12'
- 
--      - name: Publish sem-cloud-client
-+      - name: Test and preserve publishing helper
-         run: |
--          VERSION=$(grep '^version' sem-cloud-client/Cargo.toml | head -1 | sed 's/.*"\(.*\)"/\1/')
--          cargo publish -p sem-cloud-client || cargo info --registry crates-io "sem-cloud-client@$VERSION" >/dev/null
--        env:
--          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-+          python3 scripts/test-publish-crates.py
-+          cp scripts/publish-crates.py "$RUNNER_TEMP/publish-crates.py"
- 
--      - name: Wait for crates.io index
--        run: sleep 30
--
--      - name: Publish sem-mcp
--        run: |
--          VERSION=$(grep '^version' sem-mcp/Cargo.toml | head -1 | sed 's/.*"\(.*\)"/\1/')
--          cargo publish -p sem-mcp || cargo info --registry crates-io "sem-mcp@$VERSION" >/dev/null
--        env:
--          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-+      - uses: actions/checkout@v4
-+        with:
-+          ref: v${{ needs.check-version.outputs.version }}
- 
--      - name: Wait for crates.io index
--        run: sleep 30
-+      - name: Install Rust
-+        uses: dtolnay/rust-toolchain@stable
- 
--      - name: Publish sem-cli
--        run: |
--          VERSION=$(grep '^version' sem-cli/Cargo.toml | head -1 | sed 's/.*"\(.*\)"/\1/')
--          cargo publish -p sem-cli || cargo info --registry crates-io "sem-cli@$VERSION" >/dev/null
-+      - name: Publish crates in dependency order
-+        run: python3 "$RUNNER_TEMP/publish-crates.py" --workspace crates sem-core sem-cloud-client sem-mcp sem-cli
-         env:
-           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-```
-
-**File**: `CHANGELOG.md` (modified, +5/-0)
-```diff
-@@ -4,6 +4,11 @@ All notable changes to sem are documented in this file.
+@@ -4,6 +4,10 @@ All notable changes to sem are documented in this file.
  
  ## [Unreleased]
  
-+### Fixed
++### Performance
 +
-+- Crate publishing checks accepted uploads separately from sparse-index availability, waits before publishing dependents, and resumes from the immutable release tag without re-uploading accepted versions.
++- Repeated caller queries within one MCP batch reuse the first lookup while preserving input order and per-query responses. Results are not reused across requests.
 +
-+
- ## [0.28.2] - 2026-10-25
+ ### Fixed
  
- ### Added
+ - Crate publishing checks accepted uploads separately from sparse-index availability, waits before publishing dependents, and resumes from the immutable release tag without re-uploading accepted versions.
 ```
 
-**File**: `scripts/publish-crates.py` (added, +108/-0)
+**File**: `crates/sem-mcp/src/server.rs` (modified, +18/-7)
 ```diff
-@@ -0,0 +1,108 @@
-+#!/usr/bin/env python3
-+"""Publish an immutable release in dependency order, waiting for registry visibility."""
-+import argparse
-+import json
-+import subprocess
-+import time
-+import tomllib
-+import urllib.error
-+import urllib.request
-+from pathlib import Path
-+
-+
-+class RegistryError(RuntimeError):
-+    pass
-+
-+
-+def read_url(url):
-+    request = urllib.request.Request(url, headers={
-+        "User-Agent": "ataraxy-release-publisher/1.0", "Cache-Control": "no-cache",
-+    })
-+    try:
-+        with urllib.request.urlopen(request, timeout=30) as response:
-+            return response.read().decode()
-+    except urllib.error.HTTPError as exc:
-+        if exc.code == 404:
-+            return None
-+        raise RegistryError(f"Registry HTTP {exc.code}: {url}") from exc
-+    except (urllib.error.URLError, TimeoutError) as exc:
-+        raise RegistryError(f"Registry unavailable: {exc}") from exc
-+
-+
-+def uploaded(name, version):
-+    body = read_url(f"https://crates.io/api/v1/crates/{name}/{version}")
-+    if body is None:
-+        return False
-+    release = json.loads(body)["version"]
-+    if release.get("yanked"):
-+        raise RegistryError(f"{name}@{version} is yanked; refusing to continue")
-+    return release["num"] == version
-+
-+
-+def indexed(name, version):
-+    if len(name) == 1:
-+        path = f"1/{name}"
-+    elif len(name) == 2:
-+        path = f"2/{name}"
-+    elif len(name) == 3:
-+        path = f"3/{name[0]}/{name}"
-+    else:
-+        path = f"{name[:2]}/{name[2:4]}/{name}"
-+    body = read_url(f"https://index.crates.io/{path}")
-+    return body is not None and any(
-+        row.get("vers") == version and not row.get("yanked", False)
-+        for row in (json.loads(line) for line in body.splitlines() if line.strip())
-+    )
-+
-+
-+def wait_until(check, label, timeout, interval):
-+    deadline = time.monotonic() + timeout
-+    while True:
-+        try:
-+            if check():
-+                return
-+            detail = "not yet visible"
-+        except RegistryError as exc:
-+            detail = str(exc)
-+        remaining = deadline - time.monotonic()
-+        if remaining <= 0:
-+            raise RegistryError(f"Timed out waiting for {label}: {detail}. Rerun publication-only when registry indexing recovers.")
-+        print(f"Waiting for {label}: {detail} ({int(remaining)}s remaining)", flush=True)
-+        time.sleep(min(interval, remaining))
-+
-+
-+def publish_one(name, version, command, timeout, interval):
-+    if uploaded(name, version):
-+        print(f"{name}@{version} already accepted; skipping upload", flush=True)
-+    else:
-+        result = subprocess.run(command, check=False)
-+        if result.returncode and not uploaded(name, version):
-+            raise RuntimeError(f"Upload failed for {name}@{version} (exit {result.returncode})")
-+        wait_until(lambda: uploaded(name, version), f"{name}@{version} upload", timeout, interval)
-+    wait_until(lambda: indexed(name, version), f"{name}@{version} in Cargo's sparse index", timeout, interval)
-+    print(f"{name}@{version} is available to dependents", flush=True)
-+
-+
-+def main():
-+    parser = argparse.ArgumentParser(description=__doc__)
-+    parser.add_argument("--workspace", default=".")
-+    parser.add_argument("--crates-dir", default="crates")
-+    parser.add_argument("--no-verify", action="store_true")
-+    parser.add_argument("--timeout", type=int, default=3600)
-+    parser.add_argument("--interval", type=int, default=30)
-+    parser.add_argument("crates", nargs="+")
-+    args = parser.parse_args()
-+    if args.timeout <= 0 or args.interval <= 0:
-+        parser.error("timeout and interval must be positive")
-+    for name in args.crates:
-+        manifest = tomllib.loads((Path(args.crates_dir) / name / "Cargo.toml").read_text())
-+        if manifest["package"]["name"] != name:
-+            raise ValueError(f"Package name mismatch for {name}")
-+        command = ["cargo", "publish", "--manifest-path", str(Path(args.workspace) / "Cargo.toml"), "-p", name]
-+        if args.no_verify:
-+            command.append("--no-verify")
-+        publish_one(name, manifest["package"]["version"], command, args.timeout, args.interval)
-+
-+
-+if __name__ == "__main__":
-+    main()
-```
-
-**File**: `scripts/test-publish-crates.py` (added, +47/-0)
-```diff
-@@ -0,0 +1,47 @@
-+import importlib.util
-+import unittest
-+from pathlib import Path
-+from types import SimpleNamespace
-+from unittest.mock import patch
-+
-+spec = importlib.util.spec_from_file_location("publisher", Path(__file__).with_name("publish-crates.py"))
-+p = importlib.util.module_from_spec(spec)
-+spec.loader.exec_module(p)
-+
-+
-+class PublicationTests(unittest.TestCase):
-+    def test_accepted_upload_waits_for_index_without_reupload(self):
-+        with patch.object(p, "uploaded", return_value=True), patch.object(p, "indexed", side_effect=[False, True]) as index, patch.object(p.subprocess, "run") as run, patch.object(p.time, "sleep"):
-+            p.publish_one("test-crate", "1.0.0", ["cargo"], 60, 1)
-+        run.assert_not_called()
-+        self.assertEqual(index.call_count, 2)
-+
-+    def test_auth_failure_stops_before_index(self):
-+        with patch.object(p, "uploaded", return_value=False), patch.object(p.subprocess, "run", return_value=SimpleNamespace(returncode=101)), patch.object(p, "indexed") as index:
-+            with self.assertRaisesRegex(RuntimeError, "Upload failed"):
-+                p.publish_one("test-crate", "1.0.0", ["cargo"], 60, 1)
-+        index.assert_not_called()
-+
-+    def test_lost_upload_response_recovers_from_registry_confirmation(self):
-+        with patch.object(p, "uploaded", side_effect=[False, True, True]), patch.object(p.subprocess, "run", return_value=SimpleNamespace(returncode=101)), patch.object(p, "indexed", return_value=True):
-+            p.publish_one("test-crate", "1.0.0", ["cargo"], 60, 1)
-+
-+    def test_index_timeout_is_not_success(self):
-+        with patch.object(p, "uploaded", return_value=True), patch.object(p, "indexed", return_value=False), patch.object(p.time, "monotonic", side_effect=[0, 61]):
-+            with self.assertRaisesRegex(p.RegistryError, "Timed out"):
-+                p.publish_one("test-crate", "1.0.0", ["cargo"], 60, 1)
-+
-+    def test_registry_api_failure_does_not_trigger_upload(self):
-+        with patch.object(p, "uploaded", side_effect=p.RegistryError("HTTP 503")), patch.object(p.subprocess, "run") as run:
-+            with self.assertRaises(p.RegistryError):
-+                p.publish_one("test-crate", "1.0.0", ["cargo"], 60, 1)
-+        run.assert_not_called()
-+
-+    def test_sparse_index_requires_exact_unyanked_version(self):
-+        with patch.object(p, "read_url", return_value='{"vers":"1.0.0","yanked":true}\n{"vers":"1.0.1","yanked":false}'):
-+            self.assertFalse(p.indexed("test-crate", "1.0.0"))
-+            self.assertTrue(p.indexed("test-crate", "1.0.1"))
-+
-+
-+if __name__ == "__main__":
-+    unittest.main()
+@@ -2716,11 +2716,21 @@ impl SemServer {
+                     let mut blocks = Vec::new();
+                     let mut json_results = Vec::new();
+                     let mut any_ok = false;
++                    // Batch-local only: never reuse a caller result across edits
++                    // or requests. Keep one output slot for every input query.
++                    let mut results_by_query: HashMap<String, CallToolResult> = HashMap::new();
+                     for name in names {
+-                        let result = self.sem_callers(Parameters(CallersParams {
+-                            query: name.clone(), file: params.file().map(str::to_string),
+-                            limit: params.limit, format: params.format.clone(),
+-                        })).await?;
++                        let key = name.trim().to_string();
++                        let result = if let Some(result) = results_by_query.get(&key) {
++                            result.clone()
++                        } else {
++                            let result = self.sem_callers(Parameters(CallersParams {
++                                query: name.clone(), file: params.file().map(str::to_string),
++                                limit: params.limit, format: params.format.clone(),
++                            })).await?;
++                            results_by_query.insert(key, result.clone());
++                            result
++                        };
+                         let is_error = result.is_error.unwrap_or(false);
+                         any_ok |= !is_error;
+                         let mut query_results = Vec::new();
+@@ -3746,15 +3756,16 @@ mod tests {
+         let outside_repo = TempDir::new().unwrap();
+         let missing_file = outside_repo.path().join("missing/a.py");
+         let params: FindParams = serde_json::from_value(serde_json::json!({
+-            "mode": "callers", "queries": ["first", "second"],
++            "mode": "callers", "queries": ["first", "second", " first "],
+             "file": missing_file, "format": "json"
+         })).unwrap();
+         let result = SemServer::new().sem_find(Parameters(params)).await.unwrap();
+         assert!(result.is_error.unwrap_or(false));
+         let value: serde_json::Value = serde_json::from_str(&text_of(result)).unwrap();
+         let rows = value.as_array().unwrap();
+-        assert_eq!(rows.len(), 2);
+-        for (row, name) in rows.iter().zip(["first", "second"]) {
++        assert_eq!(rows.len(), 3);
++        assert_eq!(rows[0]["results"], rows[2]["results"]);
++        for (row, name) in rows.iter().zip(["first", "second", " first "]) {
+             assert_eq!(row["query"], name);
+             assert_eq!(row["is_error"], true);
+             assert!(!row["results"].as_array().unwrap().is_empty());
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #534** (2026-10-28): perf(mcp): reuse repeated caller lookups within a batch (@rs545837)
 - **PR #533** (2026-10-26): fix(release): resume accepted uploads after registry indexing stalls (@rs545837)
 - **PR #532** (2026-10-26): release: Sem 0.28.2 (@rs545837)
 - **PR #531** (2026-10-26): bench: preserve experimental validation runtime and parity checks (@rs545837)
 - **PR #530** (2026-10-24): docs: record MCP query contract fixes (@rs545837)
 - **PR #529** (2026-10-24): fix(mcp): support scoped context and structured caller batches (@rs545837)
-- **PR #528** (2026-10-22): perf: parallelize the rest of the cold index build's serial stretches (@rs545837)
 
 ---
 
@@ -2164,36 +1947,24 @@ changed.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release): resume accepted uploads after registry indexing stalls (#533)
+## X. mcp): reuse repeated caller lookups within a batch (#534)
 
 **RULE**:
-When implementing operations in `.github/workflows/release-publisher.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ataraxy-Labs/sem. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ataraxy-Labs/sem. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `76f97a98`: release): resume accepted uploads after registry indexing stalls (#533). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f28b2311`: mcp): reuse repeated caller lookups within a batch (#534). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-publisher.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-name: Release publisher tests
-on:
-  pull_request:
-    paths: ['scripts/publish-crates.py', 'scripts/test-publish-crates.py', '.github/workflows/release.yml', '.github/workflows/release-publisher.yml']
-  push:
-    branches: [main]
-    paths: ['scripts/publish-crates.py', 'scripts/test-publish-crates.py', '.github/workflows/release.yml', '.github/workflows/release-publisher.yml']
-jobs:
-  publisher:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - run: python3 scripts/test-publish-crates.py
+### Performance
+
+- Repeated caller queries within one MCP batch reuse the first lookup while preserving input order and per-query responses. Results are not reused across requests.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2203,4 +1974,4 @@ jobs:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `76f97a98` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f28b2311` are properly handled with clean fallback behavior.

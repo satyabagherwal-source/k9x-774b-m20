@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T16:58:59.333Z",
+  "last_updated": "2026-10-28T17:06:00.807Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1550,14 +1550,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-      "content_hash": "6443a7a5f904bca9f70ecd3232a49b8edf1b4acd9eae32efe22b03bced694320",
-      "verified_at": "2026-10-26T00:12:05.737Z",
+      "content_hash": "a2635af6c9c848da37527c7f8860918c36d26092aadfe239ca787095470d17c2",
+      "verified_at": "2026-10-28T17:05:43.084Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T00:12:05.737Z"
+      "last_updated": "2026-10-28T17:05:43.084Z"
     },
     "google/gemma-4-26B-A4B-it": {
       "repository": "google/gemma-4-26B-A4B-it",
@@ -8256,14 +8256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ydb-platform-ydb",
-      "content_hash": "4865a7ee73a7334ce323ac13aeae3d9064a9f93747797661423aee049758c8c5",
-      "verified_at": "2026-10-28T01:00:21.000Z",
+      "content_hash": "348ea3d4029a33e09ff2a4ce031faa4ef1fe842b71e38246880937d0afb796e0",
+      "verified_at": "2026-10-28T17:06:00.806Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T01:00:21.000Z"
+      "last_updated": "2026-10-28T17:06:00.806Z"
     },
     "arco-design/arco-design-vue": {
       "repository": "arco-design/arco-design-vue",
@@ -8691,14 +8691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kcl-lang-kcl",
-      "content_hash": "a1754bc97ab1b06be250b44ab731d8f7aecf82d43cec2f2afe31a8c10b589003",
-      "verified_at": "2026-10-27T17:56:55.324Z",
+      "content_hash": "138f18555d52529de696fffdaed0783e19a09dc0f01623ce787fec0ac6874b31",
+      "verified_at": "2026-10-28T17:05:52.751Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T17:56:55.325Z"
+      "last_updated": "2026-10-28T17:05:52.751Z"
     },
     "apache/incubator-pegasus": {
       "repository": "apache/incubator-pegasus",
@@ -9606,14 +9606,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ataraxy-labs-sem",
-      "content_hash": "8a4470177454f716f19750e3e8e4a65a05e20a93b8c68b0511131074641c5d20",
-      "verified_at": "2026-10-27T14:26:28.134Z",
+      "content_hash": "9ea765aba68ac92abed64f1a6c26fff6288cb5e1d1d241634e2ae70522f375ec",
+      "verified_at": "2026-10-28T17:05:45.393Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T14:26:28.134Z"
+      "last_updated": "2026-10-28T17:05:45.393Z"
     },
     "komi-store/komi-store": {
       "repository": "komi-store/komi-store",

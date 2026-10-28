@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T16:58:59.255Z",
+  "last_updated": "2026-10-28T17:06:00.720Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3691,8 +3691,8 @@
       "slug": "ataraxy-labs-sem",
       "platform": "github",
       "source_url": "https://github.com/Ataraxy-Labs/sem",
-      "source_version": "76f97a98",
-      "content_hash": "8a4470177454f716f19750e3e8e4a65a05e20a93b8c68b0511131074641c5d20",
+      "source_version": "f28b2311",
+      "content_hash": "9ea765aba68ac92abed64f1a6c26fff6288cb5e1d1d241634e2ae70522f375ec",
       "dossier_path": "07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
       "promoted_rules": [
@@ -3715,6 +3715,11 @@
           "number": 4845,
           "title": "release): resume accepted uploads after registry indexing stalls (#533)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5349,
+          "title": "mcp): reuse repeated caller lookups within a batch (#534)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3722,7 +3727,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T14:26:28.052Z",
+      "verified_at": "2026-10-28T17:05:45.288Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25234,7 +25239,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
       "source_version": "hf-nomic-ai-nomic-embed-text-v1.5",
-      "content_hash": "6443a7a5f904bca9f70ecd3232a49b8edf1b4acd9eae32efe22b03bced694320",
+      "content_hash": "a2635af6c9c848da37527c7f8860918c36d26092aadfe239ca787095470d17c2",
       "dossier_path": "07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md",
       "promoted_rules": [
@@ -25271,7 +25276,7 @@
         "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv3z1izs",
         "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv4dnd2y"
       ],
-      "verified_at": "2026-10-26T00:12:05.685Z",
+      "verified_at": "2026-10-28T17:05:42.953Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32520,8 +32525,8 @@
       "slug": "kcl-lang-kcl",
       "platform": "github",
       "source_url": "https://github.com/kcl-lang/kcl",
-      "source_version": "1eeb8527",
-      "content_hash": "a1754bc97ab1b06be250b44ab731d8f7aecf82d43cec2f2afe31a8c10b589003",
+      "source_version": "fcdc928b",
+      "content_hash": "138f18555d52529de696fffdaed0783e19a09dc0f01623ce787fec0ac6874b31",
       "dossier_path": "07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md",
       "promoted_rules": [
@@ -32549,6 +32554,11 @@
           "number": 4932,
           "title": "runtime): count characters, not bytes, for str len, subscript and iteration (#22",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5350,
+          "title": "runtime): round half to even in round() and keep int results for ints (#2238)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32556,7 +32566,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T17:56:55.223Z",
+      "verified_at": "2026-10-28T17:05:52.647Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55787,8 +55797,8 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "e389d007",
-      "content_hash": "4865a7ee73a7334ce323ac13aeae3d9064a9f93747797661423aee049758c8c5",
+      "source_version": "2db7fac9",
+      "content_hash": "348ea3d4029a33e09ff2a4ce031faa4ef1fe842b71e38246880937d0afb796e0",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
@@ -55836,6 +55846,11 @@
           "number": 5087,
           "title": "B2: Columnshard start: build the schema history from the diffs (#56671)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5351,
+          "title": "Fixed test (#57256)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55843,7 +55858,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T01:00:20.900Z",
+      "verified_at": "2026-10-28T17:06:00.701Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -145192,6 +145207,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T16:58:59.243Z"
+    },
+    "rule-5349": {
+      "learning_id": "rule-5349",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5349,
+      "title": "mcp): reuse repeated caller lookups within a batch (#534)",
+      "source_url": "https://github.com/Ataraxy-Labs/sem",
+      "source_version": "f28b2311",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T17:05:45.288Z"
+    },
+    "rule-5350": {
+      "learning_id": "rule-5350",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5350,
+      "title": "runtime): round half to even in round() and keep int results for ints (#2238)",
+      "source_url": "https://github.com/kcl-lang/kcl",
+      "source_version": "fcdc928b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T17:05:52.647Z"
+    },
+    "rule-5351": {
+      "learning_id": "rule-5351",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5351,
+      "title": "Fixed test (#57256)",
+      "source_url": "https://github.com/ydb-platform/ydb",
+      "source_version": "2db7fac9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T17:06:00.701Z"
     }
   },
   "aliases": {

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-7450",
-    "timestamp": "2026-10-27T14:01:04.692Z",
-    "repository": "czlonkowski/n8n-skills",
-    "learningId": "learn-github-czlonkowski-n8n-skills",
-    "contentHash": "925746295faf7aa52e6b3ccf1326ff552f7804efd1746d50dd56517341100c84",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-B1XI",
-    "timestamp": "2026-10-27T14:04:08.454Z",
-    "repository": "rdfjs/N3.js",
-    "learningId": "learn-github-rdfjs-n3-js",
-    "contentHash": "f0164119b7e39960db27a2b690233de76d5ca12ff0bf7cd1e15c880fa9d665fd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-F47M",
-    "timestamp": "2026-10-27T14:07:18.034Z",
-    "repository": "yvgude/lean-ctx",
-    "learningId": "learn-github-yvgude-lean-ctx",
-    "contentHash": "6223032506bfbef71ec0063cb00a8ae6668a4b08fab370fa61f4c66a6ee1dadc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-F5QQ",
-    "timestamp": "2026-10-27T14:07:20.018Z",
-    "repository": "RDFLib/rdflib",
-    "learningId": "learn-github-rdflib-rdflib",
-    "contentHash": "6718fc12268c615a2a34b627c10192758af168a70bdc932cf69963e153f03299",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-FD39",
     "timestamp": "2026-10-27T14:07:29.541Z",
     "repository": "VectifyAI/PageIndex",
@@ -7490,6 +7430,66 @@
     "repository": "GreptimeTeam/greptimedb",
     "learningId": "learn-github-greptimeteam-greptimedb",
     "contentHash": "6817ae15182494880c02477f005f68b790175619547c3381202536afc6fb7396",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-8EXL",
+    "timestamp": "2026-10-28T17:05:43.065Z",
+    "repository": "nomic-ai/nomic-embed-text-v1.5",
+    "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
+    "contentHash": "a2635af6c9c848da37527c7f8860918c36d26092aadfe239ca787095470d17c2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-8GPW",
+    "timestamp": "2026-10-28T17:05:45.380Z",
+    "repository": "Ataraxy-Labs/sem",
+    "learningId": "learn-github-ataraxy-labs-sem",
+    "contentHash": "9ea765aba68ac92abed64f1a6c26fff6288cb5e1d1d241634e2ae70522f375ec",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-8MEA",
+    "timestamp": "2026-10-28T17:05:52.738Z",
+    "repository": "kcl-lang/kcl",
+    "learningId": "learn-github-kcl-lang-kcl",
+    "contentHash": "138f18555d52529de696fffdaed0783e19a09dc0f01623ce787fec0ac6874b31",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-8SM1",
+    "timestamp": "2026-10-28T17:06:00.793Z",
+    "repository": "ydb-platform/ydb",
+    "learningId": "learn-github-ydb-platform-ydb",
+    "contentHash": "348ea3d4029a33e09ff2a4ce031faa4ef1fe842b71e38246880937d0afb796e0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

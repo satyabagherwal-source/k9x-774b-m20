@@ -1165,8 +1165,8 @@
     "sourceUrl": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
     "sourceVersion": "hf-nomic-ai-nomic-embed-text-v1.5",
     "license": "Open-Source",
-    "contentHash": "6443a7a5f904bca9f70ecd3232a49b8edf1b4acd9eae32efe22b03bced694320",
-    "lastHarvestedAt": "2026-10-26T00:12:05.731Z",
+    "contentHash": "a2635af6c9c848da37527c7f8860918c36d26092aadfe239ca787095470d17c2",
+    "lastHarvestedAt": "2026-10-28T17:05:43.068Z",
     "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5"
   },
   "hf-conwayresearch-underdog-saluki-27b-1.0": {
@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "e389d007",
+    "sourceVersion": "2db7fac9",
     "license": "Apache-2.0",
-    "contentHash": "4865a7ee73a7334ce323ac13aeae3d9064a9f93747797661423aee049758c8c5",
-    "lastHarvestedAt": "2026-10-28T01:00:20.993Z",
+    "contentHash": "348ea3d4029a33e09ff2a4ce031faa4ef1fe842b71e38246880937d0afb796e0",
+    "lastHarvestedAt": "2026-10-28T17:06:00.797Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {
@@ -5713,10 +5713,10 @@
     "repository": "kcl-lang/kcl",
     "platform": "github",
     "sourceUrl": "https://github.com/kcl-lang/kcl",
-    "sourceVersion": "1eeb8527",
+    "sourceVersion": "fcdc928b",
     "license": "Apache-2.0",
-    "contentHash": "a1754bc97ab1b06be250b44ab731d8f7aecf82d43cec2f2afe31a8c10b589003",
-    "lastHarvestedAt": "2026-10-27T17:56:55.315Z",
+    "contentHash": "138f18555d52529de696fffdaed0783e19a09dc0f01623ce787fec0ac6874b31",
+    "lastHarvestedAt": "2026-10-28T17:05:52.742Z",
     "learningId": "learn-github-kcl-lang-kcl"
   },
   "apache-incubator-pegasus": {
@@ -6343,10 +6343,10 @@
     "repository": "Ataraxy-Labs/sem",
     "platform": "github",
     "sourceUrl": "https://github.com/Ataraxy-Labs/sem",
-    "sourceVersion": "76f97a98",
+    "sourceVersion": "f28b2311",
     "license": "Apache-2.0",
-    "contentHash": "8a4470177454f716f19750e3e8e4a65a05e20a93b8c68b0511131074641c5d20",
-    "lastHarvestedAt": "2026-10-27T14:26:28.125Z",
+    "contentHash": "9ea765aba68ac92abed64f1a6c26fff6288cb5e1d1d241634e2ae70522f375ec",
+    "lastHarvestedAt": "2026-10-28T17:05:45.384Z",
     "learningId": "learn-github-ataraxy-labs-sem"
   },
   "komi-store-komi-store": {

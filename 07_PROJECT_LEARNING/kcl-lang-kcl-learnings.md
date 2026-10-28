@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md`  
 > **Source**: github ([https://github.com/kcl-lang/kcl](https://github.com/kcl-lang/kcl))  
-> **Source Version**: `1eeb8527`  
+> **Source Version**: `fcdc928b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T17:56:54.774Z  
+> **Timestamp**: 2026-10-28T17:05:52.084Z  
 > **Learning ID**: `learn-github-kcl-lang-kcl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kcl-lang/kcl](https://github.com/kcl-lang/kcl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T17:56:54.347Z  
+> **Harvest Timestamp**: 2026-10-28T17:05:52.074Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: KCL Language Core and API
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2435 stars
+- **Stars / Engagement**: 2438 stars
 
 ---
 
@@ -1204,293 +1204,484 @@ impl ModuleInfo {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1eeb8527` (2026-10-27)
-**Commit Message**: fix(runtime): count characters, not bytes, for str len, subscript and iteration (#2232)
+### Incident Patch 1: `128d6891` (2026-10-28)
+**Commit Message**: fix(runtime): round half to even in round() and keep int results for ints (#2238)
 
-Indexing and slicing a str already work on character positions, but
-len(), the subscript bound check and the str iterator still used the
-UTF-8 byte length. With non-ASCII text this made the pieces disagree:
+round() follows Python: it rounds halfway cases to the even neighbour,
+returns an int when ndigits is omitted, and otherwise returns a value of
+the same type as the number, as its own documentation says. Three paths
+did not:
 
-- len("héllo") returned 6 instead of 5, so s[len(s) - 1] failed.
-- "héllo"[5] passed the byte-length bound check and then panicked with
-  "called `Option::unwrap()` on a `None` value" instead of reporting
-  "string index out of range: 5".
-- list("hé") panicked with the same unwrap error, because the iterator
-  reported it was not at the end after its last character.
+- With ndigits omitted, a float was rounded with f64::round, which rounds
+  half away from zero. round(2.5) returned 3 and round(0.5) returned 1,
+  where Python returns 2 and 0.
+- With ndigits=0 the same f64::round was used, so round(2.5, 0) returned
+  3.0 instead of 2.0. Every other ndigits value already rounded half to
+  even, so round(2.5, 0) and round(0.25, 1) disagreed on the rule.
+- An int with ndigits was turned into a float and never rounded.
+  round(5, 2) returned 5.0 and round(1250, -2) returned 1250.0, where
+  Python returns 5 and 1200.
 
-len(), str_len(), the subscript bound check and the iterator length now
-all count characters, which matches Python and the existing slicing and
-find/index behavior. The ord() error message reports the length in
-characters for the same reason.
+Floats now use f64::round_ties_even in both paths. Ints with ndigits are
+rounded by a new round_int helper: a non-negative ndigits leaves the int
+unchanged, and a negative ndigits rounds to a multiple of 10^-ndigits,
+half to even, in i128 so the intermediate values cannot overflow. A result
+outside the i64 range panics with "round() r
 
-Signed-off-by: NopeCharon <[REDACTED_EMAIL]>
-
-**File**: `crates/runtime/src/stdlib/builtin.rs` (modified, +1/-1)
+**File**: `crates/runtime/src/stdlib/builtin.rs` (modified, +66/-3)
 ```diff
-@@ -410,7 +410,7 @@ impl ValueRef {
-                 if string_len != 1 {
-                     panic!(
-                         " ord() expected string of length 1, but string of length {} found",
--                        str.len()
-+                        string_len
-                     )
-                 }
-                 let ch = str.chars().next().unwrap();
-```
-
-**File**: `crates/runtime/src/value/iter.rs` (modified, +13/-4)
-```diff
-@@ -22,7 +22,7 @@ impl ValueIterator {
-         }
-         match &*p.rc.borrow() {
-             Value::str_value(s) => ValueIterator {
--                len: s.len(),
-+                len: s.chars().count(),
-                 cur_key: Default::default(),
-                 cur_val: Default::default(),
-                 keys: Vec::new(),
-@@ -102,9 +102,6 @@ impl ValueIterator {
-         }
-         match &*host.rc.borrow() {
-             Value::str_value(s) => {
--                if self.pos >= s.chars().count() as i32 {
--                    return None;
--                }
-                 let ch = s.chars().nth(self.pos as usize).unwrap();
-                 self.cur_key = ValueRef::int(self.pos as i64);
-                 self.cur_val = ValueRef::str(&ch.to_string());
-@@ -173,6 +170,18 @@ mod test_value_iter {
-         assert!(it.is_end());
-     }
- 
-+    #[test]
-+    fn test_str_iter_non_ascii() {
-+        let s = ValueRef::str("hé");
-+
-+        let mut it = s.iter();
-+        assert_eq!(it.next(&s).unwrap().as_str(), "h");
-+        assert!(!it.is_end());
-+        assert_eq!(it.next(&s).unwrap().as_str(), "é");
-+        assert!(it.is_end());
-+        assert!(it.next(&s).is_none());
-+    }
-+
-     #[test]
-     fn test_list_iter() {
-         let value = ValueRef::list_int(&[1, 2, 3]);
-```
-
-**File**: `crates/runtime/src/value/val_bin.rs` (modified, +21/-1)
-```diff
-@@ -299,7 +299,7 @@ impl ValueRef {
-                 let str_len = a.chars().count();
-                 let index = *b;
-                 let index = must_normalize_index(index as i32, str_len);
--                if index < a.len() {
-+                if index < str_len {
-                     let ch = a.chars().nth(index).unwrap();
-                     Self::str(ch.to_string().as_ref())
+@@ -582,10 +582,10 @@ pub fn pow(x: &ValueRef, y: &ValueRef, z: &ValueRef) -> ValueRef {
+ pub fn round(number: &ValueRef, ndigits: &ValueRef) -> ValueRef {
+     match &*ndigits.rc.borrow() {
+         Value::int_value(ndigits) => match &*number.rc.borrow() {
+-            Value::int_value(number) => ValueRef::float(*number as f64),
++            Value::int_value(number) => ValueRef::int(round_int(*number, *ndigits)),
+             Value::float_value(number) => {
+                 if *ndigits == 0 {
+-                    ValueRef::float(number.round())
++                    ValueRef::float(number.round_ties_even())
                  } else {
-@@ -413,6 +413,26 @@ mod test_value_bin {
-         }
+                     let (y, pow1, pow2) = if *ndigits >= 0 {
+                         // according to cpython: pow1 and pow2 are each safe from overflow, but
+@@ -629,12 +629,35 @@ pub fn round(number: &ValueRef, ndigits: &ValueRef) -> ValueRef {
+         },
+         _ => match &*number.rc.borrow() {
+             Value::int_value(number) => ValueRef::int(*number),
+-            Value::float_value(number) => ValueRef::int(number.round() as i64),
++            Value::float_value(number) => ValueRef::int(number.round_ties_even() as i64),
+             _ => ValueRef::undefined(),
+         },
+     }
+ }
+ 
++/// Round an integer to `ndigits` decimal digits, rounding half to even.
++/// A non-negative `ndigits` leaves the integer unchanged.
++fn round_int(number: i64, ndigits: i64) -> i64 {
++    if ndigits >= 0 {
++        return number;
++    }
++    // Half of 10^20 is already larger than any i64, so every i64 rounds to 0.
++    if ndigits < -19 {
++        return 0;
++    }
++    let pow = 10_i128.pow((-ndigits) as u32);
++    let number = number as i128;
++    let mut quotient = number.div_euclid(pow);
++    let remainder = number.rem_euclid(pow);
++    if remainder * 2 > pow || (remainder * 2 == pow && quotient % 2 != 0) {
++        quotient += 1;
++    }
++    match i64::try_from(quotient * pow) {
++        Ok(result) => result,
++        Err(_) => panic!("round() result overflow"),
++    }
++}
++
+ pub fn type_of(x: &ValueRef, full_name: &ValueRef) -> ValueRef {
+     if x.is_schema() {
+         if full_name.is_truthy() {
+@@ -783,6 +806,46 @@ mod test_builtin {
+         );
      }
  
 +    #[test]
-+    fn test_str_subscr_non_ascii() {
-+        let data = ValueRef::str("héllo");
-+        let cases = [(0, "h"), (1, "é"), (4, "o"), (-1, "o"), (-4, "é")];
-+        for (index, expected) in cases {
-+            let index = ValueRef::int(index as i64);
-+            let result = data.bin_subscr(&index).as_str();
-+            assert_eq!(result, expected);
++    fn test_round_half_to_even() {
++        for (number, expected) in [(0.5, 0), (1.5, 2), (2.5, 2), (-0.5, 0), (-2.5, -2)] {
++            let result = builtin::round(&ValueRef::float(number), &ValueRef::none());
++            assert!(result.is_int());
++            assert_eq!(expected, result.as_int());
 +        }
-+        // The index is out of range in characters but not in bytes.
-+        let err = std::panic::catch_unwind(|| {
-+            ValueRef::str("héllo").bin_subscr(&ValueRef::int(5));
-+        })
-+        .unwrap_err();
-+        assert_eq!(
-+            err.downcast_ref::<String>().unwrap(),
-+            "string index out of range: 5"
-+        );
++        for (number, expected) in [(0.5, 0.0), (2.5, 2.0), (3.5, 4.0), (-2.5, -2.0)] {
++            assert_eq!(
++                expected,
++                builtin::round(&ValueRef::float(number), &ValueRef::int(0)).as_float()
++            );
++        }
++    }
++
++    #[test]
++    fn test_round_int_ndigits() {
++        for (number, ndigits, expected) in [
++            (5, 2, 5),
++            (5, 0, 5),
++            (1234, -2, 1200),
++            (1250, -2, 1200),
++            (1350, -2, 1400),
++            (-1250, -2, -1200),
++            (-1251, -2, -1300),
++            (15, -1, 20),
++            (25, -1, 20),
++            (4_000_000_000_000_000_000, -19, 0),
++            (i64::MAX, -20, 0),
++            (i64::MIN, i64::MIN, 0),
++        ] {
++            let result = builtin::round(&ValueRef::int(number), &ValueRef::int(ndigits));
++            assert!(result.is_int());
++            assert_eq!(expected, result.as_int());
++        }
++        assert_panic("round() result overflow", || {
++            let _ = builtin::round(&ValueRef::int(i64::MAX), &ValueRef::int(-19));
++        });
 +    }
 +
      #[test]
-     fn test_list_subscr() {
-         let data = ValueRef::list_int(&[1, 2, 3, 4]);
+     fn test_ord() {
+         assert_eq!(65, ValueRef::str("A").ord().as_int());
 ```
 
-**File**: `crates/runtime/src/value/val_len.rs` (modified, +3/-1)
+**File**: `tests/grammar/builtins/default/round/main.k` (modified, +7/-0)
 ```diff
-@@ -5,7 +5,7 @@ use crate::*;
- impl ValueRef {
-     pub fn len(&self) -> usize {
-         match &*self.rc.borrow() {
--            Value::str_value(s) => s.len(),
-+            Value::str_value(s) => s.chars().count(),
-             Value::list_value(v) => v.values.len(),
-             Value::dict_value(v) => v.values.len(),
-             Value::schema_value(v) => v.config.values.len(),
-@@ -31,6 +31,8 @@ mod test_value_len {
-     fn test_len() {
-         let mut ctx = Context::new();
-         assert_eq!(ValueRef::str("abc").len(), 3);
-+        assert_eq!(ValueRef::str("héllo").len(), 5);
-+        assert_eq!(ValueRef::str("你好").len(), 2);
-         assert_eq!(
-             ValueRef::str("abc")
-                 .bin_aug_mul(&mut ctx, &ValueRef::int(10))
-```
-
-**File**: `crates/runtime/src/value/val_str.rs` (modified, +1/-1)
-```diff
-@@ -100,7 +100,7 @@ impl RangeNormal for std::ops::Range<usize> {
- impl ValueRef {
-     pub fn str_len(&self) -> usize {
-         match &*self.rc.borrow() {
--            Value::str_value(v) => v.len(),
-+            Value::str_value(v) => v.chars().count(),
-             _ => panic!("Invalid str object in str len"),
-         }
-     }
-```
-
-**File**: `tests/grammar/builtins/default/len_non_ascii/main.k` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+s = "héllo"
-+a = len(s)
-+b = len("你好")
-+c = s[len(s) - 1]
-+d = len(s[1:])
-+e = list("hé")
-```
-
-**File**: `tests/grammar/builtins/default/len_non_ascii/stdout.golden` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+s: héllo
-+a: 5
-+b: 2
-+c: o
-+d: 4
-+e:
-+- h
-+- é
-```
-
-**File**: `tests/grammar/expr/sub_expr/str_non_ascii/main.k` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+import runtime
+@@ -1,3 +1,10 @@
+ a = round(70.23456)
+ b = round(80.264, 2)
+ c = round(-100.000056, 3)
 +
-+s = "héllo"
-+a = s[1]
-+b = s[-1]
-+c = s[-4]
-+msg = runtime.catch(lambda {
-+    "héllo"[5] # out of range in characters, not in bytes
-+})
++d = round(2.5)
++e = round(-0.5)
++f = round(2.5, 0)
++g = round(5, 2)
++h = round(1250, -2)
++i = round(1350, -2)
+```
+
+**File**: `tests/grammar/builtins/default/round/stdout.golden` (modified, +7/-1)
+```diff
+@@ -1,3 +1,9 @@
+ a: 70
+ b: 80.26
+-c: -100.0
+\ No newline at end of file
++c: -100.0
++d: 2
++e: 0
++f: 2.0
++g: 5
++h: 1200
++i: 1400
+\ No newline at end of file
 ```
 
 ---
 
-### Incident Patch 2: `5b734aa2` (2026-10-27)
-**Commit Message**: fix(runtime): return groups and handle unmatched groups in regex.findall (#2233)
+### Incident Patch 2: `144654b8` (2026-10-28)
+**Commit Message**: fix(runtime): compute int pow() and math.pow() exactly and check overflow (#2239)
 
-regex.findall follows Python's re.findall for patterns with no group
-(the whole match) and with two or more groups (a list of the groups),
-but it had two bugs:
+pow() is documented as `x ** y` (or `x ** y % z`), but its integer paths
+behaved differently from the operator:
 
-- With exactly one group it returned the whole match instead of the
-  group: regex.findall("a=1 b=2", r"(\w)=\d") gave ["a=1", "b=2"]
-  rather than ["a", "b"].
-- A group that did not take part in a match, as in r"(a)|(b)" or
-  r"(a)?b", made it panic with "called `Option::unwrap()` on a `None`
-  value". Such groups now yield an empty string, as in Python.
+- pow(x, y) with int arguments went through f64::powf and cast the result
+  back to i64. Results above 2^53 lost precision (pow(3, 39) returned
+  4052555153018976256 instead of 4052555153018976267) and overflowing
+  results saturated silently (pow(2, 64) returned 9223372036854775807).
+- pow(x, y, z) returned Rust's remainder, which has the sign of the
+  dividend, not the sign of z as `%` in KCL does. pow(-2, 3, 5) returned
+  -3 instead of 2 and pow(2, 3, -5) returned 3 instead of -2. With y = 0
+  it returned 1 without reducing it, so pow(7, 0, 1) returned 1, not 0.
 
-Signed-off-by: NopeCharon <[REDACTED_EMAIL]>
+math.pow had related problems:
 
-**File**: `crates/runtime/src/regex/mod.rs` (modified, +14/-8)
+- For int arguments it called i64::pow(n as u32), which wraps on overflow
+  in release builds (math.pow(2, 64) returned 0) and truncates exponents
+  above u32::MAX. For a float base it used powi(n as i32), which
+  truncates the exponent in the same way.
+- It read the exponent keyword as `n`, but the function is declared with
+  parameters `x` and `y`, so math.pow(x=2, y=10) failed with
+  "pow() ta
+
+**File**: `crates/runtime/src/math/mod.rs` (modified, +9/-6)
 ```diff
-@@ -108,15 +108,21 @@ pub unsafe extern "C-unwind" fn kcl_regex_findall(
-                 .captures_iter(string.as_ref())
-                 .flatten()
-             {
--                let len = x.len();
--                if len < 3 {
--                    list.list_append(&ValueRef::str(x.get(0).unwrap().as_str()));
--                } else {
--                    let mut sub_list = ValueRef::list(None);
--                    for i in 1..len {
--                        sub_list.list_append(&ValueRef::str(x.get(i).unwrap().as_str()));
-+                // Like Python's `re.findall`, return the whole match when the pattern
-+                // has no group, the group when it has exactly one, and a list of the
-+                // groups otherwise. A group that did not participate in the match
-+                // yields an empty string.
-+                let group = |i| ValueRef::str(x.get(i).map_or("", |m| m.as_str()));
-+                match x.len() {
-+                    1 => list.list_append(&group(0)),
-+                    2 => list.list_append(&group(1)),
-+                    len => {
-+                        let mut sub_list = ValueRef::list(None);
-+                        for i in 1..len {
-+                            sub_list.list_append(&group(i));
-+                        }
-+                        list.list_append(&sub_list)
-                     }
--                    list.list_append(&sub_list)
-                 }
-             }
+@@ -359,22 +359,25 @@ pub unsafe extern "C-unwind" fn kcl_math_pow(
+     let kwargs = unsafe { ptr_as_ref(kwargs) };
  
+     if let Some(x) = args.arg_i_int(0, None).or(kwargs.kwarg_int("x", None)) {
+-        if let Some(n) = args.arg_i_int(1, None).or(kwargs.kwarg_int("n", None)) {
++        if let Some(n) = args.arg_i_int(1, None).or(kwargs.kwarg_int("y", None)) {
+             if n < 0 {
+                 return unsafe { kcl_value_Float(ctx, (x as f64).powf(n as f64)) };
+             } else {
+-                return unsafe { kcl_value_Int(ctx, x.pow(n as u32)) };
++                let ctx = unsafe { mut_ptr_as_ref(ctx) };
++                return ValueRef::int(x)
++                    .bin_pow(ctx, &ValueRef::int(n))
++                    .into_raw(ctx);
+             }
+         }
+-        if let Some(n) = args.arg_i_float(1, None).or(kwargs.kwarg_float("n", None)) {
++        if let Some(n) = args.arg_i_float(1, None).or(kwargs.kwarg_float("y", None)) {
+             return unsafe { kcl_value_Float(ctx, (x as f64).powf(n)) };
+         }
+     }
+     if let Some(x) = args.arg_i_float(0, None).or(kwargs.kwarg_float("x", None)) {
+-        if let Some(n) = args.arg_i_int(1, None).or(kwargs.kwarg_int("n", None)) {
+-            return unsafe { kcl_value_Float(ctx, x.powi(n as i32)) };
++        if let Some(n) = args.arg_i_int(1, None).or(kwargs.kwarg_int("y", None)) {
++            return unsafe { kcl_value_Float(ctx, x.powf(n as f64)) };
+         }
+-        if let Some(n) = args.arg_i_float(1, None).or(kwargs.kwarg_float("n", None)) {
++        if let Some(n) = args.arg_i_float(1, None).or(kwargs.kwarg_float("y", None)) {
+             return unsafe { kcl_value_Float(ctx, x.powf(n)) };
+         }
+     }
 ```
 
-**File**: `tests/grammar/builtins/regex/test_5/main.k` (added, +5/-0)
+**File**: `crates/runtime/src/stdlib/builtin.rs` (modified, +70/-11)
 ```diff
-@@ -0,0 +1,5 @@
-+import regex
+@@ -533,15 +533,15 @@ pub fn multiplyof(a: &ValueRef, b: &ValueRef) -> ValueRef {
+     }
+ }
+ 
+-pub fn pow(x: &ValueRef, y: &ValueRef, z: &ValueRef) -> ValueRef {
++pub fn pow(ctx: &mut Context, x: &ValueRef, y: &ValueRef, z: &ValueRef) -> ValueRef {
+     match &*z.rc.borrow() {
+         Value::int_value(z) => {
+             if *z == 0 {
+                 panic!("pow() 3rd argument cannot be 0")
+             }
+             match (&*x.rc.borrow(), &*y.rc.borrow()) {
+                 (Value::int_value(x), Value::int_value(y)) => match (*y).cmp(&0) {
+-                    std::cmp::Ordering::Equal => ValueRef::int(1),
++                    std::cmp::Ordering::Equal => ValueRef::int(1).bin_mod(&ValueRef::int(*z)),
+                     std::cmp::Ordering::Greater => {
+                         let mut ans = 1_i128;
+                         let mut base = *x as i128;
+@@ -554,7 +554,9 @@ pub fn pow(x: &ValueRef, y: &ValueRef, z: &ValueRef) -> ValueRef {
+                             base = (base * base) % m;
+                             exp /= 2;
+                         }
+-                        ValueRef::int(ans as i64)
++                        // Rust's `%` keeps the sign of the dividend, so apply KCL's `%`
++                        // to give the result the sign of `z`, as `x ** y % z` does.
++                        ValueRef::int(ans as i64).bin_mod(&ValueRef::int(*z))
+                     }
+                     std::cmp::Ordering::Less => {
+                         panic!("pow() 2nd argument cannot be negative when 3rd argument specified")
+@@ -564,12 +566,10 @@ pub fn pow(x: &ValueRef, y: &ValueRef, z: &ValueRef) -> ValueRef {
+             }
+         }
+         _ => match (&*x.rc.borrow(), &*y.rc.borrow()) {
++            // Non-negative int exponents give an exact int result, as `x ** y` does.
++            (Value::int_value(_), Value::int_value(exp)) if *exp >= 0 => x.bin_pow(ctx, y),
+             (Value::int_value(x), Value::int_value(y)) => {
+-                if *y >= 0 {
+-                    ValueRef::int((*x as f64).powf(*y as f64) as i64)
+-                } else {
+-                    ValueRef::float((*x as f64).powf(*y as f64))
+-                }
++                ValueRef::float((*x as f64).powf(*y as f64))
+             }
+             (Value::int_value(x), Value::float_value(y)) => ValueRef::float((*x as f64).powf(*y)),
+             (Value::float_value(x), Value::int_value(y)) => ValueRef::float((*x).powf(*y as f64)),
+@@ -695,21 +695,30 @@ mod test_builtin {
+ 
+     #[test]
+     fn test_pow() {
++        let mut ctx = Context::new();
++        let ctx = &mut ctx;
+         assert_eq!(
+             8,
+-            builtin::pow(&ValueRef::int(2), &ValueRef::int(3), &ValueRef::none()).as_int()
++            builtin::pow(ctx, &ValueRef::int(2), &ValueRef::int(3), &ValueRef::none()).as_int()
+         );
+         assert_eq!(
+             3,
+-            builtin::pow(&ValueRef::int(2), &ValueRef::int(3), &ValueRef::int(5)).as_int()
++            builtin::pow(ctx, &ValueRef::int(2), &ValueRef::int(3), &ValueRef::int(5)).as_int()
+         );
+         assert_eq!(
+             (2.0_f64).powf(0.5),
+-            builtin::pow(&ValueRef::int(2), &ValueRef::float(0.5), &ValueRef::none()).as_float()
++            builtin::pow(
++                ctx,
++                &ValueRef::int(2),
++                &ValueRef::float(0.5),
++                &ValueRef::none()
++            )
++            .as_float()
+         );
+         assert_eq!(
+             182523810312617,
+             builtin::pow(
++                ctx,
+                 &ValueRef::int(141592653589793),
+                 &ValueRef::int(238462643383279),
+                 &ValueRef::int(502884197169399)
+@@ -718,6 +727,56 @@ mod test_builtin {
+         )
+     }
+ 
++    #[test]
++    fn test_pow_int_is_exact() {
++        let mut ctx = Context::new();
++        let result = builtin::pow(
++            &mut ctx,
++            &ValueRef::int(3),
++            &ValueRef::int(39),
++            &ValueRef::none(),
++        );
++        assert!(result.is_int());
++        assert_eq!(4052555153018976267, result.as_int());
++        let result = builtin::pow(
++            &mut ctx,
++            &ValueRef::int(2),
++            &ValueRef::int(-1),
++            &ValueRef::none(),
++        );
++        assert_eq!(0.5, result.as_float());
++        assert_panic("A 64 bit integer overflow", || {
++            let mut ctx = Context::new();
++            let _ = builtin::pow(
++                &mut ctx,
++                &ValueRef::int(2),
++                &ValueRef::int(64),
++                &ValueRef::none(),
++            );
++        });
++    }
 +
-+keys = regex.findall("a=1 b=2", r"(\w)=\d")
-+optional = regex.findall("b", r"(a)?b")
-+either = regex.findall("ab", r"(a)|(b)")
++    #[test]
++    fn test_pow_mod_sign() {
++        let mut ctx = Context::new();
++        for (x, y, z, expected) in [
++            (-2, 3, 5, 2),
++            (2, 3, -5, -2),
++            (-2, 3, -5, -3),
++            (-3, 2, 5, 4),
++            (7, 0, 1, 0),
++            (7, 0, -3, -2),
++        ] {
++            let result = builtin::pow(
++                &mut ctx,
++     
 ```
 
-**File**: `tests/grammar/builtins/regex/test_5/stdout.golden` (added, +10/-0)
+**File**: `crates/runtime/src/stdlib/builtin_api.rs` (modified, +2/-2)
+```diff
+@@ -477,8 +477,8 @@ pub unsafe extern "C-unwind" fn kcl_builtin_pow(
+         get_call_arg(args, kwargs, 1, Some("y")),
+     ) {
+         (Some(arg0), Some(arg1)) => match get_call_arg(args, kwargs, 2, Some("z")) {
+-            Some(arg2) => builtin::pow(&arg0, &arg1, &arg2).into_raw(ctx_ref),
+-            _ => builtin::pow(&arg0, &arg1, &ValueRef::none()).into_raw(ctx_ref),
++            Some(arg2) => builtin::pow(ctx_ref, &arg0, &arg1, &arg2).into_raw(ctx_ref),
++            _ => builtin::pow(ctx_ref, &arg0, &arg1, &ValueRef::none()).into_raw(ctx_ref),
+         },
+         _ => unsafe { kcl_value_Undefined(ctx) },
+     }
+```
+
+**File**: `tests/grammar/builtins/default/pow/main.k` (modified, +4/-0)
+```diff
+@@ -1 +1,5 @@
+ a = pow(100, 2)
++b = pow(3, 39)
++c = pow(-2, 3, 5)
++d = pow(2, 3, -5)
++e = pow(7, 0, 1)
+```
+
+**File**: `tests/grammar/builtins/default/pow/stdout.golden` (modified, +5/-1)
+```diff
+@@ -1 +1,5 @@
+-a: 10000
+\ No newline at end of file
++a: 10000
++b: 4052555153018976267
++c: 2
++d: -2
++e: 0
+\ No newline at end of file
+```
+
+**File**: `tests/grammar/builtins/math/pow/main.k` (modified, +3/-0)
+```diff
+@@ -1,3 +1,6 @@
+ import math
+ 
+ a = math.pow(9, 3)
++b = math.pow(3, 39)
++c = math.pow(x=2, y=10)
++d = math.pow(2.0, 10)
+```
+
+**File**: `tests/grammar/builtins/math/pow/stdout.golden` (modified, +4/-1)
+```diff
+@@ -1 +1,4 @@
+-a: 729.0
+\ No newline at end of file
++a: 729.0
++b: 4052555153018976267
++c: 1024
++d: 1024.0
+\ No newline at end of file
+```
+
+**File**: `tests/grammar/builtins/math/pow_fail_0/main.k` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++import math
++
++a = math.pow(2, 64)
+```
+
+---
+
+### Incident Patch 3: `fcdc928b` (2026-10-28)
+**Commit Message**: fix(runtime): stop units.to_n, to_u and to_m losing one unit to float division (#2243)
+
+Signed-off-by: Steve <[REDACTED_EMAIL]>
+
+**File**: `crates/runtime/src/units/mod.rs` (modified, +3/-3)
+```diff
+@@ -315,9 +315,9 @@ pub unsafe extern "C-unwind" fn kcl_units_to_Pi(
+ 
+ fn to_unit(num: f64, suffix: to_unit_suffix) -> String {
+     match suffix {
+-        to_unit_suffix::n => format!("{}{:?}", (num / 1e-09) as i64, suffix),
+-        to_unit_suffix::u => format!("{}{:?}", (num / 1e-06) as i64, suffix),
+-        to_unit_suffix::m => format!("{}{:?}", (num / 0.001) as i64, suffix),
++        to_unit_suffix::n => format!("{}{:?}", (num * 1e9) as i64, suffix),
++        to_unit_suffix::u => format!("{}{:?}", (num * 1e6) as i64, suffix),
++        to_unit_suffix::m => format!("{}{:?}", (num * 1e3) as i64, suffix),
+         to_unit_suffix::k => format!("{}{:?}", (num / 1_000.0) as i64, suffix),
+         to_unit_suffix::K => format!("{}{:?}", (num / 1_000.0) as i64, suffix),
+         to_unit_suffix::M => format!("{}{:?}", (num / 1_000_000.0) as i64, suffix),
+```
+
+**File**: `tests/grammar/builtins/units/to_unit_str_4/main.k` (added, +10/-0)
 ```diff
 @@ -0,0 +1,10 @@
-+keys:
-+- a
-+- b
-+optional:
-+- ''
-+either:
-+- - a
-+  - ''
-+- - ''
-+  - b
++import units
++# Sub-unit suffixes must not lose a unit to floating point division
++n1 = units.to_n(1)
++n2 = units.to_n(2)
++n3 = units.to_n(0.5)
++u1 = units.to_u(1e-3)
++u2 = units.to_u(1)
++m1 = units.to_m(0.7)
++m2 = units.to_m(1)
++m3 = units.to_m(0.3)
 ```
 
-**File**: `tests/runtime/regex/test_regex.py` (modified, +3/-0)
+**File**: `tests/grammar/builtins/units/to_unit_str_4/stdout.golden` (added, +8/-0)
 ```diff
-@@ -116,6 +116,9 @@ def test_re_findall(self):
-             re.findall(r"^(\d{0,63})(E|P|T|G|M|K|Ei|Pi|Ti|Gi|Mi|Ki)$", "4Gi"),
-             [["4", "Gi"]],
-         )
-+        self.assertEqual(re.findall(r"(\w)=\d", "a=1 b=2"), ["a", "b"])
-+        self.assertEqual(re.findall("(a)?b", "b"), [""])
-+        self.assertEqual(re.findall("(a)|(b)", "ab"), [["a", ""], ["", "b"]])
-         for string in "a:b::c:::d", S("a:b::c:::d"):
-             self.assertEqual(re.findall(":+", string), [":", "::", ":::"])
-             self.assertEqual(re.findall("(:+)", string), [":", "::", ":::"])
+@@ -0,0 +1,8 @@
++n1: 1000000000n
++n2: 2000000000n
++n3: 500000000n
++u1: 1000u
++u2: 1000000u
++m1: 700m
++m2: 1000m
++m3: 300m
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2243** (2026-10-28): fix(runtime): stop units.to_n, to_u and to_m losing one unit to float division (@56steve)
+- **PR #2239** (2026-10-28): fix(runtime): compute int pow() and math.pow() exactly and check overflow (@NopeCharon)
+- **PR #2238** (2026-10-28): fix(runtime): round half to even in round() and keep int results for ints (@NopeCharon)
+- **PR #2237** (2026-10-28): fix(runtime): return correct float results from math.log, log2 and log1p (@NopeCharon)
 - **PR #2233** (2026-10-27): fix(runtime): return groups and handle unmatched groups in regex.findall (@NopeCharon)
 - **PR #2232** (2026-10-27): fix(runtime): count characters, not bytes, for str len, subscript and iteration (@NopeCharon)
-- **PR #2231** (2026-10-26): fix(runtime): use character indices in str find, index, count, startswith and endswith (@56steve)
-- **PR #2229** (2026-10-23): fix(runtime): keep the remainder when regex.split reaches maxsplit (@56steve)
-- **PR #2228** (2026-10-23): feat: Export subcommand [--target=rust] (@mihaigalos)
-- **PR #2226** (2026-10-19): ci(release): use the org DEPLOY_TOKEN for tap updates (@Peefy)
 
 ---
 
@@ -1510,13 +1701,13 @@ Signed-off-by: NopeCharon <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. runtime): count characters, not bytes, for str len, subscript and iteration (#22
+## X. runtime): round half to even in round() and keep int results for ints (#2238)
 
 **RULE**:
 When implementing operations in `crates/runtime/src/stdlib/builtin.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kcl-lang/kcl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1eeb8527`: runtime): count characters, not bytes, for str len, subscript and iteration (#2232). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `128d6891`: runtime): round half to even in round() and keep int results for ints (#2238). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/runtime/src/stdlib/builtin.rs`.
@@ -1524,14 +1715,45 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                        string_len
+            Value::int_value(number) => ValueRef::int(round_int(*number, *ndigits)),
+                    ValueRef::float(number.round_ties_even())
+            Value::float_value(number) => ValueRef::int(number.round_ties_even() as i64),
+/// Round an integer to `ndigits` decimal digits, rounding half to even.
+/// A non-negative `ndigits` leaves the integer unchanged.
+fn round_int(number: i64, ndigits: i64) -> i64 {
+    if ndigits >= 0 {
+        return number;
+    }
+    // Half of 10^20 is already larger than any i64, so every i64 rounds to 0.
+    if ndigits < -19 {
+        return 0;
+    }
+    let pow = 10_i128.pow((-ndigits) as u32);
+    let number = number as i128;
+    let mut quotient = number.div_euclid(pow);
+    let remainder = number.rem_euclid(pow);
+    if remainder * 2 > pow || (remainder * 2 == pow && quotient % 2 != 0) {
+        quotient += 1;
+    }
+    match i64::try_from(quotient * pow) {
+        Ok(result) => result,
+        Err(_) => panic!("round() result overflow"),
+    }
+}
+
+    #[test]
+    fn test_round_half_to_even() {
+        for (number, expected) in [(0.5, 0), (1.5, 2), (2.5, 2), (-0.5, 0), (-2.5, -2)] {
+            let result = builtin::round(&ValueRef::float(nu
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                        str.len()
+            Value::int_value(number) => ValueRef::float(*number as f64),
+                    ValueRef::float(number.round())
+            Value::float_value(number) => ValueRef::int(number.round() as i64),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1eeb8527` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `128d6891` are properly handled with clean fallback behavior.
