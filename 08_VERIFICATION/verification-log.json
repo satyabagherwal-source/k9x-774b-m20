@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-C3MS",
-    "timestamp": "2026-10-26T10:33:19.972Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "2891ee2bd99445b71e30a554fa03db36694af26fd59beb5ecf2bd177133634f9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-C46K",
     "timestamp": "2026-10-26T10:33:20.684Z",
     "repository": "Louis-CFM/coucou",
@@ -7492,6 +7477,21 @@
     "contentHash": "122e6028301320e66f686620b62342439d0cfbb7164c06b71f21fd8402c5b997",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-ART8",
+    "timestamp": "2026-10-28T01:15:46.124Z",
+    "repository": "lilylilith/QI_2.1_AnyAngle",
+    "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+    "contentHash": "cbe867e80fc90b3ff2fd4d90a035417db31d3fc18072216f6b59c913b4ad1b07",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

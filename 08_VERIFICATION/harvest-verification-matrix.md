@@ -5622,3 +5622,4 @@
 | `CYCLE-20261028-ZDSD` | `2026-10-28T01:06:54.733Z` | `asciinema/asciinema` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5088` | Yes (`7888f900...`) |
 | `CYCLE-20261028-ZHKW` | `2026-10-28T01:06:59.648Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5089` | Yes (`8c0af87a...`) |
 | `CYCLE-20261028-ZKTF` | `2026-10-28T01:07:03.843Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5090` | Yes (`122e6028...`) |
+| `CYCLE-20261028-ART8` | `2026-10-28T01:15:46.124Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5091, Rule 5092` | Yes (`cbe867e8...`) |

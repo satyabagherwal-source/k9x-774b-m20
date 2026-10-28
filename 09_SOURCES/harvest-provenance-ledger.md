@@ -5631,3 +5631,4 @@ Every entry in this ledger must capture:
 | `learn-github-asciinema-asciinema` | `https://github.com/asciinema/asciinema` | `cf66ef4c` | Multi-dimensional audit evidence | 2026-10-28T01:06:54.737Z |
 | `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `1d6bd4c1` | Multi-dimensional audit evidence | 2026-10-28T01:06:59.651Z |
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `562e9e32` | Multi-dimensional audit evidence | 2026-10-28T01:07:03.846Z |
+| `learn-huggingface-lilylilith-qi_2-1_anyangle` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-10-28T01:15:46.127Z |

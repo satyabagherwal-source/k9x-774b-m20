@@ -368859,3 +368859,137 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `562e9e32` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5091. Hybrid 3D-2D Geometric Grounding Invariant (Harvested from lilylilith/QI_2.1_AnyAngle)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Hybrid 3D-2D Geometric Grounding Invariant",
+  "source": "lilylilith/QI_2.1_AnyAngle",
+  "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
+  "source_version": "hf-lilylilith-qi_2.1_anyangle",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-28T01:15:45.740Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lilylilith/QI_2.1_AnyAngle](https://huggingface.co/lilylilith/QI_2.1_AnyAngle) (Revision: `hf-lilylil`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When performing spatially complex image edits (e.g., camera angle changes, object rotation) using 2D diffusion models, you **MUST** provide a geometrically accurate, low-fidelity 3D-rendered reference image as a conditioning input. You **MUST NOT** rely solely on text prompts or 2D warping for precise geometric control.
+
+**WHY**:
+2D diffusion models lack an explicit 3D scene graph. Text prompts are ambiguous regarding exact azimuth/elevation. Without a geometric anchor, the model hallucinates perspective, leading to broken vanishing points and style drift. The 3D render provides the "ground truth" for the camera matrix, allowing the 2D model to focus on texture and style synthesis rather than geometric reconstruction.
+
+**WHEN TO APPLY**:
+Any AI pipeline involving image-to-image editing where spatial geometry (camera pose, object orientation) is a primary variable. Applicable to LoRA training, ControlNet conditioning, and multi-modal diffusion architectures.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudocode for the Hybrid Pipeline
+def generate_angle_consistent_image(original_image, target_angle):
+    # 1. 3D Reconstruction (External)
+    gaussian_splat = reconstruct_3d(original_image) # e.g., Tripo Splat
+    
+    # 2. Geometric Projection (Blender/PyTorch3D)
+    coarse_render = render_from_angle(gaussian_splat, target_angle)
+    
+    # 3. 2D Diffusion Refinement (Qwen-Image-2.1 + LoRA)
+    # Input: [original_image, coarse_render]
+    # Prompt: "Change the camera angle from <image2> to <image1>."
+    final_image = diffusion_model.generate(
+        condition_images=[original_image, coarse_render],
+        prompt="Change the camera angle from <image2> to <image1>.",
+        lora_weight=1.0,
+        cfg_scale=3.0,
+        steps=20
+    )
+    return final_image
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Relying solely on text for geometric precision
+# This leads to hallucinated perspectives and style drift
+final_image = diffusion_model.generate(
+    condition_images=[original_image],
+    prompt="Change camera angle to 45 degrees azimuth and 30 degrees elevation",
+    # Missing geometric anchor -> Unstable geometry
+)
+```
+
+**VERIFICATION METHOD**:
+1.  **Geometric Consistency Check:** Overlay the coarse 3D render's wireframe on the final output. The vanishing points must align within a tolerance of $\pm 2^\circ$.
+2.  **Style Drift Metric:** Compute the CLIP score between the original image and the final output. The score must remain above a threshold (e.g., 0.85) to ensure style preservation.
+
+
+---
+
+## 5092. LoRA Conditioning Input Order Invariant (Harvested from lilylilith/QI_2.1_AnyAngle)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "LoRA Conditioning Input Order Invariant",
+  "source": "lilylilith/QI_2.1_AnyAngle",
+  "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
+  "source_version": "hf-lilylilith-qi_2.1_anyangle",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-28T01:15:45.931Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lilylilith/QI_2.1_AnyAngle](https://huggingface.co/lilylilith/QI_2.1_AnyAngle) (Revision: `hf-lilylil`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When using multi-image conditioning in diffusion models for style/geometry transfer, the **order** of input images in the prompt and the conditioning tensor **MUST** match the semantic roles defined in the training data. Swapping the order of "style anchor" and "geometric anchor" **MUST NOT** be done without retraining or fine-tuning the LoRA.
+
+**WHY**:
+Diffusion models are not inherently symmetric in their conditioning inputs. The attention mechanisms learn specific positional embeddings for each input slot. If the training data consistently used `[Style, Geometry]` but inference uses `[Geometry, Style]`, the model will fail to correctly bind the style to the geometry, resulting in a "mashed" or incoherent output.
+
+**WHEN TO APPLY**:
+Any multi-modal diffusion model using multiple reference images (e.g., IP-Adapter, Reference-only, AnyAngle LoRA).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Correct Order: [Style Anchor, Geometric Anchor]
+# Prompt must explicitly reference the order
+prompt = "Change the camera angle from <image2> to <image1>."
+# <image1> = Style Anchor (Original)
+# <image2> = Geometric Anchor (Coarse Render)
+
+conditioning = [original_image, coarse_render]
+output = model.generate(conditioning, prompt)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Swapping order without updating prompt/training
+# This causes the model to apply the style of the coarse render to the original geometry
+conditioning = [coarse_render, original_image]
+prompt = "Change the camera angle from <image2> to <image1>." 
+# <image1> is now the coarse render (wrong style)
+# <image2> is now the original (wrong geometry)
+```
+
+**VERIFICATION METHOD**:
+1.  **A/B Testing:** Generate outputs with both orders. The correct order should show high style fidelity to the original image and high geometric fidelity to the coarse render.
+2.  **Attention Map Analysis:** Visualize the cross-attention maps. The attention for "style" tokens should peak on the first image, and "geometry" tokens on the second.

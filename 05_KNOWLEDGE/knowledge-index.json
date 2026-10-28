@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T01:07:03.774Z",
+  "last_updated": "2026-10-28T01:15:46.054Z",
   "total_verified_learnings": 1154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -22984,7 +22984,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
       "source_version": "hf-lilylilith-qi_2.1_anyangle",
-      "content_hash": "ef7421b2cbd134f82d01bccfabfe9c2d825febb84dad85e217f783411a4bbaa6",
+      "content_hash": "cbe867e80fc90b3ff2fd4d90a035417db31d3fc18072216f6b59c913b4ad1b07",
       "dossier_path": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
       "promoted_rules": [
@@ -23058,6 +23058,16 @@
           "number": 4046,
           "title": "LoRA Strength Calibration for Structural Edits",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5091,
+          "title": "Hybrid 3D-2D Geometric Grounding Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5092,
+          "title": "LoRA Conditioning Input Order Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -23077,7 +23087,7 @@
         "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv40vjag",
         "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv4eu8wg"
       ],
-      "verified_at": "2026-10-25T04:31:49.084Z",
+      "verified_at": "2026-10-28T01:15:46.041Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -140110,6 +140120,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T01:07:03.750Z"
+    },
+    "rule-5091": {
+      "learning_id": "rule-5091",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5091,
+      "title": "Hybrid 3D-2D Geometric Grounding Invariant",
+      "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
+      "source_version": "hf-lilylilith-qi_2.1_anyangle",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:15:46.041Z"
+    },
+    "rule-5092": {
+      "learning_id": "rule-5092",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5092,
+      "title": "LoRA Conditioning Input Order Invariant",
+      "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
+      "source_version": "hf-lilylilith-qi_2.1_anyangle",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:15:46.041Z"
     }
   },
   "aliases": {
