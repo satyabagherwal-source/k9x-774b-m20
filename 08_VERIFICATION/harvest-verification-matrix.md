@@ -5705,3 +5705,6 @@
 | `CYCLE-20261028-ESMR` | `2026-10-28T05:30:50.355Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5187` | Yes (`4cb21338...`) |
 | `CYCLE-20261028-EX13` | `2026-10-28T05:30:56.055Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1574, Rule 1037, Rule 5188` | Yes (`83ebd5ce...`) |
 | `CYCLE-20261028-EYPT` | `2026-10-28T05:30:58.241Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5189` | Yes (`9bb261cd...`) |
+| `CYCLE-20261028-TE4F` | `2026-10-28T05:42:11.391Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`75b59453...`) |
+| `CYCLE-20261028-TLQC` | `2026-10-28T05:42:21.252Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5190` | Yes (`7ed54f3a...`) |
+| `CYCLE-20261028-TOEA` | `2026-10-28T05:42:24.706Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5191` | Yes (`c5cdbbc3...`) |

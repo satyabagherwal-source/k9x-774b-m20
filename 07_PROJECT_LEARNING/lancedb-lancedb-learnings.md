@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `3575f972`  
+> **Source Version**: `45f987a2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T15:29:35.875Z  
+> **Timestamp**: 2026-10-28T05:42:24.134Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T15:29:35.406Z  
+> **Harvest Timestamp**: 2026-10-28T05:42:24.126Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11791 stars
+- **Stars / Engagement**: 11795 stars
 
 ---
 
@@ -1212,8 +1212,8 @@ pub fn rename_column(
 - **Issue #4688** (2026-10-27): **fix: gate experimental local functions behind an opt-in feature**
   *Symptoms*: Published SDK builds currently expose local SQL computed columns and materialized-view execution that are not ready for release. Add the opt-in `experimental-functions` Cargo feature to the Rust core and forward it through the Python and Node bindings; published packages leave it disabled.  Local declarations and refreshes now return `NotSupported` before mutating tables or spawning jobs, including prepared materialized-view creation. Remote Cloud/Enterprise client operations, Python UDF packaging, ordinary eager `add_columns`, and access to existing data remain available. Stored metadata and write protections stay active, and shared server commit helpers remain usable.  CI covers both feature configurations. Existing local execution tests run with the feature enabled; default-build regressions cover early rejection, unchanged table versions, existing metadata protections, and normal eager transforms. API and source-build documentation explain the opt-in.  Validation: Rust library tests pass with the feature disabled (1,869 tests) and enabled (1,947 tests), plus three default-build integration regressions. Python and TypeScript bindings were rebuilt and tested in both configurations, including mocked remote requests; Rust formatting, Python package lint, TypeScript lint/build, and generated docs were checked. Repository-wide Ruff still reports 48 pre-existing errors in unchanged `docs/web-tests` files. 
 
-- **Issue #4686** (2026-10-27): **fix: refuse Function-bound writes by column instead of by table**
-  *Symptoms*: A table with a Function binding rejected every update and merge_insert, whatever columns the write named: updating an unrelated column, or a merge that only inserts rows, failed with "not supported on a table with registered Function bindings". Expression computed columns on the same table accept those writes.  Both paths now use the per-column guard that schema evolution already uses. An update is checked on its SET columns. A merge is checked on the columns a matched row would take from the source, every source column but the join keys; an insert-only merge is an append, and its new rows get their Function outputs from the next refresh. Writes to a binding's inputs or outputs are still refused, now naming the column. 
+- **Issue #4687** (2026-10-27): **fix!: restore blob SQL inserts with explicit adapter schemas**
+  *Symptoms*: Fixes #4685  DataFusion uses a provider's single schema for scans and INSERT coercion. Blob scans return descriptors, while writes require native inputs. `BaseTableAdapter` now defaults to `BlobSchema::Read`; SQL INSERT callers can opt into `BlobSchema::Write` with `with_blob_schema`.  Write-mode scans return only when their complete schema matches the projected provider schema, including field metadata and nullability. Blob v2 descriptor scans receive the documented planning error; legacy v1 blobs expose `LargeBinary` write inputs and reject descriptor scans with a schema mismatch. No additional execution node, cast, partial struct, or synthetic blob value is used to reconcile these schemas.  Scalar projections that exclude blobs, scalar filter pushdown, `COUNT(*)`, and scalar self-inserts remain supported. DataFusion supplies top-level projection indexes, so `SELECT extra.note` requests the whole `extra` struct. If it contains a blob, register a separate read adapter for that query, including computed scalar and window queries over the same parent. Read mode preserves descriptor reads and NULL masking from #4571.  Adapter builders preserve the selected mode. Generated `_rowid`, `_rowaddr`, and `_score` columns belong only to the read schema, so positional and explicit-column INSERTs continue to use the table's data columns regardless of builder order. Both modes and the legacy behavior are documented in the API and changelog.  Validation uses `--locked --profile ci -p lance
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1230,1166 +1230,1072 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `180eaaf6` (2026-10-26)
-**Commit Message**: fix!: reject unsupported remote connection and table options (#4486)
+### Incident Patch 1: `45dbf5ef` (2026-10-27)
+**Commit Message**: fix: use SQL for all remote materialized view APIs (#4673)
 
-Fixes #4399.
+Remote materialized-view APIs now use SQL for the full lifecycle. Create
+and refresh already submit SQL; this change moves describe, paginated
+listing, and drop onto `DESCRIBE MATERIALIZED VIEW`, `SHOW MATERIALIZED
+VIEWS`, and `DROP MATERIALIZED VIEW`.
 
-Remote connections currently discard local-only settings, including
-table write options that determine storage format. The synchronous
-Python client also binds the fourth positional `create_table` argument
-to `on_bad_vectors`, so an intended overwrite is sent as a create.
+Async create, refresh, and drop return the existing Job handle with
+`job_type = "query"`. The handle has one `id`: the connection-scoped SQL
+query ID, also accepted by `describe_query`. Submission starts the
+query, the job drains its result once, and repeated waits reuse the
+completed result. Synchronous drop waits for catalog removal; physical
+cleanup proceeds in the background.
 
-This change aligns the remote Python signature with
-`DBConnection.create_table`, preserves the legacy remote timeout
-keywords, and raises `ValueError` for other unknown connection keywords.
-The shared Rust client rejects unsupported connection, create, and open
-options before sending HTTP requests; open validation also runs before a
-table-cache hit. Python reports these as `NotImplementedError`,
-including explicit `enable_v2_manifest_paths=False`. Supported
-Enterprise connection-level storage options remain available.
+Listing uses namespace-scoped keyset pagination with opaque resume
+tokens. Streamed and deferred SQL responses share the same path. Adds
+transport coverage and updates Python/TypeScript documentation for
+query-backed drop jobs.
 
-This implements option 2 from the issue: explicit rejection. It
-deliberately does not add unverified server write parameters. Calls that
-previously supplied ignored options must omit them to use server-managed
-storage and caching. Database URI prefixes are already preserved on
-current main and are unchanged here.
+---------
 
-R
+Co-authored-by: Xuanwo <[REDACTED_EMAIL]>
 
-**File**: `docs/src/python/python.md` (modified, +11/-0)
+**File**: `docs/src/js/classes/Connection.md` (modified, +5/-4)
 ```diff
-@@ -20,6 +20,17 @@ pip install lancedb
- The following methods describe the synchronous API client. There
- is also an [asynchronous API client](#connections-asynchronous).
+@@ -436,8 +436,8 @@ abstract dropMaterializedView(name, namespacePath?): Promise<void>
  
-+Connections to `db://` databases reject local-only options with
-+`NotImplementedError`. These include `session` and `manifest_enabled=True` on
-+connect, per-table storage and write options on create, and `index_cache_size`,
-+`storage_options`, or `location` on open (where the method accepts them).
-+Omit these options to use server-managed storage and caching. Connection-level
-+`storage_options` supported by an Enterprise deployment remain available.
-+
-+The synchronous remote `create_table` uses the same positional order as the
-+local API: `name, data, schema, mode, exist_ok, on_bad_vectors, fill_value,
-+embedding_functions`. Prefer keyword arguments for optional parameters.
-+
- ## Connections (Synchronous)
+ Drop the materialized view named `name`.
  
- ::: lancedb.connect
-```
-
-**File**: `docs/web/basics/sdk.mdx` (modified, +7/-0)
-```diff
-@@ -92,6 +92,13 @@ manages background maintenance.
-   [background maintenance](/maintenance/background-jobs) rather than calling
-   the embedded table's `optimize()` method.
+-The view may become unavailable before physical cleanup finishes. Use
+-[dropMaterializedViewAsync](Connection.md#dropmaterializedviewasync) to retain and wait for the cleanup job.
++Remote drops wait for the SQL command to remove the catalog binding.
++Physical cleanup continues in the background.
  
-+{/* Draft for the remote option validation release.
-+- **Remove local storage and cache settings.** `db://` connections reject local
-+  sessions, table cache settings, and per-table storage and write options. Omit
-+  these options so Enterprise manages storage and caching. Connection-level
-+  storage options supported by your Enterprise deployment remain available.
-+*/}
-+
- For SQL connection details, see [SQL](/basics/sql). For the operating model and
- deployment options, see [LanceDB Enterprise](/enterprise).
+ Rejects a table that exists but is not a materialized view.
+ 
+@@ -459,8 +459,9 @@ Rejects a table that exists but is not a materialized view.
+ abstract dropMaterializedViewAsync(name, namespacePath?): Promise<Job>
+ ```
+ 
+-Start dropping the materialized view named `name` and return its cleanup
+-job without waiting for completion.
++Start dropping the materialized view named `name` and return its job.
++Remote jobs have type `query` and use the SQL query ID as `id`. Waiting
++confirms catalog removal; physical cleanup continues in the background.
+ 
+ Rejects a table that exists but is not a materialized view.
  
 ```
 
-**File**: `nodejs/__test__/query.test.ts` (modified, +11/-5)
+**File**: `docs/web/basics/jobs.mdx` (modified, +6/-4)
 ```diff
-@@ -538,11 +538,17 @@ describe("IVF search effort", () => {
-     const db = await connect(directory.name);
-     const rows = Array.from({ length: 512 }, (_, id) => ({
-       id,
--      vector: Array.from(
--        { length: 16 },
--        (_, j) =>
--          (Math.floor(id / 32) === j ? 1 : 0) + Math.sin(id * 17 + j) * 0.001,
--      ),
-+      // Keep all eight exact neighbors together even if random IVF training
-+      // splits the first cluster. This tests effort, not training recall.
-+      vector:
-+        id < 8
-+          ? [...vector]
-+          : Array.from(
-+              { length: 16 },
-+              (_, j) =>
-+                (Math.floor(id / 32) === j ? 1 : 0) +
-+                Math.sin(id * 17 + j) * 0.001,
-+            ),
-     }));
-     table = await db.createTable("effort", rows.slice(0, 256));
-     await table.add(rows.slice(256));
+@@ -72,10 +72,12 @@ SQL-backed job handles follow the query lifecycle described below.
+ 
+ ### SQL-backed job handles
+ 
+-Remote materialized-view CREATE and REFRESH use the SQL query backend. Python's
+-`create_materialized_view_async()` and `mv.refresh_async()` still return job
+-handles with `status()`, `wait()` and `cancel()`. Synchronous creation and refresh
+-wait on the same SQL execution before returning.
++Remote materialized-view CREATE, REFRESH, and DROP use the SQL query backend.
++Python's `create_materialized_view_async()`, `mv.refresh_async()`, and
++`drop_materialized_view_async()` return job handles with `status()`, `wait()`,
++and `cancel()`. Synchronous creation, refresh, and drop wait on the same SQL
++execution before returning. A completed DROP means the catalog binding has been
++removed; physical cleanup continues in the background.
+ 
+ The existing `job.job_type` identifies query-backed handles as `"query"` from
+ submission, and `job.id` contains the connection-scoped SQL query UUID string.
 ```
 
-**File**: `nodejs/__test__/remote.test.ts` (modified, +49/-0)
+**File**: `nodejs/__test__/remote.test.ts` (modified, +3/-25)
 ```diff
-@@ -98,6 +98,55 @@ async function withMockDatabase(
+@@ -481,23 +481,6 @@ describe("remote connection", () => {
+     expect(insertRequests).toBe(2);
+   });
+ 
+-  it("lists materialized views through the namespace route", async () => {
+-    await withMockDatabase(
+-      (req, res) => {
+-        expect(req.method).toBe("GET");
+-        expect(req.url).toBe("/v1/namespace/$/materialized_view/list");
+-        res
+-          .writeHead(200, { "content-type": "application/json" })
+-          .end(JSON.stringify({ views: ["daily_sales"] }));
+-      },
+-      async (db) => {
+-        expect(await collect(db.listMaterializedViews())).toEqual([
+-          "daily_sales",
+-        ]);
+-      },
+-    );
+-  });
+-
+   it("creates a view and decodes the schema it resolved to", async () => {
+     await withMockDatabase(
+       (req, res) => {
+@@ -1725,14 +1708,13 @@ async function collect<T>(items: AsyncIterable<T>): Promise<T[]> {
  }
  
- describe("remote connection", () => {
-+  it.each([
-+    { dataStorageVersion: "2.0" },
-+    { enableV2ManifestPaths: false },
-+    { storageOptions: { bogusOptionXyz: "1" } },
-+  ])("rejects local create options %j before sending data", async (options) => {
-+    const requests: string[] = [];
-+    await withMockDatabase(
-+      (req, res) => {
-+        requests.push(req.url ?? "");
-+        res.writeHead(200).end();
-+      },
-+      async (db) => {
-+        await expect(
-+          db.createTable("test", [{ value: 1 }], {
-+            ...options,
-+            mode: "overwrite",
-+          }),
-+        ).rejects.toThrow(/write_options.*remote/);
-+        await expect(
-+          db.createEmptyTable(
-+            "test",
-+            new Schema([new Field("value", new Int64(), true)]),
-+            options,
-+          ),
-+        ).rejects.toThrow(/write_options.*remote/);
-+      },
-+    );
-+    expect(requests).toEqual([]);
-+  });
-+
-+  it.each([{ indexCacheSize: 5 }, { storageOptions: { x: "y" } }])(
-+    "rejects local open options %j before sending a request",
-+    async (options) => {
-+      const requests: string[] = [];
-+      await withMockDatabase(
-+        (req, res) => {
-+          requests.push(req.url ?? "");
-+          res.writeHead(200).end();
-+        },
-+        async (db) => {
-+          await expect(
-+            db.openTable("test", undefined, options),
-+          ).rejects.toThrow(/not supported for remote/);
-+        },
-+      );
-+      expect(requests).toEqual([]);
-+    },
-+  );
-+
-   it.each([false, true])(
-     "normalizes remote blob writes (range target: %s)",
-     async (wide) => {
+ describe("lazy resource listings", () => {
+-  for (const kind of ["views", "materializedViews", "jobs"] as const) {
++  for (const kind of ["views", "jobs"] as const) {
+     const listing = (
+       db: Connection,
+       options: { pageToken?: string; pageLimit?: number } = {},
+     ) => {
+       if (kind === "jobs") return db.listJobs(options);
+-      if (kind === "views") return db.listViews(["team"], options);
+-      return db.listMaterializedViews(options);
++      return db.listViews(["team"], options);
+     };
+     const page = (names: string[], token?: string) => {
+       const items =
+@@ -1807,11 +1789,7 @@ describe("lazy resource listings", () => {
+                 limit: 2,
+               });
+             } else {
+-              expect(url.pathname).toBe(
+-                kind === "views"
+-                  ? "/v1/namespace/team/view/list"
+-                  : "/v1/namespace/$/materialized_view/list",
+-              );
++              expect(url.pathname).toBe("/v1/namespace/team/view/list");
+               expect(url.searchParams.get("page_token")).toBe(token);
+               expect(url.searchParams.get("limit")).toBe("2");
+             }
 ```
 
-**File**: `python/python/lancedb/__init__.py` (modified, +15/-0)
+**File**: `nodejs/lancedb/connection.ts` (modified, +5/-4)
 ```diff
-@@ -281,6 +281,21 @@ def connect(
-             "uri is required when not connecting through a namespace client"
-         )
-     if isinstance(uri, str) and uri.startswith("db://"):
-+        # Preserve the deprecated remote timeout options, but validate all other
-+        # unknown keywords just as the local connection does.
-+        unknown_kwargs = {
-+            key: value
-+            for key, value in kwargs.items()
-+            if key not in ("connection_timeout", "read_timeout")
-+        }
-+        if unknown_kwargs:
-+            raise ValueError(f"Unknown keyword arguments: {unknown_kwargs}")
-+        if session is not None:
-+            raise NotImplementedError("session is not supported for remote connections")
-+        if manifest_enabled:
-+            raise NotImplementedError(
-+                "manifest_enabled is not supported for remote connections"
-+            )
-         if api_key is None:
-             api_key = os.environ.get("LANCEDB_API_KEY")
-         if api_key is None:
-```
-
-**File**: `python/python/lancedb/remote/db.py` (modified, +25/-12)
-```diff
-@@ -7,7 +7,6 @@
- from dataclasses import replace
- from datetime import timedelta
- import json
--import logging
- from concurrent.futures import ThreadPoolExecutor
- import sys
- from typing import (
-@@ -502,18 +501,14 @@ def open_table(
+@@ -308,8 +308,8 @@ export abstract class Connection {
+   /**
+    * Drop the materialized view named `name`.
+    *
+-   * The view may become unavailable before physical cleanup finishes. Use
+-   * {@link dropMaterializedViewAsync} to retain and wait for the cleanup job.
++   * Remote drops wait for the SQL command to remove the catalog binding.
++   * Physical cleanup continues in the background.
+    *
+    * Rejects a table that exists but is not a materialized view.
+    */
+@@ -319,8 +319,9 @@ export abstract class Connection {
+   ): Promise<void>;
  
+   /**
+-   * Start dropping the materialized view named `name` and return its cleanup
+-   * job without waiting for completion.
++   * Start dropping the materialized view named `name` and return its job.
++   * Remote jobs have type `query` and use the SQL query ID as `id`. Waiting
++   * confirms catalog removal; physical cleanup continues in the background.
+    *
+    * Rejects a table that exists but is not a materialized view.
+    */
+```
+
+**File**: `python/python/lancedb/db.py` (modified, +12/-13)
+```diff
+@@ -721,9 +721,8 @@ def drop_materialized_view(
+     ) -> None:
+         """Drop a materialized view.
+ 
+-        The view may become unavailable before physical cleanup finishes. Use
+-        :meth:`drop_materialized_view_async` to retain and wait for the cleanup
+-        job.
++        Remote drops wait for the SQL command to remove the catalog binding.
++        Physical cleanup continues in the background.
+         """
+         raise NotImplementedError(
+             "materialized views are not supported on this connection type"
+@@ -732,11 +731,11 @@ def drop_materialized_view(
+     def drop_materialized_view_async(
+         self, name: str, namespace_path: Optional[List[str]] = None
+     ) -> Job[None]:
+-        """Start dropping a materialized view and return its cleanup job.
++        """Start dropping a materialized view and return its job.
+ 
+-        The job may already be complete for a local database. On LanceDB Cloud
+-        and Enterprise, its ``id`` is the server job identifier from the
+-        ``202 Accepted`` drop response.
++        The job may already be complete for a local database. Remote jobs have
++        type ``query`` and use the SQL query ID as ``id``. Waiting confirms
++        catalog removal; physical cleanup continues in the background.
+         """
+         raise NotImplementedError(
+             "materialized views are not supported on this connection type"
+@@ -2946,9 +2945,8 @@ async def drop_materialized_view(
+     ) -> None:
+         """Drop a materialized view.
+ 
+-        The view may become unavailable before physical cleanup finishes. Use
+-        :meth:`drop_materialized_view_async` to retain and wait for the cleanup
+-        job.
++        Remote drops wait for the SQL command to remove the catalog binding.
++        Physical cleanup continues in the background.
+         """
          if namespace_path is None:
              namespace_path = []
--        if storage_options is not None:
--            logging.info(
--                "storage_options is ignored for remote tables"
--                " (storage is managed; set storage_options on connect() instead)"
--            )
--        if index_cache_size is not None:
--            logging.info(
--                "index_cache_size is ignored for remote tables"
--                " (there is no local cache to configure)"
-+        table = LOOP.run(
-+            self._conn.open_table(
-+                name,
-+                namespace_path=namespace_path,
-+                storage_options=storage_options,
-+                index_cache_size=index_cache_size,
-             )
--
--        table = LOOP.run(self._conn.open_table(name, namespace_path=namespace_path))
-+        )
-         tbl = RemoteTable(
-             table,
-             self.db_name,
-@@ -593,6 +588,9 @@ def create_table(
-         embedding_functions: Optional[List[EmbeddingFunctionConfig]] = None,
+@@ -2960,10 +2958,11 @@ async def drop_materialized_view_async(
          *,
          namespace_path: Optional[List[str]] = None,
-+        storage_options: Optional[Dict[str, str]] = None,
-+        data_storage_version: Optional[str] = None,
-+        enable_v2_manifest_paths: Optional[bool] = None,
-     ) -> Table:
-         """Create a [Table][lancedb.table.Table] in the database.
+     ) -> AsyncJob[None]:
+-        """Start dropping a materialized view and return its cleanup job.
++        """Start dropping a materialized view and return its job.
  
-@@ -632,6 +630,12 @@ def create_table(
-         embedding_functions: list of EmbeddingFunctionConfig, optional
-             The embedding functions to store in the table schema and use to
-             generate vectors when creating the table or adding data.
-+        storage_options: dict, optional
-+            Not supported for remote table creation. Raises NotImplementedError.
-+        data_storage_version: str, optional
-+            Not supported for remote table creation. Raises NotImplementedError.
-+        enable_v2_manifest_paths: bool, optional
-+            Not supported for remote table creation. Raises NotImplementedError.
- 
-         Returns
-         -------
-@@ -698,6 +702,14 @@ def create_table(
-         LanceTable(table4)
- 
+-        Await :meth:`AsyncJob.wait` before assuming physical cleanup has
+-        finished.
++        For remote connections, the job has type ``query`` and its ID identifies
++        the SQL query. Await :meth:`AsyncJob.wait` for catalog removal; physical
++        cleanup continues in the background.
          """
-+        for option, value in (
-+            ("data_storage_version", data_storage_version),
-+            ("enable_v2_manifest_paths", enable_v2_manifest_paths),
-+        ):
-+            if value is not None:
-+                raise NotImplementedError(
-+                    f"{option} is not supported for remote table creation"
+         if namespace_path is None:
+             namespace_path = []
+```
+
+**File**: `python/python/tests/test_listing.py` (modified, +4/-6)
+```diff
+@@ -66,7 +66,7 @@ def response_page(kind, names, token):
+         ]
+     else:
+         items = names
+-    key = "views" if kind == "materialized_views" else kind
++    key = kind
+     return {key: items, "page_token": token}
+ 
+ 
+@@ -85,7 +85,7 @@ async def advance(items, asynchronous):
+     return await items.__anext__() if asynchronous else next(items)
+ 
+ 
+-KINDS = ["secrets", "views", "jobs", "functions", "materialized_views"]
++KINDS = ["secrets", "views", "jobs", "functions"]
+ 
+ 
+ @pytest.mark.asyncio
+@@ -236,9 +236,7 @@ async def test_listing_lazy_pages_and_resume(listing_server, kind, asynchronous)
+     )
+     db = await connection(endpoint, asynchronous)
+     method = getattr(db, "list_" + kind)
+-    kwargs = (
+-        {} if kind in ("jobs", "materialized_views") else {"namespace_path": ["team"]}
+-    )
++    kwargs = {} if kind == "jobs" else {"namespace_path": ["team"]}
+     items = method(page_token="start/token", page_limit=2, **kwargs)
+     assert requests == []
+     assert items.page_token() == "start/token"
+@@ -273,7 +271,7 @@ async def test_listing_lazy_pages_and_resume(listing_server, kind, asynchronous)
+             assert path.path == "/v1/jobs/list"
+             assert body == {"page_token": token, "limit": 2}
+         else:
+-            namespace = "$" if kind == "materialized_views" else "team"
++            namespace = "team"
+             resource = kind.removesuffix("s")
+             assert path.path == f"/v1/namespace/{namespace}/{resource}/list"
+             expected = {"page_token": [token], "limit": ["2"]}
+```
+
+**File**: `python/python/tests/test_materialized_views.py` (modified, +36/-100)
+```diff
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: Apache-2.0
+ # SPDX-FileCopyrightText: Copyright The LanceDB Authors
+ 
++
+ import contextlib
+ import http.server
+ import json
+@@ -30,89 +31,6 @@ def make_db(tmp_path):
+     return db
+ 
+ 
+-@contextlib.contextmanager
+-def mock_remote_materialized_views():
+-    requests = []
+-
+-    class Handler(http.server.BaseHTTPRequestHandler):
+-        def log_message(self, *args):
+-            pass
+-
+-        def do_GET(self):
+-            requests.append(self.path)
+-            encoded = json.dumps({"views": ["daily_sales"]}).encode()
+-            self.send_response(200)
+-            self.send_header("Content-Type", "application/json")
+-            self.send_header("Content-Length", str(len(encoded)))
+-            self.end_headers()
+-            self.wfile.write(encoded)
+-
+-    with http.server.HTTPServer(("localhost", 0), Handler) as server:
+-        thread = threading.Thread(target=server.serve_forever)
+-        thread.start()
+-        try:
+-            yield f"http://localhost:{server.server_address[1]}", requests
+-        finally:
+-            server.shutdown()
+-            thread.join()
+-
+-
+-@contextlib.contextmanager
+-def mock_remote_materialized_view_drop():
+-    requests = []
+-
+-    class Handler(http.server.BaseHTTPRequestHandler):
+-        def log_message(self, *args):
+-            pass
+-
+-        def do_POST(self):
+-            length = int(self.headers.get("Content-Length", 0))
+-            body = json.loads(self.rfile.read(length) or b"{}")
+-            requests.append((self.path, body))
+-            assert self.path.endswith("/drop")
+-            job_id = "mv-drop-123"
+-            encoded = json.dumps({"job_id": job_id}).encode()
+-            self.send_response(202)
+-            self.send_header("Content-Type", "application/json")
+-            self.send_header("Content-Length", str(len(encoded)))
+-            self.end_headers()
+-            self.wfile.write(encoded)
+-
+-    with http.server.HTTPServer(("localhost", 0), Handler) as server:
+-        thread = threading.Thread(target=server.serve_forever)
+-        thread.start()
+-        try:
+-            yield f"http://localhost:{server.server_address[1]}", requests
+-        finally:
+-            server.shutdown()
+-            thread.join()
+-
+-
+-def test_remote_list_uses_namespace_route():
+-    with mock_remote_materialized_views() as (host, requests):
+-        db = lancedb.connect(
+-            "db://dev",
+-            api_key="fake",
+-            host_override=host,
+-            client_config={"retry_config": {"retries": 0}},
+-        )
+-        assert list(db.list_materialized_views()) == ["daily_sales"]
+-    assert requests == ["/v1/namespace/$/materialized_view/list"]
+-
+-
+-def test_remote_drop_async_returns_server_job():
+-    with mock_remote_materialized_view_drop() as (host, requests):
+-        db = lancedb.connect(
+-            "db://dev",
+-            api_key="fake",
+-            host_override=host,
+-            client_config={"retry_config": {"retries": 0}},
+-        )
+-        job = db.drop_materialized_view_async("adults")
+-        assert job.id == "mv-drop-123"
+-    assert requests == [("/v1/materialized_view/adults/drop", {})]
+-
+-
+ @contextlib.contextmanager
+ def mock_remote_materialized_view_refresh():
+     requests = []
+@@ -123,11 +41,8 @@ def log_message(self, *args):
+ 
+         def do_POST(self):
+             requests.append(self.path)
+-            if self.path == "/v1/materialized_view/view/describe":
+-                response = {"query": "SELECT * FROM source"}
+-            else:
+-                assert self.path == "/v1/table/view/describe/"
+-                response = {"version": 42, "schema": {"fields": []}}
++            assert self.path == "/v1/table/view/describe/"
++            response = {"version": 42, "schema": {"fields": []}}
+             encoded = json.dumps(response).encode()
+             self.send_response(200)
+             self.send_header("Content-Type", "application/json")
+@@ -159,6 +74,16 @@ def __init__(self):
+ 
+         def do_get(self, context, ticket):
+             self.commands.append(ticket.ticket)
++            if b"DESCRIBE MATERIALIZED VIEW" in ticket.ticket:
++                return flight.RecordBatchStream(
++                    pa.table(
++                        {
++                            "name": ["view"],
++                            "query": ["SELECT * FROM source"],
++                        }
++                    )
 +                )
-         if exist_ok:
-             if mode == "create":
-                 mode = "exist_ok"
-@@ -719,6 +731,7 @@ def create_table(
-                 on_bad_vectors=on_bad_vectors,
-                 fill_value=fill_value,
-                 embedding_functions=embedding_functions,
-+                storage_options=storage_options,
-             )
++            assert b"REFRESH MATERIALIZED VIEW" in ticket.ticket
+             # SQL completion carries no refresh statistics.
+             return flight.RecordBatchStream(pa.table({"status": ["ok"]}))
+ 
+@@ -199,9 +124,24 @@ def do_get(self, context, ticket):
+             "RefreshMaterializedViewResult(mode=None, rows_written=None, "
+             "source_version=None, version=42)"
          )
-         return RemoteTable(
+-        (command,) = server.commands
+-        assert b'REFRESH MATERIALIZED VIEW "view"' in command
+-        assert (b"WITH (full = true)" in comma
 ```
 
-**File**: `python/python/tests/test_remote_db.py` (modified, +5/-5)
+**File**: `rust/lancedb/src/materialized_view.rs` (modified, +9/-8)
 ```diff
-@@ -1823,12 +1823,12 @@ def test_remote_unsupported_legacy_hnsw_pq():
-                 )
+@@ -1987,8 +1987,8 @@ impl Connection {
+     /// Drop a materialized view.
+     ///
+     /// The view may become unavailable before its physical data is removed.
+-    /// Use [`Connection::drop_materialized_view_async`] to retain the cleanup
+-    /// job and wait for it explicitly.
++    /// Remote drops wait for the SQL command to remove the catalog binding;
++    /// physical cleanup proceeds in the background.
+     pub async fn drop_materialized_view(
+         &self,
+         name: impl AsRef<str>,
+@@ -1999,8 +1999,9 @@ impl Connection {
+             return self
+                 .database()
+                 .drop_materialized_view_async(name, namespace_path)
+-                .await
+-                .map(|_| ());
++                .await?
++                .wait()
++                .await;
+         }
+         let table = self
+             .open_table(name)
+@@ -2011,12 +2012,12 @@ impl Connection {
+         self.drop_table(name, namespace_path).await
+     }
  
- 
--def test_remote_python_only_messages(caplog):
-+def test_remote_python_only_messages():
-     with mock_lancedb_connection(remote_unsupported_handler) as db:
--        with caplog.at_level("INFO"):
--            table = db.open_table("test", storage_options={}, index_cache_size=1)
--        assert "storage_options is ignored for remote tables" in caplog.text
--        assert "index_cache_size is ignored for remote tables" in caplog.text
-+        for options in [{"storage_options": {}}, {"index_cache_size": 1}]:
-+            with pytest.raises(NotImplementedError, match=next(iter(options))):
-+                db.open_table("test", **options)
-+        table = db.open_table("test")
-         for method in ["to_arrow", "to_pandas", "to_polars"]:
-             with pytest.raises(NotImplementedError) as error:
-                 getattr(table, method)()
-```
-
-**File**: `python/python/tests/test_remote_options.py` (added, +154/-0)
-```diff
-@@ -0,0 +1,154 @@
-+# SPDX-License-Identifier: Apache-2.0
-+# SPDX-FileCopyrightText: Copyright The LanceDB Authors
-+
-+import inspect
-+from urllib.parse import parse_qs, urlparse
-+
-+import lancedb
-+import pyarrow as pa
-+import pytest
-+
-+from test_remote_db import mock_lancedb_connection, mock_lancedb_connection_async
-+
-+
-+@pytest.mark.parametrize("uri", ["memory://", "db://dev"])
-+def test_unknown_connect_options(uri):
-+    with pytest.raises(ValueError, match="Unknown keyword arguments.*bogus"):
-+        lancedb.connect(uri, api_key="fake", bogus=1)
-+
-+
-+@pytest.mark.parametrize("option", ["session", "manifest_enabled"])
-+@pytest.mark.parametrize("asynchronous", [False, True])
-+@pytest.mark.asyncio
-+async def test_remote_connect_rejects_local_options(option, asynchronous):
-+    value = lancedb.Session() if option == "session" else True
-+    with pytest.raises(NotImplementedError, match=option):
-+        if asynchronous:
-+            await lancedb.connect_async("db://dev", api_key="fake", **{option: value})
-+        else:
-+            lancedb.connect("db://dev", api_key="fake", **{option: value})
-+
-+
-+def test_remote_create_signature():
-+    from lancedb.db import DBConnection
-+    from lancedb.remote.db import RemoteDBConnection
-+
-+    expected = inspect.signature(DBConnection.create_table).parameters
-+    actual = inspect.signature(RemoteDBConnection.create_table).parameters
-+    assert list(actual) == list(expected)
-+    for name in expected:
-+        assert actual[name].kind == expected[name].kind
-+        if name == "mode":
-+            # Remote connections retain their existing server-default mode.
-+            assert actual[name].default is None
-+        else:
-+            assert actual[name].default == expected[name].default
-+
-+
-+def test_remote_create_positional_mode():
-+    modes = []
-+
-+    def handler(request):
-+        assert urlparse(request.path).path == "/v1/table/ct_pos/create/"
-+        modes.append(parse_qs(urlparse(request.path).query)["mode"])
-+        request.send_response(200)
-+        request.end_headers()
-+
-+    with mock_lancedb_connection(handler) as db:
-+        data = [{"value": 1}]
-+        db.create_table("ct_pos", data, None, "overwrite")
-+        db.create_table("ct_pos", data, None, "overwrite")
-+        db.create_table("ct_pos", data, None, "create", True)
-+        with pytest.raises(ValueError, match="Invalid mode"):
-+            db.create_table("ct_pos", data, None, "drop")
-+    assert modes == [["overwrite"], ["overwrite"], ["exist_ok"]]
-+
-+
-+CREATE_OPTIONS = [
-+    {"new_table_data_storage_version": "2.0"},
-+    {"new_table_enable_v2_manifest_paths": "false"},
-+    {"bogus_option_xyz": "1"},
-+]
-+
-+
-+@pytest.mark.parametrize("storage_options", CREATE_OPTIONS)
-+@pytest.mark.parametrize("empty", [False, True])
-+@pytest.mark.asyncio
-+async def test_remote_create_rejects_write_options(storage_options, empty):
-+    requests = []
-+
-+    def handler(request):
-+        requests.append(request.path)
-+        request.send_response(200)
-+        request.end_headers()
-+
-+    kwargs = {"schema": pa.schema([("value", pa.int64())])}
-+    if not empty:
-+        kwargs["data"] = [{"value": 1}]
-+    async with mock_lancedb_connection_async(handler) as db:
-+        with pytest.raises(NotImplementedError, match="write_options.*remote"):
-+            await db.create_table("t", storage_options=storage_options, **kwargs)
-+    assert requests == []
-+
-+
-+@pytest.mark.parametrize(
-+    "options",
-+    [
-+        {"data_storage_version": "2.0"},
-+        {"enable_v2_manifest_paths": False},
-+        {"storage_options": {"x": "1"}},
-+    ],
-+)
-+def test_sync_remote_create_rejects_write_options(options):
-+    requests = []
-+
-+    def handler(request):
-+        requests.append(request.path)
-+        request.send_response(200)
-+        request.end_headers()
-+
-+    with mock_lancedb_connection(handler) as db:
-+        with pytest.raises(NotImplementedError, match="remote"):
-+            db.create_table("t", [{"value": 1}], **options)
-+    assert requests == []
-+
-+
-+@pytest.mark.parametrize("asynchronous", [False, True])
-+@pytest.mark.parametrize(
-+    "options", [{"index_cache_size": 10}, {"storage_options": {"x": "y"}}]
-+)
-+@pytest.mark.asyncio
-+async def test_remote_open_rejects_local_options(options, asynchronous):
-+    requests = []
-+
-+    def handler(request):
-+        requests.append(request.path)
-+        request.send_response(200)
-+        request.end_headers()
-+        request.wfile.write(b'{"version": 1, "schema": {"fields": []}}')
-+
-+    if asynchronous:
-+        async with mock_lancedb_connection_async(handler) as db:
-+            with pytest.raises(NotImplementedError, match="remote"):
-+                await db.open_table("t", **options)
-+    else:
-+        with mock_lancedb_connection(handler) as db:
-+            with pytest.raises(NotImplementedError, match="remote"):
-+                db.open_table("t", **options)
-+    assert requests == []
-+
-+
-+@pytest.mark.asyncio
-+async def test_remote
+-    /// Start dropping a materialized view and return its cleanup job.
++    /// Start dropping a materialized view and return its job.
+     ///
+     /// This validates that the named resource is a materialized view rather
+-    /// than an ordinary table. Call [`Job::wait`] before assuming physical
+-    /// cleanup has finished. When the backend performs cleanup inline, the
+-    /// returned job is already finished and has no job ID.
++    /// than an ordinary table. For remote connections the job has type `query`
++    /// and its ID identifies the SQL query. Waiting completes once the catalog
++    /// binding is removed; physical cleanup continues in the background.
+     ///
+     /// ```no_run
+     /// # use lancedb::Connection;
 ```
 
 ---
 
-### Incident Patch 2: `982b2a12` (2026-10-26)
-**Commit Message**: fix(python): restore sync remote connection and table API parity (#4473)
+### Incident Patch 2: `f6a348ac` (2026-10-27)
+**Commit Message**: fix(python): keep FTS scores in RRF and MRR rerankers with return_score="all" (#4677)
 
-Fixes #4400.
+`RRFReranker.rerank_hybrid` and `MRRReranker.rerank_hybrid` merge the
+vector and FTS results with the base `merge_results`, which keeps only
+the first copy of a duplicated row. With `return_score="all"`, a row
+that both searches found therefore comes back with `_score = None`, even
+though the FTS search scored it. `LinearCombinationReranker` already
+copies the FTS score onto such rows.
 
-Sync remote connections fail on `uri`, `len(db)`, and `name in db`, and
-remote tables lack `namespace`, `id`, and `replace_field_metadata`.
-Share the paginated connection helpers and table identifier contract
-through the base classes, and delegate remote metadata replacement to
-the existing async implementation. Unsupported remote session and
-read-consistency properties raise explicit `NotImplementedError`s.
+Reproduction against `lancedb` 0.40.0:
 
-Reconciled with main at `3dd57978`, including the synchronous method
-signatures from #4498. The local session fix has already landed in
-#4433, so this PR preserves its supplied-session-or-None contract and
-adds no Rust/PyO3 session access. Namespace connections retain their
-writable properties.
+```python
+import pyarrow as pa
+from lancedb.rerankers import RRFReranker
 
-Existing custom `Table` subclasses remain instantiable: `namespace`
-defaults to a fresh empty list, and deprecated `replace_field_metadata`
-delegates to `update_field_metadata` with `replace=True` while retaining
-its `None` return. Native and remote overrides are preserved. Regression
-tests instantiate an old-style subclass through normal ABC class
-creation and verify identifiers, independent namesp
-
-**File**: `python/python/lancedb/db.py` (modified, +18/-15)
-```diff
-@@ -823,8 +823,26 @@ def drop_all_tables(self, namespace_path: Optional[List[str]] = None):
- 
-     @property
-     def uri(self) -> str:
-+        """The URI of this database."""
-         return self._uri
- 
-+    def _all_table_names(self) -> Generator[str, None, None]:
-+        page_token = None
-+        while True:
-+            response = self.list_tables(page_token=page_token)
-+            yield from response.tables
-+            page_token = response.page_token
-+            if not page_token:
-+                return
-+
-+    def __len__(self) -> int:
-+        """Return the number of tables in the root namespace across all pages."""
-+        return sum(1 for _ in self._all_table_names())
-+
-+    def __contains__(self, name: str) -> bool:
-+        """Return whether the root namespace contains the named table."""
-+        return name in self._all_table_names()
-+
-     def namespace_client(self) -> LanceNamespace:
-         """Get the equivalent namespace client for this connection.
- 
-@@ -1609,21 +1627,6 @@ def table_names(
-             )
-         )
- 
--    def _all_table_names(self) -> Generator[str, None, None]:
--        page_token = None
--        while True:
--            response = self.list_tables(page_token=page_token)
--            yield from response.tables
--            page_token = response.page_token
--            if not page_token:
--                return
--
--    def __len__(self) -> int:
--        return sum(1 for _ in self._all_table_names())
--
--    def __contains__(self, name: str) -> bool:
--        return name in self._all_table_names()
--
-     @override
-     def create_table(
-         self,
+vector = pa.table({"_rowid": pa.array([1, 2], pa.uint64()), "text": ["a", "b"],
+                   "_distance": pa.array([0.1, 0.2], pa.float32())})
+fts = pa.table({"_rowid": pa.array([2, 3], pa.uint64()), "text": ["b", "c"],
+                "_score": pa.array([5.0, 4.0], pa.float32())})
+RRFReranker(return_score="all").rerank_hybrid("q", vector, fts).to_pylist()
+# row 2: _distance=0.2, _score=None   (expected _score=5.0)
 ```
 
-**File**: `python/python/lancedb/remote/db.py` (modified, +18/-1)
-```diff
-@@ -47,7 +47,7 @@
- from ..view import ViewDescription
- 
- if TYPE_CHECKING:
--    from .._lancedb import JobInfo
-+    from .._lancedb import JobInfo, Session
- from ..embeddings import EmbeddingFunctionConfig
- from lance_namespace import (
-     LanceNamespace,
-@@ -240,6 +240,23 @@ def _from_catalog(
-     def __repr__(self) -> str:
-         return f"RemoteConnect(name={self.db_name})"
- 
-+    @property
-+    @override
-+    def uri(self) -> str:
-+        return self._conn.uri
-+
-+    @property
-+    def session(self) -> Optional["Session"]:
-+        """Remote connections do not expose a local cache session."""
-+        raise NotImplementedError("session is not supported by remote connections")
-+
-+    @property
-+    def read_consistency_interval(self) -> Optional[timedelta]:
-+        """Remote connections do not expose a local read consistency interval."""
-+        raise NotImplementedError(
-+            "read_consistency_interval is not supported by remote connections"
-+        )
-+
-     @override
-     def serialize(self) -> str:
-         if getattr(self, "_catalog_oauth", False):
-```
+`table.search(query_type="hybrid")` is not affected, because
+`_combine_hybrid_results` restores the original `_distance` and `_score`
+by `_rowid` after reranking. The wrong value 
 
-**File**: `python/python/lancedb/remote/table.py` (modified, +12/-0)
+**File**: `python/python/lancedb/rerankers/mrr.py` (modified, +6/-1)
 ```diff
-@@ -192,6 +192,18 @@ def name(self) -> str:
-         """The name of the table"""
-         return self._name
+@@ -97,7 +97,12 @@ def rerank_hybrid(
+             weighted_mrr = self.weight_vector * vector_rr + self.weight_fts * fts_rr
+             final_mrr_scores[result_id] = weighted_mrr
  
-+    @property
-+    def namespace(self) -> List[str]:
-+        return self._namespace_path
-+
-+    @deprecation.deprecated(
-+        deprecated_in="0.33.1",
-+        current_version=__version__,
-+        details="Use update_field_metadata() instead.",
-+    )
-+    def replace_field_metadata(self, field_name: str, new_metadata: Dict[str, str]):
-+        LOOP.run(self._table.replace_field_metadata(field_name, new_metadata))
-+
-     def __repr__(self) -> str:
-         return f"RemoteTable({self.db_name}.{self.name})"
- 
-```
-
-**File**: `python/python/lancedb/table.py` (modified, +33/-7)
-```diff
-@@ -1360,6 +1360,16 @@ def name(self) -> str:
-         """The name of this Table"""
-         raise NotImplementedError("name is not supported for this table type")
- 
-+    @property
-+    def namespace(self) -> List[str]:
-+        """Return the namespace path of the table (empty for the root namespace)."""
-+        return []
-+
-+    @property
-+    def id(self) -> str:
-+        """Return the full identifier of the table (namespace$name)."""
-+        return "$".join(self.namespace + [self.name])
-+
-     @property
-     @abstractmethod
-     def version(self) -> int:
-@@ -3106,6 +3116,29 @@ def update_field_metadata(
-             version: the new table version after the update.
-         """
- 
-+    @deprecation.deprecated(
-+        deprecated_in="0.33.1",
-+        current_version=__version__,
-+        details="Use update_field_metadata() instead.",
-+    )
-+    def replace_field_metadata(self, field_name: str, new_metadata: Dict[str, str]):
-+        """Replace all metadata of a field in the schema.
-+
-+        .. deprecated:: 0.33.1
-+            Use [update_field_metadata][lancedb.table.Table.update_field_metadata]
-+            with ``replace=True`` instead.
-+
-+        Parameters
-+        ----------
-+        field_name: str
-+            The name of the field whose metadata is replaced.
-+        new_metadata: dict
-+            The new metadata, replacing all existing keys.
-+        """
-+        self.update_field_metadata(
-+            {"path": field_name, "metadata": new_metadata, "replace": True}
-+        )
-+
-     @abstractmethod
-     def drop_columns(self, columns: Iterable[str]) -> DropColumnsResult:
-         """
-@@ -3315,13 +3348,6 @@ def namespace(self) -> List[str]:
-         """Return the namespace path of the table."""
-         return self._namespace_path
- 
--    @property
--    def id(self) -> str:
--        """Return the full identifier of the table (namespace$name)."""
--        if self._namespace_path:
--            return "$".join(self._namespace_path + [self.name])
--        return self.name
--
-     @classmethod
-     async def from_inner(cls, tbl: LanceDBTable):
-         from .db import AsyncConnection, LanceDBConnection
-```
-
-**File**: `python/python/tests/test_sync_api_parity.py` (added, +170/-0)
-```diff
-@@ -0,0 +1,170 @@
-+# SPDX-License-Identifier: Apache-2.0
-+# SPDX-FileCopyrightText: Copyright The LanceDB Authors
-+
-+from datetime import timedelta
-+import json
-+from urllib.parse import parse_qs, urlparse
-+
-+import lancedb
-+from lancedb.table import Table
-+import pytest
-+
-+from test_remote_db import mock_lancedb_connection
-+
-+
-+@pytest.fixture
-+def legacy_table():
-+    """Implement the pre-existing abstract API without the two new members."""
-+
-+    def unsupported(self, *args, **kwargs):
-+        raise NotImplementedError
-+
-+    def update_field_metadata(self, updates):
-+        self.metadata_updates.append(updates)
-+        return object()  # The deprecated wrapper must not expose this result.
-+
-+    # Supply concrete implementations through normal ABC class creation. Leave
-+    # namespace and replace_field_metadata inherited, as an old subclass would.
-+    implementations = {
-+        name: unsupported
-+        for name in Table.__abstractmethods__
-+        if name not in {"namespace", "replace_field_metadata"}
-+    }
-+    implementations.update(
-+        name=property(lambda self: "legacy"),
-+        update_field_metadata=update_field_metadata,
-+    )
-+    legacy_class = type("LegacyTable", (Table,), implementations)
-+    table = legacy_class()
-+    table.metadata_updates = []
-+    return table
-+
-+
-+def test_legacy_table_namespace_and_id(legacy_table):
-+    assert legacy_table.namespace == []
-+    assert legacy_table.id == "legacy"
-+    namespace = legacy_table.namespace
-+    namespace.append("changed")
-+    assert legacy_table.namespace == []
-+    assert legacy_table.id == "legacy"
-+
-+
-+def test_legacy_table_replace_field_metadata(legacy_table):
-+    with pytest.warns(DeprecationWarning, match="update_field_metadata"):
-+        result = legacy_table.replace_field_metadata("nested.field", {"a": "b"})
-+    assert result is None
-+    assert legacy_table.metadata_updates == [
-+        {"path": "nested.field", "metadata": {"a": "b"}, "replace": True}
-+    ]
-+
-+
-+def respond(request, body):
-+    request.send_response(200)
-+    request.send_header("Content-Type", "application/json")
-+    request.end_headers()
-+    request.wfile.write(json.dumps(body).encode())
-+
-+
-+def test_remote_uri():
-+    with mock_lancedb_connection(lambda request: respond(request, {})) as db:
-+        assert db.uri == "db://dev"
-+
-+
-+@pytest.mark.parametrize("attribute", ["session", "read_consistency_interval"])
-+def test_remote_unsupported_properties(attribute):
-+    with mock_lancedb_connection(lambda request: respond(request, {})) as db:
-+        with pytest.raises(NotImplementedError, match=attribute):
-+            getattr(db, attribute)
-+
-+
-+@pytest.mark.parametrize("tables", [[], ["first", "last"]])
-+def test_remote_len_and_contains_follow_pages(tables):
-+    requests = []
-+
-+    def handler(request):
-+        requests.append(request.path)
-+        query = parse_qs(urlparse(request.path).query)
-+        if tables and "page_token" not in query:
-+            respond(request, {"tables": [tables[0]], "page_token": "opaque-next"})
+-        combined_results = self.merge_results(vector_results, fts_results)
++        # With return_score="all", a row found by both searches must keep its
++        # `_distance` and its `_score`.
++        if self.score == "all":
++            combined_results = self._merge_and_keep_scores(vector_results, fts_results)
 +        else:
-+            if tables:
-+                assert query["page_token"] == ["opaque-next"]
-+            respond(request, {"tables": tables[1:]})
-+
-+    with mock_lancedb_connection(handler) as db:
-+        assert len(db) == len(tables)
-+        assert ("last" in db) == bool(tables)
-+        assert "missing" not in db
-+        requests.clear()
-+        assert ("first" in db) == bool(tables)
-+        assert len(requests) == 1
-+
-+
-+@pytest.mark.parametrize("namespace", [[], ["parent", "child"]])
-+def test_remote_table_identifiers(namespace):
-+    def handler(request):
-+        respond(request, {"version": 1, "schema": {"fields": []}})
-+
-+    with mock_lancedb_connection(handler) as db:
-+        table = db.open_table("rfm", namespace_path=namespace)
-+        assert table.namespace == namespace
-+        assert table.id == "$".join(namespace + ["rfm"])
-+
-+
-+def test_remote_replace_field_metadata():
-+    updates = []
-+
-+    def handler(request):
-+        if request.path.endswith("/describe/"):
-+            respond(request, {"version": 1, "schema": {"fields": []}})
++            combined_results = self.merge_results(vector_results, fts_results)
+         combined_row_ids = combined_results["_rowid"].to_pylist()
+         relevance_scores = [final_mrr_scores[row_id] for row_id in combined_row_ids]
+         combined_results = combined_results.append_column(
+```
+
+**File**: `python/python/lancedb/rerankers/rrf.py` (modified, +6/-2)
+```diff
+@@ -54,8 +54,12 @@ def rerank_hybrid(
+             for i, result_id in enumerate(ids, 1):
+                 rrf_score_map[result_id] += 1 / (i + self.K)
+ 
+-        # Sort the results based on RRF score
+-        combined_results = self.merge_results(vector_results, fts_results)
++        # Sort the results based on RRF score. With return_score="all", a row found
++        # by both searches must keep its `_distance` and its `_score`.
++        if self.score == "all":
++            combined_results = self._merge_and_keep_scores(vector_results, fts_results)
 +        else:
-+            assert request.path == "/v1/table/rfm/update_field_metadata/"
-+            body = request.rfile.read(int(request.headers["Content-Length"]))
-+            updates.append(json.loads(body))
-+            respond(request, {"version": 2})
++            combined_results = self.merge_results(vector_results, fts_results)
+         combined_row_ids = combined_results["_rowid"].to_pylist()
+         relevance_scores = [rrf_score_map[row_id] for row_id in combined_row_ids]
+         combined_results = combined_results.append_column(
+```
+
+**File**: `python/python/tests/test_rerankers.py` (modified, +32/-0)
+```diff
+@@ -428,6 +428,38 @@ def ranking(row_ids):
+     assert result["_rowid"].to_pylist() == [2, 1, 3]
+ 
+ 
++@pytest.mark.parametrize("reranker_cls", [RRFReranker, MRRReranker])
++def test_rank_fusion_return_score_all_keeps_both_scores(reranker_cls):
++    # A row found by both searches must keep its vector `_distance` and its FTS
++    # `_score` when the reranker is asked to return all scores.
++    vector_results = pa.table(
++        {
++            "_rowid": pa.array([1, 2], type=pa.uint64()),
++            "text": ["a", "b"],
++            "_distance": pa.array([0.1, 0.2], type=pa.float32()),
++        }
++    )
++    fts_results = pa.table(
++        {
++            "_rowid": pa.array([2, 3], type=pa.uint64()),
++            "text": ["b", "c"],
++            "_score": pa.array([5.0, 4.0], type=pa.float32()),
++        }
++    )
 +
-+    with mock_lancedb_connection(handler) as db:
-+        table = db.open_table("rfm")
-+        with pytest.warns(DeprecationWarning, match="update_field_metadata"):
-+            assert table.replace_field_metadata("id", {"a": "b"}) is None
-+    assert updates == [
-+        {"updates": [{"path": "id", "metadata": {"a": "b"}, "replace": True}]}
-+    ]
++    result = reranker_cls(return_score="all").rerank_hybrid(
++        "query", vector_results, fts_results
++    )
++    rows = {row["_rowid"]: row for row in result.to_pylist()}
++
++    assert rows[1]["_distance"] == pytest.approx(0.1)
++    assert rows[1]["_score"] is None
++    assert rows[2]["_distance"] == pytest.approx(0.2)
++    assert rows[2]["_score"] == pytest.approx(5.0)
++    assert rows[3]["_distance"] is None
++    assert rows[3]["_score"] == pytest.approx(4.0)
 +
 +
-+@pytest.mark.parametrize("custom_session", [False, True])
-+def test_local_properties_and_metadata(tmp_path, custom_session):
-+    supplied = lancedb.Session() if custom_session else None
-+    db = lancedb.connect(
-+        tmp_path, 
+ def test_rrf_reranker_distance():
+     data = pa.table(
+         {
 ```
 
 ---
 
-### Incident Patch 3: `2cd635d4` (2026-10-27)
-**Commit Message**: fix: correct remote materialized view refresh results and options (#4672)
+### Incident Patch 3: `ac99ab17` (2026-10-27)
+**Commit Message**: fix(python): support native blob conversion in pandas and batches (#4647)
 
-Remote materialized-view refreshes drained the SQL result and then
-fabricated `mode=rebuild`, `rows_written=<total view rows>`, and
-`source_version=0`. This made incremental refreshes report incorrect
-statistics.
+Plain local blob v2 scans tried to open a pylance dataset before
+reaching LanceDB's byte-fetch path, so `to_pandas(blob_mode="bytes")`
+failed when the optional dependency was absent. Batch readers also had
+no `blob_mode` option.
 
-Make these three result fields optional across Rust, Python, and
-TypeScript, and leave them unset for remote SQL refreshes. Remove the
-post-refresh row count request. Local refreshes continue to populate all
-metrics, and `version` remains the view version observed after
-completion. Remote per-operation statistics remain unavailable until the
-SQL job adapter can retrieve them.
+Route supported blob v2 pandas conversions through the native Arrow
+path. Add `blob_mode` to sync and async batch readers, convert payloads
+during iteration, and expose the converted schema without fetching the
+first batch. Apply conversion after reranking and retain the default
+descriptor behavior. Clean up scanner error punctuation and remove the
+misleading plain-scan suggestion.
 
-Expose the forced-rebuild option through the Rust builder,
-synchronous/asynchronous Python refresh and job methods, and TypeScript
-refresh. Remote `full=true` sends `WITH (full = true)`; the default lets
-the server choose its refresh mode. Local source-version pinning and
-remote job cancellation are preserved.
-
-Local refresh regression tests respect the `experimental-functions`
-build gate, while remote refresh coverage also runs in default builds.
+Bytes mode retains the existing `to_arrow` restrictions for legacy/list
+blobs, remote tables, and namespace query pushdown. Lazy pandas handles
+and legacy pandas scans still require pylance; sync FTS/hybrid batching
+remains unsupported.
 
 Validation:
+- UV-managed editable Python development build completed successfully.
+- The absent-pylance regression tests fail against the original query
+implementation and pass with this change.
+- Blob and query suites: 403 passed, 1 skipped, 1 deselected.
+- Remote query
 
-- Rust: 20 materialized-view tests and 21 remote SQL tests passed
-
-**File**: `docs/src/js/classes/MaterializedView.md` (modified, +7/-3)
+**File**: `docs/web/management/table.mdx` (modified, +33/-7)
 ```diff
-@@ -66,14 +66,18 @@ refresh(options?): Promise<RefreshMaterializedViewResult>
- Recompute the view from its source.
- Local refresh requires a source build with `experimental-functions`.
+@@ -447,19 +447,20 @@ above:
+ </CodeGroup>
  
--Every refresh rebuilds the complete view. For local views,
--`sourceVersion` refreshes to that source version instead of the latest;
--remote SQL refreshes do not support source-version pinning.
-+`full: true` forces a remote rebuild; otherwise the server chooses the
-+refresh mode. Local views always rebuild, and `sourceVersion` selects a
-+source version instead of the latest. Remote SQL refreshes do not support
-+source-version pinning. Their results leave `mode`, `rowsWritten`, and
-+`sourceVersion` absent because the SQL job adapter does not expose these metrics.
+ In the Python SDK, `Table.to_pandas()`, `Table.to_arrow()`, and the query builder
+-methods `to_pandas()`, `to_arrow()`, and `to_list()` accept a `blob_mode`
+-argument:
++methods `to_pandas()`, `to_arrow()`, `to_list()`, and `to_batches()` accept a
++`blob_mode` argument. Sync and async query builders support the same modes:
  
- #### Parameters
+ | `blob_mode` | `to_pandas()` | `to_arrow()` and `to_list()` |
+ | --- | --- | --- |
+ | `"lazy"` | Default. Plain scans return seekable `BlobFile` handles. Vector, full-text, hybrid, and ordered queries return descriptor dicts. | Default. Returns descriptors carrying `_lance_row_id` so the result table can be passed to `fetch_blobs` or `fetch_blob_files`. |
+ | `"descriptions"` | Returns descriptor dicts with `kind`, `position`, `size`, `blob_id`, and `blob_uri`. | Returns the 5-field descriptor without `_lance_row_id`. |
+ | `"bytes"` | Materializes each blob as `bytes` in the DataFrame. | Materializes each blob as `large_binary` in Arrow or `bytes` in Python dicts. |
  
- * **options?**
+-`to_pandas(blob_mode="lazy")` and `to_pandas(blob_mode="bytes")` require
+-pylance. Without it they raise `ImportError`. `to_arrow()`,
+-`to_list(blob_mode="bytes")`, `to_pandas(blob_mode="descriptions")`, and the
+-fetch methods do not.
++For supported local v2 blob projections, `to_pandas(blob_mode="bytes")` and
++`to_pandas(blob_mode="descriptions")` use native Arrow conversion without
++pylance. Pandas conversions that need the Lance scanner, including plain-scan
++`"lazy"` handles and legacy blobs, still require pylance. `to_arrow()`,
++`to_list()`, `to_batches()`, and the fetch methods do not require pylance.
  
-+* **options.full?**: `boolean`
+ `blob_mode="bytes"` requires a local table snapshot, so remote and in-memory
+ tables raise `NotImplementedError`. On a remote table, `Table.to_pandas()` and
+@@ -475,9 +476,34 @@ them out of the projection. Extra keyword arguments on
+ `to_pandas()`, such as `split_blocks` and `self_destruct`, are forwarded to
+ PyArrow.
+ 
++###### Stream blob results {#multimodal-blob-batches}
 +
- * **options.sourceVersion?**: `number`
- 
- #### Returns
-```
-
-**File**: `docs/src/js/interfaces/RefreshMaterializedViewResult.md` (modified, +11/-7)
-```diff
-@@ -8,30 +8,34 @@
- 
- ## Properties
- 
--### mode
-+### mode?
- 
- ```ts
--mode: string;
-+optional mode: string;
- ```
- 
--How the view was brought up to date: "rebuild".
-+How the view was brought up to date: "rebuild", or absent for remote SQL refreshes.
- 
- ***
- 
--### rowsWritten
-+### rowsWritten?
- 
- ```ts
--rowsWritten: number;
-+optional rowsWritten: number;
- ```
- 
-+Rows written by this refresh, or absent for remote SQL refreshes.
++`to_batches(blob_mode="bytes")` fetches blob v2 payloads one batch at a time
++and returns them as Arrow `large_binary` values. Iterate over the reader and
++call `batch.to_pandas()` to convert each batch to a DataFrame without collecting
++all payloads at once.
 +
- ***
- 
--### sourceVersion
-+### sourceVersion?
- 
- ```ts
--sourceVersion: number;
-+optional sourceVersion: number;
- ```
- 
-+Source version refreshed to, or absent for remote SQL refreshes.
++For sync queries, call `query.to_batches(batch_size=64, blob_mode="bytes")`
++and iterate with `for`. For async queries, call
++`await query.to_batches(max_batch_length=64, blob_mode="bytes")` and iterate
++with `async for`. Sync full-text and hybrid queries do not support
++`to_batches()`.
 +
- ***
- 
- ### version
-```
-
-**File**: `nodejs/__test__/materialized_view.test.ts` (modified, +27/-13)
-```diff
-@@ -6,6 +6,7 @@ import * as tmp from "tmp";
- import { Connection, connect } from "../lancedb";
- import {
-   DEFINITION_META_KEY,
-+  MaterializedView,
-   definitionFromMetadata,
- } from "../lancedb/materialized_view";
- import { experimentalFunctionsEnabled } from "../lancedb/native";
-@@ -94,20 +95,33 @@ describe("materialized views", () => {
-     );
-   });
- 
--  experimentalTest("fully refreshes after an append", async () => {
--    const view = await db.createMaterializedView("copy", "people", {
--      withNoData: true,
--    });
--    await view.refresh();
--
--    const people = await db.openTable("people");
--    await people.add([{ name: "alan", age: 41 }]);
--    const result = await view.refresh();
--    expect(result.mode).toBe("rebuild");
--    expect(Number(result.rowsWritten)).toBe(4);
--    expect(await view.table().countRows()).toBe(4);
-+  experimentalTest.each([false, true])(
-+    "fully refreshes after an append (full=%s)",
-+    async (full) => {
-+      const view = await db.createMaterializedView("copy", "people", {
-+        withNoData: true,
-+      });
-+      await view.refresh();
++The default `"lazy"` mode returns descriptors and keeps automatic `_rowid`
++columns visible for manual fetches. `"descriptions"` returns the five-field
++descriptors. Both `"bytes"` and `"descriptions"` hide automatic row IDs;
++explicitly requested row IDs remain visible.
 +
-+      const people = await db.openTable("people");
-+      await people.add([{ name: "alan", age: 41 }]);
-+      const result = await view.refresh({ full });
-+      expect(result.mode).toBe("rebuild");
-+      expect(Number(result.rowsWritten)).toBe(4);
-+      expect(await view.table().countRows()).toBe(4);
++Bytes mode has the same restrictions as `to_arrow(blob_mode="bytes")`,
++including no legacy blobs, blobs inside lists, remote tables, or namespace
++`QueryTable` pushdown. If concurrent writers can overwrite the table, use a
++separate reader checked out to a fixed version before querying. Otherwise,
++an overwrite can invalidate the row IDs used to fetch bytes and raise
++`ValueError`.
 +
-+      expect((await view.refresh()).mode).toBe("rebuild");
-+    },
-+  );
+ ###### Optional pandas examples {#multimodal-blob-pandas}
  
--    expect((await view.refresh()).mode).toBe("rebuild");
-+  it("forwards a forced refresh and preserves absent remote metrics", async () => {
-+    const view = new MaterializedView(await db.openTable("people"));
-+    const remoteResult = { version: 42 };
-+    const refresh = jest
-+      .spyOn(view.table(), "refreshMaterializedView")
-+      .mockResolvedValue(remoteResult);
-+    expect(await view.refresh({ full: true })).toEqual(remoteResult);
-+    expect(refresh).toHaveBeenCalledWith(undefined, true);
-   });
+-These examples require pylance. The query example expects `tbl_async`,
++The lazy-handle calls below require pylance. The query example expects `tbl_async`,
+ `query_vector`, and a `video` column, which the `photos` table does not define.
  
-   experimentalTest("lists views and rejects non-views", async () => {
+ <CodeGroup>
 ```
 
-**File**: `nodejs/lancedb/materialized_view.ts` (modified, +10/-4)
+**File**: `python/python/lancedb/_blob.py` (modified, +12/-2)
 ```diff
-@@ -188,14 +188,20 @@ export class MaterializedView {
-    * Recompute the view from its source.
-    * Local refresh requires a source build with `experimental-functions`.
-    *
--   * Every refresh rebuilds the complete view. For local views,
--   * `sourceVersion` refreshes to that source version instead of the latest;
--   * remote SQL refreshes do not support source-version pinning.
-+   * `full: true` forces a remote rebuild; otherwise the server chooses the
-+   * refresh mode. Local views always rebuild, and `sourceVersion` selects a
-+   * source version instead of the latest. Remote SQL refreshes do not support
-+   * source-version pinning. Their results leave `mode`, `rowsWritten`, and
-+   * `sourceVersion` absent because the SQL job adapter does not expose these metrics.
-    */
-   async refresh(options?: {
-+    full?: boolean;
-     sourceVersion?: number;
-   }): Promise<RefreshMaterializedViewResult> {
-     validateNonNegativeInteger(options?.sourceVersion, "sourceVersion");
--    return await this.inner.refreshMaterializedView(options?.sourceVersion);
-+    return await this.inner.refreshMaterializedView(
-+      options?.sourceVersion,
-+      options?.full,
-+    );
-   }
- }
-```
-
-**File**: `nodejs/lancedb/table.ts` (modified, +3/-1)
-```diff
-@@ -699,6 +699,7 @@ export abstract class Table {
-    */
-   abstract refreshMaterializedView(
-     sourceVersion?: number,
-+    full?: boolean,
-   ): Promise<RefreshMaterializedViewResult>;
- 
-   /** @ignore */
-@@ -1442,8 +1443,9 @@ export class LocalTable extends Table {
- 
-   async refreshMaterializedView(
-     sourceVersion?: number,
-+    full?: boolean,
-   ): Promise<RefreshMaterializedViewResult> {
--    return await this.inner.refreshMaterializedView(sourceVersion);
-+    return await this.inner.refreshMaterializedView(sourceVersion, full);
-   }
- 
-   async materializedViewDefinition(): Promise<string> {
-```
-
-**File**: `nodejs/src/table.rs` (modified, +13/-10)
-```diff
-@@ -470,11 +470,12 @@ impl Table {
-     pub async fn refresh_materialized_view(
-         &self,
-         source_version: Option<i64>,
-+        full: Option<bool>,
-     ) -> napi::Result<RefreshMaterializedViewResult> {
-         let view = lancedb::MaterializedView::from_table(self.inner_ref()?.clone())
-             .await
-             .default_error()?;
--        let mut builder = view.refresh();
-+        let mut builder = view.refresh().full(full.unwrap_or(false));
-         if let Some(version) = source_version {
-             let version = u64::try_from(version).map_err(|_| {
-                 napi::Error::from_reason("sourceVersion must be a non-negative integer")
-@@ -1615,22 +1616,24 @@ impl From<lancedb::function::FunctionErrors> for FunctionErrors {
- 
- #[napi(object)]
- pub struct RefreshMaterializedViewResult {
--    /// How the view was brought up to date: "rebuild".
--    pub mode: String,
--    pub rows_written: i64,
--    pub source_version: i64,
-+    /// How the view was brought up to date: "rebuild", or absent for remote SQL refreshes.
-+    pub mode: Option<String>,
-+    /// Rows written by this refresh, or absent for remote SQL refreshes.
-+    pub rows_written: Option<i64>,
-+    /// Source version refreshed to, or absent for remote SQL refreshes.
-+    pub source_version: Option<i64>,
-     pub version: i64,
- }
- 
- impl From<lancedb::RefreshMaterializedViewResult> for RefreshMaterializedViewResult {
-     fn from(value: lancedb::RefreshMaterializedViewResult) -> Self {
--        let mode = match value.mode {
-+        let mode = value.mode.map(|mode| match mode {
-             lancedb::RefreshMode::Rebuild => "rebuild",
--        };
-+        });
-         Self {
--            mode: mode.to_string(),
--            rows_written: value.rows_written as i64,
--            source_version: value.source_version as i64,
-+            mode: mode.map(str::to_string),
-+            rows_written: value.rows_written.map(|rows| rows as i64),
-+            source_version: value.source_version.map(|version| version as i64),
-             version: value.version as i64,
-         }
-     }
-```
-
-**File**: `python/python/lancedb/_lancedb.pyi` (modified, +5/-5)
-```diff
-@@ -528,10 +528,10 @@ class Table:
-         limit: Optional[int] = None,
-     ) -> FunctionErrors: ...
-     async def refresh_materialized_view(
--        self, source_version: Optional[int] = None
-+        self, source_version: Optional[int] = None, *, full: bool = False
-     ) -> RefreshMaterializedViewResult: ...
-     async def refresh_materialized_view_async(
--        self, source_version: Optional[int] = None
-+        self, source_version: Optional[int] = None, *, full: bool = False
-     ) -> Job: ...
-     async def materialized_view_definition(self) -> str: ...
-     async def add_columns_with_schema(self, schema: pa.Schema) -> AddColumnsResult: ...
-@@ -921,9 +921,9 @@ class FunctionErrors:
- class RefreshMaterializedViewResult:
-     @staticmethod
-     def from_json(value: str) -> RefreshMaterializedViewResult: ...
--    mode: str
--    rows_written: int
--    source_version: int
-+    mode: Optional[str]
-+    rows_written: Optional[int]
-+    source_version: Optional[int]
-     version: int
- 
- class AlterColumnsResult:
-```
-
-**File**: `python/python/lancedb/materialized_view.py` (modified, +21/-12)
-```diff
-@@ -184,31 +184,36 @@ async def definition(self) -> MaterializedViewDefinition:
-         return _definition_from_json(raw)
- 
-     async def refresh(
--        self, *, source_version: Optional[int] = None
-+        self, *, full: bool = False, source_version: Optional[int] = None
-     ) -> "RefreshMaterializedViewResult":
-         """Recompute the view from its source.
- 
--        Every refresh rebuilds the complete view. For local views,
--        ``source_version`` refreshes to that source version instead of the
--        latest; remote SQL refreshes do not support source-version pinning.
-+        ``full=True`` forces a remote rebuild; otherwise the server chooses
-+        the refresh mode. Local views always rebuild, and ``source_version``
-+        selects a source version instead of the latest. Remote SQL refreshes
-+        do not support source-version pinning.
-+
-+        Remote results leave ``mode``, ``rows_written``, and ``source_version``
-+        as ``None`` because the SQL job adapter does not expose these metrics.
-         """
-         return await self._table._inner.refresh_materialized_view(
--            source_version=source_version
-+            source_version=source_version, full=full
+@@ -280,7 +280,11 @@ async def replace_v2_blob_columns_with_bytes(
+     row_ids = _hit_row_ids(tbl, present)
+     for output_name, source_name in present.items():
+         tbl = _set_blob_column(
+-            tbl, output_name, await fetch_blobs(source_name, row_ids)
++            tbl,
++            output_name,
++            await fetch_blobs(source_name, row_ids)
++            if row_ids
++            else pa.array([], type=pa.large_binary()),
          )
+     return tbl
  
-     async def refresh_async(
--        self, *, source_version: Optional[int] = None
-+        self, *, full: bool = False, source_version: Optional[int] = None
-     ) -> "AsyncJob[RefreshMaterializedViewResult]":
-         """Submit a refresh and return its job without waiting.
- 
-         The job may already be complete for a local view. Remote refreshes are
--        submitted through the SQL service.
-+        submitted through the SQL service. Options and result metrics follow
-+        [refresh][lancedb.materialized_view.AsyncMaterializedView.refresh].
-         """
-         from ._lancedb import RefreshMaterializedViewResult
- 
-         return _typed_job(
-             await self._table._inner.refresh_materialized_view_async(
--                source_version=source_version
-+                source_version=source_version, full=full
-             ),
-             RefreshMaterializedViewResult.from_json,
-         )
-@@ -240,18 +245,22 @@ def definition(self) -> MaterializedViewDefinition:
-         return LOOP.run(self._async.definition())
- 
-     def refresh(
--        self, *, source_version: Optional[int] = None
-+        self, *, full: bool = False, source_version: Optional[int] = None
-     ) -> "RefreshMaterializedViewResult":
-         """Recompute the view from its source. See
-         [AsyncMaterializedView.refresh][lancedb.materialized_view.AsyncMaterializedView.refresh]."""
--        return LOOP.run(self._async.refresh(source_version=source_version))
-+        return LOOP.run(self._async.refresh(full=full, source_version=source_version))
- 
-     def refresh_async(
--        self, *, source_version: Optional[int] = None
-+        self, *, full: bool = False, source_version: Optional[int] = None
-     ) -> "Job[RefreshMaterializedViewResult]":
-         """Submit a refresh and return its job without waiting.
- 
-         See
-         [AsyncMaterializedView.refresh_async][lancedb.materialized_view.AsyncMaterializedView.refresh_async].
-         """
--        return Job(LOOP.run(self._async.refresh_async(source_version=source_version)))
-+        return Job(
-+            LOOP.run(
-+                self._async.refresh_async(full=full, source_version=source_version)
-+            )
+@@ -295,7 +299,13 @@ def replace_v2_blob_columns_with_bytes_sync(
+         return tbl
+     row_ids = _hit_row_ids(tbl, present)
+     for output_name, source_name in present.items():
+-        tbl = _set_blob_column(tbl, output_name, fetch_blobs(source_name, row_ids))
++        tbl = _set_blob_column(
++            tbl,
++            output_name,
++            fetch_blobs(source_name, row_ids)
++            if row_ids
++            else pa.array([], type=pa.large_binary()),
 +        )
+     return tbl
+ 
+ 
+```
+
+**File**: `python/python/lancedb/arrow.py` (modified, +12/-1)
+```diff
+@@ -2,7 +2,7 @@
+ # SPDX-FileCopyrightText: Copyright The LanceDB Authors
+ 
+ from functools import singledispatch
+-from typing import List, Optional, Tuple, Union
++from typing import AsyncIterator, List, Optional, Tuple, Union
+ 
+ from lancedb.pydantic import LanceModel, model_to_dict
+ import pyarrow as pa
+@@ -30,6 +30,7 @@ def __init__(
+             The schema of the batches produced by the stream.
+             Accessing the schema does not consume any data from the stream
+         """
++        self._inner: AsyncIterator[pa.RecordBatch]
+         if isinstance(inner, pa.Table):
+             self._inner = self._async_iter_from_table(inner, max_batch_length)
+             self.schema: pa.Schema = inner.schema
+@@ -39,6 +40,16 @@ def __init__(
+         else:
+             raise TypeError("inner must be a RecordBatchStream or a Table")
+ 
++    @classmethod
++    def _from_batches(
++        cls, schema: pa.Schema, batches: AsyncIterator[pa.RecordBatch]
++    ) -> "AsyncRecordBatchReader":
++        """Wrap a transformed stream without consuming its first batch."""
++        reader = cls.__new__(cls)
++        reader.schema = schema
++        reader._inner = batches
++        return reader
++
+     async def read_all(self) -> List[pa.RecordBatch]:
+         """
+         Read all the record batches from the stream
+```
+
+**File**: `python/python/lancedb/query.py` (modified, +155/-27)
+```diff
+@@ -104,11 +104,13 @@ def to_reader(self): ...
+ 
+ 
+ def _unsupported_blob_pandas_error(reason: str) -> RuntimeError:
++    reason = reason.rstrip(".")
++    reason = reason[0].upper() + reason[1:]
+     return RuntimeError(
+-        "blob columns require Lance native scanner conversion for query "
+-        f"to_pandas(), but {reason}. Use a plain scan query, pass "
+-        "blob_mode='bytes' or blob_mode='descriptions', or remove blob columns "
+-        "from the projection."
++        "Blob columns require Lance native scanner conversion for this query's "
++        f"to_pandas(). {reason}. For supported blob v2 queries, pass "
++        "blob_mode='bytes' or blob_mode='descriptions'. Otherwise, install "
++        "pylance for scanner conversion or remove blob columns from the projection."
+     )
+ 
+ 
+@@ -1139,9 +1141,10 @@ def to_pandas(
+             The maximum time to wait for the query to complete.
+             If None, wait indefinitely.
+         blob_mode: str, default "lazy"
+-            Controls how blob columns are returned. Eligible local plain scans
+-            use Lance's scanner, which returns lazy blob handles in ``"lazy"``
+-            mode and also supports legacy blob columns. Other local blob v2
++            Controls how blob columns are returned. Local blob v2 queries support
++            ``"bytes"`` and ``"descriptions"`` without pylance. Eligible local
++            plain scans use pylance's scanner for lazy blob handles in ``"lazy"``
++            mode and for legacy blob columns. Other local blob v2
+             queries return descriptors in ``"lazy"`` and ``"descriptions"``
+             modes, or payloads in ``"bytes"`` mode, through :meth:`to_arrow`.
+             Remote blob queries support only ``"descriptions"`` until a stable
+@@ -1219,15 +1222,16 @@ def to_batches(
+         batch_size: Optional[int] = None,
+         *,
+         timeout: Optional[timedelta] = None,
++        blob_mode: BlobMode = "lazy",
+     ) -> pa.RecordBatchReader:
+         """
+         Execute the query and return the results as a pyarrow
+         [RecordBatchReader](https://arrow.apache.org/docs/python/generated/pyarrow.RecordBatchReader.html)
+ 
+-        For v2 blob projections, ``to_batches`` keeps the auto ``_rowid``
+-        column visible so batch consumers can call ``fetch_blobs``. Use
+-        ``to_arrow``, ``to_list``, or ``to_pandas`` if you want LanceDB to hide
+-        auto row ids in the final collected result.
++        For v2 blob projections, the default ``blob_mode="lazy"`` keeps the
++        auto ``_rowid`` column visible so batch consumers can call
++        ``fetch_blobs``. The ``"bytes"`` and ``"descriptions"`` modes hide
++        automatic row ids.
+ 
+         Parameters
+         ----------
+@@ -1236,6 +1240,16 @@ def to_batches(
+         timeout: Optional[timedelta]
+             The maximum time to wait for the query to complete.
+             If None, wait indefinitely.
++        blob_mode: str, default "lazy"
++            ``"lazy"`` keeps blob descriptors and auto row ids for manual fetches.
++            ``"descriptions"`` omits auto row ids. ``"bytes"`` fetches blob v2
++            payloads one batch at a time, without requiring pylance. Bytes mode
++            has the same restrictions as :meth:`to_arrow`.
++
++        Examples
++        --------
++        Stream blob payloads with ``query.to_batches(blob_mode="bytes")`` and
++        convert each batch separately with ``batch.to_pandas()``.
+         """
+         raise NotImplementedError
+ 
+@@ -1499,6 +1513,28 @@ def _finalize_blob_query_table(
+             finalized = finalized.drop_columns(["_rowid"])
+         return finalized
+ 
++    def _batches_in_mode(
++        self,
++        reader: pa.RecordBatchReader,
++        blob_mode: BlobMode,
++        blob_sources: dict[str, str],
++    ) -> pa.RecordBatchReader:
++        if blob_mode == "lazy":
++            return reader
++
++        def convert(tbl: pa.Table) -> pa.Table:
++            return self._finalize_blob_query_table(
++                tbl, blob_mode=blob_mode, blob_sources=blob_sources
++            )
++
++        schema = convert(pa.Table.from_batches([], schema=reader.schema)).schema
++
++        def batches():
++            for batch in reader:
++                yield from convert(pa.Table.from_batches([batch])).to_batches()
++
++        return pa.RecordBatchReader.from_batches(schema, batches())
++
+     def with_row_address(self, with_row_address: bool = True) -> Self:
+         """Set whether to return row addresses.
+ 
+@@ -1717,7 +1753,18 @@ def _plain_scan_to_pandas(
+             get_uri_scheme(self._table._dataset_path) == "memory"
+         ):
+             return None
+-        dataset = self._table.to_lance()
++        # Blob v2 payloads and descriptions use LanceDB's native fetch path.
++        # Only lazy handles, legacy blobs, and scanner-only options need pylance.
++        if (
++            blob_mode != "lazy"
++            and not _query_needs_lance_scanner(self)
++            and blob_v2_projection_s
+```
+
+**File**: `python/python/tests/test_blob.py` (modified, +110/-3)
+```diff
+@@ -843,8 +843,7 @@ def test_to_pandas_does_not_drop_fragment_selection_on_fallback():
+         table.search().with_row_address(True).to_pandas(blob_mode="descriptions")
+ 
+ 
+-@pytest.mark.parametrize("blob_mode", ["lazy", "descriptions", "bytes"])
+-def test_to_pandas_reports_lance_dataset_failures(tmp_path, blob_mode):
++def test_to_pandas_reports_lance_dataset_failures(tmp_path):
+     table = lancedb.connect(tmp_path).create_table(
+         "dataset_failure",
+         schema=pa.schema([pa.field("id", pa.int64()), lancedb.blob("image")]),
+@@ -856,7 +855,59 @@ def reject_credentials():
+ 
+     table.to_lance = reject_credentials
+     with pytest.raises(PermissionError, match="storage credentials rejected"):
+-        table.search().to_pandas(blob_mode=blob_mode)
++        table.search().to_pandas(blob_mode="lazy")
++
++
++@pytest.mark.parametrize("blob_mode", ["lazy", "descriptions", "bytes"])
++@pytest.mark.parametrize("with_row_id", [None, True, False])
++def test_to_batches_blob_modes(tmp_path, monkeypatch, blob_mode, with_row_id):
++    table = _nested_blob_table(lancedb.connect(tmp_path), "batch_blob_modes")
++    query = table.search().select({"renamed": "info"})
++    if with_row_id is not None:
++        query.with_row_id(with_row_id)
++    fetched = []
++    fetch_blobs = table.fetch_blobs
++
++    def fetch(column, row_ids):
++        fetched.append(row_ids)
++        return fetch_blobs(column, row_ids)
++
++    monkeypatch.setattr(table, "fetch_blobs", fetch)
++    reader = query.to_batches(batch_size=1, blob_mode=blob_mode)
++    assert fetched == []
++    first = reader.read_next_batch()
++    assert first.schema == reader.schema
++    assert len(fetched) == (1 if blob_mode == "bytes" else 0)
++    batches = [first, *reader]
++    assert all(batch.schema == reader.schema for batch in batches)
++    assert all(batch.num_rows == 1 for batch in batches)
++    assert len(fetched) == (3 if blob_mode == "bytes" else 0)
++    if blob_mode == "bytes":
++        assert [row["renamed"] for batch in batches for row in batch.to_pylist()] == [
++            {"name": "first", "blob": b"hello"},
++            {"name": "second", "blob": None},
++            None,
++        ]
++    if blob_mode != "lazy":
++        assert ("_rowid" in reader.schema.names) == (with_row_id is True)
++        assert "_lance_row_id" not in str(reader.schema)
++    else:
++        assert "_rowid" in reader.schema.names
++
++
++@pytest.mark.parametrize("blob_mode", ["descriptions", "bytes"])
++def test_empty_to_batches_blob_schema(blob_mode):
++    table = _blob_table("empty_blob_batches", [{"id": 1, "image": b"one"}])
++    query = table.search().where("id < 0")
++    reader = query.to_batches(blob_mode=blob_mode)
++    assert reader.schema == query.to_arrow(blob_mode=blob_mode).schema
++    assert reader.read_all().num_rows == 0
++
++
++def test_to_batches_validates_blob_mode():
++    table = _blob_table("invalid_batch_blob_mode", [{"id": 1, "image": b"one"}])
++    with pytest.raises(ValueError, match="blob_mode must be one of"):
++        table.search().to_batches(blob_mode="handles")
+ 
+ 
+ def test_to_pandas_keeps_to_arrow_overrides_without_blob_mode():
+@@ -894,6 +945,12 @@ def test_take_queries_honor_blob_mode():
+     ]
+     description = table.take_row_ids([0]).to_list(blob_mode="descriptions")[0]["image"]
+     assert "_lance_row_id" not in description
++    batches = table.take_row_ids([0]).to_batches(blob_mode="bytes")
++    assert batches.read_all().to_pylist() == [{"id": 1, "image": b"one"}]
++    batches = table.take_row_ids([0]).to_batches(blob_mode="descriptions")
++    assert "_rowid" not in batches.schema.names
++    assert "_lance_row_id" not in str(batches.schema)
++    assert batches.read_all().num_rows == 1
+ 
+ 
+ def test_bytes_mode_follows_swapped_blob_aliases():
+@@ -939,6 +996,8 @@ def test_bytes_mode_refused_under_namespace_query_pushdown(tmp_path):
+         table.search().to_list(blob_mode="bytes")
+     with pytest.raises(NotImplementedError, match="stable table snapshot"):
+         table.take_row_ids([0]).to_list(blob_mode="bytes")
++    with pytest.raises(NotImplementedError, match="stable table snapshot"):
++        table.search().to_batches(blob_mode="bytes")
+     descriptor = table.to_arrow(blob_mode="descriptions")["image"].to_pylist()[0]
+     assert "_lance_row_id" not in descriptor
+ 
+@@ -960,6 +1019,8 @@ async def test_async_bytes_mode_refused_under_namespace_query_pushdown(tmp_path)
+         await table.to_arrow(blob_mode="bytes")
+     with pytest.raises(NotImplementedError, match="stable table snapshot"):
+         await table.query().to_list(blob_mode="bytes")
++    with pytest.raises(NotImplementedError, match="stable table snapshot"):
++        await table.query().to_batches(blob_mode="bytes")
+ 
+ 
+ def test_fetch_blobs_round_trip():
+@@ -2076,6 +2137,10 @@ def test_blob_mode_for_every_query_shape(shape, blob_mode, with_row_id):
+         assert all("_lance_row_id" not in image for image in images.values())
+     df = query.to_pandas(blob_mode=blob_mode)
+     assert dic
+```
+
+**File**: `python/python/tests/test_blob_query_without_pylance.py` (added, +94/-0)
+```diff
+@@ -0,0 +1,94 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright The LanceDB Authors
++
++import subprocess
++import sys
++import textwrap
++
++import pytest
++
++
++@pytest.mark.parametrize("api", ["sync", "async"])
++@pytest.mark.parametrize("result", ["pandas", "batches", "lazy_error"])
++def test_blob_query_without_pylance(tmp_path, api, result):
++    script = """\
++import importlib.abc
++import sys
++
++class MissingLance(importlib.abc.MetaPathFinder):
++    def find_spec(self, fullname, path, target=None):
++        if fullname == "lance" or fullname.startswith("lance."):
++            raise ModuleNotFoundError(fullname, name="lance")
++
++sys.meta_path.insert(0, MissingLance())
++""" + textwrap.dedent(
++        """\
++        import asyncio
++        import lancedb
++        import pyarrow as pa
++
++        schema = pa.schema([pa.field("id", pa.int64()), lancedb.blob("video")])
++        rows = [{"id": 1, "video": b"one"}, {"id": 2, "video": None},
++                {"id": 3, "video": b"three"}]
++
++        def check(data):
++            assert data == [{"filename": 2, "payload": None},
++                            {"filename": 3, "payload": b"three"}], data
++
++        async def main():
++            if sys.argv[2] == "async":
++                db = await lancedb.connect_async(sys.argv[1])
++                table = await db.create_table("videos", schema=schema)
++                await table.add(rows)
++                query = table.query()
++            else:
++                db = lancedb.connect(sys.argv[1])
++                table = db.create_table("videos", schema=schema)
++                table.add(rows)
++                query = table.search()
++            query = query.select({"filename": "id", "payload": "video"}).offset(1)
++            if sys.argv[3] == "pandas":
++                frame = query.to_pandas(blob_mode="bytes", split_blocks=True)
++                if sys.argv[2] == "async":
++                    frame = await frame
++                check(frame.to_dict("records"))
++                frame = table.to_pandas(blob_mode="bytes")
++                if sys.argv[2] == "async":
++                    frame = await frame
++                assert frame.to_dict("records") == rows
++            elif sys.argv[3] == "batches":
++                if sys.argv[2] == "async":
++                    reader = await query.to_batches(
++                        max_batch_length=1, blob_mode="bytes")
++                    batches = [batch async for batch in reader]
++                else:
++                    reader = query.to_batches(batch_size=1, blob_mode="bytes")
++                    batches = list(reader)
++                assert reader.schema.field("payload").type == pa.large_binary()
++                assert all(batch.num_rows <= 1 for batch in batches)
++                assert all(batch.schema == reader.schema for batch in batches)
++                check([row for batch in batches for row in batch.to_pylist()])
++            else:
++                try:
++                    frame = query.to_pandas()
++                    if sys.argv[2] == "async":
++                        await frame
++                except RuntimeError as error:
++                    message = str(error)
++                    assert "pip install pylance" in message, message
++                    assert ".." not in message, message
++                    assert "Use a plain scan query" not in message, message
++                    assert "but The" not in message, message
++                else:
++                    raise AssertionError("lazy handles should require pylance")
++            assert "lance" not in sys.modules
++
++        asyncio.run(main())
++        """
++    )
++    completed = subprocess.run(
++        [sys.executable, "-c", script, str(tmp_path), api, result],
++        capture_output=True,
++        text=True,
++    )
++    assert completed.returncode == 0, completed.stderr
+```
+
+**File**: `python/python/tests/test_query.py` (modified, +3/-3)
+```diff
+@@ -675,10 +675,10 @@ def test_blob_v2_vector_projection_and_plain_scan_options(tmp_db, monkeypatch):
+ 
+     query = table.search().where("id = 1")
+ 
+-    def fail_to_arrow(*args, **kwargs):
+-        raise AssertionError("the native scanner should handle bytes with flatten")
++    def fail_to_lance(*args, **kwargs):
++        raise AssertionError("blob v2 bytes should not open a pylance dataset")
+ 
+-    monkeypatch.setattr(query, "to_arrow", fail_to_arrow)
++    monkeypatch.setattr(table, "to_lance", fail_to_lance)
+     assert query.to_pandas(blob_mode="bytes", flatten=True)["blob"].tolist() == [b"one"]
+ 
+     flattened_lazy = table.search().where("id = 1").to_pandas(flatten=True)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4697** (2026-10-28): feat: add a cascade option to drop_database (@wkalt)
+- **PR #4695** (closed): docs: fix combined TypeScript and Rust examples (@brendanclement)
+- **PR #4693** (2026-10-27): docs: remove logical-column from docs (@dantasse)
+- **PR #4692** (2026-10-27): chore: update Lance to v15.0.0-beta.3 (@Xuanwo)
 - **PR #4690** (2026-10-27): chore: update Lance to v15.0.0-beta.2 (@Xuanwo)
 - **PR #4688** (2026-10-27): fix: gate experimental local functions behind an opt-in feature (@Xuanwo)
-- **PR #4686** (2026-10-27): fix: refuse Function-bound writes by column instead of by table (@wkalt)
-- **PR #4683** (2026-10-26): fix(ci): acknowledge Arrow-pinned zstd advisories (@Xuanwo)
-- **PR #4682** (2026-10-27): fix(python)!: raise on bool(Expr) instead of silently dropping predicates (@avanish-garg)
-- **PR #4680** (closed): chore: validate lance v14.0.0-rc.2 in lancedb (@BubbleCal)
 
 ---
 
@@ -2409,38 +2315,35 @@ Validation:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix!: reject unsupported remote connection and table options (#4486)
+## X. use SQL for all remote materialized view APIs (#4673)
 
 **RULE**:
-When implementing operations in `docs/src/python/python.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/src/js/classes/Connection.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `180eaaf6`: fix!: reject unsupported remote connection and table options (#4486). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `45dbf5ef`: use SQL for all remote materialized view APIs (#4673). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/src/python/python.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/src/js/classes/Connection.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Connections to `db://` databases reject local-only options with
-`NotImplementedError`. These include `session` and `manifest_enabled=True` on
-connect, per-table storage and write options on create, and `index_cache_size`,
-`storage_options`, or `location` on open (where the method accepts them).
-Omit these options to use server-managed storage and caching. Connection-level
-`storage_options` supported by an Enterprise deployment remain available.
-
-The synchronous remote `create_table` uses the same positional order as the
-local API: `name, data, schema, mode, exist_ok, on_bad_vectors, fill_value,
-embedding_functions`. Prefer keyword arguments for optional parameters.
-
+Remote drops wait for the SQL command to remove the catalog binding.
+Physical cleanup continues in the background.
+Start dropping the materialized view named `name` and return its job.
+Remote jobs have type `query` and use the SQL query ID as `id`. Waiting
+confirms catalog removal; physical cleanup continues in the background.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+The view may become unavailable before physical cleanup finishes. Use
+[dropMaterializedViewAsync](Connection.md#dropmaterializedviewasync) to retain and wait for the cleanup job.
+Start dropping the materialized view named `name` and return its cleanup
+job without waiting for completion.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `180eaaf6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `45dbf5ef` are properly handled with clean fallback behavior.

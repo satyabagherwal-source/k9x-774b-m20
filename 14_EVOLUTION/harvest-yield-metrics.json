@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T05:30:58.247Z",
-  "total_cycles_completed": 5682,
-  "total_learnings_persisted": 5682,
-  "total_rules_promoted": 5129,
+  "last_updated": "2026-10-28T05:42:24.715Z",
+  "total_cycles_completed": 5685,
+  "total_learnings_persisted": 5685,
+  "total_rules_promoted": 5131,
   "history": [
-    {
-      "timestamp": "2026-10-27T19:49:17.838Z",
-      "repository": "ant-design/pro-components",
-      "learningId": "learn-github-ant-design-pro-components",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T19:49:21.571Z",
-      "repository": "zed-industries/zed",
-      "learningId": "learn-github-zed-industries-zed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T19:49:27.721Z",
-      "repository": "opentofu/opentofu",
-      "learningId": "learn-github-opentofu-opentofu",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T19:49:30.104Z",
       "repository": "freenet/freenet-core",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-28T05:30:58.247Z",
       "repository": "moby/buildkit",
       "learningId": "learn-github-moby-buildkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T05:42:11.399Z",
+      "repository": "fastino/GLiNER2.5-Decide",
+      "learningId": "learn-huggingface-fastino-gliner2-5-decide",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T05:42:21.260Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T05:42:24.715Z",
+      "repository": "lancedb/lancedb",
+      "learningId": "learn-github-lancedb-lancedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

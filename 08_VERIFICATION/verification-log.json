@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-ZXI9",
-    "timestamp": "2026-10-27T10:39:32.193Z",
-    "repository": "scrapy/scrapy",
-    "learningId": "learn-github-scrapy-scrapy",
-    "contentHash": "3854b119172d7cfc2f7a100f51bcf971e28d74719833fa52d9061441d1967341",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-05SY",
-    "timestamp": "2026-10-27T10:39:42.946Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "b3ba51b4d09d4e011d753ab3cc67e22ea35a11c57d75aa1e152edcd3841906a0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-A34S",
-    "timestamp": "2026-10-27T10:47:26.044Z",
-    "repository": "DouyinFE/semi-design",
-    "learningId": "learn-github-douyinfe-semi-design",
-    "contentHash": "38a33326925a062b6e1aa12db89c8bb0c43b4b7e8fcd8be2fd8c7463eb6fbc00",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-ABOW",
     "timestamp": "2026-10-27T10:47:37.136Z",
     "repository": "pingcap/tidb",
@@ -7490,6 +7445,51 @@
     "repository": "moby/buildkit",
     "learningId": "learn-github-moby-buildkit",
     "contentHash": "9bb261cd6543cbaf7e7570e6a6d89f5225e7e77392fccf73711a0ddf44612262",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-TE4F",
+    "timestamp": "2026-10-28T05:42:11.391Z",
+    "repository": "fastino/GLiNER2.5-Decide",
+    "learningId": "learn-huggingface-fastino-gliner2-5-decide",
+    "contentHash": "75b594533d6999e0a098e75f9afae0653a9f1f990730b1e26c176c3bd93a01d1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-TLQC",
+    "timestamp": "2026-10-28T05:42:21.252Z",
+    "repository": "trufflesecurity/trufflehog",
+    "learningId": "learn-github-trufflesecurity-trufflehog",
+    "contentHash": "7ed54f3a94400d5035ba4632980f89b1f691c8becbd27eb779ec004f511565a3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-TOEA",
+    "timestamp": "2026-10-28T05:42:24.706Z",
+    "repository": "lancedb/lancedb",
+    "learningId": "learn-github-lancedb-lancedb",
+    "contentHash": "c5cdbbc31d6ea30155cfb8a31726eb0b9f0086e0b7e4b76241314fb6c75346dd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

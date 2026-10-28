@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T05:30:58.197Z",
+  "last_updated": "2026-10-28T05:42:24.635Z",
   "total_verified_learnings": 1156,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -21695,7 +21695,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/fastino/GLiNER2.5-Decide",
       "source_version": "hf-fastino-gliner2.5-decide",
-      "content_hash": "7513d467af7e2a28b25463521673f690b178d8eceda48f86e28d68f30d9bee9d",
+      "content_hash": "75b594533d6999e0a098e75f9afae0653a9f1f990730b1e26c176c3bd93a01d1",
       "dossier_path": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
       "promoted_rules": [
@@ -21738,7 +21738,7 @@
         "learn-huggingface-hf-fastino-gliner2-5-decide-mv45omuu",
         "learn-huggingface-hf-fastino-gliner2-5-decide-mv4iyd2f"
       ],
-      "verified_at": "2026-10-25T13:24:08.357Z",
+      "verified_at": "2026-10-28T05:42:11.266Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33483,8 +33483,8 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "3575f972",
-      "content_hash": "38cda21232c587f0cae928b0fc066c31d823076f026f6635f4a2cfc8a9937f74",
+      "source_version": "45f987a2",
+      "content_hash": "c5cdbbc31d6ea30155cfb8a31726eb0b9f0086e0b7e4b76241314fb6c75346dd",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
@@ -33527,6 +33527,11 @@
           "number": 4885,
           "title": "fix!: reject unsupported remote connection and table options (#4486)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5191,
+          "title": "use SQL for all remote materialized view APIs (#4673)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33534,7 +33539,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T15:29:36.327Z",
+      "verified_at": "2026-10-28T05:42:24.617Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52127,8 +52132,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "ce76ea8f",
-      "content_hash": "5a605a379142a30e61b14bb2f3aeb64b4ca598abc5fd544173447834f6b0ce50",
+      "source_version": "0301dc36",
+      "content_hash": "7ed54f3a94400d5035ba4632980f89b1f691c8becbd27eb779ec004f511565a3",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -52191,6 +52196,11 @@
           "number": 4648,
           "title": "add SecretParts to custom detectors (#5470)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5190,
+          "title": "Clean up GitHub source logging for per-source debug (#5457)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52198,7 +52208,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:50:26.040Z",
+      "verified_at": "2026-10-28T05:42:21.159Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -142057,6 +142067,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T05:30:58.186Z"
+    },
+    "rule-5190": {
+      "learning_id": "rule-5190",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5190,
+      "title": "Clean up GitHub source logging for per-source debug (#5457)",
+      "source_url": "https://github.com/trufflesecurity/trufflehog",
+      "source_version": "0301dc36",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T05:42:21.159Z"
+    },
+    "rule-5191": {
+      "learning_id": "rule-5191",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5191,
+      "title": "use SQL for all remote materialized view APIs (#4673)",
+      "source_url": "https://github.com/lancedb/lancedb",
+      "source_version": "45f987a2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T05:42:24.617Z"
     }
   },
   "aliases": {

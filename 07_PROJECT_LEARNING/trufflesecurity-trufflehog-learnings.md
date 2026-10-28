@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source**: github ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
-> **Source Version**: `ce76ea8f`  
+> **Source Version**: `0301dc36`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T12:50:25.895Z  
+> **Timestamp**: 2026-10-28T05:42:20.686Z  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T12:50:25.885Z  
+> **Harvest Timestamp**: 2026-10-28T05:42:20.678Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 28727 stars
+- **Stars / Engagement**: 28742 stars
 
 ---
 
@@ -1140,400 +1140,584 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce76ea8f` (2026-10-27)
-**Commit Message**: Clean up S3 source logging for per-source debug (#5481)
+### Incident Patch 1: `0301dc36` (2026-10-28)
+**Commit Message**: Clean up GitHub source logging for per-source debug (#5457)
 
-Put S3 log lines at the documented levels and give every skip a reason.
-Add role, page, object and AWS retry lines, and stop logging an error
-per bucket on cancel. Document the debug logs in the S3 README.
+* Clean up GitHub source logging for per-source debug
 
-**File**: `pkg/sources/s3/README.md` (modified, +12/-0)
+Pass the caller's context into the GitHub App connector instead of
+context.Background(). Move page, retry and skip lines to V(4) with
+rate_remaining and reasons, and log errors with Error. Strip user info,
+including SCP-style, from logged repo URLs. Add a debug logging test.
+
+* Strip credentials from repo URLs in GitHub scan logs
+
+* Add source fields to Init logs and repo to repo-info caching
+
+* Strip repo tokens from errors and skip member fetches on cancel
+
+* Strip user info from mixed HTTPS/SCP repo URLs in logs
+
+* Redact repo URL credentials and use test contexts
+
+* Redact tokens in SCP, mixed and empty-password repo URLs
+
+**File**: `pkg/engine/scan.go` (modified, +11/-2)
 ```diff
-@@ -67,6 +67,18 @@ If a filter excludes every object in a bucket, the scan logs `Scanned no objects
- - Extensions in the shared deny list in `pkg/common/vars.go`, which already covers images, audio, and video
- - Keys ending in `/`, which are directory markers
+@@ -16,12 +16,21 @@ func (e *Engine) ScanConfig(ctx context.Context, configuredSources ...sources.Co
+ 	for _, configuredSource := range configuredSources {
+ 		sourceID, jobID, _ := e.sourceManager.GetIDs(ctx, configuredSource.Name, configuredSource.SourceType())
  
-+## Debug logs
++		// Add the source fields here, before Init, so lines logged during Init
++		// say which source and job they came from too. The source manager adds
++		// the same fields later for the scan, but skips any already set here.
++		sourceCtx := context.WithValues(ctx,
++			"source_name", configuredSource.Name,
++			"source_type", configuredSource.SourceType().String(),
++			"source_id", sourceID,
++			"job_id", jobID,
++		)
 +
-+With debug on for this source (`debug: true` in the config), the scan logs:
-+
-+- `V(1)`: `S3 source initialized` with the config choices (the endpoint's host only, never credentials), and `Found buckets to scan` for each role.
-+- `V(2)`: `Scanning bucket` and `Finished scanning bucket`, with the objects scanned, pages and duration.
-+- `V(3)`: `Scanning object` for each object downloaded.
-+- `V(4)`: `Skipping bucket` and `Skipping object` with a `reason`, `Listed page` for each page, and `AWS SDK` lines for retries, including S3 throttling (`SlowDown`).
-+- `V(5)`: `Finished scanning object` with its duration, and the region used for a bucket outside the default region.
-+
-+Lines carry `role`, `bucket`, `page_number` and `key` where they apply. An object skipped for one of the reasons above shows its reason here, so a missing finding can be traced to the object it would have come from.
-+
- ## Custom endpoints
+ 		// A source with debug on gets a context that writes all of its debug
+ 		// logs. Both Init and the scan use it, so every log from this source is
+ 		// covered. Other sources keep the global log level.
+-		sourceCtx := ctx
+ 		if configuredSource.Debug {
+-			sourceCtx = context.WithLogLevel(ctx, log.DebugLevel)
++			sourceCtx = context.WithLogLevel(sourceCtx, log.DebugLevel)
+ 		}
  
- `--endpoint` points the scan at an S3-compatible service instead of AWS S3. Setting it changes three things:
+ 		source, err := configuredSource.Init(sourceCtx, sourceID, jobID)
 ```
 
-**File**: `pkg/sources/s3/checkpointer.go` (modified, +1/-3)
+**File**: `pkg/engine/scan_test.go` (modified, +17/-0)
 ```diff
-@@ -71,8 +71,6 @@ const defaultMaxObjectsPerPage = 1000
- // NewCheckpointer creates a new checkpointer for S3 scanning operations.
- // The progress provides the underlying mechanism for persisting scan state.
- func NewCheckpointer(ctx context.Context, progress *sources.Progress, isUnitScan bool) *Checkpointer {
--	ctx.Logger().Info("Creating checkpointer")
--
- 	return &Checkpointer{
- 		// We are resuming if we have completed objects from a previous scan.
- 		completedObjects: make([]bool, defaultMaxObjectsPerPage),
-@@ -119,7 +117,7 @@ func (p *Checkpointer) ResumePoint(ctx context.Context) (ResumeInfo, error) {
- 	}
- 
- 	if resumeInfo.CurrentBucket == "" {
--		ctx.Logger().V(2).Info("resume info is missing current bucket, resuming from the beginning")
-+		ctx.Logger().V(4).Info("resume info is missing current bucket, resuming from the beginning")
- 		return resume, nil
- 	}
- 
-```
-
-**File**: `pkg/sources/s3/progress.go` (modified, +1/-1)
-```diff
-@@ -127,7 +127,7 @@ func (s *Source) countBucket(
- 		if err != nil {
- 			// A cancelled count means the unit has finished, and finish settles the totals.
- 			if ctx.Err() == nil {
--				ctx.Logger().V(2).Info("could not count objects for progress", "bucket", bucket, "err", err)
-+				ctx.Logger().V(4).Info("could not count objects for progress", "error", err)
- 				progress.setState(sources.UnitProgressUnavailable)
- 			}
- 			return
-```
-
-**File**: `pkg/sources/s3/s3.go` (modified, +62/-27)
-```diff
-@@ -134,6 +134,21 @@ func (s *Source) Init(
- 			"exclude_extensions", filter.excludeExtensions)
- 	}
- 
-+	// Only the endpoint's host, since a user-entered endpoint can carry credentials.
-+	var endpointHost string
-+	if endpoint != nil {
-+		endpointHost = endpoint.Host
+@@ -82,4 +82,21 @@ func TestScanConfig_DebugOnlyForOneSource(t *testing.T) {
+ 	assert.Equal(t, 1, countLines("chunks debug", "debug"))
+ 	assert.Zero(t, countLines("init debug", "normal"))
+ 	assert.Zero(t, countLines("chunks debug", "normal"))
++
++	// Lines from Init and from the scan both carry the source fields, and
++	// each field shows up once even though the source manager adds them too.
++	for _, message := range []string{"init info", "chunks info"} {
++		for _, entry := range logs.FilterMessage(message).FilterField(zap.String("source", "debug")).All() {
++			for _, key := range []string{"source_name", "source_type", "source_id", "job_id"} {
++				count := 0
++				for _, field := range entry.Context {
++					if field.Key == key {
++						count++
++					}
++				}
++				assert.Equal(t, 1, count, "%s on %q", key, message)
++			}
++			assert.Equal(t, "debug", entry.ContextMap()["source_name"], message)
++		}
 +	}
-+	ctx.Logger().V(1).Info("S3 source initialized",
-+		"bucket_count", len(conn.GetBuckets()),
-+		"ignore_bucket_count", len(conn.GetIgnoreBuckets()),
-+		"role_count", len(conn.GetRoles()),
-+		"region", s.defaultRegion(),
-+		"endpoint_host", endpointHost,
-+		"max_object_size", s.maxObjectSize,
-+		// a nil credential means the AWS SDK's default credential chain
-+		"credential_type", fmt.Sprintf("%T", conn.GetCredential()))
-+
+ }
+```
+
+**File**: `pkg/sources/github/comments_test.go` (modified, +2/-1)
+```diff
+@@ -630,8 +630,9 @@ func TestCommentScan_RetryLogNamesTheListing(t *testing.T) {
+ 		includePRComments:    true,
+ 		commentRetryWait:     func(context.Context, time.Duration) bool { return true },
+ 	}
++	// retries are logged at V(4), with other API decisions
+ 	var logs bytes.Buffer
+-	logger, _ := log.New("test", log.WithJSONSink(&logs, log.WithLevel(2)))
++	logger, _ := log.New("test", log.WithJSONSink(&logs, log.WithLevel(4)))
+ 	ctx := context.WithLogger(context.Background(), logger)
+ 
+ 	err := s.processIssueandPRsWithCommentsREST(ctx, gh.client, testRepo, nil, &collectingReporter{}, nil)
+```
+
+**File**: `pkg/sources/github/connector.go` (modified, +1/-1)
+```diff
+@@ -117,7 +117,7 @@ func newConnector(ctx context.Context, source *Source) (Connector, error) {
+ 	switch cred := source.conn.GetCredential().(type) {
+ 	case *sourcespb.GitHub_GithubApp:
+ 		log.RedactGlobally(cred.GithubApp.GetPrivateKey())
+-		return NewAppConnector(apiEndpoint, cred.GithubApp, source.conn.GetScanAllInstallations())
++		return NewAppConnector(ctx, apiEndpoint, cred.GithubApp, source.conn.GetScanAllInstallations())
+ 	case *sourcespb.GitHub_BasicAuth:
+ 		log.RedactGlobally(cred.BasicAuth.GetPassword())
+ 		return NewBasicAuthConnector(ctx, apiEndpoint, source.conn.GetClonePath(), cred.BasicAuth)
+```
+
+**File**: `pkg/sources/github/connector_app.go` (modified, +28/-15)
+```diff
+@@ -33,7 +33,7 @@ var _ Connector = (*appConnector)(nil)
+ 
+ const githubHTTPTimeoutSeconds = 60
+ 
+-func NewAppConnector(apiEndpoint string, app *credentialspb.GitHubApp, scanAllInstallations bool) (Connector, error) {
++func NewAppConnector(ctx context.Context, apiEndpoint string, app *credentialspb.GitHubApp, scanAllInstallations bool) (Connector, error) {
+ 	var installationID int64
+ 	var err error
+ 
+@@ -53,7 +53,7 @@ func NewAppConnector(apiEndpoint string, app *credentialspb.GitHubApp, scanAllIn
+ 		return nil, fmt.Errorf("could not parse app ID %q: %w", app.AppId, err)
+ 	}
+ 
+-	installationClient, err := GetAppClient(context.Background(), apiEndpoint, appID, app.PrivateKey)
++	installationClient, err := GetAppClient(ctx, apiEndpoint, appID, app.PrivateKey)
+ 	if err != nil {
+ 		return nil, fmt.Errorf("could not create installation client: %w", err)
+ 	}
+@@ -72,7 +72,7 @@ func NewAppConnector(apiEndpoint string, app *credentialspb.GitHubApp, scanAllIn
+ 	// clients created lazily per-repo, so there is no default client to
+ 	// validate up front.
+ 	if connector.HasDefaultInstallation() {
+-		_, err := connector.clientsForInstallation(installationID)
++		_, err := connector.clientsForInstallation(ctx, installationID)
+ 		if err != nil {
+ 			return nil, fmt.Errorf("could not create clients for configured installation: %w", err)
+ 		}
+@@ -98,7 +98,7 @@ func (c *appConnector) HasDefaultInstallation() bool {
+ // as a fallback client for repos/resources outside any installation listing
+ // and call it unconditionally.
+ func (c *appConnector) APIClient() *github.Client {
+-	client, err := c.APIClientForInstallation(c.installationID)
++	client, err := c.APIClientForInstallation(contextForClientLookup(), c.installationID)
+ 	if err != nil {
+ 		return nil
+ 	}
+@@ -107,16 +107,16 @@ func (c *appConnector) APIClient() *github.Client {
+ 
+ func (c *appConnector) APIClientForRepo(repoURL string) (*github.Client, error) {
+ 	installID, _ := c.installationIDForRepo(repoURL)
+-	return c.APIClientForInstallation(installID)
++	return c.APIClientForInstallation(contextForClientLookup(), installID)
+ }
+ 
+ func (c *appConnector) GraphQLClientForRepo(ctx context.Context, repoURL string) (*githubv4.Client, error) {
+ 	installID, _ := c.installationIDForRepo(repoURL)
+-	return c.graphqlClientForInstallation(installID)
++	return c.graphqlClientForInstallation(ctx, installID)
+ }
+ 
+-func (c *appConnector) graphqlClientForInstallation(installID int64) (*githubv4.Client, error) {
+-	clients, err := c.clientsForInstallation(installID)
++func (c *appConnector) graphqlClientForInstallation(ctx context.Context, installID int64) (*githubv4.Client, error) {
++	clients, err := c.clientsForInstallation(ctx, installID)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -136,7 +136,7 @@ func (c *appConnector) Clone(ctx context.Context, repoURL string, args ...string
+ 		return "", nil, fmt.Errorf("no GitHub App installation resolved for repo %q; set githubApp.installationId to a fallback installation to scan repos outside installation listings (e.g. member repos with scanUsers) together with scanAllInstallations", repoURL)
+ 	}
+ 
+-	cs, err := c.clientsForInstallation(installID)
++	cs, err := c.clientsForInstallation(ctx, installID)
+ 	if err != nil {
+ 		return "", nil, fmt.Errorf("cannot fetch installation clients for installation %d: %w", installID, err)
+ 	}
+@@ -159,7 +159,7 @@ func (c *appConnector) grantsForRepo(ctx context.Context, repoURL string) (*inst
+ 		return nil, fmt.Errorf("no GitHub App installation resolved for repo %q", repoURL)
+ 	}
+ 
+-	cs, err := c.clientsForInstallation(installID)
++	cs, err := c.clientsForInstallation(ctx, installID)
+ 	if err != nil {
+ 		return nil, fmt.Errorf("cannot fetch installation clients for installation %d: %w", installID, err)
+ 	}
+@@ -242,7 +242,7 @@ func (c *appConnector) setRepoInstallationForWiki(repoURL string, installationID
+ // installation, lazily creating it if needed. See APIClient for why this
+ // cannot simply return nil when no default installation is configured.
+ func (c *appConnector) GraphQLClient() *githubv4.Client {
+-	client, err := c.graphqlClientForInstallation(c.installationID)
++	client, err := c.graphqlClientForInstallation(contextForClientLookup(), c.installationID)
+ 	if err != nil {
+ 		return nil
+ 	}
+@@ -257,15 +257,28 @@ func (c *appConnector) InstallationClient() *github.Client {
+ // installation. This is needed when a GitHub App is installed across multiple
+ // orgs — each org's API calls must use that org's installation token to get
+ // proper IP allowlist bypass and permission scoping.
+-func (c *appConnector) APIClientForInstallation(installationID int64) (*github.Client, error) {
+-	clients, err := c.clientsForInstallation(installationID)
++func (c *appConnector) APIClientForInstallation(ctx context.Context, installationID int64) (*github.Client, error) {
++	clients, err := c.clientsForInstallation(ctx, installationID)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+ 
+ 	return clients.APIClient, nil
+ }
+ 
+-func (c *appCon
+```
+
+**File**: `pkg/sources/github/connector_app_test.go` (modified, +14/-14)
+```diff
+@@ -56,7 +56,7 @@ func TestAPIClientForInstallation(t *testing.T) {
+ 	}))
+ 	defer server.Close()
+ 
+-	connector, err := NewAppConnector(
++	connector, err := NewAppConnector(trContext.AddLogger(t.Context()),
+ 		server.URL,
+ 		&credentialspb.GitHubApp{
+ 			PrivateKey:     string(privKey),
+@@ -69,21 +69,21 @@ func TestAPIClientForInstallation(t *testing.T) {
+ 	ac := connector.(*appConnector)
+ 
+ 	t.Run("creates distinct clients for different installations", func(t *testing.T) {
+-		client1, err := ac.APIClientForInstallation(111)
++		client1, err := ac.APIClientForInstallation(trContext.AddLogger(t.Context()), 111)
+ 		require.NoError(t, err)
+ 		assert.NotNil(t, client1)
+ 
+-		client2, err := ac.APIClientForInstallation(222)
++		client2, err := ac.APIClientForInstallation(trContext.AddLogger(t.Context()), 222)
+ 		require.NoError(t, err)
+ 		assert.NotNil(t, client2)
+ 
+ 		assert.NotSame(t, client1, client2, "should be different client instances")
+ 	})
+ 
+ 	t.Run("reuses clients for the same installation", func(t *testing.T) {
+-		client1, err := ac.APIClientForInstallation(333)
++		client1, err := ac.APIClientForInstallation(trContext.AddLogger(t.Context()), 333)
+ 		require.NoError(t, err)
+-		client2, err := ac.APIClientForInstallation(333)
++		client2, err := ac.APIClientForInstallation(trContext.AddLogger(t.Context()), 333)
+ 		require.NoError(t, err)
+ 
+ 		assert.Same(t, client1, client2)
+@@ -94,7 +94,7 @@ func TestAPIClientForInstallation(t *testing.T) {
+ 		tokenRequestPaths = nil
+ 		mu.Unlock()
+ 
+-		client, err := ac.APIClientForInstallation(42)
++		client, err := ac.APIClientForInstallation(trContext.AddLogger(t.Context()), 42)
+ 		require.NoError(t, err)
+ 
+ 		ctx := trContext.Background()
+@@ -113,11 +113,11 @@ func TestAPIClientForInstallation(t *testing.T) {
+ 
+ 		ctx := trContext.Background()
+ 
+-		client1, err := ac.APIClientForInstallation(100)
++		client1, err := ac.APIClientForInstallation(trContext.AddLogger(t.Context()), 100)
+ 		require.NoError(t, err)
+ 		_, _, _ = client1.Organizations.ListMembers(ctx, "org-a", nil)
+ 
+-		client2, err := ac.APIClientForInstallation(200)
++		client2, err := ac.APIClientForInstallation(trContext.AddLogger(t.Context()), 200)
+ 		require.NoError(t, err)
+ 		_, _, _ = client2.Organizations.ListMembers(ctx, "org-b", nil)
+ 
+@@ -153,7 +153,7 @@ func TestNewAppConnectorDefaultAPIClientUsesConfiguredInstallation(t *testing.T)
+ 	}))
+ 	defer server.Close()
+ 
+-	connector, err := NewAppConnector(server.URL, &credentialspb.GitHubApp{
++	connector, err := NewAppConnector(trContext.AddLogger(t.Context()), server.URL, &credentialspb.GitHubApp{
+ 		PrivateKey:     string(privKey),
+ 		InstallationId: "4242",
+ 		AppId:          "12345",
+@@ -190,15 +190,15 @@ func TestNewAppConnectorInstallationIDOptionalWithScanAllInstallations(t *testin
+ 	defer server.Close()
+ 
+ 	// scanAllInstallations=true with no installationId configured should succeed.
+-	connector, err := NewAppConnector(server.URL, &credentialspb.GitHubApp{
++	connector, err := NewAppConnector(trContext.AddLogger(t.Context()), server.URL, &credentialspb.GitHubApp{
+ 		PrivateKey: string(privKey),
+ 		AppId:      "12345",
+ 	}, true)
+ 	require.NoError(t, err)
+ 	require.NotNil(t, connector)
+ 
+ 	// Without scanAllInstallations, installationId is still required.
+-	_, err = NewAppConnector(server.URL, &credentialspb.GitHubApp{
++	_, err = NewAppConnector(trContext.AddLogger(t.Context()), server.URL, &credentialspb.GitHubApp{
+ 		PrivateKey: string(privKey),
+ 		AppId:      "12345",
+ 	}, false)
+@@ -221,7 +221,7 @@ func TestAPIClientAndGraphQLClientNonNilWithoutDefaultInstallation(t *testing.T)
+ 	}))
+ 	defer server.Close()
+ 
+-	connector, err := NewAppConnector(server.URL, &credentialspb.GitHubApp{
++	connector, err := NewAppConnector(trContext.AddLogger(t.Context()), server.URL, &credentialspb.GitHubApp{
+ 		PrivateKey: string(privKey),
+ 		AppId:      "12345",
+ 	}, true)
+@@ -299,7 +299,7 @@ func TestAPIClientForRepoUsesRepoInstallationMap(t *testing.T) {
+ 	}))
+ 	defer server.Close()
+ 
+-	connector, err := NewAppConnector(
++	connector, err := NewAppConnector(trContext.AddLogger(t.Context()),
+ 		server.URL,
+ 		&credentialspb.GitHubApp{
+ 			PrivateKey:     string(privKey),
+@@ -338,7 +338,7 @@ func TestGraphQLClientForRepoCachesClients(t *testing.T) {
+ 
+ 	defaultGraphQLClient := &githubv4.Client{}
+ 
+-	connector, err := NewAppConnector(
++	connector, err := NewAppConnector(trContext.AddLogger(t.Context()),
+ 		server.URL,
+ 		&credentialspb.GitHubApp{
+ 			PrivateKey:     string(privKey),
+```
+
+**File**: `pkg/sources/github/github.go` (modified, +115/-46)
+```diff
+@@ -32,6 +32,7 @@ import (
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/feature"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/giturl"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/handlers"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/log"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/source_metadatapb"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/sourcespb"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/sanitizer"
+@@ -229,15 +230,17 @@ func (s *Source) newFilteredRepoCache(ctx context.Context, c cache.Cache[string]
+ 	for _, ig := range include {
+ 		g, err := glob.Compile(ig)
+ 		if err != nil {
+-			ctx.Logger().V(1).Info("invalid include glob", "include_value", ig, "err", err)
++			// the bad glob is dropped, so tell the user this filter is not used
++			ctx.Logger().Error(err, "invalid include glob; ignoring it", "include_value", ig)
+ 			continue
+ 		}
+ 		includeGlobs = append(includeGlobs, g)
+ 	}
+ 	for _, eg := range exclude {
+ 		g, err := glob.Compile(eg)
+ 		if err != nil {
+-			ctx.Logger().V(1).Info("invalid exclude glob", "exclude_value", eg, "err", err)
++			// the bad glob is dropped, so tell the user this filter is not used
++			ctx.Logger().Error(err, "invalid exclude glob; ignoring it", "exclude_value", eg)
+ 			continue
+ 		}
+ 		excludeGlobs = append(excludeGlobs, g)
+@@ -333,9 +336,15 @@ func (s *Source) Init(aCtx context.Context, name string, jobID sources.JobID, so
+ 	)
+ 	s.repos = s.conn.Repositories
+ 	for _, repo := range s.repos {
++		// safeRepoURL keeps the credential out of the lines we write, this
++		// also catches it in any string field logged elsewhere
++		log.RedactGlobally(repoCredential(repo))
+ 		r, err := s.normalizeRepo(repo)
+ 		if err != nil {
+-			aCtx.Logger().Error(err, "invalid repository", "repo", repo)
++			// the repo comes from the user's config and may hold a token, so strip it,
++			// also from the error, which repeats the URL
++			safeErr := errors.New(strings.ReplaceAll(err.Error(), repo, safeRepoURL(repo)))
++			aCtx.Logger().Error(safeErr, "invalid repository", "repo", safeRepoURL(repo))
+ 			continue
+ 		}
+ 		s.filteredRepoCache.Set(repo, r)
+@@ -395,6 +404,26 @@ func (s *Source) Init(aCtx context.Context, name string, jobID sources.JobID, so
+ 	}
+ 	s.git = git.NewGit(cfg)
+ 
++	// log the config choices so support can see how the source was set up
++	// only counts and flags, never repo URLs, tokens or keys
++	aCtx.Logger().V(1).Info("github source initialized",
++		"auth_type", fmt.Sprintf("%T", s.conn.GetCredential()),
++		"endpoint", safeRepoURL(s.conn.GetEndpoint()),
++		"repo_count", len(s.conn.GetRepositories()),
++		"org_count", len(s.conn.GetOrganizations()),
++		"include_repo_count", len(s.conn.GetIncludeRepos()),
++		"ignore_repo_count", len(s.conn.GetIgnoreRepos()),
++		"include_forks", s.conn.GetIncludeForks(),
++		"exclude_archived", s.conn.GetExcludeArchived(),
++		"scan_users", s.conn.GetScanUsers(),
++		"scan_all_installations", s.conn.GetScanAllInstallations(),
++		"ignore_gists", s.ignoreGists,
++		"include_wikis", s.conn.GetIncludeWikis(),
++		"include_issue_comments", s.includeIssueComments,
++		"include_pr_comments", s.includePRComments,
++		"include_gist_comments", s.includeGistComments,
++		"comments_timeframe_days", s.commentsTimeframeDays,
++	)
  	return nil
  }
  
-@@ -252,6 +267,9 @@ func (s *Source) newClient(ctx context.Context, region, roleArn string) (*s3.Cli
+@@ -565,7 +594,7 @@ func (s *Source) Enumerate(ctx context.Context, reporter sources.UnitReporter) e
  
- 	return s3.NewFromConfig(cfg, func(options *s3.Options) {
- 		options.DisableLogOutputChecksumValidationSkipped = true
-+		// Retries are otherwise invisible, including S3 throttling with SlowDown.
-+		options.Logger = sdkLogger{}
-+		options.ClientLogMode = aws.LogRetries
- 		if s.endpoint != nil {
- 			options.BaseEndpoint = aws.String(s.endpoint.String())
- 			// S3-compatible services rarely publish the wildcard DNS that
-@@ -287,9 +305,11 @@ func (s *Source) getBucketsToScan(ctx context.Context, client *s3.Client) ([]str
- 	var bucketsToScan []string
- 	for _, bucket := range res.Buckets {
- 		name := *bucket.Name
--		if _, ignored := ignore[name]; !ignored {
--			bucketsToScan = append(bucketsToScan, name)
-+		if _, ignored := ignore[name]; ignored {
-+			ctx.Logger().V(4).Info("Skipping bucket", "bucket", name, "reason", "in ignore list")
-+			continue
- 		}
-+		bucketsToScan = append(bucketsToScan, name)
+ 			// Final filter check - only include repositories that pass the filter
+ 			if s.filteredRepoCache.wantRepo(repoName) {
+-				ctx := context.WithValue(ctx, "repo", repo)
++				ctx := context.WithValue(ctx, "repo", safeRepoURL(repo))
+ 
+ 				repo, err := s.ensureRepoInfoCache(ctx, repo, &unitErrorReporter{reporter})
+ 				if err != nil {
+@@ -591,7 +620,7 @@ func (s *Source) ensureRepoInfoCache(ctx context.Context, repo string, reporter
+ 	if _, ok := s.repoInfoCache.get(repo); ok {
+ 		return repo, nil
  	}
- 	slices.Sort(bucketsToScan)
+-	ctx.Logger().V(2).Info("Caching repository info")
++	ctx.Logger().V(2).Info("Caching repository info", "repo", safeRepoURL(repo))
  
-@@ -375,28 +395,24 @@ func (s *Source) scanBuckets(
- 	chunksChan chan *sources.Chunk,
- 	totalObjectCount *uint64,
- ) {
--	if role != "" {
--		ctx = context.WithValue(ctx, "role", role)
--	}
--
- 	checkpointer := NewCheckpointer(ctx, &s.Progress, false)
- 	pos := determineResumePosition(ctx, checkpointer, bucketsToScan)
- 	switch {
- 	case pos.isNewScan:
--		ctx.Logger().Info("Starting new scan from beginning")
-+		ctx.Logger().V(1).Info("Starting new scan from beginning")
- 	case !pos.exactMatch:
- 		ctx.Logger().Info(
- 			"Resume bucket no longer available, starting from closest position",
- 			"original_bucket", pos.bucket,
- 			"position", pos.index,
--			"role", pos.role,
-+			"previous_role", pos.role,
- 		)
- 	default:
- 		ctx.Logger().Info(
- 			"Resuming scan from previous scan's bucket",
- 			"bucket", pos.bucket,
- 			"position", pos.index,
--			"role", pos.role,
-+			"previous_role", pos.role,
- 		)
- 	}
- 
-@@ -447,12 +463,15 @@ func (s *Source) scanBucket(
- 
- 	ctx = context.WithValue(ctx, "bucket", bucket)
- 
-+	// scanBuckets calls this for every remaining bucket after a cancel, so this
-+	// is not an error, or a cancelled scan would log one per bucket
- 	if common.IsDone(ctx) {
--		ctx.Logger().Error(ctx.Err(), "context done, while scanning bucket")
-+		ctx.Logger().V(4).Info("Skipping bucket", "reason", "scan cancelled")
- 		return 0
- 	}
- 
--	ctx.Logger().V(3).Info("Scanning bucket")
-+	ctx.Logger().V(2).Info("Scanning bucket")
-+	start := time.Now()
- 
- 	regionalClient, err := s.getRegionalClientForBucket(ctx, client, role, bucket)
+ 	_, urlParts, err := getRepoURLParts(repo)
  	if err != nil {
-@@ -486,7 +505,7 @@ func (s *Source) scanBucket(
- 				// often cause this to happen a lot (because in that case the scanner tries to scan every bucket in the
- 				// account, but the role probably doesn't have access to all of them). This makes it expected behavior
- 				// and therefore not an error.
--				ctx.Logger().V(3).Info("could not list objects in bucket", "err", err)
-+				ctx.Logger().V(4).Info("Skipping bucket", "reason", "role cannot list objects", "error", err)
- 			} else {
- 				// This can also be a failure to assume the role itself: role credentials
- 				// are resolved lazily, so the first request that needs them surfaces the
-@@ -497,6 +516,7 @@ func (s *Source) scanBucket(
- 			listFailed = true
- 			break
+@@ -743,7 +772,6 @@ func (s *Source) enumerateWithToken(ctx context.Context, isGithubEnterprise bool
  		}
-+		ctx.Logger().V(4).Info("Listed page", "page_number", pageNumber, "object_count", len(output.Contents))
- 		pageMetadata := pageMetadata{
- 			bucket:     bucket,
- 			role:       role,
-@@ -516,6 +536,10 @@ func (s *Source) scanBucket(
- 		pageNumber++
- 	}
- 	scannedWholeBucket = startAfter == nil && !listFailed && ctx.Err() == nil
-+	ctx.Logger().V(2).Info("Finished scanning bucket",
-+		"objects_scanned", objectCount,
-+		"pages", pageNumber-1,
-+		"duration", time.Since(start))
  
- 	// A filter that excludes everything otherwise looks exactly like a clean scan
- 	// of an empty bucket, so say so rather than finishing silently.
-@@ -572,6 +596,7 @@ func (s *Source) getRegionalClientForBucket(
- 	if region == s.defaultRegion() {
- 		return defaultRegionClient, nil
+ 		if s.conn.ScanUsers && len(s.memberCache) > 0 {
+-			ctx.Logger().Info("Fetching repos for org members", "org_count", s.orgsCache.Count(), "member_count", len(s.memberCache))
+ 			s.addReposForMembers(ctx, reporter)
+ 		}
  	}
-+	ctx.Logger().V(5).Info("Using regional client for bucket", "region", region)
- 
- 	regionalClient, err := s.newClient(ctx, region, role)
- 	if err != nil {
-@@ -632,7 +657,7 @@ func (
+@@ -770,7 +798,7 @@ func (s *Source) enumerateWithApp(ctx context.Context, connector *appConnector,
+ 			if err != nil {
+ 				return err
+ 			}
+-			ctx.Logger().Info("Scanning repos", "org_members", len(s.memberCache))
++			ctx.Logger().V(1).Info("Scanning repos", "org_members", len(s.memberCache))
+ 			if !connector.HasDefaultInstallation() {
+ 				// Member repos/gists live outside any installation's own
+ 				// listing, so there is no installation token to fetch them
+@@ -789,11 +817,18 @@ func (s *Source) enumerateWithApp(ctx context.Context, connector *appConnector,
+ 				ctx.Logg
 ```
 
-**File**: `pkg/sources/s3/s3_test.go` (modified, +128/-0)
+**File**: `pkg/sources/github/github_test.go` (modified, +195/-1)
 ```diff
-@@ -4,24 +4,34 @@ import (
- 	"encoding/base64"
- 	"encoding/json"
- 	"fmt"
-+	"net/http"
-+	"net/http/httptest"
- 	"os"
-+	"strings"
- 	"sync"
-+	"sync/atomic"
+@@ -19,16 +19,21 @@ import (
  	"testing"
  	"time"
  
- 	"github.com/aws/aws-sdk-go-v2/aws"
- 	awss3 "github.com/aws/aws-sdk-go-v2/service/s3"
- 	s3types "github.com/aws/aws-sdk-go-v2/service/s3/types"
 +	"github.com/go-logr/zapr"
- 	"github.com/kylelemons/godebug/pretty"
+ 	"github.com/google/go-cmp/cmp"
+ 	"github.com/google/go-github/v67/github"
  	"github.com/stretchr/testify/assert"
  	"github.com/stretchr/testify/require"
 +	"go.uber.org/zap"
 +	"go.uber.org/zap/zapcore"
 +	"go.uber.org/zap/zaptest/observer"
+ 	"golang.org/x/sync/errgroup"
  	"google.golang.org/protobuf/types/known/anypb"
+ 	"gopkg.in/h2non/gock.v1"
  
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/common"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/cache/simple"
  	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
 +	"github.com/trufflesecurity/trufflehog/v3/pkg/log/logtest"
  	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/credentialspb"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/source_metadatapb"
  	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/sourcespb"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/sources"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/sourcestest"
- )
+@@ -377,7 +382,7 @@ func TestAppConnector_EnterpriseBaseURL(t *testing.T) {
+ 	privateKey := createPrivateKey()
+ 	enterpriseEndpoint := "https://api.example.ghe.com"
  
- func TestSource_Init_IncludeAndIgnoreBucketsError(t *testing.T) {
-@@ -648,3 +658,121 @@ func TestSource_SkipReason(t *testing.T) {
- 		})
+-	connector, err := NewAppConnector(enterpriseEndpoint, &credentialspb.GitHubApp{
++	connector, err := NewAppConnector(context.Background(), enterpriseEndpoint, &credentialspb.GitHubApp{
+ 		PrivateKey:     privateKey,
+ 		InstallationId: "1337",
+ 		AppId:          "4141",
+@@ -3047,3 +3052,192 @@ func TestCreateAPIClient_CloudGitHub(t *testing.T) {
+ 		t.Errorf("expected https://api.github.com/, got: %s", client.BaseURL.String())
  	}
  }
 +
-+// slowDownOnce answers the first GET of key with S3's throttling error, so the client retries it.
-+type slowDownOnce struct {
-+	next http.Handler
-+	key  string
-+	done atomic.Bool
-+}
++func TestEnumerateWithToken_DebugLogging(t *testing.T) {
++	const testToken = "ghp_TESTTOKENdonotlog1234567890abcdef"
 +
-+func (h *slowDownOnce) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-+	if strings.HasSuffix(r.URL.Path, "/"+h.key) && h.done.CompareAndSwap(false, true) {
-+		w.Header().Set("Content-Type", "application/xml")
-+		w.WriteHeader(http.StatusServiceUnavailable)
-+		_, _ = w.Write([]byte(`<Error><Code>SlowDown</Code><Message>Please reduce your request rate.</Message></Error>`))
-+		return
++	// mock one page of repos: one to scan, plus one of each kind we skip
++	mockAPI := func() {
++		gock.New("https://api.github.com").
++			Get("/user").
++			Reply(200).
++			JSON(map[string]string{"login": "test-user"})
++
++		gock.New("https://api.github.com").
++			Get("/user/repos").
++			Reply(200).
++			JSON([]map[string]any{
++				{"full_name": "test-user/kept-repo", "clone_url": "https://github.com/test-user/kept-repo.git"},
++				{"full_name": "test-user/forked-repo", "clone_url": "https://github.com/test-user/forked-repo.git", "fork": true},
++				{"full_name": "test-user/archived-repo", "clone_url": "https://github.com/test-user/archived-repo.git", "archived": true},
++				{"full_name": "test-user/ignored-repo", "clone_url": "https://github.com/test-user/ignored-repo.git"},
++			})
++
++		gock.New("https://api.github.com").
++			Get("/user/orgs").
++			Reply(200).
++			JSON(`[]`)
++
++		gock.New("https://api.github.com").
++			Get("/users/test-user/gists").
++			Reply(200).
++			JSON(`[]`)
 +	}
-+	h.next.ServeHTTP(w, r)
-+}
 +
-+func TestSource_DebugLogging(t *testing.T) {
-+	const testSecret = "TESTSECRET-do-not-log-1234567890"
-+
-+	// One object of each kind the source logs about: scanned, empty, excluded by the filter, and a directory.
-+	fake := &fakeS3{buckets: map[string]fakeBucket{"bucket": {objects: map[string]string{
-+		"config.txt":      "aws_secret = " + testSecret,
-+		"empty.txt":       "",
-+		"archive/old.txt": "aws_secret = " + testSecret,
-+		"dir/":            "x",
-+	}}}}
-+
-+	// run the source with both Chunks and ChunkUnit, draining chunks the way the engine does
-+	runSource := func(t *testing.T, ctx context.Context) {
-+		server := httptest.NewServer(&slowDownOnce{next: fake, key: "config.txt"})
-+		t.Cleanup(server.Close)
-+		conn, err := anypb.New(&sourcespb.S3{
-+			Credential:      &sourcespb.S3_Unauthenticated{},
-+			Endpoint:        server.URL,
-+			Buckets:         []string{"bucket"},
-+			ExcludePrefixes: []string{"archive/"},
++	// init the source with the given context and list the repos
++	runEnumerate := func(t *testing.T, ctx context.Context) *Source {
++		s, conn := createTestSource(&sourcespb.GitHub{
++			Endpoint:        "https://api.github.com",
++			Credential:      &sourcespb.GitHub_Token{Token: testToken},
++			ExcludeArchived: true,
++			IgnoreRepos:     []string{"test-user/ignored-repo"},
 +		})
-+		require.NoError(t, err)
++		assert.NoError(t, s.Init(ctx, "test - github", 1, 1337, false, conn, 1))
++		gock.InterceptClient(s.connector.APIClient().Client())
 +
-+		s := Source{}
-+		require.NoError(t, s.Init(ctx, "test debug logging", 1, 1, false, conn, 1))
-+
-+		chunksCh := make(chan *sources.Chunk, 64)
-+		go func() {
-+			for range chunksCh {
-+			}
-+		}()
-+		require.NoError(t, s.Chunks(ctx, chunksCh))
-+		close(chunksCh)
-+
-+		reporter := sourcestest.TestReporter{}
-+		require.NoError(t, s.ChunkUnit(ctx, S3SourceUnit{Bucket: "bucket"}, &reporter))
-+		require.Empty(t, reporter.ChunkErrs)
-+		require.NotEmpty(t, reporter.Chunks)
++		assert.NoError(t, s.enumerateWithToken(ctx, false, noopReporter()))
++		assert.True(t, gock.IsDone())
++		return s
 +	}
 +
 +	t.Run("debug on", func(t *testing.T) {
++		defer gock.Off()
++		mockAPI()
++
 +		ctx, logs := logtest.DebugContext()
-+		ctx = context.WithValues(ctx, "source_name", "test debug logging", "job_id", 1)
-+		runSource(t, ctx)
++		ctx = context.WithValues(ctx, "source_name", "test - github", "job_id", 1)
++		s := runEnumerate(t, ctx)
++		assert.True(t, s.filteredRepoCache.Exists("test-user/kept-repo"))
 +
-+		// lines from each level show up
-+		for _, msg := range []string{
-+			"S3 source initialized",    // V(1)
-+			"Found buckets to scan",    // V(1)
-+			"Scanning bucket",          // V(2)
-+			"Finished scanning bucket", // V(2)
-+			"Scanning object",          // V(3)
-+			"Listed page",              // V(4)
-+			"Finished scanning object", // V(5)
-+		} {
-+			assert.NotZero(t, logs.FilterMessage(msg).Len(), "missing log line %q", msg)
++		// the config line from Init shows the auth type and filters, not the token
++		initLines := logs.FilterMessage("github source initialized").All()
++		if assert.Len(t, initLines, 1) {
++			fields := initLines[0].ContextMap()
++			assert.Equal(t, "*sourcespb.GitHub_Token", fields["auth_type"])
++			assert.Equal(t, int64(1), fields["ignore_repo_count"])
++			assert.Equal(t, true, fields["exclude_archived"])
 +		}
 +
-+		// every skip says why, at V(4)
-+		var reasons []string
-+		for _, entry := range logs.FilterMessage("Skipping object").All() {
-+			reasons = append(reasons, fmt.Sprint(entry.ContextMap()["reason"]))
-+		}
-+		assert.Contains(t, reasons, skipReasonEmptyFile)
-+		assert.Contains(t, reasons, skipReasonObjectFilter)
-+		assert.Contains(t, reasons, "directory")
-+
-+		// the throttled GET was retried, and the retry was logged through the request's context
-+		var retried bool
-+		for _, entry := range logs.FilterMessage("AWS SDK").All() {
++		// the page line and one skip line for each skipped repo, with the reason
++		assert.Equal(t, 1, logs.FilterMessage("Listed repos").Len())
++		reasons := map[string]string{}
++		for _, entry := range logs.FilterMessage("skipping repository").All() {
 +			fields := entry.ContextMap()
-+			if strings.Contains(fmt.Sprint(fields["detail"]), "retrying request") {
-+				retried = true
-+				assert.Equal(t, "config.txt", fields["key"])
-+			}
++			reasons[fields["repo"].(string)] = fields["reason"].(string)
 +		}
-+		assert.True(t, retried, "missing retry log line")
++		assert.Equal(t, map[string]string{
++			"test-user/forked-repo":   "forks are not included",
++			"test-user/archived-repo": "archived repos are excluded",
++			"test-user/ignored-repo":  "excluded by include or ignore filter",
++		}, reasons)
 +
-+		// every line came from the context logger, so it carries the source fields,
-+		// and none of them contain the secret
++		// every line came from the context logger, so it has the source fields,
++		// and no line contains the token
 +		for _, entry := range logs.All() {
 +			fields := entry.ContextMap()
 +			assert.Contains(t, fields, "source_name", "line %q", entry.Message)
 +			assert.Contains(t, fields, "job_id", "line %q", entry.Message)
-+			assert.NotContains(t, ent
-```
-
-**File**: `pkg/sources/s3/sdklog.go` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+package s3
++			assert.NotContains(t, entry.Message, testToken)
++			assert.NotContains(t, fmt.Sprint(fields), testToken)
++		}
++	})
 +
-+import (
-+	stdctx "context"
-+	"fmt"
++	t.Run("debug off", func(t *testing.T) {
++		defer gock.Off()
++		mockAPI()
 +
-+	"github.com/aws/smithy-go/logging"
-+
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
-+)
-+
-+// sdkLogger passes the AWS SDK's retry logs to the logger of the request's
-+// context, so they carry that request's fields and follow per-source debug.
-+// The zero value is what the client holds. It drops anything logged without a
-+// request context, since there is no logger to send it to.
-+type sdkLogger struct {
-+	ctx stdctx.Context
-+}
-+
-+var _ logging.ContextLogger = sdkLogger{}
-+
-+func (l sdkLogger) WithContext(ctx stdctx.Context) logging.Logger {
-+	return sdkLogger{ctx: ctx}
-+}
-+
-+func (l sdkLogger) Logf(_ logging.Classification, format string, v ...any) {
-+	if l.ctx == nil {
-+		return
-+	}
-+	logger := context.AddLogger(l.ctx).Logger().V(4)
-+	if logger.Enabled() {
-+		logger.Info("AWS SDK", "detail", fmt.Sprintf(format, v...))
-+	}
-+}
++		c
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5487** (closed): Ignore. Fat fingered  (@markcunninghamgit)
 - **PR #5481** (2026-10-27): Clean up S3 source logging for per-source debug (@kashifkhan0771)
 - **PR #5474** (2026-10-24): Fix 7z and rar panics in the archive handler and log recovered panic stacks (@dustin-decker)
 - **PR #5473** (2026-10-24): Keep GoReleaser temp files off the tmpfs /tmp in releases (@dustin-decker)
 - **PR #5472** (2026-10-24): security: bump andybalholm/brotli to v1.2.7 (CVE-2026-111497) (@dustin-decker)
 - **PR #5471** (2026-10-24): Fix --include-wikis help typo and huggingface README description (@protonnegativo)
-- **PR #5470** (2026-10-26): [SCAN-180]: Populate SecretParts for custom detector results (@casey-tran)
 
 ---
 
@@ -1553,39 +1737,39 @@ per bucket on cancel. Document the debug logs in the S3 README.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Clean up S3 source logging for per-source debug (#5481)
+## X. Clean up GitHub source logging for per-source debug (#5457)
 
 **RULE**:
-When implementing operations in `pkg/sources/s3/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/engine/scan.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce76ea8f`: Clean up S3 source logging for per-source debug (#5481). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0301dc36`: Clean up GitHub source logging for per-source debug (#5457). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/sources/s3/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/engine/scan.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-## Debug logs
+		// Add the source fields here, before Init, so lines logged during Init
+		// say which source and job they came from too. The source manager adds
+		// the same fields later for the scan, but skips any already set here.
+		sourceCtx := context.WithValues(ctx,
+			"source_name", configuredSource.Name,
+			"source_type", configuredSource.SourceType().String(),
+			"source_id", sourceID,
+			"job_id", jobID,
+		)
 
-With debug on for this source (`debug: true` in the config), the scan logs:
-
-- `V(1)`: `S3 source initialized` with the config choices (the endpoint's host only, never credentials), and `Found buckets to scan` for each role.
-- `V(2)`: `Scanning bucket` and `Finished scanning bucket`, with the objects scanned, pages and duration.
-- `V(3)`: `Scanning object` for each object downloaded.
-- `V(4)`: `Skipping bucket` and `Skipping object` with a `reason`, `Listed page` for each page, and `AWS SDK` lines for retries, including S3 throttling (`SlowDown`).
-- `V(5)`: `Finished scanning object` with its duration, and the region used for a bucket outside the default region.
-
-Lines carry `role`, `bucket`, `page_number` and `key` where they apply. An object skipped for one of the reasons above shows its reason here, so a missing finding can be traced to the object it would have come from.
-
+			sourceCtx = context.WithLogLevel(sourceCtx, log.DebugLevel)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+		sourceCtx := ctx
+			sourceCtx = context.WithLogLevel(ctx, log.DebugLevel)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce76ea8f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0301dc36` are properly handled with clean fallback behavior.

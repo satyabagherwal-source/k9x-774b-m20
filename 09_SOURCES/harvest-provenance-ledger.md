@@ -5714,3 +5714,6 @@ Every entry in this ledger must capture:
 | `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `55b79d17` | Multi-dimensional audit evidence | 2026-10-28T05:30:50.358Z |
 | `learn-huggingface-apple-lensvlm-9b` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-10-28T05:30:56.058Z |
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `6d392427` | Multi-dimensional audit evidence | 2026-10-28T05:30:58.243Z |
+| `learn-huggingface-fastino-gliner2-5-decide` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-10-28T05:42:11.394Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `0301dc36` | Multi-dimensional audit evidence | 2026-10-28T05:42:21.255Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `45f987a2` | Multi-dimensional audit evidence | 2026-10-28T05:42:24.710Z |
