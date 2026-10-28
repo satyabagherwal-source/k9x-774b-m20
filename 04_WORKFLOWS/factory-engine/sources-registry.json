@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T19:17:27.919Z",
-    "lastVerified": "2026-10-28T19:17:27.919Z",
+    "lastChecked": "2026-10-28T19:24:36.461Z",
+    "lastVerified": "2026-10-28T19:24:36.461Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -90,9 +90,9 @@
   "stakater-reloader": {
     "name": "Reloader",
     "officialUrl": "https://github.com/stakater/Reloader",
-    "lastChecked": "2026-10-28T02:48:04.482Z",
+    "lastChecked": "2026-10-28T19:24:28.885Z",
     "revisionIdentifier": "41b3ad27",
-    "lastVerified": "2026-10-28T02:48:04.482Z"
+    "lastVerified": "2026-10-28T19:24:28.885Z"
   },
   "gravitl-netmaker": {
     "name": "netmaker",
@@ -342,8 +342,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T18:41:57.981Z",
-    "lastVerified": "2026-10-28T18:41:57.981Z",
+    "lastChecked": "2026-10-28T19:24:36.451Z",
+    "lastVerified": "2026-10-28T19:24:36.451Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1646,8 +1646,8 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T15:43:16.031Z",
-    "lastVerified": "2026-10-28T15:43:16.031Z",
+    "lastChecked": "2026-10-28T19:24:31.575Z",
+    "lastVerified": "2026-10-28T19:24:31.575Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -6166,5 +6166,43 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "arxanas-git-branchless": {
+    "name": "git-branchless",
+    "officialUrl": "https://github.com/arxanas/git-branchless",
+    "lastChecked": "2026-10-28T19:24:21.825Z",
+    "revisionIdentifier": "f37244cb",
+    "lastVerified": "2026-10-28T19:24:21.825Z"
+  },
+  "hf-autotrust-gev-26b-decide": {
+    "name": "autotrust/GEV-26B-Decide",
+    "officialUrl": "https://huggingface.co/autotrust/GEV-26B-Decide",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T19:24:23.948Z",
+    "lastVerified": "2026-10-28T19:24:23.948Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-autotrust-gev-26b-decide",
+    "contentHash": "d12a51cd1bbdc9eec5802db79580dda7b84424d2c52936b63e5922c3d4f8a4c6",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hasaneyldrm-exercises-dataset": {
+    "name": "exercises-dataset",
+    "officialUrl": "https://github.com/hasaneyldrm/exercises-dataset",
+    "lastChecked": "2026-10-28T19:24:26.710Z",
+    "revisionIdentifier": "7455efae",
+    "lastVerified": "2026-10-28T19:24:26.710Z"
+  },
+  "libsql-libsql": {
+    "name": "libsql",
+    "officialUrl": "https://github.com/libsql/libsql",
+    "lastChecked": "2026-10-28T19:24:33.959Z",
+    "revisionIdentifier": "d8bc862d",
+    "lastVerified": "2026-10-28T19:24:33.959Z"
   }
 }

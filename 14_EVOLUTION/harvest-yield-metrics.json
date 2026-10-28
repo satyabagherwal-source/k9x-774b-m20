@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T19:17:25.375Z",
-  "total_cycles_completed": 5876,
-  "total_learnings_persisted": 5876,
+  "last_updated": "2026-10-28T19:24:24.922Z",
+  "total_cycles_completed": 5877,
+  "total_learnings_persisted": 5877,
   "total_rules_promoted": 5338,
   "history": [
-    {
-      "timestamp": "2026-10-28T05:24:29.522Z",
-      "repository": "SupersonicLabs/Julia-1",
-      "learningId": "learn-huggingface-supersoniclabs-julia-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T05:24:36.187Z",
       "repository": "feathersjs/feathers",
@@ -1403,6 +1396,13 @@
       "repository": "ClickHouse/ClickHouse",
       "learningId": "learn-github-clickhouse-clickhouse",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T19:24:24.922Z",
+      "repository": "autotrust/GEV-26B-Decide",
+      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

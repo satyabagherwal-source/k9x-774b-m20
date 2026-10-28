@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-LHN8",
-    "timestamp": "2026-10-27T15:08:14.612Z",
-    "repository": "pulumi/pulumi",
-    "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "8def4060b1fd6a71ea559a0652132eda989bcac2bcfc1ee9dda75467db724fdb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-QDP0",
     "timestamp": "2026-10-27T15:12:02.772Z",
     "repository": "cosscom/ui",
@@ -7492,6 +7477,21 @@
     "contentHash": "7085872d11094bf33227e91288037ca8e4a4957258adbbf828ddd04a8dd97aca",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-6S3U",
+    "timestamp": "2026-10-28T19:24:24.906Z",
+    "repository": "autotrust/GEV-26B-Decide",
+    "learningId": "learn-huggingface-autotrust-gev-26b-decide",
+    "contentHash": "d12a51cd1bbdc9eec5802db79580dda7b84424d2c52936b63e5922c3d4f8a4c6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

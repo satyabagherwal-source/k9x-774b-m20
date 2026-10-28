@@ -5899,3 +5899,4 @@
 | `CYCLE-20261028-XO8M` | `2026-10-28T19:17:19.990Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5377` | Yes (`de3689fd...`) |
 | `CYCLE-20261028-XP7Z` | `2026-10-28T19:17:21.263Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5378` | Yes (`213d8b8d...`) |
 | `CYCLE-20261028-XSDZ` | `2026-10-28T19:17:25.367Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5379` | Yes (`7085872d...`) |
+| `CYCLE-20261028-6S3U` | `2026-10-28T19:24:24.906Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | Yes (`d12a51cd...`) |
