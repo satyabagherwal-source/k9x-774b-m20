@@ -965,8 +965,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
     "sourceVersion": "hf-meta-llama-llama-2-7b-chat-hf",
     "license": "Open-Source",
-    "contentHash": "e488462a3831525c5bb0dec5c3f81f53d0e688ed8ddb4e51a464733d057ada8c",
-    "lastHarvestedAt": "2026-10-25T20:36:41.690Z",
+    "contentHash": "8b0c11704806dc4bbf8015994cdfacd9199bec278139e93cdb7b6814b8cc4160",
+    "lastHarvestedAt": "2026-10-28T14:56:28.648Z",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf"
   },
   "hf-meta-llama-llama-2-7b": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "94ffc059",
+    "sourceVersion": "333cb672",
     "license": "NOASSERTION",
-    "contentHash": "2db4dd951ba81e5687ae8b5f6089e8427d724bb366f94390b9b4c01b52226277",
-    "lastHarvestedAt": "2026-10-28T14:29:21.648Z",
+    "contentHash": "5fcf496a90878e15b7a690c1c48327da5f5c132c6824baa1235f32e151f0658f",
+    "lastHarvestedAt": "2026-10-28T14:56:45.108Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "2548bd51",
+    "sourceVersion": "b57c621c",
     "license": "Apache-2.0",
-    "contentHash": "b28a502c2c989784a8c920a075edb2211afdbc4dff1f13e0cf005801b9c466e6",
-    "lastHarvestedAt": "2026-10-27T15:18:59.135Z",
+    "contentHash": "76982cdb5dccee116f72b90bdc98fbc3af9e28be7fbe37f3c688bd15ff2ae5c2",
+    "lastHarvestedAt": "2026-10-28T14:56:39.015Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {
@@ -5483,20 +5483,20 @@
     "repository": "salvo-rs/salvo",
     "platform": "github",
     "sourceUrl": "https://github.com/salvo-rs/salvo",
-    "sourceVersion": "07f55f73",
+    "sourceVersion": "2908d718",
     "license": "Apache-2.0",
-    "contentHash": "b4ec955abd099a1daf7a95d7849302b55332daff5834cb57d4f53d3e28c6c3d6",
-    "lastHarvestedAt": "2026-10-25T18:40:47.148Z",
+    "contentHash": "6c3c733e127c8b20f4a85ce8d2ad793caf3a931fc3cac3761c0539dfece77e15",
+    "lastHarvestedAt": "2026-10-28T14:56:30.185Z",
     "learningId": "learn-github-salvo-rs-salvo"
   },
   "react-metro": {
     "repository": "react/metro",
     "platform": "github",
     "sourceUrl": "https://github.com/react/metro",
-    "sourceVersion": "43cc1e3c",
+    "sourceVersion": "492872b2",
     "license": "MIT",
-    "contentHash": "24bba216d8fc133eb2d3280177f96ed789bf77476144c6b5fee731f17989ed23",
-    "lastHarvestedAt": "2026-10-27T19:32:01.471Z",
+    "contentHash": "3eaf25f249348ab9cf74f11a33a78611d0832aeb0adbc823e72e64eb92abe416",
+    "lastHarvestedAt": "2026-10-28T14:56:35.292Z",
     "learningId": "learn-github-react-metro"
   },
   "checkmarx-kics": {

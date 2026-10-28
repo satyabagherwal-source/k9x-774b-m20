@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md`  
 > **Source**: github ([https://github.com/salvo-rs/salvo](https://github.com/salvo-rs/salvo))  
-> **Source Version**: `07f55f73`  
+> **Source Version**: `2908d718`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T18:40:46.915Z  
+> **Timestamp**: 2026-10-28T14:56:29.664Z  
 > **Learning ID**: `learn-github-salvo-rs-salvo`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/salvo-rs/salvo](https://github.com/salvo-rs/salvo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T18:40:46.491Z  
+> **Harvest Timestamp**: 2026-10-28T14:56:29.654Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A powerful web framework built with a simplified design.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4454 stars
+- **Stars / Engagement**: 4458 stars
 
 ---
 
@@ -739,6 +739,8 @@ mod proto;
 pub use proto::HttpBuilder;
 mod ctrl;
 pub use ctrl::ConnCtrl;
+mod tls;
+pub use tls::TlsInfo;
 mod stream;
 pub use stream::*;
 
@@ -982,8 +984,7 @@ pub trait Acceptor: Send {
     /// # Parameters
     ///
     /// - `fuse_policy`: Optional factory for creating fuse_configs to protect against slow HTTP
-    ///   attacks and other malicious patterns
-    /
+    ///   attacks and
 ```
 
 ### Core Architecture Module: `crates/core/src/conn/addr.rs`
@@ -1215,6 +1216,11 @@ struct Inner {
     state: AtomicU8,
     notify: Notify,
     relax: AtomicBool,
+    // Reuse the connection state already exposed on Request. Request dispatch
+    // needs no additional extension insertion, certificate clone, or synchronization.
+    // Boxing keeps connections without TLS from reserving a full TlsInfo.
+    #[cfg(feature = "rustls")]
+    tls_info: std::sync::OnceLock<Box<super::TlsInfo>>,
 }
 
 impl Default for ConnCtrl {
@@ -1240,8 +1246,20 @@ impl ConnCtrl {
                 state: AtomicU8::new(RUNNING),
                 notify: Notify::new(),
                 relax: AtomicBool::new(false),
+                #[cfg(feature = "rustls")]
+                tls_info: std::sync::OnceLock::new(),
             }),
         }
+    }
+
+    #[cfg(feature = "rustls")]
+    pub(crate) fn set_tls_info(&self, info: super::TlsInfo) {
+        let _ = self.inner.tls_info.set(Box::new(info));
+    }
+
+    #[cfg(feature = "rustls")]
+    pub(crate) fn tls_info(&self) -> Option<&super::TlsInfo> {
+        self.inner.tls_info.get().map(Box::as_ref)
     }
 
     /// Stops accepting new requests and lets accepted requests finish.
@@ -1888,419 +1906,312 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `07f55f73` (2026-10-23)
-**Commit Message**: Preserve Salvo context across Tower short circuits and cancellation (#1754)
+### Incident Patch 1: `2908d718` (2026-10-28)
+**Commit Message**: Expose client certificates and TLS metadata on requests (#1759)
 
-* Recover Salvo context when Tower layers finish or cancel
+* Expose client certificates and TLS metadata on requests
 
-* Place changelog entry beside related fixes
+* Keep one Fixed section in the combined unreleased notes
 
-**File**: `CHANGELOG.md` (modified, +2/-0)
+**File**: `CHANGELOG.md` (modified, +7/-1)
 ```diff
-@@ -53,6 +53,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
- - Enable only the requested `salvo_extra` middleware features through `salvo`,
-   avoiding unrelated WebSocket, Tower and request-ID dependencies for logging-only builds.
- - Declare the Hyper dependency directly for standalone `tower-compat` builds.
-+- Recover request, depot and flow state when Tower layers short-circuit, fail or
-+  cancel their inner future, preserving HEAD handling and prepared response policy headers.
- - Invoke tus upload completion hooks when PATCH finishes an upload, sharing
-   response customization and error handling with creation-time completion.
- - Preserve existing tus metadata if replacing its temporary file fails on Windows.
+@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+ 
+ ## [Unreleased]
+ 
++### Added
++
++- Expose client certificate chains, SNI and ALPN through `Request::tls_info` for
++  Rustls and Rustls-backed HTTP/3 connections, with an mTLS authorization example.
++
+ ### Changed
+ 
+ - Raise the minimum supported Rust version to 1.95 for Salvo and its examples.
+@@ -19,7 +24,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+ - Cancel HTTP/3 request tasks when their connection closes or the server stops
+   forcefully, while allowing accepted requests to finish on graceful shutdown.
+ 
+-### Fixed
+ - Preserve outer request extensions across direct Tower service calls, including
+   failures and cancellation.
+ - Keep static directory slash redirects on the same origin for paths beginning
+@@ -32,6 +36,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+ - Fail dependency security CI on RustSec `unsound` advisories as well as
+   vulnerability advisories, with an offline regression for the audit policy.
+ 
++- Use the same explicit crypto provider for Rustls client certificate verification
++  and server configuration, avoiding ambiguous provider selection with mTLS.
+ - Reject `QueryString` in `ToParameters` derives instead of producing an invalid
+   schema and extracting a named query parameter. Use `Query` for named values
+   or construct a whole-query parameter with `content` manually.
 ```
 
-**File**: `crates/extra/Cargo.toml` (modified, +2/-0)
+**File**: `README.md` (modified, +1/-0)
 ```diff
-@@ -66,6 +66,8 @@ tower-compat = [
-     "dep:http-body-util",
-     "dep:tower",
-     "dep:tracing",
-+    "tokio/macros",
-+    "tokio/sync",
- ]
+@@ -176,6 +176,7 @@ salvo new my_project
+ - [Official Website](https://salvo.rs)
+ - [API Documentation](https://docs.rs/salvo)
+ - [Examples](./examples/)
++- [mTLS authentication and certificate-based authorization](./examples/mtls-rustls/)
+ - [MCP server using the Rust SDK and Tower compatibility](./examples/mcp/)
+ - [Feature-specific crates](./crates/)
  
- [dependencies]
 ```
 
-**File**: `crates/extra/src/tower_compat.rs` (modified, +696/-88)
+**File**: `README.zh-hant.md` (modified, +1/-0)
 ```diff
-@@ -26,17 +26,17 @@ use std::error::Error as StdError;
- use std::fmt::{self, Debug, Formatter};
- use std::io::Error as IoError;
- use std::marker::PhantomData;
--use std::sync::Arc;
-+use std::sync::{Arc, Mutex};
- use std::task::{Context, Poll};
+@@ -177,6 +177,7 @@ salvo new my_project
+ - [官方網站](https://salvo.rs)
+ - [API 文件](https://docs.rs/salvo)
+ - [範例程式碼](./examples/)
++- [mTLS 認證與基於用戶端憑證的授權](./examples/mtls-rustls/)
+ - [按功能拆分的 crate](./crates/)
  
- use futures_util::future::{BoxFuture, FutureExt, ready};
- use http_body_util::BodyExt;
- use hyper::body::{Body, Bytes};
--use tower::buffer::Buffer;
--use tower::{Layer, Service, ServiceExt};
--
- use salvo_core::http::{ReqBody, ResBody, StatusError};
- use salvo_core::{Depot, FlowCtrl, Handler, Request, Response, async_trait, hyper};
-+use tokio::sync::oneshot;
-+use tower::buffer::Buffer;
-+use tower::{Layer, Service, ServiceExt};
+ ## 推薦專案
+```
+
+**File**: `README.zh.md` (modified, +1/-0)
+```diff
+@@ -179,6 +179,7 @@ salvo new my_project
+ - [官方网站](https://salvo.rs)
+ - [API 文档](https://docs.rs/salvo)
+ - [示例代码](./examples/)
++- [mTLS 认证与基于客户端证书的授权](./examples/mtls-rustls/)
+ - [按功能拆分的 crate](./crates/)
  
- /// Trait for tower service compat.
- pub trait TowerServiceCompat<QB, SB, E, Fut> {
-@@ -105,9 +105,7 @@ where
+ ## 推荐项目
+```
+
+**File**: `crates/core/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -153,6 +153,7 @@ zstd = { workspace = true, optional = true, features = ["default"] }
+ nix = { workspace = true, optional = true, features = ["fs", "user"] }
+ 
+ [dev-dependencies]
++rcgen = { workspace = true }
+ tracing-test = { workspace = true }
+ criterion = { workspace = true }
+ fastrand = { workspace = true }
+```
+
+**File**: `crates/core/src/conn.rs` (modified, +2/-0)
+```diff
+@@ -67,6 +67,8 @@ mod proto;
+ pub use proto::HttpBuilder;
+ mod ctrl;
+ pub use ctrl::ConnCtrl;
++mod tls;
++pub use tls::TlsInfo;
+ mod stream;
+ pub use stream::*;
+ 
+```
+
+**File**: `crates/core/src/conn/ctrl.rs` (modified, +17/-0)
+```diff
+@@ -22,6 +22,11 @@ struct Inner {
+     state: AtomicU8,
+     notify: Notify,
+     relax: AtomicBool,
++    // Reuse the connection state already exposed on Request. Request dispatch
++    // needs no additional extension insertion, certificate clone, or synchronization.
++    // Boxing keeps connections without TLS from reserving a full TlsInfo.
++    #[cfg(feature = "rustls")]
++    tls_info: std::sync::OnceLock<Box<super::TlsInfo>>,
+ }
+ 
+ impl Default for ConnCtrl {
+@@ -47,10 +52,22 @@ impl ConnCtrl {
+                 state: AtomicU8::new(RUNNING),
+                 notify: Notify::new(),
+                 relax: AtomicBool::new(false),
++                #[cfg(feature = "rustls")]
++                tls_info: std::sync::OnceLock::new(),
+             }),
          }
-         let Ok(hyper_req) = req.strip_to_hyper::<QB>() else {
-             tracing::error!("strip request to hyper failed");
--            res.render(
--                StatusError::internal_server_error().cause("strip request to hyper failed"),
--            );
-+            res.render(StatusError::internal_server_error().cause("strip request to hyper failed"));
-             return;
-         };
- 
-@@ -133,35 +131,80 @@ where
      }
- }
  
--struct FlowCtrlInContext {
--    ctrl: FlowCtrl,
--    request: Request,
--    depot: Depot,
--    response: Response,
-+struct FlowCall {
-+    request: hyper::Request<ReqBody>,
-+    response: oneshot::Sender<hyper::Response<ResBody>>,
-+    span: tracing::Span,
- }
--impl FlowCtrlInContext {
--    fn new(ctrl: FlowCtrl, request: Request, depot: Depot, response: Response) -> Self {
--        Self {
--            ctrl,
--            request,
--            depot,
--            response,
--        }
++    #[cfg(feature = "rustls")]
++    pub(crate) fn set_tls_info(&self, info: super::TlsInfo) {
++        let _ = self.inner.tls_info.set(Box::new(info));
++    }
 +
-+type FlowCallSender = Arc<Mutex<Option<oneshot::Sender<FlowCall>>>>;
++    #[cfg(feature = "rustls")]
++    pub(crate) fn tls_info(&self) -> Option<&super::TlsInfo> {
++        self.inner.tls_info.get().map(Box::as_ref)
++    }
 +
-+const REPRESENTATION_HEADERS: &[&str] = &[
-+    "content-type",
-+    "content-length",
-+    "content-encoding",
-+    "content-range",
-+    "content-disposition",
-+    "etag",
-+    "last-modified",
-+    "digest",
-+    "content-digest",
-+    "repr-digest",
-+    "transfer-encoding",
-+    "trailer",
-+];
-+
-+// Request extensions may be cloned or retained by Tower. The sender is a
-+// single-use capability, and closing it also invalidates those retained copies.
-+struct CloseFlowCall(FlowCallSender);
-+
-+impl Drop for CloseFlowCall {
-+    fn drop(&mut self) {
-+        self.0.lock().unwrap_or_else(|e| e.into_inner()).take();
-     }
- }
--struct FlowCtrlOutContext {
--    ctrl: FlowCtrl,
--    request: Request,
--    depot: Depot,
--}
--impl FlowCtrlOutContext {
--    fn new(ctrl: FlowCtrl, request: Request, depot: Depot) -> Self {
--        Self {
--            ctrl,
--            request,
--            depot,
-+
-+async fn drive_inner_call(
-+    call: oneshot::Receiver<FlowCall>,
-+    req: &mut Request,
-+    depot: &mut Depot,
-+    res: &mut Response,
-+    ctrl: &mut FlowCtrl,
-+    response_sent: &mut bool,
-+) {
-+    if let Ok(FlowCall {
-+        request,
-+        mut response,
-+        span,
-+    }) = call.await
-+    {
-+        // A layer may poll its inner future once and then abandon it while
-+        // preparing a fallback. Do not run an abandoned downstream flow.
-+        if response.is_closed() {
-+            std::future::pending::<()>().await;
-+        }
-+        req.merge_hyper(request);
-+        let completed = tokio::select! {
-+            _ = tracing::Instrument::instrument(ctrl.call_next(req, depot, res), span) => true,
-+            _ = response.closed() => false,
-+        };
-+        if !completed {
-+            std::future::pending::<()>().await;
-+        }
-+        let hyper_response = res.strip_to_hyper();
-+        // Keep the serialized policy/cookie headers for an error returned by
-+        // Tower after it consumes the response. Successful Tower responses are
-+        // authoritative, including any headers the layer deliberately removes.
-+        *res.headers_mut() = hyper_response.headers().clone();
-+        for name in REPRESENTATION_HEADERS {
-+            res.headers_mut().remove(*name);
+     /// Stops accepting new requests and lets accepted requests finish.
+     ///
+     /// A later call to [`abort`](Self::abort) escalates graceful shutdown to an
+```
+
+**File**: `crates/core/src/conn/quinn/builder.rs` (modified, +3/-0)
+```diff
+@@ -131,6 +131,9 @@ impl Builder {
+             raw_conn.close(0u32.into(), b"handshake timed out");
+             return Ok(());
          }
-+        *response_sent = true;
-+        let _ = response.send(hyper_response);
-     }
-+    // Only the Tower response completes the adapter. In particular, sending
-+    // the inner response must not cancel Tower before it can process it.
-+    std::future::pending::<()>().await;
- }
- 
- #[doc(hidden)]
-@@ -177,37 +220,45 @@ impl Service<hyper::Request<ReqBody>> for FlowCtrlService {
-     }
- 
-     fn call(&mut self, mut hyper_req: hyper::Request<ReqBody>) -> Self::Future {
--        let ctx = hyper_req
--            .extensions_mut()
--            .remove::<Arc<FlowCtrlInContext>>()
--            .and_then(Arc::into_inner);
--        let Some(FlowCtrlInContext {
--            mut ctrl,
--            mut request,
--            mut depot,
--            mut response,
--        }) = ctx
--        else {
-+        let sender = hyper_req.extensions_mut().remove::<FlowCallSender>();
-+        let Some(sender) = sender else {
-+            return ready(Err(IoError::othe
++        if let Some(tls_info) = crate::conn::TlsInfo::from_quinn(&raw_conn) {
++            conn_ctrl.set_tls_info(tls_info);
++        }
+         let mut conn = self
+             .inner
+             .build::<salvo_http3::quinn::Connection, bytes::Bytes>(inner)
 ```
 
 ---
 
-### Incident Patch 2: `2b564125` (2026-10-23)
-**Commit Message**: Audit current dependency resolutions and require patched TLS releases (#1740)
+### Incident Patch 2: `20b01dd6` (2026-10-28)
+**Commit Message**: Gate publication on dependency audits and document the JWT blocker (#1761)
 
-* Audit current dependency resolutions and require patched TLS releases
-
-* Enforce the patched rustls minimum for downstream TLS servers
-
-**File**: `.cargo/audit.toml` (added, +5/-0)
+**File**: `.github/DEPENDENCY_SECURITY.md` (modified, +34/-0)
 ```diff
-@@ -0,0 +1,5 @@
-+[advisories]
-+# certon 0.3 uses rsa for key generation and DER conversion, not private-key
-+# decryption. TLS operations use rustls' ring/aws-lc backend. No fixed rsa release
-+# exists for this advisory. See .github/DEPENDENCY_SECURITY.md; review by 2027-01-23.
-+ignore = ["RUSTSEC-2023-0071"]
+@@ -12,6 +12,40 @@ dependencies. CI checks that an isolated downstream TLS application cannot resol
+ rustls 0.23.40. Transitive dependency findings remain covered by the audit job; raising
+ a direct dependency minimum does not guarantee every transitive version is safe.
+ 
++## RUSTSEC-2026-0387: RustCrypto JWT dependency blocker
++
++As checked on 2026-10-28, the latest published `jsonwebtoken` is 11.1.0. Its
++`rust_crypto` feature requires `p256 ^0.13.2` and `p384 ^0.13`, which require
++`elliptic-curve 0.13` and `crypto-bigint 0.5.5`. The patched crypto-bigint series
++starts at 0.7.6 and cannot satisfy that dependency chain. Upstream tracks the
++blocked migration in [jsonwebtoken issue 549](https://github.com/Keats/jsonwebtoken/issues/549).
++
++Salvo enables this JWT backend through `salvo-jwt-auth/ring` or the umbrella
++`salvo/jwt-auth-ring` feature. The separately named `salvo/ring` feature selects
++the TLS backend and does not, by itself, select the RustCrypto JWT backend.
++Cargo features are additive: selecting AWS-LC at runtime does not remove a
++RustCrypto dependency that another enabled feature pulled into the lockfile.
++
++There is **no audit exception** for RUSTSEC-2026-0387. The root workspace audit
++and the release workflow's audit before any crate is published remain blocked
++until a supported upstream release removes the affected chain. Replacing the
++lockfile or installing a different runtime
++provider is not a resolution for a lockfile that still contains it. Do not
++resume publication on the strength of the default-only consumer check below.
++
++An isolated consumer using only the default JWT AWS-LC backend does not require
++the affected RustCrypto chain; CI audits that exact consumer separately to
++guard this feature boundary. Applications that can use that backend should
++disable the alternative JWT backend and audit their own final lockfile. This
++is a narrower dependency configuration, not a fix for the RustCrypto backend.
++The advisory concerns secret integer operations; dependency presence alone
++does not establish a timing attack against Salvo's token verification path.
++
++After an upstream fix, update the dependency requirement, audit all three
++workspace lockfiles and isolated JWT consumers, and remove this blocker only
++after the RustCrypto feature also passes. See the
++[RustSec advisory](https://rustsec.org/advisories/RUSTSEC-2026-0387.html).
++
+ ## RUSTSEC-2023-0071: rsa timing side channel
+ 
+ - Owner: Salvo maintainers. Review by **2027-01-23**, and whenever certon or its
 ```
 
-**File**: `.github/DEPENDENCY_SECURITY.md` (added, +31/-0)
+**File**: `.github/workflows/release.yml` (modified, +9/-3)
 ```diff
-@@ -0,0 +1,31 @@
-+# Dependency security checks
+@@ -8,9 +8,6 @@ on:
+     tags:
+       - "v*.*.*"
+ 
+-env:
+-  CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_TOKEN }}
+-
+ jobs:
+   publish:
+     runs-on: ubuntu-latest
+@@ -21,7 +18,16 @@ jobs:
+       - name: Install Rust
+         uses: dtolnay/rust-toolchain@stable
+ 
++      - uses: taiki-e/install-action@cargo-audit
 +
-+The root, examples, and fuzz workspaces intentionally ignore Cargo.lock. Security
-+CI generates each lockfile before auditing it, and runs weekly as well as on
-+dependency changes. Existing local lockfiles should be refreshed with
-+`cargo update` before interpreting findings as the current dependency resolution.
++      - name: Audit dependencies before publishing any crate
++        run: |
++          cargo generate-lockfile
++          cargo audit --deny unsound --file Cargo.lock
 +
-+The direct rustls and quinn minimums exclude known vulnerable releases of those
-+packages. The core TLS feature activates rustls as a normal optional dependency,
-+so its minimum also applies to downstream server builds without workspace dev
-+dependencies. CI checks that an isolated downstream TLS application cannot resolve
-+rustls 0.23.40. Transitive dependency findings remain covered by the audit job; raising
-+a direct dependency minimum does not guarantee every transitive version is safe.
-+
-+## RUSTSEC-2023-0071: rsa timing side channel
-+
-+- Owner: Salvo maintainers. Review by **2027-01-23**, and whenever certon or its
-+  cryptographic call sites change.
-+- Applies to the rsa 0.9 dependency of certon 0.3, used by salvo-acme. There is no
-+  patched rsa version listed in the advisory at the time of this review.
-+- certon's crypto module uses rsa for RSA key generation, PKCS#1/PKCS#8 parsing,
-+  and DER encoding. It does not use rsa private-key decryption. TLS signing and
-+  handshakes use rustls with ring/aws-lc instead. Salvo defaults new ACME keys to
-+  ECDSA P-256; applications may explicitly select RSA keys.
-+- This is an audit exception for these reviewed call paths, not a claim that rsa
-+  is fixed or suitable for private-key decryption. Remove the exception when a
-+  fixed version or replacement is available. Reassess it before adding any new
-+  use of rsa, including through other dependencies.
-+
-+All other advisories fail the audit. The workflow checks the exception review
-+date so that it cannot remain unreviewed indefinitely.
+       - name: Publish crates in dependency order
++        env:
++          CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_TOKEN }}
+         shell: bash
+         run: |
+           set -euo pipefail
 ```
 
-**File**: `.github/workflows/security.yml` (added, +69/-0)
+**File**: `.github/workflows/security.yml` (modified, +18/-0)
 ```diff
-@@ -0,0 +1,69 @@
-+name: Dependency security
-+
-+permissions:
-+  contents: read
-+
-+on:
-+  workflow_dispatch:
-+  schedule:
-+    - cron: '0 4 * * 1'
-+  pull_request:
-+    paths:
-+      - '**/Cargo.toml'
-+      - '**/Cargo.lock'
-+      - '.cargo/audit.toml'
-+      - '.github/DEPENDENCY_SECURITY.md'
-+      - '.github/workflows/security.yml'
-+  push:
-+    branches: [main]
-+    paths:
-+      - '**/Cargo.toml'
-+      - '**/Cargo.lock'
-+      - '.cargo/audit.toml'
-+      - '.github/DEPENDENCY_SECURITY.md'
-+      - '.github/workflows/security.yml'
-+
-+jobs:
-+  downstream-tls:
+@@ -28,6 +28,24 @@ on:
+       - '.github/workflows/security.yml'
+ 
+ jobs:
++  downstream-default-jwt:
++    name: Audit isolated default JWT dependencies
 +    runs-on: ubuntu-latest
 +    steps:
 +      - uses: actions/checkout@v6
 +      - uses: dtolnay/rust-toolchain@stable
-+      - name: Verify the rustls minimum without workspace dev dependencies
++      - uses: taiki-e/install-action@cargo-audit
++      - name: Verify the default JWT backend without feature unification
 +        shell: bash
 +        run: |
 +          set -euo pipefail
 +          fixture=$(mktemp -d)
 +          mkdir "$fixture/src"
 +          printf 'fn main() {}\n' > "$fixture/src/main.rs"
-+          printf '[package]\nname = "downstream-tls"\nversion = "0.0.0"\nedition = "2024"\n[workspace]\n[dependencies]\nsalvo_core = { path = "%s/crates/core", default-features = false, features = ["rustls", "ring"] }\n' "$GITHUB_WORKSPACE" > "$fixture/Cargo.toml"
++          printf '[package]\nname = "downstream-default-jwt"\nversion = "0.0.0"\nedition = "2024"\n[workspace]\n[dependencies]\nsalvo-jwt-auth = { path = "%s/crates/jwt-auth" }\n' "$GITHUB_WORKSPACE" > "$fixture/Cargo.toml"
 +          cargo generate-lockfile --manifest-path "$fixture/Cargo.toml"
-+          if cargo update --manifest-path "$fixture/Cargo.toml" -p rustls --precise 0.23.40 > "$fixture/downgrade.log" 2>&1; then
-+            echo 'A downstream TLS application unexpectedly accepted vulnerable rustls'
-+            exit 1
-+          fi
-+          cat "$fixture/downgrade.log"
-+          grep -F 'rustls = "^0.23.46"' "$fixture/downgrade.log"
-+          cargo check --manifest-path "$fixture/Cargo.toml" --locked
++          cargo audit --deny unsound --file "$fixture/Cargo.lock"
 +
-+  audit:
-+    runs-on: ubuntu-latest
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        workspace: ['.', 'examples', 'fuzz']
-+    steps:
-+      - uses: actions/checkout@v6
-+      - uses: dtolnay/rust-toolchain@stable
-+      - uses: taiki-e/install-action@cargo-audit
-+      - name: Require review of the rsa advisory exception
-+        run: |
-+          python3 - <<'PY'
-+          import datetime
-+          if datetime.datetime.now(datetime.timezone.utc).date() > datetime.date(2027, 1, 23):
-+              raise SystemExit('Review the rsa advisory exception in .cargo/audit.toml')
-+          PY
-+      - name: Resolve dependencies and audit
-+        run: |
-+          cargo generate-lockfile --manifest-path '${{ matrix.workspace }}/Cargo.toml'
-+          cargo audit --file '${{ matrix.workspace }}/Cargo.lock'
+   downstream-tls:
+     runs-on: ubuntu-latest
+     steps:
 ```
 
-**File**: `Cargo.toml` (modified, +2/-2)
+**File**: `CHANGELOG.md` (modified, +4/-0)
 ```diff
-@@ -106,7 +106,7 @@ percent-encoding = "2"
- pin-project = "1"
- proc-macro-crate = { version = ">= 2, <= 4" }
- proc-macro2 = "1"
--quinn = { version = "0.11", default-features = false }
-+quinn = { version = "0.11.12", default-features = false }
- quote = "1"
- rand = "0.10"
- rcgen = "0.14"
-@@ -115,7 +115,7 @@ reqwest = { version = "0.13", default-features = false }
- aws-lc-rs = { version = "1", default-features = true }
- ring = "0.17"
- rust_decimal = "1"
--rustls = { version = "0.23", default-features = false }
-+rustls = { version = "0.23.46", default-features = false }
- rust-embed = { version = ">= 6, <= 9" }
- saysion = "0.2"
- serde = "1"
+@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+ 
+ ### Fixed
+ 
++- Audit dependencies before publishing any crate, document the unresolved
++  RustCrypto JWT advisory, and audit an isolated default AWS-LC JWT consumer;
++  the affected backend and release remain blocked.
++
+ - Cancel HTTP/3 request tasks when their connection closes or the server stops
+   forcefully, while allowing accepted requests to finish on graceful shutdown.
+ 
 ```
 
-**File**: `crates/core/Cargo.toml` (modified, +4/-3)
+**File**: `crates/jwt-auth/README.md` (modified, +9/-0)
 ```diff
-@@ -50,15 +50,15 @@ full = [
- ]
- cookie = ["dep:cookie"]
- fix-http1-request-uri = ["http1"]
--aws-lc-rs = ["tokio-rustls?/aws-lc-rs", "quinn?/rustls-aws-lc-rs"]
--ring = ["tokio-rustls?/ring", "quinn?/rustls-ring"]
-+aws-lc-rs = ["rustls?/aws_lc_rs", "tokio-rustls?/aws-lc-rs", "quinn?/rustls-aws-lc-rs"]
-+ring = ["rustls?/ring", "tokio-rustls?/ring", "quinn?/rustls-ring"]
- server = []
- server-handle = []
- http1 = ["hyper/http1"]
- http2 = ["hyper/http2"]
- http2-cleartext = ["http2"]
- quinn = ["dep:salvo-http3", "dep:quinn", "dep:h3-datagram", "rustls"]
--rustls = ["dep:tokio-rustls", "dep:arc-swap"]
-+rustls = ["dep:rustls", "dep:tokio-rustls", "dep:arc-swap"]
- native-tls = ["dep:tokio-native-tls", "dep:native-tls", "dep:arc-swap"]
- openssl = ["dep:openssl", "dep:tokio-openssl", "dep:arc-swap"]
- unix = ["http1", "dep:nix"]
-@@ -115,6 +115,7 @@ quinn = { workspace = true, optional = true, default-features = false, features
- ] }
- rand = { workspace = true }
- regex = { workspace = true }
-+rustls = { workspace = true, optional = true }
- salvo-http3 = { workspace = true, optional = true, features = ["quinn"] }
- salvo_macros = { workspace = true }
- hyper-util = { workspace = true, features = ["tokio"] }
-```
-
-**File**: `crates/core/src/conn/rustls.rs` (modified, +5/-5)
-```diff
-@@ -2,9 +2,9 @@
- use std::io::{Error as IoError, Result as IoResult};
- use std::sync::Arc;
+@@ -62,6 +62,15 @@ RustCrypto provider for JWTs instead, disable Salvo's default features and
+ select `jwt-auth-ring`. The separate `ring` feature selects ring for Salvo's
+ rustls integration:
  
--use tokio_rustls::rustls::RootCertStore;
--use tokio_rustls::rustls::crypto::CryptoProvider;
--use tokio_rustls::rustls::pki_types::{CertificateDer, pem::PemObject};
-+use rustls::RootCertStore;
-+use rustls::crypto::CryptoProvider;
-+use rustls::pki_types::{CertificateDer, pem::PemObject};
- 
- pub(crate) mod config;
- pub use config::{Keycert, RustlsConfig, ServerConfig};
-@@ -42,11 +42,11 @@ pub fn default_crypto_provider() -> Arc<CryptoProvider> {
- 
-     #[cfg(any(feature = "aws-lc-rs", not(feature = "ring")))]
-     {
--        Arc::new(tokio_rustls::rustls::crypto::aws_lc_rs::default_provider())
-+        Arc::new(rustls::crypto::aws_lc_rs::default_provider())
-     }
-     #[cfg(all(not(feature = "aws-lc-rs"), feature = "ring"))]
-     {
--        Arc::new(tokio_rustls::rustls::crypto::ring::default_provider())
-+        Arc::new(rustls::crypto::ring::default_provider())
-     }
- }
- 
++**Current dependency limitation:** the RustCrypto JWT backend selected by
++`jwt-auth-ring` still resolves crypto-bigint 0.5 through jsonwebtoken 11.1's
++p256/p384 dependencies and is affected by
++[RUSTSEC-2026-0387](https://rustsec.org/advisories/RUSTSEC-2026-0387.html).
++There is no Salvo audit exception for it. Prefer the default AWS-LC JWT backend
++where suitable, audit your application's final lockfile, and see the repository's
++[dependency security policy](../../.github/DEPENDENCY_SECURITY.md) for the upstream
++blocker. The alternative configuration below retains this unresolved dependency.
++
+ ```toml
+ salvo = { version = "*", default-features = false, features = [
+     "server",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1754** (2026-10-23): Preserve Salvo context across Tower short circuits and cancellation (@chrislearn)
-- **PR #1753** (2026-10-23): Bound multipart part and file counts (@chrislearn)
-- **PR #1752** (2026-10-23): Refresh parsed request caches after Tower rewrites (@chrislearn)
-- **PR #1751** (2026-10-23): Log response status after Service finalization (@chrislearn)
-- **PR #1750** (2026-10-23): Omit query strings from empty-response warnings (@chrislearn)
-- **PR #1749** (2026-10-23): Enforce If-Match preconditions for embedded assets (@chrislearn)
+- **PR #1772** (2026-10-28): Raise minimum supported Rust version to 1.95 (@chrislearn)
+- **PR #1771** (2026-10-28): Add MCP Streamable HTTP integration example (@chrislearn)
+- **PR #1769** (2026-10-28): Reject unsupported querystring derives and preserve numeric constraints (@chrislearn)
+- **PR #1768** (2026-10-28): Keep static directory redirects on the request origin (@chrislearn)
+- **PR #1767** (2026-10-28): Validate OIDC discovery identity and JWK purposes (@chrislearn)
+- **PR #1766** (2026-10-28): Apply request method semantics to ReadSeeker responses (@chrislearn)
 
 ---
 
@@ -2320,13 +2231,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Preserve Salvo context across Tower short circuits and cancellation (#1754)
+## X. Expose client certificates and TLS metadata on requests (#1759)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in salvo-rs/salvo. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `07f55f73`: Preserve Salvo context across Tower short circuits and cancellation (#1754). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2908d718`: Expose client certificates and TLS metadata on requests (#1759). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2334,15 +2245,20 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Recover request, depot and flow state when Tower layers short-circuit, fail or
-  cancel their inner future, preserving HEAD handling and prepared response policy headers.
+### Added
+
+- Expose client certificate chains, SNI and ALPN through `Request::tls_info` for
+  Rustls and Rustls-backed HTTP/3 connections, with an mTLS authorization example.
+
+- Use the same explicit crypto provider for Rustls client certificate verification
+  and server configuration, avoiding ambiguous provider selection with mTLS.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+### Fixed
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `07f55f73` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2908d718` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source**: github ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
-> **Source Version**: `2548bd51`  
+> **Source Version**: `b57c621c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T15:18:58.942Z  
+> **Timestamp**: 2026-10-28T14:56:38.556Z  
 > **Learning ID**: `learn-github-aws-aws-cdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T15:18:58.934Z  
+> **Harvest Timestamp**: 2026-10-28T14:56:38.548Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AWS Cloud Development Kit is a framework for defining cloud infrastructure in code
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12954 stars
+- **Stars / Engagement**: 12957 stars
 
 ---
 
@@ -1203,437 +1203,321 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b190b461` (2026-10-26)
-**Commit Message**: chore(security-guardian): make the detect tests assert the rule they name (#39503)
+### Incident Patch 1: `572387de` (2026-10-27)
+**Commit Message**: chore: fix repository NX config (#39518)
 
-### Issue # (if applicable)
+## Why
 
-None.
+The Nx configuration in this repo had drifted into a state where **nothing was
+cached at all**, and where enabling caching would have produced incorrect build
+results. Both problems are fixed here.
 
-### Reason for this change
+### 1. Caching was silently off
 
-The tool's "should detect" tests pass even without cfn-guard installed. [`runCfnGuardValidation`](https://github.com/aws/aws-cdk/blob/e7429db970d0c181a9eef32a58496535d697432b/tools/@aws-cdk/security-guardian/src/cfn-guard-runner.ts#L83-L91) returns `false` on any error, and the tests only checked that.
+`nx.json` declared cacheability through `tasksRunnerOptions.default.options.cacheableOperations`.
+Nx 23 removed that mechanism, and Nx 24 (what `yarn.lock` resolves to) removes
+even the deprecation fallback. From Nx's own migration source:
 
-### Description of changes
+> Before Nx 23 a hidden `cache: true` still took effect, because cacheability was
+> also derived from target *names* via `cacheableOperations`; Nx 23 removed that
+> derivation and those targets silently stopped being cacheable.
 
-- Each "should detect" test now checks that its rule is reported as failed in the JUnit report, parsed with [`@xmldom/xmldom`](https://www.npmjs.com/package/@xmldom/xmldom). The package is already in `yarn.lock`.
-- The `IAM_NO_WILDCARD_ACTIONS` test now uses its own fixture. Before, it passed only because other IAM rules failed.
-- The README says how to run the tests.
+Two identical back-to-back runs confirmed it:
 
-### Describe any new or updated permissions being added
-
-None.
-
-### Description of how you validated changes
-
-- 71 of 71 tests pass with cfn-guard 3.2.1. Without it, all 6 "should detect" tests fail.
-- These tests run in CI once #39502 merges.
-
-### Checklist
-- [x] My code adheres to the [CONTRIBUTING GUIDE](https://github.com/aws/aws-cdk/blob/ma
-
-**File**: `tools/@aws-cdk/security-guardian/README.md` (modified, +8/-0)
-```diff
-@@ -142,6 +142,14 @@ yarn security-guardian
- > - `--base_sha=origin/main`  
- > - `--rule_set_path=./custom-rules`
- 
-+### 3. Run Tests
-+
-+The tests run the rules with [cfn-guard](https://github.com/aws-cloudformation/cloudformation-guard), so install cfn-guard 3 and put it on your `PATH` first.
-+
-+```bash
-+yarn test
-+```
-+
- ---
- 
- ## Output
+```
+$ npx nx run @aws-cdk/region-info:build
+  Cache: 0/11 hit (0%)     # run 1
+  Cache: 0/11 hit (0%)     # run 2, nothing changed
 ```
 
-**File**: `tools/@aws-cdk/security-guardian/package.json` (modified, +1/-0)
-```diff
-@@ -16,6 +16,7 @@
-   "devDependencies": {
-     "@types/jest": "^29.5.0",
-     "@types/node": "^22.14.1",
-+    "@xmldom/xmldom": "^0.9.12",
-     "jest": "^29.5.0",
-     "ts-jest": "^29.1.0",
-     "ts-node": "^10.9.2",
-```
+So every local build has been rebuilding the world from scratch, and the `--skip-nx-cache`
+flag that `build.sh --ci` passes has been protecting CI from a cache that did not exist.
 
-**File**: `tools/@aws-cdk/security-guardian/test/guard-rules.test.ts` (modified, +17/-9)
-```diff
-@@ -1,10 +1,12 @@
- import { preprocessTemplates } from '../src/template-preprocessor';
- import { runCfnGuardValidation } from '../src/cfn-guard-runner';
-+import { failedRules } from './junit-report';
- import * as fs from 'fs';
- import * as path from 'path';
- 
- describe('Guard Rules Validation', () => {
-   const templatesDir = path.join(__dirname, 'templates');
-+  const ruleFixturesDir = path.join(__dirname, 'rule-fixtures');
-   const outputDir = path.join(__dirname, 'guard-test-output');
-   const rulesDir = path.join(__dirname, '..', 'rules');
- 
-@@ -37,12 +39,13 @@ describe('Guard Rules Validation', () => {
-         path.join(outputDir, 'trust-scope-test.xml'),
-         'Trust Scope',
-         new Map(),
--        true
-+        false
-       );
-       
-       // Should detect broad principals (validation should fail)
-       expect(typeof success).toBe('boolean');
-       expect(success).toBe(false);
-+      expect(failedRules(path.join(outputDir, 'trust-scope-test.xml'))).toContain('IAM_ROLE_NO_BROAD_PRINCIPALS');
-     });
-   });
- 
-@@ -58,19 +61,20 @@ describe('Guard Rules Validation', () => {
-         path.join(outputDir, 'resource-policy-test.xml'),
-         'Resource Policy',
-         new Map(),
--        true
-+        false
-       );
-       
-       // Should detect root principals without conditions (validation should fail)
-       expect(typeof success).toBe('boolean');
-       expect(success).toBe(false);
-+      expect(failedRules(path.join(outputDir, 'resource-policy-test.xml'))).toContain('RESOURCE_POLICY_ROOT_PRINCIPAL_NEEDS_CONDITIONS');
-     });
-   });
- 
-   describe('IAM Rules', () => {
--    test('IAM_NO_WILDCARD_ACTIONS - should validate existing templates for wildcard actions', async () => {
--      // Process existing templates that may contain IAM policies
--      preprocessTemplates(templatesDir, outputDir);
-+    test('IAM_NO_WILDCARD_ACTIONS - should detect wildcard actions in IAM policies', async () => {
-+      // Process the rule's own fixtures; no template in test/templates uses a wildcard action
-+      preprocessTemplates(path.join(ruleFixturesDir, 'iam/iam-no-wildcard-actions'), outputDir);
-       
-       // Run validation with IAM rules
-       const success = await runCfnGuardValidation(
-@@ -79,12 +83,13 @@ describe('Guard Rules Validation', () => {
-         path.join(outputDir, 'iam-test.xml'),
-         'IAM',
-         new Map(),
--        true
-+        false
-       );
-       
-       // Should detect IAM violations (validation should fail)
-       expect(typeof success).toBe('boolean');
-       expect(success).toBe(false);
-+      expect(failedRules(path.join(outputDir, 'iam-test.xml'))).toContain('IAM_NO_WILDCARD_ACTIONS');
-     });
- 
-     describe('IAM_NO_WORLD_ACCESSIBLE_TRUST_POLICY', () => {
-@@ -99,11 +104,12 @@ describe('Guard Rules Validation', () => {
-           path.join(outputDir, 'world-accessible-static-test.xml'),
-           'World Accessible Static',
-           new Map(),
--          true
-+          false
-         );
-         
-         // Should detect world-accessible trust policies (validation should fail)
-         expect(success).toBe(false);
-+        expect(failedRules(path.join(outputDir, 'world-accessible-static-test.xml'))).toContain('IAM_NO_WORLD_ACCESSIBLE_TRUST_POLICY');
-       });
- 
-       test('Resolved: should detect Principal: "*" after intrinsic resolution', async () => {
-@@ -117,11 +123,12 @@ describe('Guard Rules Validation', () => {
-           path.join(outputDir, 'world-accessible-resolved-test.xml'),
-           'World Accessible Resolved',
-           new Map(),
--          true
-+          false
-         );
-         
-         // Should detect world-accessible trust policies (validation should fail)
-         expect(success).toBe(false);
-+        expect(failedRules(path.join(outputDir, 'world-accessible-resolved-test.xml'))).toContain('IAM_NO_WORLD_ACCESSIBLE_TRUST_POLICY');
-       });
- 
-       test('Static: should not flag intrinsic functions as world-accessible', async () => {
-@@ -196,12 +203,13 @@ describe('Guard Rules Validation', () => {
-         path.join(outputDir, 'root-principal-test.xml'),
-         'Root Principal',
-         new Map(),
--        true
-+        false
-       );
-       
-       // Should detect root principals without conditions (validation should fail)
-       expect(typeof success).toBe('boolean');
-       expect(success).toBe(false);
-+      expect(failedRules(path.join(outputDir, 'root-principal-test.xml'))).toContain('IAM_ROLE_ROOT_PRINCIPAL_NEEDS_CONDITIONS');
-     });
-   });
- 
-```
+### 2. The declared inputs were simultaneously too broad and far too narrow
 
-**File**: `tools/@aws-cdk/security-guardian/test/junit-report.ts` (added, +21/-0)
+The `bu
+
+**File**: `nx.json` (modified, +53/-45)
 ```diff
-@@ -0,0 +1,21 @@
-+import { DOMParser } from '@xmldom/xmldom';
-+import * as fs from 'fs';
-+
-+function readReport(junitFile: string) {
-+  const xml = fs.readFileSync(junitFile, 'utf8');
-+  if (xml.trim() === '') {
-+    throw new Error(`cfn-guard wrote no JUnit report to ${junitFile} (is cfn-guard on PATH?)`);
-+  }
-+  return new DOMParser().parseFromString(xml, 'text/xml');
-+}
-+
-+/**
-+ * Names of the rules that failed in a cfn-guard JUnit report.
-+ *
-+ * Needs a report written with enhanceXml disabled: only then is each failure
-+ * message the rule name (prefixed with "[Type: <type>] ").
-+ */
-+export function failedRules(junitFile: string): string[] {
-+  return Array.from(readReport(junitFile).getElementsByTagName('failure'))
-+    .map(failure => (failure.getAttribute('message') ?? '').replace(/^\[Type: [^\]]*\] /, ''));
+@@ -1,63 +1,82 @@
+ {
++  "$schema": "./node_modules/nx/schemas/nx-schema.json",
++  "extends": "@nx/workspace/presets/npm.json",
++  "workspaceLayout": {},
++  "namedInputs": {
++    "$comment": [
++      "'default' is '{projectRoot}/**/*' plus 'sharedGlobals'. Nx's file walker honours",
++      ".gitignore, and every build artifact in this repo is gitignored, so this",
++      "automatically means 'all sources, no artifacts'. Do NOT replace it with an",
++      "allow-list of directories or extensions: builds here consume .ts, .json, .py,",
++      ".md (Rosetta), .ts-fixture, .yaml, .sh, Dockerfiles and package.json, and a",
++      "'lib/*.ts'-style glob silently misses everything in a subdirectory of lib/."
++    ],
++    "sharedGlobals": [
++      "{workspaceRoot}/package.json",
++      "{workspaceRoot}/yarn.lock",
++      "{workspaceRoot}/version.v2.json",
++      "{workspaceRoot}/release.json",
++      "{workspaceRoot}/scripts/resolve-version.js",
++      "{workspaceRoot}/scripts/resolve-version-lib.js"
++    ],
++    "default": [
++      "{projectRoot}/**/*",
++      "sharedGlobals"
++    ],
++    "production": [
++      "default"
++    ]
++  },
+   "targetDefaults": {
+     "build": {
++      "cache": true,
+       "dependsOn": [
+         "^build"
+       ],
+       "inputs": [
+-        "{projectRoot}/**/bin/!(*.d|*.generated).ts",
+-        "{projectRoot}/**/lib/!(*.d|*.generated).ts",
+-        "{projectRoot}/**/test/!(*.d).ts",
+-        "!{workspaceRoot}/**/tsconfig.json",
+-        "!{workspaceRoot}/**/tsconfig.json",
+-        "!{workspaceRoot}/tsconfig.base.json",
+-        "!{workspaceRoot}/**/tsconfig.tsbuildinfo",
+-        "!{workspaceRoot}/**/jest.config.js"
++        "default",
++        "^default"
+       ],
+       "outputs": [
+-        "{projectRoot}/**/*.integ.*.js.snapshot/*",
+         "{projectRoot}/tsconfig.json",
+-        "{projectRoot}/**/lib/aws-custom-resource/sdk-v2-to-v3.json",
+-        "{projectRoot}/**/lib/aws-custom-resource/sdk-v3-metadata.json",
+-        "{projectRoot}/**/build-info.json",
++        "{projectRoot}/tsconfig.tsbuildinfo",
++        "{projectRoot}/.jsii",
++        "{projectRoot}/.jsii.gz",
++        "{projectRoot}/.warnings.jsii.js",
++        "{projectRoot}/**/dist/**/*.py",
++        "{projectRoot}/interfaces/generated/**/*",
++        "{projectRoot}/cloudformation-include/cfn-types-2-classes.json",
+         "{projectRoot}/**/*.js",
+         "{projectRoot}/**/*.js.map",
+         "{projectRoot}/**/*.d.ts",
+-        "{projectRoot}/**/lib/layer.zip",
++        "{projectRoot}/**/*.d.ts.map",
+         "{projectRoot}/**/*.generated.ts",
++        "{projectRoot}/**/*.generated.json",
+         "{projectRoot}/**/built-ins.generated/*",
++        "{projectRoot}/**/lib/layer.zip",
++        "{projectRoot}/**/lib/aws-custom-resource/sdk-v2-to-v3.json",
++        "{projectRoot}/**/lib/aws-custom-resource/sdk-v3-metadata.json",
++        "{projectRoot}/**/build-info.json",
+         "{projectRoot}/**/schema/*.json",
+-        "{projectRoot}/**/.jsii",
+-        "{projectRoot}/**/.jsii.gz",
+         "{projectRoot}/**/spec/*.json",
+-        "{projectRoot}/**/.warnings.jsii.js"
++        "!{projectRoot}/node_modules/**/*",
++        "!{projectRoot}/**/*.snapshot/**/*"
+       ]
+     },
+     "test": {
++      "cache": true,
+       "dependsOn": [
+         "build"
+       ],
+       "inputs": [
+-        "{projectRoot}/**/test/!(*.d|*.generated).ts"
++        "default",
++        "^default"
++      ],
++      "outputs": [
++        "{projectRoot}/coverage/**/*"
+       ]
+     }
+   },
+-  "extends": "@nx/workspace/presets/npm.json",
+-  "workspaceLayout": {},
+-  "tasksRunnerOptions": {
+-    "default": {
+-      "runner": "@nx/workspace/tasks-runners/default",
+-      "options": {
+-        "cacheableOperations": [
+-          "build",
+-          "test",
+-          "lint",
+-          "package",
+-          "prepare"
+-        ]
+-      }
+-    }
+-  },
+   "affected": {
+     "defaultBase": "main"
+   },
+@@ -66,16 +85,5 @@
+       "analyzeSourceFiles": false
+     }
+   },
+-  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+-  "namedInputs": {
+-    "default": [
+-      "{projectRoot}/**/*",
+-      "sharedGlobals"
+-    ],
+-    "sharedGlobals": [],
+-    "production": [
+-      "default"
+-    ]
+-  },
+   "analytics": false
+-}
+\ No newline at end of file
 +}
 ```
 
-**File**: `tools/@aws-cdk/security-guardian/test/rule-fixtures/iam/iam-no-wildcard-actions/non-compliant.json` (added, +20/-0)
+**File**: `packages/@aws-cdk/custom-resource-handlers/scripts/generate.ts` (modified, +15/-4)
 ```diff
-@@ -0,0 +1,20 @@
-+{
-+  "Description": "IAM_NO_WILDCARD_ACTIONS fires: the managed policy allows a service-wide wildcard action",
-+  "Resources": {
-+    "WildcardActionPolicy": {
-+      "Type": "AWS::IAM::ManagedPolicy",
-+      "Properties": {
-+        "PolicyDocument": {
-+          "Version": "2012-10-17",
-+          "Statement": [
-+            {
-+              "Effect": "Allow",
-+              "Action": "s3:*",
-+              "Resource": "arn:aws:s3:::example-bucket/*"
-+            }
-+          ]
-+        }
-+      }
-+    }
-+  }
+@@ -10,6 +10,13 @@ import { HandlerFrameworkModule } from '../lib/custom-resources-framework/framew
+ const framework: { [fqn: string]: ComponentProps[] } = {};
+ 
+ async function main() {
++  // Everything under dist/ is produced below, and `calculateDirectoryHash` hashes
++  // the handler directories as they are found on disk. Leftovers from an earlier
++  // build (e.g. after switching branches) would therefore change the asset hash
++  // baked into the generated code, making this script's output depend on state
++  // rather than only on its inputs. Start from empty so a build is reproducible.
++  fs.rmSync('dist', { recursive: true, force: true });
++
+   recurse(config, []);
+ 
+   for (const [fqn, components] of Object.entries(framework)) {
+@@ -156,7 +163,11 @@ function ignoreWarnings(result: esbuild.BuildResult) {
+   return ret;
+ }
+ 
+-main().catch((e) => {
+-  console.error(e);
+-  process.exitCode = 1;
+-});
++// Only generate when run as a script: tests import helpers from this file, and
++// must not regenerate (and wipe) dist/ while dependent packages are reading it.
++if (require.main === module) {
++  main().catch((e) => {
++    console.error(e);
++    process.exitCode = 1;
++  });
 +}
 ```
 
----
-
-### Incident Patch 2: `e7453546` (2026-10-26)
-**Commit Message**: chore(security-guardian): run the tool's tests on pull requests (#39502)
-
-### Issue # (if applicable)
-
-None.
-
-### Reason for this change
-
-The Security Guardian tool's tests don't run in CI. The package isn't in [`lerna.json`](https://github.com/aws/aws-cdk/blob/e7429db970d0c181a9eef32a58496535d697432b/lerna.json), and [`security-guardian.yml`](https://github.com/aws/aws-cdk/blob/e7429db970d0c181a9eef32a58496535d697432b/.github/workflows/security-guardian.yml#L52-L53) only builds the tool.
-
-### Description of changes
-
-- Add [`security-guardian-tests.yml`](https://github.com/aws/aws-cdk/blob/f8d940ff240ce4d51e345d1cc6bb6075d39462bf/.github/workflows/security-guardian-tests.yml). It builds and tests the tool on pull requests that change the tool, this workflow, `yarn.lock` or `package.json`.
-- It tests the pull request's own code, installs cfn-guard the same way as the scan, and uses Node.js 24, which GitHub runs the action with.
-- Its name differs from "Security Guardian", so it doesn't trigger the Security Report workflow.
-
-### Describe any new or updated permissions being added
-
-None.
-
-### Description of how you validated changes
-
-- [This PR's run](https://github.com/aws/aws-cdk/ac
-
-**File**: `.github/workflows/security-guardian-tests.yml` (added, +50/-0)
+**File**: `packages/@aws-cdk/cx-api/package.json` (modified, +12/-6)
 ```diff
-@@ -0,0 +1,50 @@
-+# Builds and unit-tests the Security Guardian tool when a pull request changes it
-+# or the root dependencies, which pin the tool's jest and ts-jest.
-+# security-guardian.yml checks out the base branch; this workflow uses the default
-+# checkout (the pull request merge commit), so it tests the pull request's own code.
-+name: Security Guardian Tests
-+on:
-+  pull_request:
-+    paths:
-+      - 'tools/@aws-cdk/security-guardian/**'
-+      - '.github/workflows/security-guardian-tests.yml'
-+      - 'yarn.lock'
-+      - 'package.json'
-+
-+permissions:
-+  contents: read
-+
-+jobs:
-+  test:
-+    runs-on: ubuntu-latest
-+    timeout-minutes: 30
-+    steps:
-+      - name: Checkout
-+        uses: actions/checkout@v7
-+        with:
-+          persist-credentials: false
-+
-+      # GitHub runs the Security Guardian action (action.yml: node20) on Node.js 24
-+      - name: Set up Node
-+        uses: actions/setup-node@v7
-+        with:
-+          node-version: "24"
-+
-+      # The rule tests run the same cfn-guard release as the Security Guardian scan
-+      - name: Install cfn-guard
-+        run: |
-+          mkdir -p "$HOME/.local/bin"
-+          curl -L -o cfn-guard.tar.gz https://github.com/aws-cloudformation/cloudformation-guard/releases/latest/download/cfn-guard-v3-x86_64-ubuntu-latest.tar.gz
-+          tar -xzf cfn-guard.tar.gz
-+          mv cfn-guard-v3-*/cfn-guard "$HOME/.local/bin/cfn-guard"
-+          chmod +x "$HOME/.local/bin/cfn-guard"
-+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-+
-+      - name: Install & Build security-guardian
-+        run: yarn install --frozen-lockfile && cd tools/@aws-cdk/security-guardian && yarn build
-+
-+      - name: Test security-guardian
-+        run: |
-+          cfn-guard --version
-+          cd tools/@aws-cdk/security-guardian
-+          yarn test --ci
+@@ -8,18 +8,24 @@
+     "targets": {
+       "build": {
+         "outputs": [
+-          "{projectRoot}/**/*.js",
+-          "{projectRoot}/**/*.d.ts",
++          "{projectRoot}/lib/**/*",
++          "{projectRoot}/test/**/*",
++          "{projectRoot}/build-tools/**/*",
++          "{projectRoot}/design/**/*",
++          "{projectRoot}/rosetta/**/*",
++          "{projectRoot}/README.md",
++          "{projectRoot}/FEATURE_FLAGS.md",
++          "{projectRoot}/.jsiirc.json",
+           "{projectRoot}/.jsii",
++          "{projectRoot}/.jsii.gz",
+           "{projectRoot}/.warnings.jsii.js",
+-          "{projectRoot}/.gitignore",
+           "{projectRoot}/tsconfig.json",
+-          "{projectRoot}/README.md",
+-          "{projectRoot}/rosetta",
++          "{projectRoot}/tsconfig.tsbuildinfo",
+           "!{projectRoot}/node_modules/**/*"
+         ]
+       }
+-    }
++    },
++    "$comment": "This package is a cdk-copy of the same-named aws-cdk-lib submodule: nearly its entire content, including its .ts sources, is a build output. Inputs come from aws-cdk-lib via the ^default input in nx.json."
+   },
+   "jsii": {
+     "excludeTypescript": [
 ```
 
----
-
-### Incident Patch 3: `155d8ed0` (2026-10-26)
-**Commit Message**: chore(deps): bump postcss-selector-parser from 6.1.4 to 6.1.5 in the npm_and_yarn group across 1 directory (#39500)
-
-Bumps the npm_and_yarn group with 1 update in the / directory: [postcss-selector-parser](https://github.com/postcss/postcss-selector-parser).
-
-Updates `postcss-selector-parser` from 6.1.4 to 6.1.5
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a href="https://github.com/postcss/postcss-selector-parser/releases">postcss-selector-parser's releases</a>.</em></p>
-<blockquote>
-<h2>6.1.5</h2>
-<ul>
-<li>fix: parse flat selectors in linear time, closing a CPU exhaustion vulnerability (<a href="https://github.com/advisories/GHSA-rj75-hqrm-r3gf">CVE-2026-104844</a> / GHSA-rj75-hqrm-r3gf, reported by Wayde Shi), backported from 7.1.6 (<a href="https://redirect.github.com/postcss/postcss-selector-parser/pull/346">#346</a> by <a href="https://github.com/bradyshutt"><code>@​bradyshutt</code></a>)</li>
-</ul>
-<h3>The 6.x line is now in security-only maintenance</h3>
-<p>This release exists because the advisory above covers every published 6.x
-version, and until now the only remediation on offer was an upgrade to 7.x.
-<strong>6.1.5 is the patched version for the 6.x li
-
-**File**: `package.json` (modified, +1/-1)
+**File**: `packages/@aws-cdk/region-info/package.json` (modified, +12/-6)
 ```diff
-@@ -33,7 +33,7 @@
-     "jsii-reflect": "1.142.0",
-     "jsii-rosetta": "~6.0.20",
-     "lerna": "^8.2.4",
--    "nx": "^23",
-+    "nx": "^24",
-     "semver": "^7.8.5",
-     "standard-version": "^9.5.0",
-     "ts-jest": "^29.4.15",
+@@ -8,18 +8,24 @@
+     "targets": {
+       "build": {
+         "outputs": [
+-          "{projectRoot}/**/*.js",
+-          "{projectRoot}/**/*.d.ts",
++          "{projectRoot}/lib/**/*",
++          "{projectRoot}/test/**/*",
++          "{projectRoot}/build-tools/**/*",
++          "{projectRoot}/design/**/*",
++          "{projectRoot}/rosetta/**/*",
++          "{projectRoot}/README.md",
++          "{projectRoot}/FEATURE_FLAGS.md",
++          "{projectRoot}/.jsiirc.json",
+           "{projectRoot}/.jsii",
++          "{projectRoot}/.jsii.gz",
+           "{projectRoot}/.warnings.jsii.js",
+-          "{projectRoot}/.gitignore",
+           "{projectRoot}/tsconfig.json",
+-          "{projectRoot}/README.md",
+-          "{projectRoot}/rosetta",
++          "{projectRoot}/tsconfig.tsbuildinfo",
+           "!{projectRoot}/node_modules/**/*"
+         ]
+       }
+-    }
++    },
++    "$comment": "This package is a cdk-copy of the same-named aws-cdk-lib submodule: nearly its entire content, including its .ts sources, is a build output. Inputs come from aws-cdk-lib via the ^default input in nx.json."
+   },
+   "jsii": {
+     "excludeTypescript": [
 ```
 
-**File**: `yarn.lock` (modified, +62/-167)
+**File**: `packages/aws-cdk-lib/aws-s3-assets/test/asset.test.ts` (modified, +7/-0)
 ```diff
-@@ -3866,100 +3866,100 @@
-   resolved "https://registry.npmjs.org/@nx/nx-darwin-arm64/-/nx-darwin-arm64-20.8.4.tgz#80a8dfa808d3e0749ac2a7b90683ca9dfd38f999"
-   integrity sha512-8Y7+4wj1qoZsuDRpnuiHzSIsMt3VqtJ0su8dgd/MyGccvvi4pndan2R5yTiVw/wmbMxtBmZ6PO6Z8dgSIrMVog==
+@@ -335,6 +335,13 @@ test('nested assemblies share assets: default synth edition', () => {
+ });
  
--"@nx/nx-darwin-arm64@23.3.1":
--  version "23.3.1"
--  resolved "https://registry.npmjs.org/@nx/nx-darwin-arm64/-/nx-darwin-arm64-23.3.1.tgz#51231d136bf5432f249a4faa86f4192ecc86fa33"
--  integrity sha512-T3KOTrUIdWaqlIIMyusbpKHujXTumoltkYwBjqjw9Py6Fb3c8Eb7uvWVW6dP8ODknqr9oEcTlk+C8Nid+bunAQ==
-+"@nx/nx-darwin-arm64@24.0.0":
-+  version "24.0.0"
-+  resolved "https://registry.npmjs.org/@nx/nx-darwin-arm64/-/nx-darwin-arm64-24.0.0.tgz#90df1d05ecd762e3db453cca3a80859c6dae9a24"
-+  integrity sha512-ZHXmqkMVF7aA6QShvc5lVkCU6JHjGV19m8eplw0pL06AFgNdQ9u16013HJPm+Ys6fKnltYDWl/Ef7meQjT+u3Q==
+ describe('staging', () => {
++  // These tests chdir into a temp dir. Jest reuses the worker process across test
++  // files, so restore cwd or later files (e.g. aws-s3/test/validation.test.ts,
++  // which renders paths relative to cwd) fail depending on scheduling.
++  let originalCwd: string;
++  beforeEach(() => { originalCwd = process.cwd(); });
++  afterEach(() => { process.chdir(originalCwd); });
++
+   test('copy file assets under <outdir>/${fingerprint}.ext', () => {
+     const tempdir = mkdtempSync();
+     process.chdir(tempdir); // change current directory to somewhere in /tmp
+```
+
+**File**: `packages/aws-cdk-lib/scripts/airlift-custom-resource-handlers.sh` (modified, +4/-0)
+```diff
+@@ -43,4 +43,8 @@ function recurse() {
+   done
+ }
  
- "@nx/nx-darwin-x64@20.8.4":
-   version "20.8.4"
-   resolved "https://registry.npmjs.org/@nx/nx-darwin-x64/-/nx-darwin-x64-20.8.4.tgz#59a2a7ca04c45648e4829cbc453e53dbef654317"
-   integrity sha512-2lfuxRc56QWnAysMhcD03tpCPiRzV1+foUq0MhV2sSBIybXmgV4wHLkPZNhlBCl4FNXrWiZiN1OJ2X9AGiOdug==
- 
--"@nx/nx-darwin-x64@23.3.1":
--  version "23.3.1"
--  resolved "https://registry.npmjs.org/@nx/nx-darwin-x64/-/nx-darwin-x64-23.3.1.tgz#bc3d73144279f6de18f2e400ec73ef5e27840bcd"
--  integrity sha512-GnbMF9xEGIdUI/7KoQdcTILWmRUrMLbbFi3CO8KgKcA1Be7eaoeKdgBQoCQ2yF7r7DyQOR1PXp7sF3s7gqUATQ==
-+"@nx/nx-darwin-x64@24.0.0":
-+  version "24.0.0"
-+  resolved "https://registry.npmjs.org/@nx/nx-darwin-x64/-/nx-darwin-x64-24.0.0.tgz#d8b651e2b1b777df8630da5e3bcc31d32c799642"
-+  integrity sha512-a+cpg/VQvD/vF7BJsl70vulc1GxCamtU0XwzkGOzzDATn3JcKBNpBFx0Iqp5frJYN0X00Supz4zhgCEe9LpCow==
- 
- "@nx/nx-freebsd-x64@20.8.4":
-   version "20.8.4"
-   resolved "https://registry.npmjs.org/@nx/nx-freebsd-x64/-/nx-freebsd-x64-20.8.4.tgz#3905826ac68a0bc226266b858564b1e68c7223af"
-   integrity sha512-99vnUXZy+OUBHU+8Yhabre2qafepKg9GKkQkhmXvJGqOmuIsepK7wirUFo2PiVM8YhS6UV2rv6hKAZcQ7skYyg==
- 
--"@nx/nx-freebsd-x64@23.3.1":
--  version "23.3.1"
--  resolved "https://registry.npmjs.org/@nx/nx-freebsd-x64/-/nx-freebsd-x64-23.3.1.tgz#58003c3611fad85f781af2b844d1ff1d4807b272"
--  integrity sha512-RzLx1pVL/MQQ/fSreMFIufAfsrj/TpD1+69n5kBcr3An2FaqKdQ6BhKLWRlAeOSKq6Su75Y0la8e2AU5zlmdpw==
-+"@nx/nx-freebsd-x64@24.0.0":
-+  version "24.0.0"
-+  resolved "https://registry.npmjs.org/@nx/nx-freebsd-x64/-/nx-freebsd-x64-24.0.0.tgz#8244b7c3f9ea44bab09c1cf17f295f346c7ccd10"
-+  integrity sha512-PAGVaLbJxEzBXSQvg82g/8mDoqoMQFIX/EchuJbJGekIiz3BM2Xgyiy5qAD2/2meLVOTFtbkBQR+4ZSymgqGWw==
- 
- "@nx/nx-linux-arm-gnueabihf@20.8.4":
-   version "20.8.4"
-   resolved "https://registry.npmjs.org/@nx/nx-linux-arm-gnueabihf/-/nx-linux-arm-gnueabihf-20.8.4.tgz#8c3dc73f17f064e10f98baca4f704fb1c015ebee"
-   integrity sha512-dht73zpnpzEUEzMHFQs4mfiwZH3WcJgQNWkD5p7WkeJewHq2Yyd0eG5Jg3kB7wnFtwPUV1eNJRM5rephgylkLA==
- 
--"@nx/nx-linux-arm-gnueabihf@23.3.1":
--  version "23.3.1"
--  resolved "https://registry.npmjs.org/@nx/nx-linux-arm-gnueabihf/-/nx-linux-arm-gnueabihf-23.3.1.tgz#ed8dfe436ce7c4167479be2e99101f708c792d42"
--  integrity sha512-/K7ig9xL4FMO2eQovTSLtk4QR7d0phbKoWf1wYQZ2r0ZrHNo2gPYmS8wU0Ci4d6oSiqa2fdeHKVDtEvWldTBaQ==
-+"@nx/nx-linux-arm-gnueabihf@24.0.0":
-+  version "24.0.0"
-+  resolved "https://registry.npmjs.org/@nx/nx-linux-arm-gnueabihf/-/nx-linux-arm-gnueabihf-24.0.0.tgz#f038c5522ec3b5f6b9fc5b8aa1e4b2a75071486b"
-+  integrity sha512-WOWBIlTb+1FNP86GcodUF4BHdjVyGCwrVH/lqUvNAmT/FPopirCzVLdoj1P5kfWC/F0II/qAu7X698yKzIu71A==
- 
- "@nx/nx-linux-arm64-gnu@20.8.4":
-   version "20.8.4"
-   resolved "https://registry.npmjs.org/@nx/nx-linux-arm64-gnu/-/nx-linux-arm64-gnu-20.8.4.tgz#986a01154212da2b9946117ae1b5bd4aa1d00775"
-   integrity sha512-syXxbJZ0yPaqzVmB28QJgUtaarSiW/PQmv/5Z2Ps8rCi7kYylISPVNjP1NNiIOcGDRWbHqoBfM0bEGPfSp0rBQ==
- 
--"@nx/nx-linux-arm64-gnu@23.3.1":
--  version "23.3.1"
--  resolved "https://registry.npmjs.org/@nx/nx-linux-arm64-gnu/-/nx-linux-arm64-gnu-23.3.1.tgz#a2ba4f91a9fdfb4b016bd4adfdbf7b8810e006e3"
--  integrity sha512-Uj3xl5aLXUV6EQ/vWbZBqMqZO9K58CxRIsMTISC1+LxjvGnf4uUL73ObTi3K1eih3f1CVCGsU95LF3Kf6T2Frw==
-+"@nx/nx-linux-arm64-gnu@24.0.0":
-+  version "24.0.0"
-+  resolved "https://registry.npmjs.org/@nx/nx-linux-arm64-gnu/-/nx-linux-arm64-gnu-24.0.0.tgz#6d41543cb8e87828d48c4bb62b8c6ea02521bb28"
-+  integrity sha512-vASWIfOijXd5cdOn0Z6Wcd2iwtFxlBoBre6w+c8wuLLLPN3r4SRQyL+jAEB+eHkUHz39mMxSwa8DY+VlS9luVw==
- 
- "@nx/nx-linux-arm64-musl@20.8.4":
-   version "20.8.4"
-   resolved "https://registry.npmjs.org/@nx/nx-linux-arm64-musl/-/nx-linux-arm64-musl-20.8.4.tgz#2c302efd47bd117cadbf2a2e6bf2aad7772665c4"
-   integrity sha512-AlZZFolS/S0FahRKG7rJ0Z9CgmIkyzHgGaoy3qNEMDEjFhR3jt2ZZSLp90W7zjgrxojOo90ajNMrg2UmtcQRDA==
- 
--"@nx/nx-linux-arm64-musl@23.3.1":
--  version "23.3.1"
--  resolved "https://registry.npmjs.org/@nx/nx-linux-arm64-musl/-/nx-linux-arm64-musl-23.3.1.tgz#e8608e746e5d6475364eae6029752664f59d9b0c"
--  integrity sha512-woeNHutXYgiWU0SQnvKQ4VNgVbqwy1uer6bS0HF2RbfN80HglsjhtzTAUZ
++# Both destinations are produced entirely by this script; clear them so handlers
++# left over from an earlier build (e.g. another branch) are not shipped or cached.
++rm -rf $awscdklibdir/custom-resource-handlers/dist $awscdklibdir/core/lib/dist
++
+ recurse $customresourcedir/dist
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #39540** (2026-10-28): chore: npm-check-updates && yarn upgrade (@aws-cdk-automation)
+- **PR #39518** (2026-10-27): chore: fix repository NX config (@rix0rrr)
 - **PR #39515** (closed): chore(deps): bump @aws-cdk/lambda-layer-kubectl-v36 to 2.0.1 (@aemada-aws)
 - **PR #39507** (2026-10-26): chore(merge-back): 2.275.0 (@aws-cdk-automation)
 - **PR #39504** (2026-10-27): chore(security-guardian): remove KINESIS_ENCRYPTION_ENABLED rule (@gasolima)
 - **PR #39503** (2026-10-26): chore(security-guardian): make the detect tests assert the rule they name (@ozelalisen)
-- **PR #39502** (2026-10-26): chore(security-guardian): run the tool's tests on pull requests (@ozelalisen)
-- **PR #39500** (2026-10-26): chore(deps): bump postcss-selector-parser from 6.1.4 to 6.1.5 in the npm_and_yarn group across 1 directory (@dependabot[bot])
 
 ---
 
@@ -1653,35 +1537,93 @@ version, and until now the only remediation on offer was an upgrade to 7.x.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. security-guardian): make the detect tests assert the rule they name (#39503)
+## X. fix repository NX config (#39518)
 
 **RULE**:
-When implementing operations in `tools/@aws-cdk/security-guardian/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `nx.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b190b461`: security-guardian): make the detect tests assert the rule they name (#39503). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `572387de`: fix repository NX config (#39518). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/@aws-cdk/security-guardian/README.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `nx.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-### 3. Run Tests
-
-The tests run the rules with [cfn-guard](https://github.com/aws-cloudformation/cloudformation-guard), so install cfn-guard 3 and put it on your `PATH` first.
-
-```bash
-yarn test
-```
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "extends": "@nx/workspace/presets/npm.json",
+  "workspaceLayout": {},
+  "namedInputs": {
+    "$comment": [
+      "'default' is '{projectRoot}/**/*' plus 'sharedGlobals'. Nx's file walker honours",
+      ".gitignore, and every build artifact in this repo is gitignored, so this",
+      "automatically means 'all sources, no artifacts'. Do NOT replace it with an",
+      "allow-list of directories or extensions: builds here consume .ts, .json, .py,",
+      ".md (Rosetta), .ts-fixture, .yaml, .sh, Dockerfiles and package.json, and a",
+      "'lib/*.ts'-style glob silently misses everything in a subdirectory of lib/."
+    ],
+    "sharedGlobals": [
+      "{workspaceRoot}/package.json",
+      "{workspaceRoot}/yarn.lock",
+      "{workspaceRoot}/version.v2.json",
+      "{workspaceRoot}/release.json",
+      "{workspaceRoot}/scripts/resolve-version.js",
+      "{workspaceRoot}/scripts/resolve-version-lib.js"
+    ],
+    "default": [
+      "{projectRoot}/**/*",
+      "sharedGlobals"
+    ],
+    "production": [
+      "default"
+    ]
+  },
+      "cache": true,
+        "default",
+        "^default"
+        "{projectRoot}/tsconfig.tsbuildinfo",
 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        "{projectRoot}/**/bin/!(*.d|*.generated).ts",
+        "{projectRoot}/**/lib/!(*.d|*.generated).ts",
+        "{projectRoot}/**/test/!(*.d).ts",
+        "!{workspaceRoot}/**/tsconfig.json",
+        "!{workspaceRoot}/**/tsconfig.json",
+        "!{workspaceRoot}/tsconfig.base.json",
+        "!{workspaceRoot}/**/tsconfig.tsbuildinfo",
+        "!{workspaceRoot}/**/jest.config.js"
+        "{projectRoot}/**/*.integ.*.js.snapshot/*",
+        "{projectRoot}/**/lib/aws-custom-resource/sdk-v2-to-v3.json",
+        "{projectRoot}/**/lib/aws-custom-resource/sdk-v3-metadata.json",
+        "{projectRoot}/**/build-info.json",
+        "{projectRoot}/**/lib/layer.zip",
+        "{projectRoot}/**/.jsii",
+        "{projectRoot}/**/.jsii.gz",
+        "{projectRoot}/**/.warnings.jsii.js"
+        "{projectRoot}/**/test/!(*.d|*.generated).ts"
+  "extends": "@nx/workspace/presets/npm.json",
+  "workspaceLayout": {},
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "@nx/workspace/tasks-runners/default",
+      "options": {
+        "cacheableOperations": [
+          "build",
+          "test",
+          "lint",
+          "package",
+          "prepare"
+        ]
+      }
+    }
+  },
+  "$schema": "./n
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b190b461` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `572387de` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T14:49:49.187Z",
+  "last_updated": "2026-10-28T14:56:45.037Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3970,8 +3970,8 @@
       "slug": "aws-aws-cdk",
       "platform": "github",
       "source_url": "https://github.com/aws/aws-cdk",
-      "source_version": "2548bd51",
-      "content_hash": "b28a502c2c989784a8c920a075edb2211afdbc4dff1f13e0cf005801b9c466e6",
+      "source_version": "b57c621c",
+      "content_hash": "76982cdb5dccee116f72b90bdc98fbc3af9e28be7fbe37f3c688bd15ff2ae5c2",
       "dossier_path": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "promoted_rules": [
@@ -4009,6 +4009,11 @@
           "number": 4555,
           "title": "docs(eks): explain how to pass null helm chart values from non-typescript langua",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5320,
+          "title": "fix repository NX config (#39518)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4016,7 +4021,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T15:18:59.044Z",
+      "verified_at": "2026-10-28T14:56:38.931Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8397,8 +8402,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "94ffc059",
-      "content_hash": "2db4dd951ba81e5687ae8b5f6089e8427d724bb366f94390b9b4c01b52226277",
+      "source_version": "333cb672",
+      "content_hash": "5fcf496a90878e15b7a690c1c48327da5f5c132c6824baa1235f32e151f0658f",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -8656,6 +8661,11 @@
           "number": 5309,
           "title": "viz): keep blank-qualifier rows in the region-click drill-down (#4953)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5321,
+          "title": "docs(viz gallery): make the WPRDC 2-1-1 and Boston 311 Data Schematics live (#49",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8663,7 +8673,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T14:29:21.572Z",
+      "verified_at": "2026-10-28T14:56:45.022Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23745,7 +23755,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
       "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
-      "content_hash": "e488462a3831525c5bb0dec5c3f81f53d0e688ed8ddb4e51a464733d057ada8c",
+      "content_hash": "8b0c11704806dc4bbf8015994cdfacd9199bec278139e93cdb7b6814b8cc4160",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "promoted_rules": [
@@ -23867,7 +23877,7 @@
         "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv3wsd49",
         "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv4bhyss"
       ],
-      "verified_at": "2026-10-25T20:36:41.627Z",
+      "verified_at": "2026-10-28T14:56:28.539Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44911,8 +44921,8 @@
       "slug": "react-metro",
       "platform": "github",
       "source_url": "https://github.com/react/metro",
-      "source_version": "43cc1e3c",
-      "content_hash": "24bba216d8fc133eb2d3280177f96ed789bf77476144c6b5fee731f17989ed23",
+      "source_version": "492872b2",
+      "content_hash": "3eaf25f249348ab9cf74f11a33a78611d0832aeb0adbc823e72e64eb92abe416",
       "dossier_path": "07_PROJECT_LEARNING/react-metro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-metro-learnings.md",
       "promoted_rules": [
@@ -44935,6 +44945,11 @@
           "number": 4965,
           "title": "metro-file-map: Fix regressions with symlinks and unnormalised roots (#2093)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5319,
+          "title": "Bump @babel/traverse to ^7.29.10 and add constant-folding regression tests (#204",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44942,7 +44957,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T19:32:01.374Z",
+      "verified_at": "2026-10-28T14:56:35.204Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46707,8 +46722,8 @@
       "slug": "salvo-rs-salvo",
       "platform": "github",
       "source_url": "https://github.com/salvo-rs/salvo",
-      "source_version": "07f55f73",
-      "content_hash": "b4ec955abd099a1daf7a95d7849302b55332daff5834cb57d4f53d3e28c6c3d6",
+      "source_version": "2908d718",
+      "content_hash": "6c3c733e127c8b20f4a85ce8d2ad793caf3a931fc3cac3761c0539dfece77e15",
       "dossier_path": "07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
       "promoted_rules": [
@@ -46726,6 +46741,11 @@
           "number": 4413,
           "title": "Preserve Salvo context across Tower short circuits and cancellation (#1754)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5318,
+          "title": "Expose client certificates and TLS metadata on requests (#1759)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46733,7 +46753,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T18:40:47.110Z",
+      "verified_at": "2026-10-28T14:56:30.100Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -144559,6 +144579,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T14:49:49.174Z"
+    },
+    "rule-5318": {
+      "learning_id": "rule-5318",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5318,
+      "title": "Expose client certificates and TLS metadata on requests (#1759)",
+      "source_url": "https://github.com/salvo-rs/salvo",
+      "source_version": "2908d718",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T14:56:30.100Z"
+    },
+    "rule-5319": {
+      "learning_id": "rule-5319",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5319,
+      "title": "Bump @babel/traverse to ^7.29.10 and add constant-folding regression tests (#204",
+      "source_url": "https://github.com/react/metro",
+      "source_version": "492872b2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T14:56:35.204Z"
+    },
+    "rule-5320": {
+      "learning_id": "rule-5320",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5320,
+      "title": "fix repository NX config (#39518)",
+      "source_url": "https://github.com/aws/aws-cdk",
+      "source_version": "b57c621c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T14:56:38.931Z"
+    },
+    "rule-5321": {
+      "learning_id": "rule-5321",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5321,
+      "title": "docs(viz gallery): make the WPRDC 2-1-1 and Boston 311 Data Schematics live (#49",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "333cb672",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T14:56:45.022Z"
     }
   },
   "aliases": {

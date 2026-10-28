@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `94ffc059`  
+> **Source Version**: `333cb672`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T14:29:21.202Z  
+> **Timestamp**: 2026-10-28T14:56:44.633Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T14:29:21.194Z  
+> **Harvest Timestamp**: 2026-10-28T14:56:44.623Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,206 +2203,378 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `94ffc059` (2026-10-28)
-**Commit Message**: fix(viz): keep blank-qualifier rows in the region-click drill-down (#4953)
+### Incident Patch 1: `333cb672` (2026-10-28)
+**Commit Message**: docs(viz gallery): make the WPRDC 2-1-1 and Boston 311 Data Schematics live (#4952)
 
-* fix(viz): keep blank-qualifier rows in the region-click drill-down
+* docs(viz gallery): make the WPRDC 2-1-1 and Boston 311 Data Schematics live
 
-With qualified county-name aliases (#4481), the data viewer's region filter
-ANDs the qualifier column with the spellings seen for the clicked feature.
-Blank qualifiers were never recorded, so a row placed on the map without a
-state (its county name unique nationally) was counted there but dropped from
-the drill-down, and a county whose rows all lacked a state filtered to zero.
+Each entry gets a "Make it a Live Data Schematic" how-to: download the page and
+the exact data it was rendered from, `qsv-clientd register` it with the page's
+own viz arguments, and open it from disk. Both recipes were run end to end
+(pair, Fetch latest, Re-render).
 
-Record "" as a qualifier spelling for matched rows, and emit it as
-SearchBuilder's "Empty" (null) condition instead of `= ""`.
+The two data files too large to commit are 27.0.1 release assets:
+wpa_211_requests.csv (46 MB) and boston311-2025.tsv.gz (34 MB).
 
-Found by roborev on the WPRDC 2-1-1 gallery page (#4952): 54 blank-state
-rows; McKean's only 2 requests both lack a state. Verified in-browser on a
-WPRDC slice: McKean 0 -> 2 rows, Allegheny 161 -> 200, toggle still clears.
-Regression test mutation-checked against each half of the fix.
+WPRDC: the figure is now rendered from the portal's own 13-column file,
+byte for byte, instead of a reshaped 7-column extract, so Fetch latest returns
+data of the same shape. gen_wpa_211_requests.py downloads it and checks its
+SHA-256; the file is gitignored. The dictionary covers all 13 columns
+(zip_code and needs_code as identifiers), and --dataset-pid now names the CKAN
+resource page so Fetch latest resolves it with no flags. 11 rows with no state
+and a county name other states share can't be mapped; every number in the
+blurb is unchanged.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Boston: the page is unchanged. Fetch latest uses the city's datastore export
+(--source-
 
-* docs(changelog): cite #4953
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(viz): match whitespace-only qualifiers as written in the drill-down
-
-roborev 6001: trimming a whitespace-only state 
+**File**: `.gitignore` (modified, +6/-0)
+```diff
+@@ -103,3 +103,9 @@ examples/viz/__pycache__/
+ 
+ # Session summaries appended by the qsv Claude plugin's SessionEnd hook (see docs/Logging.md)
+ .qsv-session-log.md
++
++# Gallery inputs too large to commit, attached to the qsv 27.0.1 GitHub release instead.
++# examples/viz/gen_wpa_211_requests.py re-downloads the WPRDC one and checks its bytes.
++examples/viz/wpa_211_requests.csv
++examples/viz/boston311-2025.tsv
++examples/viz/boston311-2025.tsv.gz
+```
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ### Added
+ - `viz smart`: a Data Schematic embedded in an iframe now reports its own height to the embedding page (`postMessage({qsvVizHeight: <px>}, "*")`), so a host such as CKAN can size the iframe to its content without injecting a script. It reports only when framed, on load, on resize (including the data viewer drawer opening and closing, so the iframe grows and shrinks), and when its content reflows. The data viewer now accepts the embedding page's `qsvVizViewport` answer only from that page. The gallery generator injects only its scroll-forwarding script into these pages. ([#4949](https://github.com/dathere/qsv/pull/4949))
++- Gallery: the WPRDC 2-1-1 and Boston 311 Data Schematics can now be made **Live Data Schematics**. Each gallery entry has a "Make it a Live Data Schematic" how-to: download the page and the exact data it was rendered from, register it with qsv-clientd, and open it from disk. The two data files too large to commit (`wpa_211_requests.csv`, `boston311-2025.tsv.gz`) are attached to the 27.0.1 release. The WPRDC figure is now rendered from the portal's own 13-column file instead of a reshaped 7-column extract, so Fetch latest returns data of the same shape; every number in its description is unchanged. ([#4952](https://github.com/dathere/qsv/pull/4952))
+ 
+ ### Changed
  - Build: Polars is built with its `serde` feature instead of `serde-lazy`. qsv only serializes Polars schemas (the `.pschema.json` cache), which `serde` covers; `serde-lazy` also generated serialization code for Polars' whole query-plan layer, which qsv never uses. A clean `-F all_features` debug build takes about 16% less CPU time. No behavior change. ([#4951](https://github.com/dathere/qsv/pull/4951))
- 
- ### Fixed
-+- `viz smart`: clicking a region on a county-name map now keeps the rows whose state is blank. When county names are qualified by a state column, the data viewer filter required one of the state spellings seen for that county, so a row the map had placed without a state (its county name unique on its own) was counted on the map but dropped from the drill-down; a county whose rows all lacked a state showed no rows at all. Blank states now match through the filter's "Empty" condition. Found on the WPRDC 2-1-1 gallery page (#4952). ([#4953](https://github.com/dathere/qsv/pull/4953))
- - **`viz smart`: a map in a sandboxed iframe now says why it's blank** ([#4947](https://github.com/dathere/qsv/pull/4947), [#4946](https://github.com/dathere/qsv/issues/4946)). Embedded in an `<iframe sandbox>` without `allow-same-origin` (the CKAN Webpage view the wiki recommends), every MapLibre map panel stayed empty with no error: the map library bundled with plotly.js 3.x rejects its own worker's messages when the page's origin is `null`. The schematic now shows a note above each such map telling the viewer to open it in its own tab. Pages opened from a file aren't affected. Rendering the maps there needs a plotly.js upgrade; #4946 tracks it.
- - `get`: overwriting an existing file with `--output` (`get`, `get cache-fetch`) no longer briefly exposes the new contents: the temp file that replaces it is owner-only (`0600`) while the data is written, and takes the old file's mode only afterwards. It also keeps the old file's group, so a group-readable file isn't handed to a different group; where the group can't be kept, the new file isn't group-readable, and other users get no access the old file denied its group. Setuid/setgid bits aren't carried over, as an in-place overwrite would have cleared them. Follow-up to [#4945](https://github.com/dathere/qsv/pull/4945). ([#4948](https://github.com/dathere/qsv/pull/4948))
- 
 ```
 
-**File**: `src/cmd/viz.rs` (modified, +22/-8)
+**File**: `examples/viz/README.md` (modified, +5/-4)
 ```diff
-@@ -16736,7 +16736,12 @@ const CHORO_FILTER_CHROME: &str = r##"<script>
-   }
-   function keyOf(c) { return JSON.stringify(normCrit(c)); }
-   function anyOf(title, values) {
--    var mk = function (v) { return { condition: "=", data: title, value: [v] }; };
-+    // "" stands for a blank cell (a qualifier the row lacked); SearchBuilder matches blank
-+    // cells with its "Empty" condition, not with `=`
-+    var mk = function (v) {
-+      return v === "" ? { condition: "null", data: title, value: [] }
-+                      : { condition: "=", data: title, value: [v] };
-+    };
-     return values.length === 1 ? mk(values[0]) : { logic: "OR", criteria: values.map(mk) };
-   }
-   function critFor(title, qtitle, loc) {
-@@ -32527,14 +32532,23 @@ fn build_smart_summary_choropleth_panels(
-                     variants.push(raw.to_string());
-                 }
-             }
-+            // A BLANK qualifier is recorded too: a row whose region spelling is unique on its own
-+            // still matched without one, and the map counts it, so the drawer filter must keep it.
-+            // Without it, clicking such a region drops those rows — every row, for a region whose
-+            // rows all lack a qualifier. A truly empty cell is recorded as "", which the JS side
-+            // turns into SearchBuilder's "Empty" condition; a whitespace-only cell is recorded
-+            // as-is, because the drawer keeps the spaces and "Empty" only matches zero length.
-             if let Some(qcol) = qualifier_col {
--                let cell = cell_to_string(record.get(qcol));
--                let cell = cell.trim();
--                if !cell.is_empty() {
--                    let seen = qual_raws_by_cand[ci].entry(k.clone()).or_default();
--                    if !seen.iter().any(|v| v == cell) {
--                        seen.push(cell.to_string());
--                    }
-+                let full = cell_to_string(record.get(qcol));
-+                let trimmed = full.trim();
-+                let cell = if trimmed.is_empty() {
-+                    full.as_str()
-+                } else {
-+                    trimmed
-+                };
-+                let seen = qual_raws_by_cand[ci].entry(k.clone()).or_default();
-+                if !seen.iter().any(|v| v == cell) {
-+                    seen.push(cell.to_string());
-                 }
-             }
-             match counts[ci].get_mut(&k) {
+@@ -102,7 +102,7 @@ as `text/plain`, so a browser won't render it):
+ | `nyc_311.csv` + `nyc_neighborhoods.geojson` + `nyc311_dict.schema.json` | **10,000-row** sample of NYC 311 service requests (2010–2020): 41 columns incl. `Latitude`/`Longitude`, `Borough`, `Agency`, `Complaint Type`, `Status`, several date columns, and `X`/`Y Coordinate (State Plane)`, plus a custom GeoJSON of **188 NYC neighborhoods** keyed by top-level `id` and a committed **41-field dictionary** | `smart --smarter --bivariate --dict-info --dictionary nyc311_dict.schema.json --geojson nyc_neighborhoods.geojson` (full municipal Data Schematic: dense point map + **neighborhood choropleth on a MapLibre tile basemap via point-in-polygon binning** + hour-of-day profile + time-series + parcats category flow + Sankey + bars + an NMI association heatmap with a ranked Top Relationships panel, with the committed dictionary's field labels — **no LLM needed**) |
+ | `district_requests.csv` + `district_boundaries.geojson` + `district_requests_dict.schema.json` | **1,332 SYNTHETIC** municipal service requests across **6 invented districts** (`district`, `population`, `request_type`, `response_hours`), plus a GeoJSON of those districts keyed by a top-level `id` and carrying a `properties.POP2020`, and a curated dictionary whose region column declares `x-qsv.denominator: {"column": "population", "level": "geo.county"}`. The districts are laid out on a grid at the geographic centre of the contiguous US — only the shape of the fallacy is real | `smart --dict-info --dictionary district_requests_dict.schema.json --geojson district_boundaries.geojson` (**denominator-aware region map**: the raw-count choropleth is led by the most populous district, while the **rate panel beside it** — requests per 1,000 residents — inverts the ranking) |
+ | `tristate_county_incidents.csv` + `tristate_counties.geojson` + `tristate_county_incidents_dict.schema.json` | **24,391 SYNTHETIC** infrastructure incidents across the **210 REAL counties** of Ohio, Pennsylvania and West Virginia (88 + 67 + 55), keyed by 5-digit `county_fips`, plus those counties' TIGERweb boundaries (`maxAllowableOffset=0.001`, 0.36 MB) and a curated dictionary tagging **only** `county_fips` as `geo.county_fips`. Carries **no population column** on purpose — the denominator is fetched, not shipped. Counts are derived from real ACS population by `gen_tristate_county_incidents.py`, anti-correlated with it so the rate inverts the count | `smart --dict-info --dictionary tristate_county_incidents_dict.schema.json --geojson tristate_counties.geojson --feature-id-key properties.GEOID --denominator census@2024` (**the real-geography twin of the row above**: same count-vs-rate lesson on recognizable counties, with the denominator fetched live from the Census Data API. Requires `QSV_CENSUS_API_KEY` only on a cold `~/.qsv-cache/viz-denominators` cache) |
+-| `wpa_211_requests.csv` + `wpa_211_requests_dict.schema.json` | **279,464 REAL** 2-1-1 helpline requests across the **25 Western Pennsylvania counties** served by the United Way of Southwestern Pennsylvania — the upstream resource **entire** (2023-09-22 … 2025-08-27, no window and no sample), one row per request, keyed by county **name** — plus a curated dictionary tagging `county` as `geo.county` and `state` as `geo.state`. Carries **no population column and no boundary file** on purpose: `--geojson auto` fetches the county polygons *and* canonicalizes the names to Census GEOIDs, and the denominator is fetched too. The upstream `zip_code` is dropped rather than mis-tagged — a second geo concept would add a competing choropleth candidate. Built by `gen_wpa_211_requests.py` | `smart --smarter --bivariate --dict-info --dictionary wpa_211_requests_dict.schema.json --geojson auto --denominator census@2024 --theme plotly_white --dataset-pid https://data.wprdc.org/dataset/211-requests` (**the figure where the rate map does NOT invert**: Allegheny leads both maps, but Venango climbs 11th→3rd, Cambria 5th→2nd and Butler falls 8th→13th; McKean's 2 requests against 39,904 residents make the service-reach caveat visible on the map. Requires `QSV_CENSUS_API_KEY` only on a cold `~/.qsv-cache/viz-denominators` cache) |
++| `wpa_211_requests.csv` + `wpa_211_requests_dict.schema.json` | **279,464 REAL** 2-1-1 helpline requests across the **25 Western Pennsylvania counties** served by the United Way of Southwestern Pennsylvania — the upstream resource **entire** (2023-09-22 … 2025-08-27, no window and no sample), one row per request, keyed by county **name** — the WPRDC's own file, all 13 columns, byte for byte, so a Live Data Schematic of it fetches data of the same shape. **Not committed** (46&nbsp;MB): `gen_wpa_211_requests.py` downloads it and checks its SHA-256, and it is attached to the qsv 27.0.1 release. Plus a curated dictionary tagging `county` as `geo.county` and `state` as `geo.state`. Carries **no population column and no boundary file** on purpose: `--geojson auto` f
 ```
 
-**File**: `tests/test_viz_county_names.rs` (modified, +94/-0)
+**File**: `examples/viz/gallery.html` (modified, +13/-4)
 ```diff
-@@ -616,6 +616,100 @@ fn viz_smart_county_names_region_filter_is_qualified() {
-     });
- }
+@@ -30,6 +30,7 @@
+  figure .cmdbox{position:relative;margin:6px 4px 0}figure pre.cmd{background:#f3f5f9;border-radius:6px;padding:8px 40px 8px 10px;margin:0;overflow-x:auto;font:11.5px/1.4 SFMono-Regular,Consolas,Menlo,monospace;color:#2A3F5F;white-space:pre-wrap;overflow-wrap:anywhere}figure button.copy{position:absolute;top:6px;right:6px;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;padding:0;border:1px solid transparent;background:transparent;color:#57606a;border-radius:6px;cursor:pointer}figure button.copy:hover{color:#24292f;background:#eef1f6;border-color:#d4d9e3}figure button.copy svg{width:16px;height:16px;fill:currentColor;display:block}figure button.copy .ci-check{display:none}figure button.copy.ok{color:#1a7f37;border-color:transparent;background:transparent}figure button.copy.ok .ci-copy{display:none}figure button.copy.ok .ci-check{display:block}
+  figure a.shot{display:block;text-align:center;text-decoration:none;cursor:pointer}figure a.shot img{max-width:100%;max-height:900px;height:auto;border:1px solid #e6e9f0;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.06)}figure a.shot:hover img{border-color:#c3ccdb;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+  figcaption a.popout{font-weight:400;font-size:12px;margin-left:8px;color:#3056d3;text-decoration:none}figcaption a.popout:hover{text-decoration:underline}
++ figure details.live{margin:8px 4px 0;font-size:13px;line-height:1.45}figure details.live summary{cursor:pointer;font-weight:600;color:#3056d3}figure details.live ol{margin:6px 0 0;padding-left:20px}figure details.live li{margin:6px 0}
+  .js-plotly-plot:fullscreen{background:#fff}
+  /*qsv-nav*/html{scroll-behavior:smooth}figure{scroll-margin-top:64px}span.qsv-legacy-anchor{display:block;height:0;scroll-margin-top:64px}details.toc{position:sticky;top:0;z-index:30;max-width:1200px;margin:0 auto 16px;background:#fff;border:1px solid #e6e9f0;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.05)}details.toc>summary{cursor:pointer;list-style:none;user-select:none;font-weight:600;font-size:13px;color:#2A3F5F;padding:10px 14px}details.toc>summary::-webkit-details-marker{display:none}details.toc>summary::after{content:"\25be";float:right;color:#6b7a94;font-weight:400}details.toc[open]>summary::after{content:"\25b4"}details.toc .toc-count{color:#8a97ad;font-weight:400;font-size:12px;margin-left:6px}details.toc .toc-links{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1px 16px;padding:6px 14px 12px;max-height:54vh;overflow:auto;border-top:1px solid #eef1f6}details.toc .toc-links a{display:block;font-size:12.5px;color:#3056d3;text-decoration:none;padding:3px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:4px}details.toc .toc-links a:hover{text-decoration:underline;background:#f3f5f9}@media (max-width:760px){body{padding:14px}.grid{grid-template-columns:1fr;gap:16px}figure.full .plot{height:520px}.plot{height:320px}details.toc .toc-links{grid-template-columns:1fr;max-height:60vh}}/*end-qsv-nav*/
+ </style><!--qsv-parcats-order-->
+@@ -243,10 +244,14 @@ <h1>qsv viz gallery <i>(An Interactive Viz is worth a Million Rows)</i></h1>
+ <figure class="cell full" id="fig-smart-data-schematic-denominator-aware-region-rate-real-counties"><figcaption><span class="t">smart Data Schematic (denominator-aware region rate, real counties)</span><span class="d">The same count-vs-rate lesson as the figure above, on <b>real geography with a real denominator</b>. <b>210 counties</b> across Ohio, Pennsylvania and West Virginia (88 + 67 + 55), keyed by 5-digit county FIPS. The <b>count</b> panel is led by <b>Philadelphia</b>, <b>Allegheny</b> and <b>Franklin</b> — the most populous counties in the set — because a raw-count choropleth of an event log is substantially a population map. The <b>rate</b> panel beside it divides by each county's population and the ranking inverts completely: the top becomes the <b>rural</b> tail (Forest&nbsp;PA, Wirt&nbsp;WV, Braxton&nbsp;WV) at 2.5&ndash;2.6 incidents per 1,000 residents on a hundredth of the volume — the two top-tens do not overlap at all. <b>The denominator is not in the file.</b> <code>--denominator census@2024</code> fetches ACS 5-year total population (<code>B01003</code>) from the Census Data API for the 210 matched GEOIDs and stamps the release beneath the map — <i>Denominator: ACS 2020&ndash;2024 5-yr (B01003)</i> — because a rate means something different against a different release; results cache under <code>~/.qsv-cache</code>, so a repeat run makes no request. Boundaries are committed (<code>tristate_counties.geojson</code>, TIGERweb at <code>maxAllowableOffset=0.001</code>) rather than fetched with <code>--geojson auto</code>, whose county geometry is generalized more finely (0.0005&deg;, ~50&nbsp;m): <code>viz smart</code> embeds the geometry once PER TRACE and this figure has two, so the coarser committed file keeps the page small. The curated <code>--dictionary</code> tags onl
+```
+
+**File**: `examples/viz/gen_gallery.py` (modified, +125/-6)
+```diff
+@@ -117,6 +117,12 @@
+               "color:#3056d3;text-decoration:none}"
+               "figcaption a.popout:hover{text-decoration:underline}")
  
-+/// A row with a BLANK qualifier whose region spelling is unique nationally still resolves and is
-+/// counted on the map, so the drawer's region filter must keep it: the feature's qualifier
-+/// spellings carry "" (the chrome turns it into SearchBuilder's "Empty" condition). Without it,
-+/// clicking the region dropped those rows, and every row of a region whose rows all lack a state.
-+#[test]
-+#[serial]
-+fn viz_smart_county_names_region_filter_keeps_blank_qualifier() {
-+    const DICT: &str = r#"{
-+  "$schema": "https://json-schema.org/draft/2020-12/schema",
-+  "type": "object",
-+  "properties": {
-+    "county": { "type": "string", "x-qsv": { "qsv_type": "String", "role": "dimension", "concept": "geo.county" } },
-+    "state": { "type": ["string", "null"], "x-qsv": { "qsv_type": "String", "role": "dimension", "concept": "geo.state" } },
-+    "cases": { "type": "number", "x-qsv": { "qsv_type": "Integer", "role": "measure", "concept": "measure.amount" } }
-+  }
-+}"#;
-+    let wrk = Workdir::new("viz_smart_county_names_region_filter_keeps_blank_qualifier");
-+    wrk.create_from_string(
-+        "c.csv",
-+        "county,state,cases\nWashington County,PA,10\nWashington County,PA,12\nWashington \
-+         County,MD,30\nWashington County,MD,32\nAllegheny County,PA,40\nAllegheny County,,42\n",
-+    );
-+    wrk.create_from_string("dict.schema.json", DICT);
-+    let cache_dir = wrk.path("qsv-cache");
-+    std::fs::create_dir_all(&cache_dir).expect("create cache dir");
-+    with_mock_tigerweb(|base, _observed| {
-+        let mut cmd = wrk.command("viz");
-+        cmd.args(["smart", "c.csv", "--geojson", "auto", "--dictionary"])
-+            .arg(wrk.path("dict.schema.json"))
-+            .env("QSV_CENSUS_TIGERWEB_URL", base)
-+            .env("QSV_CACHE_DIR", &cache_dir);
-+        let out = wrk.output(&mut cmd);
-+        let stderr = String::from_utf8_lossy(&out.stderr).to_string();
-+        assert!(out.status.success(), "smart run failed: {stderr}");
-+        let html = String::from_utf8_lossy(&out.stdout).to_string();
-+        assert!(
-+            html.contains("var QUAL_COL = 1;"),
-+            "region filter was not qualified: {stderr}"
-+        );
-+        // the blank-state Allegheny row is kept alongside the PA one, in first-seen order
-+        assert!(
-+            html.contains(r#""42003":["PA",""]"#),
-+            "blank qualifier missing for 42003: {stderr}"
-+        );
-+        // and the chrome maps "" to SearchBuilder's Empty condition
-+        assert!(
-+            html.contains(r#"condition: "null""#),
-+            "blank qualifier has no Empty criterion: {stderr}"
-+        );
-+    });
-+}
++# The collapsible "Make it live" how-to under a Live-Data-Schematic-ready entry (see LIVE).
++LIVE_CSS = ("figure details.live{margin:8px 4px 0;font-size:13px;line-height:1.45}"
++            "figure details.live summary{cursor:pointer;font-weight:600;color:#3056d3}"
++            "figure details.live ol{margin:6px 0 0;padding-left:20px}"
++            "figure details.live li{margin:6px 0}")
 +
-+/// A WHITESPACE-ONLY qualifier is not an empty cell to the drawer: it keeps the spaces, and
-+/// SearchBuilder's "Empty" condition matches only zero-length values. So the filter must carry the
-+/// cell as written (an exact `=` match), not trimmed to "" — otherwise a region whose rows all hold
-+/// "   " as their state would filter to zero rows.
-+#[test]
-+#[serial]
-+fn viz_smart_county_names_region_filter_keeps_whitespace_qualifier() {
-+    const DICT: &str = r#"{
-+  "$schema": "https://json-schema.org/draft/2020-12/schema",
-+  "type": "object",
-+  "properties": {
-+    "county": { "type": "string", "x-qsv": { "qsv_type": "String", "role": "dimension", "concept": "geo.county" } },
-+    "state": { "type": ["string", "null"], "x-qsv": { "qsv_type": "String", "role": "dimension", "concept": "geo.state" } },
-+    "cases": { "type": "number", "x-qsv": { "qsv_type": "Integer", "role": "measure", "concept": "measure.amount" } }
-+  }
-+}"#;
-+    let wrk = Workdir::new("viz_smart_county_names_region_filter_keeps_whitespace_qualifier");
-+    wrk.create_from_string(
-+        "c.csv",
-+        "county,state,cases\nWashington County,PA,10\nWashington County,PA,12\nWashington \
-+         County,MD,30\nWashington County,MD,32\nAllegheny County,   ,40\nAllegheny County,   ,42\n",
-+    );
-+    wrk.create_from_string("dict.schema.json", DICT);
-+    let cache_dir = wrk.path("qsv-cache");
-+    std::fs::create_dir_all(&cache_dir).expect("create cache dir");
-+    with_mock_tigerweb(|base, _observed| {
-+        let mut cmd = wrk.command("viz");
-+        cmd.args(["smart", "c.csv", "--geojson", "auto", "--dictionary"])
-+            .arg(wrk.path("dict.schema.json"))
-+            .env("QSV_CENSUS_TIGERWEB_URL", base)
-+            .env("QSV_CACHE_DIR", &cache_dir);
-+        let out = wrk.output(&mut cmd);
-+        let stderr = String::from_utf8_lossy(&out.stderr).to_string();
-+        assert!(out.status.success(), "smart run failed: {stderr}");
-+        let html = String::from_utf8_lossy(&out.stdout).to_string();
-+        assert!(
-+            html.contains(r#""42003":["   "]"#),
-+            "whitespace-only qualifier not kept as written for 42003: {stderr}"
-+        );
-+    });
-+}
+ # GitHub-style copy icons (Octicons, 16x16, fill=currentColor). The button shows the "copy" icon
+ # (two overlapping squares) and swaps to a green "check" on success — both are present in the
+ # button and toggled by the `.ok` class (no innerHTML churn, no SVG strings in JS).
+@@ -350,6 +356,89 @@
+     "})();")
+ 
+ 
++# Data Schematics a visitor can turn into a LIVE Data Schematic with qsv-clientd (qsv-client on
++# PyPI): the page plus the exact file it was rendered from, registered with the daemon. Keyed by
++# the standalone page's filename; rendered by live_block_html() as a collapsible how-to under
++# the entry. The data files too large to commit are assets of the qsv 27.0.1 GitHub release;
++# everything else is served from this site. Re-render reuses the arguments given after `--`,
++# from the daemon's working directory, so file arguments must be absolute ("$PWD/...").
++SITE = "https://dathere.github.io/qsv"
++RELEASE_DATA = "https://github.com/dathere/qsv/releases/download/27.0.1"
++_LIVE_INTRO = (
++    "A Live Data Schematic stays connected to its data: click a bar to see its rows, run "
++    "read-only queries, fetch the latest copy from the portal and re-render the page from it. "
++    "It runs on your machine through <a href=\"https://github.com/dathere/qsv-client\">"
++    "qsv-clientd</a>, so it works only on a copy opened from your disk &mdash; on this site "
++    "the page never contacts your computer. You need qsv 27.0.1 or later.")
++_LIVE_OPEN = (
++    "Open the downloaded page in your browser (from disk, e.g. by double-clicking it), click "
++    "<b>Live data</b> in its bottom-left corner, and approve the code it shows:",
++    ["qsv-clientd approve <CODE>"])
++LIVE = {
++    "smart_wpa_211_requests.html": {
++        "intro": _LIVE_INTRO,
++        "steps": [
++            ("Install qsv-client and start the daemon. Re-render fetches the county population "
++             "from the Census Data API, so give it a free "
++             "<a href=\"https://api.census.gov/data/key_signup.html\">Census API key</a>:",
++             ["pip install qsv-client",
++              "QSV_CENSUS_API_KEY=<your-key> qsv-clientd serve"]),
++            ("In another shell, download the page, its data dictionary, and the exact file it "
++             "was rendered from: the WPRDC resource, byte for byte, attached to the qsv 27.0.1 "
++             "release:",
++             [f"curl -LO {SITE}/smart_wpa_211_requests.html",
++              f"curl -LO {SITE}/wpa_211_requests_dict.schema.json",
++              f"curl -LO {RELEASE_DATA}/wpa_211_requests.csv"]),
++            ("Register the data with the page, passing the arguments it was rendered with:",
++             ['qsv-clientd register wpa_211_requests.csv --schematic smart_wpa_211_requests.html '
++              '-- --smarter --bivariate --dict-info '
++              '--dictionary "$PWD/wpa_211_requests_dict.schema.json" --geojson auto '
++              '--denominator census@2024 --theme plotly_white '
++              '--dataset-pid https://data.wprdc.org/dataset/211-requests/resource/'
++              '0ce22487-5707-4e64-8e59-5b189cfc69cb --preview-threshold 500']),
++            _LIVE_OPEN,
++        ],
++        "outro": ("<b>Fetch latest</b> downloads the resource again from the WPRDC, through the "
++                  "page's citation link. Its last request is dated 2025-08-27 and the WPRDC last "
++                  "updated it on 2026-05-01, so today that returns the same file; a revision "
++                  "would arrive in the same 13-column shape this page was built from."),
++    },
++    "smart_boston_311_2025.html": {
++        "intro": _LIVE_INTRO,
++        "steps": [
++            ("Install qsv-client and start the daemon. This page plots every point, which "
++             "takes a higher point cap than the default, so set it for Re-render too:",
++             ["pip install qsv-client",
++              "QSV_VIZ_MAX_POINTS=300000 qsv-clientd serve"]),
++            ("In another shell, download the page, its data dictionary and neighborhood "
++             "boundaries, and the exact file it was rendered from (attached to the qsv 27.0.1 "
++             "release; 34&nbsp;MB, 153&nbsp;MB unpacked):",
++             [f"curl -LO {SITE}/smart_boston_311_2025.html",
++              f"curl -LO {SITE}/boston311.schema.json",
++              f"curl -LO {SITE}/boston_neighborhood_boundaries.json",
++              f"curl -LO {RELEASE_DATA}/boston311-2025.tsv.gz",
++     
+```
+
+**File**: `examples/viz/gen_wpa_211_requests.py` (modified, +42/-68)
+```diff
+@@ -1,7 +1,11 @@
+ #!/usr/bin/env python3
+-"""Build examples/viz/wpa_211_requests.csv from the WPRDC 2-1-1 Service Requests feed.
++"""Fetch examples/viz/wpa_211_requests.csv: the WPRDC 2-1-1 Service Requests resource, verbatim.
+ 
+-REAL requests on REAL counties -- nothing here is synthesized.
++REAL requests on REAL counties -- nothing here is synthesized, and nothing is reshaped.
++The file is the portal's own datastore dump, byte for byte, so a Live Data Schematic of it
++(qsv-clientd's Fetch latest) gets data of exactly the shape the gallery page was rendered
++from. It is not committed (46 MB): it is attached to the qsv 27.0.1 GitHub release, and
++this script re-downloads it from the portal and checks the bytes.
+ 
+ The gallery's tristate_county_incidents figure teaches the count-vs-rate fallacy with
+ SYNTHETIC incidents whose rates were constructed to invert the ranking. This fixture
+@@ -25,7 +29,8 @@
+ -----------------------------------------------------------------
+ This takes the upstream resource ENTIRE -- every row it publishes, 2023-09-22 through
+ 2025-08-27 -- rather than a window or a sample. Nothing is thinned, so every count on
+-the rendered page is the real total for that county over that span.
++the rendered page is the real total for that county over that span, less the 11 rows
++the map cannot place (below).
+ 
+ The WPRDC dataset also carries an OLDER resource, "2-1-1 Requests (2020-2023)"
+ (94f52ddb-acf3-4728-93b9-4544988f1d6f). It is deliberately NOT concatenated here, and
+@@ -43,6 +48,16 @@
+ an undocumented tie-break, so the clean resource is used whole and the messy one is
+ left out rather than quietly reshaped.
+ 
++The 11 rows the map cannot place
++--------------------------------
++65 rows have no `state`. `--geojson auto` qualifies each county name by the row's state
++(422 US county names belong to more than one state), so a stateless row resolves only
++when its county name is unique nationally. Westmoreland (5 rows), Erie (4) and Crawford
++(2) are not -- there are Erie counties in NY, OH and PA -- so those 11 rows are left off
++the map (`viz smart` reports them on stderr when it renders). Every other stateless row still lands. Filling the blanks
++in with "Pennsylvania" would be true, but it would also make this file stop being the
++portal's file, which is the property the live schematic depends on.
 +
- /// A region-CODE column publishes no aliases, so the drawer
+ Why no county_fips column
+ -------------------------
+ An earlier draft added one. It is not needed: `--geojson auto` fetches the county
+@@ -56,12 +71,13 @@
+ Pittsburgh). refresh_external_dashboards.sh records the same class of trap for
+ PennDOT's own county code.
+ 
+-Why zip_code is dropped
+------------------------
+-The upstream feed carries one. Tagging a second geo concept would create a competing
+-choropleth candidate scoring against a county-keyed map -- the same reason
+-tristate_county_incidents tags only ONE geography. It is dropped here rather than
+-mis-tagged.
++Why zip_code is not tagged as a geography
++-----------------------------------------
++Tagging a second geo concept would create a competing choropleth candidate scoring
++against a county-keyed map -- the same reason tristate_county_incidents tags only ONE
++geography. The column stays in the file (it is the portal's file), and
++wpa_211_requests_dict.schema.json marks it an identifier instead, so the map stays keyed
++on county.
+ 
+ ACS_VINTAGE below is documentation only -- this script makes no Census request. It
+ records the release the committed blurb's per-1,000 numbers were computed against, and
+@@ -78,6 +94,7 @@
+ Usage: gen_wpa_211_requests.py [outdir]   (default: this script's directory)
+ """
+ import csv
++import hashlib
+ import io
+ import sys
+ import time
+@@ -100,19 +117,12 @@
+ SPAN_HI = "2025-08-27"
+ 
+ # Asserted, not assumed: a silently reshaped upstream feed must fail this script rather
+-# than quietly re-cut the figure the committed blurb describes.
++# than quietly re-cut the figure the committed blurb describes. EXPECTED_SHA256 is the
++# strongest of these: the gallery page's input fingerprint, the 27.0.1 release asset and
++# visitors' `qsv-clientd register` all depend on these exact bytes.
+ EXPECTED_ROWS = 279464
+ EXPECTED_COUNTIES = 25
+-
+-OUT_COLUMNS = [
+-    "contact_date",
+-    "county",
+-    "state",
+-    "gender",
+-    "age_range",
+-    "level_1_classification",
+-    "needs_met",
+-]
++EXPECTED_SHA256 = "be2a1b488063e9465e7d23c4c193abe539dea661563cd408d6848344043a666b"
+ 
+ # The portal returns transient failures under load, exactly as api.census.gov does for
+ # the tristate fixture. Retry with backoff; a real outage still surfaces after the last
+@@ -138,54 +148,12 @@ def fetch(url):
+     sys.exit(f"FAILED after {FETCH_ATTEMPTS} attempts: {url}\n  last error: {last}")
+ 
+ 
+-def normalize_county(raw):
+-    """'Allegheny' and 'Allegheny County' both appear upstream -- the 2020-2023 and
+-    2023-2025 resources disagree on the suffix. Emit one spelling so the frequency bar
+-    cannot split a county across two bars."""
+-    
+```
+
+**File**: `examples/viz/wpa_211_requests_dict.schema.json` (modified, +106/-23)
+```diff
+@@ -2,12 +2,25 @@
+   "$schema": "https://json-schema.org/draft/2020-12/schema",
+   "title": "wpa_211_requests",
+   "type": "object",
+-  "description": "REAL 2-1-1 helpline requests across the 25 Western Pennsylvania counties served by the United Way of Southwestern Pennsylvania, one row per request, the upstream resource entire (2023-09-22 .. 2025-08-27, no window and no sample - see gen_wpa_211_requests.py). Used to demonstrate a denominator-aware region map on a real service log rather than a synthetic one. No population column is carried on purpose: the rate panel's denominator is FETCHED by --denominator census@2024, and the county boundaries by --geojson auto, which also canonicalizes the county NAMES below to Census GEOIDs so the fetched population keys onto them.",
++  "description": "REAL 2-1-1 helpline requests across the 25 Western Pennsylvania counties served by the United Way of Southwestern Pennsylvania, one row per request: the WPRDC resource verbatim, all 13 columns, the upstream resource entire (2023-09-22 .. 2025-08-27, no window and no sample - see gen_wpa_211_requests.py). Used to demonstrate a denominator-aware region map on a real service log rather than a synthetic one. No population column is carried on purpose: the rate panel's denominator is FETCHED by --denominator census@2024, and the county boundaries by --geojson auto, which also canonicalizes the county NAMES below to Census GEOIDs so the fetched population keys onto them.",
+   "x-qsv": {
+     "grain": "one row = one 2-1-1 request",
+     "grain_unit": "request"
+   },
+   "properties": {
++    "_id": {
++      "type": "integer",
++      "title": "Row ID",
++      "description": "The WPRDC datastore's row number for the request.",
++      "x-qsv": {
++        "qsv_type": "Integer",
++        "cardinality": 279464,
++        "null_count": 0,
++        "content_type": "unique_id",
++        "role": "identifier",
++        "concept": "id.surrogate_key"
++      }
++    },
+     "contact_date": {
+       "type": "string",
+       "title": "Contact Date",
+@@ -21,10 +34,55 @@
+         "concept": "time.event_timestamp"
+       }
+     },
++    "gender": {
++      "type": [
++        "string",
++        "null"
++      ],
++      "title": "Gender",
++      "description": "Self-reported gender of the caller, where recorded.",
++      "x-qsv": {
++        "qsv_type": "String",
++        "cardinality": 3,
++        "null_count": 17395,
++        "content_type": "category",
++        "role": "dimension",
++        "concept": "category.type"
++      }
++    },
++    "age_range": {
++      "type": [
++        "string",
++        "null"
++      ],
++      "title": "Age Range",
++      "description": "Banded age of the caller, where recorded.",
++      "x-qsv": {
++        "qsv_type": "String",
++        "cardinality": 7,
++        "null_count": 5301,
++        "content_type": "category",
++        "role": "dimension",
++        "concept": "category.type"
++      }
++    },
++    "zip_code": {
++      "type": "integer",
++      "title": "ZIP Code",
++      "description": "The ZIP code the request came from. Deliberately not tagged as a geography: county is the one region this schematic maps, and a second geo concept would compete with it for the choropleth.",
++      "x-qsv": {
++        "qsv_type": "Integer",
++        "cardinality": 726,
++        "null_count": 0,
++        "content_type": "unknown",
++        "role": "identifier",
++        "concept": "unknown"
++      }
++    },
+     "county": {
+       "type": "string",
+       "title": "County",
+-      "description": "County of the caller, normalized to the '<Name> County' spelling by the generator (the upstream 2020-2023 and 2023-2025 resources disagree on the suffix). The ONLY region concept in this dictionary, deliberately: the upstream feed also carries a zip_code, and tagging it geo.* would create a competing choropleth candidate scoring against a county-keyed map. All 25 names are Pennsylvania counties and are unique within the state, so - unlike tristate_county_incidents - they need no state qualifier to stop the frequency bar silently summing namesakes.",
++      "description": "County of the caller, as the portal spells it (\"Allegheny\", without \"County\"). The ONLY region concept in this dictionary, deliberately: tagging zip_code geo.* as well would create a competing choropleth candidate. --geojson auto resolves these names to Census GEOIDs, qualified by state.",
+       "x-qsv": {
+         "qsv_type": "String",
+         "cardinality": 25,
+@@ -35,55 +93,67 @@
+       }
+     },
+     "state": {
+-      "type": "string",
++      "type": [
++        "string",
++        "null"
++      ],
+       "title": "State",
+-      "description": "Constant by construction - this is the Western Pennsylvania 2-1-1 region. Carried so --geojson auto scopes its boundary fetch to one state rather than probing the nation.",
+-      "const": "PA",
++      "description": "Pennsylvania on every row that has a state; 65 rows have none. Tagged geo.state so --geojson auto qualifies ea
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4953** (2026-10-28): fix(viz): keep blank-qualifier rows in the region-click drill-down (@jqnatividad)
+- **PR #4952** (2026-10-28): docs(viz gallery): make the WPRDC 2-1-1 and Boston 311 Data Schematics live (@jqnatividad)
 - **PR #4951** (2026-10-28): build(polars): use the serde feature instead of serde-lazy (@jqnatividad)
 - **PR #4950** (2026-10-27): docs(benchmarks): regenerate Data Schematic for the 27.0.1 run (@jqnatividad)
 - **PR #4949** (2026-10-27): feat(viz): smart Data Schematics report their own height when framed (@jqnatividad)
 - **PR #4948** (2026-10-27): fix(get): --output overwrite temp starts owner-only and keeps the group (@jqnatividad)
-- **PR #4947** (2026-10-27): fix(viz): explain blank map panels in sandboxed iframes (@jqnatividad)
 
 ---
 
@@ -2422,21 +2594,26 @@ roborev 6001: trimming a whitespace-only state
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. viz): keep blank-qualifier rows in the region-click drill-down (#4953)
+## X. docs(viz gallery): make the WPRDC 2-1-1 and Boston 311 Data Schematics live (#49
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.gitignore`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `94ffc059`: viz): keep blank-qualifier rows in the region-click drill-down (#4953). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `333cb672`: docs(viz gallery): make the WPRDC 2-1-1 and Boston 311 Data Schematics live (#4952). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.gitignore`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- `viz smart`: clicking a region on a county-name map now keeps the rows whose state is blank. When county names are qualified by a state column, the data viewer filter required one of the state spellings seen for that county, so a row the map had placed without a state (its county name unique on its own) was counted on the map but dropped from the drill-down; a county whose rows all lacked a state showed no rows at all. Blank states now match through the filter's "Empty" condition. Found on the WPRDC 2-1-1 gallery page (#4952). ([#4953](https://github.com/dathere/qsv/pull/4953))
+
+# Gallery inputs too large to commit, attached to the qsv 27.0.1 GitHub release instead.
+# examples/viz/gen_wpa_211_requests.py re-downloads the WPRDC one and checks its bytes.
+examples/viz/wpa_211_requests.csv
+examples/viz/boston311-2025.tsv
+examples/viz/boston311-2025.tsv.gz
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2446,4 +2623,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `94ffc059` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `333cb672` are properly handled with clean fallback behavior.

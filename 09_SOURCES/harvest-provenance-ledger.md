@@ -5816,3 +5816,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-stabilityai-stable-diffusion-3-medium` | `https://huggingface.co/stabilityai/stable-diffusion-3-medium` | `hf-stabili` | Multi-dimensional audit evidence | 2026-10-28T14:49:33.583Z |
 | `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `401a8531` | Multi-dimensional audit evidence | 2026-10-28T14:49:42.129Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `c22b2932` | Multi-dimensional audit evidence | 2026-10-28T14:49:49.254Z |
+| `learn-huggingface-meta-llama-llama-2-7b-chat-hf` | `https://huggingface.co/meta-llama/Llama-2-7b-chat-hf` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-28T14:56:28.648Z |
+| `learn-github-salvo-rs-salvo` | `https://github.com/salvo-rs/salvo` | `2908d718` | Multi-dimensional audit evidence | 2026-10-28T14:56:30.185Z |
+| `learn-github-react-metro` | `https://github.com/react/metro` | `492872b2` | Multi-dimensional audit evidence | 2026-10-28T14:56:35.292Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `b57c621c` | Multi-dimensional audit evidence | 2026-10-28T14:56:39.015Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `333cb672` | Multi-dimensional audit evidence | 2026-10-28T14:56:45.108Z |

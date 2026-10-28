@@ -5807,3 +5807,8 @@
 | `CYCLE-20261028-DBBF` | `2026-10-28T14:49:33.579Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md` | Yes (`5383d64a...`) |
 | `CYCLE-20261028-DHWT` | `2026-10-28T14:49:42.125Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5316` | Yes (`91980244...`) |
 | `CYCLE-20261028-DNEQ` | `2026-10-28T14:49:49.250Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5317` | Yes (`1c3219cd...`) |
+| `CYCLE-20261028-M7L0` | `2026-10-28T14:56:28.644Z` | `meta-llama/Llama-2-7b-chat-hf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md` | Yes (`8b0c1170...`) |
+| `CYCLE-20261028-M8RQ` | `2026-10-28T14:56:30.182Z` | `salvo-rs/salvo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5318` | Yes (`6c3c733e...`) |
+| `CYCLE-20261028-MCPK` | `2026-10-28T14:56:35.288Z` | `react/metro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5319` | Yes (`3eaf25f2...`) |
+| `CYCLE-20261028-MFKZ` | `2026-10-28T14:56:39.011Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5320` | Yes (`76982cdb...`) |
+| `CYCLE-20261028-MKA8` | `2026-10-28T14:56:45.104Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5321` | Yes (`5fcf496a...`) |

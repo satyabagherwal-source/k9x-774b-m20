@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T14:49:49.263Z",
+  "last_updated": "2026-10-28T14:56:45.119Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1265,14 +1265,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
-      "content_hash": "e488462a3831525c5bb0dec5c3f81f53d0e688ed8ddb4e51a464733d057ada8c",
-      "verified_at": "2026-10-25T20:36:41.697Z",
+      "content_hash": "8b0c11704806dc4bbf8015994cdfacd9199bec278139e93cdb7b6814b8cc4160",
+      "verified_at": "2026-10-28T14:56:28.657Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T20:36:41.697Z"
+      "last_updated": "2026-10-28T14:56:28.657Z"
     },
     "meta-llama/Llama-2-7b": {
       "repository": "meta-llama/Llama-2-7b",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "2db4dd951ba81e5687ae8b5f6089e8427d724bb366f94390b9b4c01b52226277",
-      "verified_at": "2026-10-28T14:29:21.657Z",
+      "content_hash": "5fcf496a90878e15b7a690c1c48327da5f5c132c6824baa1235f32e151f0658f",
+      "verified_at": "2026-10-28T14:56:45.118Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T14:29:21.657Z"
+      "last_updated": "2026-10-28T14:56:45.118Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -7326,14 +7326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aws-aws-cdk",
-      "content_hash": "b28a502c2c989784a8c920a075edb2211afdbc4dff1f13e0cf005801b9c466e6",
-      "verified_at": "2026-10-27T15:18:59.152Z",
+      "content_hash": "76982cdb5dccee116f72b90bdc98fbc3af9e28be7fbe37f3c688bd15ff2ae5c2",
+      "verified_at": "2026-10-28T14:56:39.024Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T15:18:59.152Z"
+      "last_updated": "2026-10-28T14:56:39.024Z"
     },
     "cockroachdb/cockroach": {
       "repository": "cockroachdb/cockroach",
@@ -8346,14 +8346,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-salvo-rs-salvo",
-      "content_hash": "b4ec955abd099a1daf7a95d7849302b55332daff5834cb57d4f53d3e28c6c3d6",
-      "verified_at": "2026-10-25T18:40:47.154Z",
+      "content_hash": "6c3c733e127c8b20f4a85ce8d2ad793caf3a931fc3cac3761c0539dfece77e15",
+      "verified_at": "2026-10-28T14:56:30.196Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T18:40:47.154Z"
+      "last_updated": "2026-10-28T14:56:30.196Z"
     },
     "react/metro": {
       "repository": "react/metro",
@@ -8361,14 +8361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-metro",
-      "content_hash": "24bba216d8fc133eb2d3280177f96ed789bf77476144c6b5fee731f17989ed23",
-      "verified_at": "2026-10-27T19:32:01.479Z",
+      "content_hash": "3eaf25f249348ab9cf74f11a33a78611d0832aeb0adbc823e72e64eb92abe416",
+      "verified_at": "2026-10-28T14:56:35.302Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T19:32:01.479Z"
+      "last_updated": "2026-10-28T14:56:35.302Z"
     },
     "Checkmarx/kics": {
       "repository": "Checkmarx/kics",

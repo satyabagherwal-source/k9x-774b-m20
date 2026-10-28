@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-metro-learnings.md`  
 > **Source**: github ([https://github.com/react/metro](https://github.com/react/metro))  
-> **Source Version**: `43cc1e3c`  
+> **Source Version**: `492872b2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T19:32:01.015Z  
+> **Timestamp**: 2026-10-28T14:56:34.799Z  
 > **Learning ID**: `learn-github-react-metro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-metro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react/metro](https://github.com/react/metro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T19:31:59.994Z  
+> **Harvest Timestamp**: 2026-10-28T14:56:34.790Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🚇 The JavaScript bundler for React Native
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5656 stars
+- **Stars / Engagement**: 5657 stars
 
 ---
 
@@ -1469,692 +1469,175 @@ export default class Terminal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `25a86916` (2026-10-26)
-**Commit Message**: metro-file-map: Fix regressions with symlinks and unnormalised roots (#2093)
+### Incident Patch 1: `0ab227f6` (2026-10-27)
+**Commit Message**: Bump @babel/traverse to ^7.29.10 and add constant-folding regression tests (#2043)
 
-Fixes three regressions since 0.87.1:
-
-- https://github.com/react/metro/pull/2064 drops cached files outside the roots on a warm start. Watchman lists a symlinked root's files under its real path, so they're all dropped, and imports into it fail until `--reset-cache`:
-  ```js
-  watchFolders: [path.resolve(__dirname, 'node_modules/my-linked-lib')]
-  ```
-  Real paths of roots now count too (built-in crawlers only).
-- https://github.com/react/metro/pull/1946 broke `hierarchicalLookup` through a symlink in a root to its parent:
-  ```
-  app/monorepo -> ..      (watchFolders: ['/repo'])
-  import './monorepo/shared'
-  -> ENOENT: /repo/app/mo/package.json
-  ```
-- https://github.com/react/metro/pull/1677 stopped the Node crawler normalising roots:
-  ```
-  roots: ['/proj/sub/']             -> 'sub//a.js'
-  roots: ['/proj/other/../shared']  -> blockList for '/shared/dist' ignored
-  ```
-
-Changelog: Internal
-
-Test plan:
-- New unit tests for each, failing without this change.
-- Real Watchman, watch folder linked from `node_modules`: 3/3 files on a warm start (`main`: 1/3).
-- `hierarchicalLookup` fuzz, 50k lookups in ra
-
-**File**: `packages/metro-file-map/src/__tests__/addRoot-test.js` (modified, +49/-2)
+**File**: `packages/metro-source-map/package.json` (modified, +2/-2)
 ```diff
-@@ -19,6 +19,7 @@ import type {
- import type FileMapT from '../index';
+@@ -18,7 +18,8 @@
+     "cleanup-release": "test ! -e build && mv src build && mv src.real src"
+   },
+   "dependencies": {
+-    "@babel/traverse": "^7.29.0",
++    "@babel/core": "^7.25.2",
++    "@babel/traverse": "^7.29.10",
+     "@babel/types": "^7.29.8",
+     "flow-enums-runtime": "^0.0.6",
+     "invariant": "^2.2.4",
+@@ -29,7 +30,6 @@
+   },
+   "license": "MIT",
+   "devDependencies": {
+-    "@babel/core": "^7.25.2",
+     "@babel/parser": "^7.29.9",
+     "terser": "^5.15.0"
+   },
+```
+
+**File**: `packages/metro-source-map/src/generateFunctionMap.js` (modified, +1/-1)
+```diff
+@@ -30,7 +30,7 @@ import type {
+ import type {MetroBabelFileMetadata} from 'metro-babel-transformer';
  
- import {AbstractWatcher} from '../watchers/AbstractWatcher';
-+import fs from 'node:fs';
- import * as path from 'node:path';
+ import B64Builder from './B64Builder';
+-import traverse from '@babel/traverse';
++import {traverse} from '@babel/core';
+ import * as t from '@babel/types';
+ import {
+   isAssignmentExpression,
+```
+
+**File**: `packages/metro-transform-plugins/package.json` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@
+     "@babel/core": "^7.25.2",
+     "@babel/generator": "^7.29.1",
+     "@babel/template": "^7.28.6",
+-    "@babel/traverse": "^7.29.0",
++    "@babel/traverse": "^7.29.10",
+     "flow-enums-runtime": "^0.0.6",
+     "nullthrows": "^1.1.1"
+   },
+```
+
+**File**: `packages/metro-transform-plugins/src/__tests__/constant-folding-plugin-test.js` (modified, +48/-0)
+```diff
+@@ -396,4 +396,52 @@ describe('constant expressions', () => {
  
- jest.useRealTimers();
-@@ -106,7 +107,11 @@ const EXTERNAL_DIR = path.resolve('/', 'external');
- const EXTERNAL_FILE = path.join(EXTERNAL_DIR, 'lib', 'helper.js');
- 
- function createFileMap(
--  opts?: Readonly<{enableSymlinks?: boolean, watch?: boolean}>,
-+  opts?: Readonly<{
-+    enableSymlinks?: boolean,
-+    roots?: ReadonlyArray<string>,
-+    watch?: boolean,
-+  }>,
- ): FileMapT {
-   return new FileMap({
-     cacheManagerFactory: () => ({
-@@ -130,7 +135,7 @@ function createFileMap(
-     resetCache: false,
-     retainAllFiles: true,
-     rootDir: ROOT_DIR,
--    roots: [SRC_DIR],
-+    roots: opts?.roots ?? [SRC_DIR],
-     useWatchman: false,
-     watch: opts?.watch ?? false,
+     compare([constantFoldingPlugin], code, expected);
    });
-@@ -162,6 +167,7 @@ describe('FileMap.addRoot', () => {
-   });
- 
-   afterEach(async () => {
-+    jest.restoreAllMocks();
-     await fileMap.end();
-   });
- 
-@@ -356,6 +362,47 @@ describe('FileMap.addRoot', () => {
-     expect(fileSystem.getAllFiles()).toEqual([path.join(SRC_DIR, 'index.js')]);
-   });
- 
-+  test('keeps the files of a root given through a symlink in an instance built from the cache', async () => {
-+    const linkedRoot = path.join(ROOT_DIR, 'node_modules', 'linked');
-+    const realFile = path.join(EXTERNAL_DIR, 'lib', 'helper.js');
-+    jest
-+      .spyOn(fs.promises, 'realpath')
-+      .mockImplementation(async (root: string) => {
-+        if (root === linkedRoot) {
-+          return path.join(EXTERNAL_DIR, 'lib');
-+        }
-+        throw new Error(`ENOENT: no such file or directory, '${root}'`);
-+      });
-+    // Like Watchman, list a root's files under its real path.
-+    mockNodeCrawler.mockImplementationOnce(options =>
-+      Promise.resolve(
-+        options.previousState.fileSystem.getDifference(
-+          new Map([
-+            [
-+              path.relative(ROOT_DIR, path.join(SRC_DIR, 'index.js')),
-+              [1, 42, 0, null, 0],
-+            ],
-+            [path.relative(ROOT_DIR, realFile), [1, 42, 0, null, 0]],
-+          ]),
-+        ),
-+      ),
-+    );
-+    const roots = [SRC_DIR, linkedRoot];
-+    fileMap = createFileMap({roots});
-+    await fileMap.build();
-+    await fileMap.end();
 +
-+    // Like Watchman, report only changes since the cache.
-+    mockNodeCrawler.mockImplementationOnce(() =>
-+      Promise.resolve({changedFiles: new Map(), removedFiles: new Set()}),
-+    );
-+    fileMap = createFileMap({roots});
-+    const {fileSystem} = await fileMap.build();
++  test('does not fold arithmetic on destructured object bindings', () => {
++    const code = `
++      const O = {e: 80};
++      export function f() {
++        const {e} = O;
++        return e + 1;
++      }
++    `;
 +
-+    expect(fileSystem.exists(realFile)).toBe(true);
-+    expect(fileSystem.exists(path.join(SRC_DIR, 'index.js'))).toBe(true);
++    compare([constantFoldingPlugin], code, code);
 +  });
 +
-   describe('in watch mode', () => {
-     beforeEach(() => {
-       fileMap = createFileMap({watch: true});
-```
-
-**File**: `packages/metro-file-map/src/__tests__/crawlerFactory-test.js` (modified, +25/-1)
-```diff
-@@ -9,7 +9,7 @@
-  * @oncall react_native
-  */
- 
--import type {FileMetadata} from '../flow-types';
-+import type {CacheData, FileMetadata} from '../flow-types';
- import type {
-   Crawler,
-   CrawlerFactoryOptions,
-@@ -21,6 +21,7 @@ import type {
- import typeof * as AbstractWatcherModule from '../watchers/AbstractWatcher';
- 
- import FileMap, {HastePlugin, NoopCacheManager} from '../index';
-+import fs from 'node:fs';
- import * as path from 'node:path';
- 
- // Hoisted above the imports by jest, so the backend class has to be built
-@@ -172,6 +173,29 @@ describe('crawlerFactory', () => {
-     await fileMap.end();
-   });
- 
-+  test('takes its roots as given on a cache hit, without reading the disk', async () => {
-+    let cacheContent: ?CacheData = null;
-+    const cacheManagerFactory = () => ({
-+      end: async () => {},
-+      read: async () => cacheContent,
-+      write: async (getSnapshot: () => CacheData) => {
-+        cacheContent = getSnapshot();
-+      },
-+    });
-+    const crawlerFactory = () => stubCrawler([path.join('src', 'index.js')]);
-+    await createFileMap({cacheManagerFactory, crawlerFactory}).build();
-+    const realpath = jest.spyOn(fs.promises, 'realpath');
++  test('does not fold to non-finite numbers from destructured bindings', () => {
++    const code = `
++      const SHAPE = {lo: 80, hi: 85, scale: 2.8};
++      export function f() {
++        const {lo, hi, scale} = SHAPE;
++        return (hi - lo) * scale;
++      }
++    `;
 +
-+    const {fileSystem} = await createFileMap({
-+      cacheManagerFactory,
-+      crawlerFactory,
-+    }).build();
-+
-+    expect(realpath).not.toHaveBeenCalled();
-+    expect(fileSystem.exists(p('src', 'index.js'))).toBe(true);
-+    realpath.mockRestore();
++    compare([constantFoldingPlugin], code, code);
 +  });
 +
-   test('failures are fatal, with no fallback to the node crawler', async () => {
-     // Unlike a Watchman failure, there is no sensible crawler to fall back to -
-     // silently crawling the filesystem instead would defeat the point.
-```
-
-**File**: `packages/metro-file-map/src/__tests__/index-test.js` (modified, +2/-0)
-```diff
-@@ -215,6 +215,8 @@ jest.mock('fs', () => ({
-       }
-       return entry.link;
-     }),
-+    // No root in the mock file system is a symlink.
-+    realpath: jest.fn(async path => path),
-   },
- }));
- jest.mock('node:fs', () => jest.requireMock('fs'));
-```
-
-**File**: `packages/metro-file-map/src/crawlers/__tests__/node-test.js` (modified, +22/-0)
-```diff
-@@ -373,6 +373,28 @@ describe.each([['win32'], ['posix']])('node crawler on %s', platform => {
-     );
-   });
- 
-+  test.each([
-+    ['a trailing separator', '/project/fruits/'],
-+    ["'..' segments", '/project/vegetables/../fruits'],
-+  ])('crawls a root with %s by its normal path', async (_, root) => {
-+    nodeCrawl = require('../node').default;
-+    const ignore = jest.fn(pearMatcher);
++  test('does not fold conditionals on destructured object bindings', () => {
++    const code = `
++      const O = {flag: false};
++      export function f() {
++        const {flag} = O;
++        return flag ? 1 : 2;
++      }
++    `;
 +
-+    const {changedFiles} = await nodeCrawl({
-+      console: global.console,
-+      previousState: {fileSystem: emptyFS},
-+      extensions: ['js'],
-+      ignore,
-+      rootDir,
-+      roots: [p(root)],
-+    });
-+
-+    expect([...changedFiles.keys()].sort()).toEqual(
-+      ['fruits/directory/strawberry.js', 'fruits/tomato.js'].map(p),
-+    );
-+    expect(ignore).toHaveBeenCalledWith(p('/project/fruits/directory'));
++    compare([constantFoldingPlugin], code, code);
 +  });
 +
-   test('crawls from a filesystem root without doubling separators', async () => {
-     const fs = require('node:fs');
-     nodeCrawl = require('../node').default;
-```
-
-**File**: `packages/metro-file-map/src/crawlers/node/index.js` (modified, +3/-1)
-```diff
-@@ -101,7 +101,9 @@ function find(options: CrawlerOptions): Promise<FileData> {
-       });
-     }
- 
--    for (const root of roots) {
-+    for (const givenRoot of roots) {
-+      // Paths are built by concatenation, so the root must be normalised.
-+      const root = path.resolve(givenRoot);
-       const rootNormal = pathUtils.absoluteToNormal(root);
-       const isWithinRoot =
-         rootNormal !== '..' && !rootNormal.startsWith('..' + path.sep);
-```
-
-**File**: `packages/metro-file-map/src/index.js` (modified, +15/-4)
-```diff
-@@ -536,11 +536,22 @@ export default class FileMap extends EventEmitter {
- 
-         // The cache key does not include roots added by `addRoot`, so the
-         // cache may hold files from an earlier instance's added roots. Drop
--        // them, including from plugins.
-+        // them, including from plugins. Watchman lists a symlinked root's
-+        // files under its real path. A custom crawler's files may not be on
-+        // disk.
-         if (initialData != null) {
--          for (const canonicalPath of fileSystem.pathsOutsideRoots(
--            this.#options.roots,
--          )) {
-+          const realRoots =
-+            this.#crawler == null
-+              ? await Promise.all(
-+                  this.#options.roots.map(root =>
-+                    fsPromises.realpath(root).catch(() => root),
-+                  ),
-+                )
-+              : [];
-+          for (const canonicalPath of fileSystem.pathsOutsideRoots([
-+            ...this.#options.roots,
-+            ...realRoots,
-+          ])) {
-             fileDelta.removedFiles.add(canonicalPath);
-           }
-         }
-```
-
-**File**: `packages/metro-file-map/src/lib/TreeFS.js` (modified, +33/-2)
-```diff
-@@ -39,6 +39,19 @@ function isRegularFile(node: FileNode): boolean {
-   return node[H.SYMLINK] === 0;
- }
- 
-+// Null if not within the ancestor ('' is the root).
-+function relativeToAncestor(
-+  normalPath: string,
-+  ancestorNormalPath: string,
-+): ?string {
-+  if (ancestorNormalPath === '' || normalPath === ancestorNormalPath) {
-+    return ancestorNormalPath === '' ? normalPath : '';
-+  }
-+  return normalPath.startsWith(ancestorNormalPath + path.sep)
-+    ? normalPath.slice(ancestorNormalPath.length + 1)
-+    : null;
-+}
++  test('does not fold logical expressions on destructured object bindings', () => {
++    const code = `
++      const O = {flag: false};
++      export function f() {
++        const {flag} = O;
++        return flag || 3;
++      }
++    `;
 +
- type DeserializedSnapshotInput = {
-   rootDir: string,
-   fileSystemData: DirectoryNode,
-@@ -1075,8 +1088,26 @@ export default class TreeFS implements MutableFileSystem {
- 
-     // This will be '', '..', '../..', etc.
-     let candidateNormalPath =
--      commonRootDepth > 0 ? normalPath.slice(0, 3 * commonRootDepth - 1) : '';
--    const remainingNormalPath = normalPath.slice(commonRootDepth * 3);
-+      commonRootDepth > 0
-+        ? '..' + (path.sep + '..').repeat(commonRootDepth - 1)
-+        : '';
-+    // By its real path, if the start path reaches the common root through a
-+    // symlink.
-+    const remainingNormalPath =
-+      relativeToAncestor(normalPath, candidateNormalPath) ??
-+      relativeToAncestor(
-+        closestLookup.exists
-+          ? closestLookup.canonicalPath
-+          : closestLookup.remainingPath === ''
-+            ? closestLookup.canonicalMissingPath
-+            : closestLookup.canonicalMissingPath +
-+              path.sep +
-+              closestLookup.remainingPath,
-+        candidateNormalPath,
-+      );
-+    if (remainingNormalPath == null) {
-+      return null;
-+    }
- 
-     let nextNode: ?MixedNode = commonRoot;
-     let depthBelowCommonRoot = 0;
-```
-
-**File**: `packages/metro-file-map/src/lib/__tests__/TreeFS-test.js` (modified, +9/-0)
-```diff
-@@ -590,6 +590,7 @@ describe.each([['win32'], ['posix']])('TreeFS on %s', platform => {
-               [p('a/b/c/d/link-to-C'), [0, 0, 0, null, '', null]],
-               [p('a/b/c/d/link-to-B'), [0, 0, 0, null, '..', null]],
-               [p('a/b/c/d/link-to-A'), [0, 0, 0, null, '../..', null]],
-+              [p('link-to-B'), [0, 0, 0, null, '..', null]],
-               [
-                 p('n_m/workspace/link-to-pkg'),
-                 [0, 0, 0, null, '../workspace-pkg', null],
-@@ -760,6 +761,14 @@ describe.each([['win32'], ['posix']])('TreeFS on %s', platform => {
-         ['/A/B/C/foo.js', '/A/B/C/package.json', '/A/B/package.json'],
-         ['/A/B/C/a/b/c/d/link-to-A'],
-       ],
-+      // A symlink in the root to an ancestor of the root
-+      [
-+        '/A/B/C/link-to-B/foo.js',
-+        '/A/package.json',
-+        'B/foo.js',
-+        ['/A/B/foo.js', '/A/B/package.json'],
-+        ['/A/B/C/link-to-B'],
-+      ],
-       [
-         '/A/B/C/a/1/foo.js',
-         '/A/B/C/a/1/real-package.json',
-```
-
----
-
-### Incident Patch 2: `66bfcc85` (2026-10-26)
-**Commit Message**: Inline requires: Fix memoization order and partial rewrites (#2092)
-
-* Inline requires: Fix memoization order and partial rewrites
-
-With `memoizeCalls`, destructured requires sorted their references by source position to decide which one assigns the memoized module. Nodes inserted by earlier plugins have no position, so an `exports.a = a` added by the import-export plugin could take the assignment while an earlier `a()` read the unassigned module. References are now sorted in program order, as `scope.crawl()` collects them.
-
-Both the identifier and destructured paths swallowed `replaceWith` errors, eg for references in type annotations or `export {...}` specifiers, leaving a mix of inlined and original references. References are now checked up front with Babel's `validate`, and a require with any reference that can't be rewritten is left alone. The memo `var` is added to the program body directly, since `addStmtToBlock` can't fail for a `Program`.
-
-Changelog: [Fix] Inline requires: Don't partially inline requires referenced in type annotations or `export {...}` specifiers
-
-* Inline requires: Keep the require of an empty destructuring pattern
-
-* Inline requires: Order destructured r
-
-**File**: `packages/metro-transform-plugins/src/__tests__/inline-requires-plugin-test.js` (modified, +80/-0)
-```diff
-@@ -15,10 +15,12 @@ import type {Plugins} from '@babel/core';
- import type {Node as BabelNode} from '@babel/types';
- import type {PluginTesterOptions} from 'babel-plugin-tester';
- 
-+import importExportPlugin from '../import-export-plugin';
- import inlineRequiresPlugin from '../inline-requires-plugin';
- import validateOutputAst from './validateOutputAst';
- import * as babel from '@babel/core';
- import pluginTester from 'babel-plugin-tester';
-+import vm from 'node:vm';
- import nullthrows from 'nullthrows';
- 
- type TestCases = PluginTesterOptions<PluginOptions, State>['tests'];
-@@ -269,6 +271,11 @@ const TEST_CASES: TestCases = {
-     snapshot: true,
-   },
- 
-+  'ignores empty destructured requires': {
-+    code: ['const {} = require("foo");'].join('\n'),
-+    snapshot: false,
-+  },
-+
-   'ignores destructured requires with defaults': {
-     code: ['const {', '  a = 1', '} = require("foo");', 'a();'].join('\n'),
-     snapshot: false,
-@@ -325,6 +332,22 @@ const TEST_CASES: TestCases = {
-     snapshot: true,
-   },
- 
-+  'ignores requires exported by name': {
-+    code: ['var foo = require("foo");', 'foo();', 'export { foo };'].join('\n'),
-+    snapshot: false,
-+  },
-+
-+  'ignores destructured requires exported by name': {
-+    code: [
-+      'const {',
-+      '  a',
-+      '} = require("foo");',
-+      'a();',
-+      'export { a };',
-+    ].join('\n'),
-+    snapshot: false,
-+  },
-+
-   'ignores destructured requires in `ignoredRequires`': {
-     code: ['const {', '  a', '} = require("CommonFoo");', 'a();'].join('\n'),
-     snapshot: false,
-@@ -348,6 +371,63 @@ describe.each([true, false])('memoizeCalls=%s:', memoizeCalls => {
++    compare([constantFoldingPlugin], code, code);
++  });
  });
- 
- describe('inline-requires', () => {
-+  test.each([[false], [true]])(
-+    'ignores requires referenced in type annotations (memoizeCalls=%s)',
-+    memoizeCalls => {
-+      const source = [
-+        'const foo = require("foo");',
-+        'const {a} = require("bar");',
-+        'type T = typeof foo | typeof a;',
-+        'foo(a);',
-+      ].join('\n');
-+      const transformFlow = (plugins: Plugins) =>
-+        babel.transformSync(source, {
-+          babelrc: false,
-+          configFile: false,
-+          parserOpts: {plugins: ['flow']},
-+          plugins,
-+        })?.code;
-+      expect(transformFlow([[inlineRequiresPlugin, {memoizeCalls}]])).toBe(
-+        transformFlow([]),
-+      );
-+    },
-+  );
-+
-+  test.each([[false], [true]])(
-+    'inlines destructured requires exported by the import-export plugin (memoizeCalls=%s)',
-+    memoizeCalls => {
-+      // The import-export plugin runs first in the same pass and inserts
-+      // `exports.a = a` after `a()`, with no source location.
-+      const code = nullthrows(
-+        babel.transformSync(
-+          ['const {a} = require("foo");', 'a();', 'export {a};'].join('\n'),
-+          {
-+            babelrc: false,
-+            configFile: false,
-+            sourceType: 'module',
-+            plugins: [
-+              [
-+                importExportPlugin,
-+                {
-+                  importAll: '_$$_IMPORT_ALL',
-+                  importDefault: '_$$_IMPORT_DEFAULT',
-+                  resolve: false,
-+                },
-+              ],
-+              [inlineRequiresPlugin, {memoizeCalls}],
-+            ],
-+          },
-+        )?.code,
-+      );
-+      expect(code).not.toMatch(/const \{/);
-+      const foo = {a: jest.fn()};
-+      const exports: {a?: unknown} = {};
-+      vm.runInNewContext(code, {require: () => foo, exports});
-+      expect(foo.a).toHaveBeenCalledTimes(1);
-+      expect(exports.a).toBe(foo.a);
-+    },
-+  );
-+
-   const transform = (
-     source: ReadonlyArray<string>,
-     plugins?: Plugins = [[inlineRequiresPlugin, {}]],
 ```
 
-**File**: `packages/metro-transform-plugins/src/inline-requires-plugin.js` (modified, +149/-97)
+**File**: `packages/metro-transform-plugins/src/normalizePseudoGlobals.js` (modified, +1/-1)
 ```diff
-@@ -17,7 +17,6 @@ import type {
-   MemberExpression,
-   Node,
+@@ -19,7 +19,7 @@ import type {
    Program,
--  Statement,
  } from '@babel/types';
  
- type Types = Babel['types'];
-@@ -123,12 +122,28 @@ export default ({types: t, traverse}: Babel): PluginObj<State> => ({
-               references.push({key, referencePath});
-             }
-           }
-+          if (
-+            !references.every(({referencePath}) =>
-+              canInlineAt(t, referencePath),
-+            )
-+          ) {
-+            return;
-+          }
-           // A memoized require is only assigned by the first reference in a
--          // scope, so references are replaced in source order.
--          references.sort(
--            (a, b) =>
--              (a.referencePath.node.start ?? 0) -
--              (b.referencePath.node.start ?? 0),
-+          // scope, so references are replaced in program order. Source
-+          // positions can't be used for this, because nodes inserted by
-+          // earlier plugins (e.g. `exports.a = a`) have none.
-+          const positions = new Map(
-+            references.map(({referencePath}) => [
-+              referencePath,
-+              getTreePosition(t, referencePath),
-+            ]),
-+          );
-+          references.sort((a, b) =>
-+            compareTreePositions(
-+              positions.get(a.referencePath) ?? [],
-+              positions.get(b.referencePath) ?? [],
-+            ),
-           );
+-import traverse from '@babel/traverse';
++import {traverse} from '@babel/core';
+ import nullthrows from 'nullthrows';
  
-           const declarator = declarationPath.node;
-@@ -165,62 +180,46 @@ export default ({types: t, traverse}: Babel): PluginObj<State> => ({
-             references.length > 0 &&
-             !nonMemoizedModules.has(moduleName)
-           ) {
--            const name = path.scope.generateUid(moduleName);
--            declarationPath.remove();
--            if (
--              addStmtToBlock(
--                program,
--                t.variableDeclaration('var', [
--                  t.variableDeclarator(t.identifier(name)),
--                ]),
--                0,
--              )
--            ) {
--              memoVarName = name;
--            }
-+            memoVarName = path.scope.generateUid(moduleName);
-+            program.body.unshift(
-+              t.variableDeclaration('var', [
-+                t.variableDeclarator(t.identifier(memoVarName)),
-+              ]),
-+            );
-           }
- 
--          let thrown = false;
-           const scopesWithInlinedRequire = new Set<Scope>();
-           for (const {key, referencePath} of references) {
--            try {
--              referencePath.scope.rename(requireFnName);
--              if (memoVarName == null) {
--                referencePath.replaceWith(getMember(getRequireExpr(), key));
--                continue;
--              }
--              referencePath.scope.rename(memoVarName);
--              const memoOrCall = t.logicalExpression(
--                '||',
-+            referencePath.scope.rename(requireFnName);
-+            if (memoVarName == null) {
-+              referencePath.replaceWith(getMember(getRequireExpr(), key));
-+              continue;
-+            }
-+            referencePath.scope.rename(memoVarName);
-+            const memoOrCall = t.logicalExpression(
-+              '||',
-+              t.identifier(memoVarName),
-+              t.assignmentExpression(
-+                '=',
-                 t.identifier(memoVarName),
--                t.assignmentExpression(
--                  '=',
--                  t.identifier(memoVarName),
--                  getRequireExpr(),
--                ),
-+                getRequireExpr(),
-+              ),
-+            );
-+            // Reuse the memoized module directly once this scope has
-+            // assigned it, as for identifier aliases below.
-+            if (!isDirectlyEnclosedByBlock(t, referencePath)) {
-+              referencePath.replaceWith(getMember(memoOrCall, key));
-+            } else if (scopesWithInlinedRequire.has(referencePath.scope)) {
-+              referencePath.replaceWith(
-+                getMember(t.identifier(memoVarName), key),
-               );
--              // Reuse the memoized module directly once this scope has
--              // assigned it, as for identifier aliases above.
--              if (!isDirectlyEnclosedByBlock(t, referencePath)) {
--                referencePath.replaceWith(getMember(memoOrCall, key));
--              } else if (scopesWithInlinedRequire.has(referencePath.scope)) {
--                referencePath.replaceWith(
--                  getMember(t.identifier(memoVarName), key),
--                );
--              } else {
--                referencePath.replaceWith(getMember(memoOrCall, key));
--                scopesWithInlinedRequire.add(referencePath.scope);
--              }
--            } catch (error) {
--              thrown = true;
-+            } else {
-+              referencePath.replaceWith(getMember(memoOrCall, key));
-+              scopesWithInlinedRequire.add(referencePath.scope);
-             }
-           }
- 
--          // If a replacement failed (e.g. re
+ export type Options = {
 ```
 
----
-
-### Incident Patch 3: `8d660338` (2026-10-26)
-**Commit Message**: DeltaCalculator: Don't revisit a re-added file deleted after a failed build (#2098)
-
-Since https://github.com/react/metro/pull/2007, a re-added file the graph already holds stays in the added set as well as modified. After a failed build, deleting it cancels the addition and leaves it modified:
-
-```
-foo deleted and re-added during build N  -> build N+1 revisits foo, fails
-foo deleted                              -> every build: "Failed to get the SHA-1 for: foo"
-```
-
-This moves it from added to modified instead.
-
-Changelog: Internal
-
-Test plan:
-- New unit test, failing without this change.
-
-**File**: `packages/metro/src/DeltaBundler/DeltaCalculator.js` (modified, +4/-3)
+**File**: `packages/metro/package.json` (modified, +1/-1)
 ```diff
-@@ -304,11 +304,12 @@ export default class DeltaCalculator<T> extends EventEmitter {
-       }
-     });
- 
--    // An added file that already has a module in the graph was deleted and
--    // recreated while a build was in flight. The graph never saw the deletion,
--    // so the module it holds is stale and needs revisiting.
-+    // An added file the graph already holds was deleted and recreated during
-+    // a build, so its module is stale. It is modified, not added, since it
-+    // never left the graph.
-     addedFiles.forEach((filePath: string) => {
-       if (this._graph.dependencies.has(filePath)) {
-+        addedFiles.delete(filePath);
-         modifiedFiles.add(filePath);
-       }
-     });
+@@ -24,7 +24,7 @@
+     "@babel/generator": "^7.29.1",
+     "@babel/parser": "^7.29.9",
+     "@babel/template": "^7.28.6",
+-    "@babel/traverse": "^7.29.0",
++    "@babel/traverse": "^7.29.10",
+     "@babel/types": "^7.29.8",
+     "accepts": "^2.0.0",
+     "connect": "^3.6.5",
 ```
 
-**File**: `packages/metro/src/DeltaBundler/__tests__/DeltaCalculator-test.js` (modified, +22/-0)
+**File**: `packages/metro/src/DeltaBundler/Worker.flow.js` (modified, +1/-1)
 ```diff
-@@ -629,6 +629,28 @@ describe.each(['posix', 'win32'])('DeltaCalculator (%s)', osPlatform => {
-     expect(traverseDependencies.mock.calls[1][0]).toEqual([p('/bundle')]);
-   });
+@@ -16,7 +16,7 @@ import type {
+   JsTransformOptions,
+ } from 'metro-transform-worker';
  
-+  test('should not traverse a re-added file deleted after a failed delta', async () => {
-+    await deltaCalculator.getDelta({reset: false, shallow: false});
-+
-+    // As after a delete and re-add during an earlier build.
-+    emitChange({addedFiles: ['foo']});
-+    traverseDependencies.mockRejectedValueOnce(new Error('Syntax error'));
-+    await expect(
-+      deltaCalculator.getDelta({reset: false, shallow: false}),
-+    ).rejects.toBeInstanceOf(Error);
-+
-+    emitChange({removedFiles: ['foo']});
-+    traverseDependencies.mockResolvedValueOnce({
-+      added: new Map(),
-+      modified: new Map([[p('/bundle'), entryModule]]),
-+      deleted: new Set([p('/foo')]),
-+    });
-+    await deltaCalculator.getDelta({reset: false, shallow: false});
-+
-+    expect(traverseDependencies).toHaveBeenCalledTimes(2);
-+    expect(traverseDependencies.mock.calls[1][0]).toEqual([p('/bundle')]);
-+  });
-+
-   test('should traverse a file re-added while a successful delta was being built', async () => {
-     await deltaCalculator.getDelta({reset: false, shallow: false});
+-import traverse from '@babel/traverse';
++import {traverse} from '@babel/core';
+ import crypto from 'node:crypto';
+ import fs from 'node:fs';
+ import path from 'node:path';
+```
+
+**File**: `packages/metro/src/ModuleGraph/worker/collectDependencies.js` (modified, +1/-1)
+```diff
+@@ -26,9 +26,9 @@ import type {
+   AsyncDependencyType,
+ } from 'metro/private/DeltaBundler/types';
  
++import {traverse} from '@babel/core';
+ import generate from '@babel/generator';
+ import template from '@babel/template';
+-import traverse from '@babel/traverse';
+ import * as types from '@babel/types';
+ import {isImport, isProgram} from '@babel/types';
+ import invariant from 'invariant';
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2124** (2026-10-28): Apply `processModuleFilter` to inline source maps (@kwy404)
 - **PR #2123** (2026-10-27): metro-file-map: Keep other roots' files when recrawling the project root (@YevheniiKotyrlo)
 - **PR #2120** (2026-10-27): Post automated PR reviews as github-actions[bot] (@robhogan)
 - **PR #2118** (closed): Declare root dev dependencies that Yarn hoisting was hiding (@robhogan)
 - **PR #2117** (2026-10-26): Fix async-iterable return types in Node libdef (@robhogan)
 - **PR #2115** (2026-10-26): Upgrade Flow in fbsource (@SamChou19815)
-- **PR #2102** (2026-10-25): Fix empty file list in ambiguous module resolution errors (@kwy404)
 
 ---
 
@@ -2174,62 +1657,30 @@ Test plan:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. metro-file-map: Fix regressions with symlinks and unnormalised roots (#2093)
+## X. Bump @babel/traverse to ^7.29.10 and add constant-folding regression tests (#204
 
 **RULE**:
-When implementing operations in `packages/metro-file-map/src/__tests__/addRoot-test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/metro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/metro-source-map/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/metro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `25a86916`: metro-file-map: Fix regressions with symlinks and unnormalised roots (#2093). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0ab227f6`: Bump @babel/traverse to ^7.29.10 and add constant-folding regression tests (#2043). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/metro-file-map/src/__tests__/addRoot-test.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/metro-source-map/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-import fs from 'node:fs';
-  opts?: Readonly<{
-    enableSymlinks?: boolean,
-    roots?: ReadonlyArray<string>,
-    watch?: boolean,
-  }>,
-    roots: opts?.roots ?? [SRC_DIR],
-    jest.restoreAllMocks();
-  test('keeps the files of a root given through a symlink in an instance built from the cache', async () => {
-    const linkedRoot = path.join(ROOT_DIR, 'node_modules', 'linked');
-    const realFile = path.join(EXTERNAL_DIR, 'lib', 'helper.js');
-    jest
-      .spyOn(fs.promises, 'realpath')
-      .mockImplementation(async (root: string) => {
-        if (root === linkedRoot) {
-          return path.join(EXTERNAL_DIR, 'lib');
-        }
-        throw new Error(`ENOENT: no such file or directory, '${root}'`);
-      });
-    // Like Watchman, list a root's files under its real path.
-    mockNodeCrawler.mockImplementationOnce(options =>
-      Promise.resolve(
-        options.previousState.fileSystem.getDifference(
-          new Map([
-            [
-              path.relative(ROOT_DIR, path.join(SRC_DIR, 'index.js')),
-              [1, 42, 0, null, 0],
-            ],
-            [path.relative(ROOT_DIR, realFile), [1, 42, 0, null, 0]],
-          ]),
-        ),
-      ),
-    );
-    const roo
+    "@babel/core": "^7.25.2",
+    "@babel/traverse": "^7.29.10",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-  opts?: Readonly<{enableSymlinks?: boolean, watch?: boolean}>,
-    roots: [SRC_DIR],
+    "@babel/traverse": "^7.29.0",
+    "@babel/core": "^7.25.2",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `25a86916` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0ab227f6` are properly handled with clean fallback behavior.
