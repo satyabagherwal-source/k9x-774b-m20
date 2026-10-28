@@ -2563,10 +2563,10 @@
     "repository": "nats-io/nats.go",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats.go",
-    "sourceVersion": "eb1a86e6",
+    "sourceVersion": "9868714c",
     "license": "Apache-2.0",
-    "contentHash": "c7b343de97de19db6e7efac6156430ff3df660d00c6ab86cba10df41c1bc8523",
-    "lastHarvestedAt": "2026-10-27T12:21:50.908Z",
+    "contentHash": "c19357b819f711a04f562b44d720865949a27b06dea375f5a82046760d9e980a",
+    "lastHarvestedAt": "2026-10-28T00:12:45.168Z",
     "learningId": "learn-github-nats-io-nats-go"
   },
   "chrispybacon-dev-dockflare": {
@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "442b6191",
+    "sourceVersion": "34abc74b",
     "license": "Apache-2.0",
-    "contentHash": "41bd8eb5a73e403cfa15cf5d3cf4337a5011f67e2fe9c1d4bb4ffc8bb9fe84b2",
-    "lastHarvestedAt": "2026-10-27T11:34:17.154Z",
+    "contentHash": "5fc2397fafd0151207f62b6a0a3894fa0dc5ee0e3e5ea1b34085fbcea7edff45",
+    "lastHarvestedAt": "2026-10-28T00:12:51.222Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {

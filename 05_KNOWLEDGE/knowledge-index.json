@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T00:06:05.068Z",
+  "last_updated": "2026-10-28T00:12:51.160Z",
   "total_verified_learnings": 1154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -38358,8 +38358,8 @@
       "slug": "nats-io-nats.go",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats.go",
-      "source_version": "eb1a86e6",
-      "content_hash": "c7b343de97de19db6e7efac6156430ff3df660d00c6ab86cba10df41c1bc8523",
+      "source_version": "9868714c",
+      "content_hash": "c19357b819f711a04f562b44d720865949a27b06dea375f5a82046760d9e980a",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "promoted_rules": [
@@ -38392,6 +38392,11 @@
           "number": 4745,
           "title": "[FIXED] JetStream reconnect watcher cleanup (#2216)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5069,
+          "title": "[FIXED] Legacy JetStream reconnect watcher cleanup (#2218)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38399,7 +38404,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:21:50.802Z",
+      "verified_at": "2026-10-28T00:12:45.078Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51516,8 +51521,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "442b6191",
-      "content_hash": "41bd8eb5a73e403cfa15cf5d3cf4337a5011f67e2fe9c1d4bb4ffc8bb9fe84b2",
+      "source_version": "34abc74b",
+      "content_hash": "5fc2397fafd0151207f62b6a0a3894fa0dc5ee0e3e5ea1b34085fbcea7edff45",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -51555,6 +51560,11 @@
           "number": 4713,
           "title": "Aggregation analysis for session expressions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5070,
+          "title": "running test from IntelliJ",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51562,7 +51572,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:34:17.077Z",
+      "verified_at": "2026-10-28T00:12:51.147Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -139672,6 +139682,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T00:06:05.057Z"
+    },
+    "rule-5069": {
+      "learning_id": "rule-5069",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5069,
+      "title": "[FIXED] Legacy JetStream reconnect watcher cleanup (#2218)",
+      "source_url": "https://github.com/nats-io/nats.go",
+      "source_version": "9868714c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T00:12:45.078Z"
+    },
+    "rule-5070": {
+      "learning_id": "rule-5070",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5070,
+      "title": "running test from IntelliJ",
+      "source_url": "https://github.com/trinodb/trino",
+      "source_version": "34abc74b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T00:12:51.147Z"
     }
   },
   "aliases": {

@@ -5593,3 +5593,5 @@
 | `CYCLE-20261028-T0AH` | `2026-10-28T00:05:58.073Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5066` | Yes (`9ffc0209...`) |
 | `CYCLE-20261028-T255` | `2026-10-28T00:06:00.473Z` | `RustCrypto/hashes` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5067` | Yes (`def25cb2...`) |
 | `CYCLE-20261028-T5Q1` | `2026-10-28T00:06:05.113Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5068` | Yes (`4bfe0181...`) |
+| `CYCLE-20261028-1QEL` | `2026-10-28T00:12:45.165Z` | `nats-io/nats.go` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5069` | Yes (`c19357b8...`) |
+| `CYCLE-20261028-1V2Q` | `2026-10-28T00:12:51.218Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5070` | Yes (`5fc2397f...`) |

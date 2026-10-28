@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T00:06:05.123Z",
+  "last_updated": "2026-10-28T00:12:51.231Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3981,14 +3981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-go",
-      "content_hash": "c7b343de97de19db6e7efac6156430ff3df660d00c6ab86cba10df41c1bc8523",
-      "verified_at": "2026-10-27T12:21:50.915Z",
+      "content_hash": "c19357b819f711a04f562b44d720865949a27b06dea375f5a82046760d9e980a",
+      "verified_at": "2026-10-28T00:12:45.176Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T12:21:50.915Z"
+      "last_updated": "2026-10-28T00:12:45.176Z"
     },
     "ChrispyBacon-dev/DockFlare": {
       "repository": "ChrispyBacon-dev/DockFlare",
@@ -7731,14 +7731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trinodb-trino",
-      "content_hash": "41bd8eb5a73e403cfa15cf5d3cf4337a5011f67e2fe9c1d4bb4ffc8bb9fe84b2",
-      "verified_at": "2026-10-27T11:34:17.163Z",
+      "content_hash": "5fc2397fafd0151207f62b6a0a3894fa0dc5ee0e3e5ea1b34085fbcea7edff45",
+      "verified_at": "2026-10-28T00:12:51.230Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T11:34:17.163Z"
+      "last_updated": "2026-10-28T00:12:51.230Z"
     },
     "pinterest/gestalt": {
       "repository": "pinterest/gestalt",

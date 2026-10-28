@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
-> **Source Version**: `eb1a86e6`  
+> **Source Version**: `9868714c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T12:21:50.411Z  
+> **Timestamp**: 2026-10-28T00:12:44.711Z  
 > **Learning ID**: `learn-github-nats-io-nats-go`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T12:21:49.621Z  
+> **Harvest Timestamp**: 2026-10-28T00:12:43.541Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1561,27 +1561,48 @@ func endlessPublish(ctx context.Context, nc *nats.Conn, js jetstream.JetStream) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7c6add47` (2026-10-26)
-**Commit Message**: [FIXED] JetStream reconnect watcher cleanup (#2216)
+### Incident Patch 1: `9868714c` (2026-10-27)
+**Commit Message**: [FIXED] Legacy JetStream reconnect watcher cleanup (#2218)
 
-Capture the status channel before starting the watcher so cleanup or
-publisher reuse cannot redirect a delayed watcher to a nil or new channel.
-Cover cleanup before watcher startup, with and without publisher reuse.
+Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
 
-Signed-off-by: Guangren Wang <[REDACTED_EMAIL]>
-
-**File**: `jetstream/jetstream_test.go` (modified, +32/-1)
+**File**: `js.go` (modified, +2/-5)
 ```diff
-@@ -45,7 +45,7 @@ func TestJetStreamReconnectErrorCallback(t *testing.T) {
+@@ -727,7 +727,7 @@ func (js *js) newAsyncReply() string {
+ 	}
+ 	if js.connStatusCh == nil {
+ 		js.connStatusCh = js.nc.StatusChanged(RECONNECTING, CLOSED)
+-		go js.resetPendingAcksOnReconnect()
++		go js.resetPendingAcksOnReconnect(js.connStatusCh)
+ 	}
+ 	var sb strings.Builder
+ 	sb.Grow(len(js.rpre) + aReplyTokensize)
+@@ -749,10 +749,7 @@ func (js *js) newAsyncReply() string {
+ 	return sb.String()
+ }
+ 
+-func (js *js) resetPendingAcksOnReconnect() {
+-	js.mu.Lock()
+-	connStatusCh := js.connStatusCh
+-	js.mu.Unlock()
++func (js *js) resetPendingAcksOnReconnect(connStatusCh <-chan Status) {
+ 	for {
+ 		newStatus, ok := <-connStatusCh
+ 		if !ok || newStatus == CLOSED {
+```
+
+**File**: `js_test.go` (modified, +32/-1)
+```diff
+@@ -49,7 +49,7 @@ func TestJetStreamReconnectErrorCallback(t *testing.T) {
  			}
  			called <- struct{}{}
  		}
 -		go js.resetPendingAcksOnReconnect()
-+		go js.resetPendingAcksOnReconnect(js.publisher.connStatusCh)
++		go js.resetPendingAcksOnReconnect(js.connStatusCh)
  		defer func() {
- 			close(js.publisher.connStatusCh)
+ 			close(js.connStatusCh)
  			synctest.Wait()
-@@ -65,6 +65,37 @@ func TestJetStreamReconnectErrorCallback(t *testing.T) {
+@@ -69,6 +69,37 @@ func TestJetStreamReconnectErrorCallback(t *testing.T) {
  	})
  }
  
@@ -1589,15 +1610,15 @@ Signed-off-by: Guangren Wang <[REDACTED_EMAIL]>
 +	for _, reuse := range []bool{false, true} {
 +		t.Run(fmt.Sprintf("reuse=%v", reuse), func(t *testing.T) {
 +			synctest.Test(t, func(t *testing.T) {
-+				nc := &nats.Conn{}
-+				js := &jetStream{conn: nc, publisher: &jetStreamClient{}}
-+				js.publisher.connStatusCh = nc.StatusChanged(nats.RECONNECTING, nats.CLOSED)
-+				connStatusCh := js.publisher.connStatusCh
++				nc := &Conn{}
++				js := &js{nc: nc, opts: &jsOpts{}}
++				js.connStatusCh = nc.StatusChanged(RECONNECTING, CLOSED)
++				connStatusCh := js.connStatusCh
 +
 +				// Cleanup can finish before the reconnect watcher starts running.
 +				js.CleanupPublisher()
 +				if reuse {
-+					js.publisher.connStatusCh = nc.StatusChanged(nats.RECONNECTING, nats.CLOSED)
++					js.connStatusCh = nc.StatusChanged(RECONNECTING, CLOSED)
 +					defer js.CleanupPublisher()
 +				}
 +				stopped := make(chan struct{})
@@ -1616,161 +1637,18 @@ Signed-off-by: Guangren Wang <[REDACTED_EMAIL]>
 +	}
 +}
 +
- func TestMessageMetadata(t *testing.T) {
- 	tests := []struct {
- 		name             string
-```
-
-**File**: `jetstream/publish.go` (modified, +2/-5)
-```diff
-@@ -448,7 +448,7 @@ func (js *jetStream) newAsyncReply() error {
- 	}
- 	if js.publisher.connStatusCh == nil {
- 		js.publisher.connStatusCh = js.conn.StatusChanged(nats.RECONNECTING, nats.CLOSED)
--		go js.resetPendingAcksOnReconnect()
-+		go js.resetPendingAcksOnReconnect(js.publisher.connStatusCh)
- 	}
- 	return nil
- }
-@@ -562,10 +562,7 @@ func (js *jetStream) handleAsyncErrAndUnlock(paf *pubAckFuture, err error) {
- 	}
- }
- 
--func (js *jetStream) resetPendingAcksOnReconnect() {
--	js.publisher.Lock()
--	connStatusCh := js.publisher.connStatusCh
--	js.publisher.Unlock()
-+func (js *jetStream) resetPendingAcksOnReconnect(connStatusCh <-chan nats.Status) {
- 	for {
- 		newStatus, ok := <-connStatusCh
- 		if !ok || newStatus == nats.CLOSED {
-```
-
----
-
-### Incident Patch 2: `b961bad6` (2026-10-26)
-**Commit Message**: [FIXED] Keep TLS server name for IPs discovered via an IP entry (#2217)
-
-Servers learned from INFO connect_urls that are bare IPs get the current
-URL's hostname as tlsName so the TLS handshake verifies against it
-instead of the IP. This was skipped whenever the current URL was itself
-an IP. After a failover to a discovered IP entry, a server that came
-back on a new IP was added without a tlsName, and the next reconnect to
-it failed certificate verification against the IP.
-
-Inherit the tlsName of the current IP entry when it has one.
-
-Signed-off-by: Igor Kupczyński <[REDACTED_EMAIL]>
-
-**File**: `nats.go` (modified, +10/-4)
-```diff
-@@ -2273,9 +2273,14 @@ func (nc *Conn) parseServerURL(sURL string, implicit, saveTLSName bool) (*Server
- 		}
- 		// We are checking to see if we have a secure connection and are
- 		// adding an implicit server that just has an IP. If so we will remember
--		// the current hostname we are connected to.
-+		// the current hostname we are connected to. If we are connected to an
-+		// IP ourselves, inherit the name that entry carries.
- 		if saveTLSName && hostIsIP(u) {
--			tlsName = curl.Hostname()
-+			if hostIsIP(curl) {
-+				tlsName = nc.current.tlsName
-+			} else {
-+				tlsName = curl.Hostname()
-+			}
- 		}
- 	}
- 
-@@ -4361,8 +4366,9 @@ func (nc *Conn) processInfo(info string) error {
- 			i--
- 		}
- 	}
--	// Figure out if we should save off the current non-IP hostname if we encounter a bare IP.
--	saveTLS := nc.current != nil && !hostIsIP(nc.current.URL)
-+	// Figure out if we should save off the current non-IP hostname, or the
-+	// name saved on the current IP entry, if we encounter a bare IP.
-+	saveTLS := nc.current != nil && (!hostIsIP(nc.current.URL) || nc.current.tlsName != _EMPTY_)
- 
- 	// If there are any left in the tmp map, these are new (or restarted) servers
- 	// and need to be added to the pool.
-```
-
-**File**: `nats_test.go` (modified, +58/-0)
-```diff
-@@ -2123,6 +2123,64 @@ func TestParseServerURLPreservesTLSName(t *testing.T) {
- 	}
- }
- 
-+// TestProcessInfoPropagatesTLSNameFromIPEntry verifies that a server learned
-+// through INFO connect_urls while connected through an implicit IP entry
-+// inherits that entry's tlsName, so a later reconnect to it still verifies
-+// the certificate against the original hostname.
-+func TestProcessInfoPropagatesTLSNameFromIPEntry(t *testing.T) {
-+	opts := GetDefaultOptions()
-+	opts.Url = "tls://nats.example.com:4222"
-+	opts.NoRandomize = true
-+	nc := &Conn{Opts: opts}
-+	if err := nc.setupServerPool(); err != nil {
-+		t.Fatalf("Problem setting up Server Pool: %v", err)
-+	}
-+
-+	poolServer := func(hostPort string) *Server {
-+		t.Helper()
-+		for _, s := range nc.srvPool {
-+			if s.URL.Host == hostPort {
-+				return s
-+			}
-+		}
-+		t.Fatalf("Server %q not in pool", hostPort)
-+		return nil
-+	}
-+	info := func(urls ...string) string {
-+		b, _ := json.Marshal(map[string]any{"connect_urls": urls})
-+		return string(b)
-+	}
-+
-+	// Connected through the hostname: IPs learned get its name.
-+	if err := nc.processInfo(info("10.0.0.1:4222", "10.0.0.2:4222")); err != nil {
-+		t.Fatalf("processInfo: %v", err)
-+	}
-+	for _, hp := range []string{"10.0.0.1:4222", "10.0.0.2:4222"} {
-+		if got := poolServer(hp).tlsName; got != "nats.example.com" {
-+			t.Fatalf("tlsName for %s = %q, want %q", hp, got, "nats.example.com")
-+		}
-+	}
-+
-+	// Reconnected through an IP entry, then a server comes back on a new IP.
-+	nc.current = poolServer("10.0.0.2:4222")
-+	if err := nc.processInfo(info("10.0.0.2:4222", "10.0.0.3:4222")); err != nil {
-+		t.Fatalf("processInfo: %v", err)
-+	}
-+	if got := poolServer("10.0.0.3:4222").tlsName; got != "nats.example.com" {
-+		t.Fatalf("tlsName for new IP = %q, want %q", got, "nats.example.com")
-+	}
-+
-+	// An IP entry without a tlsName has nothing to pass on.
-+	nc.current = poolServer("10.0.0.3:4222")
-+	nc.current.tlsName = _EMPTY_
-+	if err := nc.processInfo(info("10.0.0.3:4222", "10.0.0.4:4222")); err != nil {
-+		t.Fatalf("processInfo: %v", err)
-+	}
-+	if got := poolServer("10.0.0.4:4222").tlsName; got != _EMPTY_ {
-+		t.Fatalf("tlsName for new IP = %q, want empty", got)
-+	}
-+}
-+
- // hostOnlyTLSCert mints a self-signed cert carrying a single "localhost" DNS
- // SAN and deliberately no IP SANs, so verifying it against an IP-form
- // ServerName fails. Returns the server cert and a pool trusting it.
+ func TestIsWrongLastSeqErr(t *testing.T) {
+ 	// 10164 is the replicated-stream variant of the 10071 "wrong last
+ 	// sequence" CAS conflict; both must be recognized (issue #2097).
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2218** (2026-10-27): [FIXED] Legacy JetStream reconnect watcher cleanup (@piotrpio)
 - **PR #2217** (2026-10-26): [FIXED] Keep TLS server name for IPs discovered via an IP entry (@igor-kupczynski)
 - **PR #2216** (2026-10-26): [FIXED] Release the JetStream reconnect watcher after publisher cleanup (@Grivn)
 - **PR #2214** (2026-10-23): Release v1.55.0 (@piotrpio)
 - **PR #2213** (2026-10-23): [IMPROVED] Document default MaxAckPending for legacy JetStream subscriptions (@piotrpio)
 - **PR #2212** (2026-10-23): [IMPROVED] Avoid per-message metadata allocations in JetStream consumers (@piotrpio)
-- **PR #2211** (2026-10-23): [FIXED] Ordered consumer Fetch deadlock and FetchNoWait redelivery (@piotrpio)
 
 ---
 
@@ -1790,59 +1668,33 @@ Signed-off-by: Igor Kupczyński <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] JetStream reconnect watcher cleanup (#2216)
+## X. [FIXED] Legacy JetStream reconnect watcher cleanup (#2218)
 
 **RULE**:
-When implementing operations in `jetstream/jetstream_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `js.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7c6add47`: [FIXED] JetStream reconnect watcher cleanup (#2216). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9868714c`: [FIXED] Legacy JetStream reconnect watcher cleanup (#2218). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `jetstream/jetstream_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `js.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		go js.resetPendingAcksOnReconnect(js.publisher.connStatusCh)
-func TestJetStreamReconnectWatcherCleanup(t *testing.T) {
-	for _, reuse := range []bool{false, true} {
-		t.Run(fmt.Sprintf("reuse=%v", reuse), func(t *testing.T) {
-			synctest.Test(t, func(t *testing.T) {
-				nc := &nats.Conn{}
-				js := &jetStream{conn: nc, publisher: &jetStreamClient{}}
-				js.publisher.connStatusCh = nc.StatusChanged(nats.RECONNECTING, nats.CLOSED)
-				connStatusCh := js.publisher.connStatusCh
-
-				// Cleanup can finish before the reconnect watcher starts running.
-				js.CleanupPublisher()
-				if reuse {
-					js.publisher.connStatusCh = nc.StatusChanged(nats.RECONNECTING, nats.CLOSED)
-					defer js.CleanupPublisher()
-				}
-				stopped := make(chan struct{})
-				go func() {
-					js.resetPendingAcksOnReconnect(connStatusCh)
-					close(stopped)
-				}()
-				synctest.Wait()
-				select {
-				case <-stopped:
-				default:
-					t.Error("Reconnect watcher did not exit after publisher cleanup")
-				}
-			})
-		})
-	}
-}
-
+		go js.resetPendingAcksOnReconnect(js.connStatusCh)
+func (js *js) resetPendingAcksOnReconnect(connStatusCh <-chan Status) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
 		go js.resetPendingAcksOnReconnect()
+func (js *js) resetPendingAcksOnReconnect() {
+	js.mu.Lock()
+	connStatusCh := js.connStatusCh
+	js.mu.Unlock()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7c6add47` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9868714c` are properly handled with clean fallback behavior.

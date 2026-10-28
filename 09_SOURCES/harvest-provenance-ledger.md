@@ -5602,3 +5602,5 @@ Every entry in this ledger must capture:
 | `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `759295c3` | Multi-dimensional audit evidence | 2026-10-28T00:05:58.076Z |
 | `learn-github-rustcrypto-hashes` | `https://github.com/RustCrypto/hashes` | `23d8e40e` | Multi-dimensional audit evidence | 2026-10-28T00:06:00.476Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `fc353927` | Multi-dimensional audit evidence | 2026-10-28T00:06:05.116Z |
+| `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `9868714c` | Multi-dimensional audit evidence | 2026-10-28T00:12:45.168Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `34abc74b` | Multi-dimensional audit evidence | 2026-10-28T00:12:51.222Z |

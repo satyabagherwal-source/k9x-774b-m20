@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `442b6191`  
+> **Source Version**: `34abc74b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T11:34:16.752Z  
+> **Timestamp**: 2026-10-28T00:12:50.803Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T11:34:16.431Z  
+> **Harvest Timestamp**: 2026-10-28T00:12:49.956Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13374 stars
+- **Stars / Engagement**: 13377 stars
 
 ---
 
@@ -1862,486 +1862,389 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fcd508b6` (2026-10-24)
-**Commit Message**: Fix Aggregation analysis for session expressions
+### Incident Patch 1: `7fd3d978` (2026-10-23)
+**Commit Message**: Fix running test from IntelliJ
 
-Treat CURRENT_USER, CURRENT_CATALOG, CURRENT_SCHEMA and CURRENT_PATH
-as group-constant expression during aggregation analysis.
+Before the change it failed with
 
-Without these dedicated visitor methods, these expression falls throgh
-generic unsupported expression path in Aggregation Analyzer causing
-query to fail with UnsupportedOperationException.
+    java.lang.reflect.InaccessibleObjectException:
+        Unable to make io.trino.spi.connector.TestColumnMetadata()
+        accessible: module trino.spi does not "opens
+        io.trino.spi.connector" to module org.junit.platform.commons
 
-- Added test to cover these cases
-
-**File**: `core/trino-main/src/main/java/io/trino/sql/analyzer/AggregationAnalyzer.java` (modified, +28/-0)
+**File**: `core/trino-spi/src/test/java/io/trino/spi/connector/TestColumnMetadata.java` (modified, +1/-1)
 ```diff
-@@ -29,9 +29,13 @@
- import io.trino.sql.tree.AtTimeZone;
- import io.trino.sql.tree.Cast;
- import io.trino.sql.tree.CoalesceExpression;
-+import io.trino.sql.tree.CurrentCatalog;
- import io.trino.sql.tree.CurrentDate;
-+import io.trino.sql.tree.CurrentPath;
-+import io.trino.sql.tree.CurrentSchema;
- import io.trino.sql.tree.CurrentTime;
- import io.trino.sql.tree.CurrentTimestamp;
-+import io.trino.sql.tree.CurrentUser;
- import io.trino.sql.tree.DefaultExpressionTraversalVisitor;
- import io.trino.sql.tree.DereferenceExpression;
- import io.trino.sql.tree.ExistsPredicate;
-@@ -308,6 +312,30 @@ protected Boolean visitExtract(Extract node, Void context)
-             return process(node.getExpression(), context);
-         }
+@@ -21,7 +21,7 @@
+ import static io.trino.spi.type.IntegerType.INTEGER;
+ import static org.assertj.core.api.Assertions.assertThat;
  
-+        @Override
-+        protected Boolean visitCurrentCatalog(CurrentCatalog node, Void context)
-+        {
-+            return true;
-+        }
-+
-+        @Override
-+        protected Boolean visitCurrentSchema(CurrentSchema node, Void context)
-+        {
-+            return true;
-+        }
-+
-+        @Override
-+        protected Boolean visitCurrentUser(CurrentUser node, Void context)
-+        {
-+            return true;
-+        }
-+
-+        @Override
-+        protected Boolean visitCurrentPath(CurrentPath node, Void context)
-+        {
-+            return true;
-+        }
-+
-         @Override
-         protected Boolean visitCurrentTime(CurrentTime node, Void context)
-         {
+-class TestColumnMetadata
++public class TestColumnMetadata
+ {
+     @Test
+     public void testBuilderFrom()
 ```
 
-**File**: `core/trino-main/src/test/java/io/trino/sql/query/TestSessionFunctions.java` (modified, +23/-0)
+---
+
+### Incident Patch 2: `352def8f` (2026-10-18)
+**Commit Message**: Fix overflow in partition data size estimate
+
+**File**: `core/trino-main/src/main/java/io/trino/operator/output/SkewedPartitionRebalancer.java` (modified, +1/-1)
 ```diff
-@@ -105,6 +105,29 @@ public void testCurrentSchema()
+@@ -325,7 +325,7 @@ private void calculatePartitionDataSize(long dataProcessed)
+             // at least partitionDataSizeAtLastRebalance. Otherwise, it will affect the ordering of minTaskBuckets
+             // priority queue.
+             partitionDataSize[partition] = max(
+-                    (partitionRowCount.get(partition) * dataProcessed) / totalPartitionRowCount,
++                    (long) (((double) partitionRowCount.get(partition) * dataProcessed) / totalPartitionRowCount),
+                     partitionDataSize[partition]);
          }
+     }
+```
+
+**File**: `core/trino-main/src/test/java/io/trino/operator/output/TestSkewedPartitionRebalancer.java` (modified, +21/-0)
+```diff
+@@ -225,6 +225,27 @@ void testRebalancePartitionToSingleTaskInARebalancingLoop()
+                 .containsExactly(ImmutableList.of(0, 1, 2), ImmutableList.of(1), ImmutableList.of(2));
      }
  
 +    @Test
-+    public void testSessionFunctionWithAggregation()
++    void testRebalanceWhenRowCountTimesDataProcessedExceedsLong()
 +    {
-+        Session session = testSessionBuilder()
-+                .setIdentity(Identity.ofUser("test_current_user"))
-+                .setCatalog("trino_rocks")
-+                .setSchema("trino_rocks")
-+                .setPath(SqlPath.buildPath("test_path", Optional.empty()))
-+                .build();
++        int partitionCount = 3;
++        SkewedPartitionRebalancer rebalancer = new SkewedPartitionRebalancer(
++                partitionCount,
++                3,
++                3,
++                MIN_PARTITION_DATA_PROCESSED_REBALANCE_THRESHOLD,
++                MIN_DATA_PROCESSED_REBALANCE_THRESHOLD);
 +
-+        try (QueryAssertions assertions = new QueryAssertions(session)) {
-+            assertThat(assertions.query(
-+                    "SELECT CURRENT_USER, CURRENT_CATALOG, CURRENT_SCHEMA, CURRENT_PATH, count(*)"
-+                            + "FROM (VALUES 1, 2)"))
-+                    .matches(format(
-+                            "SELECT CAST('%s' AS VARCHAR), CAST('%s' AS VARCHAR), CAST('%s' AS VARCHAR), CAST('%s' AS VARCHAR), BIGINT '2'",
-+                            session.getUser(),
-+                            session.getCatalog().orElseThrow(),
-+                            session.getSchema().orElseThrow(),
-+                            session.getPath()));
-+        }
++        rebalancer.addPartitionRowCount(0, 1L << 32);
++        rebalancer.addPartitionRowCount(1, 0);
++        rebalancer.addPartitionRowCount(2, 0);
++        rebalancer.addDataProcessed(1L << 31);
++        rebalancer.rebalance();
++
++        assertThat(rebalancer.getPartitionAssignments())
++                .containsExactly(ImmutableList.of(0, 1), ImmutableList.of(1), ImmutableList.of(2));
 +    }
 +
      @Test
-     public void testCurrentGroups()
+     public void testConsiderSkewedPartitionOnlyWithinACycle()
      {
 ```
 
 ---
 
-### Incident Patch 2: `0313ae9a` (2026-10-26)
-**Commit Message**: Fix PreparedStatement date/time before Gregorian cutover
+### Incident Patch 3: `5a7baf5c` (2026-10-25)
+**Commit Message**: Use MemoryContext in BigQuery page sources
 
-Convert `java.util.Date` values, including `java.sql.Timestamp` with or
-without a `Calendar`, using `java.util` calendar and time zone rules.
-Previously, the `java.time` conversion shifted values before the 1582
-Julian/Gregorian cutover and before standard time zones were adopted,
-and `Timestamp.toLocalDateTime()` dropped the era, binding a year 2 BC
-value as year 2 AD.
+BigQueryPageSourceProvider implemented the deprecated createPageSource
+overload, so the page builder memory of the Arrow and Avro storage page
+sources was accounted only by polling getMemoryUsage. Report it to the
+MemoryContext instead.
 
-Julian leap days that do not exist in the proleptic Gregorian calendar,
-such as 1500-02-29, are rejected with `SQLException` instead of an
-unchecked `DateTimeException`.
-
-**File**: `client/trino-jdbc/src/main/java/io/trino/jdbc/AbstractTrinoResultSet.java` (modified, +1/-1)
+**File**: `plugin/trino-bigquery/pom.xml` (modified, +33/-0)
 ```diff
-@@ -129,7 +129,7 @@ abstract class AbstractTrinoResultSet
-     private static final long NANOSECONDS_PER_SECOND = 1_000_000_000;
-     private static final int PICOSECONDS_PER_NANOSECOND = 1_000;
+@@ -61,6 +61,17 @@
+             </exclusions>
+         </dependency>
  
--    static final DateTimeFormatter DATE_FORMATTER = ISODateTimeFormat.date();
-+    private static final DateTimeFormatter DATE_FORMATTER = ISODateTimeFormat.date();
++        <dependency>
++            <groupId>com.google.api.grpc</groupId>
++            <artifactId>grpc-google-cloud-bigquerystorage-v1</artifactId>
++            <exclusions>
++                <exclusion>
++                    <groupId>com.google.guava</groupId>
++                    <artifactId>listenablefuture</artifactId>
++                </exclusion>
++            </exclusions>
++        </dependency>
++
+         <dependency>
+             <groupId>com.google.api.grpc</groupId>
+             <artifactId>proto-google-cloud-bigquerystorage-v1</artifactId>
+@@ -195,11 +206,21 @@
+             <artifactId>grpc-api</artifactId>
+         </dependency>
  
-     // Before 1900, Java Time and Joda Time are not consistent with java.sql.Date and java.util.Calendar
-     // Since January 1, 1900 UTC is still December 31, 1899 in other zones, we are adding a 1 year margin.
++        <dependency>
++            <groupId>io.grpc</groupId>
++            <artifactId>grpc-inprocess</artifactId>
++        </dependency>
++
+         <dependency>
+             <groupId>io.grpc</groupId>
+             <artifactId>grpc-netty-shaded</artifactId>
+         </dependency>
+ 
++        <dependency>
++            <groupId>io.grpc</groupId>
++            <artifactId>grpc-stub</artifactId>
++        </dependency>
++
+         <dependency>
+             <groupId>io.opentelemetry.instrumentation</groupId>
+             <artifactId>opentelemetry-apache-httpclient-4.3</artifactId>
+@@ -444,6 +465,18 @@
+ 
+     <build>
+         <plugins>
++            <plugin>
++                <groupId>org.apache.maven.plugins</groupId>
++                <artifactId>maven-dependency-plugin</artifactId>
++                <configuration>
++                    <ignoredNonTestScopedDependencies>
++                        <!-- Used directly only by tests, but required at runtime -->
++                        <ignoredDependency>com.google.api.grpc:grpc-google-cloud-bigquerystorage-v1</ignoredDependency>
++                        <ignoredDependency>io.grpc:grpc-inprocess</ignoredDependency>
++                        <ignoredDependency>io.grpc:grpc-stub</ignoredDependency>
++                    </ignoredNonTestScopedDependencies>
++                </configuration>
++            </plugin>
+             <plugin>
+                 <groupId>org.basepom.maven</groupId>
+                 <artifactId>duplicate-finder-maven-plugin</artifactId>
 ```
 
-**File**: `client/trino-jdbc/src/main/java/io/trino/jdbc/TrinoPreparedStatement.java` (modified, +46/-20)
+**File**: `plugin/trino-bigquery/src/main/java/io/trino/plugin/bigquery/BigQueryPageSourceProvider.java` (modified, +12/-8)
 ```diff
-@@ -44,28 +44,29 @@
- import java.sql.Time;
- import java.sql.Timestamp;
- import java.sql.Types;
-+import java.time.DateTimeException;
- import java.time.Instant;
- import java.time.LocalDate;
- import java.time.LocalDateTime;
- import java.time.LocalTime;
- import java.time.OffsetTime;
--import java.time.ZoneId;
- import java.time.ZoneOffset;
- import java.time.format.DateTimeFormatter;
- import java.time.format.DateTimeFormatterBuilder;
- import java.util.ArrayList;
- import java.util.Calendar;
-+import java.util.GregorianCalendar;
- import java.util.HashMap;
+@@ -25,6 +25,7 @@
+ import io.trino.spi.connector.ConnectorTableHandle;
+ import io.trino.spi.connector.ConnectorTransactionHandle;
+ import io.trino.spi.connector.DynamicFilter;
++import io.trino.spi.connector.MemoryContext;
+ 
  import java.util.List;
- import java.util.Map;
-+import java.util.TimeZone;
- import java.util.function.Consumer;
- import java.util.regex.Matcher;
- import java.util.regex.Pattern;
- 
- import static com.google.common.base.Preconditions.checkArgument;
- import static com.google.common.io.BaseEncoding.base16;
- import static io.trino.client.ClientTypeSignature.VARCHAR_UNBOUNDED_LENGTH;
--import static io.trino.jdbc.AbstractTrinoResultSet.DATE_FORMATTER;
- import static io.trino.jdbc.ColumnInfo.setTypeInfo;
- import static io.trino.jdbc.ObjectCasts.castToBigDecimal;
- import static io.trino.jdbc.ObjectCasts.castToBigint;
-@@ -315,7 +316,7 @@ private String toDateLiteral(Object value)
-     {
-         requireNonNull(value, "value is null");
-         if (value instanceof java.util.Date) {
--            return DATE_FORMATTER.print(((java.util.Date) value).getTime());
-+            value = toLocalDateTime((java.util.Date) value, TimeZone.getDefault());
-         }
-         if (value instanceof LocalDate) {
-             return ISO_LOCAL_DATE.format(((LocalDate) value));
-@@ -355,13 +356,8 @@ private void setAsTime(int parameterIndex, Object value)
-     private String toTimeLiteral(Object value)
-             throws SQLException
-     {
--        if (value instanceof Timestamp) {
--            value = ((Timestamp) value).toLocalDateTime().toLocalTime();
--        }
-         if (value instanceof java.util.Date) {
--            value = Instant.ofEpochMilli(((java.util.Date) value).getTime())
--                    .atZone(ZoneId.systemDefault())
--                    .toLocalTime();
-+            value = toLocalTime((java.util.Date) value, TimeZone.getDefault());
-         }
-         if (value instanceof LocalDateTime) {
-             value = ((LocalDateTime) value).toLocalTime();
-@@ -423,13 +419,8 @@ private void setAsTimestamp(int parameterIndex, Object value)
-     private String toTimestampLiteral(Object value)
-             throws SQLException
-     {
--        if (value instanceof Timestamp) {
--            value = ((Timestamp) value).toLocalDateTime();
--        }
-         if (value instanceof java.util.Date) {
--            value = Instant.ofEpochMilli(((java.util.Date) value).getTime())
--                    .atZone(ZoneId.systemDefault())
--                    .toLocalDateTime();
-+            value = toLocalDateTime((java.util.Date) value, TimeZone.getDefault());
-         }
-         if (value instanceof LocalDateTime) {
-             return LOCAL_DATE_TIME_FORMATTER.format(((LocalDateTime) value));
-@@ -441,6 +432,45 @@ private String toTimestampLiteral(Object value)
-         throw invalidConversion(value, "timestamp");
+ import java.util.Optional;
+@@ -69,15 +70,15 @@ public BigQueryPageSourceProvider(
      }
  
-+    // Use java.util calendar and time zone rules, which differ from java.time for historical dates. Unlike Timestamp.toLocalDateTime(),
-+    // retain the era and reject days that do not exist in the proleptic Gregorian calendar
-+    private static LocalDateTime toLocalDateTime(java.util.Date value, TimeZone timeZone)
-+            throws SQLException
-+    {
-+        GregorianCalendar calendar = toCalendar(value, timeZone);
-+        int year = calendar.get(Calendar.YEAR);
-+        if (calendar.get(Calendar.ERA) == GregorianCalendar.BC) {
-+            year = 1 - year;
-+        }
-+        LocalDate date;
-+        try {
-+            date = LocalDate.of(year, calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
-+        }
-+        catch (DateTimeException e) {
-+            throw new SQLException(format("Cannot convert instance of %s to local date-time: %s", value.getClass().getName(), value), e);
-+        }
-+        return LocalDateTime.of(date, toLocalTime(value, calendar));
-+    }
-+
-+    // Unlike toLocalDateTime(), does not access the date fields, so a date that does not exist in the proleptic Gregorian calendar is not rejected
-+    private static LocalTime toLocalTime(java.util.Date value, TimeZone timeZone)
-+    {
-+        return toLocalTime(value, toCalendar(value, timeZone));
-+    }
-+
-+    private static LocalTime toLocalTime(java.util.Date value, GregorianCalendar calendar)
-+    {
-+        int nanoOfSecond = value instanceof Timestamp ? ((Timestamp) value).getNanos() : calendar.get(Calendar.MILLISECOND) * 1_000_000;
-+        return LocalTime.of(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), calendar.get(Calendar.SECOND), nanoOfSecond);
-+    }
-+
-+    private static GregorianCalendar toCalendar(java.util.Date value, TimeZone timeZone)
-+   
-```
-
-**File**: `client/trino-jdbc/src/test/java/io/trino/jdbc/TestJdbcPreparedStatement.java` (modified, +194/-0)
-```diff
-@@ -52,6 +52,7 @@
- import java.time.ZoneOffset;
- import java.time.temporal.ChronoUnit;
- import java.util.Calendar;
-+import java.util.GregorianCalendar;
- import java.util.TimeZone;
- import java.util.stream.LongStream;
+     @Override
+-    @SuppressWarnings("deprecation") // TODO (https://github.com/trinodb/trino/issues/29959) migrate to non-deprecated createPageSource overload
+     public ConnectorPageSource createPageSource(
+             ConnectorTransactionHandle transaction,
+             ConnectorSession session,
+             ConnectorSplit split,
+             ConnectorTableHandle table,
+             Optional<ConnectorTableCredentials> tableCredentials,
+             List<ColumnHandle> columns,
+-            DynamicFilter dynamicFilter)
++            DynamicFilter dynamicFilter,
++            MemoryContext memoryContext)
+     {
+         log.debug("createPageSource(transaction=%s, session=%s, split=%s, table=%s, columns=%s)", transaction, session, split, table, columns);
+         BigQuerySplit bigQuerySplit = (BigQuerySplit) split;
+@@ -97,22 +98,23 @@ public ConnectorPageSource createPageSource(
+                 .map(BigQueryColumnHandle.class::cast)
+                 .collect(toImmutableList());
  
-@@ -1064,6 +1065,54 @@ private void testConvertDate(boolean explicitPrepare)
-         assertBind((ps, i) -> ps.setObject(i, "2001-05-06", Types.DATE), explicitPrepare)
-                 .resultsIn("date", "DATE '2001-05-06'")
-                 .roundTripsAs(Types.DATE, sqlDate);
-+
-+        // BEFORE JULIAN/GREGORIAN CUTOVER
-+        LocalDate dateBeforeGregorianCutover = LocalDate.of(1410, 7, 15);
-+        Date sqlDateBeforeGregorianCutover = Date.valueOf(dateBeforeGregorianCutover);
-+        java.util.Date javaDateBeforeGregorianCutover = new java.util.Date(sqlDateBeforeGregorianCutover.getTime());
-+        LocalDateTime dateTimeBeforeGregorianCutover = LocalDateTime.of(dateBeforeGregorianCutover, LocalTime.of(15, 54, 12));
-+        Timestamp sqlTimestampBeforeGregorianCutover = Timestamp.valueOf(dateTimeBeforeGregorianCutover);
-+
-+        assertBind((ps, i) -> ps.setDate(i, sqlDateBeforeGregorianCutover), explicitPrepare)
-+                .resultsIn("date", "DATE '1410-07-15'")
-+                .roundTripsAs(Types.DATE, sqlDateBeforeGregorianCutover);
-+
-+        assertBind((ps, i) -> ps.setObject(i, sqlDateBeforeGregorianCutover), explicitPrepare)
-+                .resultsIn("date", "DATE '1410-07-15'")
-+                .roundTripsAs(Types.DATE, sqlDateBeforeGregorianCutover);
-+
-+        assertBind((ps, i) -> ps.setObject(i, sqlDateBeforeGregorianCutover, Types.DATE), explicitPrepare)
-+                .resultsIn("date", "DATE '1410-07-15'")
-+                .roundTripsAs(Types.DATE, sqlDateBeforeGregorianCutover);
-+
-+        assertBind((ps, i) -> ps.setObject(i, sqlTimestampBeforeGregorianCutover, Types.DATE), explicitPrepare)
-+                .resultsIn("date", "DATE '1410-07-15'")
-+                .roundTripsAs(Types.DATE, sqlDateBeforeGregorianCutover);
-+
-+        assertBind((ps, i) -> ps.setObject(i, javaDateBeforeGregorianCutover, Types.DATE), explicitPrepare)
-+                .resultsIn("date", "DATE '1410-07-15'")
-+                .roundTripsAs(Types.DATE, sqlDateBeforeGregorianCutover);
-+
-+        assertBind((ps, i) -> ps.setObject(i, dateBeforeGregorianCutover, Types.DATE), explicitPrepare)
-+                .resultsIn("date", "DATE '1410-07-15'")
-+                .roundTripsAs(Types.DATE, sqlDateBeforeGregorianCutover);
-+
-+        assertBind((ps, i) -> ps.setObject(i, dateTimeBeforeGregorianCutover, Types.DATE), explicitPrepare)
-+                .resultsIn("date", "DATE '1410-07-15'")
-+                .roundTripsAs(Types.DATE, sqlDateBeforeGregorianCutover);
-+
-+        // AROUND JULIAN/GREGORIAN CUTOVER, BEFORE STANDARD TIME ZONES, BEFORE COMMON ERA
-+        for (String historicalDate : ImmutableList.of("1582-10-04", "1582-10-15", "1700-03-01", "1899-12-31", "-0001-03-01")) {
-+            Date sqlHistoricalDate = Date.valueOf(LocalDate.parse(historicalDate));
-+            assertBind((ps, i) -> ps.setDate(i, sqlHistoricalDate), explicitPrepare)
-+                    .resultsIn("date", "DATE '" + historicalDate + "'")
-+                    .roundTripsAs(Types.DATE, sqlHistoricalDate);
-+        }
-+
-+        // JULIAN LEAP DAY
-+        Date sqlDateWithJulianLeapDay = new Date(new GregorianCalendar(1500, Calendar.FEBRUARY, 29).getTimeInMillis());
-+        assertBind((ps, i) -> ps.setDate(i, sqlDateWithJulianLeapDay), explicitPrepare)
-+                .isInvalid("Cannot convert instance of java.sql.Date to local date-time: 1500-02-29");
+-        return createPageSource(session, (BigQueryTableHandle) table, bigQuerySplit, bigQueryColumnHandles);
++        return createPageSource(session, (BigQueryTableHandle) table, bigQuerySplit, bigQueryColumnHandles, memoryContext);
      }
  
-     @Test
-@@ -1428,6 +1477,48 @@ private void testConvertTime(boolean explicitPrepare)
-                 .resultsIn("time(9)", "TIME '12:34:56.123456789'")
-                 .roundTripsAs(Types.TIME, sqlTimeWithMillisecond);
+     private ConnectorPageSource createPageSource(
+             ConnectorSession session,
+             BigQueryTableHandle table,
+             BigQuerySplit split,
+-            List<BigQueryColumnHandle> columnHandles)
++            List<BigQueryColumnHandle> columnHandles,
++            MemoryContext memoryContext)
+     {
+         return switch (split.mode()) {
+-            case STORAGE -> createStoragePageSource(session, split, columnHandles);
++            case STORAGE -> createStoragePageSource(session, split, columnHandles, memoryContext);
+             case QUERY -> createQueryPageSource(session, table, columnHandles, split.filter());
+         };
+     }
  
-+        // BEFORE JULIAN/GREGORIAN CUTOVER
-+        LocalDateTime dateTimeWithBeforeGregorianCutover = LocalDateTime.of(LocalDate.of(1410, 7, 15), timeWithMillisecond);
-+        Timestamp sqlTimestampWithBeforeGregorianCutover = Timestamp.valueOf(dateTimeWithBeforeGregorianCutover);
-+        Time sqlTimeWithBeforeGregorianCutover = new Time(sqlTimestampWithBeforeGregorianCutover.getTime());
-+        java.util.Date javaDateWithBeforeGregorianCutover = new java.util.Date(sqlTimestampWithBeforeGregorianCutover.getTime());
-+        Date sqlDateWithBeforeGregorianCutover = new Date(sqlTimestampWithBeforeGregorianCutover.getTime());
-+
-+        // BEFORE JULIAN/GREGORIAN CUTOVER setTime
-+        assertBind((ps, i) -> ps.setTime(i, sqlTimeWithBeforeGregorianCutover), explicitPrepare)
-+                .resultsIn("time(3)", "TIME '12:34:56.123'")
-+                .roundTripsAs(Types.TIME, sqlTimeWithMillisecond);
-+
-+        // BEFORE JULIAN/GREGORIAN CUTOVER setObject with java.sql.Time
-+        assertBind((ps, i) -> ps.setObject(i, sqlTimeWithBeforeGregorianCutover), explicitPrepare)
-+                .resultsIn("time(3)", "TIME '12:34:5
-```
-
----
-
-### Incident Patch 3: `c477523e` (2026-10-06)
-**Commit Message**: Allow requiring audience in OAuth2 access tokens
-
-NimbusOAuth2Client always added null to the set of accepted access
-token audiences, so an access token with no aud claim at all was
-accepted regardless of the client ID or any configured additional
-audiences. An identity provider shared with other services can issue
-access tokens without an aud claim for those services, and Trino
-accepted them.
-
-Add http-server.authentication.oauth2.require-audience (default
-false, preserving current behavior). When true, access tokens without
-an aud claim are rejected; the client ID and any additional audiences
-remain the accepted audiences.
-
-Co-authored-by: Ragnar Dahlén <[REDACTED_EMAIL]>
-
-**File**: `core/trino-main/src/main/java/io/trino/server/security/oauth2/NimbusOAuth2Client.java` (modified, +11/-1)
-```diff
-@@ -97,6 +97,7 @@ public class NimbusOAuth2Client
-     private final Duration maxClockSkew;
-     private final Optional<String> jwtType;
-     private final Optional<String> domainHint;
-+    private final boolean requireAudience;
-     private final NimbusHttpClient httpClient;
-     private final OAuth2ServerConfigProvider serverConfigurationProvider;
-     private volatile boolean loaded;
-@@ -119,10 +120,14 @@ public NimbusOAuth2Client(OAuth2Config oauthConfig, OAuth2ServerConfigProvider s
-         maxClockSkew = oauthConfig.getMaxClockSkew();
-         jwtType = oauthConfig.getJwtType();
-         domainHint = oauthConfig.getDomainHint();
-+        requireAudience = oauthConfig.isRequireAudience();
- 
-         accessTokenAudiences = new HashSet<>(oauthConfig.getAdditionalAudiences());
-         accessTokenAudiences.add(clientId.getValue());
--        accessTokenAudiences.add(null); // A null value in the set allows JWTs with no audience
-+        // With require-audience, null is left out so that Nimbus rejects JWTs that have no aud claim
-+        if (!requireAudience) {
-+            accessTokenAudiences.add(null); // A null value in the set allows JWTs with no audience
-+        }
- 
-         this.serverConfigurationProvider = requireNonNull(serverConfigurationProvider, "serverConfigurationProvider is null");
-         this.httpClient = requireNonNull(httpClient, "httpClient is null");
-@@ -136,6 +141,11 @@ public void load()
-         this.tokenUrl = config.tokenUrl();
-         this.userinfoUrl = config.userinfoUrl();
-         this.endSessionUrl = config.endSessionUrl();
-+        if (requireAudience && userinfoUrl.isPresent()) {
-+            // The userinfo endpoint path validates access tokens by calling the IdP instead of verifying claims locally,
-+            // so accessTokenAudiences (and therefore require-audience) is never consulted for those tokens.
-+            LOG.warn("http-server.authentication.oauth2.require-audience has no effect because access tokens are validated using the userinfo endpoint");
-+        }
+-    private ConnectorPageSource createStoragePageSource(ConnectorSession session, BigQuerySplit split, List<BigQueryColumnHandle> columnHandles)
++    private ConnectorPageSource createStoragePageSource(ConnectorSession session, BigQuerySplit split, List<BigQueryColumnHandle> columnHandles, MemoryContext memoryContext)
+     {
+         BigQueryReadClient bigQueryReadClient = bigQueryReadClientFactory.create(session);
          try {
-             jwsKeySelector = new JWSVerificationKeySelector<>(
-                     Stream.concat(JWSAlgorithm.Family.RSA.stream(), JWSAlgorithm.Family.EC.stream()).collect(toImmutableSet()),
+@@ -124,15 +126,17 @@ private ConnectorPageSource createStoragePageSource(ConnectorSession session, Bi
+                         arrowBufferAllocator.orElseThrow(() -> new IllegalStateException("ArrowBufferAllocator was not bound")),
+                         maxReadRowsRetries,
+                         split,
+-                        columnHandles);
++                        columnHandles,
++                        memoryContext);
+             }
+             return new BigQueryStorageAvroPageSource(
+                     bigQueryReadClient,
+                     executor,
+                     typeManager,
+                     maxReadRowsRetries,
+                     split,
+-                    columnHandles);
++                    columnHandles,
++                    memoryContext);
+         }
+         catch (Throwable t) {
+             closeAllSuppress(t, bigQueryReadClient);
 ```
 
-**File**: `core/trino-main/src/main/java/io/trino/server/security/oauth2/OAuth2Config.java` (modified, +14/-0)
+**File**: `plugin/trino-bigquery/src/main/java/io/trino/plugin/bigquery/BigQueryStorageArrowPageSource.java` (modified, +16/-11)
 ```diff
-@@ -42,6 +42,7 @@ public class OAuth2Config
-     private Set<String> scopes = ImmutableSet.of(OPENID_SCOPE);
-     private String principalField = "sub";
-     private List<String> additionalAudiences = Collections.emptyList();
-+    private boolean requireAudience;
-     private Duration challengeTimeout = new Duration(15, TimeUnit.MINUTES);
-     private Duration maxClockSkew = new Duration(1, TimeUnit.MINUTES);
-     private Optional<String> jwtType = Optional.empty();
-@@ -122,6 +123,19 @@ public OAuth2Config setAdditionalAudiences(List<String> additionalAudiences)
-         return this;
+@@ -20,6 +20,7 @@
+ import io.trino.spi.Page;
+ import io.trino.spi.PageBuilder;
+ import io.trino.spi.connector.ConnectorPageSource;
++import io.trino.spi.connector.MemoryContext;
+ import io.trino.spi.connector.SourcePage;
+ import org.apache.arrow.memory.BufferAllocator;
+ import org.apache.arrow.vector.ipc.ReadChannel;
+@@ -55,6 +56,7 @@ public class BigQueryStorageArrowPageSource
+     private final BigQueryArrowBufferAllocator bufferAllocator;
+     private final BigQuerySplit split;
+     private final PageBuilder pageBuilder;
++    private final MemoryContext memoryContext;
+     private final Iterator<ReadRowsResponse> responses;
+ 
+     private CompletableFuture<ReadRowsResponse> nextResponse;
+@@ -67,21 +69,25 @@ public BigQueryStorageArrowPageSource(
+             BigQueryArrowBufferAllocator bufferAllocator,
+             int maxReadRowsRetries,
+             BigQuerySplit split,
+-            List<BigQueryColumnHandle> columns)
++            List<BigQueryColumnHandle> columns,
++            MemoryContext memoryContext)
+     {
+         this.bigQueryReadClient = requireNonNull(bigQueryReadClient, "bigQueryReadClient is null");
+         this.executor = requireNonNull(executor, "executor is null");
+         this.bufferAllocator = requireNonNull(bufferAllocator, "bufferAllocator is null");
+         this.split = requireNonNull(split, "split is null");
+         requireNonNull(columns, "columns is null");
++        this.memoryContext = requireNonNull(memoryContext, "memoryContext is null");
+         Schema schema = deserializeSchema(split.schemaString());
+-        log.debug("Trace id: %s, Stream: %s, Starting to read", split.traceId(), split.streamName());
+-        responses = new ReadRowsHelper(bigQueryReadClient, split.streamName(), maxReadRowsRetries).readRows();
+-        nextResponse = CompletableFuture.supplyAsync(this::getResponse, executor);
+         this.bigQueryArrowToPageConverter = new BigQueryArrowToPageConverter(typeManager, schema, columns);
+         this.pageBuilder = new PageBuilder(columns.stream()
+                 .map(BigQueryColumnHandle::trinoType)
+                 .collect(toImmutableList()));
++        // Report before the read is started, so that exceeding the memory limit sends no read request
++        updateMemoryUsage();
++        log.debug("Trace id: %s, Stream: %s, Starting to read", split.traceId(), split.streamName());
++        responses = new ReadRowsHelper(bigQueryReadClient, split.streamName(), maxReadRowsRetries).readRows();
++        nextResponse = CompletableFuture.supplyAsync(this::getResponse, executor);
      }
  
-+    public boolean isRequireAudience()
+     @Override
+@@ -127,18 +133,12 @@ public SourcePage getNextSourcePage()
+             }
+             page = pageBuilder.build();
+             pageBuilder.reset();
++            updateMemoryUsage();
+         }
+         readTimeNanos.addAndGet(System.nanoTime() - start);
+         return SourcePage.create(page);
+     }
+ 
+-    @Override
+-    @SuppressWarnings("deprecation") // TODO (https://github.com/trinodb/trino/issues/29959) migrate to MemoryContext
+-    public long getMemoryUsage()
+-    {
+-        return pageBuilder.getRetainedSizeInBytes();
+-    }
+-
+     @Override
+     public void close()
+     {
+@@ -161,6 +161,11 @@ private ReadRowsResponse getResponse()
+         return response;
+     }
+ 
++    private void updateMemoryUsage()
 +    {
-+        return requireAudience;
++        memoryContext.setBytes(pageBuilder.getRetainedSizeInBytes());
 +    }
 +
-+    @Config("http-server.authentication.oauth2.require-audience")
-+    @ConfigDescription("Reject access tokens without an audience claim")
-+    public OAuth2Config setRequireAudience(boolean requireAudience)
+     private ArrowRecordBatch deserializeResponse(BufferAllocator allocator, ReadRowsResponse response)
+     {
+         int serializedSize = response.getArrowRecordBatch().getSerializedSize();
+```
+
+**File**: `plugin/trino-bigquery/src/main/java/io/trino/plugin/bigquery/BigQueryStorageAvroPageSource.java` (modified, +13/-8)
+```diff
+@@ -25,6 +25,7 @@
+ import io.trino.spi.block.BlockBuilder;
+ import io.trino.spi.block.RowBlockBuilder;
+ import io.trino.spi.connector.ConnectorPageSource;
++import io.trino.spi.connector.MemoryContext;
+ import io.trino.spi.connector.SourcePage;
+ import io.trino.spi.type.ArrayType;
+ import io.trino.spi.type.DecimalType;
+@@ -99,6 +100,7 @@ public class BigQueryStorageAvroPageSource
+     private final AtomicLong readBytes = new AtomicLong();
+     private final AtomicLong readTimeNanos = new AtomicLong();
+     private final PageBuilder pageBuilder;
++    private final MemoryContext memoryContext;
+     private final Iterator<ReadRowsResponse> responses;
+ 
+     private CompletableFuture<ReadRowsResponse> nextResponse;
+@@ -110,7 +112,8 @@ public BigQueryStorageAvroPageSource(
+             BigQueryTypeManager typeManager,
+             int maxReadRowsRetries,
+             BigQuerySplit split,
+-            List<BigQueryColumnHandle> columns)
++            List<BigQueryColumnHandle> columns,
++            MemoryContext memoryContext)
+     {
+         this.bigQueryReadClient = requireNonNull(bigQueryReadClient, "bigQueryReadClient is null");
+         this.executor = requireNonNull(executor, "executor is null");
+@@ -123,6 +126,9 @@ public BigQueryStorageAvroPageSource(
+         this.pageBuilder = new PageBuilder(columns.stream()
+                 .map(BigQueryColumnHandle::trinoType)
+                 .collect(toImmutableList()));
++        this.memoryContext = requireNonNull(memoryContext, "memoryContext is null");
++        // Report before the read is started, so that exceeding the memory limit sends no read request
++        updateMemoryUsage();
+ 
+         log.debug("Trace id: %s, Stream: %s, Starting to read", traceId, streamName);
+         responses = new ReadRowsHelper(bigQueryReadClient, streamName, maxReadRowsRetries).readRows();
+@@ -186,6 +192,7 @@ public SourcePage getNextSourcePage()
+ 
+         Page page = pageBuilder.build();
+         pageBuilder.reset();
++        updateMemoryUsage();
+         readTimeNanos.addAndGet(System.nanoTime() - start);
+         return SourcePage.create(page);
+     }
+@@ -329,13 +336,6 @@ private void writeRow(RowBlockBuilder output, RowType rowType, GenericRecord rec
+         });
+     }
+ 
+-    @Override
+-    @SuppressWarnings("deprecation") // TODO (https://github.com/trinodb/trino/issues/29959) migrate to MemoryContext
+-    public long getMemoryUsage()
+-    {
+-        return pageBuilder.getRetainedSizeInBytes();
+-    }
+-
+     @Override
+     public void close()
+     {
+@@ -357,6 +357,11 @@ private ReadRowsResponse getResponse()
+         return response;
+     }
+ 
++    private void updateMemoryUsage()
 +    {
-+        this.requireAudience = requireAudience;
-+        return this;
++        memoryContext.setBytes(pageBuilder.getRetainedSizeInBytes());
 +    }
 +
-     @NotNull
-     public Set<String> getScopes()
+     Iterable<GenericRecord> parse(ReadRowsResponse response)
      {
+         byte[] buffer = response.getAvroRows().getSerializedBinaryRows().toByteArray();
 ```
 
-**File**: `core/trino-main/src/test/java/io/trino/server/security/oauth2/BaseOAuth2WebUiAuthenticationFilterTest.java` (modified, +13/-4)
+**File**: `plugin/trino-bigquery/src/test/java/io/trino/plugin/bigquery/TestBigQueryStoragePageSourceMemoryTracking.java` (added, +282/-0)
 ```diff
-@@ -93,6 +93,8 @@ public abstract class BaseOAuth2WebUiAuthenticationFilterTest
-     private static final String UNTRUSTED_CLIENT_ID = "untrusted-client";
-     private static final String UNTRUSTED_CLIENT_SECRET = "untrusted-secret";
-     private static final String UNTRUSTED_CLIENT_AUDIENCE = "https://untrusted.com";
-+    protected static final String NO_AUDIENCE_CLIENT_ID = "no-audience-client";
-+    protected static final String NO_AUDIENCE_CLIENT_SECRET = "no-audience-secret";
- 
-     protected OkHttpClient httpClient;
-     protected TestingHydraIdentityProvider hydraIdP;
-@@ -146,6 +148,13 @@ public void setup()
-                 ImmutableList.of(UNTRUSTED_CLIENT_AUDIENCE),
-                 "https://untrusted.com/callback",
-                 "https://untrusted.com/logout_callback");
-+        hydraIdP.createClient(
-+                NO_AUDIENCE_CLIENT_ID,
-+                NO_AUDIENCE_CLIENT_SECRET,
-+                CLIENT_SECRET_BASIC,
-+                ImmutableList.of(),
-+                serverUri + "/oauth2/callback",
-+                serverUri + "/ui/logout/logout.html");
-     }
- 
-     protected abstract Map<String, String> getOAuth2Config(String idpUrl);
-@@ -324,7 +333,7 @@ public void testExpiredAccessToken()
-         }
-     }
- 
--    private Request.Builder uiCall()
-+    protected Request.Builder uiCall()
-     {
-         return new Request.Builder()
-                 .url(serverUri.resolve("/ui/").toString())
-@@ -386,7 +395,7 @@ protected Jws<Claims> parseJwsClaims(String claimsJws)
-         }
-     }
- 
--    private void assertUICallWithCookie(String cookieValue)
-+    protected void assertUICallWithCookie(String cookieValue)
-             throws IOException
-     {
-         OkHttpClient httpClient = httpClientWithOAuth2Cookie(cookieValue, true);
-@@ -397,7 +406,7 @@ private void assertUICallWithCookie(String cookieValue)
-         }
-     }
- 
--    private OkHttpClient httpClientWithOAuth2Cookie(String cookieValue, boolean followRedirects)
-+    protected OkHttpClient httpClientWithOAuth2Cookie(String cookieValue, boolean followRedirects)
-     {
-         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
-         setupInsecureSsl(httpClientBuilder);
-@@ -426,7 +435,7 @@ public List<Cookie> loadForRequest(HttpUrl url)
-         return httpClientBuilder.build();
-     }
- 
--    private void assertRedirectResponse(Response response)
-+    protected void assertRedirectResponse(Response response)
-             throws MalformedURLException
-     {
-         assertThat(response.code()).isEqualTo(SEE_OTHER.getStatusCode());
-```
-
-**File**: `core/trino-main/src/test/java/io/trino/server/security/oauth2/BaseOAuth2WebUiAuthenticationFilterWithJwtTest.java` (added, +79/-0)
-```diff
-@@ -0,0 +1,79 @@
+@@ -0,0 +1,282 @@
 +/*
 + * Licensed under the Apache License, Version 2.0 (the "License");
 + * you may not use this file except in compliance with the License.
@@ -2355,210 +2258,107 @@ Co-authored-by: Ragnar Dahlén <[REDACTED_EMAIL]>
 + * See the License for the specific language governing permissions and
 + * limitations under the License.
 + */
-+package io.trino.server.security.oauth2;
++package io.trino.plugin.bigquery;
 +
-+import com.google.common.collect.ImmutableMap;
-+import com.google.common.io.Resources;
-+import io.jsonwebtoken.Claims;
-+import io.jsonwebtoken.Jws;
++import com.google.api.gax.core.NoCredentialsProvider;
++import com.google.api.gax.grpc.GrpcTransportChannel;
++import com.google.api.gax.rpc.FixedTransportChannelProvider;
++import com.google.cloud.bigquery.Field.Mode;
++import com.google.cloud.bigquery.StandardSQLTypeName;
++import com.google.cloud.bigquery.storage.v1.AvroRows;
++import com.google.cloud.bigquery.storage.v1.BigQueryReadClient;
++import com.google.cloud.bigquery.storage.v1.BigQueryReadGrpc;
++import com.google.cloud.bigquery.storage.v1.BigQueryReadSettings;
++import com.google.cloud.bigquery.storage.v1.ReadRowsRequest;
++import com.google.cloud.bigquery.storage.v1.ReadRowsResponse;
++import com.google.common.collect.ImmutableList;
++import com.google.protobuf.ByteString;
++import io.grpc.ManagedChannel;
++import io.grpc.Server;
++import io.grpc.inprocess.InProcessChannelBuilder;
++import io.grpc.inprocess.InProcessServerBuilder;
++import io.grpc.stub.StreamObserver;
++import io.trino.spi.PageBuilder;
++import io.trino.spi.TrinoException;
++import io.trino.spi.connector.ConnectorPageSource;
++import io.trino.spi.connector.MemoryContext;
++import io.trino.spi.connector.SourcePage;
++import org.apache.arrow.memory.BufferAllocator;
++import org.apache.arrow.memory.RootAllocator;
++import org.apache.arrow.vector.BigIntVector;
++import org.apache.arrow.vector.VectorSchemaRoot;
++import org.apache.arrow.vector.VectorUnloader;
++import org.apache.arrow.vector.ipc.WriteChannel;
++import org.apache.arrow.vector.ipc.message.ArrowRecordBatch;
++import org.apache.arrow.vector.ipc.message.MessageSerializer;
++import org.apache.arrow.vector.types.pojo.ArrowType;
++import org.apache.arrow.vector.types.pojo.Field;
++import org.apache.arrow.vector.types.pojo.Schema;
++import org.apache.avro.SchemaBuilder;
++import org.apache.avro.generic.GenericData;
++import org.apache.avro.generic.GenericDatumWriter;
++import org.apache.avro.generic.GenericRecord;
++import org.apache.avro.io.BinaryEncoder;
++import org.apache.avro.io.EncoderFactory;
++import org.junit.jupiter.api.AfterAll;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.TestInstance;
++import org.junit.jupiter.api.parallel.Execution;
 +
-+import java.util.Map;
++import java.io.ByteArrayOutputStream;
++import java.io.IOException;
++import java.nio.channels.Channels;
++import java.util.ArrayList;
++import java.util.List;
++import java.util.OptionalInt;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.atomic.AtomicInteger;
 +
++import static com.google.common.util.concurrent.MoreExecutors.newDirectExecutorService;
++import static io.trino.spi.StandardErrorCode.EXCEEDED_LOCAL_MEMORY_LIMIT;
++import static io.trino.spi.type.BigintType.BIGINT;
++import static io.trino.type.InternalTypeManager.TESTING_TYPE_MANAGER;
 +import static org.assertj.core.api.Assertions.assertThat;
++import static org.assertj.core.api.Assertions.assertThatThrownBy;
++import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
++import static org.junit.jupiter.api.parallel.ExecutionMode.CONCURRENT;
 +
-+public abstract class BaseOAuth2WebUiAuthenticationFilterWithJwtTest
-+        extends BaseOAuth2WebUiAuthenticationFilterTest
++@TestInstance(PER_CLASS)
++@Execution(CONCURRENT)
++final class TestBigQueryStoragePageSourceMemoryTracking
 +{
-+    private final boolean stampAudience;
++    private static final BigQueryTypeManager TYPE_MANAGER = new BigQueryTypeManager(TESTING_TYPE_MANAGER);
++    private static final List<BigQueryColumnHandle> COLUMNS = ImmutableList.of(
++            new BigQueryColumnHandle("value", ImmutableList.of(), BIGINT, StandardSQLTypeName.INT64, true, Mode.NULLABLE, ImmutableList.of(), null, false));
++    private static final Schema ARROW_SCHEMA = new Schema(ImmutableList.of(Field.nullable("value", new ArrowType.Int(64, true))));
++    private static final org.apache.avro.Schema AVRO_SCHEMA = SchemaBuilder.record("__root__").fields()
++            .optionalLong("value")
++            .endRecord();
 +
-+    public BaseOAuth2WebUiAuthenticationFilterWithJwtTest(boolean stampAudience)
++    // Fetch the responses synchronously, so that every page is available when requested
++    private final ExecutorService executor = newDirectExecutorService();
++    private final BigQueryArrowBufferAllocator arrowBufferAllocator = new BigQueryArrowBufferAllocator(new BigQueryArrowConfig(), new BigQueryArrowAllocatorStats());
++
++    @AfterAll
++    void tearDown()
 +    {
-+        this.stampAudience = stampAudience;
++        executor.shutdownNow();
 +    }
 +
-+    @Override
-+    protected TestingHydraIdentityProvider getHydraIdp()
++    @Test
++    void testArrowMemoryUsage()
 +            throws Exception
 +    {
-+        TestingHydraIdentityProvider hydraIdP = new TestingHydraIdentityProvider(TTL_ACCESS_TOKEN_IN_SECONDS, true, false, stampAudience);
-+        hydraIdP.start();
-+
-+        return hydraIdP;
-+    }
-+
-+    @Override
-+    protected Map<String, String> getOAuth2Config(String idpUrl)
-+    {
-+        return ImmutableMap.<String, String>builder()
-+                .put("web-ui.enabled", "true")
-+                .put("web-ui.authentication.type", "oauth2")
-+                .put("http-server.https.enabled", "true")
-+                .put("http-server.https.keystore.path", Resources.getResource("cert/localhost.pem").getPath())
-+                .put("http-server.https.keystore.key", "")
-+                .put("http-server.authentication.oauth2.issuer", "https://localhost:4444/")
-+                .put("http-server.authentication.oauth2.auth-url", idpUrl + "/oauth2/auth")
-+                .put("http-server.authentication.oauth2.token-url", idpUrl + "/oauth2/token")
-+                .put("http-server.authentication.oauth2.end-session-url", idpUrl + "/oauth2/sessions/logout")
-+                .put("http-server.authentication.oauth2.jwks-url", idpUrl + "/.well-known/jwks.json")
-+                .put("http-server.authentication.oauth2.client-id", TRINO_CLIENT_ID)
-+                .put("http-server.authentication.oauth2.client-secret", TRINO_CLIENT_SECRET)
-+                .put("http-server.authentication.oauth2.additional-audiences", TRUSTED_CLIENT_ID)
-+                .put("http-server.authentication.oauth2.max-clock-skew", "0s")
-+                .put("http-server.authentication.oauth2.user-mapping.pattern", "(.*)(@.*)?")
-+                .put("http-server.authentication.oauth2.oidc.discovery", "false")
-+                .put("oauth2-jwk.http-client.trust-store-path", Resources.getResource("cert/localhost.pem").getPath())
-+                .buildOrThrow();
-+    }
-+
-+    @Override
-+    protected void validateAccessToken(String cookieValue)
-+    {
-+        assertThat(cookieValue).isNotBlank();
-+        Jws<Claims> jwt = parseJwsClaims(cookieValue);
-+        Claims claims = jwt.getPayload();
-+        assertThat(claims.getSubject()).isEqualTo("foo@bar.com");
-+        assertThat(claims.get("client_id")).isEqualTo(TRINO_CLIENT_ID);
-+        assertThat(claims.getIssuer()).isEqualTo("https://localhost:4444/");
-+    }
-+}
-```
-
-**File**: `core/trino-main/src/test/java/io/trino/server/security/oauth2/TestOAuth2Config.java` (modified, +3/-0)
-```diff
-@@ -45,6 +45,7 @@ public void testDefaults()
-                 .setChallengeTimeout(new Duration(15, MINUTES))
-                 .setPrincipalField("sub")
-                 .setAdditionalAudiences(Collections.emptyList())
-+                .setRequireAudience(false)
-                 .setMaxClockSkew(new Duration(1, MINUTES))
-                 .setJwtType(null)
-                 .setUserMappingPattern(null)
-@@ -67,6 +68,7 @@ public void testExplicitPropertyMappings()
-                 .put("http-server.authentication.oauth2.scopes", "email,offline")
-                 .put("http-server.authentication.oauth2.principal-field", "some-field")
-                 .put("http-server.authentication.oauth2.additional-audiences", "test-aud1,test-aud2")
-+                .put("http-server.authentication.oauth2.require-audience", "true")
-                 .put("http-server.authentication.oauth2.challenge-timeout", "90s")
-                 .put("http-server.authentication.oauth2.max-clock-skew", "15s")
-                 .put("http-server.authentication.oauth2.jwt-type", "at+jwt")
-@@ -85,6 +87,7 @@ public void testExplicitPropertyMappings()
-                 .setScopes(ImmutableSet.of("email", "offline"))
-                 .setPrincipalField("some-field")
-                 .setAdditionalAudiences(List.of("test-aud1", "test-aud2"))
-+                .setRequireAudience(true)
-                 .setChallengeTimeout(new Duration(90, SECONDS))
-                 .setMaxClockSkew(new Duration(15, SECONDS))
-                 .setJwtType("at+jwt")
-```
-
-**File**: `core/trino-main/src/test/java/io/trino/server/security/oauth2/TestOAuth2WebUiAuthenticationFilterWithJwt.java` (modified, +10/-45)
-```diff
-@@ -13,60 +13,25 @@
-  */
- package io.trino.server.security.oauth2;
- 
--import com.google.common.collect.ImmutableMap;
--import com.google.common.io.Resources;
--import io.jsonwebtoken.Claims;
--import io.jsonwebtoken.Jws;
--
--import java.util.Map;
-+import com.google.common.collect.ImmutableList;
-+import org.junit.jupiter.api.Test;
- 
- import static org.assertj.core.api.Assertions.assertThat;
- 
- public class TestOAuth2WebUiAuthenticationFilterWithJwt
--        extends BaseOAuth2WebUiAuthenticationFilterTest
-+        extends BaseOAuth2WebUiAuthenticationFilterWithJwtTest
- {
--    @Override
--    protected Map<String, String> getOAuth2Config(String idpUrl)
-+    public TestOAuth2WebUiAuthenticationFilterWithJwt()
-     {
--        return ImmutableMap.<String, String>builder()
--                .put("web-ui.enabled", "true")
--                .put("web-ui.authentication.type", "oauth2")
--                .put("http-server.https.enabled", "true")
--                .put("http-server.https.keystore.path", Resources.getResource("cert/localhost.pem").getPath())
--                .put("http-server.https.keystore.key", "")
--                .put("http-server.authentication.oauth2.issuer", "https://localhost:4444/")
--                .put("http-server.authentication.oauth2.auth-url", idpUrl + "/oauth2/auth")
--                .put("http-server.authentication.oauth2.token-url", idpUrl + "/oauth2/token")
--                .put("http-server.authentication.oauth2.end-session-url", idpUrl + "/oauth2/sessions/logout")
--                .put("http-server.authentication.oauth2.jwks-url", idpUrl + "/.well-known/jwks.json")
--                .put("http-server.authentication.oauth2.client-id", TRINO_CLIENT_ID)
--                .put("http-server.authentication.oauth2.client-secret", TRINO_CLIENT_SECRET)
--                .put("http-server.authentication.oauth2.additional-audiences", TRUSTED_CLIENT_ID)
--                .put("http-server.authentication.oauth2.max-clock-skew", "0s")
--                .put("http-server.authentication.oauth2.user-mapping.pattern", "(.*)(@.*)?")
--                .put("http-server.authentication.oauth2.oidc.discovery", "false")
--                .put("oauth2-jwk.http-client.trust-store-path", Resources.getResource("cert/localhost.pem").getPath())
--                .buildOrThrow();
-+        super(false);
-     }
- 
--    @Override
--    protected TestingHydraIdentityProvider getHydraIdp()
-+    @Test
-+    public void testTokenWithoutAudience()
-             throws Exception
-     {
--        TestingHydraIdentityProvider hydraIdP = new TestingHydraIdentityProvider(TTL_ACCESS_TOKEN_IN_SECONDS, true, false);
--        hydraIdP.start();
--
--        return hydraIdP;
--    }
--
--    @Override
--    protected void validateAccessToken(String cookieValue)
--    {
--        assertThat(cookieValue).isNotBlank();
--        Jws<Claims> jwt = parseJwsClaims(cookieValue);
--        Claims claims = jwt.getPayload();
--        assertThat(claims.getSubject()).isEqualTo("foo@bar.com");
--        assertThat(claims.get("client_id")).isEqualTo(TRINO_CLIENT_ID);
--        assertThat(claims.getIssuer()).isEqualTo("https://localhost:4444/");
-+        String token = hydraIdP.getToken(NO_AUDIENCE_CLIENT_ID, NO_AUDIENCE_CLIENT_SECRET, ImmutableList.of());
-+        assertThat(parseJwsClaims(token).getPayload().getAudience()).isNull();
-+        assertUICallWithCookie(token);
-     }
- }
-```
-
-**File**: `core/trino-main/src/test/java/io/trino/server/security/oauth2/TestOAuth2WebUiAuthenticationFilterWithOpaque.java` (modified, +1/-1)
-```diff
-@@ -62,7 +62,7 @@ protected Map<String, String> getOAuth2Config(String idpUrl)
-     protected TestingHydraIdentityProvider getHydraIdp()
-             throws Exception
-     {
--        TestingHydraIdentityProvider hydraIdP = new TestingHydraIdentityProvider(TTL_ACCESS_TOKEN_IN_SECONDS, false, false);
-+        TestingHydraIdentityProvider hydraIdP = new TestingHydraIdentityProvider(TTL_ACCESS_TOKEN_IN_SECONDS, false, false, false);
-         hydraIdP.start();
- 
-         return hydraIdP;
-```
-
-**File**: `core/trino-main/src/test/java/io/trino/server/security/oauth2/TestOAuth2WebUiAuthenticationFilterWithRefreshTokens.java` (modified, +1/-1)
-```diff
-@@ -87,7 +87,7 @@ public void setup()
-         httpClientBuilder.followRedirects(false);
-         httpClient = httpClientBuilder.build();
- 
--        hydraIdP = new TestingHydraIdentityProvider(TTL_ACCESS_TOKEN_IN_SECONDS, true, false);
-+        hydraIdP = new TestingHydraIdentityProvider(TTL_ACCESS_TOKEN_IN_SECONDS, true, false, false);
-         hydraIdP.start();
- 
-         String idpUrl = "https://localhost:" + hydraIdP.getAuthPort();
++        try (TestingBigQueryReadServer server = new TestingBigQueryReadServer(ImmutableList.of(arrowResponse(0, 10
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #31832** (2026-10-27): Update Hadoop to 3.4.3-1 (@electrum)
+- **PR #31827** (2026-10-27): Parse JDBC LocalDate without java.sql.Date (@findepi)
+- **PR #31823** (2026-10-27): Remove Joda Time from JDBC driver tests (@findepi)
+- **PR #31821** (2026-10-27): Fix flaky TestHiveRoles and TestHive4OnDataLake (@findepi)
 - **PR #31820** (2026-10-27): Remove Joda Time from JDBC driver (@findepi)
-- **PR #31814** (2026-10-27): Bump org.roaringbitmap:RoaringBitmap from 1.6.24 to 1.6.25 (@dependabot[bot])
-- **PR #31811** (2026-10-27): Update bun to 1.4.4 (@Chaho12)
-- **PR #31802** (2026-10-27): Exclude unused shaded Jackson from Iceberg plugins (@wendigo)
-- **PR #31801** (2026-10-26): Update JDK to jdk-25.0.5+8 (@wendigo)
-- **PR #31799** (2026-10-26): Bump io.airlift:airbase from 420 to 421 in the airlift group (@dependabot[bot])
+- **PR #31818** (closed): Add test for payload signing on S3 uploads (@findinpath)
 
 ---
 
@@ -2578,55 +2378,28 @@ Co-authored-by: Ragnar Dahlén <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Aggregation analysis for session expressions
+## X. running test from IntelliJ
 
 **RULE**:
-When implementing operations in `core/trino-main/src/main/java/io/trino/sql/analyzer/AggregationAnalyzer.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/trino-spi/src/test/java/io/trino/spi/connector/TestColumnMetadata.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fcd508b6`: Aggregation analysis for session expressions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7fd3d978`: running test from IntelliJ. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-main/src/main/java/io/trino/sql/analyzer/AggregationAnalyzer.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-spi/src/test/java/io/trino/spi/connector/TestColumnMetadata.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import io.trino.sql.tree.CurrentCatalog;
-import io.trino.sql.tree.CurrentPath;
-import io.trino.sql.tree.CurrentSchema;
-import io.trino.sql.tree.CurrentUser;
-        @Override
-        protected Boolean visitCurrentCatalog(CurrentCatalog node, Void context)
-        {
-            return true;
-        }
-
-        @Override
-        protected Boolean visitCurrentSchema(CurrentSchema node, Void context)
-        {
-            return true;
-        }
-
-        @Override
-        protected Boolean visitCurrentUser(CurrentUser node, Void context)
-        {
-            return true;
-        }
-
-        @Override
-        protected Boolean visitCurrentPath(CurrentPath node, Void context)
-        {
-            return true;
-        }
-
+public class TestColumnMetadata
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+class TestColumnMetadata
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fcd508b6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7fd3d978` are properly handled with clean fallback behavior.

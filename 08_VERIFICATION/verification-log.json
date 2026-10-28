@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-TCSY",
-    "timestamp": "2026-10-26T02:50:51.538Z",
-    "repository": "assistant-ui/assistant-ui",
-    "learningId": "learn-github-assistant-ui-assistant-ui",
-    "contentHash": "4b38ab4dd438440dcfa99e243d8c3de387069145f05823906377937bb427c375",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-TF9U",
-    "timestamp": "2026-10-26T02:50:54.738Z",
-    "repository": "JeffLi1993/seo-audit-skill",
-    "learningId": "learn-github-jeffli1993-seo-audit-skill",
-    "contentHash": "de3227854b73e7d4aa3c05deda3117175d9f3b7fe2552684fb536c02c4895a21",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-TJE3",
     "timestamp": "2026-10-26T02:51:00.075Z",
     "repository": "pulumi/pulumi",
@@ -7490,6 +7460,36 @@
     "repository": "arangodb/arangodb",
     "learningId": "learn-github-arangodb-arangodb",
     "contentHash": "4bfe01815f7385ece1612375b784826be7b016ef4f6d4facee2d4389ff63c3b5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-1QEL",
+    "timestamp": "2026-10-28T00:12:45.165Z",
+    "repository": "nats-io/nats.go",
+    "learningId": "learn-github-nats-io-nats-go",
+    "contentHash": "c19357b819f711a04f562b44d720865949a27b06dea375f5a82046760d9e980a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-1V2Q",
+    "timestamp": "2026-10-28T00:12:51.218Z",
+    "repository": "trinodb/trino",
+    "learningId": "learn-github-trinodb-trino",
+    "contentHash": "5fc2397fafd0151207f62b6a0a3894fa0dc5ee0e3e5ea1b34085fbcea7edff45",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
