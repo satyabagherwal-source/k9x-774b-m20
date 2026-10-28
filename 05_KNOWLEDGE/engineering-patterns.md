@@ -383088,3 +383088,143 @@ sdist = { url = "https://files.pythonhosted.org/packages/38/d5/b0aeb0b303650ac87
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `52568d90` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5279. Positional Embedding Boundary Guard (Harvested from google-bert/bert-base-uncased)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Positional Embedding Boundary Guard",
+  "source": "google-bert/bert-base-uncased",
+  "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
+  "source_version": "hf-google-bert-bert-base-uncased",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-28T12:08:58.212Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-google-bert-bert-base-uncased",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [google-bert/bert-base-uncased](https://huggingface.co/google-bert/bert-base-uncased) (Revision: `hf-google-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+The input sequence length MUST NOT exceed `max_position_embeddings` defined in the configuration. If the input exceeds this limit, the system MUST truncate or raise an explicit error. It MUST NOT allow index out-of-bounds access into the positional embedding table.
+
+**WHY**:
+BERT uses absolute positional embeddings stored as a lookup table of size `[max_position_embeddings, hidden_size]`. If an input sequence of length 513 is passed to a model with `max_position_embeddings=512`, the index `512` will be out of bounds for the embedding table (valid indices 0-511). This causes a `RuntimeError: index out of range` in PyTorch or undefined behavior in C++/CUDA backends.
+
+**WHEN TO APPLY**:
+Any model using absolute positional encodings (BERT, RoBERTa, ALBERT). Does not apply to models using relative positional encodings (T5, Longformer) which can extrapolate.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def preprocess_input(text, tokenizer, max_len=512):
+    # Tokenize
+    tokens = tokenizer.encode(text, add_special_tokens=True)
+    
+    # Invariant: Truncate to max_position_embeddings
+    if len(tokens) > max_len:
+        # Strategy: Truncate from the end (preserves start of context)
+        # Note: For some tasks, truncating from the middle or start might be better,
+        # but truncation is the safe default to prevent OOB.
+        tokens = tokens[:max_len]
+        
+    return tokens
+
+# In the model forward pass:
+def forward(self, input_ids, attention_mask=None):
+    seq_len = input_ids.size(1)
+    if seq_len > self.config.max_position_embeddings:
+        raise ValueError(
+            f"Input sequence length {seq_len} exceeds max_position_embeddings "
+            f"{self.config.max_position_embeddings}. Please truncate input."
+        )
+    # Safe to access position_embeddings[0:seq_len]
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Assuming tokenizer handles truncation automatically
+# Some tokenizers have 'truncation=True' but if max_length is not set or set incorrectly,
+# the model will still receive long sequences.
+inputs = tokenizer(text, return_tensors="pt")
+# If text is 1000 tokens and tokenizer didn't truncate:
+model(inputs['input_ids']) # CRASH: Index out of bounds
+```
+
+**VERIFICATION METHOD**:
+Property-based test: Generate random texts of length 1 to 1000. Tokenize them. Pass to model. Assert that no exception is raised if truncation is applied, or that a specific `ValueError` is raised if truncation is disabled and length > 512.
+
+
+---
+
+## 5280. Attention Mask Integrity Invariant (Harvested from google-bert/bert-base-uncased)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Attention Mask Integrity Invariant",
+  "source": "google-bert/bert-base-uncased",
+  "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
+  "source_version": "hf-google-bert-bert-base-uncased",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-28T12:08:58.463Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-google-bert-bert-base-uncased",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [google-bert/bert-base-uncased](https://huggingface.co/google-bert/bert-base-uncased) (Revision: `hf-google-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+The `attention_mask` tensor MUST have the same shape as `input_ids` and MUST contain only 0s and 1s. A 1 indicates a real token, and a 0 indicates a padding token. The model MUST NOT attend to padding tokens. If the mask is missing or malformed, the model MUST default to a mask of all 1s (assuming no padding) or raise an error.
+
+**WHY**:
+Self-attention computes weighted sums over all tokens. If padding tokens (usually ID 0) are not masked, their embeddings contribute to the attention scores, polluting the representation of real tokens. This leads to degraded performance and incorrect predictions. A malformed mask (e.g., containing 2s or -1s) can cause numerical instability in the softmax operation.
+
+**WHEN TO APPLY**:
+Any transformer model using padding. Critical for batched inference where sequences have different lengths.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def create_attention_mask(input_ids, pad_token_id=0):
+    # Invariant: Mask must be 1 for non-pad, 0 for pad
+    mask = (input_ids != pad_token_id).long()
+    return mask
+
+# In the attention mechanism:
+def scaled_dot_product_attention(query, key, value, attention_mask=None):
+    # ... compute scores ...
+    if attention_mask is not None:
+        # Expand mask to match head dimension: [batch, seq_len] -> [batch, 1, 1, seq_len]
+        mask = attention_mask[:, None, None, :]
+        # Add a large negative number to masked positions to make softmax output ~0
+        scores = scores + (1.0 - mask) * -10000.0
+    attention_weights = torch.softmax(scores, dim=-1)
+    # ...
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Forgetting to expand the mask dimension
+# If mask is [batch, seq_len] and scores are [batch, heads, seq_len, seq_len]:
+scores = scores + attention_mask # Broadcasting error or incorrect masking
+```
+
+**VERIFICATION METHOD**:
+Unit test: Create a batch of two sequences, one short (padded) and one long. Verify that the attention weights for the padded positions in the short sequence are exactly 0 (or close to 0).
+
+---

@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T12:02:11.395Z",
-    "lastVerified": "2026-10-28T12:02:11.395Z",
+    "lastChecked": "2026-10-28T12:09:01.232Z",
+    "lastVerified": "2026-10-28T12:09:01.232Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -310,8 +310,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T11:32:25.552Z",
-    "lastVerified": "2026-10-28T11:32:25.552Z",
+    "lastChecked": "2026-10-28T12:08:56.957Z",
+    "lastVerified": "2026-10-28T12:08:56.957Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1404,11 +1404,21 @@
     "lastVerified": "2026-10-28T05:24:33.541Z"
   },
   "cilium-cilium": {
-    "name": "cilium",
+    "name": "cilium/cilium",
     "officialUrl": "https://github.com/cilium/cilium",
-    "lastChecked": "2026-10-28T05:24:36.215Z",
-    "revisionIdentifier": "9c5e56ae",
-    "lastVerified": "2026-10-28T05:24:36.215Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T12:08:58.116Z",
+    "lastVerified": "2026-10-28T12:08:58.116Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "ea5d83279fd31ea1c08d52a97cf5cbaf0b17dfc0cb36432d16af679594c38850",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "langchain4j-langchain4j": {
     "name": "langchain4j/langchain4j",
@@ -2891,5 +2901,50 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "vi-websocat": {
+    "name": "websocat",
+    "officialUrl": "https://github.com/vi/websocat",
+    "lastChecked": "2026-10-28T12:08:41.959Z",
+    "revisionIdentifier": "3a3574cd",
+    "lastVerified": "2026-10-28T12:08:41.959Z"
+  },
+  "hf-google-bert-bert-base-uncased": {
+    "name": "google-bert/bert-base-uncased",
+    "officialUrl": "https://huggingface.co/google-bert/bert-base-uncased",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T12:08:44.640Z",
+    "lastVerified": "2026-10-28T12:08:44.640Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-google-bert-bert-base-uncased",
+    "contentHash": "379e96a97eab1f0321a22171560af27f808a37a92cb3de7af70a17181958c9f4",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ritz078-transform": {
+    "name": "transform",
+    "officialUrl": "https://github.com/ritz078/transform",
+    "lastChecked": "2026-10-28T12:08:47.007Z",
+    "revisionIdentifier": "ff755793",
+    "lastVerified": "2026-10-28T12:08:47.007Z"
+  },
+  "dosco-graphjin": {
+    "name": "graphjin",
+    "officialUrl": "https://github.com/dosco/graphjin",
+    "lastChecked": "2026-10-28T12:08:49.596Z",
+    "revisionIdentifier": "b60d3fc5",
+    "lastVerified": "2026-10-28T12:08:49.596Z"
+  },
+  "seekstorm-seekstorm": {
+    "name": "SeekStorm",
+    "officialUrl": "https://github.com/SeekStorm/SeekStorm",
+    "lastChecked": "2026-10-28T12:08:54.438Z",
+    "revisionIdentifier": "ab61bc73",
+    "lastVerified": "2026-10-28T12:08:54.438Z"
   }
 }

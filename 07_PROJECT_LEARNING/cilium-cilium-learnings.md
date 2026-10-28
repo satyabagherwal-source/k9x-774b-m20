@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `9c5e56ae`  
+> **Source Version**: `bcda14be`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T00:40:17.222Z  
+> **Timestamp**: 2026-10-28T12:08:58.341Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T00:40:17.215Z  
+> **Harvest Timestamp**: 2026-10-28T12:08:58.116Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25721 stars
+- **Stars / Engagement**: 25726 stars
 
 ---
 
@@ -1280,27 +1280,86 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9c5e56ae` (2026-10-09)
-**Commit Message**: fix(pkg/k8s): Remove redundant DeepCopy in GetPodMetadata
+### Incident Patch 1: `ec837ec9` (2026-10-21)
+**Commit Message**: Revert "gha/conformance-aks: Wait for AKS to roll konnectivity-agent"
 
-pkg/k8s/labels.go GetPodMetadata calls DeepCopy for Pod's labels map
-before passing it to SanitizePodLabels which passes it to
-RemoveCiliumLabels which returns a copy anyway.
+This reverts commit ab6fb83a7d6a.
 
-Signed-off-by: Patryk Piętka <[REDACTED_EMAIL]>
+The wait gives up 21 minutes after AKS creates konnectivity-agent, and
+AKS had not rolled it by then on 195 of 361 legs, so it costs a leg up
+to 21 minutes and still misses most late rolls. The previous commits
+make the connectivity test retry the execs that a roll cuts, so the wait
+no longer buys anything. On three AKS clusters where we deleted both
+konnectivity-agent pods four times during the test, and where AKS also
+rolled them once on one cluster, every test passed [1]. Nine KPR
+clusters, with IPsec, WireGuard or neither, where we deleted them three
+to five times, passed as well [2].
 
-**File**: `pkg/k8s/labels.go` (modified, +1/-2)
+This commit was prepared with AIL:3. I personally checked the diff.
+
+1: https://github.com/cilium/cilium/actions/runs/39443261740
+2: https://github.com/cilium/cilium/actions/runs/39452349485
+
+Signed-off-by: André Martins <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/conformance-aks.yaml` (modified, +0/-49)
 ```diff
-@@ -43,8 +43,7 @@ func GetPodMetadata(logger *slog.Logger, clusterInfo cmtypes.ClusterInfo, k8sNs
- 		logfields.K8sPodName, pod.Name,
- 	)
+@@ -599,55 +599,6 @@ jobs:
+         run: |
+           mkdir -p cilium-junits
  
--	objMetaCpy := pod.ObjectMeta.DeepCopy()
--	labels := k8sUtils.SanitizePodLabels(objMetaCpy.Labels, k8sNs, pod.Spec.ServiceAccountName, clusterInfo.Name)
-+	labels := k8sUtils.SanitizePodLabels(pod.ObjectMeta.Labels, k8sNs, pod.Spec.ServiceAccountName, clusterInfo.Name)
- 
- 	namedPorts = make(ciliumTypes.NamedPortMap)
- 	for _, containers := range pod.Spec.Containers {
+-      - name: Wait for AKS to finish rolling konnectivity-agent
+-        # Waits for AKS to add the checksum/service-account-key annotation that triggers the roll,
+-        # then for the rollout to complete, then for the old pods to finish terminating.
+-        # Each wait only warns on timeout, so the connectivity test still runs.
+-        env:
+-          ROLL_DEADLINE_MINUTES: 21
+-          ROLLOUT_TIMEOUT: 5m
+-          TERMINATING_TIMEOUT_SECONDS: 120
+-        run: |
+-          set -euo pipefail
+-
+-          start=$(date +%s)
+-          if ! created=$(kubectl -n kube-system get deploy konnectivity-agent \
+-              -o jsonpath='{.metadata.creationTimestamp}'); then
+-            echo "::warning::kube-system/konnectivity-agent not found"
+-            exit 0
+-          fi
+-          deadline=$(( $(date -d "$created" +%s) + ROLL_DEADLINE_MINUTES * 60 ))
+-
+-          # AKS adds this annotation in a roll that SIGKILLs the old agents and cuts their exec streams.
+-          echo "Waiting until $(date -u -d "@$deadline" +%T) for the checksum/service-account-key roll"
+-          until kubectl -n kube-system get deploy konnectivity-agent -o json \
+-              | jq -e '.spec.template.metadata.annotations["checksum/service-account-key"]' > /dev/null; do
+-            if [[ $(date +%s) -ge $deadline ]]; then
+-              echo "::warning::AKS did not roll konnectivity-agent within ${ROLL_DEADLINE_MINUTES}m of its creation at $created"
+-              break
+-            fi
+-            sleep 10
+-          done
+-
+-          kubectl -n kube-system rollout status deploy/konnectivity-agent --timeout="$ROLLOUT_TIMEOUT" \
+-            || echo "::warning::konnectivity-agent rollout did not complete within $ROLLOUT_TIMEOUT"
+-
+-          # rollout status stops counting an old pod once it has a deletionTimestamp.
+-          terminating_deadline=$(( $(date +%s) + TERMINATING_TIMEOUT_SECONDS ))
+-          until [[ $(kubectl -n kube-system get pods -l app=konnectivity-agent -o json \
+-              | jq '[.items[] | select(.metadata.deletionTimestamp)] | length') == 0 ]]; do
+-            if [[ $(date +%s) -ge $terminating_deadline ]]; then
+-              echo "::warning::old konnectivity-agent pods are still terminating"
+-              break
+-            fi
+-            sleep 10
+-          done
+-
+-          echo "Waited $(( $(date +%s) - start ))s. ReplicaSets, relative to the Deployment's creation at $created:"
+-          kubectl -n kube-system get rs -l app=konnectivity-agent -o json \
+-            | jq -r --arg created "$created" '.items | sort_by(.metadata.creationTimestamp)[]
+-                | "\(.metadata.name) +\((.metadata.creationTimestamp | fromdate) - ($created | fromdate))s replicas=\(.status.replicas)"'
+-
+       - name: Run concurrent connectivity test (${{ join(matrix.*, ', ') }})
+         id: run-tests
+         run: |
 ```
 
 #### Recent Merged Pull Requests:
@@ -1323,35 +1382,3 @@ Signed-off-by: Patryk Piętka <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. pkg/k8s): Remove redundant DeepCopy in GetPodMetadata
-
-**RULE**:
-When implementing operations in `pkg/k8s/labels.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `9c5e56ae`: pkg/k8s): Remove redundant DeepCopy in GetPodMetadata. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/k8s/labels.go`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-	labels := k8sUtils.SanitizePodLabels(pod.ObjectMeta.Labels, k8sNs, pod.Spec.ServiceAccountName, clusterInfo.Name)
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Anti-pattern to NEVER write (induced failure mode):
-	objMetaCpy := pod.ObjectMeta.DeepCopy()
-	labels := k8sUtils.SanitizePodLabels(objMetaCpy.Labels, k8sNs, pod.Spec.ServiceAccountName, clusterInfo.Name)
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9c5e56ae` are properly handled with clean fallback behavior.

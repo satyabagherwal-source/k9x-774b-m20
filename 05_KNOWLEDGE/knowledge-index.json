@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T12:02:08.781Z",
+  "last_updated": "2026-10-28T12:08:58.636Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6364,8 +6364,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "9c5e56ae",
-      "content_hash": "24e1a84c5d10bcff650ba43a197fa33735c5f97049392510833d8c356347dc93",
+      "source_version": "bcda14be",
+      "content_hash": "ea5d83279fd31ea1c08d52a97cf5cbaf0b17dfc0cb36432d16af679594c38850",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -6515,7 +6515,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T00:40:17.727Z",
+      "verified_at": "2026-10-28T12:08:58.450Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22032,7 +22032,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
       "source_version": "hf-google-bert-bert-base-uncased",
-      "content_hash": "2791403529dd82bfb11214416118db4d703d7d90eb5e7737ee86f6605af6bd3f",
+      "content_hash": "379e96a97eab1f0321a22171560af27f808a37a92cb3de7af70a17181958c9f4",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
       "promoted_rules": [
@@ -22100,6 +22100,21 @@
           "number": 3399,
           "title": "Tokenizer-Vocabulary Boundary Integrity",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "Configuration-Weight Consistency Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 5279,
+          "title": "Positional Embedding Boundary Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5280,
+          "title": "Attention Mask Integrity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -22120,7 +22135,7 @@
         "learn-huggingface-hf-google-bert-bert-base-uncased-mv48tc54",
         "learn-huggingface-hf-google-bert-bert-base-uncased-mv4m6lnc"
       ],
-      "verified_at": "2026-10-25T17:14:27.527Z",
+      "verified_at": "2026-10-28T12:08:58.624Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -143801,6 +143816,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T12:02:08.759Z"
+    },
+    "rule-5279": {
+      "learning_id": "rule-5279",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5279,
+      "title": "Positional Embedding Boundary Guard",
+      "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
+      "source_version": "hf-google-bert-bert-base-uncased",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T12:08:58.624Z"
+    },
+    "rule-5280": {
+      "learning_id": "rule-5280",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5280,
+      "title": "Attention Mask Integrity Invariant",
+      "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
+      "source_version": "hf-google-bert-bert-base-uncased",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T12:08:58.624Z"
     }
   },
   "aliases": {

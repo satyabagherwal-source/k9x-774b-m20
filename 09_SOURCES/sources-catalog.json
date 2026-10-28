@@ -715,8 +715,8 @@
     "sourceUrl": "https://huggingface.co/google-bert/bert-base-uncased",
     "sourceVersion": "hf-google-bert-bert-base-uncased",
     "license": "Open-Source",
-    "contentHash": "2791403529dd82bfb11214416118db4d703d7d90eb5e7737ee86f6605af6bd3f",
-    "lastHarvestedAt": "2026-10-25T17:14:27.597Z",
+    "contentHash": "379e96a97eab1f0321a22171560af27f808a37a92cb3de7af70a17181958c9f4",
+    "lastHarvestedAt": "2026-10-28T12:08:58.700Z",
     "learningId": "learn-huggingface-google-bert-bert-base-uncased"
   },
   "hf-google-electra-base-discriminator": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "9c5e56ae",
+    "sourceVersion": "bcda14be",
     "license": "Apache-2.0",
-    "contentHash": "24e1a84c5d10bcff650ba43a197fa33735c5f97049392510833d8c356347dc93",
-    "lastHarvestedAt": "2026-10-28T00:40:17.820Z",
+    "contentHash": "ea5d83279fd31ea1c08d52a97cf5cbaf0b17dfc0cb36432d16af679594c38850",
+    "lastHarvestedAt": "2026-10-28T12:08:58.557Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {

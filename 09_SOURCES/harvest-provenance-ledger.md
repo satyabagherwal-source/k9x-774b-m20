@@ -5766,3 +5766,5 @@ Every entry in this ledger must capture:
 | `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `0462edd7` | Multi-dimensional audit evidence | 2026-10-28T12:02:04.222Z |
 | `learn-huggingface-google-electra-base-discriminator` | `https://huggingface.co/google/electra-base-discriminator` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-28T12:02:07.296Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `52568d90` | Multi-dimensional audit evidence | 2026-10-28T12:02:08.863Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `bcda14be` | Multi-dimensional audit evidence | 2026-10-28T12:08:58.557Z |
+| `learn-huggingface-google-bert-bert-base-uncased` | `https://huggingface.co/google-bert/bert-base-uncased` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-28T12:08:58.700Z |

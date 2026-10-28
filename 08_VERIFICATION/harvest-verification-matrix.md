@@ -5757,3 +5757,5 @@
 | `CYCLE-20261028-DX6H` | `2026-10-28T12:02:04.217Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5274` | Yes (`67455395...`) |
 | `CYCLE-20261028-DZJV` | `2026-10-28T12:02:07.291Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5275, Rule 5276, Rule 5277` | Yes (`a452015b...`) |
 | `CYCLE-20261028-E0RF` | `2026-10-28T12:02:08.859Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5278` | Yes (`e32d49ea...`) |
+| `CYCLE-20261028-MSVT` | `2026-10-28T12:08:58.553Z` | `cilium/cilium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/cilium-cilium-learnings.md` | Yes (`ea5d8327...`) |
+| `CYCLE-20261028-MSZT` | `2026-10-28T12:08:58.697Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING, Rule 5279, Rule 5280` | Yes (`379e96a9...`) |
