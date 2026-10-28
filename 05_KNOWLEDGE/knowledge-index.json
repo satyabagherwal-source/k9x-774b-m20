@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T00:46:59.959Z",
+  "last_updated": "2026-10-28T00:53:43.065Z",
   "total_verified_learnings": 1154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14520,8 +14520,8 @@
       "slug": "greptimeteam-greptimedb",
       "platform": "github",
       "source_url": "https://github.com/GreptimeTeam/greptimedb",
-      "source_version": "5b4efd90",
-      "content_hash": "af6824af16e19b597c641b8117b96e2a53925b377e2bd02e0f3c75840098a71b",
+      "source_version": "62ebf71f",
+      "content_hash": "5aa699a5dd5d402df457dabfecf54abafb4e0dba067b343f1488cdcf12c17d89",
       "dossier_path": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "promoted_rules": [
@@ -14559,6 +14559,11 @@
           "number": 4739,
           "title": "mito): preserve SST lifetime across index replacement (#9950)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5083,
+          "title": "mito2): coordinate range cache invalidation and singleflight reads (#9935)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14566,7 +14571,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:14:46.898Z",
+      "verified_at": "2026-10-28T00:53:43.047Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -17205,10 +17210,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-base-en-v1.5",
       "source_version": "hf-baai-bge-base-en-v1.5",
-      "content_hash": "d0f5a3bfb45672daaa2cbd2f296fda1f773f1172fa1ab8ae1ab93b63b451165d",
+      "content_hash": "7b5e2e6811384fcf41bff7a30d23c385c68338d2ba7b94f26e95b599de27556b",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md",
       "promoted_rules": [
+        {
+          "number": 664,
+          "title": "Tokenizer-Model Vocabulary Alignment Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 790,
           "title": "Semantic Embedding Normalization Invariant",
@@ -17245,6 +17255,11 @@
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
+          "number": 1840,
+          "title": "Maximum Sequence Length Truncation Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 4036,
           "title": "Tokenizer Case-Sensitivity Alignment",
           "status": "PROMOTED_AND_VERIFIED"
@@ -17266,7 +17281,7 @@
         "learn-huggingface-hf-baai-bge-base-en-v1-5-mv40jxd1",
         "learn-huggingface-hf-baai-bge-base-en-v1-5-mv4ei7wc"
       ],
-      "verified_at": "2026-10-25T04:12:34.614Z",
+      "verified_at": "2026-10-28T00:53:37.730Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31822,8 +31837,8 @@
       "slug": "kgateway-dev-kgateway",
       "platform": "github",
       "source_url": "https://github.com/kgateway-dev/kgateway",
-      "source_version": "32e8e3f7",
-      "content_hash": "0b0d79e2199ffdb671a9a3f5eafed034e04026bcc78b516779083a7551de3b26",
+      "source_version": "e8e3d347",
+      "content_hash": "b53713c26878430f379ec0ba72080961201ebce86a5591f83966af5711eee711",
       "dossier_path": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "promoted_rules": [
@@ -31861,6 +31876,11 @@
           "number": 4768,
           "title": "test: PodSecurityContext/SecurityContext API evolution future-proofing (#14787)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5082,
+          "title": "e2e: terminate istioctl uninstall output with a newline (#14924)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31868,7 +31888,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:53:47.347Z",
+      "verified_at": "2026-10-28T00:53:37.120Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73539,14 +73559,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 664,
       "title": "Tokenizer-Model Vocabulary Alignment Invariant",
-      "source_url": "https://huggingface.co/FacebookAI/xlm-roberta-base",
-      "source_version": "hf-facebookai-xlm-roberta-base",
+      "source_url": "https://huggingface.co/BAAI/bge-base-en-v1.5",
+      "source_version": "hf-baai-bge-base-en-v1.5",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T14:27:22.814Z"
+      "verified_at": "2026-10-28T00:53:37.730Z"
     },
     "rule-665": {
       "learning_id": "rule-665",
@@ -75310,7 +75330,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-25T04:12:34.614Z"
+      "verified_at": "2026-10-28T00:53:37.730Z"
     },
     "rule-791": {
       "learning_id": "rule-791",
@@ -90372,14 +90392,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1840,
       "title": "Maximum Sequence Length Truncation Invariant",
-      "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
-      "source_version": "hf-baai-bge-large-en-v1.5",
+      "source_url": "https://huggingface.co/BAAI/bge-base-en-v1.5",
+      "source_version": "hf-baai-bge-base-en-v1.5",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T23:20:33.182Z"
+      "verified_at": "2026-10-28T00:53:37.730Z"
     },
     "rule-1841": {
       "learning_id": "rule-1841",
@@ -139929,6 +139949,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T00:46:59.952Z"
+    },
+    "rule-5082": {
+      "learning_id": "rule-5082",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5082,
+      "title": "e2e: terminate istioctl uninstall output with a newline (#14924)",
+      "source_url": "https://github.com/kgateway-dev/kgateway",
+      "source_version": "e8e3d347",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T00:53:37.121Z"
+    },
+    "rule-5083": {
+      "learning_id": "rule-5083",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5083,
+      "title": "mito2): coordinate range cache invalidation and singleflight reads (#9935)",
+      "source_url": "https://github.com/GreptimeTeam/greptimedb",
+      "source_version": "62ebf71f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T00:53:43.047Z"
     }
   },
   "aliases": {

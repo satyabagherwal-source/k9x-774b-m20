@@ -5620,3 +5620,6 @@ Every entry in this ledger must capture:
 | `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `a3ef562f` | Multi-dimensional audit evidence | 2026-10-28T00:46:44.844Z |
 | `learn-huggingface-google-gemma-4-31b-it` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-28T00:46:51.903Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `9fe8c247` | Multi-dimensional audit evidence | 2026-10-28T00:47:00.003Z |
+| `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `e8e3d347` | Multi-dimensional audit evidence | 2026-10-28T00:53:37.216Z |
+| `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-28T00:53:37.825Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `62ebf71f` | Multi-dimensional audit evidence | 2026-10-28T00:53:43.140Z |

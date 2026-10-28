@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T00:47:00.008Z",
+  "last_updated": "2026-10-28T00:53:43.150Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1655,14 +1655,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-base-en-v1-5",
-      "content_hash": "d0f5a3bfb45672daaa2cbd2f296fda1f773f1172fa1ab8ae1ab93b63b451165d",
-      "verified_at": "2026-10-25T04:12:34.707Z",
+      "content_hash": "7b5e2e6811384fcf41bff7a30d23c385c68338d2ba7b94f26e95b599de27556b",
+      "verified_at": "2026-10-28T00:53:37.834Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T04:12:34.707Z"
+      "last_updated": "2026-10-28T00:53:37.834Z"
     },
     "sentence-transformers/paraphrase-multilingual-mpnet-base-v2": {
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -4401,14 +4401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kgateway-dev-kgateway",
-      "content_hash": "0b0d79e2199ffdb671a9a3f5eafed034e04026bcc78b516779083a7551de3b26",
-      "verified_at": "2026-10-27T12:53:47.426Z",
+      "content_hash": "b53713c26878430f379ec0ba72080961201ebce86a5591f83966af5711eee711",
+      "verified_at": "2026-10-28T00:53:37.225Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T12:53:47.426Z"
+      "last_updated": "2026-10-28T00:53:37.225Z"
     },
     "freenet/freenet-core": {
       "repository": "freenet/freenet-core",
@@ -8181,14 +8181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-greptimeteam-greptimedb",
-      "content_hash": "af6824af16e19b597c641b8117b96e2a53925b377e2bd02e0f3c75840098a71b",
-      "verified_at": "2026-10-27T12:14:46.999Z",
+      "content_hash": "5aa699a5dd5d402df457dabfecf54abafb4e0dba067b343f1488cdcf12c17d89",
+      "verified_at": "2026-10-28T00:53:43.149Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T12:14:46.999Z"
+      "last_updated": "2026-10-28T00:53:43.149Z"
     },
     "heroui-inc/heroui-native": {
       "repository": "heroui-inc/heroui-native",

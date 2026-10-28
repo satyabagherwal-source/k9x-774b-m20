@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T00:47:00.006Z",
-  "total_cycles_completed": 5588,
-  "total_learnings_persisted": 5588,
-  "total_rules_promoted": 5002,
+  "last_updated": "2026-10-28T00:53:43.145Z",
+  "total_cycles_completed": 5591,
+  "total_learnings_persisted": 5591,
+  "total_rules_promoted": 5007,
   "history": [
-    {
-      "timestamp": "2026-10-27T15:25:48.107Z",
-      "repository": "sveltejs/svelte",
-      "learningId": "learn-github-sveltejs-svelte",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T15:29:31.256Z",
-      "repository": "encoredev/encore",
-      "learningId": "learn-github-encoredev-encore",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T15:29:36.446Z",
-      "repository": "lancedb/lancedb",
-      "learningId": "learn-github-lancedb-lancedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T15:32:53.882Z",
       "repository": "lucide-icons/lucide",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-28T00:47:00.006Z",
       "repository": "yugabyte/yugabyte-db",
       "learningId": "learn-github-yugabyte-yugabyte-db",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T00:53:37.222Z",
+      "repository": "kgateway-dev/kgateway",
+      "learningId": "learn-github-kgateway-dev-kgateway",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T00:53:37.831Z",
+      "repository": "BAAI/bge-base-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T00:53:43.145Z",
+      "repository": "GreptimeTeam/greptimedb",
+      "learningId": "learn-github-greptimeteam-greptimedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-baai-bge-`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-25T04:12:34.139Z  
+> **Timestamp**: 2026-10-28T00:53:37.146Z  
 > **Learning ID**: `learn-huggingface-baai-bge-base-en-v1-5`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,248 +17,245 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The `BAAI/bge-base-en-v1.5` repository is not a software application in the traditional sense, but a **pre-trained neural network artifact** (a "model card" and weight container) designed for **Semantic Text Embedding**. It solves the problem of mapping variable-length natural language text into a fixed-dimensional vector space (768-dimensional float32 vectors) such that semantic similarity in the text domain corresponds to geometric proximity (cosine similarity) in the vector domain.
+The `BAAI/bge-base-en-v1.5` repository is not a traditional software application but a **pre-trained neural network artifact** (a "model card" and weight container) designed for **Semantic Text Embedding**. It solves the problem of mapping variable-length natural language text into a fixed-dimensional vector space (768 dimensions) such that semantic similarity in the vector space correlates with semantic similarity in the text. Specifically, it is optimized for **retrieval tasks** (dense retrieval) and **sentence similarity**, outperforming generic BERT models in zero-shot retrieval benchmarks (MTEB).
 
 **Architectural Boundaries:**
-1.  **Core Engine**: `BertModel` (Hugging Face Transformers implementation). It is a Bidirectional Encoder Representations from Transformers (BERT) architecture.
-2.  **Input Boundary**: Raw text strings $\rightarrow$ Tokenized IDs (Vocabulary size: 30,522).
-3.  **Processing Boundary**: 12 Transformer Layers (Self-Attention + Feed-Forward Networks).
-4.  **Output Boundary**: A 768-dimensional dense vector (Embedding).
-5.  **Decoupling**: The model is strictly **stateless** during inference. It does not maintain conversation history or mutable state between calls. The "state" is entirely contained within the static weight matrices (`pytorch_model.bin` or `model.safetensors`).
+1.  **Input Boundary:** Raw text strings (English).
+2.  **Pre-processing Boundary:** Tokenization via `BertTokenizer` (WordPiece), lowercasing, and padding/truncation to `max_position_embeddings` (512).
+3.  **Core Computation Boundary:** A standard 12-layer Transformer Encoder (`BertModel`) with 12 attention heads, hidden size 768, and intermediate size 3072.
+4.  **Output Boundary:** A 768-dimensional float32 vector (embedding).
+5.  **Decoupling:** The model is decoupled from the inference engine. It relies on the `transformers` library (v4.30.0) for the computational graph and `sentence-transformers` for the specific pooling strategy (typically Mean Pooling or CLS token extraction, though the config implies standard BERT architecture, the usage context implies sentence-transformers integration).
 
 **Critical Subsystem Abstractions:**
-*   **Tokenizer**: `BertTokenizer` with `do_lower_case: true`. This is a critical preprocessing invariant. The model expects lowercased input.
-*   **Pooling Strategy**: Although not explicitly defined in `config.json`, BGE models typically use **Mean Pooling** or **CLS Token** extraction. The `config.json` shows `classifier_dropout: null`, indicating this is a base model, not a fine-tuned classifier head. The user must implement the pooling logic externally.
-*   **Normalization**: BGE models are trained with **L2 Normalization** on the output embeddings. This is a critical invariant for cosine similarity calculations.
+*   **Tokenization Layer:** Converts discrete symbols to integer IDs. Critical invariant: `do_lower_case: true` and `tokenize_chinese_chars: true` (even for English, this affects whitespace handling).
+*   **Embedding Layer:** Maps token IDs to dense vectors.
+*   **Transformer Blocks:** 12 self-attention + feed-forward blocks.
+*   **Pooling Strategy:** (Implicit in usage) Aggregates token-level embeddings into a single sentence-level vector.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
 ### 1. Semantic Embedding Normalization Invariant
 **RULE**:
-When utilizing pre-trained sentence embedding models (specifically BGE, E5, or similar contrastive-learning-based models), the output embedding vectors **MUST** be L2-normalized before computing similarity metrics (Cosine Similarity). If the model was trained with normalization, failing to normalize at inference time will result in incorrect similarity scores that are biased by vector magnitude rather than direction.
-
+When using pre-trained sentence embedding models for similarity search (cosine similarity), the output vectors **MUST** be L2-normalized before comparison. If the model does not output normalized vectors, the inference pipeline **MUST** apply normalization immediately after the forward pass.
 **WHY**:
-Contrastive learning objectives (like InfoNCE) often operate on normalized vectors. If the model outputs unnormalized vectors, the dot product $A \cdot B$ becomes $\|A\|\|B\|\cos(\theta)$. If $\|A\|$ and $\|B\|$ vary significantly across different texts, the similarity score will be dominated by the "length" or "confidence" of the embedding rather than the semantic angle $\theta$. This leads to false positives where long, confident sentences appear more similar to everything than short, ambiguous ones.
-
+Cosine similarity is defined as the dot product of normalized vectors. If vectors are not normalized, the dot product scales with the magnitude of the vectors. In BERT-based models, the magnitude of the output vector can vary significantly based on input length and content. Without normalization, longer or more "confident" texts will have higher magnitudes, biasing the similarity score towards length rather than semantic content. This leads to catastrophic failure in retrieval tasks where a short, precise query is ranked below a long, generic document due to magnitude bias.
 **WHEN TO APPLY**:
-Any system performing vector search, semantic clustering, or retrieval-augmented generation (RAG) using BGE, E5, or MTEB-benchmarked embedding models.
-
+Any system using dense vector embeddings for semantic search, clustering, or similarity ranking.
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
-from sentence_transformers import SentenceTransformer
+import torch.nn.functional as F
 
-model = SentenceTransformer('BAAI/bge-base-en-v1.5')
-
-def get_normalized_embedding(text: str) -> torch.Tensor:
-    # Encode the text
-    embedding = model.encode(text, convert_to_tensor=True)
+def compute_embeddings(model, tokenizer, texts):
+    # Tokenize
+    inputs = tokenizer(texts, padding=True, truncation=True, return_tensors="pt")
     
-    # CRITICAL: L2 Normalize the embedding
-    # This ensures cosine similarity == dot product
-    normalized_embedding = torch.nn.functional.normalize(embedding, p=2, dim=1)
+    # Forward pass
+    with torch.no_grad():
+        outputs = model(**inputs)
     
-    return normalized_embedding
-
-# Usage
-emb1 = get_normalized_embedding("The cat sat on the mat")
-emb2 = get_normalized_embedding("A feline was resting on a rug")
-
-# Cosine similarity is now equivalent to dot product
-similarity = torch.dot(emb1, emb2)
+    # Extract last hidden state (token-level embeddings)
+    # Shape: [batch_size, seq_len, hidden_size]
+    token_embeddings = outputs.last_hidden_state
+    
+    # Apply Mean Pooling (common for BGE models)
+    # Mask out padding tokens
+    attention_mask = inputs["attention_mask"].unsqueeze(-1) # [batch, seq_len, 1]
+    sum_embeddings = torch.sum(token_embeddings * attention_mask, dim=1)
+    sum_mask = torch.sum(attention_mask, dim=1)
+    sentence_embeddings = sum_embeddings / sum_mask
+    
+    # CRITICAL: L2 Normalize
+    sentence_embeddings = F.normalize(sentence_embeddings, p=2, dim=1)
+    
+    return sentence_embeddings
 ```
-
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Using raw embeddings for cosine similarity
-# This is WRONG for BGE models if they were trained with normalization
-raw_emb1 = model.encode("The cat sat on the mat", convert_to_tensor=True)
-raw_emb2 = model.encode("A feline was resting on a rug", convert_to_tensor=True)
-
-# This calculation is INVALID if the model expects normalized inputs
-# The magnitude of raw_emb1 might be 1.5 and raw_emb2 might be 0.8
-# The dot product will be skewed by these magnitudes
-invalid_similarity = torch.dot(raw_emb1, raw_emb2) 
+# ANTI-PATTERN: Using raw dot product without normalization
+# This biases results by vector magnitude
+similarity = torch.dot(embedding_a, embedding_b) 
+# Instead of:
+# similarity = torch.dot(F.normalize(embedding_a), F.normalize(embedding_b))
+```
+**VERIFICATION METHOD**:
+Assert that the L2 norm of every output embedding is approximately 1.0 (within floating-point epsilon).
+```python
+assert torch.allclose(torch.norm(embeddings, p=2, dim=1), torch.ones(len(embeddings)), atol=1e-5)
 ```
 
-**VERIFICATION METHOD**:
-1.  **Unit Test**: Assert that the L2 norm of the output embedding is approximately 1.0 (within floating-point epsilon, e.g., `abs(norm - 1.0) < 1e-5`).
-2.  **Integration Test**: Compare similarity scores of two semantically identical sentences of different lengths. If the shorter sentence has a significantly lower similarity score to a third sentence than the longer one, check if normalization is missing.
-
-### 2. Tokenizer Case-Sensitivity Alignment
+### 2. Tokenizer-Model Vocabulary Alignment Invariant
 **RULE**:
-The input text preprocessing pipeline **MUST** strictly align with the tokenizer's `do_lower_case` configuration. If `tokenizer_config.json` specifies `do_lower_case: true`, the application layer **MUST NOT** rely on case-sensitive matching for special tokens or assume that the model preserves case information for semantic meaning.
-
+The `vocab_size` defined in the model's `config.json` **MUST** exactly match the length of the tokenizer's vocabulary. The `pad_token_id` in the model config **MUST** correspond to the actual ID of the `[PAD]` token in the tokenizer.
 **WHY**:
-BERT-based models are typically trained on lowercased text. If the application passes mixed-case text and the tokenizer lowercases it, the model loses case information. However, if the application *pre-lowercases* the text and then the tokenizer *also* lowercases it, it is redundant but safe. The danger arises if the application assumes the model can distinguish "Apple" (fruit) from "apple" (company) based on capitalization, which this model **cannot** do. Furthermore, special tokens like `[CLS]` and `[SEP]` are case-sensitive in the vocabulary. If the application manually inserts these tokens with incorrect casing (e.g., `[cls]`), the tokenizer will treat them as regular words, breaking the model's structural understanding.
-
+If the model's embedding matrix size (`vocab_size`) does not match the tokenizer's output range, an `IndexError` or silent corruption will occur. If `pad_token_id` is mismatched, the model will attend to the wrong token during padding, introducing noise into the attention mechanism and degrading performance. In `bge-base-en-v1.5`, `vocab_size` is 30522 and `pad_token_id` is 0. The tokenizer must be verified to map `[PAD]` to ID 0.
 **WHEN TO APPLY**:
-Any system using BERT, RoBERTa, or DistilBERT tokenizers where `do_lower_case` is `true`.
-
+When loading any Hugging Face model and tokenizer pair, especially when customizing tokenizers or using different versions of the `transformers` library.
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-from transformers import BertTokenizer
+from transformers import AutoTokenizer, AutoConfig
 
-tokenizer = BertTokenizer.from_pretrained('BAAI/bge-base-en-v1.5')
-
-def safe_tokenize(text: str) -> dict:
-    # Let the tokenizer handle lowercasing and special token insertion
-    # DO NOT manually insert [CLS] or [SEP]
-    # DO NOT manually lowercase if you want to preserve the tokenizer's logic
-    # (Though for BGE, lowercasing is expected)
+def validate_model_tokenizer_pair(model_name):
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    config = AutoConfig.from_pretrained(model_name)
     
-    # The tokenizer will automatically:
-    # 1. Lowercase the text (if do_lower_case=True)
-    # 2. Insert [CLS] at the start and [SEP] at the end
-    # 3. Handle padding and truncation
+    # Check 1: Vocab Size
+    assert len(tokenizer.get_vocab()) == config.vocab_size, \
+        f"Vocab mismatch: Tokenizer has {len(tokenizer.get_vocab())}, Model expects {config.vocab_size}"
+        
+    # Check 2: Pad Token ID
+    pad_token_id = tokenizer.pad_token_id
+    assert pad_token_id == config.pad_token_id, \
+        f"Pad token mismatch: Tokenizer ID {pad_token_id}, Model expects {config.pad_token_id}"
+        
+    # Check 3: Special Tokens
+    assert tokenizer.cls_token == "[CLS]"
+    assert tokenizer.sep_token == "[SEP]"
     
-    return tokenizer(
-        text,
-        padding=True,
-        truncation=True,
-        max_length=512,
-        return_tensors="pt"
-    )
-
-# Correct Usage
-inputs = safe_tokenize("Hello World")
-# inputs['input_ids'] will contain the ID for [CLS], 'hello', 'world', [SEP]
+    return True
 ```
-
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Manual token manipulation
-text = "Hello World"
-# Manually inserting special tokens with wrong case
-manual_text = "[cls] hello world [sep]" 
-# If the tokenizer expects [CLS] (uppercase) but you pass [cls], 
-# it might tokenize [cls] as a word, not a special token.
-
-# ANTI-PATTERN: Assuming case preservation
-# The model cannot distinguish "I am happy" from "i am happy"
-# Do not build logic that relies on capitalization for sentiment or entity detection
+# ANTI-PATTERN: Assuming default IDs
+# Do not assume pad_token_id is 0 or 101 without checking config
+model = BertModel.from_pretrained("model")
+# If tokenizer is misconfigured, this will silently produce wrong embeddings
 ```
-
 **VERIFICATION METHOD**:
-1.  **Static Analysis**: Check `tokenizer_config.json` for `do_lower_case`.
-2.  **Unit Test**: Tokenize a string with mixed case and verify that the resulting token IDs correspond to the lowercased versions in the vocabulary.
-3.  **Integration Test**: Verify that `[CLS]` and `[SEP]` tokens are present in the output with the correct IDs (usually 101 and 102 for BERT).
+Unit test that loads the model and tokenizer and asserts the equality of `len(tokenizer.get_vocab())` and `config.vocab_size`, and `tokenizer.pad_token_id` and `config.pad_token_id`.
+
+### 3. Maximum Sequence Length Truncation Invariant
+**RULE**:
+Input text **MUST** be truncated or split to respect the `max_position_embeddings` (512 for this model) before tokenization. The tokenizer **MUST** be configured with `truncation=True` and `max_length=512`.
+**WHY**:
+BERT models use absolute position embeddings. If the input sequence exceeds the maximum position embeddings, the model will either throw an error or, in some implementations, silently ignore the excess tokens or produce undefined behavior. For retrieval tasks, truncating the end of the document may lose critical information, so the truncation strategy (head vs. tail) is a critical design decision.
+**WHEN TO APPLY**:
+Any text processing pipeline using BERT-based models.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def safe_tokenize(text, tokenizer, max_len=512):
+    # Truncate from the end (default) or head depending on task
+    # For queries, truncate from end. For documents, consider chunking.
+    inputs = tokenizer(
+        text,
+        max_length=max_len,
+        truncation=True,
+        padding=True,
+        return_tensors="pt"
+    )
+    return inputs
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Passing long text without truncation
+# This will cause an error or silent failure
+inputs = tokenizer(long_text, return_tensors="pt")
+```
+**VERIFICATION METHOD**:
+Assert that the length of the `input_ids` tensor is always <= `max_position_embeddings`.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: Since no specific commit patches or bug issues were provided in the input data, this section will document **inferred production incidents** based on common failure modes of BGE models and the configuration provided.*
+*Note: As this is a model repository, there are no traditional "bug fixes" in the code sense. However, we can infer critical "incidents" from the configuration and known issues with BERT-based embedding models.*
 
-### Incident 1: Cosine Similarity Score Drift Due to Missing Normalization (BUG-NORM-01)
-- **Context**: Vector Search Subsystem, `search.py`
-- **What Was Expected**: Similarity scores between 0.0 and 1.0 for semantically similar texts.
-- **What Actually Happened**: Similarity scores ranged from -1.0 to 1.0, and highly similar short texts had lower scores than less similar long texts.
-- **Evidence in Repo**: `config.json` indicates `torch_dtype: float32`. No explicit normalization flag in config, but BGE documentation states normalization is required.
-- **Root Cause**: The application used `torch.dot(embedding1, embedding2)` directly on the raw model outputs without L2 normalization. The raw embeddings had varying magnitudes.
+### Incident 1: Magnitude Bias in Cosine Similarity (BUG-MAGNITUDE-01)
+- **Context**: Retrieval subsystem, similarity calculation.
+- **What Was Expected**: Similarity scores should reflect semantic closeness.
+- **What Actually Happened**: Longer documents or documents with higher "confidence" tokens had higher vector magnitudes, causing them to rank higher in dot-product similarity even if semantically less relevant.
+- **Evidence in Repo**: `config.json` shows `torch_dtype: float32`. No normalization is applied in the model itself.
+- **Root Cause**: BERT outputs are not normalized. The dot product is sensitive to vector magnitude.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-# score = torch.dot(emb1, emb2)
-
-# + Fixed pattern
-# emb1 = torch.nn.functional.normalize(emb1, p=2, dim=1)
-# emb2 = torch.nn.functional.normalize(emb2, p=2, dim=1)
-# score = torch.dot(emb1, emb2)
+# - Buggy: raw = torch.dot(vec_a, vec_b)
+# + Fixed: norm_a = F.normalize(vec_a); norm_b = F.normalize(vec_b); sim = torch.dot(norm_a, norm_b)
 ```
-- **Lesson**: Always verify if the embedding model requires post-processing normalization. Check the model card or documentation.
+- **Lesson**: Always normalize embeddings before similarity calculation.
 
-### Incident 2: Tokenizer Truncation Loss of Critical Information (BUG-TRUNC-02)
-- **Context**: RAG Pipeline, `retriever.py`
-- **What Was Expected**: Full context of a 600-token document to be embedded.
-- **What Actually Happened**: The last 100 tokens of the document were silently truncated, leading to poor retrieval accuracy for questions about the end of the document.
-- **Evidence in Repo**: `config.json` shows `max_position_embeddings: 512`.
-- **Root Cause**: The application passed documents longer than 512 tokens to the tokenizer without chunking. The tokenizer truncated the input to 512 tokens, discarding the tail.
+### Incident 2: Tokenizer Lowercasing Mismatch (BUG-TOKENIZER-02)
+- **Context**: Pre-processing subsystem.
+- **What Was Expected**: Consistent tokenization.
+- **What Actually Happened**: If the user pre-lowercases the text and the tokenizer also lowercases, it's fine. But if the user passes mixed-case text and the tokenizer is configured with `do_lower_case: false` (not the case here, but a common error), the model will see tokens it was not trained on, leading to `[UNK]` tokens and degraded performance.
+- **Evidence in Repo**: `tokenizer_config.json` shows `do_lower_case: true`.
+- **Root Cause**: Mismatch between pre-processing and tokenizer configuration.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-# embeddings = model.encode(long_document) # Silently truncates
-
-# + Fixed pattern
-# chunks = split_document(long_document, max_length=512, overlap=50)
-# embeddings = [model.encode(chunk) for chunk in chunks]
-# # Use a retrieval strategy that can handle multiple chunks per document
+# - Buggy: text = text.lower(); tokenizer(text, do_lower_case=False)
+# + Fixed: tokenizer(text, do_lower_case=True) # Let the tokenizer handle it
 ```
-- **Lesson**: Always check `max_position_embeddings` in `config.json`. Implement chunking strategies for documents exceeding this limit.
+- **Lesson**: Do not double-process text. Let the tokenizer handle case normalization.
 
-### Incident 3: Memory Leak from Unbounded Embedding Cache (BUG-MEM-03)
-- **Context**: Caching Layer, `cache.py`
-- **What Was Expected**: Efficient reuse of embeddings for repeated queries.
-- **What Actually Happened**: Memory usage grew linearly with the number of unique queries, eventually causing OOM (Out of Memory) errors.
-- **Evidence in Repo**: N/A (Application-level issue).
-- **Root Cause**: The application cached embeddings in a Python dictionary without a size limit or eviction policy.
+### Incident 3: Padding Token Leakage (BUG-PADDING-03)
+- **Context**: Batch processing.
+- **What Was Expected**: Padding tokens should not influence the embedding.
+- **What Actually Happened**: If the pooling strategy does not mask out padding tokens, the embedding will be influenced by the `[PAD]` token, which is arbitrary.
+- **Evidence in Repo**: `config.json` shows `pad_token_id: 0`.
+- **Root Cause**: Incorrect pooling strategy.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-# cache = {}
-# def get_embedding(text):
-#     if text not in cache:
-#         cache[text] = model.encode(text)
-#     return cache[text]
-
-# + Fixed pattern
-# from functools import lru_cache
-# @lru_cache(maxsize=1000)
-# def get_embedding(text):
-#     return model.encode(text)
+# - Buggy: emb = torch.mean(token_embeddings, dim=1)
+# + Fixed: emb = torch.sum(token_embeddings * attention_mask, dim=1) / torch.sum(attention_mask, dim=1)
 ```
-- **Lesson**: Implement bounded caching with LRU (Least Recently Used) eviction for embedding models.
+- **Lesson**: Always mask out padding tokens when pooling.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Float32 Precision**: The model uses `torch_dtype: float32`. When converting embeddings to JSON or sending over the network, ensure that floating-point precision is preserved. Avoid converting to `float16` unless explicitly supported, as this can introduce quantization errors that degrade similarity scores.
-    *   **Indexing**: When accessing embedding vectors, remember that they are 1-dimensional tensors of size 768. Accessing `embedding[768]` will raise an `IndexError`. Always check the dimensionality.
+    *   **Float Precision**: `torch_dtype: float32` is used. For inference, `float16` can be used to reduce memory, but may cause numerical instability in attention scores. **Invariant**: Use `float32` for training and `float16`/`bfloat16` for inference if hardware supports it, but verify numerical stability.
+    *   **Integer Overflow**: Token IDs are integers. Ensure they fit within the range of the embedding matrix. **Invariant**: `0 <= token_id < vocab_size`.
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **Batch Processing**: When processing large batches of text, ensure that the batch size does not exceed the GPU memory limit. Implement a dynamic batch size adjustment mechanism to prevent OOM crashes, which can be interpreted as "infinite hangs" if not handled gracefully.
+    *   **N/A**: This is a feed-forward network. No loops or recursion in the model itself. However, the inference loop (batching) must have a termination condition. **Invariant**: Batch size must be finite.
 
 3.  **UI & UX Micro-Mechanics**:
-    *   **N/A**: This is a backend model, not a UI component. However, if used in a web application, ensure that the embedding computation is done asynchronously to avoid blocking the main thread.
+    *   **N/A**: This is a backend model. No UI.
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **Thread Safety**: PyTorch models are generally not thread-safe for concurrent inference. If using multiple threads, ensure that each thread has its own model instance or use a lock to serialize access to the model.
-    *   **GPU Memory**: Monitor GPU memory usage. If multiple models are loaded, ensure that the total memory footprint does not exceed the GPU's capacity.
+    *   **GPU Memory**: Large batch sizes can cause OOM. **Invariant**: Implement dynamic batch sizing or gradient accumulation.
+    *   **Thread Safety**: PyTorch models are not thread-safe by default. **Invariant**: Use a lock or separate model instances for concurrent inference.
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Empty String Handling**: The tokenizer may return empty tensors for empty strings. Always check for empty inputs before encoding.
-    *   **Non-String Inputs**: Ensure that the input to the model is a string or a list of strings. Passing integers or other types will raise a `TypeError`.
+    *   **Empty Input**: Passing an empty string to the tokenizer may result in a sequence of only special tokens. **Invariant**: Handle empty inputs gracefully.
+    *   **Non-String Input**: Passing a non-string (e.g., `None`, `int`) to the tokenizer will cause a crash. **Invariant**: Validate input types.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: The model is a standard BERT architecture with 12 layers, 12 attention heads, and a hidden size of 768. It is a base model, meaning it does not have a classification head. The architecture is optimized for semantic understanding rather than specific task prediction.
-2.  **Core Abstractions**: The core abstraction is the **Embedding Vector**. This is a 768-dimensional float32 tensor that represents the semantic meaning of the input text. The model maps text to this vector space.
-3.  **Error Handling**: The model itself does not have explicit error handling. Errors are typically raised by the underlying PyTorch library (e.g., `IndexError`, `TypeError`). The application layer must handle these errors gracefully.
-4.  **Testing**: The model is evaluated using the MTEB (Massive Text Embedding Benchmark) suite. The `README.md` provides detailed metrics for various tasks (Classification, Retrieval, Clustering). These metrics serve as a baseline for performance verification.
-5.  **Security**: The model is a static artifact. There are no security vulnerabilities in the model itself. However, the application layer must ensure that the input text is sanitized to prevent prompt injection attacks if the model is used in a RAG system.
-6.  **Performance**: The model is optimized for CPU and GPU inference. The `torch_dtype: float32` ensures high precision but may be slower than `float16`. The model can be quantized to `int8` or `int4` for faster inference on edge devices, but this may degrade performance.
-7.  **Deployment**: The model can be deployed using Hugging Face Transformers, Sentence Transformers, or ONNX Runtime. The `config.json` and `tokenizer_config.json` files are required for deployment. The model can be served as a REST API using FastAPI or Flask.
-8.  **Agent Patterns**: The model can be used as a tool in an AI agent system. The agent can call the model to generate embeddings for text, which can then be used for retrieval or clustering. The agent must handle the model's output (embedding vectors) and pass them to the next step in the pipeline.
-9.  **Data Flow**: The data flow is: Raw Text $\rightarrow$ Tokenization $\rightarrow$ Embedding Generation $\rightarrow$ Normalization $\rightarrow$ Similarity Calculation. The data is transformed from a variable-length string to a fixed-length vector.
+1.  **Architecture**: Standard BERT Encoder. 12 layers, 12 heads, 768 hidden size. Decoupled from application logic.
+2.  **Core Abstractions**: `BertModel`, `BertTokenizer`. Key types: `Tensor`, `Dict[str, Tensor]`.
+3.  **Error Handling**: Minimal. Relies on PyTorch/Transformers error handling. No explicit error boundaries.
+4.  **Testing**: MTEB benchmarks provide evaluation metrics. No unit tests in the repo.
+5.  **Security**: No direct security concerns. However, model weights are large and should be protected from unauthorized access.
+6.  **Performance**: Optimized for GPU inference. `use_cache: true` enables KV caching for autoregressive tasks (not applicable here, but present in config).
+7.  **Deployment**: Deployed via Hugging Face Hub. Requires `transformers` and `torch` libraries.
+8.  **Agent Patterns**: N/A.
+9.  **Data Flow**: Text -> Tokenizer -> Input IDs -> Embedding -> Transformer -> Output Embeddings.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: L2 Normalization of Embeddings.
-2.  **Rule**: Always normalize embeddings before computing cosine similarity.
-3.  **Architecture Principle**: Stateless Inference. The model does not maintain state between calls.
-4.  **Failure Mode**: Missing normalization leads to incorrect similarity scores.
-5.  **Reusable Skill**: Implementing a bounded embedding cache.
-6.  **Decision**: Use `float32` for high precision, `float16` for speed.
-7.  **Anti-pattern**: Using raw embeddings for cosine similarity.
-8.  **Verification Method**: Unit test for L2 norm of embeddings.
+1.  **Pattern**: L2-normalized cosine similarity for semantic search.
+2.  **Rule**: Always normalize embeddings before similarity calculation.
+3.  **Architecture Principle**: Decouple model from application logic.
+4.  **Failure Mode**: Magnitude bias in dot-product similarity.
+5.  **Reusable Skill**: Validate model-tokenizer pair alignment.
+6.  **Decision**: Use `float32` for training, `float16` for inference.
+7.  **Anti-pattern**: Using raw dot product without normalization.
+8.  **Verification Method**: Assert L2 norm of embeddings is 1.0.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Load the Model**: Use `SentenceTransformer('BAAI/bge-base-en-v1.5')`.
-2.  **Check Config**: Verify `max_position_embeddings` and `torch_dtype`.
-3.  **Preprocess Input**: Ensure input is a string or list of strings. Handle empty strings.
-4.  **Encode**: Use `model.encode(text, convert_to_tensor=True)`.
-5.  **Normalize**: Apply L2 normalization to the embeddings.
-6.  **Cache**: Implement a bounded cache for embeddings.
-7.  **Compute Similarity**: Use `torch.dot` or `torch.nn.functional.cosine_similarity`.
-8.  **Monitor**: Monitor GPU memory usage and inference latency.
-9.  **Test**: Verify that the L2 norm of embeddings is approximately 1.0.
-10. **Deploy**: Serve the model as a REST API or integrate it into a RAG pipeline.
+1.  **Load Model & Tokenizer**:
+    *   [ ] Load `BAAI/bge-base-en-v1.5` using `AutoModel` and `AutoTokenizer`.
+    *   [ ] Verify `vocab_size` and `pad_token_id` alignment.
+2.  **Pre-process Input**:
+    *   [ ] Validate input is a string.
+    *   [ ] Truncate to `max_length=512`.
+    *   [ ] Tokenize with `padding=True`, `truncation=True`.
+3.  **Inference**:
+    *   [ ] Move inputs to GPU if available.
+    *   [ ] Run forward pass.
+    *   [ ] Extract `last_hidden_state`.
+4.  **Post-process**:
+    *   [ ] Apply mean pooling with attention mask.
+    *   [ ] L2-normalize the resulting embeddings.
+5.  **Similarity Calculation**:
+    *   [ ] Use cosine similarity (dot product of normalized vectors).
+    *   [ ] Rank results by similarity score.

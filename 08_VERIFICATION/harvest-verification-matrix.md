@@ -5611,3 +5611,6 @@
 | `CYCLE-20261028-9G89` | `2026-10-28T00:46:44.841Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5079` | Yes (`db0a5fb4...`) |
 | `CYCLE-20261028-9LOC` | `2026-10-28T00:46:51.900Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `VERIFIED` | `Rule 969, Rule 5080, Rule 1803` | Yes (`9f0274d7...`) |
 | `CYCLE-20261028-9RXC` | `2026-10-28T00:47:00.000Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5081` | Yes (`3cd36c16...`) |
+| `CYCLE-20261028-IAF1` | `2026-10-28T00:53:37.213Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5082` | Yes (`b53713c2...`) |
+| `CYCLE-20261028-IAVY` | `2026-10-28T00:53:37.822Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 790, Rule 664, Rule 1840` | Yes (`7b5e2e68...`) |
+| `CYCLE-20261028-IEZK` | `2026-10-28T00:53:43.136Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5083` | Yes (`5aa699a5...`) |

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-VL4B",
-    "timestamp": "2026-10-26T09:24:30.251Z",
-    "repository": "RevenueCat/purchases-ios",
-    "learningId": "learn-github-revenuecat-purchases-ios",
-    "contentHash": "7089b1d9ab9fd504d40d7ab2a2653ddd5ee2879c007f72cf8d6a4a4f0116a8e6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-R5DK",
-    "timestamp": "2026-10-26T09:49:02.840Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "9d1d301b11f0ce1a40ced1c2366a2fe0d72daa6240399ee12fef7ad5595bae9c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-RLNO",
-    "timestamp": "2026-10-26T09:49:23.940Z",
-    "repository": "Kruszoneq/macUSB",
-    "learningId": "learn-github-kruszoneq-macusb",
-    "contentHash": "1997a061fb6bbb4ebc2647a33773b0ca6e0a773e5df994eb3c24c968ac168323",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-WVVE",
     "timestamp": "2026-10-26T09:53:30.458Z",
     "repository": "ParadevAI/Paradev",
@@ -7490,6 +7445,51 @@
     "repository": "yugabyte/yugabyte-db",
     "learningId": "learn-github-yugabyte-yugabyte-db",
     "contentHash": "3cd36c16d7803d1a89ca01c33d4e2833366e4b6767b4bfec1f4ef79486a09aea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-IAF1",
+    "timestamp": "2026-10-28T00:53:37.213Z",
+    "repository": "kgateway-dev/kgateway",
+    "learningId": "learn-github-kgateway-dev-kgateway",
+    "contentHash": "b53713c26878430f379ec0ba72080961201ebce86a5591f83966af5711eee711",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-IAVY",
+    "timestamp": "2026-10-28T00:53:37.822Z",
+    "repository": "BAAI/bge-base-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
+    "contentHash": "7b5e2e6811384fcf41bff7a30d23c385c68338d2ba7b94f26e95b599de27556b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-IEZK",
+    "timestamp": "2026-10-28T00:53:43.136Z",
+    "repository": "GreptimeTeam/greptimedb",
+    "learningId": "learn-github-greptimeteam-greptimedb",
+    "contentHash": "5aa699a5dd5d402df457dabfecf54abafb4e0dba067b343f1488cdcf12c17d89",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
