@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T20:50:54.410Z",
-  "total_cycles_completed": 5909,
-  "total_learnings_persisted": 5909,
+  "last_updated": "2026-10-28T20:57:34.993Z",
+  "total_cycles_completed": 5911,
+  "total_learnings_persisted": 5911,
   "total_rules_promoted": 5365,
   "history": [
-    {
-      "timestamp": "2026-10-28T08:45:46.953Z",
-      "repository": "prithivMLmods/Gender-Classifier-Mini",
-      "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T09:10:48.532Z",
-      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-      "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T09:30:41.313Z",
       "repository": "beclab/Olares",
@@ -1403,6 +1389,20 @@
       "repository": "flux-iac/tofu-controller",
       "learningId": "learn-github-flux-iac-tofu-controller",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T20:57:33.316Z",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T20:57:34.993Z",
+      "repository": "Qwen/Qwen-Image-2.1-Turbo",
+      "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

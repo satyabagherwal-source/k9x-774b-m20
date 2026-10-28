@@ -4660,3 +4660,7 @@ https://huggingface.co/prithivMLmods/Gender-Classifier-Mini
 # --- Automatically Discovered by AI Scout Engine [2026-10-28T15:43:00.348Z] ---
 # [HUGGINGFACE-AI-MODELS] openbmb/MiniCPM-OCR-1.0 (2961 score) - Verified Hugging Face Model: openbmb/MiniCPM-OCR-1.0 (217 likes, 791 downloads)
 https://huggingface.co/openbmb/MiniCPM-OCR-1.0
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-28T20:57:26.323Z] ---
+# [HUGGINGFACE-AI-MODELS] nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B (1808 score) - Verified Hugging Face Model: nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B (147 
+https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B

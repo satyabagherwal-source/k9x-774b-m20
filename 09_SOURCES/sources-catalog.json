@@ -375,8 +375,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
     "sourceVersion": "hf-qwen-qwen-image-2.1-turbo",
     "license": "Open-Source",
-    "contentHash": "fcde7db5d868d2fc77a045db93857a2bf17bfe6401193cced78757c7bc917662",
-    "lastHarvestedAt": "2026-10-25T12:17:00.821Z",
+    "contentHash": "4d6266396f9ac2e6226e84ef046a32224fe38a46e3e244b219c625988d293c3d",
+    "lastHarvestedAt": "2026-10-28T20:57:34.981Z",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo"
   },
   "hf-xingchen-agi-xing4.0-29b-a4b": {
@@ -11418,5 +11418,15 @@
     "contentHash": "74e0b70fe85623c2bb9d54f67644bc2969faad3f1102825226a089b087d9b705",
     "lastHarvestedAt": "2026-10-28T15:43:14.396Z",
     "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0"
+  },
+  "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b": {
+    "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+    "sourceVersion": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b",
+    "license": "Open-Source",
+    "contentHash": "f3c5f7de3c9aced73076d2de6d58ec2309d6cd9a81e5973b1ef9573e3c8474b7",
+    "lastHarvestedAt": "2026-10-28T20:57:33.311Z",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b"
   }
 }

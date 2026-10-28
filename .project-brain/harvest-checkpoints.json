@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T20:50:54.414Z",
+  "last_updated": "2026-10-28T20:57:34.997Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1820,14 +1820,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-      "content_hash": "fcde7db5d868d2fc77a045db93857a2bf17bfe6401193cced78757c7bc917662",
-      "verified_at": "2026-10-25T12:17:00.827Z",
+      "content_hash": "4d6266396f9ac2e6226e84ef046a32224fe38a46e3e244b219c625988d293c3d",
+      "verified_at": "2026-10-28T20:57:34.996Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T12:17:00.827Z"
+      "last_updated": "2026-10-28T20:57:34.996Z"
     },
     "Phocinae/Phocinae-Largha-150M-v1": {
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -17159,6 +17159,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-28T15:43:14.404Z"
+    },
+    "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B": {
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
+      "content_hash": "f3c5f7de3c9aced73076d2de6d58ec2309d6cd9a81e5973b1ef9573e3c8474b7",
+      "verified_at": "2026-10-28T20:57:33.319Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-28T20:57:33.319Z"
     }
   },
   "repos": {

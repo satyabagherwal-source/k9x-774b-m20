@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T20:50:56.940Z",
-    "lastVerified": "2026-10-28T20:50:56.940Z",
+    "lastChecked": "2026-10-28T20:57:46.954Z",
+    "lastVerified": "2026-10-28T20:57:46.954Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -362,8 +362,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T20:22:22.280Z",
-    "lastVerified": "2026-10-28T20:22:22.280Z",
+    "lastChecked": "2026-10-28T20:57:46.943Z",
+    "lastVerified": "2026-10-28T20:57:46.943Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -506,9 +506,9 @@
   "vectifyai-pageindex": {
     "name": "PageIndex",
     "officialUrl": "https://github.com/VectifyAI/PageIndex",
-    "lastChecked": "2026-10-28T03:24:45.361Z",
+    "lastChecked": "2026-10-28T20:57:44.574Z",
     "revisionIdentifier": "b81465d9",
-    "lastVerified": "2026-10-28T03:24:45.361Z"
+    "lastVerified": "2026-10-28T20:57:44.574Z"
   },
   "iii-hq-iii": {
     "name": "iii",
@@ -628,8 +628,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T17:12:48.061Z",
-    "lastVerified": "2026-10-28T17:12:48.061Z",
+    "lastChecked": "2026-10-28T20:57:41.883Z",
+    "lastVerified": "2026-10-28T20:57:41.883Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -987,9 +987,9 @@
   "emberstack-kubernetes-reflector": {
     "name": "kubernetes-reflector",
     "officialUrl": "https://github.com/emberstack/kubernetes-reflector",
-    "lastChecked": "2026-10-28T04:21:43.592Z",
+    "lastChecked": "2026-10-28T20:57:39.373Z",
     "revisionIdentifier": "9a470efc",
-    "lastVerified": "2026-10-28T04:21:43.592Z"
+    "lastVerified": "2026-10-28T20:57:39.373Z"
   },
   "freenet-freenet-core": {
     "name": "freenet/freenet-core",
@@ -6720,5 +6720,46 @@
     "lastChecked": "2026-10-28T20:50:47.294Z",
     "revisionIdentifier": "eff7c6b7",
     "lastVerified": "2026-10-28T20:50:47.294Z"
+  },
+  "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b": {
+    "name": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+    "officialUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T20:57:32.158Z",
+    "lastVerified": "2026-10-28T20:57:32.158Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
+    "contentHash": "f3c5f7de3c9aced73076d2de6d58ec2309d6cd9a81e5973b1ef9573e3c8474b7",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-qwen-qwen-image-2.1-turbo": {
+    "name": "Qwen/Qwen-Image-2.1-Turbo",
+    "officialUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T20:57:34.724Z",
+    "lastVerified": "2026-10-28T20:57:34.724Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
+    "contentHash": "4d6266396f9ac2e6226e84ef046a32224fe38a46e3e244b219c625988d293c3d",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "oblador-react-native-vector-icons": {
+    "name": "react-native-vector-icons",
+    "officialUrl": "https://github.com/oblador/react-native-vector-icons",
+    "lastChecked": "2026-10-28T20:57:37.113Z",
+    "revisionIdentifier": "666a7437",
+    "lastVerified": "2026-10-28T20:57:37.113Z"
   }
 }

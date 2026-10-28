@@ -5932,3 +5932,5 @@
 | `CYCLE-20261028-1VLS` | `2026-10-28T20:44:35.008Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5402` | Yes (`25cc4e81...`) |
 | `CYCLE-20261028-9T6I` | `2026-10-28T20:50:45.114Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md` | Yes (`cb94ac4a...`) |
 | `CYCLE-20261028-A0CJ` | `2026-10-28T20:50:54.403Z` | `flux-iac/tofu-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5403` | Yes (`10de6090...`) |
+| `CYCLE-20261028-IK57` | `2026-10-28T20:57:33.307Z` | `nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md` | Yes (`f3c5f7de...`) |
+| `CYCLE-20261028-ILFL` | `2026-10-28T20:57:34.977Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md` | Yes (`4d626639...`) |

@@ -5941,3 +5941,5 @@ Every entry in this ledger must capture:
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `3f0e3b9a` | Multi-dimensional audit evidence | 2026-10-28T20:44:35.011Z |
 | `learn-huggingface-conwayresearch-underdog-saluki-27b-1-0` | `https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-10-28T20:50:45.117Z |
 | `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `e2db61bd` | Multi-dimensional audit evidence | 2026-10-28T20:50:54.406Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-28T20:57:33.311Z |
+| `learn-huggingface-qwen-qwen-image-2-1-turbo` | `https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-28T20:57:34.981Z |

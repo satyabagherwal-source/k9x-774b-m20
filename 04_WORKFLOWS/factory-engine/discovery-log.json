@@ -19663,5 +19663,17 @@
     "downloads": 791,
     "qualityScore": 2961,
     "discoveredAt": "2026-10-28T15:40:51.758Z"
+  },
+  {
+    "name": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+    "fullName": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+    "url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B (147 likes, 338 downloads)",
+    "likes": 147,
+    "downloads": 338,
+    "qualityScore": 1808,
+    "discoveredAt": "2026-10-28T20:55:17.981Z"
   }
 ]
