@@ -245,8 +245,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
     "sourceVersion": "hf-autotrust-gev-26b-decide-nvfp4",
     "license": "Open-Source",
-    "contentHash": "ca7af94367ac22e545a6c3c31ce9fdca819bd572eb35e3420b5492c763e6b336",
-    "lastHarvestedAt": "2026-10-25T08:24:00.417Z",
+    "contentHash": "b866f2ecf9f32adaf299dedd9429f7bb9199b2d9942456150f4fb10ac391c75b",
+    "lastHarvestedAt": "2026-10-28T20:22:10.593Z",
     "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4"
   },
   "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf": {
@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "66017460",
+    "sourceVersion": "753bf1fd",
     "license": "Apache-2.0",
-    "contentHash": "da61f0054e8eaacf968cef60ecc343486191964b58f88c501edb9f959fcc1234",
-    "lastHarvestedAt": "2026-10-28T03:49:43.804Z",
+    "contentHash": "1d05f95a0ada2fc4690673b25f8dda9cf82bd4787c56881c626d66c46e6cf8cd",
+    "lastHarvestedAt": "2026-10-28T20:22:20.161Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {
@@ -7373,10 +7373,10 @@
     "repository": "tw93/Mole",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Mole",
-    "sourceVersion": "1d6bd4c1",
+    "sourceVersion": "45ee88cb",
     "license": "GPL-3.0",
-    "contentHash": "8c0af87aaafb45050ffb7f2b3d4551e2541fcf163b014630060cceaface492ad",
-    "lastHarvestedAt": "2026-10-28T01:06:59.651Z",
+    "contentHash": "d5550a887ce68f11fc2b7ee732f382304e15a37752cea2547ce9bf19250fa633",
+    "lastHarvestedAt": "2026-10-28T20:22:16.689Z",
     "learningId": "learn-github-tw93-mole"
   },
   "siderolabs-talos": {

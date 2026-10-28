@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tw93-mole-learnings.md`  
 > **Source**: github ([https://github.com/tw93/Mole](https://github.com/tw93/Mole))  
-> **Source Version**: `1d6bd4c1`  
+> **Source Version**: `45ee88cb`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T01:06:59.098Z  
+> **Timestamp**: 2026-10-28T20:22:16.263Z  
 > **Learning ID**: `learn-github-tw93-mole`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tw93-mole-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tw93/Mole](https://github.com/tw93/Mole))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T01:06:59.090Z  
+> **Harvest Timestamp**: 2026-10-28T20:22:16.258Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🐹 Keep your Mac and PC clean, light, and running like new. Fast open-source CLI, plus native Mac and Windows apps.
 - **Primary Language / Ecosystem**: Shell
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 73100 stars
+- **Stars / Engagement**: 73187 stars
 
 ---
 
@@ -1993,11 +1993,11 @@ func jsonFileEntriesFromFileEntries(files []fileEntry) []jsonFileEntry {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1877** (2026-10-28): **[Mac App Bug]**
+  *Symptoms*: ### Mole Mac app version  v1.18.0  ### macOS version  macOS 27.0.1  ### Mac model  MacBook Pro M2  ### Affected area  Clean  ### What happened?  在 **清理** 页面（Clean）中央出现了一个大面积的亮粉色方块，覆盖了原本应该显示的图标和文案区域，导致页面内容严重错乱。方块旁边还能看到一个小小的圆形图标，页面文字"山雨涤尘垢，潮退万象新"也被粉色方块遮挡了一部分。  **切换到其他 Tab（如「软件」）再切回「清理」页面后，粉色方块消失，页面恢复正常显示。**  这种现象看起来像是图片/纹理首次加载失败、SwiftUI/AppKit Canvas 未正确绘制、或是 Metal/Shader 层在首次渲染时的占位异常（品红色 placeholder）。   ### Steps to reproduce  1. 打开 Mole，进入 **清理** 页面。 2. 观察页面中央是否出现大面积亮粉色方块，覆盖图标和文案。 3. 切换到 **软件**（或其他）Tab。 4. 再切回 **清理** 页面 —— 粉色方块消失，显示正常。  ### Expected behavior  清理页面首次进入时应直接正确渲染出图标，不应出现任何颜色异常的占位方块。  ### Screenshots or safe logs  <img width="1100" height="772" alt="Image" src="https://github.com/user-attachments/assets/ab239a2f-3fa8-4ed8-a1b7-a566c034eb37" />  <img width="1100" height="772" alt="Image" src="https://github.com/user-attachments/assets/e3ad38a6-c627-4558-bd92-3a9cfc72b071" />  ### Before submitting  - [x] I updated to the latest stable Mole Mac app, reopened it, and reproduced this problem (or this report explains why I cannot update). - [x] I did not include license keys, order numbers, or private data.
+
 - **Issue #1863** (2026-10-27): **[Mac App Bug]**
   *Symptoms*: ### Mole Mac app version  v1.18.0  ### macOS version  27.0.1  ### Mac model  Mac mini M4  ### Affected area  Other  ### What happened?  应用主内容区域的左右两侧内边距在不同页面之间不统一。在 **清理**、**软件**、**分析**、**状态** 四个页面之间切换时，内容左右两侧内边距不一致，导致界面看起来不平衡、视觉上不统一。    ### Steps to reproduce  1. 打开 Mole。 2. 进入 **清理** 页面，扫描结束后观察分类列表的左右侧内边距。 3. 切换到 **软件** 页面，观察软件列表的左侧内边距。 4. 切换到 **分析** 页面，观察分析结果左右侧内边距。 5. 切换到 **状态** 页面，观察状态左右侧内边距。 6. 对比四个页面的左右侧留白 —— 四者没有对齐。  ### Expected behavior  所有主页面的内容内边距应当统一，整体界面更精致、一致。  ### Screenshots or safe logs  <img width="5500" height="4039" alt="Image" src="https://github.com/user-attachments/assets/8ecbfc3d-0f9c-4ad2-9a33-fb6767ecba8b" />  ### Before submitting  - [x] I updated to the latest stable Mole Mac app, reopened it, and reproduced this problem (or this report explains why I cannot update). - [x] I did not include license keys, order numbers, or private data.
-
-- **Issue #1862** (2026-10-27): **[Mac App]**
-  *Symptoms*: ### Mole Mac app version  1.18.0 (343)  ### macOS version  27.0.1  ### Mac model  Mac17,2 (Apple M5)  ### Affected area  Status  ### What happened?  菜单栏网速能否加个上传和下载的箭头  ### Steps to reproduce  1  ### Expected behavior  1  ### Screenshots or safe logs  <img width="127" height="46" alt="Image" src="https://github.com/user-attachments/assets/87a8c3f8-de67-4007-ae65-d9f4fa33f7d4" />  ### Before submitting  - [x] I updated to the latest stable Mole Mac app, reopened it, and reproduced this problem (or this report explains why I cannot update). - [x] I did not include license keys, order numbers, or private data.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2014,453 +2014,232 @@ func jsonFileEntriesFromFileEntries(files []fileEntry) []jsonFileEntry {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a703eddc` (2026-10-27)
-**Commit Message**: fix(core): avoid removal fallthrough during dry run find scans (#1866)
+### Incident Patch 1: `f954e2fd` (2026-10-28)
+**Commit Message**: fix(clean): preserve installed npx packages (#1872)
 
-* fix(core): avoid removal fallthrough during dry run find scans
+* fix(clean): preserve installed npx packages
 
-During dry run cleanup, safe_find_delete and safe_sudo_find_delete record candidate paths through record_dry_run_cleanup_target. When recording succeeds, the loop previously fell through to safe_remove or safe_sudo_remove because the condition evaluated [[ $preview_rc -eq 0 ]] without continuing to the next iteration.
+* docs: record npx package cleanup incident
 
-This fallthrough caused safe_remove to re-measure each candidate path and invoke record_dry_run_cleanup_target a second time, appending duplicate ledger records and causing safe_find_delete to fail when CLEAN_PREVIEW_LEDGER_FILE is unset. Continue once dry run targets are recorded, and update the removed preview count in safe_sudo_find_delete.
+* docs: leave the npx incident row for the merged fix commit
 
-* test(core): verify dry run find deletion records targets once
+The row named c258c52, a commit on the contributor branch. Mole squash-merges, so that hash never reaches main and scripts/audit_incidents.py fails it on a full clone (CI's shallow clone only shape-checks it). The row is recorded right after the merge with the squash commit.
 
-Add regression tests verifying that safe_find_delete and safe_sudo_find_delete record dry run targets exactly once, track the preview count, and do not fall through to removal sinks.
+---------
 
-* test(core): delegate mock sudo test command in regression fixture
+Co-authored-by: r266-tech <[REDACTED_EMAIL]>
+Co-authored-by: youxi798 <[REDACTED_EMAIL]>
 
-Evaluate mock sudo test calls through command test so symlink checks return 
-
-**File**: `lib/core/file_ops.sh` (modified, +5/-2)
+**File**: `lib/clean/dev.sh` (modified, +3/-3)
 ```diff
-@@ -3522,7 +3522,7 @@ safe_find_delete() {
-                 delete_rc=$preview_rc
-                 break
-             fi
--            [[ $preview_rc -eq 0 ]] || continue
-+            continue
+@@ -554,9 +554,9 @@ clean_dev_npm() {
          fi
-         local remove_rc=0
-         safe_remove "$match" true || remove_rc=$?
-@@ -3877,7 +3877,10 @@ safe_sudo_find_delete() {
-                 delete_rc=$preview_rc
-                 break
-             fi
--            [[ $preview_rc -eq 0 ]] || continue
-+            if [[ $preview_rc -eq 0 ]]; then
-+                removed_count=$((removed_count + 1))
-+            fi
-+            continue
-         fi
-         # -type f never emits symlinks; a path that is one now was swapped
-         # after find saw it, and the single-file path refuses those.
+     fi
+ 
+-    # These residual directories are not removed by `npm cache clean --force`
+-    local -a npm_residual_dirs=("_cacache" "_npx" "_logs" "_prebuilds")
+-    local -a npm_descriptions=("npm cache directory" "npm npx cache" "npm logs" "npm prebuilds")
++    # Keep _npx: running commands can still read its installed packages.
++    local -a npm_residual_dirs=("_cacache" "_logs" "_prebuilds")
++    local -a npm_descriptions=("npm cache directory" "npm logs" "npm prebuilds")
+ 
+     # Clean default npm cache path
+     local i
 ```
 
-**File**: `tests/core_safe_functions.bats` (modified, +89/-0)
+**File**: `tests/clean_dev_caches.bats` (modified, +43/-2)
 ```diff
-@@ -1932,6 +1932,95 @@ EOF
-     check_find_delete_cancellation sudo identity 143 0
+@@ -677,7 +677,7 @@ EOF
+ 
+     [ "$status" -eq 0 ]
+     [[ "$output" == *"npm cache directory|$HOME/.npm/_cacache/*"* ]] || return 1
+-    [[ "$output" == *"npm npx cache|$HOME/.npm/_npx/*"* ]] || return 1
++    [[ "$output" != *"$HOME/.npm/_npx/"* ]] || return 1
+     [[ "$output" == *"npm logs|$HOME/.npm/_logs/*"* ]] || return 1
+     [[ "$output" == *"npm prebuilds|$HOME/.npm/_prebuilds/*"* ]]
+ }
+@@ -1100,11 +1100,52 @@ EOF
+     [ "$status" -eq 0 ]
+     [[ "$output" == *"npm cache directory|$HOME/.npm/_cacache/*"* ]] || return 1
+     [[ "$output" == *"npm cache directory (custom path)|/tmp/mole-custom-npm-cache/_cacache/*"* ]] || return 1
+-    [[ "$output" == *"npm npx cache (custom path)|/tmp/mole-custom-npm-cache/_npx/*"* ]] || return 1
++    [[ "$output" != *"/_npx/"* ]] || return 1
+     [[ "$output" == *"npm logs (custom path)|/tmp/mole-custom-npm-cache/_logs/*"* ]] || return 1
+     [[ "$output" == *"npm prebuilds (custom path)|/tmp/mole-custom-npm-cache/_prebuilds/*"* ]]
  }
  
-+@test "safe_find_delete dry run records each target once without removal fallthrough (#1865)" {
-+    local target_dir="$TEST_DIR/find-dry-run-once"
-+    mkdir -p "$target_dir"
-+    touch "$target_dir/file1.log" "$target_dir/file2.log"
-+
-+    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" TARGET_DIR="$target_dir" /bin/bash --noprofile --norc <<'SCRIPT'
++@test "clean_dev_npm preserves installed npx packages in default and custom caches (#1870)" {
++    run env HOME="$BATS_TEST_TMPDIR/home" PROJECT_ROOT="$PROJECT_ROOT" PATH="/usr/bin:/bin" \
++        MOLE_TEST_NO_AUTH=1 /bin/bash --noprofile --norc <<'EOF'
 +set -euo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
++mkdir -p "$HOME"
 +source "$PROJECT_ROOT/bin/clean.sh"
-+
-+export MOLE_DRY_RUN=1
-+trace_file="$TARGET_DIR/trace.txt"
-+: > "$trace_file"
-+
-+safe_remove() {
-+    printf 'REMOVE:%s\n' "$1" >> "$trace_file"
-+}
-+
-+rc=0
-+safe_find_delete "$TARGET_DIR" "*.log" 0 f || rc=$?
-+printf 'RC=%s\n' "$rc"
-+printf 'COUNT=%s\n' "${#DRY_RUN_SEEN_IDENTITIES[@]}"
-+SCRIPT
-+
-+    [ "$status" -eq 0 ] || return 1
-+    [[ "$output" == *"RC=0"* ]] || return 1
-+    [[ "$output" == *"COUNT=2"* ]] || return 1
-+    [ ! -s "$target_dir/trace.txt" ] || return 1
-+    [ -f "$target_dir/file1.log" ] || return 1
-+    [ -f "$target_dir/file2.log" ] || return 1
-+}
-+
-+@test "safe_sudo_find_delete dry run records targets once and tracks count (#1865)" {
-+    local target_dir="$TEST_DIR/sudo-find-dry-run-once"
-+    mkdir -p "$target_dir"
-+    touch "$target_dir/file1.log" "$target_dir/file2.log"
-+
-+    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" TARGET_DIR="$target_dir" /bin/bash --noprofile --norc <<'SCRIPT'
-+set -euo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/bin/clean.sh"
-+
-+helper_source=$(declare -f safe_sudo_find_delete)
-+# shellcheck disable=SC2016 # Match the literal production guard.
-+test_guard='[[ "${MOLE_TEST_MODE:-0}" == "1" || "${MOLE_TEST_NO_AUTH:-0}" == "1" ]]'
-+helper_source=${helper_source/"$test_guard"/false}
-+eval "$helper_source"
-+
-+_mole_privileged_path_has_mutable_ancestor() { return 1; }
-+sudo() {
-+    [[ "${1:-}" == "-n" ]] && shift
-+    case "${1:-}" in
-+        test)
-+            shift
-+            command test "$@"
-+            ;;
-+        find)
-+            printf '%s\0%s\0' "$TARGET_DIR/file1.log" "$TARGET_DIR/file2.log"
-+            ;;
-+        du)
-+            printf '4\t%s\n' "${@: -1}"
-+            ;;
-+        *) return 0 ;;
++clean_pnpm_stores() { :; }
++clean_corepack_cache() { :; }
++bun() { return 1; }
++run_with_timeout() { shift; "$@"; }
++npm() {
++    case "$*" in
++        'config get cache') printf '%s\n' "$npm_test_cache" ;;
++        'cache clean --force') return 0 ;;
++        *) return 1 ;;
 +    esac
 +}
-+
-+trace_file="$TARGET_DIR/trace.txt"
-+: > "$trace_file"
-+safe_sudo_remove() {
-+    printf 'SUDO_REMOVE:%s\n' "$1" >> "$trace_file"
-+}
-+
-+export MOLE_DRY_RUN=1
-+rc=0
-+safe_sudo_find_delete "$TARGET_DIR" "*.log" 0 f 1 || rc=$?
-+printf 'RC=%s\n' "$rc"
-+printf 'COUNT=%s\n' "$MOLE_SAFE_SUDO_FIND_DELETE_COUNT"
-+printf 'IDENTITIES=%s\n' "${#DRY_RUN_SEEN_IDENTITIES[@]}"
-+SCRIPT
-+
-+    [ "$status" -eq 0 ] || return 1
-+    [[ "$output" == *"RC=0"* ]] || return 1
-+    [[ "$output" == *"COUNT=2"* ]] || return 1
-+    [[ "$output" == *"IDENTITIES=2"* ]] || return 1
-+    [ ! -s "$target_dir/trace.txt" ] || return 1
-+    [ -f "$target_dir/file1.log" ] || return 1
-+    [ -f "$target_dir/file2.log" ] || return 1
-+}
-+
- @test "safe_sudo_remove refuses symlink paths" {
-     local target_dir="$TEST_DIR/real"
-     local link_dir="$TEST_DIR/link"
-```
-
----
-
-### Incident Patch 2: `29b9699d` (2026-10-27)
-**Commit Message**: fix(optimize): report a macOS-refused DNS signal as skipped (#1867)
-
-macOS 27 refuses `launchctl kill` on the mDNSResponder service to every caller,
-root included, so Network Cache Refresh failed on every run after the
-directory-service flush had already succeeded. That refusal is the OS
-withholding the action, not a broken refresh: the task now reports it as
-skipped with its reason. It still takes no killall or PID route around the
-refusal, since the same-named-process risk that ruled those out is unchanged.
-
-Verified: a new Bats case fails on the old code and passes now; manage_sudo,
-optimize and optimize_db suites, check.sh --no-format and the full suite pass.
-Rollback: revert this commit; the task returns to reporting FAILED.
-
-**File**: `.claude/rules/optimize.md` (modified, +1/-1)
-```diff
-@@ -14,4 +14,4 @@ paths:
- - Spotlight orphan-rule optimization must parse a complete typed snapshot before resolving apps and recheck the snapshot immediately before writing. A failed indexed plist read is not evidence that the array ended. Locked by `tests/optimize.bats`.
- - The CoreDuet WAL/SHM rule is a Critical Safety Rule in `AGENTS.md`.
- - Notification database cleanup refreshes only `gui/$UID/com.apple.notificationcenterui.agent` through the fixed `/bin/launchctl kill SIGTERM` command, bounded by the existing medium timeout. The system plist `/System/Library/LaunchAgents/com.apple.notificationcenterui.plist` names that service and its `/System/Library/CoreServices/NotificationCenter.app` executable. Never use `killall NotificationCenter` or a path-check-then-PID-kill fallback: a same-named third-party process matches the former, and PID reuse remains between the latter's check and signal. launchd owns the service instance; missing, stopped or refused services do not undo successful SQL cleanup. Dry runs send no signal. Locked by `notification refresh targets only its current-user launchd service`, `notification refresh never falls back to name killing after launchd refusal` and `notification cleanup dry run never refreshes the service` in `tests/optimize_db.bats`.
--- DNS refresh likewise signals a launchd service, never `sudo killall -HUP mDNSResponder`. Read `Label` only from `/System/Library/LaunchDaemons/com.apple.mDNSResponder.plist` through `/usr/bin/plutil`, accept only `com.apple.mDNSResponder` or `com.apple.mDNSResponder.reloaded` (the latter is the live label on macOS 26), then retain sudo for `launchctl kill SIGHUP system/<label>`. An unreadable or unrecognized label fails before either cache mutation; a refused signal fails without a process-name fallback. VPN, dry-run and authorization gates remain before the plist read. Locked by the three `DNS refresh` service-target/refusal tests in `tests/optimize.bats`.
-+- DNS refresh likewise signals a launchd service, never `sudo killall -HUP mDNSResponder`. Read `Label` only from `/System/Library/LaunchDaemons/com.apple.mDNSResponder.plist` through `/usr/bin/plutil`, accept only `com.apple.mDNSResponder` or `com.apple.mDNSResponder.reloaded` (the latter is the live label on macOS 26), then retain sudo for `launchctl kill SIGHUP system/<label>`. An unreadable or unrecognized label fails before either cache mutation; a refused signal fails without a process-name fallback. macOS 27 refuses `launchctl kill` on this service to every caller, root included (`Not privileged to signal service.`, #1867): that one launchctl message after a successful `dscacheutil` flush reports the task as skipped with its reason instead of failed, and still takes no `killall` or PID route around it, since the same-named-process risk that ruled them out has not changed. VPN, dry-run and authorization gates remain before the plist read. Locked by the four `DNS refresh` service-target/refusal tests in `tests/optimize.bats`.
-```
-
-**File**: `lib/optimize/tasks.sh` (modified, +15/-6)
-```diff
-@@ -155,8 +155,9 @@ has_active_vpn_interface() {
- }
- 
- # Return 0 when the DNS cache was flushed (or would be in dry-run), 1 when the
--# flush failed or admin access is missing, 2 when an active VPN skipped it, and
--# 3 when the VPN state is unknown. SIGHUP makes mDNSResponder drop its cache,
-+# flush failed or admin access is missing, 2 when an active VPN skipped it, 3
-+# when the VPN state is unknown, and 4 when the directory cache was flushed but
-+# macOS refused the mDNSResponder signal. SIGHUP makes mDNSResponder drop its cache,
- # and VPN clients that watch DNS configuration (WireGuard and similar) treat
- # that as a network change and reconnect. An unknown state also skips, like
- # opt_network_stack_optimize, because the probe could not rule a VPN out.
-@@ -187,10 +188,14 @@ flush_dns_cache() {
-         *) return 1 ;;
-     esac
- 
--    if sudo dscacheutil -flushcache 2> /dev/null &&
--        sudo /bin/launchctl kill SIGHUP "system/$service_label" 2> /dev/null; then
--        return 0
--    fi
-+    sudo dscacheutil -flushcache 2> /dev/null || return 1
-+    local signal_error="" signal_status=0
-+    { signal_error=$(sudo /bin/launchctl kill SIGHUP "system/$service_label" 2>&1 >&3); } 3>&1 || signal_status=$?
-+    [[ $signal_status -eq 0 ]] && return 0
-+    # macOS 27 refuses this signal to every caller, root included (#1867).
-+    # That is the OS withholding the action, not a failed refresh, and the
-+    # name-based killall it would take to get past it is still refused above.
-+    [[ "$signal_error" == *"Not privileged to signal service"* ]] && return 4
-     return 1
- }
- 
-@@ -439,6 +444,10 @@ opt_network_optimization() {
-             echo -e "  ${YELLOW}${ICON_WARNING}${NC} Failed to inspect active VPN state"
-             optimize_task_result "$MOLE_OPTIMIZE_OUTCOME_FAILED"
-             ;;
-+        4)
-+            opt_msg "DNS cache refresh skipped, macOS does not allow signaling mDNSResponder"
-+            optimize_task_result "$MOLE_OPTIMIZE_OUTCOME_SKIPPED"
-+            ;;
-         *)
-             echo -e "  ${YELLOW}${ICON_WARNING}${NC} Failed to refresh DNS cache"
-             optimize_task_result "$MOLE_OPTIMIZE_OUTCOME_FAILED"
-```
-
-**File**: `tests/optimize.bats` (modified, +30/-0)
-```diff
-@@ -258,6 +258,36 @@ EOF
- 	[[ "$status" -eq 0 ]] || { echo "$output"; return 1; }
- }
- 
-+@test "DNS refresh reports a macOS-refused service signal as skipped without a name fallback" {
-+	run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" MOLE_ASSUME_VPN_ACTIVE=0 MOLE_DRY_RUN=0 /bin/bash --noprofile --norc <<'EOF'
-+set -euo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/optimize/tasks.sh"
-+optimize_sudo_available() { return 0; }
-+function /usr/bin/plutil { echo com.apple.mDNSResponder.reloaded; }
-+trace="$HOME/dns-signal-eperm.trace"
-+: > "$trace"
-+sudo() {
-+    printf '%s\n' "$*" >> "$trace"
-+    [[ "$1" == dscacheutil ]] && return 0
-+    echo "Not privileged to signal service." >&2
-+    return 1
-+}
-+result=0
-+flush_dns_cache || result=$?
-+[[ "$result" == 4 ]] || exit 1
-+expected=$(printf 'dscacheutil -flushcache\n/bin/launchctl kill SIGHUP system/com.apple.mDNSResponder.reloaded')
-+[[ "$(cat "$trace")" == "$expected" ]] || exit 2
-+flush_dns_cache() { return 4; }
-+execute_optimization network_optimization
-+[[ "$(optimize_outcome_count skipped)" == 1 ]] || exit 3
-+[[ "$(optimize_outcome_count failed)" == 0 ]] || exit 4
++for npm_test_cache in "$HOME/.npm" "$HOME/custom-npm-cache"; do
++    for DRY_RUN in true false; do
++        export DRY_RUN
++        for cache in "$HOME/.npm" "$npm_test_cache"; do
++            mkdir -p "$cache/_npx/fixture/node_modules/fixture" "$cache/_cacache/fixture"
++            printf 'RESOURCE_OK' > "$cache/_npx/fixture/node_modules/fixture/resource.txt"
++            printf 'CACHE' > "$cache/_cacache/fixture/data"
++        done
++        clean_dev_npm
++        for cache in "$HOME/.npm" "$npm_test_cache"; do
++            [[ "$(cat "$cache/_npx/fixture/node_modules/fixture/resource.txt")" == RESOURCE_OK ]] || exit 1
++            if [[ "$DRY_RUN" == false ]]; then
++                [[ ! -e "$cache/_cacache/fixture" ]] || exit 1
++            else
++                [[ -f "$cache/_cacache/fixture/data" ]] || exit 1
++            fi
++        done
++    done
++done
 +EOF
-+	[[ "$status" -eq 0 ]] || { echo "$output"; return 1; }
-+	[[ "$output" == *"macOS does not allow signaling mDNSResponder"* ]] || return 1
-+	[[ "$output" != *"Failed to refresh DNS cache"* ]]
++
++    [ "$status" -eq 0 ]
 +}
 +
- @test "DNS flush fails closed when the VPN state cannot be determined" {
- 	run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" MOLE_OPTIMIZE_SUDO_AVAILABLE=true MOLE_DRY_RUN=0 /bin/bash --noprofile --norc <<'EOF'
+ @test "clean_dev_npm falls back to default cache when npm path is invalid" {
+     run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc << 'EOF'
  set -euo pipefail
 ```
 
 ---
 
-### Incident Patch 3: `2748db02` (2026-10-26)
-**Commit Message**: fix(update): give background notices more time and the system proxy
+### Incident Patch 2: `257bdace` (2026-10-28)
+**Commit Message**: fix: prevent spinner collision with Homebrew output (#1874)
 
-A user still on 1.39.1 never saw an update notice. Two gaps remain for users
-whose network is slow or needs a proxy: the background lookup gave each request
-3s, and curl never reads the macOS system proxy, so a proxy app in system-proxy
-mode left the lookup going direct and failing silently.
+Co-authored-by: r266-tech <[REDACTED_EMAIL]>
 
-The background lookup now allows 4s to connect and 6s per request, since nothing
-waits on it, and follows the system proxy from scutil when no proxy variable is
-set. Foreground helpers keep their 2s/3s defaults and `mo update` keeps the
-environment unchanged, because its downloads would not follow a proxy only the
-lookup used.
-
-**File**: `.claude/rules/install-update.md` (modified, +1/-1)
+**File**: `lib/uninstall/batch.sh` (modified, +7/-0)
 ```diff
-@@ -36,7 +36,7 @@ The `install.sh` fail-closed rule, the refusal-diagnostics principle and the Win
- - **Launcher signals.** The interactive command wrapper installs cancellation traps before launching a child, retains signals received before PID assignment, and forwards them once both the PID and the Perl launcher readiness signal are available; asynchronous Bash children initially ignore INT. Before notifying readiness, the launcher also unblocks inherited TERM. The inherited-mask case in `tests/main_menu_pty.py` pins that boundary. `tests/main_menu_pty.py` expands that startup window with builtins; a foreground sleep would change trap scheduling and hide the race.
-   - The launch, the readiness wait and `wait` run inside one `2> /dev/null` group with the child's own stderr on fd 9; the after-launch case in `tests/main_menu_pty.py` pins it. Settle the one readiness notification before entering Bash 3.2 `wait`. The readiness-handler window and launcher-exits-before-ready cases pin this ordering. The stories behind these three rules are in `.claude/skills/bugs/references/shell-and-test-pitfalls.md` (Focused pitfalls).
-   - `run_mole_command` runs a plain `exec` when `/usr/bin/perl` is missing or the target is not an executable file, and a terminal Ctrl-C can reach a command twice (tty broadcast plus the forward), so command INT handlers must tolerate a repeat.
--- **Update notices.** Maintenance-command notices only run for interactive output. Background checks cache successful results for one day and unknown results for one hour, retaining known notices on network failure. The throttle key hashes version, channel, commit and `SCRIPT_DIR`, never the invoked name, so `mo` and `mole` share one lookup; a notice that offers the running or an older version is dropped when read, and an unwritable cache or unreadable install receipt stays silent. Stable discovery must use published release metadata or its release redirect, never the version on main; Homebrew notices use the published formula. Keep machine-readable output silent, preserve command exit statuses and cancellation, and refresh an idle menu without changing ESC decoding. The main menu colors the command at render time (`_main_menu_update_notice`) while the cache and the after-command line stay plain.
-+- **Update notices.** Maintenance-command notices only run for interactive output. Background checks cache successful results for one day and unknown results for one hour, retaining known notices on network failure. The throttle key hashes version, channel, commit and `SCRIPT_DIR`, never the invoked name, so `mo` and `mole` share one lookup; a notice that offers the running or an older version is dropped when read, and an unwritable cache or unreadable install receipt stays silent. Stable discovery must use published release metadata or its release redirect, never the version on main; Homebrew notices use the published formula. The background lookup gets a 4s connect and 6s total window per request (nothing waits on it; foreground helpers keep 2s and 3s through `MOLE_LOOKUP_CONNECT_TIMEOUT` / `MOLE_LOOKUP_MAX_TIME`) and, when no proxy variable is set, follows the macOS system proxy from `scutil --proxy` (HTTPS, then HTTP, then SOCKS as `socks5h`): curl never reads system settings, and a 1.39.1 user behind a system-mode proxy app never saw a notice (2026-10-26). Foreground `mo update` keeps the environment unchanged because its downloads and install.sh would not follow a proxy only the lookup used. Locked by `system proxy lookup prefers HTTPS, then HTTP, then SOCKS, and rejects malformed hosts` and `background update lookup waits longer and follows the system proxy while foreground lookups do not`. Keep machine-readable output silent, preserve command exit statuses and cancellation, and refresh an idle menu without changing ESC decoding. The main menu colors the command at render time (`_main_menu_update_notice`) while the cache and the after-command line stay plain.
- - Locked by `tests/update.bats` (throttle, notice cache, stale-notice and nightly cases), by `tests/main_menu_pty.py` through `tests/cli.bats` (gate, exit status, signal forwarding, repeated INT, perl fallback, idle refresh) and by the `show_main_menu` and `interactive_main_menu` cases in `tests/cli.bats`. `read_key` ESC decoding has no timing test, so the ESC timeout rule in `AGENTS.md` is its guard (`.claude/rules/core.md`).
- 
- ## Self-removal (`lib/manage/remove.sh`)
+@@ -2732,6 +2732,13 @@ _batch_execute_removals() {
+         fi
+         if [[ -z "$reason" ]]; then
+             if [[ "$is_brew_cask" == "true" && -n "$cask_name" ]]; then
++                # Homebrew and sudo write directly to the terminal. Stop the
++                # spinner before they do so neither can overwrite the other.
++                if [[ -t 1 ]]; then
++                    stop_inline_spinner
++                    [[ -t 2 ]] && printf '\r\033[2K' >&2
++                    printf '%s\n' "${_phase_prefix}Removing $(_uninstall_display_text "$app_name") (${_phase_size})..." >&2
++                fi
+                 # Mole removes only the reviewed paths below. A cask zap can
+                 # reach data that was not selected or even discovered.
+                 # Use brew_uninstall_cask helper (handles env vars, timeout, verification)
 ```
 
-**File**: `lib/manage/update.sh` (modified, +53/-5)
+**File**: `tests/uninstall.bats` (modified, +5/-0)
 ```diff
-@@ -537,9 +537,53 @@ _update_print_manual_reinstall() {
- # grep finding no match) would kill the whole command before the caller's own
- # fallback and error message could run. `mo update` exited 1 with no output at
- # all that way. The trailing `|| true` is what keeps the failure recoverable.
-+# curl reads only proxy environment variables, never the macOS system proxy,
-+# so a user who turned on a proxy app's system proxy mode and cannot reach
-+# GitHub directly never saw an update notice. Background notices read that
-+# proxy when the environment names none. Foreground `mo update` keeps the
-+# environment as it is, since its downloads and install.sh would not follow.
-+MOLE_SCUTIL_BIN="/usr/sbin/scutil"
-+
-+mole_system_proxy_url() {
-+    [[ -x "$MOLE_SCUTIL_BIN" ]] || return 0
-+    local key value https_host="" https_port="" http_host="" http_port=""
-+    local socks_host="" socks_port="" https_on=0 http_on=0 socks_on=0
-+    while IFS=' :' read -r key value; do
-+        case "$key" in
-+            HTTPSEnable) https_on="$value" ;;
-+            HTTPSProxy) https_host="$value" ;;
-+            HTTPSPort) https_port="$value" ;;
-+            HTTPEnable) http_on="$value" ;;
-+            HTTPProxy) http_host="$value" ;;
-+            HTTPPort) http_port="$value" ;;
-+            SOCKSEnable) socks_on="$value" ;;
-+            SOCKSProxy) socks_host="$value" ;;
-+            SOCKSPort) socks_port="$value" ;;
-+        esac
-+    done < <("$MOLE_SCUTIL_BIN" --proxy 2> /dev/null || true)
-+    local scheme="" host="" port=""
-+    if [[ "$https_on" == 1 ]]; then
-+        scheme=http host="$https_host" port="$https_port"
-+    elif [[ "$http_on" == 1 ]]; then
-+        scheme=http host="$http_host" port="$http_port"
-+    elif [[ "$socks_on" == 1 ]]; then
-+        scheme=socks5h host="$socks_host" port="$socks_port"
-+    fi
-+    [[ "$host" =~ ^[A-Za-z0-9._-]+$ && "$port" =~ ^[0-9]{1,5}$ ]] || return 0
-+    printf '%s://%s:%s\n' "$scheme" "$host" "$port"
-+}
-+
-+mole_use_system_proxy_if_unset() {
-+    [[ -n "${https_proxy:-}${HTTPS_PROXY:-}${all_proxy:-}${ALL_PROXY:-}" ]] && return 0
-+    local proxy
-+    proxy=$(mole_system_proxy_url)
-+    [[ -n "$proxy" ]] || return 0
-+    export https_proxy="$proxy"
-+}
-+
- get_latest_version() {
-     local location version
--    location=$(curl -fsSLI --connect-timeout 2 --max-time 3 -o /dev/null -w '%{url_effective}' \
-+    location=$(curl -fsSLI --connect-timeout "${MOLE_LOOKUP_CONNECT_TIMEOUT:-2}" --max-time "${MOLE_LOOKUP_MAX_TIME:-3}" -o /dev/null -w '%{url_effective}' \
-         "https://github.com/tw93/Mole/releases/latest" 2> /dev/null || true)
-     case "$location" in
-         https://github.com/tw93/[Mm]ole/releases/tag/[Vv]*) version="${location##*/}" ;;
-@@ -552,7 +596,7 @@ get_latest_version() {
- 
- get_latest_version_from_github() {
-     local version
--    version=$(curl -fsSL --connect-timeout 2 --max-time 3 \
-+    version=$(curl -fsSL --connect-timeout "${MOLE_LOOKUP_CONNECT_TIMEOUT:-2}" --max-time "${MOLE_LOOKUP_MAX_TIME:-3}" \
-         "https://api.github.com/repos/tw93/mole/releases/latest" 2> /dev/null |
-         /usr/bin/plutil -extract tag_name raw -o - - 2> /dev/null || true)
-     version="${version#[Vv]}"
-@@ -656,7 +700,7 @@ brew_mole_formula_installed() {
- 
- get_homebrew_latest_version() {
-     local version
--    version=$(curl -fsSL --connect-timeout 2 --max-time 3 \
-+    version=$(curl -fsSL --connect-timeout "${MOLE_LOOKUP_CONNECT_TIMEOUT:-2}" --max-time "${MOLE_LOOKUP_MAX_TIME:-3}" \
-         "https://formulae.brew.sh/api/formula/mole.json" 2> /dev/null |
-         /usr/bin/plutil -extract versions.stable raw -o - - 2> /dev/null || true)
-     [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] && printf '%s\n' "$version"
-@@ -805,10 +849,10 @@ get_latest_commit_from_github() {
-     local response=""
-     local sha=""
-     if command -v curl > /dev/null 2>&1; then
--        response=$(curl -fsSL --connect-timeout 2 --max-time 3 \
-+        response=$(curl -fsSL --connect-timeout "${MOLE_LOOKUP_CONNECT_TIMEOUT:-2}" --max-time "${MOLE_LOOKUP_MAX_TIME:-3}" \
-             "https://api.github.com/repos/tw93/mole/commits/main" 2> /dev/null || true)
-     elif command -v wget > /dev/null 2>&1; then
--        response=$(wget --timeout=3 --tries=1 -qO- \
-+        response=$(wget --timeout="${MOLE_LOOKUP_MAX_TIME:-3}" --tries=1 -qO- \
-             "https://api.github.com/repos/tw93/mole/commits/main" 2> /dev/null || true)
-     fi
-     sha=$(printf '%s\n' "$response" |
-@@ -949,6 +993,10 @@ check_for_updates() {
-     (
-         (
-             local latest="" installed="${VERSION}" message=""
-+            # Nothing waits on this lookup, so slow networks get a longer
-+            # window than the foreground default.
-+            local MOLE_LOOKUP_CONNECT_TIMEOUT=4 MOLE_LOOKUP_MAX_TIME=6
-+            mole_use_system_proxy_if_unset
-             if [[ "$channel" == nightly ]]; then
-                 installed=$(get_install_commit)
-                 latest=$(get_latest_commit_from_github api-only)
-```
-
-**File**: `tests/update.bats` (modified, +47/-0)
-```diff
-@@ -2453,3 +2453,50 @@ mole_update_message_cache_is_current() { return 0; }
- SCRIPT
-     [ "$status" -eq 0 ]
+@@ -5941,6 +5941,11 @@ EOF
+     }
  }
-+
-+@test "system proxy lookup prefers HTTPS, then HTTP, then SOCKS, and rejects malformed hosts" {
-+ run env -u https_proxy -u HTTPS_PROXY -u all_proxy -u ALL_PROXY /bin/bash <<'SCRIPT'
-+set -euo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/manage/update.sh"
-+MOLE_SCUTIL_BIN="$HOME/scutil"
-+fixture() { printf '#!/bin/bash\ncat <<D\n<dictionary> {\n%s\n}\nD\n' "$1" > "$MOLE_SCUTIL_BIN"; chmod +x "$MOLE_SCUTIL_BIN"; }
-+fixture $'  HTTPEnable : 1\n  HTTPPort : 8080\n  HTTPProxy : 10.0.0.2\n  HTTPSEnable : 1\n  HTTPSPort : 7890\n  HTTPSProxy : 127.0.0.1'
-+[[ "$(mole_system_proxy_url)" == http://127.0.0.1:7890 ]] || exit 1
-+fixture $'  HTTPEnable : 1\n  HTTPPort : 8080\n  HTTPProxy : proxy.local\n  HTTPSEnable : 0'
-+[[ "$(mole_system_proxy_url)" == http://proxy.local:8080 ]] || exit 2
-+fixture $'  SOCKSEnable : 1\n  SOCKSPort : 1080\n  SOCKSProxy : 127.0.0.1'
-+[[ "$(mole_system_proxy_url)" == socks5h://127.0.0.1:1080 ]] || exit 3
-+fixture $'  HTTPSEnable : 0\n  HTTPSPort : 7890\n  HTTPSProxy : 127.0.0.1'
-+[[ -z "$(mole_system_proxy_url)" ]] || exit 4
-+fixture $'  HTTPSEnable : 1\n  HTTPSPort : 7890\n  HTTPSProxy : bad;host'
-+[[ -z "$(mole_system_proxy_url)" ]] || exit 5
-+https_proxy=http://env.example:3128
-+mole_use_system_proxy_if_unset
-+[[ "$https_proxy" == http://env.example:3128 ]] || exit 6
-+SCRIPT
-+ [ "$status" -eq 0 ]
+ 
++@test "Homebrew output does not interleave with the uninstall spinner" {
++    run python3 "$PROJECT_ROOT/tests/uninstall_brew_output_pty.py"
++    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
 +}
 +
-+@test "background update lookup waits longer and follows the system proxy while foreground lookups do not" {
-+ run env -u https_proxy -u HTTPS_PROXY -u all_proxy -u ALL_PROXY /bin/bash <<'SCRIPT'
+ @test "match_apps_by_name joins multi-word args into one exact app name (#1365)" {
+     # `mo uninstall Tor Browser` arrives as two words; "Tor" alone
+     # substring-matched WebSTORm. The joined words exactly name an
+```
+
+**File**: `tests/uninstall_brew_output_pty.py` (added, +73/-0)
+```diff
+@@ -0,0 +1,73 @@
++#!/usr/bin/env python3
++"""Check that foreground Homebrew output does not collide with the spinner."""
++import errno
++import os
++import pty
++import select
++import subprocess
++import tempfile
++import time
++from pathlib import Path
++
++root = Path(__file__).resolve().parents[1]
++script = r'''
 +set -euo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/manage/update.sh"
-+VERSION=1.0.0
-+MOLE_SCUTIL_BIN="$HOME/scutil"
-+printf '#!/bin/bash\nprintf "  HTTPSEnable : 1\\n  HTTPSPort : 7890\\n  HTTPSProxy : 127.0.0.1\\n"\n' > "$MOLE_SCUTIL_BIN"
-+chmod +x "$MOLE_SCUTIL_BIN"
-+get_install_channel() { echo stable; }
-+is_homebrew_install() { return 1; }
-+curl() { printf '%s proxy=%s\n' "$*" "${https_proxy:-}" >> "$HOME/curl-calls"; printf '{"tag_name":"V9.8.7"}\n'; }
-+check_for_updates
-+for _ in $(seq 1 30); do [[ -s "$HOME/.cache/mole/update_message" ]] && break; sleep 0.1; done
-+grep -q -- '--max-time 6 .*proxy=http://127.0.0.1:7890' "$HOME/curl-calls" || exit 1
-+[[ "$(cat "$HOME/.cache/mole/update_message")" == *9.8.7* ]] || exit 2
-+: > "$HOME/curl-calls"
-+get_latest_version_from_github > /dev/null
-+grep -q -- '--max-time 3 .*proxy=$' "$HOME/curl-calls" || exit 3
-+SCRIPT
-+ [ "$status" -eq 0 ]
++source "$TEST_ROOT/lib/core/common.sh"
++source "$TEST_ROOT/lib/uninstall/batch.sh"
++app="$HOME/Applications/Example.app"
++mkdir -p "$app"
++_batch_selected_app_plan_matches() { return 0; }
++uninstall_live_bundle_has_other_install() { return 1; }
++stop_launch_services() { :; }
++unregister_app_bundle() { :; }
++remove_login_item() { :; }
++force_kill_app() { :; }
++brew_uninstall_cask() {
++    [[ -t 0 && -t 1 ]] || return 99
++    printf 'BREW_FIRST\n'
++    sleep .3
++    printf 'BREW_SECOND\n'
++    return "$TEST_RC"
 +}
++app_details=("Example|$app|unknown|1|||false|false|true|example||||guard_login|x|unknown||missing")
++success_count=0 failed_count=0 brew_apps_removed=0
++failed_items=() success_items=() success_dock_targets=()
++system_extension_warning_apps=() review_only_system_leftovers=()
++review_only_system_leftover_keys=() running_at_uninstall_apps=()
++total_size_freed=0 files_cleaned=0 total_items=0
++rc=0
++_batch_execute_removals || rc=$?
++printf 'RESULT:%s\n' "$rc"
++'''
++
++for expected in (124, 130):
++    with tempfile.TemporaryDirectory(prefix='mole-brew-output-') as home:
++        master, slave = pty.openpty()
++        env = dict(os.environ, HOME=home, TEST_ROOT=str(root), TEST_RC=str(expected), TERM='xterm')
++        process = subprocess.Popen(['/bin/bash', '--noprofile', '--norc', '-c', script],
++                                   stdin=slave, stdout=slave, stderr=slave, env=env)
++        os.close(slave)
++        output = b''
++        deadline = time.monotonic() + 15
++        try:
++            while time.monotonic() < deadline:
++                if select.select([master], [], [], .1)[0]:
++                    try:
++                        output += os.read(master, 65536)
++                    except OSError as exc:
++                        if exc.errno == errno.EIO:
++                            break
++                        raise
++                if process.poll() is not None and not select.select([master], [], [], 0)[0]:
++                    break
++            process.wait(timeout=2)
++            assert process.returncode == 0, output
++            assert b'Removing Example (1KB)...\r\nBREW_FIRST\r\n' in output, output
++            assert b'BREW_FIRST\r\nBREW_SECOND\r\n' in output, output
++            assert f'RESULT:{expected}'.encode() in output, output
++        finally:
++            if process.poll() is None:
++                process.kill()
++                process.wait()
++            os.close(master)
++    print(f'PASS: brew output and status {expected}')
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1875** (2026-10-28): feat(clean): reach Vesktop session caches (@hawkff)
+- **PR #1874** (2026-10-28): fix: prevent spinner collision with Homebrew output (@r266-tech)
+- **PR #1872** (2026-10-28): fix(clean): preserve installed npx packages (@r266-tech)
 - **PR #1868** (2026-10-27): feat(clean): reach idle Brave signing clones (@hawkff)
 - **PR #1866** (2026-10-27): fix(core): avoid removal fallthrough during dry run find scans (@viniciusdsandrade)
 - **PR #1864** (2026-10-27): build(deps): bump the github-actions group with 4 updates (@dependabot[bot])
-- **PR #1861** (closed): feat(clean): trim Colima VM disk to return freed blocks to macOS (@CharanTeja-6825)
-- **PR #1860** (2026-10-26): fix: fall back to pwsh when Windows PowerShell is blocked (@josways)
-- **PR #1856** (2026-10-26): fix(clean): protect Kitty graphics cache (@r266-tech)
 
 ---
 
@@ -2480,33 +2259,32 @@ lookup used.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core): avoid removal fallthrough during dry run find scans (#1866)
+## X. clean): preserve installed npx packages (#1872)
 
 **RULE**:
-When implementing operations in `lib/core/file_ops.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Mole. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `lib/clean/dev.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Mole. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a703eddc`: core): avoid removal fallthrough during dry run find scans (#1866). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f954e2fd`: clean): preserve installed npx packages (#1872). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Shell data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/core/file_ops.sh`.
+Subsystems managing Shell data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/clean/dev.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```shell
 // Verified production-grade fix pattern:
-            continue
-            if [[ $preview_rc -eq 0 ]]; then
-                removed_count=$((removed_count + 1))
-            fi
-            continue
+    # Keep _npx: running commands can still read its installed packages.
+    local -a npm_residual_dirs=("_cacache" "_logs" "_prebuilds")
+    local -a npm_descriptions=("npm cache directory" "npm logs" "npm prebuilds")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```shell
 // Anti-pattern to NEVER write (induced failure mode):
-            [[ $preview_rc -eq 0 ]] || continue
-            [[ $preview_rc -eq 0 ]] || continue
+    # These residual directories are not removed by `npm cache clean --force`
+    local -a npm_residual_dirs=("_cacache" "_npx" "_logs" "_prebuilds")
+    local -a npm_descriptions=("npm cache directory" "npm npx cache" "npm logs" "npm prebuilds")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a703eddc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f954e2fd` are properly handled with clean fallback behavior.

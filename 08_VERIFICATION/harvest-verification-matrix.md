@@ -5920,3 +5920,6 @@
 | `CYCLE-20261028-0OX7` | `2026-10-28T20:15:40.075Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md` | Yes (`98b22cf2...`) |
 | `CYCLE-20261028-0XK7` | `2026-10-28T20:15:51.271Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5393` | Yes (`cbfc8107...`) |
 | `CYCLE-20261028-0ZT2` | `2026-10-28T20:15:54.182Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5394` | Yes (`bd96eac7...`) |
+| `CYCLE-20261028-928V` | `2026-10-28T20:22:10.591Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md` | Yes (`b866f2ec...`) |
+| `CYCLE-20261028-96Y6` | `2026-10-28T20:22:16.686Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5395` | Yes (`d5550a88...`) |
+| `CYCLE-20261028-99MN` | `2026-10-28T20:22:20.159Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5396` | Yes (`1d05f95a...`) |

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T20:15:56.738Z",
-    "lastVerified": "2026-10-28T20:15:56.738Z",
+    "lastChecked": "2026-10-28T20:22:22.703Z",
+    "lastVerified": "2026-10-28T20:22:22.703Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -284,9 +284,9 @@
   "pathwaycom-llm-app": {
     "name": "llm-app",
     "officialUrl": "https://github.com/pathwaycom/llm-app",
-    "lastChecked": "2026-10-28T03:04:35.925Z",
+    "lastChecked": "2026-10-28T20:22:19.616Z",
     "revisionIdentifier": "e2a7a09b",
-    "lastVerified": "2026-10-28T03:04:35.925Z"
+    "lastVerified": "2026-10-28T20:22:19.616Z"
   },
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
@@ -346,9 +346,9 @@
   "openziti-zrok": {
     "name": "zrok",
     "officialUrl": "https://github.com/openziti/zrok",
-    "lastChecked": "2026-10-28T16:45:20.687Z",
+    "lastChecked": "2026-10-28T20:22:17.080Z",
     "revisionIdentifier": "09ed814e",
-    "lastVerified": "2026-10-28T16:45:20.687Z"
+    "lastVerified": "2026-10-28T20:22:17.080Z"
   },
   "run-llama-llama_index": {
     "name": "llama_index",
@@ -362,8 +362,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T19:54:41.278Z",
-    "lastVerified": "2026-10-28T19:54:41.278Z",
+    "lastChecked": "2026-10-28T20:22:22.280Z",
+    "lastVerified": "2026-10-28T20:22:22.280Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -721,14 +721,14 @@
     "officialUrl": "https://github.com/gardener/gardener",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T03:49:43.369Z",
-    "lastVerified": "2026-10-28T03:49:43.369Z",
+    "lastChecked": "2026-10-28T20:22:19.774Z",
+    "lastVerified": "2026-10-28T20:22:19.774Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gardener-gardener",
-    "contentHash": "da61f0054e8eaacf968cef60ecc343486191964b58f88c501edb9f959fcc1234",
+    "contentHash": "1d05f95a0ada2fc4690673b25f8dda9cf82bd4787c56881c626d66c46e6cf8cd",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6546,5 +6546,46 @@
     "lastChecked": "2026-10-28T20:15:41.774Z",
     "revisionIdentifier": "42fd8933",
     "lastVerified": "2026-10-28T20:15:41.774Z"
+  },
+  "bahdotsh-wrkflw": {
+    "name": "wrkflw",
+    "officialUrl": "https://github.com/bahdotsh/wrkflw",
+    "lastChecked": "2026-10-28T20:22:07.471Z",
+    "revisionIdentifier": "248a4190",
+    "lastVerified": "2026-10-28T20:22:07.471Z"
+  },
+  "hf-autotrust-gev-26b-decide-nvfp4": {
+    "name": "autotrust/GEV-26B-Decide-NVFP4",
+    "officialUrl": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T20:22:09.750Z",
+    "lastVerified": "2026-10-28T20:22:09.750Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
+    "contentHash": "b866f2ecf9f32adaf299dedd9429f7bb9199b2d9942456150f4fb10ac391c75b",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tw93-mole": {
+    "name": "tw93/Mole",
+    "officialUrl": "https://github.com/tw93/Mole",
+    "sourceType": "github",
+    "technology": "Shell",
+    "lastChecked": "2026-10-28T20:22:16.258Z",
+    "lastVerified": "2026-10-28T20:22:16.258Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-tw93-mole",
+    "contentHash": "d5550a887ce68f11fc2b7ee732f382304e15a37752cea2547ce9bf19250fa633",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

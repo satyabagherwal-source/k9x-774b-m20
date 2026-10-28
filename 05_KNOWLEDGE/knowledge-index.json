@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T20:15:54.106Z",
+  "last_updated": "2026-10-28T20:22:20.115Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13164,8 +13164,8 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "66017460",
-      "content_hash": "da61f0054e8eaacf968cef60ecc343486191964b58f88c501edb9f959fcc1234",
+      "source_version": "753bf1fd",
+      "content_hash": "1d05f95a0ada2fc4690673b25f8dda9cf82bd4787c56881c626d66c46e6cf8cd",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
@@ -13228,6 +13228,11 @@
           "number": 5166,
           "title": "Update terminal-controller-manager to v0.40.0 (#16111)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5396,
+          "title": "kyverno:allow-secrets ClusterRole missing patch verb for Secrets (#16113)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13235,7 +13240,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T03:49:43.730Z",
+      "verified_at": "2026-10-28T20:22:20.104Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -17345,7 +17350,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
       "source_version": "hf-autotrust-gev-26b-decide-nvfp4",
-      "content_hash": "ca7af94367ac22e545a6c3c31ce9fdca819bd572eb35e3420b5492c763e6b336",
+      "content_hash": "b866f2ecf9f32adaf299dedd9429f7bb9199b2d9942456150f4fb10ac391c75b",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
       "promoted_rules": [
@@ -17398,7 +17403,7 @@
         "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv43rd7n",
         "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv4h0go4"
       ],
-      "verified_at": "2026-10-25T08:24:00.346Z",
+      "verified_at": "2026-10-28T20:22:10.528Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53393,8 +53398,8 @@
       "slug": "tw93-mole",
       "platform": "github",
       "source_url": "https://github.com/tw93/Mole",
-      "source_version": "1d6bd4c1",
-      "content_hash": "8c0af87aaafb45050ffb7f2b3d4551e2541fcf163b014630060cceaface492ad",
+      "source_version": "45ee88cb",
+      "content_hash": "d5550a887ce68f11fc2b7ee732f382304e15a37752cea2547ce9bf19250fa633",
       "dossier_path": "07_PROJECT_LEARNING/tw93-mole-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-mole-learnings.md",
       "promoted_rules": [
@@ -53417,6 +53422,11 @@
           "number": 5089,
           "title": "core): avoid removal fallthrough during dry run find scans (#1866)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5395,
+          "title": "clean): preserve installed npx packages (#1872)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53424,7 +53434,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T01:06:59.556Z",
+      "verified_at": "2026-10-28T20:22:16.631Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -146086,6 +146096,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T20:15:54.087Z"
+    },
+    "rule-5395": {
+      "learning_id": "rule-5395",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5395,
+      "title": "clean): preserve installed npx packages (#1872)",
+      "source_url": "https://github.com/tw93/Mole",
+      "source_version": "45ee88cb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T20:22:16.631Z"
+    },
+    "rule-5396": {
+      "learning_id": "rule-5396",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5396,
+      "title": "kyverno:allow-secrets ClusterRole missing patch verb for Secrets (#16113)",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "753bf1fd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T20:22:20.104Z"
     }
   },
   "aliases": {
