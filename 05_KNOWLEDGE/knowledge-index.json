@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T04:10:11.007Z",
+  "last_updated": "2026-10-28T04:21:52.478Z",
   "total_verified_learnings": 1156,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6784,8 +6784,8 @@
       "slug": "clockworklabs-spacetimedb",
       "platform": "github",
       "source_url": "https://github.com/clockworklabs/SpacetimeDB",
-      "source_version": "e3166533",
-      "content_hash": "1560c987b2305e2dd3f6f5b43c9cd84932cc6923848e72f0ec11d1da7ae8f899",
+      "source_version": "5ce9e901",
+      "content_hash": "8b716857b0c7a91e71590a99cff0d68b17935830aedcbdeb9d54a384ffaf5ebb",
       "dossier_path": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "promoted_rules": [
@@ -6833,6 +6833,11 @@
           "number": 4862,
           "title": "Version bump 2.14.0 (#6378)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5170,
+          "title": "Add a SpacetimeDB Standalone architecture diagram to docs/DEVELOP.md (#6400)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6840,7 +6845,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T14:50:31.153Z",
+      "verified_at": "2026-10-28T04:21:52.464Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28800,7 +28805,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/TeleOCR",
       "source_version": "hf-xingchen-agi-teleocr",
-      "content_hash": "1bc85b2012862b883d21d4f1bbf8404db963c0be30217f80661df3c7f81bc414",
+      "content_hash": "c2e631605ffbe0a0873d4f113ed5d62e049e431189cbe7bace7e88174ecb2684",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "promoted_rules": [
@@ -28867,7 +28872,7 @@
         "learn-huggingface-hf-xingchen-agi-teleocr-mv44etxd",
         "learn-huggingface-hf-xingchen-agi-teleocr-mv4hnsqw"
       ],
-      "verified_at": "2026-10-25T11:12:02.867Z",
+      "verified_at": "2026-10-28T04:21:39.923Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -141667,6 +141672,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T04:10:10.996Z"
+    },
+    "rule-5170": {
+      "learning_id": "rule-5170",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5170,
+      "title": "Add a SpacetimeDB Standalone architecture diagram to docs/DEVELOP.md (#6400)",
+      "source_url": "https://github.com/clockworklabs/SpacetimeDB",
+      "source_version": "5ce9e901",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T04:21:52.464Z"
     }
   },
   "aliases": {

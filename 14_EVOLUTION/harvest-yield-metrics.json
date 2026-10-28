@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T04:10:11.082Z",
-  "total_cycles_completed": 5659,
-  "total_learnings_persisted": 5659,
-  "total_rules_promoted": 5106,
+  "last_updated": "2026-10-28T04:21:52.546Z",
+  "total_cycles_completed": 5661,
+  "total_learnings_persisted": 5661,
+  "total_rules_promoted": 5107,
   "history": [
-    {
-      "timestamp": "2026-10-27T18:43:42.576Z",
-      "repository": "rollup/rollup",
-      "learningId": "learn-github-rollup-rollup",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T18:59:37.251Z",
-      "repository": "facebook/folly",
-      "learningId": "learn-github-facebook-folly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T18:59:39.368Z",
       "repository": "ccore/Qwen3.5-4B-3D-Coder",
@@ -1403,6 +1389,20 @@
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
       "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T04:21:40.025Z",
+      "repository": "XingChen-AGI/TeleOCR",
+      "learningId": "learn-huggingface-xingchen-agi-teleocr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T04:21:52.546Z",
+      "repository": "clockworklabs/SpacetimeDB",
+      "learningId": "learn-github-clockworklabs-spacetimedb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

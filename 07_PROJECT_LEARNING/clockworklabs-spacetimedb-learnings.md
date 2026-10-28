@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source**: github ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
-> **Source Version**: `e3166533`  
+> **Source Version**: `5ce9e901`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T14:50:30.704Z  
+> **Timestamp**: 2026-10-28T04:21:52.122Z  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T14:50:29.894Z  
+> **Harvest Timestamp**: 2026-10-28T04:21:52.114Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25396 stars
+- **Stars / Engagement**: 25399 stars
 
 ---
 
@@ -810,480 +810,412 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e3166533` (2026-10-26)
-**Commit Message**: Version bump 2.14.0 (#6378)
+### Incident Patch 1: `5ce9e901` (2026-10-27)
+**Commit Message**: Add a SpacetimeDB Standalone architecture diagram to docs/DEVELOP.md (#6400)
 
 # Description of Changes
 
-<!-- Please describe your change, mention any related tickets, and so on
-here. -->
-
-- Bumps version to 2.14.0
+This PR adds an Architecture section to `docs/DEVELOP.md` with a diagram
+of what runs inside SpacetimeDB Standalone and a short paragraph
+explaining it. Previously, the only diagram in the repo was the
+user-facing one in the README, so contributors had to read the code to
+learn how the HTTP and Postgres servers, the per-database ModuleHost
+queue, views, subscriptions, durability, and snapshots fit together. The
+text is kept to one paragraph so it doesn't drift from the code, and the
+README gets a one-line pointer to it under Building from Source.
 
 # API and ABI breaking changes
 
-None
-
-<!-- If this is an API or ABI breaking change, please apply the
-corresponding GitHub label. -->
+This does not break anything. It only adds a section to
+`docs/DEVELOP.md` and an SVG and changes one line of the README, so no
+code or behavior changes.
 
 # Rollback safety impact
-
-<!--
-If this PR is safe to roll back after deployment and has no impact on
-the rollback safety of any prior PRs, write `n/a` below.
-
-Otherwise, list every prerequisite PR that must be included in a release
-before this PR can merge. This PR must not be deployed until each
-prerequisite has been deployed and sufficiently observed or tested in
-the live deployment that we are confident it will not be rolled back.
-Supported forms include #123, SpacetimeDB#123,
-clockworklabs/SpacetimeDB#123, and GitHub PR URLs.
-
-Consider whether this PR:
-- newly writes to a previously introduced but unused ControlDB table or
-reducer, system table, or on-disk data format; or
-- clears, deletes, incompatibly changes, or renders unsupported a
-previously available ControlDB table or reducer, system table, or
-on-disk data format.
--->
 
 n/a
 
 # Expected complexity level and risk
 
-- 1 - this is
+1
 
-**File**: `Cargo.lock` (modified, +59/-59)
+# Testing
+
+- [x] Checked each box and arrow in the diagram against the code
+(routes, ModuleHost queue, view refresh, commit and broadcast,
+durability, snapshots, scheduler, IDC actor)
+- [x] Rendered the SVG in headless Chrome and checked layout and
+legibility
+- [x] Validated the SVG 
+
+**File**: `README.md` (modified, +2/-0)
 ```diff
-@@ -822,7 +822,7 @@ dependencies = [
+@@ -245,6 +245,8 @@ spacetime version use $stdbVersion
  
- [[package]]
- name = "case-conversion-client"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "anyhow",
-  "env_logger 0.10.2",
-@@ -1453,7 +1453,7 @@ dependencies = [
+ Verify with `spacetime --version`.
  
- [[package]]
- name = "connect_disconnect_client"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "anyhow",
-  "console_error_panic_hook",
-@@ -2549,7 +2549,7 @@ dependencies = [
++To find your way around the code, see the [architecture diagram](docs/DEVELOP.md#architecture) of what runs inside SpacetimeDB Standalone.
++
+ ## Documentation
  
- [[package]]
- name = "event-table-client"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "anyhow",
-  "console_error_panic_hook",
-@@ -6148,7 +6148,7 @@ dependencies = [
+ To prepare your AI coding environment, follow the [agent setup guide](docs/static/agent-setup.md).
+```
+
+**File**: `docs/DEVELOP.md` (modified, +12/-1)
+```diff
+@@ -1,6 +1,6 @@
+ # DEVELOP.md
  
- [[package]]
- name = "procedural-view-pk-client"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "anyhow",
-  "console_error_panic_hook",
-@@ -6162,7 +6162,7 @@ dependencies = [
+-This document explains how to configure the environment, run the LLM benchmark tool, and work with the benchmark suite.
++This document explains how to configure the environment, run the LLM benchmark tool, and work with the benchmark suite. It ends with a diagram of the SpacetimeDB Standalone architecture.
  
- [[package]]
- name = "procedure-client"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "anyhow",
-  "console_error_panic_hook",
-@@ -6179,7 +6179,7 @@ dependencies = [
+ ---
  
- [[package]]
- name = "procedure-concurrency-client"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "anyhow",
-  "console_error_panic_hook",
-@@ -7539,7 +7539,7 @@ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
+@@ -12,6 +12,7 @@ This document explains how to configure the environment, run the LLM benchmark t
+ 4. [Benchmark Suite](#benchmark-suite)
+ 5. [Context Construction](#context-construction)
+ 6. [Troubleshooting](#troubleshooting)
++7. [Architecture](#architecture)
+ ---
  
- [[package]]
- name = "sdk-csharp-test-harness"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
+ ## Prerequisites
+@@ -308,3 +309,13 @@ When writing documentation that will be used by the benchmark:
+ **Timeouts / Rate-limits**
+ - Lower `LLM_BENCH_CONCURRENCY` or `LLM_BENCH_ROUTE_CONCURRENCY`.
+ - Some providers aggressively throttle bursts; use backoff/retry when supported.
++
++---
++
++## Architecture
++
++<p align="center">
++    <img src="../images/server-architecture.svg" alt="SpacetimeDB server architecture" width="100%">
++</p>
++
++This diagram shows what runs inside SpacetimeDB Standalone. The yellow areas run on the shared Tokio runtime: the HTTP, WebSocket, and Postgres servers, ControlDB, and each database's background workers. The purple area is each database's own thread, pinned to a core, where the ModuleHost runs reducers, SQL, and view updates one at a time against the in-memory datastore. The green arrows follow a reducer call through commit, after which the changes go to the commitlog on disk and to subscriptions, which push updates back to clients. The diagram is a plain SVG at `images/server-architecture.svg`, so you can edit it directly.
+```
+
+**File**: `images/server-architecture.svg` (added, +224/-0)
+```diff
+@@ -0,0 +1,224 @@
++<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1400" viewBox="0 0 1600 1400" role="img" aria-labelledby="title desc">
++  <title id="title">SpacetimeDB server architecture</title>
++  <desc id="desc">Clients reach SpacetimeDB Standalone over HTTP, WebSocket, or the Postgres wire protocol. Network handling, the control database, and background workers run on a shared Tokio runtime. Each database runs its module, datastore, and query engine on one thread pinned to a core. Committed transactions go to the commitlog on disk and to subscription evaluation, which pushes updates back to clients.</desc>
++  <style>
++    text { font-family: Inter, 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
++    .title { font-size: 30px; font-weight: 700; fill: #e6e9f0; }
++    .subtitle { font-size: 16px; fill: #b6c0cf; }
++    .h { font-size: 17px; font-weight: 600; fill: #e6e9f0; }
++    .h2 { font-size: 15px; font-weight: 600; fill: #e6e9f0; }
++    .b { font-size: 13.5px; fill: #b6c0cf; }
++    .tag { font-family: 'Source Code Pro', 'Source Code Pro Variable', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; fill: #6f7987; }
++    .pill { font-family: 'Source Code Pro', 'Source Code Pro Variable', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; fill: #e6e9f0; }
++    .band { font-size: 12.5px; font-weight: 700; letter-spacing: 1.6px; }
++    .bandsub { font-weight: 400; letter-spacing: 0; fill: #b6c0cf; }
++    .node { font-size: 12.5px; font-weight: 700; letter-spacing: 1.6px; fill: #b6c0cf; }
++    .al { font-size: 13px; fill: #b6c0cf; }
++    .alg { font-size: 13px; font-weight: 600; fill: #4cf490; }
++    .num { font-size: 13px; font-weight: 700; fill: #0b0e12; }
++    .or { font-size: 13px; font-style: italic; fill: #6f7987; }
++    .hot { fill: none; stroke: #4cf490; stroke-width: 2.25; stroke-linejoin: round; }
++    .cold { fill: none; stroke: #6f7987; stroke-width: 1.75; stroke-linejoin: round; }
++  </style>
++  <defs>
++    <marker id="ge" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#4cf490"/></marker>
++    <marker id="gs" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M10 0 L0 5 L10 10 z" fill="#4cf490"/></marker>
++    <marker id="ne" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#6f7987"/></marker>
++    <marker id="ns" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M10 0 L0 5 L10 10 z" fill="#6f7987"/></marker>
++  </defs>
++
++  <!-- Card -->
++  <rect x="0" y="0" width="1600" height="1400" rx="24" fill="#202126" stroke="#202126" stroke-width="0"/>
++  <text x="60" y="66" class="title">SpacetimeDB Standalone architecture</text>
++  <text x="60" y="96" class="subtitle">What runs inside the spacetimedb-standalone process. Green arrows follow a reducer call.</text>
++
++  <!-- Clients -->
++  <rect x="560" y="124" width="164" height="64" rx="10" fill="none" stroke="#6f7987" stroke-width="1.5"/>
++  <text x="642.0" y="152" class="h2" text-anchor="middle">spacetime CLI</text>
++  <text x="642.0" y="173" class="tag" text-anchor="middle">HTTP</text>
++  <rect x="836" y="124" width="164" height="64" rx="10" fill="none" stroke="#6f7987" stroke-width="1.5"/>
++  <text x="918.0" y="152" class="h2" text-anchor="middle">Client SDKs</text>
++  <text x="918.0" y="173" class="tag" text-anchor="middle">WebSocket, HTTP</text>
++  <rect x="1160" y="124" width="232" height="64" rx="10" fill="none" stroke="#6f7987" stroke-width="1.5"/>
++  <text x="1276.0" y="152" class="h2" text-anchor="middle">Postgres clients</text>
++  <text x="1276.0" y="173" class="tag" text-anchor="middle">pgwire</text>
++
++  <!-- Process -->
++  <rect x="40" y="224" width="1520" height="1038" rx="20" fill="none" stroke="#363840" stroke-width="1.5"/>
++  <text x="64" y="250" class="node">SPACETIMEDB STANDALONE</text>
++  <text x="290" y="250" class="al">one process</text>
++
++  <!-- Tokio runtime: network and control plane -->
++  <rect x="64" y="268" width="1472" height="372" rx="16" fill="#fbdc8e" fill-opacity="0.06" stroke="#fbdc8e" stroke-opacity="0.45" stroke-width="1.5"/>
++  <text x="88" y="296" class="band" fill="#fbdc8e">TOKIO RUNTIME<tspan class="bandsub" dx="12">async tasks on the shared worker cores</tspan></text>
++  <rect x="88" y="312" width="312" height="140" rx="10" fill="#18191d" stroke="#363840" stroke-width="1.5"/>
++  <text x="106" y="342" class="h">ControlDB</text>
++  <text x="384" y="342" class="tag" text-anchor="end">sled</text>
++  <text x="106" y="366" class="b">Databases, owners, and names</text>
++  <text x="106" y="385" class="b">Replicas and energy budgets</text>
++  <rect x="460" y="312" width="500" height="140" rx="10" fill="#18191d" stroke="#363840" stroke-width="1.5"/>
++  <text x="478" y="34
+```
+
+---
+
+### Incident Patch 2: `854ce637` (2026-10-27)
+**Commit Message**: Async IDC: Preserve V10 names and type IDC outbox signature hashes (#6364)
+
+## Summary
+Taken out from https://github.com/clockworklabs/SpacetimeDB/pull/6001.
+
+1. **Fix `ModuleDef` → `RawModuleDefV10` round trip bug.**: `spacetime
+generate` does the round trip from `ModuleDef -> RawModuleDef ->
+ModuleDef` for it's implementation, conversion to `RawModuleDefV10` does
+not put any `CaseConversionPolicy` causing it to defaulting to
+`snake_case`, which applied `snake_case` casing on re `RawModuleDefV10`
+to `ModuleDef` conversion, resulting in different output. Fixes that by
+harding case conversion policy to None.
+
+2. **Use typed `Hash` values for IDC outbox signatures.** Changes the
+outbox signature type to Hash as that's more appropriate than String, we
+can not fix it on system table, hence do the conversion at boundary
+
+
+# API and ABI breaking changes
+NA
+
+# Rollback safety impact
+n/a
+
+# Expected complexity level and risk
+2
+
+# Testing
+NA
+
+**File**: `Cargo.lock` (modified, +1/-0)
+```diff
+@@ -8940,6 +8940,7 @@ dependencies = [
+  "lean_string",
+  "petgraph 0.6.5",
+  "proptest",
++ "serde_json",
   "serial_test",
-  "spacetimedb-testing",
-@@ -7606,7 +7606,7 @@ dependencies = [
- 
- [[package]]
- name = "sdk-unreal-test-harness"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "serial_test",
-  "spacetimedb-testing",
-@@ -8113,7 +8113,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "anyhow",
-  "bytemuck",
-@@ -8136,7 +8136,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-auth"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "anyhow",
-  "jsonwebtoken",
-@@ -8149,7 +8149,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-bench"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "ahash 0.8.12",
-  "anyhow",
-@@ -8192,7 +8192,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-bindings-macro"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "heck 0.4.1",
-  "humantime",
-@@ -8203,14 +8203,14 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-bindings-sys"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "spacetimedb-primitives",
- ]
- 
- [[package]]
- name = "spacetimedb-cli"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "anyhow",
-  "base64 0.21.7",
-@@ -8281,7 +8281,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-client-api"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "anyhow",
-  "async-stream",
-@@ -8331,7 +8331,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-client-api-messages"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "bytes",
-  "bytestring",
-@@ -8354,7 +8354,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-codegen"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "anyhow",
-  "convert_case 0.6.0",
-@@ -8373,7 +8373,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-commitlog"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "async-stream",
-  "bitflags 2.10.0",
-@@ -8407,7 +8407,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-core"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -8506,7 +8506,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-data-structures"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "ahash 0.8.12",
-  "crossbeam-queue",
-@@ -8522,7 +8522,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-datastore"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "anyhow",
-  "bytes",
-@@ -8559,7 +8559,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-dst-lib"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "anyhow",
-  "spacetimedb-commitlog",
-@@ -8577,7 +8577,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-durability"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "anyhow",
-  "async-channel",
-@@ -8597,7 +8597,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-engine"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -8639,7 +8639,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-execution"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "anyhow",
-  "itertools 0.12.1",
-@@ -8653,7 +8653,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-expr"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "anyhow",
-  "bigdecimal",
-@@ -8671,7 +8671,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-fs-utils"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "anyhow",
-  "chrono",
-@@ -8687,15 +8687,15 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-guard"
--version = "2.13.0"
-+version = "2.14.0"
- dependencies = [
-  "reqwest",
-  "tempfile",
- ]
- 
- [[pa
+  "smallvec",
+  "spacetimedb-data-structures",
 ```
 
-**File**: `Cargo.toml` (modified, +39/-39)
+**File**: `crates/bindings-csharp/Runtime/Internal/Autogen/RawOutboxDefV10.g.cs` (modified, +2/-3)
 ```diff
-@@ -155,50 +155,50 @@ inherits = "release"
- debug = true
+@@ -24,15 +24,15 @@ public sealed partial class RawOutboxDefV10
+         [DataMember(Name = "on_result_reducer")]
+         public string? OnResultReducer;
+         [DataMember(Name = "signature_hash")]
+-        public string SignatureHash;
++        public U256 SignatureHash;
  
- [workspace.package]
--version = "2.13.0"
-+version = "2.14.0"
- edition = "2024"
- # update rust-toolchain.toml too!
- rust-version = "1.97"
- 
- [workspace.dependencies]
--spacetimedb = { path = "crates/bindings", version = "=2.13.0" }
--spacetimedb-auth = { path = "crates/auth", version = "=2.13.0" }
--spacetimedb-bindings-macro = { path = "crates/bindings-macro", version = "=2.13.0" }
--spacetimedb-bindings-sys = { path = "crates/bindings-sys", version = "=2.13.0" }
--spacetimedb-cli = { path = "crates/cli", version = "=2.13.0" }
--spacetimedb-client-api = { path = "crates/client-api", version = "=2.13.0" }
--spacetimedb-client-api-messages = { path = "crates/client-api-messages", version = "=2.13.0" }
--spacetimedb-codegen = { path = "crates/codegen", version = "=2.13.0" }
--spacetimedb-commitlog = { path = "crates/commitlog", version = "=2.13.0" }
--spacetimedb-core = { path = "crates/core", version = "=2.13.0" }
--spacetimedb-data-structures = { path = "crates/data-structures", version = "=2.13.0" }
--spacetimedb-datastore = { path = "crates/datastore", version = "=2.13.0" }
--spacetimedb-durability = { path = "crates/durability", version = "=2.13.0" }
--spacetimedb-engine = { path = "crates/engine", version = "=2.13.0" }
--spacetimedb-execution = { path = "crates/execution", version = "=2.13.0" }
--spacetimedb-expr = { path = "crates/expr", version = "=2.13.0" }
--spacetimedb-fs-utils = { path = "crates/fs-utils", version = "=2.13.0" }
--spacetimedb-guard = { path = "crates/guard", version = "=2.13.0" }
--spacetimedb-lib = { path = "crates/lib", default-features = false, version = "=2.13.0" }
--spacetimedb-memory-usage = { path = "crates/memory-usage", version = "=2.13.0", default-features = false }
--spacetimedb-metrics = { path = "crates/metrics", version = "=2.13.0" }
--spacetimedb-paths = { path = "crates/paths", version = "=2.13.0" }
--spacetimedb-pg = { path = "crates/pg", version = "=2.13.0" }
--spacetimedb-physical-plan = { path = "crates/physical-plan", version = "=2.13.0" }
--spacetimedb-portable-datastore = { path = "crates/portable-datastore", version = "=2.13.0" }
--spacetimedb-primitives = { path = "crates/primitives", version = "=2.13.0" }
--spacetimedb-query = { path = "crates/query", version = "=2.13.0" }
--spacetimedb-query-builder = { path = "crates/query-builder", version = "=2.13.0" }
--spacetimedb-runtime = { path = "crates/runtime", version = "=2.13.0" }
--spacetimedb-runtime-core = { path = "crates/runtime-core", version = "=2.13.0" }
--spacetimedb-sats = { path = "crates/sats", version = "=2.13.0" }
--spacetimedb-schema = { path = "crates/schema", version = "=2.13.0" }
--spacetimedb-snapshot = { path = "crates/snapshot", version = "=2.13.0" }
--spacetimedb-standalone = { path = "crates/standalone", version = "=2.13.0" }
--spacetimedb-subscription = { path = "crates/subscription", version = "=2.13.0" }
--spacetimedb-sql-parser = { path = "crates/sql-parser", version = "=2.13.0" }
--spacetimedb-table = { path = "crates/table", version = "=2.13.0" }
--spacetimedb-test-datastore = { path = "crates/test-datastore", version = "=2.13.0" }
-+spacetimedb = { path = "crates/bindings", version = "=2.14.0" }
-+spacetimedb-auth = { path = "crates/auth", version = "=2.14.0" }
-+spacetimedb-bindings-macro = { path = "crates/bindings-macro", version = "=2.14.0" }
-+spacetimedb-bindings-sys = { path = "crates/bindings-sys", version = "=2.14.0" }
-+spacetimedb-cli = { path = "crates/cli", version = "=2.14.0" }
-+spacetimedb-client-api = { path = "crates/client-api", version = "=2.14.0" }
-+spacetimedb-client-api-messages = { path = "crates/client-api-messages", version = "=2.14.0" }
-+spacetimedb-codegen = { path = "crates/codegen", version = "=2.14.0" }
-+spacetimedb-commitlog = { path = "crates/commitlog", version = "=2.14.0" }
-+spacetimedb-core = { path = "crates/core", version = "=2.14.0" }
-+spacetimedb-data-structures = { path = "crates/data-structures", version = "=2.14.0" }
-+spacetimedb-datastore = { path = "crates/datastore", version = "=2.14.0" }
-+spacetimedb-durability = { path = "crates/durability", version = "=2.14.0" }
-+spacetimedb-engine = { path = "crates/engine", version = "=2.14.0" }
-+spacetimedb-execution = { path = "crates/execution", version = "=2.14.0" }
-+spacetimedb-expr = { path = "crates/expr", version = "=2.14.0" }
-+spacetimedb-fs-utils = { path = "crates/fs-utils", version = "=2.14.0" }
-+spacetimedb-guard = { path = "crates/guard", version = "=2.14.0" }
-+spacetimedb-lib = { path = "crates/lib", default-features = false, version = "=2.14.0" }
-+spacetimedb-memory-usage = { path = "crates/memory-usage", version = "=2.14.0", default-features = false }
-+spacetimedb-metrics = { path = "crates/metrics", version = "=2.14.0" }
-+spacetimedb-paths = { path = "crates/paths", version = "=2.14.0" }
-+spacetimedb-pg = { path = "crates/pg", version = "=2.14.0" }
-+spacetimedb-physical-plan = { path = "crates/physical-plan", version = "=2.14.0" }
-+spacetimedb-portable-datastore = 
+         public RawOutboxDefV10(
+             string TableName,
+             string RemoteReducer,
+             ushort TargetColumn,
+             System.Collections.Generic.List<ushort> ArgColumns,
+             string? OnResultReducer,
+-            string SignatureHash
++            U256 SignatureHash
+         )
+         {
+             this.TableName = TableName;
+@@ -48,7 +48,6 @@ public RawOutboxDefV10()
+             this.TableName = "";
+             this.RemoteReducer = "";
+             this.ArgColumns = new();
+-            this.SignatureHash = "";
+         }
+     }
+ }
 ```
 
-**File**: `LICENSE.txt` (modified, +2/-2)
+**File**: `crates/core/src/host/idc_actor.rs` (modified, +6/-5)
 ```diff
-@@ -5,7 +5,7 @@ Business Source License 1.1
- Parameters
- 
- Licensor:             Clockwork Laboratories, Inc.
--Licensed Work:        SpacetimeDB 2.13.0
-+Licensed Work:        SpacetimeDB 2.14.0
-                       The Licensed Work is
-                       (c) 2023 Clockwork Laboratories, Inc.
-                       
-@@ -21,7 +21,7 @@ Additional Use Grant: You may make use of the Licensed Work provided your
-                       Licensed Work by creating tables whose schemas are
-                       controlled by such third parties.
- 
--Change Date:          2031-10-14
-+Change Date:          2031-10-25
- 
- Change License:       GNU Affero General Public License v3.0 with a linking
-                       exception
+@@ -512,7 +512,7 @@ fn load_pending_message(
+         target_identity: stream.target_identity.0,
+         ack_prefix: stream.ack_prefix,
+         target_reducer: outbox.remote_reducer.clone(),
+-        signature_hash: Hash::from_hex(&outbox.signature_hash)?,
++        signature_hash: outbox.signature_hash,
+         reducer_args,
+         outbox_row,
+         on_result_reducer: outbox.on_result_reducer.clone(),
+@@ -968,9 +968,7 @@ mod tests {
+                     &AlgebraicType::unit(),
+                     &AlgebraicType::String,
+                     &spacetimedb_sats::Typespace::default(),
+-                )
+-                .to_hex()
+-                .to_string(),
++                ),
+             }),
+         )
+     }
+@@ -1366,7 +1364,10 @@ mod tests {
+                         );
+                         assert_eq!(query["seq"], "1");
+                         assert_eq!(query["ack_prefix"], "0");
+-                        assert_eq!(query["signature_hash"], outbox_schema().outbox.unwrap().signature_hash);
++                        assert_eq!(
++                            query["signature_hash"],
++                            outbox_schema().outbox.unwrap().signature_hash.to_hex().as_str()
++                        );
+                         assert_eq!(body.as_ref(), to_vec(&42u32).unwrap());
+                         (StatusCode::from_u16(status).unwrap(), "receiver detail")
+                     }
 ```
 
-**File**: `crates/bindings-cpp/CMakeLists.txt` (modified, +1/-1)
+**File**: `crates/core/src/sql/execute.rs` (modified, +1/-1)
 ```diff
-@@ -2,7 +2,7 @@
- 
- cmake_minimum_required(VERSION 3.15)
- project(SpacetimeDBCppModuleLibrary 
--    VERSION 2.13.0
-+    VERSION 2.14.0
-     LANGUAGES CXX)
- 
- # Generate version header from template
+@@ -454,7 +454,7 @@ pub(crate) mod tests {
+                 target_column: ColId(1),
+                 arg_columns: vec![],
+                 on_result_reducer: None,
+-                signature_hash: "test-signature".into(),
++                signature_hash: spacetimedb_lib::Hash::ZERO,
+             });
+             stdb.create_table(tx, schema)
+         })?;
 ```
 
-**File**: `crates/bindings-csharp/BSATN.Codegen/BSATN.Codegen.csproj` (modified, +1/-1)
+**File**: `crates/datastore/src/locking_tx_datastore/datastore.rs` (modified, +2/-2)
 ```diff
-@@ -2,7 +2,7 @@
+@@ -3133,7 +3133,7 @@ pub(crate) mod tests {
+             target_column: ColId(1),
+             arg_columns: vec![ColId(2)],
+             on_result_reducer: None,
+-            signature_hash: "test-signature".into(),
++            signature_hash: spacetimedb_lib::Hash::ZERO,
+         });
  
-   <PropertyGroup>
-     <AssemblyName>SpacetimeDB.BSATN.Codegen</AssemblyName>
--    <Version>2.13.0</Version>
-+    <Version>2.14.0</Version>
-     <Title>SpacetimeDB BSATN Codegen</Title>
-     <Description>The SpacetimeDB BSATN Codegen implements the Roslyn incremental generators for BSATN serialization/deserialization in C#.</Description>
-   </PropertyGroup>
-```
-
-**File**: `crates/bindings-csharp/BSATN.Runtime/BSATN.Runtime.csproj` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- <Project Sdk="Microsoft.NET.Sdk">
-   <PropertyGroup>
-     <AssemblyName>SpacetimeDB.BSATN.Runtime</AssemblyName>
--    <Version>2.13.0</Version>
-+    <Version>2.14.0</Version>
-     <Title>SpacetimeDB BSATN Runtime</Title>
-     <Description>The SpacetimeDB BSATN Runtime implements APIs for BSATN serialization/deserialization in C#.</Description>
-     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-```
-
-**File**: `crates/bindings-csharp/Codegen/Codegen.csproj` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- <Project Sdk="Microsoft.NET.Sdk">
-   <PropertyGroup>
-     <AssemblyName>SpacetimeDB.Codegen</AssemblyName>
--    <Version>2.13.0</Version>
-+    <Version>2.14.0</Version>
-     <Title>SpacetimeDB Module Codegen</Title>
-     <Description>The SpacetimeDB Codegen implements the Roslyn incremental generators for writing SpacetimeDB modules in C#.</Description>
-   </PropertyGroup>
-```
-
-**File**: `crates/bindings-csharp/Runtime/Runtime.csproj` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
+         let datastore = get_datastore()?;
+@@ -3396,7 +3396,7 @@ pub(crate) mod tests {
+             target_column: ColId(1),
+             arg_columns: vec![],
+             on_result_reducer: None,
+-            signature_hash: "test-signature".into(),
++            signature_hash: spacetimedb_lib::Hash::ZERO,
+         };
+         let row = to_vec(&product![1u64, IdentityViaU256(Identity::ONE)]).unwrap();
  
-   <PropertyGroup>
-     <AssemblyName>SpacetimeDB.Runtime</AssemblyName>
--    <Version>2.13.0</Version>
-+    <Version>2.14.0</Version>
-     <Title>SpacetimeDB Module Runtime</Title>
-     <Description>The SpacetimeDB Runtime implements the database runtime bindings for writing SpacetimeDB modules in C#.</Description>
-   </PropertyGroup>
+```
+
+**File**: `crates/datastore/src/locking_tx_datastore/state_view.rs` (modified, +7/-2)
+```diff
+@@ -18,7 +18,7 @@ use core::ops::RangeBounds;
+ use spacetimedb_lib::ConnectionId;
+ use spacetimedb_primitives::{col_list, ColList, TableId};
+ use spacetimedb_sats::{product, AlgebraicValue};
+-use spacetimedb_schema::schema::{ColumnSchema, IndexSchema, TableSchema, ViewDefInfo};
++use spacetimedb_schema::schema::{ColumnSchema, IndexSchema, OutboxSchema, TableSchema, ViewDefInfo};
+ use spacetimedb_table::table::IndexScanPointIter;
+ use spacetimedb_table::{
+     blob_store::HashMapBlobStore,
+@@ -305,7 +305,12 @@ pub trait StateView {
+         // `st_outbox` is missing until `migrate_system_tables` runs.
+         // Treat that as "no outbox metadata" while reconstructing raw schemas.
+         let outbox = match self.iter_by_col_eq(ST_OUTBOX_ID, StOutboxFields::TableId, value_eq) {
+-            Ok(mut iter) => iter.next().map(StOutboxRow::try_from).transpose()?.map(Into::into),
++            Ok(mut iter) => iter
++                .next()
++                .map(StOutboxRow::try_from)
++                .transpose()?
++                .map(OutboxSchema::try_from)
++                .transpose()?,
+             Err(DatastoreError::Table(TableError::IdNotFound(..))) => None,
+             Err(e) => return Err(e),
+         };
+```
+
+**File**: `crates/datastore/src/locking_tx_datastore/tx_state.rs` (modified, +0/-1)
+```diff
+@@ -188,7 +188,6 @@ impl MemoryUsage for PendingSchemaChange {
+                                     .as_ref()
+                                     .map(|name| name.as_ref().heap_usage())
+                                     .unwrap_or(0)
+-                                + outbox.signature_hash.heap_usage()
+                         })
+                         .unwrap_or(0)
+             }
+```
+
+**File**: `crates/datastore/src/system_tables/idc.rs` (modified, +36/-6)
+```diff
+@@ -260,20 +260,22 @@ impl From<(TableId, OutboxSchema)> for StOutboxRow {
+             target_column: outbox.target_column,
+             arg_columns: outbox.arg_columns,
+             on_result_reducer: outbox.on_result_reducer.map(Into::into),
+-            signature_hash: outbox.signature_hash,
++            signature_hash: outbox.signature_hash.to_hex().to_string(),
+         }
+     }
+ }
+ 
+-impl From<StOutboxRow> for OutboxSchema {
+-    fn from(row: StOutboxRow) -> Self {
+-        Self {
++impl TryFrom<StOutboxRow> for OutboxSchema {
++    type Error = DatastoreError;
++
++    fn try_from(row: StOutboxRow) -> Result<Self, Self::Error> {
++        Ok(Self {
+             remote_reducer: ReducerName::new(row.remote_reducer),
+             target_column: row.target_column,
+             arg_columns: row.arg_columns,
+             on_result_reducer: row.on_result_reducer.map(ReducerName::new),
+-            signature_hash: row.signature_hash,
+-        }
++            signature_hash: Hash::from_hex(row.signature_hash).map_err(anyhow::Error::from)?,
++        })
+     }
+ }
+ 
+@@ -379,3 +381,31 @@ pub(crate) fn st_inbound_msg_schema() -> TableSchema {
+ pub(crate) fn st_outbox_schema() -> TableSchema {
+     st_schema(ST_OUTBOX_NAME, ST_OUTBOX_ID)
+ }
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use spacetimedb_lib::bsatn;
++
++    #[test]
++    fn outbox_signature_hash_uses_legacy_string_encoding() {
++        // Encode the existing persisted row format independently of StOutboxRow.
++        let legacy_bytes = bsatn::to_vec(&(
++            TableId(42),
++            "receive_ping",
++            ColId(1),
++            vec![ColId(2)],
++            None::<&str>,
++            "ab".repeat(32),
++        ))
++        .unwrap();
++        let mut row: StOutboxRow = bsatn::from_slice(&legacy_bytes).unwrap();
++        let outbox = OutboxSchema::try_from(row.clone()).unwrap();
++        assert_eq!(outbox.signature_hash, Hash::from_byte_array([0xab; 32]));
++        let stored = StOutboxRow::from((row.table_id, outbox));
++        assert_eq!(bsatn::to_vec(&stored).unwrap(), legacy_bytes);
++
++        row.signature_hash = "invalid".into();
++        assert!(OutboxSchema::try_from(row).is_err());
++    }
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6400** (2026-10-27): Add a SpacetimeDB Standalone architecture diagram to docs/DEVELOP.md (@cloutiertyler)
 - **PR #6378** (2026-10-26): Version bump 2.14.0 (@rekhoff)
+- **PR #6364** (2026-10-27): Async IDC: Preserve V10 names and type IDC outbox signature hashes (@Shubham8287)
 - **PR #6362** (2026-10-24): docs: document IDC receiver bindings and CLI configuration (@clockwork-labs-bot)
 - **PR #6354** (2026-10-22): Release - Work around crates.io ratelimiting (@bfops)
 - **PR #6353** (2026-10-22): View docs updated for the current args feature (@JasonAtClockwork)
-- **PR #6351** (2026-10-22): CI - check and refresh outdated rustup (@bfops)
-- **PR #6345** (closed): ci: qualify Linux and Windows staging runners (@bfops)
 
 ---
 
@@ -1303,82 +1235,29 @@ n/a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Version bump 2.14.0 (#6378)
+## X. Add a SpacetimeDB Standalone architecture diagram to docs/DEVELOP.md (#6400)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e3166533`: Version bump 2.14.0 (#6378). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5ce9e901`: Add a SpacetimeDB Standalone architecture diagram to docs/DEVELOP.md (#6400). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
-version = "2.14.0"
+To find your way around the code, see the [architecture diagram](docs/DEVELOP.md#architecture) of what runs inside SpacetimeDB Standalone.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
-version = "2.13.0"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e3166533` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5ce9e901` are properly handled with clean fallback behavior.

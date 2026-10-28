@@ -305,8 +305,8 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/TeleOCR",
     "sourceVersion": "hf-xingchen-agi-teleocr",
     "license": "Open-Source",
-    "contentHash": "1bc85b2012862b883d21d4f1bbf8404db963c0be30217f80661df3c7f81bc414",
-    "lastHarvestedAt": "2026-10-25T11:12:02.936Z",
+    "contentHash": "c2e631605ffbe0a0873d4f113ed5d62e049e431189cbe7bace7e88174ecb2684",
+    "lastHarvestedAt": "2026-10-28T04:21:40.020Z",
     "learningId": "learn-huggingface-xingchen-agi-teleocr"
   },
   "hf-qwen-qwen-image-2.1": {
@@ -7053,10 +7053,10 @@
     "repository": "clockworklabs/SpacetimeDB",
     "platform": "github",
     "sourceUrl": "https://github.com/clockworklabs/SpacetimeDB",
-    "sourceVersion": "e3166533",
+    "sourceVersion": "5ce9e901",
     "license": "NOASSERTION",
-    "contentHash": "1560c987b2305e2dd3f6f5b43c9cd84932cc6923848e72f0ec11d1da7ae8f899",
-    "lastHarvestedAt": "2026-10-27T14:50:31.246Z",
+    "contentHash": "8b716857b0c7a91e71590a99cff0d68b17935830aedcbdeb9d54a384ffaf5ebb",
+    "lastHarvestedAt": "2026-10-28T04:21:52.541Z",
     "learningId": "learn-github-clockworklabs-spacetimedb"
   },
   "apollographql-apollo-kotlin": {

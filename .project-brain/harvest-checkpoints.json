@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T04:10:11.085Z",
+  "last_updated": "2026-10-28T04:21:52.550Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -350,14 +350,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xingchen-agi-teleocr",
-      "content_hash": "1bc85b2012862b883d21d4f1bbf8404db963c0be30217f80661df3c7f81bc414",
-      "verified_at": "2026-10-25T11:12:02.943Z",
+      "content_hash": "c2e631605ffbe0a0873d4f113ed5d62e049e431189cbe7bace7e88174ecb2684",
+      "verified_at": "2026-10-28T04:21:40.028Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T11:12:02.943Z"
+      "last_updated": "2026-10-28T04:21:40.028Z"
     },
     "Qwen/Qwen-Image-2.1": {
       "repository": "Qwen/Qwen-Image-2.1",
@@ -10626,14 +10626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clockworklabs-spacetimedb",
-      "content_hash": "1560c987b2305e2dd3f6f5b43c9cd84932cc6923848e72f0ec11d1da7ae8f899",
-      "verified_at": "2026-10-27T14:50:31.255Z",
+      "content_hash": "8b716857b0c7a91e71590a99cff0d68b17935830aedcbdeb9d54a384ffaf5ebb",
+      "verified_at": "2026-10-28T04:21:52.550Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T14:50:31.255Z"
+      "last_updated": "2026-10-28T04:21:52.550Z"
     },
     "apollographql/apollo-kotlin": {
       "repository": "apollographql/apollo-kotlin",

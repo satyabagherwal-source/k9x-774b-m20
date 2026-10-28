@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-792F",
-    "timestamp": "2026-10-26T18:25:27.207Z",
-    "repository": "lingui/js-lingui",
-    "learningId": "learn-github-lingui-js-lingui",
-    "contentHash": "2847b606085618fa91ae8d9e5dbad307c3969cd79ec9e84fd820f3f420c77385",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-79YY",
-    "timestamp": "2026-10-26T18:25:28.378Z",
-    "repository": "Kuberwastaken/claurst",
-    "learningId": "learn-github-kuberwastaken-claurst",
-    "contentHash": "faa726537fa2739e8e4ce4b9a20c237b465171c7c494798801711b34f147683f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-7F7U",
     "timestamp": "2026-10-26T18:25:35.178Z",
     "repository": "wzh4869/AppPorts",
@@ -7492,6 +7462,36 @@
     "contentHash": "729119fec601a54b415c11f8aafb0d941cb326455f647b9720c14b4886a0b6e7",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-XU7K",
+    "timestamp": "2026-10-28T04:21:40.016Z",
+    "repository": "XingChen-AGI/TeleOCR",
+    "learningId": "learn-huggingface-xingchen-agi-teleocr",
+    "contentHash": "c2e631605ffbe0a0873d4f113ed5d62e049e431189cbe7bace7e88174ecb2684",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-Y3VE",
+    "timestamp": "2026-10-28T04:21:52.538Z",
+    "repository": "clockworklabs/SpacetimeDB",
+    "learningId": "learn-github-clockworklabs-spacetimedb",
+    "contentHash": "8b716857b0c7a91e71590a99cff0d68b17935830aedcbdeb9d54a384ffaf5ebb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

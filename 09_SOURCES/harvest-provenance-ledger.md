@@ -5691,3 +5691,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0` | `https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0` | `hf-stabili` | Multi-dimensional audit evidence | 2026-10-28T04:03:37.916Z |
 | `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `7709b2f9` | Multi-dimensional audit evidence | 2026-10-28T04:03:46.696Z |
 | `learn-huggingface-meta-llama-llama-3-1-8b-instruct` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-28T04:10:11.077Z |
+| `learn-huggingface-xingchen-agi-teleocr` | `https://huggingface.co/XingChen-AGI/TeleOCR` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-28T04:21:40.020Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `5ce9e901` | Multi-dimensional audit evidence | 2026-10-28T04:21:52.541Z |
