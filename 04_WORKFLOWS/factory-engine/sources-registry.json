@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T17:12:52.852Z",
-    "lastVerified": "2026-10-28T17:12:52.852Z",
+    "lastChecked": "2026-10-28T17:20:48.410Z",
+    "lastVerified": "2026-10-28T17:20:48.410Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -193,8 +193,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T16:52:00.399Z",
-    "lastVerified": "2026-10-28T16:52:00.399Z",
+    "lastChecked": "2026-10-28T17:20:48.401Z",
+    "lastVerified": "2026-10-28T17:20:48.401Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -716,9 +716,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-10-28T14:08:41.852Z",
+    "lastChecked": "2026-10-28T17:20:43.439Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-10-28T14:08:41.852Z"
+    "lastVerified": "2026-10-28T17:20:43.439Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -5287,5 +5287,50 @@
     "lastChecked": "2026-10-28T17:12:51.406Z",
     "revisionIdentifier": "2046b05e",
     "lastVerified": "2026-10-28T17:12:51.406Z"
+  },
+  "silasmarvin-lsp-ai": {
+    "name": "lsp-ai",
+    "officialUrl": "https://github.com/SilasMarvin/lsp-ai",
+    "lastChecked": "2026-10-28T17:20:33.144Z",
+    "revisionIdentifier": "1e910a8c",
+    "lastVerified": "2026-10-28T17:20:33.144Z"
+  },
+  "hf-intfloat-multilingual-e5-small": {
+    "name": "intfloat/multilingual-e5-small",
+    "officialUrl": "https://huggingface.co/intfloat/multilingual-e5-small",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T17:20:36.014Z",
+    "lastVerified": "2026-10-28T17:20:36.014Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
+    "contentHash": "30f59f6bfe23ca939bceefada05575e08c8c8bf220308c1b213a1e91396adf36",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "resocoder-flutter-tdd-clean-architecture-course": {
+    "name": "flutter-tdd-clean-architecture-course",
+    "officialUrl": "https://github.com/ResoCoder/flutter-tdd-clean-architecture-course",
+    "lastChecked": "2026-10-28T17:20:38.697Z",
+    "revisionIdentifier": "6c515614",
+    "lastVerified": "2026-10-28T17:20:38.697Z"
+  },
+  "someengineering-fixinventory": {
+    "name": "fixinventory",
+    "officialUrl": "https://github.com/someengineering/fixinventory",
+    "lastChecked": "2026-10-28T17:20:40.843Z",
+    "revisionIdentifier": "21183338",
+    "lastVerified": "2026-10-28T17:20:40.843Z"
+  },
+  "olric-data-olric": {
+    "name": "olric",
+    "officialUrl": "https://github.com/olric-data/olric",
+    "lastChecked": "2026-10-28T17:20:45.710Z",
+    "revisionIdentifier": "c49c44a8",
+    "lastVerified": "2026-10-28T17:20:45.710Z"
   }
 }

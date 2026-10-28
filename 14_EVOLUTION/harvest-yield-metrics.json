@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T17:12:41.619Z",
-  "total_cycles_completed": 5834,
-  "total_learnings_persisted": 5834,
+  "last_updated": "2026-10-28T17:20:37.002Z",
+  "total_cycles_completed": 5835,
+  "total_learnings_persisted": 5835,
   "total_rules_promoted": 5305,
   "history": [
-    {
-      "timestamp": "2026-10-28T02:48:08.370Z",
-      "repository": "react/react-native",
-      "learningId": "learn-github-react-react-native",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T02:48:09.855Z",
       "repository": "convaiinnovations/laya",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-28T17:12:41.619Z",
       "repository": "google/gemma-4-26B-A4B-it",
       "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T17:20:37.002Z",
+      "repository": "intfloat/multilingual-e5-small",
+      "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
