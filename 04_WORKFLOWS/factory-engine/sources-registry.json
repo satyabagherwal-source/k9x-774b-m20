@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T10:06:40.109Z",
-    "lastVerified": "2026-10-28T10:06:40.109Z",
+    "lastChecked": "2026-10-28T10:20:03.453Z",
+    "lastVerified": "2026-10-28T10:20:03.453Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -238,9 +238,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T08:25:33.413Z",
+    "lastChecked": "2026-10-28T10:17:58.517Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T08:25:33.413Z"
+    "lastVerified": "2026-10-28T10:17:58.517Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -817,9 +817,9 @@
   "provablehq-snarkos": {
     "name": "snarkOS",
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
-    "lastChecked": "2026-10-28T04:10:08.144Z",
+    "lastChecked": "2026-10-28T10:17:53.729Z",
     "revisionIdentifier": "6b124303",
-    "lastVerified": "2026-10-28T04:10:08.144Z"
+    "lastVerified": "2026-10-28T10:17:53.729Z"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -2385,5 +2385,50 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "orf-gping": {
+    "name": "gping",
+    "officialUrl": "https://github.com/orf/gping",
+    "lastChecked": "2026-10-28T10:17:43.568Z",
+    "revisionIdentifier": "fad1ee3c",
+    "lastVerified": "2026-10-28T10:17:43.568Z"
+  },
+  "hf-psrben-visionhope": {
+    "name": "PSRben/VisionHOPE",
+    "officialUrl": "https://huggingface.co/PSRben/VisionHOPE",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T10:17:46.201Z",
+    "lastVerified": "2026-10-28T10:17:46.201Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-psrben-visionhope",
+    "contentHash": "c2cd76b795a830c4291740f2007a2da96dc0a0101414a5a12c7e15fbdb1b33e9",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jhen0409-react-native-debugger": {
+    "name": "react-native-debugger",
+    "officialUrl": "https://github.com/jhen0409/react-native-debugger",
+    "lastChecked": "2026-10-28T10:17:48.553Z",
+    "revisionIdentifier": "bd3435a4",
+    "lastVerified": "2026-10-28T10:17:48.553Z"
+  },
+  "sorintlab-stolon": {
+    "name": "stolon",
+    "officialUrl": "https://github.com/sorintlab/stolon",
+    "lastChecked": "2026-10-28T10:17:51.080Z",
+    "revisionIdentifier": "bcea7a75",
+    "lastVerified": "2026-10-28T10:17:51.080Z"
+  },
+  "milvus-io-bootcamp": {
+    "name": "bootcamp",
+    "officialUrl": "https://github.com/milvus-io/bootcamp",
+    "lastChecked": "2026-10-28T10:17:56.080Z",
+    "revisionIdentifier": "b2be8cc8",
+    "lastVerified": "2026-10-28T10:17:56.080Z"
   }
 }

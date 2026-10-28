@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-YCQZ",
-    "timestamp": "2026-10-27T11:34:17.867Z",
-    "repository": "webrtc-rs/webrtc",
-    "learningId": "learn-github-webrtc-rs-webrtc",
-    "contentHash": "f0fda1bbcc2e63941496d6388dcbed2ff9cdd4440b9bb61c974f769a43b42da8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-4G5J",
     "timestamp": "2026-10-27T11:39:02.215Z",
     "repository": "webrecorder/pywb",
@@ -7490,6 +7475,21 @@
     "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
     "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
     "contentHash": "6e1a1a1b546d1d9454ac4b20609bc0451215b2f71c8b99d48a9c2e5963e51a04",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-QOEO",
+    "timestamp": "2026-10-28T10:20:00.912Z",
+    "repository": "PSRben/VisionHOPE",
+    "learningId": "learn-huggingface-psrben-visionhope",
+    "contentHash": "c2cd76b795a830c4291740f2007a2da96dc0a0101414a5a12c7e15fbdb1b33e9",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
     "barriers": {

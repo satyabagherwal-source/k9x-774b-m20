@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T10:06:37.581Z",
-  "total_cycles_completed": 5715,
-  "total_learnings_persisted": 5715,
-  "total_rules_promoted": 5191,
+  "last_updated": "2026-10-28T10:20:00.921Z",
+  "total_cycles_completed": 5716,
+  "total_learnings_persisted": 5716,
+  "total_rules_promoted": 5193,
   "history": [
-    {
-      "timestamp": "2026-10-27T20:54:51.695Z",
-      "repository": "microsoft/fluentui",
-      "learningId": "learn-github-microsoft-fluentui",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T21:01:37.517Z",
       "repository": "ornith-ai/Ornith-1.5-122B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-28T10:06:37.581Z",
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T10:20:00.921Z",
+      "repository": "PSRben/VisionHOPE",
+      "learningId": "learn-huggingface-psrben-visionhope",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
