@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T18:48:42.524Z",
-  "total_cycles_completed": 5867,
-  "total_learnings_persisted": 5867,
-  "total_rules_promoted": 5332,
+  "last_updated": "2026-10-28T18:57:52.093Z",
+  "total_cycles_completed": 5872,
+  "total_learnings_persisted": 5872,
+  "total_rules_promoted": 5335,
   "history": [
-    {
-      "timestamp": "2026-10-28T04:41:52.678Z",
-      "repository": "nvidia/Nemotron-3-Diarization",
-      "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T04:41:58.792Z",
-      "repository": "zulip/zulip",
-      "learningId": "learn-github-zulip-zulip",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T04:42:05.919Z",
-      "repository": "t8y2/dbx",
-      "learningId": "learn-github-t8y2-dbx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T04:48:37.673Z",
-      "repository": "Lightricks/LTX-2.5",
-      "learningId": "learn-huggingface-lightricks-ltx-2-5",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T04:56:04.527Z",
-      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-      "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T05:03:37.477Z",
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-28T18:48:42.524Z",
       "repository": "dragonflydb/dragonfly",
       "learningId": "learn-github-dragonflydb-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T18:57:36.559Z",
+      "repository": "jialinyyzz/humanizer",
+      "learningId": "learn-huggingface-jialinyyzz-humanizer",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T18:57:38.017Z",
+      "repository": "jhspetersson/fselect",
+      "learningId": "learn-github-jhspetersson-fselect",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T18:57:47.166Z",
+      "repository": "k3s-io/k3s",
+      "learningId": "learn-github-k3s-io-k3s",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T18:57:50.573Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T18:57:52.093Z",
+      "repository": "duckdb/duckdb",
+      "learningId": "learn-github-duckdb-duckdb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

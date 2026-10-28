@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T15:50:45.007Z",
+  "last_updated": "2026-10-28T18:57:38.014Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3225,6 +3225,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-rqlite-rqlite"
+    },
+    {
+      "id": "CD-8C7Y",
+      "directive_title": "Empirical Invariant Guard in searcher.rs",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "jhspetersson/fselect",
+      "source_commit": "277c4890",
+      "date_staged": "2026-10-28",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-jhspetersson-fselect"
     }
   ]
 }

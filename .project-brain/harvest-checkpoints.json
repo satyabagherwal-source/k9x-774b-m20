@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T18:48:42.527Z",
+  "last_updated": "2026-10-28T18:57:52.097Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1760,14 +1760,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-jialinyyzz-humanizer",
-      "content_hash": "e0de5996f7a94e1a3399fed9f5ae96ec2df93e3b32360ab4b4afdfe87be4c1c8",
-      "verified_at": "2026-10-28T01:49:33.399Z",
+      "content_hash": "14f400da815703166329fc7d63f79f21d6cdf245376b8c88aade5e8393f313ee",
+      "verified_at": "2026-10-28T18:57:36.563Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T01:49:33.399Z"
+      "last_updated": "2026-10-28T18:57:36.563Z"
     },
     "autotrust/JEV-27B-VL": {
       "repository": "autotrust/JEV-27B-VL",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "0c9b9b1d7cebd9d44847afa88a2c9134f737d6c7e9c3504fcbfefdca519e87ec",
-      "verified_at": "2026-10-28T15:29:50.123Z",
+      "content_hash": "025cd2958a6cc231f3ee708b7a098b572b293e0cf7aa594f03c69045ebd6a510",
+      "verified_at": "2026-10-28T18:57:50.577Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T15:29:50.123Z"
+      "last_updated": "2026-10-28T18:57:50.577Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -9381,14 +9381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duckdb-duckdb",
-      "content_hash": "34d3f1d4e30216a41a1e60d17bb0485cd55baf6ca4a96a14d1ba2283d6b60d96",
-      "verified_at": "2026-10-27T13:28:34.880Z",
+      "content_hash": "1cbdaa46855fdf478c318b7f41b5798d4ce8b141b1118068c17c49858ecdc719",
+      "verified_at": "2026-10-28T18:57:52.097Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:28:34.880Z"
+      "last_updated": "2026-10-28T18:57:52.097Z"
     },
     "megh-bari/pattern-craft": {
       "repository": "megh-bari/pattern-craft",
@@ -9591,14 +9591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-k3s-io-k3s",
-      "content_hash": "f0692c5d51e8e89708371c42a6caa6e4f42181e1a422b0efe8d18f9826248ac8",
-      "verified_at": "2026-10-27T19:38:52.387Z",
+      "content_hash": "aa7ec9501d00598efda5dfed3fba8c784d33e7b69dce9dbc5ced367ed67cb5f8",
+      "verified_at": "2026-10-28T18:57:47.169Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T19:38:52.387Z"
+      "last_updated": "2026-10-28T18:57:47.169Z"
     },
     "Ataraxy-Labs/sem": {
       "repository": "Ataraxy-Labs/sem",
@@ -10581,14 +10581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jhspetersson-fselect",
-      "content_hash": "2d5bd257ec1818ae70357a37924689926e724a57235e048ffa7f4781abda7a20",
-      "verified_at": "2026-10-27T15:39:34.240Z",
+      "content_hash": "3323057916f8a0254a69f213aaf5dcefefb562d4dce7c793383f015070ad16c0",
+      "verified_at": "2026-10-28T18:57:38.020Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T15:39:34.240Z"
+      "last_updated": "2026-10-28T18:57:38.020Z"
     },
     "mikepenz/AboutLibraries": {
       "repository": "mikepenz/AboutLibraries",

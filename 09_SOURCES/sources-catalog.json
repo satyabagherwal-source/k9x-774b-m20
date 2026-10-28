@@ -85,8 +85,8 @@
     "sourceUrl": "https://huggingface.co/jialinyyzz/humanizer",
     "sourceVersion": "hf-jialinyyzz-humanizer",
     "license": "Open-Source",
-    "contentHash": "e0de5996f7a94e1a3399fed9f5ae96ec2df93e3b32360ab4b4afdfe87be4c1c8",
-    "lastHarvestedAt": "2026-10-28T01:49:33.391Z",
+    "contentHash": "14f400da815703166329fc7d63f79f21d6cdf245376b8c88aade5e8393f313ee",
+    "lastHarvestedAt": "2026-10-28T18:57:36.548Z",
     "learningId": "learn-huggingface-jialinyyzz-humanizer"
   },
   "hf-autotrust-jev-27b-vl": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "5e26ccca",
+    "sourceVersion": "028bd9d9",
     "license": "Apache-2.0",
-    "contentHash": "0c9b9b1d7cebd9d44847afa88a2c9134f737d6c7e9c3504fcbfefdca519e87ec",
-    "lastHarvestedAt": "2026-10-28T15:29:50.114Z",
+    "contentHash": "025cd2958a6cc231f3ee708b7a098b572b293e0cf7aa594f03c69045ebd6a510",
+    "lastHarvestedAt": "2026-10-28T18:57:50.568Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "d1de96c1",
+    "sourceVersion": "6287a4e5",
     "license": "MIT",
-    "contentHash": "34d3f1d4e30216a41a1e60d17bb0485cd55baf6ca4a96a14d1ba2283d6b60d96",
-    "lastHarvestedAt": "2026-10-27T13:28:34.874Z",
+    "contentHash": "1cbdaa46855fdf478c318b7f41b5798d4ce8b141b1118068c17c49858ecdc719",
+    "lastHarvestedAt": "2026-10-28T18:57:52.087Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {
@@ -6313,10 +6313,10 @@
     "repository": "k3s-io/k3s",
     "platform": "github",
     "sourceUrl": "https://github.com/k3s-io/k3s",
-    "sourceVersion": "a443fd39",
+    "sourceVersion": "0cc587fa",
     "license": "Apache-2.0",
-    "contentHash": "f0692c5d51e8e89708371c42a6caa6e4f42181e1a422b0efe8d18f9826248ac8",
-    "lastHarvestedAt": "2026-10-27T19:38:52.377Z",
+    "contentHash": "aa7ec9501d00598efda5dfed3fba8c784d33e7b69dce9dbc5ced367ed67cb5f8",
+    "lastHarvestedAt": "2026-10-28T18:57:47.160Z",
     "learningId": "learn-github-k3s-io-k3s"
   },
   "open-source-legal-opencontracts": {
@@ -7013,10 +7013,10 @@
     "repository": "jhspetersson/fselect",
     "platform": "github",
     "sourceUrl": "https://github.com/jhspetersson/fselect",
-    "sourceVersion": "f85f1b54",
+    "sourceVersion": "277c4890",
     "license": "Apache-2.0",
-    "contentHash": "2d5bd257ec1818ae70357a37924689926e724a57235e048ffa7f4781abda7a20",
-    "lastHarvestedAt": "2026-10-27T15:39:34.231Z",
+    "contentHash": "3323057916f8a0254a69f213aaf5dcefefb562d4dce7c793383f015070ad16c0",
+    "lastHarvestedAt": "2026-10-28T18:57:38.003Z",
     "learningId": "learn-github-jhspetersson-fselect"
   },
   "mikepenz-aboutlibraries": {

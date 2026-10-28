@@ -5890,3 +5890,8 @@
 | `CYCLE-20261028-WQY8` | `2026-10-28T18:48:37.232Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5370` | Yes (`7ac9efae...`) |
 | `CYCLE-20261028-WTB0` | `2026-10-28T18:48:40.284Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5371, Rule 5372` | Yes (`273c5e57...`) |
 | `CYCLE-20261028-WV10` | `2026-10-28T18:48:42.516Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5373` | Yes (`8c57b26b...`) |
+| `CYCLE-20261028-8B35` | `2026-10-28T18:57:36.545Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md` | Yes (`14f400da...`) |
+| `CYCLE-20261028-8C7J` | `2026-10-28T18:57:37.999Z` | `jhspetersson/fselect` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md` | Yes (`33230579...`) |
+| `CYCLE-20261028-8J9X` | `2026-10-28T18:57:47.157Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5374` | Yes (`aa7ec950...`) |
+| `CYCLE-20261028-8LWK` | `2026-10-28T18:57:50.564Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5375` | Yes (`025cd295...`) |
+| `CYCLE-20261028-8N2R` | `2026-10-28T18:57:52.083Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5376` | Yes (`1cbdaa46...`) |

@@ -5899,3 +5899,8 @@ Every entry in this ledger must capture:
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `38be8ce3` | Multi-dimensional audit evidence | 2026-10-28T18:48:37.235Z |
 | `learn-huggingface-mudler-locate-anything-cpp-gguf` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-10-28T18:48:40.287Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `2391d544` | Multi-dimensional audit evidence | 2026-10-28T18:48:42.519Z |
+| `learn-huggingface-jialinyyzz-humanizer` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-10-28T18:57:36.548Z |
+| `learn-github-jhspetersson-fselect` | `https://github.com/jhspetersson/fselect` | `277c4890` | Multi-dimensional audit evidence | 2026-10-28T18:57:38.003Z |
+| `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `0cc587fa` | Multi-dimensional audit evidence | 2026-10-28T18:57:47.160Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `028bd9d9` | Multi-dimensional audit evidence | 2026-10-28T18:57:50.568Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `6287a4e5` | Multi-dimensional audit evidence | 2026-10-28T18:57:52.087Z |

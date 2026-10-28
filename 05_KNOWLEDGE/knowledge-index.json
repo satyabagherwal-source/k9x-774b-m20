@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T18:48:42.457Z",
+  "last_updated": "2026-10-28T18:57:52.012Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6419,8 +6419,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "5e26ccca",
-      "content_hash": "0c9b9b1d7cebd9d44847afa88a2c9134f737d6c7e9c3504fcbfefdca519e87ec",
+      "source_version": "028bd9d9",
+      "content_hash": "025cd2958a6cc231f3ee708b7a098b572b293e0cf7aa594f03c69045ebd6a510",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -6563,6 +6563,11 @@
           "number": 5078,
           "title": "pkg/k8s): Remove redundant DeepCopy in GetPodMetadata",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5375,
+          "title": "docs: document Standalone DNS Proxy trust limitation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6570,7 +6575,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T15:29:50.007Z",
+      "verified_at": "2026-10-28T18:57:50.475Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10083,8 +10088,8 @@
       "slug": "duckdb-duckdb",
       "platform": "github",
       "source_url": "https://github.com/duckdb/duckdb",
-      "source_version": "d1de96c1",
-      "content_hash": "34d3f1d4e30216a41a1e60d17bb0485cd55baf6ca4a96a14d1ba2283d6b60d96",
+      "source_version": "6287a4e5",
+      "content_hash": "1cbdaa46855fdf478c318b7f41b5798d4ce8b141b1118068c17c49858ecdc719",
       "dossier_path": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "promoted_rules": [
@@ -10127,6 +10132,11 @@
           "number": 4101,
           "title": "Non-Spreading Sentinel Representation for Algebraic Monoids Over Infinite Bounds",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5376,
+          "title": "Keep bulk insert rows invisible until commit and revert failed appends during co",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10134,7 +10144,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:28:34.802Z",
+      "verified_at": "2026-10-28T18:57:51.993Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23384,7 +23394,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jialinyyzz/humanizer",
       "source_version": "hf-jialinyyzz-humanizer",
-      "content_hash": "e0de5996f7a94e1a3399fed9f5ae96ec2df93e3b32360ab4b4afdfe87be4c1c8",
+      "content_hash": "14f400da815703166329fc7d63f79f21d6cdf245376b8c88aade5e8393f313ee",
       "dossier_path": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
       "promoted_rules": [
@@ -23481,7 +23491,7 @@
         "learn-huggingface-hf-jialinyyzz-humanizer-mv41atmq",
         "learn-huggingface-hf-jialinyyzz-humanizer-mv4fa4lf"
       ],
-      "verified_at": "2026-10-28T01:49:33.315Z",
+      "verified_at": "2026-10-28T18:57:36.445Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31737,8 +31747,8 @@
       "slug": "jhspetersson-fselect",
       "platform": "github",
       "source_url": "https://github.com/jhspetersson/fselect",
-      "source_version": "f85f1b54",
-      "content_hash": "2d5bd257ec1818ae70357a37924689926e724a57235e048ffa7f4781abda7a20",
+      "source_version": "277c4890",
+      "content_hash": "3323057916f8a0254a69f213aaf5dcefefb562d4dce7c793383f015070ad16c0",
       "dossier_path": "07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md",
       "promoted_rules": [
@@ -31778,7 +31788,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T15:39:34.137Z",
+      "verified_at": "2026-10-28T18:57:37.899Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32340,8 +32350,8 @@
       "slug": "k3s-io-k3s",
       "platform": "github",
       "source_url": "https://github.com/k3s-io/k3s",
-      "source_version": "a443fd39",
-      "content_hash": "f0692c5d51e8e89708371c42a6caa6e4f42181e1a422b0efe8d18f9826248ac8",
+      "source_version": "0cc587fa",
+      "content_hash": "aa7ec9501d00598efda5dfed3fba8c784d33e7b69dce9dbc5ced367ed67cb5f8",
       "dossier_path": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "promoted_rules": [
@@ -32374,6 +32384,11 @@
           "number": 4969,
           "title": "Add containerd server/metrics plugin",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5374,
+          "title": "Set IdleTimeout on the supervisor http server (#14904)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32381,7 +32396,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T19:38:52.287Z",
+      "verified_at": "2026-10-28T18:57:47.063Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -145687,6 +145702,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T18:48:42.441Z"
+    },
+    "rule-5374": {
+      "learning_id": "rule-5374",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5374,
+      "title": "Set IdleTimeout on the supervisor http server (#14904)",
+      "source_url": "https://github.com/k3s-io/k3s",
+      "source_version": "0cc587fa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T18:57:47.063Z"
+    },
+    "rule-5375": {
+      "learning_id": "rule-5375",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5375,
+      "title": "docs: document Standalone DNS Proxy trust limitation",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "028bd9d9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T18:57:50.475Z"
+    },
+    "rule-5376": {
+      "learning_id": "rule-5376",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5376,
+      "title": "Keep bulk insert rows invisible until commit and revert failed appends during co",
+      "source_url": "https://github.com/duckdb/duckdb",
+      "source_version": "6287a4e5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T18:57:51.993Z"
     }
   },
   "aliases": {

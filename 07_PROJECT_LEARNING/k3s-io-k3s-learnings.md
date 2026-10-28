@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source**: github ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
-> **Source Version**: `a443fd39`  
+> **Source Version**: `0cc587fa`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T19:38:51.944Z  
+> **Timestamp**: 2026-10-28T18:57:46.500Z  
 > **Learning ID**: `learn-github-k3s-io-k3s`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T19:38:51.938Z  
+> **Harvest Timestamp**: 2026-10-28T18:57:46.492Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Lightweight Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 34264 stars
+- **Stars / Engagement**: 34272 stars
 
 ---
 
@@ -884,11 +884,14 @@ func AddFeatureGate(current, toAdd string) string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #14913** (2026-10-28): **Decompress openvex json**
+  *Symptoms*: #### Proposed Changes ####  CI fix  #### Types of Changes ####  CI  #### Verification ####  check scan output  #### Testing ####  #### Linked Issues ####  * https://github.com/rancher/rke2/pull/11334  #### User-Facing Change #### ```release-note ```  #### Further Comments #### 
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/k3s-io/k3s/pull/14913?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 49.28%. Comparing base ([`a443fd3`](https://app.codecov.io/gh/k3s-io/k3s/commit/a443fd39077abee5f053ed1310e6af2a2e6f8d30?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)) to head ([`f872e22`](https://app.codecov.io/gh/k3s-io/k3s/commit/f872e2206a67b40493a5e9f6fc01949126c69d67?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)).  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##             main   #14913      +/-   ## ==========================================
+  > Closing in favor of https://github.com/k3s-io/k3s/pull/14916 which also corrects the on-demand scan workflow
+
 - **Issue #14910** (2026-10-27): **Expose kine connection pool settings (max open/idle connections) for external SQL datastores**
   *Symptoms*: **Is your feature request related to a problem? Please describe.**  With an external SQL datastore (`--datastore-endpoint=postgres://...`), the embedded kine connection pool cannot be configured. K3s never sets `endpoint.Config.ConnectionPoolConfig`, so kine falls back to its defaults (`pkg/drivers/generic/generic.go`): `MaxIdle` 20 and `MaxOpen` unlimited.  On a shared PostgreSQL server this lets one K3s server use a large share of `max_connections`. We run several K3s servers against one PostgreSQL instance (`max_connections` 181). Each time a new server starts, its kine opens 100-135 connections within about 10 seconds, then releases most of them. We measured this on 15 server joins in 26 hours, from the PostgreSQL `connection authorized` log. Once, this burst overlapped other load, and PostgreSQL refused connections from the new server and other clients (`FATAL: sorry, too many clients already`).  The standalone kine binary already has `--datastore-max-open-connections`, `--datastore-max-idle-connections`, `--datastore-connection-max-lifetime` and `--datastore-connection-max-idle-time` (`pkg/app/app.go`). K3s exposes only `--datastore-endpoint`, `--datastore-cafile`, `--datastore-certfile`, `--datastore-keyfile` and `--kine-tls`. We checked v1.36.5+k3s1 (kine v0.16.5), v1.37.1+k3s1 and master (kine v0.17.1). Query parameters in the DSN do not help: kine `pgsql.go` passes them to pgx as startup parameters, not to `database/sql`.  **Describe the solution you'd like**  Add s
-
-- **Issue #14909** (2026-10-27): **Add contextual logging for event-broadcaster's startup**
-  *Symptoms*: <!-- HTML Comments can be left in place or removed. --> <!-- Please see our contributing guide at https://github.com/k3s-io/k3s/blob/main/CONTRIBUTING.md for guidance on opening pull requests -->  #### Proposed Changes ####  Add small contextual logging for event-broadcaster's startup  #### Types of Changes ####  Enhancement  #### Verification ####  Run k3s and check log output  #### Testing ####  <!-- Is this change covered by testing? If not, consider adding a Unit or Integration test. --> <!-- See https://github.com/k3s-io/k3s/blob/main/tests/TESTING.md for more info -->  #### Linked Issues ####  <!-- Link any related issues, pull-requests, or commit hashes that are relevant to this pull request. If you are opening a PR without a corresponding issue please consider creating one first, at https://github.com/k3s-io/k3s/issues . A functional example will greatly help QA with verifying/reproducing a bug or testing new features. -->  contextual logging #13646  #### User-Facing Change #### <!-- Does this PR introduce a user-facing change? If no, just write "NONE" in the release-note block below. If the PR requires additional action from users switching to the new release, include the string "action required". --> ```release-note None ```  #### Further Comments ####  <!-- If this is a relatively large or complex change, kick off the discussion by explaining why you chose the solution you did and what alternatives you considered, etc... --> I added one small log first to see wheth
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -905,33 +908,39 @@ func AddFeatureGate(current, toAdd string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a443fd39` (2026-10-24)
-**Commit Message**: Add containerd server/metrics plugin
+### Incident Patch 1: `1bebce8e` (2026-10-28)
+**Commit Message**: Set IdleTimeout on the supervisor http server (#14904)
 
-containerd v2.3 moved this out to a plugin and k3s is missing it since
-v.1.37.0.
-
-Signed-off-by: Håvard Pettersson <[REDACTED_EMAIL]>
-
-**File**: `pkg/containerd/builtins.go` (modified, +1/-0)
+**File**: `pkg/cluster/https.go` (modified, +5/-0)
 ```diff
-@@ -34,6 +34,7 @@ import (
- 	_ "github.com/containerd/containerd/v2/plugins/sandbox"
- 	_ "github.com/containerd/containerd/v2/plugins/server/debug"
- 	_ "github.com/containerd/containerd/v2/plugins/server/grpc"
-+	_ "github.com/containerd/containerd/v2/plugins/server/metrics"
- 	_ "github.com/containerd/containerd/v2/plugins/server/ttrpc"
- 	_ "github.com/containerd/containerd/v2/plugins/services/containers"
- 	_ "github.com/containerd/containerd/v2/plugins/services/content"
+@@ -11,6 +11,7 @@ import (
+ 	"os"
+ 	"path/filepath"
+ 	"strconv"
++	"time"
+ 
+ 	"github.com/k3s-io/k3s/pkg/daemons/config"
+ 	"github.com/k3s-io/k3s/pkg/util"
+@@ -121,6 +122,10 @@ func (c *Cluster) initClusterAndHTTPS(ctx context.Context) error {
+ 			certHandler.ServeHTTP(rw, req)
+ 			handler.ServeHTTP(rw, req)
+ 		}),
++		// Same values as kubernetes apiserver
++		MaxHeaderBytes:    1 << 20,
++		IdleTimeout:       90 * time.Second,
++		ReadHeaderTimeout: 32 * time.Second,
+ 	}
+ 
+ 	if logrus.IsLevelEnabled(logrus.DebugLevel) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14913** (closed): Decompress openvex json (@brandond)
 - **PR #14909** (closed): Add contextual logging for event-broadcaster's startup (@ChuDucAnh242002)
 - **PR #14907** (closed): Sa v1.36.4+k3s1 (@sajuptpm)
 - **PR #14906** (closed): Document the --flannel-conf override solution for Windows (@ChuDucAnh242002)
+- **PR #14904** (2026-10-28): Set IdleTimeout on the supervisor http server (@somaz94)
 - **PR #14903** (2026-10-26): Add containerd server/metrics plugin (@haavard)
-- **PR #14898** (closed): [Windows] Add Linux-cluster agent e2e test (@ChuDucAnh242002)
-- **PR #14897** (closed): Remove the etcd member of a server whose etcd data dir was moved aside (@spicysharkco)
 
 ---
 
@@ -951,21 +960,25 @@ Signed-off-by: Håvard Pettersson <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add containerd server/metrics plugin
+## X. Set IdleTimeout on the supervisor http server (#14904)
 
 **RULE**:
-When implementing operations in `pkg/containerd/builtins.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/cluster/https.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a443fd39`: Add containerd server/metrics plugin. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1bebce8e`: Set IdleTimeout on the supervisor http server (#14904). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/containerd/builtins.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/cluster/https.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	_ "github.com/containerd/containerd/v2/plugins/server/metrics"
+	"time"
+		// Same values as kubernetes apiserver
+		MaxHeaderBytes:    1 << 20,
+		IdleTimeout:       90 * time.Second,
+		ReadHeaderTimeout: 32 * time.Second,
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -975,4 +988,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a443fd39` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1bebce8e` are properly handled with clean fallback behavior.
