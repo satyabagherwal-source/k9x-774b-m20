@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T15:29:53.978Z",
-    "lastVerified": "2026-10-28T15:29:53.978Z",
+    "lastChecked": "2026-10-28T15:36:43.137Z",
+    "lastVerified": "2026-10-28T15:36:43.137Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -340,8 +340,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T15:09:52.684Z",
-    "lastVerified": "2026-10-28T15:09:52.684Z",
+    "lastChecked": "2026-10-28T15:36:43.129Z",
+    "lastVerified": "2026-10-28T15:36:43.129Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1559,9 +1559,9 @@
   "projectdiscovery-nuclei": {
     "name": "nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
-    "lastChecked": "2026-10-28T12:15:37.729Z",
+    "lastChecked": "2026-10-28T15:36:38.221Z",
     "revisionIdentifier": "26ce6d2e",
-    "lastVerified": "2026-10-28T12:15:37.729Z"
+    "lastVerified": "2026-10-28T15:36:38.221Z"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -4473,5 +4473,50 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "cloudwego-volo": {
+    "name": "volo",
+    "officialUrl": "https://github.com/cloudwego/volo",
+    "lastChecked": "2026-10-28T15:36:28.150Z",
+    "revisionIdentifier": "80913ce4",
+    "lastVerified": "2026-10-28T15:36:28.150Z"
+  },
+  "hf-fermionresearch-phonon-2": {
+    "name": "FermionResearch/Phonon-2",
+    "officialUrl": "https://huggingface.co/FermionResearch/Phonon-2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T15:36:30.827Z",
+    "lastVerified": "2026-10-28T15:36:30.827Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-fermionresearch-phonon-2",
+    "contentHash": "1f041628c908c5bd32fe6d3fd470b4fedd8279adf067695ff6dff61d6a25585f",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "learnapollo-learnapollo": {
+    "name": "learnapollo",
+    "officialUrl": "https://github.com/learnapollo/learnapollo",
+    "lastChecked": "2026-10-28T15:36:33.194Z",
+    "revisionIdentifier": "dea1677e",
+    "lastVerified": "2026-10-28T15:36:33.194Z"
+  },
+  "orange-cyberdefense-goad": {
+    "name": "GOAD",
+    "officialUrl": "https://github.com/Orange-Cyberdefense/GOAD",
+    "lastChecked": "2026-10-28T15:36:35.668Z",
+    "revisionIdentifier": "74af01eb",
+    "lastVerified": "2026-10-28T15:36:35.668Z"
+  },
+  "cockroachdb-cockroach": {
+    "name": "cockroach",
+    "officialUrl": "https://github.com/cockroachdb/cockroach",
+    "lastChecked": "2026-10-28T15:36:41.085Z",
+    "revisionIdentifier": "d30c905f",
+    "lastVerified": "2026-10-28T15:36:41.085Z"
   }
 }

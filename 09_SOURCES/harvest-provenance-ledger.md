@@ -5832,3 +5832,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-aleph-alpha-kolibri-1` | `https://huggingface.co/Aleph-Alpha/Kolibri-1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-10-28T15:29:46.738Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `5e26ccca` | Multi-dimensional audit evidence | 2026-10-28T15:29:50.114Z |
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `f164b70f` | Multi-dimensional audit evidence | 2026-10-28T15:29:51.444Z |
+| `learn-huggingface-fermionresearch-phonon-2` | `https://huggingface.co/FermionResearch/Phonon-2` | `hf-fermion` | Multi-dimensional audit evidence | 2026-10-28T15:36:31.994Z |
