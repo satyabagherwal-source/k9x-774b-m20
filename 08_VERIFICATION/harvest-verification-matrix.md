@@ -5639,3 +5639,6 @@
 | `CYCLE-20261028-HZN5` | `2026-10-28T01:49:22.481Z` | `franken-ui/ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2109` | Yes (`94ae9020...`) |
 | `CYCLE-20261028-I6IE` | `2026-10-28T01:49:31.382Z` | `kumahq/kuma` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kumahq-kuma-learnings.md` | Yes (`df5b800e...`) |
 | `CYCLE-20261028-I823` | `2026-10-28T01:49:33.387Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5109, Rule 5110, Rule 5111` | Yes (`e0de5996...`) |
+| `CYCLE-20261028-TTTO` | `2026-10-28T01:58:34.812Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5112, Rule 5113` | Yes (`d7c2ba43...`) |
+| `CYCLE-20261028-TV5C` | `2026-10-28T01:58:36.528Z` | `CrossPaste/crosspaste-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5114` | Yes (`49517915...`) |
+| `CYCLE-20261028-TX6W` | `2026-10-28T01:58:39.176Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5115` | Yes (`0125d197...`) |

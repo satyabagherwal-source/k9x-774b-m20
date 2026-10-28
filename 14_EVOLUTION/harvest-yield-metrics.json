@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T01:49:33.395Z",
-  "total_cycles_completed": 5616,
-  "total_learnings_persisted": 5616,
-  "total_rules_promoted": 5040,
+  "last_updated": "2026-10-28T01:58:39.185Z",
+  "total_cycles_completed": 5619,
+  "total_learnings_persisted": 5619,
+  "total_rules_promoted": 5044,
   "history": [
-    {
-      "timestamp": "2026-10-27T16:58:46.972Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T16:58:49.513Z",
-      "repository": "Ontos-AI/knowhere",
-      "learningId": "learn-github-ontos-ai-knowhere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T17:05:01.020Z",
-      "repository": "zenbu-labs/terminal-browser",
-      "learningId": "learn-github-zenbu-labs-terminal-browser",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T17:05:09.987Z",
       "repository": "DNSControl/dnscontrol",
@@ -1403,6 +1382,27 @@
       "repository": "jialinyyzz/humanizer",
       "learningId": "learn-huggingface-jialinyyzz-humanizer",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T01:58:34.820Z",
+      "repository": "autotrust/JEV-27B-VL",
+      "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T01:58:36.537Z",
+      "repository": "CrossPaste/crosspaste-desktop",
+      "learningId": "learn-github-crosspaste-crosspaste-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T01:58:39.185Z",
+      "repository": "skyhook-io/radar",
+      "learningId": "learn-github-skyhook-io-radar",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `43b82f58`  
+> **Source Version**: `46376e81`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:25:23.515Z  
+> **Timestamp**: 2026-10-28T01:58:38.724Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:25:23.037Z  
+> **Harvest Timestamp**: 2026-10-28T01:58:38.716Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3924 stars
+- **Stars / Engagement**: 3930 stars
 
 ---
 
@@ -2228,736 +2228,435 @@ export function AWSMachineRenderer({ data }: Props) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `78ed5a4f` (2026-10-26)
-**Commit Message**: Require an impact preview for MCP deletion and report accepted cleanup as progress (#2041)
+### Incident Patch 1: `dabf6dc0` (2026-10-27)
+**Commit Message**: Speed up the dev-loop test runs (#2383)
 
-Requires preview before MCP deletion and reports accepted Kubernetes
-deletion separately from completed cleanup. Uses the caller-scoped
-ownership preview from #2050. No new configuration.
+## Summary
 
-### Fresh live validation — final commit
+Shortens the local test loop. The `packages/k8s-ui` suite goes from
+about 95 s to about 30 s. Repeat web runs skip most module transforms
+(on a loaded machine: 222 s cold → 149 s warm). `make test-changed`
+stops re-running Go packages whose inputs haven't changed.
 
-**Live-tested `63a51deead2772001f986ce205f662b6ed57946f` on EKS
-`radar-test-nonprod` (Kubernetes v1.34.11-eks-cfb47f5).** Built the
-complete application with `make build`; ran normal local and
-auth-enabled proxy instances against an isolated namespace. These
-results cover the current PR head, replacing the earlier-revision
-evidence.
+## What changed
 
-| Live scenario | Observed result |
-| --- | --- |
-| Missing confirmation / default preview | Unconfirmed persisted delete
-refused; preview returned a token without persisting deletion. |
-| Same-name replacement / changed root | Old token refused; replacement
-survived. Changing generation-less root data also required another
-preview. |
-| Real caller RBAC and token identity | Apiserver denied a read-only
-user's DELETE dry-run. Authorized writer obtained a usable preview; a
-second equally authorized writer could not reuse it. Original wri
+**Go: the iteration tier uses Go's test cache.**
+`scripts/test-changed.sh` no longer passes `-count=1`, so a package
+whose code and dependencies haven't changed reports `(cached)` instead
+of running again. `GO_TEST_FRESH=1` forces a real run, e.g. to recheck a
+flaky test. CI is unchanged.
 
-**File**: `docs/mcp.md` (modified, +42/-0)
+**k8s-ui: most test files share a worker without isolation.** k8s-ui had
+no Vitest config, so every file ran in a fresh worker; that is where
+most of the 95 s went. The new `packages/k8s-ui/vitest.config.ts`
+defines two projects:
+
+- `shared` (`isolate: false`): every test file except the ones below.
+Vitest still gives each environment (node / jsdom) its own workers.
+- `isolated`: files that call `vi.mock` / `vi.doMock`, detected from
+their source when the config loads (12 today). Without isolation, Vitest
+resets neither the mock registry nor the module cache between 
+
+**File**: `.claude/commands/qa.md` (modified, +11/-0)
 ```diff
-@@ -1368,3 +1368,45 @@ storage/data removal also depends on reclaim policy and controllers.
- The REST preview is advisory: it does not bind a later DELETE to the object
- shown in the dialog. Finalizers, admission and reconciliation can change or delay
- the result, so the preview does not guarantee completion.
-+
-+### MCP deletion preview and confirmation
-+
-+External writable MCP exposes `delete_resource`. It is absent from read-only
-+mounts and from the built-in `/mcp-apply` transport used by Radar OSS's built-in CLI agents. Hub's sidecar independently enforces its read-only gate; it does not use this new mount.
-+Built-in deletion stays deferred until the approval flow presents this preview.
-+There is no new configuration switch.
-+
-+The default call performs a caller-authenticated server dry-run and returns a
-+summary, finalizers, propagation, the shared observed-impact preview, and a
-+five-minute signed confirmation. `dry_run: false` requires that confirmation.
-+It binds the caller and groups, captured cluster context, root UID,
-+generation/finalizers (resourceVersion for kinds without generation), and propagation policy.
-+Root spec/finalizer/incarnation or policy changes require another preview. For roots
-+with generation, status-only changes before confirmation can proceed with fresh
-+resourceVersion preconditions. Kinds without generation require another preview
-+after any update. An API-server conflict returns an error requiring another preview;
-+the tool does not retry DELETE automatically.
-+
-+Dependent lists are advisory observations. Confirmation does not compare a child
-+fingerprint or freeze the cascade: dependents and controller inventory can change
-+independently of the root, including after preview or confirmation.
-+
-+GC dependents, possible dependents and controller teardown stay separate.
-+Counts cover the observed traversal before each 100-reference MCP list cap;
-+`ownershipCoverage` carries source gaps, caller narrowing and traversal limits.
-+Namespace contents and CRD instances are never interpreted as an empty list.
-+A completely unavailable or timed-out impact calculation returns no usable confirmation token. Inspect `cascade.unavailableReason` and `recoveryAction`: connection/cache loading can recover, but access or collection limits require a change. Use the UI or kubectl if Radar cannot provide caller-readable impact. Partial observed projections retain explicit coverage limits. One 40s
-+budget covers the call, with at most 5s each for enumeration and post-delete
-+observation. A stuck kubeconfig exec credential refresh can outlive the request
-+budget, as with other client-go operations.
-+
-+Accepted deletion is progress even while finalizers hold it. Failed post-delete
-+observation cannot turn acceptance into failure. An interrupted DELETE with an
-+uncertain result says to inspect the resource before retrying. The tool never
-+patches finalizers. Explicit finalizer intervention remains a separate
-+`patch_resource` action after inspecting cleanup. A webhook whose side-effects declaration prohibits server dry-run prevents this tool from issuing confirmation; the API error identifies the rejecting webhook. The token checks reviewed state, not proof of a human decision: the external MCP host owns per-call approval. Audit records identify caller,
-+kind/group/target and preview/accepted/failed/unknown outcomes; confirmation
-+values are omitted from ordinary tool-argument logs.
-+
-+
-+Confirmation tokens are process-local. Use a single Radar replica or session affinity so preview and confirmation reach the same process; a restart invalidates outstanding tokens. `/mcp-apply` is an authenticated subset of writable `/mcp`, intended for built-in agents, not a private network endpoint.
-```
-
-**File**: `internal/ai/diagnoser.go` (modified, +3/-3)
-```diff
-@@ -453,9 +453,9 @@ func (d *Diagnoser) DiagnoseStream(ctx context.Context, req Request, onEvent fun
- 	}
+@@ -17,6 +17,8 @@ check a small fix.
+ It vets and tests only the changed Go packages (root and `pkg/` modules), runs
+ `tsc` for `web/` and `packages/k8s-ui`, and `vitest related` on the changed
+ frontend files. Typically minutes rather than the ~20 a full run takes.
++Go results come from the test cache when nothing a package depends on changed;
++`GO_TEST_FRESH=1` forces a real run (e.g. to recheck a flaky test).
+ `GO_TEST_RUN=<regexp>` narrows a big package (`internal/server` alone takes
+ ~4.5 min); use it when the change only touches one area there. **Never**
+ `npm run lint` (broken).
+@@ -36,6 +38,15 @@ verification rounds.
+   otherwise: rerun that file alone (`npx vitest run <file>` / `go test -run`)
+   before investigating. Several UI suites (e.g. `ResourcesView.kind-view`) and
+   `TestUpgradeReadinessEndpointLargeMetrics` are timing-sensitive.
++- Vitest keeps transformed modules in `.vitest-cache/` in each project (one per
++  worktree, gitignored), so a second run skips most transforms.
++- `packages/k8s-ui` runs most test files without isolation: a worker reuses its
++  modules across files (`vitest.config.ts`). Files that call `vi.mock` run
++  isolated, picked automatically from their source. A test that passes alone but
++  fails in the suite is probably leaking or reading module state from another
++  file: reset that state in the tests (see `touch-intent.test.ts`). Shuffling
++  the file order finds such pairs:
++  `npx vitest run --project shared --sequence.shuffle.files --sequence.seed=<n>`.
+ - Node 25: run vitest with `NODE_OPTIONS=--no-experimental-webstorage`
+   (the script sets it).
  
- 	// Read-only investigation turns get the private read-only MCP mount with
--	// evidence correlation; an apply turn (user-confirmed) gets the ordinary full
--	// mount with write tools and no investigation-only result markers.
--	path := "/mcp"
-+	// evidence correlation; an apply turn gets a private remediation mount
-+	// whose server excludes tools that require a richer approval flow.
-+	path := "/mcp-apply"
- 	evidenceScope := ""
- 	var evidenceLease *investigationrefs.Scope
- 	if !req.Apply {
 ```
 
-**File**: `internal/ai/diagnoser_test.go` (modified, +2/-0)
+**File**: `.gitignore` (modified, +1/-0)
 ```diff
-@@ -171,6 +171,8 @@ func TestDiagnoseStreamUsesListenerAddress(t *testing.T) {
- 				want := "http://" + address + "/radar/mcp"
- 				if !apply {
- 					want += "-investigation?scope=" + scope
-+				} else {
-+					want += "-apply"
- 				}
- 				if agent.spec.mcpURL != want {
- 					t.Fatalf("agent MCP URL = %q, want %q", agent.spec.mcpURL, want)
-```
-
-**File**: `internal/app/bootstrap.go` (modified, +1/-0)
-```diff
-@@ -565,6 +565,7 @@ func CreateServer(cfg AppConfig) *server.Server {
- 		serverCfg.InvestigationRefs = evidenceRefs
- 		if !cfg.MCPReadOnly {
- 			serverCfg.MCPHandler = mcppkg.NewHandler()
-+			serverCfg.MCPApplyHandler = mcppkg.NewApplyHandler()
- 		}
- 		serverCfg.MCPReadOnlyHandler = mcppkg.NewReadOnlyHandler()
- 		serverCfg.MCPInvestigationHandler = mcppkg.NewInvestigationHandler(evidenceRefs)
-```
-
-**File**: `internal/app/mcp_mode_test.go` (modified, +10/-4)
-```diff
-@@ -38,8 +38,8 @@ func TestServerMCPModes(t *testing.T) {
- 				defer host.Close()
- 				ctx, cancel := context.WithTimeout(t.Context(), 10*time.Second)
- 				defer cancel()
--				for _, path := range []string{"/mcp", "/mcp-readonly", "/mcp-investigation"} {
--					available := mode.enabled && (path != "/mcp" || !mode.readOnly)
-+				for _, path := range []string{"/mcp", "/mcp-readonly", "/mcp-investigation", "/mcp-apply"} {
-+					available := mode.enabled && ((path != "/mcp" && path != "/mcp-apply") || !mode.readOnly)
- 					if !available {
- 						for _, suffix := range []string{"", "/", "/tools/call"} {
- 							for _, method := range []string{http.MethodGet, http.MethodPost} {
-@@ -78,15 +78,21 @@ func TestServerMCPModes(t *testing.T) {
- 					if err != nil {
- 						t.Fatal(err)
- 					}
--					hasWrite := false
-+					hasWrite, hasDelete := false, false
- 					for _, tool := range tools.Tools {
-+						if tool.Name == "delete_resource" {
-+							hasDelete = true
-+						}
- 						if tool.Name == "apply_resource" {
- 							hasWrite = true
- 						}
- 					}
--					if hasWrite != (path == "/mcp") {
-+					if hasWrite != (path == "/mcp" || path == "/mcp-apply") {
- 						t.Fatalf("%s write tool present = %v", path, hasWrite)
- 					}
-+					if hasDelete != (path == "/mcp") {
-+						t.Fatalf("%s delete tool present = %v", path, hasDelete)
-+					}
- 					result, err := session.CallTool(ctx, &mcpsdk.CallToolParams{Name: "list_namespaces", Arguments: struct{}{}})
- 					if err != nil || result.IsError {
- 						t.Fatalf("read tool: %v, %v", result, err)
-```
-
-**File**: `internal/auth/middleware.go` (modified, +4/-2)
-```diff
-@@ -237,6 +237,8 @@ func AuditLog(r *http.Request, namespace, name string) {
- }
+@@ -10,6 +10,7 @@ vendor/
  
- type AuditActionDetails struct {
-+	Kind      string
-+	Group     string
- 	Action    string
- 	Namespace string
- 	Name      string
-@@ -253,7 +255,7 @@ func AuditLogAction(r *http.Request, details AuditActionDetails) {
- 		username = user.Username
- 		groups = user.Groups
- 	}
--	log.Printf("[audit] user=%q groups=%q action=%q path=%q ns=%q name=%q container=%q variable=%q source=%q outcome=%q",
--		username, groups, details.Action, r.URL.Path, details.Namespace, details.Name,
-+	log.Printf("[audit] user=%q groups=%q action=%q path=%q kind=%q api_group=%q ns=%q name=%q container=%q variable=%q source=%q outcome=%q",
-+		username, groups, details.Action, r.URL.Path, details.Kind, details.Group, details.Namespace, details.Name,
- 		details.Container, details.Variable, details.Source, details.Outcome)
- }
+ # Node
+ node_modules/
++.vitest-cache/
+ web/node_modules/
+ web/dist/
+ packages/*/node_modules/
 ```
 
-**File**: `internal/k8s/update.go` (modified, +2/-2)
+**File**: `packages/k8s-ui/src/components/ui/Tooltip.touch.test.tsx` (modified, +2/-0)
 ```diff
-@@ -68,8 +68,8 @@ func DeleteResource(ctx context.Context, opts DeleteResourceOptions) error {
- 
- // DeleteResourceWithClient deletes a Kubernetes resource using the provided client.
- // If client is nil, uses the shared dynamic client.
--func DeleteResourceWithClient(ctx context.Context, opts DeleteResourceOptions, client dynamic.Interface) error {
--	return getWorkloadManagerWithClient(client).DeleteResource(ctx, opts)
-+func DeleteResourceWithClient(ctx context.Context, opts DeleteResourceOptions, client dynamic.Interface) (*k8score.DeleteResourceResult, error) {
-+	return getWorkloadManagerWithClient(client).DeleteResourceWithResult(ctx, opts)
- }
- 
- // ApplyResource creates or updates a Kubernetes resource from YAML.
-```
-
-**File**: `internal/mcp/agentlog.go` (modified, +6/-1)
-```diff
-@@ -126,7 +126,12 @@ func logToolCall[In any](
- 	handler func(context.Context, *mcp.CallToolRequest, In) (*mcp.CallToolResult, any, error),
- ) func(context.Context, *mcp.CallToolRequest, In) (*mcp.CallToolResult, any, error) {
- 	return func(ctx context.Context, req *mcp.CallToolRequest, input In) (*mcp.CallToolResult, any, error) {
--		args, _ := json.Marshal(input)
-+		loggedInput := any(input)
-+		if deletion, ok := loggedInput.(deleteResourceInput); ok {
-+			deletion.Confirm = ""
-+			loggedInput = deletion
-+		}
-+		args, _ := json.Marshal(loggedInput)
- 		log.Printf("\033[1;35m[MCP]\033[0m \033[1m%s\033[0m %s", name, string(args))
- 
- 		start := time.Now()
-```
-
----
-
-### Incident Patch 2: `aeab31a1` (2026-10-26)
-**Commit Message**: fix: explain Crossplane pause in delete and apply flows (#2338)
-
-Kubernetes can accept edits or a deletion request while a Crossplane
-resource's controller defers reconciliation. The generic confirmations
-do not explain that distinction, making a deletion that remains
-Terminating easy to mistake for a failed request and encouraging force
-deletion that can bypass cleanup.
-
-This adds context inside the relevant operation:
-
-- Single and bulk delete confirmations identify selected paused
-resources holding known Crossplane finalizers. Force confirmation
-explains the cleanup it can bypass; annotation alone, or an object
-without finalizers, does not get a definite deletion-blocking claim.
-- YAML review states whether the server preview keeps or clears the
-pause request and covers every submitted document, including unselected
-ones. Baselines remain paired with their own server document. Direct
-saves explain that omitting an annotation from server-side apply YAML
-does not guarantee removal; unavailable previews label unverified state.
-Strict Create does not imply unknown existing state.
-- Acknowledged resources without spec references use the shared
-pause-evidence helper. Single-target edi
-
-**File**: `docs/integrations.md` (modified, +5/-0)
-```diff
-@@ -1065,6 +1065,11 @@ The topology graph retains its recorded readiness color and does not add this pa
- 
- **Agent context:** AI resource summaries, per-row `summaryContext` (REST/MCP list and search), resource detail `resourceContext`, and the Diagnose kickoff health frame expose optional `crossplanePause`. `requested` means `crossplane.io/paused` is exactly `"true"`; `acknowledged` additionally has a recorded `Synced=False/ReconcilePaused` condition. This is annotation intent and stored controller evidence, independent of readiness and Issues. It does not establish freshness, matching generation, a pause start time, or the state of any child/provider controller. Omission makes no claim about management-policy pause or a prior resume. Summary rows retain the fact with `context=none`; generic CRD rows carrying `crossplanePause` retain an independent Synced failure in `issue` even when Ready is True. Compact retains the exact pause annotation and raw conditions; other Crossplane annotation keys are not broadly allowed through.
- 
-+**Operation context:** Delete confirmations identify annotated paused MR/XR/Claim resources holding a known Crossplane finalizer, whose controller cleanup is deferred; force delete can bypass that cleanup and leave external or related resources behind. YAML apply review and direct-save confirmations distinguish Kubernetes accepting edits from the resource controller acting on them. Review states whether the server preview keeps or clears a pause request; unavailable previews label unverified pause state. Direct editor saves also explain that omitting the annotation from server-side apply YAML does not guarantee removal. Removing `crossplane.io/paused` requests resumption; it does not prove the controller resumed or that related controllers paused. Generic Apply without a live preview labels existing pause state as unknown and explains that omitting the annotation from server-side apply YAML does not guarantee removal. A known pause uses the exact annotation value `"true"`; empty `managementPolicies` alone is outside this annotation-only context.
-+
-+Resources without a known Crossplane spec shape qualify for operation context only when the exact pause annotation is corroborated by `Synced=False/ReconcilePaused`. A single-target editor retains that raw evidence when review YAML omits status; generic Apply with no such evidence does not infer controller identity from the annotation alone.
-+
-+
- **Cluster Audit:** New `crossplaneStuck` check flags MRs/XRs/Claims reporting `Ready=False` or `Synced=False` for more than 5 minutes (Medium) or 30 minutes (High). Synced=False takes priority over Ready=False because it usually indicates the actionable problem (bad ProviderConfig, malformed spec, missing IAM). Same severity ramp as `stuckTerminating` for cross-surface consistency. Paused resources are deliberately suppressed.
- 
- ### v1 vs v2 Path Handling
-```
-
-**File**: `packages/k8s-ui/README.md` (modified, +6/-1)
-```diff
-@@ -84,5 +84,10 @@ tooltip. `certaintyGlyph` and `certaintyValueLabel` expose the same vocabulary.
- 
- Existing CNPG primitive exports remain available and delegate to these shared implementations.
- 
--
- `PrinterColumnDef.jsonPath` optionally carries source provenance from newer Radar servers. The UI does not evaluate it: values still come from the server's table converter. Without it, printer-cell tones stay generic. Crossplane pause qualification only recognizes exact Ready/Synced condition paths and corroborated annotation/condition evidence; same-named unrelated columns retain their normal tones. `ConditionTone` also supports opt-in `neutral`; `defaultConditionTone` retains its original return vocabulary. `ComposedRefStatus.pauseState` optionally supplies recorded Crossplane pause context for a composed-resource row.
-+
-+`ForceDeleteConfirmDialog.resourceData` optionally supplies the current object for Crossplane pause context. Paused MR/XR/Claim shapes holding a known Crossplane finalizer receive a cleanup warning; the prop does not change confirmation or force-delete behavior. YAML operation context uses the existing baseline and predicted manifests; removing a pause annotation requests resumption rather than proving it.
-+
-+`YamlReview.mode` distinguishes Apply, strict Create and Update (default: `apply`). Hosts using strict creation should pass `create` so an unpreviewable new document does not imply unknown live pause state. Crossplane operation context reports what the server preview actually keeps or clears; unsupported dry-run documents retain conditional uncertainty rather than treating submitted YAML as a live baseline.
-+
-+For a single editor target, `YamlReview.resourceData` may retain its raw condition evidence when the review YAML intentionally omits status. `EditableYamlView` binds that snapshot to its preview. It is not used to classify unrelated documents in a batch. Generic Apply with neither a known Crossplane shape nor raw acknowledged pause does not infer a resource’s controller from the annotation alone.
-```
-
-**File**: `packages/k8s-ui/src/components/resources/ResourcesView.tsx` (modified, +2/-0)
-```diff
-@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect, useCallback, useDeferredValue, use
- import { TableVirtuoso, type TableVirtuosoHandle } from 'react-virtuoso'
- import { useDebouncedValue } from '../../hooks/useDebouncedValue'
- import { usePhoneLayout } from '../../hooks/usePhoneLayout'
-+import { CrossplaneDeleteNotice } from '../ui/CrossplaneOperationNotice'
- import { Badge } from '../ui/Badge'
- import { PaneLoader } from '../ui/PaneLoader'
- import { DialogPortal } from '../ui/DialogPortal'
-@@ -7149,6 +7150,7 @@ export function ResourcesView({
-       isLoading={isBulkDeleting}
-       isClosable
-     >
-+      <CrossplaneDeleteNotice resources={checkedItems} force={bulkForceDelete} />
-       <label className="flex items-center gap-2 text-sm text-theme-text-secondary">
-         <input
-           type="checkbox"
-```
-
-**File**: `packages/k8s-ui/src/components/shared/CreateResourceDialog.test.tsx` (modified, +14/-0)
-```diff
-@@ -328,3 +328,17 @@ it('keeps created-object facts and the edited draft when canceling a file replac
-     expect(onClose).not.toHaveBeenCalled()
-   } finally { await act(async () => root.unmount()); host.remove() }
+@@ -14,6 +14,8 @@ afterEach(() => {
+   act(() => root?.unmount())
+   host?.remove()
+   vi.useRealTimers()
++  // The last touch time is module state; a key press clears it for the next file.
++  document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }))
  })
+ 
+ function render(child: React.ReactNode) {
+```
+
+**File**: `packages/k8s-ui/src/utils/touch-intent.test.ts` (modified, +9/-4)
+```diff
+@@ -1,5 +1,5 @@
+ // @vitest-environment jsdom
+-import { describe, expect, it } from 'vitest'
++import { beforeEach, describe, expect, it } from 'vitest'
+ import { isTouchIntent } from './touch-intent'
+ 
+ function press(pointerType: string) {
+@@ -8,8 +8,13 @@ function press(pointerType: string) {
+   document.body.dispatchEvent(e)
+ }
+ 
+-// Order matters: the module keeps the last touch time, so the mouse case
+-// runs before any touch has been recorded.
++function pressKey() {
++  document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }))
++}
 +
-+it.each(['apply', 'create'] as const)('explains unknown live pause only in direct %s mode without changing submission', async (mode) => {
-+  const onApply = vi.fn(async () => [])
-+  const host = document.createElement('div'); document.body.appendChild(host); const root = createRoot(host)
-+  const yaml = 'apiVersion: example.test/v1\nkind: Bucket\nmetadata:\n  name: archive\nspec:\n  providerConfigRef:\n    name: default\n'
-+  try {
-+    await act(async () => root.render(<CreateResourceDialog open onClose={() => {}} initialYaml={yaml} initialMode={mode} lockMode={mode === 'create'} onApply={onApply} isApplying={false} />))
-+    expect(document.body.textContent?.includes('Existing pause state is unknown')).toBe(mode === 'apply')
-+    const submit = button(mode === 'apply' ? 'Apply' : 'Create')!
-+    expect(submit.disabled).toBe(false)
-+    await act(async () => submit.click())
-+    expect(onApply).toHaveBeenCalledWith(expect.objectContaining({ yaml, mode }))
-+  } finally { await act(async () => root.unmount()); host.remove() }
++// The module keeps the last touch time across tests and files; a key press clears it.
++beforeEach(pressKey)
++
+ describe('isTouchIntent', () => {
+   it('ignores mouse presses', () => {
+     press('mouse')
+@@ -28,7 +33,7 @@ describe('isTouchIntent and the keyboard', () => {
+   it('ends the tap window on a key press', () => {
+     press('touch')
+     expect(isTouchIntent()).toBe(true)
+-    document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }))
++    pressKey()
+     expect(isTouchIntent()).toBe(false)
+   })
+ })
+```
+
+**File**: `packages/k8s-ui/vitest.config.ts` (added, +34/-0)
+```diff
+@@ -0,0 +1,34 @@
++import { readdirSync, readFileSync } from 'fs'
++import path from 'path'
++import { configDefaults, defineConfig } from 'vitest/config'
++
++// Most test files run without isolation: a worker reuses its module registry
++// across files (Vitest still gives each environment its own workers), which cuts
++// the suite from ~95s to ~35s. Without isolation Vitest resets neither the mock
++// registry nor the module cache between files, so a file that mocks a module
++// would miss it when an earlier file loaded it and leak the mock into later
++// files. Those files run isolated, picked from their source.
++function testFiles(dir: string): string[] {
++  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
++    if (entry.name.startsWith('.') || entry.name === 'node_modules' || entry.name === 'dist') return []
++    const file = path.join(dir, entry.name)
++    if (entry.isDirectory()) return testFiles(file)
++    return /\.(test|spec)\.[cm]?[jt]sx?$/.test(entry.name) ? [file] : []
++  })
++}
++const mockingTests = testFiles(__dirname)
++  .filter((file) => /\bvi\s*\.\s*(mock|doMock)\s*\(/.test(readFileSync(file, 'utf8')))
++  .map((file) => path.relative(__dirname, file).split(path.sep).join('/'))
++
++export default defineConfig({
++  test: {
++    fsModuleCache: true,
++    // Worktrees symlink node_modules to one checkout, so the default cache
++    // location would be shared by every worktree.
++    fsModuleCachePath: path.resolve(__dirname, '.vitest-cache'),
++    projects: [
++      { extends: true, test: { name: 'shared', isolate: false, exclude: [...configDefaults.exclude, ...mockingTests] } },
++      { extends: true, test: { name: 'isolated', include: mockingTests } },
++    ],
++  },
 +})
 ```
 
-**File**: `packages/k8s-ui/src/components/shared/CreateResourceDialog.tsx` (modified, +5/-0)
+**File**: `scripts/test-changed.sh` (modified, +5/-2)
 ```diff
-@@ -9,6 +9,8 @@ import {
-   YamlReview,
-   type YamlPreviewResult,
- } from '../ui/YamlReview'
-+import { useDebouncedValue } from '../../hooks/useDebouncedValue'
-+import { CrossplaneYamlApplyNotice } from '../ui/CrossplaneOperationNotice'
- import { Tooltip } from '../ui/Tooltip'
- import { formatApplyError } from '../../utils/k8s-errors'
- import {
-@@ -84,6 +86,7 @@ export function CreateResourceDialog({
- }: CreateResourceDialogProps) {
-   const titleId = useId()
-   const [yaml, setYaml] = useState(initialYaml)
-+  const pauseContextYaml = useDebouncedValue(onPreview ? '' : yaml, 200)
-   const [mode, setMode] = useState<'apply' | 'create'>(initialMode)
-   const [dryRun, setDryRun] = useState(false)
-   const [force, setForce] = useState(false)
-@@ -401,6 +404,7 @@ export function CreateResourceDialog({
-         <YamlReview
-           titleId={titleId}
-           submittedYaml={preview.yaml}
-+          mode={preview.mode}
-           documents={preview.documents}
-           nonAtomic={preview.nonAtomic}
-           force={preview.force}
-@@ -493,6 +497,7 @@ export function CreateResourceDialog({
-             </div>
-           </div>
+@@ -16,6 +16,8 @@
+ #
+ # This is the iteration tier. The completion check is CI on the pushed head
+ # (or, for a branch CI doesn't run, `make test` plus both full vitest suites once).
++# Go test results come from Go's test cache when nothing they depend on changed;
++# GO_TEST_FRESH=1 runs them anyway (-count=1), e.g. to recheck a flaky test.
+ # GO_TEST_RUN=<regexp> passes -run to go test, e.g. to keep internal/server short.
+ # Works with the bash 3.2 macOS ships.
+ set -euo pipefail
+@@ -51,6 +53,7 @@ done <<< "$changed"
+ dedup() { tr ' ' '\n' <<< "$1" | sed '/^$/d' | sort -u | tr '\n' ' '; }
+ pkg_pkgs=$(dedup "$pkg_pkgs"); root_pkgs=$(dedup "$root_pkgs")
+ run_flag=(); [ -n "${GO_TEST_RUN:-}" ] && run_flag=(-run "$GO_TEST_RUN")
++[ -n "${GO_TEST_FRESH:-}" ] && run_flag+=(-count=1)
  
-+          {!onPreview && <div className="px-4"><CrossplaneYamlApplyNotice yaml={pauseContextYaml} baselineUnavailable={mode === 'apply'} /></div>}
-           {(error || previewError || partialCreates.length > 0) && (
-             <ApplyErrorBanner error={error || previewError || 'Resources were created before the previous attempt stopped.'} partialCreates={partialCreates} strictCreate={lockMode && mode === 'create'} hasPreview={Boolean(onPreview)} />
-           )}
+ # Node 25 exposes a localStorage global that breaks jsdom's.
+ if [ "$(node -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0)" -ge 25 ]; then
+@@ -64,11 +67,11 @@ fi
+   if [ "$root_module" = 1 ]; then echo "== go: go.mod changed, build + vet ./..."; go build ./... && go vet ./...; fi
+   if [ -n "$pkg_pkgs" ]; then
+     echo "== go (pkg module): $pkg_pkgs"
+-    (cd pkg && go vet $pkg_pkgs && go test -count=1 ${run_flag[@]+"${run_flag[@]}"} $pkg_pkgs)
++    (cd pkg && go vet $pkg_pkgs && go test ${run_flag[@]+"${run_flag[@]}"} $pkg_pkgs)
+   fi
+   if [ -n "$root_pkgs" ]; then
+     echo "== go: $root_pkgs"
+-    go vet $root_pkgs && go test -count=1 ${run_flag[@]+"${run_flag[@]}"} $root_pkgs
++    go vet $root_pkgs && go test ${run_flag[@]+"${run_flag[@]}"} $root_pkgs
+   fi
+   if [ -n "$k8sui$web" ] || [ "$fe_config" = 1 ]; then
+     echo "== tsc"
 ```
 
-**File**: `packages/k8s-ui/src/components/shared/EditableYamlView.test.tsx` (modified, +58/-0)
+**File**: `web/vite.config.ts` (modified, +7/-0)
 ```diff
-@@ -7,6 +7,7 @@
- import { act } from "react";
- import { createRoot, type Root } from "react-dom/client";
- import { afterEach, beforeEach, expect, it, vi } from "vitest";
-+import { resourceToYaml } from "../../utils/yaml";
- 
- vi.mock("../ui/YamlEditor", async () => {
-   const { useEffect } = await import("react");
-@@ -273,3 +274,60 @@ it("uses the accent token for a generic ConfigMap Edit control", () => {
-   expect(edit.classList.contains("text-accent-text")).toBe(true);
-   expect(edit.className).not.toContain("text-blue-");
- });
-+
-+
-+it("keeps the SSA omission caveat in a direct editor save with a known paused baseline", () => {
-+  const target = { kind: "TaskBucket", namespace: "shop", name: "archive" };
-+  const baseline = { apiVersion: "example.test/v1", kind: "TaskBucket", metadata: { name: "archive", namespace: "shop", annotations: { "crossplane.io/paused": "true" } }, spec: { providerConfigRef: { name: "default" } } };
-+  sessionStorage.setItem("radar_yaml_draft:TaskBucket/shop/archive", "apiVersion: example.test/v1\nkind: TaskBucket\nmetadata:\n  name: archive\n  namespace: shop\nspec:\n  providerConfigRef:\n    name: default\n");
-+  act(() => root.render(<EditableYamlView resource={target as never} data={baseline} onCopy={() => {}} copied={false} onSave={async () => {}} />));
-+  expect(text()).toContain("Pause affects reconciliation");
-+  expect(text()).toContain("Omitting the annotation from server-side apply YAML does not guarantee its removal");
-+});
-+
-+it("does not carry a paused baseline to a different API group in a direct editor save", async () => {
-+  const target = { kind: "TaskBucket", namespace: "shop", name: "archive" };
-+  const baseline = { apiVersion: "example.test/v1", kind: "TaskBucket", metadata: { name: "archive", namespace: "shop", annotations: { "crossplane.io/paused": "true" } }, spec: { providerConfigRef: { name: "default" } } };
-+  const yaml = "apiVersion: another.example.test/v1\nkind: TaskBucket\nmetadata:\n  name: archive\n  namespace: shop\nspec: {}\n";
-+  const onSave = vi.fn(async () => {});
-+  sessionStorage.setItem("radar_yaml_draft:TaskBucket/shop/archive", yaml);
-+  act(() => root.render(<EditableYamlView resource={target as never} data={baseline} onCopy={() => {}} copied={false} onSave={onSave} />));
-+  expect(text()).not.toContain("Pause affects reconciliation");
-+  expect(text()).not.toContain("Existing pause state is unknown");
-+  await click(/^Save$/);
-+  expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ kind: "TaskBucket", namespace: "shop", name: "archive", yaml }));
-+});
-+
-+it("does not infer annotation omission before the first direct-edit debounce settles", () => {
-+  vi.useFakeTimers();
-+  try {
-+    const target = { kind: "TaskBucket", namespace: "shop", name: "archive" };
-+    const baseline = { apiVersion: "example.test/v1", kind: "TaskBucket", metadata: { name: "archive", namespace: "shop", annotations: { "crossplane.io/paused": "true" } }, spec: { providerConfigRef: { name: "default" } } };
-+    act(() => root.render(<EditableYamlView resource={target as never} data={baseline} onCopy={() => {}} copied={false} onSave={async () => {}} />));
-+    const edit = [...host.querySelectorAll("button")].find(button => button.textContent?.trim() === "Edit")!;
-+    act(() => edit.click());
-+    expect(text()).not.toContain("Omitting the annotation");
-+    act(() => vi.advanceTimersByTime(200));
-+    expect(text()).toContain("Pause affects reconciliation");
-+    expect(text()).not.toContain("Omitting the annotation");
-+  } finally {
-+    vi.useRealTimers();
-+  }
-+});
-+
-+
-+it("retains raw acknowledged ref-less pause evidence through editor and status-free review", async () => {
-+  const target = { kind: "TaskClaim", namespace: "shop", name: "ref-less" };
-+  const raw = { apiVersion: "example.test/v1", kind: "TaskClaim", metadata: { name: "ref-less", namespace: "shop", annotations: { "crossplane.io/paused": "true" } }, spec: {}, status: { conditions: [{ type: "Synced", status: "False", reason: "ReconcilePaused" }] } };
-+  const clean = resourceToYaml(raw);
-+  expect(clean).not.toContain("status:");
-+  expect(clean).not.toContain("ReconcilePaused");
-+  const onPreview = vi.fn(async () => ({ documents: [{ index: 0, status: "accepted" as const, action: "update" as const, baselineYaml: clean, predictedYaml: clean, reviewedResourceVersion: "1" }], nonAtomic: false }));
-+  act(() => root.render(<EditableYamlView resource={target as never} data={raw} onCopy={() => {}} copied={false} onSave={async () => {}} onPreview={onPreview} />));
-+  await click(/^Edit$/);
-+  await click(/Review changes/);
-+  expect(text()).toContain("Pause affects reconciliation");
-+  expect(text()).toContain("Server preview keeps the pause request on TaskClaim shop/ref-less");
-+  expect(onPreview).toHaveBeenCalledWith(expect.objectContaining({ yaml: clean }));
-+  expect(raw.status.conditions[0].reason).toBe("ReconcilePaused");
-+});
-```
-
-**File**: `packages/k8s-ui/src/components/shared/EditableYamlView.tsx` (modified, +11/-1)
-```diff
-@@ -1,4 +1,4 @@
--import { useState, useCallback, useEffect, useRef } from 'react'
-+import { useState, useCallback, useEffect, useRef, useMemo } from 'react'
- import {
-   Copy,
-   CopyPlus,
-@@ -12,6 +12,8 @@ import {
- } from 'lucide-react'
- import { Download } from 'lucide-react'
- import { stringify as yamlStringify } from 'yaml'
-+import { useDebouncedValue } from '../../hooks/useDebouncedValue'
-+import { CrossplaneYamlApplyNotice } from '../ui/CrossplaneOperationNotice'
- import { CodeViewer } from '../ui/CodeViewer'
- import { YamlEditor } from '../ui/YamlEditor'
- import type { YamlSchemaLoader } from '../ui/YamlEditor'
-@@ -207,6 +209,8 @@ export function EditableYamlView({
-   const reviewGeneration = useRef(0)
-   const [isEditing, setIsEditing] = useState(savedDraft.current !== null)
-   const [editedYaml, setEditedYaml] = useState(savedDraft.current ?? '')
-+  const pauseContextYaml = useDebouncedValue(!onPreview && isEditing ? editedYaml : '', 200)
-+  const pauseBaselineYaml = useMemo(() => !onPreview && isEditing ? resourceToYaml(data) : '', [data, onPreview, isEditing])
-   const [yamlErrors, setYamlErrors] = useState<string[]>([])
-   const [showErrorDetails, setShowErrorDetails] = useState(false)
-   // Default on: the editor resubmits the full live manifest, so an unforced
-@@ -216,6 +220,7 @@ export function EditableYamlView({
-     yaml: string
-     force: boolean
-     originalYaml: string
-+    resourceData: unknown
-     documents: YamlPreviewResult[]
-     nonAtomic: boolean
-     context?: string
-@@ -293,6 +298,7 @@ export function EditableYamlView({
-           yaml: editedYaml,
-           force,
-           originalYaml: resourceToYaml(data),
-+          resourceData: data,
-           documents: result.documents,
-           nonAtomic: result.nonAtomic,
-           context: result.context,
-@@ -382,7 +388,9 @@ export function EditableYamlView({
-       return (
-         <YamlReview
-           submittedYaml={preview.yaml}
-+          mode="update"
-           originalYaml={preview.originalYaml}
-+          resourceData={preview.resourceData}
-           documents={preview.documents}
-           nonAtomic={preview.nonAtomic}
-           force={preview.force}
-@@ -465,6 +473,8 @@ export function EditableYamlView({
-           </div>
-         </div>
- 
-+        {!onPreview && <div className="px-4 pt-2"><CrossplaneYamlApplyNotice yaml={pauseContextYaml} baselineYaml={pauseBaselineYaml} resourceData={data} /></div>}
-+
-         {editWarning && (
-           <div className="px-4 py-2.5 bg-amber-500/10 dark:bg-yellow-500/10 border-b border-amber-300 dark:border-yellow-500/30">
-             <div className="flex items-start gap-2">
-```
-
-**File**: `packages/k8s-ui/src/components/shared/ResourceActionsBar.tsx` (modified, +1/-0)
-```diff
-@@ -693,6 +693,7 @@ export function ResourceActionsBar({
-         onClose={() => setShowDeleteConfirm(false)}
-         onConfirm={handleDeleteConfirm}
-         resourceName={resource.name}
-+        resourceData={data}
-         resourceKind={displayKindName(resource.kind, data?.kind)}
-         namespaceName={resource.namespace}
-         isLoading={isDeleting ?? false}
+@@ -1,3 +1,4 @@
++/// <reference types="vitest/config" />
+ import { defineConfig } from 'vite'
+ import react from '@vitejs/plugin-react'
+ import tailwindcss from '@tailwindcss/vite'
+@@ -52,4 +53,10 @@ export default defineConfig({
+   },
+   // Handle client-side routing - serve index.html for all routes
+   appType: 'spa',
++  test: {
++    fsModuleCache: true,
++    // Worktrees symlink node_modules to one checkout, so the default cache
++    // location would be shared by every worktree.
++    fsModuleCachePath: path.resolve(__dirname, '.vitest-cache'),
++  },
+ })
 ```
 
 ---
 
-### Incident Patch 3: `39f7ed4c` (2026-10-26)
-**Commit Message**: Keep normal deletion quiet without hiding real errors (#2307)
+### Incident Patch 2: `145a6915` (2026-10-27)
+**Commit Message**: Fast dev loop: make test-changed, with the full suite once at the end (#2371)
 
-Normal Crossplane-style deletion reports `Ready=False/Deleting` while
-external cleanup proceeds. Radar currently raises a warning immediately
-and can choose that summary instead of a specific reconciliation error
-later in the conditions.
+Agents and people iterating on Radar have been running the full suites
+after every fix: about 20 minutes per branch (`internal/server` alone
+takes ~4.5 minutes, and the two vitest suites are about 7,700 tests). A
+focused run of the same change takes about 2 minutes. This makes the
+fast tier the default and says when the full run is needed.
 
-Treat only this condition as expected during Radar’s existing ten-minute
-termination window, including bounded API-server clock skew. Continue
-selecting independent errors: current or undated evidence first,
-qualified older-generation evidence next, and overdue or uncertain
-`Deleting` only as a fallback. Existing stuck-deletion folding keeps one
-canonical termination finding while preserving a separate reconciliation
-error. Failure onset remains the selected condition’s timestamp.
+### What changed
 
-This adds only deletion interpretation, tests and contract
-documentation. It changes no endpoint, wire shape, informer routing or
-authorization.
+- **`make test-changed`** (`scripts/test-changed.sh [base]`, default
+`origin/main`). It takes the files changed since the merge base, plus
+staged, unstaged and untracked files, and runs:
+- `go vet` + `go test` on the changed Go packages only, in both the root
+and `pkg/` modules. `GO_TEST_RUN=<regexp>` narrows a big package such as
+`internal/server`.
+- A deleted Go file still selects its package; a `testdata/` file
+selects the Go package that owns it.
+- Each project's `npm run tsc` (TypeScript 7, as in CI) when frontend
+files changed, then `vitest related --run` on the changed files,
+including shared `testdata/` fixtures the frontend tests import.
+- `go.mod`/`go.sum` changes build and vet the whole module. A frontend
+config change (package.json, tscon
 
-Validation:
-- Complete `internal/issues` suite and full frontend/embed/Go `make
-build` passed on `d5af3a670d27b940c53881862e3bf766fd2bfaaa`.
-- Actual EKS API requests on 18 owned synthetic CRD fixtures: reviewed
-parent and feature build with identical detector sour
-
-**File**: `docs/mcp.md` (modified, +14/-0)
+**File**: `.claude/commands/qa.md` (modified, +32/-6)
 ```diff
-@@ -815,6 +815,20 @@ watches for this scan; an empty result does not establish that unwatched kinds
- are healthy. These findings also feed Active Issues and AI resource/search
- summaries, but not dashboard health summaries or `cluster://health`.
+@@ -7,11 +7,37 @@ description: Radar verification — type-check, tests, and visual-test only when
+ What "verify this change" means in radar. Run the checks that fit the *delta*;
+ skip the rest. Don't run everything reflexively.
  
-+A `Ready=False/Deleting` condition is expected during the first 10 minutes of
-+an actual deletion. This follows Radar's termination warning window, not a
-+Kubernetes deadline. Other failure conditions remain eligible under the existing
-+condition selector, including its suspension and whole-object generation gates.
-+The same window tolerates an API-server deletion timestamp slightly ahead of
-+Radar's clock; a farther-future timestamp does not establish expected progress.
-+After that window, or when deletion timing is unavailable, the condition remains
-+a fallback when no stuck-deletion finding is available. It never takes priority
-+over an independent error, including a qualified older-generation observation.
-+Deletion itself advances a custom resource's generation. If its top-level
-+`status.observedGeneration` then lags, the existing generation gate can withhold
-+even a pre-deletion error; only a readable stuck-deletion finding covers the
-+prolonged deletion until that gate clears.
+-## Code changed → type-check + tests
+-- `make tsc` — frontend type-check. **Never** `npm run lint` (broken).
+-- `make test` — unit tests.
+-- `make build` — only before a PR, or when Go changed (does FE build + embed +
+-  binary; heavier, so not every round).
++## Fast dev loop first — the full suite runs once
 +
- Findings start at warning after 10 minutes. At 30 minutes, controller-owned
- finalizers follow this policy:
++Verification has two tiers. Use the fast one while iterating; run the full one
++once, at the end. A fast loop is the priority: never wait on a full suite to
++check a small fix.
++
++**Iteration (every round): `make test-changed`** (`scripts/test-changed.sh`).
++It vets and tests only the changed Go packages (root and `pkg/` modules), runs
++`tsc` for `web/` and `packages/k8s-ui`, and `vitest related` on the changed
++frontend files. Typically minutes rather than the ~20 a full run takes.
++`GO_TEST_RUN=<regexp>` narrows a big package (`internal/server` alone takes
++~4.5 min); use it when the change only touches one area there. **Never**
++`npm run lint` (broken).
++
++**Completion (once, after the final batch):** CI on the pushed head is the full
++run: push and let it go; don't repeat it locally. Run the full local suite
++(`make test` plus `npm run test` in `web/` and `packages/k8s-ui`) only for a
++branch CI won't run (e.g. a PR stacked on another PR's branch), and then only
++once. `make build` is for running the binary (visual or live checks), not for
++verification rounds.
++
++**Keep it fast in practice:**
++- Batch fixes, then run the fast tier once for the batch, not after each edit.
++- Don't run suites while other heavy work (builds, other test runs, agents)
++  runs on the machine: it slows everything and creates false failures.
++- A failure in a file the change doesn't touch, under load, is load until shown
++  otherwise: rerun that file alone (`npx vitest run <file>` / `go test -run`)
++  before investigating. Several UI suites (e.g. `ResourcesView.kind-view`) and
++  `TestUpgradeReadinessEndpointLargeMetrics` are timing-sensitive.
++- Node 25: run vitest with `NODE_OPTIONS=--no-experimental-webstorage`
++  (the script sets it).
  
+ ## UI changed → `/visual-test` (lean toward it for feature-scale UI; skip is OK for small)
+ For a change that adds or meaningfully changes **rendered surfaces** — a new
+@@ -34,4 +60,4 @@ it (below). (Aligns with radar's CLAUDE.md "consider visual-test" note.)
+ - **Skipped** → say so with the reason: `visual-test: skipped (no UI delta)`.
+ 
+ ## Pure backend / util / type / docs
+-`make tsc` / `make test` as relevant — no visual-test.
++`make test-changed` — no visual-test. Docs-only: nothing to run.
 ```
 
-**File**: `internal/issues/source_conditions.go` (modified, +28/-8)
+**File**: `CLAUDE.md` (modified, +2/-0)
 ```diff
-@@ -12,6 +12,7 @@ import (
- 	"github.com/skyhook-io/radar/internal/k8s"
- 	"github.com/skyhook-io/radar/internal/logsafe"
- 	"github.com/skyhook-io/radar/pkg/conditions"
-+	"github.com/skyhook-io/radar/pkg/health"
- 	"github.com/skyhook-io/radar/pkg/issuesapi"
- 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
- 	"k8s.io/apimachinery/pkg/runtime/schema"
-@@ -272,9 +273,10 @@ func findActionableCondition(u *unstructured.Unstructured, condTypes ...string)
- 	if len(condTypes) == 0 {
- 		condTypes = conditions.DefaultFalseConditionTypes
- 	}
-+	now := time.Now()
- 	// Spec edits do not prove recovery. Keep older failures as a qualified fallback.
--	var stale conditions.FalseCondition
--	hasStale := false
-+	var stale, deleting conditions.FalseCondition
-+	hasStale, hasDeletingFallback := false, false
- 	for len(condTypes) > 0 {
- 		condition, found := conditions.FindFalseConditionWithTime(u, condTypes...)
- 		if !found {
-@@ -283,18 +285,36 @@ func findActionableCondition(u *unstructured.Unstructured, condTypes ...string)
- 		current, _ := conditions.Find(u, condition.Type)
- 		paused := condition.Type == "Synced" && condition.Reason == "ReconcilePaused" && u.GetAnnotations()["crossplane.io/paused"] == "true"
- 		if current.Status == "False" && !paused && !isTransientCRDCondition(u, condition.Reason) {
--			if u.GetGeneration() <= 0 || condition.ObservedGeneration <= 0 || condition.ObservedGeneration >= u.GetGeneration() {
--				return condition, true
-+			isDeleting := condition.Type == "Ready" && condition.Reason == "Deleting"
-+			deletion := u.GetDeletionTimestamp()
-+			expectedDeletion := false
-+			if isDeleting && deletion != nil && !deletion.IsZero() {
-+				age := now.Sub(deletion.Time)
-+				expectedDeletion = age >= -health.NodeRemovalWarningAfter && age < health.NodeRemovalWarningAfter
- 			}
--			if !hasStale {
--				condition.Message = strings.TrimSpace(fmt.Sprintf("Condition was last reported for generation %d; current resource generation is %d. %s", condition.ObservedGeneration, u.GetGeneration(), condition.Message))
--				stale, hasStale = condition, true
-+			if !expectedDeletion {
-+				isStale := u.GetGeneration() > 0 && condition.ObservedGeneration > 0 && condition.ObservedGeneration < u.GetGeneration()
-+				if isStale {
-+					condition.Message = strings.TrimSpace(fmt.Sprintf("Condition was last reported for generation %d; current resource generation is %d. %s", condition.ObservedGeneration, u.GetGeneration(), condition.Message))
-+				}
-+				switch {
-+				case isDeleting:
-+					// A specific failure is more actionable than the deletion summary.
-+					deleting, hasDeletingFallback = condition, true
-+				case !isStale:
-+					return condition, true
-+				case !hasStale:
-+					stale, hasStale = condition, true
-+				}
- 			}
- 		}
- 		// Skip the whole type so an older representation cannot revive an expected condition.
- 		condTypes = slices.DeleteFunc(slices.Clone(condTypes), func(candidateType string) bool { return candidateType == condition.Type })
- 	}
--	return stale, hasStale
-+	if hasStale {
-+		return stale, true
-+	}
-+	return deleting, hasDeletingFallback
- }
+@@ -91,6 +91,8 @@ web/src → (npm run build) → web/dist → (make embed) → internal/static/di
  
- // gwListenerCond is one listener's failing condition within a gateway group.
+ `make help` lists every target — read the Makefile when uncertain. The day-to-day set: `make build` (frontend + embed + binary), `make restart` (full rebuild + restart) / `make restart-fe` (frontend + embed + restart), `make watch-backend` / `make watch-frontend` (Air :9280 + Vite :9273), `make test`, `make tsc`, `make lint` (`go vet` on both Go modules, the root and `pkg/`). `go run ./cmd/explorer --dev` serves the frontend from `web/dist` without the embed step. Web unit tests: `cd web && npm test` (`vitest run src`); a bare `npx vitest run` also collects the Playwright specs in `web/e2e` and reports them as failed files.
+ 
++**Fast dev loop above all.** While iterating, run `make test-changed` (only the changed Go packages, tsc, and `vitest related` for changed frontend files) once per batch of fixes, not a full suite per edit. The full run happens once at the end, and CI on the pushed head is that run; run the full suite locally only for a branch CI won't test, such as a stacked PR. Don't run suites alongside other heavy work; a failure in an untouched file under load gets rerun alone before anyone debugs it. Details: `.claude/commands/qa.md`.
++
+ ### Visual Testing
+ ```bash
+ ./scripts/visual-test-start.sh          # Build + launch on random port (9300-9399)
 ```
 
-**File**: `internal/issues/source_conditions_test.go` (modified, +221/-0)
+**File**: `Makefile` (modified, +7/-1)
 ```diff
-@@ -5,7 +5,9 @@ import (
- 	"testing"
- 	"time"
+@@ -1,4 +1,4 @@
+-.PHONY: build install clean dev frontend backend test test-e2e test-chart lint help restart restart-fe kill watch-backend watch-frontend loadtest
++.PHONY: build install clean dev frontend backend test test-changed test-e2e test-chart lint help restart restart-fe kill watch-backend watch-frontend loadtest
+ .PHONY: calico-demo calico-demo-down calico-demo-status
+ .PHONY: kueue-demo kueue-demo-down kueue-demo-status kueue-demo-verify
+ .PHONY: cilium-demo cilium-demo-down cilium-demo-status
+@@ -158,6 +158,11 @@ test:
+ 	go test -v ./...
+ 	cd pkg && go test -v ./...
  
-+	"github.com/skyhook-io/radar/internal/k8s"
- 	"github.com/skyhook-io/radar/pkg/issuesapi"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
- 	"k8s.io/apimachinery/pkg/runtime/schema"
- 	"k8s.io/utils/ptr"
-@@ -776,3 +778,222 @@ func TestCurrentConditionGenerationDoesNotReviveOlderRepresentation(t *testing.T
- 		t.Fatalf("current representation must stay authoritative and qualified: %+v found=%v", c, found)
- 	}
- }
++# Fast dev loop: vet/test only the changed Go packages, tsc, and `vitest related`
++# for changed frontend files. BASE defaults to origin/main. Not a completion check.
++test-changed:
++	./scripts/test-changed.sh $(BASE)
 +
-+func TestDeletionConditionSelectionRetainsSpecificEvidence(t *testing.T) {
-+	failedAt := time.Now().Add(-20 * time.Minute).UTC().Truncate(time.Second)
-+	for _, tc := range []struct {
-+		name                                       string
-+		deletionAge                                time.Duration
-+		missingDeletion, staleDeleting, staleError bool
-+		error, errorFirst, unknownOnset            bool
-+		currentReady                               string
-+		want                                       string
-+	}{
-+		{name: "recent deletion keeps older error", deletionAge: time.Minute, staleError: true, error: true, want: "Synced: ReconcileError"},
-+		{name: "overdue deletion keeps older error", deletionAge: 11 * time.Minute, staleError: true, error: true, want: "Synced: ReconcileError"},
-+		{name: "older error before overdue deletion", deletionAge: 11 * time.Minute, staleError: true, error: true, errorFirst: true, want: "Synced: ReconcileError"},
-+		{name: "uncertain deletion keeps older error", missingDeletion: true, staleError: true, error: true, want: "Synced: ReconcileError"},
-+		{name: "older deletion yields to current error", deletionAge: 11 * time.Minute, staleDeleting: true, error: true, want: "Synced: ReconcileError"},
-+		{name: "older deletion keeps qualification", deletionAge: 11 * time.Minute, staleDeleting: true, want: "Ready: Deleting"},
-+		{name: "older deletion cannot revive expected progress", deletionAge: time.Minute, staleDeleting: true},
-+		{name: "unknown time does not inherit deletion onset", deletionAge: 11 * time.Minute, error: true, unknownOnset: true, want: "Synced: ReconcileError"},
-+		{name: "modern unknown supersedes older deletion", deletionAge: 11 * time.Minute, currentReady: "Unknown"},
-+		{name: "modern true supersedes older deletion", deletionAge: 11 * time.Minute, currentReady: "True"},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			deleting := map[string]any{"type": "Ready", "status": "False", "reason": "Deleting", "message": "cleanup requested", "lastTransitionTime": failedAt.Add(-time.Hour).Format(time.RFC3339)}
-+			if tc.staleDeleting {
-+				deleting["observedGeneration"] = int64(1)
-+			}
-+			conds := []map[string]any{deleting}
-+			if tc.error {
-+				failure := map[string]any{"type": "Synced", "status": "False", "reason": "ReconcileError", "message": "delete failed: denied"}
-+				if tc.staleError {
-+					failure["observedGeneration"] = int64(1)
-+				}
-+				if !tc.unknownOnset {
-+					failure["lastTransitionTime"] = failedAt.Format(time.RFC3339)
-+				}
-+				if tc.errorFirst {
-+					conds = append([]map[string]any{failure}, conds...)
-+				} else {
-+					conds = append(conds, failure)
-+				}
-+			}
-+			u := rolloutWithConditions(conds)
-+			u.SetName("example")
-+			u.SetNamespace("test")
-+			u.SetGeneration(2)
-+			if !tc.missingDeletion {
-+				ts := metav1.NewTime(time.Now().Add(-tc.deletionAge))
-+				u.SetDeletionTimestamp(&ts)
-+			}
-+			if tc.currentReady != "" {
-+				u.Object["status"].(map[string]any)["v1beta2"] = rolloutWithConditions([]map[string]any{{"type": "Ready", "status": tc.currentReady}}).Object["status"]
-+			}
-+			gvr := schema.GroupVersionResource{Group: "example.com", Version: "v1", Resource: "widgets"}
-+			p := &fakeProvider{dynamic: map[schema.GroupVersionResource][]*unstructured.Unstructured{gvr: {u}}, kinds: map[schema.GroupVersionResource]string{gvr: "Widget"}, namespaced: map[schema.GroupVersionResource]bool{gvr: true}}
-+			for _, grouped := range []bool{false, true} {
-+				got := Compose(p, Filters{Namespaces: []string{"test"}, Grouped: grouped})
-+				if tc.want == "" {
-+					if len(got) != 0 {
-+						t.Fatalf("expected quiet condition, got %+v", got)
-+					}
-+					continue
-+				}
-+				if len(got) != 1 || got[0].Reason != tc.want {
-+					t.Fatalf("want %s, got %+v", tc.want, got)
-+				}
-+				wantMessage, wantAt, stale := "cleanup requested", failedAt.Add(-time.Hour), tc.staleDeleting
-+				if tc.error {
-+					wantMessage, wantAt, stale = "delete failed: denied", failedAt, tc.staleError
-+				}
-+				if stale {
-+					wantMessage = "Condition was last reported for generation 1; current resource generation is 2. " + wantMessage
-+				}
-+				if got[0].Message != wantMessage || got[0].OnsetUnknown != tc.unknownOnset {
-+					t.Fatalf("selected observation changed: %+v", got[0])
-+				}
-+				if !tc.unknownOnset && !got[0].FirstSeen.Equal(wantAt) {
-+					t.Fatalf("wrong onset %v, want %v", got[0].FirstSeen, wantAt)
-+				}
-+			}
-+		})
-+	}
+ # Run e2e tests against the current kubeconfig cluster (on-demand, not in CI)
+ test-e2e:
+ 	go test -tags e2e -v -timeout 5m ./internal/k8s/
+@@ -527,6 +532,7 @@ help:
+ 	@echo "  make watch-backend   - Go with air hot reload (port 9280)"
+ 	@echo "  make run             - Run built binary"
+ 	@echo "  make test            - Run tests"
++	@echo "  make test-changed    - Fast loop: only what the change touches (BASE=origin/main)"
+ 	@echo ""
+ 	@echo "Demo clusters:"
+ 	@echo "  make gitops-demo      - GitOps fixtures (Argo CD + Flux)"
+```
+
+**File**: `scripts/test-changed.sh` (added, +81/-0)
+```diff
+@@ -0,0 +1,81 @@
++#!/usr/bin/env bash
++# Fast dev-loop checks: only what the change touches.
++#
++#   scripts/test-changed.sh [base]     (default base: origin/main)
++#
++# Changed files = committed since the merge base with <base>, plus staged,
++# unstaged and untracked files. For each side that changed it runs:
++#   Go:       go vet + go test on the changed packages only (root and pkg/ modules).
++#             A deleted file still selects its package; a testdata file selects the
++#             package that owns the testdata directory.
++#   Frontend: each project's `npm run tsc`, then `vitest related` on the changed files
++#             (including shared testdata fixtures the tests import).
++#   Config:   go.mod/go.sum → build + vet the whole module; a frontend config
++#             (package.json, tsconfig, vite/vitest config) → both type-checks, and a
++#             notice that the full vitest suite is needed once.
++#
++# This is the iteration tier. The completion check is CI on the pushed head
++# (or, for a branch CI doesn't run, `make test` plus both full vitest suites once).
++# GO_TEST_RUN=<regexp> passes -run to go test, e.g. to keep internal/server short.
++# Works with the bash 3.2 macOS ships.
++set -euo pipefail
++cd "$(git rev-parse --show-toplevel)"
++
++base=$(git merge-base "${1:-origin/main}" HEAD)
++changed=$({ git diff --name-only "$base"; git diff --name-only HEAD; git ls-files --others --exclude-standard; } | sort -u)
++[ -z "$changed" ] && { echo "no changes"; exit 0; }
++
++pkg_pkgs=""; root_pkgs=""; k8sui=""; web=""
++root_module=0; pkg_module=0; fe_config=0
++add_go() { # $1 = repo-relative package directory
++  [ -d "$1" ] && ls "$1"/*.go >/dev/null 2>&1 || return 0
++  case "$1" in
++    pkg/*) pkg_pkgs="$pkg_pkgs ./${1#pkg/}" ;;
++    pkg) pkg_pkgs="$pkg_pkgs ." ;;
++    *) root_pkgs="$root_pkgs ./$1" ;;
++  esac
 +}
++while IFS= read -r f; do
++  case "$f" in
++    go.mod|go.sum) root_module=1 ;;
++    pkg/go.mod|pkg/go.sum) pkg_module=1 ;;
++    package.json|package-lock.json|web/package.json|packages/k8s-ui/package.json|web/tsconfig*.json|packages/k8s-ui/tsconfig*.json|web/vite*.config.*|web/vitest*.config.*|packages/k8s-ui/vite*.config.*|packages/k8s-ui/vitest*.config.*) fe_config=1 ;;
++    */testdata/*)
++      add_go "${f%%/testdata/*}"
++      [ -e "$f" ] && k8sui="$k8sui ../../$f" && web="$web ../$f" ;;
++    *.go) add_go "$(dirname "$f")" ;;
++    packages/k8s-ui/*.ts|packages/k8s-ui/*.tsx|packages/k8s-ui/*.json) [ -e "$f" ] && k8sui="$k8sui ${f#packages/k8s-ui/}" ;;
++    web/*.ts|web/*.tsx|web/*.json) [ -e "$f" ] && web="$web ${f#web/}" ;;
++  esac
++done <<< "$changed"
++dedup() { tr ' ' '\n' <<< "$1" | sed '/^$/d' | sort -u | tr '\n' ' '; }
++pkg_pkgs=$(dedup "$pkg_pkgs"); root_pkgs=$(dedup "$root_pkgs")
++run_flag=(); [ -n "${GO_TEST_RUN:-}" ] && run_flag=(-run "$GO_TEST_RUN")
 +
-+func TestDeletingFa
++# Node 25 exposes a localStorage global that breaks jsdom's.
++if [ "$(node -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0)" -ge 25 ]; then
++  export NODE_OPTIONS="${NODE_OPTIONS:-} --no-experimental-webstorage"
++fi
++
++# Word splitting of the package and file lists below is intended.
++# shellcheck disable=SC2086
++{
++  if [ "$pkg_module" = 1 ]; then echo "== go (pkg module): go.mod changed, build + vet ./..."; (cd pkg && go build ./... && go vet ./...); fi
++  if [ "$root_module" = 1 ]; then echo "== go: go.mod changed, build + vet ./..."; go build ./... && go vet ./...; fi
++  if [ -n "$pkg_pkgs" ]; then
++    echo "== go (pkg module): $pkg_pkgs"
++    (cd pkg && go vet $pkg_pkgs && go test -count=1 ${run_flag[@]+"${run_flag[@]}"} $pkg_pkgs)
++  fi
++  if [ -n "$root_pkgs" ]; then
++    echo "== go: $root_pkgs"
++    go vet $root_pkgs && go test -count=1 ${run_flag[@]+"${run_flag[@]}"} $root_pkgs
++  fi
++  if [ -n "$k8sui$web" ] || [ "$fe_config" = 1 ]; then
++    echo "== tsc"
++    (cd web && npm run --silent tsc) && (cd packages/k8s-ui && npm run --silent tsc)
++    if [ -n "$k8sui" ]; then echo "== vitest related (k8s-ui)"; (cd packages/k8s-ui && npx vitest related --run $k8sui); fi
++    if [ -n "$web" ]; then echo "== vitest related (web)"; (cd web && npx vitest related --run $web); fi
++    if [ "$fe_config" = 1 ]; then echo "!! frontend config changed: run the full vitest suites once (npm run test in web/ and packages/k8s-ui)"; fi
++  fi
++}
++echo "== done"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2357** (2026-10-27): Watch custom resources of CRDs installed after Radar starts (@nadaverell)
-- **PR #2354** (2026-10-27): Refuse rebinding Host values on unauthenticated shared listeners (@nadaverell)
-- **PR #2353** (2026-10-27): Phones: no YAML authoring or bulk select; one-column compare (@nadaverell)
-- **PR #2351** (2026-10-27): Link each manager a GitOps write warning names, and explain manager gaps in plain words (@nadaverell)
-- **PR #2350** (2026-10-27): Logs on phones: compact header, full-width lines (@nadaverell)
-- **PR #2349** (2026-10-27): Offer no update to development builds (@nadaverell)
+- **PR #2395** (2026-10-28): Stop the slowest internal/server tests waiting on production timers (@nadaverell)
+- **PR #2390** (closed): [temporary] Benchmark web test isolation — do not merge (@nadaverell)
+- **PR #2389** (2026-10-28): Run web unit tests without per-file isolation (@nadaverell)
+- **PR #2387** (2026-10-27): Create the AI scratch root on the first run, not at construction (@nadaverell)
+- **PR #2385** (2026-10-27): deps(go): bump github.com/go-jose/go-jose/v4 from 4.1.4 to 4.1.6 (@dependabot[bot])
+- **PR #2384** (2026-10-27): Trim the settings browser CI job (@nadaverell)
 
 ---
 
@@ -2977,40 +2676,31 @@ parent and feature build with identical detector sour
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Require an impact preview for MCP deletion and report accepted cleanup as progre
+## X. Speed up the dev-loop test runs (#2383)
 
 **RULE**:
-When implementing operations in `docs/mcp.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/commands/qa.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `78ed5a4f`: Require an impact preview for MCP deletion and report accepted cleanup as progress (#2041). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dabf6dc0`: Speed up the dev-loop test runs (#2383). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/mcp.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/commands/qa.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-
-### MCP deletion preview and confirmation
-
-External writable MCP exposes `delete_resource`. It is absent from read-only
-mounts and from the built-in `/mcp-apply` transport used by Radar OSS's built-in CLI agents. Hub's sidecar independently enforces its read-only gate; it does not use this new mount.
-Built-in deletion stays deferred until the approval flow presents this preview.
-There is no new configuration switch.
-
-The default call performs a caller-authenticated server dry-run and returns a
-summary, finalizers, propagation, the shared observed-impact preview, and a
-five-minute signed confirmation. `dry_run: false` requires that confirmation.
-It binds the caller and groups, captured cluster context, root UID,
-generation/finalizers (resourceVersion for kinds without generation), and propagation policy.
-Root spec/finalizer/incarnation or policy changes require another preview. For roots
-with generation, status-only changes before confirmation can proceed with fresh
-resourceVersion preconditions. Kinds without generation require another preview
-after any update. An API-server conflict returns an error requiring another preview;
-the tool does not retry DELETE automatically.
-
-Depende
+Go results come from the test cache when nothing a package depends on changed;
+`GO_TEST_FRESH=1` forces a real run (e.g. to recheck a flaky test).
+- Vitest keeps transformed modules in `.vitest-cache/` in each project (one per
+  worktree, gitignored), so a second run skips most transforms.
+- `packages/k8s-ui` runs most test files without isolation: a worker reuses its
+  modules across files (`vitest.config.ts`). Files that call `vi.mock` run
+  isolated, picked automatically from their source. A test that passes alone but
+  fails in the suite is probably leaking or reading module state from another
+  file: reset that state in the tests (see `touch-intent.test.ts`). Shuffling
+  the file order finds such pairs:
+  `npx vitest run --project shared --sequence.shuffle.files --sequence.seed=<n>`.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3020,4 +2710,4 @@ Depende
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `78ed5a4f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dabf6dc0` are properly handled with clean fallback behavior.

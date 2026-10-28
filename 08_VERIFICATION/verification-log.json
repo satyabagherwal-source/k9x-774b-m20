@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-VQLP",
-    "timestamp": "2026-10-26T12:40:34.669Z",
-    "repository": "kcl-lang/kcl",
-    "learningId": "learn-github-kcl-lang-kcl",
-    "contentHash": "0258b7e2d737a3bdbd63bf6fe40784be50c452143ed7ff03132ba5ade039fc4e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-GVYY",
-    "timestamp": "2026-10-26T12:57:01.402Z",
-    "repository": "matrixorigin/matrixone",
-    "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "50c8444cd070847b46f2af464e8171967aa2dc0b979ca221f32b2f4d32149864",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-N1M4",
-    "timestamp": "2026-10-26T13:01:48.652Z",
-    "repository": "DefGuard/defguard",
-    "learningId": "learn-github-defguard-defguard",
-    "contentHash": "3fbb1616c7a6979448780d717caba366f08cffffdfa83663753c9db19554d7bc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-ZDEK",
     "timestamp": "2026-10-26T13:11:23.804Z",
     "repository": "Vincentwei1021/video-shotcraft",
@@ -7492,6 +7447,51 @@
     "contentHash": "e0de5996f7a94e1a3399fed9f5ae96ec2df93e3b32360ab4b4afdfe87be4c1c8",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-TTTO",
+    "timestamp": "2026-10-28T01:58:34.812Z",
+    "repository": "autotrust/JEV-27B-VL",
+    "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+    "contentHash": "d7c2ba43d51602823f52a2238142c53e5839d2c6b495d9416a1c94cad7e0e0c0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-TV5C",
+    "timestamp": "2026-10-28T01:58:36.528Z",
+    "repository": "CrossPaste/crosspaste-desktop",
+    "learningId": "learn-github-crosspaste-crosspaste-desktop",
+    "contentHash": "4951791502e6fe7a8ee4ec6a95fe5d582f36d00f85015e8e25c3710e1e877ed4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-TX6W",
+    "timestamp": "2026-10-28T01:58:39.176Z",
+    "repository": "skyhook-io/radar",
+    "learningId": "learn-github-skyhook-io-radar",
+    "contentHash": "0125d197b3a2f087a553040fcd9f1609327cac1fc10eeb7fe7b20bd9cc66ac1b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

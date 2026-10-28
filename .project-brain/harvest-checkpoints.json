@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T01:49:33.399Z",
+  "last_updated": "2026-10-28T01:58:39.189Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1775,14 +1775,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-jev-27b-vl",
-      "content_hash": "066ff796f8b1b2d92c16a239ecfec588b61d41397b69a01bc1d2d6ddde223567",
-      "verified_at": "2026-10-25T05:21:11.932Z",
+      "content_hash": "d7c2ba43d51602823f52a2238142c53e5839d2c6b495d9416a1c94cad7e0e0c0",
+      "verified_at": "2026-10-28T01:58:34.823Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T05:21:11.932Z"
+      "last_updated": "2026-10-28T01:58:34.823Z"
     },
     "autotrust/GEV-26B-Decide": {
       "repository": "autotrust/GEV-26B-Decide",
@@ -5211,14 +5211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyhook-io-radar",
-      "content_hash": "7dcaa10aaebeb190b0b8bd9d8df93d2e482a0df9aa2d02092cf304b53e116b5f",
-      "verified_at": "2026-10-27T13:25:23.873Z",
+      "content_hash": "0125d197b3a2f087a553040fcd9f1609327cac1fc10eeb7fe7b20bd9cc66ac1b",
+      "verified_at": "2026-10-28T01:58:39.188Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:25:23.873Z"
+      "last_updated": "2026-10-28T01:58:39.188Z"
     },
     "mitmproxy/mitmproxy": {
       "repository": "mitmproxy/mitmproxy",
@@ -11451,14 +11451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crosspaste-crosspaste-desktop",
-      "content_hash": "6b5344c3ec41398ad8f33f604621a20ccb31d6d430fa7967043f3efe907c6dfd",
-      "verified_at": "2026-10-25T14:25:16.154Z",
+      "content_hash": "4951791502e6fe7a8ee4ec6a95fe5d582f36d00f85015e8e25c3710e1e877ed4",
+      "verified_at": "2026-10-28T01:58:36.540Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T14:25:16.154Z"
+      "last_updated": "2026-10-28T01:58:36.540Z"
     },
     "infiniflow/infinity": {
       "repository": "infiniflow/infinity",

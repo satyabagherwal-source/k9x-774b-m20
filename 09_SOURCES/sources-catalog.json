@@ -95,8 +95,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-27B-VL",
     "sourceVersion": "hf-autotrust-jev-27b-vl",
     "license": "Open-Source",
-    "contentHash": "066ff796f8b1b2d92c16a239ecfec588b61d41397b69a01bc1d2d6ddde223567",
-    "lastHarvestedAt": "2026-10-25T05:21:11.915Z",
+    "contentHash": "d7c2ba43d51602823f52a2238142c53e5839d2c6b495d9416a1c94cad7e0e0c0",
+    "lastHarvestedAt": "2026-10-28T01:58:34.815Z",
     "learningId": "learn-huggingface-autotrust-jev-27b-vl"
   },
   "hf-autotrust-gev-26b-decide": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "43b82f58",
+    "sourceVersion": "46376e81",
     "license": "Apache-2.0",
-    "contentHash": "7dcaa10aaebeb190b0b8bd9d8df93d2e482a0df9aa2d02092cf304b53e116b5f",
-    "lastHarvestedAt": "2026-10-27T13:25:23.866Z",
+    "contentHash": "0125d197b3a2f087a553040fcd9f1609327cac1fc10eeb7fe7b20bd9cc66ac1b",
+    "lastHarvestedAt": "2026-10-28T01:58:39.179Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -7603,10 +7603,10 @@
     "repository": "CrossPaste/crosspaste-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/CrossPaste/crosspaste-desktop",
-    "sourceVersion": "36683ed7",
+    "sourceVersion": "5d07b610",
     "license": "AGPL-3.0",
-    "contentHash": "6b5344c3ec41398ad8f33f604621a20ccb31d6d430fa7967043f3efe907c6dfd",
-    "lastHarvestedAt": "2026-10-25T14:25:16.146Z",
+    "contentHash": "4951791502e6fe7a8ee4ec6a95fe5d582f36d00f85015e8e25c3710e1e877ed4",
+    "lastHarvestedAt": "2026-10-28T01:58:36.532Z",
     "learningId": "learn-github-crosspaste-crosspaste-desktop"
   },
   "infiniflow-infinity": {

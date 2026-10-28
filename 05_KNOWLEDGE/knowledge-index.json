@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T01:49:33.328Z",
+  "last_updated": "2026-10-28T01:58:39.102Z",
   "total_verified_learnings": 1154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7619,8 +7619,8 @@
       "slug": "crosspaste-crosspaste-desktop",
       "platform": "github",
       "source_url": "https://github.com/CrossPaste/crosspaste-desktop",
-      "source_version": "36683ed7",
-      "content_hash": "6b5344c3ec41398ad8f33f604621a20ccb31d6d430fa7967043f3efe907c6dfd",
+      "source_version": "5d07b610",
+      "content_hash": "4951791502e6fe7a8ee4ec6a95fe5d582f36d00f85015e8e25c3710e1e877ed4",
       "dossier_path": "07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
       "promoted_rules": [
@@ -7633,6 +7633,11 @@
           "number": 4338,
           "title": ":bug: stop macOS search focus rechecks from blocking the EDT on AppKit (#5242)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5114,
+          "title": ":bug: highlight the clicked row in the paste panel (#5286)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7640,7 +7645,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T14:25:16.076Z",
+      "verified_at": "2026-10-28T01:58:36.453Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -17141,7 +17146,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
       "source_version": "hf-autotrust-jev-27b-vl",
-      "content_hash": "066ff796f8b1b2d92c16a239ecfec588b61d41397b69a01bc1d2d6ddde223567",
+      "content_hash": "d7c2ba43d51602823f52a2238142c53e5839d2c6b495d9416a1c94cad7e0e0c0",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "promoted_rules": [
@@ -17208,6 +17213,16 @@
           "number": 4074,
           "title": "Stochastic Generation Calibration for Decision Models",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5112,
+          "title": "Hybrid Attention Interleaving Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5113,
+          "title": "Calibrated Decision Output Constraint",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17227,7 +17242,7 @@
         "learn-huggingface-hf-autotrust-jev-27b-vl-mv41j8wr",
         "learn-huggingface-hf-autotrust-jev-27b-vl-mv4fdvg8"
       ],
-      "verified_at": "2026-10-25T05:21:11.802Z",
+      "verified_at": "2026-10-28T01:58:34.733Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47536,8 +47551,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "43b82f58",
-      "content_hash": "7dcaa10aaebeb190b0b8bd9d8df93d2e482a0df9aa2d02092cf304b53e116b5f",
+      "source_version": "46376e81",
+      "content_hash": "0125d197b3a2f087a553040fcd9f1609327cac1fc10eeb7fe7b20bd9cc66ac1b",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -47580,6 +47595,11 @@
           "number": 4801,
           "title": "Require an impact preview for MCP deletion and report accepted cleanup as progre",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5115,
+          "title": "Speed up the dev-loop test runs (#2383)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47587,7 +47607,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:25:23.802Z",
+      "verified_at": "2026-10-28T01:58:39.088Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -140519,6 +140539,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T01:49:33.315Z"
+    },
+    "rule-5112": {
+      "learning_id": "rule-5112",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5112,
+      "title": "Hybrid Attention Interleaving Invariant",
+      "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
+      "source_version": "hf-autotrust-jev-27b-vl",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:58:34.733Z"
+    },
+    "rule-5113": {
+      "learning_id": "rule-5113",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5113,
+      "title": "Calibrated Decision Output Constraint",
+      "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
+      "source_version": "hf-autotrust-jev-27b-vl",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:58:34.733Z"
+    },
+    "rule-5114": {
+      "learning_id": "rule-5114",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5114,
+      "title": ":bug: highlight the clicked row in the paste panel (#5286)",
+      "source_url": "https://github.com/CrossPaste/crosspaste-desktop",
+      "source_version": "5d07b610",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:58:36.453Z"
+    },
+    "rule-5115": {
+      "learning_id": "rule-5115",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5115,
+      "title": "Speed up the dev-loop test runs (#2383)",
+      "source_url": "https://github.com/skyhook-io/radar",
+      "source_version": "46376e81",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:58:39.088Z"
     }
   },
   "aliases": {

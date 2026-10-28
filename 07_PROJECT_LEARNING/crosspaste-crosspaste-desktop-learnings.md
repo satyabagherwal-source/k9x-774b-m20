@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md`  
 > **Source**: github ([https://github.com/CrossPaste/crosspaste-desktop](https://github.com/CrossPaste/crosspaste-desktop))  
-> **Source Version**: `36683ed7`  
+> **Source Version**: `5d07b610`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T14:25:15.769Z  
+> **Timestamp**: 2026-10-28T01:58:36.062Z  
 > **Learning ID**: `learn-github-crosspaste-crosspaste-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/CrossPaste/crosspaste-desktop](https://github.com/CrossPaste/crosspaste-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T14:25:15.761Z  
+> **Harvest Timestamp**: 2026-10-28T01:58:35.947Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cross-device clipboard sync for macOS, Windows & Linux — end-to-end encrypted, LAN-only, no cloud. OCR, CLI and MCP server built in.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2661 stars
+- **Stars / Engagement**: 2667 stars
 
 ---
 
@@ -747,11 +747,11 @@ private val MIN_CONNECTING_VISIBLE = 1.seconds
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5254** (2026-10-23): **Windows: CrossPaste's own bubble editor window can be recorded as the previous app and receive the paste**
-  *Symptoms*: ## Problem  On Windows, `WindowFocusRecorder.isValidWindow` only excludes the main window and search window titles. Other CrossPaste windows — most notably the bubble editor window (`CrossPaste Editor`), which is focusable — can be recorded as `lastWinAppInfo`, i.e. as "the previous app".  When the user then pastes from the search or main window, CrossPaste activates its own bubble window and injects the paste keystroke into it. Since #5248, the foreground check (`WindowsFocusUtils.isForegroundProcessOf`) compares by process, so it reports our own window as "back in the foreground" and the paste is treated as verified.  macOS is not affected: `prevMacAppInfo` is only updated when the frontmost bundle ID differs from CrossPaste's.  ## Steps to reproduce (Windows)  1. Open the bubble editor window and click into it. 2. Open the search window with the shortcut and pick an item with Enter. 3. The item is pasted into the bubble editor instead of the app used before it.  ## Open question  Pasting into the bubble while editing in it may sometimes be what the user wants, so we need to decide on the behavior first. Options:  - Exclude every CrossPaste window (by process ID) in `isValidWindow`, matching macOS. This is the simplest fix and keeps behavior consistent across platforms. - Keep recording the bubble window, but only treat it as a paste target on purpose.  ## Context  Found while reviewing #5248. The behavior existed before #5248; that PR just makes the paste look verified. 
+- **Issue #5279** (2026-10-26): **Double-click paste in the search window is ignored after reopening it**
+  *Symptoms*: ## Steps  1. Open the search window and single-click an item. 2. Close it with Esc. 3. Reopen it with the shortcut (Shift+Cmd+Space by default) and double-click an item.  Nothing is pasted and the window stays open. Single clicks also toggle multi-selection as if Shift were held.  ## Cause  `SidePasteboardContentView` tracks Shift in a `isShiftPressed` state that is updated only from key events reaching the paste list. The open-search shortcut itself holds Shift, and the matching key-up is not always delivered to the list (the window is hidden or not yet focused), so the state stays `true`. The `LaunchedEffect(searchWindowInfo.show)` meant to reset it is unreliable because the window content's composition is paused while hidden (see the note on `PasteSelectionViewModel.resetToTop`). With the stale `true`, `onDoubleTap` skips `quickPasteFromSearchWindow`.
 
-- **Issue #5236** (2026-10-21): **Newest paste is half off-screen when added while the search window is at the start**
-  *Symptoms*: ## Problem  With the search window open and the paste list at its initial position (newest item at the far left), a newly added paste is inserted but often ends up only half visible, with its left half outside the window. Earlier items stay still and only part of the list shifts.  ## Cause  The LazyRow is keyed by `item.id`, so when an item is prepended, LazyList anchors to the previous first item and the new one lands off-screen to the left. The list then tried to recover with `animateScrollToItem(0)` after the fact, triggered twice via `snapshotFlow { layoutInfo }.take(2)`. Interrupted or racing scroll animations left the newest item partly off-screen.  ## Expected  - At the start of the list: the new paste shows fully at the front with a smooth insertion animation, and older items move to the right. - Scrolled further along: adding a paste must not move what the user is currently looking at.
+- **Issue #5277** (2026-10-26): **Double-clicking a search window item sometimes does nothing**
+  *Symptoms*: ## Problem  Double-clicking an item in the search window occasionally does nothing: the window stays open and nothing is pasted. Retrying with a quicker double-click works.  ## Cause  Compose Desktop hard-codes the double-tap timeout to 300 ms (`PlatformContext.DefaultViewConfiguration`), while the OS lets the user pick the double-click speed (macOS defaults to 500 ms, read by AWT as `awt.multiClickInterval`). A double-click whose second press lands 300–500 ms after the first release is a double-click to the OS but reaches `detectTapGestures` as two single taps, so `onDoubleTap` never fires.  Reproduced with synthesized CGEvents: a ~390 ms gap leaves the window open with no paste; a 150 ms gap pastes.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -768,660 +768,446 @@ private val MIN_CONNECTING_VISIBLE = 1.seconds
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dd2282c7` (2026-10-21)
-**Commit Message**: :bug: stop macOS search focus rechecks from blocking the EDT on AppKit (#5242)
+### Incident Patch 1: `5d07b610` (2026-10-26)
+**Commit Message**: :bug: highlight the clicked row in the paste panel (#5286)
 
-* :bug: stop macOS search focus rechecks from blocking the EDT on AppKit
-
-* :bug: mirror willResignActive, guard NSApp and log recheck timing for macOS focus rechecks
-
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/app/MacAppWindowManager.kt` (modified, +6/-0)
+**File**: `app/src/desktopMain/kotlin/com/crosspaste/ui/model/PastePanelViewModel.kt` (modified, +14/-22)
 ```diff
-@@ -29,6 +29,12 @@ class MacAppWindowManager(
-     private val crosspasteBundleID = getSystemProperty().get("mac.bundleID")
+@@ -26,12 +26,10 @@ import kotlin.time.Duration.Companion.milliseconds
+  * State for the floating paste panel (#4995).
+  *
+  * The panel lists the clipboard history newest-first. Clicking a row pastes it into
+- * whatever app currently has focus (the panel never takes focus itself) and moves the
+- * "next" marker to the row copied right after it, so a batch copied as A, B, C is
+- * pasted back in the same order with one click per field. The marker is tracked by
+- * paste id rather than index so that new copies arriving while the panel is open do
+- * not shift it. A double click pastes once: presses that land while a paste is still
+- * running, or shortly after it, are dropped.
++ * whatever app currently has focus (the panel never takes focus itself) and highlights
++ * that row. The highlight is tracked by paste id rather than index so that new copies
++ * arriving while the panel is open do not shift it. A double click pastes once: presses
++ * that land while a paste is still running, or shortly after it, are dropped.
+  */
+ class PastePanelViewModel(
+     private val appWindowManager: DesktopAppWindowManager,
+@@ -53,8 +51,8 @@ class PastePanelViewModel(
+     private val _loadAll = MutableStateFlow(false)
+     val loadAll: StateFlow<Boolean> = _loadAll.asStateFlow()
  
-     init {
-+        // Warms the native activation monitor so the search window's focus rechecks
-+        // read cached state instead of blocking the EDT on AppKit. The first call
-+        // waits for the main thread once (on this IO thread, never the UI thread)
-+        // to register the observer; it relies on this manager being created during
-+        // startup, before the search window can open.
-+        ioScope.launch { MacAppUtils.isApplicationActive() }
-         // Re-apply the Dock icon policy immediately when the setting is toggled
-         // while the main window is open (the toggle lives in the main window).
-         // setDockIconVisibility only switches the activation policy — it must not
-```
-
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/ui/SearchWindow.kt` (modified, +3/-1)
-```diff
-@@ -296,6 +296,7 @@ fun SearchWindow(windowIcon: Painter?) {
-                                     currentMacFocusSession === session &&
-                                     window.isShowing
-                             if (eligible) {
-+                                val startedAt = System.nanoTime()
-                                 val focus =
-                                     MacSearchWindowFocusState(
-                                         appActive = MacAppUtils.isApplicationActive(),
-@@ -305,9 +306,10 @@ fun SearchWindow(windowIcon: Painter?) {
-                                         mainFocused = appWindowManager.mainComposeWindow?.hasFocusedWindow() == true,
-                                         pointerOnStatusItem = MacAppUtils.isPointerOnStatusItem(),
-                                     )
-+                                val elapsedMs = (System.nanoTime() - startedAt) / 1_000_000.0
-                                 logger.info {
-                                     "Mac search focus recheck result: source=$source, session=$sessionId, " +
--                                        "state=$focus, dismiss=${focus.shouldDismiss}, " +
-+                                        "elapsedMs=$elapsedMs, state=$focus, dismiss=${focus.shouldDismiss}, " +
-                                         "show=${appWindowManager.getCurrentSearchWindowInfo().show}"
-                                 }
-                                 focus.shouldDismiss
-```
-
-**File**: `app/src/desktopMain/swift/MacosApi.swift` (modified, +59/-6)
-```diff
-@@ -501,26 +501,79 @@ public func getCurrentActiveAppInfo() -> UnsafePointer<CChar>? {
-     return nil
- }
+-    /** Id of the row to paste next; null means the newest row. */
+-    private val _nextId = MutableStateFlow<Long?>(null)
++    /** Id of the row pasted last; null until a row is clicked. */
++    private val _highlightedId = MutableStateFlow<Long?>(null)
  
-+// Callers on the AWT EDT must not block on the main thread: during activation
-+// changes AppKit can be waiting on the EDT itself, and the two threads then stall
-+// each other for a full second. The state is mirrored from the main thread instead.
-+private final class ApplicationActiveMonitor {
-+    private let lock = NSLock()
-+    private var active: Bool?
-+
-+    init() {
-+        DispatchQueue.main.async { [self] in
-+            // The notification center retains block-based observer tokens until they
-+            // are removed; this monitor lives for the whole process, so the returned
-+            // tokens are intentionally discarded.
-+            for (name, value) in [
-+                (NSApplication.didBecomeActiveNotification, true),
-+                // willResignActive is posted before the key window resigns, hence before
-+                // AWT can queue the focus-loss event that reads this cache. Mirroring it
-+                // closes the window where a recheck could still observe the old `true`.
-+                (NSApplication.willResignActiveNotification, false),
-+                (NSApplication.didResignActiveNotification, false),
-+            ] {
-+                NotificationCenter.default.addObserver(forName: name, object: nil, queue: nil) { [self] _ in
-+                    set(value)
-+                }
-+            }
-+            set(NSApp?.isActive ?? false)
-+        }
-+    }
-+
-+    private func set(_ value: Bool) {
-+        lock.lock()
-+        active = value
-+        lock.unlock()
-+    }
-+
-+    /// Nil until the observers are registered on the main thread.
-+    var isActive: Bool? {
-+        lock.lock()
-+        defer { lock.unlock() }
-+        return active
-+    }
-+}
-+
-+private let applicationActiveMonitor = ApplicationActiveMonitor()
-+
- @_cdecl("isApplicationActive")
- public func isApplicationActive() -> Int32 {
-     if Thread.isMainThread {
--        return NSApp.isActive ? 1 : 0
-+        return (NSApp?.isActive ?? false) ? 1 : 0
-+    }
-+    if let active = applicationActiveMonitor.isActive {
-+        return active ? 1 : 0
+     private val pasteInFlight = Mutex()
+ 
+@@ -74,21 +72,19 @@ class PastePanelViewModel(
+                 initialValue = emptyList(),
+             )
+ 
+-    val nextIndex: StateFlow<Int> =
+-        combine(items, _nextId) { list, nextId ->
+-            nextId
+-                ?.let { id -> list.indexOfFirst { it.id == id } }
+-                ?.takeIf { it >= 0 }
+-                ?: 0
++    /** Index of the highlighted row, -1 when none is. */
++    val highlightedIndex: StateFlow<Int> =
++        combine(items, _highlightedId) { list, highlightedId ->
++            highlightedId?.let { id -> list.indexOfFirst { it.id == id } } ?: -1
+         }.stateIn(
+             scope = viewModelScope,
+             started = SharingStarted.WhileSubscribed(5000),
+-            initialValue = 0,
++            initialValue = -1,
+         )
+ 
+-    /** Every open starts fresh: newest row is next, first page only. */
++    /** Every open starts fresh: nothing highlighted, first page only. */
+     fun onShown() {
+-        _nextId.value = null
++        _highlightedId.value = null
+         _limit.value = PAGE_SIZE
      }
--    return DispatchQueue.main.sync { NSApp.isActive ? 1 : 0 }
-+    return DispatchQueue.main.sync { (NSApp?.isActive ?? false) ? 1 : 0 }
- }
  
- @_cdecl("isPointerOnStatusItem")
- public func isPointerOnStatusItem() -> Int32 {
--    if !Thread.isMainThread {
--        return DispatchQueue.main.sync { isPointerOnStatusItem() }
--    }
-     // macOS 27 deactivates the app before it forwards the status item mouse-down,
-     // so the click event arrives too late. Hardware state is already current:
-     // the button is down over the icon. Requiring the press keeps Cmd+Tab while
-     // hovering the icon a real dismissal.
-+    //
-+    // The press is sampled before hopping to the main thread, so keyboard-driven
-+    // focus changes never wait on AppKit. NSEvent's class-level hardware queries
-+    // read the window server's current device state and touch no AppKit objects;
-+    // AppKit does not document them as main-thread-only, so this read is
-+    // intentionally done off the main thread.
-     guard NSEvent.pressedMouseButtons & 1 != 0 else { return 0 }
-+    if !Thread.isMainThread {
-+        return DispatchQueue.main.sync { isPointerOnStatusItem() }
-+    }
-     let pointer = NSEvent.mouseLocation
--    let onStatusItem = NSApp.windows.contains { window in
-+    let onStatusItem = (NSApp?.windows ?? []).contains { window in
-         NSStringFromClass(type(of: window)) == "NSStatusBarWindow" &&
-             window.isVisible &&
-             window.frame.contains(pointer)
+@@ -111,10 +107,6 @@ class PastePanelViewModel(
+     }
+ 
+     private suspend fun pasteOnce(pasteData: PasteData) {
+-        val list = items.value
+-        val index = list.indexOfFirst { it.id == pasteData.id }
+-        // The row copied right after this one; stays put when there is nothing newer.
+-        val next = if (index > 0) list[index - 1] else pasteData
+         val written =
+             withContext(ioDispatcher) {
+                 pasteboardService
+@@ -130,6 +122,6 @@ class PastePanelViewModel(
+             return
+         }
+         appWindowManager.toPaste()
+-        _nextId.value = next.id
++        _highlightedId.value = pasteData.id
+     }
+ }
+```
+
+**File**: `app/src/desktopMain/kotlin/com/crosspaste/ui/paste/panel/PastePanelContent.kt` (modified, +2/-2)
+```diff
+@@ -85,7 +85,7 @@ fun FrameWindowScope.PastePanelContent(surface: PastePanelSurface) {
+     val viewModel = koinInject<PastePanelViewModel>()
+ 
+     val items by viewModel.items.collectAsState()
+-    val nextIndex by viewModel.nextIndex.collectAsState()
++    val highlightedIndex by viewModel.highlightedIndex.collectAsState()
+     val loadAll by viewModel.loadAll.collectAsState()
+ 
+     val listState = rememberLazyListState()
+@@ -153,7 +153,7 @@ fun FrameWindowScope.PastePanelContent(surface: PastePanelSurface) {
+                 ) { index, pasteData ->
+                     PastePanelRow(
+                         pasteData = pasteData,
+-                        highlighted = index == nextIndex,
++                        highlighted = index == highlightedIndex,
+                         onClick = {
+                             mainCoroutineDispatcher.launch {
+                                 viewModel.paste(pasteData)
+```
+
+**File**: `app/src/desktopTest/kotlin/com/crosspaste/ui/model/PastePanelViewModelTest.kt` (modified, +21/-21)
+```diff
+@@ -100,16 +100,16 @@ class PastePanelViewModelTest {
+     }
+ 
+     @Test
+-    fun `pasting a row writes it, simulates paste and advances to the row copied after it`() =
++    fun `pasting a row writes it, simulates paste and highlights that row`() =
+         runTest {
+             val vm = createViewModel()
+             val jobs =
+                 listOf(
+                     launch { vm.items.collect {} },
+-                    launch { vm.nextIndex.collect {} },
++                    launch { vm.highlightedIndex.collect {} },
+                 )
+             advanceUntilIdle()
+-            assertEquals(0, vm.nextIndex.value)
++            assertEquals(-1, vm.highlightedIndex.value)
+ 
+             vm.paste(pasteData(1))
+             advanceUntilIdle()
+@@ -123,30 +123,30 @@ class PastePanelViewModelTest {
+                 )
+             }
+             coVerify(exactly = 1) { windowManager.toPaste() }
+-            assertEquals(1, vm.nextIndex.value)
++            assertEquals(2, vm.highlightedIndex.value)
+ 
+             vm.paste(pasteData(2))
+             advanceUntilIdle()
+-            assertEquals(0, vm.nextIndex.value)
++            assertEquals(1, vm.highlightedIndex.value)
+ 
+             jobs.forEach { it.cancel() }
+         }
+ 
+     @Test
+-    fun `pasting the newest row keeps the marker on it`() =
++    fun `pasting the newest row highlights it`() =
+         runTest {
+             val vm = createViewModel()
+             val jobs =
+                 listOf(
+                     launch { vm.items.collect {} },
+-                    launch { vm.nextIndex.collect {} },
++                    launch { vm.highlightedIndex.collect {} },
+                 )
+             advanceUntilIdle()
+ 
+             vm.paste(pasteData(3))
+             advanceUntilIdle()
+ 
+-            assertEquals(0, vm.nextIndex.value)
++            assertEquals(0, vm.highlightedIndex.value)
+ 
+             jobs.forEach { it.cancel() }
+         }
+@@ -158,7 +158,7 @@ class PastePanelViewModelTest {
+             val jobs =
+                 listOf(
+                     launch { vm.items.collect {} },
+-                    launch { vm.nextIndex.collect {} },
++                    launch { vm.highlightedIndex.collect {} },
+                 )
+             advanceUntilIdle()
+ 
+@@ -169,35 +169,35 @@ class PastePanelViewModelTest {
+                 pasteboardService.tryWritePasteboard(any<PasteData>(), any(), any(), any())
+             }
+             coVerify(exactly = 1) { windowManager.toPaste() }
+-            assertEquals(1, vm.nextIndex.value)
++            assertEquals(2, vm.highlightedIndex.value)
+ 
+             jobs.forEach { it.cancel() }
+         }
+ 
+     @Test
+-    fun `marker follows the row by id when a new copy arrives on top`() =
++    fun `highlight follows the row by id when a new copy arrives on top`() =
+         runTest {
+             val vm = createViewModel()
+             val jobs =
+                 listOf(
+                     launch { vm.items.collect {} },
+-                    launch { vm.nextIndex.collect {} },
++                    launch { vm.highlightedIndex.collect {} },
+                 )
+             advanceUntilIdle()
+ 
+             vm.paste(pasteData(1))
+             advanceUntilIdle()
+-            assertEquals(1, vm.nextIndex.value)
++            assertEquals(2, vm.highlightedIndex.value)
+ 
+             history.value = listOf(pasteData(4)) + history.value
+             advanceUntilIdle()
+-            assertEquals(2, vm.nextIndex.value)
++            assertEquals(3, vm.highlightedIndex.value)
+ 
+             jobs.forEach { it.cancel() }
+         }
+ 
+     @Test
+-    fun `a failed clipboard write neither pastes nor advances`() =
++    fun `a failed clipboard write neither pastes nor highlights`() =
+         runTest {
+             coEvery {
+                 pasteboardService.tryWritePasteboard(any<PasteData>(), any(), any(), any())
+@@ -206,37 +206,37 @@ class PastePanelViewModelTest {
+             val jobs =
+                 listOf(
+                     launch { vm.items.collect {} },
+-                    launch { vm.nextIndex.collect {} },
++                    launch { vm.highlightedIndex.collect {} },
+                 )
+             advanceUntilIdle()
+ 
+             vm.paste(pasteData(1))
+             advanceUntilIdle()
+ 
+             coVerify(exactly = 0) { windowManager.toPaste() }
+-            assertEquals(0, vm.nextIndex.value)
++            assertEquals(-1, vm.highlightedIndex.value)
+ 
+             jobs.forEach { it.cancel() }
+         }
+ 
+     @Test
+-    fun `reopening resets the marker and the page size`() =
++    fun `reopening clears the highlight and resets the page size`() =
+         runTest {
+             val vm = createViewModel()
+             val jobs =
+                 listOf(
+                     launch { vm.items.collect {} },
+-                    launch { vm.nextIndex.collect {} },
++                    launch { vm.highlightedIndex.collect {} },
+                 )
+             advanceUntilIdle()
+ 
+             vm.paste(paste
 ```
 
 ---
 
-### Incident Patch 2: `0d99bd65` (2026-10-21)
-**Commit Message**: :bug: wait for the target window to become active before injecting the X11 paste keystroke (#5246)
+### Incident Patch 2: `e486ec05` (2026-10-26)
+**Commit Message**: :bug: make the macOS paste panel stay on screen and paste into the focused app (#5284)
 
-* :bug: wait for the target window to become active before injecting the X11 paste keystroke
-
-* :bug: keep the Linux X11 paste out of CrossPaste's own window
-
-`_NET_ACTIVE_WINDOW` requests sent with the APPLICATION (1) source are ignored
-by KWin X11 focus stealing prevention, even when the request carries the
-requesting window or a recent timestamp. The activation wait added for #5246
-therefore always timed out on KWin and the keystroke still landed in the
-search box, with the paste delayed by the full timeout.
-
-- Send the activation with the PAGER (2) source, which the window manager
-  treats as a trusted activation (the same source already used for
-  shortcut-triggered focus).
-- Report whether the activation was confirmed. When it was not, hide our own
-  window (hiding it is what makes the window manager hand the focus back),
-  wait for the previous app to become active, and only then inject. If the
-  focus never returns, ask the user to paste manually instead of injecting
-  blindly into CrossPaste.
-- Release the injected keys in a `finally` so a cancelled coroutine cannot
-  leave 
-
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/app/LinuxAppWindowManager.kt` (modified, +41/-10)
+**File**: `app/src/desktopMain/kotlin/com/crosspaste/ui/NonActivatingWindow.kt` (modified, +3/-1)
 ```diff
-@@ -15,7 +15,6 @@ import com.crosspaste.platform.linux.LinuxDesktopEntry
- import com.crosspaste.platform.linux.api.PortalHandles
- import com.crosspaste.platform.linux.api.RemoteDesktopPortalKeyboard
- import com.crosspaste.platform.linux.api.X11Api
--import com.crosspaste.platform.linux.api.X11Api.Companion.bringToBack
- import com.sun.jna.NativeLong
- import com.sun.jna.platform.unix.X11.Window
- import io.ktor.util.collections.ConcurrentSet
-@@ -200,7 +199,7 @@ class LinuxAppWindowManager(
-             pasteThroughPortal()
-             return
-         }
--        bringToBack(toPaste)
-+        bringToBack(toPaste) { hideMainWindow() }
-         hideMainWindow()
-     }
- 
-@@ -219,7 +218,7 @@ class LinuxAppWindowManager(
- 
-     override suspend fun returnFocusToPreviousApp() {
-         if (!needsPortalPaste()) {
--            prevLinuxAppInfo.value?.let { bringToBack(it) }
-+            prevLinuxAppInfo.value?.let { X11Api.bringToBack(it) }
-         }
-     }
- 
-@@ -245,7 +244,12 @@ class LinuxAppWindowManager(
-             }
-             return
-         }
--        bringToBack(toPaste)
-+        val targetReady = bringToBack(toPaste) { hideSearchWindow() }
-+        if (!targetReady) {
-+            // No target to paste into, so the remaining items must not be injected either.
-+            hideSearchWindow()
-+            return
-+        }
-         for (i in 1 until size) {
-             delay(1000.milliseconds)
-             if (preparePaste(i)) {
-@@ -261,13 +265,40 @@ class LinuxAppWindowManager(
-      */
-     private fun needsPortalPaste(): Boolean = isWaylandSession && prevLinuxAppInfo.value == null
- 
--    private suspend fun bringToBack(toPaste: Boolean) {
--        val prevAppInfo = prevLinuxAppInfo.value ?: return
--        if (toPaste) {
--            bringToBack(prevAppInfo, pasteKeyCodes())
--        } else {
--            bringToBack(prevAppInfo)
-+    /**
-+     * Returns false when there is no previous app to paste into, or when the focus
-+     * never came back, so callers must not inject any further keystrokes.
-+     */
-+    private suspend fun bringToBack(
-+        toPaste: Boolean,
-+        hideOwnWindow: () -> Unit,
-+    ): Boolean {
-+        val prevAppInfo = prevLinuxAppInfo.value
-+        if (prevAppInfo == null) {
-+            // No named previous window: there is no target, so stop before the
-+            // multi-select loop injects the remaining items into our own search window.
-+            if (toPaste) {
-+                notifyManualPasteRequired()
-+            }
-+            return false
-+        }
-+        if (!toPaste) {
-+            X11Api.bringToBack(prevAppInfo)
-+            return true
-         }
-+        if (!X11Api.activateAndAwait(prevAppInfo)) {
-+            // The window manager refused the activation request (KWin X11 ignores
-+            // application-sourced `_NET_ACTIVE_WINDOW`). Hiding our own window is what
-+            // makes it focus the previous app, so retry with it gone instead of
-+            // injecting the keystroke into CrossPaste's own window (issue #5245).
-+            hideOwnWindow()
-+            if (!X11Api.awaitActive(prevAppInfo)) {
-+                notifyManualPasteRequired()
-+                return false
-+            }
-+        }
-+        X11Api.toPaste(pasteKeyCodes())
-+        return true
-     }
- 
-     override suspend fun toPaste() {
+@@ -33,7 +33,9 @@ import kotlin.math.roundToInt
+  * without activating the app is an NSPanel carrying NSWindowStyleMaskNonactivatingPanel.
+  * JBR does not expose that flag (Window.Type.POPUP is an ordinary NSWindow there), but it
+  * does allocate an NSPanel for a root pane marked `Window.hidesOnDeactivate`; the flag is
+- * then switched on natively once the peer exists, see [MacNonActivatingEffect].
++ * then switched on natively once the peer exists, see [MacNonActivatingEffect]. Set that
++ * late, the style bit alone no longer stops a click from activating the app, so the
++ * native side also sets AppKit's private preventsActivation flag.
+  * Non-focusable state plus WS_EX_NOACTIVATE cover Windows. On Linux the window is an
+  * override-redirect X window (that is what XAWT makes of Window.Type.POPUP): the window
+  * manager never sees it, so a click cannot go through its click-to-focus path. A managed
 ```
 
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/platform/linux/api/X11Api.kt` (modified, +114/-18)
+**File**: `app/src/desktopMain/swift/MacosApi.swift` (modified, +14/-0)
 ```diff
-@@ -12,8 +12,11 @@ import com.sun.jna.ptr.IntByReference
- import com.sun.jna.ptr.NativeLongByReference
- import io.github.oshai.kotlinlogging.KotlinLogging
- import kotlinx.coroutines.delay
-+import kotlinx.coroutines.withTimeoutOrNull
- import java.nio.file.Path
- import javax.imageio.ImageIO
-+import kotlin.coroutines.cancellation.CancellationException
-+import kotlin.time.Duration
- import kotlin.time.Duration.Companion.milliseconds
- 
- interface X11Api : X11 {
-@@ -50,6 +53,25 @@ interface X11Api : X11 {
- 
-         val INSTANCE: X11Api = Native.load("X11", X11Api::class.java)
- 
-+        private val ACTIVATION_TIMEOUT = 500.milliseconds
-+
-+        private val ACTIVATION_POLL_INTERVAL = 10.milliseconds
-+
-+        private val KEY_HOLD = 100.milliseconds
-+
-+        /**
-+         * Source indication used for the `_NET_ACTIVE_WINDOW` requests CrossPaste issues
-+         * on the user's behalf (pasting back into the previous app, returning focus).
-+         *
-+         * Window managers apply focus stealing prevention to `APPLICATION` (1) requests.
-+         * KWin X11 ignores them even when the request carries the requesting window or a
-+         * recent timestamp, which leaves the keystroke in CrossPaste's own window. The
-+         * `PAGER` (2) indication is treated as a trusted activation, and the user did ask
-+         * for it by picking an item. `focusMainWindow`/`focusSearchWindow` already use it
-+         * for shortcut-triggered activation.
-+         */
-+        private val ACTIVATION_SOURCE: NativeLong = NativeLong(2)
-+
-         /**
-          * True when a real X11 window holds the input focus.
-          *
-@@ -121,7 +143,7 @@ interface X11Api : X11 {
- 
-         fun bringToBack(
-             prevLinuxAppInfo: LinuxAppInfo?,
--            source: NativeLong = NativeLong(1),
-+            source: NativeLong = ACTIVATION_SOURCE,
-             xServerTime: NativeLong? = null,
-         ) {
-             val display = INSTANCE.XOpenDisplay(null) ?: return
-@@ -134,39 +156,95 @@ interface X11Api : X11 {
-             }
-         }
- 
--        suspend fun bringToBack(
--            prevLinuxAppInfo: LinuxAppInfo?,
--            keyCodes: List<Int>,
--            source: NativeLong = NativeLong(1),
-+        /**
-+         * Requests activation of [prevLinuxAppInfo] and waits until the window manager
-+         * reports it as the active window.
-+         *
-+         * XTest delivers the keystroke to whichever window holds the focus at that
-+         * moment, which right after the request is still CrossPaste's own window. A
-+         * `false` result means the window manager never confirmed the activation (it
-+         * may have refused the request), so the caller must not inject blindly.
-+         */
-+        suspend fun activateAndAwait(
-+            prevLinuxAppInfo: LinuxAppInfo,
-+            source: NativeLong = ACTIVATION_SOURCE,
-             xServerTime: NativeLong? = null,
--        ) {
--            val display = INSTANCE.XOpenDisplay(null) ?: return
--            try {
--                prevLinuxAppInfo?.let {
--                    WMCtrl.activeWindow(display, it.window, source, xServerTime ?: NativeLong(X11.CurrentTime.toLong()))
--                    toPaste(display, keyCodes)
--                }
-+            timeout: Duration = ACTIVATION_TIMEOUT,
-+        ): Boolean {
-+            val display = INSTANCE.XOpenDisplay(null) ?: return false
-+            return try {
-+                WMCtrl.activeWindow(
-+                    display,
-+                    prevLinuxAppInfo.window,
-+                    source,
-+                    xServerTime ?: NativeLong(X11.CurrentTime.toLong()),
-+                )
-+                awaitActiveOn(display, prevLinuxAppInfo.window, timeout)
-             } finally {
-                 INSTANCE.XCloseDisplay(display)
-             }
-         }
- 
-+        /**
-+         * Waits for [prevLinuxAppInfo] to become the active window without requesting
-+         * activation. Used after hiding our own window, which is what makes the window
-+         * manager hand the focus back on its own.
-+         */
-+        suspend fun awaitActive(
-+            prevLinuxAppInfo: LinuxAppInfo,
-+            timeout: Duration = ACTIVATION_TIMEOUT,
-+        ): Boolean {
-+            val display = INSTANCE.XOpenDisplay(null) ?: return false
-+            return try {
-+                awaitActiveOn(display, prevLinuxAppInfo.window, timeout)
-+            } finally {
-+                INSTANCE.XCloseDisplay(display)
-+            }
+@@ -378,7 +378,21 @@ public func makeWindowNonActivating(_ rawPtr: UnsafeRawPointer?) {
+         // panel is clicked while the app is inactive and must stay on screen then.
+         guard window is NSPanel else { return }
+         window.styleMask.insert(.nonactivatingPanel)
++        // AppKit derives its private preventsActivation flag from the style mask only at
++        // init. Setting the bit afterwards (all AWT allows) leaves the flag off on macOS 27,
++        // so a click still activates CrossPaste and the simulated Cmd+V lands in CrossPaste
++        // instead of the target app. The private setter is used deliberately (#5283).
++        let preventsActivation = NSSelectorFromString("_setPreventsActivation:")
++        if window.responds(to: preventsActivation), let imp = window.method(for: preventsActivation) {
++            typealias SetPreventsActivation = @convention(c) (AnyObject, Selector, Bool) -> Void
++            unsafeBitCast(imp, to: SetPreventsActivation.self)(window, preventsActivation, true)
++        } else {
++            NSLog("CrossPaste: _setPreventsActivation: unavailable, clicks on the panel will activate the app")
 +        }
-+
-+        private suspend fun awaitActiveOn(
-+            display: Display,
-+            window: Window,
-+            timeout: Duration,
-+        ): Boolean {
-+            val activated =
-+                awaitWindowActive(timeout, ACTIVATION_POLL_INTERVAL) {
-+                    getActiveWindow(display) == window
-+                }
-+            if (!activated) {
-+                logger.warn {
-+                    "Window $window was not reported active within $timeout " +
-+                  
-```
-
-**File**: `app/src/desktopTest/kotlin/com/crosspaste/platform/linux/api/X11WindowActivationWaitTest.kt` (added, +60/-0)
-```diff
-@@ -0,0 +1,60 @@
-+package com.crosspaste.platform.linux.api
-+
-+import kotlinx.coroutines.ExperimentalCoroutinesApi
-+import kotlinx.coroutines.test.runTest
-+import kotlin.test.Test
-+import kotlin.test.assertEquals
-+import kotlin.test.assertFalse
-+import kotlin.test.assertTrue
-+import kotlin.time.Duration.Companion.milliseconds
-+
-+@OptIn(ExperimentalCoroutinesApi::class)
-+class X11WindowActivationWaitTest {
-+    @Test
-+    fun `returns as soon as the window is reported active`() =
-+        runTest {
-+            var checks = 0
-+
-+            val activated =
-+                awaitWindowActive(300.milliseconds, 10.milliseconds) {
-+                    ++checks == 3
-+                }
-+
-+            assertTrue(activated)
-+            assertEquals(3, checks)
-+            assertEquals(20L, testScheduler.currentTime)
-+        }
-+
-+    @Test
-+    fun `returns without waiting when the window is already active`() =
-+        runTest {
-+            var checks = 0
-+
-+            val activated =
-+                awaitWindowActive(300.milliseconds, 10.milliseconds) {
-+                    checks++
-+                    true
-+                }
-+
-+            assertTrue(activated)
-+            assertEquals(1, checks)
-+            assertEquals(0L, testScheduler.currentTime)
-+        }
-+
-+    @Test
-+    fun `gives up at the timeout when the window never becomes active`() =
-+        runTest {
-+            var checks = 0
-+
-+            val activated =
-+                awaitWindowActive(300.milliseconds, 10.milliseconds) {
-+                    checks++
-+                    false
-+                }
-+
-+            assertFalse(activated)
-+            assertEquals(300L, testScheduler.currentTime)
-+            // One check per poll interval until the timeout interrupts the wait.
-+            assertTrue(checks >= 30)
-+        }
-+}
+         window.hidesOnDeactivate = false
++        // Must follow the line above, which flips canHide back to true on NSPanel. Without
++        // it NSApp.hide in searchToBack/mainToBack hides the panel until the next activation.
++        window.canHide = false
+     }
+ }
+ 
 ```
 
 ---
 
-### Incident Patch 3: `cc2d2338` (2026-10-24)
-**Commit Message**: :bug: keep development.properties and stray .claude folders out of release jars (#5273)
+### Incident Patch 3: `c89f14fd` (2026-10-26)
+**Commit Message**: :bug: read Shift from the click itself in the search window list (#5280)
 
-* :bug: keep development.properties and stray .claude folders out of release jars
+* :bug: read Shift from the click itself in the search window list
 
-* :bug: keep development-only files out of locally packaged jars
+* :memo: describe what the search list's open reset actually covers
 
-Release/beta CI already passes -PappEnv=PRODUCTION to app:build, but the tracked local packaging scripts built the jar without it, so a locally packaged Store/test build still shipped development.properties. Rebuild :app:desktopJar with the same appEnv each script packages, reject DEVELOPMENT in the test-zip script, and document the production build in the Store fallback.
-
-DevConfig now tolerates a missing development.properties (release jars exclude it) and logs a warning in DEVELOPMENT runs, where it used to fail fast. DesktopResourceUtils resolves resources through a single openOrNull primitive so loadProperties and loadOptionalProperties cannot disagree, and tests cover both contracts. A stray .claude/ under compose resources is ignored at the repo level in addition to the jar-level exclusion.
-
-* :memo: move maintainer-only Store and zip self-update runbooks out of the repo
-
-MicrosoftStore.md and WindowsZipSelfUpdateTest.md are maintainer relea
-
-**File**: `.github/workflows/build-beta-linux.yml` (modified, +1/-1)
+**File**: `app/src/desktopMain/kotlin/com/crosspaste/ui/paste/side/SidePasteItemView.kt` (modified, +22/-4)
 ```diff
-@@ -104,7 +104,7 @@ jobs:
-           key: openssl-linux-${{ hashFiles('**/openssl.yaml') }}
+@@ -14,8 +14,10 @@ import androidx.compose.material3.Card
+ import androidx.compose.material3.CardDefaults
+ import androidx.compose.runtime.Composable
+ import androidx.compose.runtime.getValue
++import androidx.compose.runtime.mutableStateOf
+ import androidx.compose.runtime.remember
+ import androidx.compose.runtime.rememberUpdatedState
++import androidx.compose.runtime.setValue
+ import androidx.compose.ui.ExperimentalComposeUiApi
+ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.draganddrop.DragAndDropTransferAction
+@@ -26,6 +28,9 @@ import androidx.compose.ui.draw.drawWithContent
+ import androidx.compose.ui.graphics.Color
+ import androidx.compose.ui.graphics.layer.drawLayer
+ import androidx.compose.ui.graphics.rememberGraphicsLayer
++import androidx.compose.ui.input.pointer.PointerEventPass
++import androidx.compose.ui.input.pointer.PointerEventType
++import androidx.compose.ui.input.pointer.isShiftPressed
+ import androidx.compose.ui.input.pointer.pointerInput
+ import androidx.compose.ui.unit.IntSize
+ import androidx.compose.ui.unit.dp
+@@ -51,8 +56,8 @@ import org.koin.compose.koinInject
+ fun PasteDataScope.SidePasteItemView(
+     selected: Boolean,
+     isScrolling: Boolean,
+-    onPress: () -> Unit,
+-    onDoubleTap: () -> Unit,
++    onPress: (isShiftPressed: Boolean) -> Unit,
++    onDoubleTap: (isShiftPressed: Boolean) -> Unit,
+     pasteContent: @Composable PasteData.() -> Unit,
+ ) {
+     val configManager = koinInject<CommonConfigManager>()
+@@ -63,6 +68,7 @@ fun PasteDataScope.SidePasteItemView(
  
-       - name: Build with Gradle
--        run: ./gradlew app:build -PintegrationTests
-+        run: ./gradlew app:build -PintegrationTests -PappEnv=PRODUCTION
+     val currentOnPress by rememberUpdatedState(onPress)
+     val currentOnDoubleTap by rememberUpdatedState(onDoubleTap)
++    var isShiftPressed by remember { mutableStateOf(false) }
  
-       - name: Cache Kotlin/Native toolchain
-         uses: actions/cache@v5
+     val graphicsLayer = rememberGraphicsLayer()
+     val hoverInteraction = remember { MutableInteractionSource() }
+@@ -110,13 +116,25 @@ fun PasteDataScope.SidePasteItemView(
+                 }.size(appSizeValue.sidePasteSize)
+                 .clip(small3XRoundedCornerShape)
+                 .pointerInput(Unit) {
++                    // Read Shift off the press itself: tap callbacks carry no modifiers, and
++                    // modifier state tracked from key events goes stale whenever a key-up is
++                    // delivered elsewhere (e.g. while the window is hidden or not yet focused).
++                    awaitPointerEventScope {
++                        while (true) {
++                            val event = awaitPointerEvent(PointerEventPass.Initial)
++                            if (event.type == PointerEventType.Press) {
++                                isShiftPressed = event.keyboardModifiers.isShiftPressed
++                            }
++                        }
++                    }
++                }.pointerInput(Unit) {
+                     detectTapGestures(
+                         onPress = {
+-                            currentOnPress()
++                            currentOnPress(isShiftPressed)
+                             tryAwaitRelease()
+                         },
+                         onDoubleTap = {
+-                            currentOnDoubleTap()
++                            currentOnDoubleTap(isShiftPressed)
+                         },
+                     )
+                 }.border(
 ```
 
-**File**: `.github/workflows/build-release.yml` (modified, +1/-1)
+**File**: `app/src/desktopMain/kotlin/com/crosspaste/ui/paste/side/SidePasteboardContentView.kt` (modified, +5/-8)
 ```diff
-@@ -215,7 +215,7 @@ jobs:
-           enableCrossOsArchive: true
+@@ -49,7 +49,6 @@ import androidx.compose.ui.focus.focusRequester
+ import androidx.compose.ui.graphics.Color
+ import androidx.compose.ui.input.key.KeyEventType
+ import androidx.compose.ui.input.key.isCtrlPressed
+-import androidx.compose.ui.input.key.isShiftPressed
+ import androidx.compose.ui.input.key.key
+ import androidx.compose.ui.input.key.nativeKeyCode
+ import androidx.compose.ui.input.key.onKeyEvent
+@@ -112,7 +111,6 @@ fun SidePasteboardContentView() {
+     val latestSearchResult = rememberUpdatedState(searchResult)
+     val pasteListFocusRequester = remember { FocusRequester() }
+     var previousFirstItemId by remember { mutableStateOf<Long?>(null) }
+-    var isShiftPressed by remember { mutableStateOf(false) }
+     var isCtrlPressed by remember { mutableStateOf(false) }
  
-       - name: Build with Gradle
--        run: ./gradlew app:build -PintegrationTests
-+        run: ./gradlew app:build -PintegrationTests -PappEnv=PRODUCTION
- 
-       - name: Cache Kotlin/Native toolchain
-         uses: actions/cache@v5
-```
-
-**File**: `.github/workflows/msstore-publish.yml` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@ name: "Publish to Microsoft Store"
- # pipeline and cadence, so it is deliberately not chained to the GitHub
- # Release. The app must already be live in the Store — the first submission
- # (listing, screenshots, age rating, markets) is manual in Partner Center.
--# One-time credential setup: see doc/en/MicrosoftStore.md.
-+# One-time credential setup: see ai/docs/MicrosoftStore.md.
- 
- on:
-   workflow_dispatch:
-```
-
-**File**: `.gitignore` (modified, +3/-0)
-```diff
-@@ -39,6 +39,9 @@ output*/
- /code-review/
- /ai/
- /.claude/skills/ui-ux-pro-max/
-+# A stray .claude/ under compose resources is tool state, not app content; it
-+# would otherwise be packaged into the app jar (which also excludes it).
-+**/composeResources/**/.claude/
- /docs/superpowers/
- web/dist/
- scheduled_tasks.lock
-```
-
-**File**: `app/build.gradle.kts` (modified, +9/-0)
-```diff
-@@ -514,12 +514,21 @@ compose.desktop {
- 
-             initJvmArgs(jvmArgsLambda, buildFullPlatform)
- 
-+            // app:run runs from this jar, so development builds keep the local
-+            // development.properties; release builds pass -PappEnv=PRODUCTION
-+            // to app:build so a developer's machine-specific file never ships.
-             if (appEnv != "DEVELOPMENT") {
-                 tasks.withType<Jar> {
-                     exclude("development.properties**")
-                 }
-             }
- 
-+            // Tool state such as a stray .claude/ folder under composeResources
-+            // is not app content; keep it out of every jar.
-+            tasks.withType<Jar> {
-+                exclude("**/.claude/**")
-+            }
-+
-             // Add download info of jbr on all platforms
-             val jbrYamlFile =
-                 project.projectDir
-```
-
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/app/WindowsZipUpdater.kt` (modified, +1/-1)
-```diff
-@@ -297,7 +297,7 @@ class WindowsZipUpdater(
-         // user's privileges. Integrity therefore rests entirely on HTTPS + the GitHub /
-         // Aliyun OSS repository ACLs. Proper hardening is to verify a detached signature
-         // (e.g. minisign / GPG) over the zip or checksum against a public key baked into
--        // the app, before extracting. See doc/en/WindowsZipSelfUpdateTest.md.
-+        // the app, before extracting. See ai/docs/WindowsZipSelfUpdateTest.md.
-         val candidateBases = mirrorBases(release)
-         val savedSource = readSavedSource(release)
-         val hasPartialDownload = hasPartialDownload(release)
-```
-
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/config/DevConfig.kt` (modified, +15/-1)
-```diff
-@@ -1,10 +1,24 @@
- package com.crosspaste.config
- 
- import com.crosspaste.utils.DesktopResourceUtils
-+import com.crosspaste.utils.getAppEnvUtils
-+import io.github.oshai.kotlinlogging.KotlinLogging
- 
- object DevConfig {
- 
--    private val development = DesktopResourceUtils.loadProperties("development.properties")
-+    private val logger = KotlinLogging.logger {}
-+
-+    // Release jars exclude development.properties, so a missing file means no overrides.
-+    private val development = DesktopResourceUtils.loadOptionalProperties("development.properties")
-+
-+    init {
-+        if (development.isEmpty && getAppEnvUtils().isDevelopment()) {
-+            logger.warn {
-+                "development.properties is missing; DevConfig overrides are disabled. " +
-+                    "A development build normally restores it from development.properties.template."
-+            }
-+        }
-+    }
- 
-     val pasteAppPath: String? = development.getProperty("pasteAppPath")
- 
-```
-
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/utils/DesktopResourceUtils.kt` (modified, +30/-18)
-```diff
-@@ -7,28 +7,40 @@ import java.util.Properties
- 
- object DesktopResourceUtils {
- 
--    fun loadProperties(fileName: String): Properties {
--        val properties = Properties()
--        val inputStream = ClassLoaderResourceLoader.load(fileName)
--        InputStreamReader(inputStream, StandardCharsets.UTF_8).use { inputStreamReader ->
--            properties.load(inputStreamReader)
--        }
--        return properties
--    }
-+    fun loadProperties(fileName: String): Properties =
-+        requireNotNull(loadPropertiesOrNull(fileName)) { "Resource $fileName not found" }
-+
-+    /**
-+     * Like [loadProperties], but returns empty properties when the resource is
-+     * absent. Release jars exclude development.properties, so DevConfig must be
-+     * able to start without it.
-+     */
-+    fun loadOptionalProperties(fileName: String): Properties = loadPropertiesOrNull(fileName) ?: Properties()
- 
--    fun readResourceBytes(fileName: String): ByteArray {
-+    fun readResourceBytes(fileName: String): ByteArray =
-         ClassLoaderResourceLoader.load(fileName).use { stream ->
--            return stream.readBytes()
-+            stream.readBytes()
-+        }
-+
-+    private fun loadPropertiesOrNull(fileName: String): Properties? =
-+        ClassLoaderResourceLoader.openOrNull(fileName)?.use { inputStream ->
-+            Properties().apply {
-+                InputStreamReader(inputStream, StandardCharsets.UTF_8).use { reader ->
-+                    load(reader)
-+                }
-+            }
+     val showToStart by remember(searchListState) {
+@@ -123,12 +121,12 @@ fun SidePasteboardContentView() {
          }
--    }
- }
+     }
  
- private object ClassLoaderResourceLoader {
--    fun load(resourcePath: String): InputStream {
--        val contextClassLoader = Thread.currentThread().contextClassLoader!!
--        val resource =
--            contextClassLoader.getResourceAsStream(resourcePath)
--                ?: this::class.java.getResourceAsStream(resourcePath)
--        return requireNotNull(resource) { "Resource $resourcePath not found" }
--    }
-+
-+    // Conveyor/JNI, Gradle tests and IDEs all set the context class loader; the
-+    // class's own loader keeps resource loading working on threads that do not.
-+    private fun classLoader(): ClassLoader =
-+        Thread.currentThread().contextClassLoader ?: DesktopResourceUtils::class.java.classLoader
-+
-+    fun openOrNull(resourcePath: String): InputStream? = classLoader().getResourceAsStream(resourcePath)
-+
-+    fun load(resourcePath: String): InputStream =
-+        requireNotNull(openOrNull(resourcePath)) { "Resource $resourcePath not found" }
- }
+-    // Reset key modifier state and selection when the window opens, so it matches
+-    // the freshly recreated scroll state above.
++    // Best-effort reset of the Ctrl+1..9 badge state and the selection when the window opens.
++    // Like the scroll reset above, this may miss a reopen because the composition is paused
++    // while the window is hidden; nothing here may depend on it for correctness.
+     LaunchedEffect(searchWindowInfo.show) {
+         if (searchWindowInfo.show) {
+             isCtrlPressed = false
+-            isShiftPressed = false
+             pasteSelectionViewModel.initSelectIndex()
+         }
+     }
+@@ -278,7 +276,6 @@ fun SidePasteboardContentView() {
+                     .focusRequester(pasteListFocusRequester)
+                     .focusable()
+                     .onKeyEvent { keyEvent ->
+-                        isShiftPressed = keyEvent.isShiftPressed
+                         isCtrlPressed = keyEvent.isCtrlPressed
+ 
+                         if (keyEvent.type == KeyEventType.KeyDown) {
+@@ -336,10 +333,10 @@ fun SidePasteboardContentView() {
+                             scope.SidePasteItemView(
+                                 selected = currentIndex in selectedIndexes,
+                                 isScrolling = searchListState.isScrollInProgress,
+-                                onPress = {
++                                onPress = { isShiftPressed ->
+                                     pasteSelectionViewModel.clickSelectedIndex(currentIndex, isShiftPressed)
+                                 },
+-                                onDoubleTap = {
++                                onDoubleTap = { isShiftPressed ->
+                                     if (!isShiftPressed) {
+                                         pasteMenuService.quickPasteFromSearchWindow(currentPasteData)
+                                     }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5274** (2026-10-25): :sparkles: tint tag chips with their color and mark the selected one with a check (@guiyanakuang)
-- **PR #5273** (2026-10-24): :bug: keep development.properties and stray .claude folders out of release jars (@guiyanakuang)
-- **PR #5272** (2026-10-23): :construction_worker: hand the dnf repository back to the runner user before staging the update site (@guiyanakuang)
-- **PR #5271** (2026-10-23): :construction_worker: build the macOS dylib with the runner's Xcode swiftc instead of Homebrew swift (@guiyanakuang)
-- **PR #5270** (2026-10-23): :bookmark: release 2.3.0 (@guiyanakuang)
-- **PR #5269** (2026-10-23): :sparkles: let mobile settings lists scroll behind the navigation bar (@guiyanakuang)
+- **PR #5286** (2026-10-26): :bug: highlight the clicked row in the paste panel (@guiyanakuang)
+- **PR #5284** (2026-10-26): :bug: make the macOS paste panel stay on screen and paste into the focused app (@guiyanakuang)
+- **PR #5282** (2026-10-26): :sparkles: drive the search window top bar from the keyboard (@guiyanakuang)
+- **PR #5281** (2026-10-26): :hammer: route search window shortcuts through one key resolver keyed by focused zone (@guiyanakuang)
+- **PR #5280** (2026-10-26): :bug: read Shift from the click itself in the search window list (@guiyanakuang)
+- **PR #5278** (2026-10-26): :bug: honor the system double-click interval in the search window (@guiyanakuang)
 
 ---
 
@@ -1441,33 +1227,61 @@ MicrosoftStore.md and WindowsZipSelfUpdateTest.md are maintainer relea
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. :bug: stop macOS search focus rechecks from blocking the EDT on AppKit (#5242)
+## X. :bug: highlight the clicked row in the paste panel (#5286)
 
 **RULE**:
-When implementing operations in `app/src/desktopMain/kotlin/com/crosspaste/app/MacAppWindowManager.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in CrossPaste/crosspaste-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `app/src/desktopMain/kotlin/com/crosspaste/ui/model/PastePanelViewModel.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in CrossPaste/crosspaste-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dd2282c7`: :bug: stop macOS search focus rechecks from blocking the EDT on AppKit (#5242). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5d07b610`: :bug: highlight the clicked row in the paste panel (#5286). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/src/desktopMain/kotlin/com/crosspaste/app/MacAppWindowManager.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/src/desktopMain/kotlin/com/crosspaste/ui/model/PastePanelViewModel.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-        // Warms the native activation monitor so the search window's focus rechecks
-        // read cached state instead of blocking the EDT on AppKit. The first call
-        // waits for the main thread once (on this IO thread, never the UI thread)
-        // to register the observer; it relies on this manager being created during
-        // startup, before the search window can open.
-        ioScope.launch { MacAppUtils.isApplicationActive() }
+ * whatever app currently has focus (the panel never takes focus itself) and highlights
+ * that row. The highlight is tracked by paste id rather than index so that new copies
+ * arriving while the panel is open do not shift it. A double click pastes once: presses
+ * that land while a paste is still running, or shortly after it, are dropped.
+    /** Id of the row pasted last; null until a row is clicked. */
+    private val _highlightedId = MutableStateFlow<Long?>(null)
+    /** Index of the highlighted row, -1 when none is. */
+    val highlightedIndex: StateFlow<Int> =
+        combine(items, _highlightedId) { list, highlightedId ->
+            highlightedId?.let { id -> list.indexOfFirst { it.id == id } } ?: -1
+            initialValue = -1,
+    /** Every open starts fresh: nothing highlighted, first page only. */
+        _highlightedId.value = null
+        _highlightedId.value = pasteData.id
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+ * whatever app currently has focus (the panel never takes focus itself) and moves the
+ * "next" marker to the row copied right after it, so a batch copied as A, B, C is
+ * pasted back in the same order with one click per field. The marker is tracked by
+ * paste id rather than index so that new copies arriving while the panel is open do
+ * not shift it. A double click pastes once: presses that land while a paste is still
+ * running, or shortly after it, are dropped.
+    /** Id of the row to paste next; null means the newest row. */
+    private val _nextId = MutableStateFlow<Long?>(null)
+    val nextIndex: StateFlow<Int> =
+        combine(items, _nextId) { list, nextId ->
+            nextId
+                ?.let { id -> list.indexOfFirst { it.id == id } }
+                ?.takeIf { it >= 0 }
+                ?: 0
+            initialValue = 0,
+    /** Every open starts fresh: newest row is next, first page only. */
+        _nextId.value = null
+        val list = items.value
+        val index = list.indexOfFirst { it.id == pasteData.id }
+        // The row copied right after this one; stays put when there is nothing newer.
+        val next = if (index > 0) list[index - 1] else pasteDat
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dd2282c7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5d07b610` are properly handled with clean fallback behavior.

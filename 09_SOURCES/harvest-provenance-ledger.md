@@ -5648,3 +5648,6 @@ Every entry in this ledger must capture:
 | `learn-github-franken-ui-ui` | `https://github.com/franken-ui/ui` | `32af1a27` | Multi-dimensional audit evidence | 2026-10-28T01:49:22.484Z |
 | `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `dca7b62c` | Multi-dimensional audit evidence | 2026-10-28T01:49:31.385Z |
 | `learn-huggingface-jialinyyzz-humanizer` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-10-28T01:49:33.391Z |
+| `learn-huggingface-autotrust-jev-27b-vl` | `https://huggingface.co/autotrust/JEV-27B-VL` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-28T01:58:34.815Z |
+| `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `5d07b610` | Multi-dimensional audit evidence | 2026-10-28T01:58:36.532Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `46376e81` | Multi-dimensional audit evidence | 2026-10-28T01:58:39.179Z |
