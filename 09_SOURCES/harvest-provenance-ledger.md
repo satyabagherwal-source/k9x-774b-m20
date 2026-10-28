@@ -5687,3 +5687,4 @@ Every entry in this ledger must capture:
 | `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `29200660` | Multi-dimensional audit evidence | 2026-10-28T03:49:35.203Z |
 | `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `70bfa3ae` | Multi-dimensional audit evidence | 2026-10-28T03:49:40.475Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `66017460` | Multi-dimensional audit evidence | 2026-10-28T03:49:43.804Z |
+| `learn-huggingface-moonshotai-kimi-k3` | `https://huggingface.co/moonshotai/Kimi-K3` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-10-28T03:56:16.152Z |

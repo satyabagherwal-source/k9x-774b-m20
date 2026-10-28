@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T03:49:46.335Z",
-    "lastVerified": "2026-10-28T03:49:46.335Z",
+    "lastChecked": "2026-10-28T03:56:27.454Z",
+    "lastVerified": "2026-10-28T03:56:27.454Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -169,9 +169,9 @@
   "dathere-qsv": {
     "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
-    "lastChecked": "2026-10-28T03:24:47.937Z",
+    "lastChecked": "2026-10-28T03:56:27.447Z",
     "revisionIdentifier": "acf15714",
-    "lastVerified": "2026-10-28T03:24:47.937Z"
+    "lastVerified": "2026-10-28T03:56:27.447Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -650,5 +650,57 @@
     "lastChecked": "2026-10-28T03:49:43.335Z",
     "revisionIdentifier": "9e2e9930",
     "lastVerified": "2026-10-28T03:49:43.335Z"
+  },
+  "max-sixty-worktrunk": {
+    "name": "worktrunk",
+    "officialUrl": "https://github.com/max-sixty/worktrunk",
+    "lastChecked": "2026-10-28T03:56:12.492Z",
+    "revisionIdentifier": "bc8ad63e",
+    "lastVerified": "2026-10-28T03:56:12.492Z"
+  },
+  "hf-moonshotai-kimi-k3": {
+    "name": "moonshotai/Kimi-K3",
+    "officialUrl": "https://huggingface.co/moonshotai/Kimi-K3",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T03:56:15.045Z",
+    "lastVerified": "2026-10-28T03:56:15.045Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-moonshotai-kimi-k3",
+    "contentHash": "aa11c3f204342bdfac6b19d2ceff984af961f4088f58bfd99a2bfc4bbcb34045",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sudheerj-reactjs-interview-questions": {
+    "name": "reactjs-interview-questions",
+    "officialUrl": "https://github.com/sudheerj/reactjs-interview-questions",
+    "lastChecked": "2026-10-28T03:56:17.396Z",
+    "revisionIdentifier": "55b7d491",
+    "lastVerified": "2026-10-28T03:56:17.396Z"
+  },
+  "devspace-sh-devspace": {
+    "name": "devspace",
+    "officialUrl": "https://github.com/devspace-sh/devspace",
+    "lastChecked": "2026-10-28T03:56:19.953Z",
+    "revisionIdentifier": "8ff62607",
+    "lastVerified": "2026-10-28T03:56:19.953Z"
+  },
+  "bee-san-ciphey": {
+    "name": "Ciphey",
+    "officialUrl": "https://github.com/bee-san/Ciphey",
+    "lastChecked": "2026-10-28T03:56:22.375Z",
+    "revisionIdentifier": "c806543f",
+    "lastVerified": "2026-10-28T03:56:22.375Z"
+  },
+  "weaviate-weaviate": {
+    "name": "weaviate",
+    "officialUrl": "https://github.com/weaviate/weaviate",
+    "lastChecked": "2026-10-28T03:56:25.093Z",
+    "revisionIdentifier": "ad54fb8b",
+    "lastVerified": "2026-10-28T03:56:25.093Z"
   }
 }

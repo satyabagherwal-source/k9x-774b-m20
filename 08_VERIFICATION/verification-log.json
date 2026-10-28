@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-QM0M",
-    "timestamp": "2026-10-26T18:12:30.838Z",
-    "repository": "stakater/Reloader",
-    "learningId": "learn-github-stakater-reloader",
-    "contentHash": "beef5a6d18bef7e86fd5cf2e40228ed0bdd81190efb88c256e8ca024af32bca9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-QOWJ",
     "timestamp": "2026-10-26T18:12:34.579Z",
     "repository": "trailbaseio/trailbase",
@@ -7492,6 +7477,21 @@
     "contentHash": "da61f0054e8eaacf968cef60ecc343486191964b58f88c501edb9f959fcc1234",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-16DW",
+    "timestamp": "2026-10-28T03:56:16.148Z",
+    "repository": "moonshotai/Kimi-K3",
+    "learningId": "learn-huggingface-moonshotai-kimi-k3",
+    "contentHash": "aa11c3f204342bdfac6b19d2ceff984af961f4088f58bfd99a2bfc4bbcb34045",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
