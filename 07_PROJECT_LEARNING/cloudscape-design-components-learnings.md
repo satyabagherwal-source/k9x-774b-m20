@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cloudscape-design-components-learnings.md`  
 > **Source**: github ([https://github.com/cloudscape-design/components](https://github.com/cloudscape-design/components))  
-> **Source Version**: `6997ceb2`  
+> **Source Version**: `b7014ed7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:07:07.008Z  
+> **Timestamp**: 2026-10-28T01:42:36.014Z  
 > **Learning ID**: `learn-github-cloudscape-design-components`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cloudscape-design-components-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cloudscape-design/components](https://github.com/cloudscape-design/components))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:07:05.453Z  
+> **Harvest Timestamp**: 2026-10-28T01:42:34.576Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1531,371 +1531,305 @@ export const registerRuntimeBottomDrawer = () => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `324fda33` (2026-10-26)
-**Commit Message**: fix: Prevent stuck active state when quickly moving and releasing drag handle (#5177)
+### Incident Patch 1: `b7014ed7` (2026-10-27)
+**Commit Message**: feat: Make borderWidthFieldStatusInlineStart design token public + themeable (#5196)
 
-**File**: `src/internal/components/drag-handle/hooks/__tests__/use-drag-handle-interaction-state.test.tsx` (modified, +49/-0)
+**File**: `src/__integ__/__snapshots__/themes.test.ts.snap` (modified, +8/-8)
 ```diff
-@@ -776,6 +776,55 @@ describe('Drag Handle Hooks', () => {
-         fireEvent.keyDown(element, { key: 'Enter' });
-         expect(onUapActionEndAction).toHaveBeenCalledTimes(1);
-       });
-+      test('should still fire onDndEnd when pointer up is delivered before the dnd-active callback returns (fast release)', () => {
-+        const calls: string[] = [];
-+        let lastInteraction: DragHandleInteractionState = { value: null };
-+
-+        const FastReleaseHost = React.forwardRef<
-+          { processPointerDown: (event: PointerEvent) => void; processPointerMove: (event: PointerEvent) => void },
-+          // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-+          {}
-+        >((_props, ref) => {
-+          // A fresh props object is built every render, mirroring ItemContainer / TestComponent.
-+          const firstActiveRef = React.useRef(true);
-+
-+          const { interaction, processPointerDown, processPointerMove, processPointerUp } =
-+            useInternalDragHandleInteractionState({
-+              onDndStartAction: () => calls.push('start'),
-+              onDndActiveAction: () => {
-+                calls.push('active');
-+                // Simulate the sub-millisecond release: deliver POINTER_UP while the POINTER_MOVE
-+                // batch is still being processed, the first time only.
-+                if (firstActiveRef.current) {
-+                  firstActiveRef.current = false;
-+                  processPointerUp(createPointerEvent('pointerup'));
-+                }
-+              },
-+              onDndEndAction: () => calls.push('end'),
-+            });
-+
-+          lastInteraction = interaction;
-+
-+          useImperativeHandle(ref, () => ({ processPointerDown, processPointerMove }));
-+          return <div />;
-+        });
-+
-+        const ref = React.createRef<{
-+          processPointerDown: (event: PointerEvent) => void;
-+          processPointerMove: (event: PointerEvent) => void;
-+        }>();
-+        render(<FastReleaseHost ref={ref} />);
-+
-+        act(() => {
-+          ref.current?.processPointerDown(createPointerEvent('pointerdown'));
-+        });
-+        act(() => {
-+          ref.current?.processPointerMove(createPointerEvent('pointermove'));
-+        });
-+
-+        expect(lastInteraction.value).toBe('dnd-end');
-+        expect(calls).toEqual(['start', 'active', 'end']);
-+      });
- 
-       test('should call multiple callbacks for complex transitions', () => {
-         const onDndStartAction = jest.fn();
+@@ -12,7 +12,6 @@ exports[`CSS Custom Properties match previous snapshot for mode "compact" 1`] =
+   "border-divider-list-width": "1px",
+   "border-divider-section-width": "1px",
+   "border-dropdown-virtual-offset-width": "0px",
+-  "border-invalid-width": "4px",
+   "border-item-width": "1px",
+   "border-line-chart-dash-array": "3 5",
+   "border-line-chart-line-join": "miter",
+@@ -70,6 +69,7 @@ exports[`CSS Custom Properties match previous snapshot for mode "compact" 1`] =
+   "border-width-dialog": "0px",
+   "border-width-dropdown": "1px",
+   "border-width-field": "1px",
++  "border-width-field-status-inline-start": "4px",
+   "border-width-flashbar-inline-start": "0px",
+   "border-width-icon-big": "3px",
+   "border-width-icon-large": "4px",
+@@ -1030,7 +1030,6 @@ exports[`CSS Custom Properties match previous snapshot for mode "dark" 1`] = `
+   "border-divider-list-width": "1px",
+   "border-divider-section-width": "1px",
+   "border-dropdown-virtual-offset-width": "0px",
+-  "border-invalid-width": "4px",
+   "border-item-width": "1px",
+   "border-line-chart-dash-array": "3 5",
+   "border-line-chart-line-join": "miter",
+@@ -1088,6 +1087,7 @@ exports[`CSS Custom Properties match previous snapshot for mode "dark" 1`] = `
+   "border-width-dialog": "0px",
+   "border-width-dropdown": "1px",
+   "border-width-field": "1px",
++  "border-width-field-status-inline-start": "4px",
+   "border-width-flashbar-inline-start": "0px",
+   "border-width-icon-big": "3px",
+   "border-width-icon-large": "4px",
+@@ -2048,7 +2048,6 @@ exports[`CSS Custom Properties match previous snapshot for mode "light" 1`] = `
+   "border-divider-list-width": "1px",
+   "border-divider-section-width": "1px",
+   "border-dropdown-virtual-offset-width": "0px",
+-  "border-invalid-width": "4px",
+   "border-item-width": "1px",
+   "border-line-chart-dash-array": "3 5",
+   "border-line-chart-line-join": "miter",
+@@ -2106,6 +2105,7 @@ exports[`CSS Custom Properties match previous snapshot for mode "light" 1`] = `
+   "border-width-dialog": "0px",
+   "border-width-dropdown": "1px",
+   "border-width-field": "1px",
++  "border-width-field-status-inline-start": "4px",
+   "border-width-flashbar-inline-start": "0px",
+   "border-width-icon-big": "3px",
+   "border-width-icon-large": "4px",
+@@ -3066,7 +3066,6 @@ exports[`CSS Custom Properties match previous snapshot for mode "reduced-motion"
+   "border-divider-list-width": "1px",
+   "border-divider-section-width": "1px",
+   "border-dropdown-virtual-offset-width": "0px",
+-  "border-invalid-width": "4px",
+   "border-item-width": "1px",
+   "border-line-chart-dash-array": "3 5",
+   "border-line-chart-line-join": "miter",
+@@ -3124,6 +3123,7 @@ exports[`CSS Custom Properties match previous snapshot for mode "reduced-motion"
+   "border-width-dialog": "0px",
+   "border-width-dropdown": "1px",
+   "border-width-field": "1px",
++  "border-width-field-status-inline-start": "4px",
+   "border-width-flashbar-inline-start": "0px",
+   "border-width-icon-big": "3px",
+   "border-width-icon-large": "4px",
+@@ -4084,7 +4084,6 @@ exports[`CSS Custom Properties match previous snapshot for mode "visual-refresh"
+   "border-divider-list-width": "1px",
+   "border-divider-section-width": "1px",
+   "border-dropdown-virtual-offset-width": "2px",
+-  "border-invalid-width": "8px",
+   "border-item-width": "2px",
+   "border-line-chart-dash-array": "3 5",
+   "border-line-chart-line-join": "round",
+@@ -4142,6 +4141,7 @@ exports[`CSS Custom Properties match previous snapshot for mode "visual-refresh"
+   "border-width-dialog": "1px",
+   "border-width-dropdown": "2px",
+   "border-width-field": "1px",
++  "border-width-field-status-inline-start": "8px",
+   "border-width-flashbar-inline-start": "0px",
+   "border-width-icon-big": "3px",
+   "border-width-icon-large": "4px",
+@@ -5102,7 +5102,6 @@ exports[`CSS Custom Properties match previous snapshot for mode "visual-refresh-
+   "border-divider-list-width": "1px",
+   "border-divider-section-width": "1px",
+   "border-dropdown-virtual-offset-width": "2px",
+-  "border-invalid-width": "8px",
+   "border-item-width": "2px",
+   "border-line-chart-dash-array": "3 5",
+   "border-line-chart-line-join": "round",
+@@ -5160,6 +5159,7 @@ exports[`CSS Custom Properties match previous snapshot for mode "visual-refresh-
+   "border-width-dialog": "1px",
+   "border-width-dropdown": "2px",
+   "border-width-field": "1px",
++  "border-width-field-status-inline-start": "8px",
+   "border-width-flashbar-inline-start": "0px",
+   "border-width-icon-big": "3px",
+   "border-width-icon-large": "4px",
+@@ -6120,7 +6120,6 @@ exports[`CSS Custom Properties match previous snapshot for mode "visual-refresh-
+   "border-divider-list-width": "1px",
+   "border-divider-section-width": "1px",
+   "border-dropdown-virtual-offset-width": "2px",
+-  "border-invalid-width": "8px",
+   "border-item-width": "2px",
+   "border-line-chart-dash-array": "3 5",
+   "border-line-chart-line-join": "round",
+@@ -6178,6 +6177,7 @@ exports[`CSS Custom Properties match previous snapshot f
 ```
 
-**File**: `src/internal/components/drag-handle/hooks/interfaces.ts` (modified, +1/-1)
+**File**: `src/__tests__/snapshot-tests/__snapshots__/design-tokens.test.ts.snap` (modified, +64/-0)
 ```diff
-@@ -49,4 +49,4 @@ export type Action<T = void> =
-   | { type: 'FOCUS' }
-   | { type: 'BLUR' }
-   | { type: 'RESET_TO_IDLE' }
--  | { type: 'CLEAR_CALLBACKS' };
-+  | { type: 'CLEAR_CALLBACKS'; payload?: StateTransitionCallbacks<T>[] };
+@@ -161,6 +161,10 @@ exports[`Design tokens artifacts Design tokens JSON for classic matches the snap
+           "$description": "The border width of form fields.",
+           "$value": "1px",
+         },
++        "border-width-field-status-inline-start": {
++          "$description": "The inline-start border width of form fields and file tokens in invalid and warning states.",
++          "$value": "4px",
++        },
+         "border-width-flashbar-inline-start": {
+           "$description": "The inline-start border width of flash messages in flashbars.",
+           "$value": "0px",
+@@ -3864,6 +3868,10 @@ exports[`Design tokens artifacts Design tokens JSON for classic matches the snap
+           "$description": "The border width of form fields.",
+           "$value": "1px",
+         },
++        "border-width-field-status-inline-start": {
++          "$description": "The inline-start border width of form fields and file tokens in invalid and warning states.",
++          "$value": "4px",
++        },
+         "border-width-flashbar-inline-start": {
+           "$description": "The inline-start border width of flash messages in flashbars.",
+           "$value": "0px",
+@@ -7567,6 +7575,10 @@ exports[`Design tokens artifacts Design tokens JSON for classic matches the snap
+           "$description": "The border width of form fields.",
+           "$value": "1px",
+         },
++        "border-width-field-status-inline-start": {
++          "$description": "The inline-start border width of form fields and file tokens in invalid and warning states.",
++          "$value": "4px",
++        },
+         "border-width-flashbar-inline-start": {
+           "$description": "The inline-start border width of flash messages in flashbars.",
+           "$value": "0px",
+@@ -11270,6 +11282,10 @@ exports[`Design tokens artifacts Design tokens JSON for classic matches the snap
+           "$description": "The border width of form fields.",
+           "$value": "1px",
+         },
++        "border-width-field-status-inline-start": {
++          "$description": "The inline-start border width of form fields and file tokens in invalid and warning states.",
++          "$value": "4px",
++        },
+         "border-width-flashbar-inline-start": {
+           "$description": "The inline-start border width of flash messages in flashbars.",
+           "$value": "0px",
+@@ -14973,6 +14989,10 @@ exports[`Design tokens artifacts Design tokens JSON for classic matches the snap
+           "$description": "The border width of form fields.",
+           "$value": "1px",
+         },
++        "border-width-field-status-inline-start": {
++          "$description": "The inline-start border width of form fields and file tokens in invalid and warning states.",
++          "$value": "4px",
++        },
+         "border-width-flashbar-inline-start": {
+           "$description": "The inline-start border width of flash messages in flashbars.",
+           "$value": "0px",
+@@ -18676,6 +18696,10 @@ exports[`Design tokens artifacts Design tokens JSON for classic matches the snap
+           "$description": "The border width of form fields.",
+           "$value": "1px",
+         },
++        "border-width-field-status-inline-start": {
++          "$description": "The inline-start border width of form fields and file tokens in invalid and warning states.",
++          "$value": "4px",
++        },
+         "border-width-flashbar-inline-start": {
+           "$description": "The inline-start border width of flash messages in flashbars.",
+           "$value": "0px",
+@@ -22379,6 +22403,10 @@ exports[`Design tokens artifacts Design tokens JSON for classic matches the snap
+       "$description": "The border width of form fields.",
+       "$value": "1px",
+     },
++    "border-width-field-status-inline-start": {
++      "$description": "The inline-start border width of form fields and file tokens in invalid and warning states.",
++      "$value": "4px",
++    },
+     "border-width-flashbar-inline-start": {
+       "$description": "The inline-start border width of flash messages in flashbars.",
+       "$value": "0px",
+@@ -26087,6 +26115,10 @@ exports[`Design tokens artifacts Design tokens JSON for visual-refresh matches t
+           "$description": "The border width of form fields.",
+           "$value": "1px",
+         },
++        "border-width-field-status-inline-start": {
++          "$description": "The inline-start border width of form fields and file tokens in invalid and warning states.",
++          "$value": "8px",
++        },
+         "border-width-flashbar-inline-start": {
+           "$description": "The inline-start border width of flash messages in flashbars.",
+           "$value": "0px",
+@@ -29790,6 +29822,10 @@ exports[`Design tokens artifacts Design tokens JSON for visual-refresh matches t
+           "$description": "The border width of form fields.",
+           "$value": "1px",
+         },
++        "border-width-field-status-inline-start": {
++          "$description": "The inline-sta
 ```
 
-**File**: `src/internal/components/drag-handle/hooks/use-drag-handle-interaction-state.ts` (modified, +9/-1)
+**File**: `src/file-token-group/styles.scss` (modified, +1/-1)
 ```diff
-@@ -164,6 +164,12 @@ function interactionReducer<T = void>(
-   action: Action<T>
- ): DragHandleInteractionState<T> {
-   if (action.type === 'CLEAR_CALLBACKS') {
-+    // Only clear when the batch we processed is still the one queued. If a newer action (e.g. a
-+    // sub-millisecond POINTER_UP landing between the POINTER_MOVE passive effect flushing) has
-+    // already queued a fresh batch, keep it so it is not discarded unprocessed.
-+    if (action.payload && action.payload !== state.transitionCallbacks) {
-+      return state;
-+    }
-     return {
-       ...state,
-       transitionCallbacks: undefined,
-@@ -251,7 +257,9 @@ function useCallbackHandler<T = void>(
-     });
+@@ -10,7 +10,7 @@
+ @use '@cloudscape-design/component-toolkit/internal/focus-visible' as focus-visible;
  
-     // Clean up callbacks to prevent re-execution on subsequent re-renders.
--    dispatch({ type: 'CLEAR_CALLBACKS' });
-+    // Carry the exact batch we just processed so the reducer only clears it
-+    // if a newer action has not already replaced it.
-+    dispatch({ type: 'CLEAR_CALLBACKS', payload: pendingCallbacks });
-   }, [pendingCallbacks, props, dispatch]);
- }
+ @mixin token-box-validation {
+-  border-inline-start-width: awsui.$border-invalid-width;
++  border-inline-start-width: awsui.$border-width-field-status-inline-start;
  
+   > .dismiss-button {
+     color: awsui.$color-text-interactive-default;
 ```
 
----
-
-### Incident Patch 2: `414c6787` (2026-10-26)
-**Commit Message**: chore: Make borders of disabled controls transparent also when rendered in a control group (#5182)
-
-**File**: `pages/control-group/validation.page.tsx` (modified, +23/-2)
+**File**: `src/internal/styles/forms/constants.scss` (modified, +1/-1)
 ```diff
-@@ -22,7 +22,7 @@ import { Direction, multiOptions, noop, operators, segments, suggestions } from
- type ValidationState = 'none' | 'error' | 'warning';
+@@ -22,7 +22,7 @@ $control-padding-vertical: awsui.$space-field-vertical;
+ $control-padding-horizontal: awsui.$space-field-horizontal;
+ $control-padding: $control-padding-vertical $control-padding-horizontal;
  
- // The individual controls that can be individually disabled.
--type StatefulControl = 'input' | 'autosuggest' | 'select' | 'multiselect';
-+type StatefulControl = 'input' | 'autosuggest' | 'autosuggest-tokens' | 'select' | 'multiselect';
- 
- // Control kinds that can appear inside a group. The stateful ones can be disabled;
- // segmentedControl cannot.
-@@ -31,7 +31,14 @@ type ControlKind = StatefulControl | 'segmentedControl';
- // Things that can appear in the `disabled` list: the stateful controls plus the action button.
- type Disableable = StatefulControl | 'actionbutton';
- 
--const disableableItems: ReadonlyArray<Disableable> = ['input', 'autosuggest', 'select', 'multiselect', 'actionbutton'];
-+const disableableItems: ReadonlyArray<Disableable> = [
-+  'input',
-+  'autosuggest',
-+  'autosuggest-tokens',
-+  'select',
-+  'multiselect',
-+  'actionbutton',
-+];
- 
- interface ControlGroupValidationSettings {
-   // The group-as-a-unit validation, applied through the surrounding FormField.
-@@ -82,6 +89,17 @@ function renderControl(kind: ControlKind, disabled: ReadonlySet<Disableable>) {
-           {...stateProps('autosuggest', disabled)}
-         />
-       );
-+    case 'autosuggest-tokens':
-+      return (
-+        <Autosuggest
-+          ariaLabel="Metrics"
-+          value=""
-+          tokens={[{ value: 'CPUUtilization' }, { value: 'MemoryUtilization' }]}
-+          onChange={noop}
-+          options={suggestions}
-+          {...stateProps('autosuggest-tokens', disabled)}
-+        />
-+      );
-     case 'select':
-       return (
-         <Select
-@@ -153,6 +171,7 @@ const validationItems: ReadonlyArray<{ value: ValidationState; label: string }>
- const statefulControls: ReadonlyArray<{ key: StatefulControl; label: string }> = [
-   { key: 'input', label: 'Input' },
-   { key: 'autosuggest', label: 'Autosuggest' },
-+  { key: 'autosuggest-tokens', label: 'Autosuggest with inline tokens' },
-   { key: 'select', label: 'Select' },
-   { key: 'multiselect', label: 'Multiselect' },
- ];
-@@ -226,9 +245,11 @@ const combinations: ReadonlyArray<ControlKind[]> = [
-   ['input', 'segmentedControl'],
-   ['select', 'multiselect'],
-   ['autosuggest', 'select'],
-+  ['input', 'autosuggest-tokens'],
-   ['input', 'select', 'multiselect'],
-   ['input', 'segmentedControl', 'select'],
-   ['select', 'autosuggest', 'multiselect'],
-+  ['autosuggest-tokens', 'select', 'multiselect'],
- ];
- 
- const permutations = createPermutations<{ controls: ControlKind[] }>([{ controls: combinations }]);
+-$invalid-control-left-border: awsui.$border-invalid-width;
++$invalid-control-left-border: awsui.$border-width-field-status-inline-start;
+ $invalid-control-left-padding: calc(
+   #{$control-padding-horizontal} - (#{$invalid-control-left-border} - #{awsui.$border-width-field})
+ );
 ```
 
-**File**: `src/input/styles.scss` (modified, +5/-5)
+**File**: `style-dictionary/classic/borders.ts` (modified, +1/-1)
 ```diff
-@@ -274,11 +274,11 @@ $input-tokens: style-api.resolve(
-   }
- 
-   &.grouped {
--    @include styles.grouped-control;
--
--    // Unlike other controls, input's padding is rendered by the inner input element and not by its wrapper.
--    &.grouped-validation-first {
--      padding-inline-start: awsui.$border-width-field;
-+    // Unlike other controls, input's padding is rendered by the inner input element and not by its wrapper,
-+    // so we should not add extra space to the wrapper for the validation border.
-+    @include styles.grouped-control($validation-border-padding: awsui.$border-width-field);
-+    &.input-field-disabled {
-+      @include styles.grouped-control-disabled;
-     }
-   }
- }
+@@ -14,7 +14,7 @@ const tokens: StyleDictionary.BordersDictionary = {
+   borderControlInvalidFocusRingShadowSpread: '{borderControlFocusRingShadowSpread}',
+   borderDividerSectionWidth: '1px',
+   borderDropdownVirtualOffsetWidth: '0px',
+-  borderInvalidWidth: '4px',
++  borderWidthFieldStatusInlineStart: '4px',
+   borderItemWidth: '1px',
+   borderLineChartLineJoin: 'miter',
+   borderPanelHeaderWidth: '0px',
 ```
 
-**File**: `src/internal/components/autosuggest-input/styles.scss` (modified, +3/-0)
+**File**: `style-dictionary/utils/token-names.ts` (modified, +1/-1)
 ```diff
-@@ -89,6 +89,9 @@
- 
-   &.grouped {
-     @include styles.grouped-control;
-+    &.token-field-disabled {
-+      @include styles.grouped-control-disabled;
-+    }
-   }
- }
- 
+@@ -1046,7 +1046,7 @@ export type BordersTokenName =
+   | 'borderDividerListWidth'
+   | 'borderDividerSectionWidth'
+   | 'borderDropdownVirtualOffsetWidth'
+-  | 'borderInvalidWidth'
++  | 'borderWidthFieldStatusInlineStart'
+   | 'borderItemWidth'
+   | 'borderLineChartDashArray'
+   | 'borderLineChartLineJoin'
 ```
 
-**File**: `src/internal/components/button-trigger/styles.scss` (modified, +4/-1)
+**File**: `style-dictionary/visual-refresh/borders.ts` (modified, +1/-1)
 ```diff
-@@ -127,7 +127,7 @@ $icon-offset: awsui.$space-xxxs;
-     text-decoration: none;
-   }
- 
--  &:not(.in-filtering-token):not(.compact):not(.grouped.with-error):not(.grouped.with-warning) {
-+  &:not(.in-filtering-token):not(.compact):not(.grouped-with-error):not(.grouped-with-warning) {
-     @include focus-visible.when-visible {
-       @include styles.form-focus-element();
-     }
-@@ -190,5 +190,8 @@ $icon-offset: awsui.$space-xxxs;
- 
-   &.grouped {
-     @include styles.grouped-control;
-+    &.disabled {
-+      @include styles.grouped-control-disabled;
-+    }
-   }
- }
+@@ -12,7 +12,7 @@ export const tokens: StyleDictionary.BordersDictionary = {
+   borderDividerListWidth: '1px',
+   borderDividerSectionWidth: '1px',
+   borderDropdownVirtualOffsetWidth: '2px',
+-  borderInvalidWidth: '8px',
++  borderWidthFieldStatusInlineStart: '8px',
+   borderItemWidth: '2px',
+   borderLineChartDashArray: '3 5',
+   borderLineChartLineJoin: 'round',
 ```
 
-**File**: `src/internal/components/control-group/grouped-control-styles.ts` (modified, +2/-4)
+**File**: `style-dictionary/visual-refresh/metadata/borders.ts` (modified, +5/-1)
 ```diff
-@@ -18,13 +18,11 @@ export function getGroupedControlClassNames(
-   if (!position) {
-     return '';
-   }
--  // Only the leading (inline-start) controls draw the thick validation border
--  const isLeading = direction === 'vertical' || position === 'first' || position === 'only';
-   return clsx(
-     styles.grouped,
-+    styles[`grouped-${direction}`],
-     styles[`grouped-${direction}-${position}`],
-     hasAction && styles['grouped-with-action'],
--    validation && (validation === 'error' ? styles['with-error'] : styles['with-warning']),
--    validation && isLeading && styles['grouped-validation-first']
-+    validation && (validation === 'error' ? styles['grouped-with-error'] : styles['grouped-with-warning'])
-   );
- }
-```
-
-**File**: `src/internal/styles/forms/grouped-control.scss` (modified, +44/-14)
-```diff
-@@ -12,10 +12,7 @@ $grouped-control-border-radius: constants.$control-border-radius;
- 
- @mixin grouped-control-base {
-   @include styles.logical-radius($grouped-control-border-radius);
--  border-inline-start-color: awsui.$color-border-input-default;
--  border-inline-end-color: awsui.$color-border-input-default;
--  border-block-start-color: awsui.$color-border-input-default;
--  border-block-end-color: awsui.$color-border-input-default;
-+  border-color: awsui.$color-border-control-group-default;
- }
- 
- @mixin grouped-control-horizontal-first {
-@@ -105,7 +102,39 @@ $grouped-control-border-radius: constants.$control-border-radius;
-   }
- }
- 
--@mixin grouped-control {
-+@mixin grouped-control-disabled {
-+  &:not(.grouped-with-error):not(.grouped-with-warning) {
-+    &.grouped-horizontal {
-+      border-block-color: transparent;
-+    }
-+    &.grouped-vertical-first,
-+    &.grouped-vertical-only {
-+      border-block-start-color: transparent;
-+    }
-+    &.grouped-vertical-last,
-+    &.grouped-vertical-only {
-+      border-block-end-color: transparent;
-+    }
-+    &.grouped-horizontal-first,
-+    &.grouped-horizontal-only,
-+    &.grouped-vertical {
-+      border-inline-start-color: transparent;
-+    }
-+    &:not(.grouped-with-action) {
-+      &.grouped-vertical,
-+      &.grouped-horizontal-last,
-+      &.grouped-horizontal-only {
-+        border-inline-end-color: transparent;
-+      }
-+    }
-+  }
-+}
-+
-+@mixin grouped-control(
-+  $validation-border-padding: calc(
-+      #{constants.$invalid-control-left-border} + #{constants.$invalid-control-left-padding}
-+    )
-+) {
-   @include grouped-control-base;
- 
-   &-horizontal {
-@@ -137,15 +166,21 @@ $grouped-control-border-radius: constants.$control-border-radius;
-     border-end-end-radius: 0;
-   }
- 
--  &.with-error {
-+  &-with-error {
-     @include grouped-control-status-edges(awsui.$color-text-status-error);
-   }
--  &.with-warning {
-+  &-with-warning {
-     @include grouped-control-status-edges(awsui.$color-text-status-warning);
-   }
- 
--  &.with-error,
--  &.with-warning {
-+  &-with-error,
-+  &-with-warning {
-+    &.grouped-horizontal-first,
-+    &.grouped-horizontal-only,
-+    &.grouped-vertical {
-+      // Room for the validation thick border, which is rendered from the control group wrapper
-+      padding-inline-start: $validation-border-padding;
-+    }
-     @include focus-visible.when-visible {
-       @include mixins.windows-high-contrast-outline;
-       box-shadow: foundation.$box-shadow-focused-light-invalid;
-@@ -155,9 +190,4 @@ $grouped-control-border-radius: constants.$control-border-radius;
-       box-shadow: foundation.$box-shadow-focused-light-invalid;
-     }
-   }
--
--  &.grouped-validation-first {
--    // Room for the validation thick border, which is rendered from the control group wrapper
--    padding-inline-start: calc(#{constants.$invalid-control-left-border} + #{constants.$invalid-control-left-padding});
--  }
- }
-```
-
-**File**: `src/segmented-control/styles.scss` (modified, +2/-2)
-```diff
-@@ -72,8 +72,8 @@
-   }
- 
-   // The focused inner segment option draws its own ring, so suppress the group's.
--  &.with-error,
--  &.with-warning {
-+  &-with-error,
-+  &-with-warning {
-     &:focus-within {
-       box-shadow: none;
-     }
+@@ -9,7 +9,11 @@ const metadata: StyleDictionary.MetadataIndex = {
+     description:
+       'The default system divider width - used for dividers between sections of content such as key/value pairs and tabs, for both full width and inset dividers.',
+   },
+-  borderInvalidWidth: { description: 'Used for invalid input left border width.' },
++  borderWidthFieldStatusInlineStart: {
++    description: 'The inline-start border width of form fields and file tokens in invalid and warning states.',
++    public: true,
++    themeable: true,
++  },
+   borderWidthLayoutSideNavigation: {
+     description: 'The border width of the side navigation divider in the AppLayout and AppLayoutToolbar components.',
+     public: true,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5196** (2026-10-27): feat: Make borderWidthFieldStatusInlineStart design token public + themeable (@SpyZzey)
 - **PR #5191** (2026-10-26): chore: Adds internal style api v2 to textarea (@vvaliyev)
 - **PR #5186** (2026-10-26): chore: Prevent unexpected borders in grouped autosuggest input in validation state (@jperals)
 - **PR #5185** (2026-10-23): fix: Remove unparsable :-moz-placeholder (@SpyZzey)
 - **PR #5182** (2026-10-26): chore: Make borders of disabled controls transparent also when rendered in a control group (@jperals)
 - **PR #5181** (2026-10-22): chore: Add heroshot example for patterns page for documentation website (@at-susie)
-- **PR #5178** (2026-10-23): refactor: Move list rendering and helpers into internal listbox (@amanabiy)
 
 ---
 
@@ -1915,48 +1849,39 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Prevent stuck active state when quickly moving and releasing drag handle (#5177)
+## X. Make borderWidthFieldStatusInlineStart design token public + themeable (#5196)
 
 **RULE**:
-When implementing operations in `src/internal/components/drag-handle/hooks/__tests__/use-drag-handle-interaction-state.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cloudscape-design/components. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/__integ__/__snapshots__/themes.test.ts.snap`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cloudscape-design/components. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `324fda33`: Prevent stuck active state when quickly moving and releasing drag handle (#5177). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b7014ed7`: Make borderWidthFieldStatusInlineStart design token public + themeable (#5196). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/internal/components/drag-handle/hooks/__tests__/use-drag-handle-interaction-state.test.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/__integ__/__snapshots__/themes.test.ts.snap`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      test('should still fire onDndEnd when pointer up is delivered before the dnd-active callback returns (fast release)', () => {
-        const calls: string[] = [];
-        let lastInteraction: DragHandleInteractionState = { value: null };
-
-        const FastReleaseHost = React.forwardRef<
-          { processPointerDown: (event: PointerEvent) => void; processPointerMove: (event: PointerEvent) => void },
-          // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-          {}
-        >((_props, ref) => {
-          // A fresh props object is built every render, mirroring ItemContainer / TestComponent.
-          const firstActiveRef = React.useRef(true);
-
-          const { interaction, processPointerDown, processPointerMove, processPointerUp } =
-            useInternalDragHandleInteractionState({
-              onDndStartAction: () => calls.push('start'),
-              onDndActiveAction: () => {
-                calls.push('active');
-                // Simulate the sub-millisecond release: deliver POINTER_UP while the POINTER_MOVE
-                // batch is still being processed, the first time only.
-                if (firstActiveRef.current) {
-                  f
+  "border-width-field-status-inline-start": "4px",
+  "border-width-field-status-inline-start": "4px",
+  "border-width-field-status-inline-start": "4px",
+  "border-width-field-status-inline-start": "4px",
+  "border-width-field-status-inline-start": "8px",
+  "border-width-field-status-inline-start": "8px",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  "border-invalid-width": "4px",
+  "border-invalid-width": "4px",
+  "border-invalid-width": "4px",
+  "border-invalid-width": "4px",
+  "border-invalid-width": "8px",
+  "border-invalid-width": "8px",
+  "border-invalid-width": "8px",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `324fda33` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b7014ed7` are properly handled with clean fallback behavior.

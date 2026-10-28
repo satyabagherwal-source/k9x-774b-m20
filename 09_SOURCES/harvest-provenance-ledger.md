@@ -5641,3 +5641,7 @@ Every entry in this ledger must capture:
 | `learn-github-o2sh-onefetch` | `https://github.com/o2sh/onefetch` | `892934ca` | Multi-dimensional audit evidence | 2026-10-28T01:35:55.819Z |
 | `learn-huggingface-mudler-locate-anything-cpp-gguf` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-10-28T01:36:04.526Z |
 | `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `c443fc41` | Multi-dimensional audit evidence | 2026-10-28T01:36:08.319Z |
+| `learn-github-cloudscape-design-components` | `https://github.com/cloudscape-design/components` | `b7014ed7` | Multi-dimensional audit evidence | 2026-10-28T01:42:36.427Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `c24e68c2` | Multi-dimensional audit evidence | 2026-10-28T01:42:39.629Z |
+| `learn-huggingface-openmoss-team-moss-image-base` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base` | `hf-openmos` | Multi-dimensional audit evidence | 2026-10-28T01:42:42.360Z |
+| `learn-github-microsoft-react-native-windows` | `https://github.com/microsoft/react-native-windows` | `c7ed54c7` | Multi-dimensional audit evidence | 2026-10-28T01:42:43.294Z |

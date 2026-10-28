@@ -1675,8 +1675,8 @@
     "sourceUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
     "sourceVersion": "hf-openmoss-team-moss-image-base",
     "license": "Open-Source",
-    "contentHash": "ca081c6e5daafb50b64c0c415f2b5eb70fa8d52babee62464c714aa84882eb58",
-    "lastHarvestedAt": "2026-10-25T05:06:56.348Z",
+    "contentHash": "5821491fadf5d2f489d06db013eabcb4bffe4f1726680ea356db5d8232926368",
+    "lastHarvestedAt": "2026-10-28T01:42:42.360Z",
     "learningId": "learn-huggingface-openmoss-team-moss-image-base"
   },
   "hf-openmoss-team-moss-image-sft": {
@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "9f805e24",
+    "sourceVersion": "c24e68c2",
     "license": "Apache-2.0",
-    "contentHash": "8ecf11112de359356f8a675ed64cd39dc1eb89646f3f24a99cea4fc16401f342",
-    "lastHarvestedAt": "2026-10-26T17:58:20.019Z",
+    "contentHash": "e7dbe430457dff235a3d3b76f6fc6a5ff6d1f98ce30ae009a86cfe5eec98eab0",
+    "lastHarvestedAt": "2026-10-28T01:42:39.629Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {
@@ -5583,10 +5583,10 @@
     "repository": "cloudscape-design/components",
     "platform": "github",
     "sourceUrl": "https://github.com/cloudscape-design/components",
-    "sourceVersion": "6997ceb2",
+    "sourceVersion": "b7014ed7",
     "license": "Apache-2.0",
-    "contentHash": "b33f093a402bbe0cd35c202b7ccb36bdda6410751e28a9750c436cc91a87b967",
-    "lastHarvestedAt": "2026-10-27T13:07:07.413Z",
+    "contentHash": "6e942899332cf7c76d038eebbbd5a50c07a626ef4cbe82e1ac0159d7e077236a",
+    "lastHarvestedAt": "2026-10-28T01:42:36.427Z",
     "learningId": "learn-github-cloudscape-design-components"
   },
   "async-rs-async-std": {
@@ -7533,10 +7533,10 @@
     "repository": "microsoft/react-native-windows",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/react-native-windows",
-    "sourceVersion": "23fe304f",
+    "sourceVersion": "c7ed54c7",
     "license": "NOASSERTION",
-    "contentHash": "51cfaf337fd8d5bfd31126feca4c7573a1055f75842a63209c1b0a12d0e28409",
-    "lastHarvestedAt": "2026-10-25T14:03:22.121Z",
+    "contentHash": "b1c46c9ac3ac2f2fcf3c1b99aa9b8ae8b6023512620d30e9a2eb68d930a51fc3",
+    "lastHarvestedAt": "2026-10-28T01:42:43.294Z",
     "learningId": "learn-github-microsoft-react-native-windows"
   },
   "paradedb-paradedb": {

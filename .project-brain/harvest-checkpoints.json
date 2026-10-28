@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T01:36:08.328Z",
+  "last_updated": "2026-10-28T01:42:43.303Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2646,14 +2646,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openmoss-team-moss-image-base",
-      "content_hash": "ca081c6e5daafb50b64c0c415f2b5eb70fa8d52babee62464c714aa84882eb58",
-      "verified_at": "2026-10-25T05:06:56.355Z",
+      "content_hash": "5821491fadf5d2f489d06db013eabcb4bffe4f1726680ea356db5d8232926368",
+      "verified_at": "2026-10-28T01:42:42.369Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T05:06:56.355Z"
+      "last_updated": "2026-10-28T01:42:42.369Z"
     },
     "OpenMOSS-Team/MOSS-Image-SFT": {
       "repository": "OpenMOSS-Team/MOSS-Image-SFT",
@@ -6186,14 +6186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gitoxidelabs-gitoxide",
-      "content_hash": "8ecf11112de359356f8a675ed64cd39dc1eb89646f3f24a99cea4fc16401f342",
-      "verified_at": "2026-10-26T17:58:20.024Z",
+      "content_hash": "e7dbe430457dff235a3d3b76f6fc6a5ff6d1f98ce30ae009a86cfe5eec98eab0",
+      "verified_at": "2026-10-28T01:42:39.637Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T17:58:20.024Z"
+      "last_updated": "2026-10-28T01:42:39.637Z"
     },
     "devhubapp/devhub": {
       "repository": "devhubapp/devhub",
@@ -8496,14 +8496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cloudscape-design-components",
-      "content_hash": "b33f093a402bbe0cd35c202b7ccb36bdda6410751e28a9750c436cc91a87b967",
-      "verified_at": "2026-10-27T13:07:07.422Z",
+      "content_hash": "6e942899332cf7c76d038eebbbd5a50c07a626ef4cbe82e1ac0159d7e077236a",
+      "verified_at": "2026-10-28T01:42:36.436Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:07:07.422Z"
+      "last_updated": "2026-10-28T01:42:36.436Z"
     },
     "async-rs/async-std": {
       "repository": "async-rs/async-std",
@@ -11346,14 +11346,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-react-native-windows",
-      "content_hash": "51cfaf337fd8d5bfd31126feca4c7573a1055f75842a63209c1b0a12d0e28409",
-      "verified_at": "2026-10-25T14:03:22.127Z",
+      "content_hash": "b1c46c9ac3ac2f2fcf3c1b99aa9b8ae8b6023512620d30e9a2eb68d930a51fc3",
+      "verified_at": "2026-10-28T01:42:43.302Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T14:03:22.127Z"
+      "last_updated": "2026-10-28T01:42:43.302Z"
     },
     "paradedb/paradedb": {
       "repository": "paradedb/paradedb",

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-79K8",
-    "timestamp": "2026-10-26T11:25:33.608Z",
-    "repository": "FalkorDB/FalkorDB",
-    "learningId": "learn-github-falkordb-falkordb",
-    "contentHash": "ebc55e6f08e579d1e3bbfcbe5574e436353cf7b7df697a87611051bf282d0a53",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-FKCS",
-    "timestamp": "2026-10-26T11:32:00.844Z",
-    "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
-    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
-    "contentHash": "4ec04b8099b630255e8249c0640f4da2d01cebf30011f579c80c410516c65d2b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-YIKY",
-    "timestamp": "2026-10-26T11:46:45.010Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "274e5ac8b645ee6607d310d27b388b8c9edd35ab5ff99f75d25f4d026bcacdb1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-P1EJ",
-    "timestamp": "2026-10-26T12:07:22.459Z",
-    "repository": "LifeSciForge/seo-auditor",
-    "learningId": "learn-github-lifesciforge-seo-auditor",
-    "contentHash": "8389e1549694bac45afa376d3bb5478a9779fd97f424821fdd33ebedbc1b1b35",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-WUZS",
     "timestamp": "2026-10-26T12:13:27.400Z",
     "repository": "sayanarijit/xplr",
@@ -7490,6 +7430,66 @@
     "repository": "StarTrail-org/LEANN",
     "learningId": "learn-github-startrail-org-leann",
     "contentHash": "7cf2e5452f54e8f930dc0827b88420c5b16584863a43cf95c2fed28f94b2a064",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-9ABS",
+    "timestamp": "2026-10-28T01:42:36.424Z",
+    "repository": "cloudscape-design/components",
+    "learningId": "learn-github-cloudscape-design-components",
+    "contentHash": "6e942899332cf7c76d038eebbbd5a50c07a626ef4cbe82e1ac0159d7e077236a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-9CSQ",
+    "timestamp": "2026-10-28T01:42:39.626Z",
+    "repository": "GitoxideLabs/gitoxide",
+    "learningId": "learn-github-gitoxidelabs-gitoxide",
+    "contentHash": "e7dbe430457dff235a3d3b76f6fc6a5ff6d1f98ce30ae009a86cfe5eec98eab0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-9EWL",
+    "timestamp": "2026-10-28T01:42:42.357Z",
+    "repository": "OpenMOSS-Team/MOSS-Image-Base",
+    "learningId": "learn-huggingface-openmoss-team-moss-image-base",
+    "contentHash": "5821491fadf5d2f489d06db013eabcb4bffe4f1726680ea356db5d8232926368",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-9FMJ",
+    "timestamp": "2026-10-28T01:42:43.291Z",
+    "repository": "microsoft/react-native-windows",
+    "learningId": "learn-github-microsoft-react-native-windows",
+    "contentHash": "b1c46c9ac3ac2f2fcf3c1b99aa9b8ae8b6023512620d30e9a2eb68d930a51fc3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

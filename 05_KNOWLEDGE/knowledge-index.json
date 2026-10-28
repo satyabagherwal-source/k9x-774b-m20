@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T01:36:08.252Z",
+  "last_updated": "2026-10-28T01:42:43.216Z",
   "total_verified_learnings": 1154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6842,8 +6842,8 @@
       "slug": "cloudscape-design-components",
       "platform": "github",
       "source_url": "https://github.com/cloudscape-design/components",
-      "source_version": "6997ceb2",
-      "content_hash": "b33f093a402bbe0cd35c202b7ccb36bdda6410751e28a9750c436cc91a87b967",
+      "source_version": "b7014ed7",
+      "content_hash": "6e942899332cf7c76d038eebbbd5a50c07a626ef4cbe82e1ac0159d7e077236a",
       "dossier_path": "07_PROJECT_LEARNING/cloudscape-design-components-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cloudscape-design-components-learnings.md",
       "promoted_rules": [
@@ -6901,6 +6901,11 @@
           "number": 4785,
           "title": "Prevent stuck active state when quickly moving and releasing drag handle (#5177)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5106,
+          "title": "Make borderWidthFieldStatusInlineStart design token public + themeable (#5196)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6908,7 +6913,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:07:07.338Z",
+      "verified_at": "2026-10-28T01:42:36.352Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13342,8 +13347,8 @@
       "slug": "gitoxidelabs-gitoxide",
       "platform": "github",
       "source_url": "https://github.com/GitoxideLabs/gitoxide",
-      "source_version": "9f805e24",
-      "content_hash": "8ecf11112de359356f8a675ed64cd39dc1eb89646f3f24a99cea4fc16401f342",
+      "source_version": "c24e68c2",
+      "content_hash": "e7dbe430457dff235a3d3b76f6fc6a5ff6d1f98ce30ae009a86cfe5eec98eab0",
       "dossier_path": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "promoted_rules": [
@@ -13381,6 +13386,11 @@
           "number": 4630,
           "title": "Merge pull request #3124 from cruessler/add-benchmark-for-gix-blame",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5107,
+          "title": "gix-traverse): limit hidden history before uncached topo walks",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13388,7 +13398,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T17:58:19.977Z",
+      "verified_at": "2026-10-28T01:42:39.552Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36573,8 +36583,8 @@
       "slug": "microsoft-react-native-windows",
       "platform": "github",
       "source_url": "https://github.com/microsoft/react-native-windows",
-      "source_version": "23fe304f",
-      "content_hash": "51cfaf337fd8d5bfd31126feca4c7573a1055f75842a63209c1b0a12d0e28409",
+      "source_version": "c7ed54c7",
+      "content_hash": "b1c46c9ac3ac2f2fcf3c1b99aa9b8ae8b6023512620d30e9a2eb68d930a51fc3",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
       "promoted_rules": [
@@ -36587,6 +36597,11 @@
           "number": 4325,
           "title": "📦 Bump the all-dependencies group across 1 directory with 14 updates (#16491)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5108,
+          "title": "Dependabot grouping and route it through PackageFeedProxy (#16511)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36594,7 +36609,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T14:03:22.078Z",
+      "verified_at": "2026-10-28T01:42:43.203Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64423,10 +64438,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
       "source_version": "hf-openmoss-team-moss-image-base",
-      "content_hash": "ca081c6e5daafb50b64c0c415f2b5eb70fa8d52babee62464c714aa84882eb58",
+      "content_hash": "5821491fadf5d2f489d06db013eabcb4bffe4f1726680ea356db5d8232926368",
       "dossier_path": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md",
       "promoted_rules": [
+        {
+          "number": 1071,
+          "title": "Model Weight Integrity & Deterministic Loading",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 1865,
           "title": "Model Artifact Configuration Integrity Invariant",
@@ -64448,6 +64468,11 @@
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
+          "number": 3422,
+          "title": "Latent Space Dimensional Consistency",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 4069,
           "title": "Invariant Latent Scaling Normalization in Diffusion Autoencoders",
           "status": "PROMOTED_AND_VERIFIED"
@@ -64463,7 +64488,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T05:06:56.265Z",
+      "verified_at": "2026-10-28T01:42:42.284Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -79366,15 +79391,15 @@
       "learning_id": "rule-1071",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1071,
-      "title": "Model Weight Integrity & Deterministic Loading Invariant (Harvested from black-forest-labs/FLUX.1-dev)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Model Weight Integrity & Deterministic Loading",
+      "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
+      "source_version": "hf-openmoss-team-moss-image-base",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.817Z"
+      "verified_at": "2026-10-28T01:42:42.284Z"
     },
     "rule-1072": {
       "learning_id": "rule-1072",
@@ -113420,15 +113445,15 @@
       "learning_id": "rule-3422",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 3422,
-      "title": "Latent Space Dimensional Consistency Invariant",
-      "source_url": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
-      "source_version": "hf-compvis-stable-diffusion-v1-4",
+      "title": "Latent Space Dimensional Consistency",
+      "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
+      "source_version": "hf-openmoss-team-moss-image-base",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-20T22:51:59.403Z"
+      "verified_at": "2026-10-28T01:42:42.284Z"
     },
     "rule-3423": {
       "learning_id": "rule-3423",
@@ -140395,6 +140420,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T01:36:08.240Z"
+    },
+    "rule-5106": {
+      "learning_id": "rule-5106",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5106,
+      "title": "Make borderWidthFieldStatusInlineStart design token public + themeable (#5196)",
+      "source_url": "https://github.com/cloudscape-design/components",
+      "source_version": "b7014ed7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:42:36.352Z"
+    },
+    "rule-5107": {
+      "learning_id": "rule-5107",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5107,
+      "title": "gix-traverse): limit hidden history before uncached topo walks",
+      "source_url": "https://github.com/GitoxideLabs/gitoxide",
+      "source_version": "c24e68c2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:42:39.552Z"
+    },
+    "rule-5108": {
+      "learning_id": "rule-5108",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5108,
+      "title": "Dependabot grouping and route it through PackageFeedProxy (#16511)",
+      "source_url": "https://github.com/microsoft/react-native-windows",
+      "source_version": "c7ed54c7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T01:42:43.203Z"
     }
   },
   "aliases": {

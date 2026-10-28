@@ -5632,3 +5632,7 @@
 | `CYCLE-20261028-0P7R` | `2026-10-28T01:35:55.815Z` | `o2sh/onefetch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5102` | Yes (`aabba09d...`) |
 | `CYCLE-20261028-0VXL` | `2026-10-28T01:36:04.521Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5103, Rule 1522, Rule 5104` | Yes (`f3f36891...`) |
 | `CYCLE-20261028-0YUZ` | `2026-10-28T01:36:08.315Z` | `StarTrail-org/LEANN` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5105` | Yes (`7cf2e545...`) |
+| `CYCLE-20261028-9ABS` | `2026-10-28T01:42:36.424Z` | `cloudscape-design/components` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5106` | Yes (`6e942899...`) |
+| `CYCLE-20261028-9CSQ` | `2026-10-28T01:42:39.626Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5107` | Yes (`e7dbe430...`) |
+| `CYCLE-20261028-9EWL` | `2026-10-28T01:42:42.357Z` | `OpenMOSS-Team/MOSS-Image-Base` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1071, Rule 3422` | Yes (`5821491f...`) |
+| `CYCLE-20261028-9FMJ` | `2026-10-28T01:42:43.291Z` | `microsoft/react-native-windows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5108` | Yes (`b1c46c9a...`) |

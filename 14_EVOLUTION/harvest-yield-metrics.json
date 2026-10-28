@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T01:36:08.324Z",
-  "total_cycles_completed": 5609,
-  "total_learnings_persisted": 5609,
-  "total_rules_promoted": 5031,
+  "last_updated": "2026-10-28T01:42:43.299Z",
+  "total_cycles_completed": 5613,
+  "total_learnings_persisted": 5613,
+  "total_rules_promoted": 5036,
   "history": [
-    {
-      "timestamp": "2026-10-27T16:45:03.443Z",
-      "repository": "adobe/react-spectrum",
-      "learningId": "learn-github-adobe-react-spectrum",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T16:45:09.075Z",
-      "repository": "QwikDev/qwik",
-      "learningId": "learn-github-qwikdev-qwik",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T16:51:48.934Z",
-      "repository": "assistant-ui/assistant-ui",
-      "learningId": "learn-github-assistant-ui-assistant-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T16:51:54.929Z",
-      "repository": "vitest-dev/vitest",
-      "learningId": "learn-github-vitest-dev-vitest",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T16:52:02.068Z",
       "repository": "crate/crate",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-28T01:36:08.324Z",
       "repository": "StarTrail-org/LEANN",
       "learningId": "learn-github-startrail-org-leann",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T01:42:36.432Z",
+      "repository": "cloudscape-design/components",
+      "learningId": "learn-github-cloudscape-design-components",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T01:42:39.634Z",
+      "repository": "GitoxideLabs/gitoxide",
+      "learningId": "learn-github-gitoxidelabs-gitoxide",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T01:42:42.366Z",
+      "repository": "OpenMOSS-Team/MOSS-Image-Base",
+      "learningId": "learn-huggingface-openmoss-team-moss-image-base",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T01:42:43.299Z",
+      "repository": "microsoft/react-native-windows",
+      "learningId": "learn-github-microsoft-react-native-windows",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

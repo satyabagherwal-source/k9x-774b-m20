@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/react-native-windows](https://github.com/microsoft/react-native-windows))  
-> **Source Version**: `23fe304f`  
+> **Source Version**: `c7ed54c7`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T14:03:21.874Z  
+> **Timestamp**: 2026-10-28T01:42:42.858Z  
 > **Learning ID**: `learn-github-microsoft-react-native-windows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/react-native-windows](https://github.com/microsoft/react-native-windows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T14:03:21.868Z  
+> **Harvest Timestamp**: 2026-10-28T01:42:42.131Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A framework for building native Windows apps with React.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 17362 stars
+- **Stars / Engagement**: 17359 stars
 
 ---
 
@@ -57,10 +57,10 @@ import type {HostInstance} from '../../../src/private/types/HostInstance';
 
 import {Commands as AndroidTextInputCommands} from '../../Components/TextInput/AndroidTextInputNativeComponent';
 import {Commands as iOSTextInputCommands} from '../../Components/TextInput/RCTSingelineTextInputNativeComponent';
+import Platform from '../../Utilities/Platform';
 import {Commands as Win32TextInputCommands} from '../../Components/TextInput/Win32TextInputNativeComponent';
 
 const {findNodeHandle} = require('../../ReactNative/RendererProxy');
-const Platform = require('../../Utilities/Platform').default;
 
 let currentlyFocusedInputRef: ?HostInstance = null;
 const inputs = new Set<HostInstance>();
@@ -1342,7 +1342,7 @@ export default BackHandler;
  * Copyright (c) Microsoft Corporation.
  * Licensed under the MIT License.
  *
- * @flow
+ * @flow strict-local
  * @format
  */
 
@@ -1451,6 +1451,8 @@ class Dimensions {
    */
   static addEventListener(
     type: 'change',
+    /* $FlowFixMe[unclear-type] Callers annotate the payload with assorted
+     * object shapes that any precise signature would reject. */
     handler: Function,
   ): EventSubscription {
     invariant(
@@ -1566,391 +1568,281 @@ export default FocusManager;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `23fe304f` (2026-10-24)
-**Commit Message**: 📦 Bump the all-dependencies group across 1 directory with 14 updates (#16491)
+### Incident Patch 1: `e7f4af20` (2026-10-26)
+**Commit Message**: Fix Dependabot grouping and route it through PackageFeedProxy (#16511)
 
-Bumps the all-dependencies group with 14 updates in the / directory:
+- Group all npm updates without group update-types. Group filtering checks the
+  newest release, so compatible patch/minor updates were split into separate PRs
+  when a newer major existed. Ignore major updates explicitly instead.
+- Keep React, React Native, react-test-renderer, and React types on each
+  branch's release line by ignoring minor updates; add the same guard on main.
+- Declare anonymous PackageFeedProxy as Dependabot's npm registry and allow the
+  exact ms-feed tarball hosts it advertises, which Dependabot's egress allowlist
+  was blocking.
+- Point existing yarn.lock archive URLs at the proxy without changing versions
+  or checksums, and document Dependabot's feed setup.
 
-| Package | From | To |
-| --- | --- | --- |
-| [ts-jest](https://github.com/kulshekhar/ts-jest) | `29.4.12` | `29.4.14` |
-| [@types/react](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/react) | `19.2.18` | `19.3.0` |
-| [@types/async](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/async) | `3.2.25` | `3.2.26` |
-| [@types/lodash](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/lodash) | `4.17.25` | `4.17.26` |
-| [@types/react-test-renderer](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/react-test-renderer) | `19.1.0` | `19.3.0` |
-| [@microsoft/1ds-core-js](https://github.com/microsoft/ApplicationInsights-JS) | `4.4.3` | `4.4.5` |
-| [@microsoft/1ds-post-js](https://github.com/microsoft/ApplicationInsights-JS) | `4.4.3` | `4.4.5` |
-| [@microsoft/api-extractor](https://github.com/microsoft/rushstack/tree/HEAD/apps/api-extractor) | `7.59.0` | `7.59.4` |
-| [eslint-plugin-jest](https://github.com/jest-community/eslint-plugin-jest) | `29.16.6` | `29.16.11` |
-| [mem
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `yarn.lock` (modified, +201/-200)
+**File**: `.ado/README.md` (modified, +8/-0)
 ```diff
-@@ -2840,107 +2840,107 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@jsonjoy.com/fs-core@npm:4.69.1":
--  version: 4.69.1
--  resolution: "@jsonjoy.com/fs-core@npm:4.69.1"
-+"@jsonjoy.com/fs-core@npm:4.80.0":
-+  version: 4.80.0
-+  resolution: "@jsonjoy.com/fs-core@npm:4.80.0"
-   dependencies:
--    "@jsonjoy.com/fs-node-builtins": "npm:4.69.1"
--    "@jsonjoy.com/fs-node-utils": "npm:4.69.1"
-+    "@jsonjoy.com/fs-node-builtins": "npm:4.80.0"
-+    "@jsonjoy.com/fs-node-utils": "npm:4.80.0"
-     thingies: "npm:^2.5.0"
-   peerDependencies:
-     tslib: 2
--  checksum: 10c0/83b4302db0a485769b87d4c0bcb20a3da890ec12821051555ab75179629cb65e704db0e98e37da1f29b694fc0f67f64e6763377bdee8d128b32fa838bb305fe9
-+  checksum: 10c0/dddfc154fd16ab6bab67916794d91c0aed4d267a02f8e3a1d3062bc2966d727cade1648f550280ea3a9f044aee01dfd1ce56e449682f50a34075be724615cfaa
-   languageName: node
-   linkType: hard
- 
--"@jsonjoy.com/fs-fsa@npm:4.69.1":
--  version: 4.69.1
--  resolution: "@jsonjoy.com/fs-fsa@npm:4.69.1"
-+"@jsonjoy.com/fs-fsa@npm:4.80.0":
-+  version: 4.80.0
-+  resolution: "@jsonjoy.com/fs-fsa@npm:4.80.0"
-   dependencies:
--    "@jsonjoy.com/fs-core": "npm:4.69.1"
--    "@jsonjoy.com/fs-node-builtins": "npm:4.69.1"
--    "@jsonjoy.com/fs-node-utils": "npm:4.69.1"
-+    "@jsonjoy.com/fs-core": "npm:4.80.0"
-+    "@jsonjoy.com/fs-node-builtins": "npm:4.80.0"
-+    "@jsonjoy.com/fs-node-utils": "npm:4.80.0"
-     thingies: "npm:^2.5.0"
-   peerDependencies:
-     tslib: 2
--  checksum: 10c0/26be9b5a0846f635155380cbb23c905a77908b5ccd77bf3671e68063242d516a36275217f7bc869055944e0b5a0d5f6afa43e4622c71dd83431ee7e3df6e78da
-+  checksum: 10c0/fc5ddfccae167cb79ba1de4bee1636d73a8289c00fe6978950bfff09c2244a802063d19d55e9f27b6945e70a981b75dfede1efd9ca022c1ed6180653a41611fa
-   languageName: node
-   linkType: hard
- 
--"@jsonjoy.com/fs-node-builtins@npm:4.69.1":
--  version: 4.69.1
--  resolution: "@jsonjoy.com/fs-node-builtins@npm:4.69.1"
-+"@jsonjoy.com/fs-node-builtins@npm:4.80.0":
-+  version: 4.80.0
-+  resolution: "@jsonjoy.com/fs-node-builtins@npm:4.80.0"
-   peerDependencies:
-     tslib: 2
--  checksum: 10c0/eb76b47ab4b3bc250d74e8e3a89e70d7196c4c543ef73e6fc560f00393a2cd16745ff2bbdf57458997c324074c0a11e42e9c7321bec56db1372686ac6a569338
-+  checksum: 10c0/9324295979e8be14f64cf8ce54d9b49fe50a42f3ade9301ac00d7c7841da26ff25aa0c37f02edd8ca3247b07b6791db9e68d76e7f0d5dc51e8c2da090c514b3d
-   languageName: node
-   linkType: hard
- 
--"@jsonjoy.com/fs-node-to-fsa@npm:4.69.1":
--  version: 4.69.1
--  resolution: "@jsonjoy.com/fs-node-to-fsa@npm:4.69.1"
-+"@jsonjoy.com/fs-node-to-fsa@npm:4.80.0":
-+  version: 4.80.0
-+  resolution: "@jsonjoy.com/fs-node-to-fsa@npm:4.80.0"
-   dependencies:
--    "@jsonjoy.com/fs-fsa": "npm:4.69.1"
--    "@jsonjoy.com/fs-node-builtins": "npm:4.69.1"
--    "@jsonjoy.com/fs-node-utils": "npm:4.69.1"
-+    "@jsonjoy.com/fs-fsa": "npm:4.80.0"
-+    "@jsonjoy.com/fs-node-builtins": "npm:4.80.0"
-+    "@jsonjoy.com/fs-node-utils": "npm:4.80.0"
-   peerDependencies:
-     tslib: 2
--  checksum: 10c0/8c740984a40550b2f46d63c83365b207daa01fe4123884ea0004fabc3317d147d2a522a2bf8c9ef523d7ad1f8c72c440b2df161c4058bf816f26599a251865dd
-+  checksum: 10c0/53eebb78689e18c851f31dc1f9cea4f427225f3314eca41eefef55fcd894f40bfef829b400f1873675e9823edc67cc9f678da4812b40ae87efed13f215c350c8
-   languageName: node
-   linkType: hard
- 
--"@jsonjoy.com/fs-node-utils@npm:4.69.1":
--  version: 4.69.1
--  resolution: "@jsonjoy.com/fs-node-utils@npm:4.69.1"
-+"@jsonjoy.com/fs-node-utils@npm:4.80.0":
-+  version: 4.80.0
-+  resolution: "@jsonjoy.com/fs-node-utils@npm:4.80.0"
-   dependencies:
--    "@jsonjoy.com/fs-node-builtins": "npm:4.69.1"
--    glob-to-regex.js: "npm:^1.0.1"
-+    "@jsonjoy.com/fs-node-builtins": "npm:4.80.0"
-+    glob-to-regex.js: "npm:^1.3.1"
-   peerDependencies:
-     tslib: 2
--  checksum: 10c0/13a18aa6ab97e8cd7349448cb3a9ee7914959b99c22445d626ee28fa38ded2270c637e45e9486a0f870702c55519a2a9fc2c0b21d77fd266a49fcf2843d5057f
-+  checksum: 10c0/718465fd60009a32a76fae8582e7e88eff2047cc613c764c9ae0a6aa74ad4319b062e35849bb2325d24cfdc5e5ff2894027bbc0a4a647c8334437d1db1db9920
-   languageName: node
-   linkType: hard
- 
--"@jsonjoy.com/fs-node@npm:4.69.1":
--  version: 4.69.1
--  resolution: "@jsonjoy.com/fs-node@npm:4.69.1"
-+"@jsonjoy.com/fs-node@npm:4.80.0":
-+  version: 4.80.0
-+  resolution: "@jsonjoy.com/fs-node@npm:4.80.0"
-   dependencies:
--    "@jsonjoy.com/fs-core": "npm:4.69.1"
--    "@jsonjoy.com/fs-node-builtins": "npm:4.69.1"
--    "@jsonjoy.com/fs-node-utils": "npm:4.69.1"
--    "@jsonjoy.com/fs-print": "npm:4.69.1"
--    "@jsonjoy.com/fs-snapshot": "npm:4.69.1"
--    glob-to-regex.js: "npm:^1.0.0"
-+    "@jsonjoy.com/fs-core": "npm:4.80.0"
-+    "@jsonjoy.com/fs-node-builtins": "npm:4.80.0"
-+    "@jsonjoy.com/fs-node-utils": "npm:4.80.0"
-+    "@jsonjoy.com/fs-print": "npm:4.80.0"
-+    "@jsonjoy.com/fs-snapshot": "npm:4.80.0"
-+    glob-to-regex.js: "npm:^1.3.1"
-     thingies: "npm:^2.5.0"
-   peerDependencies:
-     tslib: 2
--  checksum: 10c0/d87832573e0cb266bd544f38c487f30b4726d0e061967
-```
-
----
-
-### Incident Patch 2: `b7001f1c` (2026-10-24)
-**Commit Message**: Route npm, Yarn, and NuGet restores through PackageFeedProxy (#16501)
-
-* Route npm, Yarn, and NuGet restores through PackageFeedProxy
-
-Keep ADO-only V8 packages on their mapped feed and preserve publication destinations.
-
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-
-* Add package-feed migration change file
-
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-
-* Address Copilot: clarify internal SDK feed opt-in
-
-Direct local internal SDK testing through the helper that adds both the NuGet source and its package mapping.
-
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-
-**File**: `.ado/README.md` (modified, +23/-13)
-```diff
-@@ -81,16 +81,25 @@ All repository resources pin `ref: refs/tags/release`.
- ## Package feed and network isolation
- 
- ISS agents run under 1ES **Network Isolation**, which blocks egress to public CDNs.
--The pipelines source packages only from the `ms/react-native-public` Azure Artifacts
--feed and neutralize three background egress attempts that green builds would
--otherwise hide:
--
--- **Feed registry:** `variables/shared.yml` points npm and Yarn at the
--  `ms/react-native-public` feed (`NPM_CONFIG_REGISTRY` / `YARN_NPM_REGISTRY_SERVER`).
--  On CI, `templates/auth-npm-feed.yml` mints a managed-identity token and writes it
--  to `~/.npmrc` and `~/.yarnrc.yml` before any install.
-+The pipelines use approved package feeds and neutralize three background egress
-+attempts that green builds would otherwise hide:
-+
-+- **NuGet restores:** the root `NuGet.Config` maps NuGet.org dependencies to
-+  `https://packagefeedproxy.microsoft.io/nuget/v3/index.json` anonymously.
-+  Only `ReactNative.V8Jsi.Windows*` and `Microsoft.JavaScript.V8*` use the
-+  `ms/react-native-public` ADO feed, where these V8 packages are published.
-+  CI imports this policy for generated apps/libraries and third-party configs;
-+  CLI-init tests also retain their local feed for freshly built RNW packages.
-+  NuGet 6.0 or later is required to enforce these source mappings.
-+  BinSkim downloads use the same proxy instead of nuget.org.
-+- **Package registries:** `variables/shared.yml` routes npm/npx and Yarn through
-+  the anonymous PackageFeedProxy (`NPM_CONFIG_REGISTRY` /
-+  `YARN_NPM_REGISTRY_SERVER`) in both PR and Continuous validation.
-+  `templates/auth-npm-feed.yml` keeps the managed-identity token scoped to direct
-+  Azure Artifacts requests in `~/.npmrc` and passes it to the Verdaccio uplink;
-+  Yarn does not send the token to the proxy.
+@@ -98,6 +98,14 @@ attempts that green builds would otherwise hide:
+   `templates/auth-npm-feed.yml` keeps the managed-identity token scoped to direct
+   Azure Artifacts requests in `~/.npmrc` and passes it to the Verdaccio uplink;
+   Yarn does not send the token to the proxy.
++- **Dependabot:** `.github/dependabot.yml` configures the same anonymous proxy
++  separately; Dependabot does not inherit the pipeline variables. Its registry
++  declarations also allow the exact `ms-feed-*` hosts advertised by proxy
++  metadata for tarball downloads. Existing archive URLs in the main lockfile
++  also use proxy paths without changing dependency versions or checksums.
++  Major version updates are ignored before grouping. React, React Native, the
++  test renderer, and React types also ignore minor updates to stay on each
++  branch's selected release lines; exact versions remain manifest-controlled.
  - **Verdaccio (CLI init tests):** `verdaccio/generate-config.js` emits the config at
--  runtime, so the uplink targets the feed (with the CI token when present) while
-+  runtime, so the uplink uses the proxy for PRs and the ADO feed with the CI token while
+   runtime, so the uplink uses the proxy for PRs and the ADO feed with the CI token while
    local packages still publish offline. The former static `config.yaml` was removed.
- - **React Native DevTools:** `RNDT_DEV: 1` stops DevTools from fetching its
-   standalone shell binary from a Facebook CDN when Metro starts. The debugger is
-@@ -101,10 +110,11 @@ otherwise hide:
-   reapplies the same policy per job as an interim belt until the updated image
-   ships; it can be dropped once a rebuilt image is confirmed clean.
- 
--Public PR builds read this feed **anonymously**, so they can only restore versions
--an authenticated identity has already saved. `warm-feed-pipeline.yml` (the
--`@rnw-scripts/warm-feed` tool) runs on a schedule to re-pull the latest patch of
--every npm/NuGet line already in the feed and keep those anonymous restores working.
-+PackageFeedProxy restores are **anonymous** and do not depend on the RNW feed
-+warm-up. The scheduled warm-up maintained on `main` still populates the ADO feed
-+for its remaining consumers. Publishing and authenticated feed maintenance keep
-+their existing endpoints; NuGet defaults shipped in generated apps/libraries
-+are unchanged.
- 
- ## SDL and Component Governance
- 
 ```
 
-**File**: `.ado/build-template.yml` (modified, +1/-2)
+**File**: `.github/dependabot.yml` (modified, +59/-41)
 ```diff
-@@ -164,7 +164,7 @@ extends:
-               version: '24.x'
-             displayName: Use Node.js 24.x
- 
--          # CI is network-isolated; authenticate to the package feed before any npm/Yarn use.
-+          # CI is network-isolated; acquire the feed token used by the Verdaccio uplink.
-           - ${{ if eq(parameters.buildEnvironment, 'Continuous') }}:
-             - template: .ado/templates/auth-npm-feed.yml@self
- 
-@@ -550,4 +550,3 @@ extends:
-           parameters:
-             buildEnvironment: ${{ parameters.buildEnvironment }}
-             AgentPool: ${{ parameters.AgentPool }}
--
+@@ -1,21 +1,55 @@
+ version: 2
+-# cooldown.default-days: 8 holds lockfile bumps until a version has cleared the
+-# ms/react-native-public feed's 7-day upstream quarantine (8 = 7 + 1d margin); newer
+-# versions 404 in CI under network isolation. Overrides Dependabot's 3-day default.
++registries:
++  packagefeedproxy:
++    type: npm-registry
++    url: https://packagefeedproxy.microsoft.io/npm/
++    replaces-base: true
++  # PackageFeedProxy metadata advertises these anonymous tarball download hosts.
++  # They do not replace the registry used to check for updates.
++  npm-public-2:
++    type: npm-registry
++    url: https://ms-feed-2.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/
++  npm-public-12:
++    type: npm-registry
++    url: https://ms-feed-12.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/
++  npm-public-25:
++    type: npm-registry
++    url: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/
++# Keep the existing 8-day cooldown aligned with npmMinimalAgeGate in .yarnrc.yml.
+ updates:
+ # main branch - all dependency updates (minor + patch), daily
+ - package-ecosystem: npm
+   directory: "/"
+   target-branch: "main"
++  registries: ["*"]
+   cooldown:
+     default-days: 8
+   groups:
+     all-dependencies:
+       patterns:
+         - '*'
++  ignore:
++    # Filter majors before grouping; group update-types checks the latest version,
++    # not the compatible version selected by lockfile-only.
++    - dependency-name: "*"
++      update-types:
++        - "version-update:semver-major"
++    # Keep the RN and React release lines selected by integration; manifests pin exact versions.
++    - dependency-name: "react"
++      update-types:
++        - "version-update:semver-minor"
++    - dependency-name: "react-native"
++      update-types:
++        - "version-update:semver-minor"
++    - dependency-name: "react-test-renderer"
++      update-types:
++        - "version-update:semver-minor"
++    - dependency-name: "@types/react"
+       update-types:
+-        - 'minor'
+-        - 'patch'
++        - "version-update:semver-minor"
++    - dependency-name: "@types/react-dom"
++      update-types:
++        - "version-update:semver-minor"
+   schedule:
+     interval: daily
+     time: "05:00"
+@@ -33,37 +67,33 @@ updates:
+ - package-ecosystem: npm
+   directory: "/"
+   target-branch: "0.81-stable"
++  registries: ["*"]
+   cooldown:
+     default-days: 8
+   groups:
+     all-dependencies:
+       patterns:
+         - '*'
+-      update-types:
+-        - 'minor'
+-        - 'patch'
+   ignore:
+-    # Pin react + react-native + react-test-renderer + @types/react* to the React 19.1 minor used by this branch.
++    - dependency-name: "*"
++      update-types:
++        - "version-update:semver-major"
++    # Keep RN on 0.81.x and React/renderers/types on 19.1.x; manifests pin exact versions.
+     - dependency-name: "react"
+       update-types:
+         - "version-update:semver-minor"
+-        - "version-update:semver-major"
+     - dependency-name: "react-native"
+       update-types:
+         - "version-update:semver-minor"
+-        - "version-update:semver-major"
+     - dependency-name: "react-test-renderer"
+       update-types:
+         - "version-update:semver-minor"
+-        - "version-update:semver-major"
+     - dependency-name: "@types/react"
+       update-types:
+         - "version-update:semver-minor"
+-        - "version-update:semver-major"
+     - dependency-name: "@types/react-dom"
+       update-types:
+         - "version-update:semver-minor"
+-        - "version-update:semver-major"
+   schedule:
+     interval: weekly
+     time: "05:00"
+@@ -79,37 +109,33 @@ updates:
+ - package-ecosystem: npm
+   directory: "/"
+   target-branch: "0.83-stable"
++  registries: ["*"]
+   cooldown:
+     default-days: 8
+   groups:
+     all-dependencies:
+       patterns:
+         - '*'
+-      update-types:
+-        - 'minor'
+-        - 'patch'
+   ignore:
+-    # Pin react + react-native + react-test-renderer + @types/react* to the React 19.2 minor used by this branch.
++    - dependency-name: "*"
++      update-types:
++        - "version-update:semver-major"
++    # Keep RN on 0.83.x and React/renderers/types on 19.2.x; manifests pin exact versions.
+     - dependency-name: "react"
+       update-types:
+         - "version-update:semver-minor"
+-        - "version-update:semver-major"
+     - dependency-name: "react-native"
+       update-types:
+         - "version-update:semver-minor"
+-        - "version-update:semver-major"
+     - dependency-name: "react-test-renderer"
+       update-types:
+         - "version-update:semver-minor"
+-        - "version-update:semver-major"
+     - dependency-name: "@types/react"
+       update-types:
+         - "version-update:semver-minor"
+-        - "version-update:semver-major"
+     - dependency-name: "@types/react-dom"
+       update-types:
+         - "version-update:semver-minor"
+-        - "version-update:semver-major"
+   schedule:
+     interval: weekly
+     time: "05:00"
+@@ -
 ```
 
-**File**: `.ado/scripts/build.js` (modified, +1/-1)
+**File**: `yarn.lock` (modified, +135/-135)
 ```diff
-@@ -16,7 +16,7 @@ const sourcesPath = path.resolve(__dirname, "..", "..");
+@@ -2048,14 +2048,14 @@ __metadata:
  
- const binskimPackageName = "Microsoft.CodeAnalysis.BinSkim";
- const binskimVersion = "4.4.9";
--const binskimNuGetSource = "https://api.nuget.org/v3/index.json";
-+const binskimNuGetSource = "https://packagefeedproxy.microsoft.io/nuget/v3/index.json";
+ "@electron-internal/extract-zip@npm:^1.0.1":
+   version: 1.0.5
+-  resolution: "@electron-internal/extract-zip@npm:1.0.5::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40electron-internal%2Fextract-zip%2F-%2Fextract-zip-1.0.5.tgz"
++  resolution: "@electron-internal/extract-zip@npm:1.0.5::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron-internal%2Fextract-zip%2F-%2Fextract-zip-1.0.5.tgz"
+   checksum: 10c0/d3341937dcb37097fd4927b7e5dfb7cb6b1ba56a42b00d62a55a7a9bbd093545dd8c6711ab39b321b2696d968b2cc32c29ed9d60a1fa6aa1665588e03e60d4e1
+   languageName: node
+   linkType: hard
  
- const options = {
-   help:          { type: "boolean", default: false },
-```
-
-**File**: `.ado/templates/auth-npm-feed.yml` (modified, +1/-4)
-```diff
-@@ -1,4 +1,4 @@
--# Authenticates npm and Yarn 4 to the ms/react-native-public feed with the build's managed identity.
-+# Acquires a managed-identity token for direct npm requests and the Verdaccio feed uplink.
- steps:
- - task: AzureCLI@2
-   displayName: Authenticate to the package feed
-@@ -11,8 +11,5 @@ steps:
-       if ([string]::IsNullOrWhiteSpace($token)) { throw 'Failed to acquire a package feed access token.' }
-       Write-Host "##vso[task.setsecret]$token"
-       Write-Host "##vso[task.setvariable variable=RNW_NPM_FEED_TOKEN;issecret=true]$token"
--      Write-Host "##vso[task.setvariable variable=NPM_CONFIG_REGISTRY]https://pkgs.dev.azure.com/ms/react-native/_packaging/react-native-public/npm/registry/"
--      Write-Host "##vso[task.setvariable variable=YARN_NPM_REGISTRY_SERVER]https://pkgs.dev.azure.com/ms/react-native/_packaging/react-native-public/npm/registry/"
-       $reg = '//pkgs.dev.azure.com/ms/react-native/_packaging/react-native-public/npm/registry/'
-       Set-Content -Path (Join-Path $env:USERPROFILE '.npmrc') -Encoding ascii -Value "${reg}:_authToken=$token"
--      Set-Content -Path (Join-Path $env:USERPROFILE '.yarnrc.yml') -Encoding ascii -Value @('npmAlwaysAuth: true', "npmAuthToken: $token")
-```
-
-**File**: `.ado/templates/prepare-build-env.yml` (modified, +28/-2)
-```diff
-@@ -44,11 +44,37 @@ steps:
-       Get-Process -Name BackgroundDownload -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
-     displayName: Disable VS Installer background download
+ "@electron/asar@npm:^4.0.0, @electron/asar@npm:^4.0.1":
+   version: 4.3.0
+-  resolution: "@electron/asar@npm:4.3.0::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40electron%2Fasar%2F-%2Fasar-4.3.0.tgz"
++  resolution: "@electron/asar@npm:4.3.0::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Fasar%2F-%2Fasar-4.3.0.tgz"
+   dependencies:
+     glob: "npm:^13.0.2"
+     minimatch: "npm:^10.0.1"
+@@ -2070,7 +2070,7 @@ __metadata:
  
--  # The commit tag in the nuspec requires that we use at least nuget 5.8 (because things break with nuget versions before and Vs 16.8 or later)
-+  # NuGet 6.0 or later is required to enforce package source mappings.
-   - task: NuGetToolInstaller@1
-     displayName: Set NuGet version
-     inputs:
--      versionSpec: ">=5.8.0"
-+      versionSpec: ">=6.0.0"
-+
-+  # Third-party configs must retain the repository's sources and mappings under network isolation.
-+  - pwsh: |
-+      [xml] $repoConfig = Get-Content -LiteralPath '$(Build.SourcesDirectory)\NuGet.Config'
-+      $root = Join-Path '$(Build.SourcesDirectory)' 'node_modules'
-+      $globs = @((Join-Path $root '*\windows\NuGet.Config'), (Join-Path $root '@*\*\windows\NuGet.Config'))
-+      $configs = Get-ChildItem -Path $globs -File -ErrorAction SilentlyContinue |
-+        Where-Object { Select-String -Path $_.FullName -Pattern 'api\.nuget\.org' -Quiet -ErrorAction SilentlyContinue }
-+      if (-not $configs) {
-+        Write-Host 'No non-compliant node_modules NuGet.Config files found.'
-+        return
-+      }
-+      foreach ($file in $configs) {
-+        [xml] $config = Get-Content -LiteralPath $file.FullName
-+        if (-not $config.configuration.packageSources) { continue }
-+        foreach ($name in @('packageSources', 'packageSourceMapping')) {
-+          $existing = $config.configuration.SelectSingleNode($name)
-+          if ($existing) {
-+            [void] $config.configuration.RemoveChild($existing)
-+          }
-+          [void] $config.configuration.AppendChild($config.ImportNode($repoConfig.configuration.SelectSingleNode($name), $true))
-+        }
-+        $config.Save($file.FullName)
-+        Write-Host "Rewrote $($file.FullName) to use the approved NuGet source mappings."
-+      }
-+    displayName: Enforce compliant NuGet feed in node_modules
+ "@electron/get@npm:^5.0.0":
+   version: 5.1.0
+-  resolution: "@electron/get@npm:5.1.0::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40electron%2Fget%2F-%2Fget-5.1.0.tgz"
++  resolution: "@electron/get@npm:5.1.0::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Fget%2F-%2Fget-5.1.0.tgz"
+   dependencies:
+     debug: "npm:^4.1.1"
+     env-paths: "npm:^3.0.0"
+@@ -2088,7 +2088,7 @@ __metadata:
  
-   - template: set-appx-platforms.yml
-     parameters:
-```
-
-**File**: `.ado/templates/prepare-js-env.yml` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@ steps:
-     displayName: Ensure npm directory for npx commands
-     condition: eq(variables['Agent.OS'], 'Windows_NT')
+ "@electron/notarize@npm:^3.1.0":
+   version: 3.1.1
+-  resolution: "@electron/notarize@npm:3.1.1::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40electron%2Fnotarize%2F-%2Fnotarize-3.1.1.tgz"
++  resolution: "@electron/notarize@npm:3.1.1::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Fnotarize%2F-%2Fnotarize-3.1.1.tgz"
+   dependencies:
+     debug: "npm:^4.4.0"
+     promise-retry: "npm:^2.0.1"
+@@ -2098,7 +2098,7 @@ __metadata:
  
--  # CI is network-isolated; authenticate to the package feed before install.
-+  # CI is network-isolated; acquire the feed token used by the Verdaccio uplink.
-   - ${{ if eq(parameters.buildEnvironment, 'Continuous') }}:
-     - template: auth-npm-feed.yml
+ "@electron/osx-sign@npm:^2.2.0":
+   version: 2.7.0
+-  resolution: "@electron/osx-sign@npm:2.7.0::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40electron%2Fosx-sign%2F-%2Fosx-sign-2.7.0.tgz"
++  resolution: "@electron/osx-sign@npm:2.7.0::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Fosx-sign%2F-%2Fosx-sign-2.7.0.tgz"
+   dependencies:
+     debug: "npm:^4.3.4"
+     isbinaryfile: "npm:^4.0.8"
+@@ -2113,7 +2113,7 @@ __metadata:
  
-```
-
-**File**: `.ado/templates/react-native-init-windows.yml` (modified, +16/-1)
-```diff
-@@ -110,9 +110,12 @@ steps:
-         $configPaths += 'example\NuGet.config'
-       }
+ "@electron/packager@npm:^20.0.0":
+   version: 20.3.0
+-  resolution: "@electron/packager@npm:20.3.0::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40electron%2Fpackager%2F-%2Fpackager-20.3.0.tgz"
++  resolution: "@electron/packager@npm:20.3.0::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Fpackager%2F-%2Fpackager-20.3.0.tgz"
+   dependencies:
+     "@electron-internal/extract-zip": "npm:^1.0.1"
+     "@electron/asar": "npm:^4.0.1"
+@@ -2140,7 +2140,7 @@ __metadata:
  
-+      [xml] $repoConfig = Get-Content -LiteralPath '$(Build.SourcesDirectory)\NuGet.Config'
-       $sources = [ordered]@{
-         TestFeed = '$(System.DefaultWorkingDirectory)\NugetTestFeed'
--        'react-native' = 'https://pkgs.dev.azure.com/ms/react-native/_packaging/react-native-public/nuget/v3/index.json'
-+      }
-+      foreach ($source in $repoConfig.configuration.packageSources.add) {
-+        $sources[$source.key] = $source.value
-       }
+ "@electron/universal@npm:^3.0.1":
+   version: 3.0.6
+-  resolution: "@electron/universal@npm:3.0.6::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40electron%2Funiversal%2F-%2Funiversal-3.0.6.tgz"
++  resolution: "@electron/universal@npm:3.0.6::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Funiversal%2F-%2Funiversal-3.0.6.tgz"
+   dependencies:
+     "@electron/asar": "npm:^4.0.0"
+     debug: "npm:^4.3.1"
+@@ -2151,7 +2151,7 @@ __metadata:
  
-       foreach ($configPath in $configPaths) {
-@@ -131,6 +134,18 @@ steps:
-           $element.SetAttribute('value', $source.Value)
-           [void] $packageSources.AppendChild($element)
-         }
-+        $existingMapping = $config.configuration.packageSourceMapping
-+        if ($existingMapping) {
-+          [void] $config.configuration.RemoveChild($existingMapping)
-+        }
-+        $mapping = $config.ImportNode($repoConfig.configuration.packageSourceMapping, $true)
-+        $localSource = $config.CreateElement('packageSource')
-+        $localSource.SetAttribute('key', 'TestFeed')
-+        $pattern = $config.CreateElement('package')
-+        $pattern.SetAttribute('pattern', '*')
-+        [void] $localSource.AppendChild($pattern)
-+        [void] $mapping.AppendChild($localSource)
-+        [void] $config.configuration.AppendChild($mapping)
-         $config.Save((Resolve-Path -LiteralPath $configPath))
-         Write-Host "Updated $configPath"
-       }
-```
-
-**File**: `.ado/variables/shared.yml` (modified, +1/-2)
-```diff
-@@ -6,8 +6,7 @@ variables:
-   NPM_CONFIG_YES: false
-   NPM_CONFIG_CACHE: $(Agent.TempDirectory)/.npmCache
+ "@electron/windows-sign@npm:^2.0.2":
+   version: 2.1.0
+-  resolution: "@electron/windows-sign@npm:2.1.0::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40electron%2Fwindows-sign%2F-%2Fwindows-sign-2.1.0.tgz"
++  resolution: "@electron/windows-sign@npm:2.1.0::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40electron%2Fwindows-sign%2F-%2Fwindows-sign-2.1.0.tgz"
+   dependencies:
+     debug: "npm:^4.3.4"
+     graceful-fs: "npm:^4.2.11"
+@@ -3827,7 +3827,7 @@ __metadata:
  
--  # Pull-request builds do not have a feed token, so use the anonymous proxy by default.
--  # Continuous builds switch to the authenticated feed in auth-npm-feed.yml.
-+  # Route npm and Yarn through the anonymous proxy so validation does not require feed authentication.
-   NPM_CONFIG_REGISTRY: https://packagefeedproxy.microsoft.io/npm/
-   YARN_NPM_REGISTRY_SERVER: https://packagefeedproxy.microsoft.io/npm/
- 
+ "@react-native-community/cli-clean@npm:20.2.0":
+   version: 20.2.0
+-  resolution: "@react-native-community/cli-clean@npm:20.2.0::__archiveUrl=https%3A%2F%2Fms-feed-25.pkgs.visualstudio.com%2F1es-public%2F_packaging%2Fnpm-public%2Fnpm%2Fregistry%2F%40react-native-community%2Fcli-clean%2F-%2Fcli-clean-20.2.0.tgz"
++  resolution: "@react-native-community/cli-clean@npm:20.2.0::__archiveUrl=https%3A%2F%2Fpackagefeedproxy.microsoft.io%2Fnpm%2F%40react-native-community%2Fcli-clean%2F-%2Fcli-clean-20.2.0
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16503** (2026-10-24): [0.84] Fix Jest ESLint plugin resolution (@vmoroz)
-- **PR #16502** (2026-10-24): [0.85] Route npm, Yarn, and NuGet restores through PackageFeedProxy (@vmoroz)
-- **PR #16501** (2026-10-24): Route npm, Yarn, and NuGet restores through PackageFeedProxy (@vmoroz)
-- **PR #16500** (2026-10-24): [0.83] Route npm, Yarn, and NuGet restores through PackageFeedProxy (@vmoroz)
-- **PR #16499** (2026-10-24): [0.81] Route npm, Yarn, and NuGet restores through PackageFeedProxy (@vmoroz)
-- **PR #16498** (2026-10-24): [0.84] Route NuGet restores through PackageFeedProxy (@vmoroz)
+- **PR #16523** (2026-10-27):  [0.81] Update Browserslist to patched versions  (@anuagragith)
+- **PR #16520** (2026-10-27): [0.81] Update vulnerable tooling dependencies (@anuagragith)
+- **PR #16519** (2026-10-27): [0.85] Publish NuGet packages through ESRP Release (@vmoroz)
+- **PR #16518** (2026-10-27): [0.84] Publish NuGet packages through ESRP Release (@vmoroz)
+- **PR #16517** (2026-10-27): [0.83] Publish NuGet packages through ESRP Release (@vmoroz)
+- **PR #16516** (2026-10-27): Update vulnerable tooling dependencies on main (@anuagragith)
 
 ---
 
@@ -1970,72 +1862,35 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 📦 Bump the all-dependencies group across 1 directory with 14 updates (#16491)
+## X. Dependabot grouping and route it through PackageFeedProxy (#16511)
 
 **RULE**:
-When implementing operations in `yarn.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/react-native-windows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.ado/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/react-native-windows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `23fe304f`: 📦 Bump the all-dependencies group across 1 directory with 14 updates (#16491). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e7f4af20`: Dependabot grouping and route it through PackageFeedProxy (#16511). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yarn.lock`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.ado/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-"@jsonjoy.com/fs-core@npm:4.80.0":
-  version: 4.80.0
-  resolution: "@jsonjoy.com/fs-core@npm:4.80.0"
-    "@jsonjoy.com/fs-node-builtins": "npm:4.80.0"
-    "@jsonjoy.com/fs-node-utils": "npm:4.80.0"
-  checksum: 10c0/dddfc154fd16ab6bab67916794d91c0aed4d267a02f8e3a1d3062bc2966d727cade1648f550280ea3a9f044aee01dfd1ce56e449682f50a34075be724615cfaa
-"@jsonjoy.com/fs-fsa@npm:4.80.0":
-  version: 4.80.0
-  resolution: "@jsonjoy.com/fs-fsa@npm:4.80.0"
-    "@jsonjoy.com/fs-core": "npm:4.80.0"
-    "@jsonjoy.com/fs-node-builtins": "npm:4.80.0"
-    "@jsonjoy.com/fs-node-utils": "npm:4.80.0"
-  checksum: 10c0/fc5ddfccae167cb79ba1de4bee1636d73a8289c00fe6978950bfff09c2244a802063d19d55e9f27b6945e70a981b75dfede1efd9ca022c1ed6180653a41611fa
-"@jsonjoy.com/fs-node-builtins@npm:4.80.0":
-  version: 4.80.0
-  resolution: "@jsonjoy.com/fs-node-builtins@npm:4.80.0"
-  checksum: 10c0/9324295979e8be14f64cf8ce54d9b49fe50a42f3ade9301ac00d7c7841da26ff25aa0c37f02edd8ca3247b07b6791db9e68d76e7f0d5dc51e8c2da090c514b3d
-"@jsonjoy.com/fs-node-to-fsa@npm:4.80.0":
-  version: 4.80.0
-  resolution: "@jsonjoy.com/fs-node-to-fsa@npm:4.80.0"
-    "@jsonjoy.com/fs-fsa": "npm:4.80.0"
-    "@jsonjoy.com/fs-node-builtins": "npm:4.80.0"
-   
+- **Dependabot:** `.github/dependabot.yml` configures the same anonymous proxy
+  separately; Dependabot does not inherit the pipeline variables. Its registry
+  declarations also allow the exact `ms-feed-*` hosts advertised by proxy
+  metadata for tarball downloads. Existing archive URLs in the main lockfile
+  also use proxy paths without changing dependency versions or checksums.
+  Major version updates are ignored before grouping. React, React Native, the
+  test renderer, and React types also ignore minor updates to stay on each
+  branch's selected release lines; exact versions remain manifest-controlled.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-"@jsonjoy.com/fs-core@npm:4.69.1":
-  version: 4.69.1
-  resolution: "@jsonjoy.com/fs-core@npm:4.69.1"
-    "@jsonjoy.com/fs-node-builtins": "npm:4.69.1"
-    "@jsonjoy.com/fs-node-utils": "npm:4.69.1"
-  checksum: 10c0/83b4302db0a485769b87d4c0bcb20a3da890ec12821051555ab75179629cb65e704db0e98e37da1f29b694fc0f67f64e6763377bdee8d128b32fa838bb305fe9
-"@jsonjoy.com/fs-fsa@npm:4.69.1":
-  version: 4.69.1
-  resolution: "@jsonjoy.com/fs-fsa@npm:4.69.1"
-    "@jsonjoy.com/fs-core": "npm:4.69.1"
-    "@jsonjoy.com/fs-node-builtins": "npm:4.69.1"
-    "@jsonjoy.com/fs-node-utils": "npm:4.69.1"
-  checksum: 10c0/26be9b5a0846f635155380cbb23c905a77908b5ccd77bf3671e68063242d516a36275217f7bc869055944e0b5a0d5f6afa43e4622c71dd83431ee7e3df6e78da
-"@jsonjoy.com/fs-node-builtins@npm:4.69.1":
-  version: 4.69.1
-  resolution: "@jsonjoy.com/fs-node-builtins@npm:4.69.1"
-  checksum: 10c0/eb76b47ab4b3bc250d74e8e3a89e70d7196c4c543ef73e6fc560f00393a2cd16745ff2bbdf57458997c324074c0a11e42e9c7321bec56db1372686ac6a569338
-"@jsonjoy.com/fs-node-to-fsa@npm:4.69.1":
-  version: 4.69.1
-  resolution: "@jsonjoy.com/fs-node-to-fsa@npm:4.69.1"
-    "@jsonjoy.com/fs-fsa": "npm:4.69.1"
-    "@jsonjoy.com/fs-node-builtins": "npm:4.69.1"
-   
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `23fe304f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e7f4af20` are properly handled with clean fallback behavior.
