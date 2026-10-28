@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source**: github ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Source Version**: `bf81a4c2`  
+> **Source Version**: `59a75202`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T20:01:22.827Z  
+> **Timestamp**: 2026-10-28T18:41:56.263Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T20:01:22.046Z  
+> **Harvest Timestamp**: 2026-10-28T18:41:55.719Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 24020 stars
+- **Stars / Engagement**: 24041 stars
 
 ---
 
@@ -2121,909 +2121,588 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `310879a3` (2026-10-27)
-**Commit Message**: Fix V2 scheduler skipping pending jittered actions (#12745)
+### Incident Patch 1: `1bef09a6` (2026-10-27)
+**Commit Message**: Fix SignalWithStart hang on orphaned current-execution pointer (#11774)
 
-This PR aims to hotfix a problem with jittering handling for
-schedulesv2, where schedules, particularly with long jitters can skip
-past the scheduling of the next fire, causing misses.
-
-Q&A: 
-- Can holding the LastProcessedTime back cause double-firing? No, the
-hold-back only occurs when there's nothing to process (such as during a
-jitter)
-- Why do we need two variables now? Because we still need to invalidate
-the generator task after it runs (for CHASM), and therefore we need to
-split its functionality between being a completion cursor for looking at
-the time-range to generate events and a chasm task being invalidated
-once the task processing has moved forward.
-
-## LLM Summary
-
-Fix V2 schedules silently losing jittered actions after an extra
-generator wakeup. Initialize `lastAction` to `start` instead of `end`,
-matching V1, and track timer executions separately so obsolete timers
-still retire.
+Fixes #10841
+## What changed?
+On a BrandNew conflict against a completed current row, overwrite it
+with UpdateCurrent. Same recovery StartWorkflow already has. Reuse
+policy still runs. Running conflicts still return
+`CurrentWorkflowConditionFailedError`.
 
 ## Why?
-Suppose the last processed action was at **15:00:57**. The next slot is
-nominally **15:15**, with jitter delaying it until **15:17**. The
-previous workflow completes at **15:16**, waking the generator before
-anything is du
+Cassandra can leave `current_executions` pointing at a run whose mutable
+state is gone. SignalWithStart treats that as no current workflow,
+BrandNew loses the CAS, and the history handler retries that error with
+no backoff until the client deadline.
+That retry exists for concurrent starts. In this case it never succeeds.
+The reporter unstuck themselves with admin `DeleteWorkflowExecution`
+that one actually removes the pointer.
+SQL doesn't hang here. The lock query inner-joins `executions`, so the
+orphan is invisible and you get a unique constraint instead.
 
-**File**: `chasm/lib/scheduler/config.go` (modified, +2/-0)
-```diff
-@@ -17,6 +17,7 @@ type (
- 		GeneratorBufferReserveSize        int           // Minimum number of spaces in `BufferedStarts` reserved for automated actions.
- 		CanceledTerminatedCountAsFailures bool          // Whether cancelled+terminated count for pause-on-failure
- 		MaxActionsPerExecution            int           // Limits the number of actions (startWorkflow, terminate/cancel) taken by ExecuteTask in a single iteration
-+		EnableGeneratorJitterFix          bool          // Preserve pending jittered actions across empty generator wakeups; disable to restore the legacy cursor behavior.
- 		EnableVersioningOverride          bool          // Whether to forward versioning overrides to started workflows
- 		IdleTime                          time.Duration // How long to keep schedules after they're done
- 		EventLogMaxEntries                int           // Maximum EventLog entries retained per component; the earliest entries are dropped beyond this.
-@@ -93,6 +94,7 @@ var (
- 		CanceledTerminatedCountAsFailures: false,
- 		MaxActionsPerExecution:            5,
- 		EnableVersioningOverride:          true,
-+		EnableGeneratorJitterFix:          true,
- 		IdleTime:                          7 * 24 * time.Hour,
- 		EventLogMaxEntries:                30,
- 		EventLogMaxMessageLen:             1000,
-```
+## How did you tt it?
+- [x] built
+- [x] run locally and tested manually
+- [x] covered by existing tests
+- [x] added new unit test(s)
+- [x] added new functional test(s)
 
-**File**: `chasm/lib/scheduler/gen/schedulerpb/v1/message.pb.go` (modified, +45/-31)
-```diff
-@@ -239,12 +239,17 @@ func (x *WorkflowMigrationState) GetPreMigrationNotes() string {
- // CHASM scheduler's Generator internal state.
- type GeneratorState struct {
- 	state protoimpl.MessageState `protogen:"open.v1"`
--	// High water mark.
-+	// High water mark for processed schedule actions. This can lag behind the
-+	// current time while an action is waiting for its jittered fire time.
- 	LastProcessedTime *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=last_processed_time,json=lastProcessedTime,proto3" json:"last_processed_time,omitempty"`
- 	// A list of upcoming times an action will be triggered.
- 	FutureActionTimes []*timestamppb.Timestamp `protobuf:"bytes,4,rep,name=future_action_times,json=futureActionTimes,proto3" json:"future_action_times,omitempty"`
--	unknownFields     protoimpl.UnknownFields
--	sizeCache         protoimpl.SizeCache
-+	// High water mark for generator task executions, used to invalidate timers
-+	// even when no schedule action was due. Unset until the first execution
-+	// after upgrading; task validation then falls back to last_processed_time.
-+	LastProcessedTaskTime *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=last_processed_task_time,json=lastProcessedTaskTime,proto3" json:"last_processed_task_time,omitempty"`
-+	unknownFields         protoimpl.UnknownFields
-+	sizeCache             protoimpl.SizeCache
- }
- 
- func (x *GeneratorState) Reset() {
-@@ -291,6 +296,13 @@ func (x *GeneratorState) GetFutureActionTimes() []*timestamppb.Timestamp {
- 	return nil
- }
- 
-+func (x *GeneratorState) GetLastProcessedTaskTime() *timestamppb.Timestamp {
-+	if x != nil {
-+		return x.LastProcessedTaskTime
-+	}
-+	return nil
-+}
-+
- // CHASM scheduler's Invoker internal state.
- type InvokerState struct {
- 	state protoimpl.MessageState `protogen:"open.v1"`
-@@ -765,10 +777,11 @@ const file_temporal_server_chasm_lib_scheduler_proto_v1_message_proto_rawDesc =
- 	"\x0flast_event_time\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\rlastEventTime\"z\n" +
- 	"\x16WorkflowMigrationState\x120\n" +
- 	"\x14pre_migration_paused\x18\x01 \x01(\bR\x12preMigrationPaused\x12.\n" +
--	"\x13pre_migration_notes\x18\x02 \x01(\tR\x11preMigrationNotes\"\xa8\x01\n" +
-+	"\x13pre_migration_notes\x18\x02 \x01(\tR\x11preMigrationNotes\"\xfd\x01\n" +
- 	"\x0eGeneratorState\x12J\n" +
- 	"\x13last_processed_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x11lastProcessedTime\x12J\n" +
--	"\x13future_action_times\x18\x04 \x03(\v2\x1a.google.protobuf.TimestampR\x11futureActionTimes\"\xeb\x02\n" +
-+	"\x13future_action_times\x18\x04 \x03(\v2\x1a.google.protobuf.TimestampR\x11futureActionTimes\x12S\n" +
-+	"\x18last_processed_task_time\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x15lastProcessedTaskTime\"\xeb\x02\n" +
- 	"\fInvokerState\x12W\n" +
- 	"\x0fbuffered_starts\x18\x02 \x03(\v2..temporal.server.api.schedule.v1.BufferedStartR\x0ebufferedStarts\x12T\n" +
- 	"\x10cancel_workflows\x18\x03 \x03(\v2).temporal.api.common.v1.WorkflowExecutionR\x0fcancelWorkflows\x12Z\n" +
-@@ -854,32 +867,33 @@ var file_temporal_server_chasm_lib_scheduler_proto_v1_message_proto_depIdxs = []
- 	14, // 4: temporal.server.chasm.lib.scheduler.proto.v1.SchedulerState.last_event_time:type_name -> google.protobuf.Timestamp
- 	14, // 5: temporal.server.chasm.lib.scheduler.proto.v1.GeneratorState.last_processed_time:type_name -> google.protobuf.Timestamp
- 	14, // 6: temporal.server.chasm.lib.scheduler.proto.v1.GeneratorState.future_action_times:type_name -> google.protobuf.Timestamp
--	15, // 7: temporal.server.chasm.lib.scheduler.proto.v1.InvokerState.buffered_starts:type_name -> temporal.server.api.schedule.v1.BufferedStart
--	16, // 8: temporal.server.chasm.lib.scheduler.proto.v1.InvokerState.cancel_workflows:type_name -> temporal.api.common.v1.WorkflowExecution
--	16, // 9: temporal.server.chasm.lib.scheduler.proto.v1.InvokerState.terminate_workflows:type_name -> temporal.api.common.v1.WorkflowExecution
--	14, // 10: temporal.server.chasm.lib.scheduler.proto.v1.InvokerState.last_processed_time:type_name -> google.protobuf.Timestamp
--	17, // 11: temporal.server.chasm.lib.scheduler.proto.v1.BackfillerState.backfill_request:type_name -> temporal.api.schedule.v1.BackfillRequest
--	18, // 12: temporal.server.chasm.lib.scheduler.proto.v1.BackfillerState.trigger_request:type_name -> temporal.api.schedule.v1.TriggerImmediatelyRequest
--	14, // 13: temporal.server.chasm.lib.scheduler.proto.v1.BackfillerState.last_processed_time:type_name -> google.protobuf.Timestamp
--	19, // 14: temporal.server.chasm.lib.scheduler.proto.v1.LastCompletionResult.success:type_name -> temporal.api.common.v1.Payload
--	20, // 15: temporal.server.chasm.lib.scheduler.proto.v1.LastCompletionResult.failure:type_name -> temporal.api.failure.v1.Failure
--	0,  // 16: temporal.server.chasm.lib.scheduler.proto.v1.SchedulerMigrationState.scheduler_state:type_name -> temporal.server.chasm.lib.scheduler.proto.v1.SchedulerState
--	2,  // 17: temporal.server.chasm.lib.scheduler.proto.v1.SchedulerMigrationState.generator_s
-```
+Unit tests cover the happy path (TIMED_OUT pointer → new run),
+REJECT_DUPLICATE, and leaving a running conflict alone.
+Cassandra f
 
-**File**: `chasm/lib/scheduler/generator_jitter_test.go` (added, +172/-0)
+**File**: `service/history/api/signalwithstartworkflow/signal_with_start_workflow.go` (modified, +94/-6)
 ```diff
-@@ -0,0 +1,172 @@
-+package scheduler_test
-+
-+import (
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/require"
-+	enumspb "go.temporal.io/api/enums/v1"
-+	schedulepb "go.temporal.io/api/schedule/v1"
-+	"go.temporal.io/api/workflowservice/v1"
-+	"go.temporal.io/server/chasm"
-+	"go.temporal.io/server/chasm/lib/scheduler/gen/schedulerpb/v1"
-+	"google.golang.org/protobuf/types/known/durationpb"
-+	"google.golang.org/protobuf/types/known/timestamppb"
-+)
-+
-+func TestGeneratorJitterGapPreservesPendingAction(t *testing.T) {
-+	t.Parallel()
-+	for _, policy := range []enumspb.ScheduleOverlapPolicy{
-+		enumspb.SCHEDULE_OVERLAP_POLICY_SKIP,
-+		enumspb.SCHEDULE_OVERLAP_POLICY_BUFFER_ONE,
-+		enumspb.SCHEDULE_OVERLAP_POLICY_BUFFER_ALL,
-+		enumspb.SCHEDULE_OVERLAP_POLICY_CANCEL_OTHER,
-+		enumspb.SCHEDULE_OVERLAP_POLICY_TERMINATE_OTHER,
-+		enumspb.SCHEDULE_OVERLAP_POLICY_ALLOW_ALL,
-+	} {
-+		t.Run(policy.String(), func(t *testing.T) {
-+			t.Parallel()
-+			schedule := defaultSchedule()
-+			schedule.Spec = &schedulepb.ScheduleSpec{
-+				Interval: []*schedulepb.IntervalSpec{{Interval: durationpb.New(15 * time.Minute)}},
-+				Jitter:   durationpb.New(10 * time.Minute),
-+			}
-+			schedule.Policies.OverlapPolicy = policy
-+			env := newTestEnv(t, withSchedule(schedule))
-+			ctx := env.MutableContext()
-+			generator := env.Scheduler.Generator.Get(ctx)
-+			invoker := env.Scheduler.Invoker.Get(ctx)
-+			handler := newGeneratorHandler(env)
-+			start := time.Date(2030, 1, 1, 0, 0, 0, 0, time.UTC).Add(-time.Second)
-+			generator.LastProcessedTime = timestamppb.New(start)
-+			env.Scheduler.Info.UpdateTime = timestamppb.New(start)
-+			next, err := env.SpecProcessor.NextTime(env.Scheduler, start)
-+			require.NoError(t, err)
-+			require.True(t, next.Next.After(next.Nominal))
-+
-+			// A completion or other event can wake the generator before the
-+			// pending action's jittered fire time, when nothing is due yet.
-+			env.TimeSource.Update(next.Nominal.Add(next.Next.Sub(next.Nominal) / 2))
-+			require.NoError(t, handler.Execute(env.MutableContext(), generator, chasm.TaskAttributes{}, &schedulerpb.GeneratorTask{}))
-+			require.Empty(t, invoker.BufferedStarts)
-+			require.Equal(t, start, generator.LastProcessedTime.AsTime())
-+
-+			// The regular timer must still generate that action exactly once.
-+			env.TimeSource.Update(next.Next)
-+			require.NoError(t, handler.Execute(env.MutableContext(), generator, chasm.TaskAttributes{}, &schedulerpb.GeneratorTask{}))
-+			require.Len(t, invoker.BufferedStarts, 1)
-+			require.Equal(t, next.Nominal, invoker.BufferedStarts[0].NominalTime.AsTime())
-+			require.Equal(t, next.Next, invoker.BufferedStarts[0].ActualTime.AsTime())
-+			require.Equal(t, next.Next, generator.LastProcessedTime.AsTime())
-+			require.NoError(t, handler.Execute(env.MutableContext(), generator, chasm.TaskAttributes{}, &schedulerpb.GeneratorTask{}))
-+			require.Len(t, invoker.BufferedStarts, 1)
-+		})
-+	}
-+}
-+
-+func TestGeneratorRetiresObsoleteTimerWithoutSkippingPendingAction(t *testing.T) {
-+	t.Parallel()
-+	schedule := defaultSchedule()
-+	schedule.Spec.Interval[0].Phase = durationpb.New(30 * time.Second)
-+	env := newTestEnv(t, withSchedule(schedule))
-+	generator := env.Scheduler.Generator.Get(env.MutableContext())
-+	invoker := env.Scheduler.Invoker.Get(env.MutableContext())
-+	handler := newGeneratorHandler(env)
-+	base := time.Date(2030, 1, 1, 0, 0, 0, 0, time.UTC)
-+	updateTime := base.Add(45 * time.Second)
-+	generator.LastProcessedTime = timestamppb.New(updateTime)
-+	env.Scheduler.Info.UpdateTime = timestamppb.New(updateTime)
-+
-+	// An update changes the next fire from 00:01:00 to 00:01:30, but the
-+	// timer from the old spec is still queued. Its empty execution must retire it.
-+	oldTimer := base.Add(time.Minute)
-+	env.TimeSource.Update(oldTimer)
-+	attrs := chasm.TaskAttributes{ScheduledTime: oldTimer}
-+	valid, err := handler.Validate(env.ReadContext(), generator, chasm.TaskInvocation{TaskAttributes: attrs}, &schedulerpb.GeneratorTask{})
-+	require.NoError(t, err)
-+	require.True(t, valid)
-+	require.NoError(t, handler.Execute(env.MutableContext(), generator, attrs, &schedulerpb.GeneratorTask{}))
-+	require.Empty(t, invoker.BufferedStarts)
-+	require.Equal(t, updateTime, generator.LastProcessedTime.AsTime())
-+	valid, err = handler.Validate(env.ReadContext(), generator, chasm.TaskInvocation{TaskAttributes: attrs}, &schedulerpb.GeneratorTask{})
-+	require.NoError(t, err)
-+	require.False(t, valid, "a successful execution must invalidate its scheduled pure task")
-+
-+	nextFire := base.Add(90 * time.Second)
-+	env.TimeSource.Update(nextFire)
-+	attrs.ScheduledTime = nextFire
-+	valid, err = handler.Validate(env.ReadContext(), generator, chasm.TaskInvocation{TaskAttributes: attrs}, &schedulerpb.GeneratorTask{})
-+	require.NoError(t, err)
-+	require.True(t, valid)
-+	require.NoError(t, handler.Execute(env.MutableContext(), generator, attrs, &schedulerpb.GeneratorTask{}))
-+	require.Len(t, invoker.BufferedStarts, 1)
-+	require.Equal(t, nextFire, invoker.Buffered
-```
-
-**File**: `chasm/lib/scheduler/generator_killswitch_test.go` (added, +112/-0)
-```diff
-@@ -0,0 +1,112 @@
-+package scheduler_test
-+
-+import (
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/require"
-+	"go.temporal.io/server/chasm"
-+	"go.temporal.io/server/chasm/lib/scheduler"
-+	"go.temporal.io/server/common/clock"
-+	"go.temporal.io/server/common/metrics"
-+	"go.temporal.io/server/common/testing/testlogger"
-+	"google.golang.org/protobuf/types/known/durationpb"
-+)
-+
-+func TestGeneratorJitterFixKillswitch(t *testing.T) {
-+	t.Parallel()
-+	for _, tc := range []struct {
-+		name           string
-+		enabled        bool
-+		pendingActions int
-+	}{
-+		{name: "enabled", enabled: true, pendingActions: 1},
-+		{name: "disabled", enabled: false, pendingActions: 0},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			t.Parallel()
-+			createdAt := time.Date(2026, 10, 26, 21, 59, 59, 0, time.UTC)
-+			fire := time.Date(2026, 10, 26, 22, 8, 0, 459000000, time.UTC)
-+			followingFire := time.Date(2026, 10, 26, 22, 22, 43, 38000000, time.UTC)
-+			ts := clock.NewEventTimeSource()
-+			ts.Update(createdAt)
-+			tweakables := scheduler.DefaultTweakables
-+			require.True(t, tweakables.EnableGeneratorJitterFix, "the fix must be enabled by default")
-+			config := defaultConfig()
-+			config.Tweakables = func(ns string) scheduler.Tweakables {
-+				require.Equal(t, namespace, ns)
-+				return tweakables
-+			}
-+			processor := scheduler.NewSpecProcessor(config, metrics.NoopMetricsHandler,
-+				testlogger.NewTestLogger(t, testlogger.FailOnExpectedErrorOnly), newLegacySpecBuilder(0, 0))
-+			schedule := defaultSchedule()
-+			schedule.Spec.Interval[0].Interval = durationpb.New(15 * time.Minute)
-+			schedule.Spec.Jitter = durationpb.New(10 * time.Minute)
-+			env := newSchedulerTestEngine(t, schedule, withEngineTimeSource(ts), withEngineSpecProcessor(processor))
-+
-+			// Change the setting after creation to exercise existing schedules.
-+			tweakables.EnableGeneratorJitterFix = tc.enabled
-+			if !tc.enabled {
-+				require.NoError(t, env.readScheduler(func(s *scheduler.Scheduler, ctx chasm.Context) error {
-+					// Manual backfill progress is unaffected by the generator switch.
-+					result, err := processor.ProcessTimeRange(s, createdAt, createdAt.Add(4*time.Minute),
-+						schedule.Policies.OverlapPolicy, s.WorkflowID(), "backfill", true, nil)
-+					require.NoError(t, err)
-+					require.Equal(t, createdAt, result.LastActionTime)
-+					require.Equal(t, fire, result.NextWakeupTime)
-+					result, err = processor.ProcessTimeRange(s, result.LastActionTime, fire,
-+						schedule.Policies.OverlapPolicy, s.WorkflowID(), "backfill", true, nil)
-+					require.NoError(t, err)
-+					require.Len(t, result.BufferedStarts, 1)
-+					return nil
-+				}))
-+			}
-+			for _, now := range []time.Time{
-+				time.Date(2026, 10, 26, 22, 2, 0, 0, time.UTC),
-+				time.Date(2026, 10, 26, 22, 4, 0, 0, time.UTC),
-+			} {
-+				ts.Update(now)
-+				require.NoError(t, env.updateScheduler(func(s *scheduler.Scheduler, ctx chasm.MutableContext) error {
-+					s.Generator.Get(ctx).Generate(ctx)
-+					return nil
-+				}))
-+				require.NoError(t, env.readScheduler(func(s *scheduler.Scheduler, ctx chasm.Context) error {
-+					cursor := createdAt
-+					if !tc.enabled {
-+						cursor = now
-+					}
-+					generator := s.Generator.Get(ctx)
-+					require.Equal(t, cursor, generator.LastProcessedTime.AsTime())
-+					require.Equal(t, now, generator.LastProcessedTaskTime.AsTime())
-+					return nil
-+				}))
-+			}
-+
-+			// CHASM validates and executes the original timer. Disabling the fix
-+			// reproduces the old skip, while task completion still invalidates it.
-+			ts.Update(fire)
-+			for range 2 {
-+				_, err := env.engine.FirePureTasks(env.rootRef, fire)
-+				require.NoError(t, err)
-+				require.NoError(t, env.readScheduler(func(s *scheduler.Scheduler, ctx chasm.Context) error {
-+					require.Len(t, s.Invoker.Get(ctx).BufferedStarts, tc.pendingActions)
-+					require.Equal(t, fire, s.Generator.Get(ctx).LastProcessedTaskTime.AsTime())
-+					return nil
-+				}))
-+			}
-+
-+			// Re-enable without rewriting state. The next eligible slot still
-+			// fires once; a slot skipped while disabled cannot be recovered.
-+			tweakables.EnableGeneratorJitterFix = true
-+			ts.Update(followingFire)
-+			for range 2 {
-+				_, err := env.engine.FirePureTasks(env.rootRef, followingFire)
-+				require.NoError(t, err)
-+				require.NoError(t, env.readScheduler(func(s *scheduler.Scheduler, ctx chasm.Context) error {
-+					require.Len(t, s.Invoker.Get(ctx).BufferedStarts, tc.pendingActions+1)
-+					return nil
-+				}))
-+			}
-+		})
-+	}
-+}
-```
-
-**File**: `chasm/lib/scheduler/generator_tasks.go` (modified, +17/-5)
-```diff
-@@ -6,6 +6,7 @@ import (
- 
- 	"go.temporal.io/server/chasm"
- 	"go.temporal.io/server/chasm/lib/scheduler/gen/schedulerpb/v1"
-+	"go.temporal.io/server/common"
- 	"go.temporal.io/server/common/log"
- 	"go.temporal.io/server/common/log/tag"
- 	"go.temporal.io/server/common/metrics"
-@@ -143,6 +144,9 @@ func (g *GeneratorTaskHandler) Execute(
- 
- 	// Write the new high water mark and future action times.
- 	generator.LastProcessedTime = timestamppb.New(result.LastActionTime)
-+	// Task progress is independent of action progress. An obsolete timer can
-+	// execute without processing an action and must still invalidate itself.
-+	generator.LastProcessedTaskTime = timestamppb.New(util.MaxTime(t2, generator.GetLastProcessedTaskTime().AsTime()))
- 	generator.UpdateFutureActionTimes(ctx, g.specBuilder)
- 
- 	g.rearmTasks(ctx, generator, scheduler, metricsHandler, tweakables.IdleTime, result.NextWakeupTime)
-@@ -202,10 +206,18 @@ func (g *GeneratorTaskHandler) rearmTasks(
- 	sched.IdleCloseTime = nil
- 
- 	if !nextWakeupTime.IsZero() {
--		// Keep the generator task perpetually scheduled. When paused, the next
--		// fire will simply advance the HWM without appending actions (handled in
--		// ProcessTimeRange).
--		generator.scheduleTask(ctx, nextWakeupTime)
-+		// A clock rollback can put the next action before the task validation
-+		// watermark. Defer the wakeup to the next queue tick after that watermark
-+		// so it remains valid. Keep the action cursor so the delayed action is
-+		// processed when the clock catches up, subject to the catchup window.
-+		validationWatermark := util.MaxTime(
-+			generator.GetLastProcessedTime().AsTime(),
-+			generator.GetLastProcessedTaskTime().AsTime(),
-+		)
-+		earliestWakeup := validationWatermark.
-+			Truncate(common.ScheduledTaskMinPrecision).
-+			Add(common.ScheduledTaskMinPrecision)
-+		generator.scheduleTask(ctx, util.MaxTime(nextWakeupTime, earliestWakeup))
- 	} else {
- 		// Hold open without a task: see the comment block above.
- 		metricsHandler.Counter(metrics.SchedulerGeneratorLoopCompleted.Name()).Record(1)
-@@ -229,7 +241,7 @@ func (g *GeneratorTaskHandler) Validate(
- 	_ *schedulerpb.GeneratorTask,
- ) (bool, error) {
- 	return validateTaskHighWaterMark(
--		generator.GetLastProcessedTime(),
-+		timestamppb.New(util.MaxTime(generator.GetLastProcessedTime().AsTime(), generator.GetLastProcessedTaskTime().AsTime())),
- 		attrs.ScheduledTime,
+@@ -162,6 +162,7 @@ func startAndSignalWorkflow(
+ 		shard,
+ 		vrid,
+ 		newWorkflowLease,
++		signalWithStartRequest.GetWorkflowIdReusePolicy(),
  	)
  }
+ 
+@@ -308,6 +309,7 @@ func startAndSignalWithoutCurrentWorkflow(
+ 	shardContext historyi.ShardContext,
+ 	vrid *api.VersionedRunID,
+ 	newWorkflowLease api.WorkflowLease,
++	workflowIDReusePolicy enumspb.WorkflowIdReusePolicy,
+ ) (startOutcome, error) {
+ 	newWorkflow, newWorkflowEventsSeq, err := newWorkflowLease.GetMutableState().CloseTransactionAsSnapshot(
+ 		ctx,
+@@ -347,14 +349,100 @@ func startAndSignalWithoutCurrentWorkflow(
+ 		newWorkflowEventsSeq,
+ 		historyi.TransactionPolicyActive,
+ 	)
+-	// CurrentWorkflowConditionFailedError.RequestIDs does not record signal delivery.
+-	// Return the error so a retry can check IsSignalRequested.
+-	if err != nil {
++	switch failedErr := err.(type) {
++	case nil:
++		// Brand-new run: head of the chain == this run id.
++		runID := newWorkflowLease.GetContext().GetWorkflowKey().RunID
++		return startOutcome{runID: runID, firstExecutionRunID: runID, started: true, createdRun: true}, nil
++	case *persistence.CurrentWorkflowConditionFailedError:
++		// RequestIDs does not record signal delivery. Return other CAS failures so a retry
++		// can check IsSignalRequested. Completed BrandNew conflicts are the orphaned-pointer
++		// case StartWorkflow recovers with UpdateCurrent.
++		if createMode != persistence.CreateWorkflowModeBrandNew ||
++			failedErr.State != enumsspb.WORKFLOW_EXECUTION_STATE_COMPLETED ||
++			len(failedErr.RunID) == 0 {
++			return startOutcome{}, err
++		}
++		if err := createAsCurrent(
++			ctx,
++			shardContext,
++			newWorkflowLease,
++			newWorkflow,
++			newWorkflowEventsSeq,
++			workflowIDReusePolicy,
++			failedErr,
++		); err != nil {
++			return startOutcome{}, err
++		}
++		runID := newWorkflowLease.GetContext().GetWorkflowKey().RunID
++		return startOutcome{runID: runID, firstExecutionRunID: runID, started: true, createdRun: true}, nil
++	default:
+ 		return startOutcome{}, err
+ 	}
+-	// Brand-new run: head of the chain == this run id.
+-	runID := newWorkflowLease.GetContext().GetWorkflowKey().RunID
+-	return startOutcome{runID: runID, firstExecutionRunID: runID, started: true, createdRun: true}, nil
++}
++
++// createAsCurrent writes the new run and points current_executions at it.
++func createAsCurrent(
++	ctx context.Context,
++	shardContext historyi.ShardContext,
++	newWorkflowLease api.WorkflowLease,
++	newWorkflow *persistence.WorkflowSnapshot,
++	newWorkflowEventsSeq []*persistence.WorkflowEvents,
++	workflowIDReusePolicy enumspb.WorkflowIdReusePolicy,
++	failedErr *persistence.CurrentWorkflowConditionFailedError,
++) error {
++	mutableState := newWorkflowLease.GetMutableState()
++	if err := api.NewWorkflowVersionCheck(
++		shardContext,
++		failedErr.LastWriteVersion,
++		mutableState,
++	); err != nil {
++		return err
++	}
++
++	namespaceEntry := mutableState.GetNamespaceEntry()
++	currentWorkflowStartTime := time.Time{}
++	if shardContext.GetConfig().EnableWorkflowIdReuseStartTimeValidation(namespaceEntry.Name().String()) &&
++		failedErr.StartTime != nil {
++		currentWorkflowStartTime = *failedErr.StartTime
++	}
++
++	workflowKey := newWorkflowLease.GetContext().GetWorkflowKey()
++	workflowKey.RunID = failedErr.RunID
++	if err := api.ResolveWorkflowIDReusePolicy(
++		shardContext,
++		workflowKey,
++		namespaceEntry,
++		failedErr.Status,
++		failedErr.RequestIDs,
++		failedErr.FirstExecutionRunID,
++		workflowIDReusePolicy,
++		currentWorkflowStartTime,
++	); err != nil {
++		return err
++	}
++
++	// If current workflow is closed after the original snapshot was prepared,
++	// LastRunningClock in that snapshot can be smaller than the current row's,
++	// causing the new workflow to be marked as zombie in the standby cluster.
++	updateExecutionInfo, updatedWorkflowEventBatches, err := mutableState.UpdateLastRunningClock(newWorkflowEventsSeq)
++	if err != nil {
++		return err
++	}
++	newWorkflow.ExecutionInfo = updateExecutionInfo
++	newWorkflowEventsSeq = updatedWorkflowEventBatches
++
++	return newWorkflowLease.GetContext().CreateWorkflowExecution(
++		ctx,
++		shardContext,
++		persistence.CreateWorkflowModeUpdateCurrent,
++		failedErr.RunID,
++		failedErr.LastWriteVersion,
++		mutableState,
++		newWorkflow,
++		newWorkflowEventsSeq,
++		historyi.TransactionPolicyActive,
++	)
+ }
+ 
+ // Successful calls leave the lease held for outcome reads. Invoke releases it.
 ```
 
-**File**: `chasm/lib/scheduler/generator_wakeup_test.go` (added, +107/-0)
+**File**: `service/history/api/signalwithstartworkflow/signal_with_start_workflow_test.go` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,107 @@
-+package scheduler_test
+@@ -658,7 +658,7 @@ func (s *signalWithStartWorkflowSuite) TestStartAndSignalWithoutCurrentWorkflow_
+ 	).Return(failedErr)
+ 	newWorkflowLease := api.NewWorkflowLease(newContext, wcache.NoopReleaseFn, newMutableState)
+ 
+-	outcome, err := startAndSignalWithoutCurrentWorkflow(ctx, s.shardContext, nil, newWorkflowLease)
++	outcome, err := startAndSignalWithoutCurrentWorkflow(ctx, s.shardContext, nil, newWorkflowLease, enumspb.WORKFLOW_ID_REUSE_POLICY_ALLOW_DUPLICATE)
+ 	s.ErrorIs(err, failedErr)
+ 	s.Equal(startOutcome{}, outcome)
+ }
+```
+
+**File**: `service/history/history_engine2_test.go` (modified, +190/-0)
+```diff
+@@ -1684,6 +1684,41 @@ func makeMockStartRequest(
+ 	}
+ }
+ 
++func makeMockSignalWithStartRequest(
++	tv *testvars.TestVars,
++	wfReusePolicy enumspb.WorkflowIdReusePolicy,
++) *historyservice.SignalWithStartWorkflowExecutionRequest {
++	return &historyservice.SignalWithStartWorkflowExecutionRequest{
++		NamespaceId: tv.NamespaceID().String(),
++		SignalWithStartRequest: &workflowservice.SignalWithStartWorkflowExecutionRequest{
++			Namespace:                tv.NamespaceID().String(),
++			WorkflowId:               tv.WorkflowID(),
++			WorkflowType:             tv.WorkflowType(),
++			TaskQueue:                tv.TaskQueue(),
++			WorkflowExecutionTimeout: durationpb.New(time.Second),
++			WorkflowTaskTimeout:      durationpb.New(2 * time.Second),
++			Identity:                 tv.WorkerIdentity(),
++			RequestId:                tv.RequestID(),
++			WorkflowIdReusePolicy:    wfReusePolicy,
++			SignalName:               tv.SignalName(),
++		},
++	}
++}
++
++func makeOrphanedCurrentExecutionConflict(
++	tv *testvars.TestVars,
++	state enumsspb.WorkflowExecutionState,
++	status enumspb.WorkflowExecutionStatus,
++) *persistence.CurrentWorkflowConditionFailedError {
++	return &persistence.CurrentWorkflowConditionFailedError{
++		Msg:              "random message",
++		RunID:            tv.RunID(),
++		State:            state,
++		Status:           status,
++		LastWriteVersion: common.EmptyVersion,
++	}
++}
++
+ func makeCurrentWorkflowConditionFailedError(
+ 	tv *testvars.TestVars,
+ 	startTime *timestamppb.Timestamp,
+@@ -3024,6 +3059,161 @@ func (s *engine2Suite) TestSignalWithStartWorkflowExecution_Start_WorkflowAlread
+ 	s.NotNil(err)
+ }
+ 
++func (s *engine2Suite) TestSignalWithStartWorkflowExecution_OrphanedCompletedCurrentExecution() {
++	s.config.EnableWorkflowIdReuseStartTimeValidation = dynamicconfig.GetBoolPropertyFnFilteredByNamespace(false)
++
++	sRequest := makeMockSignalWithStartRequest(s.tv, enumspb.WORKFLOW_ID_REUSE_POLICY_ALLOW_DUPLICATE)
++	var currentExecutionLastRunningClock int64
++	conditionFailedErr := makeOrphanedCurrentExecutionConflict(
++		s.tv,
++		enumsspb.WORKFLOW_EXECUTION_STATE_COMPLETED,
++		enumspb.WORKFLOW_EXECUTION_STATUS_TIMED_OUT,
++	)
++
++	s.mockExecutionMgr.EXPECT().GetCurrentExecution(gomock.Any(), gomock.Any()).Return(
++		&persistence.GetCurrentExecutionResponse{RunID: s.tv.RunID()}, nil)
++	s.mockExecutionMgr.EXPECT().GetWorkflowExecution(gomock.Any(), gomock.Any()).Return(
++		nil, serviceerror.NewNotFound("mutable state missing"))
++	s.mockExecutionMgr.EXPECT().CreateWorkflowExecution(gomock.Any(), mock.MatchedBy(func(request *persistence.CreateWorkflowExecutionRequest) bool {
++		return request.Mode == persistence.CreateWorkflowModeBrandNew
++	})).DoAndReturn(
++		func(_ context.Context, _ *persistence.CreateWorkflowExecutionRequest) (*persistence.CreateWorkflowExecutionResponse, error) {
++			var err error
++			currentExecutionLastRunningClock, err = s.mockShard.GenerateTaskID()
++			if err != nil {
++				return nil, err
++			}
++			return nil, conditionFailedErr
++		},
++	)
++	s.mockExecutionMgr.EXPECT().CreateWorkflowExecution(gomock.Any(), mock.MatchedBy(func(request *persistence.CreateWorkflowExecutionRequest) bool {
++		return request.Mode == persistence.CreateWorkflowModeUpdateCurrent &&
++			request.PreviousRunID == s.tv.RunID() &&
++			request.PreviousLastWriteVersion == common.EmptyVersion
++	})).DoAndReturn(
++		func(_ context.Context, request *persistence.CreateWorkflowExecutionRequest) (*persistence.CreateWorkflowExecutionResponse, error) {
++			s.assertWorkflowLastRunningClockUpdated(currentExecutionLastRunningClock, request)
++			return tests.CreateWorkflowExecutionResponse, nil
++		},
++	)
++
++	resp, err := s.historyEngine.SignalWithStartWorkflowExecution(metrics.AddMetricsContext(context.Background()), sRequest)
++	s.NoError(err)
++	s.NotNil(resp)
++	s.True(resp.Started)
++	s.NotEmpty(resp.GetRunId())
++	s.NotEqual(s.tv.RunID(), resp.GetRunId())
++	s.Equal(resp.GetRunId(), resp.GetFirstExecutionRunId())
++}
++
++func (s *engine2Suite) TestSignalWithStartWorkflowExecution_OrphanedCompletedCurrentExecution_RejectDuplicate() {
++	s.config.EnableWorkflowIdReuseStartTimeValidation = dynamicconfig.GetBoolPropertyFnFilteredByNamespace(false)
++
++	sRequest := makeMockSignalWithStartRequest(s.tv, enumspb.WORKFLOW_ID_REUSE_POLICY_REJECT_DUPLICATE)
++	brandNewExecutionRequest := mock.MatchedBy(func(request *persistence.CreateWorkflowExecutionRequest) bool {
++		return request.Mode == persistence.CreateWorkflowModeBrandNew
++	})
++	conditionFailedErr := makeOrphanedCurrentExecutionConflict(
++		s.tv,
++		enumsspb.WORKFLOW_EXECUTION_STATE_COMPLETED,
++		enumspb.WORKFLOW_EXECUTION_STATUS_COMPLETED,
++	)
++
++	s.mockExecutionMgr.EXPECT().GetCurrentExecution(gomock.Any(), gomock.Any()).Return(
++		&persistence.GetCurrentExecutionResponse{RunID: s.tv.RunID()}, nil)
++	s.mockExecutionMgr.EXPECT().GetWorkflowExecution(gomock.Any(), gomock.Any()).Return(
++		nil, serviceerror.NewNotFound("mutable state missing"))
++	s.mockExecutionMgr.EXPECT().CreateWorkflowExecution(
+```
+
+**File**: `tests/signal_with_start_orphan_pointer_test.go` (added, +116/-0)
+```diff
+@@ -0,0 +1,116 @@
++package tests
 +
 +import (
++	"context"
 +	"testing"
 +	"time"
 +
-+	"github.com/stretchr/testify/require"
++	"github.com/google/uuid"
++	commandpb "go.temporal.io/api/command/v1"
 +	enumspb "go.temporal.io/api/enums/v1"
++	"go.temporal.io/api/workflowservice/v1"
 +	"go.temporal.io/server/chasm"
-+	"go.temporal.io/server/chasm/chasmtest"
-+	"go.temporal.io/server/chasm/lib/scheduler"
-+	"go.temporal.io/server/common/clock"
-+	"go.temporal.io/server/common/metrics"
-+	"go.temporal.io/server/common/testing/testlogger"
-+	"go.uber.org/mock/gomock"
-+	"google.golang.org/protobuf/types/known/durationpb"
++	"go.temporal.io/server/common"
++	"go.temporal.io/server/common/persistence"
++	"go.temporal.io/server/common/testing/parallelsuite"
++	"go.temporal.io/server/common/testing/taskpoller"
++	"go.temporal.io/server/common/testing/testvars"
++	"go.temporal.io/server/tests/testcore"
 +)
 +
-+func TestGeneratorNextWakeupTimeStaysAtPendingJitteredFire(t *testing.T) {
-+	t.Parallel()
-+	createdAt := time.Date(2026, 10, 26, 21, 59, 59, 0, time.UTC)
-+	fire := time.Date(2026, 10, 26, 22, 8, 0, 459000000, time.UTC)
-+	followingFire := time.Date(2026, 10, 26, 22, 22, 43, 38000000, time.UTC)
-+	timeSource := clock.NewEventTimeSource()
-+	timeSource.Update(createdAt)
-+	logger := testlogger.NewTestLogger(t, testlogger.FailOnExpectedErrorOnly)
-+	realProcessor := scheduler.NewSpecProcessor(defaultConfig(), metrics.NoopMetricsHandler, logger, newLegacySpecBuilder(0, 0))
-+
-+	// Record the real processor's output, rather than inferring it from a
-+	// previously queued timer that could hide an incorrect new wakeup time.
-+	type output struct {
-+		nextWakeupTime time.Time
-+		actions        int
-+	}
-+	var outputs []output
-+	processor := scheduler.NewMockSpecProcessor(gomock.NewController(t))
-+	processor.EXPECT().NextTime(gomock.Any(), gomock.Any()).DoAndReturn(realProcessor.NextTime).AnyTimes()
-+	processor.EXPECT().ProcessTimeRange(
-+		gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(),
-+	).DoAndReturn(func(
-+		s *scheduler.Scheduler, start, end time.Time, policy enumspb.ScheduleOverlapPolicy,
-+		workflowID, backfillID string, manual bool, limit *int,
-+	) (*scheduler.ProcessedTimeRange, error) {
-+		result, err := realProcessor.ProcessTimeRange(s, start, end, policy, workflowID, backfillID, manual, limit)
-+		if err == nil {
-+			outputs = append(outputs, output{result.NextWakeupTime, len(result.BufferedStarts)})
-+		}
-+		return result, err
-+	}).AnyTimes()
-+	schedule := defaultSchedule()
-+	schedule.Spec.Interval[0].Interval = durationpb.New(15 * time.Minute)
-+	schedule.Spec.Jitter = durationpb.New(10 * time.Minute)
-+	generatorPath, err := chasm.DefaultPathEncoder.Encode(nil, []string{"Generator"})
-+	require.NoError(t, err)
-+	var timerDeadlines []time.Time
-+	observeTimers := func(config *engineTestConfig) {
-+		config.engineOpts = append(config.engineOpts, chasmtest.WithInvariantCheck(func(_ *testing.T, node *chasm.Node, _ chasm.RootComponent) {
-+			timerDeadlines = nil
-+			generator := node.Snapshot(nil).Nodes[generatorPath]
-+			for _, task := range generator.GetMetadata().GetComponentAttributes().GetPureTasks() {
-+				timerDeadlines = append(timerDeadlines, task.GetScheduledTime().AsTime())
-+			}
-+		}))
-+	}
-+	env := newSchedulerTestEngine(t, schedule, withEngineTimeSource(timeSource), withEngineSpecProcessor(processor), observeTimers)
-+	requireTimerDeadline := func(expected time.Time) {
-+		require.NotEmpty(t, timerDeadlines)
-+		for _, deadline := range timerDeadlines {
-+			require.Equal(t, expected, deadline, "every persisted generator timer must use the expected wakeup time")
-+		}
-+	}
-+
-+	// These fire times are fixed for namespace "ns-id" and schedule "sched-id".
-+	// No expected timestamp is calculated by the implementation under test.
-+	expected := []output{
-+		{fire, 0},          // Creation: the 22:00 nominal slot is still in the future.
-+		{fire, 0},          // 22:02: inside its jitter delay.
-+		{fire, 0},          // 22:04: another empty wakeup must return the same deadline.
-+		{fire, 0},          // 22:06: still waiting for the same slot.
-+		{followingFire, 1}, // At the fire time, generate it and advance to the next slot.
-+	}
-+	require.Equal(t, expected[:1], outputs)
-+	requireTimerDeadline(fire)
-+	for i, now := range []time.Time{
-+		time.Date(2026, 10, 26, 22, 2, 0, 0, time.UTC),
-+		time.Date(2026, 10, 26, 22, 4, 0, 0, time.UTC),
-+		time.Date(2026, 10, 26, 22, 6, 0, 0, time.UTC),
-+	} {
-+		timeSource.Update(now)
-+		require.NoError(t, env.updateScheduler(func(s *scheduler.Scheduler, ctx chasm.MutableContext) error {
-+			s.Generator.Get(ctx).Generate(ctx)
-+			return nil
-+		}))
-+		require.Equal(t, expected[:i+2], outputs, "empty wakeup at %s", now)
-+		requireTimerDeadline(fire)
-+	}
-+
-+	// Deliver the timer through CHASM's validation and transaction machinery.
-+	// A second delivery must neither regenerate the action nor recalculate a wakeup.
-+	timeSource.Update(fire)
-+	for range 2 {
-+		_, err := env.engine.FirePureTasks(env.rootRef, fire)
-+		require.NoError(t, err)
-+		require.Equal(t, expected, outputs)
-+		requireTimerDeadline(followingFire)
-+	}
++type SignalWithStartOrphanPointerSuite struct {
++	parallelsuite.Suite[*SignalWithStartOrphanPointerSuite]
 +}
-```
-
-**File**: `chasm/lib/scheduler/proto/v1/message.proto` (modified, +7/-1)
-```diff
-@@ -72,11 +72,17 @@ message WorkflowMigrationState {
- 
- // CHASM scheduler's Generator internal state.
- message GeneratorState {
--  // High water mark.
-+  // High water mark for processed schedule actions. This can lag behind the
-+  // current time while an action is waiting for its jittered fire time.
-   google.protobuf.Timestamp last_processed_time = 3;
- 
-   // A list of upcoming times an action will be triggered.
-   repeated google.protobuf.Timestamp future_action_times = 4;
 +
-+  // High water mark for generator task executions, used to invalidate timers
-+  // even when no schedule action was due. Unset until the first execution
-+  // after upgrading; task validation then falls back to last_processed_time.
-+  google.protobuf.Timestamp last_processed_task_time = 5;
- }
- 
- // CHASM scheduler's Invoker internal state.
-```
-
-**File**: `chasm/lib/scheduler/spec_processor.go` (modified, +8/-5)
-```diff
-@@ -115,11 +115,14 @@ func (s *SpecProcessorImpl) ProcessTimeRange(
- 
- 	catchupWindow := catchupWindow(scheduler, tweakables)
- 
--	// lastAction is used to set the high water mark for future ProcessTimeRange
--	// invocations. The code below will set a "last action" even when none is taken,
--	// simply to indicate that processing can permanently skip that period of time
--	// (e.g., it was prior to an update or past a catchup).
--	lastAction := end
-+	// Preserve the high water mark until an action is processed. NextTime searches
-+	// nominal times, so advancing to end could skip an action whose nominal time
-+	// has passed but whose jittered fire time is still in the future. The loop also
-+	// advances past actions intentionally skipped or dropped.
-+	lastAction := start
-+	if !manual && !tweakables.EnableGeneratorJitterFix {
-+		lastAction = end
++func TestSignalWithStartOrphanPointerSuite(t *testing.T) {
++	parallelsuite.Run(t, &SignalWithStartOrphanPointerSuite{})
++}
++
++// Pointer exists, mutable state doesn't. Used to hang until the client deadline.
++func (s *SignalWithStartOrphanPointerSuite) TestSignalWithStartAfterOrphanedCompletedPointer() {
++	if !testcore.UseCassandraPersistence() {
++		s.T().Skip("Cassandra only: SQL surfaces this as a unique constraint, not a hang")
 +	}
- 
- 	var next legacyscheduler.GetNextTimeResult
- 	var err error
-```
-
----
-
-### Incident Patch 2: `f7ca7c3c` (2026-10-26)
-**Commit Message**: Fix namespace registration flakes in functional test setup (#12734)
-
-## What changed?
-
-Added test-only retries for namespace creation during functional test
-setup, capped at 10 outer attempts and a 10-second retry budget.
-
-## Why?
-
-Parallel functional tests can contend on Cassandra’s shared namespace
-metadata and exhaust the existing two-attempt retry limit, failing
-before the test itself runs. The additional retries give transient
-contention more time to clear without changing production retry
-settings.
-
-## How did you test it?
-- [X] built
-- [ ] run locally and tested manually
-- [ ] covered by existing tests
-- [X] added new unit test(s)
-- [ ] added new functional test(s)
-
-**File**: `tests/testcore/functional_test_base.go` (modified, +14/-1)
-```diff
-@@ -24,13 +24,15 @@ import (
- 	"go.temporal.io/server/api/adminservice/v1"
- 	persistencespb "go.temporal.io/server/api/persistence/v1"
- 	"go.temporal.io/server/common"
-+	"go.temporal.io/server/common/backoff"
- 	"go.temporal.io/server/common/config"
- 	"go.temporal.io/server/common/dynamicconfig"
- 	"go.temporal.io/server/common/log"
- 	"go.temporal.io/server/common/log/tag"
- 	"go.temporal.io/server/common/namespace"
- 	"go.temporal.io/server/common/payloads"
- 	"go.temporal.io/server/common/persistence"
-+	persistenceclient "go.temporal.io/server/common/persistence/client"
- 	persistencetests "go.temporal.io/server/common/persistence/persistence-tests"
- 	"go.temporal.io/server/common/persistence/sql/sqlplugin/sqlite"
- 	"go.temporal.io/server/common/primitives/timestamp"
-@@ -550,7 +552,18 @@ func (s *functionalTestBase) RegisterNamespace(
- 		},
- 		IsGlobalNamespace: false,
- 	}
--	_, err := s.testCluster.testBase.MetadataManager.CreateNamespace(ctx, namespaceRequest)
 +
-+	// Parallel namespace creation can exhaust the normal retry budget, so test setup uses a larger
-+	// budget for transient errors across all persistence backends.
-+	metadataMgr := persistence.NewMetadataPersistenceRetryableClient(
-+		s.testCluster.testBase.MetadataManager,
-+		backoff.NewExponentialRetryPolicy(100*time.Millisecond).
-+			WithMaximumInterval(time.Second).
-+			WithMaximumAttempts(10).
-+			WithExpirationInterval(10*time.Second),
-+		persistenceclient.IsPersistenceTransientError,
++	env := testcore.NewEnv(s.T(), testcore.WithDedicatedCluster()) // CloseShard is cluster-wide
++	tv := testvars.New(s.T())
++	ctx := s.Context()
++
++	shardID := common.WorkflowIDToHistoryShard(
++		env.NamespaceID().String(),
++		tv.WorkflowID(),
++		env.GetTestClusterConfig().HistoryConfig.NumHistoryShards,
 +	)
-+	_, err := metadataMgr.CreateNamespace(ctx, namespaceRequest)
++	execMgr := env.GetTestCluster().ExecutionManager()
++	poller := taskpoller.New(s.T(), env.FrontendClient(), env.Namespace().String())
++
++	startResp, err := env.FrontendClient().StartWorkflowExecution(ctx, &workflowservice.StartWorkflowExecutionRequest{
++		RequestId:    uuid.NewString(),
++		Namespace:    env.Namespace().String(),
++		WorkflowId:   tv.WorkflowID(),
++		WorkflowType: tv.WorkflowType(),
++		TaskQueue:    tv.TaskQueue(),
++	})
++	s.Require().NoError(err)
++	orphanedRunID := startResp.RunId
++
++	_, err = poller.PollAndHandleWorkflowTask(tv, func(_ *workflowservice.PollWorkflowTaskQueueResponse) (*workflowservice.RespondWorkflowTaskCompletedRequest, error) {
++		return &workflowservice.RespondWorkflowTaskCompletedRequest{
++			Commands: []*commandpb.Command{{
++				CommandType: enumspb.COMMAND_TYPE_COMPLETE_WORKFLOW_EXECUTION,
++				Attributes: &commandpb.Command_CompleteWorkflowExecutionCommandAttributes{
++					CompleteWorkflowExecutionCommandAttributes: &commandpb.CompleteWorkflowExecutionCommandAttributes{},
++				},
++			}},
++		}, nil
++	})
++	s.Require().NoError(err)
++
++	// Mutable state + history go away; current_executions stays. That's the bug shape.
++	s.Require().NoError(execMgr.DeleteWorkflowExecution(ctx, &persistence.DeleteWorkflowExecutionRequest{
++		ShardID:     shardID,
++		NamespaceID: env.NamespaceID().String(),
++		WorkflowID:  tv.WorkflowID(),
++		RunID:       orphanedRunID,
++		ArchetypeID: chasm.WorkflowArchetypeID,
++	}))
++	waitForMutableStateGone(ctx, env, shardID, execMgr, tv.WorkflowID(), orphanedRunID)
++
++	current, err := execMgr.GetCurrentExecution(ctx, &persistence.GetCurrentExecutionRequest{
++		ShardID:     shardID,
++		NamespaceID: env.NamespaceID().String(),
++		WorkflowID:  tv.WorkflowID(),
++		ArchetypeID: chasm.WorkflowArchetypeID,
++	})
++	s.Require().NoError(err)
++	env.Equal(orphanedRunID, current.RunID)
++	env.Equal(enumspb.WORKFLOW_EXECUTION_STATUS_COMPLETED, current.Status)
++
++	env.CloseShard(env.NamespaceID().String(), tv.WorkflowID()) // otherwise cache still has the completed MS
++
++	swsCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
++	defer cancel()
++	swsResp, err := env.FrontendClient().SignalWithStartWorkflowExecution(swsCtx, &workflowservice.SignalWithStartWorkflowExecutionRequest{
++		RequestId:             uuid.NewString(),
++		Namespace:             env.Namespace().String(),
++		WorkflowId:            tv.WorkflowID(),
++		WorkflowType:          tv.WorkflowType(),
++		TaskQueue:             tv.TaskQueue(),
++		Identity:              tv.WorkerIdentity(),
++		SignalName:            tv.SignalName(),
++		WorkflowIdReusePolicy: enumspb.WORKFLOW_ID_REUSE_POLICY_ALLOW_DUPLICATE,
++	})
++	s.Require().NoError(err)
++	env.True(swsResp.Started)
++	env.NotEqual(orphanedRunID, swsResp.RunId)
++	env.Equal(swsResp.RunId, swsResp.FirstExecutionRunId)
++
++	replaced, err := execMgr.GetCurrentExecution(ctx, &persistence.GetCurrentExecutionRequest{
++		ShardID:     shardID,
++		NamespaceID: env.NamespaceID().String(),
++		WorkflowID:  tv.WorkflowID(),
++		ArchetypeID: chasm.WorkflowArchetypeID,
++	})
++	s.Require().NoError(err)
++	env.Equal(swsResp.RunId, replaced.RunID)
++}
+```
+
+**File**: `tools/flakereport/report.go` (modified, +3/-3)
+```diff
+@@ -148,16 +148,16 @@ func generateOccurrenceReportTable(reports []TestReport, nameHeader, countHeader
+ 	reports = limitReportRows(reports)
  
- 	if err != nil {
- 		return namespace.EmptyID, err
+ 	var sb strings.Builder
+-	sb.WriteString(fmt.Sprintf("| %s | %s | Last Occurrence | Trend | Links |\n", nameHeader, countHeader))
++	fmt.Fprintf(&sb, "| %s | %s | Last Occurrence | Trend | Links |\n", nameHeader, countHeader)
+ 	sb.WriteString("|------|--------------------|-----------------|-------|-------|\n")
+ 	for _, report := range reports {
+ 		links := formatLinks(report.GitHubURLs, maxLinks)
+ 		lastOccurrence := "N/A"
+ 		if !report.LastFailure.IsZero() {
+ 			lastOccurrence = hoursAgo(report.LastFailure)
+ 		}
+-		sb.WriteString(fmt.Sprintf("| `%s` | %d | %s | `%s` | %s |\n",
+-			report.TestName, report.FailureCount, lastOccurrence, formatSparkline(report.TrendPoints), links))
++		fmt.Fprintf(&sb, "| `%s` | %d | %s | `%s` | %s |\n",
++			report.TestName, report.FailureCount, lastOccurrence, formatSparkline(report.TrendPoints), links)
+ 	}
+ 
+ 	return sb.String()
 ```
 
 ---
 
-### Incident Patch 3: `eeea73a5` (2026-10-26)
-**Commit Message**: Add temporal_with_elasticsearch build tag to compile out Elasticsearch visibility (#12659)
+### Incident Patch 2: `a124acf0` (2026-10-28)
+**Commit Message**: Test V1 and V2 against historical scheduler jitter regression (#12775)
 
-## What changed?
+V1 fixed lost jittered actions in #6028; #12745 brings the action cursor
+fix to V2. Reuse the original `TestSignalBetweenNominalAndJittered`
+timestamps and expected starts in a comparison of both action-generation
+implementations.
 
-Follow-up to #12593: `temporal_minimal` now also compiles out
-Elasticsearch visibility.
+The fixture includes a refresh wakeup at 03:22:10, between the 03:00
+nominal slot and its 03:37:29.538 fire. Both implementations must
+generate all four expected slots exactly once. The existing V1 workflow
+test continues to cover signal delivery and continue-as-new.
 
-`temporal_with_elasticsearch` opts it back in.
+Validation:
+- `go test -tags test_dep ./service/worker/scheduler -count=1`
+- `make lint-code-fast GOLANGCI_LINT_BASE_REV=origin/main
+GOLANGCI_LINT_FIX=false`
+- Restoring V2's `lastAction := end` makes the added V2 case lose the
+03:00 slot; V1 still passes.
 
-**The default build is unchanged.**
-
-A `temporal_minimal` server with an Elasticsearch datastore refuses to
-start:
-
-```
-config validation error: persistence config error: datastore "es-visibility": elasticsearch: Elasticsearch visibility is not compiled into this server; remove this config or rebuild with the temporal_with_elasticsearch build tag
-```
-
-## Why?
-
-Every server binary includes the Elasticsearch client, even when
-visibility is stored in SQL or Cassandra.
-
-|                    | default  | `temporal_minimal` |
-| ------------------ | -------- |
------------------------------------------ |
-| darwin/arm64 | 103.1 MB | 99.4 MB (−3.68 MB, −3.6%) |
-| linux/amd64 | 107.8 MB | 104.0 MB (−3.83 MB, −3.6%) |
-| packages compiled | 1443 | 1433 |
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `Makefile` (modified, +10/-9)
+**File**: `service/worker/scheduler/jitter_comparison_test.go` (modified, +74/-7)
 ```diff
-@@ -137,10 +137,10 @@ UNIT_TEST_DIRS := $(filter-out $(FUNCTIONAL_TEST_ROOT)% $(FUNCTIONAL_TEST_XDC_RO
- UNIT_TEST_DIRS += $(TESTCORE_UNITTESTS)
- endif
- 
--# Packages with a file constrained by temporal_minimal.
--MINIMAL_DIRS := $(sort $(addprefix ./,$(dir $(shell git grep -lE '^//go:build .*temporal_minimal([^a-z0-9_]|$$)' -- '*.go'))))
--# The unit test packages among MINIMAL_DIRS.
--MINIMAL_UNIT_TEST_DIRS := $(filter $(UNIT_TEST_DIRS),$(MINIMAL_DIRS))
-+# Packages with a file built only with temporal_minimal.
-+MINIMAL_VARIANT_DIRS := $(sort $(addprefix ./,$(dir $(shell git grep --untracked -l '^//go:build.*[^!]temporal_minimal' -- '*.go'))))
-+# The unit test packages among MINIMAL_VARIANT_DIRS.
-+MINIMAL_VARIANT_UNIT_TEST_DIRS := $(filter $(UNIT_TEST_DIRS),$(MINIMAL_VARIANT_DIRS))
- SYSTEM_WORKFLOWS_ROOT := ./service/worker
- 
- PINNED_DEPENDENCIES := \
-@@ -448,7 +448,7 @@ lint-code: $(GOLANGCI_LINT) $(ERRORTYPE)
- 	@printf $(COLOR) "Linting code..."
- 	$(call lint-go,$(ALL_TEST_TAGS),$(LINT_CODE_TARGETS))
- 	@printf $(COLOR) "Linting code with temporal_minimal..."
--	$(call lint-go,$(MINIMAL_TEST_TAGS),$(MINIMAL_DIRS))
-+	$(call lint-go,$(MINIMAL_TEST_TAGS),$(MINIMAL_VARIANT_DIRS))
- 
- lint-yaml: $(YAMLFMT)
- 	@printf $(COLOR) "Checking YAML formatting..."
-@@ -541,7 +541,8 @@ comma := ,
- 
- # Packages that temporal_minimal compiles out of the server unless the temporal_with_* build tag at the
- # end of the variable name is set. Each temporal_with_* tag needs one.
--EXCLUDED_PACKAGES_temporal_with_gstorage := cloud.google.com/go/storage go.temporal.io/server/common/archiver/gcloud
-+EXCLUDED_PACKAGES_temporal_with_gstorage := cloud.google.com/go/storage
-+EXCLUDED_PACKAGES_temporal_with_elasticsearch := github.com/olivere/elastic/v7
- 
- # $(call server-deps,<tags>): the packages the server depends on when built with <tags>.
- server-deps = $(shell CGO_ENABLED=$(CGO_ENABLED) go list -tags $(ALL_BUILD_TAGS),$(1) -deps ./cmd/server)
-@@ -645,10 +646,10 @@ unit-test-coverage: prepare-coverage-test
- 	go run ./cmd/tools/test-runner test --gotestsum-path=$(GOTESTSUM) --max-attempts=$(MAX_TEST_ATTEMPTS) $(TEST_RUNNER_TIMEOUT_ARG) --junitfile=$(NEW_REPORT) -- \
- 		$(COMPILED_TEST_ARGS) -coverprofile=$(NEW_COVER_PROFILE) $(UNIT_TEST_DIRS)
- 
--# Runs the unit tests of MINIMAL_UNIT_TEST_DIRS with temporal_minimal.
-+# Runs the unit tests of MINIMAL_VARIANT_UNIT_TEST_DIRS with temporal_minimal.
- unit-test-build-tags:
--	$(if $(MINIMAL_UNIT_TEST_DIRS),,$(error No package has a file constrained by temporal_minimal))
--	$(MAKE) unit-test-coverage TEST_TAG="$(TEST_TAG),temporal_minimal" UNIT_TEST_DIRS="$(MINIMAL_UNIT_TEST_DIRS)"
-+	$(if $(MINIMAL_VARIANT_UNIT_TEST_DIRS),,$(error No package has a temporal_minimal variant))
-+	$(MAKE) unit-test-coverage TEST_TAG="$(TEST_TAG),temporal_minimal" UNIT_TEST_DIRS="$(MINIMAL_VARIANT_UNIT_TEST_DIRS)"
- 
- integration-test-coverage: prepare-coverage-test
- 	@printf $(COLOR) "Run integration tests with coverage..."
-```
-
-**File**: `common/config/config.go` (modified, +2/-2)
-```diff
-@@ -14,7 +14,7 @@ import (
- 	"go.temporal.io/server/common/log"
- 	"go.temporal.io/server/common/masker"
- 	"go.temporal.io/server/common/metrics"
--	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch/client"
-+	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch/esconfig"
- 	"go.temporal.io/server/common/primitives"
- 	"go.temporal.io/server/common/telemetry"
- 	"google.golang.org/grpc/keepalive"
-@@ -281,7 +281,7 @@ type (
- 		// Custom contains the config for custom datastore implementation
- 		CustomDataStoreConfig *CustomDatastoreConfig `yaml:"customDatastore"`
- 		// ElasticSearch contains the config for a ElasticSearch datastore
--		Elasticsearch *client.Config `yaml:"elasticsearch"`
-+		Elasticsearch *esconfig.Config `yaml:"elasticsearch"`
- 	}
- 
- 	FaultInjection struct {
-```
-
-**File**: `common/config/persistence.go` (modified, +5/-2)
-```diff
-@@ -11,7 +11,7 @@ import (
- 	"time"
- 
- 	"github.com/gocql/gocql"
--	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch/client"
-+	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch/esconfig"
- )
- 
- const (
-@@ -128,7 +128,7 @@ func (c *Persistence) GetSecondaryVisibilityStoreConfig() DataStore {
- 		if ds.Elasticsearch != nil && ds.Elasticsearch.GetSecondaryVisibilityIndex() != "" {
- 			esConfig := *ds.Elasticsearch
- 			esConfig.Indices = map[string]string{
--				client.VisibilityAppName: ds.Elasticsearch.GetSecondaryVisibilityIndex(),
-+				esconfig.VisibilityAppName: ds.Elasticsearch.GetSecondaryVisibilityIndex(),
+@@ -23,7 +23,7 @@ func TestJitterGapPreservesPendingActionV1AndV2(t *testing.T) {
+ 	t.Parallel()
+ 	for _, backend := range []struct {
+ 		name string
+-		run  func(*testing.T, *schedulepb.Schedule, time.Time, []time.Time) [][]*schedulespb.BufferedStart
++		run  func(*testing.T, *schedulepb.Schedule, string, string, time.Time, []time.Time) [][]*schedulespb.BufferedStart
+ 	}{
+ 		{"v1", generateV1Actions},
+ 		{"v2", generateV2Actions},
+@@ -53,7 +53,7 @@ func TestJitterGapPreservesPendingActionV1AndV2(t *testing.T) {
  			}
- 			ds.Elasticsearch = &esConfig
- 			return ds
-@@ -188,6 +188,9 @@ func (ds *DataStore) Validate() error {
- 		}
+ 
+ 			var actual [][]action
+-			for _, batch := range backend.run(t, schedule, createdAt, wakeups) {
++			for _, batch := range backend.run(t, schedule, "namespace-id", "schedule-id", createdAt, wakeups) {
+ 				var actions []action
+ 				for _, start := range batch {
+ 					actions = append(actions, action{
+@@ -68,16 +68,83 @@ func TestJitterGapPreservesPendingActionV1AndV2(t *testing.T) {
  	}
- 	if ds.Elasticsearch != nil {
-+		if err := validateElasticsearch(ds.Elasticsearch); err != nil {
-+			return err
-+		}
- 		if err := ds.Elasticsearch.Validate(); err != nil {
- 			return err
- 		}
-```
-
-**File**: `common/config/persistence_elasticsearch.go` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+//go:build !temporal_minimal || temporal_with_elasticsearch
-+
-+package config
-+
-+import (
-+	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch/esconfig"
-+)
-+
-+func validateElasticsearch(*esconfig.Config) error {
-+	return nil
-+}
-```
-
-**File**: `common/config/persistence_elasticsearch_excluded.go` (added, +17/-0)
-```diff
-@@ -0,0 +1,17 @@
-+//go:build temporal_minimal && !temporal_with_elasticsearch
-+
-+package config
-+
-+import (
-+	"errors"
-+
-+	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch/esconfig"
-+)
-+
-+// validateElasticsearch fails if cfg is set, since Elasticsearch visibility is excluded from this build.
-+func validateElasticsearch(cfg *esconfig.Config) error {
-+	if cfg != nil {
-+		return errors.New("elasticsearch: Elasticsearch visibility is not compiled into this server; remove this config or rebuild with the temporal_with_elasticsearch build tag")
+ }
+ 
+-func generateV1Actions(t *testing.T, schedule *schedulepb.Schedule, createdAt time.Time, wakeups []time.Time) [][]*schedulespb.BufferedStart {
++// TestJitterTimelineFromV1PR6028 reuses the fixed namespace, schedule, and
++// timestamps from TestSignalBetweenNominalAndJittered. The extra wakeup at
++// 03:22:10 represents its refresh signal. This compares action generation;
++// V1's workflow test separately exercises signal delivery and continue-as-new.
++func TestJitterTimelineFromV1PR6028(t *testing.T) {
++	t.Parallel()
++	for _, backend := range []struct {
++		name string
++		run  func(*testing.T, *schedulepb.Schedule, string, string, time.Time, []time.Time) [][]*schedulespb.BufferedStart
++	}{
++		{"v1", generateV1Actions},
++		{"v2", generateV2Actions},
++	} {
++		t.Run(backend.name, func(t *testing.T) {
++			t.Parallel()
++			schedule := &schedulepb.Schedule{
++				Spec: &schedulepb.ScheduleSpec{
++					Interval: []*schedulepb.IntervalSpec{{Interval: durationpb.New(time.Hour)}},
++					Jitter:   durationpb.New(time.Hour),
++				},
++				Policies: &schedulepb.SchedulePolicies{OverlapPolicy: enumspb.SCHEDULE_OVERLAP_POLICY_BUFFER_ONE},
++				State:    &schedulepb.ScheduleState{},
++			}
++			var wakeups []time.Time
++			for _, timestamp := range []string{
++				"2022-06-01T01:49:22.594Z",
++				"2022-06-01T01:53:00Z", // First workflow completes.
++				"2022-06-01T02:02:39.204Z",
++				"2022-06-01T02:11:00Z", // Second workflow completes.
++				"2022-06-01T03:22:10Z", // Refresh during the third slot's jitter gap.
++				"2022-06-01T03:37:29.538Z",
++				"2022-06-01T03:41:00Z", // Third workflow completes.
++				"2022-06-01T04:23:34.755Z",
++				"2022-06-01T04:27:00Z", // Fourth workflow completes.
++				"2022-06-01T05:00:00Z",
++			} {
++				now, err := time.Parse(time.RFC3339Nano, timestamp)
++				require.NoError(t, err)
++				wakeups = append(wakeups, now)
++			}
++			expected := [][]string{
++				{"2022-06-01T01:00:00Z -> 2022-06-01T01:49:22.594Z"},
++				nil,
++				{"2022-06-01T02:00:00Z -> 2022-06-01T02:02:39.204Z"},
++				nil,
++				nil,
++				{"2022-06-01T03:00:00Z -> 2022-06-01T03:37:29.538Z"},
++				nil,
++				{"2022-06-01T04:00:00Z -> 2022-06-01T04:23:34.755Z"},
++				nil,
++				nil,
++			}
++			var actual [][]string
++			for _, batch := range backend.run(t, schedule, "mynsid", "myschedule",
++				time.Date(2022, 6, 1, 0, 0, 0, 0, time.UTC), wakeups) {
++				var actions []string
++				for _, start := range batch {
++					actions = append(actions, start.NominalTime.AsTime().Format(time.RFC3339Nano)+
++						" -> "+start.ActualTime.AsTime().Format(time.RFC3339Nano))
++				}
++				actual = append(actual, actions)
++			}
++			require.Equal(t, expected, actual)
++		})
 +	}
-+	return nil
 +}
-```
-
-**File**: `common/config/persistence_elasticsearch_excluded_test.go` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+//go:build temporal_minimal && !temporal_with_elasticsearch
 +
-+package config
-+
-+import (
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch/esconfig"
-+)
-+
-+func TestDataStoreValidate_ElasticsearchExcluded(t *testing.T) {
-+	ds := &DataStore{Elasticsearch: &esconfig.Config{Indices: map[string]string{esconfig.VisibilityAppName: "temporal_visibility_v1"}}}
-+	require.EqualError(t, ds.Validate(),
-+		"elasticsearch: Elasticsearch visibility is not compiled into this server; remove this config or rebuild with the temporal_with_elasticsearch build tag")
-+}
-```
-
-**File**: `common/config/persistence_elasticsearch_test.go` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+//go:build !temporal_minimal || temporal_with_elasticsearch
-+
-+package config
-+
-+import (
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch/esconfig"
-+)
-+
-+func TestDataStoreValidate_Elasticsearch(t *testing.T) {
-+	ds := &DataStore{Elasticsearch: &esconfig.Config{Indices: map[string]string{esconfig.VisibilityAppName: "temporal_visibility_v1"}}}
-+	require.NoError(t, ds.Validate())
-+}
-```
-
-**File**: `common/persistence/persistence-tests/elasticsearch_test_cluster.go` (modified, +6/-5)
-```diff
-@@ -13,12 +13,13 @@ import (
- 	"go.temporal.io/server/common/log"
- 	"go.temporal.io/server/common/log/tag"
- 	esclient "go.temporal.io/server/common/persistence/visibility/store/elasticsearch/client"
-+	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch/esconfig"
- 	"go.temporal.io/server/temporal/environment"
- 	"go.temporal.io/server/tests/testutils"
- )
- 
- type esTestCluster struct {
--	cfg    *esclient.Config
-+	cfg    *esconfig.Config
- 	logger log.Logger
- 
- 	indexName string
-@@ -40,13 +41,13 @@ func newEsTestCluster(
- 		panic(err)
- 	}
- 	return &esTestCluster{
--		cfg: &esclient.Config{
-+		cfg: &esconfig.Config{
- 			Version:  environment.GetESVersion(),
- 			URL:      *addr,
- 			Username: username,
- 			Password: password,
- 			Indices: map[string]string{
--				esclient.VisibilityAppName: indexName,
-+				esconfig.VisibilityAppName: indexName,
- 			},
++func generateV1Actions(t *testing.T, schedule *schedulepb.Schedule, namespaceID, scheduleID string, createdAt time.Time, wakeups []time.Time) [][]*schedulespb.BufferedStart {
+ 	t.Helper()
+ 	var suite testsuite.WorkflowTestSuite
+ 	env := suite.NewTestWorkflowEnvironment()
+ 	env.ExecuteWorkflow(legacyscheduler.GenerateScheduledActionsForTest, &schedulespb.StartScheduleArgs{
+ 		Schedule: schedule,
+ 		Info:     &schedulepb.ScheduleInfo{},
+ 		State: &schedulespb.InternalState{
+-			NamespaceId:       "namespace-id",
+-			ScheduleId:        "schedule-id",
++			NamespaceId:       namespaceID,
++			ScheduleId:        scheduleID,
+ 			LastProcessedTime: timestamppb.New(createdAt),
  		},
- 		logger:    logger,
-@@ -80,7 +81,7 @@ func (c *esTestCluster) TearDownTestDatabase() {
- 	}
+ 	}, wakeups)
+@@ -87,11 +154,11 @@ func generateV1Actions(t *testing.T, schedule *schedulepb.Schedule, createdAt ti
+ 	return actions
  }
  
--func SetupEsIndex(esConfig *esclient.Config, logger log.Logger) error {
-+func SetupEsIndex(esConfig *esconfig.Config, logger log.Logger) error {
- 	ctx := context.Background()
- 	var esClient esclient.IntegrationTestsClient
- 	op := func() error {
-@@ -168,7 +169,7 @@ func waitForYellowStatus(esClient esclient.IntegrationTestsClient, index string)
- 	return nil
- }
+-func generateV2Actions(t *testing.T, schedule *schedulepb.Schedule, createdAt time.Time, wakeups []time.Time) [][]*schedulespb.BufferedStart {
++func generateV2Actions(t *testing.T, schedule *schedulepb.Schedule, namespaceID, scheduleID string, createdAt time.Time, wakeups []time.Time) [][]*schedulespb.BufferedStart {
+ 	t.Helper()
+ 	sched := &chasmscheduler.Scheduler{SchedulerState: &schedulerpb.SchedulerState{
+ 		Schedule: schedule, Info: &schedulepb.ScheduleInfo{},
+-		NamespaceId: "namespace-id", ScheduleId: "schedule-id",
++		NamespaceId: namespaceID, ScheduleId: scheduleID,
  
--func DeleteEsIndex(esConfig *esclient.Config, logger log.Logger) error {
-+func DeleteEsIndex(esConfig *esconfig.Config, logger log.Logger) error {
- 	esClient, err := esclient.NewFunctionalTestsClient(esConfig, logger)
- 	if err != nil {
- 		return err
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12754** (2026-10-27): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #12750** (closed): Keep unexpired workflow rules when creating a rule at the limit (@sangkyoonnam)
-- **PR #12745** (2026-10-27): Fix V2 scheduler skipping pending jittered actions (@davidporter-id-au)
-- **PR #12740** (2026-10-26): Skip events-reapplication reset when nothing would be reapplied (@jiechenz)
-- **PR #12737** (2026-10-27): Clamp the read partition count in PickReadPartition (@geraldw-ai)
-- **PR #12735** (closed): testlogger: never deep-walk tag values in formatValue (@claude[bot])
+- **PR #12794** (2026-10-28): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #12786** (2026-10-28): Bump testx to latest main version (@stephanos)
+- **PR #12785** (2026-10-28): Route standalone Nexus operation RPCs by operation ID (@jiechenz)
+- **PR #12779** (2026-10-28): Retry standby discard check during namespace handover and failover (@qyc5937)
+- **PR #12777** (2026-10-27): [cloud 3.164] Fix V2 scheduler skipping pending jittered actions (@davidporter-id-au)
+- **PR #12775** (2026-10-28): Test V1 and V2 against historical scheduler jitter regression (@davidporter-id-au)
 
 ---
 
@@ -3043,29 +2722,61 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. V2 scheduler skipping pending jittered actions (#12745)
+## X. SignalWithStart hang on orphaned current-execution pointer (#11774)
 
 **RULE**:
-When implementing operations in `chasm/lib/scheduler/config.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `service/history/api/signalwithstartworkflow/signal_with_start_workflow.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `310879a3`: V2 scheduler skipping pending jittered actions (#12745). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1bef09a6`: SignalWithStart hang on orphaned current-execution pointer (#11774). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `chasm/lib/scheduler/config.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `service/history/api/signalwithstartworkflow/signal_with_start_workflow.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		EnableGeneratorJitterFix          bool          // Preserve pending jittered actions across empty generator wakeups; disable to restore the legacy cursor behavior.
-		EnableGeneratorJitterFix:          true,
+		signalWithStartRequest.GetWorkflowIdReusePolicy(),
+	workflowIDReusePolicy enumspb.WorkflowIdReusePolicy,
+	switch failedErr := err.(type) {
+	case nil:
+		// Brand-new run: head of the chain == this run id.
+		runID := newWorkflowLease.GetContext().GetWorkflowKey().RunID
+		return startOutcome{runID: runID, firstExecutionRunID: runID, started: true, createdRun: true}, nil
+	case *persistence.CurrentWorkflowConditionFailedError:
+		// RequestIDs does not record signal delivery. Return other CAS failures so a retry
+		// can check IsSignalRequested. Completed BrandNew conflicts are the orphaned-pointer
+		// case StartWorkflow recovers with UpdateCurrent.
+		if createMode != persistence.CreateWorkflowModeBrandNew ||
+			failedErr.State != enumsspb.WORKFLOW_EXECUTION_STATE_COMPLETED ||
+			len(failedErr.RunID) == 0 {
+			return startOutcome{}, err
+		}
+		if err := createAsCurrent(
+			ctx,
+			shardContext,
+			newWorkflowLease,
+			newWorkflow,
+			newWorkflowEventsSeq,
+			workflowIDReusePolicy,
+			failedErr,
+		); err != nil {
+			return startOutcome{}, err
+		}
+		runID := newWorkflowLease.GetContext().GetWorkflowKey().RunID
+		return startOutcome{runID: runID, firstExecutionRunID: runID, started: true,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	// CurrentWorkflowConditionFailedError.RequestIDs does not record signal delivery.
+	// Return the error so a retry can check IsSignalRequested.
+	if err != nil {
+	// Brand-new run: head of the chain == this run id.
+	runID := newWorkflowLease.GetContext().GetWorkflowKey().RunID
+	return startOutcome{runID: runID, firstExecutionRunID: runID, started: true, createdRun: true}, nil
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `310879a3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1bef09a6` are properly handled with clean fallback behavior.

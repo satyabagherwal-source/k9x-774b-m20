@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-PCRO",
-    "timestamp": "2026-10-27T14:43:15.300Z",
-    "repository": "CYB3RMX/Qu1cksc0pe",
-    "learningId": "learn-github-cyb3rmx-qu1cksc0pe",
-    "contentHash": "64eb85a298af66a77b6a599ced7a956a4df7620c372e06db4d69fa3cccb36925",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-PEGF",
-    "timestamp": "2026-10-27T14:43:17.487Z",
-    "repository": "apioo/fusio",
-    "learningId": "learn-github-apioo-fusio",
-    "contentHash": "df5a92b24298e30fde054c540b2ea4cb8e152f40630b8e23c055a83425053ba6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-U3Y6",
-    "timestamp": "2026-10-27T14:46:57.150Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "266ddef2004b1aa89013f065ba4b08a5fe6c13d347d9750f5031031746786203",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-YN54",
-    "timestamp": "2026-10-27T14:50:28.648Z",
-    "repository": "zarf-dev/zarf",
-    "learningId": "learn-github-zarf-dev-zarf",
-    "contentHash": "74b0dcfc7ad210ee0afa29138c3b944c4928ca4f6944d9da6e9ac07567e33f3f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-YNCQ",
     "timestamp": "2026-10-27T14:50:28.922Z",
     "repository": "microsoft/agent-governance-toolkit",
@@ -7492,6 +7432,66 @@
     "contentHash": "8648a3463996ea5a635734fcccc5fd5597270cdcada31f54fd25ff13663842e5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-O618",
+    "timestamp": "2026-10-28T18:41:56.876Z",
+    "repository": "temporalio/temporal",
+    "learningId": "learn-github-temporalio-temporal",
+    "contentHash": "0ee572161c6c4dd82fbea7caabc95c044bd100a56923194e80c24f547ba528d1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-O8UM",
+    "timestamp": "2026-10-28T18:42:00.526Z",
+    "repository": "RediSearch/RediSearch",
+    "learningId": "learn-github-redisearch-redisearch",
+    "contentHash": "ae7f3750f7fa2f8c4d22ac38d74417d8732f15d71bdfe208330cb4f108c36ff6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-O90D",
+    "timestamp": "2026-10-28T18:42:00.733Z",
+    "repository": "zama-ai/tfhe-rs",
+    "learningId": "learn-github-zama-ai-tfhe-rs",
+    "contentHash": "2a59b0e1a1dd032596b49b84c738c2f0d5c805da26cd157cb4def6b56b8cf3ab",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-ODWR",
+    "timestamp": "2026-10-28T18:42:07.083Z",
+    "repository": "zai-org/GLM-5.3",
+    "learningId": "learn-huggingface-zai-org-glm-5-3",
+    "contentHash": "1ab9643a7ce9c491afd84fc2e75df7c81fc396f0bed2f015a9bc30d4009f036c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -5882,3 +5882,7 @@
 | `CYCLE-20261028-ERLZ` | `2026-10-28T18:34:38.279Z` | `onejs/one` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5363` | Yes (`5fd9f56b...`) |
 | `CYCLE-20261028-ESOJ` | `2026-10-28T18:34:39.667Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5364` | Yes (`a56ddbca...`) |
 | `CYCLE-20261028-EXLC` | `2026-10-28T18:34:46.032Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5365` | Yes (`8648a346...`) |
+| `CYCLE-20261028-O618` | `2026-10-28T18:41:56.876Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5366` | Yes (`0ee57216...`) |
+| `CYCLE-20261028-O8UM` | `2026-10-28T18:42:00.526Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5367` | Yes (`ae7f3750...`) |
+| `CYCLE-20261028-O90D` | `2026-10-28T18:42:00.733Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5368` | Yes (`2a59b0e1...`) |
+| `CYCLE-20261028-ODWR` | `2026-10-28T18:42:07.083Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | Yes (`1ab9643a...`) |

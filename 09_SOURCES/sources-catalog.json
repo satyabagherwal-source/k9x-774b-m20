@@ -65,8 +65,8 @@
     "sourceUrl": "https://huggingface.co/zai-org/GLM-5.3",
     "sourceVersion": "hf-zai-org-glm-5.3",
     "license": "Open-Source",
-    "contentHash": "915ffb33572768cc1eefdb803ff59a6f76c13b02b08f44eac3c25502bba56bb6",
-    "lastHarvestedAt": "2026-10-28T01:29:12.496Z",
+    "contentHash": "1ab9643a7ce9c491afd84fc2e75df7c81fc396f0bed2f015a9bc30d4009f036c",
+    "lastHarvestedAt": "2026-10-28T18:42:07.087Z",
     "learningId": "learn-huggingface-zai-org-glm-5-3"
   },
   "hf-mudler-locate-anything.cpp-gguf": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "b07103df",
+    "sourceVersion": "5c280571",
     "license": "NOASSERTION",
-    "contentHash": "ff1e2614c0e17cc61847a1a8535877a20a6cfd1df4a272d928f281abf13afa34",
-    "lastHarvestedAt": "2026-10-28T11:52:44.286Z",
+    "contentHash": "2a59b0e1a1dd032596b49b84c738c2f0d5c805da26cd157cb4def6b56b8cf3ab",
+    "lastHarvestedAt": "2026-10-28T18:42:00.736Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -6023,10 +6023,10 @@
     "repository": "RediSearch/RediSearch",
     "platform": "github",
     "sourceUrl": "https://github.com/RediSearch/RediSearch",
-    "sourceVersion": "0505d348",
+    "sourceVersion": "58fba8cb",
     "license": "NOASSERTION",
-    "contentHash": "db60f804f64cb48b3be2d2b5f334e9962a76a7ac7949ae0d31ca0bbcc53a101c",
-    "lastHarvestedAt": "2026-10-28T02:27:24.819Z",
+    "contentHash": "ae7f3750f7fa2f8c4d22ac38d74417d8732f15d71bdfe208330cb4f108c36ff6",
+    "lastHarvestedAt": "2026-10-28T18:42:00.529Z",
     "learningId": "learn-github-redisearch-redisearch"
   },
   "taiga-family-taiga-ui": {
@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "bf81a4c2",
+    "sourceVersion": "59a75202",
     "license": "MIT",
-    "contentHash": "ee3e8e0c350383f2da3b4b9a7f6b863f5b32188503267f0ddac0bf1f3023c7b4",
-    "lastHarvestedAt": "2026-10-27T20:01:23.256Z",
+    "contentHash": "0ee572161c6c4dd82fbea7caabc95c044bd100a56923194e80c24f547ba528d1",
+    "lastHarvestedAt": "2026-10-28T18:41:56.880Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {

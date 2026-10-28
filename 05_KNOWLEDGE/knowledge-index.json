@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T18:34:45.972Z",
+  "last_updated": "2026-10-28T18:42:06.994Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -29710,7 +29710,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/zai-org/GLM-5.3",
       "source_version": "hf-zai-org-glm-5.3",
-      "content_hash": "915ffb33572768cc1eefdb803ff59a6f76c13b02b08f44eac3c25502bba56bb6",
+      "content_hash": "1ab9643a7ce9c491afd84fc2e75df7c81fc396f0bed2f015a9bc30d4009f036c",
       "dossier_path": "07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md",
       "promoted_rules": [
@@ -29797,7 +29797,7 @@
         "learn-huggingface-hf-zai-org-glm-5-3-mv413j49",
         "learn-huggingface-hf-zai-org-glm-5-3-mv4f1uxu"
       ],
-      "verified_at": "2026-10-28T01:29:12.417Z",
+      "verified_at": "2026-10-28T18:42:06.969Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45640,8 +45640,8 @@
       "slug": "redisearch-redisearch",
       "platform": "github",
       "source_url": "https://github.com/RediSearch/RediSearch",
-      "source_version": "0505d348",
-      "content_hash": "db60f804f64cb48b3be2d2b5f334e9962a76a7ac7949ae0d31ca0bbcc53a101c",
+      "source_version": "58fba8cb",
+      "content_hash": "ae7f3750f7fa2f8c4d22ac38d74417d8732f15d71bdfe208330cb4f108c36ff6",
       "dossier_path": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "promoted_rules": [
@@ -45679,6 +45679,11 @@
           "number": 5131,
           "title": "Speed up copying aggregate index results (#12004)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5367,
+          "title": "[MOD-19190] ci: run the Rust tests under valgrind on pull requests (#11695)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45686,7 +45691,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T02:27:24.741Z",
+      "verified_at": "2026-10-28T18:42:00.434Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51506,8 +51511,8 @@
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "bf81a4c2",
-      "content_hash": "ee3e8e0c350383f2da3b4b9a7f6b863f5b32188503267f0ddac0bf1f3023c7b4",
+      "source_version": "59a75202",
+      "content_hash": "0ee572161c6c4dd82fbea7caabc95c044bd100a56923194e80c24f547ba528d1",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
@@ -51550,6 +51555,11 @@
           "number": 4980,
           "title": "V2 scheduler skipping pending jittered actions (#12745)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5366,
+          "title": "SignalWithStart hang on orphaned current-execution pointer (#11774)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51557,7 +51567,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T20:01:23.181Z",
+      "verified_at": "2026-10-28T18:41:56.780Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56373,8 +56383,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "b07103df",
-      "content_hash": "ff1e2614c0e17cc61847a1a8535877a20a6cfd1df4a272d928f281abf13afa34",
+      "source_version": "5c280571",
+      "content_hash": "2a59b0e1a1dd032596b49b84c738c2f0d5c805da26cd157cb4def6b56b8cf3ab",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -56437,6 +56447,11 @@
           "number": 5272,
           "title": "deps-dev): bump fast-uri in /tfhe/web_wasm_parallel_tests (#4115)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5368,
+          "title": "transciphering): generate otp masks in counter mode (#4105)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56444,7 +56459,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T11:52:44.238Z",
+      "verified_at": "2026-10-28T18:42:00.642Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -145535,6 +145550,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T18:34:45.957Z"
+    },
+    "rule-5366": {
+      "learning_id": "rule-5366",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5366,
+      "title": "SignalWithStart hang on orphaned current-execution pointer (#11774)",
+      "source_url": "https://github.com/temporalio/temporal",
+      "source_version": "59a75202",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T18:41:56.780Z"
+    },
+    "rule-5367": {
+      "learning_id": "rule-5367",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5367,
+      "title": "[MOD-19190] ci: run the Rust tests under valgrind on pull requests (#11695)",
+      "source_url": "https://github.com/RediSearch/RediSearch",
+      "source_version": "58fba8cb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T18:42:00.434Z"
+    },
+    "rule-5368": {
+      "learning_id": "rule-5368",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5368,
+      "title": "transciphering): generate otp masks in counter mode (#4105)",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "5c280571",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T18:42:00.642Z"
     }
   },
   "aliases": {

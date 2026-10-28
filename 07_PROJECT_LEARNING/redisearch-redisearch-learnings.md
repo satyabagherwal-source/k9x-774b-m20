@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source**: github ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
-> **Source Version**: `0505d348`  
+> **Source Version**: `58fba8cb`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T02:27:24.389Z  
+> **Timestamp**: 2026-10-28T18:41:59.903Z  
 > **Learning ID**: `learn-github-redisearch-redisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T02:27:24.067Z  
+> **Harvest Timestamp**: 2026-10-28T18:41:59.895Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A query and indexing engine for Redis, providing secondary indexing, full-text search, vector similarity search and aggregations.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6244 stars
+- **Stars / Engagement**: 6245 stars
 
 ---
 
@@ -1626,287 +1626,824 @@ void Priority_Queue_Free(PriorityQueue *pq) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0505d348` (2026-10-27)
-**Commit Message**: Speed up copying aggregate index results (#12004)
+### Incident Patch 1: `58fba8cb` (2026-10-28)
+**Commit Message**: [MOD-19190] ci: run the Rust tests under valgrind on pull requests (#11695)
 
-* top_k_bencher: Bench capturing child term records
+* ci: generalise the MIRI workflow into a standalone Rust test runner
 
-The existing top-k iterator benches use IdList children, whose virtual
-records carry no terms, so none measures the cost of capturing a child
-record holding term records. Add iterator/captured_terms, which runs the
-batches path over an intersection of term-yielding leaves, both when only
-the first k matches are captured and when every match is.
+Rename task-miri.yml to task-rust-standalone-tests.yml and select the
+tool through a `tool` input, so another tool that compiles the Rust
+tests itself can reuse the same container, cache and setup steps instead
+of duplicating them. MIRI is the only tool for now; its check names and
+cache key are unchanged.
 
-* index_result: Box aggregate children as they are copied
+* ci: run the Rust tests under valgrind on pull requests
 
-RSAggregateResult::to_owned built each child copy and boxed it in a
-separate map step. Box each copy in the closure that builds it instead:
-it makes capturing every match in the top-k iterator/captured_terms bench
-3% to 10% faster, about 3 to 5 ns per copied child.
+Valgrind catches uninitialised reads that only exist in optimised code,
+which the sanitizer, coverage and MIRI lanes all miss because they build
+with the dev profile or interpret MIR.
 
-**File**: `src/redisearch_rs/Cargo.lock` (modified, +4/-0)
+Add a valgrind tool to the standalone Rust test workflow, running
+`./build.sh RUN_RUST_VALGRIND`, and a rust-valgrind job, gated like
+MIRI, that feeds pr-validation. cargo-valgrind is installed with the
+other Rust test tools on x86_64 Linux; valgrind itself is installed by
+the job, since nothing else needs it in the image.
+
+**File**: `.github/actions/setup-build-env/action.yml` (modified, +1/-1)
 ```diff
-@@ -3339,9 +3339,13 @@ dependencies = [
-  "bindgen",
-  "build_utils",
-  "criterion",
-+ "index_result",
-+ "index_spec",
-  "rand 0.10.1",
-  "redis_mock",
-  "redisearch_rs",
-+ "rqe_core",
-+ "rqe_iterator_type",
-  "rqe_iterators",
-  "top_k",
-  "workspace_hack",
+@@ -1,7 +1,7 @@
+ name: Setup build environment
+ description: |
+   Post-checkout environment setup shared by the RediSearch CI task workflows
+-  (task-build, task-test, task-test-unit, task-test-flow, task-miri).
++  (task-build, task-test, task-test-unit, task-test-flow, task-rust-standalone-tests).
+ 
+   This action MUST run after `actions/checkout` (its own `uses:` references and
+   the local nested actions it calls only exist on disk once the repo is checked
 ```
 
-**File**: `src/redisearch_rs/index_result/src/aggregate.rs` (modified, +2/-4)
+**File**: `.github/workflows/event-pull_request.yml` (modified, +25/-1)
 ```diff
-@@ -235,8 +235,7 @@ impl<'a> RSBorrowedAggregateResult<'a> {
-         records.extend(
-             self.records
-                 .iter()
--                .map(|c| RSIndexResult::to_owned(c.get()))
--                .map(Box::new),
-+                .map(|c| Box::new(RSIndexResult::to_owned(c.get()))),
-         );
+@@ -149,13 +149,36 @@ jobs:
+       packages: write
+       id-token: write
+       actions: write
+-    uses: ./.github/workflows/task-miri.yml
++    uses: ./.github/workflows/task-rust-standalone-tests.yml
+     secrets: inherit
+     with:
++      tool: miri
+       platform: ubuntu:latest
+       architecture: x86_64
+       partition: count:${{ matrix.shard }}/3
  
-         RSOwnedAggregateResult {
-@@ -352,8 +351,7 @@ impl<'a> RSOwnedAggregateResult<'a> {
-         records.extend(
-             self.records
-                 .iter()
--                .map(|c| RSIndexResult::to_owned(c))
--                .map(Box::new),
-+                .map(|c| Box::new(RSIndexResult::to_owned(c))),
-         );
- 
-         RSOwnedAggregateResult {
++  # ------------------------------------------------------------------
++  # Rust tests under valgrind run independently too: `cargo valgrind test`
++  # compiles its own optimised test binaries, so there is no build artifact
++  # to reuse. Not sharded: build.sh's valgrind run has no partition support.
++  # ------------------------------------------------------------------
++
++  rust-valgrind:
++    needs: [check-what-changed, spellcheck]
++    # Same gate as MIRI: both only exercise the Rust workspace.
++    if: ${{ ((!github.event.pull_request.draft && needs.check-what-changed.outputs.CODE_CHANGED == 'true') || (!github.event.pull_request.draft && needs.check-what-changed.outputs.TESTS_CHANGED == 'true') || contains(github.event.pull_request.labels.*.name, 'enforce:sanitize')) && (contains(github.event.pull_request.labels.*.name, 'enforce:sanitize') || needs.check-what-changed.outputs.MIRI_RELEVANT == 'true') && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') }}
++    permissions:
++      contents: read
++      packages: write
++      id-token: write
++      actions: write
++    uses: ./.github/workflows/task-rust-standalone-tests.yml
++    secrets: inherit
++    with:
++      tool: valgrind
++      platform: ubuntu:latest
++      architecture: x86_64
++
+   pr-validation:
+     permissions: {} # aggregation gate: inspects needs.* only
+     needs:
+@@ -168,6 +191,7 @@ jobs:
+       - coverage
+       - sanitize
+       - miri
++      - rust-valgrind
+     runs-on: ubuntu-slim
+     if: ${{ !cancelled() }}
+     steps:
 ```
 
-**File**: `src/redisearch_rs/top_k_bencher/Cargo.toml` (modified, +4/-0)
+**File**: `.github/workflows/flow-pr-pipeline.yml` (modified, +1/-1)
 ```diff
-@@ -22,8 +22,12 @@ build_utils = { path = "../build_utils" }
+@@ -15,7 +15,7 @@ name: PR Pipeline (one job-type)
+ # only the first, so they start as soon as it lands.
+ #
+ # MIRI is NOT part of this pipeline. It's dispatched as its own top-level job
+-# (task-miri.yml) from event-pull_request.yml because it can't share the
++# (task-rust-standalone-tests.yml) from event-pull_request.yml because it can't share the
+ # nextest archive and would otherwise gate the other test jobs.
  
- [dependencies]
- criterion.workspace = true
-+index_result.workspace = true
-+index_spec.workspace = true
- rand.workspace = true
- redis_mock.workspace = true
-+rqe_core.workspace = true
-+rqe_iterator_type.workspace = true
- rqe_iterators = { workspace = true }
- top_k = { workspace = true, features = ["test-utils"] }
- workspace_hack.workspace = true
+ on:
 ```
 
-**File**: `src/redisearch_rs/top_k_bencher/benches/top_k.rs` (modified, +147/-1)
+**File**: `.github/workflows/task-rust-standalone-tests.yml` (renamed, +65/-18)
 ```diff
-@@ -20,8 +20,14 @@ use std::hint::black_box;
- use std::num::NonZeroUsize;
+@@ -1,15 +1,24 @@
+-name: Common Flow for MIRI
++name: Common Flow for standalone Rust test runs
  
- use criterion::{BatchSize, BenchmarkId, Criterion, criterion_group, criterion_main};
-+use index_result::{RSIndexResult, RSOffsetSlice, RSQueryTerm};
-+use index_spec::IndexSpecReadGuard;
- use rand::{SeedableRng as _, seq::SliceRandom as _};
--use rqe_iterators::RQEIterator;
-+use rqe_core::DocId;
-+use rqe_iterator_type::IteratorType;
-+use rqe_iterators::{
-+    IdList, Intersection, RQEIterator, RQEIteratorError, RQEValidateStatus, SkipToOutcome,
-+};
- use top_k::{Ascending, BatchStrategy, TopKHeap, TopKIterator, TopKMode, mock::MockScoreSource};
+ # Documentation: https://redislabs.atlassian.net/wiki/spaces/DX/pages/3967844669/RediSearch+CI+refactor
+ #
+-# Reusable workflow that runs the Rust workspace's tests under MIRI.
+-# MIRI compiles to MIR rather than native code, so the nextest-archive workflow
+-# doesn't apply — every run is a fresh cargo compile. Decoupled from the
+-# build/artifact pipeline entirely so it doesn't gate any other test job.
++# Reusable workflow that runs the Rust workspace's tests under a checking tool
++# that compiles the tests itself, so the nextest-archive workflow doesn't apply
++# — every run is a fresh cargo compile. Decoupled from the build/artifact
++# pipeline entirely so it doesn't gate any other test job.
++#
++# - miri: interprets the tests' MIR to catch undefined behavior.
++# - valgrind: runs the natively compiled tests, with build.sh's default
++#   `optimised_test` profile, to catch leaks and uninitialised reads that
++#   only exist in optimised code.
  
- // ── Heap benchmarks ───────────────────────────────────────────────────────────
-@@ -237,12 +243,152 @@ fn bench_adhoc_vs_batches(c: &mut Criterion) {
-     group.finish();
- }
+ on:
+   workflow_call:
+     inputs:
++      tool:
++        description: 'Tool to run the Rust tests under (miri, valgrind)'
++        type: string
++        required: true
+       platform:
+         description: 'Platform name (e.g., ubuntu:noble)'
+         type: string
+@@ -24,9 +33,9 @@ on:
+       fail-fast:
+         type: boolean
+         default: false
+-        description: "If true, the workflow will terminate as soon as the MIRI step fails."
++        description: "If true, the workflow will terminate as soon as the test step fails."
+       partition:
+-        description: 'Optional nextest partition for sharding, e.g. "count:1/3". Empty runs all tests.'
++        description: 'Optional nextest partition for sharding, e.g. "count:1/3". Empty runs all tests. miri only.'
+         type: string
+         default: ''
  
-+/// Child yielding, for each id of an [`IdList`], a term record owning its query
-+/// term, as an inverted index reader does.
-+struct TermLeaf<'index> {
-+    ids: IdList<'index, true>,
-+    result: RSIndexResult<'index>,
-+}
+@@ -73,7 +82,7 @@ jobs:
+ 
+   common-flow:
+     needs: [get-config, build-image]
+-    name: MIRI${{ inputs.partition && format(' [{0}]', inputs.partition) || '' }} on ${{ needs.get-config.outputs.name }}
++    name: ${{ inputs.tool == 'miri' && 'MIRI' || inputs.tool }}${{ inputs.partition && format(' [{0}]', inputs.partition) || '' }} on ${{ needs.get-config.outputs.name }}
+     if: |
+       !cancelled() &&
+       needs.get-config.result == 'success'
+@@ -104,6 +113,18 @@ jobs:
+       run:
+         shell: bash -l -eo pipefail {0}
+     steps:
++      # The test and failure steps are gated on exact `tool` values, so an
++      # unknown one would otherwise skip them all and report success.
++      - name: Check the tool input
++        shell: sh -eu {0}
++        env:
++          TOOL: ${{ inputs.tool }}
++        run: |
++          case "$TOOL" in
++            miri|valgrind) ;;
++            *) echo "::error::Unsupported tool: '$TOOL'"; exit 1 ;;
++          esac
 +
-+impl TermLeaf<'_> {
-+    const OFFSETS: &'static [u8] = &[1, 2, 3];
+       - name: Install bash
+         if: startsWith(needs.get-config.outputs.container, 'alpine:')
+         shell: sh -l -eo pipefail {0}
+@@ -139,10 +160,10 @@ jobs:
+           fi
+           echo "HOME=$h" >> "$GITHUB_ENV"
+ 
+-      # MIRI runs `make rust-tests` which goes through build.sh's full flow,
+-      # including the C build that produces libredisearch_all.a. Sccache keeps
+-      # the C compile fast across runs, and cargo-nextest (rust-test-deps) is
+-      # needed for `cargo miri nextest run`.
++      # Both tools go through build.sh's full flow, including the C build that
++      # produces libredisearch_all.a, so sccache keeps the C compile fast across
++      # runs. rust-test-deps provides cargo-nextest for `cargo miri nextest run`
++      # and cargo-valgrind for `cargo valgrind test`.
+       - name: Setup build environment
+         uses: ./.github/actions/setup-build-env
+         with:
+@@ -156,29 +177,39 @@ jobs:
+           sccache-s3-key-prefix: ${{ vars.SCCACHE_S3_KEY_PREFIX }}
+           install-script: 'true'
+           rust-cache: 'true'
+-          rust-cache-prefix-key: 'v2-rust-miri'
++          rust-cache-prefix-key: v2-rust-${{ inputs.tool }}
+           rust-cache-key: ${{ inputs.platform }}-${{ inputs.architecture }}
+           rust-test-deps: 'true'
+           github-token: ${{ github.token }}
+ 
++      # valgrind is not part of the shared container image, since no other job
++      # needs it. Installing it needs apt and root, which the ubuntu container
++      # provides.
++      - name: Install valgrind
++        if: inputs.tool == 'valgrind'
++        run: ${{ format(env.SETUP_RETRY_LOOP, 'apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq valgrind') }}
 +
-+    fn new(ids: Vec<DocId>, term: &str) -> Self {
-+        Self {
-+            ids: IdList::new(ids),
-+            result: RSIndexResult::build_term()
-+                .borrowed_record(
-+                    Some(RSQueryTerm::new(term, 1, 0)),
-+                    RSOffsetSlice::from_slice(Self::OFFSETS),
-+                )
-+                .build(),
-+        }
-+    }
-+}
-+
-+impl<'index> RQEIterator<'index> for TermLeaf<'index> {
-+    fn current(&mut self) -> Option<&mut RSIndexResult<'index>> {
-+        self.ids.current()?;
-+        Some(&mut self.result)
-+    }
-+
-+    fn read(&mut self) -> Result<Option<&mut RSIndexResult<'index>>, RQEIteratorError> {
-+        let Some(r) = self.ids.read()? else {
-+            return Ok(None);
-+        };
-+        self.result.doc_id = r.doc_id;
-+        Ok(Some(&mut self.result))
-+    }
-+
-+    fn skip_to(
-+        &mut self,
-+        doc_id: DocId,
-+    ) -> Result<Option<SkipToOutcome<'_, 'index>>, RQEIteratorError> {
-+        let Some(outcome) = self.ids.skip_to(doc_id)? else {
-+            return Ok(None);
-+        };
-+        let (found, doc_id) = match outcome {
-+            SkipToOutcome::Found(r) => (true, r.doc_id),
-+            SkipToOutcome::NotFound(r) => (false, r.doc_id),
-+        };
-+        self.result.doc_id = doc_id;
-+        Ok(Some(if found {
-+            SkipToOutcome::Found(&mut self.result)
-+        } else {
-+            SkipToOutcome::NotFound(&mut self.result)
-+        }))
-+    }
-+
-+    fn revalidate(
-+        &mut self,
-+        _: &IndexSpecReadGuard,
-+    ) -> Result<RQEValidateStatus<'_, 'index>, RQEIteratorError> {
-+        Ok(RQEValidateStatus::Ok)
-+    }
-+
-+    fn rewind(&mut self) {
-+        self.ids.rewind();
-+    }
-+
-+    fn num_estimated(&self) -> usize {
-+        self.ids.num_estimated()
-+    }
-+
-+    fn last_doc_id(&self) -> DocId {
-+        self.ids.last_doc_id()
-+    }
-+
-+    fn at_eof(&self) -> bool {
-+        self.ids.at_eof()
-+    }
-+
-+    fn type_(&self) -> IteratorType {
-+        IteratorType::Mock
-+    }
-+
-+    fn intersection_sort_weight(&self, _: bool) -> f64 {
-+        1.0
-+    }
-+}
-+
-+fn bench_captured_term_records(c: &mut Criterion) {
-+    // Batches with an untrimmed child yielding term records, as a filtered KNN
-+    // whose scorer or highlighter reads the child's terms: each match the heap
-+    // retains deep-copies the child's record, terms included.
-+    let mut group = c.benchmark_group("iterator/captured_terms");
-+    let n = 10_000usize;
-+    let k = NonZeroUsize::new(100).unwrap();
-+    // 50% overlap: batch docs are even numbers, child docs are every other even.
-+    let child_ids: Vec<u64> = (0..n as u64).step_by(2).map(|i| i * 2).collect();
-+    // Scores rising with the doc id fill the heap with the first `k` matches and
-+    // reject every later one before capturing it; falling scores make every
-+    // match outrank the heap's worst entry, so every match is captured.
-+    let ascending: Vec<(u64, f64)> = (0..n as u64).map(|i| (i * 2, i as f64)).collect();
-+    let descending: Vec<(u64, f64)> = (0..n as u64)
-+        .map(|i| (i * 2, (n as u64 - i) as f64))
-+        .collect();
-+    const TERMS: [&str; 3] = ["hello", "world", "again"];
-+
-+    for (captures, batch) in [("first_k", &ascending), ("every_match", &descending)] {
-+        for n_terms in [1usize, 2, 3] {
-+            group.bench_with_input(
-+                BenchmarkId::new(captures, format!("{n_terms}_terms")),
-+                &n_terms,
-+                |b, &n_terms| {
-+                    b.iter_batched(
-+                        || {
-+                            let source =
-+                                MockScoreSource::new(vec![batch.clone()], vec![], |_, _| {
-+                                    BatchStrategy::Continue
-+                                });
-+                            let leaves = TERMS[..n_terms]
-+                                .iter()
-+ 
+       - name: Set log artifact name
++        if: inputs.tool == 'miri'
+         # Artifact names can't contain : / etc. (platform is e.g. "ubuntu:latest")
+         # and must be unique per shard, or actions/upload-artifact errors on
+         # the second shard. Fold the partition (e.g. count:1/3) into the name and
+         # sanitise invalid characters.
+         id: log-artifact
+         env:
++          TOOL: ${{ inputs.to
+```
+
+**File**: `.install/test_deps/install_rust_deps.sh` (modified, +7/-0)
+```diff
+@@ -97,6 +97,13 @@ binstall cargo-llvm-cov@"$(cat "$REPO_ROOT/.cargo-llvm-cov-version")"
+ # we go straight to a source build with the host toolchain.
+ # Pin shared with .install/install_rust.sh (bootstrap) via .nextest-version.
+ binstall --no-host-prebuilt cargo-nextest@"$(cat "$REPO_ROOT/.nextest-version")"
++# Runs the Rust tests under valgrind (`build.sh RUN_RUST_VALGRIND`). Only on
++# x86_64 Linux: it is the one platform CI runs it on, and other Linux
++# architectures have no prebuilt release, so they would compile it from source
++# for nothing.
++if [[ "$OS_TYPE" = "Linux" ]] && [[ "$processor" = "x86_64" ]]; then
++    binstall cargo-valgrind@2.4.1
++fi
+ # Tool to aggressively unify the feature sets of our dependencies,
+ # thus improving the cacheability of our builds
+ # See https://docs.rs/cargo-hakari/latest/cargo_hakari/about/
+```
+
+**File**: `.skills/open-pr/SKILL.md` (modified, +5/-5)
+```diff
+@@ -37,8 +37,8 @@ RediSearch.
+    - Under Git: push the branch with `git push -u origin <branch>`.
+ 7. Open the PR with `gh`, **not as a draft**. Two things only happen on a
+    ready-for-review PR, and both are wanted early: the Codex bot reviews it, and the
+-   `coverage`, `sanitize` and `miri` jobs run (they are gated on `!draft` in
+-   `event-pull_request.yml`). A draft buys nothing in exchange.
++   `coverage`, `sanitize`, `miri` and `rust-valgrind` jobs run (they are gated on
++   `!draft` in `event-pull_request.yml`). A draft buys nothing in exchange.
+ 
+    The cost is that a human may review before you have finished iterating, which ends the
+    window in which history can be rewritten — see
+@@ -137,7 +137,7 @@ RediSearch.
+       fi
+       if jq -e 'all(.bucket=="pass" or .bucket=="skipping")' <<<"$s" >/dev/null; then
+         if [ "$draft" = "true" ]; then
+-          echo "DRAFT RUN GREEN — coverage/sanitize/miri are gated on non-draft and"
++          echo "DRAFT RUN GREEN — coverage/sanitize/miri/rust-valgrind are gated on non-draft and"
+           echo "have NOT run yet. Re-check after marking the PR ready."
+           exit 0
+         fi
+@@ -161,8 +161,8 @@ RediSearch.
+       failures.
+     - **`skipping` is two different things.** A job skipped because
+       `check-what-changed` found nothing relevant has legitimately passed. A job skipped
+-      because the PR is a draft has *not run yet* — `coverage`, `sanitize` and `miri` are
+-      gated on `!draft` in `event-pull_request.yml` and only fire on `ready_for_review`.
++      because the PR is a draft has *not run yet* — `coverage`, `sanitize`, `miri` and
++      `rust-valgrind` are gated on `!draft` in `event-pull_request.yml` and only fire on `ready_for_review`.
+       Both land in the same bucket, so a draft run that is "all pass or skipping" proves
+       much less than it appears to. Step 7 avoids drafts precisely for this reason; the
+       draft branch in the snippet is a safety net for a PR that was opened as one anyway.
 ```
 
 ---
 
-### Incident Patch 2: `be488761` (2026-10-27)
-**Commit Message**: check-rust-coverage: report partially covered branches like CI (#12013)
+### Incident Patch 2: `c0c5f4ad` (2026-10-28)
+**Commit Message**: [MOD-17392] [Iterator Revalidation] Intersection: suspend/resume (#10897)
 
-**File**: `.skills/check-rust-coverage/SKILL.md` (modified, +28/-3)
+* [MOD-17392] move the composite resume helpers out of union.rs into composite.rs
+
+* [MOD-17392] implement RQEIteratorBoxed + RQESuspendedIterator for Intersection
+
+**File**: `src/redisearch_rs/rqe_iterators/.skills/rqe-iterator-suspend-resume/SKILL.md` (modified, +16/-5)
 ```diff
-@@ -19,14 +19,39 @@ If a path points to a directory, consider all Rust crates in that directory.
- Run
- 
- ```bash
--cargo llvm-cov test --manifest-path <crate_directory>/Cargo.toml --quiet --json 2>/dev/null | jq -r '"Uncovered Lines:",
-+NEXTEST_PROFILE=coverage cargo +$(cat .rust-nightly) llvm-cov nextest --manifest-path <crate_directory>/Cargo.toml --branch --json 2>/dev/null | jq -r '"Uncovered Lines:",
- (.data[0].files[] |
--  select(.summary.lines.percent < 100) |
-   .filename as $f |
-   [.segments[] | select(.[2] == 0 and .[4] == true) | .[0]] |
-   unique |
-   if length > 0 then "\($f): \(join(", "))" else empty end
-+),
-+"Partially Covered Branches (line: true/false):",
-+(.data[0].files[] |
-+  .filename as $f |
-+  [.branches | group_by(.[0:4])[] |
-+    {line: .[0][0], t: (map(.[4]) | add), f: (map(.[5]) | add)} |
-+    select(.t == 0 or .f == 0) | "\(.line): \(.t)/\(.f)"] |
-+  unique |
-+  if length > 0 then "\($f): \(join(", "))" else empty end
- )'
- ```
- 
--to get the list of uncovered lines for each file in the target crate.
-+from the repository root to get, for each file in the target crate, the lines no test
-+executes and the conditions no test drives both ways.
+@@ -457,15 +457,26 @@ teardown. Any bespoke in-place transition code must reproduce this.
+ - `union_flat.rs` and `union_heap.rs` — worked examples of a **many-child**
+   composite: the walk over every child slot, compaction over aborted ones, and
+   a settle step shared with the legacy `revalidate` so the two paths cannot
+-  drift. Both use the helpers in `union.rs`: a `FreeSuspendedShell` RAII guard
+-  owning the half-transitioned buffer (the region boundaries live in the
+-  guard, so the teardown reads them rather than being handed indices), and a
+-  `rebuild_borrowed_entries` that recomputes the contributor set instead of
+-  matching entries by address, in an order each union picks. Flat offers its
++  drift. Both use the composite helpers in `composite.rs`: a
++  `FreeSuspendedShell` RAII guard owning the half-transitioned buffer (the
++  region boundaries live in the guard, so the teardown reads them rather than
++  being handed indices), and a `repush_borrowed_entries` that recomputes the
++  contributor set instead of matching entries by address, in an order each
++  caller picks; `union.rs`'s `rebuild_borrowed_entries` wraps it with the
++  union's verdict (one contributor is enough). Flat offers its
+   children in slot order, which is how its read path picks them; the heap's
+   read path picks from the heap instead, so it offers the heap's contributors
+   first and, in `QUICK_EXIT` mode, finds the backer it reported by address
+   (`previous_backer`) — the one place an address is compared, never
+   dereferenced.
++- `intersection.rs` — a many-child composite whose aggregate needs **every**
++  child to agree: it walks every slot through the same `composite.rs` helpers
++  but never compacts (any child abort aborts the intersection), offers its
++  children in slot order because its entries are positional, and settles the
++  walk into a `#[must_use]` `SettleVerdict` through `settle_after_walk`, which
++  `revalidate` calls too, so the two paths share one decision. Its substitute
++  check therefore runs *after* the walk rather than on `&self`, so a child's
++  error wins over it, and a spent, unread or ending intersection swaps a
++  substitute for an empty intersection instead of aborting.
+ - `numeric.rs`, `term.rs` — newtype-over-inner leaves that cite the inner's
+   invariant.
+```
+
+**File**: `src/redisearch_rs/rqe_iterators/src/composite.rs` (added, +351/-0)
+```diff
+@@ -0,0 +1,351 @@
++/*
++ * Copyright (c) 2006-Present, Redis Ltd.
++ * All rights reserved.
++ *
++ * Licensed under your choice of the Redis Source Available License 2.0
++ * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
++ * GNU Affero General Public License v3 (AGPLv3).
++*/
 +
-+This mirrors the CI coverage job, which Codecov reports from:
-+- `--branch` is what catches a condition that runs but never takes one of its outcomes,
-+  such as one operand of an `&&` chain that is never false. Without it such a line counts
-+  as covered.
-+- `--branch` needs nightly, and only the pinned `.rust-nightly` is known to work: an
-+  unpinned `+nightly` can silently produce a report with every line at zero.
-+- `NEXTEST_PROFILE=coverage` gives tests the longer timeouts that branch instrumentation
-+  needs; under the default profile slow tests are killed and no report is written.
-+- Generic code yields one branch entry per instantiation, so the query sums them per
-+  condition before deciding it is partially covered.
++//! Machinery shared by the `Box<Self>` [`resume`](crate::RQESuspendedIterator::resume)
++//! of composite iterators — the unions and the intersection — which transition
++//! a `Vec` of children in place and re-narrow an aggregate that borrows from
++//! them.
 +
-+Ignore lines that exist only to reject states the code rules out, as no test can reach
-+them: `unreachable!`, `unreachable_unchecked`, `debug_assert!` and its variants, and a
-+`panic!` or `expect` guarding an invariant. A condition inside a `debug_assert!` that never
-+fails shows as partially covered for the same reason.
++use std::marker::PhantomData;
++
++use index_result::{RSIndexResult, RawBorrowedAggregateResult};
++use ref_mode::Suspended;
++use rqe_core::{DocId, FieldMask};
++
++use crate::RQEIterator;
++
++/// RAII guard owning a suspended composite's shell while its children buffer
++/// is part-resumed and part-suspended.
++///
++/// The buffer is three regions during [`resume`](crate::RQESuspendedIterator::resume),
++/// and the guard's fields *are* their boundaries: [`kept`](Self::kept) resumed
++/// survivors compacted to the front, vacated slots up to
++/// [`cursor`](Self::cursor) — moved left by the compaction, or consumed by a
++/// child that aborted or failed — and still-suspended children from there to
++/// [`len`](Self::len). [`resume`](crate::RQESuspendedIterator::resume) advances the
++/// boundaries as it walks, through [`vacate_next`](Self::vacate_next) and
++/// [`keep_last_vacated`](Self::keep_last_vacated), so the drop reads the state
++/// that actually holds rather than being handed indices that have to agree
++/// with it. The fields are private because they decide what the drop frees: a
++/// stray write to one would be a double drop, or a drop at the wrong type.
++///
++/// On drop — an early return or a panic — it drops the prefix as `Resumed`,
++/// drops the suspended tail as `Elem`, leaves the vacated middle alone, empties
++/// the `Vec` so it frees only its buffer, and drops the shell, which frees
++/// whatever else the shell owns along with the allocation.
++/// [`disarm`](Self::disarm) it once the buffer is whole again and the cast is
++/// about to run.
++///
++/// `Shell` is the suspended composite, `Elem` the element type its children
++/// `Vec` is declared with, and `Resumed` the type a resumed survivor is dropped
++/// at.
++pub(crate) struct FreeSuspendedShell<Shell, Elem, Resumed> {
++    /// The shell, still owned here. Came from `Box::into_raw`.
++    raw: *mut Shell,
++    /// The shell's children `Vec`, projected from [`raw`](Self::raw).
++    children: *mut Vec<Elem>,
++    /// `children[..kept]` hold resumed survivors.
++    kept: usize,
++    /// `children[kept..cursor]` are vacated and must not be dropped.
++    cursor: usize,
++    /// `children[cursor..len]` still hold suspended children.
++    len: usize,
++    /// The type the prefix must be dropped at. Never materialised, so it adds
++    /// no drop glue of its own.
++    _resumed: PhantomData<fn() -> Resumed>,
++}
++
++impl<Shell, Elem, Resumed> FreeSuspendedShell<Shell, Elem, Resumed> {
++    /// Takes ownership of `raw`, with every child still suspended.
++    ///
++    /// `Resumed` must share `Elem`'s size and alignment, which is checked at
++    /// compile time.
++    ///
++    /// # Safety
++    ///
++    /// 1. `raw` came from [`Box::into_raw`], and ownership of it passes to the
++    ///    guard: until [`disarm`](Self::disarm), nothing else frees it, nothing
++    ///    reaches the children `Vec` except through the guard's boundaries, and
++    ///    no reference into `*raw` is used once the guard has dropped. The
++    ///    shell's other fields may still be accessed through `raw` meanwhile.
++    /// 2. `children` points to the children `Vec` field inside `*raw`.
++    /// 3. Once that `Vec` is emptied, dropping `*raw` as a `Shell` is sound.
++    pub(crate) unsafe fn new(raw: *mut Shell, children: *mut Vec<Elem>) -> Self {
++        const {
++            assert!(size_of::<Resumed>() == size_of::<Elem>());
++            assert!(align_of::<Resumed>() == align_of::<Elem>());
++        }
++        debug_assert!(!raw.is_null(), "the shell must come from a live box");
++        debug_assert!(
++            {
++                let start = raw.addr();
++                let end = start + size_of::<Shell>();
++                (start..end).contains(&children.addr())
++                    && children.addr() + size_of::<Vec<Elem>>() <= end
++            },
++            "`children` must be a field of the shell",
++        );
++        // SAFETY: `children` points into the live, exclusively owned `*raw`
++        // (preconditions 1 and 2).
++        let len = unsafe { (*children).len() };
++        Self {
++            raw,
++            children,
++            kept: 0,
++            cursor: 0,
++            len,
++            _resumed: PhantomData,
++        }
++    }
++
++    /// The number of resumed survivors compacted to the front of the buffer.
++    pub(crate) const fn kept(&self) -> usize {
++        self.kept
++    }
++
++    /// Hands the ne
+```
+
+**File**: `src/redisearch_rs/rqe_iterators/src/intersection.rs` (modified, +397/-81)
+```diff
+@@ -14,21 +14,22 @@
+ //! - `in_order`: Require terms to appear in order
+ 
+ use crate::{
+-    IteratorType, RQEIterator, RQEIteratorError, RQEValidateStatus, SkipToOutcome,
++    IteratorType, RQEIterator, RQEIteratorBoxed, RQEIteratorError, RQESuspendedIterator,
++    RQEValidateStatus, ResumeOutcome, SkipToOutcome,
++    boxed::{ResumeSlotOutcome, resume_child_slot_in_place, suspend_child_slot_in_place},
++    composite::{FreeSuspendedShell, repush_borrowed_entries},
+     profile_print::{ProfilePrint, ProfilePrintCtx},
+ };
+ 
+ use index_result::{RSIndexResult, RSResultKind, RawIndexResult};
+ use index_spec::IndexSpecReadGuard;
+-use ref_mode::{Active, Ref};
++use ref_mode::{Active, Ref, Suspended};
+ use rqe_core::DocId;
+ 
+ /// Yields documents appearing in ALL child iterators using a merge (AND) algorithm.
+ ///
+ /// Parameterised over a [`Ref`] mode — see [`Intersection`] for the
+-/// [`Active`] instantiation that implements [`RQEIterator`]. `Vec<I>`'s
+-/// representation is independent of `Rf`, so this struct is transmute-
+-/// compatible across `Active`/`Suspended` instantiations provided `I` is.
++/// [`Active`] instantiation that implements [`RQEIterator`].
+ ///
+ /// Children are sorted by estimated result count (smallest first) to minimize iterations,
+ /// unless `in_order` is set (which preserves the original child order for positional checks).
+@@ -38,6 +39,16 @@ use rqe_core::DocId;
+ /// - `max_slop`: Maximum allowed slop (distance) between term positions. `None` disables proximity
+ ///   validation entirely.
+ /// - `in_order`: When `true`, terms must appear in the same order as the child iterators.
++///
++/// # Invariants
++///
++/// 1. **Layout compatibility across the child swap.** `RawIntersection` is
++///    `#[repr(C)]` over a `Vec` of children and a [`RawIndexResult`], so
++///    `RawIntersection<Active, I>` and `RawIntersection<Suspended, I::Suspended>`
++///    are layout-identical given that each child `I` and its `I::Suspended` are.
++///    This is what lets [`suspend`](RQEIteratorBoxed::suspend) /
++///    [`resume`](RQESuspendedIterator::resume) reuse the intersection's
++///    allocation and its children buffer across the cycle.
+ #[repr(C)]
+ pub struct RawIntersection<'query, Rf: Ref, I> {
+     /// Child iterators, sorted by estimated count (smallest first) unless `in_order` is set.
+@@ -59,23 +70,61 @@ pub struct RawIntersection<'query, Rf: Ref, I> {
+ /// with an [`RQEIterator`] impl today.
+ pub type Intersection<'index, I> = RawIntersection<'index, Active<'index>, I>;
+ 
+-impl<Rf: Ref, I> RawIntersection<'_, Rf, I> {
+-    /// Whether [`result`](Self::result) is a borrowed intersection aggregate,
+-    /// the only representation
+-    /// [`build_aggregate_result`](Self::build_aggregate_result) can rebuild in
+-    /// place.
+-    ///
+-    /// [`current`](RQEIterator::current) hands the result out mutably, so a
+-    /// consumer may have replaced it: another kind has no child entries to
+-    /// rebuild, and an owned aggregate cannot take borrowed ones. A borrowed
+-    /// intersection put there passes, and is rebuilt with its own weight.
+-    fn result_is_borrowed_intersection(&self) -> bool {
+-        self.result.kind() == RSResultKind::Intersection
+-            && self
+-                .result
+-                .as_aggregate()
+-                .is_some_and(|aggregate| aggregate.as_borrowed().is_some())
+-    }
++// Compile-time proof of invariant 1 on `RawIntersection`: for a representative
++// concrete child, the `Active` and `Suspended` instantiations are
++// layout-identical. The child elements' own compatibility is their invariant 1
++// (enforced generically by the slot helpers); `result` is layout-compatible
++// across `Rf` (proven in `index_result`); the remaining fields are `Rf`-free.
++const _: () = {
++    use crate::Wildcard;
++    use std::mem::{align_of, offset_of, size_of};
++    type AChild = Wildcard<'static>;
++    type SChild = <Wildcard<'static> as RQEIteratorBoxed<'static>>::Suspended;
++    type A = RawIntersection<'static, Active<'static>, AChild>;
++    type S = RawIntersection<'static, Suspended, SChild>;
++    assert!(offset_of!(A, children) == offset_of!(S, children));
++    assert!(offset_of!(A, last_doc_id) == offset_of!(S, last_doc_id));
++    assert!(offset_of!(A, num_expected) == offset_of!(S, num_expected));
++    assert!(offset_of!(A, is_eof) == offset_of!(S, is_eof));
++    assert!(offset_of!(A, max_slop) == offset_of!(S, max_slop));
++    assert!(offset_of!(A, in_order) == offset_of!(S, in_order));
++    assert!(offset_of!(A, result) == offset_of!(S, result));
++    assert!(size_of::<A>() == size_of::<S>());
++    assert!(align_of::<A>() == align_of::<S>());
++};
++
++/// Whether an intersection is unread or rewound, so its result holds no
++/// document. Children positioned by a failed first read count as read.
++fn is_unread<'a, Rf: Ref, R>(
++    last_doc_id: DocId,
++    result: &RawIndexResult<'_, Rf>,
++    children: &[R],
++) -> bool
++where
++    R: RQEIterator<'a>,
++{
++    last_doc_id 
+```
+
+**File**: `src/redisearch_rs/rqe_iterators/src/lib.rs` (modified, +1/-0)
+```diff
+@@ -34,6 +34,7 @@ use query_term::RSQueryTerm;
+ 
+ pub mod boxed;
+ pub mod c2rust;
++mod composite;
+ pub mod config;
+ pub mod deferred;
+ pub mod empty;
+```
+
+**File**: `src/redisearch_rs/rqe_iterators/src/union.rs` (modified, +6/-307)
+```diff
+@@ -18,15 +18,13 @@
+ //! - If `true`, returns after finding the first matching child without aggregating.
+ //! - If `false`, collects results from all children with the same document.
+ 
+-use std::marker::PhantomData;
+-
+ use index_result::{
+     MetricsVec, RSIndexResult, RSResultKind, RawBorrowedAggregateResult, RawIndexResult,
+ };
+ use ref_mode::{Ref, Suspended};
+ use rqe_core::{DocId, FieldMask};
+ 
+-use crate::{RQEIterator, RQEValidateStatus, ResumeOutcome};
++use crate::{RQEIterator, RQEValidateStatus, ResumeOutcome, composite::repush_borrowed_entries};
+ 
+ pub use crate::union_flat::UnionFlat;
+ pub use crate::union_heap::UnionHeap;
+@@ -128,205 +126,6 @@ pub(crate) fn restore_gathered_metrics<'index, const QUICK_EXIT: bool>(
+     result.metrics = gathered;
+ }
+ 
+-/// RAII guard owning a suspended union's shell while its children buffer is
+-/// part-resumed and part-suspended.
+-///
+-/// The buffer is three regions during [`resume`](crate::RQESuspendedIterator::resume),
+-/// and the guard's fields *are* their boundaries: [`kept`](Self::kept) resumed
+-/// survivors compacted to the front, vacated slots up to
+-/// [`cursor`](Self::cursor) — moved left by the compaction, or consumed by a
+-/// child that aborted or failed — and still-suspended children from there to
+-/// [`len`](Self::len). [`resume`](crate::RQESuspendedIterator::resume) advances the
+-/// boundaries as it walks, through [`vacate_next`](Self::vacate_next) and
+-/// [`keep_last_vacated`](Self::keep_last_vacated), so the drop reads the state
+-/// that actually holds rather than being handed indices that have to agree
+-/// with it. The fields are private because they decide what the drop frees: a
+-/// stray write to one would be a double drop, or a drop at the wrong type.
+-///
+-/// On drop — an early return or a panic — it drops the prefix as `Resumed`,
+-/// drops the suspended tail as `Elem`, leaves the vacated middle alone, empties
+-/// the `Vec` so it frees only its buffer, and drops the shell, which frees
+-/// whatever else the shell owns along with the allocation.
+-/// [`disarm`](Self::disarm) it once the buffer is whole again and the cast is
+-/// about to run.
+-///
+-/// `Shell` is the suspended union, `Elem` the element type its children `Vec`
+-/// is declared with, and `Resumed` the type a resumed survivor is dropped at.
+-pub(crate) struct FreeSuspendedShell<Shell, Elem, Resumed> {
+-    /// The shell, still owned here. Came from `Box::into_raw`.
+-    raw: *mut Shell,
+-    /// The shell's children `Vec`, projected from [`raw`](Self::raw).
+-    children: *mut Vec<Elem>,
+-    /// `children[..kept]` hold resumed survivors.
+-    kept: usize,
+-    /// `children[kept..cursor]` are vacated and must not be dropped.
+-    cursor: usize,
+-    /// `children[cursor..len]` still hold suspended children.
+-    len: usize,
+-    /// The type the prefix must be dropped at. Never materialised, so it adds
+-    /// no drop glue of its own.
+-    _resumed: PhantomData<fn() -> Resumed>,
+-}
+-
+-impl<Shell, Elem, Resumed> FreeSuspendedShell<Shell, Elem, Resumed> {
+-    /// Takes ownership of `raw`, with every child still suspended.
+-    ///
+-    /// `Resumed` must share `Elem`'s size and alignment, which is checked at
+-    /// compile time.
+-    ///
+-    /// # Safety
+-    ///
+-    /// 1. `raw` came from [`Box::into_raw`], and ownership of it passes to the
+-    ///    guard: nothing else frees it, and nothing reaches it except through
+-    ///    the guard's boundaries until [`disarm`](Self::disarm).
+-    /// 2. `children` points to the children `Vec` field inside `*raw`.
+-    /// 3. Once that `Vec` is emptied, dropping `*raw` as a `Shell` is sound.
+-    pub(crate) unsafe fn new(raw: *mut Shell, children: *mut Vec<Elem>) -> Self {
+-        const {
+-            assert!(size_of::<Resumed>() == size_of::<Elem>());
+-            assert!(align_of::<Resumed>() == align_of::<Elem>());
+-        }
+-        debug_assert!(!raw.is_null(), "the shell must come from a live box");
+-        debug_assert!(
+-            {
+-                let start = raw.addr();
+-                let end = start + size_of::<Shell>();
+-                (start..end).contains(&children.addr())
+-                    && children.addr() + size_of::<Vec<Elem>>() <= end
+-            },
+-            "`children` must be a field of the shell",
+-        );
+-        // SAFETY: `children` points into the live, exclusively owned `*raw`
+-        // (preconditions 1 and 2).
+-        let len = unsafe { (*children).len() };
+-        Self {
+-            raw,
+-            children,
+-            kept: 0,
+-            cursor: 0,
+-            len,
+-            _resumed: PhantomData,
+-        }
+-    }
+-
+-    /// The number of resumed survivors compacted to the front of the buffer.
+-    pub(crate) const fn kept(&self) -> usize {
+-        self.kept
+-    }
+-
+-    /// Hands the next still-suspended slot to the caller, and returns its index.
+-    ///
+-    /// The slot counts as vacated from here on, so the drop leaves it alone:
+-    /// call
+```
+
+**File**: `src/redisearch_rs/rqe_iterators/src/union_flat.rs` (modified, +3/-2)
+```diff
+@@ -13,9 +13,10 @@ use index_result::{RSIndexResult, RawIndexResult};
+ use ref_mode::{Active, Ref, Suspended};
+ use rqe_core::DocId;
+ 
++use crate::composite::FreeSuspendedShell;
+ use crate::union::{
+-    FreeSuspendedShell, RebuildOutcome, SettleOutcome, rebuild_borrowed_entries,
+-    restore_gathered_metrics, result_is_borrowed_union,
++    RebuildOutcome, SettleOutcome, rebuild_borrowed_entries, restore_gathered_metrics,
++    result_is_borrowed_union,
+ };
+ use crate::{
+     IteratorType, RQEIterator, RQEIteratorBoxed, RQEIteratorError, RQESuspendedIterator,
+```
+
+**File**: `src/redisearch_rs/rqe_iterators/src/union_heap.rs` (modified, +3/-2)
+```diff
+@@ -13,9 +13,10 @@ use index_result::{RSIndexResult, RawBorrowedAggregateResult, RawIndexResult};
+ use ref_mode::{Active, Ref, Suspended};
+ use rqe_core::DocId;
+ 
++use crate::composite::FreeSuspendedShell;
+ use crate::union::{
+-    FreeSuspendedShell, RebuildOutcome, SettleOutcome, rebuild_borrowed_entries,
+-    restore_gathered_metrics, result_is_borrowed_union,
++    RebuildOutcome, SettleOutcome, rebuild_borrowed_entries, restore_gathered_metrics,
++    result_is_borrowed_union,
+ };
+ use crate::utils::{DocIdMinHeap, HeapEntry};
+ use crate::{
+```
+
+**File**: `src/redisearch_rs/rqe_iterators/tests/integration/intersection.rs` (modified, +1396/-0)
+```diff
+@@ -1492,6 +1492,1402 @@ fn revalidate_at_eof_ignores_a_substituted_result() {
+     assert!(matches!(status, RQEValidateStatus::Ok), "got {status:?}");
+ }
+ 
++mod via_resume {
++    use super::*;
++    use rqe_iterators::{ResumeOutcome, TypeErasedRQEIterator};
++    use rqe_iterators_test_utils::{ResumeOutcomeExt, revalidate_via_resume};
++
++    fn boxed_children<'spec, const N0: usize, const N1: usize, const N2: usize>(
++        c0: Mock<'spec, N0>,
++        c1: Mock<'spec, N1>,
++        c2: Mock<'spec, N2>,
++    ) -> Vec<TypeErasedRQEIterator<'spec>> {
++        vec![
++            TypeErasedRQEIterator::new(Box::new(c0)),
++            TypeErasedRQEIterator::new(Box::new(c1)),
++            TypeErasedRQEIterator::new(Box::new(c2)),
++        ]
++    }
++
++    #[test]
++    fn revalidate_ok() {
++        let mock_ctx = rqe_iterators_test_utils::MockContext::new(0, 0);
++        let child0: Mock<'_, 10> = Mock::new([10, 15, 20, 25, 30, 35, 40, 45, 50, 55]);
++        let child1: Mock<'_, 11> = Mock::new([5, 10, 18, 20, 28, 30, 38, 40, 48, 50, 60]);
++        let child2: Mock<'_, 11> = Mock::new([2, 10, 12, 20, 22, 30, 32, 40, 42, 50, 70]);
++        child0
++            .data()
++            .set_revalidate_result(MockRevalidateResult::Ok);
++        child1
++            .data()
++            .set_revalidate_result(MockRevalidateResult::Ok);
++        child2
++            .data()
++            .set_revalidate_result(MockRevalidateResult::Ok);
++
++        let children = boxed_children(child0, child1, child2);
++        let mut ii = Intersection::new(children, 1.0, false);
++
++        let result = ii.read().expect("read").unwrap();
++        assert_eq!(result.doc_id, 10);
++        let result = ii.read().expect("read").unwrap();
++        assert_eq!(result.doc_id, 20);
++
++        let guard = mock_ctx.spec_read();
++        let mut ii = revalidate_via_resume(TypeErasedRQEIterator::new(Box::new(ii)), &guard)
++            .expect("resume failed")
++            .expect_ok();
++
++        let result = ii.read().expect("read").unwrap();
++        assert_eq!(result.doc_id, 30);
++    }
++
++    /// An aborting child at each index, so the shell guard's teardown sees an
++    /// empty resumed prefix, an empty suspended suffix, and both non-empty. Under
++    /// miri, the mocks' shared state makes a missed or doubled drop visible.
++    #[test]
++    fn revalidate_aborted() {
++        for aborting in 0..3 {
++            let mock_ctx = rqe_iterators_test_utils::MockContext::new(0, 0);
++            let child0: Mock<'_, 10> = Mock::new([10, 15, 20, 25, 30, 35, 40, 45, 50, 55]);
++            let child1: Mock<'_, 11> = Mock::new([5, 10, 18, 20, 28, 30, 38, 40, 48, 50, 60]);
++            let child2: Mock<'_, 11> = Mock::new([2, 10, 12, 20, 22, 30, 32, 40, 42, 50, 70]);
++            for (i, data) in [child0.data(), child1.data(), child2.data()]
++                .iter_mut()
++                .enumerate()
++            {
++                data.set_revalidate_result(if i == aborting {
++                    MockRevalidateResult::Abort
++                } else {
++                    MockRevalidateResult::Ok
++                });
++            }
++
++            let children = boxed_children(child0, child1, child2);
++            let mut ii = Intersection::new(children, 1.0, false);
++
++            let result = ii.read().expect("read").unwrap();
++            assert_eq!(result.doc_id, 10);
++
++            let guard = mock_ctx.spec_read();
++            let outcome = revalidate_via_resume(TypeErasedRQEIterator::new(Box::new(ii)), &guard)
++                .expect("resume failed");
++            assert!(
++                matches!(outcome, ResumeOutcome::Aborted),
++                "child {aborting} aborting must abort the intersection",
++            );
++        }
++    }
++
++    /// On the no-move path the aggregate is published without a re-seek, so every
++    /// entry must still reach its child. Entries are dereferenced before any
++    /// `read()`, which would rebuild them; under miri this also checks their
++    /// provenance.
++    #[test]
++    fn resume_ok_leaves_the_aggregate_pointing_at_live_children() {
++        let mock_ctx = rqe_iterators_test_utils::MockContext::new(0, 0);
++        let child0: Mock<'_, 10> = Mock::new([10, 15, 20, 25, 30, 35, 40, 45, 50, 55]);
++        let child1: Mock<'_, 11> = Mock::new([5, 10, 18, 20, 28, 30, 38, 40, 48, 50, 60]);
++        let child2: Mock<'_, 11> = Mock::new([2, 10, 12, 20, 22, 30, 32, 40, 42, 50, 70]);
++        // Nothing moves, so `resume` carries the aggregate across untouched —
++        // the case its liveness obligation rests on entirely.
++        for data in [child0.data(), child1.data(), child2.data()].iter_mut() {
++            data.set_revalidate_result(MockRevalidateResult::Ok);
++        }
++
++        let children = boxed_children(child0, child1, child2);
++        let mut ii = Intersection::new(children, 1.0, false);
++        let result = ii.read().expect("read").unwrap();
++        assert_eq!(result.doc_id, 10);
++
++        let guard =
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #12014** (2026-10-28): [MOD-19327] Use a cheaper vector generator in the vector-update benchmark and add a large-docs variant (@nonirosenfeldredis)
 - **PR #12013** (2026-10-27): check-rust-coverage: report partially covered branches like CI (@gdesmott)
 - **PR #12012** (2026-10-27): sorting_vector: avoid a valgrind false positive in legacy_rdb test (@gdesmott)
 - **PR #12011** (2026-10-27): Bump cargo-nextest to 0.9.150 for GHSA-vc25-qg58-w57c (@gdesmott)
 - **PR #12007** (2026-10-26): [8.12] Upgrade boto3 in the release set-artifacts job (@oshadmi)
 - **PR #12006** (closed): Bump version from 8.11.90 to 8.11.91 (@github-actions[bot])
-- **PR #12004** (2026-10-27): Speed up copying aggregate index results (@gdesmott)
 
 ---
 
@@ -1926,31 +2463,28 @@ it makes capturing every match in the top-k iterator/captured_terms bench
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Speed up copying aggregate index results (#12004)
+## X. [MOD-19190] ci: run the Rust tests under valgrind on pull requests (#11695)
 
 **RULE**:
-When implementing operations in `src/redisearch_rs/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actions/setup-build-env/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0505d348`: Speed up copying aggregate index results (#12004). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `58fba8cb`: [MOD-19190] ci: run the Rust tests under valgrind on pull requests (#11695). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/redisearch_rs/Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/setup-build-env/action.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "index_result",
- "index_spec",
- "rqe_core",
- "rqe_iterator_type",
+  (task-build, task-test, task-test-unit, task-test-flow, task-rust-standalone-tests).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  (task-build, task-test, task-test-unit, task-test-flow, task-miri).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0505d348` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `58fba8cb` are properly handled with clean fallback behavior.

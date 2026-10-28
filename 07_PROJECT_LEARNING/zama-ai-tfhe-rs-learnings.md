@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `b07103df`  
+> **Source Version**: `5c280571`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T11:52:44.014Z  
+> **Timestamp**: 2026-10-28T18:42:00.118Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T11:52:43.451Z  
+> **Harvest Timestamp**: 2026-10-28T18:42:00.110Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1927,492 +1927,451 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b07103df` (2026-10-28)
-**Commit Message**: chore(deps-dev): bump fast-uri in /tfhe/web_wasm_parallel_tests (#4115)
+### Incident Patch 1: `5c280571` (2026-10-28)
+**Commit Message**: chore(transciphering): generate otp masks in counter mode (#4105)
 
-Bumps [fast-uri](https://github.com/fastify/fast-uri) from 3.1.7 to 3.1.9.
-- [Release notes](https://github.com/fastify/fast-uri/releases)
-- [Commits](https://github.com/fastify/fast-uri/compare/v3.1.7...v3.1.9)
+**File**: `tfhe/src/high_level_api/transciphering/one_time_pad.rs` (modified, +9/-1)
+```diff
+@@ -88,6 +88,13 @@ impl OneTimePadFheSecretMask {
+ 
+     /// Generate a fresh FHE-encrypted pad of `n_bits` bits server-side using
+     /// OPRF machinery.
++    ///
++    /// Pads are generated in counter mode, so the pad generated for a seed is a prefix of all
++    /// the pads generated with the same seed and more bits. See
++    /// [`TranscipheringOneTimePadFheSecretMask::new_random`] for details.
++    ///
++    /// The same seed should never be used to encrypt different data, since the generated masks
++    /// would share their bits.
+     pub fn new_random(seed: impl OprfSeed, n_bits: u64) -> crate::Result<Self> {
+         try_with_internal_keys(|keys| match keys {
+             Some(InternalServerKey::Cpu(cpu_key)) => {
+@@ -99,7 +106,8 @@ impl OneTimePadFheSecretMask {
+                         transciphering_key,
+                         shortint_sks,
+                         n_bits,
+-                    ),
++                    )
++                    .map_err(|e| format!("{e}"))?,
+                     cpu_key.tag.clone(),
+                 ))
+             }
+```
+
+**File**: `tfhe/src/transciphering/ciphers/one_time_pad/fhe.rs` (modified, +43/-5)
+```diff
+@@ -1,3 +1,4 @@
++use rayon::iter::{IntoParallelIterator, ParallelIterator};
+ use serde::{Deserialize, Serialize};
+ use tfhe_versionable::Versionize;
+ 
+@@ -12,6 +13,17 @@ use crate::transciphering::{
+     FheKeyStream, InsufficientKeystream, StreamCipherKind, Transcipherer, TranscipheringServerKey,
+ };
+ 
++#[derive(Debug)]
++pub struct InvalidMaskSize;
++
++impl std::fmt::Display for InvalidMaskSize {
++    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
++        write!(f, "The requested mask size is invalid")
++    }
++}
++
++impl std::error::Error for InvalidMaskSize {}
++
+ #[derive(Clone, Serialize, Deserialize, Versionize)]
+ #[versionize(OneTimePadFheSecretMaskVersions)]
+ pub struct OneTimePadFheSecretMask {
+@@ -45,17 +57,43 @@ impl OneTimePadFheSecretMask {
+         Self::try_new(secret_mask).unwrap()
+     }
+ 
++    /// Generate a mask of `n_bits` encrypted random bits with the OPRF of `transciphering_key`.
++    ///
++    /// The mask is generated in counter mode: the ciphertext at index `i` is generated
++    /// independently, from `seed ‖ i`, with `i` as a little-endian `u32`. As a result, the mask
++    /// generated for a given seed with some number of bits is a prefix of all the masks generated
++    /// with the same seed and more bits. This allows a mask to be decrypted and regenerated with
++    /// different lengths, as long as the regenerated length is shorter.
++    ///
++    /// The same seed should never be used to encrypt different data, since the generated masks
++    /// would share their bits.
+     pub fn new_random(
+         seed: impl OprfSeed,
+         transciphering_key: &TranscipheringServerKey,
+         sks: &ServerKey,
+         n_bits: u64,
+-    ) -> Self {
+-        let encrypted_bits = transciphering_key
+-            .oprf_key()
+-            .generate_random_boolean_sequence(seed, n_bits, sks);
++    ) -> Result<Self, InvalidMaskSize> {
++        let seed = seed.into_vec();
++
++        let oprf_key = transciphering_key.oprf_key();
++
++        // Generate mask bits following RFC030:
++        // Each call to the prf generates only 1 ciphertext, and the seed is suffixed
++        // by the ciphertext index stored on 32bits.
++        let n_blocks = u32::try_from(n_bits).map_err(|_| InvalidMaskSize)?;
++        let secret_mask = (0..n_blocks)
++            .into_par_iter()
++            .map(|i| {
++                let mut block_seed = seed.clone();
++                block_seed.extend_from_slice(&(i).to_le_bytes());
++                oprf_key
++                    .generate_random_boolean_sequence(block_seed, 1, sks)
++                    .pop()
++                    .unwrap()
++            })
++            .collect();
+ 
+-        Self::new(encrypted_bits)
++        Ok(Self::new(secret_mask))
+     }
+ 
+     /// Single bit per [`Ciphertext`].
+```
+
+**File**: `tfhe/src/transciphering/ciphers/one_time_pad/test.rs` (modified, +29/-0)
+```diff
+@@ -6,6 +6,7 @@ use crate::shortint::parameters::test_params::{
+     TEST_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+     TEST_PARAM_MESSAGE_3_CARRY_3_KS_PBS_GAUSSIAN_2M128,
+ };
++use crate::shortint::parameters::TranscipheringParameters;
+ use crate::shortint::prelude::*;
+ use crate::transciphering::ciphers::kreyvium::KreyviumPlainState;
+ use crate::transciphering::ciphers::one_time_pad::fhe::{
+@@ -16,6 +17,7 @@ use crate::transciphering::ciphers::one_time_pad::{
+ };
+ use crate::transciphering::{
+     InsufficientKeystream, StreamCipher, StreamCipherKind, TranscipherError, Transcipherer,
++    TranscipheringPrivateKey, TranscipheringServerKey,
+ };
+ 
+ /// Reference implementation: LSB-first bit `first_bit + i` of `mask` becomes LSB-first bit
+@@ -590,6 +592,33 @@ fn one_time_pad_fhe_mask_encrypt_decrypt_round_trip() {
+     }
+ }
+ 
++/// Check that masks generated with the same seed but different size share the same prefix
++#[test]
++fn one_time_pad_fhe_new_random_prefix() {
++    let (cks, sks) = gen_keys(TEST_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128);
++    let private_key = TranscipheringPrivateKey::new(&cks, TranscipheringParameters::SameAsCompute);
++    let transciphering_key = TranscipheringServerKey::new(&private_key, &cks).unwrap();
++
++    let seed: [u8; 32] = rand::thread_rng().gen();
++    println!("one_time_pad_fhe_new_random_prefix seed={seed:02x?}");
++
++    let decrypted_mask = |n_bits| -> Vec<u64> {
++        OneTimePadFheSecretMask::new_random(seed.as_slice(), &transciphering_key, &sks, n_bits)
++            .unwrap()
++            .ciphertexts()
++            .iter()
++            .map(|ct| cks.decrypt(ct))
++            .collect()
++    };
++
++    let short = decrypted_mask(16);
++    let long = decrypted_mask(40);
++
++    assert_eq!(short.len(), 16);
++    assert_eq!(long.len(), 40);
++    assert_eq!(short, long[..16], "seed={seed:02x?}");
++}
++
+ #[test]
+ fn one_time_pad_plain_secret_mask_conformance() {
+     use crate::conformance::ParameterSetConformant;
+```
 
 ---
-updated-dependencies:
-- dependency-name: fast-uri
-  dependency-version: 3.1.9
-  dependency-type: indirect
-...
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+### Incident Patch 2: `6c60ae37` (2026-10-28)
+**Commit Message**: chore(tfhe-lints): bump dylint 6.3.0 (#4121)
 
-**File**: `tfhe/web_wasm_parallel_tests/package-lock.json` (modified, +3/-8)
+**File**: `utils/tfhe-lints/Cargo.lock` (modified, +71/-64)
 ```diff
-@@ -360,7 +360,6 @@
-       "integrity": "sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==",
-       "dev": true,
-       "license": "MIT",
--      "peer": true,
-       "bin": {
-         "acorn": "bin/acorn"
-       },
-@@ -387,7 +386,6 @@
-       "integrity": "sha512-PlXPeEWMXMZ7sPYOHqmDyCJzcfNrUr3fGNKtezX14ykXOEIvyK81d+qydx89KY5O71FKMPaQ2vBfBFI5NHR63A==",
-       "dev": true,
-       "license": "MIT",
--      "peer": true,
-       "dependencies": {
-         "fast-deep-equal": "^3.1.3",
-         "fast-uri": "^3.0.1",
-@@ -613,7 +611,6 @@
-         }
-       ],
-       "license": "MIT",
--      "peer": true,
-       "dependencies": {
-         "baseline-browser-mapping": "^2.11.12",
-         "caniuse-lite": "^1.0.30001809",
-@@ -1089,9 +1086,9 @@
-       "license": "MIT"
-     },
-     "node_modules/fast-uri": {
--      "version": "3.1.7",
--      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.7.tgz",
--      "integrity": "sha512-dOvZVzjdZdz7phd9v6jCbwxrBW3fK6n8Rc0CtdmM4bumzMnxywBYhuph6J819RRw/ku+rLbelwfMunktuzVVHg==",
-+      "version": "3.1.9",
-+      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.9.tgz",
-+      "integrity": "sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==",
-       "dev": true,
-       "funding": [
-         {
-@@ -2250,7 +2247,6 @@
-       "integrity": "sha512-gX/dMkRQc7QOMzgTe6KsYFM7DxeIONQSui1s0n/0xht36HvrgbxtM1xBlgx596NbpHuQU8P7QpKwrZYwUX48nw==",
-       "dev": true,
-       "license": "MIT",
--      "peer": true,
-       "dependencies": {
-         "@types/eslint-scope": "^3.7.7",
-         "@types/estree": "^1.0.8",
-@@ -2300,7 +2296,6 @@
-       "integrity": "sha512-pIDJHIEI9LR0yxHXQ+Qh95k2EvXpWzZ5l+d+jIo+RdSm9MiHfzazIxwwni/p7+x4eJZuvG1AJwgC4TNQ7NRgsg==",
-       "dev": true,
-       "license": "MIT",
--      "peer": true,
-       "dependencies": {
-         "@discoveryjs/json-ext": "^0.5.0",
-         "@webpack-cli/configtest": "^2.1.1",
+@@ -145,9 +145,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "cc"
+-version = "1.4.7"
++version = "1.10.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "54413ede23c2daf518f35156dfde027feb2374004d63bd497f983c8db9c0e313"
++checksum = "86e055fa6e3e40ad6187ba25b6855eeb635d5271f8e0f0e1e9a5826b8d75bea0"
+ dependencies = [
+  "find-msvc-tools",
+  "jobserver",
+@@ -163,8 +163,8 @@ checksum = "4e7648175b45a9a48536d676f68d918270699102aa8dab5496df06904c914600"
+ 
+ [[package]]
+ name = "clippy_utils"
+-version = "0.1.100"
+-source = "git+https://github.com/rust-lang/rust-clippy?rev=21baba9c10c5d179915cae82e6247bc2337872fb#21baba9c10c5d179915cae82e6247bc2337872fb"
++version = "0.1.101"
++source = "git+https://github.com/rust-lang/rust-clippy?rev=a7fb0ed8a7b593daa6fb8c3d5e161cd9e0d06fb8#a7fb0ed8a7b593daa6fb8c3d5e161cd9e0d06fb8"
+ dependencies = [
+  "arrayvec",
+  "itertools",
+@@ -220,31 +220,31 @@ dependencies = [
+ 
+ [[package]]
+ name = "defmt"
+-version = "1.1.1"
++version = "1.2.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e2953bfe4f93bbd20cc71198842756f77d161884c99ebbabc41d80231ded88d1"
++checksum = "e4a0795ac740cb54d7b3775c9c17345f6aaecf884c01733b39d6017738e0e3e1"
+ dependencies = [
+  "bitflags 1.3.2",
+  "defmt-macros",
+ ]
+ 
+ [[package]]
+ name = "defmt-macros"
+-version = "1.1.1"
++version = "1.2.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "bad9c72e7ca2137e0dc3813245a0d282fd6daad32fd800af018306a9169b5fe8"
++checksum = "840bb056bd99c495c9188198a258ab787c79f306d864db3e6e8451442d6d8366"
+ dependencies = [
+  "defmt-parser",
+  "proc-macro2",
+  "quote",
+- "syn 2.0.119",
++ "syn 3.0.9",
+ ]
+ 
+ [[package]]
+ name = "defmt-parser"
+-version = "1.0.0"
++version = "1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "10d60334b3b2e7c9d91ef8150abfb6fa4c1c39ebbcf4a81c2e346aad939fee3e"
++checksum = "71958f69fb2de856c5dd51ac9377e986ca1aa5919f931bf5395a807277f889a0"
+ dependencies = [
+  "thiserror 2.0.21",
+ ]
+@@ -288,9 +288,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "dylint"
+-version = "6.1.0"
++version = "6.3.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "36143945826ac0fcdcfbe5428074d84cac9510aa28584435a71e51f22d644119"
++checksum = "a34a586a3d22e87c5cd6b0b45158c4d4ec3a7fc2ea49800c8f3127eea239538b"
+ dependencies = [
+  "anstyle",
+  "anyhow",
+@@ -306,9 +306,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "dylint_internal"
+-version = "6.1.0"
++version = "6.3.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d2d852b4a08f8591389714911e6b381bcd3da3778650a05baef91a801869917e"
++checksum = "7bc061f49eb5a4d2a440a8b40a65e3d8860f92516d118090573cfadf8c0d2fa4"
+ dependencies = [
+  "anstyle",
+  "anyhow",
+@@ -317,6 +317,7 @@ dependencies = [
+  "git2",
+  "home",
+  "log",
++ "pastey",
+  "regex",
+  "semver",
+  "serde",
+@@ -330,9 +331,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "dylint_linting"
+-version = "6.1.0"
++version = "6.3.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5a7c61575df18252a32cd5fbd4224454b62a37352cf18943476370c991ca6b8c"
++checksum = "1d190d4d3c83bd2e7a9ed94eaf98d58dbb89afbabd2bf4ad2d75c76a0c383718"
+ dependencies = [
+  "cargo_metadata",
+  "dylint_internal",
+@@ -345,9 +346,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "dylint_testing"
+-version = "6.1.0"
++version = "6.3.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1a33b8cd0529c5a22ade9665181c9c3471316db3e44b6a47b3a5516672a99081"
++checksum = "0abbaa51fb13d56446702ca2105dcf0fd390183d1ba3ea210d08b216c0805a09"
+ dependencies = [
+  "anyhow",
+  "cargo_metadata",
+@@ -362,9 +363,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "either"
+-version = "1.18.0"
++version = "1.19.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "252afb9ae5eaa683babdc6a068b3f5726eb19e05070c731f9b2a23a7c3e8ed34"
++checksum = "0e9c71c2167ca323c882b99918929403426e2373ea17242ff5653e0d5e1058be"
+ 
+ [[package]]
+ name = "env_filter"
+@@ -411,9 +412,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "equivalent"
+-version = "1.0.2"
++version = "1.0.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
++checksum = "00d174d5400e5e8fd687ad1049e2f578285fa914201b1af7e8b112a4546bd826"
+ 
+ [[package]]
+ name = "errno"
+@@ -443,9 +444,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "find-msvc-tools"
+-version = "0.1.13"
++version = "0.1.15"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ef25905e51abafe4dcea6c15fec58c57b601cdbd0ee53d22ea1d3016c587d39b"
++checksum = "1c66915cc5391097de7a2b0b972e8505aa33c0df401fd3a6811dbdb32881ba48"
+ 
+ [[package]]
+ name = "generic-array"
+@@ -554,9 +555,9 @@ checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
+ 
+ [[package]]
+ name = "jiff"
+-version = "0.2.37"
++version = "0.2.38"
+ source = "registry+https://github
 ```
 
----
-
-### Incident Patch 2: `f25a9cd4` (2026-10-28)
-**Commit Message**: feat(gpu): extend throughput oriented pbs to other gpu archs. (#4088)
-
-**File**: `Makefile` (modified, +1/-1)
+**File**: `utils/tfhe-lints/Cargo.toml` (modified, +2/-2)
 ```diff
-@@ -449,7 +449,7 @@ check_fmt_toml: install_taplo
+@@ -3,5 +3,5 @@ members = ["common", "lints", "snapshot"]
+ resolver = "3"
  
- .PHONY: check_typos # Check for typos in codebase
- check_typos: install_typos_checker
--	@git ls-files ":!*.png" ":!*.cbor" ":!*.bcode" ":!*.ico" ":!*/twiddles.cu" ":!*/fft16x4x16_twiddles.cuh" ":!*/test_cpu_gpu_fft16x4x16.cpp" ":!*/test_cpu_gpu_ifft16x4x16.cpp" ":!*.hpu" ":!*/pbs128_golden_data/*.rs" ":!ci/csv_to_ods.py" | typos --file-list - && echo "No typos found"
-+	@git ls-files ":!*.png" ":!*.cbor" ":!*.bcode" ":!*.ico" ":!*/twiddles.cu" ":!*/fft16x16x4_twiddles.cuh" ":!*.hpu" ":!*/pbs128_golden_data/*.rs" ":!ci/csv_to_ods.py" | typos --file-list - && echo "No typos found"
- 
- .PHONY: clippy_gpu # Run clippy lints on tfhe with "gpu" enabled
- clippy_gpu: install_rs_check_toolchain
+ [workspace.dependencies]
+-clippy_utils = { git = "https://github.com/rust-lang/rust-clippy", rev = "21baba9c10c5d179915cae82e6247bc2337872fb" }
+-dylint_linting = "6.1.0"
++clippy_utils = { git = "https://github.com/rust-lang/rust-clippy", rev = "a7fb0ed8a7b593daa6fb8c3d5e161cd9e0d06fb8" }
++dylint_linting = "6.3.0"
 ```
 
-**File**: `backends/tfhe-cuda-backend/cuda/include/pbs/pbs_utilities.h` (modified, +3/-5)
+**File**: `utils/tfhe-lints/Makefile` (modified, +1/-1)
 ```diff
-@@ -377,11 +377,9 @@ uint64_t get_buffer_size_programmable_bootstrap_cg(
+@@ -34,7 +34,7 @@ TFHE_LINTS_TOOLCHAIN := $(shell sed -n 's/^channel = "\(.*\)"$$/\1/p' utils/tfhe
+ 
+ .PHONY: install_cargo_dylint # Install custom tfhe-rs lints
+ install_cargo_dylint: install_tfhe_lints_toolchain
+-	cargo +$(TFHE_LINTS_TOOLCHAIN) install --locked cargo-dylint dylint-link --version 6.1.0
++	cargo +$(TFHE_LINTS_TOOLCHAIN) install --locked cargo-dylint dylint-link --version 6.3.0
+ 
+ .PHONY: install_tfhe_lints_toolchain # Install the nightly toolchain required by tfhe-lints (from utils/tfhe-lints/rust-toolchain)
+ install_tfhe_lints_toolchain:
+```
+
+**File**: `utils/tfhe-lints/common/src/lib.rs` (modified, +3/-2)
+```diff
+@@ -2,15 +2,16 @@
+ #![warn(unused_extern_crates)]
+ 
+ extern crate rustc_ast;
++extern crate rustc_attr_ir;
+ extern crate rustc_errors;
+ extern crate rustc_hir;
+ extern crate rustc_lint;
+ extern crate rustc_middle;
+ extern crate rustc_span;
+ 
+ use rustc_ast::tokenstream::TokenTree;
++use rustc_attr_ir::AttrArgs;
+ use rustc_errors::{Diag, DiagDecorator, MultiSpan};
+-use rustc_hir::AttrArgs;
+ use rustc_hir::def_id::DefId;
+ use rustc_lint::{LateContext, Lint, LintContext};
+ use rustc_middle::ty::{AliasTyKind, Ty, TyKind};
+@@ -50,7 +51,7 @@ pub fn span_lint(
+     cx: &LateContext<'_>,
+     lint: &'static Lint,
+     span: impl Into<MultiSpan>,
+-    decorate: impl FnOnce(&mut Diag<'_, ()>),
++    decorate: impl FnOnce(&mut Diag),
+ ) {
+     cx.emit_span_lint(lint, span, DiagDecorator(decorate));
  }
- 
- template <typename Torus>
--bool has_support_to_cuda_programmable_bootstrap_cg(uint32_t glwe_dimension,
--                                                   uint32_t polynomial_size,
--                                                   uint32_t level_count,
--                                                   uint32_t num_samples,
--                                                   uint32_t max_shared_memory);
-+bool has_support_to_cuda_programmable_bootstrap_cg(
-+    uint32_t glwe_dimension, uint32_t polynomial_size, uint32_t level_count,
-+    uint32_t lwe_dimension, uint32_t num_samples, uint32_t max_shared_memory);
- 
- template <typename Torus>
- void cuda_programmable_bootstrap_cg_lwe_ciphertext_vector_async(
 ```
 
-**File**: `backends/tfhe-cuda-backend/cuda/include/pbs/programmable_bootstrap.h` (modified, +24/-15)
+**File**: `utils/tfhe-lints/lints/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -10,7 +10,7 @@ void cuda_fourier_polynomial_mul_async(void *stream, uint32_t gpu_index,
-                                        void *output, uint32_t polynomial_size,
-                                        uint32_t total_polynomials);
+@@ -15,7 +15,7 @@ dylint_linting = { workspace = true }
+ tfhe-lints-common = { path = "../common" }
  
--void cuda_fourier_polynomial_mul_fft16x4x16_async(
-+void cuda_fourier_polynomial_mul_fft16x16x4_async(
-     void *stream, uint32_t gpu_index, void const *input1, void const *input2,
-     void *output, uint32_t polynomial_size, uint32_t total_polynomials);
- 
-@@ -21,28 +21,37 @@ void cuda_forward_fft_classic_async(void *stream, uint32_t gpu_index,
-                                     uint32_t polynomial_size,
-                                     uint32_t total_polynomials);
- 
--// Test-only: forward-only negacyclic FFT using the throughput-oriented
--// FFT16x4x16 core. Output is in NATURAL frequency order. Hardcoded to
--// polynomial_size == 2048 and requires sm_90 (H100).
--void cuda_forward_fft16x4x16_async(void *stream, uint32_t gpu_index,
-+// Test-only: forward-only negacyclic FFT using the paired FFT16x16x4 transform
-+// of the specialized 2_2_params PBS. Output is in NATURAL frequency order.
-+// Hardcoded to polynomial_size == 2048; two polynomials per block, so
-+// total_polynomials must be even. Runs on compute capability 8.x and newer.
-+void cuda_forward_fft16x16x4_async(void *stream, uint32_t gpu_index,
-                                    void const *input, void *output,
-                                    uint32_t polynomial_size,
-                                    uint32_t total_polynomials);
- 
--// Test-only: inverse-only negacyclic FFT using the throughput-oriented
--// FFT16x4x16 core. The clean inverse of cuda_forward_fft16x4x16_async: input
--// and time-domain output are both in NATURAL order. Hardcoded to
--// polynomial_size == 2048 and requires sm_90 (H100).
--void cuda_backward_fft16x4x16_async(void *stream, uint32_t gpu_index,
-+// Test-only: inverse-only negacyclic FFT using the paired FFT16x16x4 transform.
-+// The clean inverse of cuda_forward_fft16x16x4_async: natural-order input and
-+// natural-order time-domain output, no 1/N. Same restrictions as the forward.
-+void cuda_backward_fft16x16x4_async(void *stream, uint32_t gpu_index,
-                                     void const *input, void *output,
-                                     uint32_t polynomial_size,
-                                     uint32_t total_polynomials);
- 
--// Returns true iff the given GPU can run the FFT16x4x16 core, i.e. it has
--// compute capability 9.x (Hopper) or newer, the only architectures the core
--// is validated on. Lets callers (e.g. tests) gate the specialized path at
--// runtime instead of failing on older architectures.
--bool cuda_fft16x4x16_is_supported_async(uint32_t gpu_index);
-+// Returns true iff the given GPU has compute capability 9.x (Hopper) or newer,
-+// the only architecture the 128-bit PBS golden data is validated on. Lets the
-+// pbs128 golden tests gate themselves at runtime.
-+bool cuda_pbs128_golden_is_supported_async(uint32_t gpu_index);
-+
-+// True iff the GPU reproduces the committed PBS golden data bit for bit:
-+// compute capability 8.x (Ampere) or newer, checked on A100, L40 and H100.
-+bool cuda_pbs_golden_is_supported_async(uint32_t gpu_index);
-+
-+// True iff the GPU runs the FFT16x16x4 transforms and reproduces the committed
-+// FFT golden data bit for bit: compute capability 8.x (Ampere) or newer,
-+// checked on A100, L40 and H100. A deliberate twin of the PBS golden probe
-+// above: the two policies are independent and may diverge.
-+bool cuda_fft16x16x4_is_supported_async(uint32_t gpu_index);
- 
- void cuda_convert_lwe_programmable_bootstrap_key_32_async(
-     void *stream, uint32_t gpu_index, void *dest, void const *src,
-```
-
-**File**: `backends/tfhe-cuda-backend/cuda/src/crypto/torus.cuh` (modified, +2/-2)
-```diff
-@@ -46,8 +46,8 @@ __device__ inline void typecast_double_round_to_torus(double x, T &r) {
-   constexpr double mx = get_two_pow_torus_bits<T>();
-   // floor must be used here because round has an issue with rounding .5,
-   // as it rounds away from zero.
--  double frac = x - floor(x);
--  frac *= mx;
-+  double frac = __dsub_rn(x, floor(x));
-+  frac = __dmul_rn(frac, mx);
-   typecast_double_to_torus(round(frac), r);
- }
+ [dev-dependencies]
+-dylint_testing = "6.1.0"
++dylint_testing = "6.3.0"
+ serde = { version = "1.0", features = ["derive"] }
+ tfhe-versionable = { path = "../../tfhe-versionable" }
  
 ```
 
-**File**: `backends/tfhe-cuda-backend/cuda/src/fft/bnsmfft.cuh` (modified, +187/-363)
+**File**: `utils/tfhe-lints/lints/src/invalid_versionize_dispatch.rs` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,7 @@
- #ifndef GPU_BOOTSTRAP_FFT_CUH
- #define GPU_BOOTSTRAP_FFT_CUH
+@@ -5,7 +5,7 @@ use rustc_hir::def::Res;
+ use rustc_hir::def_id::DefId;
+ use rustc_hir::{Item, ItemKind, QPath, TyKind, VariantData};
+ use rustc_lint::{LateContext, LateLintPass};
+-use rustc_session::{declare_lint, impl_lint_pass};
++use rustc_lint_defs::{declare_lint, impl_lint_pass};
+ use rustc_span::{Ident, Symbol};
  
--#include "fft/fft16x4x16.cuh"
-+#include "fft/fft16x16x4.cuh"
- #include "polynomial/functions.cuh"
- #include "polynomial/parameters.cuh"
- #include "twiddles.cuh"
-@@ -581,108 +581,85 @@ __global__ void batch_NSMFFT_classical_specialized(double2 *d_input,
-   }
- }
- 
--// FFT16x4x16-based batch BSK forward transform for the specialized 2_2 path.
--//
--// Replacement for batch_NSMFFT_classical_specialized that converts each
--// bootstrapping-key polynomial into the same bit-reversed-frequency layout the
--// FFT16x4x16-based accumulate kernel produces and reads. Both sides therefore
--// pair identical frequencies during the GGSW pointwise multiply without any
--// per-iteration register permutation.
--//
--// Layout convention
--// ─────────────────
--//   For an N=2048 real polynomial encoded as N/2=1024 complex doubles via the
--//   compressed real layout (input[k].x = poly[k], input[k].y = poly[k+1024]):
-+// Block startup shared by the key conversion and the test kernels, as in the
-+// PBS kernel: folded twiddles in shared memory, roots and rows in registers.
-+struct fft16x16x4_block_context {
-+  const double2 *tw;
-+  double *xpose, *xpose_other, *xpose_pong, *xpose0_pong, *xpose1_pong;
-+  double2 small_w[6];
-+  double2 r0, r7, r3, r11, r1;
-+};
-+
-+static __device__ __forceinline__ void
-+fft16x16x4_block_setup(double *smem, fft16x16x4_block_context &c) {
-+  double *xpose0 = smem + FFT16x16x4_DUAL_XPOSE0_OFFSET;
-+  double *xpose1 = smem + FFT16x16x4_DUAL_XPOSE1_OFFSET;
-+  c.tw = reinterpret_cast<const double2 *>(smem);
-+  c.xpose0_pong = smem + FFT16x16x4_DUAL_XPOSE0_PONG_OFFSET;
-+  c.xpose1_pong = smem + FFT16x16x4_DUAL_XPOSE1_PONG_OFFSET;
-+  c.xpose = threadIdx.y == 0 ? xpose0 : xpose1;
-+  c.xpose_other = threadIdx.y == 0 ? xpose1 : xpose0;
-+  c.xpose_pong = threadIdx.y == 0 ? c.xpose0_pong : c.xpose1_pong;
-+
-+  fft16x16x4_load_shared_twiddles_folded_128t(smem);
-+  __syncthreads();
-+  fft16x16x4_load_small_twiddles(c.small_w);
-+  c.r0 = conjugate(twisting_twiddles[threadIdx.x]);
-+  c.r7 = c.tw[7 * 64 + threadIdx.x];
-+  c.r3 = c.tw[3 * 64 + threadIdx.x];
-+  c.r11 = c.tw[11 * 64 + threadIdx.x];
-+  c.r1 = c.tw[1 * 64 + threadIdx.x];
-+}
-+
-+// Bootstrapping-key forward transform of the specialized 2_2 path: the paired
-+// FFT16x16x4 forward of the PBS kernel, run on pairs of key polynomials, with
-+// the spectra stored in the slot order the PBS kernel reads them back.
- //
--//     d_output[blockIdx.x*(N/2) + tid + j*64]  =  Â_bsk[bitreversal16(j)*64 +
--//     tid]
-+// Layout
-+//   After the paired forward, register j of thread (tid, y) holds, for both
-+//   polynomials of the pair, the frequency the PBS kernel consumes from slot
-+//   tid + 64*(j + 8*y) of its key slice (see fft16x16x4.cuh). Storing register
-+//   j (polynomial 0) and register 8 + j (polynomial 1) at that slot pairs
-+//   identical frequencies in the GGSW product without any permutation.
- //
--//   tid ∈ [0,64), j ∈ [0,16).  The accumulate kernel's FFT16x4x16 forward
--//   leaves register a[j] holding Â_acc[bitreversal16(j)*64+tid]; reading bsk at
--//   physical index tid+j*64 picks the matching frequency.
-+//   The spectra carry the 1/N of the inverse transform (N = 1024), which the
-+//   PBS inverse path does not apply itself.
- //
--// SMEM layout (≈41 KB, single 64-thread FFT — Strategy A from the keybundle
--// migration plan, no monomial precalc needed for the classic bsk):
--//   [0 .. TW_SMEM_DOUBLES-1]                   tw_1024 twiddle table (1920)
--//   [FFT16x4x16_DUAL_COMPACT_TW_OFFSET .. +101] compact_twiddles (102)
--//   [FFT16x4x16_DUAL_XPOSE0_OFFSET .. +2207]   xpose scratch (2208)
--//   [KB_TWIST_OFFSET .. +1025]                  negacyclic twist half-table
-+// One (64, 2, 1) block per pair of polynomials (so the count must be even),
-+// FFT16x16x4_DUAL_SMEM_BYTES of shared memory.
- template <class params>
--__global__ void batch_FFT16x4x16_classical_specialized(double2 *d_input,
--                                                       double2 *d_output) {
--  extern __shared__ int8_t batch_fft16_sharedmem[];
--  double *smem = reinterpret_cast<double *>(batch_fft16_sharedmem);
--
--  const double2 *tw_shared = reinterpret_cast<const double2 *>(smem);
--  const double *compact_twiddles = smem + FFT16x4x16_DUAL_COMPACT_TW_OFFSET;
--  double *smem_xpose = smem + FFT16x4x16_DUAL_XPOSE0_OFFSET;
--  double2 *smem_twist = reinterpret_cast<double2 *>(smem + KB_TWIST_OFFSET);
--
--  // Load FFT twiddle table cooperatively (64 threads × 15 iters = 960 d2's).
--  double2 *tw_shared_w = reinterpret_cast<double2 *>(smem);
--#pragma unroll
--  for (int idx = threadIdx.x; idx < 15 * 64; idx += 64)
--    tw_shared_w[idx] = tw_1024[idx >> 6][idx & 63];
--
--  // Compact twiddles: 3 rows × 16 columns of (re, im).  First 48 threads each
--  // load one (row, col) entry; matches the convention used by the dual-FFT
--  // 128-thread loader in fft16x4x16_load_shared_twiddles_128t.
--  double *compact_twidd
+ use tfhe_lints_common::{get_def_id_from_ty, is_allowed_lint, span_lint, symbols_list_from_str};
 ```
 
-**File**: `backends/tfhe-cuda-backend/cuda/src/fft/fft16x16x4.cuh` (added, +608/-0)
+**File**: `utils/tfhe-lints/lints/src/lib.rs` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,608 @@
-+#pragma once
-+
-+#include <cuda_runtime.h>
-+#include <math.h>
-+
-+#include "fft/fft16x16x4_twiddles.cuh"
-+#include "types/complex/operations.cuh"
-+
-+// ============================================================================
-+//  FFT16x16x4: paired 1024-point negacyclic FFT of the specialized 2_2 PBS on a
-+//  (64, 2, 1) block; n = a + 4b + 64c, FFT16 along c and b, FFT4 along a.
-+// ============================================================================
-+
-+// ============================================================================
-+//  Building blocks: twiddle constants, radix-2/4/16 butterflies, twiddle rows
-+// ============================================================================
-+#define D_COS_PI_8 0.9238795325112867561281831893967882868
-+#define D_SIN_PI_8 0.3826834323650897717284599840303988667
-+
-+// Forward (sign = -1): exp(-i * angle)
-+#define d_exp_1_16 make_double2(D_COS_PI_8, -D_SIN_PI_8)
-+#define d_exp_3_16 make_double2(D_SIN_PI_8, -D_COS_PI_8)
-+#define d_exp_9_16 make_double2(-D_COS_PI_8, D_SIN_PI_8)
-+#define d_exp_1_8 make_double2(1.0, -1.0)  // post-multiply by 1/sqrt(2)
-+#define d_exp_3_8 make_double2(-1.0, -1.0) // post-multiply by 1/sqrt(2)
-+
-+// Inverse (sign = +1): exp(+i * angle)
-+#define d_iexp_1_16 make_double2(D_COS_PI_8, D_SIN_PI_8)
-+#define d_iexp_3_16 make_double2(D_SIN_PI_8, D_COS_PI_8)
-+#define d_iexp_9_16 make_double2(-D_COS_PI_8, -D_SIN_PI_8)
-+#define d_iexp_1_8 make_double2(1.0, 1.0)  // post-multiply by 1/sqrt(2)
-+#define d_iexp_3_8 make_double2(-1.0, 1.0) // post-multiply by 1/sqrt(2)
-+
-+// bitreversal16(j): natural-order index of register j after the in-register
-+// FFT16 below; for the whole transform, register j holds time position
-+// bitreversal16(j)*64 + tid. Used inside unrolled loops, so it folds at
-+// compile time.
-+static __device__ __forceinline__ int bitreversal16(int bits) {
-+  const int t[] = {0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15};
-+  return t[bits];
-+}
-+
-+// ============================================================================
-+//  Special-case complex multipliers (multiply by unit-magnitude pure angles)
-+// ============================================================================
-+
-+// Multiply by exp(-i*pi/2) = -i: (a.x, a.y) → (a.y, -a.x)
-+static inline __device__ double2 cmul_exp_1_4(double2 a) {
-+  return make_double2(a.y, -a.x);
-+}
-+
-+// Multiply by exp(+i*pi/2) = +i: (a.x, a.y) → (-a.y, a.x)
-+static inline __device__ double2 cmul_iexp_1_4(double2 a) {
-+  return make_double2(-a.y, a.x);
-+}
-+
-+// ============================================================================
-+//  Butterfly primitives — forward FFT (sign = -1)
-+// ============================================================================
-+static inline __device__ void FFT2(double2 &a0, double2 &a1) {
-+  double2 c0 = a0;
-+  a0 = c0 + a1;
-+  a1 = c0 - a1;
-+}
-+
-+// Component ops pinned: nothing here may be contracted with a multiply.
-+static inline __device__ void FFT2_mul_exp_1_4(double2 &a0, double2 &a1) {
-+  double2 c0 = a0;
-+  a0.x = __dadd_rn(c0.x, a1.y);
-+  a0.y = __dsub_rn(c0.y, a1.x);
-+  double a1_x = a1.x;
-+  a1.x = __dsub_rn(c0.x, a1.y);
-+  a1.y = __dadd_rn(c0.y, a1_x);
-+}
-+
-+static inline __device__ void FFT4(double2 &a0, double2 &a1, double2 &a2,
-+                                   double2 &a3) {
-+  FFT2(a0, a2);
-+  FFT2(a1, a3);
-+  FFT2(a0, a1);
-+  FFT2_mul_exp_1_4(a2, a3);
-+}
-+
-+// ---------------------------------------------------------------------------
-+//  16-point DFT held entirely in 16 registers a[0..15] (the in-register
-+//  passes of the transform). Computed as a 4x4 Cooley-Tukey grid, IN PLACE:
-+//  no transpose happens here, so every register keeps its index across both
-+//  passes and the two FFT4 layers just couple different subsets of the lines.
-+//
-+//  PASS 1 runs an FFT4 down each STRIDE-4 group; PASS 2 runs an FFT4 across
-+//  each CONTIGUOUS block; a twiddle layer scales 9 registers in between.
-+//  W = exp(-2*pi*i / 16).
-+//
-+//   reg   PASS 1 group (stride-4 FFT4)   x W^e     PASS 2 group (block FFT4)
-+//   ----  ---------------------------   -------    -------------------------
-+//   a0    {0, 4, 8,12}                  x 1        {0, 1, 2, 3}
-+//   a1    {1, 5, 9,13}                  x 1        {0, 1, 2, 3}
-+//   a2    {2, 6,10,14}                  x 1        {0, 1, 2, 3}
-+//   a3    {3, 7,11,15}                  x 1        {0, 1, 2, 3}
-+//   a4    {0, 4, 8,12}                  x 1        {4, 5, 6, 7}
-+//   a5    {1, 5, 9,13}                  x W^2      {4, 5, 6, 7}
-+//   a6    {2, 6,10,14}                  x W^4      {4, 5, 6, 7}
-+//   a7    {3, 7,11,15}                  x W^6      {4, 5, 6, 7}
-+//   a8    {0, 4, 8,12}                  x 1        {8, 9,10,11}
-+//   a9    {1, 5, 9,13}                  x W^1      {8, 9,10,11}
-+//   a10   {2, 6,10,14}                  x W^2      {8, 9,10,11}
-+//   a11   {3, 7,11,15}                  x W^3      {8, 9,10,11}
-+//   a12   {0, 4, 8,12}               
+@@ -4,6 +4,7 @@
+ extern crate rustc_errors;
+ extern crate rustc_hir;
+ extern crate rustc_lint;
++extern crate rustc_lint_defs;
+ extern crate rustc_middle;
+ extern crate rustc_session;
+ extern crate rustc_span;
 ```
 
-**File**: `backends/tfhe-cuda-backend/cuda/src/fft/fft16x16x4_twiddles.cu` (added, +4/-0)
+**File**: `utils/tfhe-lints/lints/src/serialize_without_versionize.rs` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,4 @@
-+// Single instantiation of the FFT16x16x4 constant-memory twiddle tables: the
-+// macro turns the header's extern declarations into definitions in this TU.
-+#define FFT16X16X4_TWIDDLES_INSTANTIATE
-+#include "fft/fft16x16x4_twiddles.cuh"
-```
-
-**File**: `backends/tfhe-cuda-backend/cuda/src/fft/fft16x16x4_twiddles.cuh` (renamed, +14/-14)
-```diff
-@@ -1,5 +1,5 @@
- #pragma once
--// Precalculated twiddle factors for FFT16x4x16 (1024-point complex FFT).
-+// Precalculated twiddle factors for FFT16x16x4 (1024-point complex FFT).
- // Ported from test_correctness/twiddle_tables.h; operators and helpers are
- // provided by types/complex/operations.cuh — not duplicated here.
- //
-@@ -11,14 +11,14 @@
- //   - The header is included by many translation units. To avoid nvlink
- //     "multiple definition" errors and to keep total constant-memory usage
- //     within the 64 KB per-program limit, the data is defined in exactly one
--//     translation unit (fft16x4x16_twiddles.cu) which #defines
--//     FFT16X4X16_TWIDDLES_INSTANTIATE before including this header. Every
-+//     translation unit (fft16x16x4_twiddles.cu) which #defines
-+//     FFT16X16X4_TWIDDLES_INSTANTIATE before including this header. Every
- //     other TU sees only the `extern __device__ __constant__` declarations.
+@@ -3,7 +3,7 @@ use std::sync::{Arc, OnceLock};
+ use rustc_hir::def_id::DefId;
+ use rustc_hir::{Impl, Item, ItemKind};
+ use rustc_lint::{LateContext, LateLintPass};
+-use rustc_session::{declare_lint, impl_lint_pass};
++use rustc_lint_defs::{declare_lint, impl_lint_pass};
  
- #include <cuda_runtime.h>
- #include <device.h>
+ use tfhe_lints_common::{get_def_id_from_ty, is_allowed_lint, span_lint, symbols_list_from_str};
  
--#ifdef FFT16X4X16_TWIDDLES_INSTANTIATE
-+#ifdef FFT16X16X4_TWIDDLES_INSTANTIATE
- __device__ __constant__ double2 tw_1024[15][64] = {
-     // k = 1  (row 0)
-     {
-@@ -1047,19 +1047,19 @@ static inline void init_twiddle_tables() {
- // ============================================================================
- //  Twisting twiddles for negacyclic FFT
- //
--//  psi_k = exp(-i*pi*k / 2048),  k = 0..1023
-+//  psi_k = exp(-i*pi*k / 2048),  k = 0..512, stored in hex for bit-exact
-+//  values. Same negative-exponent sign convention as tw_1024.
- //
--//  First-quadrant half-table: k=0..511, stored in hex for bit-exact values.
--//  Entries k=513..1023 are derived at runtime via:
--//    psi_{1024-k} = (-psi_k.y, -psi_k.x)  (swap + negate both parts)
--//  Entry k=512 = (1/sqrt(2), -1/sqrt(2)) is a compile-time constant in
--//  twist_lookup.
-+//  The FFT16x16x4 transforms read entries k = 0..63 only, one per thread:
-+//  conj(psi^tid) is folded into the shared first-stage twiddle rows and kept
-+//  in a register for row 0 (fft16x16x4_load_shared_twiddles_folded_128t,
-+//  fft16x16x4_block_setup and the PBS kernel); the rest of the twist comes
-+//  from the W64 literals of fft16x16x4_w64. The CPU reference copies the whole
-+//  table but reads the same 64 entries. Entries 64..512 are unused.
- //
--//  Same negative-exponent sign convention as tw_1024.
--//
--//  512 entries x 16 bytes = 8192 bytes
-+//  513 entries x 16 bytes = 8208 bytes
- // ============================================================================
--#ifdef FFT16X4X16_TWIDDLES_INSTANTIATE
-+#ifdef FFT16X16X4_TWIDDLES_INSTANTIATE
- __device__ __constant__ double2 twisting_twiddles[513] = {
-     {0x1.0000000000000p+0, -0x0.0p+0},
-     {0x1.ffffd88586ee6p-1, -0x1.921faaee6472dp-10},
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4121** (2026-10-28): chore(tfhe-lints): bump dylint 6.3.0 (@nsarlin-zama)
 - **PR #4115** (2026-10-28): chore(deps-dev): bump fast-uri from 3.1.7 to 3.1.9 in /tfhe/web_wasm_parallel_tests (@dependabot[bot])
 - **PR #4111** (2026-10-27): chore(deps-dev): bump fast-uri from 3.1.8 to 3.1.9 in /utils/wasm-par-mq/web_tests (@dependabot[bot])
 - **PR #4108** (2026-10-26): chore: move CODEOWNERS back because reviewable does not check all locations (@IceTDrinker)
 - **PR #4107** (2026-10-26): chore(data-extractor): update tokio to 1.54.1 (@nsarlin-zama)
 - **PR #4106** (2026-10-26): chore(deps): bump zizmorcore/zizmor-action from 0.6.4 to 0.7.1 (@dependabot[bot])
-- **PR #4104** (2026-10-27): Mz/remove wopbs from parameter set (@mayeul-zama)
 
 ---
 
@@ -2432,37 +2391,36 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps-dev): bump fast-uri in /tfhe/web_wasm_parallel_tests (#4115)
+## X. transciphering): generate otp masks in counter mode (#4105)
 
 **RULE**:
-When implementing operations in `tfhe/web_wasm_parallel_tests/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tfhe/src/high_level_api/transciphering/one_time_pad.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b07103df`: deps-dev): bump fast-uri in /tfhe/web_wasm_parallel_tests (#4115). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5c280571`: transciphering): generate otp masks in counter mode (#4105). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/web_wasm_parallel_tests/package-lock.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/high_level_api/transciphering/one_time_pad.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      "version": "3.1.9",
-      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.9.tgz",
-      "integrity": "sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==",
+    ///
+    /// Pads are generated in counter mode, so the pad generated for a seed is a prefix of all
+    /// the pads generated with the same seed and more bits. See
+    /// [`TranscipheringOneTimePadFheSecretMask::new_random`] for details.
+    ///
+    /// The same seed should never be used to encrypt different data, since the generated masks
+    /// would share their bits.
+                    )
+                    .map_err(|e| format!("{e}"))?,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-      "peer": true,
-      "peer": true,
-      "peer": true,
-      "version": "3.1.7",
-      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.7.tgz",
-      "integrity": "sha512-dOvZVzjdZdz7phd9v6jCbwxrBW3fK6n8Rc0CtdmM4bumzMnxywBYhuph6J819RRw/ku+rLbelwfMunktuzVVHg==",
-      "peer": true,
-      "peer": true,
+                    ),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b07103df` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5c280571` are properly handled with clean fallback behavior.

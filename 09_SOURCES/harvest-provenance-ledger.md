@@ -5891,3 +5891,7 @@ Every entry in this ledger must capture:
 | `learn-github-onejs-one` | `https://github.com/onejs/one` | `c5d938eb` | Multi-dimensional audit evidence | 2026-10-28T18:34:38.282Z |
 | `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `f0af1883` | Multi-dimensional audit evidence | 2026-10-28T18:34:39.670Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `dffd52bc` | Multi-dimensional audit evidence | 2026-10-28T18:34:46.035Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `59a75202` | Multi-dimensional audit evidence | 2026-10-28T18:41:56.880Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `58fba8cb` | Multi-dimensional audit evidence | 2026-10-28T18:42:00.529Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `5c280571` | Multi-dimensional audit evidence | 2026-10-28T18:42:00.736Z |
+| `learn-huggingface-zai-org-glm-5-3` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-28T18:42:07.087Z |
