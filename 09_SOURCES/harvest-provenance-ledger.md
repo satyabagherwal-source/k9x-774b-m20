@@ -5872,3 +5872,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-8b` | `https://huggingface.co/Qwen/Qwen3-8B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-28T17:35:08.897Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `84f84d1f` | Multi-dimensional audit evidence | 2026-10-28T17:35:27.745Z |
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `b304fcea` | Multi-dimensional audit evidence | 2026-10-28T17:35:30.685Z |
+| `learn-huggingface-google-vit-base-patch16-224` | `https://huggingface.co/google/vit-base-patch16-224` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-28T17:42:43.075Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `a04b8808` | Multi-dimensional audit evidence | 2026-10-28T17:42:52.277Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `1f4eee02` | Multi-dimensional audit evidence | 2026-10-28T17:42:55.855Z |

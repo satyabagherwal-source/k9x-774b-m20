@@ -5863,3 +5863,6 @@
 | `CYCLE-20261028-A9GD` | `2026-10-28T17:35:08.893Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`d273ba9f...`) |
 | `CYCLE-20261028-ANZY` | `2026-10-28T17:35:27.742Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5353` | Yes (`2f346f7e...`) |
 | `CYCLE-20261028-AQ9M` | `2026-10-28T17:35:30.682Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5354` | Yes (`ac288cbf...`) |
+| `CYCLE-20261028-JZWF` | `2026-10-28T17:42:43.071Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md` | Yes (`6a62e9b1...`) |
+| `CYCLE-20261028-K702` | `2026-10-28T17:42:52.274Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5355` | Yes (`bfac3605...`) |
+| `CYCLE-20261028-K9RG` | `2026-10-28T17:42:55.852Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5335` | Yes (`bc6905ed...`) |

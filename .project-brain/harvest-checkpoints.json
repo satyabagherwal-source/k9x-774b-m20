@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T17:35:30.696Z",
+  "last_updated": "2026-10-28T17:42:55.865Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1625,14 +1625,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-vit-base-patch16-224",
-      "content_hash": "11e900cdd46e1207bdfb2d7646fc4896a3f5873be4ebb84e1e58793211ecfd93",
-      "verified_at": "2026-10-26T01:01:11.254Z",
+      "content_hash": "6a62e9b17ac12820b8bf6d23cd785aade88f14e462d86160b5d5459a022884ac",
+      "verified_at": "2026-10-28T17:42:43.091Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T01:01:11.254Z"
+      "last_updated": "2026-10-28T17:42:43.091Z"
     },
     "google/gemma-4-31B-it": {
       "repository": "google/gemma-4-31B-it",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "9647257de8d8a09a8847a8653b780a1eea6952ab347ce96d80770a797b32d695",
-      "verified_at": "2026-10-28T16:05:21.667Z",
+      "content_hash": "bc6905ed852da8d96a08791329b631066ab219bca4d3f14d909344059718202e",
+      "verified_at": "2026-10-28T17:42:55.865Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T16:05:21.667Z"
+      "last_updated": "2026-10-28T17:42:55.865Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -9141,14 +9141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-juicedata-juicefs",
-      "content_hash": "b6cae88e4cc67163392c1c84cbbb9df3ba5e500deac68bfbd752f274180e94c0",
-      "verified_at": "2026-10-27T18:43:28.509Z",
+      "content_hash": "bfac360530447367b3a288db7deeb6cc7513e9bcab50b92c8efb29378a366d1a",
+      "verified_at": "2026-10-28T17:42:52.286Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T18:43:28.509Z"
+      "last_updated": "2026-10-28T17:42:52.286Z"
     },
     "RediSearch/RediSearch": {
       "repository": "RediSearch/RediSearch",

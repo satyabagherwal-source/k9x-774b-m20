@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-O6SB",
-    "timestamp": "2026-10-27T14:14:21.275Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "13fe10d0d042d1a096f61af4803a32c095da1d4ad17f630904afd23ff636b6f9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-UBTY",
-    "timestamp": "2026-10-27T14:19:07.750Z",
-    "repository": "martin-ger/esp32_nat_router",
-    "learningId": "learn-github-martin-ger-esp32_nat_router",
-    "contentHash": "2fb56597ce3dd2a91d4601eb01f8bf78b93839720bb0ea75addb89784b0c1bf2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-YBBY",
-    "timestamp": "2026-10-27T14:22:13.726Z",
-    "repository": "subnetmarco/pgmcp",
-    "learningId": "learn-github-subnetmarco-pgmcp",
-    "contentHash": "f07305b2e16bab4e76f1cdba5ecdb7da54914592ee8961f2a5d0dd355f41d53d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-YEOI",
     "timestamp": "2026-10-27T14:22:18.066Z",
     "repository": "concierge-hq/concierge",
@@ -7490,6 +7445,51 @@
     "repository": "argoproj/argo-workflows",
     "learningId": "learn-github-argoproj-argo-workflows",
     "contentHash": "ac288cbf7ea20e33f47906b36dde2eb7106c9be50f0d68eafbc8c8d2de562e82",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-JZWF",
+    "timestamp": "2026-10-28T17:42:43.071Z",
+    "repository": "google/vit-base-patch16-224",
+    "learningId": "learn-huggingface-google-vit-base-patch16-224",
+    "contentHash": "6a62e9b17ac12820b8bf6d23cd785aade88f14e462d86160b5d5459a022884ac",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-K702",
+    "timestamp": "2026-10-28T17:42:52.274Z",
+    "repository": "juicedata/juicefs",
+    "learningId": "learn-github-juicedata-juicefs",
+    "contentHash": "bfac360530447367b3a288db7deeb6cc7513e9bcab50b92c8efb29378a366d1a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-K9RG",
+    "timestamp": "2026-10-28T17:42:55.852Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "bc6905ed852da8d96a08791329b631066ab219bca4d3f14d909344059718202e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

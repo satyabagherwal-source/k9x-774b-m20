@@ -1235,8 +1235,8 @@
     "sourceUrl": "https://huggingface.co/google/vit-base-patch16-224",
     "sourceVersion": "hf-google-vit-base-patch16-224",
     "license": "Open-Source",
-    "contentHash": "11e900cdd46e1207bdfb2d7646fc4896a3f5873be4ebb84e1e58793211ecfd93",
-    "lastHarvestedAt": "2026-10-26T01:01:11.249Z",
+    "contentHash": "6a62e9b17ac12820b8bf6d23cd785aade88f14e462d86160b5d5459a022884ac",
+    "lastHarvestedAt": "2026-10-28T17:42:43.075Z",
     "learningId": "learn-huggingface-google-vit-base-patch16-224"
   },
   "hf-google-gemma-4-31b-it": {
@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "6b124303",
+    "sourceVersion": "1f4eee02",
     "license": "Apache-2.0",
-    "contentHash": "d4a3d7dc9bac41ec851a71096c8f0c52bca83a64a4c689a8f2e4e5dafd4e1a76",
-    "lastHarvestedAt": "2026-10-27T23:52:42.372Z",
+    "contentHash": "bc6905ed852da8d96a08791329b631066ab219bca4d3f14d909344059718202e",
+    "lastHarvestedAt": "2026-10-28T17:42:55.855Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "d5d80841",
+    "sourceVersion": "a04b8808",
     "license": "Apache-2.0",
-    "contentHash": "b6cae88e4cc67163392c1c84cbbb9df3ba5e500deac68bfbd752f274180e94c0",
-    "lastHarvestedAt": "2026-10-27T18:43:28.500Z",
+    "contentHash": "bfac360530447367b3a288db7deeb6cc7513e9bcab50b92c8efb29378a366d1a",
+    "lastHarvestedAt": "2026-10-28T17:42:52.277Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {

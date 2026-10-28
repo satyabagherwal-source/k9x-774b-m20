@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T17:35:30.691Z",
-  "total_cycles_completed": 5840,
-  "total_learnings_persisted": 5840,
-  "total_rules_promoted": 5310,
+  "last_updated": "2026-10-28T17:42:55.861Z",
+  "total_cycles_completed": 5843,
+  "total_learnings_persisted": 5843,
+  "total_rules_promoted": 5312,
   "history": [
-    {
-      "timestamp": "2026-10-28T03:11:26.777Z",
-      "repository": "sentence-transformers/all-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T03:18:00.113Z",
-      "repository": "appwrite/appwrite",
-      "learningId": "learn-github-appwrite-appwrite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T03:18:04.283Z",
-      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T03:18:06.410Z",
       "repository": "milvus-io/milvus",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-28T17:35:30.691Z",
       "repository": "argoproj/argo-workflows",
       "learningId": "learn-github-argoproj-argo-workflows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T17:42:43.087Z",
+      "repository": "google/vit-base-patch16-224",
+      "learningId": "learn-huggingface-google-vit-base-patch16-224",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T17:42:52.283Z",
+      "repository": "juicedata/juicefs",
+      "learningId": "learn-github-juicedata-juicefs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T17:42:55.861Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

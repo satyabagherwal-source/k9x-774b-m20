@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T17:35:30.607Z",
+  "last_updated": "2026-10-28T17:42:55.770Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -22692,7 +22692,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/vit-base-patch16-224",
       "source_version": "hf-google-vit-base-patch16-224",
-      "content_hash": "11e900cdd46e1207bdfb2d7646fc4896a3f5873be4ebb84e1e58793211ecfd93",
+      "content_hash": "6a62e9b17ac12820b8bf6d23cd785aade88f14e462d86160b5d5459a022884ac",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md",
       "promoted_rules": [
@@ -22744,7 +22744,7 @@
         "learn-huggingface-hf-google-vit-base-patch16-224-mv40bvhc",
         "learn-huggingface-hf-google-vit-base-patch16-224-mv4eaiut"
       ],
-      "verified_at": "2026-10-26T01:01:11.178Z",
+      "verified_at": "2026-10-28T17:42:42.970Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32136,8 +32136,8 @@
       "slug": "juicedata-juicefs",
       "platform": "github",
       "source_url": "https://github.com/juicedata/juicefs",
-      "source_version": "d5d80841",
-      "content_hash": "b6cae88e4cc67163392c1c84cbbb9df3ba5e500deac68bfbd752f274180e94c0",
+      "source_version": "a04b8808",
+      "content_hash": "bfac360530447367b3a288db7deeb6cc7513e9bcab50b92c8efb29378a366d1a",
       "dossier_path": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "promoted_rules": [
@@ -32175,6 +32175,11 @@
           "number": 4946,
           "title": "metrics: Add S3 gateway and sync Grafana dashboards, fix metric names (#7754)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5355,
+          "title": "warmup: reuse in-flight full-block downloads (#7748)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32182,7 +32187,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T18:43:28.400Z",
+      "verified_at": "2026-10-28T17:42:52.181Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65260,13 +65265,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "5375fc14",
-      "content_hash": "9647257de8d8a09a8847a8653b780a1eea6952ab347ce96d80770a797b32d695",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "1f4eee02",
+      "content_hash": "bc6905ed852da8d96a08791329b631066ab219bca4d3f14d909344059718202e",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -65326,7 +65331,7 @@
         {
           "number": 5335,
           "title": "Merge pull request #4584 from aleo-labs-protocol/fix/client-solution-limit",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -65334,7 +65339,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T16:05:21.608Z",
+      "verified_at": "2026-10-28T17:42:55.751Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -145042,14 +145047,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 5335,
       "title": "Merge pull request #4584 from aleo-labs-protocol/fix/client-solution-limit",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "5375fc14",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "1f4eee02",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-28T16:05:21.608Z"
+      "verified_at": "2026-10-28T17:42:55.751Z"
     },
     "rule-5336": {
       "learning_id": "rule-5336",
@@ -145316,6 +145321,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T17:35:30.588Z"
+    },
+    "rule-5355": {
+      "learning_id": "rule-5355",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5355,
+      "title": "warmup: reuse in-flight full-block downloads (#7748)",
+      "source_url": "https://github.com/juicedata/juicefs",
+      "source_version": "a04b8808",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T17:42:52.181Z"
     }
   },
   "aliases": {

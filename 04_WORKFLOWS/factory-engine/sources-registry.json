@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T17:35:33.237Z",
-    "lastVerified": "2026-10-28T17:35:33.237Z",
+    "lastChecked": "2026-10-28T17:42:58.399Z",
+    "lastVerified": "2026-10-28T17:42:58.399Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -123,8 +123,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-28T17:12:52.844Z",
-    "lastVerified": "2026-10-28T17:12:52.844Z",
+    "lastChecked": "2026-10-28T17:42:54.678Z",
+    "lastVerified": "2026-10-28T17:42:54.678Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -890,11 +890,21 @@
     "lastVerified": "2026-10-28T04:10:05.595Z"
   },
   "provablehq-snarkos": {
-    "name": "snarkOS",
+    "name": "aleo-labs-protocol/snarkOS",
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
-    "lastChecked": "2026-10-28T14:29:12.176Z",
-    "revisionIdentifier": "6b124303",
-    "lastVerified": "2026-10-28T14:29:12.176Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T17:42:55.408Z",
+    "lastVerified": "2026-10-28T17:42:55.408Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "bc6905ed852da8d96a08791329b631066ab219bca4d3f14d909344059718202e",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -5442,5 +5452,60 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "alexpasmantier-television": {
+    "name": "television",
+    "officialUrl": "https://github.com/alexpasmantier/television",
+    "lastChecked": "2026-10-28T17:42:39.629Z",
+    "revisionIdentifier": "67ddd304",
+    "lastVerified": "2026-10-28T17:42:39.629Z"
+  },
+  "hf-google-vit-base-patch16-224": {
+    "name": "google/vit-base-patch16-224",
+    "officialUrl": "https://huggingface.co/google/vit-base-patch16-224",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T17:42:42.150Z",
+    "lastVerified": "2026-10-28T17:42:42.150Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-google-vit-base-patch16-224",
+    "contentHash": "6a62e9b17ac12820b8bf6d23cd785aade88f14e462d86160b5d5459a022884ac",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "lysine-dev-okio": {
+    "name": "okio",
+    "officialUrl": "https://github.com/lysine-dev/okio",
+    "lastChecked": "2026-10-28T17:42:44.716Z",
+    "revisionIdentifier": "3377b13c",
+    "lastVerified": "2026-10-28T17:42:44.716Z"
+  },
+  "juicedata-juicefs": {
+    "name": "juicedata/juicefs",
+    "officialUrl": "https://github.com/juicedata/juicefs",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T17:42:51.610Z",
+    "lastVerified": "2026-10-28T17:42:51.610Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-juicedata-juicefs",
+    "contentHash": "bfac360530447367b3a288db7deeb6cc7513e9bcab50b92c8efb29378a366d1a",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "apache-incubator-pegasus": {
+    "name": "incubator-pegasus",
+    "officialUrl": "https://github.com/apache/incubator-pegasus",
+    "lastChecked": "2026-10-28T17:42:53.208Z",
+    "revisionIdentifier": "75015467",
+    "lastVerified": "2026-10-28T17:42:53.208Z"
   }
 }
