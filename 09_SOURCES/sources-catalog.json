@@ -885,8 +885,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4-pro",
     "license": "Open-Source",
-    "contentHash": "b5e4276f42af927fea016888c18df62c3d5f4663594e707a09e1246fd44098a6",
-    "lastHarvestedAt": "2026-10-25T19:45:00.077Z",
+    "contentHash": "dab231a811db22c4c3b462a261e594183091e6e470ebb19b249452f92aeb40b3",
+    "lastHarvestedAt": "2026-10-28T13:56:46.498Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro"
   },
   "hf-tongyi-mai-z-image-turbo": {
@@ -2443,10 +2443,10 @@
     "repository": "DefGuard/defguard",
     "platform": "github",
     "sourceUrl": "https://github.com/DefGuard/defguard",
-    "sourceVersion": "8efdae0f",
+    "sourceVersion": "12508b40",
     "license": "NOASSERTION",
-    "contentHash": "3fbb1616c7a6979448780d717caba366f08cffffdfa83663753c9db19554d7bc",
-    "lastHarvestedAt": "2026-10-26T13:01:48.656Z",
+    "contentHash": "111cb24bbce5633b209d64d79bb8a65de37d625292f801f2153c90dae519f38e",
+    "lastHarvestedAt": "2026-10-28T13:56:58.693Z",
     "learningId": "learn-github-defguard-defguard"
   },
   "tamagui-tamagui": {
@@ -4793,10 +4793,10 @@
     "repository": "software-mansion/react-native-gesture-handler",
     "platform": "github",
     "sourceUrl": "https://github.com/software-mansion/react-native-gesture-handler",
-    "sourceVersion": "142d4334",
+    "sourceVersion": "b19e2331",
     "license": "MIT",
-    "contentHash": "33d6ab95033716b24185bf7f6886ebcf38553f307ecb008b5cbd43d536021449",
-    "lastHarvestedAt": "2026-10-27T17:30:56.154Z",
+    "contentHash": "b2668ffafa06cf6323baf90d7745ec4b4cb3448d6c3492ee1c3565013d207d48",
+    "lastHarvestedAt": "2026-10-28T13:56:54.858Z",
     "learningId": "learn-github-software-mansion-react-native-gesture-handler"
   },
   "aws-aws-cdk": {

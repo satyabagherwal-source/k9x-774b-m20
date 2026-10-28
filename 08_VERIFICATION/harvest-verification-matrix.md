@@ -5785,3 +5785,6 @@
 | `CYCLE-20261028-0O44` | `2026-10-28T13:43:44.404Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5297` | Yes (`b32a4b83...`) |
 | `CYCLE-20261028-8LBF` | `2026-10-28T13:49:54.027Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`ad34a17d...`) |
 | `CYCLE-20261028-8NZO` | `2026-10-28T13:49:57.492Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5298` | Yes (`256ef83e...`) |
+| `CYCLE-20261028-HFKU` | `2026-10-28T13:56:46.494Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`dab231a8...`) |
+| `CYCLE-20261028-HM13` | `2026-10-28T13:56:54.855Z` | `software-mansion/react-native-gesture-handler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5299` | Yes (`b2668ffa...`) |
+| `CYCLE-20261028-HOZL` | `2026-10-28T13:56:58.689Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5300` | Yes (`111cb24b...`) |

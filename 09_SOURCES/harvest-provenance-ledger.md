@@ -5794,3 +5794,6 @@ Every entry in this ledger must capture:
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `081a4090` | Multi-dimensional audit evidence | 2026-10-28T13:43:44.407Z |
 | `learn-huggingface-qwen-qwen3-8-flash-next` | `https://huggingface.co/Qwen/Qwen3.8-Flash-Next` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-28T13:49:54.030Z |
 | `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `f2876ace` | Multi-dimensional audit evidence | 2026-10-28T13:49:57.494Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-pro` | `https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-28T13:56:46.498Z |
+| `learn-github-software-mansion-react-native-gesture-handler` | `https://github.com/software-mansion/react-native-gesture-handler` | `b19e2331` | Multi-dimensional audit evidence | 2026-10-28T13:56:54.858Z |
+| `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `12508b40` | Multi-dimensional audit evidence | 2026-10-28T13:56:58.693Z |

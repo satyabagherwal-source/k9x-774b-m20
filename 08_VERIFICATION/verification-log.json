@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-O9NC",
-    "timestamp": "2026-10-27T12:50:26.136Z",
-    "repository": "trufflesecurity/trufflehog",
-    "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "5a605a379142a30e61b14bb2f3aeb64b4ca598abc5fd544173447834f6b0ce50",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-OD0D",
-    "timestamp": "2026-10-27T12:50:30.493Z",
-    "repository": "ytsaurus/ytsaurus",
-    "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "7c23e515703ca38ac50da84d31321193b78488a49b83b10425c8dab85d11ba3b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-SJI4",
-    "timestamp": "2026-10-27T12:53:45.532Z",
-    "repository": "Saffsanity/sill",
-    "learningId": "learn-github-saffsanity-sill",
-    "contentHash": "f8c3c4e05ee42f8b690e00d136c9320c57eaac7be893e23dd50ad2cd29ca31b9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-SKYE",
     "timestamp": "2026-10-27T12:53:47.414Z",
     "repository": "kgateway-dev/kgateway",
@@ -7490,6 +7445,51 @@
     "repository": "actix/actix-web",
     "learningId": "learn-github-actix-actix-web",
     "contentHash": "256ef83e54d7b4239ab13149fe174215582f079c396cbede281d85e76142bca9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-HFKU",
+    "timestamp": "2026-10-28T13:56:46.494Z",
+    "repository": "deepseek-ai/DeepSeek-V4-Pro",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
+    "contentHash": "dab231a811db22c4c3b462a261e594183091e6e470ebb19b249452f92aeb40b3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-HM13",
+    "timestamp": "2026-10-28T13:56:54.855Z",
+    "repository": "software-mansion/react-native-gesture-handler",
+    "learningId": "learn-github-software-mansion-react-native-gesture-handler",
+    "contentHash": "b2668ffafa06cf6323baf90d7745ec4b4cb3448d6c3492ee1c3565013d207d48",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-HOZL",
+    "timestamp": "2026-10-28T13:56:58.689Z",
+    "repository": "DefGuard/defguard",
+    "learningId": "learn-github-defguard-defguard",
+    "contentHash": "111cb24bbce5633b209d64d79bb8a65de37d625292f801f2153c90dae519f38e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
