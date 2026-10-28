@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T15:23:05.470Z",
-    "lastVerified": "2026-10-28T15:23:05.470Z",
+    "lastChecked": "2026-10-28T15:29:53.978Z",
+    "lastVerified": "2026-10-28T15:29:53.978Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -279,9 +279,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T15:03:31.001Z",
+    "lastChecked": "2026-10-28T15:29:48.618Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T15:03:31.001Z"
+    "lastVerified": "2026-10-28T15:29:48.618Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1469,14 +1469,14 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T12:08:58.116Z",
-    "lastVerified": "2026-10-28T12:08:58.116Z",
+    "lastChecked": "2026-10-28T15:29:49.884Z",
+    "lastVerified": "2026-10-28T15:29:49.884Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "ea5d83279fd31ea1c08d52a97cf5cbaf0b17dfc0cb36432d16af679594c38850",
+    "contentHash": "0c9b9b1d7cebd9d44847afa88a2c9134f737d6c7e9c3504fcbfefdca519e87ec",
     "promotedRulesCount": 0,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4418,5 +4418,60 @@
     "lastChecked": "2026-10-28T15:22:55.196Z",
     "revisionIdentifier": "1c76855d",
     "lastVerified": "2026-10-28T15:22:55.196Z"
+  },
+  "mlua-rs-mlua": {
+    "name": "mlua",
+    "officialUrl": "https://github.com/mlua-rs/mlua",
+    "lastChecked": "2026-10-28T15:29:33.584Z",
+    "revisionIdentifier": "ff96ed78",
+    "lastVerified": "2026-10-28T15:29:33.584Z"
+  },
+  "hf-aleph-alpha-kolibri-1": {
+    "name": "Aleph-Alpha/Kolibri-1",
+    "officialUrl": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T15:29:36.252Z",
+    "lastVerified": "2026-10-28T15:29:36.252Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+    "contentHash": "f99e620b40220844d8f98adbabbfb2d593884cc0b73a39f6517bcbd7cdcf2162",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "benoitvallon-react-native-nw-react-calculator": {
+    "name": "react-native-nw-react-calculator",
+    "officialUrl": "https://github.com/benoitvallon/react-native-nw-react-calculator",
+    "lastChecked": "2026-10-28T15:29:38.669Z",
+    "revisionIdentifier": "4f9628fa",
+    "lastVerified": "2026-10-28T15:29:38.669Z"
+  },
+  "bridgecrewio-checkov": {
+    "name": "checkov",
+    "officialUrl": "https://github.com/bridgecrewio/checkov",
+    "lastChecked": "2026-10-28T15:29:41.151Z",
+    "revisionIdentifier": "811d0687",
+    "lastVerified": "2026-10-28T15:29:41.151Z"
+  },
+  "etcd-io-etcd": {
+    "name": "etcd-io/etcd",
+    "officialUrl": "https://github.com/etcd-io/etcd",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T15:29:50.951Z",
+    "lastVerified": "2026-10-28T15:29:50.951Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-etcd-io-etcd",
+    "contentHash": "94c541cf0f326ca0c7eddd731c3705bc7e42aa2858144af562ad060ade713532",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

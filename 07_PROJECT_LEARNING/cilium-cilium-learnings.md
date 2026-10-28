@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `bcda14be`  
+> **Source Version**: `5e26ccca`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T12:08:58.341Z  
+> **Timestamp**: 2026-10-28T15:29:49.890Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T12:08:58.116Z  
+> **Harvest Timestamp**: 2026-10-28T15:29:49.884Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25726 stars
+- **Stars / Engagement**: 25727 stars
 
 ---
 
@@ -1259,11 +1259,15 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49662** (2026-10-27): **ipam: Only release ENI prefixes acknowledged by the agent**
-  *Symptoms*: Please ensure your pull request adheres to the following guidelines:  - [x] For first time contributors, read [Submitting a pull request] - [x] All code is covered by unit and/or runtime tests where feasible. - [x] All commits contain a well written commit description including a title,       description and a `Fixes: #XXX` line if the commit addresses a particular       GitHub issue. - [x] If your commit description contains a `Fixes: <commit-id>` tag, then       please add the commit author[s] as reviewer[s] to this issue. (not applicable) - [x] All commits are signed off. See the section [Developer’s Certificate of Origin] - [x] Provide a title or release-note blurb suitable for the release notes. - [x] Describe how you have tested this change in a live environment such as       [kind], if applicable. - [x] Disclose use of machine learning models (including LLMs and other generative AI)       in accordance with the [Cilium AI Policy], and indicate the rating using       [AI Influence Level].       Example: "This PR was prepared with AIL:N. I personally checked X." - [x] Thanks for contributing!   With ENI prefix delegation and `aws-release-excess-ips`, the operator released a prefix as soon as any of its IPs was acknowledged as `ready-for-release`, even if the agent answered `do-not-release` for other IPs of that prefix or had not answered yet. Pods using those IPs lost connectivity.  `handleIPRelease` now only releases prefixes whose IPs were all ack
+- **Issue #49676** (2026-10-28): **cilium-cli/connectivity: remove unused client-egress-to-echo-port-range manifest**
+  *Symptoms*: This policy was added in commit 46f39180310c ("connectivity: Add Port Range Tests") but it was never wired up to a test. The port-range matching it would exercise is already covered by the `client-egress-to-echo-expression-port-range` and `client-egress-to-echo-service-account-port-range` tests.  AIL: 1
+  **Post-Mortem & Fix Analysis**:
+  > /test
 
-- **Issue #49654** (2026-10-27): **Add CRD-managed SPIRE registration and shared-root HA**
-  *Symptoms*: 
+- **Issue #49672** (2026-10-28): **gha/conformance-gke: Lower test concurrency to 3**
+  *Symptoms*: On GKE, the first node whose Cilium agent becomes ready receives the pending GKE add-ons and most of the test pods, 51 to 57 pods against 31 to 34 on the other Cilium node. With five concurrent test namespaces, that node's 2 vCPUs saturate, the readiness probes of its test pods time out in bursts, and curls from pods on it time out. In KPR GKE run 40524578566 [1], 22 readiness probes timed out on that node within a few seconds, and two cidrgroup curls from it then failed with:    10.114.128.212:59298 -> 10.73.184.69:443 = 000 t_dns=0.000046 t_conn=0.002565 t_tls=0.000000 t_tot=2.014061 exit=28 err=SSL connection timeout  At that point the node's CPU pressure was 55% over 10 s and 44% over 5 min, with a load average of 6.36, while its memory pressure was 4.5% with 1.38 GB still available.  This commit lowers the GKE connectivity test concurrency from 5 to 3, as we already did for EKS and AWS-CNI when their nodes ran out of room for the test pods. The GKE tests take longer to run, which costs less than doubling the vCPUs of every GKE node.  Median durations of the 1.36 legs:  | | Concurrency 5, last six scheduled main runs | Concurrency 3 | |---|---|---| | KPR GKE connectivity test step | 13.7 min (36 legs) | 15.0 min (6 legs, [2]) | | KPR GKE job | 23.2 min | 25.2 min | | GKE connectivity test step | 11.8 min (12 legs) | 15.7 min (2 legs, [3]) | | GKE job | 20.0 min | 25.9 min |  1: https://github.com/cilium/cilium/actions/runs/40524578566/job/122730547018 2: https://github.co
+  **Post-Mortem & Fix Analysis**:
+  > /test
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1280,95 +1284,135 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ec837ec9` (2026-10-21)
-**Commit Message**: Revert "gha/conformance-aks: Wait for AKS to roll konnectivity-agent"
+### Incident Patch 1: `5e26ccca` (2026-10-28)
+**Commit Message**: cilium-cli/connectivity: remove unused client-egress-to-echo-port-range manifest
 
-This reverts commit ab6fb83a7d6a.
+This policy was added in commit 46f39180310c ("connectivity: Add Port
+Range Tests") but it was never wired up to a test. The port-range
+matching it would exercise is already covered by the
+client-egress-to-echo-expression-port-range and
+client-egress-to-echo-service-account-port-range tests.
 
-The wait gives up 21 minutes after AKS creates konnectivity-agent, and
-AKS had not rolled it by then on 195 of 361 legs, so it costs a leg up
-to 21 minutes and still misses most late rolls. The previous commits
-make the connectivity test retry the execs that a roll cuts, so the wait
-no longer buys anything. On three AKS clusters where we deleted both
-konnectivity-agent pods four times during the test, and where AKS also
-rolled them once on one cluster, every test passed [1]. Nine KPR
-clusters, with IPsec, WireGuard or neither, where we deleted them three
-to five times, passed as well [2].
+Signed-off-by: Tobias Klauser <[REDACTED_EMAIL]>
 
-This commit was prepared with AIL:3. I personally checked the diff.
-
-1: https://github.com/cilium/cilium/actions/runs/39443261740
-2: https://github.com/cilium/cilium/actions/runs/39452349485
-
-Signed-off-by: André Martins <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/conformance-aks.yaml` (modified, +0/-49)
+**File**: `cilium-cli/connectivity/builder/manifests/client-egress-to-echo-port-range.yaml` (removed, +0/-41)
 ```diff
-@@ -599,55 +599,6 @@ jobs:
-         run: |
-           mkdir -p cilium-junits
- 
--      - name: Wait for AKS to finish rolling konnectivity-agent
--        # Waits for AKS to add the checksum/service-account-key annotation that triggers the roll,
--        # then for the rollout to complete, then for the old pods to finish terminating.
--        # Each wait only warns on timeout, so the connectivity test still runs.
--        env:
--          ROLL_DEADLINE_MINUTES: 21
--          ROLLOUT_TIMEOUT: 5m
--          TERMINATING_TIMEOUT_SECONDS: 120
--        run: |
--          set -euo pipefail
--
--          start=$(date +%s)
--          if ! created=$(kubectl -n kube-system get deploy konnectivity-agent \
--              -o jsonpath='{.metadata.creationTimestamp}'); then
--            echo "::warning::kube-system/konnectivity-agent not found"
--            exit 0
--          fi
--          deadline=$(( $(date -d "$created" +%s) + ROLL_DEADLINE_MINUTES * 60 ))
--
--          # AKS adds this annotation in a roll that SIGKILLs the old agents and cuts their exec streams.
--          echo "Waiting until $(date -u -d "@$deadline" +%T) for the checksum/service-account-key roll"
--          until kubectl -n kube-system get deploy konnectivity-agent -o json \
--              | jq -e '.spec.template.metadata.annotations["checksum/service-account-key"]' > /dev/null; do
--            if [[ $(date +%s) -ge $deadline ]]; then
--              echo "::warning::AKS did not roll konnectivity-agent within ${ROLL_DEADLINE_MINUTES}m of its creation at $created"
--              break
--            fi
--            sleep 10
--          done
--
--          kubectl -n kube-system rollout status deploy/konnectivity-agent --timeout="$ROLLOUT_TIMEOUT" \
--            || echo "::warning::konnectivity-agent rollout did not complete within $ROLLOUT_TIMEOUT"
--
--          # rollout status stops counting an old pod once it has a deletionTimestamp.
--          terminating_deadline=$(( $(date +%s) + TERMINATING_TIMEOUT_SECONDS ))
--          until [[ $(kubectl -n kube-system get pods -l app=konnectivity-agent -o json \
--              | jq '[.items[] | select(.metadata.deletionTimestamp)] | length') == 0 ]]; do
--            if [[ $(date +%s) -ge $terminating_deadline ]]; then
--              echo "::warning::old konnectivity-agent pods are still terminating"
--              break
--            fi
--            sleep 10
--          done
--
--          echo "Waited $(( $(date +%s) - start ))s. ReplicaSets, relative to the Deployment's creation at $created:"
--          kubectl -n kube-system get rs -l app=konnectivity-agent -o json \
--            | jq -r --arg created "$created" '.items | sort_by(.metadata.creationTimestamp)[]
--                | "\(.metadata.name) +\((.metadata.creationTimestamp | fromdate) - ($created | fromdate))s replicas=\(.status.replicas)"'
--
-       - name: Run concurrent connectivity test (${{ join(matrix.*, ', ') }})
-         id: run-tests
-         run: |
+@@ -1,41 +0,0 @@
+-apiVersion: cilium.io/v2
+-kind: CiliumNetworkPolicy
+-metadata:
+-  name: client-egress-to-echo-port-range
+-spec:
+-  endpointSelector:
+-    matchLabels:
+-      kind: client
+-  egress:
+-  - toPorts:
+-    - ports:
+-      - port: "4096"
+-        endPort: 8191
+-        protocol: TCP
+-    toEndpoints:
+-    - matchLabels:
+-        io.kubernetes.pod.namespace: cilium-test
+-        kind: echo
+-      matchExpressions:
+-      - { key: io.cilium.k8s.policy.cluster, operator: Exists }
+-  - toPorts:
+-    - ports:
+-      - port: "53"
+-        protocol: UDP
+-      - port: "53"
+-        protocol: TCP
+-    toEndpoints:
+-    - matchExpressions:
+-      - { key: 'k8s-app', operator: In, values: [ "kube-dns", "coredns", "node-local-dns", "nodelocaldns" ] }
+-      - { key: 'io.kubernetes.pod.namespace', operator: In, values: [ "kube-system" ] }
+-  # For nodelocaldns using a link-local address (the "localip" mode).
+-  - toPorts:
+-    - ports:
+-      - port: "53"
+-        protocol: UDP
+-      - port: "53"
+-        protocol: TCP
+-    # Including 'world' here may still be needed for versions up to 1.16 (#997)
+-    toEntities:
+-      - host
+-      - world
+```
+
+---
+
+### Incident Patch 2: `d7300d7f` (2026-10-16)
+**Commit Message**: envoy: keep query out of Path in ParseURL fallback
+
+When url.Parse fails on the access log entry (for example a Host with a
+non-numeric port, or a path with an invalid percent escape), ParseURL
+falls back to a hand-built url.URL with the raw request path, query
+string included, stored in Path. Hubble's --hubble-redact-http-urlquery
+only clears RawQuery and Fragment, so in that case the query survives
+redaction and is exported as "%3Ftoken=..." in the flow URL.
+
+Split the query and fragment off the path in the fallback so they land
+in the fields that redaction operates on.
+
+Signed-off-by: Kartik Naik <[REDACTED_EMAIL]>
+
+**File**: `pkg/envoy/accesslog.go` (modified, +9/-3)
+```diff
+@@ -18,10 +18,16 @@ import (
+ func ParseURL(scheme, host, path string) *url.URL {
+ 	u, err := url.Parse(fmt.Sprintf("%s://%s/%s", scheme, host, strings.TrimPrefix(path, "/")))
+ 	if err != nil {
++		// Keep the query and fragment out of Path so that consumers such
++		// as Hubble's URL query redaction still see them.
++		path, fragment, _ := strings.Cut(path, "#")
++		path, query, _ := strings.Cut(path, "?")
+ 		u = &url.URL{
+-			Scheme: scheme,
+-			Host:   host,
+-			Path:   path,
++			Scheme:   scheme,
++			Host:     host,
++			Path:     path,
++			RawQuery: query,
++			Fragment: fragment,
+ 		}
+ 	}
+ 	return u
+```
+
+**File**: `pkg/envoy/accesslog_server_test.go` (modified, +16/-0)
+```diff
+@@ -24,3 +24,19 @@ func TestParseURL(t *testing.T) {
+ 		require.Equal(t, "/foo", u.Path)
+ 	}
+ }
++
++func TestParseURLInvalid(t *testing.T) {
++	logs := []*cilium.HttpLogEntry{
++		{Scheme: "http", Host: "foo:bar", Path: "/foo?blah=131#frag"},
++		{Scheme: "http", Host: "foo", Path: "/foo%zz?blah=131#frag"},
++	}
++
++	for _, l := range logs {
++		u := ParseURL(l.Scheme, l.Host, l.Path)
++		require.Equal(t, "http", u.Scheme)
++		require.Equal(t, l.Host, u.Host)
++		require.NotContains(t, u.Path, "blah")
++		require.Equal(t, "blah=131", u.RawQuery)
++		require.Equal(t, "frag", u.Fragment)
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49676** (2026-10-28): cilium-cli/connectivity: remove unused client-egress-to-echo-port-range manifest (@tklauser)
+- **PR #49672** (2026-10-28): gha/conformance-gke: Lower test concurrency to 3 (@aanm)
 - **PR #49662** (closed): ipam: Only release ENI prefixes acknowledged by the agent (@norbjert)
+- **PR #49658** (2026-10-28): chore(deps): update module github.com/go-jose/go-jose/v4 to v4.1.6 [security] (v1.18) (@cilium-renovate[bot])
+- **PR #49657** (2026-10-28): chore(deps): update module github.com/go-jose/go-jose/v4 to v4.1.6 [security] (v1.19) (@cilium-renovate[bot])
 - **PR #49654** (closed): Add CRD-managed SPIRE registration and shared-root HA (@Arleee1)
-- **PR #49648** (closed): test commit: do not merge (@Artyop)
-- **PR #49645** (2026-10-27): l2announcer: Fix deadlock between stop() and leader events (@aanm)
-- **PR #49642** (2026-10-27): renovate: Bump go-control-plane/envoy with cilium-envoy (@aanm)
-- **PR #49637** (2026-10-27): v1.19 Backports 2026-10-27 (@christarazi)
 
 ---
 

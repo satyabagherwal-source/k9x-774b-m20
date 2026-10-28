@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T15:23:02.949Z",
-  "total_cycles_completed": 5797,
-  "total_learnings_persisted": 5797,
-  "total_rules_promoted": 5277,
+  "last_updated": "2026-10-28T15:29:51.450Z",
+  "total_cycles_completed": 5800,
+  "total_learnings_persisted": 5800,
+  "total_rules_promoted": 5278,
   "history": [
-    {
-      "timestamp": "2026-10-28T01:06:59.656Z",
-      "repository": "tw93/Mole",
-      "learningId": "learn-github-tw93-mole",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T01:07:03.852Z",
-      "repository": "beclab/Olares",
-      "learningId": "learn-github-beclab-olares",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T01:15:46.131Z",
-      "repository": "lilylilith/QI_2.1_AnyAngle",
-      "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T01:22:15.169Z",
       "repository": "ClementTsang/bottom",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-28T15:23:02.949Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T15:29:46.748Z",
+      "repository": "Aleph-Alpha/Kolibri-1",
+      "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T15:29:50.120Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T15:29:51.450Z",
+      "repository": "etcd-io/etcd",
+      "learningId": "learn-github-etcd-io-etcd",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

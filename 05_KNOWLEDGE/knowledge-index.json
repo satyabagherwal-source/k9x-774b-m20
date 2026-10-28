@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T15:23:02.904Z",
+  "last_updated": "2026-10-28T15:29:51.374Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6389,8 +6389,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "bcda14be",
-      "content_hash": "ea5d83279fd31ea1c08d52a97cf5cbaf0b17dfc0cb36432d16af679594c38850",
+      "source_version": "5e26ccca",
+      "content_hash": "0c9b9b1d7cebd9d44847afa88a2c9134f737d6c7e9c3504fcbfefdca519e87ec",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -6540,7 +6540,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T12:08:58.450Z",
+      "verified_at": "2026-10-28T15:29:50.007Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11453,8 +11453,8 @@
       "slug": "etcd-io-etcd",
       "platform": "github",
       "source_url": "https://github.com/etcd-io/etcd",
-      "source_version": "2b7b001a",
-      "content_hash": "05ad899c9cac58dd7dc4677ae385566c731021351ec958f568093c20fd8fd154",
+      "source_version": "f164b70f",
+      "content_hash": "94c541cf0f326ca0c7eddd731c3705bc7e42aa2858144af562ad060ade713532",
       "dossier_path": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "promoted_rules": [
@@ -11497,6 +11497,11 @@
           "number": 5055,
           "title": "Protobuf Header Deep Immutability Boundary",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5327,
+          "title": "Merge pull request #22661 from etcd-io/dependabot/go_modules/github.com/GoogleCl",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11504,7 +11509,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T23:21:53.864Z",
+      "verified_at": "2026-10-28T15:29:51.359Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -16297,7 +16302,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
       "source_version": "hf-aleph-alpha-kolibri-1",
-      "content_hash": "c61238734cc88c9987b5f0d82c14b0476bfd4b566f5e49fc9a542e8dd118164e",
+      "content_hash": "f99e620b40220844d8f98adbabbfb2d593884cc0b73a39f6517bcbd7cdcf2162",
       "dossier_path": "07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md",
       "promoted_rules": [
@@ -16379,7 +16384,7 @@
         "learn-huggingface-hf-aleph-alpha-kolibri-1-mv3xbaa0",
         "learn-huggingface-hf-aleph-alpha-kolibri-1-mv4c0zvx"
       ],
-      "verified_at": "2026-10-25T21:27:18.687Z",
+      "verified_at": "2026-10-28T15:29:46.642Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -144731,6 +144736,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T15:23:02.895Z"
+    },
+    "rule-5327": {
+      "learning_id": "rule-5327",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5327,
+      "title": "Merge pull request #22661 from etcd-io/dependabot/go_modules/github.com/GoogleCl",
+      "source_url": "https://github.com/etcd-io/etcd",
+      "source_version": "f164b70f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T15:29:51.359Z"
     }
   },
   "aliases": {

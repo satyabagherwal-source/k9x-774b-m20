@@ -5829,3 +5829,6 @@ Every entry in this ledger must capture:
 | `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `a4a939a9` | Multi-dimensional audit evidence | 2026-10-28T15:22:48.226Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `87db0f3b` | Multi-dimensional audit evidence | 2026-10-28T15:22:56.232Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `74088ac3` | Multi-dimensional audit evidence | 2026-10-28T15:23:02.945Z |
+| `learn-huggingface-aleph-alpha-kolibri-1` | `https://huggingface.co/Aleph-Alpha/Kolibri-1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-10-28T15:29:46.738Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `5e26ccca` | Multi-dimensional audit evidence | 2026-10-28T15:29:50.114Z |
+| `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `f164b70f` | Multi-dimensional audit evidence | 2026-10-28T15:29:51.444Z |

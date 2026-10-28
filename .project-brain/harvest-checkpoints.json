@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T15:23:02.951Z",
+  "last_updated": "2026-10-28T15:29:51.454Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1340,14 +1340,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-aleph-alpha-kolibri-1",
-      "content_hash": "c61238734cc88c9987b5f0d82c14b0476bfd4b566f5e49fc9a542e8dd118164e",
-      "verified_at": "2026-10-25T21:27:18.764Z",
+      "content_hash": "f99e620b40220844d8f98adbabbfb2d593884cc0b73a39f6517bcbd7cdcf2162",
+      "verified_at": "2026-10-28T15:29:46.752Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T21:27:18.764Z"
+      "last_updated": "2026-10-28T15:29:46.752Z"
     },
     "Qwen/Qwen3-4B": {
       "repository": "Qwen/Qwen3-4B",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "ea5d83279fd31ea1c08d52a97cf5cbaf0b17dfc0cb36432d16af679594c38850",
-      "verified_at": "2026-10-28T12:08:58.566Z",
+      "content_hash": "0c9b9b1d7cebd9d44847afa88a2c9134f737d6c7e9c3504fcbfefdca519e87ec",
+      "verified_at": "2026-10-28T15:29:50.123Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T12:08:58.566Z"
+      "last_updated": "2026-10-28T15:29:50.123Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -7281,14 +7281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-etcd-io-etcd",
-      "content_hash": "05ad899c9cac58dd7dc4677ae385566c731021351ec958f568093c20fd8fd154",
-      "verified_at": "2026-10-27T23:21:53.921Z",
+      "content_hash": "94c541cf0f326ca0c7eddd731c3705bc7e42aa2858144af562ad060ade713532",
+      "verified_at": "2026-10-28T15:29:51.453Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T23:21:53.921Z"
+      "last_updated": "2026-10-28T15:29:51.453Z"
     },
     "wasm-bindgen/wasm-pack": {
       "repository": "wasm-bindgen/wasm-pack",

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-X49P",
-    "timestamp": "2026-10-27T13:25:18.685Z",
-    "repository": "axios/axios",
-    "learningId": "learn-github-axios-axios",
-    "contentHash": "8d3e5104f396ddedddba651c933c5b990e1afdabd14a023e06d22f060c77489c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-X89J",
-    "timestamp": "2026-10-27T13:25:23.863Z",
-    "repository": "skyhook-io/radar",
-    "learningId": "learn-github-skyhook-io-radar",
-    "contentHash": "7dcaa10aaebeb190b0b8bd9d8df93d2e482a0df9aa2d02092cf304b53e116b5f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-XBM6",
-    "timestamp": "2026-10-27T13:25:28.206Z",
-    "repository": "dragonflydb/dragonfly",
-    "learningId": "learn-github-dragonflydb-dragonfly",
-    "contentHash": "8cacac3431d19d42451ff060fd2f13ee473633b371fbed95b2505efbbdae813b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-0Y7Y",
     "timestamp": "2026-10-27T13:28:17.470Z",
     "repository": "nexu-io/html-anything",
@@ -7490,6 +7445,51 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "4707d3ed96ad179955a89e15acb4958a1eda9dee0598ee3766618fd8ef533a59",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-T1BJ",
+    "timestamp": "2026-10-28T15:29:46.735Z",
+    "repository": "Aleph-Alpha/Kolibri-1",
+    "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+    "contentHash": "f99e620b40220844d8f98adbabbfb2d593884cc0b73a39f6517bcbd7cdcf2162",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-T3XA",
+    "timestamp": "2026-10-28T15:29:50.110Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "0c9b9b1d7cebd9d44847afa88a2c9134f737d6c7e9c3504fcbfefdca519e87ec",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-T4Y8",
+    "timestamp": "2026-10-28T15:29:51.440Z",
+    "repository": "etcd-io/etcd",
+    "learningId": "learn-github-etcd-io-etcd",
+    "contentHash": "94c541cf0f326ca0c7eddd731c3705bc7e42aa2858144af562ad060ade713532",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
