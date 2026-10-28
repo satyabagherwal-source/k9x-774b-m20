@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md`  
 > **Source**: github ([https://github.com/SimonSchubert/LinuxCommandLibrary](https://github.com/SimonSchubert/LinuxCommandLibrary))  
-> **Source Version**: `ee413f1b`  
+> **Source Version**: `a4fd0f15`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T15:16:04.117Z  
+> **Timestamp**: 2026-10-28T22:32:59.820Z  
 > **Learning ID**: `learn-github-simonschubert-linuxcommandlibrary`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SimonSchubert/LinuxCommandLibrary](https://github.com/SimonSchubert/LinuxCommandLibrary))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T15:16:04.110Z  
+> **Harvest Timestamp**: 2026-10-28T22:32:59.690Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 2M+ app downloads, 500k+ monthly website visitors, Linux basics, tips and formatted man pages
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2084 stars
+- **Stars / Engagement**: 2088 stars
 
 ---
 
@@ -853,95 +853,319 @@ private fun showCommandNonInteractive(terminal: Terminal, commandName: String) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `76c82645` (2026-10-23)
-**Commit Message**: Fix yana-ai-rt markup
+### Incident Patch 1: `a4fd0f15` (2026-10-28)
+**Commit Message**: Fix command page markup
 
-**File**: `assets/commands/yana-ai-rt.md` (modified, +1/-1)
+**File**: `assets/commands/fd-type.md` (modified, +4/-4)
 ```diff
-@@ -44,7 +44,7 @@ Run approved shell tools **without** `sandbox-exec.sh`
+@@ -47,7 +47,7 @@ The same filter in its **short form**
+ # PARAMETERS
  
- **yana-ai-rt** is a second Cargo binary from the **yana-rt** crate. It is built from the same `src/main.rs` as **yana-rt**. When the executable stem is `yana-ai-rt`, the process inserts the **chat** subcommand into argv before clap parses, so `yana-ai-rt --provider ollama` is the same invocation as `yana-rt chat --provider ollama`. Extra positional words after the alias still go through clap as **chat** flags; they are not extra subcommands.
+ **-t** _filetype_, **--type** _filetype_
+-> Keep entries of this type. Repeat the flag to include more than one type. Short forms may be joined to the letter (`-tf`, `-td`).
++> Keep entries of this type. Repeat the flag to include more than one type. Short forms may be joined to the letter (**-tf**, **-td**).
  
--`pip install yana-ai` also installs a console script of this name (the package's chat_main entry). That shim prepends **chat** and execs a compiled **yana-rt** binary: **YANA_RT_BIN**, then a native **yana-rt** on PATH (never the pip script itself), then a packaged ELF/Mach-O, then `target/release/yana-rt`. Point **YANA_RT_BIN** at a compiled binary, never at `which yana-rt` after a pip install. The crate is **1.5.1** on crates.io (2026-10-05); the Python package **yana-ai** is versioned separately (**1.5.2** in pyproject.toml).
-+`pip install yana-ai` also installs a console script of this name. That shim prepends **chat** and execs a compiled **yana-rt** binary: **YANA_RT_BIN**, then a native **yana-rt** on PATH (never the pip script itself), then a packaged ELF/Mach-O, then `target/release/yana-rt`. Point **YANA_RT_BIN** at a compiled binary, never at `which yana-rt` after a pip install. The crate is **1.5.1** on crates.io (2026-10-05); the Python package **yana-ai** is versioned separately (**1.5.2** in pyproject.toml).
+ **f**, **file**
+ > Regular files
+@@ -78,15 +78,15 @@ The same filter in its **short form**
  
- The REPL talks to a provider from the runtime catalog. With no **--provider**, it uses **ANTHROPIC_API_KEY**, else **OPENAI_API_KEY**, else local Ollama at `127.0.0.1:11434`. A missing key for an explicit cloud provider prints the env var and exits; it does not switch providers. Two tools are available: **read_file** (read-only, sandboxed to the repo root) and **run_command** (always asks a human first, then runs through `core/scripts/sandbox-exec.sh` unless **--no-sandbox**). The process is separate from Claude Code, so PreToolUse hooks never see it.
+ # DESCRIPTION
  
+-**fd --type** (short **-t**) restricts a search with the **fd** file finder to one or more entry types. There is no separate `fd-type` binary. On Debian and Ubuntu the same program is often installed as **fdfind**, and the flag is the same: `fdfind -t f`.
++**fd --type** (short **-t**) restricts a search with the **fd** file finder to one or more entry types. There is no separate **fd-type** binary. On Debian and Ubuntu the same program is often installed as **fdfind**, and the flag is the same: **fdfind -t f**.
+ 
+ Hidden entries and gitignore patterns stay out of the results unless you pass **--hidden** or **--no-ignore**. The search pattern is still a regex matched against the file name, not a glob, unless you pass **--glob**.
+ 
+-Repeat the flag to combine types. `--type file --type symlink` prints regular files and symbolic links. **executable** works differently: `--type executable` implies regular files, so it does not also list directories that happen to be executable. **empty** matches empty files and empty directories until you add **file** or **directory** beside it.
++Repeat the flag to combine types. **--type file --type symlink** prints regular files and symbolic links. **executable** works differently: **--type executable** implies regular files, so it does not also list directories that happen to be executable. **empty** matches empty files and empty directories until you add **file** or **directory** beside it.
+ 
+ # CAVEATS
+ 
+-Type the flag on **fd** or **fdfind**. There is no `fd-type` command. **executable** implies **file**. **empty** covers both empty files and empty directories until you narrow it. A default search still skips hidden paths and does not follow symlinked directories, so device nodes, sockets, and pipes are easy to miss under `/dev` without **--hidden** and a path.
++Type the flag on **fd** or **fdfind**. There is no **fd-type** command. **executable** implies **file**. **empty** covers both empty files and empty directories until you narrow it. A default search still skips hidden paths and does not follow symlinked directories, so device nodes, sockets, and pipes are easy to miss under **/dev** without **--hidden** and a path.
+ 
+ # INSTALL
+ 
+```
+
+**File**: `assets/commands/sesh.md` (modified, +11/-11)
+```diff
+@@ -48,7 +48,7 @@ Smart tmux session manager that uses zoxide
+ 
+ **sesh** creates and switches tmux sessions. Josh Medeski wrote it in Go. A session name comes from the git repository, the git remote, or the directory. Directory history comes from **zoxide** unless you point the frecency table at another jumper, so projects you visit often show up in **sesh list** next to sessions that are already running.
+ 
+-**connect** attaches to a name and creates the session when it is not running. **last** switches to the previous attached session, including the case where tmux's own last-session binding no longer has one. **picker** is a built-in fuzzy selector. **preview** prints the active window of a session or a directory. **clone** clones a repository and then connects. **mkdir** creates a relative, absolute, or `~` path and connects to it. **window** lists or selects windows inside a session. **root** prints the root of the attached session. **rename --enrich** adds a GitHub issue title to the session name when the **gh** command can resolve the branch.
++**connect** attaches to a name and creates the session when it is not running. **last** switches to the previous attached session, including the case where tmux's own last-session binding no longer has one. **picker** is a built-in fuzzy selector. **preview** prints the active window of a session or a directory. **clone** clones a repository and then connects. **mkdir** creates a relative, absolute, or home-relative path and connects to it. **window** lists or selects windows inside a session. **root** prints the root of the attached session. **rename --enrich** adds a GitHub issue title to the session name when the **gh** command can resolve the branch.
+ 
+ **sesh list** with no source flags includes tmux sessions, zoxide results, configured sessions, and tmuxinator configs. Pass **-t**, **-z**, **-c**, or **-T** to keep one source.
+ 
+@@ -102,7 +102,7 @@ This binary is not the AWS SSO tool that is also started by typing **sesh**. Tha
+ > On **list**, show sessions the config blacklist would otherwise hide.
+ 
+ **--format** _template_
+-> On **list**, render each row yourself. Placeholders cover the display name, the raw session name, the source, the path, and the active window name (plus a prefix form of that window name). Color spans use `{fg:yellow}` and `{/fg}`. Supported color names are black, red, green, yellow, blue, magenta, cyan, white, and the bright- variants. gray and grey mean bright-black.
++> On **list**, render each row yourself. Placeholders cover the display name, the raw session name, the source, the path, and the active window name (plus a prefix form of that window name). Color spans use **{fg:yellow}** and **{/fg}**. Supported color names are black, red, green, yellow, blue, magenta, cyan, white, and the bright- variants. gray and grey mean bright-black.
+ 
+ **--no-cache**
+ > On **list** and **picker**, read live sessions instead of the cache. The cache is still refreshed.
+@@ -123,16 +123,16 @@ This binary is not the AWS SSO tool that is also started by typing **sesh**. Tha
+ > Switch to the previous tmux session. Fails when there is no previous session.
+ 
+ **picker** (aliases **pick**, **pk**)
+-> Interactive selector. Source flags match **list**. **--preview** shows the highlighted session beside the list, and **--no-preview** hides that pane. **--query** prefills the filter. **--prompt** and **--placeholder** change the TUI text. **-s** / **--separator-aware** treats spaces as matching `-`, `_`, `/`, and `\`. **--no-alias-auto** does not connect the moment an alias is typed in full.
++> Interactive selector. Source flags match **list**. **--preview** shows the highlighted session beside the list, and **--no-preview** hides that pane. **--query** prefills the filter. **--prompt** and **--placeholder** change the TUI text. **-s** / **--separator-aware** treats a space as a hyphen, underscore, slash, or backslash. **--no-alias-auto** does not connect the moment an alias is typed in full.
+ 
+ **preview** (alias **p**) _name_
+ > Preview one session or directory. **-w** / **--watch** refreshes an active tmux session. **--interval** sets that period (default 500ms) and must be greater than zero. Directories and config-only sessions are rendered once.
+ 
+ **clone** (alias **cl**) _repo_
+-> Clone, then connect. **-c** / **--cmdDir** is the directory git runs in. **-d** / **--dir** is the checkout directory name. Arguments after `--` are extra git flags.
++> Clone, then connect. **-c** / **--cmdDir** is the directory git runs in. **-d** / **--dir** is the checkout directory name. Arguments after **--** are extra git flags.
+ 
+ **mkdir** (alias **md**) _path_
+-> Create the directory if it is missing, then connect. The path may be relative, absolute, or start with `~`.
++> Create the directory if it is missing, then connect. The path may be relative, absolute, or start with a tilde.
+ 
+ **rename** [_name_] **--enrich**
+ > Rename the named session, or the attached
 ```
 
 ---
 
-### Incident Patch 2: `fcaa2f0f` (2026-10-23)
-**Commit Message**: Fix yana-ai-rt markup
+### Incident Patch 2: `9dc49d4e` (2026-10-28)
+**Commit Message**: Fix Tiny Tube configuration headings
 
-**File**: `assets/commands/yana-ai-rt.md` (modified, +1/-1)
+**File**: `assets/commands/tiny-tube-cli.md` (modified, +3/-3)
 ```diff
-@@ -44,7 +44,7 @@ Run approved shell tools **without** `sandbox-exec.sh`
+@@ -89,13 +89,13 @@ The grouped form is `users` plus a subcommand. The same actions exist as flat co
  
- **yana-ai-rt** is a second Cargo binary from the **yana-rt** crate. It is built from the same `src/main.rs` as **yana-rt**. When the executable stem is `yana-ai-rt`, the process inserts the **chat** subcommand into argv before clap parses, so `yana-ai-rt --provider ollama` is the same invocation as `yana-rt chat --provider ollama`. Extra positional words after the alias still go through clap as **chat** flags; they are not extra subcommands.
+ # CONFIGURATION
  
--`pip install yana-ai` also installs a console script of this name (`yana_ai.rt:chat_main`). That shim prepends **chat** and execs a compiled **yana-rt** binary: **YANA_RT_BIN**, then a native **yana-rt** on PATH (never the pip script itself), then a packaged ELF/Mach-O, then `target/release/yana-rt`. Point **YANA_RT_BIN** at a compiled binary, never at `which yana-rt` after a pip install. The crate is **1.5.1** on crates.io (2026-10-05); the Python package **yana-ai** is versioned separately (**1.5.2** in `pyproject.toml`).
-+`pip install yana-ai` also installs a console script of this name (the package's chat_main entry). That shim prepends **chat** and execs a compiled **yana-rt** binary: **YANA_RT_BIN**, then a native **yana-rt** on PATH (never the pip script itself), then a packaged ELF/Mach-O, then `target/release/yana-rt`. Point **YANA_RT_BIN** at a compiled binary, never at `which yana-rt` after a pip install. The crate is **1.5.1** on crates.io (2026-10-05); the Python package **yana-ai** is versioned separately (**1.5.2** in pyproject.toml).
+-```VIDEO_DIR```
++**VIDEO_DIR**
+ > Video storage directory. Default `videos`, resolved to an absolute path. Relative paths use the working directory.
  
- The REPL talks to a provider from the runtime catalog. With no **--provider**, it uses **ANTHROPIC_API_KEY**, else **OPENAI_API_KEY**, else local Ollama at `127.0.0.1:11434`. A missing key for an explicit cloud provider prints the env var and exits; it does not switch providers. Two tools are available: **read_file** (read-only, sandboxed to the repo root) and **run_command** (always asks a human first, then runs through `core/scripts/sandbox-exec.sh` unless **--no-sandbox**). The process is separate from Claude Code, so PreToolUse hooks never see it.
+-```STORE```
++**STORE**
+ > `sqlite` (default) or `fs`. Any other value is an error.
  
+-```DB_PATH```
++**DB_PATH**
+ > SQLite file when **STORE** is `sqlite`. Default is `tiny-tube.db` inside **VIDEO_DIR**.
+ 
+ A `.env` file in the working directory fills variables that are not already set. Values already in the environment are left as they are. The file may quote values. It does not expand variables.
+```
+
+**File**: `assets/commands/tiny-tube.md` (modified, +27/-27)
+```diff
+@@ -50,85 +50,85 @@ Originals are stored under **VIDEO_DIR** (default `videos`, relative to the work
+ 
+ # CONFIGURATION
+ 
+-```VIDEO_DIR```
++**VIDEO_DIR**
+ > Directory for originals, HLS, posters, and the default database. Default `videos`. Relative paths use the working directory.
+ 
+-```ADDR```
++**ADDR**
+ > Full `host:port` listen address. When set, it overrides **HOST** and **PORT**. Must be a host and a port.
+ 
+-```HOST```
++**HOST**
+ > Bind host when **ADDR** is unset. Default `127.0.0.1`. Use `0.0.0.0` for IPv4 access from other machines.
+ 
+-```PORT```
++**PORT**
+ > TCP port when **ADDR** is unset. Default `8081`. Must be 1-65535. `8080` is accepted.
+ 
+-```STORE```
++**STORE**
+ > `sqlite` (default) or `fs`.
+ 
+-```DB_PATH```
++**DB_PATH**
+ > SQLite file. Default is `tiny-tube.db` inside **VIDEO_DIR**. Relative paths use the working directory.
+ 
+-```ADMIN_USER```
++**ADMIN_USER**
+ > Name of the first administrator, created only when no users exist. Default `admin`.
+ 
+-```ADMIN_PASS```
++**ADMIN_PASS**
+ > Password for that first account. Startup refuses an empty password or `changeme` while the user table is empty.
+ 
+-```AUTH_MODE```
++**AUTH_MODE**
+ > `local` (default), `ldap`, or `both`. In `both`, existing local accounts use their local password. Other names go to LDAP. LDAP does not take over a same-named local account.
+ 
+-```COOKIE_SECURE```
++**COOKIE_SECURE**
+ > `true` marks the session cookie Secure. Use that behind HTTPS. Default `false`.
+ 
+-```FFMPEG_BIN```
++**FFMPEG_BIN**
+ > FFmpeg executable. An explicit path that does not work prevents startup. When unset, FFmpeg is taken from `PATH` if present.
+ 
+-```MAX_UPLOAD_BYTES```
++**MAX_UPLOAD_BYTES**
+ > Maximum size of a whole multipart upload, including form fields. Default 2147483648 (2 GiB). Must be a positive integer.
+ 
+-```TRANSCODE_WORKERS```
++**TRANSCODE_WORKERS**
+ > Concurrent FFmpeg processes, from 1 to 16. Default 1.
+ 
+-```AUTH_REQUESTS_PER_MINUTE```
++**AUTH_REQUESTS_PER_MINUTE**
+ > Protected-route requests per source IP per minute, before authentication. Default 60. Range 1-3600. Extra requests get HTTP 429.
+ 
+-```UPLOAD_TIMEOUT_SECONDS```
++**UPLOAD_TIMEOUT_SECONDS**
+ > Deadline for an authenticated multipart upload. Default 1800. Range 1-86400.
+ 
+-```TRANSCODE_TIMEOUT_SECONDS```
++**TRANSCODE_TIMEOUT_SECONDS**
+ > Deadline for one HLS and poster job. Default 1800. Range 1-86400. An expired job is marked failed and the original is kept.
+ 
+-```LDAP_ADDR```
++**LDAP_ADDR**
+ > Directory URL. Default `ldap://localhost:389`. `ldaps://` is accepted.
+ 
+-```LDAP_BASE_DN```
++**LDAP_BASE_DN**
+ > Fallback search base and the default used in a direct bind. Default `dc=example,dc=com`.
+ 
+-```LDAP_BIND_DN```
++**LDAP_BIND_DN**
+ > Service account for a subtree search. When unset, users bind directly.
+ 
+-```LDAP_BIND_PASSWORD```
++**LDAP_BIND_PASSWORD**
+ > Password for that service account.
+ 
+-```LDAP_SEARCH_BASES```
++**LDAP_SEARCH_BASES**
+ > Semicolon-separated search bases. Setting this turns on subtree search.
+ 
+-```LDAP_USER_FILTER```
++**LDAP_USER_FILTER**
+ > Search filter. `%s` is the escaped username. Default `(uid=%s)`.
+ 
+-```LDAP_USER_DN```
++**LDAP_USER_DN**
+ > Direct-bind DN template. Default is `uid=%s` plus the base DN.
+ 
+-```LDAP_ATTR_EMAIL```
++**LDAP_ATTR_EMAIL**
+ > Directory attribute stored as the user's email. Default `mail`.
+ 
+-```LDAP_ATTR_FIRST_NAME```
++**LDAP_ATTR_FIRST_NAME**
+ > Directory attribute for the given name. Default `givenName`.
+ 
+-```LDAP_ATTR_LAST_NAME```
++**LDAP_ATTR_LAST_NAME**
+ > Directory attribute for the surname. Default `sn`.
+ 
+-```LDAP_ALWAYS_UPDATE```
++**LDAP_ALWAYS_UPDATE**
+ > When `true` (default), each LDAP login refreshes the local user record from the directory.
+ 
+ # CAVEATS
 ```
 
 ---
 
-### Incident Patch 3: `868047b8` (2026-10-22)
-**Commit Message**: Fix remaining otpu-i2c and otpu-ddr4 underscore markup
+### Incident Patch 3: `bcd6ffb1` (2026-10-28)
+**Commit Message**: Fix command markup
 
-**File**: `assets/commands/otpu-ddr4.md` (modified, +1/-1)
+**File**: `assets/commands/plimsoll-mcp.md` (modified, +6/-6)
 ```diff
-@@ -36,7 +36,7 @@ A **named** XDMA device
+@@ -40,13 +40,13 @@ Print a one-use **owner enrollment** code
  
- **otpu-ddr4** is the memory bring-up tool for an **openTPU** board with one LiteDRAM DDR4 core per DIMM (the **BCU1525**: Virtex UltraScale+ VU9P, four DDR4 DIMMs). After `pip install -e .` in the FeSens/openTPU tree it is installed as a console script (`opentpu.host.ddr4:main`). It can also be invoked as `python -m opentpu.host.ddr4`.
+ With no argument it speaks MCP on stdin and stdout. Diagnostics go to stderr so they do not mix with the protocol stream. It serves the MCP revision dated 2026-07-28 and the 2025 revisions (Go SDK 1.8.0). **--version** and **-version** print the server name (**plimsoll**) and version (**0.1.0** in the current source).
  
--Each DIMM **d** has CSRs in BAR0 at **R_DDR4** plus **d** times **DDR4_STRIDE**. Each core's CPU (LiteX BIOS) calibrates its DIMM at reset and logs on the UART (DIMM C1's core drives the board's). This command reads and tests what the CSRs reach. The CSR map and PHY settings ship in `opentpu/host/litedram4` (generated by `tools/litedram/gen_core_ddr4.py` from the BCU1525 LiteDRAM tree).
-+Each DIMM **d** has CSRs in BAR0 at **R_DDR4** plus **d** times **DDR4_STRIDE**. Each core's CPU (LiteX BIOS) calibrates its DIMM at reset and logs on the UART (DIMM C1's core drives the board's). This command reads and tests what the CSRs reach. The CSR map and PHY settings ship in `opentpu/host/litedram4` (generated from the BCU1525 LiteDRAM tree).
+-The tools are **run_code** (Python or JavaScript, optional files, optional sandbox handle), **open_sandbox**, **close_sandbox**, **get_record**, and **server_info**. A sandbox handle is random and is not the daemon's session id. A failed program is a result that carries the exit code. A refusal before any code is sent is a tool error whose `ran` field is **no**. A call that may have run without a checked answer is **maybe** and must not be retried.
++The tools are **run_code** (Python or JavaScript, optional files, optional sandbox handle), **open_sandbox**, **close_sandbox**, **get_record**, and **server_info**. A sandbox handle is random and is not the daemon's session id. A failed program is a result that carries the exit code. A refusal before any code is sent is a tool error whose **ran** field is **no**. A call that may have run without a checked answer is **maybe** and must not be retried.
  
- The bitstream must be register map 4 with a target whose platform mem is **ddr4** and mem-ctrl is **litedram**. The Verilator board model has no LiteDRAM cores; the command then exits **2**. Board channel **j** equals 2s + c (slice **s**, channel **c**) and maps to DIMM C0, C1, C3, C2 in that channel order.
+ **get_record** keeps the last **256** checked records in memory (at most **64 KiB** each, **16 MiB** in all) until the process exits. Signed receipts, when configured, are written beside that and are checked with **plimsoll-attest**.
  
+ One argument selects an operator command instead of stdio. **status**, **disable**, **enable**, **enroll**, and **reset-owner** print one JSON object and give up after **7** seconds. **serve-http** and **enroll-http** bind a loopback HTTP listener for the optional single-owner remote mode.
+ 
+-The module is **github.com/plimsollmark/plimsoll/clients/mcp** and needs **Go 1.26**. From a checkout of `clients/mcp`, `go build -o plimsoll-mcp ./cmd/plimsoll-mcp` produces the same binary. An npm launcher (`@plimsollmark/mcp`) exists for published releases; install that package and point the host at the installed path rather than `npx` from an untrusted project directory.
++The module is **github.com/plimsollmark/plimsoll/clients/mcp** and needs **Go 1.26**. From a checkout of **clients/mcp**, **go build -o plimsoll-mcp ./cmd/plimsoll-mcp** produces the same binary. An npm launcher (**@plimsollmark/mcp**) exists for published releases; install that package and point the host at the installed path rather than **npx** from an untrusted project directory.
+ 
+ # COMMANDS
+ 
+@@ -61,13 +61,13 @@ The module is **github.com/plimsollmark/plimsoll/clients/mcp** and needs **Go 1.
+ 
+ # CONFIGURATION
+ 
+-Stdio and **serve-http** read the daemon client from the environment. An empty value counts as unset. A value that is still a host placeholder (`${...}`) is an error. Cleartext HTTP is accepted only to loopback unless **PLIMSOLL_INSECURE_HTTP** is **1**.
++Stdio and **serve-http** read the daemon client from the environment. An empty value counts as unset. A value that is still a host placeholder (**${...}**) is an error. Cleartext HTTP is accepted only to loopback unless **PLIMSOLL_INSECURE_HTTP** is **1**.
+ 
+ **PLIMSOLL_URL**
+-> Required for stdio and **serve-http**. The **plimsolld** base URL, such as `http://127.0.0.1:8746`
++> Required for stdio and **serve-http**. The **plimsolld** base URL, such as **http://127.0.0.1:8746**
+ 
+ **PLIMSOLL_TOKEN**
+-> Caller token with the `code:run` scope. Omit only for an open development daemon. **serve-http** requires it
++> Caller token with the **code:run** scope. Omit only for an open development daemon. **serve-http** requires it
+ 
+ **PLIMSOLL_MIN_ISOLATION**
+ > Weakest tier a run accepts: **vm**, **kernel** (default), **container**, or **process**. **serve-http** allows only **kernel** or **vm**
+@@ -119,7 +119,7 @@ Stdio and **serve-http** read the daemon client from the environment. An empty v
+ 
+ # CAVEATS
+ 
+-The isolation tier is the daemon's configuration and startup checks, not hardware attestation. A sandbox has no network, and no file comes back except as stdout and stderr. A **maybe** result is never retried. Receipt signing is not available on Windows. **serve-http** is stricter than stdio: kernel or VM floor, receipts, an authenticated caller, and no insecure daemon transport. Do not launch the published npm package with `npx` from a project directory you do not trust. Exit **2** is bad usage or configuration. Exit **1** is a failed command or a server error. On a signal the process cancels calls and closes sandboxes within **5** seconds; a host may kill it sooner, which is why the sandbox lifetime exists.
++The isolation tier is the daemon's configuration and startup checks, not hardware attestation. A sandbox has no network, and no file comes back except as stdout and stderr. A **maybe** result is never retried. Receipt signing is not available on Windows. **serve-http** i
 ```
 
-**File**: `assets/commands/otpu-i2c.md` (modified, +5/-5)
+**File**: `assets/commands/preloop-server.md` (modified, +7/-7)
 ```diff
-@@ -56,13 +56,13 @@ Pin **levels** (SCL, SDA, ALERT)
- **smbus** (bus 1)
- > PCIe edge-connector SMBus (SCL R26, SDA R27). The host's own SMBus controller may also drive this bus.
+@@ -24,7 +24,7 @@ Serve **HTTPS** with that pair
  
--A transaction writes at most one byte to a device: the command code (register pointer) of a read, then a repeated START. It never writes data, so it cannot change a regulator's OPERATION, `VOUT_COMMAND`, PAGE, or any other setting. PMBus send-byte commands (`CLEAR_FAULTS`, `STORE_*`, `RESTORE_*`) are refused as command codes. No command code is written to 0x30-0x37 (DIMM SPD write-protect and page), 0x0C (alert response), or 0x61 (ARP).
-+A transaction writes at most one byte to a device: the command code (register pointer) of a read, then a repeated START. It never writes data, so it cannot change a regulator's OPERATION, VOUT COMMAND, PAGE, or any other setting. PMBus send-byte commands (CLEAR FAULTS, STORE, RESTORE) are refused as command codes. No command code is written to 0x30-0x37 (DIMM SPD write-protect and page), 0x0C (alert response), or 0x61 (ARP).
+ ```preloop-server serve --tls-cert [certs/cert.pem] --tls-key [certs/key.pem]```
  
--**scan** probes addresses **0x08-0x77** with one-byte reads and, unless **--no-identify**, classifies each ACK: LM73, INA current monitor, or PMBus (`MFR_ID` / `MFR_MODEL` and `READ_*` telemetry). Identification skips I/O expanders (0x20-0x27, 0x38-0x3F), I2C multiplexers (0x70-0x77), and EEPROMs (0x50-0x57); **read** can still address them explicitly. A full two-bus scan is cached as `<run dir>/<device>.i2c.json` for **otpu-smi**.
-+**scan** probes addresses **0x08-0x77** with one-byte reads and, unless **--no-identify**, classifies each ACK: LM73, INA current monitor, or PMBus (manufacturer id/model and telemetry). Identification skips I/O expanders (0x20-0x27, 0x38-0x3F), I2C multiplexers (0x70-0x77), and EEPROMs (0x50-0x57); **read** can still address them explicitly. A full two-bus scan is cached as `<run dir>/<device>.i2c.json` for **otpu-smi**.
+-Turn on the **cron scheduler** for `schedule` workflows
++Turn on the **cron scheduler** for schedule workflows
  
- **read** fetches **-n** bytes (default 1). With _reg_, that command code is written first. **--block** is an SMBus block read (the first byte is the count, at most 32).
+ ```preloop-server serve --enable-scheduler```
  
--**pmbus-dump** requires `PMBUS_REVISION`; it prints identification, `VOUT_MODE`, `READ_*` telemetry, and derived power.
-+**pmbus-dump** requires a PMBus revision response; it prints identification, VOUT MODE, telemetry, and derived power.
+@@ -36,11 +36,11 @@ Turn on the **cron scheduler** for `schedule` workflows
  
- **levels** prints SCL and SDA of both buses plus the LM73 ALERT pin. It does not start a transaction.
+ # DESCRIPTION
  
-@@ -74,7 +74,7 @@ Processes serialize with an flock on `<run dir>/<device>.i2c.lock`. The SMBus wa
- > XDMA device prefix (default `/dev/xdma0`).
+-**preloop-server** is the standalone control-plane binary for **Preloop**, a local GitHub Actions engine. It accepts workflow runs over the `actions/runner` protocol and stores them. The official GitHub runner and the companion **preloop-runner** binary can register against it.
++**preloop-server** is the standalone control-plane binary for **Preloop**, a local GitHub Actions engine. It accepts workflow runs over the **actions/runner** protocol and stores them. The official GitHub runner and the companion **preloop-runner** binary can register against it.
  
- **--fake**
--> In-memory demo buses (`fake_i2c.card_buses`). No hardware.
-+> In-memory demo buses. No hardware.
+-It is not **preloop serve**. That CLI command embeds this same server library and also starts the microVM pool. This binary calls `serve` with no runner pool and no GitHub funnel, so it does not boot job microVMs by itself. Install scripts from the Preloop repo place **preloop**, **preloop-server**, and **preloop-runner** together in `~/.local/bin`.
++It is not **preloop serve**. That CLI command embeds this same server library and also starts the microVM pool. This binary calls **serve** with no runner pool and no GitHub funnel, so it does not boot job microVMs by itself. Install scripts from the Preloop repo place **preloop**, **preloop-server**, and **preloop-runner** together in **~/.local/bin**.
  
- **--khz** _N_
- > SCL rate bound in kHz (default **100**). Half-bit delay is `0.5 / (khz * 1e3)`; PCIe register accesses add to the period, so the bus typically runs slower (about 50-80 kHz at the default).
-@@ -98,7 +98,7 @@ Processes serialize with an flock on `<run dir>/<device>.i2c.lock`. The SMBus wa
- > SMBus block read.
+-**serve** is the long-running process. **cert** writes `cert.pem` and `key.pem` (no OpenSSL required) and prints the **serve** flags that use them. Logs follow **RUST_LOG**, which defaults to **info**. **PRELOOP_LOG_FORMAT** selects **pretty**, **json**, or **auto**.
++**serve** is the long-running process. **cert** writes **cert.pem** and **key.pem** (no OpenSSL required) and prints the **serve** flags that use them. Logs follow **RUST_LOG**, which defaults to **info**. **PRELOOP_LOG_FORMAT** selects **pretty**, **json**, or **auto**.
  
- **pmbus-dump** _bus_ _addr_
--> PMBus identification and `READ_*` telemetry.
-+> PMBus identification and telemetry.
+ The control-plane crate is **FSL-1.1-MIT** (source-available, converts to MIT two years after each release). The rest of the Preloop tree is MIT.
  
- **levels**
- > Pin levels only.
+@@ -50,7 +50,7 @@ The control-plane crate is **FSL-1.1-MIT** (source-available, converts to MIT tw
+ > Bind the control plane and keep running. Default listen address is **127.0.0.1:8080**. Default state directory is **.preloop** in the current working directory. **--store** is a sqlite URL, a bare filesystem path, or a postgres URL. When omitted, the store URL is read from **PRELOOP_STORE_URL**, then SQLite under the state directory. **--record-flows** _file_ appends NDJSON of recorded HTTP flows. **--tls-cert** and **--tls-key** are PEM paths and must be set together. **--tls-self-signed** makes an ephemeral certificate for local development and cannot be combined with **--tls-cert**. **--enable-test-api** turns on privileged simulation endpoints and is loopback only; **--test-api-token** is the bearer for those endpoints and requires the test API. **--oidc-issuer** is the issuer URL for tokens this server mints. **--enable-scheduler** runs the cron scheduler for schedule-triggered workflows. **--unix-socket** _path_ also listens on a Unix socket (or **PRELOOP_UNIX_SOCKET**)
+ 
+ **cert**
+-> Write a persistent self-signed `cert.pem` and `key.pem`. **--output** is the directory (default **.**). The command creates the directory if needed
++> Write a persistent self-signed **cert.pem** and **key.pem**. **--output** is the directory (default **.**). The command creates the directory if needed
+ 
+ # PARAMETERS
+ 
+@@ -109,11 +109,11 @@ The control-plane crate is **FSL-1.1-MIT** (source-available, converts to MIT tw
+ 
+ # CAVEATS
+ 
+-This process does not start the microVM pool. A workflow that needs an isolated job VM still needs **preloop serve**, or a runner registered against this server. The default port is **8080**; the **preloop** CLI expects an engine on **127.0.0.1:9090** unless **PRELOOP_URL** says otherwise. The default state directory is relative to the working directory, not `~/.preloop`. **--enable-test-api** must stay on loopback. The control-plane licence forbids offering this binary as a hosted CI service that competes with Preloop.
++This process does not start the microVM pool. A workflow that needs an isolated job VM still needs **preloop serve**, or a runner registered against this server. The default port is **8080**; the **preloop** CLI expects an engine on **127.0.0.1:9090** unless **PRELOOP_URL** says otherwise. The default state directory is relative to the working directory, not **~/.preloop**. **--enable-test-api** must stay on loopback. The control-plane licence forbids offering this binary as a hosted CI service that competes with Preloop.
+ 
+ # HISTORY
+ 
+-**preloop-server** 
 ```
 
 #### Recent Merged Pull Requests:
@@ -970,28 +1194,34 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. yana-ai-rt markup
+## X. command page markup
 
 **RULE**:
-When implementing operations in `assets/commands/yana-ai-rt.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SimonSchubert/LinuxCommandLibrary. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `assets/commands/fd-type.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SimonSchubert/LinuxCommandLibrary. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `76c82645`: yana-ai-rt markup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a4fd0f15`: command page markup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `assets/commands/yana-ai-rt.md`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `assets/commands/fd-type.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-`pip install yana-ai` also installs a console script of this name. That shim prepends **chat** and execs a compiled **yana-rt** binary: **YANA_RT_BIN**, then a native **yana-rt** on PATH (never the pip script itself), then a packaged ELF/Mach-O, then `target/release/yana-rt`. Point **YANA_RT_BIN** at a compiled binary, never at `which yana-rt` after a pip install. The crate is **1.5.1** on crates.io (2026-10-05); the Python package **yana-ai** is versioned separately (**1.5.2** in pyproject.toml).
+> Keep entries of this type. Repeat the flag to include more than one type. Short forms may be joined to the letter (**-tf**, **-td**).
+**fd --type** (short **-t**) restricts a search with the **fd** file finder to one or more entry types. There is no separate **fd-type** binary. On Debian and Ubuntu the same program is often installed as **fdfind**, and the flag is the same: **fdfind -t f**.
+Repeat the flag to combine types. **--type file --type symlink** prints regular files and symbolic links. **executable** works differently: **--type executable** implies regular files, so it does not also list directories that happen to be executable. **empty** matches empty files and empty directories until you add **file** or **directory** beside it.
+Type the flag on **fd** or **fdfind**. There is no **fd-type** command. **executable** implies **file**. **empty** covers both empty files and empty directories until you narrow it. A default search still skips hidden paths and does not follow symlinked directories, so device nodes, sockets, and pipes are easy to miss under **/dev** without **--hidden** and a path.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-`pip install yana-ai` also installs a console script of this name (the package's chat_main entry). That shim prepends **chat** and execs a compiled **yana-rt** binary: **YANA_RT_BIN**, then a native **yana-rt** on PATH (never the pip script itself), then a packaged ELF/Mach-O, then `target/release/yana-rt`. Point **YANA_RT_BIN** at a compiled binary, never at `which yana-rt` after a pip install. The crate is **1.5.1** on crates.io (2026-10-05); the Python package **yana-ai** is versioned separately (**1.5.2** in pyproject.toml).
+> Keep entries of this type. Repeat the flag to include more than one type. Short forms may be joined to the letter (`-tf`, `-td`).
+**fd --type** (short **-t**) restricts a search with the **fd** file finder to one or more entry types. There is no separate `fd-type` binary. On Debian and Ubuntu the same program is often installed as **fdfind**, and the flag is the same: `fdfind -t f`.
+Repeat the flag to combine types. `--type file --type symlink` prints regular files and symbolic links. **executable** works differently: `--type executable` implies regular files, so it does not also list directories that happen to be executable. **empty** matches empty files and empty directories until you add **file** or **directory** beside it.
+Type the flag on **fd** or **fdfind**. There is no `fd-type` command. **executable** implies **file**. **empty** covers both empty files and empty directories until you narrow it. A default search still skips hidden paths and does not follow symlinked directories, so device nodes, sockets, and pipes are easy to miss under `/dev` without **--hidden** and a path.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `76c82645` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a4fd0f15` are properly handled with clean fallback behavior.

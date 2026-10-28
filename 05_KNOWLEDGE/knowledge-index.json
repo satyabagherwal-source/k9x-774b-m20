@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T22:26:48.319Z",
+  "last_updated": "2026-10-28T22:33:00.165Z",
   "total_verified_learnings": 1159,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -43981,8 +43981,8 @@
       "slug": "pola-rs-polars",
       "platform": "github",
       "source_url": "https://github.com/pola-rs/polars",
-      "source_version": "7d9102fb",
-      "content_hash": "4c2591d68c64458a5478b11b79a98fa92c7b0b7a1d4a39292dbd7331526d353b",
+      "source_version": "936c03be",
+      "content_hash": "e2c3f193a867d19c563884da11d5b015b49a5386caec6a449a9f38909317b7be",
       "dossier_path": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "promoted_rules": [
@@ -44030,6 +44030,11 @@
           "number": 4963,
           "title": "Fix panic in dt.base_utc_offset/dst_offset (#30335)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5432,
+          "title": "Ensure allocator drift is flushed at thread exit (#30383)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44037,7 +44042,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T19:31:58.179Z",
+      "verified_at": "2026-10-28T22:32:55.499Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48712,8 +48717,8 @@
       "slug": "simonschubert-linuxcommandlibrary",
       "platform": "github",
       "source_url": "https://github.com/SimonSchubert/LinuxCommandLibrary",
-      "source_version": "ee413f1b",
-      "content_hash": "7313231ad861cf0c187e64a55a310a622e0a51233fab7f03a297c23cfb4cb0eb",
+      "source_version": "a4fd0f15",
+      "content_hash": "6320212b70cd5fe3c3a2058eac4d745621f4a69d7f8e182d95ef5f4335f23069",
       "dossier_path": "07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
       "promoted_rules": [
@@ -48736,6 +48741,11 @@
           "number": 4364,
           "title": "yana-ai-rt markup",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5435,
+          "title": "command page markup",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48743,7 +48753,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T15:16:04.349Z",
+      "verified_at": "2026-10-28T22:33:00.155Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64891,7 +64901,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
       "source_version": "hf-openbmb-minicpm-v-4.7-1b",
-      "content_hash": "f39f70f22f74d2b620ff175787c04c02b9ed2980389bb25e05f47107e94c07a1",
+      "content_hash": "b49aa4d4787a9aecc5cd2c23972ef7435e72c61fd0f50e4e8542d5c58dadda61",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "promoted_rules": [
@@ -65001,6 +65011,11 @@
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
+          "number": 1574,
+          "title": "Consistent Numerical Precision Across Modalities",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 4221,
           "title": "Hybrid Linear-Full Attention State Synchronization Invariant",
           "status": "PROMOTED_AND_VERIFIED"
@@ -65014,6 +65029,16 @@
           "number": 4223,
           "title": "Canvas-Mode Multimodal Rotary Embedding (M-RoPE) Interleaving Rule",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5433,
+          "title": "Strict Token ID Reservation for Special Tokens",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5434,
+          "title": "Enforce Full Attention at Specified Intervals",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -65021,7 +65046,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T09:56:06.629Z",
+      "verified_at": "2026-10-28T22:32:59.323Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -88071,14 +88096,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1574,
       "title": "Consistent Numerical Precision Across Modalities",
-      "source_url": "https://huggingface.co/apple/LensVLM-9B",
-      "source_version": "hf-apple-lensvlm-9b",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-1b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-28T05:30:55.994Z"
+      "verified_at": "2026-10-28T22:32:59.323Z"
     },
     "rule-1575": {
       "learning_id": "rule-1575",
@@ -146816,6 +146841,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T22:26:48.308Z"
+    },
+    "rule-5432": {
+      "learning_id": "rule-5432",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5432,
+      "title": "Ensure allocator drift is flushed at thread exit (#30383)",
+      "source_url": "https://github.com/pola-rs/polars",
+      "source_version": "936c03be",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:32:55.499Z"
+    },
+    "rule-5433": {
+      "learning_id": "rule-5433",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5433,
+      "title": "Strict Token ID Reservation for Special Tokens",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-1b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:32:59.323Z"
+    },
+    "rule-5434": {
+      "learning_id": "rule-5434",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5434,
+      "title": "Enforce Full Attention at Specified Intervals",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-1b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:32:59.323Z"
+    },
+    "rule-5435": {
+      "learning_id": "rule-5435",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5435,
+      "title": "command page markup",
+      "source_url": "https://github.com/SimonSchubert/LinuxCommandLibrary",
+      "source_version": "a4fd0f15",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T22:33:00.155Z"
     }
   },
   "aliases": {

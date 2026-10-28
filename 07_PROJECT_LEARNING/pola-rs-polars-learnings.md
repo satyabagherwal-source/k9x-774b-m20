@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source**: github ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
-> **Source Version**: `7d9102fb`  
+> **Source Version**: `936c03be`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T19:31:57.836Z  
+> **Timestamp**: 2026-10-28T22:32:55.158Z  
 > **Learning ID**: `learn-github-pola-rs-polars`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T19:31:55.979Z  
+> **Harvest Timestamp**: 2026-10-28T22:32:55.019Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Extremely fast Query Engine for DataFrames, written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40218 stars
+- **Stars / Engagement**: 40226 stars
 
 ---
 
@@ -1668,14 +1668,11 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #30309** (2026-10-27): **`write_json` stops at the first empty chunk, writing `[]` or a truncated array**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  a = pl.DataFrame({"x": [1, 2, 3]}) b = pl.DataFrame({"x": [4, 5, 6]}) df = pl.concat([a, b], rechunk=False)  # A boolean Series mask keeps the chunk layout, so a chunk whose rows are all # filtered out survives as a zero-length chunk. out = df.filter(pl.Series([False, False, False, True, True, True]))  print(out.height)                      # 3 print(out.write_json())                # [] print(out.write_ndjson(), end="")      # {"x":4}\n{"x":5}\n{"x":6} print(out.to_dicts())                  # [{'x': 4}, {'x': 5}, {'x': 6}] print(out.rechunk().write_json())      # [{"x":4},{"x":5},{"x":6}] ```  Where the empty chunk sits decides how much is lost:  ```python c = pl.DataFrame({"x": [7, 8, 9]}) df = pl.concat([a, b, c], rechunk=False)  df.filter(pl.Series([0,0,0, 1,1,1, 1,1,1]).cast(pl.Boolean)).write_json() # chunks [0, 3, 3] -> []  df.filter(pl.Series([1,1,1, 0,0,0, 1,1,1]).cast(pl.Boolean)).write_json() # chunks [3, 0, 3] -> [{"x":1},{"x":2},{"x":3}]   (rows 7, 8, 9 dropped)  df.filter(pl.Series([1,1,1, 1,1,1, 0,0,0]).cast(pl.Boolean)).write_json() # chunks [3, 3, 0] -> all 6 rows, correct ```  ### Log output  ```shell  ```  ### Issue description  `DataFrame.write_json` serialises nothing after the first zero-length chunk it meets. If
+- **Issue #30360** (2026-10-28): **Sliced len() over a concat of string-only scans decodes a row group per input since 2.1.0**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import asyncio import resource import sys import tempfile from pathlib import Path  import polars as pl   def union(directory: Path) -> pl.LazyFrame:     files = sorted(directory.glob("part-*.parquet"))     schema = pl.read_parquet_schema(files[0])     return pl.concat(         [             pl.scan_parquet(f)             .with_columns(pl.col(n).cast(t) for n, t in schema.items())             .select(list(schema))             for f in files         ],         how="vertical_relaxed",     )   async def measure(directory: Path) -> None:     """Child: collect and print this process's peak RSS in MiB."""     result = await union(directory).head(1).select(pl.len()).collect_async()     assert result.item() == 1     peak = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss     print(peak / 2**20 if sys.platform == "darwin" else peak / 2**10)   async def main() -> None:     directory = Path(tempfile.mkdtemp())     cell = "x" * (1024 * 1024)  # 1 MiB per cell, distinct so dictionary encoding can't shrink it     for k in range(3):         pl.DataFrame(             {"document": [cell + str(i) for i in range(64)], "path": ["p"] * 64}         ).write_parquet(directory / f"part-{k}.parquet", compression="uncompressed")      print(union(directory).head(1).select(pl.len()
 
-- **Issue #30299** (2026-10-26): **Streaming select reorders rows for when(window).then(literal).otherwise(literal) in Polars 2.0**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars (2.0.0, checked 2026-10-25).  ### Reproducible example  Polars only, using synthetic data; no optional dependencies.  ```python import polars as pl  # 1,500 synthetic rows sorted by (g, t); x is a deterministic pseudo-random float df = pl.DataFrame({"i": range(1500)}).select(     g=pl.col("i") // 300,     t=pl.col("i") % 300,     x=(pl.col("i") * 7919 % 1009).cast(pl.Float64), )  cases = {     "when(window).then(lit).otherwise(lit)": pl.when(pl.col("x").rank().over("t") > 3).then(-1.0).otherwise(1.0),     "same, then(col)": pl.when(pl.col("x").rank().over("t") > 3).then(pl.col("x")).otherwise(1.0),     "window alone": pl.col("x").rank().over("t"), }  print(pl.__version__) for name, expr in cases.items():     for label, q in [("alone", df.lazy().select(expr.alias("v"))), ("+ key col", df.lazy().select("t", expr.alias("v")))]:         expected = q.collect(engine="in-memory")["v"]         wrong = [int((q.collect(engine="streaming")["v"] != expected).sum()) for _ in range(5)]         print(f"{name:40s} {label:10s} rows differing from in-memory, 5 runs: {wrong}")  # The output is a permutation of the correct values, not wrong values q = df.lazy().select(cases["when(window).then(lit).otherwise(lit)"].alias("v")) print(q.collect(engine="streaming")["v"].sort().equals(q.collect(engine="in-memory")["v
-  **Post-Mortem & Fix Analysis**:
-  > The following fails with both in-memory and streaming (on 2.1): ```python import polars as pl  for e in ["in-memory", "streaming"]:     out=pl.LazyFrame({"x": [3, 1, 2]}).sort("x").select(         pl.when(pl.col("x") > 1).then(1).otherwise(0).alias("v")     ).collect(engine=e)   # [1, 0, 1]; should be [0, 1, 1]. The SORT is removed from the plan.     print(f"e: {e}, {out}") ``` gives ``` e: in-memory, shape: (3, 1) ┌─────┐ │ v   │ │ --- │ │ i32 │ ╞═════╡ │ 1   │ │ 0   │ │ 1   │ └─────┘ e: streaming, shape: (3, 1) ┌─────┐ │ v   │ │ --- │ │ i32 │ ╞═════╡ │ 1   │ │ 0   │ │ 1   │ └─────┘ ``` Optimizer issue, as `collect(engine=e, optimizations = pl.QueryOptFlags.none())` produces the expected result. 
-  > With AI:  Root cause: `simplify_ordering` (#27075, first released in 1.40.0) leaves the `when` predicate out of the row orders that a `when/then/otherwise` reports. When neither branch carries the input's row order (both literals, or e.g. `then(pl.col("y").sort())`), the optimizer concludes that the expression does not depend on input order. It then drops an upstream `sort`, or marks the input unordered.  Scope: - Affected since 1.40.0 (1.39.0 is correct), in both engines, whenever the input is ordered (e.g. by a `sort`) and the result's order is observed. In 2.x the streaming engine also reorders unordered in-memory sources, which is why the original example (no explicit sort) only shows up on 2.x streaming. - Not only a permutation: the values are wrong once the result is combined with anything order-dependent. On 2.1.0, with `lf = pl.LazyFrame({"x": [3, 1, 2], "y": [10, 30, 20]}).sort("x")`:   - `lf.select(pl.when(pl.col("x") > 1).then(pl.col("y").sort()).otherwise(0))` gives `[10, 
+- **Issue #30358** (2026-10-28): **`to_pandas()` deadlocks with `map_elements` across threads**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import faulthandler import os import threading import time import warnings  os.environ.setdefault("POLARS_MAX_THREADS", "2")  # two pool threads make the hang likely  import polars as pl  warnings.filterwarnings("ignore", category=pl.exceptions.PolarsInefficientMapWarning)  # On a hang, print every thread's Python stack and exit. faulthandler.dump_traceback_later(30, exit=True)  # The String column makes to_pandas() convert the columns on the rayon pool. df = pl.DataFrame({"a": range(10_000), "s": [str(i) for i in range(10_000)]}) df.to_pandas()  # import pandas and pyarrow before the threads start  stop = threading.Event()   def to_pandas_worker() -> None:     while not stop.is_set():         df.to_pandas()   def map_elements_worker() -> None:     while not stop.is_set():         df.with_columns(             b=pl.col("a").map_elements(lambda x: x + 1, return_dtype=pl.Int64),             c=pl.col("a").map_elements(lambda x: x * 2, return_dtype=pl.Int64),         )   threads = [     threading.Thread(target=to_pandas_worker),     threading.Thread(target=map_elements_worker), ] for t in threads:     t.start() time.sleep(10) stop.set() for t in threads:     t.join() faulthandler.cancel_dump_traceback_later() print("finished without deadlock") ```   ### Log ou
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1692,696 +1689,200 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7d9102fb` (2026-10-27)
-**Commit Message**: fix: Fix panic in dt.base_utc_offset/dst_offset (#30335)
+### Incident Patch 1: `16d0b711` (2026-10-28)
+**Commit Message**: fix: Ensure allocator drift is flushed at thread exit (#30383)
 
-Co-authored-by: liyixin <[REDACTED_EMAIL]>
-
-**File**: `crates/polars-time/src/base_utc_offset.rs` (modified, +1/-1)
+**File**: `crates/polars-ooc/src/global_alloc.rs` (modified, +30/-10)
 ```diff
-@@ -13,7 +13,7 @@ pub fn base_utc_offset(
-     time_zone: &Tz,
- ) -> DurationChunked {
-     ca.phys
--        .apply_values(|t| {
-+        .apply_nonnull_values_generic(DataType::Int64, |t| {
-             let ndt = time_unit.timestamp_to_datetime(t);
-             let dt = time_zone.from_utc_datetime(&ndt);
-             dt.offset().base_utc_offset().num_milliseconds()
-```
-
-**File**: `crates/polars-time/src/dst_offset.rs` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@ use polars_core::prelude::*;
- #[cfg(feature = "timezones")]
- pub fn dst_offset(ca: &DatetimeChunked, time_unit: &TimeUnit, time_zone: &Tz) -> DurationChunked {
-     ca.phys
--        .apply_values(|t| {
-+        .apply_nonnull_values_generic(DataType::Int64, |t| {
-             let ndt = time_unit.timestamp_to_datetime(t);
-             let dt = time_zone.from_utc_datetime(&ndt);
-             dt.offset().dst_offset().num_milliseconds()
-```
-
-**File**: `py-polars/tests/unit/operations/namespaces/temporal/test_datetime.py` (modified, +9/-0)
-```diff
-@@ -372,6 +372,15 @@ def test_dst_offset_invalid() -> None:
-         ser.dt.dst_offset().rename("dst_offset")
+@@ -24,12 +24,29 @@ pub(crate) fn add_test_usage(bytes: i64) {
+     GLOBAL_ALLOC_SIZE.fetch_add(bytes as u64, Ordering::Relaxed);
+ }
  
++/// The initial drift of a thread. It makes the first allocation of a thread
++/// flush, which registers the flush at thread exit. We use two thread-local
++/// variables because thread-locals with destructors can be slower to access.
++const UNREGISTERED_DRIFT: i64 = i64::MIN / 2;
++
+ thread_local! {
+     static LOCAL_ALLOC_DRIFT: Cell<i64> = const {
+-        Cell::new(0)
++        Cell::new(UNREGISTERED_DRIFT)
++    };
++    static FLUSH_AT_EXIT: FlushAtExit = const {
++        FlushAtExit(Cell::new(false))
+     };
+ }
  
-+@pytest.mark.parametrize("time_unit", ["ms", "us"])
-+@pytest.mark.parametrize("method", ["base_utc_offset", "dst_offset"])
-+def test_offset_null_out_of_range_payload(method: str, time_unit: TimeUnit) -> None:
-+    # A null slot's backing value may be any out-of-range number.
-+    s = pl.Series([0, 2**62], dtype=pl.Int64).scatter(1, None)
-+    out = getattr(s.cast(pl.Datetime(time_unit, "UTC")).dt, method)()
-+    assert out.to_list() == [timedelta(0), None]
++// Contains a bool to check for first registry.
++struct FlushAtExit(Cell<bool>);
 +
++impl Drop for FlushAtExit {
++    fn drop(&mut self) {
++        flush_local_drift();
++    }
++}
 +
- @pytest.mark.parametrize(
-     ("time_unit", "expected"),
-     [
+ #[inline(always)]
+ fn update_alloc_size(bytes: i64) {
+     LOCAL_ALLOC_DRIFT.with(|drift| {
+@@ -45,16 +62,19 @@ fn update_alloc_size(bytes: i64) {
+ #[cold]
+ #[inline(never)]
+ pub(crate) fn flush_local_drift() {
+-    LOCAL_ALLOC_DRIFT.with(|drift| {
+-        let drift_bytes = drift.get();
+-        let old = GLOBAL_ALLOC_SIZE.fetch_add(drift_bytes as u64, Ordering::AcqRel);
+-        drift.set(0);
++    let mut drift_bytes = LOCAL_ALLOC_DRIFT.with(|drift| drift.replace(0));
++    let first_flush = FLUSH_AT_EXIT
++        .try_with(|registered| !registered.0.replace(true))
++        .unwrap_or(false);
++    if first_flush {
++        drift_bytes = drift_bytes.wrapping_sub(UNREGISTERED_DRIFT);
++    }
+ 
+-        let total = old.wrapping_add(drift_bytes as u64);
+-        if total <= i64::MAX as u64 && total > polars_config::get_oomkill_threshold_bytes() {
+-            oomkill();
+-        }
+-    })
++    let old = GLOBAL_ALLOC_SIZE.fetch_add(drift_bytes as u64, Ordering::AcqRel);
++    let total = old.wrapping_add(drift_bytes as u64);
++    if total <= i64::MAX as u64 && total > polars_config::get_oomkill_threshold_bytes() {
++        oomkill();
++    }
+ }
+ 
+ #[cold]
 ```
 
 ---
 
-### Incident Patch 2: `f6092b64` (2026-10-26)
-**Commit Message**: fix: Do not panic on null rows when list/array agg yields Struct or Null (#30302)
+### Incident Patch 2: `fd4ddde7` (2026-10-28)
+**Commit Message**: fix(python): Prevent `to_pandas()` deadlock with `map_elements` on another thread (#30361)
 
-**File**: `crates/polars-core/src/chunked_array/mod.rs` (modified, +13/-4)
+**File**: `crates/polars-python/src/dataframe/export.rs` (modified, +5/-1)
 ```diff
-@@ -684,7 +684,18 @@ where
-     ChunkedArray<T>: ChunkTakeUnchecked<[IdxSize]>,
- {
-     /// Deposit values into nulls with a certain validity mask.
-+    ///
-+    /// Panics for structs; use `Series::deposit` for those.
-     pub fn deposit(&self, validity: &Bitmap) -> Self {
-+        self.deposit_with(validity, Self::set_validity)
-+    }
-+
-+    /// [`Self::deposit`] with a custom setter for the resulting validity.
-+    pub(crate) fn deposit_with(
-+        &self,
-+        validity: &Bitmap,
-+        set_validity: impl FnOnce(&mut Self, Option<Bitmap>),
-+    ) -> Self {
-         let set_bits = validity.set_bits();
+@@ -141,8 +141,12 @@ impl PyDataFrame {
+             false,
+         );
  
-         assert_eq!(self.len(), set_bits);
-@@ -710,10 +721,8 @@ where
-         }));
- 
-         let mut ca = unsafe { ChunkTakeUnchecked::take_unchecked(self, &gather_idxs) };
--        ca.set_validity(combine_validities_and(
--            Some(validity),
--            ca.rechunk_validity().as_ref(),
--        ));
-+        let validity = combine_validities_and(Some(validity), ca.rechunk_validity().as_ref());
-+        set_validity(&mut ca, validity);
-         ca
-     }
- }
++        let rbs = py.enter_polars_ok(|| {
++            df.iter_chunks(CompatLevel::oldest(), true)
++                .collect::<Vec<_>>()
++        })?;
+         let mut replaced_schema = None;
+-        df.iter_chunks(CompatLevel::oldest(), true)
++        rbs.into_iter()
+             .map(|rb| {
+                 let length = rb.len();
+                 let (schema, mut arrays) = rb.into_schema_and_arrays();
 ```
 
-**File**: `crates/polars-core/src/series/implementations/null.rs` (modified, +2/-2)
+**File**: `py-polars/tests/unit/interop/test_to_pandas.py` (modified, +22/-0)
 ```diff
-@@ -214,8 +214,8 @@ impl SeriesTrait for NullChunked {
-     }
- 
-     fn deposit(&self, validity: &Bitmap) -> Series {
--        assert_eq!(validity.set_bits(), 0);
--        self.clone().into_series()
-+        assert_eq!(self.len(), validity.set_bits());
-+        NullChunked::new(self.name.clone(), validity.len()).into_series()
-     }
- 
-     fn len(&self) -> usize {
-```
-
-**File**: `crates/polars-core/src/series/implementations/struct_.rs` (modified, +4/-1)
-```diff
-@@ -197,7 +197,10 @@ impl SeriesTrait for SeriesWrap<StructChunked> {
-     }
- 
-     fn deposit(&self, validity: &Bitmap) -> Series {
--        self.0.deposit(validity).into_series()
-+        // The outer validity must also be propagated into the fields.
-+        self.0
-+            .deposit_with(validity, StructChunked::set_outer_validity)
-+            .into_series()
-     }
- 
-     fn len(&self) -> usize {
-```
-
-**File**: `py-polars/tests/unit/functions/test_when_then.py` (modified, +22/-0)
-```diff
-@@ -921,6 +921,28 @@ def test_when_then_scalar_condition_masks_unselected_branch(engine: EngineType)
-     assert q.collect(engine=engine).to_series().to_list() == [0, 0]
- 
- 
-+@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
-+def test_when_then_masked_list_item_struct_30252(engine: EngineType) -> None:
-+    schema = {
-+        "params": pl.List(
-+            pl.Struct({"key": pl.String, "value": pl.Struct({"int_value": pl.Int64})})
-+        )
-+    }
-+    lf = pl.LazyFrame(
-+        {"params": [[{"key": "foo", "value": {"int_value": 42}}], []]},
-+        schema=schema,
-+    )
-+    filtered = pl.col.params.list.filter(pl.element().struct.field("key") == "foo")
-+    q = lf.select(
-+        pl.when(filtered.list.len() > 0).then(
-+            filtered.list.item(allow_empty=True)
-+            .struct.field("value")
-+            .struct.field("int_value")
-+        )
-+    )
-+    assert q.collect(engine=engine).to_series().to_list() == [42, None]
+@@ -230,3 +230,25 @@ def to_pandas() -> None:
+     with ThreadPoolExecutor(10) as e:
+         fs = [e.submit(to_pandas) for _ in range(100)]
+         [f.result(timeout=10) for f in fs]
 +
 +
- @pytest.mark.parametrize("engine", ["in-memory", "streaming"])
- def test_when_then_masks_multichunk_struct_29799(engine: EngineType) -> None:
-     df = pl.DataFrame(
++@pytest.mark.filterwarnings("ignore::polars.exceptions.PolarsInefficientMapWarning")
++def test_to_pandas_no_deadlock_with_concurrent_map_elements_30358() -> None:
++    from concurrent.futures import ThreadPoolExecutor
++
++    df = pl.DataFrame({"a": range(10), "s": [str(i) for i in range(10)]})
++    chunked = pl.concat([df] * (2 * pl.thread_pool_size()), rechunk=False)
++
++    def to_pandas() -> None:
++        for _ in range(400):
++            df.to_pandas()
++
++    def map_elements() -> None:
++        for _ in range(400):
++            chunked.with_columns(
++                pl.col("a").map_elements(lambda x: x + 1, return_dtype=pl.Int64)
++            )
++
++    with ThreadPoolExecutor(2) as e:
++        fs = [e.submit(to_pandas), e.submit(map_elements)]
++        [f.result(timeout=10) for f in fs]
 ```
 
-**File**: `py-polars/tests/unit/operations/namespaces/array/test_eval.py` (modified, +16/-0)
+---
+
+### Incident Patch 3: `3e0ffc49` (2026-10-28)
+**Commit Message**: fix: Don't panic when zipping an empty frame without columns with broadcasts (#30344)
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `crates/polars-stream/src/nodes/zip.rs` (modified, +9/-3)
 ```diff
-@@ -335,3 +335,19 @@ def test_arr_eval_categorical_min_max_25906() -> None:
-         s.arr.agg(pl.element().arg_max()),
-         pl.Series("a", [0, 0], dtype=pl.get_index_type()),
+@@ -109,8 +109,11 @@ impl InputHead {
+     }
+ 
+     async fn consume_broadcast(&mut self) -> DataFrame {
+-        assert!(self.is_broadcast == Some(true) && self.total_len == 1);
+-        let out = self.morsels.pop_front().unwrap().into_df().await;
++        assert!(self.is_broadcast == Some(true) && self.total_len <= 1);
++        let out = match self.morsels.pop_front() {
++            Some(morsel) => morsel.into_df().await,
++            None => DataFrame::empty(),
++        };
+         self.clear();
+         out
+     }
+@@ -374,7 +377,10 @@ impl ComputeNode for ZipNode {
+                 for input_head in &mut self.input_heads {
+                     out.push(input_head.consume_broadcast().await);
+                 }
+-                let out_df = concat_df_horizontal(&out, false, true, false)?;
++                // An empty input without columns also counts as a broadcast. Whether the others
++                // broadcast to its length of zero is up to the zip behavior, as in memory.
++                let unit_length_as_scalar = matches!(self.zip_behavior, ZipBehavior::Broadcast);
++                let out_df = concat_df_horizontal(&out, false, false, unit_length_as_scalar)?;
+                 out.clear();
+ 
+                 let morsel = Morsel::new_unregistered(out_df, self.out_seq, source_token.clone());
+```
+
+**File**: `py-polars/tests/unit/functions/test_concat.py` (modified, +6/-0)
+```diff
+@@ -614,3 +614,9 @@ def test_concat_horizontal_strict_pruned_input_before_cache(
+     q = pl.concat([inner, shared.select("b")], how="horizontal_extend")
+ 
+     assert_frame_equal(q.collect(), pl.DataFrame({"a": [1], "b": [2]}))
++
++
++@pytest.mark.parametrize("how", ["horizontal", "horizontal_extend"])
++def test_concat_horizontal_empty_frame_without_columns(how: ConcatMethod) -> None:
++    lf = pl.concat([pl.LazyFrame(height=0), pl.LazyFrame(height=1)], how=how)
++    assert lf.select(pl.len()).collect().item() == 1
+```
+
+**File**: `py-polars/tests/unit/sql/test_subqueries.py` (modified, +8/-0)
+```diff
+@@ -1341,3 +1341,11 @@ def test_scalar_subquery_as_aggregate_parameter(
+         expected=expected,
+         engines=["in-memory", "streaming"],
      )
 +
 +
-+def test_arr_agg_null_rows_30252() -> None:
-+    dtype = pl.Struct({"a": pl.Int64, "b": pl.Struct({"c": pl.Int64})})
-+    x = {"a": 1, "b": {"c": 2}}
-+    y = {"a": 3, "b": {"c": 4}}
-+    s = pl.Series("s", [None, [x], None, [y]], dtype=pl.Array(dtype, 1))
-+    out = s.arr.agg(pl.element().first())
-+    assert_series_equal(out, pl.Series("s", [None, x, None, y], dtype=dtype))
-+    # The null rows must also be null in the fields.
-+    assert out.struct.field("b").struct.field("c").to_list() == [None, 2, None, 4]
-+
-+    s = pl.Series("s", [None, [None], None], dtype=pl.Array(pl.Null, 1))
-+    assert_series_equal(
-+        s.arr.agg(pl.element().first()), pl.Series("s", [None, None, None])
-+    )
-```
-
-**File**: `py-polars/tests/unit/operations/namespaces/list/test_eval.py` (modified, +29/-0)
-```diff
-@@ -753,3 +753,32 @@ def test_eval_on_literal_in_group_by_29554(expr: pl.Expr, expected: pl.Series) -
-     out = df.select(r=expr.over("g"))
-     expected_over = expected.gather([0, 0, 1, 1]).alias("r")
-     assert_series_equal(out.get_column("r"), expected_over)
-+
-+
-+def test_list_agg_null_rows_30252() -> None:
-+    dtype = pl.Struct({"a": pl.Int64, "b": pl.Struct({"c": pl.Int64})})
-+    x = {"a": 1, "b": {"c": 2}}
-+    y = {"a": 3, "b": {"c": 4}}
-+    s = pl.Series(
-+        "s", [None, [x], None, None, [], [None], [y], None], dtype=pl.List(dtype)
-+    )
-+    expected = pl.Series("s", [None, x, None, None, None, None, y, None], dtype=dtype)
-+    item = s.to_frame().select(pl.col.s.list.item(allow_empty=True)).to_series()
-+    for out in [s.list.agg(pl.element().first()), item]:
-+        assert_series_equal(out, expected)
-+        # The null rows must also be null in the fields.
-+        c = out.struct.field("b").struct.field("c")
-+        assert c.to_list() == [None, 2, None, None, None, None, 4, None]
-+
-+    # `list.item()` on a null row (#28932).
-+    assert_series_equal(s.gather([1, 2, 6]).list.item(), expected.gather([1, 2, 6]))
-+
-+    out = s.list.agg(pl.struct(pl.element().struct.field("a").first()))
-+    a = [None, 1, None, None, None, None, 3, None]
-+    assert out.struct.field("a").to_list() == a
-+    assert_series_equal(out.is_null(), s.is_null())
-+
-+    s = pl.Series("s", [None, [None], None], dtype=pl.List(pl.Null))
-+    assert_series_equal(
-+        s.list.agg(pl.element().first()), pl.Series("s", [None, None, None])
-+    )
-```
-
----
-
-### Incident Patch 3: `5e32866c` (2026-10-27)
-**Commit Message**: fix: Don't finish a sink's output file when its query fails (#30279)
-
-**File**: `crates/polars-io/src/utils/compression.rs` (modified, +120/-3)
-```diff
-@@ -402,14 +402,41 @@ mod compressed_writer {
- 
-     /// Constructor for `WritableTrait` compressed encoders.
-     pub enum CompressedWriter<'a, W: io::Write> {
--        Gzip(Option<flate2::write::GzEncoder<&'a mut W>>),
-+        Gzip(Option<flate2::write::GzEncoder<GzipTarget<'a, W>>>),
-         Zstd(Option<zstd::Encoder<'static, &'a mut W>>),
-     }
- 
-+    /// Discards writes once `discard` is set.
-+    pub struct GzipTarget<'a, W> {
-+        inner: &'a mut W,
-+        discard: bool,
-+    }
-+
-+    impl<W: io::Write> io::Write for GzipTarget<'_, W> {
-+        fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
-+            if self.discard {
-+                Ok(buf.len())
-+            } else {
-+                self.inner.write(buf)
-+            }
-+        }
-+
-+        fn flush(&mut self) -> io::Result<()> {
-+            if self.discard {
-+                Ok(())
-+            } else {
-+                self.inner.flush()
-+            }
-+        }
-+    }
-+
-     impl<'a, W: io::Write> CompressedWriter<'a, W> {
-         pub fn gzip(writer: &'a mut W, level: Option<u32>) -> Self {
-             Self::Gzip(Some(flate2::write::GzEncoder::new(
--                writer,
-+                GzipTarget {
-+                    inner: writer,
-+                    discard: false,
-+                },
-                 level.map(flate2::Compression::new).unwrap_or_default(),
-             )))
-         }
-@@ -440,9 +467,99 @@ mod compressed_writer {
-     impl<'a, W: io::Write> CompressedWriter<'a, W> {
-         pub fn finish(&mut self) -> io::Result<&'a mut W> {
-             match self {
--                Self::Gzip(encoder) => encoder.take().unwrap().finish(),
-+                Self::Gzip(encoder) => {
-+                    // On failure the encoder stays, so that its drop can't write the trailer.
-+                    encoder.as_mut().unwrap().try_finish()?;
-+                    encoder.take().unwrap().finish().map(|t| t.inner)
-+                },
-                 Self::Zstd(encoder) => encoder.take().unwrap().finish(),
-             }
-         }
-     }
-+
-+    impl<W: io::Write> Drop for CompressedWriter<'_, W> {
-+        fn drop(&mut self) {
-+            // `GzEncoder` writes its trailer on drop, which would make an unfinished file look complete.
-+            if let Self::Gzip(Some(encoder)) = self {
-+                encoder.get_mut().discard = true;
-+            }
-+        }
-+    }
-+
-+    #[cfg(test)]
-+    mod tests {
-+        use std::io::{self, Read, Write};
-+
-+        use super::CompressedWriter;
-+
-+        fn gzip_written(finish: bool) -> Vec<u8> {
-+            let mut out = Vec::new();
-+            let mut writer = CompressedWriter::gzip(&mut out, None);
-+            writer.write_all(b"x\n1\n").unwrap();
-+            writer.flush().unwrap();
-+            if finish {
-+                writer.finish().unwrap();
-+            }
-+            drop(writer);
-+            out
-+        }
-+
-+        #[test]
-+        fn dropped_gzip_writer_leaves_no_trailer() {
-+            let out = gzip_written(false);
-+            assert!(!out.is_empty());
-+            let err = flate2::read::GzDecoder::new(out.as_slice())
-+                .read_to_end(&mut Vec::new())
-+                .unwrap_err();
-+            assert_eq!(err.kind(), io::ErrorKind::UnexpectedEof);
-+        }
-+
-+        struct FailOnce<'a> {
-+            out: Vec<u8>,
-+            fail: &'a std::cell::Cell<bool>,
-+        }
-+
-+        impl Write for FailOnce<'_> {
-+            fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
-+                if self.fail.replace(false) {
-+                    return Err(io::Error::other("write failed"));
-+                }
-+                self.out.extend_from_slice(buf);
-+                Ok(buf.len())
-+            }
-+
-+            fn flush(&mut self) -> io::Result<()> {
-+                Ok(())
-+            }
-+        }
-+
-+        #[test]
-+        fn failed_gzip_finish_leaves_no_trailer() {
-+            let fail = std::cell::Cell::new(false);
-+            let mut target = FailOnce {
-+                out: Vec::new(),
-+                fail: &fail,
-+            };
-+            let mut writer = CompressedWriter::gzip(&mut target, None);
-+            writer.write_all(b"x\n1\n").unwrap();
-+            writer.flush().unwrap();
-+            fail.set(true);
-+            assert!(writer.finish().is_err());
-+            drop(writer);
-+            let err = flate2::read::GzDecoder::new(target.out.as_slice())
-+                .read_to_end(&mut Vec::new())
-+                .unwrap_err();
-+            assert_eq!(err.kind(), io::ErrorKind::UnexpectedEof);
-+        }
-+
-+        #[test]
-+        fn finished_gzip_writer_is_complete() {
-+            let out = gzip_written(true);
-+            let mut decoded = Vec::new();
-+            flate2::read::GzDecoder::new(out.as_slice())
-+                .read_to_end(&mut decoded)
-+                .unwrap();
-+            assert_eq!(decoded, b"x\n1\n");
-+        }
-+    }
- }
-```
-
-**File**: `crates/polars-stream/src/nodes/io_sinks/components/file_sink.rs` (modified, +5/-0)
-```diff
-@@ -5,6 +5,7 @@ use polars_error::PolarsResult;
- use crate::nodes::io_sinks::components::sink_morsel::SinkMorsel;
- use crate::nodes::io_sinks::components::sinked_path_info_list::SinkedPathInfoEntry;
- use crate::nodes::io_sinks::components::size::RowCountAndSize;
-+use crate::nodes::io_sinks::writers::interface::FinishSender;
- 
- pub type FileSinkPermit = tokio::sync::OwnedSemaphorePermit;
- 
-@@ -14,6 +15,7 @@ pub struct FileSinkTaskData {
-     task_handle: executor::JoinHandle<PolarsResult<FileSinkPermit>>,
-     path_info_entry: Option<SinkedPathInfoEntry>,
-     sent_rows: u64,
-+    finish_tx: FinishSender,
- }
- 
- impl FileSinkTaskData {
-@@ -22,13 +24,15 @@ impl FileSinkTaskData {
-         start_position: RowCountAndSize,
-         task_handle: executor::JoinHandle<PolarsResult<FileSinkPermit>>,
-         path_info_entry: Option<SinkedPathInfoEntry>,
-+        finish_tx: FinishSender,
-     ) -> Self {
-         Self {
-             morsel_tx,
-             start_position,
-             task_handle,
-             path_info_entry,
-             sent_rows: 0,
-+            finish_tx,
-         }
-     }
- 
-@@ -49,6 +53,7 @@ impl FileSinkTaskData {
-             path_info_entry.set_num_rows(self.sent_rows);
-         }
- 
-+        self.finish_tx.send();
-         self.task_handle
-     }
- }
-```
-
-**File**: `crates/polars-stream/src/nodes/io_sinks/components/partition_distributor.rs` (modified, +5/-0)
-```diff
-@@ -16,6 +16,7 @@ use crate::nodes::io_sinks::components::partition_sink_starter::PartitionSinkSta
- use crate::nodes::io_sinks::components::partition_state::PartitionState;
- use crate::nodes::io_sinks::components::partitioner::{self, PartitionedDataFrames};
- use crate::nodes::io_sinks::components::size::RowCountAndSize;
-+use crate::nodes::io_sinks::writers::interface::FinishSignal;
- 
- pub struct PartitionDistributor {
-     pub node_name: PlSmallStr,
-@@ -29,6 +30,7 @@ pub struct PartitionDistributor {
-     pub open_sinks_semaphore: Arc<tokio::sync::Semaphore>,
-     pub partition_sink_starter: PartitionSinkStarter,
-     pub no_partition_keys: bool,
-+    pub finish: FinishSignal,
-     pub verbose: bool,
- }
- 
-@@ -44,6 +46,7 @@ impl PartitionDistributor {
-             open_sinks_semaphore,
-             partition_sink_starter,
-             no_partition_keys,
-+            finish,
-             verbose,
-         } = self;
- 
-@@ -202,6 +205,8 @@ impl PartitionDistributor {
-             drop(input_wait_token);
-         }
- 
-+        finish.wait().await?;
-+
-         if verbose {
-             eprintln!("{node_name}: Begin finalize");
-         }
-```
-
-**File**: `crates/polars-stream/src/nodes/io_sinks/components/partition_sink_starter.rs` (modified, +6/-2)
-```diff
-@@ -13,7 +13,9 @@ use crate::nodes::io_sinks::components::file_provider::FileProvider;
- use crate::nodes::io_sinks::components::file_sink::{FileSinkPermit, FileSinkTaskData};
- use crate::nodes::io_sinks::components::sinked_path_info_list::SinkedPathInfoList;
- use crate::nodes::io_sinks::components::size::RowCountAndSize;
--use crate::nodes::io_sinks::writers::interface::{FileOpenTaskHandle, FileWriterStarter};
-+use crate::nodes::io_sinks::writers::interface::{
-+    FileOpenTaskHandle, FileWriterStarter, finish_signal,
-+};
- use crate::utils::tokio_handle_ext;
- 
- #[derive(Clone)]
-@@ -49,10 +51,11 @@ impl PartitionSinkStarter {
-         }));
- 
-         let (morsel_tx, morsel_rx) = connector::connector();
-+        let (finish_tx, finish_rx) = finish_signal();
- 
-         let writer_handle = self.writer_starter.start_file_writer(
-             morsel_rx,
--            FileOpenTaskHandle::new(file_open_task, self.sync_on_close),
-+            FileOpenTaskHandle::new(file_open_task, self.sync_on_close, finish_rx),
-             self.num_pipelines_per_sink,
-             self.task_metrics.clone(),
-         )?;
-@@ -68,6 +71,7 @@ impl PartitionSinkStarter {
-             start_position,
-             task_handle,
-             path_info_entry,
-+            finish_tx,
-         ))
-     }
- }
-```
-
-**File**: `crates/polars-stream/src/nodes/io_sinks/mod.rs` (modified, +13/-0)
-```diff
-@@ -18,6 +18,7 @@ use crate::nodes::io_sinks::components::partitioner::Partitioner;
- use crate::nodes::io_sinks::config::{IOSinkNodeConfig, IOSinkTarget};
- use crate::nodes::io_sinks::pipeline_initialization::partition_by::start_partition_sink_pipeline;
- use crate::nodes::io_sinks::pipeline_initialization::single_file::start_single_file_sink_pipeline;
-+use crate::nodes::io_sinks::writers::interface::{FinishSender, finish_signal};
- use crate::pipe::PortReceiver;
- pub mod components;
- pub mod config;
-@@ -85,13 +86,15 @@ impl ComputeNode for IOSinkNode {
-                 IOSinkNodeState::Initialized {
-                     phase_channel_tx,
-                     task_handle,
-+                    finish_tx,
-                 } => {
-                     if self.verbose {
-                         eprintln!(
-                             "{}: Join on task_handle (recv PortState::Done)",
-                             self.name()
-                         );
-                     }
-+                    finish_tx.send();
-                     drop(phase_channel_tx);
-                     ASYNC.block_in_place_on(task_handle)?;
-                 },
-@@ -155,6 +158,7 @@ impl ComputeNode for IOSinkNode {
-                 let IOSinkNodeState::Initialized {
-                     phase_channel_tx,
-                     task_handle,
-+                    finish_tx,
-                 } = std::mem::replace(&mut self.state, IOSinkNodeState::Finished)
-                 else {
-                     unreachable!()
-@@ -168,6 +172,8 @@ impl ComputeNode for IOSinkNode {
-                 }
- 
-                 drop(phase_channel_tx);
-+                // Before the join, or the writers waiting on it hang.
-+                drop(finish_tx);
- 
-                 return Err(task_handle.await.unwrap_err());
-             }
-@@ -186,6 +192,8 @@ enum IOSinkNodeState {
-         phase_channel_tx: connector::Sender<PortReceiver>,
-         /// Join handle for all background tasks.
-         task_handle: AbortOnDropHandle<PolarsResult<()>>,
-+        /// Sent once the input ended cleanly; files are finished only then.
-+        finish_tx: FinishSender,
-     },
- 
-     Finished,
-@@ -234,13 +242,16 @@ impl IOSinkNodeState {
-             }
-         });
- 
-+        let (finish_tx, finish_rx) = finish_signal();
-+
-         let task_handle = match &config.target {
-             IOSinkTarget::File(_) => start_single_file_sink_pipeline(
-                 node_name.clone(),
-                 multi_phase_rx,
-                 *config,
-                 execution_state,
-                 io_metrics,
-+                finish_rx,
-             )?,
- 
-             IOSinkTarget::Partitioned { .. } => start_partition_sink_pipeline(
-@@ -249,12 +260,14 @@ impl IOSinkNodeState {
-                 *config,
-                 execution_state,
-                 io_metrics,
-+                finish_rx,
-             )?,
-         };
- 
-         *self = Initialized {
-             phase_channel_tx,
-             task_handle,
-+            finish_tx,
-         };
- 
-         Ok(())
-```
-
-**File**: `crates/polars-stream/src/nodes/io_sinks/pipeline_initialization/partition_by.rs` (modified, +3/-1)
-```diff
-@@ -24,14 +24,15 @@ use crate::nodes::io_sinks::components::sinked_path_info_list::{
- use crate::nodes::io_sinks::components::size::{NonZeroRowCountAndSize, SplitMode};
- use crate::nodes::io_sinks::config::{IOSinkNodeConfig, IOSinkTarget, PartitionedTarget};
- use crate::nodes::io_sinks::writers::create_file_writer_starter;
--use crate::nodes::io_sinks::writers::interface::FileWriterStarter;
-+use crate::nodes::io_sinks::writers::interface::{FileWriterStarter, FinishSignal};
- 
- pub fn start_partition_sink_pipeline(
-     node_name: &PlSmallStr,
-     morsel_rx: connector::Receiver<Morsel>,
-     config: IOSinkNodeConfig,
-     execution_state: &StreamingExecutionState,
-     io_metrics: Option<Arc<IOMetrics>>,
-+    finish: FinishSignal,
- ) -> PolarsResult<executor::AbortOnDropHandle<PolarsResult<()>>> {
-     let num_pipelines: NonZeroUsize = execution_state.num_pipelines.try_into().unwrap();
-     let task_metrics = execution_state.task_metrics();
-@@ -198,6 +199,7 @@ pub fn start_partition_sink_pipeline(
-             open_sinks_semaphore,
-             partition_sink_starter,
-             no_partition_keys,
-+            finish,
-             verbose,
-         }
-         .run(),
-```
-
-**File**: `crates/polars-stream/src/nodes/io_sinks/pipeline_initialization/single_file.rs` (modified, +22/-3)
-```diff
-@@ -19,7 +19,9 @@ use crate::nodes::io_sinks::components::sinked_path_info_list::{
- };
- use crate::nodes::io_sinks::config::{IOSinkNodeConfig, IOSinkTarget};
- use crate::nodes::io_sinks::writers::create_file_writer_starter;
--use crate::nodes::io_sinks::writers::interface::{FileOpenTaskHandle, FileWriterStarter};
-+use crate::nodes::io_sinks::writers::interface::{
-+    FileOpenTaskHandle, FileWriterStarter, FinishSignal, finish_signal,
-+};
- use crate::utils::tokio_handle_ext;
- 
- pub fn start_single_file_sink_pipeline(
-@@ -28,6 +30,7 @@ pub fn start_single_file_sink_pipeline(
-     config: IOSinkNodeConfig,
-     execution_state: &StreamingExecutionState,
-     io_metrics: Option<Arc<IOMetrics>>,
-+    finish: FinishSignal,
- ) -> PolarsResult<executor::AbortOnDropHandle<PolarsResult<()>>> {
-     let num_pipelines: NonZeroUsize = execution_state.num_pipelines.try_into().unwrap();
-     let task_metrics = execution_state.task_metrics();
-@@ -102,7 +105,9 @@ pub fn start_single_file_sink_pipeline(
-                 })
-         }))
-     };
--    let file_open_task = FileOpenTaskHandle::new(file_open_task, sync_on_close);
-+    // The writer finishes only once its input also passed the resize stage.
-+    let (writer_finish_tx, writer_finish_rx) = finish_signal();
-+    let file_open_task = FileOpenTaskHandle::new(file_open_task, sync_on_close, writer_finish_rx);
- 
-     let target_sink_morsel_size = file_writer_starter.target_sink_morsel_size();
- 
-@@ -156,8 +161,22 @@ pub fn start_single_file_sink_pipeline(
-         TaskPriority::High,
-         task_metrics,
-         async move {
-+            let sent_size = match resize_pipeline_handle.await {
-+                Ok(sent_size) => sent_size,
-+                Err(e) => {
-+                    drop(writer_finish_tx);
-+                    let _ = writer_handle.await;
-+                    return Err(e);
-+                },
-+            };
-+            match finish.wait().await {
-+                Ok(()) => writer_finish_tx.send(),
-+                Err(e) => {
-+                    drop(writer_finish_tx);
-+                    return writer_handle.await.and(Err(e));
-+                },
-+            }
-             writer_handle.await?;
--            let sent_size = resize_pipeline_handle.await?;
- 
-             if verbose {
-                 eprintln!("{node_name}: Statistics: total_size: {sent_size:?}");
-```
-
-**File**: `crates/polars-stream/src/nodes/io_sinks/writers/csv/io_writer.rs` (modified, +3/-1)
-```diff
-@@ -30,7 +30,7 @@ impl IOWriter {
-             options,
-         } = self;
- 
--        let (mut target, sync_on_close) = file.await?;
-+        let (mut target, sync_on_close, finish) = file.await?;
- 
-         // TODO: Refactor to avoid doing compression work on a tokio async thread here.
-         let (mut writer, finish_writer) =
-@@ -63,6 +63,8 @@ impl IOWriter {
-             let _ = reuse_serializer_tx.send(serializer).await;
-         }
- 
-+        finish.wait().await?;
-+
-         if let Some(finish_writer) = &finish_writer {
-             finish_writer(writer)?.flush().await?;
-         } else {
++def test_scalar_subquery_from_table_without_columns() -> None:
++    empty = pl.LazyFrame({"x": [1]}).filter(False).select([])
++    other = pl.LazyFrame({"y": [10, 20]})
++    with pl.SQLContext(t1=empty, t2=other) as ctx:
++        result = ctx.execute("SELECT (SELECT max(y) FROM t2) AS m FROM t1").collect()
++    assert_frame_equal(result, pl.DataFrame(schema={"m": pl.Int64}))
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30336** (2026-10-27): feat: Support SQL subqueries that read a query further out than the one around them (@ritchie46)
-- **PR #30335** (2026-10-27): fix: Fix panic in dt.base_utc_offset/dst_offset (@Liyixin95)
-- **PR #30321** (2026-10-27): refactor: Make the approx_quantile failure probability an IR parameter (@dsprenkels)
-- **PR #30320** (2026-10-26): perf: Improve DirtyHash for 128-bit integers (@orlp)
-- **PR #30318** (2026-10-27): feat: Support more dtypes in `approx_quantile` (@dsprenkels)
-- **PR #30317** (2026-10-27): refactor: Replace approx_quantile merge reductions with union reduction (@dsprenkels)
+- **PR #30401** (2026-10-28): feat: Compare SQL join keys of different numeric types in a common type (@ritchie46)
+- **PR #30383** (2026-10-28): fix: Ensure allocator drift is flushed at thread exit (@orlp)
+- **PR #30382** (2026-10-28): feat: Support subqueries over the inner relations in the WHERE of SQL correlated subqueries (@ritchie46)
+- **PR #30379** (2026-10-28): perf: Add fixed-size row encoding layouts (@orlp)
+- **PR #30378** (2026-10-28): feat: Support any condition on outer columns in SQL correlated subqueries (@ritchie46)
+- **PR #30376** (2026-10-28): perf: Lower `int_range(0, pl.len())` of any wide integer dtype to a row index in streaming (@dancsi)
 
 ---
 
@@ -2401,28 +1902,66 @@ Co-authored-by: liyixin <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Fix panic in dt.base_utc_offset/dst_offset (#30335)
+## X. Ensure allocator drift is flushed at thread exit (#30383)
 
 **RULE**:
-When implementing operations in `crates/polars-time/src/base_utc_offset.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/polars-ooc/src/global_alloc.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7d9102fb`: Fix panic in dt.base_utc_offset/dst_offset (#30335). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `16d0b711`: Ensure allocator drift is flushed at thread exit (#30383). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-time/src/base_utc_offset.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-ooc/src/global_alloc.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        .apply_nonnull_values_generic(DataType::Int64, |t| {
+/// The initial drift of a thread. It makes the first allocation of a thread
+/// flush, which registers the flush at thread exit. We use two thread-local
+/// variables because thread-locals with destructors can be slower to access.
+const UNREGISTERED_DRIFT: i64 = i64::MIN / 2;
+
+        Cell::new(UNREGISTERED_DRIFT)
+    };
+    static FLUSH_AT_EXIT: FlushAtExit = const {
+        FlushAtExit(Cell::new(false))
+// Contains a bool to check for first registry.
+struct FlushAtExit(Cell<bool>);
+
+impl Drop for FlushAtExit {
+    fn drop(&mut self) {
+        flush_local_drift();
+    }
+}
+
+    let mut drift_bytes = LOCAL_ALLOC_DRIFT.with(|drift| drift.replace(0));
+    let first_flush = FLUSH_AT_EXIT
+        .try_with(|registered| !registered.0.replace(true))
+        .unwrap_or(false);
+    if first_flush {
+        drift_bytes = drift_bytes.wrapping_sub(UNREGISTERED_DRIFT);
+    }
+    let old = GLOBAL_ALLOC_SIZE.fetch_add(drift_bytes as u64, Ordering::AcqRel);
+    let total = old.wrapping_add(drift_bytes as u64);
+    if total <= i64::MAX as u64 && total > polars_config::get_oomkill_threshold_bytes() {
+        oomkill();
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        .apply_values(|t| {
+        Cell::new(0)
+    LOCAL_ALLOC_DRIFT.with(|drift| {
+        let drift_bytes = drift.get();
+        let old = GLOBAL_ALLOC_SIZE.fetch_add(drift_bytes as u64, Ordering::AcqRel);
+        drift.set(0);
+        let total = old.wrapping_add(drift_bytes as u64);
+        if total <= i64::MAX as u64 && total > polars_config::get_oomkill_threshold_bytes() {
+            oomkill();
+        }
+    })
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7d9102fb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `16d0b711` are properly handled with clean fallback behavior.

@@ -5965,3 +5965,6 @@
 | `CYCLE-20261028-P3DT` | `2026-10-28T22:26:37.025Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5427, Rule 5428, Rule 5429` | Yes (`9c22f92d...`) |
 | `CYCLE-20261028-P6QH` | `2026-10-28T22:26:41.369Z` | `higress-group/higress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5430` | Yes (`8b0e97e5...`) |
 | `CYCLE-20261028-PC50` | `2026-10-28T22:26:48.372Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5431` | Yes (`ec3e92cb...`) |
+| `CYCLE-20261028-X7GH` | `2026-10-28T22:32:55.553Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5432` | Yes (`e2c3f193...`) |
+| `CYCLE-20261028-XAEN` | `2026-10-28T22:32:59.375Z` | `openbmb/MiniCPM-V-4.7-1B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1574, Rule 5433, Rule 5434` | Yes (`b49aa4d4...`) |
+| `CYCLE-20261028-XB1R` | `2026-10-28T22:33:00.207Z` | `SimonSchubert/LinuxCommandLibrary` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5435` | Yes (`6320212b...`) |

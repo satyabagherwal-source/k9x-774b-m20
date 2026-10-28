@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-USHA",
-    "timestamp": "2026-10-27T18:03:26.254Z",
-    "repository": "mochajs/mocha",
-    "learningId": "learn-github-mochajs-mocha",
-    "contentHash": "b6358dac7fbac407e6b254c0f2316f3fa330ac96a33624f6f8ac6faca44023bd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-UYX1",
-    "timestamp": "2026-10-27T18:03:34.597Z",
-    "repository": "xerj-org/xerj",
-    "learningId": "learn-github-xerj-org-xerj",
-    "contentHash": "4dadc4f0f1520cc9dca4234788e3c00239b0d3be566a9e165cddbb1a900c8d2f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-V17A",
-    "timestamp": "2026-10-27T18:03:37.558Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "63b27a4dbe91fc5e0361f0f109b92344fea8816f7c191d31ed423281491cd4d7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-3GSK",
     "timestamp": "2026-10-27T18:10:11.012Z",
     "repository": "dubzzz/fast-check",
@@ -7490,6 +7445,51 @@
     "repository": "t8y2/dbx",
     "learningId": "learn-github-t8y2-dbx",
     "contentHash": "ec3e92cbe4553450c73ae6141ef41d535a97107e761e1aed0c40dd5c60e8d14d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-X7GH",
+    "timestamp": "2026-10-28T22:32:55.553Z",
+    "repository": "pola-rs/polars",
+    "learningId": "learn-github-pola-rs-polars",
+    "contentHash": "e2c3f193a867d19c563884da11d5b015b49a5386caec6a449a9f38909317b7be",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-XAEN",
+    "timestamp": "2026-10-28T22:32:59.375Z",
+    "repository": "openbmb/MiniCPM-V-4.7-1B",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
+    "contentHash": "b49aa4d4787a9aecc5cd2c23972ef7435e72c61fd0f50e4e8542d5c58dadda61",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-XB1R",
+    "timestamp": "2026-10-28T22:33:00.207Z",
+    "repository": "SimonSchubert/LinuxCommandLibrary",
+    "learningId": "learn-github-simonschubert-linuxcommandlibrary",
+    "contentHash": "6320212b70cd5fe3c3a2058eac4d745621f4a69d7f8e182d95ef5f4335f23069",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

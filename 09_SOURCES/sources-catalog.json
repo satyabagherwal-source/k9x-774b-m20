@@ -1375,8 +1375,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-1b",
     "license": "Open-Source",
-    "contentHash": "f39f70f22f74d2b620ff175787c04c02b9ed2980389bb25e05f47107e94c07a1",
-    "lastHarvestedAt": "2026-10-25T09:56:06.702Z",
+    "contentHash": "b49aa4d4787a9aecc5cd2c23972ef7435e72c61fd0f50e4e8542d5c58dadda61",
+    "lastHarvestedAt": "2026-10-28T22:32:59.377Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b"
   },
   "ccfos-nightingale": {
@@ -7743,10 +7743,10 @@
     "repository": "pola-rs/polars",
     "platform": "github",
     "sourceUrl": "https://github.com/pola-rs/polars",
-    "sourceVersion": "7d9102fb",
+    "sourceVersion": "936c03be",
     "license": "MIT",
-    "contentHash": "4c2591d68c64458a5478b11b79a98fa92c7b0b7a1d4a39292dbd7331526d353b",
-    "lastHarvestedAt": "2026-10-27T19:31:58.263Z",
+    "contentHash": "e2c3f193a867d19c563884da11d5b015b49a5386caec6a449a9f38909317b7be",
+    "lastHarvestedAt": "2026-10-28T22:32:55.555Z",
     "learningId": "learn-github-pola-rs-polars"
   },
   "mrkai77-loop": {
@@ -7773,10 +7773,10 @@
     "repository": "SimonSchubert/LinuxCommandLibrary",
     "platform": "github",
     "sourceUrl": "https://github.com/SimonSchubert/LinuxCommandLibrary",
-    "sourceVersion": "ee413f1b",
+    "sourceVersion": "a4fd0f15",
     "license": "Apache-2.0",
-    "contentHash": "7313231ad861cf0c187e64a55a310a622e0a51233fab7f03a297c23cfb4cb0eb",
-    "lastHarvestedAt": "2026-10-25T15:16:04.392Z",
+    "contentHash": "6320212b70cd5fe3c3a2058eac4d745621f4a69d7f8e182d95ef5f4335f23069",
+    "lastHarvestedAt": "2026-10-28T22:33:00.209Z",
     "learningId": "learn-github-simonschubert-linuxcommandlibrary"
   },
   "zed-industries-zed": {

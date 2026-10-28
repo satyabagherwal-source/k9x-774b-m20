@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T22:26:50.913Z",
-    "lastVerified": "2026-10-28T22:26:50.913Z",
+    "lastChecked": "2026-10-28T22:33:05.206Z",
+    "lastVerified": "2026-10-28T22:33:05.206Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -292,9 +292,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T21:56:41.626Z",
+    "lastChecked": "2026-10-28T22:33:05.198Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T21:56:41.626Z"
+    "lastVerified": "2026-10-28T22:33:05.198Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1302,9 +1302,9 @@
   "valeriansaliou-sonic": {
     "name": "sonic",
     "officialUrl": "https://github.com/valeriansaliou/sonic",
-    "lastChecked": "2026-10-28T04:48:40.727Z",
+    "lastChecked": "2026-10-28T22:33:02.732Z",
     "revisionIdentifier": "b635a181",
-    "lastVerified": "2026-10-28T04:48:40.727Z"
+    "lastVerified": "2026-10-28T22:33:02.732Z"
   },
   "cachix-devenv": {
     "name": "devenv",
@@ -1417,12 +1417,12 @@
     "lastVerified": "2026-10-28T21:50:16.352Z"
   },
   "zama-ai-tfhe-rs": {
-    "name": "zama-ai/tfhe-rs",
+    "name": "tfhe-rs",
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T18:42:00.110Z",
-    "lastVerified": "2026-10-28T18:42:00.110Z",
+    "lastChecked": "2026-10-28T22:33:00.408Z",
+    "lastVerified": "2026-10-28T22:33:00.408Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -1431,7 +1431,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5c280571"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -1803,9 +1804,9 @@
   "fission-fission": {
     "name": "fission",
     "officialUrl": "https://github.com/fission/fission",
-    "lastChecked": "2026-10-28T05:48:30.339Z",
+    "lastChecked": "2026-10-28T22:32:57.781Z",
     "revisionIdentifier": "ae2aabf5",
-    "lastVerified": "2026-10-28T05:48:30.339Z"
+    "lastVerified": "2026-10-28T22:32:57.781Z"
   },
   "tailscale-tailscale": {
     "name": "tailscale/tailscale",
@@ -7224,5 +7225,56 @@
     "lastChecked": "2026-10-28T22:26:31.513Z",
     "revisionIdentifier": "573ace30",
     "lastVerified": "2026-10-28T22:26:31.513Z"
+  },
+  "pola-rs-polars": {
+    "name": "pola-rs/polars",
+    "officialUrl": "https://github.com/pola-rs/polars",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-28T22:32:55.019Z",
+    "lastVerified": "2026-10-28T22:32:55.019Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-pola-rs-polars",
+    "contentHash": "e2c3f193a867d19c563884da11d5b015b49a5386caec6a449a9f38909317b7be",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 14,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-openbmb-minicpm-v-4.7-1b": {
+    "name": "openbmb/MiniCPM-V-4.7-1B",
+    "officialUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T22:32:52.910Z",
+    "lastVerified": "2026-10-28T22:32:52.910Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
+    "contentHash": "b49aa4d4787a9aecc5cd2c23972ef7435e72c61fd0f50e4e8542d5c58dadda61",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "simonschubert-linuxcommandlibrary": {
+    "name": "SimonSchubert/LinuxCommandLibrary",
+    "officialUrl": "https://github.com/SimonSchubert/LinuxCommandLibrary",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-10-28T22:32:59.690Z",
+    "lastVerified": "2026-10-28T22:32:59.690Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-simonschubert-linuxcommandlibrary",
+    "contentHash": "6320212b70cd5fe3c3a2058eac4d745621f4a69d7f8e182d95ef5f4335f23069",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 5,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

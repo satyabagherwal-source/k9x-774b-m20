@@ -5974,3 +5974,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-28T22:26:37.028Z |
 | `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `bde990b4` | Multi-dimensional audit evidence | 2026-10-28T22:26:41.372Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `fa36c67d` | Multi-dimensional audit evidence | 2026-10-28T22:26:48.374Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `936c03be` | Multi-dimensional audit evidence | 2026-10-28T22:32:55.555Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-1b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-1B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-28T22:32:59.377Z |
+| `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `a4fd0f15` | Multi-dimensional audit evidence | 2026-10-28T22:33:00.209Z |
