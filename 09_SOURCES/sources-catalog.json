@@ -1215,8 +1215,8 @@
     "sourceUrl": "https://huggingface.co/argmaxinc/whisperkit-coreml",
     "sourceVersion": "hf-argmaxinc-whisperkit-coreml",
     "license": "Open-Source",
-    "contentHash": "48b89959dd6906e58c21549c2ef7002da2f95529e419dcd059d573b8c18be2ef",
-    "lastHarvestedAt": "2026-10-26T00:41:51.368Z",
+    "contentHash": "fa4256a2bc6d88730e453b5c3e4b87a20f1c2fa29a538bc68b51c3ec071193c3",
+    "lastHarvestedAt": "2026-10-28T17:28:12.526Z",
     "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml"
   },
   "hf-qwen-qwen3-8b": {
@@ -2633,10 +2633,10 @@
     "repository": "bee-san/Ciphey",
     "platform": "github",
     "sourceUrl": "https://github.com/bee-san/Ciphey",
-    "sourceVersion": "49e5a79f",
+    "sourceVersion": "867d27e8",
     "license": "MIT",
-    "contentHash": "d1b6ab04537f084a7a2e7ca9843ef54e3d3ab8d6231e21311d65050a0905694e",
-    "lastHarvestedAt": "2026-10-28T14:15:30.421Z",
+    "contentHash": "05a2800a251e980936b6fac6c1aa4c7e67e4737e87b334fd26d8e32286e5ebe4",
+    "lastHarvestedAt": "2026-10-28T17:28:16.675Z",
     "learningId": "learn-github-bee-san-ciphey"
   },
   "pingcap-autoflow": {

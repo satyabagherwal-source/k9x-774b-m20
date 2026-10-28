@@ -5858,3 +5858,5 @@
 | `CYCLE-20261028-8SM1` | `2026-10-28T17:06:00.793Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5351` | Yes (`348ea3d4...`) |
 | `CYCLE-20261028-HDVQ` | `2026-10-28T17:12:41.606Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md` | Yes (`0149ffe5...`) |
 | `CYCLE-20261028-RKOX` | `2026-10-28T17:20:36.993Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | Yes (`30f59f6b...`) |
+| `CYCLE-20261028-1C6I` | `2026-10-28T17:28:12.522Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `VERIFIED` | `Rule 427, Rule 428` | Yes (`fa4256a2...`) |
+| `CYCLE-20261028-1FDR` | `2026-10-28T17:28:16.671Z` | `bee-san/Ciphey` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5352` | Yes (`05a2800a...`) |

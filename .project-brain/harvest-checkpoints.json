@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T17:20:37.005Z",
+  "last_updated": "2026-10-28T17:28:16.684Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1595,14 +1595,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-argmaxinc-whisperkit-coreml",
-      "content_hash": "48b89959dd6906e58c21549c2ef7002da2f95529e419dcd059d573b8c18be2ef",
-      "verified_at": "2026-10-26T00:41:51.378Z",
+      "content_hash": "fa4256a2bc6d88730e453b5c3e4b87a20f1c2fa29a538bc68b51c3ec071193c3",
+      "verified_at": "2026-10-28T17:28:12.535Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T00:41:51.378Z"
+      "last_updated": "2026-10-28T17:28:12.535Z"
     },
     "Qwen/Qwen3-8B": {
       "repository": "Qwen/Qwen3-8B",
@@ -4086,14 +4086,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bee-san-ciphey",
-      "content_hash": "d1b6ab04537f084a7a2e7ca9843ef54e3d3ab8d6231e21311d65050a0905694e",
-      "verified_at": "2026-10-28T14:15:30.429Z",
+      "content_hash": "05a2800a251e980936b6fac6c1aa4c7e67e4737e87b334fd26d8e32286e5ebe4",
+      "verified_at": "2026-10-28T17:28:16.684Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T14:15:30.429Z"
+      "last_updated": "2026-10-28T17:28:16.684Z"
     },
     "pingcap/autoflow": {
       "repository": "pingcap/autoflow",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T17:20:36.895Z",
+  "last_updated": "2026-10-28T17:28:16.599Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4277,8 +4277,8 @@
       "slug": "bee-san-ciphey",
       "platform": "github",
       "source_url": "https://github.com/bee-san/Ciphey",
-      "source_version": "49e5a79f",
-      "content_hash": "d1b6ab04537f084a7a2e7ca9843ef54e3d3ab8d6231e21311d65050a0905694e",
+      "source_version": "867d27e8",
+      "content_hash": "05a2800a251e980936b6fac6c1aa4c7e67e4737e87b334fd26d8e32286e5ebe4",
       "dossier_path": "07_PROJECT_LEARNING/bee-san-ciphey-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bee-san-ciphey-learnings.md",
       "promoted_rules": [
@@ -4291,6 +4291,11 @@
           "number": 5306,
           "title": "build(deps): bump rustls (#1124)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5352,
+          "title": "decoders): add Pollux (Morse with digits) cracker (#1121)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4298,7 +4303,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T14:15:30.300Z",
+      "verified_at": "2026-10-28T17:28:16.580Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -17050,10 +17055,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
       "source_version": "hf-argmaxinc-whisperkit-coreml",
-      "content_hash": "48b89959dd6906e58c21549c2ef7002da2f95529e419dcd059d573b8c18be2ef",
+      "content_hash": "fa4256a2bc6d88730e453b5c3e4b87a20f1c2fa29a538bc68b51c3ec071193c3",
       "dossier_path": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "promoted_rules": [
+        {
+          "number": 427,
+          "title": "Hardware-Aware Model Routing Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 428,
+          "title": "Quantized Model Naming & Size Transparency",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 965,
           "title": "Hardware-Capability Gating for ML Model Selection",
@@ -17102,7 +17117,7 @@
         "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv404ar8",
         "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv4e2t25"
       ],
-      "verified_at": "2026-10-26T00:41:51.315Z",
+      "verified_at": "2026-10-28T17:28:12.434Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -71606,29 +71621,29 @@
       "learning_id": "rule-427",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 427,
-      "title": "Hardware-Aware Model Routing Invariant (Harvested from argmaxinc/whisperkit-coreml)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Hardware-Aware Model Routing Invariant",
+      "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
+      "source_version": "hf-argmaxinc-whisperkit-coreml",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.811Z"
+      "verified_at": "2026-10-28T17:28:12.434Z"
     },
     "rule-428": {
       "learning_id": "rule-428",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 428,
-      "title": "Quantized Model Naming & Size Transparency Invariant (Harvested from argmaxinc/whisperkit-coreml)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Quantized Model Naming & Size Transparency",
+      "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
+      "source_version": "hf-argmaxinc-whisperkit-coreml",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.811Z"
+      "verified_at": "2026-10-28T17:28:12.434Z"
     },
     "rule-429": {
       "learning_id": "rule-429",
@@ -145249,6 +145264,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T17:06:00.701Z"
+    },
+    "rule-5352": {
+      "learning_id": "rule-5352",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5352,
+      "title": "decoders): add Pollux (Morse with digits) cracker (#1121)",
+      "source_url": "https://github.com/bee-san/Ciphey",
+      "source_version": "867d27e8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T17:28:16.580Z"
     }
   },
   "aliases": {

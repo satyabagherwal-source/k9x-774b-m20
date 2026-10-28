@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-JN8Q",
-    "timestamp": "2026-10-27T14:10:49.322Z",
-    "repository": "Comfy-Org/Z-Image-Turbo",
-    "learningId": "learn-huggingface-comfy-org-z-image-turbo",
-    "contentHash": "72959981cec0b965bda1d5cb1207f5e065128ff8cfad3a8e04e407f78825b1c0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-JR89",
-    "timestamp": "2026-10-27T14:10:54.489Z",
-    "repository": "milvus-io/milvus",
-    "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "3f1009bf8f86511b7eede86668b2bd20f9d3fb3b3866074df7e2f8e0c40539d5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-JSL3",
     "timestamp": "2026-10-27T14:10:56.247Z",
     "repository": "zama-ai/tfhe-rs",
@@ -7492,6 +7462,36 @@
     "contentHash": "30f59f6bfe23ca939bceefada05575e08c8c8bf220308c1b213a1e91396adf36",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-1C6I",
+    "timestamp": "2026-10-28T17:28:12.522Z",
+    "repository": "argmaxinc/whisperkit-coreml",
+    "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
+    "contentHash": "fa4256a2bc6d88730e453b5c3e4b87a20f1c2fa29a538bc68b51c3ec071193c3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-1FDR",
+    "timestamp": "2026-10-28T17:28:16.671Z",
+    "repository": "bee-san/Ciphey",
+    "learningId": "learn-github-bee-san-ciphey",
+    "contentHash": "05a2800a251e980936b6fac6c1aa4c7e67e4737e87b334fd26d8e32286e5ebe4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

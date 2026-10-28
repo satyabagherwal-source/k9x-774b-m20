@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T17:20:48.410Z",
-    "lastVerified": "2026-10-28T17:20:48.410Z",
+    "lastChecked": "2026-10-28T17:28:19.224Z",
+    "lastVerified": "2026-10-28T17:28:19.224Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -281,9 +281,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T16:58:55.657Z",
+    "lastChecked": "2026-10-28T17:28:16.812Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T16:58:55.657Z"
+    "lastVerified": "2026-10-28T17:28:16.812Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -770,14 +770,14 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T14:15:29.667Z",
-    "lastVerified": "2026-10-28T14:15:29.667Z",
+    "lastChecked": "2026-10-28T17:28:15.690Z",
+    "lastVerified": "2026-10-28T17:28:15.690Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
-    "contentHash": "d1b6ab04537f084a7a2e7ca9843ef54e3d3ab8d6231e21311d65050a0905694e",
+    "contentHash": "05a2800a251e980936b6fac6c1aa4c7e67e4737e87b334fd26d8e32286e5ebe4",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5332,5 +5332,50 @@
     "lastChecked": "2026-10-28T17:20:45.710Z",
     "revisionIdentifier": "c49c44a8",
     "lastVerified": "2026-10-28T17:20:45.710Z"
+  },
+  "graphprotocol-graph-node": {
+    "name": "graph-node",
+    "officialUrl": "https://github.com/graphprotocol/graph-node",
+    "lastChecked": "2026-10-28T17:28:02.012Z",
+    "revisionIdentifier": "cc31bc78",
+    "lastVerified": "2026-10-28T17:28:02.012Z"
+  },
+  "hf-argmaxinc-whisperkit-coreml": {
+    "name": "argmaxinc/whisperkit-coreml",
+    "officialUrl": "https://huggingface.co/argmaxinc/whisperkit-coreml",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T17:28:04.092Z",
+    "lastVerified": "2026-10-28T17:28:04.092Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
+    "contentHash": "fa4256a2bc6d88730e453b5c3e4b87a20f1c2fa29a538bc68b51c3ec071193c3",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "amir1376-ab-download-manager": {
+    "name": "ab-download-manager",
+    "officialUrl": "https://github.com/amir1376/ab-download-manager",
+    "lastChecked": "2026-10-28T17:28:06.941Z",
+    "revisionIdentifier": "e329495b",
+    "lastVerified": "2026-10-28T17:28:06.941Z"
+  },
+  "camptocamp-terraboard": {
+    "name": "terraboard",
+    "officialUrl": "https://github.com/camptocamp/terraboard",
+    "lastChecked": "2026-10-28T17:28:09.290Z",
+    "revisionIdentifier": "6f6b6b60",
+    "lastVerified": "2026-10-28T17:28:09.290Z"
+  },
+  "lindb-lindb": {
+    "name": "lindb",
+    "officialUrl": "https://github.com/lindb/lindb",
+    "lastChecked": "2026-10-28T17:28:14.329Z",
+    "revisionIdentifier": "612070e1",
+    "lastVerified": "2026-10-28T17:28:14.329Z"
   }
 }

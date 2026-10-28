@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T17:20:37.002Z",
-  "total_cycles_completed": 5835,
-  "total_learnings_persisted": 5835,
-  "total_rules_promoted": 5305,
+  "last_updated": "2026-10-28T17:28:16.680Z",
+  "total_cycles_completed": 5837,
+  "total_learnings_persisted": 5837,
+  "total_rules_promoted": 5308,
   "history": [
-    {
-      "timestamp": "2026-10-28T02:48:09.855Z",
-      "repository": "convaiinnovations/laya",
-      "learningId": "learn-huggingface-convaiinnovations-laya",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T02:48:15.777Z",
-      "repository": "Mintplex-Labs/anything-llm",
-      "learningId": "learn-github-mintplex-labs-anything-llm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T02:54:53.954Z",
       "repository": "Edge0/Audio8-ASR-Infinite",
@@ -1403,6 +1389,20 @@
       "repository": "intfloat/multilingual-e5-small",
       "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T17:28:12.531Z",
+      "repository": "argmaxinc/whisperkit-coreml",
+      "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T17:28:16.680Z",
+      "repository": "bee-san/Ciphey",
+      "learningId": "learn-github-bee-san-ciphey",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

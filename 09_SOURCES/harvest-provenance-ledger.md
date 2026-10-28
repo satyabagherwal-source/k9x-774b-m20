@@ -5867,3 +5867,5 @@ Every entry in this ledger must capture:
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `2db7fac9` | Multi-dimensional audit evidence | 2026-10-28T17:06:00.797Z |
 | `learn-huggingface-google-gemma-4-26b-a4b-it` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-28T17:12:41.609Z |
 | `learn-huggingface-intfloat-multilingual-e5-small` | `https://huggingface.co/intfloat/multilingual-e5-small` | `hf-intfloa` | Multi-dimensional audit evidence | 2026-10-28T17:20:36.997Z |
+| `learn-huggingface-argmaxinc-whisperkit-coreml` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-10-28T17:28:12.526Z |
+| `learn-github-bee-san-ciphey` | `https://github.com/bee-san/Ciphey` | `867d27e8` | Multi-dimensional audit evidence | 2026-10-28T17:28:16.675Z |
