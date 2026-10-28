@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-126F",
-    "timestamp": "2026-10-27T13:28:22.599Z",
-    "repository": "lemomo-ai/lemo-opuscar",
-    "learningId": "learn-github-lemomo-ai-lemo-opuscar",
-    "contentHash": "0a4c6a8138343b687be811f15ee09007130f6814a4ea7c3815ee6274ee0d9e27",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-136G",
-    "timestamp": "2026-10-27T13:28:23.896Z",
-    "repository": "automazeio/ccpm",
-    "learningId": "learn-github-automazeio-ccpm",
-    "contentHash": "426fdfa8200dbb78499bec9135cdbe388e393f688504a4fd4bb134c4f82e34f3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-17C0",
-    "timestamp": "2026-10-27T13:28:29.280Z",
-    "repository": "okteto/okteto",
-    "learningId": "learn-github-okteto-okteto",
-    "contentHash": "8e665ef6d0b10f4f0e47c7db90e58c2f8af2c39f3da29a6a12425a0a81db43d2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-17LE",
     "timestamp": "2026-10-27T13:28:29.618Z",
     "repository": "zulip/zulip",
@@ -7492,6 +7447,51 @@
     "contentHash": "1f041628c908c5bd32fe6d3fd470b4fedd8279adf067695ff6dff61d6a25585f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-A86G",
+    "timestamp": "2026-10-28T15:43:08.776Z",
+    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+    "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+    "contentHash": "9a3eab5b6e4fb482d6768f054272e74939c555ef21134bc1faf31f67e2d07dad",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-ACIG",
+    "timestamp": "2026-10-28T15:43:14.392Z",
+    "repository": "openbmb/MiniCPM-OCR-1.0",
+    "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
+    "contentHash": "74e0b70fe85623c2bb9d54f67644bc2969faad3f1102825226a089b087d9b705",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-ALE7",
+    "timestamp": "2026-10-28T15:43:25.903Z",
+    "repository": "apache/shardingsphere",
+    "learningId": "learn-github-apache-shardingsphere",
+    "contentHash": "59289a7f64515d0b6b5e836af1749143d89a0d3662716aa1070fe692f1cf27b2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

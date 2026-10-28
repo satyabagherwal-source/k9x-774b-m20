@@ -1055,8 +1055,8 @@
     "sourceUrl": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
     "sourceVersion": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
     "license": "Open-Source",
-    "contentHash": "5c0c2233c57cbabeda7debe3c27f194f2db10f8eb37fc6c9c3b179d2f33985df",
-    "lastHarvestedAt": "2026-10-25T21:53:16.116Z",
+    "contentHash": "9a3eab5b6e4fb482d6768f054272e74939c555ef21134bc1faf31f67e2d07dad",
+    "lastHarvestedAt": "2026-10-28T15:43:08.780Z",
     "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw"
   },
   "hf-pablodawson-minimax-h3-360-orbit-lora": {
@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "ce3abe70",
+    "sourceVersion": "5c3acbfd",
     "license": "Apache-2.0",
-    "contentHash": "a70dcad6e8b6add44c2ca3f80d202b0ad25143e7abe53825bcb95c3c8aaf2e77",
-    "lastHarvestedAt": "2026-10-27T23:44:12.119Z",
+    "contentHash": "59289a7f64515d0b6b5e836af1749143d89a0d3662716aa1070fe692f1cf27b2",
+    "lastHarvestedAt": "2026-10-28T15:43:25.907Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
@@ -11408,5 +11408,15 @@
     "contentHash": "9c9dadd3556a5f1291b8ac6629ba27cbe7176c32b9921e7d16a4d502add3d3aa",
     "lastHarvestedAt": "2026-10-28T08:45:46.949Z",
     "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini"
+  },
+  "hf-openbmb-minicpm-ocr-1.0": {
+    "repository": "openbmb/MiniCPM-OCR-1.0",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-OCR-1.0",
+    "sourceVersion": "hf-openbmb-minicpm-ocr-1.0",
+    "license": "Open-Source",
+    "contentHash": "74e0b70fe85623c2bb9d54f67644bc2969faad3f1102825226a089b087d9b705",
+    "lastHarvestedAt": "2026-10-28T15:43:14.396Z",
+    "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0"
   }
 }

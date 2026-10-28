@@ -5833,3 +5833,6 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `5e26ccca` | Multi-dimensional audit evidence | 2026-10-28T15:29:50.114Z |
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `f164b70f` | Multi-dimensional audit evidence | 2026-10-28T15:29:51.444Z |
 | `learn-huggingface-fermionresearch-phonon-2` | `https://huggingface.co/FermionResearch/Phonon-2` | `hf-fermion` | Multi-dimensional audit evidence | 2026-10-28T15:36:31.994Z |
+| `learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw` | `https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | `hf-infatos` | Multi-dimensional audit evidence | 2026-10-28T15:43:08.780Z |
+| `learn-huggingface-openbmb-minicpm-ocr-1-0` | `https://huggingface.co/openbmb/MiniCPM-OCR-1.0` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-28T15:43:14.396Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `5c3acbfd` | Multi-dimensional audit evidence | 2026-10-28T15:43:25.907Z |

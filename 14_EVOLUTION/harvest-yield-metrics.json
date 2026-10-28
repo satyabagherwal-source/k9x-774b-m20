@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T15:36:31.999Z",
-  "total_cycles_completed": 5801,
-  "total_learnings_persisted": 5801,
-  "total_rules_promoted": 5278,
+  "last_updated": "2026-10-28T15:43:25.912Z",
+  "total_cycles_completed": 5804,
+  "total_learnings_persisted": 5804,
+  "total_rules_promoted": 5282,
   "history": [
-    {
-      "timestamp": "2026-10-28T01:22:24.334Z",
-      "repository": "BAAI/bge-large-en-v1.5",
-      "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T01:29:02.341Z",
-      "repository": "carbon-design-system/carbon-components-svelte",
-      "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T01:29:08.661Z",
-      "repository": "linkwarden/linkwarden",
-      "learningId": "learn-github-linkwarden-linkwarden",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T01:29:12.501Z",
       "repository": "zai-org/GLM-5.3",
@@ -1403,6 +1382,27 @@
       "repository": "FermionResearch/Phonon-2",
       "learningId": "learn-huggingface-fermionresearch-phonon-2",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T15:43:08.790Z",
+      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T15:43:14.401Z",
+      "repository": "openbmb/MiniCPM-OCR-1.0",
+      "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T15:43:25.912Z",
+      "repository": "apache/shardingsphere",
+      "learningId": "learn-github-apache-shardingsphere",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

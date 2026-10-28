@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T15:36:31.894Z",
-  "total_verified_learnings": 1157,
+  "last_updated": "2026-10-28T15:43:25.813Z",
+  "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2253,8 +2253,8 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "ce3abe70",
-      "content_hash": "a70dcad6e8b6add44c2ca3f80d202b0ad25143e7abe53825bcb95c3c8aaf2e77",
+      "source_version": "5c3acbfd",
+      "content_hash": "59289a7f64515d0b6b5e836af1749143d89a0d3662716aa1070fe692f1cf27b2",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
@@ -2302,6 +2302,11 @@
           "number": 5058,
           "title": "Align coding standards with Checkstyle test class finality (#40378)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5330,
+          "title": "Build current table binder contexts lazily in ProjectionsSegmentBinder (#40364)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2309,7 +2314,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T23:44:12.058Z",
+      "verified_at": "2026-10-28T15:43:25.794Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22892,7 +22897,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
       "source_version": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
-      "content_hash": "5c0c2233c57cbabeda7debe3c27f194f2db10f8eb37fc6c9c3b179d2f33985df",
+      "content_hash": "9a3eab5b6e4fb482d6768f054272e74939c555ef21134bc1faf31f67e2d07dad",
       "dossier_path": "07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md",
       "promoted_rules": [
@@ -22944,7 +22949,7 @@
         "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv3xqg2c",
         "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv4cgfx7"
       ],
-      "verified_at": "2026-10-25T21:53:16.047Z",
+      "verified_at": "2026-10-28T15:43:08.674Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -144750,6 +144755,91 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T15:29:51.359Z"
+    },
+    "learn-huggingface-openbmb-minicpm-ocr-1-0": {
+      "learning_id": "learn-huggingface-openbmb-minicpm-ocr-1-0",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "openbmb/MiniCPM-OCR-1.0",
+      "repository": "openbmb/MiniCPM-OCR-1.0",
+      "slug": "hf-openbmb-minicpm-ocr-1.0",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-OCR-1.0",
+      "source_version": "hf-openbmb-minicpm-ocr-1.0",
+      "content_hash": "74e0b70fe85623c2bb9d54f67644bc2969faad3f1102825226a089b087d9b705",
+      "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-ocr-1.0-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-ocr-1.0-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 5328,
+          "title": "Vision‑Text Configuration Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "Tokenizer Special‑Token Integrity",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 5329,
+          "title": "Dtype Alignment for Mixed‑Precision Decoding",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-28T15:43:14.301Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5328": {
+      "learning_id": "rule-5328",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5328,
+      "title": "Vision‑Text Configuration Consistency",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-OCR-1.0",
+      "source_version": "hf-openbmb-minicpm-ocr-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T15:43:14.301Z"
+    },
+    "rule-5329": {
+      "learning_id": "rule-5329",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5329,
+      "title": "Dtype Alignment for Mixed‑Precision Decoding",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-OCR-1.0",
+      "source_version": "hf-openbmb-minicpm-ocr-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T15:43:14.301Z"
+    },
+    "rule-5330": {
+      "learning_id": "rule-5330",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5330,
+      "title": "Build current table binder contexts lazily in ProjectionsSegmentBinder (#40364)",
+      "source_url": "https://github.com/apache/shardingsphere",
+      "source_version": "5c3acbfd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T15:43:25.795Z"
     }
   },
   "aliases": {

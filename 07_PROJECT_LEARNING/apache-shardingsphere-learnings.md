@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source**: github ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
-> **Source Version**: `ce3abe70`  
+> **Source Version**: `5c3acbfd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T23:44:11.761Z  
+> **Timestamp**: 2026-10-28T15:43:25.316Z  
 > **Learning ID**: `learn-github-apache-shardingsphere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T23:44:11.056Z  
+> **Harvest Timestamp**: 2026-10-28T15:43:25.037Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Empowering Data Intelligence with Distributed SQL for Sharding, Scalability, and Security Across All Databases.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 20817 stars
+- **Stars / Engagement**: 20818 stars
 
 ---
 
@@ -1135,7 +1135,7 @@ from resolve_review_scope import (
 
 
 LEDGER_KIND = "review-pr-coverage-ledger"
-LEDGER_VERSION = 4
+LEDGER_VERSION = 5
 LEDGER_FILE_NAME = "ledger.json"
 FILE_STATUSES = frozenset({"pending", "reviewed", "churn-only", "test-only-reviewed", "not-applicable", "blocked"})
 FINAL_FILE_STATUSES = FILE_STATUSES - {"pending"}
@@ -1145,6 +1145,7 @@ FINDING_STATUSES = frozenset({"candidate", "confirmed", "withdrawn", "review-inc
 PASS_FOCUSES = ("root-cause", "blast-radius", "tests-runtime", "convergence")
 REVIEW_FOCUSES = ("Code Correctness Review", "Mergeability Review", "CI Review")
 SOURCE_ROLES = frozenset({"rule", "requirement", "evidence"})
+ACTUAL_VALUE_RULE = "java-testing.actual-value-naming"
 
 
 def ledger_root() -> Path:
@@ -1222,6 +1223,7 @@ def validate_schema(ledger: object) -> None:
         ("finding", ledger["findings"], {
             "id": str, "status": str, "origin": str, "fix_boundary": str, "evidence": list, "full_path": list,
             "counter_evidence": list, "necessity": str, "scope_proof": str, "files": list, "reason": str, "anchors": list,
+            "rule": str, "applicability": list,
         }),
         ("pass", ledger["passes"], {
             "focus": str, "new_findings": int, "review_revision": int, "basis_fingerprint": str,
@@ -1305,8 +1307,7 @@ def validate_source_shape(source: Any) -> None:
 
 
 def validate_anchor_shape(anchor: Any, captured: bool = False) -> None:
-    if not isinstance(anchor, dict) or anchor.get("side") not in {"base", "candidate", "source"} or not has_text(anchor.get("path")):
-        raise Runtim
+    if not isinstance(anchor, dict) or anchor.get("
 ```
 
 ### Core Architecture Module: `.codex/skills/review-pr/scripts/resolve_review_scope.py`
@@ -1449,15 +1450,13 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40378** (2026-10-27): **Align coding standards with Checkstyle test class finality**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > ### Result  Review Result: Mergeable  No blocking issues or recommended changes remain.  ### Evidence  - Only the newly added Skill section was removed; no replacement instructions were added. - The three documentation changes remain intact, with consistent Chinese and English wording. - Two independent assessments and final session validation passed.  ### Coverage  - Complete review of the three local documentation files and six changed blocks. - Policy bundle validation and 262 source-read checks passed. - No applicable automatic semantic case exists; unrelated cases were not run. - Checkstyle configuration, production code, and test code were unchanged.
+- **Issue #40385** (2026-10-28): **Reject ordinary pushdown SELECT across storage database types**
+  *Symptoms*: Fixes #40368.  Reject ordinary pushdown `SELECT` queries in ShardingSphere-Proxy and ShardingSphere-JDBC before backend business SQL execution when their final execution units span different storage database types.  - Covers all ordinary pushdown SELECTs, including simple scans and `COUNT(*)`, through Statement and PreparedStatement `executeQuery` and applicable `execute` paths, including raw pushdown. - Compares actual routed storage type identifiers, independently of the frontend protocol. The rule is not specific to MySQL and PostgreSQL. - Allows same-type execution units and routes accessing only one type in a heterogeneous database. Heterogeneous storage registration, empty execution units, and non-SELECT behavior remain unchanged.  ### SQL Federation  Queries actually selected for Federation, including their internal scans, retain Federation's own execution and validation. Enabling Federation alone does not bypass this check: queries falling back to ordinary pushdown are still validated. This change adds no heterogeneous Federation capability.  ### Validation  - 2,138 unit tests passed across infra/executor, JDBC, and Proxy backend/core. - Checkstyle and Spotless passed for all changed Java files; root RAT passed. - Local MySQL/PostgreSQL integer tests passed for both Proxy and JDBC: each covered 60 ordinary-query checks, 8 Federation-fallback checks, and 4 actual homogeneous Federation checks, including Statement and server-side PreparedStatement with `executeQuery` an
 
-- **Issue #40376** (2026-10-27): **Strengthen PR direction checks and simplify review summaries**
+- **Issue #40383** (2026-10-28): **Use three priority levels in PR reviews**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > ### Summary  This update strengthens early assessment of root causes, ownership, and existing repair options, and requires explaining what the PR changes and whether its approach is sound before giving a verdict. It reuses existing mechanisms, shortens public Coverage to a verification summary, and retains complete internal checks within the approved scope.  ### Result  Review Result: Mergeable  No blocking issues or recommended changes remain.  ### Evidence  Static validation, 9 unit checks, and 52 source-read checks passed. The initial semantic run passed 33/39 cases; paired confirmation found no new regressions, and all 5 critical cases passed majority confirmation.  ### Coverage  Local working-tree candidate against baseline f0b3e2fe1249; all 3 files reviewed. Code scope only; CI was not reviewed.
+  > ### Summary  The previous Skill did not define a uniform priority scheme; this change explicitly adopts P0/P1/P2. It uses the existing report structure, requires priority labels in issue titles, and places ordinary and minor issues in P2. Existing proof, blocking, and verdict rules remain unchanged.  ### Result  Review Result: Mergeable  No blocking issues or required changes found. This conclusion covers code scope only.  ### Evidence  - Deterministic validation, 52 source-read traces, Skill structure validation, and diff checks passed. - The three-level classification case and the P2 blocking-report case each passed two confirmation observations after completing the latter’s policy inputs. All 252 existing cases remain unchanged.  ### Coverage  Standalone local candidate based on `90e0a0793e4d502ddcd8b51ff9d3bfedd0938d0c`, covering all changes in both files. The source-impact evaluation scored 40/41; its only failure was the pre-existing baseline anomaly, which remai
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1474,85 +1473,927 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce3abe70` (2026-10-27)
-**Commit Message**: Align coding standards with Checkstyle test class finality (#40378)
+### Incident Patch 1: `909a4c6e` (2026-10-28)
+**Commit Message**: Build current table binder contexts lazily in ProjectionsSegmentBinder (#40364)
 
-**File**: `CODE_OF_CONDUCT.md` (modified, +3/-2)
+* Build current table binder contexts lazily in ProjectionsSegmentBinder
+
+The contexts built from the projections bound so far are only used on the
+retry path after a ColumnNotFoundException, but they were created for every
+projection, which made binding quadratic in the number of projections.
+
+Fixes #40332.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* Combine the last two parameters of ProjectionsSegmentBinder#bind
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `RELEASE-NOTES.md` (modified, +1/-0)
 ```diff
-@@ -40,7 +40,7 @@ The following code of conduct is based on full compliance with the [Apache Softw
- - Avoid using `this` modifier except for assignment statements where constructor parameters have the same name as global variables.
- - Local variables must not be declared as `final`, including ordinary local variables, `for` loop variables, enhanced `for` loop variables and try-with-resources resources.
- - Lambda parameters should not be marked as `final`.
--- Declare every class `final` unless it is an abstract class intended for inheritance.
-+- Declare every production class `final` unless it is an abstract class intended for inheritance.
- - Extract nested loops into separate methods.
- - The order of member variable definitions and parameter passing should remain consistent across all classes and methods.
- - Use guard clauses for invalid inputs, missing states and exceptional conditions so that the normal execution path uses positive conditions and minimal nesting.
-@@ -74,7 +74,8 @@ The following code of conduct is based on full compliance with the [Apache Softw
+@@ -130,6 +130,7 @@
+ ### Enhancements
  
- ## Unit Testing Standards
- 
--- Test code and production code need to follow the same coding standards.
-+- Test code and production code need to follow the same coding standards, except for class finality.
-+- Classes whose names end with `Test` must not be declared `final`.
- - Unit tests need to follow the AIR (Automatic, Independent, Repeatable) design philosophy.
-    - Automatic: Unit tests should be fully automated, not interactive. Manual inspection of output results is forbidden, use of `System.out`, `log`, etc. is not allowed, assertions must be used for verification.
-    - Independent: Forbid mutual calls between unit test cases, forbid dependency on execution order. Each unit test can run independently.
+ 1. SQL Binder: Enhance ORDER BY column resolution with current-query scope precedence over correlated outer scopes - [#40342](https://github.com/apache/shardingsphere/pull/40342)
++1. SQL Binder: Avoid quadratic projection binding overhead for statements with many projections - [#40332](https://github.com/apache/shardingsphere/issues/40332)
+ 1. SQL Parser: Support additional MySQL CREATE TABLE, CREATE FUNCTION, CREATE TRIGGER, INSTALL COMPONENT, LOAD XML, GET DIAGNOSTICS and SELECT syntax - [#40120](https://github.com/apache/shardingsphere/pull/40120)
+ 1. Metadata: Support view table type in openGauss meta data loader - [#39097](https://github.com/apache/shardingsphere/pull/39097)
+ 1. Build: Support compiling and using ShardingSphere under OpenJDK 26 - [#38625](https://github.com/apache/shardingsphere/issues/38625)
 ```
 
-**File**: `docs/community/content/involved/conduct/code.cn.md` (modified, +3/-2)
+**File**: `infra/binder/core/src/main/java/org/apache/shardingsphere/infra/binder/engine/segment/dml/projection/ProjectionsSegmentBinder.java` (modified, +4/-7)
 ```diff
-@@ -54,7 +54,7 @@ chapter = true
-  - 除了构造器入参与全局变量名称相同的赋值语句外，避免使用 `this` 修饰符。
-  - 局部变量不得声明为 `final`，包括普通局部变量、`for` 循环变量、增强 `for` 循环变量和 try-with-resources 资源变量。
-  - Lambda 参数不应标记为 `final`。
-- - 除用于继承的抽象类外，所有类都应声明为 `final`。
-+ - 除用于继承的抽象类外，所有生产类都应声明为 `final`。
-  - 嵌套循环应提取为独立方法。
-  - 成员变量定义顺序以及参数传递顺序在各个类和方法中保持一致。
-  - 对无效输入、缺失状态和异常条件使用卫语句提前返回，使正常执行路径使用正向条件并保持最少嵌套。
-@@ -88,7 +88,8 @@ chapter = true
- 
- ## 单元测试规范
- 
-- - 测试代码和生产代码需遵守相同代码规范。
-+ - 测试代码和生产代码需遵守相同代码规范，但类的 `final` 声明要求除外。
-+ - 名称以 `Test` 结尾的类不得声明为 `final`。
-  - 单元测试需遵循 AIR（Automatic, Independent, Repeatable）设计理念。
-    - 自动化（Automatic）：单元测试应全自动执行，而非交互式。禁止人工检查输出结果，不允许使用 `System.out`，`log` 等，必须使用断言进行验证。
-    - 独立性（Independent）：禁止单元测试用例间的互相调用，禁止依赖执行的先后次序。每个单元测试均可独立运行。
+@@ -77,8 +77,7 @@ public static ProjectionsSegment bind(final ProjectionsSegment segment, final SQ
+         ProjectionsSegment result = new ProjectionsSegment(segment.getStartIndex(), segment.getStopIndex());
+         result.setDistinctRow(segment.isDistinctRow());
+         for (ProjectionSegment each : segment.getProjections()) {
+-            Multimap<CaseInsensitiveString, TableSegmentBinderContext> currentTableBinderContexts = createCurrentTableBinderContexts(binderContext, result.getProjections());
+-            result.getProjections().add(bind(binderContext, boundTableSegment, currentTableBinderContexts, tableBinderContexts, outerTableBinderContexts, each));
++            result.getProjections().add(bind(binderContext, boundTableSegment, result.getProjections(), tableBinderContexts, outerTableBinderContexts, each));
+         }
+         Multimap<CaseInsensitiveString, TableSegmentBinderContext> currentTableBinderContexts = createCurrentTableBinderContexts(binderContext, result.getProjections());
+         for (ExpressionSegment each : segment.getDistinctOnItems()) {
+@@ -87,18 +86,16 @@ public static ProjectionsSegment bind(final ProjectionsSegment segment, final SQ
+         return result;
+     }
+     
+-    private static ProjectionSegment bind(final SQLStatementBinderContext binderContext, final TableSegment boundTableSegment,
+-                                          final Multimap<CaseInsensitiveString, TableSegmentBinderContext> currentTableBinderContexts,
++    private static ProjectionSegment bind(final SQLStatementBinderContext binderContext, final TableSegment boundTableSegment, final Collection<ProjectionSegment> boundProjections,
+                                           final Multimap<CaseInsensitiveString, TableSegmentBinderContext> tableBinderContexts,
+-                                          final Multimap<CaseInsensitiveString, TableSegmentBinderContext> outerTableBinderContexts,
+-                                          final ProjectionSegment projectionSegment) {
++                                          final Multimap<CaseInsensitiveString, TableSegmentBinderContext> outerTableBinderContexts, final ProjectionSegment projectionSegment) {
+         try {
+             return bind(projectionSegment, binderContext, boundTableSegment, tableBinderContexts, outerTableBinderContexts);
+         } catch (final ColumnNotFoundException ignored) {
+             if (isWholeRowProjection(projectionSegment, binderContext, boundTableSegment, tableBinderContexts)) {
+                 return createWholeRowProjection((ColumnProjectionSegment) projectionSegment);
+             }
+-            return bind(projectionSegment, binderContext, boundTableSegment, currentTableBinderContexts, outerTableBinderContexts);
++            return bind(projectionSegment, binderContext, boundTableSegment, createCurrentTableBinderContexts(binderContext, boundProjections), outerTableBinderContexts);
+         }
+     }
+     
 ```
 
-**File**: `docs/community/content/involved/conduct/code.en.md` (modified, +3/-2)
+---
+
+### Incident Patch 2: `1791fc19` (2026-10-28)
+**Commit Message**: Fix select * is not supported for associated query (#39131)
+
+* TDD
+
+* TDD
+
+* update
+
+* update
+
+* update
+
+* update RELEASE-NOTES.md
+
+* update
+
+* update
+
+* add join table test
+
+* update code standard
+
+* update code standard
+
+* update code standard
+
+* update code standard
+
+* update code standard
+
+* update code standard
+
+* update code standard
+
+* update tests
+
+* update sport
+
+* update test
+
+* update code standard
+
+**File**: `RELEASE-NOTES.md` (modified, +1/-0)
 ```diff
-@@ -54,7 +54,7 @@ The following code of conduct is based on full compliance with the [Apache Softw
- - Avoid using `this` modifier except for assignment statements where constructor parameters have the same name as global variables.
- - Local variables must not be declared as `final`, including ordinary local variables, `for` loop variables, enhanced `for` loop variables and try-with-resources resources.
- - Lambda parameters should not be marked as `final`.
--- Declare every class `final` unless it is an abstract class intended for inheritance.
-+- Declare every production class `final` unless it is an abstract class intended for inheritance.
- - Extract nested loops into separate methods.
- - The order of member variable definitions and parameter passing should remain consistent across all classes and methods.
- - Use guard clauses for invalid inputs, missing states and exceptional conditions so that the normal execution path uses positive conditions and minimal nesting.
-@@ -88,7 +88,8 @@ The following code of conduct is based on full compliance with the [Apache Softw
+@@ -70,6 +70,7 @@
+ 1. JDBC: Fix stale generated values leaking into prepared statement executeBatch calls without pending batches - [#38160](https://github.com/apache/shardingsphere/pull/38160)
+ 1. JDBC: Fix MySQL-compatible typed string conversion for `ResultSet#getObject(index, Class<T>)` - [#38444](https://github.com/apache/shardingsphere/pull/38444)
+ 1. JDBC: Fix statement close invalidating live result sets of other statements on the same connection - [#39503](https://github.com/apache/shardingsphere/pull/39503)
++1. JDBC: Fix select * is not supported for associated query - [#39131](https://github.com/apache/shardingsphere/pull/39131)
+ 1. Proxy: Resolve MySQL prepared statement parameter columns for where clause - [#38382](https://github.com/apache/shardingsphere/pull/38382)
+ 1. Proxy: Resolve PostgreSQL prepared statement parameter types before bind - [#38384](https://github.com/apache/shardingsphere/pull/38384)
+ 1. Proxy: Exclude derived projections from PostgreSQL prepared statement row descriptions - [#40194](https://github.com/apache/shardingsphere/issues/40194)
+```
+
+**File**: `infra/binder/core/src/main/java/org/apache/shardingsphere/infra/binder/context/segment/select/projection/ProjectionsContext.java` (modified, +19/-1)
+```diff
+@@ -93,6 +93,23 @@ private List<Projection> createExpandProjections() {
+         return result;
+     }
+     
++    /**
++     * Judge whether projections contain an unexpanded shorthand projection.
++     *
++     * <p>A shorthand projection is unexpanded when SQL binding was skipped (e.g. data-source hint)
++     * and its {@code actualColumns} remain empty.</p>
++     *
++     * @return contains unexpanded shorthand projection or not
++     */
++    public boolean containsUnexpandedShorthandProjection() {
++        for (Projection each : projections) {
++            if (each instanceof ShorthandProjection && ((ShorthandProjection) each).getActualColumns().isEmpty()) {
++                return true;
++            }
++        }
++        return false;
++    }
++    
+     /**
+      * Judge is unqualified shorthand projection or not.
+      *
+@@ -179,7 +196,8 @@ private Map<String, Integer> createColumnLabelAndIndexMap(final List<Projection>
+         Map<String, Integer> result = new CaseInsensitiveMap<>(expandProjections.size(), 1F);
+         for (int columnIndex = expandProjections.size(); columnIndex > 0; columnIndex--) {
+             Projection projection = expandProjections.get(columnIndex - 1);
+-            result.put(DerivedColumn.isDerivedColumnName(projection.getColumnLabel()) ? projection.getExpression() : projection.getColumnLabel(), columnIndex);
++            boolean isInternalDerivedLabel = projection instanceof AggregationDistinctProjection && DerivedColumn.isDerivedColumnName(projection.getColumnLabel());
++            result.put(isInternalDerivedLabel ? projection.getExpression() : projection.getColumnLabel(), columnIndex);
+         }
+         return result;
+     }
+```
+
+**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/core/resultset/ShardingSphereResultSetMetaData.java` (modified, +32/-17)
+```diff
+@@ -30,7 +30,6 @@
+ import java.sql.ResultSetMetaData;
+ import java.sql.SQLException;
+ import java.util.Collection;
+-import java.util.List;
  
- ## Unit Testing Standards
+ /**
+  * ShardingSphere result set meta data.
+@@ -44,11 +43,24 @@ public final class ShardingSphereResultSetMetaData extends WrapperAdapter implem
+     
+     private final SQLStatementContext sqlStatementContext;
+     
++    private VisibleColumnMapping visibleColumnMapping;
++    
++    private boolean visibleColumnMappingResolved;
++    
+     @Override
+     public int getColumnCount() throws SQLException {
+-        return sqlStatementContext instanceof SelectStatementContext && ((SelectStatementContext) sqlStatementContext).containsDerivedProjections()
+-                ? ((SelectStatementContext) sqlStatementContext).getProjectionsContext().getExpandProjections().size()
+-                : resultSetMetaData.getColumnCount();
++        VisibleColumnMapping mapping = resolveVisibleColumnMapping();
++        return null == mapping ? resultSetMetaData.getColumnCount() : mapping.getColumnCount();
++    }
++    
++    private VisibleColumnMapping resolveVisibleColumnMapping() throws SQLException {
++        if (!visibleColumnMappingResolved) {
++            if (sqlStatementContext instanceof SelectStatementContext && ((SelectStatementContext) sqlStatementContext).containsDerivedProjections()) {
++                visibleColumnMapping = VisibleColumnMapping.resolve((SelectStatementContext) sqlStatementContext, resultSetMetaData);
++            }
++            visibleColumnMappingResolved = true;
++        }
++        return visibleColumnMapping;
+     }
+     
+     @Override
+@@ -88,27 +100,30 @@ public int getColumnDisplaySize(final int column) throws SQLException {
+     
+     @Override
+     public String getColumnLabel(final int column) throws SQLException {
+-        if (sqlStatementContext instanceof SelectStatementContext && ((SelectStatementContext) sqlStatementContext).containsDerivedProjections()) {
+-            checkColumnIndex(column);
+-            return ((SelectStatementContext) sqlStatementContext).getProjectionsContext().getExpandProjections().get(column - 1).getColumnLabel();
++        VisibleColumnMapping mapping = resolveVisibleColumnMapping();
++        if (null != mapping) {
++            checkColumnIndex(column, mapping);
++            Projection projection = mapping.findProjection(column);
++            return null == projection ? resultSetMetaData.getColumnLabel(column) : projection.getColumnLabel();
+         }
+         return resultSetMetaData.getColumnLabel(column);
+     }
+     
+-    @Override
+-    public String getColumnName(final int column) throws SQLException {
+-        if (sqlStatementContext instanceof SelectStatementContext && ((SelectStatementContext) sqlStatementContext).containsDerivedProjections()) {
+-            checkColumnIndex(column);
+-            return ((SelectStatementContext) sqlStatementContext).getProjectionsContext().getExpandProjections().get(column - 1).getColumnName();
++    private void checkColumnIndex(final int column, final VisibleColumnMapping mapping) throws SQLException {
++        if (column > mapping.getColumnCount()) {
++            throw new ColumnIndexOutOfRangeException(column).toSQLException();
+         }
+-        return resultSetMetaData.getColumnName(column);
+     }
+     
+-    private void checkColumnIndex(final int column) throws SQLException {
+-        List<Projection> actualProjections = ((SelectStatementContext) sqlStatementContext).getProjectionsContext().getExpandProjections();
+-        if (column > actualProjections.size()) {
+-            throw new ColumnIndexOutOfRangeException(column).toSQLException();
++    @Override
++    public String getColumnName(final int column) throws SQLException {
++        VisibleColumnMapping mapping = resolveVisibleColumnMapping();
++        if (null != mapping) {
++            checkColumnIndex(column, mapping);
++            Projection projection = mapping.findProjection(column);
++            return null == projection ? resultSetMetaData.getColumnName(column) : projection.getColumnName();
+         }
++        return resultSetMetaData.getColumnName(column);
+     }
+     
+     @Override
+```
+
+**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/core/resultset/ShardingSphereResultSetUtils.java` (modified, +20/-1)
+```diff
+@@ -36,19 +36,38 @@ public final class ShardingSphereResultSetUtils {
+     /**
+      * Create column label and index map.
+      *
++     * <p>Delegates to {@link VisibleColumnMapping} for SELECT statements with derived projections.</p>
++     *
+      * @param sqlStatementContext SQL statement context
+      * @param resultSetMetaData meta data of result set
+      * @return column label and index map
+      * @throws SQLException SQL exception
+      */
+     public static Map<String, Integer> createColumnLabelAndIndexMap(final SQLStatementContext sqlStatementContext, final ResultSetMetaData resultSetMetaData) throws SQLException {
+         if (sqlStatementContext instanceof SelectStatementContext && ((SelectStatementContext) sqlStatementContext).containsDerivedProjections()) {
+-            return ((SelectStatementContext) sqlStatementContext).getProjectionsContext().getColumnLabelAndIndexMap();
++            return VisibleColumnMapping.resolve((SelectStatementContext) sqlStatementContext, resultSetMetaData).getColumnLabelAndIndexMap();
+         }
+         Map<String, Integer> result = new CaseInsensitiveMap<>(resultSetMetaData.getColumnCount(), 1F);
+         for (int columnIndex = resultSetMetaData.getColumnCount(); columnIndex > 0; columnIndex--) {
+             result.put(resultSetMetaData.getColumnLabel(columnIndex), columnIndex);
+         }
+         return result;
+     }
++    
++    /**
++     * Get visible column count.
++     *
++     * <p>Delegates to {@link VisibleColumnMapping} for SELECT statements with derived projections.</p>
++     *
++     * @param selectStatementContext select statement context
++     * @param resultSetMetaData physical result set meta data
++     * @return visible column count
++     * @throws SQLException SQL exception
++     */
++    public static int getVisibleColumnCount(final SelectStatementContext selectStatementContext, final ResultSetMetaData resultSetMetaData) throws SQLException {
++        if (selectStatementContext.containsDerivedProjections()) {
++            return VisibleColumnMapping.resolve(selectStatementContext, resultSetMetaData).getColumnCount();
++        }
++        return resultSetMetaData.getColumnCount();
++    }
+ }
+```
+
+**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/core/resultset/VisibleColumnMapping.java` (added, +111/-0)
+```diff
+@@ -0,0 +1,111 @@
++/*
++ * Licensed to the Apache Software Foundation (ASF) under one or more
++ * contributor license agreements.  See the NOTICE file distributed with
++ * this work for additional information regarding copyright ownership.
++ * The ASF licenses this file to You under the Apache License, Version 2.0
++ * (the "License"); you may not use this file except in compliance with
++ * the License.  You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package org.apache.shardingsphere.driver.jdbc.core.resultset;
++
++import com.cedarsoftware.util.CaseInsensitiveMap;
++import lombok.AccessLevel;
++import lombok.Getter;
++import lombok.RequiredArgsConstructor;
++import org.apache.shardingsphere.infra.annotation.HighFrequencyInvocation;
++import org.apache.shardingsphere.infra.binder.context.segment.select.projection.Projection;
++import org.apache.shardingsphere.infra.binder.context.segment.select.projection.ProjectionsContext;
++import org.apache.shardingsphere.infra.binder.context.statement.type.dml.SelectStatementContext;
++
++import java.sql.ResultSetMetaData;
++import java.sql.SQLException;
++import java.util.List;
++import java.util.Map;
++
++/**
++ * Visible column mapping that resolves the authoritative result shape for a query.
++ *
++ * <p>This class is the single resolution point for visible column count, label-to-index mapping,
++ * and per-column projection availability. JDBC and Proxy consumers that need visible column
++ * shape should delegate to this mapping rather than computing it independently.</p>
++ *
++ * <p>Two resolution paths exist:</p>
++ * <ul>
++ *   <li>When a shorthand projection is unexpanded (binding was skipped), physical {@link ResultSetMetaData}
++ *       is fully authoritative because the SQL was not rewritten and no internal columns were appended.</li>
++ *   <li>When projections are fully expanded, logical {@code expandProjections} are authoritative.</li>
++ * </ul>
++ */
++@HighFrequencyInvocation
++@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
++@Getter
++public final class VisibleColumnMapping {
++    
++    private final int columnCount;
++    
++    private final Map<String, Integer> columnLabelAndIndexMap;
++    
++    /**
++     * Expanded projections when available, or {@code null} when physical metadata is authoritative.
++     */
++    private final List<Projection> expandProjections;
++    
++    /**
++     * Resolve visible column mapping for a SELECT statement with derived projections.
++     *
++     * @param selectStatementContext select statement context
++     * @param physicalMetaData physical result set meta data from the underlying database
++     * @return visible column mapping
++     * @throws SQLException SQL exception
++     */
++    public static VisibleColumnMapping resolve(final SelectStatementContext selectStatementContext, final ResultSetMetaData physicalMetaData) throws SQLException {
++        ProjectionsContext projectionsContext = selectStatementContext.getProjectionsContext();
++        if (projectionsContext.containsUnexpandedShorthandProjection()) {
++            int visibleCount = physicalMetaData.getColumnCount();
++            Map<String, Integer> labelMap = new CaseInsensitiveMap<>(visibleCount, 1F);
++            for (int columnIndex = visibleCount; columnIndex > 0; columnIndex--) {
++                labelMap.put(physicalMetaData.getColumnLabel(columnIndex), columnIndex);
++            }
++            return new VisibleColumnMapping(visibleCount, labelMap, null);
++        }
++        List<Projection> expandProjections = projectionsContext.getExpandProjections();
++        return new VisibleColumnMapping(expandProjections.size(), projectionsContext.getColumnLabelAndIndexMap(), expandProjections);
++    }
++    
++    /**
++     * Resolve visible column mapping when projections are known to be fully expanded.
++     *
++     * <p>Returns {@code null} when the shorthand projection is unexpanded, so callers that lack
++     * physical {@link ResultSetMetaData} can fall back to metadata-based resolution.</p>
++     *
++     * @param selectStatementContext select statement context
++     * @return visible column mapping, or {@code null} when shorthand is unexpanded
++     */
++    public static VisibleColumnMapping resolveIfExpanded(final SelectStatementContext selectStatementContext) {
++        ProjectionsContext projectionsContext = selectStatementContext.getProjectionsContext();
++        if (projectionsContext.containsUnexpandedShorthandProjection()) {
++            return null;
++        }
++        List<Projection> expandProjections = projectionsContext.getExpandProjections();
++        return new VisibleColumnMapping(exp
+```
+
+**File**: `jdbc/src/test/java/org/apache/shardingsphere/driver/ShardingSphereResultSetShorthandProjectionIT.java` (added, +254/-0)
+```diff
+@@ -0,0 +1,254 @@
++/*
++ * Licensed to the Apache Software Foundation (ASF) under one or more
++ * contributor license agreements.  See the NOTICE file distributed with
++ * this work for additional information regarding copyright ownership.
++ * The ASF licenses this file to You under the Apache License, Version 2.0
++ * (the "License"); you may not use this file except in compliance with
++ * the License.  You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package org.apache.shardingsphere.driver;
++
++import org.apache.shardingsphere.infra.hint.HintManager;
++import org.junit.jupiter.api.AfterAll;
++import org.junit.jupiter.api.BeforeAll;
++import org.junit.jupiter.api.Test;
++
++import java.sql.Connection;
++import java.sql.DriverManager;
++import java.sql.ResultSet;
++import java.sql.ResultSetMetaData;
++import java.sql.SQLException;
++import java.sql.Statement;
++
++import static org.hamcrest.MatcherAssert.assertThat;
++import static org.hamcrest.Matchers.is;
++import static org.junit.jupiter.api.Assertions.assertFalse;
++import static org.junit.jupiter.api.Assertions.assertTrue;
++
++/**
++ * Integration tests for shorthand projection (SELECT T.*) with HintManager on sharded table t_order.
++ *
++ * <p>These tests reproduce issue #28841: when HintManager routes to a single datasource,
++ * SQL bind is skipped and shorthand projections remain unexpanded, causing column count
++ * and label mismatches in the ResultSet.</p>
++ */
++final class ShardingSphereResultSetShorthandProjectionIT {
++    
++    private static final String SHARDING_JDBC_URL = "jdbc:shardingsphere:classpath:config/driver/driver-fixture-h2-mysql.yaml";
++    
++    private static final String H2_DS_0_URL = "jdbc:h2:mem:mysql_ds_0;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;MODE=MySQL";
++    
++    private static final String H2_DS_1_URL = "jdbc:h2:mem:mysql_ds_1;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;MODE=MySQL";
++    
++    private static Connection shardingSphereConnection;
++    
++    @BeforeAll
++    static void setUp() throws SQLException {
++        shardingSphereConnection = DriverManager.getConnection(SHARDING_JDBC_URL);
++        initDataSource(H2_DS_0_URL);
++        initDataSource(H2_DS_1_URL);
++    }
++    
++    private static void initDataSource(final String url) throws SQLException {
++        try (Connection connection = DriverManager.getConnection(url, "sa", ""); Statement statement = connection.createStatement()) {
++            statement.execute("DROP TABLE IF EXISTS t_order");
++            statement.execute("CREATE TABLE t_order (order_id INT PRIMARY KEY, user_id INT, status VARCHAR(50))");
++            statement.execute("INSERT INTO t_order VALUES (1000, 10, 'ACTIVE')");
++            statement.execute("INSERT INTO t_order VALUES (1001, 11, 'PENDING')");
++            statement.execute("DROP TABLE IF EXISTS t_order_item");
++            statement.execute("CREATE TABLE t_order_item (item_id INT PRIMARY KEY, order_id INT, item_name VARCHAR(50))");
++            statement.execute("INSERT INTO t_order_item VALUES (1, 1000, 'ITEM_A')");
++            statement.execute("INSERT INTO t_order_item VALUES (2, 1001, 'ITEM_B')");
++        }
++    }
++    
++    @AfterAll
++    static void tearDown() throws SQLException {
++        if (null != shardingSphereConnection) {
++            shardingSphereConnection.close();
++        }
++    }
++    
++    /**
++     * Case 1: SELECT T.*, T.status status_new FROM t_order T WHERE T.order_id = 1000
++     * Expected columns: order_id, user_id, status, status_new (4 columns).
++     */
++    @Test
++    void assertShorthandWithAlias() throws SQLException {
++        try (HintManager hintManager = HintManager.getInstance()) {
++            hintManager.setDataSourceName("ds_0");
++            try (
++                    Statement statement = shardingSphereConnection.createStatement();
++                    ResultSet resultSet = statement.executeQuery("SELECT T.*, T.status status_new FROM t_order T WHERE T.order_id = 1000")) {
++                ResultSetMetaData actualMetaData = resultSet.getMetaData();
++                assertThat("column count should be 4", actualMetaData.getColumnCount(), is(4));
++                assertThat(actualMetaData.getColumnLabel(1), is("order_id"));
++                assertThat(actualMetaData.getColumnLabel(2), is("user_id"));
++                assertThat(actualMetaData.getColumnLabel(3), is("status"));
++                assertThat(actualMetaData.getColumnLabel(4), is("status_new"));
++                assertTrue(resultSet.next());
++                assertThat(resultSet.getString("order_id"), is("1000"));
++                assertThat(resultSet.getString("status_
+```
+
+**File**: `jdbc/src/test/java/org/apache/shardingsphere/driver/jdbc/core/resultset/ShardingSphereResultSetMetaDataTest.java` (modified, +75/-0)
+```diff
+@@ -17,12 +17,21 @@
  
--- Test code and production code need to follow the same coding standards.
-+- Test code and production code need to follow the same coding standards, except for class finality.
-+- Classes whose names end with `Test` must not be declared `final`.
- - Unit tests need to follow the AIR (Automatic, Independent, Repeatable) design philosophy.
-     - Automatic: Unit tests should be fully automated, not interactive. Manual inspection of output results is forbidden, use of `System.out`, `log`, etc. is not allowed, assertions must be used for verification.
-     - Independent: Forbid mutual calls between unit test cases, forbid dependency on execution order. Each unit test can run independently.
+ package org.apache.shardingsphere.driver.jdbc.core.resultset;
+ 
++import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
++import org.apache.shardingsphere.infra.binder.context.segment.select.projection.Projection;
++import org.apache.shardingsphere.infra.binder.context.segment.select.projection.ProjectionsContext;
++import org.apache.shardingsphere.infra.binder.context.segment.select.projection.impl.ColumnProjection;
++import org.apache.shardingsphere.infra.binder.context.segment.select.projection.impl.ShorthandProjection;
++import org.apache.shardingsphere.infra.binder.context.statement.type.dml.SelectStatementContext;
+ import org.apache.shardingsphere.infra.metadata.database.ShardingSphereDatabase;
+ import org.apache.shardingsphere.infra.rule.attribute.datanode.DataNodeRuleAttribute;
++import org.apache.shardingsphere.infra.spi.type.typed.TypedSPILoader;
+ import org.junit.jupiter.api.Test;
+ 
+ import java.sql.ResultSetMetaData;
+ import java.sql.SQLException;
++import java.util.ArrayList;
++import java.util.Collection;
+ import java.util.Collections;
+ import java.util.Optional;
+ 
+@@ -34,6 +43,8 @@
+ 
+ class ShardingSphereResultSetMetaDataTest {
+     
++    private final DatabaseType databaseType = TypedSPILoader.getService(DatabaseType.class, "MySQL");
++    
+     @Test
+     void assertGetTableNameWithNullDatabase() throws SQLException {
+         ResultSetMetaData resultSetMetaData = mock(ResultSetMetaData.class);
+@@ -53,4 +64,68 @@ void assertGetTableNameWithDataNodeRuleAttribute() throws SQLException {
+         String actualTableName = new ShardingSphereResultSetMetaData(resultSetMetaData, database, null).getTableName(1);
+         assertThat(actualTableName, is("t_order"));
+     }
++    
++    @Test
++    void assertGetColumnCountWithExpandedProjections() throws SQLException {
++        ResultSetMetaData resultSetMetaData = mock(ResultSetMetaData.class);
++        SelectStatementContext selectStatementContext = mock(SelectStatementContext.class);
++        when(selectStatementContext.containsDerivedProjections()).thenReturn(true);
++        Collection<Projection> projections = new ArrayList<>(2);
++        projections.add(new ColumnProjection(null, "col1", null, databaseType));
++        projections.add(new ColumnProjection(null, "col2", null, databaseType));
++        when(selectStatementContext.getProjectionsContext()).thenReturn(new ProjectionsContext(0, 0, false, projections));
++        assertThat(new ShardingSphereResultSetMetaData(resultSetMetaData, null, selectStatementContext).getColumnCount(), is(2));
++    }
++    
++    @Test
++    void assertGetColumnCountWithUnexpandedShorthand() throws SQLException {
++        ResultSetMetaData resultSetMetaData = mock(ResultSetMetaData.class);
++        when(resultSetMetaData.getColumnCount()).thenReturn(3);
++        SelectStatementContext selectStatementContext = mock(SelectStatementContext.class);
++        when(selectStatementContext.containsDerivedProjections()).thenReturn(true);
++        ShorthandProjection shorthand = new ShorthandProjection(null, Collections.emptyList());
++        when(selectStatementContext.getProjectionsContext()).thenReturn(new ProjectionsContext(0, 0, false, Collections.singletonList(shorthand)));
++        assertThat(new ShardingSphereResultSetMetaData(resultSetMetaData, null, selectStatementContext).getColumnCount(), is(3));
++    }
++    
++    @Test
++    void assertGetColumnCountWithoutDerivedProjections() throws SQLException {
++        ResultSetMetaData resultSetMetaData = mock(ResultSetMetaData.class);
++        when(resultSetMetaData.getColumnCount()).thenReturn(5);
++        assertThat(new ShardingSphereResultSetMetaData(resultSetMetaData, null, null).getColumnCount(), is(5));
++    }
++    
++    @Test
++    void assertGetColumnLabelWithExpandedProjections() throws SQLException {
++        ResultSetMetaData resultSetMetaData = mock(ResultSetMetaData.class);
++        SelectStatementContext selectStatementContext = mock(SelectStatementContext.class);
++        when(selectStatementContext.containsDerivedProjections()).thenReturn(true);
++        Collection<Projection> projections = new ArrayList<>(1);
++        projections.add(new ColumnProjection(null, "col1", "alias1", databaseType));
++        when(selectStatementContext.getProjectionsContext()).thenReturn(new ProjectionsContext(0, 0, false, projections));
++        assertThat(new ShardingSphereResultSetMetaData(resultSetMetaData, null, selectStatementContext).getColumnLabel(1), is("alias1"));
++    }
++    
++    @Test
++    void assertGetColumnLabelWithUnexpandedShorthandFallsBackToMetaData() throws SQLException {
++        ResultSetMetaData resultSetMetaData = mock(ResultSetMetaData.class);
++        when(resultSetMetaData.getColumnCount()).thenReturn(1);
++        when(resultSetMetaData.getColumnLabel(1)).thenReturn("physical_label");
++        SelectStatementContext selectStatementContext = mock(SelectStatementContext.class);
++        when(selectStatementContext.containsDeri
+```
+
+**File**: `jdbc/src/test/java/org/apache/shardingsphere/driver/jdbc/core/resultset/ShardingSphereResultSetUtilsTest.java` (modified, +41/-2)
+```diff
+@@ -21,15 +21,16 @@
+ import org.apache.shardingsphere.infra.binder.context.segment.select.projection.Projection;
+ import org.apache.shardingsphere.infra.binder.context.segment.select.projection.ProjectionsContext;
+ import org.apache.shardingsphere.infra.binder.context.segment.select.projection.impl.ColumnProjection;
++import org.apache.shardingsphere.infra.binder.context.segment.select.projection.impl.ShorthandProjection;
+ import org.apache.shardingsphere.infra.binder.context.statement.type.dml.SelectStatementContext;
+ import org.junit.jupiter.api.Test;
+ 
+ import java.sql.ResultSetMetaData;
+ import java.sql.SQLException;
+ import java.util.ArrayList;
++import java.util.Collection;
+ import java.util.Collections;
+ import java.util.HashMap;
+-import java.util.List;
+ import java.util.Map;
+ 
+ import static org.hamcrest.MatcherAssert.assertThat;
+@@ -54,7 +55,7 @@ void assertCreateColumnLabelAndIndexMapWithSelectWithoutExpandProjections() thro
+     void assertCreateColumnLabelAndIndexMapWithSelectWithExpandProjections() throws SQLException {
+         SelectStatementContext selectStatementContext = mock(SelectStatementContext.class);
+         when(selectStatementContext.containsDerivedProjections()).thenReturn(true);
+-        List<Projection> projections = new ArrayList<>(2);
++        Collection<Projection> projections = new ArrayList<>(2);
+         projections.add(new ColumnProjection(null, "col1", null, mock(DatabaseType.class)));
+         projections.add(new ColumnProjection(null, "col2", null, mock(DatabaseType.class)));
+         ProjectionsContext projectionsContext = new ProjectionsContext(0, 0, false, projections);
+@@ -65,4 +66,42 @@ void assertCreateColumnLabelAndIndexMapWithSelectWithExpandProjections() throws
+         Map<String, Integer> actual = ShardingSphereResultSetUtils.createColumnLabelAndIndexMap(selectStatementContext, null);
+         assertThat(actual, is(expected));
+     }
++    
++    @Test
++    void assertCreateColumnLabelAndIndexMapWithUnexpandedShorthand() throws SQLException {
++        SelectStatementContext selectStatementContext = mock(SelectStatementContext.class);
++        when(selectStatementContext.containsDerivedProjections()).thenReturn(true);
++        ShorthandProjection shorthand = new ShorthandProjection(null, Collections.emptyList());
++        ProjectionsContext projectionsContext = new ProjectionsContext(0, 0, false, Collections.singletonList(shorthand));
++        when(selectStatementContext.getProjectionsContext()).thenReturn(projectionsContext);
++        ResultSetMetaData resultSetMetaData = mock(ResultSetMetaData.class);
++        when(resultSetMetaData.getColumnCount()).thenReturn(2);
++        when(resultSetMetaData.getColumnLabel(1)).thenReturn("id");
++        when(resultSetMetaData.getColumnLabel(2)).thenReturn("name");
++        Map<String, Integer> actual = ShardingSphereResultSetUtils.createColumnLabelAndIndexMap(selectStatementContext, resultSetMetaData);
++        Map<String, Integer> expected = new HashMap<>(2, 1F);
++        expected.put("id", 1);
++        expected.put("name", 2);
++        assertThat(actual, is(expected));
++    }
++    
++    @Test
++    void assertGetVisibleColumnCountWithDerivedProjections() throws SQLException {
++        SelectStatementContext selectStatementContext = mock(SelectStatementContext.class);
++        when(selectStatementContext.containsDerivedProjections()).thenReturn(true);
++        Collection<Projection> projections = new ArrayList<>(2);
++        projections.add(new ColumnProjection(null, "col1", null, mock(DatabaseType.class)));
++        projections.add(new ColumnProjection(null, "col2", null, mock(DatabaseType.class)));
++        ProjectionsContext projectionsContext = new ProjectionsContext(0, 0, false, projections);
++        when(selectStatementContext.getProjectionsContext()).thenReturn(projectionsContext);
++        assertThat(ShardingSphereResultSetUtils.getVisibleColumnCount(selectStatementContext, null), is(2));
++    }
++    
++    @Test
++    void assertGetVisibleColumnCountWithoutDerivedProjections() throws SQLException {
++        SelectStatementContext selectStatementContext = mock(SelectStatementContext.class);
++        ResultSetMetaData resultSetMetaData = mock(ResultSetMetaData.class);
++        when(resultSetMetaData.getColumnCount()).thenReturn(5);
++        assertThat(ShardingSphereResultSetUtils.getVisibleColumnCount(selectStatementContext, resultSetMetaData), is(5));
++    }
+ }
+```
+
+---
+
+### Incident Patch 3: `642f8b13` (2026-10-28)
+**Commit Message**: Fix incorrect Firebird AST for several SQL constructs (#40365)
+
+* Fix incorrect Firebird AST for several SQL constructs
+
+* Accept charset introducers on Firebird hexadecimal literals
+
+**File**: `RELEASE-NOTES.md` (modified, +1/-0)
+```diff
+@@ -34,6 +34,7 @@
+ 1. SQL Parser: Preserve MySQL `ALTER TABLE MODIFY COLUMN` nullability metadata - [#39421](https://github.com/apache/shardingsphere/pull/39421)
+ 1. SQL Parser: Preserve Firebird `CREATE TABLE` column nullability metadata - [#39423](https://github.com/apache/shardingsphere/pull/39423)
+ 1. SQL Parser: Fix Firebird parsing of KEY, TEXT and COMMENT column aliases - [#40262](https://github.com/apache/shardingsphere/issues/40262)
++1. SQL Parser: Fix incorrect Firebird AST for NOT precedence, string literals, FULL and NATURAL joins, FIRST parameters, ALTER TABLE constraints and EXECUTE BLOCK parameters - [#40355](https://github.com/apache/shardingsphere/issues/40355)
+ 1. SQL Parser: Preserve openGauss `CREATE TABLE` column nullability metadata - [#39425](https://github.com/apache/shardingsphere/pull/39425)
+ 1. SQL Parser: Preserve Hive `CREATE TABLE` column nullability metadata - [#39428](https://github.com/apache/shardingsphere/pull/39428)
+ 1. SQL Parser: Preserve SQLServer `ALTER TABLE ALTER COLUMN` nullability metadata - [#39430](https://github.com/apache/shardingsphere/pull/39430)
+```
+
+**File**: `parser/sql/engine/dialect/firebird/src/main/antlr4/imports/firebird/BaseRule.g4` (modified, +5/-5)
+```diff
+@@ -34,7 +34,7 @@ literals
+     ;
+ 
+ stringLiterals
+-    : characterSetName? STRING_ collateClause?
++    : UNDERSCORE_CHARSET? STRING_+ collateClause?
+     ;
+ 
+ numberLiterals
+@@ -47,11 +47,11 @@ dateTimeLiterals
+     ;
+ 
+ hexadecimalLiterals
+-    : characterSetName? HEX_DIGIT_ collateClause?
++    : UNDERSCORE_CHARSET? HEX_DIGIT_ collateClause?
+     ;
+ 
+ bitValueLiterals
+-    : characterSetName? BIT_NUM_ collateClause?
++    : UNDERSCORE_CHARSET? BIT_NUM_ collateClause?
+     ;
+ 
+ booleanLiterals
+@@ -215,9 +215,9 @@ characterSetName
+     ;
+ 
+ expr
+-    : expr andOperator expr
++    : notOperator expr
++    | expr andOperator expr
+     | expr orOperator expr
+-    | notOperator expr
+     | LP_ expr RP_
+     | booleanPrimary
+     ;
+```
+
+**File**: `parser/sql/engine/dialect/firebird/src/main/antlr4/imports/firebird/DDLStatement.g4` (modified, +2/-2)
+```diff
+@@ -340,7 +340,7 @@ addConstraintSpecification
+     ;
+ 
+ dropConstraintSpecification
+-    : DROP constraintDefinition
++    : DROP CONSTRAINT constraintName
+     ;
+ 
+ returnStatement
+@@ -496,7 +496,7 @@ executeBlock
+     ;
+ 
+ inputArgumentList
+-    : LP_ announcementArgument EQ_ QUESTION_  (COMMA_ (announcementArgument EQ_ QUESTION_))* RP_
++    : LP_ announcementArgument EQ_ parameterMarker (COMMA_ (announcementArgument EQ_ parameterMarker))* RP_
+     ;
+ 
+ outputArgumentList
+```
+
+**File**: `parser/sql/engine/dialect/firebird/src/main/antlr4/imports/firebird/Literals.g4` (modified, +4/-0)
+```diff
+@@ -19,6 +19,10 @@ lexer grammar Literals;
+ 
+ import Alphabet, Symbol;
+ 
++UNDERSCORE_CHARSET
++    : '_' [A-Za-z0-9_]+
++    ;
++
+ IDENTIFIER_
+     : [A-Za-z_$0-9\u0080-\uFFFF]*?[A-Za-z_$\u0080-\uFFFF]+?[A-Za-z_$0-9\u0080-\uFFFF]*
+     |  DQ_ ~'"'+ DQ_
+```
+
+**File**: `parser/sql/engine/dialect/firebird/src/main/java/org/apache/shardingsphere/sql/parser/engine/firebird/visitor/statement/FirebirdStatementVisitor.java` (modified, +1/-1)
+```diff
+@@ -163,7 +163,7 @@ public final ASTNode visitLiterals(final LiteralsContext ctx) {
+     
+     @Override
+     public final ASTNode visitStringLiterals(final StringLiteralsContext ctx) {
+-        return new StringLiteralValue(ctx.getText());
++        return new StringLiteralValue(ctx.STRING_().stream().map(each -> new StringLiteralValue(each.getText())).collect(Collectors.toList()));
+     }
+     
+     @Override
+```
+
+**File**: `parser/sql/engine/dialect/firebird/src/main/java/org/apache/shardingsphere/sql/parser/engine/firebird/visitor/statement/type/FirebirdDDLStatementVisitor.java` (modified, +24/-2)
+```diff
+@@ -50,6 +50,7 @@
+ import org.apache.shardingsphere.sql.parser.autogen.FirebirdStatementParser.DropTableContext;
+ import org.apache.shardingsphere.sql.parser.autogen.FirebirdStatementParser.ExecuteStmtContext;
+ import org.apache.shardingsphere.sql.parser.autogen.FirebirdStatementParser.ModifyColumnSpecificationContext;
++import org.apache.shardingsphere.sql.parser.autogen.FirebirdStatementParser.ParameterMarkerContext;
+ import org.apache.shardingsphere.sql.parser.engine.firebird.visitor.statement.FirebirdStatementVisitor;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.ddl.AlterDefinitionSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.ddl.CreateDefinitionSegment;
+@@ -62,6 +63,7 @@
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.ddl.constraint.alter.AddConstraintDefinitionSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.ddl.constraint.alter.DropConstraintDefinitionSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.column.ColumnSegment;
++import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.simple.ParameterMarkerExpressionSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.generic.DataTypeSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.generic.table.SimpleTableSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.statement.type.ddl.CommentStatement;
+@@ -83,6 +85,7 @@
+ import org.apache.shardingsphere.sql.parser.statement.core.statement.type.ddl.trigger.CreateTriggerStatement;
+ import org.apache.shardingsphere.sql.parser.statement.core.value.collection.CollectionValue;
+ import org.apache.shardingsphere.sql.parser.statement.core.value.identifier.IdentifierValue;
++import org.apache.shardingsphere.sql.parser.statement.core.value.parametermarker.ParameterMarkerValue;
+ 
+ import java.util.Collection;
+ import java.util.Collections;
+@@ -161,7 +164,7 @@ public ASTNode visitAddConstraintSpecification(final AddConstraintSpecificationC
+     
+     @Override
+     public ASTNode visitDropConstraintSpecification(final DropConstraintSpecificationContext ctx) {
+-        return new DropConstraintDefinitionSegment(ctx.getStart().getStartIndex(), ctx.getStop().getStopIndex(), (ConstraintSegment) visit(ctx.constraintDefinition().constraintName()));
++        return new DropConstraintDefinitionSegment(ctx.getStart().getStartIndex(), ctx.getStop().getStopIndex(), (ConstraintSegment) visit(ctx.constraintName()));
+     }
+     
+     @SuppressWarnings("unchecked")
+@@ -174,6 +177,10 @@ public ASTNode visitConstraintDefinition(final ConstraintDefinitionContext ctx)
+         if (null != ctx.primaryKeyOption()) {
+             result.getPrimaryKeyColumns().addAll(((CollectionValue<ColumnSegment>) visit(ctx.primaryKeyOption().columnNames())).getValue());
+         }
++        if (null != ctx.uniqueOption()) {
++            result.setUniqueKey(true);
++            result.getIndexColumns().addAll(((CollectionValue<ColumnSegment>) visit(ctx.uniqueOption().columnNames())).getValue());
++        }
+         if (null != ctx.foreignKeyOption()) {
+             result.setReferencedTable((SimpleTableSegment) visit(ctx.foreignKeyOption().referenceDefinition().tableName()));
+         }
+@@ -223,6 +230,12 @@ public ASTNode visitAlterDefinitionClause(final AlterDefinitionClauseContext ctx
+         if (null != ctx.dropColumnSpecification()) {
+             result.getValue().add((DropColumnDefinitionSegment) visit(ctx.dropColumnSpecification()));
+         }
++        if (null != ctx.addConstraintSpecification()) {
++            result.getValue().add((AddConstraintDefinitionSegment) visit(ctx.addConstraintSpecification()));
++        }
++        if (null != ctx.dropConstraintSpecification()) {
++            result.getValue().add((DropConstraintDefinitionSegment) visit(ctx.dropConstraintSpecification()));
++        }
+         return result;
+     }
+     
+@@ -322,7 +335,16 @@ public ASTNode visitCreateSequence(final CreateSequenceContext ctx) {
+     
+     @Override
+     public ASTNode visitExecuteStmt(final ExecuteStmtContext ctx) {
+-        return new ExecuteStatement(getDatabaseType());
++        ExecuteStatement result = new ExecuteStatement(getDatabaseType());
++        if (null != ctx.executeBlock() && null != ctx.executeBlock().inputArgumentList()) {
++            for (ParameterMarkerContext each : ctx.executeBlock().inputArgumentList().parameterMarker()) {
++                ParameterMarkerValue parameterMarker = (ParameterMarkerValue) visit(each);
++                getParameterMarkerSegments()
++                        .add(new ParameterMarkerExpressionSegment(each.getStart().getStartIndex(), each.getStop().getStopIndex(), parameterMarker.getValue(), parameterMarker.getType()));
++            }
++        }
++        result.addParameterMarkers(getParameterMarkerSegments());
++        return result;
+     }
+     
+     @Override
+```
+
+**File**: `parser/sql/engine/dialect/firebird/src/main/java/org/apache/shardingsphere/sql/parser/engine/firebird/visitor/statement/type/FirebirdDMLStatementVisitor.java` (modified, +7/-2)
+```diff
+@@ -297,11 +297,12 @@ private CombineType getCombineType(final CombineClauseContext ctx, final SelectC
+     
+     @Override
+     public ASTNode visitSelectClause(final SelectClauseContext ctx) {
+-        ProjectionsSegment projections = (ProjectionsSegment) visit(ctx.projections());
+-        SelectStatement.SelectStatementBuilder selectStatementBuilder = SelectStatement.builder().databaseType(getDatabaseType()).projections(projections);
++        SelectStatement.SelectStatementBuilder selectStatementBuilder = SelectStatement.builder().databaseType(getDatabaseType());
+         if (null != ctx.firstSkipClause()) {
+             selectStatementBuilder.limit((LimitSegment) visit(ctx.firstSkipClause()));
+         }
++        ProjectionsSegment projections = (ProjectionsSegment) visit(ctx.projections());
++        selectStatementBuilder.projections(projections);
+         if (!ctx.selectSpecification().isEmpty()) {
+             projections.setDistinctRow(isDistinct(ctx.selectSpecification().get(0)));
+         }
+@@ -531,6 +532,7 @@ private JoinTableSegment visitJoinedTable(final JoinedTableContext ctx, final Ta
+         result.setStopIndex(ctx.stop.getStopIndex());
+         result.setRight((TableSegment) visit(ctx.tableFactor()));
+         result.setJoinType(getJoinType(ctx));
++        result.setNatural(null != ctx.NATURAL());
+         if (null != ctx.joinSpecification()) {
+             visitJoinSpecification(ctx.joinSpecification(), result);
+         }
+@@ -544,6 +546,9 @@ private String getJoinType(final JoinedTableContext ctx) {
+         if (null != ctx.RIGHT()) {
+             return JoinType.RIGHT.name();
+         }
++        if (null != ctx.FULL()) {
++            return JoinType.FULL.name();
++        }
+         return null == ctx.CROSS() ? JoinType.INNER.name() : JoinType.CROSS.name();
+     }
+     
+```
+
+**File**: `test/it/parser/src/main/java/org/apache/shardingsphere/test/it/sql/parser/internal/asserts/statement/ddl/standard/type/AlterTableStatementAssert.java` (modified, +7/-0)
+```diff
+@@ -127,6 +127,7 @@ public static void assertIs(final SQLCaseAssertContext assertContext, final Alte
+         assertAddColumnDefinitions(assertContext, actual, expected);
+         assertAddConstraintDefinitions(assertContext, actual, expected);
+         assertModifyConstraintDefinitions(assertContext, actual, expected);
++        assertDropConstraintDefinitions(assertContext, actual, expected);
+         assertModifyColumnDefinitions(assertContext, actual, expected);
+         assertChangeColumnDefinitions(assertContext, actual, expected);
+         assertDropColumns(assertContext, actual, expected);
+@@ -291,6 +292,12 @@ private static void assertModifyConstraintDefinitions(final SQLCaseAssertContext
+         }
+     }
+     
++    private static void assertDropConstraintDefinitions(final SQLCaseAssertContext assertContext, final AlterTableStatement actual, final AlterTableStatementTestCase expected) {
++        if (null != expected.getDropConstraintCount()) {
++            assertThat(assertContext.getText("Drop constraint definitions size assertion error: "), actual.getDropConstraintDefinitions().size(), is(expected.getDropConstraintCount()));
++        }
++    }
++    
+     private static void assertModifyColumnDefinitions(final SQLCaseAssertContext assertContext, final AlterTableStatement actual, final AlterTableStatementTestCase expected) {
+         assertThat(assertContext.getText("Modify column definitions size assertion error: "), actual.getModifyColumnDefinitions().size(), is(expected.getModifyColumns().size()));
+         int count = 0;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #40385** (2026-10-28): Reject ordinary pushdown SELECT across storage database types (@RaigorJiang)
+- **PR #40383** (2026-10-28): Use three priority levels in PR reviews (@terrymanu)
+- **PR #40382** (2026-10-28): Reorder set schema assertion helper (@terrymanu)
+- **PR #40381** (2026-10-28): Clarify purpose in PR review summaries (@terrymanu)
+- **PR #40380** (2026-10-28): Strengthen review applicability checks and counterexample evaluations (@terrymanu)
 - **PR #40378** (2026-10-27): Align coding standards with Checkstyle test class finality (@terrymanu)
-- **PR #40376** (2026-10-27): Strengthen PR direction checks and simplify review summaries (@terrymanu)
-- **PR #40370** (2026-10-26): Refactor MD5 digest input preparation (@terrymanu)
-- **PR #40369** (2026-10-26): Refactor CDC socket sink packages (@terrymanu)
-- **PR #40366** (2026-10-26): Refactor CDC sinks into SPI, core and socket modules (@terrymanu)
-- **PR #40363** (2026-10-24): Fix PostgreSQL 15+ pipeline catalog compatibility (@terrymanu)
 
 ---
 
@@ -1572,31 +2413,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Align coding standards with Checkstyle test class finality (#40378)
+## X. Build current table binder contexts lazily in ProjectionsSegmentBinder (#40364)
 
 **RULE**:
-When implementing operations in `CODE_OF_CONDUCT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `RELEASE-NOTES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce3abe70`: Align coding standards with Checkstyle test class finality (#40378). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `909a4c6e`: Build current table binder contexts lazily in ProjectionsSegmentBinder (#40364). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `CODE_OF_CONDUCT.md`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `RELEASE-NOTES.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-- Declare every production class `final` unless it is an abstract class intended for inheritance.
-- Test code and production code need to follow the same coding standards, except for class finality.
-- Classes whose names end with `Test` must not be declared `final`.
+1. SQL Binder: Avoid quadratic projection binding overhead for statements with many projections - [#40332](https://github.com/apache/shardingsphere/issues/40332)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-- Declare every class `final` unless it is an abstract class intended for inheritance.
-- Test code and production code need to follow the same coding standards.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce3abe70` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `909a4c6e` are properly handled with clean fallback behavior.

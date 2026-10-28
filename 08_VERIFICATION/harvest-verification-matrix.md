@@ -5824,3 +5824,6 @@
 | `CYCLE-20261028-T3XA` | `2026-10-28T15:29:50.110Z` | `cilium/cilium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/cilium-cilium-learnings.md` | Yes (`0c9b9b1d...`) |
 | `CYCLE-20261028-T4Y8` | `2026-10-28T15:29:51.440Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5327` | Yes (`94c541cf...`) |
 | `CYCLE-20261028-1Q0N` | `2026-10-28T15:36:31.991Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | Yes (`1f041628...`) |
+| `CYCLE-20261028-A86G` | `2026-10-28T15:43:08.776Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | Yes (`9a3eab5b...`) |
+| `CYCLE-20261028-ACIG` | `2026-10-28T15:43:14.392Z` | `openbmb/MiniCPM-OCR-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5328, Rule EXISTING, Rule 5329` | Yes (`74e0b70f...`) |
+| `CYCLE-20261028-ALE7` | `2026-10-28T15:43:25.903Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5330` | Yes (`59289a7f...`) |

@@ -19651,5 +19651,17 @@
     "downloads": 9089104,
     "qualityScore": 2180,
     "discoveredAt": "2026-10-28T08:41:44.252Z"
+  },
+  {
+    "name": "openbmb/MiniCPM-OCR-1.0",
+    "fullName": "openbmb/MiniCPM-OCR-1.0",
+    "url": "https://huggingface.co/openbmb/MiniCPM-OCR-1.0",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: openbmb/MiniCPM-OCR-1.0 (217 likes, 791 downloads)",
+    "likes": 217,
+    "downloads": 791,
+    "qualityScore": 2961,
+    "discoveredAt": "2026-10-28T15:40:51.758Z"
   }
 ]

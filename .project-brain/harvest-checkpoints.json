@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T15:36:32.004Z",
+  "last_updated": "2026-10-28T15:43:25.916Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1385,14 +1385,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-      "content_hash": "5c0c2233c57cbabeda7debe3c27f194f2db10f8eb37fc6c9c3b179d2f33985df",
-      "verified_at": "2026-10-25T21:53:16.124Z",
+      "content_hash": "9a3eab5b6e4fb482d6768f054272e74939c555ef21134bc1faf31f67e2d07dad",
+      "verified_at": "2026-10-28T15:43:08.793Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T21:53:16.124Z"
+      "last_updated": "2026-10-28T15:43:08.793Z"
     },
     "pablodawson/MiniMax-H3-360-Orbit-LoRA": {
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -7431,14 +7431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-shardingsphere",
-      "content_hash": "a70dcad6e8b6add44c2ca3f80d202b0ad25143e7abe53825bcb95c3c8aaf2e77",
-      "verified_at": "2026-10-27T23:44:12.126Z",
+      "content_hash": "59289a7f64515d0b6b5e836af1749143d89a0d3662716aa1070fe692f1cf27b2",
+      "verified_at": "2026-10-28T15:43:25.915Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T23:44:12.126Z"
+      "last_updated": "2026-10-28T15:43:25.915Z"
     },
     "sharkdp/pastel": {
       "repository": "sharkdp/pastel",
@@ -17144,6 +17144,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-28T08:45:46.956Z"
+    },
+    "openbmb/MiniCPM-OCR-1.0": {
+      "repository": "openbmb/MiniCPM-OCR-1.0",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-openbmb-minicpm-ocr-1-0",
+      "content_hash": "74e0b70fe85623c2bb9d54f67644bc2969faad3f1102825226a089b087d9b705",
+      "verified_at": "2026-10-28T15:43:14.404Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-28T15:43:14.404Z"
     }
   },
   "repos": {
