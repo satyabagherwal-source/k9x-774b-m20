@@ -5877,3 +5877,8 @@
 | `CYCLE-20261028-5E0J` | `2026-10-28T18:27:20.755Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | Yes (`dc272fbb...`) |
 | `CYCLE-20261028-5EAB` | `2026-10-28T18:27:21.107Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5360` | Yes (`f096cadd...`) |
 | `CYCLE-20261028-5LX1` | `2026-10-28T18:27:30.997Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5361` | Yes (`adbb7435...`) |
+| `CYCLE-20261028-EMK4` | `2026-10-28T18:34:31.732Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | Yes (`3d16d06e...`) |
+| `CYCLE-20261028-ENIJ` | `2026-10-28T18:34:32.971Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5362` | Yes (`8ed7e817...`) |
+| `CYCLE-20261028-ERLZ` | `2026-10-28T18:34:38.279Z` | `onejs/one` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5363` | Yes (`5fd9f56b...`) |
+| `CYCLE-20261028-ESOJ` | `2026-10-28T18:34:39.667Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5364` | Yes (`a56ddbca...`) |
+| `CYCLE-20261028-EXLC` | `2026-10-28T18:34:46.032Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5365` | Yes (`8648a346...`) |

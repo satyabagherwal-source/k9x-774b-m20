@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T18:27:30.925Z",
+  "last_updated": "2026-10-28T18:34:45.972Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13335,8 +13335,8 @@
       "slug": "genkit-ai-genkit",
       "platform": "github",
       "source_url": "https://github.com/genkit-ai/genkit",
-      "source_version": "c62077e5",
-      "content_hash": "d8ce421490b823e78423709a241248b92ffe71d80d9788d0833fa220d10f04ac",
+      "source_version": "dffd52bc",
+      "content_hash": "8648a3463996ea5a635734fcccc5fd5597270cdcada31f54fd25ff13663842e5",
       "dossier_path": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "promoted_rules": [
@@ -13374,6 +13374,11 @@
           "number": 5125,
           "title": "js/plugins/google-genai): send output settings as response_format (#6910)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5365,
+          "title": "genkit-tools/cli): restore .js extension on @modelcontextprotocol/sdk subpath im",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13381,7 +13386,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T02:20:23.173Z",
+      "verified_at": "2026-10-28T18:34:45.957Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -17680,7 +17685,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
       "source_version": "hf-baai-bge-large-en-v1.5",
-      "content_hash": "4faa0e85fa8954ca5cf6f27ea13dc16767777082b4a700cbb54edb447b80907b",
+      "content_hash": "3d16d06e5aa4e19c094c04b50083061b66d46079089c9e470ca7921682c2da7e",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md",
       "promoted_rules": [
@@ -17757,7 +17762,7 @@
         "learn-huggingface-hf-baai-bge-large-en-v1-5-mv40zfsc",
         "learn-huggingface-hf-baai-bge-large-en-v1-5-mv4exusx"
       ],
-      "verified_at": "2026-10-28T01:22:24.253Z",
+      "verified_at": "2026-10-28T18:34:31.643Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41375,8 +41380,8 @@
       "slug": "onejs-one",
       "platform": "github",
       "source_url": "https://github.com/onejs/one",
-      "source_version": "96fa7367",
-      "content_hash": "c35ad664482c9f5425be23c2b258a17ef913e20cf496887637dc127745caeccf",
+      "source_version": "c5d938eb",
+      "content_hash": "5fd9f56bca52a40a558c90682132588135a7ce152f4c5d59845e011d972b6d04",
       "dossier_path": "07_PROJECT_LEARNING/onejs-one-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/onejs-one-learnings.md",
       "promoted_rules": [
@@ -41409,6 +41414,11 @@
           "number": 5062,
           "title": "deps): upgrade Tamagui consumers to 3.1.6",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5363,
+          "title": "one): omit native loader twins when native:false",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41416,7 +41426,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T23:52:37.782Z",
+      "verified_at": "2026-10-28T18:34:38.203Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42124,8 +42134,8 @@
       "slug": "opentofu-opentofu",
       "platform": "github",
       "source_url": "https://github.com/opentofu/opentofu",
-      "source_version": "873eade3",
-      "content_hash": "83388a491f352ff66d59df4d85d16d47f469733f33d3851c76e31f6d0c1f5a51",
+      "source_version": "f0af1883",
+      "content_hash": "a56ddbca3d0d61ed94ce4cc118e85baaa8912bf1bb0ecf398d4db39dfb2e05c0",
       "dossier_path": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "promoted_rules": [
@@ -42163,6 +42173,11 @@
           "number": 4972,
           "title": "implicit moved detection bug",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5364,
+          "title": "occasional failure in TestContext2Apply_destroyThenUpdate",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42170,7 +42185,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T19:49:27.640Z",
+      "verified_at": "2026-10-28T18:34:39.591Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52304,8 +52319,8 @@
       "slug": "topgrade-rs-topgrade",
       "platform": "github",
       "source_url": "https://github.com/topgrade-rs/topgrade",
-      "source_version": "352e81e9",
-      "content_hash": "2fc321f3d3f446f8b31bb93f93513bc04af800e521e229060bcea9c54408d818",
+      "source_version": "c58ad18d",
+      "content_hash": "8ed7e81777f00fea22ef0744ef17b77d141e1b6fb4106de881381fdd98af378d",
       "dossier_path": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "promoted_rules": [
@@ -52348,6 +52363,11 @@
           "number": 4882,
           "title": "step): add LucidLink (#2460)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5362,
+          "title": "rubygems): skip --system update when gem is managed by Homebrew or macOS (#2468)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52355,7 +52375,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T15:25:47.715Z",
+      "verified_at": "2026-10-28T18:34:32.896Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -145459,6 +145479,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T18:27:30.907Z"
+    },
+    "rule-5362": {
+      "learning_id": "rule-5362",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5362,
+      "title": "rubygems): skip --system update when gem is managed by Homebrew or macOS (#2468)",
+      "source_url": "https://github.com/topgrade-rs/topgrade",
+      "source_version": "c58ad18d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T18:34:32.896Z"
+    },
+    "rule-5363": {
+      "learning_id": "rule-5363",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5363,
+      "title": "one): omit native loader twins when native:false",
+      "source_url": "https://github.com/onejs/one",
+      "source_version": "c5d938eb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T18:34:38.203Z"
+    },
+    "rule-5364": {
+      "learning_id": "rule-5364",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5364,
+      "title": "occasional failure in TestContext2Apply_destroyThenUpdate",
+      "source_url": "https://github.com/opentofu/opentofu",
+      "source_version": "f0af1883",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T18:34:39.591Z"
+    },
+    "rule-5365": {
+      "learning_id": "rule-5365",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5365,
+      "title": "genkit-tools/cli): restore .js extension on @modelcontextprotocol/sdk subpath im",
+      "source_url": "https://github.com/genkit-ai/genkit",
+      "source_version": "dffd52bc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T18:34:45.957Z"
     }
   },
   "aliases": {

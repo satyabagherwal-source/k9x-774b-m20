@@ -5886,3 +5886,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-lilylilith-qi_2-1_anyangle` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-10-28T18:27:20.758Z |
 | `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `76a1d8fe` | Multi-dimensional audit evidence | 2026-10-28T18:27:21.110Z |
 | `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `36f78470` | Multi-dimensional audit evidence | 2026-10-28T18:27:31.001Z |
+| `learn-huggingface-baai-bge-large-en-v1-5` | `https://huggingface.co/BAAI/bge-large-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-28T18:34:31.735Z |
+| `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `c58ad18d` | Multi-dimensional audit evidence | 2026-10-28T18:34:32.974Z |
+| `learn-github-onejs-one` | `https://github.com/onejs/one` | `c5d938eb` | Multi-dimensional audit evidence | 2026-10-28T18:34:38.282Z |
+| `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `f0af1883` | Multi-dimensional audit evidence | 2026-10-28T18:34:39.670Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `dffd52bc` | Multi-dimensional audit evidence | 2026-10-28T18:34:46.035Z |

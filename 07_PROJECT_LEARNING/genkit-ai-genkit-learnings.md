@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source**: github ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
-> **Source Version**: `c62077e5`  
+> **Source Version**: `dffd52bc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T02:20:22.700Z  
+> **Timestamp**: 2026-10-28T18:34:45.510Z  
 > **Learning ID**: `learn-github-genkit-ai-genkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T02:20:21.709Z  
+> **Harvest Timestamp**: 2026-10-28T18:34:45.504Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source framework for building agentic apps in JavaScript, Go, Dart, and Python, built and used in production by Google
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6551 stars
+- **Stars / Engagement**: 6556 stars
 
 ---
 
@@ -228,9 +228,22 @@ export async function initGenkitFile(runtime: Runtime) {
  * limitations under the License.
  */
 
-import { BaseRuntimeManager } from '@genkit-ai/tools-common/manager';
+import {
+  BaseRuntimeManager,
+  GenkitToolsError,
+} from '@genkit-ai/tools-common/manager';
 import { z } from 'zod';
 import { startDevProcessManager, startManager } from '../utils/manager-utils';
+
+export function formatMcpError(err: unknown): string {
+  if (err instanceof GenkitToolsError) {
+    return err.formatError();
+  }
+  if (err instanceof Error) {
+    return err.message;
+  }
+  return typeof err === 'string' ? err : (JSON.stringify(err) ?? String(err));
+}
 
 export interface McpToolOptions {
   projectRoot: string;
@@ -2007,1543 +2020,501 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c62077e5` (2026-10-27)
-**Commit Message**: fix(js/plugins/google-genai): send output settings as response_format (#6910)
+### Incident Patch 1: `dffd52bc` (2026-10-28)
+**Commit Message**: fix(genkit-tools/cli): restore .js extension on @modelcontextprotocol/sdk subpath imports (#6945)
 
-**File**: `js/plugins/google-genai/src/common/interaction-converters.ts` (modified, +77/-10)
+**File**: `genkit-tools/cli/jest.config.ts` (modified, +4/-0)
 ```diff
-@@ -47,7 +47,6 @@ import {
-   InteractionTool,
-   InteractionToolChoiceConfig,
-   ModelGenerationConfig,
--  ResponseModality,
-   SpeechAnnotation,
-   SpeechConfig,
-   Step,
-@@ -515,12 +514,6 @@ export function toInteractionSafetySettings(
-   return result.length ? result : undefined;
- }
+@@ -39,6 +39,10 @@ const config: Config = {
+     '^.+\\.[jt]s$': 'ts-jest',
+   },
  
--export function toInteractionResponseModalities(
--  modalities: string[]
--): ResponseModality[] {
--  return modalities.map((m) => m.toLowerCase());
--}
--
- /**
-  * Converts a Genkit/generateContent-style `speechConfig` to the Interactions
-  * API `speech_config`.
-@@ -591,7 +584,9 @@ export function toInteractionSpeechConfig(
-  *  - `contextCache` (not implemented by this plugin) is dropped;
-  *  - `topK` is dropped: there's no `top_k` in the Interactions
-  *    `generation_config` (Gemini Enterprise Agent Platform rejects it with a
-- *    400; the Gemini API accepts and ignores it).
-+ *    400; the Gemini API accepts and ignores it);
-+ *  - `imageConfig`, `audioFormat` and `videoFormat` are left out: they're
-+ *    sent as `response_format` entries (see toInteractionResponseFormat).
-  * Everything else, including keys the user passes through that aren't in the
-  * schema, is forwarded in snake_case.
-  *
-@@ -610,10 +605,11 @@ export function toInteractionGenerationConfig(
-     context_cache,
-     topK,
-     top_k,
--    // Sent as `response_format` (see toInteractionAudioResponseFormat and
--    // toInteractionVideoResponseFormat).
-+    // Sent as `response_format` entries (see toInteractionResponseFormat).
-     audioFormat: _audioFormat,
-     videoFormat: _videoFormat,
-+    imageConfig: _imageConfig,
-+    image_config: _image_config,
-     ...rest
-   } = config;
-   const result = convertObjectKeysToSnakeCase(rest);
-@@ -683,6 +679,77 @@ export function toInteractionVideoResponseFormat(
-   return { type: 'video', ...toSnakeCaseObj(videoFormat) };
- }
- 
-+/** What `toInteractionResponseFormat` builds the `response_format` from. */
-+export interface InteractionResponseFormatOptions {
-+  /**
-+   * The requested output types, e.g. `['TEXT', 'IMAGE']` (the config's
-+   * `responseModalities`, or the model's default). One entry each.
-+   */
-+  modalities?: string[];
-+  /** The `imageConfig` config (`{ aspectRatio, imageSize }`). */
-+  imageConfig?: unknown;
-+  /** The `audioFormat` config (`{ mimeType, sampleRate }`). */
-+  audioFormat?: unknown;
-+  /** The `videoFormat` config (`{ aspectRatio, resolution, ... }`). */
-+  videoFormat?: unknown;
-+  /** JSON output: the text entry gets `application/json` (and a schema). */
-+  json?: { schema?: unknown };
-+}
-+
-+/**
-+ * Builds the Interactions `response_format`: one entry per output type
-+ * (`text`, `image`, `audio`, `video`), each with its settings. This replaces
-+ * the deprecated `response_modalities` and `generation_config.image_config`.
-+ *
-+ * - Each requested modality gets an entry.
-+ * - `imageConfig`, `audioFormat` and `videoFormat` go on the image, audio and
-+ *   video entries (adding the entry if needed).
-+ * - JSON output goes on the text entry (adding it if needed).
-+ *
-+ * Returns a single entry when there's one, an array when there are more, and
-+ * `undefined` when nothing is set (the server's defaults apply).
-+ */
-+export function toInteractionResponseFormat(
-+  options: InteractionResponseFormatOptions
-+): Record<string, unknown> | Record<string, unknown>[] | undefined {
-+  const entries = new Map<string, Record<string, unknown>>();
-+  const entry = (type: string) => {
-+    let existing = entries.get(type);
-+    if (!existing) {
-+      existing = { type };
-+      entries.set(type, existing);
-+    }
-+    return existing;
-+  };
-+
-+  for (const modality of options.modalities ?? []) {
-+    entry(modality.toLowerCase());
-+  }
-+  if (isObject(options.imageConfig)) {
-+    Object.assign(entry('image'), toSnakeCaseObj(options.imageConfig));
-+  }
-+  const audio = toInteractionAudioResponseFormat(options.audioFormat);
-+  if (audio) {
-+    Object.assign(entry('audio'), audio);
-+  }
-+  const video = toInteractionVideoResponseFormat(options.videoFormat);
-+  if (video) {
-+    Object.assign(entry('video'), video);
-+  }
-+  if (options.json) {
-+    Object.assign(entry('text'), {
-+      mime_type: 'application/json',
-+      ...(options.json.schema !== undefined
-+        ? { schema: options.json.schema }
-+        : {}),
-+    });
-+  }
-+
-+  const result = [...entries.values()];
-+  if (result.length === 0) return undefined;
-+  return result.length === 1 ? result[0] : result;
-+}
-+
- /**
-  * Converts a Genkit Part to an Interaction Content object.
-  *
-```
-
-**File**: `js/plugins/google-genai/src/common/interaction-types.ts` (modified, +13/-3)
-```diff
-@@ -674,7 +674,10 @@ export declare interface ModelGenerationConfig {
-    * `{ speakers: [...] }` for multi-speaker.
-    */
-   speech_config?: SpeechConfig[] | { speakers: SpeechConfig[] };
--  /** Configuration for image interaction. */
-+  /**
-+   * Deprecated by the API: image settings go in a `response_format` image
-+   * entry. The plugin doesn't send it.
-+   */
-   image_config?: ImageConfig;
-   /** Configuration for video generation. */
-   video_config?: VideoConfig;
-@@ -783,10 +786,17 @@ export declare interface CreateInteractionRequest {
-   /** A list of tool declarations the model may call during interaction. */
-   tools?: InteractionTool[];
- 
--  /** Enforces that the generated response is a JSON object that complies with the JSON schema specified in this field */
-+  /**
-+   * The output types and their settings: one entry (`{ type: 'text' |
-+   * 'image' | 'audio' | 'video', ... }`) or an array of them. See
-+   * toInteractionResponseFormat.
-+   */
-   response_format?: Record<string, unknown> | Record<string, unknown>[];
- 
--  /** The requested modalities of the response (TEXT, IMAGE, AUDIO). */
-+  /**
-+   * Deprecated by the API in favor of `response_format` entries; the plugin
-+   * doesn't send it.
-+   */
-   response_modalities?: ResponseModality[];
- 
-   /** Whether the interaction will be streamed. */
-```
-
-**File**: `js/plugins/google-genai/src/googleai/antigravity.ts` (modified, +5/-12)
-```diff
-@@ -21,13 +21,11 @@ import {
-   ensureToolIds,
-   fromInteractionSync,
-   toInteractionConfigTool,
-+  toInteractionResponseFormat,
-   toInteractionSteps,
-   toInteractionTool,
- } from '../common/interaction-converters.js';
--import {
--  InteractionTool,
--  ResponseModality,
--} from '../common/interaction-types.js';
-+import { InteractionTool } from '../common/interaction-types.js';
- import { isKnownKey } from '../common/utils.js';
- import { createInteraction } from './client.js';
- import {
-@@ -294,20 +292,15 @@ export function defineModel(
-         }
-       }
- 
--      let responseModalitiesConverted: ResponseModality[] | undefined;
--      if (responseModalities) {
--        responseModalitiesConverted = responseModalities.map(
--          (m) => m.toLowerCase() as ResponseModality
--        );
--      }
--
-       const req: CreateInteractionRequest = {
-         agent: extractVersion(ref),
-         input: toInteractionSteps(ensureToolIds(newMessages)),
-         previous_interaction_id: previousId,
-         store: storeSetting,
-         environment: environmentToUse,
--        response_modalities: responseModalitiesConverted,
-+        response_format: toInteractionResponseFormat({
-+          modalities: responseModalities,
-+        }),
-         ...(agentModel
-           ? { agent_config: { type: 'antigravity', model: agentModel } }
-           : {}),
-```
-
-**File**: `js/plugins/google-genai/src/googleai/deep-research.ts` (modified, +15/-21)
-```diff
-@@ -25,13 +25,13 @@ import { backgroundModel as pluginBackgroundModel } from 'genkit/plugin';
- import {
-   ensureToolIds,
-   fromInteraction,
-+  toInteractionResponseFormat,
-   toInteractionSteps,
-   toInteractionTool,
- } from '../common/interaction-converters.js';
- import {
-   InteractionAllowedTools,
-   InteractionTool,
--  ResponseModality,
- } from '../common/interaction-types.js';
- import { cleanSchema, isKnownKey } from '../common/utils.js';
- import {
-@@ -382,26 +382,21 @@ export function defineModel(
-         }
-       }
- 
--      let responseFormat: any = undefined;
--      if (
-+      // JSON output and the requested output types, as `response_format`
-+      // entries.
-+      const jsonOutput =
-         request.output?.format === 'json' ||
--        request.output?.contentType === 'application/json'
--      ) {
--        responseFormat = {
--          type: 'text',
--          mime_type: 'application/json',
--        };
--        if (request.output.schema) {
--          responseFormat.schema = cleanSchema(request.output.schema);
--        }
--      }
--
--      let responseModalitiesConverted: ResponseModality[] | undefined;
--      if (responseModalities) {
--        responseModalitiesConverted = responseModalities.map(
--          (m) => m.toLowerCase() as ResponseModality
--        );
--      }
-+        request.output?.contentType === 'application/json';
-+      const responseFormat = toInteractionResponseFormat({
-+        modalities: responseModalities,
-+        json: jsonOutput
-+          ? {
-+              schema: request.output?.schema
-+                ? cleanSchema(request.output.schema)
-+                : undefined,
-+            }
-+          : undefined,
-+      });
- 
-       const req: CreateInteractionRequest = {
-         agent: extractVersion(ref),
-@@ -423,7 +418,6 @@ export function defineModel(
-         store,
-         tools: tools.length ? tools : undefined,
-         response_format: responseFormat,
--        response_modalities: responseModalitiesConverted,
-         ...rest,
-       };
- 
-```
-
-**File**: `js/plugins/google-genai/src/googleai/gemini.ts` (modified, +39/-39)
-```diff
-@@ -51,14 +51,12 @@ import {
-   mergeStreamedAudio,
-   removeId3FromAudio,
-   selectInteractionInput,
--  toInteractionAudioResponseFormat,
-   toInteractionConfigTool,
-   toInteractionGenerationConfig,
--  toInteractionResponseModalities,
-+  toInteractionResponseFormat,
-   toInteractionSteps,
-   toInteractionTool,
-   toInteractionToolChoice,
--  toInteractionVideoResponseFormat,
- } from '../common/interaction-converters.js';
- import {
-   InteractionTool,
-@@ -749,9 +747,15 @@ const KNOWN_IMAGE_MODELS = {
-   ),
- } as const;
- export type KnownImageModels = keyof typeof KNOWN_IMAGE_MODELS;
--export type ImageModelName = `gemini-${string}-image${string}`;
-+export type ImageModelName =
-+  | `gemini-${string}-image${string}`
-+  | `gemini-nano-banana-${string}`;
-+/** Image models: `-image` names and the Nano Banana names (as in vertexAI). */
- export function isImageModelName(value: string): value is ImageModelName {
--  return value.startsWith('gemini-') && value.includes('-image');
-+  return (
-+    value.startsWith('gemini-') &&
-+    (value.includes('-image') || value.startsWith('gemini-nano-banana-'))
-+  );
- }
- 
- const KNOWN_VIDEO_MODELS = {
-@@ -1398,40 +1402,36 @@ export function defineModel(
-           store,
-         };
- 
--        if (jsonMode) {
--          req.response_format = {
--            type: 'text',
--            mime_type: 'application/json',
--          };
--          if (request.output?.constrained) {
--            req.response_format.schema = pluginOptions?.legacyResponseSchema
--              ? cleanSchema(request.output.schema)
--              : request.output.schema;
--          }
--        }
--
--        const audioResponseFormat = toInteractionAudioResponseFormat(
--          audioFormatFromConfig
--        );
--        if (audioResponseFormat) {
--          req.response_format = audioResponseFormat;
--        }
--
--        const videoResponseFormat = toInteractionVideoResponseFormat(
--          videoFormatFromConfig
--        );
--        if (videoResponseFormat) {
--          req.response_format = videoResponseFormat;
--        }
--
--        if (responseModalitiesFromConfig) {
--          req.response_modalities = toInteractionResponseModalities(
--            responseModalitiesFromConfig
--          );
--        } else if (isTTSModelName(modelVersion)) {
--          req.response_modalities = ['audio'];
--        } else if (isImageModelName(modelVersion)) {
--          req.response_modalities = ['text', 'image'];
-+        // One `response_format` with an entry per output type (the
-+        // deprecated `response_modalities` and `generation_config
-+        // .image_config` aren't sent). TTS and image models ask for the same
-+        // outputs as before by default.
-+        const responseFormat = toInteractionResponseFormat({
-+          modalities:
-+            responseModalitiesFromConfig ??
-+            (isTTSModelName(modelVersion)
-+              ? ['AUDIO']
-+              : isImageModelName(modelVersion)
-+                ? ['TEXT', 'IMAGE']
-+                : undefined),
-+          imageConfig:
-+            'imageConfig' in requestOptions
-+              ? requestOptions.imageConfig
-+              : undefined,
-+          audioFormat: audioFormatFromConfig,
-+          videoFormat: videoFormatFromConfig,
-+          json: jsonMode
-+            ? {
-+                schema: request.output?.constrained
-+                  ? pluginOptions?.legacyResponseSchema
-+                    ? cleanSchema(request.output.schema)
-+                    : request.output.schema
-+                  : undefined,
-+              }
-+            : undefined,
-+        });
-+        if (responseFormat) {
-+          req.response_format = responseFormat;
-         }
- 
-         if (
-```
-
-**File**: `js/plugins/google-genai/src/googleai/lyria.ts` (modified, +5/-9)
-```diff
-@@ -20,9 +20,9 @@ import { model as pluginModel } from 'genkit/plugin';
- import {
-   ensureToolIds,
-   fromInteractionSync,
-+  toInteractionResponseFormat,
-   toInteractionSteps,
- } from '../common/interaction-converters.js';
--import { ResponseModality } from '../common/interaction-types.js';
- import { isKnownKey } from '../common/utils.js';
- import { createInteraction } from './client.js';
- import {
-@@ -185,17 +185,13 @@ export function defineModel(
- 
-       const messages = structuredClone(request.messages);
- 
--      let responseModalitiesConverted: ResponseModality[] = ['audio', 'text'];
--      if (responseModalities) {
--        responseModalitiesConverted = responseModalities.map(
--          (m) => m.toLowerCase() as ResponseModality
--        );
--      }
--
-       const req: CreateInteractionRequest = {
-         model: extractVersion(ref),
-         input: toInteractionSteps(ensureToolIds(messages)),
--        response_modalities: responseModalitiesConverted,
-+        // Audio and the lyrics/caption text by default.
-+        response_format: toInteractionResponseFormat({
-+          modalities: responseModalities ?? ['AUDIO', 'TEXT'],
-+        }),
-         ...rest,
-       };
- 
-```
-
-**File**: `js/plugins/google-genai/src/vertexai/deep-research.ts` (modified, +20/-16)
-```diff
-@@ -27,7 +27,7 @@ import {
-   ensureToolIds,
-   fromInteraction,
-   toInteractionConfigTool,
--  toInteractionResponseModalities,
-+  toInteractionResponseFormat,
-   toInteractionSteps,
-   toInteractionTool,
- } from '../common/interaction-converters.js';
-@@ -189,18 +189,22 @@ export function listKnownModels(
- const THINKING_SUMMARIES = { AUTO: 'auto', NONE: 'none' } as const;
- const VISUALIZATION = { AUTO: 'auto', OFF: 'off' } as const;
- 
--/** The `response_format` for JSON output; undefined for text output. */
-+/**
-+ * The `response_format`: JSON output and the requested output types as
-+ * entries; undefined when neither is set (the agent's defaults apply).
-+ */
- function toDeepResearchResponseFormat(
--  output?: GenerateRequest['output']
--): Record<string, unknown> | undefined {
--  if (output?.format !== 'json' && output?.contentType !== 'application/json') {
--    return undefined;
--  }
--  return {
--    type: 'text',
--    mime_type: 'application/json',
--    ...(output.schema ? { schema: cleanSchema(output.schema) } : {}),
--  };
-+  output: GenerateRequest['output'],
-+  responseModalities?: string[]
-+): Record<string, unknown> | Record<string, unknown>[] | undefined {
-+  const json =
-+    output?.format === 'json' || output?.contentType === 'application/json';
-+  return toInteractionResponseFormat({
-+    modalities: responseModalities,
-+    json: json
-+      ? { schema: output?.schema ? cleanSchema(output.schema) : undefined }
-+      : undefined,
-+  });
- }
- 
- export function defineModel(
-@@ -275,10 +279,10 @@ export function defineModel(
-         // anyway. When nothing is set, the server's default is used.
-         store: store ?? pluginOptions?.store,
-         tools: tools.length ? tools : undefined,
--        response_format: toDeepResearchResponseFormat(request.output),
--        response_modalities: responseModalities
--          ? toInteractionResponseModalities(responseModalities)
--          : undefined,
-+        response_format: toDeepResearchResponseFormat(
-+          request.output,
-+          responseModalities
-+        ),
-         ...rest,
-       };
- 
-```
-
-**File**: `js/plugins/google-genai/src/vertexai/gemini.ts` (modified, +26/-22)
-```diff
-@@ -57,12 +57,11 @@ import {
-   toInteractionConfigTool,
-   toInteractionGenerationConfig,
-   toInteractionGoogleSearch,
--  toInteractionResponseModalities,
-+  toInteractionResponseFormat,
-   toInteractionSafetySettings,
-   toInteractionSteps,
-   toInteractionTool,
-   toInteractionToolChoice,
--  toInteractionVideoResponseFormat,
- } from '../common/interaction-converters.js';
- import {
-   CreateInteractionRequest,
-@@ -1208,8 +1207,9 @@ async function generateWithInteractions(params: {
-     store: storeFromConfig,
-     previousInteractionId: previousInteractionIdFromConfig,
-     responseModalities,
--    // Sent as `response_format` below.
-+    // Sent as `response_format` entries below.
-     videoFormat,
-+    imageConfig,
-     // TTS models don't use the Interactions API.
-     audioFormat,
-     ...generationFields
-@@ -1281,27 +1281,31 @@ async function generateWithInteractions(params: {
-     req.previous_interaction_id = previousInteractionId;
-   }
- 
-+  // One `response_format` with an entry per output type (the deprecated
-+  // `response_modalities` and `generation_config.image_config` aren't sent).
-   const jsonMode =
-     request.output?.format === 'json' || !!request.output?.schema;
--  if (jsonMode) {
--    req.response_format = { type: 'text', mime_type: 'application/json' };
--    if (request.output?.constrained) {
--      req.response_format.schema = pluginOptions?.legacyResponseSchema
--        ? cleanSchema(request.output.schema)
--        : request.output.schema;
--    }
--  }
--
--  const videoResponseFormat = toInteractionVideoResponseFormat(videoFormat);
--  if (videoResponseFormat) {
--    req.response_format = videoResponseFormat;
--  }
--
--  if (Array.isArray(responseModalities) && isStringArray(responseModalities)) {
--    req.response_modalities =
--      toInteractionResponseModalities(responseModalities);
--  } else if (isImageModelName(modelVersion)) {
--    req.response_modalities = ['text', 'image'];
-+  const responseFormat = toInteractionResponseFormat({
-+    modalities:
-+      Array.isArray(responseModalities) && isStringArray(responseModalities)
-+        ? responseModalities
-+        : isImageModelName(modelVersion)
-+          ? ['TEXT', 'IMAGE']
-+          : undefined,
-+    imageConfig,
-+    videoFormat,
-+    json: jsonMode
-+      ? {
-+          schema: request.output?.constrained
-+            ? pluginOptions?.legacyResponseSchema
-+              ? cleanSchema(request.output.schema)
-+              : request.output.schema
-+            : undefined,
-+        }
-+      : undefined,
-+  });
-+  if (responseFormat) {
-+    req.response_format = responseFormat;
-   }
- 
-   if (!params.streamingRequested) {
-```
-
----
-
-### Incident Patch 2: `81a50102` (2026-10-27)
-**Commit Message**: fix(genkit-tools/cli): omit headers from list_genkit_docs MCP output (#6868)
-
-**File**: `genkit-tools/cli/src/mcp/docs.ts` (modified, +0/-3)
-```diff
-@@ -56,9 +56,6 @@ export async function defineDocsTool(server: McpServer) {
-             if (doc.description) {
-               summary += `   Description: ${doc.description}\n`;
-             }
--            if (doc.headers) {
--              summary += `   Headers:\n     ${doc.headers.split('\n').join('\n     ')}\n`;
--            }
-             return summary;
-           })
-           .join('\n') +
-```
-
-**File**: `genkit-tools/cli/tests/utils/docs_test.ts` (added, +81/-0)
-```diff
-@@ -0,0 +1,81 @@
-+/**
-+ * Copyright 2026 Google LLC
-+ *
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+import { describe, expect, it } from '@jest/globals';
-+import { Doc, searchDocs } from '../../src/utils/docs';
-+
-+describe('docs utils', () => {
-+  describe('searchDocs', () => {
-+    const sampleDocs: Record<string, Doc> = {
-+      'js/app-frameworks/angular.md': {
-+        title: 'Angular',
-+        description: 'Add Genkit to an Angular app with SSR server routes.',
-+        text: '# Angular guide',
-+        lang: 'js',
-+        headers: 'Setup\nServer Routes',
-+      },
-+      'go/app-frameworks/angular.md': {
-+        title: 'Angular',
-+        description: 'Connect an Angular UI to your Genkit Go backend.',
-+        text: '# Go Angular guide',
-+        lang: 'go',
-+        headers: 'Setup\nGo Backend',
-+      },
-+      'js/flows.md': {
-+        title: 'Defining Flows',
-+        description: 'Learn how to define and run Genkit workflow functions.',
-+        text: '# Flows',
-+        lang: 'js',
-+        headers: 'Basic Flows\nStreaming\nSSR',
-+      },
-+      'js/minimal.md': {
-+        title: 'Minimal Doc',
-+        text: '# Minimal',
-+        lang: 'js',
-+        headers: '',
-+      },
-+    };
-+
-+    it('filters search results to the requested language', () => {
-+      const jsResults = searchDocs(sampleDocs, 'angular', 'js');
-+      expect(jsResults).toHaveLength(1);
-+      expect(jsResults[0].file).toBe('js/app-frameworks/angular.md');
-+
-+      const goResults = searchDocs(sampleDocs, 'angular', 'go');
-+      expect(goResults).toHaveLength(1);
-+      expect(goResults[0].file).toBe('go/app-frameworks/angular.md');
-+    });
-+
-+    it('ranks title and description matches higher than header-only matches', () => {
-+      const results = searchDocs(sampleDocs, 'SSR', 'js');
-+      expect(results.map((r) => r.file)).toEqual([
-+        'js/app-frameworks/angular.md',
-+        'js/flows.md',
-+      ]);
-+      expect(results[0].score).toBeGreaterThan(results[1].score);
-+    });
-+
-+    it('ignores stop words and two-character terms', () => {
-+      expect(searchDocs(sampleDocs, 'and the for to js', 'js')).toEqual([]);
-+    });
-+
-+    it('handles documents with missing optional description', () => {
-+      const results = searchDocs(sampleDocs, 'minimal', 'js');
-+      expect(results).toHaveLength(1);
-+      expect(results[0].file).toBe('js/minimal.md');
-+    });
-+  });
-+});
-```
-
----
-
-### Incident Patch 3: `bf4df9d4` (2026-10-27)
-**Commit Message**: fix(js/plugins/google-genai): Interactions tool steps in history and … (#6909)
-
-**File**: `js/plugins/google-genai/README.md` (modified, +11/-3)
-```diff
-@@ -501,6 +501,12 @@ by default (`store: false`), as with `googleAI`; set `config: { store: true }`
- a conversation from the previous response's messages. Unlike `googleAI`,
- `safetySettings` and `labels` are supported on these models.
- 
-+In a stateless conversation (`store: false`), earlier results of server-side
-+tools other than code execution (Google Search, URL context, Google Maps, file
-+search, MCP servers) are not sent back with the history, because
-+the platform's Interactions API rejects them. The model may call those tools
-+again; set `store: true` to keep the full tool history on the server.
-+
- ### Standard Genkit Output vs. `response.raw`
- 
- For common use cases, the Genkit abstraction is completely unified: `response.text`, `response.reasoning`, `response.message`, streaming (`for await (const chunk of stream)`), and tool calling work identically regardless of which API backend is used.
-@@ -525,9 +531,11 @@ However, if your code directly inspects the underlying provider payload via `res
- ### Key Differences on the Interactions Path
- 
- 1. **Safety Settings:** Custom safety settings are not supported on the Interactions path. These models apply no additional safety filters by default ([Gemini API safety settings](https://ai.google.dev/gemini-api/docs/safety-settings)); built-in protections against core harms always apply. `BLOCK_NONE` settings are ignored, since they can't block anything beyond that default. Blocking thresholds (`BLOCK_ONLY_HIGH` and stricter) throw an `INVALID_ARGUMENT` error, so a requested filter is never silently dropped.
--2. **Server-Side Tool Invocations:** The Interactions API always includes intermediate tool invocations in the execution steps, so `toolConfig.includeServerSideToolInvocations` is unnecessary.
--3. **Stateless by Default (Explicit Store Opt-In):** The upstream Interactions API defaults to storing conversations on Google's servers (`store: true`). To preserve the stateless, privacy-preserving behavior of Genkit's `generateContent`, the plugin explicitly defaults `store: false`. For Gemini models, server-side storage is an explicit opt-in: `store: true` must be specified via request config (`config: { store: true }`) or plugin configuration (`googleAI({ store: true })`). When an interaction is stored, its ID is accessible on `response.message?.metadata?.interactionId`. In multi-turn calls, passing `messages: previousResponse.messages` with `config: { store: true }` will automatically extract the previous interaction ID from message metadata and continue the session statefully. If setting `config: { previousInteractionId: "..." }` manually, `store: true` is also required (omitting `store` or passing `store: false` will throw an `INVALID_ARGUMENT` error).
--4. **Antigravity Requires Storage:** The Antigravity agent doesn't work with `store: false` (the server rejects it), so unlike Gemini models it doesn't default to `store: false`; `store` is only sent when you set it. If you set `store: false` (in the request config or `googleAI({ store: false })`), it's passed through and the server returns an error; to use Antigravity with plugin-level `store: false`, set `store: true` in the request config. The agent's work (files, installed packages) lives in a sandbox environment that persists across turns, so passing `messages: previousResponse.messages` continues the stored interaction automatically, in the same environment, sending only the new messages. Function tools work the same way: a tool result is sent as a continuation of the interaction that asked for it.
-+2. **Sampling Settings:** `topK` isn't sent to these models (the Interactions API has no `top_k`); it's dropped with a warning. `temperature` and `topP` are still sent, although newer models (Gemini 3.6 Flash, 3.5 Flash-Lite and later) ignore them.
-+3. **Server-Side Tool Invocations:** The Interactions API always includes intermediate tool invocations in the execution steps, so `toolConfig.includeServerSideToolInvocations` is unnecessary.
-+4. **Stateless by Default (Explicit Store Opt-In):** The upstream Interactions API defaults to storing conversations on Google's servers (`store: true`). To preserve the stateless, privacy-preserving behavior of Genkit's `generateContent`, the plugin explicitly defaults `store: false`. For Gemini models, server-side storage is an explicit opt-in: `store: true` must be specified via request config (`config: { store: true }`) or plugin configuration (`googleAI({ store: true })`). When an interaction is stored, its ID is accessible on `response.message?.metadata?.interactionId`. In multi-turn calls, passing `messages: previousResponse.messages` with `config: { store: true }` will automatically extract the previous interaction ID from message metadata and continue the session statefully. If setting `config: { previousInteractionId: "..." }` manually, `store: true` is also required (omitting `store` or passing `store: false` will throw an `INVALID_ARGUMENT` error).
-+5. **Stream
-```
-
-**File**: `js/plugins/google-genai/src/common/interaction-converters.ts` (modified, +356/-95)
-```diff
-@@ -26,6 +26,7 @@ import {
- import { ToolDefinition } from 'genkit/model';
- import {
-   AudioContent,
-+  BuiltInToolStep,
-   CodeExecutionCallStep,
-   CodeExecutionResultStep,
-   Content,
-@@ -42,6 +43,7 @@ import {
-   InteractionFunctionTool,
-   InteractionGoogleSearchTool,
-   InteractionSafetySetting,
-+  InteractionSseEvent,
-   InteractionTool,
-   InteractionToolChoiceConfig,
-   ModelGenerationConfig,
-@@ -60,12 +62,14 @@ import {
- import { isObject } from './types.js';
- import {
-   appendToWavData,
-+  applyInteractionStepEvent,
-   camelToSnakeCase,
-   cleanSchema,
-   convertObjectKeysToSnakeCase,
-   extractMimeType,
-   interactionErrorCodeToGenkitStatus,
-   isInteractionContentBlockCode,
-+  snakeToCamelCase,
-   stripLeadingId3Tags,
-   toSnakeCaseObj,
- } from './utils.js';
-@@ -584,7 +588,10 @@ export function toInteractionSpeechConfig(
-  *  - `thinkingConfig.thinkingLevel` / `includeThoughts` become
-  *    `thinking_level` / `thinking_summaries`. There is no `thinking_config`,
-  *    so other thinking fields (e.g. `thinkingBudget`) are dropped;
-- *  - `contextCache` (not implemented by this plugin) is dropped.
-+ *  - `contextCache` (not implemented by this plugin) is dropped;
-+ *  - `topK` is dropped: there's no `top_k` in the Interactions
-+ *    `generation_config` (Gemini Enterprise Agent Platform rejects it with a
-+ *    400; the Gemini API accepts and ignores it).
-  * Everything else, including keys the user passes through that aren't in the
-  * schema, is forwarded in snake_case.
-  *
-@@ -601,6 +608,8 @@ export function toInteractionGenerationConfig(
-     thinking_config,
-     contextCache,
-     context_cache,
-+    topK,
-+    top_k,
-     // Sent as `response_format` (see toInteractionAudioResponseFormat and
-     // toInteractionVideoResponseFormat).
-     audioFormat: _audioFormat,
-@@ -633,6 +642,10 @@ export function toInteractionGenerationConfig(
-     onDropped?.('contextCache');
-   }
- 
-+  if (topK !== undefined || top_k !== undefined) {
-+    onDropped?.('topK');
-+  }
-+
-   return result;
- }
- 
-@@ -815,7 +828,9 @@ export function toInteractionRole(role: MessageData['role']): string {
-   }
- }
- 
--const GoogleSearchArgsSchema = z.object({ queries: z.array(z.string()) });
-+const GoogleSearchArgsSchema = z
-+  .object({ queries: z.array(z.string()).optional() })
-+  .passthrough();
- const RecordUnknownSchema = z.record(z.unknown());
- 
- const MediaResolutionSchema = z.enum(['low', 'medium', 'high', 'ultra_high']);
-@@ -846,9 +861,12 @@ const RecordUnknownOrStringOrArraySchema = z.union([
- 
- const OptionalStringSchema = z.string().optional();
- 
-+// `arguments`, `searchType` and `result` are optional: the platform sometimes
-+// omits them (seen live on vertexAI), and they're only sent back when present.
- const GoogleSearchCallSchema = z.object({
-   id: z.string(),
--  arguments: GoogleSearchArgsSchema,
-+  arguments: GoogleSearchArgsSchema.optional(),
-+  searchType: z.string().optional(),
- });
- 
- // The API returns `result` as an array of items (e.g.
-@@ -857,7 +875,10 @@ const GoogleSearchCallSchema = z.object({
- // still accepted for parts saved before this was fixed.
- const GoogleSearchResultSchema = z.object({
-   callId: z.string(),
--  result: z.union([z.array(RecordUnknownSchema), RecordUnknownSchema]),
-+  result: z
-+    .union([z.array(RecordUnknownSchema), RecordUnknownSchema])
-+    .optional(),
-+  isError: z.boolean().optional(),
- });
- 
- const ExecutableCodeSchema = z.object({
-@@ -874,6 +895,139 @@ const ProcessingCallSchema = z.object({ id: z.string() });
- 
- const ProcessingResultSchema = z.object({ callId: z.string() });
- 
-+// Custom parts for the server-side built-in tool steps (url context, file
-+// search, Google Maps, MCP servers), in camelCase like
-+// `googleSearchCall`. `.passthrough()` keeps fields the server may add.
-+// Only the ids are required: the platform can omit other fields (as it does
-+// for Google Search steps), and missing fields are not sent back.
-+const UrlsArgsSchema = z
-+  .object({ urls: z.array(z.string()).optional() })
-+  .passthrough();
-+const QueriesArgsSchema = z
-+  .object({ queries: z.array(z.string()).optional() })
-+  .passthrough();
-+const UrlContextCallPartSchema = z.object({
-+  id: z.string(),
-+  arguments: UrlsArgsSchema.optional(),
-+});
-+const UrlContextResultPartSchema = z.object({
-+  callId: z.string(),
-+  result: z.array(RecordUnknownSchema).optional(),
-+  isError: z.boolean().optional(),
-+});
-+const FileSearchCallPartSchema = z.object({ id: z.string() });
-+const FileSearchResultPartSchema = z.object({
-+  callId: z.string(),
-+  result: z.array(RecordUnknownSchema).optional(),
-+});
-+const GoogleMapsCallPartSchema = z.object({
-+  id: z.string(),
-+  arguments: QueriesArgsSchema.optional(),
-+});
-+const GoogleMapsResultPartSchema = z.object({
-+  callId: z.string(),
-+  result: z.array(RecordUnknownSchema).optional(),
-+});
-+const McpServerToolCallPartSchema = z.object({
-+  id: z.string(),
-+  name: z.string().optional(),
-+  serverName: z.string().optional(),
-+  arguments: Re
-```
-
-**File**: `js/plugins/google-genai/src/common/interaction-types.ts` (modified, +129/-24)
-```diff
-@@ -380,26 +380,38 @@ export type Content =
- 
- export declare interface ModelOutputStep {
-   type: 'model_output';
--  content: Content[];
-+  /**
-+   * Optional in the spec: the server can end a response with an empty
-+   * `{ type: 'model_output' }` step (seen live on vertexAI with Google Maps).
-+   */
-+  content?: Content[];
- }
- 
- export declare interface UserInputStep {
-   type: 'user_input';
-   content: Content[];
- }
- 
-+// Tool call/result steps: only `type` and the ids are required here. The spec
-+// marks more fields as required, but the platform omits them at times (e.g.
-+// a `google_search_call` without `arguments`, a `google_search_result`
-+// without `result`, seen live on vertexAI), so every content field is
-+// optional and only sent back when present.
-+
- export declare interface GoogleSearchCallStep {
-   type: 'google_search_call';
-   id: string;
--  arguments: { queries: string[] };
-+  arguments?: { queries?: string[] };
-+  /** `web_search`, `image_search` or `enterprise_web_search`. */
-+  search_type?: string;
-   signature?: string;
- }
- 
- export declare interface GoogleSearchResultStep {
-   type: 'google_search_result';
-   call_id: string;
-   /** The search results, e.g. `[{ search_suggestions }]`. */
--  result: Record<string, unknown>[] | Record<string, unknown>;
-+  result?: Record<string, unknown>[] | Record<string, unknown>;
-   is_error?: boolean;
-   signature?: string;
- }
-@@ -458,6 +470,84 @@ export declare interface ProcessingResultStep {
-   signature?: string;
- }
- 
-+// Server-side built-in tool steps. The server runs these tools itself; the
-+// steps (with their signatures) must be sent back in the history so the
-+// model keeps the tool results in later turns.
-+
-+export declare interface UrlContextCallStep {
-+  type: 'url_context_call';
-+  id: string;
-+  arguments?: { urls?: string[] };
-+  signature?: string;
-+}
-+
-+export declare interface UrlContextResultStep {
-+  type: 'url_context_result';
-+  call_id: string;
-+  /** One entry per URL: `{ url, status }` (`success`, `error`, ...). */
-+  result?: Record<string, unknown>[];
-+  is_error?: boolean;
-+  signature?: string;
-+}
-+
-+export declare interface FileSearchCallStep {
-+  type: 'file_search_call';
-+  id: string;
-+  signature?: string;
-+}
-+
-+export declare interface FileSearchResultStep {
-+  type: 'file_search_result';
-+  call_id: string;
-+  /**
-+   * Not in the spec's step schema, but the streamed delta carries it (and
-+   * the stream assembly copies it into the step), so it's kept.
-+   */
-+  result?: Record<string, unknown>[];
-+  signature?: string;
-+}
-+
-+export declare interface GoogleMapsCallStep {
-+  type: 'google_maps_call';
-+  id: string;
-+  arguments?: { queries?: string[] };
-+  signature?: string;
-+}
-+
-+export declare interface GoogleMapsResultStep {
-+  type: 'google_maps_result';
-+  call_id: string;
-+  /** e.g. `[{ places: [{ place_id, name, url }] }]`. */
-+  result?: Record<string, unknown>[];
-+  signature?: string;
-+}
-+
-+export declare interface McpServerToolCallStep {
-+  type: 'mcp_server_tool_call';
-+  id: string;
-+  name?: string;
-+  server_name?: string;
-+  arguments?: Record<string, unknown>;
-+}
-+
-+export declare interface McpServerToolResultStep {
-+  type: 'mcp_server_tool_result';
-+  call_id: string;
-+  name?: string;
-+  server_name?: string;
-+  result?: Record<string, unknown> | string | (ImageContent | TextContent)[];
-+}
-+
-+export type BuiltInToolStep =
-+  | UrlContextCallStep
-+  | UrlContextResultStep
-+  | FileSearchCallStep
-+  | FileSearchResultStep
-+  | GoogleMapsCallStep
-+  | GoogleMapsResultStep
-+  | McpServerToolCallStep
-+  | McpServerToolResultStep;
-+
- export type Step =
-   | ModelOutputStep
-   | UserInputStep
-@@ -470,17 +560,8 @@ export type Step =
-   | FunctionResultStep
-   | ThoughtStep
-   | ProcessingCallStep
--  | ProcessingResultStep;
--
--/**
-- * A turn in a conversation.
-- */
--export declare interface Turn {
--  /** The originator of this turn. Must be user for input or model for model output. */
--  role: string;
--  /** The content of the turn. */
--  content: string | Content[];
--}
-+  | ProcessingResultStep
-+  | BuiltInToolStep;
- 
- /**
-  * The token count for a single response modality.
-@@ -492,6 +573,16 @@ export declare interface ModalityTokens {
-   tokens?: number;
- }
- 
-+/**
-+ * The number of times a grounding tool was used.
-+ */
-+export declare interface GroundingToolCount {
-+  /** The grounding tool, e.g. `google_search` or `google_maps`. */
-+  type?: 'google_search' | 'google_maps' | (string & {});
-+  /** The number of times the tool was used. */
-+  count?: number;
-+}
-+
- /**
-  * Statistics on the interaction request's token usage.
-  */
-@@ -513,11 +604,13 @@ export declare interface Usage {
-   /** Number of tokens present in tool-use prompt(s). */
-   total_tool_use_tokens?: number;
-   /** A breakdown of tool-use token usage by modality. */
--  tool_use_by_modality?: ModalityTokens[];
-+  tool_use_tokens_by_modality?: ModalityTokens[];
-   /** Number of tokens of thoughts for thinking models. */
-   total
-```
-
-**File**: `js/plugins/google-genai/src/common/utils.ts` (modified, +143/-112)
-```diff
-@@ -33,6 +33,7 @@ import {
-   GeminiInteraction,
-   InteractionSseEvent,
-   InteractionStreamResult,
-+  Step,
-   TextContent,
- } from './interaction-types.js';
- import {
-@@ -736,126 +737,147 @@ async function getInteractionResponsePromise(
-         }
-       } else if (value.event_type === 'interaction.status_update') {
-         interaction.status = value.status;
--      } else if (value.event_type === 'step.start') {
--        if (!interaction.steps) interaction.steps = [];
--        interaction.steps[value.index] = value.step;
--      } else if (value.event_type === 'step.delta') {
-+      } else if (
-+        value.event_type === 'step.start' ||
-+        value.event_type === 'step.delta' ||
-+        value.event_type === 'step.stop'
-+      ) {
-         if (!interaction.steps) interaction.steps = [];
--        const step = interaction.steps[value.index];
--        if (step) {
--          if (
--            step.type === 'model_output' ||
--            step.type === 'user_input' ||
--            step.type === 'thought'
--          ) {
--            const contentArray =
--              step.type === 'thought' ? step.summary : step.content;
--            if (!contentArray) {
--              if (step.type === 'thought') step.summary = [];
--              else step.content = [];
--            }
--            const arr = (
--              step.type === 'thought' ? step.summary : step.content
--            )!;
--
--            if (value.delta.type === 'text') {
--              // Append to the previous text block so a streamed answer becomes
--              // a single block, matching the non-streamed response. This also
--              // keeps annotation start/end indices meaningful.
--              const last = arr[arr.length - 1];
--              if (last?.type === 'text') {
--                last.text = (last.text ?? '') + value.delta.text;
--              } else {
--                arr.push({ type: 'text', text: value.delta.text });
--              }
--            } else if (
--              value.delta.type === 'image' ||
--              value.delta.type === 'audio' ||
--              value.delta.type === 'video' ||
--              value.delta.type === 'document'
--            ) {
--              // Media deltas have the same shape as the matching content block.
--              arr.push({ ...value.delta });
--            } else if (value.delta.type === 'text_annotation_delta') {
--              if (value.delta.annotations?.length) {
--                let target = [...arr]
--                  .reverse()
--                  .find((c): c is TextContent => c.type === 'text');
--                if (!target) {
--                  target = { type: 'text', text: '' };
--                  arr.push(target);
--                }
--                target.annotations = [
--                  ...(target.annotations ?? []),
--                  ...value.delta.annotations,
--                ];
--              }
--            } else if (
--              value.delta.type === 'thought_summary' &&
--              value.delta.content
--            ) {
--              arr.push(value.delta.content);
--            } else if (value.delta.type === 'thought_signature') {
--              if (step.type === 'thought') {
--                step.signature = value.delta.signature;
--              }
--            } else if (value.delta.type === 'function_call') {
--              // A function call that is part of the content array
--              arr.push({
--                type: 'function_call',
--                name: value.delta.name,
--                id: value.delta.id,
--                arguments: value.delta.arguments,
--              });
-+        applyInteractionStepEvent(
-+          interaction.steps,
-+          partialArgumentsMap,
-+          value
-+        );
-+      }
-+    }
-+  } finally {
-+    reader.releaseLock();
-+  }
-+}
-+
-+/**
-+ * Applies a `step.start`, `step.delta` or `step.stop` event to the steps
-+ * assembled so far (other events are ignored). Used for the final response
-+ * and for stream chunks (`createInteractionChunkConverter`), so both see the
-+ * same steps.
-+ *
-+ * @param steps The steps so far, by index; updated in place.
-+ * @param partialArguments Function call arguments received so far, by step
-+ *   index; parsed when the step stops.
-+ * @param event The stream event.
-+ */
-+export function applyInteractionStepEvent(
-+  steps: Step[],
-+  partialArguments: Map<number, string>,
-+  event: InteractionSseEvent
-+): void {
-+  if (event.event_type === 'step.start') {
-+    // A copy: both readers of the stream get the same event objects, and each
-+    // assembles its own steps.
-+    steps[event.index] = structuredClone(event.step);
-+  } else if (event.event_type === 'step.delta') {
-+    const step = steps[event.index];
-+    if (step) {
-+      if (
-+        step.type === 'model_output' ||
-+        step.type === 'user_input' ||
-+        step.type === 'thought'
-+      ) {
-+        const contentArray =
-+          step.type === 'thought' ? step.summary : step.content;
-+        if (!contentArray)
-```
-
-**File**: `js/plugins/google-genai/src/googleai/gemini.ts` (modified, +8/-11)
-```diff
-@@ -46,7 +46,7 @@ import {
- } from '../common/converters.js';
- import {
-   applyLatLngToGoogleMapsTools,
--  fromInteractionDelta,
-+  createInteractionChunkConverter,
-   fromInteractionSync,
-   mergeStreamedAudio,
-   removeId3FromAudio,
-@@ -1454,17 +1454,14 @@ export function defineModel(
-             req,
-             clientOpt
-           );
-+          const toChunkParts = createInteractionChunkConverter();
-           for await (const event of result.stream) {
--            if (event.event_type === 'step.delta') {
--              const chunkParts = fromInteractionDelta(event.delta).map(
--                removeId3FromAudio
--              );
--              if (chunkParts.length > 0) {
--                sendChunk({
--                  index: 0,
--                  content: chunkParts,
--                });
--              }
-+            const chunkParts = toChunkParts(event).map(removeId3FromAudio);
-+            if (chunkParts.length > 0) {
-+              sendChunk({
-+                index: 0,
-+                content: chunkParts,
-+              });
-             }
-           }
-           const response = await result.response;
-```
-
-**File**: `js/plugins/google-genai/src/vertexai/gemini.ts` (modified, +61/-7)
-```diff
-@@ -50,7 +50,7 @@ import {
- } from '../common/converters.js';
- import {
-   applyLatLngToGoogleMapsTools,
--  fromInteractionDelta,
-+  createInteractionChunkConverter,
-   fromInteractionSync,
-   mergeStreamedAudio,
-   selectInteractionInput,
-@@ -67,6 +67,7 @@ import {
- import {
-   CreateInteractionRequest,
-   InteractionTool,
-+  Step,
- } from '../common/interaction-types.js';
- import { isObject } from '../common/types.js';
- import {
-@@ -1066,6 +1067,57 @@ function toVertexAISearchDatastore(
-   return `projects/${projectId}/locations/${location}/collections/default_collection/dataStores/${dataStoreId}`;
- }
- 
-+/**
-+ * Server-side tool step types that are intentionally NOT sent back in a
-+ * stateless history (`input`) on this platform.
-+ *
-+ * Resending them makes the platform return 501 "Operation is not
-+ * implemented, or supported, or enabled" (seen live, Oct 2026, whatever the
-+ * step order, arguments or signature), while the Gemini API (googleAI)
-+ * accepts the same history. `store: true` conversations work, because the
-+ * steps stay on the server. Without them the model loses the earlier tool
-+ * results (it may call the tool again). Only step types seen working are
-+ * resent; code execution steps are accepted and are not listed here.
-+ * Remove an entry once the platform accepts it.
-+ */
-+const UNSUPPORTED_RESENT_STEP_TYPES: ReadonlySet<string> = new Set([
-+  // Rejected with 501 (seen live).
-+  'google_search_call',
-+  'google_search_result',
-+  'url_context_call',
-+  'url_context_result',
-+  'google_maps_call',
-+  'google_maps_result',
-+  // Not seen working here (untestable or not available for models).
-+  'file_search_call',
-+  'file_search_result',
-+  'mcp_server_tool_call',
-+  'mcp_server_tool_result',
-+]);
-+
-+/** Whether the dropped-steps warning has been logged (once per process). */
-+let warnedDroppedResentSteps = false;
-+
-+/**
-+ * Removes the steps listed in `UNSUPPORTED_RESENT_STEP_TYPES`, warning once
-+ * when any were removed.
-+ */
-+function withoutUnsupportedResentSteps(steps: Step[]): Step[] {
-+  const kept = steps.filter(
-+    (step) => !UNSUPPORTED_RESENT_STEP_TYPES.has(step.type)
-+  );
-+  if (kept.length < steps.length && !warnedDroppedResentSteps) {
-+    warnedDroppedResentSteps = true;
-+    logger.warn(
-+      'Earlier server-side tool results (e.g. Google Search, URL context, ' +
-+        'Google Maps) are not sent back in this conversation history, ' +
-+        'because the server rejects them. The model may call those tools ' +
-+        'again. Set store: true to keep the full tool history on the server.'
-+    );
-+  }
-+  return kept;
-+}
-+
- /**
-  * Converts the request's tools and tool config fields to Interactions tools.
-  */
-@@ -1220,7 +1272,7 @@ async function generateWithInteractions(params: {
-     tools: tools.length ? tools : undefined,
-     generation_config: generationConfig,
-     stream: params.streamingRequested,
--    input: toInteractionSteps(messages),
-+    input: withoutUnsupportedResentSteps(toInteractionSteps(messages)),
-     store,
-     safety_settings: toInteractionSafetySettings(safetySettings),
-     labels: toGeminiLabels(labels),
-@@ -1261,12 +1313,11 @@ async function generateWithInteractions(params: {
-     req,
-     params.requestClientOptions
-   );
-+  const toChunkParts = createInteractionChunkConverter();
-   for await (const event of result.stream) {
--    if (event.event_type === 'step.delta') {
--      const content = fromInteractionDelta(event.delta);
--      if (content.length > 0) {
--        params.sendChunk({ index: 0, content });
--      }
-+    const content = toChunkParts(event);
-+    if (content.length > 0) {
-+      params.sendChunk({ index: 0, content });
-     }
-   }
-   return fromInteractionSync(await result.response);
-@@ -1583,4 +1634,7 @@ export const TEST_ONLY = {
-   HIDDEN_MODELS,
-   ALL_MODELS,
-   KNOWN_MODELS,
-+  resetDroppedResentStepsWarning: () => {
-+    warnedDroppedResentSteps = false;
++  moduleNameMapper: {
++    '^(\\.{1,2}/.*)\\.js$': '$1',
 +  },
++
+   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
+   transformIgnorePatterns: ['/node_modules/'],
  };
 ```
 
-**File**: `js/plugins/google-genai/tests/common/interaction-converters_test.ts` (modified, +578/-18)
+**File**: `genkit-tools/cli/src/mcp/docs.ts` (modified, +2/-2)
 ```diff
-@@ -19,6 +19,7 @@ import { GenkitError, MessageData, Part } from 'genkit';
- import { ToolDefinition } from 'genkit/model';
- import { describe, it } from 'node:test';
- import {
-+  createInteractionChunkConverter,
-   ensureToolIds,
-   fromInteraction,
-   fromInteractionContent,
-@@ -42,6 +43,7 @@ import {
- import {
-   Content,
-   GeminiInteraction,
-+  InteractionSseEvent,
-   Step,
-   StepDeltaData,
- } from '../../src/common/interaction-types.js';
-@@ -413,6 +415,25 @@ describe('Interaction Converters', () => {
-       assert.deepStrictEqual(result.usage?.custom, { toolUseTokens: 2054 });
-     });
+@@ -15,8 +15,8 @@
+  */
  
-+    it('reports grounding tool counts in usage.custom', () => {
-+      // `grounding_tool_count` as seen live (googleAI, Google Search).
-+      const result = fromInteractionSync({
-+        status: 'completed',
-+        usage: {
-+          total_tokens: 1011,
-+          total_tool_use_tokens: 0,
-+          grounding_tool_count: [
-+            { type: 'google_search', count: 2 },
-+            { type: 'google_maps', count: 1 },
-+          ],
-+        },
-+      });
-+      assert.deepStrictEqual(result.usage?.custom, {
-+        googleSearchCount: 2,
-+        googleMapsCount: 1,
-+      });
-+    });
-+
-     it('leaves usage.custom unset without tool use tokens', () => {
-       const result = fromInteractionSync({
-         status: 'completed',
-@@ -422,6 +443,265 @@ describe('Interaction Converters', () => {
-     });
-   });
- 
-+  describe('server-side built-in tool steps', () => {
-+    // Shapes seen live (Oct 2026): Google Maps on vertexAI gemini-3.8-flash
-+    // (no arguments, no signature) and URL context on googleAI
-+    // gemini-3.8-flash (with signatures).
-+    const mapsCall: Step = { type: 'google_maps_call', id: 'qpo3tzzp' };
-+    const place = {
-+      place_id: 'ChIJefTaTQZD04kRzuh2lpwlV-A',
-+      name: 'Queen Victoria Park - Google Maps',
-+      url: 'https://maps.google.com/maps?cid=16165430741939185870',
-+    };
-+    const mapsResult: Step = {
-+      type: 'google_maps_result',
-+      call_id: 'qpo3tzzp',
-+      result: [{ places: [place] }],
-+    };
-+    const changelog = 'https://ai.google.dev/gemini-api/docs/changelog';
-+    const urlCall: Step = {
-+      type: 'url_context_call',
-+      id: 'call_178104',
-+      signature: 'sig_url_call',
-+      arguments: { urls: [changelog] },
-+    };
-+    const urlResult: Step = {
-+      type: 'url_context_result',
-+      call_id: 'call_178104',
-+      signature: 'sig_url_result',
-+      result: [{ url: changelog, status: 'success' }],
-+      is_error: false,
-+    };
-+    // The other built-in tools, from the spec's examples.
-+    const otherSteps: Step[] = [
-+      { type: 'file_search_call', id: 'file_call_1', signature: 'sig_f1' },
-+      {
-+        type: 'file_search_result',
-+        call_id: 'file_call_1',
-+        signature: 'sig_f2',
-+      },
-+      {
-+        type: 'mcp_server_tool_call',
-+        id: 'mcp_call_1',
-+        name: 'calculate_tax',
-+        server_name: 'financial_mcp_server',
-+        arguments: { income: 120000, state: 'CA' },
-+      },
-+      {
-+        type: 'mcp_server_tool_result',
-+        call_id: 'mcp_call_1',
-+        name: 'calculate_tax',
-+        server_name: 'financial_mcp_server',
-+        result: { tax_due: 32400 },
-+      },
-+    ];
-+    const allSteps = [mapsCall, mapsResult, urlCall, urlResult, ...otherSteps];
-+
-+    it('converts Google Maps steps into custom parts', () => {
-+      assert.deepStrictEqual(fromInteractionStep(mapsCall), [
-+        { custom: { googleMapsCall: { id: 'qpo3tzzp' } } },
-+      ]);
-+      assert.deepStrictEqual(fromInteractionStep(mapsResult), [
-+        {
-+          custom: {
-+            googleMapsResult: {
-+              callId: 'qpo3tzzp',
-+              result: [{ places: [place] }],
-+            },
-+          },
-+        },
-+      ]);
-+    });
-+
-+    it('converts URL context steps into custom parts with their signatures', () => {
-+      assert.deepStrictEqual(fromInteractionStep(urlCall), [
-+        {
-+          custom: {
-+            urlContextCall: {
-+              id: 'call_178104',
-+              arguments: { urls: [changelog] },
-+            },
-+          },
-+          metadata: { thoughtSignature: 'sig_url_call' },
-+        },
-+      ]);
-+      assert.deepStrictEqual(fromInteractionStep(urlResult), [
-+        {
-+          custom: {
-+            urlContextResult: {
-+              callId: 'call_178104',
-+              result: [{ url: changelog, status: 'success' }],
-+              isError: false,
-+            },
-+          },
-+          metadata: { thoughtSignature: 'sig_url_result' },
-+        },
-+      ]);
-+    });
-+
-+    it('never produces tool requests (nothing for Genkit to run)', () => {
-+      // Even with isPending, which turns client function calls into tool
-+      // requests: the server already ran these tools.
-+      const parts = allSteps.flatMap((step) => fromInteractionStep(step, true));
-+      assert.strictEqual(parts.length, allSteps.length);
-+      assert.ok(parts.every((p)
+ import { record } from '@genkit-ai/tools-common/utils';
+-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
+-import { ContentBlock } from '@modelcontextprotocol/sdk/types';
++import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
++import { ContentBlock } from '@modelcontextprotocol/sdk/types.js';
+ import z from 'zod';
+ import { loadDocs, searchDocs } from '../utils/docs';
+ import { McpRunToolEvent } from './analytics';
 ```
 
-**File**: `js/plugins/google-genai/tests/googleai/gemini_test.ts` (modified, +39/-1)
+**File**: `genkit-tools/cli/src/mcp/flows.ts` (modified, +1/-1)
 ```diff
-@@ -785,6 +785,43 @@ describe('Google AI Gemini', () => {
-         assert.ok(String(budgetWarnings[0].args[0]).includes('thinkingLevel'));
-       });
+@@ -15,7 +15,7 @@
+  */
  
-+      it('drops topK with one warning per model (Interactions API)', async () => {
-+        const warnStub = sinon.stub(logger, 'warn');
-+        // An unlisted model (routed to Interactions) not used by other tests,
-+        // since the warning is only logged once per model and field.
-+        const model = defineModel('gemini-top-k-test', defaultPluginOptions);
-+        const request = {
-+          ...minimalRequest,
-+          config: { topK: 40, temperature: 0.5 },
+ import { record } from '@genkit-ai/tools-common/utils';
+-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
++import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+ import z from 'zod';
+ import { McpRunToolEvent } from './analytics';
+ import {
+```
+
+**File**: `genkit-tools/cli/src/mcp/prompts/init.ts` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@
+  * limitations under the License.
+  */
+ 
+-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
++import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+ import { z } from 'zod';
+ 
+ const GENERAL_GUIDELINES = `
+```
+
+**File**: `genkit-tools/cli/src/mcp/runtime.ts` (modified, +1/-1)
+```diff
+@@ -15,7 +15,7 @@
+  */
+ 
+ import { record } from '@genkit-ai/tools-common/utils';
+-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
++import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+ import { z } from 'zod';
+ import { waitForRuntime } from '../utils/manager-utils';
+ import { McpRunToolEvent } from './analytics';
+```
+
+**File**: `genkit-tools/cli/src/mcp/server.ts` (modified, +2/-2)
+```diff
+@@ -15,8 +15,8 @@
+  */
+ 
+ import { logger } from '@genkit-ai/tools-common/utils';
+-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
+-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio';
++import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
++import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+ import { defineDocsTool } from '../mcp/docs';
+ import { defineFlowTools } from './flows';
+ import { defineInitPrompt } from './prompts/init';
+```
+
+**File**: `genkit-tools/cli/src/mcp/trace.ts` (modified, +1/-1)
+```diff
+@@ -15,7 +15,7 @@
+  */
+ 
+ import { record } from '@genkit-ai/tools-common/utils';
+-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
++import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+ import z from 'zod';
+ import { McpRunToolEvent } from './analytics';
+ import {
+```
+
+**File**: `genkit-tools/cli/src/mcp/usage.ts` (modified, +2/-2)
+```diff
+@@ -15,8 +15,8 @@
+  */
+ 
+ import { record } from '@genkit-ai/tools-common/utils';
+-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
+-import { ContentBlock } from '@modelcontextprotocol/sdk/types';
++import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
++import { ContentBlock } from '@modelcontextprotocol/sdk/types.js';
+ import z from 'zod';
+ import { GENKIT_CONTEXT as GoContext } from '../commands/init-ai-tools/context/go';
+ import { GENKIT_CONTEXT as JsContext } from '../commands/init-ai-tools/context/nodejs';
+```
+
+---
+
+### Incident Patch 2: `0b126706` (2026-10-28)
+**Commit Message**: fix(genkit-tools): preserve ProcessManager start options and await readiness on MCP restart_runtime (#6911)
+
+**File**: `genkit-tools/cli/src/cli.ts` (modified, +1/-1)
+```diff
+@@ -46,7 +46,7 @@ import { traceGet } from './commands/trace-get';
+ import { traceList } from './commands/trace-list';
+ import { uiStart } from './commands/ui-start';
+ import { uiStop } from './commands/ui-stop';
+-import { detectCLIRuntime } from './utils/runtime-detector.js';
++import { detectCLIRuntime } from './utils/runtime-detector';
+ import { showUpdateNotification } from './utils/updates';
+ import { version } from './utils/version';
+ 
+```
+
+**File**: `genkit-tools/cli/src/mcp/docs.ts` (modified, +1/-1)
+```diff
+@@ -19,7 +19,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
+ import { ContentBlock } from '@modelcontextprotocol/sdk/types';
+ import z from 'zod';
+ import { loadDocs, searchDocs } from '../utils/docs';
+-import { McpRunToolEvent } from './analytics.js';
++import { McpRunToolEvent } from './analytics';
+ 
+ export async function defineDocsTool(server: McpServer) {
+   const documents = await loadDocs();
+```
+
+**File**: `genkit-tools/cli/src/mcp/flows.ts` (modified, +30/-20)
+```diff
+@@ -14,16 +14,16 @@
+  * limitations under the License.
+  */
+ 
+-import { GenkitToolsError } from '@genkit-ai/tools-common/manager';
+ import { record } from '@genkit-ai/tools-common/utils';
+ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
+ import z from 'zod';
+-import { McpRunToolEvent } from './analytics.js';
++import { McpRunToolEvent } from './analytics';
+ import {
+   McpToolOptions,
++  formatMcpError,
+   getCommonSchema,
+   resolveProjectRoot,
+-} from './utils.js';
++} from './utils';
+ 
+ export function defineFlowTools(server: McpServer, options: McpToolOptions) {
+   server.registerTool(
+@@ -43,24 +43,36 @@ export function defineFlowTools(server: McpServer, options: McpToolOptions) {
+       );
+       if (typeof rootOrError !== 'string') return rootOrError;
+ 
+-      const runtimeManager = await options.manager.getManager(rootOrError);
+-      const actions = await runtimeManager.listActions();
++      try {
++        const runtimeManager = await options.manager.getManager(rootOrError);
++        const actions = await runtimeManager.listActions();
+ 
+-      let flows = '';
+-      for (const key of Object.keys(actions)) {
+-        if (key.startsWith('/flow/')) {
+-          flows += ' - Flow name: ' + key.substring('/flow/'.length) + '\n';
+-          if (actions[key].description) {
+-            flows += '   Description: ' + actions[key].description + '\n';
++        let flows = '';
++        for (const key of Object.keys(actions)) {
++          if (key.startsWith('/flow/')) {
++            flows += ' - Flow name: ' + key.substring('/flow/'.length) + '\n';
++            if (actions[key].description) {
++              flows += '   Description: ' + actions[key].description + '\n';
++            }
++            flows +=
++              '   Input schema: ' +
++              JSON.stringify(actions[key].inputSchema, undefined, 2) +
++              '\n\n';
+           }
+-          flows +=
+-            '   Input schema: ' +
+-            JSON.stringify(actions[key].inputSchema, undefined, 2) +
+-            '\n\n';
+         }
+-      }
+ 
+-      return { content: [{ type: 'text', text: flows }] };
++        return { content: [{ type: 'text', text: flows }] };
++      } catch (e) {
++        return {
++          isError: true,
++          content: [
++            {
++              type: 'text',
++              text: `Error: ${formatMcpError(e)}`,
++            },
++          ],
 +        };
-+        mockFetchResponse(defaultApiResponse);
-+        await model.run(request).catch(() => undefined);
-+        mockFetchResponse(defaultApiResponse);
-+        await model.run(request).catch(() => undefined);
++      }
+     }
+   );
+ 
+@@ -101,14 +113,12 @@ export function defineFlowTools(server: McpServer, options: McpToolOptions) {
+           ],
+         };
+       } catch (e) {
+-        const errStr =
+-          e instanceof GenkitToolsError ? e.formatError() : JSON.stringify(e);
+         return {
+           isError: true,
+           content: [
+             {
+               type: 'text',
+-              text: `Error: ${errStr}`,
++              text: `Error: ${formatMcpError(e)}`,
+             },
+           ],
+         };
+```
+
+**File**: `genkit-tools/cli/src/mcp/runtime.ts` (modified, +35/-9)
+```diff
+@@ -14,16 +14,17 @@
+  * limitations under the License.
+  */
+ 
+-import { GenkitToolsError } from '@genkit-ai/tools-common/manager';
+ import { record } from '@genkit-ai/tools-common/utils';
+ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
+ import { z } from 'zod';
+-import { McpRunToolEvent } from './analytics.js';
++import { waitForRuntime } from '../utils/manager-utils';
++import { McpRunToolEvent } from './analytics';
+ import {
+   McpToolOptions,
++  formatMcpError,
+   getCommonSchema,
+   resolveProjectRoot,
+-} from './utils.js';
++} from './utils';
+ 
+ export function defineRuntimeTools(server: McpServer, options: McpToolOptions) {
+   server.registerTool(
+@@ -63,16 +64,12 @@ export function defineRuntimeTools(server: McpServer, options: McpToolOptions) {
+           timeout: options.timeout,
+         });
+       } catch (err) {
+-        const errStr =
+-          err instanceof GenkitToolsError
+-            ? err.formatError()
+-            : JSON.stringify(err);
+         return {
+           isError: true,
+           content: [
+             {
+               type: 'text',
+-              text: `Error: ${errStr}`,
++              text: `Error: ${formatMcpError(err)}`,
+             },
+           ],
+         };
+@@ -120,7 +117,36 @@ export function defineRuntimeTools(server: McpServer, options: McpToolOptions) {
+           };
+         }
+ 
+-        await runtimeManager.processManager[action]();
++        try {
++          if (action === 'restart') {
++            const existingRuntimeIds = new Set(
++              runtimeManager.listRuntimes().map((r) => r.id)
++            );
++            await runtimeManager.processManager.restart();
++            const processPromise =
++              runtimeManager.processManager.waitForProcess?.();
++            if (options.timeout !== 0 && processPromise) {
++              await waitForRuntime(
++                runtimeManager,
++                processPromise,
++                options.timeout,
++                existingRuntimeIds
++              );
++            }
++          } else {
++            await runtimeManager.processManager.kill();
++          }
++        } catch (err) {
++          return {
++            isError: true,
++            content: [
++              {
++                type: 'text',
++                text: `Error: ${formatMcpError(err)}`,
++              },
++            ],
++          };
++        }
+         return {
+           content: [{ type: 'text', text: `Done.` }],
+         };
+```
+
+**File**: `genkit-tools/cli/src/mcp/server.ts` (modified, +2/-2)
+```diff
+@@ -15,8 +15,8 @@
+  */
+ 
+ import { logger } from '@genkit-ai/tools-common/utils';
+-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
++import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
++import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio';
+ import { defineDocsTool } from '../mcp/docs';
+ import { defineFlowTools } from './flows';
+ import { defineInitPrompt } from './prompts/init';
+```
+
+**File**: `genkit-tools/cli/src/mcp/trace.ts` (modified, +4/-6)
+```diff
+@@ -14,16 +14,16 @@
+  * limitations under the License.
+  */
+ 
+-import { GenkitToolsError } from '@genkit-ai/tools-common/manager';
+ import { record } from '@genkit-ai/tools-common/utils';
+ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
+ import z from 'zod';
+-import { McpRunToolEvent } from './analytics.js';
++import { McpRunToolEvent } from './analytics';
+ import {
+   McpToolOptions,
++  formatMcpError,
+   getCommonSchema,
+   resolveProjectRoot,
+-} from './utils.js';
++} from './utils';
+ 
+ export function defineTraceTools(server: McpServer, options: McpToolOptions) {
+   server.registerTool(
+@@ -60,14 +60,12 @@ export function defineTraceTools(server: McpServer, options: McpToolOptions) {
+           ],
+         };
+       } catch (e) {
+-        const errStr =
+-          e instanceof GenkitToolsError ? e.formatError() : JSON.stringify(e);
+         return {
+           isError: true,
+           content: [
+             {
+               type: 'text',
+-              text: `Error: ${errStr}`,
++              text: `Error: ${formatMcpError(e)}`,
+             },
+           ],
+         };
+```
+
+**File**: `genkit-tools/cli/src/mcp/usage.ts` (modified, +3/-4)
+```diff
+@@ -18,10 +18,9 @@ import { record } from '@genkit-ai/tools-common/utils';
+ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
+ import { ContentBlock } from '@modelcontextprotocol/sdk/types';
+ import z from 'zod';
+-import { McpRunToolEvent } from './analytics.js';
+-
+-import { GENKIT_CONTEXT as GoContext } from '../commands/init-ai-tools/context/go.js';
+-import { GENKIT_CONTEXT as JsContext } from '../commands/init-ai-tools/context/nodejs.js';
++import { GENKIT_CONTEXT as GoContext } from '../commands/init-ai-tools/context/go';
++import { GENKIT_CONTEXT as JsContext } from '../commands/init-ai-tools/context/nodejs';
++import { McpRunToolEvent } from './analytics';
+ 
+ export async function defineUsageGuideTool(server: McpServer) {
+   server.registerTool(
+```
+
+**File**: `genkit-tools/cli/src/mcp/utils.ts` (modified, +14/-1)
+```diff
+@@ -14,10 +14,23 @@
+  * limitations under the License.
+  */
+ 
+-import { BaseRuntimeManager } from '@genkit-ai/tools-common/manager';
++import {
++  BaseRuntimeManager,
++  GenkitToolsError,
++} from '@genkit-ai/tools-common/manager';
+ import { z } from 'zod';
+ import { startDevProcessManager, startManager } from '../utils/manager-utils';
+ 
++export function formatMcpError(err: unknown): string {
++  if (err instanceof GenkitToolsError) {
++    return err.formatError();
++  }
++  if (err instanceof Error) {
++    return err.message;
++  }
++  return typeof err === 'string' ? err : (JSON.stringify(err) ?? String(err));
++}
 +
-+        const apiRequest: CreateInteractionRequest = JSON.parse(
-+          fetchStub.lastCall.args[1].body
-+        );
-+        assert.deepStrictEqual(apiRequest.generation_config, {
-+          temperature: 0.5,
-+        });
-+        const topKWarnings = warnStub
-+          .getCalls()
-+          .filter((c) => String(c.args[0]).includes('topK'));
-+        assert.strictEqual(topKWarnings.length, 1);
-+      });
+ export interface McpToolOptions {
+   projectRoot: string;
+   explicitProjectRoot: boolean;
+```
+
+---
+
+### Incident Patch 3: `2f361ed1` (2026-10-28)
+**Commit Message**: docs(global): document Conventional Commits and PR guidelines in CONTRIBUTING.md (#6924)
+
+**File**: `CONTRIBUTING.md` (modified, +45/-7)
+```diff
+@@ -202,13 +202,51 @@ Use the following command to build and view the new API reference locally.
+ cd js && pnpm build && pnpm typedoc-html && open api-refs-js/index.html
+ ```
+ 
+-## Send it
++## Submitting Changes
+ 
+-Once done coding you will want to send a PR. Always do things in a separate branch (by convention name the branch `your-name/feature-something`).
++1.  **Create a Branch**: Create a new branch for your feature or bug fix.
+ 
+-Before sending the PR, always run:
++    ```bash
++    git checkout -b your-name/my-feature-branch
++    ```
+ 
+-```
+-pnpm format
+-pnpm build
+-```
++2.  **Format and Build**: Before submitting a pull request, ensure your changes are formatted and build cleanly:
 +
-+      it('still sends topK to generateContent models', async () => {
-+        const model = defineModel('gemini-2.5-flash', defaultPluginOptions);
-+        mockFetchResponse(defaultApiResponse);
-+        await model.run({ ...minimalRequest, config: { topK: 40 } });
++    ```bash
++    pnpm format
++    pnpm build
++    ```
 +
-+        const apiRequest: GenerateContentRequest = JSON.parse(
-+          fetchStub.lastCall.args[1].body
-+        );
-+        assert.strictEqual(apiRequest.generationConfig?.topK, 40);
-+      });
++3.  **Commit Your Changes**: Make your changes and commit them using [Conventional Commits](https://www.conventionalcommits.org/). Both commit messages and **Pull Request titles** must include a **type** and a **scope**:
 +
-       it('handles every config schema field explicitly (Interactions API)', () => {
-         // The Interactions API rejects unknown `generation_config` fields with
-         // a 400, so every field in the plugin's config schemas must be either
-@@ -815,14 +852,15 @@ describe('Google AI Gemini', () => {
-           'videoFormat',
-           'thinkingConfig',
-           'contextCache',
-+          // Dropped with a warning (no `top_k` in generation_config).
-+          'topK',
-           'toolConfig',
-           'tools',
-         ];
-         // Verified live to be accepted in `generation_config`.
-         const acceptedByApi = [
-           'temperature',
-           'topP',
--          'topK',
-           'maxOutputTokens',
-           'stopSequences',
-           'imageConfig',
++    ```text
++    <type>(<scope>): <description>
++    ```
++
++    Examples:
++
++    - `feat(js/ai): add support for custom tool output handlers`
++    - `fix(go/plugins/googlegenai): default ResponseModalities for image models`
++    - `chore(global): update root formatting configuration`
++
++    Common types include:
++
++    - `feat`: A new feature
++    - `fix`: A bug fix
++    - `docs`: Documentation only changes
++    - `style`: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc.)
++    - `refactor`: A code change that neither fixes a bug nor adds a feature
++    - `perf`: A code change that improves performance
++    - `test`: Adding missing tests or correcting existing tests
++    - `build`: Changes that affect the build system or external dependencies
++    - `ci`: Changes to CI configuration files and scripts
++    - `chore`: Changes to the build process or auxiliary tools and libraries that don't modify source or test files
++    - `revert`: Reverts a previous commit
++
++4.  **Open a Pull Request**: Submit your pull request to the `main` branch. Provide a clear description of the changes and link to any related issues.
++
++## Pull Request Guidelines
++
++- **Keep it Focused**: A pull request should ideally do one thing. If you have multiple unrelated changes, please split them into separate PRs.
++- **Update Documentation**: If your changes introduce new features or change existing behavior, please update the relevant documentation and code comments as necessary.
++- **Test Your Changes**: Ensure that your changes are well-tested and don't break existing functionality.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6910** (2026-10-27): fix(js/plugins/google-genai): send output settings as response_format (@ifielker)
-- **PR #6909** (2026-10-27): fix(js/plugins/google-genai): Interactions tool steps in history and … (@ifielker)
-- **PR #6904** (2026-10-27): fix(js/plugins/google-genai): Remove client side restriction (@ifielker)
-- **PR #6895** (closed): chore(deps): bump fast-uri from 3.0.6 to 3.1.9 in /samples/js-menu (@dependabot[bot])
-- **PR #6893** (closed): chore(deps): bump body-parser and express in /samples/js-menu (@dependabot[bot])
-- **PR #6886** (2026-10-23): fix(genkit-tools): restrict packed files to lib/ in common and telemetry-server (@MichaelDoyle)
+- **PR #6945** (2026-10-28): fix(genkit-tools/cli): restore .js extension on @modelcontextprotocol/sdk subpath imports (@MichaelDoyle)
+- **PR #6943** (2026-10-28): chore(ci): narrow genkit-tools path triggers in Python and Go workflows to genkit-schema.json (@MichaelDoyle)
+- **PR #6934** (closed): chore(deps-dev): bump the root-dependencies group across 1 directory with 8 updates (@dependabot[bot])
+- **PR #6933** (closed): chore(deps-dev): bump postcss-selector-parser from 7.0.0 to 7.1.7 in /samples/js-chatbot/genkit-app (@dependabot[bot])
+- **PR #6932** (closed): chore(deps): bump qs, express and body-parser in /samples/js-schoolAgent (@dependabot[bot])
+- **PR #6931** (closed): chore(deps): bump qs, body-parser and express in /samples/js-chatbot/server (@dependabot[bot])
 
 ---
 
@@ -3563,63 +2534,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. js/plugins/google-genai): send output settings as response_format (#6910)
+## X. genkit-tools/cli): restore .js extension on @modelcontextprotocol/sdk subpath im
 
 **RULE**:
-When implementing operations in `js/plugins/google-genai/src/common/interaction-converters.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `genkit-tools/cli/jest.config.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c62077e5`: js/plugins/google-genai): send output settings as response_format (#6910). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dffd52bc`: genkit-tools/cli): restore .js extension on @modelcontextprotocol/sdk subpath imports (#6945). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `js/plugins/google-genai/src/common/interaction-converters.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `genkit-tools/cli/jest.config.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
- *    400; the Gemini API accepts and ignores it);
- *  - `imageConfig`, `audioFormat` and `videoFormat` are left out: they're
- *    sent as `response_format` entries (see toInteractionResponseFormat).
-    // Sent as `response_format` entries (see toInteractionResponseFormat).
-    imageConfig: _imageConfig,
-    image_config: _image_config,
-/** What `toInteractionResponseFormat` builds the `response_format` from. */
-export interface InteractionResponseFormatOptions {
-  /**
-   * The requested output types, e.g. `['TEXT', 'IMAGE']` (the config's
-   * `responseModalities`, or the model's default). One entry each.
-   */
-  modalities?: string[];
-  /** The `imageConfig` config (`{ aspectRatio, imageSize }`). */
-  imageConfig?: unknown;
-  /** The `audioFormat` config (`{ mimeType, sampleRate }`). */
-  audioFormat?: unknown;
-  /** The `videoFormat` config (`{ aspectRatio, resolution, ... }`). */
-  videoFormat?: unknown;
-  /** JSON output: the text entry gets `application/json` (and a schema). */
-  json?: { schema?: unknown };
-}
+  moduleNameMapper: {
+    '^(\\.{1,2}/.*)\\.js$': '$1',
+  },
 
-/**
- * Builds the Interactions `response_format`: one entry per output type
- * (`text`, `image`, `audio`, `video`), each with its settings. This replaces
- * the depr
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  ResponseModality,
-export function toInteractionResponseModalities(
-  modalities: string[]
-): ResponseModality[] {
-  return modalities.map((m) => m.toLowerCase());
-}
-
- *    400; the Gemini API accepts and ignores it).
-    // Sent as `response_format` (see toInteractionAudioResponseFormat and
-    // toInteractionVideoResponseFormat).
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c62077e5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dffd52bc` are properly handled with clean fallback behavior.

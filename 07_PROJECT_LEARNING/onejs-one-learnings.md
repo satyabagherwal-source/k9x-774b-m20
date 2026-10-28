@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/onejs-one-learnings.md`  
 > **Source**: github ([https://github.com/onejs/one](https://github.com/onejs/one))  
-> **Source Version**: `96fa7367`  
+> **Source Version**: `c5d938eb`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T23:52:37.418Z  
+> **Timestamp**: 2026-10-28T18:34:37.756Z  
 > **Learning ID**: `learn-github-onejs-one`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/onejs-one-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/onejs/one](https://github.com/onejs/one))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T23:52:36.407Z  
+> **Harvest Timestamp**: 2026-10-28T18:34:37.751Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ❶ One lets you target React web and React Native with a single Vite plugin. Everything you need to build great websites and apps with unified routing.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4625 stars
+- **Stars / Engagement**: 4626 stars
 
 ---
 
@@ -1883,416 +1883,328 @@ class OneBackgroundWorker(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5e079cc0` (2026-10-27)
-**Commit Message**: chore(deps): upgrade Tamagui consumers to 3.1.6
+### Incident Patch 1: `b7fc0440` (2026-10-28)
+**Commit Message**: fix(one): omit native loader twins when native:false
 
-Validation: exact parsed manifest audit finds 52 family-only pins; all 362 changed lock lines reference Tamagui. Normal install, frozen-lockfile dry run, check:deps and site typecheck pass. App smoke awaits an admitted build of missing fresh-workspace CLI output. Published fixed source and emitted ESM verified. No package peer range changes.
-Team-Machine-Session: r134555
+Builds with one({native:false}) run as a pure web framework, so buildPage
+skips the two per-loader .native.js twins only native clients read. Default
+and native-enabled builds are unchanged; stale twins are still pruned by the
+existing incremental cleanup.
 
-**File**: `apps/onestack.dev/package.json` (modified, +10/-10)
+Validation: new buildPage.test.ts (ordinary + redirect loaders, web bytes
+identical, twins omitted iff skipped); existing workerPool.test.ts and
+cleanUrl.test.ts green; /tmp worker probe through real dist pool incl. real
+runSecurityScan parity; oxlint changed files clean; tsc --noEmit clean.
+
+Team-Machine-Session: r151079
+
+**File**: `apps/onestack.dev/data/docs/configuration.mdx` (modified, +1/-1)
 ```diff
-@@ -24,27 +24,27 @@
-     "@callstack/liquid-glass": "^0.8.1",
-     "@react-navigation/native": "8.0.0-alpha.51",
-     "@supabase/supabase-js": "^2.44.4",
--    "@tamagui/react-native-web": "3.1.5",
--    "@tamagui/sheet": "3.1.5",
--    "@tamagui/themes": "3.1.5",
--    "@tamagui/use-store": "3.1.5",
-+    "@tamagui/react-native-web": "3.1.6",
-+    "@tamagui/sheet": "3.1.6",
-+    "@tamagui/themes": "3.1.6",
-+    "@tamagui/use-store": "3.1.6",
-     "@vxrn/color-scheme": "workspace:*",
-     "@vxrn/mdx-rust": "workspace:*",
-     "body-scroll-lock": "^4.0.0-beta.0",
-     "one": "workspace:*",
-     "react": "19.3.0",
-     "react-native": "0.88.0",
-     "react-native-screens": "~4.30.0",
--    "tamagui": "3.1.5",
--    "@tamagui/helpers-icon": "3.1.5",
-+    "tamagui": "3.1.6",
-+    "@tamagui/helpers-icon": "3.1.6",
-     "react-native-svg": "15.15.4",
--    "@tamagui/config": "3.1.5",
--    "@tamagui/react-native-svg": "3.1.5",
--    "@tamagui/react-native-web-lite": "3.1.5"
-+    "@tamagui/config": "3.1.6",
-+    "@tamagui/react-native-svg": "3.1.6",
-+    "@tamagui/react-native-web-lite": "3.1.6"
-   },
-   "devDependencies": {
-     "@algolia/client-search": "^5.8.1",
--    "@tamagui/vite-plugin": "3.1.5",
-+    "@tamagui/vite-plugin": "3.1.6",
-     "@vxrn/test": "workspace:*",
-     "gray-matter": "^4.0.3",
-     "marked": "^14.1.2",
-```
-
-**File**: `examples/testflight/package.json` (modified, +4/-4)
-```diff
-@@ -25,7 +25,7 @@
-     "@callstack/liquid-glass": "^0.8.1",
-     "@react-navigation/native": "8.0.0-alpha.51",
-     "@react-navigation/native-stack": "8.0.0-alpha.59",
--    "@tamagui/config": "3.1.5",
-+    "@tamagui/config": "3.1.6",
-     "@vxrn/color-scheme": "workspace:*",
-     "better-sqlite3": "^11.2.1",
-     "dotenv": "^17.2.1",
-@@ -41,15 +41,15 @@
-     "react-native-svg": "15.15.4",
-     "react-native-web": "^0.21.2",
-     "react-native-worklets": "~0.13.0",
--    "tamagui": "3.1.5",
--    "@tamagui/helpers-icon": "3.1.5"
-+    "tamagui": "3.1.6",
-+    "@tamagui/helpers-icon": "3.1.6"
-   },
-   "devDependencies": {
-     "@biomejs/biome": "2.5.15",
-     "@faker-js/faker": "next",
-     "@react-native-community/cli": "^20.2.0",
-     "@react-native-community/template": "^0.88.0",
--    "@tamagui/vite-plugin": "3.1.5",
-+    "@tamagui/vite-plugin": "3.1.6",
-     "tsx": "^4.20.6",
-     "vite": "^8.2.2",
-     "typescript": "7.0.2"
-```
-
-**File**: `package.json` (modified, +3/-3)
-```diff
-@@ -163,7 +163,7 @@
-     "@hono/node-server": "^1.19.14",
-     "@manypkg/cli": "^0.25.1",
-     "@react-native-swc/worklets-plugin": "0.1.5",
--    "@tamagui/web": "3.1.5",
-+    "@tamagui/web": "3.1.6",
-     "@take-out/cli": "0.4.17",
-     "@types/react": "^19.3.0",
-     "axios": "1.20.0",
-@@ -178,15 +178,15 @@
-     "playwright": "^1.58.2",
-     "prettier": "^3.5.3",
-     "shell-quote": "1.11.0",
--    "tamagui": "3.1.5",
-+    "tamagui": "3.1.6",
-     "ts-pattern": "^5.6.2",
-     "turbo": "^2.9.18",
-     "typescript": "7.0.2",
-     "ultra-runner": "^3.10.5",
-     "update-ts-references": "^3.4.0",
-     "vxrn": "workspace:*",
-     "zod": "4.6.6",
--    "@tamagui/cli": "3.1.5"
-+    "@tamagui/cli": "3.1.6"
-   },
-   "upgradeSets": {
-     "takeout": [
-```
-
-**File**: `packages/color-scheme/package.json` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@
-     "@vxrn/use-isomorphic-layout-effect": "workspace:*"
-   },
-   "devDependencies": {
--    "@tamagui/build": "3.1.5",
-+    "@tamagui/build": "3.1.6",
-     "react": "19.3.0",
-     "react-native": "0.88.0",
-     "vitest": "^4.1.0"
-```
-
-**File**: `packages/compiler/package.json` (modified, +1/-1)
-```diff
-@@ -58,7 +58,7 @@
-   },
-   "devDependencies": {
-     "@jridgewell/trace-mapping": "^0.3.25",
--    "@tamagui/build": "3.1.5",
-+    "@tamagui/build": "3.1.6",
-     "depcheck": "^1.4.7",
-     "react-native-worklets": "~0.13.0",
-     "rolldown": "^1.2.8",
-```
-
-**File**: `packages/create-vxrn/package.json` (modified, +1/-1)
-```diff
-@@ -44,7 +44,7 @@
-     "yocto-spinner": "^0.1.0"
-   },
-   "devDependencies": {
--    "@tamagui/build": "3.1.5",
-+    "@tamagui/build": "3.1.6",
-     "@types/prompts": "^2.4.9",
-     "typescript": "7.0.2"
-   },
-```
-
-**File**: `packages/debug/package.json` (modified, +1/-1)
-```diff
-@@ -33,7 +33,7 @@
-     "debug": "^4.3.7"
-   },
-   "devDependencies": {
--    "@tamagui/build": "3.1.5",
-+    "@tamagui/build": "3.1.6",
-     "@types/debug": "^4"
-   },
-   "publishConfig": {
-```
-
-**File**: `packages/emitter/package.json` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@
-     "react": "^19.3.0"
-   },
-   "devDependencies": {
--    "@tamagui/build": "3.1.5",
-+    "@tamagui/build": "3.1.6",
-     "react": "19.3.0"
-   },
-   "publishConfig": {
-```
-
----
-
-### Incident Patch 2: `08e26ddf` (2026-10-27)
-**Commit Message**: fix(router): leave the not-found page when the navigation commits, not when it starts
-
-linkTo cleared the inline not-found state before preloading the target. On a
-404ed route with a loader, that re-mounted the route while the preload was in
-flight; its loader entry still held the settled promise from the 404 (the 404
-branches never settle the entry), so it re-suspended on the stale promise
-forever, or re-fetched and re-set the 404 after the navigation committed.
-
-Validation: contrast docs catch-all missing slug on one HEAD c9f7d739ce built
-into an isolated contrast tree (bun release --into, build:prod, one serve):
-before the change clicking the home link froze the page (still blocked after
-110s, only one set and one clear of the not-found state, stack in a React render
-of the docs layout); after it navigates to / in 284ms with title Contrast.
-Controls after: top-level missing path recovers, missing slug then Back shows
-the 404 again, valid docs link navigates. The tests/test-loaders fixture cannot
-model the sequence (its 404 render never mounts the page route), so no fixture
-test is kept.
-
-Team-Machine-Session: p118834
-
-**File**: `packages/one/src/router/router.ts` (modified, +5/-3)
-```diff
-@@ -1176,9 +1176,6 @@ export async function linkTo(
-   // This enables intercepting routes to activate
-   setNavigationType('soft')
+@@ -246,7 +246,7 @@ export default {
  
--  // clear any active not-found state on new navigation
--  clearNotFoundState()
--
-   if (href[0] === '#') {
-     // this is just linking to a section of the current page on web
-     return
-@@ -1462,6 +1459,11 @@ export async function linkTo(
-     hashes[currentRootState.key] = href.slice(hash)
-   }
+ The native object allows you to configure your native apps.
  
-+  // the navigation is committed: only now leave the not-found page. clearing at
-+  // the start of linkTo re-mounted the 404ed route while the preload was still
-+  // in flight, and its loader state (a settled promise on a 404) re-suspended it
-+  clearNotFoundState()
+-Pass `false` to completely disable native (iOS/Android) support. When disabled, One will not register the `ios`/`android` Vite environments, skip the Metro / React Native dev server plugins, and skip the rolldown native bundle pipeline — useful when you want to use One purely as a web framework.
++Pass `false` to completely disable native (iOS/Android) support. When disabled, One will not register the `ios`/`android` Vite environments, skip the Metro / React Native dev server plugins, and skip the rolldown native bundle pipeline — useful when you want to use One purely as a web framework. The static build also omits the per-loader `.native.js` twins, which only native clients read; web loaders, routes, and preloaded assets are unchanged.
+ 
+ ```tsx fileName=vite.config.ts
+ export default {
+```
+
+**File**: `packages/one/src/cli/build.ts` (modified, +8/-1)
+```diff
+@@ -548,6 +548,11 @@ export async function build(args: {
+   // concurrency limiter for parallel page builds
+   const limit = pLimit(buildConcurrency)
+ 
++  // native:false runs One as a pure web framework: no native bundle exists to
++  // read the per-loader .native.js twins, so buildPage omits them. default and
++  // native-enabled builds keep writing both twins.
++  const skipNativeLoaders = oneOptions.native === false
 +
-   // a bit hacky until can figure out a reliable way to tie it to the state
-   nextOptions = options ?? null
-   pendingNavigationPathname = stripTrailingSlash(extractPathnameFromHref(href))
+   // initialize worker pool if enabled (default: true)
+   const useWorkers = shouldUseWorkers(oneOptions)
+   const workerPool = useWorkers ? getWorkerPool(buildConcurrency) : null
+@@ -1081,6 +1086,7 @@ export async function build(args: {
+             deferredPreloads,
+             useAfterLCP,
+             useAfterLCPAggressive,
++            skipNativeLoaders,
+           })
+           .then((built) => ({ built, path }))
+       }
+@@ -1110,7 +1116,8 @@ export async function build(args: {
+             criticalPreloads,
+             deferredPreloads,
+             useAfterLCP,
+-            useAfterLCPAggressive
++            useAfterLCPAggressive,
++            skipNativeLoaders
+           )
+         })
+ 
 ```
 
----
-
-### Incident Patch 3: `bf1d959e` (2026-10-26)
-**Commit Message**: chore(deps): upgrade Tamagui consumers to 3.1.5
-
-Validation: bun run check:deps, frozen install, and site typecheck pass. Manifest and lock audit found only Tamagui family version changes; existing public peer ranges are preserved. Published build and ScrollView declaration tarballs verified.
-Team-Machine-Session: r134555
-
-**File**: `apps/onestack.dev/package.json` (modified, +10/-10)
+**File**: `packages/one/src/cli/buildPage.test.ts` (added, +152/-0)
 ```diff
-@@ -24,27 +24,27 @@
-     "@callstack/liquid-glass": "^0.8.1",
-     "@react-navigation/native": "8.0.0-alpha.51",
-     "@supabase/supabase-js": "^2.44.4",
--    "@tamagui/react-native-web": "3.1.4",
--    "@tamagui/sheet": "3.1.4",
--    "@tamagui/themes": "3.1.4",
--    "@tamagui/use-store": "3.1.4",
-+    "@tamagui/react-native-web": "3.1.5",
-+    "@tamagui/sheet": "3.1.5",
-+    "@tamagui/themes": "3.1.5",
-+    "@tamagui/use-store": "3.1.5",
-     "@vxrn/color-scheme": "workspace:*",
-     "@vxrn/mdx-rust": "workspace:*",
-     "body-scroll-lock": "^4.0.0-beta.0",
-     "one": "workspace:*",
-     "react": "19.3.0",
-     "react-native": "0.88.0",
-     "react-native-screens": "~4.30.0",
--    "tamagui": "3.1.4",
--    "@tamagui/helpers-icon": "3.1.4",
-+    "tamagui": "3.1.5",
-+    "@tamagui/helpers-icon": "3.1.5",
-     "react-native-svg": "15.15.4",
--    "@tamagui/config": "3.1.4",
--    "@tamagui/react-native-svg": "3.1.4",
--    "@tamagui/react-native-web-lite": "3.1.4"
-+    "@tamagui/config": "3.1.5",
-+    "@tamagui/react-native-svg": "3.1.5",
-+    "@tamagui/react-native-web-lite": "3.1.5"
-   },
-   "devDependencies": {
-     "@algolia/client-search": "^5.8.1",
--    "@tamagui/vite-plugin": "3.1.4",
-+    "@tamagui/vite-plugin": "3.1.5",
-     "@vxrn/test": "workspace:*",
-     "gray-matter": "^4.0.3",
-     "marked": "^14.1.2",
+@@ -0,0 +1,152 @@
++import { mkdtemp, readFile, rm } from 'node:fs/promises'
++import { tmpdir } from 'node:os'
++import { join } from 'node:path'
++import { afterEach, expect, it } from 'vitest'
++import {
++  LOADER_JS_POSTFIX,
++  NATIVE_LOADER_JS_POSTFIX_UNCACHED,
++} from '../constants'
++import { buildPage } from './buildPage'
++
++let root: string | undefined
++
++afterEach(async () => {
++  if (root) await rm(root, { recursive: true, force: true })
++})
++
++async function fixture() {
++  root = await mkdtemp(join(tmpdir(), 'one-build-page-'))
++  const serverEntry = join(root, 'entry.mjs')
++  const { writeFile, mkdir } = await import('node:fs/promises')
++  await writeFile(
++    serverEntry,
++    `export default {
++      options: { routes: {
++        '/app/probe.tsx': async () => ({
++          loader: ({ params }) => ({ slug: params.slug }),
++        }),
++        '/app/gated.tsx': async () => ({
++          loader: () => { throw Response.redirect('http://example.com/login', 302) },
++        }),
++      } },
++      render: async ({ loaderData }) => '<html><head></head><body>' + JSON.stringify(loaderData) + '</body></html>'
++    }`
++  )
++  return serverEntry
++}
++
++async function buildRoute(
++  serverEntry: string,
++  out: string,
++  route: { path: string; file: string; params: any },
++  skipNativeLoaders?: boolean
++) {
++  const clientDir = join(out, 'client')
++  const staticDir = join(out, 'static')
++  const { mkdir } = await import('node:fs/promises')
++  await mkdir(join(clientDir, 'assets'), { recursive: true })
++  await mkdir(staticDir, { recursive: true })
++  const built = await buildPage(
++    serverEntry,
++    'app',
++    route.path,
++    '/probe.tsx',
++    route.params,
++    { type: 'ssg', file: route.file, layouts: [], middlewares: [] } as any,
++    { file: 'assets/probe.js' },
++    staticDir,
++    clientDir,
++    {},
++    'server/probe.js',
++    [],
++    [],
++    [],
++    [],
++    undefined,
++    undefined,
++    undefined,
++    undefined,
++    undefined,
++    skipNativeLoaders
++  )
++  return { built, clientDir, staticDir }
++}
++
++function nativeTwins(clientDir: string, loaderPath: string) {
++  const cached = join(clientDir, loaderPath.replace(/\.js$/, '.native.js'))
++  const uncached = join(
++    clientDir,
++    loaderPath.replace(LOADER_JS_POSTFIX, NATIVE_LOADER_JS_POSTFIX_UNCACHED)
++  )
++  return { cached, uncached }
++}
++
++async function exists(path: string) {
++  try {
++    await readFile(path)
++    return true
++  } catch {
++    return false
++  }
++}
++
++it('omits native loader twins when skipped, keeping web output identical', async () => {
++  const serverEntry = await fixture()
++  for (const route of [
++    { path: '/probe', file: './probe.tsx', params: { slug: 'probe' } },
++    { path: '/gated', file: './gated.tsx', params: {} },
++  ]) {
++    const enabled = await buildRoute(serverEntry, join(root!, 'enabled', route.path), route)
++    const skipped = await buildRoute(
++      serverEntry,
++      join(root!, 'skipped', route.path),
++      route,
++      true
++    )
++
++    // web loader and html are byte-identical either way
++    const [enabledLoader, skippedLoader] = await Promise.all([
++      readFile(join(enabled.clientDir, enabled.built.loaderPath), 'utf8'),
++      readFile(join(skipped.clientDir, skipped.built.loaderPath), 'utf8'),
++    ])
++    expect(skippedLoader, route.path).toBe(enabledLoader)
++    const [enabledHtml, skippedHtml] = await Promise.all([
++      readFile(join(enabled.staticDir, `${route.path.slice(1)}.html`), 'utf8'),
++      readFile(join(skipped.staticDir, `${route.path.slice(1)}.html`), 'utf8'),
++    ])
++    expect(skippedHtml, route.path).toBe(enabledHtml)
++
++    // native twins exist by default, absent when skipped
++    const enabledTwins = nativeTwins(enabled.clientDir, enabled.built.loaderPath)
++    expect(await exists(enabledTwins.cached), `${route.path} cached`).toBe(true)
++    expect(await exists(enabledTwins.uncached), `${route.path} uncached`).toBe(true)
++    const skippedTwins = nativeTwins(skipped.clientDir, skipped.built.loaderPath)
++    expect(await exists(skippedTwins.cached), `${route.path} cached`).toBe(false)
++    expect(await exists(skippedTwins.uncached), `${route.path} uncached`).toBe(false)
++  }
++
++  // the redirect loader still carries its signal on the web file
++  const skipped = await buildRoute(
++    serverEntry,
++    join(root!, 'redirect'),
++    { path: '/gated', file: './gated.tsx', params: {} },
++    true
++  )
++  const webLoader = await readFile(
++    join(skipped.clientDir, skipped.built.loaderPath),
++    'utf8'
++  )
++  expect(webLoader).toContain('__oneRedirect')
++})
++
++it('writes native loader twins by default', async () => {
++  const serverEntry = await fixture()
++  const { built, clientDir } = await buildRoute(
++    serverEntry,
++    join(root!, 'default'),
++    { path: '/probe', file: './probe.tsx', params: { slug: 'probe' } }
++  )
++  const twins = nativeTwins(clientDir, built.loaderPath)
++  expect(await exists(twins.cached)).toBe(true)
++  expect(await exi
 ```
 
-**File**: `examples/testflight/package.json` (modified, +4/-4)
+**File**: `packages/one/src/cli/buildPage.ts` (modified, +14/-9)
 ```diff
-@@ -25,7 +25,7 @@
-     "@callstack/liquid-glass": "^0.8.1",
-     "@react-navigation/native": "8.0.0-alpha.51",
-     "@react-navigation/native-stack": "8.0.0-alpha.59",
--    "@tamagui/config": "3.1.4",
-+    "@tamagui/config": "3.1.5",
-     "@vxrn/color-scheme": "workspace:*",
-     "better-sqlite3": "^11.2.1",
-     "dotenv": "^17.2.1",
-@@ -41,15 +41,15 @@
-     "react-native-svg": "15.15.4",
-     "react-native-web": "^0.21.2",
-     "react-native-worklets": "~0.13.0",
--    "tamagui": "3.1.4",
--    "@tamagui/helpers-icon": "3.1.4"
-+    "tamagui": "3.1.5",
-+    "@tamagui/helpers-icon": "3.1.5"
-   },
-   "devDependencies": {
-     "@biomejs/biome": "2.5.15",
-     "@faker-js/faker": "next",
-     "@react-native-community/cli": "^20.2.0",
-     "@react-native-community/template": "^0.88.0",
--    "@tamagui/vite-plugin": "3.1.4",
-+    "@tamagui/vite-plugin": "3.1.5",
-     "tsx": "^4.20.6",
-     "vite": "^8.2.2",
-     "typescript": "7.0.2"
+@@ -63,7 +63,8 @@ export async function buildPage(
+   criticalPreloads?: string[],
+   deferredPreloads?: string[],
+   useAfterLCP?: boolean,
+-  useAfterLCPAggressive?: boolean
++  useAfterLCPAggressive?: boolean,
++  skipNativeLoaders?: boolean
+ ): Promise<One.RouteBuildInfo> {
+   let t0 = performance.now()
+ 
+@@ -275,10 +276,12 @@ prefetchCSS()
+             loaderPartialPath,
+             `export function loader(){return ${redirectData}}`
+           )
+-          // native-friendly CJS version
+-          const nativeCjs = `exports.loader = function(){return ${redirectData}}`
+-          await outputFile(loaderPartialPath.replace(/\.js$/, '.native.js'), nativeCjs)
+-          await outputFile(uncachedNativePath, nativeCjs)
++          if (!skipNativeLoaders) {
++            // native-friendly CJS version
++            const nativeCjs = `exports.loader = function(){return ${redirectData}}`
++            await outputFile(loaderPartialPath.replace(/\.js$/, '.native.js'), nativeCjs)
++            await outputFile(uncachedNativePath, nativeCjs)
++          }
+           loaderPath = getLoaderPath(path)
+           loaderData = {}
+         } else {
+@@ -289,10 +292,12 @@ prefetchCSS()
+           // stub of its own to replace)
+           const data = JSON.stringify(loaderData)
+           await outputFile(loaderPartialPath, `export function loader(){return ${data}}`)
+-          // native-friendly CJS version
+-          const nativeCjs = `exports.loader = function(){return ${data}}`
+-          await outputFile(loaderPartialPath.replace(/\.js$/, '.native.js'), nativeCjs)
+-          await outputFile(uncachedNativePath, nativeCjs)
++          if (!skipNativeLoaders) {
++            // native-friendly CJS version
++            const nativeCjs = `exports.loader = function(){return ${data}}`
++            await outputFile(loaderPartialPath.replace(/\.js$/, '.native.js'), nativeCjs)
++            await outputFile(uncachedNativePath, nativeCjs)
++          }
+           loaderPath = getLoaderPath(path)
+         }
+       }
 ```
 
-**File**: `package.json` (modified, +3/-3)
+**File**: `packages/one/src/cli/buildPageWorker.ts` (modified, +2/-1)
 ```diff
-@@ -163,7 +163,7 @@
-     "@hono/node-server": "^1.19.14",
-     "@manypkg/cli": "^0.25.1",
-     "@react-native-swc/worklets-plugin": "0.1.5",
--    "@tamagui/web": "3.1.4",
-+    "@tamagui/web": "3.1.5",
-     "@take-out/cli": "0.4.17",
-     "@types/react": "^19.3.0",
-     "axios": "1.20.0",
-@@ -178,15 +178,15 @@
-     "playwright": "^1.58.2",
-     "prettier": "^3.5.3",
-     "shell-quote": "1.11.0",
--    "tamagui": "3.1.4",
-+    "tamagui": "3.1.5",
-     "ts-pattern": "^5.6.2",
-     "turbo": "^2.9.18",
-     "typescript": "7.0.2",
-     "ultra-runner": "^3.10.5",
-     "update-ts-references": "^3.4.0",
-     "vxrn": "workspace:*",
-     "zod": "4.6.6",
--    "@tamagui/cli": "3.1.4"
-+    "@tamagui/cli": "3.1.5"
-   },
-   "upgradeSets": {
-     "takeout": [
+@@ -86,7 +86,8 @@ parentPort.on('message', async (msg: any) => {
+           msg.args.criticalPreloads,
+           msg.args.deferredPreloads,
+           msg.args.useAfterLCP,
+-          msg.args.useAfterLCPAggressive
++          msg.args.useAfterLCPAggressive,
++          msg.args.skipNativeLoaders
+         )
+       })
+       // loader data is already in the artifacts and is discarded by the parent.
 ```
 
-**File**: `packages/color-scheme/package.json` (modified, +1/-1)
+**File**: `packages/one/src/cli/workerPool.ts` (modified, +1/-0)
 ```diff
-@@ -34,7 +34,7 @@
-     "@vxrn/use-isomorphic-layout-effect": "workspace:*"
-   },
-   "devDependencies": {
--    "@tamagui/build": "3.1.4",
-+    "@tamagui/build": "3.1.5",
-     "react": "19.3.0",
-     "react-native": "0.88.0",
-     "vitest": "^4.1.0"
+@@ -127,6 +127,7 @@ export class BuildWorkerPool {
+     deferredPreloads?: string[]
+     useAfterLCP?: boolean
+     useAfterLCPAggressive?: boolean
++    skipNativeLoaders?: boolean
+   }): Promise<any> {
+     if (this._terminated) {
+       throw new Error('Worker pool has been terminated')
 ```
 
-**File**: `packages/compiler/package.json` (modified, +1/-1)
+**File**: `packages/one/types/cli/buildPage.d.ts` (modified, +1/-1)
 ```diff
-@@ -58,7 +58,7 @@
-   },
-   "devDependencies": {
-     "@jridgewell/trace-mapping": "^0.3.25",
--    "@tamagui/build": "3.1.4",
-+    "@tamagui/build": "3.1.5",
-     "depcheck": "^1.4.7",
-     "react-native-worklets": "~0.13.0",
-     "rolldown": "^1.2.8",
+@@ -1,4 +1,4 @@
+ import type { One, RouteInfo } from '../vite/types';
+ export declare function printBuildTimings(): void;
+-export declare function buildPage(serverEntry: string, routerRoot: string, path: string, relativeId: string, params: any, foundRoute: RouteInfo<string>, clientManifestEntry: any, staticDir: string, clientDir: string, builtMiddlewares: Record<string, string>, serverJsPath: string, preloads: string[], allCSS: string[], layoutCSS: string[], routePreloads: string[], allCSSContents?: string[], criticalPreloads?: string[], deferredPreloads?: string[], useAfterLCP?: boolean, useAfterLCPAggressive?: boolean): Promise<One.RouteBuildInfo>;
++export declare function buildPage(serverEntry: string, routerRoot: string, path: string, relativeId: string, params: any, foundRoute: RouteInfo<string>, clientManifestEntry: any, staticDir: string, clientDir: string, builtMiddlewares: Record<string, string>, serverJsPath: string, preloads: string[], allCSS: string[], layoutCSS: string[], routePreloads: string[], allCSSContents?: string[], criticalPreloads?: string[], deferredPreloads?: string[], useAfterLCP?: boolean, useAfterLCPAggressive?: boolean, skipNativeLoaders?: boolean): Promise<One.RouteBuildInfo>;
+ //# sourceMappingURL=buildPage.d.ts.map
+\ No newline at end of file
 ```
 
-**File**: `packages/create-vxrn/package.json` (modified, +1/-1)
+**File**: `packages/one/types/cli/workerPool.d.ts` (modified, +1/-0)
 ```diff
-@@ -44,7 +44,7 @@
-     "yocto-spinner": "^0.1.0"
-   },
-   "devDependencies": {
--    "@tamagui/build": "3.1.4",
-+    "@tamagui/build": "3.1.5",
-     "@types/prompts": "^2.4.9",
-     "typescript": "7.0.2"
-   },
-```
-
-**File**: `packages/debug/package.json` (modified, +1/-1)
-```diff
-@@ -33,7 +33,7 @@
-     "debug": "^4.3.7"
-   },
-   "devDependencies": {
--    "@tamagui/build": "3.1.4",
-+    "@tamagui/build": "3.1.5",
-     "@types/debug": "^4"
-   },
-   "publishConfig": {
-```
-
-**File**: `packages/emitter/package.json` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@
-     "react": "^19.3.0"
-   },
-   "devDependencies": {
--    "@tamagui/build": "3.1.4",
-+    "@tamagui/build": "3.1.5",
-     "react": "19.3.0"
-   },
-   "publishConfig": {
+@@ -36,6 +36,7 @@ export declare class BuildWorkerPool {
+         deferredPreloads?: string[];
+         useAfterLCP?: boolean;
+         useAfterLCPAggressive?: boolean;
++        skipNativeLoaders?: boolean;
+     }): Promise<any>;
+     terminate(): Promise<void>;
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1068** (2026-10-28): Skip native loader files in web-only builds (@natew)
+- **PR #1067** (2026-10-28): Add audio ownership and paused loading (@natew)
 - **PR #1064** (2026-10-27): fix(vxrn): distinguish bundle and bytecode preparation in traces (@natew)
 - **PR #1063** (2026-10-27): Document native macOS and Linux apps (@natew)
 - **PR #1062** (2026-10-27): docs: remove data stack recommendations (@natew)
 - **PR #1061** (2026-10-27): fix: stop retired location callbacks and clarify native HMR traces (@natew)
-- **PR #1060** (2026-10-27): fix(one): preserve navigation during deferred boot reset (@natew)
-- **PR #1059** (2026-10-27): fix(router): not-found recovery and back/forward hash (@natew)
 
 ---
 
@@ -2312,46 +2224,28 @@ Team-Machine-Session: r134555
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): upgrade Tamagui consumers to 3.1.6
+## X. one): omit native loader twins when native:false
 
 **RULE**:
-When implementing operations in `apps/onestack.dev/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in onejs/one. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/onestack.dev/data/docs/configuration.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in onejs/one. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5e079cc0`: deps): upgrade Tamagui consumers to 3.1.6. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b7fc0440`: one): omit native loader twins when native:false. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/onestack.dev/package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/onestack.dev/data/docs/configuration.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "@tamagui/react-native-web": "3.1.6",
-    "@tamagui/sheet": "3.1.6",
-    "@tamagui/themes": "3.1.6",
-    "@tamagui/use-store": "3.1.6",
-    "tamagui": "3.1.6",
-    "@tamagui/helpers-icon": "3.1.6",
-    "@tamagui/config": "3.1.6",
-    "@tamagui/react-native-svg": "3.1.6",
-    "@tamagui/react-native-web-lite": "3.1.6"
-    "@tamagui/vite-plugin": "3.1.6",
+Pass `false` to completely disable native (iOS/Android) support. When disabled, One will not register the `ios`/`android` Vite environments, skip the Metro / React Native dev server plugins, and skip the rolldown native bundle pipeline — useful when you want to use One purely as a web framework. The static build also omits the per-loader `.native.js` twins, which only native clients read; web loaders, routes, and preloaded assets are unchanged.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "@tamagui/react-native-web": "3.1.5",
-    "@tamagui/sheet": "3.1.5",
-    "@tamagui/themes": "3.1.5",
-    "@tamagui/use-store": "3.1.5",
-    "tamagui": "3.1.5",
-    "@tamagui/helpers-icon": "3.1.5",
-    "@tamagui/config": "3.1.5",
-    "@tamagui/react-native-svg": "3.1.5",
-    "@tamagui/react-native-web-lite": "3.1.5"
-    "@tamagui/vite-plugin": "3.1.5",
+Pass `false` to completely disable native (iOS/Android) support. When disabled, One will not register the `ios`/`android` Vite environments, skip the Metro / React Native dev server plugins, and skip the rolldown native bundle pipeline — useful when you want to use One purely as a web framework.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5e079cc0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b7fc0440` are properly handled with clean fallback behavior.

@@ -55,8 +55,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-large-en-v1.5",
     "sourceVersion": "hf-baai-bge-large-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "4faa0e85fa8954ca5cf6f27ea13dc16767777082b4a700cbb54edb447b80907b",
-    "lastHarvestedAt": "2026-10-28T01:22:24.329Z",
+    "contentHash": "3d16d06e5aa4e19c094c04b50083061b66d46079089c9e470ca7921682c2da7e",
+    "lastHarvestedAt": "2026-10-28T18:34:31.735Z",
     "learningId": "learn-huggingface-baai-bge-large-en-v1-5"
   },
   "hf-zai-org-glm-5.3": {
@@ -5973,10 +5973,10 @@
     "repository": "genkit-ai/genkit",
     "platform": "github",
     "sourceUrl": "https://github.com/genkit-ai/genkit",
-    "sourceVersion": "c62077e5",
+    "sourceVersion": "dffd52bc",
     "license": "Apache-2.0",
-    "contentHash": "d8ce421490b823e78423709a241248b92ffe71d80d9788d0833fa220d10f04ac",
-    "lastHarvestedAt": "2026-10-28T02:20:23.265Z",
+    "contentHash": "8648a3463996ea5a635734fcccc5fd5597270cdcada31f54fd25ff13663842e5",
+    "lastHarvestedAt": "2026-10-28T18:34:46.035Z",
     "learningId": "learn-github-genkit-ai-genkit"
   },
   "guokaigdg-animal-island-ui": {
@@ -6363,10 +6363,10 @@
     "repository": "opentofu/opentofu",
     "platform": "github",
     "sourceUrl": "https://github.com/opentofu/opentofu",
-    "sourceVersion": "873eade3",
+    "sourceVersion": "f0af1883",
     "license": "MPL-2.0",
-    "contentHash": "83388a491f352ff66d59df4d85d16d47f469733f33d3851c76e31f6d0c1f5a51",
-    "lastHarvestedAt": "2026-10-27T19:49:27.716Z",
+    "contentHash": "a56ddbca3d0d61ed94ce4cc118e85baaa8912bf1bb0ecf398d4db39dfb2e05c0",
+    "lastHarvestedAt": "2026-10-28T18:34:39.670Z",
     "learningId": "learn-github-opentofu-opentofu"
   },
   "surrealdb-surrealdb": {
@@ -6863,10 +6863,10 @@
     "repository": "topgrade-rs/topgrade",
     "platform": "github",
     "sourceUrl": "https://github.com/topgrade-rs/topgrade",
-    "sourceVersion": "352e81e9",
+    "sourceVersion": "c58ad18d",
     "license": "GPL-3.0",
-    "contentHash": "2fc321f3d3f446f8b31bb93f93513bc04af800e521e229060bcea9c54408d818",
-    "lastHarvestedAt": "2026-10-27T15:25:47.795Z",
+    "contentHash": "8ed7e81777f00fea22ef0744ef17b77d141e1b6fb4106de881381fdd98af378d",
+    "lastHarvestedAt": "2026-10-28T18:34:32.974Z",
     "learningId": "learn-github-topgrade-rs-topgrade"
   },
   "lucide-icons-lucide": {
@@ -6923,10 +6923,10 @@
     "repository": "onejs/one",
     "platform": "github",
     "sourceUrl": "https://github.com/onejs/one",
-    "sourceVersion": "96fa7367",
+    "sourceVersion": "c5d938eb",
     "license": "NOASSERTION",
-    "contentHash": "c35ad664482c9f5425be23c2b258a17ef913e20cf496887637dc127745caeccf",
-    "lastHarvestedAt": "2026-10-27T23:52:37.856Z",
+    "contentHash": "5fd9f56bca52a40a558c90682132588135a7ce152f4c5d59845e011d972b6d04",
+    "lastHarvestedAt": "2026-10-28T18:34:38.282Z",
     "learningId": "learn-github-onejs-one"
   },
   "influxdata-influxdb": {

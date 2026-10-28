@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-CKK8",
-    "timestamp": "2026-10-27T14:33:18.872Z",
-    "repository": "boardgameio/boardgame.io",
-    "learningId": "learn-github-boardgameio-boardgame-io",
-    "contentHash": "daea718fdf67409a2fc6186d9662a06f0073d12e2a65efa5b3f37a12d214d59b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-CQ2T",
-    "timestamp": "2026-10-27T14:33:26.021Z",
-    "repository": "NirDiamant/RAG_Techniques",
-    "learningId": "learn-github-nirdiamant-rag_techniques",
-    "contentHash": "c52b5ca789d38a267d71b70a77ece3ae56d8e069a5ce5ea1471913f6b0f3559f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-GMWN",
-    "timestamp": "2026-10-27T14:36:28.535Z",
-    "repository": "unsloth/flint-GGUF",
-    "learningId": "learn-huggingface-unsloth-flint-gguf",
-    "contentHash": "e8c47cce3ad0baa87dfa6ba860d1516c4c629687369db486578812bf812f4de7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-GV31",
-    "timestamp": "2026-10-27T14:36:39.133Z",
-    "repository": "Agent-Field/agentfield",
-    "learningId": "learn-github-agent-field-agentfield",
-    "contentHash": "f17a3e9665287b5f295a5a50d3fdd3b6d690551b94e9b191107cff170458a012",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-PA8O",
-    "timestamp": "2026-10-27T14:43:12.024Z",
-    "repository": "A9T9/RPA",
-    "learningId": "learn-github-a9t9-rpa",
-    "contentHash": "417a57aeb5dcedcf605ac12c77a1cb8c78c77d42bcdef3009c126b6f9b8d3962",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-PCRO",
     "timestamp": "2026-10-27T14:43:15.300Z",
     "repository": "CYB3RMX/Qu1cksc0pe",
@@ -7490,6 +7415,81 @@
     "repository": "linkerd/linkerd2",
     "learningId": "learn-github-linkerd-linkerd2",
     "contentHash": "adbb74356b08bc97236b23d418cd0b787e9072a7d60ac35a51a8ced3a332f942",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-EMK4",
+    "timestamp": "2026-10-28T18:34:31.732Z",
+    "repository": "BAAI/bge-large-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
+    "contentHash": "3d16d06e5aa4e19c094c04b50083061b66d46079089c9e470ca7921682c2da7e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-ENIJ",
+    "timestamp": "2026-10-28T18:34:32.971Z",
+    "repository": "topgrade-rs/topgrade",
+    "learningId": "learn-github-topgrade-rs-topgrade",
+    "contentHash": "8ed7e81777f00fea22ef0744ef17b77d141e1b6fb4106de881381fdd98af378d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-ERLZ",
+    "timestamp": "2026-10-28T18:34:38.279Z",
+    "repository": "onejs/one",
+    "learningId": "learn-github-onejs-one",
+    "contentHash": "5fd9f56bca52a40a558c90682132588135a7ce152f4c5d59845e011d972b6d04",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-ESOJ",
+    "timestamp": "2026-10-28T18:34:39.667Z",
+    "repository": "opentofu/opentofu",
+    "learningId": "learn-github-opentofu-opentofu",
+    "contentHash": "a56ddbca3d0d61ed94ce4cc118e85baaa8912bf1bb0ecf398d4db39dfb2e05c0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-EXLC",
+    "timestamp": "2026-10-28T18:34:46.032Z",
+    "repository": "genkit-ai/genkit",
+    "learningId": "learn-github-genkit-ai-genkit",
+    "contentHash": "8648a3463996ea5a635734fcccc5fd5597270cdcada31f54fd25ff13663842e5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
