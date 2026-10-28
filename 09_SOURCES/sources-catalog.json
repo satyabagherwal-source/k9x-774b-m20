@@ -1225,8 +1225,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-8B",
     "sourceVersion": "hf-qwen-qwen3-8b",
     "license": "Open-Source",
-    "contentHash": "63dcd370fb5440bb5923b912785b038d70d845115d4ee4a3b13173143e110505",
-    "lastHarvestedAt": "2026-10-26T00:48:22.899Z",
+    "contentHash": "d273ba9f2f8df9c32ba33afc4c1d683885f5acf29e15d125ed569ca8e4399052",
+    "lastHarvestedAt": "2026-10-28T17:35:08.897Z",
     "learningId": "learn-huggingface-qwen-qwen3-8b"
   },
   "hf-google-vit-base-patch16-224": {
@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "c5a758f0",
+    "sourceVersion": "84f84d1f",
     "license": "Apache-2.0",
-    "contentHash": "1968815bb3f19c5a219baeadb5cc2b65ca29fd859240b1eaa6c149a85c591af6",
-    "lastHarvestedAt": "2026-10-28T01:29:18.488Z",
+    "contentHash": "2f346f7ed42834d07a67ecfa3c9146e458e85abc91bb353c9b1b5bd2a3c9aadc",
+    "lastHarvestedAt": "2026-10-28T17:35:27.745Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {
@@ -5913,10 +5913,10 @@
     "repository": "argoproj/argo-workflows",
     "platform": "github",
     "sourceUrl": "https://github.com/argoproj/argo-workflows",
-    "sourceVersion": "d3b8e91b",
+    "sourceVersion": "b304fcea",
     "license": "Apache-2.0",
-    "contentHash": "7556256d09c8cfa874234a5f735caded2ae61be0022d2c3bee3beebd3a645637",
-    "lastHarvestedAt": "2026-10-27T18:29:33.799Z",
+    "contentHash": "ac288cbf7ea20e33f47906b36dde2eb7106c9be50f0d68eafbc8c8d2de562e82",
+    "lastHarvestedAt": "2026-10-28T17:35:30.685Z",
     "learningId": "learn-github-argoproj-argo-workflows"
   },
   "postgresml-postgresml": {

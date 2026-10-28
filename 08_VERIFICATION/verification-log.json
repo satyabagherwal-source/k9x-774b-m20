@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-JSL3",
-    "timestamp": "2026-10-27T14:10:56.247Z",
-    "repository": "zama-ai/tfhe-rs",
-    "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "b0ea55d144beb7fd565894a5fb55d2899abee847d4a67063bb29dbf15ec787bd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-NXX8",
-    "timestamp": "2026-10-27T14:14:09.788Z",
-    "repository": "atomicstrata/llm-wiki-compiler",
-    "learningId": "learn-github-atomicstrata-llm-wiki-compiler",
-    "contentHash": "9d7a2850ddb412e64b9a871e726f03cd162b3af39753b7bb00278569cb210ef2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-O0F8",
-    "timestamp": "2026-10-27T14:14:13.028Z",
-    "repository": "alpic-ai/skybridge",
-    "learningId": "learn-github-alpic-ai-skybridge",
-    "contentHash": "ba554263844be74c6f857f4148d17d3905e52bc1c8573f1030977df1e6efb32b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-O6SB",
     "timestamp": "2026-10-27T14:14:21.275Z",
     "repository": "cilium/cilium",
@@ -7490,6 +7445,51 @@
     "repository": "bee-san/Ciphey",
     "learningId": "learn-github-bee-san-ciphey",
     "contentHash": "05a2800a251e980936b6fac6c1aa4c7e67e4737e87b334fd26d8e32286e5ebe4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-A9GD",
+    "timestamp": "2026-10-28T17:35:08.893Z",
+    "repository": "Qwen/Qwen3-8B",
+    "learningId": "learn-huggingface-qwen-qwen3-8b",
+    "contentHash": "d273ba9f2f8df9c32ba33afc4c1d683885f5acf29e15d125ed569ca8e4399052",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-ANZY",
+    "timestamp": "2026-10-28T17:35:27.742Z",
+    "repository": "ytsaurus/ytsaurus",
+    "learningId": "learn-github-ytsaurus-ytsaurus",
+    "contentHash": "2f346f7ed42834d07a67ecfa3c9146e458e85abc91bb353c9b1b5bd2a3c9aadc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-AQ9M",
+    "timestamp": "2026-10-28T17:35:30.682Z",
+    "repository": "argoproj/argo-workflows",
+    "learningId": "learn-github-argoproj-argo-workflows",
+    "contentHash": "ac288cbf7ea20e33f47906b36dde2eb7106c9be50f0d68eafbc8c8d2de562e82",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `c5a758f0`  
+> **Source Version**: `84f84d1f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T01:29:18.072Z  
+> **Timestamp**: 2026-10-28T17:35:27.106Z  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T01:29:17.974Z  
+> **Harvest Timestamp**: 2026-10-28T17:35:27.098Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1198,185 +1198,201 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b4d174a0` (2026-10-27)
-**Commit Message**: Fix argmin/argmax with composite crash in YTQL
+### Incident Patch 1: `3a96535c` (2026-10-28)
+**Commit Message**: Fix bundle controller crash on stale spare node operations
 
-<Message NOT for release notes>
+Deleting a bundle can leave spare node assignments or releases in its controller state. Skip operations for missing bundles and emit the spare_node_operations_for_missing_bundle alert instead of crashing in GetSpareNodesInfo.
 
 * Changelog entry
 Type: fix
-Component: dynamic-tables
+Component: misc-server
 
-Fixed crash when using argmin/argmax aggregate functions in YTQL with v3 composite types.
-commit_hash:35c6917094462671f6345747964216aee6b28957
+Prevent Bundle Controller from crashing when a deleted bundle still has spare node operations in its state.
+commit_hash:01df0dc133534053f5571f0ab9aab55b98226563
 
-**File**: `yt/yt/library/query/engine/builtin_function_profiler.cpp` (modified, +5/-1)
+**File**: `yt/yt/server/cell_balancer/node_tag_manager.cpp` (modified, +16/-0)
 ```diff
-@@ -1003,13 +1003,17 @@ std::vector<TCGValue> UnpackValues(TCGBaseContext& builder, TCGValue span, const
-             case EValueType::String: {
-                 Value* length = builder->CreateLoad(builder->getInt32Ty(), iterator);
-                 iterator = builder->CreateGEP(builder->getInt8Ty(), iterator, builder->getInt32(4));
-+                // COMPAT(sabdenovch): Expression builder v1 does not mesh well with EValueType::Composite and all its nuances.
-+                // Make sure type resolves correctly in v2.
-                 inplaceData.push_back(
-                     TCGValue::Create(
-                         builder,
-                         builder->getFalse(),
-                         length,
-                         iterator,
--                        argTypes[index]));
-+                        argTypes[index] == EValueType::Composite
-+                            ? EValueType::Any
-+                            : argTypes[index]));
-                 iterator = builder->CreateGEP(builder->getInt8Ty(), iterator, length);
-                 break;
-             }
+@@ -891,6 +891,22 @@ TPerDataCenterSpareNodesInfo GetSpareNodesInfo(
+ 
+     THashMap<std::string, std::string> operationsToBundle;
+     for (const auto& [bundleName, bundleState] : input.BundleStates) {
++        if (bundleState->SpareNodeAssignments.empty() && bundleState->SpareNodeReleasements.empty()) {
++            continue;
++        }
++
++        if (!input.Bundles.contains(bundleName)) {
++            YT_TLOG_WARNING("Skipping spare node operations for missing bundle")
++                .With("Bundle", bundleName);
++
++            mutations->AlertsToFire.push_back({
++                .Id = "spare_node_operations_for_missing_bundle",
++                .BundleName = bundleName,
++                .Description = Format("Skipping spare node operations for missing bundle %Qv", bundleName),
++            });
++            continue;
++        }
++
+         for (const auto& [spareNode, _] : bundleState->SpareNodeAssignments) {
+             operationsToBundle[spareNode] = bundleName;
+         }
 ```
 
-**File**: `yt/yt/library/query/unittests/ql_query_ut.cpp` (modified, +26/-0)
+**File**: `yt/yt/server/cell_balancer/unittests/bundle_scheduler_ut.cpp` (modified, +44/-0)
 ```diff
-@@ -8801,6 +8801,32 @@ TEST_F(TQueryEvaluateTest, ArgMin)
-     Evaluate("integer, argmin(any, double) as c from [//t] group by integer", split, source, ResultMatcher(result));
+@@ -4313,6 +4313,50 @@ TEST_P(TNodeTagsFilterManager, TestSpareNodesAreReleasedProperly)
+     EXPECT_EQ(1, std::ssize(mutations.ChangedStates["bigd"]->SpareNodeReleasements));
  }
  
-+TEST_F(TQueryEvaluateTest, ArgMaxWithComposite)
++TEST_P(TNodeTagsFilterManager, SpareNodeOperationsForRemovedBundle)
 +{
-+    auto split = MakeSplit({
-+        {"discount_id", SimpleLogicalType(ESimpleLogicalValueType::Int64)},
-+        {"version_num", SimpleLogicalType(ESimpleLogicalValueType::Int64)},
-+        {"parasite_key", EValueType::Int64},
-+        {"utc_start_period_dttm", EValueType::String},
-+        {"tag_code_list", ListLogicalType(SimpleLogicalType(ESimpleLogicalValueType::String))},
-+    });
++    for (bool releasing : {false, true}) {
++        auto input = GenerateInputContext(DefaultNodeCount);
++        auto dataCenters = GetDataCenters(input);
++        input.Zones["default-zone"]->SpareTargetConfig->TabletNodeCount = GetDataCenterCount();
++        auto nodeTagFilter = input.Bundles["bigd"]->NodeTagFilter;
++        auto bundleState = New<TBundleControllerState>();
++        input.BundleStates["bigd"] = bundleState;
++        auto& operations = releasing
++            ? bundleState->SpareNodeReleasements
++            : bundleState->SpareNodeAssignments;
 +
-+    auto source = TSource{
-+        "discount_id=1;version_num=1;utc_start_period_dttm=\"abc\";tag_code_list=[\"x\";\"y\"]",
-+    };
++        for (const auto& dataCenter : dataCenters) {
++            auto spareNodes = GenerateNodesForBundle(input, SpareBundleName, /*nodeCount*/ 1, {.DC = dataCenter});
++            const auto& nodeName = *spareNodes.begin();
++            input.TabletNodes[nodeName]->UserTags.insert(nodeTagFilter);
++            operations[nodeName] = New<TNodeTagFilterOperationState>();
++        }
 +
-+    auto resultSplit = MakeSplit({
-+        {"discount_id", SimpleLogicalType(ESimpleLogicalValueType::Int64)},
-+        {"am", EValueType::Any},
-+    });
++        EraseOrCrash(input.Bundles, "bigd");
 +
-+    auto result = YsonToRows({
-+        "discount_id=1;am=[\"x\";\"y\"]",
-+    }, resultSplit);
++        TSchedulerMutations mutations;
++        ScheduleBundles(input, &mutations);
 +
-+    Evaluate("discount_id, argmax(tag_code_list, version_num) as am from [//t] group by discount_id limit 1", split, source, ResultMatcher(result));
++        ASSERT_EQ(1, std::ssize(mutations.AlertsToFire));
++        EXPECT_EQ("spare_node_operations_for_missing_bundle", mutations.AlertsToFire.front().Id);
++        EXPECT_EQ("bigd", mutations.AlertsToFire.front().BundleName);
++
++        for (const auto& dataCenter : dataCenters) {
++            const auto& spareNodes = input.ZoneToSpareNodes.at("default-zone").at(dataCenter);
++            EXPECT_EQ(1, std::ssize(spareNodes.FreeNodes));
++            EXPECT_TRUE(spareNodes.UsedByBundle.empty());
++            EXPECT_TRUE(spareNodes.ReleasingByBundle.empty());
++        }
++
++        operations.clear();
++        mutations = {};
++        ScheduleBundles(input, &mutations);
++
++        CheckEmptyAlerts(mutations);
++    }
 +}
 +
- TEST_F(TQueryEvaluateTest, CardinalityAggregate)
+ TEST_P(TNodeTagsFilterManager, TestSpareNodesAreNotAssignedDuringWriteThreadPoolSizeChange)
  {
-     auto split = MakeSplit({
+     const auto nodeCountPerDc = 7;
 ```
 
 ---
 
-### Incident Patch 2: `3b4b0b0b` (2026-10-27)
-**Commit Message**: Add runtime LLD threads and forward package memory limits
+### Incident Patch 2: `fdb971b4` (2026-10-28)
+**Commit Message**: Fix race in test_backing_stores
 
-`--lld-threads` задаёт число потоков внутри одной локальной ELF-линковки LLD. `ya` передаёт значение через runtime-переменную `_YA_LLD_THREADS`; `build/scripts/link_exe.py` обрабатывает его непосредственно перед запуском линкера, а `link_dyn_lib.py` использует ту же реализацию. Учитывается выбор линкера после plugins и внутри response files. Раннер не разбирает команду линкера.
+Store-flush transactions are coordinated by master: master commits first (`@chunk_ids` changes), then the tablet cell commits and sets the backing store. So `assert _has_backing_store(...)` right after `wait(chunk_ids == N)` can run before the tablet cell commit is applied.
 
-Значение параметра не попадает в граф и ключи кэша: смена числа потоков не инвалидирует configure, компиляцию и линковку. Изменение самих linker scripts однократно изменит UID зависимых узлов. `--link-threads` по-прежнему управляет числом одновременных линковок; `--lld-threads` отклоняется для Larry и распределённой сборки.
+Seen locally: the "Backing store set" log line came about 1ms after the failing orchid read.
 
-`ya package` передаёт `--lld-threads` и разобранный `--memory-limit` во внутренний `ya make`.
-commit_hash:23610ad14460033ee751dbc6a8b1b0c533df0650
+The fix waits for the backing store instead.
+commit_hash:a546df2e09404547f0c759cd8f08637018c7a846
 
-**File**: `build/scripts/link_dyn_lib.py` (modified, +1/-0)
+**File**: `yt/yt/tests/integration/dynamic_tables/test_sorted_dynamic_tables.py` (modified, +2/-2)
 ```diff
-@@ -216,6 +216,7 @@ def parse_args(args):
-     else:
-         stdout = sys.stdout
+@@ -1603,15 +1603,15 @@ def _has_backing_store(address, tablet_id):
  
-+    cmd = link_exe.with_lld_threads(cmd, opts.arch, os.environ.get('_YA_LLD_THREADS'))
-     proc = subprocess.Popen(cmd, shell=False, stderr=sys.stderr, stdout=stdout)
-     proc.communicate()
-     thinlto_cache.postprocess(opts)
-```
-
-**File**: `build/scripts/link_exe.py` (modified, +42/-0)
-```diff
-@@ -5,6 +5,7 @@
- import json
- import subprocess
- import optparse
-+import shlex
- import textwrap
+         address = get_tablet_leader_address(tablet_id)
  
- # Explicitly enable local imports
-@@ -38,6 +39,46 @@ def remove_libs(cmd, libs):
-     return flags
+-        assert _has_backing_store(address, tablet_id)
++        wait(lambda: _has_backing_store(address, tablet_id))
+         wait(lambda: not _has_backing_store(address, tablet_id))
  
+         set("//tmp/t/@backing_store_retention_time", 1000000000)
+         remount_table("//tmp/t")
+         insert_rows("//tmp/t", [{"key": i} for i in range(5)])
+         wait(lambda: len(get("//tmp/t/@chunk_ids")) == 2)
  
-+def with_lld_threads(cmd, arch, threads):
-+    """Apply runtime parallelism only to ELF LLD, preserving the graph command."""
-+    if threads is None or arch not in ('LINUX', 'ANDROID', 'FREEBSD'):
-+        return cmd
-+
-+    # Inspect response files too: the driver can select a different linker there.
-+    args = []
-+    for arg in cmd:
-+        if pcf.is_cmdfile_arg(arg):
-+            content = '\n'.join(pcf.read_from_command_file(pcf.cmdfile_path(arg)))
-+            args.extend(shlex.split(content))
-+        else:
-+            args.append(arg)
-+    if any(arg.startswith('@') for arg in args):
-+        return cmd
-+
-+    linker_path = None
-+    linker = None
-+    for index, arg in enumerate(args):
-+        if arg.startswith('--ld-path='):
-+            linker_path = arg[len('--ld-path=') :]
-+        elif arg == '--ld-path' and index + 1 < len(args):
-+            linker_path = args[index + 1]
-+        elif arg.startswith('-fuse-ld='):
-+            linker = arg[len('-fuse-ld=') :]
-+        elif arg == '-fuse-ld' and index + 1 < len(args):
-+            linker = args[index + 1]
-+
-+    if linker_path is not None:
-+        if os.path.basename(linker_path) != 'ld.lld':
-+            return cmd
-+    elif linker != 'lld':
-+        return cmd
-+
-+    threads = int(threads)
-+    if threads <= 0:
-+        raise ValueError('_YA_LLD_THREADS requires a positive integer')
-+    return cmd + ['-Wl,--threads={}'.format(threads)]
-+
-+
- def parse_args(args):
-     parser = optparse.OptionParser()
-     parser.disable_interspersed_args()
-@@ -94,6 +135,7 @@ def parse_args(args):
-         stdout = sys.stdout
- 
-     thinlto_cache.preprocess(opts, cmd)
-+    cmd = with_lld_threads(cmd, opts.arch, os.environ.get('_YA_LLD_THREADS'))
-     rc = subprocess.call(cmd, shell=False, stderr=sys.stderr, stdout=stdout)
-     thinlto_cache.postprocess(opts)
+-        assert _has_backing_store(address, tablet_id)
++        wait(lambda: _has_backing_store(address, tablet_id))
+         set("//sys/tablet_cell_bundles/default/@dynamic_options/max_backing_store_memory_ratio", 0.00000001)
+         wait(lambda: not _has_backing_store(address, tablet_id))
  
 ```
 
 ---
 
-### Incident Patch 3: `8eac25ce` (2026-10-27)
-**Commit Message**: Increase teardown timeout in ytflow tests
-commit_hash:c9b84221403ad7b1cb580f2afb0076292ad08740
+### Incident Patch 3: `b8af6efd` (2026-10-28)
+**Commit Message**: YT-30196: Do not leak tablet_static limit from test_changelog_write_throttler
 
-**File**: `yt/yql/tests/agent/test_ytflow.py` (modified, +1/-0)
+`test_changelog_write_throttler` set bundle `memory_limits/tablet_static` to "old + 1024" on all nodes (`%true`) and then "restored" it to "old". But "old" came from the `memory_limit_per_category/tablet_static` orchid. For an unconfigured category, that orchid reports usage (0), not the real limit (unlimited). So the test applied a 1024-byte TabletStatic limit on every node. The restore never took effect: `TNodeResourceManager::UpdateMemoryLimits` ignores a 1024 → 0 change because it is within `memory_accounting_tolerance` (1 MB). It also skips `None` categories, so teardown resetting the bundle config does not help either.
+
+Later tests in the same environment cannot preload in-memory stores by reading chunks. Example: `TestDynamicTablesPortal::test_decommission_through_extra_peers_preload` (YT-30196). The extra peer's preload keeps failing with `Preload is cancelled due to memory pressure` (`free_memory 1024`), so the master never switches leadership to it (it waits up to `max_preload_wait_time_before_leader_switch` = 10 min), and `wait_for_cells` times out.
+
+The tablet_static changes served only as a 
+
+**File**: `yt/yt/tests/integration/dynamic_tables/test_dynamic_tables.py` (modified, +0/-18)
 ```diff
-@@ -92,6 +92,7 @@ def wrapper(self, *args, **kwargs):
+@@ -2996,11 +2996,6 @@ def _insert(overdraft_expected, max_attempts=20):
  
+         assert _insert(False)
  
- class TestYtflowBase(TestQueueAgentBase):
-+    CLASS_TEST_LIMIT = 1000
-     ENABLE_MULTIDAEMON = True
+-    def _get_orchid_memory_limits(self, node, category):
+-        return get(
+-            "//sys/cluster_nodes/{0}/orchid/node_resource_manager/memory_limit_per_category/{1}"
+-            .format(node, category))
+-
+     def _get_random_string(self, length):
+         return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(length))
  
-     NUM_MASTERS = 1
+@@ -3024,19 +3019,11 @@ def _get_insert_time(rows_count):
+                 insert_rows("//tmp/t", [{"key": i, "value": self._get_random_string(100)}])
+             return time.time() - start_time
+ 
+-        tablet_id = get("//tmp/t/@tablets/0/tablet_id")
+-        node_address = get_tablet_leader_address(tablet_id)
+-        old_tablet_static = self._get_orchid_memory_limits(node_address, "tablet_static")
+-        new_tablet_static = old_tablet_static + 1024
+-
+         expected_max_time = 9
+ 
+         bundle_dynamic_config = {
+             "%true": {
+                 "config_annotation": "foo",
+-                "memory_limits": {
+-                    "tablet_static" : new_tablet_static,
+-                },
+                 "medium_throughput_limits" : {
+                     "default" : {
+                         "write_byte_rate" : 50
+@@ -3045,7 +3032,6 @@ def _get_insert_time(rows_count):
+             }
+         }
+         set("//sys/tablet_cell_bundles/@config", bundle_dynamic_config)
+-        wait(lambda: self._get_orchid_memory_limits(node_address, "tablet_static") == new_tablet_static)
+ 
+         # Wait while changes actually take place
+         wait(lambda: _get_insert_time(5) > expected_max_time)
+@@ -3056,13 +3042,9 @@ def _get_insert_time(rows_count):
+         bundle_dynamic_config = {
+             "%true": {
+                 "config_annotation": "foo",
+-                "memory_limits": {
+-                    "tablet_static" : old_tablet_static,
+-                }
+             }
+         }
+         set("//sys/tablet_cell_bundles/@config", bundle_dynamic_config)
+-        wait(lambda: self._get_orchid_memory_limits(node_address, "tablet_static") == old_tablet_static)
+ 
+         # Wait while changes actually take place
+         wait(lambda: _get_insert_time(5) < expected_max_time)
 ```
 
 #### Recent Merged Pull Requests:
@@ -1405,32 +1421,43 @@ commit_hash:c9b84221403ad7b1cb580f2afb0076292ad08740
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. argmin/argmax with composite crash in YTQL
+## X. bundle controller crash on stale spare node operations
 
 **RULE**:
-When implementing operations in `yt/yt/library/query/engine/builtin_function_profiler.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/yt/server/cell_balancer/node_tag_manager.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b4d174a0`: argmin/argmax with composite crash in YTQL. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3a96535c`: bundle controller crash on stale spare node operations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/library/query/engine/builtin_function_profiler.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/server/cell_balancer/node_tag_manager.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-                // COMPAT(sabdenovch): Expression builder v1 does not mesh well with EValueType::Composite and all its nuances.
-                // Make sure type resolves correctly in v2.
-                        argTypes[index] == EValueType::Composite
-                            ? EValueType::Any
-                            : argTypes[index]));
+        if (bundleState->SpareNodeAssignments.empty() && bundleState->SpareNodeReleasements.empty()) {
+            continue;
+        }
+
+        if (!input.Bundles.contains(bundleName)) {
+            YT_TLOG_WARNING("Skipping spare node operations for missing bundle")
+                .With("Bundle", bundleName);
+
+            mutations->AlertsToFire.push_back({
+                .Id = "spare_node_operations_for_missing_bundle",
+                .BundleName = bundleName,
+                .Description = Format("Skipping spare node operations for missing bundle %Qv", bundleName),
+            });
+            continue;
+        }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-                        argTypes[index]));
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b4d174a0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3a96535c` are properly handled with clean fallback behavior.

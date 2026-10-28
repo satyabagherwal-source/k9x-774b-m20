@@ -5869,3 +5869,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-intfloat-multilingual-e5-small` | `https://huggingface.co/intfloat/multilingual-e5-small` | `hf-intfloa` | Multi-dimensional audit evidence | 2026-10-28T17:20:36.997Z |
 | `learn-huggingface-argmaxinc-whisperkit-coreml` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-10-28T17:28:12.526Z |
 | `learn-github-bee-san-ciphey` | `https://github.com/bee-san/Ciphey` | `867d27e8` | Multi-dimensional audit evidence | 2026-10-28T17:28:16.675Z |
+| `learn-huggingface-qwen-qwen3-8b` | `https://huggingface.co/Qwen/Qwen3-8B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-28T17:35:08.897Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `84f84d1f` | Multi-dimensional audit evidence | 2026-10-28T17:35:27.745Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `b304fcea` | Multi-dimensional audit evidence | 2026-10-28T17:35:30.685Z |

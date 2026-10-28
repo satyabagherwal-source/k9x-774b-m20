@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T17:28:16.684Z",
+  "last_updated": "2026-10-28T17:35:30.696Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1610,14 +1610,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
-      "content_hash": "63dcd370fb5440bb5923b912785b038d70d845115d4ee4a3b13173143e110505",
-      "verified_at": "2026-10-26T00:48:22.907Z",
+      "content_hash": "d273ba9f2f8df9c32ba33afc4c1d683885f5acf29e15d125ed569ca8e4399052",
+      "verified_at": "2026-10-28T17:35:08.910Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T00:48:22.907Z"
+      "last_updated": "2026-10-28T17:35:08.910Z"
     },
     "google/vit-base-patch16-224": {
       "repository": "google/vit-base-patch16-224",
@@ -8556,14 +8556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "1968815bb3f19c5a219baeadb5cc2b65ca29fd859240b1eaa6c149a85c591af6",
-      "verified_at": "2026-10-28T01:29:18.496Z",
+      "content_hash": "2f346f7ed42834d07a67ecfa3c9146e458e85abc91bb353c9b1b5bd2a3c9aadc",
+      "verified_at": "2026-10-28T17:35:27.754Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T01:29:18.496Z"
+      "last_updated": "2026-10-28T17:35:27.754Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",
@@ -8991,14 +8991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-argoproj-argo-workflows",
-      "content_hash": "7556256d09c8cfa874234a5f735caded2ae61be0022d2c3bee3beebd3a645637",
-      "verified_at": "2026-10-27T18:29:33.807Z",
+      "content_hash": "ac288cbf7ea20e33f47906b36dde2eb7106c9be50f0d68eafbc8c8d2de562e82",
+      "verified_at": "2026-10-28T17:35:30.695Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T18:29:33.807Z"
+      "last_updated": "2026-10-28T17:35:30.695Z"
     },
     "postgresml/postgresml": {
       "repository": "postgresml/postgresml",

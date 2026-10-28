@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T17:28:16.599Z",
+  "last_updated": "2026-10-28T17:35:30.607Z",
   "total_verified_learnings": 1158,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3084,8 +3084,8 @@
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "d3b8e91b",
-      "content_hash": "7556256d09c8cfa874234a5f735caded2ae61be0022d2c3bee3beebd3a645637",
+      "source_version": "b304fcea",
+      "content_hash": "ac288cbf7ea20e33f47906b36dde2eb7106c9be50f0d68eafbc8c8d2de562e82",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "promoted_rules": [
@@ -3123,6 +3123,11 @@
           "number": 4941,
           "title": "test(estimation): move fixtures into testdata (#17241)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5354,
+          "title": "deps): update module golang.org/x/net to v0.62.0 [security] (main) (#17321)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3130,7 +3135,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T18:29:33.739Z",
+      "verified_at": "2026-10-28T17:35:30.588Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26787,7 +26792,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-8B",
       "source_version": "hf-qwen-qwen3-8b",
-      "content_hash": "63dcd370fb5440bb5923b912785b038d70d845115d4ee4a3b13173143e110505",
+      "content_hash": "d273ba9f2f8df9c32ba33afc4c1d683885f5acf29e15d125ed569ca8e4399052",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md",
       "promoted_rules": [
@@ -26824,7 +26829,7 @@
         "learn-huggingface-hf-qwen-qwen3-8b-mv407vz0",
         "learn-huggingface-hf-qwen-qwen3-8b-mv4e6vig"
       ],
-      "verified_at": "2026-10-26T00:48:22.815Z",
+      "verified_at": "2026-10-28T17:35:08.784Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56051,8 +56056,8 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "c5a758f0",
-      "content_hash": "1968815bb3f19c5a219baeadb5cc2b65ca29fd859240b1eaa6c149a85c591af6",
+      "source_version": "84f84d1f",
+      "content_hash": "2f346f7ed42834d07a67ecfa3c9146e458e85abc91bb353c9b1b5bd2a3c9aadc",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
@@ -56100,6 +56105,11 @@
           "number": 5101,
           "title": "argmin/argmax with composite crash in YTQL",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5353,
+          "title": "bundle controller crash on stale spare node operations",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56107,7 +56117,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T01:29:18.411Z",
+      "verified_at": "2026-10-28T17:35:27.654Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -145278,6 +145288,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T17:28:16.580Z"
+    },
+    "rule-5353": {
+      "learning_id": "rule-5353",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5353,
+      "title": "bundle controller crash on stale spare node operations",
+      "source_url": "https://github.com/ytsaurus/ytsaurus",
+      "source_version": "84f84d1f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T17:35:27.654Z"
+    },
+    "rule-5354": {
+      "learning_id": "rule-5354",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5354,
+      "title": "deps): update module golang.org/x/net to v0.62.0 [security] (main) (#17321)",
+      "source_url": "https://github.com/argoproj/argo-workflows",
+      "source_version": "b304fcea",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T17:35:30.588Z"
     }
   },
   "aliases": {

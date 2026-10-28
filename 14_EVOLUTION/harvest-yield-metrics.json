@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T17:28:16.680Z",
-  "total_cycles_completed": 5837,
-  "total_learnings_persisted": 5837,
-  "total_rules_promoted": 5308,
+  "last_updated": "2026-10-28T17:35:30.691Z",
+  "total_cycles_completed": 5840,
+  "total_learnings_persisted": 5840,
+  "total_rules_promoted": 5310,
   "history": [
-    {
-      "timestamp": "2026-10-28T02:54:53.954Z",
-      "repository": "Edge0/Audio8-ASR-Infinite",
-      "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T03:04:27.297Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T03:04:34.028Z",
-      "repository": "storybookjs/storybook",
-      "learningId": "learn-github-storybookjs-storybook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T03:11:26.777Z",
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-28T17:28:16.680Z",
       "repository": "bee-san/Ciphey",
       "learningId": "learn-github-bee-san-ciphey",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T17:35:08.907Z",
+      "repository": "Qwen/Qwen3-8B",
+      "learningId": "learn-huggingface-qwen-qwen3-8b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T17:35:27.751Z",
+      "repository": "ytsaurus/ytsaurus",
+      "learningId": "learn-github-ytsaurus-ytsaurus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T17:35:30.691Z",
+      "repository": "argoproj/argo-workflows",
+      "learningId": "learn-github-argoproj-argo-workflows",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

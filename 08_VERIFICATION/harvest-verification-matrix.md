@@ -5860,3 +5860,6 @@
 | `CYCLE-20261028-RKOX` | `2026-10-28T17:20:36.993Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | Yes (`30f59f6b...`) |
 | `CYCLE-20261028-1C6I` | `2026-10-28T17:28:12.522Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `VERIFIED` | `Rule 427, Rule 428` | Yes (`fa4256a2...`) |
 | `CYCLE-20261028-1FDR` | `2026-10-28T17:28:16.671Z` | `bee-san/Ciphey` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5352` | Yes (`05a2800a...`) |
+| `CYCLE-20261028-A9GD` | `2026-10-28T17:35:08.893Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`d273ba9f...`) |
+| `CYCLE-20261028-ANZY` | `2026-10-28T17:35:27.742Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5353` | Yes (`2f346f7e...`) |
+| `CYCLE-20261028-AQ9M` | `2026-10-28T17:35:30.682Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5354` | Yes (`ac288cbf...`) |

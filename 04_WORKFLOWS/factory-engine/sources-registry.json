@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T17:28:19.224Z",
-    "lastVerified": "2026-10-28T17:28:19.224Z",
+    "lastChecked": "2026-10-28T17:35:33.237Z",
+    "lastVerified": "2026-10-28T17:35:33.237Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -342,8 +342,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T17:05:54.041Z",
-    "lastVerified": "2026-10-28T17:05:54.041Z",
+    "lastChecked": "2026-10-28T17:35:20.034Z",
+    "lastVerified": "2026-10-28T17:35:20.034Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -840,9 +840,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-10-28T14:22:29.304Z",
+    "lastChecked": "2026-10-28T17:35:15.173Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-10-28T14:22:29.304Z"
+    "lastVerified": "2026-10-28T17:35:15.174Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -5377,5 +5377,70 @@
     "lastChecked": "2026-10-28T17:28:14.329Z",
     "revisionIdentifier": "612070e1",
     "lastVerified": "2026-10-28T17:28:14.329Z"
+  },
+  "vercel-labs-opensrc": {
+    "name": "opensrc",
+    "officialUrl": "https://github.com/vercel-labs/opensrc",
+    "lastChecked": "2026-10-28T17:35:05.288Z",
+    "revisionIdentifier": "b51de608",
+    "lastVerified": "2026-10-28T17:35:05.288Z"
+  },
+  "hf-qwen-qwen3-8b": {
+    "name": "Qwen/Qwen3-8B",
+    "officialUrl": "https://huggingface.co/Qwen/Qwen3-8B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T17:35:07.612Z",
+    "lastVerified": "2026-10-28T17:35:07.612Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-qwen-qwen3-8b",
+    "contentHash": "d273ba9f2f8df9c32ba33afc4c1d683885f5acf29e15d125ed569ca8e4399052",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "insertkoinio-koin": {
+    "name": "koin",
+    "officialUrl": "https://github.com/InsertKoinIO/koin",
+    "lastChecked": "2026-10-28T17:35:10.211Z",
+    "revisionIdentifier": "d39a4f8e",
+    "lastVerified": "2026-10-28T17:35:10.211Z"
+  },
+  "argoproj-argo-workflows": {
+    "name": "argoproj/argo-workflows",
+    "officialUrl": "https://github.com/argoproj/argo-workflows",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T17:35:30.016Z",
+    "lastVerified": "2026-10-28T17:35:30.016Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-argoproj-argo-workflows",
+    "contentHash": "ac288cbf7ea20e33f47906b36dde2eb7106c9be50f0d68eafbc8c8d2de562e82",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 7,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ytsaurus-ytsaurus": {
+    "name": "ytsaurus/ytsaurus",
+    "officialUrl": "https://github.com/ytsaurus/ytsaurus",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-10-28T17:35:27.098Z",
+    "lastVerified": "2026-10-28T17:35:27.098Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-ytsaurus-ytsaurus",
+    "contentHash": "2f346f7ed42834d07a67ecfa3c9146e458e85abc91bb353c9b1b5bd2a3c9aadc",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 10,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
