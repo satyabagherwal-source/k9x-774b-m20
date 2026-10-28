@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T14:29:24.181Z",
-    "lastVerified": "2026-10-28T14:29:24.181Z",
+    "lastChecked": "2026-10-28T14:36:06.351Z",
+    "lastVerified": "2026-10-28T14:36:06.351Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -268,9 +268,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-28T14:08:46.867Z",
+    "lastChecked": "2026-10-28T14:36:05.852Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-28T14:08:46.867Z"
+    "lastVerified": "2026-10-28T14:36:05.852Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -929,9 +929,9 @@
   "freenet-freenet-core": {
     "name": "freenet-core",
     "officialUrl": "https://github.com/freenet/freenet-core",
-    "lastChecked": "2026-10-28T10:43:38.995Z",
+    "lastChecked": "2026-10-28T14:36:00.828Z",
     "revisionIdentifier": "b11d06c6",
-    "lastVerified": "2026-10-28T10:43:38.995Z"
+    "lastVerified": "2026-10-28T14:36:00.828Z"
   },
   "clockworklabs-spacetimedb": {
     "name": "clockworklabs/SpacetimeDB",
@@ -3956,5 +3956,60 @@
     "lastChecked": "2026-10-28T14:29:14.580Z",
     "revisionIdentifier": "43ab94ca",
     "lastVerified": "2026-10-28T14:29:14.580Z"
+  },
+  "webrtc-rs-webrtc": {
+    "name": "webrtc",
+    "officialUrl": "https://github.com/webrtc-rs/webrtc",
+    "lastChecked": "2026-10-28T14:35:50.751Z",
+    "revisionIdentifier": "1c07e9f0",
+    "lastVerified": "2026-10-28T14:35:50.751Z"
+  },
+  "hf-openai-gpt-oss-20b": {
+    "name": "openai/gpt-oss-20b",
+    "officialUrl": "https://huggingface.co/openai/gpt-oss-20b",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T14:35:53.743Z",
+    "lastVerified": "2026-10-28T14:35:53.743Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-openai-gpt-oss-20b",
+    "contentHash": "f09340f49a85be12781689902457a854ceda9ed4433d4e75a9832b52cefb19e2",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jpush-aurora-imui": {
+    "name": "aurora-imui",
+    "officialUrl": "https://github.com/jpush/aurora-imui",
+    "lastChecked": "2026-10-28T14:35:55.808Z",
+    "revisionIdentifier": "fb74b792",
+    "lastVerified": "2026-10-28T14:35:55.808Z"
+  },
+  "aquasecurity-trivy": {
+    "name": "aquasecurity/trivy",
+    "officialUrl": "https://github.com/aquasecurity/trivy",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T14:36:03.372Z",
+    "lastVerified": "2026-10-28T14:36:03.372Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-aquasecurity-trivy",
+    "contentHash": "299e51335ae96f5dd4c20f7105f6ad4d7f7a2dd264c8d2752e2a89398fd6919d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "amrdeveloper-gql": {
+    "name": "GQL",
+    "officialUrl": "https://github.com/AmrDeveloper/GQL",
+    "lastChecked": "2026-10-28T14:36:03.265Z",
+    "revisionIdentifier": "3a76cfee",
+    "lastVerified": "2026-10-28T14:36:03.265Z"
   }
 }

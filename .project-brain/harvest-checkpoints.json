@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-28T14:29:21.657Z",
+  "last_updated": "2026-10-28T14:36:03.826Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1250,14 +1250,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-gpt-oss-20b",
-      "content_hash": "87674dd7d8c634388ba15e1a894e841af82568c9bc40c4f8ad20ccb4e0c70378",
-      "verified_at": "2026-10-25T20:30:15.388Z",
+      "content_hash": "f09340f49a85be12781689902457a854ceda9ed4433d4e75a9832b52cefb19e2",
+      "verified_at": "2026-10-28T14:35:54.968Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T20:30:15.388Z"
+      "last_updated": "2026-10-28T14:35:54.968Z"
     },
     "meta-llama/Llama-2-7b-chat-hf": {
       "repository": "meta-llama/Llama-2-7b-chat-hf",
@@ -7116,14 +7116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aquasecurity-trivy",
-      "content_hash": "f3dc4928dc390f2ff3d781b367173c0e3cbf5e2b884f2e3243a575f3b05874ff",
-      "verified_at": "2026-10-27T15:04:43.550Z",
+      "content_hash": "299e51335ae96f5dd4c20f7105f6ad4d7f7a2dd264c8d2752e2a89398fd6919d",
+      "verified_at": "2026-10-28T14:36:03.825Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T15:04:43.550Z"
+      "last_updated": "2026-10-28T14:36:03.825Z"
     },
     "sfu-db/connector-x": {
       "repository": "sfu-db/connector-x",

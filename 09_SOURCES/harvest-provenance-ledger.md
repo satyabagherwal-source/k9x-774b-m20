@@ -5808,3 +5808,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-zai-org-glm-5-2` | `https://huggingface.co/zai-org/GLM-5.2` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-28T14:29:11.299Z |
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `cbed3573` | Multi-dimensional audit evidence | 2026-10-28T14:29:14.616Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `94ffc059` | Multi-dimensional audit evidence | 2026-10-28T14:29:21.648Z |
+| `learn-huggingface-openai-gpt-oss-20b` | `https://huggingface.co/openai/gpt-oss-20b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-28T14:35:54.954Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `4cdb2db6` | Multi-dimensional audit evidence | 2026-10-28T14:36:03.814Z |

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T14:29:21.653Z",
-  "total_cycles_completed": 5776,
-  "total_learnings_persisted": 5776,
-  "total_rules_promoted": 5259,
+  "last_updated": "2026-10-28T14:36:03.820Z",
+  "total_cycles_completed": 5778,
+  "total_learnings_persisted": 5778,
+  "total_rules_promoted": 5260,
   "history": [
-    {
-      "timestamp": "2026-10-28T00:26:18.944Z",
-      "repository": "CrawlCove/robots-txt-tester",
-      "learningId": "learn-github-crawlcove-robots-txt-tester",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T00:26:28.826Z",
-      "repository": "citusdata/citus",
-      "learningId": "learn-github-citusdata-citus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T00:32:49.299Z",
       "repository": "StarRocks/starrocks",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-28T14:29:21.653Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T14:35:54.964Z",
+      "repository": "openai/gpt-oss-20b",
+      "learningId": "learn-huggingface-openai-gpt-oss-20b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T14:36:03.820Z",
+      "repository": "aquasecurity/trivy",
+      "learningId": "learn-github-aquasecurity-trivy",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

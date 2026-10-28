@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source**: github ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
-> **Source Version**: `d18962e8`  
+> **Source Version**: `4cdb2db6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T15:04:43.131Z  
+> **Timestamp**: 2026-10-28T14:36:03.379Z  
 > **Learning ID**: `learn-github-aquasecurity-trivy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T15:04:43.124Z  
+> **Harvest Timestamp**: 2026-10-28T14:36:03.372Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find vulnerabilities, misconfigurations, secrets, SBOM in containers, Kubernetes, code repositories, clouds and more
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38772 stars
+- **Stars / Engagement**: 38810 stars
 
 ---
 
@@ -1002,219 +1002,218 @@ type TracingConfiguration struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d18962e8` (2026-10-27)
-**Commit Message**: feat: support multiple package digests with acquisition sources (#11216)
+### Incident Patch 1: `4cdb2db6` (2026-10-28)
+**Commit Message**: feat(crypto): show findings in table output (#11395)
 
-**File**: `integration/testdata/almalinux-8.json.golden` (modified, +1/-1)
+**File**: `docs/guide/configuration/others.md` (modified, +1/-0)
 ```diff
-@@ -75,7 +75,7 @@
-           "PkgName": "openssl-libs",
-           "PkgIdentifier": {
-             "PURL": "pkg:rpm/alma/openssl-libs@1.1.1k-4.el8?arch=x86_64\u0026distro=alma-8.5\u0026epoch=1",
--            "UID": "d88cb05095ee62ab"
-+            "UID": "5dca464358520b88"
-           },
-           "InstalledVersion": "1:1.1.1k-4.el8",
-           "FixedVersion": "1:1.1.1k-5.el8_5",
+@@ -24,6 +24,7 @@ $ trivy image --scanners vuln alpine:3.15
+ | Misconfiguration |     ✓     |
+ |      Secret      |     ✓     |
+ |     License      |     ✓     |
++|      Crypto      |     ✓     |
+ 
+ By default, `Trivy` exits with code 0 even when security issues are detected.
+ Use the `--exit-code` option if you want to exit with a non-zero exit code.
 ```
 
-**File**: `integration/testdata/alpine-310.json.golden` (modified, +4/-4)
+**File**: `docs/guide/configuration/reporting.md` (modified, +1/-0)
 ```diff
-@@ -77,7 +77,7 @@
-           "PkgName": "libcrypto1.1",
-           "PkgIdentifier": {
-             "PURL": "pkg:apk/alpine/libcrypto1.1@1.1.1c-r0?arch=x86_64\u0026distro=3.10.2",
--            "UID": "c3465bd7087640a7"
-+            "UID": "ca703c0f76eeea3c"
-           },
-           "InstalledVersion": "1.1.1c-r0",
-           "FixedVersion": "1.1.1d-r0",
-@@ -151,7 +151,7 @@
-           "PkgName": "libcrypto1.1",
-           "PkgIdentifier": {
-             "PURL": "pkg:apk/alpine/libcrypto1.1@1.1.1c-r0?arch=x86_64\u0026distro=3.10.2",
--            "UID": "c3465bd7087640a7"
-+            "UID": "ca703c0f76eeea3c"
-           },
-           "InstalledVersion": "1.1.1c-r0",
-           "FixedVersion": "1.1.1d-r2",
-@@ -235,7 +235,7 @@
-           "PkgName": "libssl1.1",
-           "PkgIdentifier": {
-             "PURL": "pkg:apk/alpine/libssl1.1@1.1.1c-r0?arch=x86_64\u0026distro=3.10.2",
--            "UID": "5743e53dcec3d29c"
-+            "UID": "d38bd441d749eee0"
-           },
-           "InstalledVersion": "1.1.1c-r0",
-           "FixedVersion": "1.1.1d-r0",
-@@ -309,7 +309,7 @@
-           "PkgName": "libssl1.1",
-           "PkgIdentifier": {
-             "PURL": "pkg:apk/alpine/libssl1.1@1.1.1c-r0?arch=x86_64\u0026distro=3.10.2",
--            "UID": "5743e53dcec3d29c"
-+            "UID": "d38bd441d749eee0"
-           },
-           "InstalledVersion": "1.1.1c-r0",
-           "FixedVersion": "1.1.1d-r2",
+@@ -18,6 +18,7 @@ Trivy supports the following formats:
+ | Misconfiguration |     ✓     |
+ |      Secret      |     ✓     |
+ |     License      |     ✓     |
++|      Crypto      |     ✓     |
+ 
+ ```bash
+ $ trivy image -f table golang:1.22.11-alpine3.20
 ```
 
-**File**: `integration/testdata/alpine-39-high-critical.json.golden` (modified, +2/-2)
+**File**: `docs/guide/references/configuration/cli/trivy_convert.md` (modified, +7/-1)
 ```diff
-@@ -77,7 +77,7 @@
-           "PkgName": "musl",
-           "PkgIdentifier": {
-             "PURL": "pkg:apk/alpine/musl@1.1.20-r4?arch=x86_64\u0026distro=3.9.4",
--            "UID": "54bca8ef3ee9e338"
-+            "UID": "bcb00cc2c0b22746"
-           },
-           "InstalledVersion": "1.1.20-r4",
-           "FixedVersion": "1.1.20-r5",
-@@ -124,7 +124,7 @@
-           "PkgName": "musl-utils",
-           "PkgIdentifier": {
-             "PURL": "pkg:apk/alpine/musl-utils@1.1.20-r4?arch=x86_64\u0026distro=3.9.4",
--            "UID": "792dadf1e7110cf2"
-+            "UID": "1e01f6837333f3a7"
-           },
-           "InstalledVersion": "1.1.20-r4",
-           "FixedVersion": "1.1.20-r5",
+@@ -41,7 +41,13 @@ trivy convert [flags] RESULT_JSON
+   -o, --output string              output file name
+       --output-plugin-arg string   [EXPERIMENTAL] output plugin arguments
+       --report string              specify a report format for the output (allowed values: all,summary) (default "all")
+-      --scanners strings           List of scanners included when generating the json report. Used only for rendering the summary table. (allowed values: vuln,misconfig,secret,license)
++      --scanners strings           List of scanners included when generating the json report. Used only for rendering the summary table.
++                                   Allowed values:
++                                     - vuln
++                                     - misconfig
++                                     - secret
++                                     - license
++                                     - crypto
+   -s, --severity strings           severities of security issues to be displayed
+                                    Allowed values:
+                                      - UNKNOWN
 ```
 
-**File**: `integration/testdata/alpine-39-ignore-cveids.json.golden` (modified, +2/-2)
+**File**: `docs/guide/scanner/crypto.md` (modified, +25/-5)
 ```diff
-@@ -77,7 +77,7 @@
-           "PkgName": "libcrypto1.1",
-           "PkgIdentifier": {
-             "PURL": "pkg:apk/alpine/libcrypto1.1@1.1.1b-r1?arch=x86_64\u0026distro=3.9.4",
--            "UID": "3148053bd3cfcabf"
-+            "UID": "4c2e06fcb981c785"
-           },
-           "InstalledVersion": "1.1.1b-r1",
-           "FixedVersion": "1.1.1d-r2",
-@@ -161,7 +161,7 @@
-           "PkgName": "libssl1.1",
-           "PkgIdentifier": {
-             "PURL": "pkg:apk/alpine/libssl1.1@1.1.1b-r1?arch=x86_64\u0026distro=3.9.4",
--            "UID": "603cbbc71f2d6dec"
-+            "UID": "aa0a5547076415c"
-           },
-           "InstalledVersion": "1.1.1b-r1",
-           "FixedVersion": "1.1.1d-r2",
+@@ -3,13 +3,12 @@
+ !!! warning "EXPERIMENTAL"
+     This feature might change without preserving backwards compatibility.
+ 
+-Trivy inventories the cryptographic material it finds in a container image and reports it as a CBOM (Cryptography Bill of Materials). The CBOM lists the certificates and keys themselves and the algorithms they use. The result is part of the CycloneDX report, next to the software components. In JSON output Trivy also reports [weak assets](#findings) found by built-in checks.
++Trivy inventories the cryptographic material it finds in a container image and reports it as a CBOM (Cryptography Bill of Materials). The CBOM lists the certificates and keys themselves and the algorithms they use. The result is part of the CycloneDX report, next to the software components. In JSON and table output Trivy also reports [weak assets](#findings) found by built-in checks.
+ 
+-The scanner is off by default. Enable it with `--scanners crypto` together with `--format cyclonedx` or `--format json`.
++The scanner is off by default. Enable it with `--scanners crypto` together with `--format cyclonedx`, `--format json` or `--format table`.
+ 
+ ```shell
+ $ trivy image --scanners crypto --format cyclonedx --output result.cdx.json myimage:1.0.0
+-$ trivy image --scanners crypto --format json --output result.json myimage:1.0.0
+ ```
+ 
+ Trivy rejects `--scanners crypto` with other report formats.
+@@ -114,7 +113,7 @@ The parameters of an algorithm are stored in `algorithmProperties`. The key size
+ 
+ ## Findings
+ 
+-Trivy runs built-in checks to find weak cryptographic assets and reports the findings in JSON output. Trivy does not determine whether any software uses these assets.
++Trivy runs built-in checks to find weak cryptographic assets and reports the findings in JSON and table output. Trivy does not determine whether any software uses these assets.
+ 
+ | Rule ID | Title | Asset | Condition | Severity |
+ | --- | --- | --- | --- | --- |
+@@ -167,7 +166,28 @@ Every entry of `CryptoAssets` in JSON output has an `AssetID`, and a finding ref
+ | `CRYPTO-0003` | `Curve`, `ClassicalSecurityLevel` |
+ | `CRYPTO-0004` | `NotAfter` |
+ 
+-Findings are evaluated only for JSON output, so they do not affect the exit code of CycloneDX output. `trivy convert` keeps the findings of a JSON report only when converting to JSON, and keeps the cryptographic assets for any format.
++Table output shows the findings without the inventory. Identical rows are merged and the asset name ends with their number, such as `x2`. `Total` counts every finding, and JSON output tells the assets apart.
++
++```
++example:latest (crypto)
++=======================
++Total: 4 (UNKNOWN: 0, LOW: 0, MEDIUM: 1, HIGH: 3, CRITICAL: 0)
++
++┌──────────┬─────────────┬───────────────────────────────────┬──────────────────────┬─────────────────────────────────────────────┐
++│ Severity │   Rule ID   │               Asset               │         File         │                   Message                   │
++├──────────┼─────────────┼───────────────────────────────────┼──────────────────────┼─────────────────────────────────────────────┤
++│ HIGH     │ CRYPTO-0002 │ RSA-1024 private key (PKCS#8)     │ app/certs/legacy.key │ RSA key is 1024 bits, less than 2048        │
++│          │             │                                   │                      │ https://avd.aquasec.com/crypto/crypto-0002/ │
++│          │             ├───────────────────────────────────┼──────────────────────┤                                             │
++│          │             │ RSA-1024 public key (PKIX) x2     │ app/certs/legacy.pem │                                             │
++│          │             │                                   │                      │                                             │
++├──────────┼─────────────┼───────────────────────────────────┤                      ├─────────────────────────────────────────────┤
++│ MEDIUM   │ CRYPTO-0004 │ CN=legacy.example.com certificate │                      │ Certificate expired on 2024-03-01           │
++│          │             │                                   │                      │ https://avd.aquasec.com/crypto/crypto-0004/ │
++└──────────┴─────────────┴───────────────────────────────────┴──────────────────────┴─────────────────────────────────────────────┘
++```
++
++Findings are evaluated only for JSON and table output, so they do not affect the exit code of CycloneDX output. `trivy convert` keeps the findings of a JSON report only when converting to JSON or table, and keeps the cryptographic assets for any format.
+ 
+ A rule ID in an [ignore file](../configuration/filtering.md#by-finding-ids) suppresses its findings, and the `crypto` section of `.trivyignore.yaml` can limit that to some file paths. The assets of suppressed findings stay in the inventory. `--ignore-policy` and `--show-suppressed` do not apply to crypto findings.
+ 
 ```
 
-**File**: `integration/testdata/alpine-39.json.golden` (modified, +6/-6)
+**File**: `docs/guide/target/container_image.md` (modified, +1/-1)
 ```diff
-@@ -77,7 +77,7 @@
-           "PkgName": "libcrypto1.1",
-           "PkgIdentifier": {
-             "PURL": "pkg:apk/alpine/libcrypto1.1@1.1.1b-r1?arch=x86_64\u0026distro=3.9.4",
--            "UID": "3148053bd3cfcabf"
-+            "UID": "4c2e06fcb981c785"
-           },
-           "InstalledVersion": "1.1.1b-r1",
-           "FixedVersion": "1.1.1d-r0",
-@@ -151,7 +151,7 @@
-           "PkgName": "libcrypto1.1",
-           "PkgIdentifier": {
-             "PURL": "pkg:apk/alpine/libcrypto1.1@1.1.1b-r1?arch=x86_64\u0026distro=3.9.4",
--            "UID": "3148053bd3cfcabf"
-+            "UID": "4c2e06fcb981c785"
-           },
-           "InstalledVersion": "1.1.1b-r1",
-           "FixedVersion": "1.1.1d-r2",
-@@ -235,7 +235,7 @@
-           "PkgName": "libssl1.1",
-           "PkgIdentifier": {
-             "PURL": "pkg:apk/alpine/libssl1.1@1.1.1b-r1?arch=x86_64\u0026distro=3.9.4",
--            "UID": "603cbbc71f2d6dec"
-+            "UID": "aa0a5547076415c"
-           },
-           "InstalledVersion": "1.1.1b-r1",
-           "FixedVersion": "1.1.1d-r0",
-@@ -309,7 +309,7 @@
-           "PkgName": "libssl1.1",
-           "PkgIdentifier": {
-             "PURL": "pkg:apk/alpine/libssl1.1@1.1.1b-r1?arch=x86_64\u0026distro=3.9.4",
--            "UID": "603cbbc71f2d6dec"
-+            "UID": "aa0a5547076415c"
-           },
-           "InstalledVersion": "1.1.1b-r1",
-           "FixedVersion": "1.1.1d-r2",
-@@ -393,7 +393,7 @@
-           "PkgName": "musl",
-           "PkgIdentifier": {
-             "PURL": "pkg:apk/alpine/musl@1.1.20-r4?arch=x86_64\u0026distro=3.9.4",
--            "UID": "54bca8ef3ee9e338"
-+            "UID": "bcb00cc2c0b22746"
-           },
-           "InstalledVersion": "1.1.20-r4",
-           "FixedVersion": "1.1.20-r5",
-@@ -440,7 +440,7 @@
-           "PkgName": "musl-utils",
-           "PkgIdentifier": {
-             "PURL": "pkg:apk/alpine/musl-utils@1.1.20-r4?arch=x86_64\u0026distro=3.9.4",
--            "UID": "792dadf1e7110cf2"
-+            "UID": "1e01f6837333f3a7"
-           },
-           "InstalledVersion": "1.1.20-r4",
-           "FixedVersion": "1.1.20-r5",
+@@ -89,7 +89,7 @@ $ trivy image --scanners license [YOUR_IMAGE_NAME]
+ 
+ ### Cryptographic assets
+ It is experimental and disabled by default.
+-It requires the CycloneDX or JSON format.
++It requires the CycloneDX, JSON or table format.
+ See [here](../scanner/crypto.md) for the detail.
+ 
+ ```shell
 ```
 
-**File**: `integration/testdata/alpine-distroless.json.golden` (modified, +1/-1)
+**File**: `pkg/commands/app.go` (modified, +1/-0)
 ```diff
-@@ -72,7 +72,7 @@
-           "PkgName": "git",
-           "PkgIdentifier": {
-             "PURL": "pkg:apk/alpine/git@2.35.1-r2?arch=x86_64\u0026distro=3.16",
--            "UID": "c6d52f037391dfc7"
-+            "UID": "e193e6e3ab14f788"
-           },
-           "InstalledVersion": "2.35.1-r2",
-           "FixedVersion": "2.35.2-r0",
+@@ -546,6 +546,7 @@ func NewConvertCommand(globalFlags *flag.GlobalFlagGroup) *cobra.Command {
+ 		Scanners: flag.ScannersFlag.Clone(),
+ 	}
+ 	scanFlagGroup.Scanners.Default = nil // disable default scanners
++	scanFlagGroup.Scanners.Values = append(scanFlagGroup.Scanners.Values, string(types.CryptoScanner))
+ 	scanFlagGroup.Scanners.Usage = "List of scanners included when generating the json report. Used only for rendering the summary table."
+ 
+ 	convertFlags := flag.Flags{
 ```
 
-**File**: `integration/testdata/amazon-1.json.golden` (modified, +1/-1)
+**File**: `pkg/commands/convert/run.go` (modified, +3/-2)
 ```diff
-@@ -76,7 +76,7 @@
-           "PkgName": "curl",
-           "PkgIdentifier": {
-             "PURL": "pkg:rpm/amazon/curl@7.61.1-11.91.amzn1?arch=x86_64\u0026distro=amazon-AMI%20release%202018.03",
--            "UID": "e50eea8f63fe4bb6"
-+            "UID": "68fd3f1ad2a38ef6"
-           },
-           "InstalledVersion": "7.61.1-11.91.amzn1",
-           "FixedVersion": "7.61.1-12.93.amzn1",
+@@ -41,10 +41,11 @@ func Run(ctx context.Context, opts flag.Options) (err error) {
+ 	}
+ 
+ 	compat(&r)
+-	// Only JSON output shows crypto findings
+-	if opts.Format != types.FormatJSON {
++
++	if !slices.Contains(types.CryptoFindingsFormats, opts.Format) {
+ 		r.Results.DropCryptoFindings()
+ 	}
++
+ 	if err = result.Filter(ctx, r, opts.FilterOpts()); err != nil {
+ 		return xerrors.Errorf("unable to filter results: %w", err)
+ 	}
 ```
 
-**File**: `integration/testdata/amazon-2.json.golden` (modified, +2/-2)
+**File**: `pkg/crypto/check/check.go` (modified, +13/-0)
 ```diff
-@@ -76,7 +76,7 @@
-           "PkgName": "curl",
-           "PkgIdentifier": {
-             "PURL": "pkg:rpm/amazon/curl@7.61.1-9.amzn2.0.1?arch=x86_64\u0026distro=amazon-2%20%28Karoo%29",
--            "UID": "dfda69b8a2968a7f"
-+            "UID": "5a9e866744e82bce"
-           },
-           "InstalledVersion": "7.61.1-9.amzn2.0.1",
-           "FixedVersion": "7.61.1-12.amzn2.0.1",
-@@ -149,7 +149,7 @@
-           "PkgName": "curl",
-           "PkgIdentifier": {
-             "PURL": "pkg:rpm/amazon/curl@7.61.1-9.amzn2.0.1?arch=x86_64\u0026distro=amazon-2%20%28Karoo%29",
--            "UID": "dfda69b8a2968a7f"
-+            "UID": "5a9e866744e82bce"
-           },
-           "InstalledVersion": "7.61.1-9.amzn2.0.1",
-           "FixedVersion": "7.61.1-11.amzn2.0.2",
+@@ -20,6 +20,19 @@ type rule struct {
+ 	// match reports whether the asset fails the rule and returns the evidence.
+ 	// Unknown asset values never match.
+ 	match func(asset ftypes.CryptoAsset, now time.Time) (types.CryptoEvidence, bool)
++	// message describes the failed check by its evidence.
++	message func(evidence types.CryptoEvidence) string
++}
++
++// Message returns the text that describes why the finding was reported.
++// It is empty for a finding of an unknown rule or a rule without a description.
++func Message(finding types.CryptoFinding) string {
++	for _, r := range rules {
++		if r.id == finding.RuleID && r.message != nil {
++			return r.message(finding.Evidence)
++		}
++	}
++	return ""
+ }
+ 
+ // match is a finding together with the asset it refers to.
+```
+
+---
+
+### Incident Patch 2: `948767f8` (2026-10-28)
+**Commit Message**: chore(deps): bump golang.org/x/net from 0.61.0 to 0.62.0 (#11489)
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -114,7 +114,7 @@ require (
+ 	go.etcd.io/bbolt v1.5.0
+ 	golang.org/x/crypto v0.58.0
+ 	golang.org/x/mod v0.42.0
+-	golang.org/x/net v0.61.0
++	golang.org/x/net v0.62.0
+ 	golang.org/x/sync v0.24.0
+ 	golang.org/x/term v0.47.0
+ 	golang.org/x/text v0.43.0
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -1119,8 +1119,8 @@ golang.org/x/net v0.0.0-20190603091049-60506f45cf65/go.mod h1:HSz+uSET+XFnRR8LxR
+ golang.org/x/net v0.0.0-20200301022130-244492dfa37a/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
+ golang.org/x/net v0.0.0-20210226172049-e18ecbb05110/go.mod h1:m0MpNAwzfU5UDzcl9v0D8zg8gWTRqZa9RBIspLL5mdg=
+ golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
+-golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
+-golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
+ golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
+ golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11475** (closed): fix(python): resolve unambiguous name-only selectors in pylock.toml (@yunaremaia)
-- **PR #11474** (closed): fix(apk): trim fuzzy version requirements and bump analyzer version (@yunaremaia)
+- **PR #11490** (closed): chore(deps): update go-jose and x/net for security advisories (@crbnn)
+- **PR #11489** (2026-10-28): chore(deps): bump golang.org/x/net from 0.61.0 to 0.62.0 (@DmitriyLewen)
+- **PR #11488** (2026-10-28): chore(deps): bump github.com/go-jose/go-jose/v4 from 4.1.5 to 4.1.6 (@dependabot[bot])
+- **PR #11477** (2026-10-28): perf(vex): open each VEX repository document once per repository set (@nimitjohri)
 - **PR #11468** (2026-10-26): chore(deps): bump alpine to 3.24.3 in container images (@DmitriyLewen)
 - **PR #11465** (closed): fix(nodejs): handle optionalDependencies in pnpm v9 importers (@cloudwithpreetham)
-- **PR #11463** (2026-10-23): chore(deps): bump the common group across 1 directory with 14 updates (@dependabot[bot])
-- **PR #11462** (2026-10-23): chore(deps): bump the docker group with 3 updates (@dependabot[bot])
 
 ---
 
@@ -1234,28 +1233,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. support multiple package digests with acquisition sources (#11216)
+## X. crypto): show findings in table output (#11395)
 
 **RULE**:
-When implementing operations in `integration/testdata/almalinux-8.json.golden`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/guide/configuration/others.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d18962e8`: support multiple package digests with acquisition sources (#11216). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4cdb2db6`: crypto): show findings in table output (#11395). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `integration/testdata/almalinux-8.json.golden`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guide/configuration/others.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-            "UID": "5dca464358520b88"
+|      Crypto      |     ✓     |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-            "UID": "d88cb05095ee62ab"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d18962e8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4cdb2db6` are properly handled with clean fallback behavior.

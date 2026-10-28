@@ -5799,3 +5799,5 @@
 | `CYCLE-20261028-N473` | `2026-10-28T14:29:11.295Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`0eb1304c...`) |
 | `CYCLE-20261028-N6R8` | `2026-10-28T14:29:14.612Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5308` | Yes (`79d8a189...`) |
 | `CYCLE-20261028-NC6L` | `2026-10-28T14:29:21.645Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5309` | Yes (`2db4dd95...`) |
+| `CYCLE-20261028-VRNR` | `2026-10-28T14:35:54.951Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`f09340f4...`) |
+| `CYCLE-20261028-VYHV` | `2026-10-28T14:36:03.811Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5310` | Yes (`299e5133...`) |

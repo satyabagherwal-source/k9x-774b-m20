@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-5AC5",
-    "timestamp": "2026-10-27T13:03:40.181Z",
-    "repository": "hookdeck/hookdeck-cli",
-    "learningId": "learn-github-hookdeck-hookdeck-cli",
-    "contentHash": "99b933a2ba7e2b1317ba2f04eee4238e2453d3d7a3deeda1da88f396ab504823",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-5BS3",
-    "timestamp": "2026-10-27T13:03:42.051Z",
-    "repository": "Alex2Yang97/yahoo-finance-mcp",
-    "learningId": "learn-github-alex2yang97-yahoo-finance-mcp",
-    "contentHash": "ac6b36b598abe127f28163f28e1a5dcf986de0cbedecedaa4be2893dd7f26a97",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-5EFZ",
     "timestamp": "2026-10-27T13:03:45.503Z",
     "repository": "react-hook-form/react-hook-form",
@@ -7490,6 +7460,36 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "2db4dd951ba81e5687ae8b5f6089e8427d724bb366f94390b9b4c01b52226277",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-VRNR",
+    "timestamp": "2026-10-28T14:35:54.951Z",
+    "repository": "openai/gpt-oss-20b",
+    "learningId": "learn-huggingface-openai-gpt-oss-20b",
+    "contentHash": "f09340f49a85be12781689902457a854ceda9ed4433d4e75a9832b52cefb19e2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-VYHV",
+    "timestamp": "2026-10-28T14:36:03.811Z",
+    "repository": "aquasecurity/trivy",
+    "learningId": "learn-github-aquasecurity-trivy",
+    "contentHash": "299e51335ae96f5dd4c20f7105f6ad4d7f7a2dd264c8d2752e2a89398fd6919d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
