@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-ABOW",
-    "timestamp": "2026-10-27T10:47:37.136Z",
-    "repository": "pingcap/tidb",
-    "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "994045af5bcd219fb100ead442f948be6ecb3f433e5f5060e2203c71023c0daa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-AEUO",
     "timestamp": "2026-10-27T10:47:41.232Z",
     "repository": "sfu-db/connector-x",
@@ -7492,6 +7477,21 @@
     "contentHash": "c5cdbbc31d6ea30155cfb8a31726eb0b9f0086e0b7e4b76241314fb6c75346dd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-1KE3",
+    "timestamp": "2026-10-28T05:48:32.763Z",
+    "repository": "HemmingwayAI/Hemmingway-1",
+    "learningId": "learn-huggingface-altworld-hemmingway-1",
+    "contentHash": "caf758cf8fe02bf866fda1a7bdedd5c3ecf42211e851c05c4b5c80586aabeeeb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

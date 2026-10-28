@@ -5717,3 +5717,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-fastino-gliner2-5-decide` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-10-28T05:42:11.394Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `0301dc36` | Multi-dimensional audit evidence | 2026-10-28T05:42:21.255Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `45f987a2` | Multi-dimensional audit evidence | 2026-10-28T05:42:24.710Z |
+| `learn-huggingface-altworld-hemmingway-1` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-10-28T05:48:32.765Z |

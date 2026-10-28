@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T05:42:27.255Z",
-    "lastVerified": "2026-10-28T05:42:27.255Z",
+    "lastChecked": "2026-10-28T05:48:37.772Z",
+    "lastVerified": "2026-10-28T05:48:37.772Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -297,9 +297,9 @@
   "nucleoidai-nucleoid": {
     "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "lastChecked": "2026-10-28T05:17:52.997Z",
+    "lastChecked": "2026-10-28T05:48:37.766Z",
     "revisionIdentifier": "73085699",
-    "lastVerified": "2026-10-28T05:17:52.997Z"
+    "lastVerified": "2026-10-28T05:48:37.766Z"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1538,5 +1538,57 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "fallow-rs-fallow": {
+    "name": "fallow",
+    "officialUrl": "https://github.com/fallow-rs/fallow",
+    "lastChecked": "2026-10-28T05:48:22.865Z",
+    "revisionIdentifier": "52965b80",
+    "lastVerified": "2026-10-28T05:48:22.865Z"
+  },
+  "hf-altworld-hemmingway-1": {
+    "name": "HemmingwayAI/Hemmingway-1",
+    "officialUrl": "https://huggingface.co/Altworld/Hemmingway-1",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T05:48:26.411Z",
+    "lastVerified": "2026-10-28T05:48:26.411Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-altworld-hemmingway-1",
+    "contentHash": "caf758cf8fe02bf866fda1a7bdedd5c3ecf42211e851c05c4b5c80586aabeeeb",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "faridsafi-react-native-gifted-chat": {
+    "name": "react-native-gifted-chat",
+    "officialUrl": "https://github.com/FaridSafi/react-native-gifted-chat",
+    "lastChecked": "2026-10-28T05:48:27.773Z",
+    "revisionIdentifier": "4ff184b1",
+    "lastVerified": "2026-10-28T05:48:27.773Z"
+  },
+  "fission-fission": {
+    "name": "fission",
+    "officialUrl": "https://github.com/fission/fission",
+    "lastChecked": "2026-10-28T05:48:30.339Z",
+    "revisionIdentifier": "ae2aabf5",
+    "lastVerified": "2026-10-28T05:48:30.339Z"
+  },
+  "tailscale-tailscale": {
+    "name": "tailscale",
+    "officialUrl": "https://github.com/tailscale/tailscale",
+    "lastChecked": "2026-10-28T05:48:32.946Z",
+    "revisionIdentifier": "3a38840c",
+    "lastVerified": "2026-10-28T05:48:32.946Z"
+  },
+  "oramasearch-orama": {
+    "name": "orama",
+    "officialUrl": "https://github.com/oramasearch/orama",
+    "lastChecked": "2026-10-28T05:48:35.312Z",
+    "revisionIdentifier": "b030e1bd",
+    "lastVerified": "2026-10-28T05:48:35.312Z"
   }
 }

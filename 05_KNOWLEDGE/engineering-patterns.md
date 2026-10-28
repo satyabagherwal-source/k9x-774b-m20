@@ -375551,3 +375551,220 @@ job without waiting for completion.
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `45dbf5ef` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5192. [Configuration File Integrity] (Harvested from HemmingwayAI/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[Configuration File Integrity]",
+  "source": "HemmingwayAI/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-28T05:48:32.330Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-altworld-hemmingway-1",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [HemmingwayAI/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+A configuration file that is intended to be parsed as JSON must be a valid JSON document; it must **not** be a JSON‑escaped string.
+
+**WHY**:  
+Double‑escaped JSON causes the parser to interpret the entire content as a single string, leading to runtime failures when the application attempts to access fields (e.g., `config["architectures"]`). This manifests as `KeyError` or `AttributeError` during model loading.
+
+**WHEN TO APPLY**:  
+All files named `*.json` that are loaded by the model loader (`AutoConfig`, `AutoTokenizer`, `AutoModelForCausalLM`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "architectures": [
+    "Qwen3_5ForCausalLM"
+  ],
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "attn_output_gate": true,
+  "bos_token_id": 248044,
+  "dtype": "bfloat16",
+  "eos_token_id": 248044,
+  "full_attention_interval": 4,
+  "head_dim": 256,
+  "hidden_act": "silu",
+  "hidden_size": 5120,
+  "initializer_range": 0.02,
+  "intermediate_size": 17408,
+  "layer_types": [
+    "linear_attention",
+    "linear_attention",
+    "linear_attention",
+    "full_attention",
+    ...
+  ],
+  "linear_conv_kernel_dim": 4,
+  "linear_key_head_dim": 128,
+  "linear_num_key_heads": 16,
+  "linear_num_value_heads": 48,
+  "linear_value_head_dim": 128,
+  "mamba_ssm_dtype": "float32",
+  "max_position_embeddings": 262144,
+  "model_type": "qwen3_5_text",
+  "mtp_num_hidden_layers": 1,
+  "mtp_use_dedicated_embeddings": false,
+  "num_attention_heads": 24,
+  "num_hidden_layers": 64,
+  "num_key_value_heads": 4,
+  "output_gate_type": "swish",
+  "pad_token_id": null,
+  "partial_rotary_factor": 0.25,
+  "rms_norm_eps": 1e-06,
+  "rope_parameters": {
+    "mrope_interleaved": true,
+    "mrope_section": [11, 11, 10],
+    "partial_rotary_factor": 0.25,
+    "rope_theta": 10000000,
+    "rope_type": "default"
+  },
+  "tie_word_embeddings": false,
+  "transfo": ...
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```json
+"{\"architectures\": [\"Qwen3_5ForCausalLM\"], ...}"
+```
+
+**VERIFICATION METHOD**:  
+Run `python -m json.tool config.json` or `jq . config.json`. A non‑JSON string will raise a `JSONDecodeError`. CI should include a lint step that fails on double‑escaped JSON.
+
+---
+
+
+---
+
+## 5193. [Data‑Type Consistency] (Harvested from HemmingwayAI/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[Data‑Type Consistency]",
+  "source": "HemmingwayAI/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-28T05:48:32.486Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-altworld-hemmingway-1",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [HemmingwayAI/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+The `dtype` specified in the model configuration must match the data‑type used when loading the model weights; mismatches must be explicitly handled or avoided.
+
+**WHY**:  
+Using a different dtype (e.g., loading `bfloat16` weights into a `float32` tensor) triggers implicit conversion, which can degrade precision or cause out‑of‑memory errors on GPUs that do not support the target dtype.
+
+**WHEN TO APPLY**:  
+During model instantiation (`AutoModelForCausalLM.from_pretrained`) and when configuring the inference engine (`vllm serve`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+model_id = "Altworld/Hemmingway-1"
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+model = AutoModelForCausalLM.from_pretrained(
+    model_id,
+    device_map="auto",
+    dtype="bfloat16"   # matches config.json
+)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+model = AutoModelForCausalLM.from_pretrained(
+    model_id,
+    device_map="auto",
+    dtype="float32"   # mismatched dtype
+)
+```
+
+**VERIFICATION METHOD**:  
+After loading, assert `model.dtype == torch.bfloat16`. Add a unit test that fails if the dtype differs.
+
+---
+
+
+---
+
+## 5194. [Attention‑Bias Contract] (Harvested from HemmingwayAI/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[Attention‑Bias Contract]",
+  "source": "HemmingwayAI/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-28T05:48:32.632Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-altworld-hemmingway-1",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [HemmingwayAI/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+If `attention_bias` is set to `false` in the configuration, the inference engine must **not** apply any bias term to the attention scores; the model must be constructed to honour this flag.
+
+**WHY**:  
+Applying a bias when the flag is `false` changes the attention distribution, potentially violating the model’s training objective and leading to degraded performance or unexpected behaviour.
+
+**WHEN TO APPLY**:  
+During the construction of the attention modules in the model graph.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+class LinearAttention(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self.use_bias = config.attention_bias
+        self.q_proj = nn.Linear(config.hidden_size, config.hidden_size, bias=self.use_bias)
+        self.k_proj = nn.Linear(config.hidden_size, config.hidden_size, bias=self.use_bias)
+        self.v_proj = nn.Linear(config.hidden_size, config.hidden_size, bias=self.use_bias)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+self.q_proj = nn.Linear(config.hidden_size, config.hidden_size, bias=True)  # ignores config
+```
+
+**VERIFICATION METHOD**:  
+Unit test that verifies `module.q_proj.bias` is `None` when `config.attention_bias` is `False`.
+
+---

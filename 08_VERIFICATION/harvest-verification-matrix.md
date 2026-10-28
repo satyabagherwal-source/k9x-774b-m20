@@ -5708,3 +5708,4 @@
 | `CYCLE-20261028-TE4F` | `2026-10-28T05:42:11.391Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`75b59453...`) |
 | `CYCLE-20261028-TLQC` | `2026-10-28T05:42:21.252Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5190` | Yes (`7ed54f3a...`) |
 | `CYCLE-20261028-TOEA` | `2026-10-28T05:42:24.706Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5191` | Yes (`c5cdbbc3...`) |
+| `CYCLE-20261028-1KE3` | `2026-10-28T05:48:32.763Z` | `HemmingwayAI/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5192, Rule 5193, Rule 5194` | Yes (`caf758cf...`) |

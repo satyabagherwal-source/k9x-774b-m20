@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T05:42:24.635Z",
+  "last_updated": "2026-10-28T05:48:32.723Z",
   "total_verified_learnings": 1156,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16325,7 +16325,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
       "source_version": "hf-altworld-hemmingway-1",
-      "content_hash": "a5bfb8db551a006ba6ef5cadfe5ad6dfadc6035d3c1083e441d587b93b410db6",
+      "content_hash": "caf758cf8fe02bf866fda1a7bdedd5c3ecf42211e851c05c4b5c80586aabeeeb",
       "dossier_path": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "promoted_rules": [
@@ -16524,6 +16524,21 @@
           "number": 4302,
           "title": "Tokenizer Pad Token Consistency",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5192,
+          "title": "[Configuration File Integrity]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5193,
+          "title": "[Data‑Type Consistency]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5194,
+          "title": "[Attention‑Bias Contract]",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16544,7 +16559,7 @@
         "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr",
         "learn-huggingface-hf-altworld-hemmingway-1-mv4iut04"
       ],
-      "verified_at": "2026-10-25T13:08:15.805Z",
+      "verified_at": "2026-10-28T05:48:32.715Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -142095,6 +142110,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T05:42:24.617Z"
+    },
+    "rule-5192": {
+      "learning_id": "rule-5192",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5192,
+      "title": "[Configuration File Integrity]",
+      "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+      "source_version": "hf-altworld-hemmingway-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T05:48:32.715Z"
+    },
+    "rule-5193": {
+      "learning_id": "rule-5193",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5193,
+      "title": "[Data‑Type Consistency]",
+      "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+      "source_version": "hf-altworld-hemmingway-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T05:48:32.715Z"
+    },
+    "rule-5194": {
+      "learning_id": "rule-5194",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5194,
+      "title": "[Attention‑Bias Contract]",
+      "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+      "source_version": "hf-altworld-hemmingway-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T05:48:32.715Z"
     }
   },
   "aliases": {

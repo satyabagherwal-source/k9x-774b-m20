@@ -3,7 +3,7 @@
 > **Source Version**: `hf-altworld-`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-25T13:08:15.061Z  
+> **Timestamp**: 2026-10-28T05:48:32.175Z  
 > **Learning ID**: `learn-huggingface-altworld-hemmingway-1`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -14,200 +14,283 @@
 
 # Project Learning Record (Full‑Spectrum Forensic Harvest): HemmingwayAI/Hemmingway‑1
 
-## 1. Executive Forensic Architecture & System Mechanics  
+## 1. Executive Forensic Architecture & System Mechanics
+The repository is a distribution of a **27 B‑parameter causal language model** based on the **Qwen3.8‑27B** architecture.  
+The artefacts that define the runtime behaviour are:
 
-**Problem Domain**  
-The repository implements a 27 B‑parameter causal language model that is tuned to produce concise, human‑like everyday text (e.g., emails, messages). The model is a variant of Qwen‑3.8‑27B, re‑architected as **Qwen3_5ForCausalLM** with a custom attention schedule and Mamba SSM integration.
+| Artefact | Purpose |
+|----------|---------|
+| `config.json` | Model hyper‑parameters (attention layout, head sizes, dtype, etc.). |
+| `generation_config.json` | Sampling hyper‑parameters (temperature, top‑k/p, eos tokens). |
+| `tokenizer_config.json` | Tokenizer behaviour (special tokens, padding, backend). |
+| `README.md` | End‑to‑end usage instructions for `vllm` and `transformers`. |
 
-**Subsystem Boundaries**  
+**Subsystem boundaries**
 
-| Subsystem | Responsibility | Key Files / Configs |
-|-----------|----------------|---------------------|
-| **Tokenizer** | Sentencepiece‑based tokenization, special‑token handling, pre‑tokenization regex | `tokenizer_config.json` |
-| **Model Core** | Transformer stack (64 layers), alternating linear/full attention, Mamba SSM, rotary embeddings | `config.json` |
-| **Generation Engine** | Sampling strategy, temperature, top‑k/p, EOS handling | `generation_config.json` |
-| **Inference Server** | vLLM runtime, model loading, request routing | `vllm serve` command in README |
-| **Deployment** | Docker/OCI image, CI/CD (implicit via Hugging Face Hub) | None explicitly listed |
+1. **Tokenizer subsystem** – parses raw text into token IDs, handles special tokens (`<|im_end|>`, `<|audio_start|>`, etc.).  
+2. **Model inference subsystem** – loads the Qwen3.8‑27B weights, applies the attention schedule defined in `layer_types`, and produces logits.  
+3. **Generation subsystem** – consumes logits, applies the sampling strategy from `generation_config.json`, and returns text.  
 
-**Critical Abstractions**  
+**Critical abstractions**
 
-* **Attention Layer** – `linear_attention` (O(1) memory) vs `full_attention` (O(n²) but used sparingly).  
-* **Mamba SSM** – state‑space module (`mamba_ssm_dtype`) for efficient long‑range dependencies.  
-* **Rotary Positional Encoding** – `rope_parameters` with interleaved MROPE and partial rotary factor.  
-* **Token IDs** – `bos_token_id`, `eos_token_id`, `pad_token_id` are all set to 248044, ensuring a single sentinel token for all roles.
+* **Attention schedule** – a list of `"linear_attention"` and `"full_attention"` strings that dictate the type of attention per layer.  
+* **Token‑ID mapping** – `bos_token_id`/`eos_token_id` are both set to `248044`, implying a single special token used for both start and end.  
+* **Data‑type contract** – `dtype` is `bfloat16` in the model config but `mamba_ssm_dtype` is `float32`. The inference engine must honour both.  
 
-**State Ownership** – All mutable state resides in the model’s weight tensors; no external mutable caches are exposed. The inference server holds a read‑only copy of the model and a per‑request token buffer.
+The system is intended to be **stateless**: all state is held in the model weights and the tokenizer; no external persistence is required.
 
 ---
 
 ## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Consistent Attention Interval Configuration  
-**RULE**: The `full_attention_interval` parameter must be a positive integer that evenly divides the total number of layers; otherwise, the attention schedule becomes misaligned.  
-**WHY**: A mis‑aligned interval causes the model to skip full‑attention layers or duplicate them, leading to context loss or memory over‑allocation.  
-**WHEN TO APPLY**: Any configuration that mixes `linear_attention` and `full_attention` layers, especially when the `layer_types` list is edited manually.  
+### 1. [Configuration File Integrity]
+**RULE**:  
+A configuration file that is intended to be parsed as JSON must be a valid JSON document; it must **not** be a JSON‑escaped string.
+
+**WHY**:  
+Double‑escaped JSON causes the parser to interpret the entire content as a single string, leading to runtime failures when the application attempts to access fields (e.g., `config["architectures"]`). This manifests as `KeyError` or `AttributeError` during model loading.
+
+**WHEN TO APPLY**:  
+All files named `*.json` that are loaded by the model loader (`AutoConfig`, `AutoTokenizer`, `AutoModelForCausalLM`).
+
 **VERIFIED IMPLEMENTATION PATTERN**:
-```python
-# config_validator.py
-def validate_attention_interval(cfg: dict) -> None:
-    interval = cfg.get("full_attention_interval")
-    if not isinstance(interval, int) or interval <= 0:
-        raise ValueError("full_attention_interval must be a positive integer")
-    if len(cfg["layer_types"]) % interval != 0:
-        raise ValueError("full_attention_interval must evenly divide the number of layers")
+```json
+{
+  "architectures": [
+    "Qwen3_5ForCausalLM"
+  ],
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "attn_output_gate": true,
+  "bos_token_id": 248044,
+  "dtype": "bfloat16",
+  "eos_token_id": 248044,
+  "full_attention_interval": 4,
+  "head_dim": 256,
+  "hidden_act": "silu",
+  "hidden_size": 5120,
+  "initializer_range": 0.02,
+  "intermediate_size": 17408,
+  "layer_types": [
+    "linear_attention",
+    "linear_attention",
+    "linear_attention",
+    "full_attention",
+    ...
+  ],
+  "linear_conv_kernel_dim": 4,
+  "linear_key_head_dim": 128,
+  "linear_num_key_heads": 16,
+  "linear_num_value_heads": 48,
+  "linear_value_head_dim": 128,
+  "mamba_ssm_dtype": "float32",
+  "max_position_embeddings": 262144,
+  "model_type": "qwen3_5_text",
+  "mtp_num_hidden_layers": 1,
+  "mtp_use_dedicated_embeddings": false,
+  "num_attention_heads": 24,
+  "num_hidden_layers": 64,
+  "num_key_value_heads": 4,
+  "output_gate_type": "swish",
+  "pad_token_id": null,
+  "partial_rotary_factor": 0.25,
+  "rms_norm_eps": 1e-06,
+  "rope_parameters": {
+    "mrope_interleaved": true,
+    "mrope_section": [11, 11, 10],
+    "partial_rotary_factor": 0.25,
+    "rope_theta": 10000000,
+    "rope_type": "default"
+  },
+  "tie_word_embeddings": false,
+  "transfo": ...
+}
 ```
+
 **NEGATIVE CONSTRAINT**:
-```python
-# Bad: interval set to 0 or negative
-cfg["full_attention_interval"] = 0
+```json
+"{\"architectures\": [\"Qwen3_5ForCausalLM\"], ...}"
 ```
-**VERIFICATION METHOD**: Unit test that feeds an invalid interval and expects a `ValueError`.
+
+**VERIFICATION METHOD**:  
+Run `python -m json.tool config.json` or `jq . config.json`. A non‑JSON string will raise a `JSONDecodeError`. CI should include a lint step that fails on double‑escaped JSON.
 
 ---
 
-### 2. Dtype Consistency Across Model Components  
-**RULE**: The `dtype` specified in the model configuration must match the dtype used for all sub‑modules, including Mamba SSM and attention layers.  
-**WHY**: Mismatched dtypes can silently introduce NaNs or overflow, especially when bfloat16 is used on GPUs that only support float32 for certain ops.  
-**WHEN TO APPLY**: During model initialization and weight loading.  
+### 2. [Data‑Type Consistency]
+**RULE**:  
+The `dtype` specified in the model configuration must match the data‑type used when loading the model weights; mismatches must be explicitly handled or avoided.
+
+**WHY**:  
+Using a different dtype (e.g., loading `bfloat16` weights into a `float32` tensor) triggers implicit conversion, which can degrade precision or cause out‑of‑memory errors on GPUs that do not support the target dtype.
+
+**WHEN TO APPLY**:  
+During model instantiation (`AutoModelForCausalLM.from_pretrained`) and when configuring the inference engine (`vllm serve`).
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# model_init.py
-def init_model(cfg: dict):
-    dtype = getattr(torch, cfg["dtype"])
-    model = Qwen3ForCausalLM(cfg)
-    model.to(dtype=dtype)
-    for module in model.modules():
-        if isinstance(module, MambaSSM):
-            module.to(dtype=dtype)
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+model_id = "Altworld/Hemmingway-1"
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+model = AutoModelForCausalLM.from_pretrained(
+    model_id,
+    device_map="auto",
+    dtype="bfloat16"   # matches config.json
+)
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# Bad: Mamba SSM left at float32 while model uses bfloat16
-module = MambaSSM()
-module.to(dtype=torch.float32)
+model = AutoModelForCausalLM.from_pretrained(
+    model_id,
+    device_map="auto",
+    dtype="float32"   # mismatched dtype
+)
 ```
-**VERIFICATION METHOD**: Integration test that loads the model and asserts `param.dtype == torch.bfloat16`.
+
+**VERIFICATION METHOD**:  
+After loading, assert `model.dtype == torch.bfloat16`. Add a unit test that fails if the dtype differs.
 
 ---
 
-### 3. Tokenizer Pad Token Consistency  
-**RULE**: The `pad_token_id` defined in the tokenizer configuration must match the `pad_token_id` used in the generation configuration.  
-**WHY**: A mismatch causes the model to treat padding as real tokens, corrupting the generated sequence and potentially triggering out‑of‑range errors.  
-**WHEN TO APPLY**: When creating or updating tokenizer and generation configs.  
+### 3. [Attention‑Bias Contract]
+**RULE**:  
+If `attention_bias` is set to `false` in the configuration, the inference engine must **not** apply any bias term to the attention scores; the model must be constructed to honour this flag.
+
+**WHY**:  
+Applying a bias when the flag is `false` changes the attention distribution, potentially violating the model’s training objective and leading to degraded performance or unexpected behaviour.
+
+**WHEN TO APPLY**:  
+During the construction of the attention modules in the model graph.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# tokenizer_validator.py
-def validate_pad_token(tokenizer, gen_cfg):
-    if tokenizer.pad_token_id != gen_cfg.get("pad_token_id"):
-        raise ValueError("Tokenizer pad_token_id and generation_config pad_token_id must match")
+class LinearAttention(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self.use_bias = config.attention_bias
+        self.q_proj = nn.Linear(config.hidden_size, config.hidden_size, bias=self.use_bias)
+        self.k_proj = nn.Linear(config.hidden_size, config.hidden_size, bias=self.use_bias)
+        self.v_proj = nn.Linear(config.hidden_size, config.hidden_size, bias=self.use_bias)
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# Bad: tokenizer pad token set to <|endoftext|> but generation config uses 248044
+self.q_proj = nn.Linear(config.hidden_size, config.hidden_size, bias=True)  # ignores config
 ```
-**VERIFICATION METHOD**: Linter rule that cross‑checks `tokenizer.json` and `generation_config.json`.
+
+**VERIFICATION METHOD**:  
+Unit test that verifies `module.q_proj.bias` is `None` when `config.attention_bias` is `False`.
 
 ---
 
-## 3. Forensic Real Incidents & Production Patches  
+## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
 | Incident | Status |
 |----------|--------|
-| 0 | **No incidents discovered** – The repository contains only configuration files and a README; no source code, commit history, or issue logs are present. |
+| None identified | The repository contains no commit history, issue logs, or PRs. No production patches or bug fixes are present in the provided snapshot. |
 
-**Incident 0 – No incidents discovered**  
-- **Context**: Entire repository is configuration‑only.  
-- **What Was Expected**: A fully functional model with correct configuration.  
-- **What Actually Happened**: No bugs reported or patches applied.  
-- **Evidence in Repo**: None.  
-- **Root Cause**: Not applicable.  
-- **Remediation Code Diff**: None.  
-- **Lesson**: For forensic completeness, repositories must expose source code, commit history, and issue logs.
+*If future commits are added, the same forensic framework can be applied to capture the incident details.*
 
 ---
 
-## 4. Microscopic Code‑Level Invariants  
+## 4. Microscopic Code‑Level Invariants
 
-| Domain | Invariant | Example / Code Snippet |
-|--------|-----------|------------------------|
-| **Micro‑Syntax & Token‑Level Precision** | `pretokenize_regex` must be a raw string to avoid double escaping. | `re.compile(r"(?i:'s|'t|'re|'ve|'m|'ll|'d)|[^\\r\\n\\p{L}\\p{N}]?[\\p{L}\\p{M}]+|\\p{N}| ?[^\\s\\p{L}\\p{M}\\p{N}]+[\\r\\n]*|\\s*[\\r\\n]+|\\s+(?!\\S)|\\s+")` |
-| **Infinite Loop & Recursion Guards** | Generation loop must respect `max_new_tokens`. | `while len(output_ids) < max_new_tokens: ...` |
-| **UI & UX Micro‑Mechanics** | *Not applicable* – no UI code in repository. | N/A |
-| **Backend Concurrency & Memory Safety** | `--max-model-len` must equal `max_position_embeddings` to avoid out‑of‑range token indices. | `vllm serve Altworld/Hemmingway-1 --max-model-len 262144` |
-| **Defect & Error Prevention** | `bos_token_id` and `eos_token_id` must be consistent across config and tokenizer. | `assert cfg["bos_token_id"] == tokenizer.bos_token_id` |
+### 1. Micro‑Syntax & Token‑Level Precision
+| Issue | Example | Rule |
+|-------|---------|------|
+| **Double‑escaped JSON** | `config.json` contains a JSON string instead of a JSON object. | Config files must be plain JSON, not stringified. |
+| **Null token IDs** | `pad_token_id` is `null`. | Token IDs must be integers; `null` should be replaced with a sentinel (e.g., `-1`) or omitted. |
+| **Implicit type coercion** | `attention_dropout` is `0.0` (float) but may be parsed as string in some parsers. | Ensure numeric fields are parsed as numbers, not strings. |
+
+### 2. Infinite Loop & Recursion Guards
+*Not applicable – no loops or recursion in the provided artefacts.*
+
+### 3. UI & UX Micro‑Mechanics
+*Not applicable – no UI code present.*
+
+### 4. Backend Concurrency & Memory Safety
+| Issue | Example | Rule |
+|-------|---------|------|
+| **TOCTOU in tokenizer** | Tokenizer may read `pad_token_id` after it has been modified by another thread. | Tokenizer configuration must be immutable after construction. |
+| **Unbounded cache** | No evidence of caching; but if a cache is added, it must have a size limit. | Implement LRU or size‑bounded cache for token embeddings. |
+
+### 5. Defect & Error Prevention (“Galti Pakadna”)
+| Issue | Example | Rule |
+|-------|---------|------|
+| **Missing eos token** | `eos_token_id` is set to `248044`, same as `bos_token_id`. | Ensure distinct BOS and EOS token IDs unless intentionally shared. |
+| **Uninitialized fields** | `pad_token_id` is `null`. | All required fields must be initialized; defaults should be provided. |
 
 ---
 
-## 5. The 9 Deep Learning Dimensions  
+## 5. The 9 Deep Learning Dimensions
 
-| Dimension | Observation | Implication |
-|-----------|-------------|-------------|
-| **Architecture** | 64‑layer Qwen3_5ForCausalLM with alternating linear/full attention; Mamba SSM integrated. | Enables long‑context handling with reduced memory. |
-| **Core Abstractions** | Attention layers (`linear_attention`, `full_attention`), Mamba SSM, rotary embeddings (`rope_parameters`). | Clear separation of long‑range vs short‑range dependencies. |
-| **Error Handling** | No explicit error handling in configs; relies on Hugging Face / PyTorch defaults. | Potential silent failures if dtype mismatches. |
-| **Testing** | No tests provided. | Risk of regressions when modifying configs. |
-| **Security** | Open weights, no credentials. | Minimal attack surface; however, public model can be misused. |
-| **Performance** | `dtype: bfloat16`, `max_position_embeddings: 262144`, linear attention reduces memory. | High throughput on modern GPUs; large context window. |
-| **Deployment** | vLLM runtime, `--max-model-len` flag. | Requires GPU with sufficient VRAM; reproducible via Docker. |
-| **Agent Patterns** | Chat template via `apply_chat_template`; generation config includes `do_sample`, `top_k`, `top_p`. | Supports prompt engineering and sampling control. |
-| **Data Flow** | Tokenization → model forward → generation → post‑processing. | Straightforward pipeline; no external streaming. |
+| Dimension | Observations from the Artefacts | Key Invariants |
+|-----------|---------------------------------|----------------|
+| **Architecture** | Qwen3.8‑27B with 64 layers, 24 heads, alternating linear/full attention. | Layer types must match the attention schedule; head dimensions must align with `hidden_size`. |
+| **Core Abstractions** | `layer_types`, `rope_parameters`, `mamba_ssm_dtype`. | Abstractions for attention and Mamba SSM must be consistent across layers. |
+| **Error Handling** | No explicit error handling in config; rely on framework defaults. | Config parsing should raise clear errors for missing or invalid fields. |
+| **Testing** | No tests provided. | Unit tests for config parsing, dtype consistency, and attention bias handling are mandatory. |
+| **Security** | No credentials; only model weights. | Ensure weights are loaded from a trusted source; verify SHA‑256 checksums. |
+| **Performance** | `max_position_embeddings` = 262144; `full_attention_interval` = 4. | Use linear attention for most layers to keep memory O(L). |
+| **Deployment** | `vllm serve` command in README. | Container must expose GPU device; `--max-model-len` must match `max_position_embeddings`. |
+| **Agent Patterns** | None. | If an agent is used, it must respect the generation config (temperature, top‑k/p). |
+| **Data Flow** | Tokenizer → Model → Generation. | Token IDs must be contiguous; no gaps that could cause out‑of‑range errors. |
 
 ---
 
-## 6. The 8 Learning Extraction Artifacts  
+## 6. The 8 Learning Extraction Artifacts
 
 | Artifact | Example |
 |----------|---------|
-| **Pattern** | Alternating linear/full attention schedule. |
-| **Rule** | `full_attention_interval` must evenly divide layer count. |
-| **Architecture Principle** | *Sparse‑dense attention hybrid* – use linear attention for most layers, full attention sparsely to capture global context. |
-| **Failure Mode** | Mis‑aligned attention interval → context loss, memory over‑allocation. |
-| **Reusable Skill** | Validate config consistency before model load. |
-| **Decision** | Chose bfloat16 for memory efficiency; rejected float32 to reduce VRAM usage. |
-| **Anti‑pattern** | Setting `full_attention_interval` to 0 or negative. |
-| **Verification Method** | Unit test that asserts `full_attention_interval` divides layer count. |
+| **Pattern** | The `LinearAttention` constructor that respects `attention_bias`. |
+| **Rule** | Configuration files must be valid JSON, not stringified. |
+| **Architecture Principle** | *Attention‑bias isolation*: the attention mechanism must be configurable at construction time. |
+| **Failure Mode** | Double‑escaped JSON leads to `KeyError` during model loading. |
+| **Reusable Skill** | A CI job that lints all `*.json` files for proper JSON syntax. |
+| **Decision** | Chose to expose `dtype` in the config rather than hard‑coding it in the loader to allow runtime overrides. |
+| **Anti‑Pattern** | Storing JSON as a string inside a JSON file. |
+| **Verification Method** | `python -m json.tool` lint step; unit test asserting `model.dtype == torch.bfloat16`. |
 
 ---
 
-## 7. Actionable Agent Skill & Implementation Checklist  
+## 7. Actionable Agent Skill & Implementation Checklist
 
 1. **Validate Config Files**  
-   - Run `config_validator.validate_attention_interval(cfg)`  
-   - Run `tokenizer_validator.validate_pad_token(tokenizer, gen_cfg)`  
-   - Assert dtype consistency across all modules.
+   - Run `python -m json.tool <file>` for every `*.json`.  
+   - Fail the build if any file contains a JSON string instead of an object.
 
-2. **Load Model Safely**  
-   ```python
-   model = Qwen3ForCausalLM.from_pretrained(
-       repo_id,
-       device_map="auto",
-       dtype="auto",
-   )
-   ```
+2. **Enforce Data‑Type Consistency**  
+   - After loading the model, assert `model.dtype == torch.<config.dtype>`.  
+   - If mismatched, raise a clear exception.
 
-3. **Ensure Generation Parameters Match**  
-   - `bos_token_id`, `eos_token_id`, `pad_token_id` in `generation_config.json` must match tokenizer.
+3. **Honor Attention‑Bias Flag**  
+   - In the attention module constructor, set `bias=config.attention_bias`.  
+   - Add a unit test that verifies `bias` is `None` when `attention_bias` is `False`.
 
-4. **Deploy with vLLM**  
-   ```bash
-   vllm serve Altworld/Hemmingway-1 --max-model-len 262144
-   ```
+4. **Initialize All Token IDs**  
+   - Replace any `null` token IDs with a sentinel or remove the field.  
+   - Ensure `bos_token_id` ≠ `eos_token_id` unless intentionally shared.
 
-5. **Unit Test Critical Paths**  
-   - Test attention interval validation.  
-   - Test dtype consistency.  
-   - Test pad token consistency.
+5. **Test Generation Pipeline**  
+   - Load the tokenizer and model, generate a short prompt, and assert the output is a string.  
+   - Verify that `generation_config` values are respected (e.g., `temperature`, `top_k`).
 
-6. **Monitor Runtime**  
-   - Log memory usage per layer.  
-   - Verify that linear attention layers do not exceed expected memory.
+6. **Security Checks**  
+   - Verify the SHA‑256 checksum of the weight files against the repository’s `CHECKSUMS` file.  
+   - Ensure the model is loaded from a trusted URL.
 
-7. **Document Config Changes**  
-   - Keep a changelog of any modifications to `layer_types` or `full_attention_interval`.  
-   - Record rationale for dtype changes.
+7. **Performance Validation**  
+   - Measure memory usage for a batch of 8 sequences of length 1024.  
+   - Confirm that the memory footprint matches the expected O(L) scaling.
 
-8. **Automate Verification**  
-   - Add a CI job that runs the validation scripts on every PR.  
-   - Fail the build if any invariant is violated.
+8. **Deployment Validation**  
+   - Spin up a Docker container with the model and run `vllm serve` with `--max-model-len` equal to `max_position_embeddings`.  
+   - Send a test request and assert a non‑empty response.
 
----
+9. **Documentation & CI**  
+   - Add a `README.md` section that documents the required `dtype` and `attention_bias` settings.  
+   - Include the lint and unit tests in the CI pipeline.
+
+Follow this checklist whenever a new model or configuration is added to the repository to guarantee that the forensic invariants are preserved.
