@@ -685,8 +685,8 @@
     "sourceUrl": "https://huggingface.co/Cloudflare/clef",
     "sourceVersion": "hf-cloudflare-clef",
     "license": "Open-Source",
-    "contentHash": "98d852e4d6f53326ebef9999b70be79dd20641f90548b3aa75ebbee263fbd31a",
-    "lastHarvestedAt": "2026-10-25T16:54:39.601Z",
+    "contentHash": "3318a21943a9ec24a2677c642acaad65153f19fe4cc01393032dfdba8f3f26ab",
+    "lastHarvestedAt": "2026-10-28T11:36:17.951Z",
     "learningId": "learn-huggingface-cloudflare-clef"
   },
   "hf-cloudflare-clef-flash": {
@@ -3463,10 +3463,10 @@
     "repository": "okteto/okteto",
     "platform": "github",
     "sourceUrl": "https://github.com/okteto/okteto",
-    "sourceVersion": "e5c46263",
+    "sourceVersion": "4aef91ec",
     "license": "Apache-2.0",
-    "contentHash": "8e665ef6d0b10f4f0e47c7db90e58c2f8af2c39f3da29a6a12425a0a81db43d2",
-    "lastHarvestedAt": "2026-10-27T13:28:29.283Z",
+    "contentHash": "2ac18930a7f0de830889fa2dec5075e87713e9bc64f802d9393057ae3bdb0c5b",
+    "lastHarvestedAt": "2026-10-28T11:32:27.455Z",
     "learningId": "learn-github-okteto-okteto"
   },
   "supervc-stack-vectorchord": {

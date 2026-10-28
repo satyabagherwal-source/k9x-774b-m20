@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-QJKB",
-    "timestamp": "2026-10-27T11:56:13.067Z",
-    "repository": "fission/fission",
-    "learningId": "learn-github-fission-fission",
-    "contentHash": "3926dd9198818ba121bb932b931f782728906d87fbfd28e05d1c070674578109",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-QNAX",
-    "timestamp": "2026-10-27T11:56:17.913Z",
-    "repository": "citusdata/citus",
-    "learningId": "learn-github-citusdata-citus",
-    "contentHash": "8d342f16db3544a3ab6c5c861af1de8821b68ad306908b9a4be95bae276cd37b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-UZ6T",
     "timestamp": "2026-10-27T11:59:39.941Z",
     "repository": "reshaped-ui/reshaped",
@@ -7490,6 +7460,36 @@
     "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
     "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
     "contentHash": "306dd3e645f1d1c179068b17173522c117d339bcbcaea4f481428003d4001df0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-BU7W",
+    "timestamp": "2026-10-28T11:32:27.452Z",
+    "repository": "okteto/okteto",
+    "learningId": "learn-github-okteto-okteto",
+    "contentHash": "2ac18930a7f0de830889fa2dec5075e87713e9bc64f802d9393057ae3bdb0c5b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261028-GS2K",
+    "timestamp": "2026-10-28T11:36:17.948Z",
+    "repository": "Cloudflare/clef",
+    "learningId": "learn-huggingface-cloudflare-clef",
+    "contentHash": "3318a21943a9ec24a2677c642acaad65153f19fe4cc01393032dfdba8f3f26ab",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

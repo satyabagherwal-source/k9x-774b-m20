@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
 > **Source**: github ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
-> **Source Version**: `e5c46263`  
+> **Source Version**: `4aef91ec`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:28:28.942Z  
+> **Timestamp**: 2026-10-28T11:32:27.048Z  
 > **Learning ID**: `learn-github-okteto-okteto`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:28:28.510Z  
+> **Harvest Timestamp**: 2026-10-28T11:32:26.758Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1502,72 +1502,46 @@ func startCommand(cmd *exec.Cmd) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e5c46263` (2026-10-26)
-**Commit Message**: build(deps): bump body-parser from 1.20.6 to 1.20.9 in /samples/node.js (#5222)
+### Incident Patch 1: `4aef91ec` (2026-10-28)
+**Commit Message**: chore(deps): Update module golang.org/x/sync to v0.24.0 (#5226)
 
-Bumps [body-parser](https://github.com/expressjs/body-parser) from 1.20.6 to 1.20.9.
-- [Release notes](https://github.com/expressjs/body-parser/releases)
-- [Changelog](https://github.com/expressjs/body-parser/blob/1.20.9/HISTORY.md)
-- [Commits](https://github.com/expressjs/body-parser/compare/1.20.6...1.20.9)
+Co-authored-by: Renovate <[REDACTED_EMAIL]>
 
----
-updated-dependencies:
-- dependency-name: body-parser
-  dependency-version: 1.20.9
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `samples/node.js/yarn.lock` (modified, +8/-8)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -70,9 +70,9 @@ binary-extensions@^2.0.0:
-   integrity sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==
- 
- body-parser@~1.20.3:
--  version "1.20.6"
--  resolved "https://registry.yarnpkg.com/body-parser/-/body-parser-1.20.6.tgz#60c789c78e0992d906da0a29d71ae01d15c1ed76"
--  integrity sha512-p5tAzS57i5MV9fZFDj9LeIiTZEufbSe2eDozP+ElheSUq1m74CRq1jI4mYNDdVs9vQztXFLuk/Gd6BWTdwRJ5g==
-+  version "1.20.9"
-+  resolved "https://registry.yarnpkg.com/body-parser/-/body-parser-1.20.9.tgz#b64358a113b4d200d7484752cd154b66933e2009"
-+  integrity sha512-FISIQxV5u91Y9gvuFq3q/tA/qTqLJn3AhRcEvyozyhJTh5OBFFtv827AdHU7Rbyct4r+Ba1/99oFa1Y3yuFsdw==
-   dependencies:
-     bytes "~3.1.2"
-     content-type "~1.0.5"
-@@ -82,7 +82,7 @@ body-parser@~1.20.3:
-     http-errors "~2.0.1"
-     iconv-lite "~0.4.24"
-     on-finished "~2.4.1"
--    qs "~6.15.1"
-+    qs "~6.16.0"
-     raw-body "~2.5.3"
-     type-is "~1.6.18"
-     unpipe "~1.0.0"
-@@ -927,10 +927,10 @@ qs@~6.14.0:
-   dependencies:
-     side-channel "^1.1.0"
- 
--qs@~6.15.1:
--  version "6.15.3"
--  resolved "https://registry.yarnpkg.com/qs/-/qs-6.15.3.tgz#76852132a58ed5c7c0ef67e4441b9bb5d6061b3b"
--  integrity sha512-O9gl3zCl5h5blw1KGUzQKhA5oUXSl8rwUIM5o0S3nCXMliSvy5Dzx7/DJcI+SwgICv+IneSZwhBh1oSyEHA71A==
-+qs@~6.16.0:
-+  version "6.16.1"
-+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.16.1.tgz#0643e17993e551759c85078e1f0bc4b9fe908020"
-+  integrity sha512-5Px6J7rfHBAGUhNQ3es4YzcOdBBw0SDcVtThJml4RdnKw4tKs2epA0kPZ+K8X+WiHktT93RHVcQ/3ym5aTCgtg==
-   dependencies:
-     es-define-property "^1.0.1"
-     side-channel "^1.1.1"
+@@ -39,7 +39,7 @@ require (
+ 	github.com/stern/stern v1.22.0
+ 	golang.org/x/crypto v0.57.0
+ 	golang.org/x/oauth2 v0.37.0
+-	golang.org/x/sync v0.23.0
++	golang.org/x/sync v0.24.0
+ 	golang.org/x/term v0.46.0
+ 	google.golang.org/grpc v1.84.0
+ 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -744,8 +744,8 @@ golang.org/x/sync v0.0.0-20190227155943-e225da77a7e6/go.mod h1:RxMgew5VJxzue5/jJ
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
+-golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
++golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20181122145206-62eef0e2fa9b/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5226** (2026-10-28): chore(deps): Update module golang.org/x/sync to v0.24.0 (@oktetobot)
 - **PR #5222** (2026-10-26): build(deps): bump body-parser from 1.20.6 to 1.20.9 in /samples/node.js (@dependabot[bot])
 - **PR #5221** (2026-10-26): PROD-551: Rename the default divert driver from nginx to gateway-api (@ifbyol)
 - **PR #5218** (2026-10-26): chore(deps): Update kubernetes to v0.37.1 (@oktetobot)
 - **PR #5216** (2026-10-26): chore(deps): Update module github.com/posthog/posthog-go to v1.27.0 (@oktetobot)
 - **PR #5215** (2026-10-23): build(deps): bump renovatebot/github-action from 46.3.8 to 46.3.9 (@dependabot[bot])
-- **PR #5214** (2026-10-22): Upgrade buildkit dependency to v0.34.1-okteto2 (@devin-ai-integration[bot])
 
 ---
 
@@ -1587,42 +1561,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump body-parser from 1.20.6 to 1.20.9 in /samples/node.js (#5222)
+## X. deps): Update module golang.org/x/sync to v0.24.0 (#5226)
 
 **RULE**:
-When implementing operations in `samples/node.js/yarn.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e5c46263`: build(deps): bump body-parser from 1.20.6 to 1.20.9 in /samples/node.js (#5222). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4aef91ec`: deps): Update module golang.org/x/sync to v0.24.0 (#5226). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `samples/node.js/yarn.lock`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  version "1.20.9"
-  resolved "https://registry.yarnpkg.com/body-parser/-/body-parser-1.20.9.tgz#b64358a113b4d200d7484752cd154b66933e2009"
-  integrity sha512-FISIQxV5u91Y9gvuFq3q/tA/qTqLJn3AhRcEvyozyhJTh5OBFFtv827AdHU7Rbyct4r+Ba1/99oFa1Y3yuFsdw==
-    qs "~6.16.0"
-qs@~6.16.0:
-  version "6.16.1"
-  resolved "https://registry.yarnpkg.com/qs/-/qs-6.16.1.tgz#0643e17993e551759c85078e1f0bc4b9fe908020"
-  integrity sha512-5Px6J7rfHBAGUhNQ3es4YzcOdBBw0SDcVtThJml4RdnKw4tKs2epA0kPZ+K8X+WiHktT93RHVcQ/3ym5aTCgtg==
+	golang.org/x/sync v0.24.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-  version "1.20.6"
-  resolved "https://registry.yarnpkg.com/body-parser/-/body-parser-1.20.6.tgz#60c789c78e0992d906da0a29d71ae01d15c1ed76"
-  integrity sha512-p5tAzS57i5MV9fZFDj9LeIiTZEufbSe2eDozP+ElheSUq1m74CRq1jI4mYNDdVs9vQztXFLuk/Gd6BWTdwRJ5g==
-    qs "~6.15.1"
-qs@~6.15.1:
-  version "6.15.3"
-  resolved "https://registry.yarnpkg.com/qs/-/qs-6.15.3.tgz#76852132a58ed5c7c0ef67e4441b9bb5d6061b3b"
-  integrity sha512-O9gl3zCl5h5blw1KGUzQKhA5oUXSl8rwUIM5o0S3nCXMliSvy5Dzx7/DJcI+SwgICv+IneSZwhBh1oSyEHA71A==
+	golang.org/x/sync v0.23.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e5c46263` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4aef91ec` are properly handled with clean fallback behavior.

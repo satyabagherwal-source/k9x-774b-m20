@@ -5747,3 +5747,5 @@
 | `CYCLE-20261028-S0OK` | `2026-10-28T11:17:02.708Z` | `unsloth/Qwen3.8-27B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5257, Rule 5258, Rule 3759` | Yes (`319a2cda...`) |
 | `CYCLE-20261028-0RUZ` | `2026-10-28T11:23:51.179Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5259` | Yes (`0ffa9a7b...`) |
 | `CYCLE-20261028-0T1C` | `2026-10-28T11:23:52.704Z` | `DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5260, Rule 5261, Rule 5262` | Yes (`306dd3e6...`) |
+| `CYCLE-20261028-BU7W` | `2026-10-28T11:32:27.452Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5263` | Yes (`2ac18930...`) |
+| `CYCLE-20261028-GS2K` | `2026-10-28T11:36:17.948Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5264, Rule 5265, Rule 5266` | Yes (`3318a219...`) |

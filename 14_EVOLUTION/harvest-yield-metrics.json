@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-28T11:23:52.713Z",
-  "total_cycles_completed": 5724,
-  "total_learnings_persisted": 5724,
-  "total_rules_promoted": 5207,
+  "last_updated": "2026-10-28T11:36:17.955Z",
+  "total_cycles_completed": 5726,
+  "total_learnings_persisted": 5726,
+  "total_rules_promoted": 5211,
   "history": [
-    {
-      "timestamp": "2026-10-27T21:18:40.530Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T21:22:20.045Z",
-      "repository": "max-sixty/worktrunk",
-      "learningId": "learn-github-max-sixty-worktrunk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T21:22:27.640Z",
       "repository": "autogluon/chronos-2",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-28T11:23:52.713Z",
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
       "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T11:32:27.459Z",
+      "repository": "okteto/okteto",
+      "learningId": "learn-github-okteto-okteto",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-28T11:36:17.955Z",
+      "repository": "Cloudflare/clef",
+      "learningId": "learn-huggingface-cloudflare-clef",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

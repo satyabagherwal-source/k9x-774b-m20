@@ -28,8 +28,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-28T11:23:55.259Z",
-    "lastVerified": "2026-10-28T11:23:55.259Z",
+    "lastChecked": "2026-10-28T11:36:20.494Z",
+    "lastVerified": "2026-10-28T11:36:20.494Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -309,8 +309,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T10:43:43.742Z",
-    "lastVerified": "2026-10-28T10:43:43.742Z",
+    "lastChecked": "2026-10-28T11:32:25.552Z",
+    "lastVerified": "2026-10-28T11:32:25.552Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1157,9 +1157,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-10-28T04:48:38.305Z",
+    "lastChecked": "2026-10-28T11:32:20.643Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-10-28T04:48:38.305Z"
+    "lastVerified": "2026-10-28T11:32:20.643Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2650,5 +2650,60 @@
     "lastChecked": "2026-10-28T11:23:51.778Z",
     "revisionIdentifier": "2b290b34",
     "lastVerified": "2026-10-28T11:23:51.778Z"
+  },
+  "sigoden-aichat": {
+    "name": "aichat",
+    "officialUrl": "https://github.com/sigoden/aichat",
+    "lastChecked": "2026-10-28T11:32:10.623Z",
+    "revisionIdentifier": "82976d34",
+    "lastVerified": "2026-10-28T11:32:10.623Z"
+  },
+  "hf-cloudflare-clef": {
+    "name": "Cloudflare/clef",
+    "officialUrl": "https://huggingface.co/Cloudflare/clef",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-28T11:32:13.157Z",
+    "lastVerified": "2026-10-28T11:32:13.157Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-cloudflare-clef",
+    "contentHash": "3318a21943a9ec24a2677c642acaad65153f19fe4cc01393032dfdba8f3f26ab",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "margelo-react-native-vision-camera": {
+    "name": "react-native-vision-camera",
+    "officialUrl": "https://github.com/margelo/react-native-vision-camera",
+    "lastChecked": "2026-10-28T11:32:15.667Z",
+    "revisionIdentifier": "1a69f290",
+    "lastVerified": "2026-10-28T11:32:15.667Z"
+  },
+  "okteto-okteto": {
+    "name": "okteto/okteto",
+    "officialUrl": "https://github.com/okteto/okteto",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-28T11:32:26.758Z",
+    "lastVerified": "2026-10-28T11:32:26.758Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-okteto-okteto",
+    "contentHash": "2ac18930a7f0de830889fa2dec5075e87713e9bc64f802d9393057ae3bdb0c5b",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "neuron-core-neuron-ai": {
+    "name": "neuron-ai",
+    "officialUrl": "https://github.com/neuron-core/neuron-ai",
+    "lastChecked": "2026-10-28T11:32:23.144Z",
+    "revisionIdentifier": "179c6818",
+    "lastVerified": "2026-10-28T11:32:23.144Z"
   }
 }

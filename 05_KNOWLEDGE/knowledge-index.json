@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-28T11:23:52.633Z",
+  "last_updated": "2026-10-28T11:36:17.902Z",
   "total_verified_learnings": 1157,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -19175,7 +19175,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef",
       "source_version": "hf-cloudflare-clef",
-      "content_hash": "98d852e4d6f53326ebef9999b70be79dd20641f90548b3aa75ebbee263fbd31a",
+      "content_hash": "3318a21943a9ec24a2677c642acaad65153f19fe4cc01393032dfdba8f3f26ab",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "promoted_rules": [
@@ -19365,6 +19365,21 @@
           "number": 4385,
           "title": "**Tokenizer Pad Token Consistency Rule**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5264,
+          "title": "Hybrid SSM-Transformer Mixed-Precision Numerical Boundary Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5265,
+          "title": "Zero-Generation Schema Coordinate Invariant for Extraction Runtimes",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5266,
+          "title": "Ragged Schema Batch Collation Padding Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -19385,7 +19400,7 @@
         "learn-huggingface-hf-cloudflare-clef-mv48hs0n",
         "learn-huggingface-hf-cloudflare-clef-mv4lvjtz"
       ],
-      "verified_at": "2026-10-25T16:54:39.533Z",
+      "verified_at": "2026-10-28T11:36:17.891Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40743,8 +40758,8 @@
       "slug": "okteto-okteto",
       "platform": "github",
       "source_url": "https://github.com/okteto/okteto",
-      "source_version": "e5c46263",
-      "content_hash": "8e665ef6d0b10f4f0e47c7db90e58c2f8af2c39f3da29a6a12425a0a81db43d2",
+      "source_version": "4aef91ec",
+      "content_hash": "2ac18930a7f0de830889fa2dec5075e87713e9bc64f802d9393057ae3bdb0c5b",
       "dossier_path": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "promoted_rules": [
@@ -40767,6 +40782,11 @@
           "number": 4804,
           "title": "build(deps): bump body-parser from 1.20.6 to 1.20.9 in /samples/node.js (#5222)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5263,
+          "title": "deps): Update module golang.org/x/sync to v0.24.0 (#5226)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40774,7 +40794,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:28:29.222Z",
+      "verified_at": "2026-10-28T11:32:27.393Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -143492,6 +143512,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-28T11:23:52.615Z"
+    },
+    "rule-5263": {
+      "learning_id": "rule-5263",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5263,
+      "title": "deps): Update module golang.org/x/sync to v0.24.0 (#5226)",
+      "source_url": "https://github.com/okteto/okteto",
+      "source_version": "4aef91ec",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T11:32:27.393Z"
+    },
+    "rule-5264": {
+      "learning_id": "rule-5264",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5264,
+      "title": "Hybrid SSM-Transformer Mixed-Precision Numerical Boundary Invariant",
+      "source_url": "https://huggingface.co/Cloudflare/clef",
+      "source_version": "hf-cloudflare-clef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T11:36:17.891Z"
+    },
+    "rule-5265": {
+      "learning_id": "rule-5265",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5265,
+      "title": "Zero-Generation Schema Coordinate Invariant for Extraction Runtimes",
+      "source_url": "https://huggingface.co/Cloudflare/clef",
+      "source_version": "hf-cloudflare-clef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T11:36:17.891Z"
+    },
+    "rule-5266": {
+      "learning_id": "rule-5266",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5266,
+      "title": "Ragged Schema Batch Collation Padding Invariant",
+      "source_url": "https://huggingface.co/Cloudflare/clef",
+      "source_version": "hf-cloudflare-clef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-28T11:36:17.891Z"
     }
   },
   "aliases": {
